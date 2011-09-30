@@ -1,14 +1,13 @@
+==============================================
 #45 : Make the client launch a WebDAV document
-----------------------------------------------
+==============================================
 
-.. todo::
-
-  We didn't yet find a way to make the client launch Openoffice 
-  or Word on a server-side file in a way that the user can save their 
-  modifications back to the original file through WebDAV.
+We didn't yet find a way to make the client launch OpenOffice 
+or Word on a server-side file in a way that the user can save their 
+modifications back to the original file through WebDAV.
 
 Lino's :mod:`lino.mixins.printable` module 
-can generate .pdf, .rtf or .odt files into a directory 
+can generate `.pdf`, `.rtf` or `.odt` files into a directory 
 located on the server, and this directory 
 can be made accessible as a WebDAV location 
 (see :doc:`/admin/webdav`).
@@ -22,6 +21,7 @@ in a way that the user can save their
 modifications back to the original file through WebDAV?
 
 
+-------------------------
 Testing the WebDAV server
 -------------------------
 
@@ -43,23 +43,30 @@ For LibreOffice, see also `Opening a Document Using WebDAV over HTTPS
 <http://help.libreoffice.org/Common/Opening_a_Document_Using_WebDAV_over_HTTPS>`_ 
 (which maybe wrongly claims that https is needed; seems that simple http works as well).
 
-Another test is to launch you Office suite from a command line::
+Another test is to launch your Office suite from a command line::
 
   "C:\Program Files\...\foo.exe"  http://lino/media/webdav/userdocs/appyrtf/notes.Note-473.rtf
   
 Where ``C:\Program Files\...\foo.exe`` is the full path of your favourite Office suite.
 
+----------
+Approaches
+----------
+
+The following is a description of the different approaches we've been 
+trying, with more or less success.
+
 Alfresco
 --------
 
-Alfresco These are Microsoft centric solutions that won't work on other platforms.
-
+Alfresco: These are Microsoft centric solutions that won't work on other platforms.
 
 Some quotes from `How to edit MSoffice documents online
 <http://forums.alfresco.com/en/viewtopic.php?f=3&t=19885>`_:
 discussion thread (2009-2010 in Alfresco forum):
 
 - online editing "requires Internet Explorer with ActiveX scripting enabled"
+
 - There is a Firefox add-on to support Webdav that needs to be installed:
   `Open As Webfolder <https://addons.mozilla.org/en-US/firefox/addon/540>`_
   
@@ -135,10 +142,6 @@ For many system administrators it is not a solution at all since
 installing such a command server on each client causes additional 
 complexity as well as security risks.
 
-Easier solutions
-----------------
-
-The following sections describe different approaches we have tried.
 
 Using browser-specific methods
 ------------------------------
@@ -161,11 +164,13 @@ For Firefox there is an equivalent approach:
 | http://stackoverflow.com/questions/1374927/launch-file-from-firefox-chrome
 
 For other browsers there are probably similar methods.
-Here is a proof of concept that works on Firefox and MSIE:
+Here is a proof of concept that works on Firefox:
 
 .. literalinclude:: 45/startfile.js.html
 
-Firefox will ask the user "A script from XXX is requesting enhanced abilities that are UNSAFE and could be used to comprimise your machine or data...":
+Firefox will ask the user "A script from XXX is requesting enhanced 
+abilities that are UNSAFE and could be used to comprimise your machine 
+or data...":
 
 .. image:: 45/20110921a.jpg
    :scale: 50
@@ -196,7 +201,7 @@ Using a Java applet
 
 Examples to be published. Seems to be possible, 
 but this requires the Java RTE which will probably 
-slow town client machines.
+slow down client machines.
 
 
 Using the DownloadWith browser plugin
@@ -250,8 +255,7 @@ This activates the
 <http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/AppendixC/The_WebDAV_Content_Provider>`_ 
 who does the conversion.
 This works, but only when the WebDAV server is on 
-``http``, 
-not on ``https``.
+``http``, not on ``https``.
 
 
 

@@ -73,6 +73,13 @@ Bugs fixed
   ein paar Buchstaben des gesuchten Namens eingegeben zu haben, dann konnte 
   das u.U. (in Google Chrome Version 12) zu einer Fehlermeldung "Seiten reagieren nicht" führen. Lag daran, dass choices_view die Parameter `start` und `limit` ignorierte. Siehe :doc:`/blog/2011/0929`.
   
+- Filter setzen auf einer Datum-Kolonne funktionierte nicht. 
+  Behoben.  
+  
+- ForeignKey-Kolonnen einer Grid haben unnützerweise eine Lupe. 
+  Die sollte nur in ForeignKey-Feldern eines Details da sein.
+    
+
 
 Administrator
 -------------

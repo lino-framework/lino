@@ -106,8 +106,8 @@ class GridColumn(Component):
         kw.update(colIndex=index)
         kw.update(editor.get_column_options())
         kw.update(hidden=editor.hidden)
-        if editor.filter_type:
-            if settings.LINO.use_filterRow:
+        if settings.LINO.use_filterRow:
+            if editor.filter_type:
                 if index == 0:
                     kw.update(clearFilter=True) # first column used to show clear filter icon in this column
                 #~ else:
@@ -122,8 +122,8 @@ class GridColumn(Component):
                   dict(value='doesnotcontain', text='Does not contain')
                 ])
               
-            if settings.LINO.use_gridfilters:
-                kw.update(filter=dict(type=editor.filter_type))
+        if settings.LINO.use_gridfilters and editor.gridfilters_settings:
+                kw.update(filter=editor.gridfilters_settings)
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
             rend = None
@@ -235,6 +235,7 @@ class LayoutElement(VisibleComponent):
     ext_suffix = ""
     data_type = None 
     filter_type = None
+    gridfilters_settings = None
     parent = None # will be set by Container
     
     label = None
@@ -457,6 +458,7 @@ class FieldElement(LayoutElement):
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
     filter_type = 'string'
+    gridfilters_settings = dict(type='string')
     vflex = True
     value_template = "new Ext.form.TextArea(%s)"
     xtype = None
@@ -512,6 +514,7 @@ class TextFieldElement(FieldElement):
         
 class CharFieldElement(FieldElement):
     filter_type = 'string'
+    gridfilters_settings = dict(type='string')
     value_template = "new Ext.form.TextField(%s)"
     sortable = True
     xtype = None
@@ -552,6 +555,7 @@ class ComboFieldElement(FieldElement):
     sortable = True
     xtype = None
     filter_type = 'string'
+    gridfilters_settings = dict(type='string')
     
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
@@ -620,9 +624,10 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         self.report = reports.get_model_report(field.rel.to)
         a = self.report.detail_action
         if a is not None:
-            self.value_template = "new Lino.TwinCombo(%s)"
-            kw.update(onTrigger2Click=js_code(
-              "function(e){ Lino.show_fk_detail(this,e,Lino.%s)}" % a))
+            if not isinstance(lh.layout,reports.ListLayout):
+                self.value_template = "new Lino.TwinCombo(%s)"
+                kw.update(onTrigger2Click=js_code(
+                    "function(e){ Lino.show_fk_detail(this,e,Lino.%s)}" % a))
         FieldElement.__init__(self,lh,field,**kw)
       
     #~ def submit_fields(self):
@@ -666,6 +671,7 @@ class DateFieldElement(FieldElement):
     sortable = True
     preferred_width = 8
     filter_type = 'date'
+    gridfilters_settings = dict(type='date',dateFormat=settings.LINO.date_format_extjs)
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
     #~ grid_column_template = "new Ext.grid.DateColumn(%s)"
     
@@ -702,6 +708,7 @@ class URLFieldElement(CharFieldElement):
     
 class IntegerFieldElement(FieldElement):
     filter_type = 'numeric'
+    gridfilters_settings = dict(type='numeric')
     xtype = 'numberfield'
     sortable = True
     preferred_width = 5
@@ -709,6 +716,7 @@ class IntegerFieldElement(FieldElement):
 
 class DecimalFieldElement(FieldElement):
     filter_type = 'numeric'
+    gridfilters_settings = dict(type='numeric')
     xtype = 'numberfield'
     sortable = True
     data_type = 'float' 
@@ -736,6 +744,7 @@ class BooleanFieldElement(FieldElement):
     xtype = 'checkbox'
     data_type = 'boolean' 
     filter_type = 'boolean'
+    gridfilters_settings = dict(type='boolean')
     #~ grid_column_template = "new Ext.grid.BooleanColumn(%s)"
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
@@ -803,6 +812,7 @@ class HtmlBoxElement(DisplayElement):
     preferred_height = 5
     vflex = True
     filter_type = 'string'
+    gridfilters_settings = dict(type='string')
     refers_to_ww = True
     
     #~ def __init__(self,lh,name,action,**kw):

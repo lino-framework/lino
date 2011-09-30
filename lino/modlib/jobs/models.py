@@ -852,6 +852,64 @@ class CandidaturesByJob(Candidatures):
 
 COLS = 8
 
+class new_ContractsSituation(mixins.Listing):
+    class Meta:
+        verbose_name = _("Contracts Situation") 
+        
+    contract_type = models.ForeignKey(ContractType,blank=True,null=True)
+    job_type = models.ForeignKey(JobType,blank=True,null=True)
+    
+    def body(self):
+        today = self.date or datetime.date.today()
+        html = ''
+        rows = []
+          
+        for jobtype in JobType.objects.all():
+            providers = [] # (obj, jobs)
+            #~ for job in jobtype.job_set.all():
+            for job in jobtype.job_set.order_by('provider'):
+                actives = []
+                candidates = []
+                for ct in job.contract_set.all():
+                    if ct.applies_from:
+                        until = ct.date_ended or ct.applies_until
+                        if not until or (ct.applies_from <= today and until >= today):
+                            actives.append(ct)
+                for req in job.candidature_set.all():
+                    if not req.contract:
+                        candidates.append(req)
+                if candidates + actives:
+                    s = "<p>"
+                    s += "<b>%s (%s)</b>" % (
+                      cgi.escape(unicode(job)),job.capacity)
+                    if job.remark:
+                        s += " <i>%s</i>" % cgi.escape(job.remark)
+                    s += "</p>"
+                    s += UL([u'%s bis %s' % (
+                      ct.person.last_name.upper(),
+                      babel.dtos(ct.applies_until)
+                    ) for ct in actives])
+                    #~ s += "<li>"
+                    #~ for ct in actives:
+                        #~ s += '<li>%s</li>' % cgi.escape(unicode(ct.person))
+                    #~ s += "</li>"
+                    if candidates:
+                        s += "<p>%s:</p>" % cgi.escape(_("Candidates"))
+                        s += UL([i.person for i in candidates])
+                        #~ for ct in candidates:
+                            #~ s += '<br>' + cgi.escape(unicode(ct.person))
+                    cells.append(s)
+            if cells:
+                html += '<h1>%s</h1>' % cgi.escape(unicode(jobtype))
+                #~ head = ''.join(['<col width="30" />' for c in cells])
+                #~ head = '<colgroup>%s</colgroup>' % head
+                s = ''.join(['<td valign="top">%s</td>' % c for c in cells])
+                s = '<tr>%s</tr>' % s
+                #~ s = head + s
+                html += '<table border="1" width="100%%">%s</table>' % s
+        html = '<div class="htmlText">%s</div>' % html
+        return html
+
 class ContractsSituation(mixins.Listing):
     class Meta:
         verbose_name = _("Contracts Situation") 

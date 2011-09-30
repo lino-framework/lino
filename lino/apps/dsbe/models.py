@@ -36,9 +36,6 @@ from django.utils.encoding import force_unicode
 #~ from django.utils import translation
 
 
-
-
-
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms

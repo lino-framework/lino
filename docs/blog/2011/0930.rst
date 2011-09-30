@@ -1,0 +1,22 @@
+20110930
+========
+
+Preparing release 1.2.3
+-----------------------
+
+- There were some details left in :mod:`lino.apps.dsbe.migrate`.
+
+- Bug fixed:
+  ForeignKey-Kolonnen einer Grid haben unnützerweise eine Lupe. 
+  Die sollte nur in ForeignKey-Feldern eines Details da sein.
+
+- Bug fixed: 
+  Filters on Date columns.
+
+  Setting a filter on a date column caused a server-side traceback::
+
+    ValueError at /api/isip/MyContracts 
+    invalid literal for int() with base 10: '09/01/2011'
+  
+  Reason was that the gridfilters config didn't pass 
+  :attr:`lino.Lino.date_format_extjs`.

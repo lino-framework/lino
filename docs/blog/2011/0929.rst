@@ -10,6 +10,6 @@
   
 #.  Im Listing :class:`Übersicht Verträge 
     <lino.modlib.jobs.models.ContractsSituation>` sind die Stellen jetzt 
-    pro Arbeitgeber gruppiert.
+    pro Arbeitgeber sortiert.
     
 #.  Updated German translations.
