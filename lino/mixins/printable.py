@@ -754,7 +754,7 @@ class Listing(CachedPrintable):
         """
         # to not call call_optional_super(Listing,self,'setup_report',rpt)
         #~ rpt.get_action('listing').label = model.__name__
-        rpt.add_action(DirectPrintAction('print',_("Print"),mode.template_name))
+        rpt.add_action(DirectPrintAction('print',_("Print"),model.template_name))
         #~ rpt.add_action(InititateListing('listing',_("Print"),'listing.odt'))
         
     def __unicode__(self):
