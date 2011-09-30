@@ -2,7 +2,7 @@
 :label_align: top
 
 fields = 
-    date:10 type:25 event_type:25 user:10 language:8
+    date:10 event_type:25 type:25 user:10 language:8
     subject:60
     person company
     
