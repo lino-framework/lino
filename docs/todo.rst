@@ -16,9 +16,6 @@ Short-term
     unformatiert (TinyMCE). Sobald man z. B.  den Titel formatiert, kommt
     beim Ausdruck nicht alles raus.
     
-#.  Die Übersicht der Verträge wird in Portrait ausgedruckt, müsste aber
-    Landscape sein.
-
 #.  The `id` field of a Company or Person is never disabled.
 
 #.  Die neue Tabelle Berufswünsche sollte auch in der

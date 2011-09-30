@@ -34,7 +34,7 @@ Preparing release 1.2.3
   wird jetzt seltener kommen.
   
   
-- Die Übersicht der Verträge wird in Portrait ausgedruckt, müsste aber
-Landscape sein.
+- Die Übersicht der Verträge wird in Landscape ausgedruckt.
+  
   
   

@@ -82,7 +82,11 @@ Bugs fixed
 - Beim Speichern eines Vertrags (Bsp. Arbeitsvertrag #140) wurde 
   die Kontaktperson nicht gespeichert.
   
-    
+- Die Bezeichnung einer Stelle (in Auswahlliste) enthält jetzt auch den 
+  Namen des Arbeitsgebers.
+  
+- Die Übersicht der Verträge wird jetzt in Landscape ausgedruckt.
+  
 
 
 Administrator
@@ -93,6 +97,9 @@ Administrator
   Notizarten werden 
   "Lebenslauf" muss manuell von "Notizarten" nach "Ereignisarten" 
   verschoben werden.
+  
+- Konfigurierung Stellen : hier muss jetzt der Name des AG aus der 
+  Bezeichnung der Stelle rausgenommen werden. 
 
 Upgrade instructions
 --------------------
