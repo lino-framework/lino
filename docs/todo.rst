@@ -12,6 +12,9 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  In Comboboxen mit mehr als einer Seite ist die Seitenblätter-Funktion
+    nicht aktiviert.
+    
 #.  The `id` field of a Company or Person is never disabled.
 
 #.  Der Ausdruck einer Notiz "Aktennotiz" - "Stand der Dinge" geht nur

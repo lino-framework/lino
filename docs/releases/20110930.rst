@@ -1,5 +1,5 @@
-Version 1.2.3 (Coming)
-======================
+Version 1.2.3 (30.09.2011)
+==========================
 
 New features
 ------------
@@ -15,8 +15,9 @@ New features
   Sektor und Funktion eingeben.
 
 - Im Hauptbildschirm habt ihr jetzt eine Liste von "Quick Links", 
-  dich ich euch leicht wunschgerecht anpassen kann
-  (momentan noch nicht benutzerspezifisch).
+  die ich euch leicht wunschgerecht anpassen kann. Also sagt mir Bescheid, 
+  welche Buttons ihr dort gerne hinzu oder raus haben wollt.
+  Momentan geht das wohl leider noch nicht benutzerspezifisch.
   
 - Der Reiter "Contracts" heißt jetzt "Verträge" und enthält *nur noch* 
   die VSE- und Arbeitsverträge. Stellenanfragen stehen jetzt 
@@ -53,7 +54,8 @@ New features
     
 - Im Listing :class:`Übersicht Verträge 
   <lino.modlib.jobs.models.ContractsSituation>` sind die Stellen jetzt 
-  pro Arbeitgeber gruppiert.
+  pro Arbeitgeber sortiert (aber noch nicht gruppiert... das kommt 
+  auch demnächst).
   
   
 Bugs fixed
@@ -76,8 +78,8 @@ Bugs fixed
 - Filter setzen auf einer Datum-Kolonne funktionierte nicht. 
   Behoben.  
   
-- ForeignKey-Kolonnen einer Grid haben unnützerweise eine Lupe. 
-  Die sollte nur in ForeignKey-Feldern eines Details da sein.
+- ForeignKey-Kolonnen einer Grid hatten unnützerweise eine Lupe. 
+  Die soll ja nur in ForeignKey-Feldern eines Details da sein.
   
 - Beim Speichern eines Vertrags (Bsp. Arbeitsvertrag #140) wurde 
   die Kontaktperson nicht gespeichert. 
@@ -87,7 +89,6 @@ Bugs fixed
   
 - Die Übersicht der Verträge wird jetzt in Landscape ausgedruckt.
   
-
 
 Administrator
 -------------
@@ -100,6 +101,8 @@ Administrator
   
 - Konfigurierung Stellen : hier muss jetzt der Name des AG aus der 
   Bezeichnung der Stelle rausgenommen werden. 
+  
+- In Tabellen "Funktionen" und "Sektoren" einige Werte eintragen.
 
 Upgrade instructions
 --------------------
