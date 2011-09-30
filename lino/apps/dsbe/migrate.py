@@ -533,6 +533,7 @@ def migrate_from_1_2_2(globals_dict):
     globals_dict.update(dsbe_Study = resolve_model("jobs.Study"))
     globals_dict.update(dsbe_StudyType = resolve_model("jobs.StudyType"))
     globals_dict.update(dsbe_JobExperience = resolve_model("jobs.Experience"))
+    globals_dict.update(jobs_JobRequest = resolve_model("jobs.Request"))
 
     notes_EventType = resolve_model("notes.EventType")
     notes_Note = resolve_model("notes.Note")
