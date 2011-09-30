@@ -655,8 +655,9 @@ class Job(models.Model):
         verbose_name=_("Remark"))
         
     def __unicode__(self):
+        if self.provider:
+            return u'%s bei %s' % (self.name,self.provider.name)
         return self.name
-        #~ return u'%s @ %s' % (self.name,self.provider)
   
     def disabled_fields(self,request):
         #~ if self.contract_set.count():
