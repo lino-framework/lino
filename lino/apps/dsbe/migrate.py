@@ -533,8 +533,7 @@ def migrate_from_1_2_2(globals_dict):
     globals_dict.update(dsbe_Study = resolve_model("jobs.Study"))
     globals_dict.update(dsbe_StudyType = resolve_model("jobs.StudyType"))
     globals_dict.update(dsbe_JobExperience = resolve_model("jobs.Experience"))
-    globals_dict.update(jobs_JobRequest = resolve_model("jobs.Request"))
-
+    
     notes_EventType = resolve_model("notes.EventType")
     notes_Note = resolve_model("notes.Note")
     notes_NoteType = resolve_model("notes.NoteType")
@@ -550,6 +549,13 @@ def migrate_from_1_2_2(globals_dict):
         type_id, event_type_id = event_type_id, type_id
         return notes_Note(id=id,user_id=user_id,must_build=must_build,person_id=person_id,company_id=company_id,date=date,type_id=type_id,event_type_id=event_type_id,subject=subject,body=body,language=language)
     globals_dict.update(create_notes_note=create_notes_note)
+    
+    jobs_JobRequest = resolve_model("jobs.Request")
+    def create_jobs_jobrequest(id, person_id, job_id, date_submitted, contract_id, remark):
+        return jobs_JobRequest(id=id,person_id=person_id,job_id=job_id,date_submitted=date_submitted,contract_id=contract_id,remark=remark)    
+    globals_dict.update(jobs_JobRequest=jobs_JobRequest)
+
+    
     return '1.2.3'
   
 
