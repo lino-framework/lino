@@ -487,9 +487,9 @@ class PrintAction(BasePrintAction):
             elem.must_build = False
             elem.save()
             kw.update(refresh=True)
-            kw.update(message="%s printable has been built." % elem)
+            kw.update(message=_("%s printable has been built.") % elem)
         else:
-            kw.update(message="Reused %s printable from cache." % elem)
+            kw.update(message=_("Reused %s printable from cache.") % elem)
         kw.update(open_url=bm.get_target_url(self,elem,ui))
         return kw
         #~ return rr.ui.success_response(open_url=target,**kw)

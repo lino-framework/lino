@@ -12,12 +12,16 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  The `id` field of a Company or Person is never disabled.
+
 #.  Der Ausdruck einer Notiz "Aktennotiz" - "Stand der Dinge" geht nur
     unformatiert (TinyMCE). Sobald man z. B.  den Titel formatiert, kommt
     beim Ausdruck nicht alles raus.
     
-#.  The `id` field of a Company or Person is never disabled.
-
+#.  Listing "Übersicht Verträge": die diversen Stellen sollten auf der 
+    Übersicht der Verträge optisch noch nach Arbeitgeber gruppiert sein.
+    
+    
 #.  Die neue Tabelle Berufswünsche sollte auch in der
     Personensuche integriert werden, damit falls dem DSBE verfügbare externe
     Stellen zugetragen werden, schnell ein geeigneter Kandidat gefunden

@@ -12,8 +12,6 @@ Preparing release 1.2.3
 
 
 - Bug fixed: 
-  Filters on Date columns.
-
   Setting a filter on a date column caused a server-side traceback::
 
     ValueError at /api/isip/MyContracts 
@@ -33,8 +31,10 @@ Preparing release 1.2.3
   "Exception: Invalid template u'' configured for NoteType u'Stand der Dinge'. Expected filename ending with '.odt'."
   wird jetzt seltener kommen.
   
-  
-- Die Übersicht der Verträge wird in Landscape ausgedruckt.
-  
+- Das Listing "Übersicht Verträge" wird jetzt in Landscape ausgedruckt.
+
+
+Release :doc:`/releases/20110930`. 
+Installation in Eupen.
   
   
