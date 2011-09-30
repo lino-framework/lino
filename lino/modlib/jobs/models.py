@@ -384,7 +384,7 @@ class Contract(ContractBase):
             
         if self.provider is not None:
             if self.contact is not None:
-                if self.contact.parent != self.provider.company_ptr:
+                if self.contact.parent.pk != self.provider.company_ptr.pk:
                     self.contact = None
                     
         super(Contract,self).full_clean(*args,**kw)
