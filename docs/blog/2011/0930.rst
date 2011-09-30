@@ -26,6 +26,15 @@ Preparing release 1.2.3
   Beim Speichern eines Vertrags (Bsp. Arbeitsvertrag #140) wird die Kontaktperson
   nicht gespeichert.
 
+- Vielleicht ein Detail, aber wenn das Feld `template` eines PrintableType leer ist, 
+  nimmt Lino jetzt den Standardnamen der Konstruktionsmethode 
+  (konkret "Default.odt" für `AppyBuildMethod`).
+  Also die Fehlermeldung 
+  "Exception: Invalid template u'' configured for NoteType u'Stand der Dinge'. Expected filename ending with '.odt'."
+  wird jetzt seltener kommen.
   
   
-Exception: Invalid template u'' configured for NoteType u'Stand der Dinge'. Expected filename ending with '.odt'.  
+- Die Übersicht der Verträge wird in Portrait ausgedruckt, müsste aber
+Landscape sein.
+  
+  

@@ -911,6 +911,7 @@ class new_ContractsSituation(mixins.Listing):
         return html
 
 class ContractsSituation(mixins.Listing):
+    template_name = 'Listing-Landscape.odt'
     class Meta:
         verbose_name = _("Contracts Situation") 
         
