@@ -78,6 +78,10 @@ Bugs fixed
   
 - ForeignKey-Kolonnen einer Grid haben unnützerweise eine Lupe. 
   Die sollte nur in ForeignKey-Feldern eines Details da sein.
+  
+- Beim Speichern eines Vertrags (Bsp. Arbeitsvertrag #140) wurde 
+  die Kontaktperson nicht gespeichert.
+  
     
 
 

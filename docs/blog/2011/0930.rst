@@ -10,6 +10,7 @@ Preparing release 1.2.3
   ForeignKey-Kolonnen einer Grid haben unnützerweise eine Lupe. 
   Die sollte nur in ForeignKey-Feldern eines Details da sein.
 
+
 - Bug fixed: 
   Filters on Date columns.
 
@@ -20,3 +21,11 @@ Preparing release 1.2.3
   
   Reason was that the gridfilters config didn't pass 
   :attr:`lino.Lino.date_format_extjs`.
+  
+- Bug fixed: 
+  Beim Speichern eines Vertrags (Bsp. Arbeitsvertrag #140) wird die Kontaktperson
+  nicht gespeichert.
+
+  
+  
+Exception: Invalid template u'' configured for NoteType u'Stand der Dinge'. Expected filename ending with '.odt'.  

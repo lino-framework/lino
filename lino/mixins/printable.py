@@ -93,6 +93,7 @@ class BuildMethod:
     templates_name = None
     cache_name = 'cache'
     webdav = False
+    default_template = ''
     
     def __init__(self):
         if self.label is None:
@@ -242,6 +243,7 @@ class AppyBuildMethod(SimpleBuildMethod):
     
     template_ext = '.odt'  
     templates_name = 'appy' # subclasses use the same templates directory
+    default_template = 'Default.odt'
     
     def simple_build(self,elem,tpl,target):
         from lino.models import get_site_config
@@ -700,11 +702,12 @@ class TypedPrintable(CachedPrintable):
         ptype = self.get_printable_type()
         if ptype is None:
             return super(TypedPrintable,self).get_print_templates(bm,action)
-        if not ptype.template.endswith(bm.template_ext):
+        tplname = ptype.template or bm.default_template
+        if not tplname.endswith(bm.template_ext):
             raise Exception(
               "Invalid template %r configured for %s %r. Expected filename ending with %r." %
-              (ptype.template,ptype.__class__.__name__,unicode(ptype),bm.template_ext))
-        return [ ptype.template ]
+              (tplname,ptype.__class__.__name__,unicode(ptype),bm.template_ext))
+        return [ tplname ]
         #~ return [ ptype.get_templates_group() + '/' + ptype.template ]
         
     def get_print_language(self,bm):

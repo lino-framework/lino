@@ -12,9 +12,6 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Beim Speichern eines Vertrags (Bsp. ID 140) wird die Kontaktperson
-    nicht gespeichert.
-
 #.  Der Ausdruck einer Notiz "Aktennotiz" - "Stand der Dinge" geht nur
     unformatiert (TinyMCE). Sobald man z. B.  den Titel formatiert, kommt
     beim Ausdruck nicht alles raus.
