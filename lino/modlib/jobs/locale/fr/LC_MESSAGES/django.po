@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-29 20:49+0100\n"
+"POT-Creation-Date: 2011-09-30 22:58+0100\n"
 "PO-Revision-Date: 2011-09-14 21:36+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -45,7 +45,7 @@ msgid "Job Sectors"
 msgstr "Secteurs d'activité"
 
 #: .\models.py:170 .\models.py:183 .\models.py:236 .\models.py:458
-#: .\models.py:504 .\models.py:655 .\models.py:791
+#: .\models.py:504 .\models.py:655 .\models.py:792
 msgid "Remark"
 msgstr "Remarque"
 
@@ -235,57 +235,57 @@ msgstr "Emplois"
 msgid "capacity"
 msgstr "Capacité"
 
-#: .\models.py:698
+#: .\models.py:699
 #, fuzzy
 msgid "Job Wish"
 msgstr "Emplois"
 
-#: .\models.py:699
+#: .\models.py:700
 #, fuzzy
 msgid "Job Wishes"
 msgstr "Types d'emplois"
 
-#: .\models.py:727
+#: .\models.py:728
 #, fuzzy
 msgid "Candidate Job Wishes"
 msgstr "Candidats"
 
-#: .\models.py:769
+#: .\models.py:770
 #, fuzzy
 msgid "Job Candidature"
 msgstr "Candidats"
 
-#: .\models.py:770
+#: .\models.py:771
 #, fuzzy
 msgid "Job Candidatures"
 msgstr "Candidats"
 
-#: .\models.py:778
+#: .\models.py:779
 msgid "date submitted"
 msgstr "date d'envoi"
 
-#: .\models.py:782
+#: .\models.py:783
 msgid "Contract found"
 msgstr "Contrat trouvé"
 
-#: .\models.py:794
+#: .\models.py:795
 #, python-format
 msgid "%(job)s request by %(person)s"
 msgstr "%(job)s request by %(person)s"
 
-#: .\models.py:857
+#: .\models.py:858 .\models.py:917
 msgid "Contracts Situation"
 msgstr "Situation contrats Art 60-7"
 
-#: .\models.py:896
+#: .\models.py:898 .\models.py:957
 msgid "Candidates"
 msgstr "Candidats"
 
-#: .\models.py:917
+#: .\models.py:978
 msgid "is Employer"
 msgstr "Employeur"
 
-#: .\models.py:930
+#: .\models.py:991
 msgid "~Jobs"
 msgstr "~Emplois"
 

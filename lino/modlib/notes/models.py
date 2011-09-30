@@ -91,7 +91,7 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
         verbose_name=_('Note Type (Content)'))
     event_type = models.ForeignKey(EventType,
         blank=True,null=True,
-        verbose_name=_('Event Type (Content)'))
+        verbose_name=_('Event Type (Form)'))
     #,on_delete=RESTRICT)
     subject = models.CharField(_("Subject"),max_length=200,blank=True) # ,null=True)
     #~ body = models.TextField(_("Body"),blank=True)

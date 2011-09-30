@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-29 20:49+0100\n"
+"POT-Creation-Date: 2011-09-30 22:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,8 +63,9 @@ msgid "Note Type (Content)"
 msgstr "Type d'événement (contenu)"
 
 #: .\models.py:94
-msgid "Event Type (Content)"
-msgstr "Type d'événement (contenu)"
+#, fuzzy
+msgid "Event Type (Form)"
+msgstr "Type de note (Formulaire)"
 
 #: .\models.py:96
 msgid "Subject"
@@ -83,5 +84,5 @@ msgstr "Notes"
 msgid "Detail"
 msgstr ""
 
-#~ msgid "Note Type (Form)"
-#~ msgstr "Type de note (Formulaire)"
+#~ msgid "Event Type (Content)"
+#~ msgstr "Type d'événement (contenu)"

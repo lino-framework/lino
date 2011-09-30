@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-29 20:49+0100\n"
+"POT-Creation-Date: 2011-09-30 22:57+0100\n"
 "PO-Revision-Date: 2011-09-15 16:47+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -146,35 +146,45 @@ msgstr "Nachname"
 msgid "Title"
 msgstr "Anrede"
 
-#: .\mixins\printable.py:469 .\mixins\printable.py:752
+#: .\mixins\printable.py:471 .\mixins\printable.py:757
 msgid "Print"
 msgstr "Drucken"
 
-#: .\mixins\printable.py:534
+#: .\mixins\printable.py:490
+#, python-format
+msgid "%s printable has been built."
+msgstr ""
+
+#: .\mixins\printable.py:492
+#, python-format
+msgid "Reused %s printable from cache."
+msgstr ""
+
+#: .\mixins\printable.py:536
 msgid "Clear cache"
 msgstr "Cache löschen"
 
-#: .\mixins\printable.py:555
+#: .\mixins\printable.py:557
 msgid "Build method"
 msgstr "Konstruktionsmethode"
 
-#: .\mixins\printable.py:564
+#: .\mixins\printable.py:566
 msgid "Template"
 msgstr "Vorlage"
 
-#: .\mixins\printable.py:600
+#: .\mixins\printable.py:602
 msgid "must build"
 msgstr "muss generiert werden"
 
-#: .\mixins\printable.py:737
+#: .\mixins\printable.py:742
 msgid "Date"
 msgstr "Datum"
 
-#: .\mixins\printable.py:784
+#: .\mixins\printable.py:789
 msgid "Preview"
 msgstr "Vorschau"
 
-#: .\mixins\printable.py:794
+#: .\mixins\printable.py:799
 #, python-format
 msgid "Initiate Listing «%s»"
 msgstr "Listing «%s» starten"
@@ -233,13 +243,13 @@ msgstr ""
 msgid "Django administration"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:635 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:640 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr "%s auswählen..."
 
-#: .\ui\extjs3\ext_elems.py:762
+#: .\ui\extjs3\ext_elems.py:771
 msgid "show"
 msgstr "zeigen"
 
