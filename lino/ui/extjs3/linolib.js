@@ -172,7 +172,7 @@ JC Watsons solution (adapted to ExtJS 3.3.1 by LS) is elegant and simple:
 
 */
 Ext.lib.Ajax.serializeForm = function(form) {
-    console.log('20111001 linolib.js serializeForm');
+    //~ console.log('20111001 linolib.js serializeForm');
     var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements, 
         hasSubmit = false, 
         encoder = encodeURIComponent, 

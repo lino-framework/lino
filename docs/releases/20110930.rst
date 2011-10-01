@@ -93,11 +93,14 @@ Bugs fixed
   einer Organisation aus bedient werden. Im Detail eines Kursanbieters 
   oder Arbeitgebers waren sie fälschlicherweise nicht deaktiviert. 
   Jetzt wohl.
+  Siehe :doc:`/blog/2011/1001`.
   
 - Wenn man versuchte, einen Kursanbieter direkt zu erstellen 
   (nicht indem man auf einer bestehenden Organisation das Feld 
   "Kursanbieter" ankreuzt), dann kam ein Traceback 
   "AssertionError at /api/dsbe/CourseProviders" auf dem Server.
+  Behoben.
+  Siehe :doc:`/blog/2011/1001`.
 
   
 
