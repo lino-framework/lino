@@ -298,27 +298,13 @@ class ExtUI(base.UI):
         
     def create_layout_element(self,lh,panelclass,name,**kw):
         
-        #~ if name == "_":
-            #~ return ext_elems.Spacer(lh,name,**kw)
-            
         de = lh.rh.report.get_data_elem(name)
-        #~ if de is None:
-            #~ raise Exception("no data element %s in %s" % (name,lh.rh.report))
-            
-        #~ if isinstance(de,list):
-            #~ for i in de:
-                #~ return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
             
         if isinstance(de,actions.ImageAction):
             return ext_elems.PictureElement(lh,name,de,**kw)
 
         if isinstance(de,fields.FieldSet):
-            e = lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
-            #~ e.label = de.verbose_name
-            #~ for child in e.elements:
-                #~ child.update(label=None)
-            #~ print 20110829, e, de.desc
-            return e
+            return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
             
         if isinstance(de,models.Field):
             if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
@@ -329,6 +315,7 @@ class ExtUI(base.UI):
                         elems.append(self.create_field_element(lh,bf,**kw))
                     return elems
             return self.create_field_element(lh,de,**kw)
+            
         if isinstance(de,generic.GenericForeignKey):
             # create a horizontal panel with 2 comboboxes
             return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
@@ -406,7 +393,10 @@ class ExtUI(base.UI):
 
     def create_vurt_element(self,lh,name,vf,**kw):
         #~ assert vf.get.func_code.co_argcount == 2, (name, vf.get.func_code.co_varnames)
-        return self.create_field_element(lh,vf,**kw)
+        e = self.create_field_element(lh,vf,**kw)
+        if not vf.is_enabled(lh):
+            e.editable = False
+        return e
         
     def create_meth_element(self,lh,name,meth,rt,**kw):
         #~ if hasattr(rt,'_return_type_for_method'):
@@ -637,13 +627,13 @@ class ExtUI(base.UI):
          
         #~ yield '<!-- ** Javascript ** -->'
         #~ yield '<!-- ExtJS library: base/adapter -->'
-        yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base.js"></script>' % self.media_url() 
         if settings.DEBUG:
-            widget_library = 'ext-all-debug'
+            yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base-debug.js"></script>' % self.media_url() 
+            yield '<script type="text/javascript" src="%s/extjs/ext-all-debug.js"></script>' % self.media_url()
         else:
-            widget_library = 'ext-all'
+            yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base.js"></script>' % self.media_url() 
+            yield '<script type="text/javascript" src="%s/extjs/ext-all.js"></script>' % self.media_url()
         #~ yield '<!-- ExtJS library: all widgets -->'
-        yield '<script type="text/javascript" src="%s/extjs/%s.js"></script>' % (self.media_url(), widget_library)
         #~ if True:
             #~ yield '<style type="text/css">'
             #~ # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 

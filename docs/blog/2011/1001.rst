@@ -1,0 +1,90 @@
+20111001
+========
+
+
+EnableChild fields on the children
+----------------------------------
+
+Ha! hier noch ein subtiles fundamentales Problem, das z.B. im Detail 
+eines Kursanbieters auftritt: 
+hier stehen im Reiter "Allgemein" auch 
+die :class:`lino.utils.mti.EnableChild`-Felder 
+`is_courseprovider` und `is_employer`, die da aber nicht hingehören. 
+Die kommen aus dem Detail von Organisation, die dürfen aber nur auf einer 
+"reinen" Organisation angezeigt werden. 
+Wenn dieses Feld auf einem Kursanbieter angezeigt wird, muss es wenigstens
+schreibgeschützt (und eingeschaltet) sein. 
+
+Das Feld is_employer braucht nicht schreibgeschützt zu sein, aber die
+Setter-Funktionen (:func:`lino.utils.mti.insert_child` und 
+:func:`lino.utils.mti.delete_child`)
+müssten dann berücksichtigen, dass sie auch von einem 
+CourseProvider aus gerufen werden können.
+Was nicht einfach zu implementieren und eher unlogisch wäre.
+
+Eigentlich müssten beide Felder eher einfach nur deaktiviert sein, 
+wenn das Detail nicht direkt auf Organisation ist.
+Genau, das geht: VirtualField hat eine neue Methode `is_enabled`, 
+die von EnableChild überschrieben wird.
+
+Außerdem eine neue Warnung "Cannot show MTI child if checkbox is off.", 
+wenn man auf den Link "zeigen" eines :class:`lino.utils.mti.EnableChild`-Feldes klickt, 
+das abgeschaltet ist. Also z.B. wenn eine Organisation *kein* Kursanbieter 
+ist (checkbox is off) und man trotzdem bei Kursanbieter auf "zeigen" 
+klickt. Bisher öffnete er dann trotzdem ein Fenster und versuchte diese 
+Organisation als Kursanbieter anzuzeigen (was dann logischerweise misslang).
+
+
+A CourseProvider cannot be parent for a JobProvider
+---------------------------------------------------
+
+Wenn man versuchte, einen Kursanbieter direkt zu erstellen 
+(nicht indem man auf einer bestehenden Organisation das Feld 
+"Kursanbieter" ankreuzt), dann kam dieser Traceback auf dem Server::
+
+  Traceback (most recent call last):
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 656, in form2obj
+      f.form2obj(request,instance,form_values,is_new)
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 344, in form2obj
+      self.vf.set_value_in_object(request,obj,v)
+    File "t:\hgwork\lino\lino\utils\mti.py", line 186, in set_value_in_object
+      insert_child(obj,self.child_model)
+    File "t:\hgwork\lino\lino\utils\mti.py", line 123, in insert_child
+      obj.__class__.__name__,child_model.__name__))
+  Exception: A CourseProvider cannot be parent for a JobProvider
+  
+Erklärung: disabled fields werden offenbar beim Submit mit übergeben, 
+und Lino ruft dann die Setter-Funktion :func:`lino.utils.mti.delete_child`
+auf. Außerdem war da ein Bug in meiner `serializeForm`: 
+schreibgeschützte Checkboxen wurden als *eingeschaltet* gepostet.
+Das kam daher, dass ExtJS für die HTML-Definition schreibgeschützter Checkboxen 
+nicht mit `disabled`, sondern `readonly` verwendet. 
+Hier die HTML-Definition der Checkbox::
+
+  <input type="checkbox" 
+  autocomplete="off" id="ext-comp-1332" 
+  name="is_jobprovider" 
+  class=" x-form-checkbox x-form-field" 
+  readonly="">
+
+Zum Vergleich die HTML-Definition eines schreibgeschützten Textfeldes::
+
+  <input type="text" size="20" autocomplete="off" id="ext-comp-1604" 
+  name="name" class="x-form-text x-form-field x-item-disabled" 
+  style="width: 332px; " disabled="">
+  
+
+Lösung war, dass ich in meiner `Ext.lib.Ajax.serializeForm` die Zeile
+
+::
+    if (!(type == 'submit' && hasSubmit)) {
+    
+ersetze durch
+
+::
+
+    if (!(/radio|checkbox/i.test(type) && !element.readonly) && !(type == 'submit' && hasSubmit)) {
+
+
+Diese beiden Bugfixes kommen noch mit in die :doc:`/releases/20110930`. 
+Installation in Eupen.

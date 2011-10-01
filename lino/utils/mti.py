@@ -145,8 +145,15 @@ class EnableChild(VirtualField):
     editable = True
     
     def __init__(self,child_model,**kw):
+        kw.update(default=False)
         self.child_model = child_model
         VirtualField.__init__(self,models.BooleanField(**kw),self.has_child)
+        
+    def is_enabled(self,lh):
+        """
+        When a DetailLayout is inherited by an MTI child, EnableChild fields must be disabled.
+        """
+        return lh.rh.report.model != self.child_model and issubclass(self.child_model,lh.rh.report.model)
 
     def lino_kernel_setup(self,model,name):
         self.child_model = resolve_model(self.child_model,model._meta.app_label)
@@ -178,5 +185,4 @@ class EnableChild(VirtualField):
             if v:
                 # child doesn't exist. insert if it should
                 insert_child(obj,self.child_model)
-        # otherwise do nothing
                 

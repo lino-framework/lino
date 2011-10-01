@@ -767,7 +767,7 @@ class BooleanFieldElement(FieldElement):
                 #~ ptrname = self.field.child_model.__name__.lower() + '_ptr'
                 m = self.field.child_model
                 url = self.lh.rh.ui.build_url('api',m._meta.app_label,m.__name__)
-                js = "Lino.show_mti_child('%s')" % (url)
+                js = "Lino.show_mti_child('%s','%s')" % (self.field.name,url)
                 label += """ (<a href="javascript:%s">%s</a>)""" % (js,_("show"))
                 
         #~ self.verbose_name = \

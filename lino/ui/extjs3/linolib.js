@@ -172,6 +172,7 @@ JC Watsons solution (adapted to ExtJS 3.3.1 by LS) is elegant and simple:
 
 */
 Ext.lib.Ajax.serializeForm = function(form) {
+    console.log('20111001 linolib.js serializeForm');
     var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements, 
         hasSubmit = false, 
         encoder = encodeURIComponent, 
@@ -194,7 +195,9 @@ Ext.lib.Ajax.serializeForm = function(form) {
                 });
             } else if (!(/file|undefined|reset|button/i.test(type))) {
                 //~ if (!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)) {
-                if (!(type == 'submit' && hasSubmit)) {
+                //~ if (!(type == 'submit' && hasSubmit)) {
+                if (!(/radio|checkbox/i.test(type) && !element.readonly) && !(type == 'submit' && hasSubmit)) {
+                    //~ console.log('20111001 data += ',encoder(name) + '=' + encoder(element.value) + '&');
                     data += encoder(name) + '=' + encoder(element.value) + '&';
                     hasSubmit = /submit/i.test(type);
                 }
@@ -3298,15 +3301,17 @@ Lino.show_uploader = function () {
 };
 #end if
 
-Lino.show_mti_child = function(urlroot) {
-  console.log('show_mti_child',urlroot);
+Lino.show_mti_child = function(fieldname,urlroot) {
+  //~ console.log('show_mti_child',urlroot,rec);
   rec = Lino.current_window.get_current_record();
   if (rec) {
     if (rec.phantom) {
       Lino.notify('Not allowed on phantom record.');
-    }else{
+    }else if (rec[fieldname]) {
       window.open(urlroot + '/' + rec.id);
       //~ window.open(urlroot + '/' + rec.id,'_blank');
+    } else {
+      Lino.notify('$_("Cannot show MTI child if checkbox is off.")');
     }
   } else {
     Lino.notify('No current record.');

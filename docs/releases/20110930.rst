@@ -88,6 +88,17 @@ Bugs fixed
   Namen des Arbeitsgebers.
   
 - Die Übersicht der Verträge wird jetzt in Landscape ausgedruckt.
+
+- Die Ankreuzfelder "Kursanbieter" und "Arbeitgeber" sollen nur von 
+  einer Organisation aus bedient werden. Im Detail eines Kursanbieters 
+  oder Arbeitgebers waren sie fälschlicherweise nicht deaktiviert. 
+  Jetzt wohl.
+  
+- Wenn man versuchte, einen Kursanbieter direkt zu erstellen 
+  (nicht indem man auf einer bestehenden Organisation das Feld 
+  "Kursanbieter" ankreuzt), dann kam ein Traceback 
+  "AssertionError at /api/dsbe/CourseProviders" auf dem Server.
+
   
 
 Administrator

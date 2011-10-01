@@ -166,6 +166,9 @@ class VirtualField: # (Field):
           blank'''.split()):
             setattr(self,k,getattr(return_type,k))
             
+    def is_enabled(self,lh):
+        return True
+        
     def unused_contribute_to_class(self, cls, name):
         ## if defined in abstract base class, called once on each submodel
         if self.name:
