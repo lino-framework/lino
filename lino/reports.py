@@ -1608,7 +1608,8 @@ class LayoutHandle:
                     and (de.name != self.rh.report.fk_name) \
                 ])
             desc = desc.replace('*',wildcard_fields)
-            #logger.debug('desc -> %r',desc)
+            #~ if 'CourseRequestsByPerson' in str(self):
+                #~ logger.info('20111003 %s desc -> %r',self,desc)
         if "\n" in desc:
             # it's a vertical box
             elems = []

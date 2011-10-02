@@ -1,4 +1,4 @@
-Version 1.2.3 (30.09.2011)
+Version 1.2.3 (03.10.2011)
 ==========================
 
 New features
@@ -109,6 +109,11 @@ Bugs fixed
   Behoben.
   Siehe :doc:`/blog/2011/1001`.
 
+- Lino 1.2.2 ließ es fälschlicherweise zu, die Partnernummer von Personen 
+  und Organisationen zu ändern. Behoben.
+  
+- Das Datum "eingereicht am" einer Kursanfrage war nicht editierbar.
+  Behoben.
   
 
 Administrator
@@ -116,11 +121,11 @@ Administrator
 
 - Die Tabellen hinter "Form" und "Inhalt" einer Notiz wurden ausgetauscht. 
   Also das Feld "Inhalt" bestimmt jetzt, welche Dokumentvorlage benutzt wird.
-  Notizarten werden 
-  "Lebenslauf" muss manuell von "Notizarten" nach "Ereignisarten" 
-  verschoben werden.
+  "Lebenslauf" wurde manuell von "Notizarten" nach "Ereignisarten" 
+  verschoben.
   
-- Konfigurierung Stellen : hier muss jetzt der Name des AG aus der 
+- Konfigurierung Stellen : 
+  hier muss jetzt der Name des AG aus der 
   Bezeichnung der Stelle rausgenommen werden. 
   
 - In Tabellen "Funktionen" und "Sektoren" einige Werte eintragen.

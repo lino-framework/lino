@@ -165,7 +165,7 @@ class PisaBuildMethod(DjangoBuildMethod):
     template_ext = '.pisa.html'  
     
     def build(self,action,elem):
-        tpl = self.get_template(elem) 
+        tpl = self.get_template(action,elem) 
         filename = action.before_build(self,elem)
         if filename is None:
             return

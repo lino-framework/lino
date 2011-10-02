@@ -1,0 +1,36 @@
+20111003
+========
+
+Editable `id` field of MTI childen
+----------------------------------
+
+The `id` field of a Company or Person was never disabled.
+:class:`lino.ui.extjs3.ext_store.DisabledFieldsStoreField` 
+now checks whether `models._meta.pk` is a `OneToOneField`.
+New test case :func:`lino.apps.dsbe.tests.dsbe_tests.test06` 
+was used to understand this problem.
+
+Execution order in :class:`lino.utils.test.TestCase`
+----------------------------------------------------
+
+:meth:`lino.utils.test.TestCase.test_them_all` now sorts 
+the test functions found in the module's globale namespace before 
+executing them.
+Since all 'testXX' functions are run in a same database, their execution 
+order may be important: keep in mind that they are executed in 
+*alphabetical* order, and that database changes remain for the whole 
+sequence.
+
+
+Missing column `date_submitted` in `CourseRequestsByPerson`
+-----------------------------------------------------------
+
+There was no column `date_submitted` in the `CourseRequestsByPerson` 
+grid.
+This was because 
+:attr:`lino.apps.dsbe.models.CourseRequest.date_submitted` was 
+declared with `auto_now_add=True` 
+which makes it readonly, 
+and because a ``*`` in 
+:attr:`lino.reports.Report.column_names` does not expand to readonly fields.
+

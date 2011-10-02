@@ -12,8 +12,6 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  The `id` field of a Company or Person is never disabled.
-
 #.  In Comboboxen mit mehr als einer Seite ist die Seitenblätter-Funktion
     nicht aktiviert.
     

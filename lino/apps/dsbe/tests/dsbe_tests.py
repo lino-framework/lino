@@ -45,10 +45,8 @@ from lino.modlib.properties.models import Property
 
 
 
-#~ class NoFixturesTest(TestCase):
 class QuickTest(TestCase):
     pass
-    #~ fixtures = ['std']
             
   
 def test01(self):
@@ -105,7 +103,7 @@ install(globals())
 """
     self.assertEqual(ser.stream.getvalue(),expected)
     
-def unused_test01(self):
+def test01(self):
     """
     Used on :doc:`/blog/2011/0414`.
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
@@ -152,7 +150,63 @@ def objects():
 from lino.apps.dsbe.migrate import install
 install(globals())
 """)
+test01.skip = True
+
+def test01b(self):
+    """
+    Tests error handling when printing a contract whose type's 
+    name contains non-ASCII char.
+    Created :doc:`/blog/2011/0615`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
+    """
+    from lino.modlib.jobs.models import Contracts, Contract, ContractType, JobProvider, Job
+    #~ from lino.modlib.notes.models import ContractType
+    from lino.mixins.printable import PrintAction
+    from lino.modlib.users.models import User
+    from lino.apps.dsbe.models import Person
+    root = User(username='root') # ,last_name="Superuser")
+    root.save()
+    jp = JobProvider(name="Test")
+    jp.save()
+    person = Person(first_name="Max",last_name="Mustermann")
+    person.full_clean()
+    person.save()
+    t = ContractType(id=1,build_method='pisa',template="",name=u'Art.60\xa77')
+    t.save()
+    job = Job(provider=jp,contract_type=t)
+    #~ job = Job(contract_type=t,name="Test")
+    job.save()
+    n = Contract(id=1,job=job,user=root,person=person)
+    n.full_clean()
+    n.save()
+    a = PrintAction()
+    #~ run_
+    #~ rr = Contracts()
+    from django.conf import settings
+    from django.utils.importlib import import_module
+    urls = import_module(settings.ROOT_URLCONF)
+    ui = urls.ui
+    #~ from lino.ui.base import UI
+    #~ ui = UI() 
+    try:
+        kw = a.run_(ui,n)
+    except Exception,e:
+        self.assertEqual(e.message,
+          u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.pisa.html'.")
+          
+    #~ t.template='Default.odt'
+    #~ t.save()
+    #~ n = Contract.objects.get(id=1)
+    #~ kw = a.run_(n)
     
+    #~ print kw
+    
+    #~ response = self.client.get('/api/dsbe/Contracts/1?fmt=print',REMOTE_USER='root')
+    #~ print response
+    #~ result = self.check_json_result(response,'message success alert')
+    #~ self.assertEqual(result['message'],'...')
+    
+
     
 def test02(self):
     """
@@ -198,60 +252,6 @@ def test02(self):
         response = self.client.get('/api/lino/SiteConfigs/1?fmt=json')
         
         
-def test03(self):
-    """
-    Tests error handling when printing a contract whose type's 
-    name contains non-ASCII char.
-    Created :doc:`/blog/2011/0615`.
-    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
-    """
-    from lino.modlib.jobs.models import Contracts, Contract, ContractType, JobProvider, Job
-    #~ from lino.modlib.notes.models import ContractType
-    from lino.mixins.printable import PrintAction
-    from lino.modlib.users.models import User
-    from lino.apps.dsbe.models import Person
-    root = User(username='root') # ,last_name="Superuser")
-    root.save()
-    jp = JobProvider(name="Test")
-    jp.save()
-    person = Person(first_name="Max",last_name="Mustermann")
-    person.full_clean()
-    person.save()
-    t = ContractType(id=1,build_method='appyodt',template="",name=u'Art.60\xa77')
-    t.save()
-    job = Job(provider=jp,contract_type=t)
-    #~ job = Job(contract_type=t,name="Test")
-    job.save()
-    n = Contract(id=1,job=job,user=root,person=person)
-    n.full_clean()
-    n.save()
-    a = PrintAction()
-    #~ run_
-    #~ rr = Contracts()
-    from django.conf import settings
-    from django.utils.importlib import import_module
-    urls = import_module(settings.ROOT_URLCONF)
-    ui = urls.ui
-    #~ from lino.ui.base import UI
-    #~ ui = UI() 
-    try:
-        kw = a.run_(ui,n)
-    except Exception,e:
-        self.assertEqual(e.message,
-          u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.odt'.")
-          
-    #~ t.template='Default.odt'
-    #~ t.save()
-    #~ n = Contract.objects.get(id=1)
-    #~ kw = a.run_(n)
-    
-    #~ print kw
-    
-    #~ response = self.client.get('/api/dsbe/Contracts/1?fmt=print',REMOTE_USER='root')
-    #~ print response
-    #~ result = self.check_json_result(response,'message success alert')
-    #~ self.assertEqual(result['message'],'...')
-    
 def test04(self):
     """
     Test some features used in document templates.
@@ -320,4 +320,26 @@ def test05(self):
     self.assertEqual(obj2str(p,True),expected)
     p.pk = 5
     self.assertEqual(obj2str(p),"Person #5 (u'TEST (5)')")
+    
+    
+def test06(self):
+    """
+    :doc:`/blog/2011/1003`.
+    The `id` field of a Company or Person was never disabled 
+    because Lino didn't recognize it as the primary key.
+    
+    """
+    from django.db import models
+    from lino.apps.dsbe.models import Person
+    from lino.core.coretools import get_data_elem
+    de = get_data_elem(Person,'id')
+    #~ print de.__class__
+    self.assertEqual(de.__class__,models.AutoField)
+    self.assertEqual(de.primary_key,True)
+    pk = Person._meta.pk
+    self.assertEqual(pk.__class__,models.OneToOneField)
+    self.assertEqual(pk.primary_key,True)
+    self.assertEqual(pk.rel.field_name,'id')
+    
+    #~ self.assertEqual(de,pk)
     

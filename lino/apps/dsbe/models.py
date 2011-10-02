@@ -1408,7 +1408,6 @@ class Course(models.Model):
         return CandidatesByCourse().request(master_instance=self)
         
         
-#~ class CourseRequest(mixins.Reminder):
 class CourseRequest(models.Model):
     u"""
     A Course Request is created when a certain Person expresses her 
@@ -1426,7 +1425,8 @@ class CourseRequest(models.Model):
         verbose_name=_("Course content"))
     u"Der gewünschte Kursinhalt (ein Objekt vom Typ :class:`CourseConent`.)"
     
-    date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
+    #~ date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
+    date_submitted = models.DateField(_("date submitted"))
     u"Das Datum, an dem die Anfrage erstellt wurde."
     
     #~ """Empty means 'any provider'
@@ -1472,6 +1472,9 @@ class CourseRequest(models.Model):
     Das wird benutzt für spätere Statistiken.
     """
     
+    def on_create(self,req):
+        self.date_submitted = datetime.date.today()
+    
         
 class Courses(reports.Report):
     model = Course
@@ -1490,7 +1493,7 @@ class CourseRequests(reports.Report):
 
 class CourseRequestsByPerson(CourseRequests):
     fk_name = 'person'
-    column_names = '* id'
+    column_names = 'date_submitted content * id'
 
 class RequestsByCourse(CourseRequests):
     fk_name = 'course'

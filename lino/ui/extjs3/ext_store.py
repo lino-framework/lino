@@ -171,16 +171,22 @@ class SpecialStoreField(StoreField):
 
 class DisabledFieldsStoreField(SpecialStoreField):
     """
-    See :doc:`/blog/2010/0803`
+    See :doc:`/blog/2010/0803`,
+    :doc:`/blog/2011/1003`
     """
     name = 'disabled_fields'
     
     def value_from_object(self,request,obj):
         #~ l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
         l = list(self.store.report.disabled_fields(obj,request))
+        # if obj is not new (i.e. has a primary key)
+        # disabled also the primary key field
         if obj.pk is not None:
             #~ l.append(self.store.pk.name)
             l.append(self.store.pk.attname)
+            # MTI children have "two" primary keys:
+            if isinstance(self.store.pk,models.OneToOneField):
+                l.append(self.store.pk.rel.field_name)
         return l
         
         

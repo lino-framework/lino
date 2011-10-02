@@ -268,6 +268,7 @@ As long as nobody protests, I'll save some time by writing in German.
 
 .. |Oct| replace::  **October**
   |br| 
+  :doc:`03 <1003>`
   |br| 
   |br| 
   |br|  	

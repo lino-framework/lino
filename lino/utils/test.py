@@ -37,9 +37,6 @@ class TestCase(DjangoTestCase):
     The Django testrunner creates and initializes a new database 
     for every TestCase instance.
     
-    If you instantiate a `lino.utils.test.TestCase` in your test module, 
-    it will automatically inspect the globel namespace of your module.
-    
     Using `django.test`::
 
       from django.test import TestCase
@@ -65,8 +62,15 @@ class TestCase(DjangoTestCase):
          ...
           
     
-    you simply write global functions that take a single argument, 
-    and the test case 
+    If you instantiate a `lino.utils.test.TestCase` in your test module, 
+    it will automatically inspect the globel namespace of your module and 
+    add all callables whose name begins with "test" to it's test suite.
+    
+    Since all 'testXX' functions are run in a same database, their execution 
+    order may be important: keep in mind that they are executed in 
+    *alphabetical* order, and that database changes remain for the whole 
+    sequence.
+    
     """
     #~ def runTest(self,*args,**kw):
         #~ # super(TestCase,self).runTest(*args,**kw)
@@ -80,11 +84,17 @@ class TestCase(DjangoTestCase):
                     #~ v(self)
                   
     def test_them_all(self):
+        """
+        This method will be executed automatically since it's 
+        name starts with 'test_'.
+        """
         m = import_module(self.__module__)
-        for k,v in m.__dict__.items():
-          if k.startswith('test') and callable(v):
-              if not getattr(v,'skip',False):
-                  v(self)
+        #~ for k,v in m.__dict__.items():
+        for k in sorted(m.__dict__.keys()):
+            v = m.__dict__.get(k)
+            if k.startswith('test') and callable(v):
+                if not getattr(v,'skip',False):
+                    v(self)
                   
     def check_json_result(self,response,expected_keys):
         """

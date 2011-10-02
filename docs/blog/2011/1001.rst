@@ -124,3 +124,9 @@ Aber das ist so ein langes Wort...
 
 Checkin "20111002c"
 
+Die Reihenfolge der Felder type und event_type in den Notizen
+(deren Bedeutung intern ausgetauscht wurde)
+war noch nicht überall so, wie die Benutzer es gewohnt sind.
+
+Checkin "20111002d"
+

@@ -102,7 +102,7 @@ Nachdem mir das klargeworden ist, habe ich noch ein Problemchen entdeckt:
 in meiner :func:`lino.utils.log.configure` muss ich den `AdminEmailHandler` 
 nicht nur den Logger ``django`` hinzufügen, sondern auch meinem Logger ``lino``.
 
-Neuer Testcase :func:`lino.apps.dsbe.tests.dsbe_tests.test03`.
+Neuer Testcase :func:`lino.apps.dsbe.tests.dsbe_tests.test01b`.
 
 Voilà. Jetzt bin ich zufrieden: 
 Der Bentuzer kriegt eine Meldung
