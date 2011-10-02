@@ -188,7 +188,7 @@ Ext.lib.Ajax.serializeForm = function(form) {
         name = element.name;
         type = element.type;
 
-        if (!element.disabled && name && !(/checkbox/i.test(type) && element.readonly)) {
+        if (!element.disabled && name && !(element.readonly && type == 'checkbox')) {
             if (/select-(one|multiple)/i.test(type)) {
                 Ext.each(element.options, function(opt){
                     if (opt.selected) {
