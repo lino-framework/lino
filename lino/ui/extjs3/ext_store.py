@@ -340,7 +340,7 @@ class VirtStoreField(StoreField):
         v = self.extract_form_data(post_data)
         #~ v = StoreField.form2obj(self,obj,post_data,is_new)
         #~ v = getattr(obj,self.field.name)
-        #~ logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
+        logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
         self.vf.set_value_in_object(request,obj,v)
         #~ return obj
 
