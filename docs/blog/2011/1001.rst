@@ -102,17 +102,21 @@ Jedenfalls deshalb noch ein Nachtrag von Checkins "20111002",
 und das Ganze kommt ebenfalls noch mit in die :doc:`/releases/20110930`. 
 
 
-Show MTI Child
---------------
+Noch kleine Bugs
+----------------
 
-Das funktionierte erstes überhaupt nicht, weil die 
+Der Link "show" auf einer EnableChild 
+funktionierte erstes überhaupt nicht, weil die 
 Warnung "Cannot show MTI child if checkbox is off." noch nicht richtig testete.
 Und zweitens öffnet er jetzt das Detail-Fenster direkt, 
 ohne ein neues Browserfenster zu öffnen.
 
+Checkin "20111002b"
+
+lino.modlib.users wurde noch gar nicht übersetzt.
 Außerdem wurde Company an manchen Stellen noch durch "Firma" 
 statt "Organisation" ersetzt. (Der englische Name "Company" ist eigentlich 
 irreführend, eigentlich müsste es auch in Englisch "Organization" heißen. 
 Aber das ist so ein langes Wort...)
 
-Checkin "20111002b"
+Checkin "20111002c"
