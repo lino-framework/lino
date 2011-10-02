@@ -199,7 +199,7 @@ Ext.lib.Ajax.serializeForm = function(form) {
             } else if (!(/file|undefined|reset|button/i.test(type))) {
                 //~ if (!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)) {
                 if (!(type == 'submit' && hasSubmit)) {
-                    //~ console.log('20111001 data += ',encoder(name) + '=' + encoder(element.value) + '&');
+                    console.log('20111001',element,'data += ',encoder(name) + '=' + encoder(element.value) + '&');
                     data += encoder(name) + '=' + encoder(element.value) + '&';
                     hasSubmit = /submit/i.test(type);
                 }
