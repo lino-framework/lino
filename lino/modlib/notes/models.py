@@ -186,7 +186,7 @@ class NoteTypes(reports.Report):
 class Notes(reports.Report):
     model = 'notes.Note'
     #~ column_names = "id date user type event_type subject * body_html"
-    column_names = "id date user type event_type subject * body"
+    column_names = "id date user event_type type subject * body"
     #~ hide_columns = "body"
     #~ hidden_columns = frozenset(['body'])
     order_by = ["id"]
@@ -195,7 +195,7 @@ class Notes(reports.Report):
 
 class MyNotes(mixins.ByUser,Notes):
     #~ fk_name = 'user'
-    column_names = "date type event_type subject body *"
+    column_names = "date event_type type subject body *"
     #~ column_names = "date type event_type subject body_html *"
     #~ can_view = perms.is_authenticated
     label = _("My notes")

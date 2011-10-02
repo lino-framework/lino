@@ -80,7 +80,7 @@ class Lino(Lino):
             
         m = main.add_menu("my",_("~My menu"))
         #~ m.add_action('projects.Projects')
-        m.add_action('notes.MyNotes')
+        m.add_action('dsbe.MyNotes')
         
         #~ m.add_action('cal.MyTasks')
         #~ m.add_action('cal.MyEvents')
@@ -92,11 +92,11 @@ class Lino(Lino):
             #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
             #~ params=dict(master_id=pg.pk))
             
-        cal.setup_my_menu(self,ui,user,m)
-        mails.setup_my_menu(self,ui,user,m)
         isip.setup_my_menu(self,ui,user,m)
         jobs.setup_my_menu(self,ui,user,m)
         
+        cal.setup_my_menu(self,ui,user,m)
+        mails.setup_my_menu(self,ui,user,m)
         m.add_action('uploads.MyUploads')
         m.add_action('lino.MyTextFieldTemplates')
 
