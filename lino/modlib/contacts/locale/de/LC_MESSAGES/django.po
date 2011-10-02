@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-30 22:58+0100\n"
-"PO-Revision-Date: 2011-09-07 04:53+0200\n"
+"PO-Revision-Date: 2011-10-02 11:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:65 .\models.py:305 .\config\contacts\Contact\1.dtl.py:3
+#: .\models.py:65
+#: .\models.py:305
+#: .\config\contacts\Contact\1.dtl.py:3
 #: .\config\contacts\Person\1.dtl.py:3
 msgid "Contact"
 msgstr "Kontakt"
@@ -119,17 +121,18 @@ msgstr "Alter"
 msgid "Person"
 msgstr "Person"
 
-#: .\models.py:253 .\models.py:349
+#: .\models.py:253
+#: .\models.py:349
 msgid "Company"
-msgstr "Firma"
+msgstr "Organisation"
 
 #: .\models.py:328
 msgid "company type"
-msgstr "Firmenart"
+msgstr "Organisationsart"
 
 #: .\models.py:329
 msgid "company types"
-msgstr "Firmenarten"
+msgstr "Organisationsarten"
 
 #: .\models.py:331
 msgid "Abbreviation"
@@ -145,7 +148,7 @@ msgstr "MWSt.-Nr."
 
 #: .\models.py:357
 msgid "Company type"
-msgstr "Firmenart"
+msgstr "Organisationsart"
 
 #: .\models.py:395
 msgid "Role Type"
@@ -197,7 +200,7 @@ msgstr "ist Person"
 
 #: .\models.py:523
 msgid "is Company"
-msgstr "ist Firma"
+msgstr "ist Organisation"
 
 #: .\models.py:536
 msgid "~Contacts"

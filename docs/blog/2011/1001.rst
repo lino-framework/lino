@@ -87,4 +87,32 @@ ersetze durch
 
 
 Diese beiden Bugfixes kommen noch mit in die :doc:`/releases/20110930`. 
-Installation in Eupen.
+
+Noch ein seriöser Bug
+---------------------
+
+Virtuelle Checkboxen funktionierten gestern noch immer nicht, 
+und ich würde sogar sagen, dass da auch "schon immer" 
+seriöse Bugs beim submitten von checkboxes waren. 
+Das sage ich aber nur theoretisch, denn ich habe keine Erklärung, 
+weshalb das nicht schon früher aufgefallen ist (das wäre eine Doktorarbeit 
+wert, aber dazu habe ich momentan nicht die Muße).
+
+Jedenfalls deshalb noch ein Nachtrag von Checkins "20111002",
+und das Ganze kommt ebenfalls noch mit in die :doc:`/releases/20110930`. 
+
+
+Show MTI Child
+--------------
+
+Das funktionierte erstes überhaupt nicht, weil die 
+Warnung "Cannot show MTI child if checkbox is off." noch nicht richtig testete.
+Und zweitens öffnet er jetzt das Detail-Fenster direkt, 
+ohne ein neues Browserfenster zu öffnen.
+
+Außerdem wurde Company an manchen Stellen noch durch "Firma" 
+statt "Organisation" ersetzt. (Der englische Name "Company" ist eigentlich 
+irreführend, eigentlich müsste es auch in Englisch "Organization" heißen. 
+Aber das ist so ein langes Wort...)
+
+Checkin "20111002b"

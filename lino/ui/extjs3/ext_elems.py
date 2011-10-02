@@ -763,12 +763,19 @@ class BooleanFieldElement(FieldElement):
             #~ kw.update(hideLabel=True)
             
             label = self.label
+            #~ if isinstance(self.field,mti.EnableChild):
+                #~ m = self.field.child_model
+                #~ url = self.lh.rh.ui.build_url('api',m._meta.app_label,m.__name__)
+                #~ js = "Lino.show_mti_child('%s','%s')" % (self.field.name,url)
+                #~ label += """ (<a href="javascript:%s">%s</a>)""" % (js,_("show"))
             if isinstance(self.field,mti.EnableChild):
-                #~ ptrname = self.field.child_model.__name__.lower() + '_ptr'
-                m = self.field.child_model
-                url = self.lh.rh.ui.build_url('api',m._meta.app_label,m.__name__)
-                js = "Lino.show_mti_child('%s','%s')" % (self.field.name,url)
-                label += """ (<a href="javascript:%s">%s</a>)""" % (js,_("show"))
+                rpt = self.field.child_model._lino_model_report
+                if rpt.detail_action is not None:
+                    js = "Lino.show_mti_child('%s',Lino.%s)" % (
+                      self.field.name,
+                      rpt.detail_action)
+                    label += """ (<a href="javascript:%s">%s</a>)""" % (
+                      js,_("show"))
                 
         #~ self.verbose_name = \
             #~ 'is a <a href="javascript:Lino.enable_child_label()">%s</a>' % self.field.child_model.__name__

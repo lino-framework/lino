@@ -47,3 +47,16 @@ To run the Django test suite::
 
     
   
+Reverting to a previous version
+-------------------------------
+
+You can consult :file:`/var/log/lino/pull.log` to see a history of 
+your pulls and find out the revision you want to revert to.
+
+If for example your want to revert to :doc:`/releases/20110906`, 
+whose revision number is 38d7d51f3f71, then type::
+
+  cd /var/snapshots/lino
+  hg revert -r 38d7d51f3f71 --all
+  
+  

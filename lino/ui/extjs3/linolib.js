@@ -170,8 +170,8 @@ JC Watsons solution (adapted to ExtJS 3.3.1 by LS) is elegant and simple:
 `A "fix" for unchecked checkbox submission  behaviour
 <http://www.sencha.com/forum/showthread.php?28449>`_
 
-For disabled checkbox inputs there is a special rule because ExtJS 
-defines them `readonly` (not `disabled` as usual).
+Added special handling for checkbox inputs. 
+ExtJS defines disabled checkboxes `readonly`, not `disabled` as for other inputs.
 
 */
 Ext.lib.Ajax.serializeForm = function(form) {
@@ -200,7 +200,7 @@ Ext.lib.Ajax.serializeForm = function(form) {
                 //~ if (!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)) {
                 if (!(type == 'submit' && hasSubmit)) {
                     if (type == 'checkbox') {
-                        console.log('20111001',element,'data += ',encoder(name) + '=' + (element.checked ? 'on' : 'off') + '&');
+                        //~ console.log('20111001',element,'data += ',encoder(name) + '=' + (element.checked ? 'on' : 'off') + '&');
                         data += encoder(name) + '=' + (element.checked ? 'on' : 'off') + '&';
                     } else {
                         //~ console.log('20111001',element,'data += ',encoder(name) + '=' + encoder(element.value) + '&');
@@ -209,8 +209,8 @@ Ext.lib.Ajax.serializeForm = function(form) {
                     hasSubmit = /submit/i.test(type);
                 }
             }
-        } else {
-            console.log(name,type,element.readonly);
+        //~ } else {
+            //~ console.log(name,type,element.readonly);
         }
     });
     return data.substr(0, data.length - 1);
@@ -3310,14 +3310,34 @@ Lino.show_uploader = function () {
 };
 #end if
 
-Lino.show_mti_child = function(fieldname,urlroot) {
+Lino.unused_show_mti_child = function(fieldname,urlroot) {
   //~ console.log('show_mti_child',urlroot,rec);
   rec = Lino.current_window.get_current_record();
   if (rec) {
     if (rec.phantom) {
       Lino.notify('Not allowed on phantom record.');
-    }else if (rec[fieldname]) {
-      window.open(urlroot + '/' + rec.id);
+    }else if (rec.data[fieldname]) {
+      //~ window.open(urlroot + '/' + rec.id);
+      document.location = urlroot + '/' + rec.id;
+      //~ window.open(urlroot + '/' + rec.id,'_blank');
+    } else {
+      Lino.notify('$_("Cannot show MTI child if checkbox is off.")');
+    }
+  } else {
+    Lino.notify('No current record.');
+  }
+};
+
+Lino.show_mti_child = function(fieldname,detail_handler) {
+  //~ console.log('show_mti_child',urlroot,rec);
+  rec = Lino.current_window.get_current_record();
+  if (rec) {
+    if (rec.phantom) {
+      Lino.notify('Not allowed on phantom record.');
+    }else if (rec.data[fieldname]) {
+      detail_handler(undefined,{record_id:rec.id});
+      //~ window.open(urlroot + '/' + rec.id);
+      //~ document.location = urlroot + '/' + rec.id;
       //~ window.open(urlroot + '/' + rec.id,'_blank');
     } else {
       Lino.notify('$_("Cannot show MTI child if checkbox is off.")');
