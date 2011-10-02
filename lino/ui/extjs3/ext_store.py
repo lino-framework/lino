@@ -326,6 +326,7 @@ class VirtStoreField(StoreField):
         self.form2obj_default = delegate.form2obj_default
         # as long as http://code.djangoproject.com/ticket/15497 is open
         self.parse_form_value = delegate.parse_form_value
+        self.set_value_in_object = vf.set_value_in_object
 
     def obj2list(self,request,obj):
         return [self.vf.value_from_object(request,obj)]
@@ -335,7 +336,7 @@ class VirtStoreField(StoreField):
         #~ logger.debug('VirtStoreField.obj2dict() %s = %s',self.field.name,v)
         d[self.field.name] = v
         
-    def form2obj(self,request,obj,post_data,is_new):
+    def unused_form2obj(self,request,obj,post_data,is_new):
         #~ logger.info("VirtStoreField.form2obj(%s)", post_data)
         v = self.extract_form_data(post_data)
         #~ v = StoreField.form2obj(self,obj,post_data,is_new)
