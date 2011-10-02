@@ -78,14 +78,21 @@ Bugs fixed
 - Filter setzen auf einer Datum-Kolonne funktionierte nicht. 
   Behoben.  
   
-- ForeignKey-Kolonnen einer Grid hatten unnützerweise eine Lupe. 
-  Die soll ja nur in ForeignKey-Feldern eines Details da sein.
+- Comboboxen für ForeignKey-Kolonnen einer Grid hatten unnützerweise 
+  eine Lupe. 
+  Die soll ja nur in ForeignKey-Feldern eines Details da sein,
+  damit man auf das Detail des in der Combobox stehenden Objekts springen 
+  kann (was in der Grid nicht nötig ist, weil dort der Text des Objektes 
+  selber anklickbar ist).
   
 - Beim Speichern eines Vertrags (Bsp. Arbeitsvertrag #140) wurde 
   die Kontaktperson nicht gespeichert. 
+  Behoben.
   
 - Die Bezeichnung einer Stelle (in Auswahlliste) enthält jetzt auch den 
   Namen des Arbeitsgebers.
+  Aus den Bezeichnungen aller Stellen sollte also jetzt der Name des AG
+  rausgeholt werden.
   
 - Die Übersicht der Verträge wird jetzt in Landscape ausgedruckt.
 

@@ -170,6 +170,9 @@ JC Watsons solution (adapted to ExtJS 3.3.1 by LS) is elegant and simple:
 `A "fix" for unchecked checkbox submission  behaviour
 <http://www.sencha.com/forum/showthread.php?28449>`_
 
+For disabled checkbox inputs there is a special rule because ExtJS 
+defines them `readonly` (not `disabled` as usual).
+
 */
 Ext.lib.Ajax.serializeForm = function(form) {
     //~ console.log('20111001 linolib.js serializeForm');
@@ -185,7 +188,7 @@ Ext.lib.Ajax.serializeForm = function(form) {
         name = element.name;
         type = element.type;
 
-        if (!element.disabled && name) {
+        if (!element.disabled && name && !(/checkbox/i.test(type) && element.readonly)) {
             if (/select-(one|multiple)/i.test(type)) {
                 Ext.each(element.options, function(opt){
                     if (opt.selected) {
@@ -195,8 +198,7 @@ Ext.lib.Ajax.serializeForm = function(form) {
                 });
             } else if (!(/file|undefined|reset|button/i.test(type))) {
                 //~ if (!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)) {
-                //~ if (!(type == 'submit' && hasSubmit)) {
-                if (!(/radio|checkbox/i.test(type) && !element.readonly) && !(type == 'submit' && hasSubmit)) {
+                if (!(type == 'submit' && hasSubmit)) {
                     //~ console.log('20111001 data += ',encoder(name) + '=' + encoder(element.value) + '&');
                     data += encoder(name) + '=' + encoder(element.value) + '&';
                     hasSubmit = /submit/i.test(type);
