@@ -113,10 +113,14 @@ ohne ein neues Browserfenster zu öffnen.
 
 Checkin "20111002b"
 
-lino.modlib.users wurde noch gar nicht übersetzt.
+:mod:`lino.modlib.users` wurde noch gar nicht übersetzt.
+Behoben.
+
 Außerdem wurde Company an manchen Stellen noch durch "Firma" 
-statt "Organisation" ersetzt. (Der englische Name "Company" ist eigentlich 
+statt "Organisation" übersetzt. 
+Der englische Name "Company" ist eigentlich 
 irreführend, eigentlich müsste es auch in Englisch "Organization" heißen. 
-Aber das ist so ein langes Wort...)
+Aber das ist so ein langes Wort...
 
 Checkin "20111002c"
+
