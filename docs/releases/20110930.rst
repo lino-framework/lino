@@ -42,10 +42,13 @@ New features
   - Neue Tabelle :menuselection:`Korrespondenz --> Dokumentarten`
     (experimentell, :class:`MailType <lino.modlib.mails.models.MailType>`)
 
-- Ich hielt es für nötig, im Hauptmenü ein paar Änderungen zu machen:
+- Ich hielt es für angebracht, im Hauptmenü ein paar Änderungen zu 
+  machen:
 
-  - "Stellenanbieter" nicht mehr unter "Kontakte", sondern in eigenem 
-    Menü "Stellen", zusammen mit dem neuen Befehl "Stellenangebote".
+  - "Stellen" nicht mehr in "Konfiguration", 
+    "Stellenanbieter" nicht mehr unter "Kontakte", 
+    sondern zusammen mit dem neuen Befehl "Stellenangebote"
+    in eigenem Menü "Stellen".
   - "Kursanbieter" nicht mehr unter "Kontakte", sondern im 
     Menü "Kurse". 
   - "Kursinhalte" und "Kursbeendigungen" stehen jetzt 

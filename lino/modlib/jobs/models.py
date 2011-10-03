@@ -982,6 +982,7 @@ if reports.is_installed('contacts') and reports.is_installed('jobs'):
 
 def setup_main_menu(site,ui,user,m): 
     m.add_action('jobs.JobProviders')
+    m.add_action('jobs.Jobs')
     m.add_action('jobs.Offers')
 
 def setup_my_menu(site,ui,user,m): 
@@ -989,7 +990,6 @@ def setup_my_menu(site,ui,user,m):
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("jobs",_("~Jobs"))
-    m.add_action('jobs.Jobs')
     m.add_action('jobs.ContractTypes')
     m.add_action('jobs.JobTypes')
     m.add_action('jobs.Sectors')
