@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation" xmlns:person="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/CommonDataTypes.xsd"/>
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" schemaLocation="../../Person/NamespaceRoot.xsd"/>
+	<xs:element name="AddressHistory">
+		<xs:annotation>
+			<xs:documentation>History of a persons addresses </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SocialSecurityUser" type="common:t_SSIN">
+					<xs:annotation>
+						<xs:documentation>The person to whom this address history belongs</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ManagerLocations" type="ManagerLocationsType" minOccurs="0"/>
+				<xs:element name="LegalAddresses" type="LegalAddressesType" minOccurs="0"/>
+				<xs:element name="DeclaredAddresses" type="DeclaredAddressesType" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ManagerLocationsType">
+		<xs:annotation>
+			<xs:documentation>History of the location that manages the persons address. Only belgian municipalities are included, diplomatic posts aren't</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ManagerLocation" type="person:ManagerLocationType" maxOccurs="100">
+				<xs:annotation>
+					<xs:documentation>History of the location that manages the persons address. Only belgian municipalities are included, diplomatic posts aren't</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LegalAddressesType">
+		<xs:annotation>
+			<xs:documentation>History of the legal addresses (standard addresses only, no diplomatic addresses), ordered from most recent to least recent</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StandardAddress" type="person:StandardAddressType" maxOccurs="100">
+				<xs:annotation>
+					<xs:documentation>History of the legal addresses (standard addresses only, no diplomatic addresses), ordered from most recent to least recent</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeclaredAddressesType">
+		<xs:annotation>
+			<xs:documentation>History of the declared addresses (for persons in the waiting register)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StandardAddress" type="person:StandardAddressType" maxOccurs="100">
+				<xs:annotation>
+					<xs:documentation>History of the declared addresses (for persons in the waiting register)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

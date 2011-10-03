@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="CommonDataTypes.xsd"/>
+	<xs:element name="ResultSummary">
+		<xs:annotation>
+			<xs:documentation>Summary infomation about the result</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ReturnCode">
+					<xs:annotation>
+						<xs:documentation>general return code. 0 = OK, 1 = WARNING, 10000 = ERROR</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:integer">
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Detail" type="DetailMessageType" minOccurs="0" maxOccurs="30">
+					<xs:annotation>
+						<xs:documentation>lists all errors and warnings</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="ok" type="ResultSummaryStatusType" use="required">
+				<xs:annotation>
+					<xs:documentation>lors de la reponse, (messageType RESPONSE | EXCEPTION), la valeur WARNING signifie qu'il faut consulter l'element Information</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="InformationType">
+		<xs:sequence>
+			<xs:element name="FieldName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>name of the field</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FieldValue" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>value of the field</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DetailMessageType">
+		<xs:sequence>
+			<xs:element name="Severity" type="common:SeverityType">
+				<xs:annotation>
+					<xs:documentation>message severity : INFORMATION, WARNING, ERROR</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReasonCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>error code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Diagnostic" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>textual error message</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuthorCodeList" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>organisation responsible for the reason code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Information" type="InformationType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>lists any fields that caused this message and their values</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ResultSummaryStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="YES"/>
+			<xs:enumeration value="NO"/>
+			<xs:enumeration value="WARNING"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

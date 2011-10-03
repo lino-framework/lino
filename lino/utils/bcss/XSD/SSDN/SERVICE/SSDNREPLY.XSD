@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by XML Spy (XML Spy) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../Common/NamespaceRoot.xsd"/>
+	<xs:include schemaLocation="CommonDataTypes.xsd"/>
+	<xs:element name="SSDNReply">
+		<xs:annotation>
+			<xs:documentation>A reply from the SSDN application at the CBSS</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ReplyContext" type="ReplyContextType">
+					<xs:annotation>
+						<xs:documentation>The context of the reply</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ServiceReply" type="ServiceReplyType" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>list of replies</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ReplyContextType">
+		<xs:annotation>
+			<xs:documentation>context information regarding the reply</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="common:ResultSummary"/>
+			<xs:element name="AuthorizedUser" type="AuthorizedUserType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The user identification information</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Message" type="ReplyMessageType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>status information about the message</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReplyMessageType">
+		<xs:annotation>
+			<xs:documentation>Information about the message</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Reference" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>reference provided by the user</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Ticket" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>reference provided by the CBSS</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeRequest" type="common:t_DateTimeUTC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time the user sent the request, in the format yyyyMMddThhmmss</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeReceive" type="common:t_DateTimeUTC">
+				<xs:annotation>
+					<xs:documentation>Date and time the system received the request, in the format yyyyMMddThhmmss</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeResponse" type="common:t_DateTimeUTC">
+				<xs:annotation>
+					<xs:documentation>Date and time the system sent the response, in the format yyyyMMddThhmmss</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ServiceReplyType">
+		<xs:annotation>
+			<xs:documentation>A single response from a service</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="common:ResultSummary"/>
+			<xs:element name="ServiceId">
+				<xs:annotation>
+					<xs:documentation>name of the service that sent the reply</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Version">
+				<xs:annotation>
+					<xs:documentation>version of the service reply</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="8"/>
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:any namespace="##any" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>replaced by the actual service reply body</xs:documentation>
+				</xs:annotation>
+			</xs:any>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

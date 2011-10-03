@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:complexType name="InscriptionType">
+		<xs:annotation>
+			<xs:documentation>An inscription</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SSIN" type="t_SSIN">
+				<xs:annotation>
+					<xs:documentation>The SSIN for which this inscription is registered</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrgUnit" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The sector  for which the person has an inscription in the repertoire</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Purpose" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The purpose for which the person has an inscription</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="PeriodType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The period span for which this inscription is in the repertoires</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InscriptionCode" type="xs:integer" minOccurs="0"/>
+			<xs:element name="PhaseCode" type="xs:integer" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="t_NISCode">
+		<xs:annotation>
+			<xs:documentation>base type for NIS codes</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="99999"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_SimpleString">
+		<xs:annotation>
+			<xs:documentation>basic string type that allows only alphabetic characters, numbers, whitespace, and -</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="[\p{L}\p{N}\s\-]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_Language">
+		<xs:annotation>
+			<xs:documentation>list of recognized languages</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="nl"/>
+			<xs:enumeration value="fr"/>
+			<xs:enumeration value="de"/>
+			<xs:enumeration value="en"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_IncompleteDate">
+		<xs:annotation>
+			<xs:documentation>a possibly incomplete date. Format yyyy-mm-dd, yyyy-mm-00 or yyyy-00-00</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="10"/>
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="[1-2][0-9]{3}\-[0-1][0-9]\-[0-3][0-9]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_CivilStateCode">
+		<xs:annotation>
+			<xs:documentation>list of valid civil state codes</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="20"/>
+			<xs:enumeration value="25"/>
+			<xs:enumeration value="26"/>
+			<xs:enumeration value="30"/>
+			<xs:enumeration value="40"/>
+			<xs:enumeration value="41"/>
+			<xs:enumeration value="50"/>
+			<xs:enumeration value="51"/>
+			<xs:enumeration value="60"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_SSIN">
+		<xs:annotation>
+			<xs:documentation>social security identification number</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="11"/>
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\p{N}{11}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_DateTimeUTC">
+		<xs:annotation>
+			<xs:documentation>date and time in yyyyMMddThhmmss</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[1-2][0-9]{3}[0-1][0-9][0-3][0-9]T[0-2][0-9][0-5][0-9][0-5][0-9]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_SISCardNumber">
+		<xs:annotation>
+			<xs:documentation>SIS Card Number</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:length value="10"/>
+			<xs:pattern value="\p{N}{10}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_IdentityCardNumber">
+		<xs:annotation>
+			<xs:documentation>Identity Card Number</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:length value="12"/>
+			<xs:pattern value="\p{N}{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="t_EmailAddress">
+		<xs:annotation>
+			<xs:documentation>email address</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value=".+@.+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="DescriptionType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="lang" type="t_Language" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="PeriodType">
+		<xs:annotation>
+			<xs:documentation>A period of time between a startdate and an enddate</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDate" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:date">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EndDate" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:date">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ClosedPeriodType">
+		<xs:annotation>
+			<xs:documentation>A closed period with a mandatory start and end date</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDate">
+				<xs:simpleType>
+					<xs:restriction base="xs:date">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EndDate">
+				<xs:simpleType>
+					<xs:restriction base="xs:date">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StartingPeriodType">
+		<xs:annotation>
+			<xs:documentation>A halfopen period with a mandatory start date</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDate">
+				<xs:simpleType>
+					<xs:restriction base="xs:date">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EndDate" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:date">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EndingPeriodType">
+		<xs:annotation>
+			<xs:documentation>A halfopen period with a mandatory end date</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDate" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:date">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EndDate">
+				<xs:simpleType>
+					<xs:restriction base="xs:date">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="SeverityType">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="INFORMATION"/>
+			<xs:enumeration value="WARNING"/>
+			<xs:enumeration value="ERROR"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

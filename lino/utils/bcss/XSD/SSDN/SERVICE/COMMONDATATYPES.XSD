@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- !KSZBCSS! -->
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../Common/NamespaceRoot.xsd"/>
+	<xs:complexType name="AuthorizedUserType">
+		<xs:annotation>
+			<xs:documentation>User identification information</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UserID" type="common:t_SSIN">
+				<xs:annotation>
+					<xs:documentation>unique ID of the user. Either  the SSIN of the person or a program ID (also in SSIN format)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Email" type="common:t_EmailAddress">
+				<xs:annotation>
+					<xs:documentation>email address of the user</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrgUnit" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>KBO nummer van de organisatie - Numéro BCE de l'organisation</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MatrixID" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>sector ID of the user in the primary network of social security</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MatrixSubID" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ID of the user in the secondary network of social security</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/CommonDataTypes.xsd"/>
+	<xs:element name="WaitRegister">
+		<xs:annotation>
+			<xs:documentation>Information about a person (refugee) stored in the wait register</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SocialSecurityUser" type="common:t_SSIN">
+					<xs:annotation>
+						<xs:documentation>The person to whom this address history belongs</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RefugeeSituationH205" type="RefugeeSituationH205Type" minOccurs="0"/>
+				<xs:element name="RefugeeAdministriveFileH206" type="RefugeeAdministriveFileH206Type" minOccurs="0"/>
+				<xs:element name="RefugeeInstitutionH207" type="RefugeeInstitutionH207Type" minOccurs="0"/>
+				<xs:element name="RefugeeDocumentH211" type="RefugeeDocumentH211Type" minOccurs="0"/>
+				<xs:element name="RefugeeLocationH212" type="RefugeeLocationH212Type" minOccurs="0"/>
+				<xs:element name="RefugeeDataH213" type="RefugeeDataH213Type" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="RefugeeSituationH205Type">
+		<xs:annotation>
+			<xs:documentation>Contains the refugee situation ~ H205 </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RefugeeSituation" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="demandDate" type="common:t_IncompleteDate" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>date de demande assil</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="qualityCode" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>code qualité de la person</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RefugeeAdministriveFileH206Type">
+		<xs:annotation>
+			<xs:documentation>Contains the administrative file of the refugee ~ H206</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RefugeeAdministrativeFile" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="structureType" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>stucture</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="administrativeSituationDate" type="common:t_IncompleteDate" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>date situation administrative</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="administrativeSituationCode" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>code situation administrative</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="organism" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>organisme</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="comment" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>commentaire</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="codeK2" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>code k2</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="municipalityCodeOrAidCenter" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>centre d'acueile ou code de la commune</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="municipalityDescription" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>description de la commune</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="municipalityDescriptionBiLingual" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>description de la commune bi lang</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="reference" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>reference</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="numberOfDays" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>nombre des jour</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="openClosedCode" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>code ferme ou ouverte</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="nisCode" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>code cpas</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="declarationDate" type="common:t_IncompleteDate" minOccurs="0"/>
+						<xs:element name="certificateDate" type="common:t_IncompleteDate" minOccurs="0"/>
+						<xs:element name="delayDate" type="common:t_IncompleteDate" minOccurs="0"/>
+						<xs:element name="originalOrganism" type="xs:integer" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RefugeeInstitutionH207Type">
+		<xs:annotation>
+			<xs:documentation>Contains the institutions fof which the refugee is known - H207</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RefugeeInstitution" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="inscriptionDate" type="common:t_IncompleteDate" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>date d'inscription</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="removeDate" type="common:t_IncompleteDate" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>date de supression</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="typeOfAid" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>type d'aide</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="municipalityDescription" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>graphique de la commune</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="municipalityDescriptionBiLingual" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>graphique de la communne bilingue</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="cpasCode" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>code cpas</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RefugeeDocumentH211Type">
+		<xs:annotation>
+			<xs:documentation>Contains the documents types given by the refugee upon registration ~ H211</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RefugeeDocument" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="InscriptionDate" type="common:t_IncompleteDate" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>date d'inscription</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="documentTypeCode" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>code document</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RefugeeLocationH212Type">
+		<xs:annotation>
+			<xs:documentation>Contains the location where the refugee resides ~ H212</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RefugeeLocation" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="inscriptionDate" type="common:t_IncompleteDate" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date d'inscription</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="code" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>code</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="description" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Graphique</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RefugeeDataH213Type">
+		<xs:annotation>
+			<xs:documentation>Additional data about the refugee ~ H213</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="aliasFull" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alias complete</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RefugeeDataBlockH213" type="RefugeeDataBlockH213Type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RefugeeDataBlockH213Type">
+		<xs:annotation>
+			<xs:documentation>The repeatable part of the refugee data</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="date" type="common:t_IncompleteDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="aliasTypeCode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type alias</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="nationalityCode" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Code nationalite</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="birthDate" type="common:t_IncompleteDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date de naissance</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="lastName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nom</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="firstName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Deux prénoms</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="firstNameIndicator" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicateur prénom</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="birthPlace" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lieu de naissance</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

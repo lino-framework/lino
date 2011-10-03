@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="ExtensionPlaceHolder">
+		<xs:annotation>
+			<xs:documentation>The sole purpose of this element is to provide a place to initialize the usage of xjc extensions in.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

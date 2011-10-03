@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<!-- !KSZBCSS! -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../Common/NamespaceRoot.xsd"/>
+	<xs:include schemaLocation="CommonDataTypes.xsd"/>
+	<xs:complexType name="ServiceRequestType">
+		<xs:annotation>
+			<xs:documentation>A single request to a service</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ServiceId" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Name of the service to invoke</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Version">
+				<xs:annotation>
+					<xs:documentation>Version of the service request</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:any namespace="##any">
+				<xs:annotation>
+					<xs:documentation>replace with the actual service request body</xs:documentation>
+				</xs:annotation>
+			</xs:any>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RequestContextType">
+		<xs:annotation>
+			<xs:documentation>context information regarding the request</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AuthorizedUser" type="AuthorizedUserType">
+				<xs:annotation>
+					<xs:documentation>The user identification data</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Message" type="RequestMessageType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>status information about the message</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="SSDNRequest">
+		<xs:annotation>
+			<xs:documentation>Request sent to the CBSS</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RequestContext" type="RequestContextType">
+					<xs:annotation>
+						<xs:documentation>The context of the request</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ServiceRequest" type="ServiceRequestType" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>list of requests</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="RequestMessageType">
+		<xs:annotation>
+			<xs:documentation>Information about the message being sent, provided by the sender</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Reference" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>reference provided by the user</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeRequest" type="common:t_DateTimeUTC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time the user sent the request, in the format yyyyMMddThhmmss</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

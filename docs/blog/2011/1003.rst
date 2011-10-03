@@ -35,4 +35,11 @@ and because a ``*`` in
 :attr:`lino.reports.Report.column_names` does not expand to readonly fields.
 
 
-Auch diese Bugfixes kommen noch mit in die :doc:`/releases/20110930`.
+Auch diese Bugfixes kommen noch mit in die :doc:`/releases/20110930`
+(Check-in 20111003).
+
+Außerdem noch eine kleine Änderung im Hauptmenü und den Release-Notizen 
+20111003b
+
+
+
