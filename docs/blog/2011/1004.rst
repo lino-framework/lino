@@ -2,7 +2,12 @@
 ========
 
 :attr:`lino.modlib.jobs.models.Candidature.job` was nullable, 
-which caused occasional 
+which caused an 
 `AttributeError 'NoneType' object has no attribute 'name'` in 
-:meth:`lino.modlib.jobs.models.Candidature.__unicode__`.
+:meth:`lino.modlib.jobs.models.Candidature.__unicode__`
+when a user tried to save a Candidatur without a Job specified.
+  
+:term:`initdb` now calls `syncdb` with `verbosity=0` to avoid the 
+irritating message "No fixtures found" (which comes because there 
+are no `initial_data` fixtures).
 

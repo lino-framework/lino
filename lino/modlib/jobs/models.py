@@ -839,7 +839,7 @@ class ContractsByType(Contracts):
 class Candidatures(reports.Report):
     model = Candidature
     order_by = ['date_submitted']
-    column_names = '* id'
+    column_names = 'date_submitted job:30 * id'
 
 class CandidaturesByPerson(Candidatures):
     fk_name = 'person'

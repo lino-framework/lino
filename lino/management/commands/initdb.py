@@ -115,7 +115,9 @@ class Command(BaseCommand):
         #~ call_command('syncdb',load_initial_data=False,**options)
         #~ if USE_SQLDELETE:
         
-        call_command('syncdb',**options)
+        syncdb_options = dict(verbosity=0)
+        syncdb_options.update(**options)
+        call_command('syncdb',**syncdb_options)
         
         call_command('loaddata',*args,**options)
         
