@@ -1,22 +1,24 @@
 20111004
 ========
 
-:attr:`lino.modlib.jobs.models.Candidature.job` was nullable, 
-which caused an 
-`AttributeError 'NoneType' object has no attribute 'name'` in 
-:meth:`lino.modlib.jobs.models.Candidature.__unicode__`
-when a user tried to save a Candidatur without a Job specified.
-  
-:term:`initdb` now calls `syncdb` with `verbosity=0` to avoid the 
-irritating message "No fixtures found" (which comes because there 
-are no `initial_data` fixtures).
+Another set of small changes that enter into the 1.2.3 release:
 
-There was no column `date_submitted` in the `CandidatursByPerson` 
-grid.
-This was because 
-:attr:`lino.apps.jobs.models.CandidatursByPerson.date_submitted` was 
-declared with `auto_now_add=True` 
-which makes it readonly, 
-and because a ``*`` in 
-:attr:`lino.reports.Report.column_names` does not expand to readonly fields.
+- :attr:`lino.modlib.jobs.models.Candidature.job` was nullable, 
+  which caused an 
+  `AttributeError 'NoneType' object has no attribute 'name'` in 
+  :meth:`lino.modlib.jobs.models.Candidature.__unicode__`
+  when a user tried to save a Candidatur without a Job specified.
+  
+- :term:`initdb` now calls `syncdb` with `verbosity=0` to avoid the 
+  irritating message "No fixtures found" (which comes because there 
+  are no `initial_data` fixtures).
+
+- There was no column `date_submitted` in the `CandidatursByPerson` 
+  grid.
+  This was because 
+  :attr:`lino.apps.jobs.models.CandidatursByPerson.date_submitted` was 
+  declared with `auto_now_add=True` 
+  which makes it readonly, 
+  and because a ``*`` in 
+  :attr:`lino.reports.Report.column_names` does not expand to readonly fields.
 

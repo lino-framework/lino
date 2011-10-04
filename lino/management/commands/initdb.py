@@ -117,8 +117,8 @@ class Command(BaseCommand):
         
         syncdb_options = dict(verbosity=0)
         syncdb_options.update(**options)
-        call_command('syncdb',**syncdb_options)
+        call_command('syncdb',**options)
         
-        call_command('loaddata',*args,**options)
+        call_command('loaddata',*args,**syncdb_options)
         
         dblogger.info("Lino initdb done %s on database %s.", args, dbname)
