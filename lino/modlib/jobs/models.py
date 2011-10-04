@@ -776,7 +776,8 @@ class Candidature(models.Model):
         #~ blank=True,null=True)
         #~ verbose_name=_("Requested Job"))
     
-    date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
+    #~ date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
+    date_submitted = models.DateField(_("date submitted"))
     u"Das Datum, an dem die Anfrage erstellt wurde."
     
     contract = models.ForeignKey("jobs.Contract",blank=True,null=True,
@@ -809,6 +810,9 @@ class Candidature(models.Model):
                   "Cannot satisfy a Candidature with a Contract on another Person")
         super(Candidature,self).clean(*args,**kw)
     
+    def on_create(self,req):
+        self.date_submitted = datetime.date.today()
+    
 
 
 
@@ -839,7 +843,7 @@ class ContractsByType(Contracts):
 class Candidatures(reports.Report):
     model = Candidature
     order_by = ['date_submitted']
-    column_names = 'date_submitted job:30 * id'
+    column_names = 'date_submitted job:25 * id'
 
 class CandidaturesByPerson(Candidatures):
     fk_name = 'person'

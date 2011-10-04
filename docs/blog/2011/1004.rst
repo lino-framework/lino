@@ -11,3 +11,12 @@ when a user tried to save a Candidatur without a Job specified.
 irritating message "No fixtures found" (which comes because there 
 are no `initial_data` fixtures).
 
+There was no column `date_submitted` in the `CandidatursByPerson` 
+grid.
+This was because 
+:attr:`lino.apps.jobs.models.CandidatursByPerson.date_submitted` was 
+declared with `auto_now_add=True` 
+which makes it readonly, 
+and because a ``*`` in 
+:attr:`lino.reports.Report.column_names` does not expand to readonly fields.
+
