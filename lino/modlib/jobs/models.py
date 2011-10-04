@@ -772,8 +772,8 @@ class Candidature(models.Model):
         
     person = models.ForeignKey("contacts.Person")
     
-    job = models.ForeignKey("jobs.Job",
-        blank=True,null=True)
+    job = models.ForeignKey("jobs.Job")
+        #~ blank=True,null=True)
         #~ verbose_name=_("Requested Job"))
     
     date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
@@ -833,6 +833,9 @@ class JobsByProvider(Jobs):
 class JobsByType(Jobs):
     fk_name = 'type'
 
+class ContractsByType(Contracts):
+    fk_name = 'type'
+
 class Candidatures(reports.Report):
     model = Candidature
     order_by = ['date_submitted']
@@ -853,9 +856,9 @@ class CandidaturesByJob(Candidatures):
 
 COLS = 8
 
-class new_ContractsSituation(mixins.Listing):
+class ContractsSituation2(mixins.Listing):
     class Meta:
-        verbose_name = _("Contracts Situation") 
+        verbose_name = _("Contracts Situation 2") 
         
     contract_type = models.ForeignKey(ContractType,blank=True,null=True)
     job_type = models.ForeignKey(JobType,blank=True,null=True)

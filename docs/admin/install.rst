@@ -59,6 +59,7 @@ You'll need the following Debian packages installed:
     mdbtools
 
 
+
 Create directories
 ------------------
 
@@ -84,6 +85,8 @@ Just `Set up your Python path`_ manually (see below).
 
 Install Django
 --------------
+
+python-django
 
 The Django version 1.2.3 provided 
 by the Debian Squeeze `python-django` package 

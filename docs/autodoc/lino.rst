@@ -41,6 +41,7 @@ Subpackages
     lino.utils.babel
     lino.utils.choosers
     lino.utils.test
+    lino.utils.bcss.test
     lino.test_apps
     lino.modlib
 

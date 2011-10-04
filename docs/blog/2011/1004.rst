@@ -1,0 +1,8 @@
+20111004
+========
+
+:attr:`lino.modlib.jobs.models.Candidature.job` was nullable, 
+which caused occasional 
+`AttributeError 'NoneType' object has no attribute 'name'` in 
+:meth:`lino.modlib.jobs.models.Candidature.__unicode__`.
+

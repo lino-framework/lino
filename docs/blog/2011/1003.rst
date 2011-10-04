@@ -41,5 +41,10 @@ Auch diese Bugfixes kommen noch mit in die :doc:`/releases/20110930`
 Außerdem noch eine kleine Änderung im Hauptmenü und den Release-Notizen 
 20111003b
 
+Using generateDS to connect to BCSS
+-----------------------------------
 
+New module :mod:`lino.utils.bcss.test` and used it to post a question 
+to `generateds-users@sourceforge.net
+<http://sourceforge.net/mailarchive/forum.php?thread_name=4E89CE0A.1020004%40gmx.net&forum_name=generateds-users>`_.
 
