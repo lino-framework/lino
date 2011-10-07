@@ -1,14 +1,11 @@
+T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "1".
+T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "2".
+T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "3".
+T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "4".
+T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "5".
 T:\hgwork\lino\docs\dsbe\appdocs\dsbe.JobExperience.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\dsbe.Study.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\dsbe.StudyType.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.JobRequest.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\mails.InMail.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\mails.OutMail.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.rst:133: WARNING: py:attr reference target not found: date_format_strftime
-T:\hgwork\lino\docs\autodoc\lino.rst:133: WARNING: py:attr reference target not found: date_format_extjs
-T:\hgwork\lino\docs\autodoc\lino.rst:150: WARNING: py:attr reference target not found: time_format_strftime
-T:\hgwork\lino\docs\autodoc\lino.rst:150: WARNING: py:attr reference target not found: time_format_extjs
-T:\hgwork\lino\docs\autodoc\lino.rst:167: WARNING: xfile reference target not found: fixtures
-T:\hgwork\lino\docs\autodoc\lino.rst:208: WARNING: py:mod reference target not found: lino.utils.config
-T:\hgwork\lino\docs\autodoc\lino.rst:300: WARNING: py:mod reference target not found: lino.test_apps.1

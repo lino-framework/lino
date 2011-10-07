@@ -53,7 +53,7 @@ def test01(self):
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     from lino.apps.dsbe.models import Person
-    self.assertEquals(Person.objects.count(), 73)
+    self.assertEquals(Person.objects.count(), 72)
     
     p = Person.objects.get(pk=117)
     self.assertEquals(unicode(p), "Annette ARENS (117)")
@@ -66,7 +66,7 @@ def test02(self):
     See also :doc:`/blog/2011/0531`.
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
-    url = '/api/properties/SoftSkillsByPerson?_dc=1298881440121&mt=22&mk=117&fmt=json'
+    url = '/api/dsbe/SoftSkillsByPerson?mt=22&mk=117&fmt=json'
     # make sure that the response is in English so that this test works on any site
     babel.set_language('en')
     #~ extra = {'Accept-Language':'fr,de-DE;q=0.8,de;q=0.6,en-US;q=0.4,en;q=0.2'
@@ -224,7 +224,7 @@ def test03(self):
     
     """
     # 
-    response = self.client.get('/api/contacts/Persons/117?fmt=json')
+    response = self.client.get('/api/contacts/Persons/117?fmt=json',REMOTE_USER='root')
     result = self.check_json_result(response,'navinfo disable_delete data id title')
     #~ result = simplejson.loads(response.content)
     #~ for k in 'navinfo disable_delete data id title'.split():
@@ -317,12 +317,12 @@ def test04(self):
         'vention%20Art.60%C2%A77%20Sozial%C3%B6konomie&typeHidden=1&user=root&us'
         'erHidden=4&user_asd=Benutzer%20ausw%C3%A4hlen...&user_asdHidden='
         
-        response = self.request_PUT(url,data)
+        response = self.request_PUT(url,data,REMOTE_USER='root')
         result = self.check_json_result(response,'message success')
         self.assertEqual(result['success'],True)
         
         url = "/api/jobs/Contracts/1?fmt=json"
-        response = self.client.get(url)
+        response = self.client.get(url,REMOTE_USER='root')
         #~ print 20110723, response
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['applies_from'],value)
@@ -334,13 +334,13 @@ def test05(self):
     """
     url ='/api/countries/Countries/BE'
     data = 'name=Belgienx&nameHidden=Belgienx&fmt=json'
-    response = self.request_PUT(url,data)
+    response = self.request_PUT(url,data,REMOTE_USER='root')
     #~ response = self.client.put(url,data,content_type='application/x-www-form-urlencoded')
     result = self.check_json_result(response,'message success')
     self.assertEqual(result['success'],True)
     
     url ='/api/countries/Countries/BE?fmt=json'
-    response = self.client.get(url)
+    response = self.client.get(url,REMOTE_USER='root')
     result = self.check_json_result(response,'navinfo disable_delete data id title')
     self.assertEqual(result['data']['name'],'Belgienx')
 
@@ -380,7 +380,7 @@ def test07(self):
     Testing whether all model reports work
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
-    response = self.client.get('/menu')
+    response = self.client.get('/menu',REMOTE_USER='root')
     result = self.check_json_result(response,'success message load_menu')
     self.assertEqual(result['load_menu']['name'],'...')
 test07.skip = "Doesn't work because simplejson.loads() doesn't parse functions"
@@ -420,7 +420,7 @@ def test09(self):
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     babel.set_language('en')
-    url = '/choices/dsbe/StudiesByPerson/city?start=0&limit=30&country=&query='
+    url = '/choices/jobs/StudiesByPerson/city?start=0&limit=30&country=&query='
     response = self.client.get(url,REMOTE_USER='root')
     result = self.check_json_result(response,'count rows title')
     self.assertEqual(result['title'],u"Choices for city")
@@ -437,9 +437,11 @@ def test10(self):
     try:
         City(name="Eupen",country=be,zip_code='4700').save()
     except IntegrityError:
-        pass
+        if settings.LINO.allow_duplicate_cities:
+            self.fail("Got IntegrityError though allow_duplicate_cities should be allowed.")
     else:
-        self.fail("Expected IntegrityError")
+        if not settings.LINO.allow_duplicate_cities:
+            self.fail("Expected IntegrityError")
         
     
     try:

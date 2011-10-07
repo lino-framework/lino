@@ -45,10 +45,13 @@ class RemoteUserMiddleware(object):
         try:
             username = request.META[self.header]
         except KeyError:
-            logger.warning("No %s in %s",self.header,request.META)
-            request.user = None
-            # If specified header doesn't exist, set `user` to None
-            return
+            if True:
+                raise Exception("No %s in %s" % (self.header,request.META))
+            else:
+                logger.warning("No %s in %s",self.header,request.META)
+                request.user = None
+                # If specified header doesn't exist, set `user` to None
+                return
         try:
             request.user = User.objects.get(username=username)
         except User.DoesNotExist,e:

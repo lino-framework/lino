@@ -1,6 +1,9 @@
 20111004
 ========
 
+Updated release 1.2.3
+---------------------
+
 Another set of small changes that enter into the 1.2.3 release:
 
 - :attr:`lino.modlib.jobs.models.Candidature.job` was nullable, 
@@ -9,10 +12,6 @@ Another set of small changes that enter into the 1.2.3 release:
   :meth:`lino.modlib.jobs.models.Candidature.__unicode__`
   when a user tried to save a Candidatur without a Job specified.
   
-- :term:`initdb` now calls `syncdb` with `verbosity=0` to avoid the 
-  irritating message "No fixtures found" (which comes because there 
-  are no `initial_data` fixtures).
-
 - There was no column `date_submitted` in the `CandidatursByPerson` 
   grid.
   This was because 
@@ -22,3 +21,14 @@ Another set of small changes that enter into the 1.2.3 release:
   and because a ``*`` in 
   :attr:`lino.reports.Report.column_names` does not expand to readonly fields.
 
+
+Writing Extensions for Google Chrome 
+------------------------------------
+
+Interesting lecture before going to bed:
+
+| http://code.google.com/chrome/extensions/getstarted.html
+| http://code.google.com/chrome/extensions/devguide.html
+| http://code.google.com/chrome/extensions/npapi.html
+| https://developer.mozilla.org/en/Plugins
+| http://www.firebreath.org/display/documentation/FireBreath+Home

@@ -927,7 +927,10 @@ tinymce.init({
         
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
-        rpt = actors.get_actor2(app_label,actor)
+        rpt = self.requested_report(request,app_label,actor)
+        #~ rpt = actors.get_actor2(app_label,actor)
+        #~ if rpt is None:
+            #~ raise Http404("No actor named '%s.%s'." % (app_label,actor))
         rh = rpt.get_handle(self)
         
         #~ if not rh.report.can_view.passes(request.user):
@@ -1315,7 +1318,8 @@ tinymce.init({
         raise Http404("Method %r not supported" % request.method)
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
-        rpt = actors.get_actor2(app_label,rptname)
+        rpt = self.requested_report(request,app_label,rptname)
+        #~ rpt = actors.get_actor2(app_label,rptname)
         #~ rh = rpt.get_handle(self)
         field = rpt.model._meta.get_field(fldname)
         chooser = choosers.get_for_field(field)

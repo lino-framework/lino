@@ -115,9 +115,15 @@ class Command(BaseCommand):
         #~ call_command('syncdb',load_initial_data=False,**options)
         #~ if USE_SQLDELETE:
         
-        syncdb_options = dict(**options)
-        syncdb_options.update(verbosity=0)
-        call_command('syncdb',**syncdb_options)
+        #~ tried to call `syncdb` with `verbosity=0` to avoid the 
+        #~ irritating message "No fixtures found" (which comes because there 
+        #~ are no `initial_data` fixtures):
+        #~ syncdb_options = dict(**options)
+        #~ syncdb_options.update(verbosity=0)
+        #~ call_command('syncdb',**syncdb_options)
+        #~ not good because all other messages "Creating table..." also disappear.
+        
+        call_command('syncdb',**options)
         
         call_command('loaddata',*args,**options)
         

@@ -1,0 +1,13 @@
+20111006
+========
+
+:mod:`lino.apps.dsbe.fixtures.demo` no longer creates a person 
+named Татьяна Казеннова. 
+The idea behind this was to show that cyrillic characters are supported.
+sqlite accepts mixing cyrillic and other alphabets, but doesn't bother 
+about correct sort collation.
+MySQL with charset utf8 and collation utf8_general_ci does NOT accept
+cyrillic characters, saying::
+
+  Warning: Incorrect string value: '\xD0\x9A\xD0\xB0\xD0\xB7...' for column 'name' at row 1
+  

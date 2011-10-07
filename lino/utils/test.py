@@ -126,13 +126,14 @@ class TestCase(DjangoTestCase):
         logger.warning("     GOT : %s",' '.join(b))
         self.fail("EXPECTED and GOT are not equivalent")
         
-    def request_PUT(self,url,data):
+    def request_PUT(self,url,data,**kw):
         """
         Sends a PUT request using Djangos test client, 
         overriding the `content_type` keyword.
         This is how ExtJS grids behave by default.
         """
-        response = self.client.put(url,data,content_type='application/x-www-form-urlencoded')
+        kw.update(content_type='application/x-www-form-urlencoded')
+        response = self.client.put(url,data,**kw)
         self.assertEqual(response.status_code,200)
         return response
         

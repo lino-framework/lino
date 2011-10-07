@@ -40,6 +40,16 @@ from lino.apps.dsbe import models as dsbe
 
 #~ dblogger.info('Loading')
 
+TATJANA_SUPPORT = False
+"""
+sqlite accepts mixing cyrillic and other alphabets, but doesn't bother 
+about correct sort collation.
+MySQL with charset utf8 and collation utf8_general_ci does NOT accept
+cyrillic characters, saying "Warning: Incorrect string value: '\xD0\x9A\xD0\xB0\xD0\xB7...' for column 'name' at row 1"
+
+"""
+
+
 DEMO_LINKS = [
   dict(name="Lino website",url="http://lino.saffre-rumma.net"),
   dict(name="Django website",url="http://www.djangoproject.com"),
@@ -239,12 +249,13 @@ def objects():
     yield gerd
     yield role(parent=cpas,child=gerd,type=4)
     
-    
-    tatjana = person(first_name=u"Татьяна",last_name=u"Казеннова",# name="Казеннова Татьяна",
-        city=kettenis,country='BE', 
-        birth_place="Moskau", # birth_country='SUHH',
-        sex='F')
-    yield tatjana
+    if TATJANA_SUPPORT:
+        tatjana = person(first_name=u"Татьяна",last_name=u"Казеннова",
+            # name="Казеннова Татьяна",
+            city=kettenis,country='BE', 
+            birth_place="Moskau", # birth_country='SUHH',
+            sex='F')
+        yield tatjana
     
     from django.core.exceptions import ValidationError
     # a circular reference: bernard is contact for company adg and also has himself as `job_office_contact`
@@ -384,13 +395,15 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
       user=root,person=hans).build
     yield contract(1,i2d(20090518),i2d(20090517),rcyclejob,rcycle_dir)
     yield contract(1,i2d(20100518),i2d(20100517),bisajob,bisa_dir)
-    yield contract(1,None,None,bisajob,bisa_dir,person=tatjana)
     yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
     yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
+    if TATJANA_SUPPORT:
+        yield contract(1,None,None,bisajob,bisa_dir,person=tatjana)
     
-    jobrequest = Instantiator('jobs.Candidature','job person').build
-    yield jobrequest(bisajob,tatjana)
-    yield jobrequest(rcyclejob,luc)
+    jobrequest = Instantiator('jobs.Candidature','job person date_submitted').build
+    if TATJANA_SUPPORT:
+        yield jobrequest(bisajob,tatjana,i2d(20111005))
+    yield jobrequest(rcyclejob,luc,i2d(20111005))
 
     #~ def f(rmd,d):
         #~ rmd.reminder_date = d
