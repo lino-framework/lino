@@ -850,7 +850,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
             kw.update(function=function)
             kw.update(sector=sector)
             #~ kw.update(job=job)
-            yield jobs.JobRequest(**kw)
+            yield jobs.Request(**kw)
         elif statut in (u'En Attente',u'En Cours',u'Terminé'):
             kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
             kw.update(applies_until=self.parsedate(row[u'FinContrat']))

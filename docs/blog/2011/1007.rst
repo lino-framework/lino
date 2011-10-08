@@ -1,6 +1,8 @@
 20111006
 ========
 
+Tring to get the test suite running on `wsl`.
+
 :mod:`lino.apps.dsbe.fixtures.demo` now 
 uses the romanized form "Tatjana Kasennova"
 instead of "Татьяна Казеннова". 
@@ -19,8 +21,90 @@ cyrillic characters, saying::
 So this example was not very useful and needs special configuration 
 tricks on MySQL. 
 
+
+
 :func:`lino.tools.obj2str` now handles the fact that values of an `AutoField` 
 are sometimes simple ``int`` and somtimes ``long`` integers.
 
-./var/snapshots/lino/lino/apps/dsbe/tests/dsbe_tests.py:194: 
-DeprecationWarning: BaseException.message has been deprecated as of Python 2.6
+The following failure comes when using Django 1.3 (and not a pre-1.4 snapshot)::
+
+  ======================================================================
+  ERROR: test_shortcut_view (django.contrib.contenttypes.tests.ContentTypesTests)
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "/var/snapshots/django/django/contrib/contenttypes/tests.py", line 64, in test_shortcut_view
+      obj = User.objects.create(username="john")
+    ...
+    File "/usr/lib/pymodules/python2.6/MySQLdb/connections.py", line 35, in defaulterrorhandler
+      raise errorclass, errorvalue
+  DatabaseError: (1146, "Table 'test_myproject.auth_user' doesn't exist")
+
+
+Accessing the `message` attribute of an `Exception` raises a DeprecationWarning 
+in Python 2.6.6, but not in Python 2.7::
+
+  ./var/snapshots/lino/lino/apps/dsbe/tests/dsbe_tests.py:194: 
+  DeprecationWarning: BaseException.message has been deprecated as of Python 2.6
+
+(Solved this by testing on ``str(e)`` instead of ``e.message``.)
+
+
+
+
+
+
+Here another funny failure that happens in wsl (Python 2.6.6, Django 1.4 pre-alpha SVN-16722) 
+but not on jana (Python 2.6.6, Django 1.4 pre-alpha SVN-16714)::
+
+  Problem installing fixture '/var/snapshots/lino/lino/apps/dsbe/fixtures/demo.py': Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 175, in handle
+      for obj in objects:
+    ...
+    File "/var/snapshots/lino/lino/utils/instantiator.py", line 80, in convert
+      model.__name__,lookup_kw,e))
+  DataError: RoleType.objects.get(**{'pk': 1}) : RoleType matching query does not exist.
+
+Updated `/var/snapshots/django-1.4` on wsl from revision 16722 to 16941.
+Updated `/var/snapshots/django` on jana from revision 16714 to 16941.
+Result: failure remains even if both systems have the same Django version. 
+
+
+Database configurations are equivalent, both have servers something like::
+
+  DATABASES = {
+      'default': {
+          'ENGINE': 'django.db.backends.mysql',
+          'NAME': 'myproject',
+          'USER': 'django',
+          'PASSWORD': 'my cool password',
+          'HOST': '127.0.0.1',
+          'PORT': '3306'
+      }
+  }
+
+How to compare the MySQL server configurations on two systems?
+The answer is::
+
+  mysqladmin variables -u root -p > mysql.vars
+  
+  
+Difference:
+`storage_engine` was `MyISAM` on jana but `InnoDB` on wsl.
+About ` storage engines <http://dev.mysql.com/doc/refman/5.1/en/storage-engines.html>`_:
+
+- MyISAM: The default MySQL storage engine and the one that is used 
+  the most in Web, data warehousing, and other application environments. 
+  MyISAM is supported in all MySQL configurations, and is the default 
+  storage engine unless you have configured MySQL to use a different 
+  one by default. 
+  
+- InnoDB: A transaction-safe (ACID compliant) storage engine for 
+  MySQL that has commit, rollback, and crash-recovery capabilities 
+  to protect user data. InnoDB row-level locking (without escalation 
+  to coarser granularity locks) and Oracle-style consistent nonlocking 
+  reads increase multi-user concurrency and performance. InnoDB stores 
+  user data in clustered indexes to reduce I/O for common queries based 
+  on primary keys. To maintain data integrity, InnoDB also supports 
+  FOREIGN KEY referential-integrity constraints.
+
+Currently we use `MyISAM`, later we'll test
