@@ -107,4 +107,7 @@ About ` storage engines <http://dev.mysql.com/doc/refman/5.1/en/storage-engines.
   on primary keys. To maintain data integrity, InnoDB also supports 
   FOREIGN KEY referential-integrity constraints.
 
-Currently we use `MyISAM`, later we'll test
+Currently we use `MyISAM`, later we'll get it running using `InnoDB`.
+
+Another little bug::
+  AttributeError: 'module' object has no attribute 'JobRequest'
