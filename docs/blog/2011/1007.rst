@@ -19,4 +19,8 @@ cyrillic characters, saying::
 So this example was not very useful and needs special configuration 
 tricks on MySQL. 
 
+:func:`lino.tools.obj2str` now handles the fact that values of an `AutoField` 
+are sometimes simple ``int`` and somtimes ``long`` integers.
 
+./var/snapshots/lino/lino/apps/dsbe/tests/dsbe_tests.py:194: 
+DeprecationWarning: BaseException.message has been deprecated as of Python 2.6

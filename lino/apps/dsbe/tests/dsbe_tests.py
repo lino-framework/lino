@@ -191,7 +191,7 @@ def test01b(self):
     try:
         kw = a.run_(ui,n)
     except Exception,e:
-        self.assertEqual(e.message,
+        self.assertEqual(str(e),
           u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.pisa.html'.")
           
     #~ t.template='Default.odt'
