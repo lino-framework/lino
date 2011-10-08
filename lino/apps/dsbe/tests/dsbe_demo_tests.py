@@ -53,7 +53,7 @@ def test01(self):
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     from lino.apps.dsbe.models import Person
-    self.assertEquals(Person.objects.count(), 72)
+    self.assertEquals(Person.objects.count(), 73)
     
     p = Person.objects.get(pk=117)
     self.assertEquals(unicode(p), "Annette ARENS (117)")
