@@ -852,7 +852,7 @@ class CandidaturesByJob(Candidatures):
     fk_name = 'job'
   
     def create_instance(self,req,**kw):
-        obj = super(RequestsByJob,self).create_instance(req,**kw)
+        obj = super(CandidaturesByJob,self).create_instance(req,**kw)
         if obj.job is not None:
             obj.type = obj.job.type
         return obj

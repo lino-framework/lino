@@ -174,6 +174,11 @@ Short-term
 Medium-term
 -----------
 
+#.  Il est vrai que Lino devrait désactiver le bouton "save grid config" 
+    pour les utilisateurs qui n'ont pas la permission (et chez qui Lino 
+    réagit en disant error_response {'message': u"L'utilisateur user ne peut 
+    pas configurer contacts.Persons.", 'success': False, 'alert': True})
+
 #.  notes : Note.body füllen aus Note.eventtype.body 
     und dabei wahrscheinlich Djangos templating language verwenden.
 
