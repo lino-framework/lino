@@ -1823,7 +1823,7 @@ if settings.LINO.user_model:
 
     reports.inject_field(User,
         'is_spis',
-        models.BooelanField(
+        models.BooleanField(
             verbose_name=_("is SPIS user")
         ),"""Whether this user is an integration assistant (not a general social agent).
         Deserves more documentation.
