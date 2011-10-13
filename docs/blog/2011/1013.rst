@@ -1,0 +1,4 @@
+20111013
+========
+
+- :mod:`lino.apps.dsbe.models` inhects new field `users.User.is_spis`.

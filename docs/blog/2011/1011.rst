@@ -1,0 +1,8 @@
+20111011
+========
+
+Fixed a simple straightforward bug 
+"NameError at /api/jobs/CandidaturesByJob:
+global name 'RequestsByJob' is not defined".
+
+

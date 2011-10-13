@@ -273,6 +273,10 @@ As long as nobody protests, I'll save some time by writing in German.
   05 06
   :doc:`07 <1007>`
   |br| 
+  10
+  :doc:`11 <1011>`
+  12
+  :doc:`13 <1013>`
   |br| 
   |br|  	
 

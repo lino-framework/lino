@@ -553,6 +553,7 @@ class UsersSGLoader(LinoMdbLoader):
         kw.update(last_name=row['NomASSSG'])
         kw.update(username=row['CodeASSSG'])
         kw.update(phone=row['TelASSSG'])
+        kw.update(is_spis=False)
         st = row['StatutASSSG']
         if st == "Ouvert":
             kw.update(is_active=True)
@@ -577,6 +578,7 @@ class UsersISPLoader(LinoMdbLoader):
         kw.update(last_name=row['NomASISP'])
         kw.update(username=row['CodeASISP'])
         kw.update(phone=row['Tel'])
+        kw.update(is_spis=True)
         st = row['StatutASISP']
         if st == "Ouvert":
             kw.update(is_active=True)
@@ -779,6 +781,7 @@ class DetailFonctionsLoader(LinoMdbLoader):
         kw.update(sector=SECTORS.get(row['Code']))
         yield self.model(**kw)
     
+
 class JobsContractTypeLoader(LinoMdbLoader):
     table_name = 'CboTypeMiseEmplois'
     model = jobs.ContractType

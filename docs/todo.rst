@@ -12,6 +12,12 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Listing 
+    "Personnes par phase d'intégration par AI" 
+    and
+    "Contrats par Employeur et par AI":
+    how to manage grouping in a report.
+
 #.  In Comboboxen mit mehr als einer Seite ist die Seitenblätter-Funktion
     nicht aktiviert.
     

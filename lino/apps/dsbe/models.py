@@ -1817,8 +1817,19 @@ reports.inject_field(Company,
 """
 from lino.tools import resolve_model
 #~ User = resolve_model('users.User')
-User = resolve_model(settings.LINO.user_model)
-User.grid_search_field = 'username'
+if settings.LINO.user_model:
+    User = resolve_model(settings.LINO.user_model)
+    User.grid_search_field = 'username'
+
+    reports.inject_field(User,
+        'is_spis',
+        models.BooelanField(
+            verbose_name=_("is SPIS user")
+        ),"""Whether this user is an integration assistant (not a general social agent).
+        Deserves more documentation.
+        """)
+        
+
 
 
 """
