@@ -42,16 +42,6 @@ class Third(
         
     remark = models.TextField(_("Remark"),blank=True,null=True)
     
-    def set_seqno(self):
-        qs = self.objects.filter(owner_type__exact=self.owner_type,
-          owner_id__exact=self.owner_id).order_by('seqno')
-        n = qs.count()
-        if n == 0:
-            self.seqno = 1
-        else:
-            last = qs[n-1]
-            self.seqno = last.seqno + 1
-            
     def summary_row(self,ui,rr,**kw):
         #~ s = ui.href_to(self)
         s = "(" + unicode(self.seqno) + ") "

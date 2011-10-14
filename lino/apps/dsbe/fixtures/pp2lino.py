@@ -930,6 +930,8 @@ class EventLoader(LinoMdbLoader):
             #~ kw.update(coach2=get_by_id(User,row[u'IDASSSG']))
             kw.update(type=EVENTS.get(row['TypeDeLettre']))
             kw.update(status=EVENT_STATI.get(row['Venu']))
+            kw.update(channel=EVENT_CHANNELS.get(row['FaireCourrier']))
+            kw.update(outbox_id=row['NCourrier'])
             yield self.model(**kw)
     
 

@@ -1,0 +1,12 @@
+20111014
+========
+
+Manager isn't accessible via Third instances
+--------------------------------------------
+
+Another bug fixed: AttributeError 
+"Manager isn't accessible via Third instances"
+at `/api/thirds/ThirdsByOwner` (when trying to add a new 
+record in `ThirdsByOwner`.
+
+

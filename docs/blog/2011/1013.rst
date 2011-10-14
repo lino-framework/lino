@@ -1,4 +1,63 @@
 20111013
 ========
 
+Changes
+-------
+
 - :mod:`lino.apps.dsbe.models` inhects new field `users.User.is_spis`.
+- Event.type now also in `lino.apps.dsbe.config.1.dtl`
+
+
+Notes d'analyse `pp2lino`
+-------------------------
+
+- `CboTypeMiseEmplois` vient bien dans `jobs.ContractType`. 
+  À noter qu'à Bruxelles il y a des contrats de travail qui *ne sont pas*
+  Art.60/7. Par contre à eupen tous les contrats de travail sont des Art.60/7.
+  Éventuellement un champ `jobs.ContractType.art60`, mais cela ne presse pas.
+  
+- Il faut une vue "rendez-vous du jour" (une par AI et une pour toute l'équipe)
+
+- Une "fiche de transfert" est un document aux données signalétiques d'un 
+  nouveau client, à encoder par une sécrétaire. 
+  
+- Les AS envoyent des gens au ISP, et l'ISP répond par une 
+  "Liste des nouveaux clients" en disant quel AI devient responsable.
+  La "Liste des nouveaux clients" est une confirmation "nous avons repris la 
+  personne".
+  
+- Propositions de convocation. 
+  L'AI devrait théoriquement voir chacun de ses clients au moins une fois par 
+  mois. 
+  Lino doit afficher une liste des personnes à convoquer (par AI). Càd de ceux qui n'ont pas eu de rdv pendant au moins un mois.
+  L'AI regarde dans son agenda (papier) pour décider quand il convoque la 
+  personne, et crée un rendez-vous à l'état "à convoquer" et avec valeur par défaut "Courrier" dans le nouveau champ "Courrier" (´channel´).
+  Lino mettra dans le champ "type de lettre" une des valeurs "1e convocation", "convocation" ou "mise en demeurre" (si au moins un rdv à l'état "absent" existe).
+  Une convocation peut alternativement être orale (convenue sur place avec le client) ou "téléphone" (l'AI a appelé la personne). Dans ces deux cas il ne faut pas envoyer de lettre.
+  Les autres convocations (celles à l'état "à convoquer" et avec "Courrier") sont à imprimer et poster par la sécrétaire, qui tient aussi un journal physique du courrier sortant, dans lequel chaque lettre sortante reçoit un n° unique. La secrétaire inscrit ce n° de pièce dans Lino (dans le nouveau champ `Event.outbox_no`) et change l'état "à convoquer" en "envoyé".
+  Si une lettre revient ("n'habite pas à l'adresse indiquée"), on passe l'état à "retour".
+  
+- RPE : checkbox qui in  dique si le rdv a été inscrit dans la bd d'actiris.
+
+- Évaluations Art.60/7 : un contrat Art60/7 implique trois rendez-vous d'évaluation ("1e éval", "éval. inter" et "éval. finale") à des dates qui sont prévisibles dès que le contrat est encodé. --> tasks automatiques ou rendez-vous "à confirmer"?
+
+- Lino affiche trop souvent une liste complète de toutes les personnes. 
+  Cela va causer un surchargement inutile de la bd.
+  Au lieu d'afficher la liste de toutes les personnes, il serait mieux d'afficher directement la fenêtre détail, avec une combobox "Go to person" en haut à droite qui permet de sélectionner la personne. 
+  
+  
+- Une "fiche candidature", dans pp, est un contrat à l'état "fiche de transfert".
+  Mais nous allons passer à la solution Lino avec deux tables distinctes car il ne s'agit pas vraiment d'un cycle de vie. Le champ Candidature.contract disparaît car la candidature d'une personne pour une fonction ou un poste reste valable tant que la personne est accompagnée et même si elle a (pour l'instant) un emploi. 
+
+- Il faut encore un champ "Motif Art. 60" par Contrat de travail, avec deux choix possibles: "expérience professionelle" ou "chômage".
+
+- DataControlListing: Moentionner les "Contrat en cours mais date de fin dépassée".
+
+- Dans tous les listings, une aide visuelle pour éviter de devoir utiliser un latte pour s'orienter. P.ex. toutes les lignes paires avec un arrière-plan gris.
+
+- Il faut encore un champ "Niveau d'études" par personne, avec des valeurs "secondaires générales", "secondaires techniques", "... "master", ..., "apprentissage", ...
+
+- Il faut peut-être encore un champ "Accompagnemnet en attente" par personne. Un client en attente est une personne pour laquelle l'AI n'a pas encore été spécifié.
+
+- Les modèles de documents se trouvent dans la mdb. 
+  P.ex. Reports CourrierMiseEnDemeurre

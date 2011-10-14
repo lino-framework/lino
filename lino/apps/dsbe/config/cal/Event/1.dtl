@@ -3,7 +3,7 @@
 :hideCheckBoxLabels: 
 
 main = 
-  summary user project 
+  type summary user project 
   start end duration alarm
   # start_date start_time end_date end_time 
   status place priority access_class transparent rset
