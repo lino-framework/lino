@@ -159,6 +159,9 @@ except ImportError, exp:
                     if class_obj2 is not None:
                         class_obj1 = class_obj2
             return class_obj1
+        # fix_any
+        def gds_build_any(self, node, type_name=None):
+            return None
 
 
 #
@@ -368,9 +371,11 @@ class ServiceRequestType(GeneratedsSuper):
     body"""
     subclass = None
     superclass = None
-    def __init__(self, ServiceId=None, Version=None):
+    def __init__(self, ServiceId=None, Version=None, any_=None):
         self.ServiceId = ServiceId
         self.Version = Version
+        # fix_any
+        self.any_ = any_
     def factory(*args_, **kwargs_):
         if ServiceRequestType.subclass:
             return ServiceRequestType.subclass(*args_, **kwargs_)
@@ -381,6 +386,9 @@ class ServiceRequestType(GeneratedsSuper):
     def set_ServiceId(self, ServiceId): self.ServiceId = ServiceId
     def get_Version(self): return self.Version
     def set_Version(self, Version): self.Version = Version
+    # fix_any
+    def get_any_(self): return self.any_
+    def set_any_(self, any_): self.any_ = any_
     def export(self, outfile, level, namespace_='', name_='ServiceRequestType', namespacedef_=''):
         showIndent(outfile, level)
         outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
@@ -402,6 +410,11 @@ class ServiceRequestType(GeneratedsSuper):
         if self.Version is not None:
             showIndent(outfile, level)
             outfile.write('<%sVersion>%s</%sVersion>\n' % (namespace_, self.gds_format_string(quote_xml(self.Version).encode(ExternalEncoding), input_name='Version'), namespace_))
+        # fix_any
+        if self.any_:
+            #~ self.any_.export(outfile, level, namespace_, name_='description', )
+            self.any_.export(outfile, level, namespace_)
+            
     def hasContent_(self):
         if (
             self.ServiceId is not None or
@@ -440,6 +453,9 @@ class ServiceRequestType(GeneratedsSuper):
             Version_ = child_.text
             Version_ = self.gds_validate_string(Version_, node, 'Version')
             self.Version = Version_
+        else:
+            obj_ = self.gds_build_any(node, 'ServiceRequestType')
+            self.set_any_(obj_)
 # end class ServiceRequestType
 
 
