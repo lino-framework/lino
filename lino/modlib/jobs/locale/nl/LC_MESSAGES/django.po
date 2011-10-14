@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-30 22:58+0100\n"
+"POT-Creation-Date: 2011-10-14 19:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgid "Job Sectors"
 msgstr ""
 
 #: .\models.py:170 .\models.py:183 .\models.py:236 .\models.py:458
-#: .\models.py:504 .\models.py:655 .\models.py:792
+#: .\models.py:504 .\models.py:655 .\models.py:793
 msgid "Remark"
 msgstr ""
 
@@ -254,31 +254,35 @@ msgstr ""
 msgid "Job Candidatures"
 msgstr ""
 
-#: .\models.py:779
+#: .\models.py:780
 msgid "date submitted"
 msgstr ""
 
-#: .\models.py:783
+#: .\models.py:784
 msgid "Contract found"
 msgstr ""
 
-#: .\models.py:795
+#: .\models.py:796
 #, python-format
 msgid "%(job)s request by %(person)s"
 msgstr ""
 
-#: .\models.py:858 .\models.py:917
-msgid "Contracts Situation"
+#: .\models.py:865
+msgid "Contracts Situation 2"
 msgstr ""
 
-#: .\models.py:898 .\models.py:957
+#: .\models.py:905 .\models.py:964
 msgid "Candidates"
 msgstr ""
 
-#: .\models.py:978
+#: .\models.py:924
+msgid "Contracts Situation"
+msgstr ""
+
+#: .\models.py:985
 msgid "is Employer"
 msgstr ""
 
-#: .\models.py:991
+#: .\models.py:999
 msgid "~Jobs"
 msgstr ""

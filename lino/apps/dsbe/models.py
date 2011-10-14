@@ -572,7 +572,7 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
           
     #~ def get_auto_task_defaults(self,**kw):
     def update_owned_task(self,task):
-        task.person = self
+        task.project = self
         
     @classmethod
     def get_reminders(model,ui,user,today,back_until):

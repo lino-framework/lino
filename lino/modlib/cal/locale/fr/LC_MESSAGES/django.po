@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-30 22:58+0100\n"
+"POT-Creation-Date: 2011-10-14 19:44+0100\n"
 "PO-Revision-Date: 2011-09-14 21:19+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -80,7 +80,7 @@ msgstr "Sommaire"
 msgid "Description"
 msgstr "Description"
 
-#: .\models.py:246 .\models.py:465
+#: .\models.py:246 .\models.py:469
 msgid " on "
 msgstr ""
 
@@ -128,7 +128,7 @@ msgstr "modifié par l'utilisateur"
 msgid "Recurrence Set"
 msgstr ""
 
-#: .\models.py:360 .\models.py:544
+#: .\models.py:360 .\models.py:548
 msgid "Event"
 msgstr "Rendez-vous"
 
@@ -160,7 +160,7 @@ msgstr "Endroit"
 msgid "Priority"
 msgstr "Priorité"
 
-#: .\models.py:375 .\models.py:550
+#: .\models.py:375 .\models.py:554
 msgid "Status"
 msgstr "Statut"
 
@@ -196,43 +196,43 @@ msgstr "Heure d'échéance"
 msgid "Done"
 msgstr "accomplie"
 
-#: .\models.py:525
+#: .\models.py:529
 msgid "Guest Role"
 msgstr "Rōle de participant"
 
-#: .\models.py:526
+#: .\models.py:530
 msgid "Guest Roles"
 msgstr "Rōles de participant"
 
-#: .\models.py:540
+#: .\models.py:544
 msgid "Guest"
 msgstr "Participant"
 
-#: .\models.py:541
+#: .\models.py:545
 msgid "Guests"
 msgstr "Participants"
 
-#: .\models.py:547
+#: .\models.py:551
 msgid "Role"
 msgstr "R^ole"
 
-#: .\models.py:557
+#: .\models.py:561
 msgid "Remark"
 msgstr "Remarque"
 
-#: .\models.py:647
+#: .\models.py:651
 msgid "Upcoming reminders"
 msgstr "Rappels à venir"
 
-#: .\models.py:648
+#: .\models.py:652
 msgid "Past reminders"
 msgstr "Rappels passés"
 
-#: .\models.py:717
+#: .\models.py:726
 msgid "due date reached"
 msgstr "date d'échéance atteinte"
 
-#: .\models.py:734 .\models.py:739 .\models.py:746
+#: .\models.py:743 .\models.py:748 .\models.py:755
 msgid "~Calendar"
 msgstr "~Calendrier"
 

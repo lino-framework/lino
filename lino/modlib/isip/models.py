@@ -143,6 +143,8 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     :class:`lino.modlib.isip.models.Contract`
     """
     
+    TASKTYPE_CONTRACT_APPLIES_UNTIL = 1
+    
     class Meta:
         abstract = True
   
@@ -183,14 +185,10 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     
     def summary_row(self,ui,rr,**kw):
         s = ui.href_to(self)
-        s += " (" + ui.href_to(self.person) + ")"
+        #~ s += " (" + ui.href_to(self.person) + ")"
         #~ s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.provider) + ")"
         return s
             
-    def update_owned_task(self,task):
-        task.person = self.person
-        task.company = self.company
-        
     def __unicode__(self):
         #~ return u'%s # %s' % (self._meta.verbose_name,self.pk)
         #~ return u'%s#%s (%s)' % (self.job.name,self.pk,
@@ -241,9 +239,23 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     def update_owned_task(self,task):
         #~ mixins.Reminder.update_owned_task(self,task)
         #~ contacts.PartnerDocument.update_owned_task(self,task)
-        task.person = self.person
-        task.company = self.company
+        task.project = self.person
+        #~ task.company = self.company
         
+    def save(self,*args,**kw):
+        super(ContractBase,self).save(*args,**kw)
+        self.save_auto_tasks()
+        
+    def save_auto_tasks(self):
+        
+        if self.user:
+            update_auto_task(
+              self.TASKTYPE_CONTRACT_APPLIES_UNTIL,
+              self.user,self.applies_until,
+              _("Contract ends"),
+              self,
+              alarm_value=1,alarm_unit=DurationUnit.months)
+              
             
     
 class Contract(ContractBase):

@@ -56,4 +56,12 @@ to return something.
 
 Check-in 20111014c.
 
+Automatic tasks
+---------------
 
+There was a bug in :meth:`lino.apps.dsbe.models.Person.update_owned_task`: 
+it did ``task.person = self`` instead of ``task.project = self`` (and Django 
+doesn't complain when setting an instance attribute that doesn't have a 
+corresponding field).
+
+New automatic task on Contracts : "Contract ends"

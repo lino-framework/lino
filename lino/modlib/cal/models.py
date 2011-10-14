@@ -448,7 +448,11 @@ class Task(mixins.Owned,Component):
                 #~ self.company = self.owner
             m = getattr(self.owner,'update_owned_task',None)
             if m:
+                #~ print "20111014 call update_owned_task() on", self.owner
                 m(self)
+            #~ else:
+                #~ print "20111014 no update_owned_task on", self
+              
         super(Task,self).save(*args,**kw)
 
     def __unicode__(self):
@@ -663,8 +667,11 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
     """Creates, updates or deletes the automatic :class:`Task` 
     related to the specified `owner`.
     """
+    #~ print "20111014 update_auto_task"
     #~ if SKIP_AUTO_TASKS: return 
-    if settings.LINO.loading_from_dump: return 
+    if settings.LINO.loading_from_dump: 
+        #~ print "20111014 loading_from_dump"
+        return 
     #~ if is_deserializing(): return 
     Task = resolve_model('cal.Task')
     ot = ContentType.objects.get_for_model(owner.__class__)
@@ -681,6 +688,7 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
             task.summary = force_unicode(summary)
         #~ obj.summary = summary
         task.start_date = date
+        #~ print "20111014 gonna save() task", task
         #~ for k,v in kw.items():
             #~ setattr(obj,k,v)
         #~ obj.due_date = date - delta
@@ -688,6 +696,7 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
         #~ owner.update_owned_task(task)
         task.save()
     else:
+        # delete task if it exists
         try:
             obj = Task.objects.get(owner_id=owner.pk,
                     owner_type=ot,auto_type=autotype)

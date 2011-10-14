@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-30 22:58+0100\n"
+"POT-Creation-Date: 2011-10-14 19:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,7 +81,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\models.py:246 .\models.py:465
+#: .\models.py:246 .\models.py:469
 msgid " on "
 msgstr ""
 
@@ -129,7 +129,7 @@ msgstr ""
 msgid "Recurrence Set"
 msgstr ""
 
-#: .\models.py:360 .\models.py:544
+#: .\models.py:360 .\models.py:548
 msgid "Event"
 msgstr ""
 
@@ -161,7 +161,7 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#: .\models.py:375 .\models.py:550
+#: .\models.py:375 .\models.py:554
 msgid "Status"
 msgstr ""
 
@@ -197,43 +197,43 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: .\models.py:525
+#: .\models.py:529
 msgid "Guest Role"
 msgstr ""
 
-#: .\models.py:526
+#: .\models.py:530
 msgid "Guest Roles"
 msgstr ""
 
-#: .\models.py:540
+#: .\models.py:544
 msgid "Guest"
 msgstr ""
 
-#: .\models.py:541
+#: .\models.py:545
 msgid "Guests"
 msgstr ""
 
-#: .\models.py:547
+#: .\models.py:551
 msgid "Role"
 msgstr ""
 
-#: .\models.py:557
+#: .\models.py:561
 msgid "Remark"
 msgstr ""
 
-#: .\models.py:647
+#: .\models.py:651
 msgid "Upcoming reminders"
 msgstr ""
 
-#: .\models.py:648
+#: .\models.py:652
 msgid "Past reminders"
 msgstr ""
 
-#: .\models.py:717
+#: .\models.py:726
 msgid "due date reached"
 msgstr ""
 
-#: .\models.py:734 .\models.py:739 .\models.py:746
+#: .\models.py:743 .\models.py:748 .\models.py:755
 msgid "~Calendar"
 msgstr ""
 

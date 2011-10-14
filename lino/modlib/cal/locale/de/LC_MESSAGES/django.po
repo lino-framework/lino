@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.cal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-30 22:58+0100\n"
+"POT-Creation-Date: 2011-10-14 19:44+0100\n"
 "PO-Revision-Date: 2011-09-01 03:08+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -80,7 +80,7 @@ msgstr "Kurzbeschreibung"
 msgid "Description"
 msgstr "Bezeichnung"
 
-#: .\models.py:246 .\models.py:465
+#: .\models.py:246 .\models.py:469
 msgid " on "
 msgstr " am "
 
@@ -128,7 +128,7 @@ msgstr "manuell bearbeitet"
 msgid "Recurrence Set"
 msgstr "Wiederholungsserie"
 
-#: .\models.py:360 .\models.py:544
+#: .\models.py:360 .\models.py:548
 msgid "Event"
 msgstr "Termin"
 
@@ -160,7 +160,7 @@ msgstr "Ort"
 msgid "Priority"
 msgstr "Priorität"
 
-#: .\models.py:375 .\models.py:550
+#: .\models.py:375 .\models.py:554
 msgid "Status"
 msgstr ""
 
@@ -196,43 +196,43 @@ msgstr "Fällig um"
 msgid "Done"
 msgstr "Erledigt"
 
-#: .\models.py:525
+#: .\models.py:529
 msgid "Guest Role"
 msgstr "Gastrolle"
 
-#: .\models.py:526
+#: .\models.py:530
 msgid "Guest Roles"
 msgstr "Gastrollen"
 
-#: .\models.py:540
+#: .\models.py:544
 msgid "Guest"
 msgstr "Gast"
 
-#: .\models.py:541
+#: .\models.py:545
 msgid "Guests"
 msgstr "Gäste"
 
-#: .\models.py:547
+#: .\models.py:551
 msgid "Role"
 msgstr "Rolle"
 
-#: .\models.py:557
+#: .\models.py:561
 msgid "Remark"
 msgstr "Bemerkungen"
 
-#: .\models.py:647
+#: .\models.py:651
 msgid "Upcoming reminders"
 msgstr "Ausblick"
 
-#: .\models.py:648
+#: .\models.py:652
 msgid "Past reminders"
 msgstr "Rückblick"
 
-#: .\models.py:717
+#: .\models.py:726
 msgid "due date reached"
 msgstr "Fälligkeitsdatum erreicht"
 
-#: .\models.py:734 .\models.py:739 .\models.py:746
+#: .\models.py:743 .\models.py:748 .\models.py:755
 msgid "~Calendar"
 msgstr "~Kalender"
 
