@@ -151,9 +151,9 @@ class Owned(models.Model):
     
     @chooser(instance_values=True)
     def owner_id_choices(cls,owner_type):
-        #~ ct = ContentType.objects.get(pk=owner_type)
         if owner_type:
             return owner_type.model_class().objects.all()
+        return []
       
     #~ owner_id_choices.instance_values = True
     #~ owner_id_choices = classmethod(owner_id_choices)

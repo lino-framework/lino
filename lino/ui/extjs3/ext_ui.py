@@ -69,6 +69,7 @@ from lino.utils import menus
 from lino.tools import makedirs_if_missing
 from lino.utils.config import find_config_file
 from lino.utils import jsgen
+from lino.utils import isiterable
 from lino.utils.jsgen import py2js, js_code, id2js
 
 from lino.utils.jscompressor import JSCompressor
@@ -1325,7 +1326,11 @@ tinymce.init({
         chooser = choosers.get_for_field(field)
         if chooser:
             qs = chooser.get_request_choices(request)
-            assert qs is not None, "%s.%s_choices() returned None" % (rpt.model,fldname)
+            #~ if qs is None:
+                #~ qs = []
+            assert isiterable(qs), \
+                  "%s.%s_choices() returned %r which is not iterable." % (
+                  rpt.model,fldname,qs)
         elif field.choices:
             qs = field.choices
         elif isinstance(field,models.ForeignKey):

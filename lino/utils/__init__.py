@@ -74,7 +74,18 @@ def iif(l,y,f):
     if l: return y 
     return f
     
+def isiterable(x):
+    "Returns `True` if the specified object is iterable."
+    try:
+        it = iter(x)
+    except TypeError: 
+        return False
+    return True
+    
+    
 def ispure(s):
+    """Returns `True` if the specified string `s` is either a unicode 
+    string or contains only ASCII characters."""
     if s is None: return True 
     if type(s) == types.UnicodeType:
         return True

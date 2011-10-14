@@ -9,4 +9,51 @@ Another bug fixed: AttributeError
 at `/api/thirds/ThirdsByOwner` (when trying to add a new 
 record in `ThirdsByOwner`.
 
+Continued on BCSS connection
+----------------------------
+
+Dave Kuhlmann sent me a first prototype on how he plans to support `<any>` 
+elements in a XSD schema.
+It seems that his approach will be a solution for me. 
+I cannot currently say more than "It seems"
+because now I must first crawl through BCSS documentaton and find out
+what they actually expect in that `<any>` element.
+
+Here is what I did: After applying his suggested manual changes to my
+`SSDNRequest.py`, I continued to try to get my BCSS request running
+(file `test2.py`). Both files are published here:
+http://code.google.com/p/lino/source/browse/lino/utils/bcss
+
+Check-in 20111014b.
+
+
+Removed useless assertion in `choices_view`
+-------------------------------------------
+
+Here is the chooser of :meth:`lino.mixins.Owned.owner_id_choices`::
+
+    @chooser(instance_values=True)
+    def owner_id_choices(cls,owner_type):
+        if owner_type:
+            return owner_type.model_class().objects.all()
+        return []
+        
+The last line, ``return []``, was missing.
+:meth:`lino.ui.extjs3.ext_ui.ExtUI.choices_view` correctly raised 
+an assertion at `/choices/cal/TasksByProject/owner_id`.
+
+A chooser must always return an iterable. 
+Usually it is either a `list` or a Django QuerySet. 
+If the chooser decides that there are no choices available, 
+it must return an empty list, not `None`.
+
+:meth:`lino.ui.extjs3.ext_ui.ExtUI.choices_view` 
+and other methods 
+might check 
+for `None` values and substitute them silently by an empty list, 
+but we prefer to avoid bugs caused by code that forgets 
+to return something.
+
+Check-in 20111014c.
+
 
