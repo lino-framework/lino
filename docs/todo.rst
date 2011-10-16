@@ -12,6 +12,12 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Idee: Notizen, Termine und Verträge mit MTI als Kinder einer 
+    allgemeinen Tabelle "Chronikeinträge" implementieren.
+    
+#.  Idee: Berufswünsche raus, und in "Stellenanfragen" stattdessen 
+    zwei neue Kolonnen Sektor und Funktion.
+
 #.  Listing 
     "Personnes par phase d'intégration par AI" 
     and

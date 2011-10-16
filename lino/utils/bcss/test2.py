@@ -14,26 +14,16 @@ commands like::
 (See :srcref:`xsd2py.bat </lino/utils/bcss/xsd2py.bat>`
 for the actual commands used on a windows machine.)
 
-Currently only the `SSDNRequest.py` module is being used,
-you can browse the input XSD 
-:srcref:`here </lino/utils/bcss/XSD/SSDN/SERVICE/SSDNREQUEST.XSD>`
-and the generated source code 
-:srcref:`here </lino/utils/bcss/SSDNRequest.py>`.
+Note that :file:`SSDNRequest.py` has been modified manually 
+for <any> support.
 
 When running this script you need to set your 
-DJANGO_SETTINGS_MODULE environment variable.
-  
-This requires `bcss_user_params` in your :xfile:`settings.py` 
-defined like::
-
-  class Lino(Lino):
-      ...
-      bcss_user_params = dict(
-            UserID='123', 
-            Email='123@example.com', 
-            OrgUnit='123', 
-            MatrixID=12, 
-            MatrixSubID=3)
+DJANGO_SETTINGS_MODULE environment variable
+which points to a :xfile:`settings.py` 
+that defines your :attr:`lino.Lino.bcss_user_params`.
+Since this script doesn't actually perform any connection, 
+the `bcss_user_params` may contain fictive values. 
+But they must exist.
 
 """
 
@@ -67,14 +57,14 @@ SOAP_ENVELOPE = """
 """
 
 class Service:
-    def __init__(self,name,requestClass,doc): # ,*args,**kw):
+    def __init__(self,name,requestClass,targetNamespace,doc): # ,*args,**kw):
         self.name = name
         self.requestClass = requestClass
+        self.targetNamespace = targetNamespace
         self.doc = doc
         #~ self.args = args
         #~ self.kw = kw
     def instantiate(self,*args,**kw):
-        # currently there is no verification of the parameters
         return self.requestClass(*args,**kw)
 
 from PerformInvestigation import PerformInvestigationRequest
@@ -85,13 +75,14 @@ SERVICES.append(
   Service(
     'OCMWCPASPerformInvestigation', 
     PerformInvestigationRequest,
+    'http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation',
     u"""
     Obtention d’informations des registres national et BCSS 
     en vue de l’enquête sociale (données légales, composition 
     de ménage, historique des adresses, recherche dans le 
     fichier d’attente).
     
-    Parameters: 
+    Instance parameters: 
     
     - SocialSecurityUser (string)
     - DataGroups : The possible types of information that can be obtained. 

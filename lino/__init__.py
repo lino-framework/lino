@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2002-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -379,6 +380,40 @@ class Lino(object):
     date_format_extjs = 'd.m.Y'
     
     alt_date_formats_extjs = 'd/m/Y|Y-m-d'
+    
+    bcss_user_params = None
+    u"""
+    User parameters for BCSS access.
+    
+    Example::
+
+      class Lino(Lino):
+          ...
+          bcss_user_params = dict(
+                UserID='123', 
+                Email='123@example.com', 
+                OrgUnit='123', 
+                MatrixID=12, 
+                MatrixSubID=3)
+
+    L’ « authorized user » est l’utilisateur de l’application. 
+    Dans certains cas il s’agit de la personne physique derrière 
+    la machine client, dans d’autres d’une application utilisant les services. 
+    Ça correspond à un profil au niveau de la BCSS (cfr. IHFN et numéro de programme).
+    
+    « MatrixID » est l’identification dans la matrice, 
+    c'est-à-dire, le secteur (17 pour les CPAS).
+    
+    « SubMatrixID » est l’identification du réseau 
+    (0 pour primaire, 1 pour secondaire donc pour les CPAS...) 
+    (voir « Service and Democlient usage »).
+    
+    « OrgUnit » est un identifiant pour l’organisme demandeur; 
+    dans le cas des CPAS, le numéro KBO est utilisé.
+
+    """
+    
+    
     
    
     def parse_date(self,s):
