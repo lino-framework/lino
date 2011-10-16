@@ -69,6 +69,9 @@ class Action(object):
     def __unicode__(self):
         return force_unicode(self.label)
         
+    def get_button_label(self):
+        return self.label 
+        
         
 class WindowAction(Action):
     pass
@@ -84,20 +87,17 @@ class OpenWindowAction(WindowAction):
     #~ action_type = 'open_window'
     
     
-class ToggleWindowAction(WindowAction):
-    opens_a_slave = True
-    #~ action_type = 'toggle_window'    
+#~ class ToggleWindowAction(WindowAction):
+    #~ opens_a_slave = True
     
                 
-class SlaveGridAction(ToggleWindowAction):
+#~ class SlaveGridAction(ToggleWindowAction):
   
-    def __init__(self,actor,slave):
-        #~ assert isinstance(slave,Report)
-        self.slave = slave # .get_handle(ah.ui)
-        self.name = slave._actor_name
-        #~ print 20100415,self.name
-        self.label = slave.button_label
-        ToggleWindowAction.__init__(self,actor)
+    #~ def __init__(self,actor,slave):
+        #~ self.slave = slave # .get_handle(ah.ui)
+        #~ self.name = slave._actor_name
+        #~ self.label = slave.button_label
+        #~ ToggleWindowAction.__init__(self,actor)
         
         
     

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-14 19:44+0100\n"
+"POT-Creation-Date: 2011-10-16 08:36+0100\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -130,7 +130,7 @@ msgstr ""
 msgid "Recurrence Set"
 msgstr ""
 
-#: .\models.py:360 .\models.py:548
+#: .\models.py:360 .\models.py:550
 msgid "Event"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#: .\models.py:375 .\models.py:554
+#: .\models.py:375 .\models.py:556
 msgid "Status"
 msgstr ""
 
@@ -200,44 +200,44 @@ msgstr ""
 msgid "Done"
 msgstr "Telefon"
 
-#: .\models.py:529
+#: .\models.py:531
 msgid "Guest Role"
 msgstr ""
 
-#: .\models.py:530
+#: .\models.py:532
 msgid "Guest Roles"
 msgstr ""
 
-#: .\models.py:544
+#: .\models.py:546
 msgid "Guest"
 msgstr ""
 
-#: .\models.py:545
+#: .\models.py:547
 msgid "Guests"
 msgstr ""
 
-#: .\models.py:551
+#: .\models.py:553
 msgid "Role"
 msgstr ""
 
-#: .\models.py:561
+#: .\models.py:563
 #, fuzzy
 msgid "Remark"
 msgstr "Märkused"
 
-#: .\models.py:651
+#: .\models.py:653
 msgid "Upcoming reminders"
 msgstr ""
 
-#: .\models.py:652
+#: .\models.py:654
 msgid "Past reminders"
 msgstr ""
 
-#: .\models.py:726
+#: .\models.py:728
 msgid "due date reached"
 msgstr ""
 
-#: .\models.py:743 .\models.py:748 .\models.py:755
+#: .\models.py:745 .\models.py:750 .\models.py:757
 msgid "~Calendar"
 msgstr ""
 

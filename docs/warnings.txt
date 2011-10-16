@@ -2,55 +2,70 @@ T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:23: (WARNING/2) autodoc can't imp
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:61: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.fixtures.pp2lino', it reported error: "ChoiceList name 'CefLevel' already defined by <class 'lino.apps.dsbe.models.CefLevel'>", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:78: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_tests', it reported error: "ChoiceList name 'CefLevel' already defined by <class 'lino.apps.dsbe.models.CefLevel'>", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:85: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_demo_tests', it reported error: "ChoiceList name 'CefLevel' already defined by <class 'lino.apps.dsbe.models.CefLevel'>", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.modlib.isip.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.isip.models', it reported error: "ChoiceList name 'CefLevel' already defined by <class 'lino.apps.dsbe.models.CefLevel'>", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.jobs.models', it reported error: "ChoiceList name 'CefLevel' already defined by <class 'lino.apps.dsbe.models.CefLevel'>", please check your spelling and sys.path
-T:\hgwork\lino\docs\blog\2011\0914.rst:24: (ERROR/3) Unknown interpreted text role "modelmeth".
-T:\hgwork\lino\docs\blog\2011\0914.rst:45: (WARNING/2) Inline substitution_reference start-string without end-string.
-T:\hgwork\lino\docs\blog\2011\0914.rst:45: (WARNING/2) Inline substitution_reference start-string without end-string.
-T:\hgwork\lino\docs\blog\2011\0914.rst:45: (WARNING/2) Inline substitution_reference start-string without end-string.
-T:\hgwork\lino\docs\blog\2011\0914.rst:45: (WARNING/2) Inline substitution_reference start-string without end-string.
-T:\hgwork\lino\docs\blog\2011\0915.rst:30: (WARNING/2) Inline substitution_reference start-string without end-string.
-T:\hgwork\lino\docs\blog\2011\0915.rst:30: (WARNING/2) Inline substitution_reference start-string without end-string.
-T:\hgwork\lino\docs\blog\2011\0915.rst:30: (WARNING/2) Inline substitution_reference start-string without end-string.
-T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "1".
-T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "2".
-T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "3".
-T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "4".
-T:\hgwork\lino\docs\tickets\45.rst:3: (WARNING/2) Duplicate explicit target name: "5".
-T:\hgwork\lino\docs\todo.rst:40: (ERROR/3) Unexpected indentation.
+t:\hgwork\lino\lino\utils\mti.py:docstring of lino.utils.mti:3: (ERROR/3) Unexpected indentation.
+t:\hgwork\lino\lino\utils\mti.py:docstring of lino.utils.mti:1: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
 T:\hgwork\lino\docs\dsbe\appdocs\dsbe.JobExperience.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\dsbe.Study.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\dsbe.StudyType.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.JobRequest.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\mails.InMail.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\mails.OutMail.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\admin\dpytutorial.rst:167: WARNING: unknown document: /tutorial/t1
-T:\hgwork\lino\docs\admin\upgrade.rst:56: WARNING: unknown document: /releases/20110906
 T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.rst:133: WARNING: py:attr reference target not found: date_format_strftime
 T:\hgwork\lino\docs\autodoc\lino.rst:133: WARNING: py:attr reference target not found: date_format_extjs
 T:\hgwork\lino\docs\autodoc\lino.rst:150: WARNING: py:attr reference target not found: time_format_strftime
 T:\hgwork\lino\docs\autodoc\lino.rst:150: WARNING: py:attr reference target not found: time_format_extjs
 T:\hgwork\lino\docs\autodoc\lino.rst:167: WARNING: xfile reference target not found: fixtures
-T:\hgwork\lino\docs\autodoc\lino.rst:208: WARNING: py:mod reference target not found: lino.utils.config
-T:\hgwork\lino\docs\autodoc\lino.rst:300: WARNING: py:mod reference target not found: lino.test_apps.1
+T:\hgwork\lino\docs\autodoc\lino.rst:207: WARNING: py:meth reference target not found: lino.apps.dsbe.settings.Lino.setup_quicklinks
+T:\hgwork\lino\docs\autodoc\lino.rst:217: WARNING: py:mod reference target not found: lino.utils.config
+T:\hgwork\lino\docs\autodoc\lino.rst:309: WARNING: py:mod reference target not found: lino.test_apps.1
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
-T:\hgwork\lino\docs\autodoc\lino.management.rst:1: WARNING: py:mod reference target not found: lino.management
-T:\hgwork\lino\docs\autodoc\lino.modlib.countries.rst:13: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.countries.rst:37: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.isip.rst:10: WARNING: py:mod reference target not found: lino.modlib.isip.models
 T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:10: WARNING: py:mod reference target not found: lino.modlib.jobs.models
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:138: WARNING: py:meth reference target not found: lino.reports.Report.do_setup
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:153: WARNING: py:class reference target not found: lino.SiteConfigs
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:196: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:221: WARNING: py:class reference target not found: django.db.models.query.QuerySet
-T:\hgwork\lino\docs\blog\2011\0914.rst:45: WARNING: py:class reference target not found: lino.modlib.uploads.models.Upload
-T:\hgwork\lino\docs\blog\2011\0914.rst:45: WARNING: py:class reference target not found: lino.modlib.links.models.Link
-T:\hgwork\lino\docs\blog\2011\0923.rst:31: WARNING: xfile reference target not found: startfile.js
-T:\hgwork\lino\docs\blog\2011\0930.rst:20: WARNING: py:attr reference target not found: lino.Lino.date_format_extjs
-T:\hgwork\lino\docs\blog\2011\1004.rst:9: WARNING: py:attr reference target not found: lino.modlib.jobs.models.Candidature.job
-T:\hgwork\lino\docs\blog\2011\1004.rst:9: WARNING: py:meth reference target not found: lino.modlib.jobs.models.Candidature.__unicode__
-T:\hgwork\lino\docs\blog\2011\1004.rst:15: WARNING: py:attr reference target not found: lino.apps.jobs.models.CandidatursByPerson.date_submitted
-T:\hgwork\lino\docs\blog\2011\1004.rst:15: WARNING: py:attr reference target not found: lino.reports.Report.column_names
-T:\hgwork\lino\docs\blog\2011\1013.rst:7: WARNING: py:mod reference target not found: lino.apps.dsbe.models
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:mod reference target not found: base
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:25: WARNING: py:mod reference target not found: requests
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:29: WARNING: py:class reference target not found: lino.reports.ReportActionRequest
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference target not found: urls
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:259: WARNING: py:class reference target not found: django.http.HttpResponse
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:34: WARNING: py:mod reference target not found: ext_windows
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:8: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:42: WARNING: py:mod reference target not found: ext_store
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:275: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:309: WARNING: py:attr reference target not found: Store.pk_index
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:10: WARNING: py:mod reference target not found: appy_pod
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:18: WARNING: py:mod reference target not found: dbfreader
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:26: WARNING: py:mod reference target not found: dpy
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:34: WARNING: py:class reference target not found: django.core.serializers.base.DeserializedObject
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:58: WARNING: py:class reference target not found: django.core.serializers.base.Serializer
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:34: WARNING: py:mod reference target not found: html2xhtml
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:10: WARNING: py:class reference target not found: HTMLParser.HTMLParser
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:42: WARNING: py:mod reference target not found: instantiator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:50: WARNING: py:mod reference target not found: jsgen
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:80: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:58: WARNING: py:mod reference target not found: latex
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:66: WARNING: py:mod reference target not found: menus
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:74: WARNING: py:mod reference target not found: perms
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:82: WARNING: py:mod reference target not found: requests
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:90: WARNING: py:mod reference target not found: restify
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:4: WARNING: py:mod reference target not found: docutils.examples
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:14: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:26: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:98: WARNING: py:mod reference target not found: simulate_remote
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: setting reference target not found: MIDDLEWARE_CLASSES
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:27: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:106: WARNING: py:mod reference target not found: mti
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:15: WARNING: py:class reference target not found: django.db.models.deletion.Collector
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:63: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:114: WARNING: py:mod reference target not found: ucsv
+T:\hgwork\lino\docs\blog\2011\1015.rst:8: WARNING: py:meth reference target not found: lino.utils.menus.MenuItem.add_item
+T:\hgwork\lino\docs\blog\2011\1015.rst:10: WARNING: xfile reference target not found: welcome.html
 T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:10: WARNING: py:attr reference target not found: lino.Lino.project_model
 T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:37: WARNING: py:class reference target not found: EventsByPlace
 T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:47: WARNING: py:class reference target not found: Guest
@@ -269,10 +284,14 @@ T:\hgwork\lino\docs\dsbe\appdocs\index.rst:57: WARNING: py:class reference targe
 T:\hgwork\lino\docs\dsbe\appdocs\index.rst:57: WARNING: py:mod reference target not found: lino.apps.dsbe.models.PersonProperty
 T:\hgwork\lino\docs\dsbe\appdocs\index.rst:81: WARNING: py:attr reference target not found: lino.Lino.project_model
 T:\hgwork\lino\docs\dsbe\appdocs\isip.Contract.rst:44: WARNING: undefined label: dsbe.isip.contracts (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\isip.Contract.rst:49: WARNING: py:class reference target not found: lino.modlib.isip.models.Contract
 T:\hgwork\lino\docs\dsbe\appdocs\isip.ContractEnding.rst:24: WARNING: undefined label: dsbe.isip.contractendings (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\isip.ContractEnding.rst:29: WARNING: py:class reference target not found: lino.modlib.isip.models.ContractEnding
 T:\hgwork\lino\docs\dsbe\appdocs\isip.ContractType.rst:30: WARNING: undefined label: dsbe.isip.contracttypes (if the link has no caption the label must precede a section header)
 T:\hgwork\lino\docs\dsbe\appdocs\isip.ContractType.rst:34: WARNING: undefined label: dsbe.isip.contractsbytype (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\isip.ContractType.rst:39: WARNING: py:class reference target not found: lino.modlib.isip.models.ContractType
 T:\hgwork\lino\docs\dsbe\appdocs\isip.ExamPolicy.rst:27: WARNING: undefined label: dsbe.isip.exampolicies (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\isip.ExamPolicy.rst:32: WARNING: py:class reference target not found: lino.modlib.isip.models.ExamPolicy
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.Candidature.rst:28: WARNING: undefined label: dsbe.jobs.candidatures (if the link has no caption the label must precede a section header)
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.Candidature.rst:33: WARNING: py:class reference target not found: lino.modlib.jobs.models.Candidature
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.Contract.rst:49: WARNING: undefined label: dsbe.jobs.contracts (if the link has no caption the label must precede a section header)
@@ -282,6 +301,8 @@ T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractType.rst:34: WARNING: undefined la
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractType.rst:39: WARNING: py:class reference target not found: lino.modlib.jobs.models.ContractType
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation.rst:27: WARNING: undefined label: dsbe.jobs.contractssituationreport (if the link has no caption the label must precede a section header)
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation.rst:32: WARNING: py:class reference target not found: lino.modlib.jobs.models.ContractsSituation
+T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:27: WARNING: undefined label: dsbe.jobs.contractssituation2report (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:32: WARNING: py:class reference target not found: lino.modlib.jobs.models.ContractsSituation2
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.Experience.rst:32: WARNING: undefined label: dsbe.jobs.experiences (if the link has no caption the label must precede a section header)
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.Experience.rst:37: WARNING: py:class reference target not found: lino.modlib.jobs.models.Experience
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.Function.rst:29: WARNING: undefined label: dsbe.jobs.functions (if the link has no caption the label must precede a section header)
@@ -395,45 +416,15 @@ T:\hgwork\lino\docs\dsbe\appdocs\uploads.Upload.rst:33: WARNING: undefined label
 T:\hgwork\lino\docs\dsbe\appdocs\uploads.Upload.rst:38: WARNING: py:class reference target not found: lino.modlib.uploads.models.Upload
 T:\hgwork\lino\docs\dsbe\appdocs\uploads.UploadType.rst:24: WARNING: undefined label: dsbe.uploads.uploadtypes (if the link has no caption the label must precede a section header)
 T:\hgwork\lino\docs\dsbe\appdocs\uploads.UploadType.rst:29: WARNING: py:class reference target not found: lino.modlib.uploads.models.UploadType
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:66: WARNING: undefined label: dsbe.users.users (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.uploads.myuploads (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.cal.mytasks (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.dsbe.mynotes (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.links.mylinks (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.lino.mytextfieldtemplates (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.notes.mynotes (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.dsbe.mysearches (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.jobs.mycontracts (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.isip.mycontracts (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:70: WARNING: undefined label: dsbe.cal.myevents (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:256: WARNING: py:attr reference target not found: steet_no
-T:\hgwork\lino\docs\releases\20110907.rst:9: WARNING: py:class reference target not found: lino.modlib.jobs.models.Contract
-T:\hgwork\lino\docs\releases\20110907.rst:28: WARNING: py:class reference target not found: lino.fields.FieldSet
-T:\hgwork\lino\docs\releases\20110907.rst:40: WARNING: py:mod reference target not found: lino.modlib.jobs.models.ContractsOverview
-T:\hgwork\lino\docs\releases\20110907.rst:81: WARNING: xfile reference target not found: doctemplates
-T:\hgwork\lino\docs\releases\20110930.rst:53: WARNING: py:class reference target not found: lino.modlib.jobs.models.ContractsSituation
-T:\hgwork\lino\docs\todo.rst:112: WARNING: unknown document: /blog/20110725
-T:\hgwork\lino\docs\todo.rst:112: WARNING: unknown document: /blog/20110809
-T:\hgwork\lino\docs\todo.rst:142: WARNING: py:class reference target not found: auth.User
-T:\hgwork\lino\docs\todo.rst:151: WARNING: py:attr reference target not found: lino.mixins.printable.Printable.must_build
-T:\hgwork\lino\docs\todo.rst:446: WARNING: xfile reference target not found: welcome.html
-T:\hgwork\lino\docs\todo.rst:498: WARNING: xfile reference target not found: lino_settings.py
-T:\hgwork\lino\docs\todo.rst:498: WARNING: py:mod reference target not found: lino.demos.igen
-T:\hgwork\lino\docs\todo.rst:506: WARNING: py:mod reference target not found: lino.modlib.dsbe
-T:\hgwork\lino\docs\todo.rst:564: WARNING: py:mod reference target not found: lino.modlib.system.models.SiteConfig
-T:\hgwork\lino\docs\todo.rst:564: WARNING: py:mod reference target not found: django.contrib.sites
-T:\hgwork\lino\docs\todo.rst:566: WARNING: xfile reference target not found: make_staff.py
-T:\hgwork\lino\docs\todo.rst:576: WARNING: py:attr reference target not found: dsbe.models.Person.work_permit
-T:\hgwork\lino\docs\todo.rst:637: WARNING: py:class reference target not found: lino.utils.printable.LatexBuildMethod
-T:\hgwork\lino\docs\todo.rst:640: WARNING: py:attr reference target not found: links.Link.parent
-T:\hgwork\lino\docs\todo.rst:645: WARNING: py:attr reference target not found: links.Link.sequence
-T:\hgwork\lino\docs\todo.rst:645: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\todo.rst:647: WARNING: py:meth reference target not found: contacts.Contact.address
-T:\hgwork\lino\docs\todo.rst:647: WARNING: py:class reference target not found: contacts.Persons
-T:\hgwork\lino\docs\todo.rst:657: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\todo.rst:659: WARNING: py:class reference target not found: notes.Note
-T:\hgwork\lino\docs\todo.rst:659: WARNING: py:class reference target not found: notes.NoteType
-T:\hgwork\lino\docs\todo.rst:675: WARNING: py:mod reference target not found: lino.modlib.finan
-T:\hgwork\lino\docs\todo.rst:701: WARNING: py:meth reference target not found: Action.run
-T:\hgwork\lino\docs\todo.rst:717: WARNING: py:mod reference target not found: <make_staff> lino.management.commands.make_staff
-T:\hgwork\lino\docs\todo.rst:737: WARNING: py:meth reference target not found: lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:67: WARNING: undefined label: dsbe.users.users (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.uploads.myuploads (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.cal.mytasks (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.dsbe.mynotes (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.links.mylinks (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.lino.mytextfieldtemplates (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.notes.mynotes (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.dsbe.mysearches (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.jobs.mycontracts (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.isip.mycontracts (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:71: WARNING: undefined label: dsbe.cal.myevents (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\users.User.rst:257: WARNING: py:attr reference target not found: steet_no

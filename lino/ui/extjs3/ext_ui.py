@@ -170,6 +170,11 @@ def elem2rec1(ar,rh,elem,**rec):
     rec.update(data=rh.store.row2dict(ar,elem))
     return rec
 
+#~ def elem2rec_empty(ar,ah,**rec):
+    #~ rec.update(data=dict())
+    #~ rec.update(title='Empty detail')
+    #~ return rec
+    
 def elem2rec_insert(ar,ah,elem):
     """
     Returns a dict of this record, designed for usage by an InsertWindow.
@@ -501,6 +506,7 @@ class ExtUI(base.UI):
             (rx+r'detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
+            (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.choices_view),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
         )
         if settings.LINO.use_tinymce:
@@ -576,6 +582,12 @@ class ExtUI(base.UI):
         self.welcome_template.site = settings.LINO # self.site
         self.welcome_template.lino = lino
         #~ main=ext_elems.ExtPanel(
+        #~ quicklinks = [dict(text="A")]
+        html=unicode(self.welcome_template)
+        quicklinks = settings.LINO.get_quicklinks(self,request.user)
+        if quicklinks.items:
+            html = 'Quick Links: ' + ' '.join([self.action_href(mi.action) for mi in quicklinks.items]) + '<br/>' + html
+        
         main=dict(
           id="main_area",
           xtype='container',
@@ -583,10 +595,12 @@ class ExtUI(base.UI):
           autoScroll=True,
           layout='fit',
           #~ html=self.welcome_template.render(c),
-          html=unicode(self.welcome_template),
+          html=html,
           #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
         )
-        #~ if not on_ready:
+        #~ if quicklinks.items:
+            #~ main.update(xtype='panel',tbar=quicklinks)
+#~ if not on_ready:
             #~ on_ready = [
               #~ 'new Lino.IndexWrapper({html:%s}).show();' % 
                 #~ py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
@@ -1055,6 +1069,7 @@ tinymce.init({
         elem = None
         
         if pk != '-99999':
+        #~ if not pk in ('-99999','-99990'):
             try:
                 elem = rpt.model.objects.get(pk=pk)
             except ValueError:
@@ -1064,6 +1079,7 @@ tinymce.init({
                 raise Http404("%s %s does not exist." % (rpt,pk))
                 
         if request.method == 'DELETE':
+            assert elem is not None
             #~ if rpt.disable_delete is not None:
             msg = rpt.disable_delete(elem,request)
             if msg is not None:
@@ -1136,9 +1152,13 @@ tinymce.init({
 
             if isinstance(a,actions.OpenWindowAction):
               
-                if elem is None:
+                if pk  == '-99999':
+                    assert elem is None
                     elem = ar.create_instance()
                     datarec = elem2rec_insert(ar,ah,elem)
+                #~ elif pk  == '-99990':
+                    #~ assert elem is None
+                    #~ datarec = elem2rec_empty(ar,ah)
                 else:
                     datarec = elem2rec_detailed(ar,ah,elem)
                 
@@ -1319,33 +1339,73 @@ tinymce.init({
         raise Http404("Method %r not supported" % request.method)
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
+        """
+        Return a JSON object with two attributes `count` and `rows`,
+        where `rows` is a list of `(display_text,value)` tuples.
+        Used by ComboBoxes or similar widgets.
+        If `fldname` is not specified, returns the choices for the `jumpto` widget.
+        """
         rpt = self.requested_report(request,app_label,rptname)
         #~ rpt = actors.get_actor2(app_label,rptname)
         #~ rh = rpt.get_handle(self)
-        field = rpt.model._meta.get_field(fldname)
-        chooser = choosers.get_for_field(field)
-        if chooser:
-            qs = chooser.get_request_choices(request)
-            #~ if qs is None:
-                #~ qs = []
-            assert isiterable(qs), \
-                  "%s.%s_choices() returned %r which is not iterable." % (
-                  rpt.model,fldname,qs)
-        elif field.choices:
-            qs = field.choices
-        elif isinstance(field,models.ForeignKey):
-            m = field.rel.to
-            cr = getattr(m,'_lino_choices_report',m._lino_model_report)
-            qs = cr.request(self).get_queryset()
-            #~ qs = mr.request(self,**mr.default_params).get_queryset()
-            #~ qs = get_default_qs(field.rel.to)
-            #~ qs = field.rel.to.objects.all()
+        if fldname is None:
+            qs = rpt.request(self).get_queryset()
+            def row2dict(obj,d):
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+                return d
         else:
-            raise Http404("No choices for %s" % fldname)
-        #~ for k,v in request.GET.items():
-            #~ kw[str(k)] = v
-        #~ chooser = rh.choosers[fldname]
-        #~ qs = chooser.get_choices(**kw)
+            field = rpt.model._meta.get_field(fldname)
+            chooser = choosers.get_for_field(field)
+            if chooser:
+                qs = chooser.get_request_choices(request)
+                #~ if qs is None:
+                    #~ qs = []
+                assert isiterable(qs), \
+                      "%s.%s_choices() returned %r which is not iterable." % (
+                      rpt.model,fldname,qs)
+                if chooser.simple_values:
+                    def row2dict(obj,d):
+                        #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                        d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+                        return d
+                elif chooser.instance_values:
+                    # same code as for ForeignKey
+                    def row2dict(obj,d):
+                        d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                        d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+                        return d
+                else:
+                    def row2dict(obj,d):
+                        d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                        d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
+                        return d
+            elif field.choices:
+                qs = field.choices
+                def row2dict(obj,d):
+                    if type(obj) is list or type(obj) is tuple:
+                        d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                        d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
+                    else:
+                        d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                        d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+                    return d
+                
+            elif isinstance(field,models.ForeignKey):
+                m = field.rel.to
+                cr = getattr(m,'_lino_choices_report',m._lino_model_report)
+                qs = cr.request(self).get_queryset()
+                #~ qs = mr.request(self,**mr.default_params).get_queryset()
+                #~ qs = get_default_qs(field.rel.to)
+                #~ qs = field.rel.to.objects.all()
+                def row2dict(obj,d):
+                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                    d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+                    return d
+            else:
+                raise Http404("No choices for %s" % fldname)
+                
+                
         quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search is not None:
             qs = reports.add_quick_search_filter(qs,quick_search)
@@ -1359,53 +1419,14 @@ tinymce.init({
             #~ kw.update(limit=int(limit))
             qs = qs[:int(limit)]
             
-            
-        if chooser:
-            if chooser.simple_values:
-                def row2dict(obj,d):
-                    #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                    d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
-                    return d
-            elif chooser.instance_values:
-                # same code as for ForeignKey
-                def row2dict(obj,d):
-                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                    d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
-                    return d
-            else:
-                def row2dict(obj,d):
-                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                    d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
-                    return d
-        elif isinstance(field,models.ForeignKey):
-            def row2dict(obj,d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
-                return d
-        else:
-            def row2dict(obj,d):
-                if type(obj) is list or type(obj) is tuple:
-                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                    d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
-                else:
-                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                    d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
-                return d
         rows = [ row2dict(row,{}) for row in qs ]
-        return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
+        return json_response_kw(count=len(rows),rows=rows) 
+        #~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
         
 
-    def unused_form_submit_view(self,request,**kw):
-        kw['submit'] = True
-        return self.json_report_view(request,**kw)
-
-    def list_report_view(self,request,**kw):
+    def unused_list_report_view(self,request,**kw):
         #kw['simple_list'] = True
         return self.json_report_view(request,**kw)
-        
-    #~ def csv_report_view(self,request,**kw):
-        #~ kw['csv'] = True
-        #~ return self.json_report_view(request,**kw)
         
     def json_report_view(self,request,app_label=None,rptname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
@@ -1481,15 +1502,15 @@ tinymce.init({
             kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
         return kw
 
-    def quicklink(self,request,app_label,actor,**kw):
-        rpt = self.requested_report(request,app_label,actor)
-        #~ return self.action_href(rpt.default_action,rpt.default_action.label,**kw)
-        return self.action_href(rpt.default_action,**kw)
+    #~ def quicklink(self,request,app_label,actor,**kw):
+        #~ rpt = self.requested_report(request,app_label,actor)
+        #~ return self.action_href(rpt.default_action,**kw)
 
     def action_href(self,a,label=None,**params):
         if label is None:
+            label = a.get_button_label()
             #~ label = a.button_label
-            label = cgi.escape(force_unicode(a.label))
+        label = cgi.escape(force_unicode(label))
         #~ print 20110915, a, label
         onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
         #~ print 20110120, onclick

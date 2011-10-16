@@ -38,10 +38,17 @@ class Lino(Lino):
     #~ domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     migration_module = 'lino.apps.dsbe.migrate'
-    projects_model = 'contacts.Person'
+    project_model = 'contacts.Person'
     
     def get_app_source_file(self):
         return __file__
+        
+    def setup_quicklinks(self,ui,user,tb):
+        tb.add_action('contacts.Persons.detail')
+        tb.add_action('dsbe.MyPersons')
+        tb.add_action('isip.MyContracts')
+        tb.add_action('jobs.MyContracts')
+        
         
     def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
@@ -67,6 +74,7 @@ class Lino(Lino):
         m = main.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
+        #~ m.add_action('contacts.Persons.detail')
         #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
         m.add_action('dsbe.MySearches')
         #~ m.add_action('contacts.AllContacts')

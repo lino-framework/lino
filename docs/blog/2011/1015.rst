@@ -1,0 +1,23 @@
+20111015
+========
+
+- The "quick search" box and the "csv" button in the top toolbar 
+  of a Detail window
+  are replaced by a `record_selector` combobox that allows 
+  to select a record of this report.
+  Note that the `record_selector` changes to empty as soon as a record 
+  has been loaded.
+  
+- When specifying the action in the specifier for :meth:`lino.utils.menus.MenuItem.add_item`, the label was duplicated.
+
+- quick links are no longer defined in :xfile:`welcome.html`. 
+  This was a quite ugly system, and it allowed only links to the default action of a report.
+  Now they are defined in :xfile:`settings.py` by overriding the new method 
+  :meth:`lino.Lino.setup_quicklinks`.
+
+- The Detail window of a report can now be invoked directly without 
+  any record selected. 
+  The form fields and the bottom toolbar are disabled in that case.
+  
+
+

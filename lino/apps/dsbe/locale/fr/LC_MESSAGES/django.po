@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-14 19:44+0100\n"
+"POT-Creation-Date: 2011-10-16 08:37+0100\n"
 "PO-Revision-Date: 2011-09-14 21:13+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -660,56 +660,56 @@ msgstr "organisateur de cours"
 msgid "is SPIS user"
 msgstr ""
 
-#: .\settings.py:67 .\settings.py:127
+#: .\settings.py:74 .\settings.py:135
 msgid "~Contacts"
 msgstr "~Contacts"
 
-#: .\settings.py:81
+#: .\settings.py:89
 msgid "~My menu"
 msgstr "~Mon menu"
 
-#: .\settings.py:104 .\settings.py:143
+#: .\settings.py:112 .\settings.py:151
 msgid "~Courses"
 msgstr "~Cours"
 
-#: .\settings.py:108
+#: .\settings.py:116
 #, fuzzy
 msgid "~Jobs"
 msgstr "Emplois"
 
-#: .\settings.py:113
+#: .\settings.py:121
 msgid "~Listings"
 msgstr ""
 
-#: .\settings.py:125
+#: .\settings.py:133
 msgid "~Configure"
 msgstr "~Configurer"
 
-#: .\settings.py:137
+#: .\settings.py:145
 msgid "~DSBE"
 msgstr "~ISP"
 
-#: .\settings.py:139
+#: .\settings.py:147
 msgid "C~V"
 msgstr ""
 
-#: .\settings.py:140
+#: .\settings.py:148
 msgid "~System"
 msgstr "~Système"
 
-#: .\settings.py:157
+#: .\settings.py:165
 msgid "~Properties"
 msgstr "~Propriétés"
 
-#: .\settings.py:192
+#: .\settings.py:200
 msgid "E~xplorer"
 msgstr "E~xplorateur"
 
-#: .\settings.py:213
+#: .\settings.py:221
 msgid "~Help"
 msgstr "~Aide"
 
-#: .\settings.py:214
+#: .\settings.py:222
 msgid "~User Manual"
 msgstr "~Manuel de l'utilisateur"
 

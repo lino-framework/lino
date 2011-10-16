@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -20,6 +21,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.utils.safestring import mark_safe
 from django import template 
+from django.utils.encoding import force_unicode
 
 from lino.core import actors
 from lino.utils import perms
@@ -68,7 +70,7 @@ class MenuItem:
             if name is None:
                 name = action.name
             if label is None:
-                label = action.label 
+                label = action.get_button_label()
             if can_view is None:
                 can_view = action.actor.can_view
         

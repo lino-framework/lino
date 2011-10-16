@@ -1496,6 +1496,7 @@ class FormPanel(jsgen.Component):
           #~ autoScroll=True,
           #~ autoHeight=True,
           layout='fit',
+          empty_title=action.get_button_label()
         )
         if not isinstance(action,reports.InsertRow):
             kw.update(has_navigator=rh.report.has_navigator)

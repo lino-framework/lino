@@ -186,13 +186,12 @@ class ProjectRelated(models.Model):
     class Meta:
         abstract = True
         
-    if settings.LINO.projects_model:
-      
-        project = models.ForeignKey(settings.LINO.projects_model,blank=True,null=True)
+    if settings.LINO.project_model:
+        project = models.ForeignKey(settings.LINO.project_model,blank=True,null=True)
 
     def summary_row(self,ui,rr,**kw):
         s = ui.href_to(self)
-        if settings.LINO.projects_model:
+        if settings.LINO.project_model:
             if self.project and not reports.has_fk(rr,'project'):
                 s += " (" + ui.href_to(self.project) + ")"
         return s

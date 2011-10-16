@@ -488,16 +488,6 @@ class EventsByPlace(Events):
     """
     fk_name = 'place'
     
-class EventsByProject(Events):
-    fk_name = 'project'
-    
-class MyEvents(mixins.ByUser):
-    model = 'cal.Event'
-    #~ label = _("My Events")
-    order_by = ["start_date","start_time"]
-    column_names = 'start_date start_time summary status *'
-    
-    
 class Tasks(reports.Report):
     model = 'cal.Task'
     column_names = 'start_date summary done status *'
@@ -510,15 +500,27 @@ class TasksByOwner(Tasks):
     fk_name = 'owner'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
-class TasksByProject(Tasks):
-    fk_name = 'project'
-    
-class MyTasks(mixins.ByUser):
-    model = 'cal.Task'
-    #~ label = _("My Tasks")
-    order_by = ["start_date","start_time"]
-    column_names = 'start_date summary done status *'
 
+if settings.LINO.project_model:    
+    class EventsByProject(Events):
+        fk_name = 'project'
+    
+    class TasksByProject(Tasks):
+        fk_name = 'project'
+    
+if settings.LINO.user_model:    
+    class MyEvents(mixins.ByUser):
+        model = 'cal.Event'
+        #~ label = _("My Events")
+        order_by = ["start_date","start_time"]
+        column_names = 'start_date start_time summary status *'
+        
+    class MyTasks(mixins.ByUser):
+        model = 'cal.Task'
+        #~ label = _("My Tasks")
+        order_by = ["start_date","start_time"]
+        column_names = 'start_date summary done status *'
+    
 
 class GuestRole(babel.BabelNamed):
     """

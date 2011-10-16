@@ -216,7 +216,7 @@ class Lino(object):
     (feature used by e.g. :mod:`lino.test_apps.1`)
     """
     
-    projects_model = None
+    project_model = None
     """Optionally set this to the <applabel_modelname> of a 
     model used as project in your application."""
     
@@ -524,6 +524,12 @@ class Lino(object):
         setup_site(self,**options)
 
 
+    def get_quicklinks(self,ui,user):
+        from lino.utils import menus
+        tb = menus.Toolbar('quicklinks')
+        self.setup_quicklinks(ui,user,tb)
+        return tb
+        
     def get_site_menu(self,ui,user):
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import menus
@@ -534,6 +540,14 @@ class Lino(object):
             url = "/"
         main.add_url_button(url,_("Home"))
         return main
+        
+    def setup_quicklinks(self,ui,user,tb):
+        """Override this 
+        in application-specific (or even local) :xfile:`settings.py` files 
+        to define a series of *quick links* to appear below the main menu bar.
+        Example see :meth:`lino.apps.dsbe.settings.Lino.setup_quicklinks`.
+        """
+        pass
         
     def setup_menu(self,ui,user,menu):
         raise NotImplementedError

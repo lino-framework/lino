@@ -340,6 +340,12 @@ class ReportAction(actions.Action):
       
         #~ return self.actor.request(self,*args,**kw)
         
+    def get_button_label(self):
+        if self is self.actor.default_action:
+            return self.label 
+        else:
+            return u"%s %s" % (self.label,self.actor.label)
+            
     #~ def get_list_title(self,rh):
     def get_action_title(self,rr):
         return rr.get_title()
@@ -368,8 +374,8 @@ class ShowDetailAction(ReportAction,actions.OpenWindowAction):
     name = 'detail'
     label = _("Detail")
     
-    def get_elem_title(self,elem):
-        return _("%s (Detail)")  % unicode(elem)
+    #~ def get_elem_title(self,elem):
+        #~ return _("%s (Detail)")  % unicode(elem)
     
         
 class InsertRow(ReportAction,actions.OpenWindowAction):
