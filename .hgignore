@@ -6,6 +6,7 @@ syntax: glob
 *~
 *.dpyc
 *.log
+*.class
 *.zip
 *.dtl.py
 *.js.py

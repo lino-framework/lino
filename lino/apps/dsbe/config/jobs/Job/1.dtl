@@ -2,7 +2,7 @@
 
 main = 
   name provider contract_type type id 
-  capacity hourly_rate 
+  sector function capacity hourly_rate 
   remark CandidaturesByJob
   ContractsByJob
 

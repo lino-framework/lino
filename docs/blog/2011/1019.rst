@@ -1,61 +1,16 @@
 20111019
 ========
 
-http://127.0.0.1:8000/media/webdav/davopen_test.html
+- Worked on :doc:`/tickets/45`:
+  :srcref:`/media/applets/davopen_test.html`
+  :srcref:`/java`
 
+- The choices for :attr:`lino.modlib.notes.models.Note.type` are now sorted by 
+  :attr:`lino.modlib.notes.models.NoteType.name`.
+  
+- `jobs.Job` and `jobs.Candidature` now inherit :class:`lino.modlib.jobs.models.SectorFunction`
 
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
-("java.io.FilePermission" "C:\Documents and Settings\Luc\Application Data\Sun\Java\Deployment\log\plugin1302865856352650770.trace" "read")
-20111018 checkPermission()
+- Removed model `jobs.Wish`. A Candidature is a Wish.
+
+- Removed field :attr:`lino.modlib.jobs.models.Candidature.contract`.
+  A candidature remains valid also if the person currently has a job.

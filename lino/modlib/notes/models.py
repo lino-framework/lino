@@ -182,6 +182,7 @@ class NoteTypes(reports.Report):
     model = 'notes.NoteType'
     #~ label = _("Note types")
     column_names = 'name build_method template *'
+    order_by = ["name"]
     
 class Notes(reports.Report):
     model = 'notes.Note'

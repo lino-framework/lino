@@ -586,5 +586,6 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     i = dsbe.Person.objects.order_by('name').__iter__()
     p = i.next()
     for f in jobs.Function.objects.all():
-        yield jobs.Wish(person=p,function=f,sector=f.sector)
+        yield jobs.Candidature(person=p,function=f,sector=f.sector,
+            date_submitted=i2d(20111019))
         p = i.next()

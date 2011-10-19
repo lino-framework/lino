@@ -323,30 +323,29 @@ class Contract(ContractBase):
             more.append(cgi.escape(_('Due date reached')))
         return s + '&nbsp;: ' + (', '.join(more))
         
-    def save(self,*args,**kw):
-        #~ self.before_save()
-        if self.job_id is not None:
-            qs = self.person.candidature_set.filter(contract=self)
-            if qs.count() == 0:
-                qs = self.person.candidature_set.filter(job=self.job,contract=None)
-                if qs.count() == 1: 
-                    obj = qs[0]
-                    obj.contract = self
-                    obj.save()
-                    dblogger.info(u'Marked job request %s as satisfied by %s' % (
-                      obj,self))
-        r = super(Contract,self).save(*args,**kw)
-        return r
+    #~ def save(self,*args,**kw):
+        #~ if self.job_id is not None:
+            #~ qs = self.person.candidature_set.filter(contract=self)
+            #~ if qs.count() == 0:
+                #~ qs = self.person.candidature_set.filter(job=self.job,contract=None)
+                #~ if qs.count() == 1: 
+                    #~ obj = qs[0]
+                    #~ obj.contract = self
+                    #~ obj.save()
+                    #~ dblogger.info(u'Marked job request %s as satisfied by %s' % (
+                      #~ obj,self))
+        #~ r = super(Contract,self).save(*args,**kw)
+        #~ return r
         
-    def data_control(self):
-        "Used by :class:`lino.models.DataControlListing`."
-        msgs = []
-        qs = self.person.candidature_set.filter(contract=self)
-        if qs.count() > 1: 
-            msgs.append(
-              u'There are more than one job request using contract %s : %s' \
-              % qs)
-        return msgs
+    #~ def data_control(self):
+        #~ "Used by :class:`lino.models.DataControlListing`."
+        #~ msgs = []
+        #~ qs = self.person.candidature_set.filter(contract=self)
+        #~ if qs.count() > 1: 
+            #~ msgs.append(
+              #~ u'There are more than one job request using contract %s : %s' \
+              #~ % qs)
+        #~ return msgs
         
     def full_clean(self,*args,**kw):
         if self.person_id is not None:
@@ -463,6 +462,10 @@ class JobType(mixins.Sequenced):
         
   
 class SectorFunction(models.Model):
+    """
+    Abstract base for models that refer to a 
+    :class:`Sector` and a :class:`Function`.
+    """
     class Meta:
         abstract = True
         
@@ -622,8 +625,8 @@ class ExperiencesByPerson(Experiences,HistoryByPerson):
     
     
 
-#~ class Job(SectorFunction):
-class Job(models.Model):
+class Job(SectorFunction):
+#~ class Job(models.Model):
     """
     A work place at some employer
     """
@@ -694,41 +697,150 @@ class Job(models.Model):
         #~ return CandidatesByCourse().request(master_instance=self)
         
         
-class Wish(SectorFunction):
+#~ class Wish(SectorFunction):
+    #~ class Meta:
+        #~ verbose_name = _("Job Wish")
+        #~ verbose_name_plural = _('Job Wishes')
+    #~ person = models.ForeignKey("contacts.Person")
+    
+#~ class Wishes(reports.Report):
+    #~ model = Wish
+    
+#~ class WishesByPerson(Wishes):
+    #~ fk_name = 'person'
+
+#~ class WishesBySector(Wishes):
+    #~ fk_name = 'sector'
+
+#~ class WishesByFunction(Wishes):
+    #~ fk_name = 'function'
+
+
+#~ class WishesByOffer(reports.Report):
+    #~ """
+    #~ Shows the persons that whish this Offer.
+    
+    #~ It is a slave report without 
+    #~ :attr:`fk_name <lino.reports.Report.fk_name>`,
+    #~ which is allowed only because it also overrides
+    #~ :meth:`get_request_queryset`
+    #~ """
+  
+    #~ model = Wish
+    #~ master = Offer
+    #~ label = _("Candidate Job Wishes")
+    
+    #~ can_add = perms.never
+    #~ can_change = perms.never
+    
+    #~ def get_request_queryset(self,rr):
+        #~ """
+        #~ Needed because the Offer is not the direct master.
+        #~ """
+        #~ offer = rr.master_instance
+        #~ if offer is None:
+            #~ return []
+        #~ kw = {}
+        #~ qs = self.model.objects.order_by('date_submitted')
+        
+        #~ if offer.function:
+            #~ qs = qs.filter(function=offer.function)
+        #~ if offer.sector:
+            #~ qs = qs.filter(sector=offer.sector)
+            
+        #~ return qs
+
+    
+
+class Candidature(SectorFunction):
+    """
+    """
     class Meta:
-        verbose_name = _("Job Wish")
-        verbose_name_plural = _('Job Wishes')
+        verbose_name = _("Job Candidature")
+        verbose_name_plural = _('Job Candidatures')
+        
     person = models.ForeignKey("contacts.Person")
     
-class Wishes(reports.Report):
-    model = Wish
+    job = models.ForeignKey("jobs.Job",
+        blank=True,null=True)
+        #~ verbose_name=_("Requested Job"))
     
-class WishesByPerson(Wishes):
+    #~ date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
+    date_submitted = models.DateField(_("date submitted"))
+    u"Das Datum, an dem die Anfrage erstellt wurde."
+    
+    #~ contract = models.ForeignKey("jobs.Contract",blank=True,null=True,
+        #~ verbose_name=_("Contract found"))
+    #~ u"""
+    #~ Der Vertrag, durch den diese Anfrage befriedigt wurde 
+    #~ (ein Objekt vom Typ :class:`Contract`).
+    #~ So lange dieses Feld leer ist, gilt die Anfrage als offen.
+    #~ """
+        
+    remark = models.TextField(
+        blank=True,null=True,
+        verbose_name=_("Remark"))
+        
+    def __unicode__(self):
+        return force_unicode(_('Candidature by %(person)s') % dict(
+            person=self.person.get_full_name(salutation=False)))
+            
+    #~ @chooser()
+    #~ def contract_choices(cls,job,person):
+        #~ if person and job:
+            #~ return person.contract_set.filter(job=job)
+        #~ return []
+        
+    #~ def clean(self,*args,**kw):
+        #~ if self.contract:
+            #~ if self.contract.person != self.person:
+                #~ raise ValidationError(
+                  #~ "Cannot satisfy a Candidature with a Contract on another Person")
+        #~ super(Candidature,self).clean(*args,**kw)
+    
+    def on_create(self,req):
+        self.date_submitted = datetime.date.today()
+    
+
+class Candidatures(reports.Report):
+    model = Candidature
+    order_by = ['date_submitted']
+    column_names = 'date_submitted job:25 * id'
+
+class CandidaturesByPerson(Candidatures):
     fk_name = 'person'
 
-class WishesBySector(Wishes):
+class CandidaturesBySector(Candidatures):
     fk_name = 'sector'
 
-class WishesByFunction(Wishes):
+class CandidaturesByFunction(Candidatures):
     fk_name = 'function'
 
+class CandidaturesByJob(Candidatures):
+    fk_name = 'job'
+    column_names = 'date_submitted person:25 * id'
+  
+    def create_instance(self,req,**kw):
+        obj = super(CandidaturesByJob,self).create_instance(req,**kw)
+        if obj.job is not None:
+            obj.type = obj.job.type
+        return obj
+    
 
-class WishesByOffer(reports.Report):
+
+
+class SectorFunctionByOffer(reports.Report):
     """
-    Shows the persons that whish this Offer.
+    Shows the Candidatures or Experiences for this Offer.
     
     It is a slave report without 
     :attr:`fk_name <lino.reports.Report.fk_name>`,
-    which is allowed only because it also overrides
-    :meth:`get_request_queryset`
+    which is allowed only because it overrides
+    :meth:`get_request_queryset`.
     """
-  
-    model = Wish
-    master = Offer
-    label = _("Candidate Job Wishes")
-    
     can_add = perms.never
     can_change = perms.never
+    master = Offer
     
     def get_request_queryset(self,rr):
         """
@@ -762,58 +874,16 @@ class WishesByOffer(reports.Report):
             #~ qs = qs.filter(id__in=s)
               
         return qs
+  
 
+class CandidaturesByOffer(SectorFunctionByOffer):
+    model = Candidature
+    label = _("Candidates")
     
-
-class Candidature(models.Model):
-    class Meta:
-        verbose_name = _("Job Candidature")
-        verbose_name_plural = _('Job Candidatures')
-        
-    person = models.ForeignKey("contacts.Person")
+class ExperiencesByOffer(SectorFunctionByOffer):
+    model = Experience
+    label = _("Candidates")
     
-    job = models.ForeignKey("jobs.Job")
-        #~ blank=True,null=True)
-        #~ verbose_name=_("Requested Job"))
-    
-    #~ date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
-    date_submitted = models.DateField(_("date submitted"))
-    u"Das Datum, an dem die Anfrage erstellt wurde."
-    
-    contract = models.ForeignKey("jobs.Contract",blank=True,null=True,
-        verbose_name=_("Contract found"))
-    u"""
-    Der Vertrag, durch den diese Anfrage befriedigt wurde 
-    (ein Objekt vom Typ :class:`Contract`).
-    So lange dieses Feld leer ist, gilt die Anfrage als offen.
-    """
-        
-    remark = models.TextField(
-        blank=True,null=True,
-        verbose_name=_("Remark"))
-        
-    def __unicode__(self):
-        return force_unicode(_('%(job)s request by %(person)s') % dict(
-            job=self.job.name,
-            person=self.person.get_full_name(salutation=False)))
-            
-    @chooser()
-    def contract_choices(cls,job,person):
-        if person and job:
-            return person.contract_set.filter(job=job)
-        return []
-        
-    def clean(self,*args,**kw):
-        if self.contract:
-            if self.contract.person != self.person:
-                raise ValidationError(
-                  "Cannot satisfy a Candidature with a Contract on another Person")
-        super(Candidature,self).clean(*args,**kw)
-    
-    def on_create(self,req):
-        self.date_submitted = datetime.date.today()
-    
-
 
 
 class Jobs(reports.Report):
@@ -840,23 +910,6 @@ class JobsByType(Jobs):
 class ContractsByType(Contracts):
     fk_name = 'type'
 
-class Candidatures(reports.Report):
-    model = Candidature
-    order_by = ['date_submitted']
-    column_names = 'date_submitted job:25 * id'
-
-class CandidaturesByPerson(Candidatures):
-    fk_name = 'person'
-
-class CandidaturesByJob(Candidatures):
-    fk_name = 'job'
-  
-    def create_instance(self,req,**kw):
-        obj = super(CandidaturesByJob,self).create_instance(req,**kw)
-        if obj.job is not None:
-            obj.type = obj.job.type
-        return obj
-    
 
 COLS = 8
 
@@ -1009,4 +1062,4 @@ def setup_config_menu(site,ui,user,m):
 def setup_explorer_menu(site,ui,user,m):
     m.add_action('jobs.Contracts')
     m.add_action('jobs.Candidatures')
-    m.add_action('jobs.Wishes')
+    #~ m.add_action('jobs.Wishes')

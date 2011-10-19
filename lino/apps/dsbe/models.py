@@ -75,7 +75,7 @@ from lino.modlib.contacts.models import Contact
 # ``from lino.apps.dsbe.models import Property``
 
 from lino.modlib.properties.models import Property
-from lino.modlib.notes.models import NoteType
+#~ from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
 
 def is_valid_niss(national_id):
