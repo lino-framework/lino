@@ -4,6 +4,8 @@
 - Worked on :doc:`/tickets/45`:
   :srcref:`/media/applets/davopen_test.html`
   :srcref:`/java`
+  
+The following changes took less than 1 hour:
 
 - The choices for :attr:`lino.modlib.notes.models.Note.type` are now sorted by 
   :attr:`lino.modlib.notes.models.NoteType.name`.
@@ -14,3 +16,5 @@
 
 - Removed field :attr:`lino.modlib.jobs.models.Candidature.contract`.
   A candidature remains valid also if the person currently has a job.
+  
+(todo: adapt :mod:`lino.apps.dsbe.migration` module and :mod:`lino.apps.dsbe.fixtures.pp2lino`)

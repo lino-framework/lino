@@ -55,8 +55,8 @@ def test01(self):
     from lino.apps.dsbe.models import Person
     self.assertEquals(Person.objects.count(), 73)
     
-    p = Person.objects.get(pk=117)
-    self.assertEquals(unicode(p), "Annette ARENS (117)")
+    p = Person.objects.get(pk=118)
+    self.assertEquals(unicode(p), "Annette ARENS (118)")
     
     
         
@@ -66,7 +66,7 @@ def test02(self):
     See also :doc:`/blog/2011/0531`.
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
-    url = '/api/dsbe/SoftSkillsByPerson?mt=22&mk=117&fmt=json'
+    url = '/api/dsbe/SoftSkillsByPerson?mt=22&mk=118&fmt=json'
     # make sure that the response is in English so that this test works on any site
     babel.set_language('en')
     #~ extra = {'Accept-Language':'fr,de-DE;q=0.8,de;q=0.6,en-US;q=0.4,en;q=0.2'
@@ -83,7 +83,7 @@ def test02(self):
     #~ for k in 'count rows gc_choices title'.split():
         #~ self.assertTrue(result.has_key(k))
     #~ if len(result['rows']) != 3:
-    self.assertEqual(result['title'],"Properties of Annette ARENS (117)")
+    self.assertEqual(result['title'],"Properties of Annette ARENS (118)")
     #~ print '\n'.join([unicode(x) for x in result['rows']])
     self.assertEqual(len(result['rows']),3)
     row = result['rows'][0]
@@ -237,7 +237,7 @@ def test03(self):
         self.assertEqual(result['navinfo']['first'],16)
         self.assertEqual(result['navinfo']['next'],68)
     self.assertEqual(result['data']['last_name'],"Arens")
-    self.assertEqual(result['data']['first_name'],"Annette")
+    self.assertEqual(result['data']['first_name'],"Andreas")
             
             
 def test04(self):
@@ -353,8 +353,8 @@ def test06(self):
     from lino.utils import babel
     from lino.apps.dsbe.models import Person
     from lino.apps.dsbe.models import Property, PersonProperty
-    annette = Person.objects.get(pk=117)
-    self.assertEquals(unicode(annette), "Annette ARENS (117)")
+    annette = Person.objects.get(pk=118)
+    self.assertEquals(unicode(annette), "Annette ARENS (118)")
     
     babel.set_language('en')
     p = Property.objects.get(name_en="Obedient")
