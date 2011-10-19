@@ -1551,7 +1551,7 @@ class CandidatesByCourse(RequestsByCourse):
 #
 # SEARCH
 #
-class PersonSearch(mixins.AutoUser):
+class PersonSearch(mixins.AutoUser,mixins.Printable):
     class Meta:
         verbose_name = _("Person Search")
         verbose_name_plural = _('Person Searches')
@@ -1584,12 +1584,13 @@ class PersonSearch(mixins.AutoUser):
     def __unicode__(self):
         return self._meta.verbose_name + ' "%s"' % (self.title or _("Unnamed"))
         
-    def get_print_language(self,pm):
-        return DEFAULT_LANGUAGE
+    #~ def get_print_language(self,pm):
+        #~ return DEFAULT_LANGUAGE
         
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('suchliste',_("Print"),'persons/suchliste.odt'))
+        rpt.add_action(DirectPrintAction('suchliste',_("Print"),'suchliste.odt'))
+        #~ rpt.add_action(DirectPrintAction('suchliste',_("Print"),'persons/suchliste.odt'))
         
 class MySearches(mixins.ByUser):
     model = PersonSearch

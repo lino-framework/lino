@@ -19,5 +19,5 @@
   any record selected. 
   The form fields and the bottom toolbar are disabled in that case.
   
-
+- Added Detail definition for `users.User`.
 

@@ -275,8 +275,9 @@ class Component(ComponentBase,
         
     access_class = AccessClass.field() # iCal:CLASS
     sequence = models.IntegerField(_("Revision"),default=0)
-    alarm_value = models.IntegerField(_("Value"),null=True,blank=True)
-    alarm_unit = DurationUnit.field(_("Unit"),blank=True) # ,null=True)
+    alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
+    alarm_unit = DurationUnit.field(_("Unit"),blank=True,
+        default=DurationUnit.days.value) # ,null=True) # note: it's a char field!
     alarm = fields.FieldSet(_("Alarm"),'alarm_value alarm_unit')
     dt_alarm = models.DateTimeField(_("Alarm time"),
         blank=True,null=True,editable=False)

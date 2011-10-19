@@ -1207,7 +1207,8 @@ Lino.show_detail = function(panel,btn) {
       //~ panel.el.mask('Bitte nochmal warten','x-mask-loading');
       //~ panel.disable();
       panel.ls_detail_handler(panel,{
-        record_id:rec.id,base_params:panel.get_base_params()
+        record_id:rec.id,
+        base_params:panel.get_base_params()
       });
       //~ panel.my_load_mask.hide();
       panel.loadMask.hide();
@@ -1317,7 +1318,8 @@ Lino.FieldBoxMixin = {
     return this.base_params;
   },
   set_base_params : function(p) {
-    this.base_params = p;
+    //~ this.base_params = p; // 20111018
+    this.base_params = Ext.apply({},p);
   },
   set_base_param : function(k,v) {
     this.base_params[k] = v;
@@ -1498,6 +1500,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(ww,config,params){
     this.ww = ww;
     if (params) Ext.apply(config,params);
+    this.set_base_param('query',''); // 20111018
+    //~ ww.config.base_params.query = ''; // 20111018
     //~ console.log(config);
     //~ console.log('FormPanel.constructor() 1',config)
     //~ Ext.applyIf(config,{base_params:{}});
@@ -1506,54 +1510,59 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     config.bbar = actions.bbar;
     //~ Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
     //~ config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
-    
-    // 20111015    
-    this.record_selector = new Lino.RemoteComboFieldElement({
-      store: new Lino.ComplexRemoteComboStore({
-        proxy: new Ext.data.HttpProxy({
-          url:ROOT_URL+'/choices'+config.ls_url,
-          method:'GET'
-        })
-      }),
-      pageSize:25,
-      listeners: { 
-        scope:this, 
-        select:function(combo,record,index) {
-          //~ console.log('jumpto_select',arguments);
-          this.goto_record_id(record.id);
-        }
-      },
-      emptyText: "$_('Go to record')",
-      tooltip: "$_('Reload current record')"
-    })
-    config.tbar = [this.record_selector];
-    if (config.has_navigator) {
+    if (ww instanceof Lino.DetailWrapper) {
+      config.tbar = [];
+      // 20111015    
+      //~ console.log('20111017 base_params:', this.get_base_params(), this.ww.config.base_params);
+      this.record_selector = new Lino.RemoteComboFieldElement({
+        store: new Lino.ComplexRemoteComboStore({
+          baseParams: this.get_base_params(),
+          //~ value: this.ww.config.base_params.query,
+          proxy: new Ext.data.HttpProxy({
+            url:ROOT_URL+'/choices'+config.ls_url,
+            method:'GET'
+          })
+        }),
+        pageSize:25,
+        listeners: { 
+          scope:this, 
+          select:function(combo,record,index) {
+            //~ console.log('jumpto_select',arguments);
+            this.goto_record_id(record.id);
+          }
+        },
+        emptyText: "$_('Go to record')",
+        tooltip: "$_('Reload current record')"
+      })
+      config.tbar = config.tbar.concat([this.record_selector]);
+      if (config.has_navigator) {
+        config.tbar = config.tbar.concat([
+          this.first = new Ext.Toolbar.Button({
+            tooltip:"$_('First')",disabled:true,handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
+          this.prev = new Ext.Toolbar.Button({
+            tooltip:"$_('Previous')",disabled:true,handler:this.movePrev,scope:this,iconCls:'x-tbar-page-prev'}),
+          this.next = new Ext.Toolbar.Button({
+            tooltip:"$_('Next')",disabled:true,handler:this.moveNext,scope:this,iconCls:'x-tbar-page-next'}),
+          this.last = new Ext.Toolbar.Button({
+            tooltip:"$_('Last')",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
+        ]);
+      }
+      //~ console.log(20101117,this.ww.refresh);
       config.tbar = config.tbar.concat([
-        this.first = new Ext.Toolbar.Button({
-          tooltip:"$_('First')",disabled:true,handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
-        this.prev = new Ext.Toolbar.Button({
-          tooltip:"$_('Previous')",disabled:true,handler:this.movePrev,scope:this,iconCls:'x-tbar-page-prev'}),
-        this.next = new Ext.Toolbar.Button({
-          tooltip:"$_('Next')",disabled:true,handler:this.moveNext,scope:this,iconCls:'x-tbar-page-next'}),
-        this.last = new Ext.Toolbar.Button({
-          tooltip:"$_('Last')",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
+        {
+          //~ text:'Refresh',
+          handler:function(){ this.do_when_clean(this.refresh.createDelegate(this)) },
+          iconCls: 'x-tbar-loading',
+          tooltip:"$_('Reload current record')",
+          scope:this}
       ]);
+          
+      config.tbar = config.tbar.concat([
+          '->',
+          this.displayItem = new Ext.Toolbar.TextItem({})
+      ]);
+          
     }
-    //~ console.log(20101117,this.ww.refresh);
-    config.tbar = config.tbar.concat([
-      {
-        //~ text:'Refresh',
-        handler:function(){ this.do_when_clean(this.refresh.createDelegate(this)) },
-        iconCls: 'x-tbar-loading',
-        tooltip:"$_('Reload current record')",
-        scope:this}
-    ]);
-        
-        
-    config.tbar = config.tbar.concat([
-        '->',
-        this.displayItem = new Ext.Toolbar.TextItem({})
-    ]);
     //~ if (config.can_config) {
     config.bbar = config.bbar.concat([
       '->',
@@ -1585,7 +1594,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     return this.ww.config.base_params;
   },
   set_base_params : function(p) {
-    this.ww.config.base_params = p;
+    this.ww.config.base_params = Ext.apply({},p); // 20111018
+    //~ this.ww.config.base_params = p;
     //~ if (p.query) this.record_selector.setValue(p.query);
   },
   set_base_param : function(k,v) {
@@ -1693,7 +1703,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   
   set_current_record : function(record,after) {
-    this.record_selector.clearValue();
+    if (this.record_selector) {
+        this.record_selector.clearValue();
+        // e.g. InsertWrapper FormPanel doesn't have a record_selector
+    }
     this.current_record = record;
     //~ if (record) 
         //~ console.log('Lino.FormPanel.set_current_record',record.title,record);

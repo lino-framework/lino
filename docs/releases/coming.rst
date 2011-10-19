@@ -23,7 +23,10 @@ Bugs fixed
 ----------
 
 - Automatische Aufgaben wurden nicht immer korrekt ihrer Person zugewiesen.
+- Aufgaben wurden im Rückblick/Ausblick ohne den Namen der Person angezeigt.
+- Manuell erstellte aufgaben hatten das Doppelfeld Erinnern (Wert, Einheut) leer.
 - AttributeError “Manager isn’t accessible via Third instances” at /api/thirds/ThirdsByOwner (when trying to add a new record in ThirdsByOwner.
+- Ausdrucken Personensuche funktionierte nicht.
 
 Administrator
 -------------

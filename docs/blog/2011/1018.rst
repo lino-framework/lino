@@ -1,0 +1,12 @@
+20111018
+========
+
+Fehlerjagd: Wenn ich in einer Grid bin und dort im quick_search-Feld einen Wert eingebe, 
+so dass nur noch z.B. 3 Records angezeigt werden, und wenn ich dann auf einem 
+der Records doppelklicke, dann stand bisher im displayText des Details-Fensters 
+"Row 1 of 3", aber der record_selector zeigte trotzdem alle Records an. 
+Und wenn man dann einen Record auswählte (der nicht zu den dreien gehörte), 
+dann kam er sogar ganz durcheinander (zweigte den ersten der drei Records an).
+
+Lösung ist momentab: das Detail-Fenster deaktiviert nun bewusst einen 
+eventuellen quick_search-Filter.
