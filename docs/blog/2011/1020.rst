@@ -1,0 +1,8 @@
+20111020
+========
+
+Meeting with Gaëtan Delannay. 
+We comparend Lino and his appy.gen framework.
+  
+Worked on :mod:`lino.utils.bcss`.
+Wrote a patch for `appy.shared.xml_parser`.

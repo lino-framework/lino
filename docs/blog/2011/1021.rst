@@ -1,0 +1,36 @@
+20111021
+========
+
+Worked on :doc:`/tickets/45` using a Java Applet.
+Files :srcref:`/media/applets/davopen_test.html` and :srcref:`/java`
+  
+Insgesamt ist es erschreckend, wie kompliziert diese Lösung wird!
+
+Hier ein Snippet, das `java.utils.prefs` benutzt um aus der Windows-Registry 
+zu lesen: http://www.kodejava.org/examples/236.html 
+Aber das nützt uns nichts, denn es kann nur unterhalb von 
+`HKCU\Software\JavaSoft\Prefs` lesen und schreiben.
+
+Dann hier noch ein Projekt, das aus der Windows-Registry lesen 
+kann und keine dll auf den Clients benötigt:
+| http://sourceforge.net/projects/java-registry/ 
+| http://code.google.com/p/java-registry/
+
+Hier auch ein interessantes Beispiel dazu:
+
+http://www.java-forum.org/codeschnipsel-u-projekte/38144-registry-auslesen.html#post268674
+
+Es zeigt diesen zweifachen Zugriff, den ich auch schon in meiner
+startfile.js (aber nur mit FF) mache. Das Beispiel ist allerdings zum
+*Setzen* der Verknüpfung, ich muss es noch adaptieren zum *Lesen*.
+
+Die beste Dokumentation zu diesem Package ist (ähnlich wie bei Lino) 
+der Source-Code:
+http://code.google.com/p/java-registry/source/browse/trunk/src/at/jta/Regor.java
+
+Das könnte klappen... vorher muss ich noch neu lernen, 
+wie ich das installiere und ins
+Applet einpacke. Denn was der Autor da macht ist zu komplex um einfach
+rauszukopieren und selber zu warten.
+
+Aber ach! Das wird daran scheitern, dass 
