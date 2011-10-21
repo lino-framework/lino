@@ -1,6 +1,9 @@
 20111021
 ========
 
+Launch Office application on webdav link using Applet
+-----------------------------------------------------
+
 Worked on :doc:`/tickets/45` using a Java Applet.
 Files :srcref:`/media/applets/davopen_test.html` and :srcref:`/java`
   
@@ -33,4 +36,56 @@ wie ich das installiere und ins
 Applet einpacke. Denn was der Autor da macht ist zu komplex um einfach
 rauszukopieren und selber zu warten.
 
-Aber ach! Das wird daran scheitern, dass 
+Aber nein! Das wird schon allein scheitern, wenn ein Benutzer keine Administrator-Rechte hat. Vergiss es!
+
+Eine mögliche Lösung scheint, dass wir eine hardkodierte Liste von 
+möglichen Pfaden und Verknüpfungen haben, und dass unser Applet die 
+Festplatte des Clients absucht, ob es ein taugliches Programm findet. 
+Das Resultat der Suche schreibt es sich in die Preferences. 
+Wenn man es dann manuell ändern will, kann ein Verwalter 
+das unter Windows mit regedit. Der Verwalter könnte auch (wenn er will) 
+auf allen Clients schon den bekannten Werte dort einschreiben.
+
+==== ========================= ====================
+ext. Binaries (Windows)        Binaries (Unix)        
+==== ========================= ====================
+doc  windword.exe, soffice.exe soffice
+xls  excel.exe, soffice.exe    soffice
+rtf  windword.exe, soffice.exe soffice
+odt  soffice.exe               soffice
+==== ========================= ====================
+
+Um nicht alle Festplatten von oben bis unten zu durchsuchen, 
+können wir eine hardcodierte Liste von Verzeichnissen erstellen:
+
+Windows : "Program Files"
+Unix : "/usr/bin"
+
+
+UnicodeDecodeError at /api/dsbe/LanguageKnowledgesByPerson/279
+--------------------------------------------------------------
+
+Den Fehler, der diese Fehlermeldung hervorrief, 
+habe ich nicht reproduzieren können, aber 
+während der Suche habe ich zwei andere Bugs behoben:
+
+- :mod:`lino.modlib.countries.fixtures.few_languages` filled only in Englisch. 
+  Now it respects :setting:`LANGUAGES`.
+  
+- Es war nicht möglich, in Feldern wie
+  :attr:`lino.apps.dsbe.models.LanguageKnowledge.spoken`  
+  oder 
+  :attr:`lino.apps.dsbe.models.LanguageKnowledge.written`
+  einen einmal gesetzten Wert wieder auf leer zu setzen.
+  Das galt für alle Felder mit einer :class:`lino.utils.choicelists.ChoiceList`.
+
+
+New Option "strict" for `resolve_model`
+---------------------------------------
+
+:func:`lino.tools.resolve_model` has a new option strict. 
+When `strict=True`, it raises an exception instead of returning 
+:class:`lino.tools.UnresolvedModel`.
+Helped me to understand that :setting:`INSTALLED_APPS` in 
+:mod:`lino.apps.std.settings` needs to include 
+:mod:`lino.modlib.users` to avoid problems during autodoc.

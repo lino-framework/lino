@@ -166,6 +166,53 @@ public class DavOpen extends Applet {
       
   }
   
+  import java.io.File; 
+  
+  private File find_executable(String paramString1, String paramString2, File paramFile)
+  {
+    String os_name = System.getProperty("os.name");
+    paramString1 = paramString1;
+    paramString2 = paramString2;
+    File[] roots = File.listRoots();  //~ Object localObject 
+    ArrayList localArrayList = new ArrayList();
+    if (b.a())
+      localArrayList.add(new File(System.getenv("SystemDrive") + "\\"));
+    for (int j = 0; j < roots.length; j++)
+    {
+      if (localArrayList.contains(roots[j]))
+        continue;
+      localArrayList.add(roots[j]);
+    }
+    k localk = new k(this, paramString1);
+    e locale = new e(this, paramString2);
+    if (b.a())
+      roots = new String[] { "Program Files", "Program Files (x86)" };
+    else if (b.b())
+      roots = new String[] { "/Applications/" };
+    else
+      roots = new String[] { "/usr/lib/" };
+    if (paramFile == null)
+      for (paramFile = 0; paramFile < localArrayList.size(); paramFile++)
+      {
+        h.a("root: " + localArrayList.get(paramFile));
+        if ((((File)localArrayList.get(paramFile)).toString().equalsIgnoreCase("a:\\")) || (((File)localArrayList.get(paramFile)).toString().equalsIgnoreCase("b:\\")))
+          continue;
+        for (int m = 0; m < roots.length; m++)
+        {
+          File localFile = new File(localArrayList.get(paramFile) + roots[m]);
+          h.a("search " + paramString1 + " in  " + localFile);
+          File[] arrayOfFile;
+          int n = (arrayOfFile = paramString2 = b.a(localFile, locale, 0)).length;
+          for (int k = 0; k < n; k++)
+            if ((paramString2 = a(paramString2 = arrayOfFile[k], localk)) != null)
+              return paramString2;
+        }
+      }
+    else if ((paramFile = a(paramFile, localk)) != null)
+      return paramFile;
+    return (File)null;
+  }  
+  
   public void open(String fileName) {
       try {
         //~ open_using_ice_registry(fileName)

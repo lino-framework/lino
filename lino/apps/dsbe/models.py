@@ -1816,12 +1816,11 @@ reports.inject_field(Company,
 """
 ...
 """
-from lino.tools import resolve_model
+from lino.tools import resolve_model, UnresolvedModel
 #~ User = resolve_model('users.User')
 if settings.LINO.user_model:
-    User = resolve_model(settings.LINO.user_model)
+    User = resolve_model(settings.LINO.user_model,strict=True)
     User.grid_search_field = 'username'
-
     reports.inject_field(User,
         'is_spis',
         models.BooleanField(

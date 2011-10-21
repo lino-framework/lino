@@ -66,7 +66,7 @@ class UnresolvedModel:
     #~ def __getattr__(self,name):
         #~ raise AttributeError("%s has no attribute %r" % (self,name))
 
-def resolve_model(model_spec,app_label=None):
+def resolve_model(model_spec,app_label=None,strict=False):
     """
     Similar logic as in django.db.models.fields.related.add_lazy_relation()
     """
@@ -82,10 +82,11 @@ def resolve_model(model_spec,app_label=None):
     else:
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
+        if strict:
+            raise Exception(
+                "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
+                model_spec,app_label,model,settings.SETTINGS_MODULE))
         return UnresolvedModel(model_spec,app_label)
-        #~ raise Exception(
-            #~ "resolve_model(%r,app_label=%r) found %r" % (
-            #~ model_spec,app_label,model))
     return model
     
 def get_field(model,name):

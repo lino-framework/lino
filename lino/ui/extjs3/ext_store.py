@@ -138,6 +138,109 @@ class StoreField(object):
             if m is not None:
                 m(old_value)
 
+
+class ComboStoreField(StoreField):
+  
+    list_values_count = 2
+    
+    def as_js(self):
+        s = StoreField.as_js(self)
+        s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        return s 
+        
+    def column_names(self):
+        yield self.options['name']
+        yield self.options['name'] + ext_requests.CHOICES_HIDDEN_SUFFIX
+        
+    def extract_form_data(self,post_data):
+        return post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
+        
+    def unused_form2obj(self,request,instance,post_data,is_new):
+        assert not self.field.primary_key
+        v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
+        #~ logger.info("ComboStoreField.form2obj %s = %r", self.field.name,v)
+        if v is None:
+            return 
+        if v in ('','undefined'): 
+            v = None
+        if v is not None:
+            v = self.parse_form_value(v,instance)
+        if v is None:
+            if not self.field.blank:
+                raise exceptions.ValidationError("field may not be empty")
+                #~ raise exceptions.ValidationError({self.field.name: "field may not be empty"})
+                #~ print "20101021 cannot set empty value for", self.field.name
+                #~ return # 20101021
+            if not self.field.null:
+                """field is blank but will be set by full_clean. 
+                Django refuses to explicitly assign None to a non-nullable field.
+                """
+                return 
+        self.set_value_in_object(request,instance,v)
+        #~ setattr(instance,self.field.name,v)
+
+    def obj2list(self,request,obj):
+        value,text = self.get_value_text(obj)
+        return [text,value]
+        
+    def obj2dict(self,request,obj,d):
+        value,text = self.get_value_text(obj)
+        d[self.field.name] = text
+        d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
+        
+    def get_value_text(self,obj):
+        v = getattr(obj,self.field.name)
+        if v is None or v == '':
+            return (None, None)
+        ch = choosers.get_for_field(self.field) 
+        if ch is not None:
+            return (v, ch.get_text_for_value(v,obj))
+        for i in self.field.choices:
+            if i[0] == v:
+                return (v, unicode(i[1]))
+        return (v, _("%r (invalid choice)") % v)
+        
+class ForeignKeyStoreField(ComboStoreField):
+        
+    def get_value_text(self,obj):
+        try:
+            v = getattr(obj,self.field.name)
+        except self.field.rel.to.DoesNotExist,e:
+            v = None
+        if v is None:
+            return (None, None)
+        else:
+            return (v.pk, unicode(v))
+            
+    def parse_form_value(self,v,obj):
+        try:
+            return self.field.rel.to.objects.get(pk=v)
+        except ValueError,e:
+            pass
+        except self.field.rel.to.DoesNotExist,e:
+            pass
+            
+        ch = choosers.get_for_field(self.field)
+        #~ if ch and ch.meth.quick_insert_field:
+        if ch and ch.can_create_choice:
+            o = ch.create_choice(obj,v)
+            if o is not None:
+                logger.info("Auto-created %s %s",o._meta.verbose_name,o)
+                return o
+            #~ qs = ch.get_instance_choices(obj)
+            #~ print 20110425, qs
+            #~ kw = {}
+            #~ kw[ch.meth.quick_insert_field] = v
+            #~ fk_target = qs.create(**kw)
+            # fk_target.save() not necessary
+            #~ logger.info("Auto-created %s %s",fk_target.__class__,fk_target)
+            #~ return fk_target
+            #~ return ch.on_quick_insert(obj,self.field,v)
+        return None
+            
+
+
+
 class PasswordStoreField(StoreField):
   
     def value_from_object(self,request,obj):
@@ -399,121 +502,6 @@ class OneToOneStoreField(StoreField):
     def obj2dict(self,request,obj,d):
         d[self.field.name] = self.value_from_object(request,obj)
         
-class ComboStoreField(StoreField):
-  
-    list_values_count = 2
-    
-    def as_js(self):
-        s = StoreField.as_js(self)
-        s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        return s 
-        
-    def column_names(self):
-        yield self.options['name']
-        yield self.options['name'] + ext_requests.CHOICES_HIDDEN_SUFFIX
-        
-    def form2obj(self,request,instance,post_data,is_new):
-        assert not self.field.primary_key
-        v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
-        #~ logger.info("ComboStoreField.form2obj %s = %r", self.field.name,v)
-        if v is None:
-            return 
-        if v in ('','undefined'): 
-            v = None
-        if v is not None:
-            v = self.parse_form_value(v,instance)
-        if v is None:
-            if not self.field.blank:
-                raise exceptions.ValidationError("field may not be empty")
-                #~ raise exceptions.ValidationError({self.field.name: "field may not be empty"})
-                #~ print "20101021 cannot set empty value for", self.field.name
-                #~ return # 20101021
-            if not self.field.null:
-                """field is blank but will be set by full_clean. 
-                Django refuses to explicitly assign None to a non-nullable field.
-                """
-                return 
-        self.set_value_in_object(request,instance,v)
-        #~ setattr(instance,self.field.name,v)
-
-    def obj2list(self,request,obj):
-        value,text = self.get_value_text(obj)
-        return [text,value]
-        
-    def obj2dict(self,request,obj,d):
-        value,text = self.get_value_text(obj)
-        d[self.field.name] = text
-        d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
-        
-    def get_value_text(self,obj):
-        v = getattr(obj,self.field.name)
-        if v is None or v == '':
-            return (None, None)
-        ch = choosers.get_for_field(self.field) 
-        if ch is not None:
-            return (v, ch.get_text_for_value(v,obj))
-        for i in self.field.choices:
-            if i[0] == v:
-                return (v, unicode(i[1]))
-        return (v, _("%r (invalid choice)") % v)
-        
-class ForeignKeyStoreField(ComboStoreField):
-        
-    def get_value_text(self,obj):
-        try:
-            v = getattr(obj,self.field.name)
-        except self.field.rel.to.DoesNotExist,e:
-            v = None
-        if v is None:
-            return (None, None)
-        else:
-            return (v.pk, unicode(v))
-            
-    def parse_form_value(self,v,obj):
-        try:
-            return self.field.rel.to.objects.get(pk=v)
-        except ValueError,e:
-            pass
-        except self.field.rel.to.DoesNotExist,e:
-            pass
-            
-        ch = choosers.get_for_field(self.field)
-        #~ if ch and ch.meth.quick_insert_field:
-        if ch and ch.can_create_choice:
-            o = ch.create_choice(obj,v)
-            if o is not None:
-                logger.info("Auto-created %s %s",o._meta.verbose_name,o)
-                return o
-            #~ qs = ch.get_instance_choices(obj)
-            #~ print 20110425, qs
-            #~ kw = {}
-            #~ kw[ch.meth.quick_insert_field] = v
-            #~ fk_target = qs.create(**kw)
-            # fk_target.save() not necessary
-            #~ logger.info("Auto-created %s %s",fk_target.__class__,fk_target)
-            #~ return fk_target
-            #~ return ch.on_quick_insert(obj,self.field,v)
-        return None
-            
-
-#~ class ChoicesStoreField(ComboStoreField):
-  
-    #~ def get_value_text(self,obj):
-        #~ v = getattr(obj,self.field.name)
-        #~ if v is None or v == '':
-            #~ return (None, None)
-        #~ for i in self.field.choices:
-            #~ if i[0] == v:
-                #~ return (v, unicode(i[1]))
-        #~ return (v, _("%r (invalid choice)") % v)
-        
-#~ class ChooserStoreField(ComboStoreField):
-    #~ """
-    #~ This will be used only for non-fk fields with chooser; 
-    #~ ForeignKey fields will get a ForeignKeyStoreField even if they have a chooser.
-    #~ """
-  
-
 
 class Store:
     """

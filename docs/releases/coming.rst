@@ -27,6 +27,17 @@ Bugs fixed
 - Manuell erstellte aufgaben hatten das Doppelfeld Erinnern (Wert, Einheut) leer.
 - AttributeError “Manager isn’t accessible via Third instances” at /api/thirds/ThirdsByOwner (when trying to add a new record in ThirdsByOwner.
 - Ausdrucken Personensuche funktionierte nicht.
+- Es war nicht möglich, in Feldern wie
+  :attr:`Wort <lino.apps.dsbe.models.LanguageKnowledge.spoken>`  
+  oder 
+  :attr:`Schrift <lino.apps.dsbe.models.LanguageKnowledge.written>`
+  einer Sprachkenntnis
+  einen einmal gesetzten Wert wieder auf leer zu setzen.
+  Das gilt wahrscheinlich für alle Felder mit 
+  einer :class:`lino.utils.choicelists.ChoiceList`.
+
+
+
 
 Administrator
 -------------

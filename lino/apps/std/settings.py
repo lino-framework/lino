@@ -179,7 +179,7 @@ ROOT_URLCONF = 'lino.ui.extjs3.urls'
 
 INSTALLED_APPS = [
   #~ 'django.contrib.auth',
-  #~ 'lino.modlib.users',
+  'lino.modlib.users',
   #~ 'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',
   #~ 'django.contrib.sites',

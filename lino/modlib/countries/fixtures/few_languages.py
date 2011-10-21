@@ -15,13 +15,44 @@ from django.db import models
 #countries = models.get_app('countries')
 
 from lino.utils.instantiator import Instantiator
+from lino.utils.babel import babel_values
 
-Language = Instantiator('countries.Language',"id name").build
+
+Language = Instantiator('countries.Language',"id").build
 
 def objects():
-    yield Language('ger',"German")
-    yield Language('fre',"French")
-    yield Language('eng',"English")
-    yield Language('est',"Estonian")
-    yield Language('dut',"Dutch")
+    yield Language('ger',**babel_values('name',
+          de=u"Deutsch",
+          fr=u'Allemand',
+          en=u'German',
+          nl=u'Duits',
+          et=u'Saksa',
+          ))
+    yield Language('fre',**babel_values('name',
+          de=u"Französisch",
+          fr=u'Français',
+          en=u'French',
+          nl=u'Frans',
+          et=u'Prantsuse',
+          ))
+    yield Language('eng',**babel_values('name',
+          de=u"Englisch",
+          fr=u'Anglais',
+          en=u'English',
+          nl=u'Engels',
+          et=u'Inglise',
+          ))
+    yield Language('dut',**babel_values('name',
+          de=u"Niederländisch",
+          fr=u'Néerlandais',
+          en=u'Dutch',
+          nl=u'Nederlands',
+          et=u'Hollandi',
+          ))
+    yield Language('est',**babel_values('name',
+          de=u"Estnisch",
+          fr=u'Estonien',
+          en=u'Estonian',
+          et=u'Eesti',
+          ))
 

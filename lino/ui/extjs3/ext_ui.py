@@ -1102,7 +1102,7 @@ tinymce.init({
                 raise Http404('Tried to PUT on element -99999')
             #~ print 20110301, request.raw_post_data
             data = http.QueryDict(request.raw_post_data)
-            #~ print 20110301, data
+            #~ print 20111021, data
             #~ fmt = data.get('fmt',None)
             return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)
             
