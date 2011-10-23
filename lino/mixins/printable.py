@@ -92,8 +92,17 @@ class BuildMethod:
     label = None
     templates_name = None
     cache_name = 'cache'
-    webdav = False
+    #~ webdav = False
     default_template = ''
+    
+    use_webdav = False
+    """Whether this build method results in an editable file.
+    In that case the target will be in a webdav folder 
+    and the print action will respond 
+    `open_davlink_url` instead of the usual `open_url`,
+    which extjs3 ui will implement by calling `Lino.davlink_open()`
+    instead of the usual `window.open()`.
+    """
     
     def __init__(self):
         if self.label is None:
@@ -118,13 +127,13 @@ class BuildMethod:
         
     def get_target_name(self,action,elem):
         "return the output filename to generate on the server"
-        if self.webdav:
+        if self.use_webdav:
             return os.path.join(settings.LINO.webdav_root,*self.get_target_parts(action,elem))
         return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
         
     def get_target_url(self,action,elem,ui):
         "return the url that points to the generated filename on the server"
-        if self.webdav:
+        if self.use_webdav:
             return settings.LINO.webdav_url + "/".join(self.get_target_parts(action,elem))
         #~ return settings.MEDIA_URL + "/".join(self.get_target_parts(action,elem))
         return ui.media_url(*self.get_target_parts(action,elem))
@@ -289,7 +298,7 @@ class AppyOdtBuildMethod(AppyBuildMethod):
     target_ext = '.odt'
     cache_name = 'userdocs'
     #~ cache_name = 'webdav'
-    webdav = True
+    use_webdav = True
 
 class AppyPdfBuildMethod(AppyBuildMethod):
     """
@@ -306,7 +315,7 @@ class AppyRtfBuildMethod(AppyBuildMethod):
     target_ext = '.rtf'
     cache_name = 'userdocs'
     #~ cache_name = 'webdav'
-    webdav = True
+    use_webdav = True
 
 class AppyDocBuildMethod(AppyBuildMethod):
     """
@@ -316,7 +325,7 @@ class AppyDocBuildMethod(AppyBuildMethod):
     target_ext = '.doc'
     cache_name = 'userdocs'
     #~ cache_name = 'webdav'
-    webdav = True
+    use_webdav = True
 
         
 class LatexBuildMethod(BuildMethod):
@@ -435,7 +444,6 @@ def get_build_method(elem):
 #~ class PrintAction(actions.RedirectAction):
 class BasePrintAction(reports.RowAction):
   
-        
     def before_build(self,bm,elem):
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
@@ -465,7 +473,8 @@ class BasePrintAction(reports.RowAction):
 class PrintAction(BasePrintAction):
     """Note that this action should rather be called 
     'Open a printable document' than 'Print'.
-    For the user they are synonyms as long as Lino doesn't support server-side printing.
+    For the user they are synonyms as long as 
+    Lino doesn't support server-side printing.
     """
     name = 'print'
     label = _('Print')
@@ -490,7 +499,11 @@ class PrintAction(BasePrintAction):
             kw.update(message=_("%s printable has been built.") % elem)
         else:
             kw.update(message=_("Reused %s printable from cache.") % elem)
-        kw.update(open_url=bm.get_target_url(self,elem,ui))
+        url = bm.get_target_url(self,elem,ui)
+        if bm.use_webdav:
+            kw.update(open_davlink_url=url)
+        else:
+            kw.update(open_url=url)
         return kw
         #~ return rr.ui.success_response(open_url=target,**kw)
         

@@ -760,7 +760,12 @@ tinymce.init({
         
         #~ yield "console.timeEnd('onReady');"
         yield "}); // end of onReady()"
-        yield '</script></head><body id="body">'
+        yield '</script></head><body>'
+        yield '<applet name="DavLink" code="davlink.DavLink.class"'
+        yield '        archive="%s/lino/applets/Applets.jar"' % self.media_url()
+        yield '        width="1" height="1"></applet>'
+        # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
+        yield '<div id="body"></div>'
         #~ yield '<div id="tbar"/>'
         #~ yield '<div id="main"/>'
         #~ yield '<div id="bbar"/>'

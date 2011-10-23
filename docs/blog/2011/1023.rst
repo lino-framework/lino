@@ -1,0 +1,11 @@
+20111023
+========
+
+Launch Office application on webdav link using Applet
+-----------------------------------------------------
+
+Worked on :doc:`/tickets/45` using a Java Applet.
+
+New files :srcref:`/media/applets/davlink_test.html` and 
+:srcref:`/java/davlink/DavLink.java`
+

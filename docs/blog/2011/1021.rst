@@ -58,8 +58,8 @@ odt  soffice.exe               soffice
 Um nicht alle Festplatten von oben bis unten zu durchsuchen, 
 können wir eine hardcodierte Liste von Verzeichnissen erstellen:
 
-Windows : "Program Files"
-Unix : "/usr/bin"
+- Windows : "Program Files"
+- Unix : "/usr/bin"
 
 
 UnicodeDecodeError at /api/dsbe/LanguageKnowledgesByPerson/279
@@ -73,9 +73,8 @@ während der Suche habe ich zwei andere Bugs behoben:
   Now it respects :setting:`LANGUAGES`.
   
 - Es war nicht möglich, in Feldern wie
-  :attr:`lino.apps.dsbe.models.LanguageKnowledge.spoken`  
-  oder 
-  :attr:`lino.apps.dsbe.models.LanguageKnowledge.written`
+  `spoken` oder `written` in 
+  :class:`lino.apps.dsbe.models.LanguageKnowledge`  
   einen einmal gesetzten Wert wieder auf leer zu setzen.
   Das galt für alle Felder mit einer :class:`lino.utils.choicelists.ChoiceList`.
 

@@ -947,6 +947,9 @@ Lino.action_handler = function (panel,on_success,gridmode) {
       } else {
           if (result.refresh) panel.refresh();
       }
+      if (result.open_davlink_url) {
+         Lino.Lino.davlink_open(result.open_davlink_url);
+      }
       if (result.open_url) {
           if (!result.message)
               Lino.notify('Open new window <a href="'+result.open_url+'" target="_blank">'+result.open_url+'</a>');
@@ -3396,3 +3399,11 @@ Lino.show_mti_child = function(fieldname,detail_handler) {
     Lino.notify('No current record.');
   }
 };
+
+
+Lino.davlink_open = function(webdavURL) {
+  /* Calls lino.applets.davlink.DavLink.open()
+  */
+  //~ console.log('Going to call document.applets.DavLink.open(',webdavURL,')');
+  document.applets.DavLink.open(webdavURL);
+}
