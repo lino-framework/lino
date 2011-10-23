@@ -948,7 +948,7 @@ Lino.action_handler = function (panel,on_success,gridmode) {
           if (result.refresh) panel.refresh();
       }
       if (result.open_davlink_url) {
-         Lino.Lino.davlink_open(result.open_davlink_url);
+         Lino.davlink_open(result.open_davlink_url);
       }
       if (result.open_url) {
           if (!result.message)

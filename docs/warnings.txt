@@ -1,1 +1,0 @@
-T:\hgwork\lino\docs\blog\2011\1021.rst:72: WARNING: py:mod reference target not found: lino.modlib.countries.fixtures.few_languages

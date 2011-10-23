@@ -268,6 +268,8 @@ def elem2rec_detailed(ar,rh,elem,**rec):
 
 
 class ExtUI(base.UI):
+    """The central instance of Lino's ExtJS3 User Interface.
+    """
     _response = None
     name = 'extjs3'
     verbose_name = "ExtJS with Windows"
@@ -575,6 +577,8 @@ class ExtUI(base.UI):
         return '\n'.join([ln for ln in self.html_lines(*args,**kw)])
         
     def html_lines(self,request,on_ready=[],**kw):
+        """Generates the lines of Lino's HTML reponse.
+        """
         #~ c = RequestContext(request,dict(site=self.site,lino=lino))
         self.welcome_template.ui = self
         self.welcome_template.request = request
