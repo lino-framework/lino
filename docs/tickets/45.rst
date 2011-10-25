@@ -12,8 +12,9 @@ located on the server, and this directory
 can be made accessible as a WebDAV location 
 (see :doc:`/admin/webdav`).
 
-When the client asks to print something, Lino generates that file 
-and returns an URL of the generated document, which the client usually 
+When the client asks to print something, Lino 
+generates that file and returns an URL of the 
+generated document, which the client usually 
 opens in a new browser window.
 
 But how to have the browser open our document 
@@ -55,80 +56,6 @@ Approaches
 
 The following is a description of the different approaches we've been 
 trying, with more or less success.
-
-
-Using browser-specific methods
-------------------------------
-
-This approach seems the most promising.
-The main challenge was that we must find out 
-which application to start, that is, 
-the application associated 
-(on the client's desktop)
-with a given file type.
-On a Windows client we must consult the registry,
-on Linux there might be different methods depending 
-on which Window Manager is used. At least KDE and Gnome 
-should have the concept of a configured list that maps 
-a file extension to the executable to be launched.
-The other challenge is to get permission for Lino's Javascript 
-to execute local commands without violating the client's 
-security.
-
-
-**Internet Explorer**: 
-If Microsoft would rule them all, we could simply do::
-
-  <script type="text/javascript">
-  function runShell(cmd) {
-    WshShell = new ActiveXObject("WScript.Shell");
-    WshShell.Run(cmd); // ,1,true);
-  }
-  </script>
-
-In fact it's less trivial: the above would still start a browser window 
-if `cmd` were a string like `http://webdav.server.tld/path/doc.rtf`. 
-It shouldn't be too difficult though to read the registry and get the 
-command associated to `.rtf` files and run it on the URL.
-But I'm not going to waste unpaid time on proprietary software.
-
-
-For **Firefox** we got it working.
-(Sources:
-`1 <https://developer.mozilla.org/en/Code_snippets/Running_applications>`_
-`2 <https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIProcess>`_
-`3 <http://forums.mozillazine.org/viewtopic.php?f=19&t=803615&start=0>`_
-`4 <http://stackoverflow.com/questions/2017743/how-to-call-a-function-in-firefox-extension-from-a-html-button>`_
-`5 <http://stackoverflow.com/questions/1374927/launch-file-from-firefox-chrome>`_)
-Here is a proof of concept:
-
-.. literalinclude:: ../blog/2011/0923/startfile.js
-
-This script would be used as follows:
-
-.. literalinclude:: ../blog/2011/0923/startfile.html
-
-
-
-Firefox will ask the user "A script from XXX is requesting enhanced 
-abilities that are UNSAFE and could be used to comprimise your machine 
-or data...":
-
-.. image:: 45/20110921a.jpg
-   :scale: 50
-  
-**Google Chrome** :
-we probably need to write an NPAPI extension.
-Read
-`1 <http://stackoverflow.com/questions/2537772/how-can-i-launch-a-system-command-via-javascript-in-google-chrome>`_
-`2 <http://code.google.com/chrome/extensions/getstarted.html>`_
-`3 <http://code.google.com/chrome/extensions/devguide.html>`_
-`4 <http://code.google.com/chrome/extensions/npapi.html>`_
-`5 <https://developer.mozilla.org/en/Plugins>`_
-and
-`6 <http://www.firebreath.org/display/documentation/FireBreath+Home>`_.
-
-
 
 
 
@@ -190,37 +117,6 @@ Writer or Word, *but* first it will download the file.
 
 
 
-A "command server" on each client?
-----------------------------------
-
-On a Windows machine, if we manually type in a DOS box::
-
-  start http://lino/media/webdav/userdocs/test.rtf
-  
-then we get the expected result.
-
-So one workaround might be to have a small "cmdserver" 
-daemon that clients need to install and run on their machine,
-at least if they want the feature of editing .rtf files.
-
-This would be a minimal HTTP server which would react to a GET `http://localhost:8910/userdocs/test.rtf` by executing the 
-corresponding file.    
-Here is a functional but neither secure nor user-friendly 
-proof-of-concept implementation of such a daemon:
-
-.. literalinclude:: 45/cmdserver.py
-   
-        
-We could make the `cmdserver` method more user-friendly and secure, 
-but it still remains a very strange workaround. 
-
-But is there really no easier solution?
-For many system administrators it is not a solution at all since 
-installing such a command server on each client causes additional 
-complexity as well as security risks.
-
-
-
 
 
 Using a Java applet 
@@ -244,50 +140,16 @@ But this Firefox plugin is not compatible with newer
 Firefox versions, and it is no longer maintained.
 ("L'auteur a malheureusement abandonné le développement de son extension.")
 
-Using a custom URL protocol
----------------------------
 
-- `We need a webdav:// URL scheme!
-  <http://kartik-log.blogspot.com/2006/01/we-need-webdav-url-scheme.html>`_ 
-  (Kartick's Log, January 2006)
 
-- `Registering an Application to a URL Protocol
-  <http://msdn.microsoft.com/en-us/library/aa767914.aspx>`_
+
+.. toctree::
+   :maxdepth: 2
+
+  45/using_url_protocol
+  45/using_cmdserver
+  45/using_javascript
   
-- Freeware `viewer <http://www.nirsoft.net/utils/url_protocol_view.html>`_ 
-  for URL protocols.
-
-Here is a simple `.reg` file that installs LibreOffice 
-as handler for ``webdav:`` URLs:
-
-.. literalinclude:: 45/webdav.reg
-
-To try it: download :srcref:`/docs/tickets/45/webdav.reg` and doubleclick on it.
-
-Here is a similar file for MS Office:
-:srcref:`/docs/tickets/45/webdav_mso.reg`.
-
-Problem: The specified URL protocol handler then receives 
-``webdav://host/path.rtf`` 
-as command line argument, 
-but the argumentneeds first to be converted 
-to ``https://host/path.rtf``.
-
-LibreOffice solves this using the magic protocol name 
-``vnd.sun.star.webdav`` 
-instead of
-``webdav``.
-This activates the 
-`WebDAV Content Provider
-<http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/AppendixC/The_WebDAV_Content_Provider>`_ 
-who does the conversion.
-This works, but only when the WebDAV server is on 
-``http``, not on ``https``.
-
-
-
-
-
 
 
 

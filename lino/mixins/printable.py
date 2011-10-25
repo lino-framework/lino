@@ -96,12 +96,22 @@ class BuildMethod:
     default_template = ''
     
     use_webdav = False
-    """Whether this build method results in an editable file.
+    """
+    Whether this build method results is an editable file.
+    For example, `.odt` files are considered editable 
+    while `.pdf` files aren't.
+    
     In that case the target will be in a webdav folder 
     and the print action will respond 
     `open_davlink_url` instead of the usual `open_url`,
     which extjs3 ui will implement by calling `Lino.davlink_open()`
     instead of the usual `window.open()`.
+    
+    When :attr:`lino.Lino.use_davlink` is `False`,
+    this setting still influences the target path
+    of resulting files, but the clients 
+    will not automatically recognize them as 
+    webdav-editable URLs.
     """
     
     def __init__(self):
@@ -500,7 +510,7 @@ class PrintAction(BasePrintAction):
         else:
             kw.update(message=_("Reused %s printable from cache.") % elem)
         url = bm.get_target_url(self,elem,ui)
-        if bm.use_webdav:
+        if bm.use_webdav and settings.LINO.use_davlink:
             kw.update(open_davlink_url=url)
         else:
             kw.update(open_url=url)

@@ -1,0 +1,44 @@
+20111024
+========
+
+New documentation page :doc:`/davlink/index` with a public self-signed 
+certificate that users can import to their browser in order to avoid 
+the security warning.
+
+
+- Opened account on www.cacert.org
+- Created new client certificate
+- Installed into FF from link provided by www.cacert.org
+- Exported from FF as file t:\data\luc\cacert\CAcertWoTUser.crt
+  using Certificate Manager (:menuselection:`Options --> 
+  Advanced --> Encryption --> Your Certificates --> 
+  View --> Details --> Export`
+- Imported into java keystore  using::
+
+    keytool -import -file t:\data\luc\cacert\CAcertWoTUser.crt -alias luc -trustcacerts
+    
+    
+    
+    
+jarsigner: Certificate chain not found for: luc.  luc must reference a valid KeyStore key entry containing a private key and corresponding public key certificate chain.    
+
+
+T:\hgwork\lino\java>keytool -importkeystore -srckeystore t:\data\luc\cacert\luc.p12 -srcstoretype PKCS12
+Enter destination keystore password:
+Enter source keystore password:
+Entry for alias cacert wot user's root ca id successfully imported.
+Import command completed:  1 entries successfully imported, 0 entries failed or cancelled
+
+keytool -changealias -alias "cacert wot user's root ca id" -destalias luc
+
+
+
+Warning:
+The signer certificate's ExtendedKeyUsage extension doesn't allow code signing.
+The signer certificate will expire within six months.
+The signer's certificate chain is not validated.
+
+
+Warning:
+The signer certificate's ExtendedKeyUsage extension doesn't allow code signing.
+The signer's certificate chain is not validated.

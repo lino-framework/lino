@@ -1,41 +1,8 @@
 /*
 
-Launch the client's desktop's office application 
-on a remote webdav file.
-  
-Supported Office suites: Microsoft, OpenOffice, LibreOffice
-Supported Platforms: Windows, Unix
-  
-Thanks to 
-  
-  FilenameFilter:
-  http://bruce-eckel.developpez.com/livres/java/traduction/tij2/?chap=12&page=0
-  
-  Inspiration for traversal()
-  http://vafer.org/blog/20071112204524/
-  
-  Methods with variable arguments:
-  http://today.java.net/pub/a/today/2004/04/19/varargs.html
-  
-  List all the drives ("roots paths") on Windows:
-  http://msdn.microsoft.com/en-us/library/aa988512(v=vs.80).aspx
-  
-  Recursive file listing
-  http://www.javapractices.com/topic/TopicAction.do?Id=68
+See http://lino.saffre-rumma.net/davlink  
 
-  Preferences API
-  http://download.oracle.com/javase/1.5.0/docs/api/java/util/prefs/Preferences.html
-  
-  API for Java SE:
-  http://download.oracle.com/javase/6/docs/api/
-  
-Alternatives
-  
-  Element IT's `OfficeOpen control
-  <http://www.element-it.com/online-edit-in-openoffice-and-microsoft-office.aspx>`_
-  
-  
-  
+http://download.oracle.com/javase/6/docs/api/java/util/ArrayList.html
 
 */
 
@@ -47,7 +14,7 @@ import java.util.Hashtable;
 import java.util.ArrayList; 
 import java.util.List; 
 import java.applet.Applet;
-
+//~ import java.security.AccessControlException;
 import java.io.FilenameFilter;
 import java.io.FileFilter;
 
@@ -87,11 +54,11 @@ class Launcher {
 }
 class DocType {
     String extension;
-    ArrayList<Launcher> launchers;
+    ArrayList<Launcher> launchers = new ArrayList<Launcher>();
   
     DocType(String ext) {
         extension = ext;
-        launchers = new ArrayList<Launcher>();
+        //~ launchers = new ArrayList<Launcher>();
     }
     
     Launcher getPreferredLauncher() {
@@ -109,7 +76,7 @@ class Searcher {
     }
     public final void traverse( final File f ) throws IOException {
         if (f.isDirectory()) {
-          //~ System.out.println("Searching " + f.getAbsolutePath());
+          System.out.println("Searching " + f.getAbsolutePath());
           //~ onDirectory(f);
           for (String name : f.list()) {
              traverse(new File(f,name));
@@ -244,19 +211,25 @@ public class DavLink extends Applet {
     
     public void init() {
         System.out.println("Initializing");
+        //~ System.out.println("toto");
         System.setSecurityManager(new SecurityManager()
         {
           @Override
           public void checkPermission(Permission permission) {
              if (permission instanceof RuntimePermission) {
-                 if (permission.getActions().equalsIgnoreCase("preferences")) {
-                    return;
-                 }
+                 return;
+                 //~ if (permission.getActions().equalsIgnoreCase("preferences")) {
+                    //~ return;
+                 //~ }
+                 //~ if (permission.getActions().equalsIgnoreCase("getenv.SystemDrive")) {
+                    //~ return;
+                 //~ }
              }
              if (permission instanceof FilePermission) {
-                 if (permission.getActions().equalsIgnoreCase("execute")) {
-                    return;
-                 }
+                 return;
+                 //~ if (permission.getActions().equalsIgnoreCase("execute")) {
+                    //~ return;
+                 //~ }
              }
              java.security.AccessController.checkPermission(permission);
           }
@@ -264,21 +237,27 @@ public class DavLink extends Applet {
     }
     
     public void generate_default_prefs() {
-        System.out.println("generate_default_prefs()");
+        //~ System.out.println("generate_default_prefs()");
+      
       
         add_program("winword.exe", null,          null,   "rtf","doc");
         add_program("swriter.exe", "libreoffice", null,   "rtf","doc","odt");
         add_program("excel.exe"  , null,          null,   "xls","csv");
         add_program("scalc.exe"  , "libreoffice", null,   "xls","ods","csv");
 
-      
         List<File> drives = new ArrayList<File>();
         String[] bindirs;
       
         String os_name = System.getProperty("os.name");
+      
         if (os_name.startsWith("Windows")) {
           bindirs = new String[] { "Program Files", "Program Files (x86)" };
-          drives.add(new File(System.getenv("SystemDrive") + "\\"));
+          //~ crack:
+          String s = System.getenv("SystemDrive") + "\\";
+          File fd = new File(s);
+          drives.add(fd);
+          //~ drives.add(new File(System.getenv("SystemDrive") + "\\"));
+          //~ System.out.println("generate_default_prefs() 10");
         } else {
           bindirs = new String[] { "/usr/bin/" };
         } 
@@ -345,7 +324,9 @@ public class DavLink extends Applet {
             Process p = Runtime.getRuntime().exec(cmd);
             p.waitFor();
             System.out.println(p.exitValue());
-        } catch (IOException | InterruptedException err) {
+        } catch (IOException err) {
+            err.printStackTrace();
+        } catch (InterruptedException err) {
             err.printStackTrace();
         }
           

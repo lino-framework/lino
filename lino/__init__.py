@@ -413,6 +413,10 @@ class Lino(object):
 
     """
     
+    use_davlink = True
+    """
+    Set this to `False` if you don't need WebDAV-enabled links.
+    """
     
     
    

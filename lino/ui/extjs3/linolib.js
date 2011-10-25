@@ -947,9 +947,11 @@ Lino.action_handler = function (panel,on_success,gridmode) {
       } else {
           if (result.refresh) panel.refresh();
       }
+      #if $settings.LINO.use_davlink
       if (result.open_davlink_url) {
          Lino.davlink_open(result.open_davlink_url);
       }
+      #end if
       if (result.open_url) {
           if (!result.message)
               Lino.notify('Open new window <a href="'+result.open_url+'" target="_blank">'+result.open_url+'</a>');
@@ -3400,6 +3402,7 @@ Lino.show_mti_child = function(fieldname,detail_handler) {
   }
 };
 
+#if $settings.LINO.use_davlink
 
 Lino.davlink_open = function(webdavURL) {
   /* Calls lino.applets.davlink.DavLink.open()
@@ -3407,3 +3410,5 @@ Lino.davlink_open = function(webdavURL) {
   //~ console.log('Going to call document.applets.DavLink.open(',webdavURL,')');
   document.applets.DavLink.open(webdavURL);
 }
+
+#end if
