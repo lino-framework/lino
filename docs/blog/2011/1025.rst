@@ -13,7 +13,7 @@ Oho, if I have the following links::
 then FF asks me:
 
 .. image:: 1025/1025a.jpg
-  :scale:90
+  :scale: 90
 
 
 My decision is save in Firefox's 
@@ -28,7 +28,7 @@ When I do the same with a fictive protocol ``foofoo:`` ::
 The I get another reaction:
 
 .. image:: 1025/1025a.jpg
-  :scale:90
+  :scale: 90
 
 
 
@@ -38,11 +38,12 @@ HKEY_CLASSES_ROOT\vnd.sun.star.webdav
 Found problem with DavLink
 --------------------------
 
-The mysterious problem with the DavLink applet was that 
+The mysterious problem with the :term:`DavLink` applet was that 
 the following exception was not displayed in the Java console::
 
   [20:45:47.095] uncaught exception: java.security.AccessControlException: access denied ("java.lang.RuntimePermission" "getenv.SystemDrive")
 
-But it was visible in the JavaScript console.
-Don't ask me why but after modifying the SecurityManager
+But it was visible in the JavaScript console where I didn't happen to look
+(don't ask me why). 
+After modifying the SecurityManager
 to irgnore also this AccessControlException, it works again.

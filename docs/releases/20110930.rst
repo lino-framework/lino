@@ -1,6 +1,8 @@
 Version 1.2.3 (03.10.2011)
 ==========================
 
+Changeset b7dcbc73707e
+
 New features
 ------------
 

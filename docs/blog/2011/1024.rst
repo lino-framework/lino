@@ -1,10 +1,10 @@
 20111024
 ========
 
-New documentation page :doc:`/davlink/index` with a public self-signed 
-certificate that users can import to their browser in order to avoid 
-the security warning.
+New documentation page :doc:`/davlink/index`.
 
+Tried to apply a public CACert certificate for the `DavLink.jar`
+so that users know whom to trust when adding their security exception.
 
 - Opened account on www.cacert.org
 - Created new client certificate
@@ -13,13 +13,12 @@ the security warning.
   using Certificate Manager (:menuselection:`Options --> 
   Advanced --> Encryption --> Your Certificates --> 
   View --> Details --> Export`
-- Imported into java keystore  using::
+- Imported into java keystore using::
 
     keytool -import -file t:\data\luc\cacert\CAcertWoTUser.crt -alias luc -trustcacerts
     
+No success yet. Difficult to document. Here are some notes::
     
-    
-::
 
   jarsigner: Certificate chain not found for: luc.  luc must reference a valid KeyStore key entry containing a private key and corresponding public key certificate chain.    
 
@@ -31,7 +30,6 @@ the security warning.
   Import command completed:  1 entries successfully imported, 0 entries failed or cancelled
 
   keytool -changealias -alias "cacert wot user's root ca id" -destalias luc
-
 
 
   Warning:

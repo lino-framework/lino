@@ -16,7 +16,7 @@ corresponding file.
 Here is a functional but neither secure nor user-friendly 
 proof-of-concept implementation of such a daemon:
 
-.. literalinclude:: 45/cmdserver.py
+.. literalinclude:: cmdserver.py
    
         
 We could make the `cmdserver` method more user-friendly and secure, 

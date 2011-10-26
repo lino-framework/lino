@@ -4,7 +4,8 @@
 a) Upgrade in Eupen
 -------------------
 
-Release 1.2.4 and upgrade in Eupen from 
+Release :doc:`/releases/20111026` 
+and upgrade in Eupen from 
 2056:b7dcbc73707e to 2057:3d185f19e083::
 
   pulling from https://lino.googlecode.com/hg/
@@ -16,7 +17,7 @@ Release 1.2.4 and upgrade in Eupen from
   178 files updated, 0 files merged, 0 files removed, 0 files unresolved
 
 
-The data migration ˇ:func:`lino.apps.dsbe.migrate.migrate_from_1_2_3` 
+The data migration :func:`lino.apps.dsbe.migrate.migrate_from_1_2_3` 
 is less complex this time. the following generated code in the dpy dump 
 caused a traceback when `owner_type_id` was None:
 
@@ -55,4 +56,18 @@ Indeed, compiling with `-Xlint` tells us more::
                            ^
   2 warnings    
   
-But 
+`Richard's Ramblings <http://www.richardsramblings.com/2007/12/java-unchecked-compiler-warnings/>`_
+gives the explanation. So I added type checking to :term:`DavLink` by replacing
+
+::
+
+    Hashtable docTypes = new Hashtable();
+    Hashtable launchers = new Hashtable();
+
+by
+
+::
+
+    Hashtable<String,DocType> docTypes = new Hashtable<String,DocType>();
+    Hashtable<String,Launcher> launchers = new Hashtable<String,Launcher>();
+
