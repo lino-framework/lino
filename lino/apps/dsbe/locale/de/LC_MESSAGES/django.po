@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-16 08:37+0100\n"
-"PO-Revision-Date: 2011-10-16 09:38+0100\n"
+"POT-Creation-Date: 2011-10-26 19:23+0100\n"
+"PO-Revision-Date: 2011-10-26 20:24+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -73,7 +73,7 @@ msgid "Cannot delete companies and persons imported from TIM"
 msgstr "Aus TIM importierte Partner dürfen nicht gelöscht werden."
 
 #: .\models.py:290
-#: .\models.py:1421
+#: .\models.py:1451
 #: .\config\contacts\Person\1.dtl.py:3
 msgid "Person"
 msgstr "Person"
@@ -110,7 +110,7 @@ msgstr "Begleitet seit"
 #: .\models.py:378
 #: .\models.py:394
 #: .\models.py:1059
-#: .\models.py:1578
+#: .\models.py:1614
 msgid "until"
 msgstr "bis"
 
@@ -329,6 +329,7 @@ msgid "My coached Persons"
 msgstr "Meine Leute"
 
 #: .\models.py:779
+#: .\config\users\User\0_user.dtl.py:3
 msgid "User"
 msgstr "Benutzer"
 
@@ -369,17 +370,17 @@ msgid "language knowledges"
 msgstr "Sprachkenntnisse"
 
 #: .\models.py:913
-#: .\models.py:1599
+#: .\models.py:1636
 msgid "Language"
 msgstr "Sprache"
 
 #: .\models.py:916
-#: .\models.py:1600
+#: .\models.py:1637
 msgid "spoken"
 msgstr "Wort"
 
 #: .\models.py:917
-#: .\models.py:1601
+#: .\models.py:1638
 msgid "written"
 msgstr "Schrift"
 
@@ -412,8 +413,8 @@ msgstr "Eigenschaften"
 
 #: .\models.py:960
 #: .\models.py:1060
-#: .\models.py:1376
-#: .\models.py:1457
+#: .\models.py:1402
+#: .\models.py:1486
 msgid "Remark"
 msgstr "Bemerkung"
 
@@ -499,186 +500,199 @@ msgid "Course Contents"
 msgstr "Kursinhalte"
 
 #: .\models.py:1325
-#: .\models.py:1346
+#: .\models.py:1342
+#: .\models.py:1394
 msgid "Name"
 msgstr ""
 
-#: .\models.py:1342
+#: .\models.py:1338
+msgid "Course Offer"
+msgstr "Kursangebot"
+
+#: .\models.py:1339
+msgid "Course Offers"
+msgstr "Kursangebote"
+
+#: .\models.py:1348
+#: .\models.py:1455
+msgid "Course content"
+msgstr "Kursinhalt"
+
+#: .\models.py:1354
+msgid "Course provider"
+msgstr "Kursanbieter"
+
+#: .\models.py:1359
+msgid "Description"
+msgstr "Beschreibung"
+
+#: .\models.py:1370
+msgid "List of candidates"
+msgstr "Kandidatenliste"
+
+#: .\models.py:1386
 msgid "Course"
 msgstr "Kurs"
 
-#: .\models.py:1343
+#: .\models.py:1387
 #: .\config\dsbe\CourseProvider\courses.dtl.py:3
 msgid "Courses"
 msgstr "Kurse"
 
-#: .\models.py:1352
-#: .\models.py:1425
-msgid "Course content"
-msgstr "Kursinhalt"
-
-#: .\models.py:1358
-msgid "Course provider"
-msgstr "Kursanbieter"
-
-#: .\models.py:1367
+#: .\models.py:1396
 msgid "start date"
 msgstr "beginnt am"
 
-#: .\models.py:1388
-msgid "List of candidates"
-msgstr "Kandidatenliste"
-
-#: .\models.py:1389
+#: .\models.py:1419
 msgid "List of participants"
 msgstr "Teilnehmerliste"
 
-#: .\models.py:1417
-#: .\models.py:1418
+#: .\models.py:1447
+#: .\models.py:1448
 msgid "Course Requests"
 msgstr "Kursanfragen"
 
-#: .\models.py:1429
+#: .\models.py:1459
 msgid "date submitted"
 msgstr "eingereicht am "
 
-#: .\models.py:1442
+#: .\models.py:1472
 msgid "Course found"
 msgstr "Kurs gefunden"
 
-#: .\models.py:1462
+#: .\models.py:1491
 msgid "date ended"
 msgstr "Beendet am"
 
-#: .\models.py:1468
+#: .\models.py:1497
 msgid "Ending"
 msgstr "Beendigung"
 
-#: .\models.py:1508
+#: .\models.py:1544
 msgid "Participants"
 msgstr "Teilnehmer"
 
-#: .\models.py:1513
+#: .\models.py:1549
 msgid "Unregister"
 msgstr "Austragen"
 
-#: .\models.py:1519
+#: .\models.py:1555
 #, python-format
 msgid "%(person)s has been unregistered from %(course)s"
 msgstr "%(person)s wurde ausgetragen aus %(course)s"
 
-#: .\models.py:1523
+#: .\models.py:1559
 msgid "Candidates"
 msgstr "Kandidaten"
 
-#: .\models.py:1535
+#: .\models.py:1571
 msgid "Register"
 msgstr "Eintragen"
 
-#: .\models.py:1540
+#: .\models.py:1576
 #, python-format
 msgid "%(person)s has been registered to %(course)s"
 msgstr "%(person)s wurde eingetragen zum Kurs %(course)s"
 
-#: .\models.py:1556
+#: .\models.py:1592
 msgid "Person Search"
 msgstr "Personensuche"
 
-#: .\models.py:1557
+#: .\models.py:1593
 msgid "Person Searches"
 msgstr "Personensuchen"
 
-#: .\models.py:1560
+#: .\models.py:1596
 msgid "Search Title"
 msgstr "Titel Suchliste"
 
-#: .\models.py:1561
+#: .\models.py:1597
 msgid "Aged from"
 msgstr "Alter von"
 
-#: .\models.py:1563
+#: .\models.py:1599
 msgid "Aged to"
 msgstr "Alter bis"
 
-#: .\models.py:1567
+#: .\models.py:1603
 msgid "Only my persons"
 msgstr "nur meine Leute"
 
-#: .\models.py:1570
+#: .\models.py:1606
 msgid "Coached by"
 msgstr "Begleitet durch"
 
-#: .\models.py:1575
+#: .\models.py:1611
 msgid "Period from"
 msgstr "Periode vom"
 
-#: .\models.py:1585
+#: .\models.py:1621
 msgid "Unnamed"
 msgstr "Unbenannt"
 
-#: .\models.py:1592
+#: .\models.py:1628
 msgid "Print"
 msgstr "Drucken"
 
-#: .\models.py:1606
+#: .\models.py:1643
 msgid "Wanted property"
 msgstr "Gesuchte Eigenschaft"
 
-#: .\models.py:1607
-#: .\models.py:1625
+#: .\models.py:1644
+#: .\models.py:1662
 msgid "Wanted properties"
 msgstr "Gesuchte Eigenschaften"
 
-#: .\models.py:1614
+#: .\models.py:1651
 msgid "Unwanted property"
 msgstr "Unerwünschte Eigenschaft"
 
-#: .\models.py:1615
-#: .\models.py:1630
+#: .\models.py:1652
+#: .\models.py:1667
 msgid "Unwanted properties"
 msgstr "Unerwünschte Eigenschaften"
 
-#: .\models.py:1620
+#: .\models.py:1657
 msgid "Wanted language knowledges"
 msgstr "Erwünschte Sprachkenntnisse"
 
-#: .\models.py:1651
+#: .\models.py:1688
 msgid "Found persons"
 msgstr "Gefundene Personen"
 
-#: .\models.py:1742
+#: .\models.py:1779
 msgid "Local job office"
 msgstr "Lokales Arbeitsamt"
 
-#: .\models.py:1752
+#: .\models.py:1789
 msgid "Skills Property Group"
 msgstr "Eigenschaftsgruppe Fähigkeiten"
 
-#: .\models.py:1760
+#: .\models.py:1797
 msgid "Soft Skills Property Group"
 msgstr "Eigenschaftsgruppe Sozialkompetenzen"
 
-#: .\models.py:1770
+#: .\models.py:1807
 msgid "Obstacles Property Group"
 msgstr "Eigenschaftsgruppe Hindernisse"
 
-#: .\models.py:1782
+#: .\models.py:1819
 msgid "Upload Type for residence permit"
 msgstr "Upload-Art Aufenthaltserlaubnis"
 
-#: .\models.py:1792
+#: .\models.py:1829
 msgid "Upload Type for work permit"
 msgstr "Upload-Art Arbeitserlaubnis"
 
-#: .\models.py:1802
+#: .\models.py:1839
 msgid "Upload Type for driving licence"
 msgstr "Upload-Art Führerschein"
 
-#: .\models.py:1809
+#: .\models.py:1846
 msgid "is Course Provider"
 msgstr "Kursanbieter"
 
-#: .\models.py:1827
+#: .\models.py:1863
 msgid "is SPIS user"
 msgstr "DSBE-Benutzer"
 
@@ -728,11 +742,11 @@ msgstr "~Eigenschaften"
 msgid "E~xplorer"
 msgstr "E~xplorer"
 
-#: .\settings.py:221
+#: .\settings.py:222
 msgid "~Help"
 msgstr "~Hilfe"
 
-#: .\settings.py:222
+#: .\settings.py:223
 msgid "~User Manual"
 msgstr "~Benutzerhandbuch"
 

@@ -588,13 +588,16 @@ def migrate_from_1_2_4(globals_dict):
         return cal_Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class=access_class,sequence=sequence,user_modified=user_modified,rset_id=rset_id,due_date=due_date,due_time=due_time,done=done,percent=percent,status=status,auto_type=auto_type)    
     globals_dict.update(create_cal_task=create_cal_task)
     
+    i2d = globals_dict['i2d']
     dsbe_CourseOffer = resolve_model("dsbe.CourseOffer")
     dsbe_Course = resolve_model("dsbe.Course")
     def create_dsbe_course(id, title, content_id, provider_id, start_date, remark):
         o = dsbe_CourseOffer(id=id,title=title,content_id=content_id,provider_id=provider_id,description=remark)
         o.full_clean()
         o.save()
-        return dsbe_Course(id=id,offer=o,start_date=start_date)   
+        if start_date is None:
+            start_date = i2d(20110901)
+        return dsbe_Course(id=id,offer=o,start_date=start_date)
         #~ return dsbe_Course(id=id,title=title,content_id=content_id,provider_id=provider_id,start_date=start_date,remark=remark)    
     globals_dict.update(create_dsbe_course=create_dsbe_course)
     

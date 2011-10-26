@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-16 08:36+0100\n"
+"POT-Creation-Date: 2011-10-26 19:22+0100\n"
 "PO-Revision-Date: 2011-10-14 20:45+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -84,59 +84,59 @@ msgstr "Beendigung"
 msgid "date ended"
 msgstr "Beendet am"
 
-#: .\models.py:255
+#: .\models.py:256
 msgid "Contract ends"
 msgstr "Vertrag endet"
 
-#: .\models.py:264
+#: .\models.py:265
 msgid "ISIP Contract"
 msgstr "VSE-Vertrag"
 
-#: .\models.py:265
+#: .\models.py:266
 msgid "ISIP Contracts"
 msgstr "VSE-Verträge"
 
-#: .\models.py:269
+#: .\models.py:270
 msgid "Contract Type"
 msgstr "Vertragsart"
 
-#: .\models.py:272
+#: .\models.py:273
 msgid "Company"
 msgstr "Firma"
 
-#: .\models.py:275
+#: .\models.py:276
 msgid "stages"
 msgstr "Etappen"
 
-#: .\models.py:277
+#: .\models.py:278
 msgid "goals"
 msgstr "Zielsetzungen"
 
-#: .\models.py:279
+#: .\models.py:280
 msgid "duties ASD"
 msgstr "Verpflichtungen ASD"
 
-#: .\models.py:281
+#: .\models.py:282
 msgid "duties DSBE"
 msgstr "Verpflichtungen DSBE"
 
-#: .\models.py:283
+#: .\models.py:284
 msgid "duties company"
 msgstr "Verpflichtungen Firma"
 
-#: .\models.py:285
+#: .\models.py:286
 msgid "duties person"
 msgstr "Verpflichtungen Person"
 
-#: .\models.py:294
+#: .\models.py:295
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
-#: .\models.py:345
+#: .\models.py:346
 msgid "My PIIS contracts"
 msgstr "Meine VSE-Verträge"
 
-#: .\models.py:360
+#: .\models.py:361
 msgid "~ISIP"
 msgstr "~VSE"
 

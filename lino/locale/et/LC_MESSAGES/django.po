@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-16 08:36+0100\n"
+"POT-Creation-Date: 2011-10-26 19:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\__init__.py:541 .\templates\500.html.py:4 .\templates\base.html.py:26
+#: .\__init__.py:580 .\templates\500.html.py:4 .\templates\base.html.py:26
 msgid "Home"
 msgstr ""
 
@@ -40,7 +40,7 @@ msgstr ""
 msgid "Text Field Templates"
 msgstr ""
 
-#: .\models.py:134 .\utils\babel.py:366
+#: .\models.py:134 .\utils\babel.py:346
 msgid "Designation"
 msgstr ""
 
@@ -141,45 +141,45 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: .\mixins\printable.py:471 .\mixins\printable.py:757
+#: .\mixins\printable.py:490 .\mixins\printable.py:780
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:490
+#: .\mixins\printable.py:509
 #, python-format
 msgid "%s printable has been built."
 msgstr ""
 
-#: .\mixins\printable.py:492
+#: .\mixins\printable.py:511
 #, python-format
 msgid "Reused %s printable from cache."
 msgstr ""
 
-#: .\mixins\printable.py:536
+#: .\mixins\printable.py:559
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:557
+#: .\mixins\printable.py:580
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:566
+#: .\mixins\printable.py:589
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:602
+#: .\mixins\printable.py:625
 msgid "must build"
 msgstr ""
 
-#: .\mixins\printable.py:742
+#: .\mixins\printable.py:765
 msgid "Date"
 msgstr ""
 
-#: .\mixins\printable.py:789
+#: .\mixins\printable.py:812
 msgid "Preview"
 msgstr ""
 
-#: .\mixins\printable.py:799
+#: .\mixins\printable.py:822
 #, python-format
 msgid "Initiate Listing «%s»"
 msgstr ""
@@ -254,63 +254,63 @@ msgstr ""
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\extjs3\ext_store.py:458 .\ui\extjs4\ext_store.py:388
+#: .\ui\extjs3\ext_store.py:201 .\ui\extjs4\ext_store.py:388
 #: .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:263 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
+#: .\ui\extjs3\ext_ui.py:264 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:801 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
+#: .\ui\extjs3\ext_ui.py:812 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:862 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs3\ext_ui.py:873 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:864 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs3\ext_ui.py:875 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:872 .\ui\extjs3\ext_ui.py:897
+#: .\ui\extjs3\ext_ui.py:883 .\ui\extjs3\ext_ui.py:908
 #: .\ui\extjs4\ext_ui.py:827 .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632
 #: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:924
+#: .\ui\extjs3\ext_ui.py:935
 #, python-format
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1094 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1105 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1191
+#: .\ui\extjs3\ext_ui.py:1202
 #, python-format
-msgid "Action \"%(action)s\" failed for %(record)s."
+msgid "Action \"%(action)s\" failed for %(record)s:"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1194
+#: .\ui\extjs3\ext_ui.py:1206
 msgid "An error report has been sent to the system administrator."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1536 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1548 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1545 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:1557 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr ""
 
@@ -331,51 +331,51 @@ msgid "Next"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:7
-msgid "Reload current record"
+msgid "Go to record"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:8
-msgid "Save changes to current record ?"
+msgid "Reload current record"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:9
-msgid "Edit text in own window"
+msgid "Save changes to current record ?"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:10
-msgid "Confirmation"
+msgid "Edit text in own window"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:11
-msgid "No data to display."
+msgid "Confirmation"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:12
-msgid "Memo"
+msgid "No data to display."
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:13
-msgid "Previous page"
+msgid "Memo"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:14
-msgid "Cannot show detail for empty foreign key."
+msgid "Previous page"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:15
-msgid "First"
+msgid "Cannot show detail for empty foreign key."
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:16
-msgid "Displaying {0} - {1} of {2}"
+msgid "First"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:17
-msgid "Last"
+msgid "Displaying {0} - {1} of {2}"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:18
-msgid "Expand memo fields"
+msgid "Last"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:19
@@ -395,7 +395,7 @@ msgid "View"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:23
-msgid "Select a record to display"
+msgid "Expand memo fields"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:24
@@ -441,19 +441,19 @@ msgstr ""
 msgid "Choices for %s"
 msgstr ""
 
-#: .\utils\babel.py:380
+#: .\utils\babel.py:360
 msgid "Language"
 msgstr ""
 
-#: .\utils\choicelists.py:142
+#: .\utils\choicelists.py:143
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr ""
 
-#: .\utils\choicelists.py:215
+#: .\utils\choicelists.py:240
 msgid "certainly not...very much"
 msgstr ""
 
-#: .\utils\choicelists.py:236
+#: .\utils\choicelists.py:261
 msgid "not at all...very well"
 msgstr ""
