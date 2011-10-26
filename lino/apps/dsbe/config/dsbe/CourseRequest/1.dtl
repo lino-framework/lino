@@ -2,7 +2,7 @@
 :label_align: top
 
 main =
-    id:8 person content
+    id:8 person content offer
     date_submitted course 
     date_ended ending
     remark  uploads.UploadsByOwner

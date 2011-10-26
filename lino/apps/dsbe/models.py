@@ -1504,9 +1504,15 @@ class CourseRequest(models.Model):
     """
     
     def save(self,*args,**kw):
-        if self.offer and not self.content:
+        if self.offer and self.offer.content:
             self.content = self.offer.content
         super(CourseRequest,self).save(*args,**kw)
+        
+    @chooser()
+    def offer_choices(cls,content):
+        if content:
+            return CourseOffers.objects.filter(content=content)
+        return CourseOffers.objects.all()
         
     
     def on_create(self,req):

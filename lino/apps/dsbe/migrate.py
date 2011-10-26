@@ -601,6 +601,13 @@ def migrate_from_1_2_4(globals_dict):
         #~ return dsbe_Course(id=id,title=title,content_id=content_id,provider_id=provider_id,start_date=start_date,remark=remark)    
     globals_dict.update(create_dsbe_course=create_dsbe_course)
     
+    dsbe_CourseRequest = resolve_model("dsbe.CourseRequest")
+    def create_dsbe_courserequest(id, person_id, content_id, date_submitted, course_id, remark, date_ended, ending_id):
+        return dsbe_CourseRequest(id=id,person_id=person_id,content_id=content_id,date_submitted=date_submitted,course_id=course_id,
+            offer_id=course_id,
+            remark=remark,date_ended=date_ended,ending_id=ending_id)    
+    globals_dict.update(create_dsbe_courserequest=create_dsbe_courserequest)
+    
     return '1.2.5'
   
 
