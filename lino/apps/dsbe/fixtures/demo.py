@@ -452,10 +452,16 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield CourseContent(id=1,name=u"Deutsch")
     yield CourseContent(id=2,name=u"Französisch")
     
+    offer = Instantiator('dsbe.CourseOffer').build
     course = Instantiator('dsbe.Course').build
-    yield course(provider=oikos,title=u"Deutsch für Anfänger",content=1,start_date=i2d(20110110))
-    yield course(provider=kap,title=u"Deutsch fur Anfanger",content=1,start_date=i2d(20110117))
-    yield course(provider=kap,title=u"Français pour débutants",content=2,start_date=i2d(20110124))
+    yield offer(provider=oikos,title=u"Deutsch für Anfänger",content=1)
+    yield course(offer=1,start_date=i2d(20110110))
+    
+    yield offer(provider=kap,title=u"Deutsch fur Anfanger",content=1)
+    yield course(offer=2,start_date=i2d(20110117))
+    
+    yield offer(provider=kap,title=u"Français pour débutants",content=2)
+    yield course(offer=3,start_date=i2d(20110124))
     
     #~ baker = Properties.objects.get(pk=1)
     #~ baker.save()

@@ -1,10 +1,10 @@
 20111026
 ========
 
-a) Upgrade in Eupen
--------------------
+Release & upgrade in Eupen
+--------------------------
 
-Release :doc:`/releases/20111026` 
+Released :doc:`/releases/20111026` 
 and upgrade in Eupen from 
 2056:b7dcbc73707e to 2057:3d185f19e083::
 
@@ -25,8 +25,8 @@ caused a traceback when `owner_type_id` was None:
       owner_type_id = ContentType.objects.get_for_model(owner_type_id).pk
       return cal_Task(id=id,user_id=user_id,...)
 
-b) After release 1.2.4
-----------------------
+After release 1.2.4
+-------------------
 
 It is almost working. But the end users get the following error 
 message in their JavaScript console::
@@ -74,9 +74,11 @@ by
 But that's not the problem. It probably has to do with the 
 security profily of end users. Nicolas will work on it.
 
+Check-in 20111026b
 
-c) Tasks, Events and reminders
-------------------------------
+
+Tasks, Events and reminders
+---------------------------
 
 - removed fields alarm_value, alarm_unit and dt_alarm from :class:`lino.modlib.cal.models.Component` 
   (i.e. tables cal.Task and cal.Event)
@@ -89,8 +91,8 @@ c) Tasks, Events and reminders
   return it (after having it curried with self).
   Usage example is :meth:`lino.modlib.cal.utils.DurationUnit.add_duration`.
 
-d) Miscellaneous
-----------------
+Miscellaneous
+-------------
 
 - :class:`lino.modlib.jobs.models.Functions` : added `column_names` 
   to have mandatory field `sector` at the beginning.
@@ -99,3 +101,10 @@ d) Miscellaneous
 
 - The test suite has been tidied up.
   
+Check-in 20111026c
+  
+New model CourseOffer
+---------------------
+
+Check-in 20111026d
+Released :doc:`/releases/20111027` 

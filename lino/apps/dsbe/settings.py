@@ -111,7 +111,7 @@ class Lino(Lino):
 
         m = main.add_menu("courses",_("~Courses"))
         m.add_action('dsbe.CourseProviders')
-        m.add_action('dsbe.Courses')
+        m.add_action('dsbe.CourseOffers')
         
         m = main.add_menu("jobs",_("~Jobs"))
         jobs.setup_main_menu(self,ui,user,m)
@@ -214,6 +214,7 @@ class Lino(Lino):
             m.add_action('dsbe.PersonSearches')
             m.add_action('lino.ContentTypes')
             m.add_action('properties.Properties')
+            m.add_action('dsbe.Courses')
             
             cal.setup_explorer_menu(self,ui,user,m)
 

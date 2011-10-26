@@ -2,9 +2,7 @@
 :label_align: top
 
 main =
-    id:8 title provider
-    content
-    start_date 
+    id:8 title offer
     remark
     dsbe.ParticipantsByCourse
     dsbe.CandidatesByCourse

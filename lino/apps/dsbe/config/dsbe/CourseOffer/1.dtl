@@ -1,0 +1,8 @@
+:label: 
+:label_align: top
+
+main =
+    id:8 title provider
+    content
+    remark
+    CoursesByOffer

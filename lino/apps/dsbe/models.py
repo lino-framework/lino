@@ -922,7 +922,7 @@ class LanguageKnowledge(models.Model):
         if self.language_id is None:
             return ''
         if self.cef_level:
-            return "%s (%s)" % (self.language,self.cef_level)
+            return u"%s (%s)" % (self.language,self.cef_level)
         if self.spoken > '1' and self.written > '1':
             return _(u"%s (s/w)") % self.language
         elif self.spoken > '1':
@@ -1331,16 +1331,12 @@ class CourseContent(models.Model):
         return unicode(self.name)
         
   
-class Course(models.Model):
+class CourseOffer(models.Model):
     """
-    Ein konkreter Kurs, der an einem bestimmten Datum beginnt 
-    und bei einem bestimmten 
-    :class:`Kursanbieter <CourseProvider>` stattfindet
-    (und für den ihr Kandidaten zu vermitteln plant).
     """
     class Meta:
-        verbose_name = _("Course")
-        verbose_name_plural = _('Courses')
+        verbose_name = _("Course Offer")
+        verbose_name_plural = _('Course Offers')
         
     title = models.CharField(max_length=200,
         verbose_name=_("Name"))
@@ -1360,14 +1356,44 @@ class Course(models.Model):
     Der Kursanbieter (eine :class:`Company`)
     """
     
+    description = fields.RichTextField(_("Description"),blank=True,format='html')
+    
+    def __unicode__(self):
+        return u'%s (%s)' % (self.title,self.provider)
+        
     @chooser()
     def provider_choices(cls):
         return CourseProviders.request().queryset
         
-    start_date = models.DateField(_("start date"),blank=True,null=True)
+    @classmethod
+    def setup_report(model,rpt):
+        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates.odt'))
+        
+    def get_print_language(self,pm):
+        "Used by DirectPrintAction"
+        return DEFAULT_LANGUAGE
+        
+        
+    
+class Course(models.Model):
     """
-    Datum, wann der Kurs beginnt. 
+    Ein konkreter Kurs, der an einem bestimmten Datum beginnt 
+    und bei einem bestimmten 
+    :class:`Kursanbieter <CourseProvider>` stattfindet
+    (und für den ihr Kandidaten zu vermitteln plant).
     """
+    class Meta:
+        verbose_name = _("Course")
+        verbose_name_plural = _('Courses')
+        
+        
+    offer = models.ForeignKey("dsbe.CourseOffer")
+    
+    title = models.CharField(max_length=200,
+        blank=True,
+        verbose_name=_("Name"))
+        
+    start_date = models.DateField(_("start date"))
     
     #~ content = models.ForeignKey("dsbe.CourseContent",verbose_name=_("Course content"))
   
@@ -1379,13 +1405,17 @@ class Course(models.Model):
     """
         
     def __unicode__(self):
-        if self.start_date is None:
-            return u'%s %s' % (self.title,self.provider)
-        return u'%s %s %s' % (self.title,self.start_date,self.provider)
+        s = "%s %s (%s)" % (self._meta.verbose_name,self.pk,self.start_date)
+        
+        if self.title:
+            s += " (%s)" % self.title
+        elif self.offer:
+            s += " (%s)" % self.offer
+        return s
   
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates.odt'))
+        #~ rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates.odt'))
         rpt.add_action(DirectPrintAction('participants',_("List of participants"),'participants.odt'))
         
     def get_print_language(self,pm):
@@ -1441,8 +1471,7 @@ class CourseRequest(models.Model):
     course = models.ForeignKey("dsbe.Course",blank=True,null=True,
         verbose_name=_("Course found"))
     u"""
-    Der Kurs, durch den diese Anfrage befriedigt wurde 
-    (ein Objekt vom Typ :class:`lino.apps.dsbe.models.Course`).
+    Der Kurs, durch den diese Anfrage befriedigt wurde.
     So lange dieses Feld leer ist, gilt die Anfrage als offen.
     """
         
@@ -1479,6 +1508,10 @@ class CourseRequest(models.Model):
 class Courses(reports.Report):
     model = Course
     order_by = ['start_date']
+    
+class CoursesByOffer(Courses):
+    fk_name = 'offer'
+    column_names = 'start_date * id'
 
 class CourseContents(reports.Report):
     model = CourseContent
