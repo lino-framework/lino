@@ -499,7 +499,7 @@ class PrintAction(BasePrintAction):
     def get_print_templates(self,bm,elem):
         return elem.get_print_templates(bm,self)
         
-    def run_(self,ui,elem,**kw):
+    def run_(self,request,ui,elem,**kw):
         bm = get_build_method(elem)
         if elem.must_build:
             bm.build(self,elem)
@@ -511,14 +511,14 @@ class PrintAction(BasePrintAction):
             kw.update(message=_("Reused %s printable from cache.") % elem)
         url = bm.get_target_url(self,elem,ui)
         if bm.use_webdav and settings.LINO.use_davlink:
-            kw.update(open_davlink_url=url)
+            kw.update(open_davlink_url=request.get_full_path(url))
         else:
             kw.update(open_url=url)
         return kw
         #~ return rr.ui.success_response(open_url=target,**kw)
         
     def run(self,rr,elem,**kw):
-        kw = self.run_(rr.ui,elem,**kw)
+        kw = self.run_(rr.request,rr.ui,elem,**kw)
         return rr.ui.success_response(**kw)
       
 class DirectPrintAction(BasePrintAction):
