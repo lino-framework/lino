@@ -1405,11 +1405,11 @@ class Course(models.Model):
     """
         
     def __unicode__(self):
-        s = u"%s %s (%s)" % (self._meta.verbose_name,self.pk,babel.dtos(self.start_date))
+        #~ s = u"%s %s (%s)" % (self._meta.verbose_name,self.pk,babel.dtos(self.start_date))
         s = babel.dtos(self.start_date)
         if self.title:
             s += " " + self.title
-        elif self.offer:
+        if self.offer:
             s += " " + unicode(self.offer)
         return s
   
