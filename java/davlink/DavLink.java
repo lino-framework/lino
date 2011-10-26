@@ -114,8 +114,8 @@ public class DavLink extends Applet {
       
     static Preferences prefs =  Preferences.systemRoot().node("/lino/davlink");
   
-    Hashtable docTypes = new Hashtable();
-    Hashtable launchers = new Hashtable();
+    Hashtable<String,DocType> docTypes = new Hashtable<String,DocType>();
+    Hashtable<String,Launcher> launchers = new Hashtable<String,Launcher>();
   
     //~ static DavLink theOneAndOnly = new DavLink();
     //~ DavLink() { init(); }

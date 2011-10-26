@@ -8,6 +8,7 @@
 #~ JFLAGS = -d build -sourcepath src
 #~ JFLAGS = -classpath s:\classpath\registry-3.1.3\classes
 #~ JFLAGS = -target 1.6 -source 1.6 -bootclasspath "C:/Program Files/Java/jre6/lib/rt.jar"
+#~ JFLAGS = -Xlint:unchecked
 JFLAGS = 
 JC = javac
 

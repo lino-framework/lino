@@ -19,26 +19,27 @@ the security warning.
     
     
     
-    
-jarsigner: Certificate chain not found for: luc.  luc must reference a valid KeyStore key entry containing a private key and corresponding public key certificate chain.    
+::
+
+  jarsigner: Certificate chain not found for: luc.  luc must reference a valid KeyStore key entry containing a private key and corresponding public key certificate chain.    
 
 
-T:\hgwork\lino\java>keytool -importkeystore -srckeystore t:\data\luc\cacert\luc.p12 -srcstoretype PKCS12
-Enter destination keystore password:
-Enter source keystore password:
-Entry for alias cacert wot user's root ca id successfully imported.
-Import command completed:  1 entries successfully imported, 0 entries failed or cancelled
+  T:\hgwork\lino\java>keytool -importkeystore -srckeystore t:\data\luc\cacert\luc.p12 -srcstoretype PKCS12
+  Enter destination keystore password:
+  Enter source keystore password:
+  Entry for alias cacert wot user's root ca id successfully imported.
+  Import command completed:  1 entries successfully imported, 0 entries failed or cancelled
 
-keytool -changealias -alias "cacert wot user's root ca id" -destalias luc
-
-
-
-Warning:
-The signer certificate's ExtendedKeyUsage extension doesn't allow code signing.
-The signer certificate will expire within six months.
-The signer's certificate chain is not validated.
+  keytool -changealias -alias "cacert wot user's root ca id" -destalias luc
 
 
-Warning:
-The signer certificate's ExtendedKeyUsage extension doesn't allow code signing.
-The signer's certificate chain is not validated.
+
+  Warning:
+  The signer certificate's ExtendedKeyUsage extension doesn't allow code signing.
+  The signer certificate will expire within six months.
+  The signer's certificate chain is not validated.
+
+
+  Warning:
+  The signer certificate's ExtendedKeyUsage extension doesn't allow code signing.
+  The signer's certificate chain is not validated.
