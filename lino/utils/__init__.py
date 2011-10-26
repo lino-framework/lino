@@ -193,6 +193,13 @@ def hex2str(value):
        r += chr(h)
     return r
     
+# http://snippets.dzone.com/posts/show/2375
+curry = lambda func, *args, **kw:\
+            lambda *p, **n:\
+                 func(*args + p, **dict(kw.items() + n.items()))
+                 
+    
+    
 
 def _test():
     import doctest

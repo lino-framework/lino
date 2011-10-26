@@ -151,12 +151,6 @@ def default_calendar(user):
         cal.save()
         dblogger.debug("Created default_calendar %s for %s.",cal,user)
         return cal
-    
-
-
-
-
-
 
 
 
@@ -235,6 +229,14 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = fields.RichTextField(_("Description"),blank=True,format='html')
     
+    def save(self,*args,**kw):
+        """
+        Fills default value "today" to start_date
+        """
+        if not self.start_date:
+            self.start_date = datetime.date.today()
+        super(ComponentBase,self).save(*args,**kw)
+        
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
 
@@ -275,12 +277,12 @@ class Component(ComponentBase,
         
     access_class = AccessClass.field() # iCal:CLASS
     sequence = models.IntegerField(_("Revision"),default=0)
-    alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
-    alarm_unit = DurationUnit.field(_("Unit"),blank=True,
-        default=DurationUnit.days.value) # ,null=True) # note: it's a char field!
-    alarm = fields.FieldSet(_("Alarm"),'alarm_value alarm_unit')
-    dt_alarm = models.DateTimeField(_("Alarm time"),
-        blank=True,null=True,editable=False)
+    #~ alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
+    #~ alarm_unit = DurationUnit.field(_("Unit"),blank=True,
+        #~ default=DurationUnit.days.value) # ,null=True) # note: it's a char field!
+    #~ alarm = fields.FieldSet(_("Alarm"),'alarm_value alarm_unit')
+    #~ dt_alarm = models.DateTimeField(_("Alarm time"),
+        #~ blank=True,null=True,editable=False)
         
     user_modified = models.BooleanField(_("modified by user"),default=False,editable=False) 
     
@@ -313,24 +315,6 @@ class Component(ComponentBase,
         self.user_modified = True
         #~ if change_type == 'POST': 
             #~ self.isdirty=True
-        
-    def save(self,*args,**kw):
-        """
-        Computes the value of `dt_alarm` before really saving.
-        """
-        if self.alarm_unit:
-            if not self.start_date:
-                self.start_date = datetime.date.today()
-            dt = self.get_datetime('start')
-            #~ if self.start_time:
-                #~ dt = datetime.datetime.combine(self.start_date,self.start_time)
-            #~ else:
-                #~ d = self.start_date
-                #~ dt = datetime.datetime(d.year,d.month,d.day)
-            self.dt_alarm = add_duration(dt,-self.alarm_value,self.alarm_unit)
-        else:
-            self.dt_alarm = None
-        super(Component,self).save(*args,**kw)
         
     def get_datetime(self,name):
         "`name` can be 'start' or 'end'."
@@ -593,11 +577,12 @@ class GuestsByContact(Guests):
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """Return a HTML summary of all open reminders for this user.
+    ay be calledn from :xfile:`welcome.html`.
     """
     Task = resolve_model('cal.Task')
     Event = resolve_model('cal.Event')
-    #~ today = datetime.date.today()
-    today = datetime.datetime.now()
+    today = datetime.date.today()
+    #~ today = datetime.datetime.now()
     #~ if days_back is None:
         #~ back_until = None
     #~ else:
@@ -605,39 +590,42 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     
     past = {}
     future = {}
-    def add(task):
-        if task.dt_alarm < today:
+    def add(cmp):
+        if cmp.start_date < today:
+        #~ if task.dt_alarm < today:
             lookup = past
         else:
             lookup = future
-        day = lookup.get(task.dt_alarm,None)
+        day = lookup.get(cmp.start_date,None)
         if day is None:
-            day = [task]
-            lookup[task.dt_alarm] = day
+            day = [cmp]
+            lookup[cmp.start_date] = day
         else:
-            day.append(task)
+            day.append(cmp)
             
     #~ filterkw = { 'due_date__lte' : today }
     filterkw = {}
     if days_back is not None:
         filterkw.update({ 
-            'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
+            'start_date__gte' : today - datetime.timedelta(days=days_back)
+            #~ 'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
         })
     if days_forward is not None:
         filterkw.update({ 
-            'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
+            'start_date__lte' : today + datetime.timedelta(days=days_forward)
+            #~ 'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
         })
-    filterkw.update(dt_alarm__isnull=False)
+    #~ filterkw.update(dt_alarm__isnull=False)
     filterkw.update(user=user)
     
     
     
-    for o in Event.objects.filter(**filterkw).order_by('dt_alarm'):
+    for o in Event.objects.filter(**filterkw).order_by('start_date'):
         add(o)
         
     filterkw.update(done=False)
             
-    for task in Task.objects.filter(**filterkw).order_by('dt_alarm'):
+    for task in Task.objects.filter(**filterkw).order_by('start_date'):
         add(task)
         
     def loop(lookup,reverse):
@@ -669,6 +657,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
     """Creates, updates or deletes the automatic :class:`Task` 
     related to the specified `owner`.
+    Specifying `None` for `date` means that the automatic task should be deleted.
     """
     #~ print "20111014 update_auto_task"
     #~ if SKIP_AUTO_TASKS: return 
@@ -713,6 +702,7 @@ def migrate_reminder(obj,reminder_date,reminder_text,
                          delay_value,delay_type,reminder_done):
     """This was used only for migrating to 1.2.0, see :mod:`lino.apps.dsbe.migrate`.
     """
+    raise NotImplementedError("No longer needed (and no longer supported after 20111026).")
     def delay2alarm(delay_type):
         if delay_type == 'D': return DurationUnit.days
         if delay_type == 'W': return DurationUnit.weeks

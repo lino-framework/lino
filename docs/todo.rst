@@ -16,7 +16,7 @@ Short-term
 
 #.  In cal.Task remove fields alarm_unit and alarm_value. Lino does 
     not actually do what caldav calls an "alarm". Tasks are to be 
-    displayed as long as theya re not done.
+    displayed as long as they are not done.
 
 #.  Idee: Notizen, Termine und Verträge mit MTI als Kinder einer 
     allgemeinen Tabelle "Chronikeinträge" implementieren.

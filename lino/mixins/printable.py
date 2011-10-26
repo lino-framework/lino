@@ -728,7 +728,7 @@ class TypedPrintable(CachedPrintable):
         tplname = ptype.template or bm.default_template
         if not tplname.endswith(bm.template_ext):
             raise Exception(
-              "Invalid template %r configured for %s %r. Expected filename ending with %r." %
+              "Invalid template %r configured for %s %r (expected filename ending with %r)" %
               (tplname,ptype.__class__.__name__,unicode(ptype),bm.template_ext))
         return [ tplname ]
         #~ return [ ptype.get_templates_group() + '/' + ptype.template ]

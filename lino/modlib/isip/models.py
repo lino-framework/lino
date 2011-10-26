@@ -251,10 +251,11 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         if self.user:
             update_auto_task(
               self.TASKTYPE_CONTRACT_APPLIES_UNTIL,
-              self.user,self.applies_until,
+              self.user,
+              DurationUnit.months.add_duration(self.applies_until,-1),
               _("Contract ends"),
-              self,
-              alarm_value=1,alarm_unit=DurationUnit.months)
+              self)
+              #~ alarm_value=1,alarm_unit=DurationUnit.months)
               
             
     

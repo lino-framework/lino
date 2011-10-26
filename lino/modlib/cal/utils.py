@@ -90,13 +90,18 @@ def add_duration(dt,value,unit):
     if unit.value == 'W' : 
         return dt + datetime.timedelta(days=value*7)
     day = dt.day
+    year = dt.year
     while True:
         try:
             if unit.value == 'M' : 
                 m = dt.month + value
-                if m > 12: m -= 12
-                if m < 1: m += 12
-                return dt.replace(month=m,day=day)
+                while m > 12: 
+                    m -= 12
+                    year += 1
+                while m < 1: 
+                    m += 12
+                    year -= 1
+                return dt.replace(month=m,day=day,year=year)
             if unit.value == 'Y' : 
                 return dt.replace(month=dt.year + value,day=day)
             raise Exception("Invalid DurationUnit %s" % unit)
@@ -111,6 +116,57 @@ class DurationUnit(ChoiceList):
     """A list of possible values for the `duration_unit` field of an :class:`Event`.
     """
     label = _("Duration Unit")
+    
+    @classmethod
+    def add_duration(cls,unit,dt,value):
+        """
+        Return a date or datetime obtained by adding `value` 
+        times the specified unit.
+        
+        This is intended for use as a curried magic 
+        method of a specified list item:
+        
+        >>> start_date = datetime.date(2011,10,26)
+        >>> DurationUnit.months.add_duration(start_date,2)
+        datetime.date(2011,12,26)
+        
+        See more usage examples in :func:`lino.modlib.cal.tests.cal_test.test01`.
+        """
+        if dt is None: 
+            return None
+        if unit.value == 's' : 
+            return dt + datetime.timedelta(seconds=value)
+        if unit.value == 'm' : 
+            return dt + datetime.timedelta(minutes=value)
+        if unit.value == 'h' : 
+            return dt + datetime.timedelta(hours=value)
+        if unit.value == 'D' : 
+            return dt + datetime.timedelta(days=value)
+        if unit.value == 'W' : 
+            return dt + datetime.timedelta(days=value*7)
+        day = dt.day
+        while True:
+            year = dt.year
+            try:
+                if unit.value == 'M' : 
+                    m = dt.month + value
+                    while m > 12: 
+                        m -= 12
+                        year += 1
+                    while m < 1: 
+                        m += 12
+                        year -= 1
+                    return dt.replace(month=m,day=day,year=year)
+                if unit.value == 'Y' : 
+                    return dt.replace(month=dt.year + value,day=day)
+                raise Exception("Invalid DurationUnit %s" % unit)
+            except ValueError:
+                if day > 28:
+                    day -= 1
+                else:
+                    raise
+    
+    
     
 add = DurationUnit.add_item
 add('s','seconds',en=u"seconds",de=u"Sekunden",   fr=u"secondes")

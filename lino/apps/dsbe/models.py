@@ -544,31 +544,31 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         if user:
             update_auto_task(
               CARD_VALID_UNTIL,user,
-              self.card_valid_until,
+              DurationUnit.months.add_duration(self.card_valid_until,-2),
               _("eID card expires"),
-              self,
-              alarm_value=2,alarm_unit=DurationUnit.months)
+              self)
+              #~ alarm_value=2,alarm_unit=DurationUnit.months)
               
             update_auto_task(
               UNAVAILABLE_UNTIL,user,
-              self.unavailable_until,
+              DurationUnit.months.add_duration(self.unavailable_until,-1),
               _("becomes available again"),
-              self,
-              alarm_value=1,alarm_unit=DurationUnit.months)
+              self)
+              #~ alarm_value=1,alarm_unit=DurationUnit.months)
               
             update_auto_task(
               WORK_PERMIT_SUSPENDED_UNTIL,user,
-              self.work_permit_suspended_until,
+              DurationUnit.months.add_duration(self.work_permit_suspended_until,-1),
               _("work permit suspension ends"),
-              self,
-              alarm_value=1,alarm_unit=DurationUnit.months)
+              self)
+              #~ alarm_value=1,alarm_unit=DurationUnit.months)
               
             update_auto_task(
               COACHED_UNTIL,user,
-              self.coached_until,
+              DurationUnit.months.add_duration(self.coached_until,-1),
               _("coaching ends"),
-              self,
-              alarm_value=1,alarm_unit=DurationUnit.months)
+              self)
+              #~ alarm_value=1,alarm_unit=DurationUnit.months)
           
     #~ def get_auto_task_defaults(self,**kw):
     def update_owned_task(self,task):

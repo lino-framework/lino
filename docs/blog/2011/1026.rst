@@ -71,3 +71,31 @@ by
     Hashtable<String,DocType> docTypes = new Hashtable<String,DocType>();
     Hashtable<String,Launcher> launchers = new Hashtable<String,Launcher>();
 
+But that's not the problem. It probably has to do with the 
+security profily of end users. Nicolas will work on it.
+
+
+c) Tasks, Events and reminders
+------------------------------
+
+- removed fields alarm_value, alarm_unit and dt_alarm from :class:`lino.modlib.cal.models.Component` 
+  (i.e. tables cal.Task and cal.Event)
+  Lino does not actually do what caldav calls an "alarm". 
+  Tasks are to be displayed as long as they are not done.
+  
+- :class:`lino.utils.choicelists.ChoiceList` has a 
+  new feature: the list items (`BabelChoice` instances) 
+  have a `__get__´  method that looks for a class method of that name and 
+  return it (after having it curried with self).
+  Usage example is :meth:`lino.modlib.cal.utils.DurationUnit.add_duration`.
+
+d) Miscellaneous
+----------------
+
+- :class:`lino.modlib.jobs.models.Functions` : added `column_names` 
+  to have mandatory field `sector` at the beginning.
+  
+- AttributeError "'Candidature' object has no attribute 'contract'" at `/api/jobs/ContractsSituationReport`. Fixed.
+
+- The test suite has been tidied up.
+  

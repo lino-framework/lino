@@ -38,7 +38,7 @@ from django.db.models import loading
 import re
 import lino
 from lino.core.coretools import app_labels
-from lino.utils import confirm
+from lino.utils import confirm, curry
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
@@ -46,11 +46,6 @@ from lino import reports
 
 from lino.tools import makedirs_if_missing, full_model_name
 
-# http://snippets.dzone.com/posts/show/2375
-curry = lambda func, *args, **kw:\
-            lambda *p, **n:\
-                 func(*args + p, **dict(kw.items() + n.items()))
-                 
 # Copied from doctest:
 
 # This regular expression finds the indentation of every non-blank

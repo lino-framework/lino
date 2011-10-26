@@ -39,6 +39,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino.utils import babel
+from lino.utils import curry
 
 CHOICELISTS = {}
 
@@ -95,7 +96,7 @@ class ChoiceList(object):
     def add_item(cls,value,ref=None,**kw):
         if cls is ChoiceList:
             raise Exception("Cannot define items on the base class")
-        i = babel.BabelChoice(value,**kw)
+        i = BabelChoice(cls,value,**kw)
         cls.choices.append((i,cls.display_text(i)))
         assert not cls.items_dict.has_key(value)
         cls.items_dict[value] = i
@@ -103,7 +104,7 @@ class ChoiceList(object):
         cls.max_length = max(len(value),cls.max_length)
         if ref is not None:
             if hasattr(cls,ref):
-                raise Exception("Attribute %r already defined in %s" % (
+                raise Exception("Item %r already defined in %s" % (
                     ref,cls.__name__))
             setattr(cls,ref,i)
         return i
@@ -145,6 +146,30 @@ class ChoiceList(object):
     #~ def __unicode__(self):
         #~ return unicode(self.stored_name) # babel_get(self.names)
         
+class BabelChoice(babel.BabelText):
+    """
+    A constant value whose unicode representation 
+    depends on the current babel language at runtime.
+    Used by :class:`lino.utils.choicelists`.
+
+    """
+    def __init__(self,choicelist,value,**texts):
+        self.value = value
+        self.choicelist = choicelist
+        babel.BabelText.__init__(self,**texts)
+        
+    def __len__(self):
+        return len(self.value)
+        
+    def __getattr__(self,name):
+        return curry(getattr(self.choicelist,name),self)
+        
+    def __str__(self):
+        return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
+          self.__class__.__name__,self.value)
+        
+                
+                
 
 class ChoiceListField(models.CharField):
     """
@@ -180,7 +205,7 @@ class ChoiceListField(models.CharField):
         return "CharField"
         
     def to_python(self, value):
-        if isinstance(value,babel.BabelChoice):
+        if isinstance(value,BabelChoice):
             return value
         value = self.choicelist.to_python(value)
         if value is None: # see 20110907

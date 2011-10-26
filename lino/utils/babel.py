@@ -29,8 +29,8 @@ Example::
       name = babel.BabelCharField(_("Foo"), max_length=200)
       
 To handle hard-coded multilingual texts we suggest 
-the :mod:`lino.utils.choicelists` module which maks use of 
-the :class:`BabelChoice` class defined below.
+the :mod:`lino.utils.choicelists` module which uses
+the :class:`BabelText` class defined below.
 
 
 One known issue is that complex language codes are not yet 
@@ -335,26 +335,6 @@ class BabelText(object):
         return unicode(babelitem(**self.texts))
         
 
-class BabelChoice(BabelText):
-    """
-    A constant value whose unicode representation 
-    depends on the current babel language at runtime.
-    Used by :class:`lino.utils.choicelists`.
-
-    """
-    def __init__(self,value,**texts):
-        self.value = value
-        BabelText.__init__(self,**texts)
-        
-    def __len__(self):
-        return len(self.value)
-        
-    def __str__(self):
-        return "%s (%s:%s)" % (self.texts[DEFAULT_LANGUAGE],
-          self.__class__.__name__,self.value)
-        
-                
-                
 class BabelNamed(models.Model):
     """
     Mixin for models that have a non-nullable field `name` 

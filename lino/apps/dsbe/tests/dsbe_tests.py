@@ -179,20 +179,38 @@ def test01b(self):
     n = Contract(id=1,job=job,user=root,person=person)
     n.full_clean()
     n.save()
-    a = PrintAction()
-    #~ run_
-    #~ rr = Contracts()
-    from django.conf import settings
-    from django.utils.importlib import import_module
-    urls = import_module(settings.ROOT_URLCONF)
-    ui = urls.ui
-    #~ from lino.ui.base import UI
-    #~ ui = UI() 
-    try:
-        kw = a.run_(ui,n)
-    except Exception,e:
-        self.assertEqual(str(e),
-          u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.pisa.html'.")
+    
+    
+    
+    url = '/api/jobs/Contract/1?an=print'
+    # make sure that the response is in English so that this test works on any site
+    babel.set_language('en')
+    
+    response = self.client.get(url,REMOTE_USER='root')
+    result = self.check_json_result(response,'success message alert')
+    self.assertEqual(result['success'],False)
+    self.assertEqual(result['alert'],True)
+    self.assertEqual(
+      result['message'],
+      u"""\
+Action "Print" failed for Job Contract "Job Contract#1 (Max MUSTERMANN)":
+Invalid template '' configured for ContractType u'Art.60\\xa77' (expected filename ending with '.pisa.html').
+An error report has been sent to the system administrator.""")
+    babel.set_language(None) # switch back to default language for subsequent tests
+    
+    
+    #~ a = PrintAction()
+    #~ from django.conf import settings
+    #~ from django.utils.importlib import import_module
+    #~ urls = import_module(settings.ROOT_URLCONF)
+    #~ ui = urls.ui
+    #~ try:
+        #~ kw = a.run_(ui,n)
+    #~ except Exception,e:
+        #~ self.assertEqual(str(e),
+          #~ u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.pisa.html'.")
+          
+          #~ u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.pisa.html'."
           
     #~ t.template='Default.odt'
     #~ t.save()
@@ -229,8 +247,10 @@ def test02(self):
     
     c = response.content
     
-    self.assertTrue(c.endswith('''}); // end of onReady()
-</script></head><body id="body">
+    #~ print c
+    
+    self.assertTrue(c.endswith('''\
+<div id="body"></div>
 </body></html>'''))
 
     if False:

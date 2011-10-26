@@ -188,6 +188,7 @@ class Function(babel.BabelNamed):
         #~ blank=True,null=True)
 class Functions(reports.Report):
     model = Function
+    column_names = 'name sector *'
     
 class FunctionsBySector(Functions):
     fk_name = 'sector'
@@ -996,8 +997,8 @@ class ContractsSituation(mixins.Listing):
                         if not until or (ct.applies_from <= today and until >= today):
                             actives.append(ct)
                 for req in job.candidature_set.all():
-                    if not req.contract:
-                        candidates.append(req)
+                    #~ if not req.contract:
+                    candidates.append(req)
                 if candidates + actives:
                     s = "<p>"
                     s += "<b>%s (%s)</b>" % (

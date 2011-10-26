@@ -65,6 +65,7 @@ from lino.utils import dblogger
 from lino.utils import ucsv
 from lino.utils import choosers
 from lino.utils import babel
+from lino.utils import choicelists
 from lino.utils import menus
 from lino.tools import makedirs_if_missing
 from lino.utils.config import find_config_file
@@ -1198,10 +1199,11 @@ tinymce.init({
                     return a.run(ar,elem)
                 except Exception,e:
                     logger.exception(e)
-                    msg = _("Action \"%(action)s\" failed for %(record)s.") % dict(
+                    msg = _("Action \"%(action)s\" failed for %(record)s:") % dict(
                         action=a,
                         record=obj2unicode(elem))
-                    msg += ' ' + _("An error report has been sent to the system administrator.")
+                    msg += "\n" + unicode(e)
+                    msg += '.\n' + _("An error report has been sent to the system administrator.")
                     #~ logger.warning(msg)
                     return error_response(e,msg)
               
@@ -1563,7 +1565,7 @@ tinymce.init({
             return js_code('STRENGTH_CHOICES')
         if v is KNOWLEDGE_CHOICES:
             return js_code('KNOWLEDGE_CHOICES')
-        if isinstance(v,babel.BabelChoice):
+        if isinstance(v,choicelists.BabelChoice):
             #~ v = unicode(v)
             return v.value
         if isinstance(v,Exception):
