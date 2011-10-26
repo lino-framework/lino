@@ -1517,7 +1517,10 @@ class CourseContents(reports.Report):
     model = CourseContent
     order_by = ['name']
 
-class CoursesByProvider(Courses):
+class CourseOffers(reports.Report):
+    model = CourseOffer
+    
+class CourseOffersByProvider(CourseOffers):
     fk_name = 'provider'
 
 class CourseRequests(reports.Report):

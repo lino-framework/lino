@@ -589,7 +589,7 @@ def migrate_from_1_2_4(globals_dict):
     globals_dict.update(create_cal_task=create_cal_task)
     
     dsbe_CourseOffer = resolve_model("dsbe.CourseOffer")
-    
+    dsbe_Course = resolve_model("dsbe.Course")
     def create_dsbe_course(id, title, content_id, provider_id, start_date, remark):
         o = dsbe_CourseOffer(id=id,title=title,content_id=content_id,provider_id=provider_id,description=remark)
         o.full_clean()
