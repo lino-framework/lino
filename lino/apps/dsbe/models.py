@@ -1544,7 +1544,7 @@ class CourseRequests(reports.Report):
 
 class CourseRequestsByPerson(CourseRequests):
     fk_name = 'person'
-    column_names = 'date_submitted:10 content offer course:20 * id'
+    column_names = 'date_submitted:10 content:15 offer:15 course:20 * id'
 
 class RequestsByCourse(CourseRequests):
     fk_name = 'course'
