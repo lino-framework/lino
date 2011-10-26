@@ -323,7 +323,7 @@ public class DavLink extends Applet {
         System.out.println(path + " " + fileName);
         try {
             Process p = Runtime.getRuntime().exec(cmd);
-            p.waitFor();
+            //~ p.waitFor();
             //~ System.out.println(p.exitValue());
         } catch (Exception err) {
             err.printStackTrace();
