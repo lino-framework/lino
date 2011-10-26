@@ -16,8 +16,7 @@ JC = javac
 .java.class:
 	$(JC) $(JFLAGS) $*.java
 
-JARFILE = ../media/applets/DavLink17.jar
-#~ CLASSES = davopen/DavOpen.java
+JARFILE = ../media/applets/DavLink.jar
 CLASSES = davlink/DavLink.java
 
 default: jar
@@ -30,7 +29,6 @@ jar: classes
 
 clean:
 	rm davlink/*.class
-	rm davopen/*.class
 	rm $(JARFILE)
 	
 	

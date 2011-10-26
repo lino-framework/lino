@@ -320,14 +320,17 @@ public class DavLink extends Applet {
    public void open(String fileName) {
         String path = getLauncherFor(fileName);
         String[] cmd = { path, fileName };
+        System.out.println(path + " " + fileName);
         try {
             Process p = Runtime.getRuntime().exec(cmd);
             p.waitFor();
-            System.out.println(p.exitValue());
-        } catch (IOException err) {
+            //~ System.out.println(p.exitValue());
+        } catch (Exception err) {
             err.printStackTrace();
-        } catch (InterruptedException err) {
-            err.printStackTrace();
+        //~ } catch (IOException err) {
+            //~ err.printStackTrace();
+        //~ } catch (InterruptedException err) {
+            //~ err.printStackTrace();
         }
           
     }
