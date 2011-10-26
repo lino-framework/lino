@@ -1405,12 +1405,12 @@ class Course(models.Model):
     """
         
     def __unicode__(self):
-        s = "%s %s (%s)" % (self._meta.verbose_name,self.pk,self.start_date)
-        
+        s = u"%s %s (%s)" % (self._meta.verbose_name,self.pk,babel.dtos(self.start_date))
+        s = babel.dtos(self.start_date)
         if self.title:
-            s += " (%s)" % self.title
+            s += " " + self.title
         elif self.offer:
-            s += " (%s)" % self.offer
+            s += " " + unicode(self.offer)
         return s
   
     @classmethod
@@ -1544,7 +1544,7 @@ class CourseRequests(reports.Report):
 
 class CourseRequestsByPerson(CourseRequests):
     fk_name = 'person'
-    column_names = 'date_submitted content * id'
+    column_names = 'date_submitted:10 content offer course:20 * id'
 
 class RequestsByCourse(CourseRequests):
     fk_name = 'course'
