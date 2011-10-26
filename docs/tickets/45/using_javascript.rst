@@ -41,11 +41,11 @@ But I'm not going to waste unpaid time on proprietary software.
 
 For **Firefox** we got it working.
 (Sources:
-`1 <https://developer.mozilla.org/en/Code_snippets/Running_applications>`_
-`2 <https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIProcess>`_
-`3 <http://forums.mozillazine.org/viewtopic.php?f=19&t=803615&start=0>`_
-`4 <http://stackoverflow.com/questions/2017743/how-to-call-a-function-in-firefox-extension-from-a-html-button>`_
-`5 <http://stackoverflow.com/questions/1374927/launch-file-from-firefox-chrome>`_)
+`1 <https://developer.mozilla.org/en/Code_snippets/Running_applications>`__
+`2 <https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIProcess>`__
+`3 <http://forums.mozillazine.org/viewtopic.php?f=19&t=803615&start=0>`__
+`4 <http://stackoverflow.com/questions/2017743/how-to-call-a-function-in-firefox-extension-from-a-html-button>`__
+`5 <http://stackoverflow.com/questions/1374927/launch-file-from-firefox-chrome>`__)
 Here is a proof of concept:
 
 .. literalinclude:: ../blog/2011/0923/startfile.js

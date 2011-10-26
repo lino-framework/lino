@@ -1284,7 +1284,8 @@ class LinksByCompany(links.LinksByOwnerBase):
 
 #~ class CourseProvider(models.Model):
 class CourseProvider(Company):
-    """Kursanbieter (KAP, Oikos, Lupe, ...) 
+    """
+    A CourseProvider is a Company that offers Courses. 
     """
     class Meta:
         app_label = 'dsbe'
@@ -1292,7 +1293,6 @@ class CourseProvider(Company):
           #~ verbose_name=_("Name"))
     #~ company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
     
-#~ CourseProvider = Company
 
 class CourseProviders(Companies):
     """
