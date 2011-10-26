@@ -1552,7 +1552,7 @@ class RequestsByCourse(CourseRequests):
     def create_instance(self,req,**kw):
         obj = super(RequestsByCourse,self).create_instance(req,**kw)
         if obj.course is not None:
-            obj.content = obj.course.content
+            obj.content = obj.course.offer.content
         return obj
     
 class ParticipantsByCourse(RequestsByCourse):
@@ -1579,7 +1579,7 @@ class CandidatesByCourse(RequestsByCourse):
         if rr.master_instance is None:
             return []
         return self.model.objects.filter(course__isnull=True,
-            content__exact=rr.master_instance.content)
+            content__exact=rr.master_instance.offer.content)
     
     def setup_actions(self):
         class Register(reports.RowAction):
