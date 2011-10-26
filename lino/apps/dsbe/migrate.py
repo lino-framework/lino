@@ -582,7 +582,7 @@ def migrate_from_1_2_4(globals_dict):
     globals_dict.update(create_cal_event=create_cal_event)
     
     cal_Task = resolve_model("cal.Task")
-    new_content_type_id = globals['new_content_type_id']
+    new_content_type_id = globals()['new_content_type_id']
     def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, project_id, calendar_id, uid, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, user_modified, rset_id, due_date, due_time, done, percent, status, auto_type):
         owner_type_id = new_content_type_id(owner_type_id)
         return cal_Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class=access_class,sequence=sequence,user_modified=user_modified,rset_id=rset_id,due_date=due_date,due_time=due_time,done=done,percent=percent,status=status,auto_type=auto_type)    
