@@ -1451,6 +1451,8 @@ class CourseRequest(models.Model):
         verbose_name=_("Person"))
     u"Die Person (ein Objekt vom Typ :class:`Person`.)"
     
+    offer = models.ForeignKey("dsbe.CourseOffer",blank=True,null=True)
+    
     content = models.ForeignKey("dsbe.CourseContent",
         verbose_name=_("Course content"))
     u"Der gewünschte Kursinhalt (ein Objekt vom Typ :class:`CourseConent`.)"
@@ -1501,6 +1503,12 @@ class CourseRequest(models.Model):
     Das wird benutzt für spätere Statistiken.
     """
     
+    def save(self,*args,**kw):
+        if self.offer and not self.content:
+            self.content = self.offer.content
+        super(CourseRequest,self).save(*args,**kw)
+        
+    
     def on_create(self,req):
         self.date_submitted = datetime.date.today()
     
@@ -1526,6 +1534,7 @@ class CourseOffersByProvider(CourseOffers):
 class CourseRequests(reports.Report):
     model = CourseRequest
     order_by = ['date_submitted']
+    active_fields = 'offer'.split()
 
 class CourseRequestsByPerson(CourseRequests):
     fk_name = 'person'

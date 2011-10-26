@@ -618,14 +618,15 @@ def install(globals_dict):
     #~ cal.SKIP_AUTO_TASKS = True
     
     while True:
-        funcname = 'migrate_from_' + globals_dict['SOURCE_VERSION'].replace('.','_')
+        from_version = globals_dict['SOURCE_VERSION']
+        funcname = 'migrate_from_' + from_version.replace('.','_')
         func = globals().get(funcname,None)
         if func:
-            dblogger.info("Found %s()", funcname)
+            #~ dblogger.info("Found %s()", funcname)
+            globals_dict['SOURCE_VERSION'] = func(globals_dict)
+            dblogger.info("Migrating from version %s to %s", from_version, globals_dict['SOURCE_VERSION'])
             if func.__doc__:
                 dblogger.info(func.__doc__)
-            globals_dict['SOURCE_VERSION'] = func(globals_dict)
-            dblogger.info("--> migrating to version %s", globals_dict['SOURCE_VERSION'])
         else:
             break
     
