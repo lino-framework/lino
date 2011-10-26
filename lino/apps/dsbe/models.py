@@ -1511,8 +1511,8 @@ class CourseRequest(models.Model):
     @chooser()
     def offer_choices(cls,content):
         if content:
-            return CourseOffers.objects.filter(content=content)
-        return CourseOffers.objects.all()
+            return CourseOffer.objects.filter(content=content)
+        return CourseOffer.objects.all()
         
     
     def on_create(self,req):
