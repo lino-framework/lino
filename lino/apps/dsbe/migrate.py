@@ -557,6 +557,18 @@ def migrate_from_1_2_2(globals_dict):
 
     
     return '1.2.3'
+    
+def migrate_from_1_2_3(globals_dict):
+    """
+    - removed jobs.Wish
+    """
+    jobs_Candidature = resolve_model("jobs.Candidature")
+
+    def create_jobs_candidature(id, person_id, job_id, date_submitted, contract_id, remark):
+        return jobs_Candidature(id=id,person_id=person_id,job_id=job_id,date_submitted=date_submitted,remark=remark)
+    globals_dict.update(create_jobs_candidature=create_jobs_candidature)
+    
+    return '1.2.4'
   
 
 def install(globals_dict):
