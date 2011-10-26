@@ -171,6 +171,7 @@ class Sector(babel.BabelNamed):
         
 class Sectors(reports.Report):
     model = Sector
+    order_by = ['name']
 
 class Function(babel.BabelNamed):
     """Each Job may have a Function."""
@@ -189,6 +190,7 @@ class Function(babel.BabelNamed):
 class Functions(reports.Report):
     model = Function
     column_names = 'name sector *'
+    order_by = ['name']
     
 class FunctionsBySector(Functions):
     fk_name = 'sector'

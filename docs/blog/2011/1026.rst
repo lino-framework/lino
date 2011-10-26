@@ -107,4 +107,4 @@ New model CourseOffer
 ---------------------
 
 Check-in 20111026d
-Released :doc:`/releases/20111027` 
+Released :doc:`/releases/20111026b` 

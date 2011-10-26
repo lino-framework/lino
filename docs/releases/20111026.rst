@@ -6,7 +6,6 @@ New features
 
 - Lino kann jetzt Notizen im Format `.rtf` verwalten
 
-
 - In der oberen Toolbar von Detail-Fenstern wurde das Feld für Schnellsuche 
   und den Button zum Export einer csv-Datei rausgeholt, weil das dort 
   nicht sehr sinnnvoll war.  
