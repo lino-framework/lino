@@ -92,6 +92,9 @@ class Element(object):
         
     @classmethod
     def add_namespace(self,ns):
+        if self.namespace:
+            raise Exception("Element %s got duplicate namespace %r" % (
+              self.__name__,ns.__name__))
         self.namespace = ns
         
     def tag(self):
@@ -138,11 +141,13 @@ class ContainerMetaClass(ElementMetaClass):
             if isinstance(v,type) and issubclass(v,Element):
                 allowedValues[k] = v
         classDict['allowedValues'] = allowedValues
+        classDict['used_namespaces'] = []
         cls = ElementMetaClass.__new__(meta, classname, bases, classDict)
         return cls
 
 
 class Container(Element):
+    __metaclass__ = ContainerMetaClass
     """
     A Container is an Element whose `value` 
     is the list of the contained elements.
@@ -167,6 +172,32 @@ class Container(Element):
 
 
 
+class RootContainer(Container):
+  
+    #~ used_namespaces = []
+    default_namespace = None
+    
+    @classmethod
+    def add_namespace(self,ns):
+        super(RootContainer,self).add_namespace(ns)
+        if ns.isdefault:
+            self.default_namespace = ns
+        elif not ns in self.used_namespaces:
+            self.used_namespaces.append(ns)
+            
+    def writeAttribs(self,wr):
+        if self.default_namespace:
+            wr.write(' xmlns="%s"' % self.default_namespace.url)
+        for ns in self.used_namespaces:
+            wr.write(' xmlns:%s="%s"' % (ns.__name__,ns.url))
+        for k,v in self._attribs.items():
+            a = self.allowedAttribs.get(k)
+            wr.write(' %s=%s' % (a.name,quote(v)))
+        super(RootContainer,self).writeAttribs(wr)
+  
+class String(Element): pass
+class EmailAddress(String): pass
+  
 
 
 
@@ -209,30 +240,4 @@ class Namespace(object):
         
         
 
-class RootContainer(Container):
-  
-    used_namespaces = []
-    default_namespace = None
-    
-    @classmethod
-    def add_namespace(self,ns):
-        super(RootContainer,self).add_namespace(ns)
-        if ns.isdefault:
-            self.default_namespace = ns
-        elif not ns in self.used_namespaces:
-            self.used_namespaces.append(ns)
-            
-    def writeAttribs(self,wr):
-        if self.default_namespace:
-            wr.write(' xmlns="%s"' % self.default_namespace.url)
-        for ns in self.used_namespaces:
-            wr.write(' %s="%s"' % (ns.__name__,ns.url))
-        for k,v in self._attribs.items():
-            a = self.allowedAttribs.get(k)
-            wr.write(' %s=%s' % (a.name,quote(v)))
-        super(RootContainer,self).writeAttribs(wr)
-  
-class String(Element): pass
-class EmailAddress(String): pass
-  
  
