@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-26 19:22+0100\n"
+"POT-Creation-Date: 2011-10-27 14:39+0100\n"
 "PO-Revision-Date: 2011-10-14 20:46+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -17,11 +17,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #: .\models.py:93
-msgid "ISIP Contract Type"
+#, fuzzy
+msgid "ISIP Type"
 msgstr "Type de contrat PIIS"
 
 #: .\models.py:94
-msgid "ISIP Contract Types"
+#, fuzzy
+msgid "ISIP Types"
 msgstr "Types de contrat PIIS"
 
 #: .\models.py:96
@@ -89,12 +91,14 @@ msgid "Contract ends"
 msgstr "Contrat se termine"
 
 #: .\models.py:265
-msgid "ISIP Contract"
-msgstr "Contrat PIIS"
+#, fuzzy
+msgid "ISIP"
+msgstr "~PIIS"
 
-#: .\models.py:266
-msgid "ISIP Contracts"
-msgstr "Contrats PIIS"
+#: .\models.py:266 .\models.py:362
+#, fuzzy
+msgid "ISIP's"
+msgstr "~PIIS"
 
 #: .\models.py:270
 msgid "Contract Type"
@@ -132,13 +136,15 @@ msgstr "Devoirs personne"
 msgid "responsible (DSBE)"
 msgstr "Responsable (ISP)"
 
-#: .\models.py:346
+#: .\models.py:347
 msgid "My PIIS contracts"
 msgstr "Mes contrats PIIS"
 
-#: .\models.py:361
-msgid "~ISIP"
-msgstr "~PIIS"
+#~ msgid "ISIP Contract"
+#~ msgstr "Contrat PIIS"
+
+#~ msgid "ISIP Contracts"
+#~ msgstr "Contrats PIIS"
 
 #, fuzzy
 #~ msgid "Job Provider"

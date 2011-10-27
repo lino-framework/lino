@@ -3365,31 +3365,14 @@ Lino.show_uploader = function () {
 };
 #end if
 
-Lino.unused_show_mti_child = function(fieldname,urlroot) {
-  //~ console.log('show_mti_child',urlroot,rec);
-  rec = Lino.current_window.get_current_record();
-  if (rec) {
-    if (rec.phantom) {
-      Lino.notify('Not allowed on phantom record.');
-    }else if (rec.data[fieldname]) {
-      //~ window.open(urlroot + '/' + rec.id);
-      document.location = urlroot + '/' + rec.id;
-      //~ window.open(urlroot + '/' + rec.id,'_blank');
-    } else {
-      Lino.notify('$_("Cannot show MTI child if checkbox is off.")');
-    }
-  } else {
-    Lino.notify('No current record.');
-  }
-};
-
 Lino.show_mti_child = function(fieldname,detail_handler) {
-  //~ console.log('show_mti_child',urlroot,rec);
   rec = Lino.current_window.get_current_record();
   if (rec) {
     if (rec.phantom) {
       Lino.notify('Not allowed on phantom record.');
     }else if (rec.data[fieldname]) {
+      console.log('show_mti_child',Lino.current_window,rec.id);
+      //~ console.log('show_mti_child',rec.id);
       detail_handler(undefined,{record_id:rec.id});
       //~ window.open(urlroot + '/' + rec.id);
       //~ document.location = urlroot + '/' + rec.id;

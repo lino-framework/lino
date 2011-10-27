@@ -40,7 +40,7 @@ from lino.modlib.mails import models as mails # import Mailable
 
 from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass, \
-    GuestStatus, add_duration, setkw, dt2kw
+    GuestStatus, setkw, dt2kw
 
 from lino.utils.babel import dtosl
 #~ from lino.utils.dpy import is_deserializing
@@ -368,7 +368,8 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
         if self.duration_value is None or self.duration_unit is None:
             return
         dt = self.get_datetime('start')
-        end_time = add_duration(dt,self.duration_value,self.duration_unit)
+        end_time = self.duration_unit.add_duration(dt,self.duration_value)
+        #~ end_time = add_duration(dt,self.duration_value,self.duration_unit)
         setkw(self,**dt2kw(end_time,'end'))
         
     def duration_value_changed(self,oldvalue):

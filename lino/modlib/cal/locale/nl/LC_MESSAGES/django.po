@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-26 19:22+0100\n"
+"POT-Creation-Date: 2011-10-27 14:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,7 +81,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\models.py:248 .\models.py:454
+#: .\models.py:248 .\models.py:455
 msgid " on "
 msgstr ""
 
@@ -113,7 +113,7 @@ msgstr ""
 msgid "Recurrence Set"
 msgstr ""
 
-#: .\models.py:345 .\models.py:535
+#: .\models.py:345 .\models.py:536
 msgid "Event"
 msgstr ""
 
@@ -145,7 +145,7 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#: .\models.py:360 .\models.py:541
+#: .\models.py:360 .\models.py:542
 msgid "Status"
 msgstr ""
 
@@ -153,7 +153,7 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#: .\models.py:362 .\models.py:412
+#: .\models.py:362 .\models.py:413
 msgid "Duration value"
 msgstr ""
 
@@ -161,63 +161,63 @@ msgstr ""
 msgid "Duration unit"
 msgstr ""
 
-#: .\models.py:401
+#: .\models.py:402
 msgid "Task"
 msgstr ""
 
-#: .\models.py:402
+#: .\models.py:403
 msgid "Tasks"
 msgstr ""
 
-#: .\models.py:407
+#: .\models.py:408
 msgid "Due date"
 msgstr ""
 
-#: .\models.py:410
+#: .\models.py:411
 msgid "Due time"
 msgstr ""
 
-#: .\models.py:411
+#: .\models.py:412
 msgid "Done"
 msgstr ""
 
-#: .\models.py:516
+#: .\models.py:517
 msgid "Guest Role"
 msgstr ""
 
-#: .\models.py:517
+#: .\models.py:518
 msgid "Guest Roles"
 msgstr ""
 
-#: .\models.py:531
+#: .\models.py:532
 msgid "Guest"
 msgstr ""
 
-#: .\models.py:532
+#: .\models.py:533
 msgid "Guests"
 msgstr ""
 
-#: .\models.py:538
+#: .\models.py:539
 msgid "Role"
 msgstr ""
 
-#: .\models.py:548
+#: .\models.py:549
 msgid "Remark"
 msgstr ""
 
-#: .\models.py:642
+#: .\models.py:643
 msgid "Upcoming reminders"
 msgstr ""
 
-#: .\models.py:643
+#: .\models.py:644
 msgid "Past reminders"
 msgstr ""
 
-#: .\models.py:719
+#: .\models.py:720
 msgid "due date reached"
 msgstr ""
 
-#: .\models.py:736 .\models.py:741 .\models.py:748
+#: .\models.py:737 .\models.py:742 .\models.py:749
 msgid "~Calendar"
 msgstr ""
 

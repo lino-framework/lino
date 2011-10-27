@@ -1,0 +1,5 @@
+Version 1.2.5 (26.10.2011)
+==========================
+
+Abends. Neue Tabelle "Kursangebote".
+

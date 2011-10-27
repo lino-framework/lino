@@ -245,7 +245,8 @@ class Contract(ContractBase):
     @chooser()
     def contact_choices(cls,provider):
         if provider is not None:
-            return provider.rolesbyparent.all()
+            #~ return provider.rolesbyparent.all()
+            return provider.rolesbyparent.filter(type__use_in_contracts=True)
         return []
         
     def get_company(self):

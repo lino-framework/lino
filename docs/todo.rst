@@ -12,6 +12,24 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  update_owned_tasks() erweitern, dass er auch Events automatisch verwalten kann.
+    cal.Events ebenfalls mit owner und auto_id.
+    Sowie ein Flag "seen": wenn das true ist, verändert er Datum, User usw. 
+    nicht mehr automatisch.
+    
+#.  lino.modlib.jobs : "Funktionen" umbenennen nach "Qualifikationen"
+
+#.  contacts.RoleType : zwei neue Felder parent_type und child_type (FK nach
+    ContentType), sowie choosers for parent und child, die dann ggf. nur diese
+    Tabelle als Auswahlliste anzeigt.
+    
+#.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
+
+#.  `Lino.show_mti_child()` hat einen Bug: wenn man von einer Grid ins Detail 
+    geht und im Detail dann mit PgUp den Record wechselt, und dann auf "zeigen" 
+    klickt, dann zeigt er den record, auf dem man in der grid doppelt geklickt 
+    hatte, nicht den richtigen.
+
 #.  Idée venue avec Gaëtan: .dtl files in Python, not yaml
 
 #.  In cal.Task remove fields alarm_unit and alarm_value. Lino does 

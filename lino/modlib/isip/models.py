@@ -90,8 +90,8 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
     templates_group = 'isip/Contract'
     
     class Meta:
-        verbose_name = _("ISIP Contract Type")
-        verbose_name_plural = _('ISIP Contract Types')
+        verbose_name = _("ISIP Type")
+        verbose_name_plural = _('ISIP Types')
         
     ref = models.CharField(_("reference"),max_length=20,blank=True)
 
@@ -262,8 +262,8 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
 class Contract(ContractBase):
   
     class Meta:
-        verbose_name = _("ISIP Contract")
-        verbose_name_plural = _('ISIP Contracts')
+        verbose_name = _("ISIP")
+        verbose_name_plural = _("ISIP's")
         
     type = models.ForeignKey("isip.ContractType",
         related_name="%(app_label)s_%(class)s_set_by_type",
@@ -307,7 +307,8 @@ class Contract(ContractBase):
     @chooser()
     def contact_choices(cls,company):
         if company is not None:
-            return company.rolesbyparent.all()
+            #~ return company.rolesbyparent.all()
+            return company.rolesbyparent.filter(type__use_in_contracts=True)
         return []
 
     def get_recipient(self):
@@ -358,7 +359,7 @@ def setup_my_menu(site,ui,user,m):
     m.add_action('isip.MyContracts')
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("isip",_("~ISIP"))
+    m  = m.add_menu("isip",_("ISIP's"))
     m.add_action('isip.ContractTypes')
     m.add_action('isip.ContractEndings')
     m.add_action('isip.ExamPolicies')

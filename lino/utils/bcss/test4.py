@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 u"""
+test4 . using xml_parser.luc.py
+
 Send a SOAP request to the Belgian 
 `BCSS server <http://www.ksz-bcss.fgov.be>`_
 (Banque Carrefour de la Sécurité Sociale, 
@@ -63,6 +65,8 @@ def assert_equivalent(xs1,xs2):
     dom1 = parseString(xs1)
     dom2 = parseString(xs2)
     if dom1 != dom2:
+        open('s1.xml','w').write(xs1)
+        open('s2.xml','w').write(xs2)
         sys.exit()
       
 

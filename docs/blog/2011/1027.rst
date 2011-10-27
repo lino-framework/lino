@@ -1,0 +1,12 @@
+20111027
+========
+
+:mod:`lino.apps.dsbe` fügt jetzt in `contacts.RoleType` ein 
+BooleanField `used_for_contracts` ein, und in seiner 
+contact_choices nur diese Funktionen auswählen lassen.
+
+Der Begriff "VSE-Vertrag" ist doppelt gemoppelt und wird durch VSE ersetzt. 
+Und der Plural von "VSE" ist "VSEs" (siehe 
+http://www.korrekturen.de/forum.pl/md/read/id/32006/sbj/plural-s-bei-abkuerzungen-akw-pkw-lkw/) obschon man das "s" beim Sprechen auch wegfallen lassen kann, 
+wenn der Plural durch den Kontext ersichtlich ist. "Heute habe ich zwei neue VSE reinbekommen".
+

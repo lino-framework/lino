@@ -78,38 +78,38 @@ add('2',en=u"completed",de=u"erledigt",   fr=u"complétée")
 add('3',en=u"cancelled",de=u"storniert",   fr=u"annulée")
 
 
-def add_duration(dt,value,unit):
-    if unit.value == 's' : 
-        return dt + datetime.timedelta(seconds=value)
-    if unit.value == 'm' : 
-        return dt + datetime.timedelta(minutes=value)
-    if unit.value == 'h' : 
-        return dt + datetime.timedelta(hours=value)
-    if unit.value == 'D' : 
-        return dt + datetime.timedelta(days=value)
-    if unit.value == 'W' : 
-        return dt + datetime.timedelta(days=value*7)
-    day = dt.day
-    year = dt.year
-    while True:
-        try:
-            if unit.value == 'M' : 
-                m = dt.month + value
-                while m > 12: 
-                    m -= 12
-                    year += 1
-                while m < 1: 
-                    m += 12
-                    year -= 1
-                return dt.replace(month=m,day=day,year=year)
-            if unit.value == 'Y' : 
-                return dt.replace(month=dt.year + value,day=day)
-            raise Exception("Invalid DurationUnit %s" % unit)
-        except ValueError:
-            if day > 28:
-                day -= 1
-            else:
-                raise
+#~ def add_duration(dt,value,unit):
+    #~ if unit.value == 's' : 
+        #~ return dt + datetime.timedelta(seconds=value)
+    #~ if unit.value == 'm' : 
+        #~ return dt + datetime.timedelta(minutes=value)
+    #~ if unit.value == 'h' : 
+        #~ return dt + datetime.timedelta(hours=value)
+    #~ if unit.value == 'D' : 
+        #~ return dt + datetime.timedelta(days=value)
+    #~ if unit.value == 'W' : 
+        #~ return dt + datetime.timedelta(days=value*7)
+    #~ day = dt.day
+    #~ year = dt.year
+    #~ while True:
+        #~ try:
+            #~ if unit.value == 'M' : 
+                #~ m = dt.month + value
+                #~ while m > 12: 
+                    #~ m -= 12
+                    #~ year += 1
+                #~ while m < 1: 
+                    #~ m += 12
+                    #~ year -= 1
+                #~ return dt.replace(month=m,day=day,year=year)
+            #~ if unit.value == 'Y' : 
+                #~ return dt.replace(month=dt.year + value,day=day)
+            #~ raise Exception("Invalid DurationUnit %s" % unit)
+        #~ except ValueError:
+            #~ if day > 28:
+                #~ day -= 1
+            #~ else:
+                #~ raise
     
 
 class DurationUnit(ChoiceList):

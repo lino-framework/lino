@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-26 19:22+0100\n"
+"POT-Creation-Date: 2011-10-27 14:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: .\models.py:93
-msgid "ISIP Contract Type"
+msgid "ISIP Type"
 msgstr ""
 
 #: .\models.py:94
-msgid "ISIP Contract Types"
+msgid "ISIP Types"
 msgstr ""
 
 #: .\models.py:96
@@ -90,11 +90,11 @@ msgid "Contract ends"
 msgstr ""
 
 #: .\models.py:265
-msgid "ISIP Contract"
+msgid "ISIP"
 msgstr ""
 
-#: .\models.py:266
-msgid "ISIP Contracts"
+#: .\models.py:266 .\models.py:362
+msgid "ISIP's"
 msgstr ""
 
 #: .\models.py:270
@@ -133,10 +133,6 @@ msgstr ""
 msgid "responsible (DSBE)"
 msgstr ""
 
-#: .\models.py:346
+#: .\models.py:347
 msgid "My PIIS contracts"
-msgstr ""
-
-#: .\models.py:361
-msgid "~ISIP"
 msgstr ""

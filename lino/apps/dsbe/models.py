@@ -1376,11 +1376,13 @@ class CourseOffer(models.Model):
         
     
 class Course(models.Model):
-    """
-    Ein konkreter Kurs, der an einem bestimmten Datum beginnt 
-    und bei einem bestimmten 
-    :class:`Kursanbieter <CourseProvider>` stattfindet
-    (und für den ihr Kandidaten zu vermitteln plant).
+    u"""
+    Ein konkreter Kurs, der an einem bestimmten Datum beginnt.
+    Für jeden Kurs muss ein entsprechendes Angebot existieren, 
+    das u.A. den :class:`Kursinhalt <CourseContent>` 
+    und :class:`Kursanbieter <CourseProvider>` 
+    detailliert. Also selbst für einen einmalig stattfindenden 
+    Kurs muss ein Angebot erstellt werden.
     """
     class Meta:
         verbose_name = _("Course")
@@ -1880,6 +1882,17 @@ if settings.LINO.user_model:
         Deserves more documentation.
         """)
         
+RoleType = resolve_model('contacts.RoleType',strict=True)
+reports.inject_field(RoleType,
+    'use_in_contracts',
+    models.BooleanField(
+        verbose_name=_("usable in contracts"),
+        default=True
+    ),"""Whether Roles of this type can be used as contact person of a job contract.
+    Deserves more documentation.
+    """)
+    
+
 
 
 
