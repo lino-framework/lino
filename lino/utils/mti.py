@@ -116,10 +116,17 @@ def delete_child(obj,child_model,using=None,request=None):
     
 
 def insert_child(obj,child_model,**attrs):
-    assert child_model != obj.__class__
+    """
+    Insert (create) a `child_model` instance of existing `obj`.
+    """
+    #~ assert child_model != obj.__class__
+    #~ if child_model == obj.__class__:
+        #~ raise ValidationError(
+            #~ "A %s cannot be parent for itself" % 
+            #~ obj.__class__.__name__)
     parent_link_field = child_model._meta.parents.get(obj.__class__,None)
     if parent_link_field is None:
-        raise Exception("A %s cannot be parent for a %s" % (
+        raise ValidationError("A %s cannot be parent for a %s" % (
             obj.__class__.__name__,child_model.__name__))
     attrs[parent_link_field.name] = obj
     #~ for pm,pf in child_model._meta.parents.items(): # pm : parent model, pf : parent link field

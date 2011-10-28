@@ -13,6 +13,29 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
+def assert_equivalent(s1,s2):
+    if s1 == s2:
+        return
+    from xml.dom.minidom import parseString
+    dom1 = parseString(s1)
+    dom2 = parseString(s2)
+    if dom1 != dom2:
+        s1 = s1.replace('><','>\n<')
+        s2 = s2.replace('><','>\n<')
+        l1 = s1.splitlines()
+        l2 = s2.splitlines()
+        if l1 == l2 : return
+        from difflib import Differ
+        d = Differ()
+        result = list(d.compare(l1, l2))
+        print '\n'.join(result)
+        if False:
+            open('s1.xml','w').write(s1)
+            open('s2.xml','w').write(s2)
+        raise Exception("XML strings are different")
+
+
+
 def quote(x):
     if isinstance(x,int):
         return '"'+str(x)+'"'
@@ -136,11 +159,11 @@ def py2xml(wr,value): # ,indent='',addindent='',newl=''
 class ContainerMetaClass(ElementMetaClass):
     def __new__(meta, classname, bases, classDict):
       
-        allowedValues = {}
+        allowedElements = {}
         for k,v in classDict.items():
             if isinstance(v,type) and issubclass(v,Element):
-                allowedValues[k] = v
-        classDict['allowedValues'] = allowedValues
+                allowedElements[k] = v
+        classDict['allowedElements'] = allowedElements
         classDict['used_namespaces'] = []
         cls = ElementMetaClass.__new__(meta, classname, bases, classDict)
         return cls
@@ -153,7 +176,7 @@ class Container(Element):
     is the list of the contained elements.
     """
     def __init__(self,*elements,**attribs):
-        # note the '*'
+        # note that we remove the '*'
         Element.__init__(self,elements,**attribs)
         
     #~ def __xml__(self,wr):
@@ -240,4 +263,6 @@ class Namespace(object):
         
         
 
- 
+__all__ = [
+    'Namespace', 'String', 'EmailAddress', 'Container', 
+    'RootContainer', 'assert_equivalent' ]

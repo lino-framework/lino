@@ -1,0 +1,38 @@
+20111028
+========
+
+Connecting to the BCSS
+----------------------
+
+I wrote a new module :mod:`lino.utils.xmlgen` which I prefer over 
+libraries like generateDS or `appy.Object`
+
+A little bug
+------------
+
+Read-only checkboxes are only grey but not read-only. 
+Seems that this is due to a bug in ExtJS.
+For example on the Detail of a JobProvider, if you activate the 
+checkbox is_courseprovider and click on Save, you get::
+
+  ERROR A JobProvider cannot be parent for a CourseProvider
+  Traceback (most recent call last):
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 651, in form2obj
+      f.form2obj(request,instance,form_values,is_new)
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 124, in form2obj
+      self.set_value_in_object(request,instance,v)
+    File "t:\hgwork\lino\lino\utils\mti.py", line 187, in set_value_in_object
+      insert_child(obj,self.child_model)
+    File "t:\hgwork\lino\lino\utils\mti.py", line 123, in insert_child
+      obj.__class__.__name__,child_model.__name__))
+  Exception: A JobProvider cannot be parent for a CourseProvider
+
+Changed this (in :func:`lino.utils.mti.insert_child`) to raise a 
+ValidationError instead of an Exception.
+
+Also removed the assertion ``assert child_model != obj.__class__``
+(which occurred today) because in that case we would simply not find 
+any `parent_link_field`, which would lead to the validation error 
+"A CourseProvider cannot be parent for a CourseProvider"
+    
+This bug 

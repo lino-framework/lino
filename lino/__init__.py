@@ -381,6 +381,11 @@ class Lino(object):
     
     alt_date_formats_extjs = 'd/m/Y|Y-m-d'
     
+    bcss_soap_url = None
+    """
+    URL of BCSS SOAP server
+    """
+    
     bcss_user_params = None
     u"""
     User parameters for BCSS access.

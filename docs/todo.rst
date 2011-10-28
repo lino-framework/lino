@@ -63,11 +63,9 @@ Short-term
     Stellen zugetragen werden, schnell ein geeigneter Kandidat gefunden
     werden kann.
 
-#.  :doc:`/tickets/45`: 
-    - openfile.js in die linolib.js integrieren
-    - Print-Button anpassen
-    - Auch den timestamp der Datei speichern, um ermitteln zu können, 
-      ob sie manuell bearbeitet wurde.
+#.  Printable: 
+    Auch den timestamp der Datei speichern, um ermitteln zu können, 
+    ob sie manuell bearbeitet wurde.
       
 #.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
     das Detail des Owners anzuzeigen. GenericForeignKey könnte auch was 
@@ -160,6 +158,7 @@ Short-term
     http://code.google.com/p/eid-applet/
     
 #.  auf Jana werden Tabellen nicht korrekt gerendert, auf Armand wohl.
+
       - OOo-Version? auf Jana ist 3.2:
         zless /usr/share/doc/openoffice.org-core/README.gz
       - appy.pod-Version?
