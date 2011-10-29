@@ -15,42 +15,106 @@
 """
 This is a simplistic method for generating XML strings.
 
-Example (does not yet pass the test):
+Primary design goal is to avoid redundancy and to allow for concise code.
+
+There are probably still important lacks.
+
+Example:
 
 >>> from lino.utils.xmlgen import *
+
+First we declare an XML Schema. This is a set of Namespace subclasses.
+Each Nameset class must define an `url` and exactly one root Container.
+
 >>> class bcss(Namespace):
-...  url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
-...
->>> class xsi(Namespace):
-...   url = "http://www.w3.org/2001/XMLSchema-instance"
->>> class xsd(Namespace):
-...   url = "http://www.w3.org/2001/XMLSchema"
+...   url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
+...   class xmlString(Container):
+...     pass
 ...
 >>> class soap(Namespace):
 ...   url = "http://schemas.xmlsoap.org/soap/envelope/" 
-...   class Envelope(RootContainer):
+...   class Envelope(Container):
 ...     class Body(Container):
-...       class xmlString(RootContainer):
 ...         pass
 ...
->>> xml = soap.Envelope(soap.Body(soap.xmlString(CDATA("FooBar"))))
->>> xml.toxml()
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">\
-<soap:Body>\
-<xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">\
-<![CDATA[FooBar]]>\
-</xmlString>\
-</soap:Body>\
+
+Then we instanciate our tree:
+
+>>> xml = soap.Envelope(soap.Body(bcss.xmlString(CDATA("FooBar"))))
+
+Now we render it as XML by calling the :meth:`Element.toxml` 
+method on the root element:
+
+>>> print xml.toxml(pretty=True)
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<soap:Body>
+<bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
+<![CDATA[FooBar]]>
+</bcss:xmlString>
+</soap:Body>
 </soap:Envelope>
 
+If you set a default namespace, you'll get slightly different result:
+
+>>> set_default_namespace(bcss)
+>>> print xml.toxml(pretty=True)
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<soap:Body>
+<xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
+<![CDATA[FooBar]]>
+</xmlString>
+</soap:Body>
+</soap:Envelope>
+
+>>> set_default_namespace(soap)
+>>> print xml.toxml(pretty=True)
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+<Body>
+<bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
+<![CDATA[FooBar]]>
+</bcss:xmlString>
+</Body>
+</Envelope>
+
+A Namespace may not define more than one root element:
+
+>>> class foo(Namespace):
+...   url = "foo" 
+...   class Foo(Container): pass
+...   class Bar(Container): pass
+Traceback (most recent call last):
+(...)
+Exception: More than one root elements in namespace foo
+
+The root element doesn't need to be a container:
+
+>>> class foo(Namespace):
+...   url = "http://foo.bar" 
+...   class Foo(String): pass
+
+>>> set_default_namespace(foo)
+>>> print foo.Foo("A simple element").toxml(True)
+<Foo xmlns="http://foo.bar">A simple element</Foo>
 
 """
+
+unused = """
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<soap:Body>
+<xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
+<![CDATA[FooBar]]>
+</xmlString>
+</soap:Body>
+</soap:Envelope>
+
+"""
+
+from xml.dom.minidom import parseString
 
 
 def assert_equivalent(s1,s2,write_diag_files=False):
     if s1 == s2:
         return
-    from xml.dom.minidom import parseString
     dom1 = parseString(s1)
     dom2 = parseString(s2)
     if dom1 != dom2:
@@ -108,6 +172,12 @@ class CDATA(Node):
     def __init__(self,data):
         self.data = data
     def __xml__(self,wr):
+        wr.write("<![CDATA[%s]]>" % self.data)
+    
+class TEXT(Node):
+    def __init__(self,data):
+        self.data = data
+    def __xml__(self,wr):
         wr.write(self.data)
     
         
@@ -121,6 +191,7 @@ class ElementMetaClass(type):
                     v.name = k
                 allowedAttribs[k] = v
         classDict['allowedAttribs'] = allowedAttribs
+        classDict['used_namespaces'] = []
         cls = type.__new__(meta, classname, bases, classDict)
         return cls
     
@@ -129,6 +200,10 @@ class Element(Node):
     __metaclass__ = ElementMetaClass
     elementname = None
     namespace = None
+    parent = None
+    #~ is_root = False
+    #~ default_namespace = None
+    #~ used_namespaces = []
     
     def __init__(self,value=None,**kw):
         if self.elementname is None:
@@ -138,6 +213,10 @@ class Element(Node):
         self.update(**kw)
 
     def update(self,**kw):
+        # the default namespace is stored separately
+        #~ ns = kw.pop('defaultns',None)
+        #~ if ns:
+            #~ self.default_namespace = ns
         for k,v in kw.items():
             #assert not k in self.defaultAttribs.keys()
             try:
@@ -159,18 +238,42 @@ class Element(Node):
                 self.__class__.__name__, name))
         
     @classmethod
-    def add_namespace(self,ns):
-        if self.namespace:
+    def collect_children(cls,ns,classname):
+        pass
+        
+    @classmethod
+    def set_namespace(cls,ns):
+        if cls.namespace:
             raise Exception("Element %s got duplicate namespace %r" % (
-              self.__name__,ns.__name__))
-        self.namespace = ns
+              cls.__name__,ns.__name__))
+        cls.namespace = ns
+        cls.add_namespace(ns)
+        
+    @classmethod
+    def add_namespace(cls,ns):
+        if cls.parent:
+            cls.parent.add_namespace(ns)
+        elif not ns in cls.used_namespaces:
+            cls.used_namespaces.append(ns)
+            
         
     def tag(self):
-        if not self.namespace.isdefault:
-            return self.namespace.__name__+ ":" + self.elementname
-        return self.elementname
+        if self.namespace == _default_namespace:
+            return self.elementname
+            #~ if self.parent and self.parent.default_namespace != self.namespace:
+            #~ if not self.namespace.isdefault:
+        return self.namespace.__name__+ ":" + self.elementname
     
     def writeAttribs(self,wr):
+        if self.parent is None: # it's the root element
+            if self.namespace and self.namespace == _default_namespace:
+                wr.write(' xmlns="%s"' % self.namespace.url)
+            for ns in self.used_namespaces:
+                if ns != _default_namespace:
+                    wr.write(' xmlns:%s="%s"' % (ns.__name__,ns.url))
+            for k,v in self._attribs.items():
+                a = self.allowedAttribs.get(k)
+                wr.write(' %s=%s' % (a.name,quote(v)))
         for k,v in self._attribs.items():
             a = self.allowedAttribs.get(k)
             wr.write(' %s=%s' % (a.name,quote(v)))
@@ -187,9 +290,12 @@ class Element(Node):
             wr.write("</"+self.tag()+">" )
         
         
-    def toxml(self):
+    def toxml(self,pretty=False):
         u = UniStringIO()
         self.__xml__(u)
+        if pretty:
+            return u.getvalue().replace("><",">\n<")
+            #~ return parseString(u.getvalue()).toprettyxml()
         return u.getvalue()
         
 def py2xml(wr,value): # ,indent='',addindent='',newl=''
@@ -209,7 +315,6 @@ class ContainerMetaClass(ElementMetaClass):
             if isinstance(v,type) and issubclass(v,Element):
                 allowedElements[k] = v
         classDict['allowedElements'] = allowedElements
-        classDict['used_namespaces'] = []
         cls = ElementMetaClass.__new__(meta, classname, bases, classDict)
         return cls
 
@@ -237,32 +342,24 @@ class Container(Element):
             #~ wr("</"+self.tag()+">" )
 
 
-
-
-
-class RootContainer(Container):
-  
-    #~ used_namespaces = []
-    default_namespace = None
-    
     @classmethod
-    def add_namespace(self,ns):
-        super(RootContainer,self).add_namespace(ns)
-        if ns.isdefault:
-            self.default_namespace = ns
-        elif not ns in self.used_namespaces:
-            self.used_namespaces.append(ns)
-            
-    def writeAttribs(self,wr):
-        if self.default_namespace:
-            wr.write(' xmlns="%s"' % self.default_namespace.url)
-        for ns in self.used_namespaces:
-            wr.write(' xmlns:%s="%s"' % (ns.__name__,ns.url))
-        for k,v in self._attribs.items():
-            a = self.allowedAttribs.get(k)
-            wr.write(' %s=%s' % (a.name,quote(v)))
-        super(RootContainer,self).writeAttribs(wr)
-  
+    def collect_children(cls,ns,classname):
+        for k,v in cls.__dict__.items():
+            if k != 'parent':
+                if isinstance(v,type) and issubclass(v,Element):
+                    v.parent = cls
+                    if ns.has_key(k):
+                        raise Exception(
+                            "Duplicate element name %s in namespace %s (%s)"
+                            % (k,classname,ns))
+                    #~ print "Adding %s to namespace %s" % (k,classname)
+                    ns[k] = v
+                    if issubclass(v,Container):
+                        v.collect_children(ns,classname)
+                
+
+
+
 class String(Element): pass
 class EmailAddress(String): pass
   
@@ -270,33 +367,45 @@ class EmailAddress(String): pass
 
 
 
-
-def extract_containers(ns,d,add):
-    for k,v in d.items():
-        if isinstance(v,type) and issubclass(v,Element):
-            if add:
-                assert not ns.has_key(k)
-                ns[k] = v
-            extract_containers(ns,v.__dict__,True)
-                
     
 class NamespaceMetaClass(type):
     def __new__(meta, classname, bases, classDict):
-        ns = {}
-        extract_containers(ns,classDict,False)
+        if classname != 'Namespace':
+            # verify that there is only one root element.
+            root = None
+            for k,v in classDict.items():
+                if isinstance(v,type) and issubclass(v,Element):
+                    if root is None:
+                        root = v
+                    else:
+                        raise Exception(
+                          "More than one root elements in namespace %s" 
+                          % classname)
+          
+            if root is None:
+                raise Exception(
+                  "No root element found in namespace %s" 
+                  % classname)
+
+            root.collect_children(classDict,classname)
+            
+            #~ children = {}
+            #~ extract_elements(ns,classDict,False)
+            
         
-        for k,v in ns.items():
-            if classDict.has_key(k):
-                raise Exception("Duplicate name %r in Namespace %r" % (k,classname))
-            classDict[k] = v
+            #~ for k,v in children.items():
+                #~ if classDict.has_key(k):
+                    #~ raise Exception(
+                        #~ "Duplicate element name %r in namespace %r" 
+                        #~ % (k,classname))
+                #~ classDict[k] = v
         
         cls = type.__new__(meta, classname, bases, classDict)
         
         for k,v in classDict.items():
             if isinstance(v,type) and issubclass(v,Element):
-                v.add_namespace(cls)
+                v.set_namespace(cls)
           
-                
         return cls
   
 
@@ -305,14 +414,28 @@ class Namespace(object):
     url = None
     __metaclass__ = NamespaceMetaClass
     
-        
+
+#~ # currently not used:
+#~ class xsi(Namespace):
+    #~ url = "http://www.w3.org/2001/XMLSchema-instance"
+#~ class xsd(Namespace):
+    #~ url = "http://www.w3.org/2001/XMLSchema"
+    
+_default_namespace = None
+
+def set_default_namespace(ns):
+    """
+    Declares the specified namespace as default namespace.
+    """
+    global _default_namespace
+    _default_namespace = ns
         
 
 __all__ = [
     'Namespace', 
     'String', 'EmailAddress', 
     'CDATA', 'Container', 
-    'RootContainer', 
+    'set_default_namespace',
     'assert_equivalent' ]
 
 def _test():
