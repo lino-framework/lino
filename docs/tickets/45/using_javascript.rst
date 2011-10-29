@@ -48,11 +48,11 @@ For **Firefox** we got it working.
 `5 <http://stackoverflow.com/questions/1374927/launch-file-from-firefox-chrome>`__)
 Here is a proof of concept:
 
-.. literalinclude:: ../blog/2011/0923/startfile.js
+.. literalinclude:: /blog/2011/0923/startfile.js
 
 This script would be used as follows:
 
-.. literalinclude:: ../blog/2011/0923/startfile.html
+.. literalinclude:: /blog/2011/0923/startfile.html
 
 
 
@@ -60,7 +60,7 @@ Firefox will ask the user "A script from XXX is requesting enhanced
 abilities that are UNSAFE and could be used to comprimise your machine 
 or data...":
 
-.. image:: 45/20110921a.jpg
+.. image:: 20110921a.jpg
    :scale: 50
   
 **Google Chrome** :

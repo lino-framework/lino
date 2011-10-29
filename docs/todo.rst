@@ -17,9 +17,15 @@ Short-term
     Sowie ein Flag "seen": wenn das true ist, verändert er Datum, User usw. 
     nicht mehr automatisch.
     
-#.  lino.modlib.jobs : "Funktionen" umbenennen nach "Qualifikationen"
+#.  :class:´lino.modlib.jobs.Function` : "Funktionen" 
+    umbenennen nach "Qualifikationen"?
+    Weil auch :class:´lino.modlib.contacts.RoleType` so übersetzt wird.
+    Oder aber Modelle :class:´lino.modlib.jobs.Function` 
+    und :class:´lino.modlib.contacts.RoleType` vereinigen?
+    Aber was passiert dann mit den Sektoren?
 
-#.  contacts.RoleType : zwei neue Felder parent_type und child_type (FK nach
+#.  :class:´lino.modlib.contacts.RoleType` : 
+    zwei neue Felder parent_type und child_type (FK nach
     ContentType), sowie choosers for parent und child, die dann ggf. nur diese
     Tabelle als Auswahlliste anzeigt.
     

@@ -5,7 +5,39 @@ Connecting to the BCSS
 ----------------------
 
 I wrote a new module :mod:`lino.utils.xmlgen` which I prefer over 
-libraries like generateDS or `appy.Object`
+:term:`generateDS` or `appy.Object` for generating 
+the XML of :term:`BCSS` requests.
+
+This is finally how I actually *enjoy* writing BCSS requests!
+
+But of course it's possible that my fascination is due to my naiveness,
+since I have no serious experience with XML. So I asked Gaëtan for his opinion:
+
+  voici donc deux modules qui font en principe la même chose mais de
+  manière différente.
+
+  test5.py est ce que nous avions commencé ensemble. Cela ne marche pas
+  encore tout-à-fait à cause du petit problème avec ANY.
+
+  Mais indépendamment de cela, je n'aimais pas la quantité de code que je
+  dois écrire et maintenir pour générer ma requête. Hier je me suis donc
+  lancé dans mon idée dont tu vois le résultat dans la test6.py
+
+  Note que les deux tests appellent des services différents:
+  
+  - test5.py HeatingAllocation
+  - test6.py PerformInvestigation
+  
+  c'est dommage car il faut maintenant comparer des pommes à des oranges,
+  cela vient du fait qu'entre temps Gerd et moi avons compris que
+  PerformInvestigation est plus urgente que HeatingAllocation...
+
+  Malgré cela je trouve que l'avantage de mon xmlgen au point de vue
+  clarté du code est bien visible.
+
+  Question pour toi: qu'en penses-tu? As-tu des exemples de XML que
+  j'aurais difficile à générer avec mon système?
+
 
 A little bug
 ------------

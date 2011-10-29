@@ -2,7 +2,42 @@
 ========
 
 Meeting with Gaëtan Delannay. 
-We comparend Lino and his appy.gen framework.
+We comparend Lino and his `appy.gen` framework.
+
+Lino versus `appy.gen`
+----------------------
+
+- ´appy.gen´ uses the ZODB while Lino uses SQL databases.
+
+- Lino application are rather traditional desktop 
+  applications that moved to the web,
+  while ´appy.gen´ application are rather database-driven dynamic websites.
   
-Worked on :mod:`lino.utils.bcss`.
+- Lino does not (yet) offer "workflows". 
+  Gaëtan explains what workflows are:
+
+    The security model behinds gen-applications is similar to 
+    what Zope and Plone offer; simply, gen tries to simplify the 
+    way to declare and manage security within your applications. 
+    According to this model, users are put into groups; groups 
+    have some roles; roles are granted basic permissions on objects 
+    (create, read, write, delete, etc). Permissions-to-roles mappings 
+    may vary according to the state of objects.
+    
+    (http://appyframework.org/genSecurityAndWorkflows.html)
+
+  
+Connecting to the BCSS
+----------------------
+
+Gaëtan also explained me how he would generate
+the XML of :term:`BCSS` requests.
+
+His method is much simpler than Dave's :term:`generateDS`!
+
+We added 
+:srcref:`/lino/sandbox/bcss/test3.py`
+and
+:srcref:`/lino/sandbox/bcss/test4.py`.
+
 Wrote a patch for `appy.shared.xml_parser`.

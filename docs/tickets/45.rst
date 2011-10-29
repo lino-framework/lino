@@ -144,7 +144,7 @@ Firefox versions, and it is no longer maintained.
 
 
 .. toctree::
-   :maxdepth: 2
+  :maxdepth: 2
 
   45/using_url_protocol
   45/using_cmdserver

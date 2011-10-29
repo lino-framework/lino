@@ -1,21 +1,11 @@
 # -*- coding: UTF-8 -*-
 u"""
-Send a SOAP request to the Belgian 
-`BCSS server <http://www.ksz-bcss.fgov.be>`_
-(Banque Carrefour de la Sécurité Sociale, 
-"Crossroads Bank for Social Security").
+Send a SOAP request to the :term: `BCSS` server
+using Dave Kuhlmann's :term:`generateDS` (version 2.6a).
 
-I got a set of XSD files that describe the services provided by the 
-BCSS. I could sucessfully convert them to Python modules using  
-commands like::
-
-  python -m generateDS -o SSDNRequest.py XSD\SSDN\SERVICE\SSDNREQUEST.XSD
-  
-(See :srcref:`xsd2py.bat </lino/utils/bcss/xsd2py.bat>`
-for the actual commands used on a windows machine.)
-
-Note that :file:`SSDNRequest.py` has been modified manually 
-for <any> support.
+Continued from :mod:`lino.sandbox.bcss.test`.
+File :file:`SSDNRequest.py` has been modified manually 
+for <any> support according to Dave's instructions.
 
 When running this script you need to set your 
 DJANGO_SETTINGS_MODULE environment variable

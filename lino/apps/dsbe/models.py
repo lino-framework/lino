@@ -1882,16 +1882,21 @@ if settings.LINO.user_model:
         Deserves more documentation.
         """)
         
-RoleType = resolve_model('contacts.RoleType',strict=True)
-reports.inject_field(RoleType,
-    'use_in_contracts',
-    models.BooleanField(
-        verbose_name=_("usable in contracts"),
-        default=True
-    ),"""Whether Roles of this type can be used as contact person of a job contract.
-    Deserves more documentation.
-    """)
-    
+RoleType = resolve_model('contacts.RoleType')
+if not isinstance(RoleType,UnresolvedModel):
+    """
+    autodoc imports this module with :mod:`lino.apps.std.settings` 
+    which has no contacts app.
+    """
+    reports.inject_field(RoleType,
+        'use_in_contracts',
+        models.BooleanField(
+            verbose_name=_("usable in contracts"),
+            default=True
+        ),"""Whether Roles of this type can be used as contact person of a job contract.
+        Deserves more documentation.
+        """)
+        
 
 
 

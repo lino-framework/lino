@@ -30,6 +30,9 @@ Subpackages
     lino.fields
     lino.mixins
     lino.models
+    lino.modlib
+    lino.sandbox.bcss
+    lino.test_apps
     lino.test_apps
     lino.ui
     lino.utils
@@ -41,7 +44,5 @@ Subpackages
     lino.utils.babel
     lino.utils.choosers
     lino.utils.test
-    lino.utils.bcss.test
-    lino.test_apps
-    lino.modlib
+    lino.utils.xmlgen
 

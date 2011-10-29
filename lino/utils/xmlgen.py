@@ -12,8 +12,42 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This is a simplistic method for generating XML strings.
 
-def assert_equivalent(s1,s2):
+Example (does not yet pass the test):
+
+>>> from lino.utils.xmlgen import *
+>>> class bcss(Namespace):
+...  url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
+...
+>>> class xsi(Namespace):
+...   url = "http://www.w3.org/2001/XMLSchema-instance"
+>>> class xsd(Namespace):
+...   url = "http://www.w3.org/2001/XMLSchema"
+...
+>>> class soap(Namespace):
+...   url = "http://schemas.xmlsoap.org/soap/envelope/" 
+...   class Envelope(RootContainer):
+...     class Body(Container):
+...       class xmlString(RootContainer):
+...         pass
+...
+>>> xml = soap.Envelope(soap.Body(soap.xmlString(CDATA("FooBar"))))
+>>> xml.toxml()
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">\
+<soap:Body>\
+<xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">\
+<![CDATA[FooBar]]>\
+</xmlString>\
+</soap:Body>\
+</soap:Envelope>
+
+
+"""
+
+
+def assert_equivalent(s1,s2,write_diag_files=False):
     if s1 == s2:
         return
     from xml.dom.minidom import parseString
@@ -29,7 +63,7 @@ def assert_equivalent(s1,s2):
         d = Differ()
         result = list(d.compare(l1, l2))
         print '\n'.join(result)
-        if False:
+        if write_diag_files:
             open('s1.xml','w').write(s1)
             open('s2.xml','w').write(s2)
         raise Exception("XML strings are different")
@@ -66,6 +100,17 @@ class Attribute(object):
     def __init__(self,name=None,**kw):
         self.name = name
         
+class Node(object):
+    def __xml__(self,wr):
+        raise NotImplementedError()
+    
+class CDATA(Node):
+    def __init__(self,data):
+        self.data = data
+    def __xml__(self,wr):
+        wr.write(self.data)
+    
+        
 class ElementMetaClass(type):
     def __new__(meta, classname, bases, classDict):
       
@@ -80,7 +125,7 @@ class ElementMetaClass(type):
         return cls
     
     
-class Element(object):
+class Element(Node):
     __metaclass__ = ElementMetaClass
     elementname = None
     namespace = None
@@ -151,7 +196,7 @@ def py2xml(wr,value): # ,indent='',addindent='',newl=''
     if isinstance(value,(list,tuple)):
         for e in value:
             py2xml(wr,e)
-    elif isinstance(value,Element):
+    elif isinstance(value,Node):
         value.__xml__(wr)
     else:
         wr.write(value)
@@ -264,5 +309,16 @@ class Namespace(object):
         
 
 __all__ = [
-    'Namespace', 'String', 'EmailAddress', 'Container', 
-    'RootContainer', 'assert_equivalent' ]
+    'Namespace', 
+    'String', 'EmailAddress', 
+    'CDATA', 'Container', 
+    'RootContainer', 
+    'assert_equivalent' ]
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+

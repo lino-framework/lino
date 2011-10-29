@@ -1,14 +1,14 @@
-T:\hgwork\lino\docs\tickets\45\using_javascript.rst:51: (WARNING/2) Include file u'T:\\hgwork\\lino\\docs\\tickets\\45\\../blog/2011/0923/startfile.js' not found or reading it failed
-T:\hgwork\lino\docs\tickets\45\using_javascript.rst:55: (WARNING/2) Include file u'T:\\hgwork\\lino\\docs\\tickets\\45\\../blog/2011/0923/startfile.html' not found or reading it failed
-T:\hgwork\lino\docs\tickets\45\using_javascript.rst:: WARNING: image file not readable: tickets\45\45/20110921a.jpg
-T:\hgwork\lino\docs\tickets\45\using_cmdserver.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\tickets\45\using_javascript.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\tickets\45\using_url_protocol.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:55: WARNING: py:class reference target not found: lino.mixins.printable.Listing
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:63: WARNING: py:class reference target not found: lino.mixins.printable.Listing
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:79: WARNING: py:class reference target not found: lino.modlib.jobs.models.Experiences
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:79: WARNING: py:class reference target not found: lino.modlib.jobs.models.HistoryByPerson
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:108: WARNING: py:class reference target not found: lino.apps.dsbe.models.Company
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:117: WARNING: py:class reference target not found: lino.apps.dsbe.models.Companies
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:154: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:188: WARNING: py:class reference target not found: lino.modlib.jobs.models.HistoryByPerson
+T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.rst:174: WARNING: py:attr reference target not found: date_format_strftime
+T:\hgwork\lino\docs\autodoc\lino.rst:174: WARNING: py:attr reference target not found: date_format_extjs
+T:\hgwork\lino\docs\autodoc\lino.rst:191: WARNING: py:attr reference target not found: time_format_strftime
+T:\hgwork\lino\docs\autodoc\lino.rst:191: WARNING: py:attr reference target not found: time_format_extjs
+T:\hgwork\lino\docs\autodoc\lino.rst:208: WARNING: xfile reference target not found: fixtures
+T:\hgwork\lino\docs\autodoc\lino.rst:248: WARNING: py:meth reference target not found: lino.apps.dsbe.settings.Lino.setup_quicklinks
+T:\hgwork\lino\docs\autodoc\lino.rst:258: WARNING: py:mod reference target not found: lino.utils.config
+T:\hgwork\lino\docs\autodoc\lino.rst:357: WARNING: py:mod reference target not found: lino.test_apps.1
+T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:2: WARNING: py:mod reference target not found: lino.sandbox.bcss
+T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:4: WARNING: term not in glossary: appy
+T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:11: WARNING: py:class reference target not found: appy.shared.xml_parser.XmlMarshaller
+T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:4: WARNING: term not in glossary: appy
+T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:14: WARNING: py:class reference target not found: appy.shared.xml_parser.XmlMarshaller

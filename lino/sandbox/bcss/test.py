@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
 u"""
-I am trying to use generateDS (version 2.6a) to write a SOAP request to the 
-Belgian `BCSS server <http://www.ksz-bcss.fgov.be>`_
-(Banque Carrefour de la Sécurité Sociale, 
-"Crossroads Bank for Social Security").
+
+Send a SOAP request to the :term: `BCSS` server
+using Dave Kuhlmann's :term:`generateDS` (version 2.6a).
 
 I got a set of XSD files that describe the services provided by the 
 BCSS. I could sucessfully convert them to Python modules using  
@@ -11,17 +10,17 @@ commands like::
 
   python -m generateDS -o SSDNRequest.py XSD\SSDN\SERVICE\SSDNREQUEST.XSD
   
-(See :srcref:`xsd2py.bat </lino/utils/bcss/xsd2py.bat>`
+(See :srcref:`xsd2py.bat </lino/sandbox/bcss/xsd2py.bat>`
 for the actual commands used on a windows machine.)
 
 Currently only the `SSDNRequest.py` module is being used,
 you can browse the input XSD 
-:srcref:`here </lino/utils/bcss/XSD/SSDN/SERVICE/SSDNREQUEST.XSD>`
+:srcref:`here </lino/sandbox/bcss/XSD/SSDN/SERVICE/SSDNREQUEST.XSD>`
 and the generated source code 
-:srcref:`here </lino/utils/bcss/SSDNRequest.py>`.
+:srcref:`here </lino/sandbox/bcss/SSDNRequest.py>`.
 
-Running the :mod:`lino.utils.bcss.test` module
-(source code :srcref:`here </lino/utils/bcss/test.py>`)
+Running the :mod:`lino.sandbox.bcss.test` module
+(source code :srcref:`here </lino/sandbox/bcss/test.py>`)
 should simply output an XML string to stdout.
 My problem is that it causes a traceback::
 

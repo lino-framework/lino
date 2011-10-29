@@ -8,9 +8,14 @@ Glossary
 
   DavLink
     See :doc:`/davlink/index`
+    
+  generateDS
+    http://www.rexx.com/~dkuhlman/generateDS.html
   
   Tups
-     The machine that served the `saffre-rumma.net` domain until 2010.
+     The machine that served the `saffre-rumma.net` 
+     domain until 2010
+     when it was replaced by :term:`Mops`.
 
   Mops
      The machine that is serving the `saffre-rumma.net` domain.
@@ -20,7 +25,9 @@ Glossary
 
   DSBE
      "Dienst für Sozial-Berufliche Eingliederung"     
-     A public service in Eupen (Belgium), frst user of :mod:`lino.apps.dsbe`.
+     A public service in Eupen (Belgium), 
+     the first serious user of a Lino application.
+     :mod:`lino.apps.dsbe`.
      
   ExtJS
     http://www.sencha.com/products/js/
@@ -108,5 +115,6 @@ Glossary
     
   BCSS
     Banque Carrefour de la Sécurité Sociale 
-    (engl. "Crossroads Bank for Social Security"),
-    http://www.ksz-bcss.fgov.be
+    (engl. "Crossroads Bank for Social Security").
+    See :doc:`/topics/bcss`.
+    
