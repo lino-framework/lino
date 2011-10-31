@@ -15,5 +15,10 @@ offered by the :term:`BCSS`.
   implementieren, indem ich ein entsprechendes Modell mache.
 
 Found another jigsaw piece for 
-:mod:`lino.utils.xmlgen`: I realized that 
-Namespace and "root" container should be the same class!
+:mod:`lino.utils.xmlgen`: 
+a Namespace can have more than one root containers.
+The prefix of a Namespace continues to be the class name by default, 
+but it is now possible to change it by giving another value to the `prefix` 
+class attribute.
+
+Checkin 20111031a before doing the changes.

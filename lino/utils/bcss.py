@@ -17,8 +17,7 @@ Communicate with the :term:`BCSS` server.
 
 Example:
 
-    #  simulate a Django `settings` module:
-
+Simulate a Django `settings` module:
 
 >>> from appy import Object
 >>> settings = Object(LINO=Object(
@@ -30,7 +29,22 @@ Example:
 ...     MatrixSubID=1)))
 
 
->>> print PerformInvestigationRequest(settings,"6806010123").toxml(True)
+>>> req = ns1.PerformInvestigationRequest("6806010123",wait="0")
+>>> print req.toxml(True)
+<ns1:PerformInvestigationRequest xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
+<ns1:SocialSecurityUser>6806010123</ns1:SocialSecurityUser>
+<ns1:DataGroups>
+<ns1:FamilyCompositionGroup>1</ns1:FamilyCompositionGroup>
+<ns1:CitizenGroup>1</ns1:CitizenGroup>
+<ns1:AddressHistoryGroup>1</ns1:AddressHistoryGroup>
+<ns1:WaitRegisterGroup>0</ns1:WaitRegisterGroup>
+</ns1:DataGroups>
+</ns1:PerformInvestigationRequest>
+
+>>> import datetime
+>>> now = datetime.datetime(2011,10,31,15,41,10)
+>>> wrapped_req = req.send(settings,'PIR # 5',now)
+>>> print wrapped_req.toxml(True)
 <SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
 <RequestContext>
 <AuthorizedUser>
@@ -41,8 +55,8 @@ Example:
 <MatrixSubID>1</MatrixSubID>
 </AuthorizedUser>
 <Message>
-<Reference>630230001156994</Reference>
-<TimeRequest>20111020T153528</TimeRequest>
+<Reference>PIR # 5</Reference>
+<TimeRequest>20111031T154110</TimeRequest>
 </Message>
 </RequestContext>
 <ServiceRequest>
@@ -65,45 +79,7 @@ Example:
 from appy.shared.dav import Resource
 from appy.shared.xml_parser import XmlUnmarshaller, XmlMarshaller
 
-#~ if True:
-    #~ from django.conf import settings
-#~ else:
-    #~ from appy import Object
-    #~ settings = Object(LINO=Object(
-        #~ bcss_soap_url=None,
-        #~ bcss_user_params = dict(
-              #~ UserID='123456', 
-              #~ Email='info@exemple.be', 
-              #~ OrgUnit='0123456', 
-              #~ MatrixID=17, 
-              #~ MatrixSubID=1)))
-
 from lino.utils.xmlgen import *
-
-#~ class com(Namespace):
-    #~ url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Service"
-
-#~ class xsi(Namespace):
-#~ class xsd(Namespace):
-#~ class soap(Namespace):
-    #~ class Envelope
-#~ xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
-#~ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-#~ xmlns:xsd="http://www.w3.org/2001/XMLSchema"  
-
-
-#~ SOAP_ENVELOPE = u"""\
-#~ <?xml version="1.0" encoding="utf-8"?>
-#~ <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-#~ xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-#~ <soap:Body>
-#~ <xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
-#~ <![CDATA[%s
-#~ ]]>
-#~ </xmlString>
-#~ </soap:Body>
-#~ </soap:Envelope>
-#~ """
 
 class bcss(Namespace):
   url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
@@ -118,7 +94,6 @@ class soap(Namespace):
 
   
 class ssdn(Namespace):
-    #~ isdefault = True
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Service"
 
     class SSDNRequest(Container): 
@@ -155,10 +130,29 @@ class ssdn(Namespace):
             #~ _any = ANY()
 
 
+class Service(Container):
+    service_id = None
+    service_version = None
+    def send(self,settings,message_ref,dt):
+        context = ssdn.RequestContext(
+            ssdn.AuthorizedUser(**settings.LINO.bcss_user_params),
+            ssdn.Message(
+                ssdn.Reference(message_ref),
+                ssdn.TimeRequest(dt.strftime("%Y%m%dT%H%M%S"))))
+        sr = ssdn.ServiceRequest(
+            ssdn.ServiceId(self.service_id),
+            ssdn.Version(self.service_version),
+            self)
+        set_default_namespace(ssdn)
+        return ssdn.SSDNRequest(context,sr)
+            
+      
+
+
 class ns2(Namespace):
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance"
     
-    class HealthInsuranceRequest(Container):
+    class HealthInsuranceRequest(Service):
         service_id = 'OCMWCPASHealthInsurance'
         service_version = '20070509'
         class SSIN(String): pass
@@ -167,9 +161,10 @@ class ns2(Namespace):
                 class StartDate(Date): pass
                 class EndDate(Date): pass
         
+
 class ns1(Namespace):
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation"
-    class PerformInvestigationRequest(Container):
+    class PerformInvestigationRequest(Service):
         service_id = 'OCMWCPASPerformInvestigation'
         service_version = '20080604'
         class SocialSecurityUser(String): pass
@@ -178,36 +173,17 @@ class ns1(Namespace):
             class CitizenGroup(String): pass
             class AddressHistoryGroup(String): pass
             class WaitRegisterGroup(String): pass
-        def __init__(self,ss_user,family='1',citizen='1',address='1',wait='1'):
+        def __init__(self,ssin,family='1',citizen='1',address='1',wait='1'):
             Container.__init__(self,
-              ns1.SocialSecurityUser(ss_user),
+              ns1.SocialSecurityUser(ssin),
               ns1.DataGroups(
                 ns1.FamilyCompositionGroup(family),
                 ns1.CitizenGroup(citizen),
                 ns1.AddressHistoryGroup(address),
                 ns1.WaitRegisterGroup(wait)))
+                
 
 
-def PerformInvestigationRequest(settings,person_niss):
-
-    context = ssdn.RequestContext(
-        ssdn.AuthorizedUser(**settings.LINO.bcss_user_params),
-        ssdn.Message(
-            ssdn.Reference('630230001156994'),
-            ssdn.TimeRequest('20111020T153528')))
-            
-            
-    request = ns1.PerformInvestigationRequest(person_niss,wait='0')
-
-    sr = ssdn.ServiceRequest(
-        ssdn.ServiceId(request.service_id),
-        ssdn.Version(request.service_version),
-        request)
-
-    set_default_namespace(ssdn)
-    return ssdn.SSDNRequest(context,sr)
-    #~ xmlString = ssdn.SSDNRequest(context,sr).toxml()
-    #~ return xmlString
     
 def send_request(settings,xmlString):
     

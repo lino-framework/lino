@@ -30,8 +30,8 @@ Usage example
 
 First we define the equivalent of an XML Schema by creating a set 
 of Namespace subclasses.
-Each Namespace must define an `url` class variable 
-and exactly one root Container.
+Each Namespace must define an `url` class variable, and usually  
+at least one root Container.
 
 For example, here is the definition of a SOAP envelope:
 
@@ -49,14 +49,14 @@ And here the definition of a :term:`BCSS` connector:
 ...     pass
 ...
 
-Then we create a tree of instances of these classes:
+Then we instantiate these classes to create our XML tree:
 
->>> xml = soap.Envelope(soap.Body(bcss.xmlString(CDATA("FooBar"))))
+>>> env = soap.Envelope(soap.Body(bcss.xmlString(CDATA("FooBar"))))
 
 We render the XML string by calling the :meth:`Element.toxml` 
 method on the root element:
 
->>> print xml.toxml(pretty=True)
+>>> print env.toxml(pretty=True)
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -70,7 +70,7 @@ call on the same tree instance
 will return slightly different result:
 
 >>> set_default_namespace(soap)
->>> print xml.toxml(pretty=True)
+>>> print env.toxml(pretty=True)
 <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
 <Body>
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -80,7 +80,7 @@ will return slightly different result:
 </Envelope>
 
 >>> set_default_namespace(bcss)
->>> print xml.toxml(pretty=True)
+>>> print env.toxml(pretty=True)
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -89,18 +89,58 @@ will return slightly different result:
 </soap:Body>
 </soap:Envelope>
 
+The prefix of a Namespace is the class's name by default, 
+but it is possible to give another value:
+
+>>> soap.set_prefix('foo')
+>>> print env.toxml(pretty=True)
+<foo:Envelope xmlns:foo="http://schemas.xmlsoap.org/soap/envelope/">
+<foo:Body>
+<xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
+<![CDATA[FooBar]]>
+</xmlString>
+</foo:Body>
+</foo:Envelope>
+
+
+
 Notes
 -----
 
-A Namespace may not define more than one root element:
+A Namespace may define more than one root elements:
 
 >>> class foo(Namespace):
 ...   url = "foo" 
-...   class Foo(Container): pass
-...   class Bar(Container): pass
+...   class Foo(Container): 
+...     class Name(String): pass
+...   class Bar(Container):
+...     class Period(String): pass
+
+>>> print foo.Foo(foo.Name("Luc")).toxml(True)
+<foo:Foo xmlns:foo="foo">
+<foo:Name>Luc</foo:Name>
+</foo:Foo>
+
+>>> print foo.Bar(foo.Period("1968-2011")).toxml(True)
+<foo:Bar xmlns:foo="foo">
+<foo:Period>1968-2011</foo:Period>
+</foo:Bar>
+
+But in the following example, "Baz" will cause a name 
+clash. 
+Since a namespace collects the names of all its elements, 
+you cannot use a same name for different things:
+
+>>> class foo(Namespace):
+...   url = "foo" 
+...   class Foo(Container): 
+...     class Baz(Container): pass
+...   class Bar(Container):
+...     class Baz(Container): pass
 Traceback (most recent call last):
 (...)
-Exception: More than one root elements in namespace foo
+Exception: Duplicate element name Baz in namespace foo
+
 
 The root element doesn't need to be a container:
 
@@ -278,7 +318,7 @@ class Element(Node):
             return self.elementname
             #~ if self.parent and self.parent.default_namespace != self.namespace:
             #~ if not self.namespace.isdefault:
-        return self.namespace.__name__+ ":" + self.elementname
+        return self.namespace.prefix+ ":" + self.elementname
     
     def writeAttribs(self,wr):
         if self.parent is None: # it's the root element
@@ -286,7 +326,7 @@ class Element(Node):
                 wr.write(' xmlns="%s"' % self.namespace.url)
             for ns in self.used_namespaces:
                 if ns != _default_namespace:
-                    wr.write(' xmlns:%s="%s"' % (ns.__name__,ns.url))
+                    wr.write(' xmlns:%s="%s"' % (ns.prefix,ns.url))
             for k,v in self._attribs.items():
                 a = self.allowedAttribs.get(k)
                 wr.write(' %s=%s' % (a.name,quote(v)))
@@ -369,8 +409,8 @@ class Container(Element):
                     v.parent = cls
                     if ns.has_key(k):
                         raise Exception(
-                            "Duplicate element name %s in namespace %s (%s)"
-                            % (k,classname,ns))
+                            "Duplicate element name %s in namespace %s"
+                            % (k,classname))
                     #~ print "Adding %s to namespace %s" % (k,classname)
                     ns[k] = v
                     if issubclass(v,Container):
@@ -391,23 +431,29 @@ class EmailAddress(String): pass
 class NamespaceMetaClass(type):
     def __new__(meta, classname, bases, classDict):
         if classname != 'Namespace':
-            # verify that there is only one root element.
-            root = None
+          
+            classDict.setdefault('prefix',classname)
+            
             for k,v in classDict.items():
                 if isinstance(v,type) and issubclass(v,Element):
-                    if root is None:
-                        root = v
-                    else:
-                        raise Exception(
-                          "More than one root elements in namespace %s" 
-                          % classname)
+                    v.collect_children(classDict,classname)
+            # verify that there is only one root element.
+            #~ root = None
+            #~ for k,v in classDict.items():
+                #~ if isinstance(v,type) and issubclass(v,Element):
+                    #~ if root is None:
+                        #~ root = v
+                    #~ else:
+                        #~ raise Exception(
+                          #~ "More than one root elements in namespace %s" 
+                          #~ % classname)
           
-            if root is None:
-                raise Exception(
-                  "No root element found in namespace %s" 
-                  % classname)
+            #~ if root is None:
+                #~ raise Exception(
+                  #~ "No root element found in namespace %s" 
+                  #~ % classname)
 
-            root.collect_children(classDict,classname)
+            #~ root.collect_children(classDict,classname)
             
             #~ children = {}
             #~ extract_elements(ns,classDict,False)
@@ -434,6 +480,10 @@ class Namespace(object):
     url = None
     __metaclass__ = NamespaceMetaClass
     
+    @classmethod
+    def set_prefix(cls,prefix):
+        cls.prefix = prefix
+    
 
 #~ # currently not used:
 #~ class xsi(Namespace):
@@ -453,7 +503,7 @@ def set_default_namespace(ns):
 
 __all__ = [
     'Namespace', 
-    'String', 'EmailAddress', 
+    'String', 'EmailAddress', 'Date',
     'CDATA', 'Container', 
     'set_default_namespace',
     'assert_equivalent' ]
