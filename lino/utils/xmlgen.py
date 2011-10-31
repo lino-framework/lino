@@ -17,32 +17,43 @@ This is a simplistic method for generating XML strings.
 
 Primary design goal is to avoid redundancy and to allow for concise code.
 
-There are probably still important lacks.
+There are probably still important lacks. Some known issues:
 
-Example:
+- no structure checking is done
+- it is not possible to generate XML strings with tags or attributes 
+  consisting of non-asci characters
+
+Usage example
+-------------
 
 >>> from lino.utils.xmlgen import *
 
-First we declare an XML Schema. This is a set of Namespace subclasses.
-Each Nameset class must define an `url` and exactly one root Container.
+First we define the equivalent of an XML Schema by creating a set 
+of Namespace subclasses.
+Each Namespace must define an `url` class variable 
+and exactly one root Container.
+
+For example, here is the definition of a SOAP envelope:
+
+>>> class soap(Namespace):
+...   url = "http://schemas.xmlsoap.org/soap/envelope/" 
+...   class Envelope(Container):
+...     class Body(Container):
+...         pass
+
+And here the definition of a :term:`BCSS` connector:
 
 >>> class bcss(Namespace):
 ...   url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
 ...   class xmlString(Container):
 ...     pass
 ...
->>> class soap(Namespace):
-...   url = "http://schemas.xmlsoap.org/soap/envelope/" 
-...   class Envelope(Container):
-...     class Body(Container):
-...         pass
-...
 
-Then we instanciate our tree:
+Then we create a tree of instances of these classes:
 
 >>> xml = soap.Envelope(soap.Body(bcss.xmlString(CDATA("FooBar"))))
 
-Now we render it as XML by calling the :meth:`Element.toxml` 
+We render the XML string by calling the :meth:`Element.toxml` 
 method on the root element:
 
 >>> print xml.toxml(pretty=True)
@@ -54,7 +65,19 @@ method on the root element:
 </soap:Body>
 </soap:Envelope>
 
-If you set a default namespace, you'll get slightly different result:
+If you set a default namespace, another :meth:`Element.toxml()` 
+call on the same tree instance
+will return slightly different result:
+
+>>> set_default_namespace(soap)
+>>> print xml.toxml(pretty=True)
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+<Body>
+<bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
+<![CDATA[FooBar]]>
+</bcss:xmlString>
+</Body>
+</Envelope>
 
 >>> set_default_namespace(bcss)
 >>> print xml.toxml(pretty=True)
@@ -66,15 +89,8 @@ If you set a default namespace, you'll get slightly different result:
 </soap:Body>
 </soap:Envelope>
 
->>> set_default_namespace(soap)
->>> print xml.toxml(pretty=True)
-<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
-<Body>
-<bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
-<![CDATA[FooBar]]>
-</bcss:xmlString>
-</Body>
-</Envelope>
+Notes
+-----
 
 A Namespace may not define more than one root element:
 
@@ -93,8 +109,8 @@ The root element doesn't need to be a container:
 ...   class Foo(String): pass
 
 >>> set_default_namespace(foo)
->>> print foo.Foo("A simple element").toxml(True)
-<Foo xmlns="http://foo.bar">A simple element</Foo>
+>>> print foo.Foo("A simple tree").toxml(True)
+<Foo xmlns="http://foo.bar">A simple tree</Foo>
 
 """
 
@@ -291,6 +307,9 @@ class Element(Node):
         
         
     def toxml(self,pretty=False):
+        """
+        Generate and return the XML string.
+        """
         u = UniStringIO()
         self.__xml__(u)
         if pretty:
@@ -361,6 +380,7 @@ class Container(Element):
 
 
 class String(Element): pass
+class Date(Element): pass
 class EmailAddress(String): pass
   
 

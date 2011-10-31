@@ -1,0 +1,19 @@
+20111031
+========
+
+Worked on the :mod:`lino.utils.bcss` module.
+
+Seems that this module will soon move from utils to modlib 
+because I understood that there must be a model for each service 
+offered by the :term:`BCSS`.
+
+  Ich habe noch was kapiert: jeder Request an die :term:`BCSS` 
+  wird in einer Tabelle festgehalten. Also man kann pro Benutzer 
+  oder pro Person eine Historik der vergangenen Requests machen.
+  Zum Beispiel bei einem HealthInsuranceRequest muss der Benutzer 
+  die Periode selber eingeben können. Das ist am einfachsten zu 
+  implementieren, indem ich ein entsprechendes Modell mache.
+
+Found another jigsaw piece for 
+:mod:`lino.utils.xmlgen`: I realized that 
+Namespace and "root" container should be the same class!

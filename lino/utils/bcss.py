@@ -12,38 +12,76 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-u"""
-test6 : 
+"""
+Communicate with the :term:`BCSS` server.
 
-Send a SOAP request to the Belgian 
-`BCSS server <http://www.ksz-bcss.fgov.be>`_
-(Banque Carrefour de la Sécurité Sociale, 
-"Crossroads Bank for Social Security").
+Example:
 
-Using  a self-made toolkit :mod:`lino.utils.xmlgen`.
+    #  simulate a Django `settings` module:
+
+
+>>> from appy import Object
+>>> settings = Object(LINO=Object(
+...   bcss_user_params = dict(
+...     UserID='123456', 
+...     Email='info@exemple.be', 
+...     OrgUnit='0123456', 
+...     MatrixID=17, 
+...     MatrixSubID=1)))
+
+
+>>> print PerformInvestigationRequest(settings,"6806010123").toxml(True)
+<SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
+<RequestContext>
+<AuthorizedUser>
+<UserID>123456</UserID>
+<Email>info@exemple.be</Email>
+<OrgUnit>0123456</OrgUnit>
+<MatrixID>17</MatrixID>
+<MatrixSubID>1</MatrixSubID>
+</AuthorizedUser>
+<Message>
+<Reference>630230001156994</Reference>
+<TimeRequest>20111020T153528</TimeRequest>
+</Message>
+</RequestContext>
+<ServiceRequest>
+<ServiceId>OCMWCPASPerformInvestigation</ServiceId>
+<Version>20080604</Version>
+<ns1:PerformInvestigationRequest xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
+<ns1:SocialSecurityUser>6806010123</ns1:SocialSecurityUser>
+<ns1:DataGroups>
+<ns1:FamilyCompositionGroup>1</ns1:FamilyCompositionGroup>
+<ns1:CitizenGroup>1</ns1:CitizenGroup>
+<ns1:AddressHistoryGroup>1</ns1:AddressHistoryGroup>
+<ns1:WaitRegisterGroup>0</ns1:WaitRegisterGroup>
+</ns1:DataGroups>
+</ns1:PerformInvestigationRequest>
+</ServiceRequest>
+</SSDNRequest>
+
 
 """
 from appy.shared.dav import Resource
 from appy.shared.xml_parser import XmlUnmarshaller, XmlMarshaller
 
-if True:
-    from django.conf import settings
-else:
-    from appy import Object
-    #  simulate a Django `settings` module:
-    settings = Object(LINO=Object(
-        bcss_soap_url=None,
-        bcss_user_params = dict(
-              UserID='123456', 
-              Email='info@exemple.be', 
-              OrgUnit='0123456', 
-              MatrixID=17, 
-              MatrixSubID=1)))
+#~ if True:
+    #~ from django.conf import settings
+#~ else:
+    #~ from appy import Object
+    #~ settings = Object(LINO=Object(
+        #~ bcss_soap_url=None,
+        #~ bcss_user_params = dict(
+              #~ UserID='123456', 
+              #~ Email='info@exemple.be', 
+              #~ OrgUnit='0123456', 
+              #~ MatrixID=17, 
+              #~ MatrixSubID=1)))
 
 from lino.utils.xmlgen import *
 
-class com(Namespace):
-    url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Service"
+#~ class com(Namespace):
+    #~ url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Service"
 
 #~ class xsi(Namespace):
 #~ class xsd(Namespace):
@@ -53,46 +91,37 @@ class com(Namespace):
 #~ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 #~ xmlns:xsd="http://www.w3.org/2001/XMLSchema"  
 
-#~ SOAP_ENVELOPE = """\
+
+#~ SOAP_ENVELOPE = u"""\
 #~ <?xml version="1.0" encoding="utf-8"?>
 #~ <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 #~ xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 #~ <soap:Body>
 #~ <xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
-#~ <![CDATA[%s]]>
+#~ <![CDATA[%s
+#~ ]]>
 #~ </xmlString>
 #~ </soap:Body>
-#~ </soap:Envelope>"""
+#~ </soap:Envelope>
+#~ """
 
-SOAP_ENVELOPE = u"""\
-<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<soap:Body>
-<xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
-<![CDATA[%s
-]]>
-</xmlString>
-</soap:Body>
-</soap:Envelope>
-"""
+class bcss(Namespace):
+  url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
+  class xmlString(Container):
+    pass
+
+class soap(Namespace):
+  url = "http://schemas.xmlsoap.org/soap/envelope/" 
+  class Envelope(Container):
+    class Body(Container):
+        pass
 
   
-class ns1(Namespace):
-    url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation"
-    class PerformInvestigationRequest(RootContainer):
-        class SocialSecurityUser(String): pass
-        class DataGroups(Container):
-            class FamilyCompositionGroup(String): pass
-            class CitizenGroup(String): pass
-            class AddressHistoryGroup(String): pass
-            class WaitRegisterGroup(String): pass
-      
-class xmlns(Namespace):
-    isdefault = True
+class ssdn(Namespace):
+    #~ isdefault = True
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Service"
 
-    class SSDNRequest(RootContainer): 
+    class SSDNRequest(Container): 
         class RequestContext(Container):
           
             class AuthorizedUser(Container):
@@ -101,6 +130,19 @@ class xmlns(Namespace):
                 class OrgUnit(String): pass
                 class MatrixID(String): pass
                 class MatrixSubID(String): pass
+                def __init__(self,
+                            UserID=None,
+                            Email=None, 
+                            OrgUnit=None, 
+                            MatrixID=None, 
+                            MatrixSubID=None):
+                    Container.__init__(self,
+                        ssdn.UserID(UserID),
+                        ssdn.Email(Email),
+                        ssdn.OrgUnit(OrgUnit),
+                        ssdn.MatrixID(MatrixID),
+                        ssdn.MatrixSubID(MatrixSubID))
+                  
                 
             class Message(Container):
                 class Reference(String): pass
@@ -113,50 +155,61 @@ class xmlns(Namespace):
             #~ _any = ANY()
 
 
-def PerformInvestigationRequest(person_niss):
-    # the following didn't work because the elements need to be in the correct order
-    #~ au = [getattr(xmlns,k)(v) 
-        #~ for k,v in settings.LINO.bcss_user_params.items()]
+class ns2(Namespace):
+    url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance"
     
-    def au(UserID='01234567890', 
-            Email='info@exemple.be', 
-            OrgUnit='0123456789', 
-            MatrixID=17, 
-            MatrixSubID=1):
-        return xmlns.AuthorizedUser(
-            xmlns.UserID(UserID),
-            xmlns.Email(Email),
-            xmlns.OrgUnit(OrgUnit),
-            xmlns.MatrixID(MatrixID),
-            xmlns.MatrixSubID(MatrixSubID))
+    class HealthInsuranceRequest(Container):
+        service_id = 'OCMWCPASHealthInsurance'
+        service_version = '20070509'
+        class SSIN(String): pass
+        class Assurability(Container):
+            class Period(Container):
+                class StartDate(Date): pass
+                class EndDate(Date): pass
+        
+class ns1(Namespace):
+    url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation"
+    class PerformInvestigationRequest(Container):
+        service_id = 'OCMWCPASPerformInvestigation'
+        service_version = '20080604'
+        class SocialSecurityUser(String): pass
+        class DataGroups(Container):
+            class FamilyCompositionGroup(String): pass
+            class CitizenGroup(String): pass
+            class AddressHistoryGroup(String): pass
+            class WaitRegisterGroup(String): pass
+        def __init__(self,ss_user,family='1',citizen='1',address='1',wait='1'):
+            Container.__init__(self,
+              ns1.SocialSecurityUser(ss_user),
+              ns1.DataGroups(
+                ns1.FamilyCompositionGroup(family),
+                ns1.CitizenGroup(citizen),
+                ns1.AddressHistoryGroup(address),
+                ns1.WaitRegisterGroup(wait)))
 
-    context = xmlns.RequestContext(
-        au(**settings.LINO.bcss_user_params),
-        xmlns.Message(
-            xmlns.Reference('630230001156994'),
-            xmlns.TimeRequest('20111020T153528')))
 
-    request = ns1.PerformInvestigationRequest(
-        ns1.SocialSecurityUser(person_niss),
-        ns1.DataGroups(
-            ns1.FamilyCompositionGroup('1'),
-            ns1.CitizenGroup('1'),
-            ns1.AddressHistoryGroup('1'),
-            ns1.WaitRegisterGroup('0')))
+def PerformInvestigationRequest(settings,person_niss):
 
-    sr = xmlns.ServiceRequest(
-        xmlns.ServiceId('OCMWCPASPerformInvestigation'),
-        xmlns.Version('20080604'),
+    context = ssdn.RequestContext(
+        ssdn.AuthorizedUser(**settings.LINO.bcss_user_params),
+        ssdn.Message(
+            ssdn.Reference('630230001156994'),
+            ssdn.TimeRequest('20111020T153528')))
+            
+            
+    request = ns1.PerformInvestigationRequest(person_niss,wait='0')
+
+    sr = ssdn.ServiceRequest(
+        ssdn.ServiceId(request.service_id),
+        ssdn.Version(request.service_version),
         request)
 
-    xmlString = xmlns.SSDNRequest(context,sr).toxml()
-
-    #~ assert_equivalent(EXPECTED,GOT)
-
-    xmlString = SOAP_ENVELOPE % xmlString
-
+    set_default_namespace(ssdn)
+    return ssdn.SSDNRequest(context,sr)
+    #~ xmlString = ssdn.SSDNRequest(context,sr).toxml()
+    #~ return xmlString
     
-    xmlString = xmlString.encode('utf-8')
+def send_request(settings,xmlString):
     
     #~ logger.info("Going to send request:\n%s",xmlString)
     
@@ -164,6 +217,14 @@ def PerformInvestigationRequest(person_niss):
         #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
         return None
     
+    #~ xmlString = SOAP_ENVELOPE % xmlString
+    
+    set_default_namespace(bcss)
+    xmlString = soap.Envelope(soap.Body(bcss.xmlString(CDATA(xmlString)))).toxml()
+    
+    xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + xmlString
+    
+    #~ xmlString = xmlString.encode('utf-8')
     
     server = Resource(settings.LINO.bcss_soap_url,measure=True)
     
@@ -178,7 +239,9 @@ def PerformInvestigationRequest(person_niss):
     
 def test_connection(nr):
   
-    reply = PerformInvestigationRequest(nr)
+    xmlString = PerformInvestigationRequest(nr)
+    
+    reply = send_request(xmlString)
 
     #~ reply.ReplyContext.AuthorizedUser
     #~ reply.ReplyContext.Message
@@ -197,7 +260,15 @@ def test_connection(nr):
 
   
     
-if __name__ == '__main__':
+#~ if __name__ == '__main__':
   
-    test_connection(sys.argv[1])
+    #~ test_connection(sys.argv[1])
   
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+

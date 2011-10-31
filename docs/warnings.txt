@@ -7,8 +7,5 @@ T:\hgwork\lino\docs\autodoc\lino.rst:208: WARNING: xfile reference target not fo
 T:\hgwork\lino\docs\autodoc\lino.rst:248: WARNING: py:meth reference target not found: lino.apps.dsbe.settings.Lino.setup_quicklinks
 T:\hgwork\lino\docs\autodoc\lino.rst:258: WARNING: py:mod reference target not found: lino.utils.config
 T:\hgwork\lino\docs\autodoc\lino.rst:357: WARNING: py:mod reference target not found: lino.test_apps.1
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:2: WARNING: py:mod reference target not found: lino.sandbox.bcss
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:4: WARNING: term not in glossary: appy
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:11: WARNING: py:class reference target not found: appy.shared.xml_parser.XmlMarshaller
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:4: WARNING: term not in glossary: appy
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:14: WARNING: py:class reference target not found: appy.shared.xml_parser.XmlMarshaller
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:44: WARNING: py:meth reference target not found: Element.toxml
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:56: WARNING: py:meth reference target not found: Element.toxml
