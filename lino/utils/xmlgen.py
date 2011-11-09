@@ -475,9 +475,10 @@ class NamespaceMetaClass(type):
         
         cls = type.__new__(meta, classname, bases, classDict)
         
-        #~ for k,v in classDict.items():
-            #~ if isinstance(v,type) and issubclass(v,Element):
-                #~ v.set_namespace(cls)
+        for k,v in classDict.items():
+            if isinstance(v,type) and issubclass(v,Element):
+                assert v.namespace is None
+                v.namespace = cls
           
         return cls
   

@@ -44,9 +44,17 @@ Example:
 </ns1:DataGroups>
 </ns1:PerformInvestigationRequest>
 
-The above examples are bare service request bodies.
-Before sending them to the BCSS server, they must be wrapped.
-Simulate a Django `settings` module:
+The above examples are bare BCSS service requests.
+Before sending a request to the BCSS server, 
+we must wrap it into a SSDN request.
+The easiest way to do this is to use the 
+:meth:`Service.ssdn_request` method.
+
+:meth:`Service.ssdn_request` expects 
+the ``settings`` module of your Lino application.
+To use this method in this test, we 
+simulate a Django ``settings`` module that has 
+a fictive :attr:`lino.Lino.bcss_user_params`:
 
 >>> from appy import Object
 >>> settings = Object(LINO=Object(
@@ -57,11 +65,15 @@ Simulate a Django `settings` module:
 ...     MatrixID=17, 
 ...     MatrixSubID=1)))
 
+:meth:`Service.ssdn_request` also expects a unique reference 
+and a timestamp for your request.
+
+Here we go. 
 
 >>> import datetime
 >>> now = datetime.datetime(2011,10,31,15,41,10)
->>> wrapped_req = req.send(settings,'PIR # 5',now)
->>> print wrapped_req.toxml(True)
+>>> sr = req.ssdn_request(settings,'PIR # 5',now)
+>>> print sr.toxml(True)
 <SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
 <RequestContext>
 <AuthorizedUser>
@@ -91,6 +103,21 @@ Simulate a Django `settings` module:
 </ServiceRequest>
 </SSDNRequest>
 
+Note that the XML chunk that starts with ``<ns1:`` 
+is exactly the same as before.
+
+Now we perform another wrapping of this SSDN request.
+
+>>> print soap_request("Foo").toxml(True)
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<soap:Body>
+<bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
+<![CDATA[Foo]]>
+</bcss:xmlString>
+</soap:Body>
+</soap:Envelope>
+
+
 """
 
 
@@ -104,6 +131,7 @@ from lino.utils import xmlgen as xg
 
 class bcss(xg.Namespace):
   url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
+  
   class xmlString(xg.Container):
     pass
 
@@ -174,23 +202,29 @@ class Service(xg.Container):
     """
     service_id = None
     service_version = None
-    def request(self,anyXML):
-        R = SSDNRequest.ServiceRequest
-        return R(
-            R.ServiceId(self.service_id),
-            R.Version(self.service_version),
-            anyXML)
+    #~ def request(self,anyXML):
+        #~ R = SSDNRequest.ServiceRequest
+        #~ return R(
+            #~ R.ServiceId(self.service_id),
+            #~ R.Version(self.service_version),
+            #~ anyXML)
       
-    def send(self,settings,message_ref,dt):
-        anyXML = self.toxml()
-        C = SSDNRequest.RequestContext
-        context = C(
-            C.AuthorizedUser(**settings.LINO.bcss_user_params),
-            C.Message(
-                C.Message.Reference(message_ref),
-                C.Message.TimeRequest(dt.strftime("%Y%m%dT%H%M%S"))))
+    def ssdn_request(self,settings,message_ref,dt):
+        #~ anyXML = self.toxml()
+        SR = SSDNRequest.ServiceRequest
+        serviceRequest = SR(
+            SR.ServiceId(self.service_id),
+            SR.Version(self.service_version),
+            self)
+        
+        RC = SSDNRequest.RequestContext
+        context = RC(
+            RC.AuthorizedUser(**settings.LINO.bcss_user_params),
+            RC.Message(
+                RC.Message.Reference(message_ref),
+                RC.Message.TimeRequest(dt.strftime("%Y%m%dT%H%M%S"))))
         xg.set_default_namespace(ssdn)
-        return SSDNRequest(context,self.request(anyXML))
+        return SSDNRequest(context,serviceRequest)
             
 
 class ips(xg.Namespace):
@@ -323,24 +357,25 @@ class PerformInvestigationRequest(Service):
             DG.WaitRegisterGroup(wait)))
             
 
-
+def soap_request(xmlString):
+    return soap.Envelope(soap.Envelope.Body(bcss.xmlString(xg.CDATA(xmlString))))
     
 def send_request(settings,xmlString):
     
     #~ logger.info("Going to send request:\n%s",xmlString)
     
-    if not settings.LINO.bcss_soap_url:
-        #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
-        return None
-    
     #~ xmlString = SOAP_ENVELOPE % xmlString
     
     xg.set_default_namespace(bcss)
-    xmlString = soap.Envelope(soap.Body(bcss.xmlString(CDATA(xmlString)))).toxml()
+    xmlString = soap_request(xmlString).toxml()
     
     xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + xmlString
     
     #~ xmlString = xmlString.encode('utf-8')
+    
+    if not settings.LINO.bcss_soap_url:
+        #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
+        return None
     
     server = Resource(settings.LINO.bcss_soap_url,measure=True)
     

@@ -22,5 +22,7 @@ new version: `parent` is being set at instantition.
 the namespace of an Element 
 defaults to the namespace of its parent.
 
+Both modules' doctests now work again. Check-in 20111109.
+
 
 
