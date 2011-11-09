@@ -294,11 +294,14 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`27 <1027>`
   :doc:`28 <1028>`
   :doc:`29 <1029>`
-  |br|  	
 
 .. |Nov| replace::  **November**
   |br| 
+  :doc:`31 <1031>`
+  01 02 03 04
   |br| 
+  07 08 
+  :doc:`09 <1109>`
   |br| 
   |br|  	
 

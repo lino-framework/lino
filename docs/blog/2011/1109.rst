@@ -1,0 +1,26 @@
+20111109
+========
+
+Continued to work on the 
+:mod:`lino.utils.bcss` 
+and
+:mod:`lino.utils.xmlgen` 
+modules.
+
+20111103: i misunderstood the concept of namespaces.
+it *is* possible to have multiple ocurences of 
+the same element name at different places in a tree. 
+example:
+
+  IdentifyPersonRequest
+    PersonData
+        LastName
+    PhoneticCriteria
+        LastName
+
+new version: `parent` is being set at instantition.
+the namespace of an Element 
+defaults to the namespace of its parent.
+
+
+

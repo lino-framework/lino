@@ -17,6 +17,35 @@ Communicate with the :term:`BCSS` server.
 
 Example:
 
+>>> req = IdentifyPersonRequest("68060101234",
+...   LastName="SAFFRE",BirthDate="1968-06-01")
+>>> print req.toxml(True)
+<ips:IdentifyPersonRequest xmlns:ips="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+<ips:SearchCriteria>
+<ips:SSIN>68060101234</ips:SSIN>
+</ips:SearchCriteria>
+<ips:VerificationData>
+<ips:PersonData>
+<ips:LastName>SAFFRE</ips:LastName>
+<ips:BirthDate>1968-06-01</ips:BirthDate>
+</ips:PersonData>
+</ips:VerificationData>
+</ips:IdentifyPersonRequest>
+
+>>> req = PerformInvestigationRequest("6806010123",wait="0")
+>>> print req.toxml(True)
+<ns1:PerformInvestigationRequest xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
+<ns1:SocialSecurityUser>6806010123</ns1:SocialSecurityUser>
+<ns1:DataGroups>
+<ns1:FamilyCompositionGroup>1</ns1:FamilyCompositionGroup>
+<ns1:CitizenGroup>1</ns1:CitizenGroup>
+<ns1:AddressHistoryGroup>1</ns1:AddressHistoryGroup>
+<ns1:WaitRegisterGroup>0</ns1:WaitRegisterGroup>
+</ns1:DataGroups>
+</ns1:PerformInvestigationRequest>
+
+The above examples are bare service request bodies.
+Before sending them to the BCSS server, they must be wrapped.
 Simulate a Django `settings` module:
 
 >>> from appy import Object
@@ -28,18 +57,6 @@ Simulate a Django `settings` module:
 ...     MatrixID=17, 
 ...     MatrixSubID=1)))
 
-
->>> req = ns1.PerformInvestigationRequest("6806010123",wait="0")
->>> print req.toxml(True)
-<ns1:PerformInvestigationRequest xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
-<ns1:SocialSecurityUser>6806010123</ns1:SocialSecurityUser>
-<ns1:DataGroups>
-<ns1:FamilyCompositionGroup>1</ns1:FamilyCompositionGroup>
-<ns1:CitizenGroup>1</ns1:CitizenGroup>
-<ns1:AddressHistoryGroup>1</ns1:AddressHistoryGroup>
-<ns1:WaitRegisterGroup>0</ns1:WaitRegisterGroup>
-</ns1:DataGroups>
-</ns1:PerformInvestigationRequest>
 
 >>> import datetime
 >>> now = datetime.datetime(2011,10,31,15,41,10)
@@ -74,114 +91,237 @@ Simulate a Django `settings` module:
 </ServiceRequest>
 </SSDNRequest>
 
-
 """
+
+
+
+
 from appy.shared.dav import Resource
 from appy.shared.xml_parser import XmlUnmarshaller, XmlMarshaller
 
-from lino.utils.xmlgen import *
+#~ from lino.utils.xmlgen import *
+from lino.utils import xmlgen as xg
 
-class bcss(Namespace):
+class bcss(xg.Namespace):
   url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
-  class xmlString(Container):
+  class xmlString(xg.Container):
     pass
 
-class soap(Namespace):
+class soap(xg.Namespace):
   url = "http://schemas.xmlsoap.org/soap/envelope/" 
-  class Envelope(Container):
-    class Body(Container):
+  class Envelope(xg.Container):
+    class Body(xg.Container):
         pass
 
   
-class ssdn(Namespace):
+#~ class com(xg.Namespace):
+    #~ url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Common"
+    #~ class SSIN(String): pass
+      
+class SSIN(xg.String):
+    def validate(self,v):
+        if len(v) != 11:
+            raise Exception("length must be 11")
+        if not v.isdigit():
+            raise Exception("must be a number")
+        return v
+      
+  
+class ssdn(xg.Namespace):
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Service"
 
-    class SSDNRequest(Container): 
-        class RequestContext(Container):
-          
-            class AuthorizedUser(Container):
-                class UserID(String): pass
-                class Email(EmailAddress): pass
-                class OrgUnit(String): pass
-                class MatrixID(String): pass
-                class MatrixSubID(String): pass
-                def __init__(self,
-                            UserID=None,
-                            Email=None, 
-                            OrgUnit=None, 
-                            MatrixID=None, 
-                            MatrixSubID=None):
-                    Container.__init__(self,
-                        ssdn.UserID(UserID),
-                        ssdn.Email(Email),
-                        ssdn.OrgUnit(OrgUnit),
-                        ssdn.MatrixID(MatrixID),
-                        ssdn.MatrixSubID(MatrixSubID))
-                  
-                
-            class Message(Container):
-                class Reference(String): pass
-                class TimeRequest(String): pass
-                
-        class ServiceRequest(Container):
-          
-            class ServiceId(String): pass
-            class Version(String): pass
-            #~ _any = ANY()
+class SSDNRequest(xg.Container): 
+    """
+    General SSDN service request wrapper
+    """
+    namespace = ssdn
+    class RequestContext(xg.Container):
+      
+        class AuthorizedUser(xg.Container):
+            class UserID(xg.String): pass
+            class Email(xg.EmailAddress): pass
+            class OrgUnit(xg.String): pass
+            class MatrixID(xg.String): pass
+            class MatrixSubID(xg.String): pass
+            def __init__(self,
+                        UserID=None,
+                        Email=None, 
+                        OrgUnit=None, 
+                        MatrixID=None, 
+                        MatrixSubID=None):
+                xg.Container.__init__(self,
+                    self.UserID(UserID),
+                    self.Email(Email),
+                    self.OrgUnit(OrgUnit),
+                    self.MatrixID(MatrixID),
+                    self.MatrixSubID(MatrixSubID))
+              
+            
+        class Message(xg.Container):
+            class Reference(xg.String): pass
+            class TimeRequest(xg.String): pass
+            
+    class ServiceRequest(xg.Container):
+      
+        class ServiceId(xg.String): pass
+        class Version(xg.String): pass
+        #~ _any = ANY()
 
 
-class Service(Container):
+class Service(xg.Container):
+    """
+    Base class for the individual services.
+    """
     service_id = None
     service_version = None
-    def send(self,settings,message_ref,dt):
-        context = ssdn.RequestContext(
-            ssdn.AuthorizedUser(**settings.LINO.bcss_user_params),
-            ssdn.Message(
-                ssdn.Reference(message_ref),
-                ssdn.TimeRequest(dt.strftime("%Y%m%dT%H%M%S"))))
-        sr = ssdn.ServiceRequest(
-            ssdn.ServiceId(self.service_id),
-            ssdn.Version(self.service_version),
-            self)
-        set_default_namespace(ssdn)
-        return ssdn.SSDNRequest(context,sr)
-            
+    def request(self,anyXML):
+        R = SSDNRequest.ServiceRequest
+        return R(
+            R.ServiceId(self.service_id),
+            R.Version(self.service_version),
+            anyXML)
       
+    def send(self,settings,message_ref,dt):
+        anyXML = self.toxml()
+        C = SSDNRequest.RequestContext
+        context = C(
+            C.AuthorizedUser(**settings.LINO.bcss_user_params),
+            C.Message(
+                C.Message.Reference(message_ref),
+                C.Message.TimeRequest(dt.strftime("%Y%m%dT%H%M%S"))))
+        xg.set_default_namespace(ssdn)
+        return SSDNRequest(context,self.request(anyXML))
+            
+
+class ips(xg.Namespace):
+    """
+    Namespace of the IdentifyPerson service.
+    
+    """
+    url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson"
+    
+    
+class IdentifyPersonRequest(Service):
+    "A request for identifying a person or validating a persons identity"
+    namespace = ips
+    service_id = 'OCMWCPASIdentifyPerson'
+    service_version = '20050930'
+    class SearchCriteria(xg.Container):
+        "criteria for identifying a person"
+        #~ allowedChildren = [SSIN,PhoneticCriteria]
+        class SSIN(SSIN):
+            "Social Security Identification number of the person to identify"
+            minOccurs = 0
+        class PhoneticCriteria(xg.Container): 
+            """
+            set of criteria for a phonetic search. 
+            all persons matching these criteria will be returned. 
+            Ignored if SSIN is also specified
+            """
+            minOccurs = 0
+            class LastName(xg.String): 
+                "last name to search for. Matched phonetically"
+            class FirstName(xg.String): pass
+            class MiddleName(xg.String): pass
+            class BirthDate(xg.Date):
+                """
+                birth date in the format yyyy-MM-dd. 
+                May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00.
+                If incomplete, Tolerance must be specified.
+                """
+            class Gender(xg.String):
+                "gender of the person. 0 = unknown, 1 = male, 2 = female"
+            class Tolerance(xg.Integer):
+                """
+                tolerance on the bith date. 
+                specifies how much BirthDate may be off. 
+                the unit depends on the format of BirthDate. 
+                yyyy-MM-dd = days; 
+                yyyy-MM-00 = months; 
+                yyyy-00-00 = years.
+                """
+            class Maximum(xg.Integer):
+                """
+                maximum number of results returned. 
+                if not specified, maximum number is returned
+                """
+          
+    class VerificationData(xg.Container):
+        """
+        data used for validating a persons identity. 
+        If this element is present, at least one of the 
+        subelements must be specified. 
+        Validation is successful if one of the subelements 
+        can be successfully validated. 
+        Ignored if SSIN is not present in the search criteria.
+        """
+        class SISCardNumber(xg.Container):
+            "ID of the persons SIS card"
+        class IdentityCardNumber(xg.Container):
+            "ID of the persons identity card"
+        class PersonData(xg.Container):
+            "set of personal data to match against"
+            class LastName(xg.String):
+                "last name to verify. matched exactly"
+            class FirstName(xg.String):
+                "first name to verify. matched exactly if present"
+            class MiddleName(xg.String):
+                "middle name to verify. matched exactly if present"
+            class BirthDate(xg.Date):
+                """
+                birth date in the format yyyy-MM-dd. 
+                May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00. 
+                If incomplete, Tolerance must be specified
+                """
+
+              
+    def __init__(self,ssin,LastName=None,BirthDate=None):
+        SC = IdentifyPersonRequest.SearchCriteria
+        VD = IdentifyPersonRequest.VerificationData
+        xg.Container.__init__(self,
+          SC(SC.SSIN(ssin)),
+          VD(VD.PersonData(
+              VD.PersonData.LastName(LastName),
+              VD.PersonData.BirthDate(BirthDate),
+            )))
 
 
-class ns2(Namespace):
+class ns2(xg.Namespace):
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance"
     
     class HealthInsuranceRequest(Service):
         service_id = 'OCMWCPASHealthInsurance'
         service_version = '20070509'
-        class SSIN(String): pass
-        class Assurability(Container):
-            class Period(Container):
-                class StartDate(Date): pass
-                class EndDate(Date): pass
+        class SSIN(SSIN): pass
+        class Assurability(xg.Container):
+            class Period(xg.Container):
+                class StartDate(xg.Date): pass
+                class EndDate(xg.Date): pass
         
 
-class ns1(Namespace):
+class ns1(xg.Namespace):
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation"
-    class PerformInvestigationRequest(Service):
-        service_id = 'OCMWCPASPerformInvestigation'
-        service_version = '20080604'
-        class SocialSecurityUser(String): pass
-        class DataGroups(Container):
-            class FamilyCompositionGroup(String): pass
-            class CitizenGroup(String): pass
-            class AddressHistoryGroup(String): pass
-            class WaitRegisterGroup(String): pass
-        def __init__(self,ssin,family='1',citizen='1',address='1',wait='1'):
-            Container.__init__(self,
-              ns1.SocialSecurityUser(ssin),
-              ns1.DataGroups(
-                ns1.FamilyCompositionGroup(family),
-                ns1.CitizenGroup(citizen),
-                ns1.AddressHistoryGroup(address),
-                ns1.WaitRegisterGroup(wait)))
-                
+    
+class PerformInvestigationRequest(Service):
+    namespace = ns1
+    service_id = 'OCMWCPASPerformInvestigation'
+    service_version = '20080604'
+    class SocialSecurityUser(xg.String): pass
+    class DataGroups(xg.Container):
+        class FamilyCompositionGroup(xg.String): pass
+        class CitizenGroup(xg.String): pass
+        class AddressHistoryGroup(xg.String): pass
+        class WaitRegisterGroup(xg.String): pass
+    def __init__(self,ssin,family='1',citizen='1',address='1',wait='1'):
+        DG = PerformInvestigationRequest.DataGroups
+        xg.Container.__init__(self,
+          PerformInvestigationRequest.SocialSecurityUser(ssin),
+          DG(
+            DG.FamilyCompositionGroup(family),
+            DG.CitizenGroup(citizen),
+            DG.AddressHistoryGroup(address),
+            DG.WaitRegisterGroup(wait)))
+            
 
 
     
@@ -195,7 +335,7 @@ def send_request(settings,xmlString):
     
     #~ xmlString = SOAP_ENVELOPE % xmlString
     
-    set_default_namespace(bcss)
+    xg.set_default_namespace(bcss)
     xmlString = soap.Envelope(soap.Body(bcss.xmlString(CDATA(xmlString)))).toxml()
     
     xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + xmlString

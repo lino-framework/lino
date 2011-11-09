@@ -42,6 +42,7 @@ Subpackages
     lino.utils.daemoncommand
     lino.utils.choicelists
     lino.utils.babel
+    lino.utils.bcss
     lino.utils.choosers
     lino.utils.test
     lino.utils.xmlgen
