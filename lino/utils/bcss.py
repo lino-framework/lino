@@ -239,6 +239,7 @@ class Service(xg.Container):
         req = soap_request(self.ssdn_request(settings,*args))
         xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.toxml()
         
+        logger.info("Going to send request /******\n%s\n******/",xmlString)
         if not settings.LINO.bcss_soap_url:
             #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
             return None

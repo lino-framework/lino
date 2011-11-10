@@ -54,5 +54,35 @@ TODO: write also tests for :mod:`lino.modlib.bcss`.
 Release in Eupen
 ----------------
 
-- Übersetzungen
-- :doc:`/releases/2011/1110`
+Installed :doc:`/releases/2011/1110` in Eupen.
+
+- Es fehlten noch ein paar Übersetzungen
+
+- Remove "-", " " and "=" from national_id before performing the request.
+  Because the length of a NISS appearently must be 11 numeric positions.
+  
+- The following traceback was not solved by upgradying :term:`appy` to 0.7.0::
+
+    Traceback (most recent call last):
+      File "/var/snapshots/lino/lino/modlib/bcss/models.py", line 70, in execute_request
+        res = srv.execute(settings,str(self.id),now)
+      File "/var/snapshots/lino/lino/utils/bcss.py", line 246, in execute
+        server = Resource(settings.LINO.bcss_soap_url,measure=True)
+      File "/var/snapshots/appy-current/appy/shared/dav.py", line 142, in __init__
+        else: raise 'Wrong URL: %s' % str(url)
+    TypeError: exceptions must be old-style classes or derived from BaseException, not str
+    
+  The bugfix is to replace, in `appy/shared/dav.py`, the following line::
+
+    urlRex = re.compile(r'http://([^:/]+)(:[0-9]+)?(/.+)?', re.I)
+    
+  by::
+  
+    urlRex = re.compile(r'http[s]?://([^:/]+)(:[0-9]+)?(/.+)?', re.I)
+    
+Now I reached the point where I get "An error occurred during the 
+parsing of the request header. Please check your message format."
+
+Now it would be helpful to ask whether the BCSS team can provide 
+a more detailed error message.
+  

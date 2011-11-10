@@ -128,6 +128,8 @@ into `/var/snapshots/`::
 
   wget http://launchpad.net/appy/0.6/0.6.6/+download/appy0.6.6.zip
   unzip appy0.6.6.zip -d appy
+  wget http://launchpad.net/appy/0.7/0.7.0/+download/appy0.7.0.zip
+  unzip appy0.7.0.zip -d appy
   
 Note: Lino didn't yet migrate to ExtJS 4.0. See :doc:`/tickets/40`
 
