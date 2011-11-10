@@ -237,7 +237,7 @@ class Service(xg.Container):
         
     def execute(self,settings,*args):
         
-        req = soap_request(self.ssdn_request(settings,*args))
+        req = soap_request(self.ssdn_request(settings,*args).toxml())
         xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.toxml()
         
         dblogger.info("Going to send request /******\n%s\n******/",xmlString)

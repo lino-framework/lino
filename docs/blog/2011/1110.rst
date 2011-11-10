@@ -82,6 +82,8 @@ Installed :doc:`/releases/2011/1110` in Eupen.
     
 Now I reached the point where I get "An error occurred during the 
 parsing of the request header. Please check your message format."
+Added a log info message that logs the complete raw XML request.
+
 
 Now it would be helpful to ask whether the BCSS team can provide 
 a more detailed error message.
