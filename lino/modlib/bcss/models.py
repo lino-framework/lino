@@ -98,8 +98,8 @@ class IdentifyPersonRequest(BCSSRequest):
         PC = SC.PhoneticCriteria
         if person.national_id:
             national_id = person.national_id.replace(' ','')
-            national_id = person.national_id.replace('-','')
-            national_id = person.national_id.replace('=','')
+            national_id = national_id.replace('-','')
+            national_id = national_id.replace('=','')
             return bcss.IdentifyPersonRequest.verify_request(
               national_id,
               LastName=person.last_name,
