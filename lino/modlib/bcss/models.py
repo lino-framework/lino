@@ -27,6 +27,7 @@ from lino.utils import babel
 from lino.utils import dblogger
 from lino.tools import resolve_model
 
+from lino.reports import GridEdit, ShowDetailAction
 
 class SendAction(reports.RowAction):
     name = 'sendbcss'
