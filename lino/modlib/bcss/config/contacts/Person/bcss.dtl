@@ -1,0 +1,5 @@
+:label: BCSS
+:label_align: top
+:hideCheckBoxLabels: 
+
+main = bcss.IdentifyRequestsByPerson

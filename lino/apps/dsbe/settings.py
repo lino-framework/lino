@@ -269,6 +269,7 @@ INSTALLED_APPS = (
   'lino.modlib.mails',
   'lino.modlib.jobs',
   'lino.modlib.isip',
+  'lino.modlib.bcss',
   'lino.apps.dsbe',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',

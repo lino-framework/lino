@@ -1,0 +1,9 @@
+:label: Detail
+:label_align: top
+:hideCheckBoxLabels: 
+
+main = 
+  sent project
+  request_xml
+  response_xml
+

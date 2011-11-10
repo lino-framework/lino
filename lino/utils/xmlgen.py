@@ -145,6 +145,7 @@ unused = """
 
 """
 
+import datetime
 from xml.dom.minidom import parseString
 
 
@@ -335,8 +336,11 @@ class Element(Node):
             wr.write('/>')
         else:
             wr.write('>')
-            py2xml(wr,self.value)
+            py2xml(wr,self.value_as_string())
             wr.write("</"+self.tag()+">" )
+            
+    def value_as_string(self):
+        return self.value
         
         
     def toxml(self,pretty=False):
@@ -394,6 +398,9 @@ class Container(Element):
                             self.used_namespaces.append(ns)
         Element.__init__(self,nodes,**attribs)
         
+    def append(self,e):
+        self.value.append(e)
+        
     #~ def __xml__(self,wr):
         #~ wr("<" + self.tag())
         #~ self.writeAttribs(wr)
@@ -423,12 +430,6 @@ class Container(Element):
                 
 
 
-
-class Integer(Element): pass
-class String(Element): pass
-class Date(Element): pass
-class EmailAddress(String): pass
-  
 
 
 class NamespaceMetaClass(type):
@@ -507,6 +508,42 @@ def set_default_namespace(ns):
     """
     global _default_namespace
     _default_namespace = ns
+    
+    
+
+class String(Element):
+    pass
+  
+
+class Integer(Element):
+  
+    def validate(self,v):
+        if not isinstance(v,int):
+            raise Exception("%r is not an integer" % v)
+        return v
+    def value_as_string(self):
+        return str(self.value)
+        
+class DateTime(Element):
+    def validate(self,v):
+        if not isinstance(v,datetime.datetime):
+            raise Exception("%r is not a datetime instance" % v)
+        return v
+    def value_as_string(self):
+        return self.value.strftime("%Y%m%dT%H%M%S")
+        
+class Date(Element):
+    def validate(self,v):
+        if not isinstance(v,datetime.date):
+            raise Exception("%r is not a date instance" % v)
+        return v
+    def value_as_string(self):
+        return self.value.strftime("%Y-%m-%d")
+      
+class EmailAddress(String): pass
+  
+
+    
         
 
 __all__ = [

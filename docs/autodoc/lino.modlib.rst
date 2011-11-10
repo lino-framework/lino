@@ -12,8 +12,8 @@ Subpackages
 
 .. toctree::
 
+    lino.modlib.bcss
     lino.modlib.cal
-    lino.modlib.mails
     lino.modlib.countries
     lino.modlib.contacts
     lino.modlib.isip
@@ -21,7 +21,8 @@ Subpackages
     lino.modlib.journals
     lino.modlib.sales
     lino.modlib.ledger
+    lino.modlib.mails
     lino.modlib.notes
-    lino.modlib.users
     lino.modlib.properties
+    lino.modlib.users
 

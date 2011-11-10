@@ -17,8 +17,9 @@ Communicate with the :term:`BCSS` server.
 
 Example:
 
->>> req = IdentifyPersonRequest("68060101234",
-...   LastName="SAFFRE",BirthDate="1968-06-01")
+>>> from datetime import date
+>>> req = IdentifyPersonRequest.verify_request("68060101234",
+...   LastName="SAFFRE",BirthDate=date(1968,6,1))
 >>> print req.toxml(True)
 <ips:IdentifyPersonRequest xmlns:ips="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
 <ips:SearchCriteria>
@@ -68,7 +69,7 @@ a fictive :attr:`lino.Lino.bcss_user_params`:
 :meth:`Service.ssdn_request` also expects a unique reference 
 and a timestamp for your request.
 
-Here we go. 
+Here we go:
 
 >>> import datetime
 >>> now = datetime.datetime(2011,10,31,15,41,10)
@@ -124,7 +125,7 @@ Now we perform another wrapping of this SSDN request.
 
 
 from appy.shared.dav import Resource
-from appy.shared.xml_parser import XmlUnmarshaller, XmlMarshaller
+from appy.shared.xml_parser import XmlUnmarshaller
 
 #~ from lino.utils.xmlgen import *
 from lino.utils import xmlgen as xg
@@ -141,12 +142,19 @@ class soap(xg.Namespace):
     class Body(xg.Container):
         pass
 
+def soap_request(xmlString):
+    return soap.Envelope(soap.Envelope.Body(bcss.xmlString(xg.CDATA(xmlString))))
+    
   
 #~ class com(xg.Namespace):
     #~ url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Common"
     #~ class SSIN(String): pass
       
 class SSIN(xg.String):
+    u"""
+    Belgian Social Security Identification Number.
+    AKA as "Numéro d'identification au régistre national".
+    """
     def validate(self,v):
         if len(v) != 11:
             raise Exception("length must be 11")
@@ -187,7 +195,7 @@ class SSDNRequest(xg.Container):
             
         class Message(xg.Container):
             class Reference(xg.String): pass
-            class TimeRequest(xg.String): pass
+            class TimeRequest(xg.DateTime): pass
             
     class ServiceRequest(xg.Container):
       
@@ -222,9 +230,31 @@ class Service(xg.Container):
             RC.AuthorizedUser(**settings.LINO.bcss_user_params),
             RC.Message(
                 RC.Message.Reference(message_ref),
-                RC.Message.TimeRequest(dt.strftime("%Y%m%dT%H%M%S"))))
+                RC.Message.TimeRequest(dt)))
         xg.set_default_namespace(ssdn)
         return SSDNRequest(context,serviceRequest)
+        
+    def execute(self,settings,*args):
+        
+        req = soap_request(self.ssdn_request(settings,*args))
+        xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.toxml()
+        
+        if not settings.LINO.bcss_soap_url:
+            #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
+            return None
+        
+        server = Resource(settings.LINO.bcss_soap_url,measure=True)
+        
+        res = server.soap(xmlString)
+        
+        return res
+
+        #~ print res.code
+        #~ print res.data
+
+        #~ reply = XmlUnmarshaller().parse(str(res.data.xmlString))
+        
+        #~ return reply
             
 
 class ips(xg.Namespace):
@@ -234,7 +264,8 @@ class ips(xg.Namespace):
     """
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson"
     
-    
+
+
 class IdentifyPersonRequest(Service):
     "A request for identifying a person or validating a persons identity"
     namespace = ips
@@ -263,7 +294,7 @@ class IdentifyPersonRequest(Service):
                 May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00.
                 If incomplete, Tolerance must be specified.
                 """
-            class Gender(xg.String):
+            class Gender(xg.Integer):
                 "gender of the person. 0 = unknown, 1 = male, 2 = female"
             class Tolerance(xg.Integer):
                 """
@@ -290,9 +321,9 @@ class IdentifyPersonRequest(Service):
         Ignored if SSIN is not present in the search criteria.
         """
         class SISCardNumber(xg.Container):
-            "ID of the persons SIS card"
+            "ID of the person's SIS card"
         class IdentityCardNumber(xg.Container):
-            "ID of the persons identity card"
+            "ID of the person's identity card"
         class PersonData(xg.Container):
             "set of personal data to match against"
             class LastName(xg.String):
@@ -308,16 +339,27 @@ class IdentifyPersonRequest(Service):
                 If incomplete, Tolerance must be specified
                 """
 
-              
-    def __init__(self,ssin,LastName=None,BirthDate=None):
+    @classmethod          
+    def verify_request(cls,ssin,**kw):
+        """
+        possible keywords are the allowed children of
+        :class:`IdentifyPersonRequest.VerificationData.PersonData`:
+        LastName,
+        FirstName,
+        MiddleName and 
+        BirthDate.
+        
+        """
         SC = IdentifyPersonRequest.SearchCriteria
         VD = IdentifyPersonRequest.VerificationData
-        xg.Container.__init__(self,
+        pd = []
+        for k,v in kw.items():
+            if v: # ignore empty fields
+                cl = getattr(VD.PersonData,k)
+                pd.append(cl(v))
+        return cls(
           SC(SC.SSIN(ssin)),
-          VD(VD.PersonData(
-              VD.PersonData.LastName(LastName),
-              VD.PersonData.BirthDate(BirthDate),
-            )))
+          VD(VD.PersonData(*pd)))
 
 
 class ns2(xg.Namespace):
@@ -357,9 +399,6 @@ class PerformInvestigationRequest(Service):
             DG.WaitRegisterGroup(wait)))
             
 
-def soap_request(xmlString):
-    return soap.Envelope(soap.Envelope.Body(bcss.xmlString(xg.CDATA(xmlString))))
-    
 def send_request(settings,xmlString):
     
     #~ logger.info("Going to send request:\n%s",xmlString)

@@ -1,0 +1,51 @@
+20111110
+========
+
+The next step in connection to the :term:`BCSS` is done!
+The idea is to have a kind of "BCSS explorer" which serves in a first 
+phase to experiment with real requests to the BCSS test server.
+
+Concretely we have now a new model 
+:class:`lino.modlib.bcss.models.IdentifyPersonRequest` 
+which is a slave of Person and becomes visible as a new tab "BCSS"
+in the Person's Detail window.
+This tab shows a list of "IdentifyPerson" requests about this person.
+
+.. image:: 1110a.jpg
+  :scale: 50
+  
+Users can manually create a request.
+
+For the IdentifyPerson service there's no need for additional user input.
+If the Person has her `national_id` field filled, 
+the request whill do a *verification* of the personal data,
+Otherwise it does a search request on the person's last_name, 
+first_name and (if filled) birth_date and gender fields.
+
+When the user clicks on the "Execute" row action, Lino will 
+
+- fill the `request_xml` field with the XML that has been sent
+- try a connection to the BCSS server (as configured in :attr:`lino.Lino.bcss_user_params`
+  and :attr:`lino.Lino.bcss_soap_url`)
+- upon success, write the response's raw XML to `response_xml` field
+- if the connection fails, Lino writes the exception traceback 
+  into the XML response field
+
+A first test from my workstation failed of course because the 
+connection is secured and will work only when run from 
+the customers network. :
+
+.. image:: 1110b.jpg
+  :scale: 50
+  
+ 
+New module :mod:`lino.modlib.bcss`.
+Note that this remains separated from :mod:`lino.utils.bcss` 
+for people who don't use Lino but want to make BCSS requests using Python).
+The docstrings of :mod:`lino.utils.bcss` and :mod:`lino.utils.xmlgen` 
+contain a general Lino-independant test suite.
+
+TODO: write also tests for :mod:`lino.modlib.bcss`.
+
+
+  
