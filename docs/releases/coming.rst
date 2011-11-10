@@ -1,10 +1,9 @@
-Version 1.2.5 (Coming)
+Version 1.2.6 (Coming)
 ======================
 
 New features
 ------------
 
- 
 Bugs fixed
 ----------
 

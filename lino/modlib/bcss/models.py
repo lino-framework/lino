@@ -31,7 +31,8 @@ from lino.tools import resolve_model
 class SendAction(reports.RowAction):
     name = 'sendbcss'
     label = _('Execute')
-    callable_from = None
+    #~ callable_from = None
+    callable_from = (GridEdit,ShowDetailAction)
     
     def run(self,rr,elem,**kw):
         elem.execute_request()
@@ -95,8 +96,11 @@ class IdentifyPersonRequest(BCSSRequest):
         SC = bcss.IdentifyPersonRequest.SearchCriteria
         PC = SC.PhoneticCriteria
         if person.national_id:
+            national_id = person.national_id.replace(' ','')
+            national_id = person.national_id.replace('-','')
+            national_id = person.national_id.replace('=','')
             return bcss.IdentifyPersonRequest.verify_request(
-              person.national_id,
+              national_id,
               LastName=person.last_name,
               FirstName=person.last_name,
               BirthDate=person.birth_date,

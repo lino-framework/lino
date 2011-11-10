@@ -1,6 +1,10 @@
 20111110
 ========
 
+
+:term:`BCSS` connection (continued)
+-----------------------------------
+
 The next step in connection to the :term:`BCSS` is done!
 The idea is to have a kind of "BCSS explorer" which serves in a first 
 phase to experiment with real requests to the BCSS test server.
@@ -38,7 +42,6 @@ the customers network. :
 .. image:: 1110b.jpg
   :scale: 50
   
- 
 New module :mod:`lino.modlib.bcss`.
 Note that this remains separated from :mod:`lino.utils.bcss` 
 for people who don't use Lino but want to make BCSS requests using Python).
@@ -48,4 +51,8 @@ contain a general Lino-independant test suite.
 TODO: write also tests for :mod:`lino.modlib.bcss`.
 
 
-  
+Release in Eupen
+----------------
+
+- Übersetzungen
+- :doc:`/releases/2011/1110`

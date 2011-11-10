@@ -12,6 +12,9 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Der Begriff "Arbeitsvertrag" ist irritierend, denn eigentlich werden die Dinger in Eupen 
+    "Artikel-60-7-Konvention" genannt. 
+
 #.  update_owned_tasks() erweitern, dass er auch Events automatisch verwalten kann.
     cal.Events ebenfalls mit owner und auto_id.
     Sowie ein Flag "seen": wenn das true ist, verändert er Datum, User usw. 
@@ -21,13 +24,13 @@ Short-term
     umbenennen nach "Qualifikationen"?
     Weil auch :class:´lino.modlib.contacts.RoleType` so übersetzt wird.
     Oder aber Modelle :class:´lino.modlib.jobs.Function` 
-    und :class:´lino.modlib.contacts.RoleType` vereinigen?
+    und :class:´lino.modlib.contacts.RoleType` vereinigen.
     Aber was passiert dann mit den Sektoren?
 
 #.  :class:´lino.modlib.contacts.RoleType` : 
     zwei neue Felder parent_type und child_type (FK nach
-    ContentType), sowie choosers for parent und child, die dann ggf. nur diese
-    Tabelle als Auswahlliste anzeigt.
+    ContentType), sowie choosers for parent und child, die dann 
+    ggf. nur diese Tabelle als Auswahlliste anzeigt.
     
 #.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
 
