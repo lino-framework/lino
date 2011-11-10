@@ -128,6 +128,7 @@ from appy.shared.dav import Resource
 from appy.shared.xml_parser import XmlUnmarshaller
 
 #~ from lino.utils.xmlgen import *
+from lino.utils import dblogger
 from lino.utils import xmlgen as xg
 
 class bcss(xg.Namespace):
@@ -239,7 +240,7 @@ class Service(xg.Container):
         req = soap_request(self.ssdn_request(settings,*args))
         xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.toxml()
         
-        logger.info("Going to send request /******\n%s\n******/",xmlString)
+        dblogger.info("Going to send request /******\n%s\n******/",xmlString)
         if not settings.LINO.bcss_soap_url:
             #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
             return None
