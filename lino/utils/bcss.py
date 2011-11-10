@@ -354,9 +354,15 @@ class IdentifyPersonRequest(Service):
         """
         SC = IdentifyPersonRequest.SearchCriteria
         VD = IdentifyPersonRequest.VerificationData
+        PD = VD.PersonData
         pd = []
-        for k,v in kw.items():
-            if v: # ignore empty fields
+        if LastName:
+            pd.append(PD.LastName(LastName))
+            
+        for k in ('LastName','FirstName','MiddleName','BirthDate'):
+        #~ for k,v in kw.items():
+            v = kw.get(k,None)
+            if v: # ignore empty values
                 cl = getattr(VD.PersonData,k)
                 pd.append(cl(v))
         return cls(
