@@ -25,10 +25,10 @@ import datetime
 from os.path import join, abspath, dirname, normpath
 
 
-__version__ = "1.2.5"
+__version__ = "1.2.6"
 """
 Lino version number. 
-The latest released version is :doc:`/releases/20111026b`.
+The latest released version is :doc:`/releases/2011/1110`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
