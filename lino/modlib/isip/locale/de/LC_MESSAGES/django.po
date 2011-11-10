@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-27 14:39+0100\n"
-"PO-Revision-Date: 2011-10-14 20:45+0100\n"
+"POT-Creation-Date: 2011-11-10 17:59+0000\n"
+"PO-Revision-Date: 2011-11-10 20:01+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -17,20 +17,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: .\models.py:93
-#, fuzzy
 msgid "ISIP Type"
-msgstr "VSE-Vertragsart"
+msgstr "VSE-Art"
 
 #: .\models.py:94
-#, fuzzy
 msgid "ISIP Types"
-msgstr "VSE-Vertragsarten"
+msgstr "VSE-Arten"
 
 #: .\models.py:96
 msgid "reference"
 msgstr "Referenz"
 
-#: .\models.py:109 .\models.py:178
+#: .\models.py:109
+#: .\models.py:178
 msgid "examination policy"
 msgstr "Auswertungsstrategie"
 
@@ -91,14 +90,13 @@ msgid "Contract ends"
 msgstr "Vertrag endet"
 
 #: .\models.py:265
-#, fuzzy
 msgid "ISIP"
-msgstr "~VSE"
+msgstr "VSE"
 
-#: .\models.py:266 .\models.py:362
-#, fuzzy
-msgid "ISIP's"
-msgstr "~VSE"
+#: .\models.py:266
+#: .\models.py:362
+msgid "ISIPs"
+msgstr "VSEs"
 
 #: .\models.py:270
 msgid "Contract Type"

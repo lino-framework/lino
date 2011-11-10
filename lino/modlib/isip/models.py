@@ -263,7 +263,7 @@ class Contract(ContractBase):
   
     class Meta:
         verbose_name = _("ISIP")
-        verbose_name_plural = _("ISIP's")
+        verbose_name_plural = _("ISIPs")
         
     type = models.ForeignKey("isip.ContractType",
         related_name="%(app_label)s_%(class)s_set_by_type",
@@ -359,7 +359,7 @@ def setup_my_menu(site,ui,user,m):
     m.add_action('isip.MyContracts')
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("isip",_("ISIP's"))
+    m  = m.add_menu("isip",_("ISIPs"))
     m.add_action('isip.ContractTypes')
     m.add_action('isip.ContractEndings')
     m.add_action('isip.ExamPolicies')

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-27 14:38+0100\n"
+"POT-Creation-Date: 2011-11-10 17:59+0000\n"
 "PO-Revision-Date: 2011-10-16 09:40+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\__init__.py:580 .\templates\500.html.py:4 .\templates\base.html.py:26
+#: .\__init__.py:585 .\templates\500.html.py:4 .\templates\base.html.py:26
 msgid "Home"
 msgstr "Startseite"
 
