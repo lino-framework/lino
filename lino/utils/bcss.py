@@ -356,9 +356,6 @@ class IdentifyPersonRequest(Service):
         VD = IdentifyPersonRequest.VerificationData
         PD = VD.PersonData
         pd = []
-        if LastName:
-            pd.append(PD.LastName(LastName))
-            
         for k in ('LastName','FirstName','MiddleName','BirthDate'):
         #~ for k,v in kw.items():
             v = kw.get(k,None)
