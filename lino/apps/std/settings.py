@@ -146,6 +146,7 @@ http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-wi
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     #~ 'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     #~ 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'lino.modlib.users.middleware.RemoteUserMiddleware',
     'django.middleware.doc.XViewMiddleware',

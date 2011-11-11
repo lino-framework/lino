@@ -163,6 +163,7 @@ def set_language(lang):
     http://www.velocityreviews.com/forums/t348372-setlocale-in-a-module-extension-library.html
     http://www.velocityreviews.com/forums/t332047-setlocale-returns-error.html
     """
+    print "20111111 babel.set_language()", lang
     if lang is None or lang is DEFAULT_LANGUAGE:
         #~ locale.setlocale(locale.LC_ALL,'')
         translation.deactivate()

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-10 17:59+0000\n"
+"POT-Creation-Date: 2011-11-11 08:58+0000\n"
 "PO-Revision-Date: 2011-11-10 20:01+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -28,8 +28,7 @@ msgstr "VSE-Arten"
 msgid "reference"
 msgstr "Referenz"
 
-#: .\models.py:109
-#: .\models.py:178
+#: .\models.py:109 .\models.py:178
 msgid "examination policy"
 msgstr "Auswertungsstrategie"
 
@@ -93,8 +92,7 @@ msgstr "Vertrag endet"
 msgid "ISIP"
 msgstr "VSE"
 
-#: .\models.py:266
-#: .\models.py:362
+#: .\models.py:266 .\models.py:362
 msgid "ISIPs"
 msgstr "VSEs"
 

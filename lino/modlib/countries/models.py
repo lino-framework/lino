@@ -62,8 +62,8 @@ class Country(babel.BabelNamed):
     """
     
     class Meta:
-        verbose_name = _("country")
-        verbose_name_plural = _("countries")
+        verbose_name = _("Country")
+        verbose_name_plural = _("Countries")
         
     isocode = models.CharField(max_length=4,primary_key=True)
     #~ name = models.CharField(max_length=200)
@@ -98,8 +98,8 @@ class City(models.Model):
     zip_code = models.CharField(max_length=8,blank=True)
     
     class Meta:
-        verbose_name = _("city")
-        verbose_name_plural = _("cities")
+        verbose_name = _("City")
+        verbose_name_plural = _("Cities")
         if not settings.LINO.allow_duplicate_cities:
             unique_together = ('country','name','zip_code')
     

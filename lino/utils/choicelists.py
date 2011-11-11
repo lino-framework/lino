@@ -132,6 +132,8 @@ class ChoiceList(object):
         Example: :class:`lino.apps.dsbe.models.CefLevel`
         """
         return unicode(bc)
+        #~ return bc
+        #~ return _(bc)
         
     @classmethod
     def get_text_for_value(self,value):

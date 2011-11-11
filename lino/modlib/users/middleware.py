@@ -19,6 +19,8 @@ Middleware to be used on sites with :doc:`/topics/http_auth`.
 import logging
 logger = logging.getLogger(__name__)
 
+from django.utils import translation
+
 from lino.modlib.users.models import User
 #~ from lino.utils import dblogger
 
@@ -42,6 +44,14 @@ class RemoteUserMiddleware(object):
     header = "REMOTE_USER"
 
     def process_request(self, request):
+      
+        #~ language = translation.get_language_from_request(request)
+        #~ translation.activate(language)
+        #~ request.LANGUAGE_CODE = translation.get_language()
+        #~ from lino.utils import babel
+        #~ if request.LANGUAGE_CODE == babel.DEFAULT_LANGUAGE:
+            #~ print 'oops', request.path_info
+      
         try:
             username = request.META[self.header]
         except KeyError:

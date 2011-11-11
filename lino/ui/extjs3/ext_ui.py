@@ -84,7 +84,6 @@ from lino.mixins import printable
 from lino.core.coretools import app_labels
 
 from lino.utils.babel import LANGUAGE_CHOICES
-#~ from lino.modlib.properties.utils import STRENGTH_CHOICES, KNOWLEDGE_CHOICES
 
 from lino.utils.choicelists import DoYouLike, HowWell
 STRENGTH_CHOICES = DoYouLike.get_choices()
@@ -733,7 +732,6 @@ tinymce.init({
         #~ yield '<!-- overrides to library -->'
         #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % self.media_url()
         yield '<script type="text/javascript" src="%s"></script>' % (
-            #~ self.media_url() + "/".join(self.lino_js_parts()))
             self.media_url(*self.lino_js_parts()))
 
         #~ yield '<!-- page specific -->'
@@ -1227,12 +1225,13 @@ tinymce.init({
     def lino_js_parts(self):
     #~ def js_cache_name(self):
         #~ return ('cache','js','site.js')
-        return ('cache','js','lino.js')
+        from django.utils import translation
+        #~ return ('cache','js','lino.js')
+        return ('cache','js','lino_'+translation.get_language()+'.js')
         
     def build_lino_js(self):
-        """Generate the :xfile:`lino.js`.
+        """Generate :xfile:`lino.js`.
         """
-        fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
         if not settings.LINO.auto_makeui:
             logger.info("NOT generating %s ...", fn)
             return 
@@ -1242,42 +1241,42 @@ tinymce.init({
             settings.MEDIA_ROOT)
             return
         
-        logger.info("Generating %s ...", fn)
-        
-        makedirs_if_missing(os.path.dirname(fn))
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
         
-        f = codecs.open(fn,'w',encoding='utf-8')
-        
-        for ln in self.lino_js_lines():
-            #~ js += ln + '\n'
-            f.write(ln + '\n')
+        for lang in babel.AVAILABLE_LANGUAGES:
+            babel.set_language(lang)
+            fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
+            logger.info("Generating %s ...", fn)
             
-        tpl = self.linolib_template()
-        
-        f.write(jscompress(unicode(tpl)+'\n'))
-        
-        # the following takes a few seconds more time when using 
-        # one big unicode string `js`.
-        #~ js = u''
-        for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values():
-            rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
-            #~ js += "Ext.namespace('Lino.%s')\n" % rpt
-            f.write("Ext.namespace('Lino.%s')\n" % rpt)
-            for a in rpt.get_actions():
-                if a.window_wrapper is not None:
-                    #~ print a, "..."
-                    #~ f.write('Lino.%s = ' % a )
-                    for ln in a.window_wrapper.js_render():
-                        f.write(ln + '\n')
-                        #~ js += ln + "\n"
-                    #~ js += "\n"
-                    f.write('\n')
-                    
-        #~ f.write(jscompress(js))
-        f.close()
-        logger.info("Wrote %s ...", fn)
+            makedirs_if_missing(os.path.dirname(fn))
+            
+            f = codecs.open(fn,'w',encoding='utf-8')
+            
+            for ln in self.lino_js_lines():
+                f.write(ln + '\n')
+                
+            tpl = self.linolib_template()
+            
+            f.write(jscompress(unicode(tpl)+'\n'))
+            
+            for rpt in reports.master_reports \
+                     + reports.slave_reports \
+                     + reports.generic_slaves.values():
+                rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
+                f.write("Ext.namespace('Lino.%s')\n" % rpt)
+                for a in rpt.get_actions():
+                    if a.window_wrapper is not None:
+                        #~ print a, "..."
+                        for ln in a.window_wrapper.js_render():
+                            f.write(ln + '\n')
+                        f.write('\n')
+                        
+            #~ f.write(jscompress(js))
+            f.close()
+            #~ logger.info("Wrote %s ...", fn)
+        logger.info("lino*.js files have been generated.")
+        babel.set_language(None)
         
     def make_linolib_messages(self):
         """

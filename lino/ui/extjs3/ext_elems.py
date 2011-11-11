@@ -415,7 +415,8 @@ class FieldElement(LayoutElement):
         #~ if self.label is None:
             #~ kw.update(header=self.field.name)
         #~ else:
-        kw.update(header=unicode(self.label or self.name))
+        #~ kw.update(header=unicode(self.label or self.name))
+        kw.update(header=self.label or self.name)
         if not self.editable:
             kw.update(editable=False)
         if not self.sortable:

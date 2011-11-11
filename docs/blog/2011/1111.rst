@@ -1,0 +1,24 @@
+20111111
+========
+
+Started support user-specific language support. 
+The basic trick is to add 
+`django.middleware.locale.LocaleMiddleware` to the 
+:setting:`MIDDLEWARE_CLASSES`.
+This makes Django ask the user's browser's language 
+preferences when setting 
+`request.LANGUAGE_CODE`.
+
+Until now I thought that was enough...
+but in fact there are a few places 
+where I need to adapt Lino.
+
+First and most evident was that the server must generate not only 
+one file :xfile:`lino.js` at startup, but one for each language.
+That wasn't too difficult.
+
+Next problem is that `choicelists.ChoiceList` triggers 
+translation when filling her `choices` list. 
+That's subtile! Not yet solved.
+
+

@@ -15,14 +15,50 @@ from django.db import models
 #countries = models.get_app('countries')
 
 from lino.utils.instantiator import Instantiator
+from lino.utils.babel import babel_values
 
 country = Instantiator('countries.Country',"isocode name").build
 
 def objects():
 
-    yield country('EE',"Estonia")
-    yield country('BE',"Belgium")
-    yield country('DE',"Germany")
-    yield country('FR',"France")
-    yield country('NL',"Netherlands")
+    yield country('EE',**babel_values('name',
+          de=u"Estland",
+          fr=u'Estonie',
+          en=u"Estonia",
+          nl=u'Estland',
+          et=u'Eesti',
+          ))
+    yield country('BE',**babel_values('name',
+          de=u"Belgien",
+          fr=u'Belgique',
+          en=u"Belgium",
+          nl=u'Belgie',
+          et=u'Belgia',
+          ))
+    yield country('DE',**babel_values('name',
+          de=u"Deutschland",
+          fr=u'Allemagne',
+          en=u"Germany",
+          nl=u'Duitsland',
+          et=u'Saksamaa',
+          ))
+    yield country('FR',**babel_values('name',
+          de=u"Frankreich",
+          fr=u'France',
+          en=u"France",
+          nl=u'Frankrijk',
+          et=u'Prantsusmaa',
+          ))
+    yield country('NL',**babel_values('name',
+          de=u"Niederlande",
+          fr=u'Pays-Bas',
+          en=u"Netherlands",
+          nl=u'Nederlande',
+          et=u'Holand',
+          ))
+    #~ yield country('EE',"Estonia")
+    #~ yield country('BE',"Belgium")
+    #~ yield country('DE',"Germany")
+    #~ yield country('FR',"France")
+    #~ yield country('NL',"Netherlands")
 
