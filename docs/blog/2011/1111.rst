@@ -22,7 +22,7 @@ That wasn't too difficult.
 Next problem is that :class:`Choice Lists <lino.utils.choicelists.ChoiceList>` trigger 
 translation when filling their `choices` list. 
 
-That's subtile! 
+That's subtile! Check-in 20111111 before touching this problem.
 
 After more than 2 hours of my evening I found the solution, which is only one line.
 Before::
@@ -45,3 +45,15 @@ And another line of code had to change,
 the `__unicode__()` method 
 of :class:`lino.modlib.properties.PropertyOccurence` must 
 explicitly call unicode on that `Promise`.
+
+Check-in 20111111b.
+
+Another problem was that many labels were converted to unicode in ext_elems 
+when creating the UI widgets. 
+Solved in check-in 20111111c.
+
+And a last problem (for today) was that in :mod:`lino.modlib.countries.models` 
+I used ugettext and not ugettext_lazy for marking translatable strings.
+
+Check-in 20111111d.
+

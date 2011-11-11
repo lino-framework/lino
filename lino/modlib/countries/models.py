@@ -26,7 +26,7 @@ from django.conf import settings
 
 from lino import reports
 #~ from lino import layouts
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from lino.utils.choosers import chooser
@@ -127,10 +127,10 @@ class CountryCity(models.Model):
     class Meta:
         abstract = True
         
-    country = models.ForeignKey("countries.Country",blank=True,null=True,
-        verbose_name=_("Country"))
-    city = models.ForeignKey('countries.City',blank=True,null=True,
-        verbose_name=_('City'))
+    country = models.ForeignKey("countries.Country",blank=True,null=True)
+        #~ verbose_name=_("Country"))
+    city = models.ForeignKey('countries.City',blank=True,null=True)
+        #~ verbose_name=_('City'))
         
     @chooser()
     def city_choices(cls,country):
