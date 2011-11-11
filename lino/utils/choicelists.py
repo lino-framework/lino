@@ -37,6 +37,7 @@ automatically available as a property value in
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import lazy
 
 from lino.utils import babel
 from lino.utils import curry
@@ -131,12 +132,16 @@ class ChoiceList(object):
         """Override this to customize the display text of choices.
         Example: :class:`lino.apps.dsbe.models.CefLevel`
         """
-        return unicode(bc)
+        return lazy(unicode,unicode)(bc)
+        #~ return unicode(bc)
         #~ return bc
         #~ return _(bc)
         
     @classmethod
     def get_text_for_value(self,value):
+        """
+        Return the text corresponding to the specified value.
+        """
         if not isinstance(value,basestring):
             raise Exception("%r is not a string" % value)
         #~ print "get_text_for_value"

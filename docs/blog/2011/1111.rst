@@ -1,24 +1,47 @@
 20111111
 ========
 
-Started support user-specific language support. 
+Started support for user-specific language selection.
 The basic trick is to add 
-`django.middleware.locale.LocaleMiddleware` to the 
-:setting:`MIDDLEWARE_CLASSES`.
+Django's `LocaleMiddleware` to 
+:setting:`MIDDLEWARE_CLASSES`
+as described in 
+`How Django discovers language preference
+<https://docs.djangoproject.com/en/dev/topics/i18n/translation/#how-django-discovers-language-preference>`_.
 This makes Django ask the user's browser's language 
-preferences when setting 
-`request.LANGUAGE_CODE`.
+preferences and set `request.LANGUAGE_CODE`.
 
 Until now I thought that was enough...
-but in fact there are a few places 
-where I need to adapt Lino.
+but it turns out that there are a few places 
+where I need to adapt Lino...
 
 First and most evident was that the server must generate not only 
 one file :xfile:`lino.js` at startup, but one for each language.
 That wasn't too difficult.
 
-Next problem is that `choicelists.ChoiceList` triggers 
-translation when filling her `choices` list. 
-That's subtile! Not yet solved.
+Next problem is that :class:`Choice Lists <lino.utils.choicelists.ChoiceList>` trigger 
+translation when filling their `choices` list. 
 
+That's subtile! 
 
+After more than 2 hours of my evening I found the solution, which is only one line.
+Before::
+
+    @classmethod
+    def display_text(cls,bc):
+        return unicode(bc)
+        
+After::        
+
+    @classmethod
+    def display_text(cls,bc):
+        return lazy(unicode,unicode)(bc)
+
+That is, :meth:`lino.utils.choicelists.ChoiceList.display_text` 
+now returns a `Promise` of a call to `unicode()` and not yet 
+the result of a call to `unicode()`.
+
+And another line of code had to change, 
+the `__unicode__()` method 
+of :class:`lino.modlib.properties.PropertyOccurence` must 
+explicitly call unicode on that `Promise`.

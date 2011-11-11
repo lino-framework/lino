@@ -18,6 +18,7 @@ that don't load any fixtures.
   
 """
 
+from django.conf import settings
 
 from lino.utils.test import TestCase
 #from lino.igen import models
@@ -60,4 +61,25 @@ Estonia''')
     
     
         
+def test02(self):
+    """
+    """
+    #~ settings.LINO.auto_makeui = False
+    url = '/api/contacts/Persons/194?query=&an=detail&fmt=json'
+    response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
+    result = self.check_json_result(response,'navinfo disable_delete data id title')
+    self.assertEqual(result['data']['country'],"Estonia")
+    self.assertEqual(result['data']['sex'],"Female")
+    
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
+        result = self.check_json_result(response,'navinfo disable_delete data id title')
+        self.assertEqual(result['data']['country'],"Estland")
+        self.assertEqual(result['data']['sex'],"Weiblich")
+        
+    if 'fr' in babel.AVAILABLE_LANGUAGES:
+        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='fr')
+        result = self.check_json_result(response,'navinfo disable_delete data id title')
+        self.assertEqual(result['data']['country'],"Estonie")
+        self.assertEqual(result['data']['sex'],u"Féminin")
         

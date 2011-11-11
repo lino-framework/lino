@@ -44,6 +44,10 @@ See http://docs.djangoproject.com/en/dev/ref/settings/#root-url
 
   See http://docs.djangoproject.com/en/dev/ref/settings/#databases
   
+.. setting:: MIDDLEWARE_CLASSES
+
+  See http://docs.djangoproject.com/en/dev/ref/settings/#middleware_classes
+  
 .. setting:: LANGUAGES
 
   Used by :class:`lino.modlib.fields.LanguageField`.

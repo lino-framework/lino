@@ -25,6 +25,8 @@ logger = logging.getLogger(__name__)
 
 from django.db.utils import IntegrityError
 from django.conf import settings
+from django.utils.encoding import force_unicode
+
 #~ from django.utils import unittest
 #~ from django.test.client import Client
 #from lino.igen import models
@@ -47,6 +49,10 @@ class DemoTest(TestCase):
     fixtures = 'std few_countries few_cities few_languages props demo'.split()
     #~ fixtures = 'std all_countries few_cities all_languages props demo'.split()
     
+    #~ def setUp(self):
+        #~ settings.LINO.auto_makeui = False
+        #~ super(DemoTest,self).setUp()
+    
             
 def test01(self):
     """
@@ -68,31 +74,37 @@ def test02(self):
     """
     url = '/api/dsbe/SoftSkillsByPerson?mt=22&mk=118&fmt=json'
     # make sure that the response is in English so that this test works on any site
-    babel.set_language('en')
+    #~ 20111111 babel.set_language('en')
     #~ extra = {'Accept-Language':'fr,de-DE;q=0.8,de;q=0.6,en-US;q=0.4,en;q=0.2'
     #~ extra = {'Accept-Language':'en-US'}
     #~ extra = dict(REMOTE_USER='root')
     #~ from django.conf import settings
     #~ babel.DEFAULT_LANGUAGE = 'en'
     #~ settings.LANGUAGE = 'en'
-    response = self.client.get(url,REMOTE_USER='root')
-    #~ response = self.client.get(url,data={},follow=False,**extra)
-    #~ print response.content
-    result = self.check_json_result(response,'count rows gc_choices title')
-    #~ result = simplejson.loads(response.content)
-    #~ for k in 'count rows gc_choices title'.split():
-        #~ self.assertTrue(result.has_key(k))
-    #~ if len(result['rows']) != 3:
-    self.assertEqual(result['title'],"Properties of Annette ARENS (118)")
-    #~ print '\n'.join([unicode(x) for x in result['rows']])
-    self.assertEqual(len(result['rows']),3)
-    row = result['rows'][0]
-    self.assertEqual(row[0],"Obedient")
-    #~ self.assertEqual(row[0],"Gehorsam")
-    self.assertEqual(row[1],7)
-    self.assertEqual(row[2],"moderate")
-    self.assertEqual(row[3],"2")
-    babel.set_language(None) # switch back to default language for subsequent tests
+    if 'en' in babel.AVAILABLE_LANGUAGES:
+        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
+        result = self.check_json_result(response,'count rows gc_choices title')
+        self.assertEqual(result['title'],"Properties of Annette ARENS (118)")
+        self.assertEqual(len(result['rows']),3)
+        row = result['rows'][0]
+        self.assertEqual(row[0],"Obedient")
+        self.assertEqual(row[1],7)
+        self.assertEqual(row[2],"moderate")
+        self.assertEqual(row[3],"2")
+        
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
+        result = self.check_json_result(response,'count rows gc_choices title')
+        self.assertEqual(result['title'],"Eigenschaften von Annette ARENS (118)")
+        self.assertEqual(len(result['rows']),3)
+        row = result['rows'][0]
+        self.assertEqual(row[0],"Gehorsam")
+        #~ self.assertEqual(row[0],"Gehorsam")
+        self.assertEqual(row[1],7)
+        self.assertEqual(row[2],u"mittelmäßig")
+        self.assertEqual(row[3],"2")
+        
+    #~ 20111111 babel.set_language(None) # switch back to default language for subsequent tests
     
     #~ tf('http://127.0.0.1:8000/api/properties/SoftSkillsByPerson?_dc=1298881440121&fmt=json&mt=22&mk=15',
         #~ """

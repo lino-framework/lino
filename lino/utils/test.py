@@ -21,6 +21,7 @@ Used in :mod:`lino.modlib.dsbe.tests.dsbe_tests`
 import logging
 logger = logging.getLogger(__name__)
 
+from django.conf import settings
 from django.utils import simplejson
 from django.utils.importlib import import_module
 from django.test import TestCase as DjangoTestCase
@@ -83,6 +84,10 @@ class TestCase(DjangoTestCase):
                 #~ if not getattr(v,'skip',False):
                     #~ v(self)
                   
+    def setUp(self):
+        settings.LINO.auto_makeui = False
+        super(TestCase,self).setUp()
+        
     def test_them_all(self):
         """
         This method will be executed automatically since it's 

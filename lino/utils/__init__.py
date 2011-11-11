@@ -55,8 +55,10 @@
 
 """
 
+
 import os, sys, locale, types, datetime
 from dateutil import parser as dateparser
+import stat
 
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
@@ -199,7 +201,28 @@ curry = lambda func, *args, **kw:\
                  func(*args + p, **dict(kw.items() + n.items()))
                  
     
-    
+
+def codetime():
+    """
+    Return the modification time of the youngest source code in memory.
+    Used by :mod:`lino.ui.extjs3.ext_ui` to avoid generating lino.js files if not necessary.
+    Inspired by the code_changed() function in django.utils.autoreload.
+    """
+    code_mtime = None
+    for filename in filter(lambda v: v, map(lambda m: getattr(m, "__file__", None), sys.modules.values())):
+        if filename.endswith(".pyc") or filename.endswith(".pyo"):
+            filename = filename[:-1]
+        if filename.endswith("$py.class"):
+            filename = filename[:-9] + ".py"
+        if not os.path.exists(filename):
+            continue # File might be in an egg, so it can't be reloaded.
+        stat = os.stat(filename)
+        mtime = stat.st_mtime
+        #~ print filename, time.ctime(mtime)
+        if code_mtime is None or code_mtime < mtime:
+            code_mtime = mtime
+    return code_mtime
+
 
 def _test():
     import doctest

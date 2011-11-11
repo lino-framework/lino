@@ -25,10 +25,13 @@ logger = logging.getLogger(__name__)
 
 #~ from django.utils import unittest
 #~ from django.test.client import Client
+from django.conf import settings
+
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
 #~ from lino.modlib.contacts.models import Companies
+
 
 from lino.utils import i2d
 from lino.utils import babel
@@ -47,6 +50,9 @@ from lino.modlib.properties.models import Property
 
 class QuickTest(TestCase):
     pass
+    #~ def setUp(self):
+        #~ settings.LINO.auto_makeui = False
+        #~ super(DemoTest,self).setUp()
             
   
 def test01(self):
@@ -184,9 +190,9 @@ def test01b(self):
     
     url = '/api/jobs/Contract/1?an=print'
     # make sure that the response is in English so that this test works on any site
-    babel.set_language('en')
+    #~ babel.set_language('en')
     
-    response = self.client.get(url,REMOTE_USER='root')
+    response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
     result = self.check_json_result(response,'success message alert')
     self.assertEqual(result['success'],False)
     self.assertEqual(result['alert'],True)
@@ -196,7 +202,7 @@ def test01b(self):
 Action "Print" failed for Job Contract "Job Contract#1 (Max MUSTERMANN)":
 Invalid template '' configured for ContractType u'Art.60\\xa77' (expected filename ending with '.pisa.html').
 An error report has been sent to the system administrator.""")
-    babel.set_language(None) # switch back to default language for subsequent tests
+    #~ babel.set_language(None) # switch back to default language for subsequent tests
     
     
     #~ a = PrintAction()

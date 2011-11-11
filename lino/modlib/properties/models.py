@@ -266,7 +266,8 @@ class PropertyOccurence(models.Model):
     def __unicode__(self):
         if self.property_id is None:
             return u"Undefined %s" % self.group
-        return self.property.type.get_text_for_value(self.value)
+        # 20111111 : call unicode() because get_text_for_value returns a Promise
+        return unicode(self.property.type.get_text_for_value(self.value))
         
     #~ def __unicode__(self):
         #~ if self.property_id is None:

@@ -36,6 +36,7 @@ from django import http
 from django.core import exceptions
 from django.utils import functional
 from django.utils.encoding import force_unicode
+from django.utils.functional import Promise
 
 from django.template.loader import get_template
 from django.template import RequestContext
@@ -55,22 +56,24 @@ from . import ext_windows
 #~ from . import ext_viewport
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
+
 #~ from lino.ui import store as ext_store
 from lino import actions #, layouts #, commands
 from lino import reports
 from lino import fields
 from lino.ui import base
 from lino.core import actors
+from lino.tools import makedirs_if_missing
 from lino.utils import dblogger
 from lino.utils import ucsv
 from lino.utils import choosers
 from lino.utils import babel
 from lino.utils import choicelists
 from lino.utils import menus
-from lino.tools import makedirs_if_missing
-from lino.utils.config import find_config_file
 from lino.utils import jsgen
 from lino.utils import isiterable
+from lino.utils import codetime
+from lino.utils.config import find_config_file
 from lino.utils.jsgen import py2js, js_code, id2js
 
 from lino.utils.jscompressor import JSCompressor
@@ -1196,13 +1199,13 @@ tinymce.init({
                 try:
                     return a.run(ar,elem)
                 except Exception,e:
-                    logger.exception(e)
                     msg = _("Action \"%(action)s\" failed for %(record)s:") % dict(
                         action=a,
                         record=obj2unicode(elem))
                     msg += "\n" + unicode(e)
                     msg += '.\n' + _("An error report has been sent to the system administrator.")
-                    #~ logger.warning(msg)
+                    logger.warning(msg)
+                    logger.exception(e)
                     return error_response(e,msg)
               
             raise NotImplementedError("Action %s is not implemented)" % a)
@@ -1233,13 +1236,15 @@ tinymce.init({
         """Generate :xfile:`lino.js`.
         """
         if not settings.LINO.auto_makeui:
-            logger.info("NOT generating %s ...", fn)
+            logger.debug("NOT generating `lino.js` because `settings.LINO.auto_makeui` is False")
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
-            logger.info("Not generating `lino.js` because "+
+            logger.warning("Not generating `lino.js` because "+
             "directory '%s' (settings.MEDIA_ROOT) does not exist.", 
             settings.MEDIA_ROOT)
             return
+        
+        mtime = codetime()
         
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
@@ -1247,6 +1252,11 @@ tinymce.init({
         for lang in babel.AVAILABLE_LANGUAGES:
             babel.set_language(lang)
             fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
+            if os.path.exists(fn):
+                if os.stat(fn).st_mtime > mtime:
+                    logger.debug("NOT generating %s because it is newer than the code.",fn)
+                    continue
+                    
             logger.info("Generating %s ...", fn)
             
             makedirs_if_missing(os.path.dirname(fn))
@@ -1556,8 +1566,11 @@ tinymce.init({
             s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
             return s
         return '[?!]'
-
+        
     def py2js_converter(self,v):
+        """
+        Additional converting logic for serializing Python values to json.
+        """
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
         if v is STRENGTH_CHOICES:
@@ -1565,8 +1578,11 @@ tinymce.init({
         if v is KNOWLEDGE_CHOICES:
             return js_code('KNOWLEDGE_CHOICES')
         if isinstance(v,choicelists.BabelChoice):
-            #~ v = unicode(v)
             return v.value
+        #~ if isinstance(v,babel.BabelText):
+            #~ return unicode(v)
+        #~ if isinstance(v,Promise):
+            #~ return unicode(v)
         if isinstance(v,Exception):
             return unicode(v)
         if isinstance(v,menus.Menu):
