@@ -46,7 +46,8 @@ def a2btn(a):
       opens_a_slave=a.opens_a_slave,
       handler=js_code("Lino.%s" % a),
       name=a.name,
-      label=unicode(a.label),
+      label=a.label, # 20111111
+      #~ label=unicode(a.label),
       #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
     )
       
@@ -394,7 +395,8 @@ class FieldElement(LayoutElement):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
-        kw.update(label=unicode(field.verbose_name))
+        #~ kw.update(label=unicode(field.verbose_name))
+        kw.update(label=field.verbose_name) # 20111111c
         #~ LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
         #~ LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
         LayoutElement.__init__(self,lh,field.name,**kw)
@@ -439,7 +441,8 @@ class FieldElement(LayoutElement):
         if not isinstance(self.lh.layout,reports.ListLayout):
             kw.update(name=self.field.name)
             if self.label:
-                kw.update(fieldLabel=unicode(self.label))
+                #~ kw.update(fieldLabel=unicode(self.label)) 20111111
+                kw.update(fieldLabel=self.label)
         if not self.field.blank:
             kw.update(allowBlank=False)
         if not self.editable:
@@ -484,7 +487,8 @@ class TextFieldElement(FieldElement):
                 self.field = field
                 self.editable = field.editable # and not field.primary_key
                 kw.update(ls_url=rpt2url(lh.rh.report))
-                kw.update(title=unicode(field.verbose_name))
+                #~ kw.update(title=unicode(field.verbose_name)) 20111111
+                kw.update(title=field.verbose_name)
                 #~ kw.update(tinymce_options=dict(
                     #~ template_external_list_url=lh.ui.build_url('templates',lh.rh.report.app_label,lh.rh.report.name)
                   #~ template_templates=[
@@ -834,7 +838,8 @@ class HtmlBoxElement(DisplayElement):
             #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
         kw.update(items=js_code("new Ext.BoxComponent()"))
         if self.label:
-            kw.update(title=unicode(self.label))
+            #~ kw.update(title=unicode(self.label)) 20111111
+            kw.update(title=self.label)
         #~ if self.field.bbar is not None:
             #~ kw.update(ls_bbar_actions=self.field.bbar)
         return kw
@@ -1186,7 +1191,8 @@ class Panel(Container):
             d.update(border=False)
             
         if self.label:
-            d.update(title=unicode(self.label))
+            #~ d.update(title=unicode(self.label)) 20111111
+            d.update(title=self.label)
             
         return d
         
@@ -1293,7 +1299,8 @@ class SlaveGridElement(GridElement):
         kw = GridElement.ext_options(self,**kw)
         #~ kw.update(plugins=js_code('new Lino.SlaveGridPlugin(caller)'))
         
-        kw.update(title=unicode(self.report.label))
+        kw.update(title=self.report.label)
+        #~ kw.update(title=unicode(self.report.label)) 20111111
         
         #~ js = "Lino.do_action(caller,%r)" % \
             #~ rh.list_layout.get_absolute_url(run=True)
