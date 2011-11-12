@@ -976,6 +976,8 @@ class ContractsSituation2(mixins.Listing):
 
 class ContractsSituation(mixins.Listing):
     #~ template_name = 'jobs/ContractsSituation/Listing.odt'
+    build_method = 'appyrtf'
+    
     class Meta:
         verbose_name = _("Contracts Situation") 
         

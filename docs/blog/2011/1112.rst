@@ -1,19 +1,25 @@
 20111112
 ========
 
+user-specific language selection
+--------------------------------
+
 More details to do for the support of 
 user-specific language selection.
 
 :class:`lino.apps.dsbe.models.CefLevel` overrides `display_text`, 
 and this method wasn't yet adapted to yesterday's changes.
 
-There are still some places where Lino translates too early: 
+There were still some places where Lino translates too early: 
 
 - the headers of tabs
 - labels of buttons and menus
 
+Worked on the French translations which are far from being 
+perfect but start to get usable.
+
 There is one conceptual detail which needed a design decision: 
-how to mark hotkey letters in menu items.
+how to mark **hotkey letters in menu items**.
 Until now we had the following temporary solution::
 
   def prepare_label(mi):
@@ -23,4 +29,17 @@ Until now we had the following temporary solution::
           label = label.replace(mi.HOTKEY_MARKER,'')
       return label
 
-This doesn't work any longer with lazy translation.
+This method doesn't work any longer with lazy translation. 
+But anyway it wasn't used since lino.ui.extjs3 simply removed the markers.
+
+Listings
+--------
+
+Optimizations when printing a :class:`Listing <lino.mixins.printable.Listing>`:
+
+- It didn't use the DavLink applet when 
+  :attr:`lino.Lino.use_davlink` was `True`. Fixed.
+- It no longer uses a hard-coded site-wide template "Listing.odt" 
+  but a `Default.odt` in the model's config directory.
+
+Check-in 20111112b

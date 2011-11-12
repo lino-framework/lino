@@ -4,10 +4,6 @@ Version 1.2.6 (Coming)
 New features
 ------------
 
-- Support for user-specific language of the web interface. 
-  On a site with more than one language, Lino selects now the user 
-  language depending on the user's browser's language preferences.
-  
   
 
 Bugs fixed
