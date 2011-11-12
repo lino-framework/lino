@@ -2973,7 +2973,7 @@ Lino.WindowWrapper = function(caller,config,params,wc) {
   if (wc) 
       Ext.apply(this.window_config,wc);
   else 
-      Ext.apply(this.window_config,{maximized: true,maximizable: true});
+      Ext.apply(this.window_config,{maximized: true,maximizable: false});
   
   //~ this.setup();
   

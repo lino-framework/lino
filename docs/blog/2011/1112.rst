@@ -57,3 +57,10 @@ Traceback (most recent call last):
     return elem.get_templates_group()
 AttributeError: 'CourseOffer' object has no attribute 'get_templates_group'
 
+Bug "maximzable"
+----------------
+
+There was a useless vertical scrollbar on all windows which 
+appeared sometimes and didn't disappeasr. 
+The bug didn't reproduce after I added a "maximzable=true" to the 
+base Window configuration.
