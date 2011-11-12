@@ -550,6 +550,7 @@ class DirectPrintAction(BasePrintAction):
         #~ return rr.ui.success_response(open_url=target,**kw)
         url = bm.get_target_url(self,elem,rr.ui)
         if bm.use_webdav and settings.LINO.use_davlink:
+            url = rr.request.build_absolute_uri(url)
             kw.update(open_davlink_url=url)
         else:
             kw.update(open_url=url)
