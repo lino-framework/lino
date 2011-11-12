@@ -304,6 +304,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`09 <1109>`
   :doc:`10 <1110>`
   :doc:`11 <1111>`
+  :doc:`12 <1112>`
   |br| 
   |br|  	
 

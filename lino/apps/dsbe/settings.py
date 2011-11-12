@@ -71,7 +71,7 @@ class Lino(Lino):
         #~ main = menus.Toolbar('main')
         #~ m = main.add_menu("master",_("~Master"))
         
-        m = main.add_menu("contacts",_("~Contacts"))
+        m = main.add_menu("contacts",_("Contacts"))
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
         #~ m.add_action('contacts.Persons.detail')
@@ -86,7 +86,7 @@ class Lino(Lino):
         if user is None:
             return main
             
-        m = main.add_menu("my",_("~My menu"))
+        m = main.add_menu("my",_("My menu"))
         #~ m.add_action('projects.Projects')
         m.add_action('dsbe.MyNotes')
         
@@ -109,16 +109,16 @@ class Lino(Lino):
         m.add_action('lino.MyTextFieldTemplates')
 
 
-        m = main.add_menu("courses",_("~Courses"))
+        m = main.add_menu("courses",_("Courses"))
         m.add_action('dsbe.CourseProviders')
         m.add_action('dsbe.CourseOffers')
         
-        m = main.add_menu("jobs",_("~Jobs"))
+        m = main.add_menu("jobs",_("Jobs"))
         jobs.setup_main_menu(self,ui,user,m)
         
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:
-        listings = main.add_menu("lst",_("~Listings"))
+        listings = main.add_menu("lst",_("Listings"))
         LISTINGS = """
         jobs.ContractsSituation
         lino.DataControlListing
@@ -130,9 +130,9 @@ class Lino(Lino):
             #~ listings.add_instance_action(lst)
         
         if user.is_staff:
-            cfg = main.add_menu("config",_("~Configure"))
+            cfg = main.add_menu("config",_("Configure"))
             
-            config_contacts = cfg.add_menu("contacts",_("~Contacts"))
+            config_contacts = cfg.add_menu("contacts",_("Contacts"))
             config_contacts.add_action('countries.Countries')
             config_contacts.add_action('countries.Cities')
             config_contacts.add_action('contacts.CompanyTypes')
@@ -142,13 +142,13 @@ class Lino(Lino):
             
             
             #~ config_notes    = cfg.add_menu("notes",_("~Notes"))
-            config_dsbe     = cfg.add_menu("dsbe",_("~DSBE"))
+            config_dsbe     = cfg.add_menu("dsbe",_("SIS"))
             
-            config_cv       = cfg.add_menu("cv",_("C~V"))
-            config_etc      = cfg.add_menu("etc",_("~System"))
+            config_cv       = cfg.add_menu("cv",_("CV"))
+            config_etc      = cfg.add_menu("etc",_("System"))
             
             
-            m = cfg.add_menu("courses",_("~Courses"))
+            m = cfg.add_menu("courses",_("Courses"))
             m.add_action('dsbe.CourseContents')
             m.add_action('dsbe.CourseEndings')
             
@@ -162,7 +162,7 @@ class Lino(Lino):
             config_dsbe.add_action('dsbe.PersonGroups')
         
             if True: # user.is_expert:
-                config_props = cfg.add_menu("props",_("~Properties"))
+                config_props = cfg.add_menu("props",_("Properties"))
                 config_props.add_action('properties.PropGroups')
                 config_props.add_action('properties.PropTypes')
                 for pg in properties.PropGroup.objects.all():
@@ -197,7 +197,7 @@ class Lino(Lino):
             config_etc.add_action('lino.TextFieldTemplates')
             config_etc.add_instance_action(self.config)
         
-            m = main.add_menu("explorer",_("E~xplorer"))
+            m = main.add_menu("explorer",_("Explorer"))
             #m.add_action('properties.PropChoices')
             #~ m.add_action('properties.PropValues')
             m.add_action('contacts.AllPersons')
@@ -219,7 +219,7 @@ class Lino(Lino):
             cal.setup_explorer_menu(self,ui,user,m)
 
         
-        m = main.add_menu("help",_("~Help"))
+        m = main.add_menu("help",_("Help"))
         m.add_item('userman',_("~User Manual"),
             href='http://lino.saffre-rumma.net/dsbe/index.html')
 

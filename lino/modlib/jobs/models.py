@@ -46,7 +46,6 @@ from lino import mixins
 from lino import actions
 from lino import fields
 from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.contacts.models import SEX_CHOICES
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads

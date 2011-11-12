@@ -26,7 +26,8 @@ import yaml
 #~ import pprint
 
 from django.conf import settings
-from django.utils.translation import ugettext as _
+#~ from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_unicode
 
@@ -1459,7 +1460,9 @@ class BaseLayout(Configured):
                         raise LayoutError('"=" expected in %r' % ln)
                     attrname = a[0].strip()
                     if hasattr(self,attrname):
-                        raise Exception('Duplicate element definition %r in %r' % (attrname,desc))
+                        raise Exception(
+                            'Duplicate element definition %r in %r' 
+                            % (attrname,desc))
                     setattr(self,attrname,a[1].strip())
         if self.label:
             #~ settings.LINO.add_dummy_message(self.label)
@@ -1519,7 +1522,8 @@ class LayoutHandle:
         #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
             if self._main is None:
-                raise Exception("%s.%s could not create main element" % (rh.report,self.layout))
+                raise Exception("%s.%s could not create main element" 
+                    % (rh.report,self.layout))
         else:
             raise Exception("%s has no main" % self.layout)
             

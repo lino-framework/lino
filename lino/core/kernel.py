@@ -115,7 +115,8 @@ def analyze_models(self,make_messages):
             if make_messages:
                 dtl.make_dummy_messages_file()
             
-        load_config_files(loader,'*.dtl','%s/%s' % (model._meta.app_label,model.__name__))
+        load_config_files(loader,'*.dtl','%s/%s' 
+            % (model._meta.app_label,model.__name__))
         
         #~ logger.debug("20110822 %s._lino_detail_layouts : %s",
             #~ full_model_name(model),

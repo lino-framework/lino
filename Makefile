@@ -47,3 +47,7 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.apps.igen.settings $(TESTS_OPTIONS)
 
 
+appdocs:
+	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings docs/dsbe/appdocs
+	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
+

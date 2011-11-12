@@ -12,6 +12,10 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Das Geschlecht (m/w) einer Person wird in Englisch "Gender" und 
+    nicht "Sex" genannt. Also wenigstens die Feldbezeichnungen ändern, 
+    und bei Gelegenheit auch die internen Feldnamen.
+
 #.  Der Begriff "Arbeitsvertrag" ist irritierend, denn eigentlich werden die Dinger in Eupen 
     "Artikel-60-7-Konvention" genannt. 
 

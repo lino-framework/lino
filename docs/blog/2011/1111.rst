@@ -1,6 +1,9 @@
 20111111
 ========
 
+browser-specific UI language
+----------------------------
+
 Started support for user-specific language selection.
 The basic trick is to add 
 Django's `LocaleMiddleware` to 
@@ -24,7 +27,9 @@ translation when filling their `choices` list.
 
 That's subtile! Check-in 20111111 before touching this problem.
 
-After more than 2 hours of my evening I found the solution, which is only one line.
+After more than 2 hours of my evening I found the solution, 
+which is only one line in 
+:meth:`lino.utils.choicelists.ChoiceList.display_text`:
 Before::
 
     @classmethod
@@ -33,18 +38,28 @@ Before::
         
 After::        
 
+    from django.utils.functional import lazy
+    
     @classmethod
     def display_text(cls,bc):
         return lazy(unicode,unicode)(bc)
 
-That is, :meth:`lino.utils.choicelists.ChoiceList.display_text` 
-now returns a `Promise` of a call to `unicode()` and not yet 
-the result of a call to `unicode()`.
+That is, this method 
+now returns a `Promise` of a call to `unicode()` 
+and not already the result of a call to `unicode()`.
 
 And another line of code had to change, 
 the `__unicode__()` method 
 of :class:`lino.modlib.properties.PropertyOccurence` must 
 explicitly call unicode on that `Promise`.
+
+As a side-effect, some unit tests needed to change 
+because we use now `LocaleMiddleware`: we cannot any longer use 
+:func:`lino.utils.babel.set_language` to select the response 
+language, instead we must pass a `HTTP_ACCEPT_LANGUAGE` keyword to
+Django's `TestCase.client.get()` function.
+The unit tests would break again if for some reason 
+we'd remove `LocaleMiddleware` again.
 
 Check-in 20111111b.
 
@@ -56,4 +71,16 @@ And a last problem (for today) was that in :mod:`lino.modlib.countries.models`
 I used ugettext and not ugettext_lazy for marking translatable strings.
 
 Check-in 20111111d.
+
+Other changes
+-------------
+
+While researching for the above solution I did a few internal optimizations:
+
+- The `few_countries` fixture now adds multilingual country names
+
+- New function :func:`lino.utils.codetime` used by :meth:`lino.ui.extjs3.ext_ui.ExtUI.build_lino_js` 
+  to avoid recreating the :xfile:`lino.js` files on each 
+  server restart.
+  Seems to work, but there may be unexpected surprises...
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-11 08:59+0000\n"
+"POT-Creation-Date: 2011-11-12 11:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Languages"
 msgstr ""
 
-#: .\models.py:65 .\models.py:131
+#: .\models.py:65
 msgid "Country"
 msgstr ""
 
@@ -33,7 +33,7 @@ msgstr ""
 msgid "Countries"
 msgstr ""
 
-#: .\models.py:101 .\models.py:133
+#: .\models.py:101
 msgid "City"
 msgstr ""
 

@@ -1,0 +1,26 @@
+20111112
+========
+
+More details to do for the support of 
+user-specific language selection.
+
+:class:`lino.apps.dsbe.models.CefLevel` overrides `display_text`, 
+and this method wasn't yet adapted to yesterday's changes.
+
+There are still some places where Lino translates too early: 
+
+- the headers of tabs
+- labels of buttons and menus
+
+There is one conceptual detail which needed a design decision: 
+how to mark hotkey letters in menu items.
+Until now we had the following temporary solution::
+
+  def prepare_label(mi):
+      label = unicode(mi.label) # trigger translation
+      n = label.find(mi.HOTKEY_MARKER)
+      if n != -1:
+          label = label.replace(mi.HOTKEY_MARKER,'')
+      return label
+
+This doesn't work any longer with lazy translation.

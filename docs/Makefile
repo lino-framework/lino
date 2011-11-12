@@ -41,10 +41,6 @@ clean:
 	-rm -rf $(CACHEDIR)
 	-rm -rf $(BUILDDIR)
 
-appdocs:
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings dsbe/appdocs
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings igen/appdocs
-
 html:
 	mkdir -p $(CACHEDIR) 
 	mkdir -p $(BUILDDIR)

@@ -115,12 +115,17 @@ class HttpResponseDeleted(HttpResponse):
     status_code = 204
     
 def prepare_label(mi):
-    label = unicode(mi.label) # trigger translation
-    n = label.find(mi.HOTKEY_MARKER)
-    if n != -1:
-        label = label.replace(mi.HOTKEY_MARKER,'')
-        #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
-    return label
+    return mi.label
+    """
+    The original idea doesn't work any more with lazy translation.
+    See :doc:`/blog/2011/1112`
+    """
+    #~ label = unicode(mi.label) # trigger translation
+    #~ n = label.find(mi.HOTKEY_MARKER)
+    #~ if n != -1:
+        #~ label = label.replace(mi.HOTKEY_MARKER,'')
+        #~ #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
+    #~ return label
     
         
 #~ def element_name(elem):
@@ -590,7 +595,7 @@ class ExtUI(base.UI):
         self.welcome_template.lino = lino
         #~ main=ext_elems.ExtPanel(
         #~ quicklinks = [dict(text="A")]
-        html=unicode(self.welcome_template)
+        html = unicode(self.welcome_template)
         quicklinks = settings.LINO.get_quicklinks(self,request.user)
         if quicklinks.items:
             html = 'Quick Links: ' + ' '.join([self.action_href(mi.action) for mi in quicklinks.items]) + '<br/>' + html
@@ -897,7 +902,8 @@ tinymce.init({
                 rh.update_detail(tab,desc)
             except Exception,e:
                 logger.exception(e)
-                return json_response_kw(success=False,message=unicode(e),alert=True)
+                return json_response_kw(success=False,
+                    message=unicode(e),alert=True)
             self.build_lino_js()
             return json_response_kw(success=True)
             #detail_layout
@@ -1103,7 +1109,8 @@ tinymce.init({
                 elem.delete()
             except Exception,e:
                 dblogger.exception(e)
-                msg = _("Failed to delete %(record)s : %(error)s.") % dict(record=obj2unicode(elem),error=e)
+                msg = _("Failed to delete %(record)s : %(error)s."
+                    ) % dict(record=obj2unicode(elem),error=e)
                 #~ msg = "Failed to delete %s." % element_name(elem)
                 return error_response(None,msg)
                 #~ raise Http404(msg)
@@ -1353,8 +1360,10 @@ tinymce.init({
                 
             templates = []
             for obj in qs:
-                url = self.build_url('templates',app_label,actor,pk,fldname,unicode(obj.pk))
-                templates.append([unicode(obj.name),url,unicode(obj.description)])
+                url = self.build_url('templates',
+                    app_label,actor,pk,fldname,unicode(obj.pk))
+                templates.append([
+                    unicode(obj.name),url,unicode(obj.description)])
             js = "var tinyMCETemplateList = %s;" % py2js(templates)
             return HttpResponse(js,content_type='text/json')
         raise Http404("Method %r not supported" % request.method)
@@ -1714,7 +1723,8 @@ tinymce.init({
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(
-          text=unicode(a.label),
+          text=a.label,
+          #~ text=unicode(a.label),
         )
         return kw
         

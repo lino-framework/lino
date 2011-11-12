@@ -108,31 +108,54 @@ def niss_validator(national_id):
         raise ValidationError("Invalid Belgian NISS %r (checkdigit)" 
             % national_id)
 
+from django.utils.functional import lazy
+
 class CefLevel(ChoiceList):
     """
     Levels of the Common European Framework (CEF).
     
-    http://www.coe.int/t/dg4/linguistic/CADRE_EN.asp
-    http://www.coe.int/t/dg4/linguistic/Source/ManualRevision-proofread-FINAL_en.pdf
-    http://www.telc.net/en/what-telc-offers/cef-levels/a2/
+    | http://www.coe.int/t/dg4/linguistic/CADRE_EN.asp
+    | http://www.coe.int/t/dg4/linguistic/Source/ManualRevision-proofread-FINAL_en.pdf
+    | http://www.telc.net/en/what-telc-offers/cef-levels/a2/
     
     """
     label = _("CEF level")
     
     @classmethod
     def display_text(cls,bc):
-        return u"%s (%s)" % (bc.value,unicode(bc))
+        def fn(bc):
+            return u"%s (%s)" % (bc.value,unicode(bc))
+        return lazy(fn,unicode)(bc)
+        #~ return u"%s (%s)" % (bc.value,unicode(bc))
     
 add = CefLevel.add_item
-add('A1', en="basic language skills",de=u"Elementare Sprachverwendung")
-add('A2', en="basic language skills",de=u"Elementare Sprachverwendung")
-add('A2+', en="basic language skills",de=u"Elementare Sprachverwendung")
-add('B1', en="independent use of language",de=u"Selbständige Sprachverwendung")
-add('B2', en="independent use of language",de=u"Selbständige Sprachverwendung")
-add('B2+', en="independent use of language",de=u"Selbständige Sprachverwendung")
-add('C1', en="proficient use of language",de=u"Kompetente Sprachverwendung")
-add('C2', en="proficient use of language",de=u"Kompetente Sprachverwendung")
-add('C2+', en="proficient use of language",de=u"Kompetente Sprachverwendung")
+add('A1', en="basic language skills",
+          de=u"Elementare Sprachverwendung",
+          fr=u"Utilisation élémentaire")
+add('A2', en="basic language skills",
+          de=u"Elementare Sprachverwendung",
+          fr=u"Utilisation élémentaire")
+add('A2+', en="basic language skills",
+           de=u"Elementare Sprachverwendung",
+          fr=u"Utilisation élémentaire")
+add('B1', en="independent use of language",
+          de=u"Selbständige Sprachverwendung",
+          fr=u"Utilisation indépendante")
+add('B2', en="independent use of language",
+          de=u"Selbständige Sprachverwendung",
+          fr=u"Utilisation indépendante")
+add('B2+', en="independent use of language",
+          de=u"Selbständige Sprachverwendung",
+          fr=u"Utilisation indépendante")
+add('C1', en="proficient use of language",
+          de=u"Kompetente Sprachverwendung",
+          fr=u"Utilisation compétente")
+add('C2', en="proficient use of language",
+          de=u"Kompetente Sprachverwendung",
+          fr=u"Utilisation compétente")
+add('C2+', en="proficient use of language",
+          de=u"Exzellente Sprachverwendung",
+          fr=u"Utilisation excellente")
 
 
 
