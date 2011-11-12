@@ -14,7 +14,8 @@ New features
   in ihrem Chrome Französisch als erste Sprache gesetzt bekommen und 
   mir dann Verbesserungsvorschläge schicken.
   
-- Listing "Übersicht Verträge" kommt jetzt erstens besser raus und 
+- Listing "Übersicht Verträge" kommt jetzt erstens 
+  mit kleinerer Schrift und engeren Rändern raus, und 
   zweitens als RTF-Dokument, das über WebDAV verändert werden kann.
   
 - :mod:`lino.apps.dsbe` fügt jetzt in `contacts.RoleType` ein 

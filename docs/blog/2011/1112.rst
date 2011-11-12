@@ -43,3 +43,17 @@ Optimizations when printing a :class:`Listing <lino.mixins.printable.Listing>`:
   but a `Default.odt` in the model's config directory.
 
 Check-in 20111112b
+
+
+
+Traceback (most recent call last):
+  File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1207, in api_element_view
+    return a.run(ar,elem)
+  File "/var/snapshots/lino/lino/mixins/printable.py", line 548, in run
+    bm.build(self,elem)
+  File "/var/snapshots/lino/lino/mixins/printable.py", line 246, in build
+    tplfile = find_config_file(tpl_leaf,self.get_group(elem))
+  File "/var/snapshots/lino/lino/mixins/printable.py", line 210, in get_group
+    return elem.get_templates_group()
+AttributeError: 'CourseOffer' object has no attribute 'get_templates_group'
+

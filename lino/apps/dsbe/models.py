@@ -1354,7 +1354,7 @@ class CourseContent(models.Model):
         return unicode(self.name)
         
   
-class CourseOffer(models.Model):
+class CourseOffer(models.Model,mixins.Printable):
     """
     """
     class Meta:

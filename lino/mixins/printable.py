@@ -621,6 +621,9 @@ class PrintableType(models.Model):
         return get_template_choices(cls,build_method)
     
 class Printable(object):
+    """
+    Mixin for Models whose instances can "print" (generate a printable document).
+    """
   
     def get_print_language(self,pm):
         return babel.DEFAULT_LANGUAGE
@@ -630,9 +633,6 @@ class Printable(object):
         
   
 class CachedPrintable(models.Model,Printable):
-    """
-    Mixin for Models whose instances can "print" (generate a printable document).
-    """
     
     must_build = models.BooleanField(_("must build"),default=True,editable=False)
     """
