@@ -18,6 +18,11 @@ There were still some places where Lino translates too early:
 Worked on the French translations which are far from being 
 perfect but start to get usable.
 
+Das Geschlecht (m/w) einer Person wird in Englisch "Gender" und 
+nicht "Sex" genannt. Ich habe jetzt wenigstens die Feldbezeichnung 
+geändert. Bei Gelegenheit auch den internen Feldnamen 
+(obschon das mehr Arbeit sein wird).
+
 There is one conceptual detail which needed a design decision: 
 how to mark **hotkey letters in menu items**.
 Until now we had the following temporary solution::
@@ -45,25 +50,12 @@ Optimizations when printing a :class:`Listing <lino.mixins.printable.Listing>`:
 Check-in 20111112b
 
 
+Miscellaneous Bugfixes
+----------------------
 
-Traceback (most recent call last):
-  File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1207, in api_element_view
-    return a.run(ar,elem)
-  File "/var/snapshots/lino/lino/mixins/printable.py", line 548, in run
-    bm.build(self,elem)
-  File "/var/snapshots/lino/lino/mixins/printable.py", line 246, in build
-    tplfile = find_config_file(tpl_leaf,self.get_group(elem))
-  File "/var/snapshots/lino/lino/mixins/printable.py", line 210, in get_group
-    return elem.get_templates_group()
-AttributeError: 'CourseOffer' object has no attribute 'get_templates_group'
+- Candidates of a Course : this print action was erroneously moved 
+  from Course to CourseOffer. Fixed.
 
-Bug "maximzable"
-----------------
+- The Labels of menu entries for Listings were strange: 
+  twice the listing title, separated by a space. Fixed.
 
-There was a useless vertical scrollbar on all windows which 
-appeared sometimes and didn't disappeasr. 
-The bug didn't reproduce after I added a "maximzable=true" to the 
-base Window configuration.
-
-Candidates of a Course : this print action was erroneously moved 
-from Course to CourseOffer. Fixed.

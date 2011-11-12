@@ -768,7 +768,12 @@ import cgi
 
 
 class Listing(CachedPrintable):
-    
+    """
+    Abstract base class for all Listings. 
+    A Listing is a printable report that requires some parameters given by the user.
+    Subclasses must implement the :meth:`body` method.
+    Each time a user asks to print a Listing, Lino will create a new record.
+    """
     #~ template_name = 'Listing.odt'
     template_name = None
     build_method = None
@@ -818,6 +823,10 @@ class Listing(CachedPrintable):
         return html
         
     def body(self):
+        """
+        To be implemented by subclasses.
+        Build the XHTML content of the listing to be printed.
+        """
         raise NotImplementedError
         
     #~ def preview(self,request):
@@ -830,6 +839,10 @@ class Listing(CachedPrintable):
     
     
 class InitiateListing(reports.InsertRow):
+    """
+    This is the (otherwise invisible) action which is used 
+    for the main menu entry of a :class:`Listing`.
+    """
     callable_from = tuple()
     name = 'listing'
     #~ label = _("Initiate")
@@ -838,10 +851,15 @@ class InitiateListing(reports.InsertRow):
     def get_action_title(self,rh):
         return _(u"Initiate Listing «%s»") % self.actor.model._meta.verbose_name
   
+    def get_button_label(self):
+        return self.actor.model._meta.verbose_name
         
 class Listings(reports.Report):
     model = Listing
     
+    def init_label(self):
+        return _(u"Listings «%s»") % self.model._meta.verbose_name
+        
     def setup_actions(self):
         #~ print 'lino.mixins.printable.Listings.setup_actions : ', self.model
         alist = []
@@ -852,6 +870,8 @@ class Listings(reports.Report):
             alist.append(reports.SubmitDetail())
             alist.append(InitiateListing(self,label=self.model._meta.verbose_name)) # replaces InsertRow
             alist.append(reports.SubmitInsert())
+            self.default_action = reports.GridEdit(self)
+            #~ alist.append(self.default_action)
         alist.append(reports.DeleteSelected())
         self.set_actions(alist)
         

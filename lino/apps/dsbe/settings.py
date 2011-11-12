@@ -22,6 +22,12 @@ import lino
 
 from lino.apps.std.settings import *
 
+LISTINGS = """
+jobs.ContractsSituation
+lino.DataControlListing
+""".split()
+
+
 class Lino(Lino):
     """
     Lino/DSBE is
@@ -119,11 +125,8 @@ class Lino(Lino):
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:
         listings = main.add_menu("lst",_("Listings"))
-        LISTINGS = """
-        jobs.ContractsSituation
-        lino.DataControlListing
-        """.split()
         for listing in LISTINGS:
+            #~ listings.add_action(listing)
             listings.add_action(listing + '.listing')
         #~ listings.add_instance_action(lst)
         #~ for lst in dsbe.FooListing.objects.all():
@@ -217,6 +220,12 @@ class Lino(Lino):
             m.add_action('dsbe.Courses')
             
             cal.setup_explorer_menu(self,ui,user,m)
+            
+            lst = m.add_menu("lst",_("Listings"))
+            for listing in LISTINGS:
+                #~ listings.add_action(listing)
+                lst.add_action(listing+"Report")
+            
 
         
         m = main.add_menu("help",_("Help"))
