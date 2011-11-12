@@ -1398,7 +1398,7 @@ class CourseOffer(models.Model):
         
         
     
-class Course(models.Model):
+class Course(models.Model,mixins.Printable):
     u"""
     Ein konkreter Kurs, der an einem bestimmten Datum beginnt.
     Für jeden Kurs muss ein entsprechendes Angebot existieren, 
