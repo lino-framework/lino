@@ -522,8 +522,11 @@ class PrintAction(BasePrintAction):
         return rr.ui.success_response(**kw)
       
 class DirectPrintAction(BasePrintAction):
+    """
+    A Print Action that uses a hard-coded template.
+    """
     #~ def __init__(self,rpt,name,label,bmname,tplname):
-    def __init__(self,name,label,tplname,build_method=None):
+    def __init__(self,name,label,tplname=None,build_method=None):
         BasePrintAction.__init__(self,name,label)
         #~ self.bm =  bm_dict.get(build_method or settings.LINO.preferred_build_method)
         self.build_method = build_method
@@ -531,17 +534,25 @@ class DirectPrintAction(BasePrintAction):
         
     def get_print_templates(self,bm,elem):
         #~ assert bm is self.bm
-        return [ self.tplname ]
+        if self.tplname:
+            return [ self.tplname + bm.template_ext ]
+        return elem.get_print_templates(bm,self)
+        #~ return super(DirectPrintAction,self).get_print_templates(bm,elem)
         
         
     def run(self,rr,elem,**kw):
         bm =  bm_dict.get(self.build_method or settings.LINO.config.default_build_method)
-        if not self.tplname.endswith(bm.template_ext):
-            raise Exception("Invalid template for build method %r" % bm.name)
+        #~ if self.tplname:
+            #~ if not self.tplname.endswith(bm.template_ext):
+                #~ raise Exception("Invalid template for build method %r" % bm.name)
         bm.build(self,elem)
         #~ target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         #~ return rr.ui.success_response(open_url=target,**kw)
-        kw.update(open_url=bm.get_target_url(self,elem,rr.ui))
+        url = bm.get_target_url(self,elem,rr.ui)
+        if bm.use_webdav and settings.LINO.use_davlink:
+            kw.update(open_davlink_url=url)
+        else:
+            kw.update(open_url=url)
         return rr.ui.success_response(**kw)
     
 #~ class EditTemplateAction(reports.RowAction):
@@ -650,6 +661,8 @@ class CachedPrintable(models.Model,Printable):
         may not contain more than 1 element.
         """
         #~ return [ filename_root(self) + bm.template_ext ]
+        if bm.default_template:
+            return [ bm.default_template ]
         return [ 'Default' + bm.template_ext ]
           
     def unused_get_last_modified_time(self):
@@ -755,7 +768,8 @@ import cgi
 
 class Listing(CachedPrintable):
     
-    template_name = 'Listing.odt'
+    #~ template_name = 'Listing.odt'
+    template_name = None
     
     class Meta:
         abstract = True
@@ -784,8 +798,8 @@ class Listing(CachedPrintable):
         return force_unicode(self.title)
         #~ return self.get_title()
         
-    def get_templates_group(self):
-        return ''
+    #~ def get_templates_group(self):
+        #~ return ''
         
     def get_title(self):
         return self._meta.verbose_name # "Untitled Listing"

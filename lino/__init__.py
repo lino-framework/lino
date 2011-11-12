@@ -359,7 +359,24 @@ class Lino(object):
     webdav_url = None
     """
     The URL prefix for webdav files.
-    Default is "/media/webdav/".
+    In a normal production configuration you should leave this to `None`, 
+    Lino will set a default value "/media/webdav/",
+    supposing that your Apache is configured as described in 
+    :doc:`/admin/apache_webdav`.
+    
+    This may be used to simulate a :term:`WebDAV` location 
+    on a development server.
+    For example on a Windows machine, you may set it to ``w:\`` in your 
+    :xfile:`sitecustomize_lino.py`::
+    
+        def on_init(LINO):
+            (...)
+            LINO.webdav_url = r"w:\"
+      
+    and before invoking :term:`runserver`, you issue in a command prompt::
+    
+        subst w: <dev_project_path>\media\webdav
+        
     """
     
     loading_from_dump = False
