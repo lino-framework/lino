@@ -64,3 +64,6 @@ There was a useless vertical scrollbar on all windows which
 appeared sometimes and didn't disappeasr. 
 The bug didn't reproduce after I added a "maximzable=true" to the 
 base Window configuration.
+
+Candidates of a Course : this print action was erroneously moved 
+from Course to CourseOffer. Fixed.
