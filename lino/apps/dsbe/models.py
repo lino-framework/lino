@@ -1354,7 +1354,7 @@ class CourseContent(models.Model):
         return unicode(self.name)
         
   
-class CourseOffer(models.Model,mixins.Printable):
+class CourseOffer(models.Model):
     """
     """
     class Meta:
@@ -1388,9 +1388,9 @@ class CourseOffer(models.Model,mixins.Printable):
     def provider_choices(cls):
         return CourseProviders.request().queryset
         
-    @classmethod
-    def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates'))
+    #~ @classmethod
+    #~ def setup_report(model,rpt):
+        #~ rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates'))
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
@@ -1440,7 +1440,7 @@ class Course(models.Model):
   
     @classmethod
     def setup_report(model,rpt):
-        #~ rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates.odt'))
+        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates'))
         rpt.add_action(DirectPrintAction('participants',_("List of participants"),'participants'))
         
     def get_print_language(self,pm):
