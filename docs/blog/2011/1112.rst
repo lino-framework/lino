@@ -60,6 +60,23 @@ Miscellaneous Bugfixes
   twice the listing title, separated by a space. Fixed.
   
 - There is now also a command to view the existing records for 
-  each Listing type. :menuselection:`Explorer --> Listings`.
+  each Listing type. 
+  :menuselection:`Explorer --> Listings`.
+  
+- Fixed the "Irritating scrollbar" bug:
+  The welcome page gets a vertical scrollbar when it has more than 
+  a screenful of information to display.
+  That's normal, but it was irritating 
+  that this scrollbar "didn't disappear" when another window is opened. 
+  And even worse, it disturbed the layout of some windows (e.g. detail of a course) 
+  because their layout manager isn't obviously aware of that scrollbar when creating 
+  the canvas, and thus each window now also has a horizontal scrollbar.
+  
+  - `html_lines` inserts the `welcome.html` now only if ``not on_ready``.
+  - Quick Links now also use a `http:` instead of a `javascript:` link.
+  
+  
+
+  
 
 Check-in 20111112c

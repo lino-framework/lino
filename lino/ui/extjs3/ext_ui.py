@@ -612,7 +612,9 @@ class ExtUI(base.UI):
             
             quicklinks = settings.LINO.get_quicklinks(self,request.user)
             if quicklinks.items:
-                html = 'Quick Links: ' + ' '.join([self.action_href(mi.action) for mi in quicklinks.items]) + '<br/>' + html
+                html = 'Quick Links: ' + ' '.join(
+                  [self.action_href_http(mi.action) for mi in quicklinks.items]
+                  ) + '<br/>' + html
             main.update(html=html)
         
         #~ if quicklinks.items:
@@ -1541,20 +1543,6 @@ tinymce.init({
         #~ rpt = self.requested_report(request,app_label,actor)
         #~ return self.action_href(rpt.default_action,**kw)
 
-    def action_href(self,a,label=None,**params):
-        if label is None:
-            label = a.get_button_label()
-            #~ label = a.button_label
-        label = cgi.escape(force_unicode(label))
-        #~ print 20110915, a, label
-        onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
-        #~ print 20110120, onclick
-        onclick = cgi.escape(onclick)
-        onclick = onclick.replace('"','&quot;')
-        #~ return '<input type="button" onclick="%s" value=" %s ">' % (onclick,label)
-        #~ return '[<a href="#" onclick="%s">%s</a>]' % (onclick,label)
-        return '[<a href="javascript:%s">%s</a>]' % (onclick,label)
-
     def quick_upload_buttons(self,rr):
         """
         Deserves more documentation.
@@ -1626,6 +1614,29 @@ tinymce.init({
             return dict(text=prepare_label(v),handler=js_code(handler))
         return v
         
+
+    def action_href_http(self,a,label=None,**params):
+        """
+        Return a HTML chunk with a link to this action.
+        """
+        label = cgi.escape(force_unicode(label or a.get_button_label()))
+        return '[<a href="%s">%s</a>]' % (self.get_action_url(a,**params),label)
+        
+    def action_href(self,a,label=None,**params):
+        """
+        Return a HTML chunk with a link to this action.
+        """
+        #~ if label is None:
+            #~ label = a.get_button_label()
+        label = cgi.escape(force_unicode(label or a.get_button_label()))
+        #~ print 20110915, a, label
+        onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
+        #~ print 20110120, onclick
+        onclick = cgi.escape(onclick)
+        onclick = onclick.replace('"','&quot;')
+        #~ return '<input type="button" onclick="%s" value=" %s ">' % (onclick,label)
+        #~ return '[<a href="#" onclick="%s">%s</a>]' % (onclick,label)
+        return '[<a href="javascript:%s">%s</a>]' % (onclick,label)
 
     def get_action_url(self,action,*args,**kw):
         #~ if not action is action.actor.default_action:

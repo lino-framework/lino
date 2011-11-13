@@ -12,16 +12,6 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Irritating scrollbar.
-    When the welcome page has more than a screenful of information to display, 
-    then if gets a vertical scrollbar, which is normal. But it's irritating 
-    that this scrollbar doesn't disappear when another window is opened. 
-    In practice, that useless scrollbar remains there for all normal windows. 
-    And even worse: it disturbs the layout of those normal windows because 
-    their layout manager isn't obviously aware of that scrollbar when creating 
-    the canvas, and thus each window now also has a horizontal scrollbar.
-    This problem is probably not easy to solve.
-
 #.  Rename field "sex" to "gender" in :mod:`lino.mixins.personal`.
 
 #.  Der Begriff "Arbeitsvertrag" ist irritierend, denn eigentlich werden die Dinger in Eupen 
