@@ -667,7 +667,7 @@ class PersonLoader(LinoMdbLoader):
         else:
             kw.update(last_name="?")
             
-        kw.update(sex=row['Sexe'])
+        kw.update(gender=row['Sexe'])
         
         #~ sex = row['Sexe']
         #~ if sex == "M"

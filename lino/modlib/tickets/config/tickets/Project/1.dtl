@@ -1,0 +1,10 @@
+:label: 
+:label_align: top
+:hideCheckBoxLabels: 
+
+main = 
+  name summary type user 
+  description
+  TicketsByProject
+  # cal.EventsByProject
+

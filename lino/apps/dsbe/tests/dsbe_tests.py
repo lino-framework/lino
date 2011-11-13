@@ -285,7 +285,7 @@ def test04(self):
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
     """
     from lino.apps.dsbe.models import Person, Company, Country, City
-    from lino.modlib.contacts.utils import SEX_MALE
+    from lino.modlib.contacts.utils import GENDER_MALE
     babel.set_language('fr')
     be = Country(isocode="BE",name="Belgique")
     be.save()
@@ -294,7 +294,7 @@ def test04(self):
     p = Person(
       first_name="Jean Louis",last_name="Dupont",
       street_prefix="Avenue de la", street="gare", street_no="3", street_box="b",
-      city=bxl, sex=SEX_MALE
+      city=bxl, gender=GENDER_MALE
       )
     p.full_clean()
     p.save()

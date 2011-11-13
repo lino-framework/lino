@@ -45,18 +45,22 @@ def test01(self):
     Tests some basic funtionality.
     """
     luc = Person.objects.get(first_name__exact='Luc',last_name__exact='Saffre')
-    babel.set_language('en')
-    self.assertEquals(luc.address(), u'''\
+    if 'en' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('en')
+        self.assertEquals(luc.address(), u'''\
 Mr Luc SAFFRE
 Uus 1
 Vana-Vigala küla
 78003 Vigala
 Estonia''')
-    self.assertEquals(luc.address_location(), u'''\
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('de')
+        self.assertEquals(luc.address(), u'''\
+Herrn Luc SAFFRE
 Uus 1
 Vana-Vigala küla
 78003 Vigala
-Estonia''')
+Estland''')
     babel.set_language(None)
     
     
@@ -65,21 +69,24 @@ def test02(self):
     """
     """
     #~ settings.LINO.auto_makeui = False
-    url = '/api/contacts/Persons/194?query=&an=detail&fmt=json'
-    response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
-    result = self.check_json_result(response,'navinfo disable_delete data id title')
-    self.assertEqual(result['data']['country'],"Estonia")
-    self.assertEqual(result['data']['sex'],"Female")
+    luc = Person.objects.get(name__exact="Saffre Luc")
+
+    url = '/api/contacts/Persons/%d?query=&an=detail&fmt=json' % luc.pk
+    if 'en' in babel.AVAILABLE_LANGUAGES:
+        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
+        result = self.check_json_result(response,'navinfo disable_delete data id title')
+        self.assertEqual(result['data']['country'],"Estonia")
+        self.assertEqual(result['data']['gender'],"Male")
     
     if 'de' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estland")
-        self.assertEqual(result['data']['sex'],"Weiblich")
+        self.assertEqual(result['data']['gender'],u"Männlich")
         
     if 'fr' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='fr')
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estonie")
-        self.assertEqual(result['data']['sex'],u"Féminin")
+        self.assertEqual(result['data']['gender'],u"Masculin")
         

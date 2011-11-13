@@ -115,11 +115,11 @@ def model_overview(model):
     #~ headers.append("help text")
     #~ formatters.append(lambda f: f.help_text)
     def verbose_name(f):
-        babel.set_language('en')
+        babel.set_language(babel.DEFAULT_LANGUAGE)
         label_en = force_unicode(_(f.verbose_name))
         babel_labels = []
         for lng in babel.AVAILABLE_LANGUAGES:
-            if lng != 'en':
+            if lng != babel.DEFAULT_LANGUAGE:
                 babel.set_language(lng)
                 label = force_unicode(_(f.verbose_name))
                 if label != label_en:

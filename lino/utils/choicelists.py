@@ -274,3 +274,10 @@ add('2',en=u"moderate",  de=u"mittelmäßig", fr=u"moyennement", ref="default")
 add('3',en=u"quite well",de=u"gut",         fr=u"bien")
 add('4',en=u"very well", de=u"sehr gut",    fr=u"très bien")
 
+
+#~ class Gender(ChoiceList):
+    #~ """
+    #~ """
+#~ add = Gender.add_item
+#~ add('0',en=u"not at all",de=u"gar nicht",   fr=u"pas du tout")
+    

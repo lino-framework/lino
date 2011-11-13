@@ -4,7 +4,10 @@ Version 1.2.6 (2011-11-10)
 New features
 ------------
 
-- BCSS-Anbindung erste Versuche. Siehe :doc:`/blog/2011/1110`.
+- BCSS-Anbindung erste Versuche. Vom neuen Reiter "BCSS" solltet ihr
+  vorläufig noch die Finger von lassen, der ist nur zu 
+  Experimentierzwecken für Gerd und mich gedacht.
+  Siehe :doc:`/blog/2011/1110`.
 
 - Support for user-specific language of the web interface. 
   On a site with more than one language, Lino selects now the user 
@@ -37,6 +40,16 @@ New features
  
 Bugs fixed
 ----------
+
+- Wenn die Startseite einen Scrollbar hat, weil sie mehr 
+  Information enthält als auf einen Bildschirm drauf passt,
+  dann verschwand dieser Scrollbar nicht, wenn sich ein 
+  Fenster öffnete.
+  Behoben.
+  Nebenwirkung: wenn man das "oberste" Fenster schließt, 
+  sieht man jetzt nicht mehr wie gewohnt die Erinnerungen, 
+  sondern nur eine weiße Fläche. Man muss explizit auf 
+  "Startseite" klicken, um die Erinnerungen anzuzeigen.
 
 Administrator
 -------------

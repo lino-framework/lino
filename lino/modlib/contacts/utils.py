@@ -1,5 +1,5 @@
-#coding: UTF-8
-## Copyright 2010 Luc Saffre
+# -*- coding: UTF-8 -*-
+## Copyright 2010-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -24,6 +24,10 @@ from lino.utils import join_words
 
 name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VOM','VON','OF', "DE", "DU", "EL", "AL")
 name_prefixes2 = ("VAN DEN","VAN DER","VAN DE","IN HET", "VON DER","DE LA")
+
+
+
+
 
 def name2kw(s,last_name_first=True):
     """
@@ -156,15 +160,15 @@ Examples:
         kw['street'] = s
     return kw
 
-SEX_MALE = 'M'
-SEX_FEMALE = 'F'
-SEX_CHOICES = ((SEX_MALE,_('Male')),(SEX_FEMALE,_('Female')))
+GENDER_MALE = 'M'
+GENDER_FEMALE = 'F'
+GENDER_CHOICES = ((GENDER_MALE,_('Male')),(GENDER_FEMALE,_('Female')))
 
 
-def get_salutation(lang,sex,nominative=False):
+def get_salutation(lang,gender,nominative=False):
     """
     Returns "Mr" or "Mrs" or a translation thereof, 
-    depending on the sex and the current babel language.
+    depending on the gender and the current babel language.
     
     Note that the English abbreviations 
     `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
@@ -179,16 +183,16 @@ def get_salutation(lang,sex,nominative=False):
     
     """
     if lang == 'de':
-        if sex == SEX_FEMALE:
+        if gender == GENDER_FEMALE:
             return "Frau"
         if nominative:
             return "Herr"
         return "Herrn"
     if lang == 'fr':
-        if sex == SEX_FEMALE:
+        if gender == GENDER_FEMALE:
             return "Mme"
         return "M."
-    if sex == SEX_FEMALE:
+    if gender == GENDER_FEMALE:
         return "Mrs"
     return "Mr"
         

@@ -24,12 +24,18 @@ from lino.apps.std.settings import *
 from lino.utils.jsgen import js_code
 
 class Lino(Lino):
-    source_dir = os.path.dirname(__file__)
+  
+    languages = ('en','fr', 'de')
+    
+    #~ source_dir = os.path.dirname(__file__)
     title = "Lino/CRL"
     #~ domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/crl/index.html"
     #~ migration_module = 'lino.apps.polo.migrate'
     
+    def get_app_source_file(self):
+        return __file__
+        
     def get_site_menu(self,ui,user):
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import perms
@@ -136,12 +142,6 @@ LINO = Lino(__file__,globals())
 
 TIME_ZONE = 'Europe/Brussels'
 
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en'
-#~ LANGUAGE_CODE = 'de-BE'
-#~ LANGUAGE_CODE = 'fr-BE'
-
 #~ SITE_ID = 1 # see also fill.py
 
 INSTALLED_APPS = (
@@ -168,4 +168,3 @@ INSTALLED_APPS = (
   #~ 'south', # http://south.aeracode.org
 )
 
-LANGUAGES = language_choices('en','fr', 'de')

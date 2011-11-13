@@ -609,6 +609,12 @@ def migrate_from_1_2_4(globals_dict):
     globals_dict.update(create_dsbe_courserequest=create_dsbe_courserequest)
     
     return '1.2.5'
+    
+def migrate_from_1_2_5(globals_dict): return '1.2.6'
+  
+def migrate_from_1_2_6(globals_dict):    
+    raise Exception("todo: sex -> gender in Person, PersonSearch")
+    return '1.2.6'
   
 
 def install(globals_dict):

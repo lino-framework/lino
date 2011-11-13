@@ -239,24 +239,6 @@ LOGGING_CONFIG = 'lino.utils.log.configure'
 LOGGING = dict(filename=None,level='INFO')
 
 
-gettext = lambda s: s
-
-def language_choices(*args):
-    """
-    A subset of Django's LANGUAGES.
-    See :doc:`/blog/2011/0226`.
-    """
-    _langs = dict(
-        en=gettext('English'),
-        de=gettext('German'),
-        fr=gettext('French'),
-        nl=gettext('Dutch'),
-        et=gettext('Estonian'),
-    )
-    return [(x,_langs[x]) for x in args]
-      
-LANGUAGES = language_choices('en','de','fr','nl','et')
-
 QOOXDOO_PATH = None
 """
 Path to the Qooxdoo SDK. Used by :term:`makeui`

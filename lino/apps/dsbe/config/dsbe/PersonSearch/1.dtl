@@ -3,6 +3,6 @@
 
 main =
     id:8 title 
-    only_my_persons coached_by period_from period_until aged_from:10 aged_to:10 sex:10
+    only_my_persons coached_by period_from period_until aged_from:10 aged_to:10 gender:10
     dsbe.LanguageKnowledgesBySearch dsbe.WantedPropsBySearch dsbe.UnwantedPropsBySearch
     dsbe.PersonsBySearch

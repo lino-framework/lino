@@ -24,5 +24,6 @@ Subpackages
     lino.modlib.mails
     lino.modlib.notes
     lino.modlib.properties
+    lino.modlib.tickets
     lino.modlib.users
 

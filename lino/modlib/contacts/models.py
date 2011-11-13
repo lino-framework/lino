@@ -30,6 +30,8 @@ from django.utils.translation import ugettext_lazy as _
 #~ from django.utils.translation import ugettext
 
 from django import forms
+from django.utils import translation
+
 
 import lino
 from lino import reports
@@ -38,19 +40,39 @@ from lino.utils import perms
 
 from lino import fields
 from lino import mixins
-from lino.mixins import PersonMixin
 from lino.utils import join_words
 from lino.utils.choosers import chooser
-from lino.utils.babel import babelattr
 from lino.utils import babel 
 from lino.models import get_site_config
 
 from lino.modlib.countries.models import CountryCity
 
-from django.utils import translation
+from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
+from lino.utils import join_words
+
 
 
 from lino.utils import mti
+
+class CompanyType(babel.BabelNamed):
+    """
+    Represents a possible choice for the  `type`
+    field of a :class:`Company`.
+    """
+    
+    class Meta:
+        verbose_name = _("company type")
+        verbose_name_plural = _("company types")
+        
+    abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
+    
+        
+class CompanyTypes(reports.Report):
+    model = 'contacts.CompanyType'
+    column_names = 'name *'
+    #~ label = _("Company types")
+
+
 
 
 class Contact(mti.MultiTableBase,CountryCity):
@@ -185,8 +207,6 @@ but e.g. :class:`PersonMixin` overrides this.
         return linesep.join(self.address_location_lines())
     
 
-
-
 class Contacts(reports.Report):
     model = 'contacts.Contact'
     column_names = "name email * id" 
@@ -196,7 +216,6 @@ class Contacts(reports.Report):
     def get_queryset(self):
         return self.model.objects.select_related('country','city')
 
-            
 
 class AllContacts(Contacts):
     def init_label(self):
@@ -207,10 +226,26 @@ class ContactsByCity(Contacts):
     order_by = 'street street_no street_box addr2'.split()
     column_names = "street street_no street_box addr2 name language *"
     
+class ContactsByCountry(Contacts):
+    fk_name = 'country'
+    column_names = "city street street_no name language *"
+    order_by = "city street street_no".split()
+    
+        
+
+
+def GenderField(**kw):
+    options = dict(max_length=1,blank=True,# null=True,
+        verbose_name=_("Gender"),choices=GENDER_CHOICES) 
+    options.update(kw)
+    return models.CharField(**options)
         
 
 class Born(models.Model):
-  
+    """
+    Abstract base class that adds a `birth_date` 
+    field and a virtual field "Age".
+    """
     class Meta:
         abstract = True
         
@@ -227,115 +262,79 @@ class Born(models.Model):
             return _("%d years") % (dd.days / 365)
         return _('unknown')
     age.return_type = fields.DisplayField(_("Age"))
-    #~ age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
     
 
 
-
-class PartnerDocument(models.Model):
+class Person(models.Model):
     """
-    Maybe deprecated. 
-    This adds two fields 'person' and 'company' to this model, 
-    making it something that refers to a "partner". 
-    If `company` is empty, the "partner" is a private person.
-    If `company` is filled, then `person` means a "contact person" 
-    for this company.
-    
+    Base class for models that represent a physical person. 
     """
-    
     class Meta:
         abstract = True
-        
-    person = models.ForeignKey("contacts.Person",
-        blank=True,null=True,
-        verbose_name=_("Person"))
-    company = models.ForeignKey("contacts.Company",
-        blank=True,null=True,verbose_name=_("Company"))
-        
-    def get_partner(self):
-        if self.company is not None:
-            return self.company
-        return self.person
-        
-    def get_mailable_contacts(self):
-        for p in self.company, self.person:
-            if p is not None and p.email:
-                #~ yield "%s <%s>" % (p, p.email)
-                yield ('to', p)
-                #~ yield ('to', unicode(p), p.email)
-        
-        
-    #~ def summary_row(self,ui,rr,**kw):
-        #~ if self.person:
-            #~ if self.company:
-                #~ # s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.company)
-                #~ return ui.href_to(self.company) + ' ' + ugettext("attn:") + ' ' + ui.href_to(self.person)
-            #~ else:
-                #~ return ui.href_to(self.person)
-        #~ elif self.company:
-            #~ return ui.href_to(self.company)
-            
-    def summary_row(self,ui,rr,**kw):
-        s = ui.href_to(self)
-        if self.person and not reports.has_fk(rr,'person'):
-            if self.company:
-                s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
-            else:
-                s += " (" + ui.href_to(self.person) + ")"
-        elif self.company:
-            s += " (" + ui.href_to(self.company) + ")"
-        return s
-            
-    def update_owned_task(self,task):
-        task.person = self.person
-        task.company = self.company
-        
-class ContactDocument(models.Model):
-    """
-    A document whose recipient is a :class:`Contact`.
-    """
-  
-    class Meta:
-        abstract = True
-        
-    contact = models.ForeignKey("contacts.Contact",
-        #~ blank=True,null=True,
-        related_name="%(app_label)s_%(class)s_by_contact",
-        #~ related_name="%(app_label)s_%(class)s_related",
-        verbose_name=_("Contact"))
-    language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
+        verbose_name = _("Person")
+        verbose_name_plural = _("Persons")
 
-    def get_mailable_contacts(self):
-        yield ('to',self.contact)
-
-    def get_recipient(self):
-        return self.contact
-    recipient = property(get_recipient)
-
-
-
-
-class CompanyType(babel.BabelNamed):
-    """
-    Represents a possible choice for the :class:`Company`.type
-    field.
-    Implemented by 
-    :ref:`dsbe.contacts.CompanyType`
-    :ref:`igen.contacts.CompanyType`
-    """
+    first_name = models.CharField(max_length=200,blank=True,
+      verbose_name=_('First name'))
+    "Space-separated list of all first names."
     
-    class Meta:
-        verbose_name = _("company type")
-        verbose_name_plural = _("company types")
+    last_name = models.CharField(max_length=200,blank=True,
+      verbose_name=_('Last name'))
+    "Last name (family name)."
+    
+    title = models.CharField(max_length=200,blank=True,
+      verbose_name=_('Title'))
+    "Text to print as part of the first address line in front of first_name."
         
-    abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
+    gender = GenderField()
+        
+    def get_salutation(self,**salutation_options):
+        return get_salutation(
+            translation.get_language(),
+            self.gender,**salutation_options)
     
         
-class CompanyTypes(reports.Report):
-    model = 'contacts.CompanyType'
-    column_names = 'name *'
-    #~ label = _("Company types")
+    def get_full_name(self,salutation=True,**salutation_options):
+        """Returns a one-line string composed of salutation, first_name and last_name.
         
+The optional keyword argument `salutation` can be set to `False` 
+to suppress salutations. 
+See :func:`lino.apps.dsbe.tests.dsbe_tests.test04` 
+and
+:func:`lino.modlib.contacts.tests.test01` 
+for some examples.
+
+Optional `salutation_options` see :func:`get_salutation`.
+        """
+        #~ return '%s %s' % (self.first_name, self.last_name.upper())
+        words = []
+        if salutation:
+            words.append(self.get_salutation(**salutation_options))
+        words += [self.first_name, self.last_name.upper()]
+        return join_words(*words)
+    full_name = property(get_full_name)
+    #~ full_name.return_type = models.CharField(max_length=200,verbose_name=_('Full name'))
+    
+    def address_person_lines(self,*args,**kw):
+        "Deserves more documentation."
+        if self.title:
+            yield self.title
+        yield self.get_full_name(*args,**kw)
+        #~ l = filter(lambda x:x,[self.first_name,self.last_name])
+        #~ yield  " ".join(l)
+        
+    def full_clean(self,*args,**kw):
+        l = filter(lambda x:x,[self.last_name,self.first_name])
+        self.name = " ".join(l)
+        super(Person,self).full_clean(*args,**kw)
+
+
+class Persons(reports.Report):
+    model = 'contacts.Person'
+    order_by = "last_name first_name id".split()
+    #~ app_label = 'contacts'
+    
+
 
 class CompanyMixin(models.Model):
 #~ class Company(Contact):
@@ -377,11 +376,6 @@ class CompanyMixin(models.Model):
     #~ order_by = ["name"]
     
     
-    
-class ContactsByCountry(Contacts):
-    fk_name = 'country'
-    column_names = "city street street_no name language *"
-    order_by = "city street street_no".split()
     
 
 
@@ -486,13 +480,96 @@ class RolesByChild(Roles):
     label = _("Contact for")
     fk_name = 'child'
     column_names = 'parent type *'
+    
+    
+    
+class PartnerDocument(models.Model):
+    """
+    Maybe deprecated. 
+    This adds two fields 'person' and 'company' to this model, 
+    making it something that refers to a "partner". 
+    If `company` is empty, the "partner" is a private person.
+    If `company` is filled, then `person` means a "contact person" 
+    for this company.
+    
+    """
+    
+    class Meta:
+        abstract = True
+        
+    person = models.ForeignKey("contacts.Person",
+        blank=True,null=True,
+        verbose_name=_("Person"))
+    company = models.ForeignKey("contacts.Company",
+        blank=True,null=True,verbose_name=_("Company"))
+        
+    def get_partner(self):
+        if self.company is not None:
+            return self.company
+        return self.person
+        
+    def get_mailable_contacts(self):
+        for p in self.company, self.person:
+            if p is not None and p.email:
+                #~ yield "%s <%s>" % (p, p.email)
+                yield ('to', p)
+                #~ yield ('to', unicode(p), p.email)
+        
+        
+    #~ def summary_row(self,ui,rr,**kw):
+        #~ if self.person:
+            #~ if self.company:
+                #~ # s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.company)
+                #~ return ui.href_to(self.company) + ' ' + ugettext("attn:") + ' ' + ui.href_to(self.person)
+            #~ else:
+                #~ return ui.href_to(self.person)
+        #~ elif self.company:
+            #~ return ui.href_to(self.company)
+            
+    def summary_row(self,ui,rr,**kw):
+        s = ui.href_to(self)
+        if self.person and not reports.has_fk(rr,'person'):
+            if self.company:
+                s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
+            else:
+                s += " (" + ui.href_to(self.person) + ")"
+        elif self.company:
+            s += " (" + ui.href_to(self.company) + ")"
+        return s
+            
+    def update_owned_task(self,task):
+        task.person = self.person
+        task.company = self.company
+        
+class ContactDocument(models.Model):
+    """
+    A document whose recipient is a :class:`Contact`.
+    """
+  
+    class Meta:
+        abstract = True
+        
+    contact = models.ForeignKey("contacts.Contact",
+        #~ blank=True,null=True,
+        related_name="%(app_label)s_%(class)s_by_contact",
+        #~ related_name="%(app_label)s_%(class)s_related",
+        verbose_name=_("Contact"))
+    language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
+
+    def get_mailable_contacts(self):
+        yield ('to',self.contact)
+
+    def get_recipient(self):
+        return self.contact
+    recipient = property(get_recipient)
+
+
+
+    
 
 
 if reports.is_installed('contacts'):
   
-        
-#~ assert 'lino.modlib.contacts' 
-
     from lino.models import SiteConfig
 
     reports.inject_field(SiteConfig,

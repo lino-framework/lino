@@ -122,11 +122,11 @@ class IdentifyPersonRequest(BCSSRequest):
           pc.append(PC.FirstName(person.first_name))
           if person.birth_date:
               pc.append(PC.BirthDate(person.birth_date))
-          if person.sex:
-              from lino.modlib.contacts.utils import SEX_MALE, SEX_FEMALE
-              if person.sex == SEX_MALE:
+          if person.gender:
+              from lino.modlib.contacts.utils import GENDER_MALE, GENDER_FEMALE
+              if person.gender == GENDER_MALE:
                   pc.append(PC.Gender(1))
-              elif person.sex == SEX_FEMALE:
+              elif person.gender == GENDER_FEMALE:
                   pc.append(PC.Gender(2))
           return bcss.IdentifyPersonRequest(SC(PC(*pc)))
       

@@ -21,4 +21,4 @@ box2 =
   gsm
 
 box3 =
-  sex:8 birth_date birth_date_circa age died_date 
+  gender:8 birth_date birth_date_circa age died_date 

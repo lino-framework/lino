@@ -2941,7 +2941,7 @@ Lino.WindowWrapper = function(caller,config,params,wc) {
   //~ config.base_params['fmt'] = config.action_name;
   this.config = config;
   //~ this.config = config_fn(this); 
-  this.slaves = {};
+  //~ this.slaves = {};
   //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
   //~ if (this.config.actions) {
       //~ console.log('config.actions no longer used!!!');
@@ -2958,17 +2958,28 @@ Lino.WindowWrapper = function(caller,config,params,wc) {
     renderTo: 'main_area', constrain: true,
     //~ maximizable: true, 
     //~ autoHeight: true,
-    title: this.config.title,
+    title: this.config.title
     //~ items: this.main_item, 
     //~ bbar: this.bbar_actions,
     //~ bbar: Lino.build_buttons(this,this.config.ls_bbar_actions),
-    tools: [ 
+    //~ tools: [ 
+      //~ // { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
+      //~ // { qtip: 'Call doLayout() on main Container.', handler: Lino.refresh_handler(this), id: "refresh" },
+      //~ { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" },
+      //~ { qtip: 'close', handler: Lino.tools_close_handler(this), id: "close" } 
+    //~ ] 
+  };
+  if (caller === undefined) {
+    this.window_config.tools = [];
+    this.window_config.closable = false;
+  } else {
+    this.window_config.tools = [ 
       //~ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
       //~ { qtip: 'Call doLayout() on main Container.', handler: Lino.refresh_handler(this), id: "refresh" },
       { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" },
       { qtip: 'close', handler: Lino.tools_close_handler(this), id: "close" } 
     ] 
-  };
+  }
   
   if (wc) 
       Ext.apply(this.window_config,wc);

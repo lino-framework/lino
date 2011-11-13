@@ -1,0 +1,9 @@
+:label: 
+:label_align: top
+:hideCheckBoxLabels: 
+
+main = 
+  project summary user created modified
+  description
+  CommentsByTicket
+

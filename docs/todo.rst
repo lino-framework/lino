@@ -12,6 +12,16 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Kann `babel.BabelText` nicht ersetzt werden durch 
+    einfache promises, die mit `gettext_lazy` erzeugt werden?
+
+#.  Wenn man das "oberste" Fenster schließt, 
+    sieht man jetzt nicht mehr wie gewohnt die Erinnerungen, 
+    sondern nur eine weiße Fläche. Man muss explizit auf 
+    "Startseite" klicken, um die Erinnerungen anzuzeigen.
+    Besser wäre, wenn das oberste Fenster gar nicht erst 
+    einen Close-Button hätte.
+
 #.  Rename field "sex" to "gender" in :mod:`lino.mixins.personal`.
 
 #.  Der Begriff "Arbeitsvertrag" ist irritierend, denn eigentlich werden die Dinger in Eupen 

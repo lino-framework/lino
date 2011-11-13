@@ -25,7 +25,7 @@ import datetime
 from os.path import join, abspath, dirname, normpath
 
 
-__version__ = "1.2.6"
+__version__ = "1.2.7"
 """
 Lino version number. 
 The latest released version is :doc:`/releases/2011/1110`.
@@ -41,6 +41,25 @@ Copyright (c) 2002-2011 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
+
+
+gettext = lambda s: s
+
+def language_choices(*args):
+    """
+    A subset of Django's LANGUAGES.
+    See :doc:`/blog/2011/0226`.
+    """
+    _langs = dict(
+        en=gettext('English'),
+        de=gettext('German'),
+        fr=gettext('French'),
+        nl=gettext('Dutch'),
+        et=gettext('Estonian'),
+    )
+    return [(x,_langs[x]) for x in args]
+      
+
 
 
 if False: 
@@ -440,43 +459,27 @@ class Lino(object):
     Set this to `False` if you don't need WebDAV-enabled links.
     """
     
+    languages = None
+    """
+    A shortcut parameter to set the supported languages for this site.
     
-   
-    def parse_date(self,s):
-        """Convert a string formatted using 
-        :attr:`date_format_strftime` or  :attr:`date_format_extjs` 
-        into a datetime.date instance.
-        See :doc:`/blog/2010/1130`.
-        """
-        ymd = reversed(map(int,s.split('.')))
-        return datetime.date(*ymd)
-        
-    def parse_time(self,s):
-        """Convert a string formatted using 
-        :attr:`time_format_strftime` or  :attr:`time_format_extjs` 
-        into a datetime.time instance.
-        """
-        hms = map(int,s.split(':'))
-        return datetime.time(*hms)
-        
-    def parse_datetime(self,s):
-        """Convert a string formatted for :meth:`parse_date` 
-        and :meth:`parse_time` 
-        into a datetime.datetime instance.
-        """
-        #~ print "20110701 parse_datetime(%r)" % s
-        s2 = s.split()
-        if len(s2) != 2:
-            raise Exception("Invalid datetime value %r" % s)
-        #~ ymd = map(int,s2[0].split('-'))
-        #~ hms = map(int,s2[1].split(':'))
-        #~ return datetime.datetime(*(ymd+hms))
-        d = self.parse_date(s[0])
-        t = self.parse_time(s[1])
-        return datetime.combine(d,t)
-
+    If specified, this must be an iterable of 2-letter codes.
+    Examples::
+    
+      languages = "en de fr nl et".split()
+      languages = ['en']
+      
+    Lino will use it to set the Django 
+    settings :setting:`LANGUAGES` and  :setting:`LANGUAGE_CODE`.
+    The default value `None` means that Lino doesn't modify 
+    these settings and that you are responsible for setting them 
+    manually.
+    
+    """
+    
     
     def __init__(self,project_file,settings_dict):
+      
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         
@@ -513,6 +516,11 @@ class Lino(object):
             join(abspath(dirname(__file__)),'templates'),
         ))
         
+        if self.languages:
+            lc = language_choices(*self.languages)
+            settings_dict.update(LANGUAGES = lc)
+            settings_dict.update(LANGUAGE_CODE = lc[0][0])
+        
         try:
             from sitecustomize_lino import on_init
         except ImportError:
@@ -542,6 +550,42 @@ class Lino(object):
         #~ from lino.models import get_site_config
         #~ self.config = get_site_config()
         
+
+
+    def parse_date(self,s):
+        """Convert a string formatted using 
+        :attr:`date_format_strftime` or  :attr:`date_format_extjs` 
+        into a datetime.date instance.
+        See :doc:`/blog/2010/1130`.
+        """
+        ymd = reversed(map(int,s.split('.')))
+        return datetime.date(*ymd)
+        
+    def parse_time(self,s):
+        """Convert a string formatted using 
+        :attr:`time_format_strftime` or  :attr:`time_format_extjs` 
+        into a datetime.time instance.
+        """
+        hms = map(int,s.split(':'))
+        return datetime.time(*hms)
+        
+    def parse_datetime(self,s):
+        """Convert a string formatted for :meth:`parse_date` 
+        and :meth:`parse_time` 
+        into a datetime.datetime instance.
+        """
+        #~ print "20110701 parse_datetime(%r)" % s
+        s2 = s.split()
+        if len(s2) != 2:
+            raise Exception("Invalid datetime value %r" % s)
+        #~ ymd = map(int,s2[0].split('-'))
+        #~ hms = map(int,s2[1].split(':'))
+        #~ return datetime.datetime(*(ymd+hms))
+        d = self.parse_date(s[0])
+        t = self.parse_time(s[1])
+        return datetime.combine(d,t)
+
+    
     #~ def get_user_model(self):
         #~ if 'django.contrib.auth' in self.settings_dict['INSTALLED_APPS']:
             #~ from django.contrib.auth.models import User

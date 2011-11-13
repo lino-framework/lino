@@ -44,7 +44,6 @@ from lino import mixins
 from lino import actions
 from lino import fields
 from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.contacts.models import SEX_CHOICES
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
@@ -302,13 +301,13 @@ class Partner(mixins.DiffingMixin,models.Model):
           
 
     
-class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable):
+class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     """
     Represents a physical person.
     
     """
     
-    class Meta(mixins.PersonMixin.Meta):
+    class Meta(contacts.Person.Meta):
         app_label = 'contacts'
         verbose_name = _("Person") # :doc:`/tickets/14`
         verbose_name_plural = _("Persons") # :doc:`/tickets/14`
@@ -424,34 +423,7 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         verbose_name=_("noble condition"))
     "The eventual noble condition of this person. Imported from TIM."
         
-        
-    #~ driving_license = models.ForeignKey("dsbe.DrivingLicense",blank=True,null=True,
-        #~ verbose_name=_("Driving license"))
-    #~ driving_license = models.CharField(max_length=4,blank=True,null=True,
-        #~ verbose_name=_("Driving license"),choices=DRIVING_LICENSE_CHOICES)
     
-    #~ no_shift            = models.BooleanField(verbose_name=_("no shift work"))
-    #~ no_weekend          = models.BooleanField(verbose_name=_("no work on week-end"))
-    #~ has_family          = models.BooleanField(verbose_name=_("Head of a family"))
-    #~ has_own_car         = models.BooleanField(verbose_name=_("has own car"))
-    #~ can_car             = models.BooleanField(verbose_name=_("Car driving licence"))
-    #~ can_truck           = models.BooleanField(verbose_name=_("Truck driving licence"))
-    #~ can_clark           = models.BooleanField(verbose_name=_("Clark driving licence"))
-    #~ can_bus             = models.BooleanField(verbose_name=_("Bus driving licence"))
-    #~ it_knowledge        = fields.KnowledgeField(blank=True,null=True,verbose_name=_("IT knowledge"))
-    #~ physical_handicap   = models.BooleanField(_("Physical handicap"))
-    #~ mental_handicap     = models.BooleanField(_("Mental handicap"))
-    #~ psycho_handicap     = models.BooleanField(_("Psychological handicap"))
-    #~ health_problems     = models.BooleanField(_("Health problems"))
-    #~ juristic_problems   = models.BooleanField(_("Juristic problems"))
-    #~ dependency_problems = models.BooleanField(_("Dependency problems"))
-    #~ social_competence   = models.BooleanField(_("Lack of social competence"))
-    #~ motivation_lack     = models.BooleanField(_("Lack of motivation"))
-    #~ fulltime_only       = models.BooleanField(_("Fulltime only"))
-    #~ parttime_only       = models.BooleanField(_("Part-time only"))
-    #~ young_children      = models.BooleanField(_("Young children"))
-    #~ is_illiterate       = models.BooleanField(_("Illiterate"))
-        
     residence_type = models.SmallIntegerField(blank=True,null=True,
         verbose_name=_("Residence type"),
         choices=RESIDENCE_TYPE_CHOICES,
@@ -480,10 +452,6 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         blank=True,# null=True,
         verbose_name=_("reason"))
     
-    #~ native_language = models.ForeignKey('countries.Language',
-      #~ verbose_name=_("Native language"),
-      #~ blank=True,null=True)
-      
     obstacles = models.TextField(_("Obstacles"),blank=True,null=True)
     skills = models.TextField(_("Other skills"),blank=True,null=True)
     job_agents = models.CharField(max_length=100,
@@ -532,9 +500,6 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
             if self.job_office_contact.child == self:
                 raise ValidationError(_("Circular reference"))
         super(Person,self).clean()
-        
-        
-        
         
 
     def card_type_text(self,request):
@@ -701,7 +666,7 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         lino.PERSON_TIM_FIELDS = reports.fields_list(cls,
           '''name first_name last_name title remarks remarks2
           zip_code city country street street_no street_box 
-          birth_date sex birth_place coach1 language 
+          birth_date gender birth_place coach1 language 
           phone fax email 
           card_number card_valid_from card_valid_until
           noble_condition card_issuer
@@ -1638,7 +1603,7 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
         blank=True,null=True)
     aged_to = models.IntegerField(_("Aged to"),
         blank=True,null=True)
-    sex = mixins.SexField()
+    gender = contacts.GenderField()
     
     only_my_persons = models.BooleanField(verbose_name=_("Only my persons")) # ,default=True)
     
@@ -1742,8 +1707,8 @@ class PersonsBySearch(reports.Report):
         kw = {}
         qs = self.model.objects.order_by('name')
         today = datetime.date.today()
-        if search.sex:
-            qs = qs.filter(sex__exact=search.sex)
+        if search.gender:
+            qs = qs.filter(gender__exact=search.gender)
         if search.aged_from:
             #~ q1 = models.Q(birth_date__isnull=True)
             #~ q2 = models.Q(birth_date__gte=today-datetime.timedelta(days=search.aged_from*365))
@@ -1811,115 +1776,117 @@ standard model SiteConfig.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 
-from lino.models import SiteConfig
-reports.inject_field(SiteConfig,
-    'job_office',
-    models.ForeignKey("contacts.Company",
-        blank=True,null=True,
-        verbose_name=_("Local job office"),
-        related_name='job_office_sites'),
-    """The Company whose contact persons will be 
-    choices for `Person.job_office_contact`.
-    """)
-    
-reports.inject_field(SiteConfig,
-    'propgroup_skills',
-    models.ForeignKey('properties.PropGroup',
-        blank=True,null=True,
-        verbose_name=_("Skills Property Group"),
-        related_name='skills_sites'),
-    """The property group to be used as master 
-    for the SkillsByPerson report.""")
-reports.inject_field(SiteConfig,
-    'propgroup_softskills',
-    models.ForeignKey('properties.PropGroup',
-        blank=True,null=True,
-        verbose_name=_("Soft Skills Property Group"),
-        related_name='softskills_sites',
-        ),
-    """The property group to be used as master 
-    for the SoftSkillsByPerson report."""
-    )
-reports.inject_field(SiteConfig,
-    'propgroup_obstacles',
-    models.ForeignKey('properties.PropGroup',
-        blank=True,null=True,
-        verbose_name=_("Obstacles Property Group"),
-        related_name='obstacles_sites',
-        ),
-    """The property group to be used as master 
-    for the ObstaclesByPerson report."""
-    )
+if reports.is_installed('dsbe'):
 
-reports.inject_field(SiteConfig,
-    'residence_permit_upload_type',
-    #~ UploadType.objects.get(pk=2)
-    models.ForeignKey("uploads.UploadType",
-        blank=True,null=True,
-        verbose_name=_("Upload Type for residence permit"),
-        related_name='residence_permit_sites'),
-    """The UploadType for `Person.residence_permit`.
-    """)
-    
-reports.inject_field(SiteConfig,
-    'work_permit_upload_type',
-    #~ UploadType.objects.get(pk=2)
-    models.ForeignKey("uploads.UploadType",
-        blank=True,null=True,
-        verbose_name=_("Upload Type for work permit"),
-        related_name='work_permit_sites'),
-    """The UploadType for `Person.work_permit`.
-    """)
-
-reports.inject_field(SiteConfig,
-    'driving_licence_upload_type',
-    #~ UploadType.objects.get(pk=2)
-    models.ForeignKey("uploads.UploadType",
-        blank=True,null=True,
-        verbose_name=_("Upload Type for driving licence"),
-        related_name='driving_licence_sites'),
-    """The UploadType for `Person.driving_licence`.
-    """)
-    
-reports.inject_field(Company,
-    'is_courseprovider',
-    mti.EnableChild('dsbe.CourseProvider',verbose_name=_("is Course Provider")),
-    """Whether this Company is also a Course Provider."""
-    )
-
-
-
-"""
-...
-"""
-from lino.tools import resolve_model, UnresolvedModel
-#~ User = resolve_model('users.User')
-if settings.LINO.user_model:
-    User = resolve_model(settings.LINO.user_model,strict=True)
-    User.grid_search_field = 'username'
-    reports.inject_field(User,
-        'is_spis',
-        models.BooleanField(
-            verbose_name=_("is SPIS user")
-        ),"""Whether this user is an integration assistant (not a general social agent).
-        Deserves more documentation.
+    from lino.models import SiteConfig
+    reports.inject_field(SiteConfig,
+        'job_office',
+        models.ForeignKey("contacts.Company",
+            blank=True,null=True,
+            verbose_name=_("Local job office"),
+            related_name='job_office_sites'),
+        """The Company whose contact persons will be 
+        choices for `Person.job_office_contact`.
         """)
         
-RoleType = resolve_model('contacts.RoleType')
-if not isinstance(RoleType,UnresolvedModel):
-    """
-    autodoc imports this module with :mod:`lino.apps.std.settings` 
-    which has no contacts app.
-    """
-    reports.inject_field(RoleType,
-        'use_in_contracts',
-        models.BooleanField(
-            verbose_name=_("usable in contracts"),
-            default=True
-        ),"""Whether Roles of this type can be used as contact person of a job contract.
-        Deserves more documentation.
+    reports.inject_field(SiteConfig,
+        'propgroup_skills',
+        models.ForeignKey('properties.PropGroup',
+            blank=True,null=True,
+            verbose_name=_("Skills Property Group"),
+            related_name='skills_sites'),
+        """The property group to be used as master 
+        for the SkillsByPerson report.""")
+    reports.inject_field(SiteConfig,
+        'propgroup_softskills',
+        models.ForeignKey('properties.PropGroup',
+            blank=True,null=True,
+            verbose_name=_("Soft Skills Property Group"),
+            related_name='softskills_sites',
+            ),
+        """The property group to be used as master 
+        for the SoftSkillsByPerson report."""
+        )
+    reports.inject_field(SiteConfig,
+        'propgroup_obstacles',
+        models.ForeignKey('properties.PropGroup',
+            blank=True,null=True,
+            verbose_name=_("Obstacles Property Group"),
+            related_name='obstacles_sites',
+            ),
+        """The property group to be used as master 
+        for the ObstaclesByPerson report."""
+        )
+
+    reports.inject_field(SiteConfig,
+        'residence_permit_upload_type',
+        #~ UploadType.objects.get(pk=2)
+        models.ForeignKey("uploads.UploadType",
+            blank=True,null=True,
+            verbose_name=_("Upload Type for residence permit"),
+            related_name='residence_permit_sites'),
+        """The UploadType for `Person.residence_permit`.
         """)
         
+    reports.inject_field(SiteConfig,
+        'work_permit_upload_type',
+        #~ UploadType.objects.get(pk=2)
+        models.ForeignKey("uploads.UploadType",
+            blank=True,null=True,
+            verbose_name=_("Upload Type for work permit"),
+            related_name='work_permit_sites'),
+        """The UploadType for `Person.work_permit`.
+        """)
+
+    reports.inject_field(SiteConfig,
+        'driving_licence_upload_type',
+        #~ UploadType.objects.get(pk=2)
+        models.ForeignKey("uploads.UploadType",
+            blank=True,null=True,
+            verbose_name=_("Upload Type for driving licence"),
+            related_name='driving_licence_sites'),
+        """The UploadType for `Person.driving_licence`.
+        """)
+        
+    reports.inject_field(Company,
+        'is_courseprovider',
+        mti.EnableChild('dsbe.CourseProvider',verbose_name=_("is Course Provider")),
+        """Whether this Company is also a Course Provider."""
+        )
+
+
+
+    """
+    ...
+    """
+    from lino.tools import resolve_model, UnresolvedModel
+    #~ User = resolve_model('users.User')
+    if settings.LINO.user_model:
+        User = resolve_model(settings.LINO.user_model,strict=True)
+        User.grid_search_field = 'username'
+        reports.inject_field(User,
+            'is_spis',
+            models.BooleanField(
+                verbose_name=_("is SPIS user")
+            ),"""Whether this user is an integration assistant (not a general social agent).
+            Deserves more documentation.
+            """)
+            
+    RoleType = resolve_model('contacts.RoleType')
+    if not isinstance(RoleType,UnresolvedModel):
+        """
+        autodoc imports this module with :mod:`lino.apps.std.settings` 
+        which has no contacts app.
+        """
+        reports.inject_field(RoleType,
+            'use_in_contracts',
+            models.BooleanField(
+                verbose_name=_("usable in contracts"),
+                default=True
+            ),"""Whether Roles of this type can be used as contact person of a job contract.
+            Deserves more documentation.
+            """)
+            
 
 
 

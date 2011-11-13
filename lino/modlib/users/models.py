@@ -26,11 +26,12 @@ from lino.core import actors
 from lino.mixins import printable
 from lino.utils import mti
 
-from lino.mixins import PersonMixin
-from lino.modlib.contacts.models import Contact
+#~ from lino.mixins import PersonMixin
+#~ from lino.modlib.contacts.models import Contact
+from lino.modlib.contacts import models as contacts
 
 
-class User(Contact,PersonMixin):
+class User(contacts.Contact,contacts.Person):
     """
     Represents a User of this site.
     
@@ -118,7 +119,7 @@ class Users(reports.Report):
 
 if reports.is_installed('contacts'):
   
-    reports.inject_field(Contact,
+    reports.inject_field(contacts.Contact,
         'is_user',
         mti.EnableChild('users.User',verbose_name=_("is User")),
         """Whether this Contact is also a User."""

@@ -173,7 +173,7 @@ def pxs2person(row,person):
       noble_condition=row.get('NOBLEECOND',''),      # 20110110
       birth_place=row.get('BIRTHPLACE',''),
       remarks2=row.get('MEMO',''),
-      sex=convert_sex(row['SEXE'])
+      gender=convert_sex(row['SEXE'])
     )
     for k,v in kw.items():
         setattr(person,k,v)

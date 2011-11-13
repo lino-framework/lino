@@ -43,8 +43,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode 
 
-#~ import lino
-#~ logger.debug(__file__+' : started')
 
 from lino import reports
 #~ from lino import layouts
@@ -55,16 +53,7 @@ from lino.utils import babel
 from lino import mixins
 from lino import actions
 #~ from lino import fields
-from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
-from lino.modlib.links import models as links
-from lino.modlib.uploads import models as uploads
-#~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.models import get_site_config
-from lino.tools import get_field
-from lino.tools import resolve_field
 from lino.utils.choosers import chooser
-from lino.mixins.printable import DirectPrintAction
 
 from lino.utils.choicelists import get_choicelist, choicelist_choices
 

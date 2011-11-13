@@ -46,6 +46,8 @@ class Lino(Lino):
     migration_module = 'lino.apps.dsbe.migrate'
     project_model = 'contacts.Person'
     
+    languages = ('de', 'fr', 'nl', 'en')
+    
     def get_app_source_file(self):
         return __file__
         
@@ -250,7 +252,7 @@ TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'de'
+#~ LANGUAGE_CODE = 'de'
 #~ LANGUAGE_CODE = 'de-BE'
 #~ LANGUAGE_CODE = 'fr-BE'
 
@@ -285,6 +287,6 @@ INSTALLED_APPS = (
   #~ 'south', # http://south.aeracode.org
 )
 
-LANGUAGES = language_choices('de','fr','nl','en')
+#~ LANGUAGES = language_choices('de','fr','nl','en')
 #~ LANGUAGES = language_choices('de','fr','en')
 

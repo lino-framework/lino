@@ -231,7 +231,7 @@ rptname_choices = []
 config_dirs = []
 
 def register_report(rpt):
-    #~ logger.debug("register_report %s", rpt.actor_id)
+    logger.debug("20111113 register_report %s", rpt.actor_id)
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     if rpt.typo_check:
         myattrs = set(rpt.__class__.__dict__.keys())
@@ -240,7 +240,7 @@ def register_report(rpt):
         if len(myattrs):
             logger.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
     if rpt.model is None:
-        #~ logger.debug("%s is an abstract report", rpt)
+        logger.debug("20111113 %s is an abstract report", rpt)
         return
         
     #~ if rpt.model._meta.abstract:
@@ -275,7 +275,7 @@ def discover():
     """
               
     logger.info("Analyzing Reports...")
-    #~ logger.debug("Register Report actors...")
+    logger.debug("20111113 Register Report actors...")
     for rpt in actors.actors_list:
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
             register_report(rpt)
@@ -285,7 +285,7 @@ def discover():
         """Not getattr but __dict__.get because of the mixins.Listings trick."""
         rpt = model.__dict__.get('_lino_model_report',None)
         #~ rpt = getattr(model,'_lino_model_report',None)
-        #~ logger.debug('20110628 %s._lino_model_report = %s',model,rpt)
+        logger.debug('20111113 %s._lino_model_report = %s',model,rpt)
         if rpt is None:
             rpt = report_factory(model)
             register_report(rpt)
@@ -300,7 +300,7 @@ def discover():
             slaves = {}
             rpt.master._lino_slaves = slaves
         slaves[rpt.actor_id] = rpt
-        logger.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
+        logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
     #~ logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
     #~ logger.debug("Setup model reports...")
@@ -431,7 +431,7 @@ class SubmitInsert(actions.Action):
 class ReportHandle(base.Handle): 
     
     def __init__(self,ui,report):
-        #~ logger.debug('ReportHandle.__init__(%s)',report)
+        logger.debug('20111113 ReportHandle.__init__(%s)',report)
         assert isinstance(report,Report)
         self.report = report
         self.data_elems = report.data_elems
@@ -940,7 +940,7 @@ class Report(actors.Actor): #,base.Handled):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)
                     if m is not None:
-                        logger.debug('Install model method %s.%s to %s',self.model.__name__,name,self)
+                        logger.debug('20111113 Install model method %s.%s to %s',self.model.__name__,name,self)
                         setattr(self.__class__,name,model2report(m))
                         
         if self.fk_name:
@@ -979,6 +979,8 @@ class Report(actors.Actor): #,base.Handled):
               # good idea, but doesn't yet work for foreign fields, 
               # e.g. order_by = ['content_type__app_label']
               for fieldname in self.order_by:
+                  if fieldname.startswith('-'):
+                      fieldname = fieldname[1:]
                   try:
                       fk, remote, direct, m2m = self.model._meta.get_field_by_name(fieldname)
                       assert direct
@@ -1468,7 +1470,14 @@ class BaseLayout(Configured):
             #~ settings.LINO.add_dummy_message(self.label)
             self.add_dummy_message(self.label)
             self.label = _(self.label)
-          
+            
+    #~ def __str__(self):
+            
+    def __str__(self):
+        if self.filename:
+            return "%s(%s %s)" % (self.__class__.__name__,self.cd.name,self.filename)
+        return self.__class__.__name__ + "(" + self._desc + ")"
+        #~ return "Dynamic " + super(Configured,self).__str__()
         
     def write_content(self,f):
         f.write(self._desc)
@@ -1499,7 +1508,7 @@ class LayoutHandle:
     
     def __init__(self,rh,layout,hidden_elements=frozenset()):
       
-        #~ logger.debug('LayoutHandle.__init__(%s,%s)',rh,layout)
+        logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
         assert isinstance(layout,BaseLayout)
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)

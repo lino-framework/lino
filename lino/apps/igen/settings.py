@@ -18,12 +18,13 @@ Default settings for :doc:`/igen/index`.
 import os
 import sys
 from os.path import join,dirname, normpath, abspath
-from tempfile import gettempdir
 from lino.apps.std.settings import *
 
 class Lino(Lino):
   
-    source_dir = os.path.dirname(__file__)
+    languages = ['en']
+    
+    #~ source_dir = os.path.dirname(__file__)
   
     title = "Lino/iGen"
     domain = "igen-demo.saffre-rumma.net"
@@ -43,9 +44,6 @@ class Lino(Lino):
 
     def get_app_source_file(self):
         return __file__
-        
-    def configure(self,sc):
-        super(Lino,self).configure(sc)
         
     def setup_menu(self,ui,user,main):
   
@@ -156,7 +154,7 @@ TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en'
+#~ LANGUAGE_CODE = 'en'
 #~ LANGUAGE_CODE = 'en-US'
 #~ LANGUAGE_CODE = 'fr-BE'
 

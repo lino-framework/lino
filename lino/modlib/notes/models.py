@@ -46,6 +46,7 @@ class NoteType(babel.BabelNamed,mixins.PrintableType):
     class Meta:
         verbose_name = _("Note Type")
         verbose_name_plural = _("Note Types")
+        
     #~ name = models.CharField(max_length=200)
     important = models.BooleanField(
         verbose_name=_("important"),
@@ -72,7 +73,6 @@ class EventTypes(reports.Report):
     order_by = ["name"]
 
 class Note(mixins.TypedPrintable,mixins.AutoUser):
-#~ class Note(mixins.TypedPrintable,mixins.Reminder):
     """
     Deserves more documentation.
     """
