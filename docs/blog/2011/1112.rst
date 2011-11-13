@@ -58,4 +58,8 @@ Miscellaneous Bugfixes
 
 - The Labels of menu entries for Listings were strange: 
   twice the listing title, separated by a space. Fixed.
+  
+- There is now also a command to view the existing records for 
+  each Listing type. :menuselection:`Explorer --> Listings`.
 
+Check-in 20111112c

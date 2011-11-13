@@ -587,18 +587,6 @@ class ExtUI(base.UI):
     def html_lines(self,request,on_ready=[],**kw):
         """Generates the lines of Lino's HTML reponse.
         """
-        #~ c = RequestContext(request,dict(site=self.site,lino=lino))
-        self.welcome_template.ui = self
-        self.welcome_template.request = request
-        self.welcome_template.user = request.user
-        self.welcome_template.site = settings.LINO # self.site
-        self.welcome_template.lino = lino
-        #~ main=ext_elems.ExtPanel(
-        #~ quicklinks = [dict(text="A")]
-        html = unicode(self.welcome_template)
-        quicklinks = settings.LINO.get_quicklinks(self,request.user)
-        if quicklinks.items:
-            html = 'Quick Links: ' + ' '.join([self.action_href(mi.action) for mi in quicklinks.items]) + '<br/>' + html
         
         main=dict(
           id="main_area",
@@ -607,9 +595,26 @@ class ExtUI(base.UI):
           autoScroll=True,
           layout='fit',
           #~ html=self.welcome_template.render(c),
-          html=html,
+          #~ html=html,
           #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
         )
+        
+        if not on_ready:
+            #~ c = RequestContext(request,dict(site=self.site,lino=lino))
+            self.welcome_template.ui = self
+            self.welcome_template.request = request
+            self.welcome_template.user = request.user
+            self.welcome_template.site = settings.LINO # self.site
+            self.welcome_template.lino = lino
+            #~ main=ext_elems.ExtPanel(
+            #~ quicklinks = [dict(text="A")]
+            html = unicode(self.welcome_template)
+            
+            quicklinks = settings.LINO.get_quicklinks(self,request.user)
+            if quicklinks.items:
+                html = 'Quick Links: ' + ' '.join([self.action_href(mi.action) for mi in quicklinks.items]) + '<br/>' + html
+            main.update(html=html)
+        
         #~ if quicklinks.items:
             #~ main.update(xtype='panel',tbar=quicklinks)
 #~ if not on_ready:
