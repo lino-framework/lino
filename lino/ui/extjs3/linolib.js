@@ -1727,20 +1727,25 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
           this.form.items.each(function(cmp){
             cmp.disable();
           },this);
-      } else if (record.data.disabled_fields) {
-        //~ console.log('20100930 disabled_fields =',record.data.disabled_fields);
-        //~ console.log('20100930 this.form =',this.form);
-        //~ for (i in record.data.disabled_fields.length) {
-        for (i = 0; i < record.data.disabled_fields.length; i++) {
-            //~ var fld = this.form.findField(record.data.disabled_fields[i]);
-            var flds = this.find('name',record.data.disabled_fields[i]);
-            if (flds.length == 1) { 
-              //~ console.log('20100930 fld',record.data.disabled_fields[i],'=',flds[0]);
-              flds[0].disable(); 
-            //~ } else {
-                //~ console.log(20100617,record.data.disabled_fields[i], 'field not found');
-            }
-        }
+      } else {
+          if (record.data.disabled_actions) {
+              console.log('disabled_action =',record.data.disabled_actions);
+          };
+          if (record.data.disabled_fields) {
+              //~ console.log('20100930 disabled_fields =',record.data.disabled_fields);
+              //~ console.log('20100930 this.form =',this.form);
+              //~ for (i in record.data.disabled_fields.length) {
+              for (i = 0; i < record.data.disabled_fields.length; i++) {
+                  //~ var fld = this.form.findField(record.data.disabled_fields[i]);
+                  var flds = this.find('name',record.data.disabled_fields[i]);
+                  if (flds.length == 1) { 
+                    //~ console.log('20100930 fld',record.data.disabled_fields[i],'=',flds[0]);
+                    flds[0].disable(); 
+                  //~ } else {
+                      //~ console.log(20100617,record.data.disabled_fields[i], 'field not found');
+                  }
+              }
+          }
       };
       if (this.has_navigator && record.navinfo) {
         this.first.setDisabled(!record.navinfo.first);

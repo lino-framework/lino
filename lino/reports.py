@@ -397,6 +397,9 @@ class DuplicateRow(ReportAction,actions.OpenWindowAction):
 
 class RowAction(actions.Action):
     callable_from = (GridEdit,ShowDetailAction)
+    
+    def disabled_for(self,obj,request):
+        return False
     #~ needs_selection = False
     #~ needs_validation = False
     #~ def before_run(self,ar):
@@ -940,7 +943,7 @@ class Report(actors.Actor): #,base.Handled):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)
                     if m is not None:
-                        logger.debug('20111113 Install model method %s.%s to %s',self.model.__name__,name,self)
+                        #~ logger.debug('20111113 Install model method %s.%s to %s',self.model.__name__,name,self)
                         setattr(self.__class__,name,model2report(m))
                         
         if self.fk_name:
@@ -1048,6 +1051,14 @@ class Report(actors.Actor): #,base.Handled):
             if m:
                 m(self)
             #~ call_on_bases(self.model,'setup_report',self)
+        
+    def disabled_actions(self,obj,request):
+        l = []
+        for a in self.get_actions():
+            if isinstance(a,RowAction):
+                if a.disabled_for(obj,request):
+                    l.append(a.name)
+        return l
         
     def disable_delete(self,obj,request):
         """

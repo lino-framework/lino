@@ -403,8 +403,81 @@ class PerformInvestigationRequest(Service):
             DG.AddressHistoryGroup(address),
             DG.WaitRegisterGroup(wait)))
             
+def xml2reply(xmlString):
+    u"""
+    Parse the XML string and return a "reply handler".
+    
+    "Lorsque le détail sous-jacent ne contient pas d’erreur 
+    ou d’avertissement, le code possède la valeur 0. 
+    Si au moins un avertissement est présent, le code 
+    a la valeur 1. Si au moins une erreur est présente, 
+    le code sera égal à 10000. 
+    Veuillez noter que si des erreurs et des avertissements sont 
+    présents, le niveau le plus critique est pris en compte 
+    (en l’occurrence, l’erreur, donc le code sera égal à 10000)."
+    
+    """
+    return XmlUnmarshaller().parse(str(xmlString))
 
-def send_request(settings,xmlString):
+    
+def reply2lines(reply):
+    """
+    Convert a reply into a 
+    """
+    yield "ReplyContext:"
+    yield "- ResultSummary:"
+    yield "  - Detail:"
+    yield "    - AuthorCodeList: %s" % reply.ReplyContext.ResultSummary.Detail.AuthorCodeList
+    yield "    - Diagnostic: %s" % reply.ReplyContext.ResultSummary.Detail.Diagnostic
+    yield "    - ReasonCode: %s" % reply.ReplyContext.ResultSummary.Detail.ReasonCode
+    yield "    - Severity: %s" % reply.ReplyContext.ResultSummary.Detail.Severity
+    
+    if False:
+        yield "- AuthorizedUser:"
+        yield "  - UserID: %s" % reply.ReplyContext.AuthorizedUser.UserID
+        yield "  - Email: %s" % reply.ReplyContext.AuthorizedUser.Email
+        yield "  - OrgUnit: %s" % reply.ReplyContext.AuthorizedUser.OrgUnit
+        yield "  - MatrixID: %s" % reply.ReplyContext.AuthorizedUser.MatrixID
+        yield "  - MatrixSubID: %s" % reply.ReplyContext.AuthorizedUser.MatrixSubID
+
+    yield "- Message:"
+    yield "  - TimeRequest: %s" % reply.ReplyContext.Message.TimeRequest
+    yield "  - TimeResponse: %s" % reply.ReplyContext.Message.TimeResponse
+    yield "  - TimeReceive: %s" % reply.ReplyContext.Message.TimeReceive
+    yield "  - Ticket: %s" % reply.ReplyContext.Message.Ticket
+    yield "  - Reference: %s" % reply.ReplyContext.Message.Reference
+
+    yield "ServiceReply:"
+    yield "- ServiceId: %s" % reply.ServiceReply.ServiceId
+    yield "- Version: %s" % reply.ServiceReply.Version
+    yield "- ResultSummary:"
+    yield "  - ReturnCode: %s" % reply.ServiceReply.ResultSummary.ReturnCode
+    yield "  - Detail:"
+    yield "    - Information.FieldName: %s" % reply.ServiceReply.ResultSummary.Detail.Information.FieldName
+    yield "    - Information.FieldValue: %s" % reply.ServiceReply.ResultSummary.Detail.Information.FieldValue
+    yield "    - ReasonCode: %s" % reply.ServiceReply.ResultSummary.Detail.ReasonCode
+    
+    
+def unused_test_connection(nr):
+  
+    xmlString = PerformInvestigationRequest(nr)
+    
+    reply = unused_send_request(xmlString)
+
+    #~ reply.ReplyContext.AuthorizedUser
+    #~ reply.ReplyContext.Message
+    dtl = reply.ReplyContext.ResultSummary.Detail
+    #~ dtl.AuthorCodeList
+    #~ dtl.Diagnostic
+    #~ dtl.ReasonCode
+    #~ dtl.Severity
+    print reply.ReplyContext.ResultSummary.ReturnCode
+    print dtl
+
+    import pdb
+    pdb.set_trace()
+
+def unused_send_request(settings,xmlString):
     
     #~ logger.info("Going to send request:\n%s",xmlString)
     
@@ -432,33 +505,8 @@ def send_request(settings,xmlString):
     
     return reply
     
-def test_connection(nr):
-  
-    xmlString = PerformInvestigationRequest(nr)
-    
-    reply = send_request(xmlString)
-
-    #~ reply.ReplyContext.AuthorizedUser
-    #~ reply.ReplyContext.Message
-    dtl = reply.ReplyContext.ResultSummary.Detail
-    #~ dtl.AuthorCodeList
-    #~ dtl.Diagnostic
-    #~ dtl.ReasonCode
-    #~ dtl.Severity
-    print reply.ReplyContext.ResultSummary.ReturnCode
-    print dtl
-
-    import pdb
-    pdb.set_trace()
-    
-        
-
   
     
-#~ if __name__ == '__main__':
-  
-    #~ test_connection(sys.argv[1])
-  
 
 def _test():
     import doctest

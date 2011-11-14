@@ -26,17 +26,50 @@ from lino import reports
 from lino.utils import babel
 from lino.utils import dblogger
 from lino.tools import resolve_model
+from lino.utils import bcss
 
 from lino.reports import GridEdit, ShowDetailAction
+from appy.shared.xml_parser import XmlUnmarshaller
+
+from lino.utils.choicelists import ChoiceList
+
+class RequestStatus(ChoiceList):
+    """
+    The status of a :class:`BCSSRequest`.
+    """
+    label = _("Status")
+
+add = RequestStatus.add_item
+add('0',_("New"),alias='new')
+add('1',_("Pending"),alias='pending')
+add('2',_("Exception"),alias='exception')
+add('3',_("OK"),alias='ok')
+add('4',_("Warnings"),alias='warnings')
+add('5',_("Errors"),alias='errors')
+  
+
+    
+    
+
 
 class SendAction(reports.RowAction):
+    """
+    This defines the "Execute" button on a :class:`BCSSRequest` record.
+    """
     name = 'sendbcss'
     label = _('Execute')
     #~ callable_from = None
     callable_from = (GridEdit,ShowDetailAction)
     
+    def disabled_for(self,obj,request):
+        if obj.sent:
+            return True
+    
     def run(self,rr,elem,**kw):
         elem.execute_request()
+        if elem.status == RequestStatus.warnings:
+            kw.update(message=_("There were warnings but no errors."))
+            kw.update(alert=True)
         kw.update(refresh=True)
         return rr.ui.success_response(**kw)
 
@@ -53,25 +86,53 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     sent = models.DateTimeField(verbose_name=_("Sent"),
         blank=True,null=True,
         editable=False)
-    request_xml = models.TextField(verbose_name=_("Request"),blank=True)
-    response_xml = models.TextField(verbose_name=_("Response"),blank=True)
+    request_xml = models.TextField(verbose_name=_("Request"),editable=False,blank=True)
+    response_xml = models.TextField(verbose_name=_("Response"),editable=False,blank=True)
+    status = RequestStatus.field(default=RequestStatus.new,editable=False)
     
     def execute_request(self):
+        """
+        This is the general method executed when a user runs :class:`SendAction`.
+        """
         if not self.id:
             self.save()
         srv = self.build_service()
         now = datetime.datetime.now()
-        self.sent = now
         self.request_xml = srv.toxml(True)
-        self.response_xml = "Pending..."
+        self.status = RequestStatus.pending
         self.save()
         
         try:
             res = srv.execute(settings,str(self.id),now)
-            self.response_xml = res.data.xmlString
         except Exception,e:
+            self.status = RequestStatus.exception
             self.response_xml = traceback.format_exc(e)
+            self.save()
+            return
+            
+        self.sent = now
+        self.response_xml = res.data.xmlString
+        reply = bcss.xml2reply(res.data.xmlString)
+        rc = reply.ServiceReply.ResultSummary.ReturnCode
+        if rc == '0':
+            self.status = RequestStatus.ok
+        elif rc == '1':
+            self.status = RequestStatus.warnings
+        elif rc == '10000':
+            self.status = RequestStatus.errors
         self.save()
+        
+        if self.status != RequestStatus.ok:
+            msg = '\n'.join(list(reply2lines(reply)))
+            raise Exception(msg)
+            
+        self.on_bcss_ok(reply)
+        
+    def on_bcss_ok(self):
+        """
+        Called when a successful reply has been received.
+        """
+        pass
         
     @classmethod
     def setup_report(cls,rpt):
@@ -93,7 +154,6 @@ class IdentifyPersonRequest(BCSSRequest):
     """
     def build_service(self):
         person = self.project
-        from lino.utils import bcss 
         VD = bcss.IdentifyPersonRequest.VerificationData
         SC = bcss.IdentifyPersonRequest.SearchCriteria
         PC = SC.PhoneticCriteria

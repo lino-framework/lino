@@ -67,3 +67,22 @@ and
 Seems that in the MiddleName element in PhoneticSearch must be present even if it is empty.
 These are probably the kind of things which :term:`generateDS` would detect already when 
 generating the XML.
+
+.. currentmodule:: lino.modlib.bcss.models
+
+More changes in :mod:`lino.modlib.bcss.models` to explore the BCSS functionality:
+
+- enhanced :method:`RequestStatus.execute_request` 
+- new field :attr:`BCSSRequest.status`
+- new choicelist  :class:`RequestStatus`
+- new utility functions 
+  :function:`lino.utils.bcss.reply2lines`
+  and :function:`lino.utils.bcss.xml2reply`
+  
+Check-in 20111114b at 23:41, time to go to bed. TODO: 
+
+http://127.0.0.1:8000/api/contacts/Persons/117?query=&an=detail&tab=11
+  - non-editable fields are not shown in a grid?
+  - console message about disabled_actions doesn't appear
+  
+  

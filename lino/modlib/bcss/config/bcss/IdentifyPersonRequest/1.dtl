@@ -1,9 +1,9 @@
-:label: Detail
+:label: 
 :label_align: top
 :hideCheckBoxLabels: 
 
 main = 
-  sent project
+  id project sent status 
   request_xml
   response_xml
 

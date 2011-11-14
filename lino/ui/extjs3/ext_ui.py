@@ -164,7 +164,6 @@ def error_response(e=None,message=None,**kw):
             kw.update(errors=e.message_dict)
     #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
     kw.update(alert=True)
-    
     kw.update(message=message)
     if message is None:
         message = unicode(e)
@@ -216,6 +215,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     #~ rec.update(title=unicode(elem))
     rec.update(id=elem.pk)
     #~ if rh.report.disable_delete:
+    rec.update(disabled_actions=rh.report.disabled_actions(elem,ar.request))
     rec.update(disable_delete=rh.report.disable_delete(elem,ar.request))
     if rh.report.show_prev_next:
         first = None
