@@ -85,6 +85,7 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
 class IdentifyPersonRequest(BCSSRequest):
     """
     Represents a request to the :term:`BCSS` IdentifyPerson service.
+    
     If the person has her `national_id` field filled, 
     it does a *verification* of the personal data,
     Otherwise it does a search request on the person's last_name, 
@@ -103,7 +104,7 @@ class IdentifyPersonRequest(BCSSRequest):
             return bcss.IdentifyPersonRequest.verify_request(
               national_id,
               LastName=person.last_name,
-              FirstName=person.last_name,
+              FirstName=person.first_name,
               BirthDate=person.birth_date,
               )
             #~ ip = [SC(SC.SSIN(person.national_id))]
@@ -120,13 +121,14 @@ class IdentifyPersonRequest(BCSSRequest):
           pc = []
           pc.append(PC.LastName(person.last_name))
           pc.append(PC.FirstName(person.first_name))
+          pc.append(PC.MiddleName(''))
           if person.birth_date:
               pc.append(PC.BirthDate(person.birth_date))
           if person.gender:
-              from lino.modlib.contacts.utils import GENDER_MALE, GENDER_FEMALE
-              if person.gender == GENDER_MALE:
+              from lino.modlib.choicelists import Gender
+              if person.gender == Gender.male:
                   pc.append(PC.Gender(1))
-              elif person.gender == GENDER_FEMALE:
+              elif person.gender == Gender.female:
                   pc.append(PC.Gender(2))
           return bcss.IdentifyPersonRequest(SC(PC(*pc)))
       

@@ -1,0 +1,69 @@
+20111114
+========
+
+Choice Lists
+------------
+
+Choice Lists had a design flaw: they used `babel.BabelText` 
+instances to store the items, but it is better to use simple 
+translatable strings (`gettext_lazy`). 
+All currently existing choicelists have been converted:
+
+- :class:`lino.apps.dsbe.models.CefLevel`
+- :class:`lino.modlib.mails.utils.DurationUnit`
+- :class:`lino.modlib.cal.utils.DurationUnit`
+- :class:`lino.utils.choicelists.HowWell`
+- :class:`lino.utils.choicelists.HowMuch`
+
+The new choicelist
+:class:`lino.utils.choicelists.Gender`
+is now being used 
+to create the `gender` fields in 
+:class:`lino.apps.dsbe.models.Person`
+and :class:`lino.apps.dsbe.models.PersonSearch`.
+Unit test cases and fixtures have been adapted.
+One advantage is that Lino no longer accepts 
+a simple 'M' as valid value on a gender field. 
+User code must import the `Gender` choicelist 
+and use the "constants" defined there.
+
+The following new models replace the formerly 
+used choice list of same name. 
+It became clear from recent user 
+interviews that these lists cannot be hard-coded.
+
+- :class:`lino.modlib.cal.models.TaskStatus`
+- :class:`lino.modlib.cal.models.EventStatus`
+- :class:`lino.modlib.cal.models.AccessClass`
+- :class:`lino.modlib.cal.models.Priority`
+
+The previously hard-coded values are now in a 
+new fixture :mod:`lino.modlib.cal.fixtures.std`
+
+The plural of "Status"
+----------------------
+
+What is the plural of "Status"? 
+Answer: "Statuses". At least in English.
+But in German the official plural form is "Status", 
+written like the singular form and pronounced with a long "u".
+That's why I'm going to translate "Status" by "Zustand" 
+which has a better plural form.
+
+
+BCSS connection
+---------------
+
+There was a bug in 
+:meth:`lino.modlib.bcss.models.IdentifyPersonRequest.build_service`: 
+if national_id known, it filled both LastName and FirstName with the person's `last_name`.
+
+Another problem: 
+if national_id and birth_date empty, 
+the reply said
+"An error occurred during the parsing of the request body. Please check your message format." 
+and 
+"Uncompleted content model. expecting: <BirthDate>,<MiddleName>".
+Seems that in the MiddleName element in PhoneticSearch must be present even if it is empty.
+These are probably the kind of things which :term:`generateDS` would detect already when 
+generating the XML.

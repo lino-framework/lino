@@ -48,7 +48,8 @@ from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.modlib.cal import models as cal
-from lino.utils.choicelists import HowWell, ChoiceList
+from lino.utils.choicelists import HowWell, Gender
+from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
@@ -59,7 +60,6 @@ from lino.utils.babel import language_choices
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
 from lino.utils.choosers import chooser
-from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
@@ -128,33 +128,42 @@ class CefLevel(ChoiceList):
         #~ return u"%s (%s)" % (bc.value,unicode(bc))
     
 add = CefLevel.add_item
-add('A1', en="basic language skills",
-          de=u"Elementare Sprachverwendung",
-          fr=u"Utilisation élémentaire")
-add('A2', en="basic language skills",
-          de=u"Elementare Sprachverwendung",
-          fr=u"Utilisation élémentaire")
-add('A2+', en="basic language skills",
-           de=u"Elementare Sprachverwendung",
-          fr=u"Utilisation élémentaire")
-add('B1', en="independent use of language",
-          de=u"Selbständige Sprachverwendung",
-          fr=u"Utilisation indépendante")
-add('B2', en="independent use of language",
-          de=u"Selbständige Sprachverwendung",
-          fr=u"Utilisation indépendante")
-add('B2+', en="independent use of language",
-          de=u"Selbständige Sprachverwendung",
-          fr=u"Utilisation indépendante")
-add('C1', en="proficient use of language",
-          de=u"Kompetente Sprachverwendung",
-          fr=u"Utilisation compétente")
-add('C2', en="proficient use of language",
-          de=u"Kompetente Sprachverwendung",
-          fr=u"Utilisation compétente")
-add('C2+', en="proficient use of language",
-          de=u"Exzellente Sprachverwendung",
-          fr=u"Utilisation excellente")
+#~ add('A1', en="basic language skills",
+          #~ de=u"Elementare Sprachverwendung",
+          #~ fr=u"Utilisation élémentaire")
+#~ add('A2', en="basic language skills",
+          #~ de=u"Elementare Sprachverwendung",
+          #~ fr=u"Utilisation élémentaire")
+#~ add('A2+', en="basic language skills",
+           #~ de=u"Elementare Sprachverwendung",
+          #~ fr=u"Utilisation élémentaire")
+#~ add('B1', en="independent use of language",
+          #~ de=u"Selbständige Sprachverwendung",
+          #~ fr=u"Utilisation indépendante")
+#~ add('B2', en="independent use of language",
+          #~ de=u"Selbständige Sprachverwendung",
+          #~ fr=u"Utilisation indépendante")
+#~ add('B2+', en="independent use of language",
+          #~ de=u"Selbständige Sprachverwendung",
+          #~ fr=u"Utilisation indépendante")
+#~ add('C1', en="proficient use of language",
+          #~ de=u"Kompetente Sprachverwendung",
+          #~ fr=u"Utilisation compétente")
+#~ add('C2', en="proficient use of language",
+          #~ de=u"Kompetente Sprachverwendung",
+          #~ fr=u"Utilisation compétente")
+#~ add('C2+', en="proficient use of language",
+          #~ de=u"Exzellente Sprachverwendung",
+          #~ fr=u"Utilisation excellente")
+add('A1', _("basic language skills"))
+add('A2', _("basic language skills"))
+add('A2+', _("basic language skills"))
+add('B1', _("independent use of language"))
+add('B2', _("independent use of language"))
+add('B2+', _("independent use of language"))
+add('C1', _("proficient use of language"))
+add('C2', _("proficient use of language"))
+add('C2+', _("proficient use of language"))
 
 
 
@@ -1603,7 +1612,9 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
         blank=True,null=True)
     aged_to = models.IntegerField(_("Aged to"),
         blank=True,null=True)
-    gender = contacts.GenderField()
+    #~ gender = contacts.GenderField()
+    gender = Gender.field()
+
     
     only_my_persons = models.BooleanField(verbose_name=_("Only my persons")) # ,default=True)
     

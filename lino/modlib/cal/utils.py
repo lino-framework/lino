@@ -54,28 +54,28 @@ def setkw(obj,**kw):
                               
 
 
-class EventStatus(ChoiceList):
-    """A list of possible values for the `status` field of an :class:`Event`.
-    """
-    label = _("Event Status")
+#~ class unused_EventStatus(ChoiceList):
+    #~ """A list of possible values for the `status` field of an :class:`Event`.
+    #~ """
+    #~ label = _("Event Status")
     
-add = EventStatus.add_item
-add('0','tentative',en=u"tentative",de=u"Vorschlag",   fr=u"proposition")
-add('1','confirmed',en=u"confirmed",de=u"bestätigt",   fr=u"confirmé")
-add('2','cancelled',en=u"cancelled",de=u"storniert",   fr=u"annulé")
-add('3','rescheduled',en=u"rescheduled",de=u"verschoben",   fr=u"reporté")
-add('4','absent',en=u"absent",de=u"abwesend",   fr=u"absent")
+#~ add = EventStatus.add_item
+#~ add('0','tentative',en=u"tentative",de=u"Vorschlag",   fr=u"proposition")
+#~ add('1','confirmed',en=u"confirmed",de=u"bestätigt",   fr=u"confirmé")
+#~ add('2','cancelled',en=u"cancelled",de=u"storniert",   fr=u"annulé")
+#~ add('3','rescheduled',en=u"rescheduled",de=u"verschoben",   fr=u"reporté")
+#~ add('4','absent',en=u"absent",de=u"abwesend",   fr=u"absent")
 
-class TaskStatus(ChoiceList):
-    """A list of possible values for the `status` field of a :class:`Task`.
-    """
-    label = _("Task Status")
+#~ class unused_TaskStatus(ChoiceList):
+    #~ """A list of possible values for the `status` field of a :class:`Task`.
+    #~ """
+    #~ label = _("Task Status")
     
-add = TaskStatus.add_item
-add('0',en=u"needs action",de=u"zu erledigen",   fr=u"à traîter")
-add('1',en=u"in process",de=u"begonnen",   fr=u"commencée")
-add('2',en=u"completed",de=u"erledigt",   fr=u"complétée")
-add('3',en=u"cancelled",de=u"storniert",   fr=u"annulée")
+#~ add = TaskStatus.add_item
+#~ add('0',en=u"needs action",de=u"zu erledigen",   fr=u"à traîter")
+#~ add('1',en=u"in process",de=u"begonnen",   fr=u"commencée")
+#~ add('2',en=u"completed",de=u"erledigt",   fr=u"complétée")
+#~ add('3',en=u"cancelled",de=u"storniert",   fr=u"annulée")
 
 
 #~ def add_duration(dt,value,unit):
@@ -169,28 +169,35 @@ class DurationUnit(ChoiceList):
     
     
 add = DurationUnit.add_item
-add('s','seconds',en=u"seconds",de=u"Sekunden",   fr=u"secondes")
-add('m','minutes',en=u"minutes",de=u"Minuten",   fr=u"minutes")
-add('h','hours',en=u"hours",de=u"Stunden",   fr=u"heures")
-add('D','days',en=u"days",de=u"Tage",   fr=u"jours")
-add('W','weeks',en=u"weeks",de=u"Wochen",   fr=u"semaines")
-add('M','months',en=u"months",de=u"Monate",   fr=u"mois")
-add('Y','years',en=u"years",de=u"Jahre",   fr=u"années")
+#~ add('s','seconds',en=u"seconds",de=u"Sekunden",   fr=u"secondes")
+#~ add('m','minutes',en=u"minutes",de=u"Minuten",   fr=u"minutes")
+#~ add('h','hours',en=u"hours",de=u"Stunden",   fr=u"heures")
+#~ add('D','days',en=u"days",de=u"Tage",   fr=u"jours")
+#~ add('W','weeks',en=u"weeks",de=u"Wochen",   fr=u"semaines")
+#~ add('M','months',en=u"months",de=u"Monate",   fr=u"mois")
+#~ add('Y','years',en=u"years",de=u"Jahre",   fr=u"années")
+add('s', _('seconds'),alias='seconds')
+add('m', _('minutes'),alias='minutes')
+add('h', _('hours')  ,alias='hours'  )
+add('D', _('days')   ,alias='days'   )
+add('W', _('weeks')  ,alias='weeks'  )
+add('M', _('months') ,alias='months' )
+add('Y', _('years')  ,alias='years'  )
 
 
 
-class Priority(ChoiceList):
+class unused_Priority(ChoiceList):
     """
     A list of possible values for the `CLASS` 
     property of a calendar component.
     """
     label = _("Priority")
     
-add = Priority.add_item
-add('0',en=u"undefined",de=u"nicht angegeben",   fr=u"non spécifiée")
-add('1',en=u"high",de=u"hoch",   fr=u"élevée")
-add('5',en=u"normal",de=u"normal",   fr=u"normale")
-add('9',en=u"low",de=u"niedrig",   fr=u"basse")
+#~ add = Priority.add_item
+#~ add('0',en=u"undefined",de=u"nicht angegeben",   fr=u"non spécifiée")
+#~ add('1',en=u"high",de=u"hoch",   fr=u"élevée")
+#~ add('5',en=u"normal",de=u"normal",   fr=u"normale")
+#~ add('9',en=u"low",de=u"niedrig",   fr=u"basse")
 
 #~ add('1',en=u"very urgent",de=u"sehr dringend",   fr=u"très urgent")
 #~ add('2',en=u"quite urgent",de=u"recht dringend",   fr=u"relativement urgent")
@@ -209,20 +216,20 @@ class AccessClass(ChoiceList):
     """
     label = _("Access Class")
     
-add = AccessClass.add_item
-add('0',en=u"Public",de=u"Öffentlich",   fr=u"Public")
-add('1',en=u"Private",de=u"Privat",   fr=u"Privé")
-add('2',en=u"Confidential",de=u"Vertraulich",   fr=u"Confidentiel")
+#~ add = AccessClass.add_item
+#~ add('0',en=u"Public",de=u"Öffentlich",   fr=u"Public")
+#~ add('1',en=u"Private",de=u"Privat",   fr=u"Privé")
+#~ add('2',en=u"Confidential",de=u"Vertraulich",   fr=u"Confidentiel")
 
 
 
-class GuestStatus(ChoiceList):
+class unused_GuestStatus(ChoiceList):
     """A list of possible values for the `status` field of an :class:`Guest`.
     """
     label = _("Guest Status")
     
-add = GuestStatus.add_item
-add('0',en=u"maybe",de=u"vielleicht",   fr=u"peut-être")
-add('1',en=u"yes",de=u"ja",   fr=u"oui")
-add('2',en=u"no",de=u"nein",   fr=u"non")
+#~ add = GuestStatus.add_item
+#~ add('0',en=u"maybe",de=u"vielleicht",   fr=u"peut-être")
+#~ add('1',en=u"yes",de=u"ja",   fr=u"oui")
+#~ add('2',en=u"no",de=u"nein",   fr=u"non")
 

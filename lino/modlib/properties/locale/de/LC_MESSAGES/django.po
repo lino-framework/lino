@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.properties\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-12 11:08+0000\n"
+"POT-Creation-Date: 2011-11-14 06:21+0000\n"
 "PO-Revision-Date: 2011-07-20 15:20+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -16,63 +16,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:84 .\models.py:169 .\models.py:207
+#: .\models.py:73 .\models.py:158 .\models.py:196
 msgid "Property Type"
 msgstr "Eigenschafts-Datentyp"
 
-#: .\models.py:85
+#: .\models.py:74
 msgid "Property Types"
 msgstr "Eigenschafts-Datentypen"
 
-#: .\models.py:91
+#: .\models.py:80
 msgid "Choices List"
 msgstr "Auswahliste"
 
-#: .\models.py:94
+#: .\models.py:83
 msgid "default value"
 msgstr "Standardwert"
 
-#: .\models.py:102
+#: .\models.py:91
 msgid "Limit to choices"
 msgstr "Beschränken auf Auswahl"
 
-#: .\models.py:107
+#: .\models.py:96
 msgid "Multiple choices"
 msgstr "Mehrfachauswahl"
 
-#: .\models.py:165
+#: .\models.py:154
 msgid "Property Choice"
 msgstr "Auswahlmöglichkeit"
 
-#: .\models.py:166
+#: .\models.py:155
 msgid "Property Choices"
 msgstr "Auswahlmöglichkeiten"
 
-#: .\models.py:170 .\models.py:234
+#: .\models.py:159 .\models.py:223
 msgid "Value"
 msgstr "Wert"
 
-#: .\models.py:171
+#: .\models.py:160
 msgid "Designation"
 msgstr "Beschreibung"
 
-#: .\models.py:189 .\models.py:206
+#: .\models.py:178 .\models.py:195
 msgid "Property Group"
 msgstr "Eigenschaftsgruppe"
 
-#: .\models.py:190
+#: .\models.py:179
 msgid "Property Groups"
 msgstr "Eigenschaftsgruppen"
 
-#: .\models.py:202 .\models.py:232
+#: .\models.py:191 .\models.py:221
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: .\models.py:203
+#: .\models.py:192
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: .\models.py:230
+#: .\models.py:219
 msgid "Property group"
 msgstr "Eigenschaftsgruppe"
 

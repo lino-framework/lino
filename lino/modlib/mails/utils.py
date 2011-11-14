@@ -28,7 +28,10 @@ class RecipientType(ChoiceList):
     label = _("Recipient Type")
     
 add = RecipientType.add_item
-add('cc','cc',en=u"cc",de=u"Kopie an",   fr=u"cc")
-add('bcc','bcc',en=u"bcc",de=u"Versteckte Kopie an",   fr=u"bcc")
-add('to','to',en=u"to",de=u"an",   fr=u"à")
+#~ add('cc','cc',en=u"cc",de=u"Kopie an",   fr=u"cc")
+#~ add('bcc','bcc',en=u"bcc",de=u"Versteckte Kopie an",   fr=u"bcc")
+#~ add('to','to',en=u"to",de=u"an",   fr=u"à")
+add('cc',_("cc"),alias='cc')
+add('bcc',_("bcc"),alias='bcc')
+add('to',_("to"),alias='to')
 

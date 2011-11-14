@@ -33,7 +33,8 @@ from lino.utils import mti
 
 #~ from django.contrib.auth import models as auth
 from lino.modlib.users import models as auth
-from lino.modlib.contacts.utils import GENDER_FEMALE, GENDER_MALE
+#~ from lino.modlib.contacts.utils import GENDER_FEMALE, GENDER_MALE
+from lino.utils.choicelists import Gender
 from lino.modlib.jobs import models as jobs
 from lino.modlib.contacts import models as contacts
 from lino.apps.dsbe import models as dsbe
@@ -228,18 +229,18 @@ def objects():
     
     ly = person(first_name="Ly",last_name="Rumma",
       city=vigala,country='EE',card_number='123',birth_country=ee,
-      birth_date=i2d(19680101),birth_date_circa=True,gender='F')
+      birth_date=i2d(19680101),birth_date_circa=True,gender=Gender.female)
     yield ly
     mari = person(first_name="Mari",last_name="Saffre",
-      city=vigala,country='EE',card_number='124',birth_country=ee,birth_date=i2d(20020405),gender='F')
+      city=vigala,country='EE',card_number='124',birth_country=ee,birth_date=i2d(20020405),gender=Gender.female)
     yield mari
     iiris = person(first_name="Iiris",last_name="Saffre",
-      city=vigala,country='EE',card_number='125',birth_country=ee,birth_date=i2d(20080324),gender='F')
+      city=vigala,country='EE',card_number='125',birth_country=ee,birth_date=i2d(20080324),gender=Gender.female)
     yield iiris
     
     gerd = person(first_name="Gerd",
       last_name="Xhonneux",city=kettenis,
-      name="Xhonneux Gerd",country='BE',gender='M')
+      name="Xhonneux Gerd",country='BE',gender=Gender.male)
     yield gerd
     yield role(parent=cpas,child=gerd,type=4)
     
@@ -250,7 +251,7 @@ def objects():
         # name="Казеннова Татьяна",
         city=kettenis,country='BE', 
         birth_place="Moskau", # birth_country='SUHH',
-        gender='F')
+        gender=Gender.female)
     yield tatjana
     
     from django.core.exceptions import ValidationError
@@ -507,7 +508,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_from = i2d(20100301)
     p.coached_until = None
     p.coach1 = User.objects.get(username='root')
-    p.gender = GENDER_FEMALE
+    p.gender = Gender.female 
     p.save()
     
     task = Instantiator('cal.Task').build
@@ -519,7 +520,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_from = i2d(20100801)
     p.coached_until = i2d(20101031)
     p.coach1 = User.objects.get(username='root')
-    p.gender = GENDER_MALE
+    p.gender = Gender.male
     p.national_id = 'INVALID-45'
     p.save()
 
@@ -529,14 +530,14 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_until = i2d(20101031)
     p.unavailable_until = i2d(20110712)
     p.coach1 = User.objects.get(username='root')
-    p.gender = GENDER_MALE
+    p.gender = Gender.male
     p.national_id = '931229 211-83'
     p.save()
 
     p = Person.objects.get(name=u"Ausdemwald Alfons")
     p.birth_date = i2d(19500301)
     p.coach1 = User.objects.get(username='root')
-    p.gender = GENDER_MALE
+    p.gender = Gender.male
     p.save()
 
     persongroup = Instantiator('dsbe.PersonGroup','name').build

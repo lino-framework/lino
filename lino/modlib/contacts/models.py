@@ -42,12 +42,14 @@ from lino import fields
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
+from lino.utils.choicelists import Gender
 from lino.utils import babel 
 from lino.models import get_site_config
 
 from lino.modlib.countries.models import CountryCity
 
-from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
+from lino.modlib.contacts.utils import get_salutation
+#~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
 from lino.utils import join_words
 
 
@@ -234,11 +236,11 @@ class ContactsByCountry(Contacts):
         
 
 
-def GenderField(**kw):
-    options = dict(max_length=1,blank=True,# null=True,
-        verbose_name=_("Gender"),choices=GENDER_CHOICES) 
-    options.update(kw)
-    return models.CharField(**options)
+#~ def GenderField(**kw):
+    #~ options = dict(max_length=1,blank=True,# null=True,
+        #~ verbose_name=_("Gender"),choices=Gender.get_choices()) 
+    #~ options.update(kw)
+    #~ return models.CharField(**options)
         
 
 class Born(models.Model):
@@ -286,7 +288,8 @@ class Person(models.Model):
       verbose_name=_('Title'))
     "Text to print as part of the first address line in front of first_name."
         
-    gender = GenderField()
+    #~ gender = GenderField()
+    gender = Gender.field()
         
     def get_salutation(self,**salutation_options):
         return get_salutation(

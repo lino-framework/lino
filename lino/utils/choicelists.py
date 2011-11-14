@@ -12,10 +12,23 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
+u"""
 Utility for defining hard-coded multi-lingual choice lists 
-whose value is rendered according to the current babel language.
+whose value is rendered according to the current language.
 
+Usage example (requires :setting:`DJANGO_SETTINGS_MODULE` to be set):
+
+>>> from django.utils import translation
+>>> from lino.utils.choicelists import Gender
+>>> translation.activate('en')
+>>> print unicode(Gender.male)
+Male
+>>> translation.activate('de')
+>>> print unicode(Gender.male)
+Männlich
+
+
+:class:`Gender`, 
 :class:`DoYouLike` and :class:`HowWell` 
 are "batteries included" usage examples.
 
@@ -33,13 +46,15 @@ automatically available as a property value in
 :mod:`lino.modlib.properties`.
 
 
+
+
 """
 
-from django.db import models
+#~ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
 
-from lino.utils import babel
+#~ from lino.utils import babel
 from lino.utils import curry
 
 CHOICELISTS = {}
@@ -91,23 +106,25 @@ class ChoiceList(object):
         
     @classmethod
     def field(cls,*args,**kw):
+        from lino.fields import ChoiceListField
         return ChoiceListField(cls,*args,**kw)
         
     @classmethod
-    def add_item(cls,value,ref=None,**kw):
+    def add_item(cls,value,text,alias=None):
+    #~ def add_item(cls,value,ref=None,**kw):
         if cls is ChoiceList:
             raise Exception("Cannot define items on the base class")
-        i = BabelChoice(cls,value,**kw)
+        i = BabelChoice(cls,value,text)
         cls.choices.append((i,cls.display_text(i)))
         assert not cls.items_dict.has_key(value)
         cls.items_dict[value] = i
         #~ cls.items_dict[i] = i
         cls.max_length = max(len(value),cls.max_length)
-        if ref is not None:
-            if hasattr(cls,ref):
+        if alias:
+            if hasattr(cls,alias):
                 raise Exception("Item %r already defined in %s" % (
-                    ref,cls.__name__))
-            setattr(cls,ref,i)
+                    alias,cls.__name__))
+            setattr(cls,alias,i)
         return i
         
     @classmethod
@@ -133,8 +150,8 @@ class ChoiceList(object):
         Example: :class:`lino.apps.dsbe.models.CefLevel`
         """
         return lazy(unicode,unicode)(bc)
-        #~ return unicode(bc)
         #~ return bc
+        #~ return unicode(bc)
         #~ return _(bc)
         
     @classmethod
@@ -153,17 +170,19 @@ class ChoiceList(object):
     #~ def __unicode__(self):
         #~ return unicode(self.stored_name) # babel_get(self.names)
         
-class BabelChoice(babel.BabelText):
+#~ class BabelChoice(babel.BabelText):
+class BabelChoice(object):
     """
     A constant value whose unicode representation 
     depends on the current babel language at runtime.
     Used by :class:`lino.utils.choicelists`.
 
     """
-    def __init__(self,choicelist,value,**texts):
-        self.value = value
+    def __init__(self,choicelist,value,text):
         self.choicelist = choicelist
-        babel.BabelText.__init__(self,**texts)
+        self.value = value
+        self.text = text
+        #~ babel.BabelText.__init__(self,**kw)
         
     def __len__(self):
         return len(self.value)
@@ -172,71 +191,15 @@ class BabelChoice(babel.BabelText):
         return curry(getattr(self.choicelist,name),self)
         
     def __str__(self):
-        return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
-          self.__class__.__name__,self.value)
+        #~ return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
+          #~ self.__class__.__name__,self.value)
+        return "%s (%s:%s)" % (self.text,
+            self.choicelist.__name__,self.value)
         
+    def __unicode__(self):
+        return unicode(self.text)
                 
                 
-
-class ChoiceListField(models.CharField):
-    """
-    
-    """
-    
-    __metaclass__ = models.SubfieldBase
-    
-    #~ choicelist = NotImplementedError
-    
-    def __init__(self,choicelist,*args,**kw):
-        if args:
-            verbose_name = args[0]
-            args = args[1:]
-        else:
-            verbose_name = kw.pop('verbose_name',None)
-        if verbose_name is None:
-            verbose_name = choicelist.label
-        self.choicelist = choicelist
-        defaults = dict(
-            #~ choices=KNOWLEDGE_CHOICES,
-            choices=choicelist.get_choices(),
-            max_length=choicelist.max_length,
-            blank=True,  # null=True,
-            #~ validators=[validate_knowledge],
-            #~ limit_to_choices=True,
-            )
-        defaults.update(kw)
-        #~ models.SmallIntegerField.__init__(self,*args, **defaults)
-        models.CharField.__init__(self,verbose_name,*args, **defaults)
-        
-    def get_internal_type(self):
-        return "CharField"
-        
-    def to_python(self, value):
-        if isinstance(value,BabelChoice):
-            return value
-        value = self.choicelist.to_python(value)
-        if value is None: # see 20110907
-            value = ''
-        return value
-        
-    def get_prep_value(self, value):
-        if value:
-            return value.value
-        return '' # see 20110907
-        #~ return None
-        
-    def value_to_string(self, obj):
-        value = self._get_val_from_obj(obj)
-        return self.get_prep_value(value)
-        #~ return self.get_db_prep_value(value,connection)
-        
-    #~ def save_form_data(self, instance, data):
-        #~ setattr(instance, self.name, data)
-        
-    def get_text_for_value(self,value):
-        return self.choicelist.get_text_for_value(value.value)
-    
-      
 
 
 
@@ -247,12 +210,16 @@ class DoYouLike(ChoiceList):
     label = _("certainly not...very much")
     
 add = DoYouLike.add_item
-add('0', en="certainly not",de=u"bloß nicht", fr=u"certainement pas")
-add('1', en="rather not"   ,de="eher nicht" , fr=u"plutôt pas")       
-add('2', en="normally"     ,de="normal"     , fr=u"moyennement", ref="default")    
-add('3', en="quite much"   ,de="gerne"      , fr=u"assez bien")
-add('4', en="very much"    ,de="sehr gerne" , fr=u"très bien")
-
+#~ add('0', en="certainly not",de=u"bloß nicht", fr=u"certainement pas")
+#~ add('1', en="rather not"   ,de="eher nicht" , fr=u"plutôt pas")       
+#~ add('2', en="normally"     ,de="normal"     , fr=u"moyennement", ref="default")    
+#~ add('3', en="quite much"   ,de="gerne"      , fr=u"assez bien")
+#~ add('4', en="very much"    ,de="sehr gerne" , fr=u"très bien")
+add('0',_("certainly not"))
+add('1',_("rather not"))
+add('2',_("normally"),alias="default")
+add('3',_("quite much"))
+add('4',_("very much"))
 
 class HowWell(ChoiceList):
     """
@@ -268,16 +235,33 @@ class HowWell(ChoiceList):
     label = _("not at all...very well")
     
 add = HowWell.add_item
-add('0',en=u"not at all",de=u"gar nicht",   fr=u"pas du tout")
-add('1',en=u"a bit",     de=u"ein bisschen",fr=u"un peu")
-add('2',en=u"moderate",  de=u"mittelmäßig", fr=u"moyennement", ref="default")
-add('3',en=u"quite well",de=u"gut",         fr=u"bien")
-add('4',en=u"very well", de=u"sehr gut",    fr=u"très bien")
-
-
-#~ class Gender(ChoiceList):
-    #~ """
-    #~ """
-#~ add = Gender.add_item
 #~ add('0',en=u"not at all",de=u"gar nicht",   fr=u"pas du tout")
+#~ add('1',en=u"a bit",     de=u"ein bisschen",fr=u"un peu")
+#~ add('2',en=u"moderate",  de=u"mittelmäßig", fr=u"moyennement", ref="default")
+#~ add('3',en=u"quite well",de=u"gut",         fr=u"bien")
+#~ add('4',en=u"very well", de=u"sehr gut",    fr=u"très bien")
+add('0',_("not at all"))
+add('1',_("a bit"))
+add('2',_("moderate"),alias="default")
+add('3',_("quite well"))
+add('4',_("very well"))
+
+
+class Gender(ChoiceList):
+    """
+    Defines choices for the "Gender" of a person.
+
+    """
+add = Gender.add_item
+add('M',_("Male"),alias='male')
+add('F',_("Female"),alias='female')
     
+
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+

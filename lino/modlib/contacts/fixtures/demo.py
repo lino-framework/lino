@@ -15,6 +15,7 @@
 from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
+from lino.utils.choicelists import Gender
 from lino.utils import dblogger
 #from lino import reports
 #contacts = reports.get_app('contacts')
@@ -52,7 +53,7 @@ def objects():
                 country='EE',street='Uus', street_no='1',
                 addr2=u'Vana-Vigala küla',
                 city=vigala,zip_code='78003').build
-    yield person(u'Luc',  u'Saffre', gender='M')
+    yield person(u'Luc',  u'Saffre', gender=Gender.male)
     
     eupen = City.objects.get(name__exact='Eupen')
     person = Instantiator('contacts.Person',"first_name last_name",

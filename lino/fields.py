@@ -34,6 +34,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from lino.utils import choosers
+from lino.utils import choicelists
 from lino.tools import full_model_name
 
 class PasswordField(models.CharField):
@@ -252,5 +253,66 @@ class FieldSet:
         #~ logger.info('get_child_label(%r)->%s',name,unicode(s))
         return s
         
+
+class ChoiceListField(models.CharField):
+    """
+    A field that stores values from a 
+    :class:`lino.utils.choicelists.ChoiceList`.
+    """
+    
+    __metaclass__ = models.SubfieldBase
+    
+    #~ choicelist = NotImplementedError
+    
+    def __init__(self,choicelist,*args,**kw):
+        if args:
+            verbose_name = args[0]
+            args = args[1:]
+        else:
+            verbose_name = kw.pop('verbose_name',None)
+        if verbose_name is None:
+            verbose_name = choicelist.label
+        self.choicelist = choicelist
+        defaults = dict(
+            #~ choices=KNOWLEDGE_CHOICES,
+            choices=choicelist.get_choices(),
+            max_length=choicelist.max_length,
+            blank=True,  # null=True,
+            #~ validators=[validate_knowledge],
+            #~ limit_to_choices=True,
+            )
+        defaults.update(kw)
+        #~ models.SmallIntegerField.__init__(self,*args, **defaults)
+        models.CharField.__init__(self,verbose_name,*args, **defaults)
         
+    def get_internal_type(self):
+        return "CharField"
+        
+    def to_python(self, value):
+        if isinstance(value,choicelists.BabelChoice):
+            return value
+        value = self.choicelist.to_python(value)
+        if value is None: # see 20110907
+            value = ''
+        return value
+        
+    def get_prep_value(self, value):
+        if value:
+            return value.value
+        return '' # see 20110907
+        #~ return None
+        
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_prep_value(value)
+        #~ return self.get_db_prep_value(value,connection)
+        
+    #~ def save_form_data(self, instance, data):
+        #~ setattr(instance, self.name, data)
+        
+    def get_text_for_value(self,value):
+        return self.choicelist.get_text_for_value(value.value)
+    
+      
+
         

@@ -22,6 +22,13 @@
     :members:
     :show-inheritance:
 
+:mod:`lino.modlib.cal.fixtures.std`
+-----------------------------------
+
+.. automodule:: lino.modlib.cal.fixtures.std
+    :members:
+    :show-inheritance:
+
 
 :mod:`lino.modlib.cal.management.commands.watch_calendars`
 ----------------------------------------------------------

@@ -12,9 +12,6 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Kann `babel.BabelText` nicht ersetzt werden durch 
-    einfache promises, die mit `gettext_lazy` erzeugt werden?
-
 #.  Wenn man das "oberste" Fenster schließt, 
     sieht man jetzt nicht mehr wie gewohnt die Erinnerungen, 
     sondern nur eine weiße Fläche. Man muss explizit auf 

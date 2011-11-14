@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-12 11:08+0000\n"
+"POT-Creation-Date: 2011-11-14 06:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,6 +95,18 @@ msgstr ""
 
 #: .\utils.py:28
 msgid "Recipient Type"
+msgstr ""
+
+#: .\utils.py:34
+msgid "cc"
+msgstr ""
+
+#: .\utils.py:35
+msgid "bcc"
+msgstr ""
+
+#: .\utils.py:36
+msgid "to"
 msgstr ""
 
 #: .\config\contacts\Contact\80_mails.dtl.py:3

@@ -2970,7 +2970,9 @@ Lino.WindowWrapper = function(caller,config,params,wc) {
     //~ ] 
   };
   if (caller === undefined) {
-    this.window_config.tools = [];
+    this.window_config.tools = [
+      { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" }
+    ];
     this.window_config.closable = false;
   } else {
     this.window_config.tools = [ 

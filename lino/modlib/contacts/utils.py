@@ -21,6 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 #~ from django.conf import settings
 
 from lino.utils import join_words
+from lino.utils.choicelists import Gender
 
 name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VOM','VON','OF', "DE", "DU", "EL", "AL")
 name_prefixes2 = ("VAN DEN","VAN DER","VAN DE","IN HET", "VON DER","DE LA")
@@ -160,9 +161,9 @@ Examples:
         kw['street'] = s
     return kw
 
-GENDER_MALE = 'M'
-GENDER_FEMALE = 'F'
-GENDER_CHOICES = ((GENDER_MALE,_('Male')),(GENDER_FEMALE,_('Female')))
+#~ GENDER_MALE = 'M'
+#~ GENDER_FEMALE = 'F'
+#~ GENDER_CHOICES = ((GENDER_MALE,_('Male')),(GENDER_FEMALE,_('Female')))
 
 
 def get_salutation(lang,gender,nominative=False):
@@ -183,16 +184,17 @@ def get_salutation(lang,gender,nominative=False):
     
     """
     if lang == 'de':
-        if gender == GENDER_FEMALE:
+        if gender == Gender.female:
+        #~ if gender == GENDER_FEMALE:
             return "Frau"
         if nominative:
             return "Herr"
         return "Herrn"
     if lang == 'fr':
-        if gender == GENDER_FEMALE:
+        if gender == Gender.female:
             return "Mme"
         return "M."
-    if gender == GENDER_FEMALE:
+    if gender == Gender.female:
         return "Mrs"
     return "Mr"
         

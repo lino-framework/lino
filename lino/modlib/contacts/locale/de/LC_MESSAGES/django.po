@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-12 11:08+0000\n"
+"POT-Creation-Date: 2011-11-14 06:21+0000\n"
 "PO-Revision-Date: 2011-10-02 11:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
@@ -16,215 +16,223 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:65 .\models.py:305 .\config\contacts\Contact\1.dtl.py:3
-#: .\config\contacts\Person\1.dtl.py:3
+#: .\models.py:64
+msgid "company type"
+msgstr "Organisationsart"
+
+#: .\models.py:65
+msgid "company types"
+msgstr "Organisationsarten"
+
+#: .\models.py:67
+msgid "Abbreviation"
+msgstr "Abkürzung"
+
+#: .\models.py:87 .\models.py:556 .\config\contacts\Company\1.dtl.py:3
+#: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
 msgid "Contact"
 msgstr "Kontakt"
 
-#: .\models.py:66
+#: .\models.py:88
 msgid "Contacts"
 msgstr "Kontakte"
 
-#: .\models.py:68
+#: .\models.py:90
 msgid "Name"
 msgstr "Name"
 
-#: .\models.py:69
+#: .\models.py:91
 msgid "Address line before street"
 msgstr "Adresszeile vor Straße"
 
-#: .\models.py:73
+#: .\models.py:95
 msgid "Street prefix"
 msgstr "Präfix Straße"
 
-#: .\models.py:76
+#: .\models.py:98
 msgid "Street"
 msgstr "Straße"
 
-#: .\models.py:79
+#: .\models.py:101
 msgid "No."
 msgstr "Nr."
 
-#: .\models.py:82
+#: .\models.py:104
 msgid "Box"
 msgstr "Box"
 
-#: .\models.py:85
+#: .\models.py:107
 msgid "Address line after street"
 msgstr "Adresszeile nach Straße"
 
-#: .\models.py:89
+#: .\models.py:111
 msgid "Zip code"
 msgstr "Postleitzahl"
 
-#: .\models.py:91
+#: .\models.py:113
 msgid "Region"
 msgstr "Region"
 
-#: .\models.py:95
+#: .\models.py:117
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: .\models.py:96
+#: .\models.py:118
 msgid "URL"
 msgstr "URL"
 
-#: .\models.py:97
+#: .\models.py:119
 msgid "Phone"
 msgstr "Telefon"
 
-#: .\models.py:98
+#: .\models.py:120
 msgid "GSM"
 msgstr "GSM"
 
-#: .\models.py:99
+#: .\models.py:121
 msgid "Fax"
 msgstr "Fax"
 
-#: .\models.py:101
+#: .\models.py:123
 msgid "Remarks"
 msgstr "Bemerkungen"
 
-#: .\models.py:178
+#: .\models.py:200
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:203
+#: .\models.py:222
 #, python-format
 msgid "All %s"
 msgstr "Alle %s"
 
-#: .\models.py:219
+#: .\models.py:239
+msgid "Gender"
+msgstr ""
+
+#: .\models.py:254
 msgid "Birth date"
 msgstr "Geburtsdatum"
 
-#: .\models.py:222
+#: .\models.py:257
 msgid "not exact"
 msgstr "ungenau"
 
-#: .\models.py:227
+#: .\models.py:262
 #, python-format
 msgid "%d years"
 msgstr "%d Jahre"
 
-#: .\models.py:228
+#: .\models.py:263
 msgid "unknown"
 msgstr "unbekannt"
 
-#: .\models.py:229
+#: .\models.py:264
 msgid "Age"
 msgstr "Alter"
 
-#: .\models.py:251
+#: .\models.py:274 .\models.py:502
 msgid "Person"
 msgstr "Person"
 
-#: .\models.py:253 .\models.py:349
+#: .\models.py:275
+msgid "Persons"
+msgstr "Personen"
+
+#: .\models.py:278
+msgid "First name"
+msgstr "Vorname"
+
+#: .\models.py:282
+msgid "Last name"
+msgstr "Familienname"
+
+#: .\models.py:286
+msgid "Title"
+msgstr "Anrede"
+
+#: .\models.py:348 .\models.py:504
 msgid "Company"
 msgstr "Organisation"
 
-#: .\models.py:328
-msgid "company type"
-msgstr "Organisationsart"
-
-#: .\models.py:329
-msgid "company types"
-msgstr "Organisationsarten"
-
-#: .\models.py:331
-msgid "Abbreviation"
-msgstr "Abkürzung"
-
-#: .\models.py:350
+#: .\models.py:349
 msgid "Companies"
 msgstr "Organisationen"
 
-#: .\models.py:352
+#: .\models.py:351
 msgid "VAT id"
 msgstr "MWSt.-Nr."
 
-#: .\models.py:357
+#: .\models.py:356
 msgid "Company type"
 msgstr "Organisationsart"
 
-#: .\models.py:395
+#: .\models.py:389
 msgid "Role Type"
 msgstr "Funktion"
 
-#: .\models.py:396
+#: .\models.py:390
 msgid "Role Types"
 msgstr "Funktionen"
 
-#: .\models.py:412
+#: .\models.py:406
 msgid "Contact Person"
 msgstr "Kontaktperson"
 
-#: .\models.py:413
+#: .\models.py:407
 msgid "Contact Persons"
 msgstr "Kontaktpersonen"
 
-#: .\models.py:416
+#: .\models.py:410
 msgid "Parent Contact"
 msgstr "Kontakt für"
 
-#: .\models.py:419
+#: .\models.py:413
 msgid "Child Contact"
 msgstr "Kontaktperson"
 
-#: .\models.py:423
+#: .\models.py:417
 msgid "Contact Role"
 msgstr "Funktion"
 
-#: .\models.py:481
+#: .\models.py:475
 msgid "Contact persons"
 msgstr "Kontaktpersonen"
 
-#: .\models.py:486
+#: .\models.py:480
 msgid "Contact for"
 msgstr "Kontaktperson für"
 
-#: .\models.py:501
+#: .\models.py:578
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste Partnernummer"
 
-#: .\models.py:510
+#: .\models.py:587
 msgid "The company that runs this site"
 msgstr "Firma, die diesen Site betreibt"
 
-#: .\models.py:518
+#: .\models.py:595
 msgid "is Person"
 msgstr "ist Person"
 
-#: .\models.py:523
+#: .\models.py:600
 msgid "is Company"
 msgstr "ist Organisation"
 
-#: .\models.py:536
+#: .\models.py:613
 msgid "~Contacts"
 msgstr "~Kontakte"
 
-#: .\utils.py:161
+#: .\utils.py:165
 msgid "Male"
 msgstr "Männlich"
 
-#: .\utils.py:161
+#: .\utils.py:165
 msgid "Female"
 msgstr "Weiblich"
 
 #~ msgid "Sex"
 #~ msgstr "Geschlecht"
-
-#~ msgid "First name"
-#~ msgstr "Vorname"
-
-#~ msgid "Last name"
-#~ msgstr "Familienname"
-
-#~ msgid "Title"
-#~ msgstr "Anrede"
-
-#~ msgid "Persons"
-#~ msgstr "Personen"
 
 #~ msgid "represented by"
 #~ msgstr "Vertreten durch"

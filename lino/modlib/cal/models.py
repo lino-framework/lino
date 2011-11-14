@@ -38,9 +38,11 @@ from lino.modlib.contacts import models as contacts
 
 from lino.modlib.mails import models as mails # import Mailable
 
-from lino.modlib.cal.utils import EventStatus, \
-    TaskStatus, DurationUnit, Priority, AccessClass, \
-    GuestStatus, setkw, dt2kw
+from lino.modlib.cal.utils import \
+    DurationUnit, setkw, dt2kw
+#~ from lino.modlib.cal.utils import EventStatus, \
+    #~ TaskStatus, DurationUnit, Priority, AccessClass, \
+    #~ GuestStatus, setkw, dt2kw
 
 from lino.utils.babel import dtosl
 #~ from lino.utils.dpy import is_deserializing
@@ -168,8 +170,62 @@ class Places(reports.Report):
     model = Place
     
 
+class EventStatus(babel.BabelNamed):
+    "The status of an Event."
+    class Meta:
+        verbose_name = _("Event Status")
+        verbose_name_plural = _('Event Statuses')
+    ref = models.CharField(max_length='1')
+class EventStatuses(reports.Report):
+    model = EventStatus
+    column_names = 'name *'
+
+class TaskStatus(babel.BabelNamed):
+    "The status of a Task."
+    class Meta:
+        verbose_name = _("Task Status")
+        verbose_name_plural = _('Task Statuses')
+    ref = models.CharField(max_length='1')
+class TaskStatuses(reports.Report):
+    model = TaskStatus
+    column_names = 'name *'
+
+class GuestStatus(babel.BabelNamed):
+    "The status of a Guest."
+    class Meta:
+        verbose_name = _("Guest Status")
+        verbose_name_plural = _('Guest Statuses')
+    ref = models.CharField(max_length='1')
+class GuestStatuses(reports.Report):
+    model = GuestStatus
+    column_names = 'name *'
+
+class Priority(babel.BabelNamed):
+    "The priority of a Task or Event."
+    class Meta:
+        verbose_name = _("Priority")
+        verbose_name_plural = _('Priorities')
+    ref = models.CharField(max_length='1')
+class Priorities(reports.Report):
+    model = Priority
+    column_names = 'name *'
+
+class AccessClass(babel.BabelNamed):
+    "The access class of a Task or Event."
+    class Meta:
+        verbose_name = _("Access Class")
+        verbose_name_plural = _('Access Classes')
+    ref = models.CharField(max_length='1')
+class AccessClasses(reports.Report):
+    model = AccessClass
+    column_names = 'name *'
+
+
+
 class EventType(mixins.PrintableType,babel.BabelNamed):
-    "Deserves more documentation."
+    """The type of an Event.
+    Determines which build method and template to be used for printing the event.
+    """
   
     templates_group = 'cal/Event'
     
@@ -275,7 +331,8 @@ class Component(ComponentBase,
     class Meta:
         abstract = True
         
-    access_class = AccessClass.field() # iCal:CLASS
+    #~ access_class = AccessClass.field() # iCal:CLASS
+    access_class = models.ForeignKey(AccessClass,blank=True,null=True)
     sequence = models.IntegerField(_("Revision"),default=0)
     #~ alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
     #~ alarm_unit = DurationUnit.field(_("Unit"),blank=True,
@@ -356,8 +413,10 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     transparent = models.BooleanField(_("Transparent"),default=False)
     type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
-    priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
-    status = EventStatus.field(_("Status"),blank=True) # iCal:STATUS
+    priority = models.ForeignKey(Priority,null=True,blank=True)
+    #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
+    #~ status = EventStatus.field(_("Status"),blank=True) # iCal:STATUS
+    status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     duration = fields.FieldSet(_("Duration"),'duration_value duration_unit')
     duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
     duration_unit = DurationUnit.field(_("Duration unit"),blank=True) # iCal:DURATION
@@ -411,7 +470,8 @@ class Task(mixins.Owned,Component):
         verbose_name=_("Due time"))
     done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
-    status = TaskStatus.field(blank=True) # iCal:STATUS
+    #~ status = TaskStatus.field(blank=True) # iCal:STATUS
+    status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     
     auto_type = models.IntegerField(null=True,blank=True,editable=False) 
     
@@ -539,7 +599,8 @@ class Guest(contacts.ContactDocument,
         verbose_name=_("Role"),
         blank=True,null=True) 
         
-    status = GuestStatus.field(verbose_name=_("Status"),blank=True)
+    #~ status = GuestStatus.field(verbose_name=_("Status"),blank=True)
+    status = models.ForeignKey(GuestStatus,verbose_name=_("Status"),blank=True,null=True)
     
     #~ confirmed = models.DateField(
         #~ blank=True,null=True,
@@ -741,8 +802,13 @@ def setup_my_menu(site,ui,user,m):
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.Places')
+    m.add_action('cal.Priorities')
+    m.add_action('cal.AccessClasses')
+    m.add_action('cal.EventStatuses')
+    m.add_action('cal.TaskStatuses')
     m.add_action('cal.EventTypes')
     m.add_action('cal.GuestRoles')
+    m.add_action('cal.GuestStatuses')
     m.add_action('cal.Calendars')
   
 def setup_explorer_menu(site,ui,user,m):

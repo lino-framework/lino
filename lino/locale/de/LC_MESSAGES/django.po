@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-12 11:08+0000\n"
-"PO-Revision-Date: 2011-11-12 13:11+0200\n"
+"POT-Creation-Date: 2011-11-14 06:20+0000\n"
+"PO-Revision-Date: 2011-11-14 08:43+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\__init__.py:585
+#: .\__init__.py:54
+msgid "English"
+msgstr "Englisch"
+
+#: .\__init__.py:55
+msgid "German"
+msgstr "Deutsch"
+
+#: .\__init__.py:56
+msgid "French"
+msgstr "Französisch"
+
+#: .\__init__.py:57
+msgid "Dutch"
+msgstr "Niederländisch"
+
+#: .\__init__.py:58
+msgid "Estonian"
+msgstr "Estnisch"
+
+#: .\__init__.py:646
 #: .\templates\500.html.py:4
 #: .\templates\base.html.py:26
 msgid "Home"
@@ -60,51 +80,51 @@ msgstr "Vorlagentext"
 msgid "~Site"
 msgstr "~Site"
 
-#: .\reports.py:375
+#: .\reports.py:376
 msgid "Detail"
 msgstr "Detail"
 
-#: .\reports.py:385
+#: .\reports.py:386
 msgid "New"
 msgstr "Neu"
 
-#: .\reports.py:390
+#: .\reports.py:391
 #, python-format
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: .\reports.py:395
+#: .\reports.py:396
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: .\reports.py:411
+#: .\reports.py:412
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\reports.py:419
-#: .\reports.py:424
+#: .\reports.py:420
+#: .\reports.py:425
 msgid "Save"
 msgstr "Speichern"
 
-#: .\reports.py:580
+#: .\reports.py:581
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr "Benutzer  %(user)s hat kein Recht,  %(report)s zu sehen."
 
-#: .\reports.py:810
+#: .\reports.py:811
 msgid "Yes"
 msgstr "Ja"
 
-#: .\reports.py:810
+#: .\reports.py:811
 msgid "No"
 msgstr "Nein"
 
-#: .\reports.py:1150
+#: .\reports.py:1153
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s von %(master)s"
 
-#: .\core\kernel.py:188
+#: .\core\kernel.py:189
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
@@ -130,24 +150,8 @@ msgstr "Besitzertabelle"
 msgid "Owner"
 msgstr "Besitzer"
 
-#: .\mixins\personal.py:31
-msgid "Gender"
-msgstr "Geschlecht"
-
-#: .\mixins\personal.py:47
-msgid "First name"
-msgstr "Vorname"
-
-#: .\mixins\personal.py:51
-msgid "Last name"
-msgstr "Nachname"
-
-#: .\mixins\personal.py:55
-msgid "Title"
-msgstr "Anrede"
-
 #: .\mixins\printable.py:490
-#: .\mixins\printable.py:780
+#: .\mixins\printable.py:801
 msgid "Print"
 msgstr "Drucken"
 
@@ -161,34 +165,39 @@ msgstr ""
 msgid "Reused %s printable from cache."
 msgstr ""
 
-#: .\mixins\printable.py:559
+#: .\mixins\printable.py:571
 msgid "Clear cache"
 msgstr "Cache löschen"
 
-#: .\mixins\printable.py:580
+#: .\mixins\printable.py:592
 msgid "Build method"
 msgstr "Konstruktionsmethode"
 
-#: .\mixins\printable.py:589
+#: .\mixins\printable.py:601
 msgid "Template"
 msgstr "Vorlage"
 
-#: .\mixins\printable.py:625
+#: .\mixins\printable.py:637
 msgid "must build"
 msgstr "muss generiert werden"
 
-#: .\mixins\printable.py:765
+#: .\mixins\printable.py:786
 msgid "Date"
 msgstr "Datum"
 
-#: .\mixins\printable.py:812
+#: .\mixins\printable.py:838
 msgid "Preview"
 msgstr "Vorschau"
 
-#: .\mixins\printable.py:822
+#: .\mixins\printable.py:852
 #, python-format
 msgid "Initiate Listing «%s»"
 msgstr "Listing «%s» starten"
+
+#: .\mixins\printable.py:861
+#, python-format
+msgid "Listings «%s»"
+msgstr "Listings «%s»"
 
 #: .\mixins\sendable.py:65
 msgid "Send email"
@@ -275,29 +284,29 @@ msgstr "%r (ungültige Auswahl)"
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Record  %(rowid)d von %(rowcount)d"
 
-#: .\ui\extjs3\ext_ui.py:818
+#: .\ui\extjs3\ext_ui.py:825
 #: .\ui\extjs4\ext_ui.py:757
 #: .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs3\ext_ui.py:879
+#: .\ui\extjs3\ext_ui.py:886
 #: .\ui\extjs4\ext_ui.py:817
 #: .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
-#: .\ui\extjs3\ext_ui.py:881
+#: .\ui\extjs3\ext_ui.py:888
 #: .\ui\extjs4\ext_ui.py:819
 #: .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs3\ext_ui.py:889
-#: .\ui\extjs3\ext_ui.py:915
+#: .\ui\extjs3\ext_ui.py:896
+#: .\ui\extjs3\ext_ui.py:922
 #: .\ui\extjs4\ext_ui.py:827
 #: .\ui\extjs4\ext_ui.py:851
 #: .\ui\qx\qx_ui.py:632
@@ -306,34 +315,34 @@ msgstr "%s wurde gespeichert."
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:942
+#: .\ui\extjs3\ext_ui.py:949
 #, python-format
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1112
+#: .\ui\extjs3\ext_ui.py:1119
 #: .\ui\extjs4\ext_ui.py:1015
 #: .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs3\ext_ui.py:1209
+#: .\ui\extjs3\ext_ui.py:1216
 #, python-format
 msgid "Action \"%(action)s\" failed for %(record)s:"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1213
+#: .\ui\extjs3\ext_ui.py:1220
 msgid "An error report has been sent to the system administrator."
 msgstr "Ein Fehlerbericht wurde an den Systemverwalter geschicht."
 
-#: .\ui\extjs3\ext_ui.py:1566
+#: .\ui\extjs3\ext_ui.py:1559
 #: .\ui\extjs4\ext_ui.py:1325
 #: .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Upload"
 
-#: .\ui\extjs3\ext_ui.py:1575
+#: .\ui\extjs3\ext_ui.py:1568
 #: .\ui\extjs4\ext_ui.py:1333
 #: .\ui\qx\qx_ui.py:1076
 msgid "Edit"
@@ -473,18 +482,78 @@ msgstr "Auswahlmöglichkeiten für %s"
 msgid "Language"
 msgstr "Sprache"
 
-#: .\utils\choicelists.py:150
+#: .\utils\choicelists.py:151
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (ungültige Auswahl für %(list)s)"
 
-#: .\utils\choicelists.py:247
+#: .\utils\choicelists.py:254
 msgid "certainly not...very much"
 msgstr "bloß nicht ... sehr gerne"
 
-#: .\utils\choicelists.py:268
+#: .\utils\choicelists.py:262
+msgid "certainly not"
+msgstr "bloß nicht"
+
+#: .\utils\choicelists.py:263
+msgid "rather not"
+msgstr "eher nicht"
+
+#: .\utils\choicelists.py:264
+msgid "normally"
+msgstr "normal"
+
+#: .\utils\choicelists.py:265
+msgid "quite much"
+msgstr "gerne"
+
+#: .\utils\choicelists.py:266
+msgid "very much"
+msgstr "segr gerne"
+
+#: .\utils\choicelists.py:280
 msgid "not at all...very well"
 msgstr "gar nicht ... sehr gut"
+
+#: .\utils\choicelists.py:288
+msgid "not at all"
+msgstr "gar nicht"
+
+#: .\utils\choicelists.py:289
+msgid "a bit"
+msgstr "ein bisschen"
+
+#: .\utils\choicelists.py:290
+msgid "moderate"
+msgstr "mittelmäßig"
+
+#: .\utils\choicelists.py:291
+msgid "quite well"
+msgstr "gut"
+
+#: .\utils\choicelists.py:292
+msgid "very well"
+msgstr "sehr gut"
+
+#: .\utils\choicelists.py:299
+msgid "Male"
+msgstr "Männlich"
+
+#: .\utils\choicelists.py:300
+msgid "Female"
+msgstr "Weiblich"
+
+#~ msgid "Gender"
+#~ msgstr "Geschlecht"
+
+#~ msgid "First name"
+#~ msgstr "Vorname"
+
+#~ msgid "Last name"
+#~ msgstr "Nachname"
+
+#~ msgid "Title"
+#~ msgstr "Anrede"
 
 #~ msgid "Sex"
 #~ msgstr "Geschlecht"
@@ -579,20 +648,8 @@ msgstr "gar nicht ... sehr gut"
 #~ msgstr "Erstellt"
 
 #, fuzzy
-#~ msgid "Male"
-#~ msgstr "Speichern"
-
-#, fuzzy
-#~ msgid "Female"
-#~ msgstr "Datei"
-
-#, fuzzy
 #~ msgid "Birth date"
 #~ msgstr "Erste Seite"
-
-#, fuzzy
-#~ msgid "not exact"
-#~ msgstr "~Kontakte"
 
 #, fuzzy
 #~ msgid "Birth place"
@@ -752,10 +809,6 @@ msgstr "gar nicht ... sehr gut"
 
 #~ msgid "~Projects"
 #~ msgstr "~Projekte"
-
-#, fuzzy
-#~ msgid "German"
-#~ msgstr "Allgemein"
 
 #, fuzzy
 #~ msgid "username"

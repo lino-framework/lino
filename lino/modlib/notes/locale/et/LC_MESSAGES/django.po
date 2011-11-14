@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-12 11:08+0000\n"
+"POT-Creation-Date: 2011-11-14 06:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,23 +24,23 @@ msgstr ""
 msgid "Note Types"
 msgstr ""
 
-#: .\models.py:51
+#: .\models.py:52
 msgid "important"
 msgstr ""
 
-#: .\models.py:53 .\models.py:65
+#: .\models.py:54 .\models.py:66
 msgid "Remark"
 msgstr ""
 
-#: .\models.py:62
+#: .\models.py:63
 msgid "Event Type"
 msgstr ""
 
-#: .\models.py:63
+#: .\models.py:64
 msgid "Event Types"
 msgstr ""
 
-#: .\models.py:66 .\models.py:98
+#: .\models.py:67 .\models.py:98
 msgid "Body"
 msgstr ""
 
