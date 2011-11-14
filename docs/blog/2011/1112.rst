@@ -84,12 +84,17 @@ Sunday
 
 Started a new experimental application for internal use.
 
-Added new configuration setting :attr:`languages <lino.Lino.languages>`.
+Some general optimizations:
 
-Some optimizations in modlib structure. 
-e.g. PersonMixin replaced by Person.
-Note that in :mod:`lino.modlib.contacts.models`, Person and Company are 
-abstract and are not automatically subclasses of Contact.
-There may be applications who want "persons" that are not a Contact.
+- Added new configuration setting :attr:`languages <lino.Lino.languages>`.
+
+- e.g. PersonMixin replaced by Person.
+  Note that in :mod:`lino.modlib.contacts.models`, Person and Company are 
+  abstract and are not automatically subclasses of Contact.
+  There may be applications who want "persons" that are not a Contact.
+  
+- Field "sex" renamed to "gender" (this will need data migration)
 
 Added new module :mod:`lino.modlib.tickets`. 
+
+Check-in 20111113b

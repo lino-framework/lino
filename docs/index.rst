@@ -59,7 +59,7 @@ Some external links:
    admin/index
    topics/index
    ref/index
-   autodoc/lino
+   autodoc/index
    download
    demos
 

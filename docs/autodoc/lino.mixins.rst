@@ -13,4 +13,3 @@ Subpackages
 
     lino.mixins.printable
     lino.mixins.uploadable
-    lino.mixins.personal

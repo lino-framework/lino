@@ -22,8 +22,6 @@ Short-term
     Besser wäre, wenn das oberste Fenster gar nicht erst 
     einen Close-Button hätte.
 
-#.  Rename field "sex" to "gender" in :mod:`lino.mixins.personal`.
-
 #.  Der Begriff "Arbeitsvertrag" ist irritierend, denn eigentlich werden die Dinger in Eupen 
     "Artikel-60-7-Konvention" genannt. 
 

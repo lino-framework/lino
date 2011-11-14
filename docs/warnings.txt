@@ -1,0 +1,13 @@
+T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:20: (WARNING/2) autodoc can't import/find module 'lino.apps.crl.models', it reported error: "'module' object has no attribute 'PersonMixin'", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:19: (WARNING/2) autodoc can't import/find module 'lino.apps.igen.models', it reported error: "'module' object has no attribute 'PersonMixin'", please check your spelling and sys.path
+T:\hgwork\lino\docs\releases\2011\1110.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:17: WARNING: py:mod reference target not found: lino.apps.crl.models
+T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:16: WARNING: py:mod reference target not found: lino.apps.igen.models
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:1: WARNING: py:mod reference target not found: mixins
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:8: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:42: WARNING: py:class reference target not found: is_authenticated
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:65: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:116: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:155: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:177: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:205: WARNING: py:class reference target not found: lino.modlib.thirds.models.Third
