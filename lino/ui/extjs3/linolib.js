@@ -1728,8 +1728,21 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
             cmp.disable();
           },this);
       } else {
-          if (record.data.disabled_actions) {
-              console.log('disabled_action =',record.data.disabled_actions);
+          if (record.disabled_actions) {
+              console.log('disabled_action =',record.disabled_actions,this.getBottomToolbar());
+              for (i = 0; i < record.disabled_actions.length; i++) {
+                  var name = record.disabled_actions[i];
+                  var cmp;
+                  this.getBottomToolbar().items.each(function(item,index,length){
+                      if (item.name == name) {
+                          cmp = item;
+                          return false;
+                      }
+                  });
+                  //~ record.disabled_actions[i]);
+                  //~ var cmp = this.getBottomToolbar().findById(record.disabled_actions[i]);
+                  console.log('found',cmp);
+              }
           };
           if (record.data.disabled_fields) {
               //~ console.log('20100930 disabled_fields =',record.data.disabled_fields);

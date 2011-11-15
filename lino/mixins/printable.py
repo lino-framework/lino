@@ -566,9 +566,16 @@ class DirectPrintAction(BasePrintAction):
         #~ return rr.ui.success_response(open_url=target,**kw)
     
 class ClearCacheAction(reports.RowAction):
-#~ class ClearCacheAction(actions.UpdateRowAction):
+    """
+    Defines the :guilabel:`Clear cache` button on a Printable record.
+    """
     name = 'clear'
     label = _('Clear cache')
+    
+    def disabled_for(self,obj,request):
+        #~ print "ClearCacheAction.disabled_for()", obj
+        if obj.must_build:
+            return True
     
     def run(self,rr,elem):
         elem.must_build = True

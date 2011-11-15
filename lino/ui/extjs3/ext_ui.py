@@ -1696,11 +1696,11 @@ tinymce.init({
             for a in h.get_actions():
                 a.window_wrapper = self.action_window_wrapper(a,h)
                 
-            for de in h.data_elems():
-                if de.name in self.reserved_names:
-                    raise Exception(
-                      "%s defines %r but that is a reserved name in lino.ui.extjs" % (
-                      h.report,de.name))
+            #~ for de in h.data_elems():
+                #~ if de.name in self.reserved_names:
+                    #~ raise Exception(
+                      #~ "%s defines %r but that is a reserved name in lino.ui.extjs" % (
+                      #~ h.report,de.name))
                 
     def source_dir(self):
         return os.path.abspath(os.path.dirname(__file__))
@@ -1740,6 +1740,7 @@ tinymce.init({
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(
           text=a.label,
+          name=a.name,
           #~ text=unicode(a.label),
         )
         return kw

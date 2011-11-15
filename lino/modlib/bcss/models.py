@@ -12,6 +12,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Lino-specific extensions to make the :term:`BCSS` 
+connection visible.
+
+"""
+
 import traceback
 import datetime
 
@@ -76,7 +82,6 @@ class SendAction(reports.RowAction):
 
 class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     """
-    
     Abstract Base class for models that represent 
     requests to the :term:`BCSS` (and responses).
     """
@@ -147,12 +152,14 @@ class IdentifyPersonRequest(BCSSRequest):
     """
     Represents a request to the :term:`BCSS` IdentifyPerson service.
     
-    If the person has her `national_id` field filled, 
-    it does a *verification* of the personal data,
-    Otherwise it does a search request on the person's last_name, 
-    first_name and (if filled) birth_date and gender fields.
     """
     def build_service(self):
+        """
+        If the person has her `national_id` field filled, 
+        it does a *verification* of the personal data,
+        Otherwise it does a search request on the person's last_name, 
+        first_name and (if filled) birth_date and gender fields.
+        """
         person = self.project
         VD = bcss.IdentifyPersonRequest.VerificationData
         SC = bcss.IdentifyPersonRequest.SearchCriteria

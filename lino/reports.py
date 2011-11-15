@@ -50,6 +50,7 @@ from django.utils.safestring import mark_safe
 
 import lino
 #~ from lino import layouts
+from lino import fields
 from lino import actions
 from lino.utils import perms, menus, call_on_bases
 from lino.utils.config import load_config_files, Configured
@@ -61,7 +62,7 @@ from lino.ui import base
 
 from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
-from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
+from lino.core.coretools import get_slave, get_model_report, get_data_elem
 
 #~ from lino.modlib import field_choices
 
@@ -437,7 +438,7 @@ class ReportHandle(base.Handle):
         logger.debug('20111113 ReportHandle.__init__(%s)',report)
         assert isinstance(report,Report)
         self.report = report
-        self.data_elems = report.data_elems
+        #~ self.data_elems = report.data_elems
         self.get_data_elem = report.get_data_elem
         self._layouts = None
         #~ actors.ActorHandle.__init__(self,report)
@@ -1001,7 +1002,7 @@ class Report(actors.Actor): #,base.Handled):
         return self.model._meta.verbose_name_plural
         
     def column_choices(self):
-        return [ de.name for de in self.data_elems() ]
+        return [ de.name for de in self.wildcard_data_elems() ]
           
     
     def do_setup(self):
@@ -1056,7 +1057,7 @@ class Report(actors.Actor): #,base.Handled):
         l = []
         for a in self.get_actions():
             if isinstance(a,RowAction):
-                if a.disabled_for(obj,request):
+                if not a.disabled_for(obj,request):
                     l.append(a.name)
         return l
         
@@ -1139,8 +1140,23 @@ class Report(actors.Actor): #,base.Handled):
         
             
         
-    def data_elems(self):
-        for de in data_elems(self.model): yield de
+    def wildcard_data_elems(self):
+        """Yields names that will be used as wildcard column_names of a Report.
+        """
+        meta = self.model._meta
+        #~ for f in meta.fields: yield f.name
+        #~ for f in meta.many_to_many: yield f.name
+        #~ for f in meta.virtual_fields: yield f.name
+        for f in meta.fields: 
+            #~ if f.editable:
+            if not isinstance(f,fields.VirtualField):
+                if not getattr(f,'_lino_babel_field',False):
+                    yield f
+        for f in meta.many_to_many: yield f
+        for f in meta.virtual_fields: yield f
+        # todo: for slave in self.report.slaves
+      
+        #~ for de in data_elems(self.model): yield de
           
     def get_data_elem(self,name):
         de = get_data_elem(self.model,name)
@@ -1631,8 +1647,9 @@ class LayoutHandle:
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                de.name for de in self.rh.report.data_elems() \
+                de.name for de in self.rh.report.wildcard_data_elems() \
                   if (de.name not in explicit_specs) \
+                    and (not de.name.endswith('_ptr')) \
                     #~ and (de.name not in self.hidden_elements) \
                     #~ and (de.name not in self.rh.report.known_values.keys()) \
                     and (de.name != self.rh.report.fk_name) \
