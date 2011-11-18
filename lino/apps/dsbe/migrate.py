@@ -614,7 +614,10 @@ def migrate_from_1_2_5(globals_dict): return '1.2.6'
   
 def migrate_from_1_2_6(globals_dict):    
     """
-    Rename fields `sex` to `gender` in contacts.Person, users.User, dsbe.PersonSearch
+    - Rename fields `sex` to `gender` 
+      in `contacts.Person`, `users.User`, `dsbe.PersonSearch`.
+    - add previously hard-coded objects from 
+      :mod:`lino.modlib.cal.fixtures.std`
     """
     from lino.utils.mti import insert_child
     contacts_Contact = resolve_model("contacts.Contact")
@@ -650,6 +653,14 @@ def migrate_from_1_2_6(globals_dict):
           access_class_id=access_class,sequence=sequence,user_modified=user_modified,rset_id=rset_id,end_date=end_date,end_time=end_time,transparent=transparent,type_id=type_id,place_id=place_id,priority=priority,status=status,duration_value=duration_value,duration_unit=duration_unit)
     globals_dict.update(create_cal_event=create_cal_event)
     
+    
+    objects = globals_dict['objects']
+    def new_objects():
+        from lino.modlib.cal.fixtures import std
+        yield std.objects
+        yield objects
+        
+    globals_dict.update(objects=new_objects)
     
     #~ raise Exception("todo: sex -> gender in Person, PersonSearch")
     return '1.2.7'
