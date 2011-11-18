@@ -399,7 +399,7 @@ class ExtUI(base.UI):
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
         msg = "Unknown element %r referred in layout %s of %s." % (
             name,lh.layout,lh.rh.report)
-        l = [de.name for de in lh.rh.data_elems()]
+        l = [de.name for de in lh.rh.report.wildcard_data_elems()]
         model = lh.rh.report.model
         if getattr(model,'_lino_slaves',None):
             l += [str(rpt) for rpt in model._lino_slaves.values()]
@@ -1656,6 +1656,11 @@ tinymce.init({
         #~ return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
         return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
+    def href_to_request(self,rr,text=None):
+        return self.href(
+            self.get_request_url(rr),
+            text or cgi.escape(force_unicode(rr.label)))
+            
     def href_to(self,obj,text=None):
         return self.href(
             self.get_detail_url(obj),

@@ -176,6 +176,8 @@ class EventStatus(babel.BabelNamed):
         verbose_name = _("Event Status")
         verbose_name_plural = _('Event Statuses')
     ref = models.CharField(max_length='1')
+    reminder = models.BooleanField(_("Reminder"),default=True)
+    
 class EventStatuses(reports.Report):
     model = EventStatus
     column_names = 'name *'
@@ -323,6 +325,7 @@ class RecurrenceSets(reports.Report):
     
     
 class Component(ComponentBase,
+                mixins.Owned,
                 mixins.AutoUser,
                 mixins.CreatedModified):
     """
@@ -341,6 +344,8 @@ class Component(ComponentBase,
     #~ dt_alarm = models.DateTimeField(_("Alarm time"),
         #~ blank=True,null=True,editable=False)
         
+    auto_type = models.IntegerField(null=True,blank=True,editable=False) 
+    
     user_modified = models.BooleanField(_("modified by user"),default=False,editable=False) 
     
     rset = models.ForeignKey(RecurrenceSet,
@@ -352,6 +357,12 @@ class Component(ComponentBase,
     #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
     #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
         
+        
+    def disabled_fields(self,request):
+        if self.auto_type:
+            #~ return settings.LINO.TASK_AUTO_FIELDS
+            return self.DISABLED_AUTO_FIELDS
+        return []
         
     def disable_editing(self,request):
         if self.rset: return True
@@ -381,6 +392,20 @@ class Component(ComponentBase,
             return datetime.datetime.combine(d,t)
         else:
             return datetime.datetime(d.year,d.month,d.day)
+        
+    def summary_row(self,ui,rr,**kw):
+        #~ if self.owner and not self.auto_type:
+        if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
+            html = ui.href_to(self)
+            if self.status_id:
+                html += ' [%s]' % cgi.escape(force_unicode(self.status))
+            if self.summary:
+                html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+                #~ html += ui.href_to(self,force_unicode(self.summary))
+            html += _(" on ") + babel.dtos(self.start_date)
+            html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+            return html
+        return super(Component,self).summary_row(ui,rr,**kw)
         
     #~ def summary_row(self,ui,rr,**kw):
         #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
@@ -448,9 +473,16 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     def setup_report(cls,rpt):
         mixins.TypedPrintable.setup_report(rpt)
         mails.Mailable.setup_report(rpt)
+        
+    @classmethod
+    def site_setup(cls,lino):
+        cls.DISABLED_AUTO_FIELDS = reports.fields_list(cls,
+            '''summary''')
+
+        
 
 #~ class Task(Component,contacts.PartnerDocument):
-class Task(mixins.Owned,Component):
+class Task(Component):
     """
     The owner of a Task is the record that caused the automatich creation.
     Non-automatic tasks always have an empty `owner` field.
@@ -473,17 +505,11 @@ class Task(mixins.Owned,Component):
     #~ status = TaskStatus.field(blank=True) # iCal:STATUS
     status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     
-    auto_type = models.IntegerField(null=True,blank=True,editable=False) 
-    
-    def disabled_fields(self,request):
-        if self.auto_type:
-            return settings.LINO.TASK_AUTO_FIELDS
-        return []
-        
 
     @classmethod
     def site_setup(cls,lino):
-        lino.TASK_AUTO_FIELDS = reports.fields_list(cls,
+        #~ lino.TASK_AUTO_FIELDS = reports.fields_list(cls,
+        cls.DISABLED_AUTO_FIELDS = reports.fields_list(cls,
             '''start_date start_time summary''')
 
     def save(self,*args,**kw):
@@ -503,18 +529,6 @@ class Task(mixins.Owned,Component):
 
     def __unicode__(self):
         return "#" + str(self.pk)
-        
-    def summary_row(self,ui,rr,**kw):
-        #~ if self.owner and not self.auto_type:
-        if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
-            html = ui.href_to(self)
-            html += " (%s)" % reports.summary_row(self.owner,ui,rr)
-            if self.summary:
-                html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-                #~ html += ui.href_to(self,force_unicode(self.summary))
-            html += _(" on ") + babel.dtos(self.start_date)
-            return html
-        return super(Task,self).summary_row(ui,rr,**kw)
         
 
 class Events(reports.Report):
@@ -546,6 +560,8 @@ class TasksByOwner(Tasks):
     fk_name = 'owner'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
+class EventsByOwner(Events):
+    fk_name = 'owner'
 
 if settings.LINO.project_model:    
     class EventsByProject(Events):
@@ -680,9 +696,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     #~ filterkw.update(dt_alarm__isnull=False)
     filterkw.update(user=user)
     
-    
-    
-    for o in Event.objects.filter(**filterkw).order_by('start_date'):
+    for o in Event.objects.filter(models.Q(status=None) | models.Q(status__reminder=True),**filterkw).order_by('start_date'):
         add(o)
         
     filterkw.update(done=False)
@@ -716,10 +730,19 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
 #~ SKIP_AUTO_TASKS = False 
 #~ "See :doc:`/blog/2011/0727`"
 
+def update_auto_event(autotype,user,date,summary,owner,**defaults):
+    model = resolve_model('cal.Event')
+    return update_auto_component(model,autotype,user,date,summary,owner,**defaults)
+  
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
-    """Creates, updates or deletes the automatic :class:`Task` 
+    model = resolve_model('cal.Task')
+    return update_auto_component(model,autotype,user,date,summary,owner,**defaults)
+    
+def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
+    """
+    Creates, updates or deletes the automatic component (either a :class:`Task` or an :class:`Event`)
     related to the specified `owner`.
-    Specifying `None` for `date` means that the automatic task should be deleted.
+    Specifying `None` for `date` means that the automatic component should be deleted.
     """
     #~ print "20111014 update_auto_task"
     #~ if SKIP_AUTO_TASKS: return 
@@ -727,42 +750,44 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
         #~ print "20111014 loading_from_dump"
         return 
     #~ if is_deserializing(): return 
-    Task = resolve_model('cal.Task')
     ot = ContentType.objects.get_for_model(owner.__class__)
     if date:
         #~ defaults = owner.get_auto_task_defaults(**defaults)
         defaults.setdefault('user',user)
-        task,created = Task.objects.get_or_create(
+        obj,created = model.objects.get_or_create(
           defaults=defaults,
           owner_id=owner.pk,
           owner_type=ot,
           auto_type=autotype)
-        task.user = user
-        if summary:
-            task.summary = force_unicode(summary)
-        #~ obj.summary = summary
-        task.start_date = date
-        #~ print "20111014 gonna save() task", task
-        #~ for k,v in kw.items():
-            #~ setattr(obj,k,v)
-        #~ obj.due_date = date - delta
-        #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
-        #~ owner.update_owned_task(task)
-        task.save()
+        if not obj.user_modified:
+            obj.user = user
+            obj.summary = force_unicode(summary)
+            #~ obj.summary = summary
+            obj.start_date = date
+            #~ print "20111014 gonna save() task", task
+            #~ for k,v in kw.items():
+                #~ setattr(obj,k,v)
+            #~ obj.due_date = date - delta
+            #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
+            #~ owner.update_owned_task(task)
+            obj.save()
     else:
         # delete task if it exists
         try:
-            obj = Task.objects.get(owner_id=owner.pk,
+            obj = model.objects.get(owner_id=owner.pk,
                     owner_type=ot,auto_type=autotype)
-        except Task.DoesNotExist:
+        except model.DoesNotExist:
             pass
         else:
-            obj.delete()
+            if not obj.user_modified:
+                obj.delete()
         
 
 def migrate_reminder(obj,reminder_date,reminder_text,
                          delay_value,delay_type,reminder_done):
-    """This was used only for migrating to 1.2.0, see :mod:`lino.apps.dsbe.migrate`.
+    """
+    This was used only for migrating to 1.2.0, 
+    see :mod:`lino.apps.dsbe.migrate`.
     """
     raise NotImplementedError("No longer needed (and no longer supported after 20111026).")
     def delay2alarm(delay_type):

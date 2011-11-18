@@ -69,7 +69,7 @@ from lino.mixins.printable import DirectPrintAction
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-from lino.modlib.cal.models import DurationUnit, update_auto_task
+from lino.modlib.cal.models import DurationUnit, update_auto_task, update_auto_event
 
 # not used here, but these modules are required in INSTALLED_APPS, 
 # and other code may import them using 
@@ -92,7 +92,11 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         verbose_name = _("ISIP Type")
         verbose_name_plural = _('ISIP Types')
         
-    ref = models.CharField(_("reference"),max_length=20,blank=True)
+    ref = models.CharField(_("Reference"),max_length=20,blank=True)
+    exam_policy = models.ForeignKey("isip.ExamPolicy",
+        related_name="%(app_label)s_%(class)s_set",
+        blank=True,null=True)
+        
 
 class ContractTypes(reports.Report):
     model = ContractType
@@ -104,9 +108,15 @@ class ContractTypes(reports.Report):
 # EXAMINATION POLICIES
 #
 class ExamPolicy(babel.BabelNamed):
+    """
+    Examination policy. 
+    This also decides about automatic tasks to be created.
+    """
+    every = models.IntegerField(_("Evaluation every X months"),
+        default=0)
     class Meta:
-        verbose_name = _("examination policy")
-        verbose_name_plural = _('examination policies')
+        verbose_name = _("Examination Policy")
+        verbose_name_plural = _('Examination Policies')
         
 
 class ExamPolicies(reports.Report):
@@ -173,8 +183,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     
     exam_policy = models.ForeignKey("isip.ExamPolicy",
         related_name="%(app_label)s_%(class)s_set",
-        blank=True,null=True,
-        verbose_name=_("examination policy"))
+        blank=True,null=True)
         
     ending = models.ForeignKey("isip.ContractEnding",
         related_name="%(app_label)s_%(class)s_set",
@@ -226,6 +235,9 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         self.person_changed(request)
       
     def full_clean(self,*args,**kw):
+        if self.type_id and self.type.exam_policy_id:
+            if not self.exam_policy_id:
+                self.exam_policy_id = self.type.exam_policy_id
         if self.contact is None:
             if self.company:
                 qs = self.company.rolesbyparent.all()
@@ -248,11 +260,43 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     def save_auto_tasks(self):
         
         if self.user:
+            if self.applies_from and self.exam_policy_id:
+                date = self.applies_from
+            else:
+                date = None
+            for i in range(24):
+                if date:
+                    date = DurationUnit.months.add_duration(date,self.exam_policy.every)
+                    if self.applies_until and date > self.applies_until:
+                        date = None
+                subject = _("Evaluation %d") % (i + 1)
+                update_auto_event(
+                  i + 1,
+                  self.user,
+                  date,subject,self)
+                        
+            #~ if self.applies_from and self.applies_until and self.exam_policy:
+                #~ if self.exam_policy.every > 0:
+                    #~ i = 0
+                    #~ date = self.applies_from
+                    #~ while date < self.applies_until:
+                        #~ date = DurationUnit.months.add_duration(date,1)
+                        #~ i += 1
+                        #~ subject = _("Evaluation %d") % i
+                        #~ update_auto_event(
+                          #~ i,
+                          #~ self.user,
+                          #~ date,subject,self)
+                          
+            if self.applies_until:
+                date = DurationUnit.months.add_duration(self.applies_until,-1)
+            else:
+                date = None
             update_auto_task(
               self.TASKTYPE_CONTRACT_APPLIES_UNTIL,
               self.user,
-              DurationUnit.months.add_duration(self.applies_until,-1),
-              _("Contract ends"),
+              date,
+              _("Contract ends in a month"),
               self)
               #~ alarm_value=1,alarm_unit=DurationUnit.months)
               

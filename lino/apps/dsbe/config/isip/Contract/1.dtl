@@ -8,7 +8,7 @@ main =
     
     date_decided date_issued 
     date_ended ending
-    cal.TasksByOwner
+    cal.TasksByOwner cal.EventsByOwner
     
     
     

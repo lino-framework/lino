@@ -4,13 +4,11 @@
 main =
     id:8 person:25 user:15 user_asd:15 language:8
     job type provider contact:20     
-    # reminder_date:10 delay_value:5 delay_type:10 reminder_text:30 reminder_done
     applies_from duration applies_until 
     regime:20 schedule:30 hourly_rate:10 refund_rate:10
     date_decided date_issued date_ended ending
     reference_person 
-    responsibilities cal.TasksByOwner
-    
+    responsibilities cal.TasksByOwner cal.EventsByOwner 
     
     
 

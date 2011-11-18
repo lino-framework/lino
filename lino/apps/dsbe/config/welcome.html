@@ -6,7 +6,7 @@
 $tasks_summary($ui,$user,days_back=90,days_forward=30,max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
 #from lino.apps.dsbe.models import persons_by_user
-$persons_by_user()
+$persons_by_user($ui,$user)
 
 #else
 <p>user is None. Check your authentication configuration.</p>

@@ -104,6 +104,7 @@ Administration & Finance | Administration & Finance | Verwaltung & Finanzwesen
 def objects():
   
     contractType = Instantiator('jobs.ContractType',"ref",
+        exam_policy=3,
         build_method='appypdf',
         template=u'art60-7.odt').build
     yield contractType('art60-7a',
@@ -138,6 +139,7 @@ def objects():
           ))
     
     contractType = Instantiator('isip.ContractType',"ref",
+      exam_policy=1,
       build_method='appypdf',template=u'vse.odt').build
     yield contractType("vsea",**babel_values('name',
           de=u"VSE Ausbildung",
@@ -184,7 +186,7 @@ def objects():
     company = Instantiator(Company).build
     #~ contact = Instantiator(Contact).build
     role = Instantiator(Role).build
-    exam_policy = Instantiator('isip.ExamPolicy').build
+    #~ exam_policy = Instantiator('isip.ExamPolicy').build
 
     City = resolve_model('countries.City')
     StudyType = resolve_model('jobs.StudyType')
@@ -390,8 +392,8 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     contract = Instantiator('jobs.Contract',
       'type applies_from applies_until job contact',
       user=root,person=hans).build
-    yield contract(1,i2d(20090518),i2d(20090517),rcyclejob,rcycle_dir)
-    yield contract(1,i2d(20100518),i2d(20100517),bisajob,bisa_dir)
+    yield contract(1,i2d(20090518),i2d(20100517),rcyclejob,rcycle_dir)
+    yield contract(1,i2d(20090518),i2d(20100517),bisajob,bisa_dir)
     yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
     yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
     yield contract(1,None,None,bisajob,bisa_dir,person=tatjana)
@@ -508,6 +510,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_from = i2d(20100301)
     p.coached_until = None
     p.coach1 = User.objects.get(username='root')
+    p.coach2 = User.objects.get(username='user')
     p.gender = Gender.female 
     p.save()
     
@@ -520,6 +523,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_from = i2d(20100801)
     p.coached_until = i2d(20101031)
     p.coach1 = User.objects.get(username='root')
+    p.coach2 = User.objects.get(username='user')
     p.gender = Gender.male
     p.national_id = 'INVALID-45'
     p.save()
@@ -530,6 +534,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_until = i2d(20101031)
     p.unavailable_until = i2d(20110712)
     p.coach1 = User.objects.get(username='root')
+    p.coach2 = User.objects.get(username='user')
     p.gender = Gender.male
     p.national_id = '931229 211-83'
     p.save()
@@ -537,6 +542,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p = Person.objects.get(name=u"Ausdemwald Alfons")
     p.birth_date = i2d(19500301)
     p.coach1 = User.objects.get(username='root')
+    p.coach2 = User.objects.get(username='user')
     p.gender = Gender.male
     p.save()
 

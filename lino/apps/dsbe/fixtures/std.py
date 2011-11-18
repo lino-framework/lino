@@ -166,11 +166,11 @@ def objects():
     
     
     
-    exam_policy = Instantiator('isip.ExamPolicy').build
-    yield exam_policy(**babel_values('name',en='every month',de='monatlich',fr="mensuel"))
-    yield exam_policy(**babel_values('name',en='every 2 months',de='zweimonatlich',fr="bimensuel"))
-    yield exam_policy(**babel_values('name',en='every 3 months',de='alle 3 Monate',fr="tous les 3 mois"))
-    yield exam_policy(**babel_values('name',en='other',de='andere',fr="autre"))
+    exam_policy = Instantiator('isip.ExamPolicy','every').build
+    yield exam_policy(1,**babel_values('name',en='every month',de='monatlich',fr="mensuel"))
+    yield exam_policy(2,**babel_values('name',en='every 2 months',de='zweimonatlich',fr="bimensuel"))
+    yield exam_policy(3,**babel_values('name',en='every 3 months',de='alle 3 Monate',fr="tous les 3 mois"))
+    yield exam_policy(0,**babel_values('name',en='other',de='andere',fr="autre"))
         
     #~ def create_dsbe_aidtype(id,name,name_fr):
         #~ return AidType(id=id,name=name,name_fr=name_fr)        

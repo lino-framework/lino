@@ -765,7 +765,9 @@ class MyPersons(Persons):
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
         qs = super(MyPersons,self).get_request_queryset(rr)
-        return only_coached_persons(only_my_persons(qs,rr.user),datetime.date.today())
+        qs = only_coached_persons(only_my_persons(qs,rr.user),datetime.date.today())
+        #~ print 20111118, 'get_request_queryset', rr.user, qs.count()
+        return qs
         #~ today = datetime.date.today()
         #~ Q = models.Q
         #~ q1 = Q(coach1__exact=rr.user) | Q(coach2__exact=rr.user)
@@ -777,8 +779,9 @@ class MyPersonsByGroup(MyPersons):
     
  
 
-def persons_by_user():
-    """Returns a summary table "Number of coached persons by user and integration phase"
+def persons_by_user(ui,requesting_user):
+    """
+    Returns a summary table "Number of coached persons by user and integration phase"
     """
     #~ from django.utils.translation import ugettext as _
     #~ from lino.modlib.users.models import User  
@@ -795,14 +798,32 @@ def persons_by_user():
         pg2col[pg.pk] = len(headers) - 1
         
     rows = [ headers ]
-    for user in User.objects.order_by('username'):
-        persons = only_coached_persons(only_my_persons(Person.objects.all(),user),datetime.date.today())
-        if persons.count():
-            cells = [cgi.escape(unicode(user)),persons.count()] + sums
-            for person in persons:
-                if person.group is not None:
-                    cells[pg2col[person.group.pk]] += 1
+    for user in User.objects.filter(is_spis=True).order_by('username'):
+        rr = MyPersons.request(ui,user=user)
+        if rr.total_count:
+            text = str(rr.total_count)
+            if rr.user == requesting_user:
+                text = ui.href_to_request(rr,text)
+            #~ cells = [cgi.escape(unicode(user)),rr.total_count] + sums
+            cells = [cgi.escape(unicode(user)),text] + sums
+            for pg in PersonGroup.objects.order_by('ref_name'):
+                rr = MyPersonsByGroup.request(ui,master_instance=pg,user=user)
+                text = str(rr.total_count)
+                if rr.user == requesting_user:
+                    text = ui.href_to_request(rr,text)
+                cells[pg2col[pg.pk]] = text
             rows.append(cells)
+        
+    if False:
+        for user in User.objects.order_by('username'):
+            persons = only_coached_persons(only_my_persons(Person.objects.all(),user),datetime.date.today())
+            #~ print user, persons1, persons
+            if persons.count():
+                cells = [cgi.escape(unicode(user)),persons.count()] + sums
+                for person in persons:
+                    if person.group is not None:
+                        cells[pg2col[person.group.pk]] += 1
+                rows.append(cells)
         
     s = ''
     for row in rows:
@@ -810,6 +831,7 @@ def persons_by_user():
         s += ''.join(['<td align="center" valign="middle" bgcolor="#eeeeee">%s</td>' % cell for cell in row])
         s += '</tr>'
     s = '<table cellspacing="3px" bgcolor="#ffffff" width="100%%"><tr>%s</tr></table>' % s
+    
     s = '<div class="htmlText">%s</div>' % s
     return s
     

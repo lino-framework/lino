@@ -1,9 +1,60 @@
-Version 1.2.6 (Coming)
+Version 1.2.7 (Coming)
 ======================
 
-New features
-------------
+Benutzer
+--------
 
+- Feinschliff in der Vorlage zum Dokument "Lebenslauf".
+  Die Eigenschaften "Activa" und "Computerkenntnisse" z.B. 
+  kommen unter "Sonstiges". 
+
+- Statt "Arbeitsvertrag" (für `jobs.Contract`) heißt es jetzt "Art.60§7-Konvention".
+
+- Einige Auswahllisten im Kalender-Modul, die bisher hardcodiert waren, sind nun 
+  konfigurierbar. Unter anderem der Status einer Aufgabe.
+  
+- Wenn man einen Vertrag abspeichert (sowohl VSE als auch Art.60§7-Konvention) 
+  werden jetzt **automatische Terminvorschläge** 
+  je nach Auswertungsstrategie generiert.
+  Einige der Regeln:
+  - Lino verwaltet maximal 24 automatische Auswertungstermine
+    (reicht das?)
+  - Solange ein automatischer Terminvorschlag nicht manuell 
+    bearbeitet wurde, kann er von Lino noch gelöscht oder verschoben 
+    werden, je nachdem wie man die Auswertungsstrategie und/oder das 
+    Beginn- und Enddatum des Vertrags ändert.
+    
+  Automatische *Termine* sind neu. Sie funktionieren ähnlich wie die 
+  bekannten automatischen *Aufgaben*,
+  aber man kann für einen Termin z.B. auch 
+  Uhrzeit und Status (bestätigt, verschoben,...) 
+  setzen.
+  
+  Eine benutzerfreundliche Kalenderansicht zum Verwalten der Termine 
+  gibt es momentan noch nicht. 
+
+- **Übersichtstabelle der Klienten pro Benutzer** im Startbildschirm:
+
+  Hier sind 
+  die Zahlen des aktuellen Benutzers jetzt anklickbar, und wenn man darauf klickt, 
+  öffnet Lino die betreffende Liste. 
+  Allerdings nur auf der Zeile des jeweiligen Benutzers.
+  
+  Diese Liste zeigt jetzt nur noch die DSBE-Benutzer an.
+  Falls das keine gute Idee war, ändere ich es wieder.
+  
+
+Administrator
+-------------
+  
+- :menuselection:`Konfigurierung --> Stellen --> Vertragsarten`
+  und :menuselection:`Konfigurierung --> VSEs --> Vertragsarten`:
+  hier sollten die neuen Felder "Auswertungsstrategie" ausgefüllt werden.
+  Bei allen Art.60§7-Konventionsarten sollte hier "alle 3 Monate" stehen.
+
+- :menuselection:`Konfigurierung --> Kalender --> Terminzustände`:
+  entscheiden, welche Zustände im Startbildschirm angezeigt werden 
+  und welche nicht.
   
 
 Bugs fixed

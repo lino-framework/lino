@@ -151,7 +151,11 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         verbose_name = _("Job Contract Type")
         verbose_name_plural = _('Job Contract Types')
         
-    ref = models.CharField(_("reference"),max_length=20,blank=True)
+    ref = models.CharField(_("Reference"),max_length=20,blank=True)
+    exam_policy = models.ForeignKey("isip.ExamPolicy",
+        related_name="%(app_label)s_%(class)s_set",
+        blank=True,null=True)
+        
 
 class ContractTypes(reports.Report):
     model = ContractType
