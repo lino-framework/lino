@@ -6,7 +6,8 @@ Choice Lists
 
 Choice Lists had a design flaw: they used `babel.BabelText` 
 instances to store the items, but it is better to use simple 
-translatable strings (`gettext_lazy`). 
+translatable strings (`gettext_lazy`) and Django's translation 
+machine.
 All currently existing choicelists have been converted:
 
 - :class:`lino.apps.dsbe.models.CefLevel`
@@ -14,6 +15,9 @@ All currently existing choicelists have been converted:
 - :class:`lino.modlib.cal.utils.DurationUnit`
 - :class:`lino.utils.choicelists.HowWell`
 - :class:`lino.utils.choicelists.HowMuch`
+
+Data fields `sex` renamed to `gender`
+-------------------------------------
 
 The new choicelist
 :class:`lino.utils.choicelists.Gender`
@@ -26,6 +30,9 @@ One advantage is that Lino no longer accepts
 a simple 'M' as valid value on a gender field. 
 User code must import the `Gender` choicelist 
 and use the "constants" defined there.
+
+Calendar statuses now configurable
+----------------------------------
 
 The following new models replace the formerly 
 used choice list of same name. 
@@ -40,9 +47,7 @@ interviews that these lists cannot be hard-coded.
 The previously hard-coded values are now in a 
 new fixture :mod:`lino.modlib.cal.fixtures.std`
 
-The plural of "Status"
-----------------------
-
+Note: 
 What is the plural of "Status"? 
 Answer: "Statuses". At least in English.
 But in German the official plural form is "Status", 

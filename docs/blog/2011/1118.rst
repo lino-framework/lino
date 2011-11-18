@@ -1,6 +1,9 @@
 20111118
 ========
 
+Some little user wishes
+-----------------------
+
 - Die Eigenschaften "Activa" und "Computerkenntnisse" 
   kommen im Lebenslauf unter "Sonstiges". 
   "Führerschein", "Auto vorhanden" und "Gabelstapler-FS" dagegen kommen oben 
@@ -39,13 +42,25 @@
   Wenn Dauer ausgefüllt und "Laufzeit bis" leer ist, dann berechnet 
   Lino (beim Speichern) einen Vorschlag für "Laufzeit bis".
 
-Auswertungsstrategien VSEs : automatisch Erinnerungen generieren.
 
-Bei Art.60§7-Konvention automatische Erinnerung alle 3 Monate eine Auswertung erstellen.
+Data migration
+--------------
 
-In Tabelle Startseite : alle Zahlen anklickbar, öffnet eine Liste dieser Verträge.
+The  
+:func:`data migration from 1.2.6 to 1.2.7 <lino.apps.dsbe.migrate.migrate_from_1_2_6>`
+is ready. This migration is another example of how flexible this system is.
 
-VSEs auch auf FR drucken können.
+
+
+TODO:
+
+- Auswertungsstrategien VSEs : automatisch Erinnerungen generieren.
+
+- Bei Art.60§7-Konvention automatische Erinnerung alle 3 Monate eine Auswertung erstellen.
+
+- In Tabelle Startseite : alle Zahlen anklickbar, öffnet eine Liste dieser Verträge.
+
+- VSEs auch auf FR drucken können.
 
 
 

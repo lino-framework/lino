@@ -667,7 +667,7 @@ def migrate_from_1_2_6(globals_dict):
           project_id=project_id,must_build=must_build,calendar_id=calendar_id,
           uid=uid,start_date=start_date,start_time=start_time,
           summary=summary,description=description,
-          access_class_id=access_class,
+          access_class=access_class,
           sequence=sequence,user_modified=user_modified,
           rset_id=rset_id,end_date=end_date,end_time=end_time,
           transparent=transparent,type_id=type_id,place_id=place_id,
@@ -684,7 +684,7 @@ def migrate_from_1_2_6(globals_dict):
             modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,
             project_id=project_id,calendar_id=calendar_id,uid=uid,
             start_date=start_date,start_time=start_time,summary=summary,
-            description=description,access_class_id=access_class,
+            description=description,access_class=access_class,
             sequence=sequence,user_modified=user_modified,rset_id=rset_id,
             due_date=due_date,due_time=due_time,done=done,
             percent=percent,status=status,auto_type=auto_type)
