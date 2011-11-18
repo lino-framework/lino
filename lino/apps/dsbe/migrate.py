@@ -625,6 +625,8 @@ def migrate_from_1_2_6(globals_dict):
     users_User = resolve_model("users.User")
     dsbe_PersonSearch = resolve_model("dsbe.PersonSearch")
     cal_Event = resolve_model("cal.Event")
+    cal_Task = resolve_model("cal.Task")
+    new_content_type_id = globals_dict['new_content_type_id']
     
     def create_contacts_person(contact_ptr_id, first_name, last_name, title, sex, birth_date, birth_date_circa, is_active, activity_id, bank_account1, bank_account2, remarks2, gesdos_id, is_cpas, is_senior, group_id, coached_from, coached_until, coach1_id, coach2_id, birth_place, birth_country_id, civil_state, national_id, health_insurance_id, pharmacy_id, nationality_id, card_number, card_valid_from, card_valid_until, card_type, card_issuer, noble_condition, residence_type, in_belgium_since, unemployed_since, needs_residence_permit, needs_work_permit, work_permit_suspended_until, aid_type_id, income_ag, income_wg, income_kg, income_rente, income_misc, is_seeking, unavailable_until, unavailable_why, obstacles, skills, job_agents, job_office_contact_id):
         return insert_child(contacts_Contact.objects.get(pk=contact_ptr_id),
@@ -650,11 +652,30 @@ def migrate_from_1_2_6(globals_dict):
           project_id=project_id,must_build=must_build,calendar_id=calendar_id,
           uid=uid,start_date=start_date,start_time=start_time,
           summary=summary,description=description,
-          access_class_id=access_class,sequence=sequence,user_modified=user_modified,rset_id=rset_id,end_date=end_date,end_time=end_time,transparent=transparent,type_id=type_id,place_id=place_id,priority=priority,status=status,duration_value=duration_value,duration_unit=duration_unit)
+          access_class_id=access_class,
+          sequence=sequence,user_modified=user_modified,
+          rset_id=rset_id,end_date=end_date,end_time=end_time,
+          transparent=transparent,type_id=type_id,place_id=place_id,
+          priority_id=priority,
+          status_id=status,
+          duration_value=duration_value,duration_unit=duration_unit)
     globals_dict.update(create_cal_event=create_cal_event)
     
+    def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, project_id, calendar_id, uid, start_date, start_time, summary, description, access_class, sequence, user_modified, rset_id, due_date, due_time, done, percent, status, auto_type):
+        owner_type_id = new_content_type_id(owner_type_id)
+        return cal_Task(id=id,user_id=user_id,created=created,
+            modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,
+            project_id=project_id,calendar_id=calendar_id,uid=uid,
+            start_date=start_date,start_time=start_time,summary=summary,
+            description=description,access_class_id=access_class,
+            sequence=sequence,user_modified=user_modified,rset_id=rset_id,
+            due_date=due_date,due_time=due_time,done=done,
+            percent=percent,status_id=status,auto_type=auto_type)
+    globals_dict.update(create_cal_task=create_cal_task)
     
-    objects = globals_dict['objects']
+    
+    objects = globals_
+    dict['objects']
     def new_objects():
         from lino.modlib.cal.fixtures import std
         yield std.objects()
