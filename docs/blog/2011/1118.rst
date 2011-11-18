@@ -1,0 +1,51 @@
+20111118
+========
+
+- Die Eigenschaften "Activa" und "Computerkenntnisse" 
+  kommen im Lebenslauf unter "Sonstiges". 
+  "Führerschein", "Auto vorhanden" und "Gabelstapler-FS" dagegen kommen oben 
+  unter den Kontaktangaben.
+  Andere Eigenschaften erscheinen nirgendwo im Lebenslauf.
+
+  Momentan ist das mit der neuen Methode :meth:`Person.properties_list` gelöst, 
+  wobei mal also manuell die IDs der jeweils gewünschten Eigenschaften angeben muss.
+  Diese muss man zuerst nachschauen. Hier ein Auszug aus 
+  :menuselection:`Konfigurierung --> Eigenschaften --> Fachkompetenzen`:
+  
+  === =================
+  ID  Beschreibung 
+  === =================
+  68  Activa
+  25  Fahrzeug vorhanden
+  6   Führerschein
+  24  Gabelstapler-Führerschein
+  === =================
+  
+  Und wenn wir in einem Template dann folgenden Absatz schreiben:
+  
+    `pp.property` : `pp` `iif(pp.remark,"("+pp.remark+")" ,"")`
+    
+  Mit folgender Wiederholungsanweisung::
+  
+    do text for pp in self.person.properties_list(6,24,25)
+    
+  dann kriegen wir das gewünschte Resultat
+
+- TODO: Macht ein neues Feld `Property.misc_seq` dann noch Sinn?
+
+- Statt "Arbeitsvertrag" (für `jobs.Contract`) heißt es jetzt "Art.60§7-Konvention" 
+
+- `jobs.Contract` : Feld "Dauer" im Detail vor "Laufzeit bis".
+  Wenn Dauer ausgefüllt und "Laufzeit bis" leer ist, dann berechnet 
+  Lino (beim Speichern) einen Vorschlag für "Laufzeit bis".
+
+Auswertungsstrategien VSEs : automatisch Erinnerungen generieren.
+
+Bei Art.60§7-Konvention automatische Erinnerung alle 3 Monate eine Auswertung erstellen.
+
+In Tabelle Startseite : alle Zahlen anklickbar, öffnet eine Liste dieser Verträge.
+
+VSEs auch auf FR drucken können.
+
+
+

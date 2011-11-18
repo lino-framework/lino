@@ -613,8 +613,33 @@ def migrate_from_1_2_4(globals_dict):
 def migrate_from_1_2_5(globals_dict): return '1.2.6'
   
 def migrate_from_1_2_6(globals_dict):    
-    raise Exception("todo: sex -> gender in Person, PersonSearch")
-    return '1.2.6'
+    """
+    Rename fields `sex` to `gender` in contacts.Person, users.User, dsbe.PersonSearch
+    """
+    contacts_Contact = resolve_model("contacts.Contact")
+    def create_contacts_person(contact_ptr_id, first_name, last_name, title, sex, birth_date, birth_date_circa, is_active, activity_id, bank_account1, bank_account2, remarks2, gesdos_id, is_cpas, is_senior, group_id, coached_from, coached_until, coach1_id, coach2_id, birth_place, birth_country_id, civil_state, national_id, health_insurance_id, pharmacy_id, nationality_id, card_number, card_valid_from, card_valid_until, card_type, card_issuer, noble_condition, residence_type, in_belgium_since, unemployed_since, needs_residence_permit, needs_work_permit, work_permit_suspended_until, aid_type_id, income_ag, income_wg, income_kg, income_rente, income_misc, is_seeking, unavailable_until, unavailable_why, obstacles, skills, job_agents, job_office_contact_id):
+        return insert_child(contacts_Contact.objects.get(pk=contact_ptr_id),
+            contacts_Person,first_name=first_name,last_name=last_name,
+            title=title,gender=sex,birth_date=birth_date,birth_date_circa=birth_date_circa,is_active=is_active,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,remarks2=remarks2,gesdos_id=gesdos_id,is_cpas=is_cpas,is_senior=is_senior,group_id=group_id,coached_from=coached_from,coached_until=coached_until,coach1_id=coach1_id,coach2_id=coach2_id,birth_place=birth_place,birth_country_id=birth_country_id,civil_state=civil_state,national_id=national_id,health_insurance_id=health_insurance_id,pharmacy_id=pharmacy_id,nationality_id=nationality_id,card_number=card_number,card_valid_from=card_valid_from,card_valid_until=card_valid_until,card_type=card_type,card_issuer=card_issuer,noble_condition=noble_condition,residence_type=residence_type,in_belgium_since=in_belgium_since,unemployed_since=unemployed_since,needs_residence_permit=needs_residence_permit,needs_work_permit=needs_work_permit,work_permit_suspended_until=work_permit_suspended_until,aid_type_id=aid_type_id,income_ag=income_ag,income_wg=income_wg,income_kg=income_kg,income_rente=income_rente,income_misc=income_misc,is_seeking=is_seeking,unavailable_until=unavailable_until,unavailable_why=unavailable_why,obstacles=obstacles,skills=skills,job_agents=job_agents,job_office_contact_id=job_office_contact_id)
+    globals_dict.update(create_contacts_person=create_contacts_person)
+    
+    users_User = resolve_model("users.User")
+    def create_users_user(contact_ptr_id, first_name, last_name, title, sex, username, is_staff, is_expert, is_active, is_superuser, last_login, date_joined, is_spis):
+        return insert_child(contacts_Contact.objects.get(pk=contact_ptr_id),users_User,
+            first_name=first_name,last_name=last_name,title=title,
+            gender=sex,
+            username=username,is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,last_login=last_login,date_joined=date_joined,is_spis=is_spis)
+    globals_dict.update(create_users_user=create_users_user)
+    
+    dsbe_PersonSearch = resolve_model("dsbe.PersonSearch")
+    def create_dsbe_personsearch(id, user_id, title, aged_from, aged_to, sex, only_my_persons, coached_by_id, period_from, period_until):
+        return dsbe_PersonSearch(id=id,user_id=user_id,title=title,
+          aged_from=aged_from,aged_to=aged_to,gender=sex,
+          only_my_persons=only_my_persons,coached_by_id=coached_by_id,period_from=period_from,period_until=period_until)
+    globals_dict.update(create_dsbe_personsearch=create_dsbe_personsearch)
+    
+    #~ raise Exception("todo: sex -> gender in Person, PersonSearch")
+    return '1.2.7'
   
 
 def install(globals_dict):

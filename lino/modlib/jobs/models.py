@@ -355,26 +355,30 @@ class Contract(ContractBase):
             #~ if not self.user_asd:
                 #~ if self.person.user != self.user:
                     #~ self.user_asd = self.person.user
-            if self.person.birth_date and self.applies_from:
-                def duration(refdate):
-                    if type(refdate) != datetime.date:
-                        raise Exception("%r is not a date!" % refdate)
-                    delta = refdate - self.person.birth_date
-                    age = delta.days / 365
-                    if age < 36:
-                        return 312
-                    elif age < 50:
-                        return 468
-                    else:
-                        return 624
+            if self.applies_from:
+                if self.person.birth_date:
+                    def duration(refdate):
+                        if type(refdate) != datetime.date:
+                            raise Exception("%r is not a date!" % refdate)
+                        delta = refdate - self.person.birth_date
+                        age = delta.days / 365
+                        if age < 36:
+                            return 312
+                        elif age < 50:
+                            return 468
+                        else:
+                            return 624
+                  
+                    if self.duration is None:
+                        if self.applies_until:
+                            self.duration = duration(self.applies_until)
+                        else:
+                            self.duration = duration(self.applies_from)
+                            self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
+                            
+                if self.duration and not self.applies_until:
+                    self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
               
-                if self.duration is None:
-                    if self.applies_until:
-                        self.duration = duration(self.applies_until)
-                    else:
-                        self.duration = duration(self.applies_from)
-                        self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
-                    
         #~ if self.job_id is not None:
         if self.job:
             if self.job.provider is not None:

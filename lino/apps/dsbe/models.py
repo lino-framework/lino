@@ -619,8 +619,21 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
           group=settings.LINO.config.propgroup_skills)
     skills_set = property(get_skills_set)
     
-    def get_property(self,prop_id):
-        """used in notes/cv.odt"""
+    def properties_list(self,*prop_ids):
+        """
+        Yields a list of the :class:`PersonProperty` 
+        properties of this person in the specified order.
+        If this person has no entry for a 
+        requested :class:`Property`, it is simply skipped.
+        Used in notes/Note/cv.odt"""
+        for pk in prop_ids:
+            try:
+                yield self.personproperty_set.get(property__id=pk)
+            except PersonProperty.DoesNotExist,e:
+                pass
+        
+    def unused_get_property(self,prop_id):
+        """used in notes/Note/cv.odt"""
         return self.personproperty_set.get(property__id=prop_id)
         #~ return PersonProperty.objects.get(property_id=prop_id,person=self)
         
