@@ -621,6 +621,7 @@ def migrate_from_1_2_6(globals_dict):
     contacts_Person = resolve_model("contacts.Person")
     users_User = resolve_model("users.User")
     dsbe_PersonSearch = resolve_model("dsbe.PersonSearch")
+    cal_Event = resolve_model("cal.Event")
     
     def create_contacts_person(contact_ptr_id, first_name, last_name, title, sex, birth_date, birth_date_circa, is_active, activity_id, bank_account1, bank_account2, remarks2, gesdos_id, is_cpas, is_senior, group_id, coached_from, coached_until, coach1_id, coach2_id, birth_place, birth_country_id, civil_state, national_id, health_insurance_id, pharmacy_id, nationality_id, card_number, card_valid_from, card_valid_until, card_type, card_issuer, noble_condition, residence_type, in_belgium_since, unemployed_since, needs_residence_permit, needs_work_permit, work_permit_suspended_until, aid_type_id, income_ag, income_wg, income_kg, income_rente, income_misc, is_seeking, unavailable_until, unavailable_why, obstacles, skills, job_agents, job_office_contact_id):
         return insert_child(contacts_Contact.objects.get(pk=contact_ptr_id),
@@ -640,6 +641,15 @@ def migrate_from_1_2_6(globals_dict):
           aged_from=aged_from,aged_to=aged_to,gender=sex,
           only_my_persons=only_my_persons,coached_by_id=coached_by_id,period_from=period_from,period_until=period_until)
     globals_dict.update(create_dsbe_personsearch=create_dsbe_personsearch)
+    
+    def create_cal_event(id, user_id, created, modified, project_id, must_build, calendar_id, uid, start_date, start_time, summary, description, access_class, sequence, user_modified, rset_id, end_date, end_time, transparent, type_id, place_id, priority, status, duration_value, duration_unit):
+        return cal_Event(id=id,user_id=user_id,created=created,modified=modified,
+          project_id=project_id,must_build=must_build,calendar_id=calendar_id,
+          uid=uid,start_date=start_date,start_time=start_time,
+          summary=summary,description=description,
+          access_class_id=access_class,sequence=sequence,user_modified=user_modified,rset_id=rset_id,end_date=end_date,end_time=end_time,transparent=transparent,type_id=type_id,place_id=place_id,priority=priority,status=status,duration_value=duration_value,duration_unit=duration_unit)
+    globals_dict.update(create_cal_event=create_cal_event)
+    
     
     #~ raise Exception("todo: sex -> gender in Person, PersonSearch")
     return '1.2.7'
