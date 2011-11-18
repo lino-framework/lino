@@ -15,14 +15,14 @@ Some little user wishes
   Diese muss man zuerst nachschauen. Hier ein Auszug aus 
   :menuselection:`Konfigurierung --> Eigenschaften --> Fachkompetenzen`:
   
-    === ==========================
-    ID  Beschreibung 
-    === ==========================
-    68  Activa
-    25  Fahrzeug vorhanden
-    6   Führerschein
-    24  Gabelstapler-Führerschein
-    === ==========================
+  === ==========================
+  ID  Beschreibung 
+  === ==========================
+  68  Activa
+  25  Fahrzeug vorhanden
+  6   Führerschein
+  24  Gabelstapler-Führerschein
+  === ==========================
   
   Und wenn wir in einem Template dann folgenden Absatz schreiben:
   
@@ -112,3 +112,7 @@ automatic *Events*. The logic is similar.
 Fields `owner` and `auto_type` are now also in `Event`, 
 no longer only in `Task`.
 
+Release 1.1.7
+-------------
+
+Released :doc:`/releases/2011/1118` and upgraded in Eupen.

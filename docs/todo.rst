@@ -19,14 +19,6 @@ Short-term
     Besser wäre, wenn das oberste Fenster gar nicht erst 
     einen Close-Button hätte.
 
-#.  Der Begriff "Arbeitsvertrag" ist irritierend, denn eigentlich werden die Dinger in Eupen 
-    "Artikel-60-7-Konvention" genannt. 
-
-#.  update_owned_tasks() erweitern, dass er auch Events automatisch verwalten kann.
-    cal.Events ebenfalls mit owner und auto_id.
-    Sowie ein Flag "seen": wenn das true ist, verändert er Datum, User usw. 
-    nicht mehr automatisch.
-    
 #.  :class:´lino.modlib.jobs.Function` : "Funktionen" 
     umbenennen nach "Qualifikationen"?
     Weil auch :class:´lino.modlib.contacts.RoleType` so übersetzt wird.

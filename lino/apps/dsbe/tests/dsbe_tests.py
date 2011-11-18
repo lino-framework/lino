@@ -244,7 +244,7 @@ def test02(self):
     i = NoteType(build_method='appyodt',template="Default.odt",id=1)
     i.save()
     response = self.client.get('/api/notes/NoteTypes/1?fmt=json',REMOTE_USER='root')
-    result = self.check_json_result(response,'data title navinfo disable_delete id')
+    result = self.check_json_result(response,'data title navinfo disable_delete id disabled_actions')
     self.assertEqual(result['data']['template'],'Default.odt')
     self.assertEqual(result['data'].has_key('templateHidden'),False)
     

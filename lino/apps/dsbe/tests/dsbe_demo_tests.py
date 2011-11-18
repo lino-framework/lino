@@ -237,7 +237,7 @@ def test03(self):
     """
     # 
     response = self.client.get('/api/contacts/Persons/117?fmt=json',REMOTE_USER='root')
-    result = self.check_json_result(response,'navinfo disable_delete data id title')
+    result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
     #~ result = simplejson.loads(response.content)
     #~ for k in 'navinfo disable_delete data id title'.split():
         #~ self.assertTrue(result.has_key(k))
@@ -336,7 +336,7 @@ def test04(self):
         url = "/api/jobs/Contracts/1?fmt=json"
         response = self.client.get(url,REMOTE_USER='root')
         #~ print 20110723, response
-        result = self.check_json_result(response,'navinfo disable_delete data id title')
+        result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
         self.assertEqual(result['data']['applies_from'],value)
 
 def test05(self):
@@ -353,7 +353,7 @@ def test05(self):
     
     url ='/api/countries/Countries/BE?fmt=json'
     response = self.client.get(url,REMOTE_USER='root')
-    result = self.check_json_result(response,'navinfo disable_delete data id title')
+    result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
     self.assertEqual(result['data']['name'],'Belgienx')
 
 
