@@ -616,6 +616,7 @@ def migrate_from_1_2_6(globals_dict):
     """
     Rename fields `sex` to `gender` in contacts.Person, users.User, dsbe.PersonSearch
     """
+    from lino.utils.mti import insert_child
     contacts_Contact = resolve_model("contacts.Contact")
     def create_contacts_person(contact_ptr_id, first_name, last_name, title, sex, birth_date, birth_date_circa, is_active, activity_id, bank_account1, bank_account2, remarks2, gesdos_id, is_cpas, is_senior, group_id, coached_from, coached_until, coach1_id, coach2_id, birth_place, birth_country_id, civil_state, national_id, health_insurance_id, pharmacy_id, nationality_id, card_number, card_valid_from, card_valid_until, card_type, card_issuer, noble_condition, residence_type, in_belgium_since, unemployed_since, needs_residence_permit, needs_work_permit, work_permit_suspended_until, aid_type_id, income_ag, income_wg, income_kg, income_rente, income_misc, is_seeking, unavailable_until, unavailable_why, obstacles, skills, job_agents, job_office_contact_id):
         return insert_child(contacts_Contact.objects.get(pk=contact_ptr_id),
