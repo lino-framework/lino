@@ -674,8 +674,7 @@ def migrate_from_1_2_6(globals_dict):
     globals_dict.update(create_cal_task=create_cal_task)
     
     
-    objects = globals_
-    dict['objects']
+    objects = globals_dict['objects']
     def new_objects():
         from lino.modlib.cal.fixtures import std
         yield std.objects()
