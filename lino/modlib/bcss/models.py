@@ -128,7 +128,7 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
         self.save()
         
         if self.status != RequestStatus.ok:
-            msg = '\n'.join(list(reply2lines(reply)))
+            msg = '\n'.join(list(bcss.reply2lines(reply)))
             raise Exception(msg)
             
         self.on_bcss_ok(reply)
