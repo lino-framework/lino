@@ -110,6 +110,10 @@ def join_words(*words):
     return ' '.join([unicode(x) for x in words if x])
       
 
+def d2iso(d):
+    "Supports also dates before 1900."
+    return "%04d-%02d-%02d" % (d.year, d.month, d.day)
+
 def i2d(i):
     d = dateparser.parse(str(i))
     d = datetime.date(d.year,d.month,d.day)
@@ -222,6 +226,151 @@ def codetime():
         if code_mtime is None or code_mtime < mtime:
             code_mtime = mtime
     return code_mtime
+    
+    
+class IncompleteDate:
+    """
+    Naive representation of an incomplete gregorian date.
+    
+    >>> print IncompleteDate('2011-00-00')
+    2011-00-00
+    >>> print IncompleteDate('1532-00-00')
+    1532-00-00
+    >>> print IncompleteDate('1990-00-01')
+    1990-00-01
+    >>> print IncompleteDate('0000-06-01')
+    0-06-01
+    
+    Christ's birth date:
+    >>> print IncompleteDate('-0007-12-25')
+    -7-12-25
+    
+    An IncompleteDate is allowed to be complete:
+    
+    >>> print IncompleteDate('2011-11-19')
+    2011-11-19
+    
+    """
+    
+    def __init__(self,s):
+        if s.startswith('-'):
+            self.bc = True
+            s = s[1:]
+        else:
+            self.bc = False
+        self.year, self.month, self.day = map(int,s.split('-'))
+        #~ s = s.replace('-','')
+        #~ if len(s) != 8:
+            #~ raise ValueError("Must be a string of format YYYY-MM-DD or YYYYMMDD.")
+        #~ self.year = int(s[:4])
+        #~ self.month = int(s[4:6])
+        #~ self.day = int(s[6:])
+        
+    def is_complete(self):
+        return self.year and self.month and self.day
+        
+    def __eq__(self,other):
+        return str(self) == str(other)
+        
+    def __ne__(self,other):
+        return str(self) != str(other)
+
+    def __len__(self):
+        return len(str(self))
+        
+    def __repr__(self):
+        return "IncompleteDate(%r)" % str(self)
+        
+    def __str__(self):
+        return self.format()
+        
+    #~ def format(self,fmt="%04d-%02d-%02d"):
+    def format(self,fmt="%Y-%m-%d"):
+        s = fmt.replace("%Y",iif(self.bc,'-','')+str(self.year))
+        s = s.replace("%m","%02d" % self.month)
+        s = s.replace("%d","%02d" % self.day)
+        return s
+        
+    def as_date(self):
+        return datetime.date(
+            (self.year * iif(self.bc,-1,1)) or 1900, 
+            self.month or 1, 
+            self.day or 1)
+        
+
+
+#~ class FirstIncompleteDate:
+    #~ """
+    #~ This encapsulates a `datetime.date` value together with 
+    #~ a flag that indicates which part(s) of the date are missing.
+    
+    #~ >>> print IncompleteDate(datetime.date(2011,11,19),
+    #~ ...   IncompleteDate.MONTH_MISSING|IncompleteDate.DAY_MISSING)
+    #~ 2011-00-00
+    #~ >>> print IncompleteDate.parse('1990-00-00')
+    #~ 1990-00-00
+    #~ >>> print IncompleteDate.parse('1990-00-01')
+    #~ 1990-00-01
+    #~ >>> print IncompleteDate.parse('0000-06-01')
+    #~ 0000-06-01
+    
+    #~ An IncompleteDate is allowed to be complete:
+    
+    #~ >>> print IncompleteDate(datetime.date(2011,11,19))
+    #~ 2011-11-19
+    
+    #~ """
+    
+    #~ def __init__(self,date,missing=0):
+        #~ self.date = date
+        #~ self.missing = missing
+        
+    #~ def year_missing(self):
+        #~ return self.missing & self.YEAR_MISSING
+        
+    #~ def is_complete(self):
+        #~ return self.missing == 0
+        
+    #~ @classmethod
+    #~ def parse(cls,s):
+        #~ s = s.replace('-','')
+        #~ if len(s) != 8:
+            #~ raise ValueError("Must be a string of format YYYY-MM-DD or YYYYMMDD.")
+        #~ y,m,d = int(s[:4]), int(s[4:6]), int(s[6:])
+        #~ missing = 0
+        #~ if y == 0: 
+            #~ y = 1900
+            #~ missing += cls.YEAR_MISSING
+        #~ if m == 0: 
+            #~ m = 1
+            #~ missing += cls.MONTH_MISSING
+        #~ if d == 0: 
+            #~ d = 1
+            #~ missing += cls.DAY_MISSING
+        #~ return cls(datetime.date(y,m,d),missing)
+        
+    #~ def __eq__(self,other):
+        #~ return other and self.date == other.date and self.missing == other.missing
+              
+    #~ def __ne__(self,other):
+        #~ return not other or self.date != other.date or self.missing != other.missing
+
+
+    #~ def __len__(self):
+        #~ return 8
+        
+    #~ def __repr__(self):
+        #~ return "IncompleteDate(%r,%d)" % (d2iso(self.date),self.missing)
+        
+    #~ def __str__(self):
+        #~ return self.format()
+        
+    #~ def format(self,fmt="%04d-%02d-%02d"):
+        #~ y,m,d = self.date.year, self.date.month, self.date.day
+        #~ if self.missing & self.YEAR_MISSING: y = 0
+        #~ if self.missing & self.MONTH_MISSING: m = 0
+        #~ if self.missing & self.DAY_MISSING: d = 0
+        #~ return fmt % (y,m,d)
 
 
 def _test():

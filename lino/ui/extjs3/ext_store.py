@@ -408,7 +408,7 @@ class MethodStoreField(StoreField):
   
     def value_from_object(self,request,obj):
         unbound_meth = self.field._return_type_for_method
-        assert unbound_meth.func_code.co_argcount == 2, (self.field.name, unbound_meth.func_code.co_varnames)
+        assert unbound_meth.func_code.co_argcount >= 2, (self.field.name, unbound_meth.func_code.co_varnames)
         #~ print self.field.name
         return unbound_meth(obj,request)
         

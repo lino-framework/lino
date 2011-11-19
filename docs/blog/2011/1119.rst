@@ -1,0 +1,30 @@
+20111119
+========
+
+
+Incomplete dates
+----------------
+
+Lino now allows to store incomplete dates
+like "1978-00-00" or "1978-06-00".
+New classes
+:class:`lino.utils.IncompleteDate`,
+:class:`lino.fields.IncompleteDateField`,
+:class:`lino.utils.bcss.IncompleteDateField`
+:class:`lino.ui.extjs.ext_elems.IncompleteDateFieldElement`
+and
+`Lino.IncompleteDateField` in :xfile:`linolib.js`.
+
+:class:`lino.modlib.contacts.models.Born` uses this for a 
+Person's `birth_date` field.
+
+
+Background:
+There are quite some people who don't know their exact birth date.
+That's no reason to not get registered in Belgium!
+:term:`BCSS` accepts birth dates.
+
+Note that we limit to the cases of incompleteness managed by 
+the :term:`BCSS` and don't go as far as the GEDCOM and ISO 8601 
+standards mentioned in a post 
+`How to store an incomplete date? <http://weblogs.sqlteam.com/mladenp/archive/2007/02/17/60103.aspx>`_.

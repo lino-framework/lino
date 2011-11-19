@@ -17,6 +17,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
+import datetime
+
 
 #~ from south.modelsinspector import add_introspection_rules
 #~ add_introspection_rules([], ["^lino\.fields\.LanguageField"])
@@ -36,6 +38,7 @@ logger = logging.getLogger(__name__)
 from lino.utils import choosers
 from lino.utils import choicelists
 from lino.tools import full_model_name
+from lino.utils import IncompleteDate, d2iso
 
 class PasswordField(models.CharField):
     """Stored as plain text in database, but not displayed in user interface."""
@@ -254,6 +257,8 @@ class FieldSet:
         return s
         
 
+
+
 class ChoiceListField(models.CharField):
     """
     A field that stores values from a 
@@ -314,5 +319,41 @@ class ChoiceListField(models.CharField):
         return self.choicelist.get_text_for_value(value.value)
     
       
+class IncompleteDateField(models.CharField):
+    """
+    A field that behaves like a DateField, but accepts
+    incomplete dates represented using 
+    :class:`lino.utils.IncompleteDate`.
+    """
+    __metaclass__ = models.SubfieldBase
+
+    def __init__(self,*args,**kw):
+        kw.update(max_length=11)
+        models.CharField.__init__(self,*args,**kw)
+      
+    def get_internal_type(self):
+        return "CharField"
+        
+    def to_python(self, value):
+        if isinstance(value,IncompleteDate):
+            return value
+        if isinstance(value,datetime.date):
+            #~ return IncompleteDate(value.strftime("%Y-%m-%d"))
+            return IncompleteDate(d2iso(value))
+        if value:
+            return IncompleteDate(value)
+        return value
+        
+    def get_prep_value(self, value):
+        return str(value)
+        #~ if value:
+            #~ return value.format("%04d%02d%02d")
+        #~ return '' 
+        
+    #~ def value_to_string(self, obj):
+        #~ value = self._get_val_from_obj(obj)
+        #~ return self.get_prep_value(value)
+        
+
 
         

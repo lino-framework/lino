@@ -55,7 +55,7 @@ from django.utils.encoding import force_unicode
 
 
 import lino
-#~ from lino.utils import menus
+from lino.utils import IncompleteDate
 
 
 def dict2js(d):
@@ -122,6 +122,8 @@ def py2js(v):
         #~ return str(v)
     if isinstance(v, (int, long, decimal.Decimal)):
         return str(v)
+    if isinstance(v, IncompleteDate):
+        return '"%s"' % v
     if isinstance(v, datetime.datetime):
         return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
         #~ return '"%s"' % v.strftime(settings.LINO.date_format_strftime 

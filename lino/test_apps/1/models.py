@@ -112,7 +112,7 @@ If you try to promote a Person to a Restaurant, you'll get an exception:
 >>> insert_child(person,Restaurant)
 Traceback (most recent call last):
 ...
-Exception: A Person cannot be parent for a Restaurant
+ValidationError: [u'A Person cannot be parent for a Restaurant']
 
 
 Virtual fields

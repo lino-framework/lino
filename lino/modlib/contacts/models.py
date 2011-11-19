@@ -251,17 +251,30 @@ class Born(models.Model):
     class Meta:
         abstract = True
         
-    birth_date = models.DateField(
-        blank=True,null=True,
+    birth_date = fields.IncompleteDateField(
+        blank=True,
         verbose_name=_("Birth date"))
-    birth_date_circa = models.BooleanField(
-        default=False,
-        verbose_name=_("not exact"))
-
-    def age(self,request):
-        if self.birth_date:
-            dd = datetime.date.today()-self.birth_date
-            return _("%d years") % (dd.days / 365)
+        
+    #~ birth_date = models.DateField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Birth date"))
+    #~ birth_date_circa = models.BooleanField(
+        #~ default=False,
+        #~ verbose_name=_("not exact"))
+        
+    def age(self,request,today=None):
+        if self.birth_date and self.birth_date.year:
+            if today is None:
+                today = datetime.date.today()
+            try:
+                dd = today - self.birth_date.as_date()
+            except ValueError:
+                pass
+            else:
+                s = _("%d years") % (dd.days / 365)
+                if self.birth_date.is_complete():
+                    return s
+                return u"±" + s
         return _('unknown')
     age.return_type = fields.DisplayField(_("Age"))
     

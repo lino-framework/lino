@@ -238,6 +238,7 @@ class Element(Node):
     elementname = None
     namespace = None
     parent = None
+    allowedValues = None
     #~ is_root = False
     #~ default_namespace = None
     used_namespaces = []
@@ -250,6 +251,8 @@ class Element(Node):
         self.update(**kw)
         
     def validate(self,v):
+        if self.allowedValues and not v in self.allowedValues:
+            raise Exception("Invalid value %r (must be one of %s)" % (v,self.allowedValues))
         return v
         
 
@@ -520,25 +523,30 @@ class Integer(Element):
     def validate(self,v):
         if not isinstance(v,int):
             raise Exception("%r is not an integer" % v)
-        return v
+        return Element.validate(self,v)
+        
     def value_as_string(self):
         return str(self.value)
         
 class DateTime(Element):
+  
     def validate(self,v):
         if not isinstance(v,datetime.datetime):
             raise Exception("%r is not a datetime instance" % v)
-        return v
+        return Element.validate(self,v)
+        
     def value_as_string(self):
         return self.value.strftime("%Y%m%dT%H%M%S")
         
 class Date(Element):
     def validate(self,v):
-        if not isinstance(v,datetime.date):
-            raise Exception("%r is not a date instance" % v)
-        return v
+        if isinstance(v,datetime.date):
+            return Element.validate(self,v)
+        raise Exception("%r is not a valid value for Date element" % v)
     def value_as_string(self):
         return self.value.strftime("%Y-%m-%d")
+
+
       
 class EmailAddress(String): pass
   

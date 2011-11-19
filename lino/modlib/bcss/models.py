@@ -38,6 +38,7 @@ from lino.reports import GridEdit, ShowDetailAction
 from appy.shared.xml_parser import XmlUnmarshaller
 
 from lino.utils.choicelists import ChoiceList
+from lino.utils.choicelists import Gender
 
 class RequestStatus(ChoiceList):
     """
@@ -174,29 +175,20 @@ class IdentifyPersonRequest(BCSSRequest):
               FirstName=person.first_name,
               BirthDate=person.birth_date,
               )
-            #~ ip = [SC(SC.SSIN(person.national_id))]
-            #~ vd = []
-            #~ if person.card_number:
-                #~ vd.append(VD.IdentityCardNumber(person.card_number))
-            #~ vd.append(VD.PersonData(
-              #~ VD.PersonData.LastName(person.last_name),
-              #~ VD.PersonData.FirstName(person.last_name),
-              #~ VD.PersonData.BirthDate(person.birth_date)))
-            #~ ip.append(VD(*vd))
-            #~ return bcss.IdentifyPersonRequest(*ip)
         else:
           pc = []
           pc.append(PC.LastName(person.last_name))
           pc.append(PC.FirstName(person.first_name))
           pc.append(PC.MiddleName(''))
-          if person.birth_date:
-              pc.append(PC.BirthDate(person.birth_date))
-          if person.gender:
-              from lino.modlib.choicelists import Gender
-              if person.gender == Gender.male:
-                  pc.append(PC.Gender(1))
-              elif person.gender == Gender.female:
-                  pc.append(PC.Gender(2))
+          #~ if person.birth_date:
+          pc.append(PC.BirthDate(person.birth_date))
+          if person.gender == Gender.male:
+              pc.append(PC.Gender(1))
+          elif person.gender == Gender.female:
+              pc.append(PC.Gender(2))
+          else:
+              pc.append(PC.Gender(0))
+          pc.append(PC.Tolerance(0))
           return bcss.IdentifyPersonRequest(SC(PC(*pc)))
       
 class IdentifyRequestsByPerson(reports.Report):

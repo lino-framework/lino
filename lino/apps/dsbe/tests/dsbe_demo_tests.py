@@ -368,24 +368,23 @@ def test06(self):
     annette = Person.objects.get(pk=118)
     self.assertEquals(unicode(annette), "Annette ARENS (118)")
     
-    babel.set_language('en')
-    p = Property.objects.get(name_en="Obedient")
-    pp = PersonProperty.objects.get(person=annette,property__name_en="Obedient")
+    if 'en' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('en')
+        p = Property.objects.get(name_en="Obedient")
+        pp = PersonProperty.objects.get(person=annette,property__name_en="Obedient")
+            
+        if 'de' in babel.AVAILABLE_LANGUAGES:
+            babel.set_language('de')
+            self.assertEquals(unicode(p), u"Gehorsam")
+            self.assertEquals(unicode(pp), u"mittelmäßig")
+            #~ self.assertEquals(unicode(pp), u"Sozialkompetenzen.Gehorsam=mittelmäßig")
         
-    if 'de' in babel.AVAILABLE_LANGUAGES:
-        babel.set_language('de')
-        self.assertEquals(unicode(p), u"Gehorsam")
-        self.assertEquals(unicode(pp), u"mittelmäßig")
-        #~ self.assertEquals(unicode(pp), u"Sozialkompetenzen.Gehorsam=mittelmäßig")
-    
-    if 'fr' in babel.AVAILABLE_LANGUAGES:
-        babel.set_language('fr')
-        self.assertEquals(unicode(p), u"Obéissant")
-        #~ self.assertEquals(unicode(pp), u"Compétences sociales.Obéissant=moyennement")
-        self.assertEquals(unicode(pp), u"moyennement")
-    
-    #~ babel.set_language(babel.DEFAULT_LANGUAGE)
-    babel.set_language(None) # switch back to default language for subsequent tests
+        if 'fr' in babel.AVAILABLE_LANGUAGES:
+            babel.set_language('fr')
+            self.assertEquals(unicode(p), u"Obéissant")
+            self.assertEquals(unicode(pp), u"moyennement")
+        
+        babel.set_language(None) # switch back to default language for subsequent tests
     
 def test07(self):
     """

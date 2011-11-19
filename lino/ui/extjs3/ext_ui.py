@@ -421,8 +421,8 @@ class ExtUI(base.UI):
                 #~ lh,name,rt))
         rt.name = name
         rt._return_type_for_method = meth
-        if meth.func_code.co_argcount != 2:
-            raise Exception("Method %s has %d arguments (must have 2)" % (meth,meth.func_code.co_argcount))
+        if meth.func_code.co_argcount < 2:
+            raise Exception("Method %s has %d arguments (must have at least 2)" % (meth,meth.func_code.co_argcount))
             #~ , (name, meth.func_code.co_varnames)
         #~ kw.update(editable=False)
         e = self.create_field_element(lh,rt,**kw)

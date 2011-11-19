@@ -17,9 +17,8 @@ Communicate with the :term:`BCSS` server.
 
 Example:
 
->>> from datetime import date
 >>> req = IdentifyPersonRequest.verify_request("68060101234",
-...   LastName="SAFFRE",BirthDate=date(1968,6,1))
+...   LastName="SAFFRE",BirthDate='1968-06-01')
 >>> print req.toxml(True)
 <ips:IdentifyPersonRequest xmlns:ips="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
 <ips:SearchCriteria>
@@ -71,7 +70,6 @@ and a timestamp for your request.
 
 Here we go:
 
->>> import datetime
 >>> now = datetime.datetime(2011,10,31,15,41,10)
 >>> sr = req.ssdn_request(settings,'PIR # 5',now)
 >>> print sr.toxml(True)
@@ -118,17 +116,50 @@ Now we perform another wrapping of this SSDN request.
 </soap:Body>
 </soap:Envelope>
 
+Element-level validation:
+
+>>> G = IdentifyPersonRequest.SearchCriteria.PhoneticCriteria.Gender
+
+>>> print G(4).toxml()
+Traceback (most recent call last):
+...
+Exception: Invalid value 4 (must be one of (0, 1, 2))
+
+>>> print G(2).toxml()
+<Gender>2</Gender>
+
+Birth dates
+-----------
+
+>>> B = IdentifyPersonRequest.SearchCriteria.PhoneticCriteria.BirthDate
+
+A birth date with missing month and day:
+
+>>> print B('1978-00-00').toxml()
+<BirthDate>1978-00-00</BirthDate>
+
+A normal birth date instantiated from a `datetime.date`:
+
+>>> print B(datetime.date(1968,6,1)).toxml()
+<BirthDate>1968-06-01</BirthDate>
+
+An empty birth date:
+
+>>> print B('').toxml()
+<BirthDate></BirthDate>
+
 
 """
 
 
-
+import datetime
 
 from appy.shared.dav import Resource
 from appy.shared.xml_parser import XmlUnmarshaller
 
 #~ from lino.utils.xmlgen import *
-from lino.utils import dblogger
+from lino.utils import d2iso
+from lino.utils import IncompleteDate
 from lino.utils import xmlgen as xg
 
 class bcss(xg.Namespace):
@@ -162,6 +193,31 @@ class SSIN(xg.String):
         if not v.isdigit():
             raise Exception("must be a number")
         return v
+        
+
+class t_IncompleteDate(xg.Element):
+    
+    def validate(self,value):
+        if isinstance(value,IncompleteDate):
+            value = IncompleteDate(value)
+        elif isinstance(value,datetime.date):
+            value = IncompleteDate(d2iso(value))
+        elif value:
+            value = IncompleteDate(value)
+        return xg.Element.validate(self,value)
+      
+        #~ if isinstance(v,datetime.date):
+            #~ v = IncompleteDate(v)
+        #~ elif isinstance(v,basestring):
+            #~ v = IncompleteDate.parse(v)
+        #~ if isinstance(v,IncompleteDate):
+            #~ return xg.Element.validate(self,v)
+        #~ raise Exception("%r is not a valid value for Date element" % v)
+        
+    def value_as_string(self):
+        return str(self.value)
+
+        
       
   
 class ssdn(xg.Namespace):
@@ -240,7 +296,7 @@ class Service(xg.Container):
         req = soap_request(self.ssdn_request(settings,*args).toxml())
         xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.toxml()
         
-        dblogger.info("Going to send request /******\n%s\n******/",xmlString)
+        #~ dblogger.info("Going to send request /******\n%s\n******/",xmlString)
         if not settings.LINO.bcss_soap_url:
             #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
             return None
@@ -290,7 +346,7 @@ class IdentifyPersonRequest(Service):
                 "last name to search for. Matched phonetically"
             class FirstName(xg.String): pass
             class MiddleName(xg.String): pass
-            class BirthDate(xg.Date):
+            class BirthDate(t_IncompleteDate):
                 """
                 birth date in the format yyyy-MM-dd. 
                 May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00.
@@ -298,6 +354,8 @@ class IdentifyPersonRequest(Service):
                 """
             class Gender(xg.Integer):
                 "gender of the person. 0 = unknown, 1 = male, 2 = female"
+                allowedValues = (0,1,2)
+                
             class Tolerance(xg.Integer):
                 """
                 tolerance on the bith date. 
@@ -334,7 +392,7 @@ class IdentifyPersonRequest(Service):
                 "first name to verify. matched exactly if present"
             class MiddleName(xg.String):
                 "middle name to verify. matched exactly if present"
-            class BirthDate(xg.Date):
+            class BirthDate(t_IncompleteDate):
                 """
                 birth date in the format yyyy-MM-dd. 
                 May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00. 

@@ -533,6 +533,7 @@ class CharFieldElement(FieldElement):
         kw.update(maxLength=self.field.max_length)
         return kw
         
+        
 class PasswordFieldElement(CharFieldElement):
     def get_field_options(self,**kw):
         kw = super(PasswordFieldElement,self).get_field_options(**kw)
@@ -718,6 +719,19 @@ class IntegerFieldElement(FieldElement):
     sortable = True
     preferred_width = 5
     data_type = 'int' 
+
+class IncompleteDateFieldElement(CharFieldElement):
+    preferred_width = 10
+    value_template = "new Lino.IncompleteDateField(%s)"
+    def __init__(self,*args,**kw):
+        FieldElement.__init__(self,*args,**kw)
+        
+    def get_field_options(self,**kw):
+        kw = FieldElement.get_field_options(self,**kw)
+        kw.update(maxLength=10)
+        return kw
+        
+
 
 class DecimalFieldElement(FieldElement):
     filter_type = 'numeric'
@@ -1564,6 +1578,7 @@ _FIELD2ELEM = (
     (fields.HtmlBox, HtmlBoxElement),
     #~ (fields.QuickAction, QuickActionElement),
     (fields.DisplayField, DisplayElement),
+    (fields.IncompleteDateField, IncompleteDateFieldElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),

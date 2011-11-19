@@ -481,6 +481,11 @@ Lino.URLField = Ext.extend(Ext.form.TriggerField,{
     window.open(this.getValue(),'_blank');
   }
 });
+Lino.IncompleteDateField = Ext.extend(Ext.form.TextField,{
+  regex: /^-?\d+-[01]\d-[0123]\d$/,
+  regexText: '$_("Enter a date in format YYYY-MM-DD (use zeroes for unknown parts).")'
+  });
+
 
 //~ Lino.make_dropzone = function(cmp) {
     //~ cmp.on('render', function(ct, position){
