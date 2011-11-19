@@ -260,13 +260,14 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     def save_auto_tasks(self):
         
         if self.user:
-            if self.applies_from and self.exam_policy_id:
+            if self.applies_from and self.exam_policy_id and self.exam_policy.every > 0:
                 date = self.applies_from
             else:
                 date = None
             for i in range(24):
                 if date:
-                    date = DurationUnit.months.add_duration(date,self.exam_policy.every)
+                    date = DurationUnit.months.add_duration(
+                            date,self.exam_policy.every)
                     if self.applies_until and date > self.applies_until:
                         date = None
                 subject = _("Evaluation %d") % (i + 1)
