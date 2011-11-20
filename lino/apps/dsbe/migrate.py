@@ -30,6 +30,7 @@ from django.conf import settings
 from lino.tools import resolve_model
 from lino.utils import mti
 from lino.utils import dblogger
+from lino import __version__
 
 def migrate_from_1_1_16(globals_dict):
     NATIVES = []
@@ -703,6 +704,9 @@ def migrate_from_1_2_6(globals_dict):
     return '1.2.7'
   
 def migrate_from_1_2_7(globals_dict):    
+    """Convert `birth_date` fields to the new :class:`lino.fields.IncompleteDate` type.
+    See :doc:`/blog/2011/1119`.
+    """
     from lino.utils.mti import insert_child
     contacts_Contact = resolve_model("contacts.Contact")
     contacts_Person = resolve_model("contacts.Person")
@@ -735,11 +739,12 @@ def install(globals_dict):
         if func:
             #~ dblogger.info("Found %s()", funcname)
             globals_dict['SOURCE_VERSION'] = func(globals_dict)
-            dblogger.info("Migrating from version %s to %s", from_version, globals_dict['SOURCE_VERSION'])
+            dblogger.info("Installed migration from version %s to %s", from_version, globals_dict['SOURCE_VERSION'])
             if func.__doc__:
                 dblogger.info(func.__doc__)
         else:
-            dblogger.warning("No migration from version %s",from_version)
+            if from_version != __version__
+                dblogger.warning("No migration from version %s to %s",from_version,__version__)
             break
     
       
