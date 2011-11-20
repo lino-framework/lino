@@ -102,8 +102,10 @@ from lino.utils.choicelists import ChoiceList
 class Channel(ChoiceList):
     label = _("Channel")
 add = Channel.add_item
-add('P',en=u"Paper",de=u"Papier", fr=u"Papier",et="Paber")
-add('E',en=u"E-mail",de=u"E-mail", fr=u"courrier électronique",et="e-mail")
+#~ add('P',en=u"Paper",de=u"Papier", fr=u"Papier",et="Paber")
+#~ add('E',en=u"E-mail",de=u"E-mail", fr=u"courrier électronique",et="e-mail")
+add('P',_("Paper"))
+add('E',_("E-mail"))
 
 
 class InvoicingMode(mixins.PrintableType,babel.BabelNamed):

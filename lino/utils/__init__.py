@@ -239,9 +239,10 @@ class IncompleteDate:
     >>> print IncompleteDate(1990,0,1)
     1990-00-01
     >>> print IncompleteDate(0,6,1)
-    0-06-01
+    0000-06-01
     
     Christ's birth date:
+    
     >>> print IncompleteDate(-7,12,25)
     -7-12-25
     >>> print IncompleteDate(-7,12,25).strftime("%d.%m.%Y")
@@ -298,7 +299,10 @@ class IncompleteDate:
         
     def strftime(self,fmt="%Y-%m-%d"):
         #~ s = fmt.replace("%Y",iif(self.bc,'-','')+str(self.year))
-        s = fmt.replace("%Y",str(self.year))
+        if self.year == 0:
+            s = fmt.replace("%Y",'0000')
+        else:
+            s = fmt.replace("%Y",str(self.year))
         s = s.replace("%m","%02d" % self.month)
         s = s.replace("%d","%02d" % self.day)
         return s

@@ -29,3 +29,4 @@ the :term:`BCSS` and don't go as far as the GEDCOM and ISO 8601
 standards mentioned in a post 
 `How to store an incomplete date? <http://weblogs.sqlteam.com/mladenp/archive/2007/02/17/60103.aspx>`_.
 
+Release :doc:`/releases/2011/1120` + upgrade in Eupen.

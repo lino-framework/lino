@@ -1,0 +1,17 @@
+Version 1.2.8 (20.11.2011)
+==========================
+
+Subtile Änderung beim Feld "Geburtsdatum" (im Rahmen der Anbindung an die BCSS): 
+das Ankreuzfeld "circa" ist weg,
+und es gibt auch in diesem Feld keinen Button mehr, um den Kalender aufzurufen 
+und ein Datum auszuwählen.
+Stattdessen kann man nun "unkomplette" Daten dort eingeben:
+
+- 00.07.1980 : irgendwann im Juli 1980 
+- 00.00.1980 : irgendwann in 1980
+- 25.03.0 : hat Geburtstag am 25. März, aber Alter ist unbekannt.
+
+Im Feld "Alter" steht dann in den ersten beiden Fällen ein "±" vor dem Alter,
+im dritten Fall ist das Alter "unbekannt".
+  
+

@@ -138,6 +138,13 @@ A birth date with missing month and day:
 >>> print B('1978-00-00').toxml()
 <BirthDate>1978-00-00</BirthDate>
 
+BCSS requires at least the year of a birth date:
+
+>>> print B('0000-04-27')
+Traceback (most recent call last):
+...
+Exception: Invalid date for BirthDate
+
 A normal birth date instantiated from a `datetime.date`:
 
 >>> print B(datetime.date(1968,6,1)).toxml()
@@ -198,13 +205,15 @@ class SSIN(xg.String):
 class t_IncompleteDate(xg.Element):
     
     def validate(self,value):
-        if isinstance(value,IncompleteDate):
-            pass
-        elif isinstance(value,datetime.date):
-            value = IncompleteDate.from_date(value)
-        elif isinstance(value,basestring):
-            if value:
-                value = IncompleteDate.parse(value)
+        if value:
+            if isinstance(value,IncompleteDate):
+                pass
+            elif isinstance(value,datetime.date):
+                value = IncompleteDate.from_date(value)
+            elif isinstance(value,basestring):
+                    value = IncompleteDate.parse(value)
+            if value.year == 0:
+                raise Exception("Invalid date for %s" % self.elementname)
         return xg.Element.validate(self,value)
       
         #~ if isinstance(v,datetime.date):

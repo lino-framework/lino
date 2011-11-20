@@ -16,7 +16,13 @@ u"""
 Utility for defining hard-coded multi-lingual choice lists 
 whose value is rendered according to the current language.
 
-Usage example (requires :setting:`DJANGO_SETTINGS_MODULE` to be set):
+Usage example :
+
+(choicelists requires :setting:`DJANGO_SETTINGS_MODULE` to be set)
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.std.settings'
+
 
 >>> from django.utils import translation
 >>> from lino.utils.choicelists import Gender
@@ -46,15 +52,11 @@ automatically available as a property value in
 :mod:`lino.modlib.properties`.
 
 
-
-
 """
 
-#~ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
 
-#~ from lino.utils import babel
 from lino.utils import curry
 
 CHOICELISTS = {}
