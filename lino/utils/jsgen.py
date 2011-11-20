@@ -14,26 +14,26 @@
 """
 Example:
 
-  >>> class TextField(Component):
-  ...    declare_type = DECLARE_VAR
-  >>> class Panel(Component):
-  ...    declare_type = DECLARE_VAR
-  >>> fld1 = TextField(fieldLabel="Field 1",name='fld1',xtype='textfield')
-  >>> fld2 = TextField(fieldLabel="Field 2",name='fld2',xtype='textfield')
-  >>> fld3 = TextField(fieldLabel="Field 3",name='fld3',xtype='textfield')
-  >>> p1 = Panel(title="Panel",name='p1',xtype='panel',items=[fld2,fld3])
-  >>> main = Component(title="Main",name='main',xtype='form',items=[fld1,p1])
-  >>> d = dict(main=main,wc=[1,2,3])
-  
-  >>> for ln in declare_vars(d):
-  ...   print ln
-  var fld1 = { fieldLabel: "Field 1", xtype: "textfield" };
-  var fld2 = { fieldLabel: "Field 2", xtype: "textfield" };
-  var fld3 = { fieldLabel: "Field 3", xtype: "textfield" };
-  var p1 = { xtype: "panel", title: "Panel", items: [ fld2, fld3 ] };
-  
-  >>> print py2js(d)
-  { main: { xtype: "form", title: "Main", items: [ fld1, p1 ] }, wc: [ 1, 2, 3 ] }
+>>> class TextField(Component):
+...    declare_type = DECLARE_VAR
+>>> class Panel(Component):
+...    declare_type = DECLARE_VAR
+>>> fld1 = TextField(fieldLabel="Field 1",name='fld1',xtype='textfield')
+>>> fld2 = TextField(fieldLabel="Field 2",name='fld2',xtype='textfield')
+>>> fld3 = TextField(fieldLabel="Field 3",name='fld3',xtype='textfield')
+>>> p1 = Panel(title="Panel",name='p1',xtype='panel',items=[fld2,fld3])
+>>> main = Component(title="Main",name='main',xtype='form',items=[fld1,p1])
+>>> d = dict(main=main,wc=[1,2,3])
+
+>>> for ln in declare_vars(d):
+...   print ln
+var fld11 = { "fieldLabel": "Field 1", "xtype": "textfield" };
+var fld22 = { "fieldLabel": "Field 2", "xtype": "textfield" };
+var fld33 = { "fieldLabel": "Field 3", "xtype": "textfield" };
+var p14 = { "items": [ fld22, fld33 ], "xtype": "panel", "title": "Panel" };
+
+>>> print py2js(d)
+{ "main": { "items": [ fld11, p14 ], "xtype": "form", "title": "Main" }, "wc": [ 1, 2, 3 ] }
   
 Another example...
 
@@ -123,7 +123,8 @@ def py2js(v):
     if isinstance(v, (int, long, decimal.Decimal)):
         return str(v)
     if isinstance(v, IncompleteDate):
-        return '"%s"' % v
+        return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
+        #~ return '"%s"' % v
     if isinstance(v, datetime.datetime):
         return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
         #~ return '"%s"' % v.strftime(settings.LINO.date_format_strftime 
@@ -132,7 +133,8 @@ def py2js(v):
         return '"%s"' % v.strftime(settings.LINO.time_format_strftime)
     if isinstance(v, datetime.date):
         if v.year < 1900:
-            return '"%s"' % v
+            v = IncompleteDate(v)
+            return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
         return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
         #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
         #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))

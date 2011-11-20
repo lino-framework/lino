@@ -1268,7 +1268,7 @@ tinymce.init({
             fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
             if os.path.exists(fn):
                 if os.stat(fn).st_mtime > mtime:
-                    logger.debug("NOT generating %s because it is newer than the code.",fn)
+                    logger.info("NOT generating %s because it is newer than the code.",fn)
                     continue
                     
             logger.info("Generating %s ...", fn)

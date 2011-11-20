@@ -31,7 +31,7 @@ Person = resolve_model('contacts.Person')
 contacts = resolve_app('contacts')
 from lino.utils.instantiator import Instantiator
 
-class StdTest(TestCase):
+class DemoTest(TestCase):
     #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
     #~ fixtures = 'few_countries few_languages demo_cities std demo demo_ee'.split()
     fixtures = 'std few_countries few_cities few_languages props demo'.split()
@@ -83,6 +83,9 @@ def test02(self):
         result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
         self.assertEqual(result['data']['country'],"Estland")
         self.assertEqual(result['data']['gender'],u"Männlich")
+        
+        # TODO: the following would fail if LINO.date_format_* have been modified
+        self.assertEqual(result['data']['birth_date'],"01.06.1968")
         
     if 'fr' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='fr')

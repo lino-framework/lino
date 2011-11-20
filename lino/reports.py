@@ -67,10 +67,10 @@ from lino.core.coretools import get_slave, get_model_report, get_data_elem
 #~ from lino.modlib import field_choices
 
 
-def parse_js_date(s,name):
+def unused_parse_js_date(s,name):
     #~ v = dateparser.parse(s)
     #~ v = dateparser.parse(s,fuzzy=True)
-    return settings.LINO.parse_date(s)
+    return datetime.date(*settings.LINO.parse_date(s))
     #~ print "parse_js_date %s : %r -> %s" % (name,s,v)
     #~ return v
 
@@ -202,7 +202,8 @@ def add_gridfilters(qs,gridfilters):
         elif flttype == 'boolean':
             kw[field.name+"__equals"] = flt['value']
         elif flttype == 'date':
-            v = parse_js_date(flt['value'],field.name)
+            v = datetime.date(*settings.LINO.parse_date(flt['value']))
+            #~ v = parse_js_date(flt['value'],field.name)
             cmp = str(flt['comparison'])
             if cmp == 'eq': cmp = 'exact'
             kw[field.name+"__"+cmp] = v

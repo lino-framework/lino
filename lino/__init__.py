@@ -413,9 +413,28 @@ class Lino(object):
     time_format_extjs = 'H:i'
     
     date_format_strftime = '%d.%m.%Y'
+    """
+    Format (in strftime syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_date`.
+    """
+    
     date_format_extjs = 'd.m.Y'
+    """
+    Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_date`.
+    """
     
     alt_date_formats_extjs = 'd/m/Y|Y-m-d'
+    """
+    Alternative date entry formats accepted by Date widgets.
+    """
+    
+    #~ date_format_regex = "/^[0123]\d\.[01]\d\.-?\d+$/"
+    date_format_regex = "/^[0123]?\d\.[01]?\d\.-?\d+$/"
+    """
+    Format (in Javascript regex syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_date`.
+    """
     
     bcss_soap_url = None
     """
@@ -555,11 +574,13 @@ class Lino(object):
     def parse_date(self,s):
         """Convert a string formatted using 
         :attr:`date_format_strftime` or  :attr:`date_format_extjs` 
-        into a datetime.date instance.
+        into a `(y,m,d)` tuple (not a `datetime.date` instance).
         See :doc:`/blog/2010/1130`.
         """
-        ymd = reversed(map(int,s.split('.')))
-        return datetime.date(*ymd)
+        ymd = tuple(reversed(map(int,s.split('.'))))
+        assert len(ymd) == 3
+        return ymd
+        #~ return datetime.date(*ymd)
         
     def parse_time(self,s):
         """Convert a string formatted using 
@@ -581,7 +602,7 @@ class Lino(object):
         #~ ymd = map(int,s2[0].split('-'))
         #~ hms = map(int,s2[1].split(':'))
         #~ return datetime.datetime(*(ymd+hms))
-        d = self.parse_date(s[0])
+        d = datetime.date(*self.parse_date(s[0]))
         t = self.parse_time(s[1])
         return datetime.combine(d,t)
 

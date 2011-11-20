@@ -199,11 +199,12 @@ class t_IncompleteDate(xg.Element):
     
     def validate(self,value):
         if isinstance(value,IncompleteDate):
-            value = IncompleteDate(value)
+            pass
         elif isinstance(value,datetime.date):
-            value = IncompleteDate(d2iso(value))
-        elif value:
-            value = IncompleteDate(value)
+            value = IncompleteDate.from_date(value)
+        elif isinstance(value,basestring):
+            if value:
+                value = IncompleteDate.parse(value)
         return xg.Element.validate(self,value)
       
         #~ if isinstance(v,datetime.date):

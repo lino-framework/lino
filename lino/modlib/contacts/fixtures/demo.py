@@ -53,7 +53,7 @@ def objects():
                 country='EE',street='Uus', street_no='1',
                 addr2=u'Vana-Vigala küla',
                 city=vigala,zip_code='78003').build
-    yield person(u'Luc',  u'Saffre', gender=Gender.male)
+    yield person(u'Luc',  u'Saffre', gender=Gender.male,birth_date='1968-06-01')
     
     eupen = City.objects.get(name__exact='Eupen')
     person = Instantiator('contacts.Person',"first_name last_name",

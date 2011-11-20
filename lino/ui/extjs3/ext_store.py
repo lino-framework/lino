@@ -39,6 +39,7 @@ from lino import fields
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
 #~ from lino.tools import obj2str
+from lino.utils import IncompleteDate
 
 class StoreField(object):
   
@@ -365,22 +366,24 @@ class AutoStoreField(StoreField):
 class DateStoreField(StoreField):
   
     def __init__(self,field,**kw):
-    #~ def __init__(self,field,**kw):
-        #~ self.date_format = date_format
         kw['type'] = 'date'
         kw['dateFormat'] = settings.LINO.date_format_extjs # date_format # 'Y-m-d'
         StoreField.__init__(self,field,**kw)
         
     def parse_form_value(self,v,obj):
-        #~ print '20101024 DateStoreField 1', v
         if v:
-            v = settings.LINO.parse_date(v) 
-            #~ v = reports.parse_js_date(v,self.field.name)
-            #~ v = dateparser.parse(v,fuzzy=True)
-            #~ ? v = datetime.date(v.year,v.month,v.day)
+            v = datetime.date(*settings.LINO.parse_date(v))
         else:
             v = None
-        #~ print '20101024 DateStoreField 2', v
+        return v
+        
+
+class IncompleteDateStoreField(StoreField):
+  
+    def parse_form_value(self,v,obj):
+        if v:
+            v = IncompleteDate(*settings.LINO.parse_date(v))
+            #~ v = datetime.date(*settings.LINO.parse_date(v))
         return v
 
 class DateTimeStoreField(StoreField):
@@ -618,6 +621,8 @@ class Store:
             return TimeStoreField(fld)
         if isinstance(fld,models.DateTimeField):
             return DateTimeStoreField(fld)
+        if isinstance(fld,fields.IncompleteDateField):
+            return IncompleteDateStoreField(fld)
         if isinstance(fld,models.DateField):
             return DateStoreField(fld)
             #~ return DateStoreField(fld,self.report.date_format)

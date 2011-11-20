@@ -40,6 +40,7 @@ cm:
 	done
   
 tests:  
+	python lino\utils\choicelists.py
 	python lino\utils\jsgen.py
 	python lino\utils\__init__.py
 	python lino\utils\xmlgen.py

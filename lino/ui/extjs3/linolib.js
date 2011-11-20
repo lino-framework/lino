@@ -482,7 +482,9 @@ Lino.URLField = Ext.extend(Ext.form.TriggerField,{
   }
 });
 Lino.IncompleteDateField = Ext.extend(Ext.form.TextField,{
-  regex: /^-?\d+-[01]\d-[0123]\d$/,
+  //~ regex: /^-?\d+-[01]\d-[0123]\d$/,
+  //~ regex: /^[0123]\d\.[01]\d\.-?\d+$/,
+  regex: $settings.LINO.date_format_regex,
   regexText: '$_("Enter a date in format YYYY-MM-DD (use zeroes for unknown parts).")'
   });
 
