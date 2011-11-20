@@ -27,7 +27,7 @@ from lino.modlib.links import models as links
 from lino.modlib.cal import models as cal
 
 class Person(contacts.Contact,contacts.Born,contacts.Person):
-    class Meta(contacts.PersonMixin.Meta):
+    class Meta(contacts.Person.Meta):
         app_label = 'contacts'
     died_date = models.DateField(
         blank=True,null=True,

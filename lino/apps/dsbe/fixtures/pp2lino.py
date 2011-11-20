@@ -51,7 +51,7 @@ from lino.tools import resolve_model, full_model_name
 from lino.apps.dsbe.models import Company, Person, City, Country, Note, PersonGroup
 from lino.modlib.users.models import User
 from lino.modlib.cal import models as cal
-from lino.modlib.cal.utils import EventStatus
+#~ from lino.modlib.cal.utils import EventStatus
 from lino.modlib.jobs import models as jobs
 from lino.modlib.isip import models as isip
 from lino.modlib.properties import models as properties
@@ -900,11 +900,11 @@ class IsipContractLoader(LinoMdbLoader):
             yield self.model(**kw)
 
 EVENT_STATI = {
-    'RDV': EventStatus.tentative,
-    'Oui': EventStatus.confirmed,
-    'Non': EventStatus.absent,
-    'Retour': EventStatus.cancelled,
-    u'Reporté': EventStatus.rescheduled,
+    'RDV': 0, # EventStatus.tentative,
+    'Oui': 1, #  EventStatus.confirmed,
+    'Non': 4, #  EventStatus.absent,
+    'Retour': 2, #  EventStatus.cancelled,
+    u'Reporté': 3, #  EventStatus.rescheduled,
     }
 
 class EventLoader(LinoMdbLoader):
@@ -929,7 +929,7 @@ class EventLoader(LinoMdbLoader):
             kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
             #~ kw.update(coach2=get_by_id(User,row[u'IDASSSG']))
             kw.update(type=EVENTS.get(row['TypeDeLettre']))
-            kw.update(status=EVENT_STATI.get(row['Venu']))
+            kw.update(status_id=EVENT_STATI.get(row['Venu']))
             kw.update(channel=EVENT_CHANNELS.get(row['FaireCourrier']))
             kw.update(outbox_id=row['NCourrier'])
             yield self.model(**kw)

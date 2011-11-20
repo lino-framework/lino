@@ -1,0 +1,30 @@
+T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:19: (WARNING/2) autodoc can't import/find module 'lino.apps.igen.models', it reported error: "'module' object has no attribute 'PersonMixin'", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.sales.models', it reported error: "add_item() got an unexpected keyword argument 'en'", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:8: WARNING: py:class reference target not found: str
+T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:25: WARNING: py:class reference target not found: django.db.models.fields.CharField
+T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:37: WARNING: py:class reference target not found: lino.modlib.links.models.Link
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:13: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:42: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:83: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:98: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:108: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:128: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:149: WARNING: py:class reference target not found: lino.apps.dsbe.models.Companies
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:162: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:171: WARNING: py:class reference target not found: CourseConent
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:206: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:219: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:227: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:235: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:244: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:252: WARNING: py:class reference target not found: dsbe.Activity
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:265: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:331: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:344: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:72: WARNING: py:class reference target not found: lino.fields.IncompleteDate
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:44: WARNING: py:class reference target not found: City
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:49: WARNING: py:class reference target not found: lino.utils.mdbtools.Loader
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:65: WARNING: py:class reference target not found: Note
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:78: WARNING: py:class reference target not found: User
+T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:16: WARNING: py:mod reference target not found: lino.apps.igen.models
