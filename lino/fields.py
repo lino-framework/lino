@@ -341,10 +341,9 @@ class IncompleteDateField(models.CharField):
             #~ return IncompleteDate(value.strftime("%Y-%m-%d"))
             #~ return IncompleteDate(d2iso(value))
             return IncompleteDate.from_date(value)
-        assert isinstance(value,basestring)
         if value:
             return IncompleteDate.parse(value)
-        return value
+        return ''
         
     def get_prep_value(self, value):
         return str(value)
