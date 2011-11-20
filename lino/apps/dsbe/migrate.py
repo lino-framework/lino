@@ -743,7 +743,7 @@ def install(globals_dict):
             if func.__doc__:
                 dblogger.info(func.__doc__)
         else:
-            if from_version != __version__
+            if from_version != __version__:
                 dblogger.warning("No migration from version %s to %s",from_version,__version__)
             break
     
