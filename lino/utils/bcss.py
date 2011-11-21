@@ -520,10 +520,11 @@ def reply2lines(reply):
     yield "- Version: %s" % reply.ServiceReply.Version
     yield "- ResultSummary:"
     yield "  - ReturnCode: %s" % reply.ServiceReply.ResultSummary.ReturnCode
-    yield "  - Detail:"
-    yield "    - Information.FieldName: %s" % reply.ServiceReply.ResultSummary.Detail.Information.FieldName
-    yield "    - Information.FieldValue: %s" % reply.ServiceReply.ResultSummary.Detail.Information.FieldValue
-    yield "    - ReasonCode: %s" % reply.ServiceReply.ResultSummary.Detail.ReasonCode
+    yield "  - Details:"
+    for dtl in reply.ServiceReply.ResultSummary.Detail:
+        yield "    - Information.FieldName: %s" % dtl.Information.FieldName
+        yield "    - Information.FieldValue: %s" % dtl.Information.FieldValue
+        yield "    - ReasonCode: %s" % dtl.Detail.ReasonCode
     
     
 def unused_test_connection(nr):

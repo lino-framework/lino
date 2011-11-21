@@ -134,7 +134,7 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
             
         self.on_bcss_ok(reply)
         
-    def on_bcss_ok(self):
+    def on_bcss_ok(self,reply):
         """
         Called when a successful reply has been received.
         """
