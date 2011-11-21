@@ -523,11 +523,12 @@ def reply2lines(reply):
     for dtl in reply.ServiceReply.ResultSummary.Detail:
         yield "  - Detail[]:"
         yield "    - ReasonCode: %s" % dtl.ReasonCode
-        for info in dtl.Information:
-            #~ yield "    - Information.FieldName[]: %s" % info.FieldName
-            #~ yield "    - Information.FieldValue[]: %s" % info.FieldValue
-            #~ yield "    - %s = %s" % (info.FieldName,info.FieldValue)
-            yield "    - %s" % info
+        yield "    - Information: %s" % dtl.Information
+        #~ info = dtl.Information:
+        #~ yield "    - Information.FieldName[]: %s" % info.FieldName
+        #~ yield "    - Information.FieldValue[]: %s" % info.FieldValue
+        #~ yield "    - %s = %s" % (info.FieldName,info.FieldValue)
+        #~ yield "    - %s" % info
     
     
 def unused_test_connection(nr):

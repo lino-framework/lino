@@ -42,3 +42,7 @@ More bugs removed::
       yield "    - ReasonCode: %s" % dtl.Detail.ReasonCode
   AttributeError: Object instance has no attribute 'Detail'  
   
+  
+    File "/var/snapshots/lino/lino/utils/bcss.py", line 526, in reply2lines
+      for info in dtl.Information:
+  TypeError: iteration over non-sequence  
