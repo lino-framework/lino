@@ -524,9 +524,10 @@ def reply2lines(reply):
         yield "  - Detail[]:"
         yield "    - ReasonCode: %s" % dtl.ReasonCode
         for info in dtl.Information:
-            #~ yield "    - Information.FieldName[]: %s" % dtl.Information.FieldName
-            #~ yield "    - Information.FieldValue[]: %s" % dtl.Information.FieldValue
-            yield "    - %s = %s" % (info.FieldName,info.FieldValue)
+            #~ yield "    - Information.FieldName[]: %s" % info.FieldName
+            #~ yield "    - Information.FieldValue[]: %s" % info.FieldValue
+            #~ yield "    - %s = %s" % (info.FieldName,info.FieldValue)
+            yield "    - %s" % info
     
     
 def unused_test_connection(nr):
