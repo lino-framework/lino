@@ -1,7 +1,7 @@
 20110218
 ========
 
-- Release :doc:`/releases/20110218` in Eupen.
+- Release :doc:`/releases/2011/0218` in Eupen.
 
 - Wurstelei am Ticket :doc:`/tickets/21`.
 

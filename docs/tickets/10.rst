@@ -1,7 +1,7 @@
 #10 [closed] : Lino doesn't like multiple processes
 ===================================================
 
-Solved in :doc:`/releases/20101027`.
+Solved in :doc:`/releases/2010/1027`.
 
 Before this, Lino required Apache to be configured with
 

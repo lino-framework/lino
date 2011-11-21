@@ -14,7 +14,7 @@ auftreten, möglichst schmerzlos beseitigt kriegen.
 - :term:`watch_tim` loggt im Falle von `Validation failed for` 
   jetzt den kompletten Traceback.
   
-- Released :doc:`/releases/20110401`. 
+- Released :doc:`/releases/2011/0401`. 
   Several minor bugs fixed during the upgrade in Eupen:
 
   - :term:`watch_tim` erstellte bei Berufscode "00" jedesmal einen neuen 

@@ -63,4 +63,4 @@ Dritte Sitzung
    `last_name_first`. 
    Sie Doku und test cases in :mod:`lino.modlib.contacts.utils`
 
-#. Released :doc:`/releases/20101209` in Eupen.
+#. Released :doc:`/releases/2010/1209` in Eupen.

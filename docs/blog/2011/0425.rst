@@ -15,7 +15,7 @@ für die ich eigentlich mehr Zeitaufwand befürchtet hatte.
     Dazu müsste ich eigentlich noch mehr Tests schreiben. Bei Gelegenheit.
 
 
-20.50 Uhr : :doc:`/releases/20110425` und Upgrade in Eupen.
+20.50 Uhr : :doc:`/releases/2011/0425` und Upgrade in Eupen.
 
 Vor dem Einschlafen kam mir dann noch folgende Idee: 
 ein neuer management command `diag`, der eine Zusammenfassung 

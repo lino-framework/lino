@@ -15,4 +15,4 @@
   New Model CourseEnding. 
   New menu command :menuselection:`Configurations --> Course Endings`
   
-- Release :doc:`/releases/20110118` in Eupen.  
+- Release :doc:`/releases/2011/0118` in Eupen.  

@@ -21,7 +21,7 @@ Also z.B. in Person::
 
 In der Grid erlaubte er, dass man virtuelle Felder bearbeitet. Behoben.
 
-Release in Eupen: :doc:`/releases/20100916`.
+Release in Eupen: :doc:`/releases/2010/0916`.
 
 watch_tim
 ---------

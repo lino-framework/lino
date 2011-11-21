@@ -5,4 +5,13 @@
 
 - Converted Lino's repository to use Mercurial's
   `eol extension <http://mercurial.selenic.com/wiki/EolExtension>`_
-  Changeset `d748776b4a8e <http://code.google.com/p/lino/source/detail?r=d748776b4a8e9ac25b86c80b71f238329c24f1a5>`_ is because of that. It touches all files, but just to review their EOL characters.
+  Changeset `d748776b4a8e <http://code.google.com/p/lino/source/detail?r=d748776b4a8e9ac25b86c80b71f238329c24f1a5>`_ is because of that. 
+  It touches all files, but just to review their EOL characters.
+  
+- Added a file `ci.bat` to save some keystrokes when doing a check-in.
+  Typing ``ci 1121`` will do::
+
+    hg ci -m http://code.google.com/p/lino/source/browse/docs/blog/2011/1121.rst
+
+- Removed old blog entries and releases from the html build. 
+  The `.rst` files remain at their place.

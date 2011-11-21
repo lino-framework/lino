@@ -16,7 +16,7 @@ als auch für
 
 Release 1.1.2 in Eupen, mit noch ein paar kleinen Tippfehler-Bugs.
 
-Noch ein Nachtrag zur :doc:`/releases/20110205`:
+Noch ein Nachtrag zur :doc:`/releases/2011/0205`:
 
 -   Der Konfigurationsparameter `preferred_build_method`, 
     der bisher als (lokal überschreibbares) 

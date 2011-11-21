@@ -213,7 +213,7 @@ als eine Ansicht hat)
 Release 1.1.2
 -------------
 
-:doc:`/releases/20110205` ist jetzt bereit und eingecheckt, aber noch nicht in 
+:doc:`/releases/2011/0205` ist jetzt bereit und eingecheckt, aber noch nicht in 
 Eupen installiert.
 
 

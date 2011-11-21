@@ -50,7 +50,7 @@ Vorher noch notieren, welche Version momentan läuft::
   update: (current)
   
 Aber ein Sprung zurück ist nicht nötig: scheint alles zu klappen. 
-Also hiermit erkläre ich Lino :doc:`/releases/20110723`  
+Also hiermit erkläre ich Lino :doc:`/releases/2011/0723`  
 als losgelassen (released). 
 Kann aber sein, dass morgen noch Nachträge kommen.
 

@@ -4,7 +4,7 @@
 Release & upgrade in Eupen
 --------------------------
 
-Released :doc:`/releases/20111026` 
+Released :doc:`/releases/2011/1026` 
 and upgrade in Eupen from 
 2056:b7dcbc73707e to 2057:3d185f19e083::
 
@@ -107,4 +107,4 @@ New model CourseOffer
 ---------------------
 
 Check-in 20111026d
-Released :doc:`/releases/20111026b` 
+Released :doc:`/releases/2011/1026b` 

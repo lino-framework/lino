@@ -32,7 +32,7 @@ This is because Django's flush tries to delete all tables
 that *should* exist, without asking whether they actually do.
 initdb must work after an upgrade and before the database migration.
 
-Released :doc:`/releases/20110907` and installed in Eupen.
+Released :doc:`/releases/2011/0907` and installed in Eupen.
 
 Another method for initdb
 =========================

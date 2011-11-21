@@ -1,7 +1,7 @@
 20101225
 ========
 
-- Install :doc:`/releases/20101224` auf :term:`Tups`.
+- Install :doc:`/releases/2010/1224` auf :term:`Tups`.
   Änderungen in :func:`lino.utils.log.configure` weil sonst beide Demos 
   in die gleiche :xfile:`system.log` schreiben wollten.
 

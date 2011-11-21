@@ -111,7 +111,7 @@ An error report has been sent to the system administrator."
 und die Systemverwalter eine E-Mail mit detaillierter Fehlerbeschreibung, unter anderem 
 "Invalid template configured for ContractType u'Art.60\xa77 intern'. Expected filename ending with '.odt'."
 
-All das ist die Checkin-Serie 20110615, die noch mit nach :doc:`/releases/20110613` reinkommt.
+All das ist die Checkin-Serie 20110615, die noch mit nach :doc:`/releases/2011/0613` reinkommt.
 
 Viele kleine Benutzerwünsche
 ----------------------------
@@ -175,4 +175,4 @@ müssen manuell rauskommentiert werden.
 
 Weiteres Check-in der Serie 20110615b zwecks Installation beim Kunden.
 
-Released :doc:`/releases/20110615`.
+Released :doc:`/releases/2011/0615`.

@@ -30,7 +30,7 @@ sondern hardkodiert im ISO-Format angezeigt (YYYY-MM-DD hh:mm:ss).
 Checkboxen abschalten
 ---------------------
 
-Upps, gerade sehe ich, dass man Checkboxen momentan (auch in :doc:`/releases/20110615`) 
+Upps, gerade sehe ich, dass man Checkboxen momentan (auch in :doc:`/releases/2011/0615`) 
 nicht abschalten konnte. Behoben.
 
 

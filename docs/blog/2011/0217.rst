@@ -1,7 +1,7 @@
 20110217
 ========
 
-#.  Die provisorische Lösung aus :doc:`/releases/20110216` 
+#.  Die provisorische Lösung aus :doc:`/releases/2011/0216` 
     (`knowledge_text(row.spoken)` in einer Dokumentvorlage 
     für :class:`lino.utils.printable.AppyBuildMethod`)
     ist jetzt wieder raus, denn Werte eines 

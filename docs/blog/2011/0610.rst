@@ -5,7 +5,7 @@
 Lino 1.1.14
 -----------
 
-Released :doc:`/releases/20110610`.
+Released :doc:`/releases/2011/0610`.
 Installed in Eupen.
 
 .. currentmodule:: lino.modlib.countries.models

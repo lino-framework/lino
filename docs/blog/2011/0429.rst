@@ -26,7 +26,7 @@
       :srcref:`lino/apps/dsbe/templates/base.html`.
     
     
-#.  Release :doc:`/releases/20110429` und Installation in Eupen.
+#.  Release :doc:`/releases/2011/0429` und Installation in Eupen.
 
 #.  Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body) 
     wurden in der Grid zu einem einzigen Absatz zusammengeschnürt. 

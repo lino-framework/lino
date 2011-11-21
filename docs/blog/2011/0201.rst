@@ -7,7 +7,7 @@
 
 #.  Übersetzungen :mod:`lino.modlib.properties`.
 
-#.  Release :doc:`/releases/20110201` in Eupen.
+#.  Release :doc:`/releases/2011/0201` in Eupen.
 
 #.  Nachmittags diverse kleine Bugfixes und Änderungen
 

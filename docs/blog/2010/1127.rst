@@ -1,7 +1,7 @@
 20101127
 ========
 
-- Release :doc:`/releases/20101127` in Eupen.
+- Release :doc:`/releases/2010/1127` in Eupen.
   Tests und Optimierungen in `dblogger`.
   initdb_tim loggt jetzt nur noch nach dblogger.
   Das Loggen von watch_tim geht scheinbar allgemein noch nicht so richtig.

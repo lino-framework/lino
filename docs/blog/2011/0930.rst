@@ -34,7 +34,7 @@ Preparing release 1.2.3
 - Das Listing "Übersicht Verträge" wird jetzt in Landscape ausgedruckt.
 
 
-Release :doc:`/releases/20110930`. 
+Release :doc:`/releases/2011/0930`. 
 Installation in Eupen.
   
   

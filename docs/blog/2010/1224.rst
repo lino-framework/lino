@@ -15,7 +15,7 @@ Und ich denke, dass wir uns das leisten können.
 **Lino ist benutzbar,
 der erste Release-Kandidat für Version 1.0 ist da!**
 
-:doc:`/releases/20101224` läuft seit heute in Eupen.
+:doc:`/releases/2010/1224` läuft seit heute in Eupen.
 
 Siehe auch :doc:`/todo`.
 

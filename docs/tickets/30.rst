@@ -115,13 +115,12 @@ On a production server::
   ln -s /var/snapshots/lino/lino/ui/qx/app/build qt
 
 
-
-
 In :file:`config.json` I replaced
 
 ::
 
     "QOOXDOO_PATH" : "S:/qooxdoo-1.3-sdk",
+    
 by
 
 ::

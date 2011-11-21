@@ -86,7 +86,7 @@ ersetze durch
     if (!(/radio|checkbox/i.test(type) && !element.readonly) && !(type == 'submit' && hasSubmit)) {
 
 
-Diese beiden Bugfixes kommen noch mit in die :doc:`/releases/20110930`. 
+Diese beiden Bugfixes kommen noch mit in die :doc:`/releases/2011/0930`. 
 
 Noch ein seriöser Bug
 ---------------------
@@ -99,7 +99,7 @@ weshalb das nicht schon früher aufgefallen ist (das wäre eine Doktorarbeit
 wert, aber dazu habe ich momentan nicht die Muße).
 
 Jedenfalls deshalb noch ein Nachtrag von Checkins "20111002",
-und das Ganze kommt ebenfalls noch mit in die :doc:`/releases/20110930`. 
+und das Ganze kommt ebenfalls noch mit in die :doc:`/releases/2011/0930`. 
 
 
 Noch kleine Bugs

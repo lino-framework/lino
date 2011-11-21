@@ -5,9 +5,7 @@ Releases
    :maxdepth: 1
    :glob:
 
-   2011/index
-   2011*
    coming
+   2011/index
    2010/index
-   archive
 

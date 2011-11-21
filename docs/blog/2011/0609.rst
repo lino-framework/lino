@@ -11,7 +11,7 @@ for the sort order.
 
 Continued on :mod:`lino.apps.dsbe.fixtures.pp2lino`.
 
-Released :doc:`/releases/20110609`.
+Released :doc:`/releases/2011/0609`.
 
 
 Miscellaneous

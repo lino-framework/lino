@@ -139,5 +139,5 @@ aber bis zur nächsten dbmig muss ich
 also den Serializer ändern, dass er so was generiert.
 
 Aber zuletzt kann ich nun doch schlafen gehen: 
-released :doc:`/releases/20110415` und Upgrade in Eupen.
+released :doc:`/releases/2011/0415` und Upgrade in Eupen.
 

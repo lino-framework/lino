@@ -75,7 +75,7 @@ Behoben.
 Release
 -------
 
-Released :doc:`/releases/20101027` 
+Released :doc:`/releases/2010/1027` 
 Installed only on Tups.
 
 

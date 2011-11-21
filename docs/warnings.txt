@@ -1,2 +1,10 @@
-T:\hgwork\lino\docs\blog\2011\1118.rst:13: WARNING: py:meth reference target not found: Person.properties_list
-T:\hgwork\lino\docs\blog\2011\1118.rst:73: WARNING: py:attr reference target not found: ExamPolicy.every
+T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
+T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231

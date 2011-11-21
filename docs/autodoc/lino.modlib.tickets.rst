@@ -7,7 +7,7 @@
     
 
 :mod:`lino.modlib.tickets.models`
-------------------------------
+---------------------------------
 
 .. automodule:: lino.modlib.tickets.models
     :members:

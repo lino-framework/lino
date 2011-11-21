@@ -102,7 +102,7 @@ Jetzt mach ich am besten gleich ein Release, sonst muss ich die
 manuellen Änderungen in meiner `d20110611a.py` 
 später wieder neu machen.
 
-Also :doc:`/releases/20110611`
+Also :doc:`/releases/2011/0611`
 
 Upgrade at customer's site:
 

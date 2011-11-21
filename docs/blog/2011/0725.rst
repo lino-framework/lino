@@ -54,13 +54,13 @@ Aber so eine Methode `setup_model` (die irgendwo in
 gibt es nicht, und die wäre auch nicht einfach zu implementieren. 
 
 Checkin 20110725b und Installation beim Kunden, 
-also das kommt noch mit in die :doc:`/releases/20110723`.
+also das kommt noch mit in die :doc:`/releases/2011/0723`.
 
 (c) Bug im Detail "Status" einer Person
 ---------------------------------------
 
 Checkin 20110725c und Installation beim Kunden, 
-also auch das kommt noch mit in die :doc:`/releases/20110723`.
+also auch das kommt noch mit in die :doc:`/releases/2011/0723`.
 
 (d) UnicodeEncodeError at /api/uploads/UploadsByOwner
 -----------------------------------------------------

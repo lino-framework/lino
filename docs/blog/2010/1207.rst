@@ -108,4 +108,4 @@ Miscellaneous
   `NameError: global name 'logger' is not defined`
 
 
-Released :doc:`/releases/20101207` in Eupen.
+Released :doc:`/releases/2010/1207` in Eupen.

@@ -87,5 +87,5 @@ Nicht dass Lino sich auf Europa beschränken will, aber in Amerika sagt man
 scheinbar eher "driver's license" als "driving license".
         
         
-Release :doc:`/releases/20110120` in Eupen.  
+Release :doc:`/releases/2011/0120` in Eupen.  
         

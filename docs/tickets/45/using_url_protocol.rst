@@ -14,7 +14,7 @@ Using a custom URL protocol
 Here is a simple `.reg` file that installs LibreOffice 
 as handler for ``webdav:`` URLs:
 
-.. literalinclude:: 45/webdav.reg
+.. literalinclude:: webdav.reg
 
 To try it: download :srcref:`/docs/tickets/45/webdav.reg` and doubleclick on it.
 

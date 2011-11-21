@@ -7,7 +7,7 @@ Vorbereitungen Demo in Pärnu
 6.20 Uhr. Cool: Babel-Felder werden jetzt automatisch expandiert. 
 Also (zumindest deswegen) sind keine lokalen .dtl-Dateien mehr nötig.
 
-8 Uhr. Release :doc:`/releases/20110303` and Upgrade in Pärnu.
+8 Uhr. Release :doc:`/releases/2011/0303` and Upgrade in Pärnu.
 
 Upgrade nach 1.1.6 in Eupen
 ---------------------------

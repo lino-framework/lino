@@ -76,7 +76,7 @@ Noch kleine Wünsche
 - Im Detail `lino.modlib.jobs.models.Job` fehlte noch die Kapazität.
 
 Installation in Eupen um 9 Uhr gerade rechtzeitig zum Tagesbeginn, 
-und somit erkläre ich Lino :doc:`/releases/20110727` als released. 
+und somit erkläre ich Lino :doc:`/releases/2011/0727` als released. 
 
 
 Another bug less in watch_tim

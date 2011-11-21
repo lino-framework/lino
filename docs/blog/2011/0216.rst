@@ -98,4 +98,4 @@ Kleinkram
 #.  Diverse Punkte aus der Todo-Liste, sie Release-Notizen.
     
 
-Release :doc:`/releases/20110216` in Eupen.
+Release :doc:`/releases/2011/0216` in Eupen.

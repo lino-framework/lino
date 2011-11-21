@@ -64,4 +64,4 @@ Other changes
 Release
 -------
 
-Released :doc:`/releases/20101012`
+Released :doc:`/releases/2010/1012`

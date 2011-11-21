@@ -9,7 +9,7 @@ Erweiterung Personensuche
       a) Begleitet durch den DSBE innerhalb einer einzugebenden Periode
       b) Auswahl des Begleiters1 und/oder Begleiters2
 
-Diese Änderungen sind noch in die :doc:`/releases/20110407` mit rein.
+Diese Änderungen sind noch in die :doc:`/releases/2011/0407` mit rein.
 
 
 Ticket #38 ist doch noch nicht fertig

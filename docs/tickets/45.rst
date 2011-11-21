@@ -1,26 +1,29 @@
-==============================================
-#45 : Make the client launch a WebDAV document
-==============================================
+=======================================================
+#45 [closed]: Make the client launch a WebDAV document
+=======================================================
 
-We didn't yet find a way to make the client launch OpenOffice 
+How to make the client launch OpenOffice 
 or Word on a server-side file in a way that the user can save their 
-modifications back to the original file through WebDAV.
+modifications back to the original file through WebDAV?
 
+More concretely:
 Lino's :mod:`lino.mixins.printable` module 
 can generate `.pdf`, `.rtf` or `.odt` files into a directory 
 located on the server, and this directory 
 can be made accessible as a WebDAV location 
 (see :doc:`/admin/webdav`).
-
 When the client asks to print something, Lino 
 generates that file and returns an URL of the 
 generated document, which the client usually 
 opens in a new browser window.
-
 But how to have the browser open our document 
 in a way that the user can save their 
 modifications back to the original file through WebDAV?
 
+The current answer 
+is to use our :doc:`DavLink applet </davlink>` 
+which is part of Lino and was written exclusively 
+for this purpose.
 
 -------------------------
 Testing the WebDAV server

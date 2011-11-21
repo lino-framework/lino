@@ -157,5 +157,5 @@ mindestens ab Revision 16392 nicht mehr::
 Lino 1.1.16
 -----------
 
-Und die heutigen Änderungen releasen wir als :doc:`/releases/20110613`.
+Und die heutigen Änderungen releasen wir als :doc:`/releases/2011/0613`.
 

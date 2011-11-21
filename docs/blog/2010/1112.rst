@@ -1,7 +1,7 @@
 20101112
 ========
 
-Eigentlich wollte ich *mal schnell* :doc:`/releases/20101112` 
+Eigentlich wollte ich *mal schnell* :doc:`/releases/2010/1112` 
 auf DSBE und Tups installieren...
 aber daraus ist ein ganzer Tag geworden.
 
