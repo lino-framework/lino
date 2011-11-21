@@ -3,5 +3,6 @@
 **.txt = native
 **.rst = native
 **.vcproj = CRLF
+**.bat = CRLF
 Makefile = LF
 **.jpg = BIN
