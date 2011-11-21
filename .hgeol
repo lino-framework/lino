@@ -1,0 +1,7 @@
+[patterns]
+**.py = native
+**.txt = native
+**.rst = native
+**.vcproj = CRLF
+Makefile = LF
+**.jpg = BIN
