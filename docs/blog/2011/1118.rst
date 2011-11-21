@@ -54,41 +54,7 @@ Some little user wishes
 Lino and OpenERP
 ----------------
 
-I discovered OpenERP:
-
-| http://demo.openerp.com/
-| http://www.openerp.com/products/application_builder
-
-If it is really as good as it looks, I will stop working on Lino, 
-convert the existing application and use OpenERP instead!
-What a pity that I didn't look at this project earlier!
-(But what a piece of chance that I discovered it now and not in two years!)
-
-::
-  
-  $ sudo aptitude install openerp-server
-  The following NEW packages will be installed:
-    blt{a} graphviz{a} libblas3gf{a} libcdt4{a} libcgraph5{a} libffi5{a} libgd2-noxpm{a} libgfortran3{a}
-    libglade2-0{a} libgraph4{a} libgvc5{a} libgvpr1{a} liblapack3gf{a} libpathplan4{a} libpq5{a} libxdot4{a}
-    libxss1{a} openerp-server postgresql{a} postgresql-8.4{a} postgresql-client-8.4{a} postgresql-client-common{a}
-    postgresql-common{a} python-cairo{a} python-egenix-mxdatetime{a} python-egenix-mxtools{a} python-glade2{a}
-    python-gobject{a} python-gtk2{a} python-libxml2{a} python-libxslt1{a} python-matplotlib{a}
-    python-matplotlib-data{a} python-numpy{a} python-psycopg2{a} python-pychart{a} python-pydot{a}
-    python-pyparsing{a} python-tk{a} python-tz{a} tcl8.5{a} tk8.5{a} ttf-liberation{a}
-  0 packages upgraded, 43 newly installed, 0 to remove and 0 not upgraded.
-  Need to get 35.7 MB/36.8 MB of archives. After unpacking 181 MB will be used.
-  Do you want to continue? [Y/n/?]  
-  ...
-  Setting up openerp-server (5.0.12-2) ...
-
-  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-  * Open ERP uses a PostgreSQL database to store its data. With the first *
-  * generation of packages, you have to setup this database manually.     *
-  * Please read /usr/share/doc/openerp-server/README.Debian how to do it. *
-  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
-  
-But it will take weeks of work to get familiar with OpenERP, 
-and there are urgent tickets waiting in Lino.
+Started ticket :doc:`/tickets/51`.
 
 
 Data migration
