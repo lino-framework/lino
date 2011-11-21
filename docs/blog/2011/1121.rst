@@ -1,0 +1,8 @@
+20111121
+========
+
+- Surfed about ticket :doc:`/tickets/51`.
+
+- Converted Lino's repository to use Mercurial's
+  `eol extension <http://mercurial.selenic.com/wiki/EolExtension>`_
+  Changeset `d748776b4a8e <http://code.google.com/p/lino/source/detail?r=d748776b4a8e9ac25b86c80b71f238329c24f1a5>`_ is because of that. It touches all files, but just to review their EOL characters.
