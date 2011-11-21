@@ -522,7 +522,7 @@ def reply2lines(reply):
     yield "  - ReturnCode: %s" % reply.ServiceReply.ResultSummary.ReturnCode
     for dtl in reply.ServiceReply.ResultSummary.Detail:
         yield "  - Detail[]:"
-        yield "    - ReasonCode: %s" % dtl.Detail.ReasonCode
+        yield "    - ReasonCode: %s" % dtl.ReasonCode
         for info in dtl.Information:
             #~ yield "    - Information.FieldName[]: %s" % dtl.Information.FieldName
             #~ yield "    - Information.FieldValue[]: %s" % dtl.Information.FieldValue

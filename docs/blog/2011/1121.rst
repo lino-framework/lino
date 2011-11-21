@@ -23,40 +23,22 @@ Documentation cleanup
 BCSS connection
 ---------------
 
-Two more bugs removed::
+More bugs removed::
 
-  Traceback (most recent call last):
-    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1214, in api_element_view
-      return a.run(ar,elem)
-    File "/var/snapshots/lino/lino/modlib/bcss/models.py", line 76, in run
-      elem.execute_request()
-    File "/var/snapshots/lino/lino/modlib/bcss/models.py", line 132, in execute_request
-      msg = '\n'.join(list(bcss.reply2lines(reply)))
     File "/var/snapshots/lino/lino/utils/bcss.py", line 524, in reply2lines
       yield "    - Information.FieldName: %s" % reply.ServiceReply.ResultSummary.Detail.Information.FieldName
   AttributeError: 'list' object has no attribute 'Information'
 
-
-
-  Traceback (most recent call last):
-    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1214, in api_element_view
-      return a.run(ar,elem)
-    File "/var/snapshots/lino/lino/modlib/bcss/models.py", line 76, in run
-      elem.execute_request()
     File "/var/snapshots/lino/lino/modlib/bcss/models.py", line 135, in execute_request
       self.on_bcss_ok(reply)
   TypeError: on_bcss_ok() takes exactly 1 argument (2 given)
 
 
-
-
-  Traceback (most recent call last):
-    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1214, in api_element_view
-      return a.run(ar,elem)
-    File "/var/snapshots/lino/lino/modlib/bcss/models.py", line 76, in run
-      elem.execute_request()
-    File "/var/snapshots/lino/lino/modlib/bcss/models.py", line 132, in execute_request
-      msg = '\n'.join(list(bcss.reply2lines(reply)))
     File "/var/snapshots/lino/lino/utils/bcss.py", line 525, in reply2lines
       yield "    - Information.FieldName: %s" % dtl.Information.FieldName
   AttributeError: 'list' object has no attribute 'FieldName'
+  
+    File "/var/snapshots/lino/lino/utils/bcss.py", line 525, in reply2lines
+      yield "    - ReasonCode: %s" % dtl.Detail.ReasonCode
+  AttributeError: Object instance has no attribute 'Detail'  
+  
