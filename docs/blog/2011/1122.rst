@@ -1,0 +1,102 @@
+20111122
+========
+
+Eingabe von Terminen
+--------------------
+
+Bug behoben: wenn man in einem Termin in den Feldern `Beginn`, 
+`Ende` und/oder `Dauer` änderte, dann funktionierten einige Dinge nicht.
+(Fehlermeldung `AttributeError: 'str' object has no attribute 'add_duration'`)
+  
+Allgemeine Regeln ab jetzt (Feedback erwünscht):
+  
+  - Obligatorisch ist nur das Beginndatum
+  
+  - Wenn Beginn und Ende manuell eingegeben wurden, 
+    sollte die Dauer ruhig leer bleiben. 
+    Wenn eine Dauer angegeben wird, passt Lino automatisch das 
+    Ende oder ggf. den Beginn des Termins an. 
+    Also eine eventuell zuvor eingegebene Angabe wird überschrieben.
+
+
+
+Learning OpenERP
+----------------
+
+This section is just a trace of my notes when I was 
+trying to get OpenERP running, 
+before I understood that OpenERP is not *free* but
+just commercial open-source software. 
+No need to read on here. 
+Just skip to the next section, `Getting started with Tryton`_.
+
+- http://selferp.de : maybe interesting, but uncomplete.
+
+- http://www.openerp.com/forum/post84841.html
+
+The Debian 6.0 (Squeeze) on :term:`jana` provides two packages `openerp-server`
+and `openerp-client` (no `openerp-web` yet), but they are a 5.0 server. 
+I guess that it will be better to start directly with 6.0...
+
+http://pve.proxmox.com/wiki/Get_Virtual_Appliances#Ubuntu_Natty_Standard
+
+Does Ubuntu 11.10 also provides only a 5.0 server? 
+To verify this, I do a dist-upgrade on :term:`rose`::
+
+  luc@rose:~$ sudo aptitude dist-upgrade
+  [sudo] password for luc:
+  The following NEW packages will be installed:
+    linux-headers-3.0.0-13{a} linux-headers-3.0.0-13-generic{a} linux-image-3.0.0-13-generic
+  The following packages will be REMOVED:
+    linux-headers-3.0.0-12{u} linux-headers-3.0.0-12-generic{u}
+  The following packages will be upgraded:
+    appmenu-qt banshee banshee-extension-soundmenu banshee-extension-ubuntuonemusicstore brltty brltty-x11 compiz
+    compiz-core compiz-gnome compiz-plugins compiz-plugins-default cups cups-bsd cups-client cups-common cups-ppdc
+    firefox firefox-branding firefox-globalmenu firefox-gnome-support firefox-locale-en ghostscript ghostscript-cups
+    ghostscript-x gnome-control-center gnome-control-center-data gnome-desktop3-data gwibber gwibber-service
+    gwibber-service-facebook gwibber-service-identica gwibber-service-twitter libbrlapi0.5 libcups2 libcupscgi1
+    libcupsdriver1 libcupsimage2 libcupsmime1 libcupsppdc1 libdecoration0 libgnome-control-center1
+    libgnome-desktop-3-2 libgs9 libgs9-common libgwibber-gtk2 libgwibber2 libnautilus-extension1 libnotify0.4-cil
+    libreoffice-base-core libreoffice-calc libreoffice-common libreoffice-core libreoffice-draw
+    libreoffice-emailmerge libreoffice-gnome libreoffice-gtk libreoffice-help-en-gb libreoffice-help-en-us
+    libreoffice-impress libreoffice-l10n-common libreoffice-l10n-en-gb libreoffice-l10n-en-za libreoffice-math
+    libreoffice-style-human libreoffice-writer linux-generic linux-headers-generic linux-image-generic linux-libc-dev
+    nautilus nautilus-data onboard python-brlapi python-uno seahorse software-center ttf-opensymbol ubufox uno-libs3
+    ure xul-ext-ubufox
+  81 packages upgraded, 3 newly installed, 2 to remove and 0 not upgraded.
+  Need to get 165 MB of archives. After unpacking 117 MB will be used.
+  Do you want to continue? [Y/n/?]
+
+While this is downloading, another idea is to use the development version on :term:`jana`::
+
+  $ sudo aptitude install bzr
+  $ bzr branch lp:openobject-server
+  You have not informed bzr of your Launchpad ID, and you must do this to
+  write to Launchpad or access private data.  See "bzr help launchpad-login".
+  
+But oops::
+
+  bzr: ERROR: No such file: 'http://bazaar.launchpad.net/~openerp/openobject-server/trunk/.bzr/repository/pack-names'
+  
+Maybe a timeout since `rose` is downloading using the same 1Mbps connection.
+
+Anyway, I'd maybe rather get one of the stable source tarballs::
+
+  wget http://www.openerp.com/download/stable/source/openerp-server-6.0.3.tar.gz
+  wget http://www.openerp.com/download/stable/source/openerp-web-6.0.3.tar.gz
+  
+  
+Getting started with Tryton
+---------------------------
+
+http://code.google.com/p/tryton/wiki/InstallationOnDebian
+
+$ sudo su - postgres -c "createuser --createdb --no-createrole --no-superuser --pwprompt tryton"
+$ sudo nano /etc/trytond.conf
+
+How to find out which version is installed?
+
+$ aptitude show tryton-server
+
+Download client for version 
+

@@ -42,7 +42,9 @@ from lino.utils import choosers
 from lino.utils import IncompleteDate
 
 class StoreField(object):
-  
+    """
+    Base class for the fields of a :class:`Store`.
+    """
     form2obj_default = None
     "because checkboxes are not submitted when they are off"
     

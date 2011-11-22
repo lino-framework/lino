@@ -448,21 +448,26 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     #~ repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
     #~ repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
     
-    def duration_changed(self):
-        if self.duration_value is None or self.duration_unit is None:
+    #~ def duration_changed(self):
+    def compute_times(self):
+        if self.duration_value is None or not self.duration_unit:
             return
-        dt = self.get_datetime('start')
-        end_time = self.duration_unit.add_duration(dt,self.duration_value)
-        #~ end_time = add_duration(dt,self.duration_value,self.duration_unit)
-        setkw(self,**dt2kw(end_time,'end'))
+        if self.start_time:
+            dt = self.get_datetime('start')
+            end_time = self.duration_unit.add_duration(dt,self.duration_value)
+            #~ end_time = add_duration(dt,self.duration_value,self.duration_unit)
+            setkw(self,**dt2kw(end_time,'end'))
+        elif self.end_time:
+            dt = self.get_datetime('end')
+            end_time = self.duration_unit.add_duration(dt,-self.duration_value)
+            setkw(self,**dt2kw(end_time,'start'))
         
-    def duration_value_changed(self,oldvalue):
-        self.duration_changed()
-        #~ print "20110829 duration_changed!", oldvalue
-        
-    def duration_unit_changed(self,oldvalue):
-        self.duration_changed()
-        #~ print "20110829 duration_changed!", oldvalue
+    def duration_value_changed(self,oldvalue): self.compute_times()
+    def duration_unit_changed(self,oldvalue): self.compute_times()
+    def start_date_changed(self,oldvalue): self.compute_times()
+    def start_time_changed(self,oldvalue): self.compute_times()
+    def end_date_changed(self,oldvalue): self.compute_times()
+    def end_time_changed(self,oldvalue): self.compute_times()
         
     def get_mailable_contacts(self):
         for g in self.guest_set.all():

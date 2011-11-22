@@ -123,8 +123,8 @@ class DurationUnit(ChoiceList):
         Return a date or datetime obtained by adding `value` 
         times the specified unit.
         
-        This is intended for use as a curried magic 
-        method of a specified list item:
+        This is intended for use as a 
+        `curried magic method` of a specified list item:
         
         >>> start_date = datetime.date(2011,10,26)
         >>> DurationUnit.months.add_duration(start_date,2)
@@ -169,13 +169,6 @@ class DurationUnit(ChoiceList):
     
     
 add = DurationUnit.add_item
-#~ add('s','seconds',en=u"seconds",de=u"Sekunden",   fr=u"secondes")
-#~ add('m','minutes',en=u"minutes",de=u"Minuten",   fr=u"minutes")
-#~ add('h','hours',en=u"hours",de=u"Stunden",   fr=u"heures")
-#~ add('D','days',en=u"days",de=u"Tage",   fr=u"jours")
-#~ add('W','weeks',en=u"weeks",de=u"Wochen",   fr=u"semaines")
-#~ add('M','months',en=u"months",de=u"Monate",   fr=u"mois")
-#~ add('Y','years',en=u"years",de=u"Jahre",   fr=u"années")
 add('s', _('seconds'),alias='seconds')
 add('m', _('minutes'),alias='minutes')
 add('h', _('hours')  ,alias='hours'  )
@@ -209,7 +202,7 @@ class unused_Priority(ChoiceList):
 #~ add('8',en=u"not urgent",de=u"nicht dringend",   fr=u"pas urgent")
 #~ add('9',en=u"not urgent at all",de=u"überhaupt nicht dringend",   fr=u"pas urgent du tout")
 
-class AccessClass(ChoiceList):
+class unused_AccessClass(ChoiceList):
     """
     A list of possible values for the `CLASS` 
     property of a calendar component.
@@ -222,14 +215,4 @@ class AccessClass(ChoiceList):
 #~ add('2',en=u"Confidential",de=u"Vertraulich",   fr=u"Confidentiel")
 
 
-
-class unused_GuestStatus(ChoiceList):
-    """A list of possible values for the `status` field of an :class:`Guest`.
-    """
-    label = _("Guest Status")
-    
-#~ add = GuestStatus.add_item
-#~ add('0',en=u"maybe",de=u"vielleicht",   fr=u"peut-être")
-#~ add('1',en=u"yes",de=u"ja",   fr=u"oui")
-#~ add('2',en=u"no",de=u"nein",   fr=u"non")
 
