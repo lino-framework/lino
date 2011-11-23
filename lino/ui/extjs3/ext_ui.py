@@ -334,8 +334,12 @@ class ExtUI(base.UI):
             
         if isinstance(de,generic.GenericForeignKey):
             # create a horizontal panel with 2 comboboxes
-            return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
-            #~ return ext_elems.VirtualFieldElement(lh,name,de,**kw)
+            #~ print 20111123, name,de.ct_field + ' ' + de.fk_field
+            #~ return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
+            #~ return ext_elems.GenericForeignKeyField(lh,name,de,**kw)
+            de.primary_key = False # for ext_store.Store()
+            lh.add_store_field(de)
+            return ext_elems.GenericForeignKeyElement(lh,de,**kw)
             
         if isinstance(de,reports.Report):
             if isinstance(lh.layout,reports.DetailLayout):
@@ -511,7 +515,7 @@ class ExtUI(base.UI):
         rx = '^'
         urlpatterns = patterns('',
             (rx+'$', self.index_view),
-            (rx+r'grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
+            #~ (rx+r'grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.grid_config_view),
             (rx+r'detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
@@ -980,7 +984,8 @@ tinymce.init({
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
-            ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+            ar = self.build_ar(request,rh)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
             instance = ar.create_instance()
             # store uploaded files. 
             # html forms cannot send files with PUT or GET, only with POST
@@ -988,23 +993,20 @@ tinymce.init({
                 rh.report.handle_uploaded_files(instance,request)
             return self.form2obj_and_save(request,rh,request.POST,instance,True)
             
+            
         if request.method == 'GET':
           
-            action_name = request.GET.get('an','grid')
-            a = rpt.get_action(action_name)
-            if a is None:
-                raise Http404("%s has no action %r" % (rpt,action_name))
-                
-            fmt = request.GET.get('fmt',a.default_format)
-          
-            #~ fmt = request.GET.get('fmt',None)
-            #~ if fmt is None:
-                #~ a = rpt.default_action
-            #~ else:
-                #~ a = rpt.get_action(fmt) 
-            #~ if a is not None:
-            ar = ext_requests.ViewReportRequest(request,rh,a)
+            ar = self.build_ar(request,rh)
             
+            #~ action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
+            #~ a = rpt.get_action(action_name)
+            #~ if a is None:
+                #~ raise Http404("%s has no action %r" % (rpt,action_name))
+
+            #~ ar = ext_requests.ViewReportRequest(request,rh,a)
+            
+            fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ar.action.default_format)
+          
             #~ print '20110714', a, fmt
             
             if fmt == 'html':
@@ -1066,6 +1068,13 @@ tinymce.init({
         raise Http404("Method %s not supported for container %s" % (request.method,rh))
     
     
+    def build_ar(self,request,rh):
+        action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
+        a = rh.report.get_action(action_name)
+        if a is None:
+            raise Http404("%s has no action %r" % (rh.report,action_name))
+        return ext_requests.ViewReportRequest(request,rh,a)
+            
         
     def requested_report(self,request,app_label,actor):
         rpt = actors.get_actor2(app_label,actor)
@@ -1159,22 +1168,6 @@ tinymce.init({
             #~ a = rpt.get_action(fmt)
                 
             ar = ext_requests.ViewReportRequest(request,ah,a)
-            
-            #~ if fmt == 'json':
-              
-                #~ if isinstance(a,reports.InsertRow):
-                    #~ elem = ar.create_instance()
-                    #~ datarec = elem2rec_insert(ar,ah,elem)
-                    #~ return json_response(datarec)
-                    
-                #~ if elem is None:
-                    #~ raise Http404('Tried to GET element -99999')
-                #~ datarec = elem2rec_detailed(ar,ah,elem)
-                #~ return json_response(datarec)
-                
-                
-            #~ if elem is None:
-                #~ raise Http404('Tried to GET element -99999')
 
             if isinstance(a,actions.OpenWindowAction):
               

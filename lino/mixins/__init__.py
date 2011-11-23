@@ -135,7 +135,7 @@ class Owned(models.Model):
     class Meta:
         abstract = True
         
-    owner_type = models.ForeignKey(ContentType,editable=True,        
+    owner_type = models.ForeignKey(ContentType,editable=True,
         blank=True,null=True,
         verbose_name=_('Owner type'))
     owner_id = fields.GenericForeignKeyIdField(owner_type,

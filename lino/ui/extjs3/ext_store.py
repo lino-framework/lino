@@ -27,6 +27,7 @@ from django.db import models
 from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes import generic
 
 from lino.utils import jsgen 
 from lino.utils.jsgen import py2js, Component, id2js, js_code
@@ -66,9 +67,9 @@ class StoreField(object):
         yield self.options['name']
         
     def value_from_object(self,request,obj):
-        if not hasattr(self.field,'value_from_object'):
-            raise Exception('%s %s has no method value_from_object?!'%(
-              self.field,self.field.name))
+        #~ if not hasattr(self.field,'value_from_object'):
+            #~ raise Exception('%s %s has no method value_from_object?!'%(
+              #~ self.field,self.field.name))
         return self.field.value_from_object(obj)
         
     def obj2list(self,request,obj):
@@ -251,6 +252,17 @@ class PasswordStoreField(StoreField):
         if v:
             return "*" * len(v)
         return v
+        
+class GenericForeignKeyField(StoreField):
+    def value_from_object(self,request,obj):
+        owner = getattr(obj,self.field.name)
+        if owner is None: return ''
+        return request.ui.href_to(owner)
+        #~ return "foo"
+        #~ if not hasattr(self.field,'value_from_object'):
+            #~ raise Exception('%s %s has no method value_from_object?!'%(
+              #~ self.field,self.field.name))
+        #~ return self.field.value_from_object(obj)
   
 class SpecialStoreField(StoreField):
     field = None 
@@ -529,37 +541,49 @@ class Store:
         assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
           self.report.actor_id,self.report.model)
           
-        fields = []
-        list_fields = self.collect_fields(fields,rh.get_list_layout())
-        detail_fields = self.collect_fields(fields,*rh.get_detail_layouts())
+        #~ fields = []
         
-        self.fields = []
+        self.df2sf = {}
+        self.all_fields = []
         self.list_fields = []
         self.detail_fields = []
         
+        self.collect_fields(self.list_fields,rh.get_list_layout())
+        self.collect_fields(self.detail_fields,*rh.get_detail_layouts())
+        
+        del self.df2sf
+        
         #~ for df in list_fields | detail_fields: # set union
-        for df in fields: 
-            sf = self.create_field(df)
-            if sf:
-                self.fields.append(sf)
-                if df in list_fields:
-                    self.list_fields.append(sf)
-                if df in detail_fields:
-                    self.detail_fields.append(sf)
-            
+        #~ for df in fields: 
+            #~ sf = self.create_field(df)
+            #~ if sf:
+                #~ self.fields.append(sf)
+                #~ if df in list_fields:
+                    #~ self.list_fields.append(sf)
+                #~ if df in detail_fields:
+                    #~ self.detail_fields.append(sf)
+                    
         #~ fields = list(fields)
         #~ self.pk_index = fields.index(self.pk)
         #~ self.fields = [ self.create_field(fld) for fld in fields ]
         self.pk_index = 0
         for fld in self.list_fields:
-            if fld.field == self.pk:
+            """
+            Django's Field.__cmp__() does::
+            
+              return cmp(self.creation_counter, other.creation_counter) 
+              
+            which causes an exception when trying to compare a field with an object of other type.
+            """
+            #~ if type(fld.field) == type(self.pk) and fld.field == self.pk:
+            if fld.field.__class__ == self.pk.__class__ and fld.field == self.pk:
                 break
             self.pk_index += fld.list_values_count
         #~ if self.report.actor_id == 'contacts.Persons':
             #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
             
         def addfield(sf):
-            self.fields.append(sf)
+            self.all_fields.append(sf)
             self.list_fields.append(sf)
             self.detail_fields.append(sf)
             
@@ -575,24 +599,40 @@ class Store:
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
         
-        self.fields = tuple(self.fields)
+        self.all_fields = tuple(self.all_fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
         
           
-    def collect_fields(self,all_fields,*layouts):
-        #~ fields = set()
-        fields = []
-        def add(f):
-            fields.append(f)
-            if f not in all_fields:
-                all_fields.append(f)
+    def collect_fields(self,fields,*layouts):
+        """
+        `fields` is a pointer to either `self.detail_fields`
+        or `self.list_fields`.
+        The `all_data_fields` set is 
+        """
+        #~ fields = []
+        pk_found = False
+        def add(df):
+            sf = self.df2sf.get(df,None)
+            if sf is None:
+                sf = self.create_field(df)
+                self.all_fields.append(sf)
+                self.df2sf[df] = sf
+            fields.append(sf)
+            
+            if df.primary_key:
+                pk_found = True
+            #~ if df not in all_data_fields:
+                #~ self.all_fields.append(sf)
+                #~ all_data_fields.add(df)
+                
         for layout in layouts:
             for fld in layout._store_fields:
                 assert fld is not None
                 add(fld)
                 #~ fields.add(fld)
-        if not self.pk in fields:
+        #~ if not self.pk in fields:
+        if not pk_found:
             #~ fields.add(self.pk)
             add(self.pk)
         return fields
@@ -615,6 +655,8 @@ class Store:
             return PasswordStoreField(fld)
         if isinstance(fld,models.OneToOneField):
             return OneToOneStoreField(fld)
+        if isinstance(fld,generic.GenericForeignKey):
+            return GenericForeignKeyField(fld)
         if isinstance(fld,fields.GenericForeignKeyIdField):
             return ComboStoreField(fld)
         if isinstance(fld,models.ForeignKey):
@@ -651,7 +693,7 @@ class Store:
         else:
             disabled_fields = set()
         #~ print 20110406, disabled_fields
-        for f in self.fields:
+        for f in self.all_fields:
             if f.field is None or not f.field.name in disabled_fields:
                 #~ logger.info("Store.form2obj %s", f.field.name)
                 try:

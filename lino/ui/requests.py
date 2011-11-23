@@ -36,6 +36,10 @@ CHOICES_VALUE_FIELD = 'value'
 CHOICES_HIDDEN_SUFFIX = "Hidden"
 
 
+URL_PARAM_ACTION_NAME = 'an'
+
+URL_PARAM_FORMAT = 'fmt'
+
 URL_PARAM_MASTER_TYPE = 'mt'
 """
 The pk of the ContentType of the master model.
@@ -67,6 +71,8 @@ URL_PARAM_LIMIT = 'limit'
 #~ TEST = 'name'
 
 URL_PARAMS = [
+  'URL_PARAM_ACTION_NAME',
+  'URL_PARAM_FORMAT',
   'URL_PARAM_MASTER_TYPE',
   'URL_PARAM_MASTER_PK',
   'URL_PARAM_GRIDFILTER',

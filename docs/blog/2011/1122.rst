@@ -89,14 +89,40 @@ Anyway, I'd maybe rather get one of the stable source tarballs::
 Getting started with Tryton
 ---------------------------
 
+Useful instructions are on 
 http://code.google.com/p/tryton/wiki/InstallationOnDebian
 
-$ sudo su - postgres -c "createuser --createdb --no-createrole --no-superuser --pwprompt tryton"
-$ sudo nano /etc/trytond.conf
+:: 
+
+  $ sudo su - postgres -c "createuser --createdb --no-createrole --no-superuser --pwprompt tryton"
+  $ sudo nano /etc/trytond.conf
 
 How to find out which version is installed?
 
-$ aptitude show tryton-server
+::
 
-Download client for version 
+  $ aptitude show tryton-server
+  Package: tryton-server
+  New: yes
+  State: installed
+  Automatically installed: yes
+  Version: 1.6.1-2
+  Priority: optional
+  Section: python
+  Maintainer: Debian Tryton Maintainers <tryton@lists.debian-maintainers.org>
+  Uncompressed Size: 2,355 k
+  Depends: python (>= 2.5), python-support (>= 0.90.0), adduser, python-dateutil, python-genshi, python-lxml,
+           python-psycopg2, python-relatorio, python-simplejson, python-pkg-resources
+  Recommends: logrotate, postgresql, postgresql-client, python-openoffice, python-openssl, python-pydot, python-tz,
+              python-webdav, openoffice.org-core, openoffice.org-draw, openoffice.org-writer
+  Suggests: tryton-client | tryton-neso, python-psyco, python-sphinx
+  Description: Tryton Application Platform (Server)
+   Tryton is a high-level general purpose application platform written in Python and using PostgreSQL as database engine.
+   It is the core base of a complete business solution.
+
+   This package contains the server.
+  Homepage: http://www.tryton.org/
+
+
+Downloaded Windows client version 1.6.4 and played with it.
 

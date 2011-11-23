@@ -1,0 +1,18 @@
+20111123
+========
+
+The owner of an Event or a Task
+-------------------------------
+
+Automatic Calendar Events and Tasks have some fields read-only 
+because they are "owned" or "governed" or "controlled" 
+by the object which caused their automatic creation.
+If that object is being modified, it may decide to delete or 
+modify all its automatic task.
+Lino identifies them as their `owner` field is non-empty.
+And that's a `GenericForeignKey`. 
+See :class:`lino.mixins.Owned`.
+And this field wasn't well rendered yet.
+Now it is rendered as a read-only clickable text that 
+will bring the user to the owner.
+

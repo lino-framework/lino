@@ -395,20 +395,9 @@ class FieldElement(LayoutElement):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
-        #~ kw.update(label=unicode(field.verbose_name))
-        kw.update(label=field.verbose_name) # 20111111c
-        #~ LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
-        #~ LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
+        kw.update(label=field.verbose_name) 
         LayoutElement.__init__(self,lh,field.name,**kw)
         
-    #~ def get_filter_options(self,**kw):
-        #~ if self.filter_type:
-            #~ kw.update(dataIndex=self.field.name)
-            # 20100805 see also GridFilters.js
-            #~ kw.update(filterable=True)  
-            #~ kw.update(filter=dict(type='auto'))
-            #~ kw.update(type=self.filter_type)
-        #~ return kw
             
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
@@ -443,9 +432,10 @@ class FieldElement(LayoutElement):
             if self.label:
                 #~ kw.update(fieldLabel=unicode(self.label)) 20111111
                 kw.update(fieldLabel=self.label)
-        if not self.field.blank:
-            kw.update(allowBlank=False)
-        if not self.editable:
+        if self.editable:
+            if not self.field.blank:
+                kw.update(allowBlank=False)
+        else:
             kw.update(disabled=True)
             kw.update(readOnly=True)
         #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
@@ -829,8 +819,21 @@ class DisplayElement(FieldElement):
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
     
+
+class GenericForeignKeyElement(DisplayElement):
   
+    def __init__(self,lh,field,**kw):
+        if not hasattr(field,'name'):
+            raise Exception("Field %s.%s has no name!" % (lh.rh.report,field))
+        assert field.name, Exception("field %r has no name!" % field)
+        self.field = field
+        self.editable = False
+        kw.update(label=field.name) 
+        #~ kw.update(label=field.verbose_name) 
+        LayoutElement.__init__(self,lh,field.name,**kw)
   
+    
+    
 class HtmlBoxElement(DisplayElement):
     ext_suffix = "_htmlbox"
     #~ declare_type = jsgen.DECLARE_VAR

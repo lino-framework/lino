@@ -2426,7 +2426,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.apply(p,this.get_base_params()); // needed for POST, ignored for PUT
     //~ Ext.apply(p,this.ww.config.base_params);
-    //~ Ext.apply(p,this.store.baseParams);
+    p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'grid';
     var self = this;
     var on_success = Lino.action_handler( this, function(result) {
       self.getStore().commitChanges(); // get rid of the red triangles
@@ -2440,12 +2440,12 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     if (e.record.phantom) {
       Ext.apply(req,{
         method: 'POST',
-        url: ROOT_URL+'/api'+this.ls_url
+        url: ROOT_URL + '/api'+this.ls_url
       });
     } else {
       Ext.apply(req,{
         method: 'PUT',
-        url: ROOT_URL+'/api'+this.ls_url+'/'+e.record.id
+        url: ROOT_URL + '/api'+this.ls_url+'/'+e.record.id
       });
     }
     //~ console.log('20110406 on_afteredit',req);

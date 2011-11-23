@@ -276,19 +276,6 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                   self.user,
                   date,subject,self)
                         
-            #~ if self.applies_from and self.applies_until and self.exam_policy:
-                #~ if self.exam_policy.every > 0:
-                    #~ i = 0
-                    #~ date = self.applies_from
-                    #~ while date < self.applies_until:
-                        #~ date = DurationUnit.months.add_duration(date,1)
-                        #~ i += 1
-                        #~ subject = _("Evaluation %d") % i
-                        #~ update_auto_event(
-                          #~ i,
-                          #~ self.user,
-                          #~ date,subject,self)
-                          
             if self.applies_until:
                 date = DurationUnit.months.add_duration(self.applies_until,-1)
             else:

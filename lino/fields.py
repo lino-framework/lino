@@ -127,6 +127,7 @@ class QuantityField(models.DecimalField):
         return fld
         
 class DisplayField:
+    primary_key = False
     editable = False
     choices = None
     blank = True
@@ -156,6 +157,7 @@ class VirtualField: # (Field):
     """
     Currently subclassed only by :class:`lino.utils.mti.EnableChild`.    
     """
+    primary_key = False
     editable = False
     name = None
     
