@@ -1,18 +1,79 @@
-20111123
+0111123
 ========
 
 The owner of an Event or a Task
 -------------------------------
 
-Automatic Calendar Events and Tasks have some fields read-only 
-because they are "owned" or "governed" or "controlled" 
-by the object which caused their automatic creation.
-If that object is being modified, it may decide to delete or 
-modify all its automatic task.
-Lino identifies them as their `owner` field is non-empty.
-And that's a `GenericForeignKey`. 
-See :class:`lino.mixins.Owned`.
-And this field wasn't well rendered yet.
-Now it is rendered as a read-only clickable text that 
+Users can now see who's the owner of an automatic 
+calendar Event or Task, and they can jump to that 
+owner by simply clicking on it.
+
+Automatic Calendar components 
+are "owned" (or "governed" or "controlled" by the object) 
+which caused their creation:
+If the owner gets modified, it may decide to delete or 
+modify all its automatic tasks or events.
+That's why some fields are read-only on an automatic task.
+
+For Lino, a calendar component is automatic when 
+its `owner` field is non-empty.
+
+The `owner` field  is a `GenericForeignKey`, defined 
+in :class:`lino.mixins.Owned`.
+
+And GFK fields weren't well rendered yet.
+
+Now they are rendered as a read-only clickable text that 
 will bring the user to the owner.
+
+Check-in.
+
+The `verbose_name` of a GFK
+---------------------------
+
+One problem remained in the above changes: there was no way to 
+specify a label (or `verbose_name`) for the GFK itself (that is, 
+the combination of both fields). 
+Here is the relevant code from :class:`lino.mixins.Owned`::
+
+  from django.contrib.contenttypes import generic
+
+  class Owned(models.Model):
+          
+      owner_type = models.ForeignKey(ContentType,editable=True,
+          blank=True,null=True,
+          verbose_name=_('Owner type'))
+      owner_id = fields.GenericForeignKeyIdField(owner_type,
+          editable=True,
+          blank=True,null=True,
+          verbose_name=_('Owner'))
+      owner = generic.GenericForeignKey('owner_type', 'owner_id')
+
+It was not possible to specify a `verbose_name`for  field `owner`.
+The author of `django.contrib.contenttypes` obviously didn't imagine 
+that somebody might want to do that.
+
+That's why we now have :class:`lino.fields.GenericForeignKey` 
+which is a thin extension to Django's `GenericForeignKey`.
+
+The new code is::
+
+      owner = fields.GenericForeignKey(
+        'owner_type', 'owner_id', verbose_name=_("Owned by"))
+
+
+Started Calendar Panel
+----------------------
+
+I did the first steps for having a "Calendar Panel" command that will use
+`Ext.ensible.cal.CalendarPanel` from 
+`Extensible <http://ext.ensible.com/deploy/1.0.1/examples/calendar/basic.html>`_.
+
+More concretely: 
+there's now a new command :menuselection:`My menu --> Calendar --> Calendar Panel`
+which displays a calendar.
+New :attr:`lino.Lino.use_extensible` to make this feature optional.
+The calendar is currently still empty. 
+I need to configure `eventStore` 
+(probably the last challenge for this new feature).
 

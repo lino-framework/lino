@@ -30,6 +30,7 @@ from django.utils.encoding import force_unicode
 from lino import mixins
 from lino import fields
 from lino import reports
+from lino import actions
 from lino.utils import babel
 from lino.utils import dblogger
 from lino.tools import resolve_model
@@ -160,8 +161,13 @@ def default_calendar(user):
 class Place(models.Model):
     """
     A location where Events can happen.
-    For a given Place you can see the :class:`EventsByPlace` that happened or will happen there
+    For a given Place you can see the :class:`EventsByPlace` 
+    that happened (or will happen) there.
     """
+    class Meta:
+        verbose_name = _("Place")
+        verbose_name_plural = _("Places")
+        
     name = models.CharField(_("Name"),max_length=200)
     def __unicode__(self):
         return self.name 
@@ -313,6 +319,9 @@ class RecurrenceSet(ComponentBase):
     Thanks to http://www.kanzaki.com/docs/ical/rdate.html
     
     """
+    class Meta:
+        verbose_name = _("Recurrence Set")
+        verbose_name_plural = _("Recurrence Sets")
     
     rdates = models.TextField(_("Recurrence dates"),blank=True)
     exdates = models.TextField(_("Excluded dates"),blank=True)
@@ -320,6 +329,9 @@ class RecurrenceSet(ComponentBase):
     exrules = models.TextField(_("Exclusion Rules"),blank=True)
     
 class RecurrenceSets(reports.Report):
+    """
+    The list of all :class:`Recurrence Sets <RecurrenceSet>`.
+    """
     model = RecurrenceSet
     
     
@@ -329,7 +341,25 @@ class Component(ComponentBase,
                 mixins.AutoUser,
                 mixins.CreatedModified):
     """
-    The `user` field is the iCal:ORGANIZER
+    Abstract base class for :class:`Event` and :class:`Task`.
+    
+    The `owner` of a Task or Event 
+    is some other database object that caused the task's or event's 
+    creation.
+    
+    For example, an invoice may cause one or several Tasks 
+    to be automatically generated when a certain payment mode 
+    is specified.
+    
+    Automatic Calendar components are "governed" or "controlled"
+    by their owner:
+    If the owner gets modified, it may decide to delete or 
+    modify all its automatic tasks or events.
+    
+    Non-automatic tasks always have an empty `owner` field.
+    Some fields are read-only on an automatic Task because 
+    it makes no sense to modify them.
+    
     """
     class Meta:
         abstract = True
@@ -346,7 +376,8 @@ class Component(ComponentBase,
         
     auto_type = models.IntegerField(null=True,blank=True,editable=False) 
     
-    user_modified = models.BooleanField(_("modified by user"),default=False,editable=False) 
+    user_modified = models.BooleanField(_("modified by user"),
+        default=False,editable=False) 
     
     rset = models.ForeignKey(RecurrenceSet,
         verbose_name=_("Recurrence Set"),
@@ -414,13 +445,12 @@ class Component(ComponentBase,
         #~ html += _(" on ") + babel.dtos(self.start_date)
         #~ return html
         
-
+#~ Component.owner.verbose_name = _("Automatically created by")
 
 class Event(Component,mixins.TypedPrintable,mails.Mailable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
-    is a scheduled lapse of time where something happens. 
-    Deserves more documentation.
+    is a scheduled lapse of time where something happens.
     """
   
     class Meta:
@@ -489,9 +519,9 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(Component):
     """
-    The owner of a Task is the record that caused the automatich creation.
-    Non-automatic tasks always have an empty `owner` field.
-    The owner and auto_type fields are hidden to the user.
+    A Task is when a user plans to to something and wants to 
+    get reminded about it.
+    
     """
   
     class Meta:
@@ -581,6 +611,15 @@ if settings.LINO.user_model:
         #~ label = _("My Events")
         order_by = ["start_date","start_time"]
         column_names = 'start_date start_time summary status *'
+        
+    class MyEventsToday(MyEvents):
+        column_names = 'start_time summary status *'
+        label = u"Meine Termine heute"
+        
+        def setup_request(self,rr):
+            rr.known_values = dict(start_date=datetime.date.today())
+            super(MyEventsToday,self).setup_request(rr)
+        
         
     class MyTasks(mixins.ByUser):
         model = 'cal.Task'
@@ -745,9 +784,12 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
     
 def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     """
-    Creates, updates or deletes the automatic component (either a :class:`Task` or an :class:`Event`)
+    Creates, updates or deletes the automatic component 
+    (either a :class:`Task` or an :class:`Event`)
     related to the specified `owner`.
-    Specifying `None` for `date` means that the automatic component should be deleted.
+    
+    Specifying `None` for `date` means that 
+    the automatic component should be deleted.
     """
     #~ print "20111014 update_auto_task"
     #~ if SKIP_AUTO_TASKS: return 
@@ -819,7 +861,8 @@ def migrate_reminder(obj,reminder_date,reminder_text,
       alarm_value = delay_value,
       alarm_unit = delay2alarm(delay_type))
       
-
+class CalendarPanel(reports.Frame):
+    default_action_class = reports.Calendar
 
 
 def setup_main_menu(site,ui,user,m): pass
@@ -827,7 +870,10 @@ def setup_main_menu(site,ui,user,m): pass
 def setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.MyTasks')
+    #~ m.add_action('cal.MyEventsToday')
     m.add_action('cal.MyEvents')
+    m.add_action('cal.CalendarPanel')
+    #~ m.add_action_(actions.Calendar())
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("~Calendar"))

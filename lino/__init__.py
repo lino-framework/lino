@@ -201,9 +201,27 @@ class Lino(object):
     """
     
     extjs_root = None
-    """Path to the extjs root directory. Only to be used on a development server."""
+    """
+    Path to the ExtJS root directory. 
+    Only used on a development server if the `media` 
+    directory has no symbolic link to the ExtJS root directory.
+    """
+    
+    extensible_root = None
+    """
+    Path to the Extensible root directory. 
+    Only used on a development server
+    if the `media` directory has no symbolic link to the Extensible root directory
+    and only if :attr:`use_extensible` is True.
+    """
+    
     tinymce_root = None
-    """Path to the tinymce root directory. Only to be used on a development server."""
+    """
+    Path to the tinymce root directory. 
+    Only to be used on a development server
+    if the `media` directory has no symbolic link to the TinyMCE root directory
+    and only if :attr:`use_tinymce` is True.
+    """
     
     allow_duplicate_cities = False
     """Set this to True if that's what you want. 
@@ -295,6 +313,11 @@ class Lino(object):
     """
     Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
     See :doc:`/blog/2011/0523`
+    """
+    
+    use_extensible = True
+    """
+    Whether to use the `Extensible <http://ext.ensible.com>`_ calendar library.
     """
     
     use_vinylfox = False

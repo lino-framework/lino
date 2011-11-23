@@ -144,7 +144,7 @@ class ActorMetaClass(type):
 
   
 class Actor(Handled):
-    "inherited by Report, Command, Layout"
+    "inherited by Report, Frame"
     __metaclass__ = ActorMetaClass
     app_label = None
     _actor_name = None

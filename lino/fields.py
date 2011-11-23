@@ -17,6 +17,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes import generic
+
 import datetime
 
 
@@ -240,14 +242,32 @@ class VirtualField: # (Field):
     
 class GenericForeignKeyIdField(models.PositiveIntegerField):
     """
+    Use this instead of `models.PositiveIntegerField` 
+    for fields that part of a :term:`GFK` and you want 
+    Lino to render them using a Combobox.
+    
+    Used by :class:`lino.mixins.Owned`.
     """
     def __init__(self, type_field, *args, **kw):
         self.type_field = type_field
         models.PositiveIntegerField.__init__(self,*args, **kw)
     
-    
+class GenericForeignKey(generic.GenericForeignKey):
+    """
+    Lino's little extension to Django's GFK.
+    Used by :class:`lino.mixins.Owned`.
+    """
+    def __init__(self, ct_field="content_type", fk_field="object_id", 
+          verbose_name=None):
+        self.verbose_name = verbose_name
+        generic.GenericForeignKey.__init__(self,ct_field,fk_field)
+        
     
 class FieldSet:
+    """
+    A group of fields that have a common label (`verbose_name`)
+    to be displayed and translated.
+    """
     def __init__(self,verbose_name,desc=None,**child_labels):
         self.verbose_name = verbose_name
         self.desc = desc
@@ -359,4 +379,3 @@ class IncompleteDateField(models.CharField):
         
 
 
-        

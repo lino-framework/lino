@@ -72,7 +72,7 @@ class MenuItem:
             if label is None:
                 label = action.get_button_label()
             if can_view is None:
-                can_view = action.actor.can_view
+                can_view = action.can_view
         
         self.name = name
         self.doc = doc
@@ -157,6 +157,9 @@ class Menu(MenuItem):
         #~ if can_view is None:
             #~ can_view = actor.can_view
         #~ return self._add_item(Action(self,actor,can_view=can_view,**kw))
+        return self._add_item(MenuItem(self,action,**kw))
+        
+    def add_action_(self,action,**kw):
         return self._add_item(MenuItem(self,action,**kw))
 
     #~ def add_item(self,**kw):

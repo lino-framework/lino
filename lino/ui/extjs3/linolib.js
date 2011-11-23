@@ -1338,6 +1338,40 @@ Lino.FieldBoxMixin = {
   }
 };
 
+Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
+  constructor : function(config) {
+    var proxy = new Ext.data.HttpProxy({ 
+      //~ url: ROOT_URL + '/api'+config.ls_url, 
+      url: ROOT_URL + '/api/cal/Events', 
+      method: "GET"
+      //~ listeners: {load:on_proxy_load} 
+    });
+    //~ config.store = new Ext.data.JsonStore({ 
+    //~ console.log('20110119 constructor',config.title,bp);
+    config.store = new Ext.data.ArrayStore({ 
+      listeners: { exception: Lino.on_store_exception }, 
+      //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
+      proxy: proxy, 
+      //~ autoLoad: true,
+      //~ idIndex: this.ww.config.pk_index,
+      remoteSort: true, 
+      //~ baseParams: bp, 
+      //~ fields: config.ls_store_fields, 
+      totalProperty: "count", 
+      root: "rows", 
+      //~ idProperty: this.ww.config.ls_id_property 
+      });
+      
+    Lino.CalendarPanel.superclass.constructor.call(this, config);
+    console.log(this);
+  }
+});
+
+Ext.override(Lino.CalendarPanel,Lino.FieldBoxMixin);
+
+
+
+
 Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
   disabled_in_insert_window : true,
   constructor : function(ww,config,params) {
@@ -3132,6 +3166,11 @@ Lino.GridMasterWrapper.override({
 });
 
 
+Lino.CalendarWrapper = Ext.extend(Lino.WindowWrapper, {
+  setup : function() {
+    Lino.WindowWrapper.prototype.setup.call(this);
+  }
+});
 
 Lino.DetailWrapperBase = Ext.extend(Lino.WindowWrapper, {
   setup : function() {

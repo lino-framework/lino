@@ -257,6 +257,15 @@ class ViewReportRequest(reports.ReportActionRequest):
         
         return kw
       
+    def request2kw(self,ui,**kw):
+        if self.quick_search:
+            kw[URL_PARAM_FILTER] = self.quick_search
+        if self.master_instance is not None:
+            kw[URL_PARAM_MASTER_PK] = self.master_instance.pk
+            mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
+            kw[URL_PARAM_MASTER_TYPE] = mt
+        return kw
+
         
     def get_user(self):
         return self.user

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.sales\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-14 06:21+0000\n"
+"POT-Creation-Date: 2011-11-23 19:26+0000\n"
 "PO-Revision-Date: 2011-03-02 21:33+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -30,51 +30,59 @@ msgstr "Tasumistingimused"
 msgid "Channel"
 msgstr ""
 
-#: .\models.py:113
+#: .\models.py:107
+msgid "Paper"
+msgstr ""
+
+#: .\models.py:108
+msgid "E-mail"
+msgstr ""
+
+#: .\models.py:115
 #, fuzzy
 msgid "Invoicing Mode"
 msgstr "Arve koostamise viis"
 
-#: .\models.py:114
+#: .\models.py:116
 #, fuzzy
 msgid "Invoicing Modes"
 msgstr "Arve koostamise viis"
 
-#: .\models.py:163
+#: .\models.py:165
 #, fuzzy
 msgid "Shipping Mode"
 msgstr "Kättetoimatamise viis"
 
-#: .\models.py:164
+#: .\models.py:166
 #, fuzzy
 msgid "Shipping Modes"
 msgstr "Kättetoimatamise viis"
 
-#: .\models.py:177
+#: .\models.py:179
 msgid "Sales Rule"
 msgstr ""
 
-#: .\models.py:178
+#: .\models.py:180
 msgid "Sales Rules"
 msgstr ""
 
-#: .\models.py:199
+#: .\models.py:201
 msgid "Customer"
 msgstr ""
 
-#: .\models.py:200
+#: .\models.py:202
 msgid "Customers"
 msgstr ""
 
-#: .\models.py:554
+#: .\models.py:556
 msgid "Description"
 msgstr "Nimetus"
 
-#: .\models.py:768
+#: .\models.py:770
 msgid "is Customer"
 msgstr ""
 
-#: .\models.py:805
+#: .\models.py:807
 msgid "~Sales"
 msgstr ""
 

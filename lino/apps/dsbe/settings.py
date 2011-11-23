@@ -98,8 +98,6 @@ class Lino(Lino):
         #~ m.add_action('projects.Projects')
         m.add_action('dsbe.MyNotes')
         
-        #~ m.add_action('cal.MyTasks')
-        #~ m.add_action('cal.MyEvents')
         mypersons = m.add_menu("mypersons",dsbe.MyPersons.label)
         mypersons.add_action('dsbe.MyPersons')
         for pg in dsbe.PersonGroup.objects.order_by('ref_name'):

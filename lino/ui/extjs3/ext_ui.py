@@ -541,31 +541,42 @@ class ExtUI(base.UI):
             
             def must_exist(s):
                 p = getattr(settings.LINO,s)
+                if not p:
+                    raise Exception("LINO.%s is not set." % s)
                 if not exists(p):
                     raise Exception("LINO.%s (%s) does not exist" % (s,p))
                     
             if not exists(join(settings.MEDIA_ROOT,'extjs')):
-                if settings.LINO.extjs_root:
-                    must_exist('extjs_root')
-                        
-                    prefix = settings.MEDIA_URL[1:]
-                    assert prefix.endswith('/')
+                #~ if settings.LINO.extjs_root:
+                must_exist('extjs_root')
                     
+                prefix = settings.MEDIA_URL[1:]
+                assert prefix.endswith('/')
+                
+                urlpatterns += patterns('django.views.static',
+                (r'^%sextjs/(?P<path>.*)$' % prefix, 
+                    'serve', {
+                    'document_root': settings.LINO.extjs_root,
+                    'show_indexes': True }))
+                    
+            if settings.LINO.use_extensible:
+                if not exists(join(settings.MEDIA_ROOT,'extensible')):
+                    must_exist('extensible_root')
                     urlpatterns += patterns('django.views.static',
-                    (r'^%sextjs/(?P<path>.*)$' % prefix, 
-                        'serve', {
-                        'document_root': settings.LINO.extjs_root,
-                        'show_indexes': True }))
-                    
+                        (r'^%sextensible/(?P<path>.*)$' % prefix, 
+                            'serve', {
+                            'document_root': settings.LINO.extensible_root,
+                            'show_indexes': True }))
+                
             if settings.LINO.use_tinymce:
                 if not exists(join(settings.MEDIA_ROOT,'tinymce')):
-                    if settings.LINO.tinymce_root:
-                        must_exist('tinymce_root')
-                        urlpatterns += patterns('django.views.static',
-                            (r'^%stinymce/(?P<path>.*)$' % prefix, 
-                                'serve', {
-                                'document_root': settings.LINO.tinymce_root,
-                                'show_indexes': True }))
+                    #~ if settings.LINO.tinymce_root:
+                    must_exist('tinymce_root')
+                    urlpatterns += patterns('django.views.static',
+                        (r'^%stinymce/(?P<path>.*)$' % prefix, 
+                            'serve', {
+                            'document_root': settings.LINO.tinymce_root,
+                            'show_indexes': True }))
                 
             if not exists(join(settings.MEDIA_ROOT,'lino')):
                 lino_media = abspath(join(dirname(lino.__file__),'..','media'))
@@ -638,12 +649,18 @@ class ExtUI(base.UI):
         #~ yield '<!-- ** CSS ** -->'
         #~ yield '<!-- base library -->'
         
-        
-        yield '<link rel="stylesheet" type="text/css" href="%s/extjs/resources/css/ext-all.css" />' % self.media_url()
+        def stylesheet(url):
+            url = self.media_url() + url
+            return '<link rel="stylesheet" type="text/css" href="%s" />' % url
+            
+        #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/resources/css/ext-all.css" />' % self.media_url()
+        yield stylesheet('/extjs/resources/css/ext-all.css')
         #~ yield '<!-- overrides to base library -->'
+        if settings.LINO.use_extensible:
+            yield stylesheet("/extensible/resources/css/extensible-all.css")
+          
         if settings.LINO.use_vinylfox:
             p = self.media_url() + '/lino/vinylfox/'
-            #~ p = self.media_url('lino','vinylfox') + '/'
             yield '<link rel="stylesheet" type="text/css" href="%sresources/css/htmleditorplugins.css" />' % p
           
         if settings.LINO.use_filterRow:
@@ -665,12 +682,26 @@ class ExtUI(base.UI):
          
         #~ yield '<!-- ** Javascript ** -->'
         #~ yield '<!-- ExtJS library: base/adapter -->'
+        def javascript(url):
+            url = self.media_url() + url
+            return '<script type="text/javascript" src="%s"></script>' % url
+            
         if settings.DEBUG:
-            yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base-debug.js"></script>' % self.media_url() 
-            yield '<script type="text/javascript" src="%s/extjs/ext-all-debug.js"></script>' % self.media_url()
+            #~ yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base-debug.js"></script>' % self.media_url() 
+            #~ yield '<script type="text/javascript" src="%s/extjs/ext-all-debug.js"></script>' % self.media_url()
+            yield javascript('/extjs/adapter/ext/ext-base-debug.js')
+            yield javascript('/extjs/ext-all-debug.js')
+            if settings.LINO.use_extensible:
+                yield javascript('/extensible/extensible-all-debug.js')
         else:
-            yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base.js"></script>' % self.media_url() 
-            yield '<script type="text/javascript" src="%s/extjs/ext-all.js"></script>' % self.media_url()
+            yield javascript('/extjs/adapter/ext/ext-base.js')
+            yield javascript('/extjs/ext-all.js')
+            #~ yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base.js"></script>' % self.media_url() 
+            #~ yield '<script type="text/javascript" src="%s/extjs/ext-all.js"></script>' % self.media_url()
+            
+            if settings.LINO.use_extensible:
+                yield javascript('/extensible/extensible-all.js')
+            
         #~ yield '<!-- ExtJS library: all widgets -->'
         #~ if True:
             #~ yield '<style type="text/css">'
@@ -976,6 +1007,16 @@ tinymce.init({
         #~ if rpt is None:
             #~ raise Http404("No actor named '%s.%s'." % (app_label,actor))
         rh = rpt.get_handle(self)
+        #~ ar = self.build_ar(request,rh)
+        
+        action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
+        a = rpt.get_action(action_name)
+        if a is None:
+            raise Http404("%s has no action %r" % (rh.report,action_name))
+        if isinstance(a,reports.ReportAction):
+            ar = ext_requests.ViewReportRequest(request,rh,a)
+        else:
+            ar = reports.ActionRequest(self,a)
         
         #~ if not rh.report.can_view.passes(request.user):
             #~ msg = _("User %(user)s cannot view %(report)s.") % dict(user=request.user,report=rpt)
@@ -984,7 +1025,6 @@ tinymce.init({
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
-            ar = self.build_ar(request,rh)
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
             instance = ar.create_instance()
             # store uploaded files. 
@@ -995,46 +1035,44 @@ tinymce.init({
             
             
         if request.method == 'GET':
-          
-            ar = self.build_ar(request,rh)
             
-            #~ action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
-            #~ a = rpt.get_action(action_name)
-            #~ if a is None:
-                #~ raise Http404("%s has no action %r" % (rpt,action_name))
-
-            #~ ar = ext_requests.ViewReportRequest(request,rh,a)
-            
-            fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ar.action.default_format)
+            fmt = request.GET.get(
+                ext_requests.URL_PARAM_FORMAT,
+                ar.action.default_format)
           
             #~ print '20110714', a, fmt
             
             if fmt == 'html':
                 kw = {}
-                bp = self.request2kw(ar)
+                bp = ar.request2kw(self)
+                #~ bp = self.request2kw(ar)
                 
                 params = dict(base_params=bp)
                 
-                if isinstance(a,reports.InsertRow):
+                if isinstance(ar.action,reports.InsertRow):
                     elem = ar.create_instance()
                     #~ rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec = elem2rec_insert(ar,rh,elem)
                     rec.update(phantom=True)
                     params.update(data_record=rec)
 
-                kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
+                kw.update(on_ready=['Lino.%s(undefined,%s);' % (
+                    ar.action,py2js(params))])
                 #~ print '20110714 on_ready', params
                 return HttpResponse(self.html_page(request,**kw))
             
             if fmt == 'csv':
                 #~ response = HttpResponse(mimetype='text/csv')
                 charset = settings.LINO.csv_params.get('encoding','utf-8')
-                response = HttpResponse(content_type='text/csv;charset="%s"' % charset)
+                response = HttpResponse(
+                  content_type='text/csv;charset="%s"' % charset)
                 if False:
-                    response['Content-Disposition'] = 'attachment; filename="%s.csv"' % ar.report
+                    response['Content-Disposition'] = \
+                        'attachment; filename="%s.csv"' % ar.report
                 else:
                     #~ response = HttpResponse(content_type='application/csv')
-                    response['Content-Disposition'] = 'inline; filename="%s.csv"' % ar.report
+                    response['Content-Disposition'] = \
+                        'inline; filename="%s.csv"' % ar.report
                   
                 #~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
                 w = ucsv.UnicodeWriter(response,**settings.LINO.csv_params)
@@ -1064,16 +1102,15 @@ tinymce.init({
                     
             raise Http404("Format %r not supported for GET on %s" % (fmt,rpt))
 
-
         raise Http404("Method %s not supported for container %s" % (request.method,rh))
     
     
-    def build_ar(self,request,rh):
-        action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
-        a = rh.report.get_action(action_name)
-        if a is None:
-            raise Http404("%s has no action %r" % (rh.report,action_name))
-        return ext_requests.ViewReportRequest(request,rh,a)
+    #~ def build_ar(self,request,rh):
+        #~ action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
+        #~ a = rh.report.get_action(action_name)
+        #~ if a is None:
+            #~ raise Http404("%s has no action %r" % (rh.report,action_name))
+        #~ return ext_requests.ViewReportRequest(request,rh,a)
             
         
     def requested_report(self,request,app_label,actor):
@@ -1185,7 +1222,7 @@ tinymce.init({
                     return json_response(datarec)
                     
                 params = dict(data_record=datarec)
-                bp = self.request2kw(ar)
+                bp = ar.request2kw(self)
                 if a.window_wrapper.tabbed:
                     tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
                     if tab is not None: 
@@ -1279,7 +1316,8 @@ tinymce.init({
             
             for rpt in reports.master_reports \
                      + reports.slave_reports \
-                     + reports.generic_slaves.values():
+                     + reports.generic_slaves.values() \
+                     + reports.frames :
                 rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
                 f.write("Ext.namespace('Lino.%s')\n" % rpt)
                 for a in rpt.get_actions():
@@ -1519,19 +1557,6 @@ tinymce.init({
             fke.lh.rh.report._actor_name,
             fke.field.name,**kw)
         
-    def request2kw(self,rr,**kw):
-        #~ if rr.known_values is not None:
-            #~ for k,v in rr.known_values.items():
-            #~ kw.update(rr.known_values)
-            #~ # kw[ext_requests.URL_KNOWN_VALUES] = rr.known_values
-        if rr.quick_search:
-            kw[ext_requests.URL_PARAM_FILTER] = rr.quick_search
-        if rr.master_instance is not None:
-            kw[ext_requests.URL_PARAM_MASTER_PK] = rr.master_instance.pk
-            mt = ContentType.objects.get_for_model(rr.master_instance.__class__).pk
-            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
-        return kw
-
     #~ def quicklink(self,request,app_label,actor,**kw):
         #~ rpt = self.requested_report(request,app_label,actor)
         #~ return self.action_href(rpt.default_action,**kw)
@@ -1641,7 +1666,7 @@ tinymce.init({
         return self.build_url("api",actor.app_label,actor._actor_name,*args,**kw)
         
     def get_request_url(self,rr,*args,**kw):
-        kw = self.request2kw(rr,**kw)
+        kw = rr.request2kw(self,**kw)
         return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
@@ -1670,6 +1695,9 @@ tinymce.init({
         #~ if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
         #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
           
+        if isinstance(a,reports.Calendar):
+            return ext_windows.CalendarWrapper(h,a)
+            
         if isinstance(a,reports.GridEdit):
             return ext_windows.GridMasterWrapper(h,a)
             
@@ -1683,6 +1711,10 @@ tinymce.init({
         #~ if isinstance(h,layouts.TabPanelHandle):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
+        if isinstance(h,reports.FrameHandle):
+            for a in h.get_actions():
+                a.window_wrapper = self.action_window_wrapper(a,h)
+                
         if isinstance(h,reports.ReportHandle):
             #~ logger.debug('ExtUI.setup_handle() %s',h.report)
             if h.report.model is None or h.report.model._meta.abstract:

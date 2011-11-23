@@ -169,6 +169,9 @@ class ComboBox(Component):
     value_template = 'new Ext.form.ComboBox(%s)'
 class ExtPanel(Component): # todo: rename this to Panel, and Panel to PanelElement or sth else
     value_template = "new Ext.Panel(%s)"
+
+class Calendar(Component): 
+    value_template = "new Lino.CalendarPanel(%s)"
     
                     
         
@@ -821,14 +824,16 @@ class DisplayElement(FieldElement):
     
 
 class GenericForeignKeyElement(DisplayElement):
-  
+    """
+    A :class:`DisplayElement` specially adapted to a :term:`GFK` field.
+    """
     def __init__(self,lh,field,**kw):
-        if not hasattr(field,'name'):
-            raise Exception("Field %s.%s has no name!" % (lh.rh.report,field))
-        assert field.name, Exception("field %r has no name!" % field)
+        #~ if not hasattr(field,'name'):
+            #~ raise Exception("Field %s.%s has no name!" % (lh.rh.report,field))
+        #~ assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = False
-        kw.update(label=field.name) 
+        kw.update(label=getattr(field,'verbose_name',None) or field.name)
         #~ kw.update(label=field.verbose_name) 
         LayoutElement.__init__(self,lh,field.name,**kw)
   

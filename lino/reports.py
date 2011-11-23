@@ -228,12 +228,17 @@ def de_verbose_name(de):
 master_reports = []
 slave_reports = []
 generic_slaves = {}
+frames = []
 rptname_choices = []
 
 config_dirs = []
 
+  
+def register_frame(frm):
+    frames.append(frm)
+    
 def register_report(rpt):
-    logger.debug("20111113 register_report %s", rpt.actor_id)
+    #~ logger.debug("20111113 register_report %s", rpt.actor_id)
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     if rpt.typo_check:
         myattrs = set(rpt.__class__.__dict__.keys())
@@ -242,7 +247,7 @@ def register_report(rpt):
         if len(myattrs):
             logger.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
     if rpt.model is None:
-        logger.debug("20111113 %s is an abstract report", rpt)
+        #~ logger.debug("20111113 %s is an abstract report", rpt)
         return
         
     #~ if rpt.model._meta.abstract:
@@ -277,17 +282,19 @@ def discover():
     """
               
     logger.info("Analyzing Reports...")
-    logger.debug("20111113 Register Report actors...")
+    #~ logger.debug("20111113 Register Report actors...")
     for rpt in actors.actors_list:
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
             register_report(rpt)
+        if isinstance(rpt,Frame) and rpt.__class__ is not Frame:
+            register_frame(rpt)
             
     logger.debug("Instantiate model reports...")
     for model in models.get_models():
         """Not getattr but __dict__.get because of the mixins.Listings trick."""
         rpt = model.__dict__.get('_lino_model_report',None)
         #~ rpt = getattr(model,'_lino_model_report',None)
-        logger.debug('20111113 %s._lino_model_report = %s',model,rpt)
+        #~ logger.debug('20111113 %s._lino_model_report = %s',model,rpt)
         if rpt is None:
             rpt = report_factory(model)
             register_report(rpt)
@@ -302,7 +309,7 @@ def discover():
             slaves = {}
             rpt.master._lino_slaves = slaves
         slaves[rpt.actor_id] = rpt
-        logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
+        #~ logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
     #~ logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
     #~ logger.debug("Setup model reports...")
@@ -328,11 +335,26 @@ class DataView:
     def __init__(self,tpl):
         self.xtemplate = tpl
         
+
+class Calendar(actions.OpenWindowAction):
+    label = "Calendar Panel"
+    name = 'grid'
+    default_format = 'html'
+    
+    def __init__(self,actor,*args,**kw):
+        self.actor = actor # actor who offers this action
+        self.can_view = perms.always # actor.can_view
+        super(Calendar,self).__init__(*args,**kw)
         
+    def __str__(self):
+        return str(self.actor)+'.'+self.name
+    
+
 class ReportAction(actions.Action):
   
     def __init__(self,report,*args,**kw):
         self.actor = report # actor who offers this action
+        self.can_view = report.can_view
         super(ReportAction,self).__init__(*args,**kw)
         
     def request(self,ui=None,**kw):
@@ -433,10 +455,11 @@ class SubmitInsert(actions.Action):
         
 
 
+      
 class ReportHandle(base.Handle): 
     
     def __init__(self,ui,report):
-        logger.debug('20111113 ReportHandle.__init__(%s)',report)
+        #~ logger.debug('20111113 ReportHandle.__init__(%s)',report)
         assert isinstance(report,Report)
         self.report = report
         #~ self.data_elems = report.data_elems
@@ -532,7 +555,15 @@ class InvalidRequest(Exception):
     pass
 
 
-class ReportActionRequest:
+class ActionRequest(object):
+    def __init__(self,ui,action):
+        self.ui = ui
+        self.action = action
+        
+    def request2kw(self,ui,**kw):
+        return kw
+  
+class ReportActionRequest(ActionRequest):
     limit = None
     offset = None
     master_instance = None
@@ -552,14 +583,15 @@ class ReportActionRequest:
         #~ if ui is not None: assert ui.create_meth_element is not None
         self.report = report
         self.ah = report.get_handle(ui)
-        self.ui = ui
         # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
             self.master = report.master
         #~ actions.ActionRequest.__init__(self,rpt,action,ui)
         #~ actions.ActionRequest.__init__(self,ui,action)
         #~ self.rh = self.ah
-        self.action = action
+        ActionRequest.__init__(self,ui,action)
+        #~ self.ui = ui
+        #~ self.action = action
         #~ self._setup(**kw)
       
     def __str__(self):
@@ -737,6 +769,31 @@ def model2report(m):
     return f
 
 
+class FrameHandle(base.Handle): 
+    def __init__(self,ui,frame):
+        assert isinstance(frame,Frame)
+        self.report = frame
+        base.Handle.__init__(self,ui)
+
+    def get_actions(self,*args,**kw):
+        return self.report.get_actions(*args,**kw)
+
+class Frame(actors.Actor): 
+  
+    _handle_class = FrameHandle
+    default_action_class = None
+    
+    def __init__(self):
+        if self.default_action_class:
+            self.default_action = self.default_action_class(self)
+        #~ if self.default_action:
+            #~ self.default_action.actor = self
+        super(Frame,self).__init__()
+  
+    def do_setup(self):
+        if self.default_action:
+            self.add_action(self.default_action)
+        
 class Report(actors.Actor): #,base.Handled):
     """
     Reports are a central concept in Lino and deserve more than one sentence of documentation.
@@ -1536,7 +1593,7 @@ class LayoutHandle:
     
     def __init__(self,rh,layout,hidden_elements=frozenset()):
       
-        logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
+        #~ logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
         assert isinstance(layout,BaseLayout)
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)

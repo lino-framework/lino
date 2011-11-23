@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-14 06:21+0000\n"
+"POT-Creation-Date: 2011-11-23 19:25+0000\n"
 "PO-Revision-Date: 2011-10-14 20:46+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -27,116 +27,129 @@ msgid "ISIP Types"
 msgstr "Types de contrat PIIS"
 
 #: .\models.py:95
-msgid "reference"
+#, fuzzy
+msgid "Reference"
 msgstr "référence"
 
-#: .\models.py:108 .\models.py:177
-msgid "examination policy"
+#: .\models.py:115
+msgid "Evaluation every X months"
+msgstr ""
+
+#: .\models.py:118
+#, fuzzy
+msgid "Examination Policy"
 msgstr "Politique d'examen"
 
-#: .\models.py:109
-msgid "examination policies"
+#: .\models.py:119
+#, fuzzy
+msgid "Examination Policies"
 msgstr "politiques d'examen"
 
-#: .\models.py:121
+#: .\models.py:131
 msgid "Contract Ending"
 msgstr "Rupture/fin de contrat"
 
-#: .\models.py:122
+#: .\models.py:132
 msgid "Contract Endings"
 msgstr "Ruptures/fins de contrat"
 
-#: .\models.py:124
+#: .\models.py:134
 msgid "designation"
 msgstr "désignation"
 
-#: .\models.py:152
+#: .\models.py:162
 msgid "Person"
 msgstr "Personne"
 
-#: .\models.py:157
+#: .\models.py:167
 msgid "represented by"
 msgstr "représenté par"
 
-#: .\models.py:163
+#: .\models.py:173
 msgid "applies from"
 msgstr "est d'application à partir de"
 
-#: .\models.py:164
+#: .\models.py:174
 msgid "applies until"
 msgstr "est d'application jusque"
 
-#: .\models.py:165
+#: .\models.py:175
 msgid "date decided"
 msgstr "date de décision"
 
-#: .\models.py:166
+#: .\models.py:176
 msgid "date issued"
 msgstr "date fournie ?"
 
-#: .\models.py:169
+#: .\models.py:179
 msgid "responsible (ASD)"
 msgstr "Responsable (SSG)"
 
-#: .\models.py:182
+#: .\models.py:191
 msgid "Ending"
 msgstr "Fin"
 
-#: .\models.py:183
+#: .\models.py:192
 msgid "date ended"
 msgstr "date de fin"
 
-#: .\models.py:255
-msgid "Contract ends"
+#: .\models.py:273
+#, fuzzy, python-format
+msgid "Evaluation %d"
+msgstr "Formation"
+
+#: .\models.py:287
+#, fuzzy
+msgid "Contract ends in a month"
 msgstr "Contrat se termine"
 
-#: .\models.py:264
+#: .\models.py:296
 #, fuzzy
 msgid "ISIP"
 msgstr "~PIIS"
 
-#: .\models.py:265 .\models.py:361
+#: .\models.py:297 .\models.py:393
 #, fuzzy
 msgid "ISIPs"
 msgstr "~PIIS"
 
-#: .\models.py:269
+#: .\models.py:301
 msgid "Contract Type"
 msgstr "Type de contrat"
 
-#: .\models.py:272
+#: .\models.py:304
 msgid "Company"
 msgstr "Société"
 
-#: .\models.py:275
+#: .\models.py:307
 msgid "stages"
 msgstr "stages"
 
-#: .\models.py:277
+#: .\models.py:309
 msgid "goals"
 msgstr "buts"
 
-#: .\models.py:279
+#: .\models.py:311
 msgid "duties ASD"
 msgstr "devoirs SSG"
 
-#: .\models.py:281
+#: .\models.py:313
 msgid "duties DSBE"
 msgstr "devois ISP"
 
-#: .\models.py:283
+#: .\models.py:315
 msgid "duties company"
 msgstr "devoirs entreprise"
 
-#: .\models.py:285
+#: .\models.py:317
 msgid "duties person"
 msgstr "Devoirs personne"
 
-#: .\models.py:294
+#: .\models.py:326
 msgid "responsible (DSBE)"
 msgstr "Responsable (ISP)"
 
-#: .\models.py:346
+#: .\models.py:378
 msgid "My PIIS contracts"
 msgstr "Mes contrats PIIS"
 
@@ -249,9 +262,6 @@ msgstr "Mes contrats PIIS"
 
 #~ msgid "Art.60-7"
 #~ msgstr "Art.60-7"
-
-#~ msgid "Education"
-#~ msgstr "Formation"
 
 #~ msgid "Properties"
 #~ msgstr "Propriétés"

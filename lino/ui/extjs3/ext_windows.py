@@ -115,7 +115,16 @@ class GridWrapperMixin(WindowWrapper):
         
     def update_config(self,wc):
         self.lh._main.update_config(wc)
+        
 
+        
+
+class CalendarWrapper(MasterWrapper):
+    def __init__(self,rh,action,**kw):
+        main = ext_elems.Calendar()
+        WindowWrapper.__init__(self,action,rh.ui,None,main,**kw)
+    
+    
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
     def __init__(self,rh,action,**kw):

@@ -20,8 +20,9 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+#~ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 
 from lino import reports, fields
 from lino.utils import perms
@@ -131,18 +132,39 @@ class Sequenced(models.Model):
         super(Sequenced,self).full_clean(*args,**kw)
   
 class Owned(models.Model):
-  
+    """
+    Mixin for models that are "owned" by other database objects.
+    
+    Defines three fields `owned_type`, `owned_id` and `owned`.
+    And a class attribute :attr:`owner_label`.
+    
+    """
+    # Translators: will also be concatenated with '(type)' '(object)'
+    owner_label = _('Owned by')
+    """
+    The labels (`verbose_name`) of the fields 
+    `owned_type`, `owned_id` and `owned`
+    are derived from this attribute which 
+    may be overridden by subclasses.
+    
+    """
+    
     class Meta:
         abstract = True
         
-    owner_type = models.ForeignKey(ContentType,editable=True,
-        blank=True,null=True,
-        verbose_name=_('Owner type'))
-    owner_id = fields.GenericForeignKeyIdField(owner_type,
+    owner_type = models.ForeignKey(ContentType,
         editable=True,
         blank=True,null=True,
-        verbose_name=_('Owner'))
-    owner = generic.GenericForeignKey('owner_type', 'owner_id')
+        verbose_name=string_concat(owner_label,' ',_('(type)')))
+    owner_id = fields.GenericForeignKeyIdField(
+        owner_type,
+        editable=True,
+        blank=True,null=True,
+        verbose_name=string_concat(owner_label,' ',_('(object)')))
+    owner = fields.GenericForeignKey(
+        'owner_type', 'owner_id',
+        verbose_name=owner_label)
+        
     #~ owner_panel= fields.FieldSet(_("Owner"),
         #~ "owner_type owner_id",
         #~ owner_type=_("Model"),
@@ -180,8 +202,11 @@ class Owned(models.Model):
         #~ msgs.append(unicode(e))
         #~ return msgs
 
+
 class ProjectRelated(models.Model):
-    "Deserves more documentation."
+    """Related to a project. 
+    Deserves more documentation.
+    """
     
     class Meta:
         abstract = True

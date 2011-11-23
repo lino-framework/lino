@@ -1,21 +1,16 @@
-Version 1.2.8 (Coming)
+Version 1.2.9 (Coming)
 ======================
 
 Benutzer
 --------
 
+- Optimierungen und Bugfixes beim Eingeben von Terminen.
   
 
 Administrator
 -------------
   
 
-
-Bugs fixed
-----------
-
-Administrator
--------------
 
 Upgrade instructions
 --------------------
