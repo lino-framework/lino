@@ -447,7 +447,7 @@ class SubmitDetail(actions.Action):
     label = _("Save")
     callable_from = (ShowDetailAction,)
     
-class SubmitInsert(actions.Action):
+class SubmitInsert(SubmitDetail):
     #~ name = 'submit'
     label = _("Save")
     #~ label = _("Insert")

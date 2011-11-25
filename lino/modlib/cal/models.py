@@ -31,6 +31,7 @@ from lino import mixins
 from lino import fields
 from lino import reports
 from lino import actions
+from lino.utils import perms
 from lino.utils import babel
 from lino.utils import dblogger
 from lino.tools import resolve_model
@@ -311,6 +312,29 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
             #~ html += ui.href_to(self,force_unicode(self.summary))
         html += _(" on ") + babel.dtos(self.start_date)
         return html
+        
+    def get_datetime(self,name):
+        "`name` can be 'start' or 'end'."
+        d = getattr(self,name+'_date')
+        if not d: return None
+        t = getattr(self,name+'_time')
+        if t:
+            return datetime.datetime.combine(d,t)
+        else:
+            return datetime.datetime(d.year,d.month,d.day)
+        
+    def start_dt(self,request):
+        return self.get_datetime('start')
+    start_dt.return_type = fields.DisplayField(_("Start"))
+    
+    def end_dt(self,request):
+        return self.get_datetime('end') or self.get_datetime('start')
+        #~ et = self.get_datetime('end')
+        #~ if et is None:
+            #~ et = self.get_datetime('start')
+        #~ return et
+    end_dt.return_type = fields.DisplayField(_("End"))
+        
 
 class RecurrenceSet(ComponentBase):
     """
@@ -415,15 +439,6 @@ class Component(ComponentBase,
         #~ if change_type == 'POST': 
             #~ self.isdirty=True
         
-    def get_datetime(self,name):
-        "`name` can be 'start' or 'end'."
-        d = getattr(self,name+'_date')
-        t = getattr(self,name+'_time')
-        if t:
-            return datetime.datetime.combine(d,t)
-        else:
-            return datetime.datetime(d.year,d.month,d.day)
-        
     def summary_row(self,ui,rr,**kw):
         #~ if self.owner and not self.auto_type:
         if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
@@ -513,6 +528,15 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     def site_setup(cls,lino):
         cls.DISABLED_AUTO_FIELDS = reports.fields_list(cls,
             '''summary''')
+            
+    def url(self,request): return 'foo'
+    url.return_type = fields.DisplayField(_("Link URL"))
+    
+    def all_day(self,request): 
+        return not self.start_time
+    all_day.return_type = models.BooleanField(_("all day"))
+    def reminder(self,request): return 'foo'
+    reminder.return_type = fields.DisplayField(_("Reminder"))
 
         
 
@@ -861,9 +885,15 @@ def migrate_reminder(obj,reminder_date,reminder_text,
       alarm_value = delay_value,
       alarm_unit = delay2alarm(delay_type))
       
-class CalendarPanel(reports.Frame):
-    default_action_class = reports.Calendar
+      
+if settings.LINO.use_extensible:
+  
+    class Panel(reports.Frame):
+        default_action_class = reports.Calendar
 
+    class PanelEvents(Events):
+        column_names = 'id start_dt end_dt summary description user place calendar rset url all_day reminder'
+        can_add = perms.never
 
 def setup_main_menu(site,ui,user,m): pass
 
@@ -872,7 +902,8 @@ def setup_my_menu(site,ui,user,m):
     m.add_action('cal.MyTasks')
     #~ m.add_action('cal.MyEventsToday')
     m.add_action('cal.MyEvents')
-    m.add_action('cal.CalendarPanel')
+    if settings.LINO.use_extensible:
+        m.add_action('cal.Panel')
     #~ m.add_action_(actions.Calendar())
   
 def setup_config_menu(site,ui,user,m): 

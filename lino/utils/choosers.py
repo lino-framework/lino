@@ -19,6 +19,8 @@ for defining choices for fields of a Django model.
 - Context-sensitive choices
 - Non-limiting choices 
   (specify a pick list of suggestions but leave the possibility to manually enter different values)
+- Self-learning Combos
+  (having new items automatically stored server-side)
 
 """
 

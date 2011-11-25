@@ -1,0 +1,35 @@
+20111124
+========
+
+Continued with Calendar Panel
+-----------------------------
+
+I managed to have the Calendar panel filled with Lino's Events.
+(I added a new report PanelEvents, virtual fields Event.dt_start and Event.dt_end)
+
+But another problem appeared: 
+I want (or rather need) to use the FormPanel defined by Lino
+when editing the details of an event.
+That seems not so easy because Lino.FormPanel constructor takes a 
+special parameter `ww`.
+All Lino panels have this pointer to their containing window wrapper.
+
+But `Ext.ensible.cal.CalendarPanel` has no API to specify a 
+custom function that creates the editor form, 
+I must replace the 'extensible.eventeditform' 
+with my own class 
+(whose constructor must work with the standard ExtJS signature).
+
+:file:`extensible-all.js` does::
+
+  Ext.reg('extensible.eventeditform', Ext.ensible.cal.EventEditForm);
+
+And I plan to do::
+
+  Ext.reg('extensible.eventeditform', Lino.EventEditForm);
+
+But first I want to make Lino.FormPanel usable without a `containing_window`.
+Moved the `save()` functions from DetailWrapper and InsertWrapper 
+to a single function in `FormPanel`.
+It tests rec.phantom to decide whether it's a POST or a PUT.
+

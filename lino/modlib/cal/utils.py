@@ -54,63 +54,6 @@ def setkw(obj,**kw):
                               
 
 
-#~ class unused_EventStatus(ChoiceList):
-    #~ """A list of possible values for the `status` field of an :class:`Event`.
-    #~ """
-    #~ label = _("Event Status")
-    
-#~ add = EventStatus.add_item
-#~ add('0','tentative',en=u"tentative",de=u"Vorschlag",   fr=u"proposition")
-#~ add('1','confirmed',en=u"confirmed",de=u"bestätigt",   fr=u"confirmé")
-#~ add('2','cancelled',en=u"cancelled",de=u"storniert",   fr=u"annulé")
-#~ add('3','rescheduled',en=u"rescheduled",de=u"verschoben",   fr=u"reporté")
-#~ add('4','absent',en=u"absent",de=u"abwesend",   fr=u"absent")
-
-#~ class unused_TaskStatus(ChoiceList):
-    #~ """A list of possible values for the `status` field of a :class:`Task`.
-    #~ """
-    #~ label = _("Task Status")
-    
-#~ add = TaskStatus.add_item
-#~ add('0',en=u"needs action",de=u"zu erledigen",   fr=u"à traîter")
-#~ add('1',en=u"in process",de=u"begonnen",   fr=u"commencée")
-#~ add('2',en=u"completed",de=u"erledigt",   fr=u"complétée")
-#~ add('3',en=u"cancelled",de=u"storniert",   fr=u"annulée")
-
-
-#~ def add_duration(dt,value,unit):
-    #~ if unit.value == 's' : 
-        #~ return dt + datetime.timedelta(seconds=value)
-    #~ if unit.value == 'm' : 
-        #~ return dt + datetime.timedelta(minutes=value)
-    #~ if unit.value == 'h' : 
-        #~ return dt + datetime.timedelta(hours=value)
-    #~ if unit.value == 'D' : 
-        #~ return dt + datetime.timedelta(days=value)
-    #~ if unit.value == 'W' : 
-        #~ return dt + datetime.timedelta(days=value*7)
-    #~ day = dt.day
-    #~ year = dt.year
-    #~ while True:
-        #~ try:
-            #~ if unit.value == 'M' : 
-                #~ m = dt.month + value
-                #~ while m > 12: 
-                    #~ m -= 12
-                    #~ year += 1
-                #~ while m < 1: 
-                    #~ m += 12
-                    #~ year -= 1
-                #~ return dt.replace(month=m,day=day,year=year)
-            #~ if unit.value == 'Y' : 
-                #~ return dt.replace(month=dt.year + value,day=day)
-            #~ raise Exception("Invalid DurationUnit %s" % unit)
-        #~ except ValueError:
-            #~ if day > 28:
-                #~ day -= 1
-            #~ else:
-                #~ raise
-    
 
 class DurationUnit(ChoiceList):
     """A list of possible values for the `duration_unit` field of an :class:`Event`.
@@ -176,43 +119,6 @@ add('D', _('days')   ,alias='days'   )
 add('W', _('weeks')  ,alias='weeks'  )
 add('M', _('months') ,alias='months' )
 add('Y', _('years')  ,alias='years'  )
-
-
-
-class unused_Priority(ChoiceList):
-    """
-    A list of possible values for the `CLASS` 
-    property of a calendar component.
-    """
-    label = _("Priority")
-    
-#~ add = Priority.add_item
-#~ add('0',en=u"undefined",de=u"nicht angegeben",   fr=u"non spécifiée")
-#~ add('1',en=u"high",de=u"hoch",   fr=u"élevée")
-#~ add('5',en=u"normal",de=u"normal",   fr=u"normale")
-#~ add('9',en=u"low",de=u"niedrig",   fr=u"basse")
-
-#~ add('1',en=u"very urgent",de=u"sehr dringend",   fr=u"très urgent")
-#~ add('2',en=u"quite urgent",de=u"recht dringend",   fr=u"relativement urgent")
-#~ add('3',en=u"relatively urgent",de=u"ziemlich dringend",   fr=u"relativement urgent")
-#~ add('4',en=u"relatively urgent",de=u"ziemlich dringend",   fr=u"relativement urgent")
-#~ add('5',en=u"normal",de=u"normal",   fr=u"normal")
-#~ add('6',en=u"not very urgent",de=u"nicht sehr niedrig",   fr=u"pas très urgent")
-#~ add('7',en=u"not urgent",de=u"nicht dringend",   fr=u"pas urgent")
-#~ add('8',en=u"not urgent",de=u"nicht dringend",   fr=u"pas urgent")
-#~ add('9',en=u"not urgent at all",de=u"überhaupt nicht dringend",   fr=u"pas urgent du tout")
-
-class unused_AccessClass(ChoiceList):
-    """
-    A list of possible values for the `CLASS` 
-    property of a calendar component.
-    """
-    label = _("Access Class")
-    
-#~ add = AccessClass.add_item
-#~ add('0',en=u"Public",de=u"Öffentlich",   fr=u"Public")
-#~ add('1',en=u"Private",de=u"Privat",   fr=u"Privé")
-#~ add('2',en=u"Confidential",de=u"Vertraulich",   fr=u"Confidentiel")
 
 
 

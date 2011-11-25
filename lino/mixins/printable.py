@@ -488,7 +488,9 @@ class PrintAction(BasePrintAction):
     """
     name = 'print'
     label = _('Print')
-    callable_from = None
+    #~ callable_from = None
+    callable_from = (reports.GridEdit,reports.ShowDetailAction)
+    
     #~ needs_selection = True
     
     def before_build(self,bm,elem):

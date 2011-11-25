@@ -92,9 +92,10 @@ from lino.utils.choicelists import DoYouLike, HowWell
 STRENGTH_CHOICES = DoYouLike.get_choices()
 KNOWLEDGE_CHOICES = HowWell.get_choices()
 
-from lino.tools import obj2str, obj2unicode
-
+from lino.tools import resolve_model, obj2str, obj2unicode
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
+
+User = resolve_model(settings.LINO.user_model)
 
 def is_devserver():
     """
@@ -189,6 +190,7 @@ def elem2rec_insert(ar,ah,elem):
     rec = elem2rec1(ar,ah,elem)
     #~ rec.update(title=_("Insert into %s...") % ar.get_title())
     rec.update(title=ar.get_action_title())
+    rec.update(phantom=True)
     #~ rec.update(id=elem.pk) or -99999)
     return rec
 
@@ -272,6 +274,154 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     return rec
             
     
+class ViewReportRequest(reports.ReportActionRequest):
+    
+    editing = 0
+    selector = None
+    sort_column = None
+    sort_direction = None
+    gc = None
+    
+    def __init__(self,request,rh,action,*args,**kw):
+        reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
+        self.ah = rh
+        self.request = request
+        self.store = rh.store
+        if request is None:
+            self.user = None
+        else:
+            kw = self.parse_req(request,rh,**kw)
+        self.setup(*args,**kw)
+        
+        
+    def spawn_request(self,rpt,**kw):
+        rh = rpt.get_handle(self.ui)
+        kw.update(user=self.user)
+        return ViewReportRequest(None,rh,rpt.default_action,**kw)
+        
+    def parse_req(self,request,rh,**kw):
+        #~ gc_name = request.REQUEST.get('gc',None)
+        #~ if gc_name:
+            #~ self.gc = system.GridConfig.objects.get(rptname=self.report.actor_id,name=gc_name)
+            
+        master = kw.get('master',self.report.master)    
+        if master is ContentType:
+            mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
+            try:
+                master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
+            except ContentType.DoesNotExist,e:
+                pass
+                #~ master is None
+                #~ raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
+                
+            #~ print kw
+        if master is not None and not kw.has_key('master_instance'):
+            pk = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_PK,None)
+            #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
+            #~ if pk in ('', '-99999'):
+            if pk == '':
+                pk = None
+            if pk is None:
+                kw['master_instance'] = None
+            else:
+                try:
+                    kw['master_instance'] = master.objects.get(pk=pk)
+                except ValueError,e:
+                    raise Http404("Invalid primary key %r for %s",pk,master.__name__)
+                except master.DoesNotExist,e:
+                    # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
+                    raise Http404("There's no %s with primary key %r",master.__name__,pk)
+            #~ print '20100212', self #, kw['master_instance']
+        #~ print '20100406b', self.report,kw
+        
+        if settings.LINO.use_filterRow:
+            exclude=dict()
+            for f in rh.store.fields:
+                if f.field:
+                    filterOption = request.REQUEST.get('filter[%s_filterOption]' % f.field.name)
+                    if filterOption == 'empty':
+                        kw[f.field.name + "__isnull"] = True
+                    elif filterOption == 'notempty':
+                        kw[f.field.name + "__isnull"] = False
+                    else:
+                        filterValue = request.REQUEST.get('filter[%s]' % f.field.name)
+                        if filterValue:
+                            if not filterOption: filterOption = 'contains'
+                            if filterOption == 'contains':
+                                kw[f.field.name + "__icontains"] = filterValue
+                            elif filterOption == 'doesnotcontain':
+                                exclude[f.field.name + "__icontains"] = filterValue
+                            else:
+                                print "unknown filterOption %r" % filterOption
+            if len(exclude):
+                kw.update(exclude=exclude)
+        if settings.LINO.use_gridfilters:
+            filter = request.REQUEST.get(ext_requests.URL_PARAM_GRIDFILTER,None)
+            if filter is not None:
+                filter = json.loads(filter)
+                kw['gridfilters'] = [dict2kw(flt) for flt in filter]
+        
+        quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
+        if quick_search:
+            kw.update(quick_search=quick_search)
+        offset = request.REQUEST.get(ext_requests.URL_PARAM_START,None)
+        if offset:
+            kw.update(offset=int(offset))
+        limit = request.REQUEST.get(ext_requests.URL_PARAM_LIMIT,None)
+        if limit:
+            kw.update(limit=int(limit))
+        #~ else:
+            #~ kw.update(limit=self.report.page_length)
+            
+        
+        sort = request.REQUEST.get(ext_requests.URL_PARAM_SORT,None)
+        if sort:
+            self.sort_column = sort
+            sort_dir = request.REQUEST.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
+            if sort_dir == 'DESC':
+                sort = '-'+sort
+                self.sort_direction = 'DESC'
+            kw.update(order_by=[sort])
+        
+        #~ layout = request.REQUEST.get('layout',None)
+        #~ if layout:
+            #~ kw.update(layout=int(layout))
+            #~ kw.update(layout=rh.layouts[int(layout)])
+            
+        #~ user = authenticated_user(request.user)
+        user = request.user
+        if user is not None and user.is_superuser:
+            username = request.REQUEST.get(ext_requests.URL_PARAM_EUSER,None)
+            if username:
+                try:
+                    user = User.objects.get(username=username)
+                except User.DoesNotExist, e:
+                    pass
+        kw.update(user=user)
+        
+        return kw
+      
+    def request2kw(self,ui,**kw):
+        if self.quick_search:
+            kw[ext_requests.URL_PARAM_FILTER] = self.quick_search
+        if self.master_instance is not None:
+            kw[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
+            mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
+            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
+        return kw
+
+    def get_user(self):
+        return self.user
+
+    def row2list(self,row):
+        #~ return self.store.row2list(self.request,row)
+        return self.store.row2list(self,row)
+      
+    def row2dict(self,row):
+        #~ return self.store.row2dict(self.request,row)
+        return self.store.row2dict(self,row)
+ 
+
     
 
 
@@ -1014,13 +1164,10 @@ tinymce.init({
         if a is None:
             raise Http404("%s has no action %r" % (rh.report,action_name))
         if isinstance(a,reports.ReportAction):
-            ar = ext_requests.ViewReportRequest(request,rh,a)
+            ar = ViewReportRequest(request,rh,a)
         else:
             ar = reports.ActionRequest(self,a)
         
-        #~ if not rh.report.can_view.passes(request.user):
-            #~ msg = _("User %(user)s cannot view %(report)s.") % dict(user=request.user,report=rpt)
-            #~ return http.HttpResponseForbidden()
         if request.method == 'POST':
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
@@ -1032,7 +1179,6 @@ tinymce.init({
             if rh.report.handle_uploaded_files is not None:
                 rh.report.handle_uploaded_files(instance,request)
             return self.form2obj_and_save(request,rh,request.POST,instance,True)
-            
             
         if request.method == 'GET':
             
@@ -1053,7 +1199,7 @@ tinymce.init({
                     elem = ar.create_instance()
                     #~ rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec = elem2rec_insert(ar,rh,elem)
-                    rec.update(phantom=True)
+                    #~ rec.update(phantom=True)
                     params.update(data_record=rec)
 
                 kw.update(on_ready=['Lino.%s(undefined,%s);' % (
@@ -1204,7 +1350,7 @@ tinymce.init({
             fmt = request.GET.get('fmt',a.default_format)
             #~ a = rpt.get_action(fmt)
                 
-            ar = ext_requests.ViewReportRequest(request,ah,a)
+            ar = ViewReportRequest(request,ah,a)
 
             if isinstance(a,actions.OpenWindowAction):
               
@@ -1511,7 +1657,7 @@ tinymce.init({
         if grid_action:
             a = rpt.get_action(grid_action)
             assert a is not None, "No action %s in %s" % (grid_action,rh)
-            ar = ext_requests.ViewReportRequest(request,rh,a)
+            ar = ViewReportRequest(request,rh,a)
             return json_response(ar.run())
             #~ return json_response(ar.run().as_dict())
                 
@@ -1521,7 +1667,7 @@ tinymce.init({
             rptreq = ext_requests.CSVReportRequest(request,rh,rpt.default_action)
             return rptreq.render_to_csv()
         else:
-            rptreq = ext_requests.ViewReportRequest(request,rh,rpt.default_action)
+            rptreq = ViewReportRequest(request,rh,rpt.default_action)
             if submit:
                 pk = request.POST.get(rh.store.pk.name) #,None)
                 #~ if pk == reports.UNDEFINED:
@@ -1738,10 +1884,13 @@ tinymce.init({
     def a2btn(self,a,**kw):
         if isinstance(a,reports.SubmitDetail):
             #~ kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
-            kw.update(handler=js_code('function() {ww.save()}'))
+            #~ kw.update(handler=js_code('function() {ww.save()}'))
+            kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
+            
             #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
-        elif isinstance(a,reports.SubmitInsert):
-            kw.update(handler=js_code('function() {ww.save()}'))
+        #~ elif isinstance(a,reports.SubmitInsert):
+            #~ kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
+            #~ kw.update(handler=js_code('function() {ww.save()}'))
             #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
             #~ kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
         #~ elif isinstance(a,actions.UpdateRowAction):
@@ -1759,8 +1908,8 @@ tinymce.init({
             kw.update(panel_btn_handler=js_code(
                 'function(panel){Lino.show_insert_duplicate(panel)}'))
         elif isinstance(a,reports.DeleteSelected):
-            kw.update(panel_btn_handler=js_code(
-                "Lino.delete_selected" % a))
+            kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
+                #~ "Lino.delete_selected" % a))
         #~ elif isinstance(a,actions.RedirectAction):
             #~ kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
         elif isinstance(a,reports.RowAction):

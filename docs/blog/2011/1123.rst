@@ -77,3 +77,4 @@ The calendar is currently still empty.
 I need to configure `eventStore` 
 (probably the last challenge for this new feature).
 
+Check-in.
