@@ -160,7 +160,7 @@ class EnableChild(VirtualField):
         """
         When a DetailLayout is inherited by an MTI child, EnableChild fields must be disabled.
         """
-        return lh.rh.report.model != self.child_model and issubclass(self.child_model,lh.rh.report.model)
+        return lh.model != self.child_model and issubclass(self.child_model,lh.model)
 
     def lino_kernel_setup(self,model,name):
         self.child_model = resolve_model(self.child_model,model._meta.app_label)

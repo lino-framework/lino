@@ -73,6 +73,27 @@ def unused_parse_js_date(s,name):
     return datetime.date(*settings.LINO.parse_date(s))
     #~ print "parse_js_date %s : %r -> %s" % (name,s,v)
     #~ return v
+    
+    
+def wildcard_data_elems(model):
+    """Yields names that will be used as wildcard column_names of a Report.
+    """
+    meta = model._meta
+    #~ for f in meta.fields: yield f.name
+    #~ for f in meta.many_to_many: yield f.name
+    #~ for f in meta.virtual_fields: yield f.name
+    for f in meta.fields: 
+        #~ if f.editable:
+        if not isinstance(f,fields.VirtualField):
+            if not getattr(f,'_lino_babel_field',False):
+                yield f
+    for f in meta.many_to_many: yield f
+    for f in meta.virtual_fields: yield f
+    # todo: for slave in self.report.slaves
+  
+    #~ for de in data_elems(self.model): yield de
+      
+    
 
 def is_installed(app_label):
     if not '.' in app_label:
@@ -463,7 +484,7 @@ class ReportHandle(base.Handle):
         assert isinstance(report,Report)
         self.report = report
         #~ self.data_elems = report.data_elems
-        self.get_data_elem = report.get_data_elem
+        #~ self.get_data_elem = report.get_data_elem
         self._layouts = None
         #~ actors.ActorHandle.__init__(self,report)
         #~ datalinks.DataLink.__init__(self,ui)
@@ -472,7 +493,7 @@ class ReportHandle(base.Handle):
         if self.report.model is not None:
             if not self.report.model._meta.abstract:
                 if ui is not None:
-                    self.list_layout = LayoutHandle(self,
+                    self.list_layout = ListLayoutHandle(self,
                         ListLayout('main = '+self.report.column_names),
                         hidden_elements=self.report.hidden_columns)
                 self.content_type = ContentType.objects.get_for_model(self.report.model).pk
@@ -485,9 +506,10 @@ class ReportHandle(base.Handle):
         if self._layouts is not None:
             return
         self._layouts = [ self.list_layout ] 
-        if self.report.model is not None:
-            self._layouts += [ LayoutHandle(self,dtl) 
-                for dtl in self.report.detail_layouts ]
+        #~ if self.report.model is not None:
+            #~ self._layouts += [ 
+                #~ LayoutHandle(self.ui,self.report.model,dtl) 
+                #~ for dtl in self.report.detail_layouts ]
               
     def get_actor_url(self,*args,**kw):
         return self.ui.get_actor_url(self.report,*args,**kw)
@@ -495,17 +517,23 @@ class ReportHandle(base.Handle):
     def submit_elems(self):
         return []
         
-    def get_layout(self,i):
-        self.setup_layouts()
-        return self._layouts[i]
+    #~ def get_layout(self,i):
+        #~ self.setup_layouts()
+        #~ return self._layouts[i]
         
-    def get_used_layouts(self):
-        self.setup_layouts()
-        return self._layouts
+    #~ def get_used_layouts(self):
+        #~ self.setup_layouts()
+        #~ return self._layouts
         
-    def get_detail_layouts(self):
-        self.setup_layouts()
-        return self._layouts[1:]
+    #~ def get_detail_layouts(self):
+        #~ if self.model._lino_detail is None:
+            #~ return []
+        #~ dh = self.model._lino_detail.get_handle(self.ui)
+        #~ return dh.layouts
+        
+    #~ def get_detail_layouts(self):
+        #~ self.setup_layouts()
+        #~ return self._layouts[1:]
         
     def get_list_layout(self):
         self.setup_layouts()
@@ -532,7 +560,7 @@ class ReportHandle(base.Handle):
     def get_actions(self,*args,**kw):
         return self.report.get_actions(*args,**kw)
         
-    def get_details(self):
+    def unused_get_details(self):
         return self.report.details
         #~ return self.layouts[1:]
           
@@ -543,10 +571,12 @@ class ReportHandle(base.Handle):
         #~ return ar
         
     def update_detail(self,tab,desc):
-        old_dtl = self.report.detail_layouts[tab]
+        raise Exception("Not yet fully converted to Lino 1.3.0")
+        old_dtl = self.report.model._lino_detail.layouts[tab]
         dtl = DetailLayout(desc,old_dtl.filename,old_dtl.cd)
-        self.report.detail_layouts[tab] = dtl
-        self._layouts[tab+1] = LayoutHandle(self,dtl)
+        self.report.model._lino_detail.layouts[tab] = dtl
+        dh = dtl.get_handle(self.ui)
+        self._layouts[tab+1] = LayoutHandle(self.ui,self.report.model,dtl)
         self.ui.setup_handle(self)
         #~ self.report.save_config()
         dtl.save_config()
@@ -1060,7 +1090,7 @@ class Report(actors.Actor): #,base.Handled):
         return self.model._meta.verbose_name_plural
         
     def column_choices(self):
-        return [ de.name for de in self.wildcard_data_elems() ]
+        return [ de.name for de in wildcard_data_elems(self.model) ]
           
     
     def do_setup(self):
@@ -1097,7 +1127,7 @@ class Report(actors.Actor): #,base.Handled):
             else:
                 self._slaves = []
                 
-        self.setup_detail_layouts()
+        #~ self.setup_detail_layouts()
         self.set_actions([])
         self.setup_actions()
         self.add_action(self.default_action)
@@ -1129,7 +1159,8 @@ class Report(actors.Actor): #,base.Handled):
         
     def setup_actions(self):
         if self.model is not None:
-            if len(self.detail_layouts) > 0:
+            #~ if len(self.detail_layouts) > 0:
+            if self.model._lino_detail:
                 self.detail_action = ShowDetailAction(self)
                 self.add_action(self.detail_action)
                 self.add_action(SubmitDetail())
@@ -1143,7 +1174,7 @@ class Report(actors.Actor): #,base.Handled):
                 #~ self.add_action(actions.ImageAction())
         
       
-    def setup_detail_layouts(self):
+    def unused_setup_detail_layouts(self):
         """
         Yield all detail tabs for this report.
         Each detail tab corresponds to a :xfile:`.dtl` file).
@@ -1182,34 +1213,19 @@ class Report(actors.Actor): #,base.Handled):
         
             
         
-    def wildcard_data_elems(self):
-        """Yields names that will be used as wildcard column_names of a Report.
-        """
-        meta = self.model._meta
-        #~ for f in meta.fields: yield f.name
-        #~ for f in meta.many_to_many: yield f.name
-        #~ for f in meta.virtual_fields: yield f.name
-        for f in meta.fields: 
-            #~ if f.editable:
-            if not isinstance(f,fields.VirtualField):
-                if not getattr(f,'_lino_babel_field',False):
-                    yield f
-        for f in meta.many_to_many: yield f
-        for f in meta.virtual_fields: yield f
-        # todo: for slave in self.report.slaves
-      
-        #~ for de in data_elems(self.model): yield de
-          
-    def get_data_elem(self,name):
-        de = get_data_elem(self.model,name)
-        if de is not None: 
-            return de
+    def get_data_elem(self,name): return get_data_elem(self.model,name)
+        #~ de = get_data_elem(self.model,name)
+        #~ if de is not None: 
+            #~ return de
         #~ return self.get_action(name)
         
         
-    def get_details(self):
+    def unused_get_details(self):
         return self.details
             
+    def get_detail(self):
+        return self.model._lino_detail
+        
     def get_title(self,rr):
         """
         Return the title of this Report for the given request `rr`.
@@ -1575,7 +1591,8 @@ class LayoutHandle:
     """
     start_focus = None
     
-    def __init__(self,rh,layout,hidden_elements=frozenset()):
+    #~ def __init__(self,rh,layout,hidden_elements=frozenset()):
+    def __init__(self,ui,model,layout,hidden_elements=frozenset()):
       
         #~ logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
         assert isinstance(layout,BaseLayout)
@@ -1583,7 +1600,9 @@ class LayoutHandle:
         #~ base.Handle.__init__(self,ui)
         #~ actors.ActorHandle.__init__(self,layout)
         self.layout = layout
-        self.rh = rh
+        self.ui = ui
+        self.model = model
+        #~ self.rh = rh
         #~ self.datalink = layout.get_datalink(ui)
         #~ self.name = layout._actor_name
         self.label = layout.label # or ''
@@ -1593,7 +1612,7 @@ class LayoutHandle:
         #~ self.slave_grids = []
         #~ self._buttons = []
         self.hidden_elements = hidden_elements # layout.get_hidden_elements(self)
-        self.main_class = rh.ui.main_panel_class(layout)
+        self.main_class = ui.main_panel_class(layout)
         
         #~ if layout.main is not None:
         if layout.main:
@@ -1601,7 +1620,7 @@ class LayoutHandle:
             self._main = self.create_element(self.main_class,'main')
             if self._main is None:
                 raise Exception("%s.%s could not create main element" 
-                    % (rh.report,self.layout))
+                    % (model,self.layout))
         else:
             raise Exception("%s has no main" % self.layout)
             
@@ -1629,8 +1648,11 @@ class LayoutHandle:
     #~ def __str__(self):
         #~ return str(self.layout) + "Handle"
         
+    def get_data_elem(self,name): return get_data_elem(self.model,name)
+      
     def __str__(self):
-        return "%s %s" % (self.rh,self.__class__.__name__)
+        #~ return "%s %s" % (self.rh,self.__class__.__name__)
+        return "%s %s" % (self.model,self.__class__.__name__)
         
     #~ def elems_by_field(self,name):
         #~ return self._elems_by_field.get(name,[])
@@ -1678,6 +1700,12 @@ class LayoutHandle:
     def ext_lines(self,request):
         return self._main.ext_lines(request)
   
+    def use_as_wildcard(self,de):
+        if de.name.endswith('_ptr'): return False
+        #~ and (de.name not in self.hidden_elements) \
+        #~ and (de.name not in self.rh.report.known_values.keys()) \
+        #~ if de.name == self.rh.report.fk_name: return False
+        return True
   
     def desc2elem(self,panelclass,desc_name,desc,**kw):
         #logger.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
@@ -1689,12 +1717,10 @@ class LayoutHandle:
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                de.name for de in self.rh.report.wildcard_data_elems() \
+                de.name for de in wildcard_data_elems(self.model) \
+                  
                   if (de.name not in explicit_specs) \
-                    and (not de.name.endswith('_ptr')) \
-                    #~ and (de.name not in self.hidden_elements) \
-                    #~ and (de.name not in self.rh.report.known_values.keys()) \
-                    and (de.name != self.rh.report.fk_name) \
+                    and self.use_as_wildcard(de) \
                 ])
             desc = desc.replace('*',wildcard_fields)
             #~ if 'CourseRequestsByPerson' in str(self):
@@ -1707,7 +1733,7 @@ class LayoutHandle:
                 x = x.strip()
                 if len(x) > 0 and not x.startswith("# "):
                     i += 1
-                    e = self.desc2elem(self.rh.ui.Panel,desc_name+'_'+str(i),x,**kw)
+                    e = self.desc2elem(self.ui.Panel,desc_name+'_'+str(i),x,**kw)
                     if e is not None:
                         elems.append(e)
             if len(elems) == 0:
@@ -1725,7 +1751,7 @@ class LayoutHandle:
                     20100214 dsbe.PersonDetail hatte 2 MainPanels, 
                     weil PageLayout kein einzeiliges (horizontales) `main` vertrug
                     """
-                    e = self.create_element(self.rh.ui.Panel,x)
+                    e = self.create_element(self.ui.Panel,x)
                     if e is None:
                         pass
                     elif isinstance(e,list):
@@ -1742,7 +1768,7 @@ class LayoutHandle:
     def create_element(self,panelclass,desc_name):
         #~ logger.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
-        e = self.rh.ui.create_layout_element(self,panelclass,name,**kw)
+        e = self.ui.create_layout_element(self,panelclass,name,**kw)
         # todo: cannot hide babelfields
         if name in self.hidden_elements:
             e.hidden = True
@@ -1761,4 +1787,42 @@ class LayoutHandle:
             elif len(a) == 2:
                 return name, dict(width=int(a[0]),height=int(a[1]))
         raise Exception("Invalid picture descriptor %s" % picture)
+        
+class ListLayoutHandle(LayoutHandle):
+  
+    def __init__(self,rh,*args,**kw):
+        self.rh = rh
+        LayoutHandle.__init__(self,rh.ui,rh.report.model,*args,**kw)
+        
+    def use_as_wildcard(self,de):
+        if de.name.endswith('_ptr'): return False
+        #~ and (de.name not in self.hidden_elements) \
+        #~ and (de.name not in self.rh.report.known_values.keys()) \
+        if de.name == self.rh.report.fk_name: return False
+        return True
+  
+
+class DetailHandle(base.Handle):
+    """
+    """
+    def __init__(self,ui,detail):
+        self.detail = detail
+        self.lh_list = [ 
+            LayoutHandle(ui,self.detail.model,dl) 
+                for dl in self.detail.layouts ]
+        base.Handle.__init__(self,ui)
+      
+
+class Detail(base.Handled):
+    """
+    The UI-agnostic representation of a Detail window.
+    Equivalent to a collection of .dtl files.
+    """
+    
+    _handle_class = DetailHandle
+    
+    def __init__(self,model,layouts):
+        self.model = model
+        self.layouts = layouts
+        base.Handled.__init__(self)
         

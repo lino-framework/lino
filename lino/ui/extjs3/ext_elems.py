@@ -227,7 +227,7 @@ class VisibleComponent(Component):
         for e in self.walk():
             yield '<tr><td>'+sep.join([py2html(e,n) for n in cols]) +'</td></tr>'
             
-    def has_field(self,fld):
+    def unused_has_field(self,fld):
         for de in self.walk():
             if isinstance(de,FieldElement) and de.field is fld:
                 return True
@@ -396,7 +396,7 @@ class FieldElement(LayoutElement):
     
     def __init__(self,lh,field,**kw):
         if not hasattr(field,'name'):
-            raise Exception("Field %s.%s has no name!" % (lh.rh.report,field))
+            raise Exception("Field %s.%s has no name!" % (lh,field))
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
@@ -481,7 +481,7 @@ class TextFieldElement(FieldElement):
                 # we don't call FieldElement.__init__ but do almost the same:
                 self.field = field
                 self.editable = field.editable # and not field.primary_key
-                kw.update(ls_url=rpt2url(lh.rh.report))
+                #~ 20111126 kw.update(ls_url=rpt2url(lh.rh.report))
                 kw.update(containing_window=js_code("ww"))
                 #~ kw.update(title=unicode(field.verbose_name)) 20111111
                 kw.update(title=field.verbose_name)
@@ -588,7 +588,7 @@ class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
   
     def store_options(self,**kw):
-        proxy = dict(url=self.lh.rh.ui.get_choices_url(self),method='GET')
+        proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
         kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
         # a JsonStore without explicit proxy sometimes used method POST
         return kw
@@ -1227,7 +1227,7 @@ class Panel(Container):
 class FieldSetPanel(Panel):
     value_template = "new Ext.form.FieldSet(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
-        self.fieldset = getattr(lh.rh.report.model,name)
+        self.fieldset = getattr(lh.model,name)
         for child in elements:
             child.label = self.fieldset.get_child_label(child.name)
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
@@ -1266,7 +1266,7 @@ class GridElement(Container):
         assert isinstance(rpt,reports.Report), "%r is not a Report!" % rpt
         self.report = rpt
         if len(columns) == 0:
-            self.rh = rpt.get_handle(lh.rh.ui)
+            self.rh = rpt.get_handle(lh.ui)
             if not hasattr(self.rh,'list_layout'):
                 raise Exception("%s has no list_layout" % self.rh)
             columns = self.rh.list_layout._main.columns
@@ -1308,7 +1308,7 @@ class GridElement(Container):
             #~ self.column_model.columns[i].update(width = w)
 
     def ext_options(self,**kw):
-        rh = self.report.get_handle(self.lh.rh.ui)
+        rh = self.report.get_handle(self.lh.ui)
         kw = LayoutElement.ext_options(self,**kw)
         #~ d.update(ls_data_url=rh.ui.get_actor_url(self.report))
         kw.update(ls_url=rpt2url(self.report))
@@ -1401,7 +1401,7 @@ class DetailMainPanel(Panel,MainPanel):
     value_template = "new Ext.Panel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         #~ self.rh = lh.datalink
-        self.report = lh.rh.report
+        #~ 20111126 self.report = lh.rh.report
         #~ MainPanel.__init__(self)
         #~ DataElementMixin.__init__(self,lh.link)
         kw.update(autoScroll=True)
@@ -1428,7 +1428,6 @@ class TabPanel(jsgen.Component):
 #~ class TabPanel(jsgen.Value):
     value_template = "new Ext.TabPanel(%s)"
 
-        
     def __init__(self,tabs,**kw):
         self.active_children = []
         for t in tabs:
@@ -1452,21 +1451,22 @@ class TabPanel(jsgen.Component):
         )
         jsgen.Value.__init__(self,kw)
         
-    def has_field(self,f):
+    def unused_has_field(self,f):
         for t in self.tabs:
             if t.has_field(f): 
                 return True
 
 
+from lino.tools import full_model_name
 
 class FormPanel(jsgen.Component):
     declare_type = jsgen.DECLARE_VAR
     listeners = None
     
-    def __init__(self,rh,action,main,**kw):
+    def __init__(self,rh,action,**kw):
         self.rh = rh
-        self.value_template = "new Lino.%s.FormPanel(%%s)" % self.rh.report
-        self.main = main
+        self.value_template = "new Lino.%s.FormPanel(%%s)" % full_model_name(self.rh.report.model)
+        #~ self.main = main
         kw.update(
           #~ items=main,
           #~ autoScroll=True,
@@ -1478,41 +1478,6 @@ class FormPanel(jsgen.Component):
         if not isinstance(action,reports.InsertRow):
             kw.update(has_navigator=rh.report.has_navigator)
             
-        self.on_render = []
-        elems_by_field = {}
-        field_elems = []
-        for e in main.active_children:
-            if isinstance(e,FieldElement):
-                field_elems.append(e)
-                l = elems_by_field.get(e.field.name,None)
-                if l is None:
-                    l = []
-                    elems_by_field[e.field.name] = l
-                l.append(e)
-            
-        for e in field_elems:
-            #~ if isinstance(e,FileFieldElement):
-                #~ kw.update(fileUpload=True)
-            chooser = choosers.get_for_field(e.field)
-            if chooser:
-                #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
-                for f in chooser.context_fields:
-                    for el in elems_by_field.get(f.name,[]):
-                        #~ if main.has_field(f):
-                        #~ varname = varname_field(f)
-                        #~ on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
-                        self.on_render.append(
-                            "%s.on('change',Lino.chooser_handler(%s,%r));" % (
-                            el.as_ext(),e.as_ext(),f.name))
-        
-        #~ 20111125 : listeners and before_row_edit are no longer rendered in ext_windows
-        #~ if on_render:
-            #~ assert not kw.has_key('listeners')
-            #~ kw.update(listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render))))
-            #~ self.listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render)))
-        #~ kw.update(before_row_edit=before_row_edit(main))
-        #~ self.before_row_edit=before_row_edit(main)
-        
         rpt = rh.report
         a = rpt.get_action('detail')
         if a:
@@ -1525,7 +1490,7 @@ class FormPanel(jsgen.Component):
         kw.update(ls_url=rpt2url(rpt))
         jsgen.Component.__init__(self,'form_panel',**kw)
         
-    def has_field(self,f):
+    def unused_has_field(self,f):
         return self.main.has_field(f)
 
 

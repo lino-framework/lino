@@ -64,6 +64,7 @@ from lino import fields
 from lino.ui import base
 from lino.core import actors
 from lino.tools import makedirs_if_missing
+from lino.tools import full_model_name
 from lino.utils import dblogger
 from lino.utils import ucsv
 from lino.utils import choosers
@@ -464,7 +465,8 @@ class ExtUI(base.UI):
         
     def create_layout_element(self,lh,panelclass,name,**kw):
         
-        de = lh.rh.report.get_data_elem(name)
+        #~ de = lh.rh.report.get_data_elem(name)
+        de = lh.get_data_elem(name)
             
         #~ if isinstance(de,actions.ImageAction):
             #~ return ext_elems.PictureElement(lh,name,de,**kw)
@@ -477,7 +479,8 @@ class ExtUI(base.UI):
                 if len(babel.BABEL_LANGS) > 0:
                     elems = [ self.create_field_element(lh,de,**kw) ]
                     for lang in babel.BABEL_LANGS:
-                        bf = lh.rh.report.get_data_elem(name+'_'+lang)
+                        bf = lh.get_data_elem(name+'_'+lang)
+                        #~ bf = lh.rh.report.get_data_elem(name+'_'+lang)
                         elems.append(self.create_field_element(lh,bf,**kw))
                     return elems
             return self.create_field_element(lh,de,**kw)
@@ -1081,6 +1084,7 @@ tinymce.init({
             msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
             return http.HttpResponseForbidden(msg)
         if request.method == 'GET':
+            raise Exception("TODO: convert after 20111127")
             tab = int(request.GET.get('tab','0'))
             return json_response_kw(success=True,tab=tab,desc=rpt.detail_layouts[tab]._desc)
         if request.method == 'PUT':
@@ -1369,7 +1373,9 @@ tinymce.init({
                     
                 params = dict(data_record=datarec)
                 bp = ar.request2kw(self)
-                if a.window_wrapper.tabbed:
+                
+                #~ if a.window_wrapper.tabbed:
+                if rpt.model._lino_detail.get_handle(self).tabbed:
                     tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
                     if tab is not None: 
                         tab = int(tab)
@@ -1459,6 +1465,12 @@ tinymce.init({
             tpl = self.linolib_template()
             
             f.write(jscompress(unicode(tpl)+'\n'))
+            
+            for model in models.get_models():
+                if model._lino_detail:
+                    f.write("Ext.namespace('Lino.%s')\n" % full_model_name(model))
+                    for ln in self.js_render_detail_classdef(model._lino_detail.get_handle(self)):
+                        f.write(ln + '\n')
             
             for rpt in reports.master_reports \
                      + reports.slave_reports \
@@ -1699,8 +1711,10 @@ tinymce.init({
 
     def get_choices_url(self,fke,**kw):
         return self.build_url("choices",
-            fke.lh.rh.report.app_label,
-            fke.lh.rh.report._actor_name,
+            #~ fke.lh.rh.report.app_label,
+            fke.lh.model._meta.app_label,
+            #~ fke.lh.rh.report._actor_name,
+            fke.lh.model.__name__,
             fke.field.name,**kw)
         
     #~ def quicklink(self,request,app_label,actor,**kw):
@@ -1857,11 +1871,12 @@ tinymce.init({
         #~ if isinstance(h,layouts.TabPanelHandle):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
-        if isinstance(h,reports.FrameHandle):
+        if isinstance(h,reports.DetailHandle): self.setup_detail_handle(h)
+        elif isinstance(h,reports.FrameHandle):
             for a in h.get_actions():
                 a.window_wrapper = self.action_window_wrapper(a,h)
                 
-        if isinstance(h,reports.ReportHandle):
+        elif isinstance(h,reports.ReportHandle):
             #~ logger.debug('ExtUI.setup_handle() %s',h.report)
             if h.report.model is None or h.report.model._meta.abstract:
                 return
@@ -1877,7 +1892,7 @@ tinymce.init({
                     #~ raise Exception(
                       #~ "%s defines %r but that is a reserved name in lino.ui.extjs" % (
                       #~ h.report,de.name))
-                
+                      
     def source_dir(self):
         return os.path.abspath(os.path.dirname(__file__))
         
@@ -1924,3 +1939,78 @@ tinymce.init({
         )
         return kw
         
+    def setup_detail_handle(self,dh):
+        """
+        Adds UI-specific information to a DetailHandle.
+        """
+        lh_list = dh.lh_list
+        if len(lh_list) == 1:
+            dh.tabbed = False
+            lh = lh_list[0]
+            #~ lh.label = None
+            dh.main = lh._main
+            #~ main.update(autoScroll=True)
+        else:
+            dh.tabbed = True
+            tabs = [lh._main for lh in lh_list]
+            #~ for t in tabs: t.update(autoScroll=True)
+            dh.main = ext_elems.TabPanel(tabs)
+            
+        dh.on_render = []
+        elems_by_field = {}
+        field_elems = []
+        for e in dh.main.active_children:
+            if isinstance(e,ext_elems.FieldElement):
+                field_elems.append(e)
+                l = elems_by_field.get(e.field.name,None)
+                if l is None:
+                    l = []
+                    elems_by_field[e.field.name] = l
+                l.append(e)
+            
+        for e in field_elems:
+            #~ if isinstance(e,FileFieldElement):
+                #~ kw.update(fileUpload=True)
+            chooser = choosers.get_for_field(e.field)
+            if chooser:
+                #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
+                for f in chooser.context_fields:
+                    for el in elems_by_field.get(f.name,[]):
+                        #~ if main.has_field(f):
+                        #~ varname = varname_field(f)
+                        #~ on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
+                        dh.on_render.append(
+                            "%s.on('change',Lino.chooser_handler(%s,%r));" % (
+                            el.as_ext(),e.as_ext(),f.name))
+        
+      
+    def js_render_detail_classdef(self,dh):
+        
+        yield ""
+        yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % full_model_name(dh.detail.model)
+        yield "  before_row_edit : function(record) {"
+        for ln in ext_elems.before_row_edit(dh.main):
+            yield "    " + ln
+        #~ yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % self.main.rh.report
+        yield "  },"
+        if dh.on_render:
+            yield "  onRender : function(ct, position) {"
+            for ln in dh.on_render:
+                yield "    " + ln
+            yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % full_model_name(dh.detail.model)
+            yield "  },"
+        yield "  initComponent : function() {"
+        yield "    var ww = this.containing_window;"
+        for ln in jsgen.declare_vars(dh.main):
+            yield "    " + ln
+        yield "    this.items = %s;" % dh.main.as_ext()
+        #~ 20111125 see ext_elems.py too
+        #~ if self.main.listeners:
+            #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
+        #~ yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
+        yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % full_model_name(dh.detail.model)
+        yield "  }"
+        yield "});"
+        yield ""
+      
+            

@@ -131,27 +131,15 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
         self.action = action
         GridWrapperMixin.__init__(self,rh)
         MasterWrapper.__init__(self,rh,action,rh.list_layout,**kw)
-      
 
-class BaseDetailWrapper(MasterWrapper):
+
+class DetailWrapper(MasterWrapper):
   
     def __init__(self,rh,action,**kw):
         self.rh = rh
-        details = rh.get_detail_layouts()
-        if len(details) == 1:
-            self.tabbed = False
-            lh = details[0]
-            #~ lh.label = None
-            main = ext_elems.FormPanel(rh,action,lh._main,method=self.method)
-            #~ main.update(autoScroll=True)
-            WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
-        else:
-            self.tabbed = True
-            tabs = [lh._main for lh in details]
-            #~ for t in tabs: t.update(autoScroll=True)
-            main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs),method=self.method)
-            WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
-            
+        main = ext_elems.FormPanel(rh,action)
+        WindowWrapper.__init__(self,action,rh.ui,None,main,**kw)
+        
         
     def get_config(self):
         d = MasterWrapper.get_config(self)
@@ -165,49 +153,12 @@ class BaseDetailWrapper(MasterWrapper):
         return d
         
         
-class DetailWrapper(BaseDetailWrapper):
-    method = 'PUT'
-  
-    def js_render_formpanel(self):
-        yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % self.main.rh.report
-        yield "  before_row_edit : function(record) {"
-        for ln in ext_elems.before_row_edit(self.main.main):
-            yield "    " + ln
-        #~ yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % self.main.rh.report
-        yield "  },"
-        if self.main.on_render:
-            yield "  onRender : function(ct, position) {"
-            for ln in self.main.on_render:
-                yield "    " + ln
-            yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % self.main.rh.report
-            yield "  },"
-        yield "  initComponent : function() {"
-        yield "    var ww = this.containing_window;"
-        for ln in jsgen.declare_vars(self.main.main):
-            yield "    " + ln
-        yield "    this.items = %s;" % self.main.main.as_ext()
-        #~ 20111125 see ext_elems.py too
-        #~ if self.main.listeners:
-            #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
-        #~ yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
-        yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % self.main.rh.report
-        yield "  }"
-        yield "});"
-        yield ""
         
-
-    def js_render(self):
-        assert isinstance(self.main,ext_elems.FormPanel)
-        for ln in self.js_render_formpanel():
-            yield ln
-        for ln in MasterWrapper.js_render(self):
-            yield ln
-
   
-class InsertWrapper(BaseDetailWrapper):
-    method = 'POST'
+class InsertWrapper(DetailWrapper):
+
     def get_config(self):
-        d = BaseDetailWrapper.get_config(self)
+        d = DetailWrapper.get_config(self)
         d.update(record_id=-99999);
         return d
         

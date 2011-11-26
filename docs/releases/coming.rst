@@ -1,10 +1,13 @@
-Version 1.2.9 (Coming)
+Version 1.3.0 (Coming)
 ======================
 
 Benutzer
 --------
 
+- Bug-Gefahr, denn es hat einige interne Optimierungen gegeben. 
 - Optimierungen und Bugfixes beim Eingeben von Terminen.
+- Passbilder sind jetzt nicht mehr verzerrt
+
   
 
 Administrator

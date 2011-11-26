@@ -966,6 +966,7 @@ Lino.action_handler = function (panel,on_success,gridmode) {
       }
       #end if
       if (result.open_url) {
+          console.log(20111126,result.open_url);
           if (!result.message)
               Lino.notify('Open new window <a href="'+result.open_url+'" target="_blank">'+result.open_url+'</a>');
           window.open(result.open_url,'foo',"");

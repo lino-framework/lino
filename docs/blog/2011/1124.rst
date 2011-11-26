@@ -50,13 +50,101 @@ And the result was suboptimal since the picture were stretched to
 fill the rectangle.
 Replaced by a simple :class:`lino.fields.HtmlBox` field::
 
-    def image2(self,request):
-        return '<img src="%s" width="120px"/>' % self.get_image_url()
+    def image(self,request):
+        url = self.get_image_url()
+        s = '<img src="%s" width="100%%"/>' % url
+        s = '<a href="%s" target="_blank">%s</a>' % (url,s)
+        return s
     image2.return_type = fields.HtmlBox()
 
-Layouts are now still Record-based, but everything is ready to make 
+Layouts are now still Report-based, but everything is ready to make 
 them model-based.
 
 Checkin 20111126 07:03 because it seems to work so far
-(except that `before_row_edit` isn't called on a GridPanel).
+(except that `before_row_edit` isn't called on a GridPanel and probably some more bugs).
+
+DetailLayouts are now stored in the model, no longer in the Report.
+New classes :class:`lino.reports.Detail` and :class:`lino.reports.DetailHandle`.
+There is one `Detail` instance per model, stored in `model._lino_detail` 
+which is `None` for models that have no `.dtl` files.
+There is still no possibility to define different Detail Windows 
+per Model and there's no need for it yet, but that's now possible.
+:meth:`lino.ui.extjs3.ext_ui.ExtUI.build_lino_js` now generates the 
+definition of a FormPanel subclass for each Detail.
+
+Checkin 20111127 01:27 because it seems to work so far.
+
+
+Todo next: 
+generate also a class definition of a GridPanel subclass for each Report
+
+
+Something like this::
+
+  Ext.namespace('Lino.thirds.ThirdsByOwner')
+  Lino.thirds.ThirdsByOwner.GridPanel = Ext.Extend(Lino.GridPanel,{
+  ls_url : "/thirds/ThirdsByOwner", 
+  
+  ls_bbar_actions: [ 
+    { "text": "L\u00f6schen", "name": "DeleteSelected", "panel_btn_handler": Lino.delete_selected } 
+  ], 
+  gc_name: 0, 
+  stripeRows: true, 
+  ls_quick_edit: true, 
+  ls_store_fields: [ { "type": "int", "name": "seqno" }, 
+    { "name": "person" },'personHidden', { "name": "company" },'companyHidden', 
+    { "type": "int", "name": "id" }, { "name": "owner_type" },'owner_typeHidden', 
+    { "name": "owner_id" },'owner_idHidden', { "name": "remark" }, 
+    { "type": "int", "name": "id" } 
+  ], 
+  pk_index: 5, 
+  ls_grid_configs: [  ], 
+  ls_id_property: "id", 
+  page_length: 30, 
+  ls_columns: [ 
+      { "colIndex": 0, "sortable": true, "header": "Seq.-Nr.", "editable": true, "filter": { "type": "numeric" }, 
+        "width": 45, "dataIndex": "seqno", "hidden": false, "editor": this.seqno8973 }, 
+      { "colIndex": 1, "sortable": true, "header": "Person", "editable": true, "filter": { "type": "string" }, "width": 90, "renderer": Lino.fk_renderer('personHidden','Lino.contacts.AllPersons.detail'), "hidden": false, "editor": this.person8974, "dataIndex": "person" }, { "colIndex": 2, "sortable": true, "header": "Organisation", "editable": true, "filter": { "type": "string" }, "width": 90, "renderer": Lino.fk_renderer('companyHidden','Lino.contacts.Companies.detail'), "hidden": false, "editor": this.company8975, "dataIndex": "company" }, { "colIndex": 3, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": this.id8976, "dataIndex": "id" }, { "colIndex": 4, "sortable": true, "header": "Verkn\u00fcpft mit (Modell)", "editable": true, "filter": { "type": "string" }, "width": 90, "dataIndex": "owner_type", "hidden": false, "editor": this.owner_type8977 }, { "colIndex": 5, "sortable": true, "header": "Verkn\u00fcpft mit (Objekt)", "editable": true, "filter": { "type": "string" }, "width": 90, "dataIndex": "owner_id", "hidden": false, "editor": this.owner_id8978 }, { "colIndex": 6, "sortable": false, "header": "Bemerkung", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": this.remark8979, "dataIndex": "remark" } 
+  ],
+         
+  before_row_edit : function(record) {
+    ...
+  },
+  initComponent : function() {
+    var ww = this.containing_window;
+    this.seqno8973 = { "xtype": "numberfield" };
+    this.person8974 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/thirds/Third/person", "method": "GET" }) }), "pageSize": 30, "emptyText": "Person ausw\u00e4hlen..." });
+    this.company8975 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/thirds/Third/company", "method": "GET" }) }), "pageSize": 30, "emptyText": "Organisation ausw\u00e4hlen..." });
+    this.id8976 = { "xtype": "numberfield" };
+    this.owner_type8977 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/thirds/Third/owner_type", "method": "GET" }) }), "pageSize": 30, "emptyText": "Inhaltstyp ausw\u00e4hlen..." });
+    this.owner_id8978 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/thirds/Third/owner_id", "method": "GET" }) }) });
+    this.remark8979 = new Ext.form.TextArea({ "growMax": 2000 });
+  }
+
+  Lino.thirds.ThirdsByOwner.grid = function(caller,params) { 
+    var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 29, "action_name": "grid" },params);
+    ww.main_item = this.new Lino.thirds.ThirdsByOwner.GridPanel({"containing_window": ww});
+    ww.show();
+  }
+
+
+Instead of::
+
+  Ext.namespace('Lino.thirds.ThirdsByOwner')
+  Lino.thirds.ThirdsByOwner.grid = function(caller,params) { 
+    var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 29, "action_name": "grid" },params);
+    this.seqno8973 = { "xtype": "numberfield" };
+    this.person8974 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/thirds/Third/person", "method": "GET" }) }), "pageSize": 30, "emptyText": "Person ausw\u00e4hlen..." });
+    this.company8975 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/thirds/Third/company", "method": "GET" }) }), "pageSize": 30, "emptyText": "Organisation ausw\u00e4hlen..." });
+    this.id8976 = { "xtype": "numberfield" };
+    this.owner_type8977 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/thirds/Third/owner_type", "method": "GET" }) }), "pageSize": 30, "emptyText": "Inhaltstyp ausw\u00e4hlen..." });
+    this.owner_id8978 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/thirds/Third/owner_id", "method": "GET" }) }) });
+    this.remark8979 = new Ext.form.TextArea({ "growMax": 2000 });
+    this.main_grid8980 = new Lino.GridPanel({ "ls_url": "/thirds/ThirdsByOwner", "ls_bbar_actions": [ { "text": "L\u00f6schen", "name": "DeleteSelected", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "seqno" }, { "name": "person" },'personHidden', { "name": "company" },'companyHidden', { "type": "int", "name": "id" }, { "name": "owner_type" },'owner_typeHidden', { "name": "owner_id" },'owner_idHidden', { "name": "remark" }, { "type": "int", "name": "id" } ], "pk_index": 5, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "Seq.-Nr.", "editable": true, "filter": { "type": "numeric" }, "width": 45, "dataIndex": "seqno", "hidden": false, "editor": this.seqno8973 }, { "colIndex": 1, "sortable": true, "header": "Person", "editable": true, "filter": { "type": "string" }, "width": 90, "renderer": Lino.fk_renderer('personHidden','Lino.contacts.AllPersons.detail'), "hidden": false, "editor": this.person8974, "dataIndex": "person" }, { "colIndex": 2, "sortable": true, "header": "Organisation", "editable": true, "filter": { "type": "string" }, "width": 90, "renderer": Lino.fk_renderer('companyHidden','Lino.contacts.Companies.detail'), "hidden": false, "editor": this.company8975, "dataIndex": "company" }, { "colIndex": 3, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": this.id8976, "dataIndex": "id" }, { "colIndex": 4, "sortable": true, "header": "Verkn\u00fcpft mit (Modell)", "editable": true, "filter": { "type": "string" }, "width": 90, "dataIndex": "owner_type", "hidden": false, "editor": this.owner_type8977 }, { "colIndex": 5, "sortable": true, "header": "Verkn\u00fcpft mit (Objekt)", "editable": true, "filter": { "type": "string" }, "width": 90, "dataIndex": "owner_id", "hidden": false, "editor": this.owner_id8978 }, { "colIndex": 6, "sortable": false, "header": "Bemerkung", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": this.remark8979, "dataIndex": "remark" } ], "containing_window": ww });
+    ww.main_item = this.main_grid8980;
+    ww.show();
+  }
+
+
+
 

@@ -549,7 +549,12 @@ class Store:
         self.detail_fields = []
         
         self.collect_fields(self.list_fields,rh.get_list_layout())
-        self.collect_fields(self.detail_fields,*rh.get_detail_layouts())
+        dtl = rh.report.get_detail()
+        if dtl:
+            dh = dtl.get_handle(rh.ui)
+            dh.lh_list
+            self.collect_fields(self.detail_fields,*dh.lh_list)
+        #~ self.collect_fields(self.detail_fields,*rh.get_detail_layouts())
         
         del self.df2sf
         

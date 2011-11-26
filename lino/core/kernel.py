@@ -140,7 +140,17 @@ def analyze_models(self,make_messages):
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
                     
-    # another loop to rework `_lino_detail_layouts`:
+    """
+    Now another loop to convert `_lino_detail_layouts` to `_lino_detail`
+    must be a separate loop because we cannot predict the sorting order of models
+    Yield all detail tabs for this model.
+    Each detail tab corresponds to a :xfile:`.dtl` file).
+    Detail tabs of inherited models come *first*.
+    Example: CouseProvider(Company) will yield first all 
+    tabs found for Company, then those for CourseProvider.
+    """
+    
+    
     for model in models.get_models():
         collector = {}
         def collect_details(m):
@@ -153,12 +163,18 @@ def analyze_models(self,make_messages):
           
         collect_details(model)
         
-        def by0(a,b):
-            return cmp(a[0],b[0])
-        collector = collector.items()
-        collector.sort(by0)
-        model._lino_detail = [i[1] for i in collector]
+        if collector:
+            def by0(a,b):
+                return cmp(a[0],b[0])
+            collector = collector.items()
+            collector.sort(by0)
+            detail_layouts = [i[1] for i in collector]
+            model._lino_detail = reports.Detail(model,detail_layouts)
+        else:
+            model._lino_detail = None
           
+        del model._lino_detail_layouts
+        
         if get_class_attr(model,'summary_row') is None:
             if model._lino_detail:
                 def f(obj,ui,rr,**kw):
@@ -172,7 +188,6 @@ def analyze_models(self,make_messages):
             model.summary_row = f
             #~ print '20101111 installed summary_row for ', model
             
-        del model._lino_detail_layouts
         
 
 
