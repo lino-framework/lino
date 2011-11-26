@@ -112,11 +112,10 @@ class RedirectAction(Action):
         raise NotImplementedError
         
         
-class ImageAction(RedirectAction):
-    name = 'image'
-    callable_from = tuple()
+#~ class ImageAction(RedirectAction):
+    #~ name = 'image'
+    #~ callable_from = tuple()
     
-    def get_target_url(self,elem):
-        #~ return settings.MEDIA_URL + "/".join(elem.get_image_parts())
-        return elem.get_image_url()
+    #~ def get_target_url(self,elem):
+        #~ return elem.get_image_url()
       

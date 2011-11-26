@@ -1224,6 +1224,7 @@ Lino.show_detail = function(panel,btn) {
       //~ panel.containing_window.window.getEl().mask('Bitte nochmal warten','x-mask-loading');
       //~ panel.el.mask('Bitte nochmal warten','x-mask-loading');
       //~ panel.disable();
+      //~ console.log(20111125,rec.id);
       panel.ls_detail_handler(panel,{
         record_id:rec.id,
         base_params:panel.get_base_params()
@@ -1315,11 +1316,12 @@ if (Ext.ux.grid !== undefined) {
 //~ });
 
 Lino.FieldBoxMixin = {
-  before_init : function(ww,config,params) {
+  before_init : function(config,params) {
     //~ this.containing_window = this.findParentByType(Lino.WindowWrapper);
     //~ if (this.containing_window != ww) 
         //~ console.log("Alarm!",this.containing_window,"!=",ww);
-    this.containing_window = ww;
+    //~ this.containing_window = ww;
+    this.containing_window = config.containing_window;
     if (params) Ext.apply(config,params);
     var actions = Lino.build_buttons(this,config.ls_bbar_actions);
     if (actions) config.bbar = actions.bbar;
@@ -1351,8 +1353,8 @@ Lino.FieldBoxMixin = {
 
 Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
   disabled_in_insert_window : true,
-  constructor : function(ww,config,params) {
-    this.before_init(ww,config,params);
+  constructor : function(config,params) {
+    this.before_init(config,params);
     Lino.HtmlBoxPanel.superclass.constructor.call(this, config);
   },
   //~ constructor : function(ww,config,params){
@@ -1373,6 +1375,7 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
   //~ enable : function() { var tb = this.getBottomToolbar(); if(tb) tb.enable()},
   onRender : function(ct, position){
     Lino.HtmlBoxPanel.superclass.onRender.call(this, ct, position);
+    //~ console.log(20111125,this.containing_window);
     this.containing_window.main_item.on('enable',this.enable,this);
     this.containing_window.main_item.on('disable',this.disable,this);
     this.el.on({
@@ -1433,7 +1436,7 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
   initComponent : function(){
     Lino.RichTextPanel.superclass.initComponent.call(this);
   },
-  constructor : function(ww,config,params) {
+  constructor : function(config,params) {
     //~ console.log('Lino.RichTextPanel.initComponent',this);
     //~ var url = TEMPLATES_URL + config.ls_url + "/" + String(rec.id) + "/" + config.name;
     //~ var url = TEMPLATES_URL + config.ls_url + "/" + config.name;
@@ -1450,7 +1453,7 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
         template_popup_height : 500,
         template_replace_values : { 
             data_field : function(element){ 
-                console.log(20110722,fieldName,t.containing_window.get_current_record()); 
+                //~ console.log(20110722,fieldName,t.containing_window.get_current_record()); 
                 var fieldName = element.innerHTML;
                 element.innerHTML = t.containing_window.get_current_record().data[fieldName];
             } 
@@ -1476,7 +1479,7 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
     delete config.name;
     //~ config.title = config.label;
     //~ delete config.label;
-    this.before_init(ww,config,params);
+    this.before_init(config,params);
     
     this.editor = new Ext.ux.TinyMCE(editorConfig);
     var t = this;
@@ -1520,13 +1523,12 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   //~ trackResetOnLoad : true,
   //~ query_params : {},
   //~ 20110119b quick_search_text : '',
-  constructor : function(ww,config,params){
+  constructor : function(config,params){
     //~ this.containing_window = this.findParentByType(Lino.WindowWrapper);
     //~ if (this.containing_window != ww) 
         //~ console.log("Alarm!",this.containing_window,"!=",ww);
-    this.containing_window = ww;
+    //~ this.containing_window = ww;
     if (params) Ext.apply(config,params);
-    this.set_base_param('query',''); // 20111018
     //~ ww.config.base_params.query = ''; // 20111018
     //~ console.log(config);
     //~ console.log('FormPanel.constructor() 1',config)
@@ -1536,13 +1538,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     config.bbar = actions.bbar;
     //~ Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
     //~ config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
-    if (ww instanceof Lino.DetailWrapper) {
+    if (config.containing_window instanceof Lino.DetailWrapper) {
       config.tbar = [];
       // 20111015    
       //~ console.log('20111017 base_params:', this.get_base_params(), this.ww.config.base_params);
       this.record_selector = new Lino.RemoteComboFieldElement({
         store: new Lino.ComplexRemoteComboStore({
-          baseParams: this.get_base_params(),
+          baseParams: config.containing_window.config.base_params,
+          //~ baseParams: this.get_base_params(),
           //~ value: this.containing_window.config.base_params.query,
           proxy: new Ext.data.HttpProxy({
             url:ROOT_URL+'/choices'+config.ls_url,
@@ -1595,11 +1598,16 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       {text:'Layout Editor',handler:this.edit_detail_config,qtip:"Edit Detail Layout",scope:this}
     ])
     //~ }
-    this.before_row_edit = config.before_row_edit.createDelegate(this);
+    //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
       
     config.trackResetOnLoad = true;
     
     Lino.FormPanel.superclass.constructor.call(this, config);
+      
+    if (! this.containing_window instanceof Lino.WindowWrapper) 
+        console.log("Alarm! Not a WW:",this.containing_window);
+      
+    this.set_base_param('query',''); // 20111018
       
     // let oosubmit replace submit:
     //~ this.form.oldSubmit=this.form.submit;
@@ -1805,13 +1813,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.before_row_edit(record);
     if (after) after();
   },
-  unused_search_change : function(field,oldValue,newValue) {
-    //~ console.log('FormPanel.search_change()');
-    this.containing_window.config.base_params['$URL_PARAM_FILTER'] = field.getValue(); //~ 20110119b 
-    //~ 20110119b this.quick_search_text = field.getValue(); 
-    this.goto_record_id(this.current_record.id);
-    //~ this.moveFirst();
+  
+  before_row_edit : function(record) {},
+  search_change : function(field,oldValue,newValue) {
+    //~ console.log('search_change',field.getValue(),oldValue,newValue)
+    this.set_base_param('$URL_PARAM_FILTER',field.getValue()); 
+    this.refresh();
   },
+  
   get_selected : function() { return [ this.current_record ] },
   get_current_record : function() {  
     //~ console.log(20100714,this.current_record);
@@ -1859,7 +1868,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
           clientValidation: true
         })
       } else {
-        console.log('20111125 FormPanel.save() PUT',panel,rec);
+        //~ console.log('20111125 FormPanel.save() PUT',panel,rec);
         //~ console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
         //~ Lino.notify('submit');
         //~ console.log('20110406 DetailWindow.save: panel.get_base_params() = <',panel.get_base_params(),'>');
@@ -1955,7 +1964,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ });
     //~ cmp.on_master_changed();
   //~ },
-  load_picture_to : function(cmp,record) {
+  unused_load_picture_to : function(cmp,record) {
     //~ console.log('FormPanel.load_picture_to()',record);
     var doit = function(src) {
         var f = function() {
@@ -1965,17 +1974,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
         Lino.do_when_visible(cmp,f);
     }
     if (record)
-      //~ Ext.Ajax.request({
-        //~ url: this.get_record_url(record.id),
-        //~ params: {fmt:'image'},
-        //~ success: function(result) {
-          //~ var response = Ext.jsondecode
-          //~ doit(response.open_url)
-        //~ }
-      //~ });
-      //~ var src = this.get_record_url(record.id) + "?fmt=image"
-      doit(this.get_record_url(record.id) + "?an=image");
-      //~ var src = ROOT_URL+'/api'+this.containing_window.main_item.ls_url + "/" + record.id + "?fmt=image"
+      doit(this.get_record_url(record.id) + "?$ext_requests.URL_PARAM_ACTION_NAME=image");
     else
       //~ doit('empty.jpg');
       doit(Ext.BLANK_IMAGE_URL);
@@ -2012,15 +2011,15 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
         },
   loadMask: {msg:"$_('Please wait...')"},
   
-  constructor : function(ww,config,params){
-    this.containing_window = ww;
+  constructor : function(config,params){
+    //~ this.containing_window = ww;
     if (params) Ext.apply(config,params);
     //~ Ext.applyIf(config,{base_params:{}});
     //~ this.containing_window = ww;
     var bp = { fmt:'json' }
-    if (ww.main_item == this) { 
+    if (config.containing_window.main_item == this) { 
         // this gridpanel is the main component
-        Ext.apply(bp,ww.config.base_params);    
+        Ext.apply(bp,config.containing_window.config.base_params);    
     }
     //~ bp['fmt'] = 'json';
     
@@ -2055,8 +2054,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ console.log('config.pk_index',config.pk_index,config.store),
     delete config.ls_store_fields;
     
-    this.before_row_edit = config.before_row_edit.createDelegate(this);
-    delete config.before_row_edit;
+    //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
+    //~ delete config.before_row_edit;
 
     if (config.ls_quick_edit) {
       config.selModel = new Ext.grid.CellSelectionModel()
@@ -2088,11 +2087,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       };
     };
     delete config.ls_quick_edit
-    
+    this_ = this;
     var tbar = [ 
         this.search_field = new Ext.form.TextField({ 
           fieldLabel: "Search", 
-          listeners: { scope:this.containing_window, change:this.containing_window.search_change }
+          listeners: { scope:this_, change:this_.search_change }
           //~ value: text
           //~ scope:this, 
           //~ enableKeyEvents: true, 
@@ -2242,17 +2241,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     this.store.setBaseParam(k,v);
   },
   
-  unused_search_change : function(field,oldValue,newValue) {
+  before_row_edit : function(record) {},
+  search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
-    //~ 20110119
-    //~ 20110119b this.quick_search_text = field.getValue();
-    this.store.setBaseParam('$URL_PARAM_FILTER',field.getValue()); 
+    this.set_base_param('$URL_PARAM_FILTER',field.getValue()); 
     this.refresh();
-    //~ this.store.load({params: { 
-      //~ start: 0, 
-      //~ limit: this.getTopToolbar().pageSize,
-      //~ query: this.quick_search_text
-      //~ }});
   },
   
   apply_grid_config : function(index,grid_configs,rpt_columns) {
@@ -2628,6 +2621,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       if (this.disabled) return;
       //~ if (this.enabled) {
           //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
+          //~ console.log(20111125, this.containing_window);
           var p = this.containing_window.get_master_params();
           //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
           //~ console.log('Lino.GridPanel.on_master_changed()',this.title,p);
@@ -2742,18 +2736,15 @@ Ext.override(Lino.TemplateBoxPlugin,{
   }
 });
 
-Lino.PictureBoxPlugin = {
-  init : function (cmp) {
-      Lino.do_when_visible(cmp,function() { cmp.el.on('click',function() { Lino.img_onclick(cmp) }) });
-      //~ cmp.el.on('click',Lino.img_click_handler(cmp.el.dom.src));
-  }
-}
+//~ Lino.PictureBoxPlugin = {
+  //~ init : function (cmp) {
+      //~ Lino.do_when_visible(cmp,function() { cmp.el.on('click',function() { Lino.img_onclick(cmp) }) });
+  //~ }
+//~ }
 
-
-Lino.img_onclick = function(cmp) {
-  //~ console.log('img_onclick',cmp,arguments);
-  window.open(cmp.el.dom.src);
-};
+//~ Lino.img_onclick = function(cmp) {
+  //~ window.open(cmp.el.dom.src);
+//~ };
 
 Lino.SlavePlugin = function(caller) {
   this.caller = caller;
@@ -3011,11 +3002,6 @@ Lino.WindowWrapperBase = {
       //~ this.refresh();
       //~ Lino.load_mask.hide();
   },
-  search_change : function(field,oldValue,newValue) {
-    //~ console.log('search_change',field.getValue(),oldValue,newValue)
-    this.main_item.set_base_param('$URL_PARAM_FILTER',field.getValue()); 
-    this.main_item.refresh();
-  },
   refresh : function(after) { 
     this.main_item.refresh(after);
   },
@@ -3226,7 +3212,7 @@ Lino.DetailWrapperBase = Ext.extend(Lino.WindowWrapper, {
       this.main_item.set_current_record(this.config.data_record);
       //~ return;
     } else if (this.config.record_id !== undefined) { // may be 0 
-      //~ console.log('Lino.WindowWrapper with record_id',this.config.record_id);
+      console.log('Lino.WindowWrapper with record_id',this.config.record_id);
       //~ this.main_item.goto_record_id(this.config.record_id);
       this.main_item.load_record_id(this.config.record_id);
     } else {
@@ -3629,11 +3615,13 @@ Ext.override(Lino.CalendarPanel,Lino.FieldBoxMixin);
 
 
 
-Lino.CalendarWrapper = Ext.extend(Lino.WindowWrapper, {
-  setup : function() {
-    Lino.WindowWrapper.prototype.setup.call(this);
-  }
-});
+Lino.CalendarWrapper = Lino.WindowWrapper;
+
+//~ Lino.CalendarWrapper = Ext.extend(Lino.WindowWrapper, {
+  //~ setup : function() {
+    //~ Lino.WindowWrapper.prototype.setup.call(this);
+  //~ }
+//~ });
 
 
 #end if

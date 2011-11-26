@@ -87,8 +87,11 @@ def declare_vars(v):
         for ln in declare_vars(v.value):
             yield ln
         # DON'T return
-    if isinstance(v,Variable) and v.declare_type == DECLARE_VAR:
-        yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
+    if isinstance(v,Variable):
+        if v.declare_type == DECLARE_VAR:
+            yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
+        elif v.declare_type == DECLARE_THIS:
+            yield "this.%s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
 
 
 def py2js(v):

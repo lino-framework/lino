@@ -66,8 +66,8 @@ def before_row_edit(panel):
     for e in panel.active_children:
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
-        elif isinstance(e,PictureElement):
-            l.append("this.load_picture_to(%s,record);" % e.as_ext())
+        #~ elif isinstance(e,PictureElement):
+            #~ l.append("this.load_picture_to(%s,record);" % e.as_ext())
         #~ elif isinstance(e,TextFieldElement):
             #~ if e.separate_window:
                 #~ l.append("%s.refresh();" % e.as_ext())
@@ -84,9 +84,10 @@ def before_row_edit(panel):
                     #~ l.append("console.log('20110128 before_row_edit',record.data);")
                     l.append(
                         "%s.setContextValue(%r,record ? record.data[%r] : undefined);" % (
-                        e.ext_name,f.name,ext_requests.form_field_name(f)))
+                        e.as_ext(),f.name,ext_requests.form_field_name(f)))
     #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
-    return js_code('function(record){ %s }' % (' '.join(l)))
+    #~ return js_code('function(record){ %s }' % (' '.join(l)))
+    return l
 
 class GridColumn(Component):
     declare_type = jsgen.DECLARE_INLINE
@@ -323,8 +324,9 @@ class TemplateElement(LayoutElement):
         kw.update(plugins=js_code('new Lino.TemplateBoxPlugin(caller,%s)' % py2js(dv.xtemplate)))
         LayoutElement.__init__(self,lh,name,**kw)
 
-class PictureElement(LayoutElement):
-    declare_type = jsgen.DECLARE_VAR
+class unused_PictureElement(LayoutElement):
+    #~ declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_THIS
     #~ declare_type = jsgen.DECLARE_INLINE
     value_template = "new Ext.BoxComponent(%s)"
     vflex = False
@@ -385,8 +387,8 @@ class Spacer(LayoutElement):
         
 class FieldElement(LayoutElement):
     #~ declare_type = jsgen.DECLARE_INLINE
-    #~ declare_type = jsgen.DECLARE_THIS
-    declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_THIS
+    #~ declare_type = jsgen.DECLARE_VAR
     stored = True
     filter_type = None # 'auto'
     #declaration_order = 3
@@ -471,7 +473,7 @@ class TextFieldElement(FieldElement):
             or settings.LINO.textfield_format
         if self.format == 'html':
             if settings.LINO.use_tinymce:
-                self.value_template = "new Lino.RichTextPanel(ww,%s)"
+                self.value_template = "new Lino.RichTextPanel(%s)"
                 self.active_child = True
                 #~ if self.label:
                     #~ kw.update(title=unicode(self.label))
@@ -480,6 +482,7 @@ class TextFieldElement(FieldElement):
                 self.field = field
                 self.editable = field.editable # and not field.primary_key
                 kw.update(ls_url=rpt2url(lh.rh.report))
+                kw.update(containing_window=js_code("ww"))
                 #~ kw.update(title=unicode(field.verbose_name)) 20111111
                 kw.update(title=field.verbose_name)
                 #~ kw.update(tinymce_options=dict(
@@ -819,7 +822,8 @@ class DisplayElement(FieldElement):
     preferred_width = 30
     preferred_height = 3
     ext_suffix = "_disp"
-    declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_THIS
+    #~ declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
     
 
@@ -842,7 +846,7 @@ class GenericForeignKeyElement(DisplayElement):
 class HtmlBoxElement(DisplayElement):
     ext_suffix = "_htmlbox"
     #~ declare_type = jsgen.DECLARE_VAR
-    value_template = "new Lino.HtmlBoxPanel(ww,%s)"
+    value_template = "new Lino.HtmlBoxPanel(%s)"
     preferred_height = 5
     vflex = True
     filter_type = 'string'
@@ -855,6 +859,7 @@ class HtmlBoxElement(DisplayElement):
         
     def get_field_options(self,**kw):
         kw.update(name=self.field.name)
+        kw.update(containing_window=js_code("ww"))
         kw.update(layout='fit')
         #~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
@@ -878,7 +883,8 @@ class Container(LayoutElement):
     
     #declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
-    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_THIS
     #~ declare_type = jsgen.DECLARE_THIS
     
     
@@ -1241,10 +1247,11 @@ class FieldSetPanel(Panel):
   
 
 class GridElement(Container): 
-    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_THIS
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     #~ value_template = "new Ext.grid.GridPanel(%s)"
-    value_template = "new Lino.GridPanel(ww,%s)"
+    value_template = "new Lino.GridPanel(%s)"
     ext_suffix = "_grid"
     vflex = True
     xtype = None
@@ -1271,6 +1278,7 @@ class GridElement(Container):
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
         kw.update(page_length=self.report.page_length)
+        kw.update(stripeRows=True)
 
         a = rpt.get_action('detail')
         if a:
@@ -1278,12 +1286,14 @@ class GridElement(Container):
         a = rpt.get_action('insert')
         if a:
             kw.update(ls_insert_handler=js_code("Lino.%s" % a))
-        kw.update(stripeRows=True)
+        
+        kw.update(containing_window=js_code("ww"))
         
         Container.__init__(self,lh,name,**kw)
         self.active_children = columns
-        assert not kw.has_key('before_row_edit')
-        self.update(before_row_edit=before_row_edit(self))
+        #~ 20111125
+        #~ assert not kw.has_key('before_row_edit')
+        #~ self.update(before_row_edit=before_row_edit(self))
         
         #~ self.preferred_height = rpt.page_length 
         if self.report.master is not None:
@@ -1319,24 +1329,15 @@ class GridElement(Container):
 class SlaveGridElement(GridElement):
     def ext_options(self,**kw):
         kw = GridElement.ext_options(self,**kw)
-        #~ kw.update(plugins=js_code('new Lino.SlaveGridPlugin(caller)'))
-        
         kw.update(title=self.report.label)
-        #~ kw.update(title=unicode(self.report.label)) 20111111
-        
-        #~ js = "Lino.do_action(caller,%r)" % \
-            #~ rh.list_layout.get_absolute_url(run=True)
-        #~ js = "function(){ Lino.notify('Das ist noch nicht fertig... siehe ext_elems.py:990');}"
-        #~ kw.update(listeners=dict(click=js_code(js)))
         return kw
       
         
-class M2mGridElement(GridElement):
-    def __init__(self,lh,field,*columns,**kw):
-        self.field = field
-        rpt = reports.get_model_report(field.rel.to)
-        #~ rh = rpt.get_handle(lh.ui)
-        GridElement.__init__(self,lh,id2js(rpt.actor_id),rpt,*columns,**kw)
+#~ class M2mGridElement(GridElement):
+    #~ def __init__(self,lh,field,*columns,**kw):
+        #~ self.field = field
+        #~ rpt = reports.get_model_report(field.rel.to)
+        #~ GridElement.__init__(self,lh,id2js(rpt.actor_id),rpt,*columns,**kw)
   
 
             
@@ -1377,16 +1378,6 @@ class MainPanel(jsgen.Variable):
         if isinstance(field,fields.VirtualField):
             selector_field = field.return_type
             
-        # 20110603
-        #~ if isinstance(field,fields.RichTextField):
-            #~ fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
-            #~ if fmt == 'html' and settings.LINO.use_tinymce:
-                #~ edit = dict(panel_btn_handler=js_code(
-                    #~ "Lino.edit_tinymce_text"))
-                #~ edit.update(text=_("Edit"))
-                #~ kw.update(ls_bbar_actions=[edit])
-                #~ kw.update(autoScroll=True)
-                #~ return HtmlBoxElement(lh,field,**kw)
         for cl,x in _FIELD2ELEM:
             if isinstance(selector_field,cl):
                 return x(lh,field,**kw)
@@ -1395,18 +1386,14 @@ class MainPanel(jsgen.Variable):
 
 
 class GridMainPanel(GridElement,MainPanel):
-    #~ value_template = "new Lino.GridPanel(%s)"
     def __init__(self,lh,name,vertical,*columns,**kw):
         """ignore the "vertical" arg"""
-        #~ MainPanel.__init__(self)
         GridElement.__init__(self,lh,name,lh.rh.report,*columns,**kw)
-        #logger.debug("GridMainPanel.__init__() %s",self.name)
         
 
 
 
 class DetailMainPanel(Panel,MainPanel):
-#~ class DetailMainPanel(Panel,WrappingMainPanel):
     #~ declare_type = jsgen.DECLARE_THIS
     #~ xtype = 'form'
     xtype = None
@@ -1422,9 +1409,6 @@ class DetailMainPanel(Panel,MainPanel):
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         #lh.needs_store(self.rh)
         
-    def unused_get_datalink(self):
-        return self.rh
-        
     def subvars(self):
         #~ print 'DetailMainPanel.subvars()', self
         for e in MainPanel.subvars(self):
@@ -1436,46 +1420,9 @@ class DetailMainPanel(Panel,MainPanel):
         self.setup()
         kw = Panel.ext_options(self,**kw)
         if self.lh.layout.label:
-            #~ kw.update(title=unicode(self.lh.layout.label))
             kw.update(title=_(self.lh.layout.label))
-        #d.update(region='east',split=True) #,width=300)
-        #~ kw.update(width=800)
-        #~ kw.update(autoScroll=True)
-        if False:
-            kw.update(tbar=js_code("""new Ext.PagingToolbar({
-              store: %s,
-              displayInfo: true,
-              pageSize: 1,
-              prependButtons: true,
-            }) """ % self.rh.store.ext_name))
-        #d.update(items=js_code(self._main.as_ext(request)))
-        #d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
-        #~ kw.update(items=self.elements)
-        #d.update(autoHeight=False)
-        #~ kw.update(bbar=self.bbar_buttons)
-        #~ kw.update(bbar=self.buttons)
-        #d.update(standardSubmit=True)
         return kw
         
-    @classmethod
-    def unused_field2elem(cls,lh,field,**kw):
-        e = MainPanel.field2elem(lh,field,**kw)
-        if isinstance(e,HtmlBoxElement): return e
-        if settings.LINO.use_tinymce:
-            if isinstance(e,TextFieldElement) and e.format == 'html': 
-                # no need to wrap them since they are Panels
-                return e
-        #~ if not e.value.has_key('fieldLabel'): return e
-        #~ if not e.label: return e
-        #~ po = dict(layout='form')
-        po = dict(layout='form') # 20101028
-        #~ po = dict(layout='form',autoHeight=True) # 20101028
-        if not isinstance(e,TextFieldElement):
-            po.update(autoHeight=True)
-            #~ po.update(anchor='100% 100%')
-        ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
-        ct.field = field
-        return ct
 
 class TabPanel(jsgen.Component):
 #~ class TabPanel(jsgen.Value):
@@ -1514,12 +1461,11 @@ class TabPanel(jsgen.Component):
 
 class FormPanel(jsgen.Component):
     declare_type = jsgen.DECLARE_VAR
-    #~ value_template = "new Lino.FormPanel(ww,%s)"
     listeners = None
     
     def __init__(self,rh,action,main,**kw):
         self.rh = rh
-        self.value_template = "new Lino.%s.FormPanel(ww,%%s)" % self.rh.report
+        self.value_template = "new Lino.%s.FormPanel(%%s)" % self.rh.report
         self.main = main
         kw.update(
           #~ items=main,
@@ -1528,10 +1474,11 @@ class FormPanel(jsgen.Component):
           layout='fit',
           empty_title=action.get_button_label()
         )
+        kw.update(containing_window=js_code("ww"))
         if not isinstance(action,reports.InsertRow):
             kw.update(has_navigator=rh.report.has_navigator)
             
-        on_render = []
+        self.on_render = []
         elems_by_field = {}
         field_elems = []
         for e in main.active_children:
@@ -1554,16 +1501,17 @@ class FormPanel(jsgen.Component):
                         #~ if main.has_field(f):
                         #~ varname = varname_field(f)
                         #~ on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
-                        on_render.append(
+                        self.on_render.append(
                             "%s.on('change',Lino.chooser_handler(%s,%r));" % (
-                            el.ext_name,e.ext_name,f.name))
+                            el.as_ext(),e.as_ext(),f.name))
         
-        if on_render:
-            assert not kw.has_key('listeners')
+        #~ 20111125 : listeners and before_row_edit are no longer rendered in ext_windows
+        #~ if on_render:
+            #~ assert not kw.has_key('listeners')
             #~ kw.update(listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render))))
-            self.listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render)))
+            #~ self.listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render)))
         #~ kw.update(before_row_edit=before_row_edit(main))
-        self.before_row_edit=before_row_edit(main)
+        #~ self.before_row_edit=before_row_edit(main)
         
         rpt = rh.report
         a = rpt.get_action('detail')
@@ -1602,7 +1550,7 @@ _FIELD2ELEM = (
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
     (models.BooleanField, BooleanFieldElement),
-    (models.ManyToManyField, M2mGridElement),
+    #~ (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),
     (models.AutoField, IntegerFieldElement),
 )

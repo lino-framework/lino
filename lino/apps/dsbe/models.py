@@ -604,7 +604,15 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
             _("coaching ends"),tab=1):
             yield o
             
-        
+    def image(self,request):
+        url = self.get_image_url()
+        #~ s = '<img src="%s" width="100%%" onclick="window.open(\'%s\')"/>' % (url,url)
+        s = '<img src="%s" width="100%%"/>' % url
+        s = '<a href="%s" target="_blank">%s</a>' % (url,s)
+        return s
+        #~ return '<img src="%s" width="120px"/>' % self.get_image_url()
+    image.return_type = fields.HtmlBox()
+
     def get_image_parts(self):
         if self.card_number:
             return ("beid",self.card_number+".jpg")

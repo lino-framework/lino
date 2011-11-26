@@ -1139,8 +1139,8 @@ class Report(actors.Actor): #,base.Handled):
                     
             self.add_action(DeleteSelected())
             
-            if hasattr(self.model,'get_image_url'):
-                self.add_action(actions.ImageAction())
+            #~ if hasattr(self.model,'get_image_url'):
+                #~ self.add_action(actions.ImageAction())
         
       
     def setup_detail_layouts(self):
@@ -1163,27 +1163,11 @@ class Report(actors.Actor): #,base.Handled):
             #~ print "NOT MANAGED: ", self.model
             #~ return
         
-        collector = {}
-        def collect_details(m):
-            #~ if m in self.hide_details: return
-            for b in m.__bases__:
-                if issubclass(b,models.Model) and b is not models.Model:
-                    collect_details(b)
-            for k,v in getattr(m,'_lino_detail_layouts',{}).items():
-                collector[k] = v
-          
-        collect_details(self.model)
-        
-        #~ def by_filename(a,b):
-            #~ ahead,atail = os.path.split(a.filename)
-            #~ bhead,btail = os.path.split(b.filename)
-            #~ return cmp(atail,btail)
-        #~ collector.sort(by_filename)
-        def by0(a,b):
-            return cmp(a[0],b[0])
-        collector = collector.items()
-        collector.sort(by0)
-        self.detail_layouts = [i[1] for i in collector]
+        if self.model._meta.abstract:
+            return
+            
+        self.detail_layouts = self.model._lino_detail
+        assert type(self.detail_layouts) is list
             
         #~ for b in self.model.__bases__:
             #~ if issubclass(b,models.Model) and b is not models.Model:
@@ -1220,7 +1204,7 @@ class Report(actors.Actor): #,base.Handled):
         de = get_data_elem(self.model,name)
         if de is not None: 
             return de
-        return self.get_action(name)
+        #~ return self.get_action(name)
         
         
     def get_details(self):

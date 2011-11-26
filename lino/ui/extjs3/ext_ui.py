@@ -466,8 +466,8 @@ class ExtUI(base.UI):
         
         de = lh.rh.report.get_data_elem(name)
             
-        if isinstance(de,actions.ImageAction):
-            return ext_elems.PictureElement(lh,name,de,**kw)
+        #~ if isinstance(de,actions.ImageAction):
+            #~ return ext_elems.PictureElement(lh,name,de,**kw)
 
         if isinstance(de,fields.FieldSet):
             return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
@@ -546,8 +546,8 @@ class ExtUI(base.UI):
                 if isinstance(value,reports.DataView):
                     return ext_elems.DataViewElement(lh,name,value)
                     #~ return ext_elems.TemplateElement(lh,name,value)
-                if isinstance(value,printable.PicturePrintMethod):
-                    return ext_elems.PictureElement(lh,name,value)
+                #~ if isinstance(value,printable.PicturePrintMethod):
+                    #~ return ext_elems.PictureElement(lh,name,value)
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))

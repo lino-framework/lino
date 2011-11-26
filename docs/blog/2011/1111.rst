@@ -84,3 +84,15 @@ While researching for the above solution I did a few internal optimizations:
   server restart.
   Seems to work, but there may be unexpected surprises...
 
+
+Closing the top-level window
+----------------------------
+
+Wenn man das "oberste" Fenster schließt, 
+sieht man jetzt nicht mehr wie gewohnt die Erinnerungen, 
+sondern nur eine weiße Fläche. Man muss explizit auf 
+"Startseite" klicken, um die Erinnerungen anzuzeigen.
+Besser wäre, wenn das oberste Fenster gar nicht erst 
+einen Close-Button hätte.
+
+

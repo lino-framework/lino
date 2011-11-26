@@ -12,12 +12,13 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Wenn man das "oberste" Fenster schließt, 
-    sieht man jetzt nicht mehr wie gewohnt die Erinnerungen, 
-    sondern nur eine weiße Fläche. Man muss explizit auf 
-    "Startseite" klicken, um die Erinnerungen anzuzeigen.
-    Besser wäre, wenn das oberste Fenster gar nicht erst 
-    einen Close-Button hätte.
+#.  Browser-specific language selection works well... 
+    except that Lino should make it 
+    possible to override that browser-specific language setting.
+    The most straigtforward place is the language field from 
+    :class:`lino.modlib.contacts.Contact`.
+    At least on a site that is using 
+    :mod:`lino.modlib.users`.
 
 #.  :class:´lino.modlib.jobs.Function` : "Funktionen" 
     umbenennen nach "Qualifikationen"?

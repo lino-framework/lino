@@ -122,19 +122,6 @@ def analyze_models(self,make_messages):
             #~ full_model_name(model),
             #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
         
-        if get_class_attr(model,'summary_row') is None:
-            if model._lino_detail_layouts:
-                def f(obj,ui,rr,**kw):
-                    return u'<a href="%s" target="_blank">%s</a>' % (
-                      ui.get_detail_url(obj,fmt='detail'),
-                      #~ rr.get_request_url(str(obj.pk),fmt='detail'),
-                      unicode(obj))
-            else:
-                def f(obj,ui,rr,**kw):
-                    return unicode(obj)
-            model.summary_row = f
-            #~ print '20101111 installed summary_row for ', model
-        
         for k,v in class_dict_items(model):
             if isinstance(v,fields.VirtualField):
                 v.lino_kernel_setup(model,k)
@@ -152,6 +139,40 @@ def analyze_models(self,make_messages):
                     ``f.rel.to._meta.verbose_name``.
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
+                    
+    # another loop to rework `_lino_detail_layouts`:
+    for model in models.get_models():
+        collector = {}
+        def collect_details(m):
+            #~ if m in self.hide_details: return
+            for b in m.__bases__:
+                if issubclass(b,models.Model) and b is not models.Model:
+                    collect_details(b)
+            for k,v in getattr(m,'_lino_detail_layouts',{}).items():
+                collector[k] = v
+          
+        collect_details(model)
+        
+        def by0(a,b):
+            return cmp(a[0],b[0])
+        collector = collector.items()
+        collector.sort(by0)
+        model._lino_detail = [i[1] for i in collector]
+          
+        if get_class_attr(model,'summary_row') is None:
+            if model._lino_detail:
+                def f(obj,ui,rr,**kw):
+                    return u'<a href="%s" target="_blank">%s</a>' % (
+                      ui.get_detail_url(obj,fmt='detail'),
+                      #~ rr.get_request_url(str(obj.pk),fmt='detail'),
+                      unicode(obj))
+            else:
+                def f(obj,ui,rr,**kw):
+                    return unicode(obj)
+            model.summary_row = f
+            #~ print '20101111 installed summary_row for ', model
+            
+        del model._lino_detail_layouts
         
 
 

@@ -28,8 +28,35 @@ And I plan to do::
 
   Ext.reg('extensible.eventeditform', Lino.EventEditForm);
 
-But first I want to make Lino.FormPanel usable without a `containing_window`.
+But first I want to make Lino.FormPanel usable without a `containing_window` 
+in the constructor.
+
+This causes an avalanche of changes:
+
 Moved the `save()` functions from DetailWrapper and InsertWrapper 
 to a single function in `FormPanel`.
 It tests rec.phantom to decide whether it's a POST or a PUT.
+
+Seems to work. Checkin.
+
+Changed the generated javascript code.
+
+Changed  `analyze_models()` in `kernel.py`, preparing to the new concept 
+for defining Details.
+
+The mechanism for rendering the picture of a person was very sophisticated 
+and required even an additional AJAX call to get the URL of the picture. 
+And the result was suboptimal since the picture were stretched to 
+fill the rectangle.
+Replaced by a simple :class:`lino.fields.HtmlBox` field::
+
+    def image2(self,request):
+        return '<img src="%s" width="120px"/>' % self.get_image_url()
+    image2.return_type = fields.HtmlBox()
+
+Layouts are now still Record-based, but everything is ready to make 
+them model-based.
+
+Checkin 20111126 07:03 because it seems to work so far
+(except that `before_row_edit` isn't called on a GridPanel).
 

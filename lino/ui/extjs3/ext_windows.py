@@ -58,7 +58,7 @@ class WindowWrapper(ActionRenderer):
         ActionRenderer.__init__(self,ui,action)
         self.main = main
         self.lh = lh # may be None
-        self.bbar_buttons = []
+        #~ self.bbar_buttons = []
         self.config = self.get_config()
         
     def __str__(self):
@@ -170,14 +170,27 @@ class DetailWrapper(BaseDetailWrapper):
   
     def js_render_formpanel(self):
         yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % self.main.rh.report
-        yield "  constructor : function(ww,config) {"
+        yield "  before_row_edit : function(record) {"
+        for ln in ext_elems.before_row_edit(self.main.main):
+            yield "    " + ln
+        #~ yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % self.main.rh.report
+        yield "  },"
+        if self.main.on_render:
+            yield "  onRender : function(ct, position) {"
+            for ln in self.main.on_render:
+                yield "    " + ln
+            yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % self.main.rh.report
+            yield "  },"
+        yield "  initComponent : function() {"
+        yield "    var ww = this.containing_window;"
         for ln in jsgen.declare_vars(self.main.main):
-            yield '  '+ln
-        yield "  config.items = %s;" % self.main.main.as_ext()
-        if self.main.listeners:
-            yield "  config.listeners = %s;" % py2js(self.main.listeners)
-        yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
-        yield "  Lino.%s.FormPanel.superclass.constructor.call(this, ww,config);" % self.main.rh.report
+            yield "    " + ln
+        yield "    this.items = %s;" % self.main.main.as_ext()
+        #~ 20111125 see ext_elems.py too
+        #~ if self.main.listeners:
+            #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
+        #~ yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
+        yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % self.main.rh.report
         yield "  }"
         yield "});"
         yield ""
