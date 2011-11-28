@@ -926,6 +926,7 @@ COLS = 8
 
 class ContractsSituation2(mixins.Listing):
     class Meta:
+        abstract = True
         verbose_name = _("Contracts Situation 2") 
         
     contract_type = models.ForeignKey(ContractType,blank=True,null=True)

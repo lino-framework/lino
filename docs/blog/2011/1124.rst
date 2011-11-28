@@ -1,5 +1,5 @@
-20111124
-========
+20111124..28
+============
 
 Continued with Calendar Panel
 -----------------------------
@@ -75,11 +75,11 @@ definition of a FormPanel subclass for each Detail.
 Checkin 20111127 01:27 because it seems to work so far.
 
 
-Todo next: 
-generate also a class definition of a GridPanel subclass for each Report
+Next step was to
+generate also a class definition of a GridPanel subclass for each Report.
+Something like...
 
-
-Something like this::
+::
 
   Ext.namespace('Lino.thirds.ThirdsByOwner')
   Lino.thirds.ThirdsByOwner.GridPanel = Ext.Extend(Lino.GridPanel,{
@@ -128,7 +128,9 @@ Something like this::
   }
 
 
-Instead of::
+... instead of...
+
+::
 
   Ext.namespace('Lino.thirds.ThirdsByOwner')
   Lino.thirds.ThirdsByOwner.grid = function(caller,params) { 
@@ -146,5 +148,15 @@ Instead of::
   }
 
 
+And then I noticed that we must subclass the Model's FormPanel, once for detail and once for insert.
 
+First success: the Calendar Panel now shows `Lino.cal.Events.detailPanel` when we click on "Details..." of an Event.
 
+TODO:
+
+- The `Lino.cal.Events.detailPanel` is not yet filled with data. 
+  Must subclass `Lino.cal.Events.detailPanel` so that it behaves like the Ext.ensible detail form.
+  
+- bug with master params
+
+Checkin 

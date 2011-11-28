@@ -67,6 +67,11 @@ def register_converter(func):
     CONVERTERS.append(func)
     
 def declare_vars(v):
+    """
+    Yield the Javascript lines that declare the passed :class:`Variable` `v`.
+    If `v` is a :class:`Component`, `list`, `tuple` or `dict` which contains
+    other variables yield also the lines to declare these.
+    """
     if isinstance(v,(list,tuple)): 
         for sub in v:
             for ln in declare_vars(sub):

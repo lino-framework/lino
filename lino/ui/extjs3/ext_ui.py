@@ -495,14 +495,17 @@ class ExtUI(base.UI):
             return ext_elems.GenericForeignKeyElement(lh,de,**kw)
             
         if isinstance(de,reports.Report):
+            kw.update(containing_panel=js_code("this"))
             if isinstance(lh.layout,reports.DetailLayout):
                 # a Report in a DetailWindow
                 kw.update(tools=[
-                  js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
+                  js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
+                  #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
                 if de.show_slave_grid:
                     # a Report in a DetailWindow, displayed as a Slave Grid
-                    e = ext_elems.SlaveGridElement(lh,name,de,**kw)
+                    #~ e = ext_elems.SlaveGridElement(lh,name,de,**kw)
+                    e = ext_elems.GridElement(lh,name,de,**kw)
                     #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
                     #~ lh.slave_grids.append(e)
                     return e
@@ -1343,7 +1346,7 @@ tinymce.init({
             #~ if fmt is None or fmt == 'json':
                 #~ return json_response(datarec)
                     
-            action_name = request.GET.get('an','detail')
+            action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'detail')
             #~ if action_name is None:
                 #~ a = rpt.default_action
             #~ else:
@@ -1469,7 +1472,7 @@ tinymce.init({
             for model in models.get_models():
                 if model._lino_detail:
                     f.write("Ext.namespace('Lino.%s')\n" % full_model_name(model))
-                    for ln in self.js_render_detail_classdef(model._lino_detail.get_handle(self)):
+                    for ln in self.js_render_detail_FormPanel(model._lino_detail.get_handle(self)):
                         f.write(ln + '\n')
             
             for rpt in reports.master_reports \
@@ -1478,7 +1481,16 @@ tinymce.init({
                      + reports.frames :
                 rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
                 f.write("Ext.namespace('Lino.%s')\n" % rpt)
+                
+                if isinstance(rpt,reports.Report):
+                    for ln in self.js_render_GridPanel_class(rh):
+                        f.write(ln + '\n')
+                    
                 for a in rpt.get_actions():
+                    if isinstance(a,(reports.ShowDetailAction,reports.InsertRow)):
+                        for ln in self.js_render_detail_action_FormPanel(rh,a):
+                              f.write(ln + '\n')
+                            
                     if a.window_wrapper is not None:
                         #~ print a, "..."
                         for ln in a.window_wrapper.js_render():
@@ -1887,6 +1899,9 @@ tinymce.init({
             for a in h.get_actions():
                 a.window_wrapper = self.action_window_wrapper(a,h)
                 
+            h.on_render = self.build_on_render(h.list_layout._main)
+                
+                
             #~ for de in h.data_elems():
                 #~ if de.name in self.reserved_names:
                     #~ raise Exception(
@@ -1956,10 +1971,14 @@ tinymce.init({
             #~ for t in tabs: t.update(autoScroll=True)
             dh.main = ext_elems.TabPanel(tabs)
             
-        dh.on_render = []
+        dh.on_render = self.build_on_render(dh.main)
+            
+    def build_on_render(self,main):
+        "dh is a DetailLayout or a ListLayout"
+        on_render = []
         elems_by_field = {}
         field_elems = []
-        for e in dh.main.active_children:
+        for e in main.active_children:
             if isinstance(e,ext_elems.FieldElement):
                 field_elems.append(e)
                 l = elems_by_field.get(e.field.name,None)
@@ -1979,36 +1998,139 @@ tinymce.init({
                         #~ if main.has_field(f):
                         #~ varname = varname_field(f)
                         #~ on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
-                        dh.on_render.append(
+                        on_render.append(
                             "%s.on('change',Lino.chooser_handler(%s,%r));" % (
                             el.as_ext(),e.as_ext(),f.name))
+        return on_render
         
       
-    def js_render_detail_classdef(self,dh):
+    def js_render_detail_FormPanel(self,dh):
         
         yield ""
         yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % full_model_name(dh.detail.model)
-        yield "  before_row_edit : function(record) {"
-        for ln in ext_elems.before_row_edit(dh.main):
-            yield "    " + ln
-        #~ yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % self.main.rh.report
-        yield "  },"
-        if dh.on_render:
-            yield "  onRender : function(ct, position) {"
-            for ln in dh.on_render:
-                yield "    " + ln
-            yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % full_model_name(dh.detail.model)
-            yield "  },"
+        
+        yield "  layout: 'fit',"
+        
         yield "  initComponent : function() {"
+            
+            
         yield "    var ww = this.containing_window;"
+        
         for ln in jsgen.declare_vars(dh.main):
             yield "    " + ln
         yield "    this.items = %s;" % dh.main.as_ext()
+        
+
+        yield "    this.before_row_edit = function(record) {"
+        for ln in ext_elems.before_row_edit(dh.main):
+            yield "      " + ln
+        yield "    }"
+        if dh.on_render:
+            yield "  this.onRender = function(ct, position) {"
+            for ln in dh.on_render:
+                yield "    " + ln
+            yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % full_model_name(dh.detail.model)
+            yield "  }"
+
+
         #~ 20111125 see ext_elems.py too
         #~ if self.main.listeners:
             #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
         #~ yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
         yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % full_model_name(dh.detail.model)
+        yield "  }"
+        yield "});"
+        yield ""
+        
+        
+    def js_render_detail_action_FormPanel(self,rh,action):
+        rpt = rh.report
+        yield ""
+        yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,full_model_name(rpt.model))
+        yield "  empty_title: %s," % py2js(action.get_button_label())
+        if not isinstance(action,reports.InsertRow):
+            yield "  has_navigator: %s," % py2js(rpt.has_navigator)
+      
+        yield "  ls_bbar_actions: %s," % py2js([rh.ui.a2btn(a) for a in rpt.get_actions(action)])
+        yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
+        if action != rpt.default_action:
+            yield "  action_name: %s," % py2js(action.name)
+        yield "  initComponent : function() {"
+        a = rpt.get_action('detail')
+        if a:
+            yield "    this.ls_detail_handler = Lino.%s;" % a
+        a = rpt.get_action('insert')
+        if a:
+            yield "    this.ls_insert_handler = Lino.%s;" % a
+            
+        yield "    Lino.%sPanel.superclass.initComponent.call(this);" % action
+        yield "  }"
+        yield "});"
+        yield ""
+        
+    def js_render_GridPanel_class(self,rh):
+        
+        yield ""
+        yield "Lino.%s.GridPanel = Ext.extend(Lino.GridPanel,{" % rh.report
+        
+        kw = dict()
+        kw.update(ls_url=ext_elems.rpt2url(rh.report))
+        kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
+        kw.update(ls_id_property=rh.store.pk.name)
+        kw.update(pk_index=rh.store.pk_index)
+        kw.update(ls_quick_edit=rh.report.cell_edit)
+        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
+        kw.update(ls_grid_configs=[gc.data for gc in rh.report.grid_configs])
+        kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
+        #~ if action != rh.report.default_action:
+            #~ kw.update(action_name=action.name)
+        
+        kw.update(page_length=rh.report.page_length)
+        kw.update(stripeRows=True)
+
+        if rh.report.master:
+            kw.update(title=rh.report.label)
+        
+        for k,v in kw.items():
+            yield "  %s : %s," % (k,py2js(v))
+        
+        yield "  initComponent : function() {"
+        
+        a = rh.report.get_action('detail')
+        if a:
+            yield "    this.ls_detail_handler = Lino.%s;" % a
+        a = rh.report.get_action('insert')
+        if a:
+            yield "    this.ls_insert_handler = Lino.%s;" % a
+        
+        
+        yield "    var ww = this.containing_window;"
+        for ln in jsgen.declare_vars(rh.list_layout._main.columns):
+            yield "    " + ln
+            
+            
+        yield "    this.before_row_edit = function(record) {"
+        for ln in ext_elems.before_row_edit(rh.list_layout._main):
+            yield "      " + ln
+        yield "    };"
+        if rh.on_render:
+            yield "    this.onRender = function(ct, position) {"
+            for ln in rh.on_render:
+                yield "      " + ln
+            yield "      Lino.%s.GridPanel.superclass.onRender.call(this, ct, position);" % rh.report
+            yield "    }"
+            
+            
+        yield "    this.ls_columns = %s;" % py2js([ 
+            ext_elems.GridColumn(i,e) for i,e in enumerate(rh.list_layout._main.columns)])
+            
+        yield "    this.columns = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);"
+
+        #~ yield "    this.items = %s;" % rh.list_layout._main.as_ext()
+        #~ 20111125 see ext_elems.py too
+        #~ if self.main.listeners:
+            #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
+        yield "    Lino.%s.GridPanel.superclass.initComponent.call(this);" % rh.report
         yield "  }"
         yield "});"
         yield ""

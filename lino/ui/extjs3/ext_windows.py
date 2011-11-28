@@ -66,7 +66,7 @@ class WindowWrapper(ActionRenderer):
         
     def get_config(self,**d):
         #~ d.update(permalink_name=str(self.action))
-        d.update(action_name=self.action.name)
+        #~ d.update(action_name=self.action.name)
         return d
         
 
@@ -95,7 +95,7 @@ class MasterWrapper(WindowWrapper):
         yield "  ww.show();"
         if False and settings.USE_FIREBUG:
             yield "  console.timeEnd('%s');" % self.action
-        yield "}"
+        yield "};"
         
             
     
@@ -143,10 +143,10 @@ class DetailWrapper(MasterWrapper):
         
     def get_config(self):
         d = MasterWrapper.get_config(self)
-        url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
+        #~ url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
         d.update(content_type=self.rh.content_type)
         d.update(active_fields=self.rh.report.active_fields) 
-        d.update(url_data=url) 
+        #~ d.update(url_data=url) 
         #~ 20101022 d.update(main_panel=self.main)
         d.update(name=self.action.name) # used by tinymce editor window
         d.update(fk_name=self.action.actor.fk_name);

@@ -315,6 +315,11 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`21 <1121>`
   :doc:`22 <1122>`
   :doc:`23 <1123>`
+  :doc:`24 <1124>`
+  :doc:`25 <1124>`
+  :doc:`26 <1124>`
+  |br|  	
+  :doc:`28 <1124>`
 
 .. |Dec| replace::  **December**
   |br| 

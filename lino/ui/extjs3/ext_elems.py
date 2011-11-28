@@ -387,8 +387,8 @@ class Spacer(LayoutElement):
         
 class FieldElement(LayoutElement):
     #~ declare_type = jsgen.DECLARE_INLINE
-    declare_type = jsgen.DECLARE_THIS
-    #~ declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_THIS
+    declare_type = jsgen.DECLARE_VAR
     stored = True
     filter_type = None # 'auto'
     #declaration_order = 3
@@ -482,7 +482,7 @@ class TextFieldElement(FieldElement):
                 self.field = field
                 self.editable = field.editable # and not field.primary_key
                 #~ 20111126 kw.update(ls_url=rpt2url(lh.rh.report))
-                kw.update(containing_window=js_code("ww"))
+                kw.update(containing_panel=js_code("this"))
                 #~ kw.update(title=unicode(field.verbose_name)) 20111111
                 kw.update(title=field.verbose_name)
                 #~ kw.update(tinymce_options=dict(
@@ -539,7 +539,7 @@ class PasswordFieldElement(CharFieldElement):
 class FileFieldElement(CharFieldElement):
     #~ xtype = 'fileuploadfield'
     #~ value_template = "new Lino.FileField(%s)"
-    value_template = "Lino.file_field_handler(ww,%s)"
+    value_template = "Lino.file_field_handler(this,%s)"
     #~ value_template = "%s"
     
     #~ def __init__(self,lh,*args,**kw):
@@ -822,8 +822,8 @@ class DisplayElement(FieldElement):
     preferred_width = 30
     preferred_height = 3
     ext_suffix = "_disp"
-    declare_type = jsgen.DECLARE_THIS
-    #~ declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_THIS
+    declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
     
 
@@ -859,7 +859,7 @@ class HtmlBoxElement(DisplayElement):
         
     def get_field_options(self,**kw):
         kw.update(name=self.field.name)
-        kw.update(containing_window=js_code("ww"))
+        #~ kw.update(containing_panel=js_code("this"))
         kw.update(layout='fit')
         #~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
@@ -882,9 +882,8 @@ class Container(LayoutElement):
     #~ hideCheckBoxLabels = True
     
     #declare_type = jsgen.DECLARE_INLINE
-    #declare_type = jsgen.DECLARE_THIS
-    #~ declare_type = jsgen.DECLARE_VAR
-    declare_type = jsgen.DECLARE_THIS
+    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_THIS
     #~ declare_type = jsgen.DECLARE_THIS
     
     
@@ -1247,8 +1246,8 @@ class FieldSetPanel(Panel):
   
 
 class GridElement(Container): 
-    #~ declare_type = jsgen.DECLARE_VAR
-    declare_type = jsgen.DECLARE_THIS
+    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_THIS
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     #~ value_template = "new Ext.grid.GridPanel(%s)"
     value_template = "new Lino.GridPanel(%s)"
@@ -1264,6 +1263,7 @@ class GridElement(Container):
         :param rpt: the report being displayed
         """
         assert isinstance(rpt,reports.Report), "%r is not a Report!" % rpt
+        self.value_template = "new Lino.%s.GridPanel(%%s)" % rpt
         self.report = rpt
         if len(columns) == 0:
             self.rh = rpt.get_handle(lh.ui)
@@ -1277,15 +1277,6 @@ class GridElement(Container):
         self.preferred_width = constrain(w,10,120)
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
-        kw.update(page_length=self.report.page_length)
-        kw.update(stripeRows=True)
-
-        a = rpt.get_action('detail')
-        if a:
-            kw.update(ls_detail_handler=js_code("Lino.%s" % a))
-        a = rpt.get_action('insert')
-        if a:
-            kw.update(ls_insert_handler=js_code("Lino.%s" % a))
         
         kw.update(containing_window=js_code("ww"))
         
@@ -1295,7 +1286,6 @@ class GridElement(Container):
         #~ assert not kw.has_key('before_row_edit')
         #~ self.update(before_row_edit=before_row_edit(self))
         
-        #~ self.preferred_height = rpt.page_length 
         if self.report.master is not None:
             self.mt = ContentType.objects.get_for_model(self.report.master).pk
         else:
@@ -1308,29 +1298,29 @@ class GridElement(Container):
             #~ self.column_model.columns[i].update(width = w)
 
     def ext_options(self,**kw):
+        "not direct parent (Container), only LayoutElement"
+        kw = LayoutElement.ext_options(self,**kw)
+        return kw
+        
+    def unused_ext_options(self,**kw):
         rh = self.report.get_handle(self.lh.ui)
         kw = LayoutElement.ext_options(self,**kw)
-        #~ d.update(ls_data_url=rh.ui.get_actor_url(self.report))
         kw.update(ls_url=rpt2url(self.report))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
         kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
-        #~ kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
         kw.update(ls_id_property=rh.store.pk.name)
         kw.update(pk_index=rh.store.pk_index)
         kw.update(ls_quick_edit=rh.report.cell_edit)
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
         kw.update(ls_grid_configs=[gc.data for gc in self.report.grid_configs])
         kw.update(gc_name=DEFAULT_GC_NAME)
-        #~ gc = self.report.grid_configs.get('',None)
-        #~ if gc is not None:
-            #~ kw.update(ls_grid_config=gc)
         return kw
         
-class SlaveGridElement(GridElement):
-    def ext_options(self,**kw):
-        kw = GridElement.ext_options(self,**kw)
-        kw.update(title=self.report.label)
-        return kw
+#~ class SlaveGridElement(GridElement):
+    #~ def ext_options(self,**kw):
+        #~ kw = GridElement.ext_options(self,**kw)
+        #~ kw.update(title=self.report.label)
+        #~ return kw
       
         
 #~ class M2mGridElement(GridElement):
@@ -1461,33 +1451,32 @@ from lino.tools import full_model_name
 
 class FormPanel(jsgen.Component):
     declare_type = jsgen.DECLARE_VAR
-    listeners = None
+    #~ listeners = None
     
     def __init__(self,rh,action,**kw):
         self.rh = rh
-        self.value_template = "new Lino.%s.FormPanel(%%s)" % full_model_name(self.rh.report.model)
-        #~ self.main = main
-        kw.update(
-          #~ items=main,
-          #~ autoScroll=True,
-          #~ autoHeight=True,
-          layout='fit',
-          empty_title=action.get_button_label()
-        )
+        #~ self.value_template = "new Lino.%s.FormPanel(%%s)" % full_model_name(self.rh.report.model)
+        self.value_template = "new Lino.%sPanel(%%s)" % action
+        #~ hmm....
+        #~ kw.update(
+          #~ layout='fit',
+          #~ empty_title=action.get_button_label()
+        #~ )
         kw.update(containing_window=js_code("ww"))
-        if not isinstance(action,reports.InsertRow):
-            kw.update(has_navigator=rh.report.has_navigator)
+        #~ if not isinstance(action,reports.InsertRow):
+            #~ kw.update(has_navigator=rh.report.has_navigator)
             
-        rpt = rh.report
-        a = rpt.get_action('detail')
-        if a:
-            kw.update(ls_detail_handler=js_code("Lino.%s" % a))
-        a = rpt.get_action('insert')
-        if a:
-            kw.update(ls_insert_handler=js_code("Lino.%s" % a))
+        #~ rpt = rh.report
+        #~ a = rpt.get_action('detail')
+        #~ if a:
+            #~ kw.update(ls_detail_handler=js_code("Lino.%s" % a))
+        #~ a = rpt.get_action('insert')
+        #~ if a:
+            #~ kw.update(ls_insert_handler=js_code("Lino.%s" % a))
         
-        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rpt.get_actions(action)])
-        kw.update(ls_url=rpt2url(rpt))
+        #~ kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rpt.get_actions(action)])
+        #~ kw.update(ls_url=rpt2url(rpt))
+        #~ ... hmm
         jsgen.Component.__init__(self,'form_panel',**kw)
         
     def unused_has_field(self,f):
