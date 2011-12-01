@@ -13,12 +13,13 @@ Short-term
 ----------
 
 #.  Browser-specific language selection works well... 
-    except that Lino should make it 
-    possible to override that browser-specific language setting.
-    The most straigtforward place is the language field from 
+    but Lino should also make it 
+    possible to override this browser-specific language setting.
+    The most straigtforward place 
+    (at least on a site that is using 
+    :mod:`lino.modlib.users`)
+    is the language field from 
     :class:`lino.modlib.contacts.Contact`.
-    At least on a site that is using 
-    :mod:`lino.modlib.users`.
 
 #.  :class:´lino.modlib.jobs.Function` : "Funktionen" 
     umbenennen nach "Qualifikationen"?
@@ -217,6 +218,8 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Write test cases with different cases of jobs.contract and isip.Contract
 
 #.  Il est vrai que Lino devrait désactiver le bouton "save grid config" 
     pour les utilisateurs qui n'ont pas la permission (et chez qui Lino 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-23 19:25+0000\n"
+"POT-Creation-Date: 2011-12-01 15:24+0000\n"
 "PO-Revision-Date: 2011-09-14 21:36+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -255,24 +255,24 @@ msgstr "date d'envoi"
 msgid "Candidature by %(person)s"
 msgstr "Candidats"
 
-#: .\models.py:892 .\models.py:896 .\models.py:969 .\models.py:1030
+#: .\models.py:892 .\models.py:896 .\models.py:970 .\models.py:1031
 msgid "Candidates"
 msgstr "Candidats"
 
-#: .\models.py:929
+#: .\models.py:930
 #, fuzzy
 msgid "Contracts Situation 2"
 msgstr "Situation contrats Art 60-7"
 
-#: .\models.py:990
+#: .\models.py:991
 msgid "Contracts Situation"
 msgstr "Situation contrats Art 60-7"
 
-#: .\models.py:1051
+#: .\models.py:1052
 msgid "is Employer"
 msgstr "Employeur"
 
-#: .\models.py:1065
+#: .\models.py:1066
 msgid "~Jobs"
 msgstr "~Emplois"
 

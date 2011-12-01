@@ -1,4 +1,4 @@
-20111124..28
+20111124..29
 ============
 
 Continued with Calendar Panel
@@ -160,3 +160,29 @@ TODO:
 - bug with master params
 
 Checkin 
+
+Some internals documentation:
+
+A slave panel needs to know the **master parameters** to get its data:
+
+- `mk` ("master key") is the primary key of the current record, 
+  required by all slave report requests,
+
+- `mt` ("master type", the ContentType of the master) 
+  is needed only for Reports on a generic master (XxxByOwner).
+
+Grids and Forms on a slave report need a `caller` 
+(either a FormPanel or a GridPanel) 
+which will act as their master (providing a method `get_master_params()` 
+which they call (1) upon render and (2) when `on_master_changed`)
+
+Another thing are **base parameters**. The concept is taken over from 
+the ExtJS Store `baseParams` config parameter.
+
+- `query` (:attr:`lino.ui.requests.URL_PARAM_FILTER`) : 
+  the current value of the `search_field` in the top toolbar of a grid.
+  
+- `mk` and `mt` are stored in the base_params of a slave panel.
+  
+  
+A FormPanel takes the base

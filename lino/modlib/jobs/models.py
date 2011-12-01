@@ -364,7 +364,7 @@ class Contract(ContractBase):
                     def duration(refdate):
                         if type(refdate) != datetime.date:
                             raise Exception("%r is not a date!" % refdate)
-                        delta = refdate - self.person.birth_date
+                        delta = refdate - self.person.birth_date.as_date()
                         age = delta.days / 365
                         if age < 36:
                             return 312

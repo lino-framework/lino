@@ -312,7 +312,6 @@ class IncompleteDate:
             #~ self.month,
             #~ self.day)
         
-        
     def as_date(self):
         return datetime.date(
             #~ (self.year * iif(self.bc,-1,1)) or 1900, 

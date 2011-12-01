@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 ## Copyright 2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -12,6 +11,50 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+"""
+
+Usage example:
+
+>>> headers = ["Country","City","Name"]
+>>> rows = []
+>>> rows.append(["Belgium","Eupen","Gerd"])
+>>> rows.append(["Estonia","Vigala","Luc"])
+>>> rows.append(["St. Vincent and the Grenadines","Chateaubelair","Nicole"])
+
+>>> print table(headers,rows)
+============================== ============= ======
+Country                        City          Name
+============================== ============= ======
+Belgium                        Eupen         Gerd
+Estonia                        Vigala        Luc
+St. Vincent and the Grenadines Chateaubelair Nicole
+============================== ============= ======
+<BLANKLINE>
+
+>>> print table(headers,rows,show_headers=False)
+============================== ============= ======
+Belgium                        Eupen         Gerd
+Estonia                        Vigala        Luc
+St. Vincent and the Grenadines Chateaubelair Nicole
+============================== ============= ======
+<BLANKLINE>
+
+Depending on your code you might prefer to use 
+directly the :class:`SimpleTable` class:
+
+>>> t = SimpleTable(headers)
+>>> print t.to_rst(rows)
+============================== ============= ======
+Country                        City          Name
+============================== ============= ======
+Belgium                        Eupen         Gerd
+Estonia                        Vigala        Luc
+St. Vincent and the Grenadines Chateaubelair Nicole
+============================== ============= ======
+<BLANKLINE>
+
+"""
 
 #~ import cStringIO as StringIO
 import StringIO 
@@ -64,8 +107,13 @@ def _write_header(writeln,level,s):
     
 
 class SimpleTable(object):
-    def __init__(self,headers):
+    """
+    Renders as a simple table.
+    
+    """
+    def __init__(self,headers,show_headers=True):
         self.headers = headers
+        self.show_headers = show_headers
         self.cols = [ Column(i,h) for i,h in enumerate(headers)]
         self.adjust_widths(headers)
         
@@ -78,21 +126,26 @@ class SimpleTable(object):
         
     def write(self,fd,rows):
         def writeln(s):
-            fd.write(s+'\n')
+            fd.write(s.rstrip()+'\n')
             
         for row in rows: self.adjust_widths(row)
-        writeln(' '.join([('=' * c.width) for c in self.cols]))
-        writeln(self.format_row(self.headers))
+        if self.show_headers:
+            writeln(' '.join([('=' * c.width) for c in self.cols]))
+            writeln(self.format_row(self.headers))
         writeln(' '.join([('=' * c.width) for c in self.cols]))
         for row in rows:
             writeln(self.format_row(row))
         writeln(' '.join([('=' * c.width) for c in self.cols]))
+          
+    def to_rst(self,rows):
+        fd = StringIO.StringIO()
+        self.write(fd,rows)
+        return fd.getvalue()
+        
 
-def table(headers,rows):
-    t = SimpleTable(headers)
-    fd = StringIO.StringIO()
-    t.write(fd,rows)
-    return fd.getvalue()
+def table(headers,rows,**kw):
+    t = SimpleTable(headers,**kw)
+    return t.to_rst(rows)
     
     
 #~ def py2rst(v):
@@ -105,3 +158,13 @@ def table(headers,rows):
         #~ ]
         #~ return table(headers,rows)
     #~ return unicode(v)
+    
+    
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+
+    

@@ -153,7 +153,7 @@ def json_response(x):
     #~ logger.debug("json_response() -> %r", s)
     # http://dev.sencha.com/deploy/dev/docs/source/BasicForm.html#cfg-Ext.form.BasicForm-fileUpload
     return HttpResponse(s, content_type='text/html')
-    return HttpResponse(s, content_type='text/json')
+    #~ return HttpResponse(s, content_type='text/json')
     #~ r = HttpResponse(s, content_type='application/json')
     # see also http://stackoverflow.com/questions/477816/the-right-json-content-type
     #~ return r
@@ -331,7 +331,7 @@ class ViewReportRequest(reports.ReportActionRequest):
                     raise Http404("Invalid primary key %r for %s",pk,master.__name__)
                 except master.DoesNotExist,e:
                     # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
-                    raise Http404("There's no %s with primary key %r",master.__name__,pk)
+                    raise Http404("There's no %s with primary key %r" % (master.__name__,pk))
             #~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.report,kw
         
@@ -495,7 +495,7 @@ class ExtUI(base.UI):
             return ext_elems.GenericForeignKeyElement(lh,de,**kw)
             
         if isinstance(de,reports.Report):
-            kw.update(containing_panel=js_code("this"))
+            kw.update(master_panel=js_code("this"))
             if isinstance(lh.layout,reports.DetailLayout):
                 # a Report in a DetailWindow
                 kw.update(tools=[
@@ -1585,9 +1585,11 @@ tinymce.init({
         """
         rpt = self.requested_report(request,app_label,rptname)
         #~ rpt = actors.get_actor2(app_label,rptname)
-        #~ rh = rpt.get_handle(self)
         if fldname is None:
-            qs = rpt.request(self).get_queryset()
+            rh = rpt.get_handle(self)
+            ar = ViewReportRequest(request,rh,rpt.default_action)
+            qs = ar.get_queryset()
+            #~ qs = rpt.request(self).get_queryset()
             def row2dict(obj,d):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
@@ -2010,6 +2012,8 @@ tinymce.init({
         yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % full_model_name(dh.detail.model)
         
         yield "  layout: 'fit',"
+        yield "  content_type: %s," % py2js(dh.content_type)
+
         
         yield "  initComponent : function() {"
             
@@ -2050,11 +2054,12 @@ tinymce.init({
         yield "  empty_title: %s," % py2js(action.get_button_label())
         if not isinstance(action,reports.InsertRow):
             yield "  has_navigator: %s," % py2js(rpt.has_navigator)
-      
+
         yield "  ls_bbar_actions: %s," % py2js([rh.ui.a2btn(a) for a in rpt.get_actions(action)])
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action != rpt.default_action:
             yield "  action_name: %s," % py2js(action.name)
+        yield "  active_fields: %s," % py2js(rpt.active_fields)
         yield "  initComponent : function() {"
         a = rpt.get_action('detail')
         if a:
@@ -2074,6 +2079,7 @@ tinymce.init({
         yield "Lino.%s.GridPanel = Ext.extend(Lino.GridPanel,{" % rh.report
         
         kw = dict()
+        #~ kw.update(empty_title=%s,rh.report.get_button_label()
         kw.update(ls_url=ext_elems.rpt2url(rh.report))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
         kw.update(ls_id_property=rh.store.pk.name)

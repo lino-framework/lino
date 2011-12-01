@@ -5,10 +5,15 @@ Benutzer
 --------
 
 - Bug-Gefahr, denn es hat einige interne Optimierungen gegeben. 
+
 - Optimierungen und Bugfixes beim Eingeben von Terminen.
+
 - Passbilder sind jetzt nicht mehr verzerrt
 
-  
+- Da war ein Bug beim Ausfüllen einer Art60-7-Konvention. 
+  ("unsupported operand type(s) for -: 'datetime.date' and 'instance'",
+  :file:`/var/snapshots/lino/lino/modlib/jobs/models.py` in duration, line 367)
+  Kann sein, dass das Speichern von Konventionen insgesamt nicht funktionierte.
 
 Administrator
 -------------

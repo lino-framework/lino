@@ -70,6 +70,14 @@ class WindowWrapper(ActionRenderer):
         return d
         
 
+#~ class MainComponent(Component): 
+    #~ def js_value(self):
+        #~ assert not self.ext_options()
+        value = self.ext_options(**self.value)
+        #~ yield self.value_template % 'params'
+  
+
+
 class MasterWrapper(WindowWrapper):
   
     def __init__(self,rh,action,lh,**kw):
@@ -83,13 +91,26 @@ class MasterWrapper(WindowWrapper):
         if False and settings.USE_FIREBUG:
             yield "  console.time('%s');" % self.action
             #~ yield "  console.log('ext_windows',20100930,params);"
-        yield "  var ww = new Lino.%s(caller,%s,params);" % (
+        yield "  var ww = new Lino.%s(caller,%s);" % (
             self.__class__.__name__,py2js(self.config))
+            
         
-        #~ yield "  ww.main_item = %s;" % self.main.as_ext()
+        """HACK : override default jsgen behaviour. 
+        The main component has no options, but must take those 
+        passed to this function as `params`.
+        """
+        if self.main.value:
+            raise Exception("Oops, value is %r" % self.main.value)
+        v = self.main
+        yield "  params.containing_window = ww;"
+        yield "  var %s = %s;" % (v.ext_name,(v.value_template % 'params'))
+            
         
-        for ln in jsgen.declare_vars(self.main):
-            yield '  '+ln
+        #~ self.main.value = 'params' ## ugly HACK!
+        
+        #~ for ln in jsgen.declare_vars(self.main):
+            #~ yield '  ' + ln
+            
         yield "  ww.main_item = %s;" % self.main.as_ext()
             
         yield "  ww.show();"
@@ -108,12 +129,12 @@ class GridWrapperMixin(WindowWrapper):
     
     def get_config(self):
         d = super(GridWrapperMixin,self).get_config()
-        d.update(content_type=self.rh.content_type)
+        #~ d.update(content_type=self.rh.content_type)
         #~ d.update(title=unicode(self.rh.get_title(None)))
         #~ 20101022 d.update(main_panel=self.lh._main)
         return d
         
-    def update_config(self,wc):
+    def u_update_config(self,wc):
         self.lh._main.update_config(wc)
         
 
@@ -144,12 +165,12 @@ class DetailWrapper(MasterWrapper):
     def get_config(self):
         d = MasterWrapper.get_config(self)
         #~ url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
-        d.update(content_type=self.rh.content_type)
-        d.update(active_fields=self.rh.report.active_fields) 
+        #~ d.update(content_type=self.rh.content_type)
+        #~ d.update(active_fields=self.rh.report.active_fields) 
         #~ d.update(url_data=url) 
         #~ 20101022 d.update(main_panel=self.main)
-        d.update(name=self.action.name) # used by tinymce editor window
-        d.update(fk_name=self.action.actor.fk_name);
+        #~ d.update(name=self.action.name) # used by tinymce editor window
+        #~ d.update(fk_name=self.action.actor.fk_name);
         return d
         
         
@@ -159,7 +180,7 @@ class InsertWrapper(DetailWrapper):
 
     def get_config(self):
         d = DetailWrapper.get_config(self)
-        d.update(record_id=-99999);
+        #~ d.update(record_id=-99999);
         return d
         
 

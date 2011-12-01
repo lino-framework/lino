@@ -458,7 +458,7 @@ class UpdateRowAction(RowAction):
 class DeleteSelected(RowAction):
     #~ needs_selection = True
     label = _("Delete")
-    #~ name = 'delete'
+    name = 'delete'
     key = actions.DELETE # (ctrl=True)
     #~ client_side = True
     
@@ -496,7 +496,7 @@ class ReportHandle(base.Handle):
                     self.list_layout = ListLayoutHandle(self,
                         ListLayout('main = '+self.report.column_names),
                         hidden_elements=self.report.hidden_columns)
-                self.content_type = ContentType.objects.get_for_model(self.report.model).pk
+                #~ self.content_type = ContentType.objects.get_for_model(self.report.model).pk
         
   
     def __str__(self):
@@ -1145,7 +1145,7 @@ class Report(actors.Actor): #,base.Handled):
         l = []
         for a in self.get_actions():
             if isinstance(a,RowAction):
-                if not a.disabled_for(obj,request):
+                if a.disabled_for(obj,request):
                     l.append(a.name)
         return l
         
@@ -1807,8 +1807,9 @@ class DetailHandle(base.Handle):
     """
     def __init__(self,ui,detail):
         self.detail = detail
+        self.content_type = ContentType.objects.get_for_model(detail.model).pk
         self.lh_list = [ 
-            LayoutHandle(ui,self.detail.model,dl) 
+            LayoutHandle(ui,detail.model,dl) 
                 for dl in self.detail.layouts ]
         base.Handle.__init__(self,ui)
       

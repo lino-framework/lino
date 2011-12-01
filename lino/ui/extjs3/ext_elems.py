@@ -482,7 +482,7 @@ class TextFieldElement(FieldElement):
                 self.field = field
                 self.editable = field.editable # and not field.primary_key
                 #~ 20111126 kw.update(ls_url=rpt2url(lh.rh.report))
-                kw.update(containing_panel=js_code("this"))
+                kw.update(master_panel=js_code("this"))
                 #~ kw.update(title=unicode(field.verbose_name)) 20111111
                 kw.update(title=field.verbose_name)
                 #~ kw.update(tinymce_options=dict(
@@ -1278,7 +1278,7 @@ class GridElement(Container):
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
         
-        kw.update(containing_window=js_code("ww"))
+        #~ kw.update(containing_window=js_code("ww"))
         
         Container.__init__(self,lh,name,**kw)
         self.active_children = columns
@@ -1462,7 +1462,7 @@ class FormPanel(jsgen.Component):
           #~ layout='fit',
           #~ empty_title=action.get_button_label()
         #~ )
-        kw.update(containing_window=js_code("ww"))
+        #~ kw.update(containing_window=js_code("ww"))
         #~ if not isinstance(action,reports.InsertRow):
             #~ kw.update(has_navigator=rh.report.has_navigator)
             

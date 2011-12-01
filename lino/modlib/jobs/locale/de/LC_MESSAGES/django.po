@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-23 19:25+0000\n"
-"PO-Revision-Date: 2011-11-18 09:35+0200\n"
+"POT-Creation-Date: 2011-12-01 15:24+0000\n"
+"PO-Revision-Date: 2011-11-30 17:47+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -64,7 +64,7 @@ msgstr "Art.60§7-Konvention"
 
 #: .\models.py:210
 msgid "Job Contracts"
-msgstr "Art.60§7-Konvention"
+msgstr "Art.60§7-Konventionen"
 
 #: .\models.py:214 .\models.py:660
 msgid "Contract Type"
@@ -251,23 +251,23 @@ msgstr "eingereicht am "
 msgid "Candidature by %(person)s"
 msgstr "Kandidatur von %(person)s"
 
-#: .\models.py:892 .\models.py:896 .\models.py:969 .\models.py:1030
+#: .\models.py:892 .\models.py:896 .\models.py:970 .\models.py:1031
 msgid "Candidates"
 msgstr "Kandidaten"
 
-#: .\models.py:929
+#: .\models.py:930
 msgid "Contracts Situation 2"
 msgstr "Übersicht Verträge 2"
 
-#: .\models.py:990
+#: .\models.py:991
 msgid "Contracts Situation"
 msgstr "Übersicht Verträge"
 
-#: .\models.py:1051
+#: .\models.py:1052
 msgid "is Employer"
 msgstr "Arbeitgeber"
 
-#: .\models.py:1065
+#: .\models.py:1066
 msgid "~Jobs"
 msgstr "~Stellen"
 

@@ -83,6 +83,8 @@ def declare_vars(v):
                 yield ln
         return
     if isinstance(v,Component): 
+        #~ for ln in declare_vars(v.value):
+            #~ yield ln
         for sub in v.ext_options().values():
             for ln in declare_vars(sub):
                 yield ln
@@ -321,6 +323,7 @@ class Component(Variable):
     
     def __init__(self,name=None,**options):
         Variable.__init__(self,name,options)
+        #~ self.update(**self.ext_options())
         
     def js_value(self):
         value = self.ext_options()
@@ -347,28 +350,28 @@ class Component(Variable):
             for e in i.walk():
                 yield e
       
-class Function(Variable):
+#~ class Function(Variable):
   
-    def __init__(self,name=None):
-        Variable.__init__(self,name,None)
+    #~ def __init__(self,name=None):
+        #~ Variable.__init__(self,name,None)
         
-    def js_value(self):
-        for ln in self.js_render():
-            yield ln
+    #~ def js_value(self):
+        #~ for ln in self.js_render():
+            #~ yield ln
         
     
       
-class Object(Function):
-    def __init__(self,name,params='this'):
-        assert isinstance(params,basestring)
-        self.params = params
-        Function.__init__(self,name)
+#~ class Object(Function):
+    #~ def __init__(self,name,params='this'):
+        #~ assert isinstance(params,basestring)
+        #~ self.params = params
+        #~ Function.__init__(self,name)
         
-    def js_value(self):
-        yield "new " 
-        for ln in self.js_render():
-            yield "  " + ln
-        yield "(" + self.params + ")"
+    #~ def js_value(self):
+        #~ yield "new " 
+        #~ for ln in self.js_render():
+            #~ yield "  " + ln
+        #~ yield "(" + self.params + ")"
     
       
       
