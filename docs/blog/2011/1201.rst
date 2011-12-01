@@ -1,0 +1,8 @@
+20111201
+========
+
+Still working on Calendar Panel.
+
+Checkin at 17:33 because the basic functionality seems to be restored now
+after the internal changes for the new JS panel constructor API.
+

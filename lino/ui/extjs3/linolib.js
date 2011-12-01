@@ -239,7 +239,8 @@ Lino.edit_tinymce_text = function(panel,options) {
   function save() {
     //~ if (todo_after_save) {alert('tried to save again'); return; }
     if (saving) {alert('tried to save again'); return; }
-    var url = panel.containing_window.main_item.get_record_url(rec.id);
+    //~ var url = panel.containing_window.main_item.get_record_url(rec.id);
+    var url = panel.master_panel.get_record_url(rec.id);
     var params = Ext.apply({},panel.get_base_params());
     params[panel.editor.name] = editor.getValue();
     var a = { 
@@ -961,7 +962,7 @@ Lino.action_handler = function (panel,on_success,gridmode) {
               Lino.notify(result.message);
           }
       }
-      if (result.refresh_all) {
+      if (result.refresh_all & panel.containing_window) {
           panel.containing_window.main_item.refresh();
       } else {
           if (result.refresh) panel.refresh();
@@ -1796,7 +1797,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ this.setTitle(title);
     if (this.containing_window) {
       this.containing_window.window.setTitle(title);
-      console.log('20111201 set_window_title(',title,') for',this.containing_window.window);
+      //~ console.log('20111201 set_window_title(',title,') for',this.containing_window.window);
     }
   },
   
@@ -1842,7 +1843,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               } else {
                   Ext.MessageBox.alert('Note',
                     "$_('No more records to display. Detail window has been closed.')");
-                  this_.containing_window.close();
+                  if (this_.containing_window) {
+                      this_.containing_window.close();
+                  }
               }
                   
           } else {
@@ -2006,10 +2009,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
                   // if there's no caller, then this was opened from a permalink.
                   var p = Ext.apply({},panel.get_base_params());
                   Ext.apply(p,{$ext_requests.URL_PARAM_ACTION_NAME : 'detail'});
-                  var url = panel.get_permalink_url() + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
+                  var url = panel.get_permalink_url() 
+                    + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
                   document.location = url;
               }
-            } else {
             }
           },
           failure: Lino.on_submit_failure,
@@ -2128,29 +2131,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   loadMask: {msg:"$_('Please wait...')"},
   
   constructor : function(config){
-    
-    //~ console.log('Lino.GridMixin.setup 1',this);
-    //~ this.tbar = this.pager;
-    //~ this.containing_window = ww;
-    //~ Ext.applyIf(config,{base_params:{}});
-    //~ this.containing_window = ww;
-    //~ config.bbar = config.bbar.concat(['->']);
-    //~ if(menu.length > 1) {
-      //~ config.bbar = config.bbar.concat([
-        //~ {text:'View',menu: menu,tooltip:"Select another view of this report"}
-      //~ ]);
-    //~ }
-    //~ config.bbar = config.bbar.concat([
-    //~ if (config.tools === undefined) config.tools = [];
-    //~ config.tools = config.tools.concat([
-      //~ {text:'GC',handler:this.manage_grid_configs,qtip:"Manage Grid Configurations",scope:this},
-      //~ {handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this, id:"save"}
-      //~ {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
-    //~ ]);
-    
-    //~ this.row_editor = new Ext.ux.grid.RowEditor();
-    //~ config.plugins = [this.row_editor,new Lino.GridFilters()];
-    
 #if $settings.LINO.use_gridfilters
     config.plugins = [new Lino.GridFilters()];
 #end if    
@@ -2159,31 +2139,30 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     config.plugins = [new Ext.ux.grid.FilterRow()];
 #end if    
     
-    //~ this.row_editor.on({
-      //~ scope: this,
-      //~ afteredit: function(roweditor, changes, record, rowIndex) {
-        //~ console.log(arguments);
-      //~ }
-    //~ });
-    
-    //~ config.colModel = new ext.grid.columnModel({defaultSortable:true,
-      //~ columns:this.apply_grid_config(config.gc_name,config.ls_grid_configs,config.ls_columns)});
-    //~ config.columns = this.apply_grid_config(config.gc_name,this.ls_grid_configs,config.ls_columns);
+    /* 
+    When a GridPanel is the main item of the window, then it doesn't 
+    have it's own header but uses the window's header bar.
+    */ 
+    if (config.containing_window) { 
+        //~ console.log(20111201, 'delete title');
+        config.title = undefined;
+        //~ this.header = false;
+    }
     
     Lino.GridPanel.superclass.constructor.call(this,config);
+    
   },
   
   initComponent : function(){
     
     var bp = { fmt:'json' }
-    //~ if (this.containing_window &&  this.containing_window.main_item == this) { 
-        //~ Ext.apply(bp,this.containing_window.main_item.get_base_params());
-    //~ }
-    //~ if (this.master_panel) { 
+    if (this.master_panel) { 
         //~ Ext.apply(bp,this.master_panel.get_base_params());    
-        //~ Ext.apply(bp,this.master_panel.get_master_params());    
+        Ext.apply(bp,this.master_panel.get_master_params());    
         //~ console.log('20111201',this.title,'from master',this.master_panel,bp);
-    //~ }
+    }
+    /* e.g. when slave gridwindow called from a permalink */
+    if (this.base_params) Ext.apply(bp,this.base_params);  
     //~ bp['fmt'] = 'json';
     
     //~ function on_proxy_load( proxy, transactionObject, callbackOptions ) {
