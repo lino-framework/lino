@@ -10,8 +10,8 @@ class Lino(Lino):
 
 LINO = Lino(__file__,globals())
 
-LANGUAGE_CODE = 'fr' # "main" language
-LANGUAGES = language_choices('fr','nl','en')
+LANGUAGE_CODE = 'en' # "main" language
+LANGUAGES = language_choices('en','fr','nl')
 
 LINO.appy_params.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
 

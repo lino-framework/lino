@@ -5,7 +5,6 @@ Administrator's Manual
     :maxdepth: 2
 
     install
-    install_apache
     ApacheHttpAuth
     apache_webdav
     printable
