@@ -228,8 +228,8 @@ Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version $(lino.__versi
 Lino.edit_tinymce_text = function(panel,options) {
   // `panel` is the RichTextPanel
   
-  var rec = panel.get_current_record();
-  //~ var rec = panel.containing_window.get_current_record();
+  //~ var rec = panel.get_current_record();
+  var rec = panel.master_panel.get_current_record();
   var value = rec ? rec.data[panel.editor.name] : '';
   var saving = false;
   var todo_after_save = false;

@@ -1,8 +1,6 @@
 20111202
 ========
 
-Still working on .
-
 Still worked the whole day on the internal changes which I started 
 a week ago in order to integrate the Ext.ensible Calendar Panel.
 
@@ -20,3 +18,10 @@ The explanation seems to be: I'm calling `Window.setTitle()`
 The `rendered` flag was already `true`, but if you look at the code of `Ext.Component.render` 
 you see that a lot of things still happen afterwards.
 I lazily worked around this by using `defer`.
+
+
+Updated installation docs
+-------------------------
+
+No, a Linux server is not required in order to see Lino. 
+Wrote new article :doc:`/admin/install_windows`.
