@@ -6,7 +6,7 @@ but we hope that the community will grew soon.
 This is the time for pionieers to join us!
 
 Lino is :doc:`published under the GPL </about/why_gpl>` 
-because we want to make sure that our voluntary work will always 
+because we want to make sure that our invested work will always 
 belong to the general public and never be misused 
 by some proprietary organisation.
 

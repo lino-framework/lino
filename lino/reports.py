@@ -352,9 +352,9 @@ class StaticText:
 #~ class Picture:
     #~ pass
     
-class DataView:
-    def __init__(self,tpl):
-        self.xtemplate = tpl
+#~ class DataView:
+    #~ def __init__(self,tpl):
+        #~ self.xtemplate = tpl
         
 
 class Calendar(actions.OpenWindowAction):

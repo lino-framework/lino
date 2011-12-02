@@ -1,99 +1,57 @@
-======================
-#51 : Lino and OpenERP
-======================
-
-Summary
--------
+=====================
+#51 : Lino and Tryton
+=====================
 
 In November 2011 I discovered OpenERP and was amazed 
 by how good it is and how well it covers what I can do 
 with Lino.
+:doc:`A few days later <blog/2011/1122>`
+I discovered that OpenERP cannot be considered free software, 
+but that we have `Tryton <http://www.tryton.org>`_, 
+a free fork of OpenERP.
 
-This discovery raises an important question:
-Should I drop Lino and join the OpenERP community?
+This discovery raised an important question:
+which framework is better?
+Should I drop Lino and join the Tryton community?
 Or continue with Lino and become their concurrent?
 
-The question is important, 
-but it will take weeks for me to get familiar with OpenERP 
-and feel ready for this decision.
+Qualities of a framework (AFAICS):
 
-My plan is to write an OpenObject 
-application in order to convince myself 
-and the Lino users in Eupen.
+- User interface : 
+  is it beautiful, intuitive, efficient?
 
-
-20111117
---------
-
-I discovered OpenERP:
-
-| http://demo.openerp.com/
-| http://www.openerp.com/products/application_builder
-
-If it is really as good as it looks, I will stop working on Lino, 
-convert the existing application and use OpenERP instead!
-What a pity that I didn't look at this project earlier!
-(But what a piece of chance that I discovered it now and not in two years!)
-
-::
+- Prototyping : 
+  how much does it cost the customer to get a first prototype of 
+  their customized application?
   
-  $ sudo aptitude install openerp-server
-  The following NEW packages will be installed:
-    blt{a} graphviz{a} libblas3gf{a} libcdt4{a} libcgraph5{a} libffi5{a} libgd2-noxpm{a} libgfortran3{a}
-    libglade2-0{a} libgraph4{a} libgvc5{a} libgvpr1{a} liblapack3gf{a} libpathplan4{a} libpq5{a} libxdot4{a}
-    libxss1{a} openerp-server postgresql{a} postgresql-8.4{a} postgresql-client-8.4{a} postgresql-client-common{a}
-    postgresql-common{a} python-cairo{a} python-egenix-mxdatetime{a} python-egenix-mxtools{a} python-glade2{a}
-    python-gobject{a} python-gtk2{a} python-libxml2{a} python-libxslt1{a} python-matplotlib{a}
-    python-matplotlib-data{a} python-numpy{a} python-psycopg2{a} python-pychart{a} python-pydot{a}
-    python-pyparsing{a} python-tk{a} python-tz{a} tcl8.5{a} tk8.5{a} ttf-liberation{a}
-  0 packages upgraded, 43 newly installed, 0 to remove and 0 not upgraded.
-  Need to get 35.7 MB/36.8 MB of archives. After unpacking 181 MB will be used.
-  Do you want to continue? [Y/n/?]  
-  ...
-  Setting up openerp-server (5.0.12-2) ...
-
-  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-  * Open ERP uses a PostgreSQL database to store its data. With the first *
-  * generation of packages, you have to setup this database manually.     *
-  * Please read /usr/share/doc/openerp-server/README.Debian how to do it. *
-  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
+- Hardware requirements:
+  what hardware is needed to get the system up and running?
   
+- Maintainability : 
+  how much will changes to the software cost?
+  
+- Scalability :
+  how will the application manage being used by 10, 100, 1000 users?
 
-20111118
---------
+- Long-term stability:
+  will the framework still be available in 5, 10, 20 years?
 
-I assisted to a free webinar held by http://www.openbig.org, very interesting.
+To answer these questions I see no other solution 
+than to test it on the field: write a Tryton
+application and attempt to convince myself 
+and the Lino users in Eupen that Tryton is better than Lino.
 
-20111121
---------
+But it will take weeks for me to get familiar with Tryton
+and feel ready for a decision.
 
-Surf notes
-
-`A forum post in December 2010 <http://www.openerp.com/forum/topic21423.html>`_
-Hmm, the forum doesn't seem to be the right place to start learning 
-OpenObject.
-
-
-`OpenERP tools & tips <http://boran.com/book/export/html/25>`_
-This guy must be an interesting person.
-While he still wrote "the community is currently dominated by 
-OpenERP partners", 
-I continue to hope that they are working on this problem.
-For example the following document obviously is quite recent:
-http://doc.openerp.com/v6.0/contribute/01_introduction.html
-
-Aha, there is at least one fork of OpenERP:
-http://www.tryton.org
+One thing is clear: 
+Tryton is a mature product with a competent and sympathic community, 
+while Lino is a young project by a single developer with a few users.
 
 
-`GettingStartedWithOpenERPDev
-<http://code.google.com/p/magento-openerp-smile-synchro/wiki/GettingStartedWithOpenERPDev>`_
-Interesting thoughts.
-Seems that I should start to get familiar with Eclipse and 
-http://pydev.org/
-
-
-
-
-
+- WYSYWYG editor and rich text fields
+- Data migration
+- File Upload 
+- Polymorphism (MTI)
+- Synchronize data from a legacy database
 

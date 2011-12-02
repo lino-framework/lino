@@ -1,0 +1,22 @@
+20111202
+========
+
+Still working on .
+
+Still worked the whole day on the internal changes which I started 
+a week ago in order to integrate the Ext.ensible Calendar Panel.
+
+Today was a typical ExtJS problem: 
+I called 
+`Window.setTitle()` 
+The DOM element got updated, but the Eindow's new 
+header text didn't appear on screen. 
+And when inspecting the element with FireBug or Chrome Development Console, 
+the updated content *was* there.
+Very puzzling.
+The explanation seems to be: I'm calling `Window.setTitle()` 
+*during* rendering 
+(while the Window or part of it's components were still being rendered).
+The `rendered` flag was already `true`, but if you look at the code of `Ext.Component.render` 
+you see that a lot of things still happen afterwards.
+I lazily worked around this by using `defer`.

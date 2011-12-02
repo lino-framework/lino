@@ -402,7 +402,12 @@ class ViewReportRequest(reports.ReportActionRequest):
         
         return kw
       
-    def request2kw(self,ui,**kw):
+    def request2kw(self,unused_ui,**kw):
+        #~ if self.known_values:
+            #~ kv = dict()
+            #~ for k,v in self.known_values:
+                
+            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
         if self.quick_search:
             kw[ext_requests.URL_PARAM_FILTER] = self.quick_search
         if self.master_instance is not None:
@@ -549,8 +554,8 @@ class ExtUI(base.UI):
                     return lh.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,reports.StaticText):
                     return ext_elems.StaticTextElement(lh,name,value)
-                if isinstance(value,reports.DataView):
-                    return ext_elems.DataViewElement(lh,name,value)
+                #~ if isinstance(value,reports.DataView):
+                    #~ return ext_elems.DataViewElement(lh,name,value)
                     #~ return ext_elems.TemplateElement(lh,name,value)
                 #~ if isinstance(value,printable.PicturePrintMethod):
                     #~ return ext_elems.PictureElement(lh,name,value)
@@ -759,43 +764,6 @@ class ExtUI(base.UI):
         """Generates the lines of Lino's HTML reponse.
         """
         
-        main=dict(
-          id="main_area",
-          xtype='container',
-          region="center",
-          autoScroll=True,
-          layout='fit',
-          #~ html=self.welcome_template.render(c),
-          #~ html=html,
-          #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
-        )
-        
-        if not on_ready:
-            #~ c = RequestContext(request,dict(site=self.site,lino=lino))
-            self.welcome_template.ui = self
-            self.welcome_template.request = request
-            self.welcome_template.user = request.user
-            self.welcome_template.site = settings.LINO # self.site
-            self.welcome_template.lino = lino
-            #~ main=ext_elems.ExtPanel(
-            #~ quicklinks = [dict(text="A")]
-            html = unicode(self.welcome_template)
-            
-            quicklinks = settings.LINO.get_quicklinks(self,request.user)
-            if quicklinks.items:
-                html = 'Quick Links: ' + ' '.join(
-                  [self.action_href_http(mi.action) for mi in quicklinks.items]
-                  ) + '<br/>' + html
-            main.update(html=html)
-        
-        #~ if quicklinks.items:
-            #~ main.update(xtype='panel',tbar=quicklinks)
-#~ if not on_ready:
-            #~ on_ready = [
-              #~ 'new Lino.IndexWrapper({html:%s}).show();' % 
-                #~ py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
-            #~ main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
-        #~ main.update(id='main_area',region='center')
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
@@ -948,6 +916,43 @@ tinymce.init({
         
         #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"
           
+        main=dict(
+          id="main_area",
+          xtype='container',
+          region="center",
+          autoScroll=True,
+          layout='fit',
+          #~ html=self.welcome_template.render(c),
+          #~ html=html,
+          #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
+        )
+        
+        if not on_ready:
+            #~ c = RequestContext(request,dict(site=self.site,lino=lino))
+            self.welcome_template.ui = self
+            self.welcome_template.request = request
+            self.welcome_template.user = request.user
+            self.welcome_template.site = settings.LINO # self.site
+            self.welcome_template.lino = lino
+            #~ main=ext_elems.ExtPanel(
+            #~ quicklinks = [dict(text="A")]
+            html = unicode(self.welcome_template)
+            
+            quicklinks = settings.LINO.get_quicklinks(self,request.user)
+            if quicklinks.items:
+                html = 'Quick Links: ' + ' '.join(
+                  [self.action_href_http(mi.action) for mi in quicklinks.items]
+                  ) + '<br/>' + html
+            main.update(html=html)
+        
+        #~ if quicklinks.items:
+            #~ main.update(xtype='panel',tbar=quicklinks)
+#~ if not on_ready:
+            #~ on_ready = [
+              #~ 'new Lino.IndexWrapper({html:%s}).show();' % 
+                #~ py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
+            #~ main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
+        #~ main.update(id='main_area',region='center')
         win = dict(
           layout='fit',
           #~ maximized=True,
@@ -1739,15 +1744,14 @@ tinymce.init({
         """
         Deserves more documentation.
         """
+        params = dict(base_params=rr.request2kw(self))
         if rr.total_count == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
             a = rr.report.get_action('insert')
             if a is not None:
-                #~ params = dict(base_params=self.request2kw(v))
-                rec = rr.create_instance()
-                #~ params = dict(data_record=elem2rec1(rr,rr.ah,rec))
-                params = dict(data_record=elem2rec_insert(rr,rr.ah,rec))
-                #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rec))
+                #~ params = dict(base_params=rr.request2kw(self))
+                elem = rr.create_instance()
+                params.update(data_record=elem2rec_insert(rr,rr.ah,elem))
                 return self.action_href(a,_("Upload"),**params)
         if rr.total_count == 1:
             #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
@@ -1756,8 +1760,13 @@ tinymce.init({
             s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(rr[0].file.name))
             #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
             #~ params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
-            params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
-            s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
+            if True:
+                #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
+                params.update(record_id=rr[0].pk)
+                s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
+            else:
+                params.update(record_id=rr[0].pk)
+                s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),**params)
             return s
         return '[?!]'
         
@@ -1807,16 +1816,10 @@ tinymce.init({
         return v
         
 
-    def action_href_http(self,a,label=None,**params):
-        """
-        Return a HTML chunk with a link to this action.
-        """
-        label = cgi.escape(force_unicode(label or a.get_button_label()))
-        return '[<a href="%s">%s</a>]' % (self.get_action_url(a,**params),label)
-        
     def action_href(self,a,label=None,**params):
         """
-        Return a HTML chunk with a link to this action.
+        Return a HTML chunk for a button that will execute this 
+        action using a *Javascript* link to this action.
         """
         #~ if label is None:
             #~ label = a.get_button_label()
@@ -1830,6 +1833,14 @@ tinymce.init({
         #~ return '[<a href="#" onclick="%s">%s</a>]' % (onclick,label)
         return '[<a href="javascript:%s">%s</a>]' % (onclick,label)
 
+    def action_href_http(self,a,label=None,**params):
+        """
+        Return a HTML chunk for a button that will execute 
+        this action using a *HTTP* link to this action.
+        """
+        label = cgi.escape(force_unicode(label or a.get_button_label()))
+        return '[<a href="%s">%s</a>]' % (self.get_action_url(a,**params),label)
+        
     def get_action_url(self,action,*args,**kw):
         #~ if not action is action.actor.default_action:
         if action != action.actor.default_action:

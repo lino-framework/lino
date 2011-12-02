@@ -1,7 +1,35 @@
 20111121
 ========
 
-- Surfed about ticket :doc:`/tickets/51`.
+Lino and OpenERP
+----------------
+
+Surfed about ticket :doc:`/tickets/51`.
+
+`A forum post in December 2010 <http://www.openerp.com/forum/topic21423.html>`_
+Hmm, the forum doesn't seem to be the right place to start learning 
+OpenObject.
+
+
+`OpenERP tools & tips <http://boran.com/book/export/html/25>`_
+This guy must be an interesting person.
+While he still wrote "the community is currently dominated by 
+OpenERP partners", 
+I continue to hope that they are working on this problem.
+For example the following document obviously is quite recent:
+http://doc.openerp.com/v6.0/contribute/01_introduction.html
+
+Aha, there is at least one fork of OpenERP:
+http://www.tryton.org
+
+
+`GettingStartedWithOpenERPDev
+<http://code.google.com/p/magento-openerp-smile-synchro/wiki/GettingStartedWithOpenERPDev>`_
+Interesting thoughts.
+Seems that I should start to get familiar with Eclipse and 
+http://pydev.org/
+
+
 
 Documentation cleanup
 ---------------------

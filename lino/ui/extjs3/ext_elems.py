@@ -299,7 +299,7 @@ class LayoutElement(VisibleComponent):
         return kw
 
 
-class DataViewElement(LayoutElement):
+class unused_DataViewElement(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
     value_template = "new Ext.DataView(%s)"
     vflex = True
@@ -313,7 +313,7 @@ class DataViewElement(LayoutElement):
         kw.update(loadingText='Loading...')
         LayoutElement.__init__(self,lh,name,**kw)
 
-class TemplateElement(LayoutElement):
+class unused_TemplateElement(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
     value_template = "new Ext.BoxComponent(%s)"
     vflex = True

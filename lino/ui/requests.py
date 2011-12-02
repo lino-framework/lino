@@ -55,6 +55,11 @@ URL_PARAM_EUSER = 'euser'
 emulate user
 """
 
+URL_PARAM_KNOWN_VALUES = 'kv'
+"""
+known values
+"""
+
 # URL_PARAM_MASTER_GRID = 'mg'
 URL_PARAM_GRIDFILTER = 'filter'
 URL_PARAM_FILTER = 'query'

@@ -1,6 +1,14 @@
 20111118
 ========
 
+Lino and OpenERP
+----------------
+
+I assisted to a free webinar held by http://www.openbig.org, very interesting.
+Opened :doc:`/tickets/51`.
+
+
+
 Some little user wishes
 -----------------------
 
