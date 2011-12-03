@@ -24,7 +24,6 @@ class Customer(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    #~ provider = models.ForeignKey(Provider)
     
     def __unicode__(self):
         return self.name

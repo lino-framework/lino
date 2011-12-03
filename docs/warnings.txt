@@ -1,4 +1,2 @@
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
-T:\hgwork\lino\docs\admin\install_windows.rst:139: WARNING: xfile reference target not found: local.pth
-T:\hgwork\lino\docs\admin\install_windows.rst:146: WARNING: xfile reference target not found: local.pth
