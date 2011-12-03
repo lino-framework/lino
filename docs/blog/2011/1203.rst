@@ -1,0 +1,53 @@
+20111203
+========
+
+After playing around with Lino's new calendar panel,
+I get the feeling that I don't want the preliminary EventEditWindow 
+with the "Edit Details..." button. 
+
+After looking at the Ext.ensible code, 
+and after reading Brians posts in the Ext.ensible forum
+(`here <http://ext.ensible.com/forum/viewtopic.php?f=2&t=421>`_
+and
+`there <http://ext.ensible.com/forum/viewtopic.php?f=2&t=326#p1165>`_),
+it seems that I must replace
+`Ext.ensible.cal.EventEditWindow`, 
+not 
+`Ext.ensible.cal.EventEditForm`.
+
+That means that I'd better also remove my WindowWrapper classes 
+which became almost useless anyway. 
+That would replace 
+
+::
+
+  Lino.thirds.ThirdsByOwner.grid = function(caller,params) { 
+    var ww = new Lino.GridMasterWrapper(caller,{  });
+    params.containing_window = ww;
+    var main_grid5470 = new Lino.thirds.ThirdsByOwner.GridPanel(params);
+    ww.main_item = main_grid5470;
+    ww.show();
+  };
+
+by
+
+:: 
+
+  Lino.thirds.ThirdsByOwner.grid = function(caller,params) { 
+    new Lino.Window({
+      items:new Lino.thirds.ThirdsByOwner.GridPanel(params)
+    }).show();
+  };
+
+
+New tutorial
+------------
+
+Started new tutorial :doc:`/tutorials/t3`.
+
+The new method :meth:`lino.Lino.get_middleware_classes` is there to support 
+sites without any user management by setting :attr:`lino.Lino.user_model` 
+to `None`.
+
+Some changes to support the case of :attr:`lino.Lino.user_model` 
+being `None` on a real site.

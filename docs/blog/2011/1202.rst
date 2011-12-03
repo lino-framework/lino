@@ -25,3 +25,5 @@ Updated installation docs
 
 No, a Linux server is not required in order to see Lino. 
 Wrote new article :doc:`/admin/install_windows`.
+
+

@@ -120,31 +120,31 @@ class DataControlListing(mixins.Listing):
     
     
 
-#~ if settings.LINO.user_model: 
+if settings.LINO.user_model: 
   
-class TextFieldTemplate(mixins.AutoUser):
-    """A reusable block of text that can be selected from a text editor to be 
-    inserted into the text being edited.
-    """
-  
-    class Meta:
-        verbose_name = _("Text Field Template")
-        verbose_name_plural = _("Text Field Templates")
+    class TextFieldTemplate(mixins.AutoUser):
+        """A reusable block of text that can be selected from a text editor to be 
+        inserted into the text being edited.
+        """
+      
+        class Meta:
+            verbose_name = _("Text Field Template")
+            verbose_name_plural = _("Text Field Templates")
+            
+        name = models.CharField(_("Designation"),max_length=200)
+        description = fields.RichTextField(_("Description"),
+            blank=True,null=True,format='html')
+        text = fields.RichTextField(_("Template Text"),
+            blank=True,null=True,format='html')
         
-    name = models.CharField(_("Designation"),max_length=200)
-    description = fields.RichTextField(_("Description"),
-        blank=True,null=True,format='html')
-    text = fields.RichTextField(_("Template Text"),
-        blank=True,null=True,format='html')
-    
-    def __unicode__(self):
-        return self.name
+        def __unicode__(self):
+            return self.name
+            
+    class MyTextFieldTemplates(mixins.ByUser):
+        model = TextFieldTemplate
         
-class MyTextFieldTemplates(mixins.ByUser):
-    model = TextFieldTemplate
-    
-class TextFieldTemplates(reports.Report):
-    model = TextFieldTemplate
+    class TextFieldTemplates(reports.Report):
+        model = TextFieldTemplate
 
 
 def add_site_menu(site):

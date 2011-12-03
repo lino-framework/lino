@@ -1,0 +1,10 @@
+=============================
+A Local Exchange Trade System
+=============================
+
+In this tutorial we are going to write an 
+application to manage a 
+`LETS <http://en.wikipedia.org/wiki/Local_exchange_trading_system>`_.
+It is inspired by http://www.elavtoit.com
+
+

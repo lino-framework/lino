@@ -138,37 +138,6 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.load_template_source',
 )
 
-"""
-Django and standard HTTP authentication.
-http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django
-"""
-
-MIDDLEWARE_CLASSES = [
-    'django.middleware.common.CommonMiddleware',
-    #~ 'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    #~ 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'lino.modlib.users.middleware.RemoteUserMiddleware',
-    'django.middleware.doc.XViewMiddleware',
-    #'lino.utils.editing.EditingMiddleware',
-    'lino.utils.ajax.AjaxExceptionResponse',
-]
-
-
-if False: # not BYPASS_PERMS:
-    MIDDLEWARE_CLASSES += (
-      'django.contrib.auth.middleware.RemoteUserMiddleware',
-    )
-    AUTHENTICATION_BACKENDS = (
-      'django.contrib.auth.backends.RemoteUserBackend',
-    )
-    
-if False:
-    MIDDLEWARE_CLASSES += (
-      #~ 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware',
-      'lino.utils.sqllog.SQLLogMiddleware',
-    )
-    
 
 ROOT_URLCONF = 'lino.ui.extjs3.urls'
 

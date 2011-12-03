@@ -2335,7 +2335,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         if (grid.containing_window)
             grid.containing_window.window.setTitle(grid.store.reader.arrayData.title);
         if(grid.selModel.getSelectedCell){         
-            grid.selModel.select(0,0);
+            if (grid.getStore().getCount()) 
+                grid.selModel.select(0,0); // if no data
         }else{
             grid.selModel.selectFirstRow();
             grid.getView().focusEl.focus();
@@ -3373,7 +3374,7 @@ Lino.davlink_open = function(webdavURL) {
 
 #end if
 
-#if $settings.LINO.use_extensible
+#if $settings.LINO.use_extensible and $settings.LINO.has_module('lino.modlib.cal')
 
 
 //~ Ext.ensible.cal.EventMappings = {
@@ -3475,9 +3476,7 @@ Lino.eventStore.load();
 Lino.EventEditFormMixin = {
   // private
   onDateChange: function(dateRangeField, val){
-      if(this.recurrenceField){
-          this.recurrenceField.setStartDate(val[0]);
-      }
+      console.log('Lino.EventEditFormMixin.onDateChange');
   },
   
   // inherited docs
@@ -3489,7 +3488,7 @@ Lino.EventEditFormMixin = {
   
   // inherited docs
   updateRecord: function(){
-      console.log("updateRecord() not implemented");
+      console.log("Lino.EventEditFormMixin.updateRecord() not implemented");
       var dates = this.dateRangeField.getValue(),
           M = Ext.ensible.cal.EventMappings,
           rec = this.activeRecord,

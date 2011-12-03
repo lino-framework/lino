@@ -11,5 +11,6 @@ Here are the next tutorials for you:
    :maxdepth: 2
 
    t1
+   t3
 
 

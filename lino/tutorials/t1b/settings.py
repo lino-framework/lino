@@ -1,7 +1,6 @@
 from lino.apps.std.settings import *
-from lino_local import LinoLocal
 
-class Lino(LinoLocal,Lino):
+class Lino(Lino):
   
     title = "Lino Tutorial"
     

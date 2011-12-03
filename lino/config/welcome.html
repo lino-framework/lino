@@ -1,8 +1,6 @@
 <div>
 #if $user is not None
 <p>User <b>$user.get_full_name() ($user)</b> on $site.title</p>
-#else
-<p>user is None. Check your authentication configuration.</p>
 #end if
 <p><font size="1">$lino.welcome_html()</font></p>
 

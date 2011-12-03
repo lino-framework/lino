@@ -678,7 +678,8 @@ class ReportActionRequest(ActionRequest):
             if create_rows is None:
                 if self.master_kw is None:
                     create_rows = 0
-                elif self.user is not None and self.report.can_add.passes(self.user):
+                #~ elif self.user is not None and self.report.can_add.passes(self.user):
+                elif self.report.can_add.passes(self.user):
                     create_rows = 1
                 else:
                     create_rows = 0

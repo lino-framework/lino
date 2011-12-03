@@ -16,6 +16,7 @@ Middleware to be used on sites with :doc:`/topics/http_auth`.
 
 """
 
+
 import logging
 logger = logging.getLogger(__name__)
 

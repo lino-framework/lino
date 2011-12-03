@@ -501,7 +501,7 @@ class Lino(object):
     Set this to `False` if you don't need WebDAV-enabled links.
     """
     
-    languages = None
+    languages = ['en']
     """
     A shortcut parameter to set the supported languages for this site.
     
@@ -558,6 +558,10 @@ class Lino(object):
             join(abspath(dirname(__file__)),'templates'),
         ))
         
+        settings_dict.update(
+            MIDDLEWARE_CLASSES=tuple(
+                self.get_middleware_classes()))
+                
         if self.languages:
             lc = language_choices(*self.languages)
             settings_dict.update(LANGUAGES = lc)
@@ -662,6 +666,10 @@ class Lino(object):
     def configure(self,sc):
         self.config = sc
         
+    def has_module(self,name):
+        from django.conf import settings
+        return name in settings.INSTALLED_APPS
+        
     def setup(self,**options):
         """
         This is called whenever a user interface 
@@ -700,3 +708,44 @@ class Lino(object):
         
     def setup_menu(self,ui,user,menu):
         raise NotImplementedError
+        
+    def get_middleware_classes(self):
+        """
+        Yields the strings to be stored in 
+        the :setting:`MIDDLEWARE_CLASSES` setting.
+        
+        In case you don't want to use this method
+        for defining :setting:`MIDDLEWARE_CLASSES`, 
+        you can simply set :setting:`MIDDLEWARE_CLASSES`
+        in your :xfile:`settings.py` 
+        after the :class:`lino.Lino` has been initialized.
+        
+        `Django and standard HTTP authentication
+        <http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django>`_
+        """
+
+        yield 'django.middleware.common.CommonMiddleware'
+        #~ yield 'django.contrib.sessions.middleware.SessionMiddleware'
+        yield 'django.middleware.locale.LocaleMiddleware'
+        #~ yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
+        if self.user_model == 'users.User':
+            yield 'lino.modlib.users.middleware.RemoteUserMiddleware'
+            yield 'django.middleware.doc.XViewMiddleware'
+        else:
+            yield 'lino.utils.nouser.NoUserMiddleware'
+        #~ yield 'lino.utils.editing.EditingMiddleware'
+        yield 'lino.utils.ajax.AjaxExceptionResponse'
+
+
+        if False: # not BYPASS_PERMS:
+            yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
+            # TODO: find solution for this:
+            #~ AUTHENTICATION_BACKENDS = (
+              #~ 'django.contrib.auth.backends.RemoteUserBackend',
+            #~ )
+            
+        if False:
+            #~ yield 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware'
+            yield 'lino.utils.sqllog.SQLLogMiddleware'
+            
+                

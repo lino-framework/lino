@@ -11,6 +11,40 @@ if you have suggestions on how to make this tutorial better.
  :depth: 2
 
 
+Create a local Django project
+-----------------------------
+
+Lino applications are Django projects.
+In case you don't know Django, we
+suggest that you now follow
+`Part 1 of the Django tutorial
+<https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_
+which applies entirely for a Lino application.
+Choose `c:\\mypy\\mysite` for your Django project directory and `mysite.settings`
+for your `DJANGO_SETTINGS_MODULE`
+
+The Django documentation is very good, 
+and it introduces some important notions about
+Creating a project,
+The development server,
+Database setup,
+Creating models,
+Activating models,
+and Playing with the API.
+
+When you've done and learned all this, we go further.
+Replace the :xfile:`settings.py` 
+of your project directory 
+`c:\\mypy\\mysite`
+with the following:
+
+.. literalinclude:: settings.py
+    
+The ``polls`` subdirectory which you maybe created during the Django 
+Tutorial is not necessary for now, but you'll need it again 
+later.
+
+
 
 
 More about the `settings.py` file

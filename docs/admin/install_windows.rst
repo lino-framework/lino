@@ -23,24 +23,25 @@ You'll need the following software installed on your computer:
   needed because Lino is in a Mercurial repository 
   and doesn't yet provide downloadable official releases.
 
-- You'll sooner or later also probably need the following Python packages :
+To test whether Python and Django are correctly installed, open a 
+command prompt and type the following::
 
-  - `python-dateutil <http://labix.org/python-dateutil>`_
-  - python-yaml
-  - python-cheetah 
-  - python-vobject
+  C:\Documents and Settings\Luc> python
+  >>> import django
+  >>> print django.VERSION
+  (1, 4, 0, 'alpha', 0)
+  >>>
+  
+You are now in the Python shell which waits for your next command.
+To exit the Python shell, type ::kbd:`Ctrl-Z` and :kbd:`ENTER`.
 
-  You may skip this step for now and worry about these packages later.
+Some manual work
+----------------
 
-- If you want WYSYWIG editor for Rich Text fields, 
-  you'll need also 
-  `TinyMCE <http://www.tinymce.com/>`_.
-  If you skip this, set
-  :attr:`lino.Lino.use_tinymce` to `False` in your 
-  local settings (see later).
-    
+ExtJS
+=====
 
-- Install `ExtJS 3 <http://www.sencha.com/products/extjs3/>`_::
+You need to manually download and unzip `ExtJS 3 <http://www.sencha.com/products/extjs3/>`_::
 
     c:\Documents and Settings> md \snapshots
     c:\Documents and Settings> cd \snapshots
@@ -57,24 +58,86 @@ them if things don't work as expected::
   
 Note that Lino didn't yet migrate to ExtJS 4.0. See :doc:`/tickets/40`
 
+TinyMCE
+=======
 
-You'll probably also want :term:`appy_pod` 
-so that Lino can generate .pdf, .rtf or .odt documents::
+If you want a WYSYWIG editor for Rich Text fields, 
+you'll need also `TinyMCE <http://www.tinymce.com/>`_.
+TinyMCE is a platform independent web based Javascript 
+HTML WYSIWYG editor control released as Open Source 
+under LGPL by Moxiecode Systems AB.
 
+If you do not want a WYSYWIG editor, 
+just skip this section, but
+you'll need to set
+:attr:`lino.Lino.use_tinymce` to `False` in your 
+local settings file (see later).
+
+Browse to http://www.tinymce.com/download/download.php
+and save the file :file:`tinymce_3.4.7.zip` 
+to your directory :file:`c:\\snapshots`, then unzip it::
+  
+  c:\snapshots> unzip tinymce_3.4.7.zip
+
+You'll maybe also want a language pack from
+http://www.tinymce.com/i18n/index.php?ctrl=lang&act=download&pr_id=1
+
+TODO: write detailed installation intructions.
+
+    
+Appy
+====
+
+You'll probably also want Gaëtan Delannay's :term:`appy_pod` 
+so that Lino can generate .pdf, .rtf or .odt documents
+when you click on a :guilabel:`Print` button::
 
   c:\snapshots> wget http://launchpad.net/appy/0.7/0.7.0/+download/appy0.7.0.zip
   c:\snapshots> unzip appy0.7.0.zip -d appy
+  
+Python dateutils
+================
+
+Lino needs Gustavo Niemeyer's python-dateutil module::
+
+  c:\snapshots> wget http://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz
+  c:\snapshots> tar -xvzf python-dateutil-1.5.tar.gz
+  
+This supposes that you have the ``tar`` command installed.
+If you don't, you may get it 
+`here <http://gnuwin32.sourceforge.net/packages/gtar.htm>`_.
+  
+  
+Cheetah
+=======
+
+Lino needs the Cheetah templating engine, too::
+
+  c:\snapshots> wget http://pypi.python.org/packages/source/C/Cheetah/Cheetah-2.4.4.tar.gz
+  c:\snapshots> tar -xvzf Cheetah-2.4.4.tar.gz
+  
+PyYAML
+======
+
+Another library needed by Lino::
+
+  c:\snapshots> wget http://pyyaml.org/download/pyyaml/PyYAML-3.10.zip
+  c:\snapshots> unzip PyYAML-3.10.zip
+
+Lino
+====
 
 Last but not least we install Lino itself::
 
   c:\snapshots> hg clone https://lino.googlecode.com/hg/ lino
-
   
+  
+ 
 Set up your Python path
 -----------------------
 
 There are several possibilities to do this, but
-ee suggest to create a 
+we suggest to create a 
 path configuration file :xfile:`local.pth` 
 in the :file:`c:\\Python27\\Lib\\site-packages` directory
 (or any other directory that's already on your 
@@ -84,10 +147,15 @@ The file :xfile:`local.pth` is a simple text file and
 should have the following content::
 
   c:\snapshots\lino
+  c:\snapshots\python-dateutil
   c:\snapshots\appy
+  c:\snapshots\Cheetah-2.4.4
+  c:\snapshots\PyYAML-3.10\lib
   c:\mypy
   
-The directory :file:`c:\\mypy` is the place where you'll hold your local Python projects.
+The directory :file:`c:\\mypy` is the place where you will hold your local Python projects.
+You may choose some other location, but we recommend 
+a name without spaces and non-ascii characters.
 
 Test whether Lino is installed
 ------------------------------
@@ -104,6 +172,45 @@ Test whether Lino is installed
    
 If things fail: contact me.
 
+
+Create your local Lino project
+------------------------------
+
+To install your first Lino project from scratch, 
+create the following 
+files in your :file:`c:\\mypy\\mysite`:
+
+#.  The directory must contain an empty file :file:`__init__.py`::
+
+      touch __init__.py
+      
+    If your don't have a ``touch`` command, do::
+    
+      notepad __init__.py
+      
+    This will invoke the Windows notepad editor who will 
+    ask you:
+    
+      | Cannot find  __init__.py file. 
+      | Do you want to create a new file?
+      
+    and you answer "Yes" and exit Notepad. 
+    
+#.  A file :xfile:`manage.py` with the following content:
+    
+    .. literalinclude:: manage.py
+    
+    Our suggestion for an :doc:`optimized </blog/2011/0531>`
+
+#.  And a file :xfile:`settings.py` with the following content:
+
+    .. literalinclude:: settings.py
+
+You will soon learn more about the :xfile:`settings.py` file,
+but for the moment we guess that you want to get a quick result.
+Just read on.
+
+
 You want Lino? Which Lino?
 --------------------------
 
@@ -112,10 +219,10 @@ In fact you don't want "just Lino",
 you'll have to decide which Lino application you want.
 
 Soon you will probably 
-:doc:`write your own Lino application </tutorials/t1>` 
+write your own Lino application
 or get somebody else write it for you, 
 but in a first step we suggest that you choose one 
-of the applications that are part of Lino:
+of the applications that come out of the box with Lino:
 
 - :mod:`lino.apps.dsbe` 
   (a database for social assistants who assist 
@@ -128,69 +235,9 @@ In fact you don't even need to choose.
 Just pick a random one.
 As long as you are just playing around, 
 it is easy to switch between these applications 
-since the only difference is one line in 
-your :xfile:`settings.py` 
-(one of the files we are going to create in the following section).
+since the only difference is the line ``from lino.apps.dsbe.settings import *`` 
+in your :xfile:`settings.py`.
 
-
-Create a local Django project
------------------------------
-
-Lino applications are Django projects.
-In case you don't know Django, we
-suggest that you now follow
-`Part 1 of the Django tutorial
-<https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_
-which applies entirely for a Lino application.
-Choose `c:\\mypy\\mysite` for your Django project directory and `mysite.settings`
-for your `DJANGO_SETTINGS_MODULE`
-
-The Django documentation is very good, 
-and it introduces some important notions about
-Creating a project,
-The development server,
-Database setup,
-Creating models,
-Activating models,
-and Playing with the API.
-
-When you've done and learned all this, we go further.
-Replace the :xfile:`settings.py` 
-of your project directory 
-`c:\\mypy\\mysite`
-with the following:
-
-.. literalinclude:: settings.py
-    
-You'll soon learn more about the :xfile:`settings.py` 
-file.
-For the moment we suppose that you want to get a quick result.
-
-The ``polls`` subdirectory which you maybe created during the Django 
-Tutorial is not necessary for now, but you'll need it again 
-later.
-
-
-Create a project from scratch
------------------------------
-
-As an alternative to the previous section, in fact you don't need 
-Django's `startproject` command.
-To install a Lino project from scratch, 
-just create the following 
-files in your :file:`c:\\mypy\\mysite`:
-
-#.  An empty file :file:`__init__.py` must exist::
-
-      touch __init__.py
-    
-#.  Our suggestion for an :doc:`optimized </blog/2011/0531>`
-    :xfile:`manage.py`:
-    
-    .. literalinclude:: manage.py
-
-
-#.  And of course also your :xfile:`settings.py` file from the previous section.
 
 Run the test suite
 ------------------
@@ -200,8 +247,8 @@ Try the following command to run Lino's unit test suite on your project::
   cd \mypy\mysite
   python manage.py test
   
-Again: if things fail: contact me.   
- 
+Again: if things fail: contact me and send me a screenshot of the messages 
+on your console window.
   
 Create your database
 --------------------
@@ -212,9 +259,15 @@ directory and run::
 
   python manage.py initdb std all_countries few_cities all_languages props demo 
   
-When using sqlite, 
-the :mod:`initdb <lino.management.commands.initdb>` command will create 
-the database file whose name is specified in your :setting:`DATABASES` setting.
+Warning: 
+The :mod:`initdb <lino.management.commands.initdb>` command 
+will create the database specified in your :setting:`DATABASES` 
+setting.
+If such a database already exists, it will delete all data in 
+that database.
+We hope that you didn't specify some existing database there, didn't you?
+This may sound dangerous, but it is a feature 
+which facilitates testing and getting started.
 
 
 Start a development web server
@@ -273,7 +326,8 @@ say:
 Where to go from here
 ---------------------
 
-- We suggest that you read the :doc:`dpytutorial` and play 
+- Now you are ready for our :doc:`/tutorials/index` section.
+
+- You can also read the :doc:`dpytutorial` and play 
   around with some of the fixtures that come with Lino.
 
-- Now you are ready for our :doc:`/tutorials/index` section.
