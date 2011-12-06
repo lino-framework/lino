@@ -35,11 +35,6 @@ Short-term
     
 #.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
 
-#.  `Lino.show_mti_child()` hat einen Bug: wenn man von einer Grid ins Detail 
-    geht und im Detail dann mit PgUp den Record wechselt, und dann auf "zeigen" 
-    klickt, dann zeigt er den record, auf dem man in der grid doppelt geklickt 
-    hatte, nicht den richtigen.
-
 #.  Idée venue avec Gaëtan: .dtl files in Python, not yaml
 
 #.  In cal.Task remove fields alarm_unit and alarm_value. Lino does 

@@ -1108,7 +1108,7 @@ tinymce.init({
                 logger.exception(e)
                 return json_response_kw(success=False,
                     message=unicode(e),alert=True)
-            self.build_lino_js()
+            self.build_lino_js(True)
             return json_response_kw(success=True)
             #detail_layout
       
@@ -1147,7 +1147,7 @@ tinymce.init({
                     report=rpt,error=e)
                 return error_response(None,msg)
             #~ logger.info(msg)
-            self.build_lino_js()            
+            self.build_lino_js(True)            
             return self.success_response(msg)
             #~ return json_response_kw(success=True)
             
@@ -1436,11 +1436,11 @@ tinymce.init({
         #~ return ('cache','js','lino.js')
         return ('cache','js','lino_'+translation.get_language()+'.js')
         
-    def build_lino_js(self):
+    def build_lino_js(self,force=False):
         """Generate :xfile:`lino.js`.
         """
-        if not settings.LINO.auto_makeui:
-            logger.debug("NOT generating `lino.js` because `settings.LINO.auto_makeui` is False")
+        if not force and not settings.LINO.auto_makeui:
+            logger.info("NOT generating `lino.js` because `settings.LINO.auto_makeui` is False")
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
             logger.warning("Not generating `lino.js` because "+
@@ -1456,7 +1456,7 @@ tinymce.init({
         for lang in babel.AVAILABLE_LANGUAGES:
             babel.set_language(lang)
             fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
-            if os.path.exists(fn):
+            if not force and os.path.exists(fn):
                 if os.stat(fn).st_mtime > mtime:
                     logger.info("NOT generating %s because it is newer than the code.",fn)
                     continue
@@ -1495,12 +1495,14 @@ tinymce.init({
                     if isinstance(a,(reports.ShowDetailAction,reports.InsertRow)):
                         for ln in self.js_render_detail_action_FormPanel(rh,a):
                               f.write(ln + '\n')
+                    #~ if isinstance(a,(reports.WindowAction)):
+                    for ln in self.js_render_window_action(rh,a):
+                        f.write(ln + '\n')
                             
-                    if a.window_wrapper is not None:
-                        #~ print a, "..."
-                        for ln in a.window_wrapper.js_render():
-                            f.write(ln + '\n')
-                        f.write('\n')
+                    #~ if a.window_wrapper is not None:
+                        #~ for ln in a.window_wrapper.js_render():
+                            #~ f.write(ln + '\n')
+                        #~ f.write('\n')
                         
             #~ f.write(jscompress(js))
             f.close()
@@ -1876,7 +1878,7 @@ tinymce.init({
     #~ def detail_href(self,obj,**kw):
         #~ return '<a href="%s">%s</a>' % (self.get_detail_url(obj,fmt='detail'),cgi.escape(unicode(obj))))
         
-    def action_window_wrapper(self,a,h):
+    def unused_action_window_wrapper(self,a,h):
         #~ if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
         #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
           
@@ -1897,9 +1899,9 @@ tinymce.init({
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
         if isinstance(h,reports.DetailHandle): self.setup_detail_handle(h)
-        elif isinstance(h,reports.FrameHandle):
-            for a in h.get_actions():
-                a.window_wrapper = self.action_window_wrapper(a,h)
+        #~ elif isinstance(h,reports.FrameHandle):
+            #~ for a in h.get_actions():
+                #~ a.window_wrapper = self.action_window_wrapper(a,h)
                 
         elif isinstance(h,reports.ReportHandle):
             #~ logger.debug('ExtUI.setup_handle() %s',h.report)
@@ -1909,8 +1911,8 @@ tinymce.init({
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
             h.store = ext_store.Store(h)
                     
-            for a in h.get_actions():
-                a.window_wrapper = self.action_window_wrapper(a,h)
+            #~ for a in h.get_actions():
+                #~ a.window_wrapper = self.action_window_wrapper(a,h)
                 
             h.on_render = self.build_on_render(h.list_layout._main)
                 
@@ -2152,4 +2154,26 @@ tinymce.init({
         yield "});"
         yield ""
       
+            
+    def js_render_window_action(self,rh,action):
+      
+        rpt = rh.report
+      
+        if isinstance(action,reports.ShowDetailAction):
+            s = "Lino.%s.detailPanel" % rpt
+        elif isinstance(action,reports.InsertRow):
+            s = "Lino.%s.insertPanel" % rpt
+        elif isinstance(action,reports.GridEdit):
+            s = "Lino.%s.GridPanel" % rpt
+        elif isinstance(action,reports.Calendar):
+            s = "Lino.CalendarPanel"
+        else:
+            s = None
+        
+        if s:
+            yield "Lino.%s = function(caller,params) { " % action
+            yield "  new Lino.Window({"
+            yield "    caller: caller, items:new %s(params)" % s
+            yield "  }).show();"
+            yield "};"
             

@@ -1,0 +1,21 @@
+20111205
+========
+
+It took another 4 hours to remove also the WindowWrapper concept.
+One long-known bug was solved *en passant*:
+
+  `Lino.show_mti_child()` hat einen Bug: wenn man von einer Grid ins Detail 
+  geht und im Detail dann mit PgUp den Record wechselt, und dann auf "zeigen" 
+  klickt, dann zeigt er den record, auf dem man in der grid doppelt geklickt 
+  hatte, nicht den richtigen.
+
+Check-in because the original functionality is now almost restored. 
+
+TODO: 
+
+- There is still at least one bug left: 
+  Closes dirty window without warning "Save changes in current record"
+- Finally do the thing that caused all these changes: make the calendar panel 
+  call a Lino Window to edit an Event.
+
+

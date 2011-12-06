@@ -1,18 +1,15 @@
 :label: Detail
 :label_align: top
 
-fields = 
-    date:10 event_type:25 type:25 user:10 language:8
-    subject:60
-    person company
-    
 right =     
     uploads.UploadsByOwner
     thirds.ThirdsByOwner:30
     cal.TasksByOwner
     
 left =     
-    fields 
+    date:10 event_type:25 type:25 user:10 language:8
+    subject:60
+    person company
     body:80 
 
 main = left:60 right:30

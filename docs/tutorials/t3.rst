@@ -11,7 +11,7 @@ Local Exchange Trade System
 inspired by a real web site http://www.elavtoit.com
 
 After having interviewed your future customer and analyzed their 
-needs, you want to show a "first draft" prototype 
+needs, you want to show a "first draft" prototype.
 The goal of such a prototype is to have something 
 to show to your customer that looks a little bit like 
 the final product, and with wich you can play to test 
@@ -29,12 +29,11 @@ The directory structure should be as follows::
   manage.py
   lets/__init__.py
   lets/models.py
-  fixtures/__init__.py
-  fixtures/demo.py
   lets/config/lets/Customer/general.dtl
   lets/config/lets/Provider/general.dtl
   lets/config/lets/Product/general.dtl
-
+  fixtures/__init__.py
+  fixtures/demo.py
 
 To get the prototype running, first run the following command 
 to populate your database with some demo data::
@@ -45,10 +44,9 @@ Then start the development web server using::
 
   python manage.py runserver
 
-And point you browser to http://127.0.0.1:8000/
+And point your browser to http://127.0.0.1:8000/
 
 Here are some screenshots.
-
 
 .. image:: t3a-1.jpg
     :scale: 70
