@@ -12,7 +12,7 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Browser-specific language selection works well... 
+#.  Browser-specific language selection is nice... 
     but Lino should also make it 
     possible to override this browser-specific language setting.
     The most straigtforward place 
@@ -213,6 +213,9 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Split :class:`lino.reports.Report` into :class:`lino.List` and :class:`lino.Detail`.
+    :class:`lino.ui.extjs3.ext_store.Store` should then create one Store per Model.
 
 #.  Write test cases with different cases of jobs.contract and isip.Contract
 

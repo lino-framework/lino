@@ -12,10 +12,16 @@ One long-known bug was solved *en passant*:
 `Check-in <http://code.google.com/p/lino/source/detail?r=357f793635a8200027468ef54b09ebdb558e1802>`_ 
 because the original functionality is now almost restored. 
 
+One more bug fixed:
+Lino allowed to close a dirty window without warning "Save changes in current record?".
+That bug was already in previous versions, but not yet known.
+
+Check-in
+  
 TODO: 
 
-- There is still at least one bug left: 
-  Closes dirty window without warning "Save changes in current record"
+- When opening a slave report in itsown window, the GridPanel's title is not deleted.
+
 - Finally do the thing that caused all these changes: make the calendar panel 
   call a Lino Window to edit an Event.
 

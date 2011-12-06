@@ -1066,6 +1066,7 @@ Lino.permalink_handler = function (ww) {
 //~ }
 
 Lino.MainPanel = {
+  do_when_clean : function(todo) { todo() },
   get_master_params : function() {
     var p = {}
     p['$URL_PARAM_MASTER_TYPE'] = this.content_type; 
@@ -1104,6 +1105,7 @@ Lino.MainPanel = {
           p['$ext_requests.URL_PARAM_ACTION_NAME'] = this.action_name;
       return p;
   }
+  
 };
 
 
@@ -1603,12 +1605,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     this.set_base_param('$URL_PARAM_FILTER',''); // 20111018
       
   },
-  
   initComponent : function(){
     
     //~ console.log("20111201 containing_window",this.containing_window,this);
-    
-    
     
     var actions = Lino.build_buttons(this,this.ls_bbar_actions);
     this.bbar = actions.bbar;
@@ -1736,9 +1735,23 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       
   },
   
-  config_containing_window : function(wincfg) { },
-  init_containing_window : function(win) { },
+  config_containing_window : function(wincfg) { 
+    //~ wincfg.close = function() {
+        //~ this.do_when_clean(win.superclass.close);
+    //~ }
+  },
+  init_containing_window : function(win) { 
+    //~ console.log("FormPanel.init_containing_window");
+    //~ win.on('beforeclose', function() { 
+      //~ var doit = {really:false};
+      //~ this.do_when_clean(function(){win.close()});
+      //~ console.log("FormPanel.beforeclose");
+      //~ return doit.really;
+      //~ return false;
+    //~ },this);
+  },
   
+    
   get_base_params : function() {
     // needed for insert action
     return this.base_params;
@@ -2392,8 +2405,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.store.load(p);
   },
   
-  
-  do_when_clean : function(todo) { todo() },
   
   onCellDblClick : function(grid, row, col){
       //~ console.log("onCellDblClick",grid, row, col);
@@ -3112,19 +3123,22 @@ Lino.Window = Ext.extend(Ext.Window,{
   },
   close : function() { 
       //~ console.log("Gonna close");
-      Lino.Window.superclass.close.call(this);
-      if (this.caller) {
-        if (this.caller.containing_window) {
-            //~ console.log('20110110 gonna refresh ww:', this.caller.containing_window);
-            Lino.current_window = this.caller.containing_window;
-            this.caller.containing_window.main_item.refresh();
-        } else {
-            //~ console.log('20110110 refresh caller (no ww):', this.caller);
-            this.caller.refresh();
+      var this_ = this;
+      this.main_item.do_when_clean(function() {
+        Lino.Window.superclass.close.call(this_);
+        if (this_.caller) {
+          if (this_.caller.containing_window) {
+              //~ console.log('20110110 gonna refresh ww:', this.caller.containing_window);
+              Lino.current_window = this_.caller.containing_window;
+              this_.caller.containing_window.main_item.refresh();
+          } else {
+              //~ console.log('20110110 refresh caller (no ww):', this.caller);
+              this_.caller.refresh();
+          }
+        //~ } else {
+          //~ console.log('20110110 cannot refresh: no caller:', this);
         }
-      //~ } else {
-        //~ console.log('20110110 cannot refresh: no caller:', this);
-      }
+      });
   },
   unused_onRender : function(ct, position){
     Lino.Window.superclass.onRender.call(this, ct, position);
