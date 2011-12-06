@@ -9,7 +9,8 @@ One long-known bug was solved *en passant*:
   klickt, dann zeigt er den record, auf dem man in der grid doppelt geklickt 
   hatte, nicht den richtigen.
 
-Check-in because the original functionality is now almost restored. 
+`Check-in <http://code.google.com/p/lino/source/detail?r=357f793635a8200027468ef54b09ebdb558e1802>`_ 
+because the original functionality is now almost restored. 
 
 TODO: 
 
