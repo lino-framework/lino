@@ -1504,6 +1504,10 @@ tinymce.init({
                             #~ f.write(ln + '\n')
                         #~ f.write('\n')
                         
+                  
+            #~ f.write("""
+#~ Ext.reg('extensible.eventeditwindow', Lino.cal.Event.FormPanel);
+#~ """)
             #~ f.write(jscompress(js))
             f.close()
             #~ logger.info("Wrote %s ...", fn)
@@ -2107,8 +2111,8 @@ tinymce.init({
         kw.update(page_length=rh.report.page_length)
         kw.update(stripeRows=True)
 
-        if rh.report.master:
-            kw.update(title=rh.report.label)
+        #~ if rh.report.master:
+        kw.update(title=rh.report.label)
         
         for k,v in kw.items():
             yield "  %s : %s," % (k,py2js(v))
@@ -2160,9 +2164,11 @@ tinymce.init({
         rpt = rh.report
       
         if isinstance(action,reports.ShowDetailAction):
-            s = "Lino.%s.detailPanel" % rpt
-        elif isinstance(action,reports.InsertRow):
-            s = "Lino.%s.insertPanel" % rpt
+            #~ s = "Lino.%s.detailPanel" % rpt
+            s = "Lino.%sPanel" % action
+        elif isinstance(action,reports.InsertRow): # also printable.InitiateListing
+            s = "Lino.%sPanel" % action
+            #~ s = "Lino.%s.%sPanel" % (rpt,action.name)
         elif isinstance(action,reports.GridEdit):
             s = "Lino.%s.GridPanel" % rpt
         elif isinstance(action,reports.Calendar):
@@ -2172,6 +2178,7 @@ tinymce.init({
         
         if s:
             yield "Lino.%s = function(caller,params) { " % action
+            yield "  params.containing_window = true;" # workaround for problem 20111206
             yield "  new Lino.Window({"
             yield "    caller: caller, items:new %s(params)" % s
             yield "  }).show();"

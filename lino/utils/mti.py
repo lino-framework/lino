@@ -94,6 +94,12 @@ class ChildCollector(Collector):
   
 from django.core.exceptions import ValidationError
 
+def get_child(obj,child_model):
+    try:
+        return child_model.objects.get(pk=obj.pk)
+    except child_model.DoesNotExist:
+        raise Exception("%s has no child in %s" % (obj,child_model.__name__))
+  
 def delete_child(obj,child_model,using=None,request=None):
     """
     Delete the `child_model` instance related to `obj` without 
@@ -101,10 +107,7 @@ def delete_child(obj,child_model,using=None,request=None):
     """
     #~ logger.info(u"delete_child %s from %s",child_model.__name__,obj)
     using = using or router.db_for_write(obj.__class__, instance=obj)
-    try:
-        child = child_model.objects.get(pk=obj.pk)
-    except child_model.DoesNotExist:
-        raise Exception("%s has no child in %s" % (obj,child_model.__name__))
+    child = get_child(obj,child_model)
     if request is not None:
         msg = child_model._lino_ddh.disable_delete(child,request)
         if msg:

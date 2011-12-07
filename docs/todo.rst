@@ -12,6 +12,8 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Convert contacts.Role to links.Link. See :doc:`/blog/2011/1206`.
+
 #.  Browser-specific language selection is nice... 
     but Lino should also make it 
     possible to override this browser-specific language setting.
@@ -28,11 +30,6 @@ Short-term
     und :class:´lino.modlib.contacts.RoleType` vereinigen.
     Aber was passiert dann mit den Sektoren?
 
-#.  :class:´lino.modlib.contacts.RoleType` : 
-    zwei neue Felder parent_type und child_type (FK nach
-    ContentType), sowie choosers for parent und child, die dann 
-    ggf. nur diese Tabelle als Auswahlliste anzeigt.
-    
 #.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
 
 #.  Idée venue avec Gaëtan: .dtl files in Python, not yaml

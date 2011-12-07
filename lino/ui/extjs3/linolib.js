@@ -898,7 +898,7 @@ Lino.report_window_button = function(handler) {
     qtip: 'Show report in own window', 
     id: "up",
     handler: function(event,toolEl,panel, tc) {
-      //~ console.log('report_window_button',panel);
+      //~ console.log('20111206 report_window_button',panel,handler);
       //~ var bp = ww.get_master_params();
       //~ panel.containing_window = ww; // for HtmlBox. see blog/2010/1022
       //~ handler(panel,{base_params:bp});
@@ -1066,6 +1066,8 @@ Lino.permalink_handler = function (ww) {
 //~ }
 
 Lino.MainPanel = {
+  config_containing_window : function(wincfg) { },
+  init_containing_window : function(win) { },
   do_when_clean : function(todo) { todo() },
   get_master_params : function() {
     var p = {}
@@ -1457,7 +1459,7 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
       this.refresh_with_after();
   },
   refresh_with_after : function(after) {
-    if (this.master_panel) {
+    //~ if (this.master_panel) {
       var record = this.master_panel.get_current_record();
       //~ console.log('HtmlBox.refresh()',this.title,record,record.title);
       var box = this.items.get(0);
@@ -1475,7 +1477,7 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
       };
       //~ Lino.do_when_visible(this,todo.createDelegate(this));
       Lino.do_when_visible(box,todo.createDelegate(this));
-    }
+    //~ }
   }
 });
 Ext.override(Lino.HtmlBoxPanel,Lino.FieldBoxMixin);
@@ -1733,22 +1735,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
     
       
-  },
-  
-  config_containing_window : function(wincfg) { 
-    //~ wincfg.close = function() {
-        //~ this.do_when_clean(win.superclass.close);
-    //~ }
-  },
-  init_containing_window : function(win) { 
-    //~ console.log("FormPanel.init_containing_window");
-    //~ win.on('beforeclose', function() { 
-      //~ var doit = {really:false};
-      //~ this.do_when_clean(function(){win.close()});
-      //~ console.log("FormPanel.beforeclose");
-      //~ return doit.really;
-      //~ return false;
-    //~ },this);
   },
   
     
@@ -2197,14 +2183,26 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   initComponent : function(){
     
     /* 
+    Problem 20111206:
     When a GridPanel is the main item of the window, then it doesn't 
     have it's own header but uses the window's header bar.
+    We must do this in initComponent because e.g. in beforerender 
+    it's already to late: a header element has been created because 
+    there was a title.
+    But Lino.Window adds itself as `this.containing_window` 
+    only after the GridPanel has been initialized.
+    Workaround is to generate a line "params.containing_window = true;" 
+    in the handler function.
     */ 
-    if (this.containing_window) { 
-        //~ console.log(20111201, 'delete title');
-        this.title = undefined;
-        //~ this.header = false;
-    }
+    if (this.containing_window) {
+        //~ console.log(20111206, 'delete title',this.title,'from',this);
+        //~ delete this.title;
+        this.title = undefined;  /* simply deleting it 
+          isn't enough because that would only 
+          unhide the title defined in some base class. */
+    } 
+    //~ else console.log(20111206, 'dont delete title',this.title,'from',this);
+    
     var bp = { fmt:'json' }
     if (this.master_panel) { 
         //~ Ext.apply(bp,this.master_panel.get_base_params());    
@@ -3140,7 +3138,7 @@ Lino.Window = Ext.extend(Ext.Window,{
         }
       });
   },
-  unused_onRender : function(ct, position){
+  onRender : function(ct, position){
     Lino.Window.superclass.onRender.call(this, ct, position);
     var main_area = Ext.getCmp('main_area')
   
@@ -3351,6 +3349,14 @@ Ext.ensible.cal.EventMappings = {
 // Don't forget to reconfigure!
 Ext.ensible.cal.EventRecord.reconfigure();
 
+Lino.on_eventclick = function(cp,rec,el) {
+  console.log("Lino.on_eventclick",arguments);
+  Lino.cal.Events.detail(cp,{record_id:rec.data.ID});
+  return false;
+}
+    
+
+
 Lino.eventStore = new Ext.data.ArrayStore({ 
       listeners: { exception: Lino.on_store_exception }, 
       //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
@@ -3406,10 +3412,10 @@ Lino.eventStore = new Ext.data.ArrayStore({
       //~ idIndex: 5,
     });
 
-    
+
 //~ console.log(20111124, Lino.eventStore);
     
-    
+/*
 //~ Lino.EventEditForm = Ext.extend(Lino.cal.Events.detailPanel,{
 Lino.EventEditFormMixin = {
   // private
@@ -3505,29 +3511,93 @@ Lino.EventEditFormMixin = {
       this.fireEvent('eventdelete', this, this.activeRecord);
   }
 };
-
+*/
 
 Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
   todayText : 'Today',
   title : 'Basic Calendar',
   store: Lino.eventStore,
+  listeners: { eventclick: Lino.on_eventclick},
   constructor : function(config) {
+    //~ Ext.reg('extensible.eventeditwindow', Lino.cal.Event.FormPanel);
     Lino.eventStore.load();
     //~ Lino.EventEditForm = Lino.cal.Event.FormPanel;
-    Lino.EventEditForm = Ext.extend(Lino.cal.Events.detailPanel,Lino.EventEditFormMixin);
-    Lino.EventEditForm.master_panel = this;
-    Ext.reg('extensible.eventeditform', Lino.EventEditForm);
+    //~ Lino.EventEditForm = Ext.extend(Lino.cal.Events.detailPanel,Lino.EventEditFormMixin);
+    //~ Lino.EventEditForm.master_panel = this;
+    //~ Ext.reg('extensible.eventeditform', Lino.EventEditForm);
     Lino.CalendarPanel.superclass.constructor.call(this, config);
     //~ console.log(config,this);
   }
 });
 
-Ext.override(Lino.CalendarPanel,Lino.FieldBoxMixin);
+Ext.override(Lino.CalendarPanel,Lino.MainPanel);
+//~ Ext.override(Lino.CalendarPanel,Lino.FieldBoxMixin);
 
 
+/***
+Ext.override(Ext.ensible.cal.CalendarView,{
+    getEventEditor : function(){
+        // only create one instance of the edit window, even if there are multiple CalendarPanels
+        this.editWin = this.editWin || Ext.WindowMgr.get('ext-cal-editwin');
+      
+      
+        if(!this.editWin){
+            //~ this.editWin = new Ext.ensible.cal.EventEditWindow({
+            this.editWin = new Lino.cal.Event.FormPanel({
+                id: 'ext-cal-editwin',
+                calendarStore: this.calendarStore,
+                modal: this.editModal,
+                enableEditDetails: this.enableEditDetails,
+                listeners: {
+                    'eventadd': {
+                        fn: function(win, rec, animTarget){
+                            //win.hide(animTarget);
+                            win.currentView.onEventAdd(null, rec);
+                        },
+                        scope: this
+                    },
+                    'eventupdate': {
+                        fn: function(win, rec, animTarget){
+                            //win.hide(animTarget);
+                            win.currentView.onEventUpdate(null, rec);
+                        },
+                        scope: this
+                    },
+                    'eventdelete': {
+                        fn: function(win, rec, animTarget){
+                            //win.hide(animTarget);
+                            win.currentView.onEventDelete(null, rec);
+                        },
+                        scope: this
+                    },
+                    'editdetails': {
+                        fn: function(win, rec, animTarget, view){
+                            win.hide(animTarget);
+                            win.currentView.fireEvent('editdetails', win.currentView, rec, animTarget);
+                        },
+                        scope: this
+                    },
+                    'eventcancel': {
+                        fn: function(win, rec, animTarget){
+                            this.dismissEventEditor(animTarget);
+                            win.currentView.onEventCancel();
+                        },
+                        scope: this
+                    }
+                }
+            });
+        }
+        
+        // allows the window to reference the current scope in its callbacks
+        this.editWin.currentView = this;
+        return this.editWin;
+    }
+  
+});
+***/
 
 
-Lino.CalendarWrapper = Lino.WindowWrapper;
+//~ Lino.CalendarWrapper = Lino.WindowWrapper;
 
 //~ Lino.CalendarWrapper = Ext.extend(Lino.WindowWrapper, {
   //~ setup : function() {

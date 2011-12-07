@@ -5,7 +5,7 @@
 In November 2011 I discovered OpenERP and was amazed 
 by how good it is and how well it covers what I can do 
 with Lino.
-:doc:`A few days later <blog/2011/1122>`
+:doc:`A few days later </blog/2011/1122>`
 I discovered that OpenERP cannot be considered free software, 
 but that we have `Tryton <http://www.tryton.org>`_, 
 a free fork of OpenERP.
@@ -48,10 +48,26 @@ One thing is clear:
 Tryton is a mature product with a competent and sympathic community, 
 while Lino is a young project by a single developer with a few users.
 
+A relatively visible difference is that Lino uses a web client 
+while Tryton needs it's own GTK client installed. 
+Difficult to say which is better.
+
+Luc's last (:doc:`</blog/2011/1207>`) statement on this question is:
+
+I guess (but didn't see with my own eyes) 
+that Tryton is better for the following topics 
+(where Lino provides only a satisfying solution 
+(i.e. on which I'm not really proud):
 
 - WYSYWYG editor and rich text fields
+- File Uploads
+
+Lino has some unique features and ways of doing things, which 
+differ from Tryton, and I guess (but didn't verify) that I 
+wouldn't be satisfied with other approaches:
+
+- Support for multilingual database content
 - Data migration
-- File Upload 
 - Polymorphism (MTI)
 - Synchronize data from a legacy database
 

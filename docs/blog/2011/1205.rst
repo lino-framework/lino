@@ -12,11 +12,11 @@ One long-known bug was solved *en passant*:
 `Check-in <http://code.google.com/p/lino/source/detail?r=357f793635a8200027468ef54b09ebdb558e1802>`_ 
 because the original functionality is now almost restored. 
 
-One more bug fixed:
-Lino allowed to close a dirty window without warning "Save changes in current record?".
+One more bug fixed (took 1 hour of bug-hunting + 1 hour of meditation):
+Lino allowed to close a dirty window without the warning "Save changes in current record?".
 That bug was already in previous versions, but not yet known.
 
-Check-in
+Check-in 20111206T1035
   
 TODO: 
 

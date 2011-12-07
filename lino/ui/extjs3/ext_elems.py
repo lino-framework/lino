@@ -858,6 +858,7 @@ class HtmlBoxElement(DisplayElement):
         #~ LayoutElement.__init__(self,lh,name,**kw)
         
     def get_field_options(self,**kw):
+        kw.update(master_panel=js_code("this"))
         kw.update(name=self.field.name)
         #~ kw.update(containing_panel=js_code("this"))
         kw.update(layout='fit')
