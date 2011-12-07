@@ -1,0 +1,87 @@
+20111207
+========
+
+Continued on Calendar Panel
+---------------------------
+
+(at 2 o'clock in the morning)
+Before going on, I had the glorious idea of searching the forum...
+very interesting:
+
+- Maybe I can subclass Brian's EventEditForm in the way 
+  he imagined (`Custom Add/Edit Panel <http://ext.ensible.com/forum/viewtopic.php?f=2&t=326>`_) 
+  if I agree to not have Lino's usual flexibility when 
+  designing a calendar event.
+
+- Or even better:
+  "Regarding replacing the default event window, you can handle the "eventclick" event and show your own editor form however you wish. The only trick is to return false from the eventclick handler so that the default edit action will not execute."
+  (Brian Moeskau in `Custom Click Behavior <http://ext.ensible.com/forum/viewtopic.php?f=2&t=338>`_)
+  
+Ha! After less than half an hour I had the thing integrated into Lino!
+And it turns out that the whole re-architecturing of my :xfile:`lino.js` 
+wasn't necessary since I can simply define my own handler for the eventclick event::
+
+  Lino.on_eventclick = function(cp,rec,el) {
+    Lino.cal.Events.detail(cp,{record_id:rec.data.ID});
+    return false;
+  }
+
+Nächtliche Gedanken
+-------------------
+
+Also vor zwei Wochen (am 23.11.) habe ich begonnen, 
+das Ext.ensible.cal.CalendarPanel zu integrieren. 
+Seitdem war das mein Hauptanliegen in Lino,
+über 45 Stunden habe ich daran gearbeitet.
+
+Und das obwohl ich die ganze Zeit über wusste, dass 
+ich eigentlich theoretisch zuerst mal die Frage 
+:doc:`/tickets/51` klären sollte. 
+
+Aber ich hatte ja erstens keine Lust, 
+daran zu arbeiten, und zweitens warten die Benutzer in Eupen relativ 
+dringend auf eine Lösung für die Terminverwaltung.
+
+Und jetzt stellt sich raus, dass ca. 40 der 45 Stunden eigentlich 
+gar nicht nötig waren, um das CalendarPanel ans Laufen zu kriegen. 
+Nicht dass sie für die Katz waren, aber sie waren eben "nur" eine 
+eine reine Investition in die Zukunft.
+
+Man kann nicht sagen, dass mir diese 45 Stunden Spaß gemacht haben, 
+sondern das war im Gegenteil eher frustrierende Arbeit. 
+Javascript zu testen macht keinen Spaß, 
+und der von Lino generierte JS-Code war vorher wirklich schrecklich verworren. 
+Bin froh, dass ich damit jetzt hoffentlich wieder einige Zeit Ruhe habe. 
+
+Und noch was: auf die Lösung bin ich rein zufällig gestoßen, 
+weil ich dem Argo eine kurze Mail am schreiben war, in der ich 
+erklären wollte, auf welche Schwierigkeit ich da gestern abend gestoßen 
+war. 
+Diesen Argo habe ich ebenso zufällig vorige Woche 
+kennengelernt: am 01.12 bekam ich eine Werbung 
+von kirka.ee, wo ich als Arbeitgeber kostenlos eine Stellenanzeige 
+aufgeben konnte. Das habe ich einfach zum Spaß mal gemacht, 
+(http://www.kirka.ee/Python_Javascript_developer-Eesti/1-62829)
+und am Tag darauf meldete sich eben dieser Argo. 
+Für uns beide war von vorneherein klar, dass er 
+(wenn überhaupt)
+eher unabhängiger Partner als Angestellter wird.
+
+Das Erlebnis ist zudem ein anschauliches Beispiel von 
+"Warum einfach, wenn es auch kompliziert geht".
+Typisch für mich.
+Eigentlich müsste ich mich ärgern über die theoretisch falsch investierte 
+Arbeitszeit (weil ich die Lösung nicht direkt gesehen habe). 
+Aber ich spüre keine Anzeichen von Ärger.
+Das wiederum bedeutet entweder engstirnige Blindheit 
+für die eigenen Schwächen, oder ein ausgeprägtes Selbstvertrauen.
+
+Wenn ich dieses ganze komplexe Erlebnis mal wie einen Traum deute, 
+dann lautet meine Schlussfolgerung: 
+das war ein weiterer Wink Gottes, dass ich 
+die Frage :doc:`/tickets/51` getrost abschließen und mit voller Energie 
+an Lino weiter machen soll!
+
+Konkret würde ich sagen: ein bis zwei Jahre gebe ich Lino noch Zeit.
+Wenn er bis dahin nicht weit genug ist "mir die Pension zu sichern", 
+sollte ich mir nochmal Gedanken machen.

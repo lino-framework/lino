@@ -1,0 +1,121 @@
+20111206
+========
+
+Role: Gerichtete Beziehungen zwischen Kontakten
+-----------------------------------------------
+
+"Uns ist aufgefallen, dass self.contact.child.full_name anscheinend
+keine Anrede mitnimmt. Ist das gewollt oder ein kleiner Bug?"
+
+Richtig, das ist ein kleiner Bug. 
+Oder eigentlich schon ein mittlerer. 
+Der folgende Punkt aus der :doc:`/todo` muss noch präzisiert werden:
+
+  :class:´lino.modlib.contacts.RoleType` kriegt
+  zwei neue Felder parent_type und child_type (FK nach
+  ContentType), sowie choosers for parent und child, die dann 
+  ggf. nur diese Tabelle als Auswahlliste anzeigt.
+
+
+`self.contact` ist ein Role,  also eine 
+Rolle, die ein Contact (Person, Firma, oder User) 
+für einen anderen Contact "erfüllt". Role.parent ist z.B. die 
+Firma BISA, Role.child ist Person Herr Meier, und Role.type ist der RoleType "Direktor". Wahrscheinlich werde ich 
+(wie wir schon mal besprochen haben) in RoleType zwei neue Felder "Parent-Model" und "Child-Model" machen, die man für 
+die RoleType "Direktor" respektive auf "Firma" und "Person" setzt. Dann ändere ich die bisherigen internen ForeignKyes 
+"parent" und "child" um, denn die verweisen in ihrer "rohen" Form nur auf den allgemeinen Contact, 
+bei dem Lino in diesem 
+Kontext nicht weiß, ob das eine Person oder eine Firma oder gar nur ein reiner Contact ist. Dann zwei neue virtuelle 
+Felder "child" und "parent", die im RoleType nachschauen, was es für eine Art sein muss und die dann das "richtige" 
+Model verwenden.
+
+Problematisch ist (intern) noch, dass "parent" und "child" 
+in einer Role was ganz anderes bedeuten als im 
+Kontext von MTI. Der Code für die 
+beiden properties wäre dann ziemlich irritierend::
+
+  def get_child(self):
+      return mti.get_child(self.child,self.type.child_type)
+  child = property(get_child)
+  def get_parent(self):
+      return mti.get_child(self.parent,self.type.parent_type)
+  parent = property(get_parent)
+    
+Deshalb vielleicht besser umbenennen nach Master und Slave? 
+Dieses Wortpaar ist freilich auch schon mit einer anderen 
+Bedeutung belegt.
+Also dann vielleicht "Origin" und "Target"? Oder "a" und "b"?
+Oder "From" (Von) und "To" (Nach)?
+Zu bemerken ist, dass es sich bei Role bewusst um *gerichtete 
+Beziehungen* (relations dirigées) geht.
+
+  ================= =========== ==========
+  role type         parent type child type
+  ================= =========== ==========
+  Direktor          Company     Person 
+  Sekretär          Company     Person
+  Filiale           Company     Person
+  Vater             Person      Person 
+  Mutter            Person      Person
+  Verantwortlicher  Customer    User
+  ================= =========== ==========
+
+Wir könnten Role bei der Gelegenheit auch gleich 
+noch verallgmeinern, indem a und b zwei generic 
+foreign keys werden. 
+
+Dann müsste "Role" umbenannt werden nach... "Link" 
+("Verknüpung" oder "Verbindung"). 
+Das bisherige Modul lino.modlib.links würde dann 
+umfunktioniert. Bisher hat das dort definierte Modell 
+"Link" eine andere Bedeutung, nämlich ein Link zu 
+einer externen Webseite. Das kann aber weg, denn es
+wird bisher nicht benutzt::
+
+  >>> from lino.apps.dsbe.models import Link
+  >>> Link.objects.all()
+  []
+
+Also machen wir folgende Felder::
+
+  Link.a_id
+  Link.b_id
+  Link.type
+  LinkType.a_type
+  LinkType.b_type
+  
+Das Feld Contract.contact kann dann seinen Namen behalten, aber es ändert 
+den Typ. 
+Und Link benutzt nicht wie Role MTI, sondern GFK. 
+Also hier die beiden properties "a" und "b" von Link::
+
+  def get_a(self):
+      ct = ContentType.objects.get(pk=self.type.a_type)
+      return ct.get_object_for_this_type(self.a_id)
+  a = property(get_a)
+  
+  def get_b(self):
+      ct = ContentType.objects.get(pk=self.type.b_type)
+      return ct.get_object_for_this_type(self.b_id)
+  b = property(get_b)
+  
+Das hat Pepp: ist elegant und klar!
+Statt "a" und "b" werde ich vielleicht doch eher "origin" und "target" 
+nehmen.
+Schade nur, das "from" und "to" reservierte Wörter in Python sind und 
+deshalb nicht als Namen in Frage kommen.
+
+(Aber zuerst wollen wir jetzt mal die Integration des Calendar Panels abschließen)
+
+Continued with CalndarPanel
+---------------------------
+
+The WindowWrapper classes have been replaced by a single 
+`Lino.Window`, and all bugs seem fixed now. 
+
+Next step is to write a Wrapper around Brian Moeskau's EditWindow 
+which converts between Ext.ensible and Lino. 
+Maybe I'll need even more changes in Lino because Dirk works 
+with a single Window instance for both insert and edit while 
+Lino uses one Window for each case... (ouch!)
+
