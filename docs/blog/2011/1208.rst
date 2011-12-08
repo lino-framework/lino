@@ -1,11 +1,18 @@
 20111208
 ========
 
-Work Schedules and Work Regimes nom configurable
-------------------------------------------------
+Configurable Work Schedules and Work Regimes 
+--------------------------------------------
 
 The lists of choices for fields 
 jobs.Contract.schedule
 and jobs.Contract.regime
 are no longer hard-coded but configurable.
-New models `jobs.Schedule` and `jobs.Regime`. 
+New models `jobs.Schedule` and `jobs.Regime`.
+
+
+get_salutation
+--------------
+
+- If gender is empty, returns an empty string (instead of "Mr")
+- now use internationalization instead of a hard-coded set of values.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-01 15:25+0000\n"
+"POT-Creation-Date: 2011-12-08 14:26+0000\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -225,6 +225,20 @@ msgstr "Firma"
 #, fuzzy
 msgid "~Contacts"
 msgstr "Kontaktid"
+
+#: .\utils.py:187
+msgid "Mrs"
+msgstr ""
+
+#: .\utils.py:190
+msgctxt "nominative salutation"
+msgid "Mr"
+msgstr ""
+
+#: .\utils.py:191
+msgctxt "indirect salutation"
+msgid "Mr"
+msgstr ""
 
 #, fuzzy
 #~ msgid "not exact"

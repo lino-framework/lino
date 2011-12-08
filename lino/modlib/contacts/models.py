@@ -306,7 +306,7 @@ class Person(models.Model):
         
     def get_salutation(self,**salutation_options):
         return get_salutation(
-            translation.get_language(),
+            #~ translation.get_language(),
             self.gender,**salutation_options)
     
         

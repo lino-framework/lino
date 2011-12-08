@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-01 15:25+0000\n"
-"PO-Revision-Date: 2011-10-02 11:10+0200\n"
+"POT-Creation-Date: 2011-12-08 14:26+0000\n"
+"PO-Revision-Date: 2011-12-08 16:29+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -28,8 +28,11 @@ msgstr "Organisationsarten"
 msgid "Abbreviation"
 msgstr "Abkürzung"
 
-#: .\models.py:89 .\models.py:572 .\config\contacts\Company\1.dtl.py:3
-#: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
+#: .\models.py:89
+#: .\models.py:572
+#: .\config\contacts\Company\1.dtl.py:3
+#: .\config\contacts\Contact\1.dtl.py:3
+#: .\config\contacts\Person\1.dtl.py:3
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -123,7 +126,8 @@ msgstr "unbekannt"
 msgid "Age"
 msgstr "Alter"
 
-#: .\models.py:289 .\models.py:518
+#: .\models.py:289
+#: .\models.py:518
 msgid "Person"
 msgstr "Person"
 
@@ -143,7 +147,8 @@ msgstr "Familienname"
 msgid "Title"
 msgstr "Anrede"
 
-#: .\models.py:364 .\models.py:520
+#: .\models.py:364
+#: .\models.py:520
 msgid "Company"
 msgstr "Organisation"
 
@@ -214,6 +219,20 @@ msgstr "ist Organisation"
 #: .\models.py:629
 msgid "~Contacts"
 msgstr "~Kontakte"
+
+#: .\utils.py:187
+msgid "Mrs"
+msgstr "Frau"
+
+#: .\utils.py:190
+msgctxt "nominative salutation"
+msgid "Mr"
+msgstr "Herr"
+
+#: .\utils.py:191
+msgctxt "indirect salutation"
+msgid "Mr"
+msgstr "Herrn"
 
 #~ msgid "not exact"
 #~ msgstr "ungenau"
