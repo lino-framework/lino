@@ -14,5 +14,10 @@ New models `jobs.Schedule` and `jobs.Regime`.
 get_salutation
 --------------
 
-- If gender is empty, returns an empty string (instead of "Mr")
-- now use internationalization instead of a hard-coded set of values.
+- When gender is empty, returns an empty string (instead of "Mr")
+
+- Now uses internationalization instead of a hard-coded set of strings.
+  This uses Django's `Contextual markers
+  <https://docs.djangoproject.com/en/dev/topics/i18n/translation/#contextual-markers>`_
+  because in German, the string "Mr" must become either "Herr" or "Herrn" depending 
+  on whether we want the "nomiative" or "indirect" form.

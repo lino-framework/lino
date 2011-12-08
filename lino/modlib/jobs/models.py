@@ -462,6 +462,14 @@ class ContractsByJob(Contracts):
     column_names = 'person applies_from applies_until user type *'
     fk_name = 'job'
 
+class ContractsByRegime(Contracts):
+    fk_name = 'regime'
+    column_names = 'job applies_from applies_until user type *'
+
+class ContractsBySchedule(Contracts):
+    fk_name = 'schedule'
+    column_names = 'job applies_from applies_until user type *'
+
 class MyContracts(mixins.ByUser,Contracts):
     column_names = "applies_from person job *"
     label = _("My contracts")

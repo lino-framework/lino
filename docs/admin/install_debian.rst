@@ -125,6 +125,10 @@ into `/var/snapshots/`::
   wget http://extjs.cachefly.net/ext-3.3.1.zip
   unzip ext-3.3.1.zip
   rm ext-3.3.1.zip
+  
+  wget https://github.com/downloads/bmoeskau/Extensible/extensible-1.0.1.zip
+  unzip extensible-1.0.1.zip
+  rm extensible-1.0.1.zip
 
   wget http://launchpad.net/appy/0.6/0.6.6/+download/appy0.6.6.zip
   unzip appy0.6.6.zip -d appy
@@ -323,6 +327,7 @@ tell Lino where certain other software is installed on your server::
 
   ln -s /var/snapshots/lino/media media/lino
   ln -s /var/snapshots/ext-3.3.1 media/extjs
+  ln -s /var/snapshots/extensible-1.0.1 media/extensible
   ln -s /usr/share/tinymce/www media/tinymce
   
 Besides these manual entries, 
