@@ -80,43 +80,63 @@ from lino.modlib.isip.models import ContractBase
 from lino.apps.dsbe.models import Company, Companies
 
 
-SCHEDULE_CHOICES = {
-    'de':[ 
-        u"5-Tage-Woche",
-        u"Montag, Mittwoch, Freitag",
-        u"Individuell",
-        ],
-    'fr':[ 
-        u"5 jours/semaine",
-        u"lundi,mercredi,vendredi",
-        u"individuel",
-        ],
-    'en':[
-        u"5 days/week",
-        u"Monday, Wednesday, Friday",
-        u"Individual",
-        ]
-}
+#~ SCHEDULE_CHOICES = {
+    #~ 'de':[ 
+        #~ u"5-Tage-Woche",
+        #~ u"Montag, Mittwoch, Freitag",
+        #~ u"Individuell",
+        #~ ],
+    #~ 'fr':[ 
+        #~ u"5 jours/semaine",
+        #~ u"lundi,mercredi,vendredi",
+        #~ u"individuel",
+        #~ ],
+    #~ 'en':[
+        #~ u"5 days/week",
+        #~ u"Monday, Wednesday, Friday",
+        #~ u"Individual",
+        #~ ]
+#~ }
 
-REGIME_CHOICES = {
-    'de':[ 
-        u"20 Stunden/Woche",
-        u"35 Stunden/Woche",
-        u"38 Stunden/Woche",
-        ],
-    'fr':[ 
-        u"20 heures/semaine",
-        u"35 heures/semaine",
-        u"38 heures/semaine",
-        ],
-    'en':[
-        u"20 hours/week",
-        u"35 hours/week",
-        u"38 hours/week",
-        u"38 hours/week",
-        ]
-}
+#~ REGIME_CHOICES = {
+    #~ 'de':[ 
+        #~ u"20 Stunden/Woche",
+        #~ u"35 Stunden/Woche",
+        #~ u"38 Stunden/Woche",
+        #~ ],
+    #~ 'fr':[ 
+        #~ u"20 heures/semaine",
+        #~ u"35 heures/semaine",
+        #~ u"38 heures/semaine",
+        #~ ],
+    #~ 'en':[
+        #~ u"20 hours/week",
+        #~ u"35 hours/week",
+        #~ u"38 hours/week",
+        #~ u"38 hours/week",
+        #~ ]
+#~ }
 
+
+class Schedule(babel.BabelNamed):
+    """List of choices for `jobs.Contract.schedule` field."""
+    class Meta:
+        verbose_name = _("Work Schedule")
+        verbose_name_plural = _('Work Schedules')
+        
+class Schedules(reports.Report):
+    model = Schedule
+    order_by = ['name']
+
+class Regime(babel.BabelNamed):
+    """List of choices for `jobs.Contract.regime` field."""
+    class Meta:
+        verbose_name = _("Work Regime")
+        verbose_name_plural = _('Work Regimes')
+        
+class Regimes(reports.Report):
+    model = Regime
+    order_by = ['name']
 
 
 
@@ -225,8 +245,10 @@ class Contract(ContractBase):
         blank=True,null=True,default=None)
     
     
-    regime = models.CharField(_("regime"),max_length=200,blank=True)
-    schedule = models.CharField(_("schedule"),max_length=200,blank=True)
+    #~ regime = models.CharField(_("regime"),max_length=200,blank=True)
+    #~ schedule = models.CharField(_("schedule"),max_length=200,blank=True)
+    regime = models.ForeignKey(Regime,blank=True,null=True)
+    schedule = models.ForeignKey(Schedule,blank=True,null=True)
     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
     refund_rate = models.CharField(_("refund rate"),max_length=200,
         blank=True)
@@ -276,13 +298,13 @@ class Contract(ContractBase):
         return [ 312, 468, 624 ]
         #~ return [ 0, 25, 50, 100 ]
     
-    @chooser(simple_values=True)
-    def regime_choices(cls,language):
-        return language_choices(language,REGIME_CHOICES)
+    #~ @chooser(simple_values=True)
+    #~ def regime_choices(cls,language):
+        #~ return language_choices(language,REGIME_CHOICES)
     
-    @chooser(simple_values=True)
-    def schedule_choices(cls,language):
-        return language_choices(language,SCHEDULE_CHOICES)
+    #~ @chooser(simple_values=True)
+    #~ def schedule_choices(cls,language):
+        #~ return language_choices(language,SCHEDULE_CHOICES)
     
     @chooser(simple_values=True)
     def refund_rate_choices(cls):
@@ -1069,6 +1091,8 @@ def setup_config_menu(site,ui,user,m):
     m.add_action('jobs.Sectors')
     m.add_action('jobs.Functions')
     m.add_action('jobs.StudyTypes')
+    m.add_action('jobs.Schedules')
+    m.add_action('jobs.Regimes')
             
     
     

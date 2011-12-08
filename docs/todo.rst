@@ -12,7 +12,11 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Convert contacts.Role to links.Link. See :doc:`/blog/2011/1206`.
+#.  Custom Quick filters 
+    See :doc:`/blog/2011/1207`.
+
+#.  Convert contacts.Role to links.Link. 
+    See :doc:`/blog/2011/1206`.
 
 #.  Browser-specific language selection is nice... 
     but Lino should also make it 

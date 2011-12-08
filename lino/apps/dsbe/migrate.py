@@ -719,6 +719,34 @@ def migrate_from_1_2_7(globals_dict):
   
     return '1.2.8'
 
+def migrate_from_1_2_8(globals_dict):    
+    jobs_Contract = resolve_model("jobs.Contract")
+    Schedule = resolve_model("jobs.Schedule")
+    Regime = resolve_model("jobs.Regime")
+    def convert(cl,name):
+        if not name: return None
+        try:
+            return cl.objects.get(name=name)
+        except cl.DoesNotExist:
+            obj = cl(name=name)
+            obj.save()
+            return obj
+    def create_jobs_contract(id, user_id, must_build, person_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, provider_id, job_id, duration, regime, schedule, hourly_rate, refund_rate, reference_person, responsibilities, remark):
+        schedule = convert(Schedule,schedule)
+        regime = convert(Regime,regime)
+        return jobs_Contract(id=id,user_id=user_id,must_build=must_build,person_id=person_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,provider_id=provider_id,job_id=job_id,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)
+    globals_dict.update(create_jobs_contract=create_jobs_contract)
+    
+    objects = globals_dict['objects']
+    def new_objects():
+        from lino.modlib.jobs.fixtures import std
+        yield std.objects()
+        yield objects()
+    globals_dict.update(objects=new_objects)
+    
+  
+    return '1.3.0'
+  
 def install(globals_dict):
     """
     Called from dpy dumps generated on a Lino/DSBE site

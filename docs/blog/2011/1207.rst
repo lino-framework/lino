@@ -82,6 +82,43 @@ das war ein weiterer Wink Gottes, dass ich
 die Frage :doc:`/tickets/51` getrost abschließen und mit voller Energie 
 an Lino weiter machen soll!
 
-Konkret würde ich sagen: ein bis zwei Jahre gebe ich Lino noch Zeit.
-Wenn er bis dahin nicht weit genug ist "mir die Pension zu sichern", 
-sollte ich mir nochmal Gedanken machen.
+
+
+
+Predefined Custom Filters
+-------------------------
+
+Mir schwant eine neue Idee.
+Pro Report eine Liste von "häufig benutzten Filtern", 
+die der Benutzer durch einfaches Anklicken 
+in der oberen toolbar einer Liste aktivieren kann. 
+Die Liste muss applikationsspezifisch definiert und 
+lokal sowohl erweiterbar als auch überschreibbar sein.
+
+Ungefähr wie folgt::
+
+  contacts.Persons.setup_quick_filters(self):
+      add = self.add_quick_filter
+      add('',_("All"))
+      add('my',_("my clients"),handler=my_coached_persons),
+      add('alicia',u"Alicias Leute"),filter=dict(user=alicia)),
+      add('aged25',_("Aged < 25"),
+        additive=True,filter=dict(birth_date__gte=dtos(today-25*365)))
+
+Der erste Parameter ist ein identifizierender Name. Der wird im URL benutzt.
+
+``URL_PARAM_CUSTOM_FILTER = 'cf'``
+
+&cf=my,aged25 --> "Meine Leute unter 25 Jahre"
+
+Es gibt Filterfragmente, die am Anfang einer Serie stehen müssen 
+('all', 'my' und 'alicia' im obigen Beispiel) und solche, die 
+sich einem vorherigen Filter dranhängen können.
+Letztere sind entweder "einschränkend" (="restriktiv" =werden mit AND drangehängt)
+oder "erweiternd" (werden mit OR drangehängt)
+und
+also kombinierbar sind.
+
+
+In JS muss ich dann eine intuitive Möglichkeit finden, 
+wie der Benutzer diese Filter auswählen und kombinieren kann.

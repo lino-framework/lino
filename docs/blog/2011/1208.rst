@@ -1,0 +1,11 @@
+20111208
+========
+
+Work Schedules and Work Regimes nom configurable
+------------------------------------------------
+
+The lists of choices for fields 
+jobs.Contract.schedule
+and jobs.Contract.regime
+are no longer hard-coded but configurable.
+New models `jobs.Schedule` and `jobs.Regime`. 
