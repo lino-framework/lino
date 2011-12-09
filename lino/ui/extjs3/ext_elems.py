@@ -617,6 +617,9 @@ class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
         return kw
         
         
+class LinkedForeignKeyElement(ComplexRemoteComboFieldElement):
+    pass
+  
 class ForeignKeyElement(ComplexRemoteComboFieldElement):
     
     def __init__(self,lh,field,**kw):
@@ -1287,7 +1290,7 @@ class GridElement(Container):
         #~ assert not kw.has_key('before_row_edit')
         #~ self.update(before_row_edit=before_row_edit(self))
         
-        if self.report.master is not None:
+        if self.report.master is not None and self.report.master is not models.Model:
             self.mt = ContentType.objects.get_for_model(self.report.master).pk
         else:
             self.mt = 'undefined'
@@ -1490,6 +1493,7 @@ _FIELD2ELEM = (
     #~ (fields.QuickAction, QuickActionElement),
     (fields.DisplayField, DisplayElement),
     (fields.IncompleteDateField, IncompleteDateFieldElement),
+    (fields.LinkedForeignKey, LinkedForeignKeyElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),

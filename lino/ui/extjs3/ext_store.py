@@ -39,7 +39,7 @@ from lino import reports
 from lino import fields
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
-#~ from lino.tools import obj2str
+from lino.tools import obj2str
 from lino.utils import IncompleteDate
 
 class StoreField(object):
@@ -57,8 +57,8 @@ class StoreField(object):
         options.update(name=field.name)
         self.options = options
         
-    def __repr__(self):
-        return self.__class__.__name__ + ' ' + self.field.name
+    #~ def __repr__(self):
+        #~ return self.__class__.__name__ + ' ' + self.field.name
         
     def as_js(self):
         return py2js(self.options)
@@ -135,7 +135,8 @@ class StoreField(object):
         return
         
     def set_value_in_object(self,request,instance,v):
-        old_value = getattr(instance,self.field.attname)
+        old_value = self.value_from_object(request,instance)
+        #~ old_value = getattr(instance,self.field.attname)
         if old_value != v:
             setattr(instance,self.field.name,v)
             m = getattr(instance,self.field.name + "_changed",None)
@@ -206,10 +207,17 @@ class ComboStoreField(StoreField):
         
 class ForeignKeyStoreField(ComboStoreField):
         
+    def get_rel_to(self,obj):
+        return self.field.rel.to
+        
     def get_value_text(self,obj):
+        relto_model = self.get_rel_to(obj)
+        if not relto_model:
+            #~ logger.info("20111209 get_value_text: no relto_model")
+            return (None, None)
         try:
             v = getattr(obj,self.field.name)
-        except self.field.rel.to.DoesNotExist,e:
+        except relto_model.DoesNotExist,e:
             v = None
         if v is None:
             return (None, None)
@@ -217,11 +225,15 @@ class ForeignKeyStoreField(ComboStoreField):
             return (v.pk, unicode(v))
             
     def parse_form_value(self,v,obj):
+        relto_model = self.get_rel_to(obj)
+        if not relto_model:
+            #~ logger.info("20111209 get_value_text: no relto_model")
+            return
         try:
-            return self.field.rel.to.objects.get(pk=v)
+            return relto_model.objects.get(pk=v)
         except ValueError,e:
             pass
-        except self.field.rel.to.DoesNotExist,e:
+        except relto_model.DoesNotExist,e:
             pass
             
         ch = choosers.get_for_field(self.field)
@@ -240,8 +252,78 @@ class ForeignKeyStoreField(ComboStoreField):
             #~ logger.info("Auto-created %s %s",fk_target.__class__,fk_target)
             #~ return fk_target
             #~ return ch.on_quick_insert(obj,self.field,v)
+        #~ else:
+            #~ logger.info("Could not find %s#%s",relto_model,v)
         return None
             
+class LinkedForeignKeyField(ForeignKeyStoreField):
+  
+    def unused_get_value_text(self,obj):
+        v = self.field.link_field.get_value(obj)
+        #~ try:
+            #~ v = getattr(obj,self.field.name)
+        #~ except self.get_rel_to(obj).DoesNotExist,e:
+            #~ v = None
+        if v is None:
+            return (None, None)
+        else:
+            return (v.pk, unicode(v))
+            
+    def get_rel_to(self,obj):
+        ct = self.field.get_content_type(obj)
+        if ct is None:
+            return None
+        return ct.model_class()
+        
+    #~ def value_from_object(self,request,obj):
+        #~ other = self.field.link_field.get_value(obj,request)
+        #~ if other is None: return ''
+        #~ return request.ui.href_to(other)
+        
+
+
+class VirtStoreField(StoreField):
+  
+    def __init__(self,vf,delegate):
+        self.vf = vf
+        StoreField.__init__(self,vf.return_type)
+        #~ for name in (
+              #~ 'form2obj_default',
+              #~ 'list_values_count', 'as_js', 'column_names',
+              #~ 'parse_form_value',
+              #~ 'obj2dict','obj2list'
+              #~ ):
+            #~ setattr(self,name,getattr(delegate,name))
+        self.form2obj_default = delegate.form2obj_default
+        # as long as http://code.djangoproject.com/ticket/15497 is open:
+        self.parse_form_value = delegate.parse_form_value
+        self.set_value_in_object = vf.set_value_in_object
+        
+        #~ self.delegate = delegate
+
+    #~ def __repr__(self):
+        #~ return self.__class__.__name__ + '(' + self.delegate.__class__.__name__ + ') ' + self.field.name
+        
+    def obj2list(self,request,obj):
+        return [self.vf.value_from_object(request,obj)]
+        
+    def obj2dict(self,request,obj,d):
+        v = self.vf.value_from_object(request,obj)
+        #~ logger.debug('VirtStoreField.obj2dict() %s = %s',self.field.name,v)
+        d[self.field.name] = v
+        
+    def unused_form2obj(self,request,obj,post_data,is_new):
+        #~ logger.info("VirtStoreField.form2obj(%s)", post_data)
+        v = self.extract_form_data(post_data)
+        #~ v = StoreField.form2obj(self,obj,post_data,is_new)
+        #~ v = getattr(obj,self.field.name)
+        #~ logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
+        self.vf.set_value_in_object(request,obj,v)
+        #~ return obj
+
+
+
+
 
 
 
@@ -444,34 +526,6 @@ class MethodStoreField(StoreField):
         #~ return instance
         #raise Exception("Cannot update a virtual field")
 
-class VirtStoreField(StoreField):
-  
-    def __init__(self,vf,delegate):
-        self.vf = vf
-        StoreField.__init__(self,vf.return_type)
-        self.form2obj_default = delegate.form2obj_default
-        # as long as http://code.djangoproject.com/ticket/15497 is open
-        self.parse_form_value = delegate.parse_form_value
-        self.set_value_in_object = vf.set_value_in_object
-
-    def obj2list(self,request,obj):
-        return [self.vf.value_from_object(request,obj)]
-        
-    def obj2dict(self,request,obj,d):
-        v = self.vf.value_from_object(request,obj)
-        #~ logger.debug('VirtStoreField.obj2dict() %s = %s',self.field.name,v)
-        d[self.field.name] = v
-        
-    def unused_form2obj(self,request,obj,post_data,is_new):
-        #~ logger.info("VirtStoreField.form2obj(%s)", post_data)
-        v = self.extract_form_data(post_data)
-        #~ v = StoreField.form2obj(self,obj,post_data,is_new)
-        #~ v = getattr(obj,self.field.name)
-        logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
-        self.vf.set_value_in_object(request,obj,v)
-        #~ return obj
-
-
 
 
 
@@ -604,6 +658,13 @@ class Store:
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
         
+        # virtual fields must come last so that Store.form2obj() 
+        # processes "real" fields first.
+        self.all_fields = [
+            f for f in self.all_fields if not isinstance(f,VirtStoreField)
+            ] + [
+            f for f in self.all_fields if isinstance(f,VirtStoreField)
+            ]
         self.all_fields = tuple(self.all_fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
@@ -649,6 +710,9 @@ class Store:
             return MethodStoreField(fld)
         #~ if isinstance(fld,fields.HtmlBox):
             #~ ...
+        if isinstance(fld,fields.LinkedForeignKey):
+            #~ logger.info("Store.create_field(%s)", fld)
+            return LinkedForeignKeyField(fld)
         if isinstance(fld,fields.VirtualField):
             delegate = self.create_field(fld.return_type)
             return VirtStoreField(fld,delegate)
@@ -693,6 +757,7 @@ class Store:
             return ComboStoreField(fld,**kw)
 
     def form2obj(self,request,form_values,instance,is_new):
+        #~ logger.info("Store.form2obj(%s)", form_values)
         if self.report.disabled_fields:
             disabled_fields = set(self.report.disabled_fields(instance,request))
         else:
@@ -709,13 +774,16 @@ class Store:
                     logger.warning("%s : %s", f.field.name,e)
                     logger.exception(e)
                     raise 
+                #~ logger.info("20111209 Store.form2obj %s -> %s", f, obj2str(instance))
         #~ return instance
             
     def row2list(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)
+        #~ logger.info("20111209 Store.row2list(%s)", obj2str(row))
         l = []
         for fld in self.list_fields:
             l += fld.obj2list(request,row)
+            #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
         return l
       
     def column_names(self):
@@ -727,9 +795,11 @@ class Store:
 
     def row2dict(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)
+        #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         d = {}
         for f in self.detail_fields:
             f.obj2dict(request,row,d)
+            #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
 
             

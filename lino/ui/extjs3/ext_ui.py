@@ -305,8 +305,8 @@ class ViewReportRequest(reports.ReportActionRequest):
         #~ if gc_name:
             #~ self.gc = system.GridConfig.objects.get(rptname=self.report.actor_id,name=gc_name)
             
-        master = kw.get('master',self.report.master)    
-        if master is ContentType:
+        master = kw.get('master',self.report.master)
+        if master is ContentType or master is models.Model:
             mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
             try:
                 master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
@@ -428,6 +428,11 @@ class ViewReportRequest(reports.ReportActionRequest):
         return self.store.row2dict(self,row)
  
 
+def find_field(model,name):
+    for vf in model._meta.virtual_fields:
+        if vf.name == name:
+            return vf
+    return model._meta.get_field(name)
     
 
 
@@ -489,6 +494,11 @@ class ExtUI(base.UI):
                         elems.append(self.create_field_element(lh,bf,**kw))
                     return elems
             return self.create_field_element(lh,de,**kw)
+            
+        if isinstance(de,fields.LinkedForeignKey):
+            de.primary_key = False # for ext_store.Store()
+            lh.add_store_field(de)
+            return ext_elems.LinkedForeignKeyElement(lh,de,**kw)
             
         if isinstance(de,generic.GenericForeignKey):
             # create a horizontal panel with 2 comboboxes
@@ -562,13 +572,17 @@ class ExtUI(base.UI):
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
-        msg = "Unknown element %r referred in layout %s of %s." % (
-            name,lh.layout,lh.rh.report)
-        l = [de.name for de in lh.rh.report.wildcard_data_elems()]
-        model = lh.rh.report.model
-        if getattr(model,'_lino_slaves',None):
-            l += [str(rpt) for rpt in model._lino_slaves.values()]
-        msg += " Possible names are %s." % ', '.join(l)
+        if hasattr(lh,'rh'):
+            msg = "Unknown element %r referred in layout %s of %s." % (
+                name,lh.layout,lh.rh.report)
+            l = [de.name for de in lh.rh.report.wildcard_data_elems()]
+            model = lh.rh.report.model
+            if getattr(model,'_lino_slaves',None):
+                l += [str(rpt) for rpt in model._lino_slaves.values()]
+            msg += " Possible names are %s." % ', '.join(l)
+        else:
+            msg = "Unknown element %r referred in layout %s." % (
+                name,lh.layout)
         raise KeyError(msg)
         
 
@@ -1606,7 +1620,7 @@ tinymce.init({
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
                 return d
         else:
-            field = rpt.model._meta.get_field(fldname)
+            field = find_field(rpt.model,fldname)
             chooser = choosers.get_for_field(field)
             if chooser:
                 qs = chooser.get_request_choices(request)
@@ -1909,7 +1923,9 @@ tinymce.init({
                 
         elif isinstance(h,reports.ReportHandle):
             #~ logger.debug('ExtUI.setup_handle() %s',h.report)
-            if h.report.model is None or h.report.model._meta.abstract:
+            if h.report.model is None \
+                or h.report.model is models.Model \
+                or h.report.model._meta.abstract:
                 return
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))

@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 from lino.utils import choosers
 from lino.utils import choicelists
 from lino.tools import full_model_name
+from lino.tools import obj2str
 from lino.utils import IncompleteDate, d2iso
 
 class PasswordField(models.CharField):
@@ -239,7 +240,195 @@ class VirtualField: # (Field):
         #~ print self.field.name
         return m(obj,request)
         
+
+#~ class DynamicForeignKey(models.PositiveIntegerField):
+    #~ """
     
+    #~ """
+    #~ def __init__(self, link_field, *args, **kw):
+        #~ self.link_field = link_field
+        #~ models.PositiveIntegerField.__init__(self,*args, **kw)
+        
+
+
+class LinkedForeignKey(generic.GenericForeignKey):
+    """
+    Like a GenericForeignKey, but the content type 
+    is not stored in another model.
+    Used by :mod:`lino.modlib.links`.
+    
+    """
+    editable = True
+    verbose_name = None
+    primary_key = False
+    choices = None
+    blank = True
+    drop_zone = None
+    
+    
+    def __init__(self,type_fk,name,*args,**kw):
+        """
+        type_fk is a regular ForeignKey field that points to a model whose 
+        instances hold the ContentType.
+        `name` is the prefix for both fields names.
+        """
+        self.type_fk = type_fk
+        self.type_fieldname = name + '_type' 
+        self.fk_field = name + '_id' 
+        for k,v in kw.items():
+            assert hasattr(self,k)
+            setattr(self,k,v)
+        
+    # the following dummy methods are needed when using a DisplayField 
+    # as return_type of a VirtualField
+    #~ def to_python(self,*args,**kw): raise NotImplementedError
+    #~ def save_form_data(self,*args,**kw): raise NotImplementedError
+    #~ def value_to_string(self,*args,**kw): raise NotImplementedError
+    
+    def instance_pre_init(self, signal, sender, args, kwargs, **_kwargs):
+        """
+        Handles initializing an object with the generic FK insteed of
+        content-type/object-id fields.
+        """
+        if self.name in kwargs:
+            value = kwargs.pop(self.name)
+            #~ kwargs[self.ct_field] = self.get_content_type(obj=value)
+            kwargs[self.fk_field] = value._get_pk_val()
+
+    def get_content_type(self,obj):
+        if not getattr(obj,self.type_fk.name+'_id'):
+            logger.info("20111209 get_contenttype() no type_id in %s", obj2str(obj))
+            return None
+        link_type = getattr(obj,self.type_fk.name)
+        #~ link_type = obj.type
+        return getattr(link_type,self.type_fieldname)
+        
+
+
+    def __get__(self, instance, instance_type=None):
+        if instance is None: # accessed as a class attribute
+            return self
+        try:
+            return getattr(instance, self.cache_attr)
+        except AttributeError:
+            rel_obj = None
+            ct = self.get_content_type(instance)
+            if ct is not None: 
+                pk = getattr(instance, self.fk_field)
+                if pk:
+                    model = ct.model_class()
+                    rel_obj = ct.get_object_for_this_type(pk=pk)
+            setattr(instance, self.cache_attr, rel_obj)
+            return rel_obj
+
+    def __set__(self, instance, value):
+        ct = None
+        fk = None
+        if value is not None:
+            ct = self.get_content_type(instance) 
+            fk = value._get_pk_val()
+
+        ct = self.get_content_type(instance)
+        if ct is None:
+            raise ValueError("Cannot store value % sbecause content type is undefined" % value)
+        if not isinstance(value,ct.model_class()):
+            raise ValueError("Expected %s instance but got %r" % (ct.model_class(),value))
+        
+        #~ setattr(instance, self.ct_field, ct)
+        setattr(instance, self.fk_field, fk)
+        setattr(instance, self.cache_attr, value)
+        
+    def value_from_object(self,obj):
+        return self.__get__(obj)
+
+
+
+
+#~ class DynamicGeneralForeignKey(models.PositiveIntegerField):
+#~ class DynamicForeignKey(models.ForeignKey):
+class unused_DynamicForeignKey(object):
+    """
+    Used to define the two fields 'a' and 'b' on the Link model.
+    """
+    #~ __metaclass__ = models.SubfieldBase
+    
+  
+    #~ def __init__(self,fk_field,type_field_name,*args,**kw):
+    def __init__(self,linkfield,*args,**kw):
+        self.fk_field = linkfield.fk_field
+        self.type_field_name = type_field_name
+        models.PositiveIntegerField.__init__(self,*args,**kw)
+    
+    
+    def to_python(self, value):
+        if isinstance(value,models.Model):
+            return value
+        if not value:
+            return value
+        raise Exception("Cannot know contenttype for %r" % value)
+        #~ ct = self.get_contenttype(obj)
+        #~ if ct is None:
+            #~ return None
+        #~ return ct.get_object_for_this_type(pk=pk)
+            
+        #~ return value
+        
+    def get_prep_value(self, value):
+        if value:
+            return value.pk
+        return None
+        
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_prep_value(value)
+        #~ return self.get_db_prep_value(value,connection)
+        
+    #~ def save_form_data(self, instance, data):
+        #~ setattr(instance, self.name, data)
+        
+    #~ def get_text_for_value(self,value):
+        #~ return self.choicelist.get_text_for_value(value.value)
+        
+    def __get__(self,obj):
+        return self.get_value(obj)
+        
+    def get_value(self,obj,request=None):
+        """
+        The optional 2nd argument `request` (passed from
+        `VirtualField.value_from_object`) is ignored.
+        """
+        pk = getattr(obj,self.name+'_id')
+        if pk is None:
+            return None
+        ct = self.get_contenttype(obj)
+        if ct is None:
+            return None
+        return ct.get_object_for_this_type(pk=pk)
+        
+        #~ try:
+            #~ return ct.get_object_for_this_type(pk=pk)
+        #~ except model.DoesNotExist:
+            #~ return None
+
+    def set_value_in_object(self,request,obj,v):
+        raise Exception("20111208")
+        if not v:
+            setattr(obj,self.name,None)
+            return 
+            
+        ct = self.get_contenttype(obj)
+        if ct is None:
+            raise Exception("20111209")
+            return None
+        
+        if not isinstance(v,ct.model_class()):
+            raise Exception("20111209")
+        setattr(obj,self.name,v.pk)
+
+
+        
+        
+
 class GenericForeignKeyIdField(models.PositiveIntegerField):
     """
     Use this instead of `models.PositiveIntegerField` 

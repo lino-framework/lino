@@ -410,7 +410,7 @@ class OutMailsByContact(MailsByContact,OutMails):
     #~ master = 'contacts.Person'
     #~ can_add = perms.never
     
-    #~ def get_master_kw(self,master_instance,**kw):
+    #~ def get_filter_kw(self,master_instance,**kw):
         #~ q1 = Recipient.objects.filter(address=master_instance.email).values('mail').query
         #~ kw['id__in'] = q1
         #~ return kw

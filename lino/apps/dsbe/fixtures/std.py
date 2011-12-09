@@ -13,7 +13,7 @@
 ## along with Lino-DSBE; if not, see <http://www.gnu.org/licenses/>.
 
 
-#~ from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.models import ContentType
 from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
 from django.utils.translation import ugettext_lazy as _
@@ -143,11 +143,26 @@ def objects():
     yield excltype(u"Termin nicht eingehalten")
     yield excltype(u"ONEM-Auflagen nicht erfüllt")
     
-    linkType = Instantiator('links.LinkType',"name").build
-    yield linkType(babelitem(de=u"Private Website",fr=u"Site privé"))
-    yield linkType(babelitem(de=u"Firmen-Website",fr=u"Site commercial"))
-    yield linkType(babelitem(de=u"Facebook-Profil",fr=u"Profil Facebook"))
-    yield linkType(babelitem(de=u"Sonstige",fr=u"Autres"))
+    linkType = Instantiator('links.LinkType',"a_type b_type name").build
+    Company = resolve_model('contacts.Company')
+    Person = resolve_model('contacts.Person')
+    
+    yield linkType(
+        ContentType.objects.get_for_model(Company),
+        ContentType.objects.get_for_model(Person),
+        babelitem(de=u"Direktor",fr=u"directeur"))
+    yield linkType(
+        ContentType.objects.get_for_model(Person),
+        ContentType.objects.get_for_model(Person),
+        babelitem(de=u"Vater",fr=u"père"))
+    yield linkType(
+        ContentType.objects.get_for_model(Person),
+        ContentType.objects.get_for_model(Person),
+        babelitem(de=u"Mutter",fr=u"mère"))
+    #~ yield linkType(babelitem(de=u"Private Website",fr=u"Site privé"))
+    #~ yield linkType(babelitem(de=u"Firmen-Website",fr=u"Site commercial"))
+    #~ yield linkType(babelitem(de=u"Facebook-Profil",fr=u"Profil Facebook"))
+    #~ yield linkType(babelitem(de=u"Sonstige",fr=u"Autres"))
     
     from lino.models import update_site_config
     

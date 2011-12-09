@@ -161,7 +161,8 @@ class EnableChild(VirtualField):
         
     def is_enabled(self,lh):
         """
-        When a DetailLayout is inherited by an MTI child, EnableChild fields must be disabled.
+        When a DetailLayout is inherited by an MTI 
+        child, EnableChild fields must be disabled.
         """
         return lh.model != self.child_model and issubclass(self.child_model,lh.model)
 

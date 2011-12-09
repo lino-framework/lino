@@ -1302,19 +1302,19 @@ class MyNotes(notes.MyNotes):
 #
 # LINKS IMPLEMENTATION AND EXTENSION
 #
-class Link(links.Link,contacts.PartnerDocument):
-    class Meta:
-        app_label = 'links'
+#~ class Link(links.Link,contacts.PartnerDocument):
+    #~ class Meta:
+        #~ app_label = 'links'
 
-class LinksByPerson(links.LinksByOwnerBase):
-    fk_name = 'person'
-    column_names = "name url user date company *"
-    order_by = ["date"]
+#~ class LinksByPerson(links.LinksByOwnerBase):
+    #~ fk_name = 'person'
+    #~ column_names = "name url user date company *"
+    #~ order_by = ["date"]
   
-class LinksByCompany(links.LinksByOwnerBase):
-    fk_name = 'company'
-    column_names = "name url user date person *"
-    order_by = ["date"]
+#~ class LinksByCompany(links.LinksByOwnerBase):
+    #~ fk_name = 'company'
+    #~ column_names = "name url user date person *"
+    #~ order_by = ["date"]
     
 
 #

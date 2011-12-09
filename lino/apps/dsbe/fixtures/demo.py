@@ -430,14 +430,16 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
             DATE += ONE_DAY
             ROW_COUNTER += 1
             yield link(**kw)
-      
-    for obj in Person.objects.all():
-        for x in demo_links(person=obj):
-            yield x
             
-    for obj in Company.objects.all():
-        for x in demo_links(company=obj):
-            yield x
+    if False:
+      
+        for obj in Person.objects.all():
+            for x in demo_links(person=obj):
+                yield x
+                
+        for obj in Company.objects.all():
+            for x in demo_links(company=obj):
+                yield x
             
     
 

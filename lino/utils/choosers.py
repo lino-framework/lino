@@ -150,7 +150,7 @@ def discover():
     #~ logger.debug("Instantiate model reports...")
     for model in models.get_models():
         #~ n = 0
-        for field in model._meta.fields:
+        for field in model._meta.fields + model._meta.virtual_fields:
             methname = field.name + "_choices"
             m = get_class_attr(model,methname)
             if m is not None:

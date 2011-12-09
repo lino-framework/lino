@@ -1,0 +1,6 @@
+20111209
+========
+
+8 hours! The new module :mod:`lino.modlib.links` 
+was a bit more complex than expected. 
+Needed to create new :class:`lino.fields.LinkedForeignKey`

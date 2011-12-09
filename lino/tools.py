@@ -142,7 +142,7 @@ def obj2str(i,force_detailed=False):
     """
     #~ if not force_detailed and i.pk is not None:
     if not isinstance(i,models.Model): 
-        if isinstance(i,long): return str(i) # AutoField would is long on mysql, int on sqlite
+        if isinstance(i,long): return str(i) # AutoField is long on mysql, int on sqlite
         return repr(i)
     if i.pk is None:
         force_detailed = True

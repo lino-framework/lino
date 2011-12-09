@@ -672,11 +672,11 @@ class ReportActionRequest(ActionRequest):
             assert master_instance is None
             master_instance = self.master.objects.get(pk=master_id)
             
-        self.master_kw = self.report.get_master_kw(master_instance)
+        self.create_kw = self.report.get_create_kw(master_instance)
         self.master_instance = master_instance
         if self.create_rows is None:
             if create_rows is None:
-                if self.master_kw is None:
+                if self.create_kw is None:
                     create_rows = 0
                 #~ elif self.user is not None and self.report.can_add.passes(self.user):
                 elif self.report.can_add.passes(self.user):
@@ -738,8 +738,8 @@ class ReportActionRequest(ActionRequest):
         return self.queryset.__len__()
         
     def create_instance(self,**kw):
-        if self.master_kw:
-            kw.update(self.master_kw)
+        if self.create_kw:
+            kw.update(self.create_kw)
         #logger.debug('%s.create_instance(%r)',self,kw)
         if self.known_values:
             kw.update(self.known_values)
@@ -1264,7 +1264,7 @@ class Report(actors.Actor): #,base.Handled):
             #~ qs = self.queryset
         #~ else:
             #~ qs = self.model.objects.all()
-        kw = self.get_master_kw(rr.master_instance,**rr.params)
+        kw = self.get_filter_kw(rr.master_instance,**rr.params)
         if kw is None:
             return []
         if len(kw):
@@ -1317,10 +1317,16 @@ class Report(actors.Actor): #,base.Handled):
     def setup_request(self,req):
         pass
         
-    def get_master_kw(self,master_instance,**kw):
-        #logger.debug('%s.get_master_kw(%r) master=%r',self,kw,self.master)
+        
+    def get_create_kw(self,master_instance,**kw):
+        return self.get_filter_kw(master_instance,**kw)
+        
+    def get_filter_kw(self,master_instance,**kw):
+        #logger.debug('%s.get_filter_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
             assert master_instance is None, "Report %s doesn't accept a master" % self.actor_id
+        elif self.master is models.Model:
+            pass
         elif self.master is ContentType:
             #~ print 20110415
             if master_instance is None:

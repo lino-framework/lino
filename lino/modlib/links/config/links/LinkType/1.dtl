@@ -1,7 +1,6 @@
 main = 
-    id type 
-    # a_id b_id
-    a b
+    id name
+    LinksByType
     # url
     # name
     # date user
