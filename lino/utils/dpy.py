@@ -74,6 +74,8 @@ class Serializer(base.Serializer):
             
 def new_content_type_id(m):
     if m is None: return m
+    # if not fmn: return None
+    # m = resolve_model(fmn)
     ct = ContentType.objects.get_for_model(m)
     if ct is None: return None
     return ct.pk
@@ -210,6 +212,7 @@ def new_content_type_id(m):
         if isinstance(field,models.ForeignKey) and field.rel.to is ContentType:
             ct = ContentType.objects.get(pk=value)
             return full_model_name(ct.model_class(),'_')
+            #~ return "'"+full_model_name(ct.model_class())+"'"
             #~ return repr(tuple(value.app_label,value.model))
         if isinstance(field,models.DateField):
             d = value

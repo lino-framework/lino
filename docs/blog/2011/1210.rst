@@ -8,3 +8,7 @@
 - Note that :class:`lino.apps.dsbe.models.ContactPersons`
   inherits :class:`lino.modlib.links.models.LinksFromThis`
   just to override the label.
+
+Discovered that due to a bug in previous dpy versions
+there were some Upload records on Role and RoleType 
+in a customer's database.

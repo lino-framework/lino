@@ -746,6 +746,8 @@ def migrate_from_1_2_8(globals_dict):
     def create_contacts_role(id, parent_id, child_id, type_id):
         return contacts_Role(id=id,a_id=parent_id,b_id=child_id,type_id=type_id)
     globals_dict.update(create_contacts_role=create_contacts_role)
+    globals_dict.update(contacts_Role=contacts_Role)
+    globals_dict.update(contacts_RoleType=contacts_RoleType)
     
     from django.contrib.contenttypes.models import ContentType
     Person = resolve_model('contacts.Person')
