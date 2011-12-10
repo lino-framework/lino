@@ -289,7 +289,12 @@ class Partner(mixins.DiffingMixin,models.Model):
     
     is_active = models.BooleanField(
         verbose_name=_("is active"),default=True)
-    "Indicates whether this Contact may be used when creating new operations."
+    "Only active Persons may be used when creating new operations."
+    
+    is_new = models.BooleanField(
+        verbose_name=_("is new"),default=False)
+    """Means that this Person needs to be confirmed. 
+    New Persons may not be used when creating new operations."""
     
     activity = models.ForeignKey("dsbe.Activity",
         blank=True,null=True,
@@ -708,7 +713,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
           national_id health_insurance pharmacy 
           bank_account1 bank_account2 
           gesdos_id activity 
-          is_cpas is_senior is_active nationality''')
+          is_cpas is_senior is_active is_new nationality''')
         #~ super(Person,cls).site_setup(lino)
 
 
@@ -730,6 +735,9 @@ class AllPersons(contacts.Contacts):
         return self.model._meta.verbose_name_plural + ' ' + force_unicode(_("(all)"))
     
 class Persons(AllPersons):
+    """
+    Almost all Persons
+    """
     app_label = 'contacts'
     #~ use_as_default_report = False
     filter = dict(is_active=True)
