@@ -746,8 +746,6 @@ def migrate_from_1_2_8(globals_dict):
     def create_contacts_role(id, parent_id, child_id, type_id):
         return contacts_Role(id=id,a_id=parent_id,b_id=child_id,type_id=type_id)
     globals_dict.update(create_contacts_role=create_contacts_role)
-    globals_dict.update(contacts_Role=contacts_Role)
-    globals_dict.update(contacts_RoleType=contacts_RoleType)
     
     from django.contrib.contenttypes.models import ContentType
     Person = resolve_model('contacts.Person')
@@ -759,6 +757,27 @@ def migrate_from_1_2_8(globals_dict):
             a_type=a_type,b_type=b_type,
             use_in_contracts=use_in_contracts)    
     globals_dict.update(create_contacts_roletype=create_contacts_roletype)
+    
+    #~ ignore any data from previous links module:
+    
+    def create_links_link(id, user_id, person_id, company_id, type_id, date, url, name):
+        return None
+    globals_dict.update(create_links_link=create_links_link)
+    def create_links_linktype(id, name):
+        return None
+    globals_dict.update(create_links_linktype=create_links_linktype)
+    del globals_dict['links_LinkType']
+    del globals_dict['links_Link']
+    
+    #~ Discovered that due to a bug in previous dpy versions
+    #~ there were some Upload records on Role and RoleType 
+    #~ in a customer's database. That's why we need to redefine also the 
+    #~ global variables contacts_Role and contacts_RoleType:
+    
+    globals_dict.update(contacts_Role=contacts_Role)
+    globals_dict.update(contacts_RoleType=contacts_RoleType)
+    
+    #~ add previously hard-coded jobs.Regime and jobs.Schedule from fixture
     
     objects = globals_dict['objects']
     def new_objects():
