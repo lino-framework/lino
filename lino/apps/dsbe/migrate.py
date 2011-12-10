@@ -743,20 +743,26 @@ def migrate_from_1_2_8(globals_dict):
     
     contacts_Role = resolve_model("links.Link")
     contacts_RoleType = resolve_model("links.LinkType")
-    def create_contacts_role(id, parent_id, child_id, type_id):
-        return contacts_Role(id=id,a_id=parent_id,b_id=child_id,type_id=type_id)
-    globals_dict.update(create_contacts_role=create_contacts_role)
     
     from django.contrib.contenttypes.models import ContentType
     Person = resolve_model('contacts.Person')
     Company = resolve_model('contacts.Company')
     a_type = ContentType.objects.get_for_model(Company)
     b_type = ContentType.objects.get_for_model(Person)
+    DEFAULT_LINKTYPE = contacts_RoleType(name='*',a_type=a_type,b_type=b_type,id=99)
+    DEFAULT_LINKTYPE.save()
+    
     def create_contacts_roletype(id, name, name_fr, name_en, use_in_contracts):
         return contacts_RoleType(id=id,name=name,name_fr=name_fr,name_en=name_en,
             a_type=a_type,b_type=b_type,
             use_in_contracts=use_in_contracts)    
     globals_dict.update(create_contacts_roletype=create_contacts_roletype)
+    
+    def create_contacts_role(id, parent_id, child_id, type_id):
+        if type_id is None:
+            type_id = DEFAULT_LINKTYPE.pk
+        return contacts_Role(id=id,a_id=parent_id,b_id=child_id,type_id=type_id)
+    globals_dict.update(create_contacts_role=create_contacts_role)
     
     #~ ignore any data from previous links module:
     
