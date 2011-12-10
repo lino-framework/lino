@@ -1,8 +1,0 @@
-main = 
-    id type 
-    # a_id b_id
-    a b
-    # url
-    # name
-    # date user
-    # cal.TasksByOwner

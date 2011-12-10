@@ -175,7 +175,8 @@ def objects():
     Person = resolve_model('contacts.Person')
     Company = resolve_model('contacts.Company')
     #~ Contact = resolve_model('contacts.Contact')
-    Role = resolve_model('contacts.Role')
+    #~ Role = resolve_model('contacts.Role')
+    Link = resolve_model('links.Link')
     Contract = resolve_model('jobs.Contract')
     JobProvider = resolve_model('jobs.JobProvider')
     Note = resolve_model('notes.Note')
@@ -185,7 +186,8 @@ def objects():
     person = Instantiator(Person).build
     company = Instantiator(Company).build
     #~ contact = Instantiator(Contact).build
-    role = Instantiator(Role).build
+    #~ role = Instantiator(Role).build
+    link = Instantiator(Link).build
     #~ exam_policy = Instantiator('isip.ExamPolicy').build
 
     City = resolve_model('countries.City')
@@ -212,11 +214,13 @@ def objects():
     yield cpas
     bisa = company(name=u"BISA",city=eupen,country='BE')
     yield bisa 
-    bisa_dir = role(parent=bisa,child=annette,type=1)
+    #~ bisa_dir = role(parent=bisa,child=annette,type=1)
+    bisa_dir = link(a=bisa,b=annette,type=1)
     yield bisa_dir 
     rcycle = company(name=u"R-Cycle Sperrgutsortierzentrum",city=eupen,country='BE')
     yield rcycle
-    rcycle_dir = role(parent=rcycle,child=andreas,type=1)
+    #~ rcycle_dir = role(parent=rcycle,child=andreas,type=1)
+    rcycle_dir = link(a=rcycle,b=andreas,type=1)
     yield rcycle_dir
     yield company(name=u"Die neue Alternative V.o.G.",city=eupen,country='BE')
     yield company(name=u"Pro Aktiv V.o.G.",city=eupen,country='BE')
@@ -246,7 +250,8 @@ def objects():
       last_name="Xhonneux",city=kettenis,
       name="Xhonneux Gerd",country='BE',gender=Gender.male)
     yield gerd
-    yield role(parent=cpas,child=gerd,type=4)
+    #~ yield role(parent=cpas,child=gerd,type=4)
+    yield link(a=cpas,b=gerd,type=4)
     
     # see :doc:`/blog/2011/1007`
     tatjana = person(
@@ -264,12 +269,13 @@ def objects():
     adg = company(name=u"Arbeitsamt der D.G.",city=eupen,country='BE')
     update_site_config(job_office=adg)
     yield adg
-    adg_dir = role(parent=adg,child=bernard,type=1)
+    #~ adg_dir = role(parent=adg,child=bernard,type=1)
+    adg_dir = link(a=adg,b=bernard,type=1)
     yield adg_dir
     try:
       bernard.job_office_contact = adg_dir
       bernard.clean()
-      #~ bernard.save()
+      bernard.save()
     except ValidationError:
         pass
     else:

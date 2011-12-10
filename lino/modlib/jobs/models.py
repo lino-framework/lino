@@ -271,7 +271,8 @@ class Contract(ContractBase):
     def contact_choices(cls,provider):
         if provider is not None:
             #~ return provider.rolesbyparent.all()
-            return provider.rolesbyparent.filter(type__use_in_contracts=True)
+            #~ return provider.rolesbyparent.filter(type__use_in_contracts=True)
+            return links.Link.objects.filter(type__use_in_contracts=True,a=provider)
         return []
         
     def get_company(self):
@@ -416,7 +417,7 @@ class Contract(ContractBase):
             
         if self.provider is not None:
             if self.contact is not None:
-                if self.contact.parent.pk != self.provider.company_ptr.pk:
+                if self.contact.a.pk != self.provider.company_ptr.pk:
                     self.contact = None
                     
         super(Contract,self).full_clean(*args,**kw)

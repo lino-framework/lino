@@ -161,10 +161,14 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         related_name="%(app_label)s_%(class)s_set_by_person",
         verbose_name=_("Person"))
         
-    contact = models.ForeignKey("contacts.Role",
+    contact = models.ForeignKey("links.Link",
       related_name="%(app_label)s_%(class)s_set_by_contact",
       blank=True,null=True,
       verbose_name=_("represented by"))
+    #~ contact = models.ForeignKey("contacts.Role",
+      #~ related_name="%(app_label)s_%(class)s_set_by_contact",
+      #~ blank=True,null=True,
+      #~ verbose_name=_("represented by"))
     #~ contact = models.ForeignKey("contacts.Contact",
       #~ blank=True,null=True,
       #~ verbose_name=_("represented by"))
@@ -339,7 +343,8 @@ class Contract(ContractBase):
     def contact_choices(cls,company):
         if company is not None:
             #~ return company.rolesbyparent.all()
-            return company.rolesbyparent.filter(type__use_in_contracts=True)
+            #~ return company.rolesbyparent.filter(type__use_in_contracts=True)
+            return links.Link.objects.filter(type__use_in_contracts=True,a=company)
         return []
 
     def get_recipient(self):

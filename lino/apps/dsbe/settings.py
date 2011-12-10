@@ -141,7 +141,7 @@ class Lino(Lino):
             config_contacts.add_action('countries.Cities')
             config_contacts.add_action('contacts.CompanyTypes')
             #~ config_contacts.add_action('contacts.ContactTypes')
-            config_contacts.add_action('contacts.RoleTypes')
+            #~ config_contacts.add_action('contacts.RoleTypes')
             config_contacts.add_action('countries.Languages')
             
             
@@ -206,7 +206,7 @@ class Lino(Lino):
             #m.add_action('properties.PropChoices')
             #~ m.add_action('properties.PropValues')
             m.add_action('contacts.AllPersons')
-            m.add_action('contacts.Roles')
+            #~ m.add_action('contacts.Roles')
             notes.setup_explorer_menu(self,ui,user,m)
             isip.setup_explorer_menu(self,ui,user,m)
             jobs.setup_explorer_menu(self,ui,user,m)

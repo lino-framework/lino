@@ -468,7 +468,8 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         verbose_name=_("Job agents"))
     
     #~ job_office_contact = models.ForeignKey("contacts.Contact",
-    job_office_contact = models.ForeignKey("contacts.Role",
+    #~ job_office_contact = models.ForeignKey("contacts.Role",
+    job_office_contact = models.ForeignKey("links.Link",
       blank=True,null=True,
       verbose_name=_("Contact person at local job office"),
       related_name='persons_job_office')
@@ -478,7 +479,8 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         sc = get_site_config()
         if sc.job_office is not None:
             #~ return sc.job_office.contact_set.all()
-            return sc.job_office.rolesbyparent.all()
+            #~ return sc.job_office.rolesbyparent.all()
+            return links.Link.objects.filter(a=sc.job_office)
         return []
 
 
@@ -504,11 +506,11 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
             msgs.append(unicode(e))
         return msgs
           
-    def clean(self):
-        if self.job_office_contact: 
-            if self.job_office_contact.child == self:
-                raise ValidationError(_("Circular reference"))
-        super(Person,self).clean()
+    #~ def clean(self):
+        #~ if self.job_office_contact: 
+            #~ if self.job_office_contact.b == self:
+                #~ raise ValidationError(_("Circular reference"))
+        #~ super(Person,self).clean()
         
 
     def card_type_text(self,request):
@@ -525,6 +527,9 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         return self.language
         
     def save(self,*args,**kw):
+        if self.job_office_contact: 
+            if self.job_office_contact.b == self:
+                raise ValidationError(_("Circular reference"))
         super(Person,self).save(*args,**kw)
         self.save_auto_tasks()
         
@@ -1926,7 +1931,8 @@ if reports.is_installed('dsbe'):
             Deserves more documentation.
             """)
             
-    RoleType = resolve_model('contacts.RoleType')
+    #~ RoleType = resolve_model('contacts.RoleType')
+    RoleType = resolve_model('links.LinkType')
     if not isinstance(RoleType,UnresolvedModel):
         """
         autodoc imports this module with :mod:`lino.apps.std.settings` 
@@ -1937,7 +1943,7 @@ if reports.is_installed('dsbe'):
             models.BooleanField(
                 verbose_name=_("usable in contracts"),
                 default=True
-            ),"""Whether Roles of this type can be used as contact person of a job contract.
+            ),"""Whether Links of this type can be used as contact person of a job contract.
             Deserves more documentation.
             """)
             
@@ -1996,3 +2002,5 @@ connection_created.connect(my_callback)
 
 
 
+class ContactPersons(links.LinksFromThis):
+    label = _("Contact persons")

@@ -396,24 +396,24 @@ class CompanyMixin(models.Model):
 
 
 
-#~ class ContactType(babel.BabelNamed):
-class RoleType(babel.BabelNamed):
-    """
-    Deserves more documentation.
-    """
-    class Meta:
-        verbose_name = _("Role Type")
-        verbose_name_plural = _("Role Types")
-    #~ abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
+#~ # class ContactType(babel.BabelNamed):
+#~ class RoleType(babel.BabelNamed):
+    #~ """
+    #~ Deserves more documentation.
+    #~ """
+    #~ class Meta:
+        #~ verbose_name = _("Role Type")
+        #~ verbose_name_plural = _("Role Types")
 
 
-class RoleTypes(reports.Report):
-    model = 'contacts.RoleType'
+#~ class RoleTypes(reports.Report):
+    #~ model = 'contacts.RoleType'
 
 
 #~ class Contact(models.Model):
 #~ class RoleOccurence(models.Model):
-class Role(models.Model):
+#~ class Role(models.Model):
+class unused_Role(object):
     """
     The role of a given :class:`Person` in a given :class:`Company`.
     """
@@ -484,18 +484,18 @@ class Role(models.Model):
     #~ fk_name = 'person'
     #~ column_names = 'company type *'
     
-class Roles(reports.Report):
-    model = 'contacts.Role'   
+#~ class Roles(reports.Report):
+    #~ model = 'contacts.Role'   
     
-class RolesByParent(Roles):
-    label = _("Contact persons")
-    fk_name = 'parent'
-    column_names = 'child type *'
+#~ class RolesByParent(Roles):
+    #~ label = _("Contact persons")
+    #~ fk_name = 'parent'
+    #~ column_names = 'child type *'
 
-class RolesByChild(Roles):
-    label = _("Contact for")
-    fk_name = 'child'
-    column_names = 'parent type *'
+#~ class RolesByChild(Roles):
+    #~ label = _("Contact for")
+    #~ fk_name = 'child'
+    #~ column_names = 'parent type *'
     
     
     
@@ -626,8 +626,9 @@ def setup_my_menu(site,ui,user,m):
     pass
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("contacts",_("~Contacts"))
-    m.add_action('contacts.RoleTypes')
+    pass
+    #~ m  = m.add_menu("contacts",_("~Contacts"))
+    #~ m.add_action('contacts.RoleTypes')
   
 def setup_explorer_menu(site,ui,user,m):
     pass

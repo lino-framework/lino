@@ -243,7 +243,7 @@ class LinkTypes(reports.Report):
 class Links(reports.Report):
     model = 'links.Link'
     #~ column_names = "id date user url name *"
-    column_names = "type a b *"
+    column_names = "type a b id *"
     order_by = ["id"]
 
 class LinksByType(Links):
@@ -257,7 +257,7 @@ class LinksFromThis(Links):
     master = models.Model
     link_name = 'a'
     #~ master = ContentType # HACK
-    column_names = 'type b *'
+    column_names = 'type b'
     
     def get_create_kw(self,master_instance,**kw):
         kw[self.link_name+'_id'] = master_instance.pk
@@ -277,7 +277,7 @@ class LinksToThis(LinksFromThis):
     """
     master = models.Model
     link_name = 'b'
-    column_names = 'type a *'
+    column_names = 'type a'
     label = _("Links to this")
 
 

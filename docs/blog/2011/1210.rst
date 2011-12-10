@@ -1,0 +1,10 @@
+20111210
+========
+
+- :class:`lino.modlib.links.models.LinksFromThis`.column_names
+- removed contacts.RoleType and contacts.Role and adapted demo and std fixtures
+- Adapted :func:`lino.apps.dsbe.migrate.migrate_from_1_2_8`
+
+- Note that :class:`lino.apps.dsbe.models.ContactPersons`
+  inherits :class:`lino.modlib.links.models.LinksFromThis`
+  just to override the label.

@@ -720,6 +720,10 @@ def migrate_from_1_2_7(globals_dict):
     return '1.2.8'
 
 def migrate_from_1_2_8(globals_dict):    
+    """
+    Convert Schedule and Regime fields in contracts.
+    Convert Roles to Links (and RoleTypes to LinkTypes).
+    """
     jobs_Contract = resolve_model("jobs.Contract")
     Schedule = resolve_model("jobs.Schedule")
     Regime = resolve_model("jobs.Regime")
@@ -736,6 +740,23 @@ def migrate_from_1_2_8(globals_dict):
         regime = convert(Regime,regime)
         return jobs_Contract(id=id,user_id=user_id,must_build=must_build,person_id=person_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,provider_id=provider_id,job_id=job_id,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)
     globals_dict.update(create_jobs_contract=create_jobs_contract)
+    
+    contacts_Role = resolve_model("links.Link")
+    contacts_RoleType = resolve_model("links.LinkType")
+    def create_contacts_role(id, parent_id, child_id, type_id):
+        return contacts_Role(id=id,a_id=parent_id,b_id=child_id,type_id=type_id)
+    globals_dict.update(create_contacts_role=create_contacts_role)
+    
+    from django.contrib.contenttypes.models import ContentType
+    Person = resolve_model('contacts.Person')
+    Company = resolve_model('contacts.Company')
+    a_type = ContentType.objects.get_for_model(Company)
+    b_type = ContentType.objects.get_for_model(Person)
+    def create_contacts_roletype(id, name, name_fr, name_en, use_in_contracts):
+        return contacts_RoleType(id=id,name=name,name_fr=name_fr,name_en=name_en,
+            a_type=a_type,b_type=b_type,
+            use_in_contracts=use_in_contracts)    
+    globals_dict.update(create_contacts_roletype=create_contacts_roletype)
     
     objects = globals_dict['objects']
     def new_objects():

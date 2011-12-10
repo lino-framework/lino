@@ -18,7 +18,8 @@ box4 =
   gsm
 address_box = box3 box4
 ## bottom_box = remarks contacts.RolesByParent
-bottom_box = box5 contacts.RolesByParent
+## bottom_box = box5 contacts.RolesByParent
+bottom_box = box5 dsbe.ContactPersons
 box5 = 
   remarks 
   is_courseprovider is_jobprovider

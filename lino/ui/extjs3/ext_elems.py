@@ -136,6 +136,9 @@ class GridColumn(Component):
                 rend = 'Lino.raw_renderer'
             elif isinstance(editor.field,models.TextField):
                 rend = 'Lino.text_renderer'
+            elif isinstance(editor.field,fields.LinkedForeignKey):
+                rend = "Lino.lfk_renderer(this,'%s')" % \
+                  (editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX)
             elif isinstance(editor.field,models.ForeignKey):
                 # FK fields are clickable if their target has a detail view
                 rpt = editor.field.rel.to._lino_model_report

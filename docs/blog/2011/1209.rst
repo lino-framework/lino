@@ -3,4 +3,12 @@
 
 8 hours! The new module :mod:`lino.modlib.links` 
 was a bit more complex than expected. 
-Needed to create new :class:`lino.fields.LinkedForeignKey`
+Needed to create new :class:`lino.fields.LinkedForeignKey`.
+
+Check-in because it seems to work now.
+
+TODO:
+
+- LinksFromThis.column_names
+- migrate
+- remove contacts.RoleType and contacts.Role

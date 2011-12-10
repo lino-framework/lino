@@ -1154,11 +1154,24 @@ Lino.fk_renderer = function(fkname,handlername) {
   return function(value, metaData, record, rowIndex, colIndex, store) {
     //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
     if (record.phantom) return '';
-    //~ if (value) 
-        //~ return '<a href="' + url + '/' + String(record.data[fkname])\
-          //~ + '?fmt=detail" target="_blank" onclick="Lino.on_fk_click">' + value + '</a>';
     if (value) {
-        //~ var s = '<a href="#" onclick="' ;
+        var s = '<a href="javascript:' ;
+        s += handlername + '(undefined,{record_id:\'' + String(record.data[fkname]) + '\'})">';
+        s += value + '</a>';
+        //~ console.log('Lino.fk_renderer',value,'-->',s);
+        return s
+    }
+    return '';
+  }
+};
+
+Lino.lfk_renderer = function(panel,fkname) {
+  //~ console.log('Lino.fk_renderer handler=',handler);
+  var handlername = 'console.log';
+  return function(value, metaData, record, rowIndex, colIndex, store) {
+    //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
+    if (record.phantom) return '';
+    if (value) {
         var s = '<a href="javascript:' ;
         s += handlername + '(undefined,{record_id:\'' + String(record.data[fkname]) + '\'})">';
         s += value + '</a>';
