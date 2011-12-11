@@ -26,6 +26,8 @@ logger = logging.getLogger(__name__)
 from django.db.utils import IntegrityError
 from django.conf import settings
 from django.utils.encoding import force_unicode
+from django.utils import translation
+
 
 #~ from django.utils import unittest
 #~ from django.test.client import Client
@@ -467,6 +469,14 @@ def test10(self):
         
     
 def test11(self):
+    """
+    Tests whether the user problem 
+    described in :doc:`/blog/2011/1206` 
+    is solved.
+    """
     from lino.modlib.jobs.models import Contract
-    obj = Contract.get(pk=1)
-    self.assertEqual(unicode(obj.contact.b),"Foo")
+    obj = Contract.objects.get(pk=5)
+    translation.activate('de')
+    self.assertEqual(obj.contact.b.get_full_name(),"Frau Annette ARENS")
+    babel.set_language(None)
+    

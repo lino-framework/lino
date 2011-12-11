@@ -17,6 +17,9 @@ Some last details solved:
 - Discovered that due to a bug in previous dpy versions
   there were some Upload records on Role and RoleType 
   in the customer's database.
+  
+- Added unit test case :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test11`
+  (Anrede Kontaktperson eines :class:`Vertrags <lino.modlib.jobs.models.Contract>` beim Ausdruck)
 
 New function :func:`lino.utils.mti.create_child`
 ------------------------------------------------

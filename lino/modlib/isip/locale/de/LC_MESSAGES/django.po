@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-08 14:26+0000\n"
-"PO-Revision-Date: 2011-11-10 20:01+0200\n"
+"PO-Revision-Date: 2011-12-11 22:23+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -25,21 +25,18 @@ msgid "ISIP Types"
 msgstr "VSE-Arten"
 
 #: .\models.py:95
-#, fuzzy
 msgid "Reference"
 msgstr "Referenz"
 
 #: .\models.py:115
 msgid "Evaluation every X months"
-msgstr ""
+msgstr "Auswertung alle X Monate"
 
 #: .\models.py:118
-#, fuzzy
 msgid "Examination Policy"
 msgstr "Auswertungsstrategie"
 
 #: .\models.py:119
-#, fuzzy
 msgid "Examination Policies"
 msgstr "Auswertungsstrategien"
 
@@ -92,20 +89,20 @@ msgid "date ended"
 msgstr "Beendet am"
 
 #: .\models.py:273
-#, fuzzy, python-format
+#, python-format
 msgid "Evaluation %d"
-msgstr "Ausbildung"
+msgstr "Auswertung %d"
 
 #: .\models.py:287
-#, fuzzy
 msgid "Contract ends in a month"
-msgstr "Vertrag endet"
+msgstr "Vertrag endet in einem Monat"
 
 #: .\models.py:296
 msgid "ISIP"
 msgstr "VSE"
 
-#: .\models.py:297 .\models.py:393
+#: .\models.py:297
+#: .\models.py:393
 msgid "ISIPs"
 msgstr "VSEs"
 
@@ -147,7 +144,7 @@ msgstr "Verantwortlicher (DSBE)"
 
 #: .\models.py:378
 msgid "My PIIS contracts"
-msgstr "Meine VSE-Verträge"
+msgstr "Meine VSEs"
 
 #~ msgid "ISIP Contract"
 #~ msgstr "VSE-Vertrag"

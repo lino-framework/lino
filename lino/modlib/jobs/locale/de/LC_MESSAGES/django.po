@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-08 14:26+0000\n"
-"PO-Revision-Date: 2011-12-08 16:31+0200\n"
+"PO-Revision-Date: 2011-12-11 22:24+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -128,7 +128,7 @@ msgstr "Verantwortlicher (DSBE)"
 
 #: .\models.py:467
 msgid "My contracts"
-msgstr "Meine Verträge"
+msgstr "Meine Art.60§7-Konventionen"
 
 #: .\models.py:481
 #: .\models.py:676
@@ -281,11 +281,11 @@ msgstr "Kandidaten"
 
 #: .\models.py:952
 msgid "Contracts Situation 2"
-msgstr "Übersicht Verträge 2"
+msgstr "Übersicht Art.60§7-Konventionen 2"
 
 #: .\models.py:1013
 msgid "Contracts Situation"
-msgstr "Übersicht Verträge"
+msgstr "Übersicht Art.60§7-Konventionen"
 
 #: .\models.py:1074
 msgid "is Employer"
