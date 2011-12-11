@@ -822,6 +822,9 @@ def install(globals_dict):
     #~ from lino.modlib.cal import models as cal
     #~ cal.SKIP_AUTO_TASKS = True
     
+    if globals_dict['SOURCE_VERSION'] == __version__:
+        dblogger.info("Source version is %s : no migration needed", __version__)
+        return
     while True:
         from_version = globals_dict['SOURCE_VERSION']
         funcname = 'migrate_from_' + from_version.replace('.','_')
