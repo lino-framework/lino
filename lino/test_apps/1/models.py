@@ -101,7 +101,6 @@ Later this Place becomes a Restaurant and hires 2 cooks:
 
 >>> from lino.utils.mti import insert_child
 >>> obj = insert_child(obj,Restaurant)
->>> obj.save()
 >>> for i in 3,4:
 ...     obj.cooks.add(Person.objects.get(pk=i))
 >>> obj

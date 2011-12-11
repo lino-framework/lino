@@ -120,7 +120,7 @@ def delete_child(obj,child_model,using=None,request=None):
 
 def insert_child(obj,child_model,**attrs):
     """
-    Create an unsaved `child_model` instance of existing `obj`.
+    Create and save an instance of `child_model` from existing `obj`.
     """
     #~ assert child_model != obj.__class__
     #~ if child_model == obj.__class__:
@@ -142,16 +142,16 @@ def insert_child(obj,child_model,**attrs):
     #~ logger.debug(u"Promote %s to %s",
         #~ obj.__class__.__name__,child_model.__name__)
     new_obj = child_model(**attrs)
-    #~ new_obj.save()
+    new_obj.save()
     return new_obj
 
-def insert_child_and_save(obj,child_model,**attrs):
-    """
-    Insert (create) and save a `child_model` instance of existing `obj`.
-    """
-    obj = insert_child(obj,child_model,**attrs)
-    obj.save()
-    return obj
+#~ def insert_child_and_save(obj,child_model,**attrs):
+    #~ """
+    #~ Insert (create) and save a `child_model` instance of existing `obj`.
+    #~ """
+    #~ obj = insert_child(obj,child_model,**attrs)
+    #~ obj.save()
+    #~ return obj
     
 
      
@@ -203,7 +203,7 @@ class EnableChild(VirtualField):
                 #~ obj.__class__.__name__,self.child_model.__name__)
             if v:
                 # child doesn't exist. insert if it should
-                insert_child_and_save(obj,self.child_model)
+                insert_child(obj,self.child_model)
                 
 
 

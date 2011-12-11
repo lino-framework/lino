@@ -67,7 +67,8 @@ class Serializer(base.Serializer):
             self.stream.write('from datetime import datetime as dt\n')
             self.stream.write('from datetime import time,date\n')
             #~ self.stream.write('from lino.utils import i2d\n')
-            self.stream.write('from lino.utils.mti import insert_child\n')
+            #~ self.stream.write('from lino.utils.mti import insert_child\n')
+            self.stream.write('from lino.utils.mti import create_child\n')
             self.stream.write('from lino.tools import resolve_model\n')
             self.stream.write('from django.contrib.contenttypes.models import ContentType\n')
             self.stream.write('from django.conf import settings\n')
@@ -105,7 +106,9 @@ def new_content_type_id(m):
                       '%s=%s' % (f.attname,f.attname) 
                           for f in child_fields])
                 else: attrs = ''
-                self.stream.write('    return insert_child(%s.objects.get(pk=%s),%s%s)\n' % (
+                #~ self.stream.write('    return insert_child(%s.objects.get(pk=%s),%s%s)\n' % (
+                    #~ full_model_name(pm,'_'),pf.attname,full_model_name(model,'_'),attrs))
+                self.stream.write('    return create_child(%s,%s,%s%s)\n' % (
                     full_model_name(pm,'_'),pf.attname,full_model_name(model,'_'),attrs))
             else:
                 for f in fields:
