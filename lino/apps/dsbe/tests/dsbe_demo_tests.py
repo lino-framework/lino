@@ -466,3 +466,7 @@ def test10(self):
             self.fail("Expected IntegrityError")
         
     
+def test11(self):
+    from lino.modlib.jobs.models import Contract
+    obj = Contract.get(pk=1)
+    self.assertEqual(unicode(obj.contact.b),"Foo")

@@ -205,3 +205,63 @@ class EnableChild(VirtualField):
                 # child doesn't exist. insert if it should
                 insert_child_and_save(obj,self.child_model)
                 
+
+
+
+
+
+def create_child(parent_model,pk_,child_model,**kw):
+    """
+    Similar to insert_child, but very tricky. See test_apps.1
+    Used by :mod:`lino.utils.dpy`
+    """
+    parent_link_field = child_model._meta.parents.get(parent_model,None)
+    if parent_link_field is None:
+        raise ValidationError("A %s cannot be parent for a %s" % (
+            parent_model.__name__,child_model.__name__))
+    attrs = {}
+    attrs[parent_link_field.name+"_id"] = pk_
+    #~ for lf in child_model._meta.local_fields:
+    # backwards compat 20111211 : dpy fixtures created by Version 1.2.8 still 
+    # specify also field values of parent_model. Ignore these silently
+    # otherwise Django would also try to create a parent_model record.
+    for f,m in child_model._meta.get_fields_with_model():
+        if m is None or not issubclass(m,parent_model):
+            if f.name in kw:
+                attrs[f.name] = kw.pop(f.name)
+    #~ if kw:
+        #~ logging.warning("create_child() ignored non-local fields %s",kw)
+        
+    child_obj = child_model(**attrs)
+    def full_clean(*args,**kw):
+        pass
+        
+    def save(*args,**kw):
+        kw.update(raw=True,force_insert=True)
+        child_obj.save_base(**kw)
+        
+    child_obj.save = save
+    child_obj.full_clean = full_clean
+    return child_obj
+        
+    #~ class MtiChildWrapper(child_model):
+        #~ pk = pk_
+        #~ def __init__(self,object):
+            #~ self.object = object
+            
+        #~ def __repr__(self):
+            #~ return "MtiChildWrapper(%s,%s)" % (
+              #~ self.model.__name__,
+              #~ self.kw)
+        
+        #~ def full_clean(self,*args,**kw):
+            #~ pass
+            
+        #~ def save(self,*args,**kw):
+            #~ kw.update(raw=True,force_insert=True)
+            #~ self.object.save_base(**kw)
+        
+    #~ return MtiChildWrapper(child_model(**attrs))
+
+
+

@@ -15,9 +15,6 @@ Short-term
 #.  Custom Quick filters 
     See :doc:`/blog/2011/1207`.
 
-#.  Convert contacts.Role to links.Link. 
-    See :doc:`/blog/2011/1206`.
-
 #.  Browser-specific language selection is nice... 
     but Lino should also make it 
     possible to override this browser-specific language setting.
@@ -214,6 +211,11 @@ Short-term
 
 Medium-term
 -----------
+
+#.  lino.apps.dsbe has a database design flaw: 
+    Person should be split into "Clients" and "normal" persons.
+    Contact Persons of a Company currently need to have an entry in the Person table.
+    This is also the reason for many deferred save()s when loading a full backup.
 
 #.  Split :class:`lino.reports.Report` into :class:`lino.List` and :class:`lino.Detail`.
     :class:`lino.ui.extjs3.ext_store.Store` should then create one Store per Model.

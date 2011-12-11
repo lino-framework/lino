@@ -4,7 +4,7 @@ class Lino(Lino):
 LINO = Lino(__file__,globals())    
 
 INSTALLED_APPS = (
-  #~ 'django.contrib.contenttypes', 
+  'django.contrib.contenttypes', 
   'lino', 
   #~ 'lino.modlib.users', 
   #~ 'lino.modlib.contacts', 

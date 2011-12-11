@@ -38,6 +38,7 @@ import lino
 from lino.tools import obj2str, sorted_models_list, full_model_name
 from lino.utils import dblogger
 from lino.utils import babel
+#~ from lino.utils.mti import MtiChildWrapper
 
 SUFFIX = '.py'
 #~ SUFFIX = '.dpy'
@@ -306,11 +307,16 @@ class FakeDeserializedObject(base.DeserializedObject):
                 raise Exception("Failed to save independent %s. Abandoned." % obj2str(obj))
             self.deserializer.register_failure(self,e)
             return False
-        except Exception,e:
-            dblogger.exception(e)
-            raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
+        #~ except Exception,e:
+            #~ dblogger.exception(e)
+            #~ raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
         
-           
+
+
+
+
+
+
 #~ IS_DESERIALIZING = False
 
 #~ def is_deserializing():
@@ -350,14 +356,19 @@ class DpyDeserializer:
         
         def expand(obj):
             if obj is None:
-                pass # silently ignore None values
-            elif isinstance(obj,models.Model):    
+                pass # ignore None values
+            elif isinstance(obj,models.Model):
                 yield FakeDeserializedObject(self,obj)
             elif hasattr(obj,'__iter__'):
             #~ if type(obj) is GeneratorType:
                 for o in obj: 
                     for so in expand(o): 
                         yield so
+            #~ elif isinstance(obj,MtiChildWrapper):
+                # the return value of create_child()
+                #~ yield FakeDeserializedObject(self,obj)
+                #~ obj.deserializer = self
+                #~ yield obj
             else:
                 dblogger.warning("Ignored unknown object %r",obj)
                 
@@ -389,12 +400,13 @@ class DpyDeserializer:
             for model,msg_objects in self.save_later.items():
                 for msg,objects in msg_objects.items():
                     s += "\n- %s %s (%d object(s), e.g. %s)" % (
-                      full_model_name(model),msg,len(objects),obj2str(objects[0].object,force_detailed=True))
+                      full_model_name(model),msg,len(objects),
+                      obj2str(objects[0].object,force_detailed=True))
                     count += len(objects)
             
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
                 count,fp.name,s)
-            #~ dblogger.warning(msg)
+            dblogger.warning(msg)
             raise Exception(msg)
             
         if hasattr(module,'after_load'):

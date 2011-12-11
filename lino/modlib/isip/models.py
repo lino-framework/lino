@@ -142,6 +142,10 @@ class ContractEndings(reports.Report):
     order_by = ['name']
 
 
+def contract_contact_choices(company):
+    return links.Link.objects.filter(
+        type__use_in_contracts=True,
+        a_id=company.pk)
 
 
 
@@ -244,7 +248,8 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 self.exam_policy_id = self.type.exam_policy_id
         if self.contact is None:
             if self.company:
-                qs = self.company.rolesbyparent.all()
+                qs = contract_contact_choices(self.company)
+                #~ qs = self.company.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact = qs[0]
                     
@@ -344,7 +349,8 @@ class Contract(ContractBase):
         if company is not None:
             #~ return company.rolesbyparent.all()
             #~ return company.rolesbyparent.filter(type__use_in_contracts=True)
-            return links.Link.objects.filter(type__use_in_contracts=True,a=company)
+            #~ return links.Link.objects.filter(type__use_in_contracts=True,a=company)
+            return contract_contact_choices(company)
         return []
 
     def get_recipient(self):

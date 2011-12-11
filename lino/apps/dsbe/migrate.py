@@ -721,8 +721,11 @@ def migrate_from_1_2_7(globals_dict):
 
 def migrate_from_1_2_8(globals_dict):    
     """
-    Convert Schedule and Regime fields in contracts.
-    Convert Roles to Links (and RoleTypes to LinkTypes).
+Convert Schedule and Regime fields in contracts.
+Convert Roles to Links (and RoleTypes to LinkTypes).
+Needs manual adaption of dpy file:
+- replace all occurences of string 'insert_child' with 'create_child'
+- 
     """
     jobs_Contract = resolve_model("jobs.Contract")
     Schedule = resolve_model("jobs.Schedule")
@@ -791,6 +794,10 @@ def migrate_from_1_2_8(globals_dict):
         yield std.objects()
         yield objects()
     globals_dict.update(objects=new_objects)
+    
+    
+    #~ from lino.utils.mti import create_child
+    #~ globals_dict.update(insert_child=create_child)
     
   
     return '1.3.0'

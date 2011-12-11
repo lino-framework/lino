@@ -101,6 +101,7 @@ Later this Place becomes a Restaurant and hires 2 cooks:
 
 >>> from lino.utils.mti import insert_child
 >>> obj = insert_child(obj,Restaurant)
+>>> obj.save()
 >>> for i in 3,4:
 ...     obj.cooks.add(Person.objects.get(pk=i))
 >>> obj
@@ -109,7 +110,7 @@ Later this Place becomes a Restaurant and hires 2 cooks:
 If you try to promote a Person to a Restaurant, you'll get an exception:
 
 >>> person = Person.objects.get(pk=2)
->>> insert_child(person,Restaurant)
+>>> insert_child(person,Restaurant).save()
 Traceback (most recent call last):
 ...
 ValidationError: [u'A Person cannot be parent for a Restaurant']
@@ -264,6 +265,53 @@ The owner and visits have been taken over, but the meals have been deleted:
 [<Visit: Say hello visit by Bert at Second>, <Visit: Hang around visit by Bert at Second>]
 >>> Meal.objects.all()
 []
+
+
+create_child
+------------
+
+Can we create a Restaurant whose Place already 
+exists *without first having to do a lookup of the 
+Place record*?
+That's why create_child was written for.
+It uses a "raw" save.
+
+>>> obj = Place(id=3,name="Third")
+>>> obj.save()
+>>> obj.owners.add(Person.objects.get(pk=2))
+>>> obj.save()
+>>> obj
+<Place: #3 (name=Third,owners=Bert)>
+
+>>> from lino.utils.mti import create_child
+>>> obj = create_child(Place,3,Restaurant)
+
+The return value is technically a normal model instance,
+but whose `save` and `full_clean` methods have been 
+patched. 
+The only thing you can do with it is to save it:
+
+>>> obj.save()
+
+If you want to work normally with the result of 
+create_child, you must re-read an instance:
+
+>>> Restaurant.objects.get(pk=3)
+<Restaurant: #3 (name=Third,owners=Bert,cooks=)>
+
+Note that 
+create_child() doesn't allow to also change the `name`
+because that field is defined in the Place model, 
+not in Restaurant. If you nevertheless do it, 
+it will be silently ignored
+for backwards compatibility `/blog/2011/1210`:
+
+>>> obj = Place(id=4,name="Fourth")
+>>> obj.save()
+>>> ow = create_child(Place,4,Restaurant,name="Cannot set new name for Fourth")
+>>> ow.save()
+>>> Restaurant.objects.get(pk=4)
+<Restaurant: #4 (name=Fourth,owners=,cooks=)>
 
 
 
