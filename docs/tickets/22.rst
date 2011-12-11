@@ -1,5 +1,7 @@
-#22 : How to implement MTI child/parent conversion
-==================================================
+#22 [closed] : How to implement MTI child/parent conversion
+===========================================================
+
+Solved. See :doc:`/topics/mti`.
 
 On a site that uses Django's MTI, Lino should provide a 
 way to "metamorphose" or convert existing data records into a 

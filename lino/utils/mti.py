@@ -12,12 +12,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-A collection of tools for manipulating .
-`Multi-table inheritance 
-    <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`__
-    (MTI).
+A collection of tools for working with
+Multi-table inheritance (:doc:`/topics/mti`).
 
-See detailed presentation in :mod:`lino.test_apps.1.models`.
+Tested and documented in :mod:`lino.test_apps.1.models`.
 
 """
 import logging
@@ -33,7 +31,6 @@ from lino.fields import VirtualField
 
 
 class MultiTableBase(models.Model):
-  
     """
     Mixin for Models that use MTI.
     Subclassed by :class:`lino.modlib.journals.models.Journaled`.
@@ -212,8 +209,9 @@ class EnableChild(VirtualField):
 
 def create_child(parent_model,pk_,child_model,**kw):
     """
-    Similar to insert_child, but very tricky. See test_apps.1
+    Similar to :func:`insert_child`, but very tricky. 
     Used by :mod:`lino.utils.dpy`
+    See :mod:`lino.test_apps.1.models`.
     """
     parent_link_field = child_model._meta.parents.get(parent_model,None)
     if parent_link_field is None:
@@ -244,24 +242,3 @@ def create_child(parent_model,pk_,child_model,**kw):
     child_obj.full_clean = full_clean
     return child_obj
         
-    #~ class MtiChildWrapper(child_model):
-        #~ pk = pk_
-        #~ def __init__(self,object):
-            #~ self.object = object
-            
-        #~ def __repr__(self):
-            #~ return "MtiChildWrapper(%s,%s)" % (
-              #~ self.model.__name__,
-              #~ self.kw)
-        
-        #~ def full_clean(self,*args,**kw):
-            #~ pass
-            
-        #~ def save(self,*args,**kw):
-            #~ kw.update(raw=True,force_insert=True)
-            #~ self.object.save_base(**kw)
-        
-    #~ return MtiChildWrapper(child_model(**attrs))
-
-
-

@@ -25,6 +25,7 @@ Some of Lino's features:
 - Designed for rapid prototyping and short release cycles.
 - Innovative solutions for 
   :doc:`data migrations </topics/datamig>`,
+  :doc:`polymorphism  </topics/mti>`,
   :doc:`user-interface transparent form design </topics/dtl>` 
   and
   :doc:`multilingual database content </topics/babel>`.
