@@ -95,14 +95,6 @@ The :mod:`restify` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`simulate_remote` Module
----------------------------------
-
-.. automodule:: lino.utils.simulate_remote
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 The :mod:`mti` Module
 ---------------------
 

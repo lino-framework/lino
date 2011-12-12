@@ -250,9 +250,22 @@ class Lino(object):
     user_model = "users.User"
     """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
     `lino.modlib.users`. 
+    
     Set it to `None` to remove any user management 
     (feature used by e.g. :mod:`lino.test_apps.1`)
     """
+    
+    default_username = None
+    """
+    Username to be used if a request with 
+    no REMOTE_USER header makes its way through to Lino. 
+    Which may happen on a development server and if Apache is 
+    configured to allow it.
+    Used by :mod:`lino.utils.auth`
+    :mod:`lino.modlib.users.middleware`
+    """
+    
+    #~ simulate_remote_user = False
     
     project_model = None
     """Optionally set this to the <applabel_modelname> of a 
@@ -724,15 +737,19 @@ class Lino(object):
         <http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django>`_
         """
 
+  
         yield 'django.middleware.common.CommonMiddleware'
         #~ yield 'django.contrib.sessions.middleware.SessionMiddleware'
         yield 'django.middleware.locale.LocaleMiddleware'
+        if False:
+            #~ self.simulate_remote_user:
+            yield 'lino.utils.auth.SimulateRemoteUserMiddleware'
         #~ yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
         if self.user_model == 'users.User':
             yield 'lino.modlib.users.middleware.RemoteUserMiddleware'
             yield 'django.middleware.doc.XViewMiddleware'
         else:
-            yield 'lino.utils.nouser.NoUserMiddleware'
+            yield 'lino.utils.auth.NoUserMiddleware'
         #~ yield 'lino.utils.editing.EditingMiddleware'
         yield 'lino.utils.ajax.AjaxExceptionResponse'
 

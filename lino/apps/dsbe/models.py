@@ -293,8 +293,14 @@ class Partner(mixins.DiffingMixin,models.Model):
     
     is_new = models.BooleanField(
         verbose_name=_("is new"),default=False)
-    """Means that this Person needs to be confirmed. 
+    """Means that there's no responsible user for this Person yet. 
     New Persons may not be used when creating new operations."""
+    
+    is_deprecated = models.BooleanField(
+        verbose_name=_("is old"),default=False)
+    """Means that data of this may be obsolete because 
+    there were no confirmations recently. 
+    Deprecated Persons may not be used when creating new operations."""
     
     activity = models.ForeignKey("dsbe.Activity",
         blank=True,null=True,
@@ -332,7 +338,8 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         
     def disabled_fields(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
-            return settings.LINO.PERSON_TIM_FIELDS
+            #~ return settings.LINO.PERSON_TIM_FIELDS
+            return self.__class__.PERSON_TIM_FIELDS
         return []
         
     def get_queryset(self):
@@ -703,7 +710,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     
     @classmethod
     def site_setup(cls,lino):
-        lino.PERSON_TIM_FIELDS = reports.fields_list(cls,
+        cls.PERSON_TIM_FIELDS = reports.fields_list(cls,
           '''name first_name last_name title remarks remarks2
           zip_code city country street street_no street_box 
           birth_date gender birth_place coach1 language 
@@ -713,7 +720,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
           national_id health_insurance pharmacy 
           bank_account1 bank_account2 
           gesdos_id activity 
-          is_cpas is_senior is_active is_new nationality''')
+          is_cpas is_senior is_active is_new is_deprecated nationality''')
         #~ super(Person,cls).site_setup(lino)
 
 

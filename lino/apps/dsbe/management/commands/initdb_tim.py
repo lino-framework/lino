@@ -160,10 +160,12 @@ def country2kw(row,kw):
             dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
       
 def par2person(row,person):
+    person.is_active = iif(row['IDPRT']=='I',False,True)
     if row.has_key('ATTRIB') and row['ATTRIB']:
         if "N" in row['ATTRIB']:
             person.is_new = True
-    person.is_active = iif(row['IDPRT']=='I',False,True)
+        if "A" in row['ATTRIB']:
+            person.is_deprecated = True
     if row['IDPRT'] == 'S':
         person.is_cpas = True
     elif row['IDPRT'] == 'A':

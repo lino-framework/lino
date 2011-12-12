@@ -2196,7 +2196,7 @@ tinymce.init({
         
         if s:
             yield "Lino.%s = function(caller,params) { " % action
-            yield "  params.containing_window = true;" # workaround for problem 20111206
+            #~ yield "  params.containing_window = true;" # workaround for problem 20111206
             yield "  new Lino.Window({"
             yield "    caller: caller, items:new %s(params)" % s
             yield "  }).show();"

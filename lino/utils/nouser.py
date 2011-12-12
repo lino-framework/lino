@@ -11,14 +11,5 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Middleware that will be used on sites with 
-empty :attr:`lino.Lino.user_model`.
-Just adds a `user` attribute 
+raise Exception("moved to lino.utils.auth")
 
-"""
-
-class NoUserMiddleware(object):
-    def process_request(self, request):
-        request.user = None
-      

@@ -26,6 +26,7 @@ extension.
     lino.sandbox.bcss
     lino.test_apps
     lino.utils
+    lino.utils.auth
     lino.utils.sqllog
     lino.utils.log
     lino.utils.dblogger

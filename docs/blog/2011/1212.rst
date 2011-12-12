@@ -33,9 +33,11 @@ Worked on :term:`watch_tim`
 Die momentanen Regeln beim Übernehmen der diversen Flags aus TIM sind:
 
 - is_new : True wenn Attribut N in TIM gesetzt ist
-- is_active : False wenn Partnerart I (ansonsten True)
+- is_deprecated : True wenn Attribut A in TIM gesetzt ist
+- is_active : False wenn Partnerart I oder Attribut W (ansonsten True)
 - is_cpas : True wenn Partnerart S
 - is_senior : True wenn Partnerart A
+
 
 
 E-Mail-Adressen aus TIM werden jetzt überprüft und wenn sie ungültig sind nicht übernommen. Dann ist also nur das Feld email leer, aber alle anderen Angaben sind wenigstens da.
@@ -49,4 +51,4 @@ In der Tat gibt es die PLZ 4720 zweimal (einmal "Kelmis" und einmal "La Calamine
   jobs.StudiesByCity und jobs.StudiesBycountry.
   
 
-WARNING PAR->IdUsr u'ELISABET' (converted to u'elisabet') doesn't exist!
+Some subtle changes in how to configure authentication.

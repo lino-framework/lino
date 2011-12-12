@@ -3,7 +3,7 @@
 
 main = 
   activity pharmacy
-  is_active is_cpas is_senior #is_minor
+  is_active is_cpas is_senior is_deprecated is_new
   remarks:30 remarks2:30 #contacts.RolesByChild:30
   links.LinksToThis:30 links.LinksFromThis:30 
 
