@@ -255,7 +255,7 @@ class Lino(object):
     (feature used by e.g. :mod:`lino.test_apps.1`)
     """
     
-    default_username = None
+    default_user = None
     """
     Username to be used if a request with 
     no REMOTE_USER header makes its way through to Lino. 
