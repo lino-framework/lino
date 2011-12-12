@@ -15,9 +15,26 @@
 
 import os
 
-from django.conf import settings
 from django.db import models
+from django.conf import settings
 from django.utils.importlib import import_module
+
+from django.core.validators import validate_email, ValidationError, URLValidator
+validate_url = URLValidator()
+def is_valid_url(s):
+    try:
+        validate_url(s)
+        return True
+    except ValidationError:
+        return False
+        
+def is_valid_email(s):
+    try:
+        validate_email(s)
+        return True
+    except ValidationError:
+        return False
+        
 
 
 def get_app(app_label):

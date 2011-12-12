@@ -1,7 +1,8 @@
 20111212
 ========
 
-Worked on CalendarPanel.
+Worked on CalendarPanel
+-----------------------
 
 Configured the different views so that they use the following config::
 
@@ -24,3 +25,15 @@ parsing of URL parameters. Used by :class:`lino.modlib.cal.models.PanelEvents`::
             filter.update(start_date__gte=parsedate(startDate))
         kw.update(filter=filter)
         return kw
+
+
+Worked on :term:`watch_tim`
+---------------------------
+
+Die momentanen Regeln beim Übernehmen der diversen Flags aus TIM sind:
+
+- is_new : True wenn Attribut N in TIM gesetzt ist
+- is_active : False wenn Partnerart I (ansonsten True)
+- is_cpas : True wenn Partnerart S
+- is_senior : True wenn Partnerart A
+

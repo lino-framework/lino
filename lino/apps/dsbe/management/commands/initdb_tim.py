@@ -43,6 +43,7 @@ from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 from lino.utils.instantiator import Instantiator
 
 from lino.tools import resolve_model, obj2str
+from lino.tools import is_valid_email
 import lino
 
 from lino.utils import confirm, iif
@@ -131,10 +132,12 @@ def country2kw(row,kw):
             country.save()
         kw.update(country=country)
     
+    email = row['EMAIL']
+    if email and is_valid_email(email):
+        kw.update(email=email)
     store(kw,
       phone=row['TEL'],
       fax=row['FAX'],
-      email=row['EMAIL'],
       )
       
     kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))

@@ -57,23 +57,8 @@ from lino.modlib.isip import models as isip
 from lino.modlib.properties import models as properties
 
 from lino.utils.mdbtools import Loader
+from lino.tools import is_valid_url, is_valid_email
 
-from django.core.validators import validate_email, ValidationError, URLValidator
-validate_url = URLValidator()
-def is_valid_url(s):
-    try:
-        validate_url(s)
-        return True
-    except ValidationError:
-        return False
-        
-def is_valid_email(s):
-    try:
-        validate_email(s)
-        return True
-    except ValidationError:
-        return False
-        
 CboStatutJuridique = {
   'Personne Physique' : 3,
   'SPRL' : 2,
