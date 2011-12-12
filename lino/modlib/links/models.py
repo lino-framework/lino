@@ -205,6 +205,14 @@ class Link(models.Model):
             return type.b_type.model_class().objects.all()
         return []
       
+    @chooser(instance_values=True)
+    def type_choices(cls,a,b):
+        if a:
+            return LinkType.objects.filter(a_type=a.__class__)
+        if b:
+            return LinkType.objects.filter(a_type=b.__class__)
+        return []
+      
     #~ owner_id_choices.instance_values = True
     #~ owner_id_choices = classmethod(owner_id_choices)
         
