@@ -621,8 +621,19 @@ class Study(CountryCity):
     
     def __unicode__(self):
         return unicode(self.type)
-  
+
+class Studies(reports.Report):
+    "General list of Studies (all Persons)"
+    model = Study
+    order_by = ["country city type content"]
+
         
+class StudiesByCountry(Studies):
+    fk_name = 'country'
+    
+class StudiesByCity(Studies):
+    fk_name = 'city'
+    
 class StudiesByPerson(HistoryByPerson):
     "List of studies for a known person."
     model = Study
@@ -1109,4 +1120,5 @@ def setup_config_menu(site,ui,user,m):
 def setup_explorer_menu(site,ui,user,m):
     m.add_action('jobs.Contracts')
     m.add_action('jobs.Candidatures')
+    m.add_action('jobs.Studies')
     #~ m.add_action('jobs.Wishes')

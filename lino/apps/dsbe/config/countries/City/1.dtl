@@ -2,4 +2,4 @@
 
 main =
     name country 
-    contacts.ContactsByCity
+    contacts.ContactsByCity jobs.StudiesByCity
