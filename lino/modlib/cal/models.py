@@ -888,12 +888,29 @@ def migrate_reminder(obj,reminder_date,reminder_text,
       
 if settings.LINO.use_extensible:
   
+    def parsedate(s):
+        return datetime.date(*settings.LINO.parse_date(s))
+  
     class Panel(reports.Frame):
         default_action_class = reports.Calendar
 
     class PanelEvents(Events):
+        """
+        The report used for Ext.ensible CalendarPanel.
+        """
         column_names = 'id start_dt end_dt summary description user place calendar rset url all_day reminder'
         can_add = perms.never
+        def parse_req(self,request,**kw):
+            filter = kw.get('filter',{})
+            endDate = request.REQUEST.get('ed',None)
+            if endDate:
+                filter.update(start_date__lte=parsedate(endDate))
+            startDate = request.REQUEST.get('sd',None)
+            if startDate:
+                filter.update(start_date__gte=parsedate(startDate))
+            kw.update(filter=filter)
+            return kw
+        
 
 def setup_main_menu(site,ui,user,m): pass
 

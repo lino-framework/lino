@@ -400,6 +400,8 @@ class ViewReportRequest(reports.ReportActionRequest):
                     pass
         kw.update(user=user)
         
+        kw = rh.report.parse_req(request,**kw)
+        
         return kw
       
     def request2kw(self,unused_ui,**kw):

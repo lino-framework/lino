@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-08 14:26+0000\n"
+"POT-Creation-Date: 2011-12-11 20:40+0000\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -162,14 +162,6 @@ msgstr "KMKR nr"
 msgid "Company type"
 msgstr "Firmaliik"
 
-#: .\models.py:405
-msgid "Role Type"
-msgstr ""
-
-#: .\models.py:406
-msgid "Role Types"
-msgstr ""
-
 #: .\models.py:422
 #, fuzzy
 msgid "Contact Person"
@@ -194,15 +186,6 @@ msgstr "Kontakt"
 msgid "Contact Role"
 msgstr "Kontaktisik"
 
-#: .\models.py:491
-#, fuzzy
-msgid "Contact persons"
-msgstr "Kontaktiliigid"
-
-#: .\models.py:496
-msgid "Contact for"
-msgstr "Kontaktisik"
-
 #: .\models.py:594
 msgid "The next automatic id for Person or Company"
 msgstr ""
@@ -221,11 +204,6 @@ msgstr "Isik"
 msgid "is Company"
 msgstr "Firma"
 
-#: .\models.py:629
-#, fuzzy
-msgid "~Contacts"
-msgstr "Kontaktid"
-
 #: .\utils.py:187
 msgid "Mrs"
 msgstr ""
@@ -239,6 +217,17 @@ msgstr ""
 msgctxt "indirect salutation"
 msgid "Mr"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Contact persons"
+#~ msgstr "Kontaktiliigid"
+
+#~ msgid "Contact for"
+#~ msgstr "Kontaktisik"
+
+#, fuzzy
+#~ msgid "~Contacts"
+#~ msgstr "Kontaktid"
 
 #, fuzzy
 #~ msgid "not exact"

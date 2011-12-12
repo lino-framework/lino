@@ -3526,11 +3526,21 @@ Lino.EventEditFormMixin = {
 };
 */
 
+Lino.CalendarCfg = {
+    dateParamFormat: '$settings.LINO.date_format_extjs',
+    dateParamStart:'sd',
+    dateParamEnd:'ed'
+};
 Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
   todayText : 'Today',
   title : 'Basic Calendar',
   store: Lino.eventStore,
   listeners: { eventclick: Lino.on_eventclick},
+  monthViewCfg: Lino.CalendarCfg,
+  weekViewCfg: Lino.CalendarCfg,
+  multiDayViewCfg: Lino.CalendarCfg,
+  multiWeekViewCfg: Lino.CalendarCfg,
+  dayViewCfg: Lino.CalendarCfg,
   constructor : function(config) {
     //~ Ext.reg('extensible.eventeditwindow', Lino.cal.Event.FormPanel);
     Lino.eventStore.load();

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-08 14:26+0000\n"
+"POT-Creation-Date: 2011-12-11 20:40+0000\n"
 "PO-Revision-Date: 2011-12-08 16:29+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -28,11 +28,8 @@ msgstr "Types de sociétés"
 msgid "Abbreviation"
 msgstr "Abbréviation"
 
-#: .\models.py:89
-#: .\models.py:572
-#: .\config\contacts\Company\1.dtl.py:3
-#: .\config\contacts\Contact\1.dtl.py:3
-#: .\config\contacts\Person\1.dtl.py:3
+#: .\models.py:89 .\models.py:572 .\config\contacts\Company\1.dtl.py:3
+#: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
 msgid "Contact"
 msgstr "Contact"
 
@@ -126,8 +123,7 @@ msgstr "inconnu"
 msgid "Age"
 msgstr "Âge"
 
-#: .\models.py:289
-#: .\models.py:518
+#: .\models.py:289 .\models.py:518
 msgid "Person"
 msgstr "Personne"
 
@@ -147,8 +143,7 @@ msgstr "Nom de famille"
 msgid "Title"
 msgstr "Allocution"
 
-#: .\models.py:364
-#: .\models.py:520
+#: .\models.py:364 .\models.py:520
 msgid "Company"
 msgstr "Société"
 
@@ -163,14 +158,6 @@ msgstr "N° de TVA"
 #: .\models.py:372
 msgid "Company type"
 msgstr "Type de société"
-
-#: .\models.py:405
-msgid "Role Type"
-msgstr "Type de rōle"
-
-#: .\models.py:406
-msgid "Role Types"
-msgstr "Types de rōle"
 
 #: .\models.py:422
 msgid "Contact Person"
@@ -192,14 +179,6 @@ msgstr "Contact enfant"
 msgid "Contact Role"
 msgstr "Rōle"
 
-#: .\models.py:491
-msgid "Contact persons"
-msgstr "Personnes de contact"
-
-#: .\models.py:496
-msgid "Contact for"
-msgstr "contact pour"
-
 #: .\models.py:594
 msgid "The next automatic id for Person or Company"
 msgstr "Identifiant automatique pour la personne ounla société suivante"
@@ -216,10 +195,6 @@ msgstr "Personne"
 msgid "is Company"
 msgstr "Société"
 
-#: .\models.py:629
-msgid "~Contacts"
-msgstr "~Contacts"
-
 #: .\utils.py:187
 msgid "Mrs"
 msgstr "Mme"
@@ -233,6 +208,21 @@ msgstr "M."
 msgctxt "indirect salutation"
 msgid "Mr"
 msgstr "M."
+
+#~ msgid "Role Type"
+#~ msgstr "Type de rōle"
+
+#~ msgid "Role Types"
+#~ msgstr "Types de rōle"
+
+#~ msgid "Contact persons"
+#~ msgstr "Personnes de contact"
+
+#~ msgid "Contact for"
+#~ msgstr "contact pour"
+
+#~ msgid "~Contacts"
+#~ msgstr "~Contacts"
 
 #~ msgid "Gender"
 #~ msgstr "Sexe"

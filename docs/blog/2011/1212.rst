@@ -1,0 +1,26 @@
+20111212
+========
+
+Worked on CalendarPanel.
+
+Configured the different views so that they use the following config::
+
+    Lino.CalendarCfg = {
+        dateParamFormat: '$settings.LINO.date_format_extjs',
+        dateParamStart:'sd',
+        dateParamEnd:'ed'
+    };
+
+Added a method :meth:`lino.reports.Report.parse_req` which does Report-specific 
+parsing of URL parameters. Used by :class:`lino.modlib.cal.models.PanelEvents`::
+
+    def parse_req(self,request,**kw):
+        filter = kw.get('filter',{})
+        endDate = request.REQUEST.get('ed',None)
+        if endDate:
+            filter.update(start_date__lte=parsedate(endDate))
+        startDate = request.REQUEST.get('sd',None)
+        if startDate:
+            filter.update(start_date__gte=parsedate(startDate))
+        kw.update(filter=filter)
+        return kw

@@ -634,6 +634,7 @@ class ReportActionRequest(ActionRequest):
             offset=None,limit=None,
             layout=None,
             user=None,
+            filter=None,
             create_rows=None,
             quick_search=None,
             gridfilters=None,
@@ -648,6 +649,7 @@ class ReportActionRequest(ActionRequest):
             msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
             raise InvalidRequest(msg)
         self.user = user
+        self.filter = filter
         #~ if isinstance(self.action,GridEdit):
             #~ self.expand_memos = expand_memos or self.report.expand_memos
         self.quick_search = quick_search
@@ -1093,6 +1095,8 @@ class Report(actors.Actor): #,base.Handled):
     def column_choices(self):
         return [ de.name for de in wildcard_data_elems(self.model) ]
           
+    def parse_req(self,request,**kw):
+        return kw
     
     def do_setup(self):
       
@@ -1275,6 +1279,10 @@ class Report(actors.Actor): #,base.Handled):
             
         if self.filter:
             qs = qs.filter(**self.filter)
+            
+        if rr.filter:
+            #~ print rr.filter
+            qs = qs.filter(**rr.filter)
             
         if rr.known_values:
             d = {}

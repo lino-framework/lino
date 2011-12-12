@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-08 14:26+0000\n"
+"POT-Creation-Date: 2011-12-11 20:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,95 +53,95 @@ msgstr ""
 msgid "designation"
 msgstr ""
 
-#: .\models.py:162
+#: .\models.py:166
 msgid "Person"
 msgstr ""
 
-#: .\models.py:167
+#: .\models.py:171
 msgid "represented by"
 msgstr ""
 
-#: .\models.py:173
+#: .\models.py:181
 msgid "applies from"
 msgstr ""
 
-#: .\models.py:174
+#: .\models.py:182
 msgid "applies until"
 msgstr ""
 
-#: .\models.py:175
+#: .\models.py:183
 msgid "date decided"
 msgstr ""
 
-#: .\models.py:176
+#: .\models.py:184
 msgid "date issued"
 msgstr ""
 
-#: .\models.py:179
+#: .\models.py:187
 msgid "responsible (ASD)"
 msgstr ""
 
-#: .\models.py:191
+#: .\models.py:199
 msgid "Ending"
 msgstr ""
 
-#: .\models.py:192
+#: .\models.py:200
 msgid "date ended"
 msgstr ""
 
-#: .\models.py:273
+#: .\models.py:282
 #, python-format
 msgid "Evaluation %d"
 msgstr ""
 
-#: .\models.py:287
+#: .\models.py:296
 msgid "Contract ends in a month"
 msgstr ""
 
-#: .\models.py:296
+#: .\models.py:305
 msgid "ISIP"
 msgstr ""
 
-#: .\models.py:297 .\models.py:393
+#: .\models.py:306 .\models.py:404
 msgid "ISIPs"
 msgstr ""
 
-#: .\models.py:301
+#: .\models.py:310
 msgid "Contract Type"
 msgstr ""
 
-#: .\models.py:304
+#: .\models.py:313
 msgid "Company"
 msgstr ""
 
-#: .\models.py:307
+#: .\models.py:316
 msgid "stages"
 msgstr ""
 
-#: .\models.py:309
+#: .\models.py:318
 msgid "goals"
 msgstr ""
 
-#: .\models.py:311
+#: .\models.py:320
 msgid "duties ASD"
 msgstr ""
 
-#: .\models.py:313
+#: .\models.py:322
 msgid "duties DSBE"
 msgstr ""
 
-#: .\models.py:315
+#: .\models.py:324
 msgid "duties company"
 msgstr ""
 
-#: .\models.py:317
+#: .\models.py:326
 msgid "duties person"
 msgstr ""
 
-#: .\models.py:326
+#: .\models.py:335
 msgid "responsible (DSBE)"
 msgstr ""
 
-#: .\models.py:378
+#: .\models.py:389
 msgid "My PIIS contracts"
 msgstr ""
