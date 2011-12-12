@@ -293,14 +293,14 @@ class Partner(mixins.DiffingMixin,models.Model):
     
     is_new = models.BooleanField(
         verbose_name=_("is new"),default=False)
-    """Means that there's no responsible user for this Person yet. 
-    New Persons may not be used when creating new operations."""
+    """Means that there's no responsible user for this partner yet. 
+    New partners may not be used when creating new operations."""
     
     is_deprecated = models.BooleanField(
-        verbose_name=_("is old"),default=False)
-    """Means that data of this may be obsolete because 
+        verbose_name=_("deprecated"),default=False)
+    """Means that data of this partner may be obsolete because 
     there were no confirmations recently. 
-    Deprecated Persons may not be used when creating new operations."""
+    Deprecated partners may not be used when creating new operations."""
     
     activity = models.ForeignKey("dsbe.Activity",
         blank=True,null=True,

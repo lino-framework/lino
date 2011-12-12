@@ -148,31 +148,8 @@ ROOT_URLCONF = 'lino.ui.extjs3.urls'
 #print "baz", __file__
 
 INSTALLED_APPS = [
-  #~ 'django.contrib.auth',
   'lino.modlib.users',
-  #~ 'django.contrib.contenttypes',
-  #~ 'django.contrib.sessions',
-  #~ 'django.contrib.sites',
-  #~ 'django.contrib.markup',
-  #~ 'django.contrib.databrowse',
-  
   'lino',
-  #~ 'lino.modlib.countries',
-  #~ 'lino.modlib.contacts',
-  #~ 'lino.modlib.products',
-  #~ 'lino.modlib.projects',
-  #~ 'lino.modlib.notes',
-  
-  #~ 'lino.modlib.journals',
-  #~ 'lino.modlib.sales',
-  #~ 'lino.modlib.ledger',
-  #~ 'lino.modlib.finan',
-  
-  #~ 'lino.modlib.properties',
-  #~ 'lino.modlib.links',
-  #~ 'lino.modlib.dsbe',
-  #~ 'lino.modlib.igen',
-  #~ 'south', # http://south.aeracode.org
 ]
 
 

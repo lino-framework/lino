@@ -20,6 +20,8 @@ To use it, define the following in your :xfile:`settings.py`::
   LOGGING_CONFIG = 'lino.utils.log.configure'
   LOGGING = None
 
+
+  
 See also :doc:`/tickets/15`
 """
 
@@ -30,12 +32,12 @@ from logging.handlers import RotatingFileHandler
 
 from django.utils.log import AdminEmailHandler
 
-def file_handler(filename,**kw):
+def file_handler(filename,rotate,**kw):
     """
     See also :doc:`/blog/2010/1129`
     """
     kw.setdefault('encoding','UTF-8')
-    if sys.platform == 'win32': 
+    if sys.platform == 'win32' or not rotate: 
         h = logging.FileHandler(filename,**kw)
     else:
         kw.setdefault('maxBytes',1000000)
@@ -68,16 +70,27 @@ def configure(config):
                      
                      
     :param level:    the overall verbosity level for both console and logfile.
-    
     :param mode:     the opening mode for the logfile
     :param encoding: the encoding for the logfile
+    
+    :param rotate:   if `logfile` specified, set this to `False` if you 
+                     don't want a rotating logfile.
+                     Ignored on Windows where this feature is not available.
+                     
     :param maxBytes: rotate if logfile's size gets bigger than this.
     :param backupCount: number of rotated logfiles to keep.
     
     Example::
     
-      LOGGING_CONFIG = 'lino.utils.log.configure'
       LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
+      
+    Example to use date-based log files::
+    
+      import datetime
+      filename = datetime.date.today().strftime('/var/log/lino/%Y-%m-%d.log')
+      LOGGING = dict(filename=filename,level='DEBUG',rotate=False)  
+
+      
       
     If there is a logfile, then console messages will never be more verbose than INFO
     because too many messages on the screen are disturbing, 
@@ -96,6 +109,7 @@ def configure(config):
     #~ print 20101225, config
     encoding = config.get('encoding','UTF-8')
     logfile = config.get('filename',None)
+    rotate = config.get('rotate',True)
     level = getattr(logging,config.get('level','notset').upper())
     
     djangoLogger = logging.getLogger('django')
@@ -115,7 +129,7 @@ def configure(config):
         for k in ('mode','encoding','maxBytes','backupCount'):
             if config.has_key(k):
                 kw[k] = config[k]
-        h = file_handler(logfile,**kw)
+        h = file_handler(logfile,rotate,**kw)
         #~ h.setLevel(level)
         linoLogger.addHandler(h)
         djangoLogger.addHandler(h)
