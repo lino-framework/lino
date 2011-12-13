@@ -49,7 +49,7 @@ from lino import actions
 from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
-from lino.modlib.links import models as links
+#~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.utils.choicelists import HowWell
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
@@ -142,10 +142,15 @@ class ContractEndings(reports.Report):
     order_by = ['name']
 
 
+#~ def contract_contact_choices(company):
+    #~ return links.Link.objects.filter(
+        #~ type__use_in_contracts=True,
+        #~ a_id=company.pk)
+
 def contract_contact_choices(company):
-    return links.Link.objects.filter(
+    return contacts.Role.objects.filter(
         type__use_in_contracts=True,
-        a_id=company.pk)
+        company_id=company.pk)
 
 
 
@@ -165,14 +170,14 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         related_name="%(app_label)s_%(class)s_set_by_person",
         verbose_name=_("Person"))
         
-    contact = models.ForeignKey("links.Link",
-      related_name="%(app_label)s_%(class)s_set_by_contact",
-      blank=True,null=True,
-      verbose_name=_("represented by"))
-    #~ contact = models.ForeignKey("contacts.Role",
+    #~ contact = models.ForeignKey("links.Link",
       #~ related_name="%(app_label)s_%(class)s_set_by_contact",
       #~ blank=True,null=True,
       #~ verbose_name=_("represented by"))
+    contact = models.ForeignKey("contacts.Role",
+      related_name="%(app_label)s_%(class)s_set_by_contact",
+      blank=True,null=True,
+      verbose_name=_("represented by"))
     #~ contact = models.ForeignKey("contacts.Contact",
       #~ blank=True,null=True,
       #~ verbose_name=_("represented by"))

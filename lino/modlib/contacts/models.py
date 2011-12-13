@@ -412,8 +412,8 @@ class CompanyMixin(models.Model):
 
 #~ class Contact(models.Model):
 #~ class RoleOccurence(models.Model):
-#~ class Role(models.Model):
-class unused_Role(object):
+class Role(models.Model):
+#~ class unused_Role(object):
     """
     The role of a given :class:`Person` in a given :class:`Company`.
     """
@@ -422,18 +422,17 @@ class unused_Role(object):
         verbose_name = _("Contact Person")
         verbose_name_plural = _("Contact Persons")
         
-    parent = models.ForeignKey('contacts.Contact',
-        verbose_name=_("Parent Contact"),
-        related_name='rolesbyparent')
-    child = models.ForeignKey('contacts.Contact',
-        verbose_name=_("Child Contact"),
-        related_name='rolesbychild')
+    #~ parent = models.ForeignKey('contacts.Contact',
+        #~ verbose_name=_("Parent Contact"),
+        #~ related_name='rolesbyparent')
+    #~ child = models.ForeignKey('contacts.Contact',
+        #~ verbose_name=_("Child Contact"),
+        #~ related_name='rolesbychild')
     type = models.ForeignKey('contacts.RoleType',
       blank=True,null=True,
       verbose_name=_("Contact Role"))
-    #~ person = models.ForeignKey('contacts.Person',verbose_name=_("person"))
-    #~ company = models.ForeignKey('contacts.Company',blank=True,null=True,
-      #~ verbose_name=_("company"))
+    person = models.ForeignKey('contacts.Person')
+    company = models.ForeignKey('contacts.Company',blank=True,null=True)
     #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       #~ verbose_name=_("contact type"))
 
@@ -444,11 +443,11 @@ class unused_Role(object):
             #~ return unicode(self.person)
         #~ return u"%s (%s)" % (self.person, self.type)
     def __unicode__(self):
-        if self.child_id is None:
+        if self.person_id is None:
             return super(Role,self).__unicode__()
         if self.type is None:
-            return unicode(self.child)
-        return u"%s (%s)" % (self.child, self.type)
+            return unicode(self.person)
+        return u"%s (%s)" % (self.company, self.type)
             
     #~ def address_lines(self):
         #~ for ln in self.person.address_person_lines():
@@ -462,15 +461,15 @@ class unused_Role(object):
             #~ for ln in self.person.address_location_lines():
                 #~ yield ln
     def address_lines(self):
-        for ln in self.child.address_person_lines():
+        for ln in self.person.address_person_lines():
             yield ln
-        if self.parent:
-            for ln in self.parent.address_person_lines():
+        if self.company:
+            for ln in self.company.address_person_lines():
                 yield ln
-            for ln in self.parent.address_location_lines():
+            for ln in self.company.address_location_lines():
                 yield ln
         else:
-            for ln in self.child.address_location_lines():
+            for ln in self.person.address_location_lines():
                 yield ln
 
 #~ class ContactsByCompany(reports.Report):
@@ -484,18 +483,18 @@ class unused_Role(object):
     #~ fk_name = 'person'
     #~ column_names = 'company type *'
     
-#~ class Roles(reports.Report):
-    #~ model = 'contacts.Role'   
+class Roles(reports.Report):
+    model = 'contacts.Role'   
     
-#~ class RolesByParent(Roles):
-    #~ label = _("Contact persons")
-    #~ fk_name = 'parent'
-    #~ column_names = 'child type *'
+class RolesByCompany(Roles):
+    label = _("Contact persons")
+    fk_name = 'company'
+    column_names = 'person type *'
 
-#~ class RolesByChild(Roles):
-    #~ label = _("Contact for")
-    #~ fk_name = 'child'
-    #~ column_names = 'parent type *'
+class RolesByPerson(Roles):
+    label = _("Contact for")
+    fk_name = 'person'
+    column_names = 'company type *'
     
     
     

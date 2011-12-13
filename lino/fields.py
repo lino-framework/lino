@@ -37,10 +37,10 @@ import datetime
 import logging
 logger = logging.getLogger(__name__)
 
-from lino.utils import choosers
-from lino.utils import choicelists
 from lino.tools import full_model_name
 from lino.tools import obj2str
+#~ from lino.utils import choosers
+from lino.utils import choicelists
 from lino.utils import IncompleteDate, d2iso
 
 class PasswordField(models.CharField):

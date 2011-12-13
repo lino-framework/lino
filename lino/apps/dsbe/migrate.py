@@ -722,7 +722,7 @@ def migrate_from_1_2_7(globals_dict):
 def migrate_from_1_2_8(globals_dict):    
     """
 Convert Schedule and Regime fields in contracts.
-Convert Roles to Links (and RoleTypes to LinkTypes).
+NOT Convert Roles to Links (and RoleTypes to LinkTypes).
 Needs manual adaption of dpy file:
 
 - Replace line ``from lino.utils.mti import insert_child`` 
@@ -754,24 +754,28 @@ Needs manual adaption of dpy file:
     contacts_Role = resolve_model("links.Link")
     contacts_RoleType = resolve_model("links.LinkType")
     
-    from django.contrib.contenttypes.models import ContentType
-    Person = resolve_model('contacts.Person')
-    Company = resolve_model('contacts.Company')
-    a_type = ContentType.objects.get_for_model(Company)
-    b_type = ContentType.objects.get_for_model(Person)
-    DEFAULT_LINKTYPE = contacts_RoleType(name='*',a_type=a_type,b_type=b_type,id=99)
-    DEFAULT_LINKTYPE.save()
+    #~ from django.contrib.contenttypes.models import ContentType
+    #~ Person = resolve_model('contacts.Person')
+    #~ Company = resolve_model('contacts.Company')
+    #~ a_type = ContentType.objects.get_for_model(Company)
+    #~ b_type = ContentType.objects.get_for_model(Person)
+    #~ DEFAULT_LINKTYPE = contacts_RoleType(name='*',a_type=a_type,b_type=b_type,id=99)
+    #~ DEFAULT_LINKTYPE.save()
     
-    def create_contacts_roletype(id, name, name_fr, name_en, use_in_contracts):
-        return contacts_RoleType(id=id,name=name,name_fr=name_fr,name_en=name_en,
-            a_type=a_type,b_type=b_type,
-            use_in_contracts=use_in_contracts)    
-    globals_dict.update(create_contacts_roletype=create_contacts_roletype)
+    #~ def create_contacts_roletype(id, name, name_fr, name_en, use_in_contracts):
+        #~ return contacts_RoleType(id=id,name=name,name_fr=name_fr,name_en=name_en,
+            #~ a_type=a_type,b_type=b_type,
+            #~ use_in_contracts=use_in_contracts)    
+    #~ globals_dict.update(create_contacts_roletype=create_contacts_roletype)
+    
+    #~ def create_contacts_role(id, parent_id, child_id, type_id):
+        #~ if type_id is None:
+            #~ type_id = DEFAULT_LINKTYPE.pk
+        #~ return contacts_Role(id=id,a_id=parent_id,b_id=child_id,type_id=type_id)
+    #~ globals_dict.update(create_contacts_role=create_contacts_role)
     
     def create_contacts_role(id, parent_id, child_id, type_id):
-        if type_id is None:
-            type_id = DEFAULT_LINKTYPE.pk
-        return contacts_Role(id=id,a_id=parent_id,b_id=child_id,type_id=type_id)
+        return contacts_Role(id=id,company_id=parent_id,person_id=child_id,type_id=type_id)
     globals_dict.update(create_contacts_role=create_contacts_role)
     
     #~ ignore any data from previous links module:
@@ -790,8 +794,8 @@ Needs manual adaption of dpy file:
     #~ in a customer's database. That's why we need to redefine also the 
     #~ global variables contacts_Role and contacts_RoleType:
     
-    globals_dict.update(contacts_Role=contacts_Role)
-    globals_dict.update(contacts_RoleType=contacts_RoleType)
+    #~ globals_dict.update(contacts_Role=contacts_Role)
+    #~ globals_dict.update(contacts_RoleType=contacts_RoleType)
     
     #~ add previously hard-coded jobs.Regime and jobs.Schedule from fixture
     
@@ -805,7 +809,6 @@ Needs manual adaption of dpy file:
     
     #~ from lino.utils.mti import create_child
     #~ globals_dict.update(insert_child=create_child)
-    
   
     return '1.3.0'
   

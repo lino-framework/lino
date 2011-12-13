@@ -22,7 +22,7 @@ from django.conf import settings
 import lino
 from lino import actions
 from lino import reports
-#~ from lino import forms
+from lino import fields
 #~ from lino.core import action_requests
 from lino.utils import ucsv
 #~ from lino.utils import choosers
@@ -109,7 +109,9 @@ def parse_boolean(v):
     raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
         
 def form_field_name(f):
-    if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
+    if isinstance(f,models.ForeignKey) \
+        or (isinstance(f,models.Field) and f.choices) \
+        or isinstance(f,fields.LinkedForeignKey):
         return f.name + CHOICES_HIDDEN_SUFFIX
     else:
         return f.name

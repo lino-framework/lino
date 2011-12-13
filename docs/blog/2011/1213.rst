@@ -6,3 +6,25 @@ Link.type_choices() kriegt den master nicht mitgeteilt.
 Ich nehme an, dass ich einen Trick finden muss, dass    
 LinksFromThis.get_create_kw() die master_instance       
 irgendwie in a speichert.                               
+
+17.05 Uhr : nachdem ich es fast geschafft hatte, 
+dass Link.type_choices() 
+den master mitgeteilt kriegt, stieß ich auf ein weiteres Problem: 
+choices_view holt sich ja gar keine Instanz des Records! 
+An dieses Detail hatte ich nicht gedacht.
+Jetzt ist Schluss! Sowieso hatte ich schon zu ahnen begonnen, 
+dass die Idee mit den Generic Links gar nicht so toll ist.
+Sie hat den Nachteil, dass man dann einzelne Link-Arten 
+nicht erweitern kann.
+Also wieder zurück mit den Roles (die Tabellennamen sind 
+da nicht ganz glücklich verteilt: "Contact" müsste ich vielleicht 
+umbenennen nach "Partner", RoleType nach Role und Role nach Contact.
+Aber ein Role ist jetzt wieder wie ganz früher
+eine Verknüpfung zwischen einer Company und 
+einer Person. 
+Statt Role.parent und Role.child (beide ein allgemeiner FK zu Contact) 
+haben wir wieder Role.company und Role.person.
+
+Also lino.modlib.links und lino.fields.LinkedForeignKey 
+funktionieren nur *fast*: es fehlt die Möglichkeit, 
+in einem Chooser die verknüpften Objekte abzufragen.

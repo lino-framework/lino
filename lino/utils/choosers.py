@@ -32,7 +32,7 @@ from lino.utils.instantiator import make_converter
 #~ from lino import reports
 from lino.core.coretools import get_data_elem # , get_unbound_meth
 import lino
-#~ from lino import fields
+from lino import fields
 from lino.utils import get_class_attr
 
 class BaseChooser:
@@ -47,6 +47,7 @@ class ChoicesChooser(FieldChooser):
         FieldChooser.__init__(self,field)
         self.simple_values = type(field.choices[0])
   
+
 class Chooser(FieldChooser):
     #~ stored_name = None
     simple_values = False
@@ -62,8 +63,6 @@ class Chooser(FieldChooser):
         #~ self.field = model._meta.get_field(fldname)
         self.meth = meth
         if not isinstance(field,models.ForeignKey):
-            #~ self.on_quick_insert = getattr(field.rel.to,'on_quick_insert',None)
-        #~ else:
             self.simple_values = getattr(meth,'simple_values',False)        
             self.instance_values = getattr(meth,'instance_values',False)
             self.force_selection = getattr(meth,'force_selection',self.force_selection)
@@ -99,7 +98,9 @@ class Chooser(FieldChooser):
             self.can_create_choice = True
             
     def __str__(self):
-        return "Chooser(%s.%s,%s)" % (self.model.__name__,self.field.name,self.context_params)
+        return "Chooser(%s.%s,%s)" % (
+            self.model.__name__,self.field.name,
+            self.context_params)
         
     def create_choice(self,obj,text):
         m = getattr(obj,"create_%s_choice" % self.field.name)
@@ -132,6 +133,7 @@ class Chooser(FieldChooser):
             kw[str(k)] = v
         for cv in self.converters:
             kw = cv.convert(**kw)
+        #~ logger.info("20111213 get_request_choices(%r) -> %r",self.converters,kw)
         return self.get_choices(**kw)
         
     def get_text_for_value(self,value,obj):

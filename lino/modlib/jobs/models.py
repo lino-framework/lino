@@ -47,7 +47,7 @@ from lino import actions
 from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
-from lino.modlib.links import models as links
+#~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.utils.choicelists import HowWell
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
@@ -272,7 +272,8 @@ class Contract(ContractBase):
         if provider is not None:
             #~ return provider.rolesbyparent.all()
             #~ return provider.rolesbyparent.filter(type__use_in_contracts=True)
-            return links.Link.objects.filter(type__use_in_contracts=True,a=provider)
+            #~ return links.Link.objects.filter(type__use_in_contracts=True,a=provider)
+            return contacts.Role.objects.filter(type__use_in_contracts=True,company=provider)
         return []
         
     def get_company(self):

@@ -11,6 +11,11 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Defines the :class:`Instantiator` class and some other utilities 
+used mainly for :doc:`/topics/dpy`.
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -25,6 +30,7 @@ from django.contrib.contenttypes.models import ContentType
 from lino.tools import resolve_model
 
 from lino.utils import i2d # for backward compatibility of .dpy fixtures
+from lino import fields
     
 
 class DataError(Exception):
@@ -61,25 +67,34 @@ class DecimalConverter(Converter):
 
 class ForeignKeyConverter(Converter):
     """Converter for ForeignKey fields."""
+    def get_rel_to(self,obj):
+        return self.field.rel.to
+        
     def convert(self,**kw):
         value = kw.get(self.field.name)
         if value is not None:
             if value == '':
                 value = None
             else:
-                model = self.field.rel.to
+                model = self.get_rel_to(value)
                 if not isinstance(value,model):
-                    if False and model is ContentType:
-                        value = ContentType.objects.get_for_model(resolve_model(value))
-                    else:
-                        lookup_kw = {self.lookup_field: value}
-                        try:
-                            value = model.objects.get(**lookup_kw)
-                        except model.DoesNotExist,e:
-                            raise DataError("%s.objects.get(**%r) : %s" % (
-                                  model.__name__,lookup_kw,e))
+                    lookup_kw = {self.lookup_field: value}
+                    try:
+                        value = model.objects.get(**lookup_kw)
+                    except model.DoesNotExist,e:
+                        raise DataError("%s.objects.get(**%r) : %s" % (
+                              model.__name__,lookup_kw,e))
             kw[self.field.name] = value
+            #~ logger.info("20111213 %s %s -> %r", self.field.name,self.__class__,value)
         return kw
+
+class LinkedForeignKeyConverter(ForeignKeyConverter):
+    """Converter for :class:`lino.fields.LinkedForeignKey` fields."""
+    def get_rel_to(self,obj):
+        ct = self.field.get_content_type(obj)
+        if ct is None:
+            return None
+        return ct.model_class()
 
 class ManyToManyConverter(Converter):
     splitsep = None
@@ -105,6 +120,9 @@ class ManyToManyConverter(Converter):
 def make_converter(f,lookup_fields={}):
     if isinstance(f,models.ForeignKey):
         return ForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
+    if isinstance(f,fields.LinkedForeignKey):
+        #~ logger.info("20111213 created LFKConverter for %r",f.name)
+        return LinkedForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
     if isinstance(f,models.ManyToManyField):
         return ManyToManyConverter(f,lookup_fields.get(f.name,"pk"))
     if isinstance(f,models.DateField):

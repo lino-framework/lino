@@ -72,7 +72,7 @@ class Lino(Lino):
         properties = models.get_app('properties')
         cal = models.get_app('cal')
         mails = models.get_app('mails')
-        links = models.get_app('links')
+        #~ links = models.get_app('links')
         notes = models.get_app('notes')
         jobs = models.get_app('jobs')
         isip = models.get_app('isip')
@@ -190,7 +190,7 @@ class Lino(Lino):
             #~ m.add_action('dsbe.JobTypes')
             #~ m.add_action('dsbe.CoachingTypes')
             
-            links.setup_config_menu(self,ui,user,cfg)
+            #~ links.setup_config_menu(self,ui,user,cfg)
             #~ config_etc.add_action('links.LinkTypes')
             config_etc.add_action('uploads.UploadTypes')
             
@@ -210,7 +210,7 @@ class Lino(Lino):
             notes.setup_explorer_menu(self,ui,user,m)
             isip.setup_explorer_menu(self,ui,user,m)
             jobs.setup_explorer_menu(self,ui,user,m)
-            links.setup_explorer_menu(self,ui,user,m)
+            #~ links.setup_explorer_menu(self,ui,user,m)
             #~ m.add_action('notes.Notes')
             #~ m.add_action('lino.TextFieldTemplates')
             #~ m.add_action('links.Links')
@@ -274,7 +274,7 @@ INSTALLED_APPS = (
   'lino.modlib.contacts',
   #~ 'lino.modlib.projects',
   'lino.modlib.notes',
-  'lino.modlib.links',
+  #~ 'lino.modlib.links',
   'lino.modlib.uploads',
   'lino.modlib.thirds',
   'lino.modlib.cal',
