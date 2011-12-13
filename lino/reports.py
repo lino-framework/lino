@@ -560,10 +560,6 @@ class ReportHandle(base.Handle):
     def get_actions(self,*args,**kw):
         return self.report.get_actions(*args,**kw)
         
-    def unused_get_details(self):
-        return self.report.details
-        #~ return self.layouts[1:]
-          
         
     #~ def request(self,*args,**kw):
         #~ ar = ReportActionRequest(self.ui,self.report.list_action)
@@ -571,12 +567,12 @@ class ReportHandle(base.Handle):
         #~ return ar
         
     def update_detail(self,tab,desc):
-        raise Exception("Not yet fully converted to Lino 1.3.0")
-        old_dtl = self.report.model._lino_detail.layouts[tab]
-        dtl = DetailLayout(desc,old_dtl.filename,old_dtl.cd)
-        self.report.model._lino_detail.layouts[tab] = dtl
-        dh = dtl.get_handle(self.ui)
-        self._layouts[tab+1] = LayoutHandle(self.ui,self.report.model,dtl)
+        #~ raise Exception("Not yet fully converted to Lino 1.3.0")
+        old_dl = self.report.get_detail().layouts[tab]
+        dtl = DetailLayout(desc,old_dl.filename,old_dl.cd)
+        self.report.get_detail().layouts[tab] = dtl
+        #~ dh = dtl.get_handle(self.ui)
+        #~ self._layouts[tab+1] = LayoutHandle(self.ui,self.report.model,dtl)
         self.ui.setup_handle(self)
         #~ self.report.save_config()
         dtl.save_config()
@@ -1225,9 +1221,6 @@ class Report(actors.Actor): #,base.Handled):
         #~ return self.get_action(name)
         
         
-    def unused_get_details(self):
-        return self.details
-            
     def get_detail(self):
         return self.model._lino_detail
         

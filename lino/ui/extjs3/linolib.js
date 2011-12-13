@@ -2207,7 +2207,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     Workaround is to generate a line "params.containing_window = true;" 
     in the handler function.
     */ 
-    if (this.containing_window) {
+    //~ if (this.containing_window) {
+    if (this.is_main_window) {
         //~ console.log(20111206, 'delete title',this.title,'from',this);
         //~ delete this.title;
         this.title = undefined;  /* simply deleting it 
@@ -3368,6 +3369,18 @@ Lino.on_eventclick = function(cp,rec,el) {
   return false;
 }
     
+Lino.on_eventadd  = function(cp,rec,el) {
+  console.log("Lino.on_eventadd ",arguments);
+  Lino.cal.Events.insert(cp,{});
+  return false;
+}
+    
+Lino.on_eventresize  = function(cp,rec,el) {
+  console.log("Lino.on_eventresize ",arguments);
+  //~ Lino.cal.Events.insert(cp);
+  //~ return false;
+}
+    
 
 
 Lino.eventStore = new Ext.data.ArrayStore({ 
@@ -3535,7 +3548,11 @@ Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
   todayText : 'Today',
   title : 'Basic Calendar',
   store: Lino.eventStore,
-  listeners: { eventclick: Lino.on_eventclick},
+  listeners: { 
+    eventclick: Lino.on_eventclick
+    ,eventadd: Lino.on_eventadd
+    ,eventresize: Lino.on_eventresize
+    },
   monthViewCfg: Lino.CalendarCfg,
   weekViewCfg: Lino.CalendarCfg,
   multiDayViewCfg: Lino.CalendarCfg,

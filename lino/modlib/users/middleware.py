@@ -11,6 +11,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise Exception("moved to lino.utils.auth")
+
 """
 Middleware to be used on sites with :doc:`/topics/http_auth`.
 
@@ -100,20 +102,20 @@ class RemoteUserMiddleware(object):
 
 
 
-class LocaleMiddleware(object):
-    """
-    This is a very simple middleware that parses a request
-    and decides what translation object to install in the current
-    thread context. This allows pages to be dynamically
-    translated to the language the user desires (if the language
-    is available, of course).
-    """
+#~ class LocaleMiddleware(object):
+    #~ """
+    #~ This is a very simple middleware that parses a request
+    #~ and decides what translation object to install in the current
+    #~ thread context. This allows pages to be dynamically
+    #~ translated to the language the user desires (if the language
+    #~ is available, of course).
+    #~ """
 
-    def process_request(self, request):
-        language = translation.get_language_from_request(request)
-        translation.activate(language)
-        request.LANGUAGE_CODE = translation.get_language()
+    #~ def process_request(self, request):
+        #~ language = translation.get_language_from_request(request)
+        #~ translation.activate(language)
+        #~ request.LANGUAGE_CODE = translation.get_language()
 
-    def process_response(self, request, response):
-        language = translation.get_language()
-        translation.deactivate()
+    #~ def process_response(self, request, response):
+        #~ language = translation.get_language()
+        #~ translation.deactivate()

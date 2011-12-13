@@ -15,10 +15,3 @@
     :show-inheritance:
 
 
-:mod:`lino.modlib.users.middleware`
------------------------------------
-
-.. automodule:: lino.modlib.users.middleware
-    :members:
-    :show-inheritance:
-

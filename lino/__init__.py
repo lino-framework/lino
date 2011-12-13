@@ -265,6 +265,11 @@ class Lino(object):
     :mod:`lino.modlib.users.middleware`
     """
     
+    remote_user_header = "REMOTE_USER"
+    """
+    The name of the header (set by the web server) that Lino consults 
+    for finding the user of a request.
+    """
     #~ simulate_remote_user = False
     
     project_model = None
@@ -709,6 +714,11 @@ class Lino(object):
         if not url: 
             url = "/"
         main.add_url_button(url,_("Home"))
+        main.add_separator("->")
+        if user:
+            main.add_instance_action(user)
+            
+        
         return main
         
     def setup_quicklinks(self,ui,user,tb):
@@ -740,13 +750,11 @@ class Lino(object):
   
         yield 'django.middleware.common.CommonMiddleware'
         #~ yield 'django.contrib.sessions.middleware.SessionMiddleware'
-        yield 'django.middleware.locale.LocaleMiddleware'
-        if False:
-            #~ self.simulate_remote_user:
-            yield 'lino.utils.auth.SimulateRemoteUserMiddleware'
+        if self.languages and len(self.languages) > 1:
+            yield 'django.middleware.locale.LocaleMiddleware'
         #~ yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
-        if self.user_model == 'users.User':
-            yield 'lino.modlib.users.middleware.RemoteUserMiddleware'
+        if self.user_model:
+            yield 'lino.utils.auth.RemoteUserMiddleware'
             yield 'django.middleware.doc.XViewMiddleware'
         else:
             yield 'lino.utils.auth.NoUserMiddleware'

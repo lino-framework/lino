@@ -154,14 +154,18 @@ def analyze_models(self,make_messages):
     for model in models.get_models():
         collector = {}
         def collect_details(m):
+            #~ if model.__name__ == 'CourseProvider':
+                #~ logger.debug("20111213 collect_details %s",m.__bases__)  
             #~ if m in self.hide_details: return
             for b in m.__bases__:
                 if issubclass(b,models.Model) and b is not models.Model:
                     collect_details(b)
             for k,v in getattr(m,'_lino_detail_layouts',{}).items():
+            #~ for k,v in m._lino_detail_layouts.items():
                 collector[k] = v
-          
         collect_details(model)
+        #~ if model.__name__ == 'CourseProvider':
+            #~ logger.debug("20111213 %s collector is %r",model,collector)  
         
         if collector:
             def by0(a,b):
@@ -172,7 +176,13 @@ def analyze_models(self,make_messages):
             model._lino_detail = reports.Detail(model,detail_layouts)
         else:
             model._lino_detail = None
+            
+    """ 
+    And yet another loop to delete _lino_detail_layouts
+    """
           
+    for model in models.get_models():
+      
         del model._lino_detail_layouts
         
         if get_class_attr(model,'summary_row') is None:

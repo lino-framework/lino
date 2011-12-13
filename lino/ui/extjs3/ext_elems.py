@@ -668,9 +668,11 @@ class DateTimeFieldElement(FieldElement):
     #~ filter_type = 'date'
     
     def __init__(self,lh,field,**kw):
-        FieldElement.__init__(self,lh,field,**kw)
         if self.editable:
-            value_template = "new Lino.DateTimeField(%s)"
+            self.value_template = "new Lino.DateTimeField(%s)"
+        else:
+            kw.update(value="<br>")
+        FieldElement.__init__(self,lh,field,**kw)
     
 class DateFieldElement(FieldElement):
     value_template = "new Lino.DateField(%s)"

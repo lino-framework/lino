@@ -1,6 +1,36 @@
 20111213
 ========
 
+How authentication is configured
+--------------------------------
+
+The following todo is done:
+
+#.  Browser-specific language selection is nice... 
+    but Lino should also make it 
+    possible to override this browser-specific language setting.
+    The most straigtforward place 
+    (at least on a site that is using 
+    :mod:`lino.modlib.users`)
+    is the language field from 
+    :class:`lino.modlib.contacts.Contact`.
+
+New Lino configuration option 
+:attr:`lino.Lino.default_user` and some changes in 
+how authentication is configured.
+
+SimulateRemoteUserMiddleware has been removed because it is 
+no longer useful. 
+Moved lino.modlib.users.middleware to lino.utils.auth and made 
+it generally work
+
+Started :doc:`/topics/auth` which should give an overview.
+
+
+
+:class:`lino.fields.LinkedForeignKey` freezed
+---------------------------------------------
+
 Im neuen fields.LinkedForeignKey war noch ein Bug:
 Link.type_choices() kriegt den master nicht mitgeteilt. 
 Ich nehme an, dass ich einen Trick finden muss, dass    
@@ -19,12 +49,29 @@ nicht erweitern kann.
 Also wieder zurück mit den Roles (die Tabellennamen sind 
 da nicht ganz glücklich verteilt: "Contact" müsste ich vielleicht 
 umbenennen nach "Partner", RoleType nach Role und Role nach Contact.
+
 Aber ein Role ist jetzt wieder wie ganz früher
 eine Verknüpfung zwischen einer Company und 
-einer Person. 
+einer Person, nicht wie zwischendurch zwischen zwei Contacts.
 Statt Role.parent und Role.child (beide ein allgemeiner FK zu Contact) 
 haben wir wieder Role.company und Role.person.
+Und wenn man irgendwann mal z.B. Verknüpfungen von Person zu 
+Person oder von Firma zu Firma machen will, 
+dann mach ich dafür eigene Tabellen. 
+Es ist ja nicht so, dass eine neue Tabelle viel Arbeit wäre.
 
-Also lino.modlib.links und lino.fields.LinkedForeignKey 
-funktionieren nur *fast*: es fehlt die Möglichkeit, 
+Also lino.fields.LinkedForeignKey und somit auch 
+lino.modlib.links 
+sind eingefroren, bevor sie überhaupt benutzt wurden, 
+denn sie funktionieren nur *fast*: 
+es fehlt die Möglichkeit, 
 in einem Chooser die verknüpften Objekte abzufragen.
+Falls das in der Zukunft mal nötig sein sollte, sehen wir weiter.
+
+
+More bugfixes
+-------------
+
+- CourseProvider had no inherited details
+- Layout Editor works again
+- ``params.is_main_window = true`` instead of ``params.containing_window = true``

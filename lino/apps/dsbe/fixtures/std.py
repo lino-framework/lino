@@ -143,22 +143,22 @@ def objects():
     yield excltype(u"Termin nicht eingehalten")
     yield excltype(u"ONEM-Auflagen nicht erfüllt")
     
-    linkType = Instantiator('links.LinkType',"a_type b_type name").build
+    #~ linkType = Instantiator('links.LinkType',"a_type b_type name").build
     Company = resolve_model('contacts.Company')
     Person = resolve_model('contacts.Person')
     
-    yield linkType(
-        ContentType.objects.get_for_model(Company),
-        ContentType.objects.get_for_model(Person),
-        babelitem(de=u"Direktor",fr=u"directeur"))
-    yield linkType(
-        ContentType.objects.get_for_model(Person),
-        ContentType.objects.get_for_model(Person),
-        babelitem(de=u"Vater",fr=u"père"))
-    yield linkType(
-        ContentType.objects.get_for_model(Person),
-        ContentType.objects.get_for_model(Person),
-        babelitem(de=u"Mutter",fr=u"mère"))
+    #~ yield linkType(
+        #~ ContentType.objects.get_for_model(Company),
+        #~ ContentType.objects.get_for_model(Person),
+        #~ babelitem(de=u"Direktor",fr=u"directeur"))
+    #~ yield linkType(
+        #~ ContentType.objects.get_for_model(Person),
+        #~ ContentType.objects.get_for_model(Person),
+        #~ babelitem(de=u"Vater",fr=u"père"))
+    #~ yield linkType(
+        #~ ContentType.objects.get_for_model(Person),
+        #~ ContentType.objects.get_for_model(Person),
+        #~ babelitem(de=u"Mutter",fr=u"mère"))
     #~ yield linkType(babelitem(de=u"Private Website",fr=u"Site privé"))
     #~ yield linkType(babelitem(de=u"Firmen-Website",fr=u"Site commercial"))
     #~ yield linkType(babelitem(de=u"Facebook-Profil",fr=u"Profil Facebook"))

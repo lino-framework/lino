@@ -477,6 +477,6 @@ def test11(self):
     from lino.modlib.jobs.models import Contract
     obj = Contract.objects.get(pk=5)
     translation.activate('de')
-    self.assertEqual(obj.contact.b.get_full_name(),"Frau Annette ARENS")
+    self.assertEqual(obj.contact.person.get_full_name(),"Frau Annette ARENS")
     babel.set_language(None)
     

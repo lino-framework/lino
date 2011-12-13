@@ -21,7 +21,11 @@ Lino's authentification utilities
 
 import os
 
+from django.utils import translation
+from django.conf import settings
 
+from lino.tools import resolve_model
+from lino.utils import babel
 
 class NoUserMiddleware(object):
     """
@@ -31,51 +35,45 @@ class NoUserMiddleware(object):
     """
     def process_request(self, request):
         request.user = None
-      
-"""
-The remainder is deprecated: 
-instead of adding this, you simply set :attr:`lino.Lino.default_user`
-in your :xfile:`settings.py`.
-"""
-
-from django.conf import settings
-
-class SimulateRemoteUserMiddleware(object):
-    """
-
-Simulate HTTP authentication  when working with the development server 
-(`manage.py runserver`). This middleware simply reads the :envvar:`REMOTE_USER` 
-environment variable (of the process running the development server) 
-and inserts this to every request's `META['REMOTE_USER']`.
-
-To use this, insert it to your MIDDLEWARE_CLASSES somewhere before 
-'django.contrib.auth.middleware.RemoteUserMiddleware'::
-
-    from lino.demos.std.settings import *
-    MIDDLEWARE_CLASSES = (
-        'lino.utils.simulate_remote.SimulateRemoteUserMiddleware',
-    ) + MIDDLEWARE_CLASSES 
         
-Be careful to not inadvertently include this to your :setting:`MIDDLEWARE_CLASSES` 
-on a production server since it will override the HTTP authentication.
-
-See also http://docs.djangoproject.com/en/dev/howto/auth-remote-user/
-
-    
-    """
-    def process_request(self, request):
-        raise Exception("""Deprecated: 
-instead of adding this, you simply set :attr:`lino.Lino.default_user`
-in your :xfile:`settings.py`.
-""")
         
-        #~ x = os.environ.get('REMOTE_USER')
-        #~ x = os.environ.get('REMOTE_USER','root')
-        x = os.environ.get('REMOTE_USER',settings.LINO.default_username)
-        request.META['REMOTE_USER'] = x
-        #~ if x:
-            #~ request.META['REMOTE_USER'] = x
-            #~ print "WARNING: Treating all requests as coming from authenticated user %s" % x
 
+if settings.LINO.user_model:
+  
+    USER_MODEL = resolve_model(settings.LINO.user_model)
 
+    class RemoteUserMiddleware(object):
+        """
+        This does the same as
+        `django.contrib.auth.middleware.RemoteUserMiddleware`, 
+        but in a simplified manner and without using Sessions.
+        
+        It also activates the User's language, if that field is not empty.
+        Since it will run *after*
+        `django.contrib.auth.middleware.RemoteUserMiddleware`
+        (at least if you didn't change :meth:`lino.Lino.get_middleware_classes`),
+        it will override any browser setting.
+        
+        """
 
+        def process_request(self, request):
+          
+            username = request.META.get(settings.LINO.remote_user_header,settings.LINO.default_user)
+            if not username:
+                raise Exception("No %s in %s" % (settings.LINO.remote_user_header,request.META))
+                
+            try:
+                request.user = USER_MODEL.objects.get(username=username)
+            except USER_MODEL.DoesNotExist,e:
+                u = USER_MODEL(username=username)
+                u.full_clean()
+                u.save()
+                logger.info("Creating new user %s from request %s",u,request)
+                request.user = u
+            
+            if len(babel.AVAILABLE_LANGUAGES) > 1:
+                if request.user.language:
+                    translation.activate(request.user.language)
+                    request.LANGUAGE_CODE = translation.get_language()
+            
+        

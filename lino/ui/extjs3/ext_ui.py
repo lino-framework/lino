@@ -1108,9 +1108,9 @@ tinymce.init({
             msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
             return http.HttpResponseForbidden(msg)
         if request.method == 'GET':
-            raise Exception("TODO: convert after 20111127")
+            #~ raise Exception("TODO: convert after 20111127")
             tab = int(request.GET.get('tab','0'))
-            return json_response_kw(success=True,tab=tab,desc=rpt.detail_layouts[tab]._desc)
+            return json_response_kw(success=True,tab=tab,desc=rpt.get_detail().layouts[tab]._desc)
         if request.method == 'PUT':
             PUT = http.QueryDict(request.raw_post_data)
             tab = int(PUT.get('tab',0))
@@ -1400,7 +1400,8 @@ tinymce.init({
                 bp = ar.request2kw(self)
                 
                 #~ if a.window_wrapper.tabbed:
-                if rpt.model._lino_detail.get_handle(self).tabbed:
+                if rpt.get_detail().get_handle(self).tabbed:
+                #~ if rpt.model._lino_detail.get_handle(self).tabbed:
                     tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
                     if tab is not None: 
                         tab = int(tab)
@@ -1818,20 +1819,36 @@ tinymce.init({
                 #return py2js(kw)
             return dict(text=prepare_label(v),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
-            if v.href is not None:
-                return dict(text=prepare_label(v),href=v.href)
+            #~ if v.href is not None:
+                #~ if v.parent.parent is None:
+                    #~ # special case for href items in main menubar
+                    #~ return dict(
+                      #~ xtype='button',text=prepare_label(v),
+                      #~ handler=js_code("function() {window.location='%s';}" % v.href))
+                #~ return dict(text=prepare_label(v),href=v.href)
             if True: 
                 """
                 20110129. In this case, the main menu uses permalinks instead of opening new windows each time.
                 """
-                if v.request is not None:
+                if v.href is not None:
+                    url = v.href
+                elif v.request is not None:
                     url = self.get_request_url(v.request)
                 elif v.instance is not None:
                     #~ url = self.get_detail_url(v.instance,an='detail')
                     url = self.get_detail_url(v.instance)
-                else:
+                elif v.action:
                     url = self.get_action_url(v.action)
+                else:
+                    # a separator
+                    #~ return dict(text=v.label)
+                    return v.label
                     #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
+                if v.parent.parent is None:
+                    # special case for href items in main menubar
+                    return dict(
+                      xtype='button',text=prepare_label(v),
+                      handler=js_code("function() {window.location='%s';}" % url))
                 return dict(text=prepare_label(v),href=url)
             # no longer supported:
             handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
@@ -2197,6 +2214,7 @@ tinymce.init({
         
         if s:
             yield "Lino.%s = function(caller,params) { " % action
+            yield "  params.is_main_window = true;" # workaround for problem 20111206
             #~ yield "  params.containing_window = true;" # workaround for problem 20111206
             yield "  new Lino.Window({"
             yield "    caller: caller, items:new %s(params)" % s

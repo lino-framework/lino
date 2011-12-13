@@ -751,8 +751,8 @@ Needs manual adaption of dpy file:
         return jobs_Contract(id=id,user_id=user_id,must_build=must_build,person_id=person_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,provider_id=provider_id,job_id=job_id,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)
     globals_dict.update(create_jobs_contract=create_jobs_contract)
     
-    contacts_Role = resolve_model("links.Link")
-    contacts_RoleType = resolve_model("links.LinkType")
+    #~ contacts_Role = resolve_model("links.Link")
+    #~ contacts_RoleType = resolve_model("links.LinkType")
     
     #~ from django.contrib.contenttypes.models import ContentType
     #~ Person = resolve_model('contacts.Person')
@@ -774,6 +774,7 @@ Needs manual adaption of dpy file:
         #~ return contacts_Role(id=id,a_id=parent_id,b_id=child_id,type_id=type_id)
     #~ globals_dict.update(create_contacts_role=create_contacts_role)
     
+    contacts_Role = resolve_model("contacts.Role")
     def create_contacts_role(id, parent_id, child_id, type_id):
         return contacts_Role(id=id,company_id=parent_id,person_id=child_id,type_id=type_id)
     globals_dict.update(create_contacts_role=create_contacts_role)

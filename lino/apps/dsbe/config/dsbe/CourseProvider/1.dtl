@@ -1,4 +1,4 @@
-:label: General
+:label: Contact
 :label_align: top
 
 main = 
@@ -22,7 +22,6 @@ bottom_box = box5 contacts.RolesByCompany
 ## bottom_box = box5 dsbe.ContactPersons
 box5 = 
   remarks 
-  is_courseprovider is_jobprovider
 
 intro_box = 
     name id language 

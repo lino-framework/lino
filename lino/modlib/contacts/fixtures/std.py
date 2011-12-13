@@ -22,9 +22,10 @@ from lino.utils.babel import babel_values, DEFAULT_LANGUAGE, AVAILABLE_LANGUAGES
 
 
 companyType = Instantiator('contacts.CompanyType',"abbr name").build
-#~ roletype = Instantiator('contacts.RoleType',"name").build
+roletype = Instantiator('contacts.RoleType',"name").build
 
 # thanks to http://belgium.angloinfo.com/countries/belgium/businesses.asp
+# see also http://en.wikipedia.org/wiki/Types_of_business_entity
 
 COMPANY_TYPES_FORMAT = 'en nl fr de'
 COMPANY_TYPES_TEXT = u"""
@@ -112,7 +113,7 @@ def objects():
     for ct in COMPANY_TYPES:
         yield companyType(**ct)
         
-    #~ yield roletype(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
-    #~ yield roletype(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor",et=u"Direktor"))
-    #~ yield roletype(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär",et=u"Sekretär"))
-    #~ yield roletype(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))
+    yield roletype(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
+    yield roletype(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor",et=u"Direktor"))
+    yield roletype(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär",et=u"Sekretär"))
+    yield roletype(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))

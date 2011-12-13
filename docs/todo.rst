@@ -15,15 +15,6 @@ Short-term
 #.  Custom Quick filters 
     See :doc:`/blog/2011/1207`.
 
-#.  Browser-specific language selection is nice... 
-    but Lino should also make it 
-    possible to override this browser-specific language setting.
-    The most straigtforward place 
-    (at least on a site that is using 
-    :mod:`lino.modlib.users`)
-    is the language field from 
-    :class:`lino.modlib.contacts.Contact`.
-
 #.  :class:´lino.modlib.jobs.Function` : "Funktionen" 
     umbenennen nach "Qualifikationen"?
     Weil auch :class:´lino.modlib.contacts.RoleType` so übersetzt wird.

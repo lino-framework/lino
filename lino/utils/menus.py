@@ -176,6 +176,9 @@ class Menu(MenuItem):
     def add_item(self,name,label,**kw):
         return self._add_item(MenuItem(self,None,name,label,**kw))
         
+    def add_separator(self,label,**kw):
+        return self._add_item(MenuItem(self,None,None,label,**kw))
+        
     def add_menu(self,name,label,**kw):
         return self._add_item(Menu(name,label,self,**kw))
 

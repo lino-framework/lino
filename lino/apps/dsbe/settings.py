@@ -92,6 +92,7 @@ class Lino(Lino):
         #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')
 
+
         if user is None:
             return main
             
@@ -115,6 +116,7 @@ class Lino(Lino):
         m.add_action('uploads.MyUploads')
         m.add_action('lino.MyTextFieldTemplates')
 
+        m.add_instance_action(user,label="My user preferences")
 
         m = main.add_menu("courses",_("Courses"))
         m.add_action('dsbe.CourseProviders')
@@ -234,7 +236,7 @@ class Lino(Lino):
         m = main.add_menu("help",_("Help"))
         m.add_item('userman',_("~User Manual"),
             href='http://lino.saffre-rumma.net/dsbe/index.html')
-
+            
         return main
       
 

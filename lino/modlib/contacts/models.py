@@ -396,18 +396,18 @@ class CompanyMixin(models.Model):
 
 
 
-#~ # class ContactType(babel.BabelNamed):
-#~ class RoleType(babel.BabelNamed):
-    #~ """
-    #~ Deserves more documentation.
-    #~ """
-    #~ class Meta:
-        #~ verbose_name = _("Role Type")
-        #~ verbose_name_plural = _("Role Types")
+# class ContactType(babel.BabelNamed):
+class RoleType(babel.BabelNamed):
+    """
+    Deserves more documentation.
+    """
+    class Meta:
+        verbose_name = _("Role Type")
+        verbose_name_plural = _("Role Types")
 
 
-#~ class RoleTypes(reports.Report):
-    #~ model = 'contacts.RoleType'
+class RoleTypes(reports.Report):
+    model = 'contacts.RoleType'
 
 
 #~ class Contact(models.Model):
@@ -431,8 +431,8 @@ class Role(models.Model):
     type = models.ForeignKey('contacts.RoleType',
       blank=True,null=True,
       verbose_name=_("Contact Role"))
-    person = models.ForeignKey('contacts.Person')
-    company = models.ForeignKey('contacts.Company',blank=True,null=True)
+    person = models.ForeignKey('contacts.Person',related_name='rolesbyperson')
+    company = models.ForeignKey('contacts.Company',related_name='rolesbycompany')
     #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       #~ verbose_name=_("contact type"))
 

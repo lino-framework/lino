@@ -1,0 +1,28 @@
+:label: General
+:label_align: top
+
+main = 
+  first_name last_name username language id
+  box3 box4 box2
+  remarks 
+  
+box2 = 
+  is_active 
+  is_spis 
+  is_staff 
+  is_expert 
+  is_superuser
+  date_joined 
+  last_login 
+
+box3 = 
+  country region
+  city zip_code:10
+  street_prefix street:25 street_no street_box
+  addr2:40
+
+box4 = 
+  email:40 
+  url
+  phone
+  gsm

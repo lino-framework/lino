@@ -1,6 +1,8 @@
 Configure Apache for HTTP authentication
 ========================================
 
+See also :doc:`/topics/auth`
+
 Here is how I configured Apache using basic HTTP authentication 
 for the demo sites. 
 In a production site you'll probably use more secure 

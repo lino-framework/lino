@@ -5,55 +5,9 @@ T:\hgwork\lino\docs\dsbe\appdocs\contacts.RoleType.rst:: WARNING: document isn't
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\contacts.Role.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\contacts.RoleType.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.rst:236: WARNING: py:func reference target not found: lino.modlib.cal.models.update_auto_task
-T:\hgwork\lino\docs\autodoc\lino.rst:265: WARNING: unknown document: /blog/2010/1130
-T:\hgwork\lino\docs\autodoc\lino.rst:282: WARNING: py:attr reference target not found: time_format_strftime
-T:\hgwork\lino\docs\autodoc\lino.rst:282: WARNING: py:attr reference target not found: time_format_extjs
-T:\hgwork\lino\docs\autodoc\lino.rst:299: WARNING: xfile reference target not found: fixtures
-T:\hgwork\lino\docs\autodoc\lino.rst:339: WARNING: py:meth reference target not found: lino.apps.dsbe.settings.Lino.setup_quicklinks
-T:\hgwork\lino\docs\autodoc\lino.rst:349: WARNING: py:mod reference target not found: lino.utils.config
-T:\hgwork\lino\docs\autodoc\lino.rst:461: WARNING: py:mod reference target not found: lino.test_apps.1
-T:\hgwork\lino\docs\autodoc\lino.rst:483: WARNING: term not in glossary: webdav
-T:\hgwork\lino\docs\autodoc\lino.rst:483: WARNING: xfile reference target not found: sitecustomize_lino.py
-T:\hgwork\lino\docs\autodoc\lino.rst:492: WARNING: term not in glossary: runserver
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:13: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:50: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:91: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:106: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:116: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:157: WARNING: py:class reference target not found: lino.apps.dsbe.models.Companies
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:170: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:179: WARNING: py:class reference target not found: CourseConent
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:227: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:235: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:243: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:260: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:268: WARNING: py:class reference target not found: dsbe.Activity
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:340: WARNING: py:class reference target not found: Property
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:363: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:402: WARNING: py:class reference target not found: lino.apps.dsbe.models.AllPersons
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:450: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:72: WARNING: py:class reference target not found: lino.fields.IncompleteDate
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1210
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1211
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1214
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:44: WARNING: py:class reference target not found: City
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:49: WARNING: py:class reference target not found: lino.utils.mdbtools.Loader
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:65: WARNING: py:class reference target not found: Note
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:78: WARNING: py:class reference target not found: User
-T:\hgwork\lino\docs\autodoc\lino.fields.rst:8: WARNING: py:class reference target not found: django.db.models.fields.CharField
-T:\hgwork\lino\docs\autodoc\lino.fields.rst:32: WARNING: py:class reference target not found: django.db.models.fields.PositiveIntegerField
-T:\hgwork\lino\docs\autodoc\lino.fields.rst:44: WARNING: py:class reference target not found: django.db.models.fields.CharField
-T:\hgwork\lino\docs\autodoc\lino.fields.rst:64: WARNING: py:class reference target not found: django.db.models.fields.CharField
-T:\hgwork\lino\docs\autodoc\lino.fields.rst:72: WARNING: py:class reference target not found: django.db.models.fields.TextField
-T:\hgwork\lino\docs\autodoc\lino.modlib.links.rst:8: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.links.rst:24: WARNING: py:class reference target not found: lino.modlib.links.models.Links
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:4: WARNING: py:mod reference target not found: django.contrib.auth
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:11: WARNING: py:mod reference target not found: django.contrib.sessions
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:15: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:27: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:12: WARNING: unknown document: /topics/http_auth
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:mod reference target not found: base
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
@@ -73,11 +27,3 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:42: WARNING: py:mod reference tar
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:121: WARNING: unknown document: /blog/2010/0803
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:321: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:357: WARNING: py:attr reference target not found: Store.pk_index
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231

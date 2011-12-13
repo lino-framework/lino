@@ -1,7 +1,0 @@
-:label_align: top
-:label: User
-
-main =
-    first_name last_name username
-    is_active is_spis is_staff is_expert is_superuser
-    date_joined last_login 
