@@ -55,94 +55,6 @@ class LinkType(babel.BabelNamed):
         
 
 
-class LinkField(fields.VirtualField):
-    """
-    Used to define the two fields 'a' and 'b' on the Link model.
-    """
-  
-    def __init__(self,fk_field,name,*args,**kw):
-        self.fk_field = fk_field
-        self.typefield_name = name + '_type' 
-        self.idfield_name = name + '_id' 
-        fields.VirtualField.__init__(self,fields.DynamicForeignKey(self),self.get_value)
-    
-    def get_contenttype(self,obj):
-        if not getattr(obj,self.fk_field.name + "_id"):
-            logger.info("20111209 get_contenttype() no type_id in %s", obj2str(obj))
-            return None
-        link_type = getattr(obj,self.fk_field.name)
-        #~ link_type = obj.type
-        return getattr(link_type,self.type_field_name)
-        
-    def to_python(self, value):
-        if isinstance(value,models.Model):
-            return value
-        if not value:
-            return value
-        raise Exception("Cannot know contenttype for %r" % value)
-        #~ ct = self.get_contenttype(obj)
-        #~ if ct is None:
-            #~ return None
-        #~ return ct.get_object_for_this_type(pk=pk)
-            
-        #~ return value
-        
-    def get_prep_value(self, value):
-        if value:
-            return value.pk
-        return None
-        
-    def value_to_string(self, obj):
-        value = self._get_val_from_obj(obj)
-        return self.get_prep_value(value)
-        #~ return self.get_db_prep_value(value,connection)
-        
-    #~ def save_form_data(self, instance, data):
-        #~ setattr(instance, self.name, data)
-        
-    #~ def get_text_for_value(self,value):
-        #~ return self.choicelist.get_text_for_value(value.value)
-        
-    def __get__(self,obj):
-        return self.get_value(obj)
-        
-    def get_value(self,obj,request=None):
-        """
-        The optional 2nd argument `request` (passed from
-        `VirtualField.value_from_object`) is ignored.
-        """
-        pk = getattr(obj,self.name+'_id')
-        if pk is None:
-            return None
-        ct = self.get_contenttype(obj)
-        if ct is None:
-            return None
-        return ct.get_object_for_this_type(pk=pk)
-        
-        #~ try:
-            #~ return ct.get_object_for_this_type(pk=pk)
-        #~ except model.DoesNotExist:
-            #~ return None
-
-    def set_value_in_object(self,request,obj,v):
-        raise Exception("20111208")
-        if not v:
-            setattr(obj,self.name,None)
-            return 
-            
-        ct = self.get_contenttype(obj)
-        if ct is None:
-            raise Exception("20111209")
-            return None
-        
-        if not isinstance(v,ct.model_class()):
-            raise Exception("20111209")
-        setattr(obj,self.name,v.pk)
-
-
-
-
-
 
 #~ class Link(mixins.Reminder):
 #~ class Link(mixins.AutoUser):
@@ -169,9 +81,6 @@ class Link(models.Model):
         blank=True,null=True,
         verbose_name=_('(b object)'))
         
-    #~ a = LinkField(type,'a')
-    #~ b = LinkField(type,'b')
-    
     a = fields.LinkedForeignKey(type,'a')
     b = fields.LinkedForeignKey(type,'b')
     
@@ -207,17 +116,20 @@ class Link(models.Model):
       
     @chooser(instance_values=True)
     def type_choices(cls,a,b):
+        logger.info("20111213 type_choices(%r,%r)",a,b)
         if a:
-            return LinkType.objects.filter(a_type=a.__class__)
+            ct = ContentType.objects.get_for_model(a.__class__)
+            return LinkType.objects.filter(a_type=ct)
         if b:
-            return LinkType.objects.filter(a_type=b.__class__)
+            ct = ContentType.objects.get_for_model(b.__class__)
+            return LinkType.objects.filter(a_type=ct)
         return []
       
     #~ owner_id_choices.instance_values = True
     #~ owner_id_choices = classmethod(owner_id_choices)
         
     def get_a_display(self,value):
-        if self.type:
+        if self.type_id:
             try:
                 return unicode(self.type.a_type.get_object_for_this_type(pk=value))
             except self.type.a_type.model_class().DoesNotExist,e:
@@ -225,7 +137,7 @@ class Link(models.Model):
                     full_model_name(self.type.a_type.model_class()),value)
     
     def get_b_display(self,value):
-        if self.type:
+        if self.type_id:
             try:
                 return unicode(self.type.b_type.get_object_for_this_type(pk=value))
             except self.type.b_type.model_class().DoesNotExist,e:
@@ -240,7 +152,9 @@ class Link(models.Model):
         #~ verbose_name=_('Name'))
             
     def __unicode__(self):
-        return force_unicode(_("%s is %s of %s")) % (self.b, self.type, self.a)
+        if self.type_id:
+            return force_unicode(_("%s (%s)")) % (self.b, self.type)
+        return force_unicode(_("%s - %s")) % (self.b, self.a)
         
 
 class LinkTypes(reports.Report):
@@ -265,10 +179,16 @@ class LinksFromThis(Links):
     master = models.Model
     link_name = 'a'
     #~ master = ContentType # HACK
-    column_names = 'type b'
+    column_names = 'type b a'
     
     def get_create_kw(self,master_instance,**kw):
         kw[self.link_name+'_id'] = master_instance.pk
+        # we *must* store at least one type otherwise Link.type_choices() 
+        # won't get the a (or b) instance
+        ct = ContentType.objects.get_for_model(master_instance.__class__)
+        types = LinkType.objects.filter(**{self.link_name+'_type':ct})
+        if types.count() > 0:
+            kw.update(type=types[0])
         return kw
         
     def get_filter_kw(self,master_instance,**kw):
@@ -285,7 +205,7 @@ class LinksToThis(LinksFromThis):
     """
     master = models.Model
     link_name = 'b'
-    column_names = 'type a'
+    column_names = 'type a b'
     label = _("Links to this")
 
 

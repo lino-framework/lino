@@ -1,0 +1,8 @@
+20111213
+========
+
+Im neuen fields.LinkedForeignKey war noch ein Bug:
+Link.type_choices() kriegt den master nicht mitgeteilt. 
+Ich nehme an, dass ich einen Trick finden muss, dass    
+LinksFromThis.get_create_kw() die master_instance       
+irgendwie in a speichert.                               

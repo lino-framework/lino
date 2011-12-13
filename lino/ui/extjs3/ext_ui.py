@@ -1265,6 +1265,7 @@ tinymce.init({
                 if ar.create_rows:
                     row = ar.create_instance()
                     d = ar.row2list(row)
+                    #~ logger.info('20111213 %s -> %s -> %s', obj2str(ar.master),row, d)
                     #~ d = ar.row2dict(row)
                     #~ 20100706 d[rh.report.model._meta.pk.name] = -99999
                     rows.append(d)

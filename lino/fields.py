@@ -255,6 +255,7 @@ class LinkedForeignKey(generic.GenericForeignKey):
     """
     Like a GenericForeignKey, but the content type 
     is not stored in another model.
+    Code partly copied from django.contrib.contenttypes GenericForeignKey.
     Used by :mod:`lino.modlib.links`.
     
     """
@@ -297,7 +298,7 @@ class LinkedForeignKey(generic.GenericForeignKey):
 
     def get_content_type(self,obj):
         if not getattr(obj,self.type_fk.name+'_id'):
-            logger.info("20111209 get_contenttype() no type_id in %s", obj2str(obj))
+            #~ logger.info("20111209 get_contenttype() no type_id in %s", obj2str(obj))
             return None
         link_type = getattr(obj,self.type_fk.name)
         #~ link_type = obj.type
@@ -330,7 +331,7 @@ class LinkedForeignKey(generic.GenericForeignKey):
 
         ct = self.get_content_type(instance)
         if ct is None:
-            raise ValueError("Cannot store value % sbecause content type is undefined" % value)
+            raise ValueError("Cannot store value % because content type is undefined" % value)
         if not isinstance(value,ct.model_class()):
             raise ValueError("Expected %s instance but got %r" % (ct.model_class(),value))
         

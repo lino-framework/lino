@@ -213,7 +213,7 @@ class ForeignKeyStoreField(ComboStoreField):
     def get_value_text(self,obj):
         relto_model = self.get_rel_to(obj)
         if not relto_model:
-            #~ logger.info("20111209 get_value_text: no relto_model")
+            logger.info("20111213 ForeignKeyStoreField.get_value_text: no relto_model")
             return (None, None)
         try:
             v = getattr(obj,self.field.name)
