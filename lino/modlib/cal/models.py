@@ -89,6 +89,7 @@ class Calendar(mixins.AutoUser):
         default='local',
         choices=CALENDAR_CHOICES)
     name = models.CharField(_("Name"),max_length=200)
+    description = fields.RichTextField(_("Description"),blank=True,format='html')
     url_template = models.CharField(_("URL template"),
         max_length=200,blank=True) # ,null=True)
     username = models.CharField(_("Username"),
@@ -98,6 +99,8 @@ class Calendar(mixins.AutoUser):
     readonly = models.BooleanField(_("read-only"),default=False)
     is_default = models.BooleanField(
         _("is default"),default=False)
+    is_hidden = models.BooleanField(
+        _("is hidden"),default=False)
     start_date = models.DateField(
         verbose_name=_("Start date"),
         blank=True,null=True)
@@ -135,6 +138,12 @@ class Calendar(mixins.AutoUser):
                     
     def __unicode__(self):
         return self.name
+        
+    def color(self,request):
+        return settings.LINO.get_calendar_color(self,request)
+    #~ color.return_type = fields.DisplayField(_("Color"))
+    color.return_type = models.IntegerField(_("Color"))
+        
         
     
 class Calendars(reports.Report):
@@ -433,6 +442,22 @@ class Component(ComponentBase,
             raise Exception('Cannot create local calendar components because settings.LINO.uid is empty.')
         return "%s@%s" % (self.pk,settings.LINO.uid)
             
+    def save(self,*args,**kw):
+        if self.owner:
+            #~ if self.owner.__class__.__name__ == 'Person':
+                #~ self.person = self.owner
+            #~ elif self.owner.__class__.__name__ == 'Company':
+                #~ self.company = self.owner
+            m = getattr(self.owner,'update_owned_instance',None)
+            #~ m = getattr(self.owner,'update_owned_task',None)
+            if m:
+                #~ print "20111014 call update_owned_task() on", self.owner
+                m(self)
+            #~ else:
+                #~ print "20111014 no update_owned_task on", self
+              
+        super(Component,self).save(*args,**kw)
+
 
     def on_user_change(self,request):
         self.user_modified = True
@@ -570,21 +595,6 @@ class Task(Component):
         #~ lino.TASK_AUTO_FIELDS = reports.fields_list(cls,
         cls.DISABLED_AUTO_FIELDS = reports.fields_list(cls,
             '''start_date start_time summary''')
-
-    def save(self,*args,**kw):
-        if self.owner:
-            #~ if self.owner.__class__.__name__ == 'Person':
-                #~ self.person = self.owner
-            #~ elif self.owner.__class__.__name__ == 'Company':
-                #~ self.company = self.owner
-            m = getattr(self.owner,'update_owned_task',None)
-            if m:
-                #~ print "20111014 call update_owned_task() on", self.owner
-                m(self)
-            #~ else:
-                #~ print "20111014 no update_owned_task on", self
-              
-        super(Task,self).save(*args,**kw)
 
     def __unicode__(self):
         return "#" + str(self.pk)
@@ -894,6 +904,10 @@ if settings.LINO.use_extensible:
     class Panel(reports.Frame):
         default_action_class = reports.Calendar
 
+    class PanelCalendars(Calendars):
+        column_names = 'id name description color is_hidden'
+        can_add = perms.never
+      
     class PanelEvents(Events):
         """
         The report used for Ext.ensible CalendarPanel.

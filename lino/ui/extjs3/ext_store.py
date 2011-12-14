@@ -792,6 +792,19 @@ class Store:
             l += fld.column_names()
         return l
         
+    def column_index(self,name):
+        """Used to write definition of Ext.ensible.cal.CalendarMappings
+        and Ext.ensible.cal.EventMappings
+        """
+        #~ logger.info("20111214 column_names: %s",list(self.column_names()))
+        return list(self.column_names()).index(name)
+        #~ i = 0
+        #~ for fld in self.list_fields:
+            #~ for cn in fld.column_names()
+            #~ if fld.field and fld.field.name == name:
+                #~ return i
+            #~ i += 1
+        
 
     def row2dict(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)

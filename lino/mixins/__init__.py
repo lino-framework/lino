@@ -48,7 +48,7 @@ class AutoUser(models.Model):
             if u is not None:
                 self.user = u
             
-        def update_owned_task(self,task):
+        def update_owned_instance(self,task):
             task.user = self.user
 
 if settings.LINO.user_model: 
@@ -189,8 +189,8 @@ class Owned(models.Model):
                     full_model_name(self.owner_type.model_class()),value)
             
             
-    def update_owned_task(self,task):
-        m = getattr(self.owner,'update_owned_task',None)
+    def update_owned_instance(self,task):
+        m = getattr(self.owner,'update_owned_instance',None)
         if m:
             m(task)
 

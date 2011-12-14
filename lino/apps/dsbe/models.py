@@ -586,7 +586,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
               #~ alarm_value=1,alarm_unit=DurationUnit.months)
           
     #~ def get_auto_task_defaults(self,**kw):
-    def update_owned_task(self,task):
+    def update_owned_instance(self,task):
         task.project = self
         
     @classmethod
@@ -1238,9 +1238,9 @@ class Note(notes.Note,contacts.PartnerDocument,mixins.DiffingMixin):
         #~ kw = contacts.PartnerDocument.get_auto_task_defaults(self,**kw)
         #~ return kw
         
-    def update_owned_task(self,task):
-        notes.Note.update_owned_task(self,task)
-        contacts.PartnerDocument.update_owned_task(self,task)
+    def update_owned_instance(self,task):
+        notes.Note.update_owned_instance(self,task)
+        contacts.PartnerDocument.update_owned_instance(self,task)
         
     #~ def disabled_fields(self,request):
         #~ if self.must_build:

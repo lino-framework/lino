@@ -12,15 +12,25 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Custom Quick filters 
-    See :doc:`/blog/2011/1207`.
-
 #.  :class:´lino.modlib.jobs.Function` : "Funktionen" 
     umbenennen nach "Qualifikationen"?
     Weil auch :class:´lino.modlib.contacts.RoleType` so übersetzt wird.
     Oder aber Modelle :class:´lino.modlib.jobs.Function` 
     und :class:´lino.modlib.contacts.RoleType` vereinigen.
+    Eher Letzteres.
     Aber was passiert dann mit den Sektoren?
+    Antwort: Function.sector wird optional. 
+    Es gibt Funktionen, die nicht sektorgebunden sind (Lagerarbeiter, 
+    Direktor, Sekretär)
+    Es könnte Stellenanfragen geben, die für einen bestimmten Sektor, 
+    aber nicht für eine bestimmte Funktion gemeint sind 
+    ("Ich suche einen Job im Horeca-Bereich, egal was")
+    Als Qualifikationen würde ich eher noch eine weitere Tabelle 
+    vorschlagen: pro Stellenamgebot bzw. Personensuche 
+    eine Liste von "erforderlichen Ausbildungen". 
+    Vielleicht auch keine Liste, sondern nur ein Feld, 
+    weil meistens nur ein Ausbildungsabschluss erforderlich ist.
+    
 
 #.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
 
@@ -33,9 +43,6 @@ Short-term
 #.  Idee: Notizen, Termine und Verträge mit MTI als Kinder einer 
     allgemeinen Tabelle "Chronikeinträge" implementieren.
     
-#.  Idee: Berufswünsche raus, und in "Stellenanfragen" stattdessen 
-    zwei neue Kolonnen Sektor und Funktion.
-
 #.  Listing 
     "Personnes par phase d'intégration par AI" 
     and
@@ -61,55 +68,10 @@ Short-term
     Auch den timestamp der Datei speichern, um ermitteln zu können, 
     ob sie manuell bearbeitet wurde.
       
-#.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
-    das Detail des Owners anzuzeigen. GenericForeignKey könnte auch was 
-    Ähnliches wie `Lino.show_mti_child`  kriegen...
-
-#.  `Extensible <http://ext.ensible.com/>`_ 
-    (founded by Brian Moeskau, one of the original cofounders of Ext JS)
-    has a `Widget for calendar event recurrency 
-    <http://ext.ensible.com/deploy/dev/examples/calendar/recurrence-widget.html>`_.
-    Extensible: 
-    "We make make high-quality components and extensions for the Ext 
-    JS JavaScript framework. Our flagship product is Ext Calendar Pro, a 
-    professional calendar component suite."
-    "Extensible is dual-licensed, just like Ext JS."
-    
-#.  :mod:`lino.modlib.mails.models`: 
-    InMail und OutMail könnten eine einzige Tabelle sein. 
-    `Recipient` würde dann zwei neue Felder `received` 
-    und `read` kriegen.
-    Mails sind dann nur bearbeitbar für ihren Autor und auch 
-    für den nur so lange sie nicht abgeschickt sind.
-    Wenn ein Lino-Benutzer einem anderen eine Mail schickt 
-    (und eine entsprechende Konfigurationsoption gesetzt ist),
-    würde Lino die Mail gar nicht erst rausschicken, sondern 
-    einfach nur `received` und `sent` auf `datetime.now()` 
-    setzen.
-
-
 #.  Remote calendars (:doc:`/tickets/47`):
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
     
-#.  Notizen per E-Mail verschicken können.    
-    Soll Text der Notiz in den Body der E-Mail kopiert werden 
-    und dort bearbeitbar sein? Dadurch würden die Benutzer allerdings 
-    zu redundanter Arbeitsweise erzogen... zu meditieren.
-    
-#.  contacts.Group: Eine Kontaktgruppe hat keine zusätzlichen Felder, 
-    das Modell wäre lediglich da, um eine Liste aller Gruppen anzeigen 
-    und ggf. spezifische Detail-Fenster definieren zu können.
-    Die Mitglieder einer Gruppe sind die Kontaktpersonen 
-    (:class:`lino.modlib.contacts.models.Role`).
-    Der eigentliche Unterschied ist, dass Gruppen (im Gegensatz zu Firmen) 
-    automatisch ihre Mitgliedsadressen expandieren müssen, 
-    wenn sie als Recipient einer Email fungieren.
-    Das könnte aber auch bei Firmen und sogar bei Personen ein 
-    interessantes Feature sein, 
-    in diesem Fall brauchen wir gar keine eigene Tabelle Group.
-    Zu meditieren.
-
 #.  notes.Notes nicht mehr PartnerDocument sondern ProjectBased.
     In einer Notiz wie Nr. 1019 würde dann die Zuweisung zur 
     Firma verloren gehen. Kann ggf. als Drittpartner eingegeben 
@@ -130,10 +92,6 @@ Short-term
     Note that Uploadable.file is a FileField(upload_to='/media/uploads').
     Maybe another field "local_file", a simple CharField?
     
-
-#.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
-    See :doc:`/blog/20110725` and :doc:`/blog/20110809`.
-
 #.  In Übersichtsliste die Benutzer des DSBE und die vom allgemeinen 
     Sozialdienst trennen. Also ein neues Feld `User.department`. 
     Sich dabei jedoch an der Struktur des LDAP-Verzeichnisses 
@@ -144,23 +102,11 @@ Short-term
     am besten konfigurierbar in zwei neuen Felder `UploadType.alarm_value`
     `UploadType.alarm_unit`.
     
-#.  Support for eID cards: (1) read data from card and (2) user authentication.
-
-    http://code.google.com/p/eid-javascript-lib/downloads/list
-    
-    http://www.e-contract.be/
-    http://code.google.com/p/eid-applet/
-    
 #.  auf Jana werden Tabellen nicht korrekt gerendert, auf Armand wohl.
 
       - OOo-Version? auf Jana ist 3.2:
         zless /usr/share/doc/openoffice.org-core/README.gz
       - appy.pod-Version?
-
-#.  Brauchen wir eine Methode "readonly" pro Record? Zum Beispiel sollen 
-    inaktive Personen allgemein nicht verändert werden können. 
-    Aber das ist eigentlich eher ein Sonderfall für `disabled_fields`, 
-    die dann "alle Felder (außer `is_active`)
 
 #.  Lino könnte per LDAP-Request verschiedene Angaben 
     in :class:`auth.User` (Name, E-Mail,...) 
@@ -171,22 +117,48 @@ Short-term
     http://www.openldap.org/
     nötig.
 
-#.  Button "Cache löschen" deaktivieren, wenn
-    :attr:`lino.mixins.printable.Printable.must_build` `True` ist.
-    Dazu muss `disabled_fields` in der :xfile:`linolib.js` auch 
-    auf actions angewendet werden.
-
 #.  Externe Links (Lesezeichen) und Uploads per drag & drop machen können, 
     indem man sie von einer anderen Anwendung auf die HtmlBox zieht.
     (u.a. :doc:`/tickets/8`)
 
 #.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`
-
     
 #.  Doppelklick auf Memo-Text einer Note in einer Grid
     bewirkt *nichts*. 
     Sollte doch wenigstens das Detail-Fenster öffnen.
     
+
+Medium-term
+-----------
+
+#.  Support for eID cards: (1) read data from card and (2) user authentication.
+
+    http://code.google.com/p/eid-javascript-lib/downloads/list
+    
+    http://www.e-contract.be/
+    http://code.google.com/p/eid-applet/
+    
+#.  Notizen per E-Mail verschicken können.    
+    Soll Text der Notiz in den Body der E-Mail kopiert werden 
+    und dort bearbeitbar sein? Dadurch würden die Benutzer allerdings 
+    zu redundanter Arbeitsweise erzogen... zu meditieren.
+    
+#.  contacts.Group: Eine Kontaktgruppe hat keine zusätzlichen Felder, 
+    das Modell wäre lediglich da, um eine Liste aller Gruppen anzeigen 
+    und ggf. spezifische Detail-Fenster definieren zu können.
+    Die Mitglieder einer Gruppe sind die Kontaktpersonen 
+    (:class:`lino.modlib.contacts.models.Role`).
+    Der eigentliche Unterschied ist, dass Gruppen (im Gegensatz zu Firmen) 
+    automatisch ihre Mitgliedsadressen expandieren müssen, 
+    wenn sie als Recipient einer Email fungieren.
+    Das könnte aber auch bei Firmen und sogar bei Personen ein 
+    interessantes Feature sein, 
+    in diesem Fall brauchen wir gar keine eigene Tabelle Group.
+    Zu meditieren.
+
+#.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
+    See :doc:`/blog/20110725` and :doc:`/blog/20110809`.
+
 #.  Buttons sollten gleich nach einem Klick deaktiviert werden, 
     bis die Aktion abgeschlossen ist.
     Wenn man z.B. auf den Lebenslauf-Button doppelt klickt, versucht 
@@ -199,9 +171,13 @@ Short-term
     "/usr/local/django/dsbe_eupen/media/cache/appypdf/contacts.Person-22315.pdf.temp"
     but this folder already exists."
 
+#.  Brauchen wir eine Methode "readonly" pro Record? Zum Beispiel sollen 
+    inaktive Personen allgemein nicht verändert werden können. 
+    Aber das ist eigentlich eher ein Sonderfall für `disabled_fields`, 
+    die dann "alle Felder (außer `is_active`)
 
-Medium-term
------------
+#.  Custom Quick filters 
+    See :doc:`/blog/2011/1207`.
 
 #.  lino.apps.dsbe has a database design flaw: 
     Person should be split into "Clients" and "normal" persons.

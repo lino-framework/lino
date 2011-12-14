@@ -2875,15 +2875,15 @@ Lino.on_load_menu = function(response) {
   if (i) i.focus();
 };      
 
-Lino.load_main_menu = function() {
-  Ext.Ajax.request({
-    waitMsg: 'Loading main menu...',
-    method: 'GET',
-    url: '/menu',
-    success: Lino.on_load_menu,
-    failure: Lino.ajax_error_handler
-  });
-};
+//~ Lino.load_main_menu = function() {
+  //~ Ext.Ajax.request({
+    //~ waitMsg: 'Loading main menu...',
+    //~ method: 'GET',
+    //~ url: '/menu',
+    //~ success: Lino.on_load_menu,
+    //~ failure: Lino.ajax_error_handler
+  //~ });
+//~ };
 
 
 
@@ -3328,40 +3328,41 @@ Lino.davlink_open = function(webdavURL) {
 #if $settings.LINO.use_extensible and $settings.LINO.has_module('lino.modlib.cal')
 
 
-//~ Ext.ensible.cal.EventMappings = {
-    //~ EventId:     {name: 'ID', mapping:'id', type:'int'},
-    //~ CalendarId:  {name: 'CalID', mapping: 'calendar_id', type: 'int'},
-    //~ Title:       {name: 'EvtTitle', mapping: 'summary'},
-    //~ StartDate:   {name: 'StartDt', mapping: 'start_date', type: 'date', dateFormat: 'c'},
-    //~ EndDate:     {name: 'EndDt', mapping: 'end_date', type: 'date', dateFormat: 'c'},
-    //~ RRule:       {name: 'RecurRule', mapping: 'recur_rule'},
-    //~ Location:    {name: 'Location', mapping: 'place'},
-    //~ Notes:       {name: 'Desc', mapping: 'description'},
-    //~ Url:         {name: 'LinkUrl', mapping: 'link_url'},
-    //~ IsAllDay:    {name: 'AllDay', mapping: 'all_day', type: 'boolean'},
-    //~ Reminder:    {name: 'Reminder', mapping: 'reminder'},
-    
-    //~ // We can also add some new fields that do not exist in the standard EventRecord:
-    //~ CreatedBy:   {name: 'CreatedBy', mapping: 'created_by'},
-    //~ IsPrivate:   {name: 'Private', mapping:'private', type:'boolean'}
-//~ };
+/*
+Mappings towards lino.modlib.cal.models.PanelCalendars
+*/
+#set $S = $ui.get_actor('cal.PanelCalendars').store
+Ext.ensible.cal.CalendarMappings = {
+    CalendarId:   {name:'ID', mapping: $S.column_index('id'), type: 'int'},
+    Title:        {name:'CalTitle', mapping: $S.column_index('name'), type: 'string'},
+    Description:  {name:'Desc', mapping: $S.column_index('description'), type: 'string'},
+    ColorId:      {name:'Color', mapping: $S.column_index('color'), type: 'int'},
+    IsHidden:     {name:'Hidden', mapping: $S.column_index('is_hidden'), type: 'boolean'},    
+};
+Ext.ensible.cal.CalendarRecord.reconfigure();  
 
+
+/*
+Mappings towards lino.modlib.cal.models.PanelEvents 
+*/
+#set $S = $ui.get_actor('cal.PanelEvents').store
 Ext.ensible.cal.EventMappings = {
-    EventId:     {name: 'ID', mapping:0, type:'int'},
-    CalendarId:  {name: 'CalID', mapping: 10, type: 'int'},
-    Title:       {name: 'EvtTitle', mapping: 3},
-    StartDate:   {name: 'StartDt', mapping: 1, type: 'date', dateFormat: 'c'},
-    EndDate:     {name: 'EndDt', mapping: 2, type: 'date', dateFormat: 'c'},
-    RRule:       {name: 'RecurRule', mapping: 13},
-    Location:    {name: 'Location', mapping: 8},
-    Notes:       {name: 'Desc', mapping: 4},
-    Url:         {name: 'LinkUrl', mapping: 14},
-    IsAllDay:    {name: 'AllDay', mapping: 15, type: 'boolean'},
-    Reminder:    {name: 'Reminder', mapping: 16}
+    EventId:     {name: 'ID', mapping: $S.column_index('id'), type:'int'},
+    CalendarId:  {name: 'CalID', mapping: $S.column_index('calendarHidden'), type: 'int'},
+    Title:       {name: 'EvtTitle', mapping: $S.column_index('summary')},
+    StartDate:   {name: 'StartDt', mapping: $S.column_index('start_dt'), type: 'date', dateFormat: 'c'},
+    EndDate:     {name: 'EndDt', mapping: $S.column_index('end_dt'), type: 'date', dateFormat: 'c'},
+    RRule:       {name: 'RecurRule', mapping: $S.column_index('rsetHidden')},
+    Location:    {name: 'Location', mapping: $S.column_index('placeHidden')},
+    Notes:       {name: 'Desc', mapping: $S.column_index('description')},
+    Url:         {name: 'LinkUrl', mapping: $S.column_index('url')},
+    IsAllDay:    {name: 'AllDay', mapping: $S.column_index('all_day'), type: 'boolean'},
+    Reminder:    {name: 'Reminder', mapping: $S.column_index('reminder')}
     
 };
 // Don't forget to reconfigure!
 Ext.ensible.cal.EventRecord.reconfigure();
+
 
 Lino.on_eventclick = function(cp,rec,el) {
   console.log("Lino.on_eventclick",arguments);
@@ -3370,8 +3371,32 @@ Lino.on_eventclick = function(cp,rec,el) {
 }
     
 Lino.on_eventadd  = function(cp,rec,el) {
-  console.log("Lino.on_eventadd ",arguments);
-  Lino.cal.Events.insert(cp,{});
+  var M = Ext.ensible.cal.EventMappings;
+  var params = {
+    //~ id: rec.data[M.EventId.name],
+    calendarHidden: rec.data[M.CalendarId.name],
+    summary: rec.data[M.Title.name],
+    start_dt: rec.data[M.StartDate.name],
+    //~ StartDate:   {name: 'StartDt', mapping: $S.column_index('start_dt'), type: 'date', dateFormat: 'c'},
+    //~ EndDate:     {name: 'EndDt', mapping: $S.column_index('end_dt'), type: 'date', dateFormat: 'c'},
+    //~ RRule:       {name: 'RecurRule', mapping: $S.column_index('rsetHidden')},
+    //~ Location:    {name: 'Location', mapping: $S.column_index('placeHidden')},
+    //~ Notes:       {name: 'Desc', mapping: $S.column_index('description')},
+    //~ Url:         {name: 'LinkUrl', mapping: $S.column_index('url')},
+    //~ IsAllDay:    {name: 'AllDay', mapping: $S.column_index('all_day'), type: 'boolean'},
+    //~ Reminder:    {name: 'Reminder', mapping: $S.column_index('reminder')}
+    };
+  var a = {
+    url: ROOT_URL + '/api/cal/Events',
+    method: 'POST',
+    params: params, 
+    success: function(form, action) {
+    }
+  }
+  console.log("Lino.on_eventadd ",arguments,'-->',a);
+  //~ Ext.Ajax.request(a);
+  
+  //~ Lino.cal.Events.insert(cp,{});
   return false;
 }
     
@@ -3385,9 +3410,7 @@ Lino.on_eventresize  = function(cp,rec,el) {
 
 Lino.eventStore = new Ext.data.ArrayStore({ 
       listeners: { exception: Lino.on_store_exception }, 
-      //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
       proxy: new Ext.data.HttpProxy({ 
-          //~ url: ROOT_URL + '/api'+config.ls_url, 
           url: ROOT_URL + '/api/cal/PanelEvents?fmt=json', 
           method: "GET"
           //~ listeners: {load:on_proxy_load} 
@@ -3399,145 +3422,25 @@ Lino.eventStore = new Ext.data.ArrayStore({
       root: "rows", 
       fields: Ext.ensible.cal.EventRecord.prototype.fields.getRange(),
       idProperty: Ext.ensible.cal.EventMappings.EventId.mapping
-      //~ fields: [ 
-        //~ { "type": "date", "name": "start_date", "dateFormat": "d.m.Y" }, 
-        //~ { "name": "start_time" }, 
-        //~ { "name": "summary" }, 
-        //~ { "name": "status" },
-        //~ 'statusHidden', 
-        //~ { "type": "int", "name": "id" }, 
-        //~ { "name": "user" },
-        //~ 'userHidden', 
-        //~ { "name": "created" }, 
-        //~ { "name": "modified" }, 
-        //~ { "name": "owner_type" },'owner_typeHidden', 
-        //~ { "name": "owner_id" },'owner_idHidden', 
-        //~ { "name": "project" },'projectHidden', 
-        //~ { "type": "boolean", "name": "must_build" }, 
-        //~ { "name": "calendar" },'calendarHidden', 
-        //~ { "name": "uid" }, 
-        //~ { "name": "description" }, 
-        //~ { "name": "access_class" },'access_classHidden', 
-        //~ { "type": "int", "name": "sequence" }, 
-        //~ { "type": "int", "name": "auto_type" }, 
-        //~ { "type": "boolean", "name": "user_modified" }, 
-        //~ { "name": "rset" },
-        //~ 'rsetHidden', 
-        //~ { "type": "date", "name": "end_date", "dateFormat": "d.m.Y" }, 
-        //~ { "name": "end_time" }, 
-        //~ { "type": "boolean", "name": "transparent" }, 
-        //~ { "name": "type" },
-        //~ 'typeHidden', 
-        //~ { "name": "place" },'placeHidden', 
-        //~ { "name": "priority" },'priorityHidden', 
-        //~ { "type": "int", "name": "duration_value" }, 
-        //~ { "name": "duration_unit" },'duration_unitHidden', 
-        //~ { "name": "owner" }, { "type": "int", "name": "id" }, 
-        //~ { "name": "disabled_fields" }, 
-        //~ { "name": "disable_editing" } ], 
-      //~ idIndex: 5,
+    });
+
+Lino.calendarStore = new Ext.data.ArrayStore({ 
+      listeners: { exception: Lino.on_store_exception }, 
+      proxy: new Ext.data.HttpProxy({ 
+          url: ROOT_URL + '/api/cal/PanelCalendars?fmt=json', 
+          method: "GET"
+          //~ listeners: {load:on_proxy_load} 
+      }), 
+      //~ autoLoad: true,
+      //~ remoteSort: true, 
+      //~ baseParams: bp, 
+      totalProperty: "count", 
+      root: "rows", 
+      fields: Ext.ensible.cal.CalendarRecord.prototype.fields.getRange(),
+      idProperty: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
     });
 
 
-//~ console.log(20111124, Lino.eventStore);
-    
-/*
-//~ Lino.EventEditForm = Ext.extend(Lino.cal.Events.detailPanel,{
-Lino.EventEditFormMixin = {
-  // private
-  onDateChange: function(dateRangeField, val){
-      console.log('Lino.EventEditFormMixin.onDateChange');
-  },
-  
-  // inherited docs
-  loadRecord: function(rec){
-      this.activeRecord = rec;
-      this.goto_record_id(rec[Ext.ensible.cal.EventMappings.EventId]);
-      //~ this.set_current_record(rec);
-  },
-  
-  // inherited docs
-  updateRecord: function(){
-      console.log("Lino.EventEditFormMixin.updateRecord() not implemented");
-      var dates = this.dateRangeField.getValue(),
-          M = Ext.ensible.cal.EventMappings,
-          rec = this.activeRecord,
-          fs = rec.fields,
-          dirty = false;
-          
-      rec.beginEdit();
-      
-      //TODO: This block is copied directly from BasicForm.updateRecord.
-      // Unfortunately since that method internally calls begin/endEdit all
-      // updates happen and the record dirty status is reset internally to
-      // that call. We need the dirty status, plus currently the DateRangeField
-      // does not map directly to the record values, so for now we'll duplicate
-      // the setter logic here (we need to be able to pick up any custom-added 
-      // fields generically). Need to revisit this later and come up with a better solution.
-      fs.each(function(f){
-          var field = this.form.findField(f.name);
-          if(field){
-              var value = field.getValue();
-              if (value.getGroupValue) {
-                  value = value.getGroupValue();
-              } 
-              else if (field.eachItem) {
-                  value = [];
-                  field.eachItem(function(item){
-                      value.push(item.getValue());
-                  });
-              }
-              rec.set(f.name, value);
-          }
-      }, this);
-      
-      rec.set(M.StartDate.name, dates[0]);
-      rec.set(M.EndDate.name, dates[1]);
-      rec.set(M.IsAllDay.name, dates[2]);
-      
-      dirty = rec.dirty;
-      //delete rec.store; // make sure the record does not try to autosave
-      rec.endEdit();
-      
-      return dirty;
-  },
-  
-  // private
-  onCancel: function(){
-      this.cleanup(true);
-      this.fireEvent('eventcancel', this, this.activeRecord);
-  },
-  
-  // private
-  cleanup: function(hide){
-      if(this.activeRecord){
-          this.activeRecord.reject();
-      }
-      delete this.activeRecord;
-      
-      if(this.form.isDirty()){
-          this.form.reset();
-      }
-  },
-  
-  // private
-  onSave: function(){
-      if(!this.form.isValid()){
-          return;
-      }
-      if(!this.updateRecord()){
-          this.onCancel();
-          return;
-      }
-      this.fireEvent(this.activeRecord.phantom ? 'eventadd' : 'eventupdate', this, this.activeRecord);
-  },
-
-  // private
-  onDelete: function(){
-      this.fireEvent('eventdelete', this, this.activeRecord);
-  }
-};
-*/
 
 Lino.CalendarCfg = {
     dateParamFormat: '$settings.LINO.date_format_extjs',
@@ -3547,7 +3450,8 @@ Lino.CalendarCfg = {
 Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
   todayText : 'Today',
   title : 'Basic Calendar',
-  store: Lino.eventStore,
+  eventStore: Lino.eventStore,
+  calendarStore: Lino.calendarStore,
   listeners: { 
     eventclick: Lino.on_eventclick
     ,eventadd: Lino.on_eventadd
@@ -3560,6 +3464,7 @@ Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
   dayViewCfg: Lino.CalendarCfg,
   constructor : function(config) {
     //~ Ext.reg('extensible.eventeditwindow', Lino.cal.Event.FormPanel);
+    Lino.calendarStore.load();
     Lino.eventStore.load();
     //~ Lino.EventEditForm = Lino.cal.Event.FormPanel;
     //~ Lino.EventEditForm = Ext.extend(Lino.cal.Events.detailPanel,Lino.EventEditFormMixin);
@@ -3573,77 +3478,6 @@ Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
 Ext.override(Lino.CalendarPanel,Lino.MainPanel);
 //~ Ext.override(Lino.CalendarPanel,Lino.FieldBoxMixin);
 
-
-/***
-Ext.override(Ext.ensible.cal.CalendarView,{
-    getEventEditor : function(){
-        // only create one instance of the edit window, even if there are multiple CalendarPanels
-        this.editWin = this.editWin || Ext.WindowMgr.get('ext-cal-editwin');
-      
-      
-        if(!this.editWin){
-            //~ this.editWin = new Ext.ensible.cal.EventEditWindow({
-            this.editWin = new Lino.cal.Event.FormPanel({
-                id: 'ext-cal-editwin',
-                calendarStore: this.calendarStore,
-                modal: this.editModal,
-                enableEditDetails: this.enableEditDetails,
-                listeners: {
-                    'eventadd': {
-                        fn: function(win, rec, animTarget){
-                            //win.hide(animTarget);
-                            win.currentView.onEventAdd(null, rec);
-                        },
-                        scope: this
-                    },
-                    'eventupdate': {
-                        fn: function(win, rec, animTarget){
-                            //win.hide(animTarget);
-                            win.currentView.onEventUpdate(null, rec);
-                        },
-                        scope: this
-                    },
-                    'eventdelete': {
-                        fn: function(win, rec, animTarget){
-                            //win.hide(animTarget);
-                            win.currentView.onEventDelete(null, rec);
-                        },
-                        scope: this
-                    },
-                    'editdetails': {
-                        fn: function(win, rec, animTarget, view){
-                            win.hide(animTarget);
-                            win.currentView.fireEvent('editdetails', win.currentView, rec, animTarget);
-                        },
-                        scope: this
-                    },
-                    'eventcancel': {
-                        fn: function(win, rec, animTarget){
-                            this.dismissEventEditor(animTarget);
-                            win.currentView.onEventCancel();
-                        },
-                        scope: this
-                    }
-                }
-            });
-        }
-        
-        // allows the window to reference the current scope in its callbacks
-        this.editWin.currentView = this;
-        return this.editWin;
-    }
-  
-});
-***/
-
-
-//~ Lino.CalendarWrapper = Lino.WindowWrapper;
-
-//~ Lino.CalendarWrapper = Ext.extend(Lino.WindowWrapper, {
-  //~ setup : function() {
-    //~ Lino.WindowWrapper.prototype.setup.call(this);
-  //~ }
-//~ });
 
 
 #end if

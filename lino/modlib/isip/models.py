@@ -261,7 +261,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         super(ContractBase,self).full_clean(*args,**kw)
         
 
-    def update_owned_task(self,task):
+    def update_owned_instance(self,task):
         #~ mixins.Reminder.update_owned_task(self,task)
         #~ contacts.PartnerDocument.update_owned_task(self,task)
         task.project = self.person

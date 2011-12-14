@@ -1560,6 +1560,7 @@ tinymce.init({
         tpl.site = settings.LINO
         tpl.settings = settings
         tpl.lino = lino
+        tpl.ui = self
         tpl.ext_requests = ext_requests
         for k in ext_requests.URL_PARAMS:
             setattr(tpl,k,getattr(ext_requests,k))
@@ -2221,3 +2222,8 @@ tinymce.init({
             yield "  }).show();"
             yield "};"
             
+    def get_actor(self,*args,**kw):
+        from lino.core import actors
+        a = actors.get_actor(*args,**kw)
+        return a.get_handle(self)
+        

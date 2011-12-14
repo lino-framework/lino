@@ -1,0 +1,43 @@
+20111214
+========
+
+The following todo items have been solved for some time, 
+I just forgot to remove them from the todo list:
+
+#.  Button "Cache löschen" deaktivieren, wenn
+    :attr:`lino.mixins.printable.Printable.must_build` `True` ist.
+    Dazu muss `disabled_fields` in der :xfile:`linolib.js` auch 
+    auf actions angewendet werden.
+    
+#.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
+    das Detail des Owners anzuzeigen. GenericForeignKey könnte auch was 
+    Ähnliches wie `Lino.show_mti_child`  kriegen...
+
+#.  :mod:`lino.modlib.mails.models`: 
+    InMail und OutMail könnten eine einzige Tabelle sein. 
+    `Recipient` würde dann zwei neue Felder `received` 
+    und `read` kriegen.
+    Mails sind dann nur bearbeitbar für ihren Autor und auch 
+    für den nur so lange sie nicht abgeschickt sind.
+    Wenn ein Lino-Benutzer einem anderen eine Mail schickt 
+    (und eine entsprechende Konfigurationsoption gesetzt ist),
+    würde Lino die Mail gar nicht erst rausschicken, sondern 
+    einfach nur `received` und `sent` auf `datetime.now()` 
+    setzen.
+
+
+
+Continued on on :doc:`/tickets/52`
+----------------------------------
+
+- new field Calendar.description
+- new report PanelCalendars when :attr:`lino.Lino.use_extensible`
+- calendarStore
+- new methods ui.get_actor() and Store.column_index()
+- In `linolib.js`, define `Ext.ensible.cal.CalendarMappings` to fit with 
+  `lino.modlib.cal.models.PanelCalendars`.
+  
+- update_owned_task was never called on an Event...
+  Renamed to `update_owned_instance`.
+  Basically this `update_owned_instance` might be defined in 
+  Owned 

@@ -1,0 +1,10 @@
+#52 : Ext.ensible Calendar Panel
+================================
+
+`Extensible <http://ext.ensible.com/>`_ 
+(founded by Brian Moeskau, one of the original cofounders of Ext JS)
+is a library of Free ExtJS-based calendar components 
+including month, week and day views. 
+
+We started end of November 2011 to integrate the `Ext.ensible.cal.CalendarPanel`
+into Lino.

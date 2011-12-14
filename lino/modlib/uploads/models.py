@@ -110,10 +110,10 @@ class Upload(
           self,
           alarm_value=2,alarm_unit=DurationUnit.months)
         
-    def update_owned_task(self,task):
-        #~ logger.info("Upload.update_owned_task() %s : owner is %s", self.pk, self.owner)
-        mixins.AutoUser.update_owned_task(self,task)
-        mixins.Owned.update_owned_task(self,task)
+    def update_owned_instance(self,task):
+        #~ logger.info("Upload.update_owned_instance() %s : owner is %s", self.pk, self.owner)
+        mixins.AutoUser.update_owned_instance(self,task)
+        mixins.Owned.update_owned_instance(self,task)
           
         
 class Uploads(reports.Report):

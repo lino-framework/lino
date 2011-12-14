@@ -552,7 +552,7 @@ class PartnerDocument(models.Model):
             s += " (" + ui.href_to(self.company) + ")"
         return s
             
-    def update_owned_task(self,task):
+    def update_owned_instance(self,task):
         task.person = self.person
         task.company = self.company
         

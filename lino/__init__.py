@@ -732,6 +732,11 @@ class Lino(object):
     def setup_menu(self,ui,user,menu):
         raise NotImplementedError
         
+    def get_calendar_color(self,calendar,request):
+        if calendar.user == request.user:
+            return 1
+        return 2
+        
     def get_middleware_classes(self):
         """
         Yields the strings to be stored in 
