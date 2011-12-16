@@ -6,12 +6,24 @@ The CalendarStore not only needed a `idProperty` but also an `idIndex` config op
 I didn't understand 100% why, but now it works perfectly.
 
 The `color` of a :class:`lino.modlib.cal.models.Calendar` no longer 
-is a virtual field but a simple `models.IntegerField`. 
+is a virtual field but a simple `models.IntegerField`. There's currently 
+not even a ComboBox (because Lino doesn't yet know how to implement Comboboxes for Integers), 
+users must know that this field is meant to contain a value between 1 and 32.
+At least
 
-A few important things are missing before I can say that CalendarPanel 
-is integrated: creating events and updating events.
+One important thing is missing before we can say that CalendarPanel 
+is integrated: creating and updating events doesn't work because my handlers 
+currently don't forward it to Lino.
 
-But also an almost philosphical question: where should the label "Calendar" 
-(and it's translations) be stored?
-Report
-Report's default_action
+There is also an almost philosphical question: where should the label "Calendar" 
+(and it's translations) be defined? Currently it is in 
+:class:`lino.reports.Calendar`. The whole pot-pourri of actors and actions 
+(Report, Frame, Detail, Action) might get an internal revision soon: 
+- is it necessary to instantiate Actors? 
+  Should the instantiation of an actor represent a request?
+- Split "Report" into "List" and "Detail": both of them get their own store. 
+  Note that one Detail would contain the equivalent of all .dtl files.
+  Replace .dtl files (one per tab) by a single configuration file.
+  The possibility of local configuration should remain, but convert them to Python code.
+- Actions should be rather like fields: instantiated within the subclass definition.
+

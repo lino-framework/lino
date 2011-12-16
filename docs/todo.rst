@@ -12,11 +12,15 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Calendar panel
+
+#.  Listings
+
 #.  :class:´lino.modlib.jobs.Function` : "Funktionen" 
     umbenennen nach "Qualifikationen"?
     Weil auch :class:´lino.modlib.contacts.RoleType` so übersetzt wird.
     Oder aber Modelle :class:´lino.modlib.jobs.Function` 
-    und :class:´lino.modlib.contacts.RoleType` vereinigen.
+    und :class:´lino.modlib.contacts.RoleType` vereinigen?
     Eher Letzteres.
     Aber was passiert dann mit den Sektoren?
     Antwort: Function.sector wird optional. 
@@ -25,20 +29,12 @@ Short-term
     Es könnte Stellenanfragen geben, die für einen bestimmten Sektor, 
     aber nicht für eine bestimmte Funktion gemeint sind 
     ("Ich suche einen Job im Horeca-Bereich, egal was")
-    Als Qualifikationen würde ich eher noch eine weitere Tabelle 
-    vorschlagen: pro Stellenamgebot bzw. Personensuche 
+    
+    Als *Qualifikationen* würde ich eher noch eine weitere Tabelle 
+    vorschlagen: pro Stellenangebot bzw. Personensuche 
     eine Liste von "erforderlichen Ausbildungen". 
     Vielleicht auch keine Liste, sondern nur ein Feld, 
     weil meistens nur ein Ausbildungsabschluss erforderlich ist.
-    
-
-#.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
-
-#.  Idée venue avec Gaëtan: .dtl files in Python, not yaml
-
-#.  In cal.Task remove fields alarm_unit and alarm_value. Lino does 
-    not actually do what caldav calls an "alarm". Tasks are to be 
-    displayed as long as they are not done.
 
 #.  Idee: Notizen, Termine und Verträge mit MTI als Kinder einer 
     allgemeinen Tabelle "Chronikeinträge" implementieren.
@@ -130,6 +126,23 @@ Short-term
 
 Medium-term
 -----------
+
+#.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
+
+#.  Idée venue avec Gaëtan: .dtl files in Python, not yaml
+
+#.   There is also an almost philosphical question: where should the label "Calendar" 
+    (and it's translations) be defined? Currently it is in 
+    :class:`lino.reports.Calendar`. The whole pot-pourri of actors and actions 
+    (Report, Frame, Detail, Action) might get an internal revision soon: 
+    - is it necessary to instantiate Actors? 
+      Should the instantiation of an actor represent a request?
+    - Split "Report" into "List" and "Detail": both of them get their own store. 
+      Note that one Detail would contain the equivalent of all .dtl files.
+      Replace .dtl files (one per tab) by a single configuration file.
+      The possibility of local configuration should remain, but convert them to Python code.
+    - Actions should be rather like fields: instantiated within the subclass definition.
+
 
 #.  Support for eID cards: (1) read data from card and (2) user authentication.
 

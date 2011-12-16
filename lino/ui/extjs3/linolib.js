@@ -3457,7 +3457,7 @@ Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
   //~ todayText : 'Today',
   //~ title : 'Basic Calendar',
   //~ empty_title : "$_('Calendar')",
-  empty_title : "$ui.get_actor('cal.Panel').label",
+  empty_title : "$ui.get_actor('cal.Panel').report.label",
   eventStore: Lino.eventStore,
   calendarStore: Lino.calendarStore,
   listeners: { 

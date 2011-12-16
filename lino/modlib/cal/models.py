@@ -76,42 +76,10 @@ def register_calendartype(name,instance):
 register_calendartype('local',LocalCalendar())
 register_calendartype('google',GoogleCalendar())
     
-COLOR_CHOICES = [
-  (1, _("Red")),
-  (2, _("Red")),
-  (3, _("Red")),
-  (4, _("Red")),
-  (5, _("Red")),
-  (6, _("Red")),
-  (7, _("Red")),
-  (8, _("Red")),
-  (9, _("Red")),
-  (10, _("Red")),
-  (11, _("Red")),
-  (12, _("Red")),
-  (13, _("Red")),
-  (14, _("Red")),
-  (15, _("Red")),
-  (16, _("Red")),
-  (17, _("Red")),
-  (18, _("Red")),
-  (19, _("Red")),
-  (20, _("Red")),
-  (21, _("Red")),
-  (22, _("Red")),
-  (23, _("Red")),
-  (24, _("Red")),
-  (25, _("Red")),
-  (26, _("Red")),
-  (27, _("Red")),
-  (28, _("Red")),
-  (29, _("Red")),
-  (30, _("Red")),
-  (31, _("Red")),
-  (32, _("Red")),
-]
-
 COLOR_CHOICES = [i + 1 for i in range(32)]
+  
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 
 class Calendar(mixins.AutoUser):
     """
@@ -141,7 +109,9 @@ class Calendar(mixins.AutoUser):
         verbose_name=_("Start date"),
         blank=True,null=True)
     color = models.IntegerField(
-        _("color"),default=1)
+        _("color"),default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(32)]
+        )
         #~ choices=COLOR_CHOICES)
     
     def full_clean(self,*args,**kw):
@@ -198,7 +168,10 @@ def default_calendar(user):
         #~ return user.cal_calendar_set_by_user.get(is_default=True)
         #~ return user.calendar_set.get(is_default=True)
     except Calendar.DoesNotExist,e:
-        cal = Calendar(user=user,is_default=True)
+        color = Calendar.objects.all().count() + 1
+        while color > 32:
+            color -= 32
+        cal = Calendar(user=user,is_default=True,color=color)
         cal.full_clean()
         cal.save()
         dblogger.debug("Created default_calendar %s for %s.",cal,user)

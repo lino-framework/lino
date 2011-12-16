@@ -813,9 +813,12 @@ class Frame(actors.Actor):
     default_action_class = None
     
     def __init__(self):
+        logger.info("%s.__init__()",self.__class__)
+        #~ if not self.__class__ is Frame:
         if self.default_action_class:
             self.default_action = self.default_action_class(self)
-        #~ if self.default_action:
+        if not self.label:
+            self.label = self.default_action.label
             #~ self.default_action.actor = self
         super(Frame,self).__init__()
   
