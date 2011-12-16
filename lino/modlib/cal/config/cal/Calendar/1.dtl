@@ -1,0 +1,11 @@
+:label: 
+:label_align: top
+:hideCheckBoxLabels: 
+
+main = 
+  type name user id 
+  url_template username password
+  description
+  readonly is_default is_hidden color start_date
+  EventsByCalendar
+

@@ -358,8 +358,8 @@ class StaticText:
         
 
 class Calendar(actions.OpenWindowAction):
-    label = "Calendar Panel"
-    name = 'grid'
+    label = _("Calendar")
+    name = 'grid' # because...
     default_format = 'html'
     
     def __init__(self,actor,*args,**kw):

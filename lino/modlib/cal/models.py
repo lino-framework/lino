@@ -76,7 +76,43 @@ def register_calendartype(name,instance):
 register_calendartype('local',LocalCalendar())
 register_calendartype('google',GoogleCalendar())
     
-    
+COLOR_CHOICES = [
+  (1, _("Red")),
+  (2, _("Red")),
+  (3, _("Red")),
+  (4, _("Red")),
+  (5, _("Red")),
+  (6, _("Red")),
+  (7, _("Red")),
+  (8, _("Red")),
+  (9, _("Red")),
+  (10, _("Red")),
+  (11, _("Red")),
+  (12, _("Red")),
+  (13, _("Red")),
+  (14, _("Red")),
+  (15, _("Red")),
+  (16, _("Red")),
+  (17, _("Red")),
+  (18, _("Red")),
+  (19, _("Red")),
+  (20, _("Red")),
+  (21, _("Red")),
+  (22, _("Red")),
+  (23, _("Red")),
+  (24, _("Red")),
+  (25, _("Red")),
+  (26, _("Red")),
+  (27, _("Red")),
+  (28, _("Red")),
+  (29, _("Red")),
+  (30, _("Red")),
+  (31, _("Red")),
+  (32, _("Red")),
+]
+
+COLOR_CHOICES = [i + 1 for i in range(32)]
+
 class Calendar(mixins.AutoUser):
     """
     A Calendar is a collection of events and tasks.
@@ -104,6 +140,9 @@ class Calendar(mixins.AutoUser):
     start_date = models.DateField(
         verbose_name=_("Start date"),
         blank=True,null=True)
+    color = models.IntegerField(
+        _("color"),default=1)
+        #~ choices=COLOR_CHOICES)
     
     def full_clean(self,*args,**kw):
         if not self.name:
@@ -139,15 +178,15 @@ class Calendar(mixins.AutoUser):
     def __unicode__(self):
         return self.name
         
-    def color(self,request):
-        return settings.LINO.get_calendar_color(self,request)
-    #~ color.return_type = fields.DisplayField(_("Color"))
-    color.return_type = models.IntegerField(_("Color"))
+    #~ def color(self,request):
+        #~ return settings.LINO.get_calendar_color(self,request)
+    #~ color.return_type = models.IntegerField(_("Color"))
         
         
     
 class Calendars(reports.Report):
     model = 'cal.Calendar'
+    column_names = "user type name color readonly is_hidden is_default *"
 
 def default_calendar(user):
     """
@@ -610,6 +649,9 @@ class Events(reports.Report):
     
 class EventsBySet(Events):
     fk_name = 'rset'
+    
+class EventsByCalendar(Events):
+    fk_name = 'calendar'
     
 class EventsByPlace(Events):
     """

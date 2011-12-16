@@ -237,13 +237,20 @@ def objects():
       city=vigala,country='EE',card_number='123',birth_country=ee,
       birth_date='0000-04-27',
       #~ birth_date=i2d(19680101),birth_date_circa=True,
+      newcomer=True,
       gender=Gender.female)
     yield ly
     mari = person(first_name="Mari",last_name="Saffre",
-      city=vigala,country='EE',card_number='124',birth_country=ee,birth_date=i2d(20020405),gender=Gender.female)
+      city=vigala,country='EE',card_number='124',birth_country=ee,
+      birth_date=i2d(20020405),
+      newcomer=True,
+      gender=Gender.female)
     yield mari
     iiris = person(first_name="Iiris",last_name="Saffre",
-      city=vigala,country='EE',card_number='125',birth_country=ee,birth_date=i2d(20080324),gender=Gender.female)
+      city=vigala,country='EE',card_number='125',birth_country=ee,
+      birth_date=i2d(20080324),
+      newcomer=True,
+      gender=Gender.female)
     yield iiris
     
     gerd = person(first_name="Gerd",
@@ -260,6 +267,7 @@ def objects():
         # name="Казеннова Татьяна",
         city=kettenis,country='BE', 
         birth_place="Moskau", # birth_country='SUHH',
+        newcomer=True,
         gender=Gender.female)
     yield tatjana
     

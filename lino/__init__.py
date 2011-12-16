@@ -732,10 +732,16 @@ class Lino(object):
     def setup_menu(self,ui,user,menu):
         raise NotImplementedError
         
-    def get_calendar_color(self,calendar,request):
-        if calendar.user == request.user:
-            return 1
-        return 2
+    #~ def get_calendar_color(self,calendar,request):
+        #~ if calendar.user == request.user:
+            #~ return 5
+        #~ return 2
+        
+    def demo_date(self,**offset):
+        J = datetime.date(2011,12,16)
+        if offset:
+            return J + datetime.timedelta(**offset)
+        return J
         
     def get_middleware_classes(self):
         """

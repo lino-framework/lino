@@ -3360,12 +3360,17 @@ Ext.ensible.cal.EventMappings = {
     Reminder:    {name: 'Reminder', mapping: $S.column_index('reminder')}
     
 };
-// Don't forget to reconfigure!
 Ext.ensible.cal.EventRecord.reconfigure();
 
 
 Lino.on_eventclick = function(cp,rec,el) {
   console.log("Lino.on_eventclick",arguments);
+  Lino.cal.Events.detail(cp,{record_id:rec.data.ID});
+  return false;
+}
+    
+Lino.on_editdetails = function(cp,rec,el) {
+  console.log("Lino.on_editdetails",arguments);
   Lino.cal.Events.detail(cp,{record_id:rec.data.ID});
   return false;
 }
@@ -3421,6 +3426,7 @@ Lino.eventStore = new Ext.data.ArrayStore({
       totalProperty: "count", 
       root: "rows", 
       fields: Ext.ensible.cal.EventRecord.prototype.fields.getRange(),
+      idIndex: Ext.ensible.cal.EventMappings.EventId.mapping,
       idProperty: Ext.ensible.cal.EventMappings.EventId.mapping
     });
 
@@ -3437,9 +3443,9 @@ Lino.calendarStore = new Ext.data.ArrayStore({
       totalProperty: "count", 
       root: "rows", 
       fields: Ext.ensible.cal.CalendarRecord.prototype.fields.getRange(),
+      idIndex: Ext.ensible.cal.CalendarMappings.CalendarId.mapping,
       idProperty: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
     });
-
 
 
 Lino.CalendarCfg = {
@@ -3448,15 +3454,19 @@ Lino.CalendarCfg = {
     dateParamEnd:'ed'
 };
 Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
-  todayText : 'Today',
-  title : 'Basic Calendar',
+  //~ todayText : 'Today',
+  //~ title : 'Basic Calendar',
+  //~ empty_title : "$_('Calendar')",
+  empty_title : "$ui.get_actor('cal.Panel').label",
   eventStore: Lino.eventStore,
   calendarStore: Lino.calendarStore,
   listeners: { 
-    eventclick: Lino.on_eventclick
+    editdetails: Lino.on_editdetails
+    ,eventclick: Lino.on_eventclick
     ,eventadd: Lino.on_eventadd
     ,eventresize: Lino.on_eventresize
     },
+  //~ enableEditDetails: false,
   monthViewCfg: Lino.CalendarCfg,
   weekViewCfg: Lino.CalendarCfg,
   multiDayViewCfg: Lino.CalendarCfg,
@@ -3473,6 +3483,11 @@ Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
     Lino.CalendarPanel.superclass.constructor.call(this, config);
     //~ console.log(config,this);
   }
+  //~ initComponent : function() {
+    //~ if (this.is_main_window) {
+        //~ this.title = undefined;  
+    //~ } 
+  //~ }
 });
 
 Ext.override(Lino.CalendarPanel,Lino.MainPanel);

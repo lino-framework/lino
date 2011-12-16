@@ -37,7 +37,6 @@ Continued on on :doc:`/tickets/52`
 - In `linolib.js`, define `Ext.ensible.cal.CalendarMappings` to fit with 
   `lino.modlib.cal.models.PanelCalendars`.
   
-- update_owned_task was never called on an Event...
-  Renamed to `update_owned_instance`.
-  Basically this `update_owned_instance` might be defined in 
-  Owned 
+- Bugfix: `update_owned_task` was never called on an Event...
+  Renamed all `update_owned_task` to `update_owned_instance`.
+  Basically this `update_owned_instance` might be defined in Owned.

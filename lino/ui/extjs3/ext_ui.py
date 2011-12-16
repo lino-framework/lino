@@ -43,6 +43,7 @@ from django.template import RequestContext
 
 from django.utils.translation import ugettext as _
 from django.utils import simplejson as json
+from django.utils import translation
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -827,8 +828,6 @@ class ExtUI(base.UI):
             return '<script type="text/javascript" src="%s"></script>' % url
             
         if settings.DEBUG:
-            #~ yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base-debug.js"></script>' % self.media_url() 
-            #~ yield '<script type="text/javascript" src="%s/extjs/ext-all-debug.js"></script>' % self.media_url()
             yield javascript('/extjs/adapter/ext/ext-base-debug.js')
             yield javascript('/extjs/ext-all-debug.js')
             if settings.LINO.use_extensible:
@@ -841,6 +840,10 @@ class ExtUI(base.UI):
             
             if settings.LINO.use_extensible:
                 yield javascript('/extensible/extensible-all.js')
+        if translation.get_language() != 'en':
+            yield javascript('/extjs/src/locale/ext-lang-'+translation.get_language()+'.js')
+            if settings.LINO.use_extensible:
+                yield javascript('/extensible/src/locale/extensible-lang-'+translation.get_language()+'.js')
             
         #~ yield '<!-- ExtJS library: all widgets -->'
         #~ if True:
@@ -1450,7 +1453,6 @@ tinymce.init({
     def lino_js_parts(self):
     #~ def js_cache_name(self):
         #~ return ('cache','js','site.js')
-        from django.utils import translation
         #~ return ('cache','js','lino.js')
         return ('cache','js','lino_'+translation.get_language()+'.js')
         

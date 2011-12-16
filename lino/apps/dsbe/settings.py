@@ -53,6 +53,7 @@ class Lino(Lino):
         
     def setup_quicklinks(self,ui,user,tb):
         tb.add_action('contacts.Persons.detail')
+        tb.add_action('cal.Panel')
         tb.add_action('dsbe.MyPersons')
         tb.add_action('isip.MyContracts')
         tb.add_action('jobs.MyContracts')
@@ -81,13 +82,14 @@ class Lino(Lino):
         #~ m = main.add_menu("master",_("~Master"))
         
         m = main.add_menu("contacts",_("Contacts"))
-        m.add_action('contacts.Companies')
-        m.add_action('contacts.Persons')
+        m.add_action('dsbe.Companies')
+        m.add_action('dsbe.Persons')
         #~ m.add_action('contacts.Persons.detail')
         #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
         m.add_action('dsbe.MySearches')
         #~ m.add_action('contacts.AllContacts')
         m.add_action('dsbe.AllContacts')
+        m.add_action('dsbe.Newcomers')
         isip.setup_main_menu(self,ui,user,m)
         #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')
@@ -207,7 +209,7 @@ class Lino(Lino):
             m = main.add_menu("explorer",_("Explorer"))
             #m.add_action('properties.PropChoices')
             #~ m.add_action('properties.PropValues')
-            m.add_action('contacts.AllPersons')
+            m.add_action('dsbe.AllPersons')
             #~ m.add_action('contacts.Roles')
             notes.setup_explorer_menu(self,ui,user,m)
             isip.setup_explorer_menu(self,ui,user,m)

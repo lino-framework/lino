@@ -74,3 +74,9 @@ def objects():
           en=u"Meeting at employer's",
           ))
     
+
+    event = Instantiator('cal.Event','user:username').build
+    yield event("user",start_date=settings.LINO.demo_date(),type=1)
+    yield event("user",start_date=settings.LINO.demo_date(days=1),type=2)
+    yield event("user",start_date=settings.LINO.demo_date(days=2),type=2)
+    

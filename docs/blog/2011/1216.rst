@@ -1,0 +1,17 @@
+20111216
+========
+
+Continued on :doc:`/tickets/52`. 
+The CalendarStore not only needed a `idProperty` but also an `idIndex` config option.
+I didn't understand 100% why, but now it works perfectly.
+
+The `color` of a :class:`lino.modlib.cal.models.Calendar` no longer 
+is a virtual field but a simple `models.IntegerField`. 
+
+A few important things are missing before I can say that CalendarPanel 
+is integrated: creating events and updating events.
+
+But also an almost philosphical question: where should the label "Calendar" 
+(and it's translations) be stored?
+Report
+Report's default_action

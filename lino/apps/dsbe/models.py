@@ -291,8 +291,8 @@ class Partner(mixins.DiffingMixin,models.Model):
         verbose_name=_("is active"),default=True)
     "Only active Persons may be used when creating new operations."
     
-    is_new = models.BooleanField(
-        verbose_name=_("is new"),default=False)
+    newcomer = models.BooleanField(
+        verbose_name=_("newcomer"),default=False)
     """Means that there's no responsible user for this partner yet. 
     New partners may not be used when creating new operations."""
     
@@ -721,7 +721,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
           national_id health_insurance pharmacy 
           bank_account1 bank_account2 
           gesdos_id activity 
-          is_cpas is_senior is_active is_new is_deprecated nationality''')
+          is_cpas is_senior is_active newcomer is_deprecated nationality''')
         #~ super(Person,cls).site_setup(lino)
 
 
@@ -732,7 +732,7 @@ class AllPersons(contacts.Contacts):
     model = 'contacts.Person'
     order_by = "last_name first_name id".split()
     can_view = perms.is_authenticated
-    app_label = 'contacts'
+    #~ app_label = 'contacts'
     #~ default_params = dict(is_active=True)
     #~ extra = dict(
       #~ select=dict(sort_name='lower(last_name||first_name)'),
@@ -746,7 +746,7 @@ class Persons(AllPersons):
     """
     Almost all Persons
     """
-    app_label = 'contacts'
+    #~ app_label = 'contacts'
     #~ use_as_default_report = False
     filter = dict(is_active=True)
     #~ label = Person.Meta.verbose_name_plural + ' ' + _("(unfiltered)")
@@ -754,8 +754,13 @@ class Persons(AllPersons):
     def init_label(self):
         return self.model._meta.verbose_name_plural
 
-    
 Person._lino_choices_report = Persons
+
+class Newcomers(AllPersons):
+    filter = dict(newcomer=True)
+    def init_label(self):
+        return self.model._meta.verbose_name_plural + ' ' + force_unicode(_("(newcomers)"))
+
 
     
 class PersonsByNationality(AllPersons):
@@ -932,7 +937,7 @@ class Companies(contacts.Contacts):
     #~ hide_details = [Contact]
     model = 'contacts.Company'
     order_by = ["name"]
-    app_label = 'contacts'
+    #~ app_label = 'contacts'
     #~ column_names = ''
     
 
@@ -2015,8 +2020,6 @@ def my_callback(sender,**kw):
         db.connection.create_collation('BINARY', stricmp)
 
 connection_created.connect(my_callback)
-
-
 
 #~ class ContactPersons(links.LinksFromThis):
     #~ label = _("Contact persons")
