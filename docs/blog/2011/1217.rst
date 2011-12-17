@@ -49,3 +49,6 @@ after a successful POST.
 
 Checkin.
 
+Discovered another bug (jobs.StudiesByCity had never been tested).
+
+Checkin.

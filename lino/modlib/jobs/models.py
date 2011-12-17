@@ -626,7 +626,7 @@ class Study(CountryCity):
 class Studies(reports.Report):
     "General list of Studies (all Persons)"
     model = Study
-    order_by = ["country city type content"]
+    order_by = "country city type content".split()
 
         
 class StudiesByCountry(Studies):
