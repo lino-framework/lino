@@ -814,5 +814,3 @@ class Store:
             f.obj2dict(request,row,d)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
-
-            

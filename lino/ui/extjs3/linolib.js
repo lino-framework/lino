@@ -1745,9 +1745,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     } else {
       this.set_current_record(undefined);
     }
-    
-    
-      
   },
   
     
@@ -1762,15 +1759,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     this.base_params[k] = v;
   },
   
-  //~ get_base_params : function() {
-    //~ return this.containing_window.config.base_params;
-  //~ },
-  //~ set_base_params : function(p) {
-    //~ this.containing_window.config.base_params = Ext.apply({},p); // 20111018
-  //~ },
-  //~ set_base_param : function(k,v) {
-    //~ this.containing_window.config.base_params[k] = v;
-  //~ },
   after_delete : function() {
     this.moveNext();
   },
@@ -1802,7 +1790,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   do_when_clean : function(todo) {
     var this_ = this;
     if (this.form.isDirty()) {
-        //~ console.log('20110701 do_when_clean() form is dirty');
+        //~ console.log('20111217 do_when_clean() form is dirty',this.form);
         var config = {title:"$_('Confirmation')"};
         config.buttons = Ext.MessageBox.YESNOCANCEL;
         config.msg = "$_('Save changes to current record ?')";
@@ -1924,7 +1912,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
                   });
                   //~ record.disabled_actions[i]);
                   //~ var cmp = this.getBottomToolbar().findById(record.disabled_actions[i]);
-                  //~ console.log('found',cmp);
+                  console.log('20111217 disabled_actions found',cmp);
                   cmp.disable();
               }
           };
@@ -2007,49 +1995,47 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     return p;
   },
   
-  
+  /* Lino.FormPanel.save() */
   save : function(after) {
     //~ console.log('InsertWrapper.save()',this);
     var panel = this;
-    var rec = panel.get_current_record();
-    if (panel.has_file_upload) panel.form.fileUpload = true;
+    var rec = this.get_current_record();
+    if (this.has_file_upload) this.form.fileUpload = true;
     if (rec) {
       if (rec.phantom) {
         if (this.action_name != 'insert') 
             console.log("Warning: phantom record, but action_name is",this.action_name)
-        panel.form.submit({
-          url: ROOT_URL + '/api' + panel.ls_url,
+        this.form.submit({
+          url: ROOT_URL + '/api' + this.ls_url,
           method: 'POST',
-          params: panel.get_base_params(), // 20101025
-          scope: panel,
+          params: this.get_base_params(), // 20101025
+          scope: this,
           success: function(form, action) {
             Lino.notify(action.result.message);
-            var ww = panel.containing_window;
-            if (ww) {
-              if (ww.caller) {
-                ww.close();
-                if (ww.caller.ls_detail_handler) {
-                  //~ console.log('call detail handler after submit_insert',ww.caller.ls_detail_handler);
-                  var p = Ext.apply({},panel.get_base_params());
-                  delete p.fmt;
-                  ww.caller.ls_detail_handler(ww.caller,{
-                    record_id:action.result.record_id,
-                    base_params:p});
-                  //~ Lino.show_detail_handler(panel.containing_window.caller.ls_detail_handler)(panel.containing_window.caller);
-                //~ } else {
-                  // htmlbox doesn't have a detailwrapper
-                  //~ ww.caller.refresh();
-                } 
-              } else {
-                  //~ console.log("submit_insert without caller: use permalink.");
-                  var p = Ext.apply({},panel.get_base_params());
-                  delete p.fmt;
-                  Ext.apply(p,{$ext_requests.URL_PARAM_ACTION_NAME : 'detail'});
-                  var url = panel.get_permalink_url() 
-                    + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
-                  //~ console.log(url);
-                  document.location = url;
-              }
+            var caller = panel.containing_window.caller;
+            if (caller) {
+              panel.containing_window.kill();
+              if (caller.ls_detail_handler) {
+                console.log('call detail handler after submit_insert');
+                var p = Ext.apply({},panel.get_base_params());
+                delete p.fmt;
+                caller.ls_detail_handler(caller,{
+                  record_id:action.result.record_id,
+                  base_params:p});
+                //~ Lino.show_detail_handler(panel.containing_window.caller.ls_detail_handler)(panel.containing_window.caller);
+              //~ } else {
+                // htmlbox doesn't have a detailwrapper
+                //~ ww.caller.refresh();
+              } 
+            } else {
+                console.log("submit_insert without caller: use permalink.");
+                var p = Ext.apply({},panel.get_base_params());
+                delete p.fmt;
+                Ext.apply(p,{$ext_requests.URL_PARAM_ACTION_NAME : 'detail'});
+                var url = panel.get_permalink_url() 
+                  + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
+                //~ console.log(url);
+                document.location = url;
             }
           },
           failure: Lino.on_submit_failure,
@@ -2063,7 +2049,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         //~ Lino.notify('submit');
         //~ console.log('20110406 DetailWindow.save: panel.get_base_params() = <',panel.get_base_params(),'>');
         // 20110406
-        panel.form.submit({
+        this.form.submit({
           url: ROOT_URL + '/api' + panel.ls_url + '/' + rec.id,
           method: 'PUT',
           //~ headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'},
@@ -3093,7 +3079,6 @@ Lino.Window = Ext.extend(Ext.Window,{
   maximized: true,
   maximizable: false,
   constructor : function (config) {
-    
     this.main_item = config.items; // `items` must be a single component
     //~ this.main_item = config.items.get(0);
     this.main_item.containing_window = this;
@@ -3133,19 +3118,23 @@ Lino.Window = Ext.extend(Ext.Window,{
       //~ this.refresh();
       //~ Lino.load_mask.hide();
   },
+  kill : function() {
+    Lino.Window.superclass.close.call(this);
+  },
   close : function() { 
       //~ console.log("Gonna close");
       var this_ = this;
+      var caller = this.caller;
       this.main_item.do_when_clean(function() {
         Lino.Window.superclass.close.call(this_);
-        if (this_.caller) {
-          if (this_.caller.containing_window) {
-              //~ console.log('20110110 gonna refresh ww:', this.caller.containing_window);
-              Lino.current_window = this_.caller.containing_window;
-              this_.caller.containing_window.main_item.refresh();
+        if (caller) {
+          if (caller.containing_window) {
+              //~ console.log('20110110 gonna refresh ww:', caller.containing_window);
+              Lino.current_window = caller.containing_window;
+              caller.containing_window.main_item.refresh();
           } else {
               //~ console.log('20110110 refresh caller (no ww):', this.caller);
-              this_.caller.refresh();
+              caller.refresh();
           }
         //~ } else {
           //~ console.log('20110110 cannot refresh: no caller:', this);
