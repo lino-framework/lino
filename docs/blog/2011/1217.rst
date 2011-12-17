@@ -1,6 +1,41 @@
 20111217
 ========
 
+Termine erstellen vom Kalender aus
+----------------------------------
+
+Continued on :doc:`/tickets/52`.
+
 `Lino.on_eventadd()` starts to work. 
 There is now a caching problem: the eventStore doesn't add a `_dc` 
 parameter so that the new event becomes visible only after a server restart.
+
+Hmm... Nach fast 6 Stunden Rumprobieren funktioniert es noch immer nicht
+und für heute ist mir die Lust vergangen.
+Warum schließt sich bei mir das EventEditWindow nicht, wenn der Termin  
+gepostet wurde?                                                         
+Es scheint, dass ich nicht daran vorbeikomme, im EventStore 
+einen `writer` zu benutzen. 
+Denn erst wenn der Store den Erfolg der save-Aktion meldet, 
+schließt sich das EventEditWindow.
+
+Also habe ich begonnen, ein ein restful interface à la ExtJS zu machen.
+GET funktioniert schon, POST erst fast: der Termin wird angelegt, 
+aber dann kommt in der JS-Console::
+
+  Uncaught Ext.data.DataReader: #realize was called with invalid remote-data.  Please see the docs for DataReader#realize and review your DataReader configuration.
+  Ext.handleErrorext-all-debug.js:10448
+  Ext.data.Store.Ext.extend.handleExceptionext-all-debug.js:23882
+  Ext.data.Store.Ext.extend.onCreateRecordsext-all-debug.js:23839
+  (anonymous function)ext-all-debug.js:23793
+  Ext.extend.onWriteext-all-debug.js:25183
+  (anonymous function)ext-base-debug.js:868
+  (anonymous function)ext-all-debug.js:25128
+  Ext.extend.handleResponseext-all-debug.js:4064
+  handleTransactionResponseext-base-debug.js:1864
+  checkResponseext-base-debug.js:1912
+  (anonymous function)ext-base-debug.js:902
+
+Kann sein, dass er durcheinander kommt, weil meine row 
+ja ein Array und nicht wie üblich ein Objekt ist.
+

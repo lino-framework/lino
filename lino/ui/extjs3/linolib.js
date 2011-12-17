@@ -3380,6 +3380,10 @@ Lino.format_time = function(dt) {
     return dt.getHours() + ':' + dt.getMinutes();
 }
     
+Lino.on_eventdelete = function() {
+  console.log("Lino.on_eventdelete",arguments);
+};
+
 Lino.on_eventadd  = function(cp,rec,el) {
   var M = Ext.ensible.cal.EventMappings;
   console.log("Lino.on_eventadd ",rec,M);
@@ -3401,18 +3405,19 @@ Lino.on_eventadd  = function(cp,rec,el) {
     //~ IsAllDay:    {name: 'AllDay', mapping: $S.column_index('all_day'), type: 'boolean'},
     //~ Reminder:    {name: 'Reminder', mapping: $S.column_index('reminder')}
     };
-  var a = {
-    url: ROOT_URL + '/api/cal/Events',
-    method: 'POST',
-    params: params, 
-    success: function(form, action) {
-    }
-  }
-  console.log("Lino.on_eventadd ",a);
-  Ext.Ajax.request(a);
-  
+  return params;
+  //~ var a = {
+    //~ url: ROOT_URL + '/api/cal/Events',
+    //~ method: 'POST',
+    //~ params: params, 
+    //~ success: function(form, action) {
+    //~ }
+  //~ }
+  //~ console.log("Lino.on_eventadd ",a);
+  //~ return a;
+  //~ Ext.Ajax.request(a);
   //~ Lino.cal.Events.insert(cp,{});
-  return false;
+  //~ return false;
 }
     
 Lino.on_eventresize  = function(cp,rec,el) {
@@ -3422,27 +3427,50 @@ Lino.on_eventresize  = function(cp,rec,el) {
 }
     
 
-
+//~ Lino.eventStore = new Ext.ensible.cal.EventStore({ 
 Lino.eventStore = new Ext.data.ArrayStore({ 
-      listeners: { exception: Lino.on_store_exception }, 
-      proxy: new Ext.data.HttpProxy({ 
-          url: ROOT_URL + '/api/cal/PanelEvents?fmt=json', 
-          //~ disableCaching:true,
-          method: "GET"
+//~ Lino.eventStore = new Ext.data.Store({ 
+      listeners: { exception: Lino.on_store_exception }
+      //~ ,proxy: new Ext.data.DirectProxy({ 
+          //~ api: {
+              //~ load : { method: 'GET'},
+              //~ create : { method: 'POST'},
+              //~ update: { method: 'PUT'},
+              //~ destroy: { method: 'DELETE'}
+          //~ }
+      //~ })
+      //~ ,baseParams: {fmt:'json'}
+      ,restful : true
+      ,url: ROOT_URL + '/restful/cal/PanelEvents'
+      //~ ,proxy: new Ext.data.DirectProxy({ })
+      ,proxy: new Ext.data.HttpProxy({ 
+          url: ROOT_URL + '/restful/cal/PanelEvents', 
+          //~ url: ROOT_URL + '/api/cal/PanelEvents?fmt=json', 
+          disableCaching:true,
+          //~ method: "GET"
           //~ listeners: {load:on_proxy_load} 
-      }), 
-      //~ disableCaching:true,
-      //~ autoLoad: true,
-      //~ remoteSort: true, 
-      //~ baseParams: bp, 
-      totalProperty: "count", 
-      root: "rows", 
-      fields: Ext.ensible.cal.EventRecord.prototype.fields.getRange(),
-      idIndex: Ext.ensible.cal.EventMappings.EventId.mapping,
-      idProperty: Ext.ensible.cal.EventMappings.EventId.mapping
+      })
+      ,writer : new Ext.data.JsonWriter({
+          encode: true,
+          writeAllFields: false,
+          createRecord : function(rec) {
+              return Lino.on_eventadd(null,rec);
+          }
+        
+      })
+      ,idIndex: Ext.ensible.cal.EventMappings.EventId.mapping
+      ,totalProperty: "count"
+      ,root: "rows"
+      ,fields: Ext.ensible.cal.EventRecord.prototype.fields.getRange()
+      ,idProperty: Ext.ensible.cal.EventMappings.EventId.mapping
+      //~ ,disableCaching:true
+      //~ ,autoLoad: true
+      //~ ,remoteSort: true
+      //~ ,baseParams: bp
     });
 
 Lino.calendarStore = new Ext.data.ArrayStore({ 
+//~ Lino.calendarStore = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
       proxy: new Ext.data.HttpProxy({ 
           url: ROOT_URL + '/api/cal/PanelCalendars?fmt=json', 
@@ -3455,8 +3483,8 @@ Lino.calendarStore = new Ext.data.ArrayStore({
       totalProperty: "count", 
       root: "rows", 
       fields: Ext.ensible.cal.CalendarRecord.prototype.fields.getRange(),
-      idIndex: Ext.ensible.cal.CalendarMappings.CalendarId.mapping,
-      idProperty: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
+      idProperty: Ext.ensible.cal.CalendarMappings.CalendarId.mapping,
+      idIndex: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
     });
 
 
@@ -3467,22 +3495,23 @@ Lino.CalendarCfg = {
 };
 Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
   empty_title : "$ui.get_actor('cal.Panel').report.label",
-  eventStore: Lino.eventStore,
+  store: Lino.eventStore,
   //~ disableCaching:true,
-  calendarStore: Lino.calendarStore,
-  listeners: { 
+  calendarStore: Lino.calendarStore
+  ,listeners: { 
     editdetails: Lino.on_editdetails
     ,eventclick: Lino.on_eventclick
-    ,eventadd: Lino.on_eventadd
-    ,eventresize: Lino.on_eventresize
-    },
-  //~ enableEditDetails: false,
-  monthViewCfg: Lino.CalendarCfg,
-  weekViewCfg: Lino.CalendarCfg,
-  multiDayViewCfg: Lino.CalendarCfg,
-  multiWeekViewCfg: Lino.CalendarCfg,
-  dayViewCfg: Lino.CalendarCfg,
-  constructor : function(config) {
+    //~ ,eventadd: Lino.on_eventadd
+    //~ ,eventdelete: Lino.on_eventdelete
+    //~ ,eventresize: Lino.on_eventresize
+    }
+  //~ ,enableEditDetails: false
+  ,monthViewCfg: Lino.CalendarCfg
+  ,weekViewCfg: Lino.CalendarCfg
+  ,multiDayViewCfg: Lino.CalendarCfg
+  ,multiWeekViewCfg: Lino.CalendarCfg
+  ,dayViewCfg: Lino.CalendarCfg
+  ,constructor : function(config) {
     //~ Ext.reg('extensible.eventeditwindow', Lino.cal.Event.FormPanel);
     Lino.calendarStore.load();
     Lino.eventStore.load();
@@ -3493,11 +3522,13 @@ Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
     Lino.CalendarPanel.superclass.constructor.call(this, config);
     //~ console.log(config,this);
   }
-  //~ initComponent : function() {
+  ,initComponent : function() {
     //~ if (this.is_main_window) {
         //~ this.title = undefined;  
     //~ } 
-  //~ }
+    //~ this.on('eventadd',Lino.on_eventadd);
+    Lino.CalendarPanel.superclass.initComponent.call(this);
+  }
 });
 
 Ext.override(Lino.CalendarPanel,Lino.MainPanel);

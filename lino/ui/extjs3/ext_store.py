@@ -777,15 +777,6 @@ class Store:
                 #~ logger.info("20111209 Store.form2obj %s -> %s", f, obj2str(instance))
         #~ return instance
             
-    def row2list(self,request,row):
-        assert isinstance(request,reports.ReportActionRequest)
-        #~ logger.info("20111209 Store.row2list(%s)", obj2str(row))
-        l = []
-        for fld in self.list_fields:
-            l += fld.obj2list(request,row)
-            #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
-        return l
-      
     def column_names(self):
         l = []
         for fld in self.list_fields:
@@ -806,6 +797,15 @@ class Store:
             #~ i += 1
         
 
+    def row2list(self,request,row):
+        assert isinstance(request,reports.ReportActionRequest)
+        #~ logger.info("20111209 Store.row2list(%s)", obj2str(row))
+        l = []
+        for fld in self.list_fields:
+            l += fld.obj2list(request,row)
+            #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
+        return l
+      
     def row2dict(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))

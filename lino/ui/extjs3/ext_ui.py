@@ -698,6 +698,8 @@ class ExtUI(base.UI):
             (rx+r'detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
+            (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$', self.restful_view),
+            (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.restful_view),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.choices_view),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
         )
@@ -1044,10 +1046,10 @@ tinymce.init({
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
-    def form2obj_and_save(self,request,rh,data,elem,is_new): # **kw2save):
+    def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows=None): # **kw2save):
         """
         """
-        #~ logger.info('form2obj_and_save %r', data)
+        logger.info('20111217 form2obj_and_save %r', data)
         #~ print 'form2obj_and_save %r' % data
         
         # store normal form data (POST or PUT)
@@ -1095,13 +1097,23 @@ tinymce.init({
             return error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
-        
+        kw = dict()
+        kw.update(success=True)
         if is_new:
             dblogger.log_created(request,elem)
-            return self.success_response(_("%s has been created.") % obj2unicode(elem),record_id=elem.pk)
+            kw.update(
+                message=_("%s has been created.") % obj2unicode(elem),
+                record_id=elem.pk)
+        else:
+            kw.update(message=_("%s has been saved.") % obj2unicode(elem))
+        if include_rows:
+            kw.update(rows=[rh.store.row2dict(include_rows,elem)])
+        return json_response(kw)
+                
             
-        return self.success_response(_("%s has been saved.") % obj2unicode(elem))
-        #~ return self.success_response(_("%s has been saved.") % obj2str(elem),**kw2resp)
+        #~ return self.success_response(
+            #~ _("%s has been saved.") % obj2unicode(elem),
+            #~ rows=[elem])
 
 
         
@@ -1299,6 +1311,49 @@ tinymce.init({
         if model is None:
             raise Http404("No actor named '%s.%s'" % (app_label,actor))
         return model._lino_model_report
+        
+    def restful_view(self,request,app_label=None,actor=None,pk=None):
+        rpt = self.requested_report(request,app_label,actor)
+        rh = rpt.get_handle(self)
+        a = rpt.default_action
+        if isinstance(a,reports.ReportAction):
+            ar = ViewReportRequest(request,rh,a)
+        else:
+            ar = reports.ActionRequest(self,a)
+        if request.method == 'POST':
+            #~ data = rh.store.get_from_form(request.POST)
+            #~ instance = ar.create_instance(**data)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+            instance = ar.create_instance()
+            # store uploaded files. 
+            # html forms cannot send files with PUT or GET, only with POST
+            if rh.report.handle_uploaded_files is not None:
+                rh.report.handle_uploaded_files(instance,request)
+            rows = request.POST.get('rows')
+            logger.info("20111217 Got POST %r",rows)
+            data = json.loads(rows)
+            return self.form2obj_and_save(request,rh,data,instance,True,include_rows=ar)
+          
+        if request.method == 'GET':
+            if pk:
+                pass
+            else:
+                rows = [ ar.row2list(row) for row in ar.queryset ]
+                #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
+                total_count = ar.total_count
+                #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+                # add extra blank row(s):
+                #~ for i in range(0,ar.extra):
+                if ar.create_rows:
+                    row = ar.create_instance()
+                    d = ar.row2list(row)
+                    #~ logger.info('20111213 %s -> %s -> %s', obj2str(ar.master),row, d)
+                    #~ d = ar.row2dict(row)
+                    #~ 20100706 d[rh.report.model._meta.pk.name] = -99999
+                    rows.append(d)
+                    total_count += 1
+                return json_response_kw(count=total_count,rows=rows)
         
     def api_element_view(self,request,app_label=None,actor=None,pk=None):
         """
