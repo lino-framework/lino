@@ -6,6 +6,6 @@ main =
   type summary user project 
   start end duration status 
   place priority access_class transparent rset
-  owner created:20 modified:20 user_modified  
+  calendar owner created:20 modified:20 user_modified  
   description GuestsByEvent
 

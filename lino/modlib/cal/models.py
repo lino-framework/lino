@@ -294,6 +294,7 @@ class CalendarRelated(models.Model):
         """
         if not self.calendar_id:
             self.calendar = default_calendar(self.user)
+            #~ print "20111217 calendar_id was empty. set to", self.calendar, "because", self.user
             
 
   

@@ -1,0 +1,6 @@
+20111217
+========
+
+`Lino.on_eventadd()` starts to work. 
+There is now a caching problem: the eventStore doesn't add a `_dc` 
+parameter so that the new event becomes visible only after a server restart.

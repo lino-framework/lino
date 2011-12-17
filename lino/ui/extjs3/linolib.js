@@ -3371,17 +3371,27 @@ Lino.on_eventclick = function(cp,rec,el) {
     
 Lino.on_editdetails = function(cp,rec,el) {
   console.log("Lino.on_editdetails",arguments);
-  Lino.cal.Events.detail(cp,{record_id:rec.data.ID});
+  if (rec.data.ID)
+      Lino.cal.Events.detail(cp,{record_id:rec.data.ID});
   return false;
+}
+
+Lino.format_time = function(dt) {
+    return dt.getHours() + ':' + dt.getMinutes();
 }
     
 Lino.on_eventadd  = function(cp,rec,el) {
   var M = Ext.ensible.cal.EventMappings;
+  console.log("Lino.on_eventadd ",rec,M);
   var params = {
     //~ id: rec.data[M.EventId.name],
     calendarHidden: rec.data[M.CalendarId.name],
     summary: rec.data[M.Title.name],
-    start_dt: rec.data[M.StartDate.name],
+    start_date: rec.data[M.StartDate.name].dateFormat("$settings.LINO.date_format_extjs"),
+    start_time: Lino.format_time(rec.data[M.StartDate.name]),
+    end_date: rec.data[M.EndDate.name].dateFormat("$settings.LINO.date_format_extjs"),
+    end_time: Lino.format_time(rec.data[M.EndDate.name]),
+    description: rec.data[M.Notes.name]
     //~ StartDate:   {name: 'StartDt', mapping: $S.column_index('start_dt'), type: 'date', dateFormat: 'c'},
     //~ EndDate:     {name: 'EndDt', mapping: $S.column_index('end_dt'), type: 'date', dateFormat: 'c'},
     //~ RRule:       {name: 'RecurRule', mapping: $S.column_index('rsetHidden')},
@@ -3398,8 +3408,8 @@ Lino.on_eventadd  = function(cp,rec,el) {
     success: function(form, action) {
     }
   }
-  console.log("Lino.on_eventadd ",arguments,'-->',a);
-  //~ Ext.Ajax.request(a);
+  console.log("Lino.on_eventadd ",a);
+  Ext.Ajax.request(a);
   
   //~ Lino.cal.Events.insert(cp,{});
   return false;
@@ -3417,9 +3427,11 @@ Lino.eventStore = new Ext.data.ArrayStore({
       listeners: { exception: Lino.on_store_exception }, 
       proxy: new Ext.data.HttpProxy({ 
           url: ROOT_URL + '/api/cal/PanelEvents?fmt=json', 
+          //~ disableCaching:true,
           method: "GET"
           //~ listeners: {load:on_proxy_load} 
       }), 
+      //~ disableCaching:true,
       //~ autoLoad: true,
       //~ remoteSort: true, 
       //~ baseParams: bp, 
@@ -3454,11 +3466,9 @@ Lino.CalendarCfg = {
     dateParamEnd:'ed'
 };
 Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
-  //~ todayText : 'Today',
-  //~ title : 'Basic Calendar',
-  //~ empty_title : "$_('Calendar')",
   empty_title : "$ui.get_actor('cal.Panel').report.label",
   eventStore: Lino.eventStore,
+  //~ disableCaching:true,
   calendarStore: Lino.calendarStore,
   listeners: { 
     editdetails: Lino.on_editdetails
