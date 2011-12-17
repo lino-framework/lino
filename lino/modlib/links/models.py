@@ -153,8 +153,8 @@ class Link(models.Model):
             
     def __unicode__(self):
         if self.type_id:
-            return force_unicode(_("%s (%s)")) % (self.b, self.type)
-        return force_unicode(_("%s - %s")) % (self.b, self.a)
+            return force_unicode("%s (%s)" % self.b, self.type)
+        return force_unicode("%(a)s - %(b)s" % (self.b, self.a))
         
 
 class LinkTypes(reports.Report):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.link\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-08 14:26+0000\n"
+"POT-Creation-Date: 2011-12-17 16:47+0000\n"
 "PO-Revision-Date: 2010-11-10 16:53+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -16,37 +16,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:34
-msgid "link type"
+#: .\models.py:42
+#, fuzzy
+msgid "Link Type"
 msgstr "Verweisart"
 
-#: .\models.py:35
-msgid "link types"
-msgstr "Verweisarten"
+#: .\models.py:43
+#, fuzzy
+msgid "Link Types"
+msgstr "Verweisart"
 
-#: .\models.py:37 .\models.py:62
-msgid "Name"
-msgstr "Name"
+#: .\models.py:49
+msgid "(a type)"
+msgstr ""
 
-#: .\models.py:52
-msgid "link"
-msgstr "Verweis"
+#: .\models.py:54
+msgid "(b type)"
+msgstr ""
 
-#: .\models.py:53
-msgid "links"
+#: .\models.py:67
+#, fuzzy
+msgid "Link"
 msgstr "Verweise"
 
-#: .\models.py:57
-msgid "Link type"
-msgstr "Verweisart"
+#: .\models.py:68
+msgid "Links"
+msgstr "Verweise"
 
-#: .\models.py:58
-msgid "Date"
-msgstr "Datum"
+#: .\models.py:78
+msgid "(a object)"
+msgstr ""
 
 #: .\models.py:82
-msgid "My links"
-msgstr "Meine Verweise"
+msgid "(b object)"
+msgstr ""
+
+#: .\models.py:178
+msgid "Links from this"
+msgstr ""
+
+#: .\models.py:209
+msgid "Links to this"
+msgstr ""
+
+#: .\models.py:217 .\models.py:221
+#, fuzzy
+msgid "~Links"
+msgstr "Verweise"
+
+#~ msgid "link type"
+#~ msgstr "Verweisart"
+
+#~ msgid "link types"
+#~ msgstr "Verweisarten"
+
+#~ msgid "Name"
+#~ msgstr "Name"
+
+#~ msgid "link"
+#~ msgstr "Verweis"
+
+#~ msgid "links"
+#~ msgstr "Verweise"
+
+#~ msgid "Date"
+#~ msgstr "Datum"
+
+#~ msgid "My links"
+#~ msgstr "Meine Verweise"
 
 #, fuzzy
 #~ msgid "Owner type"
@@ -54,9 +91,6 @@ msgstr "Meine Verweise"
 
 #~ msgid "Owner"
 #~ msgstr "Besitzer"
-
-#~ msgid "Links"
-#~ msgstr "Verweise"
 
 #~ msgid "Links by %(model)s %(owner)s"
 #~ msgstr "Verweise für %(model)s %(owner)s"

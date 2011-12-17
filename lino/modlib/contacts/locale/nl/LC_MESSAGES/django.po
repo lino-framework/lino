@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-11 20:40+0000\n"
+"POT-Creation-Date: 2011-12-17 16:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Abbreviation"
 msgstr ""
 
-#: .\models.py:89 .\models.py:572 .\config\contacts\Company\1.dtl.py:3
+#: .\models.py:89 .\models.py:571 .\config\contacts\Company\1.dtl.py:3
 #: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
 msgid "Contact"
 msgstr ""
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Age"
 msgstr ""
 
-#: .\models.py:289 .\models.py:518
+#: .\models.py:289 .\models.py:517
 msgid "Person"
 msgstr ""
 
@@ -144,7 +144,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: .\models.py:364 .\models.py:520
+#: .\models.py:364 .\models.py:519
 msgid "Company"
 msgstr ""
 
@@ -160,6 +160,14 @@ msgstr ""
 msgid "Company type"
 msgstr ""
 
+#: .\models.py:405
+msgid "Role Type"
+msgstr ""
+
+#: .\models.py:406
+msgid "Role Types"
+msgstr ""
+
 #: .\models.py:422
 msgid "Contact Person"
 msgstr ""
@@ -168,31 +176,31 @@ msgstr ""
 msgid "Contact Persons"
 msgstr ""
 
-#: .\models.py:426
-msgid "Parent Contact"
-msgstr ""
-
-#: .\models.py:429
-msgid "Child Contact"
-msgstr ""
-
 #: .\models.py:433
 msgid "Contact Role"
 msgstr ""
 
-#: .\models.py:594
+#: .\models.py:490
+msgid "Contact persons"
+msgstr ""
+
+#: .\models.py:495
+msgid "Contact for"
+msgstr ""
+
+#: .\models.py:593
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:603
+#: .\models.py:602
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:611
+#: .\models.py:610
 msgid "is Person"
 msgstr ""
 
-#: .\models.py:616
+#: .\models.py:615
 msgid "is Company"
 msgstr ""
 

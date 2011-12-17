@@ -49,6 +49,10 @@ after a successful POST.
 
 Checkin.
 
-Discovered another bug (jobs.StudiesByCity had never been tested).
+Discovered another bug: jobs.StudiesByCity hadn't yet been tested.
+
+Checkin.
+
+German translations
 
 Checkin.

@@ -89,6 +89,10 @@ class Calendar(mixins.AutoUser):
     :mod:`lino.modlib.cal.management.commands.watch_calendars`,
     and local modifications will be sent back to the remote calendar.
     """
+    class Meta:
+        verbose_name = _("Calendar")
+        verbose_name_plural = _("Calendars")
+        
     type = models.CharField(_("Type"),max_length=20,
         default='local',
         choices=CALENDAR_CHOICES)

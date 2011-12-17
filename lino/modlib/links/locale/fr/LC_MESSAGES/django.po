@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-08 14:26+0000\n"
+"POT-Creation-Date: 2011-12-17 16:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,34 +17,66 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:34
-msgid "link type"
-msgstr "type de lien"
-
-#: .\models.py:35
-msgid "link types"
-msgstr "types de lien"
-
-#: .\models.py:37 .\models.py:62
-msgid "Name"
-msgstr "Nom"
-
-#: .\models.py:52
-msgid "link"
-msgstr "lien"
-
-#: .\models.py:53
-msgid "links"
-msgstr "liens"
-
-#: .\models.py:57
-msgid "Link type"
+#: .\models.py:42
+#, fuzzy
+msgid "Link Type"
 msgstr "Type de lien"
 
-#: .\models.py:58
-msgid "Date"
-msgstr "Date"
+#: .\models.py:43
+#, fuzzy
+msgid "Link Types"
+msgstr "Type de lien"
+
+#: .\models.py:49
+msgid "(a type)"
+msgstr ""
+
+#: .\models.py:54
+msgid "(b type)"
+msgstr ""
+
+#: .\models.py:67
+#, fuzzy
+msgid "Link"
+msgstr "lien"
+
+#: .\models.py:68
+#, fuzzy
+msgid "Links"
+msgstr "liens"
+
+#: .\models.py:78
+msgid "(a object)"
+msgstr ""
 
 #: .\models.py:82
-msgid "My links"
-msgstr "Mes liens"
+msgid "(b object)"
+msgstr ""
+
+#: .\models.py:178
+msgid "Links from this"
+msgstr ""
+
+#: .\models.py:209
+msgid "Links to this"
+msgstr ""
+
+#: .\models.py:217 .\models.py:221
+#, fuzzy
+msgid "~Links"
+msgstr "liens"
+
+#~ msgid "link type"
+#~ msgstr "type de lien"
+
+#~ msgid "link types"
+#~ msgstr "types de lien"
+
+#~ msgid "Name"
+#~ msgstr "Nom"
+
+#~ msgid "Date"
+#~ msgstr "Date"
+
+#~ msgid "My links"
+#~ msgstr "Mes liens"

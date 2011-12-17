@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-11 20:40+0000\n"
+"POT-Creation-Date: 2011-12-17 16:47+0000\n"
 "PO-Revision-Date: 2011-12-08 16:29+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -28,7 +28,7 @@ msgstr "Types de sociétés"
 msgid "Abbreviation"
 msgstr "Abbréviation"
 
-#: .\models.py:89 .\models.py:572 .\config\contacts\Company\1.dtl.py:3
+#: .\models.py:89 .\models.py:571 .\config\contacts\Company\1.dtl.py:3
 #: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
 msgid "Contact"
 msgstr "Contact"
@@ -123,7 +123,7 @@ msgstr "inconnu"
 msgid "Age"
 msgstr "Âge"
 
-#: .\models.py:289 .\models.py:518
+#: .\models.py:289 .\models.py:517
 msgid "Person"
 msgstr "Personne"
 
@@ -143,7 +143,7 @@ msgstr "Nom de famille"
 msgid "Title"
 msgstr "Allocution"
 
-#: .\models.py:364 .\models.py:520
+#: .\models.py:364 .\models.py:519
 msgid "Company"
 msgstr "Société"
 
@@ -159,6 +159,14 @@ msgstr "N° de TVA"
 msgid "Company type"
 msgstr "Type de société"
 
+#: .\models.py:405
+msgid "Role Type"
+msgstr "Type de rōle"
+
+#: .\models.py:406
+msgid "Role Types"
+msgstr "Types de rōle"
+
 #: .\models.py:422
 msgid "Contact Person"
 msgstr "Personne de contact"
@@ -167,31 +175,31 @@ msgstr "Personne de contact"
 msgid "Contact Persons"
 msgstr "Personnes de contact"
 
-#: .\models.py:426
-msgid "Parent Contact"
-msgstr "Contact parent"
-
-#: .\models.py:429
-msgid "Child Contact"
-msgstr "Contact enfant"
-
 #: .\models.py:433
 msgid "Contact Role"
 msgstr "Rōle"
 
-#: .\models.py:594
+#: .\models.py:490
+msgid "Contact persons"
+msgstr "Personnes de contact"
+
+#: .\models.py:495
+msgid "Contact for"
+msgstr "contact pour"
+
+#: .\models.py:593
 msgid "The next automatic id for Person or Company"
 msgstr "Identifiant automatique pour la personne ounla société suivante"
 
-#: .\models.py:603
+#: .\models.py:602
 msgid "The company that runs this site"
 msgstr "La société ou tourne ce site"
 
-#: .\models.py:611
+#: .\models.py:610
 msgid "is Person"
 msgstr "Personne"
 
-#: .\models.py:616
+#: .\models.py:615
 msgid "is Company"
 msgstr "Société"
 
@@ -209,17 +217,11 @@ msgctxt "indirect salutation"
 msgid "Mr"
 msgstr "M."
 
-#~ msgid "Role Type"
-#~ msgstr "Type de rōle"
+#~ msgid "Parent Contact"
+#~ msgstr "Contact parent"
 
-#~ msgid "Role Types"
-#~ msgstr "Types de rōle"
-
-#~ msgid "Contact persons"
-#~ msgstr "Personnes de contact"
-
-#~ msgid "Contact for"
-#~ msgstr "contact pour"
+#~ msgid "Child Contact"
+#~ msgstr "Contact enfant"
 
 #~ msgid "~Contacts"
 #~ msgstr "~Contacts"
