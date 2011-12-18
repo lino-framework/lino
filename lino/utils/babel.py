@@ -54,6 +54,7 @@ from django.template import defaultfilters
 from django.utils import translation
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 
 from lino import fields
 
@@ -224,7 +225,7 @@ def _contribute_to_class(field,cls,fieldclass,**kw):
         return
     kw.update(blank=True)
     for lang in BABEL_LANGS:
-        kw.update(verbose_name=field.verbose_name + ' ('+lang+')')
+        kw.update(verbose_name=string_concat(field.verbose_name,' ('+lang+')'))
         newfield = fieldclass(**kw)
         newfield._lino_babel_field = True # used by coretools.get_data_elems
         cls.add_to_class(field.name + '_' + lang,newfield)

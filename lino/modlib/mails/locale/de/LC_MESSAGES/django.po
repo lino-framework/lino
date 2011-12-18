@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-18 09:07+0000\n"
-"PO-Revision-Date: 2011-09-15 16:54+0200\n"
+"PO-Revision-Date: 2011-12-18 18:57+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
 "MIME-Version: 1.0\n"
@@ -18,12 +18,11 @@ msgstr ""
 
 #: .\models.py:64
 msgid "Mail Type"
-msgstr ""
+msgstr "Korrespondenzart"
 
 #: .\models.py:65
-#, fuzzy
 msgid "Mail Types"
-msgstr "E-Mails"
+msgstr "Korrespondenzarten"
 
 #: .\models.py:78
 msgid "Create email"
@@ -33,11 +32,13 @@ msgstr "E-Mail oder Brief erstellen"
 msgid "Send email"
 msgstr "E-Mail senden"
 
-#: .\models.py:194 .\models.py:198
+#: .\models.py:194
+#: .\models.py:198
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:195 .\models.py:270
+#: .\models.py:195
+#: .\models.py:270
 msgid "Recipients"
 msgstr "Empfänger"
 
@@ -51,11 +52,11 @@ msgstr ""
 
 #: .\models.py:243
 msgid "Mail Document"
-msgstr ""
+msgstr "Korrespondenzdokument"
 
 #: .\models.py:244
 msgid "Mail Documents"
-msgstr ""
+msgstr "Korrespondenzdokumente"
 
 #: .\models.py:249
 msgid "Sender"
@@ -89,7 +90,9 @@ msgstr "Gesendete Mails"
 msgid "My Mail Inbox"
 msgstr "Posteingang"
 
-#: .\models.py:431 .\models.py:437 .\models.py:441
+#: .\models.py:431
+#: .\models.py:437
+#: .\models.py:441
 msgid "~Mails"
 msgstr "~Korrespondenz"
 
@@ -99,15 +102,15 @@ msgstr "Empfängerart"
 
 #: .\utils.py:34
 msgid "cc"
-msgstr ""
+msgstr "Kopie an"
 
 #: .\utils.py:35
 msgid "bcc"
-msgstr ""
+msgstr "Blindkopie an"
 
 #: .\utils.py:36
 msgid "to"
-msgstr ""
+msgstr "Empfänger"
 
 #: .\config\contacts\Contact\80_mails.dtl.py:3
 msgid "Mails"

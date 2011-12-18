@@ -76,5 +76,11 @@ Discovered some more minor bugs while playing:
 
 - Adding a newcomer in the newcomers list didn't automatically 
   set the newcomer flag.
-- translation of newomers menu label 
+  
+- Translation of Newcomers menu label wasn't dynamic. 
+  Same for verbose names of babel fields.
 
+- Newcomers report accidentally got used as `_lino_model_report` 
+  because :func:`lino.reports.register_report` didn't test for `known_values`.
+  
+- New testcase :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test12`.
