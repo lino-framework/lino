@@ -8,7 +8,7 @@ TESTS_OPTIONS = --verbosity=2 --traceback
 #LANGUAGES = de fr nl et
 #INPUT_FILES = lino\\actions.py lino\\ui\\extjs\\ext_ui.py lino\\modlib\\fields.py lino\\modlib\\system\\models.py
 
-.PHONY: mm cm makedocs tests
+.PHONY: mm cm makedocs tests sdist
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -56,3 +56,12 @@ appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings docs/dsbe/appdocs
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
 
+sdist:
+	python setup.py sdist --formats=gztar,zip --dist-dir=docs/dist
+  
+html:
+	cd docs ; export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; make html
+
+upload:
+	cd docs ; make upload
+	

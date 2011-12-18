@@ -757,7 +757,8 @@ class Persons(AllPersons):
 Person._lino_choices_report = Persons
 
 class Newcomers(AllPersons):
-    filter = dict(newcomer=True)
+    #~ filter = dict(newcomer=True)
+    known_values = dict(newcomer=True)
     def init_label(self):
         return self.model._meta.verbose_name_plural + ' ' + force_unicode(_("(newcomers)"))
 

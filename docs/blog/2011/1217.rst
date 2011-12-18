@@ -56,3 +56,22 @@ Checkin.
 German translations
 
 Checkin.
+
+Worked on the release process 
+-----------------------------
+
+From now on there will be source 
+distribution tarballs for each released version
+on our :doc:`/downloads` page.
+
+First screencast
+----------------
+
+I'm working on a first screencast. Installed CamStudio 2.0 on 
+my Windows machine and did first recordings. But I won't yet 
+publish them, they are too bad quality. 
+I'll first have to write a script :doc:`/casts/lino_intro`.
+
+First beta releases of Lino 1.3.0
+---------------------------------
+

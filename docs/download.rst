@@ -1,11 +1,9 @@
 Download
 ========
 
-Though Lino is :doc:`really free </about/why_gpl>` software, it isn't a packaged product that you can simply download, install and use. 
+List of official releases.
+See :doc:`/admin/install`.
 
-- If you understand the instructions on :doc:`/admin/install`, then go there and install your own Lino site! 
-
-- But for normal people, Lino becomes visible only through applications that use Lino. In order to see Lino, browse through the :doc:`example sites </demos>`. These sites serve quite different purposes, but they also have things in common. The things they have in common, that's Lino!
-
-
+- :doc:`/releases/2011/1.3.0` : 
+  `zip <dist/lino-1.3.0.zip>`_ / `tar.gz <dist/lino-1.3.0.tar.gz>`_
 

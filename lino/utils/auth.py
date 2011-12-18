@@ -20,6 +20,9 @@ Lino's authentification utilities
 """
 
 import os
+import logging
+logger = logging.getLogger(__name__)
+
 
 from django.utils import translation
 from django.conf import settings

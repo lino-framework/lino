@@ -12,7 +12,8 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Calendar panel
+#.  Calendar panel: handle eventadd, eventupdate, eventresize, 
+    eventmove events.
 
 #.  Listings
 
@@ -130,6 +131,9 @@ Medium-term
 #.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
 
 #.  Idée venue avec Gaëtan: .dtl files in Python, not yaml
+
+#.  What about Cédric Krier's `HgNested extension
+    <http://mercurial.selenic.com/wiki/HgNestedExtension>`_?
 
 #.   There is also an almost philosphical question: where should the label "Calendar" 
     (and it's translations) be defined? Currently it is in 

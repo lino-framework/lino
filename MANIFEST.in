@@ -1,8 +1,12 @@
-global-include *.txt *.py *.pds *.BAT *.bat
-global-exclude */.svn/*
-prune .svn
-prune dist
-prune _attic
-prune tests/_attic
-prune build
+global-include *.txt *.py *.BAT *.bat *.js *.css *.html \
+  *.jar *.rtf *.java *.diff *.ico *.jpg *.dtl \
+  *.csv *.xml *.tab \
+  *.po *.mo Makefile
+include bash/*
+prune docs
+prune obsolete
+prune rtlib
+prune screenshots
+prune extjs-showcases
+prune tmp
 

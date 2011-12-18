@@ -1,10 +1,17 @@
-from distutils.core import setup, Extension
+#~ import os
+from distutils.core import setup
+#~ from distutils.core import setup, Distribution
 import lino
+
+#~ class MyDistribution(Distribution):
+    
 setup(name='lino',
+      #~ distclass=MyDistribution,
       version=lino.__version__,
       description="A web application framework using Django and ExtJS",
       license='GPL',
       packages=['lino'],
+      #~ dist_dir=os.path.join('docs','dist'),
       author='Luc Saffre',
       author_email='luc.saffre@gmail.com',
       requires=['django'],
