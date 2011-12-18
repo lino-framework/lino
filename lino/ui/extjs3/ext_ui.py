@@ -1049,7 +1049,7 @@ tinymce.init({
     def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows=None): # **kw2save):
         """
         """
-        logger.info('20111217 form2obj_and_save %r', data)
+        #~ logger.info('20111217 form2obj_and_save %r', data)
         #~ print 'form2obj_and_save %r' % data
         
         # store normal form data (POST or PUT)
@@ -1331,7 +1331,7 @@ tinymce.init({
             if rh.report.handle_uploaded_files is not None:
                 rh.report.handle_uploaded_files(instance,request)
             rows = request.POST.get('rows')
-            logger.info("20111217 Got POST %r",rows)
+            #~ logger.info("20111217 Got POST %r",rows)
             data = json.loads(rows)
             return self.form2obj_and_save(request,rh,data,instance,True,include_rows=ar)
           

@@ -579,7 +579,9 @@ class Lino(object):
         settings_dict.update(
             MIDDLEWARE_CLASSES=tuple(
                 self.get_middleware_classes()))
-                
+
+        self.startup_time = datetime.datetime.today()
+        
         if self.languages:
             lc = language_choices(*self.languages)
             settings_dict.update(LANGUAGES = lc)
@@ -737,11 +739,13 @@ class Lino(object):
             #~ return 5
         #~ return 2
         
-    def demo_date(self,**offset):
-        J = datetime.date(2011,12,16)
+    def demo_date(self,days=0,**offset):
+        if days:
+            offset.update(days=days)
+        #~ J = datetime.date(2011,12,16)
         if offset:
-            return J + datetime.timedelta(**offset)
-        return J
+            return self.startup_time.date() + datetime.timedelta(**offset)
+        return self.startup_time.date()
         
     def get_middleware_classes(self):
         """

@@ -56,3 +56,11 @@ and events for this user.
 This might cange soon because I'm working 
 on a genuine Calendar panel that is going to use the 
 excellent Ext.ensible library.
+
+Let's enter a newcomer: a new person that is maybe going to be coached.
+Olga Popova, born 1980 in Moscow, speaks Russian, learned catering cook 
+in Moscow from September 2000 to June 2003, worked in a restaurant in 
+Copenhagen thereafter, married a Belgian and moved to Brussels, divorced 
+and now wants to live in Eupen with her 5 year old son.
+
+- The City field is an example of a context-sensitive and learning Combobox.

@@ -2,6 +2,7 @@ Version 1.3.0
 =============
 
 Released 2011-12-17.
+See :doc:`/downloads`.
 
 Sichtbare Änderungen
 --------------------
@@ -9,13 +10,13 @@ Sichtbare Änderungen
 - Die neue Kalender-Ansicht hat mir am meisten Arbeit verursacht, 
   ist aber noch immer nicht fertig.
   Sie zeigt immerhin schon alle Termine an. 
-  Ist aber insgesamt noch nicht benutzbar: 
+  Ist insgesamt noch nicht benutzbar: 
   Termine erstellen, verschieben,... und einiges 
   andere funktioniert noch nicht.
   
-- Passbilder sind jetzt nicht mehr verzerrt
+- Passbilder sind jetzt nicht mehr verzerrt.
 
-- Neuer Menübefehl :menuselection:`Kontakte --> Personen (Neuzugänge)`.
+- Neuer Menübefehl :menuselection:`Kontakte --> Neuzugänge`.
   Hier kommen alle Personen rein, die in TIM neu erstellt wurden und noch 
   niemandem zugewiesen worden sind. 
   Um Neuzugänge da rauszuholen, muss man ihnen momentan 
@@ -30,22 +31,10 @@ Sichtbare Änderungen
 - Da war ein Bug beim Ausfüllen einer Art60-7-Konvention. 
   ("unsupported operand type(s) for -: 'datetime.date' and 'instance'",
   :file:`/var/snapshots/lino/lino/modlib/jobs/models.py` in duration, line 367)
-  Kann sein, dass das Speichern von Konventionen insgesamt nicht funktionierte.
+  Kann es sein, dass das Speichern von Konventionen insgesamt nicht 
+  funktionierte?
 
 - In der oberen rechten Ecke ist jetzt ein Button mit dem Benutzernamen. 
-  Wenn man darauf klickt, kann man seine Benutzerdaten ändern.
+  Wenn man darauf klickt, kann man seine Benutzerdaten ändern. 
+  Zum Beispiel die Sprache auf Französisch setzen.
   
-
-Administrator
--------------
-  
-
-
-Upgrade instructions
---------------------
-
-The following are technical instructions related to this 
-upgrade, designed to be executed by a Lino expert.
-For more general instructions on how to upgrade an existing 
-Lino site, see :doc:`/admin/upgrade`.
-

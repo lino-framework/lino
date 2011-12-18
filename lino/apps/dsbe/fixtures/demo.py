@@ -17,7 +17,7 @@ from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
-#~ from django.conf import settings
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
@@ -51,7 +51,7 @@ DEMO_LINKS = [
 ]
 ROW_COUNTER = 0
 MAX_LINKS_PER_OWNER = 4
-DATE = i2d(20061014)
+DATE = settings.LINO.demo_date() # i2d(20061014)
     
 
 
@@ -311,6 +311,7 @@ def objects():
     #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
     
     
+    #~ yield note(user=root,date=settings.LINO.demo_date(),
     yield note(user=root,date=i2d(20091006),
         subject="Programmierung",company=cpas,
         type=1,event_type=1)
@@ -355,8 +356,10 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     abi = u"Abitur"
     study = Instantiator('jobs.Study').build
         
-    yield study(person=luc,type=schule,content=abi,started='19740901',stopped='19860630')
-    yield study(person=gerd,type=schule,content=abi,started='19740901',stopped='19860630')
+    yield study(person=luc,type=schule,content=abi,
+      started='19740901',stopped='19860630')
+    yield study(person=gerd,type=schule,content=abi,
+      started='19740901',stopped='19860630')
 
     yield langk(person=luc,language='ger',written='4',spoken='4')
     yield langk(person=gerd,language='ger',written='4',spoken='4')
@@ -384,8 +387,6 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
       user=root,person=hans).build
     yield contract(1,i2d(20110906),i2d(20111206))
     
-    
-    
     jobtype = Instantiator('jobs.JobType','name').build
     art607 = jobtype(u'Sozialwirtschaft = "majorés"')
     yield art607 
@@ -408,15 +409,26 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     contract = Instantiator('jobs.Contract',
       'type applies_from applies_until job contact',
       user=root,person=hans).build
-    yield contract(1,i2d(20090518),i2d(20100517),rcyclejob,rcycle_dir)
-    yield contract(1,i2d(20090518),i2d(20100517),bisajob,bisa_dir)
-    yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
-    yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
-    yield contract(1,None,None,bisajob,bisa_dir,person=tatjana)
+    #~ yield contract(1,i2d(20090518),i2d(20100517),rcyclejob,rcycle_dir)
+    yield contract(1,settings.LINO.demo_date(-30),
+        settings.LINO.demo_date(+60),rcyclejob,rcycle_dir)
+    #~ yield contract(1,i2d(20090518),i2d(20100517),bisajob,bisa_dir)
+    yield contract(1,settings.LINO.demo_date(-29),
+        settings.LINO.demo_date(+61),bisajob,bisa_dir)
+    #~ yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
+    yield contract(1,settings.LINO.demo_date(-29),None,bisajob,bisa_dir,person=andreas)
+    #~ yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
+    yield contract(1,settings.LINO.demo_date(-28),None,
+        rcyclejob,rcycle_dir,person=annette)
+    #~ yield contract(1,None,None,bisajob,bisa_dir,person=tatjana)
+    yield contract(1,settings.LINO.demo_date(-10),
+        settings.LINO.demo_date(+20),bisajob,bisa_dir,person=tatjana)
     
     jobrequest = Instantiator('jobs.Candidature','job person date_submitted').build
-    yield jobrequest(bisajob,tatjana,i2d(20111005))
-    yield jobrequest(rcyclejob,luc,i2d(20111005))
+    #~ yield jobrequest(bisajob,tatjana,i2d(20111005))
+    yield jobrequest(bisajob,tatjana,settings.LINO.demo_date(-5))
+    #~ yield jobrequest(rcyclejob,luc,i2d(20111005))
+    yield jobrequest(rcyclejob,luc,settings.LINO.demo_date(-30))
 
     #~ def f(rmd,d):
         #~ rmd.reminder_date = d
@@ -478,13 +490,16 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     offer = Instantiator('dsbe.CourseOffer').build
     course = Instantiator('dsbe.Course').build
     yield offer(provider=oikos,title=u"Deutsch für Anfänger",content=1)
-    yield course(offer=1,start_date=i2d(20110110))
+    #~ yield course(offer=1,start_date=i2d(20110110))
+    yield course(offer=1,start_date=settings.LINO.demo_date(+30))
     
     yield offer(provider=kap,title=u"Deutsch fur Anfanger",content=1)
-    yield course(offer=2,start_date=i2d(20110117))
+    #~ yield course(offer=2,start_date=i2d(20110117))
+    yield course(offer=2,start_date=settings.LINO.demo_date(+16))
     
     yield offer(provider=kap,title=u"Français pour débutants",content=2)
-    yield course(offer=3,start_date=i2d(20110124))
+    #~ yield course(offer=3,start_date=i2d(20110124))
+    yield course(offer=3,start_date=settings.LINO.demo_date(+16))
     
     #~ baker = Properties.objects.get(pk=1)
     #~ baker.save()
@@ -581,9 +596,12 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     event = Instantiator('cal.Event',
       'type start_date project summary',
       user=root).build
-    yield event(1,i2d(20100727),hans,u"Stand der Dinge")
-    yield event(2,i2d(20100727),annette,u"Problem Kühlschrank")
-    yield event(3,i2d(20100727),andreas,u"Mein dritter Termin")
+    #~ yield event(1,i2d(20100727),hans,u"Stand der Dinge")
+    #~ yield event(2,i2d(20100727),annette,u"Problem Kühlschrank")
+    #~ yield event(3,i2d(20100727),andreas,u"Mein dritter Termin")
+    yield event(1,settings.LINO.demo_date(+1),hans,u"Stand der Dinge")
+    yield event(2,settings.LINO.demo_date(+1),annette,u"Problem Kühlschrank")
+    yield event(3,settings.LINO.demo_date(+2),andreas,u"Mein dritter Termin")
 
     sector = Instantiator('jobs.Sector').build
     for ln in SECTORS.splitlines():
@@ -618,7 +636,10 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
 
     i = dsbe.Person.objects.order_by('name').__iter__()
     p = i.next()
+    offset = 0
     for f in jobs.Function.objects.all():
         yield jobs.Candidature(person=p,function=f,sector=f.sector,
-            date_submitted=i2d(20111019))
+            #~ date_submitted=i2d(20111019))
+            date_submitted=settings.LINO.demo_date(offset))
         p = i.next()
+        offset -= 1

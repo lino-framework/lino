@@ -50,6 +50,7 @@ class DateConverter(Converter):
         value = kw.get(self.field.name)
         if value is not None:
             if not isinstance(value,datetime.date):
+                #~ print "20111218 DateConverter", value
                 if type(value) == int:
                     value = str(value)
                 d = dateparser.parse(value)
