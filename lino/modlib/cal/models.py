@@ -184,7 +184,7 @@ def default_calendar(user):
 
 
 
-class Place(models.Model):
+class Place(babel.BabelNamed):
     """
     A location where Events can happen.
     For a given Place you can see the :class:`EventsByPlace` 
@@ -194,9 +194,9 @@ class Place(models.Model):
         verbose_name = _("Place")
         verbose_name_plural = _("Places")
         
-    name = models.CharField(_("Name"),max_length=200)
-    def __unicode__(self):
-        return self.name 
+    #~ name = models.CharField(_("Name"),max_length=200)
+    #~ def __unicode__(self):
+        #~ return self.name 
   
 class Places(reports.Report):
     model = Place

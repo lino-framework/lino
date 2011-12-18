@@ -447,7 +447,7 @@ class Role(models.Model):
             return super(Role,self).__unicode__()
         if self.type is None:
             return unicode(self.person)
-        return u"%s (%s)" % (self.company, self.type)
+        return u"%s (%s)" % (self.person, self.type)
             
     #~ def address_lines(self):
         #~ for ln in self.person.address_person_lines():

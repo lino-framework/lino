@@ -29,6 +29,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode 
 
 #~ import lino
@@ -303,8 +304,7 @@ class Partner(mixins.DiffingMixin,models.Model):
     Deprecated partners may not be used when creating new operations."""
     
     activity = models.ForeignKey("dsbe.Activity",
-        blank=True,null=True,
-        verbose_name=_("Activity"))
+        blank=True,null=True)
     "Pointer to :class:`dsbe.Activity`. May be empty."
     
     bank_account1 = models.CharField(max_length=40,
@@ -739,8 +739,10 @@ class AllPersons(contacts.Contacts):
       #~ order_by=['sort_name'])
     #~ order_by = None # clear the default value from contacts.Persons.order_by since we use extra order_by
     
+    
     def init_label(self):
-        return self.model._meta.verbose_name_plural + ' ' + force_unicode(_("(all)"))
+        return string_concat(
+          self.model._meta.verbose_name_plural,' ',_("(all)"))
     
 class Persons(AllPersons):
     """
@@ -759,8 +761,9 @@ Person._lino_choices_report = Persons
 class Newcomers(AllPersons):
     #~ filter = dict(newcomer=True)
     known_values = dict(newcomer=True)
+    #~ use_as_default_report = False
     def init_label(self):
-        return self.model._meta.verbose_name_plural + ' ' + force_unicode(_("(newcomers)"))
+        return _("newcomers")
 
 
     

@@ -279,7 +279,7 @@ def register_report(rpt):
     if rpt.master is None:
         if not rpt.model._meta.abstract:
             master_reports.append(rpt)
-        if not rpt.filter and rpt.use_as_default_report:
+        if not rpt.filter and not rpt.known_values and rpt.use_as_default_report:
             #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
             rpt.model._lino_model_report = rpt
     elif rpt.master is ContentType:

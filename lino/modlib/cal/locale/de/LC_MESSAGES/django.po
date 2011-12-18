@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.cal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-17 16:46+0000\n"
+"POT-Creation-Date: 2011-12-18 09:07+0000\n"
 "PO-Revision-Date: 2011-12-17 18:52+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -16,8 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:93
-#: .\models.py:281
+#: .\models.py:93 .\models.py:281
 msgid "Calendar"
 msgstr "Kalender"
 
@@ -29,13 +28,11 @@ msgstr "Kalenderliste"
 msgid "Type"
 msgstr "Art"
 
-#: .\models.py:99
-#: .\models.py:197
+#: .\models.py:99 .\models.py:197
 msgid "Name"
 msgstr "Name"
 
-#: .\models.py:100
-#: .\models.py:321
+#: .\models.py:100 .\models.py:321
 msgid "Description"
 msgstr "Bezeichnung"
 
@@ -63,8 +60,7 @@ msgstr "Standard"
 msgid "is hidden"
 msgstr "versteckt"
 
-#: .\models.py:113
-#: .\models.py:315
+#: .\models.py:113 .\models.py:315
 msgid "Start date"
 msgstr "Beginnt am"
 
@@ -72,8 +68,7 @@ msgstr "Beginnt am"
 msgid "color"
 msgstr "Farbe"
 
-#: .\models.py:194
-#: .\models.py:527
+#: .\models.py:194 .\models.py:527
 msgid "Place"
 msgstr "Ort"
 
@@ -89,8 +84,7 @@ msgstr "Termin-Status"
 msgid "Event Statuses"
 msgstr "Terminzustände"
 
-#: .\models.py:211
-#: .\models.py:581
+#: .\models.py:211 .\models.py:581
 msgid "Reminder"
 msgstr "Erinnerung"
 
@@ -126,8 +120,7 @@ msgstr "Zugriffsklasse"
 msgid "Access Classes"
 msgstr "Zugriffsklassen"
 
-#: .\models.py:267
-#: .\models.py:526
+#: .\models.py:267 .\models.py:526
 msgid "Event Type"
 msgstr "Terminart"
 
@@ -143,8 +136,7 @@ msgstr ""
 msgid "Start time"
 msgstr "Beginnt um"
 
-#: .\models.py:319
-#: .\models.py:354
+#: .\models.py:319 .\models.py:354
 msgid "Start"
 msgstr "Beginn"
 
@@ -152,18 +144,15 @@ msgstr "Beginn"
 msgid "Summary"
 msgstr "Kurzbeschreibung"
 
-#: .\models.py:339
-#: .\models.py:493
+#: .\models.py:339 .\models.py:493
 msgid " on "
 msgstr " am "
 
-#: .\models.py:362
-#: .\models.py:524
+#: .\models.py:362 .\models.py:524
 msgid "End"
 msgstr "Ende"
 
-#: .\models.py:373
-#: .\models.py:433
+#: .\models.py:373 .\models.py:433
 msgid "Recurrence Set"
 msgstr "Wiederholungsserie"
 
@@ -195,8 +184,7 @@ msgstr "Revisionsnummer"
 msgid "modified by user"
 msgstr "manuell bearbeitet"
 
-#: .\models.py:514
-#: .\models.py:710
+#: .\models.py:514 .\models.py:710
 msgid "Event"
 msgstr "Termin"
 
@@ -216,9 +204,7 @@ msgstr "Endet um"
 msgid "Transparent"
 msgstr "nicht blockierend"
 
-#: .\models.py:531
-#: .\models.py:607
-#: .\models.py:717
+#: .\models.py:531 .\models.py:607 .\models.py:717
 msgid "Status"
 msgstr ""
 
@@ -226,8 +212,7 @@ msgstr ""
 msgid "Duration"
 msgstr "Dauer"
 
-#: .\models.py:533
-#: .\models.py:605
+#: .\models.py:533 .\models.py:605
 msgid "Duration value"
 msgstr "Dauer (Anzahl)"
 
@@ -299,9 +284,7 @@ msgstr "Rückblick"
 msgid "due date reached"
 msgstr "Fälligkeitsdatum erreicht"
 
-#: .\models.py:952
-#: .\models.py:961
-#: .\models.py:973
+#: .\models.py:952 .\models.py:961 .\models.py:973
 msgid "~Calendar"
 msgstr "~Kalender"
 

@@ -480,3 +480,23 @@ def test11(self):
     self.assertEqual(obj.contact.person.get_full_name(),"Frau Annette ARENS")
     babel.set_language(None)
     
+    
+def test12(self):
+    """
+    Test whether the contact person of a contract is correctly filled in
+    when the employer has exactly one contact person.
+    """
+    from lino.modlib.jobs.models import Contract, JobProvider, Job
+    from lino.apps.dsbe.models import Person
+    from lino.modlib.users.models import User
+    u = User.objects.get(username='root')
+    #~ qs = Person.objects.order_by('last_name','first_name')
+    p = Person.objects.get(pk=177)
+    #~ e = Employer.objects.get(pk=185)
+    j = Job.objects.get(pk=1)
+    c = Contract(person=p,user=u,job=j,applies_from=i2d(20111214),duration=312)
+    c.full_clean()
+    c.save()
+    self.assertEqual(c.contact.person.pk,118)
+    self.assertEqual(c.applies_until,i2d(20121021))
+    

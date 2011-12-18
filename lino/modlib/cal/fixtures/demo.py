@@ -59,21 +59,37 @@ def objects():
           
     etype = Instantiator('cal.EventType').build
     yield etype(**babel_values('name',
-          de=u"Interner Termin",
-          fr=u"Rendez-vous interne",
-          en=u"Internal meeting",
+          de=u"Besprechung",
+          fr=u"Coordination",
+          en=u"Coordination",
           ))
     yield etype(**babel_values('name',
-          de=u"Termin beim Klienten",
-          fr=u"Rendez-vous chez le client",
-          en=u"Meeting at client's",
+          de=u"Erstgespräch",
+          fr=u"Première rencontre",
+          en=u"First meeting",
           ))
     yield etype(**babel_values('name',
-          de=u"Termin beim Arbeitgeber",
-          fr=u"Rendez-vous chez l'employeur",
-          en=u"Meeting at employer's",
+          de=u"Auswertungsgespräch",
+          fr=u"Évaluation",
+          en=u"Evaluation",
           ))
     
+    place = Instantiator('cal.Place').build
+    yield place(**babel_values('name',
+          de=u"Büro",
+          fr=u"Bureau",
+          en=u"Office",
+          ))
+    yield place(**babel_values('name',
+          de=u"Beim Klienten",
+          fr=u"Chez le client",
+          en=u"A the client's",
+          ))
+    yield place(**babel_values('name',
+          de=u"beim Arbeitgeber",
+          fr=u"chez l'employeur",
+          en=u"at employer's",
+          ))
 
     event = Instantiator('cal.Event','user:username').build
     yield event("user",start_date=settings.LINO.demo_date(),type=1)

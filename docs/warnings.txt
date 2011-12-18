@@ -1,16 +1,9 @@
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
-T:\hgwork\lino\docs\casts\lino_dsbe.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\contacts.Role.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\contacts.RoleType.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\contacts.Role.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\contacts.RoleType.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\autodoc\lino.modlib.isip.rst:44: WARNING: py:class reference target not found: django.db.models.base.Model

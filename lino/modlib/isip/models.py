@@ -150,7 +150,7 @@ class ContractEndings(reports.Report):
 def contract_contact_choices(company):
     return contacts.Role.objects.filter(
         type__use_in_contracts=True,
-        company_id=company.pk)
+        company__id=company.pk)
 
 
 

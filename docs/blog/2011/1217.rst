@@ -72,6 +72,9 @@ my Windows machine and did first recordings. But I won't yet
 publish them, they are too bad quality. 
 I'll first have to write a script :doc:`/casts/lino_intro`.
 
-First beta releases of Lino 1.3.0
----------------------------------
+Discovered some more minor bugs while playing:
+
+- Adding a newcomer in the newcomers list didn't automatically 
+  set the newcomer flag.
+- translation of newomers menu label 
 
