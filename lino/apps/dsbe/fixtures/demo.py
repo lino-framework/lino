@@ -209,6 +209,7 @@ def objects():
     andreas = Person.objects.get(name__exact="Arens Andreas")
     annette = Person.objects.get(name__exact="Arens Annette")
     hans = Person.objects.get(name__exact="Altenberg Hans")
+    ulrike = Person.objects.get(name__exact="Charlier Ulrike")
     
     cpas = company(name=u"ÖSHZ Eupen",city=eupen,country='BE')
     yield cpas
