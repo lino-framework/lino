@@ -405,20 +405,6 @@ class ViewReportRequest(reports.ReportActionRequest):
         
         return kw
       
-    def request2kw(self,unused_ui,**kw):
-        #~ if self.known_values:
-            #~ kv = dict()
-            #~ for k,v in self.known_values:
-                
-            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
-        if self.quick_search:
-            kw[ext_requests.URL_PARAM_FILTER] = self.quick_search
-        if self.master_instance is not None:
-            kw[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
-            mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
-            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
-        return kw
-
     def get_user(self):
         return self.user
 
@@ -1233,8 +1219,8 @@ tinymce.init({
             
             if fmt == 'html':
                 kw = {}
-                bp = ar.request2kw(self)
-                #~ bp = self.request2kw(ar)
+                #~ bp = ar.request2kw(self)
+                bp = self.request2kw(ar)
                 
                 params = dict(base_params=bp)
                 
@@ -1455,7 +1441,8 @@ tinymce.init({
                     return json_response(datarec)
                     
                 params = dict(data_record=datarec)
-                bp = ar.request2kw(self)
+                #~ bp = ar.request2kw(self)
+                bp = self.request2kw(ar)
                 
                 #~ if a.window_wrapper.tabbed:
                 if rpt.get_detail().get_handle(self).tabbed:
@@ -1826,7 +1813,8 @@ tinymce.init({
         """
         Deserves more documentation.
         """
-        params = dict(base_params=rr.request2kw(self))
+        #~ params = dict(base_params=rr.request2kw(self))
+        params = dict(base_params=self.request2kw(rr))
         if rr.total_count == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
             a = rr.report.get_action('insert')
@@ -1949,7 +1937,8 @@ tinymce.init({
         return self.build_url("api",actor.app_label,actor._actor_name,*args,**kw)
         
     def get_request_url(self,rr,*args,**kw):
-        kw = rr.request2kw(self,**kw)
+        #~ kw = rr.request2kw(self,**kw)
+        kw = self.request2kw(rr,**kw)
         return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
@@ -2284,3 +2273,17 @@ tinymce.init({
         a = actors.get_actor(*args,**kw)
         return a.get_handle(self)
         
+    def request2kw(self,rr,**kw):
+        #~ if self.known_values:
+            #~ kv = dict()
+            #~ for k,v in self.known_values:
+                
+            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
+        if rr.quick_search:
+            kw[ext_requests.URL_PARAM_FILTER] = rr.quick_search
+        if rr.master_instance is not None:
+            kw[ext_requests.URL_PARAM_MASTER_PK] = rr.master_instance.pk
+            mt = ContentType.objects.get_for_model(rr.master_instance.__class__).pk
+            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
+        return kw
+

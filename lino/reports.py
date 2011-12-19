@@ -586,8 +586,8 @@ class ActionRequest(object):
         self.ui = ui
         self.action = action
         
-    def request2kw(self,ui,**kw):
-        return kw
+    #~ def request2kw(self,ui,**kw):
+        #~ return kw
   
 class ReportActionRequest(ActionRequest):
     limit = None
