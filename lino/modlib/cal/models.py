@@ -617,8 +617,8 @@ class Task(Component):
         cls.DISABLED_AUTO_FIELDS = reports.fields_list(cls,
             '''start_date start_time summary''')
 
-    def __unicode__(self):
-        return "#" + str(self.pk)
+    #~ def __unicode__(self):
+        #~ return "#" + str(self.pk)
         
 
 class Events(reports.Report):

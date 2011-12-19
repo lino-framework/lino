@@ -386,8 +386,8 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
       'type applies_from applies_until',
       user=root).build
     #~ yield contract(1,i2d(20110906),i2d(20111206),person=hans)
-    yield contract(1,settings.LINO.demo_date(months=-5),
-        settings.LINO.demo_date(months=1),person=hans)
+    yield contract(1,settings.LINO.demo_date(days=-5*30),
+        settings.LINO.demo_date(days=30),person=hans)
     
     jobtype = Instantiator('jobs.JobType','name').build
     art607 = jobtype(u'Sozialwirtschaft = "majorés"')
