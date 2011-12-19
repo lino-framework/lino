@@ -6,3 +6,5 @@ Some more little optimizations while recording our first screen cast:
 - `cal.Component.summary_row`
 - dsbe demo fixture
 - Bug in participants.odt
+- The label of :class:`lino.apps.dsbe.models.ConfiguredPropsByPerson` 
+  wasn't yet dynamic.

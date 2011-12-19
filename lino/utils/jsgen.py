@@ -108,6 +108,8 @@ def py2js(v):
         
     if isinstance(v,Value):
         return v.as_ext()
+    if isinstance(v,Promise):
+        v = force_unicode(v)
     if type(v) is types.GeneratorType:
         raise Exception("Please don't call the generator function yourself")
         #~ return "\n".join([ln for ln in v])
@@ -155,8 +157,6 @@ def py2js(v):
     #return simplejson.encoder.encode_basestring(v)
     #print repr(v)
     # http://docs.djangoproject.com/en/dev/topics/serialization/
-    if isinstance(v,Promise):
-        v = force_unicode(v)
     return simplejson.dumps(v)
     #~ return simplejson.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
     

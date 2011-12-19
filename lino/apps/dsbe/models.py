@@ -1049,19 +1049,29 @@ class PersonPropsByProp(reports.Report):
     #~ column_names = "person property value remark *"
     #~ hidden_columns = frozenset(['group'])
     
+from django.utils.functional import lazy
     
 class ConfiguredPropsByPerson(PropsByPerson):
-    propgroup_config_name = NotImplementedError
+    """
+    Base class for 
+    :class`SkillsByPerson`, 
+    :class`SoftSkillsByPerson` and
+    :class`ObstaclesByPerson`.
+    """
+    propgroup_config_name = None
     typo_check = False # to avoid warning "ConfiguredPropsByPerson defines new attribute(s) propgroup_config_name"
     def setup_actions(self):
-        if not self.propgroup_config_name is NotImplementedError:
-            #~ pg = self.get_configured_action() 
+        if self.propgroup_config_name:
             pg = getattr(settings.LINO.config,self.propgroup_config_name)
             self.known_values = dict(group=pg)
             if pg is None:
                 self.label = _("(Site setting %s is empty)" % self.propgroup_config_name)
             else:
-                self.label = babelattr(pg,'name')
+                #~ def f():
+                    #~ return babelattr(pg,'name')
+                #~ self.label = lazy(f,unicode)()
+                self.label = lazy(babelattr,unicode)(pg,'name')
+                #~ self.label = babelattr(pg,'name')
         super(PropsByPerson,self).setup_actions()
         
 class SkillsByPerson(ConfiguredPropsByPerson):
