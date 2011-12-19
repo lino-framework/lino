@@ -10,6 +10,10 @@ Some more little optimizations while recording our first screen cast:
   wasn't yet dynamic.
   
   
-Trying to set a There was a NameError "global name 'dict2kw' is not defined" 
-in :file:`/var/snapshots/lino/lino/ui/extjs3/ext_ui.py`
+- Trying to set a filter gave a NameError "global name 'dict2kw' is not defined" 
+  in :file:`/var/snapshots/lino/lino/ui/extjs3/ext_ui.py`
 
+- MyPersonsByGroup war leer. Weil das MenuItem da einen ReportActionRequest 
+  macht (nicht einen ViewActionReportRequest). request2kw() muss im UI bleiben, 
+  nicht im ViewReportRequest (ich glaube, dass hatte ich irgendwann ohne 
+  trifftigen Grund geändert, bloß weil's schöner aussah).

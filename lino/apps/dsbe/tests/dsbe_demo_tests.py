@@ -518,6 +518,9 @@ def test12(self):
     
 def test13(self):
     """
+    Test whether the main menu is okay.
+    Probably ugly to keep synched, but 
+    e.g. the "empty PersonsByGroup" bug (20111219) would have triggered this.
     """
     user = User.objects.get(username='root')
     translation.activate('en')
@@ -560,19 +563,19 @@ def test13(self):
                     "href": "/api/dsbe/MyPersons"
                 }, {
                     "text": "Bilan / D\u00e9termination R\u00e9mobilisation",
-                    "href": "/api/dsbe/MyPersonsByGroup"
+                    "href": "/api/dsbe/MyPersonsByGroup?mt=50&mk=1"
                 }, {
                     "text": "Pr\u00e9formation",
-                    "href": "/api/dsbe/MyPersonsByGroup"
+                    "href": "/api/dsbe/MyPersonsByGroup?mt=50&mk=2"
                 }, {
                     "text": "Formation",
-                    "href": "/api/dsbe/MyPersonsByGroup"
+                    "href": "/api/dsbe/MyPersonsByGroup?mt=50&mk=3"
                 }, {
                     "text": "Recherche active emplois",
-                    "href": "/api/dsbe/MyPersonsByGroup"
+                    "href": "/api/dsbe/MyPersonsByGroup?mt=50&mk=4"
                 }, {
                     "text": "Travail",
-                    "href": "/api/dsbe/MyPersonsByGroup"
+                    "href": "/api/dsbe/MyPersonsByGroup?mt=50&mk=5"
                 } ]
             },
             "text": "My coached Persons"
@@ -788,13 +791,13 @@ def test13(self):
                     "href": "/api/properties/PropTypes"
                 }, {
                     "text": "Fachkompetenzen",
-                    "href": "/api/properties/PropsByGroup"
+                    "href": "/api/properties/PropsByGroup?mt=11&mk=1"
                 }, {
                     "text": "Sozialkompetenzen",
-                    "href": "/api/properties/PropsByGroup"
+                    "href": "/api/properties/PropsByGroup?mt=11&mk=2"
                 }, {
                     "text": "Hindernisse",
-                    "href": "/api/properties/PropsByGroup"
+                    "href": "/api/properties/PropsByGroup?mt=11&mk=3"
                 } ]
             },
             "text": "Properties"
@@ -922,16 +925,16 @@ def test13(self):
     },
     "text": "Help"
 }, {
-    "text": "Startseite",
+    "text": "Home",
     "handler": function() {
-        window.location = '/';
+        window.location='/';
     },
     "xtype": "button"
 }, "->",
 {
     "text": "root",
     "handler": function() {
-        window.location = '/api/users/User/103';
+        window.location='/api/users/User/103';
     },
     "xtype": "button"
 } ]
@@ -939,10 +942,3 @@ def test13(self):
     """
     self.assertEquivalent(expected,js)
     
-    #~ url_tests = [
-      #~ ''
-    #~ ]
-    #~ for mi in main.items:
-        #~ d = ui.py2js_converter(mi)
-        #~ self.assertEqual(type(d),dict)
-        

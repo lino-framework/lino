@@ -715,7 +715,7 @@ class Lino(object):
         url = self.root_url
         if not url: 
             url = "/"
-        main.add_url_button(url,_("Home"))
+        main.add_url_button(url,label=_("Home"))
         main.add_separator("->")
         if user:
             main.add_instance_action(user)

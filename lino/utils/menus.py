@@ -182,11 +182,13 @@ class Menu(MenuItem):
     def add_menu(self,name,label,**kw):
         return self._add_item(Menu(name,label,self,**kw))
 
-    def add_url_button(self,url,label):
-        #~ return self._add_item(MenuItem(self,None,None,label,**kw))
-        self.items.append(dict(
-          xtype='button',text=label,
-          handler=js_code("function() {window.location='%s';}" % url)))
+    #~ def add_url_button(self,url,label):
+    def add_url_button(self,url,**kw):
+        kw.update(href=url)
+        return self._add_item(MenuItem(self,None,**kw))
+        #~ self.items.append(dict(
+          #~ xtype='button',text=label,
+          #~ handler=js_code("function() {window.location='%s';}" % url)))
 
     def _add_item(self,m):
         assert isinstance(m,MenuItem)
