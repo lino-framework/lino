@@ -210,6 +210,7 @@ def objects():
     annette = Person.objects.get(name__exact="Arens Annette")
     hans = Person.objects.get(name__exact="Altenberg Hans")
     ulrike = Person.objects.get(name__exact="Charlier Ulrike")
+    erna = Person.objects.get(name__exact=u"Ärgerlich Erna")
     
     cpas = company(name=u"ÖSHZ Eupen",city=eupen,country='BE')
     yield cpas
@@ -489,6 +490,11 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     CourseContent = resolve_model('dsbe.CourseContent')
     yield CourseContent(id=1,name=u"Deutsch")
     yield CourseContent(id=2,name=u"Französisch")
+    
+    creq = Instantiator('dsbe.CourseRequest').build
+    yield creq(person=ulrike,content=1,date_submitted=settings.LINO.demo_date(-30))
+    yield creq(person=tatjana,content=1,date_submitted=settings.LINO.demo_date(-30))
+    yield creq(person=erna,content=2,date_submitted=settings.LINO.demo_date(-30))
     
     offer = Instantiator('dsbe.CourseOffer').build
     course = Instantiator('dsbe.Course').build
