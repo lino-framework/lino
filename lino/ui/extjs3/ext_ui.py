@@ -361,7 +361,7 @@ class ViewReportRequest(reports.ReportActionRequest):
             filter = request.REQUEST.get(ext_requests.URL_PARAM_GRIDFILTER,None)
             if filter is not None:
                 filter = json.loads(filter)
-                kw['gridfilters'] = [dict2kw(flt) for flt in filter]
+                kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
         
         quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search:
