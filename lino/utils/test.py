@@ -123,12 +123,14 @@ class TestCase(DjangoTestCase):
         """
         if a == b:
             return
-        a = a.strip().split() 
-        b = b.strip().split()
-        if a == b:
+        ta = a.strip().split() 
+        tb = b.strip().split()
+        if ta == tb:
             return 
-        logger.warning("EXPECTED : %s",' '.join(a))
-        logger.warning("     GOT : %s",' '.join(b))
+        logger.warning("EXPECTED : %s",' '.join(ta))
+        logger.warning("     GOT : %s",' '.join(tb))
+        #~ logger.warning("EXPECTED : %s",a)
+        #~ logger.warning("     GOT : %s",b)
         self.fail("EXPECTED and GOT are not equivalent")
         
     def request_PUT(self,url,data,**kw):

@@ -217,20 +217,41 @@ def create_child(parent_model,pk_,child_model,**kw):
     if parent_link_field is None:
         raise ValidationError("A %s cannot be parent for a %s" % (
             parent_model.__name__,child_model.__name__))
-    attrs = {}
-    attrs[parent_link_field.name+"_id"] = pk_
-    #~ for lf in child_model._meta.local_fields:
-    # backwards compat 20111211 : dpy fixtures created by Version 1.2.8 still 
-    # specify also field values of parent_model. Ignore these silently
-    # otherwise Django would also try to create a parent_model record.
-    for f,m in child_model._meta.get_fields_with_model():
-        if m is None or not issubclass(m,parent_model):
+    if True:
+        ignored = {}
+        for f in parent_model._meta.fields:
             if f.name in kw:
-                attrs[f.name] = kw.pop(f.name)
-    #~ if kw:
-        #~ logging.warning("create_child() ignored non-local fields %s",kw)
+                ignored[f.name] = kw.pop(f.name)
+        kw[parent_link_field.name+"_id"] = pk_ 
+        if ignored:
+            logging.warning(
+              "create_child() %s %s from %s : ignored non-local fields %s",
+              child_model.__name__,
+              pk_,
+              parent_model.__name__, 
+              ignored)
+        child_obj = child_model(**kw)
+    else:
+        attrs = {}
+        attrs[parent_link_field.name+"_id"] = pk_
+        #~ for lf in child_model._meta.local_fields:
+        # backwards compat 20111211 : dpy fixtures created by Version 1.2.8 still 
+        # specify also field values of parent_model. Ignore these silently
+        # otherwise Django would also try to create a parent_model record.
+        for f,m in child_model._meta.get_fields_with_model():
+            if m is None or not issubclass(m,child_model):
+            #~ if m is None or m is child_model or not issubclass(m,parent_model):
+                if f.name in kw:
+                    attrs[f.name] = kw.pop(f.name)
+        if kw:
+            logging.warning(
+              "create_child() %s %s from %s : ignored non-local fields %s",
+              child_model.__name__,
+              pk_,
+              parent_model.__name__, 
+              kw)
         
-    child_obj = child_model(**attrs)
+        child_obj = child_model(**attrs)
     def full_clean(*args,**kw):
         pass
         

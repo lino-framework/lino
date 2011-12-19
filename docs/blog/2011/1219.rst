@@ -8,3 +8,8 @@ Some more little optimizations while recording our first screen cast:
 - Bug in participants.odt
 - The label of :class:`lino.apps.dsbe.models.ConfiguredPropsByPerson` 
   wasn't yet dynamic.
+  
+  
+Trying to set a There was a NameError "global name 'dict2kw' is not defined" 
+in :file:`/var/snapshots/lino/lino/ui/extjs3/ext_ui.py`
+

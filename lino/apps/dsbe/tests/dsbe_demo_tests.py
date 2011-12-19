@@ -36,10 +36,17 @@ from django.utils import translation
 #from lino.modlib.countries.models import Country
 
 from lino.utils import i2d
+from lino.utils.jsgen import py2js
 from lino.utils import babel
 from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
+
+from lino.apps.dsbe.models import Person, MyPersons, only_coached_persons,only_my_persons
+from lino.modlib.users.models import User
+
+from lino.modlib.users.models import User
+from lino.ui.extjs3.urls import ui
 
 
 #~ Person = resolve_model('contacts.Person')
@@ -74,6 +81,11 @@ def test02(self):
     See also :doc:`/blog/2011/0531`.
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
+    u = User.objects.get(username='root')
+    lang = u.language
+    u.language = ''
+    u.save()
+    
     url = '/api/dsbe/SoftSkillsByPerson?mt=22&mk=118&fmt=json'
     # make sure that the response is in English so that this test works on any site
     #~ 20111111 babel.set_language('en')
@@ -107,6 +119,10 @@ def test02(self):
         self.assertEqual(row[3],"2")
         
     #~ 20111111 babel.set_language(None) # switch back to default language for subsequent tests
+    
+    u.language = lang
+    u.save()
+    
     
     #~ tf('http://127.0.0.1:8000/api/properties/SoftSkillsByPerson?_dc=1298881440121&fmt=json&mt=22&mk=15',
         #~ """
@@ -408,8 +424,6 @@ def test08(self):
     
     See :doc:`/blog/2011/0412`
     """
-    from lino.apps.dsbe.models import Person, MyPersons, only_coached_persons,only_my_persons
-    from lino.modlib.users.models import User
     u = User.objects.get(username='root')
     #~ qs = Person.objects.order_by('last_name','first_name')
     qs = Person.objects.order_by('id')
@@ -478,7 +492,8 @@ def test11(self):
     obj = Contract.objects.get(pk=5)
     translation.activate('de')
     self.assertEqual(obj.contact.person.get_full_name(),"Frau Annette ARENS")
-    babel.set_language(None)
+    #~ babel.set_language(None)
+    translation.deactivate()
     
     
 def test12(self):
@@ -500,3 +515,434 @@ def test12(self):
     self.assertEqual(c.contact.person.pk,118)
     self.assertEqual(c.applies_until,i2d(20121021))
     
+    
+def test13(self):
+    """
+    """
+    user = User.objects.get(username='root')
+    translation.activate('en')
+    main = settings.LINO.get_site_menu(ui,user)
+    d = ui.py2js_converter(main)
+    translation.deactivate()
+    js = py2js(d)
+    #~ print js
+    expected = """
+    
+[ {
+    "menu": {
+        "items": [ {
+            "text": "Companies",
+            "href": "/api/dsbe/Companies"
+        }, {
+            "text": "Persons",
+            "href": "/api/dsbe/Persons"
+        }, {
+            "text": "Meine Personensuchen",
+            "href": "/api/dsbe/MySearches"
+        }, {
+            "text": "Alle Kontakte",
+            "href": "/api/dsbe/AllContacts"
+        }, {
+            "text": "newcomers",
+            "href": "/api/dsbe/Newcomers"
+        } ]
+    },
+    "text": "Contacts"
+}, {
+    "menu": {
+        "items": [ {
+            "text": "My notes",
+            "href": "/api/dsbe/MyNotes"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "My coached Persons",
+                    "href": "/api/dsbe/MyPersons"
+                }, {
+                    "text": "Bilan / D\u00e9termination R\u00e9mobilisation",
+                    "href": "/api/dsbe/MyPersonsByGroup"
+                }, {
+                    "text": "Pr\u00e9formation",
+                    "href": "/api/dsbe/MyPersonsByGroup"
+                }, {
+                    "text": "Formation",
+                    "href": "/api/dsbe/MyPersonsByGroup"
+                }, {
+                    "text": "Recherche active emplois",
+                    "href": "/api/dsbe/MyPersonsByGroup"
+                }, {
+                    "text": "Travail",
+                    "href": "/api/dsbe/MyPersonsByGroup"
+                } ]
+            },
+            "text": "My coached Persons"
+        }, {
+            "text": "My PIIS contracts",
+            "href": "/api/isip/MyContracts"
+        }, {
+            "text": "My contracts",
+            "href": "/api/jobs/MyContracts"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Meine Aufgaben",
+                    "href": "/api/cal/MyTasks"
+                }, {
+                    "text": "Meine Termine",
+                    "href": "/api/cal/MyEvents"
+                }, {
+                    "text": "Calendar",
+                    "href": "/api/cal/Panel"
+                } ]
+            },
+            "text": "Calendar"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "My Mail Inbox",
+                    "href": "/api/mails/MyInbox"
+                }, {
+                    "text": "Mail Outbox",
+                    "href": "/api/mails/MyOutbox"
+                }, {
+                    "text": "Sent Mails",
+                    "href": "/api/mails/MySent"
+                } ]
+            },
+            "text": "Mails"
+        }, {
+            "text": "My uploads",
+            "href": "/api/uploads/MyUploads"
+        }, {
+            "text": "Meine Einf\u00fcgetexte",
+            "href": "/api/lino/MyTextFieldTemplates"
+        }, {
+            "text": "My user preferences",
+            "href": "/api/users/User/103"
+        } ]
+    },
+    "text": "My menu"
+}, {
+    "menu": {
+        "items": [ {
+            "text": "Course providers",
+            "href": "/api/dsbe/CourseProviders"
+        }, {
+            "text": "Course Offers",
+            "href": "/api/dsbe/CourseOffers"
+        } ]
+    },
+    "text": "Courses"
+}, {
+    "menu": {
+        "items": [ {
+            "text": "Employers",
+            "href": "/api/jobs/JobProviders"
+        }, {
+            "text": "Jobs",
+            "href": "/api/jobs/Jobs"
+        }, {
+            "text": "Job Offers",
+            "href": "/api/jobs/Offers"
+        } ]
+    },
+    "text": "Jobs"
+}, {
+    "menu": {
+        "items": [ {
+            "text": "Contracts Situation",
+            "href": "/api/jobs/ContractsSituationReport?an=listing"
+        }, {
+            "text": "Data Control Listing",
+            "href": "/api/lino/DataControlListingReport?an=listing"
+        } ]
+    },
+    "text": "Listings"
+}, {
+    "menu": {
+        "items": [ {
+            "menu": {
+                "items": [ {
+                    "text": "Countries",
+                    "href": "/api/countries/Countries"
+                }, {
+                    "text": "Cities",
+                    "href": "/api/countries/Cities"
+                }, {
+                    "text": "company types",
+                    "href": "/api/contacts/CompanyTypes"
+                }, {
+                    "text": "Languages",
+                    "href": "/api/countries/Languages"
+                } ]
+            },
+            "text": "Contacts"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Integration Phases",
+                    "href": "/api/dsbe/PersonGroups"
+                }, {
+                    "text": "exclusion types",
+                    "href": "/api/dsbe/ExclusionTypes"
+                }, {
+                    "text": "aid types",
+                    "href": "/api/dsbe/AidTypes"
+                } ]
+            },
+            "text": "SIS"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "activities",
+                    "href": "/api/dsbe/Activities"
+                } ]
+            },
+            "text": "CV"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "upload types",
+                    "href": "/api/uploads/UploadTypes"
+                }, {
+                    "text": "Users",
+                    "href": "/api/users/Users"
+                }, {
+                    "text": "Text Field Templates",
+                    "href": "/api/lino/TextFieldTemplates"
+                }, {
+                    "text": "Global Site Parameters",
+                    "href": "/api/lino/SiteConfig/1"
+                } ]
+            },
+            "text": "System"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Course Contents",
+                    "href": "/api/dsbe/CourseContents"
+                }, {
+                    "text": "Course Endings",
+                    "href": "/api/dsbe/CourseEndings"
+                } ]
+            },
+            "text": "Courses"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Note Types",
+                    "href": "/api/notes/NoteTypes"
+                }, {
+                    "text": "Event Types",
+                    "href": "/api/notes/EventTypes"
+                } ]
+            },
+            "text": "Notes"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "ISIP Types",
+                    "href": "/api/isip/ContractTypes"
+                }, {
+                    "text": "Contract Endings",
+                    "href": "/api/isip/ContractEndings"
+                }, {
+                    "text": "Examination Policies",
+                    "href": "/api/isip/ExamPolicies"
+                } ]
+            },
+            "text": "ISIPs"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Job Contract Types",
+                    "href": "/api/jobs/ContractTypes"
+                }, {
+                    "text": "Job Types",
+                    "href": "/api/jobs/JobTypes"
+                }, {
+                    "text": "Job Sectors",
+                    "href": "/api/jobs/Sectors"
+                }, {
+                    "text": "Job Functions",
+                    "href": "/api/jobs/Functions"
+                }, {
+                    "text": "study types",
+                    "href": "/api/jobs/StudyTypes"
+                }, {
+                    "text": "Work Schedules",
+                    "href": "/api/jobs/Schedules"
+                }, {
+                    "text": "Work Regimes",
+                    "href": "/api/jobs/Regimes"
+                } ]
+            },
+            "text": "Jobs"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Property Groups",
+                    "href": "/api/properties/PropGroups"
+                }, {
+                    "text": "Property Types",
+                    "href": "/api/properties/PropTypes"
+                }, {
+                    "text": "Fachkompetenzen",
+                    "href": "/api/properties/PropsByGroup"
+                }, {
+                    "text": "Sozialkompetenzen",
+                    "href": "/api/properties/PropsByGroup"
+                }, {
+                    "text": "Hindernisse",
+                    "href": "/api/properties/PropsByGroup"
+                } ]
+            },
+            "text": "Properties"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Places",
+                    "href": "/api/cal/Places"
+                }, {
+                    "text": "Priorities",
+                    "href": "/api/cal/Priorities"
+                }, {
+                    "text": "Access Classes",
+                    "href": "/api/cal/AccessClasses"
+                }, {
+                    "text": "Event Statuses",
+                    "href": "/api/cal/EventStatuses"
+                }, {
+                    "text": "Task Statuses",
+                    "href": "/api/cal/TaskStatuses"
+                }, {
+                    "text": "Event Types",
+                    "href": "/api/cal/EventTypes"
+                }, {
+                    "text": "Guest Roles",
+                    "href": "/api/cal/GuestRoles"
+                }, {
+                    "text": "Guest Statuses",
+                    "href": "/api/cal/GuestStatuses"
+                }, {
+                    "text": "Calendars",
+                    "href": "/api/cal/Calendars"
+                } ]
+            },
+            "text": "Calendar"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Mail Types",
+                    "href": "/api/mails/MailTypes"
+                } ]
+            },
+            "text": "Mails"
+        } ]
+    },
+    "text": "Configure"
+}, {
+    "menu": {
+        "items": [ {
+            "text": "Persons (all)",
+            "href": "/api/dsbe/AllPersons"
+        }, {
+            "text": "Events/Notes",
+            "href": "/api/notes/Notes"
+        }, {
+            "text": "ISIPs",
+            "href": "/api/isip/Contracts"
+        }, {
+            "text": "Job Contracts",
+            "href": "/api/jobs/Contracts"
+        }, {
+            "text": "Job Candidatures",
+            "href": "/api/jobs/Candidatures"
+        }, {
+            "text": "Studies & education",
+            "href": "/api/jobs/Studies"
+        }, {
+            "text": "Uploads",
+            "href": "/api/uploads/Uploads"
+        }, {
+            "text": "exclusions",
+            "href": "/api/dsbe/Exclusions"
+        }, {
+            "text": "Course Requests",
+            "href": "/api/dsbe/CourseRequests"
+        }, {
+            "text": "Person Searches",
+            "href": "/api/dsbe/PersonSearches"
+        }, {
+            "text": "content types",
+            "href": "/api/lino/ContentTypes"
+        }, {
+            "text": "Properties",
+            "href": "/api/properties/Properties"
+        }, {
+            "text": "Courses",
+            "href": "/api/dsbe/Courses"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Events",
+                    "href": "/api/cal/Events"
+                }, {
+                    "text": "Tasks",
+                    "href": "/api/cal/Tasks"
+                }, {
+                    "text": "Guests",
+                    "href": "/api/cal/Guests"
+                }, {
+                    "text": "Recurrence Sets",
+                    "href": "/api/cal/RecurrenceSets"
+                } ]
+            },
+            "text": "Calendar"
+        }, {
+            "menu": {
+                "items": [ {
+                    "text": "Listings \u00ab\u00dcbersicht Art.60\u00a77-Konventionen\u00bb",
+                    "href": "/api/jobs/ContractsSituationReport"
+                }, {
+                    "text": "Listings \u00abDatenkontrolllisting\u00bb",
+                    "href": "/api/lino/DataControlListingReport"
+                } ]
+            },
+            "text": "Listings"
+        } ]
+    },
+    "text": "Explorer"
+}, {
+    "menu": {
+        "items": [ {
+            "text": "User Manual",
+            "href": "http://lino.saffre-rumma.net/dsbe/index.html"
+        } ]
+    },
+    "text": "Help"
+}, {
+    "text": "Startseite",
+    "handler": function() {
+        window.location = '/';
+    },
+    "xtype": "button"
+}, "->",
+{
+    "text": "root",
+    "handler": function() {
+        window.location = '/api/users/User/103';
+    },
+    "xtype": "button"
+} ]
+    
+    """
+    self.assertEquivalent(expected,js)
+    
+    #~ url_tests = [
+      #~ ''
+    #~ ]
+    #~ for mi in main.items:
+        #~ d = ui.py2js_converter(mi)
+        #~ self.assertEqual(type(d),dict)
+        

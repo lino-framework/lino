@@ -719,7 +719,6 @@ class Lino(object):
         main.add_separator("->")
         if user:
             main.add_instance_action(user)
-            
         
         return main
         

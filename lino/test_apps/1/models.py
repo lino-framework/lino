@@ -320,7 +320,7 @@ create_child() doesn't allow to also change the `name`
 because that field is defined in the Place model, 
 not in Restaurant. If you nevertheless do it, 
 it will be silently ignored
-for backwards compatibility `/blog/2011/1210`:
+for backwards compatibility (:doc:`/blog/2011/1210`):
 
 >>> obj = Place(id=4,name="Fourth")
 >>> obj.save()

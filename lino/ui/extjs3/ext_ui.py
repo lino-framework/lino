@@ -1906,7 +1906,7 @@ tinymce.init({
                     # special case for href items in main menubar
                     return dict(
                       xtype='button',text=prepare_label(v),
-                      handler=js_code("function() {window.location='%s';}" % url))
+                      handler=js_code("function() { window.location='%s'; }" % url))
                 return dict(text=prepare_label(v),href=url)
             # no longer supported:
             handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
