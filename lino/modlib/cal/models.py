@@ -481,26 +481,28 @@ class Component(ComponentBase,
         #~ if change_type == 'POST': 
             #~ self.isdirty=True
         
-    def summary_row(self,ui,rr,**kw):
-        #~ if self.owner and not self.auto_type:
-        if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
-            html = ui.href_to(self)
-            if self.status_id:
-                html += ' [%s]' % cgi.escape(force_unicode(self.status))
-            if self.summary:
-                html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-                #~ html += ui.href_to(self,force_unicode(self.summary))
-            html += _(" on ") + babel.dtos(self.start_date)
-            html += " (%s)" % reports.summary_row(self.owner,ui,rr)
-            return html
-        return super(Component,self).summary_row(ui,rr,**kw)
-        
     #~ def summary_row(self,ui,rr,**kw):
         #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
         #~ if self.summary:
             #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
         #~ html += _(" on ") + babel.dtos(self.start_date)
         #~ return html
+        
+    def summary_row(self,ui,rr,**kw):
+        #~ if self.owner and not self.auto_type:
+        html = ui.href_to(self)
+        if self.start_time:
+            html += _(" at ") + babel.dtos(self.start_time)
+        if self.status_id:
+            html += ' [%s]' % cgi.escape(force_unicode(self.status))
+        if self.summary:
+            html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+            #~ html += ui.href_to(self,force_unicode(self.summary))
+        #~ html += _(" on ") + babel.dtos(self.start_date)
+        if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
+            html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+        return html
+        #~ return super(Event,self).summary_row(ui,rr,**kw)
         
 #~ Component.owner.verbose_name = _("Automatically created by")
 
@@ -752,17 +754,13 @@ class GuestsByContact(Guests):
 
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
-    """Return a HTML summary of all open reminders for this user.
-    ay be calledn from :xfile:`welcome.html`.
+    """
+    Return a HTML summary of all open reminders for this user.
+    May be called from :xfile:`welcome.html`.
     """
     Task = resolve_model('cal.Task')
     Event = resolve_model('cal.Event')
     today = datetime.date.today()
-    #~ today = datetime.datetime.now()
-    #~ if days_back is None:
-        #~ back_until = None
-    #~ else:
-        #~ back_until = today - datetime.timedelta(days=days_back)
     
     past = {}
     future = {}
@@ -794,7 +792,9 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     #~ filterkw.update(dt_alarm__isnull=False)
     filterkw.update(user=user)
     
-    for o in Event.objects.filter(models.Q(status=None) | models.Q(status__reminder=True),**filterkw).order_by('start_date'):
+    for o in Event.objects.filter(
+        models.Q(status=None) | models.Q(status__reminder=True),
+        **filterkw).order_by('start_date'):
         add(o)
         
     filterkw.update(done=False)
