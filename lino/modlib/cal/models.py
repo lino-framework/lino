@@ -499,8 +499,10 @@ class Component(ComponentBase,
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
         #~ html += _(" on ") + babel.dtos(self.start_date)
-        if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
-            html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+        #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
+            #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+        if self.project:
+            html += " (%s)" % reports.summary_row(self.project,ui,rr)
         return html
         #~ return super(Event,self).summary_row(ui,rr,**kw)
         
