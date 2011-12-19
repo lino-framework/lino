@@ -384,8 +384,10 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     
     contract = Instantiator('isip.Contract',
       'type applies_from applies_until',
-      user=root,person=hans).build
-    yield contract(1,i2d(20110906),i2d(20111206))
+      user=root).build
+    #~ yield contract(1,i2d(20110906),i2d(20111206),person=hans)
+    yield contract(1,settings.LINO.demo_date(months=-5),
+        settings.LINO.demo_date(months=1),person=hans)
     
     jobtype = Instantiator('jobs.JobType','name').build
     art607 = jobtype(u'Sozialwirtschaft = "majorés"')
@@ -408,13 +410,13 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield rcyclejob 
     contract = Instantiator('jobs.Contract',
       'type applies_from applies_until job contact',
-      user=root,person=hans).build
+      user=root).build
     #~ yield contract(1,i2d(20090518),i2d(20100517),rcyclejob,rcycle_dir)
     yield contract(1,settings.LINO.demo_date(-30),
-        settings.LINO.demo_date(+60),rcyclejob,rcycle_dir)
+        settings.LINO.demo_date(+60),rcyclejob,rcycle_dir,person=hans)
     #~ yield contract(1,i2d(20090518),i2d(20100517),bisajob,bisa_dir)
     yield contract(1,settings.LINO.demo_date(-29),
-        settings.LINO.demo_date(+61),bisajob,bisa_dir)
+        settings.LINO.demo_date(+61),bisajob,bisa_dir,person=ulrike)
     #~ yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
     yield contract(1,settings.LINO.demo_date(-29),None,bisajob,bisa_dir,person=andreas)
     #~ yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
