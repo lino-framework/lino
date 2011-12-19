@@ -1,0 +1,5 @@
+20111219
+========
+
+- `cal.Component.summary_row`
+- dsbe demo fixture
