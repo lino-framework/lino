@@ -62,7 +62,7 @@ def py2html(obj,name):
     
 def before_row_edit(panel):
     l = []
-    l.append("console.log('before_row_edit',record);")
+    #~ l.append("console.log('before_row_edit',record);")
     for e in panel.active_children:
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
@@ -189,8 +189,12 @@ class VisibleComponent(Component):
     preferred_height = 1
     #flex = None
     
-    def __init__(self,name,width=None,height=None,label=None,**kw):
+    def __init__(self,name,
+        width=None,height=None,label=None,preferred_width=None,
+        **kw):
         Component.__init__(self,name,**kw)
+        if preferred_width is not None:
+            self.preferred_width = preferred_width
         if width is not None:
             self.width = width
         if height is not None:
@@ -629,6 +633,10 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
     #~ def __init__(self,*args,**kw):
         #~ print 20100903,repr(self.field.rel.to)
         #~ assert issubclass(self.field.rel.to,models.Model), "%r is not a model" % self.field.rel.to
+        pw = getattr(field.rel.to,'_lino_preferred_width',None)
+        if pw is not None:
+            kw.setdefault('preferred_width',pw)
+            #~ kw.update(preferred_width=pw)
         self.report = reports.get_model_report(field.rel.to)
         a = self.report.detail_action
         if a is not None:

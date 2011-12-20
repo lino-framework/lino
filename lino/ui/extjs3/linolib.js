@@ -227,7 +227,7 @@ Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version $(lino.__versi
 
 Lino.edit_tinymce_text = function(panel,options) {
   // `panel` is the RichTextPanel
-  
+  //~ console.log(20111220,panel);
   //~ var rec = panel.get_current_record();
   var rec = panel.master_panel.get_current_record();
   var value = rec ? rec.data[panel.editor.name] : '';
@@ -1291,8 +1291,9 @@ Lino.show_detail = function(panel,btn) {
       //~ console.log(20111128,rec.id);
       panel.ls_detail_handler(panel,{
         record_id:rec.id,
-        master_panel: panel.master_panel
-        //~ base_params:panel.get_base_params()
+        //~ master_panel: panel.master_panel
+        //~ master_panel: panel
+        base_params:panel.get_base_params()
       });
       //~ panel.my_load_mask.hide();
       panel.loadMask.hide();
@@ -1694,10 +1695,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ }
     //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
       
-    if (this.master_panel) {
-        //~ Ext.apply(p,this.master_panel.get_master_params());
-        this.set_base_params(this.master_panel.get_master_params());
-    }
+    //~ if (this.master_panel) {
+        //~ this.set_base_params(this.master_panel.get_master_params());
+    //~ }
       
     Lino.FormPanel.superclass.initComponent.call(this);
       
@@ -1732,9 +1732,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(config.data_record)});
       //~ this.main_item.on('afterrender',function(){
       //~   this.main_item.on_master_changed(config.data_record)},this,{single:true});
-      /* 
-      must defer because because set_window_title() didn't work otherwise
-      */
+      /* must defer because because set_window_title() didn't work otherwise */
       this.set_current_record.createDelegate(this,[this.data_record]).defer(100);
       //~ this.set_current_record(this.data_record);
       //~ return;

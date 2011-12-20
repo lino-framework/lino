@@ -83,6 +83,12 @@ class Contact(mti.MultiTableBase,CountryCity):
     (postal address, email, phone,...).
     
     """
+    
+    """
+    preferred width for ForeignKey fields to a Contact
+    """
+    _lino_preferred_width = 20 
+    
   
     class Meta:
         #~ abstract = True

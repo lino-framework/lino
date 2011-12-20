@@ -1,0 +1,61 @@
+20111220
+========
+
+Hier ist noch ein Schöner::
+
+  201112-19 09:22:50 ERROR base : Internal Server Error: /api/dsbe/Persons/22659
+  Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1452, in api_element_view
+      datarec = elem2rec_detailed(ar,ah,elem)
+    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 236, in elem2rec_detailed
+      "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+  AssertionError: len(id_list) is 7777 while ar.total_count is 7778
+  201112-19 09:23:12 ERROR base : Internal Server Error: /api/dsbe/Persons/22659
+
+Das passiert beim Ermitteln der Record-Ids für die Buttons `first`, `last`, `prev` und `next`::
+
+    first = None
+    prev = None
+    next = None
+    last = None
+    recno = 0
+    if ar.total_count > 0:
+        # this algorithm is clearly quicker on reports with a few thousand Persons
+        id_list = list(ar.queryset.values_list('pk',flat=True))
+        assert len(id_list) == ar.total_count, \
+            "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+        first = id_list[0]
+        last = id_list[-1]
+        try:
+            i = id_list.index(elem.pk)
+        except ValueError:
+            pass
+        else:
+            recno = i + 1
+            if i > 0:
+                #~ prev = ar.queryset[i-1]
+                prev = id_list[i-1]
+            if i < ar.total_count - 1:
+                #~ next = ar.queryset[i+1]
+                next = id_list[i+1]
+
+Lustig ist, dass die Situation mehrmals hintereinander kommt. 
+Kann es sein, dass die Länge in irgendeinem QuerySet gecached ist?
+
+
+Keine weiteren Records, Detail wird geschlossen
+-----------------------------------------------
+
+Das war ein eher dringender Bug: wenn man z.B. in 
+:menuselection:`Konfigurierung --> Eigenschaften --> Fachkompetenzen`
+das Detail eines Records anfragte, kam sogleich die Meldung
+"Keine weiteren Records, Detail wird geschlossen".
+Das lag daran, dass das Detail-Fenster die Parameter mt und mk nicht 
+richtig anfragte.
+
+Die Standardbreite einer ForeignKey-Kolonne
+-------------------------------------------
+
+:attr:`lino.modlib.contacts.models.Contact._lino_preferred_width`

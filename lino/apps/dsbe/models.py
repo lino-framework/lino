@@ -281,6 +281,7 @@ class Partner(mixins.DiffingMixin,models.Model):
 #~ class Partner(mixins.DiffingMixin,contacts.Contact):
     """
     """
+    
     class Meta:
         abstract = True
         app_label = 'contacts'

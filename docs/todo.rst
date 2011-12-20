@@ -16,6 +16,9 @@ Short-term
 #.  Calendar panel: handle eventadd, eventupdate, eventresize, 
     eventmove events.
     
+#.  Übersicht Verträge in der welcome.html : auch die Zahlen der 
+    anderen Bentuzer anklickbar machen.    
+    
 #.  Listings
 
 #.  :class:´lino.modlib.jobs.Function` : "Funktionen" 

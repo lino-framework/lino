@@ -16,4 +16,8 @@ Some more little optimizations while recording our first screen cast:
 - MyPersonsByGroup war leer. Weil das MenuItem da einen ReportActionRequest 
   macht (nicht einen ViewActionReportRequest). request2kw() muss im UI bleiben, 
   nicht im ViewReportRequest (ich glaube, dass hatte ich irgendwann ohne 
-  trifftigen Grund geändert, bloß weil's schöner aussah).
+  triftigen Grund geändert, bloß weil's schöner aussah).
+  Neuer unit test in :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test13`.
+  
+  
+  

@@ -47,6 +47,8 @@ class User(contacts.Contact,contacts.Person):
     fields like first_name, last_name, email, access rights for the new user.    
     """
     
+    _lino_preferred_width = 15 
+    
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')

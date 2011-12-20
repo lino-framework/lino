@@ -234,6 +234,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
                 id_list = list(ar.queryset.values_list('pk',flat=True))
                 assert len(id_list) == ar.total_count, \
                     "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+                #~ print 20111220, id_list
                 first = id_list[0]
                 last = id_list[-1]
                 try:
@@ -337,7 +338,7 @@ class ViewReportRequest(reports.ReportActionRequest):
         #~ print '20100406b', self.report,kw
         
         if settings.LINO.use_filterRow:
-            exclude=dict()
+            exclude = dict()
             for f in rh.store.fields:
                 if f.field:
                     filterOption = request.REQUEST.get('filter[%s_filterOption]' % f.field.name)
@@ -409,11 +410,9 @@ class ViewReportRequest(reports.ReportActionRequest):
         return self.user
 
     def row2list(self,row):
-        #~ return self.store.row2list(self.request,row)
         return self.store.row2list(self,row)
       
     def row2dict(self,row):
-        #~ return self.store.row2dict(self.request,row)
         return self.store.row2dict(self,row)
  
 
@@ -2190,6 +2189,9 @@ tinymce.init({
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.report.default_action:
             #~ kw.update(action_name=action.name)
+        #~ kw.update(content_type=rh.report.content_type)
+        kw.update(content_type=ContentType.objects.get_for_model(rh.report.model).pk)
+        
         
         kw.update(page_length=rh.report.page_length)
         kw.update(stripeRows=True)

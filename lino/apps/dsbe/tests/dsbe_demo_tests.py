@@ -42,12 +42,6 @@ from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 
-from lino.apps.dsbe.models import Person, MyPersons, only_coached_persons,only_my_persons
-from lino.modlib.users.models import User
-
-from lino.modlib.users.models import User
-from lino.ui.extjs3.urls import ui
-
 
 #~ Person = resolve_model('contacts.Person')
 #~ Property = resolve_model('properties.Property')
@@ -81,6 +75,7 @@ def test02(self):
     See also :doc:`/blog/2011/0531`.
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
+    from lino.modlib.users.models import User
     u = User.objects.get(username='root')
     lang = u.language
     u.language = ''
@@ -259,7 +254,7 @@ def test03(self):
     #~ result = simplejson.loads(response.content)
     #~ for k in 'navinfo disable_delete data id title'.split():
         #~ self.assertTrue(result.has_key(k))
-    if False:
+    if True:
         # disabled because they depend on local database sorting configuration
         self.assertEqual(result['navinfo']['last'],93)
         self.assertEqual(result['navinfo']['recno'],3)
@@ -424,6 +419,8 @@ def test08(self):
     
     See :doc:`/blog/2011/0412`
     """
+    from lino.apps.dsbe.models import Person, MyPersons, only_coached_persons,only_my_persons
+    from lino.modlib.users.models import User
     u = User.objects.get(username='root')
     #~ qs = Person.objects.order_by('last_name','first_name')
     qs = Person.objects.order_by('id')
@@ -522,6 +519,8 @@ def test13(self):
     Probably ugly to keep synched, but 
     e.g. the "empty PersonsByGroup" bug (20111219) would have triggered this.
     """
+    from lino.ui.extjs3.urls import ui
+    from lino.modlib.users.models import User
     user = User.objects.get(username='root')
     translation.activate('en')
     main = settings.LINO.get_site_menu(ui,user)

@@ -68,6 +68,12 @@ Estland''')
 def test02(self):
     """
     """
+    from lino.modlib.users.models import User
+    u = User.objects.get(username='root')
+    lang = u.language
+    u.language = ''
+    u.save()
+    
     #~ settings.LINO.auto_makeui = False
     luc = Person.objects.get(name__exact="Saffre Luc")
 
@@ -93,3 +99,5 @@ def test02(self):
         self.assertEqual(result['data']['country'],"Estonie")
         self.assertEqual(result['data']['gender'],u"Masculin")
         
+    u.language = lang
+    u.save()

@@ -598,12 +598,8 @@ class ReportActionRequest(ActionRequest):
     create_rows = None
     extra = None
     layout = None
-    #~ selected_rows = []
-    #~ expand_memos = False
-    #~ expand_memos = True
     
     def __init__(self,ui,report,action):
-    #~ def __init__(self,rh,action):
         #~ assert isinstance(rh,ReportHandle)
         #~ assert ui.create_meth_element is not None
         #~ if ui is not None: assert ui.create_meth_element is not None

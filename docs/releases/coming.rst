@@ -1,24 +1,21 @@
-Version 1.3.0 (Coming)
+Version 1.3.1 (Coming)
 ======================
 
 Sichtbare Änderungen
 --------------------
 
-- Bug-Gefahr, denn es hat einige interne Optimierungen gegeben.
-  Bitte gebt mir Feedback, ob Lino schneller/langsamer geworden ist.
-
-- Optimierungen und Bugfixes beim Eingeben von Terminen.
-
-- Passbilder sind jetzt nicht mehr verzerrt
-
-- Da war ein Bug beim Ausfüllen einer Art60-7-Konvention. 
-  ("unsupported operand type(s) for -: 'datetime.date' and 'instance'",
-  :file:`/var/snapshots/lino/lino/modlib/jobs/models.py` in duration, line 367)
-  Kann sein, dass das Speichern von Konventionen insgesamt nicht funktionierte.
-
-- In der oberen rechten Ecke ist jetzt ein Button mit dem Benutzernamen. 
-  Wenn man darauf klickt, kann man seine Benutzerdaten ändern.
+- Bugfix: wenn man z.B. in 
+  :menuselection:`Konfigurierung --> Eigenschaften --> Fachkompetenzen`
+  das Detail eines Records anfragte, kam sogleich die Meldung
+  "Keine weiteren Records, Detail wird geschlossen".
+  Das lag daran, dass das Detail-Fenster die Parameter mt und mk nicht 
+  richtig anfragte.
   
+- Wenn in irgendeiner Tabelle eine Kolonne auf eine Person oder eine Firma 
+  verwies, dann war die generell immer zu eng. Jetzt habe ich die 
+  Standardbreite von 10 auf 20 Zeichen erweitert.
+
+- Kalender
 
 Administrator
 -------------
