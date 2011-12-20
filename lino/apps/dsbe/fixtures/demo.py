@@ -303,6 +303,10 @@ def objects():
 
     user = auth.User.objects.get(username='user')
     root = auth.User.objects.get(username='root')
+    root.is_spis = True
+    root.save()
+    user.is_spis = True
+    user.save()
     
     #~ prj = project(name="Testprojekt",company=oshz)
     #~ yield prj 
@@ -529,6 +533,15 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield langk(u"Eierschal Emil",'ger','4','3')
     yield langk(u"Ärgerlich Erna",'ger','4','4')
     
+    persongroup = Instantiator('dsbe.PersonGroup','name').build
+    pg1 = persongroup(u"Bilan / Détermination Rémobilisation",ref_name='1')
+    yield pg1
+    pg2 = persongroup(u"Préformation",ref_name='2')
+    yield pg2
+    yield persongroup(u"Formation",ref_name='3')
+    yield persongroup(u"Recherche active emplois",ref_name='4')
+    yield persongroup(u"Travail",ref_name='4bis')
+    
     for p in Person.objects.all():
         if p.zip_code == '4700':
             p.languageknowledge_set.create(language_id='ger',native=True)
@@ -550,11 +563,13 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
       
     p = Person.objects.get(name=u"Ärgerlich Erna")
     p.birth_date = i2d(19800301)
-    p.coached_from = i2d(20100301)
+    #~ p.coached_from = i2d(20100301)
+    p.coached_from = settings.LINO.demo_date(-7*30)
     p.coached_until = None
     p.coach1 = User.objects.get(username='root')
     p.coach2 = User.objects.get(username='user')
     p.gender = Gender.female 
+    p.group = pg1
     p.save()
     
     task = Instantiator('cal.Task').build
@@ -563,10 +578,13 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     
     p = Person.objects.get(name=u"Eierschal Emil")
     p.birth_date = i2d(19800501)
-    p.coached_from = i2d(20100801)
-    p.coached_until = i2d(20101031)
+    #~ p.coached_from = i2d(20100801)
+    p.coached_from = settings.LINO.demo_date(-2*30)
+    #~ p.coached_until = i2d(20101031)
+    p.coached_until = settings.LINO.demo_date(10*30)
     p.coach1 = User.objects.get(username='root')
     p.coach2 = User.objects.get(username='user')
+    p.group = pg2
     p.gender = Gender.male
     p.national_id = 'INVALID-45'
     p.save()
@@ -574,10 +592,13 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p = Person.objects.get(name=u"Bastiaensen Laurent")
     p.birth_date = i2d(19810601)
     p.coached_from = None
-    p.coached_until = i2d(20101031)
-    p.unavailable_until = i2d(20110712)
+    #~ p.coached_until = i2d(20101031)
+    p.coached_until = settings.LINO.demo_date(-2*30)
+    #~ p.unavailable_until = i2d(20110712)
+    p.unavailable_until = settings.LINO.demo_date(2*30)
     p.coach1 = User.objects.get(username='root')
     p.coach2 = User.objects.get(username='user')
+    p.group = pg1
     p.gender = Gender.male
     p.national_id = '931229 211-83'
     p.save()
@@ -589,12 +610,6 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.gender = Gender.male
     p.save()
 
-    persongroup = Instantiator('dsbe.PersonGroup','name').build
-    yield persongroup(u"Bilan / Détermination Rémobilisation",ref_name='1')
-    yield persongroup(u"Préformation",ref_name='2')
-    yield persongroup(u"Formation",ref_name='3')
-    yield persongroup(u"Recherche active emplois",ref_name='4')
-    yield persongroup(u"Travail",ref_name='4bis')
 
 
     #~ etype = Instantiator('cal.EventType','name').build

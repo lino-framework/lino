@@ -838,11 +838,13 @@ def persons_by_user(ui,requesting_user):
         
     rows = [ headers ]
     for user in User.objects.filter(is_spis=True).order_by('username'):
+        #~ rr = MyPersons.request(ui,user=user)
         rr = MyPersons.request(ui,user=user)
         if rr.total_count:
             text = str(rr.total_count)
             if rr.user == requesting_user:
                 text = ui.href_to_request(rr,text)
+            #~ text = ui.href_to_request(rr,text,user=user)
             #~ cells = [cgi.escape(unicode(user)),rr.total_count] + sums
             cells = [cgi.escape(unicode(user)),text] + sums
             for pg in PersonGroup.objects.order_by('ref_name'):

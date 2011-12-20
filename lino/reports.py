@@ -68,8 +68,7 @@ from lino.core.coretools import get_slave, get_model_report, get_data_elem
 
 #~ from lino.modlib import field_choices
 
-User = resolve_model(settings.LINO.user_model)
-
+USER_MODEL = None
 
 def unused_parse_js_date(s,name):
     #~ v = dateparser.parse(s)
@@ -347,6 +346,9 @@ def discover():
         #~ model._lino_properties_window = pw
             
     #~ logger.debug("reports.setup() done")
+    global USER_MODEL
+    USER_MODEL = resolve_model(settings.LINO.user_model)
+
 
 
 class StaticText:
@@ -614,9 +616,11 @@ class ListActionRequest(ActionRequest):
         #~ self.ah = rh
         self.request = request
         #~ self.store = rh.store
-        if request is None:
-            self.user = None
-        else:
+        #~ if request is None:
+            #~ self.user = None
+        #~ else:
+            #~ kw = self.parse_req(request,self.ah,**kw)
+        if request is not None:
             kw = self.parse_req(request,self.ah,**kw)
         self.setup(*args,**kw)
     
@@ -721,8 +725,8 @@ class ListActionRequest(ActionRequest):
             username = request.REQUEST.get(ext_requests.URL_PARAM_EUSER,None)
             if username:
                 try:
-                    user = User.objects.get(username=username)
-                except User.DoesNotExist, e:
+                    user = USER_MODEL.objects.get(username=username)
+                except USER_MODEL.DoesNotExist, e:
                     pass
         kw.update(user=user)
         
@@ -1522,9 +1526,10 @@ class Report(actors.Actor): #,base.Handled):
                 #~ return
         #~ cls.detail_layouts.append(dtl)
         
-    #~ @classmethod
-    #~ def request(cls,ui=None,**kw):
-        #~ self = cls()
+    @classmethod
+    def request(cls,ui=None,**kw):
+        self = cls()
+        return ListActionRequest(ui,self,None,self.default_action,**kw)
         #~ return self.default_action.request(ui,**kw)
         
 
