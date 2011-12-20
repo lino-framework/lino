@@ -1,0 +1,28 @@
+Version 1.3.1
+=============
+
+Sichtbare Änderungen
+--------------------
+
+- Bugfix: wenn man z.B. in 
+  :menuselection:`Konfigurierung --> Eigenschaften --> Fachkompetenzen`
+  das Detail eines Records anfragte, kam sogleich die Meldung
+  "Keine weiteren Records, Detail wird geschlossen".
+  
+- Kalender funktioniert wieder
+
+- (Ein noch nicht gemeldeter Bug:) 
+  Personensuche nach Alter funktionierte nicht: 
+  wenn man eine Altersgrenze angab, 
+  wurden überhaupt keine Personen gefunden.
+
+- (Eine nicht angefragte Optimierung:)
+  Wenn in irgendeiner Tabelle eine Kolonne auf eine Person oder eine Firma 
+  verwies, dann war die generell immer zu eng. Jetzt habe ich die 
+  Standardbreite von 10 auf 20 Zeichen erweitert.
+
+
+Upgrade instructions
+--------------------
+
+No database migration needed.

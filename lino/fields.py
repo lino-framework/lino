@@ -559,6 +559,9 @@ class IncompleteDateField(models.CharField):
         
     def get_prep_value(self, value):
         return str(value)
+        
+    #~ def get_prep_value(self, value):
+        #~ return '"' + str(value) + '"'
         #~ if value:
             #~ return value.format("%04d%02d%02d")
         #~ return '' 

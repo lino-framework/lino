@@ -798,7 +798,9 @@ class Store:
         
 
     def row2list(self,request,row):
-        assert isinstance(request,reports.ReportActionRequest)
+        assert isinstance(request,reports.ListActionRequest)
+        #~ if not isinstance(request,reports.ListActionRequest):
+            #~ raise Exception()
         #~ logger.info("20111209 Store.row2list(%s)", obj2str(row))
         l = []
         for fld in self.list_fields:
@@ -807,7 +809,7 @@ class Store:
         return l
       
     def row2dict(self,request,row):
-        assert isinstance(request,reports.ReportActionRequest)
+        assert isinstance(request,reports.ListActionRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         d = {}
         for f in self.detail_fields:

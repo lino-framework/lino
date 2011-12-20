@@ -19,12 +19,12 @@ from django.utils import simplejson as json
 from django.conf import settings
 
 
-import lino
-from lino import actions
-from lino import reports
-from lino import fields
+#~ import lino
+#~ from lino import actions
+#~ from lino import reports
+#~ from lino import fields
 #~ from lino.core import action_requests
-from lino.utils import ucsv
+#~ from lino.utils import ucsv
 #~ from lino.utils import choosers
 #~ from lino.ui.extjs import ext_windows
 
@@ -108,20 +108,11 @@ def parse_boolean(v):
         return False
     raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
         
-def form_field_name(f):
-    if isinstance(f,models.ForeignKey) \
-        or (isinstance(f,models.Field) and f.choices) \
-        or isinstance(f,fields.LinkedForeignKey):
-        return f.name + CHOICES_HIDDEN_SUFFIX
-    else:
-        return f.name
-        
 def dict2kw(d):
     newd = {}
     for k,v in d.items():
         newd[str(k)] = v
     return newd
-
 
 
 def authenticated_user(user):

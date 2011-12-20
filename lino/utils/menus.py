@@ -51,11 +51,12 @@ class MenuItem:
         #~ if params is None and action is not None:
             #~ params = action.actor.default_params
         #~ if params is not None:
-        if params:
-            #~ print 20110701, params
-            assert request is None
-            assert action is not None
-            request = action.request(**params)
+        self.params = params
+            
+        #~ if params:
+            #~ assert request is None
+            #~ assert action is not None
+            #~ request = action.request(**params)
             
         #~ self.params = params
         self.href = href

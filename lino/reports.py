@@ -60,11 +60,15 @@ from lino.core import actors
 #~ from lino.core import action_requests
 from lino.ui import base
 
+from lino.ui import requests as ext_requests
+
 from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, get_data_elem
 
 #~ from lino.modlib import field_choices
+
+User = resolve_model(settings.LINO.user_model)
 
 
 def unused_parse_js_date(s,name):
@@ -378,9 +382,9 @@ class ReportAction(actions.Action):
         self.can_view = report.can_view
         super(ReportAction,self).__init__(*args,**kw)
         
-    def request(self,ui=None,**kw):
-        ar = ReportActionRequest(ui,self.actor,self)
-        ar.setup(**kw)
+    def unused_request(self,ui=None,request=None,*args,**kw):
+        ar = ListActionRequest(ui,self.actor,request,self,**kw)
+        #~ ar.setup(**kw)
         return ar
         #~ return self.get_handle(ui).request(**kw)
       
@@ -586,10 +590,10 @@ class ActionRequest(object):
         self.ui = ui
         self.action = action
         
-    #~ def request2kw(self,ui,**kw):
-        #~ return kw
+    def request2kw(self,ui,**kw):
+        return kw
   
-class ReportActionRequest(ActionRequest):
+class ListActionRequest(ActionRequest):
     limit = None
     offset = None
     master_instance = None
@@ -599,12 +603,28 @@ class ReportActionRequest(ActionRequest):
     extra = None
     layout = None
     
-    def __init__(self,ui,report,action):
+    sort_column = None
+    sort_direction = None
+    
+    def __init__(self,ui,report,request,action,*args,**kw):
+        #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
+        ActionRequest.__init__(self,ui,action)
+        self.report = report
+        self.ah = report.get_handle(ui)
+        #~ self.ah = rh
+        self.request = request
+        #~ self.store = rh.store
+        if request is None:
+            self.user = None
+        else:
+            kw = self.parse_req(request,self.ah,**kw)
+        self.setup(*args,**kw)
+    
+    
+    def unused___init__(self,ui,report,action):
         #~ assert isinstance(rh,ReportHandle)
         #~ assert ui.create_meth_element is not None
         #~ if ui is not None: assert ui.create_meth_element is not None
-        self.report = report
-        self.ah = report.get_handle(ui)
         # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
             self.master = report.master
@@ -615,10 +635,102 @@ class ReportActionRequest(ActionRequest):
         #~ self.ui = ui
         #~ self.action = action
         #~ self._setup(**kw)
+        
+    def parse_req(self,request,rh,**kw):
+        master = kw.get('master',self.report.master)
+        if master is ContentType or master is models.Model:
+            mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
+            try:
+                master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
+            except ContentType.DoesNotExist,e:
+                pass
+                #~ master is None
+                #~ raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
+                
+            #~ print kw
+        if master is not None and not kw.has_key('master_instance'):
+            pk = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_PK,None)
+            #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
+            #~ if pk in ('', '-99999'):
+            if pk == '':
+                pk = None
+            if pk is None:
+                kw['master_instance'] = None
+            else:
+                try:
+                    kw['master_instance'] = master.objects.get(pk=pk)
+                except ValueError,e:
+                    raise Http404("Invalid primary key %r for %s",pk,master.__name__)
+                except master.DoesNotExist,e:
+                    # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
+                    raise Http404("There's no %s with primary key %r" % (master.__name__,pk))
+            #~ print '20100212', self #, kw['master_instance']
+        #~ print '20100406b', self.report,kw
+        
+        if settings.LINO.use_filterRow:
+            exclude = dict()
+            for f in rh.store.fields:
+                if f.field:
+                    filterOption = request.REQUEST.get('filter[%s_filterOption]' % f.field.name)
+                    if filterOption == 'empty':
+                        kw[f.field.name + "__isnull"] = True
+                    elif filterOption == 'notempty':
+                        kw[f.field.name + "__isnull"] = False
+                    else:
+                        filterValue = request.REQUEST.get('filter[%s]' % f.field.name)
+                        if filterValue:
+                            if not filterOption: filterOption = 'contains'
+                            if filterOption == 'contains':
+                                kw[f.field.name + "__icontains"] = filterValue
+                            elif filterOption == 'doesnotcontain':
+                                exclude[f.field.name + "__icontains"] = filterValue
+                            else:
+                                print "unknown filterOption %r" % filterOption
+            if len(exclude):
+                kw.update(exclude=exclude)
+        if settings.LINO.use_gridfilters:
+            filter = request.REQUEST.get(ext_requests.URL_PARAM_GRIDFILTER,None)
+            if filter is not None:
+                filter = json.loads(filter)
+                kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
+        
+        quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
+        if quick_search:
+            kw.update(quick_search=quick_search)
+        offset = request.REQUEST.get(ext_requests.URL_PARAM_START,None)
+        if offset:
+            kw.update(offset=int(offset))
+        limit = request.REQUEST.get(ext_requests.URL_PARAM_LIMIT,None)
+        if limit:
+            kw.update(limit=int(limit))
+        #~ else:
+            #~ kw.update(limit=self.report.page_length)
+            
+        
+        sort = request.REQUEST.get(ext_requests.URL_PARAM_SORT,None)
+        if sort:
+            self.sort_column = sort
+            sort_dir = request.REQUEST.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
+            if sort_dir == 'DESC':
+                sort = '-'+sort
+                self.sort_direction = 'DESC'
+            kw.update(order_by=[sort])
+        
+        user = request.user
+        if user is not None and user.is_superuser:
+            username = request.REQUEST.get(ext_requests.URL_PARAM_EUSER,None)
+            if username:
+                try:
+                    user = User.objects.get(username=username)
+                except User.DoesNotExist, e:
+                    pass
+        kw.update(user=user)
+        
+        kw = rh.report.parse_req(request,**kw)
+        
+        return kw
+        
       
-    def __str__(self):
-        return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
-
     def setup(self,
             master=None,
             master_instance=None,
@@ -712,6 +824,9 @@ class ReportActionRequest(ActionRequest):
         self.page_length = self.report.page_length
         
         
+    def __str__(self):
+        return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
+
     def get_queryset(self):
         # overridden by ChoicesReportRequest
         return self.report.get_request_queryset(self)
@@ -757,22 +872,34 @@ class ReportActionRequest(ActionRequest):
     def render_to_dict(self):
         return self.action.render_to_dict(self)
         
-    def row2dict(self,row,d):
-        # overridden in extjs.ext_requests.ViewReportRequest
-        return self.report.row2dict(row,d)
-        
-    #~ def run_action(self,ar):
-        #~ ar.show_action_window(self) 
-        
-    #~ def as_text(self,*args,**kw):
-        #~ from lino.ui import console
-        #~ rh = self.get_report_handle(rpt)
-        #~ rr = renderers_text.TextReportRequest(rh,*args,**kw)
-        #~ return rr.render()
-        #~ return console.ui.report_as_text(self)
+    #~ def row2dict(self,row,d):
+        #~ # overridden in extjs.ext_requests.ViewReportRequest
+        #~ return self.report.row2dict(row,d)
 
     def get_request_url(self,*args,**kw):
         return self.ui.get_request_url(self,*args,**kw)
+
+    def spawn_request(self,rpt,**kw):
+        #~ rh = rpt.get_handle(self.ui)
+        kw.update(user=self.user)
+        #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
+        return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
+        
+    def request2kw(self,ui,**kw):
+        #~ if self.known_values:
+            #~ kv = dict()
+            #~ for k,v in self.known_values:
+                
+            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
+        if self.quick_search:
+            kw[ext_requests.URL_PARAM_FILTER] = self.quick_search
+        if self.master_instance is not None:
+            kw[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
+            mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
+            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
+        return kw
+
+      
 
 
 #~ class IterActionRequest(actions.ActionRequest)
@@ -782,7 +909,7 @@ class ReportActionRequest(ActionRequest):
         
         
 def has_fk(rr,name):
-    if isinstance(rr,ReportActionRequest):
+    if isinstance(rr,ListActionRequest):
         return rr.report.fk_name == name
     return False
 
@@ -1306,7 +1433,8 @@ class Report(actors.Actor): #,base.Handled):
         Creates and returns the method to be used when :attr:`Report.show_slave_grid` is `False`.
         """
         def meth(master,request):
-            rr = self.request(ui,master_instance=master)
+            rr = ListActionRequest(ui,self,None,self.default_action,master_instance=master)
+            #~ rr = self.request(ui,master_instance=master)
             s = summary(ui,rr,row_separator)
             #~ s = ', '.join([fmt(r) for r in rr])
             #~ print 'reports.py 20101017', s
@@ -1394,10 +1522,10 @@ class Report(actors.Actor): #,base.Handled):
                 #~ return
         #~ cls.detail_layouts.append(dtl)
         
-    @classmethod
-    def request(cls,ui=None,**kw):
-        self = cls()
-        return self.default_action.request(ui,**kw)
+    #~ @classmethod
+    #~ def request(cls,ui=None,**kw):
+        #~ self = cls()
+        #~ return self.default_action.request(ui,**kw)
         
 
     def row2dict(self,row,d):

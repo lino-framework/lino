@@ -277,143 +277,31 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     return rec
             
     
-class ViewReportRequest(reports.ReportActionRequest):
+#~ class ViewReportRequest(reports.ReportActionRequest):
     
-    editing = 0
-    selector = None
-    sort_column = None
-    sort_direction = None
-    gc = None
+    #~ sort_column = None
+    #~ sort_direction = None
     
-    def __init__(self,request,rh,action,*args,**kw):
-        reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
-        self.ah = rh
-        self.request = request
-        self.store = rh.store
-        if request is None:
-            self.user = None
-        else:
-            kw = self.parse_req(request,rh,**kw)
-        self.setup(*args,**kw)
-        
-        
-    def spawn_request(self,rpt,**kw):
-        rh = rpt.get_handle(self.ui)
-        kw.update(user=self.user)
-        return ViewReportRequest(None,rh,rpt.default_action,**kw)
-        
-    def parse_req(self,request,rh,**kw):
-        #~ gc_name = request.REQUEST.get('gc',None)
-        #~ if gc_name:
-            #~ self.gc = system.GridConfig.objects.get(rptname=self.report.actor_id,name=gc_name)
-            
-        master = kw.get('master',self.report.master)
-        if master is ContentType or master is models.Model:
-            mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
-            try:
-                master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
-            except ContentType.DoesNotExist,e:
-                pass
-                #~ master is None
-                #~ raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
-                
-            #~ print kw
-        if master is not None and not kw.has_key('master_instance'):
-            pk = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_PK,None)
-            #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
-            #~ if pk in ('', '-99999'):
-            if pk == '':
-                pk = None
-            if pk is None:
-                kw['master_instance'] = None
-            else:
-                try:
-                    kw['master_instance'] = master.objects.get(pk=pk)
-                except ValueError,e:
-                    raise Http404("Invalid primary key %r for %s",pk,master.__name__)
-                except master.DoesNotExist,e:
-                    # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
-                    raise Http404("There's no %s with primary key %r" % (master.__name__,pk))
-            #~ print '20100212', self #, kw['master_instance']
-        #~ print '20100406b', self.report,kw
-        
-        if settings.LINO.use_filterRow:
-            exclude = dict()
-            for f in rh.store.fields:
-                if f.field:
-                    filterOption = request.REQUEST.get('filter[%s_filterOption]' % f.field.name)
-                    if filterOption == 'empty':
-                        kw[f.field.name + "__isnull"] = True
-                    elif filterOption == 'notempty':
-                        kw[f.field.name + "__isnull"] = False
-                    else:
-                        filterValue = request.REQUEST.get('filter[%s]' % f.field.name)
-                        if filterValue:
-                            if not filterOption: filterOption = 'contains'
-                            if filterOption == 'contains':
-                                kw[f.field.name + "__icontains"] = filterValue
-                            elif filterOption == 'doesnotcontain':
-                                exclude[f.field.name + "__icontains"] = filterValue
-                            else:
-                                print "unknown filterOption %r" % filterOption
-            if len(exclude):
-                kw.update(exclude=exclude)
-        if settings.LINO.use_gridfilters:
-            filter = request.REQUEST.get(ext_requests.URL_PARAM_GRIDFILTER,None)
-            if filter is not None:
-                filter = json.loads(filter)
-                kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
-        
-        quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
-        if quick_search:
-            kw.update(quick_search=quick_search)
-        offset = request.REQUEST.get(ext_requests.URL_PARAM_START,None)
-        if offset:
-            kw.update(offset=int(offset))
-        limit = request.REQUEST.get(ext_requests.URL_PARAM_LIMIT,None)
-        if limit:
-            kw.update(limit=int(limit))
+    #~ def __init__(self,request,rh,action,*args,**kw):
+        #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
+        #~ self.ah = rh
+        #~ self.request = request
+        #~ self.store = rh.store
+        #~ if request is None:
+            #~ self.user = None
         #~ else:
-            #~ kw.update(limit=self.report.page_length)
-            
+            #~ kw = self.parse_req(request,rh,**kw)
+        #~ self.setup(*args,**kw)
         
-        sort = request.REQUEST.get(ext_requests.URL_PARAM_SORT,None)
-        if sort:
-            self.sort_column = sort
-            sort_dir = request.REQUEST.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
-            if sort_dir == 'DESC':
-                sort = '-'+sort
-                self.sort_direction = 'DESC'
-            kw.update(order_by=[sort])
         
-        #~ layout = request.REQUEST.get('layout',None)
-        #~ if layout:
-            #~ kw.update(layout=int(layout))
-            #~ kw.update(layout=rh.layouts[int(layout)])
-            
-        #~ user = authenticated_user(request.user)
-        user = request.user
-        if user is not None and user.is_superuser:
-            username = request.REQUEST.get(ext_requests.URL_PARAM_EUSER,None)
-            if username:
-                try:
-                    user = User.objects.get(username=username)
-                except User.DoesNotExist, e:
-                    pass
-        kw.update(user=user)
-        
-        kw = rh.report.parse_req(request,**kw)
-        
-        return kw
-      
-    def get_user(self):
-        return self.user
+    #~ def get_user(self):
+        #~ return self.user
 
-    def row2list(self,row):
-        return self.store.row2list(self,row)
+    #~ def row2list(self,row):
+        #~ return self.store.row2list(self,row)
       
-    def row2dict(self,row):
-        return self.store.row2dict(self,row)
+    #~ def row2dict(self,row):
+        #~ return self.store.row2dict(self,row)
  
 
 def find_field(model,name):
@@ -1184,7 +1072,7 @@ tinymce.init({
         #~ rpt = actors.get_actor2(app_label,actor)
         #~ if rpt is None:
             #~ raise Http404("No actor named '%s.%s'." % (app_label,actor))
-        rh = rpt.get_handle(self)
+        #~ rh = rpt.get_handle(self)
         #~ ar = self.build_ar(request,rh)
         
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
@@ -1192,9 +1080,12 @@ tinymce.init({
         if a is None:
             raise Http404("%s has no action %r" % (rh.report,action_name))
         if isinstance(a,reports.ReportAction):
-            ar = ViewReportRequest(request,rh,a)
+            #~ ar = ViewReportRequest(request,rh,a)
+            ar = reports.ListActionRequest(self,rpt,request,a)
+            rh = ar.ah
         else:
             ar = reports.ActionRequest(self,a)
+            rh = rpt.get_handle(self)
         
         if request.method == 'POST':
             #~ data = rh.store.get_from_form(request.POST)
@@ -1218,8 +1109,8 @@ tinymce.init({
             
             if fmt == 'html':
                 kw = {}
-                #~ bp = ar.request2kw(self)
-                bp = self.request2kw(ar)
+                bp = ar.request2kw(self)
+                #~ bp = self.request2kw(ar)
                 
                 params = dict(base_params=bp)
                 
@@ -1252,11 +1143,11 @@ tinymce.init({
                 w = ucsv.UnicodeWriter(response,**settings.LINO.csv_params)
                 w.writerow(ar.ah.store.column_names())
                 for row in ar.queryset:
-                    w.writerow([unicode(v) for v in ar.row2list(row)])
+                    w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
                 return response
                 
             if fmt == 'json':
-                rows = [ ar.row2list(row) for row in ar.queryset ]
+                rows = [ rh.store.row2list(ar,row) for row in ar.queryset ]
                 #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
@@ -1264,7 +1155,7 @@ tinymce.init({
                 #~ for i in range(0,ar.extra):
                 if ar.create_rows:
                     row = ar.create_instance()
-                    d = ar.row2list(row)
+                    d = rh.store.row2list(ar,row)
                     #~ logger.info('20111213 %s -> %s -> %s', obj2str(ar.master),row, d)
                     #~ d = ar.row2dict(row)
                     #~ 20100706 d[rh.report.model._meta.pk.name] = -99999
@@ -1299,12 +1190,20 @@ tinymce.init({
         
     def restful_view(self,request,app_label=None,actor=None,pk=None):
         rpt = self.requested_report(request,app_label,actor)
-        rh = rpt.get_handle(self)
+        #~ rh = rpt.get_handle(self)
         a = rpt.default_action
+        
         if isinstance(a,reports.ReportAction):
-            ar = ViewReportRequest(request,rh,a)
+            #~ ar = ViewReportRequest(request,rh,a)
+            ar = reports.ListActionRequest(self,rpt,request,a)
+            rh = ar.ah
         else:
             ar = reports.ActionRequest(self,a)
+        
+        #~ if isinstance(a,reports.ReportAction):
+            #~ ar = ViewReportRequest(request,rh,a)
+        #~ else:
+            #~ ar = reports.ActionRequest(self,a)
         if request.method == 'POST':
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
@@ -1324,7 +1223,7 @@ tinymce.init({
             if pk:
                 pass
             else:
-                rows = [ ar.row2list(row) for row in ar.queryset ]
+                rows = [ rh.store.row2list(ar,row) for row in ar.queryset ]
                 #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
@@ -1332,7 +1231,7 @@ tinymce.init({
                 #~ for i in range(0,ar.extra):
                 if ar.create_rows:
                     row = ar.create_instance()
-                    d = ar.row2list(row)
+                    d = rh.store.row2list(ar,row)
                     #~ logger.info('20111213 %s -> %s -> %s', obj2str(ar.master),row, d)
                     #~ d = ar.row2dict(row)
                     #~ 20100706 d[rh.report.model._meta.pk.name] = -99999
@@ -1350,7 +1249,6 @@ tinymce.init({
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         rpt = self.requested_report(request,app_label,actor)
-        ah = rpt.get_handle(self)
         #~ if not ah.report.can_view.passes(request.user):
             #~ msg = "User %s cannot view %s." % (request.user,ah.report)
             #~ return http.HttpResponseForbidden()
@@ -1388,6 +1286,7 @@ tinymce.init({
             return HttpResponseDeleted()
             
         if request.method == 'PUT':
+            ah = rpt.get_handle(self)
             if elem is None:
                 raise Http404('Tried to PUT on element -99999')
             #~ print 20110301, request.raw_post_data
@@ -1422,7 +1321,9 @@ tinymce.init({
             fmt = request.GET.get('fmt',a.default_format)
             #~ a = rpt.get_action(fmt)
                 
-            ar = ViewReportRequest(request,ah,a)
+            #~ ar = ViewReportRequest(request,ah,a)
+            ar = reports.ListActionRequest(self,rpt,request,a)
+            ah = ar.ah
 
             if isinstance(a,actions.OpenWindowAction):
               
@@ -1440,8 +1341,8 @@ tinymce.init({
                     return json_response(datarec)
                     
                 params = dict(data_record=datarec)
-                #~ bp = ar.request2kw(self)
-                bp = self.request2kw(ar)
+                bp = ar.request2kw(self)
+                #~ bp = self.request2kw(ar)
                 
                 #~ if a.window_wrapper.tabbed:
                 if rpt.get_detail().get_handle(self).tabbed:
@@ -1659,8 +1560,10 @@ tinymce.init({
         rpt = self.requested_report(request,app_label,rptname)
         #~ rpt = actors.get_actor2(app_label,rptname)
         if fldname is None:
-            rh = rpt.get_handle(self)
-            ar = ViewReportRequest(request,rh,rpt.default_action)
+            #~ rh = rpt.get_handle(self)
+            #~ ar = ViewReportRequest(request,rh,rpt.default_action)
+            ar = reports.ListActionRequest(self,rpt,request,rpt.default_action)
+            rh = ar.ah
             qs = ar.get_queryset()
             #~ qs = rpt.request(self).get_queryset()
             def row2dict(obj,d):
@@ -1707,7 +1610,9 @@ tinymce.init({
             elif isinstance(field,models.ForeignKey):
                 m = field.rel.to
                 cr = getattr(m,'_lino_choices_report',m._lino_model_report)
-                qs = cr.request(self).get_queryset()
+                #~ qs = cr.request(self).get_queryset()
+                ar = reports.ListActionRequest(self,cr,request,cr.default_action)
+                qs = ar.get_queryset()
                 #~ qs = mr.request(self,**mr.default_params).get_queryset()
                 #~ qs = get_default_qs(field.rel.to)
                 #~ qs = field.rel.to.objects.all()
@@ -1741,11 +1646,11 @@ tinymce.init({
         #kw['simple_list'] = True
         return self.json_report_view(request,**kw)
         
-    def json_report_view(self,request,app_label=None,rptname=None,**kw):
+    def unused_json_report_view(self,request,app_label=None,rptname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
         return self.json_report_view_(request,rpt,**kw)
 
-    def json_report_view_(self,request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None,csv=False):
+    def unused_json_report_view_(self,request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None,csv=False):
         if not rpt.can_view.passes(request):
             msg = "User %s cannot view %s." % (request.user,rpt)
             raise Http404(msg)
@@ -1812,8 +1717,8 @@ tinymce.init({
         """
         Deserves more documentation.
         """
-        #~ params = dict(base_params=rr.request2kw(self))
-        params = dict(base_params=self.request2kw(rr))
+        params = dict(base_params=rr.request2kw(self))
+        #~ params = dict(base_params=self.request2kw(rr))
         if rr.total_count == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
             a = rr.report.get_action('insert')
@@ -1877,6 +1782,9 @@ tinymce.init({
                 """
                 if v.href is not None:
                     url = v.href
+                elif v.params is not None:
+                    ar = reports.ListActionRequest(self,v.action.actor,None,v.action,**v.params)
+                    url = self.get_request_url(ar)
                 elif v.request is not None:
                     url = self.get_request_url(v.request)
                 elif v.instance is not None:
@@ -1936,8 +1844,8 @@ tinymce.init({
         return self.build_url("api",actor.app_label,actor._actor_name,*args,**kw)
         
     def get_request_url(self,rr,*args,**kw):
-        #~ kw = rr.request2kw(self,**kw)
-        kw = self.request2kw(rr,**kw)
+        kw = rr.request2kw(self,**kw)
+        #~ kw = self.request2kw(rr,**kw)
         return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
@@ -2275,17 +2183,3 @@ tinymce.init({
         a = actors.get_actor(*args,**kw)
         return a.get_handle(self)
         
-    def request2kw(self,rr,**kw):
-        #~ if self.known_values:
-            #~ kv = dict()
-            #~ for k,v in self.known_values:
-                
-            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
-        if rr.quick_search:
-            kw[ext_requests.URL_PARAM_FILTER] = rr.quick_search
-        if rr.master_instance is not None:
-            kw[ext_requests.URL_PARAM_MASTER_PK] = rr.master_instance.pk
-            mt = ContentType.objects.get_for_model(rr.master_instance.__class__).pk
-            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
-        return kw
-

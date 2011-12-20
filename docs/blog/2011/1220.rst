@@ -52,6 +52,7 @@ Das war ein eher dringender Bug: wenn man z.B. in
 :menuselection:`Konfigurierung --> Eigenschaften --> Fachkompetenzen`
 das Detail eines Records anfragte, kam sogleich die Meldung
 "Keine weiteren Records, Detail wird geschlossen".
+
 Das lag daran, dass das Detail-Fenster die Parameter mt und mk nicht 
 richtig anfragte.
 
@@ -59,3 +60,21 @@ Die Standardbreite einer ForeignKey-Kolonne
 -------------------------------------------
 
 :attr:`lino.modlib.contacts.models.Contact._lino_preferred_width`
+
+
+Noch Bugs
+---------
+
+- Seit gestern funktionierte der Kalender nicht mehr.
+  Also dass ich request2kw() vom UI zum ActionRequest verschoben hatte, 
+  war nicht bloß weil's schöner aussah.
+  Die neue Lösung gefällt mir:
+  ReportActionRequest und ViewActionReportRequest sind jetzt eine 
+  einzige Klasse ListActionRequest
+
+- Personensuche 
+  nach Alter funktionierte nicht: wenn man eine Altersgrenze angab, 
+  wurden überhaupt keine Personen gefunden.
+
+
+Check-in, Release :doc:`/releases/2011/1.3.1` und Feierabend.

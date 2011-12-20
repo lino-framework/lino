@@ -256,8 +256,8 @@ def test03(self):
         #~ self.assertTrue(result.has_key(k))
     if True:
         # disabled because they depend on local database sorting configuration
-        self.assertEqual(result['navinfo']['last'],93)
-        self.assertEqual(result['navinfo']['recno'],3)
+        self.assertEqual(result['navinfo']['last'],195)
+        self.assertEqual(result['navinfo']['recno'],2)
         self.assertEqual(result['navinfo']['prev'],14)
         self.assertEqual(result['navinfo']['first'],16)
         self.assertEqual(result['navinfo']['next'],68)

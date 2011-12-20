@@ -1808,12 +1808,16 @@ class PersonsBySearch(reports.Report):
             #~ q1 = models.Q(birth_date__isnull=True)
             #~ q2 = models.Q(birth_date__gte=today-datetime.timedelta(days=search.aged_from*365))
             #~ qs = qs.filter(q1|q2)
-            qs = qs.filter(birth_date__lte=today-datetime.timedelta(days=search.aged_from*365))
+            min_date = today - datetime.timedelta(days=search.aged_from*365)
+            qs = qs.filter(birth_date__lte=min_date.strftime("%Y-%m-%d"))
+            #~ qs = qs.filter(birth_date__lte=today-datetime.timedelta(days=search.aged_from*365))
         if search.aged_to:
             #~ q1 = models.Q(birth_date__isnull=True)
             #~ q2 = models.Q(birth_date__lte=today-datetime.timedelta(days=search.aged_to*365))
             #~ qs = qs.filter(q1|q2)
-            qs = qs.filter(birth_date__gte=today-datetime.timedelta(days=search.aged_to*365))
+            max_date = today - datetime.timedelta(days=search.aged_to*365)
+            qs = qs.filter(birth_date__gte=max_date.strftime("%Y-%m-%d"))
+            #~ qs = qs.filter(birth_date__gte=today-datetime.timedelta(days=search.aged_to*365))
             
         if search.only_my_persons:
             qs = only_my_persons(qs,search.user)

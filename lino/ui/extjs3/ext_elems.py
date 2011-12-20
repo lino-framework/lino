@@ -38,6 +38,15 @@ EXT_CHAR_HEIGHT = 22
 DEFAULT_GC_NAME = 0
 
 
+def form_field_name(f):
+    if isinstance(f,models.ForeignKey) \
+        or (isinstance(f,models.Field) and f.choices) \
+        or isinstance(f,fields.LinkedForeignKey):
+        return f.name + ext_requests.CHOICES_HIDDEN_SUFFIX
+    else:
+        return f.name
+        
+
 def rpt2url(rpt):
     return '/' + rpt.app_label + '/' + rpt._actor_name
 
@@ -84,7 +93,7 @@ def before_row_edit(panel):
                     #~ l.append("console.log('20110128 before_row_edit',record.data);")
                     l.append(
                         "%s.setContextValue(%r,record ? record.data[%r] : undefined);" % (
-                        e.as_ext(),f.name,ext_requests.form_field_name(f)))
+                        e.as_ext(),f.name,form_field_name(f)))
     #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
     #~ return js_code('function(record){ %s }' % (' '.join(l)))
     return l
