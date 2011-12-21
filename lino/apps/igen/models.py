@@ -90,7 +90,7 @@ class Note(notes.Note,mixins.Owned):
         
 class NotesByOwner(reports.Report):
     model = Note
-    fk_name = 'owner'
+    master_key = 'owner'
  
 class Event(cal.Event):
     class Meta(cal.Event.Meta):

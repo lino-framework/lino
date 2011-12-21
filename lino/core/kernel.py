@@ -44,8 +44,7 @@ from django.utils.safestring import mark_safe
 
 import lino
         
-from lino.utils import menus
-from lino import reports, actions
+from lino.core import table
 from lino.utils import perms
 from lino.utils import dblogger
 #~ from lino.utils import babel
@@ -55,9 +54,8 @@ from lino.utils import get_class_attr, class_dict_items
 
 from lino.tools import resolve_model, resolve_field, get_app, get_field, full_model_name
 from lino.utils.config import load_config_files, find_config_file
-from lino.reports import DetailLayout
 from lino.utils import choosers
-from lino import fields
+from lino import dd
 from lino.models import get_site_config
 from lino.utils import babel
 
@@ -109,7 +107,7 @@ def analyze_models(self,make_messages):
         model._lino_detail_layouts = {}
             
         def loader(content,cd,filename):
-            dtl = DetailLayout(content,filename,cd)
+            dtl = table.DetailLayout(content,filename,cd)
             head,tail = os.path.split(filename)
             model._lino_detail_layouts[tail] = dtl
             if make_messages:
@@ -123,7 +121,7 @@ def analyze_models(self,make_messages):
             #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
         
         for k,v in class_dict_items(model):
-            if isinstance(v,fields.VirtualField):
+            if isinstance(v,dd.VirtualField):
                 v.lino_kernel_setup(model,k)
             
         for f, m in model._meta.get_fields_with_model():
@@ -173,7 +171,7 @@ def analyze_models(self,make_messages):
             collector = collector.items()
             collector.sort(by0)
             detail_layouts = [i[1] for i in collector]
-            model._lino_detail = reports.Detail(model,detail_layouts)
+            model._lino_detail = table.Detail(model,detail_layouts)
         else:
             model._lino_detail = None
             
@@ -272,7 +270,7 @@ def setup_site(self,make_messages=False):
     actors.discover()
     #~ logger.debug("actors.discover() done")
     
-    reports.discover()
+    table.discover()
     
     choosers.discover()
     

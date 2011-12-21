@@ -32,7 +32,7 @@ from lino.utils.instantiator import make_converter
 #~ from lino import reports
 from lino.core.coretools import get_data_elem # , get_unbound_meth
 import lino
-from lino import fields
+from lino.core import fields
 from lino.utils import get_class_attr
 
 class BaseChooser:

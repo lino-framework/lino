@@ -21,9 +21,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from lino import reports
-from lino.core import actors
-from lino.mixins import printable
+from lino import dd
 from lino.utils import mti
 
 #~ from lino.mixins import PersonMixin
@@ -111,7 +109,7 @@ class User(contacts.Contact,contacts.Person):
             self.name = self.username
         models.Model.full_clean(self,*args,**kw)
 
-class Users(reports.Report):
+class Users(dd.Table):
     """Shows the list of users on this site.
     """
     model = User
@@ -119,9 +117,9 @@ class Users(reports.Report):
     order_by = ["username"]
     column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
 
-if reports.is_installed('contacts'):
+if dd.is_installed('contacts'):
   
-    reports.inject_field(contacts.Contact,
+    dd.inject_field(contacts.Contact,
         'is_user',
         mti.EnableChild('users.User',verbose_name=_("is User")),
         """Whether this Contact is also a User."""

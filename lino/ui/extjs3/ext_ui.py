@@ -51,17 +51,18 @@ from django.conf.urls.defaults import patterns, url, include
 
 
 import lino
-from . import ext_elems
-from . import ext_store
-from . import ext_windows
+from lino.ui.extjs3 import ext_elems
+from lino.ui.extjs3 import ext_store
+from lino.ui.extjs3 import ext_windows
 #~ from . import ext_viewport
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
 
 #~ from lino.ui import store as ext_store
-from lino import actions #, layouts #, commands
-from lino import reports
-from lino import fields
+from lino import dd
+from lino.core import actions #, layouts #, commands
+from lino.core import table
+from lino.core import fields
 from lino.ui import base
 from lino.core import actors
 from lino.tools import makedirs_if_missing
@@ -277,13 +278,13 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     return rec
             
     
-#~ class ViewReportRequest(reports.ReportActionRequest):
+#~ class ViewReportRequest(table.ReportActionRequest):
     
     #~ sort_column = None
     #~ sort_direction = None
     
     #~ def __init__(self,request,rh,action,*args,**kw):
-        #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
+        #~ table.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
         #~ self.ah = rh
         #~ self.request = request
         #~ self.store = rh.store
@@ -385,9 +386,9 @@ class ExtUI(base.UI):
             lh.add_store_field(de)
             return ext_elems.GenericForeignKeyElement(lh,de,**kw)
             
-        if isinstance(de,reports.Report):
+        if isinstance(de,dd.Table):
             kw.update(master_panel=js_code("this"))
-            if isinstance(lh.layout,reports.DetailLayout):
+            if isinstance(lh.layout,table.DetailLayout):
                 # a Report in a DetailWindow
                 kw.update(tools=[
                   js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
@@ -438,9 +439,9 @@ class ExtUI(base.UI):
             if value is not None:
                 if isinstance(value,basestring):
                     return lh.desc2elem(panelclass,name,value,**kw)
-                if isinstance(value,reports.StaticText):
+                if isinstance(value,table.StaticText):
                     return ext_elems.StaticTextElement(lh,name,value)
-                #~ if isinstance(value,reports.DataView):
+                #~ if isinstance(value,table.DataView):
                     #~ return ext_elems.DataViewElement(lh,name,value)
                     #~ return ext_elems.TemplateElement(lh,name,value)
                 #~ if isinstance(value,printable.PicturePrintMethod):
@@ -522,11 +523,11 @@ class ExtUI(base.UI):
 
 
     def main_panel_class(self,layout):
-        if isinstance(layout,reports.ListLayout) : 
+        if isinstance(layout,table.ListLayout) : 
             return ext_elems.GridMainPanel
         #~ if isinstance(layout,layouts.TabLayout) : 
             #~ return ext_elems.TabMainPanel
-        if isinstance(layout,reports.DetailLayout) : 
+        if isinstance(layout,table.DetailLayout) : 
             return ext_elems.DetailMainPanel
         #~ if isinstance(layout,layouts.FormLayout) : 
             #~ return ext_elems.FormMainPanel
@@ -1079,12 +1080,12 @@ tinymce.init({
         a = rpt.get_action(action_name)
         if a is None:
             raise Http404("%s has no action %r" % (rh.report,action_name))
-        if isinstance(a,reports.ReportAction):
+        if isinstance(a,table.ReportAction):
             #~ ar = ViewReportRequest(request,rh,a)
-            ar = reports.ListActionRequest(self,rpt,request,a)
+            ar = table.ListActionRequest(self,rpt,request,a)
             rh = ar.ah
         else:
-            ar = reports.ActionRequest(self,a)
+            ar = table.ActionRequest(self,a)
             rh = rpt.get_handle(self)
         
         if request.method == 'POST':
@@ -1114,7 +1115,7 @@ tinymce.init({
                 
                 params = dict(base_params=bp)
                 
-                if isinstance(ar.action,reports.InsertRow):
+                if isinstance(ar.action,table.InsertRow):
                     elem = ar.create_instance()
                     #~ rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec = elem2rec_insert(ar,rh,elem)
@@ -1193,17 +1194,17 @@ tinymce.init({
         #~ rh = rpt.get_handle(self)
         a = rpt.default_action
         
-        if isinstance(a,reports.ReportAction):
+        if isinstance(a,table.ReportAction):
             #~ ar = ViewReportRequest(request,rh,a)
-            ar = reports.ListActionRequest(self,rpt,request,a)
+            ar = table.ListActionRequest(self,rpt,request,a)
             rh = ar.ah
         else:
-            ar = reports.ActionRequest(self,a)
+            ar = table.ActionRequest(self,a)
         
-        #~ if isinstance(a,reports.ReportAction):
+        #~ if isinstance(a,table.ReportAction):
             #~ ar = ViewReportRequest(request,rh,a)
         #~ else:
-            #~ ar = reports.ActionRequest(self,a)
+            #~ ar = table.ActionRequest(self,a)
         if request.method == 'POST':
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
@@ -1322,7 +1323,7 @@ tinymce.init({
             #~ a = rpt.get_action(fmt)
                 
             #~ ar = ViewReportRequest(request,ah,a)
-            ar = reports.ListActionRequest(self,rpt,request,a)
+            ar = table.ListActionRequest(self,rpt,request,a)
             ah = ar.ah
 
             if isinstance(a,actions.OpenWindowAction):
@@ -1361,7 +1362,7 @@ tinymce.init({
                     raise Http404("%s failed for %r" % (a,elem))
                 return http.HttpResponseRedirect(target)
                 
-            if isinstance(a,reports.RowAction):
+            if isinstance(a,table.RowAction):
                 #~ return a.run(ar,elem)
                 try:
                     return a.run(ar,elem)
@@ -1442,22 +1443,22 @@ tinymce.init({
                     for ln in self.js_render_detail_FormPanel(model._lino_detail.get_handle(self)):
                         f.write(ln + '\n')
             
-            for rpt in reports.master_reports \
-                     + reports.slave_reports \
-                     + reports.generic_slaves.values() \
-                     + reports.frames :
+            for rpt in table.master_reports \
+                     + table.slave_reports \
+                     + table.generic_slaves.values() \
+                     + table.frames :
                 rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
                 f.write("Ext.namespace('Lino.%s')\n" % rpt)
                 
-                if isinstance(rpt,reports.Report):
+                if isinstance(rpt,table.Table):
                     for ln in self.js_render_GridPanel_class(rh):
                         f.write(ln + '\n')
                     
                 for a in rpt.get_actions():
-                    if isinstance(a,(reports.ShowDetailAction,reports.InsertRow)):
+                    if isinstance(a,(table.ShowDetailAction,table.InsertRow)):
                         for ln in self.js_render_detail_action_FormPanel(rh,a):
                               f.write(ln + '\n')
-                    #~ if isinstance(a,(reports.WindowAction)):
+                    #~ if isinstance(a,(table.WindowAction)):
                     for ln in self.js_render_window_action(rh,a):
                         f.write(ln + '\n')
                             
@@ -1562,7 +1563,7 @@ tinymce.init({
         if fldname is None:
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
-            ar = reports.ListActionRequest(self,rpt,request,rpt.default_action)
+            ar = table.ListActionRequest(self,rpt,request,rpt.default_action)
             rh = ar.ah
             qs = ar.get_queryset()
             #~ qs = rpt.request(self).get_queryset()
@@ -1611,7 +1612,7 @@ tinymce.init({
                 m = field.rel.to
                 cr = getattr(m,'_lino_choices_report',m._lino_model_report)
                 #~ qs = cr.request(self).get_queryset()
-                ar = reports.ListActionRequest(self,cr,request,cr.default_action)
+                ar = table.ListActionRequest(self,cr,request,cr.default_action)
                 qs = ar.get_queryset()
                 #~ qs = mr.request(self,**mr.default_params).get_queryset()
                 #~ qs = get_default_qs(field.rel.to)
@@ -1626,7 +1627,7 @@ tinymce.init({
                 
         quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search is not None:
-            qs = reports.add_quick_search_filter(qs,quick_search)
+            qs = table.add_quick_search_filter(qs,quick_search)
             
         offset = request.GET.get(ext_requests.URL_PARAM_START,None)
         if offset:
@@ -1674,7 +1675,7 @@ tinymce.init({
             rptreq = ViewReportRequest(request,rh,rpt.default_action)
             if submit:
                 pk = request.POST.get(rh.store.pk.name) #,None)
-                #~ if pk == reports.UNDEFINED:
+                #~ if pk == table.UNDEFINED:
                     #~ pk = None
                 try:
                     data = rh.store.get_from_form(request.POST)
@@ -1783,7 +1784,7 @@ tinymce.init({
                 if v.href is not None:
                     url = v.href
                 elif v.params is not None:
-                    ar = reports.ListActionRequest(self,v.action.actor,None,v.action,**v.params)
+                    ar = table.ListActionRequest(self,v.action.actor,None,v.action,**v.params)
                     url = self.get_request_url(ar)
                 elif v.request is not None:
                     url = self.get_request_url(v.request)
@@ -1874,28 +1875,28 @@ tinymce.init({
         #~ if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
         #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
           
-        if isinstance(a,reports.Calendar):
+        if isinstance(a,table.Calendar):
             return ext_windows.CalendarWrapper(h,a)
             
-        if isinstance(a,reports.GridEdit):
+        if isinstance(a,table.GridEdit):
             return ext_windows.GridMasterWrapper(h,a)
             
-        if isinstance(a,reports.InsertRow):
+        if isinstance(a,table.InsertRow):
             return ext_windows.InsertWrapper(h,a)
             
-        if isinstance(a,reports.ShowDetailAction):
+        if isinstance(a,table.ShowDetailAction):
             return ext_windows.DetailWrapper(h,a)
             
     def setup_handle(self,h):
         #~ if isinstance(h,layouts.TabPanelHandle):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
-        if isinstance(h,reports.DetailHandle): self.setup_detail_handle(h)
-        #~ elif isinstance(h,reports.FrameHandle):
+        if isinstance(h,table.DetailHandle): self.setup_detail_handle(h)
+        #~ elif isinstance(h,table.FrameHandle):
             #~ for a in h.get_actions():
                 #~ a.window_wrapper = self.action_window_wrapper(a,h)
                 
-        elif isinstance(h,reports.ReportHandle):
+        elif isinstance(h,table.ReportHandle):
             #~ logger.debug('ExtUI.setup_handle() %s',h.report)
             if h.report.model is None \
                 or h.report.model is models.Model \
@@ -1921,37 +1922,37 @@ tinymce.init({
         return os.path.abspath(os.path.dirname(__file__))
         
     def a2btn(self,a,**kw):
-        if isinstance(a,reports.SubmitDetail):
+        if isinstance(a,table.SubmitDetail):
             #~ kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
             #~ kw.update(handler=js_code('function() {ww.save()}'))
             kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
             
             #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
-        #~ elif isinstance(a,reports.SubmitInsert):
+        #~ elif isinstance(a,table.SubmitInsert):
             #~ kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
             #~ kw.update(handler=js_code('function() {ww.save()}'))
             #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
             #~ kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
         #~ elif isinstance(a,actions.UpdateRowAction):
             #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
-        elif isinstance(a,reports.ShowDetailAction):
+        elif isinstance(a,table.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail_handler'))
             #~ kw.update(panel_btn_handler=js_code('Lino.show_detail_handler()'))
             #~ kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
-        elif isinstance(a,reports.InsertRow):
+        elif isinstance(a,table.InsertRow):
             kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code(
                 'function(panel){Lino.show_insert(panel)}'))
             #~ kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
-        elif isinstance(a,reports.DuplicateRow):
+        elif isinstance(a,table.DuplicateRow):
             kw.update(panel_btn_handler=js_code(
                 'function(panel){Lino.show_insert_duplicate(panel)}'))
-        elif isinstance(a,reports.DeleteSelected):
+        elif isinstance(a,table.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
                 #~ "Lino.delete_selected" % a))
         #~ elif isinstance(a,actions.RedirectAction):
             #~ kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
-        elif isinstance(a,reports.RowAction):
+        elif isinstance(a,table.RowAction):
             kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.name))
         else:
@@ -2059,7 +2060,7 @@ tinymce.init({
         yield ""
         yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,full_model_name(rpt.model))
         yield "  empty_title: %s," % py2js(action.get_button_label())
-        if not isinstance(action,reports.InsertRow):
+        if not isinstance(action,table.InsertRow):
             yield "  has_navigator: %s," % py2js(rpt.has_navigator)
 
         yield "  ls_bbar_actions: %s," % py2js([rh.ui.a2btn(a) for a in rpt.get_actions(action)])
@@ -2156,15 +2157,15 @@ tinymce.init({
       
         rpt = rh.report
       
-        if isinstance(action,reports.ShowDetailAction):
+        if isinstance(action,table.ShowDetailAction):
             #~ s = "Lino.%s.detailPanel" % rpt
             s = "Lino.%sPanel" % action
-        elif isinstance(action,reports.InsertRow): # also printable.InitiateListing
+        elif isinstance(action,table.InsertRow): # also printable.InitiateListing
             s = "Lino.%sPanel" % action
             #~ s = "Lino.%s.%sPanel" % (rpt,action.name)
-        elif isinstance(action,reports.GridEdit):
+        elif isinstance(action,table.GridEdit):
             s = "Lino.%s.GridPanel" % rpt
-        elif isinstance(action,reports.Calendar):
+        elif isinstance(action,table.Calendar):
             s = "Lino.CalendarPanel"
         else:
             s = None

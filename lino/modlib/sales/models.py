@@ -634,7 +634,7 @@ class Orders(SalesDocuments):
 class OrdersByJournal(Orders):
     order_by = ["number"]
     #master = journals.Journal
-    fk_name = 'journal' # see django issue 10808
+    master_key = 'journal' # see django issue 10808
     column_names = "number:4 creation_date customer:20 imode " \
                   "sales_remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
@@ -658,7 +658,7 @@ class Invoices(SalesDocuments):
     
 class InvoicesByJournal(Invoices):
     order_by = ["number"]
-    fk_name = 'journal' # see django issue 10808
+    master_key = 'journal' # see django issue 10808
     #master = journals.Journal
     column_names = "number:4 creation_date due_date " \
                   "customer:10 " \
@@ -703,7 +703,7 @@ class DocumentsToSign(Invoices):
   
 class InvoicesByOrder(SalesDocuments):
     model = Invoice
-    fk_name = "order"
+    master_key = "order"
     order_by = ["number"]
     column_names = "number creation_date your_ref total_excl *"
 
@@ -719,7 +719,7 @@ class ItemsByDocument(reports.Report):
     column_names = "pos:3 product title description:20x1 discount unit_price qty total"
     #list_layout_class = ItemsByDocumentListLayout
     #master = SalesDocument
-    fk_name = 'document'
+    master_key = 'document'
     order_by = ["pos"]
     
 
@@ -743,7 +743,7 @@ class SalesByCustomer(SalesDocuments):
     column_names = "journal:4 number:4 creation_date:8 " \
                    "total_incl total_excl total_vat *"
     order_by = ["creation_date"]
-    fk_name = 'customer'
+    master_key = 'customer'
     
 class OrdersByCustomer(SalesByCustomer):
     model = 'sales.Order'
@@ -755,7 +755,7 @@ class InvoicesByCustomer(SalesByCustomer):
     #~ column_names = "journal:4 number:4 creation_date:8 " \
                    #~ "total_incl total_excl total_vat *"
     #~ order_by = ["creation_date"]
-    #~ fk_name = 'person'
+    #~ master_key = 'person'
 
         
 

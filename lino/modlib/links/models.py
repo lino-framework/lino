@@ -23,11 +23,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 
-from lino import fields
+from lino import dd
 #~ from lino import tools
-from lino import reports
 from lino import mixins
-from lino.fields import VirtualField
+from lino.dd import VirtualField
 from lino.tools import obj2str
 #~ from lino import layouts
 from lino.utils import babel 
@@ -69,8 +68,8 @@ class Link(models.Model):
     
     type = models.ForeignKey("links.LinkType")
 
-    #~ a = fields.DynamicGeneralForeignKey(type,'a_type',blank=True,null=True)
-    #~ b = fields.DynamicGeneralForeignKey(type,'b_type',blank=True,null=True)
+    #~ a = dd.DynamicGeneralForeignKey(type,'a_type',blank=True,null=True)
+    #~ b = dd.DynamicGeneralForeignKey(type,'b_type',blank=True,null=True)
     
     a_id = models.PositiveIntegerField(
         # editable=True,
@@ -81,14 +80,14 @@ class Link(models.Model):
         blank=True,null=True,
         verbose_name=_('(b object)'))
         
-    a = fields.LinkedForeignKey(type,'a')
-    b = fields.LinkedForeignKey(type,'b')
+    a = dd.LinkedForeignKey(type,'a')
+    b = dd.LinkedForeignKey(type,'b')
     
     
-    #~ a = fields.GenericForeignKey(
+    #~ a = dd.GenericForeignKey(
         #~ 'type__a_type', 'a_id',
         #~ verbose_name=_("Link origin"))
-    #~ b = fields.GenericForeignKey(
+    #~ b = dd.GenericForeignKey(
         #~ 'type__a_type', 'a_id',
         #~ verbose_name=_("Link target"))
         
@@ -157,19 +156,19 @@ class Link(models.Model):
         return force_unicode("%(a)s - %(b)s" % (self.b, self.a))
         
 
-class LinkTypes(reports.Report):
+class LinkTypes(dd.Table):
     model = 'links.LinkType'
     column_names = "name *"
     order_by = ["name"]
     
-class Links(reports.Report):
+class Links(dd.Table):
     model = 'links.Link'
     #~ column_names = "id date user url name *"
     column_names = "type a b id *"
     order_by = ["id"]
 
 class LinksByType(Links):
-    fk_name = 'type'
+    master_key = 'type'
 
 class LinksFromThis(Links):
     """

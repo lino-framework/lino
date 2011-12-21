@@ -32,10 +32,10 @@ My patch won't fix the real problem, but another symptom: when the top-level mod
     ...
   Exception: <class '...PizzeriaBar'> has more than 1 ForeignKey to <class '....Owner'>
   
-The workaround I suggest for this problem is to specify the fk_name explicitly:
+The workaround I suggest for this problem is to specify the master_key explicitly:
 
   >>> from django.forms.models import inlineformset_factory
-  >>> f = inlineformset_factory(Owner,PizzeriaBar,fk_name='owner')
+  >>> f = inlineformset_factory(Owner,PizzeriaBar,master_key='owner')
   
 Unfortunately this workaround needs another patch because inlineformset_factory() just can't imagine that a model can have two fields with the same name.
 

@@ -239,6 +239,30 @@ class VirtualField: # (Field):
         #~ assert m.func_code.co_argcount == 2, (self.name, m.func_code.co_varnames)
         #~ print self.field.name
         return m(obj,request)
+
+class MethodField(VirtualField):
+    """
+    Not used. See :doc:`/blog/2011/1221`.
+    Similar to VirtualField, but the `get` argument to `__init__` 
+    must be a string which is the name of a model method to be called 
+    without a `request`.
+    """
+    def __init__(self,return_type,get,*args,**kw):
+        self.args = args
+        self.kw = kw
+        VirtualField.__init__(self,return_type,get)
+        
+    def lino_kernel_setup(self,model,name):
+        self.get = getattr(model,get)
+        VirtualField.lino_kernel_setup(self,model,name)
+      
+    def value_from_object(self,request,obj):
+        """
+        Return the value of this field in the specified model instance `obj`.
+        `request` is ignored.
+        """
+        m = self.get
+        return m(obj,*self.args,**self.kw)
         
 
 #~ class DynamicForeignKey(models.PositiveIntegerField):

@@ -24,7 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-from lino import reports, fields
+from lino import dd
 from lino.utils import perms
 from lino.tools import full_model_name
 from lino.utils.choosers import chooser
@@ -52,8 +52,8 @@ class AutoUser(models.Model):
             task.user = self.user
 
 if settings.LINO.user_model: 
-    class ByUser(reports.Report):
-        fk_name = 'user'
+    class ByUser(dd.Table):
+        master_key = 'user'
         can_view = perms.is_authenticated
         
         def init_label(self):
@@ -64,7 +64,7 @@ if settings.LINO.user_model:
                 rr.master_instance = rr.get_user()
 else:
     # dummy report for userless sites
-    class ByUser(reports.Report): pass 
+    class ByUser(dd.Table): pass 
   
 
 
@@ -156,16 +156,16 @@ class Owned(models.Model):
         editable=True,
         blank=True,null=True,
         verbose_name=string_concat(owner_label,' ',_('(type)')))
-    owner_id = fields.GenericForeignKeyIdField(
+    owner_id = dd.GenericForeignKeyIdField(
         owner_type,
         editable=True,
         blank=True,null=True,
         verbose_name=string_concat(owner_label,' ',_('(object)')))
-    owner = fields.GenericForeignKey(
+    owner = dd.GenericForeignKey(
         'owner_type', 'owner_id',
         verbose_name=owner_label)
         
-    #~ owner_panel= fields.FieldSet(_("Owner"),
+    #~ owner_panel= dd.FieldSet(_("Owner"),
         #~ "owner_type owner_id",
         #~ owner_type=_("Model"),
         #~ owner_id=_("Instance"))
@@ -217,7 +217,7 @@ class ProjectRelated(models.Model):
     def summary_row(self,ui,rr,**kw):
         s = ui.href_to(self)
         if settings.LINO.project_model:
-            if self.project and not reports.has_fk(rr,'project'):
+            if self.project and not dd.has_fk(rr,'project'):
                 s += " (" + ui.href_to(self.project) + ")"
         return s
             

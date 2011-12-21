@@ -15,13 +15,13 @@ class Choice(models.Model):
     def __unicode__(self):
         return self.choice    
         
-from lino import reports
+from lino import dd
 
-class Polls(reports.Report):
+class Polls(dd.Table):
     model = Poll
     
-class Choices(reports.Report):
+class Choices(dd.Table):
     model = Choice
         
 class ChoicesByPoll(Choices):
-    fk_name = 'poll'
+    master_key = 'poll'

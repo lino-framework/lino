@@ -21,7 +21,7 @@ import decimal
 
 from django import forms
 
-from lino import reports
+from lino import dd
 #~ from lino import layouts
 from lino.utils import perms
 
@@ -29,10 +29,10 @@ from django.db import models
 from lino import fields
 from lino.tools import resolve_model
 
-contacts = reports.get_app('contacts')
-#~ ledger = reports.get_app('ledger')
+contacts = dd.get_app('contacts')
+#~ ledger = dd.get_app('ledger')
 from lino.modlib.ledger import models as ledger
-journals = reports.get_app('journals')
+journals = dd.get_app('journals')
 
 Contact = resolve_model('contacts.Contact')
 #~ Person = resolve_model('contacts.Person')
@@ -201,7 +201,7 @@ class BankStatements(journals.DocumentsByJournal):
     
     
     
-class DocItems(reports.Report):
+class DocItems(dd.Report):
     column_names = "document pos:3 "\
                   "date account contact remark debit credit" 
     model = DocItem
@@ -210,7 +210,7 @@ class DocItems(reports.Report):
 class ItemsByDocument(DocItems):
     column_names = "pos:3 date account contact remark debit credit" 
     #master = BankStatement
-    fk_name = 'document'
+    master_key = 'document'
     
 BankStatement.content = ItemsByDocument
 

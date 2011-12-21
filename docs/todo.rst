@@ -12,6 +12,8 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Bug: Comboboxen zeigen beim Aufklappen immer nur eine Seite an, 
+    auch wenn es deren mehrere gibt.
 
 #.  Calendar panel: handle eventadd, eventupdate, eventresize, 
     eventmove events.

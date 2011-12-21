@@ -34,11 +34,12 @@ from django.utils import translation
 
 
 import lino
-from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
 
-from lino import fields
+from lino import dd
+#~ from lino import fields
+
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
@@ -69,7 +70,7 @@ class CompanyType(babel.BabelNamed):
     abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
     
         
-class CompanyTypes(reports.Report):
+class CompanyTypes(dd.Table):
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
@@ -213,9 +214,18 @@ but e.g. :class:`Person` overrides this.
         Lines are separated by `linesep`.
         """
         return linesep.join(self.address_location_lines())
+        
+    def address_column(self,request):
+        return self.address_location(', ')
+    address_column.return_type = dd.DisplayField(_("Address"))
+    
+    def name_column(self,request):
+        return unicode(self)
+        #~ return self.get_full_name(nominative=True)
+    name_column.return_type = dd.DisplayField(_("Name"))
     
 
-class Contacts(reports.Report):
+class Contacts(dd.Table):
     model = 'contacts.Contact'
     column_names = "name email * id" 
     order_by = ['name','id']
@@ -230,12 +240,12 @@ class AllContacts(Contacts):
         return _("All %s") % self.model._meta.verbose_name_plural
         
 class ContactsByCity(Contacts):
-    fk_name = 'city'
+    master_key = 'city'
     order_by = 'street street_no street_box addr2'.split()
     column_names = "street street_no street_box addr2 name language *"
     
 class ContactsByCountry(Contacts):
-    fk_name = 'country'
+    master_key = 'country'
     column_names = "city street street_no name language *"
     order_by = "city street street_no".split()
     
@@ -257,7 +267,7 @@ class Born(models.Model):
     class Meta:
         abstract = True
         
-    birth_date = fields.IncompleteDateField(
+    birth_date = dd.IncompleteDateField(
         blank=True,
         verbose_name=_("Birth date"))
         
@@ -282,7 +292,7 @@ class Born(models.Model):
                     return s
                 return u"±" + s
         return _('unknown')
-    age.return_type = fields.DisplayField(_("Age"))
+    age.return_type = dd.DisplayField(_("Age"))
     
 
 
@@ -351,7 +361,7 @@ Optional `salutation_options` see :func:`get_salutation`.
         super(Person,self).full_clean(*args,**kw)
 
 
-class Persons(reports.Report):
+class Persons(dd.Table):
     model = 'contacts.Person'
     order_by = "last_name first_name id".split()
     #~ app_label = 'contacts'
@@ -412,7 +422,7 @@ class RoleType(babel.BabelNamed):
         verbose_name_plural = _("Role Types")
 
 
-class RoleTypes(reports.Report):
+class RoleTypes(dd.Table):
     model = 'contacts.RoleType'
 
 
@@ -478,28 +488,28 @@ class Role(models.Model):
             for ln in self.person.address_location_lines():
                 yield ln
 
-#~ class ContactsByCompany(reports.Report):
+#~ class ContactsByCompany(dd.Table):
     #~ model = 'contacts.RoleOccurence'
-    #~ fk_name = 'company'
+    #~ master_key = 'company'
     #~ column_names = 'person type *'
 
-#~ class ContactsByPerson(reports.Report):
+#~ class ContactsByPerson(dd.Table):
     #~ label = _("Contact for")
     #~ model = 'contacts.RoleOccurence'
-    #~ fk_name = 'person'
+    #~ master_key = 'person'
     #~ column_names = 'company type *'
     
-class Roles(reports.Report):
+class Roles(dd.Table):
     model = 'contacts.Role'   
     
 class RolesByCompany(Roles):
     label = _("Contact persons")
-    fk_name = 'company'
+    master_key = 'company'
     column_names = 'person type *'
 
 class RolesByPerson(Roles):
     label = _("Contact for")
-    fk_name = 'person'
+    master_key = 'person'
     column_names = 'company type *'
     
     
@@ -549,7 +559,7 @@ class PartnerDocument(models.Model):
             
     def summary_row(self,ui,rr,**kw):
         s = ui.href_to(self)
-        if self.person and not reports.has_fk(rr,'person'):
+        if self.person and not dd.has_fk(rr,'person'):
             if self.company:
                 s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
             else:
@@ -589,11 +599,11 @@ class ContactDocument(models.Model):
     
 
 
-if reports.is_installed('contacts'):
+if dd.is_installed('contacts'):
   
     from lino.models import SiteConfig
 
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'next_partner_id',
         models.IntegerField(default=100, # first 100 for users from demo fixtures.
             verbose_name=_("The next automatic id for Person or Company")
@@ -601,7 +611,7 @@ if reports.is_installed('contacts'):
         Deserves more documentation.
         """)
         
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'site_company',
         models.ForeignKey("contacts.Company",
             blank=True,null=True,
@@ -611,12 +621,12 @@ if reports.is_installed('contacts'):
         """The Company to be used as sender in documents.""")
         
 
-    reports.inject_field(Contact,
+    dd.inject_field(Contact,
         'is_person',
         mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
         """Whether this Contact is also a Person."""
         )
-    reports.inject_field(Contact,
+    dd.inject_field(Contact,
         'is_company',
         mti.EnableChild('contacts.Company',verbose_name=_("is Company")),
         """Whether this Contact is also a Company."""

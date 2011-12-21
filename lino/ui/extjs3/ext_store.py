@@ -35,8 +35,8 @@ from lino.utils.jsgen import py2js, Component, id2js, js_code
 from lino.ui import requests as ext_requests
 
 import lino
-from lino import reports
-from lino import fields
+from lino.core import table
+from lino import dd
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
 from lino.tools import obj2str
@@ -587,7 +587,7 @@ class Store:
     #~ value_template = "new Ext.data.JsonStore(%s)"
     
     def __init__(self,rh,**options):
-        assert isinstance(rh,reports.ReportHandle)
+        assert isinstance(rh,table.ReportHandle)
         #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report
@@ -710,23 +710,23 @@ class Store:
             return MethodStoreField(fld)
         #~ if isinstance(fld,fields.HtmlBox):
             #~ ...
-        if isinstance(fld,fields.LinkedForeignKey):
+        if isinstance(fld,dd.LinkedForeignKey):
             #~ logger.info("Store.create_field(%s)", fld)
             return LinkedForeignKeyField(fld)
-        if isinstance(fld,fields.VirtualField):
+        if isinstance(fld,dd.VirtualField):
             delegate = self.create_field(fld.return_type)
             return VirtStoreField(fld,delegate)
         if isinstance(fld,models.FileField):
             return FileFieldStoreField(fld)
         if isinstance(fld,models.ManyToManyField):
             return StoreField(fld)
-        if isinstance(fld,fields.PasswordField):
+        if isinstance(fld,dd.PasswordField):
             return PasswordStoreField(fld)
         if isinstance(fld,models.OneToOneField):
             return OneToOneStoreField(fld)
         if isinstance(fld,generic.GenericForeignKey):
             return GenericForeignKeyField(fld)
-        if isinstance(fld,fields.GenericForeignKeyIdField):
+        if isinstance(fld,dd.GenericForeignKeyIdField):
             return ComboStoreField(fld)
         if isinstance(fld,models.ForeignKey):
             return ForeignKeyStoreField(fld)
@@ -734,7 +734,7 @@ class Store:
             return TimeStoreField(fld)
         if isinstance(fld,models.DateTimeField):
             return DateTimeStoreField(fld)
-        if isinstance(fld,fields.IncompleteDateField):
+        if isinstance(fld,dd.IncompleteDateField):
             return IncompleteDateStoreField(fld)
         if isinstance(fld,models.DateField):
             return DateStoreField(fld)
@@ -798,8 +798,8 @@ class Store:
         
 
     def row2list(self,request,row):
-        assert isinstance(request,reports.ListActionRequest)
-        #~ if not isinstance(request,reports.ListActionRequest):
+        assert isinstance(request,table.ListActionRequest)
+        #~ if not isinstance(request,table.ListActionRequest):
             #~ raise Exception()
         #~ logger.info("20111209 Store.row2list(%s)", obj2str(row))
         l = []
@@ -809,7 +809,7 @@ class Store:
         return l
       
     def row2dict(self,request,row):
-        assert isinstance(request,reports.ListActionRequest)
+        assert isinstance(request,table.ListActionRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         d = {}
         for f in self.detail_fields:

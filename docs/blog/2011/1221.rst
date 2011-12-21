@@ -1,0 +1,41 @@
+20111221
+========
+
+
+- Neuzugänge werden jetzt in :menuselection:`Kontakte --> Personen`
+  nicht mehr angezeigt.
+  Außerdem benutzt :class:`lino.apps.dsbe.models.Persons` 
+  jetzt :attr:`dd.Table.known_values`
+  statt :attr:`dd.Table.filter`
+  :class:`lino.apps.dsbe.models.Persons` 
+  
+
+- Ich habe mal wieder was Unvernünftiges gemacht: 
+  das Wort "Report" habe ich ersetzt durch "Table".
+  War eine Stunde konzentrierter Find-and-replace-Arbeit.
+  Weil ich es einfach nicht mehr ertragen konnte, 
+  dass eines der zentralen Konzepte von Lino einen 
+  falschen Namen trägt.
+  Lino-Anwendungscode importiert jetzt normalerweise nur noch 
+  das Modul :mod:`lino.dd`. 
+  
+  Die Module `actions`, `reports` und `fields` wurden erstens 
+  von `lino` nach `lino.core` verschoben, und außerdem wurde `reports` 
+  umbenannt nach `table`.
+  
+  :mod:`lino.apps.dsbe` ist noch nicht fertig konvertiert.
+  
+  Intern gibt es noch viele Stellen, wo ``Report`` und ``rpt`` 
+  vorkommen, die eigentlich nach ``Table`` und ``tbl`` 
+  geändert werden müssten. 
+  Aber intern ist es nicht so schlimm, zumindest an den 
+  nach "außen" sichtbaren Stellen.
+  
+- `dsbe.Persons.column_names` is now as requested by the users.
+  New virtual fields `name_column´ and `address_column` on dsbe.Person.
+  I needed to define new names for the virtual fields that are just 
+  wrappers to existing funtions. It's a pity that I cannot use the same 
+  names for both virtual fields and template fields... hm... maybe a new 
+  field :class:`lino.core.fields.MethodField`? 
+  That should work, but that still doesn't save me from defining another 
+  name...

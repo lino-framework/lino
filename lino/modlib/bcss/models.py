@@ -26,15 +26,13 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino import mixins
-from lino import fields
-from lino import reports
+from lino import dd
 
 from lino.utils import babel
 from lino.utils import dblogger
 from lino.tools import resolve_model
 from lino.utils import bcss
 
-from lino.reports import GridEdit, ShowDetailAction
 from appy.shared.xml_parser import XmlUnmarshaller
 
 from lino.utils.choicelists import ChoiceList
@@ -59,14 +57,14 @@ add('5',_("Errors"),alias='errors')
     
 
 
-class SendAction(reports.RowAction):
+class SendAction(dd.RowAction):
     """
     This defines the "Execute" button on a :class:`BCSSRequest` record.
     """
     name = 'sendbcss'
     label = _('Execute')
     #~ callable_from = None
-    callable_from = (GridEdit,ShowDetailAction)
+    callable_from = (dd.GridEdit,dd.ShowDetailAction)
     
     def disabled_for(self,obj,request):
         if obj.sent:
@@ -191,6 +189,6 @@ class IdentifyPersonRequest(BCSSRequest):
           pc.append(PC.Tolerance(0))
           return bcss.IdentifyPersonRequest(SC(PC(*pc)))
       
-class IdentifyRequestsByPerson(reports.Report):
+class IdentifyRequestsByPerson(dd.Table):
     model = IdentifyPersonRequest
-    fk_name = 'project'
+    master_key = 'project'

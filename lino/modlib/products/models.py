@@ -65,5 +65,5 @@ class Products(reports.Report):
     column_names = "id:3 name cat vatExempt price:6 *"
     
 class ProductsByCategory(Products):
-    fk_name = 'cat'
+    master_key = 'cat'
     

@@ -18,17 +18,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import simplejson as json
 from django.conf import settings
 
-
-#~ import lino
-#~ from lino import actions
-#~ from lino import reports
-#~ from lino import fields
-#~ from lino.core import action_requests
-#~ from lino.utils import ucsv
-#~ from lino.utils import choosers
-#~ from lino.ui.extjs import ext_windows
-
-
 #~ UNDEFINED = "nix"
 
 CHOICES_TEXT_FIELD = 'text'
@@ -119,13 +108,4 @@ def authenticated_user(user):
     #~ if user.is_anonymous():
         #~ return None
     return user
-        
-#~ class ActionRequest(actions.ActionRequest):
-    
-    #~ def __init__(self,request,ah,action):
-        #~ self.request = request
-        #~ actions.ActionRequest.__init__(self,ah,action,{})
-        
-    #~ def get_user(self):
-        #~ return authenticated_user(self.request.user)
         

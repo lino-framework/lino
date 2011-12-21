@@ -24,7 +24,7 @@ import datetime
 from django.db import models
 from django.conf import settings
 
-from lino import reports
+from lino import dd
 #~ from lino import layouts
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -50,7 +50,7 @@ class Language(babel.BabelNamed):
 
 #~ add_babel_field(Language,'name')
 
-class Languages(reports.Report):
+class Languages(dd.Table):
     model = Language
 
 
@@ -76,7 +76,7 @@ class Country(babel.BabelNamed):
 
 #~ add_babel_field(Country,'name')
         
-class Countries(reports.Report):
+class Countries(dd.Table):
     """
     Shows the global list of countries.
     """
@@ -106,7 +106,7 @@ class City(models.Model):
     def __unicode__(self):
         return self.name
         
-class Cities(reports.Report):
+class Cities(dd.Table):
     #~ label = _("Cities")
     model = 'countries.City'
     order_by = "country name".split()
@@ -114,7 +114,7 @@ class Cities(reports.Report):
     
 class CitiesByCountry(Cities):
     column_names = "name zip_code country *"
-    fk_name = 'country'
+    master_key = 'country'
 
 
 

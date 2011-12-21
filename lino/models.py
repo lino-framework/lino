@@ -32,9 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 
 #~ import lino
 from lino import mixins
-from lino import reports
-from lino import fields
-from lino.core import actors
+from lino import dd
 #~ from lino import commands
 from lino.mixins import printable
 from lino.utils import babel
@@ -67,9 +65,9 @@ class SiteConfig(models.Model):
     def __unicode__(self):
         return force_unicode(_("Global Site Parameters"))
 
-class SiteConfigs(reports.Report):
+class SiteConfigs(dd.Table):
     model = SiteConfig
-    #~ default_action_class = reports.OpenDetailAction
+    #~ default_action_class = dd.OpenDetailAction
     has_navigator = False
     #~ can_delete = perms.never
     
@@ -91,7 +89,7 @@ def update_site_config(**kw):
     sc.save()
 
 
-class ContentTypes(reports.Report):
+class ContentTypes(dd.Table):
     model = contenttypes.ContentType
     
     
@@ -132,9 +130,9 @@ if settings.LINO.user_model:
             verbose_name_plural = _("Text Field Templates")
             
         name = models.CharField(_("Designation"),max_length=200)
-        description = fields.RichTextField(_("Description"),
+        description = dd.RichTextField(_("Description"),
             blank=True,null=True,format='html')
-        text = fields.RichTextField(_("Template Text"),
+        text = dd.RichTextField(_("Template Text"),
             blank=True,null=True,format='html')
         
         def __unicode__(self):
@@ -143,14 +141,16 @@ if settings.LINO.user_model:
     class MyTextFieldTemplates(mixins.ByUser):
         model = TextFieldTemplate
         
-    class TextFieldTemplates(reports.Report):
+    class TextFieldTemplates(dd.Table):
         model = TextFieldTemplate
 
 
 def add_site_menu(site):
     m = site.add_menu("site",_("~Site"))
     #~ m.add_action('system.SiteConfigs',can_view=perms.is_staff,params=dict(pk=1))
-    m.add_instance_action(site.config,label=_('Global Site Parameters'),can_view=perms.is_staff)
+    m.add_instance_action(site.config,
+        label=_('Global Site Parameters'),
+        can_view=perms.is_staff)
     return m
     #~ m.add_action('lino.SiteConfigs.detail',
       #~ label=_('Site Configuration'),

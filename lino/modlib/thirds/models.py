@@ -26,7 +26,7 @@ from django.contrib.contenttypes import generic
 #~ import lino
 #~ logger.debug(__file__+' : started')
 
-from lino import reports
+from lino import dd
 from lino.utils import perms
 from lino import mixins
 from lino.modlib.contacts import models as contacts
@@ -52,14 +52,14 @@ class Third(
         return unicode(self.seqno)
         #~ return unicode(self.get_partner())
         
-class Thirds(reports.Report):
+class Thirds(dd.Table):
     model = Third
     #~ order_by = ["modified"]
     column_names = "owner_type owner_id seqno person company *"
     
 
 class ThirdsByOwner(Thirds):
-    fk_name = 'owner'
+    master_key = 'owner'
     column_names = "seqno person company id *"
     show_slave_grid = False
     

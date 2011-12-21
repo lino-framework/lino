@@ -18,8 +18,7 @@ from django.db import models
 from django.conf import settings
 
 import lino
-from lino import actions
-from lino import reports
+from lino.core import actions
 #~ from lino import forms
 from lino.ui import base
 from lino.core import actors
@@ -170,7 +169,7 @@ class DetailWrapper(MasterWrapper):
         # d.update(url_data=url) 
         # 20101022 d.update(main_panel=self.main)
         # d.update(name=self.action.name) # used by tinymce editor window
-        # d.update(fk_name=self.action.actor.fk_name);
+        # d.update(master_key=self.action.actor.master_key);
         return d
         
         

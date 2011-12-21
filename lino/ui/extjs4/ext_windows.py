@@ -172,7 +172,7 @@ class BaseDetailWindow(MasterWindow):
         d.update(url_data=url) 
         #~ 20101022 d.update(main_panel=self.main)
         d.update(name=self.action.name)
-        d.update(fk_name=self.action.actor.fk_name);
+        d.update(master_key=self.action.actor.master_key);
         return d
         
         

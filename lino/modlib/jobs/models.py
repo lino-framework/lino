@@ -37,14 +37,12 @@ from django.utils.encoding import force_unicode
 
 
 
-from lino import reports
+from lino import dd
 #~ from lino import layouts
 from lino.utils import perms
 from lino.utils import dblogger
 #~ from lino.utils import printable
 from lino import mixins
-from lino import actions
-from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
@@ -124,7 +122,7 @@ class Schedule(babel.BabelNamed):
         verbose_name = _("Work Schedule")
         verbose_name_plural = _('Work Schedules')
         
-class Schedules(reports.Report):
+class Schedules(dd.Table):
     model = Schedule
     order_by = ['name']
 
@@ -134,7 +132,7 @@ class Regime(babel.BabelNamed):
         verbose_name = _("Work Regime")
         verbose_name_plural = _('Work Regimes')
         
-class Regimes(reports.Report):
+class Regimes(dd.Table):
     model = Regime
     order_by = ['name']
 
@@ -177,7 +175,7 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         blank=True,null=True)
         
 
-class ContractTypes(reports.Report):
+class ContractTypes(dd.Table):
     model = ContractType
     column_names = 'name ref build_method template *'
 
@@ -192,7 +190,7 @@ class Sector(babel.BabelNamed):
         blank=True,
         verbose_name=_("Remark"))
         
-class Sectors(reports.Report):
+class Sectors(dd.Table):
     model = Sector
     order_by = ['name']
 
@@ -210,13 +208,13 @@ class Function(babel.BabelNamed):
         #~ related_name="%(app_label)s_%(class)s_set_by_provider",
         #~ verbose_name=_("Job Provider"),
         #~ blank=True,null=True)
-class Functions(reports.Report):
+class Functions(dd.Table):
     model = Function
     column_names = 'name sector *'
     order_by = ['name']
     
 class FunctionsBySector(Functions):
-    fk_name = 'sector'
+    master_key = 'sector'
 
 #
 # JOB CONTRACTS
@@ -249,14 +247,14 @@ class Contract(ContractBase):
     #~ schedule = models.CharField(_("schedule"),max_length=200,blank=True)
     regime = models.ForeignKey(Regime,blank=True,null=True)
     schedule = models.ForeignKey(Schedule,blank=True,null=True)
-    hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
+    hourly_rate = dd.PriceField(_("hourly rate"),blank=True,null=True)
     refund_rate = models.CharField(_("refund rate"),max_length=200,
         blank=True)
     
     reference_person = models.CharField(_("reference person"),max_length=200,
         blank=True)
         
-    responsibilities = fields.RichTextField(_("responsibilities"),
+    responsibilities = dd.RichTextField(_("responsibilities"),
         blank=True,null=True,format='html')
     
     remark = models.TextField(
@@ -430,8 +428,8 @@ class Contract(ContractBase):
         """
         Contract.user.verbose_name=_("responsible (DSBE)")
         #~ resolve_field('jobs.Contract.user').verbose_name=_("responsible (DSBE)")
-        #~ lino.CONTRACT_PRINTABLE_FIELDS = reports.fields_list(cls,
-        cls.PRINTABLE_FIELDS = reports.fields_list(cls,
+        #~ lino.CONTRACT_PRINTABLE_FIELDS = dd.fields_list(cls,
+        cls.PRINTABLE_FIELDS = dd.fields_list(cls,
             'person job provider contact type '
             'applies_from applies_until duration '
             'language schedule regime hourly_rate refund_rate '
@@ -440,36 +438,36 @@ class Contract(ContractBase):
             'date_decided date_issued ')
         #~ super(Contract,cls).site_setup(lino)
 
-class Contracts(reports.Report):
+class Contracts(dd.Table):
     model = Contract
     column_names = 'id job applies_from applies_until user type *'
     order_by = ['id']
     active_fields = 'job provider contact'.split()
     
 class ContractsByPerson(Contracts):
-    fk_name = 'person'
+    master_key = 'person'
     column_names = 'job applies_from applies_until user type *'
 
         
 class ContractsByProvider(Contracts):
-    fk_name = 'provider'
+    master_key = 'provider'
     column_names = 'person job applies_from applies_until user type *'
 
 class ContractsByType(Contracts):
-    fk_name = 'type'
+    master_key = 'type'
     column_names = "applies_from person job user *"
     order_by = ["applies_from"]
 
 class ContractsByJob(Contracts):
     column_names = 'person applies_from applies_until user type *'
-    fk_name = 'job'
+    master_key = 'job'
 
 class ContractsByRegime(Contracts):
-    fk_name = 'regime'
+    master_key = 'regime'
     column_names = 'job applies_from applies_until user type *'
 
 class ContractsBySchedule(Contracts):
-    fk_name = 'schedule'
+    master_key = 'schedule'
     column_names = 'job applies_from applies_until user type *'
 
 class MyContracts(mixins.ByUser,Contracts):
@@ -554,7 +552,7 @@ class Offer(SectorFunction):
             return self.name
         return u'%s @ %s' % (self.function,self.provider)
   
-class Offers(reports.Report):
+class Offers(dd.Table):
     model = Offer
     
     
@@ -568,14 +566,14 @@ class StudyType(babel.BabelNamed):
         verbose_name = _("study type")
         verbose_name_plural = _("study types")
 
-class StudyTypes(reports.Report):
+class StudyTypes(dd.Table):
     #~ label = _('Study types')
     model = StudyType
     order_by = ["name"]
 
 
-class HistoryByPerson(reports.Report):
-    fk_name = 'person'
+class HistoryByPerson(dd.Table):
+    master_key = 'person'
     order_by = ["started"]
     def create_instance(self,req,**kw):
         obj = super(HistoryByPerson,self).create_instance(req,**kw)
@@ -602,16 +600,16 @@ class Study(CountryCity):
         verbose_name=_("Study content"))
     #~ content = models.ForeignKey(StudyContent,blank=True,null=True,verbose_name=_("Study content"))
   
-    started = fields.MonthField(_("started"),blank=True,null=True)
-    stopped = fields.MonthField(_("stopped"),blank=True,null=True)
+    started = dd.MonthField(_("started"),blank=True,null=True)
+    stopped = dd.MonthField(_("stopped"),blank=True,null=True)
     #~ started = models.DateField(blank=True,null=True,verbose_name=_("started"))
     #~ stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
-    #~ started = fields.MonthField(blank=True,null=True,verbose_name=_("started"))
-    #~ stopped = fields.MonthField(blank=True,null=True,verbose_name=_("stopped"))
+    #~ started = dd.MonthField(blank=True,null=True,verbose_name=_("started"))
+    #~ stopped = dd.MonthField(blank=True,null=True,verbose_name=_("stopped"))
     success = models.BooleanField(verbose_name=_("Success"),default=False)
     language = models.ForeignKey("countries.Language",
         blank=True,null=True,verbose_name=_("Language"))
-    #~ language = fields.LanguageField(blank=True,null=True,verbose_name=_("Language"))
+    #~ language = dd.LanguageField(blank=True,null=True,verbose_name=_("Language"))
     
     school = models.CharField(max_length=200,
         blank=True,# null=True,
@@ -623,17 +621,17 @@ class Study(CountryCity):
     def __unicode__(self):
         return unicode(self.type)
 
-class Studies(reports.Report):
+class Studies(dd.Table):
     "General list of Studies (all Persons)"
     model = Study
     order_by = "country city type content".split()
 
         
 class StudiesByCountry(Studies):
-    fk_name = 'country'
+    master_key = 'country'
     
 class StudiesByCity(Studies):
-    fk_name = 'city'
+    master_key = 'city'
     
 class StudiesByPerson(HistoryByPerson):
     "List of studies for a known person."
@@ -655,19 +653,19 @@ class Experience(SectorFunction):
         blank=True,null=True,
         verbose_name=_("Country"))
   
-    started = fields.MonthField(_("started"),blank=True,null=True)
-    stopped = fields.MonthField(_("stopped"),blank=True,null=True)
+    started = dd.MonthField(_("started"),blank=True,null=True)
+    stopped = dd.MonthField(_("stopped"),blank=True,null=True)
     
     remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
     
     def __unicode__(self):
         return unicode(self.title)
   
-class Experiences(reports.Report):
+class Experiences(dd.Table):
     model = Experience
   
 class ExperiencesByFunction(Experiences):
-    fk_name = 'function'
+    master_key = 'function'
     order_by = ["started"]
 
     
@@ -702,7 +700,7 @@ class Job(SectorFunction):
     contract_type = models.ForeignKey(ContractType,blank=True,null=True,
         verbose_name=_("Contract Type"))
     
-    hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
+    hourly_rate = dd.PriceField(_("hourly rate"),blank=True,null=True)
     
     capacity = models.IntegerField(_("capacity"),
         default=1)
@@ -757,25 +755,25 @@ class Job(SectorFunction):
         #~ verbose_name_plural = _('Job Wishes')
     #~ person = models.ForeignKey("contacts.Person")
     
-#~ class Wishes(reports.Report):
+#~ class Wishes(dd.Table):
     #~ model = Wish
     
 #~ class WishesByPerson(Wishes):
-    #~ fk_name = 'person'
+    #~ master_key = 'person'
 
 #~ class WishesBySector(Wishes):
-    #~ fk_name = 'sector'
+    #~ master_key = 'sector'
 
 #~ class WishesByFunction(Wishes):
-    #~ fk_name = 'function'
+    #~ master_key = 'function'
 
 
-#~ class WishesByOffer(reports.Report):
+#~ class WishesByOffer(dd.Table):
     #~ """
     #~ Shows the persons that whish this Offer.
     
     #~ It is a slave report without 
-    #~ :attr:`fk_name <lino.reports.Report.fk_name>`,
+    #~ :attr:`master_key <lino.dd.Table.master_key>`,
     #~ which is allowed only because it also overrides
     #~ :meth:`get_request_queryset`
     #~ """
@@ -856,22 +854,22 @@ class Candidature(SectorFunction):
         self.date_submitted = datetime.date.today()
     
 
-class Candidatures(reports.Report):
+class Candidatures(dd.Table):
     model = Candidature
     order_by = ['date_submitted']
     column_names = 'date_submitted job:25 * id'
 
 class CandidaturesByPerson(Candidatures):
-    fk_name = 'person'
+    master_key = 'person'
 
 class CandidaturesBySector(Candidatures):
-    fk_name = 'sector'
+    master_key = 'sector'
 
 class CandidaturesByFunction(Candidatures):
-    fk_name = 'function'
+    master_key = 'function'
 
 class CandidaturesByJob(Candidatures):
-    fk_name = 'job'
+    master_key = 'job'
     column_names = 'date_submitted person:25 * id'
   
     def create_instance(self,req,**kw):
@@ -883,12 +881,12 @@ class CandidaturesByJob(Candidatures):
 
 
 
-class SectorFunctionByOffer(reports.Report):
+class SectorFunctionByOffer(dd.Table):
     """
     Shows the Candidatures or Experiences for this Offer.
     
     It is a slave report without 
-    :attr:`fk_name <lino.reports.Report.fk_name>`,
+    :attr:`master_key <lino.dd.Table.master_key>`,
     which is allowed only because it overrides
     :meth:`get_request_queryset`.
     """
@@ -940,29 +938,29 @@ class ExperiencesByOffer(SectorFunctionByOffer):
     
 
 
-class Jobs(reports.Report):
+class Jobs(dd.Table):
     model = Job
     #~ order_by = ['start_date']
     column_names = 'name provider * id'
 
-class JobTypes(reports.Report):
+class JobTypes(dd.Table):
     model = JobType
     order_by = ['name']
 
 class JobsByProvider(Jobs):
-    fk_name = 'provider'
+    master_key = 'provider'
 
 #~ class JobsByFunction(Jobs):
-    #~ fk_name = 'function'
+    #~ master_key = 'function'
 
 #~ class JobsBySector(Jobs):
-    #~ fk_name = 'sector'
+    #~ master_key = 'sector'
 
 class JobsByType(Jobs):
-    fk_name = 'type'
+    master_key = 'type'
 
 class ContractsByType(Contracts):
-    fk_name = 'type'
+    master_key = 'type'
 
 
 COLS = 8
@@ -1088,9 +1086,9 @@ class ContractsSituation(mixins.Listing):
         return html
 
 
-if reports.is_installed('contacts') and reports.is_installed('jobs'):
+if dd.is_installed('contacts') and dd.is_installed('jobs'):
   
-    reports.inject_field(Company,
+    dd.inject_field(Company,
         'is_jobprovider',
         mti.EnableChild('jobs.JobProvider',verbose_name=_("is Employer")),
         """Whether this Company is also an Employer."""

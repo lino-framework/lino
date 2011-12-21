@@ -108,7 +108,7 @@ class ChoiceList(object):
         
     @classmethod
     def field(cls,*args,**kw):
-        from lino.fields import ChoiceListField
+        from lino.core.fields import ChoiceListField
         return ChoiceListField(cls,*args,**kw)
         
     @classmethod

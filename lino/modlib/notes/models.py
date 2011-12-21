@@ -25,9 +25,10 @@ from django.db import IntegrityError
 from django.utils.encoding import force_unicode
 
 
-from lino import fields, tools
+from lino import tools
+from lino import dd
 #~ from lino.utils.babel import default_language
-from lino import reports
+#~ from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
 from lino.utils.restify import restify
@@ -67,7 +68,7 @@ class EventType(babel.BabelNamed):
     body = babel.BabelTextField(_("Body"),blank=True,format='html')
     
 
-class EventTypes(reports.Report):
+class EventTypes(dd.Table):
     model = 'notes.EventType'
     column_names = 'name *'
     order_by = ["name"]
@@ -95,7 +96,7 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
     #,on_delete=RESTRICT)
     subject = models.CharField(_("Subject"),max_length=200,blank=True) # ,null=True)
     #~ body = models.TextField(_("Body"),blank=True)
-    body = fields.RichTextField(_("Body"),blank=True,format='html')
+    body = dd.RichTextField(_("Body"),blank=True,format='html')
     
     #~ owner_type = models.ForeignKey(ContentType,verbose_name=_('Owner type'))
     #~ owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
@@ -165,7 +166,7 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
 
     @classmethod
     def site_setup(cls,lino):
-        lino.NOTE_PRINTABLE_FIELDS = reports.fields_list(cls,
+        lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
         '''date subject body language type event_type''')
         
     def summary_row(self,ui,rr,**kw):
@@ -178,13 +179,13 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'
     
-class NoteTypes(reports.Report):
+class NoteTypes(dd.Table):
     model = 'notes.NoteType'
     #~ label = _("Note types")
     column_names = 'name build_method template *'
     order_by = ["name"]
     
-class Notes(reports.Report):
+class Notes(dd.Table):
     model = 'notes.Note'
     #~ column_names = "id date user type event_type subject * body_html"
     column_names = "id date user event_type type subject * body"
@@ -195,7 +196,7 @@ class Notes(reports.Report):
 
 
 class MyNotes(mixins.ByUser,Notes):
-    #~ fk_name = 'user'
+    #~ master_key = 'user'
     column_names = "date event_type type subject body *"
     #~ column_names = "date type event_type subject body_html *"
     #~ can_view = perms.is_authenticated
@@ -207,24 +208,24 @@ class MyNotes(mixins.ByUser,Notes):
             #~ req.master_instance = req.get_user()
 
 #~ class NotesByProject(Notes):
-    #~ fk_name = 'project'
+    #~ master_key = 'project'
     #~ column_names = "date subject user *"
     #~ order_by = "date"
   
 #~ class NotesByOwner(Notes):
-    #~ fk_name = 'owner'
+    #~ master_key = 'owner'
     #~ column_names = "date subject user *"
     #~ order_by = "date"
   
 class NotesByType(Notes):
-    fk_name = 'type'
+    master_key = 'type'
     column_names = "date event_type subject user *"
     order_by = ["date"]
     #~ label = _("Notes by person")
   
   
 class NotesByEventType(Notes):
-    fk_name = 'event_type'
+    master_key = 'event_type'
     column_names = "date type subject user *"
     order_by = ["date"]
     #~ label = _("Notes by person")

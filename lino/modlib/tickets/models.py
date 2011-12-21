@@ -26,8 +26,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
 from lino import mixins
-from lino import fields
-from lino import reports
+from lino import dd
 from lino.utils import babel
 #~ from lino.modlib.cal import models as cal
 
@@ -41,7 +40,7 @@ class ProjectType(mixins.PrintableType,babel.BabelNamed):
         verbose_name = _("Project Type")
         verbose_name_plural = _('Project Types')
 
-class ProjectTypes(reports.Report):
+class ProjectTypes(dd.Table):
     model = ProjectType
     column_names = 'name build_method template *'
 
@@ -57,13 +56,13 @@ class Project(mixins.AutoUser,mixins.Printable):
     type = models.ForeignKey('tickets.ProjectType',blank=True,null=True)
     name = models.CharField(_("Name"),max_length=20)
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
-    description = fields.RichTextField(_("Description"),blank=True,format='plain')
+    description = dd.RichTextField(_("Description"),blank=True,format='plain')
     
     def __unicode__(self):
         return self.name
         
     
-class Projects(reports.Report):
+class Projects(dd.Table):
     model = 'tickets.Project'
 
 
@@ -77,7 +76,7 @@ class TicketState(babel.BabelNamed):
         verbose_name = _("Ticket State")
         verbose_name_plural = _('Ticket States')
 
-class TicketStates(reports.Report):
+class TicketStates(dd.Table):
     model = TicketState
     column_names = 'name *'
 
@@ -94,7 +93,7 @@ class Ticket(mixins.AutoUser,mixins.ProjectRelated,mixins.CreatedModified):
     #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
     state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
-    description = fields.RichTextField(_("Description"),blank=True,format='plain')
+    description = dd.RichTextField(_("Description"),blank=True,format='plain')
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),
         #~ blank=True,null=True)
@@ -103,14 +102,14 @@ class Ticket(mixins.AutoUser,mixins.ProjectRelated,mixins.CreatedModified):
         return u"#%d (%s)" % (self.id,self.summary)
 
 
-class Tickets(reports.Report):
+class Tickets(dd.Table):
     model = 'tickets.Ticket'
 
 class TicketsByProject(Tickets):
-    fk_name = 'project'
+    master_key = 'project'
 
 #~ class EventsByTicket(cal.Events):
-    #~ fk_name = 'ticket'
+    #~ master_key = 'ticket'
     
     
 class Comment(mixins.AutoUser,mixins.CreatedModified):
@@ -120,14 +119,14 @@ class Comment(mixins.AutoUser,mixins.CreatedModified):
         verbose_name_plural = _('Comments')
 
     ticket = models.ForeignKey('tickets.Ticket')
-    description = fields.RichTextField(_("Description"),blank=True,format='plain')
+    description = dd.RichTextField(_("Description"),blank=True,format='plain')
     
-class Comments(reports.Report):
+class Comments(dd.Table):
     model = Comment
     column_names = 'created description user *'
     
 class CommentsByTicket(Comments):
-    fk_name = 'ticket'
+    master_key = 'ticket'
 
 if settings.LINO.user_model:    
     class MyProjects(mixins.ByUser):
@@ -146,9 +145,9 @@ if settings.LINO.user_model:
         column_names = 'modified description *'
     
 
-#~ if reports.is_installed('cal'):
+#~ if dd.is_installed('cal'):
 
-    #~ reports.inject_field(cal.Event,
+    #~ dd.inject_field(cal.Event,
         #~ 'ticket',
         #~ models.ForeignKey("tickets.Ticket",
             #~ blank=True,null=True,

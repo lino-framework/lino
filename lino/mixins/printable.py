@@ -34,6 +34,18 @@ from django.template.loader import render_to_string, get_template, select_templa
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.encoding import force_unicode
 
+import lino
+from lino import dd
+
+from lino.utils import iif
+from lino.utils import babel 
+#~ from lino.utils import call_optional_super
+from lino.utils.choosers import chooser
+from lino.utils.appy_pod import setup_renderer
+from lino.tools import makedirs_if_missing
+
+
+
 try:
     import ho.pisa as pisa
     #pisa.showLogging()
@@ -50,19 +62,6 @@ try:
 except ImportError:
     pyratemp = None
         
-import lino
-from lino import reports
-from lino import fields
-#~ from lino import actions
-
-#~ from lino.tools import full_model_name
-from lino.utils import iif
-from lino.utils import babel 
-#~ from lino.utils import call_optional_super
-from lino.utils.choosers import chooser
-from lino.utils.appy_pod import setup_renderer
-from lino.tools import makedirs_if_missing
-
 
 def filename_root(elem):
     return elem._meta.app_label + '.' + elem.__class__.__name__
@@ -452,7 +451,7 @@ def get_build_method(elem):
         
 
 #~ class PrintAction(actions.RedirectAction):
-class BasePrintAction(reports.RowAction):
+class BasePrintAction(dd.RowAction):
   
     def before_build(self,bm,elem):
         """Return the target filename if a document needs to be built,
@@ -489,7 +488,7 @@ class PrintAction(BasePrintAction):
     name = 'print'
     label = _('Print')
     #~ callable_from = None
-    callable_from = (reports.GridEdit,reports.ShowDetailAction)
+    callable_from = (dd.GridEdit,dd.ShowDetailAction)
     
     #~ needs_selection = True
     
@@ -558,7 +557,7 @@ class DirectPrintAction(BasePrintAction):
             kw.update(open_url=url)
         return rr.ui.success_response(**kw)
     
-#~ class EditTemplateAction(reports.RowAction):
+#~ class EditTemplateAction(dd.RowAction):
     #~ name = 'tpledit'
     #~ label = _('Edit template')
     
@@ -567,7 +566,7 @@ class DirectPrintAction(BasePrintAction):
         #~ target = bm.get_template_url(self,elem)
         #~ return rr.ui.success_response(open_url=target,**kw)
     
-class ClearCacheAction(reports.RowAction):
+class ClearCacheAction(dd.RowAction):
     """
     Defines the :guilabel:`Clear cache` button on a Printable record.
     """
@@ -760,7 +759,7 @@ class TypedPrintable(CachedPrintable):
         return self.language
 
 
-#~ class PrintableTypes(reports.Report):
+#~ class PrintableTypes(dd.Report):
     #~ column_names = 'name build_method template *'
 
 
@@ -844,10 +843,10 @@ class Listing(CachedPrintable):
     
     def get_preview(self,request):
         return self.header() + self.body() + self.footer()
-    preview = fields.VirtualField(fields.HtmlBox(_("Preview")),get_preview)
+    preview = dd.VirtualField(dd.HtmlBox(_("Preview")),get_preview)
     
     
-class InitiateListing(reports.InsertRow):
+class InitiateListing(dd.InsertRow):
     """
     This is the (otherwise invisible) action which is used 
     for the main menu entry of a :class:`Listing`.
@@ -863,7 +862,7 @@ class InitiateListing(reports.InsertRow):
     def get_button_label(self):
         return self.actor.model._meta.verbose_name
         
-class Listings(reports.Report):
+class Listings(dd.Table):
     model = Listing
     
     def init_label(self):
@@ -874,14 +873,14 @@ class Listings(reports.Report):
         alist = []
         #~ if len(self.detail_layouts) > 0:
         if True:
-            self.detail_action = reports.ShowDetailAction(self)
+            self.detail_action = dd.ShowDetailAction(self)
             alist.append(self.detail_action)
-            alist.append(reports.SubmitDetail())
+            alist.append(dd.SubmitDetail())
             alist.append(InitiateListing(self,label=self.model._meta.verbose_name)) # replaces InsertRow
-            alist.append(reports.SubmitInsert())
-            self.default_action = reports.GridEdit(self)
+            alist.append(dd.SubmitInsert())
+            self.default_action = dd.GridEdit(self)
             #~ alist.append(self.default_action)
-        alist.append(reports.DeleteSelected())
+        alist.append(dd.DeleteSelected())
         self.set_actions(alist)
         
     

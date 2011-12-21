@@ -28,9 +28,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
 from lino import mixins
-from lino import fields
-from lino import reports
-from lino import actions
+from lino import dd
+#~ from lino.core import reports
+from lino.core import actions
 from lino.utils import perms
 from lino.utils import babel
 from lino.utils import dblogger
@@ -97,12 +97,12 @@ class Calendar(mixins.AutoUser):
         default='local',
         choices=CALENDAR_CHOICES)
     name = models.CharField(_("Name"),max_length=200)
-    description = fields.RichTextField(_("Description"),blank=True,format='html')
+    description = dd.RichTextField(_("Description"),blank=True,format='html')
     url_template = models.CharField(_("URL template"),
         max_length=200,blank=True) # ,null=True)
     username = models.CharField(_("Username"),
         max_length=200,blank=True) # ,null=True)
-    password = fields.PasswordField(_("Password"),
+    password = dd.PasswordField(_("Password"),
         max_length=200,blank=True) # ,null=True)
     readonly = models.BooleanField(_("read-only"),default=False)
     is_default = models.BooleanField(
@@ -158,7 +158,7 @@ class Calendar(mixins.AutoUser):
         
         
     
-class Calendars(reports.Report):
+class Calendars(dd.Table):
     model = 'cal.Calendar'
     column_names = "user type name color readonly is_hidden is_default *"
 
@@ -198,7 +198,7 @@ class Place(babel.BabelNamed):
     #~ def __unicode__(self):
         #~ return self.name 
   
-class Places(reports.Report):
+class Places(dd.Table):
     model = Place
     
 
@@ -210,7 +210,7 @@ class EventStatus(babel.BabelNamed):
     ref = models.CharField(max_length='1')
     reminder = models.BooleanField(_("Reminder"),default=True)
     
-class EventStatuses(reports.Report):
+class EventStatuses(dd.Table):
     model = EventStatus
     column_names = 'name *'
 
@@ -220,7 +220,7 @@ class TaskStatus(babel.BabelNamed):
         verbose_name = _("Task Status")
         verbose_name_plural = _('Task Statuses')
     ref = models.CharField(max_length='1')
-class TaskStatuses(reports.Report):
+class TaskStatuses(dd.Table):
     model = TaskStatus
     column_names = 'name *'
 
@@ -230,7 +230,7 @@ class GuestStatus(babel.BabelNamed):
         verbose_name = _("Guest Status")
         verbose_name_plural = _('Guest Statuses')
     ref = models.CharField(max_length='1')
-class GuestStatuses(reports.Report):
+class GuestStatuses(dd.Table):
     model = GuestStatus
     column_names = 'name *'
 
@@ -240,7 +240,7 @@ class Priority(babel.BabelNamed):
         verbose_name = _("Priority")
         verbose_name_plural = _('Priorities')
     ref = models.CharField(max_length='1')
-class Priorities(reports.Report):
+class Priorities(dd.Table):
     model = Priority
     column_names = 'name *'
 
@@ -250,7 +250,7 @@ class AccessClass(babel.BabelNamed):
         verbose_name = _("Access Class")
         verbose_name_plural = _('Access Classes')
     ref = models.CharField(max_length='1')
-class AccessClasses(reports.Report):
+class AccessClasses(dd.Table):
     model = AccessClass
     column_names = 'name *'
 
@@ -267,7 +267,7 @@ class EventType(mixins.PrintableType,babel.BabelNamed):
         verbose_name = _("Event Type")
         verbose_name_plural = _('Event Types')
 
-class EventTypes(reports.Report):
+class EventTypes(dd.Table):
     model = EventType
     column_names = 'name build_method template *'
 
@@ -316,9 +316,9 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
     start_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("Start time"))# iCal:DTSTART
-    start = fields.FieldSet(_("Start"),'start_date start_time')
+    start = dd.FieldSet(_("Start"),'start_date start_time')
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
-    description = fields.RichTextField(_("Description"),blank=True,format='html')
+    description = dd.RichTextField(_("Description"),blank=True,format='html')
     
     def save(self,*args,**kw):
         """
@@ -351,7 +351,7 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
         
     def start_dt(self,request):
         return self.get_datetime('start')
-    start_dt.return_type = fields.DisplayField(_("Start"))
+    start_dt.return_type = dd.DisplayField(_("Start"))
     
     def end_dt(self,request):
         return self.get_datetime('end') or self.get_datetime('start')
@@ -359,7 +359,7 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
         #~ if et is None:
             #~ et = self.get_datetime('start')
         #~ return et
-    end_dt.return_type = fields.DisplayField(_("End"))
+    end_dt.return_type = dd.DisplayField(_("End"))
         
 
 class RecurrenceSet(ComponentBase):
@@ -378,7 +378,7 @@ class RecurrenceSet(ComponentBase):
     rrules = models.TextField(_("Recurrence Rules"),blank=True)
     exrules = models.TextField(_("Exclusion Rules"),blank=True)
     
-class RecurrenceSets(reports.Report):
+class RecurrenceSets(dd.Table):
     """
     The list of all :class:`Recurrence Sets <RecurrenceSet>`.
     """
@@ -420,7 +420,7 @@ class Component(ComponentBase,
     #~ alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
     #~ alarm_unit = DurationUnit.field(_("Unit"),blank=True,
         #~ default=DurationUnit.days.value) # ,null=True) # note: it's a char field!
-    #~ alarm = fields.FieldSet(_("Alarm"),'alarm_value alarm_unit')
+    #~ alarm = dd.FieldSet(_("Alarm"),'alarm_value alarm_unit')
     #~ dt_alarm = models.DateTimeField(_("Alarm time"),
         #~ blank=True,null=True,editable=False)
         
@@ -502,7 +502,7 @@ class Component(ComponentBase,
         #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
             #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
         if self.project:
-            html += " (%s)" % reports.summary_row(self.project,ui,rr)
+            html += " (%s)" % dd.summary_row(self.project,ui,rr)
         return html
         #~ return super(Event,self).summary_row(ui,rr,**kw)
         
@@ -525,7 +525,7 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     end_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("End Time"))
-    end = fields.FieldSet(_("End"),'end_date end_time')
+    end = dd.FieldSet(_("End"),'end_date end_time')
     transparent = models.BooleanField(_("Transparent"),default=False)
     type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
@@ -533,7 +533,7 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
     #~ status = EventStatus.field(_("Status"),blank=True) # iCal:STATUS
     status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
-    duration = fields.FieldSet(_("Duration"),'duration_value duration_unit')
+    duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
     duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
     duration_unit = DurationUnit.field(_("Duration unit"),blank=True) # iCal:DURATION
     #~ repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
@@ -572,17 +572,17 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
         
     @classmethod
     def site_setup(cls,lino):
-        cls.DISABLED_AUTO_FIELDS = reports.fields_list(cls,
+        cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''summary''')
             
     def url(self,request): return 'foo'
-    url.return_type = fields.DisplayField(_("Link URL"))
+    url.return_type = dd.DisplayField(_("Link URL"))
     
     def all_day(self,request): 
         return not self.start_time
     all_day.return_type = models.BooleanField(_("all day"))
     def reminder(self,request): return 'foo'
-    reminder.return_type = fields.DisplayField(_("Reminder"))
+    reminder.return_type = dd.DisplayField(_("Reminder"))
 
         
 
@@ -613,55 +613,55 @@ class Task(Component):
 
     @classmethod
     def site_setup(cls,lino):
-        #~ lino.TASK_AUTO_FIELDS = reports.fields_list(cls,
-        cls.DISABLED_AUTO_FIELDS = reports.fields_list(cls,
+        #~ lino.TASK_AUTO_FIELDS = dd.fields_list(cls,
+        cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''start_date start_time summary''')
 
     #~ def __unicode__(self):
         #~ return "#" + str(self.pk)
         
 
-class Events(reports.Report):
+class Events(dd.Table):
     model = 'cal.Event'
     column_names = 'start_date start_time summary status *'
     
     #~ def setup_actions(self):
-        #~ super(reports.Report,self).setup_actions()
+        #~ super(dd.Table,self).setup_actions()
         #~ self.add_action(mails.CreateMailAction())
     
 class EventsBySet(Events):
-    fk_name = 'rset'
+    master_key = 'rset'
     
 class EventsByCalendar(Events):
-    fk_name = 'calendar'
+    master_key = 'calendar'
     
 class EventsByPlace(Events):
     """
     Displays the :class:`Events <Event>` at a given :class:`Place`.
     """
-    fk_name = 'place'
+    master_key = 'place'
     
-class Tasks(reports.Report):
+class Tasks(dd.Table):
     model = 'cal.Task'
     column_names = 'start_date summary done status *'
     #~ hidden_columns = set('owner_id owner_type'.split())
     
 #~ class EventsByOwner(Events):
-    #~ fk_name = 'owner'
+    #~ master_key = 'owner'
     
 class TasksByOwner(Tasks):
-    fk_name = 'owner'
+    master_key = 'owner'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
 class EventsByOwner(Events):
-    fk_name = 'owner'
+    master_key = 'owner'
 
 if settings.LINO.project_model:    
     class EventsByProject(Events):
-        fk_name = 'project'
+        master_key = 'project'
     
     class TasksByProject(Tasks):
-        fk_name = 'project'
+        master_key = 'project'
     
 if settings.LINO.user_model:    
     class MyEvents(mixins.ByUser):
@@ -696,7 +696,7 @@ class GuestRole(babel.BabelNamed):
         verbose_name_plural = _("Guest Roles")
 
 
-class GuestRoles(reports.Report):
+class GuestRoles(dd.Table):
     model = GuestRole
     
 
@@ -738,19 +738,19 @@ class Guest(contacts.ContactDocument,
         mixins.CachedPrintable.setup_report(rpt)
         mails.Mailable.setup_report(rpt)
         
-class Guests(reports.Report):
+class Guests(dd.Table):
     model = Guest
     column_names = 'contact role status remark event *'
     
     #~ def setup_actions(self):
-        #~ super(reports.Report,self).setup_actions()
+        #~ super(dd.Table,self).setup_actions()
         #~ self.add_action(mails.CreateMailAction())
     
 class GuestsByEvent(Guests):
-    fk_name = 'event'
+    master_key = 'event'
 
 class GuestsByContact(Guests):
-    fk_name = 'contact'
+    master_key = 'contact'
     column_names = 'event role status remark * contact'
 
 
@@ -811,7 +811,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
             sorted_days.reverse()
         for day in sorted_days:
             yield '<h3>'+dtosl(day) + '</h3>'
-            yield reports.summary(ui,lookup[day],**kw)
+            yield dd.summary(ui,lookup[day],**kw)
             
     #~ cells = ['Ausblick'+':<br>',cgi.escape(u'Rückblick')+':<br>']
     cells = [
@@ -923,8 +923,8 @@ if settings.LINO.use_extensible:
     def parsedate(s):
         return datetime.date(*settings.LINO.parse_date(s))
   
-    class Panel(reports.Frame):
-        default_action_class = reports.Calendar
+    class Panel(dd.Frame):
+        default_action_class = dd.Calendar
 
     class PanelCalendars(Calendars):
         column_names = 'id name description color is_hidden'

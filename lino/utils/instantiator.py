@@ -30,7 +30,7 @@ from django.contrib.contenttypes.models import ContentType
 from lino.tools import resolve_model
 
 from lino.utils import i2d # for backward compatibility of .dpy fixtures
-from lino import fields
+from lino.core import fields
     
 
 class DataError(Exception):

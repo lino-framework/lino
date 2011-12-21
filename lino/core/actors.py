@@ -18,7 +18,7 @@ from django.db import models
 
 import lino
 from lino.ui import base
-from lino import actions
+from lino.core import actions
 from lino.ui.base import Handled
 
 actor_classes = []

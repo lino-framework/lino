@@ -10,21 +10,26 @@ extension.
 .. toctree::
 
     lino
-    lino.management
-    lino.reports
-    lino.tools
-    lino.actions
-    lino.core
-    lino.fields
-    lino.mixins
+    
+    lino.dd
+    
     lino.models
+    lino.management
+    
+    lino.core
+    lino.core.table
+    lino.core.actions
+    lino.core.fields
+    
+    
+    lino.modlib
+    lino.mixins
     
     lino.apps
-    lino.modlib
+    
     lino.ui
     
-    lino.sandbox.bcss
-    lino.test_apps
+    lino.tools
     lino.utils
     lino.utils.auth
     lino.utils.sqllog
@@ -38,3 +43,5 @@ extension.
     lino.utils.test
     lino.utils.xmlgen
 
+    lino.sandbox.bcss
+    lino.test_apps

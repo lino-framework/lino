@@ -31,22 +31,12 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode 
 
-#~ import lino
-#~ logger.debug(__file__+' : started')
-#~ from django.utils import translation
 
-
-
-
-
-from lino import reports
-#~ from lino import layouts
+from lino import dd
 from lino.utils import perms
 from lino.utils import dblogger
 #~ from lino.utils import printable
 from lino import mixins
-from lino import actions
-from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
@@ -98,7 +88,7 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         blank=True,null=True)
         
 
-class ContractTypes(reports.Report):
+class ContractTypes(dd.Table):
     model = ContractType
     column_names = 'name ref build_method template *'
 
@@ -119,7 +109,7 @@ class ExamPolicy(babel.BabelNamed):
         verbose_name_plural = _('Examination Policies')
         
 
-class ExamPolicies(reports.Report):
+class ExamPolicies(dd.Table):
     model = ExamPolicy
     column_names = 'name *'
 
@@ -136,7 +126,7 @@ class ContractEnding(models.Model):
     def __unicode__(self):
         return unicode(self.name)
         
-class ContractEndings(reports.Report):
+class ContractEndings(dd.Table):
     model = ContractEnding
     column_names = 'name *'
     order_by = ['name']
@@ -318,17 +308,17 @@ class Contract(ContractBase):
         verbose_name=_("Company"),
         blank=True,null=True)
         
-    stages = fields.RichTextField(_("stages"),
+    stages = dd.RichTextField(_("stages"),
         blank=True,null=True,format='html')
-    goals = fields.RichTextField(_("goals"),
+    goals = dd.RichTextField(_("goals"),
         blank=True,null=True,format='html')
-    duties_asd = fields.RichTextField(_("duties ASD"),
+    duties_asd = dd.RichTextField(_("duties ASD"),
         blank=True,null=True,format='html')
-    duties_dsbe = fields.RichTextField(_("duties DSBE"),
+    duties_dsbe = dd.RichTextField(_("duties DSBE"),
         blank=True,null=True,format='html')
-    duties_company = fields.RichTextField(_("duties company"),
+    duties_company = dd.RichTextField(_("duties company"),
         blank=True,null=True,format='html')
-    duties_person = fields.RichTextField(_("duties person"),
+    duties_person = dd.RichTextField(_("duties person"),
         blank=True,null=True,format='html')
     
     @classmethod
@@ -338,8 +328,8 @@ class Contract(ContractBase):
         """
         #~ resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
         Contract.user.verbose_name=_("responsible (DSBE)")
-        #~ lino.CONTRACT_PRINTABLE_FIELDS = reports.fields_list(cls,
-        cls.PRINTABLE_FIELDS = reports.fields_list(cls,
+        #~ lino.CONTRACT_PRINTABLE_FIELDS = dd.fields_list(cls,
+        cls.PRINTABLE_FIELDS = dd.fields_list(cls,
             'person company contact type '
             'applies_from applies_until '
             'language '
@@ -373,19 +363,19 @@ class Contract(ContractBase):
         return self.PRINTABLE_FIELDS
   
 
-class Contracts(reports.Report):
+class Contracts(dd.Table):
     model = Contract
     column_names = 'id applies_from applies_until user type *'
     order_by = ['id']
     active_fields = 'company contact'.split()
     
 class ContractsByPerson(Contracts):
-    fk_name = 'person'
+    master_key = 'person'
     column_names = 'applies_from applies_until user type *'
 
         
 class ContractsByType(Contracts):
-    fk_name = 'type'
+    master_key = 'type'
     column_names = "applies_from person user *"
     order_by = ["applies_from"]
 

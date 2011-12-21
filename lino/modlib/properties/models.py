@@ -44,14 +44,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode 
 
 
-from lino import reports
+from lino import dd
 #~ from lino import layouts
 from lino.utils import perms
 from lino.utils import babel
 #~ from lino.utils.babel import babelattr
 #~ from lino.utils import printable
 from lino import mixins
-from lino import actions
 #~ from lino import fields
 from lino.utils.choosers import chooser
 
@@ -267,36 +266,36 @@ class PropertyOccurence(models.Model):
     
 
 
-class PropGroups(reports.Report):
+class PropGroups(dd.Table):
     model = PropGroup
 
-class PropTypes(reports.Report):
+class PropTypes(dd.Table):
     model = PropType
 
-class Properties(reports.Report):
+class Properties(dd.Table):
     model = Property
     order_by = ['name']
     #~ column_names = "id name"
     
 class PropsByGroup(Properties):
-    fk_name = 'group'
+    master_key = 'group'
 
 class PropsByType(Properties):
-    fk_name = 'type'
+    master_key = 'type'
 
-class PropChoices(reports.Report):
+class PropChoices(dd.Table):
     model = PropChoice
     
 class ChoicesByType(PropChoices):
     "Lists all PropChoices for a given PropType."
-    fk_name = 'type'
+    master_key = 'type'
     order_by = ['value']
     column_names = 'value text *'
     
 
-#~ class PropsByGroup(reports.Report):
+#~ class PropsByGroup(dd.Table):
     #~ model = Property
-    #~ fk_name = 'group'
+    #~ master_key = 'group'
     #~ column_names = "* group" 
     #~ """
     #~ group must be in the store, but should not be visible. 

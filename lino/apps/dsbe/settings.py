@@ -231,7 +231,7 @@ class Lino(Lino):
             lst = m.add_menu("lst",_("Listings"))
             for listing in LISTINGS:
                 #~ listings.add_action(listing)
-                lst.add_action(listing+"Report")
+                lst.add_action(listing+"Table")
             
 
         

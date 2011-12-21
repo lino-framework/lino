@@ -1,5 +1,6 @@
+
 from django.db import models
-from lino import reports
+from lino import dd
 
 class Place(models.Model):
     name = models.CharField(max_length=200)
@@ -43,33 +44,33 @@ class Demand(models.Model):
     def __unicode__(self):
         return "%s (%s)" % (self.product,self.provider)
 
-class Providers(reports.Report):
+class Providers(dd.Table):
     model = Provider
     
-class Customers(reports.Report):
+class Customers(dd.Table):
     model = Customer
 
-class Products(reports.Report):
+class Products(dd.Table):
     model = Product
 
-class Offers(reports.Report):
+class Offers(dd.Table):
     model = Offer
 
-class Places(reports.Report):
+class Places(dd.Table):
     model = Place
 
 class OffersByProvider(Offers):
-    fk_name = 'provider'
+    master_key = 'provider'
         
-class Demands(reports.Report):
+class Demands(dd.Table):
     model = Demand
 
 class DemandsByCustomer(Demands):
-    fk_name = 'customer'
+    master_key = 'customer'
 
 class DemandsByProduct(Demands):
-    fk_name = 'product'
+    master_key = 'product'
 
 class OffersByProduct(Offers):
-    fk_name = 'product'
+    master_key = 'product'
         

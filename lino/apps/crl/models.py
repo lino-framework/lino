@@ -17,7 +17,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import reports
+from lino import dd
 from lino import mixins
 from lino.models import SiteConfig
 from lino.modlib.countries import models as countries
@@ -69,7 +69,7 @@ class Link(links.Link,mixins.Owned):
         app_label = 'links'
 
 class LinksByOwner(links.LinksByOwnerBase):
-    fk_name = 'owner'
+    master_key = 'owner'
     column_names = "name url user date *"
     order_by = ["date"]
   
@@ -111,7 +111,7 @@ we store these strings as their hexadecimal representation.
         return str2hex(value)
         
 
-reports.inject_field(countries.City,'crl',CrlField())
-reports.inject_field(Person,'crl',CrlField())
-reports.inject_field(Company,'crl',CrlField())
+dd.inject_field(countries.City,'crl',CrlField())
+dd.inject_field(Person,'crl',CrlField())
+dd.inject_field(Company,'crl',CrlField())
 

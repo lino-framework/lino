@@ -1,5 +1,5 @@
 from django.db import models
-from lino import reports
+from lino import dd
 
 class Poll(models.Model):
     question = models.CharField(max_length=200)
@@ -16,11 +16,11 @@ class Choice(models.Model):
     def __unicode__(self):
         return self.choice    
         
-class Polls(reports.Report):
+class Polls(dd.Table):
     model = Poll
     
-class Choices(reports.Report):
+class Choices(dd.Table):
     model = Choice
         
 class ChoicesByPoll(Choices):
-    fk_name = 'poll'
+    master_key = 'poll'

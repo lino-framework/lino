@@ -29,7 +29,7 @@ from django.contrib.contenttypes import generic
 #~ import lino
 #~ logger.debug(__file__+' : started')
 
-from lino import reports
+from lino import dd
 from lino.utils import perms
 from lino import mixins
 from lino.modlib.contacts import models as contacts
@@ -46,7 +46,7 @@ class UploadType(models.Model):
     def __unicode__(self):
         return self.name
         
-class UploadTypes(reports.Report):
+class UploadTypes(dd.Table):
     model = 'uploads.UploadType'
     column_names = "name *"
     order_by = ["name"]
@@ -116,24 +116,24 @@ class Upload(
         mixins.Owned.update_owned_instance(self,task)
           
         
-class Uploads(reports.Report):
+class Uploads(dd.Table):
     model = Upload
     order_by = ["modified"]
     column_names = "file user created modified *"
     
 
 #~ class UploadsByPerson(Uploads):
-    #~ fk_name = 'person'
+    #~ master_key = 'person'
     #~ column_names = "file user company created modified"
     #~ show_slave_grid = False
     
 #~ class UploadsByCompany(Uploads):
-    #~ fk_name = 'company'
+    #~ master_key = 'company'
     #~ column_names = "file user person created modified"
     #~ show_slave_grid = False
     
 class UploadsByOwner(Uploads):
-    fk_name = 'owner'
+    master_key = 'owner'
     column_names = "file user type * "
     show_slave_grid = False
     

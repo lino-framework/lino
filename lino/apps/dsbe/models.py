@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Contains DSBE-specific models and reports that have not yet been 
+Contains DSBE-specific models and tables that have not yet been 
 moved into a separate module because they are really very DSBE specific.
 
 See also :doc:`/dsbe/models`.
@@ -37,16 +37,17 @@ from django.utils.encoding import force_unicode
 #~ from django.utils import translation
 
 
-from lino import reports
+#~ from lino import reports
+from lino import dd
 #~ from lino import layouts
 from lino.utils import perms
 #~ from lino.utils import printable
 from lino import mixins
-from lino import actions
-from lino import fields
+#~ from lino import actions
+#~ from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
-from lino.modlib.links import models as links
+#~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.modlib.cal import models as cal
 from lino.utils.choicelists import HowWell, Gender
@@ -431,7 +432,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         verbose_name=_("eID card issuer"))
     "The administration who issued this ID card. Imported from TIM."
     
-    eid = fields.FieldSet(_("eID card"),
+    eid = dd.FieldSet(_("eID card"),
         "card_number card_valid_from card_valid_until card_issuer card_type",
         card_number=_("number"),
         card_valid_from=_("valid from"),
@@ -526,7 +527,6 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
                 #~ raise ValidationError(_("Circular reference"))
         #~ super(Person,self).clean()
         
-
     def card_type_text(self,request):
         if self.card_type:
             s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
@@ -534,7 +534,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
                 return s
             return _("Unknown card type %r") % self.card_type
         return _("Not specified") # self.card_type
-    card_type_text.return_type = fields.DisplayField(_("eID card type"))
+    card_type_text.return_type = dd.DisplayField(_("eID card type"))
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
@@ -630,7 +630,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         s = '<a href="%s" target="_blank">%s</a>' % (url,s)
         return s
         #~ return '<img src="%s" width="120px"/>' % self.get_image_url()
-    image.return_type = fields.HtmlBox()
+    image.return_type = dd.HtmlBox()
 
     def get_image_parts(self):
         if self.card_number:
@@ -683,7 +683,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         #~ from django.utils.translation import string_concat
         #~ lines.append('</div>')
         return '<br/>'.join(lines)
-    overview.return_type = fields.HtmlBox(_("Overview"))
+    overview.return_type = dd.HtmlBox(_("Overview"))
     
     def residence_permit(self,rr):
         kv = dict(type=settings.LINO.config.residence_permit_upload_type)
@@ -693,7 +693,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         return rr.ui.quick_upload_buttons(r)
         #~ rrr = uploads.UploadsByPerson().request(rr.ui,master_instance=self,known_values=kv)
         #~ return rr.ui.quick_upload_buttons(rrr)
-    residence_permit.return_type = fields.DisplayField(_("Residence permit"))
+    residence_permit.return_type = dd.DisplayField(_("Residence permit"))
     
     def work_permit(self,rr):
         kv = dict(type=settings.LINO.config.work_permit_upload_type)
@@ -701,18 +701,18 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
               master_instance=self,
               known_values=kv)
         return rr.ui.quick_upload_buttons(r)
-    work_permit.return_type = fields.DisplayField(_("Work permit"))
+    work_permit.return_type = dd.DisplayField(_("Work permit"))
     
     def driving_licence(self,rr):
         kv = dict(type=settings.LINO.config.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner(),
               master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
-    driving_licence.return_type = fields.DisplayField(_("driving licence"))
+    driving_licence.return_type = dd.DisplayField(_("driving licence"))
     
     @classmethod
     def site_setup(cls,lino):
-        cls.PERSON_TIM_FIELDS = reports.fields_list(cls,
+        cls.PERSON_TIM_FIELDS = dd.fields_list(cls,
           '''name first_name last_name title remarks remarks2
           zip_code city country street street_no street_box 
           birth_date gender birth_place coach1 language 
@@ -733,6 +733,8 @@ class AllPersons(contacts.Contacts):
     model = 'contacts.Person'
     order_by = "last_name first_name id".split()
     can_view = perms.is_authenticated
+    #~ column_names = "name_column national_id gsm street street_no street_box city age email phone id bank_account1 aid_type coach1 language *"
+    column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
     #~ app_label = 'contacts'
     #~ default_params = dict(is_active=True)
     #~ extra = dict(
@@ -747,11 +749,12 @@ class AllPersons(contacts.Contacts):
     
 class Persons(AllPersons):
     """
-    Almost all Persons
+    All Persons except newcomers and inactive persons.
     """
     #~ app_label = 'contacts'
     #~ use_as_default_report = False
-    filter = dict(is_active=True)
+    known_values = dict(is_active=True,newcomer=False)
+    #~ filter = dict(is_active=True,newcomer=False)
     #~ label = Person.Meta.verbose_name_plural + ' ' + _("(unfiltered)")
     
     def init_label(self):
@@ -760,6 +763,9 @@ class Persons(AllPersons):
 Person._lino_choices_report = Persons
 
 class Newcomers(AllPersons):
+    """
+    Persons who have the "Newcomer" checkbox on.
+    """
     #~ filter = dict(newcomer=True)
     known_values = dict(newcomer=True)
     #~ use_as_default_report = False
@@ -770,7 +776,7 @@ class Newcomers(AllPersons):
     
 class PersonsByNationality(AllPersons):
     #~ app_label = 'contacts'
-    fk_name = 'nationality'
+    master_key = 'nationality'
     order_by = "city name".split()
     column_names = "city street street_no street_box addr2 name country language *"
     
@@ -814,7 +820,7 @@ class MyPersons(Persons):
         #~ return qs.filter(q1,q2)
 
 class MyPersonsByGroup(MyPersons):
-    fk_name = 'group'
+    master_key = 'group'
     
  
 
@@ -837,23 +843,24 @@ def persons_by_user(ui,requesting_user):
         pg2col[pg.pk] = len(headers) - 1
         
     rows = [ headers ]
-    for user in User.objects.filter(is_spis=True).order_by('username'):
-        #~ rr = MyPersons.request(ui,user=user)
-        rr = MyPersons.request(ui,user=user)
-        if rr.total_count:
-            text = str(rr.total_count)
-            if rr.user == requesting_user:
-                text = ui.href_to_request(rr,text)
-            #~ text = ui.href_to_request(rr,text,user=user)
-            #~ cells = [cgi.escape(unicode(user)),rr.total_count] + sums
-            cells = [cgi.escape(unicode(user)),text] + sums
-            for pg in PersonGroup.objects.order_by('ref_name'):
-                rr = MyPersonsByGroup.request(ui,master_instance=pg,user=user)
+    for user in User.objects.order_by('username'):
+        if user == requesting_user or user.is_spis:
+            #~ rr = MyPersons.request(ui,user=user)
+            rr = MyPersons.request(ui,user=user)
+            if rr.total_count:
                 text = str(rr.total_count)
                 if rr.user == requesting_user:
                     text = ui.href_to_request(rr,text)
-                cells[pg2col[pg.pk]] = text
-            rows.append(cells)
+                #~ text = ui.href_to_request(rr,text,user=user)
+                #~ cells = [cgi.escape(unicode(user)),rr.total_count] + sums
+                cells = [cgi.escape(unicode(user)),text] + sums
+                for pg in PersonGroup.objects.order_by('ref_name'):
+                    rr = MyPersonsByGroup.request(ui,master_instance=pg,user=user)
+                    text = str(rr.total_count)
+                    if rr.user == requesting_user:
+                        text = ui.href_to_request(rr,text)
+                    cells[pg2col[pg.pk]] = text
+                rows.append(cells)
         
     if False:
         for user in User.objects.order_by('username'):
@@ -891,7 +898,7 @@ class Contacts(contacts.Contacts):
         return super(Contacts,self).disable_delete(obj,request)
         
     def do_setup(self):
-        self.CONTACT_TIM_FIELDS = reports.fields_list(contacts.Contact,
+        self.CONTACT_TIM_FIELDS = dd.fields_list(contacts.Contact,
           '''name remarks region 
           zip_code city country 
           street_prefix street street_no street_box 
@@ -920,7 +927,7 @@ class Company(Partner,contacts.Contact,contacts.CompanyMixin):
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     prefix = models.CharField(max_length=200,blank=True) 
     # todo: remove hourly_rate after data migration. this is now in Job
-    hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
+    hourly_rate = dd.PriceField(_("hourly rate"),blank=True,null=True)
     #~ is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
     
     def disabled_fields(self,request):
@@ -930,7 +937,7 @@ class Company(Partner,contacts.Contact,contacts.CompanyMixin):
     
     @classmethod
     def site_setup(cls,lino):
-        lino.COMPANY_TIM_FIELDS = reports.fields_list(cls,
+        lino.COMPANY_TIM_FIELDS = dd.fields_list(cls,
             '''name remarks
             zip_code city country street street_no street_box 
             language vat_id
@@ -963,7 +970,7 @@ class PersonGroup(models.Model):
     def __unicode__(self):
         return self.name
 
-class PersonGroups(reports.Report):
+class PersonGroups(dd.Table):
     """List of Integration Phases"""
     model = PersonGroup
     order_by = ["ref_name"]
@@ -1006,9 +1013,9 @@ class LanguageKnowledge(models.Model):
             return unicode(self.language)
       
     
-class LanguageKnowledgesByPerson(reports.Report):
+class LanguageKnowledgesByPerson(dd.Table):
     model = LanguageKnowledge
-    fk_name = 'person'
+    master_key = 'person'
     #~ label = _("Language knowledge")
     #~ button_label = _("Languages")
     column_names = "language native spoken written cef_level"
@@ -1032,23 +1039,23 @@ class PersonProperty(properties.PropertyOccurence):
         blank=True,# null=True,
         verbose_name=_("Remark"))
   
-class PropsByPerson(reports.Report):
+class PropsByPerson(dd.Table):
     model = PersonProperty
-    fk_name = 'person'
+    master_key = 'person'
     column_names = "property value remark *"
     hidden_columns = frozenset(['group'])
     
     
-class PersonPropsByProp(reports.Report):
+class PersonPropsByProp(dd.Table):
     model = PersonProperty
     #~ app_label = 'properties'
-    fk_name = 'property'
+    master_key = 'property'
     column_names = "person value remark *"
     hidden_columns = frozenset(['group'])
     
-#~ class PersonPropsByType(reports.Report):
+#~ class PersonPropsByType(dd.Table):
     #~ model = PersonProperty
-    #~ fk_name = 'type'
+    #~ master_key = 'type'
     #~ column_names = "person property value remark *"
     #~ hidden_columns = frozenset(['group'])
     
@@ -1101,15 +1108,15 @@ class Activity(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-class Activities(reports.Report):
+class Activities(dd.Table):
     model = Activity
     #~ label = _('Activities')
 
 #~ class ActivitiesByPerson(Activities):
-    #~ fk_name = 'activity'
+    #~ master_key = 'activity'
 
 #~ class ActivitiesByCompany(Activities):
-    #~ fk_name = 'activity'
+    #~ master_key = 'activity'
     
 #
 # EXCLUSION TYPES (Sperrgründe)
@@ -1124,7 +1131,7 @@ class ExclusionType(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-class ExclusionTypes(reports.Report):
+class ExclusionTypes(dd.Table):
     model = ExclusionType
     #~ label = _('Exclusion Types')
     
@@ -1148,12 +1155,12 @@ class Exclusion(models.Model):
         if self.excluded_until: s += '-'+unicode(self.excluded_until)
         return s
 
-class Exclusions(reports.Report):
+class Exclusions(dd.Table):
     model = Exclusion
     #~ label = _('Exclusions')
     
 class ExclusionsByPerson(Exclusions):
-    fk_name = 'person'
+    master_key = 'person'
     column_names = 'excluded_from excluded_until type remark'
 
 
@@ -1170,7 +1177,7 @@ class ExclusionsByPerson(Exclusions):
     #~ def __unicode__(self):
         #~ return unicode(self.name)
 
-#~ class CoachingTypes(reports.Report):
+#~ class CoachingTypes(dd.Table):
     #~ model = CoachingType
     
 #
@@ -1186,11 +1193,11 @@ class ExclusionsByPerson(Exclusions):
     #~ remark = models.CharField(max_length=200,blank=False,verbose_name=_("Remark"))
     
 
-#~ class Coachings(reports.Report):
+#~ class Coachings(dd.Table):
     #~ model = Coaching
     
 #~ class CoachingsByPerson(Coachings):
-    #~ fk_name = 'person'
+    #~ master_key = 'person'
     #~ column_names = 'coach type remark *'
     #~ label = _('Coaches')
 
@@ -1212,7 +1219,7 @@ class CourseEnding(models.Model):
     def __unicode__(self):
         return unicode(self.name)
         
-class CourseEndings(reports.Report):
+class CourseEndings(dd.Table):
     model = CourseEnding
     column_names = 'name *'
     order_by = ['name']
@@ -1232,7 +1239,7 @@ class AidType(babel.BabelNamed):
         #~ return unicode(babel.babelattr(self,'name'))
 #~ add_babel_field(AidType,'name')
 
-class AidTypes(reports.Report):
+class AidTypes(dd.Table):
     model = AidType
     column_names = 'name *'
 
@@ -1250,7 +1257,7 @@ class Note(notes.Note,contacts.PartnerDocument,mixins.DiffingMixin):
         
     @classmethod
     def site_setup(cls,lino):
-        lino.NOTE_PRINTABLE_FIELDS = reports.fields_list(cls,
+        lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
         '''date subject body language person company type event_type''')
         #~ super(Note,cls).site_setup(lino)
         
@@ -1269,28 +1276,28 @@ class Note(notes.Note,contacts.PartnerDocument,mixins.DiffingMixin):
             #~ return []
         #~ return NOTE_PRINTABLE_FIELDS
         
-#~ NOTE_PRINTABLE_FIELDS = reports.fields_list(Note,
+#~ NOTE_PRINTABLE_FIELDS = dd.fields_list(Note,
     #~ '''date subject body language person company''')
     
 class NotesByPerson(notes.Notes):
-    fk_name = 'person'
+    master_key = 'person'
     #~ column_names = "date type event_type subject body_html user company *"
     column_names = "date event_type type subject body user company *"
     order_by = ["date"]
   
 class NotesByCompany(notes.Notes):
-    fk_name = 'company'
+    master_key = 'company'
     #~ column_names = "date type event_type subject body_html user person *"
     column_names = "date event_type type subject body user person *"
     order_by = ["date"]
     
 class MyNotes(notes.MyNotes):
-    #~ fk_name = 'user'
+    #~ master_key = 'user'
     #~ column_names = "date type event_type subject person company body_html *"
     column_names = "date event_type type subject person company body *"
     
 #~ class NotesByTask(notes.Notes):
-    #~ fk_name = 'task'
+    #~ master_key = 'task'
 
 
 
@@ -1322,22 +1329,22 @@ class MyNotes(notes.MyNotes):
         #~ app_label = 'cal'
 
 #~ class EventsByProject(cal.Events):
-    #~ fk_name = 'project'
+    #~ master_key = 'project'
     
 #~ class TasksByProject(cal.Tasks):
-    #~ fk_name = 'project'
+    #~ master_key = 'project'
     
 #~ class EventsByPerson(cal.Events):
-    #~ fk_name = 'person'
+    #~ master_key = 'person'
     
 #~ class EventsByCompany(cal.Events):
-    #~ fk_name = 'company'
+    #~ master_key = 'company'
 
 #~ class TasksByPerson(cal.Tasks):
-    #~ fk_name = 'person'
+    #~ master_key = 'person'
     
 #~ class TasksByCompany(cal.Tasks):
-    #~ fk_name = 'company'
+    #~ master_key = 'company'
     
         
 
@@ -1350,12 +1357,12 @@ class MyNotes(notes.MyNotes):
         #~ app_label = 'links'
 
 #~ class LinksByPerson(links.LinksByOwnerBase):
-    #~ fk_name = 'person'
+    #~ master_key = 'person'
     #~ column_names = "name url user date company *"
     #~ order_by = ["date"]
   
 #~ class LinksByCompany(links.LinksByOwnerBase):
-    #~ fk_name = 'company'
+    #~ master_key = 'company'
     #~ column_names = "name url user date person *"
     #~ order_by = ["date"]
     
@@ -1439,7 +1446,7 @@ class CourseOffer(models.Model):
     Der Kursanbieter (eine :class:`Company`)
     """
     
-    description = fields.RichTextField(_("Description"),blank=True,format='html')
+    description = dd.RichTextField(_("Description"),blank=True,format='html')
     
     def __unicode__(self):
         return u'%s (%s)' % (self.title,self.provider)
@@ -1604,35 +1611,35 @@ class CourseRequest(models.Model):
         self.date_submitted = datetime.date.today()
     
         
-class Courses(reports.Report):
+class Courses(dd.Table):
     model = Course
     order_by = ['start_date']
     
 class CoursesByOffer(Courses):
-    fk_name = 'offer'
+    master_key = 'offer'
     column_names = 'start_date * id'
 
-class CourseContents(reports.Report):
+class CourseContents(dd.Table):
     model = CourseContent
     order_by = ['name']
 
-class CourseOffers(reports.Report):
+class CourseOffers(dd.Table):
     model = CourseOffer
     
 class CourseOffersByProvider(CourseOffers):
-    fk_name = 'provider'
+    master_key = 'provider'
 
-class CourseRequests(reports.Report):
+class CourseRequests(dd.Table):
     model = CourseRequest
     order_by = ['date_submitted']
     active_fields = 'offer'.split()
 
 class CourseRequestsByPerson(CourseRequests):
-    fk_name = 'person'
+    master_key = 'person'
     column_names = 'date_submitted:10 content:15 offer:15 course:20 * id'
 
 class RequestsByCourse(CourseRequests):
-    fk_name = 'course'
+    master_key = 'course'
   
     def create_instance(self,req,**kw):
         obj = super(RequestsByCourse,self).create_instance(req,**kw)
@@ -1645,7 +1652,7 @@ class ParticipantsByCourse(RequestsByCourse):
     column_names = 'person remark date_ended ending'
     
     def setup_actions(self):
-        class Unregister(reports.RowAction):
+        class Unregister(dd.RowAction):
             label = _("Unregister")
             def run(self,rr,elem):
                 course = elem.course
@@ -1667,7 +1674,7 @@ class CandidatesByCourse(RequestsByCourse):
             content__exact=rr.master_instance.offer.content)
     
     def setup_actions(self):
-        class Register(reports.RowAction):
+        class Register(dd.RowAction):
             label = _("Register")
             def run(self,rr,elem):
                 elem.course = rr.master_instance
@@ -1755,31 +1762,31 @@ class UnwantedSkill(properties.PropertyOccurence):
     search = models.ForeignKey(PersonSearch)
     
     
-class LanguageKnowledgesBySearch(reports.Report):
+class LanguageKnowledgesBySearch(dd.Table):
     label = _("Wanted language knowledges")
-    fk_name = 'search'
+    master_key = 'search'
     model = WantedLanguageKnowledge
 
-class WantedPropsBySearch(reports.Report):
+class WantedPropsBySearch(dd.Table):
     label = _("Wanted properties")
-    fk_name = 'search'
+    master_key = 'search'
     model = WantedSkill
 
-class UnwantedPropsBySearch(reports.Report):
+class UnwantedPropsBySearch(dd.Table):
     label = _("Unwanted properties")
-    fk_name = 'search'
+    master_key = 'search'
     model = UnwantedSkill
 
-class PersonSearches(reports.Report):
+class PersonSearches(dd.Table):
     model = PersonSearch
     
-class PersonsBySearch(reports.Report):
+class PersonsBySearch(dd.Table):
     """
     This is the slave report of a PersonSearch that shows the 
     Persons matching the search criteria. 
     
     It is a slave report without 
-    :attr:`fk_name <lino.reports.Report.fk_name>`,
+    :attr:`master_key <lino.dd.Table.master_key>`,
     which is allowed only because it also overrides
     :meth:`get_request_queryset`
     """
@@ -1877,10 +1884,10 @@ standard model SiteConfig.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 
-if reports.is_installed('dsbe'):
+if dd.is_installed('dsbe'):
 
     from lino.models import SiteConfig
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'job_office',
         models.ForeignKey("contacts.Company",
             blank=True,null=True,
@@ -1890,7 +1897,7 @@ if reports.is_installed('dsbe'):
         choices for `Person.job_office_contact`.
         """)
         
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'propgroup_skills',
         models.ForeignKey('properties.PropGroup',
             blank=True,null=True,
@@ -1898,7 +1905,7 @@ if reports.is_installed('dsbe'):
             related_name='skills_sites'),
         """The property group to be used as master 
         for the SkillsByPerson report.""")
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'propgroup_softskills',
         models.ForeignKey('properties.PropGroup',
             blank=True,null=True,
@@ -1908,7 +1915,7 @@ if reports.is_installed('dsbe'):
         """The property group to be used as master 
         for the SoftSkillsByPerson report."""
         )
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'propgroup_obstacles',
         models.ForeignKey('properties.PropGroup',
             blank=True,null=True,
@@ -1919,7 +1926,7 @@ if reports.is_installed('dsbe'):
         for the ObstaclesByPerson report."""
         )
 
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'residence_permit_upload_type',
         #~ UploadType.objects.get(pk=2)
         models.ForeignKey("uploads.UploadType",
@@ -1929,7 +1936,7 @@ if reports.is_installed('dsbe'):
         """The UploadType for `Person.residence_permit`.
         """)
         
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'work_permit_upload_type',
         #~ UploadType.objects.get(pk=2)
         models.ForeignKey("uploads.UploadType",
@@ -1939,7 +1946,7 @@ if reports.is_installed('dsbe'):
         """The UploadType for `Person.work_permit`.
         """)
 
-    reports.inject_field(SiteConfig,
+    dd.inject_field(SiteConfig,
         'driving_licence_upload_type',
         #~ UploadType.objects.get(pk=2)
         models.ForeignKey("uploads.UploadType",
@@ -1949,7 +1956,7 @@ if reports.is_installed('dsbe'):
         """The UploadType for `Person.driving_licence`.
         """)
         
-    reports.inject_field(Company,
+    dd.inject_field(Company,
         'is_courseprovider',
         mti.EnableChild('dsbe.CourseProvider',verbose_name=_("is Course Provider")),
         """Whether this Company is also a Course Provider."""
@@ -1965,7 +1972,7 @@ if reports.is_installed('dsbe'):
     if settings.LINO.user_model:
         User = resolve_model(settings.LINO.user_model,strict=True)
         User.grid_search_field = 'username'
-        reports.inject_field(User,
+        dd.inject_field(User,
             'is_spis',
             models.BooleanField(
                 verbose_name=_("is SPIS user")
@@ -1980,7 +1987,7 @@ if reports.is_installed('dsbe'):
         autodoc imports this module with :mod:`lino.apps.std.settings` 
         which has no contacts app.
         """
-        reports.inject_field(RoleType,
+        dd.inject_field(RoleType,
             'use_in_contracts',
             models.BooleanField(
                 verbose_name=_("usable in contracts"),

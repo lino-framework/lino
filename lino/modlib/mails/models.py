@@ -34,9 +34,10 @@ from django.utils.encoding import force_unicode
 
 
 from lino import mixins
-from lino import fields, tools
+from lino import tools
+from lino import dd
 #~ from lino.utils.babel import default_language
-from lino import reports
+#~ from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
 from lino.utils.restify import restify
@@ -64,14 +65,14 @@ class MailType(mixins.PrintableType,babel.BabelNamed):
         verbose_name = _("Mail Type")
         verbose_name_plural = _('Mail Types')
 
-class MailTypes(reports.Report):
+class MailTypes(dd.Table):
     model = MailType
     column_names = 'name build_method template *'
 
 
 
 
-class CreateMailAction(reports.RowAction):
+class CreateMailAction(dd.RowAction):
     "Deserves more documentation."
   
     name = 'send'
@@ -149,7 +150,7 @@ class Mailable(models.Model):
 
 
 
-class SendMailAction(reports.RowAction):
+class SendMailAction(dd.RowAction):
     "Deserves more documentation."
   
     name = 'send'
@@ -220,13 +221,13 @@ class Recipient(models.Model):
         super(Recipient,self).full_clean()
         
 
-class Recipients(reports.Report):
+class Recipients(dd.Table):
     model = 'mails.Recipient'
     #~ column_names = 'mail  type *'
     #~ order_by = ["address"]
 
 class RecipientsByMail(Recipients):
-    fk_name = 'mail'
+    master_key = 'mail'
     column_names = 'type:10 contact:20 address:20 name:20 *'
     #~ column_names = 'type owner_type owner_id'
     #~ column_names = 'type owner'
@@ -253,7 +254,7 @@ class Mail(mixins.TypedPrintable):
         max_length=200,blank=True,
         #null=True
         )
-    body = fields.RichTextField(_("Body"),blank=True,format='html')
+    body = dd.RichTextField(_("Body"),blank=True,format='html')
     received = models.DateTimeField(null=True,editable=False)
     sent = models.DateTimeField(null=True,editable=False)
     
@@ -267,7 +268,7 @@ class Mail(mixins.TypedPrintable):
                 #~ s += "(%s)" % r.type
             #~ recs.append(s)
         return ', '.join(recs)
-    recipients = fields.VirtualField(fields.HtmlBox(_("Recipients")),get_recipients)
+    recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         
         
     #~ def recipients_to(self,rr):
@@ -276,7 +277,7 @@ class Mail(mixins.TypedPrintable):
               #~ master_instance=self,
               #~ known_values=kv)
         #~ return rr.ui.quick_upload_buttons(r)
-    #~ recipients_to.return_type = fields.DisplayField(_("to"))
+    #~ recipients_to.return_type = dd.DisplayField(_("to"))
     
     def __unicode__(self):
         return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.subject)
@@ -334,17 +335,17 @@ class Attachment(mixins.Owned):
             return unicode(self.owner)
         return unicode(self.id)
         
-class Attachments(reports.Report):
+class Attachments(dd.Table):
     model = 'mails.Attachment'
     
 class AttachmentsByOwner(Attachments):
-    fk_name = 'owner'
+    master_key = 'owner'
 
 class AttachmentsByMail(Attachments):
-    fk_name = 'mail'
+    master_key = 'mail'
     show_slave_grid = False
 
-class Mails(reports.Report):
+class Mails(dd.Table):
     model = 'mails.Mail'
     
 class InMails(Mails):
@@ -360,7 +361,7 @@ class MyOutbox(OutMails):
     #~ known_values = dict(outgoing=True)
     label = _("Mail Outbox")
     filter = dict(sent__isnull=True)
-    fk_name = 'sender'
+    master_key = 'sender'
     
     def setup_request(self,rr):
         if rr.master_instance is None:
@@ -403,7 +404,7 @@ class InMailsByContact(MailsByContact,InMails):
 class OutMailsByContact(MailsByContact,OutMails):
     column_names = 'sent subject recipients'
     order_by = ['sent']
-    fk_name = 'sender'
+    master_key = 'sender'
   
 
 #~ class MailsByPerson(object):

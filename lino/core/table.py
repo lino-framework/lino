@@ -50,8 +50,8 @@ from django.utils.safestring import mark_safe
 
 import lino
 #~ from lino import layouts
-from lino import fields
-from lino import actions
+from lino.core import fields
+from lino.core import actions
 from lino.utils import perms, menus, call_on_bases
 from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
@@ -79,7 +79,7 @@ def unused_parse_js_date(s,name):
     
     
 def wildcard_data_elems(model):
-    """Yields names that will be used as wildcard column_names of a Report.
+    """Yields names that will be used as wildcard column_names of a Table.
     """
     meta = model._meta
     #~ for f in meta.fields: yield f.name
@@ -170,7 +170,7 @@ def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
 
 
 def base_attrs(cl):
-    #~ if cl is Report or len(cl.__bases__) == 0:
+    #~ if cl is Table or len(cl.__bases__) == 0:
         #~ return
     #~ myattrs = set(cl.__dict__.keys())
     for b in cl.__bases__:
@@ -286,7 +286,7 @@ def register_report(rpt):
             #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
             rpt.model._lino_model_report = rpt
     elif rpt.master is ContentType:
-        #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.fk_name)
+        #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
         generic_slaves[rpt.actor_id] = rpt
     else:
         slave_reports.append(rpt)
@@ -306,9 +306,9 @@ def discover():
     """
               
     logger.info("Analyzing Reports...")
-    #~ logger.debug("20111113 Register Report actors...")
+    #~ logger.debug("20111113 Register Table actors...")
     for rpt in actors.actors_list:
-        if isinstance(rpt,Report) and rpt.__class__ is not Report:
+        if isinstance(rpt,Table) and rpt.__class__ is not Table:
             register_report(rpt)
         if isinstance(rpt,Frame) and rpt.__class__ is not Frame:
             register_frame(rpt)
@@ -487,7 +487,7 @@ class ReportHandle(base.Handle):
     
     def __init__(self,ui,report):
         #~ logger.debug('20111113 ReportHandle.__init__(%s)',report)
-        assert isinstance(report,Report)
+        assert isinstance(report,Table)
         self.report = report
         #~ self.data_elems = report.data_elems
         #~ self.get_data_elem = report.get_data_elem
@@ -814,7 +814,7 @@ class ListActionRequest(ActionRequest):
             #~ limit = self.report.page_length
             
         """
-        Report.page_length is not a default value for ReportRequest.limit
+        Table.page_length is not a default value for ReportRequest.limit
         For example CSVReportRequest wants all rows.
         """
         if offset is not None:
@@ -914,7 +914,7 @@ class ListActionRequest(ActionRequest):
         
 def has_fk(rr,name):
     if isinstance(rr,ListActionRequest):
-        return rr.report.fk_name == name
+        return rr.report.master_key == name
     return False
 
         
@@ -953,7 +953,7 @@ class Frame(actors.Actor):
         if self.default_action:
             self.add_action(self.default_action)
         
-class Report(actors.Actor): #,base.Handled):
+class Table(actors.Actor): #,base.Handled):
     """
     Reports are a central concept in Lino and deserve more than one sentence of documentation.
     """
@@ -969,7 +969,7 @@ class Report(actors.Actor): #,base.Handled):
     #~ """
     
     base_queryset = None 
-    "See :meth:`Report.get_queryset`"
+    "See :meth:`Table.get_queryset`"
     
     #~ default_params = {}
     """See :doc:`/blog/2011/0701`.
@@ -1000,6 +1000,21 @@ class Report(actors.Actor): #,base.Handled):
     """
     
     filter = None
+    """
+    If specified, this must be a dict of (fieldname -> value) pairs which 
+    will be used as a filter.
+    
+    Unlike :attr:`known_values`, this can use the full range of 
+    Django's `field lookup methods 
+    <https://docs.djangoproject.com/en/dev/topics/db/queries/#field-lookups>`_
+    
+    Note that if the user can create rows in a filtered table, 
+    you should make sure that new records satisfy your filter condition 
+    by default, otherwise you can get surprising behaviour if the user 
+    creates a new row.
+    If your filter consists of simple static values on some known field, 
+    then you'll prefer to use :attr:`known_values` instead of :attr:`filter.`
+    """
     exclude = None
     title = None
     column_names = '*'
@@ -1008,7 +1023,7 @@ class Report(actors.Actor): #,base.Handled):
     form_class = None
     master = None
     
-    fk_name = None
+    master_key = None
     """
     The name of the ForeignKey field of this report's model that points to it's master.
     Setting this will turn the report into a slave report.
@@ -1052,11 +1067,12 @@ class Report(actors.Actor): #,base.Handled):
     
     known_values = {}
     """
-    Return s dict of `fieldname` -> `value` pairs that specify "known values".
+    A `dict` of `fieldname` -> `value` pairs that specify "known values".
     Requests will automatically be filtered to show only existing records 
     with those values.
-    New instances created in this Report will automatically have 
+    New instances created in this Table will automatically have 
     these values set.
+    
     """
     
     #~ use_layouts = True
@@ -1080,7 +1096,7 @@ class Report(actors.Actor): #,base.Handled):
     
     grid_configs = []
     """
-    Will be filled during :meth:`lino.reports.Report.do_setup`. 
+    Will be filled during :meth:`lino.core.table.Table.do_setup`. 
     """
     
     disabled_fields = None
@@ -1088,7 +1104,7 @@ class Report(actors.Actor): #,base.Handled):
     Return a list of field names that should not be editable 
     for the specified `obj` and `request`.
     
-    If defined in the Report, this must be a method that accepts 
+    If defined in the Table, this must be a method that accepts 
     two arguments `request` and `obj`::
     
       def disabled_fields(self,obj,request):
@@ -1149,7 +1165,7 @@ class Report(actors.Actor): #,base.Handled):
                 #~ self.label = capfirst(self.model._meta.verbose_name_plural)
                 self.label = self.init_label()
             
-        #~ logger.debug("Report.__init__() %s", self)
+        #~ logger.debug("Table.__init__() %s", self)
         actors.Actor.__init__(self)
         #~ base.Handled.__init__(self)
         
@@ -1164,25 +1180,25 @@ class Report(actors.Actor): #,base.Handled):
                         #~ logger.debug('20111113 Install model method %s.%s to %s',self.model.__name__,name,self)
                         setattr(self.__class__,name,model2report(m))
                         
-        if self.fk_name:
+        if self.master_key:
             if self.model is not None:
-                #~ assert self.model is not None, "%s has .fk_name but .model is None" % self
+                #~ assert self.model is not None, "%s has .master_key but .model is None" % self
                 #~ self.master = resolve_model(self.master,self.app_label)
                 try:
-                    fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.fk_name)
+                    fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.master_key)
                     assert direct
                     assert not m2m
                     master = fk.rel.to
                 except models.FieldDoesNotExist,e:
-                    #~ logger.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.fk_name)
+                    #~ logger.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.master_key)
                     master = None
                     for vf in self.model._meta.virtual_fields:
-                        if vf.name == self.fk_name:
+                        if vf.name == self.master_key:
                             fk = vf
                             master = ContentType
                 if master is None:
-                    raise Exception("%s : no master for fk_name %r in %s" % (
-                        self,self.fk_name,self.model.__name__))
+                    raise Exception("%s : no master for master_key %r in %s" % (
+                        self,self.master_key,self.model.__name__))
                 self.master = master
                 self.fk = fk
         #~ else:
@@ -1356,8 +1372,8 @@ class Report(actors.Actor): #,base.Handled):
         
     def get_title(self,rr):
         """
-        Return the title of this Report for the given request `rr`.
-        Override this if your Report's title should mention for example filter conditions.
+        Return the title of this Table for the given request `rr`.
+        Override this if your Table's title should mention for example filter conditions.
         """
         assert rr is not None
         #~ if rr is not None and self.master is not None:
@@ -1381,7 +1397,7 @@ class Report(actors.Actor): #,base.Handled):
     def get_request_queryset(self,rr):
         """
         Build a Queryset for the specified request on this report.
-        Upon first call, this will also lazily install Report.queryset 
+        Upon first call, this will also lazily install Table.queryset 
         which will be reused on every subsequent call.
         """
         if self.base_queryset is None:
@@ -1434,7 +1450,7 @@ class Report(actors.Actor): #,base.Handled):
 
     def slave_as_summary_meth(self,ui,row_separator):
         """
-        Creates and returns the method to be used when :attr:`Report.show_slave_grid` is `False`.
+        Creates and returns the method to be used when :attr:`Table.show_slave_grid` is `False`.
         """
         def meth(master,request):
             rr = ListActionRequest(ui,self,None,self.default_action,master_instance=master)
@@ -1456,7 +1472,7 @@ class Report(actors.Actor): #,base.Handled):
     def get_filter_kw(self,master_instance,**kw):
         #logger.debug('%s.get_filter_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
-            assert master_instance is None, "Report %s doesn't accept a master" % self.actor_id
+            assert master_instance is None, "Table %s doesn't accept a master" % self.actor_id
         elif self.master is models.Model:
             pass
         elif self.master is ContentType:
@@ -1469,7 +1485,7 @@ class Report(actors.Actor): #,base.Handled):
                 ct = ContentType.objects.get_for_model(master_instance.__class__)
                 kw[self.fk.ct_field] = ct
                 kw[self.fk.fk_field] = master_instance.pk
-        elif self.fk_name is not None:
+        elif self.master_key is not None:
             if master_instance is None:
                 if not self.fk.null:
                     return # cannot add rows to this report
@@ -1562,7 +1578,7 @@ class Report(actors.Actor): #,base.Handled):
         
 def report_factory(model):
     #~ logger.info('report_factory(%s)',model.__name__)
-    bases = (Report,)
+    bases = (Table,)
     for b in model.__bases__:
         rpt = getattr(b,'_lino_model_report',None)
         if rpt is not None:
@@ -1570,7 +1586,7 @@ def report_factory(model):
             #~ if issubclass(rpt.model,model):
                 bases = (rpt.__class__,)
     #~ logger.info('report_factory(%s) : bases is %s',model.__name__,bases)
-    cls = type(model.__name__+"Report",bases,dict(model=model,app_label=model._meta.app_label))
+    cls = type(model.__name__+"Table",bases,dict(model=model,app_label=model._meta.app_label))
     return actors.register_actor(cls())
 
 
@@ -1844,7 +1860,7 @@ class LayoutHandle:
         if de.name.endswith('_ptr'): return False
         #~ and (de.name not in self.hidden_elements) \
         #~ and (de.name not in self.rh.report.known_values.keys()) \
-        #~ if de.name == self.rh.report.fk_name: return False
+        #~ if de.name == self.rh.report.master_key: return False
         return True
   
     def desc2elem(self,panelclass,desc_name,desc,**kw):
@@ -1938,7 +1954,7 @@ class ListLayoutHandle(LayoutHandle):
         if de.name.endswith('_ptr'): return False
         #~ and (de.name not in self.hidden_elements) \
         #~ and (de.name not in self.rh.report.known_values.keys()) \
-        if de.name == self.rh.report.fk_name: return False
+        if de.name == self.rh.report.master_key: return False
         return True
   
 

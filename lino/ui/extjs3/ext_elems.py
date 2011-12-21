@@ -22,7 +22,8 @@ from django.conf import settings
 
 import lino
 
-from lino import reports, actions, fields
+from lino import dd
+from lino.core import table
 from lino.utils import constrain
 from lino.utils import jsgen
 from lino.utils import mti
@@ -41,7 +42,7 @@ DEFAULT_GC_NAME = 0
 def form_field_name(f):
     if isinstance(f,models.ForeignKey) \
         or (isinstance(f,models.Field) and f.choices) \
-        or isinstance(f,fields.LinkedForeignKey):
+        or isinstance(f,dd.LinkedForeignKey):
         return f.name + ext_requests.CHOICES_HIDDEN_SUFFIX
     else:
         return f.name
@@ -141,11 +142,11 @@ class GridColumn(Component):
             if isinstance(editor.field,models.AutoField):
                 rend = 'Lino.id_renderer'
                 #~ kw.update(renderer=js_code('Lino.id_renderer'))
-            elif isinstance(editor.field,fields.DisplayField):
+            elif isinstance(editor.field,dd.DisplayField):
                 rend = 'Lino.raw_renderer'
             elif isinstance(editor.field,models.TextField):
                 rend = 'Lino.text_renderer'
-            elif isinstance(editor.field,fields.LinkedForeignKey):
+            elif isinstance(editor.field,dd.LinkedForeignKey):
                 rend = "Lino.lfk_renderer(this,'%s')" % \
                   (editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX)
             elif isinstance(editor.field,models.ForeignKey):
@@ -160,7 +161,7 @@ class GridColumn(Component):
                     #~ rend = "Lino.fk_renderer('%s','%s')" % (
                       #~ editor.field.name + 'Hidden',
                       #~ editor.lh.rh.ui.get_actor_url(rpt))
-            #~ elif isinstance(editor.field,fields.GenericForeignKeyIdField):
+            #~ elif isinstance(editor.field,dd.GenericForeignKeyIdField):
                 #~ rend = "Lino.gfk_renderer()"
             if rend:
                 kw.update(renderer=js_code(rend))
@@ -277,7 +278,7 @@ class LayoutElement(VisibleComponent):
         VisibleComponent.__init__(self,name,**kw)
         self.lh = lh
         #~ if lh is not None:
-        assert isinstance(lh,reports.LayoutHandle)
+        assert isinstance(lh,table.LayoutHandle)
         #~ lh.setup_element(self)
 
     #~ def submit_fields(self):
@@ -303,7 +304,7 @@ class LayoutElement(VisibleComponent):
             #~ self.label = None
             #~ self.update(label = None)
         if self.label and isinstance(parent,Panel):
-            if parent.labelAlign == reports.LABEL_ALIGN_LEFT:
+            if parent.labelAlign == table.LABEL_ALIGN_LEFT:
                 self.preferred_width += len(self.label)
 
     def ext_options(self,**kw):
@@ -448,7 +449,7 @@ class FieldElement(LayoutElement):
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
         # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
-        if not isinstance(self.lh.layout,reports.ListLayout):
+        if not isinstance(self.lh.layout,table.ListLayout):
             kw.update(name=self.field.name)
             if self.label:
                 #~ kw.update(fieldLabel=unicode(self.label)) 20111111
@@ -581,7 +582,7 @@ class ComboFieldElement(FieldElement):
         # because it is not needed for grids and might conflict with fields of a 
         # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
         # Also, Comboboxes with simple values may never have a hiddenName option.
-        if not isinstance(self.lh.layout,reports.ListLayout) \
+        if not isinstance(self.lh.layout,table.ListLayout) \
             and not isinstance(self,SimpleRemoteComboFieldElement):
             kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
@@ -646,10 +647,10 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         if pw is not None:
             kw.setdefault('preferred_width',pw)
             #~ kw.update(preferred_width=pw)
-        self.report = reports.get_model_report(field.rel.to)
+        self.report = table.get_model_report(field.rel.to)
         a = self.report.detail_action
         if a is not None:
-            if not isinstance(lh.layout,reports.ListLayout):
+            if not isinstance(lh.layout,table.ListLayout):
                 self.value_template = "new Lino.TwinCombo(%s)"
                 kw.update(onTrigger2Click=js_code(
                     "function(e){ Lino.show_fk_detail(this,e,Lino.%s)}" % a))
@@ -797,7 +798,7 @@ class BooleanFieldElement(FieldElement):
             
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
-        if not isinstance(self.lh.layout,reports.ListLayout):
+        if not isinstance(self.lh.layout,table.ListLayout):
             if kw.has_key('fieldLabel'):
                 del kw['fieldLabel']
             #~ kw.update(hideLabel=True)
@@ -1288,7 +1289,7 @@ class GridElement(Container):
         :param lh: the handle of the DetailLayout owning this grid
         :param rpt: the report being displayed
         """
-        assert isinstance(rpt,reports.Report), "%r is not a Report!" % rpt
+        assert isinstance(rpt,dd.Table), "%r is not a Report!" % rpt
         self.value_template = "new Lino.%s.GridPanel(%%s)" % rpt
         self.report = rpt
         if len(columns) == 0:
@@ -1352,7 +1353,7 @@ class GridElement(Container):
 #~ class M2mGridElement(GridElement):
     #~ def __init__(self,lh,field,*columns,**kw):
         #~ self.field = field
-        #~ rpt = reports.get_model_report(field.rel.to)
+        #~ rpt = table.get_model_report(field.rel.to)
         #~ GridElement.__init__(self,lh,id2js(rpt.actor_id),rpt,*columns,**kw)
   
 
@@ -1391,7 +1392,7 @@ class MainPanel(jsgen.Variable):
             return ChoicesFieldElement(lh,field,**kw)
         
         selector_field = field
-        if isinstance(field,fields.VirtualField):
+        if isinstance(field,dd.VirtualField):
             selector_field = field.return_type
             
         for cl,x in _FIELD2ELEM:
@@ -1489,7 +1490,7 @@ class FormPanel(jsgen.Component):
           #~ empty_title=action.get_button_label()
         #~ )
         #~ kw.update(containing_window=js_code("ww"))
-        #~ if not isinstance(action,reports.InsertRow):
+        #~ if not isinstance(action,table.InsertRow):
             #~ kw.update(has_navigator=rh.report.has_navigator)
             
         #~ rpt = rh.report
@@ -1511,20 +1512,20 @@ class FormPanel(jsgen.Component):
 
 
 _FIELD2ELEM = (
-    (fields.HtmlBox, HtmlBoxElement),
-    #~ (fields.QuickAction, QuickActionElement),
-    (fields.DisplayField, DisplayElement),
-    (fields.IncompleteDateField, IncompleteDateFieldElement),
-    (fields.LinkedForeignKey, LinkedForeignKeyElement),
+    (dd.HtmlBox, HtmlBoxElement),
+    #~ (dd.QuickAction, QuickActionElement),
+    (dd.DisplayField, DisplayElement),
+    (dd.IncompleteDateField, IncompleteDateFieldElement),
+    (dd.LinkedForeignKey, LinkedForeignKeyElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),
-    #~ (fields.HtmlTextField, HtmlTextFieldElement),
-    #~ (fields.RichTextField, RichTextFieldElement),
-    (models.TextField, TextFieldElement), # also fields.RichTextField
-    (fields.PasswordField, PasswordFieldElement),
+    #~ (dd.HtmlTextField, HtmlTextFieldElement),
+    #~ (dd.RichTextField, RichTextFieldElement),
+    (models.TextField, TextFieldElement), # also dd.RichTextField
+    (dd.PasswordField, PasswordFieldElement),
     (models.CharField, CharFieldElement),
-    (fields.MonthField, MonthFieldElement),
+    (dd.MonthField, MonthFieldElement),
     (models.DateTimeField, DateTimeFieldElement),
     (models.DateField, DateFieldElement),
     (models.TimeField, TimeFieldElement),

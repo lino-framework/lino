@@ -783,7 +783,7 @@ class Lino(object):
               #~ 'django.contrib.auth.backends.RemoteUserBackend',
             #~ )
             
-        if True:
+        if False:
             #~ yield 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware'
             yield 'lino.utils.sqllog.SQLLogToConsoleMiddleware'
             #~ yield 'lino.utils.sqllog.SQLLogMiddleware'

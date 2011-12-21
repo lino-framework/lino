@@ -27,7 +27,7 @@ from django.db import router
 from django.db.models.deletion import Collector
 
 from lino.tools import resolve_model
-from lino.fields import VirtualField
+from lino.core.fields import VirtualField
 
 
 class MultiTableBase(models.Model):
