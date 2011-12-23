@@ -7,6 +7,9 @@ T:\hgwork\lino\docs\autodoc\lino.modlib.ledger.rst:12: (WARNING/2) autodoc can't
 T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.sales.models', it reported error: "cannot import name fields", please check your spelling and sys.path
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
+T:\hgwork\lino\docs\todo.rst:159: (WARNING/2) Enumerated list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\todo.rst:163: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\todo.rst:164: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\contacts.Role.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\contacts.RoleType.rst:: WARNING: document isn't included in any toctree
@@ -14,6 +17,39 @@ T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: documen
 T:\hgwork\lino\docs\igen\appdocs\contacts.Role.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\contacts.RoleType.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:17: WARNING: py:mod reference target not found: lino.apps.crl.models
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:13: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:42: WARNING: py:class reference target not found: lino.apps.dsbe.models.PropsByPerson
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:53: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:94: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:109: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:119: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:139: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:152: WARNING: py:class reference target not found: lino.apps.crl.models.Company
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:160: WARNING: py:class reference target not found: lino.apps.dsbe.models.Companies
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:173: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:182: WARNING: py:class reference target not found: CourseConent
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:217: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:230: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:238: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:246: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:257: WARNING: py:attr reference target not found: lino.ui.requests.URL_PARAMS_SUBST_USER
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:264: WARNING: py:class reference target not found: lino.apps.dsbe.models.AllPersons
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:272: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:280: WARNING: py:class reference target not found: dsbe.Activity
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:310: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:349: WARNING: py:class reference target not found: lino.apps.dsbe.models.AllPersons
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:362: WARNING: py:attr reference target not found: lino.dd.Table.master_key
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:384: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:397: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:72: WARNING: py:class reference target not found: lino.fields.IncompleteDate
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1210
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1211
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1214
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:44: WARNING: py:class reference target not found: City
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:49: WARNING: py:class reference target not found: lino.utils.mdbtools.Loader
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:65: WARNING: py:class reference target not found: Note
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:78: WARNING: py:class reference target not found: User
 T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:16: WARNING: py:mod reference target not found: lino.apps.igen.models
 T:\hgwork\lino\docs\autodoc\lino.management.rst:1: WARNING: py:mod reference target not found: lino.management
 T:\hgwork\lino\docs\autodoc\lino.modlib.journals.rst:10: WARNING: py:mod reference target not found: lino.modlib.journals.models
@@ -26,3 +62,40 @@ T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/122
 T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
 T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
 T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\todo.rst:113: WARNING: py:class reference target not found: auth.User
+T:\hgwork\lino\docs\todo.rst:136: WARNING: py:class reference target not found: lino.dd.Table
+T:\hgwork\lino\docs\todo.rst:159: WARNING: py:class reference target not found: lino.reports.Calendar
+T:\hgwork\lino\docs\todo.rst:196: WARNING: unknown document: /blog/20110725
+T:\hgwork\lino\docs\todo.rst:196: WARNING: unknown document: /blog/20110809
+T:\hgwork\lino\docs\todo.rst:224: WARNING: py:class reference target not found: lino.reports.Report
+T:\hgwork\lino\docs\todo.rst:224: WARNING: py:class reference target not found: lino.List
+T:\hgwork\lino\docs\todo.rst:224: WARNING: py:class reference target not found: lino.Detail
+T:\hgwork\lino\docs\todo.rst:492: WARNING: xfile reference target not found: welcome.html
+T:\hgwork\lino\docs\todo.rst:496: WARNING: unknown document: /blog/2010/1029
+T:\hgwork\lino\docs\todo.rst:496: WARNING: unknown document: /blog/2010/1112
+T:\hgwork\lino\docs\todo.rst:544: WARNING: xfile reference target not found: lino_settings.py
+T:\hgwork\lino\docs\todo.rst:544: WARNING: py:mod reference target not found: lino.demos.igen
+T:\hgwork\lino\docs\todo.rst:552: WARNING: py:mod reference target not found: lino.modlib.dsbe
+T:\hgwork\lino\docs\todo.rst:578: WARNING: unknown document: /blog/2010/0811
+T:\hgwork\lino\docs\todo.rst:610: WARNING: py:mod reference target not found: lino.modlib.system.models.SiteConfig
+T:\hgwork\lino\docs\todo.rst:610: WARNING: py:mod reference target not found: django.contrib.sites
+T:\hgwork\lino\docs\todo.rst:612: WARNING: xfile reference target not found: make_staff.py
+T:\hgwork\lino\docs\todo.rst:622: WARNING: py:attr reference target not found: dsbe.models.Person.work_permit
+T:\hgwork\lino\docs\todo.rst:678: WARNING: py:meth reference target not found: lino.reports.Report.slave_as_summary_meth
+T:\hgwork\lino\docs\todo.rst:683: WARNING: py:class reference target not found: lino.utils.printable.LatexBuildMethod
+T:\hgwork\lino\docs\todo.rst:686: WARNING: py:attr reference target not found: links.Link.parent
+T:\hgwork\lino\docs\todo.rst:691: WARNING: py:attr reference target not found: links.Link.sequence
+T:\hgwork\lino\docs\todo.rst:691: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\todo.rst:693: WARNING: py:meth reference target not found: contacts.Contact.address
+T:\hgwork\lino\docs\todo.rst:693: WARNING: py:class reference target not found: contacts.Persons
+T:\hgwork\lino\docs\todo.rst:703: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\todo.rst:705: WARNING: py:class reference target not found: notes.Note
+T:\hgwork\lino\docs\todo.rst:705: WARNING: py:class reference target not found: notes.NoteType
+T:\hgwork\lino\docs\todo.rst:709: WARNING: unknown document: /blog/2010/1028
+T:\hgwork\lino\docs\todo.rst:721: WARNING: py:mod reference target not found: lino.modlib.finan
+T:\hgwork\lino\docs\todo.rst:728: WARNING: unknown document: /blog/2010/1103
+T:\hgwork\lino\docs\todo.rst:747: WARNING: py:meth reference target not found: Action.run
+T:\hgwork\lino\docs\todo.rst:747: WARNING: unknown document: /blog/2010/1124
+T:\hgwork\lino\docs\todo.rst:763: WARNING: py:mod reference target not found: <make_staff> lino.management.commands.make_staff
+T:\hgwork\lino\docs\todo.rst:783: WARNING: py:meth reference target not found: lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value
+T:\hgwork\lino\docs\todo.rst:830: WARNING: unknown document: /blog/2010/1024

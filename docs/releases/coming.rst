@@ -1,28 +1,8 @@
-Version 1.3.2 (Coming)
+Version 1.3.3 (Coming)
 ======================
 
 Sichtbare Änderungen
 --------------------
-
-- :term:`watch_tim` ("Neuzugang" und "Alte Daten" wurden nicht korrekt synchronisiert)
-
-- Kolonnenreihenfolge in allen Personen-Tabellen ist jetzt:
-  Name + Nationalregisternr + Handynr + Starsse + nr + Satdt + Alter + e-mail + Telefonnummer  + Partnernnr (TIM) + Bankkonto + Sozialhilfe art + Begleiter 1 
-  + Sprache + restliche Felder.
-  N.B.: die erste Kolonne ("Name") enthält momentan das Standardformat "Vorname NAME (Nr)", 
-  was allerdings die alphabetische Reihenfolge ein bisschen unklar werden lässt. 
-  Was haltet ihr davon?
-
-- In der Übersicht "Klienten pro Benutzer" im Startbildschirm 
-  sind jetzt auch die Zahlen der anderen Benutzer anklickbar,
-  und es gibt eine neue Zeile "Total" (deren Zahlen zumindest momentan 
-  nicht anklickbar sind (hättet ihr das gerne?)).
-  
-  N.B.: Die beiden Kolonnen "Komplett" (d.h. Art60-7 + VSE1) 
-  und "Aktiv" (d.h. Total - Standby)
-  habe ich noch *nicht* gemacht, weil wir vorher noch überlegen müssen, 
-  wie konfigurierbar ich das machen soll.
-  
 
 Upgrade instructions
 --------------------
