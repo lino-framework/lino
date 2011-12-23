@@ -19,6 +19,9 @@ moved into a separate module because they are really very DSBE specific.
 See also :doc:`/dsbe/models`.
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import cgi
 import datetime
@@ -760,7 +763,7 @@ class Persons(AllPersons):
     def init_label(self):
         return self.model._meta.verbose_name_plural
 
-Person._lino_choices_report = Persons
+Person._lino_choices_table = Persons
 
 class Newcomers(AllPersons):
     """
@@ -810,7 +813,7 @@ class MyPersons(Persons):
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
         qs = super(MyPersons,self).get_request_queryset(rr)
-        qs = only_coached_persons(only_my_persons(qs,rr.user),datetime.date.today())
+        qs = only_coached_persons(only_my_persons(qs,rr.get_user()),datetime.date.today())
         #~ print 20111118, 'get_request_queryset', rr.user, qs.count()
         return qs
         #~ today = datetime.date.today()
@@ -846,21 +849,26 @@ def persons_by_user(ui,requesting_user):
     for user in User.objects.order_by('username'):
         if user == requesting_user or user.is_spis:
             #~ rr = MyPersons.request(ui,user=user)
-            rr = MyPersons.request(ui,user=user)
+            #~ kv = dict(user=user)
+            rr = MyPersons.request(ui,subst_user=user)
+            #~ rr = MyPersons.request(ui,known_values=kv)
             if rr.total_count:
                 text = str(rr.total_count)
-                if rr.user == requesting_user:
-                    text = ui.href_to_request(rr,text)
+                #~ if rr.user == requesting_user:
+                text = ui.href_to_request(rr,text)
                 #~ text = ui.href_to_request(rr,text,user=user)
                 #~ cells = [cgi.escape(unicode(user)),rr.total_count] + sums
                 cells = [cgi.escape(unicode(user)),text] + sums
                 for pg in PersonGroup.objects.order_by('ref_name'):
-                    rr = MyPersonsByGroup.request(ui,master_instance=pg,user=user)
+                    rr = MyPersonsByGroup.request(ui,master_instance=pg,subst_user=user)
+                    #~ rr = MyPersonsByGroup.request(ui,master_instance=pg,known_values=kv)
                     text = str(rr.total_count)
-                    if rr.user == requesting_user:
-                        text = ui.href_to_request(rr,text)
+                    #~ if rr.user == requesting_user:
+                    text = ui.href_to_request(rr,text)
                     cells[pg2col[pg.pk]] = text
                 rows.append(cells)
+            else:
+                logger.info("20111223")
         
     if False:
         for user in User.objects.order_by('username'):
@@ -1069,7 +1077,8 @@ class ConfiguredPropsByPerson(PropsByPerson):
     :class`ObstaclesByPerson`.
     """
     propgroup_config_name = None
-    typo_check = False # to avoid warning "ConfiguredPropsByPerson defines new attribute(s) propgroup_config_name"
+    typo_check = False # to avoid warning "ConfiguredPropsByPerson 
+                       # defines new attribute(s) propgroup_config_name"
     def setup_actions(self):
         if self.propgroup_config_name:
             pg = getattr(settings.LINO.config,self.propgroup_config_name)

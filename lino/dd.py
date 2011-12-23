@@ -14,11 +14,15 @@
 """
 The name ``dd`` stands for "Data Dictionary". 
 
+See :class:`lino.core.table.Table` etc.
+
 """
 
 from lino.core.table import fields_list, is_installed, inject_field
 from lino.core.table import has_fk, is_installed, get_app
 from lino.core.table import Table
+#~ from lino.core import table
+#~ Table = table.Table
 
 from lino.core.table import summary, summary_row
 

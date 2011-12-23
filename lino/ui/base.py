@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ class Handled(object):
         
     def get_handle(self,k):
         #~ assert k is None or isinstance(k,self._handle_selector), "%s.get_handle() : %r is not a %s" % (self,k,self._handle_selector)
-        assert k is None or isinstance(k,UI), "%s.get_handle() : %r is not a BaseUI" % (self,k)
+        assert k is None or isinstance(k,UI), \
+            "%s.get_handle() : %r is not a BaseUI" % (self,k)
         h = self._handles.get(k,None)
         if h is None:
             h = self._handle_class(k,self)

@@ -12,6 +12,8 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  jobs.Job.hourly_rate: PriceField statt IntegerField
+
 #.  Bug: Comboboxen zeigen beim Aufklappen immer nur eine Seite an, 
     auch wenn es deren mehrere gibt.
 
@@ -134,19 +136,20 @@ Short-term
 Medium-term
 -----------
 
-#. Datenkontrollliste erweitern. Meldungen im Stil:
+#.  Links to :class:`lino.dd.Table` don't work. 
+    Must say :class:`lino.core.table.Table`
 
-   - "Benutzer hat is_dsbe eingeschaltet, begleitet aber nur 2 Personen"
-   - "Person gilt als begleitet, hat aber keine Anfragen / keine
-     Verträge / keine Notizen"
-   - ...
-   
-   Und ich müsste dann eine solche Liste vor und nach dem Release
-   ausdrucken, oder besser gesagt die Dinger müssten von der
-   Kommandozeile aus als Textdateien gespeichert werden, damit ich
-   sie leicht vergleichen kann.
-    
+#.  Datenkontrollliste erweitern. Meldungen im Stil:
 
+    - "Benutzer hat is_dsbe eingeschaltet, begleitet aber nur 2 Personen"
+    - "Person gilt als begleitet, hat aber keine Anfragen / keine
+       Verträge / keine Notizen"
+    - ...
+     
+    Und ich müsste dann eine solche Liste vor und nach dem Release
+    ausdrucken, oder besser gesagt die Dinger müssten von der
+    Kommandozeile aus als Textdateien gespeichert werden, damit ich
+    sie leicht vergleichen kann.
 
 #.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
 

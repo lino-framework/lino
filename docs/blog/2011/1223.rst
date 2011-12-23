@@ -1,0 +1,10 @@
+20111223
+========
+
+All rows of :func:`lino.apps.dsbe.models.persons_by_user` 
+are now clickable.
+This was a little challenge since it required a new 
+concept of "substitute user":
+lino.core.table.TableRequest.subst_user
+lino.ui.requests.URL_PARAM_SUBST_USER
+lino.mixins.AutoUser

@@ -518,10 +518,22 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     #~ baker.save()
     #~ yield baker
 
+    """
+    Distribute properties to persons. The distribution should be
+    "randomly", but independant of site's language setting.
+    """
     pp = Instantiator('properties.PersonProperty',
         'person property value').build
+    props = [p for p in Property.objects.order_by('id')]
+    i = 0
+    L = len(props)
+    assert L > 10 
     for p in Person.objects.all():
-        for prop in Property.objects.all():
+        for n in range(3):
+            if i >= L: 
+                i = 0
+            prop = props[i]
+            i += 1
             yield pp(p,prop,prop.type.default_value)
             
     langk = Instantiator('dsbe.LanguageKnowledge',
@@ -583,7 +595,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     #~ p.coached_until = i2d(20101031)
     p.coached_until = settings.LINO.demo_date(10*30)
     p.coach1 = User.objects.get(username='root')
-    p.coach2 = User.objects.get(username='user')
+    #~ p.coach2 = User.objects.get(username='user')
     p.group = pg2
     p.gender = Gender.male
     p.national_id = 'INVALID-45'
@@ -603,11 +615,22 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.national_id = '931229 211-83'
     p.save()
 
-    p = Person.objects.get(name=u"Ausdemwald Alfons")
+    p = Person.objects.get(name=u"Chantraine Marc")
     p.birth_date = i2d(19500301)
+    p.coached_from = settings.LINO.demo_date(-10)
+    p.coached_until = None
     p.coach1 = User.objects.get(username='root')
-    p.coach2 = User.objects.get(username='user')
+    #~ p.coach2 = User.objects.get(username='user')
     p.gender = Gender.male
+    p.save()
+
+    p = Person.objects.get(name=u"Charlier Ulrike")
+    p.birth_date = i2d(19600401)
+    p.coached_from = settings.LINO.demo_date(-3*30)
+    p.coached_until = None
+    p.coach1 = User.objects.get(username='user')
+    #~ p.coach2 = User.objects.get(username='user')
+    p.gender = Gender.female
     p.save()
 
 

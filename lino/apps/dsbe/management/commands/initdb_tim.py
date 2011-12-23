@@ -163,7 +163,7 @@ def par2person(row,person):
     person.is_active = iif(row['IDPRT']=='I',False,True)
     if row.has_key('ATTRIB') and row['ATTRIB']:
         if "N" in row['ATTRIB']:
-            person.is_new = True
+            person.newcomer = True
         if "A" in row['ATTRIB']:
             person.is_deprecated = True
     if row['IDPRT'] == 'S':

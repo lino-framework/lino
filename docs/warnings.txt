@@ -4,6 +4,7 @@ T:\hgwork\lino\docs\autodoc\lino.modlib.journals.rst:13: (WARNING/2) autodoc can
 T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.sales.models', it reported error: "cannot import name fields", please check your spelling and sys.path
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
+T:\hgwork\lino\docs\tutorials\t1.rst:42: (WARNING/2) Include file u'T:\\hgwork\\lino\\docs\\tutorials\\settings.py' not found or reading it failed
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\contacts.Role.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\contacts.RoleType.rst:: WARNING: document isn't included in any toctree
@@ -12,14 +13,12 @@ T:\hgwork\lino\docs\igen\appdocs\contacts.Role.rst:: WARNING: document isn't inc
 T:\hgwork\lino\docs\igen\appdocs\contacts.RoleType.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:17: WARNING: py:mod reference target not found: lino.apps.crl.models
 T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:16: WARNING: py:mod reference target not found: lino.apps.igen.models
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:141: WARNING: py:attr reference target not found: filter.
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:176: WARNING: py:meth reference target not found: lino.core.table.Table.do_setup
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:191: WARNING: py:class reference target not found: lino.SiteConfigs
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:233: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:268: WARNING: py:class reference target not found: django.db.models.query.QuerySet
 T:\hgwork\lino\docs\autodoc\lino.modlib.journals.rst:10: WARNING: py:mod reference target not found: lino.modlib.journals.models
-T:\hgwork\lino\docs\blog\2011\1221.rst:5: WARNING: py:attr reference target not found: dd.Table.known_values
-T:\hgwork\lino\docs\blog\2011\1221.rst:5: WARNING: py:attr reference target not found: dd.Table.filter
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\tutorials\t1.rst:134: WARNING: term not in glossary: tables
+T:\hgwork\lino\docs\tutorials\t1.rst:184: WARNING: term not in glossary: slave table
+T:\hgwork\lino\docs\tutorials\t1.rst:184: WARNING: py:attr reference target not found: lino.dd.Table.master_key

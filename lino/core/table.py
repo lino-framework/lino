@@ -385,7 +385,7 @@ class ReportAction(actions.Action):
         super(ReportAction,self).__init__(*args,**kw)
         
     def unused_request(self,ui=None,request=None,*args,**kw):
-        ar = ListActionRequest(ui,self.actor,request,self,**kw)
+        ar = TableRequest(ui,self.actor,request,self,**kw)
         #~ ar.setup(**kw)
         return ar
         #~ return self.get_handle(ui).request(**kw)
@@ -595,7 +595,10 @@ class ActionRequest(object):
     def request2kw(self,ui,**kw):
         return kw
   
-class ListActionRequest(ActionRequest):
+class TableRequest(ActionRequest):
+    """
+    An Action Request on a given Table.
+    """
     limit = None
     offset = None
     master_instance = None
@@ -609,6 +612,8 @@ class ListActionRequest(ActionRequest):
     sort_direction = None
     
     def __init__(self,ui,report,request,action,*args,**kw):
+        if not isinstance(report,Table):
+            raise Exception("Expected a Table instance, got %r" % report)
         #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
         ActionRequest.__init__(self,ui,action)
         self.report = report
@@ -625,21 +630,6 @@ class ListActionRequest(ActionRequest):
         self.setup(*args,**kw)
     
     
-    def unused___init__(self,ui,report,action):
-        #~ assert isinstance(rh,ReportHandle)
-        #~ assert ui.create_meth_element is not None
-        #~ if ui is not None: assert ui.create_meth_element is not None
-        # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
-        if self.master is None:
-            self.master = report.master
-        #~ actions.ActionRequest.__init__(self,rpt,action,ui)
-        #~ actions.ActionRequest.__init__(self,ui,action)
-        #~ self.rh = self.ah
-        ActionRequest.__init__(self,ui,action)
-        #~ self.ui = ui
-        #~ self.action = action
-        #~ self._setup(**kw)
-        
     def parse_req(self,request,rh,**kw):
         master = kw.get('master',self.report.master)
         if master is ContentType or master is models.Model:
@@ -697,6 +687,12 @@ class ListActionRequest(ActionRequest):
             if filter is not None:
                 filter = json.loads(filter)
                 kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
+                
+        kw.update(self.report.known_values)
+        for fieldname, default in self.report.known_values.items():
+            v = request.REQUEST.get(fieldname,None)
+            if v is not None:
+                kw.update(fieldname=v)
         
         quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search:
@@ -720,15 +716,17 @@ class ListActionRequest(ActionRequest):
                 self.sort_direction = 'DESC'
             kw.update(order_by=[sort])
         
-        user = request.user
-        if user is not None and user.is_superuser:
-            username = request.REQUEST.get(ext_requests.URL_PARAM_EUSER,None)
-            if username:
-                try:
-                    user = USER_MODEL.objects.get(username=username)
-                except USER_MODEL.DoesNotExist, e:
-                    pass
-        kw.update(user=user)
+        kw.update(user=request.user)
+        #~ user = request.user
+        #~ if user is not None and user.is_superuser:
+        #~ if True:
+        username = request.REQUEST.get(ext_requests.URL_PARAM_SUBST_USER,None)
+        if username:
+            try:
+                kw.update(subst_user=USER_MODEL.objects.get(username=username))
+            except USER_MODEL.DoesNotExist, e:
+                pass
+        #~ kw.update(user=user)
         
         kw = rh.report.parse_req(request,**kw)
         
@@ -742,6 +740,7 @@ class ListActionRequest(ActionRequest):
             offset=None,limit=None,
             layout=None,
             user=None,
+            subst_user=None,
             filter=None,
             create_rows=None,
             quick_search=None,
@@ -757,6 +756,7 @@ class ListActionRequest(ActionRequest):
             msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
             raise InvalidRequest(msg)
         self.user = user
+        self.subst_user = subst_user
         self.filter = filter
         #~ if isinstance(self.action,GridEdit):
             #~ self.expand_memos = expand_memos or self.report.expand_memos
@@ -765,7 +765,15 @@ class ListActionRequest(ActionRequest):
         self.order_by = order_by
         self.exclude = exclude or self.report.exclude
         self.extra = extra
-        self.known_values = known_values or self.report.known_values
+        #~ self.known_values = known_values or self.report.known_values
+        #~ if self.report.known_values:
+        for k,v in self.report.known_values.items():
+            kw.setdefault(k,v)
+        if known_values:
+            kw.update(known_values)
+        #~ if self.report.__class__.__name__ == 'SoftSkillsByPerson':
+            #~ logger.info("20111223 %r %r", kw, self.report.known_values)
+        self.known_values = kw
 
         #~ if selected_rows is not None:
             #~ self.selected_rows = selected_rows
@@ -775,8 +783,10 @@ class ListActionRequest(ActionRequest):
             # master might still be None
         self.master = master
         
-        kw.update(self.report.params)
-        self.params = kw
+        #~ if self.report.params:
+            #~ raise Exception("%s.params is %r" % (self.report,self.report.params))
+        #~ kw.update(self.report.params)
+        #~ self.params = kw
         
         if master_id is not None:
             assert master_instance is None
@@ -805,6 +815,14 @@ class ListActionRequest(ActionRequest):
         #~ self.setup_queryset()
         #~ logger.debug(unicode(self))
         # get_queryset() may return a list
+        """
+        TODO: 
+        Note that `total_count` is looked up 
+        *before* `offset` and `limit` are set.
+        That's a pity because it creates a database lookup
+        even if the TableRequest is being instantiated with 
+        the only purpose of generating an url.
+        """
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()
         else:
@@ -865,7 +883,7 @@ class ListActionRequest(ActionRequest):
         return obj
         
     def get_user(self):
-        return self.user
+        return self.subst_user or self.user
         
     def get_action_title(self):
         return self.action.get_action_title(self)
@@ -890,9 +908,16 @@ class ListActionRequest(ActionRequest):
         return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
         
     def request2kw(self,ui,**kw):
-        #~ if self.known_values:
+        #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
+            #~ print 20111223, self.known_values
+        if self.subst_user is not None:
+            kw[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
+            
+        if self.known_values:
             #~ kv = dict()
-            #~ for k,v in self.known_values:
+            for k,v in self.known_values.items():
+                if self.report.known_values.get(k,None) != v:
+                    kw[k] = v
                 
             #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
         if self.quick_search:
@@ -913,7 +938,7 @@ class ListActionRequest(ActionRequest):
         
         
 def has_fk(rr,name):
-    if isinstance(rr,ListActionRequest):
+    if isinstance(rr,TableRequest):
         return rr.report.master_key == name
     return False
 
@@ -955,12 +980,23 @@ class Frame(actors.Actor):
         
 class Table(actors.Actor): #,base.Handled):
     """
-    Reports are a central concept in Lino and deserve more than one sentence of documentation.
+    
+    A Table is the definition of a tabular data view, 
+    usually displayed in a Grid (but it's up to the user 
+    interface to decide how to implement this).
+    A Table definition has attributes
+    like `filter` and `sort_order` 
+    which it forwards to the QuerySet 
+    and which we sometimes call "horizontal layout" 
+    because they influence the rows to be selected.
+    But it usually also has a "vertical layout", 
+    for example the `column_names` attribute.
+
     """
     #~ default_action_class = GridEdit
     _handle_class = ReportHandle
     #~ _handle_selector = base.UI
-    params = {}
+    #~ params = {}
     field = None
     
     #~ hide_details = []
@@ -1070,7 +1106,8 @@ class Table(actors.Actor): #,base.Handled):
     A `dict` of `fieldname` -> `value` pairs that specify "known values".
     Requests will automatically be filtered to show only existing records 
     with those values.
-    New instances created in this Table will automatically have 
+    This is like :attr:`filter`, but 
+    new instances created in this Table will automatically have 
     these values set.
     
     """
@@ -1407,7 +1444,8 @@ class Table(actors.Actor): #,base.Handled):
             #~ qs = self.queryset
         #~ else:
             #~ qs = self.model.objects.all()
-        kw = self.get_filter_kw(rr.master_instance,**rr.params)
+        #~ kw = self.get_filter_kw(rr.master_instance,**rr.params)
+        kw = self.get_filter_kw(rr.master_instance)
         if kw is None:
             return []
         if len(kw):
@@ -1453,7 +1491,7 @@ class Table(actors.Actor): #,base.Handled):
         Creates and returns the method to be used when :attr:`Table.show_slave_grid` is `False`.
         """
         def meth(master,request):
-            rr = ListActionRequest(ui,self,None,self.default_action,master_instance=master)
+            rr = TableRequest(ui,self,None,self.default_action,master_instance=master)
             #~ rr = self.request(ui,master_instance=master)
             s = summary(ui,rr,row_separator)
             #~ s = ', '.join([fmt(r) for r in rr])
@@ -1543,9 +1581,9 @@ class Table(actors.Actor): #,base.Handled):
         #~ cls.detail_layouts.append(dtl)
         
     @classmethod
-    def request(cls,ui=None,**kw):
+    def request(cls,ui=None,request=None,**kw):
         self = cls()
-        return ListActionRequest(ui,self,None,self.default_action,**kw)
+        return TableRequest(ui,self,request,self.default_action,**kw)
         #~ return self.default_action.request(ui,**kw)
         
 
@@ -1586,7 +1624,9 @@ def report_factory(model):
             #~ if issubclass(rpt.model,model):
                 bases = (rpt.__class__,)
     #~ logger.info('report_factory(%s) : bases is %s',model.__name__,bases)
-    cls = type(model.__name__+"Table",bases,dict(model=model,app_label=model._meta.app_label))
+    cls = type(model.__name__+"Table",
+        bases,dict(model=model,
+            app_label=model._meta.app_label))
     return actors.register_actor(cls())
 
 

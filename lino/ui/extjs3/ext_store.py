@@ -798,7 +798,7 @@ class Store:
         
 
     def row2list(self,request,row):
-        assert isinstance(request,table.ListActionRequest)
+        assert isinstance(request,table.TableRequest)
         #~ if not isinstance(request,table.ListActionRequest):
             #~ raise Exception()
         #~ logger.info("20111209 Store.row2list(%s)", obj2str(row))
@@ -809,7 +809,7 @@ class Store:
         return l
       
     def row2dict(self,request,row):
-        assert isinstance(request,table.ListActionRequest)
+        assert isinstance(request,table.TableRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         d = {}
         for f in self.detail_fields:

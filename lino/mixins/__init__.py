@@ -31,7 +31,12 @@ from lino.utils.choosers import chooser
     
 
 class AutoUser(models.Model):
-  
+    """
+    Mixin for models that have a `user` field which is automatically 
+    set to the requesting user.
+    Also defines a `ByUser` base table which fills the master instance 
+    from the web request.
+    """
     class Meta:
         abstract = True
         
@@ -44,14 +49,16 @@ class AutoUser(models.Model):
             )
         
         def on_create(self,req):
-            u = req.get_user()
-            if u is not None:
-                self.user = u
+            if self.user is None:
+                u = req.get_user()
+                if u is not None:
+                    self.user = u
             
         def update_owned_instance(self,task):
             task.user = self.user
 
 if settings.LINO.user_model: 
+  
     class ByUser(dd.Table):
         master_key = 'user'
         can_view = perms.is_authenticated

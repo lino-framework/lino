@@ -1,0 +1,10 @@
+20111222
+========
+
+
+- Table.url_params
+
+- A little bug: TypeError "unbound method get_handle() must be called 
+  with Persons instance as first argument (got ExtUI instance instead)" 
+  in `reports.py`, line 615 
+  when trying to return the choices for a ForeignKey to Person.

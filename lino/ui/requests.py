@@ -39,9 +39,11 @@ URL_PARAM_MASTER_PK = 'mk'
 The pk of the master instance.
 """
 
-URL_PARAM_EUSER = 'euser'
+#~ URL_PARAM_EUSER = 'euser'
+#~ URL_PARAM_EUSER = 'su'
+URL_PARAM_SUBST_USER = 'su'
 """
-emulate user
+substutute user
 """
 
 URL_PARAM_KNOWN_VALUES = 'kv'
@@ -77,7 +79,8 @@ URL_PARAMS = [
   'URL_PARAM_LIMIT',
   'URL_PARAM_TAB',
   #~ 'URL_PARAM_EXPAND',
-  'URL_PARAM_EUSER',
+  #~ 'URL_PARAM_EUSER',
+  'URL_PARAM_SUBST_USER',
   #~ 'TEST',
 ]
 

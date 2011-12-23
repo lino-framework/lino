@@ -233,8 +233,12 @@ def elem2rec_detailed(ar,rh,elem,**rec):
             if True:
                 # this algorithm is clearly quicker on reports with a few thousand Persons
                 id_list = list(ar.queryset.values_list('pk',flat=True))
-                assert len(id_list) == ar.total_count, \
-                    "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+                """
+                Uncommented the following assert because it failed in certain circumstances 
+                (see :doc:`/blog/2011/1220`)
+                """
+                #~ assert len(id_list) == ar.total_count, \
+                    #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
                 #~ print 20111220, id_list
                 first = id_list[0]
                 last = id_list[-1]
@@ -1082,7 +1086,7 @@ tinymce.init({
             raise Http404("%s has no action %r" % (rh.report,action_name))
         if isinstance(a,table.ReportAction):
             #~ ar = ViewReportRequest(request,rh,a)
-            ar = table.ListActionRequest(self,rpt,request,a)
+            ar = table.TableRequest(self,rpt,request,a)
             rh = ar.ah
         else:
             ar = table.ActionRequest(self,a)
@@ -1196,7 +1200,7 @@ tinymce.init({
         
         if isinstance(a,table.ReportAction):
             #~ ar = ViewReportRequest(request,rh,a)
-            ar = table.ListActionRequest(self,rpt,request,a)
+            ar = table.TableRequest(self,rpt,request,a)
             rh = ar.ah
         else:
             ar = table.ActionRequest(self,a)
@@ -1323,7 +1327,7 @@ tinymce.init({
             #~ a = rpt.get_action(fmt)
                 
             #~ ar = ViewReportRequest(request,ah,a)
-            ar = table.ListActionRequest(self,rpt,request,a)
+            ar = table.TableRequest(self,rpt,request,a)
             ah = ar.ah
 
             if isinstance(a,actions.OpenWindowAction):
@@ -1563,7 +1567,7 @@ tinymce.init({
         if fldname is None:
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
-            ar = table.ListActionRequest(self,rpt,request,rpt.default_action)
+            ar = table.TableRequest(self,rpt,request,rpt.default_action)
             rh = ar.ah
             qs = ar.get_queryset()
             #~ qs = rpt.request(self).get_queryset()
@@ -1610,10 +1614,16 @@ tinymce.init({
                 
             elif isinstance(field,models.ForeignKey):
                 m = field.rel.to
-                cr = getattr(m,'_lino_choices_report',m._lino_model_report)
-                #~ qs = cr.request(self).get_queryset()
-                ar = table.ListActionRequest(self,cr,request,cr.default_action)
-                qs = ar.get_queryset()
+                #~ cr = getattr(m,'_lino_choices_table',None)
+                cr = getattr(m,'_lino_choices_table',m._lino_model_report)
+                #~ tblclass = getattr(m,'_lino_choices_table',m._lino_model_report)
+                #~ if tblclass is not None:
+                    #~ tbl = tblclass()
+                #~ else:
+                    #~ tbl = m._lino_model_report
+                qs = cr.request(self,request).get_queryset()
+                #~ ar = table.TableRequest(self,tbl,request,tbl.default_action)
+                #~ qs = ar.get_queryset()
                 #~ qs = mr.request(self,**mr.default_params).get_queryset()
                 #~ qs = get_default_qs(field.rel.to)
                 #~ qs = field.rel.to.objects.all()
@@ -1761,6 +1771,8 @@ tinymce.init({
             #~ return unicode(v)
         #~ if isinstance(v,Promise):
             #~ return unicode(v)
+        if isinstance(v,models.Model):
+            return v.pk
         if isinstance(v,Exception):
             return unicode(v)
         if isinstance(v,menus.Menu):
@@ -1784,7 +1796,7 @@ tinymce.init({
                 if v.href is not None:
                     url = v.href
                 elif v.params is not None:
-                    ar = table.ListActionRequest(self,v.action.actor,None,v.action,**v.params)
+                    ar = table.TableRequest(self,v.action.actor,None,v.action,**v.params)
                     url = self.get_request_url(ar)
                 elif v.request is not None:
                     url = self.get_request_url(v.request)

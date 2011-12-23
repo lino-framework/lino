@@ -131,58 +131,69 @@ we leave them alone and continue "the Lino way" of defining
 our application's user interface.
 Remember that Lino is an alternative to Django's Admin module.
 
-First we will add three :term:`Reports`.
-A Report is the definition of a window that will display data in a tabular view.
-But also the Detail Windows in Lino 
+First we will add three :term:`Tables`.
+A Table is the definition of a tabular view, 
+usually displayed in a Grid.
+A Table definition has 
+attributes
+like `filter` and `sort_order` 
+which will be forwarded to the QuerySet 
+and which we sometimes call "horizontal layout" 
+because they influence the rows to be selected.
+But it usually also has a "vertical layout", 
+for example `column_names` attribute.
+
+But also the Detail Window in Lino 
 (the form views used to display model instances one by one) 
-are always related to a Report.
-To define these Reports, you simply need to declare their classes.
-Lino discovers and analyze these Reports when it initializes.
+are always related to a Table.
+To define these Tables, you simply need to declare their classes.
+Lino discovers and analyzes them when it initializes.
 
 Add the following code to the end your :file:`polls/models.py`::
 
-  from lino import reports
+  from lino import dd
 
-  class Polls(reports.Report):
+  class Polls(dd.Table):
       "Displays the list of all Polls."
       model = Poll
       
-  class Choices(reports.Report):
+  class Choices(dd.Table):
       "Displays a list of all Choices."
       model = Choice
           
   class ChoicesByPoll(Choices):
       "Displays the Choices for a given Poll."
-      fk_name = 'poll'
+      master_key = 'poll'
       
 
-Each Report class must have at least one class attribute 
+Each Table class must have at least one class attribute 
 `model` defined. This points to the Model on which this 
-report will "work".
+table will "work".
 
-There are quite some other options for reports, 
+There are quite some other options for tables, 
 and they are documented in Lino's API doc for the
-:class:`lino.reports.Report` class.
+:class:`lino.core.table.Table` class.
 
 
-Since reports are normal Python classes 
+Since tables are normal Python classes 
 they can use inheritance.
 In our code `ChoicesByPoll` inherits from `Choices` 
-and not directly from `Report`.
+and not directly from `Table`.
 that's why we don't need to explicitly specify that 
 
-Note also that `ChoicesByPoll` is a :term:`slave report`
+Note also that `ChoicesByPoll` is a :term:`slave table`
 because it has a class attribute 
-:attr:`lino.reports.Report.fk_name`.
-The `fk_name` attribute of a Report is a string containing 
-the name of a ForeignKey field which must exist in the Report's 
+:attr:`lino.dd.Table.master_key`.
+The `master_key` attribute of a Table is a string containing 
+the name of a ForeignKey field which must exist in the Table's 
 model.
-`ChoicesByPoll` is a list of `Choice` instances
+`ChoicesByPoll` is a table of `Choice` instances
 having a `Poll` instance as master. 
-A slave report needs to know on which master it is to execute.
+A slave table needs to know on which master it is to execute.
 
-Note that you can define more than one Report per Model.
-
+Note that you can define more than one Table per Model.
+This is an important difference from Django's concept of 
+the `ModelAdmin` class and `Model._meta` options.
 
 While you are in :file:`polls/models.py` you should also 
 add a `auto_now_add=True` option to the pub_date field::

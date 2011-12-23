@@ -4,4 +4,4 @@
 .. automodule:: lino.dd
     :members:
     :show-inheritance:
-
+    :inherited-members:
