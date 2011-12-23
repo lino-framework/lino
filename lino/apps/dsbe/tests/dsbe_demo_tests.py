@@ -995,8 +995,8 @@ def test16(self):
       ['jobs/Contracts', 7], # one more than after fixture because of test12()
       ['jobs/Candidatures', 7],
       ['jobs/Studies', 3],
-      ['cal/Events', 60],
-      ['cal/Tasks', 9],
+      ['cal/Events', 63], # 3 more than after fixture because of test12()
+      ['cal/Tasks', 10],
       ['cal/Priorities', 10],
       ['dsbe/MyNotes', 3],
       ['properties/PropGroups', 4],
