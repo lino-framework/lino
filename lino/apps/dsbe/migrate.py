@@ -812,6 +812,9 @@ Needs manual adaption of dpy file:
     #~ globals_dict.update(insert_child=create_child)
   
     return '1.3.0'
+    
+def migrate_from_1_3_0(globals_dict):
+    return '1.3.1'
   
 def install(globals_dict):
     """

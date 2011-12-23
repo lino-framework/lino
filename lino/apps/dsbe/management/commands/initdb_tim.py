@@ -162,6 +162,7 @@ def country2kw(row,kw):
 def par2person(row,person):
     person.is_active = iif(row['IDPRT']=='I',False,True)
     if row.has_key('ATTRIB') and row['ATTRIB']:
+        logger.info("20111223 %r",row['ATTRIB'])
         if "N" in row['ATTRIB']:
             person.newcomer = True
         if "A" in row['ATTRIB']:
