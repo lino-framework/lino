@@ -12,11 +12,13 @@
   
 - Fixed a bug in :term:`watch_tim`: 
   Flags `newcomer` and `is_deprecated` were not correctly synchronized.
+  Updated page :doc:`/dsbe/tim2lino`.
   
 - More unit tests: :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test15`
   and :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test16`.  
   
-  
+- Added "Total" row in `persons_by_user`, moved "Total" colum to end.
+
 - Got Christmas wishes that use some (extended) ASCII art::
 
     „°*._██_*。*./ .˛* .˛.*.★* *★ 。* Ich wünsche Euch´¯˜"*°´¯˜"*°
@@ -24,3 +26,5 @@
     .°( . • . ) ˛°./• '♫ ' •.˛*./______/~＼*. ˛Weihnachtstage & einen .★* *★*。*
     *(...'•'.. ) *˛╬╬╬╬╬˛｜田田 ｜門｜╬╬╬╬ guten Rutsch !。*
     ¯˜"*°••°*"˜¯`´¯˜"*°••°*"˜¯` ••°*"˜¯`´¯˜"*°••°*"˜¯`´¯˜"*°••°*"˜¯`´¯ “  
+    
+    

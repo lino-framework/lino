@@ -841,13 +841,19 @@ def persons_by_user(ui,requesting_user):
     User = resolve_model(settings.LINO.user_model)
     #~ User = settings.LINO.get_user_model()
     #~ from lino.apps.dsbe.models import PersonGroup,Person,only_coached_persons,only_my_persons
-    headers = [cgi.escape(_("User")),cgi.escape(_("Total"))]
+    headers = [cgi.escape(_("User"))]
+    totals = [cgi.escape(_("Total"))]
     sums = []
     pg2col = {}
-    for pg in PersonGroup.objects.order_by('ref_name'):
+    phases = [pg for pg in PersonGroup.objects.order_by('ref_name')]
+    for pg in phases:
         headers.append('<font size="2">%s</font>' % cgi.escape(pg.name))
-        sums.append(0)
+        sums.append('')
+        totals.append(0)
         pg2col[pg.pk] = len(headers) - 1
+    #~ phases.append(None)
+    headers.append(cgi.escape(_("Total")))
+    totals.append(0)
         
     rows = [ headers ]
     for user in User.objects.order_by('username'):
@@ -857,33 +863,21 @@ def persons_by_user(ui,requesting_user):
             rr = MyPersons.request(ui,subst_user=user)
             #~ rr = MyPersons.request(ui,known_values=kv)
             if rr.total_count:
-                text = str(rr.total_count)
-                #~ if rr.user == requesting_user:
-                text = ui.href_to_request(rr,text)
-                #~ text = ui.href_to_request(rr,text,user=user)
-                #~ cells = [cgi.escape(unicode(user)),rr.total_count] + sums
-                cells = [cgi.escape(unicode(user)),text] + sums
-                for pg in PersonGroup.objects.order_by('ref_name'):
+                totals[-1] += rr.total_count
+                row_total = ui.href_to_request(rr,str(rr.total_count))
+                cells = [cgi.escape(unicode(user))] + sums
+                for pg in phases:
                     rr = MyPersonsByGroup.request(ui,master_instance=pg,subst_user=user)
                     #~ rr = MyPersonsByGroup.request(ui,master_instance=pg,known_values=kv)
-                    text = str(rr.total_count)
-                    #~ if rr.user == requesting_user:
-                    text = ui.href_to_request(rr,text)
-                    cells[pg2col[pg.pk]] = text
+                    if rr.total_count:
+                        totals[pg2col[pg.pk]] += rr.total_count
+                        text = str(rr.total_count)
+                        #~ if rr.user == requesting_user:
+                        text = ui.href_to_request(rr,text)
+                        cells[pg2col[pg.pk]] = text
+                cells.append(row_total)
                 rows.append(cells)
-            else:
-                logger.info("20111223")
-        
-    if False:
-        for user in User.objects.order_by('username'):
-            persons = only_coached_persons(only_my_persons(Person.objects.all(),user),datetime.date.today())
-            #~ print user, persons1, persons
-            if persons.count():
-                cells = [cgi.escape(unicode(user)),persons.count()] + sums
-                for person in persons:
-                    if person.group is not None:
-                        cells[pg2col[person.group.pk]] += 1
-                rows.append(cells)
+    rows.append(totals)
         
     s = ''
     for row in rows:
@@ -891,7 +885,6 @@ def persons_by_user(ui,requesting_user):
         s += ''.join(['<td align="center" valign="middle" bgcolor="#eeeeee">%s</td>' % cell for cell in row])
         s += '</tr>'
     s = '<table cellspacing="3px" bgcolor="#ffffff" width="100%%"><tr>%s</tr></table>' % s
-    
     s = '<div class="htmlText">%s</div>' % s
     return s
     
