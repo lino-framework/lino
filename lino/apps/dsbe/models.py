@@ -806,6 +806,10 @@ def only_my_persons(qs,user):
     return qs.filter(models.Q(coach1__exact=user) | models.Q(coach2__exact=user))
 
 class MyPersons(Persons):
+    """
+    Show only persons menaged by the requesting user (or another user, 
+    specified via :attr:`lino.ui.requests.URL_PARAMS_SUBST_USER`).
+    """
     #~ app_label = 'contacts'
     use_as_default_report = False
     label = _("My coached Persons")

@@ -2,9 +2,13 @@
 ========
 
 
-- Table.url_params
+- Worked on new concept `TableRequest.subst_user`, needed for 
+  :func:`lino.apps.dsbe.models.persons_by_user` to provide 
+  links to :class:`lino.apps.dsbe.models.MyPersons` requests for *other* users.
 
 - A little bug: TypeError "unbound method get_handle() must be called 
   with Persons instance as first argument (got ExtUI instance instead)" 
   in `reports.py`, line 615 
   when trying to return the choices for a ForeignKey to Person.
+  Unit test :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test14`.
+  

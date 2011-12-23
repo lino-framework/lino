@@ -19,9 +19,6 @@ Mandatory argument is the path to your TIM data directory.
 
 """
 
-import logging
-logger = logging.getLogger(__name__)
-
 import os
 import sys
 import datetime
@@ -155,18 +152,12 @@ def country2kw(row,kw):
             city = City(zip_code=zip_code,name=zip_code,country=country)
             city.save()
             kw.update(city=city)
-            #~ logger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
+            #~ dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
         except City.MultipleObjectsReturned,e:
             dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
       
 def par2person(row,person):
     person.is_active = iif(row['IDPRT']=='I',False,True)
-    if row.has_key('ATTRIB') and row['ATTRIB']:
-        logger.info("20111223 %r",row['ATTRIB'])
-        if "N" in row['ATTRIB']:
-            person.newcomer = True
-        if "A" in row['ATTRIB']:
-            person.is_deprecated = True
     if row['IDPRT'] == 'S':
         person.is_cpas = True
     elif row['IDPRT'] == 'A':
@@ -236,7 +227,7 @@ def try_full_clean(i):
 def load_dbf(dbpath,tableName,load):
     fn = os.path.join(dbpath,'%s.DBF' % tableName)
     f = dbfreader.DBFFile(fn,codepage="cp850")
-    logger.info("Loading %d records from %s...",len(f),fn)
+    dblogger.info("Loading %d records from %s...",len(f),fn)
     f.open()
     for dbfrow in f:
         i = load(dbfrow)

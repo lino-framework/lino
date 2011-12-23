@@ -23,6 +23,8 @@ with the following fixtures:
 import logging
 logger = logging.getLogger(__name__)
 
+import pprint
+
 from django.db.utils import IntegrityError
 from django.conf import settings
 from django.utils.encoding import force_unicode
@@ -968,8 +970,8 @@ def test16(self):
     See :doc:`/blog/2011/1223`.
     """
     cases = [
-      ['root', 3],
-      ['user', 2],
+      ['root', 4],
+      ['user', 3],
     ]
     for case in cases:
         url = '/api/dsbe/MyPersons?fmt=json&limit=30&start=0&su=%s' % case[0]
@@ -978,10 +980,32 @@ def test16(self):
         self.assertEqual(result['count'],case[1])
         
     cases = [
-      ['dsbe/Companies', 12],
+      ['dsbe/Companies', 24],
+      ['dsbe/Persons', 70],
+      ['dsbe/AllPersons', 74],
+      ['dsbe/AllContacts', 101],
+      ['dsbe/Courses', 4],
+      ['dsbe/CourseProviders', 3],
+      ['dsbe/CourseOffers', 4],
+      ['countries/Countries', 6],
+      ['notes/Notes', 6],
+      ['isip/Contracts', 2],
+      ['jobs/JobProviders', 3],
+      ['jobs/Jobs', 3],
+      ['jobs/Contracts', 7], # one more than after fixture because of test12()
+      ['jobs/Candidatures', 7],
+      ['jobs/Studies', 3],
+      ['cal/Events', 60],
+      ['cal/Tasks', 9],
+      ['cal/Priorities', 10],
+      ['dsbe/MyNotes', 3],
+      ['properties/PropGroups', 4],
     ]
     for case in cases:
         url = '/api/%s?fmt=json&limit=30&start=0' % case[0]
-        response = self.client.get(url)
+        response = self.client.get(url,REMOTE_USER='root')
         result = self.check_json_result(response,'count rows gc_choices title')
-        self.assertEqual(result['count'],case[1])
+        if result['count'] != case[1]:
+            logger.warning("%s",pprint.pformat(result['rows']))
+        self.assertEqual(result['count'],case[1],
+            "%s got %d rows instead of %d" % (case[0],result['count'],case[1]))

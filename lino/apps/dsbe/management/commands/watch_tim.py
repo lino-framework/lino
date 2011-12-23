@@ -213,6 +213,13 @@ class PAR(Controller):
         )
         ADR_applydata(obj,data) # ,**mapper)
         #~ kw.update(street2kw(join_words(data['RUE'],
+        
+        #~ dblogger.info("20111223 %r",data)
+        if data.has_key('ATTRIB'):
+            obj.newcomer = ("N" in data['ATTRIB'])
+            #~ obj.is_deprecated = ("A" in data['ATTRIB'] or "W" in data['ATTRIB'])
+            obj.is_deprecated = ("W" in data['ATTRIB'])
+        
         if obj.__class__ is Person:
             par2person(data,obj)
             mapper.update(title='ALLO')
@@ -453,7 +460,7 @@ def watch(data_dir):
         try:
             os.rename(infile,watching)
         except Exception,e:
-            dblogger.debug("Could not rename %s to %s",infile,watching)
+            dblogger.debug("Could not rename %s to %s: %s",infile,watching,e)
             return
     dblogger.info("Processing file %s",watching)
     fd_watching = codecs.open(watching,'r',encoding='cp850')

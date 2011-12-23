@@ -177,7 +177,7 @@ def objects():
     #~ Contact = resolve_model('contacts.Contact')
     Role = resolve_model('contacts.Role')
     #~ Link = resolve_model('links.Link')
-    Contract = resolve_model('jobs.Contract')
+    #~ Contract = resolve_model('jobs.Contract')
     JobProvider = resolve_model('jobs.JobProvider')
     Note = resolve_model('notes.Note')
     User = resolve_model('users.User')

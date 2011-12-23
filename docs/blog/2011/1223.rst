@@ -1,10 +1,26 @@
 20111223
 ========
 
-All rows of :func:`lino.apps.dsbe.models.persons_by_user` 
-are now clickable.
-This was a little challenge since it required a new 
-concept of "substitute user":
-lino.core.table.TableRequest.subst_user
-lino.ui.requests.URL_PARAM_SUBST_USER
-lino.mixins.AutoUser
+- All rows of :func:`lino.apps.dsbe.models.persons_by_user` 
+  are now clickable.
+  This was a little challenge since it required a new 
+  concept of "substitute user":
+  :func:`lino.apps.dsbe.models.persons_by_user`
+  :attr:`lino.core.table.TableRequest.subst_user`
+  :attr:`lino.ui.requests.URL_PARAM_SUBST_USER`
+  :attr:`lino.mixins.AutoUser`
+  
+- Fixed a bug in :term:`watch_tim`: 
+  Flags `newcomer` and `is_deprecated` were not correctly synchronized.
+  
+- More unit tests: :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test15`
+  and :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test16`.  
+  
+  
+- Got Christmas wishes that use some (extended) ASCII art::
+
+    „°*._██_*。*./ .˛* .˛.*.★* *★ 。* Ich wünsche Euch´¯˜"*°´¯˜"*°
+    ˛. (´• ̮•)*˛°*/.♫.♫*˛.* ˛_Π_____. * ˛* wunderschöne*。**。*
+    .°( . • . ) ˛°./• '♫ ' •.˛*./______/~＼*. ˛Weihnachtstage & einen .★* *★*。*
+    *(...'•'.. ) *˛╬╬╬╬╬˛｜田田 ｜門｜╬╬╬╬ guten Rutsch !。*
+    ¯˜"*°••°*"˜¯`´¯˜"*°••°*"˜¯` ••°*"˜¯`´¯˜"*°••°*"˜¯`´¯˜"*°••°*"˜¯`´¯ “  
