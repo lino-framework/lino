@@ -133,6 +133,14 @@ Short-term
 Medium-term
 -----------
 
+#.  Ich gebe zu bedenken, dass wir den Begriff "aktiv" dann demnächst in 
+    zwei verschiedenen Bedeutungen verwenden:
+    (a) Checkbox "aktiv" angeschaltet (Feld wird aus TIM importiert) 
+    (b) einer aktiven Integrationsphase zugewiesen
+    Ich könnte z.B. das aus TIM importierte "aktiv" umbenennen 
+    nach "versteckt" (und bei der Migration die Werte umkehren). 
+    Lohnt sich die Arbeit?
+
 #.  Links to :class:`lino.dd.Table` don't work. 
     Must say :class:`lino.core.table.Table`
 

@@ -7,6 +7,10 @@ Sichtbare Änderungen
 - (bugfix) eID-Kartenart (card_type) war bei importierten Partnern 
   nicht schreibgeschützt. Behoben.
 
+- (bugfix) Stundensatz einer Stelle: 
+  Hier konnte man keine Nachkommastellen eingeben. Behoben.
+  New Lino configuration attribute :attr:`lino.Lino.decimal_separator`.  
+  
 - Neue Kolonnen "Aktive Akten" und "Komplette Akten" in der 
   Übersicht 
   :func:`Klienten pro Benutzer <lino.apps.dsbe.models.persons_by_user>`.
@@ -22,30 +26,6 @@ Sichtbare Änderungen
 - N.B.: Lino macht momentan immer höchstens 24 automatische Auswertungstermine.
   Das ist ein hardcodierter Grenzwert, den ich auf Wunsch auch (a) ändern oder 
   gar (b) konfigurierbar machen kann.
-  
-- Stundensatz einer Stelle: 
-  Hier konnte man keine Nachkommastellen eingeben.
-  Behoben.
-  New Lino configuration attribute :attr:`lino.Lino.decimal_separator`.  
-  
-  
-- Ich gebe zu bedenken, dass wir den Begriff "aktiv" momentan in 
-  mindestens zwei verschiedenen Bedeutungen verwenden:
-  
-  - Checkbox "aktiv" angeschaltet (Feld wird aus TIM importiert) 
-  - einer aktiven Integrationsphase zugewiesen
-  
-  Gibt es für euch in der Praxis einen Unterschied zwischen "aktiv" 
-  und "begleitet"?
-  
-- Der Begriff "Meine Leute" hat den Nachteil, dass es "Leute" nicht 
-  in der Einzahl gibt. Deshalb habe ich begonnen, stattdessen "Meine
-  Klienten" zu schreiben. Einverstanden?  
-  
-- Und wie soll ich die Klienten nennen, die ihr mit 
-  "Komplette Akte" betitelt habt?
-  Also das sind die Klienten, bei denen der "Begleiter 1" ein 
-  DSBE-Mitarbeiter. En attendant heißt diese Liste "Komplette Klienten".
   
 
 
