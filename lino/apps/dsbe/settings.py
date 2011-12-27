@@ -118,7 +118,7 @@ class Lino(Lino):
         m.add_action('uploads.MyUploads')
         m.add_action('lino.MyTextFieldTemplates')
 
-        m.add_instance_action(user,label="My user preferences")
+        #~ m.add_instance_action(user,label="My user preferences")
 
         m = main.add_menu("courses",_("Courses"))
         m.add_action('dsbe.CourseProviders')

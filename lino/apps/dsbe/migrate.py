@@ -813,8 +813,16 @@ Needs manual adaption of dpy file:
   
     return '1.3.0'
     
-def migrate_from_1_3_0(globals_dict):
-    return '1.3.1'
+def migrate_from_1_3_0(globals_dict): return '1.3.1'
+  
+def migrate_from_1_3_1(globals_dict): return '1.3.2'
+  
+def migrate_from_1_3_2(globals_dict):
+    """
+    Needs db migration because of new fields 
+    `isip.ExamPolicy.every_unit` and `dsbe.PersonGroup.active`
+    """
+    return '1.3.3'
   
 def install(globals_dict):
     """

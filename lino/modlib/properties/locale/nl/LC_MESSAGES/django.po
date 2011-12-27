@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-18 09:07+0000\n"
+"POT-Creation-Date: 2011-12-27 20:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,62 +17,62 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:73 .\models.py:158 .\models.py:196
+#: .\models.py:72 .\models.py:157 .\models.py:195
 msgid "Property Type"
 msgstr ""
 
-#: .\models.py:74
+#: .\models.py:73
 msgid "Property Types"
 msgstr ""
 
-#: .\models.py:80
+#: .\models.py:79
 msgid "Choices List"
 msgstr ""
 
-#: .\models.py:83
+#: .\models.py:82
 msgid "default value"
 msgstr ""
 
-#: .\models.py:91
+#: .\models.py:90
 msgid "Limit to choices"
 msgstr ""
 
-#: .\models.py:96
+#: .\models.py:95
 msgid "Multiple choices"
 msgstr ""
 
-#: .\models.py:154
+#: .\models.py:153
 msgid "Property Choice"
 msgstr ""
 
-#: .\models.py:155
+#: .\models.py:154
 msgid "Property Choices"
 msgstr ""
 
-#: .\models.py:159 .\models.py:223
+#: .\models.py:158 .\models.py:222
 msgid "Value"
 msgstr ""
 
-#: .\models.py:160
+#: .\models.py:159
 msgid "Designation"
 msgstr ""
 
-#: .\models.py:178 .\models.py:195
+#: .\models.py:177 .\models.py:194
 msgid "Property Group"
 msgstr ""
 
-#: .\models.py:179
+#: .\models.py:178
 msgid "Property Groups"
 msgstr ""
 
-#: .\models.py:191 .\models.py:221
+#: .\models.py:190 .\models.py:220
 msgid "Property"
 msgstr ""
 
-#: .\models.py:192
+#: .\models.py:191
 msgid "Properties"
 msgstr ""
 
-#: .\models.py:219
+#: .\models.py:218
 msgid "Property group"
 msgstr ""

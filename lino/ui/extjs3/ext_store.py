@@ -426,6 +426,17 @@ class DisableEditingStoreField(SpecialStoreField):
             #~ return v
         #~ return extract_summary(v)
   
+class DecimalStoreField(StoreField):
+    def __init__(self,field,**kw):
+        kw['type'] = 'float'
+        StoreField.__init__(self,field,**kw)
+        
+    def parse_form_value(self,v,obj):
+        if '.' in v and ',' in v:
+            raise Exception("Invalid decimal value %r" % v)
+        return v.replace(',','.')
+
+  
 class BooleanStoreField(StoreField):
     """
     This class wouldn't be necessary if Django's 
@@ -741,6 +752,8 @@ class Store:
             #~ return DateStoreField(fld,self.report.date_format)
         if isinstance(fld,models.BooleanField):
             return BooleanStoreField(fld)
+        if isinstance(fld,models.DecimalField):
+            return DecimalStoreField(fld)
         #~ if isinstance(fld,models.TextField):
             #~ return TextStoreField(fld)
         if isinstance(fld,models.AutoField):

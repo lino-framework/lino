@@ -1,0 +1,22 @@
+20111227
+========
+
+
+- Neue Kolonnen "Aktive Akten" und "Komplette Akten" in der 
+  Übersichtstabelle :func:`Klienten pro Benutzer 
+  <lino.apps.dsbe.models.persons_by_user>`.
+
+
+- The parameters :attr:`lino.core.table.Table.filter` and 
+  :attr:`lino.core.table.Table.exclude` are no longer expected to be 
+  `dict` objects, but `models.Q` objects.
+  
+- New field `PersonGroup.active` used in 
+  :func:`lino.apps.dsbe.models.persons_by_user`.
+  
+- Decimal fields were not handled correctly. 
+  It was not possible to enter decimal (non-integer) values even 
+  if `decimal_places` was set to 2.
+  New Lino configuration attribute :attr:`lino.Lino.decimal_separator`.
+  
+Check-in wegen Feierabend.  

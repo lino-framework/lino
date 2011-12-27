@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-18 09:07+0000\n"
+"POT-Creation-Date: 2011-12-27 20:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,46 +17,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\models.py:42
+#: .\models.py:41
 msgid "Link Type"
 msgstr ""
 
-#: .\models.py:43
+#: .\models.py:42
 msgid "Link Types"
 msgstr ""
 
-#: .\models.py:49
+#: .\models.py:48
 msgid "(a type)"
 msgstr ""
 
-#: .\models.py:54
+#: .\models.py:53
 msgid "(b type)"
 msgstr ""
 
-#: .\models.py:67
+#: .\models.py:66
 msgid "Link"
 msgstr ""
 
-#: .\models.py:68
+#: .\models.py:67
 msgid "Links"
 msgstr ""
 
-#: .\models.py:78
+#: .\models.py:77
 msgid "(a object)"
 msgstr ""
 
-#: .\models.py:82
+#: .\models.py:81
 msgid "(b object)"
 msgstr ""
 
-#: .\models.py:178
+#: .\models.py:177
 msgid "Links from this"
 msgstr ""
 
-#: .\models.py:209
+#: .\models.py:208
 msgid "Links to this"
 msgstr ""
 
-#: .\models.py:217 .\models.py:221
+#: .\models.py:216 .\models.py:220
 msgid "~Links"
 msgstr ""

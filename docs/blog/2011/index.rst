@@ -348,6 +348,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`22 <1222>`
   :doc:`23 <1223>`
   |br|  	
+  26
+  :doc:`27 <1227>`
 
 ===== ===== =====
 |Jan| |Feb| |Mar|

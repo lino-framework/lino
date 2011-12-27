@@ -96,12 +96,12 @@ class PriceField(models.DecimalField):
         defaults.update(kwargs)
         super(PriceField, self).__init__(*args, **defaults)
         
-    def formfield(self, **kwargs):
-        fld = super(PriceField, self).formfield(**kwargs)
-        # display size is smaller than full size:
-        fld.widget.attrs['size'] = "6"
-        fld.widget.attrs['style'] = "text-align:right;"
-        return fld
+    #~ def formfield(self, **kwargs):
+        #~ fld = super(PriceField, self).formfield(**kwargs)
+        #~ # display size is smaller than full size:
+        #~ fld.widget.attrs['size'] = "6"
+        #~ fld.widget.attrs['style'] = "text-align:right;"
+        #~ return fld
         
 class MyDateField(models.DateField):
         

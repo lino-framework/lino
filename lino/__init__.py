@@ -450,6 +450,14 @@ class Lino(object):
     See also :doc:`/blog/2011/0901`.
     """
     
+    #~ decimal_separator = '.'
+    decimal_separator = ','
+    """
+    Set this to either ``'.'`` or ``','`` to define wether to use 
+    comma or dot as decimal separator when entering a `DecimalField`.
+    """
+
+    
     time_format_strftime = '%H:%M'
     time_format_extjs = 'H:i'
     

@@ -180,11 +180,15 @@ def objects():
     update_site_config(driving_licence_upload_type = p)
     
     
-    
-    exam_policy = Instantiator('isip.ExamPolicy','every').build
+    from lino.modlib.cal.models import DurationUnit
+
+    exam_policy = Instantiator('isip.ExamPolicy','every',every_unit=DurationUnit.months).build
     yield exam_policy(1,**babel_values('name',en='every month',de='monatlich',fr="mensuel"))
     yield exam_policy(2,**babel_values('name',en='every 2 months',de='zweimonatlich',fr="bimensuel"))
     yield exam_policy(3,**babel_values('name',en='every 3 months',de='alle 3 Monate',fr="tous les 3 mois"))
+    exam_policy = Instantiator('isip.ExamPolicy','every',every_unit=DurationUnit.weeks).build
+    yield exam_policy(2,**babel_values('name',en='every 2 weeks',de='zweiwöchentlich',fr="hebdomadaire"))
+    exam_policy = Instantiator('isip.ExamPolicy','every').build
     yield exam_policy(0,**babel_values('name',en='other',de='andere',fr="autre"))
         
     #~ def create_dsbe_aidtype(id,name,name_fr):

@@ -425,14 +425,14 @@ def test08(self):
     #~ print "Person.object.all()", qs
     qs = only_my_persons(qs,u)
     #~ print "only_my_persons()", qs
-    self.assertEqual(qs.count(),4)
+    self.assertEqual(qs.count(),5)
     qs = only_coached_persons(qs,settings.LINO.demo_date())
     #~ qs = only_coached_persons(qs,i2d(20100901))
     #~ print "only_coached_persons(20100901)", qs
     self.assertEqual(qs.count(),3)
     #~ qs = MyPersons.request(user=)
     got = [unicode(p) for p in qs]
-    expected = [u'Marc CHANTRAINE (124)', u'Erna ÄRGERLICH (171)', u'Emil EIERSCHAL (177)']
+    expected = [u'Charlotte COLLARD (122)', u'Erna ÄRGERLICH (171)', u'Emil EIERSCHAL (177)']
     self.assertEqual(got,expected)
     
     

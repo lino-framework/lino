@@ -255,7 +255,7 @@ class LayoutElement(VisibleComponent):
     stored = False
     ext_name = None
     ext_suffix = ""
-    data_type = None 
+    #~ data_type = None 
     filter_type = None
     gridfilters_settings = None
     parent = None # will be set by Container
@@ -671,7 +671,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
 class TimeFieldElement(FieldElement):
     value_template = "new Lino.TimeField(%s)"
     #~ xtype = 'timefield'
-    data_type = 'time' # for store column
+    #~ data_type = 'time' # for store column
     sortable = True
     preferred_width = 8
     #~ filter_type = 'time'
@@ -695,7 +695,7 @@ class DateTimeFieldElement(FieldElement):
 class DateFieldElement(FieldElement):
     value_template = "new Lino.DateField(%s)"
     #~ xtype = 'datefield'
-    data_type = 'date' # for store column
+    #~ data_type = 'date' # for store column
     sortable = True
     preferred_width = 8
     filter_type = 'date'
@@ -740,7 +740,7 @@ class IntegerFieldElement(FieldElement):
     xtype = 'numberfield'
     sortable = True
     preferred_width = 5
-    data_type = 'int' 
+    #~ data_type = 'int' 
 
 class IncompleteDateFieldElement(CharFieldElement):
     preferred_width = 10
@@ -760,7 +760,7 @@ class DecimalFieldElement(FieldElement):
     gridfilters_settings = dict(type='numeric')
     xtype = 'numberfield'
     sortable = True
-    data_type = 'float' 
+    #~ data_type = 'float' 
     #~ grid_column_template = "new Ext.grid.NumberColumn(%s)"
     
     def __init__(self,*args,**kw):
@@ -768,13 +768,28 @@ class DecimalFieldElement(FieldElement):
         self.preferred_width = min(5,self.field.max_digits) \
                 + self.field.decimal_places
                 
+    def get_field_options(self,**kw):
+        kw = FieldElement.get_field_options(self,**kw)
+        if self.field.decimal_places:
+            kw.update(decimalPrecision=self.field.decimal_places)
+            kw.update(decimalSeparator=settings.LINO.decimal_separator)
+        else:
+            kw.update(allowDecimals=False)
+        return kw
+        
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='numbercolumn')
         kw.update(align='right')
-        fmt = "0,000"
-        if self.field.decimal_places > 0:
-            fmt += "." + ("0" * self.field.decimal_places)
+        if settings.LINO.decimal_separator == ',':
+            fmt = "0.000"
+            if self.field.decimal_places > 0:
+                fmt += ',' + ("0" * self.field.decimal_places)
+                fmt += "/i"
+        elif settings.LINO.decimal_separator == '.':
+            fmt = "0,000"
+            if self.field.decimal_places > 0:
+                fmt += '.' + ("0" * self.field.decimal_places)
         kw.update(format=fmt)
         return kw
         
@@ -783,7 +798,7 @@ class DecimalFieldElement(FieldElement):
 class BooleanFieldElement(FieldElement):
   
     xtype = 'checkbox'
-    data_type = 'boolean' 
+    #~ data_type = 'boolean' 
     filter_type = 'boolean'
     gridfilters_settings = dict(type='boolean')
     #~ grid_column_template = "new Ext.grid.BooleanColumn(%s)"

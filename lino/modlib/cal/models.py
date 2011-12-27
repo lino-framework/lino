@@ -474,6 +474,10 @@ class Component(ComponentBase,
                 #~ print "20111014 no update_owned_task on", self
               
         super(Component,self).save(*args,**kw)
+        if self.owner:
+            m = getattr(self.owner,'after_update_owned_instance',None)
+            if m:
+                m(self)
 
 
     def on_user_change(self,request):
@@ -851,7 +855,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     #~ if SKIP_AUTO_TASKS: return 
     if settings.LINO.loading_from_dump: 
         #~ print "20111014 loading_from_dump"
-        return 
+        return None
     #~ if is_deserializing(): return 
     ot = ContentType.objects.get_for_model(owner.__class__)
     if date:
@@ -874,6 +878,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
             #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
             #~ owner.update_owned_task(task)
             obj.save()
+        return obj
     else:
         # delete task if it exists
         try:

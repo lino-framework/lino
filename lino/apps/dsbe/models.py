@@ -27,7 +27,7 @@ import cgi
 import datetime
 
 from django.db import models
-#~ from django.db.models import Q
+from django.db.models import Q
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
@@ -595,7 +595,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         
     @classmethod
     def get_reminders(model,ui,user,today,back_until):
-        q = models.Q(coach1__exact=user) | models.Q(coach2__exact=user)
+        q = Q(coach1__exact=user) | Q(coach2__exact=user)
         
         def find_them(fieldname,today,delta,msg,**linkkw):
             filterkw = { fieldname+'__lte' : today + delta }
@@ -720,7 +720,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
           zip_code city country street street_no street_box 
           birth_date gender birth_place coach1 language 
           phone fax email 
-          card_number card_valid_from card_valid_until
+          card_type card_number card_valid_from card_valid_until
           noble_condition card_issuer
           national_id health_insurance pharmacy 
           bank_account1 bank_account2 
@@ -783,38 +783,72 @@ class PersonsByNationality(AllPersons):
     order_by = "city name".split()
     column_names = "city street street_no street_box addr2 name country language *"
     
-def only_coached_persons(qs,period_from,period_until=None):
+
+
+def unused_only_coached_persons(qs,period_from,period_until=None):
     """
     coached_from and coached_until
     """
     #~ period_from = period_from or datetime.date.today()
     period_until = period_until or period_from
     #~ today = datetime.date.today()
-    Q = models.Q
     qs = qs.filter(Q(coached_until__isnull=False)|Q(coached_from__isnull=False))
     if period_from is not None:
         qs = qs.filter(Q(coached_until__isnull=True)|Q(coached_until__gte=period_from))
     if period_until is not None:
         qs = qs.filter(Q(coached_from__isnull=True)|Q(coached_from__lte=period_until))
     return qs
-    #~ return qs.filter(
-        #~ models.Q(coached_from__isnull=False,coached_from__lte=period_until) | 
-        #~ models.Q(coached_until__isnull=False,coached_until__gte=period_from)
-        #~ )
+  
+def only_coached_persons(qs,*args,**kw):
+    return qs.filter(only_coached_persons_filter(*args,**kw))
+  
+def only_coached_persons_filter(period_from,period_until=None):
+    """
+    coached_from and coached_until
+    """
+    period_until = period_until or period_from
+    filter = Q(coached_until__isnull=False) | Q(coached_from__isnull=False)
+    if period_from is not None:
+        filter = Q(filter,Q(coached_until__isnull=True)|Q(coached_until__gte=period_from))
+    if period_until is not None:
+        filter = Q(filter,(Q(coached_from__isnull=True)|Q(coached_from__lte=period_until)))
+    return filter
   
 def only_my_persons(qs,user):
-    return qs.filter(models.Q(coach1__exact=user) | models.Q(coach2__exact=user))
+    return qs.filter(Q(coach1__exact=user) | Q(coach2__exact=user))
+
+class PersonsByCoach1(Persons):
+    master_key = 'coach1'
+    label = _("Primary clients by coach")
+    
+    def get_title(self,rr):
+        return _("Primary clients of %s") % rr.master_instance
+        
+    def get_request_queryset(self,rr):
+        #~ rr.master_instance = rr.get_user()
+        qs = super(PersonsByCoach1,self).get_request_queryset(rr)
+        #~ only_my_persons(qs,rr.get_user())
+        qs = only_coached_persons(qs,datetime.date.today())
+        #~ qs = qs.filter()
+        #~ print 20111118, 'get_request_queryset', rr.user, qs.count()
+        return qs
+
 
 class MyPersons(Persons):
     """
-    Show only persons menaged by the requesting user (or another user, 
-    specified via :attr:`lino.ui.requests.URL_PARAMS_SUBST_USER`).
+    Show only persons attended 
+    by the requesting user (or another user, 
+    specified via :attr:`lino.ui.requests.URL_PARAMS_SUBST_USER`),
+    either as primary or as secondary attendant.
     """
     #~ app_label = 'contacts'
     use_as_default_report = False
-    label = _("My coached Persons")
-    order_by = ['last_name','first_name']
-    #~ def get_queryset(self):
+    label = _("My clients")
+    #~ order_by = ['last_name','first_name']
+    
+    def get_title(self,rr):
+        return _("Clients of %s") % rr.get_user()
+        
     def get_request_queryset(self,rr):
         qs = super(MyPersons,self).get_request_queryset(rr)
         qs = only_coached_persons(only_my_persons(qs,rr.get_user()),datetime.date.today())
@@ -828,12 +862,23 @@ class MyPersons(Persons):
 
 class MyPersonsByGroup(MyPersons):
     master_key = 'group'
+    def get_title(self,rr):
+        return _("%(phase)s clients of %(user)s") % dict(
+          phase=rr.master_instance, user=rr.get_user())
     
+class MyActivePersons(MyPersons):
+  
+    def get_title(self,rr):
+        return _("Active clients of %s") % rr.get_user()
+    def get_request_queryset(self,rr):
+        qs = super(MyActivePersons,self).get_request_queryset(rr)
+        qs = qs.filter(group__active=True)
+        return qs
  
 
 def persons_by_user(ui,requesting_user):
     """
-    Returns a summary table "Number of coached persons by user and integration phase"
+    Returns a summary table "Number of clients by user and integration phase"
     """
     #~ from django.utils.translation import ugettext as _
     #~ from lino.modlib.users.models import User  
@@ -852,7 +897,11 @@ def persons_by_user(ui,requesting_user):
         totals.append(0)
         pg2col[pg.pk] = len(headers) - 1
     #~ phases.append(None)
+    headers.append(cgi.escape(_("Primary clients")))
+    headers.append(cgi.escape(_("Active clients")))
     headers.append(cgi.escape(_("Total")))
+    totals.append(0)
+    totals.append(0)
     totals.append(0)
         
     rows = [ headers ]
@@ -868,13 +917,18 @@ def persons_by_user(ui,requesting_user):
                 cells = [cgi.escape(unicode(user))] + sums
                 for pg in phases:
                     rr = MyPersonsByGroup.request(ui,master_instance=pg,subst_user=user)
-                    #~ rr = MyPersonsByGroup.request(ui,master_instance=pg,known_values=kv)
                     if rr.total_count:
                         totals[pg2col[pg.pk]] += rr.total_count
                         text = str(rr.total_count)
-                        #~ if rr.user == requesting_user:
                         text = ui.href_to_request(rr,text)
                         cells[pg2col[pg.pk]] = text
+                def yet_another_column(i,rr):
+                    totals[i] += rr.total_count
+                    text = str(rr.total_count)
+                    text = ui.href_to_request(rr,text)
+                    cells.append(text)
+                yet_another_column(-3,PersonsByCoach1.request(ui,master_instance=user))
+                yet_another_column(-2,MyActivePersons.request(ui,subst_user=user))
                 cells.append(row_total)
                 rows.append(cells)
     rows.append(totals)
@@ -968,6 +1022,7 @@ class PersonGroup(models.Model):
     """
     name = models.CharField(_("Designation"),max_length=200)
     ref_name = models.CharField(_("Reference name"),max_length=20,blank=True)
+    active = models.BooleanField(_("Considered active"),default=True)
     #~ text = models.TextField(_("Description"),blank=True,null=True)
     class Meta:
         verbose_name = _("Integration Phase")

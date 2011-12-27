@@ -1217,8 +1217,7 @@ class Table(actors.Actor): #,base.Handled):
                         #~ logger.debug('20111113 Install model method %s.%s to %s',self.model.__name__,name,self)
                         setattr(self.__class__,name,model2report(m))
                         
-        if self.master_key:
-            if self.model is not None:
+            if self.master_key:
                 #~ assert self.model is not None, "%s has .master_key but .model is None" % self
                 #~ self.master = resolve_model(self.master,self.app_label)
                 try:
@@ -1440,10 +1439,6 @@ class Table(actors.Actor): #,base.Handled):
         if self.base_queryset is None:
             self.base_queryset = self.get_queryset()
         qs = self.base_queryset
-        #~ if self.queryset is not None:
-            #~ qs = self.queryset
-        #~ else:
-            #~ qs = self.model.objects.all()
         #~ kw = self.get_filter_kw(rr.master_instance,**rr.params)
         kw = self.get_filter_kw(rr.master_instance)
         if kw is None:
@@ -1452,14 +1447,17 @@ class Table(actors.Actor): #,base.Handled):
             qs = qs.filter(**kw)
 
         if rr.exclude:
-            qs = qs.exclude(**rr.exclude)
+            #~ qs = qs.exclude(**rr.exclude)
+            qs = qs.exclude(rr.exclude)
             
         if self.filter:
-            qs = qs.filter(**self.filter)
+            #~ qs = qs.filter(**self.filter)
+            qs = qs.filter(self.filter)
             
         if rr.filter:
             #~ print rr.filter
-            qs = qs.filter(**rr.filter)
+            #~ qs = qs.filter(**rr.filter)
+            qs = qs.filter(rr.filter)
             
         if rr.known_values:
             d = {}
@@ -1467,7 +1465,8 @@ class Table(actors.Actor): #,base.Handled):
                 if v is None:
                     d[k+"__isnull"] = True
                 else:
-                    d[k+"__exact"] = v
+                    #~ d[k+"__exact"] = v
+                    d[k] = v
                 qs = qs.filter(**d)
                 
         if self.exclude:

@@ -546,13 +546,16 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield langk(u"Ärgerlich Erna",'ger','4','4')
     
     persongroup = Instantiator('dsbe.PersonGroup','name').build
-    pg1 = persongroup(u"Bilan / Détermination Rémobilisation",ref_name='1')
+    #~ pg1 = persongroup(u"Art. 60 § 7",ref_name='1')
+    pg1 = persongroup(u"Bilan",ref_name='1')
     yield pg1
     pg2 = persongroup(u"Préformation",ref_name='2')
     yield pg2
     yield persongroup(u"Formation",ref_name='3')
     yield persongroup(u"Recherche active emplois",ref_name='4')
     yield persongroup(u"Travail",ref_name='4bis')
+    standby = persongroup(u"Standby",ref_name='9',active=False)
+    yield standby
     
     for p in Person.objects.all():
         if p.zip_code == '4700':
@@ -617,10 +620,11 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
 
     p = Person.objects.get(name=u"Chantraine Marc")
     p.birth_date = i2d(19500301)
-    p.coached_from = settings.LINO.demo_date(-10)
+    p.coached_from = settings.LINO.demo_date(10)
     p.coached_until = None
     p.coach1 = User.objects.get(username='root')
     #~ p.coach2 = User.objects.get(username='user')
+    p.group = pg2
     p.gender = Gender.male
     p.save()
 
@@ -631,6 +635,18 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coach1 = User.objects.get(username='user')
     #~ p.coach2 = User.objects.get(username='user')
     p.gender = Gender.female
+    p.group = pg1
+    p.save()
+
+
+    p = Person.objects.get(name=u"Collard Charlotte")
+    p.birth_date = i2d(19800401)
+    p.coached_from = settings.LINO.demo_date(-6*30)
+    p.coached_until = None
+    p.coach1 = User.objects.get(username='root')
+    #~ p.coach2 = User.objects.get(username='user')
+    p.gender = Gender.female
+    p.group = standby
     p.save()
 
 

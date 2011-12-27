@@ -104,6 +104,9 @@ class ExamPolicy(babel.BabelNamed):
     """
     every = models.IntegerField(_("Evaluation every X months"),
         default=0)
+    every_unit = DurationUnit.field(_("Duration unit"),
+        default=DurationUnit.months,
+        blank=True) # iCal:DURATION
     class Meta:
         verbose_name = _("Examination Policy")
         verbose_name_plural = _('Examination Policies')
@@ -251,11 +254,16 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         super(ContractBase,self).full_clean(*args,**kw)
         
 
-    def update_owned_instance(self,task):
+    def update_owned_instance(self,comp):
         #~ mixins.Reminder.update_owned_task(self,task)
         #~ contacts.PartnerDocument.update_owned_task(self,task)
-        task.project = self.person
+        comp.project = self.person
         #~ task.company = self.company
+        
+    def after_update_owned_instance(self,comp):
+        if comp.user_modified:
+            self.save_auto_tasks()
+        
         
     def save(self,*args,**kw):
         super(ContractBase,self).save(*args,**kw)
@@ -264,21 +272,30 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     def save_auto_tasks(self):
         
         if self.user:
-            if self.applies_from and self.exam_policy_id and self.exam_policy.every > 0:
+            if self.applies_from and self.exam_policy_id \
+                and self.exam_policy.every > 0 \
+                and self.exam_policy.every_unit:
                 date = self.applies_from
             else:
                 date = None
             for i in range(24):
                 if date:
-                    date = DurationUnit.months.add_duration(
-                            date,self.exam_policy.every)
+                    date = self.exam_policy.every_unit.add_duration(date,self.exam_policy.every)
+                    #~ date = DurationUnit.months.add_duration(
+                            #~ date,self.exam_policy.every)
                     if self.applies_until and date > self.applies_until:
                         date = None
                 subject = _("Evaluation %d") % (i + 1)
-                update_auto_event(
+                e = update_auto_event(
                   i + 1,
                   self.user,
                   date,subject,self)
+                """
+                if one event has been manually rescheduled, all following events
+                adapt to the new rythm.
+                """
+                if e:
+                    date = e.start_date
                         
             if self.applies_until:
                 date = DurationUnit.months.add_duration(self.applies_until,-1)

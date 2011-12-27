@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-18 09:07+0000\n"
+"POT-Creation-Date: 2011-12-27 20:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,168 +36,168 @@ msgstr ""
 msgid "Estonian"
 msgstr ""
 
-#: .\__init__.py:716 .\templates\500.html.py:4 .\templates\base.html.py:26
+#: .\__init__.py:726 .\templates\500.html.py:4 .\templates\base.html.py:26
 msgid "Home"
 msgstr ""
 
-#: .\models.py:58
+#: .\models.py:56
 msgid "Default build method"
 msgstr ""
 
-#: .\models.py:68 .\models.py:153
+#: .\models.py:66 .\models.py:152
 msgid "Global Site Parameters"
 msgstr ""
 
-#: .\models.py:104
+#: .\models.py:102
 msgid "Data Control Listing"
 msgstr ""
 
-#: .\models.py:131
+#: .\models.py:129
 msgid "Text Field Template"
 msgstr ""
 
-#: .\models.py:132
+#: .\models.py:130
 msgid "Text Field Templates"
 msgstr ""
 
-#: .\models.py:134 .\utils\babel.py:347
+#: .\models.py:132 .\utils\babel.py:348
 msgid "Designation"
 msgstr ""
 
-#: .\models.py:135
+#: .\models.py:133
 msgid "Description"
 msgstr ""
 
-#: .\models.py:137
+#: .\models.py:135
 msgid "Template Text"
 msgstr ""
 
-#: .\models.py:151
+#: .\models.py:149
 msgid "~Site"
 msgstr ""
 
-#: .\reports.py:361
-msgid "Calendar"
-msgstr ""
-
-#: .\reports.py:421
-msgid "Detail"
-msgstr ""
-
-#: .\reports.py:431
-msgid "New"
-msgstr ""
-
-#: .\reports.py:436
-#, python-format
-msgid "Insert into %s"
-msgstr ""
-
-#: .\reports.py:441
-msgid "Duplicate"
-msgstr ""
-
-#: .\reports.py:460
-msgid "Delete"
-msgstr ""
-
-#: .\reports.py:468 .\reports.py:473
-msgid "Save"
-msgstr ""
-
-#: .\reports.py:645
-#, python-format
-msgid "User %(user)s cannot view %(report)s."
-msgstr ""
-
-#: .\reports.py:905
-msgid "Yes"
-msgstr ""
-
-#: .\reports.py:905
-msgid "No"
-msgstr ""
-
-#: .\reports.py:1239
-#, python-format
-msgid "%(details)s of %(master)s"
-msgstr ""
-
-#: .\core\kernel.py:235
+#: .\core\kernel.py:233
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: .\mixins\__init__.py:41
+#: .\core\table.py:367
+msgid "Calendar"
+msgstr ""
+
+#: .\core\table.py:427
+msgid "Detail"
+msgstr ""
+
+#: .\core\table.py:437
+msgid "New"
+msgstr ""
+
+#: .\core\table.py:442
+#, python-format
+msgid "Insert into %s"
+msgstr ""
+
+#: .\core\table.py:447
+msgid "Duplicate"
+msgstr ""
+
+#: .\core\table.py:466
+msgid "Delete"
+msgstr ""
+
+#: .\core\table.py:474 .\core\table.py:479
+msgid "Save"
+msgstr ""
+
+#: .\core\table.py:756
+#, python-format
+msgid "User %(user)s cannot view %(report)s."
+msgstr ""
+
+#: .\core\table.py:1083
+msgid "Yes"
+msgstr ""
+
+#: .\core\table.py:1083
+msgid "No"
+msgstr ""
+
+#: .\core\table.py:1418
+#, python-format
+msgid "%(details)s of %(master)s"
+msgstr ""
+
+#: .\mixins\__init__.py:46
 msgid "user"
 msgstr ""
 
-#: .\mixins\__init__.py:60
+#: .\mixins\__init__.py:67
 #, python-format
 msgid "My %s"
 msgstr ""
 
-#: .\mixins\__init__.py:114
+#: .\mixins\__init__.py:121
 msgid "Seq.No."
 msgstr ""
 
 #. Translators: will also be concatenated with '(type)' '(object)'
-#: .\mixins\__init__.py:143
+#: .\mixins\__init__.py:150
 msgid "Owned by"
 msgstr ""
 
-#: .\mixins\__init__.py:158
+#: .\mixins\__init__.py:165
 msgid "(type)"
 msgstr ""
 
-#: .\mixins\__init__.py:163
+#: .\mixins\__init__.py:170
 msgid "(object)"
 msgstr ""
 
-#: .\mixins\printable.py:490 .\mixins\printable.py:810
+#: .\mixins\printable.py:489 .\mixins\printable.py:809
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:511
+#: .\mixins\printable.py:510
 #, python-format
 msgid "%s printable has been built."
 msgstr ""
 
-#: .\mixins\printable.py:513
+#: .\mixins\printable.py:512
 #, python-format
 msgid "Reused %s printable from cache."
 msgstr ""
 
-#: .\mixins\printable.py:575
+#: .\mixins\printable.py:574
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:601
+#: .\mixins\printable.py:600
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:610
+#: .\mixins\printable.py:609
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:646
+#: .\mixins\printable.py:645
 msgid "must build"
 msgstr ""
 
-#: .\mixins\printable.py:795
+#: .\mixins\printable.py:794
 msgid "Date"
 msgstr ""
 
-#: .\mixins\printable.py:847
+#: .\mixins\printable.py:846
 msgid "Preview"
 msgstr ""
 
-#: .\mixins\printable.py:861
+#: .\mixins\printable.py:860
 #, python-format
 msgid "Initiate Listing «%s»"
 msgstr ""
 
-#: .\mixins\printable.py:870
+#: .\mixins\printable.py:869
 #, python-format
 msgid "Listings «%s»"
 msgstr ""
@@ -206,19 +206,19 @@ msgstr ""
 msgid "Send email"
 msgstr ""
 
-#: .\mixins\uploadable.py:41
+#: .\mixins\uploadable.py:40
 msgid "upload"
 msgstr ""
 
-#: .\mixins\uploadable.py:42
+#: .\mixins\uploadable.py:41
 msgid "uploads"
 msgstr ""
 
-#: .\mixins\uploadable.py:44
+#: .\mixins\uploadable.py:43
 msgid "File"
 msgstr ""
 
-#: .\mixins\uploadable.py:47
+#: .\mixins\uploadable.py:46
 msgid "MIME type"
 msgstr ""
 
@@ -256,13 +256,13 @@ msgstr ""
 msgid "Django administration"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:648 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:666 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:801
+#: .\ui\extjs3\ext_elems.py:834
 msgid "show"
 msgstr ""
 
@@ -278,57 +278,57 @@ msgstr ""
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:275 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
+#: .\ui\extjs3\ext_ui.py:281 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1042 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
+#: .\ui\extjs3\ext_ui.py:920 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1105 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs3\ext_ui.py:983 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1108 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs3\ext_ui.py:986 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1123 .\ui\extjs3\ext_ui.py:1150
+#: .\ui\extjs3\ext_ui.py:1001 .\ui\extjs3\ext_ui.py:1028
 #: .\ui\extjs4\ext_ui.py:827 .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632
 #: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1177
+#: .\ui\extjs3\ext_ui.py:1055
 #, python-format
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1398 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1286 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1482
+#: .\ui\extjs3\ext_ui.py:1374
 #, python-format
 msgid "Action \"%(action)s\" failed for %(record)s:"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1486
+#: .\ui\extjs3\ext_ui.py:1378
 msgid "An error report has been sent to the system administrator."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1837 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1740 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1848 .\ui\extjs3\ext_ui.py:1851
+#: .\ui\extjs3\ext_ui.py:1751 .\ui\extjs3\ext_ui.py:1754
 #: .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr ""
@@ -464,7 +464,7 @@ msgstr ""
 msgid "Choices for %s"
 msgstr ""
 
-#: .\utils\babel.py:361
+#: .\utils\babel.py:362
 msgid "Language"
 msgstr ""
 
