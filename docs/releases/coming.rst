@@ -23,10 +23,7 @@ Sichtbare Änderungen
   passt Lino nun alle folgenden Termine automatisch dem neuen Datum an
   (zumindest die, die noch nicht bestätigt oder sonstwie bearbeitet sind).
   
-- N.B.: Lino macht momentan immer höchstens 24 automatische Auswertungstermine.
-  Das ist ein hardcodierter Grenzwert, den ich auf Wunsch auch (a) ändern oder 
-  gar (b) konfigurierbar machen kann.
-  
+ 
 
 
 Upgrade instructions

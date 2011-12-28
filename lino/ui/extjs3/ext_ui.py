@@ -1639,6 +1639,8 @@ tinymce.init({
         if quick_search is not None:
             qs = table.add_quick_search_filter(qs,quick_search)
             
+        count = qs.count()
+            
         offset = request.GET.get(ext_requests.URL_PARAM_START,None)
         if offset:
             qs = qs[int(offset):]
@@ -1649,7 +1651,8 @@ tinymce.init({
             qs = qs[:int(limit)]
             
         rows = [ row2dict(row,{}) for row in qs ]
-        return json_response_kw(count=len(rows),rows=rows) 
+        return json_response_kw(count=count,rows=rows) 
+        #~ return json_response_kw(count=len(rows),rows=rows) 
         #~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
         
 

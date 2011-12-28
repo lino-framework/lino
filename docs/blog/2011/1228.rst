@@ -1,0 +1,5 @@
+20111228
+========
+
+- Bugfix: Comboboxes always showed "Page 1 of 1", even if there were more 
+  than one pageful of choices.
