@@ -323,7 +323,8 @@ class Contract(ContractBase):
                 df.append('provider')
             if self.job.contract_type:
                 df.append('type')
-        if self.must_build:
+        #~ if self.must_build:
+        if self.build_time:
             return df
         #~ return df + settings.LINO.CONTRACT_PRINTABLE_FIELDS
         return df + self.PRINTABLE_FIELDS
@@ -678,7 +679,6 @@ class ExperiencesByPerson(Experiences,HistoryByPerson):
     
 
 class Job(SectorFunction):
-#~ class Job(models.Model):
     """
     A work place at some employer
     """
@@ -716,9 +716,11 @@ class Job(SectorFunction):
   
     def disabled_fields(self,request):
         #~ if self.contract_set.count():
-        if self.contract_set.filter(must_build=False).count():
+        #~ if self.contract_set.filter(must_build=False).count():
+        if self.contract_set.filter(build_time__isnull=False).count():
             return ['contract_type','provider']
         return []
+        
         
     #~ @chooser()
     #~ def provider_choices(cls):

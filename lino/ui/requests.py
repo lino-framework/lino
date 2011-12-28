@@ -51,6 +51,8 @@ URL_PARAM_KNOWN_VALUES = 'kv'
 known values
 """
 
+URL_PARAM_ACTION_STEP = "as"
+
 # URL_PARAM_MASTER_GRID = 'mg'
 URL_PARAM_GRIDFILTER = 'filter'
 URL_PARAM_FILTER = 'query'
@@ -81,6 +83,7 @@ URL_PARAMS = [
   #~ 'URL_PARAM_EXPAND',
   #~ 'URL_PARAM_EUSER',
   'URL_PARAM_SUBST_USER',
+  'URL_PARAM_ACTION_STEP',
   #~ 'TEST',
 ]
 

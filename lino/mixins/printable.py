@@ -24,6 +24,7 @@ import sys
 import logging
 import traceback
 import cStringIO
+import datetime
 import glob
 from fnmatch import fnmatch
 
@@ -62,7 +63,6 @@ try:
 except ImportError:
     pyratemp = None
         
-
 def filename_root(elem):
     return elem._meta.app_label + '.' + elem.__class__.__name__
 
@@ -136,13 +136,13 @@ class BuildMethod:
         
     def get_target_name(self,action,elem):
         "return the output filename to generate on the server"
-        if self.use_webdav:
+        if self.use_webdav and settings.LINO.use_davlink:
             return os.path.join(settings.LINO.webdav_root,*self.get_target_parts(action,elem))
         return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
         
     def get_target_url(self,action,elem,ui):
         "return the url that points to the generated filename on the server"
-        if self.use_webdav:
+        if self.use_webdav and settings.LINO.use_davlink:
             return settings.LINO.webdav_url + "/".join(self.get_target_parts(action,elem))
         #~ return settings.MEDIA_URL + "/".join(self.get_target_parts(action,elem))
         return ui.media_url(*self.get_target_parts(action,elem))
@@ -197,9 +197,14 @@ class PisaBuildMethod(DjangoBuildMethod):
         pdf = pisa.pisaDocument(cStringIO.StringIO(html), result,encoding='utf-8')
         pisa.log.removeHandler(h)
         h.close()
-        file(filename,'wb').write(result.getvalue())
+        fd = file(filename,'wb')
+        fd.write(result.getvalue())
+        fd.close()
         if pdf.err:
             raise Exception("pisa.pisaDocument.err is %r" % pdf.err)
+        return os.path.getmtime(filename)
+        
+        
         
 
 class SimpleBuildMethod(BuildMethod):
@@ -246,7 +251,7 @@ class SimpleBuildMethod(BuildMethod):
         if not tplfile:
             raise Exception("No file %s / %s" % (self.get_group(elem),tpl_leaf))
         #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
-        self.simple_build(elem,tplfile,target)
+        return self.simple_build(elem,tplfile,target)
         
     def simple_build(self,elem,tpl,target):
         raise NotImplementedError
@@ -293,6 +298,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ renderer.context.update(restify=debug_restify)
         renderer.run()
         babel.set_language(savelang)
+        return os.path.getmtime(target)
         
 
 class AppyOdtBuildMethod(AppyBuildMethod):
@@ -368,7 +374,10 @@ class RtfBuildMethod(SimpleBuildMethod):
             result = t(**context)
         except pyratemp.TemplateRenderError,e:
             raise Exception(u"%s in %s" % (e,tpl))
-        file(target,'wb').write(result)
+        fd = file(target,'wb')
+        fd.write(result)
+        fd.close()
+        return os.path.getmtime(target)
         
 
 
@@ -461,20 +470,10 @@ class BasePrintAction(dd.RowAction):
         if not filename:
             return
         if os.path.exists(filename):
-            #~ if not elem.must_rebuild_target(filename,self):
-                #~ logger.debug("%s : %s -> %s is up to date",self,elem,filename)
-                #~ return
             logger.info(u"%s %s -> overwrite existing %s.",bm,elem,filename)
             os.remove(filename)
         else:
             makedirs_if_missing(os.path.dirname(filename))
-            
-            #~ dirname = os.path.dirname(filename)
-            #~ if not os.path.isdir(dirname):
-                #~ if settings.LINO.make_missing_dirs:
-                    #~ os.makedirs(dirname)
-                #~ else:
-                    #~ raise Exception("Please create yourself directory %s" % dirname)
         logger.debug(u"%s : %s -> %s", bm,elem,filename)
         return filename
         
@@ -493,7 +492,8 @@ class PrintAction(BasePrintAction):
     #~ needs_selection = True
     
     def before_build(self,bm,elem):
-        if not elem.must_build:
+        #~ if not elem.must_build:
+        if elem.build_time:
             return
         return BasePrintAction.before_build(self,bm,elem)
             
@@ -502,12 +502,19 @@ class PrintAction(BasePrintAction):
         
     def run_(self,request,ui,elem,**kw):
         bm = get_build_method(elem)
-        if elem.must_build:
-            bm.build(self,elem)
-            elem.must_build = False
-            elem.save()
-            kw.update(refresh=True)
-            kw.update(message=_("%s printable has been built.") % elem)
+        #~ if elem.must_build:
+        if not elem.build_time:
+            t = bm.build(self,elem)
+            if t is None:
+                raise Exception("%s : build() returned None?!")
+                #~ kw.update(message=_("%s printable has been built.") % elem)
+            else:
+                elem.build_time = datetime.datetime.fromtimestamp(t)
+                #~ bm.build(self,elem)
+                #~ elem.must_build = False
+                elem.save()
+                kw.update(refresh=True)
+                kw.update(message=_("%s printable has been built.") % elem)
         else:
             kw.update(message=_("Reused %s printable from cache.") % elem)
         url = bm.get_target_url(self,elem,ui)
@@ -575,11 +582,23 @@ class ClearCacheAction(dd.RowAction):
     
     def disabled_for(self,obj,request):
         #~ print "ClearCacheAction.disabled_for()", obj
-        if obj.must_build:
+        #~ if obj.must_build:
+        if not obj.build_time:
             return True
     
     def run(self,rr,elem):
-        elem.must_build = True
+        if elem.get_cache_mtime() != elem.build_time:
+            logger.info("%r != %r", elem.get_cache_mtime(),elem.build_time)
+            rr.confirm(1,
+                _("This will discard all changes in the generated file."),
+                _("Are you sure?"))
+            logger.info("got confirmation")
+        else:
+            logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
+          
+          
+        #~ elem.must_build = True
+        elem.build_time = None
         elem.save()
         return rr.ui.success_response("%s printable cache has been cleared." % elem,refresh=True)
 
@@ -642,9 +661,11 @@ class Printable(object):
   
 class CachedPrintable(models.Model,Printable):
     
-    must_build = models.BooleanField(_("must build"),default=True,editable=False)
+    #~ must_build = models.BooleanField(_("must build"),default=True,editable=False)
+    build_time = models.DateTimeField(_("build time"),null=True,editable=False)
     """
-    For internal use. Users don't need to see this.
+    Timestamp of the built target file. Contains `None` 
+    if no build hasn't been called yet.
     """
     
     class Meta:
@@ -655,13 +676,6 @@ class CachedPrintable(models.Model,Printable):
         #~ call_optional_super(CachedPrintable,cls,'setup_report',rpt)
         rpt.add_action(PrintAction())
         rpt.add_action(ClearCacheAction())
-
-        #~ m = getattr(super(CachedPrintable,cls),'setup_report',None)
-        #~ if m is not None:
-            #~ m(rpt)
-        
-        #~ rpt.add_action(EditTemplateAction(rpt))
-        #~ super(Printable,cls).setup_report(rpt)
 
     def get_print_templates(self,bm,action):
         """Return a list of filenames of templates for the specified build method.
@@ -674,38 +688,24 @@ class CachedPrintable(models.Model,Printable):
             return [ bm.default_template ]
         return [ 'Default' + bm.template_ext ]
           
-    def unused_get_last_modified_time(self):
-        """Return a model-specific timestamp that expresses when 
-        this model instance has been last updated. 
-        Default is to return None which means that existing target 
-        files never get overwritten.
-        
-        """
-        return None
-        
-    def unused_must_rebuild_target(self,filename,pm):
-        """When the target document already exists, 
-        return True if it should be built again (overriding the existing file. 
-        The default implementation is to call :meth:`get_last_modified_time` 
-        and return True if it is newer than the timestamp of the file.
-        """
-        last_modified = self.get_last_modified_time()
-        if last_modified is None:
-            return False
-        mtime = os.path.getmtime(filename)
-        #~ st = os.stat(filename)
-        #~ mtime = st.st_mtime
-        mtime = datetime.datetime.fromtimestamp(mtime)
-        if mtime >= last_modified:
-            return False
-        return True
-      
     def get_build_method(self):
         # TypedPrintable  overrides this
         #~ return 'rtf'
         return settings.LINO.config.default_build_method 
         #~ return settings.LINO.preferred_build_method 
         #~ return 'pisa'
+        
+    def get_cache_mtime(self):
+        # TODO: too stupid that we must instantate an Action here...
+        a = PrintAction()
+        bm = get_build_method(self)
+        filename = bm.get_target_name(a,self)
+        try:
+            t = os.path.getmtime(filename)
+        except OSError,e:
+            return None
+        return datetime.datetime.fromtimestamp(t)
+        
         
 
 class TypedPrintable(CachedPrintable):
@@ -759,17 +759,6 @@ class TypedPrintable(CachedPrintable):
         return self.language
 
 
-#~ class PrintableTypes(dd.Report):
-    #~ column_names = 'name build_method template *'
-
-
-#~ class VolatileModel(models.Model):
-  
-    #~ class Meta:
-        #~ abstract = True
-    
-    #~ def save(self,*args,**kw):
-        #~ raise Exception("This is a VolatileModel!")
 
   
 import cgi

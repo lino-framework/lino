@@ -3,3 +3,61 @@
 
 - Bugfix: Comboboxes always showed "Page 1 of 1", even if there were more 
   than one pageful of choices.
+  
+The "Clear cache" button on a :class:`lino.mixins.printable.CachedPrintable` 
+was a gotcha which potentially had a user delete a WebDAV-edited document.
+Lino needs to protect the user from accidentally deleting their changes. 
+The idea is that Lino asks an additional confirmation 
+"Are you sure you want to discard all changes in the generated file?"
+when the user clicks on "Clear cache" and the document has been edited 
+after Lino generated it.
+
+A first change was relatively easy:
+
+- In :class:`lino.mixins.printable.CachedPrintable`:
+  BooleanField `must_build` has been replaced by a DateTimeField `build_time`.
+  
+A second required change was in fact a long-waiting new feature 
+"action confirmations".
+For application code it is easy: 
+the ``rr.confirm()`` call in the example below will raise an exception 
+if the user answers "No" to the question.
+Here is how this looks in 
+:class:`lino.mixins.printable.ClearCacheAction`::
+
+    def run(self,rr,elem):
+        if elem.get_cache_mtime() != elem.build_time:
+            rr.confirm(1,
+                _("This will discard all changes in the generated file."),
+                _("Are you sure?"))
+          
+        elem.build_time = None
+        elem.save()
+        return rr.ui.success_response("%s printable cache has been cleared." % elem,refresh=True)
+        
+The challenge was how to implement this without using cookies and sessions!
+
+Checkin
+  
+TODO:  
+
+    Test wether the 'contract_type' and 'provider' fields of a jobs.Job 
+    are disabled when some (printed) contract exists.
+
+
+Inserting images using appy pod
+-------------------------------
+
+The following problem appeared today:: 
+
+  Error while evaluating the expression "document(at=self.person.get_image_path(),anchor="as-char")" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "l:\snapshots\appy-0.6.7\appy\pod\renderer.py", line 293, in importDocument
+  res = imp.run()
+  File "l:\snapshots\appy-0.6.7\appy\pod\doc_importers.py", line 224, in run
+  width, height = getSize(self.importPath, self.format)
+  File "l:\snapshots\appy-0.6.7\appy\pod\doc_importers.py", line 190, in getSize
+  return float(x)/pxToCm, float(y)/pxToCm
+  <type 'exceptions.TypeError'>: float() argument must be a string or a number
+
+It was solved by getting the version 0.8.0 from https://launchpad.net/appy

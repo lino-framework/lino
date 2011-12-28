@@ -948,12 +948,24 @@ Lino.delete_selected = function(panel) {
   });
 };
 
-Lino.action_handler = function (panel,on_success,gridmode) {
+Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
   return function (response) {
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
       //~ console.log('Lino.do_action()',action.name,'result is',result);
       if (on_success && result.success) on_success(result);
+      if (on_confirm && result.confirm_message) {
+          var config = {title:"$_('Confirmation')"};
+          config.buttons = Ext.MessageBox.YESNOCANCEL;
+          config.msg = result.confirm_message;
+          config.fn = function(buttonId,text,opt) {
+            if (buttonId == "yes") {
+                on_confirm(panel,undefined,result.step);
+            }
+          }
+          Ext.MessageBox.show(config);
+          return;
+      }
       if (result.message) {
           if (result.alert && ! gridmode) {
               //~ Ext.MessageBox.alert('Alert',result.alert_msg);
@@ -1258,14 +1270,15 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
   return fn(rec);
 };
 
-Lino.row_action_handler = function(actionName) {
-  return function(panel,btn) {
+Lino.row_action_handler = function(actionName,gridmode) {
+  var fn = function(panel,btn,step) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
       var url = panel.get_record_url(rec.id);
       var p = Ext.apply({},panel.get_base_params());
       //~ var p = Ext.apply({},panel.get_master_params());
       p['$ext_requests.URL_PARAM_ACTION_NAME'] = actionName;
+      if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
       //~ p.an = action_name;
       //~ url += "?" + Ext.urlEncode(p);
       //~ window.open(url);
@@ -1273,10 +1286,11 @@ Lino.row_action_handler = function(actionName) {
         method: 'GET',
         url: url,
         params: p,
-        success: Lino.action_handler(panel,function(result){})
+        success: Lino.action_handler(panel,function(result){},gridmode,fn)
       });
     });
-  }
+  };
+  return fn;
 };
 
 Lino.show_detail = function(panel,btn) {

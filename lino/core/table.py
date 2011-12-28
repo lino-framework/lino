@@ -595,6 +595,7 @@ class ActionRequest(object):
     def request2kw(self,ui,**kw):
         return kw
   
+
 class TableRequest(ActionRequest):
     """
     An Action Request on a given Table.
@@ -927,8 +928,11 @@ class TableRequest(ActionRequest):
             mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
             kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
         return kw
-
-      
+        
+    def confirm(self,step,*messages):
+        if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
+            return
+        raise actions.ConfirmationRequired(step,messages)
 
 
 #~ class IterActionRequest(actions.ActionRequest)

@@ -286,7 +286,8 @@ class SalesDocument(
         return self.imode
         
     def disabled_fields(self,request):
-        if self.must_build:
+        #~ if self.must_build:
+        if not self.build_time:
             return []
         return SALES_PRINTABLE_FIELDS
         

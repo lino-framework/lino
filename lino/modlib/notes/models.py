@@ -160,7 +160,8 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
     #~ body_html.return_type = fields.DisplayField(_("Body"))
     
     def disabled_fields(self,request):
-        if self.must_build:
+        #~ if self.must_build:
+        if not self.build_time:
             return []
         return settings.LINO.NOTE_PRINTABLE_FIELDS
 

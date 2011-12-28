@@ -119,3 +119,10 @@ class RedirectAction(Action):
     #~ def get_target_url(self,elem):
         #~ return elem.get_image_url()
       
+
+class ConfirmationRequired(Exception):
+    def __init__(self,step,messages):
+        self.step = step
+        self.messages = messages
+        Exception.__init__(self)
+

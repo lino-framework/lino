@@ -1370,6 +1370,12 @@ tinymce.init({
                 #~ return a.run(ar,elem)
                 try:
                     return a.run(ar,elem)
+                except actions.ConfirmationRequired,e:
+                    r = dict(
+                      success=True,
+                      confirm_message='\n'.join([unicode(m) for m in e.messages]),
+                      step=e.step)
+                    return json_response(r)
                 except Exception,e:
                     msg = _("Action \"%(action)s\" failed for %(record)s:") % dict(
                         action=a,

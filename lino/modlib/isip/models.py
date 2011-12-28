@@ -374,7 +374,8 @@ class Contract(ContractBase):
     recipient = property(get_recipient)
         
     def disabled_fields(self,request):
-        if self.must_build:
+        #~ if self.must_build:
+        if not self.build_time:
             return []
         #~ return df + settings.LINO.CONTRACT_PRINTABLE_FIELDS
         return self.PRINTABLE_FIELDS
