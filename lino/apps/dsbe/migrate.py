@@ -857,6 +857,72 @@ def migrate_from_1_3_2(globals_dict):
       BooleanField `must_build` has been replaced by a DateTimeField `build_time`.
       
     """
+    cal_Event = resolve_model('cal.Event')
+    cal_Guest = resolve_model('cal.Guest')
+    isip_Contract = resolve_model('isip.Contract')
+    jobs_Contract = resolve_model('jobs.Contract')
+    jobs_ContractsSituation = resolve_model('jobs.ContractsSituation')
+    lino_DataControlListing = resolve_model('lino.DataControlListing')
+    mails_Mail = resolve_model('mails.Mail')
+    notes_Note = resolve_model('notes.Note')
+    def create_cal_event(id, user_id, created, modified, owner_type_id, owner_id, project_id, must_build, calendar_id, uid, start_date, start_time, summary, description, access_class_id, sequence, auto_type, user_modified, rset_id, end_date, end_time, transparent, type_id, place_id, priority_id, status_id, duration_value, duration_unit):
+        owner_type_id = new_content_type_id(owner_type_id)
+        obj = cal_Event(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,
+          #~ must_build=must_build,
+          calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,user_modified=user_modified,rset_id=rset_id,end_date=end_date,end_time=end_time,transparent=transparent,type_id=type_id,place_id=place_id,priority_id=priority_id,status_id=status_id,duration_value=duration_value,duration_unit=duration_unit)
+        obj.build_time = obj.get_cache_mtime()
+        return obj
+    globals_dict.update(create_cal_event=create_cal_event)
+    def create_cal_guest(id, must_build, contact_id, language, event_id, role_id, status_id, remark):
+        obj = cal_Guest(id=id,
+          #~ must_build=must_build,
+          contact_id=contact_id,language=language,event_id=event_id,role_id=role_id,status_id=status_id,remark=remark)
+        obj.build_time = obj.get_cache_mtime()
+        return obj
+    globals_dict.update(create_cal_guest=create_cal_guest)
+    def create_isip_contract(id, user_id, must_build, person_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, company_id, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person):
+        obj = isip_Contract(id=id,user_id=user_id,
+          #~ must_build=must_build,
+          person_id=person_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,company_id=company_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)
+        obj.build_time = obj.get_cache_mtime()
+        return obj
+    globals_dict.update(create_isip_contract=create_isip_contract)
+    def create_jobs_contract(id, user_id, must_build, person_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, provider_id, job_id, duration, regime_id, schedule_id, hourly_rate, refund_rate, reference_person, responsibilities, remark):
+        obj = jobs_Contract(id=id,user_id=user_id,
+          #~ must_build=must_build,
+          person_id=person_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,provider_id=provider_id,job_id=job_id,duration=duration,regime_id=regime_id,schedule_id=schedule_id,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)
+        obj.build_time = obj.get_cache_mtime()
+        return obj
+    globals_dict.update(create_jobs_contract=create_jobs_contract)
+    def create_jobs_contractssituation(id, must_build, date, contract_type_id, job_type_id):
+        obj = jobs_ContractsSituation(id=id,
+          #~ must_build=must_build,
+          date=date,contract_type_id=contract_type_id,job_type_id=job_type_id)
+        obj.build_time = obj.get_cache_mtime()
+        return obj
+    globals_dict.update(create_jobs_contractssituation=create_jobs_contractssituation)
+    def create_lino_datacontrollisting(id, must_build, date):
+        obj = lino_DataControlListing(id=id,
+          #~ must_build=must_build,
+          date=date)
+        obj.build_time = obj.get_cache_mtime()
+        return obj
+    globals_dict.update(create_lino_datacontrollisting=create_lino_datacontrollisting)
+    def create_mails_mail(id, must_build, type_id, sender_id, subject, body, received, sent):
+        obj = mails_Mail(id=id,
+          #~ must_build=must_build,
+          type_id=type_id,sender_id=sender_id,subject=subject,body=body,received=received,sent=sent)
+        obj.build_time = obj.get_cache_mtime()
+        return obj
+    globals_dict.update(create_mails_mail=create_mails_mail)
+    def create_notes_note(id, user_id, must_build, person_id, company_id, date, type_id, event_type_id, subject, body, language):
+        obj = notes_Note(id=id,user_id=user_id,
+          #~ must_build=must_build,
+          person_id=person_id,company_id=company_id,date=date,type_id=type_id,event_type_id=event_type_id,subject=subject,body=body,language=language)
+        obj.build_time = obj.get_cache_mtime()
+        return obj
+    globals_dict.update(create_notes_note=create_notes_note)
+    
     
     return '1.3.3'
   

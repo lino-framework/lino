@@ -587,15 +587,15 @@ class ClearCacheAction(dd.RowAction):
             return True
     
     def run(self,rr,elem):
-        if elem.get_cache_mtime() != elem.build_time:
-            logger.info("%r != %r", elem.get_cache_mtime(),elem.build_time)
+        t = elem.get_cache_mtime()
+        if t is not None and t != elem.build_time:
+            #~ logger.info("%r != %r", elem.get_cache_mtime(),elem.build_time)
             rr.confirm(1,
                 _("This will discard all changes in the generated file."),
                 _("Are you sure?"))
-            logger.info("got confirmation")
-        else:
-            logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
-          
+            logger.info("Got confirmation to discard changes in %s", elem.get_cache_filename())
+        #~ else:
+            #~ logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
           
         #~ elem.must_build = True
         elem.build_time = None
@@ -695,11 +695,15 @@ class CachedPrintable(models.Model,Printable):
         #~ return settings.LINO.preferred_build_method 
         #~ return 'pisa'
         
-    def get_cache_mtime(self):
+    def get_cache_filename(self):
         # TODO: too stupid that we must instantate an Action here...
         a = PrintAction()
         bm = get_build_method(self)
-        filename = bm.get_target_name(a,self)
+        return bm.get_target_name(a,self)
+        
+    def get_cache_mtime(self):
+        filename = self.get_cache_filename()
+        if not filename: return None
         try:
             t = os.path.getmtime(filename)
         except OSError,e:

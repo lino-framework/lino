@@ -1,0 +1,5 @@
+20111229
+========
+
+- wrote migration handler :func:`lino.apps.dsbe.migrate.migrate_from_1_3_2` 
+  which sets the new `build_time` fields on existing data.

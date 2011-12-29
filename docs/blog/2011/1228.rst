@@ -4,6 +4,13 @@
 - Bugfix: Comboboxes always showed "Page 1 of 1", even if there were more 
   than one pageful of choices.
   
+- There was also a little bug which struck only on my development server:
+  If `BuildMethod.use_webdav` was True, but :attr:`lino.Lino.use_davlink` not, 
+  then he still used :attr:`lino.Lino.webdav_url` in some places.
+  
+Action confirmations
+--------------------
+  
 The "Clear cache" button on a :class:`lino.mixins.printable.CachedPrintable` 
 was a gotcha which potentially had a user delete a WebDAV-edited document.
 Lino needs to protect the user from accidentally deleting their changes. 
@@ -36,13 +43,22 @@ Here is how this looks in
         return rr.ui.success_response("%s printable cache has been cleared." % elem,refresh=True)
         
 The challenge was how to implement this without using cookies and sessions!
+`Checkin
+<http://code.google.com/p/lino/source/detail?r=04126d584bb61e75e22f42e2bda7511a3bf5e986>`_
 
-Checkin
   
 TODO:  
 
-    Test wether the 'contract_type' and 'provider' fields of a jobs.Job 
-    are disabled when some (printed) contract exists.
+- write migration handler which sets the new `build_time` fields 
+  on existing data.
+- no confirmation needed it mtime is None 
+  (which happens for example when the file doesn't exist)
+- Test wether the 'contract_type' and 'provider' fields of a jobs.Job 
+  are disabled when some (printed) contract exists.
+- Test for possible bugs.
+- Convert the "Delete" method to use the new feature. 
+  It would be good to have applications decide individually whether 
+  and how to confirm before deleting a record.
 
 
 Inserting images using appy pod
