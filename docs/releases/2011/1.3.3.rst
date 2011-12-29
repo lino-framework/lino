@@ -1,0 +1,53 @@
+Version 1.3.3 (29.12.2009)
+==========================
+
+Sichtbare Änderungen
+--------------------
+
+- Bugfix: eID-Kartenart (card_type) war bei importierten Partnern 
+  nicht schreibgeschützt. Behoben.
+
+- Bugfix: Stundensatz einer Stelle: 
+  Hier konnte man keine Nachkommastellen eingeben. Behoben.
+  New Lino configuration attribute :attr:`lino.Lino.decimal_separator`.  
+  
+- Bugfix: Comboboxen zeigten immer "Page 1 of 1", selbst wenn es 
+  in Wirklichkeit mehr als eine Seite von Auswahlmöglichkeiten gab.
+  
+- Neue Kolonnen "Aktive Akten" und "Komplette Akten" in der 
+  Übersicht 
+  :func:`Klienten pro Benutzer <lino.apps.dsbe.models.persons_by_user>`.
+  Neues Feld `PersonGroup.active`.
+  Für den DSBE ist "aktiv" in diesem Kontext synonym für "nicht Standby".
+  Das hat nichts zu tun mit der Checkbox "aktiv" im Aktenreiter "Sonstige" 
+  einer Person.
+  
+- Auswertungsstrategien "wöchentlich" oder "zweiwöchentlich" sind nun möglich.
+  Neues Feld `isip.ExamPolicy.every_unit`.
+  
+- Das Feld "muss generiert werden" wurde ersetzt durch ein Feld "Gedruckt am", 
+  das Datum und Uhrzeit des (letzten) Ausdrucks anzeigt.
+  
+- Der Button "Cache löschen" war bisher eine Mausefalle, durch die man sich 
+  versehentlich eine via WebDAV manuell barbeitete Datei löschen konnte, 
+  und dadurch alle manuellen Änderungen verlor. Jetzt fragt Lino vor dem 
+  Löschen eine Bestätigung 
+  "Sind Sie sicher, dass Sie manuelle Änderungen im generierten Dokument verwerfen wollen?" 
+  wenn das generierte Dokument auch tatsächlich via WebDAV nachträglich bearbeitet wurde).
+  
+- Datenkontrollliste : hier werden jetzt auch überschneidende Verträge angezeigt.
+  Lino verweigert das bei der Eingabe (noch) nicht, weil ihr die bestehenden Fehler
+  ausmerzen müsst, bevor ich das schon bei der Eingabe kontrollieren lasse.
+  
+- Wenn man das Datum eines automatisch generierten Termins verschiebt, dann 
+  passt Lino jetzt alle folgenden Termine automatisch dem neuen Datum an
+  (zumindest die, die noch nicht bestätigt oder sonstwie bearbeitet sind).
+  
+ 
+
+
+Upgrade instructions
+--------------------
+
+Database migration required.
+See :func:`lino.apps.dsbe.migrate.migrate_from_1_3_2`.
