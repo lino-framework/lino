@@ -865,6 +865,7 @@ def migrate_from_1_3_2(globals_dict):
     lino_DataControlListing = resolve_model('lino.DataControlListing')
     mails_Mail = resolve_model('mails.Mail')
     notes_Note = resolve_model('notes.Note')
+    new_content_type_id = globals_dict.get('new_content_type_id')
     def create_cal_event(id, user_id, created, modified, owner_type_id, owner_id, project_id, must_build, calendar_id, uid, start_date, start_time, summary, description, access_class_id, sequence, auto_type, user_modified, rset_id, end_date, end_time, transparent, type_id, place_id, priority_id, status_id, duration_value, duration_unit):
         owner_type_id = new_content_type_id(owner_type_id)
         obj = cal_Event(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,
