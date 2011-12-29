@@ -29,10 +29,10 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from lino import fields
+from lino import dd
         
-from lino import reports
-from lino import actions
+#~ from lino import reports
+from lino.core import actions
 from lino import mixins
 from lino.utils import mti
 from lino.utils import perms
@@ -78,7 +78,7 @@ class PaymentTerm(babel.BabelNamed):
         return d
 
 
-class PaymentTerms(reports.Report):
+class PaymentTerms(dd.Table):
     model = PaymentTerm
     order_by = ["id"]
     can_view = perms.is_staff
@@ -122,7 +122,7 @@ class InvoicingMode(mixins.PrintableType,babel.BabelNamed):
     journal = journals.JournalRef()
     #journal = models.ForeignKey(journals.Journal)
     #~ name = babel.BabelCharField(max_length=200)
-    price = fields.PriceField(blank=True,null=True)
+    price = dd.PriceField(blank=True,null=True)
     "Additional fee charged when using this method."
     channel = Channel.field(help_text="""
         Method used to send the invoice.""")
@@ -142,7 +142,7 @@ class InvoicingMode(mixins.PrintableType,babel.BabelNamed):
 #~ add_babel_field(InvoicingMode,'name')
         
         
-class InvoicingModes(reports.Report):
+class InvoicingModes(dd.Table):
     model = 'sales.InvoicingMode'
     order_by = ["id"]
     can_view = perms.is_staff
@@ -152,12 +152,12 @@ class InvoicingModes(reports.Report):
 class ShippingMode(babel.BabelNamed):
     id = models.CharField(max_length=10, primary_key=True)
     #~ name = babel.BabelCharField(max_length=200)
-    price = fields.PriceField(blank=True,null=True)
+    price = dd.PriceField(blank=True,null=True)
     
     #~ def __unicode__(self):
         #~ return self.name
         
-class ShippingModes(reports.Report):
+class ShippingModes(dd.Table):
     """Represents a possible method of how the items described in a SalesDocument 
     are to be transferred from us to our customer.
     """
@@ -228,7 +228,7 @@ class Customer(contacts.Contact):
         #~ return recipient.as_address(self,*args,**kw)
     
     
-#~ class Customers(reports.Report):
+#~ class Customers(dd.Table):
     #~ column_names = "name payment_term vat_exempt item_vat company person"
     #~ can_delete = True
     #~ model = Customer
@@ -272,8 +272,8 @@ class SalesDocument(
     subject = models.CharField("Subject line",max_length=200,blank=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
-    total_excl = fields.PriceField(default=0)
-    total_vat = fields.PriceField(default=0)
+    total_excl = dd.PriceField(default=0)
+    total_vat = dd.PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
     #~ user = models.ForeignKey(settings.LINO.user_model,blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
@@ -315,7 +315,7 @@ class SalesDocument(
         
     def total_incl(self,request=None):
         return self.total_excl + self.total_vat
-    total_incl.return_type = fields.PriceField()
+    total_incl.return_type = dd.PriceField()
     
     def update_total(self):
         if self.pk is None:
@@ -349,7 +349,7 @@ class SalesDocument(
             self.shipping_mode = r.shipping_mode
         self.update_total()
       
-SALES_PRINTABLE_FIELDS = reports.fields_list(SalesDocument,
+SALES_PRINTABLE_FIELDS = dd.fields_list(SalesDocument,
   'customer imode payment_term '
   'creation_date your_ref subject '
   'language vat_exempt item_vat ')
@@ -382,10 +382,10 @@ class Order(SalesDocument):
     
     cycle = models.CharField(max_length=1, 
             choices=CYCLE_CHOICES)
-    start_date = fields.MyDateField(blank=True,null=True,
+    start_date = models.DateField(blank=True,null=True,
       help_text="""Beginning of payable period. 
       Set to blank if no bill should be generated""")
-    covered_until = fields.MyDateField(blank=True,null=True)
+    covered_until = models.DateField(blank=True,null=True)
     
     objects = OrderManager()
     
@@ -554,12 +554,12 @@ class DocItem(models.Model):
     
     product = models.ForeignKey(products.Product,blank=True,null=True)
     title = models.CharField(max_length=200,blank=True)
-    description = fields.RichTextField(_("Description"),blank=True,null=True)
+    description = dd.RichTextField(_("Description"),blank=True,null=True)
     
     discount = models.IntegerField("Discount %",default=0)
-    unit_price = fields.PriceField(blank=True,null=True) 
-    qty = fields.QuantityField(blank=True,null=True)
-    total = fields.PriceField(blank=True,null=True)
+    unit_price = dd.PriceField(blank=True,null=True) 
+    qty = dd.QuantityField(blank=True,null=True)
+    total = dd.PriceField(blank=True,null=True)
     
     #~ def total_excl(self):
         #~ if self.unitPrice is not None:
@@ -612,7 +612,7 @@ class InvoiceItem(DocItem):
 
     
 
-class SalesDocuments(reports.Report):
+class SalesDocuments(dd.Table):
     pass
     #~ model = SalesDocument
     #~ page_layouts = (DocumentPageLayout,)
@@ -716,7 +716,7 @@ class InvoicesByOrder(SalesDocuments):
     #~ """
     #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
 
-class ItemsByDocument(reports.Report):
+class ItemsByDocument(dd.Table):
     column_names = "pos:3 product title description:20x1 discount unit_price qty total"
     #list_layout_class = ItemsByDocumentListLayout
     #master = SalesDocument
@@ -766,7 +766,7 @@ journals.register_doctype(Invoice,InvoicesByJournal)
 
 from lino.modlib.contacts.models import Contact
 
-reports.inject_field(Contact,
+dd.inject_field(Contact,
     'is_customer',
     mti.EnableChild('sales.Customer',verbose_name=_("is Customer")),
     """Whether this Contactis also a Customer."""
@@ -774,20 +774,20 @@ reports.inject_field(Contact,
 
 
 
-#~ reports.inject_field(
+#~ dd.inject_field(
     #~ Contact,'payment_term',
     #~ models.ForeignKey(PaymentTerm,
         #~ blank=True,null=True,
         #~ verbose_name=_("payment term")),
     #~ """The default PaymentTerm for sales invoices to this Contact.
     #~ """)
-#~ reports.inject_field(
+#~ dd.inject_field(
     #~ Contact, 'vat_exempt',
     #~ models.BooleanField(default=False,
         #~ verbose_name=_("VAT exempt")),
     #~ """The default value for vat_exempt for sales invoices to this Contact.
     #~ """)
-#~ reports.inject_field(
+#~ dd.inject_field(
     #~ Contact, 'item_vat',
     #~ models.BooleanField(default=False,
         #~ verbose_name=_("item_vat")),

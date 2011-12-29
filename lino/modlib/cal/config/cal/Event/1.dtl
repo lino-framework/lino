@@ -3,7 +3,7 @@
 :hideCheckBoxLabels: 
 
 main = 
-  type summary user project 
+  type summary user 
   start end duration 
   status place priority access_class transparent 
   owner rset created:20 modified:20 user_modified 

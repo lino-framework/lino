@@ -15,9 +15,9 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import fields
+from lino import dd
 #journals = models.get_app('journals')
-from lino import reports
+#~ from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
 from lino.utils import babel
@@ -35,7 +35,7 @@ class ProductCat(babel.BabelNamed):
     #~ def __unicode__(self):
         #~ return self.name
 
-class ProductCats(reports.Report):
+class ProductCats(dd.Table):
     model = ProductCat
     order_by = ["id"]
     can_view = perms.is_staff
@@ -50,7 +50,7 @@ class Product(babel.BabelNamed):
     description = babel.BabelTextField(blank=True,null=True)
     cat = models.ForeignKey(ProductCat,verbose_name="Category")
     vatExempt = models.BooleanField(default=False)
-    price = fields.PriceField(blank=True,null=True)
+    price = dd.PriceField(blank=True,null=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
@@ -59,7 +59,7 @@ class Product(babel.BabelNamed):
 
         
 
-class Products(reports.Report):
+class Products(dd.Table):
     model = Product
     order_by = ["id"]
     column_names = "id:3 name cat vatExempt price:6 *"

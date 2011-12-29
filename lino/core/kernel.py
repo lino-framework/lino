@@ -56,7 +56,7 @@ from lino.tools import resolve_model, resolve_field, get_app, get_field, full_mo
 from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
 from lino import dd
-from lino.models import get_site_config
+#~ from lino.models import get_site_config
 from lino.utils import babel
 
 def analyze_models(self,make_messages):
@@ -251,6 +251,7 @@ def setup_site(self,make_messages=False):
     
     """
     logger.info(lino.welcome_text())
+    #~ raise Exception("20111229")
 
     if self._setup_done:
         #~ logger.warning("LinoSite setup already done ?!")
@@ -262,7 +263,8 @@ def setup_site(self,make_messages=False):
     #~ try:
     self._setting_up = True
     
-    self.configure(get_site_config())
+    #~ self.configure(get_site_config())
+    #~ self._siteconfig = get_site_config()
   
     analyze_models(self,make_messages)
     #~ logger.debug("analyze_models() done")

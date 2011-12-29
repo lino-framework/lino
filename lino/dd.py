@@ -41,5 +41,6 @@ from lino.core.fields import VirtualField
 from lino.core.fields import PasswordField
 from lino.core.fields import MonthField
 from lino.core.fields import LinkedForeignKey
+from lino.core.fields import QuantityField
 from lino.core.fields import HtmlBox, FieldSet, PriceField, RichTextField
 #~ from lino.core.fields import MethodField

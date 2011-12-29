@@ -1,5 +1,36 @@
 20111229
 ========
 
-- wrote migration handler :func:`lino.apps.dsbe.migrate.migrate_from_1_3_2` 
-  which sets the new `build_time` fields on existing data.
+I wrote the migration handler 
+:func:`lino.apps.dsbe.migrate.migrate_from_1_3_2` 
+which sets the new `build_time` fields on existing data.
+
+One surprise::
+
+  Problem installing fixture '/usr/local/django/dsbe_eupen/fixtures/d20111229.py': Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 190, in handle
+      raise e.__class__, e.__class__(msg), sys.exc_info()[2]
+    File "/usr/lib/python2.6/contextlib.py", line 34, in __exit__
+      self.gen.throw(type, value, traceback)
+    File "/var/snapshots/django/django/db/backends/__init__.py", line 246, in constraint_checks_disabled
+      yield
+    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 176, in handle
+      for obj in objects:
+    File "/var/snapshots/lino/lino/utils/dpy.py", line 379, in deserialize
+      for o in expand(obj): yield o
+    File "/var/snapshots/lino/lino/utils/dpy.py", line 367, in expand
+      for o in obj:
+    File "/usr/local/django/dsbe_eupen/fixtures/d20111229.py", line 266, in lino_datacontrollisting_objects
+      yield create_lino_datacontrollisting(1,True,None)
+    File "/var/snapshots/lino/lino/apps/dsbe/migrate.py", line 908, in create_lino_datacontrollisting
+      obj.build_time = obj.get_cache_mtime()
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 705, in get_cache_mtime
+      filename = self.get_cache_filename()
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 701, in get_cache_filename
+      bm = get_build_method(self)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 453, in get_build_method
+      bmname = elem.get_build_method()
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 694, in get_build_method
+      return settings.LINO.config.default_build_method
+  AttributeError: 'Lino' object has no attribute 'config'
+

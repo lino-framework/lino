@@ -545,6 +545,15 @@ class Lino(object):
     
     """
     
+    site_config_defaults = {}
+    """
+    Default values to be used when creating the persistent 
+    :class:`lino.models.SiteConfig` instance.
+    """
+    
+    # for internal use:
+    _site_config = None
+    
     
     def __init__(self,project_file,settings_dict):
       
@@ -691,8 +700,16 @@ class Lino(object):
     #~ def update_settings(self,**kw):
         #~ self._settings_dict.update(kw)
             
-    def configure(self,sc):
-        self.config = sc
+    #~ def configure(self,sc):
+        #~ self.config = sc
+        
+    def get_site_config(self):
+        if self._site_config is None:
+            from lino.models import get_site_config
+            self._site_config = get_site_config()
+        return self._site_config
+    site_config = property(get_site_config)
+        
         
     def has_module(self,name):
         from django.conf import settings

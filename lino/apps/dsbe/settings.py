@@ -204,7 +204,7 @@ class Lino(Lino):
             config_etc.add_action('users.Users')
             #~ if self.use_tinymce:
             config_etc.add_action('lino.TextFieldTemplates')
-            config_etc.add_instance_action(self.config)
+            config_etc.add_instance_action(self.site_config)
         
             m = main.add_menu("explorer",_("Explorer"))
             #m.add_action('properties.PropChoices')

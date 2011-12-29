@@ -646,7 +646,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         
     def get_skills_set(self):
         return self.personproperty_set.filter(
-          group=settings.LINO.config.propgroup_skills)
+          group=settings.LINO.site_config.propgroup_skills)
     skills_set = property(get_skills_set)
     
     def properties_list(self,*prop_ids):
@@ -689,7 +689,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     overview.return_type = dd.HtmlBox(_("Overview"))
     
     def residence_permit(self,rr):
-        kv = dict(type=settings.LINO.config.residence_permit_upload_type)
+        kv = dict(type=settings.LINO.site_config.residence_permit_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner(),
               master_instance=self,
               known_values=kv)
@@ -699,7 +699,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     residence_permit.return_type = dd.DisplayField(_("Residence permit"))
     
     def work_permit(self,rr):
-        kv = dict(type=settings.LINO.config.work_permit_upload_type)
+        kv = dict(type=settings.LINO.site_config.work_permit_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner(),
               master_instance=self,
               known_values=kv)
@@ -707,7 +707,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     work_permit.return_type = dd.DisplayField(_("Work permit"))
     
     def driving_licence(self,rr):
-        kv = dict(type=settings.LINO.config.driving_licence_upload_type)
+        kv = dict(type=settings.LINO.site_config.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner(),
               master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
@@ -1133,7 +1133,7 @@ class ConfiguredPropsByPerson(PropsByPerson):
                        # defines new attribute(s) propgroup_config_name"
     def setup_actions(self):
         if self.propgroup_config_name:
-            pg = getattr(settings.LINO.config,self.propgroup_config_name)
+            pg = getattr(settings.LINO.site_config,self.propgroup_config_name)
             self.known_values = dict(group=pg)
             if pg is None:
                 self.label = _("(Site setting %s is empty)" % self.propgroup_config_name)

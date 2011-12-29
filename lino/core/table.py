@@ -2006,7 +2006,7 @@ class DetailHandle(base.Handle):
     """
     def __init__(self,ui,detail):
         self.detail = detail
-        self.content_type = ContentType.objects.get_for_model(detail.model).pk
+        #~ self.content_type = ContentType.objects.get_for_model(detail.model).pk
         self.lh_list = [ 
             LayoutHandle(ui,detail.model,dl) 
                 for dl in self.detail.layouts ]

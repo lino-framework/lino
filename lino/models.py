@@ -42,8 +42,9 @@ from lino.tools import obj2str, sorted_models_list
 
 class SiteConfig(models.Model):
     """
-    This table normally contains only exactly record, 
+    This model should have exactly one instance, 
     used to store persistent global site parameters.
+    Application code sees this as ``settings.LINO.config``.
     """
     # moved to contacts.models:
     #~ site_company = models.ForeignKey('contacts.Company',blank=True,null=True,
@@ -57,10 +58,10 @@ class SiteConfig(models.Model):
       default='appyodt',
       choices=printable.build_method_choices(),blank=True)
         
-    def save(self,*args,**kw):
-        settings.LINO.configure(self)
-        r = super(SiteConfig,self).save(*args,**kw)
-        return r
+    #~ def save(self,*args,**kw):
+        #~ settings.LINO.configure(self)
+        #~ r = super(SiteConfig,self).save(*args,**kw)
+        #~ return r
    
     def __unicode__(self):
         return force_unicode(_("Global Site Parameters"))
@@ -77,8 +78,11 @@ def get_site_config():
         return SiteConfig.objects.get(pk=1)
     #~ except SiteConfig.DoesNotExist:
     except Exception,e:
+        kw = dict(pk=1)
+        kw.update(settings.LINO.site_config_defaults)
         dblogger.debug("Creating SiteConfig record (%s)",e)
-        sc = SiteConfig(pk=1)
+        sc = SiteConfig(**kw)
+        #~ do NOT save the instance here
         #~ sc.save()
         return sc
 

@@ -13,12 +13,12 @@
 
 
 from django.db import models
-from lino import fields
+from lino import dd
 
 
 from django import forms
 
-from lino import reports
+#~ from lino import reports
 from lino.utils import perms
 
 #contacts = reports.get_app('contacts')
@@ -140,8 +140,8 @@ class Booking(models.Model):
     contact = models.ForeignKey('contacts.Contact',blank=True,null=True)
     #~ person = models.ForeignKey(Person,blank=True,null=True)
     #~ company = models.ForeignKey(Company,blank=True,null=True)
-    debit = fields.PriceField(default=0)
-    credit = fields.PriceField(default=0)
+    debit = dd.PriceField(default=0)
+    credit = dd.PriceField(default=0)
     
     def __unicode__(self):
         return u"%s.%d" % (self.document,self.pos)
@@ -156,7 +156,7 @@ class Booking(models.Model):
 ##        
         
 
-class Accounts(reports.Report):
+class Accounts(dd.Table):
     model = Account
     #column_names = "id name:50"
 

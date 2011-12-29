@@ -59,7 +59,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import reports
+from lino import dd
 from lino import mixins
 from lino.models import SiteConfig
 from lino.modlib.contacts import models as contacts
@@ -88,7 +88,7 @@ class Note(notes.Note,mixins.Owned):
         #~ verbose_name = _("Note")
         #~ verbose_name_plural = _("Notes")
         
-class NotesByOwner(reports.Report):
+class NotesByOwner(dd.Table):
     model = Note
     master_key = 'owner'
  
@@ -101,7 +101,7 @@ class Task(cal.Task):
         app_label = 'cal'
  
  
-reports.inject_field(
+dd.inject_field(
     SiteConfig,
     'sales_base_account',
     models.ForeignKey("ledger.Account",
@@ -111,7 +111,7 @@ reports.inject_field(
     """The account where to book base amount of sales.
     """)
 
-reports.inject_field(
+dd.inject_field(
     SiteConfig,
     'sales_vat_account',
     models.ForeignKey("ledger.Account",

@@ -19,14 +19,14 @@ import sys
 import decimal
 #import logging ; logger = logging.getLogger('lino.apps.finan')
 
-from django import forms
+#~ from django import forms
 
 from lino import dd
 #~ from lino import layouts
 from lino.utils import perms
 
 from django.db import models
-from lino import fields
+#~ from lino import fields
 from lino.tools import resolve_model
 
 contacts = dd.get_app('contacts')
@@ -62,9 +62,9 @@ class BankStatement(journals.Journaled,ledger.Booked):
       #~ max_length=200,blank=True)
     #~ booked = models.BooleanField(default=False)
     
-    date = fields.MyDateField()
-    balance1 = fields.PriceField()
-    balance2 = fields.PriceField()
+    date = models.DateField()
+    balance1 = dd.PriceField()
+    balance2 = dd.PriceField()
     
     def full_clean(self,*args,**kw):
     #~ def before_save(self):
@@ -144,9 +144,9 @@ class BankStatement(journals.Journaled,ledger.Booked):
 class DocItem(models.Model):
     document = models.ForeignKey(BankStatement) 
     pos = models.IntegerField("Position")
-    date = fields.MyDateField(blank=True,null=True)
-    debit = fields.PriceField(default=0)
-    credit = fields.PriceField(default=0)
+    date = models.DateField(blank=True,null=True)
+    debit = dd.PriceField(default=0)
+    credit = dd.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
     account = models.ForeignKey(ledger.Account)
     contact = models.ForeignKey(Contact,blank=True,null=True)
@@ -201,7 +201,7 @@ class BankStatements(journals.DocumentsByJournal):
     
     
     
-class DocItems(dd.Report):
+class DocItems(dd.Table):
     column_names = "document pos:3 "\
                   "date account contact remark debit credit" 
     model = DocItem

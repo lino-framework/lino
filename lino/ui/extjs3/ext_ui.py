@@ -2041,7 +2041,8 @@ tinymce.init({
         yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % full_model_name(dh.detail.model)
         
         yield "  layout: 'fit',"
-        yield "  content_type: %s," % py2js(dh.content_type)
+        #~ yield "  content_type: %s," % py2js(dh.content_type)
+        yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(dh.detail.model).pk)
 
         
         yield "  initComponent : function() {"

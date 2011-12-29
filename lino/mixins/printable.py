@@ -269,7 +269,7 @@ class AppyBuildMethod(SimpleBuildMethod):
     default_template = 'Default.odt'
     
     def simple_build(self,elem,tpl,target):
-        from lino.models import get_site_config
+        #~ from lino.models import get_site_config
         from appy.pod.renderer import Renderer
         renderer = None
         context = dict(self=elem,
@@ -282,7 +282,8 @@ class AppyBuildMethod(SimpleBuildMethod):
             iif=iif,
             settings=settings,
             #~ restify=restify,
-            site_config = get_site_config(),
+            #~ site_config = get_site_config(),
+            site_config = settings.LINO.site_config,
             _ = _,
             #~ knowledge_text=fields.knowledge_text,
             )
@@ -643,8 +644,11 @@ class PrintableType(models.Model):
         
     @chooser(simple_values=True)
     def template_choices(cls,build_method):
+        #~ from lino.models import get_site_config
         if not build_method:
-            build_method = settings.LINO.config.default_build_method 
+            #~ build_method = get_site_config().default_build_method 
+            #~ build_method = settings.LINO.config.default_build_method 
+            build_method = settings.LINO.site_config.default_build_method 
         return get_template_choices(cls,build_method)
     
 class Printable(object):
@@ -691,7 +695,9 @@ class CachedPrintable(models.Model,Printable):
     def get_build_method(self):
         # TypedPrintable  overrides this
         #~ return 'rtf'
-        return settings.LINO.config.default_build_method 
+        #~ from lino.models import get_site_config
+        #~ return get_site_config.default_build_method 
+        return settings.LINO.config.default_build_method
         #~ return settings.LINO.preferred_build_method 
         #~ return 'pisa'
         

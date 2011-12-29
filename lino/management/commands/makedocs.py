@@ -42,7 +42,7 @@ from lino.utils import confirm, curry
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
-from lino import reports
+from lino.core import table
 
 from lino.tools import makedirs_if_missing, full_model_name
 
@@ -142,11 +142,11 @@ def model_overview(model):
     rows = [ rowfmt(f) for f in model._meta.fields ]
     s = rstgen.table(headers,rows)
     
-    model_reports = [r for r in reports.master_reports if r.model is model]
+    model_reports = [r for r in table.master_reports if r.model is model]
     if model_reports:
-        s += '\n\nMaster reports: %s\n\n' % rptlist(model_reports)
+        s += '\n\nMaster tables: %s\n\n' % rptlist(model_reports)
     if getattr(model,'_lino_slaves',None):
-        s += '\n\nSlave reports: %s\n\n' % rptlist(model._lino_slaves.values())
+        s += '\n\nSlave tables: %s\n\n' % rptlist(model._lino_slaves.values())
         #~ s += '\n\nSlave reports: ' 
         #~ s += ', '.join([name for name,rpt in model._lino_slaves.items()])
         #~ s += '\n\n' 

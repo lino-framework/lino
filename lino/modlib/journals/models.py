@@ -31,7 +31,7 @@ import os
 
 from django.db import models
 import lino
-from lino import reports
+from lino import dd
 from lino.utils.babel import babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
 #~ from lino import mixins
@@ -292,13 +292,13 @@ class Sendable(models.Model):
 ##        
         
 
-class Journals(reports.Report):
+class Journals(dd.Table):
     model = Journal
     order_by = ["pos"]
     column_names = "id name doctype force_sequence *"
     
     
-class DocumentsByJournal(reports.Report):
+class DocumentsByJournal(dd.Table):
     order_by =  ["number"]
     master_key = 'journal' # see django issue 10808
     
@@ -309,7 +309,7 @@ class DocumentsByJournal(reports.Report):
           renderer.master_instance.id)
     
     
-class unused_DocumentsByJournal(reports.Report):
+class unused_DocumentsByJournal(dd.Table):
     order_by = ["number"]
     #master = Journal
     master_key = 'journal' # see django issue 10808
@@ -328,7 +328,7 @@ class unused_DocumentsByJournal(reports.Report):
           column_names=rpt.column_names,
         )
         params.update(kw)
-        reports.Report.__init__(self,**params)
+        dd.Table.__init__(self,**params)
 
 
 #~ __all__ = ['Journal']
