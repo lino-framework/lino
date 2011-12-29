@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.sales\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 20:24+0000\n"
+"POT-Creation-Date: 2011-12-29 15:30+0000\n"
 "PO-Revision-Date: 2011-03-02 21:33+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -74,15 +74,15 @@ msgstr ""
 msgid "Customers"
 msgstr ""
 
-#: .\models.py:556
+#: .\models.py:557
 msgid "Description"
 msgstr "Nimetus"
 
-#: .\models.py:770
+#: .\models.py:771
 msgid "is Customer"
 msgstr ""
 
-#: .\models.py:807
+#: .\models.py:808
 msgid "~Sales"
 msgstr ""
 

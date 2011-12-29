@@ -28,7 +28,12 @@ Sichtbare Änderungen
 - Das Feld "muss generiert werden" wurde ersetzt durch ein Feld "Gedruckt am", 
   das Datum und Uhrzeit des (letzten) Ausdrucks anzeigt.
   
-- Der Button "Cache löschen" war bisher eine Mausefalle, durch die man sich versehentlich eine via WebDAV manuell barbeitete Datei löschen konnte, und dadurch alle manuellen Änderungen verlor. Jetzt fragt Lino vor dem Löschen eine Bestätigung "Sind Sie sicher, dass Sie manuelle Änderungen im generierten Dokument verwerfen wollen?" wenn das generierte Dokument auch tatsächlich via WebDAV nachträglich bearbeitet wurde).
+- Der Button "Cache löschen" war bisher eine Mausefalle, durch die man sich 
+  versehentlich eine via WebDAV manuell barbeitete Datei löschen konnte, 
+  und dadurch alle manuellen Änderungen verlor. Jetzt fragt Lino vor dem 
+  Löschen eine Bestätigung 
+  "Sind Sie sicher, dass Sie manuelle Änderungen im generierten Dokument verwerfen wollen?" 
+  wenn das generierte Dokument auch tatsächlich via WebDAV nachträglich bearbeitet wurde).
   
 - Wenn man das Datum eines automatisch generierten Termins verschiebt, dann 
   passt Lino jetzt alle folgenden Termine automatisch dem neuen Datum an

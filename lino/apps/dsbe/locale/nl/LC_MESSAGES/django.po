@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 20:24+0000\n"
+"POT-Creation-Date: 2011-12-29 15:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -779,7 +779,7 @@ msgid "~User Manual"
 msgstr ""
 
 #: .\config\contacts\Company\1.dtl.py:3 .\config\isip\Contract\1.dtl.py:3
-#: .\config\jobs\Contract\1.dtl.py:3
+#: .\config\jobs\Contract\1.dtl.py:3 .\config\users\User\1.dtl.py:3
 msgid "General"
 msgstr ""
 
@@ -821,6 +821,10 @@ msgstr ""
 
 #: .\config\contacts\Person\9.dtl.py:3
 msgid "Miscellaneous"
+msgstr ""
+
+#: .\config\dsbe\CourseProvider\1.dtl.py:3
+msgid "Contact"
 msgstr ""
 
 #: .\config\isip\Contract\2.dtl.py:3

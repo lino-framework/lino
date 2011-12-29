@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 20:24+0000\n"
+"POT-Creation-Date: 2011-12-29 15:30+0000\n"
 "PO-Revision-Date: 2011-12-27 22:28+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -20,21 +20,15 @@ msgstr ""
 msgid "CEF level"
 msgstr "CEF-Kategorie"
 
-#: .\models.py:163
-#: .\models.py:164
-#: .\models.py:165
+#: .\models.py:163 .\models.py:164 .\models.py:165
 msgid "basic language skills"
 msgstr "Elementare Sprachverwendung"
 
-#: .\models.py:166
-#: .\models.py:167
-#: .\models.py:168
+#: .\models.py:166 .\models.py:167 .\models.py:168
 msgid "independent use of language"
 msgstr "Selbstständige Sprachverwendung"
 
-#: .\models.py:169
-#: .\models.py:170
-#: .\models.py:171
+#: .\models.py:169 .\models.py:170 .\models.py:171
 msgid "proficient use of language"
 msgstr "Exzellente Sprachverwendung"
 
@@ -94,9 +88,7 @@ msgstr "Bankkonto 2"
 msgid "Cannot delete companies and persons imported from TIM"
 msgstr "Aus TIM importierte Partner dürfen nicht gelöscht werden."
 
-#: .\models.py:337
-#: .\models.py:1604
-#: .\config\contacts\Person\1.dtl.py:3
+#: .\models.py:337 .\models.py:1604 .\config\contacts\Person\1.dtl.py:3
 msgid "Person"
 msgstr "Person"
 
@@ -128,10 +120,7 @@ msgstr "Integrationsphase"
 msgid "Coached from"
 msgstr "Begleitet seit"
 
-#: .\models.py:381
-#: .\models.py:426
-#: .\models.py:442
-#: .\models.py:1210
+#: .\models.py:381 .\models.py:426 .\models.py:442 .\models.py:1210
 #: .\models.py:1784
 msgid "until"
 msgstr "bis"
@@ -180,8 +169,7 @@ msgstr "eID-Kartennummer"
 msgid "ID card valid from"
 msgstr "ID-Karte gültig von"
 
-#: .\models.py:430
-#: .\models.py:540
+#: .\models.py:430 .\models.py:540
 msgid "eID card type"
 msgstr "eID-Kartenart"
 
@@ -302,23 +290,19 @@ msgstr "Ohne Angabe"
 msgid "Circular reference"
 msgstr "Redundanter RÜckbezug"
 
-#: .\models.py:567
-#: .\models.py:617
+#: .\models.py:567 .\models.py:617
 msgid "eID card expires"
 msgstr "eID-Karte läuft aus"
 
-#: .\models.py:574
-#: .\models.py:620
+#: .\models.py:574 .\models.py:620
 msgid "becomes available again"
 msgstr "ist wieder verfügbar"
 
-#: .\models.py:581
-#: .\models.py:623
+#: .\models.py:581 .\models.py:623
 msgid "work permit suspension ends"
 msgstr "Arbeitslosen-Wartezeit endet"
 
-#: .\models.py:588
-#: .\models.py:626
+#: .\models.py:588 .\models.py:626
 msgid "coaching ends"
 msgstr "Begleitung endet"
 
@@ -382,8 +366,7 @@ msgstr "\"Aktive\" Klienten von %s"
 msgid "User"
 msgstr "Benutzer"
 
-#: .\models.py:890
-#: .\models.py:902
+#: .\models.py:890 .\models.py:902
 msgid "Total"
 msgstr "Total"
 
@@ -431,18 +414,15 @@ msgstr "Sprachkenntnis"
 msgid "language knowledges"
 msgstr "Sprachkenntnisse"
 
-#: .\models.py:1053
-#: .\models.py:1806
+#: .\models.py:1053 .\models.py:1806
 msgid "Language"
 msgstr "Sprache"
 
-#: .\models.py:1056
-#: .\models.py:1807
+#: .\models.py:1056 .\models.py:1807
 msgid "spoken"
 msgstr "Wort"
 
-#: .\models.py:1057
-#: .\models.py:1808
+#: .\models.py:1057 .\models.py:1808
 msgid "written"
 msgstr "Schrift"
 
@@ -469,15 +449,11 @@ msgstr "%s (S)"
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: .\models.py:1095
-#: .\settings.py:173
+#: .\models.py:1095 .\settings.py:173
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: .\models.py:1100
-#: .\models.py:1211
-#: .\models.py:1555
-#: .\models.py:1641
+#: .\models.py:1100 .\models.py:1211 .\models.py:1555 .\models.py:1641
 msgid "Remark"
 msgstr "Bemerkung"
 
@@ -562,9 +538,7 @@ msgstr "Kursinhalt"
 msgid "Course Contents"
 msgstr "Kursinhalte"
 
-#: .\models.py:1476
-#: .\models.py:1493
-#: .\models.py:1547
+#: .\models.py:1476 .\models.py:1493 .\models.py:1547
 msgid "Name"
 msgstr ""
 
@@ -576,8 +550,7 @@ msgstr "Kursangebot"
 msgid "Course Offers"
 msgstr "Kursangebote"
 
-#: .\models.py:1499
-#: .\models.py:1610
+#: .\models.py:1499 .\models.py:1610
 msgid "Course content"
 msgstr "Kursinhalt"
 
@@ -593,9 +566,7 @@ msgstr "Beschreibung"
 msgid "Course"
 msgstr "Kurs"
 
-#: .\models.py:1540
-#: .\settings.py:123
-#: .\settings.py:159
+#: .\models.py:1540 .\settings.py:123 .\settings.py:159
 #: .\config\dsbe\CourseProvider\courses.dtl.py:3
 msgid "Courses"
 msgstr "Kurse"
@@ -612,8 +583,7 @@ msgstr "Kandidatenliste"
 msgid "List of participants"
 msgstr "Teilnehmerliste"
 
-#: .\models.py:1600
-#: .\models.py:1601
+#: .\models.py:1600 .\models.py:1601
 msgid "Course Requests"
 msgstr "Kursanfragen"
 
@@ -703,8 +673,7 @@ msgstr "Drucken"
 msgid "Wanted property"
 msgstr "Gesuchte Eigenschaft"
 
-#: .\models.py:1814
-#: .\models.py:1832
+#: .\models.py:1814 .\models.py:1832
 msgid "Wanted properties"
 msgstr "Gesuchte Eigenschaften"
 
@@ -712,8 +681,7 @@ msgstr "Gesuchte Eigenschaften"
 msgid "Unwanted property"
 msgstr "Unerwünschte Eigenschaft"
 
-#: .\models.py:1822
-#: .\models.py:1837
+#: .\models.py:1822 .\models.py:1837
 msgid "Unwanted properties"
 msgstr "Unerwünschte Eigenschaften"
 
@@ -765,8 +733,7 @@ msgstr "DSBE-Benutzer"
 msgid "usable in contracts"
 msgstr "erlaubt in Verträgen"
 
-#: .\settings.py:84
-#: .\settings.py:143
+#: .\settings.py:84 .\settings.py:143
 msgid "Contacts"
 msgstr "Kontakte"
 
@@ -774,13 +741,11 @@ msgstr "Kontakte"
 msgid "My menu"
 msgstr "Mein Menü"
 
-#: .\settings.py:127
-#: .\config\jobs\JobProvider\jobs.dtl.py:3
+#: .\settings.py:127 .\config\jobs\JobProvider\jobs.dtl.py:3
 msgid "Jobs"
 msgstr "Stellen"
 
-#: .\settings.py:132
-#: .\settings.py:231
+#: .\settings.py:132 .\settings.py:231
 msgid "Listings"
 msgstr ""
 
@@ -812,9 +777,8 @@ msgstr "Hilfe"
 msgid "~User Manual"
 msgstr "~Benutzerhandbuch"
 
-#: .\config\contacts\Company\1.dtl.py:3
-#: .\config\isip\Contract\1.dtl.py:3
-#: .\config\jobs\Contract\1.dtl.py:3
+#: .\config\contacts\Company\1.dtl.py:3 .\config\isip\Contract\1.dtl.py:3
+#: .\config\jobs\Contract\1.dtl.py:3 .\config\users\User\1.dtl.py:3
 msgid "General"
 msgstr "Allgemein"
 
@@ -858,14 +822,17 @@ msgstr "Kalender"
 msgid "Miscellaneous"
 msgstr "Sonstiges"
 
+#: .\config\dsbe\CourseProvider\1.dtl.py:3
+#, fuzzy
+msgid "Contact"
+msgstr "Kontakte"
+
 #: .\config\isip\Contract\2.dtl.py:3
 msgid "VSE"
 msgstr ""
 
-#: .\config\isip\ContractType\1.dtl.py:3
-#: .\config\jobs\ContractType\1.dtl.py:3
-#: .\config\jobs\JobType\1.dtl.py:3
-#: .\config\notes\EventType\1.dtl.py:3
+#: .\config\isip\ContractType\1.dtl.py:3 .\config\jobs\ContractType\1.dtl.py:3
+#: .\config\jobs\JobType\1.dtl.py:3 .\config\notes\EventType\1.dtl.py:3
 #: .\config\notes\Note\1.dtl.py:3
 msgid "Detail"
 msgstr "Detail"

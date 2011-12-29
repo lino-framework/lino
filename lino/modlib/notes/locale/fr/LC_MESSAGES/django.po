@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 20:24+0000\n"
+"POT-Creation-Date: 2011-12-29 15:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,11 +71,11 @@ msgstr "Type de note (Formulaire)"
 msgid "Subject"
 msgstr "Objet"
 
-#: .\models.py:203
+#: .\models.py:204
 msgid "My notes"
 msgstr "Mes notes"
 
-#: .\models.py:241
+#: .\models.py:242
 #, fuzzy
 msgid "~Notes"
 msgstr "Notes"

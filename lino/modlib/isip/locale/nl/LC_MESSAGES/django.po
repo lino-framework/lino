@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 20:23+0000\n"
+"POT-Creation-Date: 2011-12-29 15:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,115 +33,119 @@ msgstr ""
 msgid "Evaluation every X months"
 msgstr ""
 
-#: .\models.py:108
+#: .\models.py:107
+msgid "Duration unit"
+msgstr ""
+
+#: .\models.py:111
 msgid "Examination Policy"
 msgstr ""
 
-#: .\models.py:109
+#: .\models.py:112
 msgid "Examination Policies"
 msgstr ""
 
-#: .\models.py:121
+#: .\models.py:124
 msgid "Contract Ending"
 msgstr ""
 
-#: .\models.py:122
+#: .\models.py:125
 msgid "Contract Endings"
 msgstr ""
 
-#: .\models.py:124
+#: .\models.py:127
 msgid "designation"
 msgstr ""
 
-#: .\models.py:161
+#: .\models.py:164
 msgid "Person"
 msgstr ""
 
-#: .\models.py:170
+#: .\models.py:173
 msgid "represented by"
 msgstr ""
 
-#: .\models.py:176
+#: .\models.py:179
 msgid "applies from"
 msgstr ""
 
-#: .\models.py:177
+#: .\models.py:180
 msgid "applies until"
 msgstr ""
 
-#: .\models.py:178
+#: .\models.py:181
 msgid "date decided"
 msgstr ""
 
-#: .\models.py:179
+#: .\models.py:182
 msgid "date issued"
 msgstr ""
 
-#: .\models.py:182
+#: .\models.py:185
 msgid "responsible (ASD)"
 msgstr ""
 
-#: .\models.py:194
+#: .\models.py:197
 msgid "Ending"
 msgstr ""
 
-#: .\models.py:195
+#: .\models.py:198
 msgid "date ended"
 msgstr ""
 
-#: .\models.py:277
+#: .\models.py:288
 #, python-format
 msgid "Evaluation %d"
 msgstr ""
 
-#: .\models.py:291
+#: .\models.py:308
 msgid "Contract ends in a month"
 msgstr ""
 
-#: .\models.py:300
+#: .\models.py:317
 msgid "ISIP"
 msgstr ""
 
-#: .\models.py:301 .\models.py:399
+#: .\models.py:318 .\models.py:417
 msgid "ISIPs"
 msgstr ""
 
-#: .\models.py:305
+#: .\models.py:322
 msgid "Contract Type"
 msgstr ""
 
-#: .\models.py:308
+#: .\models.py:325
 msgid "Company"
 msgstr ""
 
-#: .\models.py:311
+#: .\models.py:328
 msgid "stages"
 msgstr ""
 
-#: .\models.py:313
+#: .\models.py:330
 msgid "goals"
 msgstr ""
 
-#: .\models.py:315
+#: .\models.py:332
 msgid "duties ASD"
 msgstr ""
 
-#: .\models.py:317
+#: .\models.py:334
 msgid "duties DSBE"
 msgstr ""
 
-#: .\models.py:319
+#: .\models.py:336
 msgid "duties company"
 msgstr ""
 
-#: .\models.py:321
+#: .\models.py:338
 msgid "duties person"
 msgstr ""
 
-#: .\models.py:330
+#: .\models.py:347
 msgid "responsible (DSBE)"
 msgstr ""
 
-#: .\models.py:384
+#: .\models.py:402
 msgid "My PIIS contracts"
 msgstr ""

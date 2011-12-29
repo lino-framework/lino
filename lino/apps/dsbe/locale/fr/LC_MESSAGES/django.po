@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 20:24+0000\n"
+"POT-Creation-Date: 2011-12-29 15:30+0000\n"
 "PO-Revision-Date: 2011-11-12 13:14+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -782,7 +782,7 @@ msgid "~User Manual"
 msgstr "~Manuel de l'utilisateur"
 
 #: .\config\contacts\Company\1.dtl.py:3 .\config\isip\Contract\1.dtl.py:3
-#: .\config\jobs\Contract\1.dtl.py:3
+#: .\config\jobs\Contract\1.dtl.py:3 .\config\users\User\1.dtl.py:3
 msgid "General"
 msgstr "Général"
 
@@ -825,6 +825,11 @@ msgstr "Calendrier"
 #: .\config\contacts\Person\9.dtl.py:3
 msgid "Miscellaneous"
 msgstr "Divers"
+
+#: .\config\dsbe\CourseProvider\1.dtl.py:3
+#, fuzzy
+msgid "Contact"
+msgstr "Contacts"
 
 #: .\config\isip\Contract\2.dtl.py:3
 msgid "VSE"
