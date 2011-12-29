@@ -522,6 +522,33 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
             niss_validator(self.national_id)
         except ValidationError,e:
             msgs.append(unicode(e))
+            
+        ranges = []
+        #~ overlaps = dict()
+        def overlap(ad1,ad2,bd1,bd2):
+            if not (ad1 and ad2 and bd1 and bd2): return False
+            if ad1 > bd1 and ad1 < bd2: return True
+            if ad2 > bd1 and ad2 < bd2: return True
+            #~ if ad1 < bd1 and ad1 > bd2: return True
+            #~ if ad2 < bd1 and ad2 > bd2: return True
+            return False
+        from lino.modlib.isip import models as isip
+        from lino.modlib.jobs import models as jobs
+        for model in jobs.Contract, isip.Contract:
+            for con in model.objects.filter(person=self):
+                ranges.append([con.applies_from,con.applies_until,con])
+        found = set()
+        for ad1,ad2,acon in ranges:
+            if not acon in found:
+                for bd1,bd2,bcon in ranges:
+                    if not bcon in found:
+                        if acon != bcon:
+                            if overlap(ad1,ad2,bd1,bd2):
+                                found.add(bcon)
+                                found.add(acon)
+                                msgs.append(
+                                    _("%(a)s overlaps with %(b)s.") % 
+                                    dict(a=acon, b=bcon))
         return msgs
           
     #~ def clean(self):

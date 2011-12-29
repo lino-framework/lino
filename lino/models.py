@@ -113,7 +113,14 @@ class DataControlListing(mixins.Listing):
                 for i in model.objects.all():
                     msgs = i.data_control()
                     if msgs:
-                        items.append("%s : %s" % (obj2str(i),"<br/>".join(msgs)))
+                        if len(msgs) == 1:
+                            items.append("<b>%s</b> : %s" % (unicode(i),msgs[0]))
+                        else:
+                            items.append("<b>%s</b> : %s" % (
+                              unicode(i),
+                              "\n".join(
+                                ["<br/>(%d) %s" % (x[0]+1,x[1])
+                                  for x in enumerate(msgs)])))
         html = "<ol>"
         html += "\n".join(["<li>%s</li>" % ln for ln in items])
         html += "</ol>"
