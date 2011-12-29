@@ -1,11 +1,17 @@
 20111229
 ========
 
-I wrote the migration handler 
-:func:`lino.apps.dsbe.migrate.migrate_from_1_3_2` 
-which sets the new `build_time` fields on existing data.
+- Wrote the migration handler 
+  :func:`lino.apps.dsbe.migrate.migrate_from_1_3_2` 
+  which sets the new `build_time` fields on existing data.
+  
+- Added a new test "Overlapping contracts" 
+  to :meth:`lino.apps.dsbe.models.Person.data_control`.
+  On result is that the preview takes now quite some time 
+  and should be cached.
+  
 
-One surprise::
+One surprise while working on the migration handler::
 
   Problem installing fixture '/usr/local/django/dsbe_eupen/fixtures/d20111229.py': Traceback (most recent call last):
     ...

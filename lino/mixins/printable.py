@@ -791,6 +791,9 @@ class Listing(CachedPrintable):
     date = models.DateField(
         blank=True,null=True,
         verbose_name=_("Date"))
+    header_html = dd.RichTextField(_("Header"),editable=False)
+    footer_html = dd.RichTextField(_("Footer"),editable=False)
+    body_html = dd.RichTextField(_("Body"),editable=False)
         
     #~ title = models.CharField(max_length=200,
       #~ verbose_name=_("Title"),
@@ -800,7 +803,7 @@ class Listing(CachedPrintable):
     #~ """
     
     @classmethod
-    def setup_report(model,rpt):
+    def unused_setup_report(model,rpt):
         u"""
         """
         # to not call call_optional_super(Listing,self,'setup_report',rpt)
@@ -839,9 +842,14 @@ class Listing(CachedPrintable):
     #~ def preview(self,request):
         #~ return self.header() + self.body() + self.footer()
     #~ preview.return_type = fields.HtmlBox(_("Preview"))
+    def save(self,*args,**kw):
+        self.header_html = self.header()
+        self.footer_html = self.footer()
+        self.body_html = self.body()
+        super(Listing,self).save(*args,**kw)
     
     def get_preview(self,request):
-        return self.header() + self.body() + self.footer()
+        return self.header_html + self.body_html + self.footer_html
     preview = dd.VirtualField(dd.HtmlBox(_("Preview")),get_preview)
     
     
