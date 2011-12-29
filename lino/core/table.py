@@ -655,10 +655,10 @@ class TableRequest(ActionRequest):
                 try:
                     kw['master_instance'] = master.objects.get(pk=pk)
                 except ValueError,e:
-                    raise Http404("Invalid primary key %r for %s",pk,master.__name__)
+                    raise Exception("Invalid primary key %r for %s",pk,master.__name__)
                 except master.DoesNotExist,e:
                     # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
-                    raise Http404("There's no %s with primary key %r" % (master.__name__,pk))
+                    raise Exception("There's no %s with primary key %r" % (master.__name__,pk))
             #~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.report,kw
         

@@ -8,18 +8,7 @@ which sets the new `build_time` fields on existing data.
 One surprise::
 
   Problem installing fixture '/usr/local/django/dsbe_eupen/fixtures/d20111229.py': Traceback (most recent call last):
-    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 190, in handle
-      raise e.__class__, e.__class__(msg), sys.exc_info()[2]
-    File "/usr/lib/python2.6/contextlib.py", line 34, in __exit__
-      self.gen.throw(type, value, traceback)
-    File "/var/snapshots/django/django/db/backends/__init__.py", line 246, in constraint_checks_disabled
-      yield
-    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 176, in handle
-      for obj in objects:
-    File "/var/snapshots/lino/lino/utils/dpy.py", line 379, in deserialize
-      for o in expand(obj): yield o
-    File "/var/snapshots/lino/lino/utils/dpy.py", line 367, in expand
-      for o in obj:
+    ...
     File "/usr/local/django/dsbe_eupen/fixtures/d20111229.py", line 266, in lino_datacontrollisting_objects
       yield create_lino_datacontrollisting(1,True,None)
     File "/var/snapshots/lino/lino/apps/dsbe/migrate.py", line 908, in create_lino_datacontrollisting
@@ -33,4 +22,13 @@ One surprise::
     File "/var/snapshots/lino/lino/mixins/printable.py", line 694, in get_build_method
       return settings.LINO.config.default_build_method
   AttributeError: 'Lino' object has no attribute 'config'
+
+Explanation: the dpy fixtures are of course executed before any the kernel 
+setup has been done. That's why there was no `config` object jetzt in the :class:`lino.Lino` 
+instance. 
+And the site's :attr:`lino.models.SiteConfig.default_build_method` has not yet been restored.
+
+Solution: new configuration parameter :attr:`lino.Lino.site_config_defaults`.
+And instead of setting a `config` instance variable during kernel setup, we now have 
+a property `site_config` which lazily calls `get_site_config`.
 
