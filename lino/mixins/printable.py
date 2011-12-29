@@ -550,7 +550,7 @@ class DirectPrintAction(BasePrintAction):
         
         
     def run(self,rr,elem,**kw):
-        bm =  bm_dict.get(self.build_method or settings.LINO.config.default_build_method)
+        bm =  bm_dict.get(self.build_method or settings.LINO.site_config.default_build_method)
         #~ if self.tplname:
             #~ if not self.tplname.endswith(bm.template_ext):
                 #~ raise Exception("Invalid template for build method %r" % bm.name)
@@ -697,7 +697,7 @@ class CachedPrintable(models.Model,Printable):
         #~ return 'rtf'
         #~ from lino.models import get_site_config
         #~ return get_site_config.default_build_method 
-        return settings.LINO.config.default_build_method
+        return settings.LINO.site_config.default_build_method
         #~ return settings.LINO.preferred_build_method 
         #~ return 'pisa'
         
@@ -751,7 +751,7 @@ class TypedPrintable(CachedPrintable):
             return super(TypedPrintable,self).get_build_method()
         if ptype.build_method:
             return ptype.build_method
-        return settings.LINO.config.default_build_method 
+        return settings.LINO.site_config.default_build_method 
         
     def get_print_templates(self,bm,action):
         ptype = self.get_printable_type()
