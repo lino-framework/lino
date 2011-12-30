@@ -54,6 +54,7 @@ from lino.utils import babel
 from lino.utils.choosers import chooser
 from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
+from lino.utils import overlap
 from lino.mixins.printable import DirectPrintAction
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str, models_by_abc
@@ -316,26 +317,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         a2 = self.date_ended or self.applies_until
         b1 = b.applies_from
         b2 = b.date_ended or b.applies_until
-        if a2:
-            if b1:
-                if b1 >= a2:
-                    return False
-                else:
-                    if b2 and a1:
-                        return b2 <= a1
-                    else:
-                        return True
-            else:
-                if b2 and a1:
-                    return b2 >= a1
-                else:
-                    return True
-        elif b2:
-            if a1:
-                return b2 >= a1
-            else:
-                return True
-        return True
+        return overlap(a1,a2,b1,b2)
         
     def data_control(self):
             

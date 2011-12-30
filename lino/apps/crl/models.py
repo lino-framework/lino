@@ -64,14 +64,14 @@ class Task(cal.Task):
 #
 # LINKS
 #
-class Link(links.Link,mixins.Owned):
-    class Meta:
-        app_label = 'links'
+#~ class Link(links.Link,mixins.Owned):
+    #~ class Meta:
+        #~ app_label = 'links'
 
-class LinksByOwner(links.LinksByOwnerBase):
-    master_key = 'owner'
-    column_names = "name url user date *"
-    order_by = ["date"]
+#~ class LinksByOwner(links.LinksByOwnerBase):
+    #~ master_key = 'owner'
+    #~ column_names = "name url user date *"
+    #~ order_by = ["date"]
   
 from lino.utils import str2hex, hex2str
 

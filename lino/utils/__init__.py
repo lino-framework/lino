@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -32,6 +33,10 @@
 5
 
 
+:func:`overlaps` (test whether two ranges overlap)
+--------------------------------------------------
+
+
 :func:`iif` (inline ``if``)
 ---------------------------
 
@@ -62,6 +67,91 @@ import stat
 
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
+    
+def overlap(a1,a2,b1,b2):
+    """
+    Test whether two value ranges overlap.
+    
+    This function is typically used with dates, but it also 
+    works with integers or other comparable values.
+
+    Unlike the test presented at <http://bytes.com/topic/python/answers/457949-determing-whether-two-ranges-overlap>,
+    this works also with "open" ranges 
+    (the open end being indicated by a `None` value).
+
+
+    >>> overlap(1,2,3,4)
+    False
+    >>> overlap(3,4,1,2)
+    False
+    >>> overlap(1,3,2,4)
+    True
+    >>> overlap(2,4,1,3)
+    True
+    >>> overlap(1,4,2,3)
+    True
+    >>> overlap(2,3,1,4)
+    True
+    
+    
+    
+    |  ``o--------------->``
+    |  ``      o----o``
+    
+    >>> overlap(1,None,3,4)
+    True
+    >>> overlap(3,4,1,None)
+    True
+    
+    |   ``o----o``
+    |   ``        o---->``
+    
+    >>> overlap(1,2,3,None)
+    False
+    >>> overlap(3,None,1,2)
+    False
+    
+    >>> overlap(None,2,3,None)
+    False
+    >>> overlap(3,None,None,2)
+    False
+    
+    >>> overlap(1,3,2,None)
+    True
+    
+    Ranges that "only touch" each other are not considered overlapping:
+        
+    >>> overlap(1,2,2,3)
+    False
+    >>> overlap(2,3,1,2)
+    False
+    """
+    
+    #~ return a2 > b1 and a1 < b2
+    
+    if a2:
+        if b1:
+            if b1 >= a2:
+                return False
+            else:
+                if b2 and a1:
+                    if a1 > a2:
+                        raise ValueError("Range 1 ends before it started.")
+                    return b2 > a1
+                else:
+                    return True
+        else:
+            if b2 and a1:
+                return b2 >= a1
+            else:
+                return True
+    elif b2:
+        if a1:
+            return b2 > a1
+        else:
+            return True
+    return True
+    
 
 def confirm(prompt=None):
     while True:
