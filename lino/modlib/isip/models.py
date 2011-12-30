@@ -317,11 +317,20 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 if b.applies_from >= self.applies_until:
                     return True
                 else:
-                    return b.applies_until <= self.applies_from
+                    if b.applies_until and self.applies_from:
+                        return b.applies_until <= self.applies_from
+                    else:
+                        return True
             else:
-                return b.applies_until <= self.applies_from
+                if b.applies_until and self.applies_from:
+                    return b.applies_until <= self.applies_from
+                else:
+                    return True
         elif b.applies_until:
-            return b.applies_until <= self.applies_from
+            if self.applies_from:
+                return b.applies_until <= self.applies_from
+            else:
+                return True
         return True
         
     def data_control(self):
