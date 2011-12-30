@@ -1,3 +1,13 @@
 20111230
 ========
 
+- Listing : 
+
+  - New field `body_html` now stores the result of `body()`.
+    Changed :file:`config/lino/DataControlListing/Default.odt`
+    
+
+  - removed fields 'header' and 'footer' because 
+    ``do text from html(self.header())`` doesn't seem 
+    to work when used in a page header or footer.
+    

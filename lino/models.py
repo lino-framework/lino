@@ -121,9 +121,10 @@ class DataControlListing(mixins.Listing):
                               "\n".join(
                                 ["<br>(%d) %s" % (x[0]+1,x[1])
                                   for x in enumerate(msgs)])))
-        html = "<ol>"
-        html += "\n".join(["<li>%s</li>" % ln for ln in items])
-        html += "</ol>"
+        #~ html = "<ol>"
+        #~ html += "\n".join(["<li>%s</li>" % ln for ln in items])
+        #~ html += "</ol>"
+        html = "\n".join(["<p>%s</p>" % ln for ln in items])
         html = '<div class="htmlText">%s</div>' % html
         return html
     
