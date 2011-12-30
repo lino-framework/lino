@@ -704,10 +704,12 @@ class Lino(object):
         #~ self.config = sc
         
     def get_site_config(self):
-        if self._site_config is None:
-            from lino.models import get_site_config
-            self._site_config = get_site_config()
-        return self._site_config
+        from lino.models import get_site_config
+        return get_site_config()
+        #~ if self._site_config is None:
+            #~ from lino.models import get_site_config
+            #~ self._site_config = get_site_config()
+        #~ return self._site_config
     site_config = property(get_site_config)
         
         
