@@ -70,6 +70,13 @@ from lino.core.coretools import get_slave, get_model_report, get_data_elem
 
 USER_MODEL = None
 
+
+class ComputedColumn(object):
+    def __init__(self,label,func):
+        self.label = label
+        self.func = func
+        
+
 def unused_parse_js_date(s,name):
     #~ v = dateparser.parse(s)
     #~ v = dateparser.parse(s,fuzzy=True)
@@ -1016,7 +1023,15 @@ class Table(actors.Actor): #,base.Handled):
     """
     
     model = None
+    """
+    The model on which this table iterates.
+    """
+    
     use_as_default_report = True
+    """
+    Set this to False if this Table should not become the model's default table.
+    """
+    
     order_by = None
     
     expand_memos = False
@@ -1177,6 +1192,8 @@ class Table(actors.Actor): #,base.Handled):
     """
     
     detail_action = None
+    
+    computed_columns = dict()
     
     def __init__(self):
         if self.model is None:
@@ -1400,7 +1417,11 @@ class Table(actors.Actor): #,base.Handled):
         
             
         
-    def get_data_elem(self,name): return get_data_elem(self.model,name)
+    def get_data_elem(self,name): 
+        cc = self.computed_columns.get(name,None)
+        if cc:
+            return cc
+        return get_data_elem(self.model,name)
         #~ de = get_data_elem(self.model,name)
         #~ if de is not None: 
             #~ return de
@@ -2026,3 +2047,4 @@ class Detail(base.Handled):
         self.layouts = layouts
         base.Handled.__init__(self)
         
+

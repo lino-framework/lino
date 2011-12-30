@@ -56,7 +56,7 @@ from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
 #~ from lino.mixins.reminder import ReminderEntry
-from lino.tools import obj2str
+from lino.tools import obj2str, models_by_abc
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.cal.models import DurationUnit, update_auto_task, update_auto_event
@@ -309,6 +309,30 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
               self)
               #~ alarm_value=1,alarm_unit=DurationUnit.months)
               
+    def overlaps_with(self,b):
+        if b == self: 
+            return False
+        elif self.applies_until:
+            if b.applies_from:
+                if b.applies_from >= self.applies_until:
+                    return True
+                else:
+                    return b.applies_until <= self.applies_from
+            else:
+                return b.applies_until <= self.applies_from
+        elif b.applies_until:
+            return b.applies_until <= self.applies_from
+        return True
+        
+    def data_control(self):
+            
+        msgs = []
+        for model in models_by_abc(ContractBase):
+            for con in model.objects.filter(person=self.person):
+                if self.overlaps_with(con):
+                    msgs.append(_("Dates overlap with %s") % con)
+        return msgs
+          
             
     
 class Contract(ContractBase):

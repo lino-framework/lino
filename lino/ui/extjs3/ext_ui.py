@@ -362,6 +362,9 @@ class ExtUI(base.UI):
         #~ if isinstance(de,actions.ImageAction):
             #~ return ext_elems.PictureElement(lh,name,de,**kw)
 
+        if isinstance(de,table.ComputedColumn):
+            return ext_elems.DisplayElement(de)
+            
         if isinstance(de,fields.FieldSet):
             return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
             

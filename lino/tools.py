@@ -199,6 +199,15 @@ def sorted_models_list():
         return cmp(full_model_name(a),full_model_name(b))
     models_list.sort(fn)
     return models_list
+
+def models_by_abc(abc):
+    """
+    Yields a list of installed models that are 
+    subclass of the given abstract base class.
+    """
+    for m in models.get_models():
+        if issubclass(m,abc):
+            yield m
     
 
 def makedirs_if_missing(dirname):
