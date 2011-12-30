@@ -42,7 +42,7 @@ from django.db.models import loading
 #~ from lino.utils import get_class_attr
 
 import lino
-from lino import reports
+from lino.core import table
 from lino.core.coretools import app_labels
 from lino.utils import confirm
 from lino.utils.config import find_config_file
@@ -106,18 +106,18 @@ class Command(GeneratingCommand):
             
         self.generate_class_file('lino.Application','Application.js.tmpl',**context)
         #~ self.generate('Application',application_lines(self))
-        for rpt in (reports.master_reports 
-          + reports.slave_reports 
-          + reports.generic_slaves.values()):
+        for rpt in (table.master_reports 
+          + table.slave_reports 
+          + table.generic_slaves.values()):
             rh = rpt.get_handle(ui) 
             #~ js += "Ext.namespace('Lino.%s')\n" % rpt
             #~ f.write("Ext.namespace('Lino.%s')\n" % rpt)
             context.update(rh=rh)
             for a in rpt.get_actions():
-                if isinstance(a,reports.GridEdit):
+                if isinstance(a,table.GridEdit):
                     context.update(action=a)
                     self.generate_class_file(a2class(a),'XyzTableWindow.js.tmpl',**context)
-                if isinstance(a,reports.ShowDetailAction):
+                if isinstance(a,table.ShowDetailAction):
                     context.update(action=a)
                     self.generate_class_file(a2class(a),
                         'XyzDetailWindow.js.tmpl',

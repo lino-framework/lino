@@ -875,6 +875,31 @@ class MyActivePersons(MyPersons):
         qs = qs.filter(group__active=True)
         return qs
  
+if False:
+  
+  class PersonsByUser(dd.Table):
+    model = settings.LINO.user_model
+    
+    class Row:
+        def __init__(self,user):
+            self.user = user
+            self.rr = MyPersons.request(ui,subst_user=user)
+    
+    def get_request_queryset(self,rr):
+        l = []
+        for user in User.objects.filter(
+            Q(user=rr.get_user()),Q(user__is_spis=True)
+          ).order_by('username'):
+            row = Row(user)
+            if row.rr.total_count:
+                l.append(row)  
+        return l
+        
+    @dd.computed(_("User"))
+    def user(cls,ui,row):
+        return ui.href_to(row.user)
+        
+        
 
 def persons_by_user(ui,requesting_user):
     """

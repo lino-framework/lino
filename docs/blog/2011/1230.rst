@@ -1,13 +1,16 @@
 20111230
 ========
 
-- Listing : 
+The Data Control Listing was too slow. Some more changes that go into 1.3.3:
 
-  - New field `body_html` now stores the result of `body()`.
-    Changed :file:`config/lino/DataControlListing/Default.odt`
-    
-
-  - removed fields 'header' and 'footer' because 
-    ``do text from html(self.header())`` doesn't seem 
-    to work when used in a page header or footer.
-    
+- New field `body_html` now stores the result of `body()`.
+  Removed fields 'header' and 'footer' because 
+  ``do text from html(self.header())`` doesn't seem 
+  to work when used in a page header or footer.
+  Changed :file:`config/lino/DataControlListing/Default.odt`
+  
+- `.odt` files were missing in source distribution
+  
+- settings.LINO.site_config didn't update when the SiteConfig 
+  record had been modified.
+  

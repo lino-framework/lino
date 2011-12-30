@@ -312,23 +312,27 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     def overlaps_with(self,b):
         if b == self: 
             return False
-        elif self.applies_until:
-            if b.applies_from:
-                if b.applies_from >= self.applies_until:
-                    return True
+        a1 = self.applies_from
+        a2 = self.date_ended or self.applies_until
+        b1 = b.applies_from
+        b2 = b.date_ended or b.applies_until
+        if a2:
+            if b1:
+                if b1 >= a2:
+                    return False
                 else:
-                    if b.applies_until and self.applies_from:
-                        return b.applies_until <= self.applies_from
+                    if b2 and a1:
+                        return b2 <= a1
                     else:
                         return True
             else:
-                if b.applies_until and self.applies_from:
-                    return b.applies_until <= self.applies_from
+                if b2 and a1:
+                    return b2 >= a1
                 else:
                     return True
-        elif b.applies_until:
-            if self.applies_from:
-                return b.applies_until <= self.applies_from
+        elif b2:
+            if a1:
+                return b2 >= a1
             else:
                 return True
         return True

@@ -70,11 +70,22 @@ from lino.core.coretools import get_slave, get_model_report, get_data_elem
 
 USER_MODEL = None
 
-
+  
 class ComputedColumn(object):
     def __init__(self,label,func):
         self.label = label
         self.func = func
+        
+def computed(label=None):
+    def decorator(fn):
+        def wrapped(*args):
+            return fn(*args)
+        wrapped.label = label
+        return classmethod(wrapped)
+    return decorator
+    
+
+        
         
 
 def unused_parse_js_date(s,name):

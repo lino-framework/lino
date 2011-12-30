@@ -1,9 +1,57 @@
 T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:20: (WARNING/2) autodoc can't import/find module 'lino.apps.crl.models', it reported error: "'module' object has no attribute 'LinksByOwnerBase'", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.management.rst:30: (WARNING/2) autodoc can't import/find module 'lino.management.commands.makeui', it reported error: "cannot import name reports", please check your spelling and sys.path
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:17: WARNING: py:mod reference target not found: lino.apps.crl.models
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:13: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:42: WARNING: py:class reference target not found: lino.apps.dsbe.models.PropsByPerson
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:53: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:94: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:109: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:119: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:139: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:152: WARNING: py:class reference target not found: lino.apps.crl.models.Company
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:160: WARNING: py:class reference target not found: lino.apps.dsbe.models.Companies
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:173: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:182: WARNING: py:class reference target not found: CourseConent
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:217: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:230: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:238: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:246: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:257: WARNING: py:attr reference target not found: lino.ui.requests.URL_PARAMS_SUBST_USER
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:266: WARNING: py:class reference target not found: lino.apps.dsbe.models.AllPersons
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:274: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:282: WARNING: py:class reference target not found: dsbe.Activity
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:312: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:351: WARNING: py:class reference target not found: lino.apps.dsbe.models.AllPersons
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:364: WARNING: py:attr reference target not found: lino.dd.Table.master_key
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:386: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:399: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:72: WARNING: py:class reference target not found: lino.fields.IncompleteDate
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:100: WARNING: py:class reference target not found: lino.mixins.printable.CachedPrintable
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1210
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1211
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1214
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:44: WARNING: py:class reference target not found: City
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:49: WARNING: py:class reference target not found: lino.utils.mdbtools.Loader
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:65: WARNING: py:class reference target not found: Note
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:78: WARNING: py:class reference target not found: User
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:141: WARNING: py:attr reference target not found: filter.
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:176: WARNING: py:meth reference target not found: lino.core.table.Table.do_setup
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:191: WARNING: py:class reference target not found: lino.SiteConfigs
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:241: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:283: WARNING: py:class reference target not found: lino.core.table.ActionRequest
+T:\hgwork\lino\docs\autodoc\lino.core.table.rst:291: WARNING: py:class reference target not found: django.db.models.query.QuerySet
 T:\hgwork\lino\docs\autodoc\lino.management.rst:1: WARNING: py:mod reference target not found: lino.management
+T:\hgwork\lino\docs\autodoc\lino.modlib.isip.rst:44: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231

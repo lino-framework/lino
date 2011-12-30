@@ -93,7 +93,7 @@ class Lino(Lino):
                 for pg in properties.PropGroup.objects.all():
                     config_props.add_action('properties.PropsByGroup',params=dict(master_instance=pg),label=pg.name)
         
-            config_etc.add_action('links.LinkTypes')
+            #~ config_etc.add_action('links.LinkTypes')
             config_etc.add_action('uploads.UploadTypes')
             
             cal.setup_config_menu(self,ui,user,cfg)
@@ -109,7 +109,7 @@ class Lino(Lino):
             #~ m.add_action('contacts.AllPersons')
             #~ m.add_action('notes.Notes')
             #~ m.add_action('lino.TextFieldTemplates')
-            m.add_action('links.Links')
+            #~ m.add_action('links.Links')
             #~ m.add_action('jobs.Contracts')
             m.add_action('uploads.Uploads')
             m.add_action('contenttypes.ContentTypes')
@@ -159,7 +159,7 @@ INSTALLED_APPS = (
   'lino.modlib.contacts',
   #~ 'lino.modlib.projects',
   'lino.modlib.notes',
-  'lino.modlib.links',
+  #~ 'lino.modlib.links',
   'lino.modlib.uploads',
   #~ 'lino.modlib.thirds',
   'lino.modlib.cal',
