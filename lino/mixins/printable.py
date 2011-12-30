@@ -791,8 +791,8 @@ class Listing(CachedPrintable):
     date = models.DateField(
         blank=True,null=True,
         verbose_name=_("Date"))
-    header_html = dd.RichTextField(_("Header"),editable=False)
-    footer_html = dd.RichTextField(_("Footer"),editable=False)
+    #~ header_html = dd.RichTextField(_("Header"),editable=False)
+    #~ footer_html = dd.RichTextField(_("Footer"),editable=False)
     body_html = dd.RichTextField(_("Body"),editable=False)
         
     #~ title = models.CharField(max_length=200,
@@ -823,14 +823,14 @@ class Listing(CachedPrintable):
         return self._meta.verbose_name # "Untitled Listing"
     title = property(get_title)
         
-    def header(self):
-        return '<p align="center"><b>%s</b></p>' % cgi.escape(self.title)
+    #~ def header(self):
+        #~ return '<p align="center"><b>%s</b></p>' % cgi.escape(self.title)
         
-    def footer(self):
-        html = '<td align="left">%s</td>' % 'left footer'
-        html += '<td align="right">Page X of Y</td>'
-        html = '<table width="100%%"><tr>%s</tr></table>' % html
-        return html
+    #~ def footer(self):
+        #~ html = '<td align="left">%s</td>' % 'left footer'
+        #~ html += '<td align="right">Page X of Y</td>'
+        #~ html = '<table width="100%%"><tr>%s</tr></table>' % html
+        #~ return html
         
     def body(self):
         """
@@ -843,13 +843,15 @@ class Listing(CachedPrintable):
         #~ return self.header() + self.body() + self.footer()
     #~ preview.return_type = fields.HtmlBox(_("Preview"))
     def save(self,*args,**kw):
-        self.header_html = self.header()
-        self.footer_html = self.footer()
-        self.body_html = self.body()
+        #~ self.header_html = self.header()
+        #~ self.footer_html = self.footer()
+        if not self.body_html:
+            self.body_html = self.body()
         super(Listing,self).save(*args,**kw)
     
     def get_preview(self,request):
-        return self.header_html + self.body_html + self.footer_html
+        return self.body_html
+        #~ return self.header_html + self.body_html + self.footer_html
     preview = dd.VirtualField(dd.HtmlBox(_("Preview")),get_preview)
     
     
