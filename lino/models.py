@@ -119,7 +119,7 @@ class DataControlListing(mixins.Listing):
                             items.append("<b>%s</b> : %s" % (
                               unicode(i),
                               "\n".join(
-                                ["<br/>(%d) %s" % (x[0]+1,x[1])
+                                ["<br>(%d) %s" % (x[0]+1,x[1])
                                   for x in enumerate(msgs)])))
         html = "<ol>"
         html += "\n".join(["<li>%s</li>" % ln for ln in items])
