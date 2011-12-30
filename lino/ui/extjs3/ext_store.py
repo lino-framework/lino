@@ -537,6 +537,19 @@ class MethodStoreField(StoreField):
         #~ return instance
         #raise Exception("Cannot update a virtual field")
 
+class ComputedColumnField(StoreField):
+  
+    def value_from_object(self,ar,obj):
+        m = self.field.func
+        #~ assert m.func_code.co_argcount >= 2, (self.field.name, m.func_code.co_varnames)
+        #~ print self.field.name
+        return m(obj,ar)[0]
+        
+    def form2obj(self,request,instance,post_data,is_new):
+        pass
+        #~ return instance
+        #raise Exception("Cannot update a virtual field")
+
 
 
 
@@ -591,6 +604,9 @@ class Store:
     Represents an :extjs:`Ext.data.JsonStore`.
     
     """
+    
+    pk = None
+    
     #declare_type = jsgen.DECLARE_THIS
     #~ declare_type = jsgen.DECLARE_VAR
     #~ declare_type = jsgen.DECLARE_INLINE
@@ -602,9 +618,10 @@ class Store:
         #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report
-        self.pk = self.report.model._meta.pk
-        assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
-          self.report.actor_id,self.report.model)
+        if isinstance(rh.report,table.Table):
+            self.pk = self.report.model._meta.pk
+            assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
+              self.report.actor_id,self.report.model)
           
         #~ fields = []
         
@@ -636,21 +653,22 @@ class Store:
         #~ fields = list(fields)
         #~ self.pk_index = fields.index(self.pk)
         #~ self.fields = [ self.create_field(fld) for fld in fields ]
-        self.pk_index = 0
-        for fld in self.list_fields:
-            """
-            Django's Field.__cmp__() does::
-            
-              return cmp(self.creation_counter, other.creation_counter) 
-              
-            which causes an exception when trying to compare a field with an object of other type.
-            """
-            #~ if type(fld.field) == type(self.pk) and fld.field == self.pk:
-            if fld.field.__class__ == self.pk.__class__ and fld.field == self.pk:
-                break
-            self.pk_index += fld.list_values_count
-        #~ if self.report.actor_id == 'contacts.Persons':
-            #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
+        if isinstance(rh.report,table.Table):
+            self.pk_index = 0
+            for fld in self.list_fields:
+                """
+                Django's Field.__cmp__() does::
+                
+                  return cmp(self.creation_counter, other.creation_counter) 
+                  
+                which causes an exception when trying to compare a field with an object of other type.
+                """
+                #~ if type(fld.field) == type(self.pk) and fld.field == self.pk:
+                if fld.field.__class__ == self.pk.__class__ and fld.field == self.pk:
+                    break
+                self.pk_index += fld.list_values_count
+            #~ if self.report.actor_id == 'contacts.Persons':
+                #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
             
         def addfield(sf):
             self.all_fields.append(sf)
@@ -709,12 +727,15 @@ class Store:
                 add(fld)
                 #~ fields.add(fld)
         #~ if not self.pk in fields:
-        if not pk_found:
+        if not pk_found and self.pk is not None:
             #~ fields.add(self.pk)
             add(self.pk)
         return fields
         
     def create_field(self,fld):
+        if isinstance(fld,dd.ComputedColumn):
+            #~ logger.info("20111230 Store.create_field(%s)", fld)
+            return ComputedColumnField(fld)
         meth = getattr(fld,'_return_type_for_method',None)
         if meth is not None:
             # uh, this is tricky...
@@ -811,7 +832,7 @@ class Store:
         
 
     def row2list(self,request,row):
-        assert isinstance(request,table.TableRequest)
+        #~ assert isinstance(request,table.AbstractTableRequest)
         #~ if not isinstance(request,table.ListActionRequest):
             #~ raise Exception()
         #~ logger.info("20111209 Store.row2list(%s)", obj2str(row))
@@ -822,7 +843,7 @@ class Store:
         return l
       
     def row2dict(self,request,row):
-        assert isinstance(request,table.TableRequest)
+        #~ assert isinstance(request,table.AbstractTableRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         d = {}
         for f in self.detail_fields:

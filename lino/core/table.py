@@ -72,16 +72,26 @@ USER_MODEL = None
 
   
 class ComputedColumn(object):
-    def __init__(self,label,func):
-        self.label = label
+    editable = False
+    primary_key = False
+    def __init__(self,func,verbose_name=None,name=None,width=None):
         self.func = func
+        self.name = name
+        self.verbose_name = verbose_name or name
+        self.width = width
         
-def computed(label=None):
+        
+def computed(*args,**kw):
     def decorator(fn):
         def wrapped(*args):
             return fn(*args)
-        wrapped.label = label
-        return classmethod(wrapped)
+        #~ wrapped.label = label
+        #~ wrapped.formatter = formatter
+        #~ return wrapped
+        #~ return staticmethod(wrapped)
+        return ComputedColumn(wrapped,*args,**kw)
+        #~ return ComputedColumn(classmethod(wrapped),verbose_name=verbose_name)
+        #~ return classmethod(wrapped)
     return decorator
     
 
@@ -271,7 +281,8 @@ master_reports = []
 slave_reports = []
 generic_slaves = {}
 frames = []
-rptname_choices = []
+custom_tables = []
+#~ rptname_choices = []
 
 config_dirs = []
 
@@ -282,32 +293,47 @@ def register_frame(frm):
 def register_report(rpt):
     #~ logger.debug("20111113 register_report %s", rpt.actor_id)
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
+    
     if rpt.typo_check:
         myattrs = set(rpt.__class__.__dict__.keys())
         for attr in base_attrs(rpt.__class__):
             myattrs.discard(attr)
         if len(myattrs):
             logger.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
-    if rpt.model is None:
+            
+    if isinstance(rpt,Table) and rpt.model is None:
         #~ logger.debug("20111113 %s is an abstract report", rpt)
         return
         
+    for n in rpt.__class__.__dict__.keys():
+    #~ for n in dir(rpt):
+        v = getattr(rpt,n)
+        if isinstance(v,ComputedColumn):
+            v.name = n
+            d = dict()
+            d.update(rpt.computed_columns)
+            d[n] = v
+            rpt.computed_columns = d
+            
     #~ if rpt.model._meta.abstract:
         
     #~ rptname_choices.append((rpt.actor_id, rpt.get_label()))
-    rptname_choices.append(rpt.actor_id)
+    #~ rptname_choices.append(rpt.actor_id)
     
-    if rpt.master is None:
-        if not rpt.model._meta.abstract:
-            master_reports.append(rpt)
-        if not rpt.filter and not rpt.known_values and rpt.use_as_default_report:
-            #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
-            rpt.model._lino_model_report = rpt
-    elif rpt.master is ContentType:
-        #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
-        generic_slaves[rpt.actor_id] = rpt
-    else:
-        slave_reports.append(rpt)
+    if isinstance(rpt,Table):
+        if rpt.master is None:
+            if not rpt.model._meta.abstract:
+                master_reports.append(rpt)
+            if not rpt.filter and not rpt.known_values and rpt.use_as_default_report:
+                #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
+                rpt.model._lino_model_report = rpt
+        elif rpt.master is ContentType:
+            #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
+            generic_slaves[rpt.actor_id] = rpt
+        else:
+            slave_reports.append(rpt)
+    elif isinstance(rpt,CustomTable):
+        custom_tables.append(rpt)
 
     
     
@@ -327,6 +353,8 @@ def discover():
     #~ logger.debug("20111113 Register Table actors...")
     for rpt in actors.actors_list:
         if isinstance(rpt,Table) and rpt.__class__ is not Table:
+            register_report(rpt)
+        elif isinstance(rpt,CustomTable) and rpt.__class__ is not CustomTable:
             register_report(rpt)
         if isinstance(rpt,Frame) and rpt.__class__ is not Frame:
             register_frame(rpt)
@@ -504,24 +532,9 @@ class SubmitInsert(SubmitDetail):
 class ReportHandle(base.Handle): 
     
     def __init__(self,ui,report):
-        #~ logger.debug('20111113 ReportHandle.__init__(%s)',report)
-        assert isinstance(report,Table)
         self.report = report
-        #~ self.data_elems = report.data_elems
-        #~ self.get_data_elem = report.get_data_elem
         self._layouts = None
-        #~ actors.ActorHandle.__init__(self,report)
-        #~ datalinks.DataLink.__init__(self,ui)
-        #~ self.ui = ui
         base.Handle.__init__(self,ui)
-        if self.report.model is not None:
-            if not self.report.model._meta.abstract:
-                if ui is not None:
-                    self.list_layout = ListLayoutHandle(self,
-                        ListLayout('main = '+self.report.column_names),
-                        hidden_elements=self.report.hidden_columns)
-                #~ self.content_type = ContentType.objects.get_for_model(self.report.model).pk
-        
   
     def __str__(self):
         return str(self.report) + 'Handle'
@@ -530,34 +543,12 @@ class ReportHandle(base.Handle):
         if self._layouts is not None:
             return
         self._layouts = [ self.list_layout ] 
-        #~ if self.report.model is not None:
-            #~ self._layouts += [ 
-                #~ LayoutHandle(self.ui,self.report.model,dtl) 
-                #~ for dtl in self.report.detail_layouts ]
               
     def get_actor_url(self,*args,**kw):
         return self.ui.get_actor_url(self.report,*args,**kw)
         
     def submit_elems(self):
         return []
-        
-    #~ def get_layout(self,i):
-        #~ self.setup_layouts()
-        #~ return self._layouts[i]
-        
-    #~ def get_used_layouts(self):
-        #~ self.setup_layouts()
-        #~ return self._layouts
-        
-    #~ def get_detail_layouts(self):
-        #~ if self.model._lino_detail is None:
-            #~ return []
-        #~ dh = self.model._lino_detail.get_handle(self.ui)
-        #~ return dh.layouts
-        
-    #~ def get_detail_layouts(self):
-        #~ self.setup_layouts()
-        #~ return self._layouts[1:]
         
     def get_list_layout(self):
         self.setup_layouts()
@@ -568,14 +559,6 @@ class ReportHandle(base.Handle):
         #~ print 20110315, layout._main.columns
         return layout._main.columns
         
-    #~ def get_absolute_url(self,*args,**kw):
-        #~ return self.ui.get_report_url(self,*args,**kw)
-        
-    #~ def data_elems(self):
-        #~ for de in self.report.data_elems(): yield de
-    #~ def get_data_elem(self,name):
-        #~ return get_data_elem(self.report.model,name)
-        
     def get_slaves(self):
         return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
             
@@ -583,12 +566,6 @@ class ReportHandle(base.Handle):
         return self.report.get_action(name)
     def get_actions(self,*args,**kw):
         return self.report.get_actions(*args,**kw)
-        
-        
-    #~ def request(self,*args,**kw):
-        #~ ar = ReportActionRequest(self.ui,self.report.list_action)
-        #~ ar.setup(*args,**kw)
-        #~ return ar
         
     def update_detail(self,tab,desc):
         #~ raise Exception("Not yet fully converted to Lino 1.3.0")
@@ -614,39 +591,170 @@ class ActionRequest(object):
         return kw
   
 
-class TableRequest(ActionRequest):
-    """
-    An Action Request on a given Table.
-    """
-    limit = None
-    offset = None
-    master_instance = None
-    master = None
-    instance = None
+class AbstractTableRequest(ActionRequest):
+  
     create_rows = None
-    extra = None
-    layout = None
     
-    sort_column = None
-    sort_direction = None
-    
-    def __init__(self,ui,report,request,action,*args,**kw):
-        if not isinstance(report,Table):
-            raise Exception("Expected a Table instance, got %r" % report)
+    #~ def __init__(self,ui,report,request,action,*args,**kw):
+    def __init__(self,ui,report,request,action,**kw):
+        if not isinstance(report,AbstractTable):
+            raise Exception("Expected an AbstractTable instance, got %r" % report)
         #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
         ActionRequest.__init__(self,ui,action)
         self.report = report
         self.ah = report.get_handle(ui)
         #~ self.ah = rh
         self.request = request
-        #~ self.store = rh.store
-        #~ if request is None:
-            #~ self.user = None
-        #~ else:
-            #~ kw = self.parse_req(request,self.ah,**kw)
         if request is not None:
             kw = self.parse_req(request,self.ah,**kw)
-        self.setup(*args,**kw)
+        self.setup(**kw)
+        #~ self.setup(*args,**kw)
+    
+    def parse_req(self,request,rh,**kw):
+        kw.update(self.report.known_values)
+        for fieldname, default in self.report.known_values.items():
+            v = request.REQUEST.get(fieldname,None)
+            if v is not None:
+                #~ kw.update(fieldname=v)
+                kw[fieldname] =v
+        
+        kw.update(user=request.user)
+        #~ user = request.user
+        #~ if user is not None and user.is_superuser:
+        #~ if True:
+        username = request.REQUEST.get(ext_requests.URL_PARAM_SUBST_USER,None)
+        if username:
+            try:
+                kw.update(subst_user=USER_MODEL.objects.get(username=username))
+            except USER_MODEL.DoesNotExist, e:
+                pass
+        #~ kw.update(user=user)
+        
+        kw = rh.report.parse_req(request,**kw)
+        
+        return kw
+        
+    def setup(self,
+            user=None,
+            subst_user=None,
+            known_values=None,
+            **kw):
+        if user is not None and not self.report.can_view.passes(user):
+            msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
+            raise InvalidRequest(msg)
+            
+        #~ if user is None:
+            #~ raise InvalidRequest("%s : user is None" % self)
+            
+        self.user = user
+        self.subst_user = subst_user
+        #~ self.known_values = known_values or self.report.known_values
+        #~ if self.report.known_values:
+        for k,v in self.report.known_values.items():
+            kw.setdefault(k,v)
+        if known_values:
+            kw.update(known_values)
+        #~ if self.report.__class__.__name__ == 'SoftSkillsByPerson':
+            #~ logger.info("20111223 %r %r", kw, self.report.known_values)
+        self.known_values = kw
+        
+        self.report.setup_request(self)
+        self.queryset = self.get_queryset()
+        #~ self.setup_queryset()
+        #~ logger.debug(unicode(self))
+        
+        """
+        TODO: 
+        Note that `total_count` is looked up 
+        *before* `offset` and `limit` are set.
+        That's a pity because it creates a database lookup
+        even if the TableRequest is being instantiated with 
+        the only purpose of generating an url.
+        """
+        # get_queryset() may return a list
+        if isinstance(self.queryset,models.query.QuerySet):
+            self.total_count = self.queryset.count()
+        else:
+            self.total_count = len(self.queryset)
+            
+    def get_queryset(self):
+        # overridden by ChoicesReportRequest
+        return self.report.get_request_queryset(self)
+        #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
+        
+    def get_base_filename(self):
+        return str(self.report)
+        #~ s = self.get_title()
+        #~ return s.encode('us-ascii','replace')
+        
+    def __iter__(self):
+        return self.queryset.__iter__()
+        
+    def __getitem__(self,*args):
+        return self.queryset.__getitem__(*args)
+        
+    def __len__(self):
+        return self.queryset.__len__()
+        
+    def get_user(self):
+        return self.subst_user or self.user
+        
+    def get_action_title(self):
+        return self.action.get_action_title(self)
+        
+    def get_title(self):
+        return self.report.get_title(self)
+        
+    def render_to_dict(self):
+        return self.action.render_to_dict(self)
+        
+    #~ def row2dict(self,row,d):
+        #~ # overridden in extjs.ext_requests.ViewReportRequest
+        #~ return self.report.row2dict(row,d)
+
+    def get_request_url(self,*args,**kw):
+        return self.ui.get_request_url(self,*args,**kw)
+
+    def spawn_request(self,rpt,**kw):
+        #~ rh = rpt.get_handle(self.ui)
+        kw.update(user=self.user)
+        #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
+        return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
+        
+    def request2kw(self,ui,**kw):
+        if self.subst_user is not None:
+            kw[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
+            
+        if self.known_values:
+            #~ kv = dict()
+            for k,v in self.known_values.items():
+                if self.report.known_values.get(k,None) != v:
+                    kw[k] = v
+                
+            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
+        return kw
+            
+    def confirm(self,step,*messages):
+        if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
+            return
+        raise actions.ConfirmationRequired(step,messages)
+
+        
+class TableRequest(AbstractTableRequest):
+    """
+    An Action Request on a given Table.
+    """
+    limit = None
+    offset = None
+    
+    master_instance = None
+    master = None
+    instance = None
+    extra = None
+    layout = None
+    
+    sort_column = None
+    sort_direction = None
     
     
     def parse_req(self,request,rh,**kw):
@@ -707,12 +815,6 @@ class TableRequest(ActionRequest):
                 filter = json.loads(filter)
                 kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
                 
-        kw.update(self.report.known_values)
-        for fieldname, default in self.report.known_values.items():
-            v = request.REQUEST.get(fieldname,None)
-            if v is not None:
-                kw.update(fieldname=v)
-        
         quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)
@@ -725,7 +827,6 @@ class TableRequest(ActionRequest):
         #~ else:
             #~ kw.update(limit=self.report.page_length)
             
-        
         sort = request.REQUEST.get(ext_requests.URL_PARAM_SORT,None)
         if sort:
             self.sort_column = sort
@@ -735,31 +836,14 @@ class TableRequest(ActionRequest):
                 self.sort_direction = 'DESC'
             kw.update(order_by=[sort])
         
-        kw.update(user=request.user)
-        #~ user = request.user
-        #~ if user is not None and user.is_superuser:
-        #~ if True:
-        username = request.REQUEST.get(ext_requests.URL_PARAM_SUBST_USER,None)
-        if username:
-            try:
-                kw.update(subst_user=USER_MODEL.objects.get(username=username))
-            except USER_MODEL.DoesNotExist, e:
-                pass
-        #~ kw.update(user=user)
+        return AbstractTableRequest.parse_req(self,request,rh,**kw)
         
-        kw = rh.report.parse_req(request,**kw)
-        
-        return kw
-        
-      
+            
     def setup(self,
             master=None,
             master_instance=None,
             master_id=None,
-            offset=None,limit=None,
             layout=None,
-            user=None,
-            subst_user=None,
             filter=None,
             create_rows=None,
             quick_search=None,
@@ -767,15 +851,8 @@ class TableRequest(ActionRequest):
             order_by=None,
             exclude=None,
             extra=None,
-            known_values=None,
-            #~ expand_memos=None,
-            #~ selected_rows=None,
+            offset=None,limit=None,
             **kw):
-        if user is not None and not self.report.can_view.passes(user):
-            msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
-            raise InvalidRequest(msg)
-        self.user = user
-        self.subst_user = subst_user
         self.filter = filter
         #~ if isinstance(self.action,GridEdit):
             #~ self.expand_memos = expand_memos or self.report.expand_memos
@@ -784,15 +861,6 @@ class TableRequest(ActionRequest):
         self.order_by = order_by
         self.exclude = exclude or self.report.exclude
         self.extra = extra
-        #~ self.known_values = known_values or self.report.known_values
-        #~ if self.report.known_values:
-        for k,v in self.report.known_values.items():
-            kw.setdefault(k,v)
-        if known_values:
-            kw.update(known_values)
-        #~ if self.report.__class__.__name__ == 'SoftSkillsByPerson':
-            #~ logger.info("20111223 %r %r", kw, self.report.known_values)
-        self.known_values = kw
 
         #~ if selected_rows is not None:
             #~ self.selected_rows = selected_rows
@@ -813,6 +881,9 @@ class TableRequest(ActionRequest):
             
         self.create_kw = self.report.get_create_kw(master_instance)
         self.master_instance = master_instance
+        
+        AbstractTableRequest.setup(self,**kw)
+        
         if self.create_rows is None:
             if create_rows is None:
                 if self.create_kw is None:
@@ -829,23 +900,6 @@ class TableRequest(ActionRequest):
             else:
                 layout = self.ah._layouts[layout]
             self.layout = layout
-        self.report.setup_request(self)
-        self.queryset = self.get_queryset()
-        #~ self.setup_queryset()
-        #~ logger.debug(unicode(self))
-        # get_queryset() may return a list
-        """
-        TODO: 
-        Note that `total_count` is looked up 
-        *before* `offset` and `limit` are set.
-        That's a pity because it creates a database lookup
-        even if the TableRequest is being instantiated with 
-        the only purpose of generating an url.
-        """
-        if isinstance(self.queryset,models.query.QuerySet):
-            self.total_count = self.queryset.count()
-        else:
-            self.total_count = len(self.queryset)
         
         #~ if limit is None:
             #~ limit = self.report.page_length
@@ -868,25 +922,6 @@ class TableRequest(ActionRequest):
     def __str__(self):
         return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
 
-    def get_queryset(self):
-        # overridden by ChoicesReportRequest
-        return self.report.get_request_queryset(self)
-        #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
-        
-    def __iter__(self):
-        return self.queryset.__iter__()
-        
-    def get_base_filename(self):
-        return str(self.report)
-        #~ s = self.get_title()
-        #~ return s.encode('us-ascii','replace')
-        
-    def __getitem__(self,*args):
-        return self.queryset.__getitem__(*args)
-        
-    def __len__(self):
-        return self.queryset.__len__()
-        
     def create_instance(self,**kw):
         if self.create_kw:
             kw.update(self.create_kw)
@@ -901,44 +936,10 @@ class TableRequest(ActionRequest):
                 #~ kw[k] = v
         return obj
         
-    def get_user(self):
-        return self.subst_user or self.user
-        
-    def get_action_title(self):
-        return self.action.get_action_title(self)
-        
-    def get_title(self):
-        return self.report.get_title(self)
-        
-    def render_to_dict(self):
-        return self.action.render_to_dict(self)
-        
-    #~ def row2dict(self,row,d):
-        #~ # overridden in extjs.ext_requests.ViewReportRequest
-        #~ return self.report.row2dict(row,d)
-
-    def get_request_url(self,*args,**kw):
-        return self.ui.get_request_url(self,*args,**kw)
-
-    def spawn_request(self,rpt,**kw):
-        #~ rh = rpt.get_handle(self.ui)
-        kw.update(user=self.user)
-        #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
-        return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
-        
     def request2kw(self,ui,**kw):
+        kw = AbstractTableRequest.request2kw(self,ui,**kw)
         #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
             #~ print 20111223, self.known_values
-        if self.subst_user is not None:
-            kw[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
-            
-        if self.known_values:
-            #~ kv = dict()
-            for k,v in self.known_values.items():
-                if self.report.known_values.get(k,None) != v:
-                    kw[k] = v
-                
-            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
         if self.quick_search:
             kw[ext_requests.URL_PARAM_FILTER] = self.quick_search
         if self.master_instance is not None:
@@ -947,11 +948,6 @@ class TableRequest(ActionRequest):
             kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
         return kw
         
-    def confirm(self,step,*messages):
-        if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
-            return
-        raise actions.ConfirmationRequired(step,messages)
-
 
 #~ class IterActionRequest(actions.ActionRequest)
     #~ def __init__(self,ui,iter,action):
@@ -1000,7 +996,7 @@ class Frame(actors.Actor):
         if self.default_action:
             self.add_action(self.default_action)
         
-class Table(actors.Actor): #,base.Handled):
+class AbstractTable(actors.Actor): #,base.Handled):
     """
     
     A Table is the definition of a tabular data view, 
@@ -1009,33 +1005,261 @@ class Table(actors.Actor): #,base.Handled):
     A Table definition has attributes
     like `filter` and `sort_order` 
     which it forwards to the QuerySet 
-    and which we sometimes call "horizontal layout" 
+    and which we sometimes call "vertical layout" 
     because they influence the rows to be selected.
-    But it usually also has a "vertical layout", 
+    But it usually also has a "horizontal layout", 
     for example the `column_names` attribute.
 
     """
-    #~ default_action_class = GridEdit
     _handle_class = ReportHandle
-    #~ _handle_selector = base.UI
+    
     #~ params = {}
     field = None
     
+    title = None
+    column_names = '*'
+    #~ hide_columns = None
+    hidden_columns = frozenset()
+    form_class = None
+    help_url = None
+    #master_instance = None
+    
+    page_length = 30
+    """
+    Number of rows to display per page.
+    """
+    
+    cell_edit = True 
+    """
+    `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
+    """
+    
+    #~ date_format = lino.DATE_FORMAT_EXTJS
+    #~ boolean_texts = boolean_texts
+    boolean_texts = boolean_texts = (_('Yes'),_('No'),' ')
+    
+    can_view = perms.always
+    can_add = perms.is_authenticated
+    can_change = perms.is_authenticated
+    can_config = perms.is_staff
+    
+    show_prev_next = True
+    
+    #~ default_action = GridEdit
+    default_layout = 0
+    
+    typo_check = True
+    """
+    True means that Lino shoud issue a warning if a subclass 
+    defines any attribute that did not exist in the base class.
+    Usually such a warning means that there is something wrong.
+    """
+    
+    known_values = {}
+    """
+    A `dict` of `fieldname` -> `value` pairs that specify "known values".
+    Requests will automatically be filtered to show only existing records 
+    with those values.
+    This is like :attr:`filter`, but 
+    new instances created in this Table will automatically have 
+    these values set.
+    
+    """
+    
+    #~ url = None
+    
+    #~ use_layouts = True
+    
+    button_label = None
+    
+    active_fields = []
+    """A list of field names that are "active" (cause a save and 
+    refresh of a Detail or Insert form).
+    """
+    
+    #~ detail_layouts = []
+    
+    show_slave_grid = True
+    """
+    How to display this report when it is a slave in a Detail. 
+    `True` (default) to render as a grid. 
+    `False` to render as a HtmlBoxPanel with a summary.
+    Example: :class:`links.LinksByOwner`
+    """
+    
+    grid_configs = []
+    """
+    Will be filled during :meth:`lino.core.table.Table.do_setup`. 
+    """
+    
+    disabled_fields = None
+    """
+    Return a list of field names that should not be editable 
+    for the specified `obj` and `request`.
+    
+    If defined in the Table, this must be a method that accepts 
+    two arguments `request` and `obj`::
+    
+      def disabled_fields(self,obj,request):
+          ...
+          return []
+    
+    If not defined in a subclass, the report will look whether 
+    it's model has a `disabled_fields` method expecting a single 
+    argument `request` and install a wrapper to this model method.
+    See also :doc:`/tickets/2`.
+    """
+    
+    disable_editing = None
+    """
+    Return `True` if the record as a whole should be read-only.
+    Same remarks as for :attr:`disabled_fields`.
+    """
+    
+    has_navigator = True
+    """
+    Whether a Detail Form should have navigation buttons.
+    This option is False in :class:`lino.SiteConfigs`.
+    """
+    
+    detail_action = None
+    
+    computed_columns = {}
+    
+    def __init__(self):
+        actors.Actor.__init__(self)
+        #~ self.default_action = self.default_action_class(self)
+        self.default_action = GridEdit(self)
+        #~ self.default_elem_action = ShowDetailAction(self)
+        #~ self.list_action = ListAction(self)
+      
+        
+    @classmethod
+    def spawn(cls,suffix,**kw):
+        kw['app_label'] = cls.app_label
+        return type(cls.__name__+str(suffix),(cls,),kw)
+        
+          
+    def parse_req(self,request,**kw):
+        return kw
+    
+    def do_setup(self):
+      
+        #~ filename = self.get_grid_config_file()
+        self.grid_configs = []
+        
+        def loader(content,cd,filename):
+            data = yaml.load(content)
+            gc = GridConfig(self,data,filename,cd)
+            self.grid_configs.append(gc)
+            
+        load_config_files(loader,'%s.*gc' % self)
+            
+        #~ self.setup_detail_layouts()
+        self.set_actions([])
+        self.setup_actions()
+        self.add_action(self.default_action)
+                
+        if self.button_label is None:
+            self.button_label = self.label
+            
+        
+    def disabled_actions(self,obj,request):
+        l = []
+        for a in self.get_actions():
+            if isinstance(a,RowAction):
+                if a.disabled_for(obj,request):
+                    l.append(a.name)
+        return l
+        
+    def setup_actions(self):
+        pass
+        
+    def add_computed_column(self,*args,**kw):
+        col = ComputedColumn(*args,**kw)
+        self.computed_columns[col.name] = col
+        return col
+        
+        
+    def get_data_elem(self,name):
+        return self.computed_columns.get(name,None)
+        
+    def get_title(self,rr):
+        """
+        Return the title of this Table for the given request `rr`.
+        Override this if your Table's title should mention for example filter conditions.
+        """
+        return self.title or self.label
+        
+    def setup_request(self,req):
+        pass
+        
+    def wildcard_data_elems(self):
+        return []
+        
+    def get_detail(self):
+        return None
+        
+        
+    def row2dict(self,row,d):
+        """
+        Overridden by lino.modlib.properties.PropValuesByOwner.
+        See also lino.ui.extjs.ext_requests.ViewReportRequest.
+        """
+        for n in self.column_names.split():
+            d[n] = getattr(row,n)
+        return d
+        
+    def save_grid_config(self,index,data):
+        if len(self.grid_configs) == 0:
+            gc = GridConfig(self,data,'%s.gc' % self)
+            self.grid_configs.append(gc)
+        else:
+            gc = self.grid_configs[index]
+        gc.data = data
+        gc.validate()
+        #~ self.grid_configs[index] = gc
+        return gc.save_config()
+        #~ filename = self.get_grid_config_file(gc)
+        #~ f = open(filename,'w')
+        #~ f.write("# Generated file. Delete it to restore default configuration.\n")
+        #~ d = dict(grid_configs=self.grid_configs)
+        #~ f.write(yaml.dump(d))
+        #~ f.close()
+        #~ return "Grid Config has been saved to %s" % filename
+        
+
+class CustomTable(AbstractTable):
+    @classmethod
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls()
+        if action is None:
+            action = self.default_action
+        return AbstractTableRequest(ui,self,request,action,**kw)
+        #~ return self.default_action.request(ui,**kw)
+
+
+
+
+
+
+
+class Table(AbstractTable):
     #~ hide_details = []
     #~ """
     #~ A list of base classes whose `.dtl` files should not be loaded for this report.
     #~ """
+    
+    model = None
+    """
+    The model on which this table iterates.
+    """
     
     base_queryset = None 
     "See :meth:`Table.get_queryset`"
     
     #~ default_params = {}
     """See :doc:`/blog/2011/0701`.
-    """
-    
-    model = None
-    """
-    The model on which this table iterates.
     """
     
     use_as_default_report = True
@@ -1082,11 +1306,7 @@ class Table(actors.Actor): #,base.Handled):
     then you'll prefer to use :attr:`known_values` instead of :attr:`filter.`
     """
     exclude = None
-    title = None
-    column_names = '*'
-    #~ hide_columns = None
-    hidden_columns = frozenset()
-    form_class = None
+    
     master = None
     
     master_key = None
@@ -1095,116 +1315,11 @@ class Table(actors.Actor): #,base.Handled):
     Setting this will turn the report into a slave report.
     """
     
-    help_url = None
-    #master_instance = None
-    
-    page_length = 30
-    """
-    Number of rows to display per page.
-    """
-    
-    cell_edit = True 
-    """
-    `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
-    """
-    
-    #~ date_format = lino.DATE_FORMAT_EXTJS
-    #~ boolean_texts = boolean_texts
-    boolean_texts = boolean_texts = (_('Yes'),_('No'),' ')
-    
-    can_view = perms.always
-    can_add = perms.is_authenticated
-    can_change = perms.is_authenticated
-    can_config = perms.is_staff
-    
-    show_prev_next = True
-    
-    #~ default_action = GridEdit
-    default_layout = 0
-    
-    typo_check = True
-    """
-    True means that Lino shoud issue a warning if a subclass 
-    defines any attribute that did not exist in the base class.
-    Usually such a warning means that there is something wrong.
-    """
-    
-    #~ url = None
-    
-    known_values = {}
-    """
-    A `dict` of `fieldname` -> `value` pairs that specify "known values".
-    Requests will automatically be filtered to show only existing records 
-    with those values.
-    This is like :attr:`filter`, but 
-    new instances created in this Table will automatically have 
-    these values set.
-    
-    """
-    
-    #~ use_layouts = True
-    
-    button_label = None
-    
-    active_fields = []
-    """A list of field names that are "active" (cause a save and 
-    refresh of a Detail or Insert form).
-    """
-    
-    #~ detail_layouts = []
-    
-    show_slave_grid = True
-    """
-    How to display this report when it is a slave in a Detail. 
-    `True` (default) to render as a grid. 
-    `False` to render as a HtmlBoxPanel with a summary.
-    Example: :class:`links.LinksByOwner`
-    """
-    
-    grid_configs = []
-    """
-    Will be filled during :meth:`lino.core.table.Table.do_setup`. 
-    """
-    
-    disabled_fields = None
-    """
-    Return a list of field names that should not be editable 
-    for the specified `obj` and `request`.
-    
-    If defined in the Table, this must be a method that accepts 
-    two arguments `request` and `obj`::
-    
-      def disabled_fields(self,obj,request):
-          ...
-          return []
-    
-    If not defined in a subclass, the report will look whether 
-    it's model has a `disabled_fields` method expecting a single 
-    argument `request` and install a wrapper to this model method.
-    See also :doc:`/tickets/2`.
-    """
-    
     handle_uploaded_files = None
     """
     Handler for uploaded files.
     Same remarks as for :attr:`disabled_fields`.
     """
-    
-    disable_editing = None
-    """
-    Return `True` if the record as a whole should be read-only.
-    Same remarks as for :attr:`disabled_fields`.
-    """
-    
-    has_navigator = True
-    """
-    Whether a Detail Form should have navigation buttons.
-    This option is False in :class:`lino.SiteConfigs`.
-    """
-    
-    detail_action = None
-    
-    computed_columns = dict()
     
     def __init__(self):
         if self.model is None:
@@ -1235,7 +1350,7 @@ class Table(actors.Actor): #,base.Handled):
                 self.label = self.init_label()
             
         #~ logger.debug("Table.__init__() %s", self)
-        actors.Actor.__init__(self)
+        AbstractTable.__init__(self)
         #~ base.Handled.__init__(self)
         
         if self.model is not None:
@@ -1272,10 +1387,6 @@ class Table(actors.Actor): #,base.Handled):
         #~ else:
             #~ assert self.master is None
         
-        #~ self.default_action = self.default_action_class(self)
-        self.default_action = GridEdit(self)
-        #~ self.default_elem_action = ShowDetailAction(self)
-        #~ self.list_action = ListAction(self)
         
         if self.order_by is not None:
             if not isinstance(self.order_by,(list,tuple)):
@@ -1293,76 +1404,36 @@ class Table(actors.Actor): #,base.Handled):
                   except models.FieldDoesNotExist,e:
                       raise Exception("Unknown fieldname %r in %s.order_by" % (fieldname,self))
         
-        
     @classmethod
-    def spawn(cls,suffix,**kw):
-        kw['app_label'] = cls.app_label
-        return type(cls.__name__+str(suffix),(cls,),kw)
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls()
+        if action is None:
+            action = self.default_action
+        return TableRequest(ui,self,request,action,**kw)
         
     def init_label(self):
         return self.model._meta.verbose_name_plural
         
     def column_choices(self):
-        return [ de.name for de in wildcard_data_elems(self.model) ]
+        return [ de.name for de in self.wildcard_data_elems() ]
           
-    def parse_req(self,request,**kw):
-        return kw
+    def wildcard_data_elems(self):
+        return wildcard_data_elems(self.model)
+          
     
     def do_setup(self):
-      
-        #~ filename = self.get_grid_config_file()
-        self.grid_configs = []
-        
-        def loader(content,cd,filename):
-            data = yaml.load(content)
-            gc = GridConfig(self,data,filename,cd)
-            self.grid_configs.append(gc)
-            
-        load_config_files(loader,'%s.*gc' % self)
-            
-        
-        #~ if os.path.exists(filename):
-            #~ logger.info("Loading %s...",filename)
-            #~ try:
-                #~ d = yaml.load(codecs.open(filename,encoding='utf-8').read())
-                #~ if d is not None:
-                    #~ must_save = self.validate_grid_config(d)
-                    #~ self.grid_configs = d['grid_configs']
-                    #~ if must_save:
-                        #~ msg = self.save_grid_config()
-                        #~ logger.debug(msg)
-            #~ except Exception,e:
-                #~ logger.warning("Exception while loading %s : %s",filename,e)
-                #~ logger.exception(e)
-          
+        AbstractTable.do_setup(self)
         if self.model is not None:
-                
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()
             else:
                 self._slaves = []
                 
-        #~ self.setup_detail_layouts()
-        self.set_actions([])
-        self.setup_actions()
-        self.add_action(self.default_action)
-                
-        if self.button_label is None:
-            self.button_label = self.label
-            
         if self.model is not None:
             m = getattr(self.model,'setup_report',None)
             if m:
                 m(self)
             #~ call_on_bases(self.model,'setup_report',self)
-        
-    def disabled_actions(self,obj,request):
-        l = []
-        for a in self.get_actions():
-            if isinstance(a,RowAction):
-                if a.disabled_for(obj,request):
-                    l.append(a.name)
-        return l
         
     def disable_delete(self,obj,request):
         """
@@ -1388,48 +1459,8 @@ class Table(actors.Actor): #,base.Handled):
             #~ if hasattr(self.model,'get_image_url'):
                 #~ self.add_action(actions.ImageAction())
         
-      
-    def unused_setup_detail_layouts(self):
-        """
-        Yield all detail tabs for this report.
-        Each detail tab corresponds to a :xfile:`.dtl` file).
-        Detail tabs of inherited models come *first*.
-        Example: CouseProvider(Company) will yield first all 
-        tabs found for Company, then those for CourseProvider.
-        """
-        self.detail_layouts = []
-        
-        #~ for b in self.__class__.__bases__:
-            #~ for dtl in br.detail_layouts:
-                #~ self.detail_layouts.append(dtl)
-                
-        if self.model is None:
-            return
-        #~ if not self.model._meta.managed:
-            #~ print "NOT MANAGED: ", self.model
-            #~ return
-        
-        if self.model._meta.abstract:
-            return
-            
-        self.detail_layouts = self.model._lino_detail
-        assert type(self.detail_layouts) is list
-            
-        #~ for b in self.model.__bases__:
-            #~ if issubclass(b,models.Model) and b is not models.Model:
-                #~ for dtl in getattr(b,'_lino_detail_layouts',[]):
-                    #~ self.detail_layouts.append(dtl)
-        #~ for dtl in getattr(self.model,'_lino_detail_layouts',[]):
-            #~ self.detail_layouts.append(dtl)
-            
-        #~ if self.detail_layouts:
-            #~ print 20110822, self, [dl.filename for dl in self.detail_layouts]
-
-        
-            
-        
-    def get_data_elem(self,name): 
-        cc = self.computed_columns.get(name,None)
+    def get_data_elem(self,name):
+        cc = AbstractTable.get_data_elem(self,name)
         if cc:
             return cc
         return get_data_elem(self.model,name)
@@ -1443,10 +1474,6 @@ class Table(actors.Actor): #,base.Handled):
         return self.model._lino_detail
         
     def get_title(self,rr):
-        """
-        Return the title of this Table for the given request `rr`.
-        Override this if your Table's title should mention for example filter conditions.
-        """
         assert rr is not None
         #~ if rr is not None and self.master is not None:
         if self.master is not None:
@@ -1456,7 +1483,7 @@ class Table(actors.Actor): #,base.Handled):
               #~ model=rr.master_instance._meta.verbose_name,
               details=self.model._meta.verbose_name_plural,
               master=rr.master_instance)
-        return self.title or self.label
+        return AbstractTable.get_title(self,rr)
         
     def get_queryset(self):
         """
@@ -1521,6 +1548,21 @@ class Table(actors.Actor): #,base.Handled):
             qs = qs.order_by(*order_by)
         return qs
 
+    def create_instance(self,req,**kw):
+        instance = self.model(**kw)
+        #~ self.on_create(instance,req)
+        
+        """
+        Used e.g. by modlib.notes.Note.on_create().
+        on_create gets the request as argument.
+        Didn't yet find out how to do that using a standard Django signal.
+        """
+        m = getattr(instance,'on_create',None)
+        if m:
+            m(req)
+        #~ print 20110128, instance
+        return instance
+        
     def slave_as_summary_meth(self,ui,row_separator):
         """
         Creates and returns the method to be used when :attr:`Table.show_slave_grid` is `False`.
@@ -1533,10 +1575,6 @@ class Table(actors.Actor): #,base.Handled):
             #~ print 'reports.py 20101017', s
             return s
         return meth
-        
-        
-    def setup_request(self,req):
-        pass
         
         
     def get_create_kw(self,master_instance,**kw):
@@ -1573,21 +1611,6 @@ class Table(actors.Actor): #,base.Handled):
     #~ def on_create(self,instance,request):
         #~ pass
         
-    def create_instance(self,req,**kw):
-        instance = self.model(**kw)
-        #~ self.on_create(instance,req)
-        
-        """
-        Used e.g. by modlib.notes.Note.on_create().
-        on_create gets the request as argument.
-        Didn't yet find out how to do that using a standard Django signal.
-        """
-        m = getattr(instance,'on_create',None)
-        if m:
-            m(req)
-        #~ print 20110128, instance
-        return instance
-        
     #~ def get_label(self):
         #~ return self.label
         
@@ -1615,40 +1638,21 @@ class Table(actors.Actor): #,base.Handled):
                 #~ return
         #~ cls.detail_layouts.append(dtl)
         
-    @classmethod
-    def request(cls,ui=None,request=None,**kw):
-        self = cls()
-        return TableRequest(ui,self,request,self.default_action,**kw)
-        #~ return self.default_action.request(ui,**kw)
-        
 
-    def row2dict(self,row,d):
-        """
-        Overridden by lino.modlib.properties.PropValuesByOwner.
-        See also lino.ui.extjs.ext_requests.ViewReportRequest.
-        """
-        for n in self.column_names.split():
-            d[n] = getattr(row,n)
-        return d
-        
-    def save_grid_config(self,index,data):
-        if len(self.grid_configs) == 0:
-            gc = GridConfig(self,data,'%s.gc' % self)
-            self.grid_configs.append(gc)
-        else:
-            gc = self.grid_configs[index]
-        gc.data = data
-        gc.validate()
-        #~ self.grid_configs[index] = gc
-        return gc.save_config()
-        #~ filename = self.get_grid_config_file(gc)
-        #~ f = open(filename,'w')
-        #~ f.write("# Generated file. Delete it to restore default configuration.\n")
-        #~ d = dict(grid_configs=self.grid_configs)
-        #~ f.write(yaml.dump(d))
-        #~ f.close()
-        #~ return "Grid Config has been saved to %s" % filename
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def report_factory(model):
     #~ logger.info('report_factory(%s)',model.__name__)
     bases = (Table,)
@@ -1822,8 +1826,7 @@ class LayoutHandle:
     """
     start_focus = None
     
-    #~ def __init__(self,rh,layout,hidden_elements=frozenset()):
-    def __init__(self,ui,model,layout,hidden_elements=frozenset()):
+    def __init__(self,ui,table,layout,hidden_elements=frozenset()):
       
         #~ logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
         assert isinstance(layout,BaseLayout)
@@ -1832,7 +1835,7 @@ class LayoutHandle:
         #~ actors.ActorHandle.__init__(self,layout)
         self.layout = layout
         self.ui = ui
-        self.model = model
+        self.table = table
         #~ self.rh = rh
         #~ self.datalink = layout.get_datalink(ui)
         #~ self.name = layout._actor_name
@@ -1851,7 +1854,7 @@ class LayoutHandle:
             self._main = self.create_element(self.main_class,'main')
             if self._main is None:
                 raise Exception("%s.%s could not create main element" 
-                    % (model,self.layout))
+                    % (table,self.layout))
         else:
             raise Exception("%s has no main" % self.layout)
             
@@ -1879,11 +1882,9 @@ class LayoutHandle:
     #~ def __str__(self):
         #~ return str(self.layout) + "Handle"
         
-    def get_data_elem(self,name): return get_data_elem(self.model,name)
-      
     def __str__(self):
         #~ return "%s %s" % (self.rh,self.__class__.__name__)
-        return "%s %s" % (self.model,self.__class__.__name__)
+        return "%s %s" % (self.table,self.__class__.__name__)
         
     #~ def elems_by_field(self,name):
         #~ return self._elems_by_field.get(name,[])
@@ -1931,13 +1932,6 @@ class LayoutHandle:
     def ext_lines(self,request):
         return self._main.ext_lines(request)
   
-    def use_as_wildcard(self,de):
-        if de.name.endswith('_ptr'): return False
-        #~ and (de.name not in self.hidden_elements) \
-        #~ and (de.name not in self.rh.report.known_values.keys()) \
-        #~ if de.name == self.rh.report.master_key: return False
-        return True
-  
     def desc2elem(self,panelclass,desc_name,desc,**kw):
         #logger.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
         #assert desc != 'Countries_choices2'
@@ -1948,7 +1942,7 @@ class LayoutHandle:
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                de.name for de in wildcard_data_elems(self.model) \
+                de.name for de in self.table.wildcard_data_elems() \
                   
                   if (de.name not in explicit_specs) \
                     and self.use_as_wildcard(de) \
@@ -2019,11 +2013,21 @@ class LayoutHandle:
                 return name, dict(width=int(a[0]),height=int(a[1]))
         raise Exception("Invalid picture descriptor %s" % picture)
         
+    def use_as_wildcard(self,de):
+        if de.name.endswith('_ptr'): return False
+        #~ and (de.name not in self.hidden_elements) \
+        #~ and (de.name not in self.rh.report.known_values.keys()) \
+        #~ if de.name == self.rh.report.master_key: return False
+        return True
+  
+    def get_data_elem(self,name): 
+        return self.table.get_data_elem(name)
+        
 class ListLayoutHandle(LayoutHandle):
   
     def __init__(self,rh,*args,**kw):
         self.rh = rh
-        LayoutHandle.__init__(self,rh.ui,rh.report.model,*args,**kw)
+        LayoutHandle.__init__(self,rh.ui,rh.report,*args,**kw)
         
     def use_as_wildcard(self,de):
         if de.name.endswith('_ptr'): return False
@@ -2032,6 +2036,8 @@ class ListLayoutHandle(LayoutHandle):
         if de.name == self.rh.report.master_key: return False
         return True
   
+    def get_data_elem(self,name): 
+        return self.table.get_data_elem(name)
 
 class DetailHandle(base.Handle):
     """
@@ -2040,9 +2046,10 @@ class DetailHandle(base.Handle):
         self.detail = detail
         #~ self.content_type = ContentType.objects.get_for_model(detail.model).pk
         self.lh_list = [ 
-            LayoutHandle(ui,detail.model,dl) 
+            LayoutHandle(ui,detail.model._lino_model_report,dl) 
                 for dl in self.detail.layouts ]
         base.Handle.__init__(self,ui)
+      
       
 
 class Detail(base.Handled):

@@ -363,7 +363,9 @@ class ExtUI(base.UI):
             #~ return ext_elems.PictureElement(lh,name,de,**kw)
 
         if isinstance(de,table.ComputedColumn):
-            return ext_elems.DisplayElement(de)
+            lh.add_store_field(de)
+            kw.setdefault('width',de.width)
+            return ext_elems.DisplayElement(lh,de,**kw)
             
         if isinstance(de,fields.FieldSet):
             return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
@@ -1088,8 +1090,8 @@ tinymce.init({
         if a is None:
             raise Http404("%s has no action %r" % (rh.report,action_name))
         if isinstance(a,table.ReportAction):
-            #~ ar = ViewReportRequest(request,rh,a)
-            ar = table.TableRequest(self,rpt,request,a)
+            ar = rpt.request(self,request,a)
+            #~ ar = table.TableRequest(self,rpt,request,a)
             rh = ar.ah
         else:
             ar = table.ActionRequest(self,a)
@@ -1459,11 +1461,12 @@ tinymce.init({
             for rpt in table.master_reports \
                      + table.slave_reports \
                      + table.generic_slaves.values() \
+                     + table.custom_tables \
                      + table.frames :
                 rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
                 f.write("Ext.namespace('Lino.%s')\n" % rpt)
                 
-                if isinstance(rpt,table.Table):
+                if isinstance(rpt,table.AbstractTable):
                     for ln in self.js_render_GridPanel_class(rh):
                         f.write(ln + '\n')
                     
@@ -1726,10 +1729,10 @@ tinymce.init({
 
     def get_choices_url(self,fke,**kw):
         return self.build_url("choices",
-            #~ fke.lh.rh.report.app_label,
-            fke.lh.model._meta.app_label,
-            #~ fke.lh.rh.report._actor_name,
-            fke.lh.model.__name__,
+            #~ fke.lh.model._meta.app_label,
+            fke.lh.table.model._meta.app_label,
+            #~ fke.lh.model.__name__,
+            fke.lh.table.model.__name__,
             fke.field.name,**kw)
         
     #~ def quicklink(self,request,app_label,actor,**kw):
@@ -1921,26 +1924,22 @@ tinymce.init({
                 #~ a.window_wrapper = self.action_window_wrapper(a,h)
                 
         elif isinstance(h,table.ReportHandle):
-            #~ logger.debug('ExtUI.setup_handle() %s',h.report)
-            if h.report.model is None \
-                or h.report.model is models.Model \
-                or h.report.model._meta.abstract:
-                return
+            if isinstance(h.report,table.Table):
+                #~ logger.debug('ExtUI.setup_handle() %s',h.report)
+                if h.report.model is None \
+                    or h.report.model is models.Model \
+                    or h.report.model._meta.abstract:
+                    return
+                    
+            h.list_layout = table.ListLayoutHandle(h,
+                table.ListLayout('main = '+h.report.column_names),
+                hidden_elements=h.report.hidden_columns)
+        
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
             h.store = ext_store.Store(h)
-                    
-            #~ for a in h.get_actions():
-                #~ a.window_wrapper = self.action_window_wrapper(a,h)
-                
             h.on_render = self.build_on_render(h.list_layout._main)
                 
-                
-            #~ for de in h.data_elems():
-                #~ if de.name in self.reserved_names:
-                    #~ raise Exception(
-                      #~ "%s defines %r but that is a reserved name in lino.ui.extjs" % (
-                      #~ h.report,de.name))
                       
     def source_dir(self):
         return os.path.abspath(os.path.dirname(__file__))
@@ -2115,8 +2114,10 @@ tinymce.init({
         #~ kw.update(empty_title=%s,rh.report.get_button_label()
         kw.update(ls_url=ext_elems.rpt2url(rh.report))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
-        kw.update(ls_id_property=rh.store.pk.name)
-        kw.update(pk_index=rh.store.pk_index)
+        if rh.store.pk is not None:
+            kw.update(ls_id_property=rh.store.pk.name)
+            kw.update(pk_index=rh.store.pk_index)
+            kw.update(content_type=ContentType.objects.get_for_model(rh.report.model).pk)
         kw.update(ls_quick_edit=rh.report.cell_edit)
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.report.grid_configs])
@@ -2124,7 +2125,6 @@ tinymce.init({
         #~ if action != rh.report.default_action:
             #~ kw.update(action_name=action.name)
         #~ kw.update(content_type=rh.report.content_type)
-        kw.update(content_type=ContentType.objects.get_for_model(rh.report.model).pk)
         
         
         kw.update(page_length=rh.report.page_length)

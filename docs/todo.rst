@@ -12,15 +12,27 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  jobs.Job.hourly_rate: PriceField statt IntegerField
-
-#.  Bug: Comboboxen zeigen beim Aufklappen immer nur eine Seite an, 
-    auch wenn es deren mehrere gibt.
-
 #.  Calendar panel: handle eventadd, eventupdate, eventresize, 
     eventmove events.
     
-#.  Listings
+#.  Listings 
+    "Personnes par phase d'intégration par AI" 
+    and
+    "Contrats par Employeur et par AI":
+    how to manage grouping in a report.
+
+
+#.  Zwei Ideen zur besseren Ermittlung der Konstruktionsmethode einer Notiz: 
+
+    - noch einen optionalen benutzerspezifischen Parameter "Default-Konstruktionsmethode", 
+      der Vorrang vor dem entsprechenden globalen Parameter hat.
+      Printable.get_build_method()
+      `CachedPrintable.get_cache_mtime` muss dann allerdings einen 
+      optionalen Paremter `user` kriegen.
+    - verwendete Konstruktionsmethode pro Notiz speichern. 
+      Vorteil: zum Testen kann man dann leichter auf eine andere Method umschalten.
+      Nachteile: (1) ein relativ unnützes Datenfeld (20 bytes pro Notiz) hinzu, 
+      und (2) bei DirectPrintAction ist das auch keine Lösung.
 
 #.  :class:´lino.modlib.jobs.Function` : "Funktionen" 
     umbenennen nach "Qualifikationen"?
@@ -44,13 +56,13 @@ Short-term
 
 #.  Idee: Notizen, Termine und Verträge mit MTI als Kinder einer 
     allgemeinen Tabelle "Chronikeinträge" implementieren.
+    Meine momentane Meinung: 
+    eher nicht, denn ich glaube nicht mehr an die Idee einer 
+    allumfassenden Chronik. 
+    Diese Idee wird eher durch die automatischen Kalenderkomponenten
+    verwirklicht.
+    Z.B. führt ein Vertrag zu einer ganzen Serie von "Ereignissen".
     
-#.  Listing 
-    "Personnes par phase d'intégration par AI" 
-    and
-    "Contrats par Employeur et par AI":
-    how to manage grouping in a report.
-
 #.  In Comboboxen mit mehr als einer Seite ist die Seitenblätter-Funktion
     nicht aktiviert.
     

@@ -16,3 +16,21 @@ The Data Control Listing was too slow. Some more changes that go into 1.3.3:
   
 And there were some plain bugs in my algorithm.
 Added new function :func:`lino.utils.overlap` with testcases.
+
+CustomTable
+-----------
+
+In the evening I started a little revolution: I split about half 
+of the code of :class:`lino.core.table.Table`
+into :class:`lino.core.table.AbstractTable`
+which becomes common base for 
+the new :class:`lino.core.table.CustomTable` class.
+A Custom Table doesn't work on a Model but on some arbitrary data.
+First example is 
+:class:`lino.apps.dsbe.models.OverviewClientsByUser`
+who does exactly the same as
+:func:`lino.apps.dsbe.models.persons_by_user`,
+but in a very different way.
+
+This change opens new dimensions for writing "Listings".
+One "detail" is missing: how to do a user form for entering volatile parameters to such CustomTables.

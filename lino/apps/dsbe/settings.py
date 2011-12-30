@@ -90,6 +90,7 @@ class Lino(Lino):
         #~ m.add_action('contacts.AllContacts')
         m.add_action('dsbe.AllContacts')
         m.add_action('dsbe.Newcomers')
+        m.add_action('dsbe.OverviewClientsByUser')
         isip.setup_main_menu(self,ui,user,m)
         #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')

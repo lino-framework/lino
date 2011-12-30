@@ -21,6 +21,9 @@ See :class:`lino.core.table.Table` etc.
 from lino.core.table import fields_list, is_installed, inject_field
 from lino.core.table import has_fk, is_installed, get_app
 from lino.core.table import Table
+from lino.core.table import CustomTable
+from lino.core.table import computed
+from lino.core.table import ComputedColumn
 #~ from lino.core import table
 #~ Table = table.Table
 
@@ -44,3 +47,5 @@ from lino.core.fields import LinkedForeignKey
 from lino.core.fields import QuantityField
 from lino.core.fields import HtmlBox, FieldSet, PriceField, RichTextField
 #~ from lino.core.fields import MethodField
+
+from lino.utils import perms

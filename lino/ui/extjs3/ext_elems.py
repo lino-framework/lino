@@ -1268,7 +1268,7 @@ class Panel(Container):
 class FieldSetPanel(Panel):
     value_template = "new Ext.form.FieldSet(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
-        self.fieldset = getattr(lh.model,name)
+        self.fieldset = getattr(lh.table.model,name)
         for child in elements:
             child.label = self.fieldset.get_child_label(child.name)
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
@@ -1304,7 +1304,7 @@ class GridElement(Container):
         :param lh: the handle of the DetailLayout owning this grid
         :param rpt: the report being displayed
         """
-        assert isinstance(rpt,dd.Table), "%r is not a Report!" % rpt
+        #~ assert isinstance(rpt,dd.AbstractTable), "%r is not a Table!" % rpt
         self.value_template = "new Lino.%s.GridPanel(%%s)" % rpt
         self.report = rpt
         if len(columns) == 0:

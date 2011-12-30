@@ -121,7 +121,9 @@ class ActorMetaClass(type):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
         #logger.debug("actor(%s)", cls)
-        if classname not in ('Report','Action','HandledActor','Actor','Frame'):
+        if classname not in (
+            'Table','AbstractTable','CustomTable',
+            'Action','HandledActor','Actor','Frame'):
         #~ if classname not in ('Report','Action','HandledActor','Actor','Command',
               #~ 'Layout','ListLayout','DetailLayout','FormLayout',
               #~ 'ModelLayout'):
