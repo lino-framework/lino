@@ -78,6 +78,25 @@ def overlap(a1,a2,b1,b2):
     Unlike the test presented at <http://bytes.com/topic/python/answers/457949-determing-whether-two-ranges-overlap>,
     this works also with "open" ranges 
     (the open end being indicated by a `None` value).
+    
+    Types of constellations::
+    
+      -   o---o  o---o             
+      -   o---o  o--->
+      -   <---o  o---o
+      -   <---o  o--->
+                
+      -   o------------->
+                o---o                
+                
+      -   o---o
+            o---o
+                
+      -   o---o
+            o--->
+      -   <---------o
+               o---o
+    
 
 
     >>> overlap(1,2,3,4)
@@ -95,16 +114,12 @@ def overlap(a1,a2,b1,b2):
     
     
     
-    |  ``o--------------->``
-    |  ``      o----o``
     
     >>> overlap(1,None,3,4)
     True
     >>> overlap(3,4,1,None)
     True
     
-    |   ``o----o``
-    |   ``        o---->``
     
     >>> overlap(1,2,3,None)
     False

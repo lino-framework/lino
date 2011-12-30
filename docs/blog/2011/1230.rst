@@ -14,3 +14,5 @@ The Data Control Listing was too slow. Some more changes that go into 1.3.3:
 - settings.LINO.site_config didn't update when the SiteConfig 
   record had been modified.
   
+And there were some plain bugs in my algorithm.
+Added new function :func:`lino.utils.overlap` with testcases.
