@@ -1,0 +1,10 @@
+20111231
+========
+
+Continued to work on 
+the new :class:`CustomTable <lino.core.table.CustomTable>` 
+class.
+Added `column_defaults` to specify a default column width.
+:class:`OverviewClientsByUser 
+<lino.apps.dsbe.models.OverviewClientsByUser>` 
+now almost has a total row.

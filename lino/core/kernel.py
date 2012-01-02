@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -18,7 +18,10 @@ import os
 import sys
 #~ import imp
 import codecs
+#~ import collections
+from UserDict import IterableUserDict
 
+from django.db.models import loading
 from django.conf import settings
 from django.utils.importlib import import_module
 from django.utils.functional import LazyObject
@@ -288,6 +291,15 @@ def setup_site(self,make_messages=False):
             a = actors.actors_dict[k]
             #~ logger.debug("%s -> %r",k,a.__class__)
             logger.debug("%s -> %r",k,a.debug_summary())
+            
+    d = dict()
+    for a in loading.get_apps():
+        d[a.__name__.split('.')[-2]] = a
+    self.modules = IterableUserDict(d)
+    
+    cls = type("Modules",tuple(),d)
+    self.modules = cls()
+    #~ logger.info("20120102 modules: %s",self.modules)
               
       
     self._setup_done = True

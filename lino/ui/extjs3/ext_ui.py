@@ -222,7 +222,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     #~ if rh.report.disable_delete:
     rec.update(disabled_actions=rh.report.disabled_actions(elem,ar.request))
     rec.update(disable_delete=rh.report.disable_delete(elem,ar.request))
-    if rh.report.show_prev_next:
+    if rh.report.show_detail_navigator:
         first = None
         prev = None
         next = None
@@ -232,7 +232,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
         if ar.total_count > 0:
             if True:
                 # this algorithm is clearly quicker on reports with a few thousand Persons
-                id_list = list(ar.queryset.values_list('pk',flat=True))
+                id_list = list(ar._data_iterator.values_list('pk',flat=True))
                 """
                 Uncommented the following assert because it failed in certain circumstances 
                 (see :doc:`/blog/2011/1220`)
@@ -1157,8 +1157,8 @@ tinymce.init({
                 return response
                 
             if fmt == 'json':
-                rows = [ rh.store.row2list(ar,row) for row in ar.queryset ]
-                #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
+                rows = [ rh.store.row2list(ar,row) for row in ar ]
+                #~ rows = [ rh.store.row2list(ar,row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):

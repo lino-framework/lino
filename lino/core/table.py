@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -71,30 +71,6 @@ from lino.core.coretools import get_slave, get_model_report, get_data_elem
 USER_MODEL = None
 
   
-class ComputedColumn(object):
-    editable = False
-    primary_key = False
-    def __init__(self,func,verbose_name=None,name=None,width=None):
-        self.func = func
-        self.name = name
-        self.verbose_name = verbose_name or name
-        self.width = width
-        
-        
-def computed(*args,**kw):
-    def decorator(fn):
-        def wrapped(*args):
-            return fn(*args)
-        #~ wrapped.label = label
-        #~ wrapped.formatter = formatter
-        #~ return wrapped
-        #~ return staticmethod(wrapped)
-        return ComputedColumn(wrapped,*args,**kw)
-        #~ return ComputedColumn(classmethod(wrapped),verbose_name=verbose_name)
-        #~ return classmethod(wrapped)
-    return decorator
-    
-
         
         
 
@@ -305,14 +281,20 @@ def register_report(rpt):
         #~ logger.debug("20111113 %s is an abstract report", rpt)
         return
         
-    for n in rpt.__class__.__dict__.keys():
-    #~ for n in dir(rpt):
-        v = getattr(rpt,n)
+    for name,v in rpt.__class__.__dict__.items():
+    #~ for name in rpt.__class__.__dict__.keys():
+    #~ for name in dir(rpt):
+        #~ v = getattr(rpt,name)
+        #~ if isinstance(v,Group):
+            #~ v.name = name
+            #~ v.add_to_table(rpt)
+            #~ rpt.custom_groups = rpt.custom_groups + [v]
         if isinstance(v,ComputedColumn):
-            v.name = n
+            v.name = name
+            v.add_to_table(rpt)
             d = dict()
             d.update(rpt.computed_columns)
-            d[n] = v
+            d[name] = v
             rpt.computed_columns = d
             
     #~ if rpt.model._meta.abstract:
@@ -382,15 +364,6 @@ def discover():
         #~ logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
     #~ logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
-    #~ logger.debug("Setup model reports...")
-    #~ for model in models.get_models():
-        #~ model._lino_model_report.setup()
-        
-    #~ logger.debug("Instantiate property editors...")
-    #~ for model in models.get_models():
-        #~ pw = ext_elems.PropertiesWindow(model)
-        #~ model._lino_properties_window = pw
-            
     #~ logger.debug("reports.setup() done")
     global USER_MODEL
     USER_MODEL = resolve_model(settings.LINO.user_model)
@@ -659,28 +632,12 @@ class AbstractTableRequest(ActionRequest):
         self.known_values = kw
         
         self.report.setup_request(self)
-        self.queryset = self.get_queryset()
-        #~ self.setup_queryset()
-        #~ logger.debug(unicode(self))
+        #~ self.queryset = self.get_queryset()
+        self._data_iterator = self.get_data_iterator()
         
-        """
-        TODO: 
-        Note that `total_count` is looked up 
-        *before* `offset` and `limit` are set.
-        That's a pity because it creates a database lookup
-        even if the TableRequest is being instantiated with 
-        the only purpose of generating an url.
-        """
-        # get_queryset() may return a list
-        if isinstance(self.queryset,models.query.QuerySet):
-            self.total_count = self.queryset.count()
-        else:
-            self.total_count = len(self.queryset)
             
-    def get_queryset(self):
-        # overridden by ChoicesReportRequest
-        return self.report.get_request_queryset(self)
-        #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
+    def get_data_iterator(self):
+        raise NotImplementedError
         
     def get_base_filename(self):
         return str(self.report)
@@ -688,13 +645,13 @@ class AbstractTableRequest(ActionRequest):
         #~ return s.encode('us-ascii','replace')
         
     def __iter__(self):
-        return self.queryset.__iter__()
+        return self._data_iterator.__iter__()
         
     def __getitem__(self,*args):
-        return self.queryset.__getitem__(*args)
+        return self._data_iterator.__getitem__(*args)
         
     def __len__(self):
-        return self.queryset.__len__()
+        return self._data_iterator.__len__()
         
     def get_user(self):
         return self.subst_user or self.user
@@ -740,6 +697,21 @@ class AbstractTableRequest(ActionRequest):
         raise actions.ConfirmationRequired(step,messages)
 
         
+        
+class CustomTableRequest(AbstractTableRequest):
+  
+    def get_data_iterator(self):
+        l = []
+        for row in self.report.get_data_rows(self):
+            group = self.report.group_from_row(row)
+            group.process_row(l,row)
+        return l
+        
+    def setup(self,**kw):
+        AbstractTableRequest.setup(self,**kw)
+        self.total_count = len(self._data_iterator)
+        
+  
 class TableRequest(AbstractTableRequest):
     """
     An Action Request on a given Table.
@@ -884,6 +856,19 @@ class TableRequest(AbstractTableRequest):
         
         AbstractTableRequest.setup(self,**kw)
         
+        assert isinstance(self._data_iterator,models.query.QuerySet)
+        
+        """
+        TODO: Note that `total_count` is looked up 
+        *before* `offset` and `limit` are set.
+        That's a pity because it creates a database lookup
+        even if the TableRequest is being instantiated with 
+        the only purpose of generating an url.
+        """
+        
+        self.total_count = self._data_iterator.count()
+        
+        
         if self.create_rows is None:
             if create_rows is None:
                 if self.create_kw is None:
@@ -909,11 +894,11 @@ class TableRequest(AbstractTableRequest):
         For example CSVReportRequest wants all rows.
         """
         if offset is not None:
-            self.queryset = self.queryset[offset:]
+            self.queryset = self._data_iterator[offset:]
             self.offset = offset
             
         if limit is not None:
-            self.queryset = self.queryset[:limit]
+            self.queryset = self._data_iterator[:limit]
             self.limit = limit
             
         self.page_length = self.report.page_length
@@ -922,6 +907,9 @@ class TableRequest(AbstractTableRequest):
     def __str__(self):
         return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
 
+    def get_data_iterator(self):
+        return self.report.get_request_queryset(self)
+        
     def create_instance(self,**kw):
         if self.create_kw:
             kw.update(self.create_kw)
@@ -995,21 +983,77 @@ class Frame(actors.Actor):
     def do_setup(self):
         if self.default_action:
             self.add_action(self.default_action)
+
+
+
+
+
+class ComputedColumn(object):
+    """
+    A Column whose value is not retrieved from the database but 
+    "computed" by a custom function.
+    """
+    editable = False
+    primary_key = False
+    def __init__(self,func,verbose_name=None,name=None,width=None):
+        self.func = func
+        self.name = name
+        self.verbose_name = verbose_name or name
+        self.width = width
         
+    def add_to_table(self,table):
+        self.table = table
+        if self.width is None:
+            self.width = table.column_defaults.get('width',None)
+        
+        
+def computed(*args,**kw):
+    """
+    Decorator used to define computed columns as part 
+    of the Table's definition.
+    """
+    def decorator(fn):
+        def wrapped(*args):
+            return fn(*args)
+        #~ wrapped.label = label
+        #~ wrapped.formatter = formatter
+        #~ return wrapped
+        #~ return staticmethod(wrapped)
+        return ComputedColumn(wrapped,*args,**kw)
+        #~ return ComputedColumn(classmethod(wrapped),*args,**kw)
+        #~ return ComputedColumn(classmethod(wrapped),verbose_name=verbose_name)
+        #~ return classmethod(wrapped)
+    return decorator
+    
+
+
+class Group(object):
+  
+    def __init__(self):
+        self.sums = []
+        
+    def process_row(self,collector,row):
+        collector.append(row)
+
+    #~ def add_to_table(self,table):
+        #~ self.table = table
+        #~ for col in table.computed_columns.values():
+
+
+
+
+
+
 class AbstractTable(actors.Actor): #,base.Handled):
     """
+    Base class for :class:`Table` and `CustomTable`.
     
-    A Table is the definition of a tabular data view, 
+    An AbstractTable is the definition of a tabular data view, 
     usually displayed in a Grid (but it's up to the user 
     interface to decide how to implement this).
-    A Table definition has attributes
-    like `filter` and `sort_order` 
-    which it forwards to the QuerySet 
-    and which we sometimes call "vertical layout" 
-    because they influence the rows to be selected.
-    But it usually also has a "horizontal layout", 
-    for example the `column_names` attribute.
-
+    
+    The `column_names` attribute defines the "horizontal layout".
+    The "vertical layout" is some iterable.
     """
     _handle_class = ReportHandle
     
@@ -1017,7 +1061,27 @@ class AbstractTable(actors.Actor): #,base.Handled):
     field = None
     
     title = None
+    
     column_names = '*'
+    """
+    A string that describes the list of columns of this table.
+    """
+    
+    computed_columns = {}
+    """
+    Used internally to store :class:`computed columns <ComputedColumn>` defined by this Table.
+    """
+    
+    custom_groups = []
+    """
+    Used internally to store :class:`groups <Group>` defined by this Table.
+    """
+    
+    column_defaults = {}
+    """
+    A dictionary of default parameters for :class:`computed columns <ComputedColumn>` on this table.
+    """
+    
     #~ hide_columns = None
     hidden_columns = frozenset()
     form_class = None
@@ -1039,11 +1103,15 @@ class AbstractTable(actors.Actor): #,base.Handled):
     boolean_texts = boolean_texts = (_('Yes'),_('No'),' ')
     
     can_view = perms.always
-    can_add = perms.is_authenticated
     can_change = perms.is_authenticated
     can_config = perms.is_staff
     
-    show_prev_next = True
+    #~ show_prev_next = True
+    show_detail_navigator = False
+    """
+    Whether a Detail view on a row of this table should feature a navigator
+    """
+    
     
     #~ default_action = GridEdit
     default_layout = 0
@@ -1124,8 +1192,6 @@ class AbstractTable(actors.Actor): #,base.Handled):
     
     detail_action = None
     
-    computed_columns = {}
-    
     def __init__(self):
         actors.Actor.__init__(self)
         #~ self.default_action = self.default_action_class(self)
@@ -1175,8 +1241,14 @@ class AbstractTable(actors.Actor): #,base.Handled):
     def setup_actions(self):
         pass
         
-    def add_computed_column(self,*args,**kw):
+    def add_column(self,*args,**kw):
+        """
+        Use this from an overridden `__init__` method to 
+        dynamically define computed columns to this table.
+        """
         col = ComputedColumn(*args,**kw)
+        col.add_to_table(self)
+        self.computed_columns = dict(self.computed_columns)
         self.computed_columns[col.name] = col
         return col
         
@@ -1229,13 +1301,26 @@ class AbstractTable(actors.Actor): #,base.Handled):
         #~ return "Grid Config has been saved to %s" % filename
         
 
+
+
 class CustomTable(AbstractTable):
+    """
+    An :class:`AbstractTable` that works on an arbitrary 
+    list of "rows", using only computed columns.
+    """
+    
+    default_group = Group()
+    
+    def group_from_row(self,row):
+        return self.default_group
+        
+    
     @classmethod
     def request(cls,ui=None,request=None,action=None,**kw):
         self = cls()
         if action is None:
             action = self.default_action
-        return AbstractTableRequest(ui,self,request,action,**kw)
+        return CustomTableRequest(ui,self,request,action,**kw)
         #~ return self.default_action.request(ui,**kw)
 
 
@@ -1245,6 +1330,19 @@ class CustomTable(AbstractTable):
 
 
 class Table(AbstractTable):
+    """
+    An :class:`AbstractTable` that works on a Django 
+    Model using a Django QuerySet.
+    
+    A Table definition adds attributes
+    like `model` and `master` and `master_key` 
+    who are important because Lino handles relations automagically.
+    
+    Another class of attributes are
+    `filter`, 'exclude' and `sort_order` 
+    which it simply forwards to the QuerySet.
+    
+    """
     #~ hide_details = []
     #~ """
     #~ A list of base classes whose `.dtl` files should not be loaded for this report.
@@ -1255,8 +1353,10 @@ class Table(AbstractTable):
     The model on which this table iterates.
     """
     
+    show_detail_navigator = True
+    
     base_queryset = None 
-    "See :meth:`Table.get_queryset`"
+    "See :meth:`Table.get_data_iterator`"
     
     #~ default_params = {}
     """See :doc:`/blog/2011/0701`.
@@ -1273,6 +1373,11 @@ class Table(AbstractTable):
     """
     (No longer used; see :doc:`/tickets/44`). 
     Whether multi-line text fields in Grid views should be expanded in by default or not.
+    """
+    
+    can_add = perms.is_authenticated
+    """
+    A permission descriptor that defines who can add (create) rows in this table.
     """
     
     extra = None

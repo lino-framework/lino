@@ -38,13 +38,13 @@ class MenuItem:
                  request=None,
                  instance=None,
                  href=None):
-        p = parent
-        l = []
-        while p is not None:
-            if p in l:
-                raise Exception("circular parent")
-            l.append(p)
-            p = p.parent
+        #~ p = parent
+        #~ l = []
+        #~ while p is not None:
+            #~ if p in l:
+                #~ raise Exception("circular parent")
+            #~ l.append(p)
+            #~ p = p.parent
         self.parent = parent
         
         self.action = action
@@ -104,36 +104,34 @@ class MenuItem:
     def walk_items(self):
         yield self
         
-    def interesting(self,**kw):
-        l = []
-        if self.label is not None:
-            l.append(('label',self.label.strip()))
-        if not self.enabled:
-            l.append( ('enabled',self.enabled))
-        return l
+    #~ def interesting(self,**kw):
+        #~ l = []
+        #~ if self.label is not None:
+            #~ l.append(('label',self.label.strip()))
+        #~ if not self.enabled:
+            #~ l.append( ('enabled',self.enabled))
+        #~ return l
 
-    def parents(self):
-        l = []
-        p = self.parent
-        while p is not None:
-            l.append(p)
-            p = p.parent
-        return l
+    #~ def parents(self):
+        #~ l = []
+        #~ p = self.parent
+        #~ while p is not None:
+            #~ l.append(p)
+            #~ p = p.parent
+        #~ return l
   
-    def get_url_path(self):
-        if self.parent:
-            s = self.parent.get_url_path()
-            if len(s) and not s.endswith("/"):
-                s += "/"
-        else:
-            s='/'
-        return s + self.name
+    #~ def get_url_path(self):
+        #~ if self.parent:
+            #~ s = self.parent.get_url_path()
+            #~ if len(s) and not s.endswith("/"):
+                #~ s += "/"
+        #~ else:
+            #~ s='/'
+        #~ return s + self.name
 
-    def as_html(self,request,level=None):
-        #~ if not self.can_view.passes(request):
-            #~ return u''
-        return mark_safe('<a href="%s">%s</a>' % (
-              self.get_url_path(),self.label))
+    #~ def as_html(self,request,level=None):
+        #~ return mark_safe('<a href="%s">%s</a>' % (
+              #~ self.get_url_path(),self.label))
               
     def menu_request(self,user):
         if self.can_view.passes(user):
@@ -149,8 +147,15 @@ class Menu(MenuItem):
         #~ self.items_dict = {}
 
     def add_action(self,spec,**kw):
-        action = actors.resolve_action(spec)
-        if action is None:
+        if isinstance(spec,basestring):
+            action = actors.resolve_action(spec)
+            if action is None:
+                raise Exception("%r is not a valid action specifier" % spec)
+        elif isinstance(spec,actions.Action):
+            action = spec
+        elif issubclass(spec,actors.Actor):
+            action = spec().default_action
+        else:
             raise Exception("%r is not a valid action specifier" % spec)
         #~ if isinstance(actor,basestring):
             #~ actor = actors.resolve_action(actor)

@@ -12,7 +12,7 @@ Before this I tried also
 `googlecode's Wiki (Jan-June 2010) <http://code.google.com/p/lino/wiki/WikiBlog>`_
 
 Note: older blog entries are currently not rendered here, 
-but you can view their raw text below
+but you can view their raw text in the source code repository under
 :srcref:`/docs/blog`
 
 
@@ -22,5 +22,6 @@ but you can view their raw text below
    2009/index
    2010/index
    2011/index
+   2012/index
    
    

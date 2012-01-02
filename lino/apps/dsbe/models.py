@@ -883,12 +883,12 @@ def req2cell(rr):
         return ('',0)
     return (rr.ui.href_to_request(rr,str(rr.total_count)),rr.total_count)
     
-COLUMN_WIDTH = 8
 class OverviewClientsByUser(dd.CustomTable):
-    use_as_default_report = False
-    #~ model = settings.LINO.user_model
-    can_add = dd.perms.never
+    """
+    A customized overview report.
+    """
     label = _("Overview Clients By User")
+    column_defaults = dict(width=8)
     
     def __init__(self):
         self.column_names = 'user:10'
@@ -898,42 +898,37 @@ class OverviewClientsByUser(dd.CustomTable):
                     rr = MyPersonsByGroup.request(ar.ui,master_instance=pg,subst_user=obj)
                     return req2cell(rr)
                 return func
-            cc = self.add_computed_column(w(pg),
+            cc = self.add_column(w(pg),
               verbose_name=pg.name,
-              name='G'+pg.ref_name,
-              width=COLUMN_WIDTH)
+              name='G'+pg.ref_name)
             #~ cc = dd.ComputedColumn(func,name='G'+pg.ref_name,verbose_name=pg.name)
             self.column_names += ' ' + cc.name 
             
-        self.column_names += ' primary_clients:4 active_clients:4 row_total:4'
+        self.column_names += ' primary_clients active_clients row_total'
         super(OverviewClientsByUser,self).__init__()
     
-    def get_request_queryset(self,ar):
-        l = []
+    def get_data_rows(self,ar):
         for user in User.objects.filter(
-            Q(username=ar.get_user().username) 
-              | Q(is_spis=True)
+            Q(username=ar.get_user().username) | Q(is_spis=True)
           ).order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
             if r.total_count:
                 user.my_persons = r
-                l.append(user)  
-                #~ l.append(Object(user=user,rr=r))  
-        return l
-        
-    @dd.computed(_("User"),width=COLUMN_WIDTH)
+                yield user
+                
+    @dd.computed(_("User"),width=10)
     def user(obj,ar):
         return (ar.ui.href_to(obj),0)
         
-    @dd.computed(_("Total"),width=COLUMN_WIDTH)
+    @dd.computed(_("Total"))
     def row_total(obj,ar):
         return req2cell(obj.my_persons)
         
-    @dd.computed(_("Primary clients"),width=COLUMN_WIDTH)
+    @dd.computed(_("Primary clients"))
     def primary_clients(obj,ar):
         return req2cell(PersonsByCoach1.request(ar.ui,master_instance=obj))
         
-    @dd.computed(_("Active clients"),width=COLUMN_WIDTH)
+    @dd.computed(_("Active clients"))
     def active_clients(obj,ar):
         return req2cell(MyActivePersons.request(ar.ui,subst_user=obj))
         

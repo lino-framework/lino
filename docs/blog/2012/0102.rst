@@ -1,0 +1,6 @@
+20120102
+========
+
+:func:`lino.core.kernel.setup_site` now adds a new attribute `modules`
+which makes it easy to directly address the installed modules. 
+This is going to replace `resolve_action`.
