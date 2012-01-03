@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -91,34 +91,11 @@ class OpenWindowAction(WindowAction):
     #~ action_type = 'open_window'
     
     
-#~ class ToggleWindowAction(WindowAction):
-    #~ opens_a_slave = True
-    
-                
-#~ class SlaveGridAction(ToggleWindowAction):
-  
-    #~ def __init__(self,actor,slave):
-        #~ self.slave = slave # .get_handle(ah.ui)
-        #~ self.name = slave._actor_name
-        #~ self.label = slave.button_label
-        #~ ToggleWindowAction.__init__(self,actor)
-        
-        
-    
-                
 class RedirectAction(Action):
     #~ mimetype = None
     def get_target_url(self,elem):
         raise NotImplementedError
         
-        
-#~ class ImageAction(RedirectAction):
-    #~ name = 'image'
-    #~ callable_from = tuple()
-    
-    #~ def get_target_url(self,elem):
-        #~ return elem.get_image_url()
-      
 
 class ConfirmationRequired(Exception):
     def __init__(self,step,messages):

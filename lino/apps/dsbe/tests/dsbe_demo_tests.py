@@ -946,7 +946,7 @@ def test14(self):
     """
     for url in """\
     /choices/isip/Contract/person?start=0&limit=10&query=
-    /choices/contacts/Person/city?start=0&limit=10&country=BE&query=
+    /choices/dsbe/Person/city?start=0&limit=10&country=BE&query=
     """.splitlines():
       url = url.strip()
       if url and not url.startswith("#"):
@@ -1003,6 +1003,7 @@ def test16(self):
     ]
     for case in cases:
         url = '/api/%s?fmt=json&limit=30&start=0' % case[0]
+        #~ logger.info("20120103 %s",url)
         response = self.client.get(url,REMOTE_USER='root')
         result = self.check_json_result(response,'count rows gc_choices title')
         if result['count'] != case[1]:

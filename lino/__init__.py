@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2002-2011 Luc Saffre
+## Copyright 2002-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ __url__ = "http://lino.saffre-rumma.net"
 #~ __url__ = "http://code.google.com/p/lino/"
 
 __copyright__ = """\
-Copyright (c) 2002-2011 Luc Saffre.
+Copyright (c) 2002-2012 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -522,7 +522,7 @@ class Lino(object):
 
     """
     
-    use_davlink = True
+    use_davlink = False
     """
     Set this to `False` if you don't need WebDAV-enabled links.
     """

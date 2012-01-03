@@ -63,9 +63,11 @@ if settings.LINO.user_model:
         master_key = 'user'
         can_view = perms.is_authenticated
         
+        @classmethod
         def init_label(self):
             return _("My %s") % self.model._meta.verbose_name_plural
             
+        @classmethod
         def setup_request(self,rr):
             if rr.master_instance is None:
                 rr.master_instance = rr.get_user()

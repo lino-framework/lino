@@ -8,17 +8,17 @@ class Lino(Lino):
     
     def setup_menu(self,ui,user,main):
         m = main.add_menu("master","Master")
-        m.add_action('lets.Products')
-        m.add_action('lets.Customers')
-        m.add_action('lets.Providers')
+        m.add_action(self.modules.lets.Products)
+        m.add_action(self.modules.lets.Customers)
+        m.add_action(self.modules.lets.Providers)
         
         m = main.add_menu("master","Market")
-        m.add_action('lets.Offers')
-        m.add_action('lets.Demands')
+        m.add_action(self.modules.lets.Offers)
+        m.add_action(self.modules.lets.Demands)
         
         m = main.add_menu("config","Configure")
         #~ m.add_action('users.Users')
-        m.add_action('lets.Places')
+        m.add_action(self.modules.lets.Places)
     
     
 LINO = Lino(__file__,globals()) 
@@ -40,3 +40,4 @@ INSTALLED_APPS = (
   'lino.tutorials.t3a.lets'
 )
 
+LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')

@@ -235,14 +235,13 @@ class NotesByEventType(Notes):
 def setup_main_menu(site,ui,user,m): pass
   
 def setup_my_menu(site,ui,user,m): 
-    m.add_action('cal.MyEvents')
-    m.add_action('cal.MyTasks')
+    pass
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("notes",_("~Notes"))
-    m.add_action('notes.NoteTypes')
-    m.add_action('notes.EventTypes')
+    m.add_action(NoteTypes)
+    m.add_action(EventTypes)
   
 def setup_explorer_menu(site,ui,user,m):
-    m.add_action('notes.Notes')
+    m.add_action(Notes)
   

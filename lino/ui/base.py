@@ -28,14 +28,19 @@ class Handle:
         
 class Handled(object):
   
-    "Inherited by Report, Layout, and maybe others"
+    "Inherited by Table, Layout, and maybe others"
     
     _handle_class = None
-    #~ _handle_selector = None
     
-    def __init__(self):
+    @classmethod
+    def do_setup(self):
+        pass
+        
+    @classmethod
+    def class_init(self):
         self._handles = {}
         
+    @classmethod
     def get_handle(self,k):
         #~ assert k is None or isinstance(k,self._handle_selector), "%s.get_handle() : %r is not a %s" % (self,k,self._handle_selector)
         assert k is None or isinstance(k,UI), \

@@ -70,10 +70,9 @@ DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 #TEMPLATE_STRING_IF_INVALID = 'foo'
 
 
-ADMINS = (
-    ('Luc Saffre', 'luc.saffre@gmx.net'),
+ADMINS = [
     # ('Your Name', 'your_email@domain.com'),
-)
+]
 
 MANAGERS = ADMINS
 

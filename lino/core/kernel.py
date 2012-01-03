@@ -167,7 +167,7 @@ def analyze_models(self,make_messages):
         collect_details(model)
         #~ if model.__name__ == 'CourseProvider':
             #~ logger.debug("20111213 %s collector is %r",model,collector)  
-        
+
         if collector:
             def by0(a,b):
                 return cmp(a[0],b[0])

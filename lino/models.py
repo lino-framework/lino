@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ class DataControlListing(mixins.Listing):
     """
     class Meta:
         verbose_name = _("Data Control Listing") 
-        
+    
     def body(self):
         items = []
         for model in sorted_models_list():

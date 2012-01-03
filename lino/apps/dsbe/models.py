@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -690,7 +690,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     
     def residence_permit(self,rr):
         kv = dict(type=settings.LINO.site_config.residence_permit_upload_type)
-        r = rr.spawn_request(uploads.UploadsByOwner(),
+        r = rr.spawn_request(uploads.UploadsByOwner,
               master_instance=self,
               known_values=kv)
         return rr.ui.quick_upload_buttons(r)
@@ -700,7 +700,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     
     def work_permit(self,rr):
         kv = dict(type=settings.LINO.site_config.work_permit_upload_type)
-        r = rr.spawn_request(uploads.UploadsByOwner(),
+        r = rr.spawn_request(uploads.UploadsByOwner,
               master_instance=self,
               known_values=kv)
         return rr.ui.quick_upload_buttons(r)
@@ -708,7 +708,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     
     def driving_licence(self,rr):
         kv = dict(type=settings.LINO.site_config.driving_licence_upload_type)
-        r = rr.spawn_request(uploads.UploadsByOwner(),
+        r = rr.spawn_request(uploads.UploadsByOwner,
               master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
     driving_licence.return_type = dd.DisplayField(_("driving licence"))
@@ -729,9 +729,83 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         #~ super(Person,cls).site_setup(lino)
 
 
+class Contacts(contacts.Contacts):
+    CONTACT_TIM_FIELDS = []
+    
+    @classmethod
+    def disabled_fields(self,obj,request):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
+            return self.CONTACT_TIM_FIELDS
+        return []
+        
+    @classmethod
+    def disable_delete(self,obj,request):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
+            return _("Cannot delete contacts imported from TIM")
+        return super(Contacts,self).disable_delete(obj,request)
+        
+    @classmethod
+    def do_setup(self):
+        self.CONTACT_TIM_FIELDS = dd.fields_list(contacts.Contact,
+          '''name remarks region 
+          zip_code city country 
+          street_prefix street street_no street_box 
+          addr2
+          language 
+          phone fax gsm email url
+          is_person is_company
+          ''')
+        super(contacts.Contacts,self).do_setup()
+        
+class AllContacts(contacts.AllContacts,Contacts):
+    pass
+
+class Company(Partner,contacts.Contact,contacts.CompanyMixin):
+  
+    """
+    Inner class Meta is necessary because of :doc:`/tickets/14`.
+    """
+    
+    class Meta(contacts.CompanyMixin.Meta):
+        app_label = 'contacts'
+        #~ verbose_name = _("Company")
+        #~ verbose_name_plural = _("Companies")
+        
+    #~ vat_id = models.CharField(max_length=200,blank=True)
+    #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
+    prefix = models.CharField(max_length=200,blank=True) 
+    # todo: remove hourly_rate after data migration. this is now in Job
+    hourly_rate = dd.PriceField(_("hourly rate"),blank=True,null=True)
+    #~ is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
+    
+    def disabled_fields(self,request):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+            return settings.LINO.COMPANY_TIM_FIELDS
+        return []
+    
+    @classmethod
+    def site_setup(cls,lino):
+        lino.COMPANY_TIM_FIELDS = dd.fields_list(cls,
+            '''name remarks
+            zip_code city country street street_no street_box 
+            language vat_id
+            phone fax email 
+            bank_account1 bank_account2 activity''')
+        #~ super(Company,cls).site_setup(lino)
+  
+    
+#~ class Companies(reports.Report):
+#~ class Companies(contacts.Contacts):
+class Companies(Contacts):
+    #~ hide_details = [Contact]
+    model = 'contacts.Company'
+    order_by = ["name"]
+    #~ app_label = 'contacts'
+    #~ column_names = ''
+    
 
 #~ class AllPersons(contacts.Persons):
-class AllPersons(contacts.Contacts):
+class AllPersons(Contacts):
     #~ hide_details = [Contact]
     model = 'contacts.Person'
     order_by = "last_name first_name id".split()
@@ -746,6 +820,7 @@ class AllPersons(contacts.Contacts):
     #~ order_by = None # clear the default value from contacts.Persons.order_by since we use extra order_by
     
     
+    @classmethod
     def init_label(self):
         return string_concat(
           self.model._meta.verbose_name_plural,' ',_("(all)"))
@@ -760,6 +835,7 @@ class Persons(AllPersons):
     #~ filter = dict(is_active=True,newcomer=False)
     #~ label = Person.Meta.verbose_name_plural + ' ' + _("(unfiltered)")
     
+    @classmethod
     def init_label(self):
         return self.model._meta.verbose_name_plural
 
@@ -772,6 +848,8 @@ class Newcomers(AllPersons):
     #~ filter = dict(newcomer=True)
     known_values = dict(newcomer=True)
     #~ use_as_default_report = False
+    
+    @classmethod
     def init_label(self):
         return _("newcomers")
 
@@ -821,9 +899,11 @@ class PersonsByCoach1(Persons):
     master_key = 'coach1'
     label = _("Primary clients by coach")
     
+    @classmethod
     def get_title(self,rr):
         return _("Primary clients of %s") % rr.master_instance
         
+    @classmethod
     def get_request_queryset(self,rr):
         #~ rr.master_instance = rr.get_user()
         qs = super(PersonsByCoach1,self).get_request_queryset(rr)
@@ -846,9 +926,11 @@ class MyPersons(Persons):
     label = _("My clients")
     #~ order_by = ['last_name','first_name']
     
+    @classmethod
     def get_title(self,rr):
         return _("Clients of %s") % rr.get_user()
         
+    @classmethod
     def get_request_queryset(self,rr):
         qs = super(MyPersons,self).get_request_queryset(rr)
         qs = only_coached_persons(only_my_persons(qs,rr.get_user()),datetime.date.today())
@@ -862,14 +944,19 @@ class MyPersons(Persons):
 
 class MyPersonsByGroup(MyPersons):
     master_key = 'group'
+    
+    @classmethod
     def get_title(self,rr):
         return _("%(phase)s clients of %(user)s") % dict(
           phase=rr.master_instance, user=rr.get_user())
     
 class MyActivePersons(MyPersons):
   
+    @classmethod
     def get_title(self,rr):
         return _("Active clients of %s") % rr.get_user()
+        
+    @classmethod
     def get_request_queryset(self,rr):
         qs = super(MyActivePersons,self).get_request_queryset(rr)
         qs = qs.filter(group__active=True)
@@ -890,7 +977,8 @@ class OverviewClientsByUser(dd.CustomTable):
     label = _("Overview Clients By User")
     column_defaults = dict(width=8)
     
-    def __init__(self):
+    @classmethod
+    def class_init(self):
         self.column_names = 'user:10'
         for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
             def w(pg):
@@ -905,8 +993,9 @@ class OverviewClientsByUser(dd.CustomTable):
             self.column_names += ' ' + cc.name 
             
         self.column_names += ' primary_clients active_clients row_total'
-        super(OverviewClientsByUser,self).__init__()
+        super(OverviewClientsByUser,self).class_init()
     
+    @classmethod
     def get_data_rows(self,ar):
         for user in User.objects.filter(
             Q(username=ar.get_user().username) | Q(is_spis=True)
@@ -1000,76 +1089,6 @@ def persons_by_user(ui,requesting_user):
     s = '<div class="htmlText">%s</div>' % s
     return s
     
-    
-class Contacts(contacts.Contacts):
-    CONTACT_TIM_FIELDS = []
-    
-    def disabled_fields(self,obj,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
-            return self.CONTACT_TIM_FIELDS
-        return []
-        
-    def disable_delete(self,obj,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
-            return _("Cannot delete contacts imported from TIM")
-        return super(Contacts,self).disable_delete(obj,request)
-        
-    def do_setup(self):
-        self.CONTACT_TIM_FIELDS = dd.fields_list(contacts.Contact,
-          '''name remarks region 
-          zip_code city country 
-          street_prefix street street_no street_box 
-          addr2
-          language 
-          phone fax gsm email url
-          is_person is_company
-          ''')
-        super(contacts.Contacts,self).do_setup()
-        
-class AllContacts(contacts.AllContacts,Contacts):
-    pass
-
-class Company(Partner,contacts.Contact,contacts.CompanyMixin):
-  
-    """
-    Inner class Meta is necessary because of :doc:`/tickets/14`.
-    """
-    
-    class Meta(contacts.CompanyMixin.Meta):
-        app_label = 'contacts'
-        #~ verbose_name = _("Company")
-        #~ verbose_name_plural = _("Companies")
-        
-    #~ vat_id = models.CharField(max_length=200,blank=True)
-    #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
-    prefix = models.CharField(max_length=200,blank=True) 
-    # todo: remove hourly_rate after data migration. this is now in Job
-    hourly_rate = dd.PriceField(_("hourly rate"),blank=True,null=True)
-    #~ is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
-    
-    def disabled_fields(self,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
-            return settings.LINO.COMPANY_TIM_FIELDS
-        return []
-    
-    @classmethod
-    def site_setup(cls,lino):
-        lino.COMPANY_TIM_FIELDS = dd.fields_list(cls,
-            '''name remarks
-            zip_code city country street street_no street_box 
-            language vat_id
-            phone fax email 
-            bank_account1 bank_account2 activity''')
-        #~ super(Company,cls).site_setup(lino)
-  
-    
-#~ class Companies(reports.Report):
-class Companies(contacts.Contacts):
-    #~ hide_details = [Contact]
-    model = 'contacts.Company'
-    order_by = ["name"]
-    #~ app_label = 'contacts'
-    #~ column_names = ''
     
 
 #
@@ -1189,6 +1208,7 @@ class ConfiguredPropsByPerson(PropsByPerson):
     propgroup_config_name = None
     typo_check = False # to avoid warning "ConfiguredPropsByPerson 
                        # defines new attribute(s) propgroup_config_name"
+    @classmethod
     def setup_actions(self):
         if self.propgroup_config_name:
             pg = getattr(settings.LINO.site_config,self.propgroup_config_name)
@@ -1760,6 +1780,7 @@ class CourseRequestsByPerson(CourseRequests):
 class RequestsByCourse(CourseRequests):
     master_key = 'course'
   
+    @classmethod
     def create_instance(self,req,**kw):
         obj = super(RequestsByCourse,self).create_instance(req,**kw)
         if obj.course is not None:
@@ -1770,6 +1791,7 @@ class ParticipantsByCourse(RequestsByCourse):
     label = _("Participants")
     column_names = 'person remark date_ended ending'
     
+    @classmethod
     def setup_actions(self):
         class Unregister(dd.RowAction):
             label = _("Unregister")
@@ -1786,12 +1808,14 @@ class CandidatesByCourse(RequestsByCourse):
     column_names = 'person remark content date_submitted'
     #~ can_add = perms.never
     
+    @classmethod
     def get_request_queryset(self,rr):
         if rr.master_instance is None:
             return []
         return self.model.objects.filter(course__isnull=True,
             content__exact=rr.master_instance.offer.content)
     
+    @classmethod
     def setup_actions(self):
         class Register(dd.RowAction):
             label = _("Register")
@@ -1803,6 +1827,7 @@ class CandidatesByCourse(RequestsByCourse):
                       person=elem.person,course=elem.course))
         self.add_action(Register())
     
+    @classmethod
     def create_instance(self,req,**kw):
         """Manually clear the `course` field.
         """
@@ -1918,6 +1943,7 @@ class PersonsBySearch(dd.Table):
     can_add = perms.never
     can_change = perms.never
     
+    @classmethod
     def get_request_queryset(self,rr):
         """
         Here is the code that builds the query. It can be quite complex.
@@ -2005,6 +2031,7 @@ class OverlappingContracts(dd.Table):
     #~ def get_title(self,rr):
         #~ return _("Primary clients of %s") % rr.master_instance
         
+    @classmethod
     def get_request_queryset(self,rr):
         #~ rr.master_instance = rr.get_user()
         qs = super(OverlappingContracts,self).get_request_queryset(rr)

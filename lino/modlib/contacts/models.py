@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -231,11 +231,14 @@ class Contacts(dd.Table):
     order_by = ['name','id']
     #~ column_names = "name * id" 
     
+    @classmethod
     def get_queryset(self):
         return self.model.objects.select_related('country','city')
 
 
 class AllContacts(Contacts):
+  
+    @classmethod
     def init_label(self):
         return _("All %s") % self.model._meta.verbose_name_plural
         
@@ -248,16 +251,8 @@ class ContactsByCountry(Contacts):
     master_key = 'country'
     column_names = "city street street_no name language *"
     order_by = "city street street_no".split()
-    
-        
 
 
-#~ def GenderField(**kw):
-    #~ options = dict(max_length=1,blank=True,# null=True,
-        #~ verbose_name=_("Gender"),choices=Gender.get_choices()) 
-    #~ options.update(kw)
-    #~ return models.CharField(**options)
-        
 
 class Born(models.Model):
     """

@@ -323,11 +323,9 @@ class Contract(ContractBase):
                 df.append('provider')
             if self.job.contract_type:
                 df.append('type')
-        #~ if self.must_build:
         if self.build_time:
-            return df
-        #~ return df + settings.LINO.CONTRACT_PRINTABLE_FIELDS
-        return df + self.PRINTABLE_FIELDS
+            df += self.PRINTABLE_FIELDS
+        return df
         
     def unused_get_reminder_html(self,ui,user):
         #~ url = ui.get_detail_url(self,fmt='detail')
@@ -576,6 +574,8 @@ class StudyTypes(dd.Table):
 class HistoryByPerson(dd.Table):
     master_key = 'person'
     order_by = ["started"]
+    
+    @classmethod
     def create_instance(self,req,**kw):
         obj = super(HistoryByPerson,self).create_instance(req,**kw)
         if obj.person is not None:
@@ -874,6 +874,7 @@ class CandidaturesByJob(Candidatures):
     master_key = 'job'
     column_names = 'date_submitted person:25 * id'
   
+    @classmethod
     def create_instance(self,req,**kw):
         obj = super(CandidaturesByJob,self).create_instance(req,**kw)
         if obj.job is not None:
@@ -896,6 +897,7 @@ class SectorFunctionByOffer(dd.Table):
     can_change = perms.never
     master = Offer
     
+    @classmethod
     def get_request_queryset(self,rr):
         """
         Needed because the Offer is not the direct master.
@@ -1098,28 +1100,27 @@ if dd.is_installed('contacts') and dd.is_installed('jobs'):
 
 
 def setup_main_menu(site,ui,user,m): 
-    m.add_action('jobs.JobProviders')
-    m.add_action('jobs.Jobs')
-    m.add_action('jobs.Offers')
+    m.add_action(JobProviders)
+    m.add_action(Jobs)
+    m.add_action(Offers)
 
 def setup_my_menu(site,ui,user,m): 
-    m.add_action('jobs.MyContracts')
+    m.add_action(MyContracts)
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("jobs",_("~Jobs"))
-    m.add_action('jobs.ContractTypes')
-    m.add_action('jobs.JobTypes')
-    m.add_action('jobs.Sectors')
-    m.add_action('jobs.Functions')
-    m.add_action('jobs.StudyTypes')
-    m.add_action('jobs.Schedules')
-    m.add_action('jobs.Regimes')
+    m.add_action(ContractTypes)
+    m.add_action(JobTypes)
+    m.add_action(Sectors)
+    m.add_action(Functions)
+    m.add_action(StudyTypes)
+    m.add_action(Schedules)
+    m.add_action(Regimes)
             
     
     
   
 def setup_explorer_menu(site,ui,user,m):
-    m.add_action('jobs.Contracts')
-    m.add_action('jobs.Candidatures')
-    m.add_action('jobs.Studies')
-    #~ m.add_action('jobs.Wishes')
+    m.add_action(Contracts)
+    m.add_action(Candidatures)
+    m.add_action(Studies)

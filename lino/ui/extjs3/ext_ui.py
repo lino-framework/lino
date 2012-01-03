@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -395,7 +395,7 @@ class ExtUI(base.UI):
             lh.add_store_field(de)
             return ext_elems.GenericForeignKeyElement(lh,de,**kw)
             
-        if isinstance(de,dd.Table):
+        if isinstance(de,type) and issubclass(de,dd.Table):
             kw.update(master_panel=js_code("this"))
             if isinstance(lh.layout,table.DetailLayout):
                 # a Report in a DetailWindow
@@ -404,15 +404,10 @@ class ExtUI(base.UI):
                   #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
                 if de.show_slave_grid:
-                    # a Report in a DetailWindow, displayed as a Slave Grid
-                    #~ e = ext_elems.SlaveGridElement(lh,name,de,**kw)
                     e = ext_elems.GridElement(lh,name,de,**kw)
-                    #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
-                    #~ lh.slave_grids.append(e)
                     return e
-                    #~ return ext_elems.GridElementBox(lh,e)
                 else:
-                    # a Report in a DetailWindow, displayed as a summary in a HtmlBox 
+                    # a Table in a DetailWindow, displayed as a summary in a HtmlBox 
                     o = dict(drop_zone="FooBar")
                     a = de.get_action('insert')
                     if a is not None:
@@ -421,7 +416,7 @@ class ExtUI(base.UI):
                           self.a2btn(a),
                           ])
                     field = fields.HtmlBox(verbose_name=de.label,**o)
-                    field.name = de._actor_name
+                    field.name = de.__name__
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
                     lh.add_store_field(field)
                     e = ext_elems.HtmlBoxElement(lh,field,**kw)
@@ -429,7 +424,7 @@ class ExtUI(base.UI):
             else:
                 #~ field = fields.TextField(verbose_name=de.label)
                 field = fields.HtmlBox(verbose_name=de.label)
-                field.name = de._actor_name
+                field.name = de.__name__
                 field._return_type_for_method = de.slave_as_summary_meth(self,', ')
                 lh.add_store_field(field)
                 e = ext_elems.HtmlBoxElement(lh,field,**kw)
@@ -450,14 +445,7 @@ class ExtUI(base.UI):
                     return lh.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,table.StaticText):
                     return ext_elems.StaticTextElement(lh,name,value)
-                #~ if isinstance(value,table.DataView):
-                    #~ return ext_elems.DataViewElement(lh,name,value)
-                    #~ return ext_elems.TemplateElement(lh,name,value)
-                #~ if isinstance(value,printable.PicturePrintMethod):
-                    #~ return ext_elems.PictureElement(lh,name,value)
-                #~ if isinstance(value,layouts.PropertyGrid):
-                    #~ return ext_elems.PropertyGridElement(lh,name,value)
-                raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
+                raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout.__name__,name))
         if hasattr(lh,'rh'):
             msg = "Unknown element %r referred in layout %s of %s." % (
                 name,lh.layout,lh.rh.report)
@@ -517,31 +505,13 @@ class ExtUI(base.UI):
         return e
         #return FieldElement(self,field,**kw)
         
-    #~ def create_virt_element(self,name,field,**kw):
-        #~ e = self.ui.VirtualFieldElement(self,name,field,**kw)
-        #~ return e
-        
-    #~ def field2elem(self,lh,field,**kw):
-        #~ # used also by lino.ui.extjs.ext_elem.MethodElement
-        #~ return lh.main_class.field2elem(lh,field,**kw)
-        #~ # return self.ui.field2elem(self,field,**kw)
-        
-    #~ def create_prop_element(self,lh,prop,**kw):
-        #~ ...
-      
-
 
     def main_panel_class(self,layout):
         if isinstance(layout,table.ListLayout) : 
             return ext_elems.GridMainPanel
-        #~ if isinstance(layout,layouts.TabLayout) : 
-            #~ return ext_elems.TabMainPanel
         if isinstance(layout,table.DetailLayout) : 
             return ext_elems.DetailMainPanel
-        #~ if isinstance(layout,layouts.FormLayout) : 
-            #~ return ext_elems.FormMainPanel
         raise Exception("No element class for layout %r" % layout)
-            
 
     
     #~ def save_window_config(self,a,wc):
@@ -1088,7 +1058,7 @@ tinymce.init({
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
         a = rpt.get_action(action_name)
         if a is None:
-            raise Http404("%s has no action %r" % (rh.report,action_name))
+            raise Http404("%s has no action %r" % (rpt,action_name))
         if isinstance(a,table.ReportAction):
             ar = rpt.request(self,request,a)
             #~ ar = table.TableRequest(self,rpt,request,a)
@@ -1181,22 +1151,19 @@ tinymce.init({
         raise Http404("Method %s not supported for container %s" % (request.method,rh))
     
     
-    #~ def build_ar(self,request,rh):
-        #~ action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,'grid')
-        #~ a = rh.report.get_action(action_name)
-        #~ if a is None:
-            #~ raise Http404("%s has no action %r" % (rh.report,action_name))
-        #~ return ext_requests.ViewReportRequest(request,rh,a)
-            
-        
     def requested_report(self,request,app_label,actor):
-        rpt = actors.get_actor2(app_label,actor)
-        if rpt:
-            return rpt
-        model = models.get_model(app_label,actor,False)
-        if model is None:
-            raise Http404("No actor named '%s.%s'" % (app_label,actor))
-        return model._lino_model_report
+        x = getattr(settings.LINO.modules,app_label)
+        cl = getattr(x,actor)
+        if issubclass(cl,models.Model):
+            return cl._lino_model_report
+        return cl
+        #~ rpt = actors.get_actor2(app_label,actor)
+        #~ if rpt:
+            #~ return rpt
+        #~ model = models.get_model(app_label,actor,False)
+        #~ if model is None:
+            #~ raise Http404("No actor named '%s.%s'" % (app_label,actor))
+        #~ return model._lino_model_report
         
     def restful_view(self,request,app_label=None,actor=None,pk=None):
         rpt = self.requested_report(request,app_label,actor)
@@ -1205,7 +1172,8 @@ tinymce.init({
         
         if isinstance(a,table.ReportAction):
             #~ ar = ViewReportRequest(request,rh,a)
-            ar = table.TableRequest(self,rpt,request,a)
+            #~ ar = table.TableRequest(self,rpt,request,a)
+            ar = rpt.request(self,request,a)
             rh = ar.ah
         else:
             ar = table.ActionRequest(self,a)
@@ -1332,7 +1300,8 @@ tinymce.init({
             #~ a = rpt.get_action(fmt)
                 
             #~ ar = ViewReportRequest(request,ah,a)
-            ar = table.TableRequest(self,rpt,request,a)
+            #~ ar = table.TableRequest(self,rpt,request,a)
+            ar = rpt.request(self,request,a)
             ah = ar.ah
 
             if isinstance(a,actions.OpenWindowAction):
@@ -1454,7 +1423,7 @@ tinymce.init({
             
             for model in models.get_models():
                 if model._lino_detail:
-                    f.write("Ext.namespace('Lino.%s')\n" % full_model_name(model))
+                    f.write("Ext.namespace('Lino.%s') // detail\n" % full_model_name(model))
                     for ln in self.js_render_detail_FormPanel(model._lino_detail.get_handle(self)):
                         f.write(ln + '\n')
             
@@ -1464,9 +1433,9 @@ tinymce.init({
                      + table.custom_tables \
                      + table.frames :
                 rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
-                f.write("Ext.namespace('Lino.%s')\n" % rpt)
+                f.write("\nExt.namespace('Lino.%s') // table\n" % rpt)
                 
-                if isinstance(rpt,table.AbstractTable):
+                if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
                     for ln in self.js_render_GridPanel_class(rh):
                         f.write(ln + '\n')
                     
@@ -1579,9 +1548,10 @@ tinymce.init({
         if fldname is None:
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
-            ar = table.TableRequest(self,rpt,request,rpt.default_action)
-            rh = ar.ah
-            qs = ar.get_queryset()
+            #~ ar = table.TableRequest(self,rpt,request,rpt.default_action)
+            ar = rpt.request(self,request,rpt.default_action)
+            #~ rh = ar.ah
+            qs = ar.get_data_iterator()
             #~ qs = rpt.request(self).get_queryset()
             def row2dict(obj,d):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
@@ -1633,7 +1603,7 @@ tinymce.init({
                     #~ tbl = tblclass()
                 #~ else:
                     #~ tbl = m._lino_model_report
-                qs = cr.request(self,request).get_queryset()
+                qs = cr.request(self,request).get_data_iterator()
                 #~ ar = table.TableRequest(self,tbl,request,tbl.default_action)
                 #~ qs = ar.get_queryset()
                 #~ qs = mr.request(self,**mr.default_params).get_queryset()
@@ -1811,7 +1781,8 @@ tinymce.init({
                 if v.href is not None:
                     url = v.href
                 elif v.params is not None:
-                    ar = table.TableRequest(self,v.action.actor,None,v.action,**v.params)
+                    #~ ar = table.TableRequest(self,v.action.actor,None,v.action,**v.params)
+                    ar = v.action.actor.request(self,None,v.action,**v.params)
                     url = self.get_request_url(ar)
                 elif v.request is not None:
                     url = self.get_request_url(v.request)
@@ -1824,7 +1795,7 @@ tinymce.init({
                     # a separator
                     #~ return dict(text=v.label)
                     return v.label
-                    #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
+                    #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor.__name__,fmt=v.action.name)
                 if v.parent.parent is None:
                     # special case for href items in main menubar
                     return dict(
@@ -1866,19 +1837,19 @@ tinymce.init({
         #~ if not action is action.actor.default_action:
         if action != action.actor.default_action:
             kw.update(an=action.name)
-        return self.build_url("api",action.actor.app_label,action.actor._actor_name,*args,**kw)
+        return self.build_url("api",action.actor.app_label,action.actor.__name__,*args,**kw)
             
     def get_actor_url(self,actor,*args,**kw):
-        return self.build_url("api",actor.app_label,actor._actor_name,*args,**kw)
+        return self.build_url("api",actor.app_label,actor.__name__,*args,**kw)
         
     def get_request_url(self,rr,*args,**kw):
         kw = rr.request2kw(self,**kw)
         #~ kw = self.request2kw(rr,**kw)
-        return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
+        return self.build_url('api',rr.report.app_label,rr.report.__name__,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
         #~ rpt = obj._lino_model_report
-        #~ return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
+        #~ return self.build_url('api',rpt.app_label,rpt.__name__,str(obj.pk),*args,**kw)
         return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     def href_to_request(self,rr,text=None):
@@ -1895,26 +1866,9 @@ tinymce.init({
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
     
-    #~ def detail_href(self,obj,**kw):
-        #~ return '<a href="%s">%s</a>' % (self.get_detail_url(obj,fmt='detail'),cgi.escape(unicode(obj))))
-        
-    def unused_action_window_wrapper(self,a,h):
-        #~ if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
-        #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
-          
-        if isinstance(a,table.Calendar):
-            return ext_windows.CalendarWrapper(h,a)
-            
-        if isinstance(a,table.GridEdit):
-            return ext_windows.GridMasterWrapper(h,a)
-            
-        if isinstance(a,table.InsertRow):
-            return ext_windows.InsertWrapper(h,a)
-            
-        if isinstance(a,table.ShowDetailAction):
-            return ext_windows.DetailWrapper(h,a)
             
     def setup_handle(self,h):
+        logger.debug('20120103 ExtUI.setup_handle() %s',h)
         #~ if isinstance(h,layouts.TabPanelHandle):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
@@ -1924,8 +1878,7 @@ tinymce.init({
                 #~ a.window_wrapper = self.action_window_wrapper(a,h)
                 
         elif isinstance(h,table.ReportHandle):
-            if isinstance(h.report,table.Table):
-                #~ logger.debug('ExtUI.setup_handle() %s',h.report)
+            if issubclass(h.report,table.Table):
                 if h.report.model is None \
                     or h.report.model is models.Model \
                     or h.report.model._meta.abstract:

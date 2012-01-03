@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ def form_field_name(f):
         
 
 def rpt2url(rpt):
-    return '/' + rpt.app_label + '/' + rpt._actor_name
+    return '/' + rpt.app_label + '/' + rpt.__name__
 
 def a2btn(a):
     return dict(
@@ -1358,19 +1358,7 @@ class GridElement(Container):
         kw.update(gc_name=DEFAULT_GC_NAME)
         return kw
         
-#~ class SlaveGridElement(GridElement):
-    #~ def ext_options(self,**kw):
-        #~ kw = GridElement.ext_options(self,**kw)
-        #~ kw.update(title=self.report.label)
-        #~ return kw
-      
         
-#~ class M2mGridElement(GridElement):
-    #~ def __init__(self,lh,field,*columns,**kw):
-        #~ self.field = field
-        #~ rpt = table.get_model_report(field.rel.to)
-        #~ GridElement.__init__(self,lh,id2js(rpt.actor_id),rpt,*columns,**kw)
-  
 
             
 class MainPanel(jsgen.Variable):

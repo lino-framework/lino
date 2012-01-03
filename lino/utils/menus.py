@@ -22,6 +22,7 @@ from django.shortcuts import render_to_response
 from django.utils.safestring import mark_safe
 from django import template 
 from django.utils.encoding import force_unicode
+from django.db import models
 
 from lino.core import actors
 from lino.utils import perms
@@ -95,11 +96,11 @@ class MenuItem:
     def getDoc(self):
         return self.doc
 
-    def __repr__(self):
-        s = self.__class__.__name__+"("
-        s += ', '.join([
-            k+"="+repr(v) for k,v in self.interesting()])
-        return s+")"
+    #~ def __repr__(self):
+        #~ s = self.__class__.__name__+"("
+        #~ s += ', '.join([
+            #~ k+"="+repr(v) for k,v in self.interesting()])
+        #~ return s+")"
     
     def walk_items(self):
         yield self
@@ -146,24 +147,32 @@ class Menu(MenuItem):
         self.items = []
         #~ self.items_dict = {}
 
-    def add_action(self,spec,**kw):
+    def add_action(self,spec,action=None,**kw):
         if isinstance(spec,basestring):
-            action = actors.resolve_action(spec)
-            if action is None:
-                raise Exception("%r is not a valid action specifier" % spec)
-        elif isinstance(spec,actions.Action):
-            action = spec
-        elif issubclass(spec,actors.Actor):
-            action = spec().default_action
+            a = actors.resolve_action(spec)
+            if a is None:
+                raise Exception("Could not resolve action specifier %r" % spec)
+        if isinstance(spec,actions.Action):
+            a = spec
+        elif isinstance(spec,type) and issubclass(spec,models.Model):
+            if action:
+                a = spec._lino_model_report.get_action(action)
+            else:
+                a = spec._lino_model_report.default_action
+        elif isinstance(spec,type) and issubclass(spec,actors.Actor):
+            if action:
+                a = spec.get_action(action)
+            else:
+                a = spec.default_action
+                if a.actor is not spec:
+                    raise Exception("20120103 %r != %r" % (a.actor,spec))
+
         else:
-            raise Exception("%r is not a valid action specifier" % spec)
-        #~ if isinstance(actor,basestring):
-            #~ actor = actors.resolve_action(actor)
-            #~ actor = actors.get_actor(actor)
-        #~ if can_view is None:
-            #~ can_view = actor.can_view
-        #~ return self._add_item(Action(self,actor,can_view=can_view,**kw))
-        return self._add_item(MenuItem(self,action,**kw))
+            raise Exception("(%r,%r) is not a valid action specifier" % (spec,action))
+        if kw.has_key('params'):
+            if a.actor.__name__ == 'Contacts':
+              raise Exception("20120103")
+        return self._add_item(MenuItem(self,a,**kw))
         
     def add_action_(self,action,**kw):
         return self._add_item(MenuItem(self,action,**kw))

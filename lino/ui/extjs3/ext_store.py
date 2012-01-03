@@ -384,9 +384,11 @@ class DisabledFieldsStoreField(SpecialStoreField):
         if obj.pk is not None:
             #~ l.append(self.store.pk.name)
             l.append(self.store.pk.attname)
-            # MTI children have "two" primary keys:
+            # MTI children have two "primary keys":
             if isinstance(self.store.pk,models.OneToOneField):
                 l.append(self.store.pk.rel.field_name)
+        #~ if self.store.report == settings.LINO.modules.dsbe.Persons:
+            #~ logger.info('20120103 disabled_fields is %s',l)
         return l
         
         
@@ -618,7 +620,7 @@ class Store:
         #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report
-        if isinstance(rh.report,table.Table):
+        if issubclass(rh.report,table.Table):
             self.pk = self.report.model._meta.pk
             assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
               self.report.actor_id,self.report.model)
@@ -653,7 +655,7 @@ class Store:
         #~ fields = list(fields)
         #~ self.pk_index = fields.index(self.pk)
         #~ self.fields = [ self.create_field(fld) for fld in fields ]
-        if isinstance(rh.report,table.Table):
+        if issubclass(rh.report,table.Table):
             self.pk_index = 0
             for fld in self.list_fields:
                 """

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@ import lino
 
 from lino.apps.std.settings import *
 
-LISTINGS = """
-jobs.ContractsSituation
-lino.DataControlListing
-""".split()
+#~ LISTINGS = """
+#~ jobs.ContractsSituation
+#~ lino.DataControlListing
+#~ """.split()
 
 
 class Lino(Lino):
@@ -53,7 +53,7 @@ class Lino(Lino):
         
     def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons().detail)
-        tb.add_action('contacts.Persons.detail')
+        tb.add_action(self.modules.contacts.Persons,'detail')
         tb.add_action(self.modules.cal.Panel)
         tb.add_action(self.modules.dsbe.MyPersons)
         tb.add_action(self.modules.isip.MyContracts)
@@ -63,6 +63,12 @@ class Lino(Lino):
     def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
+        
+        LISTINGS = [
+          self.modules.jobs.ContractsSituation,
+          self.modules.lino.DataControlListing,
+        ]
+        
         
         m = main.add_menu("contacts",_("Contacts"))
         m.add_action(self.modules.dsbe.Companies)
@@ -89,8 +95,10 @@ class Lino(Lino):
         mypersons = m.add_menu("mypersons",self.modules.dsbe.MyPersons.label)
         mypersons.add_action(self.modules.dsbe.MyPersons)
         for pg in self.modules.dsbe.PersonGroup.objects.order_by('ref_name'):
-            mypersons.add_action(self.modules.dsbe.MyPersonsByGroup,label=pg.name,
-                params=dict(master_instance=pg))
+            mypersons.add_action(
+              self.modules.dsbe.MyPersonsByGroup,
+              label=pg.name,
+              params=dict(master_instance=pg))
             #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
             #~ params=dict(master_id=pg.pk))
             
@@ -116,7 +124,7 @@ class Lino(Lino):
         listings = main.add_menu("lst",_("Listings"))
         for listing in LISTINGS:
             #~ listings.add_action(listing)
-            listings.add_action(listing + '.listing')
+            listings.add_action(listing,'listing')
         #~ listings.add_instance_action(lst)
         #~ for lst in dsbe.FooListing.objects.all():
             #~ listings.add_instance_action(lst)
@@ -206,7 +214,8 @@ class Lino(Lino):
             lst = m.add_menu("lst",_("Listings"))
             for listing in LISTINGS:
                 #~ listings.add_action(listing)
-                lst.add_action(listing+"Table")
+                #~ lst.add_action(listing+"Table")
+                lst.add_action(listing)
             
 
         

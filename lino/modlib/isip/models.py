@@ -430,13 +430,13 @@ class MyContracts(mixins.ByUser,Contracts):
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    m.add_action('isip.MyContracts')
+    m.add_action(MyContracts)
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("isip",_("ISIPs"))
-    m.add_action('isip.ContractTypes')
-    m.add_action('isip.ContractEndings')
-    m.add_action('isip.ExamPolicies')
+    m.add_action(ContractTypes)
+    m.add_action(ContractEndings)
+    m.add_action(ExamPolicies)
   
 def setup_explorer_menu(site,ui,user,m):
-    m.add_action('isip.Contracts')
+    m.add_action(Contracts)

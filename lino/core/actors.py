@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -73,11 +73,12 @@ def resolve_actor(actor,app_label):
     return get_actor(actor)
         
 def register_actor(a):
-    #~ logger.debug("register_actor %s",a.actor_id)
+    logger.debug("register_actor %s",a.actor_id)
     old = actors_dict.get(a.actor_id,None)
     if old is not None:
-        #~ logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+        logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old,a)
         actors_list.remove(old)
+    #~ a.setup()
     actors_dict[a.actor_id] = a
     actors_list.append(a)
     return a
@@ -95,10 +96,13 @@ def discover():
     assert actors_list is None
     actors_dict = {}
     actors_list = []
-    logger.debug("actors.discover() : instantiating %d actors",len(actor_classes))
+    logger.debug("actors.discover() : setting up %d actors",len(actor_classes))
     for cls in actor_classes:
-        if not cls.__name__.startswith('unused_'):
-            register_actor(cls())
+        cls.class_init()
+    for cls in actor_classes:
+        #~ if not cls.__name__.startswith('unused_'):
+        cls.setup()
+        register_actor(cls)
     actor_classes = None
     
     #~ logger.debug("actors.discover() : setup %d actors",len(actors_list))
@@ -119,109 +123,85 @@ class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
+            
+        # attributes that are not inherited from base classes:
+        #~ classDict.setdefault('name',classname)
+        classDict.setdefault('label',None)
+        classDict.setdefault('button_label',None)
+        classDict.setdefault('title',None)
+        
         cls = type.__new__(meta, classname, bases, classDict)
-        #logger.debug("actor(%s)", cls)
+        
+        
+        """
+        20110822 : a report now always gets the app_label of its model
+        you cannot set this yourself in a subclass
+        because otherwise it gets complex when inheriting reports from other app_labels
+        20110912 Cancelled change 20110822 because PersonsByOffer 
+        should clearly get app_label 'jobs' and not 'contacts'.
+        """
+        #~ if not 'app_label' in classDict.keys():
+            #~ if self.app_label is None:
+            # Figure out the app_label by looking one level up.
+            # For 'django.contrib.sites.models', this would be 'sites'.
+            #~ m = sys.modules[self.__module__]
+            #~ self.app_label = m.__name__.split('.')[-2]
+            #~ cls.app_label = cls.__module__.split('.')[-2]
+            #~ self.app_label = self.model._meta.app_label
+            
+        cls.app_label = cls.__module__.split('.')[-2]
+            
+        cls.actor_id = cls.app_label + ACTOR_SEP + cls.__name__
+        cls._actions_list = []
+        cls._actions_dict = {}
+        cls._setup_done = False
+        cls._setup_doing = False
+        
         if classname not in (
             'Table','AbstractTable','CustomTable',
             'Action','HandledActor','Actor','Frame'):
-        #~ if classname not in ('Report','Action','HandledActor','Actor','Command',
-              #~ 'Layout','ListLayout','DetailLayout','FormLayout',
-              #~ 'ModelLayout'):
             if actor_classes is None:
                 #~ logger.debug("%s definition was after discover",cls)
                 pass
-            else:
+            elif not cls.__name__.startswith('unused_'):
                 #~ logger.debug("Found actor %s.",cls)
+                #~ cls.class_init()              
                 actor_classes.append(cls)
+            #~ logger.debug("ActorMetaClass.__new__(%s)", cls)
         return cls
 
-    def __init__(cls, name, bases, dict):
-        type.__init__(cls,name, bases, dict)
-        cls.instance = None 
-
-    def __call__(cls,*args,**kw):
-        if cls.instance is None:
-            cls.instance = type.__call__(cls,*args, **kw)
-        return cls.instance
-
+    def __str__(self):
+        return self.actor_id 
+        
   
 class Actor(Handled):
     "inherited by Report, Frame"
     __metaclass__ = ActorMetaClass
     app_label = None
-    _actor_name = None
+    #~ _actor_name = None
     title = None
     label = None
     #~ actions = []
     default_action = None
     actor_id = None
 
-    def __init__(self):
-        self._setup_done = False
-        self._setup_doing = False
-        if self.label is None:
-            self.label = self.__class__.__name__
-        if self.title is None:
-            self.title = self.label
-        if self._actor_name is None:
-            self._actor_name = self.__class__.__name__
-        else:
-            assert type(self._actor_name) is str
-            
-        if not 'app_label' in self.__class__.__dict__.keys():
-            # 20110822 : a report now always gets the app_label of its model
-            # you cannot set this yourself in a subclass
-            # because otherwise it gets complex when inheriting reports from other app_labels
-            # 20110912 Cancelled change 20110822 because PersonsByOffer 
-            # should clearly get app_label 'jobs' and not 'contacts'.
-            #~ if self.app_label is None:
-            # Figure out the app_label by looking one level up.
-            # For 'django.contrib.sites.models', this would be 'sites'.
-            #~ m = sys.modules[self.__module__]
-            #~ self.app_label = m.__name__.split('.')[-2]
-            self.app_label = self.__class__.__module__.split('.')[-2]
-            #~ self.app_label = self.model._meta.app_label
-            
-            
-        #~ if self.app_label is None:
-            #~ self.__class__.app_label = self.__class__.__module__.split('.')[-2]
-            #~ self.app_label = self.__class__.__module__.split('.')[-2]
-        self.actor_id = self.app_label + ACTOR_SEP + self._actor_name
-        self._forms = {} # will be filled by lino.layouts.FormLayout.setup()
-        self._actions_list = []
-        self._actions_dict = {}
-        Handled.__init__(self)
-
-        #~ logger.debug("Actor.__init__() %s",self)
-
+    @classmethod
     def get_label(self):
-        #~ if self.label is None:
-            #~ return self.__class__.__name__
         return self.label
         
-    def __str__(self):
-        #~ return '<' + self.actor_id + '>'
-        return self.actor_id 
-        
-    #~ def define_action(self,a):
-        #~ self._actions_list.append(a)
-        #~ self._actions_dict[a.name] = a
-    
+    @classmethod
     def debug_summary(self):
-        return "%s (%s)" % (self.__class__,','.join([a.name for a in self._actions_list]))
+        return "%s (%s)" % (self.__class__,','.join([
+            a.name for a in self._actions_list]))
         
+    @classmethod
     def get_url(self,ui,**kw):
         return ui.get_action_url(self,self.default_action,**kw)
 
-    #~ def get_action(self,action_name=None):
-        #~ if action_name is None:
-            #~ return self.default_action
-            #~ #action_name = self.default_action
-        #~ return getattr(self,action_name,None)
-        
+    @classmethod
     def setup(self):
         #~ raise "20100616"
-        assert not self._setup_done, "%s.setup() called again" % self
+        #~ assert not self._setup_done, "%s.setup() called again" % self
         if self._setup_done:
             return True
         if self._setup_doing:
@@ -232,35 +212,49 @@ class Actor(Handled):
                 return False
         #~ logger.debug("Actor.setup() %s", self)
         self._setup_doing = True
+        
+        #~ if self.label is None:
+            #~ self.label = self.__name__
+        #~ if self.title is None:
+            #~ self.title = self.label
+        
         self.do_setup()
         self._setup_doing = False
         self._setup_done = True
-        #~ logger.debug("Report.setup() done: %s", self.actor_id)
+        logger.debug("20120103 Actor.setup() done: %s, default_action is %s", 
+            self.actor_id,self.default_action)
         return True
         
-    def do_setup(self):
-        pass
-        
-        
+    @classmethod
     def set_actions(self,actions):
         self._actions_list = []
         self._actions_dict = {}
         for a in actions:
             self.add_action(a)
             
+    @classmethod
     def add_action(self,a):
+        if hasattr(a,'actor') and a.actor is not self:
+            raise Exception("20120103")
         if self._actions_dict.has_key(a.name):
-            logger.warning("%s action %r : %s overridden by %s",self,a.name,self._actions_dict[a.name],a)
+            #~ logger.warning("%s action %r : %s overridden by %s",
+              #~ self,a.name,self._actions_dict[a.name],a)
+            raise Exception(
+              "%s action %r : %s overridden by %s" %
+              (self,a.name,self._actions_dict[a.name],a))
         self._actions_dict[a.name] = a
         self._actions_list.append(a)
             
+    @classmethod
     def get_action(self,name):
         return self._actions_dict.get(name,None)
         
+    @classmethod
     def get_actions(self,callable_from=None):
         if callable_from is None:
             return self._actions_list
-        return [a for a in self._actions_list if a.callable_from is None or isinstance(callable_from,a.callable_from)]
+        return [a for a in self._actions_list 
+          if a.callable_from is None or isinstance(callable_from,a.callable_from)]
     
         
 

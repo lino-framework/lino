@@ -4,3 +4,27 @@
 :func:`lino.core.kernel.setup_site` now adds a new attribute `modules`
 which makes it easy to directly address the installed modules. 
 This is going to replace `resolve_action`.
+
+Checkin
+
+And then another internal change that took me more than a day:
+Actors no longer get instantiated. 
+Application code simply uses the class object itself 
+where there used to be a singleton instance.
+
+The :meth:`lino.utils.menus.Menu.add_action` method 
+(which is used heavily in 
+:meth:`lino.Lino.setup_menu`
+and
+:meth:`lino.Lino.setup_quicklinks`) now gets the Actor's class 
+instead of a string. That's more readable and probably also more 
+efficient (which is not unimportant since these methods are called 
+for every request).
+
+One detail which I didn't like so much is that application programmers 
+must not forget to decorate their overridden Table class 
+methods as `@classmethod`.
+
+Checkin 2012-02-03 at 21:15 (the unit test suite is almost okay).
+
+I plan to also convert TableRequest to Table instances.

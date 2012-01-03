@@ -267,21 +267,21 @@ def register_frame(frm):
     frames.append(frm)
     
 def register_report(rpt):
-    #~ logger.debug("20111113 register_report %s", rpt.actor_id)
+    logger.debug("20120103 register_report %s", rpt.actor_id)
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     
-    if rpt.typo_check:
-        myattrs = set(rpt.__class__.__dict__.keys())
-        for attr in base_attrs(rpt.__class__):
-            myattrs.discard(attr)
-        if len(myattrs):
-            logger.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
+    #~ if rpt.typo_check:
+        #~ myattrs = set(rpt.__dict__.keys())
+        #~ for attr in base_attrs(rpt):
+            #~ myattrs.discard(attr)
+        #~ if len(myattrs):
+            #~ logger.warning("%s defines new attribute(s) %s", rpt, ",".join(myattrs))
             
-    if isinstance(rpt,Table) and rpt.model is None:
+    if issubclass(rpt,Table) and rpt.model is None:
         #~ logger.debug("20111113 %s is an abstract report", rpt)
         return
         
-    for name,v in rpt.__class__.__dict__.items():
+    for name,v in rpt.__dict__.items():
     #~ for name in rpt.__class__.__dict__.keys():
     #~ for name in dir(rpt):
         #~ v = getattr(rpt,name)
@@ -302,9 +302,10 @@ def register_report(rpt):
     #~ rptname_choices.append((rpt.actor_id, rpt.get_label()))
     #~ rptname_choices.append(rpt.actor_id)
     
-    if isinstance(rpt,Table):
+    if issubclass(rpt,Table):
         if rpt.master is None:
             if not rpt.model._meta.abstract:
+                logger.debug("20120102 register %s : master report", rpt.actor_id)
                 master_reports.append(rpt)
             if not rpt.filter and not rpt.known_values and rpt.use_as_default_report:
                 #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
@@ -313,8 +314,9 @@ def register_report(rpt):
             #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
             generic_slaves[rpt.actor_id] = rpt
         else:
+            logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
             slave_reports.append(rpt)
-    elif isinstance(rpt,CustomTable):
+    elif issubclass(rpt,CustomTable):
         custom_tables.append(rpt)
 
     
@@ -334,11 +336,11 @@ def discover():
     logger.info("Analyzing Reports...")
     #~ logger.debug("20111113 Register Table actors...")
     for rpt in actors.actors_list:
-        if isinstance(rpt,Table) and rpt.__class__ is not Table:
+        if issubclass(rpt,Table) and rpt is not Table:
             register_report(rpt)
-        elif isinstance(rpt,CustomTable) and rpt.__class__ is not CustomTable:
+        elif issubclass(rpt,CustomTable) and rpt is not CustomTable:
             register_report(rpt)
-        if isinstance(rpt,Frame) and rpt.__class__ is not Frame:
+        if issubclass(rpt,Frame) and rpt is not Frame:
             register_frame(rpt)
             
     logger.debug("Instantiate model reports...")
@@ -402,15 +404,7 @@ class ReportAction(actions.Action):
         self.actor = report # actor who offers this action
         self.can_view = report.can_view
         super(ReportAction,self).__init__(*args,**kw)
-        
-    def unused_request(self,ui=None,request=None,*args,**kw):
-        ar = TableRequest(ui,self.actor,request,self,**kw)
-        #~ ar.setup(**kw)
-        return ar
-        #~ return self.get_handle(ui).request(**kw)
-      
-        #~ return self.actor.request(self,*args,**kw)
-        
+
     def get_button_label(self):
         if self is self.actor.default_action:
             return self.label 
@@ -422,10 +416,8 @@ class ReportAction(actions.Action):
         return rr.get_title()
         
     def __str__(self):
-        return str(self.actor)+'.'+self.name
+        return str(self.actor) + '.' + self.name
         
-#~ class JsonAction(ReportAction):
-    #~ name = 'json'
 
 
 class GridEdit(ReportAction,actions.OpenWindowAction):
@@ -570,8 +562,8 @@ class AbstractTableRequest(ActionRequest):
     
     #~ def __init__(self,ui,report,request,action,*args,**kw):
     def __init__(self,ui,report,request,action,**kw):
-        if not isinstance(report,AbstractTable):
-            raise Exception("Expected an AbstractTable instance, got %r" % report)
+        if not (isinstance(report,type) and issubclass(report,AbstractTable)):
+            raise Exception("Expected an AbstractTable subclass, got %r" % report)
         #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
         ActionRequest.__init__(self,ui,action)
         self.report = report
@@ -632,7 +624,7 @@ class AbstractTableRequest(ActionRequest):
         self.known_values = kw
         
         self.report.setup_request(self)
-        #~ self.queryset = self.get_queryset()
+        
         self._data_iterator = self.get_data_iterator()
         
             
@@ -950,15 +942,15 @@ def has_fk(rr,name):
 
         
 def model2report(m):
-    def f(self,obj,request):
+    def f(table,obj,request):
         return m(obj,request)
         #~ return getattr(obj,name)(request)
-    return f
+    return classmethod(f)
 
 
 class FrameHandle(base.Handle): 
     def __init__(self,ui,frame):
-        assert isinstance(frame,Frame)
+        #~ assert issubclass(frame,Frame)
         self.report = frame
         base.Handle.__init__(self,ui)
 
@@ -970,17 +962,16 @@ class Frame(actors.Actor):
     _handle_class = FrameHandle
     default_action_class = None
     
-    def __init__(self):
-        logger.info("%s.__init__()",self.__class__)
+    @classmethod
+    def do_setup(self):
+        #~ logger.info("%s.__init__()",self.__class__)
         #~ if not self.__class__ is Frame:
         if self.default_action_class:
             self.default_action = self.default_action_class(self)
         if not self.label:
             self.label = self.default_action.label
             #~ self.default_action.actor = self
-        super(Frame,self).__init__()
-  
-    def do_setup(self):
+        super(Frame,self).do_setup()
         if self.default_action:
             self.add_action(self.default_action)
 
@@ -1192,26 +1183,21 @@ class AbstractTable(actors.Actor): #,base.Handled):
     
     detail_action = None
     
-    def __init__(self):
-        actors.Actor.__init__(self)
-        #~ self.default_action = self.default_action_class(self)
-        self.default_action = GridEdit(self)
-        #~ self.default_elem_action = ShowDetailAction(self)
-        #~ self.list_action = ListAction(self)
-      
-        
     @classmethod
     def spawn(cls,suffix,**kw):
         kw['app_label'] = cls.app_label
         return type(cls.__name__+str(suffix),(cls,),kw)
         
           
+    @classmethod
     def parse_req(self,request,**kw):
         return kw
     
+    @classmethod
     def do_setup(self):
       
-        #~ filename = self.get_grid_config_file()
+        super(AbstractTable,self).do_setup()
+        
         self.grid_configs = []
         
         def loader(content,cd,filename):
@@ -1221,15 +1207,20 @@ class AbstractTable(actors.Actor): #,base.Handled):
             
         load_config_files(loader,'%s.*gc' % self)
             
+        self.default_action = GridEdit(self)
         #~ self.setup_detail_layouts()
         self.set_actions([])
         self.setup_actions()
         self.add_action(self.default_action)
+        #~ if self.default_action.actor != self:
+            #~ raise Exception("20120103 %r.do_setup() : default.action.actor is %r" % (
+              #~ self,self.default_action.actor))
                 
         if self.button_label is None:
             self.button_label = self.label
             
         
+    @classmethod
     def disabled_actions(self,obj,request):
         l = []
         for a in self.get_actions():
@@ -1238,9 +1229,11 @@ class AbstractTable(actors.Actor): #,base.Handled):
                     l.append(a.name)
         return l
         
+    @classmethod
     def setup_actions(self):
         pass
         
+    @classmethod
     def add_column(self,*args,**kw):
         """
         Use this from an overridden `__init__` method to 
@@ -1253,9 +1246,11 @@ class AbstractTable(actors.Actor): #,base.Handled):
         return col
         
         
+    @classmethod
     def get_data_elem(self,name):
         return self.computed_columns.get(name,None)
         
+    @classmethod
     def get_title(self,rr):
         """
         Return the title of this Table for the given request `rr`.
@@ -1263,16 +1258,22 @@ class AbstractTable(actors.Actor): #,base.Handled):
         """
         return self.title or self.label
         
+    @classmethod
     def setup_request(self,req):
         pass
         
+    @classmethod
     def wildcard_data_elems(self):
-        return []
+        for cc in self.computed_columns.values():
+            yield cc
+        #~ return []
         
+    @classmethod
     def get_detail(self):
         return None
         
         
+    @classmethod
     def row2dict(self,row,d):
         """
         Overridden by lino.modlib.properties.PropValuesByOwner.
@@ -1282,6 +1283,7 @@ class AbstractTable(actors.Actor): #,base.Handled):
             d[n] = getattr(row,n)
         return d
         
+    @classmethod
     def save_grid_config(self,index,data):
         if len(self.grid_configs) == 0:
             gc = GridConfig(self,data,'%s.gc' % self)
@@ -1311,13 +1313,17 @@ class CustomTable(AbstractTable):
     
     default_group = Group()
     
+    @classmethod
     def group_from_row(self,row):
         return self.default_group
         
+    @classmethod
+    def get_data_rows(self,ar):
+        raise NotImplementedError
     
     @classmethod
     def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls()
+        self = cls
         if action is None:
             action = self.default_action
         return CustomTableRequest(ui,self,request,action,**kw)
@@ -1426,7 +1432,28 @@ class Table(AbstractTable):
     Same remarks as for :attr:`disabled_fields`.
     """
     
-    def __init__(self):
+    @classmethod
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls
+        if action is None:
+            action = self.default_action
+        return TableRequest(ui,self,request,action,**kw)
+        
+    @classmethod
+    def init_label(self):
+        return self.model._meta.verbose_name_plural
+        
+    @classmethod
+    def column_choices(self):
+        return [ de.name for de in self.wildcard_data_elems() ]
+          
+    @classmethod
+    def wildcard_data_elems(self):
+        return wildcard_data_elems(self.model)
+          
+    @classmethod
+    def class_init(self):
+        super(Table,self).class_init()
         if self.model is None:
             if self.base_queryset is not None:
                 self.model = self.base_queryset.model
@@ -1434,31 +1461,17 @@ class Table(AbstractTable):
         else:
             self.model = resolve_model(self.model,self.app_label)
             
+        logger.debug("20120103 class_init(%s) : model is %s",self,self.model)
+        
         if isinstance(self.model,UnresolvedModel):
             self.model = None
             
+        
         if self.model is not None:
-            # 20110822 : a report now always gets the app_label of its model
-            # you cannot set this yourself in a subclass
-            # because otherwise it gets complex when inheriting reports from other app_labels
-            # 20110912 Cancelled change 20110822 because PersonsByOffer 
-            # should clearly get app_label 'jobs' and not 'contacts'.
-            #~ if self.app_label is None:
-            #~ if not self.__dict__.has_key('app_label'):
-                # Figure out the app_label by looking one level up.
-                # For 'django.contrib.sites.models', this would be 'sites'.
-                #~ m = sys.modules[self.__module__]
-                #~ self.app_label = m.__name__.split('.')[-2]
-                #~ self.app_label = self.model._meta.app_label
+          
             if self.label is None:
                 #~ self.label = capfirst(self.model._meta.verbose_name_plural)
                 self.label = self.init_label()
-            
-        #~ logger.debug("Table.__init__() %s", self)
-        AbstractTable.__init__(self)
-        #~ base.Handled.__init__(self)
-        
-        if self.model is not None:
           
             for name in ('disabled_fields',
                          'handle_uploaded_files', 
@@ -1467,7 +1480,9 @@ class Table(AbstractTable):
                     m = getattr(self.model,name,None)
                     if m is not None:
                         #~ logger.debug('20111113 Install model method %s.%s to %s',self.model.__name__,name,self)
-                        setattr(self.__class__,name,model2report(m))
+                        setattr(self,name,model2report(m))
+                        #~ 'dictproxy' object does not support item assignment:
+                        #~ self.__dict__[name] = model2report(m) 
                         
             if self.master_key:
                 #~ assert self.model is not None, "%s has .master_key but .model is None" % self
@@ -1510,36 +1525,23 @@ class Table(AbstractTable):
                       raise Exception("Unknown fieldname %r in %s.order_by" % (fieldname,self))
         
     @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls()
-        if action is None:
-            action = self.default_action
-        return TableRequest(ui,self,request,action,**kw)
-        
-    def init_label(self):
-        return self.model._meta.verbose_name_plural
-        
-    def column_choices(self):
-        return [ de.name for de in self.wildcard_data_elems() ]
-          
-    def wildcard_data_elems(self):
-        return wildcard_data_elems(self.model)
-          
-    
     def do_setup(self):
-        AbstractTable.do_setup(self)
-        if self.model is not None:
-            if hasattr(self.model,'_lino_slaves'):
-                self._slaves = self.model._lino_slaves.values()
-            else:
-                self._slaves = []
-                
-        if self.model is not None:
-            m = getattr(self.model,'setup_report',None)
-            if m:
-                m(self)
-            #~ call_on_bases(self.model,'setup_report',self)
+            
+        super(Table,self).do_setup()
+        #~ AbstractTable.do_setup(self)
+        if self.model is None:
+            return 
+            
+        if hasattr(self.model,'_lino_slaves'):
+            self._slaves = self.model._lino_slaves.values()
+        else:
+            self._slaves = []
+            
+        m = getattr(self.model,'setup_report',None)
+        if m:
+            m(self)
         
+    @classmethod
     def disable_delete(self,obj,request):
         """
         Return either `None` if the given `obj` *is allowed* 
@@ -1548,6 +1550,7 @@ class Table(AbstractTable):
         """
         return self.model._lino_ddh.disable_delete(obj,request)
         
+    @classmethod
     def setup_actions(self):
         if self.model is not None:
             #~ if len(self.detail_layouts) > 0:
@@ -1564,8 +1567,10 @@ class Table(AbstractTable):
             #~ if hasattr(self.model,'get_image_url'):
                 #~ self.add_action(actions.ImageAction())
         
+    @classmethod
     def get_data_elem(self,name):
-        cc = AbstractTable.get_data_elem(self,name)
+        cc = super(Table,self).get_data_elem(name)
+        #~ cc = AbstractTable.get_data_elem(self,name)
         if cc:
             return cc
         return get_data_elem(self.model,name)
@@ -1575,9 +1580,11 @@ class Table(AbstractTable):
         #~ return self.get_action(name)
         
         
+    @classmethod
     def get_detail(self):
         return self.model._lino_detail
         
+    @classmethod
     def get_title(self,rr):
         assert rr is not None
         #~ if rr is not None and self.master is not None:
@@ -1588,8 +1595,10 @@ class Table(AbstractTable):
               #~ model=rr.master_instance._meta.verbose_name,
               details=self.model._meta.verbose_name_plural,
               master=rr.master_instance)
-        return AbstractTable.get_title(self,rr)
+        #~ return AbstractTable.get_title(self,rr)
+        return super(Table,self).get_title(rr)
         
+    @classmethod
     def get_queryset(self):
         """
         Return an iterable over the items processed by this report.
@@ -1598,6 +1607,7 @@ class Table(AbstractTable):
         """
         return self.model.objects.all()
       
+    @classmethod
     def get_request_queryset(self,rr):
         """
         Build a Queryset for the specified request on this report.
@@ -1653,6 +1663,7 @@ class Table(AbstractTable):
             qs = qs.order_by(*order_by)
         return qs
 
+    @classmethod
     def create_instance(self,req,**kw):
         instance = self.model(**kw)
         #~ self.on_create(instance,req)
@@ -1668,6 +1679,7 @@ class Table(AbstractTable):
         #~ print 20110128, instance
         return instance
         
+    @classmethod
     def slave_as_summary_meth(self,ui,row_separator):
         """
         Creates and returns the method to be used when :attr:`Table.show_slave_grid` is `False`.
@@ -1682,9 +1694,11 @@ class Table(AbstractTable):
         return meth
         
         
+    @classmethod
     def get_create_kw(self,master_instance,**kw):
         return self.get_filter_kw(master_instance,**kw)
         
+    @classmethod
     def get_filter_kw(self,master_instance,**kw):
         #logger.debug('%s.get_filter_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
@@ -1722,6 +1736,7 @@ class Table(AbstractTable):
     #~ def __str__(self):
         #~ return rc_name(self.__class__)
         
+    @classmethod
     def ajax_update(self,request):
         print request.POST
         return HttpResponse("1", mimetype='text/x-json')
@@ -1742,17 +1757,6 @@ class Table(AbstractTable):
                 #~ cls.detail_layouts[i] = dtl
                 #~ return
         #~ cls.detail_layouts.append(dtl)
-        
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1766,12 +1770,15 @@ def report_factory(model):
         if rpt is not None:
             if issubclass(model,rpt.model):
             #~ if issubclass(rpt.model,model):
-                bases = (rpt.__class__,)
+                bases = (rpt,)
+                #~ bases = (rpt.__class__,)
     #~ logger.info('report_factory(%s) : bases is %s',model.__name__,bases)
     cls = type(model.__name__+"Table",
         bases,dict(model=model,
             app_label=model._meta.app_label))
-    return actors.register_actor(cls())
+    cls.class_init()
+    cls.setup()
+    return actors.register_actor(cls)
 
 
 def column_choices(rptname):
@@ -1943,7 +1950,6 @@ class LayoutHandle:
         self.table = table
         #~ self.rh = rh
         #~ self.datalink = layout.get_datalink(ui)
-        #~ self.name = layout._actor_name
         self.label = layout.label # or ''
         self._store_fields = []
         #~ self._elems_by_field = {}
@@ -2138,7 +2144,8 @@ class ListLayoutHandle(LayoutHandle):
         if de.name.endswith('_ptr'): return False
         #~ and (de.name not in self.hidden_elements) \
         #~ and (de.name not in self.rh.report.known_values.keys()) \
-        if de.name == self.rh.report.master_key: return False
+        if issubclass(self.rh.report,Table):
+            if de.name == self.rh.report.master_key: return False
         return True
   
     def get_data_elem(self,name): 
@@ -2157,17 +2164,25 @@ class DetailHandle(base.Handle):
       
       
 
-class Detail(base.Handled):
+class Detail(object):
     """
     The UI-agnostic representation of a Detail window.
     Equivalent to a collection of .dtl files.
     """
     
-    _handle_class = DetailHandle
-    
     def __init__(self,model,layouts):
         self.model = model
         self.layouts = layouts
-        base.Handled.__init__(self)
+        self._handles = {}
         
+
+    def get_handle(self,k):
+        h = self._handles.get(k,None)
+        if h is None:
+            h = DetailHandle(k,self)
+            self._handles[k] = h
+            h.setup()
+        return h
+        
+
 

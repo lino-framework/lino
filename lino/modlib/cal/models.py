@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -678,6 +678,7 @@ if settings.LINO.user_model:
         column_names = 'start_time summary status *'
         label = u"Meine Termine heute"
         
+        @classmethod
         def setup_request(self,rr):
             rr.known_values = dict(start_date=datetime.date.today())
             super(MyEventsToday,self).setup_request(rr)
@@ -941,6 +942,8 @@ if settings.LINO.use_extensible:
         """
         column_names = 'id start_dt end_dt summary description user place calendar rset url all_day reminder'
         can_add = perms.never
+        
+        @classmethod
         def parse_req(self,request,**kw):
             filter = kw.get('filter',{})
             endDate = request.REQUEST.get('ed',None)
@@ -957,29 +960,28 @@ def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("~Calendar"))
-    m.add_action('cal.MyTasks')
-    #~ m.add_action('cal.MyEventsToday')
-    m.add_action('cal.MyEvents')
+    m.add_action(MyTasks)
+    m.add_action(MyEvents)
     if settings.LINO.use_extensible:
-        m.add_action('cal.Panel')
+        m.add_action(Panel)
     #~ m.add_action_(actions.Calendar())
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("~Calendar"))
-    m.add_action('cal.Places')
-    m.add_action('cal.Priorities')
-    m.add_action('cal.AccessClasses')
-    m.add_action('cal.EventStatuses')
-    m.add_action('cal.TaskStatuses')
-    m.add_action('cal.EventTypes')
-    m.add_action('cal.GuestRoles')
-    m.add_action('cal.GuestStatuses')
-    m.add_action('cal.Calendars')
+    m.add_action(Places)
+    m.add_action(Priorities)
+    m.add_action(AccessClasses)
+    m.add_action(EventStatuses)
+    m.add_action(TaskStatuses)
+    m.add_action(EventTypes)
+    m.add_action(GuestRoles)
+    m.add_action(GuestStatuses)
+    m.add_action(Calendars)
   
 def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("cal",_("~Calendar"))
-    m.add_action('cal.Events')
-    m.add_action('cal.Tasks')
-    m.add_action('cal.Guests')
-    m.add_action('cal.RecurrenceSets')
+    m.add_action(Events)
+    m.add_action(Tasks)
+    m.add_action(Guests)
+    m.add_action(RecurrenceSets)
   

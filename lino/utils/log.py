@@ -82,13 +82,20 @@ def configure(config):
     
       LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
       
+    Another example using :attr:`lino.Lino.project_dir`::
+    
+      ...
+      LINO = Lino(__file__,globals()) 
+      ...
+      LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
+
+      
     Example to use date-based log files::
     
       import datetime
       filename = datetime.date.today().strftime('/var/log/lino/%Y-%m-%d.log')
       LOGGING = dict(filename=filename,level='DEBUG',rotate=False)  
 
-      
       
     If there is a logfile, then console messages will never be more verbose than INFO
     because too many messages on the screen are disturbing, 

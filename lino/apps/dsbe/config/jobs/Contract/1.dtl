@@ -7,7 +7,7 @@ main =
     applies_from duration applies_until 
     regime:20 schedule:30 hourly_rate:10 refund_rate:10
     date_decided date_issued date_ended ending
-    reference_person 
+    reference_person build_time
     responsibilities cal.TasksByOwner cal.EventsByOwner 
     
     

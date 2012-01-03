@@ -874,9 +874,11 @@ class InitiateListing(dd.InsertRow):
 class Listings(dd.Table):
     model = Listing
     
+    @classmethod
     def init_label(self):
         return _(u"Listings «%s»") % self.model._meta.verbose_name
         
+    @classmethod
     def setup_actions(self):
         #~ print 'lino.mixins.printable.Listings.setup_actions : ', self.model
         alist = []

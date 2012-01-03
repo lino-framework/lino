@@ -363,6 +363,7 @@ class MyOutbox(OutMails):
     filter = dict(sent__isnull=True)
     master_key = 'sender'
     
+    @classmethod
     def setup_request(self,rr):
         if rr.master_instance is None:
             rr.master_instance = rr.get_user()
@@ -379,6 +380,7 @@ class MyInbox(InMails):
     can_add = perms.never
     can_change = perms.never
     
+    @classmethod
     def get_request_queryset(self,rr):
         q1 = Recipient.objects.filter(contact=rr.get_user()).values('mail').query
         qs = Mail.objects.filter(id__in=q1)
@@ -394,6 +396,8 @@ class MailsByContact(object):
 class InMailsByContact(MailsByContact,InMails):
     column_names = 'received subject sender'
     order_by = ['received']
+    
+    @classmethod
     def get_request_queryset(self,rr):
         q1 = Recipient.objects.filter(contact=rr.master_instance).values('mail').query
         qs = Mail.objects.filter(id__in=q1)
@@ -430,15 +434,15 @@ def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("mails",_("~Mails"))
-    m.add_action('mails.MyInbox')
-    m.add_action('mails.MyOutbox')
-    m.add_action('mails.MySent')
+    m.add_action(MyInbox)
+    m.add_action(MyOutbox)
+    m.add_action(MySent)
   
 def setup_config_menu(site,ui,user,m):
     m  = m.add_menu("mails",_("~Mails"))
-    m.add_action('mails.MailTypes')
+    m.add_action(MailTypes)
   
 def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("mails",_("~Mails"))
-    m.add_action('mails.Mails')
+    m.add_action(Mails)
   

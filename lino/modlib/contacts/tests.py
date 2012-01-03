@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -86,9 +86,12 @@ def test02(self):
     
     if 'de' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
-        result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
+        result = self.check_json_result(
+          response,
+          'navinfo disable_delete data id title disabled_actions')
         self.assertEqual(result['data']['country'],"Estland")
         self.assertEqual(result['data']['gender'],u"Männlich")
+        self.assertEqual(result['data']['disabled_fields'],['contact_ptr_id','id'])
         
         # TODO: the following would fail if LINO.date_format_* have been modified
         self.assertEqual(result['data']['birth_date'],"01.06.1968")
