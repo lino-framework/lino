@@ -18,6 +18,11 @@ with the following fixtures:
 
   std all_countries few_cities all_languages props demo
   
+To run only this test suite::
+
+  python manage.py test dsbe.DemoTest
+  
+  
 """
 
 import logging
@@ -947,6 +952,7 @@ def test14(self):
     for url in """\
     /choices/isip/Contract/person?start=0&limit=10&query=
     /choices/dsbe/Person/city?start=0&limit=10&country=BE&query=
+    /choices/jobs/Contract/duration
     """.splitlines():
       url = url.strip()
       if url and not url.startswith("#"):

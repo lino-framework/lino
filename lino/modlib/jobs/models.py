@@ -162,7 +162,19 @@ class JobProviders(Companies):
 # CONTRACT TYPES 
 #
 class ContractType(mixins.PrintableType,babel.BabelNamed):
+    """
+    This is the homologue of 
+    :class:`lino.modlib.isip.models.ContractType` (see there 
+    for general documentation).
+    
+    They are separated tables because ISIP contracts are by nature 
+    very different from JOBS contracts, and also their types should 
+    not be mixed.
+    
+    """
   
+    _lino_preferred_width = 20 
+    
     templates_group = 'jobs/Contract'
     
     class Meta:
@@ -323,9 +335,9 @@ class Contract(ContractBase):
                 df.append('provider')
             if self.job.contract_type:
                 df.append('type')
-        if self.build_time:
-            df += self.PRINTABLE_FIELDS
-        return df
+        if not self.build_time:
+            return df 
+        return df + self.PRINTABLE_FIELDS
         
     def unused_get_reminder_html(self,ui,user):
         #~ url = ui.get_detail_url(self,fmt='detail')
@@ -482,6 +494,8 @@ class MyContracts(mixins.ByUser,Contracts):
 
 class JobType(mixins.Sequenced):
     """
+    The list of Job Types is used for statistical analysis, 
+    e.g. in :class:``
     """
     
     class Meta:
@@ -682,6 +696,9 @@ class Job(SectorFunction):
     """
     A work place at some employer
     """
+    
+    _lino_preferred_width = 20 
+    
     class Meta:
         verbose_name = _("Job")
         verbose_name_plural = _('Jobs')

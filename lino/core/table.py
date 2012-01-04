@@ -30,6 +30,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_unicode
+from django.utils.importlib import import_module
 
 from django.db import models
 from django.db.models.query import QuerySet
@@ -350,7 +351,7 @@ def discover():
         #~ rpt = getattr(model,'_lino_model_report',None)
         #~ logger.debug('20111113 %s._lino_model_report = %s',model,rpt)
         if rpt is None:
-            rpt = report_factory(model)
+            rpt = table_factory(model)
             register_report(rpt)
             model._lino_model_report = rpt
             
@@ -1765,8 +1766,13 @@ class Table(AbstractTable):
 
 
 
-def report_factory(model):
-    #~ logger.info('report_factory(%s)',model.__name__)
+def table_factory(model):
+    """
+    Automatically define a Table class for the specified model.
+    This is used during kernel setup to cerate default tables for 
+    models who have no table found.
+    """
+    #~ logger.info('table_factory(%s)',model.__name__)
     bases = (Table,)
     for b in model.__bases__:
         rpt = getattr(b,'_lino_model_report',None)
@@ -1775,12 +1781,28 @@ def report_factory(model):
             #~ if issubclass(rpt.model,model):
                 bases = (rpt,)
                 #~ bases = (rpt.__class__,)
-    #~ logger.info('report_factory(%s) : bases is %s',model.__name__,bases)
-    cls = type(model.__name__+"Table",
-        bases,dict(model=model,
-            app_label=model._meta.app_label))
+    #~ logger.info('table_factory(%s) : bases is %s',model.__name__,bases)
+    app_label = model._meta.app_label
+    name = model.__name__ + "Table"
+    cls = type(name,bases,dict(model=model,app_label=app_label))
     cls.class_init()
     cls.setup()
+    
+    """
+    20120104 We even add the factored class to the module because 
+    actor lookup needs it. Otherwise we'd get a 
+    `'module' object has no attribute 'DataControlListingTable'` error.
+    
+    We cannot simply do ``setattr(settings.LINO.modules.get(app_label),name,cls)``
+    because this code i executed when `settings.LINO.modules` doesn't yet exist.
+    """
+    
+    m = import_module(model.__module__)
+    if getattr(m,name,None) is not None:
+        raise Exception(
+          "Name of factored class %s clashes with existing name in %s" 
+          %(cls,m))
+    setattr(m,name,cls)
     return actors.register_actor(cls)
 
 

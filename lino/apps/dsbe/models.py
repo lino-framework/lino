@@ -512,8 +512,8 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         #~ rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
         
     def __unicode__(self):
-        #~ return u"%s (%s)" % (self.name,self.pk)
-        return u"%s (%s)" % (self.get_full_name(salutation=False),self.pk)
+        #~ return u"%s (%s)" % (self.get_full_name(salutation=False),self.pk)
+        return u"%s %s (%s)" % (self.last_name.upper(),self.first_name,self.pk)
         
     def data_control(self):
         "Used by :class:`lino.models.DataControlListing`."

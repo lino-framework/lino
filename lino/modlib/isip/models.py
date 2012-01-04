@@ -77,6 +77,15 @@ from lino.apps.dsbe.models import Company, Companies
 #
 class ContractType(mixins.PrintableType,babel.BabelNamed):
   
+    """
+    The contract type determines the print template to be used. 
+    Print templates may use the `ref` field to conditionally 
+    hide or show certain parts.
+    `exam_policy` is the default value for new Contracts.
+    """
+    
+    _lino_preferred_width = 20 
+    
     templates_group = 'isip/Contract'
     
     class Meta:

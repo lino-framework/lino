@@ -3332,7 +3332,7 @@ Lino.davlink_open = function(webdavURL) {
 /*
 Mappings towards lino.modlib.cal.models.PanelCalendars
 */
-#set $S = $ui.get_actor('cal.PanelCalendars').store
+#set $S = $site.modules.cal.PanelCalendars.get_handle($ui).store
 Ext.ensible.cal.CalendarMappings = {
     CalendarId:   {name:'ID', mapping: $S.column_index('id'), type: 'int'},
     Title:        {name:'CalTitle', mapping: $S.column_index('name'), type: 'string'},
@@ -3345,8 +3345,9 @@ Ext.ensible.cal.CalendarRecord.reconfigure();
 
 /*
 Mappings towards lino.modlib.cal.models.PanelEvents 
+\#set $S = \$ui.get_actor('cal.PanelEvents').store
 */
-#set $S = $ui.get_actor('cal.PanelEvents').store
+#set $S = $site.modules.cal.PanelEvents.get_handle($ui).store
 Ext.ensible.cal.EventMappings = {
     EventId:     {name: 'ID', mapping: $S.column_index('id'), type:'int'},
     CalendarId:  {name: 'CalID', mapping: $S.column_index('calendarHidden'), type: 'int'},
@@ -3495,7 +3496,8 @@ Lino.CalendarCfg = {
     dateParamEnd:'ed'
 };
 Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,{
-  empty_title : "$ui.get_actor('cal.Panel').report.label",
+  //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
+  empty_title : "$site.modules.cal.Panel.label",
   store: Lino.eventStore,
   //~ disableCaching:true,
   calendarStore: Lino.calendarStore

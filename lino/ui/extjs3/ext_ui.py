@@ -449,7 +449,9 @@ class ExtUI(base.UI):
                     return lh.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,table.StaticText):
                     return ext_elems.StaticTextElement(lh,name,value)
-                raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout.__name__,name))
+                raise KeyError(
+                  "Cannot handle value %r in %s.%s." 
+                  % (value,lh.layout.__name__,name))
         if hasattr(lh,'rh'):
             msg = "Unknown element %r referred in layout %s of %s." % (
                 name,lh.layout,lh.rh.report)
@@ -1627,7 +1629,7 @@ tinymce.init({
         if quick_search is not None:
             qs = table.add_quick_search_filter(qs,quick_search)
             
-        count = qs.count()
+        count = len(qs)
             
         offset = request.GET.get(ext_requests.URL_PARAM_START,None)
         if offset:

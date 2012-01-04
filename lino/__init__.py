@@ -25,7 +25,7 @@ import datetime
 from os.path import join, abspath, dirname, normpath
 
 
-__version__ = "1.3.3"
+__version__ = "1.3.4"
 """
 Lino version number. 
 The latest released version is available on the :doc:`/downloads` page.

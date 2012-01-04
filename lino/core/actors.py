@@ -53,11 +53,13 @@ def resolve_action(spec,app_label=None):
     return actor.default_action
   
 def get_actor(actor_id):
+    raise Exception('20120104')
     return actors_dict.get(actor_id,None)
     #~ return cls()
     
 def get_actor2(app_label,name):
     k = app_label + ACTOR_SEP + name
+    raise Exception('20120104')
     return actors_dict.get(k,None)
     #~ cls = actors_dict.get(k,None)
     #~ if cls is None:
@@ -132,25 +134,30 @@ class ActorMetaClass(type):
         
         cls = type.__new__(meta, classname, bases, classDict)
         
+        """
+        On 20110822 I thought "A Table always gets the app_label of its model,
+        you cannot set this yourself in a subclass
+        because otherwise it gets complex when inheriting reports from other
+        app_labels."
+        On 20110912 I cancelled change 20110822 because PersonsByOffer 
+        should clearly get app_label 'jobs' and not 'contacts'.
         
         """
-        20110822 : a report now always gets the app_label of its model
-        you cannot set this yourself in a subclass
-        because otherwise it gets complex when inheriting reports from other app_labels
-        20110912 Cancelled change 20110822 because PersonsByOffer 
-        should clearly get app_label 'jobs' and not 'contacts'.
-        """
+        
         #~ if not 'app_label' in classDict.keys():
+        #~ if cls.app_label is None:
+        if classDict.get('app_label',None) is None:
             #~ if self.app_label is None:
             # Figure out the app_label by looking one level up.
             # For 'django.contrib.sites.models', this would be 'sites'.
             #~ m = sys.modules[self.__module__]
             #~ self.app_label = m.__name__.split('.')[-2]
-            #~ cls.app_label = cls.__module__.split('.')[-2]
+            cls.app_label = cls.__module__.split('.')[-2]
             #~ self.app_label = self.model._meta.app_label
             
-        cls.app_label = cls.__module__.split('.')[-2]
+        #~ cls.app_label = cls.__module__.split('.')[-2]
             
+        
         cls.actor_id = cls.app_label + ACTOR_SEP + cls.__name__
         cls._actions_list = []
         cls._actions_dict = {}
@@ -175,9 +182,18 @@ class ActorMetaClass(type):
         
   
 class Actor(Handled):
-    "inherited by Report, Frame"
+    "Base class for Tables and Frames"
+    
     __metaclass__ = ActorMetaClass
+    
     app_label = None
+    """
+    The default value is deduced from the module where the 
+    subclass is defined.
+    Applications should not need to explicitly set this attribute, 
+    but :func:`lino.core.table.table_factory`
+    uses it to specify a value which overrides the default.
+    """
     #~ _actor_name = None
     title = None
     label = None

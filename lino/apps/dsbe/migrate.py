@@ -926,4 +926,8 @@ def migrate_from_1_3_2(globals_dict):
     
     
     return '1.3.3'
+
+def migrate_from_1_3_3(globals_dict):
+    """No changes in database structure."""
+    return '1.3.4'
   

@@ -15,6 +15,8 @@
 
 from django.db.models import loading
 from django.db import models
+from django.conf import settings
+from django.utils.importlib import import_module
 from django.contrib.contenttypes.models import ContentType
 from lino.core import actors
 from lino.utils import get_class_attr
@@ -57,7 +59,18 @@ def get_data_elem(model,name):
         return model._meta.get_field(name)
     except models.FieldDoesNotExist,e:
         pass
-    rpt = get_slave(model,name)
+        
+    s = name.split('.')
+    if len(s) == 1:
+        mod = import_module(model.__module__)
+        rpt = getattr(mod,name,None)
+    elif len(s) == 2:
+        mod = getattr(settings.LINO.modules,s[0])
+        rpt = getattr(mod,s[1],None)
+    else:
+        raise Exception("Invalid data element name %r" % name)
+    
+    #~ rpt = get_slave(model,name)
     if rpt is not None: 
         if rpt.master is not ContentType:
             ok = True
@@ -70,7 +83,6 @@ def get_data_elem(model,name):
                 #~ return None
                 raise Exception("%s.master is %r, must be subclass of %r" % (
                     name,rpt.master,model))
-            
         return rpt
     v = get_class_attr(model,name)
     if v is not None: return v

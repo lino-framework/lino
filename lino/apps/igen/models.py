@@ -67,48 +67,49 @@ from lino.models import SiteConfig
 #~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.cal import models as cal
 
-contacts = dd.get_app('contacts')
-notes = dd.get_app('notes')
-cal = dd.get_app('cal')
-
-#~ class Person(contacts.Person,contacts.Contact):
-#~ class Person(contacts.Contact,contacts.Born,contacts.Person):
-class Person(contacts.Person,contacts.Contact,contacts.Born):
-    class Meta(contacts.Person.Meta):
-        app_label = 'contacts'
-        # see :doc:`/tickets/14`
-        #~ verbose_name = _("Person")
-        #~ verbose_name_plural = _("Persons")
-
-              
-class Company(contacts.Contact,contacts.CompanyMixin):
-    class Meta(contacts.CompanyMixin.Meta):
-        app_label = 'contacts'
-        # see :doc:`/tickets/14`
-        #~ verbose_name = _("Company")
-        #~ verbose_name_plural = _("Companies")
-    
-class Note(notes.Note,mixins.Owned):
-     class Meta:
-        app_label = 'notes'
-        # see :doc:`/tickets/14`
-        #~ verbose_name = _("Note")
-        #~ verbose_name_plural = _("Notes")
-        
-class NotesByOwner(dd.Table):
-    model = Note
-    master_key = 'owner'
- 
-class Event(cal.Event):
-    class Meta(cal.Event.Meta):
-        app_label = 'cal'
-
-class Task(cal.Task):
-    class Meta(cal.Task.Meta):
-        app_label = 'cal'
- 
 if dd.is_installed('igen'):
- 
+
+    contacts = dd.get_app('contacts')
+    notes = dd.get_app('notes')
+    cal = dd.get_app('cal')
+
+    #~ class Person(contacts.Person,contacts.Contact):
+    #~ class Person(contacts.Contact,contacts.Born,contacts.Person):
+    class Person(contacts.Person,contacts.Contact,contacts.Born):
+        class Meta(contacts.Person.Meta):
+            app_label = 'contacts'
+            # see :doc:`/tickets/14`
+            #~ verbose_name = _("Person")
+            #~ verbose_name_plural = _("Persons")
+
+                  
+    class Company(contacts.Contact,contacts.CompanyMixin):
+        class Meta(contacts.CompanyMixin.Meta):
+            app_label = 'contacts'
+            # see :doc:`/tickets/14`
+            #~ verbose_name = _("Company")
+            #~ verbose_name_plural = _("Companies")
+        
+    class Note(notes.Note,mixins.Owned):
+         class Meta:
+            app_label = 'notes'
+            # see :doc:`/tickets/14`
+            #~ verbose_name = _("Note")
+            #~ verbose_name_plural = _("Notes")
+            
+    class NotesByOwner(dd.Table):
+        model = Note
+        master_key = 'owner'
+     
+    class Event(cal.Event):
+        class Meta(cal.Event.Meta):
+            app_label = 'cal'
+
+    class Task(cal.Task):
+        class Meta(cal.Task.Meta):
+            app_label = 'cal'
+     
+     
     dd.inject_field(
         SiteConfig,
         'sales_base_account',

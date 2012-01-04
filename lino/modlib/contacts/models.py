@@ -51,7 +51,6 @@ from lino.modlib.countries.models import CountryCity
 
 from lino.modlib.contacts.utils import get_salutation
 #~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
-from lino.utils import join_words
 
 
 
@@ -220,6 +219,7 @@ but e.g. :class:`Person` overrides this.
     address_column.return_type = dd.DisplayField(_("Address"))
     
     def name_column(self,request):
+        #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
         #~ return self.get_full_name(nominative=True)
     name_column.return_type = dd.DisplayField(_("Name"))

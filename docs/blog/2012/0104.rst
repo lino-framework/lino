@@ -9,3 +9,41 @@ After another 2 hours of work, igen is again functional.
 Though the test cases don't yet pass completely.
 
 Checkin
+
+
+Some more bugs fixed:
+
+- Verträge konnten nicht bearbeitet werden (in `disabled_fields` hatte 
+  ich ein ``not`` vergessen.
+  
+- Feld "Dauer (Arbeitstage)" einer Art-60/7-Konvention 
+  (jobs.Contract.duration) konnte nicht ausgewählt werden
+
+Actor lookup and the ``app_label`` of a Table
+---------------------------------------------
+
+Fixed a bug after yesterday's changes: 
+Tables created by
+:func:`lino.core.table.table_factory`
+didn't have the correct
+:attr:`app_label <lino.core.actors.Actor.app_label>`.
+
+:func:`lino.core.table.table_factory`
+now adds the new table class 
+to the model's module because actor lookup needs 
+it.
+
+As a result, the `get_actor()` functions 
+and `actors._actors_dict` 
+are no longer needed!
+
+
+Miscellaneous
+-------------
+
+- Im Detail einer Art-60/7-Konvention waren die Breiten der Felder 
+  der zweiten Zeile ungerecht verteilt. "Arbeitgeber" und "Vertreten durch" 
+  waren seit der letzten Version breiter geworden, aber dadurch waren die 
+  Felder "Stelle" und "Vertragsart" arg zusammengequetscht. 
+  Die beste Lösung scheint mir, dass ich auch für Job und ContractType 
+  eine `_lino_preferred_width` von 20 setze.
