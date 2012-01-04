@@ -1,0 +1,11 @@
+20120104
+========
+
+When I yesterday wrote that the tests pass, this was true 
+only for :mod:`lino.apps.dsbe`, not for 
+:mod:`lino.apps.igen`.
+But before going on it would be good to get them all pass.
+After another 2 hours of work, igen is again functional. 
+Though the test cases don't yet pass completely.
+
+Checkin

@@ -7,7 +7,7 @@ main =
   bottom_box
   
 box1 = last_name first_name:15 title:10
-box2 = id language
+box2 = id language gender birth_date age
 box3 = 
   country region
   city zip_code:10

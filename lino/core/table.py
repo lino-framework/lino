@@ -1183,6 +1183,9 @@ class AbstractTable(actors.Actor): #,base.Handled):
     
     detail_action = None
     
+    def __init__(self,*args,**kw):
+        raise NotImplementedError("20120104")
+    
     @classmethod
     def spawn(cls,suffix,**kw):
         kw['app_label'] = cls.app_label
@@ -1274,7 +1277,7 @@ class AbstractTable(actors.Actor): #,base.Handled):
         
         
     @classmethod
-    def row2dict(self,row,d):
+    def unused_row2dict(self,row,d):
         """
         Overridden by lino.modlib.properties.PropValuesByOwner.
         See also lino.ui.extjs.ext_requests.ViewReportRequest.

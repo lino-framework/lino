@@ -1,5 +1,0 @@
-:label: Sales
-:label_align: top
-
-main = 
-  sales.SalesByCustomer

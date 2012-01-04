@@ -1,4 +1,4 @@
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -62,11 +62,18 @@ from django.utils.translation import ugettext_lazy as _
 from lino import dd
 from lino import mixins
 from lino.models import SiteConfig
-from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
-from lino.modlib.cal import models as cal
 
-class Person(contacts.Contact,contacts.Born,contacts.Person):
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.notes import models as notes
+#~ from lino.modlib.cal import models as cal
+
+contacts = dd.get_app('contacts')
+notes = dd.get_app('notes')
+cal = dd.get_app('cal')
+
+#~ class Person(contacts.Person,contacts.Contact):
+#~ class Person(contacts.Contact,contacts.Born,contacts.Person):
+class Person(contacts.Person,contacts.Contact,contacts.Born):
     class Meta(contacts.Person.Meta):
         app_label = 'contacts'
         # see :doc:`/tickets/14`
@@ -100,25 +107,26 @@ class Task(cal.Task):
     class Meta(cal.Task.Meta):
         app_label = 'cal'
  
+if dd.is_installed('igen'):
  
-dd.inject_field(
-    SiteConfig,
-    'sales_base_account',
-    models.ForeignKey("ledger.Account",
-        blank=True,null=True,
-        verbose_name=_("Sales base account"),
-        related_name='sales_base_sites'),
-    """The account where to book base amount of sales.
-    """)
+    dd.inject_field(
+        SiteConfig,
+        'sales_base_account',
+        models.ForeignKey("ledger.Account",
+            blank=True,null=True,
+            verbose_name=_("Sales base account"),
+            related_name='sales_base_sites'),
+        """The account where to book base amount of sales.
+        """)
 
-dd.inject_field(
-    SiteConfig,
-    'sales_vat_account',
-    models.ForeignKey("ledger.Account",
-        blank=True,null=True,
-        verbose_name=_("Sales VAT account"),
-        related_name='sales_vat_sites'),
-    """The account where to book VAT amount of sales.
-    """)
+    dd.inject_field(
+        SiteConfig,
+        'sales_vat_account',
+        models.ForeignKey("ledger.Account",
+            blank=True,null=True,
+            verbose_name=_("Sales VAT account"),
+            related_name='sales_vat_sites'),
+        """The account where to book VAT amount of sales.
+        """)
 
- 
+     

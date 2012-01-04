@@ -18,8 +18,10 @@ See :class:`lino.core.table.Table` etc.
 
 """
 
+from lino.tools import resolve_model, get_app
+
 from lino.core.table import fields_list, is_installed, inject_field
-from lino.core.table import has_fk, is_installed, get_app
+from lino.core.table import has_fk, is_installed
 from lino.core.table import Table
 from lino.core.table import CustomTable
 from lino.core.table import computed

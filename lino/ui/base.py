@@ -39,16 +39,20 @@ class Handled(object):
     @classmethod
     def class_init(self):
         self._handles = {}
+      
+    @classmethod
+    def before_ui_handle(self,ui):
+        pass
         
     @classmethod
-    def get_handle(self,k):
-        #~ assert k is None or isinstance(k,self._handle_selector), "%s.get_handle() : %r is not a %s" % (self,k,self._handle_selector)
-        assert k is None or isinstance(k,UI), \
-            "%s.get_handle() : %r is not a BaseUI" % (self,k)
-        h = self._handles.get(k,None)
+    def get_handle(self,ui):
+        assert ui is None or isinstance(ui,UI), \
+            "%s.get_handle() : %r is not a BaseUI" % (self,ui)
+        h = self._handles.get(ui,None)
         if h is None:
-            h = self._handle_class(k,self)
-            self._handles[k] = h
+            self.before_ui_handle(ui)
+            h = self._handle_class(ui,self)
+            self._handles[ui] = h
             h.setup()
         return h
         

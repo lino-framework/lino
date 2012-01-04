@@ -14,7 +14,7 @@ Welcome to the Lino Website.
 - Have a look at the :doc:`/demos` (but be patient because 
   they are served from a slow internet connection).
   
-- See Luc's :doc:`Blog <blog/2011/index>` to get the hottest 
+- See Luc's :doc:`Blog <blog/2012/index>` to get the hottest 
   news about what's going on here. 
 - The final truth about what's going on is only 
   `The Source Code <http://code.google.com/p/lino/source/list>`_.

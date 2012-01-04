@@ -978,7 +978,7 @@ class OverviewClientsByUser(dd.CustomTable):
     column_defaults = dict(width=8)
     
     @classmethod
-    def class_init(self):
+    def before_ui_handle(self,ui):
         self.column_names = 'user:10'
         for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
             def w(pg):
@@ -993,7 +993,8 @@ class OverviewClientsByUser(dd.CustomTable):
             self.column_names += ' ' + cc.name 
             
         self.column_names += ' primary_clients active_clients row_total'
-        super(OverviewClientsByUser,self).class_init()
+        super(OverviewClientsByUser,self).before_ui_handle(ui)
+        #~ super(OverviewClientsByUser,self).class_init()
     
     @classmethod
     def get_data_rows(self,ar):

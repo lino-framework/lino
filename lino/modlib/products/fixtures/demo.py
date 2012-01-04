@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,18 +13,18 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 #from lino.apps.products.models import *
-from lino import reports
-products = reports.get_app('products')
+#~ from lino import reports
+#~ products = reports.get_app('products')
 from lino.utils.instantiator import Instantiator
 
 from lino.utils.babel import babel_values, default_language
 
 
-productcat = Instantiator('products.ProductCat').build
-product = Instantiator('products.Product',"price cat").build
-
 def objects():
         
+    productcat = Instantiator('products.ProductCat').build
+    product = Instantiator('products.Product',"price cat").build
+
     furniture = productcat(id=1,**babel_values('name',
         en="Furniture",et=u"Mööbel",de="Möbel",fr="Meubles"))
     yield furniture

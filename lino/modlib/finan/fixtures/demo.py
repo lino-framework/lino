@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
 #from dateutil import parser as dateparser
 #from lino.apps.finan import models as finan
 import decimal
+from django.conf import settings
+
+from lino import dd
 from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
 
@@ -25,15 +28,18 @@ from lino.tools import resolve_model
 #from lino.apps.journals import models as journals
 #from lino.apps.ledger.fixtures import be
 
-from lino import reports
-#contacts = reports.get_app('contacts')
-ledger = reports.get_app('ledger')
-finan = reports.get_app('finan')
-
-#~ Company = resolve_model('contacts.Company')
-Contact = resolve_model('contacts.Contact')
+#~ from lino import reports
+#~ #contacts = reports.get_app('contacts')
+#~ ledger = reports.get_app('ledger')
+#~ finan = reports.get_app('finan')
 
 def objects():
+    #~ Company = resolve_model('contacts.Company')
+    ledger = dd.get_app('ledger')
+    finan = dd.get_app('finan')
+    Contact = dd.resolve_model('contacts.Contact')
+    #~ ledger = settings.LINO.modules.ledger
+    #~ finan = settings.LINO.modules.finan
     ba = ledger.Account.objects.get(match="5500")
     #BANK = journals.get_journal_by_docclass(finan.BankStatement)
     BANK = finan.BankStatement.create_journal(

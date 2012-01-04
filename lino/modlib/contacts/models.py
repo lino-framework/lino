@@ -360,6 +360,7 @@ class Persons(dd.Table):
     model = 'contacts.Person'
     order_by = "last_name first_name id".split()
     #~ app_label = 'contacts'
+    column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"
     
 
 
@@ -398,9 +399,9 @@ class CompanyMixin(models.Model):
 
 
               
-#~ class Companies(Contacts):
-    #~ model = 'contacts.Company'
-    #~ order_by = ["name"]
+class Companies(Contacts):
+    model = 'contacts.Company'
+    order_by = ["name"]
     
     
     

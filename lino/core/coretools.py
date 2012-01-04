@@ -32,15 +32,6 @@ def get_slave(model,name):
     rpt = actors.get_actor(name)
     if rpt is None: 
         return None
-    if rpt.master is not ContentType:
-        try:
-            if not issubclass(model,rpt.master):
-                raise Exception("%s.master is %r, must be subclass of %r" % (
-                    name,rpt.master,model))
-        except TypeError,e: # e.g. issubclass() arg 1 must be a class
-            raise Exception("%s.master is %r, must be subclass of %r" % (
-                name,rpt.master,model))
-            
     return rpt
     #~ rpt = generic_slaves.get(name,None)
     #~ if rpt is not None:
@@ -67,7 +58,20 @@ def get_data_elem(model,name):
     except models.FieldDoesNotExist,e:
         pass
     rpt = get_slave(model,name)
-    if rpt is not None: return rpt
+    if rpt is not None: 
+        if rpt.master is not ContentType:
+            ok = True
+            try:
+                if not issubclass(model,rpt.master):
+                    ok = False
+            except TypeError,e: # e.g. issubclass() arg 1 must be a class
+                ok = False
+            if not ok:
+                #~ return None
+                raise Exception("%s.master is %r, must be subclass of %r" % (
+                    name,rpt.master,model))
+            
+        return rpt
     v = get_class_attr(model,name)
     if v is not None: return v
     

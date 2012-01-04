@@ -46,7 +46,6 @@ class Lino(Lino):
         return __file__
         
     def setup_menu(self,ui,user,main):
-  
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import perms
 
@@ -56,31 +55,31 @@ class Lino(Lino):
         from django.db import models
 
         #~ system = models.get_app('system')
-        countries = models.get_app('countries')
-        contacts = models.get_app('contacts')
-        products = models.get_app('products')
+        #~ countries = models.get_app('countries')
+        #~ contacts = models.get_app('contacts')
+        #~ products = models.get_app('products')
         #~ documents = models.get_app('documents')
-        ledger = models.get_app('ledger')
-        sales = models.get_app('sales')
-        finan = models.get_app('finan')
-        journals = models.get_app('journals')
-        notes = models.get_app('notes')
-        cal = models.get_app('cal')
-        mails = models.get_app('mails')
+        #~ ledger = models.get_app('ledger')
+        #~ sales = models.get_app('sales')
+        #~ finan = models.get_app('finan')
+        #~ journals = models.get_app('journals')
+        #~ notes = models.get_app('notes')
+        #~ cal = models.get_app('cal')
+        #~ mails = models.get_app('mails')
 
         m = main.add_menu("contacts","~Contacts")
-        m.add_action('contacts.Companies')
-        m.add_action('contacts.Persons')
+        m.add_action(self.modules.contacts.Companies)
+        m.add_action(self.modules.contacts.Persons)
         #~ m.add_action('sales.Customers')
 
         m = main.add_menu("prods","~Products")
-        m.add_action('products.Products')
-        m.add_action('products.ProductCats')
+        m.add_action(self.modules.products.Products)
+        m.add_action(self.modules.products.ProductCats)
         
         if user and user.is_active:
             m = main.add_menu("my",_("~My menu"))
-            cal.setup_my_menu(self,ui,user,m)
-            mails.setup_my_menu(self,ui,user,m)
+            self.modules.cal.setup_my_menu(self,ui,user,m)
+            self.modules.mails.setup_my_menu(self,ui,user,m)
         
         
         
@@ -91,8 +90,8 @@ class Lino(Lino):
                 #~ m.add_action('contacts.MyPersonsByGroup',label=jnl.name,
                     #~ params=dict(master_instance=jnl))
             
-            for jnl in journals.Journal.objects.all().order_by('pos'):
-                m.add_action(str(jnl.get_doc_report()),
+            for jnl in self.modules.journals.Journal.objects.all().order_by('pos'):
+                m.add_action(jnl.get_doc_report(),
                     params=dict(master_instance=jnl))
                 # m.add_action(jnl.get_doc_report(),args=[jnl.pk])
                 #~ m.add_action(str(jnl.get_doc_report()))
@@ -110,31 +109,31 @@ class Lino(Lino):
 
         if user and user.is_staff:
             m = main.add_menu("config","~Configuration")
-            sales.setup_config_menu(self,ui,user,m)
-            notes.setup_config_menu(self,ui,user,m)
-            cal.setup_config_menu(self,ui,user,m)
-            m.add_action('journals.Journals')
+            self.modules.sales.setup_config_menu(self,ui,user,m)
+            self.modules.notes.setup_config_menu(self,ui,user,m)
+            self.modules.cal.setup_config_menu(self,ui,user,m)
+            m.add_action(self.modules.journals.Journals)
             #~ m = self.add_menu("ledger","~Ledger",
               #~ can_view=perms.is_authenticated)
-            m.add_action('ledger.Accounts')
+            m.add_action(self.modules.ledger.Accounts)
             
 
-            m.add_action('countries.Countries')
+            m.add_action(self.modules.countries.Countries)
             #m.add_action(contacts.Countries())
-            m.add_action('contenttypes.ContentTypes')
+            m.add_action(self.modules.lino.ContentTypes)
             #m = self.add_menu("system","~System")
             #~ m.add_action('auth.Permissions')
             #~ m.add_action('auth.Users')
-            m.add_action('users.Users')
+            m.add_action(self.modules.users.Users)
             #~ m.add_action('auth.Groups')
             #m.can_view = perms.is_staff
             
         if user and user.is_expert:
             m = main.add_menu("explorer",_("E~xplorer"))
-            sales.setup_explorer_menu(self,ui,user,m)
-            notes.setup_explorer_menu(self,ui,user,m)
-            cal.setup_explorer_menu(self,ui,user,m)
-            mails.setup_explorer_menu(self,ui,user,m)
+            self.modules.sales.setup_explorer_menu(self,ui,user,m)
+            self.modules.notes.setup_explorer_menu(self,ui,user,m)
+            self.modules.cal.setup_explorer_menu(self,ui,user,m)
+            self.modules.mails.setup_explorer_menu(self,ui,user,m)
             
             
 
@@ -174,6 +173,7 @@ INSTALLED_APPS = (
     'lino.modlib.ledger',
     'lino.modlib.sales',
     'lino.modlib.finan',
+    'lino.modlib.uploads',
     'lino.apps.igen',
     #~ 'lino.modlib.properties',
 )

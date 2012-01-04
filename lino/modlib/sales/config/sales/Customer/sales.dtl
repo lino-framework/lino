@@ -1,0 +1,6 @@
+:label: Sales
+:label_align: top
+
+main = 
+  sales.OrdersByCustomer
+  sales.InvoicesByCustomer

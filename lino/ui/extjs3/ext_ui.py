@@ -357,7 +357,11 @@ class ExtUI(base.UI):
     def create_layout_element(self,lh,panelclass,name,**kw):
         
         #~ de = lh.rh.report.get_data_elem(name)
-        de = lh.get_data_elem(name)
+        try:
+            de = lh.get_data_elem(name)
+        except Exception, e:
+            de = None
+            name += " (" + str(e) + ")"
             
         #~ if isinstance(de,actions.ImageAction):
             #~ return ext_elems.PictureElement(lh,name,de,**kw)
@@ -1063,7 +1067,9 @@ tinymce.init({
             ar = rpt.request(self,request,a)
             #~ ar = table.TableRequest(self,rpt,request,a)
             rh = ar.ah
+            assert rh.report == rpt
         else:
+            # e.g. calendar
             ar = table.ActionRequest(self,a)
             rh = rpt.get_handle(self)
         
@@ -1201,7 +1207,7 @@ tinymce.init({
             if pk:
                 pass
             else:
-                rows = [ rh.store.row2list(ar,row) for row in ar.queryset ]
+                rows = [ rh.store.row2list(ar,row) for row in ar._data_iterator ]
                 #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
@@ -1868,7 +1874,7 @@ tinymce.init({
     
             
     def setup_handle(self,h):
-        logger.debug('20120103 ExtUI.setup_handle() %s',h)
+        #~ logger.debug('20120103 ExtUI.setup_handle() %s',h)
         #~ if isinstance(h,layouts.TabPanelHandle):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           

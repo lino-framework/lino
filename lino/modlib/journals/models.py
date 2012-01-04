@@ -85,7 +85,7 @@ class Journal(models.Model):
         return DOCTYPES[self.doctype][0]
 
     def get_doc_report(self):
-        return DOCTYPES[self.doctype][1]()
+        return DOCTYPES[self.doctype][1]
 
     def create_document(self,**kw):
         """Create an instance of this Journal's document model (:meth:`get_doc_model`)."""

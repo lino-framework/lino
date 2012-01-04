@@ -15,30 +15,28 @@
 import time
 from datetime import date
 from dateutil import parser as dateparser
+
 #from lino.apps.sales.models import *
 #from lino.apps.contacts import models as contacts
+from lino import dd
 from lino.modlib.sales import utils
 from lino.utils.instantiator import Instantiator, i2d
-from lino.tools import resolve_model
-
-#~ Person = resolve_model('contacts.Person')
-Company = resolve_model('contacts.Company')
-#~ Contact = resolve_model('contacts.Contact')
-Customer = resolve_model('sales.Customer')
-#~ Customer = resolve_model('sales.Customer')
-
-#contacts = reports.get_app('contacts')
-products = reports.get_app('products')
-sales = reports.get_app('sales')
-
-salesrule = Instantiator(sales.SalesRule).build
-#customer = Instantiator(Customer).build
-
-imode = Instantiator(sales.InvoicingMode,
-  "id channel name advance_days journal").build
+#~ from lino.tools import resolve_model
 
 def objects():
   
+    Company = dd.resolve_model('contacts.Company')
+    Customer = dd.resolve_model('sales.Customer')
+
+    products = dd.get_app('products')
+    sales = dd.get_app('sales')
+
+    salesrule = Instantiator(sales.SalesRule).build
+    #customer = Instantiator(Customer).build
+
+    imode = Instantiator(sales.InvoicingMode,
+      "id channel name advance_days journal").build
+
     for c in Company.objects.filter(country_id='BE'):
         yield c.contact_ptr.insert_child(Customer)
         

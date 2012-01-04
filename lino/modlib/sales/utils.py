@@ -33,7 +33,7 @@ import datetime
 #~ from timtools.console import syscon
 
 #~ import lino
-from lino import reports
+#~ from lino import reports
 
 from lino.modlib.sales import models as sales
 #sales = reports.get_app('sales')

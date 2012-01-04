@@ -38,10 +38,10 @@ class DemoTest(TestCase):
 def test01(self):
     """
     """
-    self.assertEqual(Invoice.objects.all().count(),46)
+    self.assertEqual(Invoice.objects.all().count(),28)
     i = Invoice.objects.all()[0]
     self.assertEqual(unicode(i),u"Invoice # 1")
-    s = i.recipient.address()
+    s = i.customer.address()
     self.assertEquals(s,u"""\
 Rumma & Ko OÜ
 Tartu mnt 71

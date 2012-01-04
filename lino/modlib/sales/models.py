@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -647,6 +647,8 @@ class PendingOrdersParams(forms.Form):
 
 class PendingOrders(Orders):
     param_form = PendingOrdersParams
+    
+    @classmethod
     def get_queryset(self,master_instance,make_until=None):
         assert master_instance is None
         return Order.objects.pending(make_until=make_until)
@@ -764,51 +766,53 @@ class InvoicesByCustomer(SalesByCustomer):
 journals.register_doctype(Order,OrdersByJournal)
 journals.register_doctype(Invoice,InvoicesByJournal)
 
-from lino.modlib.contacts.models import Contact
+if dd.is_installed('igen'):
 
-dd.inject_field(Contact,
-    'is_customer',
-    mti.EnableChild('sales.Customer',verbose_name=_("is Customer")),
-    """Whether this Contactis also a Customer."""
-    )
+    from lino.modlib.contacts.models import Contact
+
+    dd.inject_field(Contact,
+        'is_customer',
+        mti.EnableChild('sales.Customer',verbose_name=_("is Customer")),
+        """Whether this Contact is also a Customer."""
+        )
 
 
 
-#~ dd.inject_field(
-    #~ Contact,'payment_term',
-    #~ models.ForeignKey(PaymentTerm,
-        #~ blank=True,null=True,
-        #~ verbose_name=_("payment term")),
-    #~ """The default PaymentTerm for sales invoices to this Contact.
-    #~ """)
-#~ dd.inject_field(
-    #~ Contact, 'vat_exempt',
-    #~ models.BooleanField(default=False,
-        #~ verbose_name=_("VAT exempt")),
-    #~ """The default value for vat_exempt for sales invoices to this Contact.
-    #~ """)
-#~ dd.inject_field(
-    #~ Contact, 'item_vat',
-    #~ models.BooleanField(default=False,
-        #~ verbose_name=_("item_vat")),
-    #~ """The default value for item_vat for sales invoices to this Contact.
-    #~ """)
+    #~ dd.inject_field(
+        #~ Contact,'payment_term',
+        #~ models.ForeignKey(PaymentTerm,
+            #~ blank=True,null=True,
+            #~ verbose_name=_("payment term")),
+        #~ """The default PaymentTerm for sales invoices to this Contact.
+        #~ """)
+    #~ dd.inject_field(
+        #~ Contact, 'vat_exempt',
+        #~ models.BooleanField(default=False,
+            #~ verbose_name=_("VAT exempt")),
+        #~ """The default value for vat_exempt for sales invoices to this Contact.
+        #~ """)
+    #~ dd.inject_field(
+        #~ Contact, 'item_vat',
+        #~ models.BooleanField(default=False,
+            #~ verbose_name=_("item_vat")),
+        #~ """The default value for item_vat for sales invoices to this Contact.
+        #~ """)
 
 
 def setup_main_menu(site,ui,user,m): 
-    m.add_action('sales.Orders')
-    m.add_action('sales.Invoices')
-    m.add_action('sales.DocumentsToSign')
-    m.add_action('sales.PendingOrders')
+    m.add_action(Orders)
+    m.add_action(Invoices)
+    m.add_action(DocumentsToSign)
+    m.add_action(PendingOrders)
 
 def setup_my_menu(site,ui,user,m): 
     pass
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("cal",_("~Sales"))
-    m.add_action('sales.InvoicingModes')
-    m.add_action('sales.ShippingModes')
-    m.add_action('sales.PaymentTerms')
+    m  = m.add_menu("sales",_("Sales"))
+    m.add_action(InvoicingModes)
+    m.add_action(ShippingModes)
+    m.add_action(PaymentTerms)
     
 def setup_explorer_menu(site,ui,user,m):
     pass
