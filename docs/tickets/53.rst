@@ -1,0 +1,18 @@
+#53 : Lino site on a PHP/MySQL-only host?
+=========================================
+
+Lino has a disadvantage compared to PHP/MySQL applications: 
+renting a virtual host that provides Python and Django is more 
+expensive than the PHP and MySQL hosts which you can get for 
+much cheaper.
+
+One idea might be possible: 
+to have Lino generate .php code which communicates 
+directly with a MySQL database.
+Only "administrative tasks" like initdb, upgrades and database migrations 
+would be run on a machine that has Lino and the application's source 
+code installed.
+
+The heart of it would be the communication with the database.
+
+

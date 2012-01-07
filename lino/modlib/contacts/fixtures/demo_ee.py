@@ -12,6 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 #from lino import reports
@@ -21,8 +22,13 @@ from lino.utils.instantiator import Instantiator
 def objects():
     #~ city = Instantiator('countries.City','name country').build
     #~ yield city('Vigala','EE')
-    
-    company = Instantiator("contacts.Company",country='EE',language='et').build
+    if 'et' in settings.LINO.languages:
+        lang = 'et'
+    else:
+        # if language 'et' is not available, use the default language
+        lang = settings.LINO.languages[0]
+        
+    company = Instantiator("contacts.Company",country='EE',language=lang).build
     yield company(name=u'Minu Firma OÜ')
     yield company(name=u'Mets ja Puu OÜ')
     yield company(name=u'Kenavälja OÜ')

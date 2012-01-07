@@ -837,7 +837,7 @@ class Store:
         #~ assert isinstance(request,table.AbstractTableRequest)
         #~ if not isinstance(request,table.ListActionRequest):
             #~ raise Exception()
-        #~ logger.info("20111209 Store.row2list(%s)", obj2str(row))
+        #~ logger.info("20120107 Store %s row2list(%s)", self.report.model, obj2str(row))
         l = []
         for fld in self.list_fields:
             l += fld.obj2list(request,row)

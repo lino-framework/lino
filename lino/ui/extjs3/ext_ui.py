@@ -363,9 +363,6 @@ class ExtUI(base.UI):
             de = None
             name += " (" + str(e) + ")"
             
-        #~ if isinstance(de,actions.ImageAction):
-            #~ return ext_elems.PictureElement(lh,name,de,**kw)
-
         if isinstance(de,table.ComputedColumn):
             lh.add_store_field(de)
             kw.setdefault('width',de.width)
@@ -380,7 +377,6 @@ class ExtUI(base.UI):
                     elems = [ self.create_field_element(lh,de,**kw) ]
                     for lang in babel.BABEL_LANGS:
                         bf = lh.get_data_elem(name+'_'+lang)
-                        #~ bf = lh.rh.report.get_data_elem(name+'_'+lang)
                         elems.append(self.create_field_element(lh,bf,**kw))
                     return elems
             return self.create_field_element(lh,de,**kw)

@@ -982,6 +982,24 @@ class JobsByType(Jobs):
 
 class ContractsByType(Contracts):
     master_key = 'type'
+  
+    
+class ContractsByUser(Contracts):
+    master_key = 'user'
+    #~ group_by = ['type']
+    group_by = ['person__group']
+    column_names = 'person person__national_id person__gender applies_from applies_until job id user type *'
+    
+    def on_group_break(self,group):
+        if group == 0:
+            yield self.total_line(0)
+        else:
+            yield self.total_line(group)
+            
+    def total_line(self,group):
+        return 
+  
+    
 
 
 COLS = 8

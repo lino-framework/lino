@@ -54,6 +54,7 @@ import lino
 from lino.core import fields
 from lino.core import actions
 from lino.utils import perms, menus, call_on_bases
+from lino.tools import obj2str
 from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
 #~ from lino.core import boolean_texts
@@ -143,7 +144,7 @@ def summary_row(obj,ui,rr,**kw):
 
 def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
     """
-    Returns this report as a unicode string.
+    Returns this table as a unicode string.
     
     :param max_items: don't include more than the specified number of items.
     """
@@ -246,10 +247,10 @@ def add_gridfilters(qs,gridfilters):
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
     
-def de_verbose_name(de):
-    if isinstance(de,models.Field):
-        return de.verbose_name
-    return de.name
+#~ def de_verbose_name(de):
+    #~ if isinstance(de,models.Field):
+        #~ return de.verbose_name
+    #~ return de.name
 
     
     
@@ -268,7 +269,7 @@ def register_frame(frm):
     frames.append(frm)
     
 def register_report(rpt):
-    logger.debug("20120103 register_report %s", rpt.actor_id)
+    #~ logger.debug("20120103 register_report %s", rpt.actor_id)
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     
     #~ if rpt.typo_check:
@@ -306,7 +307,7 @@ def register_report(rpt):
     if issubclass(rpt,Table):
         if rpt.master is None:
             if not rpt.model._meta.abstract:
-                logger.debug("20120102 register %s : master report", rpt.actor_id)
+                #~ logger.debug("20120102 register %s : master report", rpt.actor_id)
                 master_reports.append(rpt)
             if not rpt.filter and not rpt.known_values and rpt.use_as_default_report:
                 #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
@@ -325,16 +326,17 @@ def register_report(rpt):
 def discover():
     """
     - Each model can receive a number of "slaves". 
-      Slaves are reports whose data depends on an instance of another model (their master).
+      Slaves are tables whose data depends on an instance 
+      of another model (their master).
       
-    - For each model we want to find out the "model report" ot "default report".
-      The "choices report" for a foreignkey field is also currently simply the pointed model's
-      model_report.
+    - For each model we want to find out the "model table" ot "default table".
+      The "choices table" for a foreignkey field is also currently simply the pointed model's
+      model_table.
       `_lino_model_report`
 
     """
               
-    logger.info("Analyzing Reports...")
+    logger.info("Analyzing Tables...")
     #~ logger.debug("20111113 Register Table actors...")
     for rpt in actors.actors_list:
         if issubclass(rpt,Table) and rpt is not Table:
@@ -344,7 +346,7 @@ def discover():
         if issubclass(rpt,Frame) and rpt is not Frame:
             register_frame(rpt)
             
-    logger.debug("Instantiate model reports...")
+    logger.debug("Instantiate model tables...")
     for model in models.get_models():
         """Not getattr but __dict__.get because of the mixins.Listings trick."""
         rpt = model.__dict__.get('_lino_model_report',None)
@@ -356,7 +358,7 @@ def discover():
             model._lino_model_report = rpt
             
             
-    logger.debug("Analyze %d slave reports...",len(slave_reports))
+    logger.debug("Analyze %d slave tables...",len(slave_reports))
     for rpt in slave_reports:
         rpt.master = resolve_model(rpt.master)
         slaves = getattr(rpt.master,"_lino_slaves",None)
@@ -1036,7 +1038,7 @@ class Group(object):
 
 
 
-class AbstractTable(actors.Actor): #,base.Handled):
+class AbstractTable(actors.Actor):
     """
     Base class for :class:`Table` and `CustomTable`.
     
@@ -1057,6 +1059,12 @@ class AbstractTable(actors.Actor): #,base.Handled):
     column_names = '*'
     """
     A string that describes the list of columns of this table.
+    """
+    
+    group_by = None
+    """
+    A list of field names that define the groups of rows in this table.
+    Each group can have her own header and/or total lines.
     """
     
     computed_columns = {}
@@ -1137,13 +1145,11 @@ class AbstractTable(actors.Actor): #,base.Handled):
     refresh of a Detail or Insert form).
     """
     
-    #~ detail_layouts = []
-    
     show_slave_grid = True
     """
-    How to display this report when it is a slave in a Detail. 
+    How to display this table when it is a slave in a detail window. 
     `True` (default) to render as a grid. 
-    `False` to render as a HtmlBoxPanel with a summary.
+    `False` to render a summary in a HtmlBoxPanel.
     Example: :class:`links.LinksByOwner`
     """
     
@@ -1240,7 +1246,7 @@ class AbstractTable(actors.Actor): #,base.Handled):
     @classmethod
     def add_column(self,*args,**kw):
         """
-        Use this from an overridden `__init__` method to 
+        Use this from an overridden `before_ui_handle` method to 
         dynamically define computed columns to this table.
         """
         col = ComputedColumn(*args,**kw)
@@ -1307,7 +1313,15 @@ class AbstractTable(actors.Actor): #,base.Handled):
         #~ return "Grid Config has been saved to %s" % filename
         
 
-
+def redirect(obj,name,*other):
+    """
+    """
+    logger.info('redirect()')
+    o = getattr(obj,name)
+    if other:
+        return redirect(o,*other)
+    return o
+        
 
 class CustomTable(AbstractTable):
     """
@@ -1366,7 +1380,10 @@ class Table(AbstractTable):
     show_detail_navigator = True
     
     base_queryset = None 
-    "See :meth:`Table.get_data_iterator`"
+    """Internally used to store one Queryset instance that is reused for each request.
+    Didn't yet measure this, but I believe that this is important for performance 
+    because Django then will cache database lookups.
+    """
     
     #~ default_params = {}
     """See :doc:`/blog/2011/0701`.
@@ -1465,7 +1482,7 @@ class Table(AbstractTable):
         else:
             self.model = resolve_model(self.model,self.app_label)
             
-        logger.debug("20120103 class_init(%s) : model is %s",self,self.model)
+        #~ logger.debug("20120103 class_init(%s) : model is %s",self,self.model)
         
         if isinstance(self.model,UnresolvedModel):
             self.model = None
@@ -1570,13 +1587,34 @@ class Table(AbstractTable):
             
             #~ if hasattr(self.model,'get_image_url'):
                 #~ self.add_action(actions.ImageAction())
-        
+                
     @classmethod
     def get_data_elem(self,name):
         cc = super(Table,self).get_data_elem(name)
         #~ cc = AbstractTable.get_data_elem(self,name)
         if cc:
             return cc
+        
+        parts = name.split('__')
+        if len(parts) > 1:
+            model = self.model
+            for n in parts:
+                fld = get_data_elem(model,n)
+                if fld is None:
+                    raise Exception("Part %s of %s got None" % (n,model))
+                if fld.rel:
+                    model = fld.rel.to
+                else:
+                    model = False
+            def fn(obj,ar):
+                try:
+                    for n in parts:
+                        obj = getattr(obj,n)
+                    return (obj,0)
+                except Exception,e:
+                    return ('',0)
+            return self.add_column(fn,name=name,verbose_name=fld.verbose_name)
+            
         return get_data_elem(self.model,name)
         #~ de = get_data_elem(self.model,name)
         #~ if de is not None: 
@@ -1618,9 +1656,10 @@ class Table(AbstractTable):
         Upon first call, this will also lazily install Table.queryset 
         which will be reused on every subsequent call.
         """
-        if self.base_queryset is None:
-            self.base_queryset = self.get_queryset()
-        qs = self.base_queryset
+        qs = self.__dict__.get('base_queryset',None)
+        if qs is None:
+            qs = self.base_queryset = self.get_queryset()
+        #~ qs = self.base_queryset
         #~ kw = self.get_filter_kw(rr.master_instance,**rr.params)
         kw = self.get_filter_kw(rr.master_instance)
         if kw is None:
@@ -1686,7 +1725,8 @@ class Table(AbstractTable):
     @classmethod
     def slave_as_summary_meth(self,ui,row_separator):
         """
-        Creates and returns the method to be used when :attr:`Table.show_slave_grid` is `False`.
+        Creates and returns the method to be used when 
+        :attr:`AbstractTable.show_slave_grid` is `False`.
         """
         def meth(master,request):
             rr = TableRequest(ui,self,None,self.default_action,master_instance=master)

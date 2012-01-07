@@ -72,7 +72,7 @@ def test01(self):
     self.assertEquals(Person.objects.count(), 73)
     
     p = Person.objects.get(pk=118)
-    self.assertEquals(unicode(p), "Annette ARENS (118)")
+    self.assertEquals(unicode(p), "ARENS Annette (118)")
     
     
         
@@ -94,7 +94,7 @@ def test02(self):
     if 'en' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
         result = self.check_json_result(response,'count rows gc_choices title')
-        self.assertEqual(result['title'],"Properties of Marc CHANTRAINE (124)")
+        self.assertEqual(result['title'],"Properties of CHANTRAINE Marc (124)")
         self.assertEqual(len(result['rows']),2)
         row = result['rows'][0]
         self.assertEqual(row[0],"Obedient")
@@ -105,7 +105,7 @@ def test02(self):
     if 'de' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
         result = self.check_json_result(response,'count rows gc_choices title')
-        self.assertEqual(result['title'],"Eigenschaften von Marc CHANTRAINE (124)")
+        self.assertEqual(result['title'],"Eigenschaften von CHANTRAINE Marc (124)")
         self.assertEqual(len(result['rows']),2)
         row = result['rows'][0]
         self.assertEqual(row[0],"Gehorsam")
@@ -382,7 +382,7 @@ def test06(self):
     from lino.apps.dsbe.models import Person
     from lino.apps.dsbe.models import Property, PersonProperty
     annette = Person.objects.get(pk=118)
-    self.assertEquals(unicode(annette), "Annette ARENS (118)")
+    self.assertEquals(unicode(annette), "ARENS Annette (118)")
     
     if 'en' in babel.AVAILABLE_LANGUAGES:
         babel.set_language('en')
@@ -404,7 +404,7 @@ def test06(self):
     
 def test07(self):
     """
-    Testing whether all model reports work
+    Testing whether all model tables work
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     response = self.client.get('/menu',REMOTE_USER='root')
@@ -437,7 +437,7 @@ def test08(self):
     self.assertEqual(qs.count(),3)
     #~ qs = MyPersons.request(user=)
     got = [unicode(p) for p in qs]
-    expected = [u'Charlotte COLLARD (122)', u'Erna ÄRGERLICH (171)', u'Emil EIERSCHAL (177)']
+    expected = [u'COLLARD Charlotte (122)', u'ÄRGERLICH Erna (171)', u'EIERSCHAL Emil (177)']
     self.assertEqual(got,expected)
     
     

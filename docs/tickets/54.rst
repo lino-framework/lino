@@ -1,0 +1,22 @@
+#54 : Report Generator
+======================
+
+- New notion of groups and totals. These would be ignored when 
+  rendering the table in an editor grid.
+
+- Add user-editable parameters to a Table. 
+  Technically similar to the existing 
+  :attr:`lino.core.table.AbstractTable.known_values`,
+  maybe even replacing them,
+  but defined like Django database field instances 
+  on the Table (thus not managed by Django)
+  and displayed for editing when a Table is rendered.
+  
+- :attr:`lino.core.table.AbstractTable.show_slave_grid` 
+  will be replaced by an attribute `default_format` which can 
+  have the existing possibilities "editor grid" and "summary" 
+  plus the new possibility "html". 
+  This new possibility would render the table as 
+  "plain" html and with groups and totals.
+  
+  

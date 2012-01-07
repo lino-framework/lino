@@ -3,3 +3,4 @@ T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\blog\2012\0107.rst:14: WARNING: py:attr reference target not found: lino.ui.base.Handled._handles

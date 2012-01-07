@@ -970,6 +970,7 @@ def req2cell(rr):
         return ('',0)
     return (rr.ui.href_to_request(rr,str(rr.total_count)),rr.total_count)
     
+  
 class OverviewClientsByUser(dd.CustomTable):
     """
     A customized overview report.
@@ -994,7 +995,6 @@ class OverviewClientsByUser(dd.CustomTable):
             
         self.column_names += ' primary_clients active_clients row_total'
         super(OverviewClientsByUser,self).before_ui_handle(ui)
-        #~ super(OverviewClientsByUser,self).class_init()
     
     @classmethod
     def get_data_rows(self,ar):

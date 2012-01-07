@@ -52,6 +52,8 @@ class Handled(object):
         if h is None:
             self.before_ui_handle(ui)
             h = self._handle_class(ui,self)
+            # be careful to not store it in the base class's `_handles`:
+            self._handles = dict(self._handles)
             self._handles[ui] = h
             h.setup()
         return h

@@ -1,0 +1,43 @@
+20120107
+========
+
+Test suites pass again
+----------------------
+
+The unit test suite revealed another bug::
+
+  INFO 20120103 /api/dsbe/CourseProviders?fmt=json&limit=30&start=0          
+  INFO 20120107 Store <class 'lino.apps.dsbe.models.CourseProvider'>         
+  row2list(Company #197 (u'Arbeitsamt der D.G.'))                            
+  AttributeError: 'Company' object has no attribute 'company_ptr'            
+  
+This was because Tables are no longer singletons. 
+The CourseProviders table request received Company objects instead of CourseProvider.
+:attr:`lino.core.table.Table.base_queryset` was not None if the 
+base table had had a request before.
+The same effect probably happened for 
+:attr:`lino.ui.base.Handled._handles`, 
+(at least theoretically... it didn't become visible)
+anyway now we also there make sure to "disconnect" 
+from the the base class's `_handles` instance 
+by creating a new dict() object for each handle.
+Performance is not an issue there since this happens only once 
+per UI and Table.
+
+Now the test suites for both igen and dsbe pass again.
+
+
+New ideas
+---------
+
+- Opened :doc:`/tickets/53`, but this is going to wait until 
+  there's concrete need.
+
+- I realized that before continuing with 
+  :doc:`/tickets/52`
+  (the last steps will probably be rather stupid routine work), 
+  I prefer to find a 
+  solution for generating printed reports more easily.
+  Opened :doc:`/tickets/54`.
+  
+

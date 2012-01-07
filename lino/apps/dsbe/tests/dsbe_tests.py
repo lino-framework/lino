@@ -343,7 +343,7 @@ def test05(self):
     expected += ")"
     self.assertEqual(obj2str(p,True),expected)
     p.pk = 5
-    self.assertEqual(obj2str(p),"Person #5 (u'TEST (5)')")
+    self.assertEqual(obj2str(p),"Person #5 (u'TEST  (5)')")
     
     
 def test06(self):
