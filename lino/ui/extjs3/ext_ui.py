@@ -500,10 +500,10 @@ class ExtUI(base.UI):
         #~ return e
           
     def create_field_element(self,lh,field,**kw):
-        e = lh.main_class.field2elem(lh,field,**kw)
+        #~ e = lh.main_class.field2elem(lh,field,**kw)
+        e = ext_elems.field2elem(lh,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
         lh.add_store_field(e.field)
-        
         return e
         #return FieldElement(self,field,**kw)
         
@@ -1642,73 +1642,6 @@ tinymce.init({
         #~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
         
 
-    def unused_list_report_view(self,request,**kw):
-        #kw['simple_list'] = True
-        return self.json_report_view(request,**kw)
-        
-    def unused_json_report_view(self,request,app_label=None,rptname=None,**kw):
-        rpt = actors.get_actor2(app_label,rptname)
-        return self.json_report_view_(request,rpt,**kw)
-
-    def unused_json_report_view_(self,request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None,csv=False):
-        if not rpt.can_view.passes(request):
-            msg = "User %s cannot view %s." % (request.user,rpt)
-            raise Http404(msg)
-            #~ return json_response_kw(success=False,msg=msg)
-                
-        rh = rpt.get_handle(self)
-        
-        if grid_action:
-            a = rpt.get_action(grid_action)
-            assert a is not None, "No action %s in %s" % (grid_action,rh)
-            ar = ViewReportRequest(request,rh,a)
-            return json_response(ar.run())
-            #~ return json_response(ar.run().as_dict())
-                
-        if choices_for_field:
-            rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
-        elif csv:
-            rptreq = ext_requests.CSVReportRequest(request,rh,rpt.default_action)
-            return rptreq.render_to_csv()
-        else:
-            rptreq = ViewReportRequest(request,rh,rpt.default_action)
-            if submit:
-                pk = request.POST.get(rh.store.pk.name) #,None)
-                #~ if pk == table.UNDEFINED:
-                    #~ pk = None
-                try:
-                    data = rh.store.get_from_form(request.POST)
-                    if pk in ('', None):
-                        #return json_response(success=False,msg="No primary key was specified")
-                        instance = rptreq.create_instance(**data)
-                        instance.save(force_insert=True)
-                    else:
-                        instance = rpt.model.objects.get(pk=pk)
-                        for k,v in data.items():
-                            setattr(instance,k,v)
-                        instance.save(force_update=True)
-                    return json_response_kw(success=True,
-                          message="%s has been saved" % instance)
-                except Exception,e:
-                    logger.exception(e)
-                    #traceback.format_exc(e)
-                    return error_response(e) #,_("There was a problem while saving your data : "))
-                    #~ return error_response(e)
-                    #~ return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
-        # otherwise it's a simple list:
-        #~ print 20100406, rptreq
-        d = rptreq.render_to_dict()
-        return json_response(d)
-        
-
-    def get_choices_url(self,fke,**kw):
-        return self.build_url("choices",
-            #~ fke.lh.model._meta.app_label,
-            fke.lh.table.model._meta.app_label,
-            #~ fke.lh.model.__name__,
-            fke.lh.table.model.__name__,
-            fke.field.name,**kw)
-        
     #~ def quicklink(self,request,app_label,actor,**kw):
         #~ rpt = self.requested_report(request,app_label,actor)
         #~ return self.action_href(rpt.default_action,**kw)
@@ -2161,7 +2094,7 @@ tinymce.init({
             yield "  }).show();"
             yield "};"
             
-    def get_actor(self,*args,**kw):
+    def unused_get_actor(self,*args,**kw):
         from lino.core import actors
         a = actors.get_actor(*args,**kw)
         return a.get_handle(self)

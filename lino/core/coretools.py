@@ -60,13 +60,22 @@ def get_data_elem(model,name):
     except models.FieldDoesNotExist,e:
         pass
         
+    #~ s = name.split('.')
+    #~ if len(s) == 1:
+        #~ mod = import_module(model.__module__)
+        #~ rpt = getattr(mod,name,None)
+    #~ elif len(s) == 2:
+        #~ mod = getattr(settings.LINO.modules,s[0])
+        #~ rpt = getattr(mod,s[1],None)
+    #~ else:
+        #~ raise Exception("Invalid data element name %r" % name)
+    
     s = name.split('.')
     if len(s) == 1:
-        mod = import_module(model.__module__)
-        rpt = getattr(mod,name,None)
+        #~ app_label = model._meta.app_label
+        rpt = settings.LINO.modules[model._meta.app_label].get(name,None)
     elif len(s) == 2:
-        mod = getattr(settings.LINO.modules,s[0])
-        rpt = getattr(mod,s[1],None)
+        rpt = settings.LINO.modules[s[0]].get(s[1],None)
     else:
         raise Exception("Invalid data element name %r" % name)
     

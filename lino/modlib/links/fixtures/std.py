@@ -25,8 +25,8 @@ from lino.tools import resolve_model,UnresolvedModel
 
 
 def objects():
-    Person = resolve_model('contacts.Person')
-    Company = resolve_model('contacts.Company')
+    Person = resolve_model(settings.LINO.person_model)
+    Company = resolve_model(settings.LINO.company_model)
     if not isinstance(Company,UnresolvedModel):
         roletype = Instantiator('links.LinkType',
             a_type=ContentType.objects.get_for_model(Company),

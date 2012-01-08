@@ -357,7 +357,7 @@ Optional `salutation_options` see :func:`get_salutation`.
 
 
 class Persons(dd.Table):
-    model = 'contacts.Person'
+    model = settings.LINO.person_model
     order_by = "last_name first_name id".split()
     #~ app_label = 'contacts'
     column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"
@@ -367,7 +367,7 @@ class Persons(dd.Table):
 class CompanyMixin(models.Model):
 #~ class Company(Contact):
     """
-    Implements the :class:`contacts.Company` convention.
+    Abstract base class for a company.
     See also :doc:`/tickets/14`.
     """
     class Meta:
@@ -400,7 +400,7 @@ class CompanyMixin(models.Model):
 
               
 class Companies(Contacts):
-    model = 'contacts.Company'
+    model = settings.LINO.company_model
     order_by = ["name"]
     
     
@@ -443,8 +443,8 @@ class Role(models.Model):
     type = models.ForeignKey('contacts.RoleType',
       blank=True,null=True,
       verbose_name=_("Contact Role"))
-    person = models.ForeignKey('contacts.Person',related_name='rolesbyperson')
-    company = models.ForeignKey('contacts.Company',related_name='rolesbycompany')
+    person = models.ForeignKey(settings.LINO.person_model,related_name='rolesbyperson')
+    company = models.ForeignKey(settings.LINO.company_model,related_name='rolesbycompany')
     #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       #~ verbose_name=_("contact type"))
 
@@ -524,11 +524,15 @@ class PartnerDocument(models.Model):
     class Meta:
         abstract = True
         
-    person = models.ForeignKey("contacts.Person",
+    #~ person = models.ForeignKey("contacts.Person",
+    person = models.ForeignKey(settings.LINO.person_model,
         blank=True,null=True,
-        verbose_name=_("Person"))
-    company = models.ForeignKey("contacts.Company",
-        blank=True,null=True,verbose_name=_("Company"))
+        #~ verbose_name=_("Person")
+        )
+    company = models.ForeignKey(settings.LINO.company_model,
+        blank=True,null=True,
+        #~ verbose_name=_("Company")
+        )
         
     def get_partner(self):
         if self.company is not None:
@@ -609,7 +613,7 @@ if dd.is_installed('contacts'):
         
     dd.inject_field(SiteConfig,
         'site_company',
-        models.ForeignKey("contacts.Company",
+        models.ForeignKey(settings.LINO.company_model,
             blank=True,null=True,
             verbose_name=_("The company that runs this site"),
             related_name='site_company_sites',
@@ -619,12 +623,13 @@ if dd.is_installed('contacts'):
 
     dd.inject_field(Contact,
         'is_person',
-        mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
+        #~ mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
+        mti.EnableChild(settings.LINO.person_model,verbose_name=_("is Person")),
         """Whether this Contact is also a Person."""
         )
     dd.inject_field(Contact,
         'is_company',
-        mti.EnableChild('contacts.Company',verbose_name=_("is Company")),
+        mti.EnableChild(settings.LINO.company_model,verbose_name=_("is Company")),
         """Whether this Contact is also a Company."""
         )
 

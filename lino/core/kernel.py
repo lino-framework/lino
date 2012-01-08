@@ -61,6 +61,8 @@ from lino.utils import choosers
 from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
+from lino.utils import AttrDict
+
 
 def analyze_models(self,make_messages):
     """
@@ -280,9 +282,31 @@ def setup_site(self,make_messages=False):
     choosers.discover()
     
     #~ babel.discover() # would have to be called before model setup
+    
+    
+    self.modules = AttrDict()
 
+    for a in models.get_apps():
+        #~ for app_label,a in loading.cache.app_store.items():
+        app_label = a.__name__.split('.')[-2]
+        #~ logger.info("Installing %s = %s" ,app_label,a)
+        for n in dir(a):
+            if n.startswith('setup_'):
+                self.modules.define(app_label,n,getattr(a,n))
+    for m in models.get_models():
+        if not m._meta.abstract:
+            self.modules.define(m._meta.app_label,m.__name__,m)
+            
+    for a in actors.actors_list:
+        self.modules.define(a.app_label,a.__name__,a)
+        
+    #~ import pprint
+    #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
+    #~ logger.info("settings.LINO.modules['cal']['main'] is %r" ,self.modules['cal']['main'])
+                
     for a in actors.actors_list:
         a.setup()
+            
 
     #~ if settings.MODEL_DEBUG:
     if False:
@@ -292,15 +316,14 @@ def setup_site(self,make_messages=False):
             #~ logger.debug("%s -> %r",k,a.__class__)
             logger.debug("%s -> %r",k,a.debug_summary())
             
-    d = dict()
-    for a in loading.get_apps():
-        d[a.__name__.split('.')[-2]] = a
-    self.modules = IterableUserDict(d)
+    #~ d = dict()
+    #~ for a in loading.get_apps():
+        #~ d[a.__name__.split('.')[-2]] = a
+    #~ self.modules = IterableUserDict(d)
     
-    cls = type("Modules",tuple(),d)
-    self.modules = cls()
+    #~ cls = type("Modules",tuple(),d)
+    #~ self.modules = cls()
     #~ logger.info("20120102 modules: %s",self.modules)
-              
       
     self._setup_done = True
     self._setting_up = False

@@ -247,6 +247,28 @@ class Lino(object):
     on a production server that uses remote calendars.
     """
     
+    person_model = None
+    """
+    If your application uses :model:`lino.modlib.contacts`,
+    set this to a string "applabel.Modelname" which identifies 
+    your Person model (which should inherit from
+    :class:`lino.modlib.contacts.models.Person`).
+    """
+    
+    company_model = None
+    """
+    If your application uses :model:`lino.modlib.contacts`,
+    set this to a string "applabel.Modelname" which identifies 
+    your Company model (which should inherit from
+    :class:`lino.modlib.contacts.models.Company`).
+    """
+    
+    project_model = None
+    """
+    Optionally set this to the <applabel_modelname> of a 
+    model used as project in your application.
+    """
+    
     user_model = "users.User"
     """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
     `lino.modlib.users`. 
@@ -271,10 +293,6 @@ class Lino(object):
     for finding the user of a request.
     """
     #~ simulate_remote_user = False
-    
-    project_model = None
-    """Optionally set this to the <applabel_modelname> of a 
-    model used as project in your application."""
     
     
     legacy_data_path = None

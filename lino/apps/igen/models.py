@@ -70,7 +70,7 @@ from lino.models import SiteConfig
 if dd.is_installed('igen'):
 
     contacts = dd.get_app('contacts')
-    notes = dd.get_app('notes')
+    #~ notes = dd.get_app('notes')
     cal = dd.get_app('cal')
 
     #~ class Person(contacts.Person,contacts.Contact):
@@ -78,28 +78,28 @@ if dd.is_installed('igen'):
     class Person(contacts.Person,contacts.Contact,contacts.Born):
         class Meta(contacts.Person.Meta):
             app_label = 'contacts'
-            # see :doc:`/tickets/14`
-            #~ verbose_name = _("Person")
-            #~ verbose_name_plural = _("Persons")
+            #~ # see :doc:`/tickets/14`
+            verbose_name = _("Person")
+            verbose_name_plural = _("Persons")
 
                   
     class Company(contacts.Contact,contacts.CompanyMixin):
         class Meta(contacts.CompanyMixin.Meta):
             app_label = 'contacts'
-            # see :doc:`/tickets/14`
-            #~ verbose_name = _("Company")
-            #~ verbose_name_plural = _("Companies")
+            #~ # see :doc:`/tickets/14`
+            verbose_name = _("Company")
+            verbose_name_plural = _("Companies")
         
-    class Note(notes.Note,mixins.Owned):
-         class Meta:
-            app_label = 'notes'
+    #~ class Note(notes.Note,mixins.Owned):
+         #~ class Meta:
+            #~ app_label = 'notes'
             # see :doc:`/tickets/14`
             #~ verbose_name = _("Note")
             #~ verbose_name_plural = _("Notes")
             
-    class NotesByOwner(dd.Table):
-        model = Note
-        master_key = 'owner'
+    #~ class NotesByOwner(dd.Table):
+        #~ model = Note
+        #~ master_key = 'owner'
      
     class Event(cal.Event):
         class Meta(cal.Event.Meta):

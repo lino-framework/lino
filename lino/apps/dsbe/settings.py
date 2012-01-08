@@ -44,7 +44,11 @@ class Lino(Lino):
     #~ domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     migration_module = 'lino.apps.dsbe.migrate'
+    
+    #~ project_model = 'contacts.Person'
     project_model = 'contacts.Person'
+    person_model = "contacts.Person"
+    company_model = "contacts.Company"
     
     languages = ('de', 'fr', 'nl', 'en')
     
@@ -71,7 +75,7 @@ class Lino(Lino):
         
         
         m = main.add_menu("contacts",_("Contacts"))
-        m.add_action(self.modules.dsbe.Companies)
+        m.add_action(self.modules.contacts.Companies)
         m.add_action(self.modules.dsbe.Persons)
         #~ m.add_action('contacts.Persons.detail')
         #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
@@ -90,7 +94,7 @@ class Lino(Lino):
             
         m = main.add_menu("my",_("My menu"))
         #~ m.add_action('projects.Projects')
-        m.add_action(self.modules.dsbe.MyNotes)
+        m.add_action(self.modules.notes.MyNotes)
         
         mypersons = m.add_menu("mypersons",self.modules.dsbe.MyPersons.label)
         mypersons.add_action(self.modules.dsbe.MyPersons)

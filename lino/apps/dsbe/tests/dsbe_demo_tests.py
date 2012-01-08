@@ -951,7 +951,7 @@ def test14(self):
     """
     for url in """\
     /choices/isip/Contract/person?start=0&limit=10&query=
-    /choices/dsbe/Person/city?start=0&limit=10&country=BE&query=
+    /choices/contacts/Person/city?start=0&limit=10&country=BE&query=
     /choices/jobs/Contract/duration
     """.splitlines():
       url = url.strip()
@@ -986,8 +986,9 @@ def test16(self):
         self.assertEqual(result['count'],case[1])
         
     cases = [
-      ['dsbe/Companies', 24],
+      ['contacts/Companies', 24],
       ['dsbe/Persons', 70],
+      ['contacts/Persons', 74],
       ['dsbe/AllPersons', 74],
       ['dsbe/AllContacts', 101],
       ['dsbe/Courses', 4],
@@ -1004,7 +1005,7 @@ def test16(self):
       ['cal/Events', 63], # 3 more than after fixture because of test12()
       ['cal/Tasks', 10],
       ['cal/Priorities', 10],
-      ['dsbe/MyNotes', 3],
+      ['notes/MyNotes', 3],
       ['properties/PropGroups', 4],
     ]
     for case in cases:

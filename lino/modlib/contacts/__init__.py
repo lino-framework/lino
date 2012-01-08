@@ -13,24 +13,5 @@
 
 """
 
-Implements a :mod:`contacts` application label.
-
-The :class:`contacts.Person` and :class:`contacts.Company` 
-in this implementation are 
-abstract because you are probably going to extend them.
-The simplest way to make them usable is to subclass them 
-without any change::
-
-  from lino.modlib.contacts import models as contacts
-  
-  class Person(contacts.Person):
-      class Meta:
-          app_label = 'contacts'
-      
-  class Company(contacts.Company):
-      class Meta:
-          app_label = 'contacts'
-
-
 
 """

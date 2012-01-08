@@ -404,9 +404,9 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         #~ ,validators=[niss_validator]
         )
         
-    health_insurance = models.ForeignKey("contacts.Company",blank=True,null=True,
+    health_insurance = models.ForeignKey(settings.LINO.company_model,blank=True,null=True,
         verbose_name=_("Health insurance"),related_name='health_insurance_for')
-    pharmacy = models.ForeignKey("contacts.Company",blank=True,null=True,
+    pharmacy = models.ForeignKey(settings.LINO.company_model,blank=True,null=True,
         verbose_name=_("Pharmacy"),related_name='pharmacy_for')
     
     nationality = models.ForeignKey('countries.Country',
@@ -767,6 +767,7 @@ class Company(Partner,contacts.Contact,contacts.CompanyMixin):
     """
     
     class Meta(contacts.CompanyMixin.Meta):
+    #~ class Meta:
         app_label = 'contacts'
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
@@ -798,7 +799,7 @@ class Company(Partner,contacts.Contact,contacts.CompanyMixin):
 #~ class Companies(contacts.Contacts):
 class Companies(Contacts):
     #~ hide_details = [Contact]
-    model = 'contacts.Company'
+    model = settings.LINO.company_model
     order_by = ["name"]
     #~ app_label = 'contacts'
     #~ column_names = ''
@@ -807,7 +808,8 @@ class Companies(Contacts):
 #~ class AllPersons(contacts.Persons):
 class AllPersons(Contacts):
     #~ hide_details = [Contact]
-    model = 'contacts.Person'
+    #~ model = 'contacts.Person'
+    model = settings.LINO.person_model
     order_by = "last_name first_name id".split()
     can_view = perms.is_authenticated
     #~ column_names = "name_column national_id gsm street street_no street_box city age email phone id bank_account1 aid_type coach1 language *"
@@ -1127,7 +1129,8 @@ class LanguageKnowledge(models.Model):
         verbose_name = _("language knowledge")
         verbose_name_plural = _("language knowledges")
         
-    person = models.ForeignKey("contacts.Person")
+    #~ person = models.ForeignKey("contacts.Person")
+    person = models.ForeignKey(settings.LINO.person_model)
     language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
     #~ language = models.ForeignKey("countries.Language")
     #~ language = fields.LanguageField()
@@ -1165,14 +1168,15 @@ class LanguageKnowledgesByPerson(dd.Table):
 from lino.modlib.properties import models as properties
 
 class PersonProperty(properties.PropertyOccurence):
-    """A certain property defined for a certain person. 
+    """A given property defined for a given person. 
     See :mod:`lino.modlib.properties`."""
     class Meta:
         app_label = 'properties'
         verbose_name = _("Property")
         verbose_name_plural = _("Properties")
         
-    person = models.ForeignKey("contacts.Person")
+    #~ person = models.ForeignKey("contacts.Person")
+    person = models.ForeignKey(settings.LINO.person_model)
     remark = models.CharField(max_length=200,
         blank=True,# null=True,
         verbose_name=_("Remark"))
@@ -1283,7 +1287,8 @@ class Exclusion(models.Model):
         verbose_name = _("exclusion")
         verbose_name_plural = _('exclusions')
         
-    person = models.ForeignKey("contacts.Person")
+    #~ person = models.ForeignKey("contacts.Person")
+    person = models.ForeignKey(settings.LINO.person_model)
     type = models.ForeignKey("dsbe.ExclusionType",verbose_name=_("Reason"))
     excluded_from = models.DateField(blank=True,null=True,verbose_name=_("from"))
     excluded_until = models.DateField(blank=True,null=True,verbose_name=_("until"))
@@ -1382,62 +1387,6 @@ class AidType(babel.BabelNamed):
 class AidTypes(dd.Table):
     model = AidType
     column_names = 'name *'
-
-
-
-#
-# NOTES
-#
-class Note(notes.Note,contacts.PartnerDocument,mixins.DiffingMixin):
-    class Meta:
-        app_label = 'notes'
-        verbose_name = _("Event/Note") # application-specific override
-        verbose_name_plural = _("Events/Notes")
-
-        
-    @classmethod
-    def site_setup(cls,lino):
-        lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
-        '''date subject body language person company type event_type''')
-        #~ super(Note,cls).site_setup(lino)
-        
-    #~ def get_auto_task_defaults(self,**kw):
-        #~ """Called from :func:`lino.modlib.cal.models.update_auto_task`."""
-        #~ kw = notes.Note.get_auto_task_defaults(self,**kw)
-        #~ kw = contacts.PartnerDocument.get_auto_task_defaults(self,**kw)
-        #~ return kw
-        
-    def update_owned_instance(self,task):
-        notes.Note.update_owned_instance(self,task)
-        contacts.PartnerDocument.update_owned_instance(self,task)
-        
-    #~ def disabled_fields(self,request):
-        #~ if self.must_build:
-            #~ return []
-        #~ return NOTE_PRINTABLE_FIELDS
-        
-#~ NOTE_PRINTABLE_FIELDS = dd.fields_list(Note,
-    #~ '''date subject body language person company''')
-    
-class NotesByPerson(notes.Notes):
-    master_key = 'person'
-    #~ column_names = "date type event_type subject body_html user company *"
-    column_names = "date event_type type subject body user company *"
-    order_by = ["date"]
-  
-class NotesByCompany(notes.Notes):
-    master_key = 'company'
-    #~ column_names = "date type event_type subject body_html user person *"
-    column_names = "date event_type type subject body user person *"
-    order_by = ["date"]
-    
-class MyNotes(notes.MyNotes):
-    #~ master_key = 'user'
-    #~ column_names = "date type event_type subject person company body_html *"
-    column_names = "date event_type type subject person company body *"
-    
-#~ class NotesByTask(notes.Notes):
-    #~ master_key = 'task'
 
 
 
@@ -1679,7 +1628,8 @@ class CourseRequest(models.Model):
         verbose_name = _("Course Requests")
         verbose_name_plural = _('Course Requests')
         
-    person = models.ForeignKey("contacts.Person",
+    #~ person = models.ForeignKey("contacts.Person",
+    person = models.ForeignKey(settings.LINO.person_model,
         verbose_name=_("Person"))
     u"Die Person (ein Objekt vom Typ :class:`Person`.)"
     
@@ -2055,7 +2005,8 @@ if dd.is_installed('dsbe'):
     from lino.models import SiteConfig
     dd.inject_field(SiteConfig,
         'job_office',
-        models.ForeignKey("contacts.Company",
+        #~ models.ForeignKey("contacts.Company",
+        models.ForeignKey(settings.LINO.company_model,
             blank=True,null=True,
             verbose_name=_("Local job office"),
             related_name='job_office_sites'),

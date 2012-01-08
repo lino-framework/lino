@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Luc Saffre
+ Copyright 2009-2012 Luc Saffre
  This file is part of the Lino project.
  Lino is free software; you can redistribute it and/or modify 
  it under the terms of the GNU General Public License as published by
@@ -2916,8 +2916,8 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
       Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
       */
       /* `record` is used to get the text corresponding to this value */
-      //~ if(this.name == 'birth_country') 
-        //~ console.log(this.name,'.setValue(', v ,') this=', this,'record=',record);
+      if(this.name == 'city') 
+          console.log('20120108', this.name,'.setValue(', v ,') this=', this,'record=',record);
       var text = v;
       if(this.valueField){
         if(v == null || v == '') { 
@@ -2925,6 +2925,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
                 //~ console.log(this.name,'.setValue',v,'no lookup needed, value is empty');
             //~ v = undefined;
             v = '';
+            //~ text = '';
         } else if (Ext.isDefined(record)) {
           text = record.data[this.name];
           //~ if (this.name == 'birth_country') 
@@ -2966,6 +2967,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
         }
       }
       this.lastSelectionText = text;
+      //~ this.lastSelectionText = v;
       if(this.hiddenField){
           //~ this.hiddenField.originalValue = v;
           this.hiddenField.value = v;

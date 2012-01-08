@@ -1,0 +1,86 @@
+20120108
+========
+
+Bug
+---
+
+Discovered another bug caused by the removal of actors.actors_dict:
+`ext_elems.RemoteComboFieldElement` finds a wrong URL to query.
+For the Person.city field, it should be 
+"/choices/dsbe/Person/city" but currently it is
+"/choices/contacts/Person/city".
+
+This was because the `dsbe.Person` model 
+has `app_label = contacts`.
+With the new actor lookup system after the removal of actors.actors_dict, 
+this points to the abstract Person model in :mod:`lino.modlib.contacts.models`,
+which is not what we want here.
+
+I cannot easily remove that app_label on dsbe.Person 
+because this name (and the freedom from needing to know 
+where Person is really defined) is used in a lot of places.
+
+A first attempt failed: 
+But are there really so many of them?
+Shouldn't I better use global settings 
+`person_model` and `company_model`, 
+as I did for :attr:`lino.Lino.user_model`?
+Yes, that seems a good solution.
+Overriding app_label of a model is simply no longer supported.
+This feature was a little insane anyway. 
+Flexibility is good, but it should remain under control.
+If there are "variable" or "overridable" models, 
+then this should be a configuration option.
+Currently we have four of them:
+:attr:`lino.Lino.user_model`,
+:attr:`lino.Lino.person_model`,
+:attr:`lino.Lino.company_model` and
+:attr:`lino.Lino.project_model`.
+
+The same problem was with :class:`lino.modlib.notes.models.Note` 
+which was also abstract to make application-specific overrides 
+possible. Here I decided to make the whole modlib module 
+specific to `lino.apps.dsbe` because also the modlib version was 
+already quite dsbe-specific.
+
+I abandoned this attempt after realizing that 
+"the freedom to not need to know where Person is really 
+defined" *is* important.
+One example of why this is such a complex topic:
+:class:`lino.apps.dsbe.models.Persons` is accessible as `dsbe.Persons`,
+:class:`lino.modlib.contacts.models.Persons` as `contacts.Persons`.
+`dsbe.Persons` inherits the modlib version, but adds application-specific rules 
+of not showing newcomers and inactive Persons.
+I'll have to write more about that topic one day.
+
+The solution was to not store the ``models`` modules 
+themselves in `settings.LINO.modules`, but to rather 
+build an equivalent of the `actors_dict`, with some 
+differences:
+
+- accessible using dotted notation using :class:`lino.utils.AttrDict`
+- contains models, actors (tables, frames) *and also the `setup_` methods.
+
+
+
+Another bug
+-----------
+
+Ein anderer Bug, der möglicherweise schon länger existiert:
+Wenn ich im Detail einer Person bin:
+
+- ein anderes Land auswählen
+- die Liste im Feld "Stadt" aufklappen und wieder schließe, ohne eine Stadt auszuwählen
+- das Land wieder auf das vorige zurücksetzen
+- Speichern
+
+Dann kommt eine Fehlermeldung im Stil
+"{'city': ValidationError([u'Refused to auto-create city Aachen in Deutschland because same name exists.'])}"
+  
+Schon beim PUT hat er fälschlicherweise im Feld `cityHidden` 
+den Namen statt die ID der Stadt stehen::
+
+  cityHidden:Aachen
+  city:Aachen
+
+Bisher noch keine Lösung gefunden.

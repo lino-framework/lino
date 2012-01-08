@@ -425,6 +425,39 @@ class IncompleteDate:
             self.day or 1)
         
 
+class AttrDict(dict):
+    """
+    Usage example::
+    
+    >>> a = AttrDict()
+    >>> a.define('foo',1)
+    >>> a.define('bar','baz',2)
+    >>> print a
+    {'foo': 1, 'bar': {'baz': 2}}
+    >>> print a.foo
+    1
+    >>> print a.bar.baz
+    2
+    >>> print a.bar
+    {'baz': 2}
+    
+    """
+  
+    def __getattr__(self, name):
+        return self[name]
+        
+    def define(self,*args):
+        "args must be a series of names followed by the value"
+        assert len(args) >= 2
+        d = s = self
+        for n in args[:-2]:
+            d = s.get(n,None)
+            if d is None:
+                d = AttrDict()
+                s[n] = d
+            s = d
+        d[args[-2]] = args[-1]
+    
 
 
 

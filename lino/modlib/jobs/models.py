@@ -608,7 +608,7 @@ class Study(CountryCity):
     class Meta:
         verbose_name = _("study or education")
         verbose_name_plural = _("Studies & education")
-    person = models.ForeignKey("contacts.Person") #,verbose_name=_("Person"))
+    person = models.ForeignKey(settings.LINO.person_model) #,verbose_name=_("Person"))
     type = models.ForeignKey(StudyType,verbose_name=_("Study type"))
     content = models.CharField(max_length=200,
         blank=True, # null=True,
@@ -659,7 +659,7 @@ class Experience(SectorFunction):
     class Meta:
         verbose_name = _("Job Experience")
         verbose_name_plural = _("Job Experiences")
-    person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
+    person = models.ForeignKey(settings.LINO.person_model,verbose_name=_("Person"))
     #~ company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
     company = models.CharField(max_length=200,verbose_name=_("company"))
     #~ type = models.ForeignKey(JobType,verbose_name=_("job type"))
@@ -830,7 +830,7 @@ class Candidature(SectorFunction):
         verbose_name = _("Job Candidature")
         verbose_name_plural = _('Job Candidatures')
         
-    person = models.ForeignKey("contacts.Person")
+    person = models.ForeignKey(settings.LINO.person_model)
     
     job = models.ForeignKey("jobs.Job",
         blank=True,null=True)
@@ -985,6 +985,9 @@ class ContractsByType(Contracts):
   
     
 class ContractsByUser(Contracts):
+    """
+    Shows the job contracts owned by this user.
+    """
     master_key = 'user'
     #~ group_by = ['type']
     group_by = ['person__group']

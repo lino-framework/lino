@@ -46,12 +46,6 @@ class SiteConfig(models.Model):
     used to store persistent global site parameters.
     Application code sees this as ``settings.LINO.config``.
     """
-    # moved to contacts.models:
-    #~ site_company = models.ForeignKey('contacts.Company',blank=True,null=True,
-        #~ verbose_name=_("The company that runs this site"))
-    #~ next_partner_id = models.IntegerField(
-        #~ default=1,
-        #~ verbose_name=_("The next automatic id for Person or Company"))
         
     default_build_method = models.CharField(max_length=20,
       verbose_name=_("Default build method"),

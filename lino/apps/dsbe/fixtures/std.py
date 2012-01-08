@@ -20,10 +20,11 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from django.db import models
+from django.conf import settings
 from lino.utils.babel import babel_values, babelitem
 
-Person = resolve_model('contacts.Person')
-Company = resolve_model('contacts.Company')
+Person = resolve_model(settings.LINO.person_model)
+Company = resolve_model(settings.LINO.company_model)
 ExclusionType = resolve_model('dsbe.ExclusionType')
 
 #~ from lino.modlib.properties import models as properties 
@@ -144,8 +145,8 @@ def objects():
     yield excltype(u"ONEM-Auflagen nicht erfüllt")
     
     #~ linkType = Instantiator('links.LinkType',"a_type b_type name").build
-    Company = resolve_model('contacts.Company')
-    Person = resolve_model('contacts.Person')
+    Company = resolve_model(settings.LINO.company_model)
+    Person = resolve_model(settings.LINO.person_model)
     
     #~ yield linkType(
         #~ ContentType.objects.get_for_model(Company),

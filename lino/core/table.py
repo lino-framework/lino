@@ -1613,7 +1613,9 @@ class Table(AbstractTable):
                     return (obj,0)
                 except Exception,e:
                     return ('',0)
-            return self.add_column(fn,name=name,verbose_name=fld.verbose_name)
+            #~ de = get_data_elem(model,name)
+            return self.add_column(fn,name=name,
+              verbose_name=fld.verbose_name)
             
         return get_data_elem(self.model,name)
         #~ de = get_data_elem(self.model,name)

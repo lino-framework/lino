@@ -169,7 +169,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     class Meta:
         abstract = True
   
-    person = models.ForeignKey("contacts.Person",
+    person = models.ForeignKey(settings.LINO.person_model,
         related_name="%(app_label)s_%(class)s_set_by_person",
         verbose_name=_("Person"))
         
@@ -349,7 +349,7 @@ class Contract(ContractBase):
         related_name="%(app_label)s_%(class)s_set_by_type",
         verbose_name=_("Contract Type"),blank=True)
     
-    company = models.ForeignKey('contacts.Company',
+    company = models.ForeignKey(settings.LINO.company_model,
         verbose_name=_("Company"),
         blank=True,null=True)
         

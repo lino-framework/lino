@@ -37,6 +37,7 @@ from lino.utils import babel
 from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
+from lino.modlib.contacts import models as contacts
 
 #~ TEMPLATE_GROUP = 'notes'
 
@@ -73,14 +74,21 @@ class EventTypes(dd.Table):
     column_names = 'name *'
     order_by = ["name"]
 
-class Note(mixins.TypedPrintable,mixins.AutoUser):
+#~ class Note(mixins.TypedPrintable,mixins.AutoUser):
+class Note(mixins.TypedPrintable,
+      mixins.AutoUser,
+      contacts.PartnerDocument,
+      mixins.DiffingMixin):
+      
     """
     Deserves more documentation.
     """
     class Meta:
-        abstract = True
-        verbose_name = _("Note")
-        verbose_name_plural = _("Notes")
+        #~ abstract = True
+        verbose_name = _("Event/Note") 
+        verbose_name_plural = _("Events/Notes")
+        #~ verbose_name = _("Note")
+        #~ verbose_name_plural = _("Notes")
         
     #~ date = fields.MyDateField()
     date = models.DateField(verbose_name=_('Date'),default=datetime.date.today)
@@ -168,7 +176,12 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
     @classmethod
     def site_setup(cls,lino):
         lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
-        '''date subject body language type event_type''')
+        '''date subject body language person company type event_type''')
+        
+    #~ @classmethod
+    #~ def site_setup(cls,lino):
+        #~ lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
+        #~ '''date subject body language type event_type''')
         
     def summary_row(self,ui,rr,**kw):
         s = super(Note,self).summary_row(ui,rr)
@@ -176,6 +189,10 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
         if self.subject:
             s += ' ' + cgi.escape(self.subject) 
         return s
+    
+    def update_owned_instance(self,task):
+        mixins.AutoUser.update_owned_instance(self,task)
+        contacts.PartnerDocument.update_owned_instance(self,task)
     
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'
@@ -189,7 +206,7 @@ class NoteTypes(dd.Table):
 class Notes(dd.Table):
     model = 'notes.Note'
     #~ column_names = "id date user type event_type subject * body_html"
-    column_names = "id date user event_type type subject * body"
+    column_names = "id date user event_type type person company subject * body"
     #~ hide_columns = "body"
     #~ hidden_columns = frozenset(['body'])
     order_by = ["id"]
@@ -198,7 +215,8 @@ class Notes(dd.Table):
 
 class MyNotes(mixins.ByUser,Notes):
     #~ master_key = 'user'
-    column_names = "date event_type type subject body *"
+    column_names = "date event_type type subject person company body *"
+    #~ column_names = "date event_type type subject body *"
     #~ column_names = "date type event_type subject body_html *"
     #~ can_view = perms.is_authenticated
     label = _("My notes")
@@ -230,6 +248,22 @@ class NotesByEventType(Notes):
     column_names = "date type subject user *"
     order_by = ["date"]
     #~ label = _("Notes by person")
+    
+    
+
+class NotesByPerson(Notes):
+    master_key = 'person'
+    #~ column_names = "date type event_type subject body_html user company *"
+    column_names = "date event_type type subject body user company *"
+    order_by = ["date"]
+  
+class NotesByCompany(Notes):
+    master_key = 'company'
+    #~ column_names = "date type event_type subject body_html user person *"
+    column_names = "date event_type type subject body user person *"
+    order_by = ["date"]
+    
+    
   
   
 def setup_main_menu(site,ui,user,m): pass

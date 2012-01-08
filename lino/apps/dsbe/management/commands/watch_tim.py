@@ -67,8 +67,8 @@ from lino.apps.dsbe.management.commands.initdb_tim import convert_sex, \
 
 Country = resolve_model('countries.Country')
 City = resolve_model('countries.City')
-Person = resolve_model('contacts.Person')
-Company = resolve_model('contacts.Company')
+Person = resolve_model(settings.LINO.person_model)
+Company = resolve_model(settings.LINO.company_model)
     
 def json2py(dct):
     if '__date__' in dct:

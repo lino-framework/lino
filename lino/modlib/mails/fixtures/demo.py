@@ -28,8 +28,8 @@ from lino.modlib.mails.utils import RecipientType
 
 def objects():
   
-    Person = resolve_model('contacts.Person')
-    Company = resolve_model('contacts.Company')
+    Person = resolve_model(settings.LINO.person_model)
+    Company = resolve_model(settings.LINO.company_model)
     User = resolve_model(settings.LINO.user_model)
     
     root = User.objects.get(username='root')

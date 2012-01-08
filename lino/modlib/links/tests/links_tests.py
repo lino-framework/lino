@@ -54,8 +54,8 @@ def test01(self):
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
     """
 
-    Person = resolve_model('contacts.Person')
-    Company = resolve_model('contacts.Company')
+    Person = resolve_model(settings.LINO.person_model)
+    Company = resolve_model(settings.LINO.company_model)
     
     p1 = Person(first_name="First",last_name="Person")
     p1.save()

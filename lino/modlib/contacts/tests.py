@@ -27,7 +27,7 @@ from lino.utils.test import TestCase
 from lino.utils import babel
 
 from lino.tools import resolve_model,resolve_app
-Person = resolve_model('contacts.Person')
+Person = resolve_model(settings.LINO.person_model)
 contacts = resolve_app('contacts')
 from lino.utils.instantiator import Instantiator
 
@@ -37,8 +37,8 @@ class DemoTest(TestCase):
     fixtures = 'std few_countries few_cities few_languages props demo'.split()
     
     
-person = Instantiator('contacts.Person').build
-company = Instantiator('contacts.Company').build
+person = Instantiator(settings.LINO.person_model).build
+company = Instantiator(settings.LINO.company_model).build
         
 def test01(self):
     """

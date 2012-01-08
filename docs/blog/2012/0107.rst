@@ -26,6 +26,19 @@ per UI and Table.
 
 Now the test suites for both igen and dsbe pass again.
 
+Remote fields
+-------------
+
+Added the possibility to specify fields on a related model 
+through a ForeignKey using Django's ``__`` separator. 
+First use case 
+is :class:`lino.modlib.jobs.models.ContractsByUser`::
+
+  class ContractsByUser(Contracts):
+
+      column_names = 'person person__national_id person__gender applies_from applies_until job id user type *'
+
+TODO: the default value for `preferred_width` isn't correct.
 
 New ideas
 ---------

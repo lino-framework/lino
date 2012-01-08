@@ -30,6 +30,9 @@ class Lino(Lino):
     domain = "igen-demo.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/igen/index.html"
     
+    person_model = "contacts.Person"
+    company_model = "contacts.Company"
+    
     #~ residence_permit_upload_type = None
     #~ work_permit_upload_type = None
     #~ driving_licence_upload_type = None 
@@ -110,7 +113,7 @@ class Lino(Lino):
         if user and user.is_staff:
             m = main.add_menu("config","~Configuration")
             self.modules.sales.setup_config_menu(self,ui,user,m)
-            self.modules.notes.setup_config_menu(self,ui,user,m)
+            #~ self.modules.notes.setup_config_menu(self,ui,user,m)
             self.modules.cal.setup_config_menu(self,ui,user,m)
             m.add_action(self.modules.journals.Journals)
             #~ m = self.add_menu("ledger","~Ledger",
@@ -131,7 +134,7 @@ class Lino(Lino):
         if user and user.is_expert:
             m = main.add_menu("explorer",_("E~xplorer"))
             self.modules.sales.setup_explorer_menu(self,ui,user,m)
-            self.modules.notes.setup_explorer_menu(self,ui,user,m)
+            #~ self.modules.notes.setup_explorer_menu(self,ui,user,m)
             self.modules.cal.setup_explorer_menu(self,ui,user,m)
             self.modules.mails.setup_explorer_menu(self,ui,user,m)
             
@@ -165,7 +168,7 @@ INSTALLED_APPS = (
     'lino',
     'lino.modlib.countries',
     'lino.modlib.contacts',
-    'lino.modlib.notes',
+    #~ 'lino.modlib.notes',
     'lino.modlib.cal',
     'lino.modlib.mails',
     'lino.modlib.products',

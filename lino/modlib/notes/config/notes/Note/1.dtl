@@ -1,8 +1,17 @@
-:label: Notes
 :label_align: top
 
-main =
-    date type  user language
-    subject
-    body:80x5 
+left =     
+    date:10 event_type:25 type:25
+    subject 
+    person company
+    id user:10 language:8 build_time
+    body
+
+right =     
+    uploads.UploadsByOwner
+    thirds.ThirdsByOwner:30
+    cal.TasksByOwner
+    
+main = 
+    left:60 right:30
 

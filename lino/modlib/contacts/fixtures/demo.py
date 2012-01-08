@@ -12,6 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
@@ -24,39 +25,39 @@ from lino.utils import dblogger
 def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE').build
+    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='EE').build
     yield company(u'Rumma & Ko OÜ','10115','Tallinn',u'Tartu mnt','71')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='BE').build
+    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='BE').build
     yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
     yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')
     yield company(u'Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße','53')
     yield company(u'Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße','13')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='NL').build
+    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='NL').build
     yield company(u'Donderweer BV','4816 AR','Breda', 'Edisonstraat','12')
     yield company(u'Van Achter NV','4836 LG','Breda', 'Hazeldonk','2')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE').build
+    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='DE').build
     yield company(u'Hans Flott & Co','22453','Hamburg',u'Niendorfer Weg','532')
     yield company(u'Bernd Brechts Bücherladen','80333',u'München',u'Brienner Straße','18')
     yield company(u'Reinhards Baumschule','12487 ',u'Berlin',u'Segelfliegerdamm','123')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='FR').build
+    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='FR').build
     yield company(u'Moulin Rouge','75018','Paris',u'Boulevard de Clichy','82')
     yield company(u'Auto École Verte','54000 ','Nancy',u'rue de Mon Désert','12')
     
     City = resolve_model('countries.City')
     vigala = City.objects.get(name__exact='Vigala')
     #~ tallinn = City.objects.get(name__exact='Tallinn')
-    person = Instantiator('contacts.Person',"first_name last_name",
+    person = Instantiator(settings.LINO.person_model,"first_name last_name",
                 country='EE',street='Uus', street_no='1',
                 addr2=u'Vana-Vigala küla',
                 city=vigala,zip_code='78003').build
     yield person(u'Luc',  u'Saffre', gender=Gender.male,birth_date='1968-06-01')
     
     eupen = City.objects.get(name__exact='Eupen')
-    person = Instantiator('contacts.Person',"first_name last_name",
+    person = Instantiator(settings.LINO.person_model,"first_name last_name",
                 country='BE',city=eupen,zip_code='4700').build
     yield person(u'Andreas',  u'Arens',gender=Gender.male)
     yield person(u'Annette',  u'Arens',gender=Gender.female)
@@ -95,7 +96,7 @@ def objects():
     yield person(u'Marie-Louise', u'Meier',gender=Gender.female)
     
     raeren = City.objects.get(name__exact='Raeren')
-    person = Instantiator('contacts.Person',"first_name last_name",
+    person = Instantiator(settings.LINO.person_model,"first_name last_name",
                 country='BE',language=default_language(),city=raeren,zip_code='4730').build
     yield person(u'Erich',    u'Emonts',gender=Gender.male)
     yield person(u'Erwin',    u'Emontspool',gender=Gender.male)
@@ -122,22 +123,22 @@ def objects():
     yield person(u'Erna',   u'Ärgerlich')
     
     
-    person = Instantiator('contacts.Person',country='BE',city=City.objects.get(name__exact=u'Angleur')).build
+    person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact=u'Angleur')).build
     yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
     yield person(first_name=u'Jean',last_name=u'Dupont')
     
-    person = Instantiator('contacts.Person',country='BE',city=City.objects.get(name__exact=u'Oostende')).build
+    person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact=u'Oostende')).build
     yield person(first_name=u'Mark',last_name=u'Martelaer')
     yield person(first_name=u'Rik',last_name=u'Radermecker')
     yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos')
     
-    person = Instantiator('contacts.Person',country='DE').build
+    person = Instantiator(settings.LINO.person_model,country='DE').build
     yield person(first_name=u'Emil',last_name=u'Eierschal')
     yield person(first_name=u'Lisa',last_name=u'Lahm')
     yield person(first_name=u'Bernd',last_name=u'Brecht')
     yield person(first_name=u'Karl',last_name=u'Keller')
     
-    person = Instantiator('contacts.Person',country='FR').build
+    person = Instantiator(settings.LINO.person_model,country='FR').build
     yield person(first_name=u'Robin',last_name=u'Dubois')
     yield person(first_name=u'Denis',last_name=u'Denon')
     yield person(first_name=u'Jérôme',last_name=u'Jeanémart')
@@ -250,7 +251,7 @@ Weserstraße
     
     i = 0
     nr = 1
-    for p in resolve_model('contacts.Person').objects.filter(city=eupen):
+    for p in resolve_model(settings.LINO.person_model).objects.filter(city=eupen):
         p.street = streets_of_eupen[i]
         p.stret_no = str(nr)
         p.save()

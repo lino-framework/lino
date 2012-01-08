@@ -172,8 +172,8 @@ def objects():
     
   
   
-    Person = resolve_model('contacts.Person')
-    Company = resolve_model('contacts.Company')
+    Person = resolve_model(settings.LINO.person_model)
+    Company = resolve_model(settings.LINO.company_model)
     #~ Contact = resolve_model('contacts.Contact')
     Role = resolve_model('contacts.Role')
     #~ Link = resolve_model('links.Link')

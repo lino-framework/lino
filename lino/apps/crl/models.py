@@ -35,8 +35,9 @@ class Person(contacts.Contact,contacts.Born,contacts.Person):
 
               
 class Company(contacts.Contact,contacts.CompanyMixin):
-    class Meta(contacts.CompanyMixin.Meta):
-        app_label = 'contacts'
+    pass
+    #~ class Meta(contacts.CompanyMixin.Meta):
+        #~ app_label = 'contacts'
         # see :doc:`/tickets/14`
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
