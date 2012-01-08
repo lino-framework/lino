@@ -1,8 +1,31 @@
 20120108
 ========
 
-Bug
----
+A yet undiscovered bug in context-sensitive ComboBoxes
+------------------------------------------------------
+
+Ein anderer Bug, der möglicherweise schon länger existiert:
+Wenn ich im Detail einer Person bin:
+
+- ein anderes Land auswählen
+- die Liste im Feld "Stadt" aufklappen und wieder schließe, ohne eine Stadt auszuwählen
+- das Land wieder auf das vorige zurücksetzen
+- Speichern
+
+Dann kommt eine Fehlermeldung im Stil
+"{'city': ValidationError([u'Refused to auto-create city Aachen in Deutschland because same name exists.'])}"
+  
+Schon beim PUT hat er fälschlicherweise im Feld `cityHidden` 
+den Namen statt die ID der Stadt stehen::
+
+  cityHidden:Aachen
+  city:Aachen
+
+Bisher noch keine Lösung gefunden.
+
+
+Models, Tables and their app_label
+----------------------------------
 
 Discovered another bug caused by the removal of actors.actors_dict:
 `ext_elems.RemoteComboFieldElement` finds a wrong URL to query.
@@ -63,24 +86,3 @@ differences:
 
 
 
-Another bug
------------
-
-Ein anderer Bug, der möglicherweise schon länger existiert:
-Wenn ich im Detail einer Person bin:
-
-- ein anderes Land auswählen
-- die Liste im Feld "Stadt" aufklappen und wieder schließe, ohne eine Stadt auszuwählen
-- das Land wieder auf das vorige zurücksetzen
-- Speichern
-
-Dann kommt eine Fehlermeldung im Stil
-"{'city': ValidationError([u'Refused to auto-create city Aachen in Deutschland because same name exists.'])}"
-  
-Schon beim PUT hat er fälschlicherweise im Feld `cityHidden` 
-den Namen statt die ID der Stadt stehen::
-
-  cityHidden:Aachen
-  city:Aachen
-
-Bisher noch keine Lösung gefunden.

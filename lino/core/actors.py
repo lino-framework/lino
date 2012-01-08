@@ -22,7 +22,7 @@ from lino.core import actions
 from lino.ui.base import Handled
 
 actor_classes = []
-actors_dict = None
+#~ actors_dict = None
 actors_list = None
 
 ACTOR_SEP = '.'
@@ -67,6 +67,7 @@ def get_actor2(app_label,name):
     #~ return cls()
     
 def resolve_actor(actor,app_label):
+    raise Exception('20120104')
     if actor is None: return None
     if isinstance(actor,Actor): return actor
     s = actor.split(ACTOR_SEP)
@@ -76,12 +77,11 @@ def resolve_actor(actor,app_label):
         
 def register_actor(a):
     logger.debug("register_actor %s",a.actor_id)
-    old = actors_dict.get(a.actor_id,None)
-    if old is not None:
-        logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old,a)
-        actors_list.remove(old)
-    #~ a.setup()
-    actors_dict[a.actor_id] = a
+    #~ old = actors_dict.get(a.actor_id,None)
+    #~ if old is not None:
+        #~ logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old,a)
+        #~ actors_list.remove(old)
+    #~ actors_dict[a.actor_id] = a
     actors_list.append(a)
     return a
   
@@ -92,11 +92,11 @@ def register_actor(a):
 
 def discover():
     global actor_classes
-    global actors_dict
+    #~ global actors_dict
     global actors_list
-    assert actors_dict is None
+    #~ assert actors_dict is None
     assert actors_list is None
-    actors_dict = {}
+    #~ actors_dict = {}
     actors_list = []
     logger.debug("actors.discover() : setting up %d actors",len(actor_classes))
     for cls in actor_classes:
