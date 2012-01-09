@@ -1974,6 +1974,7 @@ class PersonsBySearch(dd.Table):
 
 class OverlappingContracts(dd.Table):
     model = Person
+    use_as_default_report = False
     #~ base_queryset = only_coached_persons(Person.objects.all())
     label = _("Overlapping Contracts")
     #~ def a(self):

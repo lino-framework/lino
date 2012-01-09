@@ -12,6 +12,10 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  User permissions, roles, functions
+
+#.  Report Generator (:doc:`/tickets/54`)
+
 #.  Calendar panel: handle eventadd, eventupdate, eventresize, 
     eventmove events.
     
@@ -145,6 +149,11 @@ Short-term
 Medium-term
 -----------
 
+#.  The `setup_*` methods in models modules should be inside a Module class which 
+    also has a userfriendly (and translated) description of the module.
+    The kernel would instantiate these Module classes and store them as 
+    the items of `settings.LINO.modules`.
+    
 #.  Ich gebe zu bedenken, dass wir den Begriff "aktiv" dann demnächst in 
     zwei verschiedenen Bedeutungen verwenden:
     (a) Checkbox "aktiv" angeschaltet (Feld wird aus TIM importiert) 

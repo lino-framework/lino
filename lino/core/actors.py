@@ -14,11 +14,10 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db import models
 
 import lino
 from lino.ui import base
-from lino.core import actions
+
 from lino.ui.base import Handled
 
 actor_classes = []
@@ -27,16 +26,19 @@ actors_list = None
 
 ACTOR_SEP = '.'
 
-def resolve_action(spec,app_label=None):
+#~ from django.db import models
+#~ from lino.core import actions
+
+def unused_resolve_action(spec,app_label=None):
     if spec is None: return None
     if isinstance(spec,actions.Action): return spec
-    s = spec.split(ACTOR_SEP)
+    s = spec.split('.')
     if len(s) == 1:
         if not app_label:
             return None
         actor = get_actor2(app_label,spec)
     elif len(s) == 3:
-        actor = get_actor(ACTOR_SEP.join(s[0:2]))
+        actor = get_actor('.'.join(s[0:2]))
         if actor is None:
             model = models.get_model(s[0],s[1],False)
             #~ print "20110712 actor is None, model is", model, s
@@ -52,29 +54,6 @@ def resolve_action(spec,app_label=None):
         #~ raise Exception("Actor %r does not exist" % spec)
     return actor.default_action
   
-def get_actor(actor_id):
-    raise Exception('20120104')
-    return actors_dict.get(actor_id,None)
-    #~ return cls()
-    
-def get_actor2(app_label,name):
-    k = app_label + ACTOR_SEP + name
-    raise Exception('20120104')
-    return actors_dict.get(k,None)
-    #~ cls = actors_dict.get(k,None)
-    #~ if cls is None:
-        #~ return cls
-    #~ return cls()
-    
-def resolve_actor(actor,app_label):
-    raise Exception('20120104')
-    if actor is None: return None
-    if isinstance(actor,Actor): return actor
-    s = actor.split(ACTOR_SEP)
-    if len(s) == 1:
-        return get_actor2(app_label,actor)
-    return get_actor(actor)
-        
 def register_actor(a):
     logger.debug("register_actor %s",a.actor_id)
     #~ old = actors_dict.get(a.actor_id,None)
@@ -158,7 +137,7 @@ class ActorMetaClass(type):
         #~ cls.app_label = cls.__module__.split('.')[-2]
             
         
-        cls.actor_id = cls.app_label + ACTOR_SEP + cls.__name__
+        cls.actor_id = cls.app_label + '.' + cls.__name__
         cls._actions_list = []
         cls._actions_dict = {}
         cls._setup_done = False

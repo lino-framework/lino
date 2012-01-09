@@ -247,7 +247,8 @@ class Lino(object):
     on a production server that uses remote calendars.
     """
     
-    person_model = None
+    #~ person_model = None
+    person_model = "contacts.Person"
     """
     If your application uses :model:`lino.modlib.contacts`,
     set this to a string "applabel.Modelname" which identifies 
@@ -255,7 +256,8 @@ class Lino(object):
     :class:`lino.modlib.contacts.models.Person`).
     """
     
-    company_model = None
+    #~ company_model = None
+    company_model = "contacts.Company"
     """
     If your application uses :model:`lino.modlib.contacts`,
     set this to a string "applabel.Modelname" which identifies 

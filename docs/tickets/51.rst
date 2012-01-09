@@ -15,6 +15,23 @@ which framework is better?
 Should I drop Lino and join the Tryton community?
 Or continue with Lino and become their concurrent?
 
+To answer this question I see no other solution 
+than to test it on the field: write a Tryton
+application and attempt to convince myself 
+and the Lino users in Eupen that Tryton is better than Lino.
+
+But it will take weeks for me to get familiar with Tryton
+and feel ready for a decision.
+That's why this project is currently sleeping.
+
+One thing is clear: 
+Tryton is a mature product with a competent and sympathic community, 
+while Lino is a young project by a single developer with a few users.
+
+A relatively visible difference is that Lino uses a web client 
+while Tryton needs it's own GTK client installed. 
+Difficult to say which is better.
+
 Qualities of a framework (AFAICS):
 
 - User interface : 
@@ -36,28 +53,12 @@ Qualities of a framework (AFAICS):
 - Long-term stability:
   will the framework still be available in 5, 10, 20 years?
 
-To answer these questions I see no other solution 
-than to test it on the field: write a Tryton
-application and attempt to convince myself 
-and the Lino users in Eupen that Tryton is better than Lino.
-
-But it will take weeks for me to get familiar with Tryton
-and feel ready for a decision.
-
-One thing is clear: 
-Tryton is a mature product with a competent and sympathic community, 
-while Lino is a young project by a single developer with a few users.
-
-A relatively visible difference is that Lino uses a web client 
-while Tryton needs it's own GTK client installed. 
-Difficult to say which is better.
-
-Luc's last (:doc:`</blog/2011/1207>`) statement on this question is:
+Luc's last (:doc:`statement </blog/2011/1207>`) on this question is:
 
 I guess (but didn't see with my own eyes) 
-that Tryton is better for the following topics 
-(where Lino provides only a satisfying solution 
-(i.e. on which I'm not really proud):
+that Tryton is better in the following areas 
+(where Lino currently provides only a satisfying solution, 
+that is, on which I'm not really proud):
 
 - WYSYWYG editor and rich text fields
 - File Uploads
@@ -67,7 +68,7 @@ differ from Tryton, and I guess (but didn't verify) that I
 wouldn't be satisfied with other approaches:
 
 - Support for multilingual database content
-- Data migration
-- Polymorphism (MTI)
+- :doc:`/topics/datamig`
+- :doc:`/topics/mti` (MTI)
 - Synchronize data from a legacy database
 

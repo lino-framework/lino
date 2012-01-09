@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -39,8 +39,10 @@ from lino.core import table
 from lino import dd
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
+from lino.utils import curry
 from lino.tools import obj2str
 from lino.utils import IncompleteDate
+from lino.utils import tables
 
 class StoreField(object):
     """
@@ -70,6 +72,9 @@ class StoreField(object):
         #~ if not hasattr(self.field,'value_from_object'):
             #~ raise Exception('%s %s has no method value_from_object?!'%(
               #~ self.field,self.field.name))
+        return self.full_value_from_object(obj)
+        
+    def full_value_from_object(self,obj):
         return self.field.value_from_object(obj)
         
     def obj2list(self,request,obj):
@@ -143,6 +148,32 @@ class StoreField(object):
             if m is not None:
                 m(old_value)
 
+#~ class RemoteStoreField(StoreField):
+    #~ def __init__(self,store,rf):
+        #~ self.remote_field = rf
+        #~ self.delegate = store.create_field(rf.field)
+        #~ StoreField.__init__
+      
+class RelatedMixin(object):
+        
+    def get_rel_to(self,obj):
+        #~ if self.field.rel is None:
+            #~ return None
+        return self.field.rel.to
+        
+    def full_value_from_object(self,obj):
+        # here we don't want the pk (stored in field's attname) 
+        # but the full object this field refers to
+        relto_model = self.get_rel_to(obj)
+        if not relto_model:
+            logger.warning("%s get_rel_to returned None",self.field)
+            return None
+        try:
+            return getattr(obj,self.field.name)
+        except relto_model.DoesNotExist,e:
+            return None
+        
+
 
 class ComboStoreField(StoreField):
   
@@ -194,7 +225,7 @@ class ComboStoreField(StoreField):
         d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
         
     def get_value_text(self,obj):
-        v = getattr(obj,self.field.name)
+        v = self.full_value_from_object(obj)
         if v is None or v == '':
             return (None, None)
         ch = choosers.get_for_field(self.field) 
@@ -205,20 +236,12 @@ class ComboStoreField(StoreField):
                 return (v, unicode(i[1]))
         return (v, _("%r (invalid choice)") % v)
         
-class ForeignKeyStoreField(ComboStoreField):
-        
-    def get_rel_to(self,obj):
-        return self.field.rel.to
+class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         
     def get_value_text(self,obj):
-        relto_model = self.get_rel_to(obj)
-        if not relto_model:
-            logger.info("20111213 ForeignKeyStoreField.get_value_text: no relto_model")
-            return (None, None)
-        try:
-            v = getattr(obj,self.field.name)
-        except relto_model.DoesNotExist,e:
-            v = None
+        v = self.full_value_from_object(obj)
+        #~ if isinstance(v,basestring):
+            #~ logger.info("20120109 %s -> %s -> %r",obj,self,v)
         if v is None:
             return (None, None)
         else:
@@ -336,8 +359,13 @@ class PasswordStoreField(StoreField):
         return v
         
 class GenericForeignKeyField(StoreField):
+        
+    def full_value_from_object(self,obj):
+        return getattr(obj,self.field.name)
+        
     def value_from_object(self,request,obj):
-        owner = getattr(obj,self.field.name)
+        owner = self.full_value_from_object(obj)
+        #~ owner = getattr(obj,self.field.name)
         if owner is None: return ''
         return request.ui.href_to(owner)
         #~ return "foo"
@@ -562,7 +590,7 @@ class ComputedColumnField(StoreField):
         #~ #logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
         #~ d[self.field.name] = self.slave_report.()
 
-class OneToOneStoreField(StoreField):
+class OneToOneStoreField(RelatedMixin,StoreField):
         
     def unused_form2obj(self,instance,post_data,is_new):
         #v = values.get(self.field.name,None)
@@ -585,10 +613,11 @@ class OneToOneStoreField(StoreField):
         #~ instance[self.field.name] = v
         
     def value_from_object(self,request,obj):
-        try:
-            v = getattr(obj,self.field.name)
-        except self.field.rel.to.DoesNotExist,e:
-            v = None
+        v = self.full_value_from_object(obj)
+        #~ try:
+            #~ v = getattr(obj,self.field.name)
+        #~ except self.field.rel.to.DoesNotExist,e:
+            #~ v = None
         if v is None:
             return None
         return v.pk
@@ -616,7 +645,7 @@ class Store:
     #~ value_template = "new Ext.data.JsonStore(%s)"
     
     def __init__(self,rh,**options):
-        assert isinstance(rh,table.ReportHandle)
+        assert isinstance(rh,tables.TableHandle)
         #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report
@@ -636,7 +665,7 @@ class Store:
         dtl = rh.report.get_detail()
         if dtl:
             dh = dtl.get_handle(rh.ui)
-            dh.lh_list
+            #~ dh.lh_list
             self.collect_fields(self.detail_fields,*dh.lh_list)
         #~ self.collect_fields(self.detail_fields,*rh.get_detail_layouts())
         
@@ -699,8 +728,8 @@ class Store:
         self.all_fields = tuple(self.all_fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
-        
-          
+
+
     def collect_fields(self,fields,*layouts):
         """
         `fields` is a pointer to either `self.detail_fields`
@@ -735,7 +764,23 @@ class Store:
         return fields
         
     def create_field(self,fld):
-        if isinstance(fld,dd.ComputedColumn):
+        if isinstance(fld,table.RemoteField):
+            """Hack: we create a StoreField based on the remote field,
+            then modify its behaviour...
+            """
+            sf = self.create_field(fld.field)
+            def value_from_object(sf,ar,obj):
+                m = fld.func
+                return m(obj)
+                
+            def full_value_from_object(sf,obj):
+                m = fld.func
+                return m(obj)
+                
+            sf.value_from_object = curry(value_from_object,sf)
+            sf.full_value_from_object = curry(full_value_from_object,sf)
+            return sf
+        if isinstance(fld,tables.ComputedColumn):
             #~ logger.info("20111230 Store.create_field(%s)", fld)
             return ComputedColumnField(fld)
         meth = getattr(fld,'_return_type_for_method',None)

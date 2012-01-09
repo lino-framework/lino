@@ -93,21 +93,38 @@ class ChoiceListMeta(type):
   
 
 class ChoiceList(object):
+    __metaclass__ = ChoiceListMeta
+    items = []
+    stored_name = None
     """
     Every subclass of ChoiceList will be automatically registered.
     Define this if your class's name clashes with the name of an exiting ChoiceList.
     """
-    __metaclass__ = ChoiceListMeta
-    items = []
-    stored_name = None
+    
     label = None
+    "The label or title for this list"
+    
+    preferred_width = 5
     """
+    Preferred width (in characters) used by 
+    :class:`fields <lino.core.fields.ChoiceListField>` 
+    that refer to this list.
+    This is automatically set to length of the longest choice 
+    text (using the :attr:`lino.Lino.languages <default site language>`). 
+    
+    Currently you cannot manually force it to a lower 
+    value than that. And it might guess wrong if the user language 
+    is not the default site language.
     """
-    def __init__(self,items=[],max_length=1):
+    
+    def __init__(self,*args,**kw):
         raise Exception("ChoiceList may not be instantiated")
         
     @classmethod
     def field(cls,*args,**kw):
+        """
+        Shortcut to create a :class:`lino.core.fields.ChoiceListField` in a Model.
+        """
         from lino.core.fields import ChoiceListField
         return ChoiceListField(cls,*args,**kw)
         
@@ -117,7 +134,9 @@ class ChoiceList(object):
         if cls is ChoiceList:
             raise Exception("Cannot define items on the base class")
         i = BabelChoice(cls,value,text)
-        cls.choices.append((i,cls.display_text(i)))
+        dt = cls.display_text(i)
+        cls.choices.append((i,dt))
+        cls.preferred_width = max(cls.preferred_width,len(unicode(dt)))
         assert not cls.items_dict.has_key(value)
         cls.items_dict[value] = i
         #~ cls.items_dict[i] = i
@@ -175,7 +194,7 @@ class ChoiceList(object):
 #~ class BabelChoice(babel.BabelText):
 class BabelChoice(object):
     """
-    A constant value whose unicode representation 
+    A constant (hard-coded) value whose unicode representation 
     depends on the current babel language at runtime.
     Used by :class:`lino.utils.choicelists`.
 

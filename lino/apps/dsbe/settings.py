@@ -47,8 +47,6 @@ class Lino(Lino):
     
     #~ project_model = 'contacts.Person'
     project_model = 'contacts.Person'
-    person_model = "contacts.Person"
-    company_model = "contacts.Company"
     
     languages = ('de', 'fr', 'nl', 'en')
     

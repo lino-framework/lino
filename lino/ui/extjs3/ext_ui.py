@@ -62,6 +62,7 @@ from lino.ui import requests as ext_requests
 from lino import dd
 from lino.core import actions #, layouts #, commands
 from lino.core import table
+from lino.utils import tables
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
@@ -356,12 +357,25 @@ class ExtUI(base.UI):
         
     def create_layout_element(self,lh,panelclass,name,**kw):
         
-        #~ de = lh.rh.report.get_data_elem(name)
         try:
             de = lh.get_data_elem(name)
         except Exception, e:
             de = None
             name += " (" + str(e) + ")"
+            
+        if isinstance(de,table.RemoteField):
+            dummy = ext_elems.field2elem(lh,de.field,**kw)
+            dummy.editable = False
+            #~ dummy = self.create_field_element(lh,de.field,**kw)
+            lh.add_store_field(de)
+            return dummy
+            #~ kw.setdefault('preferred_width',dummy.preferred_width)
+            #~ kw.setdefault('height',dummy.height)
+            #~ kw.setdefault('width',dummy.width)
+            #~ kw.setdefault('label',dummy.label)
+            #~ # logger.info("%s : %s", name,kw)
+            #~ return ext_elems.DisplayElement(lh,de,**kw)
+            
             
         if isinstance(de,table.ComputedColumn):
             lh.add_store_field(de)
@@ -1068,7 +1082,7 @@ tinymce.init({
             assert rh.report == rpt
         else:
             # e.g. calendar
-            ar = table.ActionRequest(self,a)
+            ar = tables.ActionRequest(self,a)
             rh = rpt.get_handle(self)
         
         if request.method == 'POST':
@@ -1180,7 +1194,7 @@ tinymce.init({
             ar = rpt.request(self,request,a)
             rh = ar.ah
         else:
-            ar = table.ActionRequest(self,a)
+            ar = tables.ActionRequest(self,a)
         
         #~ if isinstance(a,table.ReportAction):
             #~ ar = ViewReportRequest(request,rh,a)
@@ -1688,6 +1702,9 @@ tinymce.init({
         if v is KNOWLEDGE_CHOICES:
             return js_code('KNOWLEDGE_CHOICES')
         if isinstance(v,choicelists.BabelChoice):
+            """
+            This is special. We don't render the text but the value. 
+            """
             return v.value
         #~ if isinstance(v,babel.BabelText):
             #~ return unicode(v)
@@ -1814,7 +1831,7 @@ tinymce.init({
             #~ for a in h.get_actions():
                 #~ a.window_wrapper = self.action_window_wrapper(a,h)
                 
-        elif isinstance(h,table.ReportHandle):
+        elif isinstance(h,tables.TableHandle):
             if issubclass(h.report,table.Table):
                 if h.report.model is None \
                     or h.report.model is models.Model \

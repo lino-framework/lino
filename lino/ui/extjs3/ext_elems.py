@@ -24,6 +24,7 @@ import lino
 
 from lino import dd
 from lino.core import table
+from lino.core import fields
 from lino.utils import constrain
 from lino.utils import jsgen
 from lino.utils import mti
@@ -359,7 +360,8 @@ class FieldElement(LayoutElement):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
-        kw.update(label=field.verbose_name) 
+        kw.setdefault('label',field.verbose_name)
+        #~ kw.update(label=field.verbose_name) 
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
         
             
@@ -532,9 +534,9 @@ class ComboFieldElement(FieldElement):
 class ChoicesFieldElement(ComboFieldElement):
     value_template = "new Lino.ChoicesFieldElement(%s)"
   
-    def __init__(self,*args,**kw):
-        FieldElement.__init__(self,*args,**kw)
-        self.preferred_width = 20
+    #~ def __init__(self,*args,**kw):
+        #~ self.preferred_width = 20
+        #~ FieldElement.__init__(self,*args,**kw)
         
     def get_field_options(self,**kw):
         kw = ComboFieldElement.get_field_options(self,**kw)
@@ -1476,6 +1478,10 @@ def field2elem(layout_handle,field,**kw):
             else:
                 return ComplexRemoteComboFieldElement(layout_handle,field,**kw)
     if field.choices:
+        if isinstance(field,fields.ChoiceListField):
+            kw.setdefault('preferred_width',field.choicelist.preferred_width)
+        else:
+            kw.setdefault('preferred_width',20)
         return ChoicesFieldElement(layout_handle,field,**kw)
     
     selector_field = field
