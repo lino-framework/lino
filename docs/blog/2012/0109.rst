@@ -25,3 +25,5 @@ Currently you cannot manually force it to a lower
 value than that. And it might guess wrong if the user language 
 is not the default site language.
 
+Checkin (test suite dsbe passes, igen is waiting some work on 
+the generated demo invoices).
