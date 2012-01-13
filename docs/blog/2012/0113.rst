@@ -1,0 +1,9 @@
+20120113
+========
+
+The ParameterPanel is funtional for 
+:class:`lino.modlib.jobs.models.ContractsByUser`.
+
+But it is not yet beautiful enough.
+I'm going to try with a new concept `params_template`.
+But first a checkin.

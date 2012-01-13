@@ -1,0 +1,28 @@
+20120110
+========
+
+Tabellenparameter
+-----------------
+
+- TableMetaClass scannt nach Instanzen von `django.db.models.fields.Field`
+  und füllt sich einen dict namens `params` damit.
+  
+- Neue Klasse Lino.ParametersPanel in der :xfile:`linolib.js`.
+
+
+
+Benutzernamen
+-------------
+
+Alicia hatte es geschafft, beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
+Apache ließ sie als " alicia" durch.
+Und Lino legte brav einen neuen User " alicia" an.
+Erstens machen wir deshalb jetzt 
+in :mod:`lino.modlib.users.middleware`
+ein strip() des Benutzernamens.
+Und zweitens eine Änderung, an die ich sowieso schon gedacht hatte:
+das Automatische Anlegen von neuen Benutzern ist passé,
+wenn Apache jemanden durchlässt, den Lino nicht kennt, dann 
+kriegt der Verwalter eine Email und muss sich drum kümmern.
+
+

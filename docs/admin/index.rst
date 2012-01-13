@@ -1,22 +1,34 @@
 Administrator's Manual 
 ======================
 
+Installation
+------------
+
 .. toctree::
     :maxdepth: 2
 
     install
     ApacheHttpAuth
     apache_webdav
-    printable
-    ConfigureNotesTemplates
-    tim2lino
     django_tests
-    using_appy_pod
     upgrade
     datamig
     translate
-    dpytutorial
     webdav
     oood
     watch_tim
+   
+Other
+-----
+
+.. toctree::
+    :maxdepth: 2
+
+   
+    using_appy_pod
+    printable
+    ConfigureNotesTemplates
+    tim2lino
+    settings
+    dpytutorial
    

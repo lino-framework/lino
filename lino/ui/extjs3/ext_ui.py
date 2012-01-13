@@ -527,6 +527,8 @@ class ExtUI(base.UI):
             return ext_elems.GridMainPanel
         if isinstance(layout,table.DetailLayout) : 
             return ext_elems.DetailMainPanel
+        if isinstance(layout,table.ParamsLayout) : 
+            return ext_elems.ParamsPanel
         raise Exception("No element class for layout %r" % layout)
 
     
@@ -2088,7 +2090,8 @@ tinymce.init({
     def js_render_window_action(self,rh,action):
       
         rpt = rh.report
-      
+        params = None
+        
         if isinstance(action,table.ShowDetailAction):
             #~ s = "Lino.%s.detailPanel" % rpt
             s = "Lino.%sPanel" % action
@@ -2097,17 +2100,38 @@ tinymce.init({
             #~ s = "Lino.%s.%sPanel" % (rpt,action.name)
         elif isinstance(action,table.GridEdit):
             s = "Lino.%s.GridPanel" % rpt
+            if action.actor.params:
+                #~ th = action.actor.get_handle(self)
+                #~ if action.actor.params_template:
+                
+                param_names = ' '.join([pf.name for pf in action.actor.params])
+                lh = table.LayoutHandle(self,action.actor,
+                    table.ParamsLayout('main = '+param_names))
+                #~ params = lh
+                #~ params = lh._main
+                params = [e for e in lh.walk() if isinstance(e,ext_elems.FieldElement)]
+                #~ params = [ext_elems.field2elem(lh,pf) for pf in action.actor.params]
+                #~ params = dict(xtype='container',layout='',items=params)
         elif isinstance(action,table.Calendar):
             s = "Lino.CalendarPanel"
         else:
             s = None
         
         if s:
-            yield "Lino.%s = function(caller,params) { " % action
-            yield "  params.is_main_window = true;" # workaround for problem 20111206
+            yield "Lino.%s = function(caller,mainConfig) { " % action
+            yield "  mainConfig.is_main_window = true;" # workaround for problem 20111206
             #~ yield "  params.containing_window = true;" # workaround for problem 20111206
+            yield "  var mp = new %s(mainConfig);" % s
+            if params:
+                for ln in jsgen.declare_vars(params):
+                    yield '  '  + ln
+                yield "  var pp = new Lino.ParameterPanel({grid_panel: mp,fields:%s})" % py2js(params)
             yield "  new Lino.Window({"
-            yield "    caller: caller, items:new %s(params)" % s
+            yield "    caller: caller, "
+            if params:
+                #~ yield "  new Lino.ParamWindow({"
+                yield "    params_item: pp," 
+            yield "    main_item: mp" 
             yield "  }).show();"
             yield "};"
             

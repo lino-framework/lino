@@ -12,23 +12,22 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  User permissions, roles, functions
-
-#.  Report Generator (:doc:`/tickets/54`)
-
-#.  Calendar panel: handle eventadd, eventupdate, eventresize, 
-    eventmove events.
-    
-#.  Listings 
+#.  Report Generator (:doc:`/tickets/54`).
+    Listings 
     "Personnes par phase d'intégration par AI" 
     and
     "Contrats par Employeur et par AI":
     how to manage grouping in a report.
 
+#.  User permissions, roles, functions
 
+#.  Calendar panel: handle eventadd, eventupdate, eventresize, 
+    eventmove events.
+    
 #.  Zwei Ideen zur besseren Ermittlung der Konstruktionsmethode einer Notiz: 
 
-    - noch einen optionalen benutzerspezifischen Parameter "Default-Konstruktionsmethode", 
+    - noch einen optionalen benutzerspezifischen Parameter
+      "Default-Konstruktionsmethode", 
       der Vorrang vor dem entsprechenden globalen Parameter hat.
       Printable.get_build_method()
       `CachedPrintable.get_cache_mtime` muss dann allerdings einen 

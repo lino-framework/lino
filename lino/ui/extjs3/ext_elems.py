@@ -1361,6 +1361,10 @@ class DetailMainPanel(Panel,MainPanel):
         return kw
         
 
+class ParamsPanel(DetailMainPanel):
+    value_template = "new Ext.Container(%s)"
+    
+
 class TabPanel(jsgen.Component):
 #~ class TabPanel(jsgen.Value):
     value_template = "new Ext.TabPanel(%s)"

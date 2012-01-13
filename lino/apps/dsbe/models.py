@@ -1030,6 +1030,8 @@ def persons_by_user(ui,requesting_user):
     """
     Returns a summary table "Number of clients by user and integration phase"
     """
+    assert requesting_user is not None
+    
     #~ from django.utils.translation import ugettext as _
     #~ from lino.modlib.users.models import User  
     #~ User = resolve_model('users.User')

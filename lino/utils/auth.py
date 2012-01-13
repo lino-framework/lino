@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2011 Luc Saffre
+## Copyright 2010-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -61,18 +61,27 @@ if settings.LINO.user_model:
 
         def process_request(self, request):
           
-            username = request.META.get(settings.LINO.remote_user_header,settings.LINO.default_user)
+            username = request.META.get(
+                settings.LINO.remote_user_header,settings.LINO.default_user)
             if not username:
-                raise Exception("No %s in %s" % (settings.LINO.remote_user_header,request.META))
-                
+                raise Exception("No %s in %s" 
+                  % (settings.LINO.remote_user_header,request.META))
+            """
+            20120110 : alicia hatte es geschafft, beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
+            Apache ließ sie als " alicia" durch.
+            Und Lino legte brav einen neuen User " alicia" an.
+            """
+            username = username.strip()
+            
             try:
                 request.user = USER_MODEL.objects.get(username=username)
             except USER_MODEL.DoesNotExist,e:
-                u = USER_MODEL(username=username)
-                u.full_clean()
-                u.save()
-                logger.info("Creating new user %s from request %s",u,request)
-                request.user = u
+                logger.error("Unknown username %s from request %s",u,request)
+                #~ u = USER_MODEL(username=username)
+                #~ u.full_clean()
+                #~ u.save()
+                #~ logger.info("Creating new user %s from request %s",u,request)
+                #~ request.user = u
             
             if len(babel.AVAILABLE_LANGUAGES) > 1:
                 if request.user.language:

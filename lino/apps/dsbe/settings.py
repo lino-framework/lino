@@ -81,7 +81,6 @@ class Lino(Lino):
         #~ m.add_action('contacts.AllContacts')
         m.add_action(self.modules.dsbe.AllContacts)
         m.add_action(self.modules.dsbe.Newcomers)
-        m.add_action(self.modules.dsbe.OverviewClientsByUser)
         self.modules.isip.setup_main_menu(self,ui,user,m)
         #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')
@@ -123,10 +122,12 @@ class Lino(Lino):
         
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:
-        listings = main.add_menu("lst",_("Listings"))
+        m = main.add_menu("lst",_("Listings"))
         for listing in LISTINGS:
             #~ listings.add_action(listing)
-            listings.add_action(listing,'listing')
+            m.add_action(listing,'listing')
+        m.add_action(self.modules.jobs.ContractsByUser)
+        m.add_action(self.modules.dsbe.OverviewClientsByUser)
         #~ listings.add_instance_action(lst)
         #~ for lst in dsbe.FooListing.objects.all():
             #~ listings.add_instance_action(lst)

@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import json
 import cgi
 import os
 import sys
@@ -544,7 +545,7 @@ class TableRequest(AbstractTableRequest):
                 self.sort_direction = 'DESC'
             kw.update(order_by=[sort])
         
-        kw.update(user=request.user)
+        #~ 20120111 kw.update(user=request.user)
         #~ user = request.user
         #~ if user is not None and user.is_superuser:
         #~ if True:
@@ -627,6 +628,7 @@ class TableRequest(AbstractTableRequest):
                 else:
                     create_rows = 0
             self.create_rows = create_rows
+            
         if self.ui is not None:
             if layout is None:
                 layout = self.ah._layouts[self.report.default_layout]
@@ -642,11 +644,11 @@ class TableRequest(AbstractTableRequest):
         For example CSVReportRequest wants all rows.
         """
         if offset is not None:
-            self.queryset = self._data_iterator[offset:]
+            self._data_iterator = self._data_iterator[offset:]
             self.offset = offset
             
         if limit is not None:
-            self.queryset = self._data_iterator[:limit]
+            self._data_iterator = self._data_iterator[:limit]
             self.limit = limit
             
         self.page_length = self.report.page_length
@@ -1080,6 +1082,7 @@ class Table(AbstractTable):
             qs = qs.filter(rr.filter)
             
         if rr.known_values:
+            #~ logger.info("20120111 known values %r",rr.known_values)
             d = {}
             for k,v in rr.known_values.items():
                 if v is None:
@@ -1326,12 +1329,17 @@ class ListLayout(BaseLayout):
         #~ if isinstance(e,TextFieldElement):
             #~ e.hidden = True
 
+
 class DetailLayout(BaseLayout):
     #~ label = _("Detail")
     show_labels = True
     join_str = "\n"
     only_for_report = None
 
+class ParamsLayout(BaseLayout):
+    #~ label = _("List")
+    show_labels = False
+    join_str = " "
 
 
 class LayoutHandle:
@@ -1531,10 +1539,6 @@ class ListLayoutHandle(LayoutHandle):
         if issubclass(self.rh.report,Table):
             if de.name == self.rh.report.master_key: return False
         return True
-  
-    def get_data_elem(self,name): 
-        return self.table.get_data_elem(name)
-
 
 
 

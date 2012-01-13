@@ -3086,18 +3086,31 @@ Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
 
 
 Lino.Window = Ext.extend(Ext.Window,{
-  layout: "fit", 
+  //~ layout: "fit", 
   closeAction : 'close',
   renderTo: 'main_area', 
   constrain: true,
   maximized: true,
   maximizable: false,
   constructor : function (config) {
-    this.main_item = config.items; // `items` must be a single component
+    if (config.params_item) {
+        config.layout = 'border';
+        config.main_item.region = 'center';
+        config.params_item.region = 'north';
+        config.items = [config.params_item, config.main_item];
+    } else {
+        config.layout = 'fit';
+        config.items = config.main_item;
+    }
+    this.main_item = config.main_item; 
+    
+    delete config.main_item;
+    delete config.params_item;
+    
     //~ this.main_item = config.items.get(0);
     this.main_item.containing_window = this;
     
-    //~ console.log(20111205, this.main_item);
+    //~ console.log('20120110 Lino.Window.constructor() 1');
     
     config.title = this.main_item.empty_title;
     config.tools = [ 
@@ -3116,21 +3129,25 @@ Lino.Window = Ext.extend(Ext.Window,{
     
     this.main_item.config_containing_window(config);
     
+    //~ console.log('20120110 Lino.Window.constructor() 2');
     Lino.Window.superclass.constructor.call(this,config);
     
-    this.main_item.init_containing_window(this);
+    //~ console.log('20120110 Lino.Window.constructor() 3');
     
   },
-  //~ initComponent : function() {
-    //~ Lino.Window.superclass.initComponent.call(this);
+  initComponent : function() {
+    this.main_item.init_containing_window(this);
+    Lino.Window.superclass.initComponent.call(this);
   
-  //~ },
+  },
   show : function() {
+      console.log('20120110 Lino.Window.show() 1',this);
       Lino.Window.superclass.show.call(this,arguments);
       //~ this.window.show();
       Lino.current_window = this;
       //~ this.refresh();
       //~ Lino.load_mask.hide();
+      console.log('20120110 Lino.Window.show() 2');
   },
   kill : function() {
     Lino.Window.superclass.close.call(this);
@@ -3156,15 +3173,33 @@ Lino.Window = Ext.extend(Ext.Window,{
       });
   },
   onRender : function(ct, position){
+    console.log('20120110 Lino.Window.onRender() 1');
     Lino.Window.superclass.onRender.call(this, ct, position);
     var main_area = Ext.getCmp('main_area')
+    console.log('20120110 Lino.Window.onRender() 2');
   
     this.on('show', function(win) {
+        console.log('20120110 Lino.Window.on show 1');
         main_area.on('resize', win.onWindowResize, win);
     });
     this.on('hide', function(win) {
         main_area.un('resize', win.onWindowResize, win);
     });
+    console.log('20120110 Lino.Window.onRender() 3');
+  }
+});
+
+
+Lino.unused_ParamWindow = Ext.extend(Lino.Window,{
+  //~ layout: "border", 
+  constructor : function (config) {
+    Lino.ParamWindow.superclass.constructor.call(this,config);
+    this.main_item = config.items; // `items` must be a single component
+    config.layout = 'border';
+    this.main_item.region = 'center';
+    config.params.region = 'north';
+    config.items = [config.params, config.items];
+    //~ delete config.params;
   }
 });
 
@@ -3542,3 +3577,49 @@ Ext.override(Lino.CalendarPanel,Lino.MainPanel);
 
 
 #end if
+
+Lino.ParameterPanel = Ext.extend(Ext.Container,{
+  layout: "hbox", 
+  //~ align: "middle",
+  //~ pack: "center",
+  //~ labelWidth: 63, 
+  //~ autoHeight: true, 
+  //~ frame: false, 
+  //~ border: false,
+  //~ constructor : function(config) {
+    //~ Lino.ParameterPanel.superclass.constructor.call(this, config);
+  //~ },
+  onGoButtonClick : function(pp,event) {
+      //~ console.log('onGoButtonClick', this.grid_panel);
+      for(var i=0; i < this.fields.length;i++) {
+          var fld = this.fields[i]; 
+          //~ .get(i);
+          console.log(fld.name, "=", fld.getValue());
+          this.grid_panel.set_base_param(fld.name,fld.getValue());
+          this.grid_panel.refresh();
+      }
+  },
+  initComponent : function() {
+    var fields_panel = { "xtype": "panel", 
+      "items": this.fields, 
+      //~ region: 'center',
+      flex: 1,
+      autoHeight: true, 
+      layout: "form", 
+      labelAlign: 'top', 
+      //~ weigth: 1
+      //~ ,align:"right" 
+    };
+    var go_button = new Ext.Button({
+        //~ autoHeight: true, 
+        text:'Go', 
+        //~ region: 'east',
+        //~ flex: 0, 
+        handler: this.onGoButtonClick, 
+        scope: this})
+    //~ this.items = { "xtype": "panel", "items": [fields_panel, go_button], "autoHeight": true, "layout": "hbox" };
+    this.items = [fields_panel, go_button];
+    Lino.ParameterPanel.superclass.initComponent.call(this);
+  }
+});
+

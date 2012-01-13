@@ -5,4 +5,3 @@
 .. automodule:: lino.utils.choicelists
     :members:
     :show-inheritance:
-

@@ -550,12 +550,14 @@ class Lino(object):
     languages = ['en']
     """
     A shortcut parameter to set the supported languages for this site.
-    
     If specified, this must be an iterable of 2-letter codes.
     Examples::
     
       languages = "en de fr nl et".split()
       languages = ['en']
+      
+    The first language in this list will be the site's 
+    default language.
       
     Lino will use it to set the Django 
     settings :setting:`LANGUAGES` and  :setting:`LANGUAGE_CODE`.

@@ -983,25 +983,42 @@ class JobsByType(Jobs):
 class ContractsByType(Contracts):
     master_key = 'type'
   
-    
-class ContractsByUser(Contracts):
-    """
-    Shows the job contracts owned by this user.
-    """
-    master_key = 'user'
-    #~ group_by = ['type']
-    group_by = ['person__group']
-    column_names = 'person person__city person__national_id person__gender applies_from applies_until job id user type *'
-    
-    def on_group_break(self,group):
-        if group == 0:
-            yield self.total_line(0)
-        else:
-            yield self.total_line(group)
-            
-    def total_line(self,group):
-        return 
+if settings.LINO.user_model:
   
+    from lino.tools import resolve_model, UnresolvedModel
+    USER_MODEL = resolve_model(settings.LINO.user_model)
+    
+    class ContractsByUser(Contracts):
+        """
+        Shows the job contracts owned by this user.
+        """
+        label = _("Job contracts by User")
+        
+        # parameters:
+        
+        user = models.ForeignKey(USER_MODEL)
+        #~ show_active = models.BooleanField(_("active contracts"))
+        #~ show_past = models.BooleanField(_("past contracts"))
+        #~ show_coming = models.BooleanField(_("coming contracts"))
+        #~ today = models.DateField(_("on"))
+        #~ params_template = _("""
+        #~ Show [show_active] / [show_active] / [show_coming] on [today]
+        #~ (of [user])
+        #~ """)
+        
+        #~ master_key = 'user'
+        #~ group_by = ['type']
+        group_by = ['person__group']
+        column_names = 'person person__city person__national_id person__gender applies_from applies_until job id user type *'
+        
+        def on_group_break(self,group):
+            if group == 0:
+                yield self.total_line(0)
+            else:
+                yield self.total_line(group)
+                
+        def total_line(self,group):
+            return 
     
 
 

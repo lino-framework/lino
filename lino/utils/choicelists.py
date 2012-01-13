@@ -93,6 +93,9 @@ class ChoiceListMeta(type):
   
 
 class ChoiceList(object):
+    """
+    Used-defined choice lists must inherit from this base class.
+    """
     __metaclass__ = ChoiceListMeta
     items = []
     stored_name = None
@@ -110,7 +113,7 @@ class ChoiceList(object):
     :class:`fields <lino.core.fields.ChoiceListField>` 
     that refer to this list.
     This is automatically set to length of the longest choice 
-    text (using the :attr:`lino.Lino.languages <default site language>`). 
+    text (using the :attr:`default site language <lino.Lino.languages>`). 
     
     Currently you cannot manually force it to a lower 
     value than that. And it might guess wrong if the user language 

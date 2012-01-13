@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from django.db import models
 
 import lino
 from lino.ui import base
@@ -26,7 +27,6 @@ actors_list = None
 
 ACTOR_SEP = '.'
 
-#~ from django.db import models
 #~ from lino.core import actions
 
 def unused_resolve_action(spec,app_label=None):
@@ -105,6 +105,7 @@ class ActorMetaClass(type):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
             
+        
         # attributes that are not inherited from base classes:
         #~ classDict.setdefault('name',classname)
         classDict.setdefault('label',None)
@@ -112,6 +113,14 @@ class ActorMetaClass(type):
         classDict.setdefault('title',None)
         
         cls = type.__new__(meta, classname, bases, classDict)
+        
+        cls.params = []
+        for k,v in classDict.items():
+            if isinstance(v,models.Field):
+                v.set_attributes_from_name(k)
+                v.table = cls
+                cls.params.append(v)
+                
         
         """
         On 20110822 I thought "A Table always gets the app_label of its model,

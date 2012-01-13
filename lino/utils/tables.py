@@ -216,15 +216,25 @@ class AbstractTableRequest(ActionRequest):
         #~ self.setup(*args,**kw)
     
     def parse_req(self,request,rh,**kw):
-        kw.update(self.report.known_values)
-        for fieldname, default in self.report.known_values.items():
-            v = request.REQUEST.get(fieldname,None)
+        #~ kw.update(self.report.known_values)
+        #~ for fieldname, default in self.report.known_values.items():
+            #~ v = request.REQUEST.get(fieldname,None)
+            #~ if v is not None:
+                #~ kw[fieldname] = v
+        kw.update(user=request.user)
+            
+        def parse_param(fld,request,kv):
+            v = request.REQUEST.get(fld.name,None)
             if v is not None:
-                #~ kw.update(fieldname=v)
-                kw[fieldname] =v
+                kv[fld.name] = v
+            
+        kv = kw.get('known_values',{})
+        for fld in self.report.params:
+            parse_param(fld,request,kv)
+        if kv:
+            kw.update(known_values=kv)
         
         kw = rh.report.parse_req(request,**kw)
-        
         return kw
         
     def setup(self,
@@ -239,6 +249,7 @@ class AbstractTableRequest(ActionRequest):
         #~ if user is None:
             #~ raise InvalidRequest("%s : user is None" % self)
             
+        #~ 20120111 
         self.user = user
         self.subst_user = subst_user
         #~ self.known_values = known_values or self.report.known_values
@@ -398,7 +409,12 @@ class AbstractTable(actors.Actor):
     """
     _handle_class = TableHandle
     
-    #~ params = {}
+    params = None
+    """
+    This is automatically filled with 
+    the user-definable parameter fields for this table.
+    """
+    
     field = None
     
     title = None
@@ -609,7 +625,13 @@ class AbstractTable(actors.Actor):
         
     @classmethod
     def get_data_elem(self,name):
-        return self.computed_columns.get(name,None)
+        cc = self.computed_columns.get(name,None)
+        if cc is not None:
+            return cc
+        for pf in self.params:
+            if pf.name == name:  return pf
+        return None
+              
         
     @classmethod
     def get_title(self,rr):
