@@ -16,6 +16,8 @@
 See also :doc:`/dsbe/models`.
 
 """
+import logging
+logger = logging.getLogger(__name__)
 
 import os
 import cgi
@@ -53,6 +55,7 @@ from lino.utils.choicelists import HowWell
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
+from lino.tools import range_filter
 from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem, language_choices
 from lino.utils.htmlgen import UL
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
@@ -982,6 +985,8 @@ class JobsByType(Jobs):
 
 class ContractsByType(Contracts):
     master_key = 'type'
+    
+    
   
 if settings.LINO.user_model:
   
@@ -997,20 +1002,43 @@ if settings.LINO.user_model:
         # parameters:
         
         user = models.ForeignKey(USER_MODEL)
-        #~ show_active = models.BooleanField(_("active contracts"))
-        #~ show_past = models.BooleanField(_("past contracts"))
-        #~ show_coming = models.BooleanField(_("coming contracts"))
-        #~ today = models.DateField(_("on"))
+        show_past = models.BooleanField(_("past contracts"),default=True)
+        show_active = models.BooleanField(_("active contracts"),default=True)
+        show_coming = models.BooleanField(_("coming contracts"),default=True)
+        today = models.DateField(_("on"))
         #~ params_template = _("""
-        #~ Show [show_active] / [show_active] / [show_coming] on [today]
+        #~ Show [show_past] / [show_active] / [show_coming] on [today]
         #~ (of [user])
         #~ """)
+        params_template = """show_past show_active show_coming today user"""
+        params_panel_hidden = True
         
         #~ master_key = 'user'
         #~ group_by = ['type']
         group_by = ['person__group']
         column_names = 'person person__city person__national_id person__gender applies_from applies_until job id user type *'
         
+        @classmethod
+        def get_request_queryset(cls,rr):
+            logger.info("20120114 param_values = %r",rr.param_values)
+            qs = super(ContractsByUser,cls).get_request_queryset(rr)
+            user = rr.param_values.get('user',None)
+            if user:
+                qs = qs.filter(user=user)
+            today = rr.param_values.get('today',None) or datetime.date.today()
+            show_active = rr.param_values.get('show_active',True)
+            if not show_active:
+                flt = range_filter(today,'applies_from','applies_until')
+                logger.info("20120114 flt = %r",flt)
+                qs = qs.exclude(flt)
+            show_past = rr.param_values.get('show_past',True)
+            if not show_past:
+                qs = qs.exclude(applies_until__isnull=False,applies_until__lt=today)
+            show_coming = rr.param_values.get('show_coming',True)
+            if not show_coming:
+                qs = qs.exclude(applies_from__isnull=False,applies_from__gt=today)
+            return qs
+            
         def on_group_break(self,group):
             if group == 0:
                 yield self.total_line(0)

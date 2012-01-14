@@ -131,12 +131,6 @@ class StoreField(object):
               self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
               
         self.set_value_in_object(request,instance,v)
-        #~ print 20110524, __file__, self.field.name, v
-        #~ try:
-            #~ setattr(instance,self.field.name,v)
-        #~ except exceptions.ValidationError,e:
-            #~ logger.exception("%s = %r : %s",self.field.name,v,e)
-            #~ raise 
         return
         
     def set_value_in_object(self,request,instance,v):
@@ -670,6 +664,11 @@ class Store:
         #~ self.collect_fields(self.detail_fields,*rh.get_detail_layouts())
         
         del self.df2sf
+        if rh.report.params:
+            self.param_fields = []
+            for pf in rh.params_layout._store_fields:
+            #~ for pf in rh.report.params:
+                self.param_fields.append(self.create_field(pf))
         
         #~ for df in list_fields | detail_fields: # set union
         #~ for df in fields: 
@@ -897,3 +896,13 @@ class Store:
             f.obj2dict(request,row,d)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
+
+    def pv2dict(self,pv,**kw):
+        if pv: 
+            for i,f in enumerate(self.param_fields):
+                kw[f.field.name] = f.parse_form_value(pv[i],None)
+        return kw
+        
+    def parse_params(self,request):
+        return self.pv2dict(request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))
+        

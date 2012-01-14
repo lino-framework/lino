@@ -80,9 +80,6 @@ def discover():
     logger.debug("actors.discover() : setting up %d actors",len(actor_classes))
     for cls in actor_classes:
         cls.class_init()
-    for cls in actor_classes:
-        #~ if not cls.__name__.startswith('unused_'):
-        cls.setup()
         register_actor(cls)
     actor_classes = None
     
@@ -99,6 +96,10 @@ def discover():
     #~ for a in actors_dict.values():
         #~ a.setup()
 
+def setup_actors():
+    for cls in actors_list:
+        #~ if not cls.__name__.startswith('unused_'):
+        cls.setup()
 
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):

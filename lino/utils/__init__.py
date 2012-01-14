@@ -72,7 +72,7 @@ def overlap(a1,a2,b1,b2):
     """
     Test whether two value ranges overlap.
     
-    This function is typically used with dates, but it also 
+    This function is typically used with date values, but it also 
     works with integers or other comparable values.
 
     Unlike the test presented at <http://bytes.com/topic/python/answers/457949-determing-whether-two-ranges-overlap>,

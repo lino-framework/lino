@@ -114,6 +114,7 @@ def py2js(v):
         raise Exception("Please don't call the generator function yourself")
         #~ return "\n".join([ln for ln in v])
     if callable(v):
+        print 20120114, repr(v)
         #~ raise Exception("Please call the function yourself")
         return "\n".join([ln for ln in v()])
     if isinstance(v,js_code):

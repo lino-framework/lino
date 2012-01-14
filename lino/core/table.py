@@ -1228,7 +1228,7 @@ def table_factory(model):
     name = model.__name__ + "Table"
     cls = type(name,bases,dict(model=model,app_label=app_label))
     cls.class_init()
-    cls.setup()
+    #~ cls.setup()
     
     """
     20120104 We even add the factored class to the module because 
@@ -1236,7 +1236,7 @@ def table_factory(model):
     `'module' object has no attribute 'DataControlListingTable'` error.
     
     We cannot simply do ``setattr(settings.LINO.modules.get(app_label),name,cls)``
-    because this code i executed when `settings.LINO.modules` doesn't yet exist.
+    because this code is executed when `settings.LINO.modules` doesn't yet exist.
     """
     
     m = import_module(model.__module__)
@@ -1272,8 +1272,10 @@ class BaseLayout(Configured):
     collapsible_elements  = {}
     write_debug_info = False
     
-    def __init__(self,desc,*args,**kw):
+    #~ 20120114 def __init__(self,desc,*args,**kw):
+    def __init__(self,table,desc,*args,**kw):
         #~ self.label = label
+        self.table = table
         self._desc = desc
         #~ super(BaseLayout,self).__init__(*args,**kw)
         Configured.__init__(self,*args,**kw)
@@ -1319,6 +1321,9 @@ class BaseLayout(Configured):
         
     def write_content(self,f):
         f.write(self._desc)
+        
+    def get_data_elem(self,name): 
+        return self.table.get_data_elem(name)
             
 class ListLayout(BaseLayout):
     #~ label = _("List")
@@ -1338,9 +1343,11 @@ class DetailLayout(BaseLayout):
 
 class ParamsLayout(BaseLayout):
     #~ label = _("List")
-    show_labels = False
+    show_labels = True
     join_str = " "
 
+    def get_data_elem(self,name): 
+        return self.table.get_param_elem(name)
 
 class LayoutHandle:
     """
@@ -1349,7 +1356,8 @@ class LayoutHandle:
     """
     start_focus = None
     
-    def __init__(self,ui,table,layout,hidden_elements=frozenset()):
+    #~ 20120114 def __init__(self,ui,table,layout,hidden_elements=frozenset()):
+    def __init__(self,ui,layout,hidden_elements=frozenset()):
       
         #~ logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
         assert isinstance(layout,BaseLayout)
@@ -1358,7 +1366,6 @@ class LayoutHandle:
         #~ actors.ActorHandle.__init__(self,layout)
         self.layout = layout
         self.ui = ui
-        self.table = table
         #~ self.rh = rh
         #~ self.datalink = layout.get_datalink(ui)
         self.label = layout.label # or ''
@@ -1444,7 +1451,7 @@ class LayoutHandle:
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                de.name for de in self.table.wildcard_data_elems() \
+                de.name for de in self.layout.table.wildcard_data_elems() \
                   
                   if (de.name not in explicit_specs) \
                     and self.use_as_wildcard(de) \
@@ -1523,14 +1530,15 @@ class LayoutHandle:
         return True
   
     def get_data_elem(self,name): 
-        return self.table.get_data_elem(name)
+        return self.layout.get_data_elem(name)
         
 
 class ListLayoutHandle(LayoutHandle):
   
     def __init__(self,rh,*args,**kw):
         self.rh = rh
-        LayoutHandle.__init__(self,rh.ui,rh.report,*args,**kw)
+        #~ 20120114 LayoutHandle.__init__(self,rh.ui,rh.report,*args,**kw)
+        LayoutHandle.__init__(self,rh.ui,*args,**kw)
         
     def use_as_wildcard(self,de):
         if de.name.endswith('_ptr'): return False
@@ -1550,8 +1558,9 @@ class DetailHandle(base.Handle):
         self.detail = detail
         #~ self.content_type = ContentType.objects.get_for_model(detail.model).pk
         self.lh_list = [ 
-            LayoutHandle(ui,detail.model._lino_model_report,dl) 
-                for dl in self.detail.layouts ]
+            #~ 20120114 LayoutHandle(ui,detail.model._lino_model_report,dl) for dl in self.detail.layouts
+            LayoutHandle(ui,dl) for dl in self.detail.layouts 
+            ]
         base.Handle.__init__(self,ui)
       
       
@@ -1564,6 +1573,7 @@ class Detail(object):
     
     def __init__(self,model,layouts):
         self.model = model
+        self.table = model._lino_model_report,
         self.layouts = layouts
         self._handles = {}
         

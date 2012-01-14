@@ -528,7 +528,7 @@ class ExtUI(base.UI):
         if isinstance(layout,table.DetailLayout) : 
             return ext_elems.DetailMainPanel
         if isinstance(layout,table.ParamsLayout) : 
-            return ext_elems.ParamsPanel
+            return ext_elems.ParameterPanel
         raise Exception("No element class for layout %r" % layout)
 
     
@@ -1146,8 +1146,13 @@ tinymce.init({
                     w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
                 return response
                 
+            if fmt == 'printer':
+                response = HttpResponse(content_type='text/html;charset="utf-8"')
+                ar.render_to_html(response)
+                return response
+                
             if fmt == 'json':
-                rows = [ rh.store.row2list(ar,row) for row in ar ]
+                rows = [ rh.store.row2list(ar,row) for row in ar]
                 #~ rows = [ rh.store.row2list(ar,row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
@@ -1184,6 +1189,9 @@ tinymce.init({
         #~ if model is None:
             #~ raise Http404("No actor named '%s.%s'" % (app_label,actor))
         #~ return model._lino_model_report
+        
+    def parse_params(self,rh,request):
+        return rh.store.parse_params(request)
         
     def restful_view(self,request,app_label=None,actor=None,pk=None):
         rpt = self.requested_report(request,app_label,actor)
@@ -1841,8 +1849,15 @@ tinymce.init({
                     return
                     
             h.list_layout = table.ListLayoutHandle(h,
-                table.ListLayout('main = '+h.report.column_names),
+                table.ListLayout(h.report,'main = '+h.report.column_names),
                 hidden_elements=h.report.hidden_columns)
+            if h.report.params:
+                if h.report.params_template:
+                    params_template = h.report.params_template
+                else:
+                    params_template= ' '.join([pf.name for pf in h.report.params])
+                h.params_layout = table.LayoutHandle(self,
+                    table.ParamsLayout(h.report,'main = '+params_template))
         
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
@@ -2101,17 +2116,15 @@ tinymce.init({
         elif isinstance(action,table.GridEdit):
             s = "Lino.%s.GridPanel" % rpt
             if action.actor.params:
-                #~ th = action.actor.get_handle(self)
+                params = rh.params_layout._main
                 #~ if action.actor.params_template:
-                
-                param_names = ' '.join([pf.name for pf in action.actor.params])
-                lh = table.LayoutHandle(self,action.actor,
-                    table.ParamsLayout('main = '+param_names))
-                #~ params = lh
+                    #~ params_template = action.actor.params_template
+                #~ else:
+                    #~ params_template= ' '.join([pf.name for pf in action.actor.params])
+                #~ lh = table.LayoutHandle(self,action.actor,
+                    #~ table.ParamsLayout('main = '+params_template))
                 #~ params = lh._main
-                params = [e for e in lh.walk() if isinstance(e,ext_elems.FieldElement)]
-                #~ params = [ext_elems.field2elem(lh,pf) for pf in action.actor.params]
-                #~ params = dict(xtype='container',layout='',items=params)
+                #~ params.update(fields=[e for e in lh.walk() if isinstance(e,ext_elems.FieldElement)])
         elif isinstance(action,table.Calendar):
             s = "Lino.CalendarPanel"
         else:
@@ -2121,17 +2134,20 @@ tinymce.init({
             yield "Lino.%s = function(caller,mainConfig) { " % action
             yield "  mainConfig.is_main_window = true;" # workaround for problem 20111206
             #~ yield "  params.containing_window = true;" # workaround for problem 20111206
-            yield "  var mp = new %s(mainConfig);" % s
             if params:
                 for ln in jsgen.declare_vars(params):
                     yield '  '  + ln
-                yield "  var pp = new Lino.ParameterPanel({grid_panel: mp,fields:%s})" % py2js(params)
+                #~ yield "  var pp = new %s(mainConfig);" % params
+                yield "  mainConfig.params_panel = %s;" % params
+                #~ if True:
+                    #~ yield "  var pp = new Lino.ParameterPanel({grid_panel: mp,fields:%s})" % (
+                        #~ py2js(params),py2js(params_template))
+                #~ else:
+                    #~ yield "  var pp = new Lino.ParameterPanel({grid_panel: mp,fields:%s,html: %s})" % (
+                        #~ py2js(params),py2js(params_template))
             yield "  new Lino.Window({"
             yield "    caller: caller, "
-            if params:
-                #~ yield "  new Lino.ParamWindow({"
-                yield "    params_item: pp," 
-            yield "    main_item: mp" 
+            yield "    main_item: new %s(mainConfig)" % s
             yield "  }).show();"
             yield "};"
             

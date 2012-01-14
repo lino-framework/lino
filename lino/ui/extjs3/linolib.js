@@ -2142,6 +2142,31 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
     }
   return '';
 }
+
+Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
+    load: function(options) {
+        if (this.params_panel) {
+          var pv = Array(this.params_panel.fields.length);
+          for(var i=0; i < this.params_panel.fields.length;i++) {
+              pv[i] = this.params_panel.fields[i].getValue(); 
+              //~ var fld = this.params_panel.fields[i]; 
+              //~ console.log(fld.name, "=", fld.getValue());
+              //~ this.set_base_param(fld.name,fld.getValue());
+          }
+          //~ this.set_base_param('$ext_requests.URL_PARAM_PARAM_VALUES',pv);
+          //~ p['$ext_requests.URL_PARAM_PARAM_VALUES'] = pv;
+          //~ this.store.setBaseParam('$ext_requests.URL_PARAM_PARAM_VALUES',pv);
+          options.params.$ext_requests.URL_PARAM_PARAM_VALUES = pv;
+          //~ console.log(20120113,options);
+        } 
+    //~ else console.log('20120113 no params_panel in this',this);
+    
+        //~ this.params_panel
+    //~ }
+    Lino.GridStore.superclass.load.call(this,options);
+  }
+});
+
     
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,Lino.MainPanel);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,{
@@ -2150,6 +2175,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   clicksToEdit:2,
   enableColLock: false,
   autoHeight: false,
+  params_panel_hidden : false,
   //~ loadMask: true,
   viewConfig: {
           //autoScroll:true,
@@ -2234,8 +2260,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       //~ listeners: {load:on_proxy_load} 
     });
     //~ config.store = new Ext.data.JsonStore({ 
-    this.store = new Ext.data.ArrayStore({ 
+    //~ this.store = new Ext.data.ArrayStore({ 
+    this.store = new Lino.GridStore({ 
       listeners: { exception: Lino.on_store_exception }, 
+      params_panel: this.params_panel,
       proxy: proxy, 
       //~ autoLoad: this.containing_window ? true : false,
       idIndex: this.pk_index,
@@ -2277,10 +2305,32 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
           //~ id: "seachString" 
         }), 
         { scope:this, 
-          text: "csv", 
+          text: "[filter]", // gear
+          enableToggle: true,
+          pressed: ! this.params_panel_hidden,
+          toggleHandler: function(btn,state) { 
+            //~ if (this.params_panel.isVisible()) 
+                //~ this.params_panel.hide();
+            //~ else
+                //~ this.params_panel.show();
+            if (state) this.params_panel.hide();
+            else this.params_panel.show();
+            this.containing_window.doLayout();
+          }
+        },
+        { scope:this, 
+          text: "[csv]", 
           handler: function() { 
             var p = Ext.apply({},this.get_base_params());
             p['fmt'] = 'csv';
+            //~ url += "?" + Ext.urlEncode(p);
+            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+          } },
+        { scope:this, 
+          text: "[html]", 
+          handler: function() { 
+            var p = Ext.apply({},this.get_base_params());
+            p['fmt'] = 'printer';
             //~ url += "?" + Ext.urlEncode(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
@@ -2409,6 +2459,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         //~ Ext.apply(p,this.master_panel.get_master_params());
         this.set_base_params(this.master_panel.get_master_params());
     }
+    
     if (after) {
         p.callback = function(r,options,success) {if(success) after()};
       }
@@ -2916,8 +2967,8 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
       Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
       */
       /* `record` is used to get the text corresponding to this value */
-      if(this.name == 'city') 
-          console.log('20120108', this.name,'.setValue(', v ,') this=', this,'record=',record);
+      //~ if(this.name == 'city') 
+          //~ console.log('20120108', this.name,'.setValue(', v ,') this=', this,'record=',record);
       var text = v;
       if(this.valueField){
         if(v == null || v == '') { 
@@ -3093,11 +3144,12 @@ Lino.Window = Ext.extend(Ext.Window,{
   maximized: true,
   maximizable: false,
   constructor : function (config) {
-    if (config.params_item) {
+    if (config.main_item.params_panel) {
         config.layout = 'border';
         config.main_item.region = 'center';
-        config.params_item.region = 'north';
-        config.items = [config.params_item, config.main_item];
+        config.main_item.params_panel.region = 'north';
+        config.main_item.params_panel.hidden = ! config.main_item.params_panel_hidden;
+        config.items = [config.main_item.params_panel, config.main_item];
     } else {
         config.layout = 'fit';
         config.items = config.main_item;
@@ -3105,7 +3157,7 @@ Lino.Window = Ext.extend(Ext.Window,{
     this.main_item = config.main_item; 
     
     delete config.main_item;
-    delete config.params_item;
+    //~ delete config.params_item;
     
     //~ this.main_item = config.items.get(0);
     this.main_item.containing_window = this;
@@ -3118,11 +3170,14 @@ Lino.Window = Ext.extend(Ext.Window,{
     ];
     //~ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
     //~ { qtip: 'Call doLayout() on main Container.', handler: Lino.refresh_handler(this), id: "refresh" },
+    //~ if (this.main_item.params_panel) {
+        //~ config.tools = config.tools.concat([ 
+          //~ { qtip: 'Show/hide parameter panel', handler: this.toggle_params_panel, id: "gear", scope:this } 
+        //~ ]);
+    //~ }
     if (config.closable !== false) {
-      // it undefined, will take default behaviour
-      //~ console.log('20111202 add close() button handler');
+      // if undefined, will take default behaviour
       config.tools = config.tools.concat([ 
-        //~ { qtip: 'close', handler: Lino.tools_close_handler(this), id: "close" } 
         { qtip: 'close', handler: this.close, id: "close", scope:this } 
       ]);
     }
@@ -3140,14 +3195,21 @@ Lino.Window = Ext.extend(Ext.Window,{
     Lino.Window.superclass.initComponent.call(this);
   
   },
+  //~ toggle_params_panel : function() {
+      //~ if (this.main_item.params_panel.isVisible()) 
+          //~ this.main_item.params_panel.hide();
+      //~ else
+          //~ this.main_item.params_panel.show();
+      //~ this.doLayout();
+  //~ },
   show : function() {
-      console.log('20120110 Lino.Window.show() 1',this);
+      //~ console.log('20120110 Lino.Window.show() 1',this);
       Lino.Window.superclass.show.call(this,arguments);
       //~ this.window.show();
       Lino.current_window = this;
       //~ this.refresh();
       //~ Lino.load_mask.hide();
-      console.log('20120110 Lino.Window.show() 2');
+      //~ console.log('20120110 Lino.Window.show() 2');
   },
   kill : function() {
     Lino.Window.superclass.close.call(this);
@@ -3173,19 +3235,19 @@ Lino.Window = Ext.extend(Ext.Window,{
       });
   },
   onRender : function(ct, position){
-    console.log('20120110 Lino.Window.onRender() 1');
+    //~ console.log('20120110 Lino.Window.onRender() 1');
     Lino.Window.superclass.onRender.call(this, ct, position);
     var main_area = Ext.getCmp('main_area')
-    console.log('20120110 Lino.Window.onRender() 2');
+    //~ console.log('20120110 Lino.Window.onRender() 2');
   
     this.on('show', function(win) {
-        console.log('20120110 Lino.Window.on show 1');
+        //~ console.log('20120110 Lino.Window.on show 1');
         main_area.on('resize', win.onWindowResize, win);
     });
     this.on('hide', function(win) {
         main_area.un('resize', win.onWindowResize, win);
     });
-    console.log('20120110 Lino.Window.onRender() 3');
+    //~ console.log('20120110 Lino.Window.onRender() 3');
   }
 });
 
@@ -3578,8 +3640,9 @@ Ext.override(Lino.CalendarPanel,Lino.MainPanel);
 
 #end if
 
-Lino.ParameterPanel = Ext.extend(Ext.Container,{
-  layout: "hbox", 
+//~ Lino.ParameterPanel = Ext.extend(Ext.Component,{
+Lino.unused_ParameterPanel = Ext.extend(Ext.Container,{
+  //~ layout: "hbox", 
   //~ align: "middle",
   //~ pack: "center",
   //~ labelWidth: 63, 
@@ -3599,8 +3662,14 @@ Lino.ParameterPanel = Ext.extend(Ext.Container,{
           this.grid_panel.refresh();
       }
   },
+  //~ onRender : function(ct, position){
+    //~ Lino.ParameterPanel.superclass.onRender.call(this, ct, position);
+    //~ for(var i=0; i < this.fields.length;i++) {
+        //~ this.fields[i].onRender(); 
+    //~ }
+  //~ },
   initComponent : function() {
-    var fields_panel = { "xtype": "panel", 
+    var unused_fields_panel = { "xtype": "panel", 
       "items": this.fields, 
       //~ region: 'center',
       flex: 1,
@@ -3610,15 +3679,16 @@ Lino.ParameterPanel = Ext.extend(Ext.Container,{
       //~ weigth: 1
       //~ ,align:"right" 
     };
-    var go_button = new Ext.Button({
+    var unused_go_button = new Ext.Button({
         //~ autoHeight: true, 
         text:'Go', 
+        renderTo: 'go-button',
         //~ region: 'east',
         //~ flex: 0, 
         handler: this.onGoButtonClick, 
         scope: this})
-    //~ this.items = { "xtype": "panel", "items": [fields_panel, go_button], "autoHeight": true, "layout": "hbox" };
-    this.items = [fields_panel, go_button];
+    //~ this.items = [fields_panel, go_button];
+    //~ this.fields = this.fields.concat([go_button]);
     Lino.ParameterPanel.superclass.initComponent.call(this);
   }
 });

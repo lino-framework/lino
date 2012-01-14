@@ -49,6 +49,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actors
 from lino.core import actions
+from lino.core.fields import FakeField
 from lino.ui import base
 from lino.ui import requests as ext_requests
 from lino.utils import perms
@@ -216,23 +217,27 @@ class AbstractTableRequest(ActionRequest):
         #~ self.setup(*args,**kw)
     
     def parse_req(self,request,rh,**kw):
+        if rh.report.params:
+            kw.update(param_values=self.ui.parse_params(rh,request))
         #~ kw.update(self.report.known_values)
         #~ for fieldname, default in self.report.known_values.items():
             #~ v = request.REQUEST.get(fieldname,None)
             #~ if v is not None:
                 #~ kw[fieldname] = v
         kw.update(user=request.user)
+        
+        #~ kw.update(param_values=request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))
+        
+        #~ def parse_param(fld,request,kv):
+            #~ v = request.REQUEST.get(fld.name,None)
+            #~ if v is not None:
+                #~ kv[fld.name] = v
             
-        def parse_param(fld,request,kv):
-            v = request.REQUEST.get(fld.name,None)
-            if v is not None:
-                kv[fld.name] = v
-            
-        kv = kw.get('known_values',{})
-        for fld in self.report.params:
-            parse_param(fld,request,kv)
-        if kv:
-            kw.update(known_values=kv)
+        #~ kv = kw.get('known_values',{})
+        #~ for fld in self.report.params:
+            #~ parse_param(fld,request,kv)
+        #~ if kv:
+            #~ kw.update(known_values=kv)
         
         kw = rh.report.parse_req(request,**kw)
         return kw
@@ -241,6 +246,7 @@ class AbstractTableRequest(ActionRequest):
             user=None,
             subst_user=None,
             known_values=None,
+            param_values=None,
             **kw):
         if user is not None and not self.report.can_view.passes(user):
             msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
@@ -261,6 +267,7 @@ class AbstractTableRequest(ActionRequest):
         #~ if self.report.__class__.__name__ == 'SoftSkillsByPerson':
             #~ logger.info("20111223 %r %r", kw, self.report.known_values)
         self.known_values = kw
+        self.param_values = param_values
         
         self.report.setup_request(self)
         
@@ -293,8 +300,15 @@ class AbstractTableRequest(ActionRequest):
     def get_title(self):
         return self.report.get_title(self)
         
+    def render_to_html(self,w):
+        w.write("""<HTML><BODY>
+        foo
+        </BODY></HTML>
+        """)
     def render_to_dict(self):
         return self.action.render_to_dict(self)
+        
+        
         
     #~ def row2dict(self,row,d):
         #~ # overridden in extjs.ext_requests.ViewReportRequest
@@ -411,11 +425,23 @@ class AbstractTable(actors.Actor):
     
     params = None
     """
-    This is automatically filled with 
+    Internal attribute automatically filled with 
     the user-definable parameter fields for this table.
     """
     
-    field = None
+    params_template = None
+    """
+    If this table has parameters, specify here how they should be 
+    laid out in the parameters panel.
+    """
+    
+    params_panel_hidden = True
+    """
+    If this table has parameters, set this to False if the parameters 
+    panel should be hidden when the table is rendered in a grid widget.
+    """
+    
+    #~ field = None
     
     title = None
     
@@ -624,12 +650,16 @@ class AbstractTable(actors.Actor):
       
         
     @classmethod
+    def get_param_elem(self,name):
+        for pf in self.params:
+            if pf.name == name:  return pf
+        return None
+      
+    @classmethod
     def get_data_elem(self,name):
         cc = self.computed_columns.get(name,None)
         if cc is not None:
             return cc
-        for pf in self.params:
-            if pf.name == name:  return pf
         return None
               
         
@@ -686,13 +716,13 @@ class AbstractTable(actors.Actor):
         #~ return "Grid Config has been saved to %s" % filename
     
 
-class ComputedColumn(object):
+class ComputedColumn(FakeField):
     """
     A Column whose value is not retrieved from the database but 
     "computed" by a custom function.
     """
-    editable = False
-    primary_key = False
+    #~ editable = False
+    #~ primary_key = False
     def __init__(self,func,verbose_name=None,name=None,width=None):
         self.func = func
         self.name = name

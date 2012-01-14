@@ -103,6 +103,37 @@ Administration & Finance | Administration & Finance | Verwaltung & Finanzwesen
 
 def objects():
   
+    sector = Instantiator('jobs.Sector').build
+    for ln in SECTORS.splitlines():
+        if ln:
+            a = ln.split('|')
+            if len(a) == 3:
+                kw = dict(en=a[0],fr=a[1],de=a[2])
+                yield sector(**babel_values('name',**kw))
+                
+    horeca = jobs.Sector.objects.get(pk=5)
+    function = Instantiator('jobs.Function',sector=horeca).build
+    yield function(**babel_values('name',
+          de=u"Kellner",
+          fr=u'Serveur',
+          en=u'Waiter',
+          ))
+    yield function(**babel_values('name',
+          de=u"Koch",
+          fr=u'Cuisinier',
+          en=u'Cook',
+          ))
+    yield function(**babel_values('name',
+          de=u"Küchenassistent",
+          fr=u'Aide Cuisinier',
+          en=u'Cook assistant',
+          ))
+    yield function(**babel_values('name',
+          de=u"Tellerwäscher",
+          fr=u'Plongeur',
+          en=u'Dishwasher',
+          ))
+
     contractType = Instantiator('jobs.ContractType',"ref",
         exam_policy=3,
         build_method='appypdf',
@@ -191,6 +222,7 @@ def objects():
     #~ exam_policy = Instantiator('isip.ExamPolicy').build
 
     City = resolve_model('countries.City')
+    #~ City = settings.LINO.modules.countries.City
     StudyType = resolve_model('jobs.StudyType')
     Country = resolve_model('countries.Country')
     Property = resolve_model('properties.Property')
@@ -217,7 +249,6 @@ def objects():
     bisa = company(name=u"BISA",city=eupen,country='BE')
     yield bisa 
     bisa_dir = role(company=bisa,person=annette,type=1)
-    #~ bisa_dir = link(a=bisa,b=annette,type=1)
     yield bisa_dir 
     rcycle = company(name=u"R-Cycle Sperrgutsortierzentrum",city=eupen,country='BE')
     yield rcycle
@@ -225,7 +256,10 @@ def objects():
     #~ rcycle_dir = link(a=rcycle,b=andreas,type=1)
     yield rcycle_dir
     yield company(name=u"Die neue Alternative V.o.G.",city=eupen,country='BE')
-    yield company(name=u"Pro Aktiv V.o.G.",city=eupen,country='BE')
+    proaktiv = company(name=u"Pro Aktiv V.o.G.",city=eupen,country='BE')
+    yield proaktiv
+    proaktiv_dir = role(company=proaktiv,person=hans,type=1)
+    yield proaktiv_dir
     yield company(name=u"Werkstatt Cardijn V.o.G.",city=eupen,country='BE')
     yield company(name=u"Behindertenstätten Eupen",city=eupen,country='BE')
     yield company(name=u"Beschützende Werkstätte Eupen",city=eupen,country='BE')
@@ -398,56 +432,50 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     jobtype = Instantiator('jobs.JobType','name').build
     art607 = jobtype(u'Sozialwirtschaft = "majorés"')
     yield art607 
-    yield jobtype(u'INTERN')
-    yield jobtype(u'EXTERN (Öffentl. VoE mit Kostenrückerstattung)')
-    yield jobtype(u'EXTERN (Privat Kostenrückerstattung)')
+    yield jobtype(u'Intern')
+    yield jobtype(u'Extern (Öffentl. VoE mit Kostenrückerstattung)')
+    yield jobtype(u'Extern (Privat Kostenrückerstattung)')
     yield jobtype(u'VSE')
-    yield jobtype(u'Sonstige (alle nicht')
+    yield jobtype(u'Sonstige')
     
     rcycle = mti.insert_child(rcycle,JobProvider)
     yield rcycle 
     bisa = mti.insert_child(bisa,JobProvider)
     yield bisa 
+    proaktiv = mti.insert_child(proaktiv,JobProvider)
+    yield proaktiv
     
     job = Instantiator('jobs.Job','provider type contract_type name').build
     bisajob = job(bisa,art607,1,"bisa")
     yield bisajob
     rcyclejob = job(rcycle,art607,2,"rcycle")
     yield rcyclejob 
+    proaktivjob = job(proaktiv,art607,2,"proaktiv",sector=horeca,function=1)
+    yield proaktivjob
     contract = Instantiator('jobs.Contract',
       'type applies_from applies_until job contact',
       user=root).build
-    #~ yield contract(1,i2d(20090518),i2d(20100517),rcyclejob,rcycle_dir)
     yield contract(1,settings.LINO.demo_date(-30),
         settings.LINO.demo_date(+60),rcyclejob,rcycle_dir,person=hans)
-    #~ yield contract(1,i2d(20090518),i2d(20100517),bisajob,bisa_dir)
     yield contract(1,settings.LINO.demo_date(-29),
         settings.LINO.demo_date(+61),bisajob,bisa_dir,person=ulrike)
-    #~ yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
     yield contract(1,settings.LINO.demo_date(-29),None,bisajob,bisa_dir,person=andreas)
-    #~ yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
     yield contract(1,settings.LINO.demo_date(-28),None,
         rcyclejob,rcycle_dir,person=annette)
-    #~ yield contract(1,None,None,bisajob,bisa_dir,person=tatjana)
-    yield contract(1,settings.LINO.demo_date(-10),
-        settings.LINO.demo_date(+20),bisajob,bisa_dir,person=tatjana)
+    yield contract(1,
+        settings.LINO.demo_date(-10),settings.LINO.demo_date(+20),
+        bisajob,bisa_dir,person=tatjana)
+    yield contract(2,
+        settings.LINO.demo_date(20),settings.LINO.demo_date(+120),
+        proaktivjob,proaktiv_dir,person=tatjana)
+    yield contract(2,
+        settings.LINO.demo_date(-120),settings.LINO.demo_date(-20),
+        proaktivjob,proaktiv_dir,person=ulrike)
     
     jobrequest = Instantiator('jobs.Candidature','job person date_submitted').build
-    #~ yield jobrequest(bisajob,tatjana,i2d(20111005))
     yield jobrequest(bisajob,tatjana,settings.LINO.demo_date(-5))
-    #~ yield jobrequest(rcyclejob,luc,i2d(20111005))
     yield jobrequest(rcyclejob,luc,settings.LINO.demo_date(-30))
 
-    #~ def f(rmd,d):
-        #~ rmd.reminder_date = d
-        #~ rmd.reminder_text = 'demo reminder'
-        #~ rmd.save()
-        
-    #~ for rmd in Note.objects.all(): f(rmd,i2d(20101110))
-    #~ for rmd in Contract.objects.all(): f(rmd,i2d(20101111))
-      
-      
-      
     
     if False: # this was lino.modlib.links before December 2011
       
@@ -665,37 +693,6 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield event(1,settings.LINO.demo_date(+1),hans,u"Stand der Dinge")
     yield event(2,settings.LINO.demo_date(+1),annette,u"Problem Kühlschrank")
     yield event(3,settings.LINO.demo_date(+2),andreas,u"Mein dritter Termin")
-
-    sector = Instantiator('jobs.Sector').build
-    for ln in SECTORS.splitlines():
-        if ln:
-            a = ln.split('|')
-            if len(a) == 3:
-                kw = dict(en=a[0],fr=a[1],de=a[2])
-                yield sector(**babel_values('name',**kw))
-                
-    horeca = jobs.Sector.objects.get(pk=5)
-    function = Instantiator('jobs.Function',sector=horeca).build
-    yield function(**babel_values('name',
-          de=u"Kellner",
-          fr=u'Serveur',
-          en=u'Waiter',
-          ))
-    yield function(**babel_values('name',
-          de=u"Koch",
-          fr=u'Cuisinier',
-          en=u'Cook',
-          ))
-    yield function(**babel_values('name',
-          de=u"Küchenassistent",
-          fr=u'Aide Cuisinier',
-          en=u'Cook assistant',
-          ))
-    yield function(**babel_values('name',
-          de=u"Tellerwäscher",
-          fr=u'Plongeur',
-          en=u'Dishwasher',
-          ))
 
     i = dsbe.Person.objects.order_by('name').__iter__()
     p = i.next()

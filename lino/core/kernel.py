@@ -64,7 +64,7 @@ from lino.utils import babel
 from lino.utils import AttrDict
 
 
-def analyze_models(self,make_messages):
+def analyze_models(self):
     """
     This is a part of a Lino site setup.
     The Django Model definitions are done, now Lino analyzes them and does certain actions.
@@ -109,22 +109,6 @@ def analyze_models(self,make_messages):
         if hasattr(model,'site_setup'):
             model.site_setup(self)
     
-        model._lino_detail_layouts = {}
-            
-        def loader(content,cd,filename):
-            dtl = table.DetailLayout(content,filename,cd)
-            head,tail = os.path.split(filename)
-            model._lino_detail_layouts[tail] = dtl
-            if make_messages:
-                dtl.make_dummy_messages_file()
-            
-        load_config_files(loader,'*.dtl','%s/%s' 
-            % (model._meta.app_label,model.__name__))
-        
-        #~ logger.debug("20110822 %s._lino_detail_layouts : %s",
-            #~ full_model_name(model),
-            #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
-        
         for k,v in class_dict_items(model):
             if isinstance(v,dd.VirtualField):
                 v.lino_kernel_setup(model,k)
@@ -143,6 +127,27 @@ def analyze_models(self,make_messages):
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
                     
+        
+def load_details(make_messages):
+  
+    for model in models.get_models():
+      
+        model._lino_detail_layouts = {}
+            
+        def loader(content,cd,filename):
+            dtl = table.DetailLayout(model._lino_model_report,content,filename,cd)
+            head,tail = os.path.split(filename)
+            model._lino_detail_layouts[tail] = dtl
+            if make_messages:
+                dtl.make_dummy_messages_file()
+            
+        load_config_files(loader,'*.dtl','%s/%s' 
+            % (model._meta.app_label,model.__name__))
+        
+        #~ logger.debug("20110822 %s._lino_detail_layouts : %s",
+            #~ full_model_name(model),
+            #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
+            
     """
     Now another loop to convert `_lino_detail_layouts` to `_lino_detail`
     must be a separate loop because we cannot predict the sorting order of models
@@ -271,18 +276,25 @@ def setup_site(self,make_messages=False):
     #~ self.configure(get_site_config())
     #~ self._siteconfig = get_site_config()
   
-    analyze_models(self,make_messages)
-    #~ logger.debug("analyze_models() done")
+    analyze_models(self)
     
     actors.discover()
-    #~ logger.debug("actors.discover() done")
+    
+    #~ logger.debug("analyze_models() done")
+    
+    # set _lino_model_report for all models:
     
     table.discover()
     
     choosers.discover()
     
-    #~ babel.discover() # would have to be called before model setup
+    load_details(make_messages)
     
+    
+    actors.setup_actors()
+    #~ logger.debug("actors.discover() done")
+    
+    #~ babel.discover() # would have to be called before model setup
     
     self.modules = AttrDict()
 

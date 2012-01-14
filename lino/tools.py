@@ -16,6 +16,7 @@
 import os
 
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 from django.utils.importlib import import_module
 
@@ -224,4 +225,14 @@ def makedirs_if_missing(dirname):
         else:
             raise Exception("Please create yourself directory %s" % dirname)
         
-    
+def range_filter(v,f1,f2):
+    """
+    return a Q object (to be added as a filter on a queryset)
+    to inlude only instances where v is contained within the range between f1 and f2.
+    `v` being a value and f1 and f2 being the names of fields of same data type as v.
+    """
+    #~ filter = Q(**{f2+'__isnull':False}) | Q(**{f1+'__isnull':False})
+    q1 = Q(**{f1+'__isnull':True}) | Q(**{f1+'__lte':v})
+    q2 = Q(**{f2+'__isnull':True}) | Q(**{f2+'__gte':v})
+    return Q(q1,q2)
+  

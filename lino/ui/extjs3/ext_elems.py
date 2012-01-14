@@ -361,6 +361,7 @@ class FieldElement(LayoutElement):
         self.field = field
         self.editable = field.editable # and not field.primary_key
         kw.setdefault('label',field.verbose_name)
+        self.add_default_value(kw)
         #~ kw.update(label=field.verbose_name) 
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
         
@@ -385,6 +386,13 @@ class FieldElement(LayoutElement):
         
     #~ def submit_fields(self):
         #~ return [self.field.name]
+    def add_default_value(self,kw):
+        if self.field.has_default():
+            dv = self.field.default
+            if callable(dv):
+                dv = dv()
+            kw.update(value=dv)
+            
         
     def get_field_options(self,**kw):
         if self.xtype:
@@ -550,8 +558,8 @@ class RemoteComboFieldElement(ComboFieldElement):
   
     def store_options(self,**kw):
         url = self.layout_handle.ui.build_url("choices",
-            self.layout_handle.table.model._meta.app_label,
-            self.layout_handle.table.model.__name__,
+            self.layout_handle.layout.table.model._meta.app_label,
+            self.layout_handle.layout.table.model.__name__,
             self.field.name,**kw)
         proxy = dict(url=url,method='GET')
         kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
@@ -745,7 +753,8 @@ class DecimalFieldElement(FieldElement):
 
 class BooleanFieldElement(FieldElement):
   
-    xtype = 'checkbox'
+    value_template = "new Ext.form.Checkbox(%s)"
+    #~ xtype = 'checkbox'
     #~ data_type = 'boolean' 
     filter_type = 'boolean'
     gridfilters_settings = dict(type='boolean')
@@ -759,6 +768,15 @@ class BooleanFieldElement(FieldElement):
         if parent.hideCheckBoxLabels:
             self.update(hideLabel=True)
             
+    def add_default_value(self,kw):
+        if self.field.has_default():
+            dv = self.field.default
+            if callable(dv):
+                dv = dv()
+            kw.update(checked=dv)
+            #~ self.remove('value')
+        
+
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         if not isinstance(self.layout_handle.layout,table.ListLayout):
@@ -830,6 +848,8 @@ class GenericForeignKeyElement(DisplayElement):
         #~ kw.update(label=field.verbose_name) 
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
   
+    def add_default_value(self,kw):
+        pass
     
     
 class HtmlBoxElement(DisplayElement):
@@ -1216,7 +1236,7 @@ class Panel(Container):
 class FieldSetPanel(Panel):
     value_template = "new Ext.form.FieldSet(%s)"
     def __init__(self,layout_handle,name,vertical,*elements,**kw):
-        self.fieldset = getattr(layout_handle.table.model,name)
+        self.fieldset = getattr(layout_handle.layout.table.model,name)
         for child in elements:
             child.label = self.fieldset.get_child_label(child.name)
         Panel.__init__(self,layout_handle,name,vertical,*elements,**kw)
@@ -1269,7 +1289,9 @@ class GridElement(Container):
         self.columns = columns
         
         #~ kw.update(containing_window=js_code("ww"))
-        
+        #~ if not rpt.show_params_at_render:
+        if rpt.params_panel_hidden:
+            kw.update(params_panel_hidden=False)
         Container.__init__(self,layout_handle,name,**kw)
         self.active_children = columns
         #~ 20111125
@@ -1361,8 +1383,20 @@ class DetailMainPanel(Panel,MainPanel):
         return kw
         
 
-class ParamsPanel(DetailMainPanel):
+class ParameterPanel(DetailMainPanel):
     value_template = "new Ext.Container(%s)"
+    def __init__(self,layout_handle,name,vertical,*elements,**kw):
+        DetailMainPanel.__init__(self,layout_handle,name,vertical,*elements,**kw)
+        self.fields = []
+        for e in self.walk():
+            if isinstance(e,FieldElement):
+                #~ logger.info("20120114 ")
+                self.fields.append(e)
+        #~ self.fields = [e for e in self.walk() if isinstance(e,FieldElement)]
+    def ext_options(self,**kw):
+        kw = super(ParameterPanel,self).ext_options(**kw)
+        kw.update(fields=self.fields)
+        return kw
     
 
 class TabPanel(jsgen.Component):

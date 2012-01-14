@@ -11,19 +11,19 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from django.db import models
-from django.http import HttpResponse, Http404
-from django.contrib.contenttypes.models import ContentType
+#~ from django.db import models
+#~ from django.http import HttpResponse, Http404
+#~ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
-from django.utils import simplejson as json
-from django.conf import settings
-
-#~ UNDEFINED = "nix"
+#~ from django.utils import simplejson as json
+#~ from django.conf import settings
 
 CHOICES_TEXT_FIELD = 'text'
 CHOICES_VALUE_FIELD = 'value'
 CHOICES_HIDDEN_SUFFIX = "Hidden"
 
+
+URL_PARAM_PARAM_VALUES = 'pv'
 
 URL_PARAM_ACTION_NAME = 'an'
 

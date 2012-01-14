@@ -60,6 +60,7 @@ from lino.utils.choicelists import ChoiceList
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
+from lino.tools import range_filter
 from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils.babel import language_choices
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
@@ -881,8 +882,8 @@ def unused_only_coached_persons(qs,period_from,period_until=None):
   
 def only_coached_persons(qs,*args,**kw):
     return qs.filter(only_coached_persons_filter(*args,**kw))
-  
-def only_coached_persons_filter(period_from,period_until=None):
+    
+def unused_only_coached_persons_filter(period_from,period_until=None):
     """
     coached_from and coached_until
     """
@@ -893,6 +894,17 @@ def only_coached_persons_filter(period_from,period_until=None):
     if period_until is not None:
         filter = Q(filter,(Q(coached_from__isnull=True)|Q(coached_from__lte=period_until)))
     return filter
+  
+
+def only_coached_persons_filter(today):
+    """
+    coached_from and coached_until
+    """
+    #~ period_until = period_until or period_from
+    # Person with both fields empty is not considered coached:
+    q1 = Q(coached_until__isnull=False) | Q(coached_from__isnull=False)
+    return Q(q1,range_filter(today,'coached_from','coached_until'))
+    
   
 def only_my_persons(qs,user):
     return qs.filter(Q(coach1__exact=user) | Q(coach2__exact=user))
@@ -1932,7 +1944,11 @@ class PersonsBySearch(dd.Table):
         if search.coached_by:
             qs = only_my_persons(qs,search.coached_by)
             
-        qs = only_coached_persons(qs,search.period_from,search.period_until)
+        if search.period_from:
+            qs = only_coached_persons(qs,search.period_from)
+            
+        if search.period_until:
+            qs = only_coached_persons(qs,search.period_until)
           
         required_id_sets = []
         

@@ -129,9 +129,20 @@ class QuantityField(models.DecimalField):
         fld.widget.attrs['style'] = "text-align:right;"
         return fld
         
-class DisplayField:
+class FakeField: 
     primary_key = False
     editable = False
+    name = None
+    
+    def is_enabled(self,lh):
+        return True
+        
+    def has_default(self):
+        return False
+        
+
+class DisplayField(FakeField):
+    
     choices = None
     blank = True
     drop_zone = None
@@ -146,7 +157,7 @@ class DisplayField:
     def to_python(self,*args,**kw): raise NotImplementedError
     def save_form_data(self,*args,**kw): raise NotImplementedError
     def value_to_string(self,*args,**kw): raise NotImplementedError
-    #~ def value_from_object(self,*args,**kw): raise NotImplementedError
+        
         
 class HtmlBox(DisplayField):
     pass
@@ -156,13 +167,10 @@ class HtmlBox(DisplayField):
     
 #~ from django.db.models.fields import Field
 
-class VirtualField: # (Field):
+class VirtualField(FakeField): # (Field):
     """
     Currently subclassed only by :class:`lino.utils.mti.EnableChild`.    
     """
-    primary_key = False
-    editable = False
-    name = None
     
     def __init__(self,return_type,get):
         self.return_type = return_type # a Django Field instance
@@ -175,9 +183,6 @@ class VirtualField: # (Field):
           blank'''.split()):
             setattr(self,k,getattr(return_type,k))
             
-    def is_enabled(self,lh):
-        return True
-        
     def unused_contribute_to_class(self, cls, name):
         ## if defined in abstract base class, called once on each submodel
         if self.name:
