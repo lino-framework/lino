@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -215,7 +215,8 @@ class TEXT(Node):
     def __init__(self,data):
         self.data = data
     def __xml__(self,wr):
-        wr.write(self.data)
+        py2xml(wr,self.data)
+        #~ wr.write(self.data)
     
         
 class ElementMetaClass(type):
@@ -252,7 +253,9 @@ class Element(Node):
         
     def validate(self,v):
         if self.allowedValues and not v in self.allowedValues:
-            raise Exception("Invalid value %r (must be one of %s)" % (v,self.allowedValues))
+            raise Exception(
+              "Invalid value %r (must be one of %s)" % (
+                v,self.allowedValues))
         return v
         
 
@@ -281,28 +284,8 @@ class Element(Node):
                 "%s instance has no attribute '%s'" % (
                 self.__class__.__name__, name))
         
-    #~ @classmethod
-    #~ def collect_children(cls,ns,classname):
-        #~ pass
-        
     def set_parent(self,p):
         self.parent = p
-        
-    #~ @classmethod
-    #~ def set_namespace(cls,ns):
-        #~ if cls.namespace:
-            #~ raise Exception("Element %s got duplicate namespace %r" % (
-              #~ cls.__name__,ns.__name__))
-        #~ cls.namespace = ns
-        #~ cls.add_namespace(ns)
-        
-    #~ @classmethod
-    #~ def add_namespace(cls,ns):
-        #~ if cls.parent:
-            #~ cls.parent.add_namespace(ns)
-        #~ elif not ns in cls.used_namespaces:
-            #~ cls.used_namespaces.append(ns)
-            
         
     def get_namespace(self):
         if self.namespace is not None:
@@ -357,12 +340,17 @@ class Element(Node):
             #~ return parseString(u.getvalue()).toprettyxml()
         return u.getvalue()
         
+from django.utils.functional import Promise
+from django.utils.encoding import force_unicode
+
 def py2xml(wr,value): # ,indent='',addindent='',newl=''
     if isinstance(value,(list,tuple)):
         for e in value:
             py2xml(wr,e)
     elif isinstance(value,Node):
         value.__xml__(wr)
+    elif isinstance(value,Promise):
+        wr.write(force_unicode(value))
     else:
         wr.write(value)
 
@@ -399,10 +387,17 @@ class Container(Element):
                     for ns in e.used_namespaces:
                         if not ns in self.used_namespaces:
                             self.used_namespaces.append(ns)
-        Element.__init__(self,nodes,**attribs)
+        Element.__init__(self,list(nodes),**attribs)
         
     def append(self,e):
         self.value.append(e)
+        return e
+        
+    def find_node(self,cl):
+        for n in self.value:
+            if isinstance(n,cl): 
+                return n
+        return self.append(cl())
         
     #~ def __xml__(self,wr):
         #~ wr("<" + self.tag())

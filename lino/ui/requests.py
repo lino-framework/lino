@@ -101,7 +101,7 @@ def parse_boolean(v):
         return True
     if v in ('false','off'):
         return False
-    raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
+    raise Exception("Invalid boolean value %r" % v)
         
 def dict2kw(d):
     newd = {}

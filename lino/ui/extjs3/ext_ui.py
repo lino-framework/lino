@@ -36,7 +36,7 @@ from django import http
 from django.core import exceptions
 from django.utils import functional
 from django.utils.encoding import force_unicode
-from django.utils.functional import Promise
+#~ from django.utils.functional import Promise
 
 from django.template.loader import get_template
 from django.template import RequestContext
@@ -63,6 +63,7 @@ from lino import dd
 from lino.core import actions #, layouts #, commands
 from lino.core import table
 from lino.utils import tables
+from lino.utils import xhtml as xhg
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
@@ -230,10 +231,10 @@ def elem2rec_detailed(ar,rh,elem,**rec):
         last = None
         #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
         recno = 0
-        if ar.total_count > 0:
+        if len(ar.data_iterator) > 0:
             if True:
                 # this algorithm is clearly quicker on reports with a few thousand Persons
-                id_list = list(ar._data_iterator.values_list('pk',flat=True))
+                id_list = list(ar.data_iterator.values_list('pk',flat=True))
                 """
                 Uncommented the following assert because it failed in certain circumstances 
                 (see :doc:`/blog/2011/1220`)
@@ -252,13 +253,13 @@ def elem2rec_detailed(ar,rh,elem,**rec):
                     if i > 0:
                         #~ prev = ar.queryset[i-1]
                         prev = id_list[i-1]
-                    if i < ar.total_count - 1:
+                    if i < len(ar.data_iterator) - 1:
                         #~ next = ar.queryset[i+1]
                         next = id_list[i+1]
             else:
                 first = ar.queryset[0]
                 last = ar.queryset.reverse()[0]
-                if ar.total_count > 200:
+                if len(ar.data_iterator) > 200:
                     #~ TODO: check performance
                     pass
                 g = enumerate(ar.queryset) # a generator
@@ -279,7 +280,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
                 if next is not None: next = next.pk
         rec.update(navinfo=dict(
             first=first,prev=prev,next=next,last=last,recno=recno,
-            message=_("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=ar.total_count)))
+            message=_("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=len(ar.data_iterator))))
     return rec
             
     
@@ -321,7 +322,7 @@ def find_field(model,name):
 class ExtUI(base.UI):
     """The central instance of Lino's ExtJS3 User Interface.
     """
-    _response = None
+    #~ _response = None
     name = 'extjs3'
     verbose_name = "ExtJS with Windows"
     Panel = ext_elems.Panel
@@ -1142,19 +1143,32 @@ tinymce.init({
                 #~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
                 w = ucsv.UnicodeWriter(response,**settings.LINO.csv_params)
                 w.writerow(ar.ah.store.column_names())
-                for row in ar.queryset:
+                for row in ar.data_iterator:
                     w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
                 return response
                 
             if fmt == 'printer':
                 response = HttpResponse(content_type='text/html;charset="utf-8"')
-                ar.render_to_html(response)
+                #~ ar.render_to_html(self,response)
+                doc = xhg.HTML()
+                doc.set_title(ar.get_title())
+                t = xhg.TABLE(border="1")
+                #~ t = xhg.TABLE(style="")
+                doc.add_to_body(t)
+                headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
+                t.add_header_row(*headers)
+                for row in ar.data_iterator:
+                    #~ cells = [getattr(row,col.name) for col in self.ah.list_layout._main.columns]
+                    cells = [x for x in ar.ah.store.cells_html(ar,row)]
+                    t.add_body_row(*cells)
+                doc.__xml__(response)
                 return response
                 
             if fmt == 'json':
-                rows = [ rh.store.row2list(ar,row) for row in ar]
+                rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
                 #~ rows = [ rh.store.row2list(ar,row) for row in ar.queryset ]
-                total_count = ar.total_count
+                #~ total_count = ar.total_count
+                total_count = len(ar.data_iterator)
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):
                 #~ for i in range(0,ar.extra):
@@ -1229,9 +1243,10 @@ tinymce.init({
             if pk:
                 pass
             else:
-                rows = [ rh.store.row2list(ar,row) for row in ar._data_iterator ]
+                rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator ]
                 #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
-                total_count = ar.total_count
+                #~ total_count = ar.total_count
+                total_count = len(ar.data_iterator)
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):
                 #~ for i in range(0,ar.extra):
@@ -1579,7 +1594,8 @@ tinymce.init({
             #~ ar = table.TableRequest(self,rpt,request,rpt.default_action)
             ar = rpt.request(self,request,rpt.default_action)
             #~ rh = ar.ah
-            qs = ar.get_data_iterator()
+            #~ qs = ar.get_data_iterator()
+            qs = ar.data_iterator
             #~ qs = rpt.request(self).get_queryset()
             def row2dict(obj,d):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
@@ -1625,13 +1641,13 @@ tinymce.init({
             elif isinstance(field,models.ForeignKey):
                 m = field.rel.to
                 #~ cr = getattr(m,'_lino_choices_table',None)
-                cr = getattr(m,'_lino_choices_table',m._lino_model_report)
+                t = getattr(m,'_lino_choices_table',m._lino_model_report)
                 #~ tblclass = getattr(m,'_lino_choices_table',m._lino_model_report)
                 #~ if tblclass is not None:
                     #~ tbl = tblclass()
                 #~ else:
                     #~ tbl = m._lino_model_report
-                qs = cr.request(self,request).get_data_iterator()
+                qs = t.request(self,request).data_iterator
                 #~ ar = table.TableRequest(self,tbl,request,tbl.default_action)
                 #~ qs = ar.get_queryset()
                 #~ qs = mr.request(self,**mr.default_params).get_queryset()
@@ -1676,7 +1692,7 @@ tinymce.init({
         """
         params = dict(base_params=rr.request2kw(self))
         #~ params = dict(base_params=self.request2kw(rr))
-        if rr.total_count == 0:
+        if len(rr.data_iterator) == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
             a = rr.report.get_action('insert')
             if a is not None:
@@ -1684,19 +1700,19 @@ tinymce.init({
                 elem = rr.create_instance()
                 params.update(data_record=elem2rec_insert(rr,rr.ah,elem))
                 return self.action_href(a,_("Upload"),**params)
-        if rr.total_count == 1:
+        if len(rr.data_iterator) == 1:
             #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
             #~ s = unicode(v[0]) + ':'
             s = ''
-            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(rr[0].file.name))
+            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(rr.data_iterator[0].file.name))
             #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
             #~ params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
             if True:
                 #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
-                params.update(record_id=rr[0].pk)
+                params.update(record_id=rr.data_iterator[0].pk)
                 s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
             else:
-                params.update(record_id=rr[0].pk)
+                params.update(record_id=rr.data_iterator[0].pk)
                 s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),**params)
             return s
         return '[?!]'
@@ -2117,14 +2133,7 @@ tinymce.init({
             s = "Lino.%s.GridPanel" % rpt
             if action.actor.params:
                 params = rh.params_layout._main
-                #~ if action.actor.params_template:
-                    #~ params_template = action.actor.params_template
-                #~ else:
-                    #~ params_template= ' '.join([pf.name for pf in action.actor.params])
-                #~ lh = table.LayoutHandle(self,action.actor,
-                    #~ table.ParamsLayout('main = '+params_template))
-                #~ params = lh._main
-                #~ params.update(fields=[e for e in lh.walk() if isinstance(e,ext_elems.FieldElement)])
+                assert params.__class__.__name__ == 'ParameterPanel'
         elif isinstance(action,table.Calendar):
             s = "Lino.CalendarPanel"
         else:
@@ -2135,10 +2144,14 @@ tinymce.init({
             yield "  mainConfig.is_main_window = true;" # workaround for problem 20111206
             #~ yield "  params.containing_window = true;" # workaround for problem 20111206
             if params:
+                #~ print "20120115 ext_options", params.ext_options()
                 for ln in jsgen.declare_vars(params):
                     yield '  '  + ln
                 #~ yield "  var pp = new %s(mainConfig);" % params
                 yield "  mainConfig.params_panel = %s;" % params
+                yield "  mainConfig.params_panel.fields = %s;" % py2js(
+                  [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
+                
                 #~ if True:
                     #~ yield "  var pp = new Lino.ParameterPanel({grid_panel: mp,fields:%s})" % (
                         #~ py2js(params),py2js(params_template))

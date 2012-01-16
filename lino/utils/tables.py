@@ -39,7 +39,7 @@ u"""
 ...         return obj[2]
 ...
 
->>> CitiesAndInhabitants.render(fmt='text')
+>>> CitiesAndInhabitants.request().render_to_html()
 
 """
 
@@ -199,6 +199,8 @@ class ActionRequest(object):
 
 class AbstractTableRequest(ActionRequest):
   
+    limit = None
+    offset = None
     create_rows = None
     
     #~ def __init__(self,ui,report,request,action,*args,**kw):
@@ -215,6 +217,14 @@ class AbstractTableRequest(ActionRequest):
             kw = self.parse_req(request,self.ah,**kw)
         self.setup(**kw)
         #~ self.setup(*args,**kw)
+        self.data_iterator = self.get_data_iterator()
+        self.sliced_data_iterator = self.data_iterator
+        if self.offset is not None:
+            self.sliced_data_iterator = self.sliced_data_iterator[self.offset:]
+        if self.limit is not None:
+            self.sliced_data_iterator = self.sliced_data_iterator[:self.limit]
+        
+        
     
     def parse_req(self,request,rh,**kw):
         if rh.report.params:
@@ -225,6 +235,14 @@ class AbstractTableRequest(ActionRequest):
             #~ if v is not None:
                 #~ kw[fieldname] = v
         kw.update(user=request.user)
+        
+        offset = request.REQUEST.get(ext_requests.URL_PARAM_START,None)
+        if offset:
+            kw.update(offset=int(offset))
+        limit = request.REQUEST.get(ext_requests.URL_PARAM_LIMIT,None)
+        if limit:
+            kw.update(limit=int(limit))
+        
         
         #~ kw.update(param_values=request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))
         
@@ -247,6 +265,7 @@ class AbstractTableRequest(ActionRequest):
             subst_user=None,
             known_values=None,
             param_values=None,
+            offset=None,limit=None,
             **kw):
         if user is not None and not self.report.can_view.passes(user):
             msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
@@ -268,10 +287,15 @@ class AbstractTableRequest(ActionRequest):
             #~ logger.info("20111223 %r %r", kw, self.report.known_values)
         self.known_values = kw
         self.param_values = param_values
+        if offset is not None:
+            self.offset = offset
+            
+        if limit is not None:
+            self.limit = limit
+            
         
         self.report.setup_request(self)
         
-        self._data_iterator = self.get_data_iterator()
         
             
     def get_data_iterator(self):
@@ -282,14 +306,14 @@ class AbstractTableRequest(ActionRequest):
         #~ s = self.get_title()
         #~ return s.encode('us-ascii','replace')
         
-    def __iter__(self):
-        return self._data_iterator.__iter__()
+    #~ def __iter__(self):
+        #~ return self._sliced_data_iterator.__iter__()
         
-    def __getitem__(self,*args):
-        return self._data_iterator.__getitem__(*args)
+    #~ def __getitem__(self,*args):
+        #~ return self._data_iterator.__getitem__(*args)
         
-    def __len__(self):
-        return self._data_iterator.__len__()
+    #~ def __len__(self):
+        #~ return self._data_iterator.__len__()
         
     def get_user(self):
         return self.subst_user or self.user
@@ -300,15 +324,9 @@ class AbstractTableRequest(ActionRequest):
     def get_title(self):
         return self.report.get_title(self)
         
-    def render_to_html(self,w):
-        w.write("""<HTML><BODY>
-        foo
-        </BODY></HTML>
-        """)
+        
     def render_to_dict(self):
         return self.action.render_to_dict(self)
-        
-        
         
     #~ def row2dict(self,row,d):
         #~ # overridden in extjs.ext_requests.ViewReportRequest
@@ -354,7 +372,7 @@ class CustomTableRequest(AbstractTableRequest):
         
     def setup(self,**kw):
         AbstractTableRequest.setup(self,**kw)
-        self.total_count = len(self._data_iterator)
+        #~ self.total_count = len(self._data_iterator)
 
 
 

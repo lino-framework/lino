@@ -1011,7 +1011,7 @@ if settings.LINO.user_model:
         #~ (of [user])
         #~ """)
         params_template = """show_past show_active show_coming today user"""
-        params_panel_hidden = True
+        params_panel_hidden = False
         
         #~ master_key = 'user'
         #~ group_by = ['type']
@@ -1020,7 +1020,7 @@ if settings.LINO.user_model:
         
         @classmethod
         def get_request_queryset(cls,rr):
-            logger.info("20120114 param_values = %r",rr.param_values)
+            #~ logger.info("20120114 param_values = %r",rr.param_values)
             qs = super(ContractsByUser,cls).get_request_queryset(rr)
             user = rr.param_values.get('user',None)
             if user:
@@ -1029,7 +1029,7 @@ if settings.LINO.user_model:
             show_active = rr.param_values.get('show_active',True)
             if not show_active:
                 flt = range_filter(today,'applies_from','applies_until')
-                logger.info("20120114 flt = %r",flt)
+                #~ logger.info("20120114 flt = %r",flt)
                 qs = qs.exclude(flt)
             show_past = rr.param_values.get('show_past',True)
             if not show_past:

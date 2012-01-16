@@ -1,0 +1,36 @@
+20120116
+========
+
+Ich war am Wochenende nochmal wieder ziemlich aktiv: 
+der "Report-Generator" wird langsam fertig. Es gibt 
+jetzt neben dem [csv]-Button einen [html]-Button, das 
+Äquivalent der [Sh-F7]-Taste in TIM. Es kommt dort jetzt 
+auch schon eine HTML-Ansicht der Grid raus, die allerdings 
+noch nicht gestylt ist und auch noch nicht die geplanten 
+(Zwischen)summen hat. 
+Mein Plan ist, dass man in diesem Fenster dann mit Ctrl-P ohne viel Hantier einen "schönen" Ausdruck der Tabelle bekommt. 
+
+Auch gibt es jetzt die Möglichkeit, interaktive Parameter 
+einer Tabelle anzugeben. Tabellen, die Parameter definiert haben, 
+haben vor dem [csv]-Button einen [filter]-Button. 
+Das ist ein Togglebutton, der das "Parameter-Panel" 
+anzeigt/versteckt.
+Die erste Tabelle mit solchen Parametern (die neue Tabelle 
+ContractsByUser) funktioniert schon ganz gut.
+
+Bald kriegt z.B. auch die Tabelle "Personen" ein 
+solches Parameterfenster, das dann die bisherigen Personensuchen ersetzt. 
+Also die Felder, die momentan dort stehen, kommen in die Tabelle Personen 
+als Parameter rein und können dann in allen Personenlisten benutzt werden. 
+
+Und dann werden die beiden Listings durch solche parametrierbaren Tabellen 
+ersetzt.
+
+Die bisherige Datenkontrollliste in dieser Form verschwindet, wird ersetzt 
+entweder durch eine Serie von parametrierbaren Tabellen oder 
+durch neue Filteroptionen wie "nur Personen mit ungültiger NR-Nummer" 
+oder "nur überschneidende Verträge".
+
+Es gibt da noch ein Problem mit dem Layout 
+(scheinbar das Gleiche wie im Detail von Notizen: 
+Hintergrund ist weiß statt blau). 

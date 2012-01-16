@@ -161,7 +161,7 @@ class ActorMetaClass(type):
                 pass
             elif not cls.__name__.startswith('unused_'):
                 #~ logger.debug("Found actor %s.",cls)
-                #~ cls.class_init()              
+                #~ cls.class_init() # 20120115
                 actor_classes.append(cls)
             #~ logger.debug("ActorMetaClass.__new__(%s)", cls)
         return cls
@@ -261,5 +261,3 @@ class Actor(Handled):
         return [a for a in self._actions_list 
           if a.callable_from is None or isinstance(callable_from,a.callable_from)]
     
-        
-

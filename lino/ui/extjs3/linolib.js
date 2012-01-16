@@ -2146,17 +2146,40 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
     load: function(options) {
         if (this.params_panel) {
-          var pv = Array(this.params_panel.fields.length);
-          for(var i=0; i < this.params_panel.fields.length;i++) {
-              pv[i] = this.params_panel.fields[i].getValue(); 
-              //~ var fld = this.params_panel.fields[i]; 
-              //~ console.log(fld.name, "=", fld.getValue());
-              //~ this.set_base_param(fld.name,fld.getValue());
+            //~ var pv = Array();
+            //~ this.params_panel.items.each(function(f){
+                //~ if(f.isFormField){
+                    //~ pv.push(f.getValue()); 
+                    //~ console.log('20120116', f.name, "=", f.getValue());
+                //~ }
+            //~ });
+          
+          //~ this.params_panel.fields.each(function(f){
+              //~ if (f.el.getValue() != f.emptyText) {
+                  //~ pv.push(f.el.dom.value);
+              //~ } else pv.push('');
+          //~ })
+          var fields = this.params_panel.fields;
+          //~ console.log('20120116 gonna loop on', fields);
+          var pv = Array(fields.length);
+          for(var i=0; i < fields.length;i++) {
+              var f = fields[i]
+              //~ if (f.el.getValue() != f.emptyText) {
+                  //~ pv[i] = f.el.dom.value;
+              //~ } else pv[i] = '';
+              //~ if (f instanceof Lino.DateField) {
+              if (f.formatDate) {
+                  pv[i] = f.formatDate(f.getValue()); 
+              } else {
+                  pv[i] = f.getValue(); 
+              }
           }
           //~ this.set_base_param('$ext_requests.URL_PARAM_PARAM_VALUES',pv);
           //~ p['$ext_requests.URL_PARAM_PARAM_VALUES'] = pv;
           //~ this.store.setBaseParam('$ext_requests.URL_PARAM_PARAM_VALUES',pv);
+            
           options.params.$ext_requests.URL_PARAM_PARAM_VALUES = pv;
+            
           //~ console.log(20120113,options);
         } 
     //~ else console.log('20120113 no params_panel in this',this);
@@ -2295,46 +2318,49 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     );
       
     var tbar = [ 
-        this.search_field = new Ext.form.TextField({ 
-          fieldLabel: "Search", 
-          listeners: { scope:this_, change:this_.search_change }
-          //~ value: text
-          //~ scope:this, 
-          //~ enableKeyEvents: true, 
-          //~ listeners: { keypress: this.search_keypress }, 
-          //~ id: "seachString" 
-        }), 
-        { scope:this, 
-          text: "[filter]", // gear
-          enableToggle: true,
-          pressed: ! this.params_panel_hidden,
-          toggleHandler: function(btn,state) { 
-            //~ if (this.params_panel.isVisible()) 
-                //~ this.params_panel.hide();
-            //~ else
-                //~ this.params_panel.show();
-            if (state) this.params_panel.hide();
-            else this.params_panel.show();
-            this.containing_window.doLayout();
-          }
-        },
-        { scope:this, 
-          text: "[csv]", 
-          handler: function() { 
-            var p = Ext.apply({},this.get_base_params());
-            p['fmt'] = 'csv';
-            //~ url += "?" + Ext.urlEncode(p);
-            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-          } },
-        { scope:this, 
-          text: "[html]", 
-          handler: function() { 
-            var p = Ext.apply({},this.get_base_params());
-            p['fmt'] = 'printer';
-            //~ url += "?" + Ext.urlEncode(p);
-            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-          } }
-      ]
+      this.search_field = new Ext.form.TextField({ 
+        fieldLabel: "Search", 
+        listeners: { scope:this_, change:this_.search_change }
+        //~ value: text
+        //~ scope:this, 
+        //~ enableKeyEvents: true, 
+        //~ listeners: { keypress: this.search_keypress }, 
+        //~ id: "seachString" 
+    })];
+    if (this.params_panel) {
+      tbar = tbar.concat([{ scope:this, 
+        text: "[filter]", // gear
+        enableToggle: true,
+        pressed: ! this.params_panel_hidden,
+        toggleHandler: function(btn,state) { 
+          //~ if (this.params_panel.isVisible()) 
+              //~ this.params_panel.hide();
+          //~ else
+              //~ this.params_panel.show();
+          if (state) this.params_panel.hide();
+          else this.params_panel.show();
+          this.containing_window.doLayout();
+        }
+      }])
+    }
+    tbar = tbar.concat([
+      { scope:this, 
+        text: "[csv]", 
+        handler: function() { 
+          var p = Ext.apply({},this.get_base_params());
+          p['fmt'] = 'csv';
+          //~ url += "?" + Ext.urlEncode(p);
+          window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+        } },
+      { scope:this, 
+        text: "[html]", 
+        handler: function() { 
+          var p = Ext.apply({},this.get_base_params());
+          p['fmt'] = 'printer';
+          //~ url += "?" + Ext.urlEncode(p);
+          window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+        } }
+    ]);
     
     
     var menu = [];
@@ -3148,7 +3174,7 @@ Lino.Window = Ext.extend(Ext.Window,{
         config.layout = 'border';
         config.main_item.region = 'center';
         config.main_item.params_panel.region = 'north';
-        config.main_item.params_panel.hidden = ! config.main_item.params_panel_hidden;
+        config.main_item.params_panel.hidden = config.main_item.params_panel_hidden;
         config.items = [config.main_item.params_panel, config.main_item];
     } else {
         config.layout = 'fit';

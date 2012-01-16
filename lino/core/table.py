@@ -156,7 +156,7 @@ def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
             #~ return unicode(obj)
     s = u''
     n = 0
-    for i in rr:
+    for i in rr.data_iterator:
         if n:
             s += separator
         else:
@@ -453,8 +453,6 @@ class TableRequest(AbstractTableRequest):
     """
     An Action Request on a given Table.
     """
-    limit = None
-    offset = None
     
     master_instance = None
     master = None
@@ -464,6 +462,8 @@ class TableRequest(AbstractTableRequest):
     
     sort_column = None
     sort_direction = None
+    
+        
     
     
     def parse_req(self,request,rh,**kw):
@@ -527,12 +527,6 @@ class TableRequest(AbstractTableRequest):
         quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)
-        offset = request.REQUEST.get(ext_requests.URL_PARAM_START,None)
-        if offset:
-            kw.update(offset=int(offset))
-        limit = request.REQUEST.get(ext_requests.URL_PARAM_LIMIT,None)
-        if limit:
-            kw.update(limit=int(limit))
         #~ else:
             #~ kw.update(limit=self.report.page_length)
             
@@ -572,7 +566,6 @@ class TableRequest(AbstractTableRequest):
             order_by=None,
             exclude=None,
             extra=None,
-            offset=None,limit=None,
             **kw):
         self.filter = filter
         #~ if isinstance(self.action,GridEdit):
@@ -605,17 +598,10 @@ class TableRequest(AbstractTableRequest):
         
         AbstractTableRequest.setup(self,**kw)
         
-        assert isinstance(self._data_iterator,models.query.QuerySet)
+        #~ assert isinstance(self._data_iterator,models.query.QuerySet)
         
-        """
-        TODO: Note that `total_count` is looked up 
-        *before* `offset` and `limit` are set.
-        That's a pity because it creates a database lookup
-        even if the TableRequest is being instantiated with 
-        the only purpose of generating an url.
-        """
         
-        self.total_count = self._data_iterator.count()
+        #~ self.total_count = self._data_iterator.count()
         
         
         if self.create_rows is None:
@@ -636,21 +622,11 @@ class TableRequest(AbstractTableRequest):
                 layout = self.ah._layouts[layout]
             self.layout = layout
         
-        #~ if limit is None:
-            #~ limit = self.report.page_length
             
         """
         Table.page_length is not a default value for ReportRequest.limit
         For example CSVReportRequest wants all rows.
         """
-        if offset is not None:
-            self._data_iterator = self._data_iterator[offset:]
-            self.offset = offset
-            
-        if limit is not None:
-            self._data_iterator = self._data_iterator[:limit]
-            self.limit = limit
-            
         self.page_length = self.report.page_length
         
         
@@ -1343,6 +1319,7 @@ class DetailLayout(BaseLayout):
 
 class ParamsLayout(BaseLayout):
     #~ label = _("List")
+    #~ label_align = LABEL_ALIGN_TOP
     show_labels = True
     join_str = " "
 

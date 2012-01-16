@@ -26,7 +26,8 @@ from django.conf import settings
 from django.db import models
 from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
 from django.contrib.contenttypes import generic
 
 from lino.utils import jsgen 
@@ -40,6 +41,7 @@ from lino import dd
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
 from lino.utils import curry
+from lino.utils import iif
 from lino.tools import obj2str
 from lino.utils import IncompleteDate
 from lino.utils import tables
@@ -65,6 +67,9 @@ class StoreField(object):
     def as_js(self):
         return py2js(self.options)
         
+    def __repr__(self):
+        return "%s '%s'" % (self.__class__.__name__, self.field.name)
+        
     def column_names(self):
         yield self.options['name']
         
@@ -72,11 +77,16 @@ class StoreField(object):
         #~ if not hasattr(self.field,'value_from_object'):
             #~ raise Exception('%s %s has no method value_from_object?!'%(
               #~ self.field,self.field.name))
-        return self.full_value_from_object(obj)
+        return self.full_value_from_object(request,obj)
         
-    def full_value_from_object(self,obj):
+    def full_value_from_object(self,ar,obj):
         return self.field.value_from_object(obj)
-        
+    
+    def cell_html(self,req,row):
+        v = self.full_value_from_object(req,row)
+        if v is None: return ''
+        return force_unicode(v)
+      
     def obj2list(self,request,obj):
         return [self.value_from_object(request,obj)]
         
@@ -155,7 +165,7 @@ class RelatedMixin(object):
             #~ return None
         return self.field.rel.to
         
-    def full_value_from_object(self,obj):
+    def full_value_from_object(self,req,obj):
         # here we don't want the pk (stored in field's attname) 
         # but the full object this field refers to
         relto_model = self.get_rel_to(obj)
@@ -219,7 +229,7 @@ class ComboStoreField(StoreField):
         d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
         
     def get_value_text(self,obj):
-        v = self.full_value_from_object(obj)
+        v = self.full_value_from_object(None,obj)
         if v is None or v == '':
             return (None, None)
         ch = choosers.get_for_field(self.field) 
@@ -232,8 +242,14 @@ class ComboStoreField(StoreField):
         
 class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         
+    def cell_html(self,req,row):
+        obj = self.full_value_from_object(req,row)
+        if obj is None:
+            return ''
+        return req.ui.href_to(obj)
+        
     def get_value_text(self,obj):
-        v = self.full_value_from_object(obj)
+        v = self.full_value_from_object(None,obj)
         #~ if isinstance(v,basestring):
             #~ logger.info("20120109 %s -> %s -> %r",obj,self,v)
         if v is None:
@@ -312,6 +328,7 @@ class VirtStoreField(StoreField):
               #~ ):
             #~ setattr(self,name,getattr(delegate,name))
         self.form2obj_default = delegate.form2obj_default
+        self.cell_html = delegate.cell_html
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
         self.set_value_in_object = vf.set_value_in_object
@@ -321,13 +338,21 @@ class VirtStoreField(StoreField):
     #~ def __repr__(self):
         #~ return self.__class__.__name__ + '(' + self.delegate.__class__.__name__ + ') ' + self.field.name
         
-    def obj2list(self,request,obj):
-        return [self.vf.value_from_object(request,obj)]
+    #~ def cell_html(self,req,row):
+        #~ return force_unicode(self.full_value_from_object(row))
+
+    def full_value_from_object(self,req,obj):
+        return self.vf.value_from_object(req,obj)
+
+    #~ def value_from_object(self,request,obj):
+        #~ return self.vf.value_from_object(request,obj)
         
-    def obj2dict(self,request,obj,d):
-        v = self.vf.value_from_object(request,obj)
-        #~ logger.debug('VirtStoreField.obj2dict() %s = %s',self.field.name,v)
-        d[self.field.name] = v
+    #~ def obj2list(self,request,obj):
+        #~ return [self.vf.value_from_object(request,obj)]
+        
+    #~ def obj2dict(self,request,obj,d):
+        #~ v = self.vf.value_from_object(request,obj)
+        #~ d[self.field.name] = v
         
     def unused_form2obj(self,request,obj,post_data,is_new):
         #~ logger.info("VirtStoreField.form2obj(%s)", post_data)
@@ -354,11 +379,11 @@ class PasswordStoreField(StoreField):
         
 class GenericForeignKeyField(StoreField):
         
-    def full_value_from_object(self,obj):
+    def full_value_from_object(self,req,obj):
         return getattr(obj,self.field.name)
         
     def value_from_object(self,request,obj):
-        owner = self.full_value_from_object(obj)
+        owner = self.full_value_from_object(request,obj)
         #~ owner = getattr(obj,self.field.name)
         if owner is None: return ''
         return request.ui.href_to(owner)
@@ -480,6 +505,11 @@ class BooleanStoreField(StoreField):
         #~ print "20110717 parse_form_value", self.field.name, v, obj
         return ext_requests.parse_boolean(v)
 
+    def cell_html(self,req,row):
+        v = self.full_value_from_object(req,row)
+        if v is None: return ''
+        return iif(v,_("Yes"),_("No"))
+      
 
 class AutoStoreField(StoreField):
     def __init__(self,field,**kw):
@@ -540,6 +570,12 @@ class FileFieldStoreField(StoreField):
         
 class MethodStoreField(StoreField):
   
+    def full_value_from_object(self,request,obj):
+        unbound_meth = self.field._return_type_for_method
+        assert unbound_meth.func_code.co_argcount >= 2, (self.field.name, unbound_meth.func_code.co_varnames)
+        #~ print self.field.name
+        return unbound_meth(obj,request)
+        
     def value_from_object(self,request,obj):
         unbound_meth = self.field._return_type_for_method
         assert unbound_meth.func_code.co_argcount >= 2, (self.field.name, unbound_meth.func_code.co_varnames)
@@ -607,7 +643,7 @@ class OneToOneStoreField(RelatedMixin,StoreField):
         #~ instance[self.field.name] = v
         
     def value_from_object(self,request,obj):
-        v = self.full_value_from_object(obj)
+        v = self.full_value_from_object(request,obj)
         #~ try:
             #~ v = getattr(obj,self.field.name)
         #~ except self.field.rel.to.DoesNotExist,e:
@@ -643,14 +679,30 @@ class Store:
         #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report
-        if issubclass(rh.report,table.Table):
-            self.pk = self.report.model._meta.pk
-            assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
-              self.report.actor_id,self.report.model)
+        """
+        MTI children have two primary keys. Example::
+        >>> from lino.apps.dsbe.models import Person
+        >>> [f for f in Person._meta.fields if f.primary_key]
+        [<django.db.models.fields.AutoField: id>, <django.db.models.fields.related.OneToOneField: contact_ptr>]
+        >>> Person._meta.pk
+        <django.db.models.fields.related.OneToOneField: contact_ptr>
+        >>> p = Person.objects.get(pk=118)
+        >>> p
+        <Person: ARENS Annette (118)>
+        >>> p.contact_ptr_id = 117
+        >>> p.pk
+        117
+        >>> p.save()
+        >>>        
+        """
+        #~ if issubclass(rh.report,table.Table):
+            #~ self.pk = self.report.model._meta.pk
+            #~ assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
+              #~ self.report.actor_id,self.report.model)
           
         #~ fields = []
         
-        self.df2sf = {}
+        self.df2sf = {} # temporary dict used by collect_fields and add_field_for
         self.all_fields = []
         self.list_fields = []
         self.detail_fields = []
@@ -659,32 +711,12 @@ class Store:
         dtl = rh.report.get_detail()
         if dtl:
             dh = dtl.get_handle(rh.ui)
-            #~ dh.lh_list
             self.collect_fields(self.detail_fields,*dh.lh_list)
-        #~ self.collect_fields(self.detail_fields,*rh.get_detail_layouts())
         
-        del self.df2sf
-        if rh.report.params:
-            self.param_fields = []
-            for pf in rh.params_layout._store_fields:
-            #~ for pf in rh.report.params:
-                self.param_fields.append(self.create_field(pf))
         
-        #~ for df in list_fields | detail_fields: # set union
-        #~ for df in fields: 
-            #~ sf = self.create_field(df)
-            #~ if sf:
-                #~ self.fields.append(sf)
-                #~ if df in list_fields:
-                    #~ self.list_fields.append(sf)
-                #~ if df in detail_fields:
-                    #~ self.detail_fields.append(sf)
-                    
-        #~ fields = list(fields)
-        #~ self.pk_index = fields.index(self.pk)
-        #~ self.fields = [ self.create_field(fld) for fld in fields ]
         if issubclass(rh.report,table.Table):
             self.pk_index = 0
+            found = False
             for fld in self.list_fields:
                 """
                 Django's Field.__cmp__() does::
@@ -694,12 +726,22 @@ class Store:
                 which causes an exception when trying to compare a field with an object of other type.
                 """
                 #~ if type(fld.field) == type(self.pk) and fld.field == self.pk:
-                if fld.field.__class__ == self.pk.__class__ and fld.field == self.pk:
+                if (fld.field.__class__ is self.pk.__class__) and fld.field == self.pk:
+                    #~ self.pk = fld.field
+                    found = True
                     break
                 self.pk_index += fld.list_values_count
-            #~ if self.report.actor_id == 'contacts.Persons':
-                #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
+            if not found:
+                raise Exception("Primary key %s not found in list_fields %s" % (self.pk,self.list_fields))
             
+        del self.df2sf
+        
+        if rh.report.params:
+            self.param_fields = []
+            for pf in rh.params_layout._store_fields:
+            #~ for pf in rh.report.params:
+                self.param_fields.append(self.create_field(pf))
+        
         def addfield(sf):
             self.all_fields.append(sf)
             self.list_fields.append(sf)
@@ -729,42 +771,41 @@ class Store:
         self.detail_fields = tuple(self.detail_fields)
 
 
+    def add_field_for(self,fields,df):
+        sf = self.df2sf.get(df,None)
+        if sf is None:
+            sf = self.create_field(df)
+            self.all_fields.append(sf)
+            self.df2sf[df] = sf
+        fields.append(sf)
+        
     def collect_fields(self,fields,*layouts):
         """
-        `fields` is a pointer to either `self.detail_fields`
-        or `self.list_fields`.
-        The `all_data_fields` set is 
+        `fields` is a pointer to either `self.detail_fields` or `self.list_fields`.
+        Each of these must contain a primary key field.
+        
         """
-        #~ fields = []
         pk_found = False
-        def add(df):
-            sf = self.df2sf.get(df,None)
-            if sf is None:
-                sf = self.create_field(df)
-                self.all_fields.append(sf)
-                self.df2sf[df] = sf
-            fields.append(sf)
-            
-            if df.primary_key:
-                pk_found = True
-            #~ if df not in all_data_fields:
-                #~ self.all_fields.append(sf)
-                #~ all_data_fields.add(df)
-                
         for layout in layouts:
-            for fld in layout._store_fields:
-                assert fld is not None
-                add(fld)
+            for df in layout._store_fields:
+                assert df is not None
+                self.add_field_for(fields,df)
+                if df.primary_key:
+                    pk_found = True
+                    if self.pk is None:
+                        self.pk = df
                 #~ fields.add(fld)
         #~ if not self.pk in fields:
-        if not pk_found and self.pk is not None:
-            #~ fields.add(self.pk)
-            add(self.pk)
-        return fields
+        if issubclass(self.rh.report,table.Table):
+            if self.pk is None:
+                self.pk = self.report.model._meta.pk
+            if not pk_found:
+                self.add_field_for(fields,self.pk)
         
     def create_field(self,fld):
         if isinstance(fld,table.RemoteField):
-            """Hack: we create a StoreField based on the remote field,
+            """
+            Hack: we create a StoreField based on the remote field,
             then modify its behaviour...
             """
             sf = self.create_field(fld.field)
@@ -772,7 +813,7 @@ class Store:
                 m = fld.func
                 return m(obj)
                 
-            def full_value_from_object(sf,obj):
+            def full_value_from_object(sf,ar,obj):
                 m = fld.func
                 return m(obj)
                 
@@ -816,13 +857,10 @@ class Store:
             return IncompleteDateStoreField(fld)
         if isinstance(fld,models.DateField):
             return DateStoreField(fld)
-            #~ return DateStoreField(fld,self.report.date_format)
         if isinstance(fld,models.BooleanField):
             return BooleanStoreField(fld)
         if isinstance(fld,models.DecimalField):
             return DecimalStoreField(fld)
-        #~ if isinstance(fld,models.TextField):
-            #~ return TextStoreField(fld)
         if isinstance(fld,models.AutoField):
             return AutoStoreField(fld)
             #~ kw.update(type='int')
@@ -903,6 +941,13 @@ class Store:
                 kw[f.field.name] = f.parse_form_value(pv[i],None)
         return kw
         
+    def cells_html(self,request,row):
+        for fld in self.list_fields:
+            #~ print 20120115, fld.field.name
+            #~ if not isinstance(fld,SpecialStoreField):
+            if fld.field is not None:
+                yield fld.cell_html(request,row)
+            
     def parse_params(self,request):
         return self.pv2dict(request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))
         

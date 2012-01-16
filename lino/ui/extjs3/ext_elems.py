@@ -364,7 +364,9 @@ class FieldElement(LayoutElement):
         self.add_default_value(kw)
         #~ kw.update(label=field.verbose_name) 
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
-        
+
+    def cell_html(self,ui,row):
+        return getattr(row,self.field.name)
             
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
@@ -622,6 +624,11 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         kw.update(emptyText=_('Select a %s...') % self.report.model._meta.verbose_name)
         return kw
 
+    def cell_html(self,ui,row):
+        obj = getattr(row,self.field.name)
+        if obj is None:
+            return ''
+        return ui.href_to(obj)
 
 
 class TimeFieldElement(FieldElement):
@@ -961,6 +968,7 @@ class Wrapper(VisibleComponent):
         kw.update(layout='form')
         if not isinstance(e,TextFieldElement):
             kw.update(autoHeight=True)
+        kw.update(labelAlign=e.parent.labelAlign)
         kw.update(items=e,xtype='panel')
         VisibleComponent.__init__(self,e.name+"_ct",**kw)
         self.wrapped = e
@@ -1127,6 +1135,7 @@ class Panel(Container):
                 
         if d['layout'] == 'form':
             assert self.vertical
+            self.update(labelAlign=self.labelAlign)
             self.wrap_formlayout_elements()
             #~ d.update(autoHeight=True)
             if len(self.elements) == 1 and self.elements[0].vflex:
@@ -1192,9 +1201,6 @@ class Panel(Container):
             return Wrapper(e)
         self.elements = [wrap(e) for e in self.elements]
           
-            
-        
-            
         
     def ext_options(self,**d):
         d = Container.ext_options(self,**d)
@@ -1220,7 +1226,7 @@ class Panel(Container):
             d.update(frame=True)
             d.update(bodyBorder=False)
             d.update(border=False)
-            d.update(labelAlign=self.labelAlign)
+            #~ 20120115 d.update(labelAlign=self.labelAlign)
             #d.update(style=dict(padding='0px'),color='green')
         else:
             d.update(frame=False)
@@ -1338,8 +1344,8 @@ class MainPanel(jsgen.Variable):
     def apply_window_config(self,wc):
         pass
   
-    def setup(self):
-        pass
+    #~ def setup(self):
+        #~ pass
                 
 
 
@@ -1376,7 +1382,7 @@ class DetailMainPanel(Panel,MainPanel):
             yield e
             
     def ext_options(self,**kw):
-        self.setup()
+        #~ self.setup()
         kw = Panel.ext_options(self,**kw)
         if self.layout_handle.layout.label:
             kw.update(title=_(self.layout_handle.layout.label))
@@ -1384,7 +1390,11 @@ class DetailMainPanel(Panel,MainPanel):
         
 
 class ParameterPanel(DetailMainPanel):
-    value_template = "new Ext.Container(%s)"
+    pass
+    
+class unused_ParameterPanel(DetailMainPanel):
+    #~ value_template = "new Ext.Container(%s)"
+    #~ value_template = "new Ext.Panel(%s)"
     def __init__(self,layout_handle,name,vertical,*elements,**kw):
         DetailMainPanel.__init__(self,layout_handle,name,vertical,*elements,**kw)
         self.fields = []
@@ -1393,6 +1403,7 @@ class ParameterPanel(DetailMainPanel):
                 #~ logger.info("20120114 ")
                 self.fields.append(e)
         #~ self.fields = [e for e in self.walk() if isinstance(e,FieldElement)]
+        #~ print '20120115 ParameterPanel.elements =', self.elements
     def ext_options(self,**kw):
         kw = super(ParameterPanel,self).ext_options(**kw)
         kw.update(fields=self.fields)

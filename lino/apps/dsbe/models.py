@@ -980,9 +980,9 @@ class MyActivePersons(MyPersons):
 from appy import Object
 
 def req2cell(rr):
-    if not rr.total_count:
+    if len(rr.data_iterator) == 0:
         return ('',0)
-    return (rr.ui.href_to_request(rr,str(rr.total_count)),rr.total_count)
+    return (rr.ui.href_to_request(rr,str(len(rr.data_iterator))),len(rr.data_iterator))
     
   
 class OverviewClientsByUser(dd.CustomTable):
@@ -1016,7 +1016,7 @@ class OverviewClientsByUser(dd.CustomTable):
             Q(username=ar.get_user().username) | Q(is_spis=True)
           ).order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
-            if r.total_count:
+            if len(r.data_iterator):
                 user.my_persons = r
                 yield user
                 
@@ -1075,20 +1075,20 @@ def persons_by_user(ui,requesting_user):
             #~ kv = dict(user=user)
             rr = MyPersons.request(ui,subst_user=user)
             #~ rr = MyPersons.request(ui,known_values=kv)
-            if rr.total_count:
-                totals[-1] += rr.total_count
-                row_total = ui.href_to_request(rr,str(rr.total_count))
+            if len(rr.data_iterator):
+                totals[-1] += len(rr.data_iterator)
+                row_total = ui.href_to_request(rr,str(len(rr.data_iterator)))
                 cells = [cgi.escape(unicode(user))] + sums
                 for pg in phases:
                     rr = MyPersonsByGroup.request(ui,master_instance=pg,subst_user=user)
-                    if rr.total_count:
-                        totals[pg2col[pg.pk]] += rr.total_count
-                        text = str(rr.total_count)
+                    if len(rr.data_iterator):
+                        totals[pg2col[pg.pk]] += len(rr.data_iterator)
+                        text = str(len(rr.data_iterator))
                         text = ui.href_to_request(rr,text)
                         cells[pg2col[pg.pk]] = text
                 def yet_another_column(i,rr):
-                    totals[i] += rr.total_count
-                    text = str(rr.total_count)
+                    totals[i] += len(rr.data_iterator)
+                    text = str(len(rr.data_iterator))
                     text = ui.href_to_request(rr,text)
                     cells.append(text)
                 yet_another_column(-3,PersonsByCoach1.request(ui,master_instance=user))

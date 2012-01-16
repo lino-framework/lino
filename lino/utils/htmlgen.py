@@ -42,7 +42,7 @@ class HTML(object):
         return self.html_code
       
 def LIST(tag,items):
-    s = '\n'.join(['<li>%s</li>' % cgi.escape(unicode(i)) for i in items])
+    s = '\n'.join(['<li>%s</li>' % py2html(i) for i in items])
     return "<%s>%s</%s>" % (tag,s,tag)
 def UL(items): return LIST('UL',items)
 def OL(items): return LIST('OL',items)
