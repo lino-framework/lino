@@ -759,8 +759,24 @@ class DecimalFieldElement(FieldElement):
         kw.update(format=fmt)
         return kw
         
+class DisplayElement(FieldElement):
+    preferred_width = 30
+    preferred_height = 3
+    ext_suffix = "_disp"
+    #~ declare_type = jsgen.DECLARE_THIS
+    declare_type = jsgen.DECLARE_VAR
+    value_template = "new Ext.form.DisplayField(%s)"
+    
+    def __init__(self,*args,**kw):
+        FieldElement.__init__(self,*args,**kw)
+        if self.field.max_length:
+            self.preferred_width = self.field.max_length
+    
+class BooleanDisplayElement(DisplayElement):
+    preferred_width = 20
+    preferred_height = 1
+    
                 
-
 class BooleanFieldElement(FieldElement):
   
     value_template = "new Ext.form.Checkbox(%s)"
@@ -785,7 +801,6 @@ class BooleanFieldElement(FieldElement):
                 dv = dv()
             kw.update(checked=dv)
             #~ self.remove('value')
-        
 
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
@@ -815,16 +830,11 @@ class BooleanFieldElement(FieldElement):
                 
             kw.update(boxLabel=label)
         
-            
         return kw
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='checkcolumn')
-        #~ kw.update(xtype='booleancolumn')
-        #~ kw.update(trueText=self.layout_handle.rh.report.boolean_texts[0])
-        #~ kw.update(falseText=self.layout_handle.rh.report.boolean_texts[1])
-        #~ kw.update(undefinedText=self.layout_handle.rh.report.boolean_texts[2])
         return kw
         
     def get_from_form(self,instance,values):
@@ -835,19 +845,6 @@ class BooleanFieldElement(FieldElement):
         instance[self.field.name] = values.get(self.field.name,False)
 
 
-class DisplayElement(FieldElement):
-    preferred_width = 30
-    preferred_height = 3
-    ext_suffix = "_disp"
-    #~ declare_type = jsgen.DECLARE_THIS
-    declare_type = jsgen.DECLARE_VAR
-    value_template = "new Ext.form.DisplayField(%s)"
-    
-    def __init__(self,*args,**kw):
-        FieldElement.__init__(self,*args,**kw)
-        if self.field.max_length:
-            self.preferred_width = self.field.max_length
-    
 
 class GenericForeignKeyElement(DisplayElement):
     """
@@ -1544,6 +1541,9 @@ def field2elem(layout_handle,field,**kw):
     selector_field = field
     if isinstance(field,dd.VirtualField):
         selector_field = field.return_type
+    
+    if isinstance(selector_field,models.BooleanField) and not field.editable:
+        return BooleanDisplayElement(layout_handle,field,**kw)
         
     for cl,x in _FIELD2ELEM:
         if isinstance(selector_field,cl):

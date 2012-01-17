@@ -505,16 +505,17 @@ class BooleanStoreField(StoreField):
     def __init__(self,field,name,**kw):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,name,**kw)
+        if not field.editable:
+            def fn(self,request,obj):
+                return self.value2html(request.ui,self.field.value_from_object(obj))
+            self.full_value_from_object = curry(fn,self)
+        
         
     def parse_form_value(self,v,obj):
         #~ print "20110717 parse_form_value", self.field.name, v, obj
         return ext_requests.parse_boolean(v)
 
-    #~ def cell_html(self,req,row):
-        #~ v = self.full_value_from_object(req,row)
-        #~ if v is None: return ''
-        #~ return iif(v,_("Yes"),_("No"))
-
+        
     def value2html(self,ui,v):
         return iif(v,_("Yes"),_("No"))
       

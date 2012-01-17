@@ -495,7 +495,7 @@ class AbstractTable(actors.Actor):
     help_url = None
     #master_instance = None
     
-    page_length = 30
+    page_length = 20
     """
     Number of rows to display per page.
     """

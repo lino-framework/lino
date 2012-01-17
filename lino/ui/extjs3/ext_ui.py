@@ -990,7 +990,8 @@ tinymce.init({
 
         
     def detail_config_view(self,request,app_label=None,actor=None):
-        rpt = actors.get_actor2(app_label,actor)
+        #~ rpt = actors.get_actor2(app_label,actor)
+        rpt = self.requested_report(request,app_label,actor)
         if not rpt.can_config.passes(request.user):
             msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
             return http.HttpResponseForbidden(msg)
@@ -1115,15 +1116,19 @@ tinymce.init({
                 
                 params = dict(base_params=bp)
                 
+                after_show = {}
                 if isinstance(ar.action,table.InsertRow):
                     elem = ar.create_instance()
                     #~ rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec = elem2rec_insert(ar,rh,elem)
-                    #~ rec.update(phantom=True)
-                    params.update(data_record=rec)
+                    #~ params.update(data_record=rec)
+                    after_show.update(data_record=rec)
+                    #~ data_record = rec
 
-                kw.update(on_ready=['Lino.%s(undefined,%s);' % (
-                    ar.action,py2js(params))])
+                kw.update(on_ready=['Lino.%s(undefined,%s,%s);' % (
+                    ar.action,
+                    py2js(params),
+                    after_show)])
                 #~ print '20110714 on_ready', params
                 return HttpResponse(self.html_page(request,**kw))
             
@@ -1205,13 +1210,6 @@ tinymce.init({
         if issubclass(cl,models.Model):
             return cl._lino_model_report
         return cl
-        #~ rpt = actors.get_actor2(app_label,actor)
-        #~ if rpt:
-            #~ return rpt
-        #~ model = models.get_model(app_label,actor,False)
-        #~ if model is None:
-            #~ raise Http404("No actor named '%s.%s'" % (app_label,actor))
-        #~ return model._lino_model_report
         
     def parse_params(self,rh,request):
         return rh.store.parse_params(request)
@@ -1371,7 +1369,8 @@ tinymce.init({
                 if fmt == 'json':
                     return json_response(datarec)
                     
-                params = dict(data_record=datarec)
+                after_show = dict(data_record=datarec)
+                params = dict()
                 bp = ar.request2kw(self)
                 #~ bp = self.request2kw(ar)
                 
@@ -1381,9 +1380,11 @@ tinymce.init({
                     tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
                     if tab is not None: 
                         tab = int(tab)
-                        params.update(active_tab=tab)
+                        after_show.update(active_tab=tab)
                 params.update(base_params=bp)
-                return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))]))
+                return HttpResponse(self.html_page(request,
+                  on_ready=['Lino.%s(undefined,%s,%s);' % (
+                    a,py2js(params),py2js(after_show))]))
                 
                 
             if isinstance(a,actions.RedirectAction):
@@ -1700,6 +1701,7 @@ tinymce.init({
         Deserves more documentation.
         """
         params = dict(base_params=rr.request2kw(self))
+        after_show = dict()
         #~ params = dict(base_params=self.request2kw(rr))
         if len(rr.data_iterator) == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
@@ -1707,8 +1709,8 @@ tinymce.init({
             if a is not None:
                 #~ params = dict(base_params=rr.request2kw(self))
                 elem = rr.create_instance()
-                params.update(data_record=elem2rec_insert(rr,rr.ah,elem))
-                return self.action_href(a,_("Upload"),**params)
+                after_show.update(data_record=elem2rec_insert(rr,rr.ah,elem))
+                return self.action_href(a,params,after_show,_("Upload"))
         if len(rr.data_iterator) == 1:
             #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
             #~ s = unicode(v[0]) + ':'
@@ -1718,11 +1720,11 @@ tinymce.init({
             #~ params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
             if True:
                 #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
-                params.update(record_id=rr.data_iterator[0].pk)
-                s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
+                after_show.update(record_id=rr.data_iterator[0].pk)
+                s += ' ' + self.action_href(rr.ah.report.detail_action,params,after_show,_("Edit"))
             else:
-                params.update(record_id=rr.data_iterator[0].pk)
-                s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),**params)
+                after_show.update(record_id=rr.data_iterator[0].pk)
+                s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),params,after_show)
             return s
         return '[?!]'
         
@@ -1763,41 +1765,41 @@ tinymce.init({
                       #~ xtype='button',text=prepare_label(v),
                       #~ handler=js_code("function() {window.location='%s';}" % v.href))
                 #~ return dict(text=prepare_label(v),href=v.href)
-            if True: 
-                """
-                20110129. In this case, the main menu uses permalinks instead of opening new windows each time.
-                """
-                if v.href is not None:
-                    url = v.href
-                elif v.params is not None:
-                    #~ ar = table.TableRequest(self,v.action.actor,None,v.action,**v.params)
-                    ar = v.action.actor.request(self,None,v.action,**v.params)
-                    url = self.get_request_url(ar)
-                elif v.request is not None:
-                    url = self.get_request_url(v.request)
-                elif v.instance is not None:
-                    #~ url = self.get_detail_url(v.instance,an='detail')
-                    url = self.get_detail_url(v.instance)
-                elif v.action:
-                    url = self.get_action_url(v.action)
+            """
+            20110129. In this case, the main menu uses permalinks instead of opening new windows each time.
+            """
+            if v.href is not None:
+                url = v.href
+            elif v.params is not None:
+                #~ ar = table.TableRequest(self,v.action.actor,None,v.action,**v.params)
+                ar = v.action.actor.request(self,None,v.action,**v.params)
+                url = self.get_request_url(ar)
+            elif v.request is not None:
+                url = self.get_request_url(v.request)
+            elif v.instance is not None:
+                #~ url = self.get_detail_url(v.instance,an='detail')
+                url = self.get_detail_url(v.instance)
+            elif v.action:
+                if True:
+                    handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params or {}))
+                    return dict(text=prepare_label(v),handler=js_code(handler))
                 else:
-                    # a separator
-                    #~ return dict(text=v.label)
-                    return v.label
-                    #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor.__name__,fmt=v.action.name)
-                if v.parent.parent is None:
-                    # special case for href items in main menubar
-                    return dict(
-                      xtype='button',text=prepare_label(v),
-                      handler=js_code("function() { window.location='%s'; }" % url))
-                return dict(text=prepare_label(v),href=url)
-            # no longer supported:
-            handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
-            return dict(text=prepare_label(v),handler=js_code(handler))
+                    url = self.get_action_url(v.action)
+            else:
+                # a separator
+                #~ return dict(text=v.label)
+                return v.label
+                #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor.__name__,fmt=v.action.name)
+            if v.parent.parent is None:
+                # special case for href items in main menubar
+                return dict(
+                  xtype='button',text=prepare_label(v),
+                  handler=js_code("function() { window.location='%s'; }" % url))
+            return dict(text=prepare_label(v),href=url)
         return v
         
 
-    def action_href(self,a,label=None,**params):
+    def action_href(self,a,params,after_show,label=None):
         """
         Return a HTML chunk for a button that will execute this 
         action using a *Javascript* link to this action.
@@ -1806,7 +1808,7 @@ tinymce.init({
             #~ label = a.get_button_label()
         label = cgi.escape(force_unicode(label or a.get_button_label()))
         #~ print 20110915, a, label
-        onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
+        onclick = 'Lino.%s(undefined,%s,%s)' % (a,py2js(params),py2js(after_show))
         #~ print 20110120, onclick
         onclick = cgi.escape(onclick)
         onclick = onclick.replace('"','&quot;')
@@ -1847,10 +1849,16 @@ tinymce.init({
             text or cgi.escape(force_unicode(rr.label)))
             
     def href_to(self,obj,text=None):
+        if True:
+            a = obj.__class__._lino_model_report.get_action('detail')
+            onclick = 'Lino.%s(undefined,{},{record_id:%s})' % (a,py2js(obj.pk))
+            onclick = cgi.escape(onclick)
+            onclick = onclick.replace('"','&quot;')
+            url = "javascript:" + onclick
+            return self.href(url,text or cgi.escape(force_unicode(obj)))
         return self.href(
             self.get_detail_url(obj),
             text or cgi.escape(force_unicode(obj)))
-        #~ return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
 
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
@@ -2134,11 +2142,9 @@ tinymce.init({
         params = None
         
         if isinstance(action,table.ShowDetailAction):
-            #~ s = "Lino.%s.detailPanel" % rpt
             s = "Lino.%sPanel" % action
         elif isinstance(action,table.InsertRow): # also printable.InitiateListing
             s = "Lino.%sPanel" % action
-            #~ s = "Lino.%s.%sPanel" % (rpt,action.name)
         elif isinstance(action,table.GridEdit):
             s = "Lino.%s.GridPanel" % rpt
             if action.actor.parameters:
@@ -2147,32 +2153,30 @@ tinymce.init({
         elif isinstance(action,table.Calendar):
             s = "Lino.CalendarPanel"
         else:
-            s = None
+            return 
         
-        if s:
-            yield "Lino.%s = function(caller,mainConfig) { " % action
-            yield "  mainConfig.is_main_window = true;" # workaround for problem 20111206
-            #~ yield "  params.containing_window = true;" # workaround for problem 20111206
-            if params:
-                #~ print "20120115 ext_options", params.ext_options()
-                for ln in jsgen.declare_vars(params):
-                    yield '  '  + ln
-                #~ yield "  var pp = new %s(mainConfig);" % params
-                yield "  mainConfig.params_panel = %s;" % params
-                yield "  mainConfig.params_panel.fields = %s;" % py2js(
-                  [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
-                
-                #~ if True:
-                    #~ yield "  var pp = new Lino.ParameterPanel({grid_panel: mp,fields:%s})" % (
-                        #~ py2js(params),py2js(params_template))
-                #~ else:
-                    #~ yield "  var pp = new Lino.ParameterPanel({grid_panel: mp,fields:%s,html: %s})" % (
-                        #~ py2js(params),py2js(params_template))
-            yield "  new Lino.Window({"
-            yield "    caller: caller, "
-            yield "    main_item: new %s(mainConfig)" % s
-            yield "  }).show();"
-            yield "};"
+        yield "Lino.%s_window = null;" % action
+        yield "Lino.%s = function(caller,mainConfig,after_show) { " % action
+        yield "  if(caller === undefined) caller = Lino.current_window;"
+        yield "  if (Lino.%s_window == null) {" % action
+        #~ yield "    console.log('20120117 instantiate Lino.%s_window');" % action
+        yield "    mainConfig.is_main_window = true;" # workaround for problem 20111206
+        if params:
+            #~ print "20120115 ext_options", params.ext_options()
+            for ln in jsgen.declare_vars(params):
+                yield '    '  + ln
+            #~ yield "  var pp = new %s(mainConfig);" % params
+            yield "    mainConfig.params_panel = %s;" % params
+            yield "    mainConfig.params_panel.fields = %s;" % py2js(
+              [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
+            
+        yield "    Lino.%s_window = new Lino.Window({" % action
+        yield "      caller: caller, "
+        yield "      main_item: new %s(mainConfig)" % s
+        yield "    });"
+        yield "  }"
+        yield "  Lino.%s_window.show(after_show);" % action
+        yield "};"
             
     def unused_get_actor(self,*args,**kw):
         from lino.core import actors

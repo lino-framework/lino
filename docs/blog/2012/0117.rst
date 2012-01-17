@@ -51,3 +51,39 @@ Checkin um 12 Uhr :
   dass es wenigstens nicht ganz so weh tut, sie anzuschauen. 
   Das Thema :doc:`/tickets/55` ist aber noch nicht abgeschlossen...
   
+Checkin um 16 Uhr:
+
+- Fenster werden jetzt nicht mehr zerstört und jedesmal neu aufgebaut, 
+  sondern wiederverwertet.
+  Was sich erfreulich auf die Reaktionsgeschwindigkeit auswirkt.
+  Es gibt eine globale Instanz pro Fenster. 
+  Dazu musste ich record_id und data_record nicht im constructor 
+  auswerten sondern in after_show()
+  
+- Schreibgeschützte BooleanField werden jetzt nicht mehr als Checkbox 
+  dargestellt, sondern als DisplayElement. Das ist vor allem, um das 
+  scheinbar ziemlich tief verwurzelte Problem zu umgehen, 
+  dass ExtJS Checkboxen nicht schreibgeschützt machen kann.
+
+- Bug behoben: "Wenn ich einen Führerschein hochlade, dann springt er 
+  anschließend nicht auf die Person zurück."
+
+Ha, es sieht so aus, als könnte ich demnächst anfangen, am CalendarPanel 
+weiter zu machen!
+
+Vorher noch ein neuer Bug: IntegerField können jetzt keine Auswahlliste 
+mehr haben. Deshalb kann man momentan in residence_type nichts ändern.
+RESIDENCE_TYPE_CHOICES muss in eine ChoiceList konvertiert werden.
+Dann könnte ich in einem auch BEID_CARD_TYPES konvertieren. 
+Das ist nämlich auch momentan altmodisch geregelt mit einem zusätzlichen 
+Feld card_type_text
+
+
+Und zwei Dinge sind noch zu beobachten:
+
+- Wird Chrome nun langsamer, wenn man viele verschiedene Fenster geöffnet hat?
+
+- Wenn man das Detail-Fenster schließt, das er nach dem Erstellen eines Uploads 
+  anzeigt, dann wird das aufrufende Detail der Person weiterhin nicht aktualisiert. 
+  Dieser Schönheitsfehler ist schon lange da. Theoretisch ruft er aber refresh() 
+  in `Lino.Window.hide()`. Komisch...
