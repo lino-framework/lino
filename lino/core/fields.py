@@ -39,6 +39,8 @@ logger = logging.getLogger(__name__)
 
 from lino.tools import full_model_name
 from lino.tools import obj2str
+from lino.tools import resolve_field
+
 #~ from lino.utils import choosers
 from lino.utils import choicelists
 from lino.utils import IncompleteDate, d2iso
@@ -146,18 +148,20 @@ class DisplayField(FakeField):
     choices = None
     blank = True
     drop_zone = None
+    max_length = None
     #~ bbar = None
     def __init__(self,verbose_name=None,**kw):
         self.verbose_name = verbose_name
         for k,v in kw.items():
             assert hasattr(self,k)
             setattr(self,k,v)
-    # the following dummy methods are needed when using a DisplayField 
+    # the following dummy methods are never called but needed when using a DisplayField 
     # as return_type of a VirtualField
     def to_python(self,*args,**kw): raise NotImplementedError
     def save_form_data(self,*args,**kw): raise NotImplementedError
     def value_to_string(self,*args,**kw): raise NotImplementedError
         
+
         
 class HtmlBox(DisplayField):
     pass
@@ -173,15 +177,17 @@ class VirtualField(FakeField): # (Field):
     """
     
     def __init__(self,return_type,get):
+        if isinstance(return_type,basestring):
+            return_type = resolve_field(return_type)
         self.return_type = return_type # a Django Field instance
         self.get = get
         #~ self.set = set
         #~ self.name = None
         #~ Field.__init__(self)
         for k in ('''to_python choices save_form_data 
-          value_to_string verbose_name
+          value_to_string verbose_name max_length rel
           blank'''.split()):
-            setattr(self,k,getattr(return_type,k))
+            setattr(self,k,getattr(return_type,k,None))
             
     def unused_contribute_to_class(self, cls, name):
         ## if defined in abstract base class, called once on each submodel
@@ -219,8 +225,9 @@ class VirtualField(FakeField): # (Field):
     def lino_kernel_setup(self,model,name):
         self.model = model
         self.name = name
-        self.return_type.name = name
-        self.return_type.attname = name
+        #~ self.return_type.name = name
+        #~ self.return_type.attname = name
+        #~ if issubclass(model,models.Model):
         model._meta.add_virtual_field(self)
         logger.debug('Found VirtualField %s.%s',full_model_name(model),name)
         
@@ -244,6 +251,24 @@ class VirtualField(FakeField): # (Field):
         #~ assert m.func_code.co_argcount == 2, (self.name, m.func_code.co_varnames)
         #~ print self.field.name
         return m(obj,request)
+        
+def virtualfield(return_type):
+    """
+    Decorator to make a VirtualField from a method.
+    """
+    def decorator(fn):
+        def wrapped(*args):
+            return fn(*args)
+        return VirtualField(return_type,wrapped)
+    return decorator
+    
+def displayfield(*args,**kw):
+    """
+    Decorator shortcut to make a virtual DisplayField from a method.
+    """
+    return virtualfield(DisplayField(*args,**kw))
+    
+        
 
 class MethodField(VirtualField):
     """

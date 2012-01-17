@@ -20,10 +20,10 @@ See :class:`lino.core.table.Table` etc.
 
 
 from lino.utils.tables import CustomTable
-from lino.utils.tables import computed
+#~ from lino.utils.tables import computed
 #~ from lino.utils.tables import ComputedColumn
 
-from lino.tools import resolve_model, get_app
+from lino.tools import resolve_model, get_app, resolve_field
 
 from lino.core.table import fields_list, is_installed, inject_field
 from lino.core.table import has_fk, is_installed
@@ -45,6 +45,7 @@ from lino.core.fields import GenericForeignKeyIdField
 from lino.core.fields import IncompleteDateField
 from lino.core.fields import DisplayField
 from lino.core.fields import VirtualField
+from lino.core.fields import displayfield, virtualfield
 from lino.core.fields import PasswordField
 from lino.core.fields import MonthField
 from lino.core.fields import LinkedForeignKey

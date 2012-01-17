@@ -56,9 +56,9 @@ class StoreField(object):
     list_values_count = 1
     "Necessary to compute :attr:`Store.pk_index`."
     
-    def __init__(self,field,**options):
+    def __init__(self,field,name=None,**options):
         self.field = field
-        options.update(name=field.name)
+        options.update(name=name or field.name)
         self.options = options
         
     #~ def __repr__(self):
@@ -85,6 +85,9 @@ class StoreField(object):
     def cell_html(self,req,row):
         v = self.full_value_from_object(req,row)
         if v is None: return ''
+        return force_unicode(v)
+        
+    def value2html(self,ui,v):
         return force_unicode(v)
       
     def obj2list(self,request,obj):
@@ -248,6 +251,9 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
             return ''
         return req.ui.href_to(obj)
         
+    def value2html(self,ui,v):
+        return ui.href_to(v)
+        
     def get_value_text(self,obj):
         v = self.full_value_from_object(None,obj)
         #~ if isinstance(v,basestring):
@@ -319,7 +325,7 @@ class VirtStoreField(StoreField):
   
     def __init__(self,vf,delegate):
         self.vf = vf
-        StoreField.__init__(self,vf.return_type)
+        StoreField.__init__(self,vf.return_type,vf.name)
         #~ for name in (
               #~ 'form2obj_default',
               #~ 'list_values_count', 'as_js', 'column_names',
@@ -329,6 +335,7 @@ class VirtStoreField(StoreField):
             #~ setattr(self,name,getattr(delegate,name))
         self.form2obj_default = delegate.form2obj_default
         self.cell_html = delegate.cell_html
+        self.value2html = delegate.value2html
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
         self.set_value_in_object = vf.set_value_in_object
@@ -339,6 +346,7 @@ class VirtStoreField(StoreField):
         #~ return self.__class__.__name__ + '(' + self.delegate.__class__.__name__ + ') ' + self.field.name
         
     #~ def cell_html(self,req,row):
+        #~ return self.delegate.cell_html(req,row)
         #~ return force_unicode(self.full_value_from_object(row))
 
     def full_value_from_object(self,req,obj):
@@ -439,6 +447,11 @@ class DisabledFieldsStoreField(SpecialStoreField):
         return l
         
         
+class RecnoStoreField(SpecialStoreField):
+    name = 'recno'
+    def value_from_object(self,request,obj):
+        return 
+        
 class DisableEditingStoreField(SpecialStoreField):
     """
     A field whose value is the result of the `disable_editing` 
@@ -508,6 +521,9 @@ class BooleanStoreField(StoreField):
     def cell_html(self,req,row):
         v = self.full_value_from_object(req,row)
         if v is None: return ''
+        return iif(v,_("Yes"),_("No"))
+
+    def value2html(self,ui,v):
         return iif(v,_("Yes"),_("No"))
       
 
@@ -597,18 +613,16 @@ class MethodStoreField(StoreField):
         #~ return instance
         #raise Exception("Cannot update a virtual field")
 
-class ComputedColumnField(StoreField):
+#~ class ComputedColumnField(StoreField):
   
-    def value_from_object(self,ar,obj):
-        m = self.field.func
-        #~ assert m.func_code.co_argcount >= 2, (self.field.name, m.func_code.co_varnames)
-        #~ print self.field.name
-        return m(obj,ar)[0]
+    #~ def value_from_object(self,ar,obj):
+        #~ m = self.field.func
+        #~ # assert m.func_code.co_argcount >= 2, (self.field.name, m.func_code.co_varnames)
+        #~ # print self.field.name
+        #~ return m(obj,ar)[0]
         
-    def form2obj(self,request,instance,post_data,is_new):
-        pass
-        #~ return instance
-        #raise Exception("Cannot update a virtual field")
+    #~ def form2obj(self,request,instance,post_data,is_new):
+        #~ pass
 
 
 
@@ -707,6 +721,14 @@ class Store:
         self.list_fields = []
         self.detail_fields = []
         
+        def addfield(sf):
+            self.all_fields.append(sf)
+            self.list_fields.append(sf)
+            self.detail_fields.append(sf)
+            
+        if not issubclass(rh.report,table.Table):
+            addfield(RecnoStoreField(self))
+          
         self.collect_fields(self.list_fields,rh.get_list_layout())
         dtl = rh.report.get_detail()
         if dtl:
@@ -736,17 +758,12 @@ class Store:
             
         del self.df2sf
         
-        if rh.report.params:
+        if rh.report.parameters:
             self.param_fields = []
             for pf in rh.params_layout._store_fields:
             #~ for pf in rh.report.params:
                 self.param_fields.append(self.create_field(pf))
         
-        def addfield(sf):
-            self.all_fields.append(sf)
-            self.list_fields.append(sf)
-            self.detail_fields.append(sf)
-            
         if rh.report.disabled_fields:
             addfield(DisabledFieldsStoreField(self))
             #~ sf = DisabledFieldsStoreField(self)
@@ -806,7 +823,7 @@ class Store:
         if isinstance(fld,table.RemoteField):
             """
             Hack: we create a StoreField based on the remote field,
-            then modify its behaviour...
+            then modify its behaviour.
             """
             sf = self.create_field(fld.field)
             def value_from_object(sf,ar,obj):
@@ -820,9 +837,9 @@ class Store:
             sf.value_from_object = curry(value_from_object,sf)
             sf.full_value_from_object = curry(full_value_from_object,sf)
             return sf
-        if isinstance(fld,tables.ComputedColumn):
+        #~ if isinstance(fld,tables.ComputedColumn):
             #~ logger.info("20111230 Store.create_field(%s)", fld)
-            return ComputedColumnField(fld)
+            #~ return ComputedColumnField(fld)
         meth = getattr(fld,'_return_type_for_method',None)
         if meth is not None:
             # uh, this is tricky...
@@ -902,7 +919,8 @@ class Store:
         return l
         
     def column_index(self,name):
-        """Used to write definition of Ext.ensible.cal.CalendarMappings
+        """
+        Used to write definition of Ext.ensible.cal.CalendarMappings
         and Ext.ensible.cal.EventMappings
         """
         #~ logger.info("20111214 column_names: %s",list(self.column_names()))
@@ -946,7 +964,12 @@ class Store:
             #~ print 20120115, fld.field.name
             #~ if not isinstance(fld,SpecialStoreField):
             if fld.field is not None:
-                yield fld.cell_html(request,row)
+                v = fld.full_value_from_object(request,row)
+                if v is None:
+                    yield ''
+                else:
+                    yield fld.value2html(request.ui,v)
+                #~ yield fld.cell_html(request,row)
             
     def parse_params(self,request):
         return self.pv2dict(request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))

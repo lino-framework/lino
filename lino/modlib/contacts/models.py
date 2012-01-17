@@ -557,9 +557,11 @@ class PartnerDocument(models.Model):
         #~ elif self.company:
             #~ return ui.href_to(self.company)
             
-    def summary_row(self,ui,rr,**kw):
+    #~ def summary_row(self,ui,rr,**kw):
+    def summary_row(self,ui,**kw):
         s = ui.href_to(self)
-        if self.person and not dd.has_fk(rr,'person'):
+        #~ if self.person and not dd.has_fk(rr,'person'):
+        if self.person:
             if self.company:
                 s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
             else:

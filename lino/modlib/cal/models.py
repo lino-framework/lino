@@ -331,8 +331,9 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
 
-    def summary_row(self,ui,rr,**kw):
-        html = mixins.ProjectRelated.summary_row(self,ui,rr,**kw)
+    #~ def summary_row(self,ui,rr,**kw):
+    def summary_row(self,ui,**kw):
+        html = mixins.ProjectRelated.summary_row(self,ui,**kw)
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
@@ -492,7 +493,7 @@ class Component(ComponentBase,
         #~ html += _(" on ") + babel.dtos(self.start_date)
         #~ return html
         
-    def summary_row(self,ui,rr,**kw):
+    def summary_row(self,ui,**kw):
         #~ if self.owner and not self.auto_type:
         html = ui.href_to(self)
         if self.start_time:
@@ -506,7 +507,7 @@ class Component(ComponentBase,
         #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
             #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
         if self.project:
-            html += " (%s)" % dd.summary_row(self.project,ui,rr)
+            html += " (%s)" % dd.summary_row(self.project,ui)
         return html
         #~ return super(Event,self).summary_row(ui,rr,**kw)
         

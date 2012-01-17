@@ -999,17 +999,13 @@ if settings.LINO.user_model:
         """
         label = _("Job contracts by User")
         
-        # parameters:
-        
-        user = models.ForeignKey(USER_MODEL)
-        show_past = models.BooleanField(_("past contracts"),default=True)
-        show_active = models.BooleanField(_("active contracts"),default=True)
-        show_coming = models.BooleanField(_("coming contracts"),default=True)
-        today = models.DateField(_("on"))
-        #~ params_template = _("""
-        #~ Show [show_past] / [show_active] / [show_coming] on [today]
-        #~ (of [user])
-        #~ """)
+        parameters = dict(
+          user = models.ForeignKey(USER_MODEL,blank=True),
+          show_past = models.BooleanField(_("past contracts"),default=True),
+          show_active = models.BooleanField(_("active contracts"),default=True),
+          show_coming = models.BooleanField(_("coming contracts"),default=True),
+          today = models.DateField(_("on"),blank=True),
+        )
         params_template = """show_past show_active show_coming today user"""
         params_panel_hidden = False
         

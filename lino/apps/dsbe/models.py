@@ -34,6 +34,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode 
+from django.utils.functional import lazy
 
 #~ import lino
 #~ logger.debug(__file__+' : started')
@@ -74,14 +75,19 @@ from lino.tools import obj2str
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.cal.models import DurationUnit, update_auto_task
 from lino.modlib.contacts.models import Contact
+from lino.tools import resolve_model, UnresolvedModel
 
-# not used here, but these modules are required in INSTALLED_APPS, 
-# and other code may import them using 
-# ``from lino.apps.dsbe.models import Property``
+#~ # not used here, but these modules are required in INSTALLED_APPS, 
+#~ # and other code may import them using 
+#~ # ``from lino.apps.dsbe.models import Property``
 
-from lino.modlib.properties.models import Property
-#~ from lino.modlib.notes.models import NoteType
-from lino.modlib.countries.models import Country, City
+#~ from lino.modlib.properties.models import Property
+#~ # from lino.modlib.notes.models import NoteType
+#~ from lino.modlib.countries.models import Country, City
+
+if settings.LINO.user_model:
+    User = resolve_model(settings.LINO.user_model,strict=True)
+
 
 def is_valid_niss(national_id):
     try:
@@ -113,7 +119,6 @@ def niss_validator(national_id):
         raise ValidationError("Invalid Belgian NISS %r (checkdigit)" 
             % national_id)
 
-from django.utils.functional import lazy
 
 class CefLevel(ChoiceList):
     """
@@ -134,33 +139,6 @@ class CefLevel(ChoiceList):
         #~ return u"%s (%s)" % (bc.value,unicode(bc))
     
 add = CefLevel.add_item
-#~ add('A1', en="basic language skills",
-          #~ de=u"Elementare Sprachverwendung",
-          #~ fr=u"Utilisation élémentaire")
-#~ add('A2', en="basic language skills",
-          #~ de=u"Elementare Sprachverwendung",
-          #~ fr=u"Utilisation élémentaire")
-#~ add('A2+', en="basic language skills",
-           #~ de=u"Elementare Sprachverwendung",
-          #~ fr=u"Utilisation élémentaire")
-#~ add('B1', en="independent use of language",
-          #~ de=u"Selbständige Sprachverwendung",
-          #~ fr=u"Utilisation indépendante")
-#~ add('B2', en="independent use of language",
-          #~ de=u"Selbständige Sprachverwendung",
-          #~ fr=u"Utilisation indépendante")
-#~ add('B2+', en="independent use of language",
-          #~ de=u"Selbständige Sprachverwendung",
-          #~ fr=u"Utilisation indépendante")
-#~ add('C1', en="proficient use of language",
-          #~ de=u"Kompetente Sprachverwendung",
-          #~ fr=u"Utilisation compétente")
-#~ add('C2', en="proficient use of language",
-          #~ de=u"Kompetente Sprachverwendung",
-          #~ fr=u"Utilisation compétente")
-#~ add('C2+', en="proficient use of language",
-          #~ de=u"Exzellente Sprachverwendung",
-          #~ fr=u"Utilisation excellente")
 add('A1', _("basic language skills"))
 add('A2', _("basic language skills"))
 add('A2+', _("basic language skills"))
@@ -170,40 +148,6 @@ add('B2+', _("independent use of language"))
 add('C1', _("proficient use of language"))
 add('C2', _("proficient use of language"))
 add('C2+', _("proficient use of language"))
-
-
-
-#~ AID_RATE_CHOICES = {
-    #~ 'de':[ 
-        #~ u'Alleinlebende Person',
-        #~ u'Zusammenlebende Person',
-        #~ u'Person mit Familie zu Lasten',
-        #~ ],
-    #~ 'fr':[ 
-        #~ u'Personne isolée',
-        #~ u'Personne cohabitante',
-        #~ u'Personne qui cohabite avec une famille à sa charge',
-        #~ ],
-    #~ 'en':[
-        #~ ]
-#~ }
-
-#~ AID_NATURE_CHOICES = {
-    #~ 'de':[ 
-        #~ u'Eingliederungseinkommen',
-        #~ u'Sozialhilfe', 
-        #~ u'Ausgleich zum Eingliederungseinkommen', 
-        #~ u'Ausgleich zur Sozialhilfe' 
-        #~ ],
-    #~ 'fr':[ 
-        #~ u"Revenu d'intégration sociale",
-        #~ u"Aide sociale",
-        #~ u"Complément au revenu d'intégration sociale",
-        #~ u"Complément à l'aide sociale",
-        #~ ],
-    #~ 'en':[
-        #~ ]
-#~ }
 
 
 
@@ -218,13 +162,6 @@ CIVIL_STATE_CHOICES = [
 
 # http://en.wikipedia.org/wiki/European_driving_licence
 
-#~ DRIVING_LICENSE_CHOICES = (
-  #~ ('A'  , _("Motorcycles") ),
-  #~ ('B'  , _("Car") ), # Auto
-  #~ ('C'  , _("Lorry") ),
-  #~ ('CE' , _("Lorry with trailer") ), 
-  #~ ('D'  , _("Bus") ), 
-#~ )
 
 RESIDENCE_TYPE_CHOICES = (
   (1  , _("Registry of citizens")   ), # Bevölkerungsregister registre de la population
@@ -437,12 +374,13 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     "The administration who issued this ID card. Imported from TIM."
     
     eid = dd.FieldSet(_("eID card"),
-        "card_number card_valid_from card_valid_until card_issuer card_type",
+        "card_number card_valid_from card_valid_until card_issuer card_type card_type_text",
         card_number=_("number"),
         card_valid_from=_("valid from"),
         card_valid_until=_("until"),
         card_issuer=_("issued by"),
         card_type=_("card type"),
+        card_type_text=_("eID card type"),
         )
     
     noble_condition = models.CharField(max_length=50,
@@ -689,6 +627,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         return '<br/>'.join(lines)
     overview.return_type = dd.HtmlBox(_("Overview"))
     
+    @dd.displayfield(_("Residence permit"))
     def residence_permit(self,rr):
         kv = dict(type=settings.LINO.site_config.residence_permit_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner,
@@ -697,22 +636,25 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         return rr.ui.quick_upload_buttons(r)
         #~ rrr = uploads.UploadsByPerson().request(rr.ui,master_instance=self,known_values=kv)
         #~ return rr.ui.quick_upload_buttons(rrr)
-    residence_permit.return_type = dd.DisplayField(_("Residence permit"))
+    #~ residence_permit.return_type = dd.DisplayField(_("Residence permit"))
     
+    @dd.displayfield(_("Work permit"))
     def work_permit(self,rr):
         kv = dict(type=settings.LINO.site_config.work_permit_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner,
               master_instance=self,
               known_values=kv)
         return rr.ui.quick_upload_buttons(r)
-    work_permit.return_type = dd.DisplayField(_("Work permit"))
+    #~ work_permit.return_type = dd.DisplayField(_("Work permit"))
     
+    @dd.displayfield(_("driving licence"))
+    #~ @dd.virtualfield(dd.DisplayField(_("driving licence")))
     def driving_licence(self,rr):
         kv = dict(type=settings.LINO.site_config.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner,
               master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
-    driving_licence.return_type = dd.DisplayField(_("driving licence"))
+    #~ driving_licence.return_type = dd.DisplayField(_("driving licence"))
     
     @classmethod
     def site_setup(cls,lino):
@@ -980,9 +922,12 @@ class MyActivePersons(MyPersons):
 from appy import Object
 
 def req2cell(rr):
-    if len(rr.data_iterator) == 0:
-        return ('',0)
-    return (rr.ui.href_to_request(rr,str(len(rr.data_iterator))),len(rr.data_iterator))
+    n = len(rr.data_iterator)
+    if n == 0:
+        #~ return ('',0)
+        return '0'
+    #~ return (rr.ui.href_to_request(rr,str(n)),n)
+    return rr.ui.href_to_request(rr,str(n))
     
   
 class OverviewClientsByUser(dd.CustomTable):
@@ -994,24 +939,36 @@ class OverviewClientsByUser(dd.CustomTable):
     
     @classmethod
     def before_ui_handle(self,ui):
+        """
+        Builds columns dynamically from the :class:`PersonGroup` database table.
+        Called when kernel setup is done, 
+        before the UI handle is being instantiated.
+        """
         self.column_names = 'user:10'
         for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
             def w(pg):
-                def func(obj,ar):
+                def func(self,obj,ar):
                     rr = MyPersonsByGroup.request(ar.ui,master_instance=pg,subst_user=obj)
                     return req2cell(rr)
                 return func
-            cc = self.add_column(w(pg),
-              verbose_name=pg.name,
-              name='G'+pg.ref_name)
+            #~ cc = self.add_column(w(pg),
+              #~ verbose_name=pg.name,
+              #~ name='G'+pg.ref_name)
+            vf = dd.VirtualField(models.CharField(verbose_name=pg.name,max_length=8),w(pg))
+            self.add_virtual_field('G'+pg.ref_name,vf)
             #~ cc = dd.ComputedColumn(func,name='G'+pg.ref_name,verbose_name=pg.name)
-            self.column_names += ' ' + cc.name 
+            self.column_names += ' ' + vf.name 
             
         self.column_names += ' primary_clients active_clients row_total'
         super(OverviewClientsByUser,self).before_ui_handle(ui)
     
     @classmethod
     def get_data_rows(self,ar):
+        """
+        We only want the users who actually have at least one client.
+        We store the corresponding request in the user object 
+        under the name `my_persons`.
+        """
         for user in User.objects.filter(
             Q(username=ar.get_user().username) | Q(is_spis=True)
           ).order_by('username'):
@@ -1020,20 +977,32 @@ class OverviewClientsByUser(dd.CustomTable):
                 user.my_persons = r
                 yield user
                 
-    @dd.computed(_("User"),width=10)
-    def user(obj,ar):
-        return (ar.ui.href_to(obj),0)
+    #~ @dd.computed(_("User"),width=10)
+    #~ def user(obj,ar):
+        #~ return (ar.ui.href_to(obj),0)
         
-    @dd.computed(_("Total"))
-    def row_total(obj,ar):
+    #~ @dd.virtualfield(models.CharField(_("User"),max_length=10))
+    #~ def user(self,obj,ar):
+        #~ # return ",".join([obj2str(self),obj2str(obj),obj2str(ar)])
+        #~ return ar.ui.href_to(obj)
+        
+    @dd.virtualfield('contacts.Person.coach1')
+    def user(self,obj,ar):
+        return obj
+        
+    #~ @dd.computed(_("Total"))
+    @dd.virtualfield(models.CharField(_("Total"),max_length=8))
+    def row_total(self,obj,ar):
         return req2cell(obj.my_persons)
         
-    @dd.computed(_("Primary clients"))
-    def primary_clients(obj,ar):
+    #~ @dd.computed(_("Primary clients"))
+    @dd.virtualfield(models.CharField(_("Primary clients"),max_length=8))
+    def primary_clients(self,obj,ar):
         return req2cell(PersonsByCoach1.request(ar.ui,master_instance=obj))
         
-    @dd.computed(_("Active clients"))
-    def active_clients(obj,ar):
+    #~ @dd.computed(_("Active clients"))
+    @dd.virtualfield(models.CharField(_("Active clients"),max_length=8))
+    def active_clients(self,obj,ar):
         return req2cell(MyActivePersons.request(ar.ui,subst_user=obj))
         
         
@@ -2103,10 +2072,7 @@ if dd.is_installed('dsbe'):
     """
     ...
     """
-    from lino.tools import resolve_model, UnresolvedModel
-    #~ User = resolve_model('users.User')
     if settings.LINO.user_model:
-        User = resolve_model(settings.LINO.user_model,strict=True)
         User.grid_search_field = 'username'
         dd.inject_field(User,
             'is_spis',

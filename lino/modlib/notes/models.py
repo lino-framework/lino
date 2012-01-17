@@ -183,8 +183,10 @@ class Note(mixins.TypedPrintable,
         #~ lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
         #~ '''date subject body language type event_type''')
         
-    def summary_row(self,ui,rr,**kw):
-        s = super(Note,self).summary_row(ui,rr)
+    #~ def summary_row(self,ui,rr,**kw):
+    def summary_row(self,ui,**kw):
+        #~ s = super(Note,self).summary_row(ui,rr)
+        s = super(Note,self).summary_row(ui)
         #~ s = contacts.ContactDocument.summary_row(self,ui,rr)
         if self.subject:
             s += ' ' + cgi.escape(self.subject) 

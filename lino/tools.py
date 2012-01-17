@@ -121,8 +121,9 @@ def get_field(model,name):
   
 
 def resolve_field(name,app_label=None):
-    """Returns the field descriptor specified by the string `name` which 
-    should be either `model.field` or `app.model.field`.
+    """
+    Returns the field descriptor specified by the string `name` which 
+    should be either `model.field` or `app_label.model.field`.
     """
     l = name.split('.')
     if len(l) == 3:

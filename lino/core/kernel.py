@@ -195,13 +195,12 @@ def load_details(make_messages):
         
         if get_class_attr(model,'summary_row') is None:
             if model._lino_detail:
-                def f(obj,ui,rr,**kw):
+                def f(obj,ui,**kw):
                     return u'<a href="%s" target="_blank">%s</a>' % (
                       ui.get_detail_url(obj,fmt='detail'),
-                      #~ rr.get_request_url(str(obj.pk),fmt='detail'),
                       unicode(obj))
             else:
-                def f(obj,ui,rr,**kw):
+                def f(obj,ui,**kw):
                     return unicode(obj)
             model.summary_row = f
             #~ print '20101111 installed summary_row for ', model

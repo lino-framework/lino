@@ -42,10 +42,10 @@ class Third(
         
     remark = models.TextField(_("Remark"),blank=True,null=True)
     
-    def summary_row(self,ui,rr,**kw):
+    def summary_row(self,ui,**kw):
         #~ s = ui.href_to(self)
         s = "(" + unicode(self.seqno) + ") "
-        s += contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
+        s += contacts.PartnerDocument.summary_row(self,ui,**kw)
         return s
         
     def __unicode__(self):

@@ -378,10 +378,10 @@ class ExtUI(base.UI):
             #~ return ext_elems.DisplayElement(lh,de,**kw)
             
             
-        if isinstance(de,table.ComputedColumn):
-            lh.add_store_field(de)
-            kw.setdefault('width',de.width)
-            return ext_elems.DisplayElement(lh,de,**kw)
+        #~ if isinstance(de,table.ComputedColumn):
+            #~ lh.add_store_field(de)
+            #~ kw.setdefault('width',de.width)
+            #~ return ext_elems.DisplayElement(lh,de,**kw)
             
         if isinstance(de,fields.FieldSet):
             return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
@@ -467,7 +467,7 @@ class ExtUI(base.UI):
             msg = "Unknown element %r referred in layout %s of %s." % (
                 name,lh.layout,lh.rh.report)
             l = [de.name for de in lh.rh.report.wildcard_data_elems()]
-            model = lh.rh.report.model
+            model = getattr(lh.rh.report,'model',None) # CustomTables don't have a model
             if getattr(model,'_lino_slaves',None):
                 l += [str(rpt) for rpt in model._lino_slaves.values()]
             msg += " Possible names are %s." % ', '.join(l)
@@ -1867,11 +1867,12 @@ tinymce.init({
             h.list_layout = table.ListLayoutHandle(h,
                 table.ListLayout(h.report,'main = '+h.report.column_names),
                 hidden_elements=h.report.hidden_columns)
-            if h.report.params:
+            if h.report.parameters:
                 if h.report.params_template:
                     params_template = h.report.params_template
                 else:
-                    params_template= ' '.join([pf.name for pf in h.report.params])
+                    #~ params_template= ' '.join([pf.name for pf in h.report.params])
+                    params_template= ' '.join(h.report.parameters.keys())
                 h.params_layout = table.LayoutHandle(self,
                     table.ParamsLayout(h.report,'main = '+params_template))
         
@@ -2131,7 +2132,7 @@ tinymce.init({
             #~ s = "Lino.%s.%sPanel" % (rpt,action.name)
         elif isinstance(action,table.GridEdit):
             s = "Lino.%s.GridPanel" % rpt
-            if action.actor.params:
+            if action.actor.parameters:
                 params = rh.params_layout._main
                 assert params.__class__.__name__ == 'ParameterPanel'
         elif isinstance(action,table.Calendar):

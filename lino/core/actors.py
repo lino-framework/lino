@@ -20,6 +20,8 @@ import lino
 from lino.ui import base
 
 from lino.ui.base import Handled
+from lino.core import fields
+from lino.utils import curry
 
 actor_classes = []
 #~ actors_dict = None
@@ -115,12 +117,25 @@ class ActorMetaClass(type):
         
         cls = type.__new__(meta, classname, bases, classDict)
         
-        cls.params = []
-        for k,v in classDict.items():
-            if isinstance(v,models.Field):
+        
+        if cls.parameters:
+            for k,v in cls.parameters.items():
                 v.set_attributes_from_name(k)
                 v.table = cls
-                cls.params.append(v)
+                
+        cls.virtual_fields = {}
+        for k,v in classDict.items():
+            #~ if isinstance(v,models.Field):
+            #~ if isinstance(v,(models.Field,fields.VirtualField)):
+            if isinstance(v,fields.VirtualField):
+                cls.add_virtual_field(k,v)
+                
+        #~ cls.params = []
+        #~ for k,v in classDict.items():
+            #~ if isinstance(v,models.Field):
+                #~ v.set_attributes_from_name(k)
+                #~ v.table = cls
+                #~ cls.params.append(v)
                 
         
         """
@@ -183,6 +198,12 @@ class Actor(Handled):
     but :func:`lino.core.table.table_factory`
     uses it to specify a value which overrides the default.
     """
+    
+    parameters = None
+    """
+    See :attr:`lino.utils.tables.AbstractTable.parameters`
+    """
+    
     #~ _actor_name = None
     title = None
     label = None
@@ -198,6 +219,13 @@ class Actor(Handled):
     def debug_summary(self):
         return "%s (%s)" % (self.__class__,','.join([
             a.name for a in self._actions_list]))
+        
+    @classmethod
+    def add_virtual_field(cls,name,vf):
+        cls.virtual_fields[name] = vf
+        vf.name = name
+        #~ vf.lino_kernel_setup(cls,name)
+        vf.get = curry(vf.get,cls)
         
     @classmethod
     def get_url(self,ui,**kw):

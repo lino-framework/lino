@@ -69,7 +69,7 @@ from lino.tools import resolve_model, resolve_field, get_app, full_model_name, g
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, get_data_elem
 from lino.utils.tables import AbstractTable, AbstractTableRequest, CustomTable
-from lino.utils.tables import GridEdit, ComputedColumn
+from lino.utils.tables import GridEdit #, ComputedColumn
 
 
 #~ from lino.modlib import field_choices
@@ -134,10 +134,13 @@ def fields_list(model,field_names):
     return [get_field(model,n).name for n in field_names.split()]
 
 
-def summary_row(obj,ui,rr,**kw):
+#~ def summary_row(obj,ui,rr,**kw):
+def summary_row(obj,ui,**kw):
     m = getattr(obj,'summary_row',None)
     if m:
-        return m(ui,rr,**kw)
+        #~ return m(ui,rr,**kw)
+        #~ print 20120116, obj.__class__
+        return m(ui,**kw)
     return ui.href_to(obj)
     #~ linkkw = {}
     #~ linkkw.update(fmt='detail')
@@ -145,7 +148,8 @@ def summary_row(obj,ui,rr,**kw):
     #~ return '<a href="%s">%s</a>' % (url,cgi.escape(force_unicode(obj)))
   
 
-def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
+#~ def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
+def summary(ui,objects,separator=', ',max_items=5,before='',after='',**kw):
     """
     Returns this table as a unicode string.
     
@@ -156,13 +160,15 @@ def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
             #~ return unicode(obj)
     s = u''
     n = 0
-    for i in rr.data_iterator:
+    #~ for i in rr.data_iterator:
+    for i in objects:
         if n:
             s += separator
         else:
             s += before
         n += 1
-        s += summary_row(i,ui,rr,**kw)
+        #~ s += summary_row(i,ui,rr,**kw)
+        s += summary_row(i,ui,**kw)
         #~ s += i.summary_row(ui,rr,**kw)
         if n >= max_items:
             s += separator + '...' + after
@@ -286,7 +292,7 @@ def register_report(rpt):
         #~ logger.debug("20111113 %s is an abstract report", rpt)
         return
         
-    for name,v in rpt.__dict__.items():
+    #~ for name,v in rpt.__dict__.items():
     #~ for name in rpt.__class__.__dict__.keys():
     #~ for name in dir(rpt):
         #~ v = getattr(rpt,name)
@@ -294,13 +300,13 @@ def register_report(rpt):
             #~ v.name = name
             #~ v.add_to_table(rpt)
             #~ rpt.custom_groups = rpt.custom_groups + [v]
-        if isinstance(v,ComputedColumn):
-            v.name = name
-            v.add_to_table(rpt)
-            d = dict()
-            d.update(rpt.computed_columns)
-            d[name] = v
-            rpt.computed_columns = d
+        #~ if isinstance(v,ComputedColumn):
+            #~ v.name = name
+            #~ v.add_to_table(rpt)
+            #~ d = dict()
+            #~ d.update(rpt.computed_columns)
+            #~ d[name] = v
+            #~ rpt.computed_columns = d
             
     #~ if rpt.model._meta.abstract:
         
@@ -1109,7 +1115,8 @@ class Table(AbstractTable):
         def meth(master,request):
             rr = TableRequest(ui,self,None,self.default_action,master_instance=master)
             #~ rr = self.request(ui,master_instance=master)
-            s = summary(ui,rr,row_separator)
+            s = summary(ui,rr.data_iterator,row_separator)
+            #~ s = summary(ui,rr,row_separator)
             #~ s = ', '.join([fmt(r) for r in rr])
             #~ print 'reports.py 20101017', s
             return s

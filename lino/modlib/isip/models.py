@@ -207,7 +207,8 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         verbose_name=_("Ending"))
     date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
     
-    def summary_row(self,ui,rr,**kw):
+    #~ def summary_row(self,ui,rr,**kw):
+    def summary_row(self,ui,**kw):
         s = ui.href_to(self)
         #~ s += " (" + ui.href_to(self.person) + ")"
         #~ s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.provider) + ")"

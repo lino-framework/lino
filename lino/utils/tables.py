@@ -227,7 +227,7 @@ class AbstractTableRequest(ActionRequest):
         
     
     def parse_req(self,request,rh,**kw):
-        if rh.report.params:
+        if rh.report.parameters:
             kw.update(param_values=self.ui.parse_params(rh,request))
         #~ kw.update(self.report.known_values)
         #~ for fieldname, default in self.report.known_values.items():
@@ -441,10 +441,10 @@ class AbstractTable(actors.Actor):
     """
     _handle_class = TableHandle
     
-    params = None
+    parameters = None
     """
-    Internal attribute automatically filled with 
-    the user-definable parameter fields for this table.
+    User-definable parameter fields for this table.
+    Set this to a `dict` of `name = models.XyzField()` pairs.
     """
     
     params_template = None
@@ -474,10 +474,10 @@ class AbstractTable(actors.Actor):
     Each group can have her own header and/or total lines.
     """
     
-    computed_columns = {}
-    """
-    Used internally to store :class:`computed columns <ComputedColumn>` defined by this Table.
-    """
+    #~ computed_columns = {}
+    #~ """
+    #~ Used internally to store :class:`computed columns <ComputedColumn>` defined by this Table.
+    #~ """
     
     custom_groups = []
     """
@@ -650,34 +650,39 @@ class AbstractTable(actors.Actor):
     def setup_actions(self):
         pass
         
-    @classmethod
-    def add_column(self,*args,**kw):
-        """
-        Use this from an overridden `before_ui_handle` method to 
-        dynamically define computed columns to this table.
-        """
-        return self._add_column(ComputedColumn(*args,**kw))
+    #~ @classmethod
+    #~ def add_column(self,*args,**kw):
+        #~ """
+        #~ Use this from an overridden `before_ui_handle` method to 
+        #~ dynamically define computed columns to this table.
+        #~ """
+        #~ return self._add_column(ComputedColumn(*args,**kw))
         
-    @classmethod
-    def _add_column(self,col):
-        col.add_to_table(self)
-        # make sure we don't add it to an inherited `computed_columns`:
-        self.computed_columns = dict(self.computed_columns)
-        self.computed_columns[col.name] = col
-        return col
+    #~ @classmethod
+    #~ def _add_column(self,col):
+        #~ col.add_to_table(self)
+        #~ # make sure we don't add it to an inherited `computed_columns`:
+        #~ self.computed_columns = dict(self.computed_columns)
+        #~ self.computed_columns[col.name] = col
+        #~ return col
       
         
     @classmethod
     def get_param_elem(self,name):
-        for pf in self.params:
-            if pf.name == name:  return pf
+        if self.parameters:
+            return self.parameters.get(name,None)
+        #~ for pf in self.params:
+            #~ if pf.name == name:  return pf
         return None
       
     @classmethod
     def get_data_elem(self,name):
-        cc = self.computed_columns.get(name,None)
-        if cc is not None:
-            return cc
+        #~ cc = self.computed_columns.get(name,None)
+        #~ if cc is not None:
+            #~ return cc
+        vf = self.virtual_fields.get(name,None)
+        if vf is not None:
+            return vf
         return None
               
         
@@ -734,35 +739,33 @@ class AbstractTable(actors.Actor):
         #~ return "Grid Config has been saved to %s" % filename
     
 
-class ComputedColumn(FakeField):
-    """
-    A Column whose value is not retrieved from the database but 
-    "computed" by a custom function.
-    """
-    #~ editable = False
-    #~ primary_key = False
-    def __init__(self,func,verbose_name=None,name=None,width=None):
-        self.func = func
-        self.name = name
-        self.verbose_name = verbose_name or name
-        self.width = width
+#~ class ComputedColumn(FakeField):
+    #~ """
+    #~ A Column whose value is not retrieved from the database but 
+    #~ "computed" by a custom function.
+    #~ """
+    #~ def __init__(self,func,verbose_name=None,name=None,width=None):
+        #~ self.func = func
+        #~ self.name = name
+        #~ self.verbose_name = verbose_name or name
+        #~ self.width = width
         
-    def add_to_table(self,table):
-        self.table = table
-        if self.width is None:
-            self.width = table.column_defaults.get('width',None)
+    #~ def add_to_table(self,table):
+        #~ self.table = table
+        #~ if self.width is None:
+            #~ self.width = table.column_defaults.get('width',None)
         
         
-def computed(*args,**kw):
-    """
-    Decorator used to define computed columns as part 
-    of the Table's definition.
-    """
-    def decorator(fn):
-        def wrapped(*args):
-            return fn(*args)
-        return ComputedColumn(wrapped,*args,**kw)
-    return decorator
+#~ def computed(*args,**kw):
+    #~ """
+    #~ Decorator used to define computed columns as part 
+    #~ of the Table's definition.
+    #~ """
+    #~ def decorator(fn):
+        #~ def wrapped(*args):
+            #~ return fn(*args)
+        #~ return ComputedColumn(wrapped,*args,**kw)
+    #~ return decorator
     
 
 

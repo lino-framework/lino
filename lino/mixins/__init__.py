@@ -223,10 +223,12 @@ class ProjectRelated(models.Model):
     if settings.LINO.project_model:
         project = models.ForeignKey(settings.LINO.project_model,blank=True,null=True)
 
-    def summary_row(self,ui,rr,**kw):
+    #~ def summary_row(self,ui,rr,**kw):
+    def summary_row(self,ui,**kw):
         s = ui.href_to(self)
         if settings.LINO.project_model:
-            if self.project and not dd.has_fk(rr,'project'):
+            #~ if self.project and not dd.has_fk(rr,'project'):
+            if self.project:
                 s += " (" + ui.href_to(self.project) + ")"
         return s
             

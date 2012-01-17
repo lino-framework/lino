@@ -559,12 +559,13 @@ class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
   
     def store_options(self,**kw):
-        url = self.layout_handle.ui.build_url("choices",
-            self.layout_handle.layout.table.model._meta.app_label,
-            self.layout_handle.layout.table.model.__name__,
-            self.field.name,**kw)
-        proxy = dict(url=url,method='GET')
-        kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
+        if self.editable:
+            url = self.layout_handle.ui.build_url("choices",
+                self.layout_handle.layout.table.model._meta.app_label,
+                self.layout_handle.layout.table.model.__name__,
+                self.field.name,**kw)
+            proxy = dict(url=url,method='GET')
+            kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
         # a JsonStore without explicit proxy sometimes used method POST
         return kw
       
@@ -1540,4 +1541,6 @@ def field2elem(layout_handle,field,**kw):
     for cl,x in _FIELD2ELEM:
         if isinstance(selector_field,cl):
             return x(layout_handle,field,**kw)
+    if isinstance(field,dd.VirtualField):
+        raise NotImplementedError("No LayoutElement for VirtualField on %s" % field.return_type.__class__)
     raise NotImplementedError("No LayoutElement for %s" % field.__class__)
