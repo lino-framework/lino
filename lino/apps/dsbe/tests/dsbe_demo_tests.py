@@ -380,7 +380,9 @@ def test06(self):
     """
     from lino.utils import babel
     from lino.apps.dsbe.models import Person
-    from lino.apps.dsbe.models import Property, PersonProperty
+    #~ from lino.apps.dsbe.models import Property, PersonProperty
+    Property = settings.LINO.modules.properties.Property
+    PersonProperty = settings.LINO.modules.properties.PersonProperty
     annette = Person.objects.get(pk=118)
     self.assertEquals(unicode(annette), "ARENS Annette (118)")
     
@@ -997,13 +999,13 @@ def test16(self):
       ['countries/Countries', 6],
       ['notes/Notes', 6],
       ['isip/Contracts', 2],
-      ['jobs/JobProviders', 3],
-      ['jobs/Jobs', 3],
-      ['jobs/Contracts', 7], # one more than after fixture because of test12()
+      ['jobs/JobProviders', 4],
+      ['jobs/Jobs', 4],
+      ['jobs/Contracts', 9], # one more than after fixture because of test12()
       ['jobs/Candidatures', 7],
       ['jobs/Studies', 3],
-      ['cal/Events', 63], # 3 more than after fixture because of test12()
-      ['cal/Tasks', 10],
+      ['cal/Events', 65], # 3 more than after fixture because of test12()
+      ['cal/Tasks', 12],
       ['cal/Priorities', 10],
       ['notes/MyNotes', 3],
       ['properties/PropGroups', 4],

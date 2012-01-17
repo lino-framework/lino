@@ -1,0 +1,15 @@
+20120117
+========
+
+
+Zunächst mal "noch schnell" das kleine Problem mit der 
+Benutzernummer statt des Benutzernamens geregelt.
+(also die Tatsache, dass ContractsByUser in der ersten Kolonne 
+statt des Benutzernamens dessen Nummer zeigte).
+Zack, zwei Stunden Wurstelei.
+Es gab auch noch ein paar andere Bugs.
+
+
+Checkin um 10 Uhr : Test-Suite dsbe läuft wieder, und auch manuell scheint alles zu klappen. 
+Bis auf folgenden Bug:
+Wenn ich einen Führerschein hochlade, dann springt er anschließend nicht auf die Person zurück.

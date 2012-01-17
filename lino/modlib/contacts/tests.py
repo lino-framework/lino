@@ -91,7 +91,8 @@ def test02(self):
           'navinfo disable_delete data id title disabled_actions')
         self.assertEqual(result['data']['country'],"Estland")
         self.assertEqual(result['data']['gender'],u"Männlich")
-        self.assertEqual(result['data']['disabled_fields'],['contact_ptr_id','id'])
+        #~ self.assertEqual(result['data']['disabled_fields'],['contact_ptr_id','id'])
+        self.assertEqual(result['data']['disabled_fields'],['id'])
         
         # TODO: the following would fail if LINO.date_format_* have been modified
         self.assertEqual(result['data']['birth_date'],"01.06.1968")

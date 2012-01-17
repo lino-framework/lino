@@ -139,6 +139,13 @@ class GridColumn(Component):
                 kw.update(filter=editor.gridfilters_settings)
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
+            def fk_renderer(fld,name):
+                rpt = fld.rel.to._lino_model_report
+                if rpt.detail_action is not None:
+                    return "Lino.fk_renderer('%s','Lino.%s')" % (
+                      name + ext_requests.CHOICES_HIDDEN_SUFFIX,
+                      rpt.detail_action)
+              
             rend = None
             if isinstance(editor.field,models.AutoField):
                 rend = 'Lino.id_renderer'
@@ -152,16 +159,11 @@ class GridColumn(Component):
                   (editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX)
             elif isinstance(editor.field,models.ForeignKey):
                 # FK fields are clickable if their target has a detail view
-                rpt = editor.field.rel.to._lino_model_report
-                if rpt.detail_action is not None:
-                #~ a = rpt.get_action('detail')
-                #~ if a is not None:
-                    rend = "Lino.fk_renderer('%s','Lino.%s')" % (
-                      editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX,
-                      rpt.detail_action)
-                    #~ rend = "Lino.fk_renderer('%s','%s')" % (
-                      #~ editor.field.name + 'Hidden',
-                      #~ editor.layout_handle.rh.ui.get_actor_url(rpt))
+                rend = fk_renderer(editor.field,editor.field.name)
+            elif isinstance(editor.field,fields.VirtualField) \
+              and isinstance(editor.field.return_type,models.ForeignKey):
+                # FK fields are clickable if their target has a detail view
+                rend = fk_renderer(editor.field.return_type,editor.field.name)
             #~ elif isinstance(editor.field,dd.GenericForeignKeyIdField):
                 #~ rend = "Lino.gfk_renderer()"
             if rend:

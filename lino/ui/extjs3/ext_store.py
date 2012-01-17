@@ -49,6 +49,11 @@ from lino.utils import tables
 class StoreField(object):
     """
     Base class for the fields of a :class:`Store`.
+    
+    Note: `value_from_object` and `full_value_from_object` are similar, 
+    but for ForeignKeyStoreField one returns the primary key while the 
+    other returns the full instance.
+    
     """
     form2obj_default = None
     "because checkboxes are not submitted when they are off"
@@ -56,9 +61,10 @@ class StoreField(object):
     list_values_count = 1
     "Necessary to compute :attr:`Store.pk_index`."
     
-    def __init__(self,field,name=None,**options):
+    def __init__(self,field,name,**options):
         self.field = field
-        options.update(name=name or field.name)
+        #~ options.update(name=name or field.name)
+        options.update(name=name)
         self.options = options
         
     #~ def __repr__(self):
@@ -74,27 +80,31 @@ class StoreField(object):
         yield self.options['name']
         
     def value_from_object(self,request,obj):
-        #~ if not hasattr(self.field,'value_from_object'):
-            #~ raise Exception('%s %s has no method value_from_object?!'%(
-              #~ self.field,self.field.name))
         return self.full_value_from_object(request,obj)
         
-    def full_value_from_object(self,ar,obj):
+    def full_value_from_object(self,request,obj):
         return self.field.value_from_object(obj)
     
-    def cell_html(self,req,row):
-        v = self.full_value_from_object(req,row)
-        if v is None: return ''
-        return force_unicode(v)
+    #~ def cell_html(self,req,row):
+        #~ v = self.full_value_from_object(req,row)
+        #~ if v is None: return ''
+        #~ return force_unicode(v)
         
     def value2html(self,ui,v):
         return force_unicode(v)
       
-    def obj2list(self,request,obj):
-        return [self.value_from_object(request,obj)]
+    #~ def obj2list(self,request,obj):
+        #~ return [self.value_from_object(request,obj)]
         
-    def obj2dict(self,request,obj,d):
-        d[self.field.name] = self.value_from_object(request,obj)
+    #~ def obj2dict(self,request,obj,d):
+        #~ d[self.field.name] = self.value_from_object(request,obj)
+
+    def value2list(self,ui,v,l,row):
+        return l.append(v)
+        
+    def value2dict(self,ui,v,d,row):
+        d[self.options['name']] = v
+        #~ d[self.field.name] = v
 
     def parse_form_value(self,v,obj):
         #~ if v == '' and not self.field.empty_strings_allowed:
@@ -188,7 +198,8 @@ class ComboStoreField(StoreField):
     
     def as_js(self):
         s = StoreField.as_js(self)
-        s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        #~ s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        s += "," + repr(self.options['name']+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return s 
         
     def column_names(self):
@@ -198,41 +209,19 @@ class ComboStoreField(StoreField):
     def extract_form_data(self,post_data):
         return post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
         
-    def unused_form2obj(self,request,instance,post_data,is_new):
-        assert not self.field.primary_key
-        v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
-        #~ logger.info("ComboStoreField.form2obj %s = %r", self.field.name,v)
-        if v is None:
-            return 
-        if v in ('','undefined'): 
-            v = None
-        if v is not None:
-            v = self.parse_form_value(v,instance)
-        if v is None:
-            if not self.field.blank:
-                raise exceptions.ValidationError("field may not be empty")
-                #~ raise exceptions.ValidationError({self.field.name: "field may not be empty"})
-                #~ print "20101021 cannot set empty value for", self.field.name
-                #~ return # 20101021
-            if not self.field.null:
-                """field is blank but will be set by full_clean. 
-                Django refuses to explicitly assign None to a non-nullable field.
-                """
-                return 
-        self.set_value_in_object(request,instance,v)
-        #~ setattr(instance,self.field.name,v)
-
-    def obj2list(self,request,obj):
-        value,text = self.get_value_text(obj)
-        return [text,value]
+    #~ def obj2list(self,request,obj):
+    def value2list(self,request,v,l,row):
+        value,text = self.get_value_text(v,row)
+        l += [text,value]
         
-    def obj2dict(self,request,obj,d):
-        value,text = self.get_value_text(obj)
+    #~ def obj2dict(self,request,obj,d):
+    def value2dict(self,request,v,d,row):
+        value,text = self.get_value_text(v,row)
         d[self.field.name] = text
-        d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
+        d[self.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX] = value
         
-    def get_value_text(self,obj):
-        v = self.full_value_from_object(None,obj)
+    def get_value_text(self,v,obj):
+        #~ v = self.full_value_from_object(None,obj)
         if v is None or v == '':
             return (None, None)
         ch = choosers.get_for_field(self.field) 
@@ -245,17 +234,17 @@ class ComboStoreField(StoreField):
         
 class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         
-    def cell_html(self,req,row):
-        obj = self.full_value_from_object(req,row)
-        if obj is None:
-            return ''
-        return req.ui.href_to(obj)
+    #~ def cell_html(self,req,row):
+        #~ obj = self.full_value_from_object(req,row)
+        #~ if obj is None:
+            #~ return ''
+        #~ return req.ui.href_to(obj)
         
     def value2html(self,ui,v):
         return ui.href_to(v)
         
-    def get_value_text(self,obj):
-        v = self.full_value_from_object(None,obj)
+    def get_value_text(self,v,obj):
+        #~ v = self.full_value_from_object(None,obj)
         #~ if isinstance(v,basestring):
             #~ logger.info("20120109 %s -> %s -> %r",obj,self,v)
         if v is None:
@@ -297,35 +286,19 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
             
 class LinkedForeignKeyField(ForeignKeyStoreField):
   
-    def unused_get_value_text(self,obj):
-        v = self.field.link_field.get_value(obj)
-        #~ try:
-            #~ v = getattr(obj,self.field.name)
-        #~ except self.get_rel_to(obj).DoesNotExist,e:
-            #~ v = None
-        if v is None:
-            return (None, None)
-        else:
-            return (v.pk, unicode(v))
-            
     def get_rel_to(self,obj):
         ct = self.field.get_content_type(obj)
         if ct is None:
             return None
         return ct.model_class()
         
-    #~ def value_from_object(self,request,obj):
-        #~ other = self.field.link_field.get_value(obj,request)
-        #~ if other is None: return ''
-        #~ return request.ui.href_to(other)
-        
 
 
 class VirtStoreField(StoreField):
   
-    def __init__(self,vf,delegate):
+    def __init__(self,vf,delegate,name):
         self.vf = vf
-        StoreField.__init__(self,vf.return_type,vf.name)
+        StoreField.__init__(self,vf.return_type,name)
         #~ for name in (
               #~ 'form2obj_default',
               #~ 'list_values_count', 'as_js', 'column_names',
@@ -333,9 +306,15 @@ class VirtStoreField(StoreField):
               #~ 'obj2dict','obj2list'
               #~ ):
             #~ setattr(self,name,getattr(delegate,name))
+        self.as_js = delegate.as_js
+        self.column_names = delegate.column_names
+        self.list_values_count = delegate.list_values_count
         self.form2obj_default = delegate.form2obj_default
-        self.cell_html = delegate.cell_html
+        #~ self.cell_html = delegate.cell_html
         self.value2html = delegate.value2html
+        #~ self.obj2list = delegate.obj2list
+        self.value2list = delegate.value2list
+        self.value2dict = delegate.value2dict
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
         self.set_value_in_object = vf.set_value_in_object
@@ -387,11 +366,12 @@ class PasswordStoreField(StoreField):
         
 class GenericForeignKeyField(StoreField):
         
-    def full_value_from_object(self,req,obj):
-        return getattr(obj,self.field.name)
+    #~ def value_from_object(self,req,obj):
+        #~ return getattr(obj,self.field.name)
         
-    def value_from_object(self,request,obj):
-        owner = self.full_value_from_object(request,obj)
+    def full_value_from_object(self,request,obj):
+        #~ owner = self.full_value_from_object(request,obj)
+        owner = getattr(obj,self.field.name)
         #~ owner = getattr(obj,self.field.name)
         if owner is None: return ''
         return request.ui.href_to(owner)
@@ -409,15 +389,21 @@ class SpecialStoreField(StoreField):
         self.options = dict(name=self.name)
         self.store = store
         
-    def obj2dict(self,request,obj,d):
-        #~ d.update(disable_editing=self.value_from_object(request,obj))
-        d[self.name] = self.value_from_object(request,obj)
+    #~ def value2dict(self,ui,v,d):
+        #~ d[self.name] = v
+
+    #~ def obj2dict(self,request,obj,d):
+        #~ # d.update(disable_editing=self.value_from_object(request,obj))
+        #~ d[self.name] = self.value_from_object(request,obj)
 
     def parse_form_value(self,v,instance):
         pass
         
-    def obj2list(self,request,obj):
-        return [self.value_from_object(request,obj)]
+    #~ def obj2list(self,request,obj):
+        #~ return [self.value_from_object(request,obj)]
+      
+    #~ def value2list(self,ui,v):
+        #~ return [v]
       
     def form2obj(self,request,instance,post_data,is_new):
         pass
@@ -431,7 +417,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
     """
     name = 'disabled_fields'
     
-    def value_from_object(self,request,obj):
+    def full_value_from_object(self,request,obj):
         #~ l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
         l = list(self.store.report.disabled_fields(obj,request))
         # if obj is not new (i.e. has a primary key)
@@ -447,10 +433,10 @@ class DisabledFieldsStoreField(SpecialStoreField):
         return l
         
         
-class RecnoStoreField(SpecialStoreField):
-    name = 'recno'
-    def value_from_object(self,request,obj):
-        return 
+#~ class RecnoStoreField(SpecialStoreField):
+    #~ name = 'recno'
+    #~ def full_value_from_object(self,request,obj):
+        #~ return 
         
 class DisableEditingStoreField(SpecialStoreField):
     """
@@ -460,7 +446,7 @@ class DisableEditingStoreField(SpecialStoreField):
     """
     name = 'disable_editing'
         
-    def value_from_object(self,request,obj):
+    def full_value_from_object(self,request,obj):
         return self.store.report.disable_editing(obj,request)
         
 
@@ -489,9 +475,9 @@ class DisableEditingStoreField(SpecialStoreField):
         #~ return extract_summary(v)
   
 class DecimalStoreField(StoreField):
-    def __init__(self,field,**kw):
+    def __init__(self,field,name,**kw):
         kw['type'] = 'float'
-        StoreField.__init__(self,field,**kw)
+        StoreField.__init__(self,field,name,**kw)
         
     def parse_form_value(self,v,obj):
         if '.' in v and ',' in v:
@@ -510,27 +496,27 @@ class BooleanStoreField(StoreField):
   
     form2obj_default = False # 'off'
     
-    def __init__(self,field,**kw):
+    def __init__(self,field,name,**kw):
         kw['type'] = 'boolean'
-        StoreField.__init__(self,field,**kw)
+        StoreField.__init__(self,field,name,**kw)
         
     def parse_form_value(self,v,obj):
         #~ print "20110717 parse_form_value", self.field.name, v, obj
         return ext_requests.parse_boolean(v)
 
-    def cell_html(self,req,row):
-        v = self.full_value_from_object(req,row)
-        if v is None: return ''
-        return iif(v,_("Yes"),_("No"))
+    #~ def cell_html(self,req,row):
+        #~ v = self.full_value_from_object(req,row)
+        #~ if v is None: return ''
+        #~ return iif(v,_("Yes"),_("No"))
 
     def value2html(self,ui,v):
         return iif(v,_("Yes"),_("No"))
       
 
 class AutoStoreField(StoreField):
-    def __init__(self,field,**kw):
+    def __init__(self,field,name,**kw):
         kw['type'] = 'int'
-        StoreField.__init__(self,field,**kw)
+        StoreField.__init__(self,field,name,**kw)
   
     def form2obj(self,request,instance,post_data,is_new):
         pass
@@ -542,10 +528,10 @@ class AutoStoreField(StoreField):
 
 class DateStoreField(StoreField):
   
-    def __init__(self,field,**kw):
+    def __init__(self,field,name,**kw):
         kw['type'] = 'date'
         kw['dateFormat'] = settings.LINO.date_format_extjs # date_format # 'Y-m-d'
-        StoreField.__init__(self,field,**kw)
+        StoreField.__init__(self,field,name,**kw)
         
     def parse_form_value(self,v,obj):
         if v:
@@ -580,7 +566,7 @@ class TimeStoreField(StoreField):
 
 class FileFieldStoreField(StoreField):
   
-    def value_from_object(self,request,obj):
+    def full_value_from_object(self,request,obj):
         ff = self.field.value_from_object(obj)
         return ff.name
         
@@ -598,12 +584,12 @@ class MethodStoreField(StoreField):
         #~ print self.field.name
         return unbound_meth(obj,request)
         
-    def obj2list(self,request,obj):
-        return [self.value_from_object(request,obj)]
+    #~ def obj2list(self,request,obj):
+        #~ return [self.value_from_object(request,obj)]
         
-    def obj2dict(self,request,obj,d):
-        #~ logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
-        d[self.field.name] = self.value_from_object(request,obj)
+    #~ def obj2dict(self,request,obj,d):
+        #  logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
+        #~ d[self.field.name] = self.value_from_object(request,obj)
         
     #~ def get_from_form(self,instance,post_data):
         #~ pass
@@ -666,11 +652,11 @@ class OneToOneStoreField(RelatedMixin,StoreField):
             return None
         return v.pk
       
-    def obj2list(self,request,obj):
-        return [self.value_from_object(request,obj)]
+    #~ def obj2list(self,request,obj):
+        #~ return [self.value_from_object(request,obj)]
         
-    def obj2dict(self,request,obj,d):
-        d[self.field.name] = self.value_from_object(request,obj)
+    #~ def obj2dict(self,request,obj,d):
+        #~ d[self.field.name] = self.value_from_object(request,obj)
         
 
 class Store:
@@ -726,8 +712,8 @@ class Store:
             self.list_fields.append(sf)
             self.detail_fields.append(sf)
             
-        if not issubclass(rh.report,table.Table):
-            addfield(RecnoStoreField(self))
+        #~ if not issubclass(rh.report,table.Table):
+            #~ addfield(RecnoStoreField(self))
           
         self.collect_fields(self.list_fields,rh.get_list_layout())
         dtl = rh.report.get_detail()
@@ -762,7 +748,7 @@ class Store:
             self.param_fields = []
             for pf in rh.params_layout._store_fields:
             #~ for pf in rh.report.params:
-                self.param_fields.append(self.create_field(pf))
+                self.param_fields.append(self.create_field(pf,pf.name))
         
         if rh.report.disabled_fields:
             addfield(DisabledFieldsStoreField(self))
@@ -791,7 +777,7 @@ class Store:
     def add_field_for(self,fields,df):
         sf = self.df2sf.get(df,None)
         if sf is None:
-            sf = self.create_field(df)
+            sf = self.create_field(df,df.name)
             self.all_fields.append(sf)
             self.df2sf[df] = sf
         fields.append(sf)
@@ -819,13 +805,13 @@ class Store:
             if not pk_found:
                 self.add_field_for(fields,self.pk)
         
-    def create_field(self,fld):
+    def create_field(self,fld,name):
         if isinstance(fld,table.RemoteField):
             """
             Hack: we create a StoreField based on the remote field,
             then modify its behaviour.
             """
-            sf = self.create_field(fld.field)
+            sf = self.create_field(fld.field,fld.name)
             def value_from_object(sf,ar,obj):
                 m = fld.func
                 return m(obj)
@@ -843,43 +829,43 @@ class Store:
         meth = getattr(fld,'_return_type_for_method',None)
         if meth is not None:
             # uh, this is tricky...
-            return MethodStoreField(fld)
+            return MethodStoreField(fld,name)
         #~ if isinstance(fld,fields.HtmlBox):
             #~ ...
         if isinstance(fld,dd.LinkedForeignKey):
             #~ logger.info("Store.create_field(%s)", fld)
-            return LinkedForeignKeyField(fld)
+            return LinkedForeignKeyField(fld,name)
         if isinstance(fld,dd.VirtualField):
-            delegate = self.create_field(fld.return_type)
-            return VirtStoreField(fld,delegate)
+            delegate = self.create_field(fld.return_type,fld.name)
+            return VirtStoreField(fld,delegate,name)
         if isinstance(fld,models.FileField):
-            return FileFieldStoreField(fld)
+            return FileFieldStoreField(fld,name)
         if isinstance(fld,models.ManyToManyField):
-            return StoreField(fld)
+            return StoreField(fld,name)
         if isinstance(fld,dd.PasswordField):
-            return PasswordStoreField(fld)
+            return PasswordStoreField(fld,name)
         if isinstance(fld,models.OneToOneField):
-            return OneToOneStoreField(fld)
+            return OneToOneStoreField(fld,name)
         if isinstance(fld,generic.GenericForeignKey):
-            return GenericForeignKeyField(fld)
+            return GenericForeignKeyField(fld,name)
         if isinstance(fld,dd.GenericForeignKeyIdField):
-            return ComboStoreField(fld)
+            return ComboStoreField(fld,name)
         if isinstance(fld,models.ForeignKey):
-            return ForeignKeyStoreField(fld)
+            return ForeignKeyStoreField(fld,name)
         if isinstance(fld,models.TimeField):
-            return TimeStoreField(fld)
+            return TimeStoreField(fld,name)
         if isinstance(fld,models.DateTimeField):
-            return DateTimeStoreField(fld)
+            return DateTimeStoreField(fld,name)
         if isinstance(fld,dd.IncompleteDateField):
-            return IncompleteDateStoreField(fld)
+            return IncompleteDateStoreField(fld,name)
         if isinstance(fld,models.DateField):
-            return DateStoreField(fld)
+            return DateStoreField(fld,name)
         if isinstance(fld,models.BooleanField):
-            return BooleanStoreField(fld)
+            return BooleanStoreField(fld,name)
         if isinstance(fld,models.DecimalField):
-            return DecimalStoreField(fld)
+            return DecimalStoreField(fld,name)
         if isinstance(fld,models.AutoField):
-            return AutoStoreField(fld)
+            return AutoStoreField(fld,name)
             #~ kw.update(type='int')
         kw = {}
         if isinstance(fld,models.SmallIntegerField):
@@ -887,9 +873,9 @@ class Store:
         if isinstance(fld,models.IntegerField):
             kw.update(type='int')
         if choosers.uses_simple_values(fld):
-            return StoreField(fld,**kw)
+            return StoreField(fld,name,**kw)
         else:
-            return ComboStoreField(fld,**kw)
+            return ComboStoreField(fld,name,**kw)
 
     def form2obj(self,request,form_values,instance,is_new):
         #~ logger.info("Store.form2obj(%s)", form_values)
@@ -940,7 +926,9 @@ class Store:
         #~ logger.info("20120107 Store %s row2list(%s)", self.report.model, obj2str(row))
         l = []
         for fld in self.list_fields:
-            l += fld.obj2list(request,row)
+            v = fld.full_value_from_object(request,row)
+            #~ l += fld.obj2list(request,row)
+            fld.value2list(request.ui,v,l,row)
             #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
         return l
       
@@ -948,8 +936,10 @@ class Store:
         #~ assert isinstance(request,table.AbstractTableRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         d = {}
-        for f in self.detail_fields:
-            f.obj2dict(request,row,d)
+        for fld in self.detail_fields:
+            v = fld.full_value_from_object(request,row)
+            fld.value2dict(request.ui,v,d,row)
+            #~ fld.obj2dict(request,row,d)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
 
