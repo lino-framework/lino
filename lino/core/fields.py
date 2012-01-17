@@ -231,16 +231,6 @@ class VirtualField(FakeField): # (Field):
         model._meta.add_virtual_field(self)
         logger.debug('Found VirtualField %s.%s',full_model_name(model),name)
         
-    #~ def contribute_to_class(self, cls, name):
-        #~ "Called from lino.core.kernel.setup"
-        #~ self.name = name
-        #~ self.model = cls
-        
-    #~ def get_db_prep_save(self, value, connection):
-        #~ raise NotImplementedError
-    #~ def pre_save(self, model_instance, add):
-        #~ raise NotImplementedError
-        
     def value_from_object(self,request,obj):
         """
         Return the value of this field in the specified model instance `obj`.
@@ -252,6 +242,12 @@ class VirtualField(FakeField): # (Field):
         #~ print self.field.name
         return m(obj,request)
         
+class RequestField(VirtualField):
+    def __init__(self,get,*args,**kw):
+        kw.setdefault('max_length',8)
+        VirtualField.__init__(self,DisplayField(*args,**kw),get)
+        
+
 def virtualfield(return_type):
     """
     Decorator to make a VirtualField from a method.
@@ -267,6 +263,17 @@ def displayfield(*args,**kw):
     Decorator shortcut to make a virtual DisplayField from a method.
     """
     return virtualfield(DisplayField(*args,**kw))
+    
+def requestfield(*args,**kw):
+    """
+    Decorator to make a RequestField from a method.
+    The method to decorate must return either None or a TableRequest object.
+    """
+    def decorator(fn):
+        def wrapped(*args):
+            return fn(*args)
+        return RequestField(wrapped,*args,**kw)
+    return decorator
     
         
 

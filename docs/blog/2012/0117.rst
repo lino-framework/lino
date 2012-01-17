@@ -13,3 +13,41 @@ Es gab auch noch ein paar andere Bugs.
 Checkin um 10 Uhr : Test-Suite dsbe läuft wieder, und auch manuell scheint alles zu klappen. 
 Bis auf folgenden Bug:
 Wenn ich einen Führerschein hochlade, dann springt er anschließend nicht auf die Person zurück.
+
+
+Wie weiter? Nochmal eine Übersicht.
+
+- Neuer Datentyp "RequestField"
+- Summen und Zwischensummen
+
+- Bug "Wenn ich einen Führerschein hochlade, dann springt er 
+  anschließend nicht auf die Person zurück."
+- Öffnen von Fenstern geschieht manchmal per Permalink und 
+  manchmal per handler. Sehr irritierend.
+- Windows nicht zerstören sondern eine Instanz pro Fenster. 
+  Dazu muss ich record_id und data_record nicht im constructor 
+  auswerten sondern in refresh()
+
+- CalendarPanel weiter
+
+- CustomTable sind ja read-only. 
+  Eigentlich ist es Ressourcenverschwendung, 
+  dafür ein EditorGridPanel zu nehmen. 
+  Wieso nicht sofort als printable html?
+  Aber was ist mit langen bzw. langsamen Listen?
+  Überhaupt, was ist dem Blättern am Bildschirm und 
+  dem Seitenwechsel auf Papier?
+
+
+  
+Checkin um 12 Uhr :
+
+- Neuer Datentyp "RequestField"
+
+- Gesamtsummen werden jetzt angezeigt (für IntegerField und RequestField).
+  Zwischensummen können jetzt erstmal was warten.
+
+- En passant habe ich die "Druckerfreundliche" [html]-Ansicht mal ein wenig gestylt, 
+  dass es wenigstens nicht ganz so weh tut, sie anzuschauen. 
+  Das Thema :doc:`/tickets/55` ist aber noch nicht abgeschlossen...
+  

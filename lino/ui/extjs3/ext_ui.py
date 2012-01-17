@@ -1152,15 +1152,24 @@ tinymce.init({
                 #~ ar.render_to_html(self,response)
                 doc = xhg.HTML()
                 doc.set_title(ar.get_title())
-                t = xhg.TABLE(border="1")
+                #~ t = xhg.TABLE(border="1")
+                t = xhg.TABLE(cellspacing="3px",bgcolor="#ffffff", width="100%")
                 #~ t = xhg.TABLE(style="")
                 doc.add_to_body(t)
                 headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
-                t.add_header_row(*headers)
+                sums  = [0 for col in ar.ah.store.list_fields]
+                cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
+                t.add_header_row(*headers,**cellattrs)
                 for row in ar.data_iterator:
-                    #~ cells = [getattr(row,col.name) for col in self.ah.list_layout._main.columns]
-                    cells = [x for x in ar.ah.store.cells_html(ar,row)]
-                    t.add_body_row(*cells)
+                    cells = [x for x in ar.ah.store.row2html(ar,row,sums)]
+                    t.add_body_row(*cells,**cellattrs)
+                has_sum = False
+                for i in sums:
+                    if i:
+                        has_sum = True
+                        break
+                if has_sum:
+                    t.add_body_row(*ar.ah.store.sums2html(ar,sums),**cellattrs)
                 doc.__xml__(response)
                 return response
                 

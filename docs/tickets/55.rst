@@ -1,0 +1,19 @@
+#55 : Printing tables 
+=====================
+
+How to provide, as a generic solution, on any table 
+a "Printer" button that actually leads to a satisfying result?
+
+First decision is: should we use printer-friendly HTML/CSS 
+or rather generate a PDF file?
+
+Ich muss wahrscheinlich eine spezielle 
+CSS verwenden, die sowohl am Bildschirm als auch auf Papier "schön" aussieht.
+Kann auch sein, dass printer-friendly HTML noch immer Utopie ist: was ist mit 
+mehrseitigen Ausdrucken usw... Momentan schneidet der Ausdruck mit Chrome 
+beim Seitenumbruch die Zellen brutal durch wie es gerade kommt. 
+Und wenn die Kolonnen nicht alle draufpassen, schneidet er auch einfach mittendrin 
+durch. Also da gibt es noch was zu tun.
+
+
+  

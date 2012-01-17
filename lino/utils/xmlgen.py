@@ -223,6 +223,11 @@ class ElementMetaClass(type):
     def __new__(meta, classname, bases, classDict):
       
         allowedAttribs = {}
+        for b in bases:
+            for k,v in b.__dict__.items():
+                if isinstance(v,Attribute):
+                    allowedAttribs[k] = v
+            
         for k,v in classDict.items():
             if isinstance(v,Attribute):
                 if not v.name:

@@ -73,6 +73,14 @@ class StoreField(object):
     def as_js(self):
         return py2js(self.options)
         
+    def value2int(self,v):
+        return 0
+        
+    def sum2html(self,ui,v):
+        if not v:
+            return ''
+        return str(v)
+        
     def __repr__(self):
         return "%s '%s'" % (self.__class__.__name__, self.field.name)
         
@@ -85,20 +93,6 @@ class StoreField(object):
     def full_value_from_object(self,request,obj):
         return self.field.value_from_object(obj)
     
-    #~ def cell_html(self,req,row):
-        #~ v = self.full_value_from_object(req,row)
-        #~ if v is None: return ''
-        #~ return force_unicode(v)
-        
-    def value2html(self,ui,v):
-        return force_unicode(v)
-      
-    #~ def obj2list(self,request,obj):
-        #~ return [self.value_from_object(request,obj)]
-        
-    #~ def obj2dict(self,request,obj,d):
-        #~ d[self.field.name] = self.value_from_object(request,obj)
-
     def value2list(self,ui,v,l,row):
         return l.append(v)
         
@@ -106,6 +100,9 @@ class StoreField(object):
         d[self.options['name']] = v
         #~ d[self.field.name] = v
 
+    def value2html(self,ui,v):
+        return force_unicode(v)
+      
     def parse_form_value(self,v,obj):
         #~ if v == '' and not self.field.empty_strings_allowed:
             #~ return None
@@ -299,20 +296,12 @@ class VirtStoreField(StoreField):
     def __init__(self,vf,delegate,name):
         self.vf = vf
         StoreField.__init__(self,vf.return_type,name)
-        #~ for name in (
-              #~ 'form2obj_default',
-              #~ 'list_values_count', 'as_js', 'column_names',
-              #~ 'parse_form_value',
-              #~ 'obj2dict','obj2list'
-              #~ ):
-            #~ setattr(self,name,getattr(delegate,name))
         self.as_js = delegate.as_js
         self.column_names = delegate.column_names
         self.list_values_count = delegate.list_values_count
         self.form2obj_default = delegate.form2obj_default
-        #~ self.cell_html = delegate.cell_html
+        self.value2int = delegate.value2int
         self.value2html = delegate.value2html
-        #~ self.obj2list = delegate.obj2list
         self.value2list = delegate.value2list
         self.value2dict = delegate.value2dict
         # as long as http://code.djangoproject.com/ticket/15497 is open:
@@ -324,31 +313,48 @@ class VirtStoreField(StoreField):
     #~ def __repr__(self):
         #~ return self.__class__.__name__ + '(' + self.delegate.__class__.__name__ + ') ' + self.field.name
         
-    #~ def cell_html(self,req,row):
-        #~ return self.delegate.cell_html(req,row)
-        #~ return force_unicode(self.full_value_from_object(row))
-
     def full_value_from_object(self,req,obj):
         return self.vf.value_from_object(req,obj)
 
-    #~ def value_from_object(self,request,obj):
-        #~ return self.vf.value_from_object(request,obj)
         
-    #~ def obj2list(self,request,obj):
-        #~ return [self.vf.value_from_object(request,obj)]
+class RequestStoreField(StoreField):
+  
+    def __init__(self,vf,delegate,name):
+        self.vf = vf 
+        StoreField.__init__(self,vf.return_type,name)
+        self.as_js = delegate.as_js
+        self.column_names = delegate.column_names
+        self.list_values_count = delegate.list_values_count
+        #~ self.form2obj_default = delegate.form2obj_default
+        #~ self.value2int = delegate.value2int
+        #~ self.value2html = delegate.value2html
+        #~ self.value2list = delegate.value2list
+        #~ self.value2dict = delegate.value2dict
+        # as long as http://code.djangoproject.com/ticket/15497 is open:
+        #~ self.parse_form_value = delegate.parse_form_value
+        #~ self.set_value_in_object = vf.set_value_in_object
         
-    #~ def obj2dict(self,request,obj,d):
-        #~ v = self.vf.value_from_object(request,obj)
+    def full_value_from_object(self,req,obj):
+        return self.vf.value_from_object(req,obj)
+
+    def value2int(self,v):
+        return len(v.data_iterator)
+        
+    def value2list(self,ui,v,l,row):
+        return l.append(self.format_value(ui,v))
+        
+    def value2dict(self,ui,v,d,row):
+        d[self.options['name']] = self.format_value(ui,v)
         #~ d[self.field.name] = v
+
+    def value2html(self,ui,v):
+        return self.format_value(ui,v)
         
-    def unused_form2obj(self,request,obj,post_data,is_new):
-        #~ logger.info("VirtStoreField.form2obj(%s)", post_data)
-        v = self.extract_form_data(post_data)
-        #~ v = StoreField.form2obj(self,obj,post_data,is_new)
-        #~ v = getattr(obj,self.field.name)
-        #~ logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
-        self.vf.set_value_in_object(request,obj,v)
-        #~ return obj
+    def format_value(self,ui,v):
+        n = len(v.data_iterator)
+        if n == 0:
+            return '0'
+        return ui.href_to_request(v,str(n))
 
 
 
@@ -513,6 +519,11 @@ class BooleanStoreField(StoreField):
         return iif(v,_("Yes"),_("No"))
       
 
+class IntegerStoreField(StoreField):
+    def __init__(self,field,name,**kw):
+        kw['type'] = 'int'
+        StoreField.__init__(self,field,name,**kw)
+        
 class AutoStoreField(StoreField):
     def __init__(self,field,name,**kw):
         kw['type'] = 'int'
@@ -520,8 +531,6 @@ class AutoStoreField(StoreField):
   
     def form2obj(self,request,instance,post_data,is_new):
         pass
-        #~ assert instance.pk
-        #~ return instance
         
         
         
@@ -835,6 +844,9 @@ class Store:
         if isinstance(fld,dd.LinkedForeignKey):
             #~ logger.info("Store.create_field(%s)", fld)
             return LinkedForeignKeyField(fld,name)
+        if isinstance(fld,dd.RequestField):
+            delegate = self.create_field(fld.return_type,fld.name)
+            return RequestStoreField(fld,delegate,name)
         if isinstance(fld,dd.VirtualField):
             delegate = self.create_field(fld.return_type,fld.name)
             return VirtStoreField(fld,delegate,name)
@@ -867,11 +879,11 @@ class Store:
         if isinstance(fld,models.AutoField):
             return AutoStoreField(fld,name)
             #~ kw.update(type='int')
-        kw = {}
         if isinstance(fld,models.SmallIntegerField):
-            kw.update(type='int')
+            return IntegerStoreField(fld,name)
         if isinstance(fld,models.IntegerField):
-            kw.update(type='int')
+            return IntegerStoreField(fld,name)
+        kw = {}
         if choosers.uses_simple_values(fld):
             return StoreField(fld,name,**kw)
         else:
@@ -927,7 +939,6 @@ class Store:
         l = []
         for fld in self.list_fields:
             v = fld.full_value_from_object(request,row)
-            #~ l += fld.obj2list(request,row)
             fld.value2list(request.ui,v,l,row)
             #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
         return l
@@ -939,7 +950,6 @@ class Store:
         for fld in self.detail_fields:
             v = fld.full_value_from_object(request,row)
             fld.value2dict(request.ui,v,d,row)
-            #~ fld.obj2dict(request,row,d)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
 
@@ -949,8 +959,8 @@ class Store:
                 kw[f.field.name] = f.parse_form_value(pv[i],None)
         return kw
         
-    def cells_html(self,request,row):
-        for fld in self.list_fields:
+    def row2html(self,request,row,sums):
+        for i,fld in enumerate(self.list_fields):
             #~ print 20120115, fld.field.name
             #~ if not isinstance(fld,SpecialStoreField):
             if fld.field is not None:
@@ -958,8 +968,13 @@ class Store:
                 if v is None:
                     yield ''
                 else:
+                    sums[i] += fld.value2int(v)
                     yield fld.value2html(request.ui,v)
                 #~ yield fld.cell_html(request,row)
+                
+    def sums2html(self,request,sums):
+        return [fld.sum2html(request.ui,sums[i])
+          for i,fld in enumerate(self.list_fields)]
             
     def parse_params(self,request):
         return self.pv2dict(request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))

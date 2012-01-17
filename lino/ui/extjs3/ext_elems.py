@@ -843,6 +843,11 @@ class DisplayElement(FieldElement):
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
     
+    def __init__(self,*args,**kw):
+        FieldElement.__init__(self,*args,**kw)
+        if self.field.max_length:
+            self.preferred_width = self.field.max_length
+    
 
 class GenericForeignKeyElement(DisplayElement):
     """

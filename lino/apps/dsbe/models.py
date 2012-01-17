@@ -921,14 +921,12 @@ class MyActivePersons(MyPersons):
   
 from appy import Object
 
-def req2cell(rr):
-    n = len(rr.data_iterator)
-    if n == 0:
-        #~ return ('',0)
-        return '0'
-    #~ return (rr.ui.href_to_request(rr,str(n)),n)
-    return rr.ui.href_to_request(rr,str(n))
-    
+#~ def req2cell(rr):
+    #~ n = len(rr.data_iterator)
+    #~ if n == 0:
+        #~ return '0'
+    #~ return rr.ui.href_to_request(rr,str(n))
+
   
 class OverviewClientsByUser(dd.CustomTable):
     """
@@ -947,16 +945,18 @@ class OverviewClientsByUser(dd.CustomTable):
         self.column_names = 'user:10'
         for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
             def w(pg):
+                #~ def func(self,obj,ar):
+                    #~ rr = MyPersonsByGroup.request(
+                      #~ ar.ui,master_instance=pg,subst_user=obj)
+                    #~ return req2cell(rr)
+                #~ return func
                 def func(self,obj,ar):
-                    rr = MyPersonsByGroup.request(ar.ui,master_instance=pg,subst_user=obj)
-                    return req2cell(rr)
+                    return MyPersonsByGroup.request(
+                      ar.ui,master_instance=pg,subst_user=obj)
                 return func
-            #~ cc = self.add_column(w(pg),
-              #~ verbose_name=pg.name,
-              #~ name='G'+pg.ref_name)
-            vf = dd.VirtualField(models.CharField(verbose_name=pg.name,max_length=8),w(pg))
+            vf = dd.RequestField(w(pg),verbose_name=pg.name)
+            #~ vf = dd.VirtualField(models.CharField(verbose_name=pg.name,max_length=8),w(pg))
             self.add_virtual_field('G'+pg.ref_name,vf)
-            #~ cc = dd.ComputedColumn(func,name='G'+pg.ref_name,verbose_name=pg.name)
             self.column_names += ' ' + vf.name 
             
         self.column_names += ' primary_clients active_clients row_total'
@@ -990,20 +990,27 @@ class OverviewClientsByUser(dd.CustomTable):
     def user(self,obj,ar):
         return obj
         
-    #~ @dd.computed(_("Total"))
-    @dd.virtualfield(models.CharField(_("Total"),max_length=8))
+    #~ @dd.virtualfield(models.CharField(_("Total"),max_length=8))
+    #~ def row_total(self,obj,ar):
+        #~ return req2cell(obj.my_persons)
+        
+    @dd.requestfield(_("Total"))
     def row_total(self,obj,ar):
-        return req2cell(obj.my_persons)
+        return obj.my_persons
         
-    #~ @dd.computed(_("Primary clients"))
-    @dd.virtualfield(models.CharField(_("Primary clients"),max_length=8))
+    #~ @dd.virtualfield(models.CharField(_("Primary clients"),max_length=8))
+    #~ def primary_clients(self,obj,ar):
+        #~ return req2cell(PersonsByCoach1.request(ar.ui,master_instance=obj))
+    @dd.requestfield(_("Primary clients"))
     def primary_clients(self,obj,ar):
-        return req2cell(PersonsByCoach1.request(ar.ui,master_instance=obj))
+        return PersonsByCoach1.request(ar.ui,master_instance=obj)
         
-    #~ @dd.computed(_("Active clients"))
-    @dd.virtualfield(models.CharField(_("Active clients"),max_length=8))
+    #~ @dd.virtualfield(models.CharField(_("Active clients"),max_length=8))
+    #~ def active_clients(self,obj,ar):
+        #~ return req2cell(MyActivePersons.request(ar.ui,subst_user=obj))
+    @dd.requestfield(_("Active clients"))
     def active_clients(self,obj,ar):
-        return req2cell(MyActivePersons.request(ar.ui,subst_user=obj))
+        return MyActivePersons.request(ar.ui,subst_user=obj)
         
         
 

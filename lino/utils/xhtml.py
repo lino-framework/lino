@@ -78,6 +78,8 @@ from lino.utils import xmlgen as xg
 
 class HtmlContainer(xg.Container):
     style = xg.Attribute()
+    bgcolor = xg.Attribute()
+    width = xg.Attribute()
 
 class xhtml(xg.Namespace):
   url = "http://www.w3.org/1999/xhtml"
@@ -91,6 +93,7 @@ class xhtml(xg.Namespace):
         class P(HtmlContainer): pass
         class TABLE(HtmlContainer):
             border = xg.Attribute()
+            cellspacing = xg.Attribute()
             class COLGROUP(xg.Container): 
                 class COL(xg.Container): 
                     width = xg.Attribute()
@@ -98,17 +101,20 @@ class xhtml(xg.Namespace):
                     
             class TBODY(xg.Container): 
                 class TR(HtmlContainer):
-                    class TD(HtmlContainer): pass
-                    class TH(HtmlContainer): pass
+                    class TD(HtmlContainer):
+                      align = xg.Attribute()
+                      valign = xg.Attribute()
+                      bgcolor = xg.Attribute()
+                    class TH(TD): pass
             class THEAD(TBODY): pass
             class TFOOT(TBODY): pass
               
-            def add_header_row(self,*headers):
-                cells = [self.THEAD.TR.TH(h) for h in headers]
+            def add_header_row(self,*headers,**kw):
+                cells = [self.THEAD.TR.TH(h,**kw) for h in headers]
                 self.append(self.THEAD(*cells))
 
-            def add_body_row(self,*headers):
-                cells = [self.TBODY.TR.TD(h) for h in headers]
+            def add_body_row(self,*cells,**kw):
+                cells = [self.TBODY.TR.TD(h,**kw) for h in cells]
                 self.append(self.TBODY(*cells))
 
     def set_title(self,text):
