@@ -797,8 +797,9 @@ class Table(AbstractTable):
     
     filter = None
     """
-    If specified, this must be a dict of (fieldname -> value) pairs which 
-    will be used as a filter.
+    If specified, this must be a models.Q objectt
+    (and no longer a dict of (fieldname -> value) pairs)
+    which will be used as a filter.
     
     Unlike :attr:`known_values`, this can use the full range of 
     Django's `field lookup methods 

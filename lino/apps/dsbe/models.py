@@ -927,8 +927,9 @@ from appy import Object
         #~ return '0'
     #~ return rr.ui.href_to_request(rr,str(n))
 
+if dd.is_installed('dsbe'):
   
-class OverviewClientsByUser(dd.CustomTable):
+  class OverviewClientsByUser(dd.CustomTable):
     """
     A customized overview report.
     """

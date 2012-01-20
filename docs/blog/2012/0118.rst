@@ -1,0 +1,25 @@
+20120118
+========
+
+There were several places (quick links, button actions) 
+where Lino still used a `http:` URL. 
+Now they also use the `javascript:` URL.
+
+Continued another 4 hours with the CalendarPanel.
+The permalink button now works.
+
+`dt_start` and `dt_end` are now  
+:class:`editable virtual fields 
+<lino.modlib.cal.models.ExtDateTimeField>`
+defined on the PanelEvents table,
+no longer on the model itself. 
+A nice confirmation for the recent internal changes.
+
+The main challenge is the AJAX communication:
+Lino's :meth:`lino.ui.extjs3.ext_ui.ExtUI.restful_view` 
+and the configuration 
+of the Ext.data.Store in :xfile:`linolib.js`.
+
+No checkin because no visible success yet. 
+Current problem is that the CalendarPanel store does a 
+*POST* when I *move* an existing event to another date.

@@ -31,7 +31,7 @@ Short-term
       der Vorrang vor dem entsprechenden globalen Parameter hat.
       Printable.get_build_method()
       `CachedPrintable.get_cache_mtime` muss dann allerdings einen 
-      optionalen Paremter `user` kriegen.
+      optionalen Parameter `user` kriegen.
     - verwendete Konstruktionsmethode pro Notiz speichern. 
       Vorteil: zum Testen kann man dann leichter auf eine andere Method umschalten.
       Nachteile: (1) ein relativ unnützes Datenfeld (20 bytes pro Notiz) hinzu, 

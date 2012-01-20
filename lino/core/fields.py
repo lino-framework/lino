@@ -219,8 +219,8 @@ class VirtualField(FakeField): # (Field):
         This special behaviour is needed to implement 
         :class:`lino.utils.mti.EnableChild`.
         """
-        #~ raise NotImplementedError
-        pass
+        raise NotImplementedError
+        #~ pass
         
     def lino_kernel_setup(self,model,name):
         self.model = model
@@ -250,7 +250,7 @@ class RequestField(VirtualField):
 
 def virtualfield(return_type):
     """
-    Decorator to make a VirtualField from a method.
+    Decorator to turn a method into a VirtualField.
     """
     def decorator(fn):
         def wrapped(*args):
@@ -260,7 +260,7 @@ def virtualfield(return_type):
     
 def displayfield(*args,**kw):
     """
-    Decorator shortcut to make a virtual DisplayField from a method.
+    Decorator shortcut to turn a method into a virtual DisplayField.
     """
     return virtualfield(DisplayField(*args,**kw))
     

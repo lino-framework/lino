@@ -48,7 +48,8 @@ from lino.utils import dblogger
 from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model, full_model_name
 
-from lino.apps.dsbe.models import Company, Person, City, Country, PersonGroup
+from lino.apps.dsbe.models import Company, Person, PersonGroup
+from lino.modlib.countries.models import City, Country
 from lino.modlib.notes.models import Note
 from lino.modlib.users.models import User
 from lino.modlib.cal import models as cal

@@ -479,7 +479,16 @@ class Lino(object):
 
     
     time_format_strftime = '%H:%M'
+    """
+    Format (in strftime syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_time`.
+    """
+    
     time_format_extjs = 'H:i'
+    """
+    Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_time`.
+    """
     
     date_format_strftime = '%d.%m.%Y'
     """
@@ -503,6 +512,18 @@ class Lino(object):
     """
     Format (in Javascript regex syntax) to use for displaying dates to the user.
     If you change this setting, you also need to override :meth:`parse_date`.
+    """
+    
+    datetime_format_strftime = '%Y-%m-%dT%H:%M:%S'
+    """
+    Format (in strftime syntax) to use for formatting timestamps in AJAX responses.
+    If you change this setting, you also need to override :meth:`parse_datetime`.
+    """
+    
+    datetime_format_extjs = 'Y-m-d\TH:i:s'
+    """
+    Format (in ExtJS syntax) to use for formatting timestamps in AJAX calls.
+    If you change this setting, you also need to override :meth:`parse_datetime`.
     """
     
     bcss_soap_url = None
@@ -677,20 +698,20 @@ class Lino(object):
         return datetime.time(*hms)
         
     def parse_datetime(self,s):
-        """Convert a string formatted for :meth:`parse_date` 
-        and :meth:`parse_time` 
+        """Convert a string formatted using
+        :attr:`datetime_format_strftime` or  :attr:`datetime_format_extjs` 
         into a datetime.datetime instance.
         """
         #~ print "20110701 parse_datetime(%r)" % s
-        s2 = s.split()
+        #~ s2 = s.split()
+        s2 = s.split('T')
         if len(s2) != 2:
-            raise Exception("Invalid datetime value %r" % s)
-        #~ ymd = map(int,s2[0].split('-'))
-        #~ hms = map(int,s2[1].split(':'))
-        #~ return datetime.datetime(*(ymd+hms))
-        d = datetime.date(*self.parse_date(s[0]))
-        t = self.parse_time(s[1])
-        return datetime.combine(d,t)
+            raise Exception("Invalid datetime string %r" % s)
+        ymd = map(int,s2[0].split('-'))
+        hms = map(int,s2[1].split(':'))
+        return datetime.datetime(*(ymd+hms))
+        #~ d = datetime.date(*self.parse_date(s[0]))
+        #~ return datetime.combine(d,t)
 
     
     #~ def get_user_model(self):

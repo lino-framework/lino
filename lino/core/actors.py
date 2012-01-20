@@ -102,6 +102,12 @@ def setup_actors():
     for cls in actors_list:
         #~ if not cls.__name__.startswith('unused_'):
         cls.setup()
+        
+def unused_add_virtual_field(cls,name,v):
+    cls.virtual_fields[name] = v
+    v.name = name
+    #~ vf.lino_kernel_setup(cls,name)
+    v.get = curry(v.get,cls)
 
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
@@ -129,6 +135,8 @@ class ActorMetaClass(type):
             #~ if isinstance(v,(models.Field,fields.VirtualField)):
             if isinstance(v,fields.VirtualField):
                 cls.add_virtual_field(k,v)
+                #~ add_virtual_field(cls,k,v)
+                
                 
         #~ cls.params = []
         #~ for k,v in classDict.items():
@@ -220,16 +228,19 @@ class Actor(Handled):
         return "%s (%s)" % (self.__class__,','.join([
             a.name for a in self._actions_list]))
         
+    #~ @classmethod
+    #~ def add_virtual_field(cls,name,vf): 
+        #~ add_virtual_field(cls,name,vf)
+        
     @classmethod
     def add_virtual_field(cls,name,vf):
         cls.virtual_fields[name] = vf
         vf.name = name
-        #~ vf.lino_kernel_setup(cls,name)
         vf.get = curry(vf.get,cls)
         
     @classmethod
     def get_url(self,ui,**kw):
-        return ui.get_action_url(self,self.default_action,**kw)
+        return ui.action_url_http(self,self.default_action,**kw)
 
     @classmethod
     def setup(self):

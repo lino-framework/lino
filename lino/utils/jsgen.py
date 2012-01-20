@@ -139,9 +139,9 @@ def py2js(v):
         return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
         #~ return '"%s"' % v
     if isinstance(v, datetime.datetime):
-        return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
-        #~ return '"%s"' % v.strftime(settings.LINO.date_format_strftime 
-            #~ + ' ' + settings.LINO.time_format_strftime)
+        """20120120"""
+        return '"%s"' % v.strftime(settings.LINO.datetime_format_strftime)
+        #~ return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
     if isinstance(v, datetime.time):
         return '"%s"' % v.strftime(settings.LINO.time_format_strftime)
     if isinstance(v, datetime.date):
@@ -189,7 +189,7 @@ class LinoJSONEncoder(DjangoJSONEncoder):
         if isinstance(o,menus.MenuItem):
             # from lino.lino_site import lino_site
             # todo: convert
-            # url = lino_site.ui.get_action_url(o.actor)
+            # url = lino_site.ui.action_url_http(o.actor)
             #handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (url,id2js(o.actor.actor_id))
             return dict(text=o.label,handler=js_code(handler))
             

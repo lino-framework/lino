@@ -1,0 +1,41 @@
+20120120
+========
+
+Ta-daa! The long awaited calendar panel finally works! 
+Users can create, move resize and delete events using 
+the calendar panel.
+
+The Ta-daa doesn't apply to the following limitations which 
+we'll tackle when need arises:
+
+- managing recurrent events
+- displaying also tasks in the calendar panel
+
+As expected, it was all just a fiddling with the gory details of 
+AJAX communication between Lino and the Ext.ensible CalendarPanel.
+
+Each :class:`StoreField <lino.ui.extjs3.ext_store.StoreField>` 
+now has a `name` attribute.
+
+:func:`py2js <lino.utils.jsgen.py2js>`
+and 
+the `Ext.ensible.cal.EventMappings` defined in :xfile:`:linolib.js`
+now use the 
+new Lino configuration settings
+:attr:`lino.Lino.datetime_format_strftime`,
+:attr:`lino.Lino.datetime_format_extjs`
+and
+:meth:`lino.Lino.parse_datetime`.
+
+Note that there are now three times three settings to handle 
+date and time values!
+
+- X_format_extjs
+- X_format_strftime
+- parse_X
+
+for X being date, time and datetime.
+
+datetime is not simply a combination of date and time:
+time fields contain (in a default configuration) 
+only minutes, while datetime fields have also seconds.

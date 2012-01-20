@@ -76,7 +76,7 @@ mehr haben. Deshalb kann man momentan in residence_type nichts ändern.
 RESIDENCE_TYPE_CHOICES muss in eine ChoiceList konvertiert werden.
 Dann könnte ich in einem auch BEID_CARD_TYPES konvertieren. 
 Das ist nämlich auch momentan altmodisch geregelt mit einem zusätzlichen 
-Feld card_type_text
+Feld card_type_text.
 
 
 Und zwei Dinge sind noch zu beobachten:

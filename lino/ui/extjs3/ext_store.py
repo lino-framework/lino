@@ -63,6 +63,7 @@ class StoreField(object):
     
     def __init__(self,field,name,**options):
         self.field = field
+        self.name = name
         #~ options.update(name=name or field.name)
         options.update(name=name)
         self.options = options
@@ -82,7 +83,7 @@ class StoreField(object):
         return str(v)
         
     def __repr__(self):
-        return "%s '%s'" % (self.__class__.__name__, self.field.name)
+        return "%s '%s'" % (self.__class__.__name__, self.name)
         
     def column_names(self):
         yield self.options['name']
@@ -97,8 +98,8 @@ class StoreField(object):
         return l.append(v)
         
     def value2dict(self,ui,v,d,row):
-        d[self.options['name']] = v
-        #~ d[self.field.name] = v
+        #~ d[self.options['name']] = v
+        d[self.name] = v
 
     def value2html(self,ui,v):
         return force_unicode(v)
@@ -109,7 +110,7 @@ class StoreField(object):
         return self.field.to_python(v)
         
     def extract_form_data(self,post_data):
-        return post_data.get(self.field.name,None)
+        return post_data.get(self.name,None)
         #~ v = post_data.get(self.field.name,self.form2obj_default)
         #~ if v is None:
             #~ # means that the field wasn't part of the submitted form. don't touch it.
@@ -157,8 +158,8 @@ class StoreField(object):
         old_value = self.value_from_object(request,instance)
         #~ old_value = getattr(instance,self.field.attname)
         if old_value != v:
-            setattr(instance,self.field.name,v)
-            m = getattr(instance,self.field.name + "_changed",None)
+            setattr(instance,self.name,v)
+            m = getattr(instance,self.name + "_changed",None)
             if m is not None:
                 m(old_value)
 
@@ -183,7 +184,7 @@ class RelatedMixin(object):
             logger.warning("%s get_rel_to returned None",self.field)
             return None
         try:
-            return getattr(obj,self.field.name)
+            return getattr(obj,self.name)
         except relto_model.DoesNotExist,e:
             return None
         
@@ -200,11 +201,13 @@ class ComboStoreField(StoreField):
         return s 
         
     def column_names(self):
-        yield self.options['name']
-        yield self.options['name'] + ext_requests.CHOICES_HIDDEN_SUFFIX
+        #~ yield self.options['name']
+        #~ yield self.options['name'] + ext_requests.CHOICES_HIDDEN_SUFFIX
+        yield self.name
+        yield self.name + ext_requests.CHOICES_HIDDEN_SUFFIX
         
     def extract_form_data(self,post_data):
-        return post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
+        return post_data.get(self.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
         
     #~ def obj2list(self,request,obj):
     def value2list(self,request,v,l,row):
@@ -214,8 +217,8 @@ class ComboStoreField(StoreField):
     #~ def obj2dict(self,request,obj,d):
     def value2dict(self,request,v,d,row):
         value,text = self.get_value_text(v,row)
-        d[self.field.name] = text
-        d[self.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX] = value
+        d[self.name] = text
+        d[self.name + ext_requests.CHOICES_HIDDEN_SUFFIX] = value
         
     def get_value_text(self,v,obj):
         #~ v = self.full_value_from_object(None,obj)
@@ -304,14 +307,15 @@ class VirtStoreField(StoreField):
         self.value2html = delegate.value2html
         self.value2list = delegate.value2list
         self.value2dict = delegate.value2dict
+        #~ self.form2obj = delegate.form2obj
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
         self.set_value_in_object = vf.set_value_in_object
         
         #~ self.delegate = delegate
 
-    #~ def __repr__(self):
-        #~ return self.__class__.__name__ + '(' + self.delegate.__class__.__name__ + ') ' + self.field.name
+    def __repr__(self):
+        return self.vf.__class__.__name__ + ' ' + self.name + '(virtual)' 
         
     def full_value_from_object(self,req,obj):
         return self.vf.value_from_object(req,obj)
@@ -344,7 +348,8 @@ class RequestStoreField(StoreField):
         return l.append(self.format_value(ui,v))
         
     def value2dict(self,ui,v,d,row):
-        d[self.options['name']] = self.format_value(ui,v)
+        d[self.name] = self.format_value(ui,v)
+        #~ d[self.options['name']] = self.format_value(ui,v)
         #~ d[self.field.name] = v
 
     def value2html(self,ui,v):
@@ -377,7 +382,7 @@ class GenericForeignKeyField(StoreField):
         
     def full_value_from_object(self,request,obj):
         #~ owner = self.full_value_from_object(request,obj)
-        owner = getattr(obj,self.field.name)
+        owner = getattr(obj,self.name)
         #~ owner = getattr(obj,self.field.name)
         if owner is None: return ''
         return request.ui.href_to(owner)
@@ -402,6 +407,9 @@ class SpecialStoreField(StoreField):
         #~ # d.update(disable_editing=self.value_from_object(request,obj))
         #~ d[self.name] = self.value_from_object(request,obj)
 
+    #~ def __repr__(self):
+        #~ return "%s '%s'" % (self.__class__.__name__, self.name)
+        
     def parse_form_value(self,v,instance):
         pass
         
@@ -584,13 +592,13 @@ class MethodStoreField(StoreField):
   
     def full_value_from_object(self,request,obj):
         unbound_meth = self.field._return_type_for_method
-        assert unbound_meth.func_code.co_argcount >= 2, (self.field.name, unbound_meth.func_code.co_varnames)
+        assert unbound_meth.func_code.co_argcount >= 2, (self.name, unbound_meth.func_code.co_varnames)
         #~ print self.field.name
         return unbound_meth(obj,request)
         
     def value_from_object(self,request,obj):
         unbound_meth = self.field._return_type_for_method
-        assert unbound_meth.func_code.co_argcount >= 2, (self.field.name, unbound_meth.func_code.co_varnames)
+        assert unbound_meth.func_code.co_argcount >= 2, (self.name, unbound_meth.func_code.co_varnames)
         #~ print self.field.name
         return unbound_meth(obj,request)
         
@@ -717,14 +725,6 @@ class Store:
         self.list_fields = []
         self.detail_fields = []
         
-        def addfield(sf):
-            self.all_fields.append(sf)
-            self.list_fields.append(sf)
-            self.detail_fields.append(sf)
-            
-        #~ if not issubclass(rh.report,table.Table):
-            #~ addfield(RecnoStoreField(self))
-          
         self.collect_fields(self.list_fields,rh.get_list_layout())
         dtl = rh.report.get_detail()
         if dtl:
@@ -760,6 +760,14 @@ class Store:
             #~ for pf in rh.report.params:
                 self.param_fields.append(self.create_field(pf,pf.name))
         
+        def addfield(sf):
+            self.all_fields.append(sf)
+            self.list_fields.append(sf)
+            self.detail_fields.append(sf)
+            
+        #~ if not issubclass(rh.report,table.Table):
+            #~ addfield(RecnoStoreField(self))
+          
         if rh.report.disabled_fields:
             addfield(DisabledFieldsStoreField(self))
             #~ sf = DisabledFieldsStoreField(self)
@@ -779,6 +787,8 @@ class Store:
             ] + [
             f for f in self.all_fields if isinstance(f,VirtStoreField)
             ]
+        #~ if str(self.report) == "cal.PanelEvents":
+            #~ logger.info("20120119 %s",self.all_fields)
         self.all_fields = tuple(self.all_fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
@@ -898,14 +908,15 @@ class Store:
             disabled_fields = set()
         #~ print 20110406, disabled_fields
         for f in self.all_fields:
-            if f.field is None or not f.field.name in disabled_fields:
-                #~ logger.info("Store.form2obj %s", f.field.name)
+            #~ if f.field is None or not f.field.name in disabled_fields:
+            if not f.name in disabled_fields:
+                #~ logger.info("20120119 Store.form2obj %s", f)
                 try:
                     f.form2obj(request,instance,form_values,is_new)
                 except exceptions.ValidationError,e:
-                    raise exceptions.ValidationError({f.field.name:e})
+                    raise exceptions.ValidationError({f.name:e})
                 except Exception,e:
-                    logger.warning("%s : %s", f.field.name,e)
+                    logger.warning("%s : %s", f.name,e)
                     logger.exception(e)
                     raise 
                 #~ logger.info("20111209 Store.form2obj %s -> %s", f, obj2str(instance))
@@ -919,17 +930,11 @@ class Store:
         
     def column_index(self,name):
         """
-        Used to write definition of Ext.ensible.cal.CalendarMappings
-        and Ext.ensible.cal.EventMappings
+        Was used to write definition of Ext.ensible.cal.CalendarMappings
+        and Ext.ensible.cal.EventMappings 
         """
         #~ logger.info("20111214 column_names: %s",list(self.column_names()))
         return list(self.column_names()).index(name)
-        #~ i = 0
-        #~ for fld in self.list_fields:
-            #~ for cn in fld.column_names()
-            #~ if fld.field and fld.field.name == name:
-                #~ return i
-            #~ i += 1
         
 
     def row2list(self,request,row):
@@ -944,11 +949,13 @@ class Store:
             #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
         return l
       
-    def row2dict(self,request,row):
+    def row2dict(self,request,row,fields=None):
         #~ assert isinstance(request,table.AbstractTableRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         d = {}
-        for fld in self.detail_fields:
+        if fields is None:
+            fields = self.detail_fields
+        for fld in fields:
             v = fld.full_value_from_object(request,row)
             fld.value2dict(request.ui,v,d,row)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)

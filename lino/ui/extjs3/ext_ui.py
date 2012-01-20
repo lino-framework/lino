@@ -834,7 +834,7 @@ tinymce.init({
             quicklinks = settings.LINO.get_quicklinks(self,request.user)
             if quicklinks.items:
                 html = 'Quick Links: ' + ' '.join(
-                  [self.action_href_http(mi.action) for mi in quicklinks.items]
+                  [self.action_href_js(mi.action,mi.params) for mi in quicklinks.items]
                   ) + '<br/>' + html
             main.update(html=html)
         
@@ -1214,43 +1214,62 @@ tinymce.init({
     def parse_params(self,rh,request):
         return rh.store.parse_params(request)
         
+    #~ def rest2form(self,request,rh,data):
+        #~ d = dict()
+        #~ logger.info('20120118 rest2form %r', data)
+        #~ for i,f in enumerate(rh.store.list_fields):
+        #~ return d
+        
+    def delete_element(self,request,rpt,elem):
+        assert elem is not None
+        #~ if rpt.disable_delete is not None:
+        msg = rpt.disable_delete(elem,request)
+        if msg is not None:
+            return error_response(None,msg)
+                
+        dblogger.log_deleted(request,elem)
+        
+        try:
+            elem.delete()
+        except Exception,e:
+            dblogger.exception(e)
+            msg = _("Failed to delete %(record)s : %(error)s."
+                ) % dict(record=obj2unicode(elem),error=e)
+            #~ msg = "Failed to delete %s." % element_name(elem)
+            return error_response(None,msg)
+            #~ raise Http404(msg)
+        return HttpResponseDeleted()
+        
     def restful_view(self,request,app_label=None,actor=None,pk=None):
+        """
+        Used to collaborate with a restful Ext.data.Store.
+        """
         rpt = self.requested_report(request,app_label,actor)
-        #~ rh = rpt.get_handle(self)
         a = rpt.default_action
         
+        elem = None
+        if pk is not None:
+            try:
+                elem = rpt.model.objects.get(pk=pk)
+            except ValueError:
+                msg = "Invalid primary key %r for %s." % pk,full_model_name(rpt.model)
+                raise Http404(msg)
+            except rpt.model.DoesNotExist:
+                raise Http404("%s %s does not exist." % (rpt,pk))
+        
+        
         if isinstance(a,table.ReportAction):
-            #~ ar = ViewReportRequest(request,rh,a)
-            #~ ar = table.TableRequest(self,rpt,request,a)
             ar = rpt.request(self,request,a)
             rh = ar.ah
         else:
             ar = tables.ActionRequest(self,a)
         
-        #~ if isinstance(a,table.ReportAction):
-            #~ ar = ViewReportRequest(request,rh,a)
-        #~ else:
-            #~ ar = table.ActionRequest(self,a)
-        if request.method == 'POST':
-            #~ data = rh.store.get_from_form(request.POST)
-            #~ instance = ar.create_instance(**data)
-            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
-            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
-            instance = ar.create_instance()
-            # store uploaded files. 
-            # html forms cannot send files with PUT or GET, only with POST
-            if rh.report.handle_uploaded_files is not None:
-                rh.report.handle_uploaded_files(instance,request)
-            rows = request.POST.get('rows')
-            #~ logger.info("20111217 Got POST %r",rows)
-            data = json.loads(rows)
-            return self.form2obj_and_save(request,rh,data,instance,True,include_rows=ar)
-          
         if request.method == 'GET':
             if pk:
                 pass
             else:
-                rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator ]
+                #~ rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator ]
+                rows = [ rh.store.row2dict(ar,row,rh.store.list_fields) for row in ar.sliced_data_iterator ]
                 #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
                 #~ total_count = ar.total_count
                 total_count = len(ar.data_iterator)
@@ -1267,6 +1286,39 @@ tinymce.init({
                     total_count += 1
                 return json_response_kw(count=total_count,rows=rows)
         
+        if request.method == 'DELETE':
+            return self.delete_element(request,rpt,elem)
+              
+        if request.method == 'POST':
+            #~ data = rh.store.get_from_form(request.POST)
+            #~ instance = ar.create_instance(**data)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+            instance = ar.create_instance()
+            # store uploaded files. 
+            # html forms cannot send files with PUT or GET, only with POST
+            if rh.report.handle_uploaded_files is not None:
+                rh.report.handle_uploaded_files(instance,request)
+                
+            data = request.POST.get('rows')
+            #~ logger.info("20111217 Got POST %r",data)
+            data = json.loads(data)
+            #~ data = self.rest2form(request,rh,data)
+            return self.form2obj_and_save(request,rh,data,instance,True,include_rows=ar)
+            
+        if request.method == 'PUT':
+            if elem:
+                data = http.QueryDict(request.raw_post_data).get('rows')
+                #~ logger.info('20120118 PUT 1 %r', data)
+                data = json.loads(data)
+                #~ logger.info('20120118 PUT 2 %r', data)
+                #~ data = self.rest2form(request,rh,data)
+                #~ print 20111021, data
+                #~ fmt = data.get('fmt',None)
+                return self.form2obj_and_save(request,ar.ah,data,elem,False) # force_update=True)
+            else:
+                raise Http404("PUT without element")
+          
     def api_element_view(self,request,app_label=None,actor=None,pk=None):
         """
         GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
@@ -1294,24 +1346,7 @@ tinymce.init({
                 raise Http404("%s %s does not exist." % (rpt,pk))
                 
         if request.method == 'DELETE':
-            assert elem is not None
-            #~ if rpt.disable_delete is not None:
-            msg = rpt.disable_delete(elem,request)
-            if msg is not None:
-                return error_response(None,msg)
-                    
-            dblogger.log_deleted(request,elem)
-            
-            try:
-                elem.delete()
-            except Exception,e:
-                dblogger.exception(e)
-                msg = _("Failed to delete %(record)s : %(error)s."
-                    ) % dict(record=obj2unicode(elem),error=e)
-                #~ msg = "Failed to delete %s." % element_name(elem)
-                return error_response(None,msg)
-                #~ raise Http404(msg)
-            return HttpResponseDeleted()
+            return self.delete_element(request,rpt,elem)
             
         if request.method == 'PUT':
             ah = rpt.get_handle(self)
@@ -1710,7 +1745,7 @@ tinymce.init({
                 #~ params = dict(base_params=rr.request2kw(self))
                 elem = rr.create_instance()
                 after_show.update(data_record=elem2rec_insert(rr,rr.ah,elem))
-                return self.action_href(a,params,after_show,_("Upload"))
+                return self.action_href_js(a,params,after_show,_("Upload"))
         if len(rr.data_iterator) == 1:
             #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
             #~ s = unicode(v[0]) + ':'
@@ -1721,7 +1756,7 @@ tinymce.init({
             if True:
                 #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
                 after_show.update(record_id=rr.data_iterator[0].pk)
-                s += ' ' + self.action_href(rr.ah.report.detail_action,params,after_show,_("Edit"))
+                s += ' ' + self.action_href_js(rr.ah.report.detail_action,params,after_show,_("Edit"))
             else:
                 after_show.update(record_id=rr.data_iterator[0].pk)
                 s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),params,after_show)
@@ -1781,10 +1816,11 @@ tinymce.init({
                 url = self.get_detail_url(v.instance)
             elif v.action:
                 if True:
-                    handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params or {}))
+                    handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (
+                        v.action,py2js(v.params or {}))
                     return dict(text=prepare_label(v),handler=js_code(handler))
                 else:
-                    url = self.get_action_url(v.action)
+                    url = self.action_url_http(v.action)
             else:
                 # a separator
                 #~ return dict(text=v.label)
@@ -1794,27 +1830,30 @@ tinymce.init({
                 # special case for href items in main menubar
                 return dict(
                   xtype='button',text=prepare_label(v),
-                  handler=js_code("function() { window.location='%s'; }" % url))
+                  #~ handler=js_code("function() { window.location='%s'; }" % url))
+                  handler=js_code("function() { location.replace('%s'); }" % url))
             return dict(text=prepare_label(v),href=url)
         return v
         
 
-    def action_href(self,a,params,after_show,label=None):
+    def action_href_js(self,a,params,after_show=None,label=None):
         """
         Return a HTML chunk for a button that will execute this 
         action using a *Javascript* link to this action.
         """
-        #~ if label is None:
-            #~ label = a.get_button_label()
         label = cgi.escape(force_unicode(label or a.get_button_label()))
-        #~ print 20110915, a, label
-        onclick = 'Lino.%s(undefined,%s,%s)' % (a,py2js(params),py2js(after_show))
+        url = self.action_url_js(a,params,after_show)
+        return self.href_button(url,label)
+        
+    def action_url_js(self,a,params,after_show):
+        onclick = 'Lino.%s(undefined,%s,%s)' % (
+          a,
+          py2js(params or {}),
+          py2js(after_show or {}))
         #~ print 20110120, onclick
         onclick = cgi.escape(onclick)
         onclick = onclick.replace('"','&quot;')
-        #~ return '<input type="button" onclick="%s" value=" %s ">' % (onclick,label)
-        #~ return '[<a href="#" onclick="%s">%s</a>]' % (onclick,label)
-        return '[<a href="javascript:%s">%s</a>]' % (onclick,label)
+        return 'javascript:' + onclick
 
     def action_href_http(self,a,label=None,**params):
         """
@@ -1822,9 +1861,10 @@ tinymce.init({
         this action using a *HTTP* link to this action.
         """
         label = cgi.escape(force_unicode(label or a.get_button_label()))
-        return '[<a href="%s">%s</a>]' % (self.get_action_url(a,**params),label)
+        return '[<a href="%s">%s</a>]' % (self.action_url_http(a,**params),label)
         
-    def get_action_url(self,action,*args,**kw):
+    #~ def get_action_url(self,action,*args,**kw):
+    def action_url_http(self,action,*args,**kw):
         #~ if not action is action.actor.default_action:
         if action != action.actor.default_action:
             kw.update(an=action.name)
@@ -1862,6 +1902,9 @@ tinymce.init({
 
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
+        
+    def href_button(self,url,text):
+        return '[<a href="%s">%s</a>]' % (url,text)
     
             
     def setup_handle(self,h):

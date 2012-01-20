@@ -14,10 +14,14 @@
 
 """
 This module turns Lino into a basic calendar client. 
+To be combined with :attr:`lino.Lino.use_extensible`.
 Supports remote calendars.
 Events and Tasks can get attributed to a :attr:`Project <lino.Lino.project_model>`.
 
 """
+import logging
+logger = logging.getLogger(__name__)
+
 import cgi
 import datetime
 
@@ -34,7 +38,7 @@ from lino.core import actions
 from lino.utils import perms
 from lino.utils import babel
 from lino.utils import dblogger
-from lino.tools import resolve_model
+from lino.tools import resolve_model, obj2str
 
 from lino.modlib.contacts import models as contacts
 
@@ -340,27 +344,24 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
         html += _(" on ") + babel.dtos(self.start_date)
         return html
         
-    def get_datetime(self,name):
+    def set_datetime(self,name,value):
+        #~ logger.info("20120119 set_datetime(%r)",value)
+        setattr(self,name+'_date',value.date())
+        setattr(self,name+'_time',value.time())
+        
+    def get_datetime(self,name,altname=None):
         "`name` can be 'start' or 'end'."
         d = getattr(self,name+'_date')
-        if not d: return None
         t = getattr(self,name+'_time')
+        if not d and altname is not None: 
+            d = getattr(self,altname+'_date')
+            if not t and altname is not None: 
+                t = getattr(self,altname+'_time')
+        if not d: return None
         if t:
             return datetime.datetime.combine(d,t)
         else:
             return datetime.datetime(d.year,d.month,d.day)
-        
-    def start_dt(self,request):
-        return self.get_datetime('start')
-    start_dt.return_type = dd.DisplayField(_("Start"))
-    
-    def end_dt(self,request):
-        return self.get_datetime('end') or self.get_datetime('start')
-        #~ et = self.get_datetime('end')
-        #~ if et is None:
-            #~ et = self.get_datetime('start')
-        #~ return et
-    end_dt.return_type = dd.DisplayField(_("End"))
         
 
 class RecurrenceSet(ComponentBase):
@@ -924,7 +925,32 @@ def migrate_reminder(obj,reminder_date,reminder_text,
       alarm_value = delay_value,
       alarm_unit = delay2alarm(delay_type))
       
-      
+
+class ExtDateTimeField(dd.VirtualField):
+    """
+    An editable virtual field needed for 
+    communication with the Ext.ensible CalendarPanel
+    because Lino uses two separate fields 
+    `start_date` and `start_time`
+    or `end_date` and `end_time` while CalendarPanel expects 
+    and sends single DateTime values.
+    """
+    editable = True
+    def __init__(self,name_prefix,alt_prefix,label):
+        self.name_prefix = name_prefix
+        self.alt_prefix = alt_prefix
+        rt = models.DateTimeField(label)
+        dd.VirtualField.__init__(self,rt,None)
+    
+    def set_value_in_object(self,request,obj,value):
+        obj.set_datetime(self.name_prefix,value)
+        
+    def value_from_object(self,request,obj):
+        #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
+        return obj.get_datetime(self.name_prefix,self.alt_prefix)
+    
+
+
 if settings.LINO.use_extensible:
   
     def parsedate(s):
@@ -941,20 +967,54 @@ if settings.LINO.use_extensible:
         """
         The report used for Ext.ensible CalendarPanel.
         """
+        
+        use_as_default_report = False
+        #~ filter = models.Q(start_date__isnull=False)
+        
         column_names = 'id start_dt end_dt summary description user place calendar rset url all_day reminder'
         can_add = perms.never
         
+        start_dt = ExtDateTimeField('start',None,_("Start"))
+        end_dt = ExtDateTimeField('end','start',_("End"))
+        
         @classmethod
         def parse_req(self,request,**kw):
-            filter = kw.get('filter',{})
+            #~ filter = kw.get('filter',{})
+            assert not kw.has_key('filter')
+            filter = {}
+            #~ logger.info("20120118 filter is %r", filter)
             endDate = request.REQUEST.get('ed',None)
             if endDate:
-                filter.update(start_date__lte=parsedate(endDate))
+                d = parsedate(endDate)
+                filter.update(start_date__lte=d)
             startDate = request.REQUEST.get('sd',None)
             if startDate:
-                filter.update(start_date__gte=parsedate(startDate))
+                d = parsedate(startDate)
+                #~ logger.info("startDate is %r", d)
+                filter.update(start_date__gte=d)
+            #~ logger.info("20120118 filter is %r", filter)
+            filter = models.Q(**filter)
             kw.update(filter=filter)
             return kw
+            
+        @dd.displayfield(_("Summary"))
+        def summary(cls,self,request):
+            "Note that this overrides the database field of same name"
+            if self.project:
+                return "%s %s" % (self.project,self.summary)
+            return self.summary
+            
+        #~ @dd.displayfield(_("Start"))
+        #~ def start_dt(cls,self,request):
+            #~ return self.get_datetime('start')
+        
+        #~ @dd.virtualfield(models.DateTimeField(_("Start")))
+        #~ def start_dt(cls,self,request):
+            #~ return self.get_datetime('start')
+        
+        #~ @dd.displayfield(_("End"))
+        #~ def end_dt(cls,self,request):
+            #~ return self.get_datetime('end') or self.get_datetime('start')
         
 
 def setup_main_menu(site,ui,user,m): pass
