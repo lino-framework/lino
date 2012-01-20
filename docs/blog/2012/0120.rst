@@ -58,6 +58,7 @@ and one method that parses such strings to a Python value:
 Endspurt vor dem Release
 ------------------------
 
-Neue Klasse :class:`lino.apps.dsbe.models.ResidenceType`.
-Das Feld Person.registry_type ist jetzt kein Integer mehr sondern ein CHAR
-und wird :func:`automatisch <lino.apps.dsbe.migrate.migrate_from_1_3_3>` konvertiert.
+- Neue Klasse :class:`lino.apps.dsbe.models.ResidenceType`.
+  Das Feld Person.registry_type ist jetzt kein Integer mehr sondern ein CHAR
+  und wird :func:`automatisch <lino.apps.dsbe.migrate.migrate_from_1_3_3>` konvertiert.
+
