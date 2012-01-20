@@ -1,6 +1,9 @@
 20120120
 ========
 
+Calendar panel
+--------------
+
 Ta-daa! The long awaited calendar panel finally works! 
 Users can create, move resize and delete events using 
 the calendar panel.
@@ -27,15 +30,34 @@ new Lino configuration settings
 and
 :meth:`lino.Lino.parse_datetime`.
 
-Note that there are now three times three settings to handle 
-date and time values!
+Note that datetime is not simply a combination of date and time:
+time fields contain  
+only minutes, while datetime fields have also seconds
+(in a default configuration).
 
-- X_format_extjs
-- X_format_strftime
-- parse_X
+So there are now 9 settings to handle date and time values: 
+2 attributes containing a format string (one using strftime and the other using extjs syntax), 
+and one method that parses such strings to a Python value:
 
-for X being date, time and datetime.
+- date:
+  :attr:`strftime  <lino.Lino.date_format_strftime>`
+  :attr:`extjs <lino.Lino.date_format_extjs>`
+  :meth:`parse<lino.Lino.parse_date>`
 
-datetime is not simply a combination of date and time:
-time fields contain (in a default configuration) 
-only minutes, while datetime fields have also seconds.
+- time:
+  :attr:`strftime <lino.Lino.time_format_strftime>`
+  :attr:`extjs <lino.Lino.time_format_extjs>`
+  :meth:`parse<lino.Lino.parse_time>`
+
+- datetime:
+  :attr:`strftime <lino.Lino.datetime_format_strftime>`
+  :attr:`extjs <lino.Lino.datetime_format_extjs>`
+  :meth:`parse<lino.Lino.parse_datetime>`
+
+
+Endspurt vor dem Release
+------------------------
+
+Neue Klasse :class:`lino.apps.dsbe.models.ResidenceType`.
+Das Feld Person.registry_type ist jetzt kein Integer mehr sondern ein CHAR
+und wird :func:`automatisch <lino.apps.dsbe.migrate.migrate_from_1_3_3>` konvertiert.

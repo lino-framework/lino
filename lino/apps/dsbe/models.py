@@ -163,11 +163,24 @@ CIVIL_STATE_CHOICES = [
 # http://en.wikipedia.org/wiki/European_driving_licence
 
 
-RESIDENCE_TYPE_CHOICES = (
-  (1  , _("Registry of citizens")   ), # Bevölkerungsregister registre de la population
-  (2  , _("Registry of foreigners") ), # Fremdenregister        Registre des étrangers      vreemdelingenregister 
-  (3  , _("Waiting for registry")   ), # Warteregister
-)
+
+class ResidenceType(ChoiceList):
+    """
+    Types of registries for the Belgian residence.
+    
+    """
+    label = _("Residence type")
+    
+add = ResidenceType.add_item
+add('1', _("Registry of citizens"))
+add('2', _("Registry of foreigners"))
+add('3', _("Waiting for registry"))
+
+#~ RESIDENCE_TYPE_CHOICES = (
+  #~ (1  , _("Registry of citizens")   ), # Bevölkerungsregister registre de la population
+  #~ (2  , _("Registry of foreigners") ), # Fremdenregister        Registre des étrangers      vreemdelingenregister 
+  #~ (3  , _("Waiting for registry")   ), # Warteregister
+#~ )
 
 BEID_CARD_TYPES = {
   '1' : dict(en=u"Belgian citizen",de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
@@ -389,12 +402,13 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     "The eventual noble condition of this person. Imported from TIM."
         
     
-    residence_type = models.SmallIntegerField(blank=True,null=True,
-        verbose_name=_("Residence type"),
-        choices=RESIDENCE_TYPE_CHOICES,
-        max_length=1,
-        #~ limit_to_choices=True,
-        )
+    #~ residence_type = models.SmallIntegerField(blank=True,null=True,
+        #~ verbose_name=_("Residence type"),
+        #~ choices=RESIDENCE_TYPE_CHOICES,
+        #~ max_length=1,
+        #~ )
+    residence_type = ResidenceType.field(blank=True) 
+        
     in_belgium_since = models.DateField(_("Lives in Belgium since"),blank=True,null=True)
     unemployed_since = models.DateField(_("Seeking work since"),blank=True,null=True)
     #~ work_permit_exempt = models.BooleanField(verbose_name=_("Work permit exemption"))
