@@ -20,6 +20,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+import time
 import cgi
 import datetime
 
@@ -1059,6 +1060,8 @@ class JobsOverview(dd.EmptyTable):
 
     @dd.displayfield(_("Body"))
     def body(cls,self,req):
+        logger.info("Waiting 5 seconds...")
+        time.sleep(5)
         today = self.date or datetime.date.today()
         html = ''
         rows = []

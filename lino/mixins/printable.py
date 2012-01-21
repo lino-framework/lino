@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -65,8 +65,8 @@ try:
 except ImportError:
     pyratemp = None
         
-def filename_root(elem):
-    return elem._meta.app_label + '.' + elem.__class__.__name__
+#~ def filename_root(elem):
+    #~ return elem._meta.app_label + '.' + elem.__class__.__name__
 
 def model_group(elem):
     return elem._meta.app_label + '/' + elem.__class__.__name__
@@ -134,7 +134,9 @@ class BuildMethod:
         
     def get_target_parts(self,action,elem):
         "used by `get_target_name`"
-        return [self.cache_name, self.name, filename_root(elem) + '-' + str(elem.pk) + self.target_ext]
+        #~ return [self.cache_name, self.name, action.actor.elem_filename_root(elem) + self.target_ext]
+        return [self.cache_name, self.name, elem.filename_root() + self.target_ext]
+        #~ return [self.cache_name, self.name, filename_root(elem) + '-' + str(elem.pk) + self.target_ext]
         
     def get_target_name(self,action,elem):
         "return the output filename to generate on the server"
@@ -465,7 +467,15 @@ def get_build_method(elem):
 #~ class PrintAction(actions.RedirectAction):
 class BasePrintAction(actions.RowAction):
   
-    callable_from = (actions.GridEdit,actions.ShowDetailAction,actions.ShowEmptyTable)
+    name = 'print'
+    label = _('Print')
+    
+    callable_from = (actions.GridEdit, actions.ShowDetailAction,
+        actions.ShowEmptyTable)
+    
+    def __init__(self,rpt,*args,**kw):
+        self.actor = rpt
+        actions.RowAction.__init__(self,*args,**kw)
     
     def before_build(self,bm,elem):
         """Return the target filename if a document needs to be built,
@@ -489,8 +499,6 @@ class PrintAction(BasePrintAction):
     For the user they are synonyms as long as 
     Lino doesn't support server-side printing.
     """
-    name = 'print'
-    label = _('Print')
     #~ callable_from = None
     
     #~ needs_selection = True
@@ -538,8 +546,11 @@ class DirectPrintAction(BasePrintAction):
     A Print Action that uses a hard-coded template.
     """
     #~ def __init__(self,rpt,name,label,bmname,tplname):
-    def __init__(self,name,label,tplname=None,build_method=None):
-        BasePrintAction.__init__(self,name,label)
+    def __init__(self,rpt,name=None,label=None,tplname='Default',build_method=None):
+        #~ if name is None: name = 'print'
+        #~ if label is None: label = _("Print")
+        #~ if tplname is None: tplname = 'Default'
+        BasePrintAction.__init__(self,rpt,name,label)
         #~ self.bm =  bm_dict.get(build_method or settings.LINO.preferred_build_method)
         self.build_method = build_method
         self.tplname = tplname
@@ -665,6 +676,9 @@ class Printable(object):
     def get_templates_group(self):
         return model_group(self)
         
+    def filename_root(self):
+        return self._meta.app_label + '.' + self.__class__.__name__ + '-' + str(self.pk)
+        
   
 class CachedPrintable(models.Model,Printable):
     
@@ -681,7 +695,7 @@ class CachedPrintable(models.Model,Printable):
     @classmethod
     def setup_report(cls,rpt):
         #~ call_optional_super(CachedPrintable,cls,'setup_report',rpt)
-        rpt.add_action(PrintAction())
+        rpt.add_action(PrintAction(rpt))
         rpt.add_action(ClearCacheAction())
 
     def get_print_templates(self,bm,action):
@@ -706,7 +720,7 @@ class CachedPrintable(models.Model,Printable):
         
     def get_cache_filename(self):
         # TODO: too stupid that we must instantate an Action here...
-        a = PrintAction()
+        a = PrintAction(self.__class__._lino_model_report)
         bm = get_build_method(self)
         return bm.get_target_name(a,self)
         
@@ -811,7 +825,7 @@ class Listing(CachedPrintable):
         """
         # to not call call_optional_super(Listing,self,'setup_report',rpt)
         #~ rpt.get_action('listing').label = model.__name__
-        rpt.add_action(DirectPrintAction('print',_("Print"),
+        rpt.add_action(DirectPrintAction(rpt,'print',_("Print"),
           model.template_name,model.build_method))
         #~ rpt.add_action(InititateListing('listing',_("Print"),'listing.odt'))
         

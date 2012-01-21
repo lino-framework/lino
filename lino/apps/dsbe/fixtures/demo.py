@@ -83,7 +83,7 @@ DATE = settings.LINO.demo_date() # i2d(20061014)
 
 #~ StudyContent = resolve_model('dsbe.StudyContent')
 
-SECTORS = u"""
+SECTORS_LIST = u"""
 Agriculture & horticulture | Agriculture & horticulture | Landwirtschaft & Garten
 Maritime | Maritime | Seefahrt
 Medical & paramedical | Médical & paramédical | Medizin & Paramedizin
@@ -100,11 +100,25 @@ Sales | Vente | Verkauf
 Administration & Finance | Administration & Finance | Verwaltung & Finanzwesen
 """
 
+class Cycle:
+  
+    def __init__(self,*items):
+        self.items = items
+        self.current = 0
+        
+    def pop(self):
+        item = self.items[self.current]
+        self.current += 1
+        if self.current >= len(self.items):
+            self.current = 0
+        return item
+        
+
 
 def objects():
   
     sector = Instantiator('jobs.Sector').build
-    for ln in SECTORS.splitlines():
+    for ln in SECTORS_LIST.splitlines():
         if ln:
             a = ln.split('|')
             if len(a) == 3:
@@ -216,6 +230,8 @@ def objects():
     #~ Link = resolve_model('links.Link')
     #~ Contract = resolve_model('jobs.Contract')
     JobProvider = resolve_model('jobs.JobProvider')
+    Function = resolve_model('jobs.Function')
+    Sector = resolve_model('jobs.Sector')
     Note = resolve_model('notes.Note')
     User = resolve_model('users.User')
     Country = resolve_model('countries.Country')
@@ -228,6 +244,7 @@ def objects():
     #~ exam_policy = Instantiator('isip.ExamPolicy').build
 
     City = resolve_model('countries.City')
+    Job = resolve_model('jobs.Job')
     #~ City = settings.LINO.modules.countries.City
     StudyType = resolve_model('jobs.StudyType')
     Country = resolve_model('countries.Country')
@@ -444,12 +461,22 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield jobtype(u'VSE')
     yield jobtype(u'Sonstige')
     
+    from lino.modlib.jobs.models import ContractType, JobType
+    PERSONS = Cycle(annette,ulrike,tatjana,hans)
+    CTYPES = Cycle(*[x for x in ContractType.objects.all()])
+    JTYPES = Cycle(*[x for x in JobType.objects.all()])
+    
+    
     rcycle = mti.insert_child(rcycle,JobProvider)
     yield rcycle 
     bisa = mti.insert_child(bisa,JobProvider)
     yield bisa 
     proaktiv = mti.insert_child(proaktiv,JobProvider)
     yield proaktiv
+    
+    PROVIDERS = Cycle(*[x for x in JobProvider.objects.all()])
+    SECTORS = Cycle(*[x for x in Sector.objects.all()])
+    FUNCTIONS = Cycle(*[x for x in Function.objects.all()])
     
     job = Instantiator('jobs.Job','provider type contract_type name').build
     bisajob = job(bisa,art607,1,"bisa")
@@ -458,6 +485,11 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield rcyclejob 
     proaktivjob = job(proaktiv,art607,2,"proaktiv",sector=horeca,function=1)
     yield proaktivjob
+    
+    for i in range(10):
+        yield job(PROVIDERS.pop(),JTYPES.pop(),CTYPES.pop(),str(i),
+          sector=SECTORS.pop(),function=FUNCTIONS.pop())
+    
     contract = Instantiator('jobs.Contract',
       'type applies_from applies_until job contact',
       user=root).build
@@ -477,6 +509,15 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield contract(2,
         settings.LINO.demo_date(-120),settings.LINO.demo_date(-20),
         proaktivjob,proaktiv_dir,person=ulrike)
+        
+    
+    JOBS = Cycle(*[x for x in Job.objects.all()])
+    
+    for i in range(20):
+        yield contract(CTYPES.pop(),
+            settings.LINO.demo_date(-i),settings.LINO.demo_date(i),
+            JOBS.pop(),None,person=PERSONS.pop())
+
     
     jobrequest = Instantiator('jobs.Candidature','job person date_submitted').build
     yield jobrequest(bisajob,tatjana,settings.LINO.demo_date(-5))

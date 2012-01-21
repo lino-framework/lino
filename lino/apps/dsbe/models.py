@@ -460,7 +460,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'persons/auskunftsblatt.odt'))
         Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig wird.
         """
-        rpt.add_action(DirectPrintAction('eid',_("eID sheet"),'eid-content'))
+        rpt.add_action(DirectPrintAction(rpt,'eid',_("eID sheet"),'eid-content'))
         #~ rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
         
     def __unicode__(self):
@@ -1600,8 +1600,8 @@ class Course(models.Model,mixins.Printable):
   
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates'))
-        rpt.add_action(DirectPrintAction('participants',_("List of participants"),'participants'))
+        rpt.add_action(DirectPrintAction(rpt,'candidates',_("List of candidates"),'candidates'))
+        rpt.add_action(DirectPrintAction(rpt,'participants',_("List of participants"),'participants'))
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
@@ -1833,8 +1833,7 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
         
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('suchliste',_("Print"),'suchliste'))
-        #~ rpt.add_action(DirectPrintAction('suchliste',_("Print"),'persons/suchliste.odt'))
+        rpt.add_action(DirectPrintAction(rpt,'suchliste',_("Print"),'suchliste'))
         
 class MySearches(mixins.ByUser):
     model = PersonSearch

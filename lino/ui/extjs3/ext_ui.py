@@ -199,6 +199,19 @@ def elem2rec_insert(ar,ah,elem):
     #~ rec.update(id=elem.pk) or -99999)
     return rec
 
+def elem2rec_empty(ar,ah,elem,**rec):
+    """
+    Returns a dict of this record, designed for usage by an EmptyTable.
+    """
+    #~ rec.update(data=rh.store.row2dict(ar,elem))
+    rec.update(data=elem._data)
+    #~ rec = elem2rec1(ar,ah,elem)
+    #~ rec.update(title=_("Insert into %s...") % ar.get_title())
+    rec.update(title=ar.get_action_title())
+    rec.update(id=-99998)
+    #~ rec.update(id=elem.pk) or -99999)
+    return rec
+
 def elem2rec_detailed(ar,rh,elem,**rec):
     """
     Adds additional information for this record, used only by detail views.
@@ -1114,11 +1127,8 @@ tinymce.init({
                 after_show = {}
                 if isinstance(ar.action,actions.InsertRow):
                     elem = ar.create_instance()
-                    #~ rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec = elem2rec_insert(ar,rh,elem)
-                    #~ params.update(data_record=rec)
                     after_show.update(data_record=rec)
-                    #~ data_record = rec
 
                 kw.update(on_ready=[self.action_handler(ar.action,None,params,after_show)])
                 #~ kw.update(on_ready=['Lino.%s(undefined,%s,%s);' % (
@@ -1323,7 +1333,7 @@ tinymce.init({
             
         elem = None
         
-        if pk != '-99999':
+        if pk != '-99999' and pk != '-99998':
             try:
                 elem = rpt.model.objects.get(pk=pk)
             except ValueError:
@@ -1379,20 +1389,25 @@ tinymce.init({
 
             if isinstance(a,actions.OpenWindowAction):
               
-                if pk == '-99999':
-                    assert elem is None
-                    elem = ar.create_instance()
-                    datarec = elem2rec_insert(ar,ah,elem)
-                #~ elif pk  == '-99990':
-                    #~ assert elem is None
-                    #~ datarec = elem2rec_empty(ar,ah)
-                else:
-                    datarec = elem2rec_detailed(ar,ah,elem)
-                
                 if fmt == 'json':
+                    if pk == '-99999':
+                        assert elem is None
+                        elem = ar.create_instance()
+                        datarec = elem2rec_insert(ar,ah,elem)
+                    elif pk == '-99998':
+                        assert elem is None
+                        elem = ar.create_instance()
+                        datarec = elem2rec_empty(ar,ah,elem)
+                    #~ elif pk  == '-99990':
+                        #~ assert elem is None
+                        #~ datarec = elem2rec_empty(ar,ah)
+                    else:
+                        datarec = elem2rec_detailed(ar,ah,elem)
+                    
                     return json_response(datarec)
                     
-                after_show = dict(data_record=datarec)
+                #~ after_show = dict(data_record=datarec)
+                after_show = dict(record_id=pk)
                 params = dict()
                 bp = ar.request2kw(self)
                 #~ bp = self.request2kw(ar)
@@ -1406,8 +1421,10 @@ tinymce.init({
                         after_show.update(active_tab=tab)
                 params.update(base_params=bp)
                 return HttpResponse(self.html_page(request,
-                  on_ready=['Lino.%s(undefined,%s,%s);' % (
-                    a,py2js(params),py2js(after_show))]))
+                  on_ready=[self.action_handler(a,None,params,after_show)]))
+                #~ return HttpResponse(self.html_page(request,
+                  #~ on_ready=['Lino.%s(undefined,%s,%s);' % (
+                    #~ a,py2js(params),py2js(after_show))]))
                 
                 
             if isinstance(a,actions.RedirectAction):
@@ -1418,6 +1435,10 @@ tinymce.init({
                 
             if isinstance(a,actions.RowAction):
                 #~ return a.run(ar,elem)
+                if pk == '-99998':
+                    assert elem is None
+                    elem = ar.create_instance()
+                
                 try:
                     return a.run(ar,elem)
                 except actions.ConfirmationRequired,e:
@@ -1427,10 +1448,15 @@ tinymce.init({
                       step=e.step)
                     return json_response(r)
                 except Exception,e:
-                    msg = _("Action \"%(action)s\" failed for %(record)s:") % dict(
-                        action=a,
-                        record=obj2unicode(elem))
-                    msg += "\n" + unicode(e)
+                    msg = unicode(e)
+                    #~ if elem is None:
+                        #~ msg = unicode(e)
+                    #~ else:
+                        #~ msg = _("Action \"%(action)s\" failed for %(record)s:") % dict(
+                            #~ action=a,
+                            #~ record=obj2unicode(elem))
+                        #~ msg += "\n" + unicode(e)
+                      
                     msg += '.\n' + _("An error report has been sent to the system administrator.")
                     logger.warning(msg)
                     logger.exception(e)
@@ -1746,7 +1772,6 @@ tinymce.init({
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
             a = rr.report.get_action('insert')
             if a is not None:
-                #~ params = dict(base_params=rr.request2kw(self))
                 elem = rr.create_instance()
                 after_show.update(data_record=elem2rec_insert(rr,rr.ah,elem))
                 return self.action_href_js(a,params,after_show,_("Upload"))
@@ -1840,7 +1865,7 @@ tinymce.init({
         
     def action_handler(self,a,caller=None,params=None,after_show=None):
         if isinstance(a,actions.ShowEmptyTable):
-            after_show = dict(record_id=-99999)
+            after_show = dict(record_id=-99998)
         if after_show:
             return "Lino.%s(%s,%s,%s)" % (a,py2js(caller),py2js(params),py2js(after_show))
         if params:

@@ -57,6 +57,7 @@ import lino
 from lino.core import fields
 from lino.core import actions
 from lino.utils import perms, menus, call_on_bases
+from lino.utils import babel
 from lino.tools import obj2str
 from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
@@ -661,7 +662,7 @@ class EmptyTable(Frame):
             self.add_action(self.default_action)
             #~ self.add_action(self.default_action)
             from lino.mixins.printable import DirectPrintAction
-            self.add_action(DirectPrintAction('print',_("Print"),'default'))
+            self.add_action(DirectPrintAction(self))
 
             
     @classmethod
@@ -676,13 +677,42 @@ class EmptyTable(Frame):
         #~ if self.known_values:
             #~ kw.update(self.known_values)
         kw.update(req.param_values)
+
         #~ for k,v in req.param_values.items():
             #~ kw[k] = v
         #~ for k,f in self.parameters.items():
             #~ kw[k] = f.value_from_object(None)
-        obj = Object(**kw)
+        obj = EmptyTableRow(self,**kw)
+        kw = req.ah.store.row2dict(req,obj)
+        obj._data = kw
+        obj.update(**kw)
         return obj
     
+    #~ @classmethod
+    #~ def elem_filename_root(self,elem):
+        #~ return self.app_label + '.' + self.__name__
+
+class EmptyTableRow(object):
+  
+    def __init__(self,table,**kw):
+        self._table = table
+        self.update(**kw)
+        
+    def update(self,**kw):
+        for k,v in kw.items():
+            setattr(self,k,v)
+            
+    def __unicode__(self):
+        return unicode(self._table.label)
+        
+    def get_print_language(self,pm):
+        return babel.DEFAULT_LANGUAGE
+        
+    def get_templates_group(self):
+        return self._table.app_label + '/' + self._table.__name__
+    
+    def filename_root(self):
+        return self._table.app_label + '.' + self._table.__name__
         
 
 class RemoteField(object):
@@ -809,6 +839,10 @@ class Table(AbstractTable):
     def column_choices(self):
         return [ de.name for de in self.wildcard_data_elems() ]
           
+    #~ @classmethod
+    #~ def elem_filename_root(cls,elem):
+        #~ return elem._meta.app_label + '.' + elem.__class__.__name__ + '-' + str(elem.pk)
+
     @classmethod
     def get_detail_sets(self):
         """
