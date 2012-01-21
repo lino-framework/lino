@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -108,8 +108,13 @@ def py2js(v):
         
     if isinstance(v,Value):
         return v.as_ext()
+        #~ v = v.as_ext()
+        #~ if not isinstance(v, basestring):
+            #~ raise Exception("20120121b %r is of type %s" % (v,type(v)))
+        #~ return v
     if isinstance(v,Promise):
-        v = force_unicode(v)
+        #~ v = force_unicode(v)
+        return simplejson.dumps(force_unicode(v))
     if type(v) is types.GeneratorType:
         raise Exception("Please don't call the generator function yourself")
         #~ return "\n".join([ln for ln in v])
@@ -129,6 +134,7 @@ def py2js(v):
         return "{ %s }" % ", ".join([
             #~ "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
             "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()])
+            #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
     #~ if isinstance(v,CRL):
@@ -158,6 +164,8 @@ def py2js(v):
     #return simplejson.encoder.encode_basestring(v)
     #print repr(v)
     # http://docs.djangoproject.com/en/dev/topics/serialization/
+    if not isinstance(v, (str,unicode)):
+        raise Exception("20120121 %r is of type %s" % (v,type(v)))
     return simplejson.dumps(v)
     #~ return simplejson.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
     

@@ -38,6 +38,8 @@ from django.utils.encoding import force_unicode
 import lino
 from lino import dd
 
+from lino.core import actions
+from lino.core import fields
 from lino.utils import iif
 from lino.utils import babel 
 #~ from lino.utils import call_optional_super
@@ -461,8 +463,10 @@ def get_build_method(elem):
         
 
 #~ class PrintAction(actions.RedirectAction):
-class BasePrintAction(dd.RowAction):
+class BasePrintAction(actions.RowAction):
   
+    callable_from = (actions.GridEdit,actions.ShowDetailAction,actions.ShowEmptyTable)
+    
     def before_build(self,bm,elem):
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
@@ -488,7 +492,6 @@ class PrintAction(BasePrintAction):
     name = 'print'
     label = _('Print')
     #~ callable_from = None
-    callable_from = (dd.GridEdit,dd.ShowDetailAction)
     
     #~ needs_selection = True
     
@@ -574,7 +577,7 @@ class DirectPrintAction(BasePrintAction):
         #~ target = bm.get_template_url(self,elem)
         #~ return rr.ui.success_response(open_url=target,**kw)
     
-class ClearCacheAction(dd.RowAction):
+class ClearCacheAction(actions.RowAction):
     """
     Defines the :guilabel:`Clear cache` button on a Printable record.
     """
@@ -793,7 +796,7 @@ class Listing(CachedPrintable):
         verbose_name=_("Date"))
     #~ header_html = dd.RichTextField(_("Header"),editable=False)
     #~ footer_html = dd.RichTextField(_("Footer"),editable=False)
-    body_html = dd.RichTextField(_("Body"),editable=False)
+    body_html = fields.RichTextField(_("Body"),editable=False)
         
     #~ title = models.CharField(max_length=200,
       #~ verbose_name=_("Title"),
@@ -852,10 +855,10 @@ class Listing(CachedPrintable):
     def get_preview(self,request):
         return self.body_html
         #~ return self.header_html + self.body_html + self.footer_html
-    preview = dd.VirtualField(dd.HtmlBox(_("Preview")),get_preview)
+    preview = fields.VirtualField(fields.HtmlBox(_("Preview")),get_preview)
     
     
-class InitiateListing(dd.InsertRow):
+class InitiateListing(actions.InsertRow):
     """
     This is the (otherwise invisible) action which is used 
     for the main menu entry of a :class:`Listing`.
@@ -884,14 +887,14 @@ class Listings(dd.Table):
         alist = []
         #~ if len(self.detail_layouts) > 0:
         if True:
-            self.detail_action = dd.ShowDetailAction(self)
+            self.detail_action = actions.ShowDetailAction(self)
             alist.append(self.detail_action)
-            alist.append(dd.SubmitDetail())
+            alist.append(actions.SubmitDetail())
             alist.append(InitiateListing(self,label=self.model._meta.verbose_name)) # replaces InsertRow
-            alist.append(dd.SubmitInsert())
-            self.default_action = dd.GridEdit(self)
+            alist.append(actions.SubmitInsert())
+            self.default_action = actions.GridEdit(self)
             #~ alist.append(self.default_action)
-        alist.append(dd.DeleteSelected())
+        alist.append(actions.DeleteSelected())
         self.set_actions(alist)
         
     

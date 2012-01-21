@@ -1048,33 +1048,42 @@ if settings.LINO.user_model:
 
 COLS = 8
 
-class ContractsSituation2(mixins.Listing):
-    class Meta:
-        abstract = True
-        verbose_name = _("Contracts Situation 2") 
-        
-    contract_type = models.ForeignKey(ContractType,blank=True,null=True)
-    job_type = models.ForeignKey(JobType,blank=True,null=True)
+class JobsOverview(dd.EmptyTable):
+    label = _("Contracts Situation") 
     
-    def body(self):
+    parameters = dict(
+      date = models.DateField(default=datetime.date.today),
+      contract_type = models.ForeignKey(ContractType,blank=True,null=True),
+      job_type = models.ForeignKey(JobType,blank=True,null=True),
+      )
+
+    @dd.displayfield(_("Body"))
+    def body(cls,self,req):
         today = self.date or datetime.date.today()
         html = ''
         rows = []
           
-        for jobtype in JobType.objects.all():
-            providers = [] # (obj, jobs)
+        if self.job_type:
+            jobtypes = [self.job_type]
+        else:
+            jobtypes = JobType.objects.all()
+        for jobtype in jobtypes:
+            cells = []
             #~ for job in jobtype.job_set.all():
             for job in jobtype.job_set.order_by('provider'):
                 actives = []
                 candidates = []
-                for ct in job.contract_set.all():
+                qs = job.contract_set.all()
+                if self.contract_type:
+                    qs = qs.filter(type=self.contract_type)
+                for ct in qs:
                     if ct.applies_from:
                         until = ct.date_ended or ct.applies_until
                         if not until or (ct.applies_from <= today and until >= today):
                             actives.append(ct)
                 for req in job.candidature_set.all():
-                    if not req.contract:
-                        candidates.append(req)
+                    #~ if not req.contract:
+                    candidates.append(req)
                 if candidates + actives:
                     s = "<p>"
                     s += "<b>%s (%s)</b>" % (
@@ -1082,7 +1091,7 @@ class ContractsSituation2(mixins.Listing):
                     if job.remark:
                         s += " <i>%s</i>" % cgi.escape(job.remark)
                     s += "</p>"
-                    s += UL([u'%s bis %s' % (
+                    s += UL(['%s bis %s' % (
                       ct.person.last_name.upper(),
                       babel.dtos(ct.applies_until)
                     ) for ct in actives])
@@ -1091,7 +1100,7 @@ class ContractsSituation2(mixins.Listing):
                         #~ s += '<li>%s</li>' % cgi.escape(unicode(ct.person))
                     #~ s += "</li>"
                     if candidates:
-                        s += "<p>%s:</p>" % cgi.escape(_("Candidates"))
+                        s += "<p>%s:</p>" % cgi.escape(unicode(_("Candidates")))
                         s += UL([i.person for i in candidates])
                         #~ for ct in candidates:
                             #~ s += '<br>' + cgi.escape(unicode(ct.person))
@@ -1105,7 +1114,11 @@ class ContractsSituation2(mixins.Listing):
                 #~ s = head + s
                 html += '<table border="1" width="100%%">%s</table>' % s
         html = '<div class="htmlText">%s</div>' % html
+        #~ logger.info(html[46:58])
+        #~ html = str(html)
+        #~ assert type(html) == type('')
         return html
+
 
 class ContractsSituation(mixins.Listing):
     #~ template_name = 'jobs/ContractsSituation/Listing.odt'

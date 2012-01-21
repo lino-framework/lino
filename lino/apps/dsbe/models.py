@@ -454,7 +454,6 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
             #~ return links.Link.objects.filter(a=sc.job_office)
         return []
 
-
     @classmethod
     def setup_report(model,rpt):
         u"""

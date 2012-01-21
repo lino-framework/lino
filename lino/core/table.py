@@ -26,6 +26,8 @@ import yaml
 #~ import cPickle as pickle
 #~ import pprint
 
+from appy import Object
+
 from django.conf import settings
 #~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
@@ -69,14 +71,11 @@ from lino.tools import resolve_model, resolve_field, get_app, full_model_name, g
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, get_data_elem
 from lino.utils.tables import AbstractTable, AbstractTableRequest, CustomTable
-from lino.utils.tables import GridEdit #, ComputedColumn
+#~ from lino.utils.tables import GridEdit #, ComputedColumn
 
 
 #~ from lino.modlib import field_choices
 
-USER_MODEL = None
- 
-        
         
 
 def unused_parse_js_date(s,name):
@@ -379,8 +378,6 @@ def discover():
     #~ logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
     #~ logger.debug("reports.setup() done")
-    global USER_MODEL
-    USER_MODEL = resolve_model(settings.LINO.user_model)
 
 
 
@@ -394,62 +391,6 @@ class StaticText:
 #~ class DataView:
     #~ def __init__(self,tpl):
         #~ self.xtemplate = tpl
-        
-
-class Calendar(actions.OpenWindowAction):
-    label = _("Calendar")
-    name = 'grid' # because...
-    default_format = 'html'
-    
-    def __init__(self,actor,*args,**kw):
-        self.actor = actor # actor who offers this action
-        self.can_view = perms.always # actor.can_view
-        super(Calendar,self).__init__(*args,**kw)
-        
-    def __str__(self):
-        return str(self.actor)+'.'+self.name
-    
-
-from lino.utils.tables import ReportAction, GridEdit, ShowDetailAction, RowAction
-
-class InsertRow(ReportAction,actions.OpenWindowAction):
-    callable_from = (GridEdit,ShowDetailAction)
-    name = 'insert'
-    #~ label = _("Insert")
-    label = _("New")
-    key = actions.INSERT # (ctrl=True)
-    #~ needs_selection = False
-    
-    def get_action_title(self,rr):
-        return _("Insert into %s") % force_unicode(rr.get_title())
-
-class DuplicateRow(ReportAction,actions.OpenWindowAction):
-    callable_from = (GridEdit,ShowDetailAction)
-    name = 'duplicate'
-    label = _("Duplicate")
-
-            
-class UpdateRowAction(RowAction):
-    pass
-    
-class DeleteSelected(RowAction):
-    #~ needs_selection = True
-    label = _("Delete")
-    name = 'delete'
-    key = actions.DELETE # (ctrl=True)
-    #~ client_side = True
-    
-        
-class SubmitDetail(actions.Action):
-    #~ name = 'submit'
-    label = _("Save")
-    callable_from = (ShowDetailAction,)
-    
-class SubmitInsert(SubmitDetail):
-    #~ name = 'submit'
-    label = _("Save")
-    #~ label = _("Insert")
-    callable_from = (InsertRow,)
         
 
 
@@ -469,10 +410,10 @@ class TableRequest(AbstractTableRequest):
     sort_column = None
     sort_direction = None
     
-        
     
-    
-    def parse_req(self,request,rh,**kw):
+    def parse_req(self,request,**kw):
+        #~ logger.info("20120121 %s.parse_req()",self)
+        rh = self.ah
         master = kw.get('master',self.report.master)
         if master is ContentType or master is models.Model:
             mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
@@ -524,6 +465,7 @@ class TableRequest(AbstractTableRequest):
                                 print "unknown filterOption %r" % filterOption
             if len(exclude):
                 kw.update(exclude=exclude)
+                
         if settings.LINO.use_gridfilters:
             filter = request.REQUEST.get(ext_requests.URL_PARAM_GRIDFILTER,None)
             if filter is not None:
@@ -545,19 +487,9 @@ class TableRequest(AbstractTableRequest):
                 self.sort_direction = 'DESC'
             kw.update(order_by=[sort])
         
-        #~ 20120111 kw.update(user=request.user)
-        #~ user = request.user
-        #~ if user is not None and user.is_superuser:
-        #~ if True:
-        username = request.REQUEST.get(ext_requests.URL_PARAM_SUBST_USER,None)
-        if username:
-            try:
-                kw.update(subst_user=USER_MODEL.objects.get(username=username))
-            except USER_MODEL.DoesNotExist, e:
-                pass
-        #~ kw.update(user=user)
-        
-        return AbstractTableRequest.parse_req(self,request,rh,**kw)
+        kw = AbstractTableRequest.parse_req(self,request,**kw)
+        #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
+        return kw
         
             
     def setup(self,
@@ -573,6 +505,8 @@ class TableRequest(AbstractTableRequest):
             exclude=None,
             extra=None,
             **kw):
+            
+        #~ logger.info("20120121 %s.setup()",self)
         self.filter = filter
         #~ if isinstance(self.action,GridEdit):
             #~ self.expand_memos = expand_memos or self.report.expand_memos
@@ -602,6 +536,9 @@ class TableRequest(AbstractTableRequest):
         self.create_kw = self.report.get_create_kw(master_instance)
         self.master_instance = master_instance
         
+        #~ if self.master and master_instance is None:
+            #~ raise Exception("20120121 %s : no master" % self)
+            
         AbstractTableRequest.setup(self,**kw)
         
         #~ assert isinstance(self._data_iterator,models.query.QuerySet)
@@ -635,26 +572,13 @@ class TableRequest(AbstractTableRequest):
         """
         self.page_length = self.report.page_length
         
+        #~ logger.info("20120121 %s.setup() done",self)
         
     def __str__(self):
         return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
 
     def get_data_iterator(self):
         return self.report.get_request_queryset(self)
-        
-    def create_instance(self,**kw):
-        if self.create_kw:
-            kw.update(self.create_kw)
-        #logger.debug('%s.create_instance(%r)',self,kw)
-        if self.known_values:
-            kw.update(self.known_values)
-        obj = self.report.create_instance(self,**kw)
-        #~ if self.known_values is not None:
-            #~ self.ah.store.form2obj(self.known_values,obj,True)
-            #~ for k,v in self.known_values:
-                #~ field = self.model._meta.get_field(k) ...hier
-                #~ kw[k] = v
-        return obj
         
     def request2kw(self,ui,**kw):
         kw = AbstractTableRequest.request2kw(self,ui,**kw)
@@ -696,6 +620,9 @@ class FrameHandle(base.Handle):
 
     def get_actions(self,*args,**kw):
         return self.report.get_actions(*args,**kw)
+        
+    def __str__(self):
+        return "%s on %s" %(self.__class__.__name__,self.report)
 
 class Frame(actors.Actor): 
   
@@ -716,7 +643,47 @@ class Frame(actors.Actor):
             self.add_action(self.default_action)
 
 
+class EmptyTable(Frame):
+  
+    has_navigator = False
+    default_list_action_name = 'show'
+    default_elem_action_name =  'show'
+    
+    @classmethod
+    def do_setup(self):
+        #~ logger.info("%s.__init__()",self.__class__)
+        #~ if not self.__class__ is Frame:
+        if self is not EmptyTable:
+            assert self.default_action_class is None
+            assert self.label is not None
+            self.default_action = actions.ShowEmptyTable(self)
+            super(Frame,self).do_setup()
+            self.add_action(self.default_action)
+            #~ self.add_action(self.default_action)
+            from lino.mixins.printable import DirectPrintAction
+            self.add_action(DirectPrintAction('print',_("Print"),'default'))
 
+            
+    @classmethod
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls
+        if action is None:
+            action = self.default_action
+        return actions.ActorRequest(ui,self,request,action,**kw)
+        
+    @classmethod
+    def create_instance(self,req,**kw):
+        #~ if self.known_values:
+            #~ kw.update(self.known_values)
+        kw.update(req.param_values)
+        #~ for k,v in req.param_values.items():
+            #~ kw[k] = v
+        #~ for k,f in self.parameters.items():
+            #~ kw[k] = f.value_from_object(None)
+        obj = Object(**kw)
+        return obj
+    
+        
 
 class RemoteField(object):
     primary_key = False
@@ -825,12 +792,11 @@ class Table(AbstractTable):
     handle_uploaded_files = None
     """
     Handler for uploaded files.
-    Same remarks as for :attr:`disabled_fields`.
+    Same remarks as for :attr:`lino.core.actors.Actor.disabled_fields`.
     """
     
     @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls
+    def request(self,ui=None,request=None,action=None,**kw):
         if action is None:
             action = self.default_action
         return TableRequest(ui,self,request,action,**kw)
@@ -843,6 +809,34 @@ class Table(AbstractTable):
     def column_choices(self):
         return [ de.name for de in self.wildcard_data_elems() ]
           
+    @classmethod
+    def get_detail_sets(self):
+        """
+        Yield a list of (app_label,name) tuples for which the kernel 
+        should try to create a Detail Set.
+        """
+        if self.model is not None:
+            def yield_model_detail_sets(m):
+                for b in m.__bases__:
+                    if issubclass(b,models.Model) and b is not models.Model:
+                        for ds in yield_model_detail_sets(b):
+                            yield ds
+                yield m._meta.app_label + '/' + m.__name__
+          
+            for ds in yield_model_detail_sets(self.model):
+                yield ds
+            
+        for s in super(Table,self).get_detail_sets():
+            yield s
+            
+    #~ @classmethod
+    #~ def find_field(cls,model,name):
+        #~ for vf in cls.model._meta.virtual_fields:
+            #~ if vf.name == name:
+                #~ return vf
+        #~ return cls.model._meta.get_field(name)
+    
+            
     @classmethod
     def wildcard_data_elems(self):
         return wildcard_data_elems(self.model)
@@ -950,15 +944,16 @@ class Table(AbstractTable):
     def setup_actions(self):
         if self.model is not None:
             #~ if len(self.detail_layouts) > 0:
-            if self.model._lino_detail:
-                self.detail_action = ShowDetailAction(self)
+            #~ if self.model._lino_detail:
+            if self._lino_detail:
+                self.detail_action = actions.ShowDetailAction(self)
                 self.add_action(self.detail_action)
-                self.add_action(SubmitDetail())
-                self.add_action(InsertRow(self))
+                self.add_action(actions.SubmitDetail())
+                self.add_action(actions.InsertRow(self))
                 #~ self.add_action(actions.DuplicateRow(self))
-                self.add_action(SubmitInsert())
+                self.add_action(actions.SubmitInsert())
                     
-            self.add_action(DeleteSelected())
+            self.add_action(actions.DeleteSelected())
             
             #~ if hasattr(self.model,'get_image_url'):
                 #~ self.add_action(actions.ImageAction())
@@ -1006,9 +1001,9 @@ class Table(AbstractTable):
         #~ return self.get_action(name)
         
         
-    @classmethod
-    def get_detail(self):
-        return self.model._lino_detail
+    #~ @classmethod
+    #~ def get_detail(self):
+        #~ return self.model._lino_detail
         
     @classmethod
     def get_title(self,rr):
@@ -1393,7 +1388,7 @@ class LayoutHandle:
         
     def __str__(self):
         #~ return "%s %s" % (self.rh,self.__class__.__name__)
-        return "%s %s" % (self.table,self.__class__.__name__)
+        return "%s for %s" % (self.__class__.__name__,self.layout)
         
         
     def add_store_field(self,field):
@@ -1556,9 +1551,12 @@ class Detail(object):
     Equivalent to a collection of .dtl files.
     """
     
-    def __init__(self,model,layouts):
-        self.model = model
-        self.table = model._lino_model_report,
+    #~ def __init__(self,model,layouts):
+    def __init__(self,actor,layouts):
+        #~ self.model = model
+        #~ self.table = model._lino_model_report,
+        self.actor = actor
+        #~ self.table = model._lino_model_report,
         self.layouts = layouts
         self._handles = {}
         
@@ -1571,5 +1569,18 @@ class Detail(object):
             h.setup()
         return h
         
+    def __str__(self):
+        #~ return "%s Detail(%s)" % (self.actor,[str(x) for x in self.layouts])
+        return "%s Detail(%s)" % (self.actor,len(self.layouts))
+        
 
+all_details = []
+
+def register_detail(a,layouts):
+    for dtl in all_details:
+        if dtl.layouts == layouts:
+            return dtl
+    dtl = Detail(a,layouts)
+    all_details.append(dtl)
+    return dtl
 

@@ -33,12 +33,14 @@ from lino.core.table import Table
 
 from lino.core.table import summary, summary_row
 
-from lino.core.table import Frame, Calendar
+from lino.core.table import Frame
+from lino.core.table import EmptyTable
 
-from lino.core.table import RowAction
-from lino.core.table import GridEdit, ShowDetailAction
-from lino.core.table import InsertRow, DeleteSelected
-from lino.core.table import SubmitDetail, SubmitInsert
+from lino.core.actions import RowAction
+from lino.core.actions import GridEdit, ShowDetailAction
+from lino.core.actions import InsertRow, DeleteSelected
+from lino.core.actions import SubmitDetail, SubmitInsert
+from lino.core.actions import Calendar
 
 from lino.core.fields import GenericForeignKey
 from lino.core.fields import GenericForeignKeyIdField

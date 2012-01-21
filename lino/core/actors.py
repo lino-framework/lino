@@ -207,10 +207,77 @@ class Actor(Handled):
     uses it to specify a value which overrides the default.
     """
     
+    default_list_action_name = 'grid'
+    default_elem_action_name =  'detail'
+
+    
+    disabled_fields = None
+    """
+    Return a list of field names that should not be editable 
+    for the specified `obj` and `request`.
+    
+    If defined in the Table, this must be a method that accepts 
+    two arguments `request` and `obj`::
+    
+      def disabled_fields(self,obj,request):
+          ...
+          return []
+    
+    If not defined in a subclass, the report will look whether 
+    it's model has a `disabled_fields` method expecting a single 
+    argument `request` and install a wrapper to this model method.
+    See also :doc:`/tickets/2`.
+    """
+    
+    disable_editing = None
+    """
+    Return `True` if the record as a whole should be read-only.
+    Same remarks as for :attr:`disabled_fields`.
+    """
+    
+    detail_action = None
+    
+    active_fields = []
+    """A list of field names that are "active" (cause a save and 
+    refresh of a Detail or Insert form).
+    """
+    
+    has_navigator = True
+    """
+    Whether a Detail Form should have navigation buttons.
+    This option is False in :class:`lino.SiteConfigs`.
+    """
+    
+    known_values = {}
+    """
+    A `dict` of `fieldname` -> `value` pairs that specify "known values".
+    Requests will automatically be filtered to show only existing records 
+    with those values.
+    This is like :attr:`filter`, but 
+    new instances created in this Table will automatically have 
+    these values set.
+    
+    """
+    
     parameters = None
     """
-    See :attr:`lino.utils.tables.AbstractTable.parameters`
+    User-definable parameter fields for this table.
+    Set this to a `dict` of `name = models.XyzField()` pairs.
     """
+    
+    params_template = None
+    """
+    If this table has parameters, specify here how they should be 
+    laid out in the parameters panel.
+    """
+    
+    params_panel_hidden = True
+    """
+    If this table has parameters, set this to False if the parameters 
+    panel should be hidden when the table is rendered in a grid widget.
+    """
+    
+    
     
     #~ _actor_name = None
     title = None
@@ -224,9 +291,33 @@ class Actor(Handled):
         return self.label
         
     @classmethod
+    def get_title(self,rr):
+        """
+        Return the title of this Table for the given request `rr`.
+        Override this if your Table's title should mention for example filter conditions.
+        """
+        return self.title or self.label
+        
+    @classmethod
+    def setup_request(self,req):
+        pass
+        
+    @classmethod
     def debug_summary(self):
         return "%s (%s)" % (self.__class__,','.join([
             a.name for a in self._actions_list]))
+        
+    @classmethod
+    def get_detail_sets(self):
+        """
+        Yield a list of (app_label,name) tuples for which the kernel 
+        should try to create a Detail Set.
+        """
+        yield self.app_label + '/' + self.__name__
+            
+    @classmethod
+    def get_detail(self):
+        return self._lino_detail
         
     #~ @classmethod
     #~ def add_virtual_field(cls,name,vf): 
@@ -300,3 +391,21 @@ class Actor(Handled):
         return [a for a in self._actions_list 
           if a.callable_from is None or isinstance(callable_from,a.callable_from)]
     
+    @classmethod
+    def get_param_elem(self,name):
+        if self.parameters:
+            return self.parameters.get(name,None)
+        #~ for pf in self.params:
+            #~ if pf.name == name:  return pf
+        return None
+      
+    @classmethod
+    def get_data_elem(self,name):
+        #~ cc = self.computed_columns.get(name,None)
+        #~ if cc is not None:
+            #~ return cc
+        vf = self.virtual_fields.get(name,None)
+        if vf is not None:
+            return vf
+        return None
+              

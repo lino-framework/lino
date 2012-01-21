@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -35,7 +35,8 @@ class MenuItem:
     
     def __init__(self,parent,action,
                  name=None,label=None,doc=None,enabled=True,
-                 can_view=None,hotkey=None,params=None,
+                 #~ can_view=None,
+                 hotkey=None,params=None,
                  request=None,
                  instance=None,
                  href=None):
@@ -73,8 +74,8 @@ class MenuItem:
                 name = action.name
             if label is None:
                 label = action.get_button_label()
-            if can_view is None:
-                can_view = action.can_view
+            #~ if can_view is None:
+                #~ can_view = action.can_view
         
         self.name = name
         self.doc = doc
@@ -86,7 +87,7 @@ class MenuItem:
             label = label.replace('~','')
         self.label = label
         
-        self.can_view = can_view or perms.always
+        #~ self.can_view = can_view or perms.always
         
         
 
@@ -135,8 +136,8 @@ class MenuItem:
               #~ self.get_url_path(),self.label))
               
     def menu_request(self,user):
-        if self.can_view.passes(user):
-            return self
+        #~ if self.can_view.passes(user):
+        return self
         
 
 
@@ -270,20 +271,20 @@ class Menu(MenuItem):
             traceback.print_exc(e)
 
     def menu_request(self,user):
-        if self.can_view.passes(user):
-            m = copy.copy(self)
-            items = []
-            for i in m.items:
-                meth = getattr(i,'menu_request',None)
-                if meth is None:
-                    items.append(i)
-                else:
-                    r = meth(user)
-                    #~ r = i.menu_request(user)
-                    if r is not None:
-                        items.append(r)
-            m.items = items
-            return m
+        #~ if self.can_view.passes(user):
+        m = copy.copy(self)
+        items = []
+        for i in m.items:
+            meth = getattr(i,'menu_request',None)
+            if meth is None:
+                items.append(i)
+            else:
+                r = meth(user)
+                #~ r = i.menu_request(user)
+                if r is not None:
+                    items.append(r)
+        m.items = items
+        return m
 
 class Toolbar(Menu):
     pass

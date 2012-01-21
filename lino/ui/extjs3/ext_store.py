@@ -693,7 +693,7 @@ class Store:
     #~ value_template = "new Ext.data.JsonStore(%s)"
     
     def __init__(self,rh,**options):
-        assert isinstance(rh,tables.TableHandle)
+        #~ assert isinstance(rh,tables.TableHandle)
         #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report
@@ -725,7 +725,9 @@ class Store:
         self.list_fields = []
         self.detail_fields = []
         
-        self.collect_fields(self.list_fields,rh.get_list_layout())
+        if not issubclass(rh.report,table.Frame):
+            self.collect_fields(self.list_fields,rh.get_list_layout())
+            
         dtl = rh.report.get_detail()
         if dtl:
             dh = dtl.get_handle(rh.ui)
@@ -754,8 +756,9 @@ class Store:
             
         del self.df2sf
         
+        self.param_fields = []
+        
         if rh.report.parameters:
-            self.param_fields = []
             for pf in rh.params_layout._store_fields:
             #~ for pf in rh.report.params:
                 self.param_fields.append(self.create_field(pf,pf.name))
@@ -965,6 +968,9 @@ class Store:
         if pv: 
             for i,f in enumerate(self.param_fields):
                 kw[f.field.name] = f.parse_form_value(pv[i],None)
+        else:
+            for i,f in enumerate(self.param_fields):
+                kw[f.field.name] = f.parse_form_value('',None)
         return kw
         
     def row2html(self,request,row,sums):

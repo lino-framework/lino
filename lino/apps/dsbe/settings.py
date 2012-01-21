@@ -123,9 +123,9 @@ class Lino(Lino):
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:
         m = main.add_menu("lst",_("Listings"))
-        for listing in LISTINGS:
-            #~ listings.add_action(listing)
-            m.add_action(listing,'listing')
+        #~ for listing in LISTINGS:
+            #~ m.add_action(listing,'listing')
+        m.add_action(self.modules.jobs.JobsOverview)
         m.add_action(self.modules.jobs.ContractsByUser)
         m.add_action(self.modules.dsbe.OverviewClientsByUser)
         #~ listings.add_instance_action(lst)

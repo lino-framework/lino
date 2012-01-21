@@ -563,8 +563,10 @@ class RemoteComboFieldElement(ComboFieldElement):
     def store_options(self,**kw):
         if self.editable:
             url = self.layout_handle.ui.build_url("choices",
-                self.layout_handle.layout.table.model._meta.app_label,
-                self.layout_handle.layout.table.model.__name__,
+                #~ self.layout_handle.layout.table.model._meta.app_label,
+                #~ self.layout_handle.layout.table.model.__name__,
+                self.layout_handle.layout.table.app_label,
+                self.layout_handle.layout.table.__name__,
                 self.field.name,**kw)
             proxy = dict(url=url,method='GET')
             kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))

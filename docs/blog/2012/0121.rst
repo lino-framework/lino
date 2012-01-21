@@ -1,0 +1,26 @@
+20120121
+========
+
+
+Ja, der gestern begonnene 
+:class:`lino.modlib.jobs.models.JobsOverview`
+war *überhaupt nicht* trivial.
+Die neue Klasse :class:`lino.core.table.EmptyTable` ist was 
+ganz Besonderes: eine Tabelle, die *par défintion*
+nur eine "virtuelle" Zeile hat.
+
+Lino hat sich mir heute mal wieder wie ein große Puzzle gezeigt, 
+bei dem große Teile schon fertig sind. Plötzlich entdeckt man 
+"Oho, diese beiden großen Lappen hier passen ja zusammen! 
+Du hattest es bisher nur nicht gesehen, weil einer der beiden 
+kopfüber vor dir lag!".
+Heute habe ich sozusagen mehr als 6 Stunden damit verbracht, 
+den einen der beiden Lappen umzudrehen. Und es sieht tatsächlich 
+so aus, als ob die beiden Teile wirklich zusammen passen.
+
+Checkin, nachdem wieder alles zu funktionieren scheint.
+Aber der Ausdruck von
+:class:`lino.modlib.jobs.models.JobsOverview`
+funktioniert noch nicht, weil ich noch nicht alles umgedreht habe...
+
+

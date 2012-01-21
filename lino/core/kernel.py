@@ -127,9 +127,88 @@ def analyze_models(self):
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
                     
+  
+class DetailSet(object):
+  
+    def __init__(self,responsible_actor):
+    #~ def __init__(self,app_label,name):
+        #~ self.app_label = app_label
+        #~ self.name = name
+        #~ self.actors = []
+        self.actor = responsible_actor
+        self.layouts = {}
         
+    #~ def add_actor(self,actor):
+        #~ self.actors.append(actor)
+        
+detail_sets = dict()
+    
 def load_details(make_messages):
   
+    
+    for a in actors.actors_list:
+        for name in a.get_detail_sets():
+            detail_sets.setdefault(name,DetailSet(a))
+            
+        #~ for (app_label,name) in a.get_detail_sets():
+            #~ m = detail_sets.setdefault(app_label,{})
+            #~ ds = m.setdefault(name,DetailSet(app_label,name))
+            #~ ds.add_actor(a)
+        
+    for name,ds in detail_sets.items():
+      
+        def loader(content,cd,filename):
+            dtl = table.DetailLayout(ds.actor,content,filename,cd)
+            head,tail = os.path.split(filename)
+            ds.layouts[tail] = dtl
+            if make_messages:
+                dtl.make_dummy_messages_file()
+            
+        load_config_files(loader,'*.dtl',name)
+        
+    for a in actors.actors_list:
+        collector = {}
+        for name in a.get_detail_sets():
+            for k,v in detail_sets[name].layouts.items():
+                collector[k] = v
+                
+        if collector:
+            def by0(a,b):
+                return cmp(a[0],b[0])
+            collector = collector.items()
+            collector.sort(by0)
+            detail_layouts = [i[1] for i in collector]
+            #~ a._lino_detail = table.Detail(a,detail_layouts)
+            a._lino_detail = table.register_detail(a,detail_layouts)
+            #~ if a._lino_detail.actor != a:
+                #~ logger.info("20120120 %s got detail with actor %s",a, a._lino_detail.actor)
+        else:
+            a._lino_detail = None
+        
+        
+    """ 
+    Install a summary_row() method to models.
+    """
+          
+    for model in models.get_models():
+        
+        if get_class_attr(model,'summary_row') is None:
+            if model._lino_model_report._lino_detail:
+                def f(obj,ui,**kw):
+                    return ui.href_to(obj)
+                    #~ return u'<a href="%s" target="_blank">%s</a>' % (
+                      #~ ui.get_detail_url(obj,fmt='detail'),
+                      #~ unicode(obj))
+            else:
+                def f(obj,ui,**kw):
+                    return unicode(obj)
+            model.summary_row = f
+            #~ print '20101111 installed summary_row for ', model
+        
+          
+          
+def old_load_details(make_messages):
+        
     for model in models.get_models():
       
         model._lino_detail_layouts = {}
@@ -149,10 +228,10 @@ def load_details(make_messages):
             #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
             
     """
-    Now another loop to convert `_lino_detail_layouts` to `_lino_detail`
-    must be a separate loop because we cannot predict the sorting order of models
+    Now another loop to convert `_lino_detail_layouts` to `_lino_detail`.
+    Must be a separate loop because we cannot predict the sorting order of models.
     Yield all detail tabs for this model.
-    Each detail tab corresponds to a :xfile:`.dtl` file).
+    Each detail tab corresponds to a :xfile:`.dtl` file.
     Detail tabs of inherited models come *first*.
     Example: CouseProvider(Company) will yield first all 
     tabs found for Company, then those for CourseProvider.
@@ -277,6 +356,9 @@ def setup_site(self,make_messages=False):
     #~ self._siteconfig = get_site_config()
   
     analyze_models(self)
+    
+    if self.user_model:
+        self.user_model = resolve_model(self.user_model)
     
     actors.discover()
     

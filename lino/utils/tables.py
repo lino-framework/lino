@@ -58,63 +58,6 @@ from lino.utils.config import Configured, load_config_files
 
 class InvalidRequest(Exception):
     pass
-    
-    
-    
-class ReportAction(actions.Action):
-  
-    def __init__(self,report,*args,**kw):
-        self.actor = report # actor who offers this action
-        self.can_view = report.can_view
-        super(ReportAction,self).__init__(*args,**kw)
-
-    def get_button_label(self):
-        if self is self.actor.default_action:
-            return self.label 
-        else:
-            return u"%s %s" % (self.label,self.actor.label)
-            
-    #~ def get_list_title(self,rh):
-    def get_action_title(self,rr):
-        return rr.get_title()
-        
-    def __str__(self):
-        return str(self.actor) + '.' + self.name
-        
-
-
-class GridEdit(ReportAction,actions.OpenWindowAction):
-  
-    callable_from = tuple()
-    name = 'grid'
-    
-    def __init__(self,rpt):
-        self.label = rpt.button_label or rpt.label
-        ReportAction.__init__(self,rpt)
-
-
-class ShowDetailAction(ReportAction,actions.OpenWindowAction):
-    callable_from = (GridEdit,)
-    #~ show_in_detail = False
-    #~ needs_selection = True
-    name = 'detail'
-    label = _("Detail")
-    
-    #~ def get_elem_title(self,elem):
-        #~ return _("%s (Detail)")  % unicode(elem)
-    
-
-class RowAction(actions.Action):
-    callable_from = (GridEdit,ShowDetailAction)
-    
-    def disabled_for(self,obj,request):
-        return False
-    #~ needs_selection = False
-    #~ needs_validation = False
-    #~ def before_run(self,ar):
-        #~ if self.needs_selection and len(ar.selected_rows) == 0:
-            #~ return _("No selection. Nothing to do.")
-            
 
 
 class GridConfig(Configured):
@@ -182,22 +125,7 @@ class GridConfig(Configured):
 
 
 
-
-
-
-
-
-
-class ActionRequest(object):
-    def __init__(self,ui,action):
-        self.ui = ui
-        self.action = action
-        
-    def request2kw(self,ui,**kw):
-        return kw
-  
-
-class AbstractTableRequest(ActionRequest):
+class AbstractTableRequest(actions.ActorRequest):
   
     limit = None
     offset = None
@@ -208,14 +136,7 @@ class AbstractTableRequest(ActionRequest):
         if not (isinstance(report,type) and issubclass(report,AbstractTable)):
             raise Exception("Expected an AbstractTable subclass, got %r" % report)
         #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
-        ActionRequest.__init__(self,ui,action)
-        self.report = report
-        self.ah = report.get_handle(ui)
-        #~ self.ah = rh
-        self.request = request
-        if request is not None:
-            kw = self.parse_req(request,self.ah,**kw)
-        self.setup(**kw)
+        actions.ActorRequest.__init__(self,ui,report,request,action,**kw)
         #~ self.setup(*args,**kw)
         self.data_iterator = self.get_data_iterator()
         self.sliced_data_iterator = self.data_iterator
@@ -226,16 +147,16 @@ class AbstractTableRequest(ActionRequest):
         
         
     
-    def parse_req(self,request,rh,**kw):
-        if rh.report.parameters:
-            kw.update(param_values=self.ui.parse_params(rh,request))
+    def parse_req(self,request,**kw):
+        rh = self.ah
+        kw = actions.ActorRequest.parse_req(self,request,**kw)
+        #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
+        
         #~ kw.update(self.report.known_values)
         #~ for fieldname, default in self.report.known_values.items():
             #~ v = request.REQUEST.get(fieldname,None)
             #~ if v is not None:
                 #~ kw[fieldname] = v
-        kw.update(user=request.user)
-        
         offset = request.REQUEST.get(ext_requests.URL_PARAM_START,None)
         if offset:
             kw.update(offset=int(offset))
@@ -260,81 +181,27 @@ class AbstractTableRequest(ActionRequest):
         kw = rh.report.parse_req(request,**kw)
         return kw
         
+            
     def setup(self,
-            user=None,
-            subst_user=None,
-            known_values=None,
-            param_values=None,
             offset=None,limit=None,
             **kw):
-        if user is not None and not self.report.can_view.passes(user):
-            msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
-            raise InvalidRequest(msg)
+        #~ if user is not None and not self.report.can_view.passes(user):
+            #~ msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
+            #~ raise InvalidRequest(msg)
             
         #~ if user is None:
             #~ raise InvalidRequest("%s : user is None" % self)
             
-        #~ 20120111 
-        self.user = user
-        self.subst_user = subst_user
-        #~ self.known_values = known_values or self.report.known_values
-        #~ if self.report.known_values:
-        for k,v in self.report.known_values.items():
-            kw.setdefault(k,v)
-        if known_values:
-            kw.update(known_values)
-        #~ if self.report.__class__.__name__ == 'SoftSkillsByPerson':
-            #~ logger.info("20111223 %r %r", kw, self.report.known_values)
-        self.known_values = kw
-        self.param_values = param_values
+        actions.ActorRequest.setup(self,**kw)
         if offset is not None:
             self.offset = offset
             
         if limit is not None:
             self.limit = limit
-            
         
         self.report.setup_request(self)
         
         
-            
-    def get_data_iterator(self):
-        raise NotImplementedError
-        
-    def get_base_filename(self):
-        return str(self.report)
-        #~ s = self.get_title()
-        #~ return s.encode('us-ascii','replace')
-        
-    #~ def __iter__(self):
-        #~ return self._sliced_data_iterator.__iter__()
-        
-    #~ def __getitem__(self,*args):
-        #~ return self._data_iterator.__getitem__(*args)
-        
-    #~ def __len__(self):
-        #~ return self._data_iterator.__len__()
-        
-    def get_user(self):
-        return self.subst_user or self.user
-        
-    def get_action_title(self):
-        return self.action.get_action_title(self)
-        
-    def get_title(self):
-        return self.report.get_title(self)
-        
-        
-    def render_to_dict(self):
-        return self.action.render_to_dict(self)
-        
-    #~ def row2dict(self,row,d):
-        #~ # overridden in extjs.ext_requests.ViewReportRequest
-        #~ return self.report.row2dict(row,d)
-
-    def get_request_url(self,*args,**kw):
-        return self.ui.get_request_url(self,*args,**kw)
-
     def spawn_request(self,rpt,**kw):
         #~ rh = rpt.get_handle(self.ui)
         kw.update(user=self.user)
@@ -350,6 +217,7 @@ class AbstractTableRequest(ActionRequest):
             for k,v in self.known_values.items():
                 if self.report.known_values.get(k,None) != v:
                     kw[k] = v
+            #~ kw.update(known_values = kv)
                 
             #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
         return kw
@@ -441,27 +309,7 @@ class AbstractTable(actors.Actor):
     """
     _handle_class = TableHandle
     
-    parameters = None
-    """
-    User-definable parameter fields for this table.
-    Set this to a `dict` of `name = models.XyzField()` pairs.
-    """
-    
-    params_template = None
-    """
-    If this table has parameters, specify here how they should be 
-    laid out in the parameters panel.
-    """
-    
-    params_panel_hidden = True
-    """
-    If this table has parameters, set this to False if the parameters 
-    panel should be hidden when the table is rendered in a grid widget.
-    """
-    
     #~ field = None
-    
-    title = None
     
     column_names = '*'
     """
@@ -509,9 +357,9 @@ class AbstractTable(actors.Actor):
     #~ boolean_texts = boolean_texts
     boolean_texts = boolean_texts = (_('Yes'),_('No'),' ')
     
-    can_view = perms.always
-    can_change = perms.is_authenticated
-    can_config = perms.is_staff
+    #~ can_view = perms.always
+    #~ can_change = perms.is_authenticated
+    #~ can_config = perms.is_staff
     
     #~ show_prev_next = True
     show_detail_navigator = False
@@ -530,27 +378,11 @@ class AbstractTable(actors.Actor):
     Usually such a warning means that there is something wrong.
     """
     
-    known_values = {}
-    """
-    A `dict` of `fieldname` -> `value` pairs that specify "known values".
-    Requests will automatically be filtered to show only existing records 
-    with those values.
-    This is like :attr:`filter`, but 
-    new instances created in this Table will automatically have 
-    these values set.
-    
-    """
-    
     #~ url = None
     
     #~ use_layouts = True
     
     button_label = None
-    
-    active_fields = []
-    """A list of field names that are "active" (cause a save and 
-    refresh of a Detail or Insert form).
-    """
     
     show_slave_grid = True
     """
@@ -564,38 +396,6 @@ class AbstractTable(actors.Actor):
     """
     Will be filled during :meth:`lino.core.table.Table.do_setup`. 
     """
-    
-    disabled_fields = None
-    """
-    Return a list of field names that should not be editable 
-    for the specified `obj` and `request`.
-    
-    If defined in the Table, this must be a method that accepts 
-    two arguments `request` and `obj`::
-    
-      def disabled_fields(self,obj,request):
-          ...
-          return []
-    
-    If not defined in a subclass, the report will look whether 
-    it's model has a `disabled_fields` method expecting a single 
-    argument `request` and install a wrapper to this model method.
-    See also :doc:`/tickets/2`.
-    """
-    
-    disable_editing = None
-    """
-    Return `True` if the record as a whole should be read-only.
-    Same remarks as for :attr:`disabled_fields`.
-    """
-    
-    has_navigator = True
-    """
-    Whether a Detail Form should have navigation buttons.
-    This option is False in :class:`lino.SiteConfigs`.
-    """
-    
-    detail_action = None
     
     def __init__(self,*args,**kw):
         raise NotImplementedError("20120104")
@@ -624,7 +424,7 @@ class AbstractTable(actors.Actor):
             
         load_config_files(loader,'%s.*gc' % self)
             
-        self.default_action = GridEdit(self)
+        self.default_action = actions.GridEdit(self)
         #~ self.setup_detail_layouts()
         self.set_actions([])
         self.setup_actions()
@@ -641,7 +441,7 @@ class AbstractTable(actors.Actor):
     def disabled_actions(self,obj,request):
         l = []
         for a in self.get_actions():
-            if isinstance(a,RowAction):
+            if isinstance(a,actions.RowAction):
                 if a.disabled_for(obj,request):
                     l.append(a.name)
         return l
@@ -667,36 +467,6 @@ class AbstractTable(actors.Actor):
         #~ return col
       
         
-    @classmethod
-    def get_param_elem(self,name):
-        if self.parameters:
-            return self.parameters.get(name,None)
-        #~ for pf in self.params:
-            #~ if pf.name == name:  return pf
-        return None
-      
-    @classmethod
-    def get_data_elem(self,name):
-        #~ cc = self.computed_columns.get(name,None)
-        #~ if cc is not None:
-            #~ return cc
-        vf = self.virtual_fields.get(name,None)
-        if vf is not None:
-            return vf
-        return None
-              
-        
-    @classmethod
-    def get_title(self,rr):
-        """
-        Return the title of this Table for the given request `rr`.
-        Override this if your Table's title should mention for example filter conditions.
-        """
-        return self.title or self.label
-        
-    @classmethod
-    def setup_request(self,req):
-        pass
         
     @classmethod
     def wildcard_data_elems(self):
@@ -704,9 +474,9 @@ class AbstractTable(actors.Actor):
             yield cc
         #~ return []
         
-    @classmethod
-    def get_detail(self):
-        return None
+    #~ @classmethod
+    #~ def get_detail(self):
+        #~ return None
         
         
     @classmethod

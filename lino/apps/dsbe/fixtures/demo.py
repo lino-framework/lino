@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino-DSBE project.
 ## Lino-DSBE is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -138,35 +138,41 @@ def objects():
         exam_policy=3,
         build_method='appypdf',
         template=u'art60-7.odt').build
+    #~ yield contractType('art60-7a',
+      #~ **babel_values('name',
+          #~ de=u"Konvention Art.60§7 Sozialökonomie",
+          #~ fr=u'Convention art.60§7 économie sociale',
+          #~ en=u'Convention art.60§7 social economy',
+          #~ ))
     yield contractType('art60-7a',
       **babel_values('name',
-          de=u"Konvention Art.60§7 Sozialökonomie",
-          fr=u'Convention art.60§7 économie sociale',
-          en=u'Convention art.60§7 social economy',
+          de=u"Sozialökonomie",
+          fr=u'économie sociale',
+          en=u'social economy',
           ))
     yield contractType('art60-7b',
       **babel_values('name',
-          de=u"Konvention Art.60§7 Sozialökonomie - majoré",
-          fr=u'Convention art.60§7 économie sociale - majoré',
-          en=u'Convention art.60§7 social economy - increased',
+          de=u"Sozialökonomie - majoré",
+          fr=u'économie sociale - majoré',
+          en=u'social economy - increased',
           ))
     yield contractType('art60-7c',
       **babel_values('name',
-          de=u"Konvention Art.60§7 mit Rückerstattung",
-          fr=u'Convention art.60§7 avec remboursement',
-          en=u'Convention art.60§7 social economy with refund',
+          de=u"mit Rückerstattung",
+          fr=u'avec remboursement',
+          en=u'social economy with refund',
           ))
     yield contractType('art60-7d',
       **babel_values('name',
-          de=u"Konvention Art.60§7 mit Rückerstattung Schule",
-          fr=u'Convention art.60§7 avec remboursement école',
-          en=u'Convention art.60§7 social economy school',
+          de=u"mit Rückerstattung Schule",
+          fr=u'avec remboursement école',
+          en=u'social economy school',
           ))
     yield contractType('art60-7e',
       **babel_values('name',
-          de=u"Konvention Art.60§7 Stadt Eupen",
-          fr=u"Convention art.60§7 ville d'Eupen",
-          en=u'Convention art.60§7 town',
+          de=u"Stadt Eupen",
+          fr=u"ville d'Eupen",
+          en=u'town',
           ))
     
     contractType = Instantiator('isip.ContractType',"ref",

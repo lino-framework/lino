@@ -1,4 +1,4 @@
-## Copyright 2010-2011 Luc Saffre
+## Copyright 2010-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -14,6 +14,10 @@
 """
 
 """
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 import datetime
 
@@ -69,9 +73,13 @@ if settings.LINO.user_model:
             
         @classmethod
         def setup_request(self,rr):
+            logger.info("mixins.ByUser.setup_request")
             if rr.master_instance is None:
                 rr.master_instance = rr.get_user()
+                
+                
 else:
+  
     # dummy report for userless sites
     class ByUser(dd.Table): pass 
   

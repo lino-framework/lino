@@ -427,7 +427,7 @@ class IncompleteDate:
 
 class AttrDict(dict):
     """
-    Usage example::
+    Usage example:
     
     >>> a = AttrDict()
     >>> a.define('foo',1)

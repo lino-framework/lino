@@ -58,7 +58,28 @@ and one method that parses such strings to a Python value:
 Endspurt vor dem Release
 ------------------------
 
-- Neue Klasse :class:`lino.apps.dsbe.models.ResidenceType`.
-  Das Feld Person.registry_type ist jetzt kein Integer mehr sondern ein CHAR
-  und wird :func:`automatisch <lino.apps.dsbe.migrate.migrate_from_1_3_3>` konvertiert.
+Neue Klasse :class:`lino.apps.dsbe.models.ResidenceType`.
+Das Feld Person.registry_type ist jetzt kein Integer mehr sondern ein CHAR
+und wird :func:`automatisch <lino.apps.dsbe.migrate.migrate_from_1_3_3>` 
+konvertiert.
+Als Test importiere ich einen aktuellen Dump eine laufenden Lino: 
+funktioniert auf Anhieb. Bravo, Lino!
 
+Noch was Neues
+--------------
+
+Upps: vor dem Release muss ich noch 
+:class:`lino.modlib.jobs.models.ContractsSituation` 
+("Situation Art 60-7")
+konvertieren bzw. neu 
+implementieren.
+Das ist nicht trivial, weil dieser Report eigentlich 
+gar keine Kolonnen hat, 
+sondern eine tabellarisch angeordnete Liste von Views... 
+hm...
+Aufschieben wäre jedenfalls uneffizient, denn die alten Listings 
+funktionieren momentan überhaupt nicht (wahrscheinlich 
+zwar nur ein kleiner Bug im Javascript, 
+aber da die Listings sowieso in den Müll kommen, lohnt der sich nicht)
+
+:class:`lino.modlib.jobs.models.JobsOverview`.

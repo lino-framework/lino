@@ -21,7 +21,20 @@ from django.conf import settings
 
 import lino
 
-from lino.utils import perms
+
+#~ from lino.utils import perms
+
+from lino.ui import requests as ext_requests
+
+from lino.tools import resolve_model
+
+#~ if settings.LINO.user_model:
+    #~ USER_MODEL = resolve_model(settings.LINO.user_model)
+#~ else:
+    #~ USER_MODEL = None
+ 
+        
+
 
 class Hotkey:
     keycode = None
@@ -48,6 +61,13 @@ INSERT = Hotkey(keycode=44)
 DELETE = Hotkey(keycode=46)
     
     
+class ConfirmationRequired(Exception):
+    def __init__(self,step,messages):
+        self.step = step
+        self.messages = messages
+        Exception.__init__(self)
+
+
 class Action(object): 
     opens_a_slave = False
     label = None
@@ -55,7 +75,7 @@ class Action(object):
     key = None
     callable_from = None
     default_format = 'html'
-    can_view = perms.always
+    #~ can_view = perms.always
     
     
     def __init__(self,name=None,label=None):
@@ -97,9 +117,262 @@ class RedirectAction(Action):
         raise NotImplementedError
         
 
-class ConfirmationRequired(Exception):
-    def __init__(self,step,messages):
-        self.step = step
-        self.messages = messages
-        Exception.__init__(self)
+
+class ReportAction(Action):
+  
+    def __init__(self,report,*args,**kw):
+        self.actor = report # actor who offers this action
+        #~ self.can_view = report.can_view
+        super(ReportAction,self).__init__(*args,**kw)
+
+    def get_button_label(self):
+        if self is self.actor.default_action:
+            return self.label 
+        else:
+            return u"%s %s" % (self.label,self.actor.label)
+            
+    #~ def get_list_title(self,rh):
+    def get_action_title(self,rr):
+        return rr.get_title()
+        
+    def __str__(self):
+        return str(self.actor) + '.' + self.name
+        
+
+
+class GridEdit(ReportAction,OpenWindowAction):
+  
+    callable_from = tuple()
+    name = 'grid'
+    
+    def __init__(self,rpt):
+        self.label = rpt.button_label or rpt.label
+        ReportAction.__init__(self,rpt)
+
+
+class ShowDetailAction(ReportAction,OpenWindowAction):
+    callable_from = (GridEdit,)
+    #~ show_in_detail = False
+    #~ needs_selection = True
+    name = 'detail'
+    label = _("Detail")
+    
+    #~ def get_elem_title(self,elem):
+        #~ return _("%s (Detail)")  % unicode(elem)
+        
+
+class RowAction(Action):
+    callable_from = (GridEdit,ShowDetailAction)
+    
+    def disabled_for(self,obj,request):
+        return False
+    #~ needs_selection = False
+    #~ needs_validation = False
+    #~ def before_run(self,ar):
+        #~ if self.needs_selection and len(ar.selected_rows) == 0:
+            #~ return _("No selection. Nothing to do.")
+            
+class InsertRow(ReportAction,OpenWindowAction):
+    callable_from = (GridEdit,ShowDetailAction)
+    name = 'insert'
+    #~ label = _("Insert")
+    label = _("New")
+    key = INSERT # (ctrl=True)
+    #~ needs_selection = False
+    
+    def get_action_title(self,rr):
+        return _("Insert into %s") % force_unicode(rr.get_title())
+
+class DuplicateRow(ReportAction,OpenWindowAction):
+    callable_from = (GridEdit,ShowDetailAction)
+    name = 'duplicate'
+    label = _("Duplicate")
+
+
+#~ class ShowEmptyTable(InsertRow):
+class ShowEmptyTable(ShowDetailAction):
+    callable_from = tuple()
+    name = 'show' 
+    default_format = 'html'
+    def __init__(self,actor,*args,**kw):
+        #~ self.actor = actor # actor who offers this action
+        self.label = actor.label
+        #~ self.can_view = perms.always # actor.can_view
+        super(ShowEmptyTable,self).__init__(actor,*args,**kw)
+        
+    def get_action_title(self,rr):
+        return rr.get_title()
+    #~ def __str__(self):
+        #~ return str(self.actor)+'.'+self.name
+        
+    
+
+
+class UpdateRowAction(RowAction):
+    pass
+    
+class DeleteSelected(RowAction):
+    #~ needs_selection = True
+    label = _("Delete")
+    name = 'delete'
+    key = DELETE # (ctrl=True)
+    #~ client_side = True
+    
+        
+class SubmitDetail(Action):
+    #~ name = 'submit'
+    label = _("Save")
+    callable_from = (ShowDetailAction,)
+    
+class SubmitInsert(SubmitDetail):
+    #~ name = 'submit'
+    label = _("Save")
+    #~ label = _("Insert")
+    callable_from = (InsertRow,)
+        
+
+
+class Calendar(OpenWindowAction):
+    label = _("Calendar")
+    name = 'grid' # because...
+    default_format = 'html'
+    
+    def __init__(self,actor,*args,**kw):
+        self.actor = actor # actor who offers this action
+        #~ self.can_view = perms.always # actor.can_view
+        super(Calendar,self).__init__(*args,**kw)
+        
+    def __str__(self):
+        return str(self.actor) + '.' + self.name
+    
+
+#~ class ShowEmptyTable(actions.OpenWindowAction):
+    #~ name = 'grid' # because...
+    #~ default_format = 'html'
+    #~ def __init__(self,actor,*args,**kw):
+        #~ self.actor = actor # actor who offers this action
+        #~ self.label = actor.label
+        #~ self.can_view = perms.always # actor.can_view
+        #~ super(ShowEmptyTable,self).__init__(*args,**kw)
+        
+    #~ def __str__(self):
+        #~ return str(self.actor)+'.'+self.name
+    
+
+            
+            
+class ActionRequest(object):
+    def __init__(self,ui,action):
+        self.ui = ui
+        self.action = action
+        
+    def request2kw(self,ui,**kw):
+        return kw
+  
+
+
+class ActorRequest(ActionRequest):
+  
+    create_kw = None
+    
+    def __init__(self,ui,report,request,action,**kw):
+        ActionRequest.__init__(self,ui,action)
+        self.report = report
+        self.ah = report.get_handle(ui)
+        #~ self.ah = rh
+        self.request = request
+        if request is not None:
+            kw = self.parse_req(request,**kw)
+        self.setup(**kw)
+        
+    def create_instance(self,**kw):
+        if self.create_kw:
+            kw.update(self.create_kw)
+        #logger.debug('%s.create_instance(%r)',self,kw)
+        if self.known_values:
+            kw.update(self.known_values)
+        obj = self.report.create_instance(self,**kw)
+        #~ if self.known_values is not None:
+            #~ self.ah.store.form2obj(self.known_values,obj,True)
+            #~ for k,v in self.known_values:
+                #~ field = self.model._meta.get_field(k) ...hier
+                #~ kw[k] = v
+        return obj
+        
+    def parse_req(self,request,**kw):
+        if self.ah.report.parameters:
+            kw.update(param_values=self.ui.parse_params(self.ah,request))
+        kw.update(user=request.user)
+        
+        #~ 20120111 kw.update(user=request.user)
+        #~ user = request.user
+        #~ if user is not None and user.is_superuser:
+        #~ if True:
+        if settings.LINO.user_model:
+            username = request.REQUEST.get(ext_requests.URL_PARAM_SUBST_USER,None)
+            if username:
+                try:
+                    kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))
+                except settings.LINO.user_model.DoesNotExist, e:
+                    pass
+            #~ kw.update(user=user)
+        return kw
+      
+    def setup(self,
+            user=None,
+            subst_user=None,
+            param_values=None,
+            known_values=None,
+            **kw):
+        self.user = user
+        self.param_values = param_values
+        self.subst_user = subst_user
+        #~ 20120111 
+        #~ self.known_values = known_values or self.report.known_values
+        #~ if self.report.known_values:
+        #~ d = dict(self.report.known_values)
+        for k,v in self.report.known_values.items():
+            kw.setdefault(k,v)
+        if known_values:
+            kw.update(known_values)
+        #~ if self.report.__class__.__name__ == 'SoftSkillsByPerson':
+            #~ logger.info("20111223 %r %r", kw, self.report.known_values)
+        self.known_values = kw
+        
+        
+    def get_data_iterator(self):
+        raise NotImplementedError
+        
+    def get_base_filename(self):
+        return str(self.report)
+        #~ s = self.get_title()
+        #~ return s.encode('us-ascii','replace')
+        
+    #~ def __iter__(self):
+        #~ return self._sliced_data_iterator.__iter__()
+        
+    #~ def __getitem__(self,*args):
+        #~ return self._data_iterator.__getitem__(*args)
+        
+    #~ def __len__(self):
+        #~ return self._data_iterator.__len__()
+        
+    def get_user(self):
+        return self.subst_user or self.user
+        
+    def get_action_title(self):
+        return self.action.get_action_title(self)
+        
+    def get_title(self):
+        return self.report.get_title(self)
+        
+    def render_to_dict(self):
+        return self.action.render_to_dict(self)
+        
+    #~ def row2dict(self,row,d):
+        #~ # overridden in extjs.ext_requests.ViewReportRequest
+        #~ return self.report.row2dict(row,d)
+
+    def get_request_url(self,*args,**kw):
+        return self.ui.get_request_url(self,*args,**kw)
 
