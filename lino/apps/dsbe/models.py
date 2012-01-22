@@ -944,6 +944,9 @@ if dd.is_installed('dsbe'):
   
   #~ class InvalidClients(Persons):
   class ClientsTest(Persons):
+    """
+    Table of persons whose data seems unlogical or inconsistent.
+    """
     label = _("Data Test Clients")
     parameters = dict(
       user = models.ForeignKey(User,blank=True,verbose_name=_("Coached by")),
@@ -953,7 +956,7 @@ if dd.is_installed('dsbe'):
       #~ only_my_persons = models.BooleanField(_("Only my persons"),default=True),
     )
     params_template = """overlapping_contracts invalid_niss user today"""
-    params_panel_hidden = False
+    #~ params_panel_hidden = False
     column_names = "name_column error_message national_id id"
     
     @classmethod

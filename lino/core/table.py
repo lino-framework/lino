@@ -409,8 +409,8 @@ class TableRequest(AbstractTableRequest):
     extra = None
     layout = None
     
-    sort_column = None
-    sort_direction = None
+    #~ sort_column = None
+    #~ sort_direction = None
     
     
     def parse_req(self,request,**kw):
@@ -482,11 +482,11 @@ class TableRequest(AbstractTableRequest):
             
         sort = request.REQUEST.get(ext_requests.URL_PARAM_SORT,None)
         if sort:
-            self.sort_column = sort
+            #~ self.sort_column = sort
             sort_dir = request.REQUEST.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
             if sort_dir == 'DESC':
-                sort = '-'+sort
-                self.sort_direction = 'DESC'
+                sort = '-' + sort
+                #~ self.sort_direction = 'DESC'
             kw.update(order_by=[sort])
         
         kw = AbstractTableRequest.parse_req(self,request,**kw)
@@ -1114,6 +1114,7 @@ class Table(AbstractTable):
             qs = qs.extra(**extra)
         order_by = rr.order_by or self.order_by
         if order_by:
+            #~ logger.info("20120122 order_by %s",order_by)
             qs = qs.order_by(*order_by)
         return qs
 

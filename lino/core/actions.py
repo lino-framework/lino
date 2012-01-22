@@ -330,7 +330,7 @@ class ActorRequest(ActionRequest):
         self.param_values = AttrDict()
         
         if param_values:
-            logger.info("20120122 param_values is %s",param_values)
+            #~ logger.info("20120122 param_values is %s",param_values)
             for k,v in param_values.items():
                 self.param_values.define(k,v)
         self.subst_user = subst_user

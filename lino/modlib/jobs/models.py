@@ -1005,7 +1005,7 @@ if settings.LINO.user_model:
           show_past = models.BooleanField(_("past contracts"),default=True),
           show_active = models.BooleanField(_("active contracts"),default=True),
           show_coming = models.BooleanField(_("coming contracts"),default=True),
-          today = models.DateField(_("on"),blank=True),
+          today = models.DateField(_("on"),blank=True,default=datetime.date.today),
         )
         params_template = """show_past show_active show_coming today user"""
         params_panel_hidden = False
@@ -1025,16 +1025,17 @@ if settings.LINO.user_model:
             today = rr.param_values.today
             #~ today = rr.param_values.get('today',None) or datetime.date.today()
             #~ show_active = rr.param_values.get('show_active',True)
-            if not rr.param_values.show_active:
-                flt = range_filter(today,'applies_from','applies_until')
-                #~ logger.info("20120114 flt = %r",flt)
-                qs = qs.exclude(flt)
-            #~ show_past = rr.param_values.get('show_past',True)
-            if not rr.param_values.show_past:
-                qs = qs.exclude(applies_until__isnull=False,applies_until__lt=today)
-            #~ show_coming = rr.param_values.get('show_coming',True)
-            if not rr.param_values.show_coming:
-                qs = qs.exclude(applies_from__isnull=False,applies_from__gt=today)
+            if today:
+                if not rr.param_values.show_active:
+                    flt = range_filter(today,'applies_from','applies_until')
+                    #~ logger.info("20120114 flt = %r",flt)
+                    qs = qs.exclude(flt)
+                #~ show_past = rr.param_values.get('show_past',True)
+                if not rr.param_values.show_past:
+                    qs = qs.exclude(applies_until__isnull=False,applies_until__lt=today)
+                #~ show_coming = rr.param_values.get('show_coming',True)
+                if not rr.param_values.show_coming:
+                    qs = qs.exclude(applies_from__isnull=False,applies_from__gt=today)
             return qs
             
         def on_group_break(self,group):

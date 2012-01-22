@@ -1158,29 +1158,57 @@ tinymce.init({
                     w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
                 return response
                 
+            if fmt == 'pdf':
+              
+                from lino.utils.appy_pod import setup_renderer
+                from appy.pod.renderer import Renderer
+                
+                tpl_leaf = "Table.odt" 
+                #~ tplgroup = rpt.app_label + '/' + rpt.__name__
+                tplgroup = None
+                tplfile = find_config_file(tpl_leaf,tplgroup)
+                if not tplfile:
+                    raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
+                    
+                target_parts = ['cache', 'appypdf', rpt.app_label + '.' + rpt.__name__ + '.odt']
+                target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
+                target_url = self.media_url(*target_parts)
+                
+                body = self.table2xhtml(ar).toxml()
+                #~ logger.info("20120122 body is %s",body)
+                context = dict(
+                    self=unicode(ar.get_title()),
+                    table_body=body,
+                    dtos=babel.dtos,
+                    dtosl=babel.dtosl,
+                    dtomy=babel.dtomy,
+                    babelattr=babel.babelattr,
+                    babelitem=babel.babelitem,
+                    tr=babel.babelitem,
+                    #~ iif=iif,
+                    settings=settings,
+                    #~ restify=restify,
+                    #~ site_config = get_site_config(),
+                    #~ site_config = settings.LINO.site_config,
+                    _ = _,
+                    #~ knowledge_text=fields.knowledge_text,
+                    )
+                #~ lang = str(elem.get_print_language(self))
+                logger.info(u"appy.pod render %s -> %s (params=%s",
+                    tplfile,target_file,settings.LINO.appy_params)
+                renderer = Renderer(tplfile, context, target_file,**settings.LINO.appy_params)
+                setup_renderer(renderer)
+                #~ renderer.context.update(restify=debug_restify)
+                renderer.run()
+                return http.HttpResponseRedirect(target_url)
+                
             if fmt == 'printer':
                 response = HttpResponse(content_type='text/html;charset="utf-8"')
                 #~ ar.render_to_html(self,response)
                 doc = xhg.HTML()
                 doc.set_title(ar.get_title())
-                #~ t = xhg.TABLE(border="1")
-                t = xhg.TABLE(cellspacing="3px",bgcolor="#ffffff", width="100%")
-                #~ t = xhg.TABLE(style="")
+                t = self.table2xhtml(ar)
                 doc.add_to_body(t)
-                headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
-                sums  = [0 for col in ar.ah.store.list_fields]
-                cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
-                t.add_header_row(*headers,**cellattrs)
-                for row in ar.data_iterator:
-                    cells = [x for x in ar.ah.store.row2html(ar,row,sums)]
-                    t.add_body_row(*cells,**cellattrs)
-                has_sum = False
-                for i in sums:
-                    if i:
-                        has_sum = True
-                        break
-                if has_sum:
-                    t.add_body_row(*ar.ah.store.sums2html(ar,sums),**cellattrs)
                 doc.__xml__(response)
                 return response
                 
@@ -2148,6 +2176,10 @@ tinymce.init({
         yield "  empty_title: %s," % py2js(action.get_button_label())
         if not isinstance(action,actions.InsertRow):
             yield "  has_navigator: %s," % py2js(rpt.has_navigator)
+            
+        if rh.report.params_panel_hidden:
+            yield "  params_panel_hidden: true,"
+            
 
         yield "  ls_bbar_actions: %s," % py2js([rh.ui.a2btn(a) for a in rpt.get_actions(action)])
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
@@ -2294,3 +2326,21 @@ tinymce.init({
         a = actors.get_actor(*args,**kw)
         return a.get_handle(self)
         
+    def table2xhtml(self,ar):
+        t = xhg.TABLE(cellspacing="3px",bgcolor="#ffffff", width="100%")
+        headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
+        sums  = [0 for col in ar.ah.store.list_fields]
+        cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
+        t.add_header_row(*headers,**cellattrs)
+        for row in ar.data_iterator:
+            cells = [x for x in ar.ah.store.row2html(ar,row,sums)]
+            t.add_body_row(*cells,**cellattrs)
+        has_sum = False
+        for i in sums:
+            if i:
+                has_sum = True
+                break
+        if has_sum:
+            t.add_body_row(*ar.ah.store.sums2html(ar,sums),**cellattrs)
+        return t
+            

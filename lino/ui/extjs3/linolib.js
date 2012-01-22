@@ -1136,7 +1136,7 @@ Lino.MainPanel = {
   ,add_params_panel : function (tbar) {
       if (this.params_panel) {
         tbar = tbar.concat([{ scope:this, 
-          text: "[filter]", // gear
+          text: "$_("[parameters]")", // gear
           enableToggle: true,
           pressed: ! this.params_panel_hidden,
           toggleHandler: function(btn,state) { 
@@ -1144,8 +1144,8 @@ Lino.MainPanel = {
                 //~ this.params_panel.hide();
             //~ else
                 //~ this.params_panel.show();
-            if (state) this.params_panel.hide();
-            else this.params_panel.show();
+            if (state) this.params_panel.show();
+            else this.params_panel.hide();
             this.containing_window.doLayout();
           }
         }])
@@ -1653,6 +1653,7 @@ Ext.override(Lino.RichTextPanel,Lino.FieldBoxMixin);
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,{
+  params_panel_hidden : false,
   base_params : {},
   //~ trackResetOnLoad : true,
   //~ query_params : {},
@@ -2199,8 +2200,10 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 
 Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
   load: function(options) {
+    //~ console.log("20120122 GridStore.load()",options);
     this.grid_panel.add_param_values(options.params);
-    Lino.GridStore.superclass.load.call(this,options);
+    //~ console.log("20120122 GridStore.load() 2",options);
+    return Lino.GridStore.superclass.load.call(this,options);
   }
 });
 
@@ -2356,6 +2359,16 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         handler: function() { 
           var p = Ext.apply({},this.get_base_params());
           p['fmt'] = 'printer';
+          this.add_param_values(p);
+          //~ url += "?" + Ext.urlEncode(p);
+          window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+        } },
+      { scope:this, 
+        text: "[pdf]", 
+        handler: function() { 
+          var p = Ext.apply({},this.get_base_params());
+          p['fmt'] = 'pdf';
+          this.add_param_values(p);
           //~ url += "?" + Ext.urlEncode(p);
           window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
         } }

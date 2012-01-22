@@ -275,10 +275,10 @@ class Actor(Handled):
     laid out in the parameters panel.
     """
     
-    params_panel_hidden = True
+    params_panel_hidden = False
     """
     If this table has parameters, set this to False if the parameters 
-    panel should be hidden when the table is rendered in a grid widget.
+    panel should be visible when this table is being displayed.
     """
     
     

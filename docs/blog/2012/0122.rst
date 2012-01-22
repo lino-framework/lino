@@ -8,3 +8,12 @@ hat mich ebenfalls nochmal 3 Stunden gekostet.
 
 Dann habe ich noch einen Bug bemerkt: 
 die Kolonnensortierung funktioniert nicht.
+Das lag daran, dass in meiner GridStore.load das return fehlte.
+Daran habe ich anderthalb Stunden lang gerätselt.
+
+Und auch den Ausdruck einer Liste nach PDF und HTML 
+will ich noch schaffen.
+
+
+:attr:`lino.core.actors.Actor.parameters`
+:attr:`lino.core.actors.Actor.params_panel_hidden`
