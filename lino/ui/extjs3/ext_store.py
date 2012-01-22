@@ -133,16 +133,12 @@ class StoreField(object):
             return
         if v == '' and not self.field.empty_strings_allowed:
             v = self.form2obj_default
-            # the following was wrong: if a field has been posted with empty string, 
-            # we don't want it to get the default value! 
+            # if a field has been posted with empty string, 
+            # we don't want it to get the field's default value! 
             # otherwise checkboxes with default value True can never be unset!
             # charfields have empty_strings_allowed
             # e.g. id field may be empty
             # but don't do this for other cases
-            #~ if self.field.default is NOT_PROVIDED:
-                #~ v = self.form2obj_default
-            #~ else:
-                #~ v = self.field.default
         else:
             v = self.parse_form_value(v,instance)
         if not is_new and self.field.primary_key and instance.pk is not None:
@@ -965,12 +961,24 @@ class Store:
         return d
 
     def pv2dict(self,pv,**kw):
+        def parse(self,form_value):
+            if form_value == '' and not self.field.empty_strings_allowed:
+                return self.form2obj_default
+                # if a field has been posted with empty string, 
+                # we don't want it to get the field's default value! 
+                # otherwise checkboxes with default value True can never be unset!
+                # charfields have empty_strings_allowed
+                # e.g. id field may be empty
+                # but don't do this for other cases
+            else:
+                return self.parse_form_value(form_value,None)
+      
         if pv: 
             for i,f in enumerate(self.param_fields):
-                kw[f.field.name] = f.parse_form_value(pv[i],None)
+                kw[f.field.name] = parse(f,pv[i])
         else:
             for i,f in enumerate(self.param_fields):
-                kw[f.field.name] = f.parse_form_value('',None)
+                kw[f.field.name] = parse(f,'')
         return kw
         
     def row2html(self,request,row,sums):

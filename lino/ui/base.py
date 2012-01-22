@@ -40,9 +40,9 @@ class Handled(object):
     def class_init(self):
         self._handles = {}
       
-    @classmethod
-    def before_ui_handle(self,ui):
-        pass
+    #~ @classmethod
+    #~ def before_ui_handle(self,ui):
+        #~ pass
         
     @classmethod
     def get_handle(self,ui):
@@ -50,7 +50,7 @@ class Handled(object):
             "%s.get_handle() : %r is not a BaseUI" % (self,ui)
         h = self._handles.get(ui,None)
         if h is None:
-            self.before_ui_handle(ui)
+            #~ self.before_ui_handle(ui)
             h = self._handle_class(ui,self)
             # be careful to not store it in the base class's `_handles`:
             self._handles = dict(self._handles)

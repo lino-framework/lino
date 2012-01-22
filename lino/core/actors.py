@@ -29,6 +29,10 @@ actors_list = None
 
 ACTOR_SEP = '.'
 
+class CreatePermission: pass
+          
+
+
 #~ from lino.core import actions
 
 def unused_resolve_action(spec,app_label=None):
@@ -306,6 +310,10 @@ class Actor(Handled):
     def debug_summary(self):
         return "%s (%s)" % (self.__class__,','.join([
             a.name for a in self._actions_list]))
+        
+    @classmethod
+    def get_permission(self,p,user):
+        return True
         
     @classmethod
     def get_detail_sets(self):

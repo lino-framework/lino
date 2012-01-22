@@ -222,6 +222,16 @@ class AbstractTableRequest(actions.ActorRequest):
             #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
         return kw
             
+    def get_data_iterator(self):
+        if self.report.get_data_rows:
+            l = []
+            for row in self.report.get_data_rows(self):
+                group = self.report.group_from_row(row)
+                group.process_row(l,row)
+            return l
+        return self.report.get_request_queryset(self)
+        
+        
     def confirm(self,step,*messages):
         if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
             return
@@ -230,16 +240,10 @@ class AbstractTableRequest(actions.ActorRequest):
         
         
 class CustomTableRequest(AbstractTableRequest):
-  
-    def get_data_iterator(self):
-        l = []
-        for row in self.report.get_data_rows(self):
-            group = self.report.group_from_row(row)
-            group.process_row(l,row)
-        return l
+    pass
         
-    def setup(self,**kw):
-        AbstractTableRequest.setup(self,**kw)
+    #~ def setup(self,**kw):
+        #~ AbstractTableRequest.setup(self,**kw)
         #~ self.total_count = len(self._data_iterator)
 
 
@@ -294,6 +298,19 @@ class TableHandle(base.Handle):
         #~ self.report.save_config()
         dtl.save_config()
 
+class Group(object):
+  
+    def __init__(self):
+        self.sums = []
+        
+    def process_row(self,collector,row):
+        collector.append(row)
+
+    #~ def add_to_table(self,table):
+        #~ self.table = table
+        #~ for col in table.computed_columns.values():
+
+
 
 
 class AbstractTable(actors.Actor):
@@ -322,20 +339,30 @@ class AbstractTable(actors.Actor):
     Each group can have her own header and/or total lines.
     """
     
-    #~ computed_columns = {}
-    #~ """
-    #~ Used internally to store :class:`computed columns <ComputedColumn>` defined by this Table.
-    #~ """
-    
     custom_groups = []
     """
     Used internally to store :class:`groups <Group>` defined by this Table.
     """
     
-    column_defaults = {}
+    get_data_rows = None
     """
-    A dictionary of default parameters for :class:`computed columns <ComputedColumn>` on this table.
+    Custom tables must define a class method of this name which 
+    will be called with a TableRequest object and which is expected
+    to return or yield the list of "rows"::
+    
+        @classmethod
+        def get_data_rows(self,request):
+            ...
+            yield somerow
+            
+    Model tables may also define such a method in case they need local filtering.
+    
     """
+    
+    #~ column_defaults = {}
+    #~ """
+    #~ A dictionary of default parameters for :class:`computed columns <ComputedColumn>` on this table.
+    #~ """
     
     #~ hide_columns = None
     hidden_columns = frozenset()
@@ -366,6 +393,8 @@ class AbstractTable(actors.Actor):
     """
     Whether a Detail view on a row of this table should feature a navigator
     """
+    
+    default_group = Group()
     
     
     #~ default_action = GridEdit
@@ -413,6 +442,11 @@ class AbstractTable(actors.Actor):
     @classmethod
     def do_setup(self):
       
+        if self.get_data_rows is not None:
+            self.show_detail_navigator = False
+      
+        self.setup_columns()
+        
         super(AbstractTable,self).do_setup()
         
         self.grid_configs = []
@@ -447,6 +481,10 @@ class AbstractTable(actors.Actor):
         return l
         
     @classmethod
+    def setup_columns(self):
+        pass
+        
+    @classmethod
     def setup_actions(self):
         pass
         
@@ -466,11 +504,13 @@ class AbstractTable(actors.Actor):
         #~ self.computed_columns[col.name] = col
         #~ return col
       
-        
-        
+    @classmethod
+    def group_from_row(self,row):
+        return self.default_group
+    
     @classmethod
     def wildcard_data_elems(self):
-        for cc in self.computed_columns.values():
+        for cc in self.virtual_fields.values():
             yield cc
         #~ return []
         
@@ -478,16 +518,12 @@ class AbstractTable(actors.Actor):
     #~ def get_detail(self):
         #~ return None
         
-        
     @classmethod
-    def unused_row2dict(self,row,d):
-        """
-        Overridden by lino.modlib.properties.PropValuesByOwner.
-        See also lino.ui.extjs.ext_requests.ViewReportRequest.
-        """
-        for n in self.column_names.split():
-            d[n] = getattr(row,n)
-        return d
+    def get_permission(self,p,user):
+        if self.get_data_rows:
+            return False
+        return True
+        
         
     @classmethod
     def save_grid_config(self,index,data):
@@ -539,19 +575,6 @@ class AbstractTable(actors.Actor):
     
 
 
-class Group(object):
-  
-    def __init__(self):
-        self.sums = []
-        
-    def process_row(self,collector,row):
-        collector.append(row)
-
-    #~ def add_to_table(self,table):
-        #~ self.table = table
-        #~ for col in table.computed_columns.values():
-
-
 
 
 #~ def redirect(obj,name,*other):
@@ -569,16 +592,6 @@ class CustomTable(AbstractTable):
     An :class:`AbstractTable` that works on an arbitrary 
     list of "rows", using only computed columns.
     """
-    
-    default_group = Group()
-    
-    @classmethod
-    def group_from_row(self,row):
-        return self.default_group
-        
-    @classmethod
-    def get_data_rows(self,ar):
-        raise NotImplementedError
     
     @classmethod
     def request(cls,ui=None,request=None,action=None,**kw):

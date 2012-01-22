@@ -25,13 +25,13 @@ Aber der Ausdruck von
 funktioniert noch nicht, weil ich noch nicht alles umgedreht habe...
 
 
-23.20 Uhr. 
-Fertig!
+23.20 Uhr: Fertig!
 :class:`lino.modlib.jobs.models.JobsOverview` zeigt jetzt die 
 "Übersicht Art 60-7", man kann in der Vorschau scrollen und der 
 Ausdruck funktioniert auch.
-Sieht äußerlich fast genau so aus wie vorher, aber innendrin funktioniert 
-es ganz anders.
-9 Stunden und 16 Minuten habe ich heute wie besessen daran gearbeitet.
+Sieht äußerlich fast genauso aus wie vorher, 
+aber innendrin funktioniert es ganz anders.
+9 Stunden und 16 Minuten habe ich heute unterm Computer gelegen 
+und wie besessen daran gearbeitet.
 
 

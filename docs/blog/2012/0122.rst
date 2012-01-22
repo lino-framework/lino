@@ -1,0 +1,10 @@
+20120122
+========
+
+
+:class:`lino.apps.dsbe.models.ClientsTest`, 
+die Neuimplementierung der Aktenkontrollliste, 
+hat mich ebenfalls nochmal 3 Stunden gekostet.
+
+Dann habe ich noch einen Bug bemerkt: 
+die Kolonnensortierung funktioniert nicht.

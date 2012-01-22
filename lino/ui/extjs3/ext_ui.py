@@ -1547,8 +1547,7 @@ tinymce.init({
             
             for rpt in actors_list:
                      
-                rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
-                #~ f.write("\nExt.namespace('Lino.%s') // table\n" % rpt)
+                rh = rpt.get_handle(self) 
                 
                 if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
                     for ln in self.js_render_GridPanel_class(rh):

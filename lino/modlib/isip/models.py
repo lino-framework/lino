@@ -329,6 +329,10 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         b2 = b.date_ended or b.applies_until
         return overlap(a1,a2,b1,b2)
         
+    def active_period(self):
+        return (self.applies_from, self.date_ended or self.applies_until)
+        
+        
     def data_control(self):
             
         msgs = []

@@ -1019,20 +1019,21 @@ if settings.LINO.user_model:
         def get_request_queryset(cls,rr):
             #~ logger.info("20120114 param_values = %r",rr.param_values)
             qs = super(ContractsByUser,cls).get_request_queryset(rr)
-            user = rr.param_values.get('user',None)
-            if user:
-                qs = qs.filter(user=user)
-            today = rr.param_values.get('today',None) or datetime.date.today()
-            show_active = rr.param_values.get('show_active',True)
-            if not show_active:
+            #~ user = rr.param_values.get('user',None)
+            if rr.param_values.user:
+                qs = qs.filter(user=rr.param_values.user)
+            today = rr.param_values.today
+            #~ today = rr.param_values.get('today',None) or datetime.date.today()
+            #~ show_active = rr.param_values.get('show_active',True)
+            if not rr.param_values.show_active:
                 flt = range_filter(today,'applies_from','applies_until')
                 #~ logger.info("20120114 flt = %r",flt)
                 qs = qs.exclude(flt)
-            show_past = rr.param_values.get('show_past',True)
-            if not show_past:
+            #~ show_past = rr.param_values.get('show_past',True)
+            if not rr.param_values.show_past:
                 qs = qs.exclude(applies_until__isnull=False,applies_until__lt=today)
-            show_coming = rr.param_values.get('show_coming',True)
-            if not show_coming:
+            #~ show_coming = rr.param_values.get('show_coming',True)
+            if not rr.param_values.show_coming:
                 qs = qs.exclude(applies_from__isnull=False,applies_from__gt=today)
             return qs
             
@@ -1060,8 +1061,8 @@ class JobsOverview(dd.EmptyTable):
 
     @dd.displayfield(_("Body"))
     def body(cls,self,req):
-        logger.info("Waiting 5 seconds...")
-        time.sleep(5)
+        #~ logger.info("Waiting 5 seconds...")
+        #~ time.sleep(5)
         today = self.date or datetime.date.today()
         html = ''
         rows = []

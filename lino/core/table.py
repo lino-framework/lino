@@ -88,7 +88,8 @@ def unused_parse_js_date(s,name):
     
     
 def wildcard_data_elems(model):
-    """Yields names that will be used as wildcard column_names of a Table.
+    """
+    Yields names that will be used as wildcard column_names of a Table.
     """
     meta = model._meta
     #~ for f in meta.fields: yield f.name
@@ -547,17 +548,16 @@ class TableRequest(AbstractTableRequest):
         
         #~ self.total_count = self._data_iterator.count()
         
-        
-        if self.create_rows is None:
-            if create_rows is None:
-                if self.create_kw is None:
-                    create_rows = 0
-                #~ elif self.user is not None and self.report.can_add.passes(self.user):
-                elif self.report.can_add.passes(self.user):
-                    create_rows = 1
-                else:
-                    create_rows = 0
-            self.create_rows = create_rows
+        if create_rows is None:
+            if self.create_kw is None:
+                create_rows = 0
+            #~ elif self.user is not None and self.report.can_add.passes(self.user):
+            #~ elif self.report.can_add.passes(self.user):
+            elif self.report.get_permission(actors.CreatePermission,self.user):
+                create_rows = 1
+            else:
+                create_rows = 0
+        self.create_rows = create_rows
             
         if self.ui is not None:
             if layout is None:
@@ -578,9 +578,6 @@ class TableRequest(AbstractTableRequest):
     def __str__(self):
         return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
 
-    def get_data_iterator(self):
-        return self.report.get_request_queryset(self)
-        
     def request2kw(self,ui,**kw):
         kw = AbstractTableRequest.request2kw(self,ui,**kw)
         #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
@@ -773,10 +770,10 @@ class Table(AbstractTable):
     Whether multi-line text fields in Grid views should be expanded in by default or not.
     """
     
-    can_add = perms.is_authenticated
-    """
-    A permission descriptor that defines who can add (create) rows in this table.
-    """
+    #~ can_add = perms.is_authenticated
+    #~ """
+    #~ A permission descriptor that defines who can add (create) rows in this table.
+    #~ """
     
     extra = None
     """

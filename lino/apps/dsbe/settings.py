@@ -66,10 +66,10 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
         
-        LISTINGS = [
-          self.modules.jobs.ContractsSituation,
-          self.modules.lino.DataControlListing,
-        ]
+        #~ LISTINGS = [
+          #~ self.modules.jobs.ContractsSituation,
+          #~ self.modules.lino.DataControlListing,
+        #~ ]
         
         
         m = main.add_menu("contacts",_("Contacts"))
@@ -128,6 +128,7 @@ class Lino(Lino):
         m.add_action(self.modules.jobs.JobsOverview)
         m.add_action(self.modules.jobs.ContractsByUser)
         m.add_action(self.modules.dsbe.OverviewClientsByUser)
+        m.add_action(self.modules.dsbe.ClientsTest)
         #~ listings.add_instance_action(lst)
         #~ for lst in dsbe.FooListing.objects.all():
             #~ listings.add_instance_action(lst)
@@ -214,11 +215,9 @@ class Lino(Lino):
             
             self.modules.cal.setup_explorer_menu(self,ui,user,m)
             
-            lst = m.add_menu("lst",_("Listings"))
-            for listing in LISTINGS:
-                #~ listings.add_action(listing)
-                #~ lst.add_action(listing+"Table")
-                lst.add_action(listing)
+            #~ lst = m.add_menu("lst",_("Listings"))
+            #~ for listing in LISTINGS:
+                #~ lst.add_action(listing)
             
 
         

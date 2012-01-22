@@ -932,7 +932,7 @@ class MyActivePersons(MyPersons):
         return qs
  
   
-from appy import Object
+#~ from appy import Object
 
 #~ def req2cell(rr):
     #~ n = len(rr.data_iterator)
@@ -942,15 +942,101 @@ from appy import Object
 
 if dd.is_installed('dsbe'):
   
+  #~ class InvalidClients(Persons):
+  class ClientsTest(Persons):
+    label = _("Data Test Clients")
+    parameters = dict(
+      user = models.ForeignKey(User,blank=True,verbose_name=_("Coached by")),
+      today = models.DateField(_("only active on"),blank=True),
+      invalid_niss = models.BooleanField(_("Check NISS validity"),default=True),
+      overlapping_contracts = models.BooleanField(_("Check for overlapping contracts"),default=True),
+      #~ only_my_persons = models.BooleanField(_("Only my persons"),default=True),
+    )
+    params_template = """overlapping_contracts invalid_niss user today"""
+    params_panel_hidden = False
+    column_names = "name_column error_message national_id id"
+    
+    @classmethod
+    def get_data_rows(self,ar):
+        """
+        We only want the users who actually have at least one client.
+        We store the corresponding request in the user object 
+        under the name `my_persons`.
+        """
+        #~ qs = Person.objects.all()
+        qs = self.get_request_queryset(ar)
+        
+        if ar.param_values.user:
+            qs = only_my_persons(qs,ar.param_values.user)
+        
+        if ar.param_values.today:
+            qs = only_coached_persons(qs,ar.param_values.today)
+            
+        from lino.modlib.isip.models import ContractBase
+        from lino.tools import models_by_abc
+        from lino.utils import overlap2
+
+        #~ for p in qs.order_by('name'):
+        for person in qs:
+            messages = []
+            if ar.param_values.overlapping_contracts:
+                actives = []
+                for model in models_by_abc(ContractBase):
+                    for con1 in model.objects.filter(person=person):
+                        p1 = con1.active_period()
+                        if p1:
+                            for (p2,con2) in actives:
+                                if overlap2(p1,p2):
+                                    messages.append("Overlapping contracts %s and %s" % (con1,con2))
+                            actives.append((p1,con1))
+              
+            if ar.param_values.invalid_niss:
+                try:
+                    niss_validator(person.national_id)
+                except ValidationError,e:
+                    messages += e.messages
+          
+            if messages:
+                person.error_message = '; '.join(messages)
+                #~ logger.info("%s : %s", p, p.error_message)
+                yield person
+                
+        
+    @dd.displayfield(_('Error message'))
+    def error_message(self,obj,ar):
+        return obj.error_message
+        
+    
   class OverviewClientsByUser(dd.CustomTable):
     """
     A customized overview report.
     """
     label = _("Overview Clients By User")
-    column_defaults = dict(width=8)
+    #~ column_defaults = dict(width=8)
     
+    #~ @classmethod
+    #~ def before_ui_handle(self,ui):
+        #~ """
+        #~ Builds columns dynamically from the :class:`PersonGroup` database table.
+        #~ Called when kernel setup is done, 
+        #~ before the UI handle is being instantiated.
+        #~ """
+        #~ self.column_names = 'user:10'
+        #~ for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
+            #~ def w(pg):
+                #~ def func(self,obj,ar):
+                    #~ return MyPersonsByGroup.request(
+                      #~ ar.ui,master_instance=pg,subst_user=obj)
+                #~ return func
+            #~ vf = dd.RequestField(w(pg),verbose_name=pg.name)
+            #~ self.add_virtual_field('G'+pg.ref_name,vf)
+            #~ self.column_names += ' ' + vf.name 
+            
+        #~ self.column_names += ' primary_clients active_clients row_total'
+        #~ super(OverviewClientsByUser,self).before_ui_handle(ui)
+        
     @classmethod
-    def before_ui_handle(self,ui):
+    def setup_columns(self):
         """
         Builds columns dynamically from the :class:`PersonGroup` database table.
         Called when kernel setup is done, 
@@ -959,22 +1045,15 @@ if dd.is_installed('dsbe'):
         self.column_names = 'user:10'
         for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
             def w(pg):
-                #~ def func(self,obj,ar):
-                    #~ rr = MyPersonsByGroup.request(
-                      #~ ar.ui,master_instance=pg,subst_user=obj)
-                    #~ return req2cell(rr)
-                #~ return func
                 def func(self,obj,ar):
                     return MyPersonsByGroup.request(
                       ar.ui,master_instance=pg,subst_user=obj)
                 return func
             vf = dd.RequestField(w(pg),verbose_name=pg.name)
-            #~ vf = dd.VirtualField(models.CharField(verbose_name=pg.name,max_length=8),w(pg))
             self.add_virtual_field('G'+pg.ref_name,vf)
             self.column_names += ' ' + vf.name 
             
         self.column_names += ' primary_clients active_clients row_total'
-        super(OverviewClientsByUser,self).before_ui_handle(ui)
     
     @classmethod
     def get_data_rows(self,ar):
@@ -991,37 +1070,18 @@ if dd.is_installed('dsbe'):
                 user.my_persons = r
                 yield user
                 
-    #~ @dd.computed(_("User"),width=10)
-    #~ def user(obj,ar):
-        #~ return (ar.ui.href_to(obj),0)
-        
-    #~ @dd.virtualfield(models.CharField(_("User"),max_length=10))
-    #~ def user(self,obj,ar):
-        #~ # return ",".join([obj2str(self),obj2str(obj),obj2str(ar)])
-        #~ return ar.ui.href_to(obj)
-        
     @dd.virtualfield('contacts.Person.coach1')
     def user(self,obj,ar):
         return obj
-        
-    #~ @dd.virtualfield(models.CharField(_("Total"),max_length=8))
-    #~ def row_total(self,obj,ar):
-        #~ return req2cell(obj.my_persons)
         
     @dd.requestfield(_("Total"))
     def row_total(self,obj,ar):
         return obj.my_persons
         
-    #~ @dd.virtualfield(models.CharField(_("Primary clients"),max_length=8))
-    #~ def primary_clients(self,obj,ar):
-        #~ return req2cell(PersonsByCoach1.request(ar.ui,master_instance=obj))
     @dd.requestfield(_("Primary clients"))
     def primary_clients(self,obj,ar):
         return PersonsByCoach1.request(ar.ui,master_instance=obj)
         
-    #~ @dd.virtualfield(models.CharField(_("Active clients"),max_length=8))
-    #~ def active_clients(self,obj,ar):
-        #~ return req2cell(MyActivePersons.request(ar.ui,subst_user=obj))
     @dd.requestfield(_("Active clients"))
     def active_clients(self,obj,ar):
         return MyActivePersons.request(ar.ui,subst_user=obj)
@@ -1808,7 +1868,7 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
     gender = Gender.field()
 
     
-    only_my_persons = models.BooleanField(verbose_name=_("Only my persons")) # ,default=True)
+    only_my_persons = models.BooleanField(_("Only my persons")) # ,default=True)
     
     coached_by = models.ForeignKey(settings.LINO.user_model,
         verbose_name=_("Coached by"),

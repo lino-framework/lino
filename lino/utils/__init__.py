@@ -68,6 +68,9 @@ import stat
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
     
+def overlap2(a,b):
+    return overlap(a[0],a[1],b[0],b[1])
+    
 def overlap(a1,a2,b1,b2):
     """
     Test whether two value ranges overlap.

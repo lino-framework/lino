@@ -20,6 +20,7 @@ from django.utils.encoding import force_unicode
 from django.conf import settings
 
 import lino
+from lino.utils import AttrDict
 
 
 #~ from lino.utils import perms
@@ -300,7 +301,7 @@ class ActorRequest(ActionRequest):
         return obj
         
     def parse_req(self,request,**kw):
-        if self.ah.report.parameters:
+        if self.report.parameters:
             kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
         
@@ -325,7 +326,13 @@ class ActorRequest(ActionRequest):
             known_values=None,
             **kw):
         self.user = user
-        self.param_values = param_values
+        #~ self.param_values = param_values
+        self.param_values = AttrDict()
+        
+        if param_values:
+            logger.info("20120122 param_values is %s",param_values)
+            for k,v in param_values.items():
+                self.param_values.define(k,v)
         self.subst_user = subst_user
         #~ 20120111 
         #~ self.known_values = known_values or self.report.known_values
