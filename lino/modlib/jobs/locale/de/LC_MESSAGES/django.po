@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-01-23 07:45+0000\n"
-"PO-Revision-Date: 2012-01-23 10:18+0200\n"
+"PO-Revision-Date: 2012-01-23 11:43+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -178,11 +178,11 @@ msgstr "Ausbildungsarten"
 
 #: .\models.py:613
 msgid "study or education"
-msgstr "Audbildung"
+msgstr "Audbildung oder Studium"
 
 #: .\models.py:614
 msgid "Studies & education"
-msgstr "Ausbildung"
+msgstr "Ausbildungen und Studien"
 
 #: .\models.py:616
 msgid "Study type"

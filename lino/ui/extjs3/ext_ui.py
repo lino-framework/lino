@@ -1117,6 +1117,19 @@ tinymce.init({
           
             #~ print '20110714', a, fmt
             
+            if fmt == 'json':
+                rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
+                total_count = len(ar.data_iterator)
+                if ar.create_rows:
+                    row = ar.create_instance()
+                    d = rh.store.row2list(ar,row)
+                    rows.append(d)
+                    total_count += 1
+                return json_response_kw(count=total_count,
+                  rows=rows,
+                  title=unicode(ar.get_title()),
+                  gc_choices=[gc.data for gc in rpt.grid_configs])
+                    
             if fmt == 'html':
                 kw = {}
                 bp = ar.request2kw(self)
@@ -1213,19 +1226,6 @@ tinymce.init({
                 doc.__xml__(response)
                 return response
                 
-            if fmt == 'json':
-                rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
-                total_count = len(ar.data_iterator)
-                if ar.create_rows:
-                    row = ar.create_instance()
-                    d = rh.store.row2list(ar,row)
-                    rows.append(d)
-                    total_count += 1
-                return json_response_kw(count=total_count,
-                  rows=rows,
-                  title=unicode(ar.get_title()),
-                  gc_choices=[gc.data for gc in rpt.grid_configs])
-                    
             raise Http404("Format %r not supported for GET on %s" % (fmt,rpt))
 
         raise Http404("Method %s not supported for container %s" % (request.method,rh))
@@ -1303,14 +1303,14 @@ tinymce.init({
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):
                 #~ for i in range(0,ar.extra):
-                if ar.create_rows:
-                    row = ar.create_instance()
-                    d = rh.store.row2list(ar,row)
-                    #~ logger.info('20111213 %s -> %s -> %s', obj2str(ar.master),row, d)
-                    #~ d = ar.row2dict(row)
-                    #~ 20100706 d[rh.report.model._meta.pk.name] = -99999
-                    rows.append(d)
-                    total_count += 1
+                if False:
+                    #~ CalendarPanel would give "Uncaught TypeError: Cannot call method 'getTime' of null"
+                    #~ if there are empty rows
+                    if ar.create_rows:
+                        row = ar.create_instance()
+                        d = rh.store.row2list(ar,row)
+                        rows.append(d)
+                        total_count += 1
                 return json_response_kw(count=total_count,rows=rows)
         
         if request.method == 'DELETE':

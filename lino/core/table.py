@@ -747,11 +747,11 @@ class Table(AbstractTable):
     
     show_detail_navigator = True
     
-    base_queryset = None 
-    """Internally used to store one Queryset instance that is reused for each request.
-    Didn't yet measure this, but I believe that this is important for performance 
-    because Django then will cache database lookups.
-    """
+    #~ base_queryset = None 
+    #~ """Internally used to store one Queryset instance that is reused for each request.
+    #~ Didn't yet measure this, but I believe that this is important for performance 
+    #~ because Django then will cache database lookups.
+    #~ """
     
     #~ default_params = {}
     """See :doc:`/blog/2011/0701`.
@@ -875,11 +875,14 @@ class Table(AbstractTable):
     @classmethod
     def class_init(self):
         super(Table,self).class_init()
-        if self.model is None:
-            if self.base_queryset is not None:
-                self.model = self.base_queryset.model
-            # raise Exception(self.__class__)
-        else:
+        #~ if self.model is None:
+            #~ if self.base_queryset is not None:
+                #~ self.model = self.base_queryset.model
+            # raise Exception("No model in %s" %  self)
+        #~ else:
+            #~ self.model = resolve_model(self.model,self.app_label)
+            
+        if self.model is not None:
             self.model = resolve_model(self.model,self.app_label)
             
         #~ logger.debug("20120103 class_init(%s) : model is %s",self,self.model)
@@ -1066,10 +1069,16 @@ class Table(AbstractTable):
         Upon first call, this will also lazily install Table.queryset 
         which will be reused on every subsequent call.
         """
-        qs = self.__dict__.get('base_queryset',None)
-        if qs is None:
-            qs = self.base_queryset = self.get_queryset()
-        #~ qs = self.base_queryset
+        #~ See 20120123
+        #~ from lino.modlib.jobs.models import Jobs
+        #~ if rr.report is Jobs:
+            #~ logger.info("20120123 get_request_queryset()")
+        #~ qs = self.__dict__.get('base_queryset',None)
+        #~ if qs is None:
+            #~ qs = self.base_queryset = self.get_queryset()
+            #~ if rr.report is Jobs:
+                #~ logger.info("20120123 Setting base_queryset")
+        qs = self.get_queryset()
         #~ kw = self.get_filter_kw(rr.master_instance,**rr.params)
         kw = self.get_filter_kw(rr.master_instance)
         if kw is None:

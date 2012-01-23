@@ -22,4 +22,21 @@ Fehlerjagd vor dem Release.
     --> ``self.card_type_text()`` wurde ersetzt durch ``self.card_type``.
     
   - Error while evaluating expression "self.sex". 'Person' object has no attribute 'sex'
+
+  Person.card_type ist jetzt auch endlich eine ChoiceList.
+  Folglich müssen diese Texte nun auch via poEdit übersetzt werden.
   
+- Der Trick mit dem base_queryset, das in der Tabelle gespeichert 
+  wird, scheint nun ein Caching-Problem hervorzurufen. 
+    War einfach reproduzierbar, 
+  indem ich in einer Listenansicht einen Record erstellte. Anschließend wurde 
+  dieser Record erst nach einem Server-Neustart sichtbar.
+  Seltsam, dass das nicht schon immer so war. 
+  Ich deaktiviere das ganze System, zumal ich nie nachgeprüft habe, 
+  ob das überhaupt was bringt.
+  Kann auch sein, dass es bisher nur deshalb 
+  keinen Schaden anrichtete, weil es gar nicht funktionierte...
+  
+- CalendarPanel machte "Uncaught TypeError: Cannot call method 'getTime' of null".
+  restful_view schickt jetzt für ein GET der Liste niemals einen Phantom-Record 
+  mit.
