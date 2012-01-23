@@ -1094,7 +1094,7 @@ tinymce.init({
             assert rh.report == rpt
         else:
             # e.g. calendar
-            ar = tables.ActionRequest(self,a)
+            ar = actions.ActionRequest(self,a)
             rh = rpt.get_handle(self)
         
         if request.method == 'POST':
