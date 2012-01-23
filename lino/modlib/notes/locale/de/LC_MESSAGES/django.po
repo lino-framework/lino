@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.notes\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-23 07:46+0000\n"
+"POT-Creation-Date: 2012-01-23 20:34+0000\n"
 "PO-Revision-Date: 2011-10-01 01:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -78,7 +78,7 @@ msgstr "Meine Notizen"
 msgid "~Notes"
 msgstr "~Notizen"
 
-#: .\config\notes\NoteType\1.dtl.py:3
+#: .\config\notes\EventType\1.dtl.py:3 .\config\notes\NoteType\1.dtl.py:3
 msgid "Detail"
 msgstr ""
 

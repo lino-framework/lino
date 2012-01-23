@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-23 07:45+0000\n"
+"POT-Creation-Date: 2012-01-23 20:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -259,42 +259,46 @@ msgstr ""
 msgid "Candidature by %(person)s"
 msgstr ""
 
-#: .\models.py:958 .\models.py:962 .\models.py:1108 .\models.py:1173
+#: .\models.py:958 .\models.py:962 .\models.py:1112 .\models.py:1177
 msgid "Candidates"
 msgstr ""
 
 #: .\models.py:1001
-msgid "Job contracts by User"
-msgstr ""
-
-#: .\models.py:1005
-msgid "past contracts"
+msgid "Job Contracts Search"
 msgstr ""
 
 #: .\models.py:1006
-msgid "active contracts"
+msgid "Only contracts of type"
 msgstr ""
 
 #: .\models.py:1007
-msgid "coming contracts"
+msgid "past contracts"
 msgstr ""
 
 #: .\models.py:1008
+msgid "active contracts"
+msgstr ""
+
+#: .\models.py:1009
+msgid "coming contracts"
+msgstr ""
+
+#: .\models.py:1010
 msgid "on"
 msgstr ""
 
-#: .\models.py:1055 .\models.py:1133
+#: .\models.py:1059 .\models.py:1137
 msgid "Contracts Situation"
 msgstr ""
 
-#: .\models.py:1063
+#: .\models.py:1067
 msgid "Body"
 msgstr ""
 
-#: .\models.py:1194
+#: .\models.py:1198
 msgid "is Employer"
 msgstr ""
 
-#: .\models.py:1208
+#: .\models.py:1213
 msgid "~Jobs"
 msgstr ""

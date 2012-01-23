@@ -2144,7 +2144,8 @@ tinymce.init({
         yield "  initComponent : function() {"
             
             
-        yield "    var ww = this.containing_window;"
+        #~ yield "    var ww = this.containing_window;"
+        yield "    var containing_panel = this;"
         
         for ln in jsgen.declare_vars(dh.main):
             yield "    " + ln

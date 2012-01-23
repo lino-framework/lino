@@ -221,6 +221,14 @@ Ext.lib.Ajax.serializeForm = function(form) {
 
 Ext.namespace('Lino');
 
+Lino.PanelMixin = {
+  get_containing_window : function (){
+      if (this.containing_window) return this.containing_window;
+      return this.containing_panel.get_containing_window();
+  }
+};
+
+
 Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version $(lino.__version__).'});
 
 #if $settings.LINO.use_tinymce
@@ -544,7 +552,7 @@ Lino.FileUploadField = Ext.extend(Ext.ux.form.FileUploadField,{
           scope:this
           ,fn:function(event){
             event.stopEvent();
-            console.log(20110516);
+            //~ console.log(20110516);
             var files = event.browserEvent.dataTransfer.files;
             if(files === undefined){
               return true;
@@ -977,9 +985,10 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
           }
       }
       if (result.refresh_all) {
+          var cw = panel.get_containing_window();
           console.log("20120123 refresh_all");
-          if (panel.containing_window) {
-            panel.containing_window.main_item.refresh();
+          if (cw) {
+            cw.main_item.refresh();
           }
           else console.log("20120123 cannot refresh_all",panel);
       } else {
@@ -1656,6 +1665,7 @@ Ext.override(Lino.RichTextPanel,Lino.FieldBoxMixin);
 #end if
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
+Lino.FormPanel = Ext.extend(Lino.FormPanel,Lino.PanelMixin);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   params_panel_hidden : false,
   base_params : {},
@@ -2193,6 +2203,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
 });
 
 
+
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {
   if (record.phantom) {
     //~ console.log(20101009);
@@ -2213,6 +2224,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
 
     
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,Lino.MainPanel);
+Lino.GridPanel = Ext.extend(Lino.GridPanel,Lino.PanelMixin);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   //~ quick_search_text : '',
   disabled_in_insert_window : true,

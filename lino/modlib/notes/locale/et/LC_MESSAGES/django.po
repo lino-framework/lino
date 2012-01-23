@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-23 07:46+0000\n"
+"POT-Creation-Date: 2012-01-23 20:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,6 +76,6 @@ msgstr ""
 msgid "~Notes"
 msgstr ""
 
-#: .\config\notes\NoteType\1.dtl.py:3
+#: .\config\notes\EventType\1.dtl.py:3 .\config\notes\NoteType\1.dtl.py:3
 msgid "Detail"
 msgstr ""

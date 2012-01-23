@@ -29,7 +29,7 @@ from lino.utils import mti
 from lino.modlib.contacts import models as contacts
 
 
-class User(contacts.Contact,contacts.Person):
+class User(contacts.Contact,contacts.PersonMixin):
     """
     Represents a User of this site.
     

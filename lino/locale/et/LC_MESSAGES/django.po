@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-23 07:45+0000\n"
+"POT-Creation-Date: 2012-01-23 20:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,7 +110,7 @@ msgstr ""
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: .\core\table.py:1045
+#: .\core\table.py:1048
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
@@ -424,26 +424,30 @@ msgid "Expand memo fields"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:25
-msgid "No more records to display. Detail window has been closed."
+msgid "[parameters]"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:26
-msgid "First page"
+msgid "No more records to display. Detail window has been closed."
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:27
-msgid "Select another view of this report"
+msgid "First page"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:28
-msgid "Cannot show MTI child if checkbox is off."
+msgid "Select another view of this report"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:29
-msgid "Save changes to text ?"
+msgid "Cannot show MTI child if checkbox is off."
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:30
+msgid "Save changes to text ?"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:31
 msgid "Previous"
 msgstr ""
 

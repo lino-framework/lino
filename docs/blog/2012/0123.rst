@@ -48,4 +48,17 @@ Fehlerjagd vor dem Release.
 
 - Die Aktion :class:`Eintragen <lino.apps.dsbe.models.RegisterCandidate>` 
   in der Tabelle der :class:`Kandidaten pro Kurs <lino.apps.dsbe.models.CandidatesByCourse>`
-  machte kein Refresh des Fensters.
+  machte kein Refresh des Fensters. Das waren zwei Stunden Arbeit mit
+  `containing_window` und `containing_panel`.
+  
+- Einige Übersetzungen der labels von .dtl-Datreien sind scheinbar verlorengegangen.
+  Kann sein, dass ich die .dtl.py-Dateien irgendwann mal gelöscht hatte und 
+  `make appdocs` vor dem letzten `make mm` nicht habe laufen lassen. 
+  Und `make appdocs` funktioniert nicht::
+  
+    File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 1107, in setup_columns
+      for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
+    ...
+    django.db.utils.DatabaseError: no such table: dsbe_persongroup
+    
+  

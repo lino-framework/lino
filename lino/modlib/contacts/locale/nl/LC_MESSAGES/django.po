@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-23 07:45+0000\n"
+"POT-Creation-Date: 2012-01-23 20:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Abbreviation"
 msgstr ""
 
-#: .\models.py:95 .\models.py:589 .\config\contacts\Company\1.dtl.py:3
+#: .\models.py:95 .\models.py:592 .\config\contacts\Company\1.dtl.py:3
 #: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
 msgid "Contact"
 msgstr ""
@@ -124,83 +124,83 @@ msgstr ""
 msgid "Age"
 msgstr ""
 
-#: .\models.py:300
+#: .\models.py:303
 msgid "Person"
 msgstr ""
 
-#: .\models.py:301
+#: .\models.py:304
 msgid "Persons"
 msgstr ""
 
-#: .\models.py:304
+#: .\models.py:307
 msgid "First name"
 msgstr ""
 
-#: .\models.py:308
+#: .\models.py:311
 msgid "Last name"
 msgstr ""
 
-#: .\models.py:312
+#: .\models.py:315
 msgid "Title"
 msgstr ""
 
-#: .\models.py:376
+#: .\models.py:379
 msgid "Company"
 msgstr ""
 
-#: .\models.py:377
+#: .\models.py:380
 msgid "Companies"
 msgstr ""
 
-#: .\models.py:379
+#: .\models.py:382
 msgid "VAT id"
 msgstr ""
 
-#: .\models.py:384
+#: .\models.py:387
 msgid "Company type"
 msgstr ""
 
-#: .\models.py:417
+#: .\models.py:420
 msgid "Role Type"
 msgstr ""
 
-#: .\models.py:418
+#: .\models.py:421
 msgid "Role Types"
 msgstr ""
 
-#: .\models.py:434
+#: .\models.py:437
 msgid "Contact Person"
 msgstr ""
 
-#: .\models.py:435
+#: .\models.py:438
 msgid "Contact Persons"
 msgstr ""
 
-#: .\models.py:445
+#: .\models.py:448
 msgid "Contact Role"
 msgstr ""
 
-#: .\models.py:502
+#: .\models.py:505
 msgid "Contact persons"
 msgstr ""
 
-#: .\models.py:507
+#: .\models.py:510
 msgid "Contact for"
 msgstr ""
 
-#: .\models.py:611
+#: .\models.py:614
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:620
+#: .\models.py:623
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:629
+#: .\models.py:632
 msgid "is Person"
 msgstr ""
 
-#: .\models.py:634
+#: .\models.py:637
 msgid "is Company"
 msgstr ""
 

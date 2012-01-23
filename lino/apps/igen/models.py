@@ -67,7 +67,7 @@ from lino.models import SiteConfig
 #~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.cal import models as cal
 
-if dd.is_installed('igen'):
+if True: # dd.is_installed('igen'):
 
     contacts = dd.get_app('contacts')
     #~ notes = dd.get_app('notes')
@@ -75,8 +75,8 @@ if dd.is_installed('igen'):
 
     #~ class Person(contacts.Person,contacts.Contact):
     #~ class Person(contacts.Contact,contacts.Born,contacts.Person):
-    class Person(contacts.Person,contacts.Contact,contacts.Born):
-        class Meta(contacts.Person.Meta):
+    class Person(contacts.PersonMixin,contacts.Contact,contacts.Born):
+        class Meta(contacts.PersonMixin.Meta):
             app_label = 'contacts'
             #~ # see :doc:`/tickets/14`
             verbose_name = _("Person")

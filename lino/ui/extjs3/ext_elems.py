@@ -1301,7 +1301,8 @@ class GridElement(Container):
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
         
-        kw.update(containing_window=js_code("this.containing_window"))
+        #~ kw.update(containing_window=js_code("this.containing_window"))
+        kw.update(containing_panel=js_code("containing_panel"))
         #~ if not rpt.show_params_at_render:
         if rpt.params_panel_hidden:
             kw.update(params_panel_hidden=True)

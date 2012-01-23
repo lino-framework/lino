@@ -291,9 +291,12 @@ class Born(models.Model):
     
 
 
-class Person(models.Model):
+#~ Note `PersonMixin` must not be named `Person` because users.User also inherits 
+#~ from it and would then also find all contacs/Person/*.dtl !
+
+class PersonMixin(models.Model):
     """
-    Base class for models that represent a physical person. 
+    Mixin for models that represent a physical person. 
     """
     class Meta:
         abstract = True

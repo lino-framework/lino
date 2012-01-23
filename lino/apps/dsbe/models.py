@@ -28,6 +28,7 @@ import datetime
 
 from django.db import models
 from django.db.models import Q
+from django.db.utils import DatabaseError
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
@@ -318,13 +319,13 @@ class Partner(mixins.DiffingMixin,models.Model):
           
 
     
-class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
+class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printable):
     """
     Represents a physical person.
     
     """
     
-    class Meta(contacts.Person.Meta):
+    class Meta(contacts.PersonMixin.Meta):
         app_label = 'contacts'
         verbose_name = _("Person") # :doc:`/tickets/14`
         verbose_name_plural = _("Persons") # :doc:`/tickets/14`
@@ -430,7 +431,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
     "The administration who issued this ID card. Imported from TIM."
     
     eid_panel = dd.FieldSet(_("eID card"),
-        "card_number card_valid_from card_valid_until card_issuer card_type",
+        "card_number card_valid_from card_valid_until card_issuer card_type:20",
         card_number=_("number"),
         card_valid_from=_("valid from"),
         card_valid_until=_("until"),
@@ -1104,15 +1105,19 @@ if True: # dd.is_installed('dsbe'):
         before the UI handle is being instantiated.
         """
         self.column_names = 'user:10'
-        for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
-            def w(pg):
-                def func(self,obj,ar):
-                    return MyPersonsByGroup.request(
-                      ar.ui,master_instance=pg,subst_user=obj)
-                return func
-            vf = dd.RequestField(w(pg),verbose_name=pg.name)
-            self.add_virtual_field('G'+pg.ref_name,vf)
-            self.column_names += ' ' + vf.name 
+        try:
+            for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
+                def w(pg):
+                    def func(self,obj,ar):
+                        return MyPersonsByGroup.request(
+                          ar.ui,master_instance=pg,subst_user=obj)
+                    return func
+                vf = dd.RequestField(w(pg),verbose_name=pg.name)
+                self.add_virtual_field('G'+pg.ref_name,vf)
+                self.column_names += ' ' + vf.name 
+        except DatabaseError:
+            # happens during `make appdocs`
+            pass
             
         self.column_names += ' primary_clients active_clients row_total'
     
