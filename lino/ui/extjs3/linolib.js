@@ -1669,7 +1669,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,Lino.PanelMixin);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   params_panel_hidden : false,
   base_params : {},
-  loadMask: {msg:"$_('Please wait...')"},
+  //~ 20120123 loadMask: {msg:"$_('Please wait...')"},
   //~ trackResetOnLoad : true,
   //~ query_params : {},
   //~ 20110119b quick_search_text : '',
@@ -1920,7 +1920,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     this.add_param_values(p);
-    this.loadMask.show();
+    //~ 20120123 this.loadMask.show();
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
       method: 'GET',
@@ -1928,7 +1928,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       url: this_.get_record_url(record_id),
       success: function(response) {   
         // todo: convert to Lino.action_handler.... but result 
-        this_.loadMask.hide();
+        //~ 20120123 this_.loadMask.hide();
         if (response.responseText) {
           var rec = Ext.decode(response.responseText);
           //~ console.log('goto_record_id success',rec);
@@ -1954,7 +1954,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         }
       },
       failure: function() {
-        this_.loadMask.hide();
+        //~ 20120123 this_.loadMask.hide();
         Lino.ajax_error_handler(arguments);
       }
     });
