@@ -1023,7 +1023,7 @@ if True: # dd.is_installed('dsbe'):
         from lino.modlib.isip.models import ContractBase
         from lino.tools import models_by_abc
         from lino.utils import overlap2
-
+        logger.info("Building ClientsTest data rows...")
         #~ for p in qs.order_by('name'):
         for person in qs:
             messages = []
@@ -1062,6 +1062,7 @@ if True: # dd.is_installed('dsbe'):
                 person.error_message = '; '.join(messages)
                 #~ logger.info("%s : %s", p, p.error_message)
                 yield person
+        logger.info("Building ClientsTest data rows: done")
                 
         
     @dd.displayfield(_('Error message'))

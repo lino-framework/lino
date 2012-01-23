@@ -51,7 +51,7 @@ Fehlerjagd vor dem Release.
   machte kein Refresh des Fensters. Das waren zwei Stunden Arbeit mit
   `containing_window` und `containing_panel`.
   
-- Einige Übersetzungen der labels von .dtl-Datreien sind scheinbar verlorengegangen.
+- Einige Übersetzungen der labels von .dtl-Dateien waren verschwunden.
   Kann sein, dass ich die .dtl.py-Dateien irgendwann mal gelöscht hatte und 
   `make appdocs` vor dem letzten `make mm` nicht habe laufen lassen. 
   Und `make appdocs` funktioniert nicht::
@@ -61,4 +61,6 @@ Fehlerjagd vor dem Release.
     ...
     django.db.utils.DatabaseError: no such table: dsbe_persongroup
     
+- Das Detail-Fenster von User holte sich jetzt auch die .dtl-Dateien von Person.
+  Das kam, weil :class:`lino.modlib.contacts.models.PersonMixin` nur `Person` hieß. 
   
