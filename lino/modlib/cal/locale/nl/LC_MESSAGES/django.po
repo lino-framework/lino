@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-29 15:29+0000\n"
+"POT-Creation-Date: 2012-01-23 07:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,279 +17,279 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:93 .\models.py:281
+#: .\models.py:97 .\models.py:285
 msgid "Calendar"
 msgstr ""
 
-#: .\models.py:94
+#: .\models.py:98
 msgid "Calendars"
 msgstr ""
 
-#: .\models.py:96
+#: .\models.py:100
 msgid "Type"
 msgstr ""
 
-#: .\models.py:99
+#: .\models.py:103
 msgid "Name"
 msgstr ""
 
-#: .\models.py:100 .\models.py:321
+#: .\models.py:104 .\models.py:325
 msgid "Description"
 msgstr ""
 
-#: .\models.py:101
+#: .\models.py:105
 msgid "URL template"
 msgstr ""
 
-#: .\models.py:103
+#: .\models.py:107
 msgid "Username"
 msgstr ""
 
-#: .\models.py:105
+#: .\models.py:109
 msgid "Password"
 msgstr ""
 
-#: .\models.py:107
+#: .\models.py:111
 msgid "read-only"
 msgstr ""
 
-#: .\models.py:109
+#: .\models.py:113
 msgid "is default"
 msgstr ""
 
-#: .\models.py:111
+#: .\models.py:115
 msgid "is hidden"
 msgstr ""
 
-#: .\models.py:113 .\models.py:315
+#: .\models.py:117 .\models.py:319
 msgid "Start date"
 msgstr ""
 
-#: .\models.py:116
+#: .\models.py:120
 msgid "color"
 msgstr ""
 
-#: .\models.py:194 .\models.py:535
+#: .\models.py:198 .\models.py:537
 msgid "Place"
 msgstr ""
 
-#: .\models.py:195
+#: .\models.py:199
 msgid "Places"
 msgstr ""
 
-#: .\models.py:208
+#: .\models.py:212
 msgid "Event Status"
 msgstr ""
 
-#: .\models.py:209
+#: .\models.py:213
 msgid "Event Statuses"
 msgstr ""
 
-#: .\models.py:211 .\models.py:589
+#: .\models.py:215 .\models.py:591
 msgid "Reminder"
 msgstr ""
 
-#: .\models.py:220
+#: .\models.py:224
 msgid "Task Status"
 msgstr ""
 
-#: .\models.py:221
+#: .\models.py:225
 msgid "Task Statuses"
 msgstr ""
 
-#: .\models.py:230
+#: .\models.py:234
 msgid "Guest Status"
 msgstr ""
 
-#: .\models.py:231
+#: .\models.py:235
 msgid "Guest Statuses"
 msgstr ""
 
-#: .\models.py:240
+#: .\models.py:244
 msgid "Priority"
 msgstr ""
 
-#: .\models.py:241
+#: .\models.py:245
 msgid "Priorities"
 msgstr ""
 
-#: .\models.py:250
+#: .\models.py:254
 msgid "Access Class"
 msgstr ""
 
-#: .\models.py:251
+#: .\models.py:255
 msgid "Access Classes"
 msgstr ""
 
-#: .\models.py:267 .\models.py:534
+#: .\models.py:271 .\models.py:536
 msgid "Event Type"
 msgstr ""
 
-#: .\models.py:268
+#: .\models.py:272
 msgid "Event Types"
 msgstr ""
 
-#: .\models.py:310
+#: .\models.py:314
 msgid "UID"
 msgstr ""
 
-#: .\models.py:318
+#: .\models.py:322
 msgid "Start time"
 msgstr ""
 
-#: .\models.py:319 .\models.py:354
+#: .\models.py:323 .\models.py:977
 msgid "Start"
 msgstr ""
 
-#: .\models.py:320
+#: .\models.py:324 .\models.py:1000
 msgid "Summary"
 msgstr ""
 
-#: .\models.py:339
+#: .\models.py:344
 msgid " on "
 msgstr ""
 
-#: .\models.py:362 .\models.py:532
-msgid "End"
-msgstr ""
-
-#: .\models.py:373 .\models.py:433
+#: .\models.py:375 .\models.py:435
 msgid "Recurrence Set"
 msgstr ""
 
-#: .\models.py:374
+#: .\models.py:376
 msgid "Recurrence Sets"
 msgstr ""
 
-#: .\models.py:376
+#: .\models.py:378
 msgid "Recurrence dates"
 msgstr ""
 
-#: .\models.py:377
+#: .\models.py:379
 msgid "Excluded dates"
 msgstr ""
 
-#: .\models.py:378
+#: .\models.py:380
 msgid "Recurrence Rules"
 msgstr ""
 
-#: .\models.py:379
+#: .\models.py:381
 msgid "Exclusion Rules"
 msgstr ""
 
-#: .\models.py:419
+#: .\models.py:421
 msgid "Revision"
 msgstr ""
 
-#: .\models.py:429
+#: .\models.py:431
 msgid "modified by user"
 msgstr ""
 
-#: .\models.py:499
+#: .\models.py:501
 msgid " at "
 msgstr ""
 
-#: .\models.py:522 .\models.py:718
+#: .\models.py:524 .\models.py:721
 msgid "Event"
 msgstr ""
 
-#: .\models.py:523
+#: .\models.py:525
 msgid "Events"
 msgstr ""
 
-#: .\models.py:528
+#: .\models.py:530
 msgid "End Date"
 msgstr ""
 
-#: .\models.py:531
+#: .\models.py:533
 msgid "End Time"
 msgstr ""
 
-#: .\models.py:533
+#: .\models.py:534 .\models.py:978
+msgid "End"
+msgstr ""
+
+#: .\models.py:535
 msgid "Transparent"
 msgstr ""
 
-#: .\models.py:539 .\models.py:615 .\models.py:725
+#: .\models.py:541 .\models.py:617 .\models.py:728
 msgid "Status"
 msgstr ""
 
-#: .\models.py:540
+#: .\models.py:542
 msgid "Duration"
 msgstr ""
 
-#: .\models.py:541 .\models.py:613
+#: .\models.py:543 .\models.py:615
 msgid "Duration value"
 msgstr ""
 
-#: .\models.py:542
+#: .\models.py:544
 msgid "Duration unit"
 msgstr ""
 
-#: .\models.py:583
+#: .\models.py:585
 msgid "Link URL"
 msgstr ""
 
-#: .\models.py:587
+#: .\models.py:589
 msgid "all day"
 msgstr ""
 
-#: .\models.py:602
+#: .\models.py:604
 msgid "Task"
 msgstr ""
 
-#: .\models.py:603
+#: .\models.py:605
 msgid "Tasks"
 msgstr ""
 
-#: .\models.py:608
+#: .\models.py:610
 msgid "Due date"
 msgstr ""
 
-#: .\models.py:611
+#: .\models.py:613
 msgid "Due time"
 msgstr ""
 
-#: .\models.py:612
+#: .\models.py:614
 msgid "Done"
 msgstr ""
 
-#: .\models.py:699
+#: .\models.py:702
 msgid "Guest Role"
 msgstr ""
 
-#: .\models.py:700
+#: .\models.py:703
 msgid "Guest Roles"
 msgstr ""
 
-#: .\models.py:714
+#: .\models.py:717
 msgid "Guest"
 msgstr ""
 
-#: .\models.py:715
+#: .\models.py:718
 msgid "Guests"
 msgstr ""
 
-#: .\models.py:721
+#: .\models.py:724
 msgid "Role"
 msgstr ""
 
-#: .\models.py:732
+#: .\models.py:735
 msgid "Remark"
 msgstr ""
 
-#: .\models.py:822
+#: .\models.py:825
 msgid "Upcoming reminders"
 msgstr ""
 
-#: .\models.py:823
+#: .\models.py:826
 msgid "Past reminders"
 msgstr ""
 
-#: .\models.py:914
+#: .\models.py:917
 msgid "due date reached"
 msgstr ""
 
-#: .\models.py:959 .\models.py:968 .\models.py:980
+#: .\models.py:1023 .\models.py:1031 .\models.py:1043
 msgid "~Calendar"
 msgstr ""
 

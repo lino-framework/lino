@@ -24,4 +24,4 @@ box3 =
   gender:8 birth_date:15 age civil_state noble_condition 
   birth_country birth_place nationality:15 national_id:15 
   # national_id:15 card_number:15 card_valid_from:15 card_valid_until:10 card_issuer card_type_text
-  eid 
+  eid_panel

@@ -1,0 +1,25 @@
+20120123
+========
+
+Fehlerjagd vor dem Release.
+
+- Der :guilabel:`[Upload]`-Button von 
+  :meth:`quick_upload_buttons <lino.ui.extjs.ext_ui.ExtUI.quick_upload_buttons>`
+  enthielt fehlerhaften Code::
+
+    <a href='javascript:Lino.uploads.UploadsByOwner.insert({ "base_params": { "mt": 18, "type": 2, "mk": 200007 } },{ "data_record": { "phantom": true, "data": { "valid_until": null, "description": "", "created": null, "userHidden": 200067, "modified": null, "typeHidden": 2, "user": "lsaffre", "file": "", "owner": "<a href=\"javascript:Lino.dsbe.AllPersons.detail(undefined,{},{record_id:200007})\">MUSTERMANN Max (200007)</a>", "type": "Aufenthaltserlaubnis", "id": null }, "title": "Uploads von MUSTERMANN Max (200007)" } })'>Upload</a>
+    
+  Der erst Parameter, `caller` fehlte.
+  
+  Außerdem habe ich Ticket :doc:`/tickets/56` eröffnet.
+
+
+- Beim Ausdruck der `contacts/Person/eid-content.odt` 
+  (eID-Inhalt) kamen zwei Fehler:
+  
+  - "Error while evaluating expression "self.card_type_text()". 
+    card_type_text() takes exactly 2 arguments (1 given)"
+    --> ``self.card_type_text()`` wurde ersetzt durch ``self.card_type``.
+    
+  - Error while evaluating expression "self.sex". 'Person' object has no attribute 'sex'
+  

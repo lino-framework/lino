@@ -5,15 +5,43 @@
 :class:`lino.apps.dsbe.models.ClientsTest`, 
 die Neuimplementierung der Aktenkontrollliste, 
 hat mich ebenfalls nochmal 3 Stunden gekostet.
+Unter Anderem 
+:attr:`lino.core.actors.Actor.parameters`
+und
+:attr:`lino.core.actors.Actor.params_panel_hidden`.
+
 
 Dann habe ich noch einen Bug bemerkt: 
 die Kolonnensortierung funktioniert nicht.
-Das lag daran, dass in meiner GridStore.load das return fehlte.
+Das lag daran, dass in meiner GridStore.load das 
+``return`` fehlte.
 Daran habe ich anderthalb Stunden lang gerätselt.
 
-Und auch den Ausdruck einer Liste nach PDF und HTML 
-will ich noch schaffen.
+Und dann noch was Schönes, obschon ich eigentlich ins Bett müsste:
+Der Ausdruck einer Liste nach PDF funktioniert jetzt fast.
+Nur hat appy.pod scheinbar Probleme mit dem von mir 
+generierten XHTML, 
+aber sagt das leider nicht.
 
+Bemerkung am Rande: Ich versuche ja schon seit langem, 
+dass Verweise à la
+:class:`lino.apps.dsbe.models.ClientsTest`
+in diesem Blog funktionieren.
+Aber ich habs noch nicht geschafft.
+Hier der nächste erfolglose Versuch::
 
-:attr:`lino.core.actors.Actor.parameters`
-:attr:`lino.core.actors.Actor.params_panel_hidden`
+    set DJANGO_SETTINGS_MODULE=lino.apps.sphinxdocs.settings
+    python -m lino.apps.dsbe.models
+    Traceback (most recent call last):
+      File "c:\Python27\lib\runpy.py", line 162, in _run_module_as_main
+        "__main__", fname, loader, pkg_name)
+      File "c:\Python27\lib\runpy.py", line 72, in _run_code
+        exec code in run_globals
+      File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 123, in <module>
+        class CefLevel(ChoiceList):
+      File "t:\hgwork\lino\lino\utils\choicelists.py", line 91, in __new__
+        register_choicelist(cls)
+      File "t:\hgwork\lino\lino\utils\choicelists.py", line 68, in register_choicelist
+        (k,CHOICELISTS[k]))
+    Exception: ChoiceList name 'CefLevel' already defined by <class 'lino.apps.dsbe.models.CefLevel'>
+

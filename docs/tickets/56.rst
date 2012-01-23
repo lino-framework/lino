@@ -1,0 +1,29 @@
+#56 : Cannot yet handle `known_values´ in action buttons
+========================================================
+
+Der :guilabel:`[Upload]`-Button von 
+:meth:`quick_upload_buttons <lino.ui.extjs.ext_ui.ExtUI.quick_upload_buttons>`
+enthält zur Zeit folgenden Code::
+
+  <a href='javascript:Lino.uploads.UploadsByOwner.insert(null, { 
+    "base_params": { "mt": 18, "type": 2, "mk": 200007 } },
+    { "data_record": { 
+      "phantom": true, 
+      "data": { "valid_until": null, "description": "", 
+      "created": null, "userHidden": 200067, 
+      "modified": null, "typeHidden": 2, 
+      "user": "lsaffre", "file": "", 
+      "owner": "<a href=\"javascript:Lino.dsbe.AllPersons.detail(undefined,{},{record_id:200007})\">MUSTERMANN Max (200007)</a>", 
+      "type": "Aufenthaltserlaubnis", "id": null }, 
+      "title": "Uploads von MUSTERMANN Max (200007)" 
+    } })'>Upload</a>
+    
+Das ist ziemlich lang. Aber wenn ich record_id statt data_record verwende, kriege ich momentan folgendes::  
+  
+  <a href='javascript:Lino.uploads.UploadsByOwner.insert(null,{ 
+    "base_params": { "mt": 20, "type": 2, "mk": 117 } },
+    { "record_id": -99999 })'>Upload</a>
+    
+Das kann nicht funktionieren, weil er die known value `type` nicht 
+richtig übergibt (muss auch `typeHidden´ setzen).
+Und wenn er's täte, bin ich nicht sicher, was FormPanel dann daraus macht.

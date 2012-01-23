@@ -182,53 +182,94 @@ add('3', _("Waiting for registry"))
   #~ (3  , _("Waiting for registry")   ), # Warteregister
 #~ )
 
-BEID_CARD_TYPES = {
-  '1' : dict(en=u"Belgian citizen",de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
-  '6' : dict(en=u"Kids card (< 12 year)",de=u"Kind unter 12 Jahren"),
-  '8' : dict(en=u"Habilitation",fr=u"Habilitation",nl=u"Machtiging"),
-  '11' : dict(
-        en=u"Foreigner card type A",
-        nl=u"Bewijs van inschrijving in het vreemdelingenregister - Tijdelijk verblijf",
-        fr=u"Certificat d'inscription au registre des étrangers - Séjour temporaire",
-        de=u"Bescheinigung der Eintragung im Ausländerregister - Vorübergehender Aufenthalt",
-      ),
-  '12' : dict(
-        en=u"Foreigner card type B",
-        nl=u"Bewijs van inschrijving in het vreemdelingenregister",
-        fr=u"Certificat d'inscription au registre des étrangers",
-        de=u"Bescheinigung der Eintragung im Ausländerregister",
-      ),
-  '13' : dict(
-        en=u"Foreigner card type C",
-        nl=u"Identiteitskaart voor vreemdeling",
-        fr=u"Carte d'identité d'étranger",
-        de=u"Personalausweis für Ausländer",
-      ),
-  '14' : dict(
-        en=u"Foreigner card type D",
-        nl=u"EG - langdurig ingezetene",
-        fr=u"Résident de longue durée - CE",
-        de=u"Daueraufenthalt - EG",
-      ),
-  '15' : dict(
-        en=u"Foreigner card type E",
-        nl=u"Verklaring van inschrijving",
-        fr=u"Attestation d’enregistrement",
-        de=u"Anmeldebescheinigung",
-      ),
-  '16' : dict(
-        en=u"Foreigner card type E+",
-      ),
-  '17' : dict(
-        en=u"Foreigner card type F",
-        nl=u"Verblijfskaart van een familielid van een burger van de Unie",
-        fr=u"Carte de séjour de membre de la famille d’un citoyen de l’Union",
-        de=u"Aufenthaltskarte für Familienangehörige eines Unionsbürgers",
-      ),
-  '18' : dict(
-        en=u"Foreigner card type F+",
-      ),
-}
+class BeIdCardType(ChoiceList):
+    """
+    List of Belgian Identification Card Types.
+    
+    """
+    label = _("eID card type")
+    
+add = BeIdCardType.add_item
+add('1',_("Belgian citizen")) 
+# ,de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
+add('6', _("Kids card (< 12 year)")) 
+#,de=u"Kind unter 12 Jahren"),
+add('8', _("Habilitation")) 
+#,fr=u"Habilitation",nl=u"Machtiging")
+add('11', _("Foreigner card A"))
+        #~ nl=u"Bewijs van inschrijving in het vreemdelingenregister - Tijdelijk verblijf",
+        #~ fr=u"Certificat d'inscription au registre des étrangers - Séjour temporaire",
+        #~ de=u"Ausländerkarte A Bescheinigung der Eintragung im Ausländerregister - Vorübergehender Aufenthalt",
+add('12', _("Foreigner card B"))
+        #~ nl=u"Bewijs van inschrijving in het vreemdelingenregister",
+        #~ fr=u"Certificat d'inscription au registre des étrangers",
+        #~ de=u"Ausländerkarte B (Bescheinigung der Eintragung im Ausländerregister)",
+add('13', _("Foreigner card C"))
+        #~ nl=u"Identiteitskaart voor vreemdeling",
+        #~ fr=u"Carte d'identité d'étranger",
+        #~ de=u"C (Personalausweis für Ausländer)",
+add('14', _("Foreigner card D"))
+        #~ nl=u"EG - langdurig ingezetene",
+        #~ fr=u"Résident de longue durée - CE",
+        #~ de=u"Daueraufenthalt - EG",
+add('15', _("Foreigner card E"))
+        #~ nl=u"Verklaring van inschrijving",
+        #~ fr=u"Attestation d’enregistrement",
+        #~ de=u"Anmeldebescheinigung",
+add('16', _("Foreigner card E+"))
+add('17', _("Foreigner card F"))
+        #~ nl=u"Verblijfskaart van een familielid van een burger van de Unie",
+        #~ fr=u"Carte de séjour de membre de la famille d’un citoyen de l’Union",
+        #~ de=u"Aufenthaltskarte für Familienangehörige eines Unionsbürgers",
+add('18', _("Foreigner card F+"))
+
+#~ BEID_CARD_TYPES = {
+  #~ '1' : dict(en=u"Belgian citizen",de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
+  #~ '6' : dict(en=u"Kids card (< 12 year)",de=u"Kind unter 12 Jahren"),
+  #~ '8' : dict(en=u"Habilitation",fr=u"Habilitation",nl=u"Machtiging"),
+  #~ '11' : dict(
+        #~ en=u"Foreigner card type A",
+        #~ nl=u"Bewijs van inschrijving in het vreemdelingenregister - Tijdelijk verblijf",
+        #~ fr=u"Certificat d'inscription au registre des étrangers - Séjour temporaire",
+        #~ de=u"Bescheinigung der Eintragung im Ausländerregister - Vorübergehender Aufenthalt",
+      #~ ),
+  #~ '12' : dict(
+        #~ en=u"Foreigner card type B",
+        #~ nl=u"Bewijs van inschrijving in het vreemdelingenregister",
+        #~ fr=u"Certificat d'inscription au registre des étrangers",
+        #~ de=u"Bescheinigung der Eintragung im Ausländerregister",
+      #~ ),
+  #~ '13' : dict(
+        #~ en=u"Foreigner card type C",
+        #~ nl=u"Identiteitskaart voor vreemdeling",
+        #~ fr=u"Carte d'identité d'étranger",
+        #~ de=u"Personalausweis für Ausländer",
+      #~ ),
+  #~ '14' : dict(
+        #~ en=u"Foreigner card type D",
+        #~ nl=u"EG - langdurig ingezetene",
+        #~ fr=u"Résident de longue durée - CE",
+        #~ de=u"Daueraufenthalt - EG",
+      #~ ),
+  #~ '15' : dict(
+        #~ en=u"Foreigner card type E",
+        #~ nl=u"Verklaring van inschrijving",
+        #~ fr=u"Attestation d’enregistrement",
+        #~ de=u"Anmeldebescheinigung",
+      #~ ),
+  #~ '16' : dict(
+        #~ en=u"Foreigner card type E+",
+      #~ ),
+  #~ '17' : dict(
+        #~ en=u"Foreigner card type F",
+        #~ nl=u"Verblijfskaart van een familielid van een burger van de Unie",
+        #~ fr=u"Carte de séjour de membre de la famille d’un citoyen de l’Union",
+        #~ de=u"Aufenthaltskarte für Familienangehörige eines Unionsbürgers",
+      #~ ),
+  #~ '18' : dict(
+        #~ en=u"Foreigner card type F+",
+      #~ ),
+#~ }
 
 
 
@@ -376,24 +417,27 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         blank=True,null=True,
         verbose_name=_("until"))
         
-    card_type = models.CharField(max_length=20,
-        blank=True,# null=True,
-        verbose_name=_("eID card type"))
-    "The type of the electronic ID card. Imported from TIM."
+    #~ card_type = models.CharField(max_length=20,
+        #~ blank=True,# null=True,
+        #~ verbose_name=_("eID card type"))
+    #~ "The type of the electronic ID card. Imported from TIM."
+    
+    card_type = BeIdCardType.field(blank=True)
     
     card_issuer = models.CharField(max_length=50,
         blank=True,# null=True,
         verbose_name=_("eID card issuer"))
     "The administration who issued this ID card. Imported from TIM."
     
-    eid = dd.FieldSet(_("eID card"),
-        "card_number card_valid_from card_valid_until card_issuer card_type card_type_text",
+    eid_panel = dd.FieldSet(_("eID card"),
+        "card_number card_valid_from card_valid_until card_issuer card_type",
         card_number=_("number"),
         card_valid_from=_("valid from"),
         card_valid_until=_("until"),
         card_issuer=_("issued by"),
-        card_type=_("card type"),
-        card_type_text=_("eID card type"),
+        #~ card_type=_("card type"),
+        #~ card_type_text=_("eID card type"),
+        card_type=_("eID card type"),
         )
     
     noble_condition = models.CharField(max_length=50,
@@ -482,14 +526,14 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
                 #~ raise ValidationError(_("Circular reference"))
         #~ super(Person,self).clean()
         
-    def card_type_text(self,request):
-        if self.card_type:
-            s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
-            if s:
-                return s
-            return _("Unknown card type %r") % self.card_type
-        return _("Not specified") # self.card_type
-    card_type_text.return_type = dd.DisplayField(_("eID card type"))
+    #~ def card_type_text(self,request):
+        #~ if self.card_type:
+            #~ s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
+            #~ if s:
+                #~ return s
+            #~ return _("Unknown card type %r") % self.card_type
+        #~ return _("Not specified") # self.card_type
+    #~ card_type_text.return_type = dd.DisplayField(_("eID card type"))
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"

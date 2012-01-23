@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.notes\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-29 15:30+0000\n"
+"POT-Creation-Date: 2012-01-23 07:46+0000\n"
 "PO-Revision-Date: 2011-10-01 01:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -16,69 +16,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:48
+#: .\models.py:49
 msgid "Note Type"
 msgstr "Notizart"
 
-#: .\models.py:49
+#: .\models.py:50
 msgid "Note Types"
 msgstr "Notizarten"
 
-#: .\models.py:53
+#: .\models.py:54
 msgid "important"
 msgstr "wichtig"
 
-#: .\models.py:55 .\models.py:67
+#: .\models.py:56 .\models.py:68
 msgid "Remark"
 msgstr "Bemerkung"
 
-#: .\models.py:64
+#: .\models.py:65
 msgid "Event Type"
 msgstr "Ereignisart"
 
-#: .\models.py:65
+#: .\models.py:66
 msgid "Event Types"
 msgstr "Ereignisarten"
 
-#: .\models.py:68 .\models.py:99
+#: .\models.py:69 .\models.py:107
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:82
-msgid "Note"
-msgstr "Notiz"
+#: .\models.py:88
+#, fuzzy
+msgid "Event/Note"
+msgstr "Notizart"
 
-#: .\models.py:83 .\config\notes\Note\1.dtl.py:3
-msgid "Notes"
-msgstr "Notizen"
+#: .\models.py:89
+#, fuzzy
+msgid "Events/Notes"
+msgstr "Notizart"
 
-#: .\models.py:86
+#: .\models.py:94
 msgid "Date"
 msgstr "Datum"
 
-#: .\models.py:92
+#: .\models.py:100
 msgid "Note Type (Content)"
 msgstr "Notizart (Inhalt)"
 
-#: .\models.py:95
+#: .\models.py:103
 msgid "Event Type (Form)"
 msgstr "Ereignisart (Form)"
 
-#: .\models.py:97
+#: .\models.py:105
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:204
+#: .\models.py:224
 msgid "My notes"
 msgstr "Meine Notizen"
 
-#: .\models.py:242
+#: .\models.py:277
 msgid "~Notes"
 msgstr "~Notizen"
 
 #: .\config\notes\NoteType\1.dtl.py:3
 msgid "Detail"
 msgstr ""
+
+#~ msgid "Note"
+#~ msgstr "Notiz"
+
+#~ msgid "Notes"
+#~ msgstr "Notizen"
 
 #~ msgid "Event Type (Content)"
 #~ msgstr "Ereignisart (Inhalt)"
@@ -87,10 +95,6 @@ msgstr ""
 #~ msgstr "Bezeichnung"
 
 #~ msgid "Note type"
-#~ msgstr "Notizart"
-
-#, fuzzy
-#~ msgid "Event type"
 #~ msgstr "Notizart"
 
 #~ msgid "note types"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-29 15:30+0000\n"
+"POT-Creation-Date: 2012-01-23 07:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,65 +17,67 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:48
+#: .\models.py:49
 msgid "Note Type"
 msgstr "Type de note"
 
-#: .\models.py:49
+#: .\models.py:50
 msgid "Note Types"
 msgstr "Types de note"
 
-#: .\models.py:53
+#: .\models.py:54
 msgid "important"
 msgstr "important"
 
-#: .\models.py:55 .\models.py:67
+#: .\models.py:56 .\models.py:68
 msgid "Remark"
 msgstr "Remarque"
 
-#: .\models.py:64
+#: .\models.py:65
 msgid "Event Type"
 msgstr "Type d'événement"
 
-#: .\models.py:65
+#: .\models.py:66
 msgid "Event Types"
 msgstr "Types d'événements"
 
-#: .\models.py:68 .\models.py:99
+#: .\models.py:69 .\models.py:107
 msgid "Body"
 msgstr "Corps"
 
-#: .\models.py:82
-msgid "Note"
-msgstr "Note"
+#: .\models.py:88
+#, fuzzy
+msgid "Event/Note"
+msgstr "Type d'événement"
 
-#: .\models.py:83 .\config\notes\Note\1.dtl.py:3
-msgid "Notes"
-msgstr "Notes"
+#: .\models.py:89
+#, fuzzy
+msgid "Events/Notes"
+msgstr "Types d'événements"
 
-#: .\models.py:86
+#: .\models.py:94
 msgid "Date"
 msgstr "Date"
 
-#: .\models.py:92
+#: .\models.py:100
 #, fuzzy
 msgid "Note Type (Content)"
 msgstr "Type d'événement (contenu)"
 
-#: .\models.py:95
+#: .\models.py:103
 #, fuzzy
 msgid "Event Type (Form)"
 msgstr "Type de note (Formulaire)"
 
-#: .\models.py:97
+#: .\models.py:105
 msgid "Subject"
 msgstr "Objet"
 
-#: .\models.py:204
+#: .\models.py:224
 msgid "My notes"
 msgstr "Mes notes"
 
-#: .\models.py:242
+#: .\models.py:277
 #, fuzzy
 msgid "~Notes"
 msgstr "Notes"
@@ -83,6 +85,12 @@ msgstr "Notes"
 #: .\config\notes\NoteType\1.dtl.py:3
 msgid "Detail"
 msgstr ""
+
+#~ msgid "Note"
+#~ msgstr "Note"
+
+#~ msgid "Notes"
+#~ msgstr "Notes"
 
 #~ msgid "Event Type (Content)"
 #~ msgstr "Type d'événement (contenu)"

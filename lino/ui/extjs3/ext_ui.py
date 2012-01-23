@@ -1130,7 +1130,8 @@ tinymce.init({
                     rec = elem2rec_insert(ar,rh,elem)
                     after_show.update(data_record=rec)
 
-                kw.update(on_ready=[self.action_handler(ar.action,None,params,after_show)])
+                kw.update(on_ready=[self.action_handler(ar.action,None,
+                    params,after_show)])
                 #~ kw.update(on_ready=['Lino.%s(undefined,%s,%s);' % (
                     #~ ar.action,
                     #~ py2js(params),
@@ -1790,7 +1791,15 @@ tinymce.init({
 
     def quick_upload_buttons(self,rr):
         """
-        Deserves more documentation.
+        Returns a HTML chunk that displays "quick upload buttons":
+        either one button :guilabel:`[Upload]` 
+        (if the given :class:` request <lino.core.table.TableRequest>`
+        has no rows)
+        or two buttons :guilabel:`[Show]` and :guilabel:`[Edit]` 
+        if it has one row.
+        
+        See also :doc:`/tickets/56`.
+        
         """
         params = dict(base_params=rr.request2kw(self))
         after_show = dict()
@@ -1801,6 +1810,8 @@ tinymce.init({
             if a is not None:
                 elem = rr.create_instance()
                 after_show.update(data_record=elem2rec_insert(rr,rr.ah,elem))
+                #~ after_show.update(record_id=-99999)
+                # see tickets/56
                 return self.action_href_js(a,params,after_show,_("Upload"))
         if len(rr.data_iterator) == 1:
             #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
@@ -1870,7 +1881,7 @@ tinymce.init({
             elif v.action:
                 if True:
                     #~ handler = self.action_handler(v.action,params=v.params)
-                    handler = "function(){%s}" % self.action_handler(v.action,params=v.params)
+                    handler = "function(){%s}" % self.action_handler(v.action,None,v.params)
                     #~ handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (
                         #~ v.action,py2js(v.params or {}))
                     return dict(text=prepare_label(v),handler=js_code(handler))
@@ -1911,7 +1922,7 @@ tinymce.init({
         return self.href_button(url,label)
         
     def action_url_js(self,a,params,after_show):
-        onclick = self.action_handler(a,params,after_show)
+        onclick = self.action_handler(a,None,params,after_show)
         #~ onclick = 'Lino.%s(undefined,%s,%s)' % (
           #~ a,
           #~ py2js(params or {}),

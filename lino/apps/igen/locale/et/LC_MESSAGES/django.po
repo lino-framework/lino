@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-29 15:30+0000\n"
+"POT-Creation-Date: 2012-01-23 07:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,34 +17,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\models.py:109
+#: .\models.py:82
+msgid "Person"
+msgstr ""
+
+#: .\models.py:83
+msgid "Persons"
+msgstr ""
+
+#: .\models.py:90
+msgid "Company"
+msgstr ""
+
+#: .\models.py:91
+msgid "Companies"
+msgstr ""
+
+#: .\models.py:118
 msgid "Sales base account"
 msgstr ""
 
-#: .\models.py:119
+#: .\models.py:128
 msgid "Sales VAT account"
 msgstr ""
 
-#: .\settings.py:81
+#: .\settings.py:83
 msgid "~My menu"
 msgstr ""
 
-#: .\settings.py:133
+#: .\settings.py:135
 msgid "E~xplorer"
 msgstr ""
 
-#: .\settings.py:143
+#: .\settings.py:145
 msgid "~Help"
 msgstr ""
 
-#: .\settings.py:144
+#: .\settings.py:146
 msgid "~User Manual"
 msgstr ""
 
 #: .\config\contacts\Company\1.dtl.py:3
 msgid "Contact"
-msgstr ""
-
-#: .\config\contacts\Company\2.dtl.py:3
-msgid "Sales"
 msgstr ""

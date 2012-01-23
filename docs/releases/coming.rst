@@ -22,6 +22,10 @@ Sichtbare Änderungen
   der zweiten Zeile ungerecht verteilt. "Arbeitgeber" und "Vertreten durch" 
   waren seit der letzten Version breiter geworden, aber dadurch waren die 
   Felder "Stelle" und "Vertragsart" arg zusammengequetscht. 
+  
+- Im Detail einer Person, Reiter "Person", standen bisher zwei Felder 
+  "Kartenart" mit einer Nummer und "eid-Kartenart" mit dem Text, der 
+  diesem Code entspricht. Jetzt ist dort eine Combobox.
 
 Zwei Bugs, die ich in Eupen schon manuell vor dem Release korrigiert hatte:
 
@@ -34,5 +38,8 @@ Zwei Bugs, die ich in Eupen schon manuell vor dem Release korrigiert hatte:
 Upgrade instructions
 --------------------
 
-Database migration required.
-See :func:`lino.apps.dsbe.migrate.migrate_from_1_3_2`.
+- Database migration required.
+  See :func:`lino.apps.dsbe.migrate.migrate_from_1_3_3`.
+
+- Lokale Datei `contacts/Person/eid-content.odt` löschen.
+  
