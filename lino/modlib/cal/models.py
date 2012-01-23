@@ -1001,7 +1001,7 @@ if settings.LINO.use_extensible:
         def summary(cls,self,request):
             "Note that this overrides the database field of same name"
             if self.project:
-                return "%s %s" % (self.project,self.summary)
+                return u"%s %s" % (self.project,self.summary)
             return self.summary
             
         #~ @dd.displayfield(_("Start"))

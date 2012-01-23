@@ -73,7 +73,7 @@ if settings.LINO.user_model:
             
         @classmethod
         def setup_request(self,rr):
-            logger.info("mixins.ByUser.setup_request")
+            #~ logger.info("mixins.ByUser.setup_request")
             if rr.master_instance is None:
                 rr.master_instance = rr.get_user()
                 
