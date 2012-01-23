@@ -989,39 +989,43 @@ class ContractsByType(Contracts):
     
     
   
-if settings.LINO.user_model:
+if True: # settings.LINO.user_model:
   
     from lino.tools import resolve_model, UnresolvedModel
     USER_MODEL = resolve_model(settings.LINO.user_model)
     
-    class ContractsByUser(Contracts):
+    class ContractsSearch(Contracts):
         """
         Shows the job contracts owned by this user.
         """
-        label = _("Job contracts by User")
+        label = _("Job Contracts Search")
         
         parameters = dict(
           user = models.ForeignKey(USER_MODEL,blank=True),
+          #~ user = models.ForeignKey(settings.LINO.user_model,blank=True),
+          type = models.ForeignKey(ContractType,blank=True,verbose_name=_("Only contracts of type")),
           show_past = models.BooleanField(_("past contracts"),default=True),
           show_active = models.BooleanField(_("active contracts"),default=True),
           show_coming = models.BooleanField(_("coming contracts"),default=True),
           today = models.DateField(_("on"),blank=True,default=datetime.date.today),
         )
-        params_template = """show_past show_active show_coming today user"""
-        params_panel_hidden = False
+        params_template = """type show_past show_active show_coming today user"""
+        #~ params_panel_hidden = False
         
         #~ master_key = 'user'
         #~ group_by = ['type']
         group_by = ['person__group']
-        column_names = 'person person__city person__national_id person__gender applies_from applies_until job id user type *'
+        column_names = 'id applies_from applies_until job person person__city person__national_id person__gender user type *'
         
         @classmethod
         def get_request_queryset(cls,rr):
             #~ logger.info("20120114 param_values = %r",rr.param_values)
-            qs = super(ContractsByUser,cls).get_request_queryset(rr)
+            qs = super(ContractsSearch,cls).get_request_queryset(rr)
             #~ user = rr.param_values.get('user',None)
             if rr.param_values.user:
                 qs = qs.filter(user=rr.param_values.user)
+            if rr.param_values.type:
+                qs = qs.filter(type=rr.param_values.type)
             today = rr.param_values.today
             #~ today = rr.param_values.get('today',None) or datetime.date.today()
             #~ show_active = rr.param_values.get('show_active',True)
@@ -1187,7 +1191,7 @@ class ContractsSituation(mixins.Listing):
         return html
 
 
-if dd.is_installed('contacts') and dd.is_installed('jobs'):
+if True: # dd.is_installed('contacts') and dd.is_installed('jobs'):
   
     dd.inject_field(Company,
         'is_jobprovider',
@@ -1200,6 +1204,7 @@ def setup_main_menu(site,ui,user,m):
     m.add_action(JobProviders)
     m.add_action(Jobs)
     m.add_action(Offers)
+    m.add_action(ContractsSearch)
 
 def setup_my_menu(site,ui,user,m): 
     m.add_action(MyContracts)

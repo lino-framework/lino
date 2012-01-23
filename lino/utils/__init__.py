@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -461,6 +461,43 @@ class AttrDict(dict):
             s = d
         d[args[-2]] = args[-1]
     
+
+class Cycler:
+    """
+    Turns a list of items into an endless loop.
+    Useful when generating demo fixtures.
+    
+    >>> def myfunc():
+    ...     yield "a"
+    ...     yield "b"
+    ...     yield "c"
+    
+    >>> c = Cycler(myfunc())
+    >>> s = ""
+    >>> for i in range(10):
+    ...     s += c.pop()
+    >>> print s
+    abcabcabca
+    
+    """
+    def __init__(self,*args):
+    #~ def __init__(self,items):
+        if len(args) == 0:
+            raise ValueError()
+        elif len(args) == 1:
+            self.items = list(args[0])
+        else:
+            self.items = args
+        self.current = 0
+        
+    def pop(self):
+        item = self.items[self.current]
+        self.current += 1
+        if self.current >= len(self.items):
+            self.current = 0
+        return item
+        
+
 
 
 

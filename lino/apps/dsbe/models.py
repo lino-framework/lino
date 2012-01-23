@@ -182,14 +182,14 @@ add('3', _("Waiting for registry"))
   #~ (3  , _("Waiting for registry")   ), # Warteregister
 #~ )
 
-class BeIdCardType(ChoiceList):
+class BeIdCardTypes(ChoiceList):
     """
     List of Belgian Identification Card Types.
     
     """
     label = _("eID card type")
     
-add = BeIdCardType.add_item
+add = BeIdCardTypes.add_item
 add('1',_("Belgian citizen")) 
 # ,de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
 add('6', _("Kids card (< 12 year)")) 
@@ -422,7 +422,7 @@ class Person(Partner,contacts.Person,contacts.Contact,contacts.Born,Printable):
         #~ verbose_name=_("eID card type"))
     #~ "The type of the electronic ID card. Imported from TIM."
     
-    card_type = BeIdCardType.field(blank=True)
+    card_type = BeIdCardTypes.field(blank=True)
     
     card_issuer = models.CharField(max_length=50,
         blank=True,# null=True,
@@ -984,7 +984,7 @@ class MyActivePersons(MyPersons):
         #~ return '0'
     #~ return rr.ui.href_to_request(rr,str(n))
 
-if dd.is_installed('dsbe'):
+if True: # dd.is_installed('dsbe'):
   
   #~ class InvalidClients(Persons):
   class ClientsTest(Persons):
@@ -1034,7 +1034,21 @@ if dd.is_installed('dsbe'):
                         if p1:
                             for (p2,con2) in actives:
                                 if overlap2(p1,p2):
-                                    messages.append("Overlapping contracts %s and %s" % (con1,con2))
+                                    if con1.__class__ == con2.__class__:
+                                        msg = _("%(ctype)s #%(id1)d and #%(id2)d overlap") % dict(
+                                          ctype=con1.__class__._meta.verbose_name_plural,
+                                          id1=con1.pk,
+                                          id2=con2.pk
+                                        )
+                                    else:
+                                        msg = _("%(ctype1)s #%(id1)d and %(ctype2)s #%(id2)d overlap") % dict(
+                                          ctype1=con1.__class__._meta.verbose_name,
+                                          ctype2=con2.__class__._meta.verbose_name,
+                                          id1=con1.pk,
+                                          id2=con2.pk
+                                        )
+                                    #~ messages.append("Overlapping contracts %s and %s" % (con1,con2))
+                                    messages.append(msg)
                             actives.append((p1,con1))
               
             if ar.param_values.invalid_niss:
@@ -1849,26 +1863,57 @@ class RequestsByCourse(CourseRequests):
             obj.content = obj.course.offer.content
         return obj
     
+class RegisterCandidate(dd.RowAction):
+    """
+    Register the given :class:`Candidate` for the given :class:`Course`.
+    This action is available on a row of :class:`CandidatesByCourse`.
+    """
+    label = _("Register")
+    name = "register"
+    def run(self,rr,elem):
+        elem.course = rr.master_instance
+        elem.save()
+        return rr.ui.success_response(refresh_all=True,
+          message=_("%(person)s has been registered to %(course)s") % dict(
+              person=elem.person,course=elem.course))
+
+class UnregisterCandidate(dd.RowAction):
+    """
+    Unregister the given :class:`Candidate` for the given :class:`Course`.
+    This action is available on a row of :class:`ParticipantsByCourse`.
+    """
+    label = _("Unregister")
+    name = "unregister"
+    def run(self,rr,elem):
+        course = elem.course
+        elem.course = None
+        elem.save()
+        return rr.ui.success_response(refresh_all=True,
+          message=_("%(person)s has been unregistered from %(course)s") % dict(person=elem.person,course=course))
+
 class ParticipantsByCourse(RequestsByCourse):
+    """
+    List of participating :class:`Candidates <Candidate>` for the given :class:`Course`.
+    """
     label = _("Participants")
     column_names = 'person remark date_ended ending'
     
     @classmethod
     def setup_actions(self):
-        class Unregister(dd.RowAction):
-            label = _("Unregister")
-            def run(self,rr,elem):
-                course = elem.course
-                elem.course = None
-                elem.save()
-                return rr.ui.success_response(refresh_all=True,
-                  message=_("%(person)s has been unregistered from %(course)s") % dict(person=elem.person,course=course))
-        self.add_action(Unregister())
+        self.add_action(UnregisterCandidate())
 
 class CandidatesByCourse(RequestsByCourse):
+    """
+    List of :class:`Candidates <Candidate>` for the given :class:`Course`
+    which are not registiered.
+    """
     label = _("Candidates")
     column_names = 'person remark content date_submitted'
     #~ can_add = perms.never
+    
+    @classmethod
+    def setup_actions(self):
+        self.add_action(RegisterCandidate())
     
     @classmethod
     def get_request_queryset(self,rr):
@@ -1876,18 +1921,6 @@ class CandidatesByCourse(RequestsByCourse):
             return []
         return self.model.objects.filter(course__isnull=True,
             content__exact=rr.master_instance.offer.content)
-    
-    @classmethod
-    def setup_actions(self):
-        class Register(dd.RowAction):
-            label = _("Register")
-            def run(self,rr,elem):
-                elem.course = rr.master_instance
-                elem.save()
-                return rr.ui.success_response(refresh_all=True,
-                  message=_("%(person)s has been registered to %(course)s") % dict(
-                      person=elem.person,course=elem.course))
-        self.add_action(Register())
     
     @classmethod
     def create_instance(self,req,**kw):
@@ -2115,7 +2148,7 @@ standard model SiteConfig.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 
-if dd.is_installed('dsbe'):
+if True: # dd.is_installed('dsbe'):
 
     from lino.models import SiteConfig
     dd.inject_field(SiteConfig,

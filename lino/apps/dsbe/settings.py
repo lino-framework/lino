@@ -126,7 +126,7 @@ class Lino(Lino):
         #~ for listing in LISTINGS:
             #~ m.add_action(listing,'listing')
         m.add_action(self.modules.jobs.JobsOverview)
-        m.add_action(self.modules.jobs.ContractsByUser)
+        #~ m.add_action(self.modules.jobs.ContractsSearch)
         m.add_action(self.modules.dsbe.OverviewClientsByUser)
         m.add_action(self.modules.dsbe.ClientsTest)
         #~ listings.add_instance_action(lst)

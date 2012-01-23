@@ -9,8 +9,7 @@ Fehlerjagd vor dem Release.
 
     <a href='javascript:Lino.uploads.UploadsByOwner.insert({ "base_params": { "mt": 18, "type": 2, "mk": 200007 } },{ "data_record": { "phantom": true, "data": { "valid_until": null, "description": "", "created": null, "userHidden": 200067, "modified": null, "typeHidden": 2, "user": "lsaffre", "file": "", "owner": "<a href=\"javascript:Lino.dsbe.AllPersons.detail(undefined,{},{record_id:200007})\">MUSTERMANN Max (200007)</a>", "type": "Aufenthaltserlaubnis", "id": null }, "title": "Uploads von MUSTERMANN Max (200007)" } })'>Upload</a>
     
-  Der erst Parameter, `caller` fehlte.
-  
+  Der erste Parameter, `caller` fehlte.  
   Außerdem habe ich Ticket :doc:`/tickets/56` eröffnet.
 
 
@@ -23,12 +22,13 @@ Fehlerjagd vor dem Release.
     
   - Error while evaluating expression "self.sex". 'Person' object has no attribute 'sex'
 
-  Person.card_type ist jetzt auch endlich eine ChoiceList.
+  Person.card_type ist jetzt auch endlich eine ChoiceList namens
+  :class:`lino.apps.dsbe.models.BeIdCardTypes`.
   Folglich müssen diese Texte nun auch via poEdit übersetzt werden.
   
 - Der Trick mit dem base_queryset, das in der Tabelle gespeichert 
-  wird, scheint nun ein Caching-Problem hervorzurufen. 
-    War einfach reproduzierbar, 
+  wird, scheint nun ein Caching-Problem hervorzurufen.
+  War einfach reproduzierbar, 
   indem ich in einer Listenansicht einen Record erstellte. Anschließend wurde 
   dieser Record erst nach einem Server-Neustart sichtbar.
   Seltsam, dass das nicht schon immer so war. 
@@ -40,3 +40,12 @@ Fehlerjagd vor dem Release.
 - CalendarPanel machte "Uncaught TypeError: Cannot call method 'getTime' of null".
   restful_view schickt jetzt für ein GET der Liste niemals einen Phantom-Record 
   mit.
+
+- New utility class :class:`lino.utils.Cycler` used 
+  in :mod:`lino.apps.dsbe.fixtures.demo`.
+  
+- :func:`lino.tools.resolve_field` now returns an :class:`lino.tools.UnresolvedField`  
+
+- Die Aktion :class:`Eintragen <lino.apps.dsbe.models.RegisterCandidate>` 
+  in der Tabelle der :class:`Kandidaten pro Kurs <lino.apps.dsbe.models.CandidatesByCourse>`
+  machte kein Refresh des Fensters.

@@ -1,4 +1,4 @@
-#56 : Cannot yet handle `known_values´ in action buttons
+#56 : Cannot yet handle `known_values` in action buttons
 ========================================================
 
 Der :guilabel:`[Upload]`-Button von 

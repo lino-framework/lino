@@ -976,8 +976,12 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
               Lino.notify(result.message);
           }
       }
-      if (result.refresh_all & panel.containing_window) {
-          panel.containing_window.main_item.refresh();
+      if (result.refresh_all) {
+          console.log("20120123 refresh_all");
+          if (panel.containing_window) {
+            panel.containing_window.main_item.refresh();
+          }
+          else console.log("20120123 cannot refresh_all",panel);
       } else {
           if (result.refresh) panel.refresh();
       }

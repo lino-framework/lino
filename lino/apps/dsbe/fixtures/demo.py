@@ -22,7 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
 
-from lino.utils import i2d
+from lino.utils import i2d, Cycler
 from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
 from lino.utils.babel import babel_values, default_language
@@ -100,19 +100,6 @@ Sales | Vente | Verkauf
 Administration & Finance | Administration & Finance | Verwaltung & Finanzwesen
 """
 
-class Cycle:
-  
-    def __init__(self,*items):
-        self.items = items
-        self.current = 0
-        
-    def pop(self):
-        item = self.items[self.current]
-        self.current += 1
-        if self.current >= len(self.items):
-            self.current = 0
-        return item
-        
 
 
 def objects():
@@ -349,6 +336,8 @@ def objects():
         raise Exception("Expected ValidationError")
       
     
+    CLIENTS = Cycler(andreas,annette,hans,ulrike,erna,tatjana)
+    #~ CLIENTS = Cycler(Person.objects.filter(is_active=True))
     
     
     #~ oshz = Company.objects.get(name=u"ÖSHZ Eupen")
@@ -445,12 +434,24 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield langk(person=iiris,language='est',written='0',spoken='3')
     
     
-    contract = Instantiator('isip.Contract',
+    from lino.modlib.isip.models import ContractType, Contract
+    
+    contract = Instantiator(Contract,
       'type applies_from applies_until',
       user=root).build
     #~ yield contract(1,i2d(20110906),i2d(20111206),person=hans)
     yield contract(1,settings.LINO.demo_date(days=-5*30),
         settings.LINO.demo_date(days=30),person=hans)
+        
+        
+    DURATIONS = Cycler(30,312,480)
+    CTYPES = Cycler(ContractType.objects.all())
+    
+    for i in range(20):
+        yield contract(CTYPES.pop(),
+            settings.LINO.demo_date(-i*7),settings.LINO.demo_date(-i*7+DURATIONS.pop()),
+            person=CLIENTS.pop())
+        
     
     jobtype = Instantiator('jobs.JobType','name').build
     art607 = jobtype(u'Sozialwirtschaft = "majorés"')
@@ -462,9 +463,10 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield jobtype(u'Sonstige')
     
     from lino.modlib.jobs.models import ContractType, JobType
-    PERSONS = Cycle(annette,ulrike,tatjana,hans)
-    CTYPES = Cycle(*[x for x in ContractType.objects.all()])
-    JTYPES = Cycle(*[x for x in JobType.objects.all()])
+    #~ CTYPES = Cycler(*[x for x in ContractType.objects.all()])
+    #~ JTYPES = Cycler(*[x for x in JobType.objects.all()])
+    CTYPES = Cycler(ContractType.objects.all())
+    JTYPES = Cycler(JobType.objects.all())
     
     
     rcycle = mti.insert_child(rcycle,JobProvider)
@@ -474,9 +476,12 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     proaktiv = mti.insert_child(proaktiv,JobProvider)
     yield proaktiv
     
-    PROVIDERS = Cycle(*[x for x in JobProvider.objects.all()])
-    SECTORS = Cycle(*[x for x in Sector.objects.all()])
-    FUNCTIONS = Cycle(*[x for x in Function.objects.all()])
+    #~ PROVIDERS = Cycler(*[x for x in JobProvider.objects.all()])
+    #~ SECTORS = Cycler(*[x for x in Sector.objects.all()])
+    #~ FUNCTIONS = Cycler(*[x for x in Function.objects.all()])
+    PROVIDERS = Cycler(JobProvider.objects.all())
+    SECTORS = Cycler(Sector.objects.all())
+    FUNCTIONS = Cycler(Function.objects.all())
     
     job = Instantiator('jobs.Job','provider type contract_type name').build
     bisajob = job(bisa,art607,1,"bisa")
@@ -486,9 +491,12 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     proaktivjob = job(proaktiv,art607,2,"proaktiv",sector=horeca,function=1)
     yield proaktivjob
     
-    for i in range(10):
+    for i in range(5):
         yield job(PROVIDERS.pop(),JTYPES.pop(),CTYPES.pop(),str(i),
           sector=SECTORS.pop(),function=FUNCTIONS.pop())
+    
+    #~ JOBS = Cycler(*[x for x in Job.objects.all()])
+    JOBS = Cycler(Job.objects.all())
     
     contract = Instantiator('jobs.Contract',
       'type applies_from applies_until job contact',
@@ -510,13 +518,12 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
         settings.LINO.demo_date(-120),settings.LINO.demo_date(-20),
         proaktivjob,proaktiv_dir,person=ulrike)
         
+    DURATIONS = Cycler(30,312,480)
     
-    JOBS = Cycle(*[x for x in Job.objects.all()])
-    
-    for i in range(20):
+    for i in range(5):
         yield contract(CTYPES.pop(),
-            settings.LINO.demo_date(-i),settings.LINO.demo_date(i),
-            JOBS.pop(),None,person=PERSONS.pop())
+            settings.LINO.demo_date(-i*7),settings.LINO.demo_date(-i*7+DURATIONS.pop()),
+            JOBS.pop(),None,person=CLIENTS.pop())
 
     
     jobrequest = Instantiator('jobs.Candidature','job person date_submitted').build
@@ -663,7 +670,8 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.save()
     
     task = Instantiator('cal.Task').build
-    yield task(user=root,start_date=i2d(20110717),summary=u"Anrufen Termin",
+    yield task(user=root,start_date=i2d(20110717),
+        summary=u"Anrufen Termin",
         owner=p)
     
     p = Person.objects.get(name=u"Eierschal Emil")

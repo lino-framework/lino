@@ -119,6 +119,14 @@ def get_field(model,name):
         #~ raise Exception("get_field(%r,%r) got a remote model ?!" % (model,name))
     return fld
   
+class UnresolvedField(object):
+    """
+    Returned by :func:`resolve_field` if the specified field doesn't exist.
+    This case happens when sphinx autodoc tries to import a module.
+    See ticket :doc:`/tickets/4`.
+    """
+    def __init__(self,name):
+        self.name = name
 
 def resolve_field(name,app_label=None):
     """
@@ -132,9 +140,11 @@ def resolve_field(name,app_label=None):
     if len(l) == 2:
         #print "models.get_model(",app_label,l[0],False,")"
         model = models.get_model(app_label,l[0],False)
-        fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
-        assert remote_model is None
-        return fld
+        if model is not None:
+            fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
+            assert remote_model is None
+            return fld
+    return UnresolvedField(name)
 
 
 def requires_apps(self,*app_labels):
