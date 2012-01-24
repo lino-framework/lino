@@ -1,0 +1,7 @@
+#57 : Atomizers
+===============
+
+Die bisherigen StoreField könnten im Model gespeichert werden.
+Und statt dann einen Store mit list_fields, detail_fields 
+und parameter_fields zu haben, werden diese Atomizer-Listen im 
+LayoutHandle gespeichert.

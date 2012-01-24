@@ -4,8 +4,16 @@ Version 1.3.4 (Coming)
 Sichtbare Änderungen
 --------------------
 
+- Die beiden Listings lassen sich jetzt intuitiver bedienen als bisher.
 
-- "in allen Personenlisten, erscheinen die Namen in Kolonne "Name" erst mit
+- Allgemein ist Linos Reaktionsgeschwindigkeit schneller geworden.
+  Hoffe ich jedenfalls. 
+ 
+- Jede Liste hat jetzt neben [csv] zwei neue Buttons [html] und [pdf]. 
+  Der [pdf]-Button funktioniert noch nicht, 
+  aber zum Resultat von [html] erwarte ich euer Feedback.
+  
+- "in allen Personenlisten erscheinen die Namen in Kolonne "Name" erst mit
   Vorname, was sehr verwirrend ist. Wir hätten es viel lieber wenn es mit 
   Nachname, alphabetisch anfing."
 
@@ -23,9 +31,12 @@ Sichtbare Änderungen
   waren seit der letzten Version breiter geworden, aber dadurch waren die 
   Felder "Stelle" und "Vertragsart" arg zusammengequetscht. 
   
-- Im Detail einer Person, Reiter "Person", standen bisher zwei Felder 
-  "Kartenart" mit einer Nummer und "eid-Kartenart" mit dem Text, der 
-  diesem Code entspricht. Jetzt ist dort eine Combobox.
+- Im Detail einer Person standen bisher zwei Felder 
+  "Kartenart" und "eid-Kartenart", 
+  eines mit einer Nummer und das andere mit dem dazugehörigen Text, 
+  der iesem Code entspricht. 
+  Jetzt ist dort eine Combobox.
+  
 
 Zwei Bugs, die ich in Eupen schon manuell vor dem Release korrigiert hatte:
 

@@ -622,22 +622,26 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         for o in find_them('coached_until', today, datetime.timedelta(days=30),
             _("coaching ends"),tab=1):
             yield o
-            
+        
+    @dd.virtualfield(dd.HtmlBox())
     def image(self,request):
-        url = self.get_image_url()
+        url = self.get_image_url(request)
         #~ s = '<img src="%s" width="100%%" onclick="window.open(\'%s\')"/>' % (url,url)
         s = '<img src="%s" width="100%%"/>' % url
         s = '<a href="%s" target="_blank">%s</a>' % (url,s)
         return s
         #~ return '<img src="%s" width="120px"/>' % self.get_image_url()
-    image.return_type = dd.HtmlBox()
+    #~ image.return_type = dd.HtmlBox()
 
     def get_image_parts(self):
         if self.card_number:
             return ("beid",self.card_number+".jpg")
         return ("pictures","contacts.Person.jpg")
-    def get_image_url(self):
-        return settings.MEDIA_URL + "/".join(self.get_image_parts())
+        
+    def get_image_url(self,request):
+        #~ return settings.MEDIA_URL + "/".join(self.get_image_parts())
+        return request.ui.media_url(*self.get_image_parts())
+        
     def get_image_path(self):
         return os.path.join(settings.MEDIA_ROOT,*self.get_image_parts())
         

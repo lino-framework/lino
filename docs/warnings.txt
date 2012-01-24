@@ -1,5 +1,4 @@
 T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:19: (WARNING/2) autodoc can't import/find module 'lino.apps.igen.models', it reported error: "No application labeled 'contacts'.", please check your spelling and sys.path
-t:\hgwork\lino\lino\utils\test.py:docstring of lino.utils.test.TestCase.test_them_all:1: (ERROR/3) Unknown target name: "test".
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
@@ -46,15 +45,6 @@ T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:49: WARNING: py:class reference t
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:65: WARNING: py:class reference target not found: Note
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:78: WARNING: py:class reference target not found: User
 T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:16: WARNING: py:mod reference target not found: lino.apps.igen.models
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:8: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:33: WARNING: py:class reference target not found: lino.utils.tables.AbstractTable
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:35: WARNING: py:class reference target not found: AbstractTable
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:88: WARNING: py:attr reference target not found: known_values
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:92: WARNING: py:attr reference target not found: known_values
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:92: WARNING: py:attr reference target not found: filter.
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:157: WARNING: py:attr reference target not found: AbstractTable.show_slave_grid
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:171: WARNING: py:class reference target not found: lino.utils.tables.AbstractTableRequest
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:179: WARNING: py:class reference target not found: django.db.models.query.QuerySet
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:mod reference target not found: base
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
@@ -62,11 +52,11 @@ T:\hgwork\lino\docs\autodoc\lino.ui.rst:25: WARNING: py:mod reference target not
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference target not found: urls
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:328: WARNING: py:class reference target not found: django.http.HttpResponse
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:345: WARNING: unknown document: /blog/2010/0716
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:345: WARNING: unknown document: /blog/2010/0721
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:345: WARNING: unknown document: /blog/2010/1116
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:345: WARNING: unknown document: /blog/2010/1207
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:336: WARNING: py:class reference target not found: django.http.HttpResponse
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:353: WARNING: unknown document: /blog/2010/0716
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:353: WARNING: unknown document: /blog/2010/0721
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:353: WARNING: unknown document: /blog/2010/1116
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:353: WARNING: unknown document: /blog/2010/1207
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:34: WARNING: py:mod reference target not found: ext_windows
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:8: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:42: WARNING: py:mod reference target not found: ext_store
@@ -74,5 +64,3 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:131: WARNING: unknown document: /
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:253: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:409: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:454: WARNING: py:attr reference target not found: Store.pk_index
-T:\hgwork\lino\docs\autodoc\lino.utils.test.rst:6: WARNING: py:mod reference target not found: lino.modlib.dsbe.tests.dsbe_tests
-T:\hgwork\lino\docs\autodoc\lino.utils.test.rst:12: WARNING: py:class reference target not found: django.test.testcases.TestCase

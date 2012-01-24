@@ -12,6 +12,15 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Layout problem "wrong background color" in Detail of a Note 
+    and parameter panels.
+    
+#.  [pdf] button : generate html table without THEAD, TFOOT and TBODY.
+    Am besten sogar separate Methoden Table.header_html() und Table.body_html().
+    Dazu muss ich vielleicht voerher den Store generalisieren
+    :doc:`/tickets/57`.
+    "StoreField" wird nach "Atomizer" umbenannt und im Model 
+    
 #.  Report Generator (:doc:`/tickets/54`).
     Listings 
     "Personnes par phase d'intégration par AI" 
