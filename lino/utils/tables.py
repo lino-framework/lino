@@ -231,6 +231,15 @@ class AbstractTableRequest(actions.ActorRequest):
             return l
         return self.report.get_request_queryset(self)
         
+    def get_total_count(self):
+        """
+        Calling `len()` on a QuerySet will execute the whole SELECT.
+        See :doc:`/blog/2012/0124`
+        """
+        if self.report.get_data_rows:
+            return len(self.data_iterator)
+        else:
+            return self.data_iterator.count()
         
     def confirm(self,step,*messages):
         if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):

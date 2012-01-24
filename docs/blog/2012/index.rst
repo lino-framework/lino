@@ -31,6 +31,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`22 <0122>`
   |br| 
   :doc:`23 <0123>`
+  :doc:`24 <0124>`
   
 
 .. |Feb| replace:: **February**

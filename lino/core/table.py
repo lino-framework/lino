@@ -640,6 +640,12 @@ class Frame(actors.Actor):
         if self.default_action:
             self.add_action(self.default_action)
 
+    @classmethod
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls
+        if action is None:
+            action = self.default_action
+        return actions.ActorRequest(ui,self,request,action,**kw)
 
 class EmptyTable(Frame):
   

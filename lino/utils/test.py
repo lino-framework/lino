@@ -25,6 +25,8 @@ from django.conf import settings
 from django.utils import simplejson
 from django.utils.importlib import import_module
 from django.test import TestCase as DjangoTestCase
+from django.db import connection, reset_queries
+
 
 class TestCase(DjangoTestCase):
     """
@@ -73,6 +75,20 @@ class TestCase(DjangoTestCase):
     sequence.
     
     """
+    
+    defining_module = None
+    """
+    When you decorate your subclass of TestCase, you must also specify::
+    
+        defining_module = __name__
+
+    Because a decorator will change 
+    your class's  `__module__` attribute 
+    and :meth:`test_them_all` would search 
+    for test methods in the wrong module.
+    
+    """
+    
     #~ def runTest(self,*args,**kw):
         #~ # super(TestCase,self).runTest(*args,**kw)
         #~ m = import_module(self.__module__)
@@ -93,7 +109,7 @@ class TestCase(DjangoTestCase):
         This method will be executed automatically since it's 
         name starts with 'test_'.
         """
-        m = import_module(self.__module__)
+        m = import_module(self.defining_module or self.__module__)
         #~ for k,v in m.__dict__.items():
         for k in sorted(m.__dict__.keys()):
             v = m.__dict__.get(k)
@@ -144,3 +160,25 @@ class TestCase(DjangoTestCase):
         self.assertEqual(response.status_code,200)
         return response
         
+    def check_sql_queries(self,*expected):
+        """
+        Checks whether the specified expected SQL queries match to those 
+        who actually have been emitted.
+        """
+        for i,x1 in enumerate(expected):
+            sql = connection.queries[i]['sql'].strip()
+            x2 = x1.split('[...]')
+            if len(x2) == 2:
+                s = x2.pop().strip()
+                if not sql.endswith(s):
+                    self.fail("SQL %d doesn't end with %s:---\n%s\n---" % (i,s,sql))
+                    
+            self.assertEqual(len(x2),1)
+            s = x2[0].strip()
+            if not sql.startswith(s):
+                self.fail("SQL %d doesn't start with %s:---\n%s\n---" % (i,s,sql))
+        if len(expected) < len(connection.queries):
+            for q in connection.queries[len(expected):]:
+                logger.warning("Unexpected SQL:---\n%s\n---",q['sql'])
+            self.fail("Found unexpected SQL")
+        reset_queries()

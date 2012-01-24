@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -14,3 +14,4 @@
 
 from dsbe_demo_tests import *
 from dsbe_tests import *
+from dsbe_sql_tests import *

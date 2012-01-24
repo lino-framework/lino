@@ -244,7 +244,9 @@ def elem2rec_detailed(ar,rh,elem,**rec):
         last = None
         #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
         recno = 0
-        if len(ar.data_iterator) > 0:
+        #~ if len(ar.data_iterator) > 0:
+        LEN = ar.get_total_count()
+        if LEN > 0:
             if True:
                 # this algorithm is clearly quicker on reports with a few thousand Persons
                 id_list = list(ar.data_iterator.values_list('pk',flat=True))
@@ -266,13 +268,13 @@ def elem2rec_detailed(ar,rh,elem,**rec):
                     if i > 0:
                         #~ prev = ar.queryset[i-1]
                         prev = id_list[i-1]
-                    if i < len(ar.data_iterator) - 1:
+                    if i < len(id_list) - 1:
                         #~ next = ar.queryset[i+1]
                         next = id_list[i+1]
             else:
                 first = ar.queryset[0]
                 last = ar.queryset.reverse()[0]
-                if len(ar.data_iterator) > 200:
+                if ar.get_total_count() > 200:
                     #~ TODO: check performance
                     pass
                 g = enumerate(ar.queryset) # a generator
@@ -293,7 +295,8 @@ def elem2rec_detailed(ar,rh,elem,**rec):
                 if next is not None: next = next.pk
         rec.update(navinfo=dict(
             first=first,prev=prev,next=next,last=last,recno=recno,
-            message=_("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=len(ar.data_iterator))))
+            message=_("Row %(rowid)d of %(rowcount)d") % dict(
+              rowid=recno,rowcount=LEN)))
     return rec
             
     
@@ -1087,15 +1090,19 @@ tinymce.init({
         a = rpt.get_action(action_name)
         if a is None:
             raise Http404("%s has no action %r" % (rpt,action_name))
-        if isinstance(a,actions.ReportAction):
-            ar = rpt.request(self,request,a)
-            #~ ar = table.TableRequest(self,rpt,request,a)
-            rh = ar.ah
-            assert rh.report == rpt
-        else:
-            # e.g. calendar
-            ar = actions.ActionRequest(self,a)
-            rh = rpt.get_handle(self)
+            
+        #~ if isinstance(a,actions.ReportAction):
+            #~ ar = rpt.request(self,request,a)
+            #~ # ar = table.TableRequest(self,rpt,request,a)
+            #~ rh = ar.ah
+            #~ assert rh.report == rpt
+        #~ else:
+            #~ # e.g. calendar
+            #~ ar = actions.ActionRequest(self,a)
+            #~ rh = rpt.get_handle(self)
+            
+        ar = rpt.request(self,request,a)
+        rh = ar.ah
         
         if request.method == 'POST':
             #~ data = rh.store.get_from_form(request.POST)
@@ -1119,7 +1126,9 @@ tinymce.init({
             
             if fmt == 'json':
                 rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
-                total_count = len(ar.data_iterator)
+                #~ return json_response_kw(msg="20120124")
+                #~ total_count = len(ar.data_iterator)
+                total_count = ar.get_total_count()
                 if ar.create_rows:
                     row = ar.create_instance()
                     d = rh.store.row2list(ar,row)
@@ -1295,23 +1304,8 @@ tinymce.init({
             if pk:
                 pass
             else:
-                #~ rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator ]
                 rows = [ rh.store.row2dict(ar,row,rh.store.list_fields) for row in ar.sliced_data_iterator ]
-                #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
-                #~ total_count = ar.total_count
-                total_count = len(ar.data_iterator)
-                #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-                # add extra blank row(s):
-                #~ for i in range(0,ar.extra):
-                if False:
-                    #~ CalendarPanel would give "Uncaught TypeError: Cannot call method 'getTime' of null"
-                    #~ if there are empty rows
-                    if ar.create_rows:
-                        row = ar.create_instance()
-                        d = rh.store.row2list(ar,row)
-                        rows.append(d)
-                        total_count += 1
-                return json_response_kw(count=total_count,rows=rows)
+                return json_response_kw(count=ar.get_total_count(),rows=rows)
         
         if request.method == 'DELETE':
             return self.delete_element(request,rpt,elem)
@@ -1804,7 +1798,8 @@ tinymce.init({
         params = dict(base_params=rr.request2kw(self))
         after_show = dict()
         #~ params = dict(base_params=self.request2kw(rr))
-        if len(rr.data_iterator) == 0:
+        if rr.get_total_count() == 0:
+        #~ if len(rr.data_iterator) == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
             a = rr.report.get_action('insert')
             if a is not None:
@@ -1813,7 +1808,8 @@ tinymce.init({
                 #~ after_show.update(record_id=-99999)
                 # see tickets/56
                 return self.action_href_js(a,params,after_show,_("Upload"))
-        if len(rr.data_iterator) == 1:
+        if rr.get_total_count() == 1:
+        #~ if len(rr.data_iterator) == 1:
             #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
             #~ s = unicode(v[0]) + ':'
             s = ''

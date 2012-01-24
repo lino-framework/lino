@@ -987,6 +987,10 @@ def test16(self):
         result = self.check_json_result(response,'count rows gc_choices title')
         self.assertEqual(result['count'],case[1])
         
+def test17(self):
+    """
+    Test the number of rows returned for certain queries
+    """
     cases = [
       ['contacts/Companies', 24],
       ['dsbe/Persons', 70],

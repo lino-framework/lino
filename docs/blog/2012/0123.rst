@@ -54,7 +54,8 @@ Fehlerjagd vor dem Release.
 - Einige Übersetzungen der labels von .dtl-Dateien waren verschwunden.
   Kann sein, dass ich die .dtl.py-Dateien irgendwann mal gelöscht hatte und 
   `make appdocs` vor dem letzten `make mm` nicht habe laufen lassen. 
-  Und `make appdocs` funktioniert nicht::
+  
+- Und `make appdocs` funktionierte übrigens nicht::
   
     File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 1107, in setup_columns
       for pg in PersonGroup.objects.filter(ref_name__isnull=False).order_by('ref_name'):
@@ -62,5 +63,14 @@ Fehlerjagd vor dem Release.
     django.db.utils.DatabaseError: no such table: dsbe_persongroup
     
 - Das Detail-Fenster von User holte sich jetzt auch die .dtl-Dateien von Person.
-  Das kam, weil :class:`lino.modlib.contacts.models.PersonMixin` nur `Person` hieß. 
+  Das kam, weil :class:`lino.modlib.contacts.models.PersonMixin` 
+  nur `Person` hieß. 
+
+Und dann habe ich in letzter Minute noch mögliche Performance-Probleme festgestellt. 
+Schade! Aber es ist jetzt 23.30 Uhr, ich habe 8 Stunden intensive Fehlerjagd hinter mir... 
+jetzt gehe ich erstmal schlafen, und morgen schaue ich mir die Sachen genauer an. 
+
+TODO: Lino.FormPanel sollte sein loadMask aktivieren (Meldung "Bitte warten"),
+wenn er speichert. Das ist nämlich vor allem bei aktiven Feldern 
+(z.B. Eingabe einer Art60-7-Konvention) lästig.
   

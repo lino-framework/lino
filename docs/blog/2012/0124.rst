@@ -1,0 +1,29 @@
+20120124
+========
+
+Ha! Wie gut, dass ich das Release verschoben habe!
+
+Lino hatte in der Tat ein gewaltiges Performance-Problem: ich hatte gedacht, 
+dass wenn man `len()` von einem QuerySet macht, Django dies automatisch in 
+einen entsprechenden "SELECT COUNT" konvertiert. Aber Pustekuchen, der 
+machte dann jedesmal ein "SELECT * FROM Persons", und zwar ohne LIMIT. 
+Und ich rief das ungeniert mehrere Male pro Request auf.
+
+Interessant, dass mir das bei den Tests mit der Demo-Datenbank gar nicht 
+aufgefallen war.
+Aber bei 5000 Records machte es sich dann doch bemerkbar.
+
+Um das rauszufinden, habe ich übrigens zunächst mal einen TestCase 
+geschrieben: new module :mod:`lino.apps.dsbe.tests.dsbe_sql_tests`.
+
+Das war nicht ganz leicht, eigentlich musste ich zunächst mal ein 
+Test-Framework zum Testen der SQL-Queries aufbauen:
+Added new class attribute 
+:attr:`lino.utils.test.TestCase.defining_module` and
+method :meth:`lino.utils.test.TestCase.check_sql_queries`.
+
+Also fixed a little bug in :mod:`lino.utils.auth`.
+
+
+
+

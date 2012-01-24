@@ -69,6 +69,7 @@ props
     :members:
     :show-inheritance:
 
+
 Unit Tests
 ----------
 
@@ -83,6 +84,13 @@ dsbe_demo_tests
 ~~~~~~~~~~~~~~~
 
 .. automodule:: lino.apps.dsbe.tests.dsbe_demo_tests
+    :members:
+    :show-inheritance:
+
+dsbe_sql_tests
+~~~~~~~~~~~~~~
+
+.. automodule:: lino.apps.dsbe.tests.dsbe_sql_tests
     :members:
     :show-inheritance:
 

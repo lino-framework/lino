@@ -150,7 +150,7 @@ class Contact(mti.MultiTableBase,CountryCity):
         """\
 Returns a one-line string representing this Contact.
 The default returns simply the `name` field, ignoring any parameters, 
-but e.g. :class:`Person` overrides this.
+but e.g. :class:`PersonMixin` overrides this.
         """
         
         #~ try:
@@ -356,7 +356,7 @@ Optional `salutation_options` see :func:`get_salutation`.
     def full_clean(self,*args,**kw):
         l = filter(lambda x:x,[self.last_name,self.first_name])
         self.name = " ".join(l)
-        super(Person,self).full_clean(*args,**kw)
+        super(PersonMixin,self).full_clean(*args,**kw)
 
 
 class Persons(dd.Table):

@@ -14,8 +14,24 @@
 
 """
 
+Overview
+--------
+
 Lino's authentification utilities
 
+Notes
+-----
+
+The source code is at :srcref:`/lino/utils/auth.py`.
+Notes about marked code locations:
+
+[C1] Before logging the error we must create a `request.user` 
+     attribute, otherwise Django might say 
+     "AssertionError: The XView middleware requires authentication 
+     middleware to be installed."
+     
+Documented classes and functions
+--------------------------------
 
 """
 
@@ -76,7 +92,11 @@ if settings.LINO.user_model:
             try:
                 request.user = USER_MODEL.objects.get(username=username)
             except USER_MODEL.DoesNotExist,e:
-                logger.error("Unknown username %s from request %s",u,request)
+                request.user = None  # [C1]
+                logger.error("Unknown username %s from request %s",
+                  username,request)
+                """
+                """
                 #~ u = USER_MODEL(username=username)
                 #~ u.full_clean()
                 #~ u.save()
