@@ -13,21 +13,25 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module contains "quick" tests that are 
-run with only the ``std`` fixture. You can run only these tests by issuing::
+This module runs a series of tests on whether Lino issues the correct SQL requests.
+
+You can run only these tests by issuing::
 
   python manage.py test dsbe.SqlTest
 
 See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_sql_tests.py`.
 
-  Overriding settings
-  See https://docs.djangoproject.com/en/dev/topics/testing/#overriding-settings
-  
-  "Regardless of the value of the DEBUG setting in your configuration file, all Django tests run with DEBUG=False. This is to ensure that the observed output of your code matches what will be seen in a production setting."  
-  (https://docs.djangoproject.com/en/dev/topics/testing)
-  
-[Note1] When using Django's override_settings decorator, 
-        we need to set :attr:`lino.utils.test.TestCase.defining_module`.
+"Regardless of the value of the DEBUG setting in your configuration file, 
+all Django tests run with DEBUG=False. This is to ensure that the observed 
+output of your code matches what will be seen in a production setting."  
+(https://docs.djangoproject.com/en/dev/topics/testing)
+
+Fortunately Django gives a possibility to override this:
+`Overriding settings <https://docs.djangoproject.com/en/dev/topics/testing/#overriding-settings>`_ 
+
+[Note1] 
+Because we are applying Django's `override_settings` decorator *to the whole class*, 
+we need to also set :attr:`lino.utils.test.TestCase.defining_module`.
   
   
 """
@@ -41,7 +45,6 @@ import datetime
 NOW = datetime.datetime.now() 
 
 from django.conf import settings
-from django.db import connection, reset_queries
 from django.test.utils import override_settings
 
 from lino.utils import i2d
@@ -64,25 +67,6 @@ from lino.utils.test import TestCase
 class SqlTest(TestCase):
     defining_module = __name__  # [Note1]
     
-    def check_sql_queries(self,*expected):
-        for i,x1 in enumerate(expected):
-            sql = connection.queries[i]['sql'].strip()
-            x2 = x1.split('[...]')
-            if len(x2) == 2:
-                s = x2.pop().strip()
-                if not sql.endswith(s):
-                    self.fail("SQL %d doesn't end with %s:---\n%s\n---" % (i,s,sql))
-                    
-            self.assertEqual(len(x2),1)
-            s = x2[0].strip()
-            if not sql.startswith(s):
-                self.fail("SQL %d doesn't start with %s:---\n%s\n---" % (i,s,sql))
-        if len(expected) < len(connection.queries):
-            for q in connection.queries[len(expected):]:
-                logger.warning("Unexpected SQL:---\n%s\n---",q['sql'])
-            self.fail("Found unexpected SQL")
-        reset_queries()
-                    
   
   
 def test01(self):
@@ -119,6 +103,8 @@ def test01(self):
       'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
       'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
       'SELECT "contacts_contact"."id", [...] WHERE "users_user"."username" = root',
+      'SELECT "contacts_contact"."id", [...] ORDER BY "contacts_contact"."name" ASC LIMIT 30',
+      'SELECT COUNT(*) FROM "contacts_company"',
     )
     
     #~ response = self.client.get('/',REMOTE_USER='root')

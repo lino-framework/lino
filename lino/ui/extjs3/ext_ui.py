@@ -1863,26 +1863,26 @@ tinymce.init({
                       #~ xtype='button',text=prepare_label(v),
                       #~ handler=js_code("function() {window.location='%s';}" % v.href))
                 #~ return dict(text=prepare_label(v),href=v.href)
-            if v.href is not None:
-                url = v.href
-            elif v.params is not None:
-                #~ ar = table.TableRequest(self,v.action.actor,None,v.action,**v.params)
-                ar = v.action.actor.request(self,None,v.action,**v.params)
-                url = self.get_request_url(ar)
-            elif v.request is not None:
-                url = self.get_request_url(v.request)
-            elif v.instance is not None:
-                #~ url = self.get_detail_url(v.instance,an='detail')
-                url = self.get_detail_url(v.instance)
-            elif v.action:
+            if v.action:
                 if True:
                     #~ handler = self.action_handler(v.action,params=v.params)
                     handler = "function(){%s}" % self.action_handler(v.action,None,v.params)
-                    #~ handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (
-                        #~ v.action,py2js(v.params or {}))
                     return dict(text=prepare_label(v),handler=js_code(handler))
                 else:
                     url = self.action_url_http(v.action)
+            #~ elif v.params is not None:
+                #~ ar = v.action.actor.request(self,None,v.action,**v.params)
+                #~ url = self.get_request_url(ar)
+            elif v.href is not None:
+                url = v.href
+            elif v.request is not None:
+                url = self.get_request_url(v.request)
+            elif v.instance is not None:
+                handler = "function(){%s}" % self.instance_handler(v.instance)
+                return dict(text=prepare_label(v),handler=js_code(handler))
+              
+                #~ url = self.get_detail_url(v.instance,an='detail')
+                url = self.get_detail_url(v.instance)
             else:
                 # a separator
                 #~ return dict(text=v.label)
@@ -1908,6 +1908,10 @@ tinymce.init({
             return "Lino.%s(%s)" % (a,py2js(caller))
         return "Lino.%s()" % a
 
+    def instance_handler(self,obj):
+        a = obj.__class__._lino_model_report.get_action('detail')
+        return self.action_handler(a,None,None,dict(record_id=obj.pk))
+        
     def action_href_js(self,a,params,after_show=None,label=None):
         """
         Return a HTML chunk for a button that will execute this 
@@ -1918,16 +1922,19 @@ tinymce.init({
         return self.href_button(url,label)
         
     def action_url_js(self,a,params,after_show):
-        onclick = self.action_handler(a,None,params,after_show)
+        return self.js2url(self.action_handler(a,None,params,after_show))
         #~ onclick = 'Lino.%s(undefined,%s,%s)' % (
           #~ a,
           #~ py2js(params or {}),
           #~ py2js(after_show or {}))
         #~ print 20110120, onclick
-        onclick = cgi.escape(onclick)
-        onclick = onclick.replace('"','&quot;')
-        return 'javascript:' + onclick
 
+    def js2url(self,js):
+        js = cgi.escape(js)
+        js = js.replace('"','&quot;')
+        return 'javascript:' + js
+        
+      
     def action_href_http(self,a,label=None,**params):
         """
         Return a HTML chunk for a button that will execute 
@@ -1963,11 +1970,15 @@ tinymce.init({
             
     def href_to(self,obj,text=None):
         if True:
-            a = obj.__class__._lino_model_report.get_action('detail')
-            onclick = 'Lino.%s(undefined,{},{record_id:%s})' % (a,py2js(obj.pk))
-            onclick = cgi.escape(onclick)
-            onclick = onclick.replace('"','&quot;')
-            url = "javascript:" + onclick
+            url = self.js2url(self.instance_handler(obj))
+            #~ a = obj.__class__._lino_model_report.get_action('detail')
+            #~ url = self.action_url_js(a,None,dict(record_id=obj.pk))
+            #~ onclick = self.instance_handler(obj)
+            #~ a = obj.__class__._lino_model_report.get_action('detail')
+            #~ onclick = 'Lino.%s(undefined,{},{record_id:%s})' % (a,py2js(obj.pk))
+            #~ onclick = cgi.escape(onclick)
+            #~ onclick = onclick.replace('"','&quot;')
+            #~ url = "javascript:" + onclick
             return self.href(url,text or cgi.escape(force_unicode(obj)))
         return self.href(
             self.get_detail_url(obj),

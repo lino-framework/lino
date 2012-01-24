@@ -995,7 +995,7 @@ if True: # dd.is_installed('dsbe'):
     label = _("Data Test Clients")
     parameters = dict(
       user = models.ForeignKey(User,blank=True,verbose_name=_("Coached by")),
-      today = models.DateField(_("only active on"),blank=True),
+      today = models.DateField(_("only active on"),blank=True,default=datetime.date.today),
       invalid_niss = models.BooleanField(_("Check NISS validity"),default=True),
       overlapping_contracts = models.BooleanField(_("Check for overlapping contracts"),default=True),
       #~ only_my_persons = models.BooleanField(_("Only my persons"),default=True),
