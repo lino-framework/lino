@@ -69,3 +69,27 @@ Noch Kleinkram:
   Jetzt wird der Termin in der Sprache des Klienten ausgedruckt. 
   Falls der Termin mit keinem Klient verknüpft ist in der Sprache 
   des Benutzers.
+
+- Ha, noch ein kleiner Bug: beim Ausdrucken einer Kandidatenliste::
+
+    Error while evaluating expression "self.candidates()".
+    File "<string>", line 1, in <module>
+    File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 1754, in candidates
+    return CandidatesByCourse().request(master_instance=self)
+    File "t:\hgwork\lino\lino\utils\tables.py", line 439, in __init__
+    raise NotImplementedError("20120104")
+    <type 'exceptions.NotImplementedError'>: 20120104
+
+  Erklärung: 
+  :meth:`lino.apps.dsbe.models.Course.participants`
+  und
+  :meth:`lino.apps.dsbe.models.Course.candidates`
+  versuchten, die Tabelle zu instanziieren. Was jetzt ja nicht mehr nötig ist.
+  
+  Außerdem ist ein TableRequest per se jetzt nicht mehr iterable. 
+  Man muss sich entscheiden für entweder `data_iterator` oder `sliced_data_iterator`.
+  Ob das so toll ist? Sollte ich nicht doch den __iter__ wieder reintun, 
+  und die loopt dann über den sliced iterator. Nur wenn man explizit das 
+  offset und limit ignorieren will (was außer von get_total_count auch 
+  von den druckbaren Versionen (csv, html, pdf) benutzt wird, fragt man 
+  sich den data_iterator.

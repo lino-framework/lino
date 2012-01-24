@@ -12,6 +12,11 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  The CalendarPanel when starting, calls all Events. 
+    Should call only those of current month.
+    
+    http://ext.ensible.com/forum/viewtopic.php?f=2&t=477
+
 #.  Layout problem "wrong background color" in Detail of a Note 
     and parameter panels.
     
@@ -156,6 +161,16 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Eigentlich ist ein TableRequest per se jetzt nicht mehr iterable. 
+    Man muss sich entscheiden für entweder `data_iterator` oder `sliced_data_iterator`.
+    Ob das so toll ist? Sollte ich nicht doch die `__iter__()` wieder reintun, 
+    und die loopt dann über den `sliced_data_iterator`? 
+    Wenn man explizit das 
+    offset und limit ignorieren will (was außer von get_total_count auch 
+    von den druckbaren Versionen (csv, html, pdf) benutzt wird, fragt man 
+    sich den `data_iterator`.
+
 
 #.  The `setup_*` methods in models modules should be inside a Module class which 
     also has a userfriendly (and translated) description of the module.

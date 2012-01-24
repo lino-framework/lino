@@ -3694,6 +3694,7 @@ Lino.CalendarPanel = Ext.extend(Ext.ensible.cal.CalendarPanel,Lino.MainPanel);
 Lino.CalendarPanel = Ext.extend(Lino.CalendarPanel,{
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
   empty_title : "$site.modules.cal.Panel.label"
+  ,activeItem: 1 // 0: day, 1: week
   ,eventStore: Lino.eventStore
   ,ls_url: '/cal/Panel'
   //~ ,disableCaching:true
