@@ -226,6 +226,18 @@ Lino.PanelMixin = {
       if (this.containing_window) return this.containing_window;
       return this.containing_panel.get_containing_window();
   }
+  ,set_window_title : function(title) {
+    //~ this.setTitle(title);
+    var cw = this.get_containing_window();
+
+    if (cw) {
+      //~ console.log('20111202 set_window_title(',title,') for',this.containing_window);
+      //~ if (! this.containing_window.rendered) console.log("WARNING: not rendered!");
+      cw.setTitle(title);
+    } 
+    //~ else console.log('20111202 not set_window_title(',title,') for',this);
+  }
+  
 };
 
 
@@ -986,7 +998,7 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
       }
       if (result.refresh_all) {
           var cw = panel.get_containing_window();
-          console.log("20120123 refresh_all");
+          //~ console.log("20120123 refresh_all");
           if (cw) {
             cw.main_item.refresh();
           }
@@ -1159,7 +1171,7 @@ Lino.MainPanel = {
                 //~ this.params_panel.show();
             if (state) this.params_panel.show();
             else this.params_panel.hide();
-            this.containing_window.doLayout();
+            this.get_containing_window().doLayout();
           }
         }])
       }
@@ -1374,11 +1386,11 @@ Lino.show_detail = function(panel,btn) {
   );
 };
 
-Lino.show_fk_detail = function(combo,e,handler) {
-    //~ console.log(combo,e,handler);
+Lino.show_fk_detail = function(combo,containing_panel,handler) {
+    //~ console.log("Lino.show_fk_detail",combo,e,handler);
     pk = combo.getValue();
     if (pk) {
-        handler(undefined,{},{record_id: pk})
+        handler(containing_panel,{},{record_id: pk})
       } else {
         Lino.notify("$_('Cannot show detail for empty foreign key.')");
       }
@@ -1885,16 +1897,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       //~ console.log('do_when_clean : now!')
       todo();
     }
-  },
-  
-  set_window_title : function(title) {
-    //~ this.setTitle(title);
-    if (this.containing_window) {
-      //~ console.log('20111202 set_window_title(',title,') for',this.containing_window);
-      //~ if (! this.containing_window.rendered) console.log("WARNING: not rendered!");
-      this.containing_window.setTitle(title);
-    } 
-    //~ else console.log('20111202 not set_window_title(',title,') for',this);
   },
   
   goto_record_id : function(record_id) {
@@ -3280,17 +3282,18 @@ Lino.Window = Ext.extend(Ext.Window,{
         Lino.Window.superclass.hide.call(this_);
         Lino.current_window = null;
         if (caller) {
-          if (caller.containing_window) {
-              //~ console.log("20120118 gonna refresh caller's window", 
-                //~ caller.containing_window);
-              Lino.current_window = caller.containing_window;
-              caller.containing_window.main_item.refresh();
+          //~ console.log('20120124 caller is', caller);
+          var cw = caller.get_containing_window();
+          if (cw) {
+              //~ console.log("20120118 refresh caller's window", cw);
+              Lino.current_window = cw;
+              cw.main_item.refresh();
           } else {
-              //~ console.log('20120118 gonna refresh standalone caller', caller);
-              caller.refresh();
+              console.log('20120124 caller had no containing window', caller);
+              //~ caller.refresh();
           }
-        //~ } else {
-          //~ console.log('20110110 cannot refresh: no caller:', this);
+        } else {
+          console.log('20120124 cannot refresh: no caller:', this);
         }
       });
   },

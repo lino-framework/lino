@@ -616,7 +616,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             if not isinstance(layout_handle.layout,table.ListLayout):
                 self.value_template = "new Lino.TwinCombo(%s)"
                 kw.update(onTrigger2Click=js_code(
-                    "function(e){ Lino.show_fk_detail(this,e,Lino.%s)}" % a))
+                    "function(){ Lino.show_fk_detail(this,containing_panel,Lino.%s)}" % a))
         FieldElement.__init__(self,layout_handle,field,**kw)
       
     #~ def submit_fields(self):

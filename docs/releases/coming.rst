@@ -31,6 +31,12 @@ Sichtbare Änderungen
   waren seit der letzten Version breiter geworden, aber dadurch waren die 
   Felder "Stelle" und "Vertragsart" arg zusammengequetscht. 
   
+- Die Kalenderansicht ist jetzt so weit, dass ich auf eure Feedback 
+  warte: was ist noch nötig, damit das Ding benutzbar wird?
+  
+- Einen Termin kann man jetzt ausdrucken. 
+  Allerdings müssen wir noch an der Druckvorlage arbeiten...  
+  
 - Im Detail einer Person standen bisher zwei Felder 
   "Kartenart" und "eid-Kartenart", 
   eines mit einer Nummer und das andere mit dem dazugehörigen Text, 

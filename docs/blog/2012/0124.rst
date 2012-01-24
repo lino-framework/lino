@@ -35,7 +35,8 @@ Noch Kleinkram:
   und gibt dafür jetzt auch dann den richtigen URL, wenn Lino nicht 
   im Root des Webservers installiert ist.
   
-- Wenn man vom Detail einer Person aus auf die Lupe beim Feld "Stadt" 
+- Bug in der Anbindung von Lino.show_fk_detail:
+  Wenn man vom Detail einer Person aus auf die Lupe beim Feld "Stadt" 
   klickte um deren Detail zu öffnen, und dieses Fenster dann wieder schloss,
   dann kam in der Console::
 
@@ -46,3 +47,25 @@ Noch Kleinkram:
     (anonymous function)                        ext-all-debug.js:17401
     h
   
+- Wenn man versuchte, einen Termin auszudrucken, bekam man eine Fehlermeldung  
+  "'Event' object has no attribute 'language'. Ein Fehlerbericht wurde 
+  an den Systemverwalter geschickt."::
+  
+    Traceback (most recent call last):
+      File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 1466, in api_element_view
+        return a.run(ar,elem)
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 541, in run
+        kw = self.run_(rr.request,rr.ui,elem,**kw)
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 519, in run_
+        t = bm.build(self,elem)
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 253, in build
+        tpl_leaf = self.get_template_leaf(action,elem)
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 230, in get_template_leaf
+        lang = elem.get_print_language(self)
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 786, in get_print_language
+        return self.language
+    AttributeError: 'Event' object has no attribute 'language'  
+  
+  Jetzt wird der Termin in der Sprache des Klienten ausgedruckt. 
+  Falls der Termin mit keinem Klient verknüpft ist in der Sprache 
+  des Benutzers.

@@ -581,15 +581,23 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''summary''')
             
+    @dd.displayfield(_("Link URL"))
     def url(self,request): return 'foo'
-    url.return_type = dd.DisplayField(_("Link URL"))
+    #~ url.return_type = dd.DisplayField(_("Link URL"))
     
+    @dd.virtualfield(models.BooleanField(_("all day")))
     def all_day(self,request): 
         return not self.start_time
-    all_day.return_type = models.BooleanField(_("all day"))
+    #~ all_day.return_type = models.BooleanField(_("all day"))
+    
+    @dd.virtualfield(dd.DisplayField(_("Reminder")))
     def reminder(self,request): return 'foo'
-    reminder.return_type = dd.DisplayField(_("Reminder"))
+    #~ reminder.return_type = dd.DisplayField(_("Reminder"))
 
+    def get_print_language(self,bm):
+        if self.project:
+            return self.project.get_print_language(bm)
+        return self.user.language
         
 
 #~ class Task(Component,contacts.PartnerDocument):
