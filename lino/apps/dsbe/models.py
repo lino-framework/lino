@@ -1137,7 +1137,8 @@ if True: # dd.is_installed('dsbe'):
             Q(username=ar.get_user().username) | Q(is_spis=True)
           ).order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
-            if len(r.data_iterator):
+            if r.get_total_count():
+            #~ if len(r.data_iterator):
                 user.my_persons = r
                 yield user
                 
@@ -1196,20 +1197,21 @@ def persons_by_user(ui,requesting_user):
             #~ kv = dict(user=user)
             rr = MyPersons.request(ui,subst_user=user)
             #~ rr = MyPersons.request(ui,known_values=kv)
-            if len(rr.data_iterator):
-                totals[-1] += len(rr.data_iterator)
-                row_total = ui.href_to_request(rr,str(len(rr.data_iterator)))
+            if rr.get_total_count():
+            #~ if len(rr.data_iterator):
+                totals[-1] += rr.get_total_count()
+                row_total = ui.href_to_request(rr,str(rr.get_total_count()))
                 cells = [cgi.escape(unicode(user))] + sums
                 for pg in phases:
                     rr = MyPersonsByGroup.request(ui,master_instance=pg,subst_user=user)
-                    if len(rr.data_iterator):
-                        totals[pg2col[pg.pk]] += len(rr.data_iterator)
-                        text = str(len(rr.data_iterator))
+                    if rr.get_total_count():
+                        totals[pg2col[pg.pk]] += rr.get_total_count()
+                        text = str(rr.get_total_count())
                         text = ui.href_to_request(rr,text)
                         cells[pg2col[pg.pk]] = text
                 def yet_another_column(i,rr):
-                    totals[i] += len(rr.data_iterator)
-                    text = str(len(rr.data_iterator))
+                    totals[i] += rr.get_total_count()
+                    text = str(rr.get_total_count())
                     text = ui.href_to_request(rr,text)
                     cells.append(text)
                 yet_another_column(-3,PersonsByCoach1.request(ui,master_instance=user))
@@ -1857,7 +1859,7 @@ class CourseOffersByProvider(CourseOffers):
 class CourseRequests(dd.Table):
     model = CourseRequest
     order_by = ['date_submitted']
-    active_fields = 'offer'.split()
+    active_fields = ['offer']
 
 class CourseRequestsByPerson(CourseRequests):
     master_key = 'person'

@@ -455,7 +455,8 @@ class TextFieldElement(FieldElement):
                 self.field = field
                 self.editable = field.editable # and not field.primary_key
                 #~ 20111126 kw.update(ls_url=rpt2url(layout_handle.rh.report))
-                kw.update(master_panel=js_code("this"))
+                #~ kw.update(master_panel=js_code("this"))
+                kw.update(containing_panel=js_code("this"))
                 #~ kw.update(title=unicode(field.verbose_name)) 20111111
                 kw.update(title=field.verbose_name)
                 #~ kw.update(tinymce_options=dict(
@@ -883,7 +884,7 @@ class HtmlBoxElement(DisplayElement):
     def get_field_options(self,**kw):
         kw.update(master_panel=js_code("this"))
         kw.update(name=self.field.name)
-        #~ kw.update(containing_panel=js_code("this"))
+        kw.update(containing_panel=js_code("this"))
         kw.update(layout='fit')
         #~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
@@ -1302,7 +1303,7 @@ class GridElement(Container):
         self.columns = columns
         
         #~ kw.update(containing_window=js_code("this.containing_window"))
-        kw.update(containing_panel=js_code("containing_panel"))
+        kw.update(containing_panel=js_code("this"))
         #~ if not rpt.show_params_at_render:
         if rpt.params_panel_hidden:
             kw.update(params_panel_hidden=True)

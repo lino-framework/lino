@@ -338,7 +338,8 @@ class RequestStoreField(StoreField):
         return self.vf.value_from_object(req,obj)
 
     def value2int(self,v):
-        return len(v.data_iterator)
+        #~ return len(v.data_iterator)
+        return v.get_total_count()
         
     def value2list(self,ui,v,l,row):
         return l.append(self.format_value(ui,v))
@@ -352,9 +353,9 @@ class RequestStoreField(StoreField):
         return self.format_value(ui,v)
         
     def format_value(self,ui,v):
-        n = len(v.data_iterator)
+        n = v.get_total_count()
         if n == 0:
-            return '0'
+            return ''
         return ui.href_to_request(v,str(n))
 
 

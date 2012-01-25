@@ -45,6 +45,7 @@ u"""
 
 import yaml
 
+from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actors
@@ -236,10 +237,9 @@ class AbstractTableRequest(actions.ActorRequest):
         Calling `len()` on a QuerySet will execute the whole SELECT.
         See :doc:`/blog/2012/0124`
         """
-        if self.report.get_data_rows:
-            return len(self.data_iterator)
-        else:
+        if isinstance(self.data_iterator,QuerySet):
             return self.data_iterator.count()
+        return len(self.data_iterator)
         
     def confirm(self,step,*messages):
         if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):

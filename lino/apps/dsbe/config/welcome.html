@@ -2,11 +2,11 @@
 #if $user is not None
 <p>User <b>$user.get_full_name() ($user)</b> on $site.title</p>
 
-#from lino.modlib.cal.models import tasks_summary
-$tasks_summary($ui,$user,days_back=90,days_forward=30,max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
 #from lino.apps.dsbe.models import persons_by_user
 $persons_by_user($ui,$user)
+
+#from lino.modlib.cal.models import tasks_summary
+$tasks_summary($ui,$user,days_back=90,days_forward=30,max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
 #else
 <p>user is None. Check your authentication configuration.</p>

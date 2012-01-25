@@ -133,7 +133,11 @@ def prepare_label(mi):
         #~ #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
     #~ return label
     
-        
+def handler_item(mi,handler):
+    handler = "function(){%s}" % handler
+    return dict(text=prepare_label(mi),handler=js_code(handler))
+
+
 #~ def element_name(elem):
     #~ return u"%s (#%s in %s.%s)" % (elem,elem.pk,elem._meta.app_label,elem.__class__.__name__)
 
@@ -1144,16 +1148,17 @@ tinymce.init({
                 bp = ar.request2kw(self)
                 #~ bp = self.request2kw(ar)
                 
-                params = dict(base_params=bp)
+                #~ params = dict()
+                after_show = dict(base_params=bp)
                 
-                after_show = {}
+                #~ after_show = {}
                 if isinstance(ar.action,actions.InsertRow):
                     elem = ar.create_instance()
                     rec = elem2rec_insert(ar,rh,elem)
                     after_show.update(data_record=rec)
 
-                kw.update(on_ready=[self.action_handler(ar.action,None,
-                    params,after_show)])
+                kw.update(on_ready=[
+                    self.action_handler(ar.action,None,None,after_show)])
                 #~ kw.update(on_ready=['Lino.%s(undefined,%s,%s);' % (
                     #~ ar.action,
                     #~ py2js(params),
@@ -1633,7 +1638,8 @@ tinymce.init({
             setattr(tpl,k,getattr(ext_requests,k))
         return tpl
             
-    def templates_view(self,request,app_label=None,actor=None,pk=None,fldname=None,tplname=None,**kw):
+    def templates_view(self,request,
+        app_label=None,actor=None,pk=None,fldname=None,tplname=None,**kw):
       
         if request.method == 'GET':
             from lino.models import TextFieldTemplate
@@ -1641,10 +1647,11 @@ tinymce.init({
                 tft = TextFieldTemplate.objects.get(pk=int(tplname))
                 return HttpResponse(tft.text)
                 
-            rpt = actors.get_actor2(app_label,actor)
-            if rpt is None:
-                model = models.get_model(app_label,actor,False)
-                rpt = model._lino_model_report
+            rpt = self.requested_report(request,app_label,actor)
+            #~ rpt = actors.get_actor2(app_label,actor)
+            #~ if rpt is None:
+                #~ model = models.get_model(app_label,actor,False)
+                #~ rpt = model._lino_model_report
             try:
                 elem = rpt.model.objects.get(pk=pk)
             except ValueError:
@@ -1863,11 +1870,17 @@ tinymce.init({
                       #~ xtype='button',text=prepare_label(v),
                       #~ handler=js_code("function() {window.location='%s';}" % v.href))
                 #~ return dict(text=prepare_label(v),href=v.href)
+            if v.params is not None:
+                ar = v.action.actor.request(self,None,v.action,**v.params)
+                return handler_item(v,self.request_handler(ar))
+                #~ return dict(text=prepare_label(v),handler=js_code(handler))
             if v.action:
                 if True:
                     #~ handler = self.action_handler(v.action,params=v.params)
-                    handler = "function(){%s}" % self.action_handler(v.action,None,v.params)
-                    return dict(text=prepare_label(v),handler=js_code(handler))
+                    return handler_item(v,self.action_handler(v.action))
+                    #~ handler = "function(){%s}" % self.action_handler(
+                        #~ v.action,None,v.params)
+                    #~ return dict(text=prepare_label(v),handler=js_code(handler))
                 else:
                     url = self.action_url_http(v.action)
             #~ elif v.params is not None:
@@ -1878,8 +1891,9 @@ tinymce.init({
             elif v.request is not None:
                 url = self.get_request_url(v.request)
             elif v.instance is not None:
-                handler = "function(){%s}" % self.instance_handler(v.instance)
-                return dict(text=prepare_label(v),handler=js_code(handler))
+                return handler_item(v,self.instance_handler(v.instance))
+                #~ handler = "function(){%s}" % self.instance_handler(v.instance)
+                #~ return dict(text=prepare_label(v),handler=js_code(handler))
               
                 #~ url = self.get_detail_url(v.instance,an='detail')
                 url = self.get_detail_url(v.instance)
@@ -1901,7 +1915,8 @@ tinymce.init({
         if isinstance(a,actions.ShowEmptyTable):
             after_show = dict(record_id=-99998)
         if after_show:
-            return "Lino.%s(%s,%s,%s)" % (a,py2js(caller),py2js(params),py2js(after_show))
+            return "Lino.%s(%s,%s,%s)" % (
+              a,py2js(caller),py2js(params),py2js(after_show))
         if params:
             return "Lino.%s(%s,%s)" % (a,py2js(caller),py2js(params))
         if caller:
@@ -1911,6 +1926,10 @@ tinymce.init({
     def instance_handler(self,obj):
         a = obj.__class__._lino_model_report.get_action('detail')
         return self.action_handler(a,None,None,dict(record_id=obj.pk))
+        
+    def request_handler(self,rr,*args,**kw):
+        bp = rr.request2kw(self,**kw)
+        return self.action_handler(rr.action,after_show=dict(base_params=bp))
         
     def action_href_js(self,a,params,after_show=None,label=None):
         """
@@ -1963,7 +1982,14 @@ tinymce.init({
         #~ return self.build_url('api',rpt.app_label,rpt.__name__,str(obj.pk),*args,**kw)
         return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
+    #~ def request_href_js(self,rr,text=None):
+        #~ url = self.request_handler(rr)
+        #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
+        
     def href_to_request(self,rr,text=None):
+        if True:
+            url = self.js2url(self.request_handler(rr))
+            return self.href(url,text or cgi.escape(force_unicode(rr.label)))
         return self.href(
             self.get_request_url(rr),
             text or cgi.escape(force_unicode(rr.label)))
@@ -2337,7 +2363,7 @@ tinymce.init({
         yield "      main_item: new %s(mainConfig)" % s
         yield "    });"
         yield "  }"
-        yield "  Lino.%s_window.show(after_show);" % action
+        yield "  Lino.%s_window.show(undefined,undefined,undefined,after_show);" % action
         yield "};"
             
     def unused_get_actor(self,*args,**kw):

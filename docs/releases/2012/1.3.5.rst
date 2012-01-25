@@ -1,0 +1,14 @@
+Version 1.3.5
+=============
+
+Released :doc:`/blog/2012/0125`.
+Available from :doc:`/download`.
+
+
+Zwei Bugs behoben:
+
+- :menuselection:`Mein Menu --> Meine Klienten --> <Gruppe>` 
+  funktionierte nicht. 
+  
+- "Inhalt aus Vorlage einfügen" im Text-Editor funktionierte nicht.
+

@@ -12,9 +12,21 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Continue with BCSS-Connection: 
+
+    - add more fields to existing first service
+    - button to quickly create a request
+    
+#.  Eingabe Art-60-7-Konventionen : hier sind ja einige "aktive Felder", 
+    d.h. wenn man eine Stelle eingegeben hat und das Feld verlässt, 
+    wird das Formular ohne zu fragen abgespeichert. Ist auch so gewollt, 
+    weil dadurch einige andere Felder eventuell verändert werden. 
+    Problem ist, dass die Anfrage an den Server oft eine Sekunde dauert, 
+    und Lino sollte das Formular während dieser Zeit mit 
+    einer loadMask ("Bitte warten") deaktivieren.
+    
 #.  The CalendarPanel when starting, calls all Events. 
     Should call only those of current month.
-    
     http://ext.ensible.com/forum/viewtopic.php?f=2&t=477
 
 #.  Layout problem "wrong background color" in Detail of a Note 
@@ -26,7 +38,7 @@ Short-term
     :doc:`/tickets/57`.
     "StoreField" wird nach "Atomizer" umbenannt und im Model 
     
-#.  Report Generator (:doc:`/tickets/54`).
+#.  Continue with Report Generator (:doc:`/tickets/54`).
     Listings 
     "Personnes par phase d'intégration par AI" 
     and
@@ -35,9 +47,6 @@ Short-term
 
 #.  User permissions, roles, functions
 
-#.  Calendar panel: handle eventadd, eventupdate, eventresize, 
-    eventmove events.
-    
 #.  Zwei Ideen zur besseren Ermittlung der Konstruktionsmethode einer Notiz: 
 
     - noch einen optionalen benutzerspezifischen Parameter
@@ -71,18 +80,6 @@ Short-term
     Vielleicht auch keine Liste, sondern nur ein Feld, 
     weil meistens nur ein Ausbildungsabschluss erforderlich ist.
 
-#.  Idee: Notizen, Termine und Verträge mit MTI als Kinder einer 
-    allgemeinen Tabelle "Chronikeinträge" implementieren.
-    Meine momentane Meinung: 
-    eher nicht, denn ich glaube nicht mehr an die Idee einer 
-    allumfassenden Chronik. 
-    Diese Idee wird eher durch die automatischen Kalenderkomponenten
-    verwirklicht.
-    Z.B. führt ein Vertrag zu einer ganzen Serie von "Ereignissen".
-    
-#.  In Comboboxen mit mehr als einer Seite ist die Seitenblätter-Funktion
-    nicht aktiviert.
-    
 #.  Der Ausdruck einer Notiz "Aktennotiz" - "Stand der Dinge" geht nur
     unformatiert (TinyMCE). Sobald man z. B.  den Titel formatiert, kommt
     beim Ausdruck nicht alles raus.
@@ -95,10 +92,6 @@ Short-term
     Stellen zugetragen werden, schnell ein geeigneter Kandidat gefunden
     werden kann.
 
-#.  Printable: 
-    Auch den timestamp der Datei speichern, um ermitteln zu können, 
-    ob sie manuell bearbeitet wurde.
-      
 #.  Remote calendars (:doc:`/tickets/47`):
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
@@ -111,7 +104,7 @@ Short-term
       >>> from lino.apps.dsbe.models import Note
       >>> [int(n.pk) for n in Note.objects.filter(company__isnull=False)]
       [499, 501, 616, 349, 1019, 825, 425, 996, 117, 508, 822, 342, 841, 842]
-
+      
 #.  Attachments of outgoing mails.
     An UploadsByOwner slave in the detail of a mail will be enough for 
     users to upload their files.

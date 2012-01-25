@@ -25,5 +25,5 @@ box5 =
   is_courseprovider is_jobprovider
 
 intro_box = 
-    name id language 
+    prefix name id language 
     vat_id:12 activity:20 type:20 #hourly_rate

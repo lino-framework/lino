@@ -1,6 +1,8 @@
 20120124
 ========
 
+05.00 Uhr.
+
 Wie gut, dass ich das Release verschoben habe:
 
 Lino hatte in der Tat ein gewaltiges Performance-Problem: ich hatte gedacht, 
@@ -93,3 +95,7 @@ Noch Kleinkram:
   offset und limit ignorieren will (was außer von get_total_count auch 
   von den druckbaren Versionen (csv, html, pdf) benutzt wird, fragt man 
   sich den data_iterator.
+
+23.56 Uhr. Voilà, die Version :doc:`/releases/2012/1.3.4` 
+hat die interne QC bestanden und wurde released und in Eupen 
+installiert.

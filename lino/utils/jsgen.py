@@ -102,6 +102,9 @@ def declare_vars(v):
 
 
 def py2js(v):
+    """
+    Note that None values are rendered as ``null`` (not ``undefined``.
+    """
     #~ logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)

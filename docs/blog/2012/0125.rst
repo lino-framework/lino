@@ -1,0 +1,11 @@
+20120125
+========
+
+Bugfix-Release :doc:`/releases/2012/1.3.5` mit zwei scheinbar 
+kleinen Punkten, die aber viel Arbeit waren.
+
+Wenn ich height und width in Lino.Window setze, dann funktionierten FormPanels, 
+deren main_item VBorderPanel hatte, nicht. 
+Uncaught TypeError: Cannot call method 'getHeight' of undefined.
+Z.B. das Detail von CourseOffers.
+

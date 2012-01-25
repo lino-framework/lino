@@ -63,15 +63,15 @@ from lino import dd
 from lino import mixins
 from lino.models import SiteConfig
 
-#~ from lino.modlib.contacts import models as contacts
+from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.notes import models as notes
-#~ from lino.modlib.cal import models as cal
+from lino.modlib.cal import models as cal
 
 if True: # dd.is_installed('igen'):
 
-    contacts = dd.get_app('contacts')
+    #~ contacts = dd.get_app('contacts')
     #~ notes = dd.get_app('notes')
-    cal = dd.get_app('cal')
+    #~ cal = dd.get_app('cal')
 
     #~ class Person(contacts.Person,contacts.Contact):
     #~ class Person(contacts.Contact,contacts.Born,contacts.Person):
