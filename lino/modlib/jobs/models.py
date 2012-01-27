@@ -700,7 +700,8 @@ class ExperiencesByFunction(Experiences):
     
 class ExperiencesByPerson(Experiences,HistoryByPerson):
     "List of job experiences for a known person"
-    model = Experience
+    #~ model = Experience
+    column_names = "company started stopped title sector function country remarks"
     
   
     

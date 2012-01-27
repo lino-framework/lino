@@ -221,6 +221,36 @@ Ext.lib.Ajax.serializeForm = function(form) {
 
 Ext.namespace('Lino');
 
+Lino.current_window = null;
+Lino.window_history = Array();
+
+Lino.open_window = function(win,st) {
+  var cw = Lino.current_window;
+  if (cw) {
+    Lino.window_history.push({
+      window:cw,
+      status:cw.main_item.get_status()
+    });
+  }
+  Lino.current_window = win;
+  win.main_item.set_status(st);
+  win.show();
+};
+
+Lino.close_window = function(status_update) {
+  var cw = Lino.current_window;
+  var ww = Lino.window_history.pop();
+  if (ww) {
+    if (status_update) Ext.apply(ww.status,status_update);
+    ww.window.main_item.set_status(ww.status);
+    Lino.current_window = ww.window;
+  } else {
+    Lino.current_window = null;
+  }
+  if (cw) cw.hide_really();
+};
+  
+
 Lino.PanelMixin = {
   get_containing_window : function (){
       if (this.containing_window) return this.containing_window;
@@ -1157,7 +1187,8 @@ Lino.MainPanel = {
           p['$ext_requests.URL_PARAM_ACTION_NAME'] = this.action_name;
       return p;
   }
-  ,after_show : function(config) {}
+  ,set_status : function(status) {}
+  ,get_status : function() { return {}}
   ,refresh : function() {}
   ,get_base_params : function() { return {}}
   ,add_params_panel : function (tbar) {
@@ -1374,7 +1405,7 @@ Lino.row_action_handler = function(actionName,gridmode) {
 Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel, function(rec) {
       //~ panel.loadMask.show();
-      panel.ls_detail_handler(panel,{
+      panel.ls_detail_handler({
         //~ listeners: {show: function() {panel.loadMask.hide();}}
         },{
         record_id:rec.id,
@@ -1388,11 +1419,11 @@ Lino.show_detail = function(panel,btn) {
   );
 };
 
-Lino.show_fk_detail = function(combo,containing_panel,handler) {
+Lino.show_fk_detail = function(combo,handler) {
     //~ console.log("Lino.show_fk_detail",combo,e,handler);
     pk = combo.getValue();
     if (pk) {
-        handler(containing_panel,{},{record_id: pk})
+        handler({},{record_id: pk})
       } else {
         Lino.notify("$_('Cannot show detail for empty foreign key.')");
       }
@@ -1401,7 +1432,7 @@ Lino.show_fk_detail = function(combo,containing_panel,handler) {
 Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
   console.log('20120125 Lino.show_insert',bp)
-  panel.ls_insert_handler(panel,{},{record_id:-99999,base_params:bp});
+  panel.ls_insert_handler({},{record_id:-99999,base_params:bp});
 };
 
 Lino.show_insert_duplicate = function(panel,btn) {
@@ -1410,7 +1441,7 @@ Lino.show_insert_duplicate = function(panel,btn) {
       var newRec = {};
       Ext.apply(newRec,rec);
       newRec.id = -99999;
-      panel.ls_insert_handler(panel,{data_record:rec});
+      panel.ls_insert_handler({data_record:rec});
     });
 };
 
@@ -1819,9 +1850,21 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
   },
   
-  after_show : function(config){
+  get_status : function(){
+      var st = {
+        base_params: this.get_base_params(),
+        data_record : this.get_current_record()
+        }
+      var tp = this.items.get(0);
+      if (tp instanceof Ext.TabPanel) {
+        st.active_tab = tp.getActiveTab();
+      }
+      return st;
+  },
+  set_status : function(config){
     //~ console.log('20120117 FormPanel.after_show()',config);
     this.clear_base_params();
+    if (config == undefined) config = {};
     if (config.base_params) { this.set_base_params(config.base_params);}
     var tp = this.items.get(0);
     if (tp instanceof Ext.TabPanel) {
@@ -2112,33 +2155,28 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           scope: this,
           success: function(form, action) {
             Lino.notify(action.result.message);
-            var caller = panel.containing_window.caller;
-            if (caller) {
-              panel.containing_window.kill();
-              if (caller.ls_detail_handler) {
-                //~ console.log('20120117 call detail handler after submit_insert');
-                var p = Ext.apply({},panel.get_base_params());
-                delete p.fmt;
-                caller.ls_detail_handler(caller,{},{
-                  record_id:action.result.record_id,
-                  base_params:p
-                  });
-                //~ Lino.show_detail_handler(panel.containing_window.caller.ls_detail_handler)(panel.containing_window.caller);
-              //~ } else {
-                // htmlbox doesn't have a detailwrapper
-                //~ ww.caller.refresh();
-              } 
-            } else {
-                //~ console.log("20120117 submit_insert without caller: use permalink.");
-                var p = Ext.apply({},panel.get_base_params());
-                delete p.fmt;
-                Ext.apply(p,{$ext_requests.URL_PARAM_ACTION_NAME : 'detail'});
-                var url = panel.get_permalink_url() 
-                  + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
-                //~ console.log(url);
-                //~ document.location = url;
-                location.replace(url);
-            }
+            Lino.close_window({data_record:null,record_id:action.result.record_id});
+            //~ var caller = panel.containing_window.caller;
+            //~ if (caller) {
+              //~ panel.containing_window.kill();
+              //~ if (caller.ls_detail_handler) {
+                //~ // console.log('20120117 call detail handler after submit_insert');
+                //~ var p = Ext.apply({},panel.get_base_params());
+                //~ delete p.fmt;
+                //~ caller.ls_detail_handler(caller,{},{
+                  //~ record_id:action.result.record_id,
+                  //~ base_params:p
+                  //~ });
+              //~ } 
+            //~ } else {
+                //~ // console.log("20120117 submit_insert without caller: use permalink.");
+                //~ var p = Ext.apply({},panel.get_base_params());
+                //~ delete p.fmt;
+                //~ Ext.apply(p,{$ext_requests.URL_PARAM_ACTION_NAME : 'detail'});
+                //~ var url = panel.get_permalink_url() 
+                  //~ + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
+                //~ location.replace(url);
+            //~ }
           },
           failure: Lino.on_submit_failure,
           clientValidation: true
@@ -2515,15 +2553,19 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
   },
   
-  after_show : function(config){
-      //~ console.log("20120125 GridPanelafter_show",config);
-      this.clear_base_params();
-      if (config.base_params) { 
-        this.set_base_params(config.base_params);
-        //~ this.getStore().load();
-      }
-      this.refresh(); 
-      //~ this.store.load();
+  get_status : function(){
+    return { base_params : this.get_base_params()};
+  },
+  set_status : function(config){
+    //~ console.log("20120125 GridPanel.set_status",config);
+    this.clear_base_params();
+    if (config == undefined) config = {};
+    if (config.base_params) { 
+      this.set_base_params(config.base_params);
+      //~ this.getStore().load();
+    }
+    this.refresh(); 
+    //~ this.store.load();
   },
   
   refresh : function(unused) { 
@@ -3012,9 +3054,10 @@ Lino.on_load_menu = function(response) {
 
 
 
-Lino.SlavePlugin = function(caller) {
-  this.caller = caller;
-};
+//~ Lino.SlavePlugin = function(caller) {
+  //~ this.caller = caller;
+//~ };
+
 Lino.chooser_handler = function(combo,name) {
   return function(cmp,newValue,oldValue) {
     //~ console.log('Lino.chooser_handler()',cmp,oldValue,newValue);
@@ -3280,7 +3323,7 @@ Lino.Window = Ext.extend(Ext.Window,{
           //~ this.main_item.params_panel.show();
       //~ this.doLayout();
   //~ },
-  show : function(animateTarget,callback,scope,after_show) {
+  unused_show : function(animateTarget,callback,scope,after_show) {
       //~ console.log('20120110 Lino.Window.show()',after_show);
       if (this.caller && !this.caller.get_containing_window) 
           console.log('20120124 WARNING: no get_containing_window in caller', this.caller);
@@ -3295,11 +3338,19 @@ Lino.Window = Ext.extend(Ext.Window,{
       //~ console.log('20120110 Lino.Window.show() 2');
       return this;
   },
-  kill : function() {
-    Lino.Window.superclass.hide.call(this);
-    Lino.current_window = this;
-  },
+  //~ kill : function() {
+    //~ Lino.Window.superclass.hide.call(this);
+    //~ Lino.current_window = this;
+  //~ },
   hide : function() { 
+      var t = this;
+      this.main_item.do_when_clean(function() { 
+        Lino.close_window(t); });
+  },
+  hide_really : function() { 
+    Lino.Window.superclass.hide.call(this);
+  },
+  unused_hide : function() { 
       //~ console.log("Gonna close");
       var this_ = this;
       var caller = this.caller;

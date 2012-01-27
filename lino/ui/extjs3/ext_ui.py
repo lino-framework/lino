@@ -1149,7 +1149,7 @@ tinymce.init({
                     after_show.update(data_record=rec)
 
                 kw.update(on_ready=[
-                    self.action_handler(ar.action,None,None,after_show)])
+                    self.action_handler(ar.action,None,after_show)])
                 #~ kw.update(on_ready=['Lino.%s(undefined,%s,%s);' % (
                     #~ ar.action,
                     #~ py2js(params),
@@ -1440,7 +1440,7 @@ tinymce.init({
                         after_show.update(active_tab=tab)
                 params.update(base_params=bp)
                 return HttpResponse(self.html_page(request,
-                  on_ready=[self.action_handler(a,None,params,after_show)]))
+                  on_ready=[self.action_handler(a,params,after_show)]))
                 #~ return HttpResponse(self.html_page(request,
                   #~ on_ready=['Lino.%s(undefined,%s,%s);' % (
                     #~ a,py2js(params),py2js(after_show))]))
@@ -1902,21 +1902,19 @@ tinymce.init({
             return dict(text=prepare_label(v),href=url)
         return v
         
-    def action_handler(self,a,caller=None,params=None,after_show=None):
+    def action_handler(self,a,params=None,after_show=None):
         if isinstance(a,actions.ShowEmptyTable):
             after_show = dict(record_id=-99998)
         if after_show:
-            return "Lino.%s(%s,%s,%s)" % (
-              a,py2js(caller),py2js(params),py2js(after_show))
+            return "Lino.%s(%s,%s)" % (
+              a,py2js(params),py2js(after_show))
         if params:
-            return "Lino.%s(%s,%s)" % (a,py2js(caller),py2js(params))
-        if caller:
-            return "Lino.%s(%s)" % (a,py2js(caller))
+            return "Lino.%s(%s)" % (a,py2js(params))
         return "Lino.%s()" % a
 
     def instance_handler(self,obj):
         a = obj.__class__._lino_model_report.get_action('detail')
-        return self.action_handler(a,None,None,dict(record_id=obj.pk))
+        return self.action_handler(a,None,dict(record_id=obj.pk))
         
     def request_handler(self,rr,*args,**kw):
         bp = rr.request2kw(self,**kw)
@@ -1932,7 +1930,7 @@ tinymce.init({
         return self.href_button(url,label)
         
     def action_url_js(self,a,params,after_show):
-        return self.js2url(self.action_handler(a,None,params,after_show))
+        return self.js2url(self.action_handler(a,params,after_show))
         #~ onclick = 'Lino.%s(undefined,%s,%s)' % (
           #~ a,
           #~ py2js(params or {}),
@@ -2334,8 +2332,8 @@ tinymce.init({
         
         #~ yield "// js_render_window_action (%s)" % action
         yield "Lino.%s_window = null;" % action
-        yield "Lino.%s = function(caller,mainConfig,after_show) { " % action
-        yield "  if(!caller) caller = Lino.current_window;"
+        yield "Lino.%s = function(mainConfig,status) { " % action
+        #~ yield "  if(!caller) caller = Lino.current_window;"
         yield "  if(!mainConfig) mainConfig = {};"
         yield "  if (Lino.%s_window == null) {" % action
         #~ yield "    console.log('20120117 instantiate Lino.%s_window');" % action
@@ -2350,11 +2348,12 @@ tinymce.init({
               [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
             
         yield "    Lino.%s_window = new Lino.Window({" % action
-        yield "      caller: caller, "
+        #~ yield "      caller: caller, "
         yield "      main_item: new %s(mainConfig)" % s
         yield "    });"
         yield "  }"
-        yield "  Lino.%s_window.show(undefined,undefined,undefined,after_show);" % action
+        yield "  Lino.open_window(Lino.%s_window,status);" % action
+        #~ yield "  Lino.%s_window.show(undefined,undefined,undefined,after_show);" % action
         yield "};"
             
     def unused_get_actor(self,*args,**kw):
