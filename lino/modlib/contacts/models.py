@@ -49,12 +49,40 @@ from lino.models import get_site_config
 
 from lino.modlib.countries.models import CountryCity
 
-from lino.modlib.contacts.utils import get_salutation
+#~ from lino.modlib.contacts.utils import get_salutation
 #~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
 
 
-
 from lino.utils import mti
+
+
+def get_salutation(gender,nominative=False):
+    """
+    Returns "Mr" or "Mrs" or a translation thereof, 
+    depending on the gender and the current babel language.
+    
+    Note that the English abbreviations 
+    `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
+    `Mrs <http://en.wikipedia.org/wiki/Mrs.>`_
+    are written either with (AE) or 
+    without (BE) a dot. Since the babel module doesn't yet allow 
+    to differentiate dialects, we opted for the british version.
+    
+    The optional keyword argument `nominative` used only when babel language
+    is "de": specifying ``nominative=True`` will return "Herr" instead of default 
+    "Herrn" for male persons.
+    
+    """
+    if not gender: return ''
+    if gender == Gender.female: return _("Mrs")
+    from django.utils.translation import pgettext
+    if nominative:
+        return pgettext("nominative salutation","Mr") 
+    return pgettext("indirect salutation","Mr") 
+    
+
+
+
 
 class CompanyType(babel.BabelNamed):
     """
@@ -168,7 +196,9 @@ but e.g. :class:`PersonMixin` overrides this.
         if self.addr1:
             yield self.addr1
         if self.street:
-            yield join_words(self.street_prefix, self.street,self.street_no,self.street_box)
+            yield join_words(
+              self.street_prefix, self.street,
+              self.street_no,self.street_box)
         if self.addr2:
             yield self.addr2
         #lines = [self.name,street,self.addr1,self.addr2]

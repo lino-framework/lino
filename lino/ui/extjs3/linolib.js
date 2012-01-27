@@ -241,7 +241,8 @@ Lino.close_window = function(status_update) {
   var cw = Lino.current_window;
   var ww = Lino.window_history.pop();
   if (ww) {
-    if (status_update) Ext.apply(ww.status,status_update);
+    //~ if (status_update) Ext.apply(ww.status,status_update);
+    if (status_update) status_update(ww);
     ww.window.main_item.set_status(ww.status);
     Lino.current_window = ww.window;
   } else {
@@ -1277,7 +1278,7 @@ Lino.fk_renderer = function(fkname,handlername) {
     //~ if (record.phantom) return '';
     if (value) {
         var s = '<a href="javascript:' ;
-        s += handlername + '(undefined,{},{record_id:\'' + String(record.data[fkname]) + '\'})">';
+        s += handlername + '({},{record_id:\'' + String(record.data[fkname]) + '\'})">';
         s += value + '</a>';
         //~ console.log('Lino.fk_renderer',value,'-->',s);
         return s
@@ -1294,7 +1295,7 @@ Lino.lfk_renderer = function(panel,fkname) {
     if (record.phantom) return '';
     if (value) {
         var s = '<a href="javascript:' ;
-        s += handlername + '(undefined,{},{record_id:\'' + String(record.data[fkname]) + '\'})">';
+        s += handlername + '({},{record_id:\'' + String(record.data[fkname]) + '\'})">';
         s += value + '</a>';
         //~ console.log('Lino.fk_renderer',value,'-->',s);
         return s
@@ -1431,7 +1432,7 @@ Lino.show_fk_detail = function(combo,handler) {
 
 Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
-  console.log('20120125 Lino.show_insert',bp)
+  //~ console.log('20120125 Lino.show_insert',bp)
   panel.ls_insert_handler({},{record_id:-99999,base_params:bp});
 };
 
@@ -2155,7 +2156,23 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           scope: this,
           success: function(form, action) {
             Lino.notify(action.result.message);
-            Lino.close_window({data_record:null,record_id:action.result.record_id});
+            /***
+            If the calling window is a detail on the same table,
+            then it should skip to the new record. But only then.
+            ***/
+            var url = this.ls_url;
+            Lino.close_window(function(ww){
+                if (ww.window.main_item instanceof Lino.FormPanel 
+                    && ww.window.main_item.ls_url == url) {
+                  //~ console.log("20120127 update_status: yes",ww);
+                  ww.status.data_record = null,
+                  ww.status.record_id = action.result.record_id
+                }
+                //~ else console.log("20120127 update_status: no",ww);
+            });
+            //~ Lino.close_window({
+              //~ data_record:null,
+              //~ record_id:action.result.record_id});
             //~ var caller = panel.containing_window.caller;
             //~ if (caller) {
               //~ panel.containing_window.kill();
@@ -3343,9 +3360,10 @@ Lino.Window = Ext.extend(Ext.Window,{
     //~ Lino.current_window = this;
   //~ },
   hide : function() { 
-      var t = this;
+      //~ var t = this;
       this.main_item.do_when_clean(function() { 
-        Lino.close_window(t); });
+        //~ Lino.close_window(t); });
+        Lino.close_window(); });
   },
   hide_really : function() { 
     Lino.Window.superclass.hide.call(this);

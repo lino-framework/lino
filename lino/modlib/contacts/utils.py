@@ -16,17 +16,15 @@
 
 import re
 
-from django.utils.translation import ugettext_lazy as _
+#~ from django.utils.translation import ugettext_lazy as _
 #~ from django.db import models
 #~ from django.conf import settings
 
-from lino.utils import join_words
-from lino.utils.choicelists import Gender
 
-name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VOM','VON','OF', "DE", "DU", "EL", "AL")
-name_prefixes2 = ("VAN DEN","VAN DER","VAN DE","IN HET", "VON DER","DE LA")
-
-
+name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER',
+  'VOM','VON','OF', "DE", "DU", "EL", "AL")
+name_prefixes2 = ("VAN DEN","VAN DER","VAN DE",
+  "IN HET", "VON DER","DE LA")
 
 
 
@@ -49,6 +47,11 @@ Examples:
 >>> name2kw("Van den Bossche Marc Antoine Bernard")
 {'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
 
+In more complicated cases, a comma is required to help:
+
+>>> name2kw("Mombanga born Ngungi, Maria Magdalena")
+{'first_name': 'Maria Magdalena', 'last_name': 'Mombanga born Ngungi'}
+
 
 
 >>> name2kw("Luc Saffre",False)
@@ -70,10 +73,12 @@ Bibliography:
 #. http://www.myheritage.com/support-post-130501/dutch-belgium-german-french-surnames-with-prefix-such-as-van
 
 
-
-
     """
     kw = {}
+    a = s.split(',')
+    if len(a) == 2:
+        if last_name_first:
+            return dict(last_name=a[0].strip(),first_name= a[1].strip())
     a = s.strip().split()
     if len(a) == 1:
         return dict(last_name=a[0])
@@ -161,67 +166,6 @@ Examples:
         kw['street'] = s
     return kw
 
-#~ GENDER_MALE = 'M'
-#~ GENDER_FEMALE = 'F'
-#~ GENDER_CHOICES = ((GENDER_MALE,_('Male')),(GENDER_FEMALE,_('Female')))
-
-
-def get_salutation(gender,nominative=False):
-    """
-    Returns "Mr" or "Mrs" or a translation thereof, 
-    depending on the gender and the current babel language.
-    
-    Note that the English abbreviations 
-    `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
-    `Mrs <http://en.wikipedia.org/wiki/Mrs.>`_
-    are written either with (AE) or 
-    without (BE) a dot. Since the babel module doesn't yet allow 
-    to differentiate dialects, we opted for the british version.
-    
-    The optional keyword argument `nominative` used only when babel language
-    is "de": specifying ``nominative=True`` will return "Herr" instead of default 
-    "Herrn" for male persons.
-    
-    """
-    if not gender: return ''
-    if gender == Gender.female: return _("Mrs")
-    from django.utils.translation import pgettext
-    if nominative:
-        return pgettext("nominative salutation","Mr") 
-    return pgettext("indirect salutation","Mr") 
-    
-def unused_get_salutation(lang,gender,nominative=False):
-    """
-    Returns "Mr" or "Mrs" or a translation thereof, 
-    depending on the gender and the current babel language.
-    
-    Note that the English abbreviations 
-    `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
-    `Mrs <http://en.wikipedia.org/wiki/Mrs.>`_
-    are written either with (AE) or 
-    without (BE) a dot. Since the babel module doesn't yet allow 
-    to differentiate dialects, we opted for the british version.
-    
-    The optional keyword argument `nominative` used only when babel language
-    is "de": specifying ``nominative=True`` will return "Herr" instead of default 
-    "Herrn" for male persons.
-    
-    """
-    if lang == 'de':
-        if gender == Gender.female:
-        #~ if gender == GENDER_FEMALE:
-            return "Frau"
-        if nominative:
-            return "Herr"
-        return "Herrn"
-    if lang == 'fr':
-        if gender == Gender.female:
-            return "Mme"
-        return "M."
-    if gender == Gender.female:
-        return "Mrs"
-    return "Mr"
-        
 
 
 def _test():

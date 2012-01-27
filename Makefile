@@ -45,6 +45,7 @@ tests:
 	python lino\utils\xmlgen.py
 	python lino\utils\bcss.py
 	python lino\utils\rstgen.py
+	python lino\modlib\contacts\utils.py
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings

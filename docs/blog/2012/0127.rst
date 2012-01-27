@@ -1,6 +1,42 @@
 20120127
 ========
 
-Nachtrag "windows_history" zur :doc:`/releases/2012/1.3.6`.
+Window management
+-----------------
+
+Mir ist über Nacht klargeworden, dass im 
+:doc:`neuen Windowing-System </tickets/58>`_
+noch ein Denkfehler war:
+Nachtrag "window_history" zur :doc:`/releases/2012/1.3.6`:
+
+`Lino.current_window` holds the current window.
+
+Lino.window_history is a stack (an Array) of windows that have been hidden 
+but are still "active". Each item is an object with two attributes 
+`window` and `status`.
+
+Lino.open_window(win,status) : pushes the current window and its status to the stack, 
+then shows the new window and activates the given status.
+
+Lino.close_window(update_status) : closes the current window,
+pops the last window from stack and restores it's saved status. 
+If update_status is given, this means "update the stored status 
+of previous window with some new values". 
+This is used after a SubmitInsert.
 
 
+Complicated names
+-----------------
+
+We had a case where :func:`lino.modlib.contacts.utils.name2kw` 
+failed to correctly split a name into first_name and last_name.
+`name2kw` now supports a comma to handle complicated cases.
+
+Noch Bugs im windows management
+-------------------------------
+
+- Lino.fk_renderer (Anklickbare Werte in einer Grid) funktionierte nicht.
+- Das mit dem update_status nach einem SubmitInsert musste 
+  ich noch verfeinern. Wenn man z.B. im Detail einer Person Nr. 123 
+  in NotesByPerson doppelklickte und eine Notiz Nr 14 erstellte, 
+  suchte er nach dem Speichern des Fensters eine Person Nr. 14.
