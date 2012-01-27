@@ -238,6 +238,14 @@ class FunctionsBySector(Functions):
 class Contract(ContractBase):
     """
     A Contract
+    
+    [NOTE1] I applies_from and duration are set, then the default value 
+    for applies_until is computed 26 workdays per month:
+    
+    - duration `312` -> 12 months 
+    - duration `468` -> 18 months 
+    - duration `624` -> 24 months 
+    
     """
     class Meta:
         verbose_name = _("Job Contract")
@@ -418,7 +426,9 @@ class Contract(ContractBase):
                             self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
                             
                 if self.duration and not self.applies_until:
-                    self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
+                    #~ self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
+                    self.applies_until = DurationUnit.months.add_duration(
+                      self.applies_from,self.duration/26)  # [NOTE1]
               
         #~ if self.job_id is not None:
         if self.job:
@@ -1063,6 +1073,7 @@ class JobsOverview(dd.EmptyTable):
       contract_type = models.ForeignKey(ContractType,blank=True,null=True),
       job_type = models.ForeignKey(JobType,blank=True,null=True),
       )
+    params_panel_hidden = True
 
     @dd.displayfield(_("Body"))
     def body(cls,self,req):

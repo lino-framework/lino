@@ -1243,7 +1243,7 @@ Lino.fk_renderer = function(fkname,handlername) {
   //~ console.log('Lino.fk_renderer handler=',handler);
   return function(value, metaData, record, rowIndex, colIndex, store) {
     //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
-    if (record.phantom) return '';
+    //~ if (record.phantom) return '';
     if (value) {
         var s = '<a href="javascript:' ;
         s += handlername + '(undefined,{},{record_id:\'' + String(record.data[fkname]) + '\'})">';

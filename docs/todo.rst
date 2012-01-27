@@ -155,6 +155,11 @@ Short-term
 Medium-term
 -----------
 
+#.  Automatische Auswertungstermine eines Vertrags: 
+    Warnung, wenn sie nicht alle generiert wurden, 
+    weil die maximale Anzahl überschritten wurde.
+
+
 #.  Eigentlich ist ein TableRequest per se jetzt nicht mehr iterable. 
     Man muss sich entscheiden für entweder `data_iterator` oder `sliced_data_iterator`.
     Ob das so toll ist? Sollte ich nicht doch die `__iter__()` wieder reintun, 

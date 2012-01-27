@@ -1,4 +1,4 @@
-Version 1.3.5 (Coming)
+Version 1.3.7 (Coming)
 ======================
 
 Sichtbare Änderungen

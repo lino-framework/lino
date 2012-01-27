@@ -1,0 +1,23 @@
+20120126
+========
+
+Bugfix-Release :doc:`/releases/2012/1.3.6`.
+Außer den dort beschrieben sichtbaren Änderungen 
+folgende interne Änderungen:
+
+- `CustomTable` nenne ich jetzt :class:`lino.utils.tables.VirtualTable`.
+
+- Die Liste "Übersicht Klienten" (`OverviewClientsByUser`) 
+  habe ich umbenannt nach 
+  "Benutzer mit Klienten" 
+  (:class:`UsersWithClients <lino.apps.dsbe.models.UsersWithClients>`).
+
+- In :class:`UsersWithClients <lino.apps.dsbe.models.UsersWithClients>` 
+  wurde in der ersten Kolonne der Benutzername nicht 
+  angezeigt. 
+  Das kam, weil für das EditorGridPanel alle Zeilen einer VirtualTable 
+  "Phantom-Records" sind.
+  `Lino.fk_renderer` testet jetzt nicht mehr auf if `rec.phantom`, 
+  sondern der Server macht dafür eine spezielle 
+  :class:`lino.core.actions.PhantomRow`.
+

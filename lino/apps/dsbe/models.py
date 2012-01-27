@@ -334,12 +334,6 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
     #~ last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
     #~ title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
         
-    def disabled_fields(self,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
-            #~ return settings.LINO.PERSON_TIM_FIELDS
-            return self.__class__.PERSON_TIM_FIELDS
-        return []
-        
     def get_queryset(self):
         return self.model.objects.select_related('country','city','coach1','coach2','nationality')
         
@@ -718,29 +712,14 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         return rr.ui.quick_upload_buttons(r)
     #~ driving_licence.return_type = dd.DisplayField(_("driving licence"))
     
-    @classmethod
-    def site_setup(cls,lino):
-        cls.PERSON_TIM_FIELDS = dd.fields_list(cls,
-          '''name first_name last_name title remarks remarks2
-          zip_code city country street street_no street_box 
-          birth_date gender birth_place coach1 language 
-          phone fax email 
-          card_type card_number card_valid_from card_valid_until
-          noble_condition card_issuer
-          national_id health_insurance pharmacy 
-          bank_account1 bank_account2 
-          gesdos_id activity 
-          is_cpas is_senior is_active newcomer is_deprecated nationality''')
-        #~ super(Person,cls).site_setup(lino)
-
 
 class Contacts(contacts.Contacts):
-    CONTACT_TIM_FIELDS = []
+    imported_fields = []
     
     @classmethod
     def disabled_fields(self,obj,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
-            return self.CONTACT_TIM_FIELDS
+            return self.imported_fields
         return []
         
     @classmethod
@@ -751,16 +730,16 @@ class Contacts(contacts.Contacts):
         
     @classmethod
     def do_setup(self):
-        self.CONTACT_TIM_FIELDS = dd.fields_list(contacts.Contact,
+        super(contacts.Contacts,self).do_setup()
+        self.imported_fields = dd.fields_list(contacts.Contact,
           '''name remarks region 
           zip_code city country 
           street_prefix street street_no street_box 
           addr2
           language 
-          phone fax gsm email url
+          phone fax email url
           is_person is_company
           ''')
-        super(contacts.Contacts,self).do_setup()
         
 class AllContacts(contacts.AllContacts,Contacts):
     pass
@@ -784,20 +763,11 @@ class Company(Partner,contacts.Contact,contacts.CompanyMixin):
     hourly_rate = dd.PriceField(_("hourly rate"),blank=True,null=True)
     #~ is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
     
-    def disabled_fields(self,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
-            return settings.LINO.COMPANY_TIM_FIELDS
-        return []
+    #~ def disabled_fields(self,request):
+        #~ if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+            #~ return settings.LINO.COMPANY_TIM_FIELDS
+        #~ return []
     
-    @classmethod
-    def site_setup(cls,lino):
-        lino.COMPANY_TIM_FIELDS = dd.fields_list(cls,
-            '''name remarks
-            zip_code city country street street_no street_box 
-            language vat_id
-            phone fax email 
-            bank_account1 bank_account2 activity''')
-        #~ super(Company,cls).site_setup(lino)
   
     
 #~ class Companies(reports.Report):
@@ -809,6 +779,15 @@ class Companies(Contacts):
     #~ app_label = 'contacts'
     #~ column_names = ''
     
+    @classmethod
+    def do_setup(cls):
+        super(Companies,cls).do_setup()
+        cls.imported_fields = dd.fields_list(cls.model,
+            '''name remarks
+            zip_code city country street street_no street_box 
+            language vat_id
+            phone fax email 
+            bank_account1 bank_account2 activity''')
 
 #~ class AllPersons(contacts.Persons):
 class AllPersons(Contacts):
@@ -832,6 +811,29 @@ class AllPersons(Contacts):
         return string_concat(
           self.model._meta.verbose_name_plural,' ',_("(all)"))
     
+    @classmethod
+    def do_setup(cls):
+        #~ cls.PERSON_TIM_FIELDS = dd.fields_list(cls,
+        super(AllPersons,cls).do_setup()
+        cls.imported_fields = dd.fields_list(cls.model,
+          '''name first_name last_name title remarks remarks2
+          zip_code city country street street_no street_box 
+          birth_date gender birth_place coach1 language 
+          phone fax email 
+          card_type card_number card_valid_from card_valid_until
+          noble_condition card_issuer
+          national_id health_insurance pharmacy 
+          bank_account1 bank_account2 
+          gesdos_id activity 
+          is_cpas is_senior is_active newcomer is_deprecated nationality''')
+
+    #~ @classmethod
+    #~ def disabled_fields(self,request):
+        #~ if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+            #~ # return settings.LINO.PERSON_TIM_FIELDS
+            #~ return self.__class__.PERSON_TIM_FIELDS
+        #~ return []
+        
 class Persons(AllPersons):
     """
     All Persons except newcomers and inactive persons.
@@ -858,7 +860,7 @@ class Newcomers(AllPersons):
     
     @classmethod
     def init_label(self):
-        return _("newcomers")
+        return _("Newcomers")
 
 
     
@@ -1074,11 +1076,13 @@ if True: # dd.is_installed('dsbe'):
         return obj.error_message
         
     
-  class OverviewClientsByUser(dd.CustomTable):
+  #~ class OverviewClientsByUser(dd.VirtualTable):
+  class UsersWithClients(dd.VirtualTable):
     """
     A customized overview report.
     """
-    label = _("Overview Clients By User")
+    #~ label = _("Overview Clients By User")
+    label = _("Users with Clients")
     #~ column_defaults = dict(width=8)
     
     #~ @classmethod

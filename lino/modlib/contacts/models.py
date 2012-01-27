@@ -214,15 +214,17 @@ but e.g. :class:`PersonMixin` overrides this.
         """
         return linesep.join(self.address_location_lines())
         
+    @dd.displayfield(_("Address"))
     def address_column(self,request):
         return self.address_location(', ')
-    address_column.return_type = dd.DisplayField(_("Address"))
+    #~ address_column.return_type = dd.DisplayField(_("Address"))
     
+    @dd.displayfield(_("Name"))
     def name_column(self,request):
         #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
         #~ return self.get_full_name(nominative=True)
-    name_column.return_type = dd.DisplayField(_("Name"))
+    #~ name_column.return_type = dd.DisplayField(_("Name"))
     
 
 class Contacts(dd.Table):

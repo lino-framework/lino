@@ -480,7 +480,7 @@ class ExtUI(base.UI):
             msg = "Unknown element %r referred in layout %s of %s." % (
                 name,lh.layout,lh.rh.report)
             l = [de.name for de in lh.rh.report.wildcard_data_elems()]
-            model = getattr(lh.rh.report,'model',None) # CustomTables don't have a model
+            model = getattr(lh.rh.report,'model',None) # VirtualTables don't have a model
             if getattr(model,'_lino_slaves',None):
                 l += [str(rpt) for rpt in model._lino_slaves.values()]
             msg += " Possible names are %s." % ', '.join(l)
@@ -1095,16 +1095,6 @@ tinymce.init({
         if a is None:
             raise Http404("%s has no action %r" % (rpt,action_name))
             
-        #~ if isinstance(a,actions.ReportAction):
-            #~ ar = rpt.request(self,request,a)
-            #~ # ar = table.TableRequest(self,rpt,request,a)
-            #~ rh = ar.ah
-            #~ assert rh.report == rpt
-        #~ else:
-            #~ # e.g. calendar
-            #~ ar = actions.ActionRequest(self,a)
-            #~ rh = rpt.get_handle(self)
-            
         ar = rpt.request(self,request,a)
         rh = ar.ah
         
@@ -1134,7 +1124,8 @@ tinymce.init({
                 #~ total_count = len(ar.data_iterator)
                 total_count = ar.get_total_count()
                 if ar.create_rows:
-                    row = ar.create_instance()
+                    #~ row = ar.create_instance()
+                    row = ar.create_phantom_row()
                     d = rh.store.row2list(ar,row)
                     rows.append(d)
                     total_count += 1

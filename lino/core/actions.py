@@ -21,6 +21,7 @@ from django.conf import settings
 
 import lino
 from lino.utils import AttrDict
+from lino.utils import babel
 
 
 #~ from lino.utils import perms
@@ -260,7 +261,65 @@ class Calendar(OpenWindowAction):
         #~ return str(self.actor)+'.'+self.name
     
 
+
+
+
+
+
+
+
+
+
+class VirtualRow(object):
+    def __init__(self,**kw):
+        self.update(**kw)
+        
+    def update(self,**kw):
+        for k,v in kw.items():
+            setattr(self,k,v)
             
+class PhantomRow(VirtualRow):
+    def __init__(self,request,**kw):
+        self._ar = request
+        VirtualRow.__init__(self,**kw)
+        
+    def __unicode__(self):
+        return unicode(self._ar.get_action_title())
+        
+class EmptyTableRow(VirtualRow):
+  
+    def __init__(self,table,**kw):
+        self._table = table
+        VirtualRow.__init__(self,**kw)
+        
+    def __unicode__(self):
+        return unicode(self._table.label)
+        
+    def get_print_language(self,pm):
+        return babel.DEFAULT_LANGUAGE
+        
+    def get_templates_group(self):
+        return self._table.app_label + '/' + self._table.__name__
+    
+    def filename_root(self):
+        return self._table.app_label + '.' + self._table.__name__
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             
 class ActionRequest(object):
     def __init__(self,ui,action):
@@ -286,6 +345,10 @@ class ActorRequest(ActionRequest):
             kw = self.parse_req(request,**kw)
         self.setup(**kw)
         
+    def create_phantom_row(self,**kw):
+        obj = PhantomRow(self,**kw)
+        return obj
+      
     def create_instance(self,**kw):
         if self.create_kw:
             kw.update(self.create_kw)
@@ -382,4 +445,5 @@ class ActorRequest(ActionRequest):
 
     def get_request_url(self,*args,**kw):
         return self.ui.get_request_url(self,*args,**kw)
+
 

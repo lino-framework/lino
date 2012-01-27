@@ -1,0 +1,44 @@
+Version 1.3.6
+=============
+
+Released :doc:`/blog/2012/0126`.
+Available from :doc:`/download`.
+
+Diese Version behebt eine weitere Serie von Bugs.
+Sichtbare Änderungen:
+
+- Im Schnellsuche-Feld kann man jetzt auch eine Partnernummer eingeben.
+
+- In der Liste 
+  :class:`Übersicht Art.60-7-Konventionen <lino.modlib.jobs.models.JobsOverview>`)
+  ist das [parameters]-Panel jetzt par défaut versteckt.
+  Zur Zeit sind die Parameter in dieser Liste mehr eine Spielerei,
+  aber man kann dort z.B. das Datum ändern, um einen Zustand in 
+  Vergangenheit oder Zukunft zu simulieren.
+
+- VSEs und Art-60-7-Konventionen:
+  "Il faudrait aussi que le fait d'encoder une date dans 'beendet am'
+  annule tous les RDV prévus après cette date."
+  --> Stimmt, das machte Lino noch nicht. Jetzt wohl. 
+  
+  Maximale Anzahl automatischer Termine habe ich von 24 auf 36 erhöht.
+  (Nicht wie mit Gerd besprochen 72 ...)
+
+  Und übrigens noch eine kleine Änderung: wenn beide Felder "Laufzeit bis"
+  und "beendet am" leer sind, dann werden jetzt **keine** Termine mehr 
+  generiert (bisher generierte er dann alle 24 Termine).
+  
+- Art-60-7-Konventionen: 
+  Wenn Dauer angegeben ist, wird Standardwert für :guilabel:`Laufzeit bis` 
+  jetzt mit 26 Arbeitstage pro Monat errechnet.
+
+- Bei importierten Partnern waren z.B. Handynummer schreibgeschützt, 
+  dafür die Kartenart nicht. Das war ein Bug bei der Entscheidung, 
+  welche Felder schreibgeschützt sind und welche nicht. Behoben.
+
+- Die Liste "Übersicht Klienten" (`OverviewClientsByUser`) 
+  habe ich umbenannt nach "Benutzer mit Klienten" 
+  (:class:`UsersWithClients <lino.apps.dsbe.models.UsersWithClients>`).
+  Diese Liste ist inhaltlich die Gleiche wie die Tabelle auf der Startseite.
+
+

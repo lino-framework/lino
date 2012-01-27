@@ -71,7 +71,7 @@ from lino.ui import requests as ext_requests
 from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, get_data_elem
-from lino.utils.tables import AbstractTable, AbstractTableRequest, CustomTable
+from lino.utils.tables import AbstractTable, AbstractTableRequest, VirtualTable
 #~ from lino.utils.tables import GridEdit #, ComputedColumn
 
 
@@ -205,6 +205,12 @@ def add_quick_search_filter(qs,search_text):
         if isinstance(field,models.CharField):
             kw = {field.name+"__icontains": search_text}
             q = q | models.Q(**kw)
+    if search_text.isdigit():
+        for field in qs.model._meta.fields:
+            if isinstance(field,(models.IntegerField,models.AutoField)):
+                kw = {field.name: int(search_text)}
+                q = q | models.Q(**kw)
+        
     return qs.filter(q)
     
     
@@ -328,7 +334,7 @@ def register_report(rpt):
         else:
             logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
             slave_reports.append(rpt)
-    elif issubclass(rpt,CustomTable):
+    elif issubclass(rpt,VirtualTable):
         custom_tables.append(rpt)
 
     
@@ -351,9 +357,9 @@ def discover():
     for rpt in actors.actors_list:
         if issubclass(rpt,Table) and rpt is not Table:
             register_report(rpt)
-        elif issubclass(rpt,CustomTable) and rpt is not CustomTable:
+        elif issubclass(rpt,VirtualTable) and rpt is not VirtualTable:
             register_report(rpt)
-        if issubclass(rpt,Frame) and rpt is not Frame:
+        if issubclass(rpt,actors.Frame) and rpt is not actors.Frame:
             register_frame(rpt)
             
     logger.debug("Instantiate model tables...")
@@ -609,114 +615,6 @@ def model2report(m):
         #~ return getattr(obj,name)(request)
     return classmethod(f)
 
-
-class FrameHandle(base.Handle): 
-    def __init__(self,ui,frame):
-        #~ assert issubclass(frame,Frame)
-        self.report = frame
-        base.Handle.__init__(self,ui)
-
-    def get_actions(self,*args,**kw):
-        return self.report.get_actions(*args,**kw)
-        
-    def __str__(self):
-        return "%s on %s" %(self.__class__.__name__,self.report)
-
-class Frame(actors.Actor): 
-  
-    _handle_class = FrameHandle
-    default_action_class = None
-    
-    @classmethod
-    def do_setup(self):
-        #~ logger.info("%s.__init__()",self.__class__)
-        #~ if not self.__class__ is Frame:
-        if self.default_action_class:
-            self.default_action = self.default_action_class(self)
-        if not self.label:
-            self.label = self.default_action.label
-            #~ self.default_action.actor = self
-        super(Frame,self).do_setup()
-        if self.default_action:
-            self.add_action(self.default_action)
-
-    @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls
-        if action is None:
-            action = self.default_action
-        return actions.ActorRequest(ui,self,request,action,**kw)
-
-class EmptyTable(Frame):
-  
-    has_navigator = False
-    default_list_action_name = 'show'
-    default_elem_action_name =  'show'
-    
-    @classmethod
-    def do_setup(self):
-        #~ logger.info("%s.__init__()",self.__class__)
-        #~ if not self.__class__ is Frame:
-        if self is not EmptyTable:
-            assert self.default_action_class is None
-            assert self.label is not None
-            self.default_action = actions.ShowEmptyTable(self)
-            super(Frame,self).do_setup()
-            self.add_action(self.default_action)
-            #~ self.add_action(self.default_action)
-            from lino.mixins.printable import DirectPrintAction
-            self.add_action(DirectPrintAction(self))
-
-            
-    @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls
-        if action is None:
-            action = self.default_action
-        return actions.ActorRequest(ui,self,request,action,**kw)
-        
-    @classmethod
-    def create_instance(self,req,**kw):
-        #~ if self.known_values:
-            #~ kw.update(self.known_values)
-        kw.update(req.param_values)
-
-        #~ for k,v in req.param_values.items():
-            #~ kw[k] = v
-        #~ for k,f in self.parameters.items():
-            #~ kw[k] = f.value_from_object(None)
-        obj = EmptyTableRow(self,**kw)
-        kw = req.ah.store.row2dict(req,obj)
-        obj._data = kw
-        obj.update(**kw)
-        return obj
-    
-    #~ @classmethod
-    #~ def elem_filename_root(self,elem):
-        #~ return self.app_label + '.' + self.__name__
-
-class EmptyTableRow(object):
-  
-    def __init__(self,table,**kw):
-        self._table = table
-        self.update(**kw)
-        
-    def update(self,**kw):
-        for k,v in kw.items():
-            setattr(self,k,v)
-            
-    def __unicode__(self):
-        return unicode(self._table.label)
-        
-    def get_print_language(self,pm):
-        return babel.DEFAULT_LANGUAGE
-        
-    def get_templates_group(self):
-        return self._table.app_label + '/' + self._table.__name__
-    
-    def filename_root(self):
-        return self._table.app_label + '.' + self._table.__name__
-        
 
 class RemoteField(object):
     primary_key = False

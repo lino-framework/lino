@@ -19,7 +19,7 @@ See :class:`lino.core.table.Table` etc.
 """
 
 
-from lino.utils.tables import CustomTable
+from lino.utils.tables import VirtualTable
 #~ from lino.utils.tables import computed
 #~ from lino.utils.tables import ComputedColumn
 
@@ -33,8 +33,8 @@ from lino.core.table import Table
 
 from lino.core.table import summary, summary_row
 
-from lino.core.table import Frame
-from lino.core.table import EmptyTable
+from lino.core.actors import Frame
+from lino.core.actors import EmptyTable
 
 from lino.core.actions import RowAction
 from lino.core.actions import GridEdit, ShowDetailAction

@@ -21,6 +21,7 @@ from lino.ui import base
 
 from lino.ui.base import Handled
 from lino.core import fields
+from lino.core import actions
 from lino.utils import curry
 
 actor_classes = []
@@ -181,7 +182,7 @@ class ActorMetaClass(type):
         cls._setup_doing = False
         
         if classname not in (
-            'Table','AbstractTable','CustomTable',
+            'Table','AbstractTable','VirtualTable',
             'Action','HandledActor','Actor','Frame'):
             if actor_classes is None:
                 #~ logger.debug("%s definition was after discover",cls)
@@ -417,3 +418,91 @@ class Actor(Handled):
             return vf
         return None
               
+
+class FrameHandle(base.Handle): 
+    def __init__(self,ui,frame):
+        #~ assert issubclass(frame,Frame)
+        self.report = frame
+        base.Handle.__init__(self,ui)
+
+    def get_actions(self,*args,**kw):
+        return self.report.get_actions(*args,**kw)
+        
+    def __str__(self):
+        return "%s on %s" %(self.__class__.__name__,self.report)
+
+
+
+class Frame(Actor): 
+  
+    _handle_class = FrameHandle
+    default_action_class = None
+    
+    @classmethod
+    def do_setup(self):
+        #~ logger.info("%s.__init__()",self.__class__)
+        #~ if not self.__class__ is Frame:
+        if self.default_action_class:
+            self.default_action = self.default_action_class(self)
+        if not self.label:
+            self.label = self.default_action.label
+            #~ self.default_action.actor = self
+        super(Frame,self).do_setup()
+        if self.default_action:
+            self.add_action(self.default_action)
+
+    @classmethod
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls
+        if action is None:
+            action = self.default_action
+        return actions.ActorRequest(ui,self,request,action,**kw)
+
+class EmptyTable(Frame):
+  
+    has_navigator = False
+    default_list_action_name = 'show'
+    default_elem_action_name =  'show'
+    
+    @classmethod
+    def do_setup(self):
+        #~ logger.info("%s.__init__()",self.__class__)
+        #~ if not self.__class__ is Frame:
+        if self is not EmptyTable:
+            assert self.default_action_class is None
+            assert self.label is not None
+            self.default_action = actions.ShowEmptyTable(self)
+            super(Frame,self).do_setup()
+            self.add_action(self.default_action)
+            #~ self.add_action(self.default_action)
+            from lino.mixins.printable import DirectPrintAction
+            self.add_action(DirectPrintAction(self))
+
+            
+    @classmethod
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls
+        if action is None:
+            action = self.default_action
+        return actions.ActorRequest(ui,self,request,action,**kw)
+        
+    @classmethod
+    def create_instance(self,req,**kw):
+        #~ if self.known_values:
+            #~ kw.update(self.known_values)
+        kw.update(req.param_values)
+
+        #~ for k,v in req.param_values.items():
+            #~ kw[k] = v
+        #~ for k,f in self.parameters.items():
+            #~ kw[k] = f.value_from_object(None)
+        obj = actions.EmptyTableRow(self,**kw)
+        kw = req.ah.store.row2dict(req,obj)
+        obj._data = kw
+        obj.update(**kw)
+        return obj
+    
+    #~ @classmethod
+    #~ def elem_filename_root(self,elem):
+        #~ return self.app_label + '.' + self.__name__
+

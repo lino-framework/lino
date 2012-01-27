@@ -281,7 +281,14 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         self.save_auto_tasks()
         
     def save_auto_tasks(self):
+        """
+        Generate automatic calendar events owned by this contract.
         
+        [NOTE1] if one event has been manually rescheduled, all following events
+        adapt to the new rythm.
+        
+        """
+        MAX_AUTO_EVENTS = 36
         if self.user:
             if self.applies_from and self.exam_policy_id \
                 and self.exam_policy.every > 0 \
@@ -289,23 +296,22 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 date = self.applies_from
             else:
                 date = None
-            for i in range(24):
+            until = self.date_ended or self.applies_until
+            if not until:
+                date = None
+            for i in range(MAX_AUTO_EVENTS):
                 if date:
                     date = self.exam_policy.every_unit.add_duration(date,self.exam_policy.every)
                     #~ date = DurationUnit.months.add_duration(
                             #~ date,self.exam_policy.every)
-                    if self.applies_until and date > self.applies_until:
+                    if until and date > until:
                         date = None
                 subject = _("Evaluation %d") % (i + 1)
                 e = update_auto_event(
                   i + 1,
                   self.user,
                   date,subject,self)
-                """
-                if one event has been manually rescheduled, all following events
-                adapt to the new rythm.
-                """
-                if e:
+                if e: # [NOTE1]
                     date = e.start_date
                         
             if self.applies_until:

@@ -22,11 +22,11 @@ u"""
 ... ]
 
 
->>> class CitiesAndInhabitants(CustomTable):
+>>> class CitiesAndInhabitants(VirtualTable):
 ...     column_names = "country city population"
 ...     @classmethod
-...         def get_data_rows(self,ar):
-...             return DATA
+...     def get_data_rows(self,ar):
+...         return DATA
 ...
 ...     @column(label="Country")
 ...     def country(obj,ar):
@@ -248,7 +248,7 @@ class AbstractTableRequest(actions.ActorRequest):
 
         
         
-class CustomTableRequest(AbstractTableRequest):
+class VirtualTableRequest(AbstractTableRequest):
     pass
         
     #~ def setup(self,**kw):
@@ -324,7 +324,7 @@ class Group(object):
 
 class AbstractTable(actors.Actor):
     """
-    Base class for :class:`Table` and `CustomTable`.
+    Base class for :class:`Table` and `VirtualTable`.
     
     An AbstractTable is the definition of a tabular data view, 
     usually displayed in a Grid (but it's up to the user 
@@ -596,7 +596,7 @@ class AbstractTable(actors.Actor):
     #~ return o
         
 
-class CustomTable(AbstractTable):
+class VirtualTable(AbstractTable):
     """
     An :class:`AbstractTable` that works on an arbitrary 
     list of "rows", using only computed columns.
@@ -607,7 +607,7 @@ class CustomTable(AbstractTable):
         self = cls
         if action is None:
             action = self.default_action
-        return CustomTableRequest(ui,self,request,action,**kw)
+        return VirtualTableRequest(ui,self,request,action,**kw)
         #~ return self.default_action.request(ui,**kw)
 
 

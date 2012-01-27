@@ -127,7 +127,8 @@ class Lino(Lino):
             #~ m.add_action(listing,'listing')
         m.add_action(self.modules.jobs.JobsOverview)
         #~ m.add_action(self.modules.jobs.ContractsSearch)
-        m.add_action(self.modules.dsbe.OverviewClientsByUser)
+        #~ m.add_action(self.modules.dsbe.OverviewClientsByUser)
+        m.add_action(self.modules.dsbe.UsersWithClients)
         m.add_action(self.modules.dsbe.ClientsTest)
         #~ listings.add_instance_action(lst)
         #~ for lst in dsbe.FooListing.objects.all():

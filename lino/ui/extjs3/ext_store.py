@@ -37,6 +37,8 @@ from lino.ui import requests as ext_requests
 
 import lino
 from lino.core import table
+from lino.core import actions
+from lino.core import actors
 from lino import dd
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
@@ -98,7 +100,6 @@ class StoreField(object):
         return l.append(v)
         
     def value2dict(self,ui,v,d,row):
-        #~ d[self.options['name']] = v
         d[self.name] = v
 
     def value2html(self,ui,v):
@@ -722,7 +723,7 @@ class Store:
         self.list_fields = []
         self.detail_fields = []
         
-        if not issubclass(rh.report,table.Frame):
+        if not issubclass(rh.report,actors.Frame):
             self.collect_fields(self.list_fields,rh.get_list_layout())
             
         dtl = rh.report.get_detail()
@@ -943,9 +944,13 @@ class Store:
             #~ raise Exception()
         #~ logger.info("20120107 Store %s row2list(%s)", self.report.model, obj2str(row))
         l = []
-        for fld in self.list_fields:
-            v = fld.full_value_from_object(request,row)
-            fld.value2list(request.ui,v,l,row)
+        if isinstance(row,actions.PhantomRow):
+            for fld in self.list_fields:
+                fld.value2list(request.ui,None,l,row)
+        else:
+            for fld in self.list_fields:
+                v = fld.full_value_from_object(request,row)
+                fld.value2list(request.ui,v,l,row)
             #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
         return l
       
