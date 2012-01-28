@@ -1213,28 +1213,33 @@ if True: # dd.is_installed('contacts') and dd.is_installed('jobs'):
 
 
 def setup_main_menu(site,ui,user,m): 
-    m.add_action(JobProviders)
-    m.add_action(Jobs)
-    m.add_action(Offers)
-    m.add_action(ContractsSearch)
+    if user.is_spis:
+        m = m.add_menu("jobs",_("Jobs"))
+        m.add_action(JobProviders)
+        m.add_action(Jobs)
+        m.add_action(Offers)
+        m.add_action(ContractsSearch)
 
 def setup_my_menu(site,ui,user,m): 
-    m.add_action(MyContracts)
+    if user.is_spis:
+        m.add_action(MyContracts)
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("jobs",_("~Jobs"))
-    m.add_action(ContractTypes)
-    m.add_action(JobTypes)
-    m.add_action(Sectors)
-    m.add_action(Functions)
-    m.add_action(StudyTypes)
-    m.add_action(Schedules)
-    m.add_action(Regimes)
+    if user.is_spis:
+        m  = m.add_menu("jobs",_("~Jobs"))
+        m.add_action(ContractTypes)
+        m.add_action(JobTypes)
+        m.add_action(Sectors)
+        m.add_action(Functions)
+        m.add_action(StudyTypes)
+        m.add_action(Schedules)
+        m.add_action(Regimes)
             
     
     
   
 def setup_explorer_menu(site,ui,user,m):
-    m.add_action(Contracts)
-    m.add_action(Candidatures)
-    m.add_action(Studies)
+    if user.is_spis:
+        m.add_action(Contracts)
+        m.add_action(Candidatures)
+        m.add_action(Studies)

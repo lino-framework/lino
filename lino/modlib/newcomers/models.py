@@ -135,6 +135,7 @@ class Newcomers(AllPersons):
         
 class NewClients(AllPersons):
     label = _("New Clients")
+    use_as_default_report = False
     
     parameters = dict(
         user = models.ForeignKey(users.User,verbose_name=_("Show agents for newcomer")),
@@ -216,6 +217,14 @@ class UsersByNewcomer(dd.VirtualTable):
             since=ar.param_values.since))
         
         
+#~ if settings.LINO.user_model:
+dd.inject_field(users.User,
+    'is_newcomers',
+    models.BooleanField(
+        verbose_name=_("is Newcomers user")
+    ),"""Whether this user is responsible for dispatching of Newcomers.
+    Deserves more documentation.
+    """)
 
 dd.inject_field(Person,
     'broker',
@@ -235,19 +244,23 @@ class Module(dd.Module):
   
   
 def setup_main_menu(site,ui,user,m):
-    m.add_action(Newcomers)
+    if user.is_newcomers:
+        m.add_action(Newcomers)
   
 def setup_my_menu(site,ui,user,m): 
-    #~ m.add_action(MyCompetences)
-    m  = m.add_menu("newcomers",_("Newcomers"))
-    m.add_action(UsersByNewcomer)
-    m.add_action(NewClients)
+    if user.is_newcomers:
+        #~ m.add_action(MyCompetences)
+        m  = m.add_menu("newcomers",_("Newcomers"))
+        m.add_action(UsersByNewcomer)
+        m.add_action(NewClients)
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("newcomers",_("Newcomers"))
-    m.add_action(Brokers)
-    m.add_action(Faculties)
+    if user.is_newcomers:
+        m  = m.add_menu("newcomers",_("Newcomers"))
+        m.add_action(Brokers)
+        m.add_action(Faculties)
   
 def setup_explorer_menu(site,ui,user,m):
-    m.add_action(Competences)
+    if user.is_newcomers:
+        m.add_action(Competences)
   

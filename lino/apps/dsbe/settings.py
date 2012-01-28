@@ -119,8 +119,7 @@ class Lino(Lino):
         m.add_action(self.modules.dsbe.CourseProviders)
         m.add_action(self.modules.dsbe.CourseOffers)
         
-        m = main.add_menu("jobs",_("Jobs"))
-        self.modules.jobs.setup_main_menu(self,ui,user,m)
+        self.modules.jobs.setup_main_menu(self,ui,user,main)
         
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:

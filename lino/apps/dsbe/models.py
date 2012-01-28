@@ -2119,116 +2119,116 @@ standard model SiteConfig.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 
-if True: # dd.is_installed('dsbe'):
+#~ if True: # dd.is_installed('dsbe'):
 
-    from lino.models import SiteConfig
-    dd.inject_field(SiteConfig,
-        'job_office',
-        #~ models.ForeignKey("contacts.Company",
-        models.ForeignKey(settings.LINO.company_model,
-            blank=True,null=True,
-            verbose_name=_("Local job office"),
-            related_name='job_office_sites'),
-        """The Company whose contact persons will be 
-        choices for `Person.job_office_contact`.
+from lino.models import SiteConfig
+dd.inject_field(SiteConfig,
+    'job_office',
+    #~ models.ForeignKey("contacts.Company",
+    models.ForeignKey(settings.LINO.company_model,
+        blank=True,null=True,
+        verbose_name=_("Local job office"),
+        related_name='job_office_sites'),
+    """The Company whose contact persons will be 
+    choices for `Person.job_office_contact`.
+    """)
+    
+dd.inject_field(SiteConfig,
+    'propgroup_skills',
+    models.ForeignKey('properties.PropGroup',
+        blank=True,null=True,
+        verbose_name=_("Skills Property Group"),
+        related_name='skills_sites'),
+    """The property group to be used as master 
+    for the SkillsByPerson report.""")
+dd.inject_field(SiteConfig,
+    'propgroup_softskills',
+    models.ForeignKey('properties.PropGroup',
+        blank=True,null=True,
+        verbose_name=_("Soft Skills Property Group"),
+        related_name='softskills_sites',
+        ),
+    """The property group to be used as master 
+    for the SoftSkillsByPerson report."""
+    )
+dd.inject_field(SiteConfig,
+    'propgroup_obstacles',
+    models.ForeignKey('properties.PropGroup',
+        blank=True,null=True,
+        verbose_name=_("Obstacles Property Group"),
+        related_name='obstacles_sites',
+        ),
+    """The property group to be used as master 
+    for the ObstaclesByPerson report."""
+    )
+
+dd.inject_field(SiteConfig,
+    'residence_permit_upload_type',
+    #~ UploadType.objects.get(pk=2)
+    models.ForeignKey("uploads.UploadType",
+        blank=True,null=True,
+        verbose_name=_("Upload Type for residence permit"),
+        related_name='residence_permit_sites'),
+    """The UploadType for `Person.residence_permit`.
+    """)
+    
+dd.inject_field(SiteConfig,
+    'work_permit_upload_type',
+    #~ UploadType.objects.get(pk=2)
+    models.ForeignKey("uploads.UploadType",
+        blank=True,null=True,
+        verbose_name=_("Upload Type for work permit"),
+        related_name='work_permit_sites'),
+    """The UploadType for `Person.work_permit`.
+    """)
+
+dd.inject_field(SiteConfig,
+    'driving_licence_upload_type',
+    #~ UploadType.objects.get(pk=2)
+    models.ForeignKey("uploads.UploadType",
+        blank=True,null=True,
+        verbose_name=_("Upload Type for driving licence"),
+        related_name='driving_licence_sites'),
+    """The UploadType for `Person.driving_licence`.
+    """)
+    
+dd.inject_field(Company,
+    'is_courseprovider',
+    mti.EnableChild('dsbe.CourseProvider',verbose_name=_("is Course Provider")),
+    """Whether this Company is also a Course Provider."""
+    )
+
+
+
+"""
+...
+"""
+if settings.LINO.user_model:
+    User.grid_search_field = 'username'
+    dd.inject_field(User,
+        'is_spis',
+        models.BooleanField(
+            verbose_name=_("is SPIS user")
+        ),"""Whether this user is an integration assistant (not a general social agent).
+        Deserves more documentation.
         """)
         
-    dd.inject_field(SiteConfig,
-        'propgroup_skills',
-        models.ForeignKey('properties.PropGroup',
-            blank=True,null=True,
-            verbose_name=_("Skills Property Group"),
-            related_name='skills_sites'),
-        """The property group to be used as master 
-        for the SkillsByPerson report.""")
-    dd.inject_field(SiteConfig,
-        'propgroup_softskills',
-        models.ForeignKey('properties.PropGroup',
-            blank=True,null=True,
-            verbose_name=_("Soft Skills Property Group"),
-            related_name='softskills_sites',
-            ),
-        """The property group to be used as master 
-        for the SoftSkillsByPerson report."""
-        )
-    dd.inject_field(SiteConfig,
-        'propgroup_obstacles',
-        models.ForeignKey('properties.PropGroup',
-            blank=True,null=True,
-            verbose_name=_("Obstacles Property Group"),
-            related_name='obstacles_sites',
-            ),
-        """The property group to be used as master 
-        for the ObstaclesByPerson report."""
-        )
-
-    dd.inject_field(SiteConfig,
-        'residence_permit_upload_type',
-        #~ UploadType.objects.get(pk=2)
-        models.ForeignKey("uploads.UploadType",
-            blank=True,null=True,
-            verbose_name=_("Upload Type for residence permit"),
-            related_name='residence_permit_sites'),
-        """The UploadType for `Person.residence_permit`.
-        """)
-        
-    dd.inject_field(SiteConfig,
-        'work_permit_upload_type',
-        #~ UploadType.objects.get(pk=2)
-        models.ForeignKey("uploads.UploadType",
-            blank=True,null=True,
-            verbose_name=_("Upload Type for work permit"),
-            related_name='work_permit_sites'),
-        """The UploadType for `Person.work_permit`.
-        """)
-
-    dd.inject_field(SiteConfig,
-        'driving_licence_upload_type',
-        #~ UploadType.objects.get(pk=2)
-        models.ForeignKey("uploads.UploadType",
-            blank=True,null=True,
-            verbose_name=_("Upload Type for driving licence"),
-            related_name='driving_licence_sites'),
-        """The UploadType for `Person.driving_licence`.
-        """)
-        
-    dd.inject_field(Company,
-        'is_courseprovider',
-        mti.EnableChild('dsbe.CourseProvider',verbose_name=_("is Course Provider")),
-        """Whether this Company is also a Course Provider."""
-        )
-
-
-
+RoleType = resolve_model('contacts.RoleType')
+#~ RoleType = resolve_model('links.LinkType')
+if not isinstance(RoleType,UnresolvedModel):
     """
-    ...
+    autodoc imports this module with :mod:`lino.apps.std.settings` 
+    which has no contacts app.
     """
-    if settings.LINO.user_model:
-        User.grid_search_field = 'username'
-        dd.inject_field(User,
-            'is_spis',
-            models.BooleanField(
-                verbose_name=_("is SPIS user")
-            ),"""Whether this user is an integration assistant (not a general social agent).
-            Deserves more documentation.
-            """)
-            
-    RoleType = resolve_model('contacts.RoleType')
-    #~ RoleType = resolve_model('links.LinkType')
-    if not isinstance(RoleType,UnresolvedModel):
-        """
-        autodoc imports this module with :mod:`lino.apps.std.settings` 
-        which has no contacts app.
-        """
-        dd.inject_field(RoleType,
-            'use_in_contracts',
-            models.BooleanField(
-                verbose_name=_("usable in contracts"),
-                default=True
-            ),"""Whether Links of this type can be used as contact person of a job contract.
-            Deserves more documentation.
-            """)
-            
+    dd.inject_field(RoleType,
+        'use_in_contracts',
+        models.BooleanField(
+            verbose_name=_("usable in contracts"),
+            default=True
+        ),"""Whether Links of this type can be used as contact person of a job contract.
+        Deserves more documentation.
+        """)
+        
 
 
 

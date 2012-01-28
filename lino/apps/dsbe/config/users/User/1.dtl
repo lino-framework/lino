@@ -9,6 +9,7 @@ main =
 box2 = 
   is_active 
   is_spis 
+  is_newcomers
   is_staff 
   is_expert 
   is_superuser
