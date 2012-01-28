@@ -839,7 +839,7 @@ class Persons(AllPersons):
     All Persons except newcomers and inactive persons.
     """
     #~ app_label = 'contacts'
-    #~ use_as_default_report = False
+    #~ use_as_default_report = False 
     known_values = dict(is_active=True,newcomer=False)
     #~ filter = dict(is_active=True,newcomer=False)
     #~ label = Person.Meta.verbose_name_plural + ' ' + _("(unfiltered)")
@@ -1037,7 +1037,7 @@ class UsersWithClients(dd.VirtualTable):
     A customized overview report.
     """
     #~ label = _("Overview Clients By User")
-    label = _("Users with Clients")
+    label = _("Users with their Clients")
     #~ column_defaults = dict(width=8)
     
     #~ @classmethod

@@ -71,38 +71,39 @@ class Lino(Lino):
           #~ self.modules.lino.DataControlListing,
         #~ ]
         
-        
         m = main.add_menu("contacts",_("Contacts"))
-        m.add_action(self.modules.contacts.Companies)
-        m.add_action(self.modules.dsbe.Persons)
-        #~ m.add_action('contacts.Persons.detail')
-        #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
-        m.add_action(self.modules.dsbe.MySearches)
-        #~ m.add_action('contacts.AllContacts')
-        m.add_action(self.modules.dsbe.AllContacts)
-        #~ m.add_action(self.modules.dsbe.Newcomers)
+        if user.is_spis:
+            m.add_action(self.modules.contacts.Companies)
+            m.add_action(self.modules.dsbe.Persons)
+            #~ m.add_action('contacts.Persons.detail')
+            #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
+            m.add_action(self.modules.dsbe.MySearches)
+            #~ m.add_action('contacts.AllContacts')
+            m.add_action(self.modules.dsbe.AllContacts)
+            #~ m.add_action(self.modules.dsbe.Newcomers)
         self.modules.isip.setup_main_menu(self,ui,user,m)
         self.modules.newcomers.setup_main_menu(self,ui,user,m)
         #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')
 
 
-        if user is None:
-            return main
+        #~ if user is None:
+            #~ return main
             
         m = main.add_menu("my",_("My menu"))
         #~ m.add_action('projects.Projects')
         m.add_action(self.modules.notes.MyNotes)
         
-        mypersons = m.add_menu("mypersons",self.modules.dsbe.MyPersons.label)
-        mypersons.add_action(self.modules.dsbe.MyPersons)
-        for pg in self.modules.dsbe.PersonGroup.objects.order_by('ref_name'):
-            mypersons.add_action(
-              self.modules.dsbe.MyPersonsByGroup,
-              label=pg.name,
-              params=dict(master_instance=pg))
-            #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
-            #~ params=dict(master_id=pg.pk))
+        if user.is_spis:
+            mypersons = m.add_menu("mypersons",self.modules.dsbe.MyPersons.label)
+            mypersons.add_action(self.modules.dsbe.MyPersons)
+            for pg in self.modules.dsbe.PersonGroup.objects.order_by('ref_name'):
+                mypersons.add_action(
+                  self.modules.dsbe.MyPersonsByGroup,
+                  label=pg.name,
+                  params=dict(master_instance=pg))
+                #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
+                #~ params=dict(master_id=pg.pk))
             
         self.modules.isip.setup_my_menu(self,ui,user,m)
         self.modules.jobs.setup_my_menu(self,ui,user,m)
@@ -115,9 +116,17 @@ class Lino(Lino):
 
         #~ m.add_instance_action(user,label="My user preferences")
 
-        m = main.add_menu("courses",_("Courses"))
-        m.add_action(self.modules.dsbe.CourseProviders)
-        m.add_action(self.modules.dsbe.CourseOffers)
+        if user.is_spis:
+            m = main.add_menu("courses",_("Courses"))
+            m.add_action(self.modules.dsbe.CourseProviders)
+            m.add_action(self.modules.dsbe.CourseOffers)
+            
+        if user.is_newcomers:
+            m  = main.add_menu("newcomers",_("Newcomers"))
+            m.add_action(self.modules.newcomers.Newcomers)
+            m.add_action(self.modules.newcomers.UsersByNewcomer)
+            m.add_action(self.modules.newcomers.NewClients)
+            
         
         self.modules.jobs.setup_main_menu(self,ui,user,main)
         
@@ -126,14 +135,15 @@ class Lino(Lino):
         m = main.add_menu("lst",_("Listings"))
         #~ for listing in LISTINGS:
             #~ m.add_action(listing,'listing')
-        m.add_action(self.modules.jobs.JobsOverview)
-        #~ m.add_action(self.modules.jobs.ContractsSearch)
-        #~ m.add_action(self.modules.dsbe.OverviewClientsByUser)
-        m.add_action(self.modules.dsbe.UsersWithClients)
-        m.add_action(self.modules.dsbe.ClientsTest)
-        #~ listings.add_instance_action(lst)
-        #~ for lst in dsbe.FooListing.objects.all():
+        if user.is_spis:
+            m.add_action(self.modules.jobs.JobsOverview)
+            #~ m.add_action(self.modules.jobs.ContractsSearch)
+            #~ m.add_action(self.modules.dsbe.OverviewClientsByUser)
+            m.add_action(self.modules.dsbe.UsersWithClients)
+            m.add_action(self.modules.dsbe.ClientsTest)
             #~ listings.add_instance_action(lst)
+            #~ for lst in dsbe.FooListing.objects.all():
+                #~ listings.add_instance_action(lst)
         
         if user.is_staff:
             cfg = main.add_menu("config",_("Configure"))

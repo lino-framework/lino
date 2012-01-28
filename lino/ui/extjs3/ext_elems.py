@@ -1553,5 +1553,6 @@ def field2elem(layout_handle,field,**kw):
         if isinstance(selector_field,cl):
             return x(layout_handle,field,**kw)
     if isinstance(field,dd.VirtualField):
-        raise NotImplementedError("No LayoutElement for VirtualField on %s" % field.return_type.__class__)
+        raise NotImplementedError("No LayoutElement for VirtualField %s on %s" % (
+          field.name,field.return_type.__class__))
     raise NotImplementedError("No LayoutElement for %s" % field.__class__)

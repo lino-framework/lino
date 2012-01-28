@@ -90,6 +90,8 @@ class MenuItem:
         #~ self.can_view = can_view or perms.always
         
         
+    def compress(self):
+        pass
 
     def getLabel(self):
         return self.label
@@ -148,6 +150,20 @@ class Menu(MenuItem):
         self.items = []
         #~ self.items_dict = {}
 
+    def compress(self):
+        for mi in self.items:
+            mi.compress()
+        newitems = []
+        for mi in self.items:
+            if isinstance(mi,Menu):
+                if len(mi.items) == 1:
+                    newitems.append(mi.items[0])
+                if len(mi.items) > 1:
+                    newitems.append(mi)
+            else:
+                newitems.append(mi)
+        self.items = newitems
+                
     def add_action(self,spec,action=None,**kw):
         if isinstance(spec,basestring):
             a = actors.resolve_action(spec)

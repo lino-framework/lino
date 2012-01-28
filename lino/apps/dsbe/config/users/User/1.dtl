@@ -3,7 +3,8 @@
 
 main = 
   first_name last_name username language id
-  box3 box4 box2
+  box3:40 box4:30 box2:20
+  date_joined last_login 
   remarks 
   
 box2 = 
@@ -13,8 +14,6 @@ box2 =
   is_staff 
   is_expert 
   is_superuser
-  date_joined 
-  last_login 
 
 box3 = 
   country region

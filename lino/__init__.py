@@ -782,6 +782,7 @@ class Lino(object):
         from lino.utils import menus
         main = menus.Toolbar('main')
         self.setup_menu(ui,user,main)
+        main.compress()
         url = self.root_url
         if not url: 
             url = "/"

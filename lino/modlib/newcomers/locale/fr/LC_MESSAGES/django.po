@@ -1,0 +1,90 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-01-28 20:43+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: .\models.py:52
+msgid "Broker"
+msgstr ""
+
+#: .\models.py:53
+msgid "Brokers"
+msgstr ""
+
+#: .\models.py:79
+msgid "Faculty"
+msgstr ""
+
+#: .\models.py:80
+msgid "Faculties"
+msgstr ""
+
+#: .\models.py:81
+msgid "Body"
+msgstr ""
+
+#: .\models.py:95
+msgid "Competence"
+msgstr ""
+
+#: .\models.py:96
+msgid "Competences"
+msgstr ""
+
+#: .\models.py:135 .\models.py:277 .\models.py:283
+msgid "Newcomers"
+msgstr ""
+
+#: .\models.py:138 .\models.py:225
+msgid "New Clients"
+msgstr ""
+
+#: .\models.py:142
+msgid "Show agents for newcomer"
+msgstr ""
+
+#: .\models.py:143 .\models.py:183
+msgid "Count Newcomers since"
+msgstr ""
+
+#: .\models.py:179
+msgid "Users by Newcomer"
+msgstr ""
+
+#: .\models.py:182
+msgid "Show suggested agents for"
+msgstr ""
+
+#: .\models.py:217
+msgid "Primary clients"
+msgstr ""
+
+#: .\models.py:221
+msgid "Active clients"
+msgstr ""
+
+#: .\models.py:229
+msgid "Score"
+msgstr ""
+
+#: .\models.py:241
+msgid "is Newcomers user"
+msgstr ""
+
+#: .\models.py:248
+msgid "Newcomers Quota"
+msgstr ""

@@ -1,0 +1,15 @@
+Version 1.3.7
+=============
+
+Released :doc:`/blog/2012/0128`.
+Available from :doc:`/download`.
+
+Sichtbare Änderungen:
+
+- Zwei neue Felder "Fachbereich" und "Vermittler" in :menuselection`Personen --> Detail --> Status`.
+- Pro Benutzer ein neues Feld `is_newcomers`
+  Neue Befehle für Benutzer, die das angekreuzt haben:
+  
+  - :menuselection:`Kontakte --> Neuzugänge`
+  - :menuselection:`Mein Menü --> Neuzugänge --> `
+  - :menuselection:`Konfigurierung --> Neuzugänge --> `

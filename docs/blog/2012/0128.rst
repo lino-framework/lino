@@ -11,3 +11,8 @@ Ein paar allgemeine Features zu Tabellenparametern musste ich noch machen:
 
 - parameter chooser methods on tables
 - resolve_model on ForeignKey parameters
+
+Später dann beim Endspurt noch Kleinigkeiten:
+
+- Das Site-Menü wird nun erstmals unter Berücksichtigung der Benutzerrechte aufgebaut.
+- Menu.compress()
