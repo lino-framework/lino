@@ -359,6 +359,7 @@ def py2xml(wr,value): # ,indent='',addindent='',newl=''
     elif isiterable(value):
         for e in value:
             py2xml(wr,e)
+            wr.flush()
     elif isinstance(value,Node):
         value.__xml__(wr)
     elif isinstance(value,Promise):
