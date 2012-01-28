@@ -6,10 +6,20 @@ Available from :doc:`/download`.
 
 Sichtbare Änderungen:
 
-- Zwei neue Felder "Fachbereich" und "Vermittler" in :menuselection`Personen --> Detail --> Status`.
-- Pro Benutzer ein neues Feld `is_newcomers`
-  Neue Befehle für Benutzer, die das angekreuzt haben:
-  
-  - :menuselection:`Kontakte --> Neuzugänge`
-  - :menuselection:`Mein Menü --> Neuzugänge --> `
-  - :menuselection:`Konfigurierung --> Neuzugänge --> `
+- Die versprochenen beiden Bugfixes:
+
+  - Wenn man z.B. im Detail einer Person
+    Nr. 123 auf deren Notizenliste doppelklickte und eine Notiz
+    erstellte, die z.B. Nr 14 erhielt dann kam nach dem Speichern des
+    Fensters bestenfalls ein "Lino did not respond to AJAX call", oder
+    aber er sprang ohne Warnung auf Person Nr. 14.
+
+  - Anklickbare Werte in einer Grid funktionierten nicht korrekt.
+
+- Neues Modul "Neuzugänge":
+  - Zwei neue Felder "Fachbereich" und "Vermittler" in :menuselection`Personen --> Detail --> Status`.
+  - Pro Benutzer ein neues Feld `is_newcomers`
+  - Neues Menü für Benutzer, die `is_newcomers` angekreuzt haben.
+
+- Bei komplizierten Namen berücksichtigt watch_tim jetzt ein eventuelles Komma, 
+  um Vor- und Nachname zu trennen.

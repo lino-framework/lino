@@ -3647,14 +3647,14 @@ Ext.ensible.cal.EventRecord.reconfigure();
 
 Lino.on_eventclick = function(cp,rec,el) {
   console.log("Lino.on_eventclick",arguments);
-  Lino.cal.Events.detail(cp,{},{record_id:rec.data.ID});
+  Lino.cal.Events.detail({},{record_id:rec.data.ID});
   return false;
 }
     
 Lino.on_editdetails = function(cp,rec,el) {
   console.log("Lino.on_editdetails",arguments);
   if (rec.data.ID)
-      Lino.cal.Events.detail(cp,{},{record_id:rec.data.ID});
+      Lino.cal.Events.detail({},{record_id:rec.data.ID});
   return false;
 }
 
