@@ -58,4 +58,31 @@ geladen wird, bevor sie gerendert werden kann. Und das habe ich nun
 (wahrscheinlich) elegant gelöst, indem man als `value` eine 
 Generator-Funktion angibt.
 
-Aber Tests und Sichtbarkeitsmachung ist für morgen.
+Man bedenke, dass der `[html]`-Button bewusst 
+eine Tabelle mit *allen* Zeilen generiert, weil es ja 
+eben eine druckbare Seite sein soll, ohne Navigator-Buttons, 
+die der Browser je nach Druckeinstellungen selber paginieren 
+soll.
+
+Tests auf Jana mit einer Liste von 7825 Personen.
+Der Request 
+http://jana/api/dsbe/Persons?fmt=printer 
+dauert ca. 5 Minuten.
+
+*Vor* dieser Änderung ging dem Server die Luft aus 
+(memory exhausted), 
+als ich die gleiche Seite ein zweites Mal anforderte.
+
+*Nach* dieser Änderung ging ihm immerhin nicht mehr die Luft aus.
+Hier der Output von Top nach zweimaligem Request ::
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+ 2016 root      18   0 10716 3888 2020 S  0.0  0.2   0:00.17 apache2
+ 2023 www-data  25   0  436m 283m 4076 S  0.0 18.5   5:34.01 apache2
+ 2029 www-data  25   0  428m 276m 4068 S  0.0 18.0   5:06.28 apache2
+ 2030 www-data  15   0 12228 5812 2332 S  0.0  0.4   0:29.16 apache2 
+
+Dennoch: bis auf weiteres setze ich mal eine Obergrenze von 300 
+Zeilen. Wenn die überschritten wird, kommt eine letzte Zeile
+"List truncated after 300 rows".
+

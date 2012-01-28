@@ -124,6 +124,7 @@ class xhtml(xg.Namespace):
                   align = xg.Attribute()
                   valign = xg.Attribute()
                   bgcolor = xg.Attribute()
+                  colspan = xg.Attribute()
                 class TH(TD): pass
                   
             class COLGROUP(xg.Container): 

@@ -2364,16 +2364,26 @@ tinymce.init({
         a = actors.get_actor(*args,**kw)
         return a.get_handle(self)
         
-    def table2xhtml(self,ar):
+    def table2xhtml(self,ar,max_row_count=300):
+        """
+        """
         def f():
             headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
             sums  = [0 for col in ar.ah.store.list_fields]
             #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
             cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
             yield xhg.table_header_row(*headers,**cellattrs)
+            recno = 0
             for row in ar.data_iterator:
+                recno += 1
                 cells = [x for x in ar.ah.store.row2html(ar,row,sums)]
                 yield xhg.table_body_row(*cells,**cellattrs)
+                if recno > max_row_count:
+                    yield xhg.table_body_row(
+                      _("List truncated after %d rows") % max_row_count,
+                      colspan=len(headers),**cellattrs)
+                    break
+                    
             has_sum = False
             for i in sums:
                 if i:
@@ -2381,7 +2391,5 @@ tinymce.init({
                     break
             if has_sum:
                 yield xhg.table_body_row(*ar.ah.store.sums2html(ar,sums),**cellattrs)
-        t = xhg.TABLE(f(),cellspacing="3px",bgcolor="#ffffff", width="100%")
-        #~ t.value = f()
-        return t
+        return xhg.TABLE(f(),cellspacing="3px",bgcolor="#ffffff", width="100%")
             
