@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-23 20:33+0000\n"
+"POT-Creation-Date: 2012-01-28 02:10+0000\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -15,216 +15,216 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\models.py:66
+#: .\models.py:77
+msgid "Mrs"
+msgstr ""
+
+#: .\models.py:80
+msgctxt "nominative salutation"
+msgid "Mr"
+msgstr ""
+
+#: .\models.py:81
+msgctxt "indirect salutation"
+msgid "Mr"
+msgstr ""
+
+#: .\models.py:94
 msgid "company type"
 msgstr "Firmaliik"
 
-#: .\models.py:67
+#: .\models.py:95
 msgid "company types"
 msgstr ""
 
-#: .\models.py:69
+#: .\models.py:97
 msgid "Abbreviation"
 msgstr "Lühend"
 
-#: .\models.py:95 .\models.py:592 .\config\contacts\Company\1.dtl.py:3
+#: .\models.py:123 .\models.py:624 .\config\contacts\Company\1.dtl.py:3
 #: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
 #, fuzzy
 msgid "Contact"
 msgstr "Kontakt"
 
-#: .\models.py:96
+#: .\models.py:124
 #, fuzzy
 msgid "Contacts"
 msgstr "Kontaktid"
 
-#: .\models.py:98 .\models.py:225
+#: .\models.py:126 .\models.py:252
 msgid "Name"
 msgstr "Nimi"
 
-#: .\models.py:99
+#: .\models.py:127
 msgid "Address line before street"
 msgstr "Addressi lisatext enne tänav"
 
-#: .\models.py:103
+#: .\models.py:131
 #, fuzzy
 msgid "Street prefix"
 msgstr "Tänav"
 
-#: .\models.py:106
+#: .\models.py:134
 msgid "Street"
 msgstr "Tänav"
 
-#: .\models.py:109
+#: .\models.py:137
 msgid "No."
 msgstr "Nr."
 
-#: .\models.py:112
+#: .\models.py:140
 msgid "Box"
 msgstr "PK/krt"
 
-#: .\models.py:115
+#: .\models.py:143
 msgid "Address line after street"
 msgstr "Aadressilisa pärast tänav"
 
-#: .\models.py:119
+#: .\models.py:147
 msgid "Zip code"
 msgstr "Sihtnumber"
 
-#: .\models.py:121
+#: .\models.py:149
 msgid "Region"
 msgstr "Maakond"
 
-#: .\models.py:125
+#: .\models.py:153
 msgid "E-Mail"
 msgstr ""
 
-#: .\models.py:126
+#: .\models.py:154
 msgid "URL"
 msgstr ""
 
-#: .\models.py:127
+#: .\models.py:155
 msgid "Phone"
 msgstr "Telefon"
 
-#: .\models.py:128
+#: .\models.py:156
 msgid "GSM"
 msgstr ""
 
-#: .\models.py:129
+#: .\models.py:157
 msgid "Fax"
 msgstr ""
 
-#: .\models.py:131
+#: .\models.py:159
 msgid "Remarks"
 msgstr "Märkused"
 
-#: .\models.py:208 .\models.py:219
+#: .\models.py:238 .\models.py:247
 msgid "Address"
 msgstr "Adress"
 
-#: .\models.py:243
+#: .\models.py:275
 #, python-format
 msgid "All %s"
 msgstr ""
 
-#: .\models.py:267
+#: .\models.py:299
 #, fuzzy
 msgid "Birth date"
 msgstr "Eesnimi"
 
-#: .\models.py:285
+#: .\models.py:317
 #, python-format
 msgid "%d years"
 msgstr ""
 
-#: .\models.py:289
+#: .\models.py:321
 msgid "unknown"
 msgstr ""
 
-#: .\models.py:290
+#: .\models.py:322
 msgid "Age"
 msgstr ""
 
-#: .\models.py:303
+#: .\models.py:335
 msgid "Person"
 msgstr "Isik"
 
-#: .\models.py:304
+#: .\models.py:336
 msgid "Persons"
 msgstr "Isikud"
 
-#: .\models.py:307
+#: .\models.py:339
 msgid "First name"
 msgstr "Eesnimi"
 
-#: .\models.py:311
+#: .\models.py:343
 msgid "Last name"
 msgstr "Perekonnanimi"
 
-#: .\models.py:315
+#: .\models.py:347
 msgid "Title"
 msgstr ""
 
-#: .\models.py:379
+#: .\models.py:411
 msgid "Company"
 msgstr "Firma"
 
-#: .\models.py:380
+#: .\models.py:412
 msgid "Companies"
 msgstr "Firmad"
 
-#: .\models.py:382
+#: .\models.py:414
 msgid "VAT id"
 msgstr "KMKR nr"
 
-#: .\models.py:387
+#: .\models.py:419
 msgid "Company type"
 msgstr "Firmaliik"
 
-#: .\models.py:420
+#: .\models.py:452
 msgid "Role Type"
 msgstr ""
 
-#: .\models.py:421
+#: .\models.py:453
 msgid "Role Types"
 msgstr ""
 
-#: .\models.py:437
+#: .\models.py:469
 #, fuzzy
 msgid "Contact Person"
 msgstr "Kontaktisik"
 
-#: .\models.py:438
+#: .\models.py:470
 #, fuzzy
 msgid "Contact Persons"
 msgstr "Kontaktisik"
 
-#: .\models.py:448
+#: .\models.py:480
 #, fuzzy
 msgid "Contact Role"
 msgstr "Kontaktisik"
 
-#: .\models.py:505
+#: .\models.py:537
 #, fuzzy
 msgid "Contact persons"
 msgstr "Kontaktiliigid"
 
-#: .\models.py:510
+#: .\models.py:542
 msgid "Contact for"
 msgstr "Kontaktisik"
 
-#: .\models.py:614
+#: .\models.py:646
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:623
+#: .\models.py:655
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:632
+#: .\models.py:664
 #, fuzzy
 msgid "is Person"
 msgstr "Isik"
 
-#: .\models.py:637
+#: .\models.py:669
 #, fuzzy
 msgid "is Company"
 msgstr "Firma"
-
-#: .\utils.py:187
-msgid "Mrs"
-msgstr ""
-
-#: .\utils.py:190
-msgctxt "nominative salutation"
-msgid "Mr"
-msgstr ""
-
-#: .\utils.py:191
-msgctxt "indirect salutation"
-msgid "Mr"
-msgstr ""
 
 #, fuzzy
 #~ msgid "Child Contact"

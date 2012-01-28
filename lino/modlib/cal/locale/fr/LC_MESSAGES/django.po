@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-23 20:33+0000\n"
+"POT-Creation-Date: 2012-01-28 02:09+0000\n"
 "PO-Revision-Date: 2011-09-14 21:19+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -87,7 +87,7 @@ msgstr "Etat de rendez-vous"
 msgid "Event Statuses"
 msgstr "Etat de rendez-vous"
 
-#: .\models.py:215 .\models.py:591
+#: .\models.py:215 .\models.py:593
 #, fuzzy
 msgid "Reminder"
 msgstr "Rappels passés"
@@ -143,11 +143,11 @@ msgstr ""
 msgid "Start time"
 msgstr "Heure de début"
 
-#: .\models.py:323 .\models.py:977
+#: .\models.py:323 .\models.py:985
 msgid "Start"
 msgstr "Début"
 
-#: .\models.py:324 .\models.py:1000
+#: .\models.py:324 .\models.py:1008
 msgid "Summary"
 msgstr "Sommaire"
 
@@ -192,7 +192,7 @@ msgstr "modifié par l'utilisateur"
 msgid " at "
 msgstr ""
 
-#: .\models.py:524 .\models.py:721
+#: .\models.py:524 .\models.py:729
 msgid "Event"
 msgstr "Rendez-vous"
 
@@ -208,7 +208,7 @@ msgstr "Date de fin"
 msgid "End Time"
 msgstr "Heure de fin"
 
-#: .\models.py:534 .\models.py:978
+#: .\models.py:534 .\models.py:986
 msgid "End"
 msgstr "Fin"
 
@@ -216,7 +216,7 @@ msgstr "Fin"
 msgid "Transparent"
 msgstr "non bloquant"
 
-#: .\models.py:541 .\models.py:617 .\models.py:728
+#: .\models.py:541 .\models.py:625 .\models.py:736
 msgid "Status"
 msgstr "Statut"
 
@@ -224,7 +224,7 @@ msgstr "Statut"
 msgid "Duration"
 msgstr "Durée"
 
-#: .\models.py:543 .\models.py:615
+#: .\models.py:543 .\models.py:623
 msgid "Duration value"
 msgstr "Durée (valeur)"
 
@@ -232,71 +232,71 @@ msgstr "Durée (valeur)"
 msgid "Duration unit"
 msgstr "Durée (unité)"
 
-#: .\models.py:585
+#: .\models.py:584
 msgid "Link URL"
 msgstr ""
 
-#: .\models.py:589
+#: .\models.py:588
 msgid "all day"
 msgstr ""
 
-#: .\models.py:604
+#: .\models.py:612
 msgid "Task"
 msgstr "Tâche"
 
-#: .\models.py:605
+#: .\models.py:613
 msgid "Tasks"
 msgstr "Tâches"
 
-#: .\models.py:610
+#: .\models.py:618
 msgid "Due date"
 msgstr "Date d'échéance"
 
-#: .\models.py:613
+#: .\models.py:621
 msgid "Due time"
 msgstr "Heure d'échéance"
 
-#: .\models.py:614
+#: .\models.py:622
 msgid "Done"
 msgstr "accomplie"
 
-#: .\models.py:702
+#: .\models.py:710
 msgid "Guest Role"
 msgstr "Rōle de participant"
 
-#: .\models.py:703
+#: .\models.py:711
 msgid "Guest Roles"
 msgstr "Rōles de participant"
 
-#: .\models.py:717
+#: .\models.py:725
 msgid "Guest"
 msgstr "Participant"
 
-#: .\models.py:718
+#: .\models.py:726
 msgid "Guests"
 msgstr "Participants"
 
-#: .\models.py:724
+#: .\models.py:732
 msgid "Role"
 msgstr "R^ole"
 
-#: .\models.py:735
+#: .\models.py:743
 msgid "Remark"
 msgstr "Remarque"
 
-#: .\models.py:825
+#: .\models.py:833
 msgid "Upcoming reminders"
 msgstr "Rappels à venir"
 
-#: .\models.py:826
+#: .\models.py:834
 msgid "Past reminders"
 msgstr "Rappels passés"
 
-#: .\models.py:917
+#: .\models.py:925
 msgid "due date reached"
 msgstr "date d'échéance atteinte"
 
-#: .\models.py:1023 .\models.py:1031 .\models.py:1043
+#: .\models.py:1031 .\models.py:1039 .\models.py:1051
 msgid "~Calendar"
 msgstr "~Calendrier"
 

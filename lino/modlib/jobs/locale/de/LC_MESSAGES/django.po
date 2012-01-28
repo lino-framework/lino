@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-23 20:33+0000\n"
-"PO-Revision-Date: 2012-01-23 11:43+0200\n"
+"POT-Creation-Date: 2012-01-28 02:10+0000\n"
+"PO-Revision-Date: 2012-01-28 04:13+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -32,13 +32,13 @@ msgstr "Regime"
 msgid "Work Regimes"
 msgstr "Regimes"
 
-#: .\models.py:151 .\models.py:252
-msgid "Employer"
-msgstr "Arbeitgeber"
+#: .\models.py:151
+msgid "Job Provider"
+msgstr "Stellenanbieter"
 
 #: .\models.py:152
-msgid "Employers"
-msgstr "Arbeitgeber"
+msgid "Job Providers"
+msgstr "Stellenanbieter"
 
 #: .\models.py:185
 msgid "Job Contract Type"
@@ -60,8 +60,13 @@ msgstr "Sektor"
 msgid "Job Sectors"
 msgstr "Sektoren"
 
-#: .\models.py:207 .\models.py:221 .\models.py:278 .\models.py:515
-#: .\models.py:565 .\models.py:731 .\models.py:857
+#: .\models.py:207
+#: .\models.py:221
+#: .\models.py:286
+#: .\models.py:525
+#: .\models.py:575
+#: .\models.py:742
+#: .\models.py:868
 msgid "Remark"
 msgstr "Bemerkung"
 
@@ -73,236 +78,255 @@ msgstr "Funktion"
 msgid "Job Functions"
 msgstr "Funktionen"
 
-#: .\models.py:243
+#: .\models.py:251
 msgid "Job Contract"
 msgstr "Art.60§7-Konvention"
 
-#: .\models.py:244
+#: .\models.py:252
 msgid "Job Contracts"
 msgstr "Art.60§7-Konventionen"
 
-#: .\models.py:248 .\models.py:722
+#: .\models.py:256
+#: .\models.py:733
 msgid "Contract Type"
 msgstr "Vertragsart"
 
-#: .\models.py:255 .\models.py:707
+#: .\models.py:263
+#: .\models.py:718
 msgid "Job"
 msgstr "Stelle"
 
-#: .\models.py:258
+#: .\models.py:266
 msgid "duration (days)"
 msgstr "Dauer (Arbeitstage)"
 
-#: .\models.py:266 .\models.py:724
+#: .\models.py:274
+#: .\models.py:735
 msgid "hourly rate"
 msgstr "Stundensatz"
 
-#: .\models.py:267
+#: .\models.py:275
 msgid "refund rate"
 msgstr "Rückzahlung"
 
-#: .\models.py:270
+#: .\models.py:278
 msgid "reference person"
 msgstr "Referenzperson"
 
-#: .\models.py:273
+#: .\models.py:281
 msgid "responsibilities"
 msgstr "Aufgabenbereich"
 
-#: .\models.py:367
+#: .\models.py:375
 msgid "Due date reached"
 msgstr "Fälligkeitsdatum erreicht"
 
-#: .\models.py:444
+#: .\models.py:454
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
-#: .\models.py:490
+#: .\models.py:500
 msgid "My contracts"
 msgstr "Meine Art.60§7-Konventionen"
 
-#: .\models.py:506 .\models.py:716
+#: .\models.py:516
+#: .\models.py:727
 msgid "Job Type"
 msgstr "Stellenart"
 
-#: .\models.py:507
+#: .\models.py:517
 msgid "Job Types"
 msgstr "Stellenarten"
 
-#: .\models.py:511
+#: .\models.py:521
 msgid "Designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:545
+#: .\models.py:555
 msgid "Job Offer"
 msgstr "Stellenangebot"
 
-#: .\models.py:546
+#: .\models.py:556
 msgid "Job Offers"
 msgstr "Stellenangebote"
 
-#: .\models.py:551 .\models.py:712
+#: .\models.py:561
+#: .\models.py:723
 msgid "Name"
 msgstr "Name"
 
-#: .\models.py:556
+#: .\models.py:566
 msgid "selection from"
 msgstr "Beginn Auswahl"
 
-#: .\models.py:558
+#: .\models.py:568
 msgid "selection until"
 msgstr "Ende Auswahl"
 
-#: .\models.py:560
+#: .\models.py:570
 msgid "start date"
 msgstr "beginnt am"
 
-#: .\models.py:583
+#: .\models.py:593
 msgid "study type"
 msgstr "Ausbildungsart"
 
-#: .\models.py:584
+#: .\models.py:594
 msgid "study types"
 msgstr "Ausbildungsarten"
 
-#: .\models.py:613
+#: .\models.py:623
 msgid "study or education"
 msgstr "Audbildung oder Studium"
 
-#: .\models.py:614
+#: .\models.py:624
 msgid "Studies & education"
 msgstr "Ausbildungen und Studien"
 
-#: .\models.py:616
+#: .\models.py:626
 msgid "Study type"
 msgstr "Ausbildungsart"
 
-#: .\models.py:619
+#: .\models.py:629
 msgid "Study content"
 msgstr "Ausbildungsinhalt"
 
-#: .\models.py:622 .\models.py:675
+#: .\models.py:632
+#: .\models.py:685
 msgid "started"
 msgstr "begonnen"
 
-#: .\models.py:623 .\models.py:676
+#: .\models.py:633
+#: .\models.py:686
 msgid "stopped"
 msgstr "beendet"
 
-#: .\models.py:628
+#: .\models.py:638
 msgid "Success"
 msgstr "Abschluss"
 
-#: .\models.py:630
+#: .\models.py:640
 msgid "Language"
 msgstr "Sprache"
 
-#: .\models.py:635
+#: .\models.py:645
 msgid "School"
 msgstr "Schule"
 
-#: .\models.py:638 .\models.py:678
+#: .\models.py:648
+#: .\models.py:688
 msgid "Remarks"
 msgstr "Bemerkungen"
 
-#: .\models.py:659
+#: .\models.py:669
 msgid "Studies"
 msgstr "Studien"
 
-#: .\models.py:664
+#: .\models.py:674
 msgid "Job Experience"
 msgstr "Berufserfahrung"
 
-#: .\models.py:665
+#: .\models.py:675
 msgid "Job Experiences"
 msgstr "Berufserfahrungen"
 
-#: .\models.py:666
+#: .\models.py:676
 msgid "Person"
 msgstr "Person"
 
-#: .\models.py:668
+#: .\models.py:678
 msgid "company"
 msgstr "Firma"
 
-#: .\models.py:670
+#: .\models.py:680
 msgid "job title"
 msgstr "Bezeichnung"
 
-#: .\models.py:673
+#: .\models.py:683
 msgid "Country"
 msgstr "Land"
 
-#: .\models.py:708
+#: .\models.py:719
 msgid "Jobs"
 msgstr "Stellen"
 
-#: .\models.py:726
+#: .\models.py:737
 msgid "capacity"
 msgstr "Kapazität"
 
-#: .\models.py:834
+#: .\models.py:845
 msgid "Job Candidature"
 msgstr "Stellenanfrage"
 
-#: .\models.py:835
+#: .\models.py:846
 msgid "Job Candidatures"
 msgstr "Stellenanfragen"
 
-#: .\models.py:844
+#: .\models.py:855
 msgid "date submitted"
 msgstr "eingereicht am "
 
-#: .\models.py:860
+#: .\models.py:871
 #, python-format
 msgid "Candidature by %(person)s"
 msgstr "Kandidatur von %(person)s"
 
-#: .\models.py:958 .\models.py:962 .\models.py:1112 .\models.py:1177
+#: .\models.py:969
+#: .\models.py:973
+#: .\models.py:1124
+#: .\models.py:1189
 msgid "Candidates"
 msgstr "Kandidaten"
 
-#: .\models.py:1001
-#, fuzzy
+#: .\models.py:1012
 msgid "Job Contracts Search"
-msgstr "Art.60§7-Konventionen"
+msgstr "Suche Art.60§7-Konventionen"
 
-#: .\models.py:1006
-#, fuzzy
+#: .\models.py:1017
 msgid "Only contracts of type"
-msgstr "Vertragsart"
+msgstr "Nur Vertragsart"
 
-#: .\models.py:1007
+#: .\models.py:1018
 msgid "past contracts"
 msgstr "ausgelaufene Verträge"
 
-#: .\models.py:1008
+#: .\models.py:1019
 msgid "active contracts"
 msgstr "aktive Verträge"
 
-#: .\models.py:1009
+#: .\models.py:1020
 msgid "coming contracts"
 msgstr "zukünftige Verträge"
 
-#: .\models.py:1010
+#: .\models.py:1021
 msgid "on"
 msgstr "am"
 
-#: .\models.py:1059 .\models.py:1137
+#: .\models.py:1070
+#: .\models.py:1149
 msgid "Contracts Situation"
 msgstr "Übersicht Art.60§7-Konventionen"
 
-#: .\models.py:1067
+#: .\models.py:1079
 msgid "Body"
 msgstr ""
 
-#: .\models.py:1198
-msgid "is Employer"
-msgstr "Arbeitgeber"
+#: .\models.py:1210
+msgid "is Job Provider"
+msgstr "Stellenanbieter"
 
-#: .\models.py:1213
+#: .\models.py:1225
 msgid "~Jobs"
 msgstr "~Stellen"
+
+#~ msgid "Employer"
+#~ msgstr "Arbeitgeber"
+
+#~ msgid "Employers"
+#~ msgstr "Arbeitgeber"
+
+#~ msgid "is Employer"
+#~ msgstr "Arbeitgeber"
 
 #, fuzzy
 #~ msgid "Job contracts by User"
@@ -325,15 +349,6 @@ msgstr "~Stellen"
 
 #~ msgid "Job Requests"
 #~ msgstr "Stellenanfragen"
-
-#~ msgid "Job Provider"
-#~ msgstr "Stellenanbieter"
-
-#~ msgid "Job Providers"
-#~ msgstr "Stellenanbieter"
-
-#~ msgid "is Job Provider"
-#~ msgstr "Stellenanbieter"
 
 #~ msgid "Requested Job"
 #~ msgstr "Angefragte Stelle"
