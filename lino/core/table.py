@@ -334,7 +334,7 @@ def register_report(rpt):
             #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
             generic_slaves[rpt.actor_id] = rpt
         else:
-            logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
+            #~ logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
             slave_reports.append(rpt)
     elif issubclass(rpt,VirtualTable):
         custom_tables.append(rpt)

@@ -57,3 +57,6 @@ from lino.core.fields import RequestField, requestfield
 #~ from lino.core.fields import MethodField
 
 from lino.utils import perms
+
+class Module(object):
+    pass

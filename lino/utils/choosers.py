@@ -146,6 +146,17 @@ class Chooser(FieldChooser):
         return m(value)
         #~ raise NotImplementedError("%s : Cannot get text for value %r" % (self.meth,value))
         
+def check_for_chooser(model,field):
+    methname = field.name + "_choices"
+    m = get_class_attr(model,methname)
+    if m is not None:
+        #~ n += 1
+        ch = Chooser(model,field,m)
+        setattr(field,'_lino_chooser',ch)
+        #~ logger.debug("Installed %s",ch)
+    #~ else:
+        #~ logger.info("No chooser for %s.%s",model,field.name)
+
 
 def discover():
     logger.info("Discovering choosers...")
@@ -153,15 +164,7 @@ def discover():
     for model in models.get_models():
         #~ n = 0
         for field in model._meta.fields + model._meta.virtual_fields:
-            methname = field.name + "_choices"
-            m = get_class_attr(model,methname)
-            if m is not None:
-                #~ n += 1
-                ch = Chooser(model,field,m)
-                setattr(field,'_lino_chooser',ch)
-                #~ logger.debug("Installed %s",ch)
-            #~ else:
-                #~ logger.info("No chooser for %s.%s",model,field.name)
+            check_for_chooser(model,field)
         #~ logger.debug("Discovered %d choosers in model %s.",n,model)
 
 def get_for_field(fld):

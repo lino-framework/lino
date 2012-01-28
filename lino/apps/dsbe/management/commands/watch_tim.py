@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2011 Luc Saffre
+## Copyright 2010-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@ from lino.modlib.users import models as auth
 import lino
 
 from lino.tools import resolve_model
-from lino.modlib.contacts.utils import name2kw, street2kw, join_words
+from lino.modlib.contacts.utils import name2kw, street2kw
+from lino.utils import join_words
 
 from lino.utils import confirm
 from lino.utils import dblogger

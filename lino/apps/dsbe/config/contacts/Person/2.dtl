@@ -28,7 +28,7 @@ suche2 =
   
 suche = 
   suche1:40  suche2:40
-  job_office_contact job_agents
+  job_office_contact job_agents broker faculty
   income:20 dsbe.ExclusionsByPerson
   
   

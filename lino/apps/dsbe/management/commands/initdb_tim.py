@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@ from lino.utils import dbfreader
 from lino.utils import dblogger
 #~ from lino import diag
 
-from lino.modlib.contacts.utils import name2kw, street2kw, join_words
+from lino.modlib.contacts.utils import name2kw, street2kw
+from lino.utils import join_words
+#~ from lino.modlib.contacts.models import name2kw, street2kw, join_words
 from lino.utils.instantiator import Instantiator
 
 from lino.tools import resolve_model, obj2str

@@ -80,8 +80,9 @@ class Lino(Lino):
         m.add_action(self.modules.dsbe.MySearches)
         #~ m.add_action('contacts.AllContacts')
         m.add_action(self.modules.dsbe.AllContacts)
-        m.add_action(self.modules.dsbe.Newcomers)
+        #~ m.add_action(self.modules.dsbe.Newcomers)
         self.modules.isip.setup_main_menu(self,ui,user,m)
+        self.modules.newcomers.setup_main_menu(self,ui,user,m)
         #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')
 
@@ -105,6 +106,7 @@ class Lino(Lino):
             
         self.modules.isip.setup_my_menu(self,ui,user,m)
         self.modules.jobs.setup_my_menu(self,ui,user,m)
+        self.modules.newcomers.setup_my_menu(self,ui,user,m)
         
         self.modules.cal.setup_my_menu(self,ui,user,m)
         self.modules.mails.setup_my_menu(self,ui,user,m)
@@ -160,6 +162,7 @@ class Lino(Lino):
             self.modules.notes.setup_config_menu(self,ui,user,cfg)
             self.modules.isip.setup_config_menu(self,ui,user,cfg)
             self.modules.jobs.setup_config_menu(self,ui,user,cfg)
+            self.modules.newcomers.setup_config_menu(self,ui,user,cfg)
             
             config_dsbe.add_action(self.modules.dsbe.PersonGroups)
         
@@ -202,6 +205,7 @@ class Lino(Lino):
             self.modules.notes.setup_explorer_menu(self,ui,user,m)
             self.modules.isip.setup_explorer_menu(self,ui,user,m)
             self.modules.jobs.setup_explorer_menu(self,ui,user,m)
+            self.modules.newcomers.setup_explorer_menu(self,ui,user,m)
             #~ links.setup_explorer_menu(self,ui,user,m)
             #~ m.add_action('notes.Notes')
             #~ m.add_action('lino.TextFieldTemplates')
@@ -273,6 +277,7 @@ INSTALLED_APPS = (
   'lino.modlib.jobs',
   'lino.modlib.isip',
   'lino.modlib.bcss',
+  'lino.modlib.newcomers',
   'lino.apps.dsbe',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',

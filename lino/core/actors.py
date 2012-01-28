@@ -22,6 +22,7 @@ from lino.ui import base
 from lino.ui.base import Handled
 from lino.core import fields
 from lino.core import actions
+from lino.tools import resolve_model
 from lino.utils import curry
 
 actor_classes = []
@@ -361,6 +362,13 @@ class Actor(Handled):
             #~ self.label = self.__name__
         #~ if self.title is None:
             #~ self.title = self.label
+            
+        if self.parameters:
+            from lino.utils.choosers import check_for_chooser
+            for k,v in self.parameters.items():
+                if isinstance(v,models.ForeignKey):
+                    v.rel.to = resolve_model(v.rel.to)
+                check_for_chooser(self,v)
         
         self.do_setup()
         self._setup_doing = False

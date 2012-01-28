@@ -1,0 +1,4 @@
+:label: Newcomers
+:label_align: top
+
+main = newcomers.CompetencesByUser

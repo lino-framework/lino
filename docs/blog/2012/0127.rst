@@ -95,3 +95,11 @@ Zeilen. Wenn die überschritten wird, kommt eine letzte Zeile
 "List truncated after 300 rows". 
 Mal sehen, wann das jemandem auffällt.
 
+Übersetzungen
+-------------
+
+- "Primary Clients" --> "Komplette Akten" statt "Komplette Klienten" 
+
+- :class:`lino.modlib.jobs.models.JobProvider` sind 
+  keine "Employer" ("Arbeitgeber").
+  Also "Arbeitgeber" --> "Stellenanbieter"

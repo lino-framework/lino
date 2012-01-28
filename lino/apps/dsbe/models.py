@@ -850,19 +850,6 @@ class Persons(AllPersons):
 
 Person._lino_choices_table = Persons
 
-class Newcomers(AllPersons):
-    """
-    Persons who have the "Newcomer" checkbox on.
-    """
-    #~ filter = dict(newcomer=True)
-    known_values = dict(newcomer=True)
-    #~ use_as_default_report = False
-    
-    @classmethod
-    def init_label(self):
-        return _("Newcomers")
-
-
     
 class PersonsByNationality(AllPersons):
     #~ app_label = 'contacts'
@@ -919,6 +906,7 @@ class MyPersons(Persons):
     use_as_default_report = False
     label = _("My clients")
     #~ order_by = ['last_name','first_name']
+    column_names = "name_column:20 coached_from coached_until national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
     
     @classmethod
     def get_title(self,rr):

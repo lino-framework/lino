@@ -81,6 +81,11 @@ def analyze_models(self):
     ## or resolve_model().
 
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
+    
+    for a in loading.get_apps():
+        for k,v in a.__dict__.items():
+            if isinstance(v,type)  and issubclass(v,dd.Module):
+                logger.info("20120128 Found module %s",v)
 
     #~ if settings.MODEL_DEBUG:
     if False:
@@ -204,87 +209,6 @@ def load_details(make_messages):
                     return unicode(obj)
             model.summary_row = f
             #~ print '20101111 installed summary_row for ', model
-        
-          
-          
-def old_load_details(make_messages):
-        
-    for model in models.get_models():
-      
-        model._lino_detail_layouts = {}
-            
-        def loader(content,cd,filename):
-            dtl = table.DetailLayout(model._lino_model_report,content,filename,cd)
-            head,tail = os.path.split(filename)
-            model._lino_detail_layouts[tail] = dtl
-            if make_messages:
-                dtl.make_dummy_messages_file()
-            
-        load_config_files(loader,'*.dtl','%s/%s' 
-            % (model._meta.app_label,model.__name__))
-        
-        #~ logger.debug("20110822 %s._lino_detail_layouts : %s",
-            #~ full_model_name(model),
-            #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
-            
-    """
-    Now another loop to convert `_lino_detail_layouts` to `_lino_detail`.
-    Must be a separate loop because we cannot predict the sorting order of models.
-    Yield all detail tabs for this model.
-    Each detail tab corresponds to a :xfile:`.dtl` file.
-    Detail tabs of inherited models come *first*.
-    Example: CouseProvider(Company) will yield first all 
-    tabs found for Company, then those for CourseProvider.
-    """
-    
-    
-    for model in models.get_models():
-        collector = {}
-        def collect_details(m):
-            #~ if model.__name__ == 'CourseProvider':
-                #~ logger.debug("20111213 collect_details %s",m.__bases__)  
-            #~ if m in self.hide_details: return
-            for b in m.__bases__:
-                if issubclass(b,models.Model) and b is not models.Model:
-                    collect_details(b)
-            for k,v in getattr(m,'_lino_detail_layouts',{}).items():
-            #~ for k,v in m._lino_detail_layouts.items():
-                collector[k] = v
-        collect_details(model)
-        #~ if model.__name__ == 'CourseProvider':
-            #~ logger.debug("20111213 %s collector is %r",model,collector)  
-
-        if collector:
-            def by0(a,b):
-                return cmp(a[0],b[0])
-            collector = collector.items()
-            collector.sort(by0)
-            detail_layouts = [i[1] for i in collector]
-            model._lino_detail = table.Detail(model,detail_layouts)
-        else:
-            model._lino_detail = None
-            
-    """ 
-    And yet another loop to delete _lino_detail_layouts
-    """
-          
-    for model in models.get_models():
-      
-        del model._lino_detail_layouts
-        
-        if get_class_attr(model,'summary_row') is None:
-            if model._lino_detail:
-                def f(obj,ui,**kw):
-                    return ui.href_to(obj)
-                    #~ return u'<a href="%s" target="_blank">%s</a>' % (
-                      #~ ui.get_detail_url(obj,fmt='detail'),
-                      #~ unicode(obj))
-            else:
-                def f(obj,ui,**kw):
-                    return unicode(obj)
-            model.summary_row = f
-            #~ print '20101111 installed summary_row for ', model
-            
         
 
 

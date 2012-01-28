@@ -1,4 +1,4 @@
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.cal import models as cal
 
-class Person(contacts.Contact,contacts.Born,contacts.Person):
-    class Meta(contacts.Person.Meta):
+class Person(contacts.Contact,contacts.Born,contacts.PersonMixin):
+    class Meta(contacts.PersonMixin.Meta):
         app_label = 'contacts'
     died_date = models.DateField(
         blank=True,null=True,

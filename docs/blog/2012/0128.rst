@@ -1,0 +1,13 @@
+20120128
+========
+
+Newcomers (Neuzugänge)
+----------------------
+
+In knapp zwei Stunden hatte ich das neue Modul :mod:`lino.modlib.newcomers` 
+so gut wie fertig. Zumindest so weit, dass man es sich anschauen und weiterdenken kann.
+
+Ein paar allgemeine Features zu Tabellenparametern musste ich noch machen:
+
+- parameter chooser methods on tables
+- resolve_model on ForeignKey parameters
