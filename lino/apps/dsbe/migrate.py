@@ -943,3 +943,12 @@ def migrate_from_1_3_3(globals_dict):
     
     return '1.3.4'
   
+
+def migrate_from_1_3_6(globals_dict):
+    """
+    No manual migration. 
+    Just add new fields Person.broker, Person.faculty
+    and new models Broker and Faculty, Competence.
+    """
+    return '1.3.7'
+
