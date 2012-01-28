@@ -31,35 +31,59 @@ First example:
 Second example:
 
 >>> doc = HTML()
->>> doc.set_title("A simple table")
->>> p = doc.add_to_body(P("Here is a table."))
->>> t = TABLE()
->>> doc.add_to_body(t)
->>> t.add_header_row("Country", "Capital", "Population")
->>> t.add_body_row("Belgium", "Brussels", "10.0M")
->>> t.add_body_row("Estonia", "Tallinn", "1.1M")
+>>> doc.set_title("Two tables")
+>>> p = doc.add_to_body(P("Here are two tables."))
+>>> def add_table(cl):
+...     t = cl()
+...     doc.add_to_body(t)
+...     t.add_header_row("Country", "Capital", "Population")
+...     t.add_body_row("Belgium", "Brussels", "10.0M")
+...     t.add_body_row("Estonia", "Tallinn", "1.1M")
+>>> add_table(TABLE)
+>>> add_table(HFBTABLE)
 >>> print doc.toxml(True)
 <HTML xmlns="http://www.w3.org/1999/xhtml">
 <HEAD>
-<TITLE>A simple table</TITLE>
+<TITLE>Two tables</TITLE>
 </HEAD>
 <BODY>
-<P>Here is a table.</P>
+<P>Here are two tables.</P>
 <TABLE>
-<THEAD>
+<TR>
 <TH>Country</TH>
 <TH>Capital</TH>
 <TH>Population</TH>
-</THEAD>
-<TBODY>
+</TR>
+<TR>
 <TD>Belgium</TD>
 <TD>Brussels</TD>
 <TD>10.0M</TD>
-</TBODY>
-<TBODY>
+</TR>
+<TR>
 <TD>Estonia</TD>
 <TD>Tallinn</TD>
 <TD>1.1M</TD>
+</TR>
+</TABLE>
+<TABLE>
+<THEAD>
+<TR>
+<TH>Country</TH>
+<TH>Capital</TH>
+<TH>Population</TH>
+</TR>
+</THEAD>
+<TBODY>
+<TR>
+<TD>Belgium</TD>
+<TD>Brussels</TD>
+<TD>10.0M</TD>
+</TR>
+<TR>
+<TD>Estonia</TD>
+<TD>Tallinn</TD>
+<TD>1.1M</TD>
+</TR>
 </TBODY>
 </TABLE>
 </BODY>
@@ -94,28 +118,44 @@ class xhtml(xg.Namespace):
         class TABLE(HtmlContainer):
             border = xg.Attribute()
             cellspacing = xg.Attribute()
+                
+            class TR(HtmlContainer):
+                class TD(HtmlContainer):
+                  align = xg.Attribute()
+                  valign = xg.Attribute()
+                  bgcolor = xg.Attribute()
+                class TH(TD): pass
+                  
             class COLGROUP(xg.Container): 
                 class COL(xg.Container): 
                     width = xg.Attribute()
                     span = xg.Attribute()
                     
-            class TBODY(xg.Container): 
-                class TR(HtmlContainer):
-                    class TD(HtmlContainer):
-                      align = xg.Attribute()
-                      valign = xg.Attribute()
-                      bgcolor = xg.Attribute()
-                    class TH(TD): pass
-            class THEAD(TBODY): pass
-            class TFOOT(TBODY): pass
+            class TBODY(xg.Container): pass
+            class THEAD(xg.Container): pass
+            class TFOOT(xg.Container): pass
               
-            def add_header_row(self,*headers,**kw):
-                cells = [self.THEAD.TR.TH(h,**kw) for h in headers]
-                self.append(self.THEAD(*cells))
+            def add_header_row(self,*args,**kw):
+                return self.add_child(table_header_row(*args,**kw))
+                
+            def add_body_row(self,*args,**kw):
+                return self.add_child(table_body_row(*args,**kw))
 
-            def add_body_row(self,*cells,**kw):
-                cells = [self.TBODY.TR.TD(h,**kw) for h in cells]
-                self.append(self.TBODY(*cells))
+                
+        class HFBTABLE(TABLE):
+            "Variant of TABLE that uses THEAD, TFOOT and TBODY elements"
+            elementname = "TABLE"
+            def add_header_row(self,*args,**kw):
+                return self.find_node(self.THEAD).add_child(table_header_row(*args,**kw))
+                
+            def add_footer_row(self,*args,**kw):
+                return self.find_node(self.TFOOT).add_child(table_body_row(*args,**kw))
+                #~ tr = self.TR(*[self.TR.TH(h,**kw) for h in headers])
+
+            def add_body_row(self,*args,**kw):
+                return self.find_node(self.TBODY).add_child(table_body_row(*args,**kw))
+                #~ tr = self.TR(*[self.TR.TD(h,**kw) for h in cells])
+                #~ self.add_child(self.TBODY(*cells))
 
     def set_title(self,text):
         head = self.find_node(HEAD)
@@ -124,7 +164,7 @@ class xhtml(xg.Namespace):
         
     def add_to_body(self,node):
         body = self.find_node(BODY)
-        body.append(node)
+        return body.add_child(node)
   
 HTML = xhtml.HTML
 HEAD = xhtml.HTML.HEAD
@@ -132,10 +172,18 @@ TITLE = xhtml.HTML.HEAD.TITLE
 BODY = xhtml.HTML.BODY
 P = xhtml.HTML.BODY.P
 TABLE = xhtml.HTML.BODY.TABLE
+HFBTABLE = xhtml.HTML.BODY.HFBTABLE
 #~ TR = xhtml.HTML.BODY.TABLE.TR
 #~ TD = xhtml.HTML.BODY.TABLE.TR.TD
 #~ TH = xhtml.HTML.BODY.TABLE.TR.TH
 TEXT = xhtml.HTML.BODY.TEXT
+
+def table_header_row(*headers,**kw):
+    return TABLE.TR(*[TABLE.TR.TH(h,**kw) for h in headers])
+def table_body_row(*cells,**kw):
+    return TABLE.TR(*[TABLE.TR.TD(h,**kw) for h in cells])
+                  
+
 
 def _test():
     import doctest

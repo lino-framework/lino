@@ -147,7 +147,7 @@ unused = """
 
 import datetime
 from xml.dom.minidom import parseString
-
+from lino.utils import isiterable
 
 def assert_equivalent(s1,s2,write_diag_files=False):
     if s1 == s2:
@@ -222,20 +222,24 @@ class TEXT(Node):
 class ElementMetaClass(type):
     def __new__(meta, classname, bases, classDict):
       
+        classDict.setdefault('elementname',classname)
+        #~ classDict['allowedAttribs'] = allowedAttribs
+        #~ classDict['used_namespaces'] = []
+        cls = type.__new__(meta, classname, bases, classDict)
         allowedAttribs = {}
-        for b in bases:
-            for k,v in b.__dict__.items():
+        def collect(cl,to):
+            for b in cl.__bases__:
+                collect(b,to)
+            for k,v in cl.__dict__.items():
                 if isinstance(v,Attribute):
-                    allowedAttribs[k] = v
-            
-        for k,v in classDict.items():
+                    to[k] = v
+        collect(cls,allowedAttribs)                
+        for k,v in cls.__dict__.items():
             if isinstance(v,Attribute):
                 if not v.name:
                     v.name = k
                 allowedAttribs[k] = v
-        classDict['allowedAttribs'] = allowedAttribs
-        #~ classDict['used_namespaces'] = []
-        cls = type.__new__(meta, classname, bases, classDict)
+        cls.allowedAttribs = allowedAttribs
         return cls
     
     
@@ -250,8 +254,8 @@ class Element(Node):
     used_namespaces = []
     
     def __init__(self,value=None,**kw):
-        if self.elementname is None:
-            self.elementname = self.__class__.__name__
+        #~ if self.elementname is None:
+            #~ self.elementname = self.__class__.__name__
         self.value = self.validate(value)
         self._attribs = {}
         self.update(**kw)
@@ -275,8 +279,8 @@ class Element(Node):
                 xmlname = self.allowedAttribs[k]
             except KeyError,e:
                 raise Exception(
-                    "%s attribute not allowed for %s" % (
-                    repr(k), self.__class__.__name__))
+                    "%s attribute not allowed for %s (%s)." % (
+                    repr(k), self.__class__.__name__,self.allowedAttribs))
             self._attribs[k] = v
             
     def __getattr__(self,name):
@@ -327,19 +331,19 @@ class Element(Node):
             wr.write('/>')
         else:
             wr.write('>')
-            py2xml(wr,self.value_as_string())
+            py2xml(wr,self.value2string(self.value))
             wr.write("</"+self.tag()+">" )
             
-    def value_as_string(self):
-        return self.value
+    def value2string(self,v):
+        return v
         
         
-    def toxml(self,pretty=False):
+    def toxml(self,pretty=False,**kw):
         """
         Generate and return the XML string.
         """
         u = UniStringIO()
-        self.__xml__(u)
+        self.__xml__(u,**kw)
         if pretty:
             return u.getvalue().replace("><",">\n<")
             #~ return parseString(u.getvalue()).toprettyxml()
@@ -349,7 +353,10 @@ from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 
 def py2xml(wr,value): # ,indent='',addindent='',newl=''
-    if isinstance(value,(list,tuple)):
+    #~ if isinstance(value,(list,tuple)):
+    if isinstance(value,basestring):
+        wr.write(value)
+    elif isiterable(value):
         for e in value:
             py2xml(wr,e)
     elif isinstance(value,Node):
@@ -357,7 +364,8 @@ def py2xml(wr,value): # ,indent='',addindent='',newl=''
     elif isinstance(value,Promise):
         wr.write(force_unicode(value))
     else:
-        wr.write(value)
+        #~ raise Exception("Invalid value %r" % value)
+        wr.write(str(value))
 
 class ContainerMetaClass(ElementMetaClass):
     def __new__(meta, classname, bases, classDict):
@@ -393,16 +401,20 @@ class Container(Element):
                         if not ns in self.used_namespaces:
                             self.used_namespaces.append(ns)
         Element.__init__(self,list(nodes),**attribs)
+        #~ Element.__init__(self,nodes,**attribs)
         
-    def append(self,e):
+    def add_child(self,e):
         self.value.append(e)
         return e
         
     def find_node(self,cl):
+        """
+        Find the first child of specified class.
+        """
         for n in self.value:
             if isinstance(n,cl): 
                 return n
-        return self.append(cl())
+        return self.add_child(cl())
         
     #~ def __xml__(self,wr):
         #~ wr("<" + self.tag())
@@ -525,8 +537,8 @@ class Integer(Element):
             raise Exception("%r is not an integer" % v)
         return Element.validate(self,v)
         
-    def value_as_string(self):
-        return str(self.value)
+    def value2string(self,v):
+        return str(v)
         
 class DateTime(Element):
   
@@ -535,16 +547,16 @@ class DateTime(Element):
             raise Exception("%r is not a datetime instance" % v)
         return Element.validate(self,v)
         
-    def value_as_string(self):
-        return self.value.strftime("%Y%m%dT%H%M%S")
+    def value2string(self,v):
+        return v.strftime("%Y%m%dT%H%M%S")
         
 class Date(Element):
     def validate(self,v):
         if isinstance(v,datetime.date):
             return Element.validate(self,v)
         raise Exception("%r is not a valid value for Date element" % v)
-    def value_as_string(self):
-        return self.value.strftime("%Y-%m-%d")
+    def value2string(self,v):
+        return v.strftime("%Y-%m-%d")
 
 
       

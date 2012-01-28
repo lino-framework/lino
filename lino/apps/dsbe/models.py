@@ -183,14 +183,14 @@ add('3', _("Waiting for registry"))
   #~ (3  , _("Waiting for registry")   ), # Warteregister
 #~ )
 
-class BeIdCardTypes(ChoiceList):
+class BeIdCardType(ChoiceList):
     """
     List of Belgian Identification Card Types.
     
     """
     label = _("eID card type")
     
-add = BeIdCardTypes.add_item
+add = BeIdCardType.add_item
 add('1',_("Belgian citizen")) 
 # ,de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
 add('6', _("Kids card (< 12 year)")) 
@@ -417,7 +417,7 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         #~ verbose_name=_("eID card type"))
     #~ "The type of the electronic ID card. Imported from TIM."
     
-    card_type = BeIdCardTypes.field(blank=True)
+    card_type = BeIdCardType.field(blank=True)
     
     card_issuer = models.CharField(max_length=50,
         blank=True,# null=True,
@@ -872,35 +872,9 @@ class PersonsByNationality(AllPersons):
     
 
 
-def unused_only_coached_persons(qs,period_from,period_until=None):
-    """
-    coached_from and coached_until
-    """
-    #~ period_from = period_from or datetime.date.today()
-    period_until = period_until or period_from
-    #~ today = datetime.date.today()
-    qs = qs.filter(Q(coached_until__isnull=False)|Q(coached_from__isnull=False))
-    if period_from is not None:
-        qs = qs.filter(Q(coached_until__isnull=True)|Q(coached_until__gte=period_from))
-    if period_until is not None:
-        qs = qs.filter(Q(coached_from__isnull=True)|Q(coached_from__lte=period_until))
-    return qs
-  
 def only_coached_persons(qs,*args,**kw):
     return qs.filter(only_coached_persons_filter(*args,**kw))
     
-def unused_only_coached_persons_filter(period_from,period_until=None):
-    """
-    coached_from and coached_until
-    """
-    period_until = period_until or period_from
-    filter = Q(coached_until__isnull=False) | Q(coached_from__isnull=False)
-    if period_from is not None:
-        filter = Q(filter,Q(coached_until__isnull=True)|Q(coached_until__gte=period_from))
-    if period_until is not None:
-        filter = Q(filter,(Q(coached_from__isnull=True)|Q(coached_from__lte=period_until)))
-    return filter
-  
 
 def only_coached_persons_filter(today):
     """
@@ -981,20 +955,12 @@ class MyActivePersons(MyPersons):
         qs = super(MyActivePersons,self).get_request_queryset(rr)
         qs = qs.filter(group__active=True)
         return qs
- 
   
-#~ from appy import Object
 
-#~ def req2cell(rr):
-    #~ n = len(rr.data_iterator)
-    #~ if n == 0:
-        #~ return '0'
-    #~ return rr.ui.href_to_request(rr,str(n))
-
-if True: # dd.is_installed('dsbe'):
+#~ if True: # dd.is_installed('dsbe'):
   
-  #~ class InvalidClients(Persons):
-  class ClientsTest(Persons):
+#~ class InvalidClients(Persons):
+class ClientsTest(Persons):
     """
     Table of persons whose data seems unlogical or inconsistent.
     """
@@ -1076,9 +1042,10 @@ if True: # dd.is_installed('dsbe'):
         return obj.error_message
         
     
-  #~ class OverviewClientsByUser(dd.VirtualTable):
-  class UsersWithClients(dd.VirtualTable):
+#~ class OverviewClientsByUser(dd.VirtualTable):
+class UsersWithClients(dd.VirtualTable):
     """
+    New implementation of persons_by_user
     A customized overview report.
     """
     #~ label = _("Overview Clients By User")

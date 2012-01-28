@@ -367,3 +367,21 @@ def test06(self):
     
     #~ self.assertEqual(de,pk)
     
+
+def test07(self):
+    """
+    Bug 20120127 : VirtualFields had sneaked into wildcard columns.
+    """
+    from lino.apps.dsbe.models import Companies
+    wcde = [de.name for de in Companies.wildcard_data_elems()]
+    expected = '''\
+id country city name addr1 street_prefix street street_no street_box 
+addr2 zip_code region language email url phone gsm fax remarks 
+contact_ptr vat_id type is_active newcomer is_deprecated activity 
+bank_account1 bank_account2 prefix hourly_rate'''.split()
+    
+    s = ' '.join(wcde)
+    #~ print s
+    #~ print [de for de in Companies.wildcard_data_elems()]
+    self.assertEqual(wcde,expected)
+        

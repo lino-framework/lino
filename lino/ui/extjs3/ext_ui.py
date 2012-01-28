@@ -1193,6 +1193,7 @@ tinymce.init({
                 target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
                 target_url = self.media_url(*target_parts)
                 
+                #~ body = ar.table2xhtml().toxml()
                 body = self.table2xhtml(ar).toxml()
                 #~ logger.info("20120122 body is %s",body)
                 context = dict(
@@ -1213,6 +1214,8 @@ tinymce.init({
                     #~ knowledge_text=fields.knowledge_text,
                     )
                 #~ lang = str(elem.get_print_language(self))
+                if os.path.exists(target_file):
+                    os.remove(target_file)
                 logger.info(u"appy.pod render %s -> %s (params=%s",
                     tplfile,target_file,settings.LINO.appy_params)
                 renderer = Renderer(tplfile, context, target_file,**settings.LINO.appy_params)
@@ -2362,20 +2365,23 @@ tinymce.init({
         return a.get_handle(self)
         
     def table2xhtml(self,ar):
-        t = xhg.TABLE(cellspacing="3px",bgcolor="#ffffff", width="100%")
-        headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
-        sums  = [0 for col in ar.ah.store.list_fields]
-        cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
-        t.add_header_row(*headers,**cellattrs)
-        for row in ar.data_iterator:
-            cells = [x for x in ar.ah.store.row2html(ar,row,sums)]
-            t.add_body_row(*cells,**cellattrs)
-        has_sum = False
-        for i in sums:
-            if i:
-                has_sum = True
-                break
-        if has_sum:
-            t.add_body_row(*ar.ah.store.sums2html(ar,sums),**cellattrs)
+        def f():
+            headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
+            sums  = [0 for col in ar.ah.store.list_fields]
+            #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
+            cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+            yield xhg.table_header_row(*headers,**cellattrs)
+            for row in ar.data_iterator:
+                cells = [x for x in ar.ah.store.row2html(ar,row,sums)]
+                yield xhg.table_body_row(*cells,**cellattrs)
+            has_sum = False
+            for i in sums:
+                if i:
+                    has_sum = True
+                    break
+            if has_sum:
+                yield xhg.table_body_row(*ar.ah.store.sums2html(ar,sums),**cellattrs)
+        t = xhg.TABLE(f(),cellspacing="3px",bgcolor="#ffffff", width="100%")
+        #~ t.value = f()
         return t
             

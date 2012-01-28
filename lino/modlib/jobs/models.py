@@ -148,8 +148,8 @@ class JobProvider(Company):
     """
     class Meta:
         app_label = 'jobs'
-        verbose_name = _("Employer")
-        verbose_name_plural = _('Employers')
+        verbose_name = _("Job Provider")
+        verbose_name_plural = _('Job Providers')
     
 
 class JobProviders(Companies):
@@ -257,7 +257,7 @@ class Contract(ContractBase):
     
     provider = models.ForeignKey(JobProvider,
         related_name="%(app_label)s_%(class)s_set_by_provider",
-        verbose_name=_("Employer"),
+        #~ verbose_name=_("Employer"),
         blank=True,null=True)
     job = models.ForeignKey("jobs.Job",
         verbose_name=_("Job"),
@@ -709,7 +709,7 @@ class ExperiencesByPerson(Experiences,HistoryByPerson):
 
 class Job(SectorFunction):
     """
-    A work place at some employer
+    A place where Clients can work. at some Job Provider
     """
     
     _lino_preferred_width = 20 
@@ -1207,8 +1207,8 @@ if True: # dd.is_installed('contacts') and dd.is_installed('jobs'):
   
     dd.inject_field(Company,
         'is_jobprovider',
-        mti.EnableChild('jobs.JobProvider',verbose_name=_("is Employer")),
-        """Whether this Company is also an Employer."""
+        mti.EnableChild('jobs.JobProvider',verbose_name=_("is Job Provider")),
+        """Whether this Company is also a Job Provider."""
         )
 
 

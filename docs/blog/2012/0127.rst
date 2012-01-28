@@ -40,3 +40,22 @@ Noch Bugs im windows management
   ich noch verfeinern. Wenn man z.B. im Detail einer Person Nr. 123 
   in NotesByPerson doppelklickte und eine Notiz Nr 14 erstellte, 
   suchte er nach dem Speichern des Fensters eine Person Nr. 14.
+
+VirtualFields in Grid Views
+---------------------------
+
+I discovered that by mistake all VirtualFields were 
+considered wildcard data elements. 
+New testcase :func:`lino.apps.dsbe.tests.dsbe_tests.test07` 
+to avoid this infuture releases.
+
+py2xml() on iterables
+---------------------
+
+Wow! Beim Optimieren der Ausgabe von [html] war mir aufgefallen, 
+dass xmlgen es bisher erforderte, dass die ganze Tabelle in eine DOM 
+geladen wird, bevor sie gerendert werden kann. Und das habe ich nun 
+(wahrscheinlich) elegant gelöst, indem man als `value` eine 
+Generator-Funktion angibt.
+
+Aber Tests und Sichtbarkeitsmachung ist für morgen.
