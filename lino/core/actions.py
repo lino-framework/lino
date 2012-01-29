@@ -334,6 +334,7 @@ class ActionRequest(object):
 class ActorRequest(ActionRequest):
   
     create_kw = None
+    renderer = None
     
     def __init__(self,ui,report,request,action,**kw):
         ActionRequest.__init__(self,ui,action)
@@ -387,8 +388,11 @@ class ActorRequest(ActionRequest):
             subst_user=None,
             param_values=None,
             known_values=None,
+            renderer=None,
             **kw):
         self.user = user
+        if renderer is not None:
+            self.renderer = renderer
         #~ self.param_values = param_values
         self.param_values = AttrDict()
         

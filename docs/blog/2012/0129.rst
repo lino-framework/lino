@@ -1,0 +1,15 @@
+20120129
+========
+
+Da! Eigentlich müsste ich dringend ins Bett, 
+aber vorher wollte ich doch schnell mal ausprobieren, 
+ob ich den [pdf]-Button nicht ans Laufen kriege.
+Das war nicht evident, weil appy.pod keine 
+Links mit Protokoll `javascript:` erlaubt (was logisch ist).
+Ich musste also die Notion von UI-Renderern einführen.
+Das war so spannend, dass ich es nach zwei Stunden 
+scheinbar fertig habe.
+Kanns noch kaum glauben, dass so eine konzeptuelle 
+Neuerung so einfach ist.
+Checkin, aber bevor ich das release, braucht es noch ein paar Tests.
+

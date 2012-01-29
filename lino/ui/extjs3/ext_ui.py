@@ -117,6 +117,252 @@ def is_devserver():
     
 
 
+class HtmlRenderer(object):
+    def __init__(self,ui):
+        self.ui = ui
+        
+    def href(self,url,text):
+        return '<a href="%s">%s</a>' % (url,text)
+        
+    def href_button(self,url,text):
+        return '[<a href="%s">%s</a>]' % (url,text)
+        
+    def quick_upload_buttons(self,rr):
+        """
+        Returns a HTML chunk that displays "quick upload buttons":
+        either one button :guilabel:`[Upload]` 
+        (if the given :class:` request <lino.core.table.TableRequest>`
+        has no rows)
+        or two buttons :guilabel:`[Show]` and :guilabel:`[Edit]` 
+        if it has one row.
+        
+        See also :doc:`/tickets/56`.
+        
+        """
+        params = dict(base_params=rr.request2kw(self))
+        after_show = dict()
+        #~ params = dict(base_params=self.request2kw(rr))
+        if rr.get_total_count() == 0:
+        #~ if len(rr.data_iterator) == 0:
+            #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
+            a = rr.report.get_action('insert')
+            if a is not None:
+                elem = rr.create_instance()
+                after_show.update(data_record=elem2rec_insert(rr,rr.ah,elem))
+                #~ after_show.update(record_id=-99999)
+                # see tickets/56
+                return self.action_href_js(a,params,after_show,_("Upload"))
+        if rr.get_total_count() == 1:
+        #~ if len(rr.data_iterator) == 1:
+            #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
+            #~ s = unicode(v[0]) + ':'
+            s = ''
+            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(rr.data_iterator[0].file.name))
+            #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
+            #~ params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
+            if True:
+                #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
+                after_show.update(record_id=rr.data_iterator[0].pk)
+                s += ' ' + self.action_href_js(rr.ah.report.detail_action,params,after_show,_("Edit"))
+            else:
+                after_show.update(record_id=rr.data_iterator[0].pk)
+                s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),params,after_show)
+            return s
+        return '[?!]'
+        
+  
+class PdfRenderer(HtmlRenderer):
+    def href_to_request(self,rr,text=None):
+        return text or ("<b>%s</b>" % cgi.escape(force_unicode(rr.label)))
+    def href_to(self,obj,text=None):
+        text = text or ("<b>%s</b>" % cgi.escape(force_unicode(obj)))
+        return "<b>%s</b>" % text
+        
+class ExtRendererPermalink(HtmlRenderer):
+    def href_to_request(self,rr,text=None):
+        return self.href(
+            self.get_request_url(rr),
+            text or cgi.escape(force_unicode(rr.label)))
+    def href_to(self,obj,text=None):
+        return self.href(
+            self.get_detail_url(obj),
+            text or cgi.escape(force_unicode(obj)))
+            
+class ExtRenderer(HtmlRenderer):
+    def href_to_request(self,rr,text=None):
+        url = self.js2url(self.request_handler(rr))
+        return self.href(url,text or cgi.escape(force_unicode(rr.label)))
+            
+    def href_to(self,obj,text=None):
+        url = self.js2url(self.instance_handler(obj))
+        #~ a = obj.__class__._lino_model_report.get_action('detail')
+        #~ url = self.action_url_js(a,None,dict(record_id=obj.pk))
+        #~ onclick = self.instance_handler(obj)
+        #~ a = obj.__class__._lino_model_report.get_action('detail')
+        #~ onclick = 'Lino.%s(undefined,{},{record_id:%s})' % (a,py2js(obj.pk))
+        #~ onclick = cgi.escape(onclick)
+        #~ onclick = onclick.replace('"','&quot;')
+        #~ url = "javascript:" + onclick
+        return self.href(url,text or cgi.escape(force_unicode(obj)))
+
+    def js2url(self,js):
+        js = cgi.escape(js)
+        js = js.replace('"','&quot;')
+        return 'javascript:' + js
+        
+    def py2js_converter(self,v):
+        """
+        Additional converting logic for serializing Python values to json.
+        """
+        if v is LANGUAGE_CHOICES:
+            return js_code('LANGUAGE_CHOICES')
+        if v is STRENGTH_CHOICES:
+            return js_code('STRENGTH_CHOICES')
+        if v is KNOWLEDGE_CHOICES:
+            return js_code('KNOWLEDGE_CHOICES')
+        if isinstance(v,choicelists.BabelChoice):
+            """
+            This is special. We don't render the text but the value. 
+            """
+            return v.value
+        #~ if isinstance(v,babel.BabelText):
+            #~ return unicode(v)
+        #~ if isinstance(v,Promise):
+            #~ return unicode(v)
+        if isinstance(v,models.Model):
+            return v.pk
+        if isinstance(v,Exception):
+            return unicode(v)
+        if isinstance(v,menus.Menu):
+            if v.parent is None:
+                return v.items
+                #kw.update(region='north',height=27,items=v.items)
+                #return py2js(kw)
+            return dict(text=prepare_label(v),menu=dict(items=v.items))
+        if isinstance(v,menus.MenuItem):
+            #~ if v.href is not None:
+                #~ if v.parent.parent is None:
+                    #~ # special case for href items in main menubar
+                    #~ return dict(
+                      #~ xtype='button',text=prepare_label(v),
+                      #~ handler=js_code("function() {window.location='%s';}" % v.href))
+                #~ return dict(text=prepare_label(v),href=v.href)
+            if v.params is not None:
+                ar = v.action.actor.request(self.ui,None,v.action,**v.params)
+                return handler_item(v,self.request_handler(ar))
+                #~ return dict(text=prepare_label(v),handler=js_code(handler))
+            if v.action:
+                if True:
+                    #~ handler = self.action_handler(v.action,params=v.params)
+                    return handler_item(v,self.action_handler(v.action))
+                    #~ handler = "function(){%s}" % self.action_handler(
+                        #~ v.action,None,v.params)
+                    #~ return dict(text=prepare_label(v),handler=js_code(handler))
+                else:
+                    url = self.action_url_http(v.action)
+            #~ elif v.params is not None:
+                #~ ar = v.action.actor.request(self,None,v.action,**v.params)
+                #~ url = self.get_request_url(ar)
+            elif v.href is not None:
+                url = v.href
+            elif v.request is not None:
+                url = self.get_request_url(v.request)
+            elif v.instance is not None:
+                return handler_item(v,self.instance_handler(v.instance))
+                #~ handler = "function(){%s}" % self.instance_handler(v.instance)
+                #~ return dict(text=prepare_label(v),handler=js_code(handler))
+              
+                #~ url = self.get_detail_url(v.instance,an='detail')
+                url = self.get_detail_url(v.instance)
+            else:
+                # a separator
+                #~ return dict(text=v.label)
+                return v.label
+                #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor.__name__,fmt=v.action.name)
+            if v.parent.parent is None:
+                # special case for href items in main menubar
+                return dict(
+                  xtype='button',text=prepare_label(v),
+                  #~ handler=js_code("function() { window.location='%s'; }" % url))
+                  handler=js_code("function() { location.replace('%s'); }" % url))
+            return dict(text=prepare_label(v),href=url)
+        return v
+        
+    def action_handler(self,a,params=None,after_show=None):
+        if isinstance(a,actions.ShowEmptyTable):
+            after_show = dict(record_id=-99998)
+        if after_show:
+            return "Lino.%s(%s,%s)" % (
+              a,py2js(params),py2js(after_show))
+        if params:
+            return "Lino.%s(%s)" % (a,py2js(params))
+        return "Lino.%s()" % a
+
+    def instance_handler(self,obj):
+        a = obj.__class__._lino_model_report.get_action('detail')
+        return self.action_handler(a,None,dict(record_id=obj.pk))
+        
+    def request_handler(self,rr,*args,**kw):
+        bp = rr.request2kw(self.ui,**kw)
+        return self.action_handler(rr.action,after_show=dict(base_params=bp))
+        
+    def action_href_js(self,a,params,after_show=None,label=None):
+        """
+        Return a HTML chunk for a button that will execute this 
+        action using a *Javascript* link to this action.
+        """
+        label = cgi.escape(force_unicode(label or a.get_button_label()))
+        url = self.action_url_js(a,params,after_show)
+        return self.href_button(url,label)
+        
+    def action_url_js(self,a,params,after_show):
+        return self.js2url(self.action_handler(a,params,after_show))
+        #~ onclick = 'Lino.%s(undefined,%s,%s)' % (
+          #~ a,
+          #~ py2js(params or {}),
+          #~ py2js(after_show or {}))
+        #~ print 20110120, onclick
+
+      
+    def action_href_http(self,a,label=None,**params):
+        """
+        Return a HTML chunk for a button that will execute 
+        this action using a *HTTP* link to this action.
+        """
+        label = cgi.escape(force_unicode(label or a.get_button_label()))
+        return '[<a href="%s">%s</a>]' % (self.action_url_http(a,**params),label)
+        
+    #~ def get_action_url(self,action,*args,**kw):
+    def action_url_http(self,action,*args,**kw):
+        #~ if not action is action.actor.default_action:
+        if action != action.actor.default_action:
+            kw.update(an=action.name)
+        return self.build_url("api",action.actor.app_label,action.actor.__name__,*args,**kw)
+            
+    def get_actor_url(self,actor,*args,**kw):
+        return self.build_url("api",actor.app_label,actor.__name__,*args,**kw)
+        
+    def get_request_url(self,rr,*args,**kw):
+        kw = rr.request2kw(self,**kw)
+        #~ kw = self.request2kw(rr,**kw)
+        return self.build_url('api',rr.report.app_label,rr.report.__name__,*args,**kw)
+        
+    def get_detail_url(self,obj,*args,**kw):
+        #~ rpt = obj._lino_model_report
+        #~ return self.build_url('api',rpt.app_label,rpt.__name__,str(obj.pk),*args,**kw)
+        return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
+        
+    #~ def request_href_js(self,rr,text=None):
+        #~ url = self.request_handler(rr)
+        #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
+        
+    
+            
+
+
+
+
+
 class HttpResponseDeleted(HttpResponse):
     status_code = 204
     
@@ -332,6 +578,8 @@ def elem2rec_detailed(ar,rh,elem,**rec):
  
 
 
+  
+    
 class ExtUI(base.UI):
     """The central instance of Lino's ExtJS3 User Interface.
     """
@@ -340,11 +588,14 @@ class ExtUI(base.UI):
     verbose_name = "ExtJS with Windows"
     Panel = ext_elems.Panel
     
+    
     #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
 
     def __init__(self,*args,**kw):
+        self.pdf_renderer = PdfRenderer(self)
+        self.ext_renderer = ExtRenderer(self)
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
-        jsgen.register_converter(self.py2js_converter)
+        jsgen.register_converter(self.ext_renderer.py2js_converter)
         #~ self.window_configs = {}
         #~ if os.path.exists(self.window_configs_file):
             #~ logger.info("Loading %s...",self.window_configs_file)
@@ -1119,6 +1370,7 @@ tinymce.init({
             #~ print '20110714', a, fmt
             
             if fmt == 'json':
+                ar.renderer = self.ext_renderer
                 rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
                 #~ return json_response_kw(msg="20120124")
                 #~ total_count = len(ar.data_iterator)
@@ -1135,6 +1387,7 @@ tinymce.init({
                   gc_choices=[gc.data for gc in rpt.grid_configs])
                     
             if fmt == 'html':
+                ar.renderer = self.ext_renderer
                 kw = {}
                 bp = ar.request2kw(self)
                 #~ bp = self.request2kw(ar)
@@ -1149,7 +1402,7 @@ tinymce.init({
                     after_show.update(data_record=rec)
 
                 kw.update(on_ready=[
-                    self.action_handler(ar.action,None,after_show)])
+                    self.ext_renderer.action_handler(ar.action,None,after_show)])
                 #~ kw.update(on_ready=['Lino.%s(undefined,%s,%s);' % (
                     #~ ar.action,
                     #~ py2js(params),
@@ -1189,10 +1442,11 @@ tinymce.init({
                 if not tplfile:
                     raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
                     
-                target_parts = ['cache', 'appypdf', rpt.app_label + '.' + rpt.__name__ + '.odt']
+                target_parts = ['cache', 'appypdf', 
+                    rpt.app_label + '.' + rpt.__name__ + '.pdf']
                 target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
                 target_url = self.media_url(*target_parts)
-                
+                ar.renderer = self.pdf_renderer
                 #~ body = ar.table2xhtml().toxml()
                 body = self.table2xhtml(ar).toxml()
                 #~ logger.info("20120122 body is %s",body)
@@ -1225,10 +1479,12 @@ tinymce.init({
                 return http.HttpResponseRedirect(target_url)
                 
             if fmt == 'printer':
+                ar.renderer = self.pdf_renderer
                 response = HttpResponse(content_type='text/html;charset="utf-8"')
                 #~ ar.render_to_html(self,response)
                 doc = xhg.HTML()
                 doc.set_title(ar.get_title())
+                #~ ar.ui = self.pdf_ui
                 t = self.table2xhtml(ar)
                 doc.add_to_body(t)
                 doc.__xml__(response)
@@ -1407,6 +1663,7 @@ tinymce.init({
             #~ ar = ViewReportRequest(request,ah,a)
             #~ ar = table.TableRequest(self,rpt,request,a)
             ar = rpt.request(self,request,a)
+            ar.renderer = self.ext_renderer
             ah = ar.ah
 
             if isinstance(a,actions.OpenWindowAction):
@@ -1443,7 +1700,7 @@ tinymce.init({
                         after_show.update(active_tab=tab)
                 params.update(base_params=bp)
                 return HttpResponse(self.html_page(request,
-                  on_ready=[self.action_handler(a,params,after_show)]))
+                  on_ready=[self.ext_renderer.action_handler(a,params,after_show)]))
                 #~ return HttpResponse(self.html_page(request,
                   #~ on_ready=['Lino.%s(undefined,%s,%s);' % (
                     #~ a,py2js(params),py2js(after_show))]))
@@ -1784,231 +2041,6 @@ tinymce.init({
         #~ rpt = self.requested_report(request,app_label,actor)
         #~ return self.action_href(rpt.default_action,**kw)
 
-    def quick_upload_buttons(self,rr):
-        """
-        Returns a HTML chunk that displays "quick upload buttons":
-        either one button :guilabel:`[Upload]` 
-        (if the given :class:` request <lino.core.table.TableRequest>`
-        has no rows)
-        or two buttons :guilabel:`[Show]` and :guilabel:`[Edit]` 
-        if it has one row.
-        
-        See also :doc:`/tickets/56`.
-        
-        """
-        params = dict(base_params=rr.request2kw(self))
-        after_show = dict()
-        #~ params = dict(base_params=self.request2kw(rr))
-        if rr.get_total_count() == 0:
-        #~ if len(rr.data_iterator) == 0:
-            #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
-            a = rr.report.get_action('insert')
-            if a is not None:
-                elem = rr.create_instance()
-                after_show.update(data_record=elem2rec_insert(rr,rr.ah,elem))
-                #~ after_show.update(record_id=-99999)
-                # see tickets/56
-                return self.action_href_js(a,params,after_show,_("Upload"))
-        if rr.get_total_count() == 1:
-        #~ if len(rr.data_iterator) == 1:
-            #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
-            #~ s = unicode(v[0]) + ':'
-            s = ''
-            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(rr.data_iterator[0].file.name))
-            #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
-            #~ params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
-            if True:
-                #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
-                after_show.update(record_id=rr.data_iterator[0].pk)
-                s += ' ' + self.action_href_js(rr.ah.report.detail_action,params,after_show,_("Edit"))
-            else:
-                after_show.update(record_id=rr.data_iterator[0].pk)
-                s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),params,after_show)
-            return s
-        return '[?!]'
-        
-    def py2js_converter(self,v):
-        """
-        Additional converting logic for serializing Python values to json.
-        """
-        if v is LANGUAGE_CHOICES:
-            return js_code('LANGUAGE_CHOICES')
-        if v is STRENGTH_CHOICES:
-            return js_code('STRENGTH_CHOICES')
-        if v is KNOWLEDGE_CHOICES:
-            return js_code('KNOWLEDGE_CHOICES')
-        if isinstance(v,choicelists.BabelChoice):
-            """
-            This is special. We don't render the text but the value. 
-            """
-            return v.value
-        #~ if isinstance(v,babel.BabelText):
-            #~ return unicode(v)
-        #~ if isinstance(v,Promise):
-            #~ return unicode(v)
-        if isinstance(v,models.Model):
-            return v.pk
-        if isinstance(v,Exception):
-            return unicode(v)
-        if isinstance(v,menus.Menu):
-            if v.parent is None:
-                return v.items
-                #kw.update(region='north',height=27,items=v.items)
-                #return py2js(kw)
-            return dict(text=prepare_label(v),menu=dict(items=v.items))
-        if isinstance(v,menus.MenuItem):
-            #~ if v.href is not None:
-                #~ if v.parent.parent is None:
-                    #~ # special case for href items in main menubar
-                    #~ return dict(
-                      #~ xtype='button',text=prepare_label(v),
-                      #~ handler=js_code("function() {window.location='%s';}" % v.href))
-                #~ return dict(text=prepare_label(v),href=v.href)
-            if v.params is not None:
-                ar = v.action.actor.request(self,None,v.action,**v.params)
-                return handler_item(v,self.request_handler(ar))
-                #~ return dict(text=prepare_label(v),handler=js_code(handler))
-            if v.action:
-                if True:
-                    #~ handler = self.action_handler(v.action,params=v.params)
-                    return handler_item(v,self.action_handler(v.action))
-                    #~ handler = "function(){%s}" % self.action_handler(
-                        #~ v.action,None,v.params)
-                    #~ return dict(text=prepare_label(v),handler=js_code(handler))
-                else:
-                    url = self.action_url_http(v.action)
-            #~ elif v.params is not None:
-                #~ ar = v.action.actor.request(self,None,v.action,**v.params)
-                #~ url = self.get_request_url(ar)
-            elif v.href is not None:
-                url = v.href
-            elif v.request is not None:
-                url = self.get_request_url(v.request)
-            elif v.instance is not None:
-                return handler_item(v,self.instance_handler(v.instance))
-                #~ handler = "function(){%s}" % self.instance_handler(v.instance)
-                #~ return dict(text=prepare_label(v),handler=js_code(handler))
-              
-                #~ url = self.get_detail_url(v.instance,an='detail')
-                url = self.get_detail_url(v.instance)
-            else:
-                # a separator
-                #~ return dict(text=v.label)
-                return v.label
-                #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor.__name__,fmt=v.action.name)
-            if v.parent.parent is None:
-                # special case for href items in main menubar
-                return dict(
-                  xtype='button',text=prepare_label(v),
-                  #~ handler=js_code("function() { window.location='%s'; }" % url))
-                  handler=js_code("function() { location.replace('%s'); }" % url))
-            return dict(text=prepare_label(v),href=url)
-        return v
-        
-    def action_handler(self,a,params=None,after_show=None):
-        if isinstance(a,actions.ShowEmptyTable):
-            after_show = dict(record_id=-99998)
-        if after_show:
-            return "Lino.%s(%s,%s)" % (
-              a,py2js(params),py2js(after_show))
-        if params:
-            return "Lino.%s(%s)" % (a,py2js(params))
-        return "Lino.%s()" % a
-
-    def instance_handler(self,obj):
-        a = obj.__class__._lino_model_report.get_action('detail')
-        return self.action_handler(a,None,dict(record_id=obj.pk))
-        
-    def request_handler(self,rr,*args,**kw):
-        bp = rr.request2kw(self,**kw)
-        return self.action_handler(rr.action,after_show=dict(base_params=bp))
-        
-    def action_href_js(self,a,params,after_show=None,label=None):
-        """
-        Return a HTML chunk for a button that will execute this 
-        action using a *Javascript* link to this action.
-        """
-        label = cgi.escape(force_unicode(label or a.get_button_label()))
-        url = self.action_url_js(a,params,after_show)
-        return self.href_button(url,label)
-        
-    def action_url_js(self,a,params,after_show):
-        return self.js2url(self.action_handler(a,params,after_show))
-        #~ onclick = 'Lino.%s(undefined,%s,%s)' % (
-          #~ a,
-          #~ py2js(params or {}),
-          #~ py2js(after_show or {}))
-        #~ print 20110120, onclick
-
-    def js2url(self,js):
-        js = cgi.escape(js)
-        js = js.replace('"','&quot;')
-        return 'javascript:' + js
-        
-      
-    def action_href_http(self,a,label=None,**params):
-        """
-        Return a HTML chunk for a button that will execute 
-        this action using a *HTTP* link to this action.
-        """
-        label = cgi.escape(force_unicode(label or a.get_button_label()))
-        return '[<a href="%s">%s</a>]' % (self.action_url_http(a,**params),label)
-        
-    #~ def get_action_url(self,action,*args,**kw):
-    def action_url_http(self,action,*args,**kw):
-        #~ if not action is action.actor.default_action:
-        if action != action.actor.default_action:
-            kw.update(an=action.name)
-        return self.build_url("api",action.actor.app_label,action.actor.__name__,*args,**kw)
-            
-    def get_actor_url(self,actor,*args,**kw):
-        return self.build_url("api",actor.app_label,actor.__name__,*args,**kw)
-        
-    def get_request_url(self,rr,*args,**kw):
-        kw = rr.request2kw(self,**kw)
-        #~ kw = self.request2kw(rr,**kw)
-        return self.build_url('api',rr.report.app_label,rr.report.__name__,*args,**kw)
-        
-    def get_detail_url(self,obj,*args,**kw):
-        #~ rpt = obj._lino_model_report
-        #~ return self.build_url('api',rpt.app_label,rpt.__name__,str(obj.pk),*args,**kw)
-        return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
-        
-    #~ def request_href_js(self,rr,text=None):
-        #~ url = self.request_handler(rr)
-        #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
-        
-    def href_to_request(self,rr,text=None):
-        if True:
-            url = self.js2url(self.request_handler(rr))
-            return self.href(url,text or cgi.escape(force_unicode(rr.label)))
-        return self.href(
-            self.get_request_url(rr),
-            text or cgi.escape(force_unicode(rr.label)))
-            
-    def href_to(self,obj,text=None):
-        if True:
-            url = self.js2url(self.instance_handler(obj))
-            #~ a = obj.__class__._lino_model_report.get_action('detail')
-            #~ url = self.action_url_js(a,None,dict(record_id=obj.pk))
-            #~ onclick = self.instance_handler(obj)
-            #~ a = obj.__class__._lino_model_report.get_action('detail')
-            #~ onclick = 'Lino.%s(undefined,{},{record_id:%s})' % (a,py2js(obj.pk))
-            #~ onclick = cgi.escape(onclick)
-            #~ onclick = onclick.replace('"','&quot;')
-            #~ url = "javascript:" + onclick
-            return self.href(url,text or cgi.escape(force_unicode(obj)))
-        return self.href(
-            self.get_detail_url(obj),
-            text or cgi.escape(force_unicode(obj)))
-
-    def href(self,url,text):
-        return '<a href="%s">%s</a>' % (url,text)
-        
-    def href_button(self,url,text):
-        return '[<a href="%s">%s</a>]' % (url,text)
-    
-            
     def setup_handle(self,h):
         #~ logger.debug('20120103 ExtUI.setup_handle() %s',h)
         #~ if isinstance(h,layouts.TabPanelHandle):

@@ -689,7 +689,7 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         r = rr.spawn_request(uploads.UploadsByOwner,
               master_instance=self,
               known_values=kv)
-        return rr.ui.quick_upload_buttons(r)
+        return rr.renderer.quick_upload_buttons(r)
         #~ rrr = uploads.UploadsByPerson().request(rr.ui,master_instance=self,known_values=kv)
         #~ return rr.ui.quick_upload_buttons(rrr)
     #~ residence_permit.return_type = dd.DisplayField(_("Residence permit"))
@@ -700,7 +700,7 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         r = rr.spawn_request(uploads.UploadsByOwner,
               master_instance=self,
               known_values=kv)
-        return rr.ui.quick_upload_buttons(r)
+        return rr.renderer.quick_upload_buttons(r)
     #~ work_permit.return_type = dd.DisplayField(_("Work permit"))
     
     @dd.displayfield(_("driving licence"))
@@ -709,7 +709,7 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         kv = dict(type=settings.LINO.site_config.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner,
               master_instance=self,known_values=kv)
-        return rr.ui.quick_upload_buttons(r)
+        return rr.renderer.quick_upload_buttons(r)
     #~ driving_licence.return_type = dd.DisplayField(_("driving licence"))
     
 

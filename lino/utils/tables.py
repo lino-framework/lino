@@ -206,6 +206,7 @@ class AbstractTableRequest(actions.ActorRequest):
     def spawn_request(self,rpt,**kw):
         #~ rh = rpt.get_handle(self.ui)
         kw.update(user=self.user)
+        kw.update(renderer=self.renderer)
         #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
         return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
         

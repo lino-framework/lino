@@ -96,13 +96,13 @@ class StoreField(object):
     def full_value_from_object(self,request,obj):
         return self.field.value_from_object(obj)
     
-    def value2list(self,ui,v,l,row):
+    def value2list(self,ar,v,l,row):
         return l.append(v)
         
     def value2dict(self,ui,v,d,row):
         d[self.name] = v
 
-    def value2html(self,ui,v):
+    def value2html(self,ar,v):
         return force_unicode(v)
       
     def parse_form_value(self,v,obj):
@@ -207,7 +207,7 @@ class ComboStoreField(StoreField):
         return post_data.get(self.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
         
     #~ def obj2list(self,request,obj):
-    def value2list(self,request,v,l,row):
+    def value2list(self,ar,v,l,row):
         value,text = self.get_value_text(v,row)
         l += [text,value]
         
@@ -237,8 +237,8 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
             #~ return ''
         #~ return req.ui.href_to(obj)
         
-    def value2html(self,ui,v):
-        return ui.href_to(v)
+    def value2html(self,ar,v):
+        return ar.renderer.href_to(v)
         
     def get_value_text(self,v,obj):
         #~ v = self.full_value_from_object(None,obj)
@@ -342,22 +342,22 @@ class RequestStoreField(StoreField):
         #~ return len(v.data_iterator)
         return v.get_total_count()
         
-    def value2list(self,ui,v,l,row):
-        return l.append(self.format_value(ui,v))
+    def value2list(self,ar,v,l,row):
+        return l.append(self.format_value(ar,v))
         
     def value2dict(self,ui,v,d,row):
         d[self.name] = self.format_value(ui,v)
         #~ d[self.options['name']] = self.format_value(ui,v)
         #~ d[self.field.name] = v
 
-    def value2html(self,ui,v):
-        return self.format_value(ui,v)
+    def value2html(self,ar,v):
+        return self.format_value(ar,v)
         
-    def format_value(self,ui,v):
+    def format_value(self,ar,v):
         n = v.get_total_count()
         if n == 0:
             return ''
-        return ui.href_to_request(v,str(n))
+        return ar.renderer.href_to_request(v,str(n))
 
 
 
@@ -383,7 +383,7 @@ class GenericForeignKeyField(StoreField):
         owner = getattr(obj,self.name)
         #~ owner = getattr(obj,self.field.name)
         if owner is None: return ''
-        return request.ui.href_to(owner)
+        return request.renderer.href_to(owner)
         #~ return "foo"
         #~ if not hasattr(self.field,'value_from_object'):
             #~ raise Exception('%s %s has no method value_from_object?!'%(
@@ -513,7 +513,7 @@ class BooleanStoreField(StoreField):
         StoreField.__init__(self,field,name,**kw)
         if not field.editable:
             def fn(self,request,obj):
-                return self.value2html(request.ui,self.field.value_from_object(obj))
+                return self.value2html(request,self.field.value_from_object(obj))
             self.full_value_from_object = curry(fn,self)
         
         
@@ -522,7 +522,7 @@ class BooleanStoreField(StoreField):
         return ext_requests.parse_boolean(v)
 
         
-    def value2html(self,ui,v):
+    def value2html(self,ar,v):
         return iif(v,_("Yes"),_("No"))
       
 
@@ -946,11 +946,11 @@ class Store:
         l = []
         if isinstance(row,actions.PhantomRow):
             for fld in self.list_fields:
-                fld.value2list(request.ui,None,l,row)
+                fld.value2list(request,None,l,row)
         else:
             for fld in self.list_fields:
                 v = fld.full_value_from_object(request,row)
-                fld.value2list(request.ui,v,l,row)
+                fld.value2list(request,v,l,row)
             #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
         return l
       
@@ -997,7 +997,7 @@ class Store:
                     yield ''
                 else:
                     sums[i] += fld.value2int(v)
-                    yield fld.value2html(request.ui,v)
+                    yield fld.value2html(request,v)
                 #~ yield fld.cell_html(request,row)
                 
     def sums2html(self,request,sums):
