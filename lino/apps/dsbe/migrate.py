@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ Lino writes the corresponding ``import`` statement into every dpy dump because
 :attr:`lino.Lino.migration_module` 
 set to ``"lino.apps.dsbe.migrate"``
 
-Deserves more documentation.
 """
 
 from django.conf import settings
@@ -60,7 +59,7 @@ def install(globals_dict):
                 dblogger.info(func.__doc__)
         else:
             if from_version != __version__:
-                dblogger.warning("No migration from version %s to %s",from_version,__version__)
+                dblogger.warning("No method for migration from version %s to %s",from_version,__version__)
             break
 
 
@@ -954,3 +953,4 @@ def migrate_from_1_3_6(globals_dict):
     """
     return '1.3.7'
 
+def migrate_from_1_3_7(globals_dict): return '1.3.8'

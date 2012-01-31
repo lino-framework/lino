@@ -261,8 +261,8 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 #~ qs = self.company.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact = qs[0]
-        # severe test:
-        if self.person_id is not None:
+        # severe test is ready but not yet activated :
+        if False and self.person_id is not None:
             msg = OverlappingContractsTest(self.person).check(self)
             if msg:
                 raise ValidationError(msg)
@@ -344,14 +344,13 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         return (self.applies_from, self.date_ended or self.applies_until)
         
         
-    def data_control(self):
-            
-        msgs = []
-        for model in models_by_abc(ContractBase):
-            for con in model.objects.filter(person=self.person):
-                if self.overlaps_with(con):
-                    msgs.append(_("Dates overlap with %s") % con)
-        return msgs
+    #~ def data_control(self):
+        #~ msgs = []
+        #~ for model in models_by_abc(ContractBase):
+            #~ for con in model.objects.filter(person=self.person):
+                #~ if self.overlaps_with(con):
+                    #~ msgs.append(_("Dates overlap with %s") % con)
+        #~ return msgs
           
 
 class OverlappingContractsTest:
