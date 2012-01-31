@@ -19,7 +19,7 @@ Example:
 
 >>> req = IdentifyPersonRequest.verify_request("68060101234",
 ...   LastName="SAFFRE",BirthDate='1968-06-01')
->>> print req.toxml(True)
+>>> print req.tostring(True)
 <ips:IdentifyPersonRequest xmlns:ips="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
 <ips:SearchCriteria>
 <ips:SSIN>68060101234</ips:SSIN>
@@ -33,7 +33,7 @@ Example:
 </ips:IdentifyPersonRequest>
 
 >>> req = PerformInvestigationRequest("6806010123",wait="0")
->>> print req.toxml(True)
+>>> print req.tostring(True)
 <ns1:PerformInvestigationRequest xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
 <ns1:SocialSecurityUser>6806010123</ns1:SocialSecurityUser>
 <ns1:DataGroups>
@@ -72,7 +72,7 @@ Here we go:
 
 >>> now = datetime.datetime(2011,10,31,15,41,10)
 >>> sr = req.ssdn_request(settings,'PIR # 5',now)
->>> print sr.toxml(True)
+>>> print sr.tostring(True)
 <SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
 <RequestContext>
 <AuthorizedUser>
@@ -107,7 +107,7 @@ is exactly the same as before.
 
 Now we perform another wrapping of this SSDN request.
 
->>> print soap_request("Foo").toxml(True)
+>>> print soap_request("Foo").tostring(True)
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -120,12 +120,12 @@ Element-level validation:
 
 >>> G = IdentifyPersonRequest.SearchCriteria.PhoneticCriteria.Gender
 
->>> print G(4).toxml()
+>>> print G(4).tostring()
 Traceback (most recent call last):
 ...
 Exception: Invalid value 4 (must be one of (0, 1, 2))
 
->>> print G(2).toxml()
+>>> print G(2).tostring()
 <Gender>2</Gender>
 
 Birth dates
@@ -135,7 +135,7 @@ Birth dates
 
 A birth date with missing month and day:
 
->>> print B('1978-00-00').toxml()
+>>> print B('1978-00-00').tostring()
 <BirthDate>1978-00-00</BirthDate>
 
 BCSS requires at least the year of a birth date:
@@ -147,12 +147,12 @@ Exception: Invalid date for BirthDate
 
 A normal birth date instantiated from a `datetime.date`:
 
->>> print B(datetime.date(1968,6,1)).toxml()
+>>> print B(datetime.date(1968,6,1)).tostring()
 <BirthDate>1968-06-01</BirthDate>
 
 An empty birth date:
 
->>> print B('').toxml()
+>>> print B('').tostring()
 <BirthDate></BirthDate>
 
 
@@ -285,7 +285,7 @@ class Service(xg.Container):
             #~ anyXML)
       
     def ssdn_request(self,settings,message_ref,dt):
-        #~ anyXML = self.toxml()
+        #~ anyXML = self.tostring()
         SR = SSDNRequest.ServiceRequest
         serviceRequest = SR(
             SR.ServiceId(self.service_id),
@@ -303,8 +303,8 @@ class Service(xg.Container):
         
     def execute(self,settings,*args):
         
-        req = soap_request(self.ssdn_request(settings,*args).toxml())
-        xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.toxml()
+        req = soap_request(self.ssdn_request(settings,*args).tostring())
+        xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.tostring()
         
         #~ dblogger.info("Going to send request /******\n%s\n******/",xmlString)
         if not settings.LINO.bcss_soap_url:
@@ -557,7 +557,7 @@ def unused_send_request(settings,xmlString):
     #~ xmlString = SOAP_ENVELOPE % xmlString
     
     xg.set_default_namespace(bcss)
-    xmlString = soap_request(xmlString).toxml()
+    xmlString = soap_request(xmlString).tostring()
     
     xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + xmlString
     

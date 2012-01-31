@@ -182,8 +182,8 @@ def obj2str(i,force_detailed=False):
             return u"%s #%s (%s)" % (i.__class__.__name__,str(i.pk),repr(unicode(i)))
         except Exception,e:
         #~ except TypeError,e:
-            return u"Unprintable %s(pk=%s,error=%s" % (
-              i.__class__.__name__,str(i.pk),e)
+            return "Unprintable %s(pk=%r,error=%r" % (
+              i.__class__.__name__,i.pk,e)
             #~ return unicode(e)
     #~ names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])

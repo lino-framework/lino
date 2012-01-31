@@ -496,7 +496,7 @@ class Component(ComponentBase,
         
     def summary_row(self,ui,**kw):
         #~ if self.owner and not self.auto_type:
-        html = ui.href_to(self)
+        html = ui.ext_renderer.href_to(self)
         if self.start_time:
             html += _(" at ") + babel.dtos(self.start_time)
         if self.status_id:

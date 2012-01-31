@@ -54,7 +54,7 @@ from lino.utils import babel
 from lino.utils.choosers import chooser
 from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
-from lino.utils import overlap
+from lino.utils import overlap, overlap2, encompass
 from lino.mixins.printable import DirectPrintAction
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str, models_by_abc
@@ -261,7 +261,12 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 #~ qs = self.company.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact = qs[0]
-                    
+        # severe test:
+        if self.person_id is not None:
+            msg = OverlappingContractsTest(self.person).check(self)
+            if msg:
+                raise ValidationError(msg)
+            
         super(ContractBase,self).full_clean(*args,**kw)
         
 
@@ -326,14 +331,14 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
               self)
               #~ alarm_value=1,alarm_unit=DurationUnit.months)
               
-    def overlaps_with(self,b):
-        if b == self: 
-            return False
-        a1 = self.applies_from
-        a2 = self.date_ended or self.applies_until
-        b1 = b.applies_from
-        b2 = b.date_ended or b.applies_until
-        return overlap(a1,a2,b1,b2)
+    #~ def overlaps_with(self,b):
+        #~ if b == self: 
+            #~ return False
+        #~ a1 = self.applies_from
+        #~ a2 = self.date_ended or self.applies_until
+        #~ b1 = b.applies_from
+        #~ b2 = b.date_ended or b.applies_until
+        #~ return overlap(a1,a2,b1,b2)
         
     def active_period(self):
         return (self.applies_from, self.date_ended or self.applies_until)
@@ -348,6 +353,50 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                     msgs.append(_("Dates overlap with %s") % con)
         return msgs
           
+
+class OverlappingContractsTest:
+    """
+    Volatile object used to test for overlapping contracts.
+    """
+    def __init__(self,person):
+        """
+        Test whether this person has overlapping contracts.
+        """
+        from lino.modlib.isip.models import ContractBase
+        self.person = person
+        self.actives = []
+        for model in models_by_abc(ContractBase):
+            for con1 in model.objects.filter(person=person):
+                p1 = con1.active_period()
+                if p1:
+                    self.actives.append((p1,con1))
+        
+    def check(self,con1):
+        ap = con1.active_period()
+        if ap:
+            if not encompass((self.person.coached_from,self.person.coached_until),ap):
+                return _("Date range lies outside of coached period")
+            for (p2,con2) in self.actives:
+                if con1 != con2 and overlap2(ap,p2):
+                    return _("Date range overlaps with %(ctype)s #%(id)s") % dict(
+                      ctype=con2.__class__._meta.verbose_name,
+                      id=con2.pk
+                    )
+        return None
+        
+    def check_all(self):
+        messages = []
+        for (p1,con1) in self.actives:
+            msg = self.check(con1)
+            if msg:
+                messages.append(
+                  _("%(ctype)s #%(id)s : %(msg)s") % dict(
+                    msg=msg,
+                    ctype=con1.__class__._meta.verbose_name,
+                    id=con1.pk))
+        return messages
+        
+
             
     
 class Contract(ContractBase):

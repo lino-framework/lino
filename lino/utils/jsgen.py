@@ -37,6 +37,17 @@ var p14 = { "items": [ fld22, fld33 ], "xtype": "panel", "title": "Panel" };
   
 Another example...
 
+>>> def onReady(name):
+...     yield js_line("hello = function() {")
+...     yield js_line("console.log(%s)" % py2js("Hello, " + name + "!"))
+...     yield js_line("}")
+>>> print py2js(onReady("World"))
+hello = function() {
+console.log("Hello, World!")
+}
+<BLANKLINE>
+
+
 
 """
 
@@ -118,8 +129,12 @@ def py2js(v):
     if isinstance(v,Promise):
         #~ v = force_unicode(v)
         return simplejson.dumps(force_unicode(v))
-    if type(v) is types.GeneratorType:
-        raise Exception("Please don't call the generator function yourself")
+        
+    if isinstance(v,types.GeneratorType): 
+        return "".join([py2js(x) for x in v])
+        
+    #~ if type(v) is types.GeneratorType:
+        #~ raise Exception("Please don't call the generator function yourself")
         #~ return "\n".join([ln for ln in v])
     if callable(v):
         #~ print 20120114, repr(v)
@@ -233,6 +248,7 @@ class js_code:
     #~ def __repr__(self):
         #~ return self.s
   
+def js_line(s,*args): return js_code(s+'\n',*args)
 
 DECLARE_INLINE = 0
 DECLARE_VAR = 1

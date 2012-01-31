@@ -68,7 +68,42 @@ import stat
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
     
+def encompass(a,b):
+    """
+    Test whether range `a` encompasses (is wider than) range `b`.
+    
+    >>> encompass((1,4),(2,3))
+    True
+    >>> encompass((1,3),(2,4))
+    False
+    >>> encompass((None,None),(1,4))
+    True
+    >>> encompass((1,None),(1,4))
+    True
+    >>> encompass((2,None),(1,None))
+    False
+    >>> encompass((1,None),(2,None))
+    True
+    """
+    if a[0] is None:
+        if a[1] is None:
+            return True
+        if b[1] is None:
+            return False
+        return (b[1] <= a[1])
+    else:
+        if b[0] is None or b[0] < a[0]:
+            return False
+        if a[1] is None:
+            return True
+        if b[1] is None:
+            return False
+        return a[1] >= b[1]
+      
 def overlap2(a,b):
+    """
+    Same as :func:`overlap` but with different signature.
+    """
     return overlap(a[0],a[1],b[0],b[1])
     
 def overlap(a1,a2,b1,b2):

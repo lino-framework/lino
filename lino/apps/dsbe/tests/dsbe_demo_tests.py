@@ -493,29 +493,29 @@ def test11(self):
     from lino.modlib.jobs.models import Contract
     obj = Contract.objects.get(pk=5)
     translation.activate('de')
-    self.assertEqual(obj.contact.person.get_full_name(),"Frau Annette ARENS")
+    self.assertEqual(obj.contact.person.get_full_name(),"Herrn Hans ALTENBERG")
     #~ babel.set_language(None)
     translation.deactivate()
     
     
 def test12(self):
     """
-    Test whether the contact person of a contract is correctly filled in
-    when the employer has exactly one contact person.
+    Test whether the contact person of a jobs contract is correctly filled in
+    when the provider has exactly one contact person.
     """
     from lino.modlib.jobs.models import Contract, JobProvider, Job
     from lino.apps.dsbe.models import Person
     from lino.modlib.users.models import User
     u = User.objects.get(username='root')
     #~ qs = Person.objects.order_by('last_name','first_name')
-    p = Person.objects.get(pk=177)
+    p = Person.objects.get(pk=177) # Emil Eierschal
     #~ e = Employer.objects.get(pk=185)
-    j = Job.objects.get(pk=1)
-    c = Contract(person=p,user=u,job=j,applies_from=i2d(20111214),duration=312)
+    j = Job.objects.get(pk=1) # bisa
+    c = Contract(person=p,user=u,job=j,applies_from=p.coached_from,duration=312)
     c.full_clean()
     c.save()
     self.assertEqual(c.contact.person.pk,118)
-    self.assertEqual(c.applies_until,i2d(20121021))
+    #~ self.assertEqual(c.applies_until,p.coached_from+datetime.timedelta(days=))
     
     
 def test13(self):

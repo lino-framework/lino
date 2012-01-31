@@ -283,19 +283,19 @@ def objects():
       city=vigala,country='EE',card_number='123',birth_country=ee,
       birth_date='0000-04-27',
       #~ birth_date=i2d(19680101),birth_date_circa=True,
-      newcomer=True,
+      #~ newcomer=True,
       gender=Gender.female)
     yield ly
     mari = person(first_name="Mari",last_name="Saffre",
       city=vigala,country='EE',card_number='124',birth_country=ee,
       birth_date=i2d(20020405),
-      newcomer=True,
+      #~ newcomer=True,
       gender=Gender.female)
     yield mari
     iiris = person(first_name="Iiris",last_name="Saffre",
       city=vigala,country='EE',card_number='125',birth_country=ee,
       birth_date=i2d(20080324),
-      newcomer=True,
+      #~ newcomer=True,
       gender=Gender.female)
     yield iiris
     
@@ -335,10 +335,24 @@ def objects():
     else:
         raise Exception("Expected ValidationError")
       
+    DIRECTORS = (annette,hans,andreas,bernard)
     
-    CLIENTS = Cycler(andreas,annette,hans,ulrike,erna,tatjana)
-    #~ CLIENTS = Cycler(Person.objects.filter(is_active=True))
-    
+    #~ CLIENTS = Cycler(andreas,annette,hans,ulrike,erna,tatjana)
+    count = 0
+    for client in Person.objects.all():
+        if not client in DIRECTORS:
+            count += 1
+            if count % 3:
+                client.is_active = True
+                client.coached_from = settings.LINO.demo_date(-7 * count)
+                if count % 6:
+                    client.coached_until = settings.LINO.demo_date(-7 * count)
+            elif count % 8:
+                client.newcomer = True
+            client.clean()
+            client.save()
+            
+    CLIENTS = Cycler(Person.objects.filter(is_active=True))
     
     #~ oshz = Company.objects.get(name=u"ÖSHZ Eupen")
     
@@ -353,6 +367,8 @@ def objects():
     root.save()
     user.is_spis = True
     user.save()
+    
+    USERS = Cycler(root,user)
     
     #~ prj = project(name="Testprojekt",company=oshz)
     #~ yield prj 
@@ -436,21 +452,43 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     
     from lino.modlib.isip.models import ContractType, Contract
     
-    contract = Instantiator(Contract,
-      'type applies_from applies_until',
-      user=root).build
+    
+    def check_contract(cont):
+      
+        modified = False
+        if cont.person.coached_from is None or cont.person.coached_from > cont.applies_from:
+            cont.person.coached_from = cont.applies_from
+            modified = True
+        if cont.applies_until is None:
+            cont.person.coached_until = None 
+            modified = True
+        else:
+            if cont.person.coached_until is None or cont.person.coached_until < cont.applies_until:
+                cont.person.coached_until = cont.applies_until
+                modified = True
+        if modified:
+            cont.person.full_clean()
+            cont.person.save()
+        return cont
+    
+    CTYPES = Cycler(ContractType.objects.all())
+    
+    #~ contract = Instantiator(Contract,
+      #~ 'type applies_from applies_until',
+      #~ user=root).build
     #~ yield contract(1,i2d(20110906),i2d(20111206),person=hans)
-    yield contract(1,settings.LINO.demo_date(days=-5*30),
-        settings.LINO.demo_date(days=30),person=hans)
+    #~ yield contract(1,settings.LINO.demo_date(days=-5*30),
+        #~ settings.LINO.demo_date(days=30),person=hans)
         
         
     DURATIONS = Cycler(30,312,480)
     CTYPES = Cycler(ContractType.objects.all())
     
     for i in range(20):
-        yield contract(CTYPES.pop(),
-            settings.LINO.demo_date(-i*7),settings.LINO.demo_date(-i*7+DURATIONS.pop()),
-            person=CLIENTS.pop())
+        yield check_contract(Contract(type=CTYPES.pop(),
+            applies_from=settings.LINO.demo_date(-100+i*7),
+            applies_until=settings.LINO.demo_date(-i*7+DURATIONS.pop()),
+            person=CLIENTS.pop(),user=USERS.pop()))
         
     
     jobtype = Instantiator('jobs.JobType','name').build
@@ -459,10 +497,10 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield jobtype(u'Intern')
     yield jobtype(u'Extern (Öffentl. VoE mit Kostenrückerstattung)')
     yield jobtype(u'Extern (Privat Kostenrückerstattung)')
-    yield jobtype(u'VSE')
+    #~ yield jobtype(u'VSE')
     yield jobtype(u'Sonstige')
     
-    from lino.modlib.jobs.models import ContractType, JobType
+    from lino.modlib.jobs.models import ContractType, JobType, Job, Contract, Candidature
     #~ CTYPES = Cycler(*[x for x in ContractType.objects.all()])
     #~ JTYPES = Cycler(*[x for x in JobType.objects.all()])
     CTYPES = Cycler(ContractType.objects.all())
@@ -492,43 +530,54 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield proaktivjob
     
     for i in range(5):
-        yield job(PROVIDERS.pop(),JTYPES.pop(),CTYPES.pop(),str(i),
-          sector=SECTORS.pop(),function=FUNCTIONS.pop())
+        f = FUNCTIONS.pop()
+        yield Job(provider=PROVIDERS.pop(),
+          type=JTYPES.pop(),
+          contract_type=CTYPES.pop(),
+          name=unicode(f),
+          sector=SECTORS.pop(),function=f)
     
     #~ JOBS = Cycler(*[x for x in Job.objects.all()])
     JOBS = Cycler(Job.objects.all())
-    
-    contract = Instantiator('jobs.Contract',
-      'type applies_from applies_until job contact',
-      user=root).build
-    yield contract(1,settings.LINO.demo_date(-30),
-        settings.LINO.demo_date(+60),rcyclejob,rcycle_dir,person=hans)
-    yield contract(1,settings.LINO.demo_date(-29),
-        settings.LINO.demo_date(+61),bisajob,bisa_dir,person=ulrike)
-    yield contract(1,settings.LINO.demo_date(-29),None,bisajob,bisa_dir,person=andreas)
-    yield contract(1,settings.LINO.demo_date(-28),None,
-        rcyclejob,rcycle_dir,person=annette)
-    yield contract(1,
-        settings.LINO.demo_date(-10),settings.LINO.demo_date(+20),
-        bisajob,bisa_dir,person=tatjana)
-    yield contract(2,
-        settings.LINO.demo_date(20),settings.LINO.demo_date(+120),
-        proaktivjob,proaktiv_dir,person=tatjana)
-    yield contract(2,
-        settings.LINO.demo_date(-120),settings.LINO.demo_date(-20),
-        proaktivjob,proaktiv_dir,person=ulrike)
+    if False:
+        contract = Instantiator('jobs.Contract',
+          'type applies_from applies_until job contact',
+          user=root).build
+        yield contract(1,settings.LINO.demo_date(-30),
+            settings.LINO.demo_date(+60),rcyclejob,rcycle_dir,person=hans)
+        yield contract(1,settings.LINO.demo_date(-29),
+            settings.LINO.demo_date(+61),bisajob,bisa_dir,person=ulrike)
+        yield contract(1,settings.LINO.demo_date(-29),None,bisajob,bisa_dir,person=andreas)
+        yield contract(1,settings.LINO.demo_date(-28),None,
+            rcyclejob,rcycle_dir,person=annette)
+        yield contract(1,
+            settings.LINO.demo_date(-10),settings.LINO.demo_date(+20),
+            bisajob,bisa_dir,person=tatjana)
+        yield contract(2,
+            settings.LINO.demo_date(20),settings.LINO.demo_date(+120),
+            proaktivjob,proaktiv_dir,person=tatjana)
+        yield contract(2,
+            settings.LINO.demo_date(-120),settings.LINO.demo_date(-20),
+            proaktivjob,proaktiv_dir,person=ulrike)
         
-    DURATIONS = Cycler(30,312,480)
-    
-    for i in range(5):
-        yield contract(CTYPES.pop(),
-            settings.LINO.demo_date(-i*7),settings.LINO.demo_date(-i*7+DURATIONS.pop()),
-            JOBS.pop(),None,person=CLIENTS.pop())
+    DURATIONS = Cycler(312,480,624)
+    contract = Instantiator('jobs.Contract').build
+    for i in range(20):
+        yield check_contract(Contract(
+            type=CTYPES.pop(),
+            applies_from=settings.LINO.demo_date(-600+i*40),
+            duration=DURATIONS.pop(),
+            job=JOBS.pop(),person=CLIENTS.pop(),user=USERS.pop()))
 
     
-    jobrequest = Instantiator('jobs.Candidature','job person date_submitted').build
-    yield jobrequest(bisajob,tatjana,settings.LINO.demo_date(-5))
-    yield jobrequest(rcyclejob,luc,settings.LINO.demo_date(-30))
+    #~ jobrequest = Instantiator('jobs.Candidature','job person date_submitted').build
+    #~ yield jobrequest(bisajob,tatjana,settings.LINO.demo_date(-5))
+    #~ yield jobrequest(rcyclejob,luc,settings.LINO.demo_date(-30))
+    
+    for i in range(30):
+        yield Candidature(job=JOBS.pop(),person=CLIENTS.pop(),
+          date_submitted=settings.LINO.demo_date(-30+i))
+    
 
     
     if False: # this was lino.modlib.links before December 2011

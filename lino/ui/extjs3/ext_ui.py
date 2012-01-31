@@ -1098,7 +1098,7 @@ tinymce.init({
             quicklinks = settings.LINO.get_quicklinks(self,request.user)
             if quicklinks.items:
                 html = 'Quick Links: ' + ' '.join(
-                  [self.action_href_js(mi.action,mi.params) for mi in quicklinks.items]
+                  [self.ext_renderer.action_href_js(mi.action,mi.params) for mi in quicklinks.items]
                   ) + '<br/>' + html
             main.update(html=html)
         
@@ -1169,18 +1169,6 @@ tinymce.init({
         #~ html = '\n'.join(self.html_page(request,main,konsole,**kw))
         #~ return HttpResponse(html)
 
-
-    def unused_menu_view(self,request):
-        "used only by lino.modlib.dsbe.tests"
-        #~ from lino.lino_site import lino_site
-        #~ from lino import lino_site
-        return json_response_kw(success=True,
-          message=(_("Welcome on Lino server %(title)r, user %(user)s") % dict(
-            title=settings.LINO.title,
-            user=request.user)),
-          load_menu=settings.LINO.get_site_menu(request.user))
-        #~ s = py2js(lino_site.get_menu(request))
-        #~ return HttpResponse(s, mimetype='text/html')
 
     def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows=None): # **kw2save):
         """
@@ -1448,7 +1436,7 @@ tinymce.init({
                 target_url = self.media_url(*target_parts)
                 ar.renderer = self.pdf_renderer
                 #~ body = ar.table2xhtml().toxml()
-                body = self.table2xhtml(ar).toxml()
+                body = self.table2xhtml(ar).tostring()
                 #~ logger.info("20120122 body is %s",body)
                 context = dict(
                     self=unicode(ar.get_title()),
@@ -1487,7 +1475,8 @@ tinymce.init({
                 #~ ar.ui = self.pdf_ui
                 t = self.table2xhtml(ar)
                 doc.add_to_body(t)
-                doc.__xml__(response)
+                xhg.Writer(response).render(doc)
+                #~ doc.__xml__(response)
                 return response
                 
             raise Http404("Format %r not supported for GET on %s" % (fmt,rpt))
@@ -1777,6 +1766,8 @@ tinymce.init({
             return
         
         mtime = codetime()
+        started = time.time()
+        count = 0
         
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
@@ -1789,6 +1780,7 @@ tinymce.init({
                     logger.info("NOT generating %s because it is newer than the code.",fn)
                     continue
                     
+            count += 1 
             logger.info("Generating %s ...", fn)
             
             makedirs_if_missing(os.path.dirname(fn))
@@ -1852,7 +1844,9 @@ tinymce.init({
             #~ f.write(jscompress(js))
             f.close()
             #~ logger.info("Wrote %s ...", fn)
-        logger.info("lino*.js files have been generated.")
+        #~ logger.info("lino*.js files have been generated.")
+        logger.info("%d lino*.js files have been generated in %s seconds.",
+          count,time.time()-started)
         babel.set_language(None)
         
     def make_linolib_messages(self):

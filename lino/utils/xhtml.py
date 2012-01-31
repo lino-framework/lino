@@ -18,7 +18,7 @@ First example:
 
 >>> xg.set_default_namespace(xhtml)
 >>> doc = HTML(HEAD(TITLE("Hello")),BODY(P("Hello, world!")))
->>> print doc.toxml(True)
+>>> print doc.tostring(True)
 <HTML xmlns="http://www.w3.org/1999/xhtml">
 <HEAD>
 <TITLE>Hello</TITLE>
@@ -41,7 +41,7 @@ Second example:
 ...     t.add_body_row("Estonia", "Tallinn", "1.1M")
 >>> add_table(TABLE)
 >>> add_table(HFBTABLE)
->>> print doc.toxml(True)
+>>> print doc.tostring(True)
 <HTML xmlns="http://www.w3.org/1999/xhtml">
 <HEAD>
 <TITLE>Two tables</TITLE>
@@ -100,6 +100,8 @@ from lino.utils import d2iso
 from lino.utils import IncompleteDate
 from lino.utils import xmlgen as xg
 
+Writer = xg.Writer
+
 class HtmlContainer(xg.Container):
     style = xg.Attribute()
     bgcolor = xg.Attribute()
@@ -110,6 +112,7 @@ class xhtml(xg.Namespace):
   
   class HTML(HtmlContainer):
     class HEAD(xg.Container):
+        #~ class SCRIPT(xg.Javascript): pass
         class TITLE(xg.String):
             pass
     class BODY(HtmlContainer):
@@ -178,6 +181,7 @@ HFBTABLE = xhtml.HTML.BODY.HFBTABLE
 #~ TD = xhtml.HTML.BODY.TABLE.TR.TD
 #~ TH = xhtml.HTML.BODY.TABLE.TR.TH
 TEXT = xhtml.HTML.BODY.TEXT
+#~ SCRIPT = xhtml.HTML.HEAD.SCRIPT
 
 def table_header_row(*headers,**kw):
     return TABLE.TR(*[TABLE.TR.TH(h,**kw) for h in headers])

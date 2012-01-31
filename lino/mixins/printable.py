@@ -462,6 +462,16 @@ def get_build_method(elem):
     if bm is None:
         raise Exception("Build method %r doesn't exist. Requested by %r." % (bmname,elem))
     return bm
+    
+    
+#~ class PrintTableAction(actions.TableAction):
+    #~ def run(self,ar,**kw):
+        #~ bm = get_build_method(elem)
+        #~ url = bm.get_target_url(self,elem,ui)
+        #~ kw.update(open_url=url)
+        #~ return ar.ui.success_response(**kw)
+  
+    
         
 
 #~ class PrintAction(actions.RedirectAction):

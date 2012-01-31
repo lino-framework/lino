@@ -55,10 +55,10 @@ Then we instantiate these classes to create our XML tree:
 
 >>> env = Envelope(Envelope.Body(xmlString(CDATA("FooBar"))))
 
-We render the XML string by calling the :meth:`Element.toxml` 
+We render the XML string by calling the :meth:`Element.tostring` 
 method on the root element:
 
->>> print env.toxml(pretty=True)
+>>> print env.tostring(pretty=True)
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -67,12 +67,12 @@ method on the root element:
 </soap:Body>
 </soap:Envelope>
 
-If you set a default namespace, another :meth:`Element.toxml()` 
+If you set a default namespace, another :meth:`Element.tostring()` 
 call on the same tree instance
 will return slightly different result:
 
 >>> set_default_namespace(soap)
->>> print env.toxml(pretty=True)
+>>> print env.tostring(pretty=True)
 <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
 <Body>
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -82,7 +82,7 @@ will return slightly different result:
 </Envelope>
 
 >>> set_default_namespace(bcss)
->>> print env.toxml(pretty=True)
+>>> print env.tostring(pretty=True)
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -95,7 +95,7 @@ The prefix of a Namespace is the class's name by default,
 but it is possible to give another value:
 
 >>> soap.set_prefix('foo')
->>> print env.toxml(pretty=True)
+>>> print env.tostring(pretty=True)
 <foo:Envelope xmlns:foo="http://schemas.xmlsoap.org/soap/envelope/">
 <foo:Body>
 <xmlString xmlns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -118,12 +118,12 @@ Another example:
 ...     class Name(String): pass
 ...     class Period(String): pass
 
->>> print Foo(Foo.Baz.Name("Luc")).toxml(True)
+>>> print Foo(Foo.Baz.Name("Luc")).tostring(True)
 <Foo>
 <Name>Luc</Name>
 </Foo>
 
->>> print Foo(Foo.Bar(Foo.Baz.Period("1968-2011"))).toxml(True)
+>>> print Foo(Foo.Bar(Foo.Baz.Period("1968-2011"))).tostring(True)
 <Foo>
 <Bar>
 <Period>1968-2011</Period>
@@ -146,6 +146,7 @@ unused = """
 """
 
 import datetime
+import types
 from xml.dom.minidom import parseString
 from lino.utils import isiterable
 
@@ -214,8 +215,8 @@ class CDATA(Node):
 class TEXT(Node):
     def __init__(self,data):
         self.data = data
-    def __xml__(self,wr):
-        py2xml(wr,self.data)
+    def __xml__(self,r):
+        r.py2xml(self.data)
         #~ wr.write(self.data)
     
         
@@ -241,7 +242,6 @@ class ElementMetaClass(type):
                 allowedAttribs[k] = v
         cls.allowedAttribs = allowedAttribs
         return cls
-    
     
 class Element(Node):
     __metaclass__ = ElementMetaClass
@@ -331,41 +331,82 @@ class Element(Node):
             wr.write('/>')
         else:
             wr.write('>')
-            py2xml(wr,self.value2string(self.value))
+            wr.py2xml(self.value2string(self.value))
             wr.write("</"+self.tag()+">" )
             
     def value2string(self,v):
         return v
         
         
-    def toxml(self,pretty=False,**kw):
+    def tostring(self,pretty=False,**kw):
         """
         Generate and return the XML string.
         """
         u = UniStringIO()
-        self.__xml__(u,**kw)
+        wr = Writer(u)
+        self.__xml__(wr,**kw)
         if pretty:
             return u.getvalue().replace("><",">\n<")
             #~ return parseString(u.getvalue()).toprettyxml()
         return u.getvalue()
         
+#~ class Javascript(Element):
+    #~ def __xml__(self,wr):
+        #~ wr.write("<" + self.tag())
+        #~ self.writeAttribs(wr)
+        
+        #~ if self.value is None:
+            #~ wr.write('/>')
+        #~ else:
+            #~ wr.write('>')
+            
+            #~ wr.py2xml(self.value2string(self.value))
+            #~ wr.write("</"+self.tag()+">" )
+    
+        
+        
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 
-def py2xml(wr,value): # ,indent='',addindent='',newl=''
-    #~ if isinstance(value,(list,tuple)):
-    if isinstance(value,basestring):
-        wr.write(value)
-    elif isiterable(value):
-        for e in value:
-            py2xml(wr,e)
-    elif isinstance(value,Node):
-        value.__xml__(wr)
-    elif isinstance(value,Promise):
-        wr.write(force_unicode(value))
-    else:
-        #~ raise Exception("Invalid value %r" % value)
-        wr.write(str(value))
+class Writer(object):
+  
+    def __init__(self,file=None):
+        self.file = file
+        
+    def write(self,s):
+        self.file.write(s)
+        
+    def writeln(self,s):
+        self.file.write(s+'\n')
+        
+    def tostring(self,x):
+        oldfile = self.file
+        self.file = UniStringIO()
+        #~ wr = cls(u)
+        self.render(x)
+        v = self.file.getvalue()
+        self.file = oldfile
+        return v
+        
+    def py2xml(self,value): # ,indent='',addindent='',newl=''
+        #~ if isinstance(value,(list,tuple)):
+        if isinstance(value,basestring):
+            self.write(value)
+        elif isinstance(value,types.GeneratorType):
+            for e in value:
+                #~ self.write('\n')
+                self.py2xml(e)
+        elif isiterable(value):
+            for e in value:
+                self.py2xml(e)
+        elif isinstance(value,Node):
+            value.__xml__(self)
+        elif isinstance(value,Promise):
+            self.write(force_unicode(value))
+        else:
+            #~ raise Exception("Invalid value %r" % value)
+            self.write(str(value))
+    render = py2xml
 
 class ContainerMetaClass(ElementMetaClass):
     def __new__(meta, classname, bases, classDict):

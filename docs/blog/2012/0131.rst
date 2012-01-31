@@ -1,0 +1,74 @@
+20120131
+========
+
+py2js() without global list of converters
+-----------------------------------------
+
+Seit Sonntagabend hatte ich über sieben Stunden 
+an einer Änderung gearbeitet, die ich dann wieder 
+verworfen habe.
+
+Die Idee war eigentlich ganz nobel: ich möchte 
+gern einen subtilen Missstand beheben: die Tatsache,
+dass py2js() eine globale Liste von Konvertern benutzt.
+Das könnte unerwünschte Nebenwirkungen haben.
+
+:mod:`lino.utils.xmlgen` arbeitet jetzt nach dem Prinzip, 
+das ich auch für :mod:`lino.utils.jsgen` fast fertig hatte. 
+Für `jsgen` habe ich es dann wieder verworfen, weil es 
+erstens noch mehr Änderungen erfordert hätte (u.a. ext_store.value2dict() 
+usw hätten ebenfalls noch konvertiert werden müssen) und zweitens 
+weil sich rausstellte, dass das doch sehr auf die Performance 
+drückte: Generieren einer :xfile:`lino.js` nahm 8,6 statt bisher 
+5,5 Sekunden.
+
+Tabellen nach pdf drucken
+-------------------------
+
+Das funktioniert nun.... mit zwei offenen Problemen:
+
+- er nimmt immer den gleichen Namen für die temporäre Datei. 
+  Also wenn zwei Benutzer die gleiche Tabelle gleichzeitig ausdrucken, 
+  gibt es Probleme.
+  
+- Tabellen wie `Persons` haben sehr viele Kolonnen, so dass das Resultat 
+  lustig aussieht aber nicht sehr nützlich ist.
+  Lösungswege: 
+  - bei solchen Listen insgesamt die Kolonnenzahl reduzieren.
+  - Pro Kolonne konfigurieren können, ob sie (1) am Bildschirm, 
+    (2) in der .csv-Datei, (3) in der .pdf-Datei erscheinen 
+    soll oder nicht.
+    
+
+Überschneidende Verträge
+------------------------
+
+Oh, hier ist was Schönes::
+
+  Unhandled exception in thread started by <bound method Command.inner_run of <django.core.management.commands.runserver.Command object at 0x011373D0>>
+  Traceback (most recent call last):
+    File "l:\snapshots\django\django\core\management\commands\runserver.py", line 92, in inner_run
+      self.validate(display_num_errors=True)
+    File "l:\snapshots\django\django\core\management\base.py", line 249, in validate
+      num_errors = get_validation_errors(s, app)
+    File "l:\snapshots\django\django\core\management\validation.py", line 30, in get_validation_errors
+      for (app_name, error) in get_app_errors().items():
+    File "l:\snapshots\django\django\db\models\loading.py", line 157, in get_app_errors
+      self._populate()
+    File "l:\snapshots\django\django\db\models\loading.py", line 67, in _populate
+      self.load_app(app_name)
+    File "l:\snapshots\django\django\db\models\loading.py", line 88, in load_app
+      models = import_module('.models', app_name)
+    File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+      __import__(name)
+    File "t:\hgwork\lino\lino\modlib\newcomers\models.py", line 44, in <module>
+      from lino.apps.dsbe.models import Person, AllPersons, only_my_persons, PersonsByCoach1, MyActivePersons
+    File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 124, in <module>
+      class CefLevel(ChoiceList):
+    File "t:\hgwork\lino\lino\utils\choicelists.py", line 91, in __new__
+      register_choicelist(cls)
+    File "t:\hgwork\lino\lino\utils\choicelists.py", line 68, in register_choicelist
+      (k,CHOICELISTS[k]))
+  Exception: ChoiceList name 'CefLevel' already defined by <class 'lino.apps.dsbe.models.CefLevel'>
+  
+So eine Fehlermeldung kann durch einen redundanten ``import`` kommen.

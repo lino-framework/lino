@@ -76,8 +76,7 @@ def test02(self):
     
     #~ settings.LINO.auto_makeui = False
     luc = Person.objects.get(name__exact="Saffre Luc")
-
-    url = '/api/contacts/Persons/%d?query=&an=detail&fmt=json' % luc.pk
+    url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
     if 'en' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
         result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')

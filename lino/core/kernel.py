@@ -200,7 +200,7 @@ def load_details(make_messages):
         if get_class_attr(model,'summary_row') is None:
             if model._lino_model_report._lino_detail:
                 def f(obj,ui,**kw):
-                    return ui.href_to(obj)
+                    return ui.ext_renderer.href_to(obj)
                     #~ return u'<a href="%s" target="_blank">%s</a>' % (
                       #~ ui.get_detail_url(obj,fmt='detail'),
                       #~ unicode(obj))

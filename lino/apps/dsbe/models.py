@@ -946,6 +946,10 @@ class MyActivePersons(MyPersons):
   
 
 #~ if True: # dd.is_installed('dsbe'):
+
+from lino.tools import models_by_abc
+
+
   
 #~ class InvalidClients(Persons):
 class ClientsTest(Persons):
@@ -958,6 +962,7 @@ class ClientsTest(Persons):
       today = models.DateField(_("only active on"),blank=True,default=datetime.date.today),
       invalid_niss = models.BooleanField(_("Check NISS validity"),default=True),
       overlapping_contracts = models.BooleanField(_("Check for overlapping contracts"),default=True),
+      #~ coached_period = models.BooleanField(_("Check coaching period"),default=True),
       #~ only_my_persons = models.BooleanField(_("Only my persons"),default=True),
     )
     params_template = """overlapping_contracts invalid_niss user today"""
@@ -971,6 +976,7 @@ class ClientsTest(Persons):
         We store the corresponding request in the user object 
         under the name `my_persons`.
         """
+        from lino.modlib.isip.models import OverlappingContractsTest
         #~ qs = Person.objects.all()
         qs = self.get_request_queryset(ar)
         
@@ -980,37 +986,12 @@ class ClientsTest(Persons):
         if ar.param_values.today:
             qs = only_coached_persons(qs,ar.param_values.today)
             
-        from lino.modlib.isip.models import ContractBase
-        from lino.tools import models_by_abc
-        from lino.utils import overlap2
         logger.info("Building ClientsTest data rows...")
         #~ for p in qs.order_by('name'):
         for person in qs:
             messages = []
             if ar.param_values.overlapping_contracts:
-                actives = []
-                for model in models_by_abc(ContractBase):
-                    for con1 in model.objects.filter(person=person):
-                        p1 = con1.active_period()
-                        if p1:
-                            for (p2,con2) in actives:
-                                if overlap2(p1,p2):
-                                    if con1.__class__ == con2.__class__:
-                                        msg = _("%(ctype)s #%(id1)d and #%(id2)d overlap") % dict(
-                                          ctype=con1.__class__._meta.verbose_name_plural,
-                                          id1=con1.pk,
-                                          id2=con2.pk
-                                        )
-                                    else:
-                                        msg = _("%(ctype1)s #%(id1)d and %(ctype2)s #%(id2)d overlap") % dict(
-                                          ctype1=con1.__class__._meta.verbose_name,
-                                          ctype2=con2.__class__._meta.verbose_name,
-                                          id1=con1.pk,
-                                          id2=con2.pk
-                                        )
-                                    #~ messages.append("Overlapping contracts %s and %s" % (con1,con2))
-                                    messages.append(msg)
-                            actives.append((p1,con1))
+                messages += OverlappingContractsTest(person).check_all()
               
             if ar.param_values.invalid_niss:
                 try:
@@ -1019,7 +1000,8 @@ class ClientsTest(Persons):
                     messages += e.messages
           
             if messages:
-                person.error_message = '; '.join(messages)
+                #~ person.error_message = ';<br/>'.join([cgi.escape(m) for m in messages])
+                person.error_message = ';\n'.join(messages)
                 #~ logger.info("%s : %s", p, p.error_message)
                 yield person
         logger.info("Building ClientsTest data rows: done")
@@ -1027,6 +1009,7 @@ class ClientsTest(Persons):
         
     @dd.displayfield(_('Error message'))
     def error_message(self,obj,ar):
+        #~ return obj.error_message.replace('\n','<br/>')
         return obj.error_message
         
     
@@ -1124,6 +1107,7 @@ def persons_by_user(ui,requesting_user):
     Returns a summary table "Number of clients by user and integration phase"
     """
     assert requesting_user is not None
+    renderer = ui.ext_renderer
     
     #~ from django.utils.translation import ugettext as _
     #~ from lino.modlib.users.models import User  
@@ -1159,19 +1143,19 @@ def persons_by_user(ui,requesting_user):
             if rr.get_total_count():
             #~ if len(rr.data_iterator):
                 totals[-1] += rr.get_total_count()
-                row_total = ui.href_to_request(rr,str(rr.get_total_count()))
+                row_total = renderer.href_to_request(rr,str(rr.get_total_count()))
                 cells = [cgi.escape(unicode(user))] + sums
                 for pg in phases:
                     rr = MyPersonsByGroup.request(ui,master_instance=pg,subst_user=user)
                     if rr.get_total_count():
                         totals[pg2col[pg.pk]] += rr.get_total_count()
                         text = str(rr.get_total_count())
-                        text = ui.href_to_request(rr,text)
+                        text = renderer.href_to_request(rr,text)
                         cells[pg2col[pg.pk]] = text
                 def yet_another_column(i,rr):
                     totals[i] += rr.get_total_count()
                     text = str(rr.get_total_count())
-                    text = ui.href_to_request(rr,text)
+                    text = renderer.href_to_request(rr,text)
                     cells.append(text)
                 yet_another_column(-3,PersonsByCoach1.request(ui,master_instance=user))
                 yet_another_column(-2,MyActivePersons.request(ui,subst_user=user))
