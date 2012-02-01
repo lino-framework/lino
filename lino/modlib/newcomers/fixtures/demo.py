@@ -16,7 +16,7 @@
 from lino.utils.instantiator import Instantiator, i2d
 from lino.utils import Cycler
 #~ from lino.tools import resolve_model
-#~ from django.utils.translation import ugettext_lazy as _
+# from django.utils.translation import ugettext_lazy as _
 
 #~ from django.db import models
 from lino.utils.babel import babel_values, babelitem
@@ -28,10 +28,12 @@ def objects():
     from lino.apps.dsbe.models import Person
     
     I = Instantiator(Broker).build
-    yield I(**babel_values('name',
-        de=u"Polizei", fr=u"Police",en=u"Police"))
-    yield I(**babel_values('name',
-        de=u"Jugendgericht", fr=u"Jugendgericht",en=u"Jugendgericht"))
+    #~ yield I(**babel_values('name',
+        #~ de=u"Polizei", fr=u"Police",en=u"Police"))
+    #~ yield I(**babel_values('name',
+        #~ de=u"Jugendgericht", fr=u"Jugendgericht",en=u"Jugendgericht"))
+    yield I(name="Police")
+    yield I(name="Other PCSW")
 
     I = Instantiator(Faculty).build
     yield I(**babel_values('name', de=u"Eingliederungseinkommen", fr=u"EiEi",en=u"EiEi"))
