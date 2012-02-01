@@ -131,6 +131,9 @@ def analyze_models(self):
                     ``f.rel.to._meta.verbose_name``.
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
+    from lino.models import HelpText
+    for ht in HelpText.objects.all():
+        resolve_field(unicode(ht)).help_text = ht.help_text
                     
   
 class DetailSet(object):

@@ -39,6 +39,7 @@ from lino.utils import babel
 from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
 from lino.tools import obj2str, sorted_models_list
+from lino.tools import resolve_field
 
 class SiteConfig(models.Model):
     """
@@ -121,8 +122,56 @@ class DataControlListing(mixins.Listing):
         html = "\n".join(["<p>%s</p>" % ln for ln in items])
         html = '<div class="htmlText">%s</div>' % html
         return html
+        
+from lino.utils.choosers import chooser
     
+class HelpText(models.Model):
     
+    class Meta:
+        verbose_name = _("Help Text")
+        verbose_name_plural = _("Help Texts")
+        
+    content_type = models.ForeignKey(contenttypes.ContentType,
+        verbose_name=_("Model"))
+    field = models.CharField(_("Field"),
+        max_length=200)
+
+    help_text = dd.RichTextField(_("HelpText"),
+        blank=True,null=True,format='plain')
+    
+    def __unicode__(self):
+        return self.content_type.app_label + '.' + self.content_type.name + '.' + self.field
+        
+    @chooser(simple_values=True)
+    def field_choices(cls,content_type):
+        l = []
+        if content_type is not None:
+            meta = content_type.model_class()._meta
+            #~ for f in meta.fields: yield f.name
+            #~ for f in meta.many_to_many: yield f.name
+            #~ for f in meta.virtual_fields: yield f.name
+            for f in meta.fields: 
+                if not getattr(f,'_lino_babel_field',False):
+                    l.append(f.name)
+            for f in meta.many_to_many: l.append(f.name)
+            for f in meta.virtual_fields: l.append(f.name)
+        return l
+        
+    #~ def get_field_display(cls,fld):
+        #~ return fld
+
+    @dd.virtualfield(models.CharField(_("Verbose name"),max_length=200))
+    def verbose_name(self,request):
+        return resolve_field(unicode(self)).verbose_name
+            
+            
+            
+class HelpTexts(dd.Table):
+    model = HelpText
+    column_names = "field verbose_name help_text id content_type"
+    
+class HelpTextsByModel(HelpTexts):
+    master_key = 'content_type'
 
 if settings.LINO.user_model: 
   

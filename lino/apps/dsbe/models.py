@@ -448,7 +448,8 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         #~ )
     residence_type = ResidenceType.field(blank=True) 
         
-    in_belgium_since = models.DateField(_("Lives in Belgium since"),blank=True,null=True)
+    in_belgium_since = models.DateField(_("Lives in Belgium since"),
+        blank=True,null=True)
     unemployed_since = models.DateField(_("Seeking work since"),blank=True,null=True)
     #~ work_permit_exempt = models.BooleanField(verbose_name=_("Work permit exemption"))
     needs_residence_permit = models.BooleanField(verbose_name=_("Needs residence permit"))

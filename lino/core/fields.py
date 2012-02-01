@@ -135,6 +135,7 @@ class FakeField:
     primary_key = False
     editable = False
     name = None
+    help_text = None
     
     def is_enabled(self,lh):
         return True

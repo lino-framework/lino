@@ -123,6 +123,7 @@ and :term:`appy_pod`
 into `/var/snapshots/`::
 
   wget http://extjs.cachefly.net/ext-3.3.1.zip
+  wget http://extjs.cachefly.net/ext-3.4.0.zip
   unzip ext-3.3.1.zip
   rm ext-3.3.1.zip
   

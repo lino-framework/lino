@@ -362,6 +362,19 @@ class FieldElement(LayoutElement):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
+        
+        #~ help_text = getattr(self.field,'help_text',None):
+        if self.field.help_text:
+            #~ kw.update(qtip=self.field.help_text)
+            #~ kw.update(toolTipText=self.field.help_text)
+            #~ kw.update(tooltip=self.field.help_text)
+            kw.update(listeners=dict(render=js_code("Lino.quicktip_renderer(%s)" % py2js(self.field.help_text)))
+            )
+            
+
+        #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
+        #~ if self.field.__doc__:
+            #~ kw.update(toolTipText=self.field.__doc__)
         kw.setdefault('label',field.verbose_name)
         self.add_default_value(kw)
         #~ kw.update(label=field.verbose_name) 
@@ -401,7 +414,7 @@ class FieldElement(LayoutElement):
     def get_field_options(self,**kw):
         if self.xtype:
             kw.update(xtype=self.xtype)
-            
+        
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
         # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
@@ -416,9 +429,6 @@ class FieldElement(LayoutElement):
         else:
             kw.update(disabled=True)
             kw.update(readOnly=True)
-        #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
-        #~ if self.field.__doc__:
-            #~ kw.update(toolTipText=self.field.__doc__)
         return kw
         
     def ext_options(self,**kw):
@@ -562,6 +572,7 @@ class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
   
     def store_options(self,**kw):
+        #~ kw.update(baseParams=js_code('this.get_base_params()')) # 20120202
         if self.editable:
             url = self.layout_handle.ui.build_url("choices",
                 #~ self.layout_handle.layout.table.model._meta.app_label,

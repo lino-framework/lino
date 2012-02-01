@@ -232,3 +232,13 @@ def objects():
       en=u"Autre aide sociale",
       ))
     
+    I = Instantiator('lino.HelpText','content_type field help_text').build
+    
+    t = ContentType.objects.get_for_model(Person)
+    yield I(t,'in_belgium_since',"""\
+Since when this person in Belgium lives.
+<b>Important:</b> help_text can be formatted.""")
+    yield I(t,'noble_condition',"""\
+The eventual noble condition of this person. Imported from TIM.
+""")
+    

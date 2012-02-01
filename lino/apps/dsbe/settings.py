@@ -161,7 +161,6 @@ class Lino(Lino):
             config_dsbe     = cfg.add_menu("dsbe",_("SIS"))
             
             config_cv       = cfg.add_menu("cv",_("CV"))
-            config_etc      = cfg.add_menu("etc",_("System"))
             
             
             m = cfg.add_menu("courses",_("Courses"))
@@ -195,13 +194,18 @@ class Lino(Lino):
             #~ m.add_action('dsbe.CoachingTypes')
             
             #~ links.setup_config_menu(self,ui,user,cfg)
-            #~ config_etc.add_action('links.LinkTypes')
-            config_etc.add_action(self.modules.uploads.UploadTypes)
+            
+            
+            config_dsbe.add_action(self.modules.uploads.UploadTypes)
             
             self.modules.cal.setup_config_menu(self,ui,user,cfg)
             self.modules.mails.setup_config_menu(self,ui,user,cfg)
             
+            config_etc      = cfg.add_menu("etc",_("System"))
+            #~ config_etc.add_action('links.LinkTypes')
+            config_etc.add_action(self.modules.lino.ContentTypes)
             config_etc.add_action(self.modules.users.Users)
+            config_etc.add_action(self.modules.lino.HelpTexts)
             #~ if self.use_tinymce:
             config_etc.add_action(self.modules.lino.TextFieldTemplates)
             config_etc.add_instance_action(self.site_config)
@@ -223,7 +227,7 @@ class Lino(Lino):
             m.add_action(self.modules.dsbe.Exclusions)
             m.add_action(self.modules.dsbe.CourseRequests)
             m.add_action(self.modules.dsbe.PersonSearches)
-            m.add_action(self.modules.lino.ContentTypes)
+            #~ m.add_action(self.modules.lino.ContentTypes)
             m.add_action(self.modules.properties.Properties)
             m.add_action(self.modules.dsbe.Courses)
             

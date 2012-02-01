@@ -22,6 +22,7 @@ Aber bevor es mit TX25 weitergehen kann, wollen wir noch folgenden Kleinkram erl
 Done:
 
 - Feld quota_newcomers im Detail anzeigen
+- Button "show in own window" nur zeigen wenn es nicht schon das main_item ist.
 
 Todo:
 
@@ -31,10 +32,29 @@ Todo:
 - Anzahl Zeilen pro Seite einer Grid dynamisch in Funktion der Fenstergröße ermitteln.
 - Konfigurierung Fachbereiche: Wenn man 'name' editiert, ist das Feld blau.
 - Fachbereiche Feld "body" kann weg
-- Button "show report in own window" nur zeigen wenn es nicht schon das main_item ist.
+- Neuzugänge: hier muss noch ein Button bzw eine Prozedur her für den 
+  Akt der Zuweisung. 
+  
 
 Idee für später:
 
 - Tooltips aktivieren und lokal bearbeitbar machen.
   Tooltips müssen lokal gepflegt werden können,
   am besten in einen Metadaten-Editor direkt vom jeweiligen Bildschirm aus.
+
+
+Abends
+------
+
+Abends habe ich dann die "Idee für später" mal schnell eingebaut. 
+Funktioniert sogar, ist allerdings noch nicht sehr benutzerfreundlich.
+Es fehlt noch ein Button, um direkt von einem Detail-Fenster aus 
+auf dessen Hilfetextdefinitionen zu gehen.
+HelpText.field_choices() gibt noch eine leere Liste, wenn es in einem 
+HelpTextsByModel ist. Dazu muss einerseits 
+chooser.get_request_choices() 
+auch die mk und mt auswerten, was er jetzt tut, 
+aber andererseits muss die ComboBox sie jetzt noch in ihre 
+baseParams bekommen.
+Hmm...
+

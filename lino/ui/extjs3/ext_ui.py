@@ -714,9 +714,10 @@ class ExtUI(base.UI):
         if isinstance(de,type) and issubclass(de,dd.Table):
             kw.update(master_panel=js_code("this"))
             if isinstance(lh.layout,table.DetailLayout):
-                # a Report in a DetailWindow
+                """a Table in a DetailWindow"""
                 kw.update(tools=[
-                  js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
+                  js_code("Lino.show_in_own_window_button(Lino.%s)" % de.default_action)
+                  #~ js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
                   #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
                 if de.show_slave_grid:
@@ -1161,7 +1162,7 @@ tinymce.init({
             yield ln
         yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
             
-        yield '  Ext.QuickTips.init();'
+        #~ yield '  Ext.QuickTips.init();'
         
         for ln in on_ready:
             yield ln
@@ -1991,7 +1992,7 @@ tinymce.init({
                 field = rpt.get_param_elem(fldname)
             chooser = choosers.get_for_field(field)
             if chooser:
-                qs = chooser.get_request_choices(request)
+                qs = chooser.get_request_choices(request,rpt)
                 #~ if qs is None:
                     #~ qs = []
                 assert isiterable(qs), \

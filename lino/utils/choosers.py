@@ -34,6 +34,7 @@ from lino.core.coretools import get_data_elem # , get_unbound_meth
 import lino
 from lino.core import fields
 from lino.utils import get_class_attr
+from lino.ui import requests as ext_requests
 
 class BaseChooser:
     pass
@@ -127,8 +128,28 @@ class Chooser(FieldChooser):
             #~ args.append(getattr(obj,varname,None))
         #~ return self.meth(*args)
       
-    def get_request_choices(self,request):
+    def get_request_choices(self,request,tbl):
         kw = {}
+        
+        # 20120202
+        if tbl.master_field is not None:
+            mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
+            try:
+                master = ContentType.objects.get(pk=mt).model_class()
+            except ContentType.DoesNotExist,e:
+                pass
+                
+            pk = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_PK,None)
+            if pk:
+                try:
+                    kw[tbl.master_field.name] = master.objects.get(pk=pk)
+                except ValueError,e:
+                    raise Exception("Invalid primary key %r for %s",pk,master.__name__)
+                except master.DoesNotExist,e:
+                    # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
+                    raise Exception("There's no %s with primary key %r" % (master.__name__,pk))
+      
+        
         for k,v in request.GET.items():
             kw[str(k)] = v
         for cv in self.converters:

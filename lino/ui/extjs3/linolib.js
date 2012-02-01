@@ -948,9 +948,9 @@ Lino.save_wc_handler = function(ww) {
 
 */
 
-Lino.report_window_button = function(handler) {
+Lino.show_in_own_window_button = function(handler) {
   return {
-    qtip: 'Show this grid in own window', 
+    qtip: "$_("Show this panel in own window")", 
     id: "up",
     handler: function(event,toolEl,panel, tc) {
       //~ console.log('20111206 report_window_button',panel,handler);
@@ -958,7 +958,7 @@ Lino.report_window_button = function(handler) {
       //~ panel.containing_window = ww; // for HtmlBox. see blog/2010/1022
       //~ handler(panel,{base_params:bp});
       //~ handler(panel,{base_params:panel.get_master_params()});
-      handler(panel,{},{base_params:panel.containing_panel.get_master_params()});
+      handler({},{base_params:panel.containing_panel.get_master_params()});
       //~ handler(panel,{master_panel:panel.containing_window.main_item});
     }
   }
@@ -1241,6 +1241,18 @@ Lino.ajax_error_handler = function(response,options) {
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
 Lino.main_menu = new Ext.Toolbar({});
+  
+Ext.QuickTips.init();
+  
+Lino.quicktip_renderer = function(msg) {
+  return function(c) {
+    Ext.QuickTips.register({
+      target: c.getEl(),
+      text: msg
+    });
+  }
+};
+  
 
 // Path to the blank image should point to a valid location on your server
 //~ Ext.BLANK_IMAGE_URL = MEDIA_URL + '/extjs/resources/images/default/s.gif'; 
@@ -2290,7 +2302,7 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 }
 
 Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
-  autLoad: false,
+  autoLoad: false,
   load: function(options) {
     if (!options) options = {};
     if (!options.params) options.params = {};
@@ -2382,6 +2394,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     if (this.is_main_window) {
         //~ console.log(20111206, 'delete title',this.title,'from',this);
         //~ delete this.title;
+        this.tools = undefined;  
         this.title = undefined;  /* simply deleting it 
           isn't enough because that would only 
           unhide the title defined in some base class. */

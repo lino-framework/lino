@@ -714,12 +714,20 @@ class Table(AbstractTable):
     """
     exclude = None
     
-    master = None
-    
     master_key = None
     """
     The name of the ForeignKey field of this report's model that points to it's master.
     Setting this will turn the report into a slave report.
+    """
+    
+    master_field = None
+    """
+    For internal use. Automatically set to the field descriptor of the :attr:`master_key`.
+    """
+    
+    master = None
+    """
+    For internal use. Automatically set to the model pointed to by the :attr:`master_key`.
     """
     
     handle_uploaded_files = None
@@ -833,7 +841,8 @@ class Table(AbstractTable):
                     raise Exception("%s : no master for master_key %r in %s" % (
                         self,self.master_key,self.model.__name__))
                 self.master = master
-                self.fk = fk
+                #~ self.fk = fk
+                self.master_field = fk
         #~ else:
             #~ assert self.master is None
         
@@ -1077,7 +1086,8 @@ class Table(AbstractTable):
             assert master_instance is None, "Table %s doesn't accept a master" % self.actor_id
         elif self.master is models.Model:
             pass
-        elif self.master is ContentType:
+        elif isinstance(self.master_field,generic.GenericForeignKey):
+        #~ elif self.master is ContentType:
             #~ print 20110415
             if master_instance is None:
                 pass
@@ -1085,15 +1095,16 @@ class Table(AbstractTable):
                 #~ kw[self.fk.fk_field] = None
             else:
                 ct = ContentType.objects.get_for_model(master_instance.__class__)
-                kw[self.fk.ct_field] = ct
-                kw[self.fk.fk_field] = master_instance.pk
-        elif self.master_key is not None:
+                kw[self.master_field.ct_field] = ct
+                kw[self.master_field.fk_field] = master_instance.pk
+        elif self.master_field is not None:
             if master_instance is None:
-                if not self.fk.null:
+                if not self.master_field.null:
                     return # cannot add rows to this report
             elif not isinstance(master_instance,self.master):
-                raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
-            kw[self.fk.name] = master_instance
+                raise Exception("%r is not a %s (master_key is %r)" % (
+                  master_instance,self.master.__name__,self.master_field))
+            kw[self.master_field.name] = master_instance
             
         #~ else:
             #~ kw['master'] = master_instance
