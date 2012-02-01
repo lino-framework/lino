@@ -4,9 +4,10 @@ Authentication
 HTTP authentication
 -------------------
 
-HTTP authentication is currently the only method supported 
-by Lino (because there hasn't been any need for other methods 
-until now).
+`HTTP authentication <http://en.wikipedia.org/wiki/Basic_access_authentication>`_ 
+is currently the only method supported 
+by Lino, because there hasn't been any need 
+for other methods until now.
 
 This means basically that Lino delegates the authentication to the web server.
 Lino trusts completely the 
@@ -21,7 +22,6 @@ Lino's Users table from the LDAP server or whatever user database
 used by the web server.
 
 One advantage of this is that Lino does not need any sessions.
-
 
 
 See also

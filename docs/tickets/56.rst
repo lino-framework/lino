@@ -2,7 +2,7 @@
 ========================================================
 
 Der :guilabel:`[Upload]`-Button von 
-:meth:`quick_upload_buttons <lino.ui.extjs.ext_ui.ExtUI.quick_upload_buttons>`
+:meth:`quick_upload_buttons <lino.ui.extjs3.ext_ui.HtmlRenderer.quick_upload_buttons>`.
 enthält zur Zeit folgenden Code::
 
   <a href='javascript:Lino.uploads.UploadsByOwner.insert(null, { 
@@ -26,4 +26,8 @@ Das ist ziemlich lang. Aber wenn ich record_id statt data_record verwende, krieg
     
 Das kann nicht funktionieren, weil er die known value `type` nicht 
 richtig übergibt (muss auch `typeHidden´ setzen).
-Und wenn er's täte, bin ich nicht sicher, was FormPanel dann daraus macht.
+Und wenn er's täte, bin ich nicht sicher, was FormPanel daraus machen würde.
+
+Für 
+:meth:`quick_add_buttons <lino.ui.extjs3.ext_ui.HtmlRenderer.quick_add_buttons>`
+dagegen haben wir bisher keinen Fall von 

@@ -54,12 +54,12 @@ def install(globals_dict):
         if func:
             #~ dblogger.info("Found %s()", funcname)
             globals_dict['SOURCE_VERSION'] = func(globals_dict)
-            dblogger.info("Installed migration from version %s to %s", from_version, globals_dict['SOURCE_VERSION'])
+            dblogger.info("Found method for migrating from version %s to %s", from_version, globals_dict['SOURCE_VERSION'])
             if func.__doc__:
                 dblogger.info(func.__doc__)
         else:
             if from_version != __version__:
-                dblogger.warning("No method for migration from version %s to %s",from_version,__version__)
+                dblogger.warning("No method for migrating from version %s to %s",from_version,__version__)
             break
 
 

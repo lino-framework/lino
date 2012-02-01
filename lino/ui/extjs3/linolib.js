@@ -950,7 +950,7 @@ Lino.save_wc_handler = function(ww) {
 
 Lino.report_window_button = function(handler) {
   return {
-    qtip: 'Show report in own window', 
+    qtip: 'Show this grid in own window', 
     id: "up",
     handler: function(event,toolEl,panel, tc) {
       //~ console.log('20111206 report_window_button',panel,handler);

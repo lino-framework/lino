@@ -1,0 +1,40 @@
+20120201
+========
+
+TX25
+====
+
+TX25 ist der nächste Schritt im Projekt BCSS-Anbindung.
+Vorbereitungen:
+
+- Dokumentation lesen (Pua...)
+- Wir brauchen etwas Ähnliches wie die 
+  :meth:`quick_upload_buttons <lino.ui.extjs3.ext_ui.HtmlRenderer.quick_upload_buttons>`.
+  Nennen wir es...
+  :meth:`quick_add_buttons <lino.ui.extjs3.ext_ui.HtmlRenderer.quick_add_buttons>`.
+
+
+Noch Kleinkram
+--------------
+
+Aber bevor es mit TX25 weitergehen kann, wollen wir noch folgenden Kleinkram erledigen:
+
+Done:
+
+- Feld quota_newcomers im Detail anzeigen
+
+Todo:
+
+- Klick auf "Neue Klienten" zeigt alle. Also der Filter steht nicht im Klick drin.
+  Liegt wahrscheinlich an :meth:`lino.ui.extjs3.ext_ui.ExtRendererPermalink.href_to_request`.
+- Neue virtuelle Kolonnen mit Anfangs- und Enddatum des aktuellen Vertrags in MyClients.
+- Anzahl Zeilen pro Seite einer Grid dynamisch in Funktion der Fenstergröße ermitteln.
+- Konfigurierung Fachbereiche: Wenn man 'name' editiert, ist das Feld blau.
+- Fachbereiche Feld "body" kann weg
+- Button "show report in own window" nur zeigen wenn es nicht schon das main_item ist.
+
+Idee für später:
+
+- Tooltips aktivieren und lokal bearbeitbar machen.
+  Tooltips müssen lokal gepflegt werden können,
+  am besten in einen Metadaten-Editor direkt vom jeweiligen Bildschirm aus.

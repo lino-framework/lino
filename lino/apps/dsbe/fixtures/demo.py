@@ -352,7 +352,7 @@ def objects():
             client.clean()
             client.save()
             
-    CLIENTS = Cycler(Person.objects.filter(is_active=True))
+    CLIENTS = Cycler(Person.objects.filter(is_active=True,newcomer=False))
     
     #~ oshz = Company.objects.get(name=u"ÖSHZ Eupen")
     

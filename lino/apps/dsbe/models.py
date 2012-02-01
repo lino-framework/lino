@@ -712,6 +712,12 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         return rr.renderer.quick_upload_buttons(r)
     #~ driving_licence.return_type = dd.DisplayField(_("driving licence"))
     
+    @dd.displayfield(_("BCSS Identify Person"))
+    def bcss_identify_person(self,rr):
+        r = rr.spawn_request(
+              settings.LINO.modules.bcss.IdentifyRequestsByPerson,
+              master_instance=self)
+        return rr.renderer.quick_add_buttons(r)
 
 class Contacts(contacts.Contacts):
     imported_fields = []

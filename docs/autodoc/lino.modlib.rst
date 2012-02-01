@@ -23,6 +23,7 @@ Subpackages
     lino.modlib.ledger
     lino.modlib.links
     lino.modlib.mails
+    lino.modlib.newcomers
     lino.modlib.notes
     lino.modlib.properties
     lino.modlib.tickets

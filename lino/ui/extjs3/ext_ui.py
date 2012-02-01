@@ -118,6 +118,9 @@ def is_devserver():
 
 
 class HtmlRenderer(object):
+    """
+    Deserves more documentation.
+    """
     def __init__(self,ui):
         self.ui = ui
         
@@ -127,11 +130,40 @@ class HtmlRenderer(object):
     def href_button(self,url,text):
         return '[<a href="%s">%s</a>]' % (url,text)
         
+    def quick_add_buttons(self,tr):
+        """
+        Returns a HTML chunk that displays "quick add buttons"
+        for the given :class:`request <lino.core.table.TableRequest>`:
+        a button  :guilabel:`[New]` followed possibly 
+        (if the request has rows) by a :guilabel:`[Show last]` 
+        and a :guilabel:`[Show all]` button.
+        
+        See also :doc:`/tickets/56`.
+        
+        """
+        s = ''
+        params = dict(base_params=tr.request2kw(self))
+        after_show = dict()
+        a = tr.report.get_action('insert')
+        if a is not None:
+            elem = tr.create_instance()
+            after_show.update(data_record=elem2rec_insert(tr,tr.ah,elem))
+            #~ after_show.update(record_id=-99999)
+            # see tickets/56
+            s += self.action_href_js(a,params,after_show,_("New"))
+        n = tr.get_total_count()
+        if n > 0:
+            obj = tr.data_iterator[n-1]
+            after_show.update(record_id=obj.pk)
+            s += ' ' + self.action_href_js(tr.ah.report.detail_action,params,after_show,_("Show Last"))
+            s += ' ' + self.href_to_request(tr,_("Show All"))
+        return s
+                
     def quick_upload_buttons(self,rr):
         """
         Returns a HTML chunk that displays "quick upload buttons":
         either one button :guilabel:`[Upload]` 
-        (if the given :class:` request <lino.core.table.TableRequest>`
+        (if the given :class:`TableTequest <lino.core.table.TableRequest>`
         has no rows)
         or two buttons :guilabel:`[Show]` and :guilabel:`[Edit]` 
         if it has one row.
@@ -141,10 +173,7 @@ class HtmlRenderer(object):
         """
         params = dict(base_params=rr.request2kw(self))
         after_show = dict()
-        #~ params = dict(base_params=self.request2kw(rr))
         if rr.get_total_count() == 0:
-        #~ if len(rr.data_iterator) == 0:
-            #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
             a = rr.report.get_action('insert')
             if a is not None:
                 elem = rr.create_instance()
@@ -153,42 +182,55 @@ class HtmlRenderer(object):
                 # see tickets/56
                 return self.action_href_js(a,params,after_show,_("Upload"))
         if rr.get_total_count() == 1:
-        #~ if len(rr.data_iterator) == 1:
-            #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
-            #~ s = unicode(v[0]) + ':'
+            obj = rr.data_iterator[0]
             s = ''
-            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(rr.data_iterator[0].file.name))
-            #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
-            #~ params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
+            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(obj.file.name))
             if True:
-                #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
-                after_show.update(record_id=rr.data_iterator[0].pk)
+                after_show.update(record_id=obj.pk)
                 s += ' ' + self.action_href_js(rr.ah.report.detail_action,params,after_show,_("Edit"))
             else:
-                after_show.update(record_id=rr.data_iterator[0].pk)
+                after_show.update(record_id=obj.pk)
                 s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),params,after_show)
             return s
         return '[?!]'
         
   
 class PdfRenderer(HtmlRenderer):
+    """
+    Deserves more documentation.
+    """
     def href_to_request(self,rr,text=None):
         return text or ("<b>%s</b>" % cgi.escape(force_unicode(rr.label)))
     def href_to(self,obj,text=None):
         text = text or ("<b>%s</b>" % cgi.escape(force_unicode(obj)))
         return "<b>%s</b>" % text
         
+
 class ExtRendererPermalink(HtmlRenderer):
+    """
+    Deserves more documentation.
+    """
     def href_to_request(self,rr,text=None):
+        """
+        Returns a HTML chunk with a clickable link to 
+        the given :class:`TableTequest <lino.core.table.TableRequest>`.
+        """
         return self.href(
             self.get_request_url(rr),
             text or cgi.escape(force_unicode(rr.label)))
     def href_to(self,obj,text=None):
+        """
+        Returns a HTML chunk with a clickable link to 
+        the given model instance.
+        """
         return self.href(
             self.get_detail_url(obj),
             text or cgi.escape(force_unicode(obj)))
             
 class ExtRenderer(HtmlRenderer):
+    """
+    Deserves more documentation.
+    """
     def href_to_request(self,rr,text=None):
         url = self.js2url(self.request_handler(rr))
         return self.href(url,text or cgi.escape(force_unicode(rr.label)))
@@ -317,11 +359,6 @@ class ExtRenderer(HtmlRenderer):
         
     def action_url_js(self,a,params,after_show):
         return self.js2url(self.action_handler(a,params,after_show))
-        #~ onclick = 'Lino.%s(undefined,%s,%s)' % (
-          #~ a,
-          #~ py2js(params or {}),
-          #~ py2js(after_show or {}))
-        #~ print 20110120, onclick
 
       
     def action_href_http(self,a,label=None,**params):

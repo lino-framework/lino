@@ -12,6 +12,10 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Tooltips aktivieren und lokal bearbeitbar machen.
+    Tooltips müssen lokal gepflegt werden können,
+    am besten in einen Metadaten-Editor direkt vom jeweiligen Bildschirm aus.
+
 #.  Continue with BCSS-Connection: 
 
     - add more fields to existing first service
