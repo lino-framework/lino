@@ -77,6 +77,7 @@ class Action(object):
     key = None
     callable_from = None
     default_format = 'html'
+    readonly = True
     #~ can_view = perms.always
     
     
@@ -163,18 +164,8 @@ class ShowDetailAction(ReportAction,OpenWindowAction):
         #~ return _("%s (Detail)")  % unicode(elem)
         
 
-class RowAction(Action):
-    callable_from = (GridEdit,ShowDetailAction)
-    
-    def disabled_for(self,obj,request):
-        return False
-    #~ needs_selection = False
-    #~ needs_validation = False
-    #~ def before_run(self,ar):
-        #~ if self.needs_selection and len(ar.selected_rows) == 0:
-            #~ return _("No selection. Nothing to do.")
-            
 class InsertRow(ReportAction,OpenWindowAction):
+    readonly = False
     callable_from = (GridEdit,ShowDetailAction)
     name = 'insert'
     #~ label = _("Insert")
@@ -186,6 +177,7 @@ class InsertRow(ReportAction,OpenWindowAction):
         return _("Insert into %s") % force_unicode(rr.get_title())
 
 class DuplicateRow(ReportAction,OpenWindowAction):
+    readonly = False
     callable_from = (GridEdit,ShowDetailAction)
     name = 'duplicate'
     label = _("Duplicate")
@@ -207,33 +199,6 @@ class ShowEmptyTable(ShowDetailAction):
     #~ def __str__(self):
         #~ return str(self.actor)+'.'+self.name
         
-    
-
-
-class UpdateRowAction(RowAction):
-    pass
-    
-class DeleteSelected(RowAction):
-    #~ needs_selection = True
-    label = _("Delete")
-    name = 'delete'
-    key = DELETE # (ctrl=True)
-    #~ client_side = True
-    
-        
-class SubmitDetail(Action):
-    #~ name = 'submit'
-    label = _("Save")
-    callable_from = (ShowDetailAction,)
-    
-class SubmitInsert(SubmitDetail):
-    #~ name = 'submit'
-    label = _("Save")
-    #~ label = _("Insert")
-    callable_from = (InsertRow,)
-        
-
-
 class Calendar(OpenWindowAction):
     label = _("Calendar")
     name = 'grid' # because...
@@ -246,20 +211,58 @@ class Calendar(OpenWindowAction):
         
     def __str__(self):
         return str(self.actor) + '.' + self.name
+
+
     
 
-#~ class ShowEmptyTable(actions.OpenWindowAction):
-    #~ name = 'grid' # because...
-    #~ default_format = 'html'
-    #~ def __init__(self,actor,*args,**kw):
-        #~ self.actor = actor # actor who offers this action
-        #~ self.label = actor.label
-        #~ self.can_view = perms.always # actor.can_view
-        #~ super(ShowEmptyTable,self).__init__(*args,**kw)
-        
-    #~ def __str__(self):
-        #~ return str(self.actor)+'.'+self.name
+class RowAction(Action):
+    """
+    Base class for actions that are executed server-side on an individual row.
+    """
+    callable_from = (GridEdit,ShowDetailAction)
     
+    def disabled_for(self,obj,request):
+        return False
+            
+    def run(self,rr,elem,**kw):
+        raise NotImplementedError("%s has no run() method" % self.__class__)
+
+class UpdateRowAction(RowAction):
+    readonly = False
+    
+
+class ListAction(Action):
+    """
+    Base class for actions that are executed server-side on an individual row.
+    """
+    callable_from = (GridEdit,)
+    
+    def run(self,rr,**kw):
+        raise NotImplementedError("%s has no run() method" % self.__class__)
+            
+
+class DeleteSelected(Action):
+    readonly = False
+    callable_from = (GridEdit,ShowDetailAction)
+    #~ needs_selection = True
+    label = _("Delete")
+    name = 'delete'
+    key = DELETE # (ctrl=True)
+    #~ client_side = True
+    
+        
+class SubmitDetail(Action):
+    readonly = False
+    #~ name = 'submit'
+    label = _("Save")
+    callable_from = (ShowDetailAction,)
+    
+class SubmitInsert(SubmitDetail):
+    #~ name = 'submit'
+    label = _("Save")
+    #~ label = _("Insert")
+    callable_from = (InsertRow,)
+
 
 
 

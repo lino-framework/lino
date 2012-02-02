@@ -108,6 +108,24 @@ class User(contacts.Contact,contacts.PersonMixin):
         if not self.name:
             self.name = self.username
         models.Model.full_clean(self,*args,**kw)
+        
+    def get_permission(self,action,user):
+        if user.is_superuser: return True
+        if action.readonly: return True
+        if user == self: return True
+        return False
+          
+    #~ def disable_editing(self,ar):
+        #~ if ar.get_user().is_superuser: return False
+        #~ if ar.get_user() == self: return False
+        #~ return True
+        
+    def disabled_fields(self,request):
+        #~ if ar.get_user().is_superuser: 
+        if request.user.is_superuser: 
+            return []
+        return ['is_superuser','is_active']
+        
 
 class Users(dd.Table):
     """Shows the list of users on this site.

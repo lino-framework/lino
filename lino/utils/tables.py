@@ -436,6 +436,12 @@ class AbstractTable(actors.Actor):
     Will be filled during :meth:`lino.core.table.Table.do_setup`. 
     """
     
+    editable = None
+    """
+    Set this explicitly to True or False to make the 
+    table per se editable or not.
+    """
+    
     def __init__(self,*args,**kw):
         raise NotImplementedError("20120104")
     
@@ -454,6 +460,9 @@ class AbstractTable(actors.Actor):
       
         if self.get_data_rows is not None:
             self.show_detail_navigator = False
+            
+        if self.editable is None:
+            self.editable = (self.get_data_rows is None)
       
         self.setup_columns()
         
@@ -480,15 +489,6 @@ class AbstractTable(actors.Actor):
         if self.button_label is None:
             self.button_label = self.label
             
-        
-    @classmethod
-    def disabled_actions(self,obj,request):
-        l = []
-        for a in self.get_actions():
-            if isinstance(a,actions.RowAction):
-                if a.disabled_for(obj,request):
-                    l.append(a.name)
-        return l
         
     @classmethod
     def setup_columns(self):
@@ -529,9 +529,9 @@ class AbstractTable(actors.Actor):
         #~ return None
         
     @classmethod
-    def get_permission(self,p,user):
+    def get_permission(self,action,user):
         if self.get_data_rows:
-            return False
+            return action.readonly
         return True
         
         

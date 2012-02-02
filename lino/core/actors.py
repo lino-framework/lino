@@ -31,6 +31,8 @@ actors_list = None
 
 ACTOR_SEP = '.'
 
+class ReadPermission: pass
+class UpdatePermission: pass
 class CreatePermission: pass
           
 
@@ -291,6 +293,9 @@ class Actor(Handled):
     #~ actions = []
     default_action = None
     actor_id = None
+    
+    submit_action = actions.SubmitDetail()
+    
 
     @classmethod
     def get_label(self):
@@ -314,8 +319,25 @@ class Actor(Handled):
             a.name for a in self._actions_list]))
         
     @classmethod
-    def get_permission(self,p,user):
+    def get_permission(self,action,user):
         return True
+        
+    @classmethod
+    def disabled_actions(self,ar,obj):
+        #~ l = []
+        d = dict()
+        u = ar.get_user()
+        #~ u = request.user
+        m = getattr(obj,'get_permission',None)
+        for a in self.get_actions():
+            if not self.get_permission(a,u) or m is not None and not m(a,u):
+                d[a.name] = True
+            #~ if not self.get_permission(a,u):
+                #~ l.append(a.name)
+            #~ if isinstance(a,actions.RowAction):
+                #~ if a.disabled_for(obj,request):
+                    #~ l.append(a.name)
+        return d
         
     @classmethod
     def get_detail_sets(self):

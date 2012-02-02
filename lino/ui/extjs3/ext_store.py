@@ -431,18 +431,20 @@ class DisabledFieldsStoreField(SpecialStoreField):
     
     def full_value_from_object(self,request,obj):
         #~ l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
-        l = list(self.store.report.disabled_fields(obj,request))
-        # if obj is not new (i.e. has a primary key)
+        d = dict()
+        if self.store.report.disabled_fields is not None:
+            for name in self.store.report.disabled_fields(obj,request):
+                d[name] = True
+        #~ l = list(self.store.report.disabled_fields(obj,request))
         # disabled also the primary key field
         if obj.pk is not None:
-            #~ l.append(self.store.pk.name)
-            l.append(self.store.pk.attname)
+            d[self.store.pk.attname] = True
+            #~ l.append(self.store.pk.attname)
             # MTI children have two "primary keys":
             if isinstance(self.store.pk,models.OneToOneField):
-                l.append(self.store.pk.rel.field_name)
-        #~ if self.store.report == settings.LINO.modules.dsbe.Persons:
-            #~ logger.info('20120103 disabled_fields is %s',l)
-        return l
+                #~ l.append(self.store.pk.rel.field_name)
+                d[self.store.pk.rel.field_name] = True
+        return d
         
         
 #~ class RecnoStoreField(SpecialStoreField):
@@ -458,8 +460,16 @@ class DisableEditingStoreField(SpecialStoreField):
     """
     name = 'disable_editing'
         
-    def full_value_from_object(self,request,obj):
-        return self.store.report.disable_editing(obj,request)
+    def full_value_from_object(self,ar,obj):
+        #~ return self.store.report.disable_editing(obj,request)
+        a = self.store.report.submit_action
+        m = getattr(obj,'get_permission',None)
+        u = ar.get_user()
+        if not self.store.report.get_permission(a,u) or (m is not None and not m(a,u)):
+            return True
+        return False
+        #~ if not self.store.report.get_permission(ar.get_user(),):
+            #~ return False
         
 
         
@@ -769,13 +779,15 @@ class Store:
         #~ if not issubclass(rh.report,table.Table):
             #~ addfield(RecnoStoreField(self))
           
-        if rh.report.disabled_fields:
-            addfield(DisabledFieldsStoreField(self))
+        #~ if rh.report.disabled_fields is not None:
+        addfield(DisabledFieldsStoreField(self))
+            
             #~ sf = DisabledFieldsStoreField(self)
             #~ self.fields.append(sf)
             #~ self.list_fields.append(sf)
             #~ self.detail_fields.append(sf)
-        if rh.report.disable_editing:
+        #~ if rh.report.disable_editing is not None:
+        if rh.report.submit_action is not None:
             addfield(DisableEditingStoreField(self))
             
         #~ self.fields.append(PropertiesStoreField)

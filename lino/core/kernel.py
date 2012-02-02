@@ -132,7 +132,7 @@ def analyze_models(self):
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
     from lino.models import HelpText
-    for ht in HelpText.objects.all():
+    for ht in HelpText.objects.filter(help_text__isnull=False):
         resolve_field(unicode(ht)).help_text = ht.help_text
                     
   

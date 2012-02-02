@@ -1,0 +1,54 @@
+20120202
+========
+
+
+Mir war aufgefallen, dass man in 
+:class:`UsersByNewcomer <lino.modlib.newcomers.models.UsersByNewcomer>`
+auch Benutzer löschen, bearbeiten, erstellen kann.
+So habe ich dann einen ganzen Arbeitstag ins 
+Permission-System investiert.
+
+`disabled_actions` werden jetzt auch im Kontextmenü disabled.
+
+Außerdem haben Aktionen jetzt allgemein ein Attribut `readonly`, 
+das in 
+:meth:`lino.core.actors.Actor.get_permission`
+die Entscheidung vereinfacht.
+
+Eine Tabelle kann jetzt *per se* `editable´ 
+oder nicht sein. Wenn sie es nicht ist 
+(z.B. besagte 
+:class:`UsersByNewcomer <lino.modlib.newcomers.models.UsersByNewcomer>`), 
+dann kann selbst der Superuser dort nichts ändern,
+permissions werden dann gar nicht erst abgefragt.
+
+get_permission() kann jetzt auf einem Model definiert 
+sein, was ich sogleich an 
+:class:`lino.modlib.users.models.User` ausprobiert habe:
+
+- Benutzer dürfen nur sich selbst bearbeiten, 
+  nur Superuser dürfen auch andere Benutzer bearbeiten.
+  
+- Die Checkboxen "Superuser" und "Aktiv" darf auch bei sich selbst 
+  nur der Superuser bearbeiten.
+  
+  Zum Testen kann man sich als Superuser einloggen und sich dieses 
+  Attribut abschalten: anschließend gibt es keinen Weg, es wieder 
+  einzuschalten, außer mit einem :term:`make_staff` 
+  
+N.B. :term:`make_staff` müsste eigentlich 
+`make_superuser` oder `setsu` heißen,
+bzw. `setroot` (falls ich irgendwann mal "Superuser" 
+nach "Root" umbenenne)
+
+
+Weiterhin bleibt zu tun:
+
+- Klick auf "Neue Klienten" zeigt alle. Also der Filter steht nicht im Klick drin.
+  Liegt wahrscheinlich an :meth:`lino.ui.extjs3.ext_ui.ExtRendererPermalink.href_to_request`.
+- Neue virtuelle Kolonnen mit Anfangs- und Enddatum des aktuellen Vertrags in MyClients.
+- Anzahl Zeilen pro Seite einer Grid dynamisch in Funktion der Fenstergröße ermitteln.
+- Konfigurierung Fachbereiche: Wenn man 'name' editiert, ist das Feld blau.
+- Fachbereiche Feld "body" kann weg
+- Neuzugänge: hier muss noch ein Button bzw eine Prozedur her für den 
+  Akt der Zuweisung. 

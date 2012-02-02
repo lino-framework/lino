@@ -96,6 +96,9 @@ URL_PARAMS = [
 #~ User = reports.resolve_model('users.User')
 #~ from lino.modlib.users.models import User
 
+URL_FORMAT_JSON = 'json'
+
+
 def parse_boolean(v):
     if v in ('true','on'):
         return True

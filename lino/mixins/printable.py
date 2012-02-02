@@ -605,11 +605,9 @@ class ClearCacheAction(actions.RowAction):
     name = 'clear'
     label = _('Clear cache')
     
-    def disabled_for(self,obj,request):
-        #~ print "ClearCacheAction.disabled_for()", obj
-        #~ if obj.must_build:
-        if not obj.build_time:
-            return True
+    #~ def disabled_for(self,obj,request):
+        #~ if not obj.build_time:
+            #~ return True
     
     def run(self,rr,elem):
         t = elem.get_cache_mtime()
@@ -707,6 +705,14 @@ class CachedPrintable(models.Model,Printable):
         #~ call_optional_super(CachedPrintable,cls,'setup_report',rpt)
         rpt.add_action(PrintAction(rpt))
         rpt.add_action(ClearCacheAction())
+        
+    def get_permission(self,action,user):
+        if isinstance(action,ClearCacheAction):
+            if not self.build_time:
+                return False
+        return True
+      
+        
 
     def get_print_templates(self,bm,action):
         """Return a list of filenames of templates for the specified build method.

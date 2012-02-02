@@ -179,7 +179,7 @@ class UsersByNewcomer(dd.Table):
     model = users.User
     filter = models.Q(is_spis=True)
     label = _("Users by Newcomer")
-    column_names = 'name primary_clients active_clients newcomers newcomer_quota newcomer_score'
+    column_names = 'name primary_clients active_clients new_clients newcomer_quota newcomer_score'
     parameters = dict(
         for_client = models.ForeignKey('contacts.Person',verbose_name=_("Show suggested agents for")),
         since = models.DateField(_("Count Newcomers since"),blank=True,default=amonthago),
@@ -189,6 +189,12 @@ class UsersByNewcomer(dd.Table):
     @chooser()
     def for_client_choices(cls):
         return Newcomers.request().data_iterator
+        
+    #~ @classmethod
+    #~ def get_permission(self,action,user):
+        #~ return isinstance(p.actors.ReadPermission)
+        #~ return True
+        
         
     @classmethod
     def get_data_rows(self,ar):
@@ -225,7 +231,7 @@ class UsersByNewcomer(dd.Table):
         return MyActivePersons.request(ar.ui,subst_user=obj)
         
     @dd.requestfield(_("New Clients"))
-    def newcomers(self,obj,ar):
+    def new_clients(self,obj,ar):
         return obj.new_clients
         
     @dd.virtualfield(models.IntegerField(_("Score")))

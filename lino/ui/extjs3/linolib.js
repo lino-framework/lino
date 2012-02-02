@@ -1253,6 +1253,15 @@ Lino.quicktip_renderer = function(msg) {
   }
 };
   
+Lino.help_text_editor = function() {
+  //~ var bp = {
+      //~ mk:this.content_type,
+      //~ mt:1
+    //~ };
+    //~ console.log(20120202,bp);
+  //~ Lino.lino.ContentTypes.detail({},{base_params:bp});
+  Lino.lino.ContentTypes.detail({},{record_id:this.content_type});
+}
 
 // Path to the blank image should point to a valid location on your server
 //~ Ext.BLANK_IMAGE_URL = MEDIA_URL + '/extjs/resources/images/default/s.gif'; 
@@ -1413,6 +1422,22 @@ Lino.row_action_handler = function(actionName,gridmode) {
     });
   };
   return fn;
+};
+
+Lino.list_action_handler = function(actionName,gridmode) {
+  return function(panel,btn,step) {
+    //~ console.log(panel);
+    var url = ROOT_URL + '/api' + panel.ls_url ;
+    var p = Ext.apply({},panel.get_base_params());
+    p['$ext_requests.URL_PARAM_ACTION_NAME'] = actionName;
+    if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
+    Ext.Ajax.request({
+      method: 'GET',
+      url: url,
+      params: p,
+      success: Lino.action_handler(panel,function(result){},gridmode,fn)
+    });
+  };
 };
 
 Lino.show_detail = function(panel,btn) {
@@ -1825,7 +1850,14 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ if (config.can_config) {
     config.bbar = config.bbar.concat([
       '->',
-      {text:'Layout Editor',handler:this.edit_detail_config,qtip:"Edit Detail Layout",scope:this}
+      { text:'Help Text Editor',
+        handler: Lino.help_text_editor,
+        qtip: "$_("Edit help texts for fields on this model.")",
+        scope: this},
+      { text:'Layout Editor',
+        handler: this.edit_detail_config,
+        qtip: "$_("Edit Detail layout")",
+        scope: this}
     ])
     //~ }
     //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
@@ -1988,7 +2020,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         p['$ext_requests.URL_PARAM_ACTION_NAME'] = this.action_name;
     //~ p.an = this.action_name;
     //~ p.an = this.containing_window.config.action_name;
-    p.fmt = 'json';
+    //~ p.fmt = 'json';
+    p.fmt = '$ext_requests.URL_FORMAT_JSON';
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     this.add_param_values(p);
@@ -2049,43 +2082,34 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.form.loadRecord(record);
       this.set_window_title(record.title);
       this.getBottomToolbar().enable();
+      if (record.disabled_actions) {
+          //~ console.log('disabled_actions =',record.disabled_actions,this.getBottomToolbar());
+          this.getBottomToolbar().items.each(function(item,index,length){
+              if (record.disabled_actions[item.name]) 
+                item.disable();
+              else item.enable();
+          });
+      };
       if (record.data.disable_editing) {
+          //~ console.log("20120202 disable_editing",record.title);
           this.form.items.each(function(cmp){
             cmp.disable();
           },this);
       } else {
-          if (record.disabled_actions) {
-              //~ console.log('disabled_actions =',record.disabled_actions,this.getBottomToolbar());
-              for (i = 0; i < record.disabled_actions.length; i++) {
-                  var name = record.disabled_actions[i];
-                  var cmp;
-                  this.getBottomToolbar().items.each(function(item,index,length){
-                      if (item.name == name) {
-                          cmp = item;
-                          return false;
-                      }
-                  });
-                  //~ record.disabled_actions[i]);
-                  //~ var cmp = this.getBottomToolbar().findById(record.disabled_actions[i]);
-                  //~ console.log('20111217 disabled_actions found',cmp);
-                  cmp.disable();
-              }
-          };
-          if (record.data.disabled_fields) {
-              //~ console.log('20100930 disabled_fields =',record.data.disabled_fields);
-              //~ console.log('20100930 this.form =',this.form);
-              //~ for (i in record.data.disabled_fields.length) {
-              for (i = 0; i < record.data.disabled_fields.length; i++) {
-                  //~ var fld = this.form.findField(record.data.disabled_fields[i]);
-                  var flds = this.find('name',record.data.disabled_fields[i]);
-                  if (flds.length == 1) { 
-                    //~ console.log('20100930 fld',record.data.disabled_fields[i],'=',flds[0]);
-                    flds[0].disable(); 
-                  //~ } else {
-                      //~ console.log(20100617,record.data.disabled_fields[i], 'field not found');
-                  }
-              }
-          }
+          this.form.items.each(function(cmp){
+            console.log("20120202",cmp);
+            if (record.data.disabled_fields[cmp.name]) cmp.disable();
+            else cmp.enable();
+          },this);
+        
+          //~ if (record.data.disabled_fields) {
+              //~ for (i = 0; i < record.data.disabled_fields.length; i++) {
+                  //~ var flds = this.find('name',record.data.disabled_fields[i]);
+                  //~ if (flds.length == 1) { 
+                    //~ flds[0].disable(); 
+                  //~ }
+              //~ }
+          //~ }
       };
       if (this.has_navigator && record.navinfo) {
         this.first.setDisabled(!record.navinfo.first);
@@ -2313,7 +2337,8 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
       
       
     Ext.applyIf(options.params, {
-        fmt : 'json',
+        //~ fmt : 'json',
+        fmt : '$ext_requests.URL_FORMAT_JSON',
         '$URL_PARAM_LIMIT' : this.grid_panel.getTopToolbar().pageSize,
         '$URL_PARAM_START' : this.grid_panel.getTopToolbar().cursor
         //~ // 20110119 $URL_PARAM_FILTER: this.quick_search_text
@@ -2436,6 +2461,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ var grid = this;
     this.store.on('load', function() {
         //~ console.log('GridMasterWrapper setup',this_.store.reader.arrayData.title);
+        var da = this_.store.reader.arrayData.disabled_actions
+        if (da) {
+            this.cmenu.cascade(function(item){ 
+              if(da[item.name]) item.disable();
+              else item.enable();
+            });
+        };
         if (this_.containing_window)
             this_.containing_window.setTitle(this_.store.reader.arrayData.title);
         if(this_.selModel.getSelectedCell){         
@@ -3775,7 +3807,7 @@ Lino.calendarStore = new Ext.data.JsonStore({
       listeners: { exception: Lino.on_store_exception }
       ,restful : true
       ,proxy: new Ext.data.HttpProxy({ 
-          url: ROOT_URL + '/restful/cal/PanelCalendars?fmt=json', 
+          url: ROOT_URL + '/restful/cal/PanelCalendars?fmt=$ext_requests.URL_FORMAT_JSON', 
           disableCaching: false // no need for cache busting when loading via Ajax
           //~ restful : true
           //~ method: "GET"

@@ -522,7 +522,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     #~ rec.update(title=unicode(elem))
     rec.update(id=elem.pk)
     #~ if rh.report.disable_delete:
-    rec.update(disabled_actions=rh.report.disabled_actions(elem,ar.request))
+    rec.update(disabled_actions=rh.report.disabled_actions(ar,elem))
     rec.update(disable_delete=rh.report.disable_delete(elem,ar.request))
     if rh.report.show_detail_navigator:
         first = None
@@ -729,9 +729,7 @@ class ExtUI(base.UI):
                     a = de.get_action('insert')
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" % a))
-                        kw.update(ls_bbar_actions=[
-                          self.a2btn(a),
-                          ])
+                        kw.update(ls_bbar_actions=[self.a2btn(a)])
                     field = fields.HtmlBox(verbose_name=de.label,**o)
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
@@ -1395,7 +1393,8 @@ tinymce.init({
           
             #~ print '20110714', a, fmt
             
-            if fmt == 'json':
+            #~ if fmt == 'json':
+            if fmt == ext_requests.URL_FORMAT_JSON:
                 ar.renderer = self.ext_renderer
                 rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
                 #~ return json_response_kw(msg="20120124")
@@ -1410,6 +1409,7 @@ tinymce.init({
                 return json_response_kw(count=total_count,
                   rows=rows,
                   title=unicode(ar.get_title()),
+                  disabled_actions=rpt.disabled_actions(ar,None),
                   gc_choices=[gc.data for gc in rpt.grid_configs])
                     
             if fmt == 'html':
@@ -2139,7 +2139,7 @@ tinymce.init({
         #~ elif isinstance(a,actions.UpdateRowAction):
             #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
         elif isinstance(a,actions.ShowDetailAction):
-            kw.update(panel_btn_handler=js_code('Lino.show_detail_handler'))
+            kw.update(panel_btn_handler=js_code('Lino.show_detail'))
             #~ kw.update(panel_btn_handler=js_code('Lino.show_detail_handler()'))
             #~ kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
         elif isinstance(a,actions.InsertRow):
@@ -2157,7 +2157,12 @@ tinymce.init({
             #~ kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
         elif isinstance(a,actions.RowAction):
             kw.update(must_save=True)
-            kw.update(panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.name))
+            kw.update(
+              panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.name))
+        elif isinstance(a,actions.ListAction):
+            kw.update(must_save=True)
+            kw.update(
+              panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.name))
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(
@@ -2282,7 +2287,8 @@ tinymce.init({
             yield "  params_panel_hidden: true,"
             
 
-        yield "  ls_bbar_actions: %s," % py2js([rh.ui.a2btn(a) for a in rpt.get_actions(action)])
+        yield "  ls_bbar_actions: %s," % py2js([
+            rh.ui.a2btn(a) for a in rpt.get_actions(action)])
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         #~ if action != rpt.default_action:
         yield "  action_name: %s," % py2js(action.name)
@@ -2315,7 +2321,8 @@ tinymce.init({
             kw.update(pk_index=rh.store.pk_index)
             kw.update(content_type=ContentType.objects.get_for_model(rh.report.model).pk)
         kw.update(ls_quick_edit=rh.report.cell_edit)
-        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
+        kw.update(ls_bbar_actions=[
+            rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.report.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.report.default_action:
@@ -2423,11 +2430,7 @@ tinymce.init({
         #~ yield "  Lino.%s_window.show(undefined,undefined,undefined,after_show);" % action
         yield "};"
             
-    def unused_get_actor(self,*args,**kw):
-        from lino.core import actors
-        a = actors.get_actor(*args,**kw)
-        return a.get_handle(self)
-        
+
     def table2xhtml(self,ar,max_row_count=300):
         """
         """

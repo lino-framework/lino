@@ -40,7 +40,7 @@ Idee für später:
 
 - Tooltips aktivieren und lokal bearbeitbar machen.
   Tooltips müssen lokal gepflegt werden können,
-  am besten in einen Metadaten-Editor direkt vom jeweiligen Bildschirm aus.
+  am besten in einen HelpText-Editor direkt vom jeweiligen Bildschirm aus.
 
 
 Abends

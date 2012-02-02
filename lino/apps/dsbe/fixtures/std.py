@@ -241,4 +241,12 @@ Since when this person in Belgium lives.
     yield I(t,'noble_condition',"""\
 The eventual noble condition of this person. Imported from TIM.
 """)
+    yield I(t,'noble_condition',u"""\
+Unkomplette Geburtsdaten sind erlaubt, z.B. 
+<ul>
+<li>00.00.1980 : irgendwann in 1980</li>
+<li>00.07.1980 : im Juli 1980</li>
+<li>23.07.0000 : Geburtstag am 23. Juli, Alter unbekannt</li>
+</ul>    
+""")
     
