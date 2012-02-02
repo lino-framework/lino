@@ -1986,10 +1986,16 @@ tinymce.init({
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
                 return d
         else:
+            """
+            NOTE: if you define a parameter with the same name 
+            as some existing data element name, then the parameter 
+            will override the data element. At least here in choices view.
+            """
             #~ field = find_field(rpt.model,fldname)
-            field = rpt.get_data_elem(fldname)
+            field = rpt.get_param_elem(fldname)
             if field is None:
-                field = rpt.get_param_elem(fldname)
+                field = rpt.get_data_elem(fldname)
+            #~ logger.info("20120202 %r",field)
             chooser = choosers.get_for_field(field)
             if chooser:
                 qs = chooser.get_request_choices(request,rpt)

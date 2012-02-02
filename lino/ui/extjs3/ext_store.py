@@ -999,6 +999,13 @@ class Store:
                 kw[f.field.name] = parse(f,'')
         return kw
         
+    def pv2list(self,pv):
+        l = []
+        for f in self.param_fields:
+            l.append(pv[f.field.name])
+        return l
+        
+        
     def row2html(self,request,row,sums):
         for i,fld in enumerate(self.list_fields):
             #~ print 20120115, fld.field.name

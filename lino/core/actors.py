@@ -395,8 +395,8 @@ class Actor(Handled):
         self.do_setup()
         self._setup_doing = False
         self._setup_done = True
-        logger.debug("20120103 Actor.setup() done: %s, default_action is %s", 
-            self.actor_id,self.default_action)
+        #~ logger.debug("20120103 Actor.setup() done: %s, default_action is %s", 
+            #~ self.actor_id,self.default_action)
         return True
         
     @classmethod
@@ -445,7 +445,9 @@ class Actor(Handled):
             #~ return cc
         vf = self.virtual_fields.get(name,None)
         if vf is not None:
+            #~ logger.info("20120202 Actor.get_data_elem found vf %r",vf)
             return vf
+        #~ logger.info("20120202 Actor.get_data_elem found nothing")
         return None
               
 

@@ -948,6 +948,7 @@ class Table(AbstractTable):
             #~ return self.add_column(fn,name=name,
               #~ verbose_name=fld.verbose_name)
             
+        #~ logger.info("20120202 Table.get_data_elem found nothing")
         return get_data_elem(self.model,name)
         #~ de = get_data_elem(self.model,name)
         #~ if de is not None: 

@@ -13,6 +13,10 @@
 
 "coretools may not be used in models modules (but well during lino_site set up)."
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 from django.db.models import loading
 from django.db import models
 from django.conf import settings
@@ -55,6 +59,7 @@ def get_unbound_meth(cl,name):
     
     
 def get_data_elem(model,name):
+    #~ logger.info("20120202 get_data_elem %r,%r",model,name)
     try:
         return model._meta.get_field(name)
     except models.FieldDoesNotExist,e:

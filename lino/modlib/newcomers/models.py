@@ -144,9 +144,10 @@ class NewClients(AllPersons):
     use_as_default_report = False
     
     parameters = dict(
-        user = models.ForeignKey(users.User,verbose_name=_("Show agents for newcomer")),
-        since= models.DateField(_("Count Newcomers since"),blank=True,default=amonthago),
+        coached_by = models.ForeignKey(users.User,verbose_name=_("Coached by")),
+        since = models.DateField(_("Since"),blank=True,default=amonthago),
     )
+    params_template = "coached_by since"
     
     column_names = "name_column:20 coached_from coached_until national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
     
@@ -161,8 +162,8 @@ class NewClients(AllPersons):
         #~ qs = Person.objects.all()
         qs = super(NewClients,self).get_request_queryset(ar)
         
-        if ar.param_values.user:
-            qs = only_my_persons(qs,ar.param_values.user)
+        if ar.param_values.coached_by:
+            qs = only_my_persons(qs,ar.param_values.coached_by)
             
         if ar.param_values.since:
             qs = qs.filter(coached_from__isnull=False,coached_from__gte=ar.param_values.since) 
@@ -214,7 +215,7 @@ class UsersByNewcomer(dd.Table):
                     continue
             user.new_clients = NewClients.request(
               ar.ui,param_values=dict(
-                user=user,
+                coached_by=user,
                 since=ar.param_values.since))
             yield user
                 

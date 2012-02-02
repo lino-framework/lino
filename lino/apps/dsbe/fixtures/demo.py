@@ -337,6 +337,15 @@ def objects():
       
     DIRECTORS = (annette,hans,andreas,bernard)
     
+    user = auth.User.objects.get(username='user')
+    root = auth.User.objects.get(username='root')
+    root.is_spis = True
+    root.save()
+    user.is_spis = True
+    user.save()
+    
+    USERS = Cycler(root,user)
+    
     #~ CLIENTS = Cycler(andreas,annette,hans,ulrike,erna,tatjana)
     count = 0
     for client in Person.objects.all():
@@ -347,6 +356,11 @@ def objects():
                 client.coached_from = settings.LINO.demo_date(-7 * count)
                 if count % 6:
                     client.coached_until = settings.LINO.demo_date(-7 * count)
+                if count % 2:
+                    p.coach1 = USERS.pop()
+                else:
+                    p.coach2 = USERS.pop()
+                    
             elif count % 8:
                 client.newcomer = True
             client.clean()
@@ -361,15 +375,6 @@ def objects():
     note = Instantiator('notes.Note').build
     langk = Instantiator('dsbe.LanguageKnowledge').build
 
-    user = auth.User.objects.get(username='user')
-    root = auth.User.objects.get(username='root')
-    root.is_spis = True
-    root.save()
-    user.is_spis = True
-    user.save()
-    
-    USERS = Cycler(root,user)
-    
     #~ prj = project(name="Testprojekt",company=oshz)
     #~ yield prj 
     #~ yield note(user=user,project=prj,date=i2d(20091006),subject="Programmierung",company=oshz)

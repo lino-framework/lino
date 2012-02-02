@@ -453,4 +453,9 @@ class ActorRequest(ActionRequest):
     def get_request_url(self,*args,**kw):
         return self.ui.get_request_url(self,*args,**kw)
 
+    def request2kw(self,ui,**kw):
+        if self.report.parameters:
+            kw[ext_requests.URL_PARAM_PARAM_VALUES] = self.ah.store.pv2list(self.param_values)
+        return kw
+        
 

@@ -211,6 +211,7 @@ class AbstractTableRequest(actions.ActorRequest):
         return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
         
     def request2kw(self,ui,**kw):
+        kw = actions.ActorRequest.request2kw(self,ui,**kw)
         if self.subst_user is not None:
             kw[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
             

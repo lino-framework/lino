@@ -9,6 +9,8 @@ So habe ich dann einen ganzen Arbeitstag ins
 Permission-System investiert.
 
 `disabled_actions` werden jetzt auch im Kontextmenü disabled.
+`disabled_actions` und `disabled_fields` werden jetzt nicht mehr 
+als einfaches array, sondern als hashed array übergeben.
 
 Außerdem haben Aktionen jetzt allgemein ein Attribut `readonly`, 
 das in 
@@ -42,13 +44,19 @@ bzw. `setroot` (falls ich irgendwann mal "Superuser"
 nach "Root" umbenenne)
 
 
+
 Weiterhin bleibt zu tun:
 
 - Klick auf "Neue Klienten" zeigt alle. Also der Filter steht nicht im Klick drin.
-  Liegt wahrscheinlich an :meth:`lino.ui.extjs3.ext_ui.ExtRendererPermalink.href_to_request`.
+
+  Das liegt daran, dass die param_values eines ActionRequest 
+  noch nicht in die URL übergeben und noch nicht vom Panel 
+  übernommen werden.
+  
 - Neue virtuelle Kolonnen mit Anfangs- und Enddatum des aktuellen Vertrags in MyClients.
 - Anzahl Zeilen pro Seite einer Grid dynamisch in Funktion der Fenstergröße ermitteln.
 - Konfigurierung Fachbereiche: Wenn man 'name' editiert, ist das Feld blau.
 - Fachbereiche Feld "body" kann weg
 - Neuzugänge: hier muss noch ein Button bzw eine Prozedur her für den 
   Akt der Zuweisung. 
+
