@@ -53,9 +53,10 @@ Weiterhin bleibt zu tun:
   noch nicht in die URL übergeben und noch nicht vom Panel 
   übernommen werden.
   
-- Neue virtuelle Kolonnen mit Anfangs- und Enddatum des aktuellen Vertrags in MyClients.
 - Anzahl Zeilen pro Seite einer Grid dynamisch in Funktion der Fenstergröße ermitteln.
-- Konfigurierung Fachbereiche: Wenn man 'name' editiert, ist das Feld blau.
+- Konfigurierung Fachbereiche: Wenn man 'name' editiert, 
+  ist das Feld blau.
+- Neue virtuelle Kolonnen mit Anfangs- und Enddatum des aktuellen Vertrags in MyClients.
 - Fachbereiche Feld "body" kann weg
 - Neuzugänge: hier muss noch ein Button bzw eine Prozedur her für den 
   Akt der Zuweisung. 

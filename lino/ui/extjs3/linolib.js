@@ -303,7 +303,7 @@ Lino.current_window = null;
 Lino.window_history = Array();
 
 Lino.open_window = function(win,st) {
-  console.log("20120203 Lino.open_window()",win,st);
+  //~ console.log("20120203 Lino.open_window()",win,st);
   var cw = Lino.current_window;
   if (cw) {
     Lino.window_history.push({
@@ -1310,12 +1310,12 @@ Lino.MainPanel = {
           }
       }
       p.$ext_requests.URL_PARAM_PARAM_VALUES = pv;
-      console.log("20120203 add_param_values added pv",pv,"to",p);
+      //~ console.log("20120203 add_param_values added pv",pv,"to",p);
     }
     
   },
   set_param_values : function(pv) {
-    console.log('20120203 set_param_values', pv);
+    //~ console.log('20120203 set_param_values', pv);
     if (this.params_panel) {
       if (pv) this.params_panel.form.my_loadRecord(pv);
       else this.params_panel.form.reset(); 
@@ -2434,13 +2434,29 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
   autoLoad: false,
   load: function(options) {
+    if (!this.grid_panel.rendered) {
+        console.log("20120122 GridStore.load() must wait until rendered",options);
+        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
+        return;
+    }
+    
+    var ps = this.grid_panel.calculatePageSize();
+    
+    if (!ps) {
+        //~ console.log("20120122 GridStore.load() failed to calculate pagesize");
+        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
+        return;
+    }
+    
+    this.grid_panel.getTopToolbar().pageSize =  ps;
+    
+    //~ console.log("20120122 GridStore.load() now",options);
     if (!options) options = {};
     if (!options.params) options.params = {};
     //~ Ext.apply(options.params,this.baseParams);
     //~ options.params.fmt = 'json';
     //~ options.params.$URL_PARAM_LIMIT = this.grid_panel.getTopToolbar().pageSize;
     //~ options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
-      
       
     Ext.applyIf(options.params, {
         //~ fmt : 'json',
@@ -2449,9 +2465,8 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
         '$URL_PARAM_START' : this.grid_panel.getTopToolbar().cursor
         //~ // 20110119 $URL_PARAM_FILTER: this.quick_search_text
     });
-    //~ console.log("20120122 GridStore.load()",options);
     this.grid_panel.add_param_values(options.params);
-    console.log("20120122 GridStore.load() 2",options.params);
+    //~ console.log("20120122 GridStore.load() 2",options.params);
     return Lino.GridStore.superclass.load.call(this,options);
   }
 });
@@ -2714,8 +2729,16 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.on('cellcontextmenu', Lino.cell_context_menu, this);
     //~ this.on('contextmenu', Lino.grid_context_menu, this);
     
+    this.on('resize', function(cmp,aw,ah,rw,rh) {
+        var ps = this.calculatePageSize();
+        if (ps && ps != this.getTopToolbar().pageSize) {
+            //~ console.log('20120203 resize : pageSize',this.getTopToolbar().pageSize,'->',ps);
+            //~ this.getTopToolbar().pageSize =  ps;
+            cmp.refresh();
+        }
+      }, this);
     //~ this.on('resize', function(cmp,aw,ah,rw,rh) {
-        //~ cmp.getTopToolbar().pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
+        //~ cmp.getTopToolbar().pageSize = this.calculatePageSize(aw,ah,rw,rh) || 10;
         //~ cmp.refresh();
       //~ }, this, {delay:500});
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
@@ -2725,7 +2748,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     return { base_params : this.get_base_params()};
   },
   set_status : function(status){
-    console.log("20120203 GridPanel.set_status",status);
+    //~ console.log("20120203 GridPanel.set_status",status);
     this.clear_base_params();
     if (status == undefined) status = {};
     if (status.param_values) this.set_param_values(status.param_values);
@@ -2741,7 +2764,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.refresh_with_after();
   },
   refresh_with_after : function(after) { 
-    Lino.notify('20120203 Lino.GridPanel.refresh');
+    //~ Lino.notify('20120203 Lino.GridPanel.refresh');
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
     //~ var bp = { fmt:'json' }
     if (this.containing_panel) {
@@ -2774,7 +2797,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     return this.store.baseParams;
   },
   set_base_params : function(p) {
-    console.log('GridPanel.set_base_params',p)
+    //~ console.log('GridPanel.set_base_params',p)
     for (k in p) this.store.setBaseParam(k,p[k]);
     //~ this.store.baseParams = p;
     if (p.query) 
@@ -3111,25 +3134,29 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   // pageSize depends on grid height (Trying to remove scrollbar)
   // Thanks to Christophe Badoit on http://www.extjs.net/forum/showthread.php?t=82647
-  calculatePageSize : function(caller,aw,ah,rw,rh) {
+  calculatePageSize : function() {
+    if (!this.isVisible()) { return false; }
     if (!this.rendered) { return false; }
-    var rowHeight = 22; // experimental value
-    var row = this.view.getRow(0);
-    if (row) rowHeight = Ext.get(row).getHeight();
-    // console.log('rowHeight',rowHeight,this,caller);
+    var rowHeight = this.getFrameHeight();
+    //~ var rowHeight = 52; // experimental value
+    //~ var row = this.view.getRow(0);
+    //~ if (row) rowHeight = Ext.get(row).getHeight();
+    //~ console.log('rowHeight is ',rowHeight,this,caller);
     // var height = this.getView().scroller.getHeight();
-    // console.log('scroller.getHeight() is',this.getView().scroller.getHeight());
-    // console.log('scroller',this.getView().scroller.getHeight());
-    // console.log('mainBody',this.getView().mainBody.getHeight());
-    // console.log('getInnerHeight() is',this.getInnerHeight());
-    // console.log('getFrameHeight() is',this.getFrameHeight());
-    // var height = this.getView().scroller.getHeight();
-    var height = this.getInnerHeight();
+    //~ console.log('scroller.getHeight() is',this.getView().scroller.getHeight());
+    //~ console.log('scroller',this.getView().scroller.getHeight());
+    //~ console.log('mainBody',this.getView().mainBody.getHeight());
+    //~ console.log('getInnerHeight() is',this.getInnerHeight());
+    //~ console.log('getFrameHeight() is',this.getFrameHeight());
+    var height = this.getView().scroller.getHeight();
+    //~ var height = this.getInnerHeight();
     // var height = this.getView().mainBody.getHeight();
     // var height = this.getHeight() - this.getFrameHeight();
+    //~ height -= this.getView().scrollOffset;
+    height -= 10; // keep a few pixels of space... experimental value
     var ps = Math.floor(height / rowHeight);
-    // console.log('calculatePageSize():',height,'/',rowHeight,'->',ps);
-    ps -= 3; // experimental value
+    //~ console.log('20120203 calculatePageSize():',height,'/',rowHeight,'->',ps);
+    ps -= 1; // phantom row ... experimental value
     return (ps > 1 ? ps : false);
   },
   postEditValue : function(value, originalValue, r, field){
@@ -3258,7 +3285,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
       */
       /* `record_data` is used to get the text corresponding to this value */
       //~ if(this.name == 'city') 
-      console.log('20120203', this.name,'.setValue(', v ,') this=', this,'record_data=',record_data);
+      //~ console.log('20120203', this.name,'.setValue(', v ,') this=', this,'record_data=',record_data);
       var text = v;
       if(this.valueField){
         if(v == null || v == '') { 

@@ -507,6 +507,14 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         #~ return u"%s (%s)" % (self.get_full_name(salutation=False),self.pk)
         return u"%s %s (%s)" % (self.last_name.upper(),self.first_name,self.pk)
         
+    def get_active_contract(self):
+        flt = range_filter(datetime.date.today(),'applies_from','applies_until')
+        qs1 = self.isip_contract_set_by_person.filter(flt)
+        qs2 = self.jobs_contract_set_by_person.filter(flt)
+        if qs1.count() + qs2.count() == 1:
+            if qs1.count() == 1: return qs1[0]
+            if qs2.count() == 1: return qs2[0]
+        
     def data_control(self):
         "Used by :class:`lino.models.DataControlListing`."
         msgs = []
@@ -804,7 +812,8 @@ class AllPersons(Contacts):
     order_by = "last_name first_name id".split()
     can_view = perms.is_authenticated
     #~ column_names = "name_column national_id gsm street street_no street_box city age email phone id bank_account1 aid_type coach1 language *"
-    column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
+    #~ column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
+    column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10"
     #~ app_label = 'contacts'
     #~ default_params = dict(is_active=True)
     #~ extra = dict(
@@ -913,7 +922,8 @@ class MyPersons(Persons):
     use_as_default_report = False
     label = _("My clients")
     #~ order_by = ['last_name','first_name']
-    column_names = "name_column:20 coached_from coached_until national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
+    #~ column_names = "name_column:20 coached_from coached_until national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
+    column_names = "name_column:20 applies_from applies_until national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10"
     
     @classmethod
     def get_title(self,rr):
@@ -930,6 +940,20 @@ class MyPersons(Persons):
         #~ q1 = Q(coach1__exact=rr.user) | Q(coach2__exact=rr.user)
         #~ q2 = Q(coached_from__isnull=False) | Q(coached_until__isnull=False,coached_until__gte=today)
         #~ return qs.filter(q1,q2)
+        
+    #~ @dd.virtualfield('jobs.Contract.applies_from')
+    @dd.virtualfield(models.DateField(_("Contract starts")))
+    def applies_from(self,obj,ar):
+        c = obj.get_active_contract()
+        if c is not None:
+            return c.applies_from
+            
+    #~ @dd.virtualfield('jobs.Contract.applies_until')
+    @dd.virtualfield(models.DateField(_("Contract ends")))
+    def applies_until(self,obj,ar):
+        c = obj.get_active_contract()
+        if c is not None:
+            return c.applies_until
 
 class MyPersonsByGroup(MyPersons):
     master_key = 'group'

@@ -16,6 +16,24 @@ um rauszufinden, dass der dazugehörige Text "root" ist. Problem ist, dass ihr
 setValue dadurch deferred wird und im gleich darauf stattfindenden load des 
 GridStores leer ist.
 
-Checkin, um diesen Stand der Dinge zu archivieren.
+Checkin um 10 Uhr, um diesen Stand der Dinge zu archivieren.
 
-13.15 Uhr: Es war wirklich nicht leicht, aber ich habs geschafft!
+Checkin um 13.15 Uhr: Es war wirklich nicht leicht (sh. changeset), 
+aber ich habs geschafft!
+
+Die folgenden Punkte gingen nun relativ schnell:
+
+- Anzahl Zeilen pro Seite einer Grid dynamisch in Funktion der Fenstergröße ermitteln.
+
+- Neue virtuelle Kolonnen mit Anfangs- und Enddatum des 
+  aktuellen Vertrags in MyClients.
+
+Checkin um 17 Uhr wegen Feierabend. Bleibt zu tun:
+
+- Konfigurierung Fachbereiche: Wenn man 'name' editiert, 
+  ist das Feld blau.
+- Fachbereiche Feld "body" kann weg
+
+- Neuzugänge: hier muss noch ein Button bzw eine Prozedur her für den 
+  Akt der Zuweisung. 
+

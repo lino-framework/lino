@@ -138,6 +138,13 @@ class ActorMetaClass(type):
                 v.table = cls
                 
         cls.virtual_fields = {}
+        
+        # inherit virtual fields defined on parent tables
+        for b in bases:
+            bvf = getattr(b,'virtual_fields',None)
+            if bvf:
+                cls.virtual_fields.update(bvf)
+            
         for k,v in classDict.items():
             #~ if isinstance(v,models.Field):
             #~ if isinstance(v,(models.Field,fields.VirtualField)):
@@ -443,12 +450,13 @@ class Actor(Handled):
         #~ cc = self.computed_columns.get(name,None)
         #~ if cc is not None:
             #~ return cc
-        vf = self.virtual_fields.get(name,None)
-        if vf is not None:
+        return self.virtual_fields.get(name,None)
+        #~ vf = self.virtual_fields.get(name,None)
+        #~ if vf is not None:
             #~ logger.info("20120202 Actor.get_data_elem found vf %r",vf)
-            return vf
+            #~ return vf
         #~ logger.info("20120202 Actor.get_data_elem found nothing")
-        return None
+        #~ return None
               
 
 class FrameHandle(base.Handle): 
