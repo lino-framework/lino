@@ -564,7 +564,8 @@ class TableRequest(AbstractTableRequest):
             #~ elif self.report.get_permission(actors.CreatePermission,self.user):
             #~ a = self.report.get_action('SubmitInsert')
             #~ if a and self.report.get_permission(a,self.user):
-            elif self.report.get_permission(self.report.submit_action,self.user,None):
+            elif self.report.get_permission(
+                self.report.submit_action,self.user,None):
                 create_rows = 1
             else:
                 create_rows = 0

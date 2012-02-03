@@ -39,7 +39,8 @@ Checkin um 17 Uhr wegen Feierabend. Bleibt zu tun:
 - Neuzugänge: hier muss noch ein Button bzw eine Prozedur her für den 
   Akt der Zuweisung. 
 
-17.50 Uhr: Oho, da sind ja noch zwei kleine Bugs gewesen.
+**17.50 Uhr** 
+Oho, da war ja noch ein kleiner Bug:
 Um zu entscheiden, um api_list_view eine phantom-Zeile dranhängt oder nicht, 
 kann es nicht fragen, ob die Tabelle eine Aktion SubmitInsert hat, denn 
 gerade in Tabellen ohne Detail braucht man ja eine PhantomRow.
@@ -48,5 +49,21 @@ get_permission() kriegt jetzt immer drei statt bisher zwei Parameter.
 Der dritte Parameter ist entweder None oder eine 
 Tabellenzeile (model instance).
 Infolgedessen kann get_permission jetzt doch nicht auf dem Model 
-definiert werden. Falls das nötig ist, muss ich mir was einfallen lassen...
+definiert werden. Falls das mal nötig werden sollte, 
+muss ich mir was einfallen lassen...
+
+api_list_view fragt jetzt nach submit_action 
+(die auch dann existiert, wenn es kein Detail gibt) 
+und mit None, und User.get_permission ist wie folgt definiert::
+
+    @classmethod
+    def get_permission(cls,action,user,obj):
+        if user.is_superuser: return True
+        if action.readonly: return True
+        if user is not None and user == obj: return True
+        return False
+
+Resultat: in Users haben nur Superuser eine phantom-Zeile. 
+Und in Fachbereiche (wo keine war) ist sie wieder da.
+
 Checkin um 18.20 Uhr
