@@ -329,7 +329,7 @@ class ActionRequest(object):
         self.ui = ui
         self.action = action
         
-    def request2kw(self,ui,**kw):
+    def get_status(self,ui,**kw):
         return kw
   
 
@@ -453,9 +453,11 @@ class ActorRequest(ActionRequest):
     def get_request_url(self,*args,**kw):
         return self.ui.get_request_url(self,*args,**kw)
 
-    def request2kw(self,ui,**kw):
+    def get_status(self,ui,**kw):
         if self.report.parameters:
-            kw[ext_requests.URL_PARAM_PARAM_VALUES] = self.ah.store.pv2list(self.param_values)
+            #~ pv = kw.setdefault('param_values',{})
+            kw.update(param_values = self.ah.store.pv2list(self.param_values))
+            #~ kw[ext_requests.URL_PARAM_PARAM_VALUES] = self.ah.store.pv2list(self.param_values)
         return kw
         
 

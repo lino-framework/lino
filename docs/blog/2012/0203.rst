@@ -1,0 +1,19 @@
+20120203
+========
+
+Der erste Punkt von gestern ist noch komplexer als gedacht:
+
+- Klick auf "Neue Klienten" zeigt alle. Also der Filter steht nicht im Klick drin.
+  Das liegt daran, dass die param_values eines ActionRequest 
+  noch nicht in die URL übergeben und noch nicht vom Panel 
+  übernommen werden.
+  
+Ich muss das ParameterPanel mit einer BaseForm definieren und die param_values 
+nicht als sequentielles array sondern wie einen Detail-Record übergeben.
+Sonst machen z.B. Comboboxen einen zusätzlichen request. 
+Die kriegt momentan nur coached_by=103 gesetzt und macht dann brav einen AJAX-call 
+um rauszufinden, dass der dazugehörige Text "root" ist. Problem ist, dass ihr 
+setValue dadurch deferred wird und im gleich darauf stattfindenden load des 
+GridStores leer ist.
+
+Checkin, um diesen Stand der Dinge zu archivieren.

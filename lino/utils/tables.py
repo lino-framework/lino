@@ -210,16 +210,17 @@ class AbstractTableRequest(actions.ActorRequest):
         #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
         return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
         
-    def request2kw(self,ui,**kw):
-        kw = actions.ActorRequest.request2kw(self,ui,**kw)
+    def get_status(self,ui,**kw):
+        kw = actions.ActorRequest.get_status(self,ui,**kw)
+        bp = kw.setdefault('base_params',{})
         if self.subst_user is not None:
-            kw[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
+            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
             
         if self.known_values:
             #~ kv = dict()
             for k,v in self.known_values.items():
                 if self.report.known_values.get(k,None) != v:
-                    kw[k] = v
+                    bp[k] = v
             #~ kw.update(known_values = kv)
                 
             #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values

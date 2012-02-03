@@ -588,16 +588,17 @@ class TableRequest(AbstractTableRequest):
     def __str__(self):
         return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
 
-    def request2kw(self,ui,**kw):
-        kw = AbstractTableRequest.request2kw(self,ui,**kw)
+    def get_status(self,ui,**kw):
+        kw = AbstractTableRequest.get_status(self,ui,**kw)
         #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
             #~ print 20111223, self.known_values
+        bp = kw.setdefault('base_params',{})
         if self.quick_search:
-            kw[ext_requests.URL_PARAM_FILTER] = self.quick_search
+            bp[ext_requests.URL_PARAM_FILTER] = self.quick_search
         if self.master_instance is not None:
-            kw[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
+            bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
             mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
-            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
+            bp[ext_requests.URL_PARAM_MASTER_TYPE] = mt
         return kw
         
 

@@ -12,7 +12,8 @@
  You should have received a copy of the GNU General Public License
  along with Lino; if not, see <http://www.gnu.org/licenses/>.
 */
-// test: $site.title ($lino.welcome_text())
+
+$ui.linolib_intro()
 
 /* MonthPickerPlugin: thanks to keypoint @ sencha forum
    http://www.sencha.com/forum/showthread.php?74002-3.x-Ext.ux.MonthMenu&p=356860#post356860
@@ -225,6 +226,7 @@ Lino.current_window = null;
 Lino.window_history = Array();
 
 Lino.open_window = function(win,st) {
+  console.log("20120203 Lino.open_window()",win,st);
   var cw = Lino.current_window;
   if (cw) {
     Lino.window_history.push({
@@ -1226,11 +1228,12 @@ Lino.MainPanel = {
           }
       }
       p.$ext_requests.URL_PARAM_PARAM_VALUES = pv;
-      //~ console.log(20120113,options);
+      console.log("20120203 add_param_values added pv",pv,"to",p);
     }
     
   },
   set_param_values : function(pv) {
+    console.log('20120203 set_param_values', pv);
     if (this.params_panel) {
       var fields = this.params_panel.fields;
       //~ console.log('20120116 gonna loop on', fields);
@@ -1238,9 +1241,12 @@ Lino.MainPanel = {
           var f = fields[i]
           f.setValue(pv[i]); 
       }
-      p.$ext_requests.URL_PARAM_PARAM_VALUES = pv;
+      //~ this.refresh();
       //~ console.log(20120113,options);
     }
+    var test = {test:"foo"};
+    this.add_param_values(test);
+    console.log('20120203 set_param_values test is ', test);
   }
 };
 
@@ -1568,6 +1574,7 @@ Lino.FieldBoxMixin = {
   },
   set_base_params : function(p) {
     this.base_params = Ext.apply({},p);
+    //~ if (p.param_values) this.set_param_values(p.param_values);  
   },
   clear_base_params : function() {
       this.base_params = {};
@@ -1961,6 +1968,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   set_base_params : function(p) {
     //~ this.base_params = Ext.apply({},p);
     Ext.apply(this.base_params,p);
+    //~ if (p.param_values) this.set_param_values(p.param_values);  
   },
   clear_base_params : function() {
       this.base_params = {};
@@ -2358,7 +2366,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     });
     //~ console.log("20120122 GridStore.load()",options);
     this.grid_panel.add_param_values(options.params);
-    //~ console.log("20120122 GridStore.load() 2",options.params);
+    console.log("20120122 GridStore.load() 2",options.params);
     return Lino.GridStore.superclass.load.call(this,options);
   }
 });
@@ -2631,13 +2639,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   get_status : function(){
     return { base_params : this.get_base_params()};
   },
-  set_status : function(config){
-    //~ console.log("20120125 GridPanel.set_status",config);
+  set_status : function(status){
+    console.log("20120203 GridPanel.set_status",status);
     this.clear_base_params();
-    if (config == undefined) config = {};
+    if (status == undefined) status = {};
     if (status.param_values) this.set_param_values(status.param_values);
-    if (config.base_params) { 
-      this.set_base_params(config.base_params);
+    if (status.base_params) { 
+      this.set_base_params(status.base_params);
       //~ this.getStore().load();
     }
     this.refresh(); 
@@ -2648,7 +2656,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.refresh_with_after();
   },
   refresh_with_after : function(after) { 
-    //~ Lino.notify('Lino.GridPanel.refresh');
+    Lino.notify('20120203 Lino.GridPanel.refresh');
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
     //~ var bp = { fmt:'json' }
     if (this.containing_panel) {
@@ -2681,11 +2689,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     return this.store.baseParams;
   },
   set_base_params : function(p) {
-    //~ console.log('GridPanel.set_base_params',p)
+    console.log('GridPanel.set_base_params',p)
     for (k in p) this.store.setBaseParam(k,p[k]);
     //~ this.store.baseParams = p;
     if (p.query) 
         this.search_field.setValue(p.query);
+    //~ if (p.param_values) 
+        //~ this.set_param_values(p.param_values);  
   },
   clear_base_params : function() {
       this.store.baseParams = {};
@@ -3163,7 +3173,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
       */
       /* `record` is used to get the text corresponding to this value */
       //~ if(this.name == 'city') 
-          //~ console.log('20120108', this.name,'.setValue(', v ,') this=', this,'record=',record);
+      console.log('20120203', this.name,'.setValue(', v ,') this=', this,'record=',record);
       var text = v;
       if(this.valueField){
         if(v == null || v == '') { 

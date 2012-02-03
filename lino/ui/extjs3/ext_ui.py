@@ -142,7 +142,8 @@ class HtmlRenderer(object):
         
         """
         s = ''
-        params = dict(base_params=tr.request2kw(self))
+        #~ params = dict(base_params=tr.request2kw(self))
+        params = tr.get_status(self)
         after_show = dict()
         a = tr.report.get_action('insert')
         if a is not None:
@@ -171,7 +172,8 @@ class HtmlRenderer(object):
         See also :doc:`/tickets/56`.
         
         """
-        params = dict(base_params=rr.request2kw(self))
+        #~ params = dict(base_params=rr.request2kw(self))
+        params = rr.get_status(self)
         after_show = dict()
         if rr.get_total_count() == 0:
             a = rr.report.get_action('insert')
@@ -345,8 +347,10 @@ class ExtRenderer(HtmlRenderer):
         return self.action_handler(a,None,dict(record_id=obj.pk))
         
     def request_handler(self,rr,*args,**kw):
-        bp = rr.request2kw(self.ui,**kw)
-        return self.action_handler(rr.action,after_show=dict(base_params=bp))
+        #~ bp = rr.request2kw(self.ui,**kw)
+        st = rr.get_status(self.ui,**kw)
+        #~ return self.action_handler(rr.action,after_show=dict(base_params=bp))
+        return self.action_handler(rr.action,st)
         
     def action_href_js(self,a,params,after_show=None,label=None):
         """
@@ -380,7 +384,8 @@ class ExtRenderer(HtmlRenderer):
         return self.build_url("api",actor.app_label,actor.__name__,*args,**kw)
         
     def get_request_url(self,rr,*args,**kw):
-        kw = rr.request2kw(self,**kw)
+        raise Exception("20120203")
+        kw = rr.get_status(self,**kw)
         #~ kw = self.request2kw(rr,**kw)
         return self.build_url('api',rr.report.app_label,rr.report.__name__,*args,**kw)
         
@@ -1180,18 +1185,25 @@ tinymce.init({
         #~ yield '<div id="konsole"></div>'
         yield "</body></html>"
         
-    def lino_js_lines(self):
-        yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
-        yield "Ext.BLANK_IMAGE_URL = '%s/extjs/resources/images/default/s.gif';" % self.media_url()
-        yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
-        yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
-        yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
-        yield "MEDIA_URL = %r;" % (self.media_url())
-        #~ yield "ROOT_URL = %r;" % settings.LINO.root_url
-        yield "ROOT_URL = %r;" % self.root_url
-        #~ yield "API_URL = %r;" % self.build_url('api')
-        #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')
-        #~ yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
+    def linolib_intro(self):
+        def fn():
+            yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
+            #~ // $site.title ($lino.welcome_text())
+            yield "Ext.BLANK_IMAGE_URL = '%s/extjs/resources/images/default/s.gif';" % self.media_url()
+            yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
+            yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
+            yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
+            yield "MEDIA_URL = %r;" % (self.media_url())
+            #~ yield "ROOT_URL = %r;" % settings.LINO.root_url
+            yield "ROOT_URL = %r;" % self.root_url
+            #~ yield "API_URL = %r;" % self.build_url('api')
+            #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')
+            #~ yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
+        
+        #~ return '\n'.join([ln for ln in fn()])
+        return '\n'.join(fn())
+                
+            
         
             
 
@@ -1415,11 +1427,11 @@ tinymce.init({
             if fmt == 'html':
                 ar.renderer = self.ext_renderer
                 kw = {}
-                bp = ar.request2kw(self)
+                after_show = ar.get_status(self)
                 #~ bp = self.request2kw(ar)
                 
                 #~ params = dict()
-                after_show = dict(base_params=bp)
+                #~ after_show = dict(base_params=bp)
                 
                 #~ after_show = {}
                 if isinstance(ar.action,actions.InsertRow):
@@ -1713,9 +1725,9 @@ tinymce.init({
                     return json_response(datarec)
                     
                 #~ after_show = dict(data_record=datarec)
-                after_show = dict(record_id=pk)
-                params = dict()
-                bp = ar.request2kw(self)
+                #~ after_show = dict()
+                #~ params = dict()
+                after_show = ar.get_status(self,record_id=pk)
                 #~ bp = self.request2kw(ar)
                 
                 #~ if a.window_wrapper.tabbed:
@@ -1725,9 +1737,9 @@ tinymce.init({
                     if tab is not None: 
                         tab = int(tab)
                         after_show.update(active_tab=tab)
-                params.update(base_params=bp)
+                #~ params.update(base_params=bp)
                 return HttpResponse(self.html_page(request,
-                  on_ready=[self.ext_renderer.action_handler(a,params,after_show)]))
+                  on_ready=[self.ext_renderer.action_handler(a,None,after_show)]))
                 #~ return HttpResponse(self.html_page(request,
                   #~ on_ready=['Lino.%s(undefined,%s,%s);' % (
                     #~ a,py2js(params),py2js(after_show))]))
@@ -1825,9 +1837,6 @@ tinymce.init({
             
             f = codecs.open(fn,'w',encoding='utf-8')
             
-            for ln in self.lino_js_lines():
-                f.write(ln + '\n')
-                
             tpl = self.linolib_template()
             
             f.write(jscompress(unicode(tpl)+'\n'))
