@@ -978,32 +978,17 @@ class Store:
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
 
-    def pv2dict(self,pv,**kw):
-        def parse(self,form_value):
-            if form_value == '' and not self.field.empty_strings_allowed:
-                return self.form2obj_default
-                # if a field has been posted with empty string, 
-                # we don't want it to get the field's default value! 
-                # otherwise checkboxes with default value True can never be unset!
-                # charfields have empty_strings_allowed
-                # e.g. id field may be empty
-                # but don't do this for other cases
-            else:
-                return self.parse_form_value(form_value,None)
-      
-        if pv: 
-            for i,f in enumerate(self.param_fields):
-                kw[f.field.name] = parse(f,pv[i])
-        else:
-            for i,f in enumerate(self.param_fields):
-                kw[f.field.name] = parse(f,'')
-        return kw
-        
-    def pv2list(self,pv):
+    def unused_pv2list(self,pv):
         l = []
         for f in self.param_fields:
             l.append(pv[f.field.name])
         return l
+        
+    def pv2dict(self,ui,pv,**d):
+        for fld in self.param_fields:
+            v = pv[fld.name]
+            fld.value2dict(ui,v,d,None)
+        return d
         
         
     def row2html(self,request,row,sums):
@@ -1023,6 +1008,26 @@ class Store:
         return [fld.sum2html(request.ui,sums[i])
           for i,fld in enumerate(self.list_fields)]
             
-    def parse_params(self,request):
-        return self.pv2dict(request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))
+    def parse_params(self,request,**kw):
+        pv = request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES)
+        
+        def parse(self,form_value):
+            if form_value == '' and not self.field.empty_strings_allowed:
+                return self.form2obj_default
+                # if a field has been posted with empty string, 
+                # we don't want it to get the field's default value! 
+                # otherwise checkboxes with default value True can never be unset!
+                # charfields have empty_strings_allowed
+                # e.g. id field may be empty
+                # but don't do this for other cases
+            else:
+                return self.parse_form_value(form_value,None)
+      
+        if pv: 
+            for i,f in enumerate(self.param_fields):
+                kw[f.field.name] = parse(f,pv[i])
+        else:
+            for i,f in enumerate(self.param_fields):
+                kw[f.field.name] = parse(f,'')
+        return kw
         

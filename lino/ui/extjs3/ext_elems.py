@@ -1410,7 +1410,8 @@ class DetailMainPanel(Panel,MainPanel):
         
 
 class ParameterPanel(DetailMainPanel):
-    pass
+    value_template = "new Ext.form.FormPanel(%s)"
+    #~ pass
     
 class unused_ParameterPanel(DetailMainPanel):
     #~ value_template = "new Ext.Container(%s)"

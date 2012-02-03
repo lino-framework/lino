@@ -17,7 +17,7 @@ das in
 :meth:`lino.core.actors.Actor.get_permission`
 die Entscheidung vereinfacht.
 
-Eine Tabelle kann jetzt *per se* `editable´ 
+Eine Tabelle kann jetzt *per se* `editable`
 oder nicht sein. Wenn sie es nicht ist 
 (z.B. besagte 
 :class:`UsersByNewcomer <lino.modlib.newcomers.models.UsersByNewcomer>`), 

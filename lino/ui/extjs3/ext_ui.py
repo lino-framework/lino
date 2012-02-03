@@ -350,7 +350,7 @@ class ExtRenderer(HtmlRenderer):
         #~ bp = rr.request2kw(self.ui,**kw)
         st = rr.get_status(self.ui,**kw)
         #~ return self.action_handler(rr.action,after_show=dict(base_params=bp))
-        return self.action_handler(rr.action,st)
+        return self.action_handler(rr.action,after_show=st)
         
     def action_href_js(self,a,params,after_show=None,label=None):
         """

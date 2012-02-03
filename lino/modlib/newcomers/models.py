@@ -144,7 +144,7 @@ class NewClients(AllPersons):
     use_as_default_report = False
     
     parameters = dict(
-        coached_by = models.ForeignKey(users.User,verbose_name=_("Coached by")),
+        coached_by = models.ForeignKey(users.User,verbose_name=_("Coached by"),blank=True),
         since = models.DateField(_("Since"),blank=True,default=amonthago),
     )
     params_template = "coached_by since"
@@ -182,8 +182,11 @@ class UsersByNewcomer(dd.Table):
     label = _("Users by Newcomer")
     column_names = 'name primary_clients active_clients new_clients newcomer_quota newcomer_score'
     parameters = dict(
-        for_client = models.ForeignKey('contacts.Person',verbose_name=_("Show suggested agents for")),
-        since = models.DateField(_("Count Newcomers since"),blank=True,default=amonthago),
+        for_client = models.ForeignKey('contacts.Person',
+            verbose_name=_("Show suggested agents for"),
+            blank=True),
+        since = models.DateField(_("Count Newcomers since"),
+            blank=True,default=amonthago),
     )
     params_template = "for_client since"
     

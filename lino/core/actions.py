@@ -456,7 +456,8 @@ class ActorRequest(ActionRequest):
     def get_status(self,ui,**kw):
         if self.report.parameters:
             #~ pv = kw.setdefault('param_values',{})
-            kw.update(param_values = self.ah.store.pv2list(self.param_values))
+            #~ kw.update(param_values=self.ah.store.pv2list(self.param_values))
+            kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
             #~ kw[ext_requests.URL_PARAM_PARAM_VALUES] = self.ah.store.pv2list(self.param_values)
         return kw
         

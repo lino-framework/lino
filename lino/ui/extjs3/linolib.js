@@ -176,7 +176,7 @@ ExtJS defines disabled checkboxes `readonly`, not `disabled` as for other inputs
 
 */
 Ext.lib.Ajax.serializeForm = function(form) {
-    //~ console.log('20111001 linolib.js serializeForm');
+    //~ console.log('20120203 linolib.js serializeForm',form);
     var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements, 
         hasSubmit = false, 
         encoder = encodeURIComponent, 
@@ -217,10 +217,87 @@ Ext.lib.Ajax.serializeForm = function(form) {
     return data.substr(0, data.length - 1);
 };
 
-
-
-
 Ext.namespace('Lino');
+
+/*
+Instead of serializing the fields of a params_panel, we want their values be stored into an object.
+
+The following code is a collage of serializeForm and Action.Submit.run()
+*/
+Lino.unused_form2dict = function(pp) {
+  
+    if(!pp.form.isValid()) {
+        console.log('20120203 WARNING form2dict found invalid data',pp);
+        //~ return;
+    }
+      
+    var frm = Ext.getDom(pp.form.el.dom)
+      //~ var frm = this.params_panel.form.el.dom
+    if (!frm) {
+        console.log('20120203 form2dict no frm',pp);
+        return;
+    }
+    
+    var fields = pp.form.items,
+        emptyFields = [],
+        setupEmptyFields = function(f){
+            if (f.el.getValue() == f.emptyText) {
+                emptyFields.push(f);
+                f.el.dom.value = "";
+            }
+            if(f.isComposite && f.rendered){
+                f.items.each(setupEmptyFields);
+            }
+        };
+        
+    fields.each(setupEmptyFields);
+        
+    var data = {};
+      
+    var fElements = frm.elements,
+        hasSubmit = false, 
+        name, 
+        type, 
+        hasValue;
+
+    Ext.each(fElements, function(element){
+        name = element.name;
+        type = element.type;
+        if (!element.disabled && name && !(type == 'checkbox' && element.readonly)) {
+            if (/select-(one|multiple)/i.test(type)) {
+                Ext.each(element.options, function(opt){
+                    if (opt.selected) {
+                        hasValue = opt.hasAttribute ? opt.hasAttribute('value') : opt.getAttributeNode('value').specified;
+                        data[name] = hasValue ? opt.value : opt.text;
+                    }
+                });
+            } else if (!(/file|undefined|reset|button/i.test(type))) {
+                //~ if (!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)) {
+                if (!(type == 'submit' && hasSubmit)) {
+                    if (type == 'checkbox') {
+                        //~ console.log('20111001',element,'data += ',encoder(name) + '=' + (element.checked ? 'on' : 'off') + '&');
+                        data[name] = (element.checked ? 'on' : 'off')
+                    } else {
+                        //~ console.log('20111001',element,'data += ',encoder(name) + '=' + encoder(element.value) + '&');
+                        data[name] = element.value
+                    }
+                    hasSubmit = /submit/i.test(type);
+                }
+            }
+        }
+    });
+    
+    Ext.each(emptyFields, function(f) {
+        if (f.applyEmptyText) {
+            f.applyEmptyText();
+        }
+    });
+      
+    return data;
+};
+
+
+
 
 Lino.current_window = null;
 Lino.window_history = Array();
@@ -1216,6 +1293,11 @@ Lino.MainPanel = {
   }
   ,add_param_values : function (p) {
     if (this.params_panel) {
+      //~ var formdata = Lino.form2dict(this.params_panel);
+      //~ console.log('20120203 add_param_values formdata', formdata);
+      //~ p.$ext_requests.URL_PARAM_PARAM_VALUES = formdata;
+      //~ return;
+      //~ var formdata = Ext.lib.Ajax.serializeForm(frm);
       var fields = this.params_panel.fields;
       //~ console.log('20120116 gonna loop on', fields);
       var pv = Array(fields.length);
@@ -1235,18 +1317,21 @@ Lino.MainPanel = {
   set_param_values : function(pv) {
     console.log('20120203 set_param_values', pv);
     if (this.params_panel) {
-      var fields = this.params_panel.fields;
+      if (pv) this.params_panel.form.my_loadRecord(pv);
+      else this.params_panel.form.reset(); 
+      
+      //~ var fields = this.params_panel.fields;
       //~ console.log('20120116 gonna loop on', fields);
-      for(var i=0; i < fields.length;i++) {
-          var f = fields[i]
-          f.setValue(pv[i]); 
-      }
+      //~ for(var i=0; i < fields.length;i++) {
+          //~ var f = fields[i]
+          //~ f.setValue(pv[i]); 
+      //~ }
       //~ this.refresh();
       //~ console.log(20120113,options);
     }
-    var test = {test:"foo"};
-    this.add_param_values(test);
-    console.log('20120203 set_param_values test is ', test);
+    //~ var test = {test:"foo"};
+    //~ this.add_param_values(test);
+    //~ console.log('20120203 set_param_values test is ', test);
   }
 };
 
@@ -2100,7 +2185,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
-      this.form.loadRecord(record);
+      this.form.my_loadRecord(record.data);
       this.set_window_title(record.title);
       this.getBottomToolbar().enable();
       if (record.disabled_actions) {
@@ -2271,7 +2356,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           params: panel.get_base_params(), 
           success: function(form, action) {
             //~ panel.form.setValues(rec.data);
-            //~ 20110701 panel.form.loadRecord(rec);
+            //~ 20110701 panel.form.my_loadRecord(rec);
             Lino.notify(action.result.message);
             panel.refresh_with_after(after);
             //~ if (after) after(); else panel.refresh();
@@ -3167,13 +3252,13 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
       //~ Ext.form.ComboBox.initComponent(this);
       Lino.ComboBox.superclass.initComponent.call(this);
   },
-  setValue : function(v,record){
+  setValue : function(v,record_data){
       /*
       Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
       */
-      /* `record` is used to get the text corresponding to this value */
+      /* `record_data` is used to get the text corresponding to this value */
       //~ if(this.name == 'city') 
-      console.log('20120203', this.name,'.setValue(', v ,') this=', this,'record=',record);
+      console.log('20120203', this.name,'.setValue(', v ,') this=', this,'record_data=',record_data);
       var text = v;
       if(this.valueField){
         if(v == null || v == '') { 
@@ -3182,8 +3267,8 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
             //~ v = undefined;
             v = '';
             //~ text = '';
-        } else if (Ext.isDefined(record)) {
-          text = record.data[this.name];
+        } else if (Ext.isDefined(record_data)) {
+          text = record_data[this.name];
           //~ if (this.name == 'birth_country') 
             //~ console.log(this.name,'.setValue',v,'got text ',text,' from record ',record);
         } else {
@@ -3538,15 +3623,17 @@ Lino.unused_ParamWindow = Ext.extend(Lino.Window,{
 })(); 
 
 Ext.override(Ext.form.BasicForm,{
-    loadRecord : function(record){
-        /* Forward record to field.setValue(). 
+    my_loadRecord : function(record_data){
+    //~ loadRecord : function(record){
+        /* Forward also `record` to field.setValue() 
+        so that Lino.Combobox can use it. 
         Lino never uses an array record here, so we can ignore this case. 
         */
         //~ console.log('20110214e loadRecord',record.data)
         var field, id;
-        for(id in record.data){
-            if(!Ext.isFunction(record.data[id]) && (field = this.findField(id))){
-                field.setValue(record.data[id],record);
+        for(id in record_data){
+            if(!Ext.isFunction(record_data[id]) && (field = this.findField(id))){
+                field.setValue(record_data[id],record_data);
                 if(this.trackResetOnLoad){
                     field.originalValue = field.getValue();
                     //~ if (field.hiddenField) {
@@ -3579,7 +3666,7 @@ function initializeFooBarDropZone(cmp) {
 
 
         // Load the record into the form
-        //~ formPanel.getForm().loadRecord(selectedRecord);
+        //~ formPanel.getForm().my_loadRecord(selectedRecord);
 
 
         // Delete record from the grid.  not really required.

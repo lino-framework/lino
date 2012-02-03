@@ -17,3 +17,5 @@ setValue dadurch deferred wird und im gleich darauf stattfindenden load des
 GridStores leer ist.
 
 Checkin, um diesen Stand der Dinge zu archivieren.
+
+13.15 Uhr: Es war wirklich nicht leicht, aber ich habs geschafft!
