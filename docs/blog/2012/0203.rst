@@ -23,7 +23,8 @@ aber ich habs geschafft!
 
 Die folgenden Punkte gingen nun relativ schnell:
 
-- Anzahl Zeilen pro Seite einer Grid dynamisch in Funktion der Fenstergröße ermitteln.
+- Anzahl Zeilen pro Seite einer Grid dynamisch in Funktion 
+  der Fenstergröße ermitteln.
 
 - Neue virtuelle Kolonnen mit Anfangs- und Enddatum des 
   aktuellen Vertrags in MyClients.
@@ -32,8 +33,20 @@ Checkin um 17 Uhr wegen Feierabend. Bleibt zu tun:
 
 - Konfigurierung Fachbereiche: Wenn man 'name' editiert, 
   ist das Feld blau.
+  
 - Fachbereiche Feld "body" kann weg
 
 - Neuzugänge: hier muss noch ein Button bzw eine Prozedur her für den 
   Akt der Zuweisung. 
 
+17.50 Uhr: Oho, da sind ja noch zwei kleine Bugs gewesen.
+Um zu entscheiden, um api_list_view eine phantom-Zeile dranhängt oder nicht, 
+kann es nicht fragen, ob die Tabelle eine Aktion SubmitInsert hat, denn 
+gerade in Tabellen ohne Detail braucht man ja eine PhantomRow.
+Lösung:
+get_permission() kriegt jetzt immer drei statt bisher zwei Parameter.
+Der dritte Parameter ist entweder None oder eine 
+Tabellenzeile (model instance).
+Infolgedessen kann get_permission jetzt doch nicht auf dem Model 
+definiert werden. Falls das nötig ist, muss ich mir was einfallen lassen...
+Checkin um 18.20 Uhr

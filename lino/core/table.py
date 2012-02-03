@@ -562,8 +562,9 @@ class TableRequest(AbstractTableRequest):
             #~ elif self.user is not None and self.report.can_add.passes(self.user):
             #~ elif self.report.can_add.passes(self.user):
             #~ elif self.report.get_permission(actors.CreatePermission,self.user):
-            a = self.report.get_action('SubmitInsert')
-            if a and self.report.get_permission(a,self.user):
+            #~ a = self.report.get_action('SubmitInsert')
+            #~ if a and self.report.get_permission(a,self.user):
+            elif self.report.get_permission(self.report.submit_action,self.user,None):
                 create_rows = 1
             else:
                 create_rows = 0
@@ -615,8 +616,8 @@ def has_fk(rr,name):
 
         
 def model2report(m):
-    def f(table,obj,request):
-        return m(obj,request)
+    def f(table,*args):
+        return m(*args)
         #~ return getattr(obj,name)(request)
     return classmethod(f)
 
@@ -817,6 +818,7 @@ class Table(AbstractTable):
           
             for name in ('disabled_fields',
                          'handle_uploaded_files', 
+                         #~ 'get_permission', 
                          'disable_editing'):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)

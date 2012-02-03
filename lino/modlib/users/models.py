@@ -109,12 +109,6 @@ class User(contacts.Contact,contacts.PersonMixin):
             self.name = self.username
         models.Model.full_clean(self,*args,**kw)
         
-    def get_permission(self,action,user):
-        if user.is_superuser: return True
-        if action.readonly: return True
-        if user == self: return True
-        return False
-          
     #~ def disable_editing(self,ar):
         #~ if ar.get_user().is_superuser: return False
         #~ if ar.get_user() == self: return False
@@ -135,6 +129,13 @@ class Users(dd.Table):
     order_by = ["username"]
     column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
 
+    @classmethod
+    def get_permission(cls,action,user,obj):
+        if user.is_superuser: return True
+        if action.readonly: return True
+        if user is not None and user == obj: return True
+        return False
+          
 if dd.is_installed('contacts'):
   
     dd.inject_field(contacts.Contact,

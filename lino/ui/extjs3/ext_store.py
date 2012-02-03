@@ -463,9 +463,10 @@ class DisableEditingStoreField(SpecialStoreField):
     def full_value_from_object(self,ar,obj):
         #~ return self.store.report.disable_editing(obj,request)
         a = self.store.report.submit_action
-        m = getattr(obj,'get_permission',None)
+        #~ m = getattr(obj,'get_permission',None)
         u = ar.get_user()
-        if not self.store.report.get_permission(a,u) or (m is not None and not m(a,u)):
+        #~ if not self.store.report.get_permission(a,u) or (m is not None and not m(a,u)):
+        if not self.store.report.get_permission(a,u,obj):
             return True
         return False
         #~ if not self.store.report.get_permission(ar.get_user(),):

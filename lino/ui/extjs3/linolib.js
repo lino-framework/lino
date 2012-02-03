@@ -2997,7 +2997,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   
   on_beforeedit : function(e) {
     //~ console.log('20120202 GridPanel.on_beforeedit()',e,e.record.data.disabled_fields);
-    if(e.record.data.disabled_fields[e.field]) {
+    if(e.record.data.disabled_fields && e.record.data.disabled_fields[e.field]) {
       e.cancel = true;
       Lino.notify(String.format("$_("Field '{0}' is disabled")",e.field));
     }

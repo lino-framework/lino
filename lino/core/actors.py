@@ -326,7 +326,7 @@ class Actor(Handled):
             a.name for a in self._actions_list]))
         
     @classmethod
-    def get_permission(self,action,user):
+    def get_permission(self,action,user,obj):
         return True
         
     @classmethod
@@ -335,9 +335,10 @@ class Actor(Handled):
         d = dict()
         u = ar.get_user()
         #~ u = request.user
-        m = getattr(obj,'get_permission',None)
+        #~ m = getattr(obj,'get_permission',None)
         for a in self.get_actions():
-            if not self.get_permission(a,u) or m is not None and not m(a,u):
+            #~ if not self.get_permission(a,u) or m is not None and not m(a,u):
+            if not self.get_permission(a,u,obj):
                 d[a.name] = True
             #~ if not self.get_permission(a,u):
                 #~ l.append(a.name)
