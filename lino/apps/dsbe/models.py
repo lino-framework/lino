@@ -2332,12 +2332,12 @@ class Home(dd.EmptyTable):
     
     @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
     def missed_reminders(cls,self,req):
-        return reminders(req.ui,req.get_user(),days_back=10,
+        return reminders(req.ui,req.get_user(),days_back=90,
           max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
     @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
     def coming_reminders(cls,self,req):
-        return reminders(req.ui,req.get_user(),days_forward=14,
+        return reminders(req.ui,req.get_user(),days_forward=30,
             max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
 from lino.utils.babel import dtosl
