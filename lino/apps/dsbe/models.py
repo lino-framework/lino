@@ -2405,6 +2405,6 @@ def reminders(ui,user,days_back=None,days_forward=None,**kw):
     else:
         s = ''.join([chunk for chunk in loop(future,False)])
         
-    s = '<div class="htmlText">%s</div>' % s
+    #~ s = '<div class="htmlText" width="30%%">%s</div>' % s
     return s
     
