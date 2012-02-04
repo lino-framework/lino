@@ -62,7 +62,10 @@ Sichtbare Änderungen
   
 - Vergabe von Benutzerrechten. 
   Hier waren einige interne Änderungen nötig.
-  Normale Benutzer (die nicht Superuser sind) können jetzt nicht 
+  Z.B. konnte man bisher in 
+  :class:`Sozi-Vorschläge <lino.modlib.newcomers.models.UsersByNewcomer>`
+  auch Benutzer löschen, bearbeiten, erstellen.
+  Oder normale Benutzer (die nicht Superuser sind) können jetzt nicht 
   mehr andere Benutzer bearbeiten.
 
 - Das Feld "body" eines Fachbereichs habe ich bis auf weiteres 

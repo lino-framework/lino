@@ -54,7 +54,7 @@ def install(globals_dict):
         if func:
             #~ dblogger.info("Found %s()", funcname)
             globals_dict['SOURCE_VERSION'] = func(globals_dict)
-            dblogger.info("Found method for migrating from version %s to %s", from_version, globals_dict['SOURCE_VERSION'])
+            dblogger.info("Migrating from version %s to %s", from_version, globals_dict['SOURCE_VERSION'])
             if func.__doc__:
                 dblogger.info(func.__doc__)
         else:
@@ -947,10 +947,17 @@ def migrate_from_1_3_4(globals_dict): return '1.3.5'
 def migrate_from_1_3_5(globals_dict): return '1.3.6'
   
 def migrate_from_1_3_6(globals_dict):
-    """
-    Adds new fields Person.broker, Person.faculty, User.is_newcomer, User.newcomer_quota
-    and new models Broker and Faculty, Competence.
-    """
+    """\
+Adds new fields Person.broker, Person.faculty, User.is_newcomer, User.newcomer_quota
+and new models Broker and Faculty, Competence."""
     return '1.3.7'
 
-def migrate_from_1_3_7(globals_dict): return '1.3.8'
+def migrate_from_1_3_7(globals_dict): 
+    """\
+Removed newcomers.Faculty.body
+New field dsbe.CourseRequest.urgent"""
+    newcomers_Faculty = resolve_model("newcomers.Faculty")
+    def create_newcomers_faculty(id, name, body, body_fr, body_en, name_fr, name_en):
+        return newcomers_Faculty(id=id,name=name,body=body,body_fr=body_fr,body_en=body_en,name_fr=name_fr,name_en=name_en)
+    globals_dict.update(create_newcomers_faculty=create_newcomers_faculty)
+    return '1.3.8'

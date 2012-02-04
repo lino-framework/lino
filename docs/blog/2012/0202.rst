@@ -28,17 +28,20 @@ get_permission() kann jetzt auf einem Model definiert
 sein, was ich sogleich an 
 :class:`lino.modlib.users.models.User` ausprobiert habe:
 
-- Benutzer dürfen nur sich selbst bearbeiten, 
-  nur Superuser dürfen auch andere Benutzer bearbeiten.
+- Benutzer dürfen nur sich selbst bearbeiten
+  (nur Superuser dürfen auch andere Benutzer bearbeiten).
   
 - Die Checkboxen "Superuser" und "Aktiv" darf auch bei sich selbst 
   nur der Superuser bearbeiten.
   
   Zum Testen kann man sich als Superuser einloggen und sich dieses 
   Attribut abschalten: anschließend gibt es keinen Weg, es wieder 
-  einzuschalten, außer mit einem :term:`make_staff` 
+  einzuschalten, außer mit einem 
+  :mod:`make_staff <lino.management.commands.make_staff>`  
   
-N.B. :term:`make_staff` müsste eigentlich 
+N.B. 
+:mod:`make_staff <lino.management.commands.make_staff>` 
+müsste eigentlich 
 `make_superuser` oder `setsu` heißen,
 bzw. `setroot` (falls ich irgendwann mal "Superuser" 
 nach "Root" umbenenne)
