@@ -960,6 +960,6 @@ def migrate_from_1_3_7(globals_dict):
     """
     newcomers_Faculty = resolve_model("newcomers.Faculty")
     def create_newcomers_faculty(id, name, body, body_fr, body_en, name_fr, name_en):
-        return newcomers_Faculty(id=id,name=name,body=body,body_fr=body_fr,body_en=body_en,name_fr=name_fr,name_en=name_en)
+        return newcomers_Faculty(id=id,name=name,name_fr=name_fr,name_en=name_en)
     globals_dict.update(create_newcomers_faculty=create_newcomers_faculty)
     return '1.3.8'

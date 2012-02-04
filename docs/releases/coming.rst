@@ -1,6 +1,15 @@
 Version 1.3.8 (Coming)
 ======================
 
+Diese Version ist eine der Letzten, bevor es an die TX25 und Authentifizierung per eId-Karte geht.
+
+Es bleibt noch folgender Punkt offen, für den ich noch auf eine konkrete Idee warte:
+
+- Neuzugänge: hier muss noch ein Button bzw. eine Prozedur her für den 
+  Akt der Zuweisung. Aber wo soll der Button stehen?
+  
+
+
 Sichtbare Änderungen
 --------------------
 
@@ -70,6 +79,8 @@ Sichtbare Änderungen
 
 - Das Feld "body" eines Fachbereichs habe ich bis auf weiteres 
   wieder rausgeschmisssen.  
+  
+
 
 Upgrade instructions
 --------------------

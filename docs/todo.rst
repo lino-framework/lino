@@ -19,10 +19,12 @@ Short-term
     
 #.  Eingabe Art-60-7-Konventionen : hier sind ja einige "aktive Felder", 
     d.h. wenn man eine Stelle eingegeben hat und das Feld verlässt, 
-    wird das Formular ohne zu fragen abgespeichert. Ist auch so gewollt, 
-    weil dadurch einige andere Felder eventuell verändert werden. 
-    Problem ist, dass die Anfrage an den Server oft eine Sekunde dauert, 
-    und Lino sollte das Formular während dieser Zeit mit 
+    wird das Formular ohne zu fragen abgespeichert. 
+    Das muss auch so sein, weil dadurch einige andere Felder eventuell 
+    verändert werden. 
+    Problem ist, dass die Anfrage an den Server oft eine Sekunde dauert,
+    in der ein Schnelltipper womöglich schon beginnt, im nächsten Feld etwas einzugeben.
+    Also Lino sollte das Formular während dieser Zeit mit 
     einer loadMask ("Bitte warten") deaktivieren.
     
 #.  The CalendarPanel when starting, calls all Events. 
