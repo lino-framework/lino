@@ -54,9 +54,10 @@ def install(globals_dict):
         if func:
             #~ dblogger.info("Found %s()", funcname)
             globals_dict['SOURCE_VERSION'] = func(globals_dict)
-            dblogger.info("Migrating from version %s to %s", from_version, globals_dict['SOURCE_VERSION'])
+            msg = "Migrating from version %s to %s" % (from_version, globals_dict['SOURCE_VERSION'])
             if func.__doc__:
-                dblogger.info(func.__doc__)
+                msg += ":\n" + func.__doc__
+            dblogger.info(msg)
         else:
             if from_version != __version__:
                 dblogger.warning("No method for migrating from version %s to %s",from_version,__version__)
@@ -953,9 +954,10 @@ and new models Broker and Faculty, Competence."""
     return '1.3.7'
 
 def migrate_from_1_3_7(globals_dict): 
-    """\
-Removed newcomers.Faculty.body
-New field dsbe.CourseRequest.urgent"""
+    """
+    - Remove field newcomers.Faculty.body
+    - Add field dsbe.CourseRequest.urgent
+    """
     newcomers_Faculty = resolve_model("newcomers.Faculty")
     def create_newcomers_faculty(id, name, body, body_fr, body_en, name_fr, name_en):
         return newcomers_Faculty(id=id,name=name,body=body,body_fr=body_fr,body_en=body_en,name_fr=name_fr,name_en=name_en)
