@@ -340,11 +340,15 @@ Lino.PanelMixin = {
     //~ this.setTitle(title);
     var cw = this.get_containing_window();
 
-    if (cw) {
+    //~ if (cw) {
+    //~ if (cw && cw.closable) {
+    if (cw && !cw.main_item.hide_window_title) {
       //~ console.log('20111202 set_window_title(',title,') for',this.containing_window);
       //~ if (! this.containing_window.rendered) console.log("WARNING: not rendered!");
       cw.setTitle(title);
-    } 
+    //~ } else {
+      //~ document.title = title;
+    }
     //~ else console.log('20111202 not set_window_title(',title,') for',this);
   }
   
@@ -1895,10 +1899,12 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ if (this.containing_window instanceof Lino.DetailWrapper) {
     
     //~ console.log('20120121 initComponent', this.action_name);
-    if (this.action_name == 'detail' | this.action_name == 'show') {
+    //~ if (this.action_name == 'detail' | this.action_name == 'show') {
+    //~ if (this.action_name != 'insert') {
+    if (! this.hide_top_toolbar) {
       this.tbar = [];
       // 20111015    
-      if (config.has_navigator) {
+      if (! this.hide_navigator) {
         this.record_selector = new Lino.RemoteComboFieldElement({
           store: new Lino.ComplexRemoteComboStore({
             //~ baseParams: config.containing_window.config.base_params,
@@ -1954,11 +1960,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ if (config.can_config) {
     config.bbar = config.bbar.concat([
       '->',
-      { text:'Help Text Editor',
+      { text: '[$_("Help Text Editor")]',
         handler: Lino.help_text_editor,
-        qtip: "$_("Edit help texts for fields on this model.")",
+        qtip: "$_('Edit help texts for fields on this model.')",
         scope: this},
-      { text:'Layout Editor',
+      { text: '[$_("Layout Editor")]',
         handler: this.edit_detail_config,
         qtip: "$_("Edit Detail layout")",
         scope: this}
@@ -2217,7 +2223,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               //~ }
           //~ }
       };
-      if (this.has_navigator && record.navinfo) {
+      if (! this.hide_navigator && record.navinfo) {
         this.first.setDisabled(!record.navinfo.first);
         this.prev.setDisabled(!record.navinfo.prev);
         this.next.setDisabled(!record.navinfo.next);
@@ -2234,7 +2240,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       },this);
       this.set_window_title(this.empty_title);
       //~ this.containing_window.window.setTitle(this.empty_title);
-      if (this.has_navigator) {
+      if (!this.hide_navigator) {
         this.first.disable();
         this.prev.disable();
         this.next.disable();
@@ -2261,7 +2267,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   
   get_permalink_url : function() {
       var rec = this.get_current_record();
-      if (rec && ! rec.phantom)
+      if (rec && ! rec.phantom && rec.id != -99998)
           return ROOT_URL + '/api' + this.ls_url + '/' + rec.id;
       return ROOT_URL + '/api' + this.ls_url;
     
@@ -2270,14 +2276,15 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     var p = {};
     //~ var p = {an:'detail'};
     if (this.action_name)
-        p['$ext_requests.URL_PARAM_ACTION_NAME'] = this.action_name;
+        p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
     //~ var p = {an:this.action_name};
     var main = this.items.get(0);
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);
       //~ console.log('main.activeTab',tab,main.activeTab);
-      if (tab) p['$ext_requests.URL_PARAM_TAB'] = tab
+      if (tab) p.$ext_requests.URL_PARAM_TAB = tab;
     }
+    this.add_param_values(p)
     return p;
   },
   
@@ -2443,14 +2450,12 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     var ps = this.grid_panel.calculatePageSize();
     
     if (!ps) {
-        //~ console.log("20120122 GridStore.load() failed to calculate pagesize");
+        //~ console.log("20120204 GridStore.load() failed to calculate pagesize");
         //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
         return;
     }
     
-    this.grid_panel.getTopToolbar().pageSize =  ps;
-    
-    //~ console.log("20120122 GridStore.load() now",options);
+    //~ console.log("20120204 GridStore.load() now",options);
     if (!options) options = {};
     if (!options.params) options.params = {};
     //~ Ext.apply(options.params,this.baseParams);
@@ -2458,13 +2463,23 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     //~ options.params.$URL_PARAM_LIMIT = this.grid_panel.getTopToolbar().pageSize;
     //~ options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
       
-    Ext.applyIf(options.params, {
+    options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
+      
+    options.params.$URL_PARAM_LIMIT = ps;
+      
+    if (this.grid_panel.hide_top_toolbar) {
+        options.params.$URL_PARAM_START = 0;
+    } else {
+        this.grid_panel.getTopToolbar().pageSize =  ps;
+        options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
+    }
+    
+    //~ Ext.applyIf(options.params, {
         //~ fmt : 'json',
-        fmt : '$ext_requests.URL_FORMAT_JSON',
-        '$URL_PARAM_LIMIT' : this.grid_panel.getTopToolbar().pageSize,
-        '$URL_PARAM_START' : this.grid_panel.getTopToolbar().cursor
+        //~ '$URL_PARAM_LIMIT' : this.grid_panel.getTopToolbar().pageSize,
+        //~ '$URL_PARAM_START' : this.grid_panel.getTopToolbar().cursor
         //~ // 20110119 $URL_PARAM_FILTER: this.quick_search_text
-    });
+    //~ });
     this.grid_panel.add_param_values(options.params);
     //~ console.log("20120122 GridStore.load() 2",options.params);
     return Lino.GridStore.superclass.load.call(this,options);
@@ -2512,9 +2527,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   
   config_containing_window : function(wincfg) { 
-      wincfg.tools = [
-        {handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this, id:"save"}
-      ].concat(wincfg.tools);
+      if (wincfg.tools != undefined) 
+        wincfg.tools = [
+          {handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this, id:"save"}
+        ].concat(wincfg.tools);
       //~ wincfg.listeners = { show: ... };
   },
   init_containing_window : function(win) { 
@@ -2590,7 +2606,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             });
         };
         if (this_.containing_window)
-            this_.containing_window.setTitle(this_.store.reader.arrayData.title);
+            this_.set_window_title(this_.store.reader.arrayData.title);
+            //~ this_.containing_window.setTitle(this_.store.reader.arrayData.title);
         if(this_.selModel.getSelectedCell){         
             if (this_.getStore().getCount()) // there may be no data
                 this_.selModel.select(0,0); 
@@ -2600,68 +2617,97 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         }
       }, this
     );
-      
-    var tbar = [ 
-      this.search_field = new Ext.form.TextField({ 
-        fieldLabel: "Search", 
-        listeners: { scope:this_, change:this_.search_change }
-        //~ value: text
-        //~ scope:this, 
-        //~ enableKeyEvents: true, 
-        //~ listeners: { keypress: this.search_keypress }, 
-        //~ id: "seachString" 
-    })];
-    tbar = this.add_params_panel(tbar);
-    tbar = tbar.concat([
-      { scope:this, 
-        text: "[csv]", 
-        handler: function() { 
-          var p = Ext.apply({},this.get_base_params());
-          p['fmt'] = 'csv';
-          //~ url += "?" + Ext.urlEncode(p);
-          window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-        } },
-      { scope:this, 
-        text: "[html]", 
-        handler: function() { 
-          var p = Ext.apply({},this.get_base_params());
-          p['fmt'] = 'printer';
-          this.add_param_values(p);
-          //~ url += "?" + Ext.urlEncode(p);
-          window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-        } },
-      { scope:this, 
-        text: "[pdf]", 
-        handler: function() { 
-          var p = Ext.apply({},this.get_base_params());
-          p['fmt'] = 'pdf';
-          this.add_param_values(p);
-          //~ url += "?" + Ext.urlEncode(p);
-          window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-        } }
-    ]);
-    
-    
-    var menu = [];
-    var set_gc = function(index) {
-      return function() {
-        //~ console.log('set_gc() 20100812');
-        this.getColumnModel().setConfig(
-            this.apply_grid_config(index,this.ls_grid_configs,this.ls_columns));
-      }
-    }
-    for (var i = 0; i < this.ls_grid_configs.length;i++) {
-      var gc = this.ls_grid_configs[i];
-      menu.push({text:gc.label,handler:set_gc(i),scope:this})
-    }
-    if(menu.length > 1) {
+    if (!this.hide_top_toolbar) {  
+      var tbar = [ 
+        this.search_field = new Ext.form.TextField({ 
+          fieldLabel: "Search", 
+          listeners: { scope:this_, change:this_.search_change }
+          //~ value: text
+          //~ scope:this, 
+          //~ enableKeyEvents: true, 
+          //~ listeners: { keypress: this.search_keypress }, 
+          //~ id: "seachString" 
+      })];
+      tbar = this.add_params_panel(tbar);
       tbar = tbar.concat([
-        { text:"$_('View')",
-          menu: menu,
-          tooltip:"$_('Select another view of this report')"
-        }
+        { scope:this, 
+          text: "[csv]", 
+          handler: function() { 
+            var p = Ext.apply({},this.get_base_params());
+            p['fmt'] = 'csv';
+            //~ url += "?" + Ext.urlEncode(p);
+            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+          } },
+        { scope:this, 
+          text: "[html]", 
+          handler: function() { 
+            var p = Ext.apply({},this.get_base_params());
+            p['fmt'] = 'printer';
+            this.add_param_values(p);
+            //~ url += "?" + Ext.urlEncode(p);
+            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+          } },
+        { scope:this, 
+          text: "[pdf]", 
+          handler: function() { 
+            var p = Ext.apply({},this.get_base_params());
+            p['fmt'] = 'pdf';
+            this.add_param_values(p);
+            //~ url += "?" + Ext.urlEncode(p);
+            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+          } }
       ]);
+    
+    
+      var menu = [];
+      var set_gc = function(index) {
+        return function() {
+          //~ console.log('set_gc() 20100812');
+          this.getColumnModel().setConfig(
+              this.apply_grid_config(index,this.ls_grid_configs,this.ls_columns));
+        }
+      }
+      for (var i = 0; i < this.ls_grid_configs.length;i++) {
+        var gc = this.ls_grid_configs[i];
+        menu.push({text:gc.label,handler:set_gc(i),scope:this})
+      }
+      if(menu.length > 1) {
+        tbar = tbar.concat([
+          { text:"$_('View')",
+            menu: menu,
+            tooltip:"$_('Select another view of this report')"
+          }
+        ]);
+      }
+      this.tbar = new Ext.PagingToolbar({ 
+        store: this.store, 
+        prependButtons: true, 
+        pageSize: this.page_length, 
+        displayInfo: true, 
+        beforePageText: "$_('Page')",
+        afterPageText: "$_('of {0}')",
+        displayMsg: "$_('Displaying {0} - {1} of {2}')",
+        firstText: "$_('First page')",
+        lastText: "$_('Last page')",
+        prevText: "$_('Previous page')",
+        nextText: "$_('Next page')",
+        items: tbar
+      });
+      this.on('resize', function(cmp,aw,ah,rw,rh) {
+          var ps = this.calculatePageSize();
+          if (ps && ps != this.getTopToolbar().pageSize) {
+              //~ console.log('20120203 resize : pageSize',this.getTopToolbar().pageSize,'->',ps);
+              //~ this.getTopToolbar().pageSize =  ps;
+              cmp.refresh();
+          }
+        }, this);
+      //~ this.on('resize', function(cmp,aw,ah,rw,rh) {
+          //~ cmp.getTopToolbar().pageSize = this.calculatePageSize(aw,ah,rw,rh) || 10;
+          //~ cmp.refresh();
+        //~ }, this, {delay:500});
     }
+    
+    delete this.page_length
     
     var actions = Lino.build_buttons(this,this.ls_bbar_actions);
     this.cmenu = actions.cmenu;
@@ -2671,21 +2717,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ this.cmenu = new Ext.menu.Menu({items: config.bbar});
     delete this.ls_bbar_actions
     
-    this.tbar = new Ext.PagingToolbar({ 
-      store: this.store, 
-      prependButtons: true, 
-      pageSize: this.page_length, 
-      displayInfo: true, 
-      beforePageText: "$_('Page')",
-      afterPageText: "$_('of {0}')",
-      displayMsg: "$_('Displaying {0} - {1} of {2}')",
-      firstText: "$_('First page')",
-      lastText: "$_('Last page')",
-      prevText: "$_('Previous page')",
-      nextText: "$_('Next page')",
-      items: tbar
-    });
-    delete this.page_length
     
       
     if (this.ls_quick_edit) {
@@ -2729,18 +2760,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.on('cellcontextmenu', Lino.cell_context_menu, this);
     //~ this.on('contextmenu', Lino.grid_context_menu, this);
     
-    this.on('resize', function(cmp,aw,ah,rw,rh) {
-        var ps = this.calculatePageSize();
-        if (ps && ps != this.getTopToolbar().pageSize) {
-            //~ console.log('20120203 resize : pageSize',this.getTopToolbar().pageSize,'->',ps);
-            //~ this.getTopToolbar().pageSize =  ps;
-            cmp.refresh();
-        }
-      }, this);
-    //~ this.on('resize', function(cmp,aw,ah,rw,rh) {
-        //~ cmp.getTopToolbar().pageSize = this.calculatePageSize(aw,ah,rw,rh) || 10;
-        //~ cmp.refresh();
-      //~ }, this, {delay:500});
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
   },
   
@@ -2764,7 +2783,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.refresh_with_after();
   },
   refresh_with_after : function(after) { 
-    //~ Lino.notify('20120203 Lino.GridPanel.refresh');
+    //~ Lino.notify('20120204 Lino.GridPanel.refresh');
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
     //~ var bp = { fmt:'json' }
     if (this.containing_panel) {
@@ -3135,8 +3154,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   // pageSize depends on grid height (Trying to remove scrollbar)
   // Thanks to Christophe Badoit on http://www.extjs.net/forum/showthread.php?t=82647
   calculatePageSize : function() {
-    if (!this.isVisible()) { return false; }
-    if (!this.rendered) { return false; }
+    if (!this.isVisible()) { 
+      console.log('calculatePageSize : not visible');
+      return false; }
+    if (!this.rendered) { 
+      console.log('calculatePageSize : not rendered');
+      return false; }
     var rowHeight = this.getFrameHeight();
     //~ var rowHeight = 52; // experimental value
     //~ var row = this.view.getRow(0);
@@ -3157,7 +3180,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     var ps = Math.floor(height / rowHeight);
     //~ console.log('20120203 calculatePageSize():',height,'/',rowHeight,'->',ps);
     ps -= 1; // phantom row ... experimental value
-    return (ps > 1 ? ps : false);
+    //~ return (ps > 1 ? ps : false);
+    return (ps > 1 ? ps : 5);
   },
   postEditValue : function(value, originalValue, r, field){
     value = Lino.GridPanel.superclass.postEditValue.call(this,value,originalValue,r,field);
@@ -3459,6 +3483,7 @@ Lino.Window = Ext.extend(Ext.Window,{
   renderTo: 'main_area', 
   constrain: true,
   maximized: true,
+  draggable: false,
   width: 700,
   height: 500,
   maximizable: false,
@@ -3467,7 +3492,7 @@ Lino.Window = Ext.extend(Ext.Window,{
         config.layout = 'border';
         config.main_item.region = 'center';
         config.main_item.params_panel.region = 'north';
-        config.main_item.params_panel.hidden = config.main_item.params_panel_hidden;
+        //~ config.main_item.params_panel.hidden = config.main_item.params_panel_hidden;
         config.items = [config.main_item.params_panel, config.main_item];
     } else {
         config.layout = 'fit';
@@ -3482,11 +3507,22 @@ Lino.Window = Ext.extend(Ext.Window,{
     this.main_item.containing_window = this;
     
     //~ console.log('20120110 Lino.Window.constructor() 1');
-    
-    config.title = this.main_item.empty_title;
-    config.tools = [ 
-      { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" }
-    ];
+    //~ if (Lino.current_window) { // all windows except the top are closable
+    if (this.main_item.hide_window_title) { 
+      config.closable = false;
+      config.frame = false;
+      config.shadow = false;
+      //~ config.border = true;
+      //~ config.title = undefined;
+      //~ config.tools = null;
+      delete config.title;
+      delete config.tools;
+    } else {
+      config.title = this.main_item.empty_title;
+      config.closable = true;
+      config.tools = [ 
+        { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" }
+      ];
     //~ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
     //~ { qtip: 'Call doLayout() on main Container.', handler: Lino.refresh_handler(this), id: "refresh" },
     //~ if (this.main_item.params_panel) {
@@ -3494,7 +3530,7 @@ Lino.Window = Ext.extend(Ext.Window,{
           //~ { qtip: 'Show/hide parameter panel', handler: this.toggle_params_panel, id: "gear", scope:this } 
         //~ ]);
     //~ }
-    if (config.closable !== false) {
+    //~ if (config.closable !== false) {
       // if undefined, will take default behaviour
       config.tools = config.tools.concat([ 
         { qtip: 'close', handler: this.hide, id: "close", scope:this } 

@@ -956,7 +956,7 @@ class ExtDateTimeField(dd.VirtualField):
     def value_from_object(self,request,obj):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         return obj.get_datetime(self.name_prefix,self.alt_prefix)
-    
+
 
 
 if settings.LINO.use_extensible:

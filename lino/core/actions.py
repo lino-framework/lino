@@ -78,6 +78,8 @@ class Action(object):
     callable_from = None
     default_format = 'html'
     readonly = True
+    hide_top_toolbar = False
+    hide_navigator = False
     #~ can_view = perms.always
     
     
@@ -123,9 +125,11 @@ class RedirectAction(Action):
 
 class ReportAction(Action):
   
-    def __init__(self,report,*args,**kw):
-        self.actor = report # actor who offers this action
+    def __init__(self,actor,*args,**kw):
+        self.actor = actor # actor who offers this action
         #~ self.can_view = report.can_view
+        if actor.hide_top_toolbar:
+            self.hide_top_toolbar = True
         super(ReportAction,self).__init__(*args,**kw)
 
     def get_button_label(self):
@@ -165,6 +169,7 @@ class ShowDetailAction(ReportAction,OpenWindowAction):
         
 
 class InsertRow(ReportAction,OpenWindowAction):
+    hide_top_toolbar = True
     readonly = False
     callable_from = (GridEdit,ShowDetailAction)
     name = 'insert'
@@ -172,6 +177,7 @@ class InsertRow(ReportAction,OpenWindowAction):
     label = _("New")
     key = INSERT # (ctrl=True)
     #~ needs_selection = False
+    hide_navigator = True
     
     def get_action_title(self,rr):
         return _("Insert into %s") % force_unicode(rr.get_title())
@@ -188,6 +194,8 @@ class ShowEmptyTable(ShowDetailAction):
     callable_from = tuple()
     name = 'show' 
     default_format = 'html'
+    #~ hide_top_toolbar = True
+    hide_navigator = True
     def __init__(self,actor,*args,**kw):
         #~ self.actor = actor # actor who offers this action
         self.label = actor.label

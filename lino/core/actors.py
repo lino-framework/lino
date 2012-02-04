@@ -15,6 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
+from django.conf import settings
 
 import lino
 from lino.ui import base
@@ -224,6 +225,9 @@ class Actor(Handled):
     
     default_list_action_name = 'grid'
     default_elem_action_name =  'detail'
+    
+    hide_top_toolbar = False
+    hide_window_title = False
 
     
     disabled_fields = None
@@ -548,3 +552,11 @@ class EmptyTable(Frame):
     #~ def elem_filename_root(self,elem):
         #~ return self.app_label + '.' + self.__name__
 
+    @classmethod
+    def get_data_elem(self,name):
+        de = super(EmptyTable,self).get_data_elem(name)
+        if de is not None:
+            return de
+        a = name.split('.')
+        if len(a) == 2:
+            return getattr(getattr(settings.LINO.modules,a[0]),a[1])

@@ -2308,3 +2308,103 @@ connection_created.connect(my_callback)
 #~ class ContactPersons(links.LinksFromThis):
     #~ label = _("Contact persons")
     
+    
+    
+class Home(dd.EmptyTable):
+    label = _("Home") 
+    hide_window_title = True
+    hide_top_toolbar = True
+    
+    #~ @dd.displayfield("")
+    
+    @dd.virtualfield(dd.HtmlBox())
+    def tasks_summary(cls,self,req):
+        return cal.tasks_summary(req.ui,req.get_user())
+    
+    @dd.virtualfield(dd.HtmlBox())
+    def quick_links(cls,self,req):
+        quicklinks = settings.LINO.get_quicklinks(self,req.get_user())
+        if quicklinks.items:
+            return 'Quick Links: ' + ' '.join(
+              [req.ui.ext_renderer.action_href_js(mi.action,mi.params) for mi in quicklinks.items]
+              )
+      
+    
+    @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
+    def missed_reminders(cls,self,req):
+        return reminders(req.ui,req.get_user(),days_back=10,
+          max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+    @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
+    def coming_reminders(cls,self,req):
+        return reminders(req.ui,req.get_user(),days_forward=14,
+            max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+from lino.utils.babel import dtosl
+    
+def reminders(ui,user,days_back=None,days_forward=None,**kw):
+    """
+    Return a HTML summary of all open reminders for this user.
+    May be called from :xfile:`welcome.html`.
+    """
+    Task = resolve_model('cal.Task')
+    Event = resolve_model('cal.Event')
+    today = datetime.date.today()
+    
+    past = {}
+    future = {}
+    def add(cmp):
+        if cmp.start_date < today:
+        #~ if task.dt_alarm < today:
+            lookup = past
+        else:
+            lookup = future
+        day = lookup.get(cmp.start_date,None)
+        if day is None:
+            day = [cmp]
+            lookup[cmp.start_date] = day
+        else:
+            day.append(cmp)
+            
+    #~ filterkw = { 'due_date__lte' : today }
+    filterkw = {}
+    if days_back is not None:
+        filterkw.update({ 
+            'start_date__gte' : today - datetime.timedelta(days=days_back)
+            #~ 'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
+        })
+    if days_forward is not None:
+        filterkw.update({ 
+            'start_date__lte' : today + datetime.timedelta(days=days_forward)
+            #~ 'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
+        })
+    #~ filterkw.update(dt_alarm__isnull=False)
+    filterkw.update(user=user)
+    
+    for o in Event.objects.filter(
+        models.Q(status=None) | models.Q(status__reminder=True),
+        **filterkw).order_by('start_date'):
+        add(o)
+        
+    filterkw.update(done=False)
+            
+    for task in Task.objects.filter(**filterkw).order_by('start_date'):
+        add(task)
+        
+    def loop(lookup,reverse):
+        sorted_days = lookup.keys()
+        sorted_days.sort()
+        if reverse: 
+            sorted_days.reverse()
+        for day in sorted_days:
+            yield '<h3>'+dtosl(day) + '</h3>'
+            yield dd.summary(ui,lookup[day],**kw)
+            
+    if days_back is not None:
+        s = ''.join([chunk for chunk in loop(past,True)])
+    else:
+        s = ''.join([chunk for chunk in loop(future,False)])
+        
+    s = '<div class="htmlText">%s</div>' % s
+    return s
+    

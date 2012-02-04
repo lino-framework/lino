@@ -60,6 +60,7 @@ class Lino(Lino):
         tb.add_action(self.modules.dsbe.MyPersons)
         tb.add_action(self.modules.isip.MyContracts)
         tb.add_action(self.modules.jobs.MyContracts)
+        #~ tb.add_action(self.modules.dsbe.Home)
         
         
     def setup_menu(self,ui,user,main):

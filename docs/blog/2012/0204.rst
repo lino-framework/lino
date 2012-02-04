@@ -1,7 +1,10 @@
 20120204
 ========
 
-Checkin um 4.00 Uhr : noch ein paar Bugs weniger.
+Die letzten Bugs
+----------------
+
+Nachts: Noch ein paar Bugs weniger. Checkin um 4.00 Uhr.
 
 Außerdem war mir aufgefallen, dass die drei Aktionen 
 CREATE, UPDATE und DELETE 
@@ -30,7 +33,11 @@ Außerdem folgende Benutzeranfragen erledigt:
   aber ich warte dazu auf euer Feedback, denn das wäre dann mindestens 
   ein Klick pro Eingabe mehr.
 
+
 Und somit beginnt der Endspurt vor dem Release 
 :doc:`/releases/2012/1.3.8`.
+
 Datenmigration
 :func:`lino.apps.dsbe.migrate.migrate_from_1_3_7`
+
+Tagsüber habe ich dann noch mal wieder was Unvernünftiges gemacht:

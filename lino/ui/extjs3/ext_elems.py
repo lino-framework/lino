@@ -897,6 +897,7 @@ class HtmlBoxElement(DisplayElement):
         kw.update(name=self.field.name)
         kw.update(containing_panel=js_code("this"))
         kw.update(layout='fit')
+        kw.update(autoScroll=True)
         #~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
         kw.update(items=js_code("new Ext.BoxComponent()"))
