@@ -25,12 +25,14 @@ The user interface (i.e. :js:func:`Lino.delete_selected`)
 is responsible for not requesting to DELETE a record 
 that has a message in `disable_delete`.
 
-When :djangoticket:`7539` is available, we'll modify these automatic 
-`disable_delete` methods so that they act only for 
-ForeignKey fields with `on_delete=RESTRICT`.
-For example in :attr:`sales.DocItem.document`, we'll say::
+Another reason why we don't use Django's 
+`ForeignKey.on_delete
+<https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_ 
+is that we need a way to tell *in advance* 
+whether a delete will succeed or not.
 
-    document = models.ForeignKey(SalesDocument,on_delete=CASCADE)
+
+
     
 Blog entries:
 

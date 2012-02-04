@@ -67,3 +67,46 @@ Resultat: in Users haben nur Superuser eine phantom-Zeile.
 Und in Fachbereiche (wo keine war) ist sie wieder da.
 
 Checkin um 18.20 Uhr
+
+Oho, zumindest auf Jana funktioniert der [pdf]-Ausdruck dann doch nicht.
+Er macht zwar ein Dokument, aber das ist bis auf den Titel leer.
+In der .odt-Version steht dann::
+
+  Error while evaluating the expression "xhtml(table_body)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "/var/snapshots/appy/appy/pod/renderer.py", line 244, in renderXhtml
+  stylesMapping, ns).run()
+  File "/var/snapshots/appy/appy/pod/xhtml2odt.py", line 497, in run
+  self.xhtmlParser.parse(self.xhtmlString)
+  File "/var/snapshots/appy/appy/shared/xml_parser.py", line 193, in parse
+  self.parser.parse(inputSource)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 107, in parse
+  xmlreader.IncrementalParser.parse(self, source)
+  File "/usr/lib/python2.6/xml/sax/xmlreader.py", line 123, in parse
+  self.feed(buffer)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 211, in feed
+  self._err_handler.fatalError(exc)
+  File "/usr/lib/python2.6/xml/sax/handler.py", line 38, in fatalError
+  raise exception
+  <class 'xml.sax._exceptions.SAXParseException'>: <unknown>:1:1: not well-formed (invalid token)
+
+Oder (wenn ich ein ``encode('utf-8')`` mache)::
+
+  Error while evaluating the expression "xhtml(table_body)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "/var/snapshots/appy/appy/pod/renderer.py", line 244, in renderXhtml
+  stylesMapping, ns).run()
+  File "/var/snapshots/appy/appy/pod/xhtml2odt.py", line 497, in run
+  self.xhtmlParser.parse(self.xhtmlString)
+  File "/var/snapshots/appy/appy/shared/xml_parser.py", line 193, in parse
+  self.parser.parse(inputSource)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 107, in parse
+  xmlreader.IncrementalParser.parse(self, source)
+  File "/usr/lib/python2.6/xml/sax/xmlreader.py", line 123, in parse
+  self.feed(buffer)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 211, in feed
+  self._err_handler.fatalError(exc)
+  File "/usr/lib/python2.6/xml/sax/handler.py", line 38, in fatalError
+  raise exception
+  <class 'xml.sax._exceptions.SAXParseException'>: <unknown>:1:7999: undefined entity
+

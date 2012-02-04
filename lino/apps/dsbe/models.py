@@ -1736,7 +1736,7 @@ class Course(models.Model,mixins.Printable):
         
         
 class CourseRequest(models.Model):
-    u"""
+    """
     A Course Request is created when a certain Person expresses her 
     wish to participate in a Course with a certain CourseContent.
     """
@@ -1746,18 +1746,21 @@ class CourseRequest(models.Model):
         
     #~ person = models.ForeignKey("contacts.Person",
     person = models.ForeignKey(settings.LINO.person_model,
-        verbose_name=_("Person"))
-    u"Die Person (ein Objekt vom Typ :class:`Person`.)"
+        verbose_name=_("Person"),
+        help_text=u"Die Person, die die Anfrage macht.")
     
     offer = models.ForeignKey("dsbe.CourseOffer",blank=True,null=True)
     
     content = models.ForeignKey("dsbe.CourseContent",
-        verbose_name=_("Course content"))
-    u"Der gewünschte Kursinhalt (ein Objekt vom Typ :class:`CourseConent`.)"
+        verbose_name=_("Course content"),
+        help_text=u"Der gewünschte Kursinhalt (ein Objekt vom Typ :class:`CourseConent`.)")
     
     #~ date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
-    date_submitted = models.DateField(_("date submitted"))
-    u"Das Datum, an dem die Anfrage erstellt wurde."
+    date_submitted = models.DateField(_("date submitted"),
+        help_text=u"Das Datum, an dem die Anfrage erstellt wurde.")
+    
+    urgent = models.BooleanField(_("Urgent"),default=False,
+        help_text=u"Ankreuzen, wenn der Kurs für die Arbeitssuche benötigt wird.")
     
     #~ """Empty means 'any provider'
     #~ """

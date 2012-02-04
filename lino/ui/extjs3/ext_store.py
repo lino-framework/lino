@@ -436,8 +436,8 @@ class DisabledFieldsStoreField(SpecialStoreField):
             for name in self.store.report.disabled_fields(obj,request):
                 d[name] = True
         #~ l = list(self.store.report.disabled_fields(obj,request))
-        # disabled also the primary key field
-        if obj.pk is not None:
+        # disable also the primary key field
+        if self.store.pk is not None and obj.pk is not None:
             d[self.store.pk.attname] = True
             #~ l.append(self.store.pk.attname)
             # MTI children have two "primary keys":
@@ -462,13 +462,15 @@ class DisableEditingStoreField(SpecialStoreField):
         
     def full_value_from_object(self,ar,obj):
         #~ return self.store.report.disable_editing(obj,request)
-        a = self.store.report.submit_action
+        #~ a = self.store.report.submit_action
         #~ m = getattr(obj,'get_permission',None)
-        u = ar.get_user()
+        #~ u = ar.get_user()
         #~ if not self.store.report.get_permission(a,u) or (m is not None and not m(a,u)):
-        if not self.store.report.get_permission(a,u,obj):
-            return True
-        return False
+        #~ if not self.store.report.get_permission(a,u,obj):
+        return not self.store.report.get_permission(actions.UPDATE,ar.get_user(),obj)
+        #~ if not self.store.report.get_permission(actions.UPDATE,ar.get_user(),obj):
+            #~ return True
+        #~ return False
         #~ if not self.store.report.get_permission(ar.get_user(),):
             #~ return False
         
@@ -788,7 +790,8 @@ class Store:
             #~ self.list_fields.append(sf)
             #~ self.detail_fields.append(sf)
         #~ if rh.report.disable_editing is not None:
-        if rh.report.submit_action is not None:
+        #~ if rh.report.submit_action is not None:
+        if rh.report.editable:
             addfield(DisableEditingStoreField(self))
             
         #~ self.fields.append(PropertiesStoreField)

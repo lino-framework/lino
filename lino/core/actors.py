@@ -301,7 +301,7 @@ class Actor(Handled):
     default_action = None
     actor_id = None
     
-    submit_action = actions.SubmitDetail()
+    #~ submit_action = actions.SubmitDetail()
     
 
     @classmethod
@@ -478,6 +478,7 @@ class Frame(Actor):
   
     _handle_class = FrameHandle
     default_action_class = None
+    editable = False
     
     @classmethod
     def do_setup(self):

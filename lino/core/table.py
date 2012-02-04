@@ -564,8 +564,7 @@ class TableRequest(AbstractTableRequest):
             #~ elif self.report.get_permission(actors.CreatePermission,self.user):
             #~ a = self.report.get_action('SubmitInsert')
             #~ if a and self.report.get_permission(a,self.user):
-            elif self.report.get_permission(
-                self.report.submit_action,self.user,None):
+            elif self.report.get_permission(actions.CREATE,self.user,None):
                 create_rows = 1
             else:
                 create_rows = 0
@@ -905,13 +904,16 @@ class Table(AbstractTable):
                 self.detail_action = actions.ShowDetailAction(self)
                 self.add_action(self.detail_action)
                 if self.editable:
-                    self.add_action(self.submit_action)
+                    #~ self.add_action(self.submit_action)
+                    self.add_action(actions.UPDATE)
                     self.add_action(actions.InsertRow(self))
                     #~ self.add_action(actions.DuplicateRow(self))
-                    self.add_action(actions.SubmitInsert())
+                    #~ self.add_action(actions.SubmitInsert())
+                    self.add_action(actions.CREATE)
               
             if self.editable:
-                self.add_action(actions.DeleteSelected())
+                #~ self.add_action(actions.DeleteSelected())
+                self.add_action(actions.DELETE)
             
             #~ if hasattr(self.model,'get_image_url'):
                 #~ self.add_action(actions.ImageAction())

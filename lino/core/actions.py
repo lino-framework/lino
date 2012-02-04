@@ -221,8 +221,8 @@ class RowAction(Action):
     """
     callable_from = (GridEdit,ShowDetailAction)
     
-    def disabled_for(self,obj,request):
-        return False
+    #~ def disabled_for(self,obj,request):
+        #~ return False
             
     def run(self,rr,elem,**kw):
         raise NotImplementedError("%s has no run() method" % self.__class__)
@@ -264,7 +264,12 @@ class SubmitInsert(SubmitDetail):
     callable_from = (InsertRow,)
 
 
-
+"""
+"General actions"
+"""
+CREATE = SubmitInsert()
+UPDATE = SubmitDetail()
+DELETE = DeleteSelected()
 
 
 

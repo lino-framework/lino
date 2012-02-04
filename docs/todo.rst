@@ -258,11 +258,6 @@ Medium-term
     "/usr/local/django/dsbe_eupen/media/cache/appypdf/contacts.Person-22315.pdf.temp"
     but this folder already exists."
 
-#.  Brauchen wir eine Methode "readonly" pro Record? Zum Beispiel sollen 
-    inaktive Personen allgemein nicht verändert werden können. 
-    Aber das ist eigentlich eher ein Sonderfall für `disabled_fields`, 
-    die dann "alle Felder (außer `is_active`)
-
 #.  Custom Quick filters 
     See :doc:`/blog/2011/1207`.
 
@@ -687,39 +682,19 @@ Long-term
 
 #. Ich würde in der Rückfrage zum Löschen eine oder mehrerer Records ja auch 
    gerne die `__unicode__` der zu löschenden Records anzeigen.
-   FormPanel und GridPanel.get_selected() geben deshalb jetzt nicht mehr bloß eine Liste der IDs, sondern eine Liste der Records.
-   Aber das nützt (noch) nichts, denn ich weiß nicht, wie ich den Grid-Store überredet bekomme, außer `data` 
-   auch eine Eigenschaft `title` aus jedem Record rauszulesen. 
-   Auf Serverseite wäre das kein Problem: ich bräuchte einfach nur title in `elem2rec1` statt in `elem2rec_detailed` zu setzen.
+   FormPanel und GridPanel.get_selected() geben deshalb jetzt nicht mehr bloß eine Liste der IDs, 
+   sondern eine Liste der Records.
+   Aber das nützt (noch) nichts, denn ich weiß nicht, wie ich den Grid-Store überredet bekomme, 
+   außer `data` auch eine Eigenschaft `title` aus jedem Record rauszulesen. 
+   Auf Serverseite wäre das kein Problem: ich bräuchte einfach nur title 
+   in `elem2rec1` statt in `elem2rec_detailed` zu setzen.
    Aber das interessiert den Store der Grid nicht. Kann sein, dass ich ihn konfigurieren kann...
-   Oder ich würde es wie mit `disabled_fields` machen. Also ein neues automatisches virtuelles Feld __unicode__.
+   Oder ich würde es wie mit `disabled_fields` machen. Also ein neues automatisches 
+   virtuelles Feld __unicode__.
   
 #. Insert-Fenster: Für die Situationen, wo man viele neue Records hintereinander erfasst, könnte
    vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
    oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
-
-#. Das Folgende macht er noch nicht:
-   Falls ein Template in der Sprache der Notiz nicht existiert 
-   (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
-   nimmt er die Standard-Vorlage aus der Hauptsprache.
-   
-#.  `lino.reports.Report.page_length` (Anzahl Records pro Seite) könnte evtl. 
-    in die GC mit reinkommen.
-   
-
-#. Generic Foreign Keys: 
-
-  #. In einem Detail sind ist owner_type ja schon eine ComboBox, 
-     aber der Owner könnte doch eigentlich auch eine sein. 
-     Müsste er einen automatischen chooser kriegen.
-  #. Wenn ein GFK explizit in Report.column_names angegeben sit, 
-     müssten zwei Kolonnen erzeugt werden 
-     (statt momentan einer Kolonne, die dann nicht korrekt angezeigt wird)
-  
-#. When :djangoticket:`7539` is available, we'll modify these automatic 
-   `disable_delete` methods so that they act only for 
-   ForeignKey fields with `on_delete=RESTRICT`.
-   See :doc:`/tickets/2`
 
 #. ReportRequest und/oder ViewReportRequest sind (glaube ich) ein Fall für 
    `Django-Middleware <http://docs.djangoproject.com/en/dev/topics/http/middleware/>`_.

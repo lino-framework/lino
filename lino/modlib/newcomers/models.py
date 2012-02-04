@@ -83,7 +83,7 @@ class Faculty(babel.BabelNamed):
     class Meta:
         verbose_name = _("Faculty")
         verbose_name_plural = _("Faculties")
-    body = babel.BabelTextField(_("Body"),blank=True,format='html')
+    #~ body = babel.BabelTextField(_("Body"),blank=True,format='html')
     
 
 class Faculties(dd.Table):

@@ -1,0 +1,36 @@
+20120204
+========
+
+Checkin um 4.00 Uhr : noch ein paar Bugs weniger.
+
+Außerdem war mir aufgefallen, dass die drei Aktionen 
+CREATE, UPDATE und DELETE 
+nicht für jede Tabelle separat instanziert 
+zu werden brauchen.
+Von denen gibt es jetzt nur noch eine Instanz, 
+die direkt im :mod:`lino.core.actions` 
+definiert wird.
+
+Und wieso keine general action für READ? 
+Weil wir die bisher nicht brauchen. 
+Um zu testen, ob ein READ erlaubt ist, 
+nimmt er :attr:`lino.core.actors.Actor.default_action`, 
+die (zumindest momentan) pro Actor instanziert wird, 
+weil sie ihren Actor kennen muss, 
+um den Namen der globalen Handler-Funktion in der lino.js zu generieren.
+
+Außerdem folgende Benutzeranfragen erledigt:
+
+- Fachbereiche Feld “body” kann weg
+
+- Neue Checkbox-Kolonne "Dringend" 
+  in :class:`Kursanfragen <lino.apps.dsbe.models.CourseRequest>`, 
+  die anzukreuzen ist, wenn der Kurs für die Arbeitssuche benötigt wird.
+  Eine Combobox mit konfigurierbarer Auswahlliste wäre auch möglich,
+  aber ich warte dazu auf euer Feedback, denn das wäre dann mindestens 
+  ein Klick pro Eingabe mehr.
+
+Es bleibt noch folgender Punkt offen, für den ich noch auf eine konkrete Idee warte:
+
+- Neuzugänge: hier muss noch ein Button bzw eine Prozedur her für den 
+  Akt der Zuweisung. 

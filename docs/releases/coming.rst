@@ -4,20 +4,29 @@ Version 1.3.8 (Coming)
 Sichtbare Änderungen
 --------------------
 
+- Neue Checkbox-Kolonne "Dringend" 
+  in :class:`Kursanfragen <lino.apps.dsbe.models.CourseRequest>`, 
+  die anzukreuzen ist, wenn der Kurs für die Arbeitssuche benötigt wird.
+  Eine Combobox mit konfigurierbarer Auswahlliste wäre auch möglich,
+  aber ich warte dazu auf euer Feedback, denn das wäre dann mindestens 
+  ein Klick pro Eingabe mehr.
+  
 - Vertragsüberschneidungen: ich habe den Test noch strenger gemacht: 
   Verträge müssen 
   jetzt außerdem auch innerhalb der Begleitperiode des Klienten sein. 
   Wobei letztere nach hinten oder vorne hin offen sein kann 
   (eines der Daten darf leer sein).
+  
   Weil beide Tests technisch gesehen "zugleich" stattfinden, 
   müsst ihr auch noch diese Fehlermeldungen ausmerzen, bevor ich den Test 
   obligatorisch machen kann.
-  N.B.: wenn dieser Test obligatorisch ist, wird die entsprechende Option 
-  aus der Datenkontrollliste verschwinden da unnötig.
+  N.B.: wenn dieser Test obligatorisch ist, wird die Option 
+  "auf Vertragsüberschneidungen prüfen"
+  aus der Datenkontrollliste wieder verschwinden, weil ja solche Fälle dann 
+  schon beim Speichern abgefangen werden.
   
 - Der [pdf]-Button funktioniert jetzt... 
-
-  ... mit zwei offenen Problemen:
+  mit zwei offenen Problemen, für die ich euer Feedback erwarte:
 
   - Wenn zwei Benutzer die gleiche Tabelle gleichzeitig ausdrucken, 
     gibt es Probleme, weil er auf dem Server immer den gleichen Namen nimmt 
@@ -31,7 +40,33 @@ Sichtbare Änderungen
     - Pro Kolonne konfigurieren können, ob sie (1) am Bildschirm, 
       (2) in der .csv-Datei, (3) in der .pdf-Datei erscheinen 
       soll oder nicht.
+      
+- Anzahl Zeilen pro Seite einer Grid werden jetzt dynamisch in Funktion 
+  der Fenstergröße ermittelt.
+  
+- Zwei neue virtuelle Kolonnen mit Anfangs- und Enddatum des aktuellen Vertrags
+  (wenn es einen gibt)
+  in :class:`Meine Klienten <lino.apps.dsbe.models.MyPersons>` 
+  und allen Untervarianten.
+  Kann sein, dass Lino sich noch manchmal irrt bei der Entscheidung, 
+  ob es einen "aktuellen Vertrag" gibt. Fehler bitte melden.
+  
+- Hilfetexte: 
+  Bei einigen Feldern erscheint jetzt schon ein Hilfetext, 
+  wenn man mit der Maus darüberfährt. 
+  Die Hilfetexte können 
+  mit dem neuen Button [Hilfetexte] (unten rechts in Detail-Fenstern)
+  lokal konfiguriert werden.
+  Allerdings ist das noch nicht sehr benutzerfreundlich, und 
+  Änderungen werden erst sichtbar nach einem Server-Neustart.
+  
+- Vergabe von Benutzerrechten. 
+  Hier waren einige interne Änderungen nötig.
+  Normale Benutzer (die nicht Superuser sind) können jetzt nicht 
+  mehr andere Benutzer bearbeiten.
 
+- Das Feld "body" eines Fachbereichs habe ich bis auf weiteres 
+  wieder rausgeschmisssen.  
 
 Upgrade instructions
 --------------------

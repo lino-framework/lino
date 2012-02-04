@@ -357,9 +357,9 @@ def objects():
                 if count % 6:
                     client.coached_until = settings.LINO.demo_date(-7 * count)
                 if count % 2:
-                    p.coach1 = USERS.pop()
+                    client.coach1 = USERS.pop()
                 else:
-                    p.coach2 = USERS.pop()
+                    client.coach2 = USERS.pop()
                     
             elif count % 8:
                 client.newcomer = True

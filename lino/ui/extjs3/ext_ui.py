@@ -186,7 +186,7 @@ class HtmlRenderer(object):
         if rr.get_total_count() == 1:
             obj = rr.data_iterator[0]
             s = ''
-            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(obj.file.name))
+            s += ' [<a href="%s" target="_blank">show</a>]' % (self.ui.media_url(obj.file.name))
             if True:
                 after_show.update(record_id=obj.pk)
                 s += ' ' + self.action_href_js(rr.ah.report.detail_action,params,after_show,_("Edit"))
@@ -1486,6 +1486,7 @@ tinymce.init({
                 target_url = self.media_url(*target_parts)
                 ar.renderer = self.pdf_renderer
                 #~ body = ar.table2xhtml().toxml()
+                #~ body = self.table2xhtml(ar).tostring().encode('utf-8')
                 body = self.table2xhtml(ar).tostring()
                 #~ logger.info("20120122 body is %s",body)
                 context = dict(
