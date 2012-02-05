@@ -4,12 +4,18 @@ Download
 
 The current stable release is 
 
-- :doc:`/releases/2012/1.3.6` : 
-  `zip <dist/lino-1.3.6.zip>`_ / `tar.gz <dist/lino-1.3.6.tar.gz>`_
+- :doc:`/releases/2012/1.3.8` : 
+  `zip <dist/lino-1.3.8.zip>`_ / `tar.gz <dist/lino-1.3.8.tar.gz>`_
 
 See :doc:`/admin/install` and :doc:`/releases/index`.
 
 List of historic releases:
+
+- :doc:`/releases/2012/1.3.7` : 
+  `zip <dist/lino-1.3.7.zip>`_ / `tar.gz <dist/lino-1.3.7.tar.gz>`_
+
+- :doc:`/releases/2012/1.3.6` : 
+  `zip <dist/lino-1.3.6.zip>`_ / `tar.gz <dist/lino-1.3.6.tar.gz>`_
 
 - :doc:`/releases/2012/1.3.5` : 
   `zip <dist/lino-1.3.5.zip>`_ / `tar.gz <dist/lino-1.3.5.tar.gz>`_

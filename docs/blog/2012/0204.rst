@@ -58,9 +58,21 @@ Und eins nachher:
 .. image:: 0204b.jpg
   :scale: 60
 
-Was mir noch nicht gefällt: 
-
-- Die Höhen des Quicklinks-Bereichs und des Panels
+Was mir noch nicht gefällt: die Höhen des Quicklinks-Bereichs und des Panels
   :class:`Benutzer und ihre Klienten <lino.apps.dsbe.models.UsersWithClients>` 
-  sollten automatisch ausgerichtet werden.
+  sollten automatisch ausgerichtet werden. Aber das ist für später. 
+  
+Notfalls kann der neue Look übrigens durch Auskommentieren einer einzigen Zeile wieder rückgängig gemacht werden.
 
+
+:doc:`/releases/2012/1.3.8` raus und in Eupen installiert.
+
+Ein Bug, den ich erst nach dem Release entdeckt habe: 
+beim *erneuten* Öffnen einer Grid machte er kein Refresh.
+Man musste selbst zunächst auf den Refresh-Button klicken.
+
+linolib.js Zeilen 3160ff manuell rauskommentiert::
+
+    //~ if (!this.isVisible()) { 
+      //~ console.log('calculatePageSize : not visible');
+      //~ return false; }

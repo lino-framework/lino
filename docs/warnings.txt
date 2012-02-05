@@ -5,23 +5,3 @@ T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: documen
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\ref\modelattr.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:mod reference target not found: base
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:25: WARNING: py:mod reference target not found: requests
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference target not found: urls
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:338: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:381: WARNING: py:class reference target not found: django.http.HttpResponse
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:414: WARNING: unknown document: /blog/2010/0716
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:414: WARNING: unknown document: /blog/2010/0721
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:414: WARNING: unknown document: /blog/2010/1116
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:414: WARNING: unknown document: /blog/2010/1207
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:34: WARNING: py:mod reference target not found: ext_windows
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:8: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:42: WARNING: py:mod reference target not found: ext_store
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:131: WARNING: unknown document: /blog/2010/0803
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:253: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:413: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:458: WARNING: py:attr reference target not found: Store.pk_index

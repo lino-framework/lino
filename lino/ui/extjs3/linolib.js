@@ -3154,9 +3154,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   // pageSize depends on grid height (Trying to remove scrollbar)
   // Thanks to Christophe Badoit on http://www.extjs.net/forum/showthread.php?t=82647
   calculatePageSize : function() {
-    if (!this.isVisible()) { 
-      console.log('calculatePageSize : not visible');
-      return false; }
+    //~ if (!this.isVisible()) { 
+      //~ console.log('calculatePageSize : not visible');
+      //~ return false; }
     if (!this.rendered) { 
       console.log('calculatePageSize : not rendered');
       return false; }
