@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-28 20:43+0000\n"
-"PO-Revision-Date: 2012-01-28 22:43+0200\n"
+"POT-Creation-Date: 2012-02-05 00:01+0000\n"
+"PO-Revision-Date: 2012-02-05 02:06+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
 "MIME-Version: 1.0\n"
@@ -16,79 +16,79 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:52
+#: .\models.py:57
 msgid "Broker"
 msgstr "Vermittler"
 
-#: .\models.py:53
+#: .\models.py:58
 msgid "Brokers"
 msgstr "Vermittler"
 
-#: .\models.py:79
+#: .\models.py:84
 msgid "Faculty"
 msgstr "Fachbereich"
 
-#: .\models.py:80
+#: .\models.py:85
 msgid "Faculties"
 msgstr "Fachbereiche"
 
-#: .\models.py:81
-msgid "Body"
-msgstr ""
-
-#: .\models.py:95
+#: .\models.py:100
 msgid "Competence"
 msgstr "Kompetenz"
 
-#: .\models.py:96
+#: .\models.py:101
 msgid "Competences"
 msgstr "Kompetenzen"
 
-#: .\models.py:135
-#: .\models.py:277
-#: .\models.py:283
+#: .\models.py:140
+#: .\models.py:289
 msgid "Newcomers"
 msgstr "Neuzugänge"
 
-#: .\models.py:138
-#: .\models.py:225
+#: .\models.py:143
+#: .\models.py:237
 msgid "New Clients"
 msgstr "Neue Klienten"
 
-#: .\models.py:142
-msgid "Show agents for newcomer"
-msgstr "Sozis für Neuzugang:"
+#: .\models.py:147
+msgid "Coached by"
+msgstr "Begleitet durch"
 
-#: .\models.py:143
-#: .\models.py:183
-msgid "Count Newcomers since"
-msgstr "Neue Klienten seit"
+#: .\models.py:148
+msgid "Since"
+msgstr "Seit"
 
-#: .\models.py:179
+#: .\models.py:182
 msgid "Users by Newcomer"
 msgstr "Sozis vorschlagen"
 
-#: .\models.py:182
+#: .\models.py:186
 msgid "Show suggested agents for"
 msgstr "Zeige Vorschläge für"
 
-#: .\models.py:217
+#: .\models.py:188
+msgid "Count Newcomers since"
+msgstr "Neue Klienten seit"
+
+#: .\models.py:229
 msgid "Primary clients"
 msgstr "Komplette Akten"
 
-#: .\models.py:221
+#: .\models.py:233
 msgid "Active clients"
 msgstr "Aktive Klienten"
 
-#: .\models.py:229
-msgid "Score"
-msgstr ""
-
 #: .\models.py:241
+msgid "Score"
+msgstr "Quote"
+
+#: .\models.py:253
 msgid "is Newcomers user"
 msgstr "Neuzugänge"
 
-#: .\models.py:248
+#: .\models.py:260
 msgid "Newcomers Quota"
 msgstr "Quote NZ"
 
+#~ msgid "Show agents for newcomer"
+#~ msgstr "Sozis für Neuzugang:"

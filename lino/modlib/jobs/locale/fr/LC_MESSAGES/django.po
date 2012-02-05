@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-28 02:10+0000\n"
+"POT-Creation-Date: 2012-02-05 00:00+0000\n"
 "PO-Revision-Date: 2011-09-14 21:36+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -242,7 +242,7 @@ msgstr "Intitulé de la fonction"
 msgid "Country"
 msgstr "Pays"
 
-#: .\models.py:719
+#: .\models.py:719 .\models.py:1217
 msgid "Jobs"
 msgstr "Emplois"
 
@@ -315,7 +315,7 @@ msgstr ""
 msgid "is Job Provider"
 msgstr "dispenseur de cours"
 
-#: .\models.py:1225
+#: .\models.py:1229
 msgid "~Jobs"
 msgstr "~Emplois"
 

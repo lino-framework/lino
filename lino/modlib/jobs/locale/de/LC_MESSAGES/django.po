@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-28 02:10+0000\n"
+"POT-Creation-Date: 2012-02-05 00:00+0000\n"
 "PO-Revision-Date: 2012-01-28 04:13+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -60,13 +60,8 @@ msgstr "Sektor"
 msgid "Job Sectors"
 msgstr "Sektoren"
 
-#: .\models.py:207
-#: .\models.py:221
-#: .\models.py:286
-#: .\models.py:525
-#: .\models.py:575
-#: .\models.py:742
-#: .\models.py:868
+#: .\models.py:207 .\models.py:221 .\models.py:286 .\models.py:525
+#: .\models.py:575 .\models.py:742 .\models.py:868
 msgid "Remark"
 msgstr "Bemerkung"
 
@@ -86,13 +81,11 @@ msgstr "Art.60§7-Konvention"
 msgid "Job Contracts"
 msgstr "Art.60§7-Konventionen"
 
-#: .\models.py:256
-#: .\models.py:733
+#: .\models.py:256 .\models.py:733
 msgid "Contract Type"
 msgstr "Vertragsart"
 
-#: .\models.py:263
-#: .\models.py:718
+#: .\models.py:263 .\models.py:718
 msgid "Job"
 msgstr "Stelle"
 
@@ -100,8 +93,7 @@ msgstr "Stelle"
 msgid "duration (days)"
 msgstr "Dauer (Arbeitstage)"
 
-#: .\models.py:274
-#: .\models.py:735
+#: .\models.py:274 .\models.py:735
 msgid "hourly rate"
 msgstr "Stundensatz"
 
@@ -129,8 +121,7 @@ msgstr "Verantwortlicher (DSBE)"
 msgid "My contracts"
 msgstr "Meine Art.60§7-Konventionen"
 
-#: .\models.py:516
-#: .\models.py:727
+#: .\models.py:516 .\models.py:727
 msgid "Job Type"
 msgstr "Stellenart"
 
@@ -150,8 +141,7 @@ msgstr "Stellenangebot"
 msgid "Job Offers"
 msgstr "Stellenangebote"
 
-#: .\models.py:561
-#: .\models.py:723
+#: .\models.py:561 .\models.py:723
 msgid "Name"
 msgstr "Name"
 
@@ -191,13 +181,11 @@ msgstr "Ausbildungsart"
 msgid "Study content"
 msgstr "Ausbildungsinhalt"
 
-#: .\models.py:632
-#: .\models.py:685
+#: .\models.py:632 .\models.py:685
 msgid "started"
 msgstr "begonnen"
 
-#: .\models.py:633
-#: .\models.py:686
+#: .\models.py:633 .\models.py:686
 msgid "stopped"
 msgstr "beendet"
 
@@ -213,8 +201,7 @@ msgstr "Sprache"
 msgid "School"
 msgstr "Schule"
 
-#: .\models.py:648
-#: .\models.py:688
+#: .\models.py:648 .\models.py:688
 msgid "Remarks"
 msgstr "Bemerkungen"
 
@@ -246,7 +233,7 @@ msgstr "Bezeichnung"
 msgid "Country"
 msgstr "Land"
 
-#: .\models.py:719
+#: .\models.py:719 .\models.py:1217
 msgid "Jobs"
 msgstr "Stellen"
 
@@ -271,10 +258,7 @@ msgstr "eingereicht am "
 msgid "Candidature by %(person)s"
 msgstr "Kandidatur von %(person)s"
 
-#: .\models.py:969
-#: .\models.py:973
-#: .\models.py:1124
-#: .\models.py:1189
+#: .\models.py:969 .\models.py:973 .\models.py:1124 .\models.py:1189
 msgid "Candidates"
 msgstr "Kandidaten"
 
@@ -302,8 +286,7 @@ msgstr "zukünftige Verträge"
 msgid "on"
 msgstr "am"
 
-#: .\models.py:1070
-#: .\models.py:1149
+#: .\models.py:1070 .\models.py:1149
 msgid "Contracts Situation"
 msgstr "Übersicht Art.60§7-Konventionen"
 
@@ -315,7 +298,7 @@ msgstr ""
 msgid "is Job Provider"
 msgstr "Stellenanbieter"
 
-#: .\models.py:1225
+#: .\models.py:1229
 msgid "~Jobs"
 msgstr "~Stellen"
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-28 02:09+0000\n"
-"PO-Revision-Date: 2012-01-28 04:14+0200\n"
+"POT-Creation-Date: 2012-02-05 00:00+0000\n"
+"PO-Revision-Date: 2012-02-05 02:02+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -33,9 +33,8 @@ msgid "Evaluation every X months"
 msgstr "Auswertung alle X Monate"
 
 #: .\models.py:117
-#, fuzzy
 msgid "Duration unit"
-msgstr "Wartezeit bis"
+msgstr "Zeiteinheit"
 
 #: .\models.py:121
 msgid "Examination Policy"
@@ -93,66 +92,75 @@ msgstr "Beendigung"
 msgid "date ended"
 msgstr "Beendet am"
 
-#: .\models.py:309
+#: .\models.py:314
 #, python-format
 msgid "Evaluation %d"
 msgstr "Auswertung %d"
 
-#: .\models.py:325
+#: .\models.py:330
 msgid "Contract ends in a month"
 msgstr "Vertrag endet in einem Monat"
 
-#: .\models.py:348
-#, python-format
-msgid "Dates overlap with %s"
-msgstr "Datum überschneidet sich mit %s"
+#: .\models.py:377
+msgid "Date range lies outside of coached period"
+msgstr "Datumsbereich außerhalb Begleitungsperiode"
 
-#: .\models.py:356
+#: .\models.py:380
+#, python-format
+msgid "Date range overlaps with %(ctype)s #%(id)s"
+msgstr "Datumsbereich überschneidet sich mit %(ctype)s #%(id)s"
+
+#: .\models.py:392
+#, python-format
+msgid "%(ctype)s #%(id)s : %(msg)s"
+msgstr ""
+
+#: .\models.py:404
 msgid "ISIP"
 msgstr "VSE"
 
-#: .\models.py:357
-#: .\models.py:456
+#: .\models.py:405
+#: .\models.py:506
 msgid "ISIPs"
 msgstr "VSEs"
 
-#: .\models.py:361
+#: .\models.py:409
 msgid "Contract Type"
 msgstr "Vertragsart"
 
-#: .\models.py:364
+#: .\models.py:412
 msgid "Company"
 msgstr "Firma"
 
-#: .\models.py:367
+#: .\models.py:415
 msgid "stages"
 msgstr "Etappen"
 
-#: .\models.py:369
+#: .\models.py:417
 msgid "goals"
 msgstr "Zielsetzungen"
 
-#: .\models.py:371
+#: .\models.py:419
 msgid "duties ASD"
 msgstr "Verpflichtungen ASD"
 
-#: .\models.py:373
+#: .\models.py:421
 msgid "duties DSBE"
 msgstr "Verpflichtungen DSBE"
 
-#: .\models.py:375
+#: .\models.py:423
 msgid "duties company"
 msgstr "Verpflichtungen Firma"
 
-#: .\models.py:377
+#: .\models.py:425
 msgid "duties person"
 msgstr "Verpflichtungen Person"
 
-#: .\models.py:386
+#: .\models.py:434
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
-#: .\models.py:441
+#: .\models.py:489
 msgid "My PIIS contracts"
 msgstr "Meine VSEs"
 
