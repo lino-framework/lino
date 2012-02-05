@@ -726,12 +726,12 @@ class ExtUI(base.UI):
                   #~ js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
                   #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
-                if de.show_slave_grid:
+                if de.slave_grid_format == 'grid':
                     if not de.parameters:
                         kw.update(hide_top_toolbar=True)
                     e = ext_elems.GridElement(lh,name,de,**kw)
                     return e
-                else:
+                elif de.slave_grid_format == 'summary':
                     # a Table in a DetailWindow, displayed as a summary in a HtmlBox 
                     o = dict(drop_zone="FooBar")
                     a = de.get_action('insert')
@@ -741,6 +741,18 @@ class ExtUI(base.UI):
                     field = fields.HtmlBox(verbose_name=de.label,**o)
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
+                    lh.add_store_field(field)
+                    e = ext_elems.HtmlBoxElement(lh,field,**kw)
+                    return e
+                    
+                elif de.slave_grid_format == 'html':
+                    a = de.get_action('insert')
+                    if a is not None:
+                        kw.update(ls_insert_handler=js_code("Lino.%s" % a))
+                        kw.update(ls_bbar_actions=[self.a2btn(a)])
+                    field = fields.HtmlBox(verbose_name=de.label)
+                    field.name = de.__name__
+                    field._return_type_for_method = de.slave_as_html_meth(self)
                     lh.add_store_field(field)
                     e = ext_elems.HtmlBoxElement(lh,field,**kw)
                     return e
@@ -1208,14 +1220,12 @@ tinymce.init({
         
         #~ return '\n'.join([ln for ln in fn()])
         return '\n'.join(fn())
-                
-            
-        
-            
+
 
     def index_view(self, request,**kw):
         #~ from lino.lino_site import lino_site
-        kw.update(on_ready=self.ext_renderer.action_call(settings.LINO.modules.dsbe.Home.default_action))
+        if True:
+            kw.update(on_ready=self.ext_renderer.action_call(settings.LINO.modules.dsbe.Home.default_action))
         #~ kw.update(title=settings.LINO.modules.dsbe.Home.label)
         #~ kw.update(title=lino_site.title)
         #~ mnu = py2js(lino_site.get_site_menu(request.user))

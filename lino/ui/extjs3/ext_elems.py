@@ -899,6 +899,7 @@ class HtmlBoxElement(DisplayElement):
         kw.update(layout='fit')
         kw.update(autoScroll=True)
         
+        # hide horizontal scrollbar      
         # for this trick thanks to Vladimir 
         # <http://forums.ext.net/showthread.php?1513-CLOSED-Autoscroll-on-ext-panel>
         kw.update(bodyStyle="overflow-x:hidden !important;")

@@ -16,9 +16,9 @@ Defines some system models, especially the :class:`SiteConfig` model.
 Expected to be installed in every Lino application.
 """
 
-#~ import logging
-#~ logger = logging.getLogger(__name__)
-from lino.utils import dblogger
+import logging
+logger = logging.getLogger(__name__)
+#~ from lino.utils import dblogger
 
 from django.conf import settings
 #~ from django.contrib.auth import models as auth
@@ -75,7 +75,7 @@ def get_site_config():
     except Exception,e:
         kw = dict(pk=1)
         kw.update(settings.LINO.site_config_defaults)
-        dblogger.debug("Creating SiteConfig record (%s)",e)
+        logger.debug("Creating SiteConfig record (%s)",e)
         sc = SiteConfig(**kw)
         #~ do NOT save the instance here
         #~ sc.save()
@@ -89,7 +89,27 @@ def update_site_config(**kw):
 
 
 class ContentTypes(dd.Table):
+    """
+    Deserves more documentation.
+    """
     model = contenttypes.ContentType
+    
+    @dd.displayfield(_("Base classes"))
+    def base_classes(self,obj,ar):
+        chunks = []
+        def add(cl):
+            for b in cl.__bases__:
+                add(b)
+            if issubclass(cl,models.Model) and cl is not models.Model and cl._meta.managed: # :
+                if getattr(cl,'_meta',False) and not cl._meta.abstract:
+                    logger.info("20120205 adding(%r)",cl)
+                    ct = contenttypes.ContentType.objects.get_for_model(cl)
+                    chunks.append(ar.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
+        if obj is not None:
+            #~ add(obj.model_class())
+            for b in obj.model_class().__bases__:
+                add(b)
+        return ', '.join(chunks)
     
     
   

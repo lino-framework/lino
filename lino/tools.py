@@ -17,6 +17,7 @@ import os
 
 from django.db import models
 from django.db.models import Q
+from django.db.models.fields import FieldDoesNotExist
 from django.conf import settings
 from django.utils.importlib import import_module
 
@@ -127,6 +128,7 @@ class UnresolvedField(object):
     """
     def __init__(self,name):
         self.name = name
+        self.verbose_name = "Unresolved Field " + name
 
 def resolve_field(name,app_label=None):
     """
@@ -141,8 +143,12 @@ def resolve_field(name,app_label=None):
         #print "models.get_model(",app_label,l[0],False,")"
         model = models.get_model(app_label,l[0],False)
         if model is not None:
-            fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
-            assert remote_model is None
+            try:
+                fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
+            except FieldDoesNotExist:
+                return UnresolvedField(name)
+            assert remote_model is None or issubclass(model,remote_model), \
+                "resolve_field(%r) : remote model is %r (expected None or base of %r)" % (name,remote_model,model)
             return fld
     return UnresolvedField(name)
 

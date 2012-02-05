@@ -1957,7 +1957,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       ]);
           
     }
-    //~ if (config.can_config) {
+    if (config.content_type) {
     config.bbar = config.bbar.concat([
       '->',
       { text: '[$_("Help Text Editor")]',
@@ -1969,7 +1969,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         qtip: "$_("Edit Detail layout")",
         scope: this}
     ])
-    //~ }
+    }
     //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
       
     //~ if (this.master_panel) {

@@ -45,7 +45,7 @@ war nicht schwer.
 Neuer Look für die Startseite
 -----------------------------
 
-Tagsüber habe ich dann noch mal wieder was Unvernünftiges gemacht: 
+Am Wochenende habe ich dann noch mal wieder was Unvernünftiges gemacht: 
 ich habe die Startseite renoviert.
 
 Ein Bild vorher:
@@ -58,9 +58,9 @@ Und eins nachher:
 .. image:: 0204b.jpg
   :scale: 60
 
-Details, die da noch fehlen:
+Was mir noch nicht gefällt: 
 
-- :class:`Benutzer und ihre Klienten <lino.apps.dsbe.models.UsersWithClients>` zeigt keine Summen an.
-- Das Padding der beiden Panel müsste was großzügiger sein.
-- Die Höhe des Quicklinks-Bereichs sollte automatisch ausgerichtet werden.
+- Die Höhen des Quicklinks-Bereichs und des Panels
+  :class:`Benutzer und ihre Klienten <lino.apps.dsbe.models.UsersWithClients>` 
+  sollten automatisch ausgerichtet werden.
 

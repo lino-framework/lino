@@ -425,11 +425,12 @@ class AbstractTable(actors.Actor):
     
     button_label = None
     
-    show_slave_grid = True
+    slave_grid_format = 'grid'
     """
     How to display this table when it is a slave in a detail window. 
-    `True` (default) to render as a grid. 
-    `False` to render a summary in a HtmlBoxPanel.
+    `grid` (default) to render as a grid. 
+    `summary` to render a summary in a HtmlBoxPanel.
+    `html` to render plain html  a HtmlBoxPanel.
     Example: :class:`links.LinksByOwner`
     """
     
@@ -556,6 +557,20 @@ class AbstractTable(actors.Actor):
         #~ f.close()
         #~ return "Grid Config has been saved to %s" % filename
     
+    @classmethod
+    def slave_as_html_meth(self,ui):
+        """
+        Creates and returns the method to be used when 
+        :attr:`AbstractTable.slave_grid_format` is `html`.
+        """
+        def meth(master,ar):
+            ar = self.request(ui,request=ar.request,action=self.default_action,master_instance=master)
+            ar.renderer = ui.ext_renderer
+            #~ ar = TableRequest(ui,self,None,self.default_action,master_instance=master)
+            s = ui.table2xhtml(ar).tostring()
+            return s
+        return meth
+        
 
 #~ class ComputedColumn(FakeField):
     #~ """

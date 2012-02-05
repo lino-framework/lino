@@ -343,7 +343,7 @@ class AttachmentsByOwner(Attachments):
 
 class AttachmentsByMail(Attachments):
     master_key = 'mail'
-    show_slave_grid = False
+    slave_grid_format = 'summary'
 
 class Mails(dd.Table):
     model = 'mails.Mail'

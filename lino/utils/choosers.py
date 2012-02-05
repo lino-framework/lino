@@ -28,6 +28,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+
 from lino.utils.instantiator import make_converter
 #~ from lino import reports
 from lino.core.coretools import get_data_elem # , get_unbound_meth

@@ -463,6 +463,7 @@ class Actor(Handled):
         #~ logger.info("20120202 Actor.get_data_elem found nothing")
         #~ return None
               
+        
 
 class FrameHandle(base.Handle): 
     def __init__(self,ui,frame):

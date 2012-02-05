@@ -241,12 +241,18 @@ Since when this person in Belgium lives.
     yield I(t,'noble_condition',"""\
 The eventual noble condition of this person. Imported from TIM.
 """)
-    yield I(t,'noble_condition',u"""\
+    yield I(t,'birth_date',u"""\
 Unkomplette Geburtsdaten sind erlaubt, z.B. 
 <ul>
 <li>00.00.1980 : irgendwann in 1980</li>
 <li>00.07.1980 : im Juli 1980</li>
 <li>23.07.0000 : Geburtstag am 23. Juli, Alter unbekannt</li>
 </ul>    
+""")
+    
+    Contact = resolve_model('contacts.Contact')
+    t = ContentType.objects.get_for_model(Contact)
+    yield I(t,'language',u"""\
+    Die Sprache, in der Dokumente ausgestellt werden sollen.
 """)
     

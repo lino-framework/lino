@@ -1074,18 +1074,13 @@ class Table(AbstractTable):
     def slave_as_summary_meth(self,ui,row_separator):
         """
         Creates and returns the method to be used when 
-        :attr:`AbstractTable.show_slave_grid` is `False`.
+        :attr:`AbstractTable.slave_grid_format` is 'summary'.
         """
         def meth(master,request):
             rr = TableRequest(ui,self,None,self.default_action,master_instance=master)
-            #~ rr = self.request(ui,master_instance=master)
             s = summary(ui,rr.data_iterator,row_separator)
-            #~ s = summary(ui,rr,row_separator)
-            #~ s = ', '.join([fmt(r) for r in rr])
-            #~ print 'reports.py 20101017', s
             return s
         return meth
-        
         
     @classmethod
     def get_create_kw(self,master_instance,**kw):

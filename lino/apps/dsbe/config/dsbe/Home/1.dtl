@@ -3,7 +3,5 @@
 
 main = 
   quick_links:80x1
-  coming_reminders:50x10 missed_reminders:30x10
-  # tasks_summary:80x10
-  dsbe.UsersWithClients:80x5
-
+  dsbe.UsersWithClients:80x8
+  coming_reminders:40x16 missed_reminders:40x16

@@ -1054,6 +1054,8 @@ class UsersWithClients(dd.VirtualTable):
     label = _("Users with their Clients")
     #~ column_defaults = dict(width=8)
     
+    slave_grid_format = 'html'    
+    
     #~ @classmethod
     #~ def before_ui_handle(self,ui):
         #~ """
@@ -2406,5 +2408,6 @@ def reminders(ui,user,days_back=None,days_forward=None,**kw):
         s = ''.join([chunk for chunk in loop(future,False)])
         
     #~ s = '<div class="htmlText" width="30%%">%s</div>' % s
+    s = '<div class="htmlText" style="margin:5px">%s</div>' % s
     return s
     
