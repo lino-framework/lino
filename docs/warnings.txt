@@ -5,3 +5,12 @@ T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: documen
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\ref\modelattr.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:33: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:51: WARNING: py:class reference target not found: lino.modlib.cal.models.ComponentBase
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:110: WARNING: py:class reference target not found: lino.modlib.cal.models.Events
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:131: WARNING: py:class reference target not found: lino.mixins.printable.CachedPrintable
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:156: WARNING: py:class reference target not found: lino.modlib.cal.models.Events
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:182: WARNING: py:class reference target not found: lino.modlib.cal.models.ComponentBase
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:238: WARNING: xfile reference target not found: welcome.html
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:12: WARNING: py:class reference target not found: Event
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:29: WARNING: py:func reference target not found: lino.modlib.cal.tests.cal_test.test01

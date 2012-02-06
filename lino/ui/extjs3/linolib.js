@@ -2438,50 +2438,20 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
   return '';
 }
 
+//~ FOO = 0;
+
 Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
   autoLoad: false,
   load: function(options) {
-    if (!this.grid_panel.rendered) {
-        console.log("20120122 GridStore.load() must wait until rendered",options);
-        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
-        return;
-    }
-    
-    var ps = this.grid_panel.calculatePageSize();
-    
-    if (!ps) {
-        //~ console.log("20120204 GridStore.load() failed to calculate pagesize");
-        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
-        return;
-    }
-    
-    //~ console.log("20120204 GridStore.load() now",options);
     if (!options) options = {};
     if (!options.params) options.params = {};
-    //~ Ext.apply(options.params,this.baseParams);
-    //~ options.params.fmt = 'json';
-    //~ options.params.$URL_PARAM_LIMIT = this.grid_panel.getTopToolbar().pageSize;
-    //~ options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
-      
     options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
-      
-    options.params.$URL_PARAM_LIMIT = ps;
-      
-    if (this.grid_panel.hide_top_toolbar) {
-        options.params.$URL_PARAM_START = 0;
-    } else {
-        this.grid_panel.getTopToolbar().pageSize =  ps;
-        options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
-    }
-    
-    //~ Ext.applyIf(options.params, {
-        //~ fmt : 'json',
-        //~ '$URL_PARAM_LIMIT' : this.grid_panel.getTopToolbar().pageSize,
-        //~ '$URL_PARAM_START' : this.grid_panel.getTopToolbar().cursor
-        //~ // 20110119 $URL_PARAM_FILTER: this.quick_search_text
-    //~ });
+    this.grid_panel.set_start_limit(options.params);
     this.grid_panel.add_param_values(options.params);
-    //~ console.log("20120122 GridStore.load() 2",options.params);
+    //~ console.log("20120206 GridStore.load()",options.params);
+    //~ if (FOO > 0) {
+        //~ foo.bar = baz;
+    //~ } else FOO += 1;
     return Lino.GridStore.superclass.load.call(this,options);
   }
 });
@@ -2608,10 +2578,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         if (this_.containing_window)
             this_.set_window_title(this_.store.reader.arrayData.title);
             //~ this_.containing_window.setTitle(this_.store.reader.arrayData.title);
-        if(this_.selModel.getSelectedCell){         
+        if (this_.selModel.getSelectedCell){
             if (this_.getStore().getCount()) // there may be no data
                 this_.selModel.select(0,0); 
-        }else{
+        } else {
             this_.selModel.selectFirstRow();
             this_.getView().focusEl.focus();
         }
@@ -2682,7 +2652,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       this.tbar = new Ext.PagingToolbar({ 
         store: this.store, 
         prependButtons: true, 
-        pageSize: this.page_length, 
+        //~ pageSize: this.page_length, 
+        pageSize: 1, 
         displayInfo: true, 
         beforePageText: "$_('Page')",
         afterPageText: "$_('of {0}')",
@@ -2693,14 +2664,15 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         nextText: "$_('Next page')",
         items: tbar
       });
-      this.on('resize', function(cmp,aw,ah,rw,rh) {
-          var ps = this.calculatePageSize();
-          if (ps && ps != this.getTopToolbar().pageSize) {
-              //~ console.log('20120203 resize : pageSize',this.getTopToolbar().pageSize,'->',ps);
-              //~ this.getTopToolbar().pageSize =  ps;
-              cmp.refresh();
-          }
-        }, this);
+      //~ this.on('resize', function(cmp,aw,ah,rw,rh) {
+          //~ var ps = this.calculatePageSize();
+          //~ if (ps && ps != this.getTopToolbar().pageSize) {
+              //~ // console.log('20120203 resize : pageSize',this.getTopToolbar().pageSize,'->',ps);
+              //~ // this.getTopToolbar().pageSize =  ps;
+              //~ cmp.refresh();
+              //~ // this.getTopToolbar().doRefresh();
+          //~ }
+        //~ }, this);
       //~ this.on('resize', function(cmp,aw,ah,rw,rh) {
           //~ cmp.getTopToolbar().pageSize = this.calculatePageSize(aw,ah,rw,rh) || 10;
           //~ cmp.refresh();
@@ -2752,9 +2724,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     Lino.GridPanel.superclass.initComponent.call(this);
     
     //~ if (this.containing_window) 
+        //~ this.on('afterlayout', this.refresh, this);
         //~ this.on('afterrender', this.refresh,this);
     //~ else
         //~ this.on('show', this.refresh,this);
+    //~ this.on('afterlayout', this.refresh);
+    //~ this.on('afterrender', this.refresh);
+    //~ this.on('resize', this.refresh,this,{delay:500});
     this.on('afteredit', this.on_afteredit);
     this.on('beforeedit', this.on_beforeedit);
     this.on('cellcontextmenu', Lino.cell_context_menu, this);
@@ -2762,6 +2738,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
   },
+  
+  //~ onResize : function(){
+      //~ console.log("20120206 GridPanel.onResize",arguments);
+      //~ Lino.GridPanel.superclass.onResize.apply(this, arguments);
+      //~ this.refresh();
+  //~ },
+  
   
   get_status : function(){
     return { base_params : this.get_base_params()};
@@ -2773,9 +2756,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     if (status.param_values) this.set_param_values(status.param_values);
     if (status.base_params) { 
       this.set_base_params(status.base_params);
-      //~ this.getStore().load();
     }
-    this.refresh(); 
+    //~ this.fireEvent('resize');
+    this.refresh.defer(100,this); 
+    //~ this.refresh(); 
+    //~ this.doLayout(); 
+    //~ this.onResize(); 
     //~ this.store.load();
   },
   
@@ -2791,13 +2777,112 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         //~ Ext.apply(options.params,this.containing_panel.get_master_params());
         this.set_base_params(this.containing_panel.get_master_params());
     }
-    var p = {};
+    
+    var options = {};
     if (after) {
-        p.callback = function(r,options,success) {if(success) after()}
+        options.callback = function(r,options,success) {if(success) after()}
     }
-    this.store.load(p);
+    
+      
+    //~ if (!this.rendered) {
+        //~ console.log("20120206 GridPanel.refresh() must wait until rendered",options);
+        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
+        //~ return;
+    //~ }
+    
+    this.store.load(options);
   },
   
+  set_start_limit : function(params) {
+    
+    var ps = this.calculatePageSize();
+    
+    if (!ps) {
+        console.log("20120206 GridPanel.refresh() failed to calculate pagesize");
+        params.$URL_PARAM_LIMIT = 1;
+        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
+        //~ return;
+    } else {
+    
+    //~ console.log("20120206 calculatePageSize() found",ps);
+    //~ Ext.apply(options.params,this.baseParams);
+    //~ options.params.fmt = 'json';
+    //~ options.params.$URL_PARAM_LIMIT = this.grid_panel.getTopToolbar().pageSize;
+    //~ options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
+      
+    //~ options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
+      
+        params.$URL_PARAM_LIMIT = ps;
+    }
+      
+    if (this.hide_top_toolbar) {
+        //~ console.log("20120206 GridStore.load() toolbar is hidden");
+        params.$URL_PARAM_START = 0;
+    } else {
+        //~ options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
+        //~ if (this.grid_panel.getTopToolbar().pageSize !=  ps) {
+          //~ console.log("20120206 abort load because toolbar says pagesize",
+            //~ this.grid_panel.getTopToolbar().pageSize,
+            //~ "while actual pagesize is",ps);
+            //~ return;
+        //~ }
+        
+        this.getTopToolbar().pageSize =  ps;
+        if (params.$URL_PARAM_START == undefined)
+            params.$URL_PARAM_START = this.getTopToolbar().cursor;
+      
+        //~ Ext.applyIf(options.params, {
+            //~ '$URL_PARAM_LIMIT' : this.grid_panel.getTopToolbar().pageSize,
+            //~ '$URL_PARAM_START' : this.grid_panel.getTopToolbar().cursor
+            // 20110119 $URL_PARAM_FILTER: this.quick_search_text
+        //~ });
+      
+    }
+      
+    //~ console.log("20120206 GridPanel.refresh() would call store.load()",options);
+    
+  },
+  
+  // pageSize depends on grid height (Trying to remove scrollbar)
+  // Thanks to Christophe Badoit on http://www.sencha.com/forum/showthread.php?82647
+  calculatePageSize : function() {
+    //~ if (!this.isVisible()) { 
+      //~ console.log('calculatePageSize : not visible');
+      //~ return false; }
+    if (!this.rendered) { 
+      console.log('Cannot calculatePageSize() : not rendered');
+      return false; }
+      
+    //~ console.log('getFrameHeight() is',this.getFrameHeight());
+    //~ console.log('getView().scroller.getHeight() is',this.getView().scroller.getHeight());
+    //~ console.log('mainBody.getHeight() is',this.getView().mainBody.getHeight());
+    //~ console.log('getInnerHeight() is',this.getInnerHeight());
+    //~ console.log('getHeight() is',this.getHeight());
+    //~ console.log('el.getHeight() is',this.getEl().getHeight());
+    //~ console.log('getGridEl().getHeight() is',this.getGridEl().getHeight());
+    //~ console.log('getOuterSize().height is',this.getOuterSize().height);
+    //~ console.log('getBox().height is',this.getBox().height);
+    //~ console.log('getResizeEl.getHeight() is',this.getResizeEl().getHeight());
+    //~ console.log('getLayoutTarget().getHeight() is',this.getLayoutTarget().getHeight());
+      
+    var rowHeight = this.getFrameHeight();
+    //~ var rowHeight = 52; // experimental value
+    //~ var row = this.view.getRow(0);
+    //~ if (row) rowHeight = Ext.get(row).getHeight();
+    //~ console.log('rowHeight is ',rowHeight,this,caller);
+    // var height = this.getView().scroller.getHeight();
+    var height = this.getView().scroller.getHeight();
+    //~ var height = this.getInnerHeight();
+    // var height = this.getView().mainBody.getHeight();
+    // var height = this.getHeight() - this.getFrameHeight();
+    //~ height -= this.getView().scrollOffset;
+    //~ height -= 10; // keep room for a possible horizontal scrollbar... experimental value
+    var ps = Math.floor(height / rowHeight);
+    //~ console.log('20120203 calculatePageSize():',height,'/',rowHeight,'->',ps);
+    ps -= 1; // phantom row ... experimental value
+    //~ return (ps > 1 ? ps : false);
+    return (ps > 1 ? ps : 5);
+  },
   
   onCellDblClick : function(grid, row, col){
       //~ console.log("onCellDblClick",grid, row, col);
@@ -3150,38 +3235,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   add_row_listener : function(fn,scope) {
     this.getSelectionModel().addListener('rowselect',fn,scope);
-  },
-  // pageSize depends on grid height (Trying to remove scrollbar)
-  // Thanks to Christophe Badoit on http://www.extjs.net/forum/showthread.php?t=82647
-  calculatePageSize : function() {
-    //~ if (!this.isVisible()) { 
-      //~ console.log('calculatePageSize : not visible');
-      //~ return false; }
-    if (!this.rendered) { 
-      console.log('calculatePageSize : not rendered');
-      return false; }
-    var rowHeight = this.getFrameHeight();
-    //~ var rowHeight = 52; // experimental value
-    //~ var row = this.view.getRow(0);
-    //~ if (row) rowHeight = Ext.get(row).getHeight();
-    //~ console.log('rowHeight is ',rowHeight,this,caller);
-    // var height = this.getView().scroller.getHeight();
-    //~ console.log('scroller.getHeight() is',this.getView().scroller.getHeight());
-    //~ console.log('scroller',this.getView().scroller.getHeight());
-    //~ console.log('mainBody',this.getView().mainBody.getHeight());
-    //~ console.log('getInnerHeight() is',this.getInnerHeight());
-    //~ console.log('getFrameHeight() is',this.getFrameHeight());
-    var height = this.getView().scroller.getHeight();
-    //~ var height = this.getInnerHeight();
-    // var height = this.getView().mainBody.getHeight();
-    // var height = this.getHeight() - this.getFrameHeight();
-    //~ height -= this.getView().scrollOffset;
-    height -= 10; // keep a few pixels of space... experimental value
-    var ps = Math.floor(height / rowHeight);
-    //~ console.log('20120203 calculatePageSize():',height,'/',rowHeight,'->',ps);
-    ps -= 1; // phantom row ... experimental value
-    //~ return (ps > 1 ? ps : false);
-    return (ps > 1 ? ps : 5);
   },
   postEditValue : function(value, originalValue, r, field){
     value = Lino.GridPanel.superclass.postEditValue.call(this,value,originalValue,r,field);

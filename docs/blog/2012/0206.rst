@@ -1,0 +1,25 @@
+20120206
+========
+
+Den ganzen Tag lang war ich auf Fehlerjagd... und habe 
+noch immer keine wirklich befriedigende Lösung für 
+das automatische Ermitteln der Zeilenzahl einer Grid gefunden.
+
+Das resize-Event einer Grid wird beim Aufbau der Grid 
+offenbar mehrmals kurz hintereinander ausgelöst, mit wechselnden 
+Größenangaben.
+`Christophe Badoit <http://www.sencha.com/forum/showthread.php?82647>`_ 
+benutzt deshalb wahrscheinlich ein `{delay:500}`.
+Ich bräuchte ein "onstable"-Event, aber das gibt es nicht.
+
+Der refresh-Button des PagingToolbar ruft Store.load() direkt auf. 
+Deshalb habe ich mein GridStore mit erweiterter load().
+
+Checkin um 18.15 Uhr mit einer vielleicht befriedigenden Lösung:
+Man muss nach einem resize *selber* auf den Refresh-Button 
+klicken, damit sich die Zeilenzahl korrekt setzt. 
+Ist vielleicht sogar ganz angenehm.
+Aber in set_status() rufe ich weiterhin das refresh() 
+um eine Zehntelsekunde deferred auf, weil sonst die Höhe 
+des GridPanels noch nicht ermittelbar ist.
+
