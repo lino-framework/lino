@@ -244,7 +244,7 @@ def makedirs_if_missing(dirname):
         
 def range_filter(v,f1,f2):
     """
-    return a Q object (to be added as a filter on a queryset)
+    Returns a Q object (to be added as a filter on a queryset)
     to inlude only instances where v is contained within the range between f1 and f2.
     `v` being a value and f1 and f2 being the names of fields of same data type as v.
     """

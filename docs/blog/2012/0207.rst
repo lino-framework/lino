@@ -4,15 +4,15 @@
 Subtile Bugs
 ------------
 
-Also der folgende Bug scheint mir behoben:
+Die folgenden Bugs sind nun in der Development-Version behoben:
 
 - In Grids mit mehr als einer Bildschirmseite voll Daten konnte man nicht blättern.
 - Quicklink [Detail Personen] erlaubte das Bearbeiten importierter Felder.
 - Kursanfragen: im Detail wurde das neue Feld "Dringend" noch nicht angezeigt.
-- [Layout Editor] funktionmierte nicht
+- [Layout Editor] funktionierte nicht
 
 
-Notizen und Bemerkungen
+Details und Bemerkungen
 
 In der :mod:`lino.apps.dsbe.settiings` machte ich::
 
@@ -27,6 +27,10 @@ Stattdessen musste es sein::
         ...
 
 Der Effekt war, dass man importierte Felder bearbeiten konnte.
+Das ist eine Mausefalle, die nicht gekommen wäre, wenn das `app_label` 
+von dsbe.Persons weiterhin `contacts` wäre. 
+Soll ich wieder forcieren, dass dass app_label vererbt wird?
+Aber ich glaube es gibt andere Fälle, wo diese Möglichkeit wichtig ist...
 
 
 Der [Layout Editor] funktionmierte nicht, weil er dann folgendes machte::

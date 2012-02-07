@@ -508,22 +508,22 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         return u"%s %s (%s)" % (self.last_name.upper(),self.first_name,self.pk)
         
     def get_active_contract(self):
-        flt = range_filter(datetime.date.today(),'applies_from','applies_until')
+        """
+        Return the one and only active contract on this client.
+        If there are more than 1 active contracts, return None.
+        """
+        v = datetime.date.today()
+        q1 = Q(applies_from__isnull=True) | Q(applies_from__lte=v)
+        q2 = Q(applies_until__isnull=True) | Q(applies_until__gte=v)
+        q3 = Q(date_ended__isnull=True) | Q(date_ended__gte=v)
+        flt = Q(q1,q2,q3)
+        #~ flt = range_filter(datetime.date.today(),'applies_from','applies_until')
         qs1 = self.isip_contract_set_by_person.filter(flt)
         qs2 = self.jobs_contract_set_by_person.filter(flt)
         if qs1.count() + qs2.count() == 1:
             if qs1.count() == 1: return qs1[0]
             if qs2.count() == 1: return qs2[0]
         
-    def data_control(self):
-        "Used by :class:`lino.models.DataControlListing`."
-        msgs = []
-        try:
-            niss_validator(self.national_id)
-        except ValidationError,e:
-            msgs.append(unicode(e))
-        return msgs
-            
     #~ def clean(self):
         #~ if self.job_office_contact: 
             #~ if self.job_office_contact.b == self:

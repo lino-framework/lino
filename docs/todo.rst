@@ -12,6 +12,11 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Unerwünschte Scrollbars:
+
+    - Beim Passbild (nur mit Firefox und Chromium 17, aber nicht mit Chrome 16)
+    - Im Detail Kursangebot (manchmal)
+    
 #.  Continue with BCSS-Connection: 
 
     - add more fields to existing first service
