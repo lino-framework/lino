@@ -1923,8 +1923,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               this.goto_record_id(record.id);
             }
           },
-          emptyText: "$_('Go to record')",
-          tooltip: "$_('Reload current record')"
+          emptyText: "$_('Go to record')"
         })
         config.tbar = config.tbar.concat([this.record_selector]);
         

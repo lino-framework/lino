@@ -1310,9 +1310,9 @@ tinymce.init({
     def detail_config_view(self,request,app_label=None,actor=None):
         #~ rpt = actors.get_actor2(app_label,actor)
         rpt = self.requested_report(request,app_label,actor)
-        if not rpt.can_config.passes(request.user):
-            msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
-            return http.HttpResponseForbidden(msg)
+        #~ if not rpt.can_config.passes(request.user):
+            #~ msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
+            #~ return http.HttpResponseForbidden(msg)
         if request.method == 'GET':
             #~ raise Exception("TODO: convert after 20111127")
             tab = int(request.GET.get('tab','0'))

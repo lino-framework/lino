@@ -92,6 +92,8 @@ Sichtbare Änderungen
   
 
 
-Upgrade instructions
---------------------
+Known bugs
+----------
+
+See :doc:`/blog/2012/0206` and :doc:`/blog/2012/0207`
 

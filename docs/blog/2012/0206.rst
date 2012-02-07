@@ -1,6 +1,10 @@
 20120206
 ========
 
+Fehlerjagd
+----------
+
+
 Den ganzen Tag lang war ich auf Fehlerjagd... und habe 
 noch immer keine wirklich befriedigende Lösung für 
 das automatische Ermitteln der Zeilenzahl einer Grid gefunden.
@@ -19,7 +23,10 @@ Checkin um 18.15 Uhr mit einer vielleicht befriedigenden Lösung:
 Man muss nach einem resize *selber* auf den Refresh-Button 
 klicken, damit sich die Zeilenzahl korrekt setzt. 
 Ist vielleicht sogar ganz angenehm.
-Aber in set_status() rufe ich weiterhin das refresh() 
-um eine Zehntelsekunde deferred auf, weil sonst die Höhe 
-des GridPanels noch nicht ermittelbar ist.
+Im Auge zu behalten: 
+in set_status() rufe ich weiterhin das refresh() 
+um eine Zehntelsekunde deferred auf, 
+weil sonst die Höhe des GridPanels noch nicht ermittelbar ist.
+Kann also sein, dass Nebeneffekte kommen, wenn der Client aus 
+langsamer als gewöhnlich arbeitet.
 

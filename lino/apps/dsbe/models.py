@@ -729,6 +729,12 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         return rr.renderer.quick_add_buttons(r)
 
 class Contacts(contacts.Contacts):
+    """
+    Base class for Companies and Persons tables. 
+    Manages disabled_fields using a list of `imported_fields` 
+    defined by subclasses.
+    """
+    
     imported_fields = []
     
     @classmethod
@@ -806,8 +812,9 @@ class Companies(Contacts):
 
 #~ class AllPersons(contacts.Persons):
 class AllPersons(Contacts):
-    #~ hide_details = [Contact]
-    #~ model = 'contacts.Person'
+    """
+    List of all Persons.
+    """
     model = settings.LINO.person_model
     order_by = "last_name first_name id".split()
     can_view = perms.is_authenticated

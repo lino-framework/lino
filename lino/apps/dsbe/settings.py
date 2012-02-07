@@ -55,7 +55,8 @@ class Lino(Lino):
         
     def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons().detail)
-        tb.add_action(self.modules.contacts.Persons,'detail')
+        #~ tb.add_action(self.modules.contacts.Persons,'detail')
+        tb.add_action(self.modules.dsbe.Persons,'detail')
         tb.add_action(self.modules.cal.Panel)
         tb.add_action(self.modules.dsbe.MyPersons)
         tb.add_action(self.modules.isip.MyContracts)

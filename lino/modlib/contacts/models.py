@@ -392,9 +392,11 @@ Optional `salutation_options` see :func:`get_salutation`.
 
 
 class Persons(dd.Table):
+    """
+    List of all Persons.
+    """
     model = settings.LINO.person_model
-    order_by = "last_name first_name id".split()
-    #~ app_label = 'contacts'
+    order_by = ["last_name","first_name","id"]
     column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"
     
 
