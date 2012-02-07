@@ -126,8 +126,8 @@ class GridConfig(Configured):
 
 
 
-class AbstractTableRequest(actions.ActorRequest):
-  
+class AbstractTableRequest(actions.ActionRequest):
+    
     limit = None
     offset = None
     create_rows = None
@@ -137,7 +137,7 @@ class AbstractTableRequest(actions.ActorRequest):
         if not (isinstance(report,type) and issubclass(report,AbstractTable)):
             raise Exception("Expected an AbstractTable subclass, got %r" % report)
         #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
-        actions.ActorRequest.__init__(self,ui,report,request,action,**kw)
+        actions.ActionRequest.__init__(self,ui,report,request,action,**kw)
         #~ self.setup(*args,**kw)
         self.data_iterator = self.get_data_iterator()
         self.sliced_data_iterator = self.data_iterator
@@ -150,7 +150,7 @@ class AbstractTableRequest(actions.ActorRequest):
     
     def parse_req(self,request,**kw):
         rh = self.ah
-        kw = actions.ActorRequest.parse_req(self,request,**kw)
+        kw = actions.ActionRequest.parse_req(self,request,**kw)
         #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
         
         #~ kw.update(self.report.known_values)
@@ -193,7 +193,7 @@ class AbstractTableRequest(actions.ActorRequest):
         #~ if user is None:
             #~ raise InvalidRequest("%s : user is None" % self)
             
-        actions.ActorRequest.setup(self,**kw)
+        actions.ActionRequest.setup(self,**kw)
         if offset is not None:
             self.offset = offset
             
@@ -211,7 +211,7 @@ class AbstractTableRequest(actions.ActorRequest):
         return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
         
     def get_status(self,ui,**kw):
-        kw = actions.ActorRequest.get_status(self,ui,**kw)
+        kw = actions.ActionRequest.get_status(self,ui,**kw)
         bp = kw.setdefault('base_params',{})
         if self.subst_user is not None:
             bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
@@ -244,11 +244,6 @@ class AbstractTableRequest(actions.ActorRequest):
             return self.data_iterator.count()
         return len(self.data_iterator)
         
-    def confirm(self,step,*messages):
-        if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
-            return
-        raise actions.ConfirmationRequired(step,messages)
-
         
         
 class VirtualTableRequest(AbstractTableRequest):
@@ -497,10 +492,6 @@ class AbstractTable(actors.Actor):
     def setup_columns(self):
         pass
         
-    @classmethod
-    def setup_actions(self):
-        pass
-        
     #~ @classmethod
     #~ def add_column(self,*args,**kw):
         #~ """
@@ -570,54 +561,13 @@ class AbstractTable(actors.Actor):
             s = ui.table2xhtml(ar).tostring()
             return s
         return meth
-        
 
-#~ class ComputedColumn(FakeField):
-    #~ """
-    #~ A Column whose value is not retrieved from the database but 
-    #~ "computed" by a custom function.
-    #~ """
-    #~ def __init__(self,func,verbose_name=None,name=None,width=None):
-        #~ self.func = func
-        #~ self.name = name
-        #~ self.verbose_name = verbose_name or name
-        #~ self.width = width
-        
-    #~ def add_to_table(self,table):
-        #~ self.table = table
-        #~ if self.width is None:
-            #~ self.width = table.column_defaults.get('width',None)
-        
-        
-#~ def computed(*args,**kw):
-    #~ """
-    #~ Decorator used to define computed columns as part 
-    #~ of the Table's definition.
-    #~ """
-    #~ def decorator(fn):
-        #~ def wrapped(*args):
-            #~ return fn(*args)
-        #~ return ComputedColumn(wrapped,*args,**kw)
-    #~ return decorator
-    
-
-
-
-
-#~ def redirect(obj,name,*other):
-    #~ """
-    #~ """
-    #~ logger.info('redirect()')
-    #~ o = getattr(obj,name)
-    #~ if other:
-        #~ return redirect(o,*other)
-    #~ return o
-        
 
 class VirtualTable(AbstractTable):
     """
-    An :class:`AbstractTable` that works on an arbitrary 
-    list of "rows", using only computed columns.
+    An :class:`AbstractTable` that works on an 
+    volatile (non persistent)
+    list of "rows", using only virtual fields.
     """
     
     @classmethod

@@ -1051,7 +1051,7 @@ Lino.show_in_own_window_button = function(handler) {
 
 
 Lino.delete_selected = function(panel) {
-  console.log("Lino.delete_selected",panel);
+  //~ console.log("Lino.delete_selected",panel);
   var recs1 = panel.get_selected();
   var recs = [];
   for ( var i=0; i < recs1.length; i++ ) { if (! recs1[i].phantom) recs.push(recs1[i]); }
@@ -1090,7 +1090,7 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
   return function (response) {
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
-      //~ console.log('Lino.do_action()',action.name,'result is',result);
+      //~ console.log('Lino.action_handler()','result is',result,'on_confirm is',on_confirm);
       if (on_success && result.success) on_success(result);
       if (on_confirm && result.confirm_message) {
           var config = {title:"$_('Confirmation')"};
@@ -1107,7 +1107,8 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
       if (result.message) {
           if (result.alert && ! gridmode) {
               //~ Ext.MessageBox.alert('Alert',result.alert_msg);
-              Ext.MessageBox.alert('Alert',result.message);
+              if (result.alert === true) result.alert = "$_('Alert')";
+              Ext.MessageBox.alert(result.alert,result.message);
           } else {
               Lino.notify(result.message);
           }
@@ -1532,7 +1533,7 @@ Lino.row_action_handler = function(actionName,gridmode) {
 };
 
 Lino.list_action_handler = function(actionName,gridmode) {
-  return function(panel,btn,step) {
+  var fn = function(panel,btn,step) {
     //~ console.log(panel);
     var url = ROOT_URL + '/api' + panel.ls_url ;
     var p = Ext.apply({},panel.get_base_params());
@@ -1545,6 +1546,7 @@ Lino.list_action_handler = function(actionName,gridmode) {
       success: Lino.action_handler(panel,function(result){},gridmode,fn)
     });
   };
+  return fn;
 };
 
 Lino.show_detail = function(panel,btn) {
@@ -1867,7 +1869,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,Lino.PanelMixin);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   params_panel_hidden : false,
   base_params : {},
-  //~ 20120123 loadMask: {msg:"$_('Please wait...')"},
   //~ trackResetOnLoad : true,
   //~ query_params : {},
   //~ 20110119b quick_search_text : '',
@@ -1957,17 +1958,17 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           
     }
     if (config.content_type) {
-    config.bbar = config.bbar.concat([
-      '->',
-      { text: '[$_("Help Text Editor")]',
-        handler: Lino.help_text_editor,
-        qtip: "$_('Edit help texts for fields on this model.')",
-        scope: this},
-      { text: '[$_("Layout Editor")]',
-        handler: this.edit_detail_config,
-        qtip: "$_("Edit Detail layout")",
-        scope: this}
-    ])
+      config.bbar = config.bbar.concat([
+        '->',
+        { text: '[$_("Help Text Editor")]',
+          handler: Lino.help_text_editor,
+          qtip: "$_('Edit help texts for fields on this model.')",
+          scope: this},
+        { text: '[$_("Layout Editor")]',
+          handler: this.edit_detail_config,
+          qtip: "$_("Edit Detail layout")",
+          scope: this}
+      ])
     }
     //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
       
@@ -1976,20 +1977,26 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ }
       
     Lino.FormPanel.superclass.initComponent.call(this);
-      
-    var this_ = this;
-    this.cascade(function(cmp){
-      var active_field = false;
-      for (i = 0; i < this_.active_fields.length; i++) {
-        if (cmp.name == this_.active_fields[i]) {
-            active_field = true; break;
-        }
-      };
-      if (active_field) {
-      //~ if (cmp instanceof Lino.GridPanel) {
-          cmp.on("change",function() {this_.save()});
-      }
-    });
+    
+    this.on('render',function(){
+      this.loadMask = new Ext.LoadMask(this.bwrap,{msg:"$_('Please wait...')"});
+    },this);
+    
+    
+    //~ var this_ = this;
+    //~ this.cascade(function(cmp){
+      //~ // var active_field = false;
+      //~ for (i = 0; i < this_.active_fields.length; i++) {
+        //~ if (cmp.name == this_.active_fields[i]) {
+            //~ // active_field = true; break;
+            //~ cmp.on("change",function() {this_.save()});
+        //~ }
+      //~ };
+      //~ if (active_field) {
+      // if (cmp instanceof Lino.GridPanel) {
+          //~ cmp.on("change",function() {this_.save()});
+      //~ }
+    //~ });
     
     if (this.action_name == 'insert') {
       this.cascade(function(cmp){
@@ -2136,15 +2143,16 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     this.add_param_values(p);
-    //~ 20120123 this.loadMask.show();
+    if (this.loadMask) this.loadMask.show();
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
       method: 'GET',
       params: p,
-      url: this_.get_record_url(record_id),
+      scope: this,
+      url: this.get_record_url(record_id),
       success: function(response) {   
         // todo: convert to Lino.action_handler.... but result 
-        //~ 20120123 this_.loadMask.hide();
+        if (this.loadMask) this.loadMask.hide();
         if (response.responseText) {
           var rec = Ext.decode(response.responseText);
           //~ console.log('goto_record_id success',rec);
@@ -2155,22 +2163,22 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               */
               //~ this_.goto_record_id(rec.navinfo.first);
               if (rec.navinfo.first) {
-                  this_.load_record_id(rec.navinfo.first);
+                  this.load_record_id(rec.navinfo.first);
               } else {
                   Ext.MessageBox.alert('Note',
                     "$_('No more records to display. Detail window has been closed.')");
-                  if (this_.containing_window) {
-                      this_.containing_window.hide();
+                  if (this.containing_window) {
+                      this.containing_window.hide();
                   }
               }
                   
           } else {
-              this_.set_current_record(rec,after);
+              this.set_current_record(rec,after);
           }
         }
       },
       failure: function() {
-        //~ 20120123 this_.loadMask.hide();
+        if (this.loadMask) this.loadMask.hide();
         Lino.ajax_error_handler(arguments);
       }
     });
@@ -2292,6 +2300,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ console.log('InsertWrapper.save()',this);
     var panel = this;
     var rec = this.get_current_record();
+    this.loadMask.show();
     if (this.has_file_upload) this.form.fileUpload = true;
     if (rec) {
       if (rec.phantom) {
@@ -2308,6 +2317,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             If the calling window is a detail on the same table,
             then it should skip to the new record. But only then.
             ***/
+            this.loadMask.hide();
             var url = this.ls_url;
             Lino.close_window(function(ww){
                 if (ww.window.main_item instanceof Lino.FormPanel 
@@ -2343,7 +2353,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
                 //~ location.replace(url);
             //~ }
           },
-          failure: Lino.on_submit_failure,
+          failure: function() { this.loadMask.hide();Lino.on_submit_failure(arguments)},
           clientValidation: true
         })
       } else {
@@ -2363,11 +2373,12 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           success: function(form, action) {
             //~ panel.form.setValues(rec.data);
             //~ 20110701 panel.form.my_loadRecord(rec);
+            this.loadMask.hide();
             Lino.notify(action.result.message);
             panel.refresh_with_after(after);
             //~ if (after) after(); else panel.refresh();
           },
-          failure: Lino.on_submit_failure,
+          failure: function() { this.loadMask.hide();Lino.on_submit_failure(arguments)},
           clientValidation: true
         })
       }

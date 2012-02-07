@@ -514,6 +514,35 @@ class Component(ComponentBase,
         
 #~ Component.owner.verbose_name = _("Automatically created by")
 
+class ExtAllDayField(dd.VirtualField):
+    """
+    An editable virtual field needed for 
+    communication with the Ext.ensible CalendarPanel
+    because we consider the "all day" checkbox 
+    equivalent to "empty start and end time fields".
+    """
+    
+    editable = True
+    
+    def __init__(self,*args,**kw):
+        dd.VirtualField.__init__(self,models.BooleanField(*args,**kw),None)
+        
+    def set_value_in_object(self,request,obj,value):
+        if value:
+            obj.end_time = None
+            obj.start_time = None
+        else:
+            if not obj.start_time:
+                obj.start_time = datetime.time(9,0,0)
+            if not obj.end_time:
+                obj.end_time = datetime.time(10,0,0)
+        
+    def value_from_object(self,request,obj):
+        #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
+        return (obj.start_time is None)
+        
+
+
 class Event(Component,mixins.TypedPrintable,mails.Mailable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
@@ -539,32 +568,34 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
     #~ status = EventStatus.field(_("Status"),blank=True) # iCal:STATUS
     status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
-    duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
-    duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
-    duration_unit = DurationUnit.field(_("Duration unit"),blank=True) # iCal:DURATION
+    #~ duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
+    #~ duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
+    #~ duration_unit = DurationUnit.field(_("Duration unit"),blank=True) # iCal:DURATION
     #~ repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
     #~ repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
+    all_day = ExtAllDayField(_("all day"))
+    #~ all_day = models.BooleanField(_("all day"),default=False)
     
-    #~ def duration_changed(self):
-    def compute_times(self):
-        if self.duration_value is None or not self.duration_unit:
-            return
-        if self.start_time:
-            dt = self.get_datetime('start')
-            end_time = self.duration_unit.add_duration(dt,self.duration_value)
-            #~ end_time = add_duration(dt,self.duration_value,self.duration_unit)
-            setkw(self,**dt2kw(end_time,'end'))
-        elif self.end_time:
-            dt = self.get_datetime('end')
-            end_time = self.duration_unit.add_duration(dt,-self.duration_value)
-            setkw(self,**dt2kw(end_time,'start'))
+    
+    #~ def compute_times(self):
+        #~ if self.duration_value is None or not self.duration_unit:
+            #~ return
+        #~ if self.start_time:
+            #~ dt = self.get_datetime('start')
+            #~ end_time = self.duration_unit.add_duration(dt,self.duration_value)
+            #~ # end_time = add_duration(dt,self.duration_value,self.duration_unit)
+            #~ setkw(self,**dt2kw(end_time,'end'))
+        #~ elif self.end_time:
+            #~ dt = self.get_datetime('end')
+            #~ end_time = self.duration_unit.add_duration(dt,-self.duration_value)
+            #~ setkw(self,**dt2kw(end_time,'start'))
         
-    def duration_value_changed(self,oldvalue): self.compute_times()
-    def duration_unit_changed(self,oldvalue): self.compute_times()
-    def start_date_changed(self,oldvalue): self.compute_times()
-    def start_time_changed(self,oldvalue): self.compute_times()
-    def end_date_changed(self,oldvalue): self.compute_times()
-    def end_time_changed(self,oldvalue): self.compute_times()
+    #~ def duration_value_changed(self,oldvalue): self.compute_times()
+    #~ def duration_unit_changed(self,oldvalue): self.compute_times()
+    #~ def start_date_changed(self,oldvalue): self.compute_times()
+    #~ def start_time_changed(self,oldvalue): self.compute_times()
+    #~ def end_date_changed(self,oldvalue): self.compute_times()
+    #~ def end_time_changed(self,oldvalue): self.compute_times()
         
     def get_mailable_contacts(self):
         for g in self.guest_set.all():
@@ -585,10 +616,9 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     def url(self,request): return 'foo'
     #~ url.return_type = dd.DisplayField(_("Link URL"))
     
-    @dd.virtualfield(models.BooleanField(_("all day")))
-    def all_day(self,request): 
-        return not self.start_time
-    #~ all_day.return_type = models.BooleanField(_("all day"))
+    #~ @dd.virtualfield(models.BooleanField(_("all day")))
+    #~ def all_day(self,request): 
+        #~ return not self.start_time
     
     @dd.virtualfield(dd.DisplayField(_("Reminder")))
     def reminder(self,request): return 'foo'
@@ -638,10 +668,28 @@ class Task(Component):
 class Events(dd.Table):
     model = 'cal.Event'
     column_names = 'start_date start_time summary status *'
+    active_fields = ['all_day']
     
     #~ def setup_actions(self):
         #~ super(dd.Table,self).setup_actions()
         #~ self.add_action(mails.CreateMailAction())
+        
+    @classmethod
+    def disabled_fields(self,obj,request):
+        if obj.all_day:
+            return ['start_time','end_time']
+        return []
+        
+    def all_day_changed(self,old_value):
+        if self.all_day:
+            obj.end_time = None
+            obj.start_time = None
+        else:
+            if not obj.start_time:
+                obj.start_time = datetime.time(9,0,0)
+            if not obj.end_time:
+                obj.end_time = datetime.time(10,0,0)
+        
     
 class EventsBySet(Events):
     master_key = 'rset'
@@ -678,11 +726,11 @@ if settings.LINO.project_model:
         master_key = 'project'
     
 if settings.LINO.user_model:    
-    class MyEvents(mixins.ByUser):
+    class MyEvents(Events,mixins.ByUser):
         model = 'cal.Event'
         #~ label = _("My Events")
         order_by = ["start_date","start_time"]
-        column_names = 'start_date start_time summary status *'
+        #~ column_names = 'start_date start_time summary status *'
         
     class MyEventsToday(MyEvents):
         column_names = 'start_time summary status *'
@@ -957,6 +1005,30 @@ class ExtDateTimeField(dd.VirtualField):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         return obj.get_datetime(self.name_prefix,self.alt_prefix)
 
+class ExtSummaryField(dd.VirtualField):
+    """
+    An editable virtual field needed for 
+    communication with the Ext.ensible CalendarPanel
+    because we want a customized "virtual summary" 
+    that includes the project name.
+    """
+    editable = True
+    def __init__(self,label):
+        rt = models.CharField(label)
+        dd.VirtualField.__init__(self,rt,None)
+        
+    def set_value_in_object(self,request,obj,value):
+        if obj.project:
+            s = unicode(obj.project)
+            if value.startswith(s):
+                value = value[len(s):]
+        obj.summary = value
+        
+    def value_from_object(self,request,obj):
+        #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
+        if obj.project:
+            return u"%s %s" % (obj.project,obj.summary)
+        return obj.summary
 
 
 if settings.LINO.use_extensible:
@@ -985,6 +1057,17 @@ if settings.LINO.use_extensible:
         start_dt = ExtDateTimeField('start',None,_("Start"))
         end_dt = ExtDateTimeField('end','start',_("End"))
         
+        summary = ExtSummaryField(_("Summary"))
+        "Note that this overrides the database field of same name"
+        
+        
+        #~ @dd.displayfield(_("Summary"))
+        #~ def summary(cls,self,request):
+            #~ "Note that this overrides the database field of same name"
+            #~ if self.project:
+                #~ return u"%s %s" % (self.project,self.summary)
+            #~ return self.summary
+            
         @classmethod
         def parse_req(self,request,**kw):
             #~ filter = kw.get('filter',{})
@@ -1005,24 +1088,6 @@ if settings.LINO.use_extensible:
             kw.update(filter=filter)
             return kw
             
-        @dd.displayfield(_("Summary"))
-        def summary(cls,self,request):
-            "Note that this overrides the database field of same name"
-            if self.project:
-                return u"%s %s" % (self.project,self.summary)
-            return self.summary
-            
-        #~ @dd.displayfield(_("Start"))
-        #~ def start_dt(cls,self,request):
-            #~ return self.get_datetime('start')
-        
-        #~ @dd.virtualfield(models.DateTimeField(_("Start")))
-        #~ def start_dt(cls,self,request):
-            #~ return self.get_datetime('start')
-        
-        #~ @dd.displayfield(_("End"))
-        #~ def end_dt(cls,self,request):
-            #~ return self.get_datetime('end') or self.get_datetime('start')
         
 
 def setup_main_menu(site,ui,user,m): pass

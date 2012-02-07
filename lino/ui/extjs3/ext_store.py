@@ -531,7 +531,17 @@ class BooleanStoreField(StoreField):
         
         
     def parse_form_value(self,v,obj):
+        """
+        Ext.ensible CalendarPanel sends boolean values as 
+        """
         #~ print "20110717 parse_form_value", self.field.name, v, obj
+        if v in ('true','on',True):
+            return True
+        if v in ('false','off',False):
+            return False
+        raise Exception("Invalid boolean value %r for field %s" % (v,self.name))
+        
+        
         return ext_requests.parse_boolean(v)
 
         
@@ -719,7 +729,7 @@ class Store:
         >>> p
         <Person: ARENS Annette (118)>
         >>> p.contact_ptr_id = 117
-        >>> p.pk
+        >>> print p.pk
         117
         >>> p.save()
         >>>        
@@ -736,6 +746,11 @@ class Store:
         self.list_fields = []
         self.detail_fields = []
         
+        def addfield(sf):
+            self.all_fields.append(sf)
+            self.list_fields.append(sf)
+            self.detail_fields.append(sf)
+            
         if not issubclass(rh.report,actors.Frame):
             self.collect_fields(self.list_fields,rh.get_list_layout())
             
@@ -774,11 +789,6 @@ class Store:
             #~ for pf in rh.report.params:
                 self.param_fields.append(self.create_field(pf,pf.name))
         
-        def addfield(sf):
-            self.all_fields.append(sf)
-            self.list_fields.append(sf)
-            self.detail_fields.append(sf)
-            
         #~ if not issubclass(rh.report,table.Table):
             #~ addfield(RecnoStoreField(self))
           

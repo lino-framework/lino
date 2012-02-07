@@ -195,7 +195,7 @@ class HtmlRenderer(object):
                 s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),params,after_show)
             return s
         return '[?!]'
-        
+
   
 class PdfRenderer(HtmlRenderer):
     """
@@ -437,9 +437,7 @@ def parse_int(s,default=None):
     if s is None: return None
     return int(s)
 
-def json_response_kw(msg=None,**kw):
-    if msg:
-        kw.update(message=msg)
+def json_response_kw(**kw):
     return json_response(kw)
     
 def json_response(x):
@@ -455,21 +453,28 @@ def json_response(x):
     #~ return r
     #~ return HttpResponse(s, mimetype='text/html')
     
-def error_response(e=None,message=None,**kw):
-    kw.update(success=False)
-    if e is not None:
-        if hasattr(e,'message_dict'):
-            kw.update(errors=e.message_dict)
-    #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
-    kw.update(alert=True)
-    kw.update(message=message)
-    if message is None:
-        message = unicode(e)
-    kw.update(message=cgi.escape(message))
-    #~ kw.update(message=message_prefix+unicode(e))
-    dblogger.debug('error_response %s',kw)
+
+ACTION_RESPONSES = frozenset((
+  'message','success','alert',
+  'refresh','refresh_all',
+  'confirm_message', 'step',
+  'open_url','open_davlink_url'))
+"""
+Action responses supported by `Lino.action_handler` (defined in :xfile:`linolib.js`).
+"""
+
+def action_response(kw):
+    """
+    Builds a JSON response from given dict, 
+    checking first whether there are only allowed keys 
+    (defined in :attr:`ACTION_RESPONSES`)
+    """
+    for k in kw.keys():
+        if not k in ACTION_RESPONSES:
+            raise Exception("Unknown action response %r" % k)
     return json_response(kw)
-    
+        
+
 
 def elem2rec1(ar,rh,elem,**rec):
     rec.update(data=rh.store.row2dict(ar,elem))
@@ -592,33 +597,6 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     return rec
             
     
-#~ class ViewReportRequest(table.ReportActionRequest):
-    
-    #~ sort_column = None
-    #~ sort_direction = None
-    
-    #~ def __init__(self,request,rh,action,*args,**kw):
-        #~ table.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
-        #~ self.ah = rh
-        #~ self.request = request
-        #~ self.store = rh.store
-        #~ if request is None:
-            #~ self.user = None
-        #~ else:
-            #~ kw = self.parse_req(request,rh,**kw)
-        #~ self.setup(*args,**kw)
-        
-        
-    #~ def get_user(self):
-        #~ return self.user
-
-    #~ def row2list(self,row):
-        #~ return self.store.row2list(self,row)
-      
-    #~ def row2dict(self,row):
-        #~ return self.store.row2dict(self,row)
- 
-
 
   
     
@@ -1247,7 +1225,7 @@ tinymce.init({
             rh.store.form2obj(request,data,elem,is_new)
         except exceptions.ValidationError,e:
             #~ raise
-            return error_response(e)
+            return self.error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
         #~ logger.info('store.form2obj passed')
         
@@ -1264,7 +1242,7 @@ tinymce.init({
             elem.full_clean()
         except exceptions.ValidationError, e:
         #~ except Exception, e:
-            return error_response(e) #,_("There was a problem while validating your data : "))
+            return self.error_response(e) #,_("There was a problem while validating your data : "))
             #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
             
         #~ logger.info('elem.full_clean() passed')
@@ -1284,7 +1262,7 @@ tinymce.init({
         except IntegrityError,e:
             #~ print unicode(elem)
             #~ logger.exception(e)
-            return error_response(e) # ,_("There was a problem while saving your data : "))
+            return self.error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
         kw = dict()
@@ -1340,7 +1318,7 @@ tinymce.init({
             if not rpt.can_config.passes(request.user):
                 msg = _("User %(user)s cannot configure %(report)s.") % dict(
                     user=request.user,report=rpt)
-                return error_response(None,msg)
+                return self.error_response(None,msg)
             #~ return http.HttpResponseForbidden(msg)
             PUT = http.QueryDict(request.raw_post_data)
             gc = dict(
@@ -1367,11 +1345,10 @@ tinymce.init({
             except IOError,e:
                 msg = _("Error while saving GC for %(report)s: %(error)s") % dict(
                     report=rpt,error=e)
-                return error_response(None,msg)
+                return self.error_response(None,msg)
             #~ logger.info(msg)
             self.build_lino_js(True)            
             return self.success_response(msg)
-            #~ return json_response_kw(success=True)
             
         raise NotImplementedError
         
@@ -1575,7 +1552,7 @@ tinymce.init({
         #~ if rpt.disable_delete is not None:
         msg = rpt.disable_delete(elem,request)
         if msg is not None:
-            return error_response(None,msg)
+            return self.error_response(None,msg)
                 
         dblogger.log_deleted(request,elem)
         
@@ -1586,7 +1563,7 @@ tinymce.init({
             msg = _("Failed to delete %(record)s : %(error)s."
                 ) % dict(record=obj2unicode(elem),error=e)
             #~ msg = "Failed to delete %s." % element_name(elem)
-            return error_response(None,msg)
+            return self.error_response(None,msg)
             #~ raise Http404(msg)
         return HttpResponseDeleted()
         
@@ -1608,11 +1585,14 @@ tinymce.init({
                 raise Http404("%s %s does not exist." % (rpt,pk))
         
         
-        if isinstance(a,actions.ReportAction):
-            ar = rpt.request(self,request,a)
-            rh = ar.ah
-        else:
-            ar = tables.ActionRequest(self,a)
+        ar = rpt.request(self,request,a)
+        rh = ar.ah
+            
+        #~ if isinstance(a,actions.ReportAction):
+            #~ ar = rpt.request(self,request,a)
+            #~ rh = ar.ah
+        #~ else:
+            #~ ar = actions.ActionRequest(self,a)
         
         if request.method == 'GET':
             if pk:
@@ -1785,7 +1765,7 @@ tinymce.init({
                       success=True,
                       confirm_message='\n'.join([unicode(m) for m in e.messages]),
                       step=e.step)
-                    return json_response(r)
+                    return action_response(r)
                 except Exception,e:
                     msg = unicode(e)
                     #~ if elem is None:
@@ -1799,12 +1779,12 @@ tinymce.init({
                     msg += '.\n' + _("An error report has been sent to the system administrator.")
                     logger.warning(msg)
                     logger.exception(e)
-                    return error_response(e,msg)
+                    return self.error_response(e,msg)
               
             raise NotImplementedError("Action %s is not implemented)" % a)
                 
               
-        return error_response(None,
+        return self.error_response(None,
             "Method %r not supported for elements of %s." % (
                 request.method,ah.report))
         #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
@@ -1814,9 +1794,27 @@ tinymce.init({
         kw.update(success=False)
         return error_response(*args,**kw)
         
-    def success_response(self,*args,**kw):
+    def error_response(self,e=None,message=None,**kw):
+        kw.update(success=False)
+        if e is not None:
+            if hasattr(e,'message_dict'):
+                kw.update(errors=e.message_dict)
+        #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
+        kw.update(alert=True)
+        kw.update(message=message)
+        if message is None:
+            message = unicode(e)
+        kw.update(message=cgi.escape(message))
+        #~ kw.update(message=message_prefix+unicode(e))
+        dblogger.debug('error_response %s',kw)
+        return action_response(kw)
+    
+
+    def success_response(self,message=None,**kw):
         kw.update(success=True)
-        return json_response_kw(*args,**kw)
+        if message:
+            kw.update(message=message)
+        return action_response(kw)
         
     def lino_js_parts(self):
     #~ def js_cache_name(self):
@@ -1899,16 +1897,8 @@ tinymce.init({
                     #~ if isinstance(a,(table.WindowAction)):
                     for ln in self.js_render_window_action(rh,a):
                         f.write(ln + '\n')
-                            
-                    #~ if a.window_wrapper is not None:
-                        #~ for ln in a.window_wrapper.js_render():
-                            #~ f.write(ln + '\n')
-                        #~ f.write('\n')
-                        
-                  
-            #~ f.write("""
-#~ Ext.reg('extensible.eventeditwindow', Lino.cal.Event.FormPanel);
-#~ """)
+
+
             #~ f.write(jscompress(js))
             f.close()
             #~ logger.info("Wrote %s ...", fn)
@@ -2287,12 +2277,12 @@ tinymce.init({
             yield "      " + ln
         yield "    }"
         if dh.on_render:
-            yield "  this.onRender = function(ct, position) {"
+            yield "    this.onRender = function(ct, position) {"
             for ln in dh.on_render:
-                yield "    " + ln
+                yield "      " + ln
             #~ yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % full_model_name(dh.detail.model)
-            yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % dh.detail.actor
-            yield "  }"
+            yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % dh.detail.actor
+            yield "    }"
 
 
         #~ 20111125 see ext_elems.py too
@@ -2301,6 +2291,21 @@ tinymce.init({
         #~ yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
         #~ yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % full_model_name(dh.detail.model)
         yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % dh.detail.actor
+        
+        rpt = dh.detail.actor
+        if rpt.active_fields:
+            yield '    // active_fields:'
+            #~ dh = dtl.get_handle(rh.ui)
+            for name in rpt.active_fields:
+                e = dh.find_by_name(name)
+                #~ yield '    %s.on("change",function(){this.save()},this);' % py2js(e)
+                #~ yield '    %s.on("check",function(){this.save()},this);' % py2js(e)
+                yield '    %s.on("%s",function(){this.save()},this);' % (py2js(e),e.active_change_event)
+                """
+                Seems that checkboxes don't emit a change event when they are changed.
+                http://www.sencha.com/forum/showthread.php?43350-2.1-gt-2.2-OPEN-Checkbox-missing-the-change-event
+                """
+                
         yield "  }"
         yield "});"
         yield ""
@@ -2312,9 +2317,10 @@ tinymce.init({
         #~ yield "// js_render_detail_action_FormPanel %s" % action
         #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,full_model_name(rpt.model))
         #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,action.actor)
-        if rpt.get_detail() is None:
+        dtl = rpt.get_detail()
+        if dtl is None:
             raise Exception("action %s on table %r == %r without detail?" % (action,action.actor,rpt))
-        yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,rpt.get_detail().actor)
+        yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl.actor)
         yield "  empty_title: %s," % py2js(action.get_button_label())
         #~ if not isinstance(action,actions.InsertRow):
         if action.hide_navigator:
@@ -2329,7 +2335,7 @@ tinymce.init({
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action != rpt.default_action:
             yield "  action_name: %s," % py2js(action.name)
-        yield "  active_fields: %s," % py2js(rpt.active_fields)
+        #~ yield "  active_fields: %s," % py2js(rpt.active_fields)
         yield "  initComponent : function() {"
         a = rpt.get_action('detail')
         if a:
@@ -2465,7 +2471,9 @@ tinymce.init({
               [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
             
         yield "    Lino.%s_window = new Lino.Window({" % action
-        #~ yield "      caller: caller, "
+        if action.actor.window_size:
+            yield "      width: %d, height: %d, " % action.actor.window_size
+            yield "      maximized: false, draggable: true, maximizable: true, modal: true,"
         yield "      main_item: new %s(mainConfig)" % s
         yield "    });"
         yield "  }"

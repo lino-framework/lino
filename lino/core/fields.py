@@ -158,7 +158,8 @@ class DisplayField(FakeField):
             setattr(self,k,v)
     # the following dummy methods are never called but needed when using a DisplayField 
     # as return_type of a VirtualField
-    def to_python(self,*args,**kw): raise NotImplementedError
+    def to_python(self,*args,**kw): 
+        raise NotImplementedError("%s.to_python(%s,%s)",(self.name,args,kw))
     def save_form_data(self,*args,**kw): raise NotImplementedError
     def value_to_string(self,*args,**kw): raise NotImplementedError
         

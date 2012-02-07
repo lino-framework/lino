@@ -408,7 +408,8 @@ class StaticText:
 
 class TableRequest(AbstractTableRequest):
     """
-    An Action Request on a given Table.
+    An :class:`action request <lino.core.actions.ActionRequest>` 
+    on a :class:`Table`.
     """
     
     master_instance = None
@@ -603,10 +604,6 @@ class TableRequest(AbstractTableRequest):
         return kw
         
 
-#~ class IterActionRequest(actions.ActionRequest)
-    #~ def __init__(self,ui,iter,action):
-        #~ self.iter = iter
-        #~ actions.ActionRequest.__init__(self,ui,action)
         
         
 def has_fk(rr,name):
@@ -1503,9 +1500,15 @@ class DetailHandle(base.Handle):
         #~ self.content_type = ContentType.objects.get_for_model(detail.model).pk
         self.lh_list = [ 
             #~ 20120114 LayoutHandle(ui,detail.model._lino_model_report,dl) for dl in self.detail.layouts
-            LayoutHandle(ui,dl) for dl in self.detail.layouts 
+            LayoutHandle(ui,dl) for dl in self.detail.layouts
             ]
         base.Handle.__init__(self,ui)
+        
+    def find_by_name(self,name):
+        for lh in self.lh_list:
+            e = lh._main.find_by_name(name)
+            if e is not None:
+                return e
       
       
 

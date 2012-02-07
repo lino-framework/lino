@@ -613,7 +613,7 @@ class ClearCacheAction(actions.RowAction):
         t = elem.get_cache_mtime()
         if t is not None and t != elem.build_time:
             #~ logger.info("%r != %r", elem.get_cache_mtime(),elem.build_time)
-            rr.confirm(1,
+            rr.confirm(
                 _("This will discard all changes in the generated file."),
                 _("Are you sure?"))
             logger.info("Got confirmation to discard changes in %s", elem.get_cache_filename())

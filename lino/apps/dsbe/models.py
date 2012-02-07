@@ -948,14 +948,12 @@ class MyPersons(Persons):
         #~ q2 = Q(coached_from__isnull=False) | Q(coached_until__isnull=False,coached_until__gte=today)
         #~ return qs.filter(q1,q2)
         
-    #~ @dd.virtualfield('jobs.Contract.applies_from')
     @dd.virtualfield(models.DateField(_("Contract starts")))
     def applies_from(self,obj,ar):
         c = obj.get_active_contract()
         if c is not None:
             return c.applies_from
             
-    #~ @dd.virtualfield('jobs.Contract.applies_until')
     @dd.virtualfield(models.DateField(_("Contract ends")))
     def applies_until(self,obj,ar):
         c = obj.get_active_contract()

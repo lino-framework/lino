@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -351,7 +351,7 @@ class Mails(dd.Table):
 class InMails(Mails):
     column_names = "received sender subject * body"
     order_by = ["received"]
-    filter = dict(received__isnull=False)
+    filter = models.Q(received__isnull=False)
 
 class OutMails(Mails):
     column_names = "sent recipients subject * body"
@@ -360,7 +360,7 @@ class OutMails(Mails):
 class MyOutbox(OutMails):
     #~ known_values = dict(outgoing=True)
     label = _("Mail Outbox")
-    filter = dict(sent__isnull=True)
+    filter = models.Q(sent__isnull=True)
     master_key = 'sender'
     
     @classmethod
@@ -370,7 +370,7 @@ class MyOutbox(OutMails):
 
 class MySent(MyOutbox):
     label = _("Sent Mails")
-    filter = dict(sent__isnull=False)
+    filter = models.Q(sent__isnull=False)
     
 
 class MyInbox(InMails): 

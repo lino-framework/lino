@@ -30,7 +30,7 @@ from django.utils.encoding import force_unicode
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-#~ import lino
+import lino
 from lino import mixins
 from lino import dd
 #~ from lino import commands
@@ -40,6 +40,7 @@ from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
 from lino.tools import obj2str, sorted_models_list
 from lino.tools import resolve_field
+from lino.utils.choosers import chooser
 
 class SiteConfig(models.Model):
     """
@@ -143,7 +144,6 @@ class DataControlListing(mixins.Listing):
         html = '<div class="htmlText">%s</div>' % html
         return html
         
-from lino.utils.choosers import chooser
     
 class HelpText(models.Model):
     
@@ -218,6 +218,56 @@ if settings.LINO.user_model:
         
     class TextFieldTemplates(dd.Table):
         model = TextFieldTemplate
+
+
+
+class BuildLinoJS(dd.RowAction):
+    """
+    Rebuild the :xfile`lino.js` files.
+    This action is available on :class:`About`.
+    """
+    label = _("Build lino*.js files")
+    name = "buildjs"
+    def run(self,rr,elem):
+        rr.confirm(_("Are you sure?"))
+        #~ rr.confirm(_("Are you really sure?"))
+        rr.ui.build_lino_js(True)
+        return rr.ui.success_response(
+            """\
+Seems that it worked. Refresh your browser. 
+<br>
+Note that other users might experience side effects because 
+of the unexpected .js update, but there are no known problems so far.
+Please report any anomalies.""",
+            alert=_("Success"))
+
+    
+
+
+
+class About(dd.EmptyTable):
+    """
+    A modal window displaying information about this Lino server.
+    """
+    label = _("About") 
+    #~ hide_window_title = True
+    hide_top_toolbar = True
+    window_size = (700,400)
+    
+    @classmethod
+    def setup_actions(self):
+        super(About,self).setup_actions()
+        self.add_action(BuildLinoJS())
+   
+    @dd.displayfield(_("Versions"))
+    def versions(cls,self,req):
+        return lino.welcome_html()
+        
+    @dd.virtualfield(models.DateTimeField(_("Server up since")))
+    def startup_time(cls,self,req):
+        return settings.LINO.startup_time
+    
+
 
 
 def add_site_menu(site):

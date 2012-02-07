@@ -241,9 +241,12 @@ class Lino(Lino):
             
 
         
-        m = main.add_menu("help",_("Help"))
-        m.add_item('userman',_("~User Manual"),
-            href='http://lino.saffre-rumma.net/dsbe/index.html')
+        m = main.add_menu("site",_("Site"))
+        m.add_action(self.modules.lino.About)
+        
+        #~ m = main.add_menu("help",_("Help"))
+        #~ m.add_item('userman',_("~User Manual"),
+            #~ href='http://lino.saffre-rumma.net/dsbe/index.html')
             
         return main
       

@@ -12,26 +12,21 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Unerwünschte Scrollbars:
-
-    - Beim Passbild (nur mit Firefox und Chromium 17, aber nicht mit Chrome 16)
-    - Im Detail Kursangebot (manchmal)
-    
 #.  Continue with BCSS-Connection: 
 
     - add more fields to existing first service
     - button to quickly create a request
     
-#.  Eingabe Art-60-7-Konventionen : hier sind ja einige "aktive Felder", 
-    d.h. wenn man eine Stelle eingegeben hat und das Feld verlässt, 
-    wird das Formular ohne zu fragen abgespeichert. 
-    Das muss auch so sein, weil dadurch einige andere Felder eventuell 
-    verändert werden. 
-    Problem ist, dass die Anfrage an den Server oft eine Sekunde dauert,
-    in der ein Schnelltipper womöglich schon beginnt, im nächsten Feld etwas einzugeben.
-    Also Lino sollte das Formular während dieser Zeit mit 
-    einer loadMask ("Bitte warten") deaktivieren.
+#.  Mails verschicken: notes.Note und mails.OutMail könnten 
+    zusammengeführt werden. Kann sein, dass thirds.Third dann 
+    unnötig wird.
     
+#.  User profiles and one lino.js per user profile. 
+    Because this would save a lot of JS code to download for most users.
+    
+#.  Kontakte als common base class für Personen und Firmen : 
+    beibehalten oder wieder trennen?
+
 #.  The CalendarPanel when starting, calls all Events. 
     Should call only those of current month.
     http://ext.ensible.com/forum/viewtopic.php?f=2&t=477
@@ -100,6 +95,7 @@ Short-term
     werden kann.
 
 #.  Remote calendars (:doc:`/tickets/47`):
+
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
     
@@ -162,6 +158,21 @@ Short-term
 Medium-term
 -----------
 
+#.  Die virtuellen Felder `applies_from` und `applies_until` 
+    in :class:`Meine Klienten <lino.apps.dsbe.models.MyPersons>` 
+    machen jedes seinen eigenen Datenbank-Request 
+    Also zwei zusätzlichen Requests für jede Zeile. 
+    Einer für beide Felder würde reichen. 
+    Noch besser wäre natürlich gar keiner:
+    https://docs.djangoproject.com/en/dev/ref/models/querysets/#annotate
+    https://docs.djangoproject.com/en/dev/topics/db/managers/
+    https://docs.djangoproject.com/en/dev/topics/db/aggregation/
+
+#.  Unerwünschte Scrollbars:
+
+    - Beim Passbild (nur mit Firefox und Chromium 17, aber nicht mit Chrome 16)
+    - Im Detail Kursangebot (manchmal)
+    
 #.  Automatische Auswertungstermine eines Vertrags: 
     Warnung, wenn sie nicht alle generiert wurden, 
     weil die maximale Anzahl überschritten wurde.

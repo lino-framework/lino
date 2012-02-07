@@ -472,7 +472,7 @@ class Contracts(dd.Table):
     model = Contract
     column_names = 'id applies_from applies_until user type *'
     order_by = ['id']
-    active_fields = 'company contact'.split()
+    active_fields = ('company','contact')
     
 class ContractsByPerson(Contracts):
     master_key = 'person'

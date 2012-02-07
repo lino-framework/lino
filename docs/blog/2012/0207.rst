@@ -1,8 +1,8 @@
 20120207
 ========
 
-Subtile Bugs
-------------
+Ein paar subtile Bugs
+---------------------
 
 Die folgenden Bugs sind nun in der Development-Version behoben:
 
@@ -14,7 +14,7 @@ Die folgenden Bugs sind nun in der Development-Version behoben:
 
 Details und Bemerkungen
 
-In der :mod:`lino.apps.dsbe.settiings` machte ich::
+In der :mod:`lino.apps.dsbe.settings` machte ich::
 
     def setup_quicklinks(self,ui,user,tb):
         tb.add_action(self.modules.contacts.Persons,'detail')
@@ -28,8 +28,8 @@ Stattdessen musste es sein::
 
 Der Effekt war, dass man importierte Felder bearbeiten konnte.
 Das ist eine Mausefalle, die nicht gekommen wäre, wenn das `app_label` 
-von dsbe.Persons weiterhin `contacts` wäre. 
-Soll ich wieder forcieren, dass dass app_label vererbt wird?
+von :class:`lino.apps.dsbe.models.Persons` weiterhin `contacts` wäre. 
+Soll ich wieder forcieren, dass dass `app_label` vererbt wird?
 Aber ich glaube es gibt andere Fälle, wo diese Möglichkeit wichtig ist...
 
 
@@ -51,3 +51,73 @@ von vor `get_permission`.
 Ich habs jetzt einfach deaktiviert (war ja sowieso für alle Benutzer offen),
 aber bei Gelegenheit will ich eine neue Aktion `ConfigureLayout` machen 
 und die `detail_config_view` in die `api_list_view` aufnehmen.
+
+
+About
+-----
+
+New Window :class:`lino.models.About`, a first use-case of the new
+:attr:`window_size <lino.core.actors.Actor.window_size>`
+attribute for :class:`lino.core.actors.Actor`.
+
+:meth:`lino.core.actions.ActorRequest.confirm` required a first argument `step`. 
+This wasn't necessary since it can itself count the number of confirms.
+
+:func:`lino.ui.extjs3.ext_ui.action_response` and
+:attr:`lino.ui.extjs3.ext_ui.ACTION_RESPONSES`.
+
+Änderungen Kalender
+-------------------
+
+Erstens habe ich einen Bug behoben (man konnte vom Kalender aus 
+keine Termine erstellen),
+zweitens das Feld "Dauer" rausgeworfen und 
+drittens ein neues Ankreuzfeld "ganztags".
+
+Der Bug kam, weil `summary` und `all_day` virtuelle Felder waren.
+Zwei neue Klassen 
+:class:`ExtSummaryField <lino.modlib.cal.models.ExtSummaryField>`
+und
+:class:`ExtAllDayField <lino.modlib.cal.models.ExtAllDayField>`,
+um sie editierbar zu machen.
+  
+`all_day` ist ein Checkbox-Feld, 
+das in den meisten Kalender-Clients benutzt wird, 
+um dynamisch die beiden Zeit-Felder zu deaktivieren. 
+Diese Info braucht man nicht in der Datenbank zu speichern.
+
+Aktive Felder
+-------------
+
+Die Namen der aktiven Felder eines Detail-Fensters werden jetzt schon 
+beim Generieren der :xfile:`lino.js` aufgelöst. 
+Also Schutz vor Tippfehlerbugs und Aufbau ein bisschen effizienter.
+
+FormPanel hat jetzt auch eine `loadMask`, die beim Speichern 
+aktiviert wird. Also das folgende Problem ist gelöst:
+
+- Eingabe Art-60-7-Konventionen : hier sind ja einige "aktive Felder", 
+  d.h. wenn man eine Stelle eingegeben hat und das Feld verlässt, 
+  wird das Formular ohne zu fragen abgespeichert. 
+  Das muss auch so sein, weil dadurch einige andere Felder eventuell 
+  verändert werden. 
+  Problem ist, dass die Anfrage an den Server oft eine Sekunde dauert,
+  in der ein Schnelltipper womöglich schon beginnt, im nächsten Feld etwas einzugeben.
+  Also Lino sollte das Formular während dieser Zeit mit 
+  einer loadMask ("Bitte warten") deaktivieren.
+
+
+Es gibt aber noch zwei Bugs mit den 
+:attr:`active_fields <lino.core.actors.Actor.active_fields>`:
+erstens reagieren Checkboxen scheinbar nicht aufs change-Event
+und zweitens stimmt da was nicht: 
+wenn man in einem VSE, dessen `Vertreten durch` leer ist, 
+die `Organisation` ändert und dann das Feld mit [TAB] verlässt, 
+dann speichert er ein erstes Mal, und wenn man dann zum nächsten 
+VSE springt, speichert er ein zweites Mal.
+Sehr subtil. Hat scheinbar damit zu tun, dass der Eingabefokus 
+während des Speicherns in einem Feld ist, das durch das Speichern verändert wird.
+
+Übrigens könnte FormPanel.save() 
+vom PUT den aktualisierten Record 
+zurückbekommen statt ein weiteres GET zu machen.

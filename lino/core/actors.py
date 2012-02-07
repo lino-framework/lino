@@ -32,10 +32,18 @@ actors_list = None
 
 ACTOR_SEP = '.'
 
-class ReadPermission: pass
-class UpdatePermission: pass
-class CreatePermission: pass
+#~ class ReadPermission: pass
+#~ class UpdatePermission: pass
+#~ class CreatePermission: pass
           
+
+
+
+
+
+
+
+
 
 
 #~ from lino.core import actions
@@ -210,7 +218,10 @@ class ActorMetaClass(type):
         
   
 class Actor(Handled):
-    "Base class for Tables and Frames"
+    """
+    Base class for Tables and Frames. 
+    An alternative name for "Actor" is "Resource".
+    """
     
     __metaclass__ = ActorMetaClass
     
@@ -223,11 +234,21 @@ class Actor(Handled):
     uses it to specify a value which overrides the default.
     """
     
+    window_size = None
+    """
+    Set this to a tuple of (height, width) in pixels to have 
+    this actor display in a modal non-maximized window.
+    """
+    
     default_list_action_name = 'grid'
     default_elem_action_name =  'detail'
     
     hide_top_toolbar = False
+    
     hide_window_title = False
+    """
+    This is set to `True` in lino.
+    """
 
     
     disabled_fields = None
@@ -412,6 +433,10 @@ class Actor(Handled):
         return True
         
     @classmethod
+    def setup_actions(self):
+        pass
+        
+    @classmethod
     def set_actions(self,actions):
         self._actions_list = []
         self._actions_dict = {}
@@ -463,6 +488,13 @@ class Actor(Handled):
         #~ logger.info("20120202 Actor.get_data_elem found nothing")
         #~ return None
               
+    @classmethod
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls
+        if action is None:
+            action = self.default_action
+        return actions.ActionRequest(ui,self,request,action,**kw)
+
         
 
 class FrameHandle(base.Handle): 
@@ -480,7 +512,8 @@ class FrameHandle(base.Handle):
 
 
 class Frame(Actor): 
-  
+    """
+    """
     _handle_class = FrameHandle
     default_action_class = None
     editable = False
@@ -495,18 +528,16 @@ class Frame(Actor):
             self.label = self.default_action.label
             #~ self.default_action.actor = self
         super(Frame,self).do_setup()
+        self.set_actions([])
+        self.setup_actions()
         if self.default_action:
             self.add_action(self.default_action)
 
-    @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls
-        if action is None:
-            action = self.default_action
-        return actions.ActorRequest(ui,self,request,action,**kw)
-
 class EmptyTable(Frame):
-  
+    """
+    A "Table" that has exactly one virtual row and thus is visible 
+    only using a Detail view on that row.
+    """
     has_navigator = False
     default_list_action_name = 'show'
     default_elem_action_name =  'show'
@@ -520,19 +551,16 @@ class EmptyTable(Frame):
             assert self.label is not None
             self.default_action = actions.ShowEmptyTable(self)
             super(Frame,self).do_setup()
+            self.setup_actions()
             self.add_action(self.default_action)
-            #~ self.add_action(self.default_action)
-            from lino.mixins.printable import DirectPrintAction
-            self.add_action(DirectPrintAction(self))
 
-            
     @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls
-        if action is None:
-            action = self.default_action
-        return actions.ActorRequest(ui,self,request,action,**kw)
+    def setup_actions(self):
+        super(EmptyTable,self).setup_actions()
+        from lino.mixins.printable import DirectPrintAction
+        self.add_action(DirectPrintAction(self))
         
+            
     @classmethod
     def create_instance(self,req,**kw):
         #~ if self.known_values:

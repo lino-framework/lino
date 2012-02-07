@@ -23,19 +23,55 @@ import lino
 from lino.utils import AttrDict
 from lino.utils import babel
 
-
-#~ from lino.utils import perms
-
 from lino.ui import requests as ext_requests
 
 from lino.tools import resolve_model
 
-#~ if settings.LINO.user_model:
-    #~ USER_MODEL = resolve_model(settings.LINO.user_model)
-#~ else:
-    #~ USER_MODEL = None
- 
+
+
+
+class VirtualRow(object):
+    def __init__(self,**kw):
+        self.update(**kw)
         
+    def update(self,**kw):
+        for k,v in kw.items():
+            setattr(self,k,v)
+            
+class PhantomRow(VirtualRow):
+    def __init__(self,request,**kw):
+        self._ar = request
+        VirtualRow.__init__(self,**kw)
+        
+    def __unicode__(self):
+        return unicode(self._ar.get_action_title())
+        
+class EmptyTableRow(VirtualRow):
+    """
+    Base class for virtual rows of an :class:`EmptyTable`.
+    """
+    def __init__(self,table,**kw):
+        self._table = table
+        VirtualRow.__init__(self,**kw)
+        
+    def __unicode__(self):
+        return unicode(self._table.label)
+        
+    def get_print_language(self,pm):
+        return babel.DEFAULT_LANGUAGE
+        
+    def get_templates_group(self):
+        return self._table.app_label + '/' + self._table.__name__
+    
+    def filename_root(self):
+        return self._table.app_label + '.' + self._table.__name__
+
+
+
+
+
+
+
 
 
 class Hotkey:
@@ -64,6 +100,10 @@ DELETE = Hotkey(keycode=46)
     
     
 class ConfirmationRequired(Exception):
+    """
+    This is the special exception risen when an Action calls 
+    :meth:`ActionRequest.confirm`.
+    """
     def __init__(self,step,messages):
         self.step = step
         self.messages = messages
@@ -71,6 +111,9 @@ class ConfirmationRequired(Exception):
 
 
 class Action(object): 
+    """
+    Abstract base class for all Actions
+    """
     opens_a_slave = False
     label = None
     name = None
@@ -101,6 +144,13 @@ class Action(object):
     def get_button_label(self):
         return self.label 
         
+    def run(self,ar,**kw):
+        """
+        Execute the action. `ar` is an :class:`ActionRequest` 
+        object representing the context where the action is running.
+        """
+        raise NotImplementedError("%s has no run() method" % self.__class__)
+            
         
 class WindowAction(Action):
     pass
@@ -245,9 +295,6 @@ class ListAction(Action):
     """
     callable_from = (GridEdit,)
     
-    def run(self,rr,**kw):
-        raise NotImplementedError("%s has no run() method" % self.__class__)
-            
 
 class DeleteSelected(Action):
     readonly = False
@@ -283,85 +330,49 @@ DELETE = DeleteSelected()
 
 
 
-
-
-
-class VirtualRow(object):
-    def __init__(self,**kw):
-        self.update(**kw)
+#~ class ActionRequest(object):
+    #~ def __init__(self,ui,action):
+        #~ self.ui = ui
+        #~ self.action = action
         
-    def update(self,**kw):
-        for k,v in kw.items():
-            setattr(self,k,v)
-            
-class PhantomRow(VirtualRow):
-    def __init__(self,request,**kw):
-        self._ar = request
-        VirtualRow.__init__(self,**kw)
-        
-    def __unicode__(self):
-        return unicode(self._ar.get_action_title())
-        
-class EmptyTableRow(VirtualRow):
-  
-    def __init__(self,table,**kw):
-        self._table = table
-        VirtualRow.__init__(self,**kw)
-        
-    def __unicode__(self):
-        return unicode(self._table.label)
-        
-    def get_print_language(self,pm):
-        return babel.DEFAULT_LANGUAGE
-        
-    def get_templates_group(self):
-        return self._table.app_label + '/' + self._table.__name__
-    
-    def filename_root(self):
-        return self._table.app_label + '.' + self._table.__name__
-        
+    #~ def get_status(self,ui,**kw):
+        #~ return kw
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
+#~ class ActorRequest(ActionRequest):
 class ActionRequest(object):
-    def __init__(self,ui,action):
-        self.ui = ui
-        self.action = action
-        
-    def get_status(self,ui,**kw):
-        return kw
-  
-
-
-class ActorRequest(ActionRequest):
-  
+    """
+    Deserves more documentation.
+    """
     create_kw = None
     renderer = None
     
     def __init__(self,ui,report,request,action,**kw):
-        ActionRequest.__init__(self,ui,action)
+        #~ ActionRequest.__init__(self,ui,action)
+        self.ui = ui
+        self.action = action
+        self.step = 0 # confirmation counter
         self.report = report
         self.ah = report.get_handle(ui)
-        #~ self.ah = rh
         self.request = request
         if request is not None:
             kw = self.parse_req(request,**kw)
         self.setup(**kw)
         
+    #~ def confirm(self,step,*messages):
+        #~ if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
+            #~ return
+        #~ raise ConfirmationRequired(step,messages)
+
+    def confirm(self,*messages):
+        """
+        Calling this from an Action's :meth:`Action.run`
+        """
+        assert len(messages) > 0 and messages[0], "At least one non-empty message required"
+        self.step += 1
+        if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
+            return
+        raise ConfirmationRequired(self.step,messages)
+
     def create_phantom_row(self,**kw):
         obj = PhantomRow(self,**kw)
         return obj

@@ -353,6 +353,7 @@ class FieldElement(LayoutElement):
     declare_type = jsgen.DECLARE_VAR
     stored = True
     filter_type = None # 'auto'
+    active_change_event = 'change'
     #declaration_order = 3
     #~ ext_suffix = "_field"
     
@@ -801,6 +802,7 @@ class BooleanFieldElement(FieldElement):
     #~ grid_column_template = "new Ext.grid.BooleanColumn(%s)"
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
+    active_change_event = 'check'
         
     def set_parent(self,parent):
         FieldElement.set_parent(self,parent)
@@ -973,6 +975,11 @@ class Container(LayoutElement):
             for el in e.walk():
                 yield el
         yield self
+        
+    def find_by_name(self,name):
+        for e in self.walk():
+            if e.name == name:
+                return e
         
 
     def pprint(self,level=0):

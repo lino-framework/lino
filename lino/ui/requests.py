@@ -99,13 +99,6 @@ URL_PARAMS = [
 URL_FORMAT_JSON = 'json'
 
 
-def parse_boolean(v):
-    if v in ('true','on'):
-        return True
-    if v in ('false','off'):
-        return False
-    raise Exception("Invalid boolean value %r" % v)
-        
 def dict2kw(d):
     newd = {}
     for k,v in d.items():
