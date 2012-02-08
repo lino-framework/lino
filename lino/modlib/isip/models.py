@@ -255,12 +255,14 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         if self.type_id and self.type.exam_policy_id:
             if not self.exam_policy_id:
                 self.exam_policy_id = self.type.exam_policy_id
-        if self.contact is None:
-            if self.company:
+        if self.company:
+            if self.contact is None or self.contact.company != self.company:
                 qs = contract_contact_choices(self.company)
                 #~ qs = self.company.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact = qs[0]
+                else:
+                    self.contact = None
         # severe test is ready but not yet activated :
         if False and self.person_id is not None:
             msg = OverlappingContractsTest(self.person).check(self)
@@ -399,7 +401,9 @@ class OverlappingContractsTest:
             
     
 class Contract(ContractBase):
-  
+    """
+    ISIP = Individual Social Integration Project (VSE)
+    """
     class Meta:
         verbose_name = _("ISIP")
         verbose_name_plural = _("ISIPs")
@@ -472,7 +476,8 @@ class Contracts(dd.Table):
     model = Contract
     column_names = 'id applies_from applies_until user type *'
     order_by = ['id']
-    active_fields = ('company','contact')
+    #~ active_fields = ('company','contact')
+    active_fields = ['company']
     
 class ContractsByPerson(Contracts):
     master_key = 'person'

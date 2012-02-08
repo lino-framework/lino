@@ -2313,11 +2313,13 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           scope: this,
           success: function(form, action) {
             Lino.notify(action.result.message);
+            this.loadMask.hide();
             /***
+            Close this window, but update the status of the 
+            calling window.
             If the calling window is a detail on the same table,
             then it should skip to the new record. But only then.
             ***/
-            this.loadMask.hide();
             var url = this.ls_url;
             Lino.close_window(function(ww){
                 if (ww.window.main_item instanceof Lino.FormPanel 
@@ -2328,57 +2330,32 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
                 }
                 //~ else console.log("20120127 update_status: no",ww);
             });
-            //~ Lino.close_window({
-              //~ data_record:null,
-              //~ record_id:action.result.record_id});
-            //~ var caller = panel.containing_window.caller;
-            //~ if (caller) {
-              //~ panel.containing_window.kill();
-              //~ if (caller.ls_detail_handler) {
-                //~ // console.log('20120117 call detail handler after submit_insert');
-                //~ var p = Ext.apply({},panel.get_base_params());
-                //~ delete p.fmt;
-                //~ caller.ls_detail_handler(caller,{},{
-                  //~ record_id:action.result.record_id,
-                  //~ base_params:p
-                  //~ });
-              //~ } 
-            //~ } else {
-                //~ // console.log("20120117 submit_insert without caller: use permalink.");
-                //~ var p = Ext.apply({},panel.get_base_params());
-                //~ delete p.fmt;
-                //~ Ext.apply(p,{$ext_requests.URL_PARAM_ACTION_NAME : 'detail'});
-                //~ var url = panel.get_permalink_url() 
-                  //~ + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
-                //~ location.replace(url);
-            //~ }
           },
-          failure: function() { this.loadMask.hide();Lino.on_submit_failure(arguments)},
+          failure: function() { 
+            this.loadMask.hide();
+            Lino.on_submit_failure(arguments)},
           clientValidation: true
         })
       } else {
         if (this.action_name != 'detail') 
             console.log("Warning: non-phantom record, but action_name is",this.action_name)
-        //~ console.log('20111125 FormPanel.save() PUT',panel,rec);
-        //~ console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
-        //~ Lino.notify('submit');
-        //~ console.log('20110406 DetailWindow.save: panel.get_base_params() = <',panel.get_base_params(),'>');
-        // 20110406
         this.form.submit({
           url: ROOT_URL + '/api' + panel.ls_url + '/' + rec.id,
           method: 'PUT',
           //~ headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'},
-          scope: panel,
-          params: panel.get_base_params(), 
+          scope: this,
+          params: this.get_base_params(), 
           success: function(form, action) {
             //~ panel.form.setValues(rec.data);
             //~ 20110701 panel.form.my_loadRecord(rec);
             this.loadMask.hide();
             Lino.notify(action.result.message);
-            panel.refresh_with_after(after);
+            this.refresh_with_after(after);
             //~ if (after) after(); else panel.refresh();
           },
-          failure: function() { this.loadMask.hide();Lino.on_submit_failure(arguments)},
+          failure: function() { 
+            this.loadMask.hide();
+            Lino.on_submit_failure(arguments)},
           clientValidation: true
         })
       }

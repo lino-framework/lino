@@ -1,0 +1,15 @@
+20120208
+========
+
+Für beide Vertragsarten gilt jetzt: 
+
+- :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
+  ist kein aktives Feld mehr.
+  
+- Wenn 
+  :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
+  nicht leer ist und man die 
+  :attr:`Organisation <lino.modlib.isip.ContractBase.company>` 
+  ändert, dann wird der bestehende Wert in 
+  :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
+  überschrieben.

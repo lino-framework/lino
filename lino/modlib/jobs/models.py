@@ -295,7 +295,8 @@ class Contract(ContractBase):
             #~ return provider.rolesbyparent.all()
             #~ return provider.rolesbyparent.filter(type__use_in_contracts=True)
             #~ return links.Link.objects.filter(type__use_in_contracts=True,a=provider)
-            return contacts.Role.objects.filter(type__use_in_contracts=True,company=provider)
+            return contacts.Role.objects.filter(
+                type__use_in_contracts=True,company=provider)
         return []
         
     def get_company(self):
