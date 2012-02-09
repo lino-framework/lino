@@ -143,8 +143,11 @@ class HtmlRenderer(object):
         """
         s = ''
         #~ params = dict(base_params=tr.request2kw(self))
-        params = tr.get_status(self)
-        after_show = dict()
+        params = None
+        after_show = tr.get_status(self)
+        
+        #~ params = tr.get_status(self)
+        #~ after_show = dict()
         a = tr.report.get_action('insert')
         if a is not None:
             elem = tr.create_instance()
@@ -173,8 +176,11 @@ class HtmlRenderer(object):
         
         """
         #~ params = dict(base_params=rr.request2kw(self))
-        params = rr.get_status(self)
-        after_show = dict()
+        #~ params = rr.get_status(self)
+        params = None
+        after_show = rr.get_status(self)
+        #~ after_show = dict(base_params=rr.get_status(self))
+        #~ after_show = dict()
         if rr.get_total_count() == 0:
             a = rr.report.get_action('insert')
             if a is not None:
@@ -440,18 +446,29 @@ def parse_int(s,default=None):
 def json_response_kw(**kw):
     return json_response(kw)
     
-def json_response(x):
+def json_response(x,content_type='application/json'):
+    #~ logger.info("20120208")
     #s = simplejson.dumps(kw,default=unicode)
     #return HttpResponse(s, mimetype='text/html')
     s = py2js(x)
+    #~ logger.info("20120208 json_response(%r)\n--> %s",x,s)
     #~ logger.debug("json_response() -> %r", s)
-    # http://dev.sencha.com/deploy/dev/docs/source/BasicForm.html#cfg-Ext.form.BasicForm-fileUpload
-    return HttpResponse(s, content_type='text/html')
+    """
+    Theroretically we should send content_type='application/json'
+    (http://stackoverflow.com/questions/477816/the-right-json-content-type),
+    but "File uploads are not performed using Ajax submission, 
+    that is they are not performed using XMLHttpRequests. (...) 
+    If the server is using JSON to send the return object, then 
+    the Content-Type header must be set to "text/html" in order 
+    to tell the browser to insert the text unchanged into the 
+    document body." 
+    (http://docs.sencha.com/ext-js/3-4/#!/api/Ext.form.BasicForm)
+    See 20120209.
+    """
+    return HttpResponse(s, content_type=content_type)
+    #~ return HttpResponse(s, content_type='text/html')
+    #~ return HttpResponse(s, content_type='application/json')
     #~ return HttpResponse(s, content_type='text/json')
-    #~ r = HttpResponse(s, content_type='application/json')
-    # see also http://stackoverflow.com/questions/477816/the-right-json-content-type
-    #~ return r
-    #~ return HttpResponse(s, mimetype='text/html')
     
 
 ACTION_RESPONSES = frozenset((
@@ -509,12 +526,12 @@ def elem2rec_empty(ar,ah,elem,**rec):
     #~ rec.update(id=elem.pk) or -99999)
     return rec
 
-def elem2rec_detailed(ar,rh,elem,**rec):
+def elem2rec_detailed(ar,elem,**rec):
     """
     Adds additional information for this record, used only by detail views.
     
     The "navigation information" is a set of pointers to the next, previous, 
-    first and last record relativ to this record in this report. 
+    first and last record relative to this record in this report. 
     (This information can be relatively expensive for records that are towards 
     the end of the report. 
     See :doc:`/blog/2010/0716`,
@@ -526,6 +543,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     This can happen after changing the quick filter (search_change) of a detail view.
     
     """
+    rh = ar.ah
     rec = elem2rec1(ar,rh,elem,**rec)
     rec.update(title=ar.get_title() + u" » " + unicode(elem))
     #~ rec.update(title=rh.report.model._meta.verbose_name + u"«%s»" % unicode(elem))
@@ -1214,9 +1232,12 @@ tinymce.init({
         #~ return HttpResponse(html)
 
 
-    def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows=None): # **kw2save):
+    #~ def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows): # **kw2save):
+    def form2obj_and_save(self,ar,data,elem,is_new,restful,file_upload=False): # **kw2save):
         """
         """
+        request = ar.request
+        rh = ar.ah
         #~ logger.info('20111217 form2obj_and_save %r', data)
         #~ print 'form2obj_and_save %r' % data
         
@@ -1232,50 +1253,39 @@ tinymce.init({
         if not is_new:
             dblogger.log_changes(request,elem)
             
-        #~ if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`, :doc:`/blog/2011/0226`
-            #~ elem.before_save()
-            
-        #~ logger.info('elem.before_save() passed')
-        
-        #~ print '20101024a', elem.card_valid_from
         try:
             elem.full_clean()
         except exceptions.ValidationError, e:
-        #~ except Exception, e:
             return self.error_response(e) #,_("There was a problem while validating your data : "))
-            #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
             
-        #~ logger.info('elem.full_clean() passed')
-        #~ print '20101024b', elem.card_valid_from
-
         kw2save = {}
-        #~ kw2resp = {}
         if is_new:
             kw2save.update(force_insert=True)
-            #~ kw2resp.update(close=True)
         else:
             kw2save.update(force_update=True)
-            #~ kw2resp.update(refresh=True)
             
         try:
             elem.save(**kw2save)
         except IntegrityError,e:
-            #~ print unicode(elem)
-            #~ logger.exception(e)
             return self.error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
-        kw = dict()
-        kw.update(success=True)
+        kw = dict(success=True)
         if is_new:
             dblogger.log_created(request,elem)
             kw.update(
-                message=_("%s has been created.") % obj2unicode(elem),
-                record_id=elem.pk)
+                message=_("%s has been created.") % obj2unicode(elem))
+                #~ record_id=elem.pk)
         else:
             kw.update(message=_("%s has been saved.") % obj2unicode(elem))
-        if include_rows:
-            kw.update(rows=[rh.store.row2dict(include_rows,elem)])
+        if restful:
+            kw.update(rows=[rh.store.row2dict(ar,elem)])
+        elif file_upload:
+            kw.update(record_id=elem.pk)
+            return json_response(kw,content_type='text/html')
+        else:
+            kw.update(data_record=elem2rec_detailed(ar,elem))
+        #~ logger.info("20120208 form2obj_and_save --> %r",kw)
         return json_response(kw)
                 
             
@@ -1364,13 +1374,9 @@ tinymce.init({
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         rpt = self.requested_report(request,app_label,actor)
-        #~ rpt = actors.get_actor2(app_label,actor)
-        #~ if rpt is None:
-            #~ raise Http404("No actor named '%s.%s'." % (app_label,actor))
-        #~ rh = rpt.get_handle(self)
-        #~ ar = self.build_ar(request,rh)
         
-        action_name = request.GET.get(
+        #~ action_name = request.GET.get(
+        action_name = request.REQUEST.get(
             ext_requests.URL_PARAM_ACTION_NAME,
             rpt.default_list_action_name)
         a = rpt.get_action(action_name)
@@ -1378,6 +1384,7 @@ tinymce.init({
             raise Http404("%s has no action %r" % (rpt,action_name))
             
         ar = rpt.request(self,request,a)
+        ar.renderer = self.ext_renderer
         rh = ar.ah
         
         if request.method == 'POST':
@@ -1385,12 +1392,17 @@ tinymce.init({
             #~ instance = ar.create_instance(**data)
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
-            instance = ar.create_instance()
+            elem = ar.create_instance()
             # store uploaded files. 
             # html forms cannot send files with PUT or GET, only with POST
+            #~ logger.info("20120208 list POST %s",obj2str(elem,force_detailed=True))
             if rh.report.handle_uploaded_files is not None:
-                rh.report.handle_uploaded_files(instance,request)
-            return self.form2obj_and_save(request,rh,request.POST,instance,True)
+                rh.report.handle_uploaded_files(elem,request)
+                file_upload = True
+            else:
+                file_upload = False
+            return self.form2obj_and_save(ar,request.POST,elem,True,False,file_upload)
+            #~ return self.form2obj_and_save(request,rh,request.POST,instance,True,ar)
             
         if request.method == 'GET':
             
@@ -1398,9 +1410,6 @@ tinymce.init({
                 ext_requests.URL_PARAM_FORMAT,
                 ar.action.default_format)
           
-            #~ print '20110714', a, fmt
-            
-            #~ if fmt == 'json':
             if fmt == ext_requests.URL_FORMAT_JSON:
                 ar.renderer = self.ext_renderer
                 rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
@@ -1619,7 +1628,7 @@ tinymce.init({
             #~ logger.info("20111217 Got POST %r",data)
             data = json.loads(data)
             #~ data = self.rest2form(request,rh,data)
-            return self.form2obj_and_save(request,rh,data,instance,True,include_rows=ar)
+            return self.form2obj_and_save(ar,data,instance,True,True)
             
         if request.method == 'PUT':
             if elem:
@@ -1630,7 +1639,10 @@ tinymce.init({
                 #~ data = self.rest2form(request,rh,data)
                 #~ print 20111021, data
                 #~ fmt = data.get('fmt',None)
-                return self.form2obj_and_save(request,ar.ah,data,elem,False) # force_update=True)
+                a = rpt.get_action(rpt.default_list_action_name)
+                ar = rpt.request(self,request,a)
+                ar.renderer = self.ext_renderer
+                return self.form2obj_and_save(ar,data,elem,False,True) # force_update=True)
             else:
                 raise Http404("PUT without element")
           
@@ -1663,47 +1675,32 @@ tinymce.init({
             return self.delete_element(request,rpt,elem)
             
         if request.method == 'PUT':
-            ah = rpt.get_handle(self)
+            #~ ah = rpt.get_handle(self)
             if elem is None:
                 raise Http404('Tried to PUT on element -99999')
             #~ print 20110301, request.raw_post_data
             data = http.QueryDict(request.raw_post_data)
             #~ print 20111021, data
             #~ fmt = data.get('fmt',None)
-            return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)
+            a = rpt.get_action(rpt.default_list_action_name)
+            ar = rpt.request(self,request,a)
+            ar.renderer = self.ext_renderer
+            return self.form2obj_and_save(ar,data,elem,False,False) # force_update=True)
             
         if request.method == 'GET':
-            #~ # before 20110713
-            #~ ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
-            
-            #~ if pk == '-99999':
-                #~ elem = ar.create_instance()
-            
-            #~ fmt = request.GET.get('fmt',None)
-            #~ if pk == '-99999':
-                #~ datarec = elem2rec_insert(ar,ah,elem)
-            #~ else:
-                #~ datarec = elem2rec_detailed(ar,ah,elem)
-            #~ if fmt is None or fmt == 'json':
-                #~ return json_response(datarec)
                     
             action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
               rpt.default_elem_action_name)
-            #~ if action_name is None:
-                #~ a = rpt.default_action
-            #~ else:
             a = rpt.get_action(action_name)
             if a is None:
                 raise Http404("%s has no action %r" % (rpt,action_name))
                 
-            fmt = request.GET.get('fmt',a.default_format)
-            #~ a = rpt.get_action(fmt)
-                
-            #~ ar = ViewReportRequest(request,ah,a)
-            #~ ar = table.TableRequest(self,rpt,request,a)
             ar = rpt.request(self,request,a)
             ar.renderer = self.ext_renderer
             ah = ar.ah
+            
+            #~ fmt = request.GET.get('fmt',a.default_format)
+            fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,a.default_format)
 
             if isinstance(a,actions.OpenWindowAction):
               
@@ -1716,11 +1713,8 @@ tinymce.init({
                         assert elem is None
                         elem = ar.create_instance()
                         datarec = elem2rec_empty(ar,ah,elem)
-                    #~ elif pk  == '-99990':
-                        #~ assert elem is None
-                        #~ datarec = elem2rec_empty(ar,ah)
                     else:
-                        datarec = elem2rec_detailed(ar,ah,elem)
+                        datarec = elem2rec_detailed(ar,elem)
                     
                     return json_response(datarec)
                     

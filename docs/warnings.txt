@@ -5,4 +5,8 @@ T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: documen
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\ref\modelattr.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2012\0207.rst:63: WARNING: py:meth reference target not found: lino.core.actions.ActorRequest.confirm
+T:\hgwork\lino\docs\blog\2012\0208.rst:8: WARNING: py:attr reference target not found: lino.modlib.isip.ContractBase.contact
+T:\hgwork\lino\docs\blog\2012\0208.rst:11: WARNING: py:attr reference target not found: lino.modlib.isip.ContractBase.contact
+T:\hgwork\lino\docs\blog\2012\0208.rst:11: WARNING: py:attr reference target not found: lino.modlib.isip.ContractBase.company
+T:\hgwork\lino\docs\blog\2012\0208.rst:11: WARNING: py:attr reference target not found: lino.modlib.isip.ContractBase.contact
+T:\hgwork\lino\docs\blog\2012\0208.rst:26: WARNING: py:func reference target not found: lino.extjs3.ext_ui.HtmlRenderer.quick_upload_buttons

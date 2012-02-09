@@ -1,6 +1,8 @@
 20120208
 ========
 
+
+Hier die Lösung für das Problem von :doc:`gestern <0207>`. 
 Für beide Vertragsarten gilt jetzt: 
 
 - :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
@@ -13,3 +15,106 @@ Für beide Vertragsarten gilt jetzt:
   ändert, dann wird der bestehende Wert in 
   :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
   überschrieben.
+  
+  
+Pro Speichern ein AJAX-Call weniger
+-----------------------------------
+
+`FormPanel.save()` kriegt jetzt als Antwort vom Server auf sein POST bzw. PUT 
+den kompletten aktualisierten Record zurück, 
+statt wie bisher lediglich dessen ID, mit dem er dann ein weiteres GET machte.
+Also pro Speichern ein AJAX-Call weniger!
+Was insbesondere bei aktiven Feldern angenehm auffallen dürfte.
+
+Beim Testen dieses Features fand ich einen weiteren Bug:
+Die drei [Upload]-Buttons für Arbeitserlaubnis, Führerschein etc.
+funktionieren momentan nicht korrekt. Wenn man die benutzt, ist
+anschließend der Upload nicht der betreffenden Person zugewiesen.
+Erklärung:
+:func:`lino.extjs3.ext_ui.HtmlRenderer.quick_upload_buttons` setzte 
+base_params  nach params statt nach status.
+
+Probleme mit komplexer JSON-Response
+------------------------------------
+
+Oops, weil er jetzt den kompletten Record zurückgibt, 
+kriegt der Browser in komplexeren Fällen scheinbar ein Problem mit dem 
+Dekodieren des JSON. Hier die Antwort auf das POST nach 
+Erstellen eines neuen Uploads::
+
+  { "message": "Upload \"Aufenthaltserlaubnis wir2012b_4.jpg\" wurde erstellt.", 
+    "success": true, 
+    "data_record": { 
+      "navinfo": { "last": 3, "recno": 1, "prev": null, "message": "Record  1 von 1", "first": 3, "next": null },
+      "disable_delete": null, 
+      "title": "Uploads von COLLARD Charlotte (122) \u00bb Aufenthaltserlaubnis wir2012b_4.jpg",
+      "data": { 
+        "valid_until": null, "description": "", 
+        "created": "2012-02-08T10:06:27", "userHidden": 103, 
+        "modified": "2012-02-08T10:06:27", "typeHidden": 2, 
+        "disable_editing": false, "user": "root", 
+        "file": "uploads/2012/02/wir2012b_4.jpg", 
+        "owner": "<a href="\&quot;javascript:Lino.dsbe.AllPersons.detail(null,{" &quot;record_id&quot;:="" 122="" })\"="">COLLARD Charlotte (122)</a>", 
+        "disabled_fields": { "id": true }, 
+        "type": "Aufenthaltserlaubnis", "id": 3 }, "disabled_actions": {  }, "id": 3 } }
+        
+Das obige habe ich abgefangen, indem ich in der `ext-all-debug.js` eine Zeile eingefügt habe::
+        
+    doDecode = function(json){
+        console.log("20120208 doDecode()",json);
+        return eval("(" + json + ")");    
+    },
+        
+        
+Im Feld `owner` stehen zwei ``=""``, die ich mir nicht erklären kann (und der Browser offenbar auch nicht).
+Wenn ich anschließend den erstellen Record abfrage (http://127.0.0.1:8000/api/uploads/Uploads/3), 
+kommt eine korrekte Antwort::
+  
+  { "navinfo": { "last": 4, "recno": 3, "prev": 2, "message": "Record  3 von 4", "first": 1, "next": 4 }, 
+  "disable_delete": null, 
+  "title": "Uploads \u00bb Aufenthaltserlaubnis wir2012b_4.jpg", 
+  "data": { 
+    "valid_until": null, "description": "", 
+    "created": "2012-02-08T10:06:27", "userHidden": 103, 
+    "modified": "2012-02-08T10:06:27", "typeHidden": 2, 
+    "disable_editing": false, "user": "root", 
+    "file": "uploads/2012/02/wir2012b_4.jpg", 
+    "owner": "<a href=\"javascript:Lino.dsbe.AllPersons.detail(null,{ &quot;record_id&quot;: 122 })\">COLLARD Charlotte (122)</a>", 
+    "disabled_fields": { "id": true }, 
+    "type": "Aufenthaltserlaubnis", "id": 3 }, "disabled_actions": {  }, "id": 3 }        
+        
+Ist es vielleicht ein Bug in meiner :func:`lino.utils.jsgen.py2js`? 
+Das Feld `owner` ist ein DisplayField und soll folgendes HTML-Fragment enthalten::
+
+  <a href="javascript:Lino.dsbe.AllPersons.detail(null,{&quot;record_id&quot;: 122 }">COLLARD Charlotte (122)</a>
+  
+  
+Hier ein vereinfachtes Beispiel, das in jedem Browser funktioniert::
+  
+  <html>
+  <body>
+  <a href="javascript:alert({&quot;record_id&quot;: 122 })">Test</a>
+  </body>
+  </html>
+    
+Added test examples in docstring of :mod:`lino.utils.jsgen`.
+
+Wenn ich folgende Meldung einbaue::
+
+  def json_response(x):
+      s = py2js(x)
+      logger.info("20120208 json_response(%r)\n--> %s",x,s)
+      #~ return HttpResponse(s, content_type='text/html')
+      return HttpResponse(s, content_type='application/json')
+
+
+Dann kriege ich::
+
+  INFO 20120208 json_response({'message': u'Upload "F\xfchrerschein wir2012b_8.jpg" wurde erstellt.', 'success': True, 'data_record': {'navinfo': {'last': 9, 'recno': 3, 'prev': 8, 'message': u'Record  3 von 3', 'first': 7, 'next': None}, 'disable_delete': None, 'title': u'Uploads von ARENS Annette (118) \xbb F\xfchrerschein wir2012b_8.jpg', 'data': {'valid_until': None, 'description': '', 'created': datetime.datetime(2012, 2, 8, 20, 43, 48, 46000), 'userHidden': 103, 'modified': datetime.datetime(2012, 2, 8, 20, 43, 48, 46000), 'typeHidden': 5, 'disable_editing': False, 'user': u'root', 'file': u'uploads/2012/02/wir2012b_8.jpg', 'owner': u'<a href="javascript:Lino.dsbe.AllPersons.detail(null,{ &quot;record_id&quot;: 118 })">ARENS Annette (118)</a>', 'disabled_fields': {'id': True}, 'type': u'F\xfchrerschein', 'id': 9}, 'disabled_actions': {}, 'id': 9}})
+  --> { "message": "Upload \"F\u00fchrerschein wir2012b_8.jpg\" wurde erstellt.", "success": true, "data_record": { "navinfo": { "last": 9, "recno": 3, "prev": 8, "message": "Record  3 von 3", "first": 7, "next": null }, "disable_delete": null, "title": "Uploads von ARENS Annette (118) \u00bb F\u00fchrerschein wir2012b_8.jpg", "data": { "valid_until": null, "description": "", "created": "2012-02-08T20:43:48", "userHidden": 103, "modified": "2012-02-08T20:43:48", "typeHidden": 5, "disable_editing": false, "user": "root", "file": "uploads/2012/02/wir2012b_8.jpg", "owner": "<a href=\"javascript:Lino.dsbe.AllPersons.detail(null,{ &quot;record_id&quot;: 118 })\">ARENS Annette (118)</a>", "disabled_fields": { "id": true }, "type": "F\u00fchrerschein", "id": 9 }, "disabled_actions": {  }, "id": 9 } }
+
+Also der Fehler scheint nicht in py2js zu sein, sondern eher ein Nebeneffekt beim decoding.
+
+Das Ganze könnte damit zusammen hängen, 
+dass es sich um die Antwort auf einen file upload handelt.
+Hm, das wäre ein Grund, mal den awesome uploader auszupacken...

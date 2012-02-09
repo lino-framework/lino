@@ -74,7 +74,8 @@ from lino.mixins.printable import DirectPrintAction, Printable
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-from lino.modlib.cal.models import DurationUnit, update_auto_task
+#~ from lino.modlib.cal.models import DurationUnit, update_auto_task
+from lino.modlib.cal.models import DurationUnit, update_reminder
 from lino.modlib.contacts.models import Contact
 from lino.tools import resolve_model, UnresolvedModel
 
@@ -548,46 +549,25 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
             if self.job_office_contact.person == self:
                 raise ValidationError(_("Circular reference"))
         super(Person,self).save(*args,**kw)
-        self.save_auto_tasks()
+        self.update_reminders()
         
-    def save_auto_tasks(self):
-      
-        # These constants must be unique for the whole Lino Site.
-        # Keep in sync with auto types defined in lino.mixins.reminders
-        CARD_VALID_UNTIL = 1
-        UNAVAILABLE_UNTIL = 2
-        WORK_PERMIT_SUSPENDED_UNTIL = 4
-        COACHED_UNTIL = 4
-        
+    def update_reminders(self):
         user = self.coach2 or self.coach1
         if user:
-            update_auto_task(
-              CARD_VALID_UNTIL,user,
-              DurationUnit.months.add_duration(self.card_valid_until,-2),
-              _("eID card expires"),
-              self)
-              #~ alarm_value=2,alarm_unit=DurationUnit.months)
+            M = DurationUnit.months
+            update_reminder(1,self,user,
+              self.card_valid_until,
+              _("eID card expires"),2,M)
+            update_reminder(2,self,user,
+              self.unavailable_until,
+              _("becomes available again"),1,M)
+            update_reminder(3,self,user,
+              self.work_permit_suspended_until,
+              _("work permit suspension ends"),1,M)
+            update_reminder(4,self,user,
+              self.coached_until,
+              _("coaching ends"),1,M)
               
-            update_auto_task(
-              UNAVAILABLE_UNTIL,user,
-              DurationUnit.months.add_duration(self.unavailable_until,-1),
-              _("becomes available again"),
-              self)
-              #~ alarm_value=1,alarm_unit=DurationUnit.months)
-              
-            update_auto_task(
-              WORK_PERMIT_SUSPENDED_UNTIL,user,
-              DurationUnit.months.add_duration(self.work_permit_suspended_until,-1),
-              _("work permit suspension ends"),
-              self)
-              #~ alarm_value=1,alarm_unit=DurationUnit.months)
-              
-            update_auto_task(
-              COACHED_UNTIL,user,
-              DurationUnit.months.add_duration(self.coached_until,-1),
-              _("coaching ends"),
-              self)
-              #~ alarm_value=1,alarm_unit=DurationUnit.months)
           
     #~ def get_auto_task_defaults(self,**kw):
     def update_owned_instance(self,task):
@@ -983,7 +963,7 @@ class MyActivePersons(MyPersons):
 
 #~ if True: # dd.is_installed('dsbe'):
 
-from lino.tools import models_by_abc
+#~ from lino.tools import models_by_abc
 
 
   
@@ -2322,8 +2302,6 @@ class Home(dd.EmptyTable):
     hide_window_title = True
     hide_top_toolbar = True
     
-    #~ @dd.displayfield("")
-    
     @dd.virtualfield(dd.HtmlBox())
     def tasks_summary(cls,self,req):
         return cal.tasks_summary(req.ui,req.get_user())
@@ -2339,80 +2317,11 @@ class Home(dd.EmptyTable):
     
     @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
     def missed_reminders(cls,self,req):
-        return reminders(req.ui,req.get_user(),days_back=90,
+        return cal.reminders(req.ui,req.get_user(),days_back=90,
           max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
     @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
     def coming_reminders(cls,self,req):
-        return reminders(req.ui,req.get_user(),days_forward=30,
+        return cal.reminders(req.ui,req.get_user(),days_forward=30,
             max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
-from lino.utils.babel import dtosl
-    
-def reminders(ui,user,days_back=None,days_forward=None,**kw):
-    """
-    Return a HTML summary of all open reminders for this user.
-    May be called from :xfile:`welcome.html`.
-    """
-    Task = resolve_model('cal.Task')
-    Event = resolve_model('cal.Event')
-    today = datetime.date.today()
-    
-    past = {}
-    future = {}
-    def add(cmp):
-        if cmp.start_date < today:
-        #~ if task.dt_alarm < today:
-            lookup = past
-        else:
-            lookup = future
-        day = lookup.get(cmp.start_date,None)
-        if day is None:
-            day = [cmp]
-            lookup[cmp.start_date] = day
-        else:
-            day.append(cmp)
-            
-    #~ filterkw = { 'due_date__lte' : today }
-    filterkw = {}
-    if days_back is not None:
-        filterkw.update({ 
-            'start_date__gte' : today - datetime.timedelta(days=days_back)
-            #~ 'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
-        })
-    if days_forward is not None:
-        filterkw.update({ 
-            'start_date__lte' : today + datetime.timedelta(days=days_forward)
-            #~ 'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
-        })
-    #~ filterkw.update(dt_alarm__isnull=False)
-    filterkw.update(user=user)
-    
-    for o in Event.objects.filter(
-        models.Q(status=None) | models.Q(status__reminder=True),
-        **filterkw).order_by('start_date'):
-        add(o)
-        
-    filterkw.update(done=False)
-            
-    for task in Task.objects.filter(**filterkw).order_by('start_date'):
-        add(task)
-        
-    def loop(lookup,reverse):
-        sorted_days = lookup.keys()
-        sorted_days.sort()
-        if reverse: 
-            sorted_days.reverse()
-        for day in sorted_days:
-            yield '<h3>'+dtosl(day) + '</h3>'
-            yield dd.summary(ui,lookup[day],**kw)
-            
-    if days_back is not None:
-        s = ''.join([chunk for chunk in loop(past,True)])
-    else:
-        s = ''.join([chunk for chunk in loop(future,False)])
-        
-    #~ s = '<div class="htmlText" width="30%%">%s</div>' % s
-    s = '<div class="htmlText" style="margin:5px">%s</div>' % s
-    return s
-    

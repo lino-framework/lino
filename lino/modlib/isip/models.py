@@ -280,14 +280,14 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         
     def after_update_owned_instance(self,comp):
         if comp.user_modified:
-            self.save_auto_tasks()
+            self.update_reminders()
         
         
     def save(self,*args,**kw):
         super(ContractBase,self).save(*args,**kw)
-        self.save_auto_tasks()
+        self.update_reminders()
         
-    def save_auto_tasks(self):
+    def update_reminders(self):
         """
         Generate automatic calendar events owned by this contract.
         

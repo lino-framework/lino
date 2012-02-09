@@ -115,9 +115,20 @@ wenn man in einem VSE, dessen `Vertreten durch` leer ist,
 die `Organisation` ändert und dann das Feld mit [TAB] verlässt, 
 dann speichert er ein erstes Mal, und wenn man dann zum nächsten 
 VSE springt, speichert er ein zweites Mal.
-Sehr subtil. Hat scheinbar damit zu tun, dass der Eingabefokus 
-während des Speicherns in einem Feld ist, das durch das Speichern verändert wird.
+Sehr subtil. 
+Das kommt daher, dass der Eingabefokus dann
+während des Speicherns in einem Feld ist, das durch das Speichern 
+verändert wird, und das ebenfalls aktiv ist.
+
+Also der Cursor befindet sich in einem aktiven Feld, 
+dann kommt der AJAX-Call rein und verändert unter anderem 
+just dieses Feld. 
+Logisch, dass er dann beim Weiterspringen denkt, er hätte sein Feld 
+verändert.
+Also wenn man mehr als ein aktives Feld definiert, sollten 
+die sich beim Speichern nicht auch noch gegenseitig aktualisieren.
+Lösung im Fall von Verträgen:siehe :doc:`morgen <0208>`.
 
 Übrigens könnte FormPanel.save() 
-vom PUT den aktualisierten Record 
+vom PUT bzw. POST den aktualisierten Record 
 zurückbekommen statt ein weiteres GET zu machen.

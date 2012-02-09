@@ -27,7 +27,9 @@ import datetime
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
@@ -903,9 +905,9 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
     
 def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     """
-    Creates, updates or deletes the automatic component 
-    (either a :class:`Task` or an :class:`Event`)
-    related to the specified `owner`.
+    Creates, updates or deletes the 
+    automatic :class:`calendar component <Component>`
+    of the specified `type` and `owner`.
     
     Specifying `None` for `date` means that 
     the automatic component should be deleted.
@@ -948,7 +950,24 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
         else:
             if not obj.user_modified:
                 obj.delete()
+                
         
+def update_reminder(type,owner,user,orig,msg,num,unit):
+    """
+    Shortcut for calling :func:`update_auto_task` 
+    for automatic "reminder tasks".
+    A reminder task is a message about something that will 
+    happen in the future.
+    """
+    kw = dict(unit=unit,num=num)
+    update_auto_task(
+      type,user,
+      unit.add_duration(orig,-num),
+      string_concat(msg,' ',_("in %(num)d %(unit)s" % kw)),
+      owner)
+            
+
+
 
 def migrate_reminder(obj,reminder_date,reminder_text,
                          delay_value,delay_type,reminder_done):
@@ -1088,7 +1107,113 @@ if settings.LINO.use_extensible:
             kw.update(filter=filter)
             return kw
             
+
+from lino.utils.babel import dtosl
+    
+def reminders(ui,user,days_back=None,days_forward=None,**kw):
+    """
+    Return a HTML summary of all open reminders for this user.
+    
+    """
+    Task = resolve_model('cal.Task')
+    Event = resolve_model('cal.Event')
+    today = datetime.date.today()
+    
+    past = {}
+    future = {}
+    def add(cmp):
+        if cmp.start_date < today:
+        #~ if task.dt_alarm < today:
+            lookup = past
+        else:
+            lookup = future
+        day = lookup.get(cmp.start_date,None)
+        if day is None:
+            day = [cmp]
+            lookup[cmp.start_date] = day
+        else:
+            day.append(cmp)
+            
+    #~ filterkw = { 'due_date__lte' : today }
+    filterkw = {}
+    if days_back is not None:
+        filterkw.update({ 
+            'start_date__gte' : today - datetime.timedelta(days=days_back)
+            #~ 'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
+        })
+    if days_forward is not None:
+        filterkw.update({ 
+            'start_date__lte' : today + datetime.timedelta(days=days_forward)
+            #~ 'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
+        })
+    #~ filterkw.update(dt_alarm__isnull=False)
+    filterkw.update(user=user)
+    
+    for o in Event.objects.filter(
+        models.Q(status=None) | models.Q(status__reminder=True),
+        **filterkw).order_by('start_date'):
+        add(o)
         
+    filterkw.update(done=False)
+            
+    for task in Task.objects.filter(**filterkw).order_by('start_date'):
+        add(task)
+        
+    def loop(lookup,reverse):
+        sorted_days = lookup.keys()
+        sorted_days.sort()
+        if reverse: 
+            sorted_days.reverse()
+        for day in sorted_days:
+            yield '<h3>'+dtosl(day) + '</h3>'
+            yield dd.summary(ui,lookup[day],**kw)
+            
+    if days_back is not None:
+        s = ''.join([chunk for chunk in loop(past,True)])
+    else:
+        s = ''.join([chunk for chunk in loop(future,False)])
+        
+    #~ s = '<div class="htmlText" width="30%%">%s</div>' % s
+    s = '<div class="htmlText" style="margin:5px">%s</div>' % s
+    return s
+    
+    
+def update_reminders(user):
+    n = 0 
+    for obj in settings.LINO.get_reminder_generators_by_user(user):
+        obj.update_reminders()
+        n += 1
+    return n
+      
+
+class UpdateReminders(actions.RowAction):
+    #~ name = 'print'
+    label = _('Update Reminders')
+    
+    callable_from = (actions.GridEdit, actions.ShowDetailAction)
+        
+    def run(self,ar,user,**kw):
+        logger.info("Updating reminders for %s",user)
+        n = update_reminders(user)
+        kw.update(success=True)
+        kw.update(message=
+          _("%(num)d reminders for %(user)s have been updated.") 
+            % dict(user=user,num=n))
+        logger.info("Done updating reminders for %s",user)
+        return ar.ui.success_response(**kw)
+        
+class RemindersByUser(dd.Table):
+    model = Task
+    label = _("Reminders")
+    master_key = 'user'
+    column_names = "start_date summary *"
+    order_by = ["start_date"]
+    filter = Q(auto_type__isnull=False)
+
+def site_setup(site):
+    #~ from lino.modlib.users.models import Users
+    site.modules.users.Users.add_action(UpdateReminders())
+
 
 def setup_main_menu(site,ui,user,m): pass
 

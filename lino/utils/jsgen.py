@@ -11,7 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
+r"""
 Example:
 
 >>> class TextField(Component):
@@ -47,9 +47,33 @@ console.log("Hello, World!")
 }
 <BLANKLINE>
 
+And yet another example (:doc:`/blog/2012/0208`)...
 
+>>> chunk = '<a href="javascript:alert({&quot;record_id&quot;: 122 })">Test</a>'
+>>> print py2js(chunk)
+"<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>"
+
+>>> data_record = dict(
+...   title="Upload \"Aufenthaltserlaubnis\"",
+...   data=dict(owner=chunk))
+>>> print py2js(data_record)
+{ "data": { "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" }, "title": "Upload \"Aufenthaltserlaubnis\"" }
+>>> response = dict(
+...   message="Upload \"Aufenthaltserlaubnis\" wurde erstellt.",
+...   success=True,
+...   data_record=data_record)
+>>> print py2js(response) #doctest: +NORMALIZE_WHITESPACE
+{ "message": "Upload \"Aufenthaltserlaubnis\" wurde erstellt.", "success": true, 
+  "data_record": { 
+    "data": { 
+      "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" 
+    }, 
+    "title": "Upload \"Aufenthaltserlaubnis\"" 
+  } 
+}
 
 """
+
 
 import logging
 logger = logging.getLogger(__name__)

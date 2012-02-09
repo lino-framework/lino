@@ -1,0 +1,57 @@
+20120209
+========
+
+Probleme mit komplexer JSON-Response
+------------------------------------
+
+Weiter mit dem Problem von :doc:`gestern <0208>`.
+Das Ganze hängt in der Tat damit zusammen, 
+dass es sich um die Antwort auf einen file upload handelt.
+
+Im Fall eines Dateiuploads funktioniert eine ExtJS-Form anders als 
+normal: "File uploads are not performed using Ajax submission, 
+that is they are not performed using XMLHttpRequests. (...) 
+If the server is using JSON to send the return object, then 
+the Content-Type header must be set to "text/html" in order 
+to tell the browser to insert the text unchanged into the 
+document body." 
+(http://docs.sencha.com/ext-js/3-4/#!/api/Ext.form.BasicForm)
+
+Aber den Awesome Uploader zu benutzen, der mit richtigen XMLHttpRequests 
+arbeitet, 
+scheint mir weiterhin viel Aufwand für wenig Nutzen.
+(Wie viel Aufwand es wäre, kann ich momentan nicht genau abschätzen, 
+aber es könnten einige Teufel im Detail stecken.)
+Und zumindest in unserer momentanen Sicht der Dinge brauchen wir keinen multiple 
+file upload, weil die Benutzer sowieso pro Datei diverse Metadaten angeben sollen 
+(Upload-Art, Gültig bis, Person).
+Der einzige Vorteil wäre, dass man während des Dateitransfers 
+weiter im Formular eingeben kann.
+
+Nach einigem Surfen 
+(`1 <http://loianegroner.com/2010/03/ajax-file-upload-with-extjs-and-spring-framework/>`_
+`2 <http://dev.sencha.com/deploy/ext-4.0.0/examples/form/file-upload.html>`_
+`3 <http://superdit.com/2010/07/17/extjs-basic-multiple-file-upload/>`_)
+und Probieren scheint mir 
+momentan folgende Knubbelslösung die Sinnvollste: 
+der Lino-Server antwortet auf ein "normales" mit einem 
+vollen `data_record` in der JSON-Antwort (die jetzt auch den 
+offiziellen content type 'application/json' hat), 
+und nur in der Antwort auf ein POST mit file upload 
+benutzt er `record_id` und den content type 'text/html'.
+
+
+Speichern eines Uploads
+-----------------------
+
+Beim Speichern eines Uploads mit ausgefülltem :guilabel`Gültig bis` 
+kam ein Server-Traceback
+"'alarm_value' is an invalid keyword argument for this function".
+
+Außerdem waren die Erinnerungsmeldungen "eID-Karte läuft ab" ein 
+bisschen unkomplett: sie gaben nicht an, *wann* das passiert.
+Jetzt lautet der automatische Text "eID-Karte läuft ab in 2 Monaten".
+
+Neue Funktion :func:`lino.modlib.cal.utils.update_reminder`
+
+Neue Funktion :func:`lino.apps.dsbe.models.update_all_reminders`

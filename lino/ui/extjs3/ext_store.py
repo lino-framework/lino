@@ -980,15 +980,14 @@ class Store:
             #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
         return l
       
-    def row2dict(self,request,row,fields=None,**d):
-        #~ assert isinstance(request,table.AbstractTableRequest)
+    def row2dict(self,ar,row,fields=None,**d):
+        #~ assert isinstance(ar,table.AbstractTableRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
-        #~ d = {}
         if fields is None:
             fields = self.detail_fields
         for fld in fields:
-            v = fld.full_value_from_object(request,row)
-            fld.value2dict(request.ui,v,d,row)
+            v = fld.full_value_from_object(ar,row)
+            fld.value2dict(ar.ui,v,d,row)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
 

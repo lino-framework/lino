@@ -69,7 +69,7 @@ from lino.mixins.printable import DirectPrintAction
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-from lino.modlib.cal.models import DurationUnit, update_auto_task
+from lino.modlib.cal.models import DurationUnit
 
 # not used here, but these modules are required in INSTALLED_APPS, 
 # and other code may import them using 

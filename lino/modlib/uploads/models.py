@@ -33,7 +33,8 @@ from lino import dd
 from lino.utils import perms
 from lino import mixins
 from lino.modlib.contacts import models as contacts
-from lino.modlib.cal.models import DurationUnit, update_auto_task
+#~ from lino.modlib.cal.models import DurationUnit, update_auto_task
+from lino.modlib.cal.models import DurationUnit, update_reminder
 
 class UploadType(models.Model):
     
@@ -93,23 +94,19 @@ class Upload(
         
     def save(self,*args,**kw):
         super(Upload,self).save(*args,**kw)
-        self.save_auto_tasks()
+        self.update_reminders()
         
-    def save_auto_tasks(self):
-        #~ logger.info("Upload.save_auto_tasks() %s : owner is %s", self.pk, self.owner)
-      
-        # These constants must be unique for the whole Lino Site.
-        # Keep in sync with auto types defined in lino.apps.-dsbe.models.Person
-        UPLOAD_VALID_UNTIL = 5
+    def update_reminders(self):
+        """
+        Also called from :func:`lino.apps.dsbe.models.update_all_reminders`.
+        """
+        #~ logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
         
-        update_auto_task(
-          UPLOAD_VALID_UNTIL,
-          self.user,
+        update_reminder(1,self,self.user,
           self.valid_until,
           _("%s expires" % (self.type)),
-          self,
-          alarm_value=2,alarm_unit=DurationUnit.months)
-        
+          2,DurationUnit.months)
+      
     def update_owned_instance(self,task):
         #~ logger.info("Upload.update_owned_instance() %s : owner is %s", self.pk, self.owner)
         mixins.AutoUser.update_owned_instance(self,task)
@@ -134,12 +131,12 @@ class Uploads(dd.Table):
     
 class UploadsByOwner(Uploads):
     master_key = 'owner'
-    column_names = "file user type * "
+    column_names = "file type description user * "
     slave_grid_format = 'summary'
     
     
 class MyUploads(mixins.ByUser,Uploads):
     #~ column_names = "file user person company owner created modified"
-    column_names = "file user owner *"
+    column_names = "file description user owner *"
     label = _("My uploads")
     order_by = ["modified"]

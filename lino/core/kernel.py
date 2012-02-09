@@ -82,11 +82,6 @@ def analyze_models(self):
 
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
     
-    for a in loading.get_apps():
-        for k,v in a.__dict__.items():
-            if isinstance(v,type)  and issubclass(v,dd.Module):
-                logger.info("20120128 Found module %s",v)
-
     #~ if settings.MODEL_DEBUG:
     if False:
         apps = app_labels()
@@ -131,6 +126,7 @@ def analyze_models(self):
                     ``f.rel.to._meta.verbose_name``.
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
+                    
     from lino.models import HelpText
     for ht in HelpText.objects.filter(help_text__isnull=False):
         resolve_field(unicode(ht)).help_text = ht.help_text
@@ -311,9 +307,12 @@ def setup_site(self,make_messages=False):
         #~ for app_label,a in loading.cache.app_store.items():
         app_label = a.__name__.split('.')[-2]
         #~ logger.info("Installing %s = %s" ,app_label,a)
-        for n in dir(a):
-            if n.startswith('setup_'):
-                self.modules.define(app_label,n,getattr(a,n))
+        
+        for k,v in a.__dict__.items():
+            #~ if isinstance(v,type)  and issubclass(v,dd.Module):
+                #~ logger.info("20120128 Found module %s",v)
+            if k.startswith('setup_'):
+                self.modules.define(app_label,k,v)
     for m in models.get_models():
         if not m._meta.abstract:
             self.modules.define(m._meta.app_label,m.__name__,m)
@@ -328,6 +327,10 @@ def setup_site(self,make_messages=False):
     for a in actors.actors_list:
         a.setup()
             
+    for a in models.get_apps():
+        fn = getattr(a,'site_setup',None)
+        if fn is not None:
+            fn(self)
 
     #~ if settings.MODEL_DEBUG:
     if False:

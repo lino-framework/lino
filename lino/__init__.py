@@ -859,4 +859,13 @@ class Lino(object):
             yield 'lino.utils.sqllog.SQLLogToConsoleMiddleware'
             #~ yield 'lino.utils.sqllog.SQLLogMiddleware'
             
+    def get_reminder_generators_by_user(self,user):
+        """
+        Override this per application to return a list of 
+        reminder generators from all models for a give ueser
+        A reminder generator is an object that has a `update_reminders` 
+        method.
+        """
+        return []
+        
                 

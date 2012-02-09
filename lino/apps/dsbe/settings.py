@@ -250,6 +250,20 @@ class Lino(Lino):
             
         return main
       
+    def get_reminder_generators_by_user(self,user):
+        """
+        """
+        from lino.tools import models_by_abc
+        from django.db.models import Q
+        from lino.modlib.isip import models as isip
+        
+        for obj in self.modules.contacts.Person.objects.filter(Q(coach1=user)|Q(coach1__isnull=True,coach2=user)):
+            yield obj
+        for obj in self.modules.uploads.Upload.objects.filter(user=user):
+            yield obj
+        for model in models_by_abc(self.modules.isip.ContractBase):
+            for obj in model.objects.filter(user=user):
+                yield obj
 
 LINO = Lino(__file__,globals())
 

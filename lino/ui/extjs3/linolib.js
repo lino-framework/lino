@@ -2023,7 +2023,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       return st;
   },
   set_status : function(status){
-    //~ console.log('20120117 FormPanel.after_show()',status);
+    console.log('20120208 FormPanel.set_status()',this,status);
     this.clear_base_params();
     if (status == undefined) status = {};
     if (status.param_values) this.set_param_values(status.param_values);
@@ -2050,7 +2050,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.set_current_record.createDelegate(this,[status.data_record]).defer(100);
       //~ this.set_current_record(this.data_record);
       //~ return;
-    } else if (status.record_id !== undefined) { // may be 0 
+    } else if (status.record_id != undefined) { 
+      /* possible values include 0 and null, 0 being a valid record id, 
+      null the equivalent of undefined
+      */
       //~ this.main_item.goto_record_id(this.status.record_id);
       this.load_record_id(status.record_id);
     } else {
@@ -2075,7 +2078,12 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   },
   
   after_delete : function() {
-    this.moveNext();
+    if (this.current_record.navinfo.next)
+      this.moveNext();
+    else if (this.current_record.navinfo.prev)
+      this.movePrev();
+    else 
+      this.abandon();
   },
   moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
   movePrev : function() {this.goto_record_id(this.current_record.navinfo.prev)},
@@ -2164,13 +2172,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               //~ this_.goto_record_id(rec.navinfo.first);
               if (rec.navinfo.first) {
                   this.load_record_id(rec.navinfo.first);
-              } else {
-                  Ext.MessageBox.alert('Note',
-                    "$_('No more records to display. Detail window has been closed.')");
-                  if (this.containing_window) {
-                      this.containing_window.hide();
-                  }
-              }
+              } else this.abandon();
                   
           } else {
               this.set_current_record(rec,after);
@@ -2182,6 +2184,15 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         Lino.ajax_error_handler(arguments);
       }
     });
+  },
+
+  abandon : function () {
+    Ext.MessageBox.alert('Note',
+      "$_('No more records to display. Detail window has been closed.')");
+    Lino.close_window();
+    //~ if (this.containing_window) {
+        //~ this.containing_window.hide();
+    //~ }
   },
   
   set_current_record : function(record,after) {
@@ -2295,13 +2306,15 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     return p;
   },
   
-  /* Lino.FormPanel.save() */
+  /* 
+  Lino.FormPanel.save() 
+  */
   save : function(after) {
-    //~ console.log('InsertWrapper.save()',this);
-    var panel = this;
-    var rec = this.get_current_record();
+    //~ var panel = this;
     this.loadMask.show();
+    var rec = this.get_current_record();
     if (this.has_file_upload) this.form.fileUpload = true;
+    console.log('FormPanel.save()',rec);
     if (rec) {
       if (rec.phantom) {
         if (this.action_name != 'insert') 
@@ -2312,21 +2325,27 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           params: this.get_base_params(), // 20101025
           scope: this,
           success: function(form, action) {
-            Lino.notify(action.result.message);
             this.loadMask.hide();
+            Lino.notify(action.result.message);
             /***
             Close this window, but update the status of the 
             calling window.
             If the calling window is a detail on the same table,
             then it should skip to the new record. But only then.
+            A successful response usually has a data_record,
+            except if it is a fileupload form where some mysterious 
+            decoding problems (20120209) force us to return a record_id 
+            which will lead to an additional GET.
             ***/
             var url = this.ls_url;
             Lino.close_window(function(ww){
                 if (ww.window.main_item instanceof Lino.FormPanel 
                     && ww.window.main_item.ls_url == url) {
                   //~ console.log("20120127 update_status: yes",ww);
-                  ww.status.data_record = null,
-                  ww.status.record_id = action.result.record_id
+                  //~ ww.status.data_record = null,
+                  ww.status.record_id = action.result.record_id,
+                  ww.status.data_record = action.result.data_record
+                  //~ ww.status.record_id = action.result.record_id
                 }
                 //~ else console.log("20120127 update_status: no",ww);
             });
@@ -2340,7 +2359,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         if (this.action_name != 'detail') 
             console.log("Warning: non-phantom record, but action_name is",this.action_name)
         this.form.submit({
-          url: ROOT_URL + '/api' + panel.ls_url + '/' + rec.id,
+          url: ROOT_URL + '/api' + this.ls_url + '/' + rec.id,
           method: 'PUT',
           //~ headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'},
           scope: this,
@@ -2350,7 +2369,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             //~ 20110701 panel.form.my_loadRecord(rec);
             this.loadMask.hide();
             Lino.notify(action.result.message);
-            this.refresh_with_after(after);
+            this.set_current_record(action.result.data_record,after);
+            //~ this.refresh_with_after(after);
             //~ if (after) after(); else panel.refresh();
           },
           failure: function() { 

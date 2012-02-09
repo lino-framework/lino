@@ -1,0 +1,7 @@
+:label: Calendar
+:label_align: top
+:hideCheckBoxLabels: 
+
+main = 
+  cal.RemindersByUser
+
