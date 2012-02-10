@@ -55,3 +55,12 @@ Jetzt lautet der automatische Text "eID-Karte läuft ab in 2 Monaten".
 Neue Funktion :func:`lino.modlib.cal.utils.update_reminder`
 
 Neue Funktion :func:`lino.apps.dsbe.models.update_all_reminders`
+
+Neuer Button "Update reminders" pro User.
+
+Der Lino-Kernel führt jetzt gegen Ende des startups eine eventuelle 
+Funktion `site_setup` aus. Dadurch kann das cal-Modul in der Users-Tabelle 
+seinen Button "Update reminders" hinzufügen.
+
+Cool! Aber das alles ist erst fast fertig.
+Checkin wegen Feierabend um 22.50 Uhr. 

@@ -257,11 +257,12 @@ class Lino(Lino):
         from django.db.models import Q
         from lino.modlib.isip import models as isip
         
-        for obj in self.modules.contacts.Person.objects.filter(Q(coach1=user)|Q(coach1__isnull=True,coach2=user)):
+        for obj in self.modules.contacts.Person.objects.filter(
+          Q(coach1=user)|Q(coach1__isnull=True,coach2=user)):
             yield obj
         for obj in self.modules.uploads.Upload.objects.filter(user=user):
             yield obj
-        for model in models_by_abc(self.modules.isip.ContractBase):
+        for model in models_by_abc(isip.ContractBase):
             for obj in model.objects.filter(user=user):
                 yield obj
 

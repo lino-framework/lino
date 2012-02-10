@@ -1,0 +1,12 @@
+20120210
+========
+
+Der Button "Update reminders" funktioniert jetzt. Unschön ist noch, 
+dass die Aktion ziemlich lange dauert und der Benutzer kein Feedback kriegt.
+
+Außerdem eine kleine Spielerei vor dem Frühstück: das About-Fenster zeigt 
+jetzt eine Liste aller Modelle. Das ist der Start zu einem allgemeinen 
+Modul zur Introspection, das auch zur Auswertung der XML-Responses der 
+BCSS nützlich werden könnte.
+
+Checkin um 9.20 Uhr.

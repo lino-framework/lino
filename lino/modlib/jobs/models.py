@@ -1012,6 +1012,8 @@ if True: # settings.LINO.user_model:
         """
         label = _("Job Contracts Search")
         
+        use_as_default_report = False
+        
         parameters = dict(
           user = models.ForeignKey(USER_MODEL,blank=True),
           #~ user = models.ForeignKey(settings.LINO.user_model,blank=True),

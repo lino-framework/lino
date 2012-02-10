@@ -52,6 +52,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`07 <0207>`
   :doc:`08 <0208>`
   :doc:`09 <0209>`
+  :doc:`10 <0210>`
 
 .. |Mar| replace:: **March**
   |br| 

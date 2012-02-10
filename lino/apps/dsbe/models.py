@@ -557,16 +557,16 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
             M = DurationUnit.months
             update_reminder(1,self,user,
               self.card_valid_until,
-              _("eID card expires"),2,M)
+              _("eID card expires in 2 months"),2,M)
             update_reminder(2,self,user,
               self.unavailable_until,
-              _("becomes available again"),1,M)
+              _("becomes available again in 1 month"),1,M)
             update_reminder(3,self,user,
               self.work_permit_suspended_until,
-              _("work permit suspension ends"),1,M)
+              _("work permit suspension ends in 1 month"),1,M)
             update_reminder(4,self,user,
               self.coached_until,
-              _("coaching ends"),1,M)
+              _("coaching ends in 1 month"),1,M)
               
           
     #~ def get_auto_task_defaults(self,**kw):
@@ -2324,4 +2324,5 @@ class Home(dd.EmptyTable):
     def coming_reminders(cls,self,req):
         return cal.reminders(req.ui,req.get_user(),days_forward=30,
             max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
 

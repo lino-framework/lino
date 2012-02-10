@@ -669,21 +669,8 @@ class ExtUI(base.UI):
         if isinstance(de,table.RemoteField):
             dummy = ext_elems.field2elem(lh,de.field,**kw)
             dummy.editable = False
-            #~ dummy = self.create_field_element(lh,de.field,**kw)
             lh.add_store_field(de)
             return dummy
-            #~ kw.setdefault('preferred_width',dummy.preferred_width)
-            #~ kw.setdefault('height',dummy.height)
-            #~ kw.setdefault('width',dummy.width)
-            #~ kw.setdefault('label',dummy.label)
-            #~ # logger.info("%s : %s", name,kw)
-            #~ return ext_elems.DisplayElement(lh,de,**kw)
-            
-            
-        #~ if isinstance(de,table.ComputedColumn):
-            #~ lh.add_store_field(de)
-            #~ kw.setdefault('width',de.width)
-            #~ return ext_elems.DisplayElement(lh,de,**kw)
             
         if isinstance(de,fields.FieldSet):
             return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)

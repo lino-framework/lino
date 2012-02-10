@@ -29,7 +29,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
+#~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
@@ -919,7 +919,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
         return None
     #~ if is_deserializing(): return 
     ot = ContentType.objects.get_for_model(owner.__class__)
-    if date:
+    if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
         #~ defaults = owner.get_auto_task_defaults(**defaults)
         defaults.setdefault('user',user)
         obj,created = model.objects.get_or_create(
@@ -959,11 +959,13 @@ def update_reminder(type,owner,user,orig,msg,num,unit):
     A reminder task is a message about something that will 
     happen in the future.
     """
-    kw = dict(unit=unit,num=num)
+    #~ kw = dict(unit=unit,num=num,msg=msg)
     update_auto_task(
       type,user,
       unit.add_duration(orig,-num),
-      string_concat(msg,' ',_("in %(num)d %(unit)s" % kw)),
+      msg,
+      #~ _("%(msg)s in %(num)d %(unit)s") % kw,
+      #~ unicode(msg)+,' ',_("in %(num)d %(unit)s" % kw)),
       owner)
             
 
@@ -1182,6 +1184,7 @@ def update_reminders(user):
     n = 0 
     for obj in settings.LINO.get_reminder_generators_by_user(user):
         obj.update_reminders()
+        logger.info("--> %s",unicode(obj))
         n += 1
     return n
       

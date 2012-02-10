@@ -346,9 +346,10 @@ class ActionRequest(object):
     create_kw = None
     renderer = None
     
-    def __init__(self,ui,report,request,action,**kw):
+    def __init__(self,ui,report,request,action,renderer=None,**kw):
         #~ ActionRequest.__init__(self,ui,action)
         self.ui = ui
+        self.renderer = renderer
         self.action = action
         self.step = 0 # confirmation counter
         self.report = report

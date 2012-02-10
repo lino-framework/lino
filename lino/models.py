@@ -243,6 +243,40 @@ Please report any anomalies.""",
 
     
 
+class Models(dd.VirtualTable):
+    label = _("Models")
+    #~ column_defaults = dict(width=8)
+    #~ column_names = "app name verbose_name docstring rows"
+    column_names = "app name docstring rows"
+    
+    slave_grid_format = 'html'    
+  
+    @classmethod
+    def get_data_rows(self,ar):
+        for model in models.get_models():
+            yield model
+                
+    @dd.displayfield(_("app_label"))
+    def app(self,obj,ar):
+        return obj._meta.app_label
+        
+    @dd.displayfield(_("name"))
+    def name(self,obj,ar):
+        return obj.__name__
+        
+    #~ @dd.displayfield(_("verbose name"))
+    #~ def vebose_name(self,obj,ar):
+        #~ return unicode(obj._meta.vebose_name)
+        
+    @dd.displayfield(_("docstring"))
+    def docstring(self,obj,ar):
+        return obj.__doc__
+        
+    @dd.requestfield(_("Rows"))
+    def rows(self,obj,ar):
+        return obj._lino_model_report.request(ar.ui,
+          user=ar.get_user(),renderer=ar.renderer)
+        
 
 
 class About(dd.EmptyTable):
@@ -260,6 +294,7 @@ class About(dd.EmptyTable):
         self.add_action(BuildLinoJS())
    
     @dd.displayfield(_("Versions"))
+    #~ @dd.virtualfield(dd.RichTextField(_("Versions"),format='html'))
     def versions(cls,self,req):
         return lino.welcome_html()
         
