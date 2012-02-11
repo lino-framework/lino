@@ -4,13 +4,77 @@ Version 1.3.9 (20120212)
 Sichtbare Änderungen
 --------------------
 
-- Benutzer können jetzt alle automatischen Erinnerungen 
-  auf Knopfdruck neu generieren lassen, indem sie
-  auf den Button :class:`Erinnerungen aktualisieren <lino.modlib.cal.models.UpdateReminders>` 
-  klicken.
-  N.B.: Die Aktion dauert ein bisschen, und momentan hat 
-  man noch keinen Feedback über den Verlauf.
+- Beim Speichern eines Uploads mit ausgefülltem :guilabel`Gültig bis` 
+  kam ein Server-Traceback
+  "'alarm_value' is an invalid keyword argument for this function".
 
+  Außerdem waren die Erinnerungsmeldungen "eID-Karte läuft ab" usw. ein 
+  bisschen unkomplett: sie gaben nicht an, *wann* das passiert.
+  Jetzt lautet der automatische Text "eID-Karte läuft ab in 2 Monaten".
+
+  Benutzer können jetzt alle automatischen Erinnerungen 
+  auf Knopfdruck neu generieren lassen, indem sie
+  auf den neuen Button :class:`Erinnerungen aktualisieren <lino.modlib.cal.models.UpdateReminders>` 
+  klicken, der sich im Benutzer-Detail befindet 
+  (Button oben rechts im Hauptmenü).
+  Alle *automatisch generierten* Erinnerungen sind in diesem Detail 
+  jetzt unter dem neuen Reiter "Kalender" einsehbar.
+  N.B.: Die Aktion dauert ein bisschen, und der einzige Feedback 
+  nach Abschluss ist eine unscheinbare Meldung in der Statuszeile, 
+  die zudem nur für 5 Sekunden dort stehen bleibt.
+  
+  Beim Generieren automatischer Erinnerungen löscht Lino jetzt alle 
+  **Erinnerungen, die mehr als sieben Tage zurück liegen** und nie 
+  manuell bearbeitet wurden.
+  
+- [html] und [pdf] respektieren jetzt die Grid-Einstellungen: 
+  Kolonnenreihenfolge, -breiten und -sichtbarkeit.
+
+  Die Kolonnenbreiten werden allerdings erst "so gut wie möglich" 
+  respektiert:
+
+  - Im [html]-Ausdruck nimmt die Tabelle immer die ganze Bildschirmbreite 
+    ein und der Browser interpretiert die Breitenangaben unter Umständen, 
+    aber insgesamt kriegt er es einigermaßen sinnvoll hin.
+  - Im [pdf]-Ausdruck sind momentan leider alle Kolonnen immer gleich breit. 
+    https://answers.launchpad.net/appy/+question/187455
+    
+- :class:`Kursanfragen <lino.apps.dsbe.models.CourseRequest>`: 
+  statt "Dringend" heißt es jetzt "zwecks beruflicher Eingliederung"
+  
+- Eingabe von VSE und Art60-7. Für beide Vertragsarten gilt jetzt: 
+
+  - :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
+    ist kein aktives Feld mehr.
+  - Wenn 
+    :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
+    nicht leer ist und man die 
+    :attr:`Organisation <lino.modlib.isip.ContractBase.company>` 
+    ändert, dann wird der bestehende Wert in 
+    :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
+    überschrieben.
+  
+- Beim Klick auf "Speichern" eines Detail-Fensters machte Lino bisher 
+  2 AJAX-Calls, jetzt nur noch einen. 
+  Was insbesondere bei aktiven Feldern angenehm auffallen dürfte.
+  
+- Neuer Befehl :menuselection:`Site --> Info` 
+  zeigt die Lino-Version an.  
+  Aber in diesem Fenster gibt es vor allem einen Button 
+  :guilabel:`lino*.js-Dateien generieren`, den man braucht, 
+  um aktualisierte Hilfetexte sichtbar zu machen.
+
+
+- Kalender: 
+  Erstens habe ich einen Bug behoben (man konnte vom Kalender aus 
+  keine Termine erstellen),
+  zweitens das Feld "Dauer" rausgeworfen und 
+  drittens ein neues Ankreuzfeld "ganztags".
+
+  
+  
+  
+  
 
 Upgrade instructions
 --------------------
