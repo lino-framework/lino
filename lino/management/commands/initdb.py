@@ -88,8 +88,10 @@ class Command(BaseCommand):
         
             from django.db import connection
             cursor = connection.cursor()
-            cursor.execute("DROP DATABASE %s;", [connection.settings_dict['NAME']])
-            cursor.execute("CREATE DATABASE %s;", [connection.settings_dict['NAME']])        
+            #~ cursor.execute("DROP DATABASE %s;", [connection.settings_dict['NAME']])
+            #~ cursor.execute("CREATE DATABASE %s;", [connection.settings_dict['NAME']])        
+            cursor.execute("DROP DATABASE %s;", [dbname])
+            cursor.execute("CREATE DATABASE %s;", [dbname])
                 
         else:
         
