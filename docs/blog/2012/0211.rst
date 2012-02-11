@@ -56,3 +56,13 @@ by::
 solved the problem.
 
 Updated German translations.
+
+Das Feld `ganztags` funktionierte noch nicht. Außerdem machte er beim 
+Speichern eines automatisch generierten Auswertungstermins ein paar 
+unnütze save's.
+
+Auch das mangelnde Feedback bei längeren Aktionen ist jetzt behoben: er 
+muss beim Ausführen einer row action (natürlich) auch die loadMask 
+aktivieren.
+
+

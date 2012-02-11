@@ -40,6 +40,13 @@ offiziellen content type 'application/json' hat),
 und nur in der Antwort auf ein POST mit file upload 
 benutzt er `record_id` und den content type 'text/html'.
 
+N.B.: Noch was Schönes (aber nur von intern):
+:class:`lino.ui.extjs3.ext_store.Store` speichert die 
+erstellten :class:`Atomizer <lino.ui.extjs3.ext_store.StoreField>` 
+jetzt nicht mehr temporär für sich selber, sondern im Feld 
+unter einem Attribut `_lino_atomizer`. Also mehrere Stores auf dem 
+gleichen Modell benutzen die gleichen Atomizer.
+
 
 Speichern eines Uploads
 -----------------------

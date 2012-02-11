@@ -1088,6 +1088,7 @@ Lino.delete_selected = function(panel) {
 
 Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
   return function (response) {
+    panel.loadMask.hide(); // 20120211
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
       //~ console.log('Lino.action_handler()','result is',result,'on_confirm is',on_confirm);
@@ -1522,6 +1523,7 @@ Lino.row_action_handler = function(actionName,gridmode) {
       //~ p.an = action_name;
       //~ url += "?" + Ext.urlEncode(p);
       //~ window.open(url);
+      panel.loadMask.show(); // 20120211
       Ext.Ajax.request({
         method: 'GET',
         url: url,
@@ -1540,6 +1542,7 @@ Lino.list_action_handler = function(actionName,gridmode) {
     var p = Ext.apply({},panel.get_base_params());
     p['$ext_requests.URL_PARAM_ACTION_NAME'] = actionName;
     if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
+    panel.loadMask.show(); // 20120211
     Ext.Ajax.request({
       method: 'GET',
       url: url,
@@ -2024,7 +2027,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       return st;
   },
   set_status : function(status){
-    console.log('20120208 FormPanel.set_status()',this,status);
+    //~ console.log('20120208 FormPanel.set_status()',this,status);
     this.clear_base_params();
     if (status == undefined) status = {};
     if (status.param_values) this.set_param_values(status.param_values);
@@ -2409,6 +2412,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         })
       };
       //~ console.log('detail_config/save sent',a);
+      _this.loadMask.show(); // 20120211
       Ext.Ajax.request(a);
     }
     var save_btn = new Ext.Button({text:'Save',handler:save,disabled:true});
@@ -2807,7 +2811,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     var ps = this.calculatePageSize();
     
     if (!ps) {
-        console.log("20120206 GridPanel.refresh() failed to calculate pagesize");
+        //~ console.log("20120206 GridPanel.refresh() failed to calculate pagesize");
         params.$URL_PARAM_LIMIT = 1;
         //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
         //~ return;
@@ -3107,6 +3111,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       success: Lino.action_handler(this),
       failure: Lino.ajax_error_handler
     };
+    this.loadMask.show(); // 20120211
     Ext.Ajax.request(a);
     //~ Lino.do_action(this,a);
   },
@@ -3214,6 +3219,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       });
     }
     //~ console.log('20110406 on_afteredit',req);
+    this.loadMask.show(); // 20120211
     Ext.Ajax.request(req);
   },
 
@@ -4083,6 +4089,20 @@ Lino.CalendarPanel = Ext.extend(Lino.CalendarPanel,{
     //~ ,eventadd: Lino.on_eventadd
     //~ ,eventdelete: Lino.on_eventdelete
     //~ ,eventresize: Lino.on_eventresize
+    ,afterrender : function(config) {
+      //~ console.log("20120211 render");
+      Lino.calendarStore.load();
+      var view = this.getActiveView();
+      var bounds = view.getViewBounds();
+      //~ var p = {sd:'05.02.2012',ed:'11.02.2012'};
+      var p = {};
+      p[view.dateParamStart] = bounds.start.format(view.dateParamFormat);
+      p[view.dateParamEnd] = bounds.end.format(view.dateParamFormat);
+      //~ console.log("20120211",p);
+      Lino.eventStore.load({params:p});
+      //~ Lino.CalendarPanel.superclass.constructor.call(this, config);
+      //~ console.log(20120118, config,this);
+    }
     }
   ,enableEditDetails: false
   ,monthViewCfg: Lino.CalendarCfg
@@ -4090,12 +4110,6 @@ Lino.CalendarPanel = Ext.extend(Lino.CalendarPanel,{
   ,multiDayViewCfg: Lino.CalendarCfg
   ,multiWeekViewCfg: Lino.CalendarCfg
   ,dayViewCfg: Lino.CalendarCfg
-  ,constructor : function(config) {
-    Lino.calendarStore.load();
-    Lino.eventStore.load();
-    Lino.CalendarPanel.superclass.constructor.call(this, config);
-    //~ console.log(20120118, config,this);
-  }
   //~ ,initComponent : function() {
     //~ // this.on('eventadd',Lino.on_eventadd);
     //~ Lino.CalendarPanel.superclass.initComponent.call(this);

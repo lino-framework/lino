@@ -464,11 +464,12 @@ class Component(ComponentBase,
         return "%s@%s" % (self.pk,settings.LINO.uid)
             
     def save(self,*args,**kw):
-        if self.owner:
+        if self.owner and self.user_modified:
             #~ if self.owner.__class__.__name__ == 'Person':
                 #~ self.person = self.owner
             #~ elif self.owner.__class__.__name__ == 'Company':
                 #~ self.company = self.owner
+            #~ logger.info("20120211 update_owned_instance %s",self.summary)
             m = getattr(self.owner,'update_owned_instance',None)
             #~ m = getattr(self.owner,'update_owned_task',None)
             if m:
@@ -478,7 +479,8 @@ class Component(ComponentBase,
                 #~ print "20111014 no update_owned_task on", self
               
         super(Component,self).save(*args,**kw)
-        if self.owner:
+        if self.owner and self.user_modified:
+            #~ logger.info("20120211 after_update_owned_instance %s",self.summary)
             m = getattr(self.owner,'after_update_owned_instance',None)
             if m:
                 m(self)
@@ -531,13 +533,14 @@ class ExtAllDayField(dd.VirtualField):
         
     def set_value_in_object(self,request,obj,value):
         if value:
+            obj.end_time = None
+            obj.start_time = None
+        else:
             if not obj.start_time:
                 obj.start_time = datetime.time(9,0,0)
             if not obj.end_time:
                 obj.end_time = datetime.time(10,0,0)
-        else:
-            obj.end_time = None
-            obj.start_time = None
+        obj.save()
         
     def value_from_object(self,request,obj):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
@@ -678,19 +681,21 @@ class Events(dd.Table):
         
     @classmethod
     def disabled_fields(self,obj,request):
-        if obj.all_day:
+        #~ if obj.all_day:
+        if obj.start_time is None:
             return ['start_time','end_time']
         return []
         
-    def all_day_changed(self,old_value):
-        if self.all_day:
-            obj.end_time = None
-            obj.start_time = None
-        else:
-            if not obj.start_time:
-                obj.start_time = datetime.time(9,0,0)
-            if not obj.end_time:
-                obj.end_time = datetime.time(10,0,0)
+    #~ def all_day_changed(self,old_value):
+        #~ # if self.all_day:
+        #~ if obj.start_time is None:
+            #~ obj.end_time = None
+            #~ obj.start_time = None
+        #~ else:
+            #~ if not obj.start_time:
+                #~ obj.start_time = datetime.time(9,0,0)
+            #~ if not obj.end_time:
+                #~ obj.end_time = datetime.time(10,0,0)
         
     
 class EventsBySet(Events):
@@ -922,23 +927,34 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
         #~ defaults = owner.get_auto_task_defaults(**defaults)
         defaults.setdefault('user',user)
-        obj,created = model.objects.get_or_create(
+        obj,must_save = model.objects.get_or_create(
           defaults=defaults,
           owner_id=owner.pk,
           owner_type=ot,
           auto_type=autotype)
         if not obj.user_modified:
-            obj.user = user
-            obj.summary = force_unicode(summary)
+            if obj.user != user:
+                #~ logger.info("20120211 must save %s because user changed",obj.pk)
+                obj.user = user
+                must_save = True
+            summary = force_unicode(summary)
+            if obj.summary != summary:
+                #~ logger.info("20120211 must save %s because summary changed",obj.pk)
+                obj.summary = summary
+                must_save = True
             #~ obj.summary = summary
-            obj.start_date = date
+            if obj.start_date != date:
+                #~ logger.info("20120211 must save %s because start_date changed",obj.pk)
+                obj.start_date = date
+                must_save = True
             #~ print "20111014 gonna save() task", task
             #~ for k,v in kw.items():
                 #~ setattr(obj,k,v)
             #~ obj.due_date = date - delta
             #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
             #~ owner.update_owned_task(task)
-            obj.save()
+            if must_save:
+                obj.save()
         return obj
     else:
         # delete task if it exists

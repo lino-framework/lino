@@ -14,35 +14,37 @@ Sichtbare Änderungen
 
   Benutzer können jetzt alle automatischen Erinnerungen 
   auf Knopfdruck neu generieren lassen, indem sie
-  auf den neuen Button :class:`Erinnerungen aktualisieren <lino.modlib.cal.models.UpdateReminders>` 
+  auf den neuen Button 
+  :class:`Erinnerungen aktualisieren <lino.modlib.cal.models.UpdateReminders>` 
   klicken, der sich im Benutzer-Detail befindet 
   (Button oben rechts im Hauptmenü).
   Alle *automatisch generierten* Erinnerungen sind in diesem Detail 
   jetzt unter dem neuen Reiter "Kalender" einsehbar.
-  N.B.: Die Aktion dauert ein bisschen, und der einzige Feedback 
-  nach Abschluss ist eine unscheinbare Meldung in der Statuszeile, 
-  die zudem nur für 5 Sekunden dort stehen bleibt.
   
   Beim Generieren automatischer Erinnerungen löscht Lino jetzt alle 
   **Erinnerungen, die mehr als sieben Tage zurück liegen** und nie 
   manuell bearbeitet wurden.
   
+- [pdf] funktioniert jetzt.
+
 - [html] und [pdf] respektieren jetzt die Grid-Einstellungen: 
   Kolonnenreihenfolge, -breiten und -sichtbarkeit.
 
-  Die Kolonnenbreiten werden allerdings erst "so gut wie möglich" 
+  Die Kolonnenbreiten werden allerdings nur "so gut wie möglich" 
   respektiert:
 
   - Im [html]-Ausdruck nimmt die Tabelle immer die ganze Bildschirmbreite 
-    ein und der Browser interpretiert die Breitenangaben unter Umständen, 
-    aber insgesamt kriegt er es einigermaßen sinnvoll hin.
+    ein und der Browser interpretiert die Breitenangaben unter Umständen 
+    nach seinen eigenen Gesetzen.
+    Insgesamt kriegt er es doch einigermaßen sinnvoll hin.
   - Im [pdf]-Ausdruck sind momentan leider alle Kolonnen immer gleich breit. 
+    Insofern ist der oft noch nicht wirklich benutzbar.
     https://answers.launchpad.net/appy/+question/187455
     
 - :class:`Kursanfragen <lino.apps.dsbe.models.CourseRequest>`: 
   statt "Dringend" heißt es jetzt "zwecks beruflicher Eingliederung"
   
-- Eingabe von VSE und Art60-7. Für beide Vertragsarten gilt jetzt: 
+- Bei der Eingabe von VSE und Art60-7 gilt jetzt: 
 
   - :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
     ist kein aktives Feld mehr.
@@ -64,17 +66,12 @@ Sichtbare Änderungen
   :guilabel:`lino*.js-Dateien generieren`, den man braucht, 
   um aktualisierte Hilfetexte sichtbar zu machen.
 
-
 - Kalender: 
   Erstens habe ich einen Bug behoben (man konnte vom Kalender aus 
   keine Termine erstellen),
   zweitens das Feld "Dauer" rausgeworfen und 
   drittens ein neues Ankreuzfeld "ganztags".
-
-  
-  
-  
-  
+ 
 
 Upgrade instructions
 --------------------

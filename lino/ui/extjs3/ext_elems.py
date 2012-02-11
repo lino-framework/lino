@@ -810,7 +810,7 @@ class BooleanFieldElement(FieldElement):
     #~ grid_column_template = "new Ext.grid.BooleanColumn(%s)"
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
-    active_change_event = 'check'
+    #~ active_change_event = 'check'
         
     def set_parent(self,parent):
         FieldElement.set_parent(self,parent)
@@ -1193,7 +1193,7 @@ class Panel(Container):
                 will become itself vflex
                 """        
                 if e.height:
-                    logger.info("20120210 %s becomes vflex because %s has height",self,e)
+                    #~ logger.info("20120210 %s becomes vflex because %s has height",self,e)
                     self.vflex = True
                   
                 if e.hflex:

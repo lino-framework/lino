@@ -825,8 +825,10 @@ class Store:
         sf = getattr(df,'_lino_atomizer',None)
         if sf is None:
             sf = self.create_field(df,df.name)
-            self.all_fields.append(sf)
             setattr(df,'_lino_atomizer',sf)
+            
+        if not sf in self.all_fields:
+            self.all_fields.append(sf)
             
         #~ sf = self.df2sf.get(df,None)
         #~ if sf is None:
@@ -934,16 +936,18 @@ class Store:
             return ComboStoreField(fld,name,**kw)
 
     def form2obj(self,request,form_values,instance,is_new):
-        #~ logger.info("Store.form2obj(%s)", form_values)
+        #~ raise Exception('20120211')
         if self.report.disabled_fields:
             disabled_fields = set(self.report.disabled_fields(instance,request))
         else:
             disabled_fields = set()
+        #~ logger.info("%s Store.form2obj(%s), \ndisabled %s\n all_fields %s", 
+            #~ self.report,form_values,disabled_fields,self.all_fields)
         #~ print 20110406, disabled_fields
         for f in self.all_fields:
             #~ if f.field is None or not f.field.name in disabled_fields:
             if not f.name in disabled_fields:
-                #~ logger.info("20120119 Store.form2obj %s", f)
+                #~ logger.info("20120211 %s Store.form2obj %s", self.report,f)
                 try:
                     f.form2obj(request,instance,form_values,is_new)
                 except exceptions.ValidationError,e:

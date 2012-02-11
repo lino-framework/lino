@@ -12,6 +12,10 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Checkboxen können nicht aktiv sein, weil sie aufs change-Event nicht reagieren. 
+    Und das check-Event kann ich auch nicht nutzen, weil das auch schon beim 
+    loadRecord abgefeuert wird.
+    
 #.  When a user tries to sort a column on a RemoteField, the server says::
 
       FieldError
