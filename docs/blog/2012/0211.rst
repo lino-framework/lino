@@ -1,0 +1,9 @@
+20120211
+========
+
+[html] und [pdf] respektieren jetzt die Grid-Einstellungen: 
+Kolonnenreihenfolge, -breiten und -sichtbarkeit.
+
+Die Kolonnenbreiten werden "so gut wie möglich" respektiert.
+Im [pdf]-Ausdruck ist das leider momentan "gar nicht".
+https://answers.launchpad.net/appy/+question/187455

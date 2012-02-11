@@ -38,7 +38,8 @@ class Handled(object):
         
     @classmethod
     def class_init(self):
-        self._handles = {}
+        pass
+        #~ self._handles = {}
       
     #~ @classmethod
     #~ def before_ui_handle(self,ui):
@@ -48,15 +49,26 @@ class Handled(object):
     def get_handle(self,ui):
         assert ui is None or isinstance(ui,UI), \
             "%s.get_handle() : %r is not a BaseUI" % (self,ui)
-        h = self._handles.get(ui,None)
+        if ui is None:
+            hname = '_lino_console_handler'
+        else:
+            hname = ui._handler_attr_name
+        h = self.__dict__.get(hname,None)
         if h is None:
-            #~ self.before_ui_handle(ui)
             h = self._handle_class(ui,self)
-            # be careful to not store it in the base class's `_handles`:
-            self._handles = dict(self._handles)
-            self._handles[ui] = h
+            setattr(self,hname,h)
             h.setup()
         return h
+        
+        #~ h = self._handles.get(ui,None)
+        #~ if h is None:
+            #~ # self.before_ui_handle(ui)
+            #~ h = self._handle_class(ui,self)
+            #~ # be careful to not store it in the base class's `_handles`:
+            #~ self._handles = dict(self._handles)
+            #~ self._handles[ui] = h
+            #~ h.setup()
+        #~ return h
         
         
 class UI:

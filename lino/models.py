@@ -20,6 +20,8 @@ import logging
 logger = logging.getLogger(__name__)
 #~ from lino.utils import dblogger
 
+import cgi
+
 from django.conf import settings
 #~ from django.contrib.auth import models as auth
 #~ from django.contrib.sessions import models as sessions
@@ -278,6 +280,114 @@ class Models(dd.VirtualTable):
           user=ar.get_user(),renderer=ar.renderer)
         
 
+import inspect
+import types
+from lino.utils import AttrDict
+
+class Inspected(object):
+    def __init__(self,parent,prefix,name,value):
+        self.parent = parent
+        self.prefix = prefix
+        self.name = name
+        self.value = value
+
+class Inspector(dd.VirtualTable):
+    label = _("Inspector")
+    column_names = "i_name i_type i_value"
+    parameters = dict(
+      inspected=models.CharField(_("Inspected object"),max_length=100,blank=True),
+      show_callables=models.BooleanField(_("show callables"),default=False)
+      )
+    params_template = 'inspected show_callables'
+    #~ editable = False
+    #~ slave_grid_format = 'html'    
+  
+    @classmethod
+    def get_inspected(self,name):
+        #~ ctx = dict(settings=settings,lino=lino)
+        if not name:
+            return settings
+        try:
+            o = eval('settings.'+name)
+        except Exception,e:
+            o = e
+        return o
+        
+        #~ o = settings
+        #~ try:
+            #~ for ch in name.split('.'):
+                #~ o = getattr(o,ch)
+        #~ except Exception,e:
+            #~ o = e
+        #~ return o
+        
+    @classmethod
+    def get_data_rows(self,ar):
+        logger.info("20120210 %s, %s",ar.quick_search,ar.param_values.inspected)
+        
+        if ar.param_values.show_callables:
+            def flt(v): return True
+        else:
+            def flt(v): 
+                if isinstance(v,(
+                    types.FunctionType,
+                    types.GeneratorType,
+                    types.UnboundMethodType,
+                    types.UnboundMethodType,
+                    types.BuiltinMethodType,
+                    types.BuiltinFunctionType,
+                    )): 
+                    return False
+                return True
+          
+        
+        o = self.get_inspected(ar.param_values.inspected)
+        if isinstance(o,(list,tuple)):
+            for i,v in enumerate(o):
+                k = "[" + str(i) + "]"
+                yield Inspected(o,'',k,v)
+        elif isinstance(o,AttrDict):
+            for k,v in o.items():
+                yield Inspected(o,'.',k,v)
+        elif isinstance(o,dict):
+            for k,v in o.items():
+                k = "[" + repr(k) + "]"
+                yield Inspected(o,'',k,v)
+        else:
+            for k in dir(o):
+                if not k.startswith('__'):
+                    if not ar.quick_search or (ar.quick_search.lower() in k.lower()):
+                        v = getattr(o,k)
+                        if flt(v):
+                        #~ if not inspect.isbuiltin(v) and not inspect.ismethod(v):
+                            #~ if ar.param_values.show_callables or not inspect.isfunction(v):
+                            #~ if isinstance(v,types.FunctionType ar.param_values.show_callables or not callable(v):
+                            yield Inspected(o,'.',k,v)
+        #~ for k,v in o.__dict__.items():
+            #~ yield Inspected(o,k,v)
+            
+                
+    @dd.displayfield(_("Name"))
+    def i_name(self,obj,ar):
+        pv = dict()
+        if ar.param_values.inspected:
+            pv.update(inspected=ar.param_values.inspected+obj.prefix+obj.name)
+        else:
+            pv.update(inspected=obj.name)
+        newreq = ar.report.request(ar.ui,user=ar.user,renderer=ar.renderer,param_values=pv)
+        return ar.renderer.href_to_request(newreq,obj.name)
+        #~ return obj.name
+        
+    @dd.displayfield(_("Value"))
+    def i_value(self,obj,ar):
+        return cgi.escape(unicode(obj.value))
+        
+    @dd.displayfield(_("Type"))
+    def i_type(self,obj,ar):
+        return cgi.escape(str(type(obj.value)))
+        
+
+
 
 class About(dd.EmptyTable):
     """
@@ -288,15 +398,16 @@ class About(dd.EmptyTable):
     hide_top_toolbar = True
     window_size = (700,400)
     
+    versions = dd.Constant(lino.welcome_html())
+    
     @classmethod
     def setup_actions(self):
         super(About,self).setup_actions()
         self.add_action(BuildLinoJS())
    
-    @dd.displayfield(_("Versions"))
-    #~ @dd.virtualfield(dd.RichTextField(_("Versions"),format='html'))
-    def versions(cls,self,req):
-        return lino.welcome_html()
+    #~ @dd.constantfield(_("Versions"))
+    #~ def versions(cls,self,req):
+        #~ return lino.welcome_html()
         
     @dd.virtualfield(models.DateTimeField(_("Server up since")))
     def startup_time(cls,self,req):

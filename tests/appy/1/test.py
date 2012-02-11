@@ -13,7 +13,7 @@ from appy import version
 APPY_PARAMS = dict()
 
 #~ ACTIVE_TESTS = None # run all tests
-ACTIVE_TESTS = (13,) # run only specified tests
+ACTIVE_TESTS = [ 14 ] # run only specified tests
 
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
@@ -250,4 +250,13 @@ This text is rendered.
 </blockquote>
 """
 run_test(13,"20110723",HTML=html)
+
+#~ # 14 : 
+
+html = """
+<TABLE>
+<TR><TD width="20">foo</TD><TD width="100">bar</TD></TR>
+</TABLE>
+"""
+run_test(14,"20120211",XHTML=html)
 

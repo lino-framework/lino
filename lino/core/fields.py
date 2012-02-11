@@ -130,8 +130,8 @@ class QuantityField(models.DecimalField):
         fld.widget.attrs['size'] = "3"
         fld.widget.attrs['style'] = "text-align:right;"
         return fld
-        
-class FakeField: 
+
+class FakeField:
     primary_key = False
     editable = False
     name = None
@@ -142,6 +142,8 @@ class FakeField:
         
     def has_default(self):
         return False
+        
+
         
 
 class DisplayField(FakeField):
@@ -244,6 +246,13 @@ class VirtualField(FakeField): # (Field):
         #~ print self.field.name
         return m(obj,request)
         
+class Constant(object):
+    #~ get = None
+    def __init__(self,text):
+        self.text = text
+        
+
+
 class RequestField(VirtualField):
     def __init__(self,get,*args,**kw):
         kw.setdefault('max_length',8)

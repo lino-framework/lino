@@ -1288,6 +1288,7 @@ Lino.MainPanel = {
                 //~ this.params_panel.hide();
             //~ else
                 //~ this.params_panel.show();
+            console.log("20120210 add_params_panel",this.params_panel);
             if (state) this.params_panel.show();
             else this.params_panel.hide();
             this.get_containing_window().doLayout();
@@ -2474,17 +2475,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   autoHeight: false,
   params_panel_hidden : false,
   //~ loadMask: true,
-  viewConfig: {
-          //autoScroll:true,
-          //autoFill:true,
-          //forceFit=True,
-          //enableRowBody=True,
-          //~ showPreview:true,
-          //~ scrollOffset:200,
-          getRowClass: Lino.getRowClass,
-          //~ enableRowBody: true,
-          emptyText:"$_('No data to display.')"
-        },
+  //~ viewConfig: {
+          //~ getRowClass: Lino.getRowClass,
+          //~ emptyText:"$_('No data to display.')"
+        //~ },
   loadMask: {msg:"$_('Please wait...')"},
   
   constructor : function(config){
@@ -2506,7 +2500,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   config_containing_window : function(wincfg) { 
       if (wincfg.tools != undefined) 
         wincfg.tools = [
-          {handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this, id:"save"}
+          {handler:this.save_grid_config,
+            qtip:"$_("Save Grid Configuration")",
+            scope:this, id:"save"}
         ].concat(wincfg.tools);
       //~ wincfg.listeners = { show: ... };
   },
@@ -2618,8 +2614,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         { scope:this, 
           text: "[html]", 
           handler: function() { 
-            var p = Ext.apply({},this.get_base_params());
-            p['fmt'] = 'printer';
+            var p = this.get_current_grid_config();
+            Ext.apply(p,this.get_base_params());
+            //~ var p = Ext.apply({},this.get_base_params());
+            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PRINTER";
+            //~ p['fmt'] = 'printer';
             this.add_param_values(p);
             //~ url += "?" + Ext.urlEncode(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
@@ -2627,8 +2626,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         { scope:this, 
           text: "[pdf]", 
           handler: function() { 
-            var p = Ext.apply({},this.get_base_params());
-            p['fmt'] = 'pdf';
+            var p = this.get_current_grid_config();
+            Ext.apply(p,this.get_base_params());
+            //~ var p = Ext.apply({},this.get_base_params());
+            //~ p['fmt'] = 'pdf';
+            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PDF";
             this.add_param_values(p);
             //~ url += "?" + Ext.urlEncode(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
@@ -2952,9 +2954,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     for (var j = 0; j < rpt_columns.length;j++) {
       var col = rpt_columns[j];
       for (var i = 0; i < gc.columns.length; i++) {
-        if (col.dataIndex == gc.columns[i]) {
-          col.width = gc.widths[i];
-          col.hidden = gc.hiddens[i];
+        if (col.dataIndex == gc.$(ext_requests.URL_PARAM_COLUMNS)[i]) {
+          col.width = gc.$(ext_requests.URL_PARAM_WIDTHS)[i];
+          col.hidden = gc.$(ext_requests.URL_PARAM_HIDDENS)[i];
           columns[i] = col;
           break;
         }
@@ -3026,9 +3028,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       //~ if (col.hidden) hidden_cols.push(col.dataIndex);
     }
     //~ p['hidden_cols'] = hidden_cols;
-    p['widths'] = widths;
-    p['hiddens'] = hiddens;
-    p['columns'] = columns;
+    p.$ext_requests.URL_PARAM_WIDTHS = widths;
+    p.$ext_requests.URL_PARAM_HIDDENS = hiddens;
+    p.$ext_requests.URL_PARAM_COLUMNS = columns;
+    //~ p['widths'] = widths;
+    //~ p['hiddens'] = hiddens;
+    //~ p['columns'] = columns;
     p['name'] = this.gc_name;
     //~ var gc = this.ls_grid_configs[this.gc_name];
     //~ if (gc !== undefined) 

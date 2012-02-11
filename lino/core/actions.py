@@ -414,7 +414,7 @@ class ActionRequest(object):
     def setup(self,
             user=None,
             subst_user=None,
-            param_values=None,
+            param_values={},
             known_values=None,
             renderer=None,
             **kw):
@@ -422,7 +422,14 @@ class ActionRequest(object):
         if renderer is not None:
             self.renderer = renderer
         #~ self.param_values = param_values
-        self.param_values = AttrDict()
+        if self.report.parameters:
+            self.param_values = AttrDict()
+            for k,pf in self.report.parameters.items():
+                v = param_values.get(k,None)
+                if v is None:
+                    v = pf.get_default()
+                self.param_values.define(k,v)
+                
         
         if param_values:
             #~ logger.info("20120122 param_values is %s",param_values)

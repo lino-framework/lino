@@ -12,6 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 from cgi import escape
 
 from django.db import models
@@ -214,6 +217,9 @@ class VisibleComponent(Component):
             self.height = height
         if label is not None:
             self.label = label
+        #~ if name == 'versions':
+            #~ assert self.height is not None
+            #~ logger.info("20120210 c __init__() %s" % self)
         #~ if flex is not None:
             #~ self.flex = flex
     
@@ -320,15 +326,17 @@ class LayoutElement(VisibleComponent):
 
 
 
-class StaticTextElement(LayoutElement):
+class ConstantElement(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
     #~ declare_type = jsgen.DECLARE_VAR
     xtype = 'label'
+    vflex = True
     
-    def __init__(self,layout_handle,name,text,**kw):
-        kw.update(html=text.text)
-        LayoutElement.__init__(self,layout_handle,name,**kw)
+    def __init__(self,lh,fld,**kw):
+        kw.update(html=fld.text)
+        #~ kw.update(autoHeight=True)
+        LayoutElement.__init__(self,lh,fld.name,**kw)
         #~ self.text = text
 
     #~ def ext_options(self,**kw):
@@ -955,17 +963,6 @@ class Container(LayoutElement):
                 
         LayoutElement.__init__(self,layout_handle,name,**kw)
         
-        #~ if layout_handle.layout.__class__.__name__ == 'CompanyDetail':
-            #~ print 20100919, self.__class__.__name__, name, ':', str(elements)
-        
-        #~ onlyCheckBoxes = True
-        #~ for e in self.walk():
-            #~ if not isinstance(e,BooleanFieldElement):
-                #~ onlyCheckBoxes = False
-        #~ if onlyCheckBoxes:
-            #~ for e in self.walk():
-                #~ e.update(hideLabel=True)
-                #~ print 'hideLabel:', e,
         
     def subvars(self):
         return self.elements
@@ -1056,7 +1053,6 @@ class Panel(Container):
                 if not e.vflex:
                     self.vflex = False
                     #~ print 20100615, self.layout_handle.layout, self, "hbox loses vflex because of", e
-                    
         if len(elements) > 1 and self.vflex:
             if self.vertical:
                 """
@@ -1134,6 +1130,7 @@ class Panel(Container):
         Container.__init__(self,layout_handle,name,*elements,**kw)
 
         w = h = 0
+        has_height = False # 20120210
         for e in self.elements:
             ew = e.width or e.preferred_width
             eh = e.height or e.preferred_height
@@ -1142,10 +1139,16 @@ class Panel(Container):
                 h += eh
                 w = max(w,ew)
             else:
+                if e.height:
+                    has_height = True
                 #w += e.flex
                 w += ew
                 h = max(h,eh)
-        self.preferred_height = h
+        if has_height:
+            self.height = h
+            self.vflex = True
+        else:
+            self.preferred_height = h
         self.preferred_width = w
         assert self.preferred_height > 0, "%s : preferred_height is 0" % self
         assert self.preferred_width > 0, "%s : preferred_width is 0" % self
@@ -1178,15 +1181,29 @@ class Panel(Container):
                     e.update(anchor="100%")
                 
         elif d['layout'] == 'hbox':
+                
+            #~ if self.as_ext() == 'main_1_panel187':
+                #~ logger.info("20120210 b main_1_panel187 : %r",[repr(e) for e in self.elements])
+            
             self.wrap_formlayout_elements()
-            if not self.vflex: # 20101028
-                d.update(autoHeight=True)
-                d.update(layoutConfig=dict(align='stretchmax'))
             for e in self.elements:
+                """
+                20120210
+                a hbox having at least one child with explicit height 
+                will become itself vflex
+                """        
+                if e.height:
+                    logger.info("20120210 %s becomes vflex because %s has height",self,e)
+                    self.vflex = True
+                  
                 if e.hflex:
                     w = e.width or e.preferred_width
                     #~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
                     e.value.update(flex=int(w*100/self.preferred_width))
+                    
+            if not self.vflex: # 20101028
+                d.update(autoHeight=True)
+                d.update(layoutConfig=dict(align='stretchmax'))
                 
               
         elif d['layout'] == 'vbox':
@@ -1326,6 +1343,21 @@ class GridElement(Container):
         self.preferred_width = constrain(w,10,120)
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
+        
+        vc = dict(emptyText=_("No data to display."))
+        if rpt.editable:
+            vc.update(getRowClass=js_code('Lino.getRowClass'))
+        
+        #~ //autoScroll:true,
+        #~ //autoFill:true,
+        #~ //forceFit=True,
+        #~ //enableRowBody=True,
+        #~ //~ showPreview:true,
+        #~ //~ scrollOffset:200,
+        #~ //~ enableRowBody: true,
+        
+        kw.update(viewConfig=vc)
+        
         
         #~ kw.update(containing_window=js_code("this.containing_window"))
         kw.update(containing_panel=js_code("this"))
@@ -1516,6 +1548,7 @@ class FormPanel(jsgen.Component):
 
 
 _FIELD2ELEM = (
+    #~ (dd.Constant, ConstantElement),
     (dd.HtmlBox, HtmlBoxElement),
     #~ (dd.QuickAction, QuickActionElement),
     (dd.DisplayField, DisplayElement),

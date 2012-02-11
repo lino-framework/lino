@@ -147,6 +147,7 @@ class ActorMetaClass(type):
                 v.table = cls
                 
         cls.virtual_fields = {}
+        cls._constants = {}
         
         # inherit virtual fields defined on parent tables
         for b in bases:
@@ -157,6 +158,10 @@ class ActorMetaClass(type):
         for k,v in classDict.items():
             #~ if isinstance(v,models.Field):
             #~ if isinstance(v,(models.Field,fields.VirtualField)):
+            if isinstance(v,fields.Constant):
+                cls.add_constant(k,v)
+                #~ return v
+            
             if isinstance(v,fields.VirtualField):
                 cls.add_virtual_field(k,v)
                 #~ add_virtual_field(cls,k,v)
@@ -395,6 +400,11 @@ class Actor(Handled):
         vf.get = curry(vf.get,cls)
         
     @classmethod
+    def add_constant(cls,name,vf):
+        cls._constants[name] = vf
+        vf.name = name
+        
+    @classmethod
     def get_url(self,ui,**kw):
         return ui.action_url_http(self,self.default_action,**kw)
 
@@ -477,9 +487,9 @@ class Actor(Handled):
       
     @classmethod
     def get_data_elem(self,name):
-        #~ cc = self.computed_columns.get(name,None)
-        #~ if cc is not None:
-            #~ return cc
+        c = self._constants.get(name,None)
+        if c is not None:
+            return c
         return self.virtual_fields.get(name,None)
         #~ vf = self.virtual_fields.get(name,None)
         #~ if vf is not None:
@@ -565,7 +575,8 @@ class EmptyTable(Frame):
     def create_instance(self,req,**kw):
         #~ if self.known_values:
             #~ kw.update(self.known_values)
-        kw.update(req.param_values)
+        if self.parameters:
+            kw.update(req.param_values)
 
         #~ for k,v in req.param_values.items():
             #~ kw[k] = v

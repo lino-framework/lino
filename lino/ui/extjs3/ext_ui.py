@@ -102,6 +102,9 @@ from lino.tools import resolve_model, obj2str, obj2unicode
 
 User = resolve_model(settings.LINO.user_model)
 
+MAX_ROW_COUNT = 300
+
+
 def is_devserver():
     """
     Returns True if we are running a development server.
@@ -621,6 +624,7 @@ def elem2rec_detailed(ar,elem,**rec):
 class ExtUI(base.UI):
     """The central instance of Lino's ExtJS3 User Interface.
     """
+    _handler_attr_name = '_extjs3_handle'
     #~ _response = None
     name = 'extjs3'
     verbose_name = "ExtJS with Windows"
@@ -674,6 +678,9 @@ class ExtUI(base.UI):
             
         if isinstance(de,fields.FieldSet):
             return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
+            
+        if isinstance(de,fields.Constant):
+            return ext_elems.ConstantElement(lh,de,**kw)
             
         if isinstance(de,models.Field):
             if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
@@ -761,8 +768,8 @@ class ExtUI(base.UI):
             if value is not None:
                 if isinstance(value,basestring):
                     return lh.desc2elem(panelclass,name,value,**kw)
-                if isinstance(value,table.StaticText):
-                    return ext_elems.StaticTextElement(lh,name,value)
+                #~ if isinstance(value,table.StaticText):
+                    #~ return ext_elems.StaticTextElement(lh,name,value)
                 raise KeyError(
                   "Cannot handle value %r in %s.%s." 
                   % (value,lh.layout.__name__,name))
@@ -1319,9 +1326,9 @@ tinymce.init({
             #~ return http.HttpResponseForbidden(msg)
             PUT = http.QueryDict(request.raw_post_data)
             gc = dict(
-              widths=[int(x) for x in PUT.getlist('widths')],
-              columns=[str(x) for x in PUT.getlist('columns')],
-              hiddens=[(x == 'true') for x in PUT.getlist('hiddens')],
+              widths = [int(x) for x in PUT.getlist(ext_requests.URL_PARAM_WIDTHS)],
+              columns = [str(x) for x in PUT.getlist(ext_requests.URL_PARAM_COLUMNS)],
+              hiddens=[(x == 'true') for x in PUT.getlist(ext_requests.URL_PARAM_HIDDENS)],
               #~ hidden_cols=[str(x) for x in PUT.getlist('hidden_cols')],
             )
             
@@ -1415,7 +1422,8 @@ tinymce.init({
                   disabled_actions=rpt.disabled_actions(ar,None),
                   gc_choices=[gc.data for gc in rpt.grid_configs])
                     
-            if fmt == 'html':
+            #~ if fmt == 'html':
+            if fmt == ext_requests.URL_FORMAT_HTML:
                 ar.renderer = self.ext_renderer
                 #~ kw = {}
                 after_show = ar.get_status(self)
@@ -1460,7 +1468,12 @@ tinymce.init({
                     w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
                 return response
                 
-            if fmt == 'pdf':
+            if fmt == ext_requests.URL_FORMAT_PDF:
+            #~ if fmt == 'pdf':
+                #~ max_row_count = 10
+                if ar.get_total_count() > MAX_ROW_COUNT:
+                    raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
+            
               
                 from lino.utils.appy_pod import setup_renderer
                 from appy.pod.renderer import Renderer
@@ -1473,7 +1486,7 @@ tinymce.init({
                     raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
                     
                 target_parts = ['cache', 'appypdf', 
-                    rpt.app_label + '.' + rpt.__name__ + '.pdf']
+                    rpt.app_label + '.' + rpt.__name__ + '.odt']
                 target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
                 target_url = self.media_url(*target_parts)
                 ar.renderer = self.pdf_renderer
@@ -1509,7 +1522,10 @@ tinymce.init({
                 renderer.run()
                 return http.HttpResponseRedirect(target_url)
                 
-            if fmt == 'printer':
+            if fmt == ext_requests.URL_FORMAT_PRINTER:
+                if ar.get_total_count() > MAX_ROW_COUNT:
+                    raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
+              
                 ar.renderer = self.pdf_renderer
                 response = HttpResponse(content_type='text/html;charset="utf-8"')
                 #~ ar.render_to_html(self,response)
@@ -2466,22 +2482,53 @@ tinymce.init({
     def table2xhtml(self,ar,max_row_count=300):
         """
         """
+        widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+        columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+        hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
+        
+        fields = ar.ah.store.list_fields
+        headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
+        
+        if columns:
+            fields = []
+            headers = []
+            cellwidths = []
+            for i,cn in enumerate(columns):
+                col = None
+                for e in ar.ah.list_layout._main.columns:
+                    if e.name == cn:
+                        col = e
+                        break
+                #~ col = ar.ah.list_layout._main.find_by_name(cn)
+                #~ col = ar.ah.list_layout._main.columns[ci]
+                if col is None:
+                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
+                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout._main.columns))
+                if not hiddens[i]:
+                    fields.append(col.field._lino_atomizer)
+                    headers.append(col.label or col.name)
+                    cellwidths.append(widths[i])
+        
         def f():
-            headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
-            sums  = [0 for col in ar.ah.store.list_fields]
+            sums  = [0 for col in fields]
             #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
             cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
-            yield xhg.table_header_row(*headers,**cellattrs)
+            hr = xhg.table_header_row(*headers,**cellattrs)
+            for i,td in enumerate(hr.value): # hr.value is the list of items
+                td.update(width=cellwidths[i])
+            yield hr
+            
             recno = 0
             for row in ar.data_iterator:
                 recno += 1
-                cells = [x for x in ar.ah.store.row2html(ar,row,sums)]
+                cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums)]
                 yield xhg.table_body_row(*cells,**cellattrs)
-                if recno > max_row_count:
-                    yield xhg.table_body_row(
-                      _("List truncated after %d rows") % max_row_count,
-                      colspan=len(headers),**cellattrs)
-                    break
+                #~ yield tr
+                #~ if recno > max_row_count:
+                    #~ yield xhg.table_body_row(
+                      #~ _("List truncated after %d rows") % max_row_count,
+                      #~ colspan=len(headers),**cellattrs)
+                    #~ break
                     
             has_sum = False
             for i in sums:
@@ -2489,6 +2536,6 @@ tinymce.init({
                     has_sum = True
                     break
             if has_sum:
-                yield xhg.table_body_row(*ar.ah.store.sums2html(ar,sums),**cellattrs)
-        return xhg.TABLE(f(),cellspacing="3px",bgcolor="#ffffff", width="100%")
+                yield xhg.table_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
+        return xhg.HFBTABLE(f(),cellspacing="3px",bgcolor="#ffffff", width="100%")
             

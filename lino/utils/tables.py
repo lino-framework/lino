@@ -158,6 +158,21 @@ class AbstractTableRequest(actions.ActionRequest):
             #~ v = request.REQUEST.get(fieldname,None)
             #~ if v is not None:
                 #~ kw[fieldname] = v
+                
+        quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
+        if quick_search:
+            kw.update(quick_search=quick_search)
+            
+        sort = request.REQUEST.get(ext_requests.URL_PARAM_SORT,None)
+        if sort:
+            #~ self.sort_column = sort
+            sort_dir = request.REQUEST.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
+            if sort_dir == 'DESC':
+                sort = '-' + sort
+                #~ self.sort_direction = 'DESC'
+            kw.update(order_by=[sort])
+        
+                
         offset = request.REQUEST.get(ext_requests.URL_PARAM_START,None)
         if offset:
             kw.update(offset=int(offset))
@@ -184,9 +199,15 @@ class AbstractTableRequest(actions.ActionRequest):
         
             
     def setup(self,
+            quick_search=None,
+            order_by=None,
             offset=None,limit=None,
             **kw):
-        #~ if user is not None and not self.report.can_view.passes(user):
+            
+        self.quick_search = quick_search
+        self.order_by = order_by
+        
+    #~ if user is not None and not self.report.can_view.passes(user):
             #~ msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
             #~ raise InvalidRequest(msg)
             
@@ -215,6 +236,9 @@ class AbstractTableRequest(actions.ActionRequest):
         bp = kw.setdefault('base_params',{})
         if self.subst_user is not None:
             bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
+            
+        if self.quick_search:
+            bp[ext_requests.URL_PARAM_FILTER] = self.quick_search
             
         if self.known_values:
             #~ kv = dict()

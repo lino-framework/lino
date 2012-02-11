@@ -66,6 +66,9 @@ URL_PARAM_SORT = 'sort'
 URL_PARAM_SORTDIR = 'dir'
 URL_PARAM_START = 'start'
 URL_PARAM_LIMIT = 'limit'
+URL_PARAM_WIDTHS = 'cw'
+URL_PARAM_HIDDENS = 'ch'
+URL_PARAM_COLUMNS = 'ci'
 #~ TEST = 'name'
 
 URL_PARAMS = [
@@ -97,7 +100,9 @@ URL_PARAMS = [
 #~ from lino.modlib.users.models import User
 
 URL_FORMAT_JSON = 'json'
-
+URL_FORMAT_PDF = 'pdf'
+URL_FORMAT_PRINTER = 'printer'
+URL_FORMAT_HTML = 'html'
 
 def dict2kw(d):
     newd = {}

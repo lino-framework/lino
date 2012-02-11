@@ -822,11 +822,17 @@ class Store:
 
 
     def add_field_for(self,fields,df):
-        sf = self.df2sf.get(df,None)
+        sf = getattr(df,'_lino_atomizer',None)
         if sf is None:
             sf = self.create_field(df,df.name)
             self.all_fields.append(sf)
-            self.df2sf[df] = sf
+            setattr(df,'_lino_atomizer',sf)
+            
+        #~ sf = self.df2sf.get(df,None)
+        #~ if sf is None:
+            #~ sf = self.create_field(df,df.name)
+            #~ self.all_fields.append(sf)
+            #~ self.df2sf[df] = sf
         fields.append(sf)
         
     def collect_fields(self,fields,*layouts):
@@ -999,13 +1005,14 @@ class Store:
         
     def pv2dict(self,ui,pv,**d):
         for fld in self.param_fields:
-            v = pv[fld.name]
+            v = pv.get(fld.name,None)
             fld.value2dict(ui,v,d,None)
         return d
         
         
-    def row2html(self,request,row,sums):
-        for i,fld in enumerate(self.list_fields):
+    def row2html(self,request,fields,row,sums):
+        #~ for i,fld in enumerate(self.list_fields):
+        for i,fld in enumerate(fields):
             #~ print 20120115, fld.field.name
             #~ if not isinstance(fld,SpecialStoreField):
             if fld.field is not None:
@@ -1017,9 +1024,10 @@ class Store:
                     yield fld.value2html(request,v)
                 #~ yield fld.cell_html(request,row)
                 
-    def sums2html(self,request,sums):
+    def sums2html(self,request,fields,sums):
         return [fld.sum2html(request.ui,sums[i])
-          for i,fld in enumerate(self.list_fields)]
+          #~ for i,fld in enumerate(self.list_fields)]
+          for i,fld in enumerate(fields)]
             
     def parse_params(self,request,**kw):
         pv = request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES)

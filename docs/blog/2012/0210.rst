@@ -10,3 +10,40 @@ Modul zur Introspection, das auch zur Auswertung der XML-Responses der
 BCSS nützlich werden könnte.
 
 Checkin um 9.20 Uhr.
+
+
+
+
+
+Ein Container, der in einer vbox saß, bekam sein flex nicht gesetzt.
+Oder besser gesagt: ein vbox-Panel setzte das flex seiner Kinder nicht immer korrekt.
+
+
+Lino.lino.About.FormPanel = Ext.extend(Lino.FormPanel,{
+  layout: 'fit',
+  initComponent : function() {
+    var containing_panel = this;
+    var startup_time186 = new Ext.form.DisplayField({ "disabled": true, "readOnly": true, "fieldLabel": "Server up since", "name": "startup_time", "anchor": "100%", "value": "<br>" });
+    var main_1_panel187 = new Ext.Container({ 
+      "flex": 60, // fehlte
+      "border": false, "autoHeight": true, "labelWidth": 144, 
+      "items": [ 
+        { "flex": 25, "autoHeight": true, "html": "Lino version 1.3.8 using <a href=\"http://www.python.org/\" target=\"_blank\">Python</a> 2.7.1, <a href=\"http://www.djangoproject.com\" target=\"_blank\">Django</a> 1.4 pre-alpha SVN-16714, <a href=\"http://labix.org/python-dateutil\" target=\"_blank\">python-dateutil</a> 1.5, <a href=\"http://cheetahtemplate.org/\" target=\"_blank\">Cheetah</a> 2.4.4, <a href=\"http://docutils.sourceforge.net/\" target=\"_blank\">docutils</a> 0.7, <a href=\"http://pyyaml.org/\" target=\"_blank\">PyYaml</a> 3.08, <a href=\"http://www.xhtml2pdf.com\" target=\"_blank\">xhtml2pdf</a> 3.0.32, <a href=\"http://www.reportlab.org/rl_toolkit.html\" target=\"_blank\">ReportLab Toolkit</a> 2.4, <a href=\"http://appyframework.org/pod.html\" target=\"_blank\">appy.pod</a> 0.8.0 (2011/12/15 22:41)", "xtype": "label" }, 
+        { "flex": 75, "autoHeight": true, "layout": "form", "xtype": "panel", "items": startup_time186, "labelAlign": "top" } ],
+      "layout": "hbox", "frame": false, "layoutConfig": { "align": "stretchmax" } });
+    var Models_htmlbox189 = new Lino.HtmlBoxPanel({ "flex": 90, "layout": "fit", "name": "Models", "containing_panel": this, "items": new Ext.BoxComponent(), "title": "Models", "master_panel": this, "bodyStyle": "overflow-x:hidden !important;", "autoScroll": true, "tools": [ Lino.show_in_own_window_button(Lino.lino.Models.grid) ] });
+    var main_panel190 = new Ext.Panel({ "border": false, "layout": "vbox", "items": [ main_1_panel187, Models_htmlbox189 ], "autoScroll": true, "labelWidth": 63, "frame": true, "layoutConfig": { "align": "stretch" }, "bodyBorder": false });
+    this.items = main_panel190;
+    this.before_row_edit = function(record) {
+      Models_htmlbox189.refresh();
+    }
+    Lino.lino.About.FormPanel.superclass.initComponent.call(this);
+  }
+});
+
+
+Um das obige Problem zu verstehen, habe ich mir einen Inspector gemacht.
+
+quick_search und order_by werden jetzt in AbstracTable geparst. 
+Damit das in einer VirtualTable funktioniert, muss deren get_data_rows diese berücksichtigen.
+

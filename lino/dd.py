@@ -54,6 +54,7 @@ from lino.core.fields import LinkedForeignKey
 from lino.core.fields import QuantityField
 from lino.core.fields import HtmlBox, FieldSet, PriceField, RichTextField
 from lino.core.fields import RequestField, requestfield
+from lino.core.fields import Constant
 #~ from lino.core.fields import MethodField
 
 from lino.utils import perms

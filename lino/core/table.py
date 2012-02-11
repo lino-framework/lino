@@ -391,9 +391,9 @@ def discover():
 
 
 
-class StaticText:
-    def __init__(self,text):
-        self.text = text
+#~ class StaticText:
+    #~ def __init__(self,text):
+        #~ self.text = text
         
 #~ class Picture:
     #~ pass
@@ -483,21 +483,6 @@ class TableRequest(AbstractTableRequest):
                 filter = json.loads(filter)
                 kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
                 
-        quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
-        if quick_search:
-            kw.update(quick_search=quick_search)
-        #~ else:
-            #~ kw.update(limit=self.report.page_length)
-            
-        sort = request.REQUEST.get(ext_requests.URL_PARAM_SORT,None)
-        if sort:
-            #~ self.sort_column = sort
-            sort_dir = request.REQUEST.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
-            if sort_dir == 'DESC':
-                sort = '-' + sort
-                #~ self.sort_direction = 'DESC'
-            kw.update(order_by=[sort])
-        
         kw = AbstractTableRequest.parse_req(self,request,**kw)
         #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
         return kw
@@ -510,9 +495,7 @@ class TableRequest(AbstractTableRequest):
             layout=None,
             filter=None,
             create_rows=None,
-            quick_search=None,
             gridfilters=None,
-            order_by=None,
             exclude=None,
             extra=None,
             **kw):
@@ -521,9 +504,7 @@ class TableRequest(AbstractTableRequest):
         self.filter = filter
         #~ if isinstance(self.action,GridEdit):
             #~ self.expand_memos = expand_memos or self.report.expand_memos
-        self.quick_search = quick_search
         self.gridfilters = gridfilters
-        self.order_by = order_by
         self.exclude = exclude or self.report.exclude
         self.extra = extra
 
@@ -595,8 +576,6 @@ class TableRequest(AbstractTableRequest):
         #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
             #~ print 20111223, self.known_values
         bp = kw.setdefault('base_params',{})
-        if self.quick_search:
-            bp[ext_requests.URL_PARAM_FILTER] = self.quick_search
         if self.master_instance is not None:
             bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
             mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
@@ -1356,7 +1335,7 @@ class LayoutHandle:
     def add_store_field(self,field):
         self._store_fields.append(field)
             
-    def has_field(self,f):
+    def unused_has_field(self,f):
         return self._main.has_field(f)
         
     def add_hidden_field(self,field):
@@ -1517,6 +1496,7 @@ class Detail(object):
     The UI-agnostic representation of a Detail window.
     Equivalent to a collection of .dtl files.
     """
+    _handle_class = DetailHandle    
     
     #~ def __init__(self,model,layouts):
     def __init__(self,actor,layouts):
@@ -1526,15 +1506,30 @@ class Detail(object):
         #~ self.table = model._lino_model_report,
         self.layouts = layouts
         self._handles = {}
-        
 
-    def get_handle(self,k):
-        h = self._handles.get(k,None)
+
+    def get_handle(self,ui):
+        "similar to Handled.get_handle, but now its an instance method"
+        #~ assert ui is None or isinstance(ui,UI), \
+            #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
+        if ui is None:
+            hname = '_lino_console_handler'
+        else:
+            hname = ui._handler_attr_name
+        h = self.__dict__.get(hname,None)
         if h is None:
-            h = DetailHandle(k,self)
-            self._handles[k] = h
+            h = self._handle_class(ui,self)
+            setattr(self,hname,h)
             h.setup()
         return h
+
+    #~ def get_handle(self,k):
+        #~ h = self._handles.get(k,None)
+        #~ if h is None:
+            #~ h = DetailHandle(k,self)
+            #~ self._handles[k] = h
+            #~ h.setup()
+        #~ return h
         
     def __str__(self):
         #~ return "%s Detail(%s)" % (self.actor,[str(x) for x in self.layouts])
