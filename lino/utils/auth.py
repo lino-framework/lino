@@ -96,10 +96,12 @@ if settings.LINO.user_model:
                         translation.activate(request.user.language)
                         request.LANGUAGE_CODE = translation.get_language()
             except USER_MODEL.DoesNotExist,e:
-                #~ request.user = None  # [C1]
-                #~ logger.error("Unknown username %s from request %s",
-                raise Exception("Unknown username %s from request %s",
-                  username,request)
+                # [C1]
+                request.user = None  
+                logger.error("Unknown username %s from request %s",request)
+                raise Exception(
+                  "Unknown username %r. Please contact your system administrator." 
+                  % username)
                 """
                 """
                 #~ u = USER_MODEL(username=username)
