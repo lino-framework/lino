@@ -91,6 +91,10 @@ if settings.LINO.user_model:
             
             try:
                 request.user = USER_MODEL.objects.get(username=username)
+                if len(babel.AVAILABLE_LANGUAGES) > 1:
+                    if request.user.language:
+                        translation.activate(request.user.language)
+                        request.LANGUAGE_CODE = translation.get_language()
             except USER_MODEL.DoesNotExist,e:
                 request.user = None  # [C1]
                 logger.error("Unknown username %s from request %s",
@@ -103,9 +107,5 @@ if settings.LINO.user_model:
                 #~ logger.info("Creating new user %s from request %s",u,request)
                 #~ request.user = u
             
-            if len(babel.AVAILABLE_LANGUAGES) > 1:
-                if request.user.language:
-                    translation.activate(request.user.language)
-                    request.LANGUAGE_CODE = translation.get_language()
             
         

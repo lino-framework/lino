@@ -53,7 +53,12 @@ from lino.core.coretools import app_labels
 from lino.utils import *
 
 USE_SQLDELETE = True
+
 USE_DROP_CREATE = False # tried, but doesn't seem to work
+"""
+http://stackoverflow.com/questions/3414247/django-drop-all-tables-from-database
+http://thingsilearned.com/2009/05/10/drop-database-command-for-django-manager/
+"""
 
 class Command(BaseCommand):
     help = __doc__
