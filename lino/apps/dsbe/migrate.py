@@ -966,6 +966,12 @@ def migrate_from_1_3_7(globals_dict):
 
 def migrate_from_1_3_8(globals_dict): 
     """
-    No database changes.
+    - Remove fields `cal.Event.duration_value` and `cal.Event.duration_unit`
     """
+    cal_Event = resolve_model("cal.Event")
+    new_content_type_id = globals_dict['new_content_type_id']
+    def create_cal_event(id, user_id, created, modified, owner_type_id, owner_id, project_id, build_time, calendar_id, uid, start_date, start_time, summary, description, access_class_id, sequence, auto_type, user_modified, rset_id, end_date, end_time, transparent, type_id, place_id, priority_id, status_id, duration_value, duration_unit):
+        owner_type_id = new_content_type_id(owner_type_id)
+        return cal_Event(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,build_time=build_time,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,user_modified=user_modified,rset_id=rset_id,end_date=end_date,end_time=end_time,transparent=transparent,type_id=type_id,place_id=place_id,priority_id=priority_id,status_id=status_id,duration_value=duration_value,duration_unit=duration_unit)    
+    globals_dict.update(create_cal_event=create_cal_event)
     return '1.3.9'

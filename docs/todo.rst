@@ -73,10 +73,6 @@ Short-term
 #.  Kontakte als common base class für Personen und Firmen : 
     beibehalten oder wieder trennen?
 
-#.  The CalendarPanel when starting, calls all Events. 
-    Should call only those of current month.
-    http://ext.ensible.com/forum/viewtopic.php?f=2&t=477
-
 #.  Layout problem "wrong background color" in Detail of a Note 
     and parameter panels.
     

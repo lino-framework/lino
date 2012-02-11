@@ -4,7 +4,7 @@ Version 1.3.9 (20120212)
 Sichtbare Änderungen
 --------------------
 
-- Beim Speichern eines Uploads mit ausgefülltem :guilabel`Gültig bis` 
+- Beim Speichern eines Uploads mit ausgefülltem :guilabel:`Gültig bis` 
   kam ein Server-Traceback
   "'alarm_value' is an invalid keyword argument for this function".
 
@@ -16,10 +16,12 @@ Sichtbare Änderungen
   auf Knopfdruck neu generieren lassen, indem sie
   auf den neuen Button 
   :class:`Erinnerungen aktualisieren <lino.modlib.cal.models.UpdateReminders>` 
-  klicken, der sich im Benutzer-Detail befindet 
-  (Button oben rechts im Hauptmenü).
-  Alle *automatisch generierten* Erinnerungen sind in diesem Detail 
-  jetzt unter dem neuen Reiter "Kalender" einsehbar.
+  klicken, der sich unterhalb des Benutzer-Details befindet 
+  (welches sich mit dem Button oben rechts im Hauptmenü öffnet).
+  Alle :class:`automatisch generierten Erinnerungen <lino.modlib.cal.models.RemindersByUser>`  
+  (also nur die) 
+  sind jetzt zudem im Benuzer-Detail 
+  unter einem neuen Reiter "Kalender" einsehbar.
   
   Beim Generieren automatischer Erinnerungen löscht Lino jetzt alle 
   **Erinnerungen, die mehr als sieben Tage zurück liegen** und nie 
@@ -61,18 +63,17 @@ Sichtbare Änderungen
   Was insbesondere bei aktiven Feldern angenehm auffallen dürfte.
   
 - Neuer Befehl :menuselection:`Site --> Info` 
-  zeigt die Lino-Version an.  
-  Aber in diesem Fenster gibt es vor allem einen Button 
+  zeigt die Lino-Version und den Zeitpunkt des Serverstarts an.  
+  Aber vor allem gibt es in diesem Fenster einen Button 
   :guilabel:`lino*.js-Dateien generieren`, den man braucht, 
   um aktualisierte Hilfetexte sichtbar zu machen.
 
 - Kalender: 
   Erstens habe ich einen Bug behoben (man konnte vom Kalender aus 
   keine Termine erstellen),
-  zweitens das Feld "Dauer" rausgeworfen und 
-  drittens ein neues Ankreuzfeld "ganztags".
+  zweitens das Feld "Dauer" rausgeworfen, 
+  drittens ein neues Ankreuzfeld "ganztags" eingeführt
+  und viertens ist der Kalender beim ersten Aufruf jetzt deutlich schneller,
+  weil er nur noch die Termine der laufenden Woche abfragt.
  
-
-Upgrade instructions
---------------------
 

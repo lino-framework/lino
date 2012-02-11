@@ -1225,6 +1225,9 @@ class UpdateReminders(actions.RowAction):
         return ar.ui.success_response(**kw)
         
 class RemindersByUser(dd.Table):
+    """
+    Shows the 
+    """
     model = Task
     label = _("Reminders")
     master_key = 'user'
