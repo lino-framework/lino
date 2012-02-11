@@ -1,9 +1,22 @@
 20120211
 ========
 
+[html] und [pdf] respektieren Grid-Einstellungen
+------------------------------------------------
+
+Wow, das ging schöner als ich gedacht hatte:
 [html] und [pdf] respektieren jetzt die Grid-Einstellungen: 
 Kolonnenreihenfolge, -breiten und -sichtbarkeit.
 
-Die Kolonnenbreiten werden "so gut wie möglich" respektiert.
-Im [pdf]-Ausdruck ist das leider momentan "gar nicht".
-https://answers.launchpad.net/appy/+question/187455
+Die Kolonnenbreiten werden "so gut wie möglich" respektiert:
+
+- Im [html]-Ausdruck nimmt die Tabelle immer die ganze Bildschirmbreite 
+  ein und der Browser interpretiert die Breitenangaben unter Umständen, 
+  aber insgesamt kriegt er es einigermaßen sinnvoll hin.
+
+- Im [pdf]-Ausdruck sind momentan leider alle Kolonnen immer gleich breit. 
+  https://answers.launchpad.net/appy/+question/187455
+
+
+Endspurt vor dem Release 1.3.9
+------------------------------

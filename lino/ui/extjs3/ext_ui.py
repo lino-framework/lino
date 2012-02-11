@@ -2488,6 +2488,7 @@ tinymce.init({
         
         fields = ar.ah.store.list_fields
         headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
+        cellwidths = None
         
         if columns:
             fields = []
@@ -2514,8 +2515,9 @@ tinymce.init({
             #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
             cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
             hr = xhg.table_header_row(*headers,**cellattrs)
-            for i,td in enumerate(hr.value): # hr.value is the list of items
-                td.update(width=cellwidths[i])
+            if cellwidths:
+                for i,td in enumerate(hr.value): # hr.value is the list of items
+                    td.update(width=cellwidths[i])
             yield hr
             
             recno = 0

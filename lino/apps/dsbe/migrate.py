@@ -963,3 +963,9 @@ def migrate_from_1_3_7(globals_dict):
         return newcomers_Faculty(id=id,name=name,name_fr=name_fr,name_en=name_en)
     globals_dict.update(create_newcomers_faculty=create_newcomers_faculty)
     return '1.3.8'
+
+def migrate_from_1_3_8(globals_dict): 
+    """
+    No database changes.
+    """
+    return '1.3.9'

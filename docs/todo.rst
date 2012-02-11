@@ -12,6 +12,48 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  When a user tries to sort a column on a RemoteField, the server says::
+
+      FieldError
+      Cannot resolve keyword u'applies_until' into field. Choices are: activity, addr1, addr2, aid_type, bank_account1, bank_account2, birth_country, birth_date, birth_place, broker, cal_guest_by_contact, card_issuer, card_number, card_type, card_valid_from, card_valid_until, city, civil_state, coach1, coach2, coached_from, coached_until, contact_ptr, country, email, event, faculty, fax, first_name, gender, gesdos_id, group, gsm, health_insurance, id, identifypersonrequest, in_belgium_since, income_ag, income_kg, income_misc, income_rente, income_wg, is_active, is_cpas, is_deprecated, is_seeking, is_senior, job_agents, job_office_contact, language, last_name, mails_by_sender, name, national_id, nationality, needs_residence_permit, needs_work_permit, newcomer, noble_condition, note, obstacles, pharmacy, phone, recipient, recurrenceset, region, remarks, remarks2, residence_type, rolesbyperson, skills, street, street_box, street_no, street_prefix, task, third, title, unavailable_until, unavailable_why, unemployed_since, url, work_permit_suspended_until, zip_code
+
+      TRACEBACK:
+        File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+          response = callback(request, *callback_args, **callback_kwargs)
+
+        File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 1409, in api_list_view
+          rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
+
+        File "l:\snapshots\django\django\db\models\query.py", line 104, in _result_iter
+          self._fill_cache()
+
+        File "l:\snapshots\django\django\db\models\query.py", line 776, in _fill_cache
+          self._result_cache.append(self._iter.next())
+
+        File "l:\snapshots\django\django\db\models\query.py", line 266, in iterator
+          for row in compiler.results_iter():
+
+        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 699, in results_iter
+          for rows in self.execute_sql(MULTI):
+
+        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 744, in execute_sql
+          sql, params = self.as_sql()
+
+        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 62, in as_sql
+          ordering, ordering_group_by = self.get_ordering()
+
+        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 359, in get_ordering
+          self.query.model._meta, default_order=asc):
+
+        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 388, in find_ordering_name
+          opts, alias, False)
+
+        File "l:\snapshots\django\django\db\models\sql\query.py", line 1283, in setup_joins
+          "Choices are: %s" % (name, ", ".join(names)))
+
+
+
+
 #.  Continue with BCSS-Connection: 
 
     - add more fields to existing first service
