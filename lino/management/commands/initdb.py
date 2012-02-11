@@ -53,7 +53,7 @@ from lino.core.coretools import app_labels
 from lino.utils import *
 
 USE_SQLDELETE = True
-USE_DROP_CREATE = True
+USE_DROP_CREATE = False # tried, but doesn't seem to work
 
 class Command(BaseCommand):
     help = __doc__
