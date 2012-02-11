@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ from lino.core.coretools import app_labels
 from lino.utils import *
 
 USE_SQLDELETE = True
+USE_DROP_CREATE = True
 
 class Command(BaseCommand):
     help = __doc__
@@ -83,33 +84,42 @@ class Command(BaseCommand):
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(lino.welcome_text())
         
-        sql_list = []
-        conn = connections[using]
+        if USE_DROP_CREATE:
         
-        if USE_SQLDELETE:
-            #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
-            app_list = [models.get_app(app_label) for app_label in app_labels()]
-            for app in app_list:
-                # app_label = app.__name__.split('.')[-2]
-                sql_list.extend(sql_delete(app,no_style(),conn))
-                # print app_label, ':', sql_list
+            from django.db import connection
+            cursor = connection.cursor()
+            cursor.execute("DROP DATABASE %s;", [connection.settings_dict['NAME']])
+            cursor.execute("CREATE DATABASE %s;", [connection.settings_dict['NAME']])        
+                
         else:
-            #~ call_command('flush',verbosity=0,interactive=False)
-            #~ call_command('flush',**options)
-            sql_list.extend(sql_flush(no_style(), conn, only_django=False))
-            
-        #~ print sql_list
         
-        try:
-            cursor = conn.cursor()
-            for sql in sql_list:
-                # print sql
-                cursor.execute(sql)
-        except Exception, e:
-            transaction.rollback_unless_managed(using=using)
-            raise
+            sql_list = []
+            conn = connections[using]
             
-        transaction.commit_unless_managed()
+            if USE_SQLDELETE:
+                #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
+                app_list = [models.get_app(app_label) for app_label in app_labels()]
+                for app in app_list:
+                    # app_label = app.__name__.split('.')[-2]
+                    sql_list.extend(sql_delete(app,no_style(),conn))
+                    # print app_label, ':', sql_list
+            else:
+                #~ call_command('flush',verbosity=0,interactive=False)
+                #~ call_command('flush',**options)
+                sql_list.extend(sql_flush(no_style(), conn, only_django=False))
+                
+            #~ print sql_list
+            
+            try:
+                cursor = conn.cursor()
+                for sql in sql_list:
+                    # print sql
+                    cursor.execute(sql)
+            except Exception, e:
+                transaction.rollback_unless_managed(using=using)
+                raise
+                
+            transaction.commit_unless_managed()
         
         #~ call_command('reset',*apps,**options)
         #~ call_command('syncdb',load_initial_data=False,**options)
@@ -122,6 +132,8 @@ class Command(BaseCommand):
         #~ syncdb_options.update(verbosity=0)
         #~ call_command('syncdb',**syncdb_options)
         #~ not good because all other messages "Creating table..." also disappear.
+        
+        
         
         call_command('syncdb',**options)
         
