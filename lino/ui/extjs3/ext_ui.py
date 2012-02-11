@@ -1486,13 +1486,17 @@ tinymce.init({
                     raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
                     
                 target_parts = ['cache', 'appypdf', 
-                    rpt.app_label + '.' + rpt.__name__ + '.odt']
+                    rpt.app_label + '.' + rpt.__name__ + '.pdf']
                 target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
                 target_url = self.media_url(*target_parts)
                 ar.renderer = self.pdf_renderer
                 #~ body = ar.table2xhtml().toxml()
-                #~ body = self.table2xhtml(ar).tostring().encode('utf-8')
-                body = self.table2xhtml(ar).tostring()
+                """
+                [NOTE] :doc:`/blog/2012/0211`:
+                
+                """
+                body = self.table2xhtml(ar).tostring().encode('utf-8')
+                #~ body = self.table2xhtml(ar).tostring()
                 #~ logger.info("20120122 body is %s",body)
                 context = dict(
                     self=unicode(ar.get_title()),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-05 00:00+0000\n"
+"POT-Creation-Date: 2012-02-11 14:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,73 +93,73 @@ msgstr ""
 msgid "date ended"
 msgstr ""
 
-#: .\models.py:314
+#: .\models.py:316
 #, python-format
 msgid "Evaluation %d"
 msgstr ""
 
-#: .\models.py:330
+#: .\models.py:332
 msgid "Contract ends in a month"
 msgstr ""
 
-#: .\models.py:377
+#: .\models.py:379
 msgid "Date range lies outside of coached period"
 msgstr ""
 
-#: .\models.py:380
+#: .\models.py:382
 #, python-format
 msgid "Date range overlaps with %(ctype)s #%(id)s"
 msgstr ""
 
-#: .\models.py:392
+#: .\models.py:394
 #, python-format
 msgid "%(ctype)s #%(id)s : %(msg)s"
 msgstr ""
 
-#: .\models.py:404
+#: .\models.py:408
 msgid "ISIP"
 msgstr ""
 
-#: .\models.py:405 .\models.py:506
+#: .\models.py:409 .\models.py:511
 msgid "ISIPs"
 msgstr ""
 
-#: .\models.py:409
+#: .\models.py:413
 msgid "Contract Type"
 msgstr ""
 
-#: .\models.py:412
+#: .\models.py:416
 msgid "Company"
 msgstr ""
 
-#: .\models.py:415
+#: .\models.py:419
 msgid "stages"
 msgstr ""
 
-#: .\models.py:417
+#: .\models.py:421
 msgid "goals"
 msgstr ""
 
-#: .\models.py:419
+#: .\models.py:423
 msgid "duties ASD"
 msgstr ""
 
-#: .\models.py:421
+#: .\models.py:425
 msgid "duties DSBE"
 msgstr ""
 
-#: .\models.py:423
+#: .\models.py:427
 msgid "duties company"
 msgstr ""
 
-#: .\models.py:425
+#: .\models.py:429
 msgid "duties person"
 msgstr ""
 
-#: .\models.py:434
+#: .\models.py:438
 msgid "responsible (DSBE)"
 msgstr ""
 
-#: .\models.py:489
+#: .\models.py:494
 msgid "My PIIS contracts"
 msgstr ""

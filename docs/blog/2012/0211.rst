@@ -20,3 +20,39 @@ Die Kolonnenbreiten werden "so gut wie möglich" respektiert:
 
 Endspurt vor dem Release 1.3.9
 ------------------------------
+
+Under Python 2.6.6 (not Python 2.7.1), 
+the [pdf] button to print a table produced an empty document 
+showing only header and footer, but no table body.
+Rendering to .odt instead of .pdf revealed the following traceback::
+
+  Error while evaluating the expression "xhtml(table_body)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "/var/snapshots/appy/appy/pod/renderer.py", line 244, in renderXhtml
+  stylesMapping, ns).run()
+  File "/var/snapshots/appy/appy/pod/xhtml2odt.py", line 497, in run
+  self.xhtmlParser.parse(self.xhtmlString)
+  File "/var/snapshots/appy/appy/shared/xml_parser.py", line 193, in parse
+  self.parser.parse(inputSource)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 107, in parse
+  xmlreader.IncrementalParser.parse(self, source)
+  File "/usr/lib/python2.6/xml/sax/xmlreader.py", line 123, in parse
+  self.feed(buffer)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 211, in feed
+  self._err_handler.fatalError(exc)
+  File "/usr/lib/python2.6/xml/sax/handler.py", line 38, in fatalError
+  raise exception
+  <class 'xml.sax._exceptions.SAXParseException'>: <unknown>:1:1: not well-formed (invalid token)
+
+It seems that the 2.6 expatreader doesn't like Unicode strings.
+Replacing the line::
+
+    body = self.table2xhtml(ar).tostring()
+    
+by::    
+
+    body = self.table2xhtml(ar).tostring().encode('utf-8')
+
+solved the problem.
+
+Updated German translations.

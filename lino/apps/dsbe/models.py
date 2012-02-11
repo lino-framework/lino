@@ -1746,7 +1746,8 @@ class CourseRequest(models.Model):
     date_submitted = models.DateField(_("date submitted"),
         help_text=u"Das Datum, an dem die Anfrage erstellt wurde.")
     
-    urgent = models.BooleanField(_("Urgent"),default=False,
+    urgent = models.BooleanField(_("Needed for job search"),
+        default=False,
         help_text=u"Ankreuzen, wenn der Kurs für die Arbeitssuche benötigt wird.")
     
     #~ """Empty means 'any provider'

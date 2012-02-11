@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-05 00:01+0000\n"
+"POT-Creation-Date: 2012-02-11 14:40+0000\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Abbreviation"
 msgstr "Lühend"
 
-#: .\models.py:123 .\models.py:624 .\config\contacts\Company\1.dtl.py:3
+#: .\models.py:123 .\models.py:626 .\config\contacts\Company\1.dtl.py:3
 #: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
 #, fuzzy
 msgid "Contact"
@@ -160,68 +160,68 @@ msgstr "Perekonnanimi"
 msgid "Title"
 msgstr ""
 
-#: .\models.py:411
+#: .\models.py:413
 msgid "Company"
 msgstr "Firma"
 
-#: .\models.py:412
+#: .\models.py:414
 msgid "Companies"
 msgstr "Firmad"
 
-#: .\models.py:414
+#: .\models.py:416
 msgid "VAT id"
 msgstr "KMKR nr"
 
-#: .\models.py:419
+#: .\models.py:421
 msgid "Company type"
 msgstr "Firmaliik"
 
-#: .\models.py:452
+#: .\models.py:454
 msgid "Role Type"
 msgstr ""
 
-#: .\models.py:453
+#: .\models.py:455
 msgid "Role Types"
 msgstr ""
 
-#: .\models.py:469
+#: .\models.py:471
 #, fuzzy
 msgid "Contact Person"
 msgstr "Kontaktisik"
 
-#: .\models.py:470
+#: .\models.py:472
 #, fuzzy
 msgid "Contact Persons"
 msgstr "Kontaktisik"
 
-#: .\models.py:480
+#: .\models.py:482
 #, fuzzy
 msgid "Contact Role"
 msgstr "Kontaktisik"
 
-#: .\models.py:537
+#: .\models.py:539
 #, fuzzy
 msgid "Contact persons"
 msgstr "Kontaktiliigid"
 
-#: .\models.py:542
+#: .\models.py:544
 msgid "Contact for"
 msgstr "Kontaktisik"
 
-#: .\models.py:646
+#: .\models.py:648
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:655
+#: .\models.py:657
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:664
+#: .\models.py:666
 #, fuzzy
 msgid "is Person"
 msgstr "Isik"
 
-#: .\models.py:669
+#: .\models.py:671
 #, fuzzy
 msgid "is Company"
 msgstr "Firma"

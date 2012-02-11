@@ -1190,6 +1190,9 @@ def update_reminders(user):
       
 
 class UpdateReminders(actions.RowAction):
+    """
+    Users can invoke this to re-generate their automatic tasks.
+    """
     #~ name = 'print'
     label = _('Update Reminders')
     
