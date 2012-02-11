@@ -6,5 +6,5 @@ main =
   start_date status due_date done id
   summary 
   user project 
-  created:20 modified:20 owner
+  calendar owner created:20 modified:20 user_modified  
   description #notes.NotesByTask
