@@ -1495,7 +1495,7 @@ class TabPanel(jsgen.Component):
           activeTab=0,
           #~ layoutOnTabChange=True, # 20101028
           #~ forceLayout=True, # 20101028
-          #~ deferredRender=False, # 20101028
+          #~ deferredRender=False, # 20120212
           #~ autoScroll=True, 
           #~ width=300, # ! http://code.google.com/p/lino/wiki/20100513
           items=tabs,

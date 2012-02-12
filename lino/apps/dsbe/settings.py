@@ -253,6 +253,9 @@ class Lino(Lino):
       
     def get_reminder_generators_by_user(self,user):
         """
+        Yield a list of objects susceptible to generate 
+        automatic reminders for the specified user.
+        Used by :func:`lino.modlib.cal.update_reminders`.
         """
         from lino.tools import models_by_abc
         from django.db.models import Q

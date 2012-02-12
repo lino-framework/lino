@@ -81,6 +81,13 @@ geantwortet, aber jetzt erst hatte ich das gesehen.
 (instead of just logging an error) 
 when the remote username doesn't exist in Lino's database.
 
+A person can have 2 coaches.
+:meth:`lino.apps.dsbe.models.Person.update_reminders` must decide 
+for which of them to generate reminders.
+The rule here is "coach2 or coach1": 
+if there are 2 coaches, then coach2 is responsible and gets the reminders.
+:meth:`lino.apps.dsbe.settigs.Lino.get_reminder_generators_by_user` 
+also works according to this rule.
 
 :doc:`/releases/2012/1.3.9`
 

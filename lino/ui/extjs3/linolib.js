@@ -2858,7 +2858,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   
   // pageSize depends on grid height (Trying to remove scrollbar)
   // Thanks to Christophe Badoit on http://www.sencha.com/forum/showthread.php?82647
-  calculatePageSize : function() {
+  calculatePageSize : function(second_attempt) {
     //~ if (!this.isVisible()) { 
       //~ console.log('calculatePageSize : not visible');
       //~ return false; }
@@ -2883,18 +2883,29 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ var row = this.view.getRow(0);
     //~ if (row) rowHeight = Ext.get(row).getHeight();
     //~ console.log('rowHeight is ',rowHeight,this,caller);
-    // var height = this.getView().scroller.getHeight();
+    //~ this.getView().syncScroll();
+    //~ this.getView().initTemplates();
     var height = this.getView().scroller.getHeight();
-    //~ var height = this.getInnerHeight();
-    // var height = this.getView().mainBody.getHeight();
-    // var height = this.getHeight() - this.getFrameHeight();
+    //~ var height = this.getView().mainBody.getHeight();
+    //~ var height = this.getView().mainWrap.getHeight();
+    //~ var height = this.getView().resizeMarker.getHeight();
+    //~ this.syncSize();
+    //~ var height = this.getInnerHeight() - this.getFrameHeight();
+    //~ var height = this.getHeight() - this.getFrameHeight();
     //~ height -= this.getView().scrollOffset;
     //~ height -= 10; // keep room for a possible horizontal scrollbar... experimental value
     var ps = Math.floor(height / rowHeight);
     //~ console.log('20120203 calculatePageSize():',height,'/',rowHeight,'->',ps);
     ps -= 1; // phantom row ... experimental value
     //~ return (ps > 1 ? ps : false);
-    return (ps > 1 ? ps : 5);
+    if (ps > 1) return ps;
+    return 5;
+    //~ if (second_attempt) {
+        //~ console.log('calculatePageSize() abandons after second attempt:',
+          //~ height,'/',rowHeight,'->',ps);
+      //~ return 5;
+    //~ }
+    //~ return this.calculatePageSize.defer(500,this,[true]);
   },
   
   onCellDblClick : function(grid, row, col){

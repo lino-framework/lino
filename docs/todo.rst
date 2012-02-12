@@ -12,6 +12,12 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Mysteriöses Layout-Problem: wenn z.B. im Detail eines Benutzers auf den
+    Aktenreiter "Kalender" klickt, dann funktioniert beim ersten Mal
+    calculatePageSize() nicht korrekt. Er zeigt nur 5 Zeilen an, auch wenn 
+    es deren mehr gibt. Erst wenn man Refresh klickt, wird die 
+    korrekte Zeilenanzahl geladen.
+    
 #.  Checkboxen können nicht aktiv sein, weil sie aufs change-Event nicht reagieren. 
     Und das check-Event kann ich auch nicht nutzen, weil das auch schon beim 
     loadRecord abgefeuert wird. Doof, aber (scheinbar) wahr.
