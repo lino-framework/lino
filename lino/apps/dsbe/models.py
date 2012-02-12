@@ -877,7 +877,8 @@ def only_coached_persons_filter(today):
     
   
 def only_my_persons(qs,user):
-    return qs.filter(Q(coach1__exact=user) | Q(coach2__exact=user))
+    #~ return qs.filter(Q(coach1__exact=user) | Q(coach2__exact=user))
+    return qs.filter(Q(coach1=user) | Q(coach2=user))
 
 class PersonsByCoach1(Persons):
     master_key = 'coach1'

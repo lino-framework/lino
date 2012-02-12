@@ -14,7 +14,21 @@ Short-term
 
 #.  Checkboxen können nicht aktiv sein, weil sie aufs change-Event nicht reagieren. 
     Und das check-Event kann ich auch nicht nutzen, weil das auch schon beim 
-    loadRecord abgefeuert wird.
+    loadRecord abgefeuert wird. Doof, aber (scheinbar) wahr.
+    
+    Stattdessen könnte ich ein spezielles `keyword attribute`
+    für Checkboxen machen::
+    
+      all_day = ExtAllDayField(_("all day"),disables=('end_time','start_time'))
+      
+    - :attr:`disables` : a list or tuple of names of fields which should be 
+      disabled when the field is checked (and enabled when it is unchecked)
+    - :attr:`enables` : a list or tuple of names of fields which should be 
+      enabled when the field is checked (and disabled when it is unchecked)
+      
+    Das hätte vor allem auch den Vorteil, dass dann überhaupt kein Ajax-Call 
+    nötig ist.
+      
     
 #.  When a user tries to sort a column on a RemoteField, the server says::
 
