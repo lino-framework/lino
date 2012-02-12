@@ -257,12 +257,12 @@ class Lino(Lino):
         from lino.tools import models_by_abc
         from django.db.models import Q
         from lino.modlib.isip import models as isip
-        from lino.apps.dsbe.models import only_my_persons
+        #~ from lino.apps.dsbe.models import only_my_persons
         
-        #~ for obj in self.modules.contacts.Person.objects.filter(
-          #~ Q(coach1=user)|Q(coach1__isnull=True,coach2=user)):
-        for obj in only_my_persons(
-            self.modules.contacts.Person.objects.all(),user):
+        for obj in self.modules.contacts.Person.objects.filter(
+          Q(coach2=user)|Q(coach2__isnull=True,coach1=user)):
+        #~ for obj in only_my_persons(
+            #~ self.modules.contacts.Person.objects.all(),user):
             yield obj
         for obj in self.modules.uploads.Upload.objects.filter(user=user):
             yield obj
