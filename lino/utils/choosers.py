@@ -156,6 +156,8 @@ class Chooser(FieldChooser):
             kw[str(k)] = v
         for cv in self.converters:
             kw = cv.convert(**kw)
+        if tbl.known_values:
+            kw.update(tbl.known_values)
         #~ logger.info("20111213 get_request_choices(%r) -> %r",self.converters,kw)
         return self.get_choices(**kw)
         

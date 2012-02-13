@@ -2020,7 +2020,7 @@ tinymce.init({
             chooser = choosers.get_for_field(field)
             if chooser:
                 qs = chooser.get_request_choices(request,rpt)
-                logger.info("20120213 %s",qs)
+                #~ logger.info("20120213 %s",qs)
                 #~ if qs is None:
                     #~ qs = []
                 assert isiterable(qs), \
