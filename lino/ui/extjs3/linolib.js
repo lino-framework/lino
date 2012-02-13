@@ -1350,7 +1350,7 @@ Lino.ajax_error_handler = function(response,options) {
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
-Lino.main_menu = new Ext.Toolbar({});
+//~ Lino.main_menu = new Ext.Toolbar({});
   
 Ext.QuickTips.init();
   
@@ -1472,9 +1472,12 @@ Lino.do_when_visible = function(cmp,todo) {
     // 'visible' means 'rendered and not hidden'
     //~ console.log(cmp.title,'-> cmp is visible now');
     todo(); 
+  //~ } else {
+      //~ cmp.on('resize',todo,cmp,{single:true});
+  //~ }
+  //~ if (false) { // 20120213
   } else { 
     //~ console.log('Lino.do_when_visible() must defer because not isVisible()',todo,cmp);
-    //~ todo.defer(1000);
     if (cmp.rendered) {
       //~ console.log(cmp,'-> cmp is rendered but not visible: and now?');
       //~ console.log(cmp.title,'-> cmp is rendered but not visible: try again in a moment...');
@@ -2455,10 +2458,42 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
   autoLoad: false,
   load: function(options) {
+    //~ foo.bar = baz; // 20120213
     if (!options) options = {};
     if (!options.params) options.params = {};
     options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
-    this.grid_panel.set_start_limit(options.params);
+      
+    var ps = this.grid_panel.calculatePageSize();
+    
+    if (!ps) {
+        //~ this.gridpanel.on('render',this.load())
+      //~ console.log("20120213 GridStore.load() failed to calculate pagesize");
+      return false;
+        //~ params.$URL_PARAM_LIMIT = 1;
+        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
+        //~ return;
+    } 
+    
+    options.params.$URL_PARAM_LIMIT = ps;
+      
+    if (this.grid_panel.hide_top_toolbar) {
+        //~ console.log("20120206 GridStore.load() toolbar is hidden");
+        options.params.$URL_PARAM_START = 0;
+    } else {
+        //~ options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
+        //~ if (this.grid_panel.getTopToolbar().pageSize !=  ps) {
+          //~ console.log("20120206 abort load because toolbar says pagesize",
+            //~ this.grid_panel.getTopToolbar().pageSize,
+            //~ "while actual pagesize is",ps);
+            //~ return;
+        //~ }
+        
+        this.grid_panel.getTopToolbar().pageSize =  ps;
+        if (options.params.$URL_PARAM_START == undefined)
+            options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
+      
+    }
+      
     this.grid_panel.add_param_values(options.params);
     //~ console.log("20120213 GridStore.load()",options.params);
     //~ if (FOO > 0) {
@@ -2741,15 +2776,32 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         //~ this.on('afterrender', this.refresh,this);
     //~ else
         //~ this.on('show', this.refresh,this);
-    //~ this.on('afterlayout', this.refresh);
+    //~ this.on('afterlayout', function() {
+      //~ if (this.id == "ext-comp-1157") 
+        //~ console.log("20120213 afterlayout",this); 
+      //~ // this.refresh();
+      //~ },this);
     //~ this.on('afterrender', this.refresh);
     //~ this.on('resize', this.refresh,this,{delay:500});
+    //~ this.on('resize', function(){console.log("20120213 resize",arguments)},this);
+    this.on('resize', function(){
+      //~ console.log("20120213 resize",arguments)
+      this.refresh();
+      },this);
+    this.on('viewready', function(){
+      //~ console.log("20120213 resize",arguments);
+      this.view_is_ready = true;
+      this.refresh();
+      },this);
     this.on('afteredit', this.on_afteredit);
     this.on('beforeedit', this.on_beforeedit);
     this.on('cellcontextmenu', Lino.cell_context_menu, this);
     //~ this.on('contextmenu', Lino.grid_context_menu, this);
     
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
+    
+    //~ if (this.id == "ext-comp-1157") captureEvents(this);    
+    
   },
   
   //~ onResize : function(){
@@ -2781,7 +2833,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       this.getTopToolbar().changePage(status.current_page || 1);
     }
     //~ this.fireEvent('resize');
-    this.refresh.defer(100,this); 
+    //~ this.refresh.defer(100,this); 
+    //~ this.onResize.defer(100,this); 
     //~ this.refresh(); 
     //~ this.doLayout(); 
     //~ this.onResize(); 
@@ -2801,6 +2854,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         this.set_base_params(this.containing_panel.get_master_params());
     }
     
+    if (! this.view_is_ready) return;
+    
     var options = {};
     if (after) {
         options.callback = function(r,options,success) {if(success) after()}
@@ -2816,65 +2871,19 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.store.load(options);
   },
   
-  set_start_limit : function(params) {
-    
-    var ps = this.calculatePageSize();
-    
-    if (!ps) {
-        //~ console.log("20120206 GridPanel.refresh() failed to calculate pagesize");
-        params.$URL_PARAM_LIMIT = 1;
-        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
-        //~ return;
-    } else {
-    
-    //~ console.log("20120206 calculatePageSize() found",ps);
-    //~ Ext.apply(options.params,this.baseParams);
-    //~ options.params.fmt = 'json';
-    //~ options.params.$URL_PARAM_LIMIT = this.grid_panel.getTopToolbar().pageSize;
-    //~ options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
-      
-    //~ options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
-      
-        params.$URL_PARAM_LIMIT = ps;
-    }
-      
-    if (this.hide_top_toolbar) {
-        //~ console.log("20120206 GridStore.load() toolbar is hidden");
-        params.$URL_PARAM_START = 0;
-    } else {
-        //~ options.params.$URL_PARAM_START = this.grid_panel.getTopToolbar().cursor;
-        //~ if (this.grid_panel.getTopToolbar().pageSize !=  ps) {
-          //~ console.log("20120206 abort load because toolbar says pagesize",
-            //~ this.grid_panel.getTopToolbar().pageSize,
-            //~ "while actual pagesize is",ps);
-            //~ return;
-        //~ }
-        
-        this.getTopToolbar().pageSize =  ps;
-        if (params.$URL_PARAM_START == undefined)
-            params.$URL_PARAM_START = this.getTopToolbar().cursor;
-      
-        //~ Ext.applyIf(options.params, {
-            //~ '$URL_PARAM_LIMIT' : this.grid_panel.getTopToolbar().pageSize,
-            //~ '$URL_PARAM_START' : this.grid_panel.getTopToolbar().cursor
-            // 20110119 $URL_PARAM_FILTER: this.quick_search_text
-        //~ });
-      
-    }
-      
-    //~ console.log("20120206 GridPanel.refresh() would call store.load()",options);
-    
-  },
-  
-  // pageSize depends on grid height (Trying to remove scrollbar)
-  // Thanks to Christophe Badoit on http://www.sencha.com/forum/showthread.php?82647
+  /* pageSize depends on grid height (Trying to remove scrollbar)
+  Thanks to 
+  - Christophe Badoit on http://www.sencha.com/forum/showthread.php?82647
+  - http://www.sencha.com/forum/archive/index.php/t-37231.html
+  */
   calculatePageSize : function(second_attempt) {
+    //~ if (!this.rendered) { 
+    if (!this.view_is_ready) { 
+      //~ console.log('Cannot calculatePageSize() : not rendered');
+      return false; }
     //~ if (!this.isVisible()) { 
       //~ console.log('calculatePageSize : not visible');
       //~ return false; }
-    if (!this.rendered) { 
-      console.log('Cannot calculatePageSize() : not rendered');
-      return false; }
       
     //~ console.log('getFrameHeight() is',this.getFrameHeight());
     //~ console.log('getView().scroller.getHeight() is',this.getView().scroller.getHeight());
@@ -2890,25 +2899,35 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       
     var rowHeight = this.getFrameHeight();
     //~ var rowHeight = 52; // experimental value
-    //~ var row = this.view.getRow(0);
-    //~ if (row) rowHeight = Ext.get(row).getHeight();
+    var row = this.view.getRow(0);
+    if (row) {
+      //~ console.log('20120213 yes');
+      rowHeight = Ext.get(row).getHeight();
+    }
     //~ console.log('rowHeight is ',rowHeight,this,caller);
     //~ this.getView().syncScroll();
     //~ this.getView().initTemplates();
     var height = this.getView().scroller.getHeight();
+    //~ console.log('getView().scroller.getHeight() is',this.getView().scroller.getHeight());
+    //~ console.log('getInnerHeight() - getFrameHeight() is',
+      //~ this.getInnerHeight(), '-',
+      //~ this.getFrameHeight(), '=',
+      //~ this.getInnerHeight() - this.getFrameHeight());
     //~ var height = this.getView().mainBody.getHeight();
     //~ var height = this.getView().mainWrap.getHeight();
     //~ var height = this.getView().resizeMarker.getHeight();
     //~ this.syncSize();
     //~ var height = this.getInnerHeight() - this.getFrameHeight();
     //~ var height = this.getHeight() - this.getFrameHeight();
+    height -= Ext.getScrollBarWidth(); // leave room for a possible horizontal scrollbar... 
     //~ height -= this.getView().scrollOffset;
-    //~ height -= 10; // keep room for a possible horizontal scrollbar... experimental value
     var ps = Math.floor(height / rowHeight);
     //~ console.log('20120203 calculatePageSize():',height,'/',rowHeight,'->',ps);
-    ps -= 1; // phantom row ... experimental value
+    ps -= 1; // leave room for a possible phantom row
     //~ return (ps > 1 ? ps : false);
     if (ps > 1) return ps;
+    console.log('calculatePageSize() found less than 1 row:',height,'/',rowHeight,'->',ps);
+    //~ foo.bar = baz; // 20120213
     return 5;
     //~ if (second_attempt) {
         //~ console.log('calculatePageSize() abandons after second attempt:',
@@ -3284,6 +3303,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ if (! this.enabled) return;
     //~ cmp = this;
     //~ console.log('Lino.GridPanel.on_master_changed()',this.title);
+    //~ if (! this.rendered) return; // 20120213
     var todo = function() {
       if (this.disabled) return;
       //~ if (this.enabled) {
@@ -3328,33 +3348,6 @@ Lino.cell_context_menu = function(grid,row,col,e) {
   grid.cmenu.showAt(xy);
 }
 
-
-Lino.on_load_menu = function(response) {
-  // console.log('success',response.responseText);
-  //~ console.log('on_load_menu before',response);
-  var r = Ext.decode(response.responseText);
-  // console.log('on_load_menu p',p);
-  // Lino.viewport.hide();
-  // Lino.viewport.remove(Lino.main_menu);
-  if (! r.success) { 
-    Lino.notify("on_load_menu() got unexpected resonse ",r);
-    return; 
-  }
-  if (r.message) Lino.notify(r.message);
-  Lino.main_menu.removeAll();
-  Lino.main_menu.add(r.load_menu);
-  Lino.main_menu.add({text:"Help",menu:[{
-    text:"About", handler: Lino.show_about
-  }]});
-  // Lino.main_menu = new Ext.Toolbar(p);
-  // console.log('on_load_menu after',Lino.main_menu);
-  // Lino.viewport.add(Lino.main_menu);
-  Lino.viewport.doLayout();
-  // console.log('on_load_menu viewport',Lino.viewport);
-  // Lino.viewport.show();
-  i = Lino.main_menu.get(0);
-  if (i) i.focus();
-};      
 
 //~ Lino.load_main_menu = function() {
   //~ Ext.Ajax.request({
@@ -4140,3 +4133,27 @@ Lino.CalendarPanel = Ext.extend(Lino.CalendarPanel,{
 
 
 #end if
+
+/*
+captureEvents utility by Aaron Conran
+<http://www.sencha.com/learn/grid-faq/>
+
+Ext.onReady(function(){
+    var grid = new Ext.grid.GridPanel({
+        ... 
+    });
+ 
+    captureEvents(grid);
+});
+
+*/
+function captureEvents(observable) {
+    Ext.util.Observable.capture(
+        observable,
+        function(eventName) {
+            console.info(eventName);
+        },
+        this
+    );		
+}
+ 

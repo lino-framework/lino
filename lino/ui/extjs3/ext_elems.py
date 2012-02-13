@@ -21,6 +21,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
+from django.utils.translation import string_concat
 from django.conf import settings
 
 import lino
@@ -42,6 +43,7 @@ EXT_CHAR_HEIGHT = 22
 #~ DEFAULT_GC_NAME = 'std'
 DEFAULT_GC_NAME = 0
 
+DEFAULT_PADDING = 2
 
 def form_field_name(f):
     if isinstance(f,models.ForeignKey) \
@@ -384,7 +386,27 @@ class FieldElement(LayoutElement):
         #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
         #~ if self.field.__doc__:
             #~ kw.update(toolTipText=self.field.__doc__)
-        kw.setdefault('label',field.verbose_name)
+        label = field.verbose_name
+        if self.field.help_text:
+            #~ label = string_concat(
+              #~ '<b>',
+              #~ field.verbose_name,'</b>')
+            #~ label = string_concat(
+              #~ '<span style:border-bottom: 1px dotted #000000; color: #000000; outline: none;>',
+              #~ field.verbose_name,'</span>')
+            label = string_concat(
+              field.verbose_name,' [?]')
+            
+        kw.setdefault('label',label)
+        #~ kw.setdefault('label',string_concat('<b>',field.verbose_name,'</b>'))
+        #~ kw.setdefault('label',
+          #~ string_concat('<span class="ttdef"><a class="tooltip" href="#">',
+            #~ field.verbose_name,
+            #~ '<span class="classic">This is a test...</span></a></span>'))
+        #~ kw.setdefault('label',
+          #~ string_concat('<div class="ttdef"><a class="tooltip" href="#">',
+            #~ field.verbose_name,
+            #~ '<span class="classic">This is a test...</span></a></div>'))
         self.add_default_value(kw)
         #~ kw.update(label=field.verbose_name) 
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
@@ -520,6 +542,8 @@ class CharFieldElement(FieldElement):
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         kw.update(maxLength=self.field.max_length)
+        #~ kw.update(style=dict(padding=DEFAULT_PADDING))
+        #~ kw.update(margins='10px')
         return kw
         
         
@@ -1009,6 +1033,7 @@ class Wrapper(VisibleComponent):
             e.update(anchor="100% 100%")
         else:
             e.update(anchor="100%")
+        e.update(padding=DEFAULT_PADDING)
             
     def walk(self):
         for e in self.wrapped.walk():
@@ -1271,6 +1296,8 @@ class Panel(Container):
         
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
+        else:
+            d.update(padding=DEFAULT_PADDING)
         if len(self.elements) > 1 and self.vertical:
             #d.update(frame=self.has_frame)
             d.update(frame=True)

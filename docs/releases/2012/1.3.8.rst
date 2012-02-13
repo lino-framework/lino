@@ -1,5 +1,9 @@
-Version 1.3.8 (2012-02-04)
-==========================
+Version 1.3.8 (20120204)
+========================
+
+Source distributions : 
+`zip <dist/lino-1.3.8.zip>`_ / `tar.gz <dist/lino-1.3.8.tar.gz>`_
+
 
 Diese Version ist eine der Letzten, bevor es an die TX25 und Authentifizierung per eId-Karte geht.
 

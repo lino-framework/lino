@@ -129,8 +129,11 @@ class Chooser(FieldChooser):
         #~ for varname in self.context_params:
             #~ args.append(getattr(obj,varname,None))
         #~ return self.meth(*args)
-      
+
     def get_request_choices(self,request,tbl):
+        """
+        Return a list of choices for this chooser, using a HttpRequest to build the context.
+        """
         kw = {}
         
         # 20120202

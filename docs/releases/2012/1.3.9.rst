@@ -1,6 +1,10 @@
 Version 1.3.9 (20120212)
 ========================
 
+Source distributions : 
+`zip <dist/lino-1.3.9.zip>`_ / `tar.gz <dist/lino-1.3.9.tar.gz>`_
+
+
 Sichtbare Änderungen
 --------------------
 
@@ -12,7 +16,8 @@ Sichtbare Änderungen
   und viertens ist der Kalender beim ersten Aufruf jetzt deutlich schneller,
   weil er nur noch die Termine der laufenden Woche abfragt.
  
-- Benutzer können jetzt alle automatischen Erinnerungen 
+- Benutzer können jetzt alle (sie selbst betreffenden) 
+  automatischen Erinnerungen 
   auf Knopfdruck neu generieren lassen, indem sie
   auf den neuen Button 
   :class:`Erinnerungen aktualisieren <lino.modlib.cal.models.UpdateReminders>` 

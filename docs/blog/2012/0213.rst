@@ -1,10 +1,76 @@
 20120213
 ========
 
+Nachtrag
+--------
+
 - Ein Bug weniger:
   GridPanel.set_status() speichert jetzt die aktuelle Seite der PagingToolbar.
   
-- Ein neuer Bug, der schon in der 1.3.8 drin war und den ich jetzt erst entdeckt habe: 
-  Man kann im Reiter "Kompetenzen" einer Person nichts eingeben 
-  (alle Auswahllisten sind leer).
+- Ein weiterer Bug weniger, 
+  der schon in der 1.3.8 drin war und den ich jetzt erst entdeckt habe: 
+  Man konnte im Reiter "Kompetenzen" einer Person nichts eingeben 
+  (alle Auswahllisten waren leer).
+  Das lag daran, dass 
+  :meth:`lino.utils.choosers.Chooser.get_request_choices`
+  die :attr:`known values <lino.core.actors.Actor.known_values>` ignorierte.
+  
+Diese beiden Bugs sind nachträglich noch in der :doc:`/releases/2012/1.3.9` 
+mit drin.
 
+Grids having the correct number of rows
+---------------------------------------
+
+There was still a bug in 1.3.9:
+
+#.  Wenn man z.B. im Detail eines Benutzers auf den
+    Aktenreiter "Kalender" klickt, dann funktioniert beim ersten Mal
+    calculatePageSize() nicht korrekt. Er zeigt nur 5 Zeilen an, auch wenn 
+    es deren mehr gibt. Erst wenn man Refresh klickt, wird die 
+    korrekte Zeilenanzahl geladen.
+    
+The general question for this problem is:
+**How can I automatically set the pageSize of a PagingToolbar
+so that it takes as many rows as fit into the GridPanel?**
+
+I did not find a correct answer using Google, 
+although it seems to be a common problem. For example:
+
+- final resize event in gridpanel
+  http://www.sencha.com/forum/showthread.php?106609-final-resize-event-in-gridpanel
+- http://www.sencha.com/forum/showthread.php?82647
+- http://www.sencha.com/forum/archive/index.php/t-37231.html
+
+I solved it now by capturing a combination of the `resize` and `viewready` events:
+  
+  initComponent : function() {
+    ...
+    this.on('resize', function(){  this.refresh(); },this);
+    this.on('viewready', function(){ this.view_is_ready = true; this.refresh(); },this);
+    }
+  
+  refresh : function() { 
+    ...
+    if (! this.view_is_ready) return;
+    ...
+    this.store.load(options);
+  },
+  
+  
+
+Thanks also to http://www.sencha.com/learn/grid-faq
+who collected and published Aaron Conran's
+simple captureEvents utility which helped my to discover 
+the `viewready` event::
+
+  function captureEvents(observable) {
+      Ext.util.Observable.capture(
+          observable,
+          function(eventName) {
+              console.info(eventName);
+          },
+          this
+      );		
+  }
+ 
+  
