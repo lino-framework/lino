@@ -235,7 +235,7 @@ class PropertyOccurence(models.Model):
             
     @chooser()
     def property_choices(cls,group):
-        #~ print group
+        print group
         if group is None:
             return []
         return Property.objects.filter(group=group).order_by('name')

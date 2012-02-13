@@ -13,14 +13,14 @@
 
 """
 
-The :mod:`lino.utils.choosers` extends the possibilities 
-for defining choices for fields of a Django model.
+Extends the possibilities for defining choices for fields of a Django model.
 
 - Context-sensitive choices
-- Non-limiting choices 
-  (specify a pick list of suggestions but leave the possibility to manually enter different values)
-- Self-learning Combos
-  (having new items automatically stored server-side)
+- Non-limiting choices :
+  specify a pick list of suggestions but leave the possibility 
+  to store manually entered values
+- Self-learning Combos :
+  having new items automatically stored server-side.
 
 """
 

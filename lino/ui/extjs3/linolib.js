@@ -2460,7 +2460,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
     this.grid_panel.set_start_limit(options.params);
     this.grid_panel.add_param_values(options.params);
-    //~ console.log("20120206 GridStore.load()",options.params);
+    //~ console.log("20120213 GridStore.load()",options.params);
     //~ if (FOO > 0) {
         //~ foo.bar = baz;
     //~ } else FOO += 1;
@@ -2760,15 +2760,25 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   
   
   get_status : function(){
-    return { base_params : this.get_base_params()};
+    var p = { base_params : this.get_base_params()};
+    if (!this.hide_top_toolbar) {
+        p.current_page = this.getTopToolbar().current;
+    }
+    //~ console.log("20120213 GridPanel.get_status",p);
+    return p;
   },
   set_status : function(status){
-    //~ console.log("20120203 GridPanel.set_status",status);
+    //~ console.log("20120213 GridPanel.set_status",status);
     this.clear_base_params();
     if (status == undefined) status = {};
     if (status.param_values) this.set_param_values(status.param_values);
     if (status.base_params) { 
       this.set_base_params(status.base_params);
+    }
+    if (!this.hide_top_toolbar) {
+      //~ console.log("20120213 GridPanel.getTopToolbar().changePage",
+          //~ status.current_page || 1);
+      this.getTopToolbar().changePage(status.current_page || 1);
     }
     //~ this.fireEvent('resize');
     this.refresh.defer(100,this); 

@@ -1,0 +1,10 @@
+20120213
+========
+
+- Ein Bug weniger:
+  GridPanel.set_status() speichert jetzt die aktuelle Seite der PagingToolbar.
+  
+- Ein neuer Bug, der schon in der 1.3.8 drin war und den ich jetzt erst entdeckt habe: 
+  Man kann im Reiter "Kompetenzen" einer Person nichts eingeben 
+  (alle Auswahllisten sind leer).
+
