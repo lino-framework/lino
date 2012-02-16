@@ -191,6 +191,9 @@ Path to the Qooxdoo SDK. Used by :term:`makeui`
 
 # this setting will be overridden by local settings
 # it is needed for generating docs. Sphinx's autodoc needs to import the modules to introspect them, but Django would complain if no settings is specified.
+
+#~ DATABASES = None
+
 DATABASES = {
       'default': {
           'ENGINE': 'django.db.backends.sqlite3',

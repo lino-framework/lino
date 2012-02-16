@@ -757,7 +757,8 @@ class Store:
         dtl = rh.report.get_detail()
         if dtl:
             dh = dtl.get_handle(rh.ui)
-            self.collect_fields(self.detail_fields,*dh.lh_list)
+            #~ self.collect_fields(self.detail_fields,*dh.lh_list)
+            self.collect_fields(self.detail_fields,dh)
         
         
         if issubclass(rh.report,table.Table):
@@ -1048,7 +1049,10 @@ class Store:
             else:
                 return self.parse_form_value(form_value,None)
       
-        if pv: 
+        #~ if pv: 
+            #~ if len(self.param_fields) != len(pv):
+                #~ raise Exception("len(%r) != len(%r)" % (self.param_fields,pv))
+        if pv and len(self.param_fields) == len(pv):
             for i,f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f,pv[i])
         else:

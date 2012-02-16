@@ -206,8 +206,12 @@ class Configured(object):
             logger.info("Not writing %s because %s is writeable",
                 self.filename,self.cd.name)
             return
-        if self.messages:
-            make_dummy_messages_file(fn,self.messages)
+        #~ if self.messages: 
+        """
+        if there are no messages, we still write a 
+        new file to remove messages from pervious versions.
+        """
+        make_dummy_messages_file(fn,self.messages)
         
         
     def add_dummy_message(self,msg):

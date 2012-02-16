@@ -319,7 +319,7 @@ class Partner(mixins.DiffingMixin,models.Model):
             return _("Cannot delete companies and persons imported from TIM")
           
 
-    
+
 class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printable):
     """
     Represents a physical person.
@@ -331,22 +331,9 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         verbose_name = _("Person") # :doc:`/tickets/14`
         verbose_name_plural = _("Persons") # :doc:`/tickets/14`
         
-    #~ first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
-    #~ last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
-    #~ title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
-        
     def get_queryset(self):
-        return self.model.objects.select_related('country','city','coach1','coach2','nationality')
-        
-    #~ def full_clean(self,*args,**kw):
-        #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
-        #~ self.name = " ".join(l)
-        #~ super(Person,self).full_clean(*args,**kw)
-        
-    #~ def clean(self):
-        #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
-        #~ self.name = " ".join(l)
-        #~ super(Person,self).clean()
+        return self.model.objects.select_related(
+            'country','city','coach1','coach2','nationality')
         
     remarks2 = models.TextField(_("Remarks (Social Office)"),blank=True) # ,null=True)
     gesdos_id = models.CharField(max_length=40,blank=True,
@@ -425,16 +412,14 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         verbose_name=_("eID card issuer"))
     "The administration who issued this ID card. Imported from TIM."
     
-    eid_panel = dd.FieldSet(_("eID card"),
-        "card_number card_valid_from card_valid_until card_issuer card_type:20",
-        card_number=_("number"),
-        card_valid_from=_("valid from"),
-        card_valid_until=_("until"),
-        card_issuer=_("issued by"),
-        #~ card_type=_("card type"),
-        #~ card_type_text=_("eID card type"),
-        card_type=_("eID card type"),
-        )
+    #~ eid_panel = dd.FieldSet(_("eID card"),
+        #~ "card_number card_valid_from card_valid_until card_issuer card_type:20",
+        #~ card_number=_("number"),
+        #~ card_valid_from=_("valid from"),
+        #~ card_valid_until=_("until"),
+        #~ card_issuer=_("issued by"),
+        #~ card_type=_("eID card type"),
+        #~ )
     
     noble_condition = models.CharField(max_length=50,
         blank=True,#null=True,
@@ -494,15 +479,17 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
             return sc.job_office.rolesbycompany.all()
             #~ return links.Link.objects.filter(a=sc.job_office)
         return []
+        
 
     @classmethod
-    def setup_report(model,rpt):
+    def setup_report(model,table):
         u"""
         rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'persons/auskunftsblatt.odt'))
         Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig wird.
         """
-        rpt.add_action(DirectPrintAction(rpt,'eid',_("eID sheet"),'eid-content'))
-        #~ rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
+        table.add_action(DirectPrintAction(table,'eid',_("eID sheet"),'eid-content'))
+        #~ table.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
+        #~ table.set_detail(PersonDetail(table))
         
     def __unicode__(self):
         #~ return u"%s (%s)" % (self.get_full_name(salutation=False),self.pk)
@@ -789,6 +776,158 @@ class Companies(Contacts):
             language vat_id
             phone fax email 
             bank_account1 bank_account2 activity''')
+            
+            
+            
+
+class PersonDetail(dd.DetailLayout):
+  
+    #~ actor = 'contacts.Person'
+    
+    main = "tab1 tab2 tab3 tab4 tab5 tab5b history contracts calendar misc bcss"
+    
+    tab1 = """
+    box1 box2
+    box4 image:15 #overview 
+    """
+    
+    box1 = """
+    last_name first_name:15 title:10
+    country city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+    """
+    
+    box2 = """
+    id:12 language
+    email
+    phone fax
+    gsm
+    """
+    
+    box3 = """
+    gender birth_date age:10 civil_state noble_condition 
+    birth_country birth_place nationality:15 national_id:15 
+    """
+    
+    eid_panel = """
+    card_number card_valid_from card_valid_until card_issuer card_type:20
+    """
+
+    box4 = """
+    box3
+    eid_panel
+    """
+
+    t2box1 = """
+    in_belgium_since:15 residence_type gesdos_id health_insurance
+    #pharmacy
+    coach1 coach2 group coached_from coached_until
+    bank_account1 bank_account2
+    """
+      
+    income = """
+    aid_type   
+    income_ag  income_wg    
+    income_kg   income_rente  
+    income_misc  
+    """
+      
+    suche1 = """
+    is_seeking unemployed_since work_permit_suspended_until
+    unavailable_until:15 unavailable_why:30
+    """
+      
+    suche2 = """
+    needs_residence_permit needs_work_permit 
+    residence_permit work_permit  driving_licence
+    """
+      
+    suche = """
+    suche1:40  suche2:40
+    job_office_contact job_agents broker faculty
+    income:20 dsbe.ExclusionsByPerson
+    """
+      
+    tab2 = """
+    t2box1:40 uploads.UploadsByOwner
+    suche
+    """
+    
+    tab3 = """
+    jobs.StudiesByPerson 
+    jobs.ExperiencesByPerson:40
+    """
+    
+    tab4 = """
+    dsbe.LanguageKnowledgesByPerson 
+    dsbe.CourseRequestsByPerson  
+    # skills obstacles
+    """
+    
+    tab5 = """
+    dsbe.SkillsByPerson dsbe.SoftSkillsByPerson  skills
+    dsbe.ObstaclesByPerson obstacles 
+    """
+
+    tab5b = """
+    jobs.CandidaturesByPerson
+    """
+      
+    history = """
+    notes.NotesByPerson #:60 #dsbe.LinksByPerson:20
+    """
+    
+    contracts = """
+    isip.ContractsByPerson
+    jobs.ContractsByPerson
+    """
+    
+    calendar = """
+    cal.EventsByProject
+    cal.TasksByProject
+    """
+    
+    misc = """
+    activity pharmacy bcss_identify_person
+    is_active is_cpas is_senior is_deprecated newcomer
+    remarks:30 remarks2:30 contacts.RolesByPerson:30
+    # links.LinksToThis:30 links.LinksFromThis:30 
+    """
+    
+    bcss = """
+    bcss.IdentifyRequestsByPerson
+    """
+    
+    def setup_handle(self,lh):
+      
+        lh.tab1.label = _("Person")
+        lh.tab2.label = _("Status")
+        lh.tab3.label = _("Education")
+        lh.tab4.label = _("Languages")
+        lh.tab5.label = _("Competences")
+        lh.tab5b.label = _("Job Requests")
+        lh.history.label = _("History")
+        lh.contracts.label = _("Contracts")
+        lh.calendar.label = _("Calendar")
+        lh.misc.label = _("Miscellaneous")
+        lh.bcss.label = _("BCSS")
+        
+      
+        lh.box1.label = _("Address")
+        lh.box2.label = _("Contact")
+        lh.box3.label = _("Birth")
+        lh.eid_panel.label = _("eID card")
+        
+        # override default field labels
+        lh.eid_panel.card_number.label = _("number")
+        lh.eid_panel.card_valid_from.label = _("valid from")
+        lh.eid_panel.card_valid_until.label = _("valid until")
+        lh.eid_panel.card_issuer.label = _("issued by")
+        lh.eid_panel.card_type.label = _("eID card type")
+
+
+            
 
 #~ class AllPersons(contacts.Persons):
 class AllPersons(Contacts):
@@ -796,6 +935,7 @@ class AllPersons(Contacts):
     List of all Persons.
     """
     model = settings.LINO.person_model
+    detail_layout = PersonDetail()
     order_by = "last_name first_name id".split()
     can_view = perms.is_authenticated
     #~ column_names = "name_column national_id gsm street street_no street_box city age email phone id bank_account1 aid_type coach1 language *"
@@ -2297,12 +2437,19 @@ connection_created.connect(my_callback)
 #~ class ContactPersons(links.LinksFromThis):
     #~ label = _("Contact persons")
     
-    
+class HomeDetail(dd.DetailLayout):
+    main = """
+    quick_links:80x1
+    dsbe.UsersWithClients:80x8
+    coming_reminders:40x16 missed_reminders:40x16
+    """
+  
     
 class Home(dd.EmptyTable):
     label = _("Home") 
     hide_window_title = True
     hide_top_toolbar = True
+    detail_layout = HomeDetail()
     
     @dd.virtualfield(dd.HtmlBox())
     def tasks_summary(cls,self,req):
@@ -2326,5 +2473,6 @@ class Home(dd.EmptyTable):
     def coming_reminders(cls,self,req):
         return cal.reminders(req.ui,req.get_user(),days_forward=30,
             max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
 
 

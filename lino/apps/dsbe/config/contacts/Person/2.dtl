@@ -1,10 +1,3 @@
-:label: Status
-:label_align: top
-
-main = 
-  box1:40 uploads.UploadsByOwner
-  suche 
-
 box1 = 
   in_belgium_since:15 residence_type gesdos_id health_insurance
   #pharmacy
@@ -31,4 +24,11 @@ suche =
   job_office_contact job_agents broker faculty
   income:20 dsbe.ExclusionsByPerson
   
+  
+main = 
+  :label: Status
+  :label_align: top
+  box1:40 uploads.UploadsByOwner
+  suche 
+
   

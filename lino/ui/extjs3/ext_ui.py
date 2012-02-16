@@ -62,6 +62,7 @@ from lino.ui import requests as ext_requests
 from lino import dd
 from lino.core import actions #, layouts #, commands
 from lino.core import table
+from lino.core import layouts
 from lino.utils import tables
 from lino.utils import xhtml as xhg
 from lino.core import fields
@@ -624,11 +625,11 @@ def elem2rec_detailed(ar,elem,**rec):
 class ExtUI(base.UI):
     """The central instance of Lino's ExtJS3 User Interface.
     """
-    _handler_attr_name = '_extjs3_handle'
+    _handle_attr_name = '_extjs3_handle'
     #~ _response = None
     name = 'extjs3'
     verbose_name = "ExtJS with Windows"
-    Panel = ext_elems.Panel
+    #~ Panel = ext_elems.Panel
     
     
     #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
@@ -662,7 +663,7 @@ class ExtUI(base.UI):
         self.build_lino_js()
         #~ self.generate_linolib_messages()
         
-    def create_layout_element(self,lh,panelclass,name,**kw):
+    def create_layout_element(self,lh,name,**kw):
         
         try:
             de = lh.get_data_elem(name)
@@ -676,8 +677,9 @@ class ExtUI(base.UI):
             lh.add_store_field(de)
             return dummy
             
-        if isinstance(de,fields.FieldSet):
-            return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
+        #~ if isinstance(de,fields.FieldSet):
+            #~ # return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
+            #~ return lh.desc2elem(name,de.desc,**kw)
             
         if isinstance(de,fields.Constant):
             return ext_elems.ConstantElement(lh,de,**kw)
@@ -709,7 +711,7 @@ class ExtUI(base.UI):
         #~ if isinstance(de,type) and issubclass(de,dd.Table):
         if isinstance(de,type) and issubclass(de,tables.AbstractTable):
             kw.update(master_panel=js_code("this"))
-            if isinstance(lh.layout,table.DetailLayout):
+            if isinstance(lh.layout,layouts.DetailLayout):
                 """a Table in a DetailWindow"""
                 kw.update(tools=[
                   js_code("Lino.show_in_own_window_button(Lino.%s)" % de.default_action)
@@ -764,15 +766,16 @@ class ExtUI(base.UI):
                 return self.create_meth_element(lh,name,de,rt,**kw)
                 
         if not name in ('__str__','__unicode__','name','label'):
-            value = getattr(lh.layout,name,None)
+            #~ value = getattr(lh.layout,name,None)
+            value = getattr(lh,name,None)
             if value is not None:
-                if isinstance(value,basestring):
-                    return lh.desc2elem(panelclass,name,value,**kw)
-                #~ if isinstance(value,table.StaticText):
-                    #~ return ext_elems.StaticTextElement(lh,name,value)
-                raise KeyError(
-                  "Cannot handle value %r in %s.%s." 
-                  % (value,lh.layout.__name__,name))
+                return value
+                
+                #~ if isinstance(value,basestring):
+                    #~ return lh.desc2elem(panelclass,name,value,**kw)
+                #~ raise KeyError(
+                  #~ "Cannot handle value %r in %s.%s." 
+                  #~ % (value,lh.layout.__name__,name))
         if hasattr(lh,'rh'):
             msg = "Unknown element %r referred in layout %s of %s." % (
                 name,lh.layout,lh.rh.report)
@@ -833,16 +836,6 @@ class ExtUI(base.UI):
         #return FieldElement(self,field,**kw)
         
 
-    def main_panel_class(self,layout):
-        if isinstance(layout,table.ListLayout) : 
-            return ext_elems.GridMainPanel
-        if isinstance(layout,table.DetailLayout) : 
-            return ext_elems.DetailMainPanel
-        if isinstance(layout,table.ParamsLayout) : 
-            return ext_elems.ParameterPanel
-        raise Exception("No element class for layout %r" % layout)
-
-    
     #~ def save_window_config(self,a,wc):
         #~ self.window_configs[str(a)] = wc
         #~ #a.window_wrapper.config.update(wc=wc)
@@ -1732,8 +1725,9 @@ tinymce.init({
                 #~ bp = self.request2kw(ar)
                 
                 #~ if a.window_wrapper.tabbed:
-                if rpt.get_detail().get_handle(self).tabbed:
+                #~ if rpt.get_detail().tabbed:
                 #~ if rpt.model._lino_detail.get_handle(self).tabbed:
+                if True:
                     tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
                     if tab is not None: 
                         tab = int(tab)
@@ -1879,8 +1873,15 @@ tinymce.init({
             #~ logger.info('20120120 table.all_details:\n%s',
                 #~ '\n'.join([str(d) for d in table.all_details]))
             
-            for dtl in table.all_details:
-                for ln in self.js_render_detail_FormPanel(dtl.get_handle(self)):
+            details = set()
+            for a in actors_list:
+                dtl = a.get_detail()
+                if dtl is not None:
+                    details.add(dtl)
+                    
+            for dtl in details:
+                dh = dtl.get_handle(self)
+                for ln in self.js_render_detail_FormPanel(dh):
                     f.write(ln + '\n')
             
             for rpt in actors_list:
@@ -1910,7 +1911,7 @@ tinymce.init({
         
     def make_linolib_messages(self):
         """
-        Called from :term:`makedocs`.
+        Called from :term:`dtl2py`.
         """
         from lino.utils.config import make_dummy_messages_file
         tpl = self.linolib_template()
@@ -1921,7 +1922,11 @@ tinymce.init({
             return _(s)
         tpl._ = mytranslate
         unicode(tpl) # just to execute the template. result is not needed
-        make_dummy_messages_file(self.linolib_template_name(),messages)
+        return make_dummy_messages_file(self.linolib_template_name(),messages)
+        
+    def make_dtl_messages(self):
+        from lino.core.kernel import make_dtl_messages
+        return make_dtl_messages(self)
         
     def linolib_template_name(self):
         return os.path.join(os.path.dirname(__file__),'linolib.js')
@@ -2106,22 +2111,17 @@ tinymce.init({
         #~ if isinstance(h,layouts.TabPanelHandle):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
-        if isinstance(h,table.DetailHandle): self.setup_detail_handle(h)
-        #~ elif isinstance(h,table.FrameHandle):
-            #~ for a in h.get_actions():
-                #~ a.window_wrapper = self.action_window_wrapper(a,h)
-                
-        else:
+        #~ if isinstance(h,layouts.DetailHandle): self.setup_detail_handle(h)
+        #~ else:
             if isinstance(h,tables.TableHandle):
                 if issubclass(h.report,table.Table):
                     if h.report.model is None \
                         or h.report.model is models.Model \
                         or h.report.model._meta.abstract:
                         return
-                        
-                h.list_layout = table.ListLayoutHandle(h,
-                    table.ListLayout(h.report,'main = '+h.report.column_names),
-                    hidden_elements=h.report.hidden_columns)
+                ll = layouts.ListLayout(h.report,h.report.column_names,hidden_elements=h.report.hidden_columns)
+                #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.report.hidden_columns)
+                h.list_layout = ll.get_handle(self)
             else:
                 h.list_layout = None
                     
@@ -2131,8 +2131,9 @@ tinymce.init({
                 else:
                     #~ params_template= ' '.join([pf.name for pf in h.report.params])
                     params_template= ' '.join(h.report.parameters.keys())
-                h.params_layout = table.LayoutHandle(self,
-                    table.ParamsLayout(h.report,'main = '+params_template))
+                pl = layouts.ParamsLayout(h.report,params_template)
+                h.params_layout = pl.get_handle(self)
+                #~ h.params_layout = layouts.LayoutHandle(self,pl)
                 #~ logger.info("20120121 %s params_layout is %s",h,h.params_layout)
             
             h.store = ext_store.Store(h)
@@ -2141,7 +2142,7 @@ tinymce.init({
                 #~ logger.info("20120121 %s param_fields is %s",h,h.store.param_fields)
             
             if h.list_layout:
-                h.on_render = self.build_on_render(h.list_layout._main)
+                h.on_render = self.build_on_render(h.list_layout.main)
                 
             #~ elif isinstance(h,table.FrameHandle):
                 #~ if issubclass(h.report,table.EmptyTable):
@@ -2200,7 +2201,7 @@ tinymce.init({
         )
         return kw
         
-    def setup_detail_handle(self,dh):
+    def unused_setup_detail_handle(self,dh):
         """
         Adds UI-specific information to a DetailHandle.
         """
@@ -2209,11 +2210,11 @@ tinymce.init({
             dh.tabbed = False
             lh = lh_list[0]
             #~ lh.label = None
-            dh.main = lh._main
+            dh.main = lh.main
             #~ main.update(autoScroll=True)
         else:
             dh.tabbed = True
-            tabs = [lh._main for lh in lh_list]
+            tabs = [lh.main for lh in lh_list]
             #~ for t in tabs: t.update(autoScroll=True)
             dh.main = ext_elems.TabPanel(tabs)
             
@@ -2252,15 +2253,17 @@ tinymce.init({
       
     def js_render_detail_FormPanel(self,dh):
         
+        tbl = dh.layout._table
+        
         yield ""
         #~ yield "// js_render_detail_FormPanel"
         #~ yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % full_model_name(dh.detail.model)
-        yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % dh.detail.actor
+        yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % tbl
         
         yield "  layout: 'fit',"
         #~ yield "  content_type: %s," % py2js(dh.content_type)
-        if issubclass(dh.detail.actor,table.Table):
-            yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(dh.detail.actor.model).pk)
+        if issubclass(tbl,table.Table):
+            yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
 
         
         yield "  initComponent : function() {"
@@ -2278,12 +2281,13 @@ tinymce.init({
         for ln in ext_elems.before_row_edit(dh.main):
             yield "      " + ln
         yield "    }"
-        if dh.on_render:
+        on_render = self.build_on_render(dh.main)
+        if on_render:
             yield "    this.onRender = function(ct, position) {"
-            for ln in dh.on_render:
+            for ln in on_render:
                 yield "      " + ln
             #~ yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % full_model_name(dh.detail.model)
-            yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % dh.detail.actor
+            yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % tbl
             yield "    }"
 
 
@@ -2292,13 +2296,12 @@ tinymce.init({
             #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
         #~ yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
         #~ yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % full_model_name(dh.detail.model)
-        yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % dh.detail.actor
+        yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % tbl
         
-        rpt = dh.detail.actor
-        if rpt.active_fields:
+        if tbl.active_fields:
             yield '    // active_fields:'
             #~ dh = dtl.get_handle(rh.ui)
-            for name in rpt.active_fields:
+            for name in tbl.active_fields:
                 e = dh.find_by_name(name)
                 #~ yield '    %s.on("change",function(){this.save()},this);' % py2js(e)
                 #~ yield '    %s.on("check",function(){this.save()},this);' % py2js(e)
@@ -2322,7 +2325,7 @@ tinymce.init({
         dtl = rpt.get_detail()
         if dtl is None:
             raise Exception("action %s on table %r == %r without detail?" % (action,action.actor,rpt))
-        yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl.actor)
+        yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._table)
         yield "  empty_title: %s," % py2js(action.get_button_label())
         #~ if not isinstance(action,actions.InsertRow):
         if action.hide_navigator:
@@ -2395,12 +2398,12 @@ tinymce.init({
         
         
         yield "    var ww = this.containing_window;"
-        for ln in jsgen.declare_vars(rh.list_layout._main.columns):
+        for ln in jsgen.declare_vars(rh.list_layout.main.columns):
             yield "    " + ln
             
             
         yield "    this.before_row_edit = function(record) {"
-        for ln in ext_elems.before_row_edit(rh.list_layout._main):
+        for ln in ext_elems.before_row_edit(rh.list_layout.main):
             yield "      " + ln
         yield "    };"
         if rh.on_render:
@@ -2412,7 +2415,7 @@ tinymce.init({
             
             
         yield "    this.ls_columns = %s;" % py2js([ 
-            ext_elems.GridColumn(i,e) for i,e in enumerate(rh.list_layout._main.columns)])
+            ext_elems.GridColumn(i,e) for i,e in enumerate(rh.list_layout.main.columns)])
             
         yield "    this.columns = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);"
 
@@ -2444,7 +2447,7 @@ tinymce.init({
             return 
             
         if action.actor.parameters:
-            params = rh.params_layout._main
+            params = rh.params_layout.main
             #~ assert params.__class__.__name__ == 'ParameterPanel'
         else:
             params = None
@@ -2492,7 +2495,7 @@ tinymce.init({
         hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
         
         fields = ar.ah.store.list_fields
-        headers = [col.label or col.name for col in ar.ah.list_layout._main.columns]
+        headers = [col.label or col.name for col in ar.ah.list_layout.main.columns]
         cellwidths = None
         
         if columns:
@@ -2501,7 +2504,7 @@ tinymce.init({
             cellwidths = []
             for i,cn in enumerate(columns):
                 col = None
-                for e in ar.ah.list_layout._main.columns:
+                for e in ar.ah.list_layout.main.columns:
                     if e.name == cn:
                         col = e
                         break
@@ -2509,7 +2512,7 @@ tinymce.init({
                 #~ col = ar.ah.list_layout._main.columns[ci]
                 if col is None:
                     #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout._main.columns))
+                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
                 if not hiddens[i]:
                     fields.append(col.field._lino_atomizer)
                     headers.append(col.label or col.name)
@@ -2545,4 +2548,26 @@ tinymce.init({
             if has_sum:
                 yield xhg.table_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
         return xhg.HFBTABLE(f(),cellspacing="3px",bgcolor="#ffffff", width="100%")
-            
+    
+    def create_layout_panel(self,lh,name,vertical,elems,**kw):
+        pkw = dict()
+        pkw.update(labelAlign=kw.pop('label_align','top'))
+        pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels',True))
+        pkw.update(label=kw.pop('label',None))
+        pkw.update(width=kw.pop('width',None))
+        pkw.update(height=kw.pop('height',None))
+        if kw:
+            raise Exception("Unknown panel attributes %r" % kw)
+        if name == 'main':
+            if isinstance(lh.layout,layouts.ListLayout): 
+                #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
+                return ext_elems.GridMainPanel(lh,name,lh.layout._table,*elems,**pkw)
+            if isinstance(lh.layout,layouts.ParamsLayout) : 
+                return ext_elems.ParameterPanel(lh,name,vertical,*elems,**pkw)
+            if isinstance(lh.layout,layouts.DetailLayout): 
+                if len(elems) == 1 or vertical:
+                    return ext_elems.DetailMainPanel(lh,name,vertical,*elems,**pkw)
+                else:
+                    return ext_elems.TabPanel(lh,name,*elems,**pkw)
+            raise Exception("No element class for layout %r" % lh.layout)
+        return ext_elems.Panel(lh,name,vertical,*elems,**pkw)

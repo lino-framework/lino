@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-11 14:40+0000\n"
+"POT-Creation-Date: 2012-02-15 09:00+0000\n"
 "PO-Revision-Date: 2011-12-08 16:29+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -42,7 +42,7 @@ msgstr "Types de sociétés"
 msgid "Abbreviation"
 msgstr "Abbréviation"
 
-#: .\models.py:123 .\models.py:626 .\config\contacts\Company\1.dtl.py:3
+#: .\models.py:123 .\models.py:628 .\config\contacts\Company\1.dtl.py:3
 #: .\config\contacts\Contact\1.dtl.py:3 .\config\contacts\Person\1.dtl.py:3
 msgid "Contact"
 msgstr "Contact"
@@ -145,75 +145,75 @@ msgstr "Personne"
 msgid "Persons"
 msgstr "Personnes"
 
-#: .\models.py:339
+#: .\models.py:340
 msgid "First name"
 msgstr "Prénom"
 
-#: .\models.py:343
+#: .\models.py:345
 msgid "Last name"
 msgstr "Nom de famille"
 
-#: .\models.py:347
+#: .\models.py:349
 msgid "Title"
 msgstr "Allocution"
 
-#: .\models.py:413
+#: .\models.py:415
 msgid "Company"
 msgstr "Société"
 
-#: .\models.py:414
+#: .\models.py:416
 msgid "Companies"
 msgstr "Sociétés"
 
-#: .\models.py:416
+#: .\models.py:418
 msgid "VAT id"
 msgstr "N° de TVA"
 
-#: .\models.py:421
+#: .\models.py:423
 msgid "Company type"
 msgstr "Type de société"
 
-#: .\models.py:454
+#: .\models.py:456
 msgid "Role Type"
 msgstr "Type de rōle"
 
-#: .\models.py:455
+#: .\models.py:457
 msgid "Role Types"
 msgstr "Types de rōle"
 
-#: .\models.py:471
+#: .\models.py:473
 msgid "Contact Person"
 msgstr "Personne de contact"
 
-#: .\models.py:472
+#: .\models.py:474
 msgid "Contact Persons"
 msgstr "Personnes de contact"
 
-#: .\models.py:482
+#: .\models.py:484
 msgid "Contact Role"
 msgstr "Rōle"
 
-#: .\models.py:539
+#: .\models.py:541
 msgid "Contact persons"
 msgstr "Personnes de contact"
 
-#: .\models.py:544
+#: .\models.py:546
 msgid "Contact for"
 msgstr "contact pour"
 
-#: .\models.py:648
+#: .\models.py:650
 msgid "The next automatic id for Person or Company"
 msgstr "Identifiant automatique pour la personne ounla société suivante"
 
-#: .\models.py:657
+#: .\models.py:659
 msgid "The company that runs this site"
 msgstr "La société ou tourne ce site"
 
-#: .\models.py:666
+#: .\models.py:668
 msgid "is Person"
 msgstr "Personne"
 
-#: .\models.py:671
+#: .\models.py:673
 msgid "is Company"
 msgstr "Société"
 

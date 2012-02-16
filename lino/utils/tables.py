@@ -281,10 +281,11 @@ class VirtualTableRequest(AbstractTableRequest):
 
 
 class TableHandle(base.Handle): 
+  
+    _layouts = None
     
     def __init__(self,ui,report):
         self.report = report
-        self._layouts = None
         base.Handle.__init__(self,ui)
   
     def __str__(self):
@@ -306,9 +307,9 @@ class TableHandle(base.Handle):
         return self._layouts[0]
         
     def get_columns(self):
-        layout = self.get_list_layout()
+        lh = self.get_list_layout()
         #~ print 20110315, layout._main.columns
-        return layout._main.columns
+        return lh.main.columns
         
     def get_slaves(self):
         return [ sl.get_handle(self.ui) for sl in self.report._slaves ]

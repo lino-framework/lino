@@ -115,36 +115,37 @@ class ContentTypes(dd.Table):
         return ', '.join(chunks)
     
     
+if False:
   
-class DataControlListing(mixins.Listing):
-    """Performs a "soft integrity test" on the database. 
-    Prints 
-    """
-    class Meta:
-        verbose_name = _("Data Control Listing") 
-    
-    def body(self):
-        items = []
-        for model in sorted_models_list():
-            m = getattr(model,'data_control',None)
-            if m is not None:
-                for i in model.objects.all():
-                    msgs = i.data_control()
-                    if msgs:
-                        if len(msgs) == 1:
-                            items.append("<b>%s</b> : %s" % (unicode(i),msgs[0]))
-                        else:
-                            items.append("<b>%s</b> : %s" % (
-                              unicode(i),
-                              "\n".join(
-                                ["<br>(%d) %s" % (x[0]+1,x[1])
-                                  for x in enumerate(msgs)])))
-        #~ html = "<ol>"
-        #~ html += "\n".join(["<li>%s</li>" % ln for ln in items])
-        #~ html += "</ol>"
-        html = "\n".join(["<p>%s</p>" % ln for ln in items])
-        html = '<div class="htmlText">%s</div>' % html
-        return html
+    class DataControlListing(mixins.Listing):
+        """Performs a "soft integrity test" on the database. 
+        Prints 
+        """
+        class Meta:
+            verbose_name = _("Data Control Listing") 
+        
+        def body(self):
+            items = []
+            for model in sorted_models_list():
+                m = getattr(model,'data_control',None)
+                if m is not None:
+                    for i in model.objects.all():
+                        msgs = i.data_control()
+                        if msgs:
+                            if len(msgs) == 1:
+                                items.append("<b>%s</b> : %s" % (unicode(i),msgs[0]))
+                            else:
+                                items.append("<b>%s</b> : %s" % (
+                                  unicode(i),
+                                  "\n".join(
+                                    ["<br>(%d) %s" % (x[0]+1,x[1])
+                                      for x in enumerate(msgs)])))
+            #~ html = "<ol>"
+            #~ html += "\n".join(["<li>%s</li>" % ln for ln in items])
+            #~ html += "</ol>"
+            html = "\n".join(["<p>%s</p>" % ln for ln in items])
+            html = '<div class="htmlText">%s</div>' % html
+            return html
         
     
 class HelpText(models.Model):
@@ -387,6 +388,12 @@ class Inspector(dd.VirtualTable):
         return cgi.escape(str(type(obj.value)))
         
 
+class AboutDetail(dd.DetailLayout):
+  
+    main = """
+    versions:40x5 startup_time:30
+    lino.Models:70x10
+    """
 
 
 class About(dd.EmptyTable):
@@ -397,6 +404,7 @@ class About(dd.EmptyTable):
     #~ hide_window_title = True
     hide_top_toolbar = True
     window_size = (700,400)
+    detail_layout = AboutDetail()
     
     versions = dd.Constant(lino.welcome_html())
     

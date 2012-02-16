@@ -1,8 +1,8 @@
-:label: 
-:label_align: top
-:hideCheckBoxLabels: 
-
 main = 
+  :label: 
+  :label_align: top
+  :hideCheckBoxLabels: 
+
   type name user id 
   url_template username password
   description

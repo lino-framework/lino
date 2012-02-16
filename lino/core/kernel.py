@@ -48,6 +48,7 @@ from django.utils.safestring import mark_safe
 import lino
         
 from lino.core import table
+#~ from lino.core import layouts
 from lino.utils import perms
 from lino.utils import dblogger
 #~ from lino.utils import babel
@@ -127,69 +128,89 @@ def analyze_models(self):
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
                     
-    from lino.models import HelpText
-    for ht in HelpText.objects.filter(help_text__isnull=False):
-        resolve_field(unicode(ht)).help_text = ht.help_text
+    from django.db.utils import DatabaseError
+    try:
+        from lino.models import HelpText
+        for ht in HelpText.objects.filter(help_text__isnull=False):
+            resolve_field(unicode(ht)).help_text = ht.help_text
+    except DatabaseError,e:
+        logger.warning("No help texts : %s",e)
+        pass
                     
+
+if False:
   
-class DetailSet(object):
-  
-    def __init__(self,responsible_actor):
-    #~ def __init__(self,app_label,name):
-        #~ self.app_label = app_label
-        #~ self.name = name
-        #~ self.actors = []
-        self.actor = responsible_actor
-        self.layouts = {}
-        
-    #~ def add_actor(self,actor):
-        #~ self.actors.append(actor)
-        
-detail_sets = dict()
+  class DetailSet(object):
     
-def load_details(make_messages):
-  
-    
-    for a in actors.actors_list:
-        for name in a.get_detail_sets():
-            detail_sets.setdefault(name,DetailSet(a))
-            
-        #~ for (app_label,name) in a.get_detail_sets():
-            #~ m = detail_sets.setdefault(app_label,{})
-            #~ ds = m.setdefault(name,DetailSet(app_label,name))
-            #~ ds.add_actor(a)
-        
-    for name,ds in detail_sets.items():
+      def __init__(self,responsible_actor):
+      #~ def __init__(self,app_label,name):
+          #~ self.app_label = app_label
+          #~ self.name = name
+          #~ self.actors = []
+          self.actor = responsible_actor
+          self.layouts = {}
+          
+      #~ def add_actor(self,actor):
+          #~ self.actors.append(actor)
+          
+  detail_sets = dict()
+
+  def unused_make_dtl_messages(ui):
+      for ds in detail_sets.values():
+          for dl in ds.layouts.values():
+              # make sure that messages have been filled in
+              table.LayoutHandle(ui,dl)
+              #~ dh = dl.get_handle(ui) 
+              # write the file if necessary
+              dl.make_dummy_messages_file()
+
       
-        def loader(content,cd,filename):
-            dtl = table.DetailLayout(ds.actor,content,filename,cd)
-            head,tail = os.path.split(filename)
-            ds.layouts[tail] = dtl
-            if make_messages:
-                dtl.make_dummy_messages_file()
-            
-        load_config_files(loader,'*.dtl',name)
+  def unused_load_details(make_messages):
+    
+      
+      for a in actors.actors_list:
+          for name in a.get_detail_sets():
+              detail_sets.setdefault(name,DetailSet(a))
+              
+          #~ for (app_label,name) in a.get_detail_sets():
+              #~ m = detail_sets.setdefault(app_label,{})
+              #~ ds = m.setdefault(name,DetailSet(app_label,name))
+              #~ ds.add_actor(a)
+          
+      for name,ds in detail_sets.items():
         
-    for a in actors.actors_list:
-        collector = {}
-        for name in a.get_detail_sets():
-            for k,v in detail_sets[name].layouts.items():
-                collector[k] = v
-                
-        if collector:
-            def by0(a,b):
-                return cmp(a[0],b[0])
-            collector = collector.items()
-            collector.sort(by0)
-            detail_layouts = [i[1] for i in collector]
-            #~ a._lino_detail = table.Detail(a,detail_layouts)
-            a._lino_detail = table.register_detail(a,detail_layouts)
-            #~ if a._lino_detail.actor != a:
-                #~ logger.info("20120120 %s got detail with actor %s",a, a._lino_detail.actor)
-        else:
-            a._lino_detail = None
+          def loader(content,cd,filename):
+              dtl = table.DetailLayout(ds.actor,content,filename,cd)
+              head,tail = os.path.split(filename)
+              ds.layouts[tail] = dtl
+              #~ if make_messages:
+              if False: 
+                  dtl.make_dummy_messages_file()
+              
+          load_config_files(loader,'*.dtl',name)
+          
+      for a in actors.actors_list:
+          collector = {}
+          for name in a.get_detail_sets():
+              for k,v in detail_sets[name].layouts.items():
+                  collector[k] = v
+                  
+          if collector:
+              def by0(a,b):
+                  return cmp(a[0],b[0])
+              collector = collector.items()
+              collector.sort(by0)
+              detail_layouts = [i[1] for i in collector]
+              #~ a._lino_detail = table.Detail(a,detail_layouts)
+              a._lino_detail = table.register_detail(a,detail_layouts)
+              #~ if a._lino_detail.actor != a:
+                  #~ logger.info("20120120 %s got detail with actor %s",a, a._lino_detail.actor)
+          else:
+              a._lino_detail = None
+          
         
-        
+def install_summary_rows():
+  
     """ 
     Install a summary_row() method to models.
     """
@@ -197,7 +218,8 @@ def load_details(make_messages):
     for model in models.get_models():
         
         if get_class_attr(model,'summary_row') is None:
-            if model._lino_model_report._lino_detail:
+            #~ if model._lino_model_report._lino_detail:
+            if model._lino_model_report.detail_layout:
                 def f(obj,ui,**kw):
                     return ui.ext_renderer.href_to(obj)
                     #~ return u'<a href="%s" target="_blank">%s</a>' % (
@@ -293,10 +315,10 @@ def setup_site(self,make_messages=False):
     
     choosers.discover()
     
-    load_details(make_messages)
+    #~ load_details(make_messages)
     
+    install_summary_rows()
     
-    actors.setup_actors()
     #~ logger.debug("actors.discover() done")
     
     #~ babel.discover() # would have to be called before model setup
@@ -319,6 +341,16 @@ def setup_site(self,make_messages=False):
             
     for a in actors.actors_list:
         self.modules.define(a.app_label,a.__name__,a)
+        
+    #~ layouts.setup_layouts()
+    
+    #~ for a in actors.actors_list:
+        #~ if not hasattr(a,'_lino_detail'):
+            #~ a._lino_detail = None
+    
+    
+    actors.setup_actors()
+        
         
     #~ import pprint
     #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
@@ -359,9 +391,8 @@ def setup_site(self,make_messages=False):
         #~ logger.exception(e)
         #~ raise
 
-def generate_dummy_messages(self):
+def unused_generate_dummy_messages(self):
     fn = os.path.join(self.source_dir,'dummy_messages.py')
-    #~ fn = os.path.join(os.path.dirname(__file__),'dummy_messages.py')
     self.dummy_messages
     raise Exception("use write_message_file() instead!")
     

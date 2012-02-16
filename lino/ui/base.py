@@ -52,7 +52,7 @@ class Handled(object):
         if ui is None:
             hname = '_lino_console_handler'
         else:
-            hname = ui._handler_attr_name
+            hname = ui._handle_attr_name
         h = self.__dict__.get(hname,None)
         if h is None:
             h = self._handle_class(ui,self)

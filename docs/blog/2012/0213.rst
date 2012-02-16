@@ -15,7 +15,7 @@ Nachtrag
   :meth:`lino.utils.choosers.Chooser.get_request_choices`
   die :attr:`known values <lino.core.actors.Actor.known_values>` ignorierte.
   
-Diese beiden Bugs sind nachträglich noch in der :doc:`/releases/2012/1.3.9` 
+Diese beiden Bugfixes sind nachträglich noch in der :doc:`/releases/2012/1.3.9` 
 mit drin.
 
 Grids having the correct number of rows
@@ -73,4 +73,14 @@ the `viewready` event::
       );		
   }
  
-  
+CSS Tooltips
+------------
+
+Tried to integrate `Alexander Dawson's CSS tooltips
+<http://sixrevisions.com/css/css-only-tooltips/>`_
+into Lino. 
+Problem seems to be that ExtJS does some trickery with 
+CSS which partly overrides Dawson's definitions.
+So I didn't yet manage to get them work when defined on 
+field labels in an ExtJS form.
+

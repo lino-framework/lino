@@ -122,7 +122,8 @@ body.mceNonEditable {
 .htmlText em {
 	font-style: italic;
 	}
-	
+
+
 
 /* 
 the following are 
@@ -131,6 +132,8 @@ from <http://sixrevisions.com/css/css-only-tooltips/>
 But I didn't yet manage to get them work when defined on 
 field labels inside an ExtJS form.
 */
+
+/* first attempts
 a.ttdef .tooltip {
 	border-bottom: 1px dotted #000000; color: #000000; outline: none;
 	cursor: help; text-decoration: none;
@@ -163,3 +166,49 @@ a.ttdef .critical { background: #FFCCAA; border: 1px solid #FF3334;	}
 a.ttdef .help { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 a.ttdef .info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 a.ttdef .warning { background: #FFFFAA; border: 1px solid #FFAD33; }
+*/
+
+/* 
+.x-form-field { padding: 10px; }
+*/
+
+.x-panel-body-noheader { padding-left: 2px; padding-right: 2px; }
+.x-panel-body { padding-left: 2px; padding-right: 2px; }
+
+.x-form-item-label .tooltip {
+	border-bottom: 1px dotted #000000; color: #000000; outline: none;
+	cursor: help; 
+	/* cursor: default; */
+	text-decoration: none;
+	position: relative;
+}
+.x-form-item-label .tooltip span {
+	margin-left: -999em;
+	position: absolute;
+}
+.x-form-item-label .tooltip:hover span {
+	border-radius: 5px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; 
+	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.1); 
+	-moz-box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
+	font-family: Calibri, Tahoma, Geneva, sans-serif;
+	position: absolute; left: 1em; top: 2em; z-index: 99;
+	overflow: visible;
+	margin-left: 0; width: 250px;
+	
+}
+.x-form-item-label .tooltip:hover img {
+	border: 0; margin: -10px 0 0 -55px;
+	float: left; position: absolute;
+}
+.x-form-item-label .tooltip:hover em {
+	font-family: Candara, Tahoma, Geneva, sans-serif; font-size: 1.2em; font-weight: bold;
+	display: block; padding: 0.2em 0 0.6em 0;
+}
+.x-form-item-label .classic { padding: 0.8em 1em; }
+.x-form-item-label .custom { padding: 0.5em 0.8em 0.8em 2em; }
+.x-form-item-label * html a:hover { background: transparent; }
+.x-form-item-label .classic {background: #FFFFAA; border: 1px solid #FFAD33; }
+.x-form-item-label .critical { background: #FFCCAA; border: 1px solid #FF3334;	}
+.x-form-item-label .help { background: #9FDAEE; border: 1px solid #2BB0D7;	}
+.x-form-item-label .info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
+.x-form-item-label .warning { background: #FFFFAA; border: 1px solid #FFAD33; }

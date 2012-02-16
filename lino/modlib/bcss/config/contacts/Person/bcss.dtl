@@ -1,5 +1,7 @@
-:label: BCSS
-:label_align: top
-:hideCheckBoxLabels: 
+main = 
 
-main = bcss.IdentifyRequestsByPerson
+  :label: BCSS
+  :label_align: top
+  :hideCheckBoxLabels: 
+  
+  bcss.IdentifyRequestsByPerson

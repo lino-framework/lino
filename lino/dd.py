@@ -59,5 +59,8 @@ from lino.core.fields import Constant
 
 from lino.utils import perms
 
+from lino.core.layouts import DetailLayout
+
+
 class Module(object):
     pass

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-11 14:40+0000\n"
+"POT-Creation-Date: 2012-02-15 09:00+0000\n"
 "PO-Revision-Date: 2012-02-05 02:06+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -40,7 +40,7 @@ msgstr "Kompetenz"
 msgid "Competences"
 msgstr "Kompetenzen"
 
-#: .\models.py:140 .\models.py:289
+#: .\models.py:140 .\models.py:289 .\config\users\User\newcomers.dtl.py:3
 msgid "Newcomers"
 msgstr "Neuzugänge"
 

@@ -166,6 +166,11 @@ class ActorMetaClass(type):
                 cls.add_virtual_field(k,v)
                 #~ add_virtual_field(cls,k,v)
                 
+        dl = classDict.get('detail_layout',None)
+        if dl is not None:
+            dl._table = cls
+                
+                
                 
         #~ cls.params = []
         #~ for k,v in classDict.items():
@@ -322,6 +327,8 @@ class Actor(Handled):
     panel should be visible when this table is being displayed.
     """
     
+    #~ _lino_detail = None
+    
     
     
     #~ _actor_name = None
@@ -330,6 +337,8 @@ class Actor(Handled):
     #~ actions = []
     default_action = None
     actor_id = None
+    
+    detail_layout = None
     
     #~ submit_action = actions.SubmitDetail()
     
@@ -377,17 +386,33 @@ class Actor(Handled):
                     #~ l.append(a.name)
         return d
         
-    @classmethod
-    def get_detail_sets(self):
-        """
-        Yield a list of (app_label,name) tuples for which the kernel 
-        should try to create a Detail Set.
-        """
-        yield self.app_label + '/' + self.__name__
+    #~ @classmethod
+    #~ def get_detail_sets(self):
+        #~ """
+        #~ Yield a list of (app_label,name) tuples for which the kernel 
+        #~ should try to create a Detail Set.
+        #~ """
+        #~ yield self.app_label + '/' + self.__name__
             
     @classmethod
     def get_detail(self):
-        return self._lino_detail
+        #~ if self.detail_layout is None:
+            #~ return None
+        #~ if self.detail_layout._table is None:
+            #~ self.detail_layout._table = self
+        #~ if not issubclass(self,self.detail_layout._table):
+            #~ raise Exception("20120216 %s not a subclass of %s" % (self,self.detail_layout._table))
+        return self.detail_layout
+
+        #~ dtl = getattr(self,'_lino_detail',None)
+        #~ if dtl is None:
+            #~ dtl = self.detail_layout
+            #~ self._lino_detail = dtl
+        #~ return dtl
+        
+    #~ @classmethod
+    #~ def set_detail(self,dtl):
+        #~ self._lino_detail = dtl
         
     #~ @classmethod
     #~ def add_virtual_field(cls,name,vf): 

@@ -720,8 +720,6 @@ class InvoicesByOrder(SalesDocuments):
 
 class ItemsByDocument(dd.Table):
     column_names = "pos:3 product title description:20x1 discount unit_price qty total"
-    #list_layout_class = ItemsByDocumentListLayout
-    #master = SalesDocument
     master_key = 'document'
     order_by = ["pos"]
     

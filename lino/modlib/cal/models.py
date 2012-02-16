@@ -322,7 +322,7 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
     start_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("Start time"))# iCal:DTSTART
-    start = dd.FieldSet(_("Start"),'start_date start_time')
+    #~ start = dd.FieldSet(_("Start"),'start_date start_time')
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = dd.RichTextField(_("Description"),blank=True,format='html')
     
@@ -565,7 +565,7 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     end_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("End Time"))
-    end = dd.FieldSet(_("End"),'end_date end_time')
+    #~ end = dd.FieldSet(_("End"),'end_date end_time')
     transparent = models.BooleanField(_("Transparent"),default=False)
     type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION

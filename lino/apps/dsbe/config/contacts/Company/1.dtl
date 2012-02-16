@@ -1,10 +1,3 @@
-:label: General
-:label_align: top
-
-main = 
-  intro_box
-  address_box
-  bottom_box
 box3 = 
   country region
   city zip_code:10
@@ -16,14 +9,25 @@ box4 =
   url
   phone
   gsm
+
 address_box = box3 box4
-## bottom_box = remarks contacts.RolesByParent
-bottom_box = box5 contacts.RolesByCompany
-## bottom_box = box5 dsbe.ContactPersons
+
 box5 = 
   remarks 
   is_courseprovider is_jobprovider
 
+## bottom_box = remarks contacts.RolesByParent
+bottom_box = box5 contacts.RolesByCompany
+## bottom_box = box5 dsbe.ContactPersons
+
 intro_box = 
     prefix name id language 
     vat_id:12 activity:20 type:20 #hourly_rate
+
+main = 
+  :label: General
+  :label_align: top
+
+  intro_box
+  address_box
+  bottom_box

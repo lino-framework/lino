@@ -476,6 +476,8 @@ class AttrDict(dict):
     1
     >>> print a.bar.baz
     2
+    >>> print a.resolve('bar.baz')
+    2
     >>> print a.bar
     {'baz': 2}
     
@@ -496,6 +498,16 @@ class AttrDict(dict):
             s = d
         d[args[-2]] = args[-1]
     
+    def resolve(self,name,default=None):
+        """
+        return an attribute with dotted name
+        """
+        o = self
+        for part in name.split('.'):
+            o = getattr(o,part,default)
+            # o = o.__getattr__(part)
+        return o
+        
 
 class Cycler:
     """

@@ -140,8 +140,12 @@ def using():
     except ImportError:
         pass
 
-    import reportlab
-    yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
+    try:
+        import reportlab
+        version = reportlab.Version
+    except ImportError:
+        version = NOT_FOUND_MSG
+    yield ("ReportLab Toolkit",version,"http://www.reportlab.org/rl_toolkit.html")
                
     try:
         #~ import appy
@@ -356,6 +360,16 @@ class Lino(object):
     use_extensible = True
     """
     Whether to use the `Extensible <http://ext.ensible.com>`_ calendar library.
+    """
+    
+    use_quicktips = False
+    """
+    Whether to make use of `Ext.QuickTips <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_.
+    """
+    
+    use_css_tooltips = True
+    """
+    Whether to make use of `Ext.QuickTips <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_.
     """
     
     use_vinylfox = False
@@ -765,7 +779,8 @@ class Lino(object):
         This is called whenever a user interface 
         (:class:`lino.ui.base.UI`) gets instantiated (which usually 
         happenes in some URLConf, for example in:mod:`lino.ui.extjs3.urls`). 
-        Also called by :term:`makedocs` with keyword argument `make_messages`.
+        #~ Also called by :term:`makedocs` with keyword argument `make_messages`.
+        Also called by :term:`dtl2py` with keyword argument `make_messages`.
         """
         from lino.core.kernel import setup_site
         setup_site(self,**options)

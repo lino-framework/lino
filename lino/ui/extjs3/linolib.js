@@ -1352,16 +1352,21 @@ Lino.ajax_error_handler = function(response,options) {
 
 //~ Lino.main_menu = new Ext.Toolbar({});
   
+#if $settings.LINO.use_quicktips
+
 Ext.QuickTips.init();
   
-Lino.quicktip_renderer = function(msg) {
+Lino.quicktip_renderer = function(title,body) {
   return function(c) {
     Ext.QuickTips.register({
       target: c.getEl(),
-      text: msg
+      title: title,
+      text: body
     });
   }
 };
+
+#end if
   
 Lino.help_text_editor = function() {
   //~ var bp = {

@@ -6,18 +6,3 @@ main =
   dsbe.CourseRequestsByPerson  
   # skills obstacles
   
-box12 =   
-  box1 box2 
-  
-box2 = 
-  driving_licence
-  has_own_car
-  # it_knowledge
-
-box1 = 
-  can_car
-  can_truck
-  can_bus
-  can_clark
-  
-

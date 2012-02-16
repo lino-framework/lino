@@ -335,11 +335,13 @@ class PersonMixin(models.Model):
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
 
-    first_name = models.CharField(max_length=200,blank=True,
+    first_name = models.CharField(max_length=200,
+      #~ blank=True,
       verbose_name=_('First name'))
     "Space-separated list of all first names."
     
-    last_name = models.CharField(max_length=200,blank=True,
+    last_name = models.CharField(max_length=200,
+      #~ blank=True,
       verbose_name=_('Last name'))
     "Last name (family name)."
     

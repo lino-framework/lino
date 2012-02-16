@@ -1,0 +1,135 @@
+20120215
+========
+
+Publishing Lino to PyPI
+-----------------------
+
+Nachdem ich nochmal das Kapitel 
+`Packaging Python Libraries <http://diveintopython3.ep.io/packaging.html>`_
+von Marc Pilgrim gelesen habe, 
+habe ich die :doc:`/releases/2012/1.3.9` 
+mal auf http://pypi.python.org/pypi/lino
+veröffentlicht mit ``register``.
+``upload`` musste ich übers Web-Interface machen, 
+weil mein source code ja inzwischen schon weiter 
+ist.
+
+Für das zentrale Speichern der Versionsnummer sehe ich noch nicht klar.
+Meine setup.py macht ein ``import lino`` um sie rauszufinden. 
+Das funktioniert auch, solange ich setup.py *für mich* den Entwickler 
+benutze.
+Aber ein ``setup.py install`` würde natürlich nicht funktionieren.
+Ist mir momentan auch noch egal.
+
+dtl2py
+------
+
+New management command dtl2py to create dummy .py files
+from .dtl files and linolib.js.
+These dummy py files are necessary for makemessages
+so that it can find translatable strings from these files.
+
+
+.dtl files replaced by .py
+--------------------------
+
+Hier die bisherige Definition des ersten Reiters einer Person::
+
+  box1 = 
+    :label: Address
+    last_name first_name:15 title:10
+    country city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+
+  box2 = 
+    :label: Contact
+    id:12 language
+    email
+    phone fax
+    gsm
+
+  box3 =
+    :label: Birth
+    gender birth_date age:10 civil_state noble_condition 
+    birth_country birth_place nationality:15 national_id:15 
+    # national_id:15 card_number:15 card_valid_from:15 card_valid_until:10 card_issuer card_type_text
+    
+  eid_panel = 
+    :label: eID card
+    :card_number.label: number
+    :card_valid_from.label: valid from
+    :card_valid_until.label: until
+    :card_issuer.label: issued by
+    :card_type.label: eID card type
+    card_number card_valid_from card_valid_until card_issuer card_type:20
+    
+  box4 = 
+    box3
+    eid_panel
+
+  main = 
+    :label: Person
+    :label_align: top
+    :hideCheckBoxLabels: 
+    box1 box2
+    box4 image:15 #overview 
+
+
+Und so sieht es jetzt aus::
+
+class Person(dd.FormLayout):
+    box1 = """
+    last_name first_name:15 title:10
+    country city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+    """
+
+    def setup(self):
+        self.box1.label = _("Address")
+        
+        self.define_panel("box1","""
+        last_name first_name:15 title:10
+        country city zip_code:10
+        street_prefix street:25 street_no street_box
+        addr2:40
+        """,label=_("Address"))
+
+        self.define_panel("box2","""
+        id:12 language
+        email
+        phone fax
+        gsm
+        """,label=_("Contact"))
+
+        self.define_panel("box3","""
+        gender birth_date age:10 civil_state noble_condition 
+        birth_country birth_place nationality:15 national_id:15 
+        """,label=_("Birth"))
+          
+        self.define_panel("eid_panel","""
+        card_number card_valid_from card_valid_until card_issuer card_type:20
+        """,label=_("eID card"))
+
+        self.eid_panel.card_number.label = _("number")
+        self.eid_panel.card_valid_from.label = _("valid from")
+        self.eid_panel.card_valid_until.label = _("valid until")
+        self.eid_panel.card_issuer.label = _("issued by")
+        self.eid_panel.card_type.label = _("eID card type")
+
+          
+        self.define_panel("box4","""
+        box3
+        eid_panel
+        """)
+
+        self.define_panel("main","""
+        box1 box2
+        box4 image:15 #overview 
+        """,label=_("Person"),hideCheckBoxLabels=True,label_align="top")
+
+
+
+
+

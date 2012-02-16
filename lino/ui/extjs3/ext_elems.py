@@ -28,6 +28,7 @@ import lino
 
 from lino import dd
 from lino.core import table
+from lino.core import layouts
 from lino.core import fields
 from lino.utils import constrain
 from lino.utils import jsgen
@@ -249,7 +250,7 @@ class VisibleComponent(Component):
         sep = u"</td><td>"
         cols = """ext_name name parent label __class__.__name__ 
         elements js_value
-        labelAlign vertical width preferred_width height 
+        label_align vertical width preferred_width height 
         preferred_height vflex""".split()
         yield '<tr><td>' + sep.join(cols) + '</td></tr>'
         for e in self.walk():
@@ -289,7 +290,7 @@ class LayoutElement(VisibleComponent):
         VisibleComponent.__init__(self,name,**kw)
         self.layout_handle = layout_handle
         #~ if layout_handle is not None:
-        assert isinstance(layout_handle,table.LayoutHandle)
+        assert isinstance(layout_handle,layouts.LayoutHandle)
         #~ layout_handle.setup_element(self)
 
     #~ def submit_fields(self):
@@ -314,9 +315,12 @@ class LayoutElement(VisibleComponent):
         #~ if isinstance(parent,FieldSetPanel):
             #~ self.label = None
             #~ self.update(label = None)
-        if self.label and isinstance(parent,Panel):
-            if parent.labelAlign == table.LABEL_ALIGN_LEFT:
-                self.preferred_width += len(self.label)
+        if self.label:
+            if isinstance(parent,Panel):
+                if parent.label_align == layouts.LABEL_ALIGN_LEFT:
+                    self.preferred_width += len(self.label)
+            if isinstance(parent,TabPanel):
+                self.update(title=self.label)
 
     def ext_options(self,**kw):
         kw = VisibleComponent.ext_options(self,**kw)
@@ -375,29 +379,28 @@ class FieldElement(LayoutElement):
         self.editable = field.editable # and not field.primary_key
         
         #~ help_text = getattr(self.field,'help_text',None):
-        if self.field.help_text:
+        if settings.LINO.use_quicktips and self.field.help_text:
             #~ kw.update(qtip=self.field.help_text)
             #~ kw.update(toolTipText=self.field.help_text)
             #~ kw.update(tooltip=self.field.help_text)
-            kw.update(listeners=dict(render=js_code("Lino.quicktip_renderer(%s)" % py2js(self.field.help_text)))
-            )
+            kw.update(listeners=dict(render=js_code(
+              "Lino.quicktip_renderer(%s,%s)" % (py2js(self.field.verbose_name),py2js(self.field.help_text)))
+            ))
             
 
         #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
         #~ if self.field.__doc__:
             #~ kw.update(toolTipText=self.field.__doc__)
         label = field.verbose_name
-        if self.field.help_text:
-            #~ label = string_concat(
-              #~ '<b>',
-              #~ field.verbose_name,'</b>')
-            #~ label = string_concat(
-              #~ '<span style:border-bottom: 1px dotted #000000; color: #000000; outline: none;>',
-              #~ field.verbose_name,'</span>')
-            label = string_concat(
-              field.verbose_name,' [?]')
+        #~ if not self.field.blank:
+            #~ label = string_concat('<b>',label,'</b>')
+            #~ label = string_concat(label,' [*]')
             
-        kw.setdefault('label',label)
+        #~ kw.update(style=dict(padding=DEFAULT_PADDING))
+        #~ kw.update(style=dict(marginLeft=DEFAULT_PADDING))
+        #~ kw.update(style='padding: 10px')
+        
+        kw.setdefault('label',field.verbose_name)
         #~ kw.setdefault('label',string_concat('<b>',field.verbose_name,'</b>'))
         #~ kw.setdefault('label',
           #~ string_concat('<span class="ttdef"><a class="tooltip" href="#">',
@@ -449,11 +452,27 @@ class FieldElement(LayoutElement):
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
         # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
-        if not isinstance(self.layout_handle.layout,table.ListLayout):
+        if not isinstance(self.layout_handle.layout,layouts.ListLayout):
             kw.update(name=self.field.name)
             if self.label:
+                label = self.label
+                if self.field.help_text and settings.LINO.use_css_tooltips:
+                    #~ label = string_concat(
+                      #~ '<b>',
+                      #~ field.verbose_name,'</b>')
+                    #~ label = string_concat(
+                      #~ '<span style:border-bottom: 1px dotted #000000; color: #000000; outline: none;>',
+                      #~ label,'</span>')
+                    label = string_concat(
+                      '<a class="tooltip" href="#">',
+                      label,
+                      '<span class="classic">',
+                      self.field.help_text,
+                      '</span></a>')
+                    #~ label = string_concat(label,' [?]')
+            
                 #~ kw.update(fieldLabel=unicode(self.label)) 20111111
-                kw.update(fieldLabel=self.label)
+                kw.update(fieldLabel=label)
         if self.editable:
             if not self.field.blank:
                 kw.update(allowBlank=False)
@@ -582,7 +601,7 @@ class ComboFieldElement(FieldElement):
         # because it is not needed for grids and might conflict with fields of a 
         # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
         # Also, Comboboxes with simple values may never have a hiddenName option.
-        if not isinstance(self.layout_handle.layout,table.ListLayout) \
+        if not isinstance(self.layout_handle.layout,layouts.ListLayout) \
             and not isinstance(self,SimpleRemoteComboFieldElement):
             kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
@@ -610,8 +629,8 @@ class RemoteComboFieldElement(ComboFieldElement):
             url = self.layout_handle.ui.build_url("choices",
                 #~ self.layout_handle.layout.table.model._meta.app_label,
                 #~ self.layout_handle.layout.table.model.__name__,
-                self.layout_handle.layout.table.app_label,
-                self.layout_handle.layout.table.__name__,
+                self.layout_handle.layout._table.app_label,
+                self.layout_handle.layout._table.__name__,
                 self.field.name,**kw)
             proxy = dict(url=url,method='GET')
             kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
@@ -658,7 +677,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         self.report = table.get_model_report(field.rel.to)
         a = self.report.detail_action
         if a is not None:
-            if not isinstance(layout_handle.layout,table.ListLayout):
+            if not isinstance(layout_handle.layout,layouts.ListLayout):
                 self.value_template = "new Lino.TwinCombo(%s)"
                 kw.update(onTrigger2Click=js_code(
                     "function(){ Lino.show_fk_detail(this,Lino.%s)}" % a))
@@ -852,7 +871,7 @@ class BooleanFieldElement(FieldElement):
 
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
-        if not isinstance(self.layout_handle.layout,table.ListLayout):
+        if not isinstance(self.layout_handle.layout,layouts.ListLayout):
             if kw.has_key('fieldLabel'):
                 del kw['fieldLabel']
             #~ kw.update(hideLabel=True)
@@ -956,7 +975,8 @@ class Container(LayoutElement):
     is_fieldset = False
     #~ xtype = 'container'
     value_template = "new Ext.Container(%s)"
-    #~ hideCheckBoxLabels = True
+    hideCheckBoxLabels = True
+    label_align = layouts.LABEL_ALIGN_TOP
     
     #declare_type = jsgen.DECLARE_INLINE
     declare_type = jsgen.DECLARE_VAR
@@ -965,14 +985,18 @@ class Container(LayoutElement):
     
     
     def __init__(self,layout_handle,name,*elements,**kw):
-        self.has_frame = layout_handle.layout.has_frame
-        self.labelAlign = layout_handle.layout.label_align
-        self.hideCheckBoxLabels = layout_handle.layout.hideCheckBoxLabels
+        #~ self.has_frame = layout_handle.layout.has_frame
+        #~ self.labelAlign = layout_handle.layout.label_align
+        #~ self.hideCheckBoxLabels = layout_handle.layout.hideCheckBoxLabels
         self.active_children = []
         self.elements = elements
         if elements:
             #~ self.has_fields = False
             for e in elements:
+                v = getattr(self,e.name,None)
+                if v is not None:
+                    raise Exception("%s has already %s = %s" % (self,e.name,v))
+                setattr(self,e.name,e)
                 e.set_parent(self)
                 #~ if isinstance(e,FieldElement):
                     #~ self.has_fields = True
@@ -1022,7 +1046,8 @@ class Wrapper(VisibleComponent):
         kw.update(layout='form')
         if not isinstance(e,TextFieldElement):
             kw.update(autoHeight=True)
-        kw.update(labelAlign=e.parent.labelAlign)
+        #~ kw.update(labelAlign=e.parent.labelAlign)
+        kw.update(labelAlign=e.parent.label_align)
         kw.update(items=e,xtype='panel')
         VisibleComponent.__init__(self,e.name+"_ct",**kw)
         self.wrapped = e
@@ -1033,7 +1058,7 @@ class Wrapper(VisibleComponent):
             e.update(anchor="100% 100%")
         else:
             e.update(anchor="100%")
-        e.update(padding=DEFAULT_PADDING)
+        #~ e.update(padding=DEFAULT_PADDING)
             
     def walk(self):
         for e in self.wrapped.walk():
@@ -1147,11 +1172,12 @@ class Panel(Container):
                         self.label_width = w
 
 
-        label = layout_handle.layout.collapsible_elements.get(name,None)
-        if label:
-            self.collapsible = True
-            self.label = label
-
+        if False: # not yet converted to new dtl syntax 20120214
+            label = layout_handle.layout.collapsible_elements.get(name,None)
+            if label:
+                self.collapsible = True
+                self.label = label
+            
         Container.__init__(self,layout_handle,name,*elements,**kw)
 
         w = h = 0
@@ -1196,7 +1222,8 @@ class Panel(Container):
                 
         if d['layout'] == 'form':
             assert self.vertical
-            self.update(labelAlign=self.labelAlign)
+            #~ self.update(labelAlign=self.labelAlign)
+            self.update(labelAlign=self.label_align)
             self.wrap_formlayout_elements()
             #~ d.update(autoHeight=True)
             if len(self.elements) == 1 and self.elements[0].vflex:
@@ -1261,6 +1288,23 @@ class Panel(Container):
             self.wrap_formlayout_elements()
         else:
             raise Exception("layout is %r" % d['layout'] )
+            
+        if self.is_fieldset:
+            self.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
+        #~ else:
+            #~ d.update(padding=DEFAULT_PADDING)
+        if len(self.elements) > 1 and self.vertical:
+            #d.update(frame=self.has_frame)
+            self.update(frame=True)
+            self.update(bodyBorder=False)
+            self.update(border=False)
+            #~ 20120115 d.update(labelAlign=self.labelAlign)
+            #d.update(style=dict(padding='0px'),color='green')
+        else:
+            self.update(frame=False)
+            #self.update(bodyBorder=False)
+            self.update(border=False)
+            
         
     def wrap_formlayout_elements(self):
         #~ if layout_handle.main_class is DetailMainPanel:
@@ -1293,45 +1337,36 @@ class Panel(Container):
         #l = [e.as_ext() for e in self.elements ]
         #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         #d.update(items=js_code("this.elements"))
-        
-        if self.is_fieldset:
-            d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
-        else:
-            d.update(padding=DEFAULT_PADDING)
-        if len(self.elements) > 1 and self.vertical:
-            #d.update(frame=self.has_frame)
-            d.update(frame=True)
-            d.update(bodyBorder=False)
-            d.update(border=False)
-            #~ 20120115 d.update(labelAlign=self.labelAlign)
-            #d.update(style=dict(padding='0px'),color='green')
-        else:
-            d.update(frame=False)
-            #d.update(bodyBorder=False)
-            d.update(border=False)
-            
-        if self.label:
+        #~ if self.label and not isinstance(self,MainPanel) and not isinstance(self.parent,MainPanel):
+        if False and self.label and not isinstance(self,MainPanel):
             #~ d.update(title=unicode(self.label)) 20111111
+            #~ d.update(header=self.label)
             d.update(title=self.label)
-            
+            #~ self.value_template = "new Ext.Panel(%s)"
+            self.value_template = "new Ext.form.FieldSet(%s)"
+            d.update(frame=False)
+            d.update(bodyBorder=True)
+            d.update(border=True)
         return d
         
-class FieldSetPanel(Panel):
+class unused_FieldSetPanel(Panel):
     value_template = "new Ext.form.FieldSet(%s)"
     def __init__(self,layout_handle,name,vertical,*elements,**kw):
-        self.fieldset = getattr(layout_handle.layout.table.model,name)
+        self.fieldset = getattr(layout_handle.layout._table.model,name)
         for child in elements:
             child.label = self.fieldset.get_child_label(child.name)
+        kw.update(label=self.fieldset.verbose_name)
         Panel.__init__(self,layout_handle,name,vertical,*elements,**kw)
         
-        self.label = self.fieldset.verbose_name
+        #~ self.label = self.fieldset.verbose_name
         
     def ext_options(self,**d):
         d = Panel.ext_options(self,**d)
         d.update(frame=False)
         d.update(bodyBorder=True)
         d.update(border=True)
-        d.update(labelAlign=self.labelAlign)
+        #~ d.update(labelAlign=self.labelAlign)
+        d.update(labelAlign=self.label_align)
         return d
         
     #~ def wrap_formlayout_elements(self):
@@ -1362,7 +1397,7 @@ class GridElement(Container):
             self.rh = rpt.get_handle(layout_handle.ui)
             if not hasattr(self.rh,'list_layout'):
                 raise Exception("%s has no list_layout" % self.rh)
-            columns = self.rh.list_layout._main.columns
+            columns = self.rh.list_layout.main.columns
             #~ columns = self.rh.list_layout._main.elements
         w = 0
         for e in columns:
@@ -1444,9 +1479,10 @@ class MainPanel(jsgen.Variable):
 
 
 class GridMainPanel(GridElement,MainPanel):
-    def __init__(self,layout_handle,name,vertical,*columns,**kw):
-        """ignore the "vertical" arg"""
-        GridElement.__init__(self,layout_handle,name,layout_handle.rh.report,*columns,**kw)
+    pass
+    #~ def __init__(self,lh,name,vertical,*columns,**kw):
+        #~ """Note that this ignores the "vertical" arg"""
+        #~ GridElement.__init__(self,lh,name,lh.layout.table,*columns,**kw)
         
 
 
@@ -1477,8 +1513,10 @@ class DetailMainPanel(Panel,MainPanel):
     def ext_options(self,**kw):
         #~ self.setup()
         kw = Panel.ext_options(self,**kw)
-        if self.layout_handle.layout.label:
-            kw.update(title=_(self.layout_handle.layout.label))
+        #~ if self.layout_handle.layout.label:
+            #~ kw.update(title=_(self.layout_handle.layout.label))
+        if self.layout_handle.main.label:
+            kw.update(title=_(self.layout_handle.main.label))
         return kw
         
 
@@ -1504,19 +1542,23 @@ class unused_ParameterPanel(DetailMainPanel):
         return kw
     
 
-class TabPanel(jsgen.Component):
+class TabPanel(Panel,MainPanel):
+#~ class TabPanel(jsgen.Component):
 #~ class TabPanel(jsgen.Value):
     value_template = "new Ext.TabPanel(%s)"
+    #~ width = None
+    #~ height = None
 
-    def __init__(self,tabs,**kw):
-        self.active_children = []
-        for t in tabs:
-            self.active_children += t.active_children
-            t.update(listeners=dict(activate=js_code("Lino.on_tab_activate")))
-            #~ if t.has_upload:
-                #~ self.has_upload = True
-      
-        self.tabs = tabs
+    def __init__(self,layout_handle,name,*elems,**kw):
+        #~ self.rh = layout_handle.datalink
+        #~ 20111126 self.report = layout_handle.rh.report
+        #~ MainPanel.__init__(self)
+        #~ DataElementMixin.__init__(self,layout_handle.link)
+        kw.update(autoScroll=True)
+        #~ kw.update(height=800, autoScroll=True)
+        
+        #~ self.tabs = elems
+        
         kw.update(
           split=True,
           activeTab=0,
@@ -1525,19 +1567,21 @@ class TabPanel(jsgen.Component):
           #~ deferredRender=False, # 20120212
           #~ autoScroll=True, 
           #~ width=300, # ! http://code.google.com/p/lino/wiki/20100513
-          items=tabs,
+          #~ items=elems,
           # http://www.extjs.com/forum/showthread.php?26564-Solved-FormPanel-in-a-TabPanel
           #~ listeners=dict(activate=js_code("function(p) {p.doLayout();}"),single=True),
         )
-        jsgen.Value.__init__(self,kw)
+        Container.__init__(self,layout_handle,name,*elems,**kw)
         
-    def unused_has_field(self,f):
-        for t in self.tabs:
-            if t.has_field(f): 
-                return True
+    #~ def __init__(self,tabs,**kw):
+        #~ self.active_children = []
+        #~ for t in tabs:
+            #~ self.active_children += t.active_children
+            #~ t.update(listeners=dict(activate=js_code("Lino.on_tab_activate")))
+      
+        #~ super(TabPanel,self).__init__(kw)
+        
 
-
-from lino.tools import full_model_name
 
 class FormPanel(jsgen.Component):
     declare_type = jsgen.DECLARE_VAR
@@ -1545,7 +1589,6 @@ class FormPanel(jsgen.Component):
     
     def __init__(self,rh,action,**kw):
         self.rh = rh
-        #~ self.value_template = "new Lino.%s.FormPanel(%%s)" % full_model_name(self.rh.report.model)
         self.value_template = "new Lino.%sPanel(%%s)" % action
         #~ hmm....
         #~ kw.update(

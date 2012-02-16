@@ -1,6 +1,9 @@
 About Lino
 ==========
 
+What is Lino?
+-------------
+
 Lino is a framework for creating customized enterprise-level 
 Rich Internet Applications that use :term:`Django's <Django>`
 database model combined with an out-of-the box user interface.
@@ -12,13 +15,17 @@ running in a Belgian
 (PCSW) since January 2011.
 These users and their system adminstrator 
 are so satisfied that other similar centres showed their interest.
-That's why :doc:`Lino-PCSW </dsbe/index>` 
+That's why this particular Lino application 
+:doc:`Lino-PCSW </dsbe/index>` 
 is currently using up most of our human resources.
 
 But Lino is a *framework*. This means that there 
-will be many different Linos in the future.
-:doc:`Lino-iGen</igen/index>` is just one example 
+will be many different Lino applications in the future.
+:doc:`Lino-iGen </igen/index>` is just one example 
 of what's possible.
+
+Features
+--------
 
 Some of Lino's features:
 
@@ -26,7 +33,7 @@ Some of Lino's features:
 - Innovative solutions for 
   :doc:`data migrations </topics/datamig>`,
   :doc:`polymorphism  </topics/mti>`,
-  :doc:`user-interface transparent form design </topics/dtl>` 
+  :doc:`user-interface agnostic form design </topics/dtl>` 
   and
   :doc:`multilingual database content </topics/babel>`.
 

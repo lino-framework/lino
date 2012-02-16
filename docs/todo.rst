@@ -13,6 +13,9 @@ Short-term
 ----------
 
 #.  http://www.sencha.com/learn/grid-faq/
+
+#.  http://code.google.com/p/support/wiki/ScriptedUploads
+    http://wiki.python.org/moin/CheeseShopTutorial
     
 #.  Checkboxen können nicht aktiv sein, weil sie aufs change-Event nicht reagieren. 
     Und das check-Event kann ich auch nicht nutzen, weil das auch schon beim 
@@ -216,6 +219,12 @@ Short-term
 Medium-term
 -----------
 
+#.  Für das zentrale Speichern der Versionsnummer sehe ich noch nicht klar.
+    Meine setup.py macht ein ``import lino`` um sie rauszufinden. 
+    Das funktioniert auch, solange ich setup.py *für mich* den Entwickler 
+    benutze.
+    Aber ein ``setup.py install`` würde natürlich nicht funktionieren.
+
 #.  Die virtuellen Felder `applies_from` und `applies_until` 
     in :class:`Meine Klienten <lino.apps.dsbe.models.MyPersons>` 
     machen jedes seinen eigenen Datenbank-Request 
@@ -276,7 +285,7 @@ Medium-term
 
 #.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
 
-#.  Idée venue avec Gaëtan: .dtl files in Python, not yaml
+#.  Idée reconfirmée par Gaëtan: .dtl files in Python, not yaml
 
 #.  What about Cédric Krier's `HgNested extension
     <http://mercurial.selenic.com/wiki/HgNestedExtension>`_?
@@ -284,7 +293,7 @@ Medium-term
 #.   There is also an almost philosphical question: where should the label "Calendar" 
     (and it's translations) be defined? Currently it is in 
     :class:`lino.reports.Calendar`. The whole pot-pourri of actors and actions 
-    (Report, Frame, Detail, Action) might get an internal revision soon: 
+    (Table, Frame, Detail, Action) might get an internal revision soon: 
     - is it necessary to instantiate Actors? 
       Should the instantiation of an actor represent a request?
     - Split "Report" into "List" and "Detail": both of them get their own store. 
@@ -483,12 +492,6 @@ Later
 
 #.  DELETE (per Taste) auf einer Zeile in Teilnehmer oder Kandidaten funktioniert. 
     Aber dort soll man nicht löschen können.
-
-#.  Die Titel der Reiter (.dtl-Dateien) sind momentan noch nicht 
-    internationalisiert, stehen also in den Konfigurationsdateien 
-    in hardkodiertem Deutsch drin. 
-    Also bis zur ersten Lino-Demo in FR oder NL muss ich mir dazu
-    noch was einfallen lassen.
 
 #.  Wenn man die Rückfrage nach "Delete" zu schnell beantwortet, 
     wird die Grid nicht aktualisiert. 

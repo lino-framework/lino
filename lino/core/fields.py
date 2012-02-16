@@ -520,8 +520,9 @@ class GenericForeignKey(generic.GenericForeignKey):
     Used by :class:`lino.mixins.Owned`.
     """
     def __init__(self, ct_field="content_type", fk_field="object_id", 
-          verbose_name=None):
+          verbose_name=None,help_text=None):
         self.verbose_name = verbose_name
+        self.help_text = help_text
         generic.GenericForeignKey.__init__(self,ct_field,fk_field)
         
     

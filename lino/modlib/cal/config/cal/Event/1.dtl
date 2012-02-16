@@ -1,8 +1,8 @@
-:label: 
-:label_align: top
-:hideCheckBoxLabels: 
-
 main = 
+  :label: 
+  :label_align: top
+  :hideCheckBoxLabels: 
+
   type summary user 
   start end all_day #duration status 
   place priority access_class transparent rset 
