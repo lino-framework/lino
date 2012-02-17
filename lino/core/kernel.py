@@ -350,21 +350,29 @@ def setup_site(self,make_messages=False):
             #~ a._lino_detail = None
     
     
-    actors.setup_actors()
+    #~ actors.setup_actors()
         
         
     #~ import pprint
     #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
     #~ logger.info("settings.LINO.modules['cal']['main'] is %r" ,self.modules['cal']['main'])
                 
-    for a in actors.actors_list:
-        a.setup()
-            
     for a in models.get_apps():
         fn = getattr(a,'site_setup',None)
         if fn is not None:
             fn(self)
-
+            
+    """
+    Actor.setup() must be called after site_setup(). 
+    Example: dsbe.site_setup() adds a detail to properties.Properties, 
+    the base class for properties.PropsByGroup. The latter would not 
+    install a detail action during her setup() and also would never 
+    get it later.
+    """
+    
+    for a in actors.actors_list:
+        a.setup()
+            
     """
     this comes after site_setup() because site_setup() might 
     install detail_layouts on model tables.

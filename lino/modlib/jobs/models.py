@@ -79,7 +79,7 @@ from lino.modlib.properties.models import Property
 from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
 from lino.modlib.isip.models import ContractBase
-from lino.apps.dsbe.models import Company, Companies
+from lino.apps.dsbe.models import Company, Companies, CompanyDetail
 
 
 #~ SCHEDULE_CHOICES = {
@@ -152,6 +152,30 @@ class JobProvider(Company):
         verbose_name_plural = _('Job Providers')
     
 
+class JobProviderDetail(CompanyDetail):
+    """
+    This is the same as CompanyDetail, except that we
+    
+    - remove MTI fields from `remark` panel
+    - add a new tab `jobs`
+    
+    """
+    box5 = "remarks" 
+    jobs = """
+    JobsByProvider
+    ContractsByProvider
+    """
+    main = "general notes jobs"
+    
+    def setup_handle(self,lh):
+        CompanyDetail.setup_handle(self,lh)
+        lh.jobs.label = _("Jobs")
+
+      
+
+  
+
+
 class JobProviders(Companies):
     """
     List of Companies that have `Company.is_jobprovider` activated.
@@ -159,6 +183,7 @@ class JobProviders(Companies):
     use_as_default_report = False
     model = JobProvider
     app_label = 'jobs'
+    detail_layout = JobProviderDetail()
   
 
 
@@ -171,7 +196,7 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
     :class:`lino.modlib.isip.models.ContractType` (see there 
     for general documentation).
     
-    They are separated tables because ISIP contracts are by nature 
+    They are separated tables because ISIP contracts are in practice
     very different from JOBS contracts, and also their types should 
     not be mixed.
     
@@ -1008,6 +1033,10 @@ class Jobs(dd.Table):
 class JobTypes(dd.Table):
     model = JobType
     order_by = ['name']
+    detail_template = """
+    id name 
+    JobsByType
+    """
 
 class JobsByProvider(Jobs):
     master_key = 'provider'

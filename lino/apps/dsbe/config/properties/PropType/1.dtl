@@ -1,7 +1,0 @@
-:label: 
-:label_align: top
-
-main = 
-  id name choicelist default_value
-  ChoicesByType
-  PropsByType

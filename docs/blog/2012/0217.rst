@@ -22,6 +22,12 @@ Advantages:
 - 
 
 - Using inheritance and writing "intelligent" layouts are now possible.
+  Examples are 
+  :class:`lino.modlib.jobs.models.JobProviderDetail`
+  and
+  :class:`lino.apps.dsbe.models.CourseProviderDetail`
+  who inherit from
+  :class:`lino.apps.dsbe.models.CompanyDetail`.
 
 - for simple cases, e.g. :class:`lino.modlib.notes.models.EventType` 
   it easier to just say::

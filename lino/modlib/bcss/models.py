@@ -189,6 +189,14 @@ class IdentifyPersonRequest(BCSSRequest):
           pc.append(PC.Tolerance(0))
           return bcss.IdentifyPersonRequest(SC(PC(*pc)))
       
-class IdentifyRequestsByPerson(dd.Table):
+class IdentifyPersonRequests(dd.Table):
     model = IdentifyPersonRequest
+    detail_template = """
+    id project sent status 
+    request_xml
+    response_xml
+    """
+    
+class IdentifyRequestsByPerson(IdentifyPersonRequests):
     master_key = 'project'
+    

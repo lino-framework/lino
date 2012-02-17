@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise Exception("No longer user after 20120217")
+
 import logging
 logger = logging.getLogger(__name__)
 

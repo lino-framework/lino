@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -271,6 +271,11 @@ class PropGroups(dd.Table):
 
 class PropTypes(dd.Table):
     model = PropType
+    detail_template = """
+    id name choicelist default_value
+    ChoicesByType
+    PropsByType
+    """
 
 class Properties(dd.Table):
     model = Property
@@ -293,15 +298,3 @@ class ChoicesByType(PropChoices):
     column_names = 'value text *'
     
 
-#~ class PropsByGroup(dd.Table):
-    #~ model = Property
-    #~ master_key = 'group'
-    #~ column_names = "* group" 
-    #~ """
-    #~ group must be in the store, but should not be visible. 
-    #~ needed to set context of property combobox.
-    #~ """
-    #~ hide_columns = ['group'] # doen's work yet
-    
-
-#~ from lino.models import SiteConfig

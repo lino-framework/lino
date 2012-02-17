@@ -1487,20 +1487,22 @@ class PersonProperty(properties.PropertyOccurence):
     remark = models.CharField(max_length=200,
         blank=True,# null=True,
         verbose_name=_("Remark"))
-  
-class PropsByPerson(dd.Table):
+
+
+class PersonProperties(dd.Table):
     model = PersonProperty
-    master_key = 'person'
-    column_names = "property value remark *"
     hidden_columns = frozenset(['group'])
     
+class PropsByPerson(PersonProperties):
+    master_key = 'person'
+    column_names = "property value remark *"
     
-class PersonPropsByProp(dd.Table):
+    
+class PersonPropsByProp(PersonProperties):
     model = PersonProperty
     #~ app_label = 'properties'
     master_key = 'property'
     column_names = "person value remark *"
-    hidden_columns = frozenset(['group'])
     
 #~ class PersonPropsByType(dd.Table):
     #~ model = PersonProperty
@@ -2310,8 +2312,6 @@ standard model SiteConfig.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 
-#~ if True: # dd.is_installed('dsbe'):
-
 from lino.models import SiteConfig
 dd.inject_field(SiteConfig,
     'job_office',
@@ -2522,6 +2522,20 @@ class Home(dd.EmptyTable):
 
 def site_setup(site):
   
+    site.modules.lino.SiteConfigs.set_detail("""
+    site_company default_build_method
+    next_partner_id
+    job_office
+    propgroup_skills propgroup_softskills propgroup_obstacles
+    residence_permit_upload_type work_permit_upload_type driving_licence_upload_type
+    """)
+    
+    site.modules.properties.Properties.set_detail("""
+    id group type 
+    name
+    dsbe.PersonPropsByProp
+    """)
+    
     site.modules.countries.Cities.set_detail("""
     name country 
     contacts.ContactsByCity jobs.StudiesByCity

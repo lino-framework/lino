@@ -1,7 +1,0 @@
-main = 
-    site_company default_build_method
-    next_partner_id
-    job_office
-    propgroup_skills propgroup_softskills propgroup_obstacles
-    residence_permit_upload_type work_permit_upload_type driving_licence_upload_type
-    
