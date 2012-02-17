@@ -496,6 +496,12 @@ class AttrDict(dict):
                 d = AttrDict()
                 s[n] = d
             s = d
+        #~ if d.has_key(args[-2]):
+            #~ print 20120217, "Overriding %s from %r to %r" % (
+              #~ '.'.join(args[:-1]),
+              #~ d[args[-2]],
+              #~ args[-1]
+              #~ )
         d[args[-2]] = args[-1]
     
     def resolve(self,name,default=None):

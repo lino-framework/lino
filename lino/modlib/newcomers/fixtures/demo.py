@@ -47,7 +47,7 @@ def objects():
     root.save()
 
     I = Instantiator(User).build
-    yield I(username="caroline",is_newcomers=True)
+    yield I(username="caroline",is_newcomers=True,first_name="Caroline",last_name="Carnol")
     
     FACULTIES = Cycler(Faculty.objects.all())
     USERS = Cycler(User.objects.filter(is_spis=True))

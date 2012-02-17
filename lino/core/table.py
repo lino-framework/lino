@@ -139,16 +139,12 @@ def fields_list(model,field_names):
 
 #~ def summary_row(obj,ui,rr,**kw):
 def summary_row(obj,ui,**kw):
+    #~ return obj.summary_row(ui,**kw)
     m = getattr(obj,'summary_row',None)
     if m:
-        #~ return m(ui,rr,**kw)
-        #~ print 20120116, obj.__class__
         return m(ui,**kw)
-    return ui.href_to(obj)
-    #~ linkkw = {}
-    #~ linkkw.update(fmt='detail')
-    #~ url = ui.get_detail_url(obj,**linkkw)
-    #~ return '<a href="%s">%s</a>' % (url,cgi.escape(force_unicode(obj)))
+    return ui.ext_renderer.href_to(obj)
+    #~ return ui.href_to(obj)
   
 
 #~ def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):

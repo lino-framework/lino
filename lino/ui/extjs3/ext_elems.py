@@ -58,15 +58,13 @@ def form_field_name(f):
 def rpt2url(rpt):
     return '/' + rpt.app_label + '/' + rpt.__name__
 
-def a2btn(a):
-    return dict(
-      opens_a_slave=a.opens_a_slave,
-      handler=js_code("Lino.%s" % a),
-      name=a.name,
-      label=a.label, # 20111111
-      #~ label=unicode(a.label),
-      #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
-    )
+#~ def a2btn(a):
+    #~ return dict(
+      #~ opens_a_slave=a.opens_a_slave,
+      #~ handler=js_code("Lino.%s" % a),
+      #~ name=a.name,
+      #~ label=a.label, # 20111111
+    #~ )
       
 def py2html(obj,name):
     for n in name.split('.'):
@@ -296,9 +294,6 @@ class LayoutElement(VisibleComponent):
     #~ def submit_fields(self):
         #~ return []
         
-    def update_config(self,wc):
-        pass
-        
     def get_property(self,name):
         v = getattr(self,name,None)
         if self.parent is None or v is not None:
@@ -319,15 +314,25 @@ class LayoutElement(VisibleComponent):
             if isinstance(parent,Panel):
                 if parent.label_align == layouts.LABEL_ALIGN_LEFT:
                     self.preferred_width += len(self.label)
-            if isinstance(parent,TabPanel):
-                self.update(title=self.label)
 
     def ext_options(self,**kw):
-        kw = VisibleComponent.ext_options(self,**kw)
+        if isinstance(self.parent,TabPanel):
+            if not self.label:
+                raise Exception("Item %s of TabPanel %s has no label!" % (self,self.parent))
+            #~ if self.value_template != 'new Lino.VBorderPanel(%s)':
+            #~ if self.value_template == "%s":
+            #~ if self.value_template == "new Ext.Container":
+            #~ if self.value_template == "new Ext.Container(%s)":
+                #~ self.value_template = "new Ext.Panel(%s)"
+            #~ else:
+                #~ logger.info("20120217 value_template %s",self.value_template)
+            self.update(title=self.label)
+            self.update(listeners=dict(activate=js_code("Lino.on_tab_activate")))
         if self.xtype is not None:
-            kw.update(xtype=self.xtype)
+            self.update(xtype=self.xtype)
         if self.collapsible:
-            kw.update(collapsible=True)
+            self.update(collapsible=True)
+        kw = VisibleComponent.ext_options(self,**kw)
         return kw
 
 
@@ -417,6 +422,16 @@ class FieldElement(LayoutElement):
     def cell_html(self,ui,row):
         return getattr(row,self.field.name)
             
+    #~ def submit_fields(self):
+        #~ return [self.field.name]
+    def add_default_value(self,kw):
+        if self.field.has_default():
+            dv = self.field.default
+            if callable(dv):
+                dv = dv()
+            kw.update(value=dv)
+            
+        
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
         #~ kw.update(xtype='gridcolumn')
@@ -434,16 +449,6 @@ class FieldElement(LayoutElement):
         kw.update(width=w*EXT_CHAR_WIDTH)
         return kw    
         
-        
-    #~ def submit_fields(self):
-        #~ return [self.field.name]
-    def add_default_value(self,kw):
-        if self.field.has_default():
-            dv = self.field.default
-            if callable(dv):
-                dv = dv()
-            kw.update(value=dv)
-            
         
     def get_field_options(self,**kw):
         if self.xtype:
@@ -993,10 +998,10 @@ class Container(LayoutElement):
         if elements:
             #~ self.has_fields = False
             for e in elements:
-                v = getattr(self,e.name,None)
-                if v is not None:
-                    raise Exception("%s has already %s = %s" % (self,e.name,v))
-                setattr(self,e.name,e)
+                #~ v = getattr(self,e.name,None)
+                #~ if v is not None:
+                    #~ raise Exception("%s has already %s = %s" % (self,e.name,v))
+                #~ setattr(self,e.name,e)
                 e.set_parent(self)
                 #~ if isinstance(e,FieldElement):
                     #~ self.has_fields = True
@@ -1074,6 +1079,7 @@ class Panel(Container):
     """
     ext_suffix = "_panel"
     active_child = False
+    value_template = "new Ext.Panel(%s)"
     #~ declare_type = jsgen.DECLARE_VAR
     #~ value_template = "new Ext.Panel(%s)"
     
@@ -1322,6 +1328,25 @@ class Panel(Container):
           
         
     def ext_options(self,**d):
+        if not self.label and self.value_template == "new Ext.Panel(%s)":
+            #~ if not self.parent or len(self.parent.elements) == 1:
+            #~ if self.parent and len(self.parent.elements) > 1:
+            if self.parent is not None:
+                self.value_template = "new Ext.Container(%s)"
+            
+        if self.label:
+            if not isinstance(self.parent,TabPanel):
+                self.update(title=self.label)
+                self.value_template = "new Ext.form.FieldSet(%s)"
+                self.update(frame=False)
+                self.update(bodyBorder=True)
+                self.update(border=True)
+            #~ elif isinstance(self.parent,DetailMainPanel):
+                #~ if self.value_template == "new Ext.Container(%s)":
+                    #~ self.value_template = "new Ext.Panel(%s)"
+              
+            #~ else:
+                #~ self.value_template = "new Ext.Panel(%s)"
         d = Container.ext_options(self,**d)
         #~ if self.collapsible:
             #~ d.update(xtype='panel')
@@ -1338,40 +1363,8 @@ class Panel(Container):
         #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         #d.update(items=js_code("this.elements"))
         #~ if self.label and not isinstance(self,MainPanel) and not isinstance(self.parent,MainPanel):
-        if False and self.label and not isinstance(self,MainPanel):
-            #~ d.update(title=unicode(self.label)) 20111111
-            #~ d.update(header=self.label)
-            d.update(title=self.label)
-            #~ self.value_template = "new Ext.Panel(%s)"
-            self.value_template = "new Ext.form.FieldSet(%s)"
-            d.update(frame=False)
-            d.update(bodyBorder=True)
-            d.update(border=True)
         return d
         
-class unused_FieldSetPanel(Panel):
-    value_template = "new Ext.form.FieldSet(%s)"
-    def __init__(self,layout_handle,name,vertical,*elements,**kw):
-        self.fieldset = getattr(layout_handle.layout._table.model,name)
-        for child in elements:
-            child.label = self.fieldset.get_child_label(child.name)
-        kw.update(label=self.fieldset.verbose_name)
-        Panel.__init__(self,layout_handle,name,vertical,*elements,**kw)
-        
-        #~ self.label = self.fieldset.verbose_name
-        
-    def ext_options(self,**d):
-        d = Panel.ext_options(self,**d)
-        d.update(frame=False)
-        d.update(bodyBorder=True)
-        d.update(border=True)
-        #~ d.update(labelAlign=self.labelAlign)
-        d.update(labelAlign=self.label_align)
-        return d
-        
-    #~ def wrap_formlayout_elements(self):
-        #~ pass
-  
 
 class GridElement(Container): 
     declare_type = jsgen.DECLARE_VAR
@@ -1419,7 +1412,7 @@ class GridElement(Container):
         #~ //~ enableRowBody: true,
         
         kw.update(viewConfig=vc)
-        
+        kw.setdefault('label',rpt.label)
         
         #~ kw.update(containing_window=js_code("this.containing_window"))
         kw.update(containing_panel=js_code("this"))
@@ -1438,48 +1431,27 @@ class GridElement(Container):
             #~ self.mt = 'undefined'
             
             
-    def update_config(self,wc):
-        pass
-        #~ for i,w in enumerate(wc['column_widths']):
-            #~ self.column_model.columns[i].update(width = w)
-
     def ext_options(self,**kw):
         "not direct parent (Container), only LayoutElement"
         kw = LayoutElement.ext_options(self,**kw)
         return kw
         
-    def unused_ext_options(self,**kw):
-        rh = self.report.get_handle(self.layout_handle.ui)
-        kw = LayoutElement.ext_options(self,**kw)
-        kw.update(ls_url=rpt2url(self.report))
-        kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
-        kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
-        kw.update(ls_id_property=rh.store.pk.name)
-        kw.update(pk_index=rh.store.pk_index)
-        kw.update(ls_quick_edit=rh.report.cell_edit)
-        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
-        kw.update(ls_grid_configs=[gc.data for gc in self.report.grid_configs])
-        kw.update(gc_name=DEFAULT_GC_NAME)
-        return kw
-        
         
 
             
-class MainPanel(jsgen.Variable):
-    declare_type = jsgen.DECLARE_INLINE
-    refers_to_ww = True
+#~ class MainPanel(jsgen.Variable):
+    #~ declare_type = jsgen.DECLARE_INLINE
+    #~ refers_to_ww = True
   
-    def apply_window_config(self,wc):
-        pass
-  
-    #~ def setup(self):
+    #~ def apply_window_config(self,wc):
         #~ pass
-                
+  
 
 
 
-class GridMainPanel(GridElement,MainPanel):
-    pass
+#~ class GridMainPanel(GridElement,MainPanel):
+#~ class GridMainPanel(GridElement):
+    #~ pass
     #~ def __init__(self,lh,name,vertical,*columns,**kw):
         #~ """Note that this ignores the "vertical" arg"""
         #~ GridElement.__init__(self,lh,name,lh.layout.table,*columns,**kw)
@@ -1487,7 +1459,8 @@ class GridMainPanel(GridElement,MainPanel):
 
 
 
-class DetailMainPanel(Panel,MainPanel):
+#~ class DetailMainPanel(Panel,MainPanel):
+class DetailMainPanel(Panel):
     #~ declare_type = jsgen.DECLARE_THIS
     #~ xtype = 'form'
     xtype = None
@@ -1503,7 +1476,7 @@ class DetailMainPanel(Panel,MainPanel):
         Panel.__init__(self,layout_handle,name,vertical,*elements,**kw)
         #layout_handle.needs_store(self.rh)
         
-    def subvars(self):
+    def unused_subvars(self):
         #~ print 'DetailMainPanel.subvars()', self
         for e in MainPanel.subvars(self):
             yield e
@@ -1521,7 +1494,8 @@ class DetailMainPanel(Panel,MainPanel):
         
 
 class ParameterPanel(DetailMainPanel):
-    value_template = "new Ext.form.FormPanel(%s)"
+    #~ value_template = "new Ext.form.FormPanel(%s)"
+    value_template = "new Ext.form.FormPanel({items:new Ext.Panel(%s)})"
     #~ pass
     
 class unused_ParameterPanel(DetailMainPanel):
@@ -1542,7 +1516,8 @@ class unused_ParameterPanel(DetailMainPanel):
         return kw
     
 
-class TabPanel(Panel,MainPanel):
+class TabPanel(Panel):
+#~ class TabPanel(Panel,MainPanel):
 #~ class TabPanel(jsgen.Component):
 #~ class TabPanel(jsgen.Value):
     value_template = "new Ext.TabPanel(%s)"

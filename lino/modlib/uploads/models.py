@@ -117,6 +117,17 @@ class Uploads(dd.Table):
     model = Upload
     order_by = ["modified"]
     column_names = "file user created modified *"
+    detail_template = """
+    file user
+    type description 
+    # person company
+    # reminder_date reminder_text delay_value delay_type reminder_done
+    modified created owner
+    # show_date show_time 
+    # show_date time timestamp
+    """
+    
+    
     
 
 #~ class UploadsByPerson(Uploads):

@@ -30,8 +30,8 @@ These dummy py files are necessary for makemessages
 so that it can find translatable strings from these files.
 
 
-.dtl files replaced by .py
---------------------------
+.dtl files replaced by .py files
+--------------------------------
 
 Hier die bisherige Definition des ersten Reiters einer Person::
 
@@ -76,60 +76,60 @@ Hier die bisherige Definition des ersten Reiters einer Person::
     box4 image:15 #overview 
 
 
-Und so sieht es jetzt aus::
+Und so ungefähr könnte es stattdessen aussehen::
 
-class Person(dd.FormLayout):
-    box1 = """
-    last_name first_name:15 title:10
-    country city zip_code:10
-    street_prefix street:25 street_no street_box
-    addr2:40
-    """
+  class Person(dd.FormLayout):
+      box1 = """
+      last_name first_name:15 title:10
+      country city zip_code:10
+      street_prefix street:25 street_no street_box
+      addr2:40
+      """
 
-    def setup(self):
-        self.box1.label = _("Address")
-        
-        self.define_panel("box1","""
-        last_name first_name:15 title:10
-        country city zip_code:10
-        street_prefix street:25 street_no street_box
-        addr2:40
-        """,label=_("Address"))
-
-        self.define_panel("box2","""
-        id:12 language
-        email
-        phone fax
-        gsm
-        """,label=_("Contact"))
-
-        self.define_panel("box3","""
-        gender birth_date age:10 civil_state noble_condition 
-        birth_country birth_place nationality:15 national_id:15 
-        """,label=_("Birth"))
+      def setup(self):
+          self.box1.label = _("Address")
           
-        self.define_panel("eid_panel","""
-        card_number card_valid_from card_valid_until card_issuer card_type:20
-        """,label=_("eID card"))
+          self.define_panel("box1","""
+          last_name first_name:15 title:10
+          country city zip_code:10
+          street_prefix street:25 street_no street_box
+          addr2:40
+          """,label=_("Address"))
 
-        self.eid_panel.card_number.label = _("number")
-        self.eid_panel.card_valid_from.label = _("valid from")
-        self.eid_panel.card_valid_until.label = _("valid until")
-        self.eid_panel.card_issuer.label = _("issued by")
-        self.eid_panel.card_type.label = _("eID card type")
+          self.define_panel("box2","""
+          id:12 language
+          email
+          phone fax
+          gsm
+          """,label=_("Contact"))
 
-          
-        self.define_panel("box4","""
-        box3
-        eid_panel
-        """)
+          self.define_panel("box3","""
+          gender birth_date age:10 civil_state noble_condition 
+          birth_country birth_place nationality:15 national_id:15 
+          """,label=_("Birth"))
+            
+          self.define_panel("eid_panel","""
+          card_number card_valid_from card_valid_until card_issuer card_type:20
+          """,label=_("eID card"))
 
-        self.define_panel("main","""
-        box1 box2
-        box4 image:15 #overview 
-        """,label=_("Person"),hideCheckBoxLabels=True,label_align="top")
+          self.eid_panel.card_number.label = _("number")
+          self.eid_panel.card_valid_from.label = _("valid from")
+          self.eid_panel.card_valid_until.label = _("valid until")
+          self.eid_panel.card_issuer.label = _("issued by")
+          self.eid_panel.card_type.label = _("eID card type")
+
+            
+          self.define_panel("box4","""
+          box3
+          eid_panel
+          """)
+
+          self.define_panel("main","""
+          box1 box2
+          box4 image:15 #overview 
+          """,label=_("Person"),hideCheckBoxLabels=True,label_align="top")
 
 
 
-
+To be continued...
 

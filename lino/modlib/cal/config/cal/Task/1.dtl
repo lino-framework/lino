@@ -1,9 +1,0 @@
-main = 
-  :label: 
-  :label_align: top
-  :hideCheckBoxLabels: 
-
-  start_date status due_date user done 
-  summary 
-  created:20 modified:20 owner #owner_type #owner_id
-  description #notes.NotesByTask

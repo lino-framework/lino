@@ -1,7 +1,0 @@
-:label: Contracts
-:label_align: top
-
-main = 
-    isip.ContractsByPerson
-    jobs.ContractsByPerson
-    

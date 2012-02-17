@@ -69,6 +69,9 @@ class SiteConfigs(dd.Table):
     #~ default_action_class = dd.OpenDetailAction
     has_navigator = False
     #~ can_delete = perms.never
+    detail_template = "default_build_method"
+
+
     
     
 def get_site_config():
@@ -96,6 +99,11 @@ class ContentTypes(dd.Table):
     Deserves more documentation.
     """
     model = contenttypes.ContentType
+    
+    detail_template = """
+    id name app_label model base_classes
+    lino.HelpTextsByModel
+    """
     
     @dd.displayfield(_("Base classes"))
     def base_classes(self,obj,ar):
@@ -216,12 +224,17 @@ if settings.LINO.user_model:
         def __unicode__(self):
             return self.name
             
-    class MyTextFieldTemplates(mixins.ByUser):
-        model = TextFieldTemplate
-        
     class TextFieldTemplates(dd.Table):
+        detail_template = """
+        id name user
+        description
+        text
+        """
         model = TextFieldTemplate
 
+    class MyTextFieldTemplates(TextFieldTemplates,mixins.ByUser):
+        pass
+        
 
 
 class BuildLinoJS(dd.RowAction):
@@ -388,12 +401,12 @@ class Inspector(dd.VirtualTable):
         return cgi.escape(str(type(obj.value)))
         
 
-class AboutDetail(dd.DetailLayout):
+#~ class AboutDetail(dd.DetailLayout):
   
-    main = """
-    versions:40x5 startup_time:30
-    lino.Models:70x10
-    """
+    #~ main = """
+    #~ versions:40x5 startup_time:30
+    #~ lino.Models:70x10
+    #~ """
 
 
 class About(dd.EmptyTable):
@@ -404,7 +417,11 @@ class About(dd.EmptyTable):
     #~ hide_window_title = True
     hide_top_toolbar = True
     window_size = (700,400)
-    detail_layout = AboutDetail()
+    #~ detail_layout = AboutDetail()
+    detail_template = """
+    versions:40x5 startup_time:30
+    lino.Models:70x10
+    """
     
     versions = dd.Constant(lino.welcome_html())
     

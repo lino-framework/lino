@@ -1,7 +1,0 @@
-:label: Competences
-:label_align: top
-
-main =
-  dsbe.SkillsByPerson dsbe.SoftSkillsByPerson  skills
-  dsbe.ObstaclesByPerson obstacles 
-

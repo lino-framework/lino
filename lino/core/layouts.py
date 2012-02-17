@@ -11,6 +11,46 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+'''
+
+A Layout consists of "data elements" arranged in "panels".
+Panels are either horizontal or vertical.
+A layout must have at least a main panel. 
+It can define more panels.
+Data elements are database fields, table fields or slave tables.
+For a :class:`ParamsLayout`, data elements are names of parameters defined on the table.
+
+- Indentation doesn't matter.
+
+If the `main` panel of a DetailLayout is horizontal, ExtJS will interpret 
+this as a tabbed main panel. If you want a hbox layout instead, just insert 
+a newline somewhere in your main's template. Example::
+
+
+  class NoteDetail(dd.DetailLayout):
+      left = """
+      date type subject 
+      person company
+      body
+      """
+      
+      right = """
+      uploads.UploadsByOwner
+      cal.TasksByOwner
+      """
+      
+      # the following will create a tabbed main panel:
+      
+      main = "left:60 right:30"
+      
+      # to avoid a tabbed main panel, specify:
+      main = """
+      left:60 right:30
+      """
+
+
+'''
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -21,59 +61,12 @@ import sys
 import traceback
 import codecs
 import yaml
-#~ import datetime
-#import logging ; logger = logging.getLogger('lino.reports')
-#~ import cPickle as pickle
-#~ import pprint
 
-from appy import Object
 
-from django.conf import settings
-#~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import capfirst
-from django.utils.encoding import force_unicode
-from django.utils.importlib import import_module
-
-from django.db import models
-from django.db.models.query import QuerySet
-from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
-from django import forms
-from django.conf.urls.defaults import patterns, url, include
-from django.forms.models import modelform_factory
-from django.forms.models import _get_foreign_key
-#~ from django.contrib.auth.decorators import login_required
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-
-#~ from dateutil import parser as dateparser
-
-from django.http import HttpResponse
-from django.utils.safestring import mark_safe
 
 
-import lino
-#~ from lino import layouts
-from lino.core import fields
-from lino.core import actions
-from lino.utils import perms, menus, call_on_bases
-from lino.utils import babel
-from lino.tools import obj2str
-from lino.utils.config import load_config_files, Configured
-#~ from lino.core import datalinks
-#~ from lino.core import boolean_texts
-from lino.core import actors
-#~ from lino.core import action_requests
-from lino.ui import base
 
-from lino.ui import requests as ext_requests
-
-#~ from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field, UnresolvedModel
-from lino.tools import resolve_model, UnresolvedModel
-#~ from lino.utils.config import LOCAL_CONFIG_DIR
-from lino.core.coretools import get_slave, get_model_report, get_data_elem
-from lino.utils.tables import AbstractTable, AbstractTableRequest, VirtualTable
-#~ from lino.utils.tables import GridEdit #, ComputedColumn
 
 class LayoutError(RuntimeError):
     pass
@@ -96,7 +89,6 @@ class LayoutHandle:
         assert isinstance(layout,BaseLayout)
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)
-        #~ actors.ActorHandle.__init__(self,layout)
         self.layout = layout
         self.ui = ui
         #~ self.rh = rh
@@ -109,7 +101,7 @@ class LayoutHandle:
         #~ self._buttons = []
         #~ self.main_class = ui.main_panel_class(layout)
         
-        self.define_elem('main',layout.main)
+        self.define_panel('main',layout.main)
         
         if self.main is None:
             raise Exception("Failed to create main element %r for %s." % (layout.main,layout))
@@ -132,18 +124,6 @@ class LayoutHandle:
     def add_hidden_field(self,field):
         return HiddenField(self,field)
         
-    def write_debug_info(self):
-        if self.layout.filename and self.layout.write_debug_info:
-            filename = "%s.debug.html" % self.layout.filename
-            filename = os.path.join(self.layout.cd.name,filename)
-            logger.info("Writing %s..." % filename)
-            f = codecs.open(filename,"w",encoding='utf-8')
-            f.write('''<html><body><table border="1">''')
-            f.write('''<h1>%s</h1>''' % self)
-            f.write(u"\n".join(self.main.debug_lines()))
-            f.write('''</table></body></html>''')
-            f.close()
-        
     def get_title(self,ar):
         return self.layout.get_title(ar)
         
@@ -154,7 +134,7 @@ class LayoutHandle:
         return self.main.ext_lines(request)
   
         
-    def define_elem(self,name,desc,**kw):
+    def define_panel(self,name,desc,**kw):
         if not desc:
             raise Exception(
                 'Failed to define empty element %s (in %s)' 
@@ -177,7 +157,6 @@ class LayoutHandle:
         setattr(self,name,e)
         return e
         
-    #~ define_panel = define_elem
             
     #~ def desc2elem(self,panelclass,desc_name,desc,**kw):
     def desc2elem(self,elemname,desc,**kw):
@@ -223,8 +202,8 @@ class LayoutHandle:
                         e = self.desc2elem(elemname+'_'+str(i),x)
                         if e is not None:
                             elems.append(e)
-            if len(elems) == 1:
-                vertical = False
+            #~ if len(elems) == 1:
+                #~ vertical = False
         else:
             # it's a horizontal box
             vertical = False
@@ -267,11 +246,12 @@ class LayoutHandle:
             return e
         desc = getattr(self.layout,name,None)
         if desc is not None:
-            return self.define_elem(name,desc,**kw)
+            return self.define_panel(name,desc,**kw)
         e = self.ui.create_layout_element(self,name,**kw)
         # todo: cannot hide babelfields
         if name in self.layout.hidden_elements:
             e.hidden = True
+        setattr(self,name,e)
         #~ self.setup_element(e)
         return e
         
@@ -339,7 +319,6 @@ class unused_ListLayoutHandle(LayoutHandle):
         #~ return cls
 
 
-#~ class BaseLayout(Configured):
 class BaseLayout(object):
   
     _handle_class = LayoutHandle
@@ -347,7 +326,7 @@ class BaseLayout(object):
     
     _table = None
     
-    def __init__(self,table,main=None,hidden_elements=frozenset()):
+    def __init__(self,table=None,main=None,hidden_elements=frozenset()):
         self._table = table
         self.hidden_elements = hidden_elements 
         if main:
@@ -394,8 +373,8 @@ class DetailLayout(BaseLayout):
         #~ BaseLayout.__init(self,*args,**kw)
         #~ if self.main
         
-    def __init__(self,*args,**kw):
-        super(DetailLayout,self).__init__(None,*args,**kw)
+    #~ def __init__(self,*args,**kw):
+        #~ super(DetailLayout,self).__init__(None,*args,**kw)
         
 
 class ListLayout(BaseLayout):
@@ -412,100 +391,4 @@ class ParamsLayout(BaseLayout):
 
     def get_data_elem(self,name): 
         return self._table.get_param_elem(name)
-
-#~ def setup_layouts():
-    #~ for cl in LAYOUTS:
-        #~ if layout.actor is None:
-            #~ continue
-        #~ if isinstance(layout.actor,basestring):
-            #~ layout.actor = settings.LINO.modules.resolve(layout.actor)
-        #~ if issubclass(layout.actor,models.Model):
-            #~ layout.actor = layout.actor._lino_model_report
-        #~ if layout.actor is None:
-            #~ continue
-
-        #~ if issubclass(DetailLayout):
-            #~ layout.actor._lino_detail = LayoutHandle(ui)
-
-
-
-
-
-if False:
-
-
-  class unused_DetailHandle(base.Handle):
-      """
-      """
-      def __init__(self,ui,detail):
-          self.detail = detail
-          #~ self.content_type = ContentType.objects.get_for_model(detail.model).pk
-          self.lh_list = [ 
-              #~ 20120114 LayoutHandle(ui,detail.model._lino_model_report,dl) for dl in self.detail.layouts
-              LayoutHandle(ui,dl) for dl in self.detail.layouts
-              ]
-          base.Handle.__init__(self,ui)
-          
-      def find_by_name(self,name):
-          for lh in self.lh_list:
-              e = lh.main.find_by_name(name)
-              if e is not None:
-                  return e
-        
-        
-
-  class unused_Detail(object):
-      """
-      The UI-agnostic representation of a Detail window.
-      Equivalent to a collection of .dtl files.
-      """
-      _handle_class = DetailHandle    
-      
-      #~ def __init__(self,model,layouts):
-      def __init__(self,actor,layouts):
-          #~ self.model = model
-          #~ self.table = model._lino_model_report,
-          self.actor = actor
-          #~ self.table = model._lino_model_report,
-          self.layouts = layouts
-          self._handles = {}
-
-
-      def get_handle(self,ui):
-          "similar to Handled.get_handle, but now its an instance method"
-          #~ assert ui is None or isinstance(ui,UI), \
-              #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
-          if ui is None:
-              hname = '_lino_console_handler'
-          else:
-              hname = ui._handle_attr_name
-          h = self.__dict__.get(hname,None)
-          if h is None:
-              h = self._handle_class(ui,self)
-              setattr(self,hname,h)
-              h.setup()
-          return h
-
-      #~ def get_handle(self,k):
-          #~ h = self._handles.get(k,None)
-          #~ if h is None:
-              #~ h = DetailHandle(k,self)
-              #~ self._handles[k] = h
-              #~ h.setup()
-          #~ return h
-          
-      def __str__(self):
-          #~ return "%s Detail(%s)" % (self.actor,[str(x) for x in self.layouts])
-          return "%s Detail(%s)" % (self.actor,len(self.layouts))
-          
-
-  all_details = []
-
-  def register_detail(a,layouts):
-      for dtl in all_details:
-          if dtl.layouts == layouts:
-              return dtl
-      dtl = Detail(a,layouts)
-      all_details.append(dtl)
-      return dtl
 

@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -170,8 +170,8 @@ class EnableChild(VirtualField):
         When a DetailLayout is inherited by an MTI 
         child, EnableChild fields must be disabled.
         """
-        return lh.layout.table.model != self.child_model \
-          and issubclass(self.child_model,lh.layout.table.model)
+        return lh.layout._table.model != self.child_model \
+          and issubclass(self.child_model,lh.layout._table.model)
 
     def lino_kernel_setup(self,model,name):
         self.child_model = resolve_model(self.child_model,model._meta.app_label)

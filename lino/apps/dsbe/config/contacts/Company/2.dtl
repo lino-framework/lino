@@ -1,6 +1,0 @@
-:label: Notes
-:label_align: top
-
-main = 
-  notes.NotesByCompany #:60 #dsbe.LinksByCompany:20
-

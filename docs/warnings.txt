@@ -1,5 +1,3 @@
-T:\hgwork\lino\docs\blog\2012\0214.rst:: WARNING: image file not readable: blog\2012\0214c.jpg
-T:\hgwork\lino\docs\blog\2012\0214.rst:: WARNING: image file not readable: blog\2012\0214d.jpg
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
@@ -7,3 +5,5 @@ T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: documen
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\ref\modelattr.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\blog\2012\index.rst:42: WARNING: unknown document: 0216
+T:\hgwork\lino\docs\blog\2012\index.rst:: WARNING: unknown document: 0216

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ class NoteType(babel.BabelNamed,mixins.PrintableType):
 
 class EventType(babel.BabelNamed):
     """
+    A possible choice for :attr:`Note.event_type`.
     """
     class Meta:
         verbose_name = _("Event Type")
@@ -69,10 +70,22 @@ class EventType(babel.BabelNamed):
     body = babel.BabelTextField(_("Body"),blank=True,format='html')
     
 
+
+
 class EventTypes(dd.Table):
+    """
+    List of all Event Types.
+    """
     model = 'notes.EventType'
     column_names = 'name *'
     order_by = ["name"]
+    
+    detail_template = """
+    id name
+    remark:60x3
+    notes.NotesByEventType:60x6
+    """
+    
 
 #~ class Note(mixins.TypedPrintable,mixins.AutoUser):
 class Note(mixins.TypedPrintable,
@@ -205,8 +218,38 @@ class NoteTypes(dd.Table):
     column_names = 'name build_method template *'
     order_by = ["name"]
     
+    detail_template = """
+    id name
+    build_method template
+    remark:60x5
+    notes.NotesByType
+    """
+
+class NoteDetail(dd.DetailLayout):
+    left = """
+    date:10 event_type:25 type:25
+    subject 
+    person company
+    id user:10 language:8 build_time
+    body
+    """
+    
+    right = """
+    uploads.UploadsByOwner
+    thirds.ThirdsByOwner:30
+    cal.TasksByOwner
+    """
+    
+    main = """
+    left:60 right:30
+    """
+
+
+
+    
 class Notes(dd.Table):
     model = 'notes.Note'
+    detail_layout = NoteDetail()
     #~ column_names = "id date user type event_type subject * body_html"
     column_names = "id date user event_type type person company subject * body"
     #~ hide_columns = "body"

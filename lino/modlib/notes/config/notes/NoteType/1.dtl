@@ -1,8 +1,0 @@
-:label: Detail
-:label_align: top
-
-main = 
-    id name
-    build_method template
-    remark:60x5
-    notes.NotesByType

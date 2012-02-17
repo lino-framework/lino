@@ -1,8 +1,0 @@
-:label_align: top
-
-main = 
-  name provider contract_type type id 
-  sector function capacity hourly_rate 
-  remark CandidaturesByJob
-  ContractsByJob
-

@@ -187,7 +187,7 @@ class Menu(MenuItem):
         else:
             raise Exception("(%r,%r) is not a valid action specifier" % (spec,action))
         if a is None:
-            raise Exception("add_action(%r) found None" % spec)
+            raise Exception("add_action(%r,%r,%r) found None" % (spec,action,kw))
         if kw.has_key('params'):
             if a.actor.__name__ == 'Contacts':
               raise Exception("20120103")

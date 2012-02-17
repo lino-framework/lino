@@ -167,6 +167,14 @@ class Calendar(mixins.AutoUser):
 class Calendars(dd.Table):
     model = 'cal.Calendar'
     column_names = "user type name color readonly is_hidden is_default *"
+    
+    detail_template = """
+    type name user id 
+    url_template username password
+    description
+    readonly is_default is_hidden color start_date
+    EventsByCalendar
+    """
 
 def default_calendar(user):
     """
@@ -388,6 +396,11 @@ class RecurrenceSets(dd.Table):
     """
     model = RecurrenceSet
     
+    detail_template = """
+    id calendar uid summary start_date start_time
+    rdates exdates rrules exrules
+    EventsBySet    
+    """
     
     
 class Component(ComponentBase,
@@ -499,6 +512,7 @@ class Component(ComponentBase,
         #~ return html
         
     def summary_row(self,ui,**kw):
+        #~ logger.info("20120217 Component.summary_row() %s", self)
         #~ if self.owner and not self.auto_type:
         html = ui.ext_renderer.href_to(self)
         if self.start_time:
@@ -513,6 +527,8 @@ class Component(ComponentBase,
             #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
         if self.project:
             html += " (%s)" % dd.summary_row(self.project,ui)
+            #~ print 20120217, self.project.__class__, self
+            #~ html += " (%s)" % self.project.summary_row(ui)
         return html
         #~ return super(Event,self).summary_row(ui,rr,**kw)
         
@@ -670,10 +686,29 @@ class Task(Component):
         #~ return "#" + str(self.pk)
         
 
+class EventDetail(dd.DetailLayout):
+  
+    start = "start_date start_time"
+    end = "end_date end_time"
+    
+    main = """
+    type summary user 
+    start end all_day #duration status 
+    place priority access_class transparent rset 
+    calendar owner created:20 modified:20 user_modified 
+    description
+    GuestsByEvent
+    """
+    
 class Events(dd.Table):
     model = 'cal.Event'
     column_names = 'start_date start_time summary status *'
     active_fields = ['all_day']
+    
+    detail_layout = EventDetail()
+    
+
+    
     
     #~ def setup_actions(self):
         #~ super(dd.Table,self).setup_actions()
@@ -715,6 +750,20 @@ class Tasks(dd.Table):
     column_names = 'start_date summary done status *'
     #~ hidden_columns = set('owner_id owner_type'.split())
     
+    #~ detail_template = """
+    #~ start_date status due_date user done 
+    #~ summary 
+    #~ created:20 modified:20 owner #owner_type #owner_id
+    #~ description #notes.NotesByTask    
+    #~ """
+    detail_template = """
+    start_date status due_date done id
+    summary 
+    user project 
+    calendar owner created:20 modified:20 user_modified  
+    description #notes.NotesByTask    
+    """
+    
 #~ class EventsByOwner(Events):
     #~ master_key = 'owner'
     
@@ -726,6 +775,7 @@ class EventsByOwner(Events):
     master_key = 'owner'
 
 if settings.LINO.project_model:    
+  
     class EventsByProject(Events):
         master_key = 'project'
     
@@ -733,8 +783,9 @@ if settings.LINO.project_model:
         master_key = 'project'
     
 if settings.LINO.user_model:    
+  
     class MyEvents(Events,mixins.ByUser):
-        model = 'cal.Event'
+        #~ model = 'cal.Event'
         #~ label = _("My Events")
         order_by = ["start_date","start_time"]
         #~ column_names = 'start_date start_time summary status *'
@@ -748,10 +799,7 @@ if settings.LINO.user_model:
             rr.known_values = dict(start_date=datetime.date.today())
             super(MyEventsToday,self).setup_request(rr)
         
-        
-    class MyTasks(mixins.ByUser):
-        model = 'cal.Task'
-        #~ label = _("My Tasks")
+    class MyTasks(Tasks,mixins.ByUser):
         order_by = ["start_date","start_time"]
         column_names = 'start_date summary done status *'
     

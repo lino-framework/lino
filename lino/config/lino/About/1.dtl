@@ -1,3 +1,0 @@
-main = 
-    versions:40x5 startup_time:30
-    lino.Models:70x10

@@ -1,8 +1,0 @@
-:label: 
-:label_align: top
-
-main =
-    id:8 start_date offer title 
-    remark
-    dsbe.ParticipantsByCourse
-    dsbe.CandidatesByCourse

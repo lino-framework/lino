@@ -730,7 +730,8 @@ class Contacts(contacts.Contacts):
           ''')
         
 class AllContacts(contacts.AllContacts,Contacts):
-    pass
+    app_label = 'contacts'
+    #~ pass
 
 class Company(Partner,contacts.Contact,contacts.CompanyMixin):
   
@@ -743,6 +744,7 @@ class Company(Partner,contacts.Contact,contacts.CompanyMixin):
         app_label = 'contacts'
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
+        
         
     #~ vat_id = models.CharField(max_length=200,blank=True)
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
@@ -758,13 +760,64 @@ class Company(Partner,contacts.Contact,contacts.CompanyMixin):
     
   
     
+
+class CompanyDetail(dd.DetailLayout):
+  
+    box3 = """
+    country region
+    city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+    """
+
+    box4 = """
+    email:40 
+    url
+    phone
+    gsm
+    """
+
+    address_box = "box3 box4"
+
+    box5 = """
+    remarks 
+    is_courseprovider is_jobprovider
+    """
+
+    bottom_box = "box5 contacts.RolesByCompany"
+
+    intro_box = """
+      prefix name id language 
+      vat_id:12 activity:20 type:20 #hourly_rate
+      """
+
+    general = """
+    intro_box
+    address_box
+    bottom_box
+    """
+    
+    notes = "notes.NotesByCompany"
+    
+    main = "general notes"
+
+    def setup_handle(self,lh):
+      
+        lh.general.label = _("General")
+        lh.notes.label = _("Notes")
+
+
+
+
 #~ class Companies(reports.Report):
 #~ class Companies(contacts.Contacts):
 class Companies(Contacts):
     #~ hide_details = [Contact]
     model = settings.LINO.company_model
+    detail_layout = CompanyDetail()
+        
     order_by = ["name"]
-    #~ app_label = 'contacts'
+    app_label = 'contacts'
     #~ column_names = ''
     
     @classmethod
@@ -779,6 +832,8 @@ class Companies(Contacts):
             
             
             
+
+
 
 class PersonDetail(dd.DetailLayout):
   
@@ -920,11 +975,17 @@ class PersonDetail(dd.DetailLayout):
         lh.eid_panel.label = _("eID card")
         
         # override default field labels
-        lh.eid_panel.card_number.label = _("number")
-        lh.eid_panel.card_valid_from.label = _("valid from")
-        lh.eid_panel.card_valid_until.label = _("valid until")
-        lh.eid_panel.card_issuer.label = _("issued by")
-        lh.eid_panel.card_type.label = _("eID card type")
+        #~ lh.eid_panel.card_number.label = _("number")
+        #~ lh.eid_panel.card_valid_from.label = _("valid from")
+        #~ lh.eid_panel.card_valid_until.label = _("valid until")
+        #~ lh.eid_panel.card_issuer.label = _("issued by")
+        #~ lh.eid_panel.card_type.label = _("eID card type")
+        
+        lh.card_number.label = _("number")
+        lh.card_valid_from.label = _("valid from")
+        lh.card_valid_until.label = _("valid until")
+        lh.card_issuer.label = _("issued by")
+        lh.card_type.label = _("eID card type")
 
 
             
@@ -941,7 +1002,9 @@ class AllPersons(Contacts):
     #~ column_names = "name_column national_id gsm street street_no street_box city age email phone id bank_account1 aid_type coach1 language *"
     #~ column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
     column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10"
-    #~ app_label = 'contacts'
+    
+    app_label = 'contacts'
+    
     #~ default_params = dict(is_active=True)
     #~ extra = dict(
       #~ select=dict(sort_name='lower(last_name||first_name)'),
@@ -981,7 +1044,7 @@ class Persons(AllPersons):
     """
     All Persons except newcomers and inactive persons.
     """
-    #~ app_label = 'contacts'
+    app_label = 'contacts'
     #~ use_as_default_report = False 
     known_values = dict(is_active=True,newcomer=False)
     #~ filter = dict(is_active=True,newcomer=False)
@@ -1635,72 +1698,6 @@ class AidTypes(dd.Table):
 
 
 #
-# CALENDAR IMPLEMENTATION AND EXTENSION
-#
-
-#~ class ComponentMixin(contacts.PartnerDocument):
-#~ class ComponentMixin(mixins.ProjectRelated):
-  
-    #~ class Meta:
-        #~ abstract = True
-  
-    #~ def summary_row(self,ui,rr,**kw):
-        #~ html = mixins.ProjectRelated.summary_row(self,ui,rr,**kw)
-        # html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
-        #~ if self.summary:
-            #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-            # html += ui.href_to(self,force_unicode(self.summary))
-        #~ html += _(" on ") + babel.dtos(self.start_date)
-        #~ return html
-
-#~ class Event(cal.Event,ComponentMixin):
-    #~ class Meta(cal.Event.Meta):
-        #~ app_label = 'cal'
-
-#~ class Task(cal.Task,ComponentMixin):
-    #~ class Meta(cal.Task.Meta):
-        #~ app_label = 'cal'
-
-#~ class EventsByProject(cal.Events):
-    #~ master_key = 'project'
-    
-#~ class TasksByProject(cal.Tasks):
-    #~ master_key = 'project'
-    
-#~ class EventsByPerson(cal.Events):
-    #~ master_key = 'person'
-    
-#~ class EventsByCompany(cal.Events):
-    #~ master_key = 'company'
-
-#~ class TasksByPerson(cal.Tasks):
-    #~ master_key = 'person'
-    
-#~ class TasksByCompany(cal.Tasks):
-    #~ master_key = 'company'
-    
-        
-
-  
-#
-# LINKS IMPLEMENTATION AND EXTENSION
-#
-#~ class Link(links.Link,contacts.PartnerDocument):
-    #~ class Meta:
-        #~ app_label = 'links'
-
-#~ class LinksByPerson(links.LinksByOwnerBase):
-    #~ master_key = 'person'
-    #~ column_names = "name url user date company *"
-    #~ order_by = ["date"]
-  
-#~ class LinksByCompany(links.LinksByOwnerBase):
-    #~ master_key = 'company'
-    #~ column_names = "name url user date person *"
-    #~ order_by = ["date"]
-    
-
-#
 # COURSES
 #
 
@@ -1716,6 +1713,18 @@ class CourseProvider(Company):
           #~ verbose_name=_("Name"))
     #~ company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
     
+class CourseProviderDetail(CompanyDetail):
+    """
+    This is the same as CompanyDetail, except that we
+    
+    - remove MTI fields
+    - add a new tab "Courses"
+    
+    """
+    box5 = "remarks" 
+    main = "general notes CourseOffersByProvider"
+
+  
 
 class CourseProviders(Companies):
     """
@@ -1726,6 +1735,7 @@ class CourseProviders(Companies):
     #~ app_label = 'dsbe'
     label = _("Course providers")
     model = CourseProvider
+    detail_layout = CourseProviderDetail()
     #~ known_values = dict(is_courseprovider=True)
     #~ filter = dict(is_courseprovider__exact=True)
     
@@ -1952,6 +1962,12 @@ class CourseRequest(models.Model):
 class Courses(dd.Table):
     model = Course
     order_by = ['start_date']
+    detail_template = """
+    id:8 start_date offer title 
+    remark
+    dsbe.ParticipantsByCourse
+    dsbe.CandidatesByCourse
+    """
     
 class CoursesByOffer(Courses):
     master_key = 'offer'
@@ -1963,12 +1979,24 @@ class CourseContents(dd.Table):
 
 class CourseOffers(dd.Table):
     model = CourseOffer
+    detail_template = """
+    id:8 title content provider
+    description
+    CoursesByOffer
+    """
     
 class CourseOffersByProvider(CourseOffers):
     master_key = 'provider'
 
 class CourseRequests(dd.Table):
     model = CourseRequest
+    
+    detail_template = """
+    date_submitted person content offer urgent 
+    course date_ended ending id:8 
+    remark  uploads.UploadsByOwner
+    """
+    
     order_by = ['date_submitted']
     active_fields = ['offer']
 
@@ -2098,8 +2126,18 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
     def setup_report(model,rpt):
         rpt.add_action(DirectPrintAction(rpt,'suchliste',_("Print"),'suchliste'))
         
-class MySearches(mixins.ByUser):
+class PersonSearches(dd.Table):
     model = PersonSearch
+    detail_template = """
+    id:8 title 
+    only_my_persons coached_by period_from period_until aged_from:10 aged_to:10 gender:10
+    dsbe.LanguageKnowledgesBySearch dsbe.WantedPropsBySearch dsbe.UnwantedPropsBySearch
+    dsbe.PersonsBySearch
+    """
+    
+class MyPersonSearches(PersonSearches,mixins.ByUser):
+    #~ model = PersonSearch
+    pass
     
 class WantedLanguageKnowledge(models.Model):
     search = models.ForeignKey(PersonSearch)
@@ -2138,10 +2176,8 @@ class UnwantedPropsBySearch(dd.Table):
     master_key = 'search'
     model = UnwantedSkill
 
-class PersonSearches(dd.Table):
-    model = PersonSearch
-    
-class PersonsBySearch(dd.Table):
+#~ class PersonsBySearch(dd.Table):
+class PersonsBySearch(AllPersons):
     """
     This is the slave report of a PersonSearch that shows the 
     Persons matching the search criteria. 
@@ -2152,7 +2188,7 @@ class PersonsBySearch(dd.Table):
     :meth:`get_request_queryset`
     """
   
-    model = Person
+    #~ model = Person
     master = PersonSearch
     #~ 20110822 app_label = 'dsbe'
     label = _("Found persons")
@@ -2262,6 +2298,9 @@ class OverlappingContracts(dd.Table):
         #~ qs = qs.filter()
         #~ print 20111118, 'get_request_queryset', rr.user, qs.count()
         return qs
+
+
+
 
 
 
@@ -2437,19 +2476,18 @@ connection_created.connect(my_callback)
 #~ class ContactPersons(links.LinksFromThis):
     #~ label = _("Contact persons")
     
-class HomeDetail(dd.DetailLayout):
-    main = """
-    quick_links:80x1
-    dsbe.UsersWithClients:80x8
-    coming_reminders:40x16 missed_reminders:40x16
-    """
   
     
 class Home(dd.EmptyTable):
     label = _("Home") 
     hide_window_title = True
     hide_top_toolbar = True
-    detail_layout = HomeDetail()
+    #~ detail_layout = HomeDetail()
+    detail_template = """
+    quick_links:80x1
+    dsbe.UsersWithClients:80x8
+    coming_reminders:40x16 missed_reminders:40x16
+    """
     
     @dd.virtualfield(dd.HtmlBox())
     def tasks_summary(cls,self,req):
@@ -2476,3 +2514,96 @@ class Home(dd.EmptyTable):
 
 
 
+
+
+
+
+
+
+def site_setup(site):
+  
+    site.modules.countries.Cities.set_detail("""
+    name country 
+    contacts.ContactsByCity jobs.StudiesByCity
+    """)
+    
+    site.modules.countries.Countries.set_detail("""
+    isocode name short_code
+    countries.CitiesByCountry jobs.StudiesByCountry
+    """)
+    
+    site.modules.uploads.Uploads.set_detail("""
+    file user
+    type description valid_until
+    # person company
+    # reminder_date reminder_text delay_value delay_type reminder_done
+    modified created owner
+    cal.TasksByOwner
+    # show_date show_time 
+    # show_date time timestamp
+    """)
+
+  
+    #~ from lino.modlib.cal import models as cal
+
+    class EventDetail(cal.EventDetail):
+        main = """
+        type summary user project
+        start end all_day #duration status 
+        place priority access_class transparent rset 
+        calendar owner created:20 modified:20 user_modified 
+        description GuestsByEvent
+        """
+        
+    #~ cal.Events.detail_layout = EventDetail(cal.Events)
+    site.modules.cal.Events.set_detail(EventDetail())
+    
+    
+    class UserDetail(dd.DetailLayout):
+      
+        box2 = """
+        is_active 
+        is_spis 
+        is_newcomers
+        is_staff 
+        is_expert 
+        is_superuser
+        newcomer_quota
+        """
+        
+        box3 = """
+        country region
+        city zip_code:10
+        street_prefix street:25 street_no street_box
+        addr2:40
+        """
+
+        box4 = """
+        email:40 
+        url
+        phone
+        gsm
+        """
+
+        general = """
+        first_name last_name username language id
+        box3:40 box4:30 box2:20
+        date_joined last_login 
+        remarks 
+        """
+        
+        #~ reminders = "cal.RemindersByUser"
+        #~ newcomers = "newcomers.CompetencesByUser"
+        
+        #~ main = "general reminders newcomers"
+        main = "general cal.RemindersByUser newcomers.CompetencesByUser"
+      
+        def setup_handle(self,lh):
+          
+            lh.general.label = _("General")
+            #~ lh.reminders.label = _("Reminders")
+            #~ lh.newcomers.label = _("Newcomers")
+
+    
+    site.modules.users.Users.set_detail(UserDetail())
+        

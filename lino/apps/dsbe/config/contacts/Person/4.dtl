@@ -1,8 +1,0 @@
-:label: Languages
-:label_align: top
-
-main = 
-  dsbe.LanguageKnowledgesByPerson 
-  dsbe.CourseRequestsByPerson  
-  # skills obstacles
-  

@@ -216,8 +216,8 @@ def install_summary_rows():
     """
           
     for model in models.get_models():
-        
-        if get_class_attr(model,'summary_row') is None:
+        m = get_class_attr(model,'summary_row') 
+        if m is None:
             #~ if model._lino_model_report._lino_detail:
             if model._lino_model_report.detail_layout:
                 def f(obj,ui,**kw):
@@ -225,11 +225,14 @@ def install_summary_rows():
                     #~ return u'<a href="%s" target="_blank">%s</a>' % (
                       #~ ui.get_detail_url(obj,fmt='detail'),
                       #~ unicode(obj))
+                logger.info('20120217 %s : installed clickable summary_row', model)
             else:
                 def f(obj,ui,**kw):
                     return unicode(obj)
+                logger.info('20120217 %s : installed plain summary_row', model)
             model.summary_row = f
-            #~ print '20101111 installed summary_row for ', model
+        else:
+            logger.info('20120217 %s : use model summary_row defined in %s', model,m.__module__)
         
 
 
@@ -317,8 +320,6 @@ def setup_site(self,make_messages=False):
     
     #~ load_details(make_messages)
     
-    install_summary_rows()
-    
     #~ logger.debug("actors.discover() done")
     
     #~ babel.discover() # would have to be called before model setup
@@ -364,6 +365,12 @@ def setup_site(self,make_messages=False):
         if fn is not None:
             fn(self)
 
+    """
+    this comes after site_setup() because site_setup() might 
+    install detail_layouts on model tables.
+    """
+    #~ install_summary_rows()
+    
     #~ if settings.MODEL_DEBUG:
     if False:
         logger.debug("ACTORS:")

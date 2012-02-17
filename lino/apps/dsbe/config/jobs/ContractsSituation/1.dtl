@@ -1,5 +1,0 @@
-:label_align: top
-
-main =
-    id contract_type job_type
-    preview

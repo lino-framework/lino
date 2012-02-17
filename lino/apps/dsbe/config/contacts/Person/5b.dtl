@@ -1,6 +1,0 @@
-:label: Job Requests
-:label_align: top
-
-main = 
-    jobs.CandidaturesByPerson
-    

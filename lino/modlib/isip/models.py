@@ -101,6 +101,11 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
 class ContractTypes(dd.Table):
     model = ContractType
     column_names = 'name ref build_method template *'
+    detail_template = """
+    id name 
+    ref build_method template
+    ContractsByType
+    """
 
 
 
@@ -470,7 +475,31 @@ class Contract(ContractBase):
             return []
         #~ return df + settings.LINO.CONTRACT_PRINTABLE_FIELDS
         return self.PRINTABLE_FIELDS
-  
+
+
+class ContractDetail(dd.DetailLayout):    
+    general = """
+    id:8 person:25 user:15 user_asd:15 language:8
+    type company contact:20     
+    applies_from applies_until exam_policy
+    
+    date_decided date_issued 
+    date_ended ending
+    cal.TasksByOwner cal.EventsByOwner
+    """
+    
+    isip = """
+    stages        goals
+    duties_asd    duties_dsbe
+    duties_company duties_person
+    """
+    
+    main = "general isip"
+    
+    def setup_handle(self,dh):
+        dh.general.label = _("General")
+        dh.isip.label = _("ISIP")
+
 
 class Contracts(dd.Table):
     model = Contract
@@ -478,6 +507,7 @@ class Contracts(dd.Table):
     order_by = ['id']
     #~ active_fields = ('company','contact')
     active_fields = ['company']
+    detail_layout = ContractDetail()
     
 class ContractsByPerson(Contracts):
     master_key = 'person'
@@ -489,9 +519,10 @@ class ContractsByType(Contracts):
     column_names = "applies_from person user *"
     order_by = ["applies_from"]
 
-class MyContracts(mixins.ByUser,Contracts):
+class MyContracts(Contracts,mixins.ByUser):
     column_names = "applies_from person *"
-    label = _("My PIIS contracts")
+    #~ label = _("My ISIP contracts")
+    #~ label = _("My PIIS contracts")
     #~ order_by = "reminder_date"
     #~ column_names = "reminder_date person company *"
     order_by = ["applies_from"]

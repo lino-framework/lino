@@ -354,6 +354,8 @@ class ExtRenderer(HtmlRenderer):
 
     def instance_handler(self,obj):
         a = obj.__class__._lino_model_report.get_action('detail')
+        if a is None:
+            raise Exception("No detail action for %s" % obj.__class__._lino_model_report)
         return self.action_call(a,None,dict(record_id=obj.pk))
         
     def request_handler(self,rr,*args,**kw):
@@ -2302,7 +2304,7 @@ tinymce.init({
             yield '    // active_fields:'
             #~ dh = dtl.get_handle(rh.ui)
             for name in tbl.active_fields:
-                e = dh.find_by_name(name)
+                e = dh.main.find_by_name(name)
                 #~ yield '    %s.on("change",function(){this.save()},this);' % py2js(e)
                 #~ yield '    %s.on("check",function(){this.save()},this);' % py2js(e)
                 yield '    %s.on("%s",function(){this.save()},this);' % (py2js(e),e.active_change_event)
@@ -2561,7 +2563,8 @@ tinymce.init({
         if name == 'main':
             if isinstance(lh.layout,layouts.ListLayout): 
                 #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
-                return ext_elems.GridMainPanel(lh,name,lh.layout._table,*elems,**pkw)
+                #~ return ext_elems.GridMainPanel(lh,name,lh.layout._table,*elems,**pkw)
+                return ext_elems.GridElement(lh,name,lh.layout._table,*elems,**pkw)
             if isinstance(lh.layout,layouts.ParamsLayout) : 
                 return ext_elems.ParameterPanel(lh,name,vertical,*elems,**pkw)
             if isinstance(lh.layout,layouts.DetailLayout): 

@@ -526,20 +526,19 @@ class GenericForeignKey(generic.GenericForeignKey):
         generic.GenericForeignKey.__init__(self,ct_field,fk_field)
         
     
-class FieldSet:
-    """
-    A group of fields that have a common label (`verbose_name`)
-    to be displayed and translated.
-    """
-    def __init__(self,verbose_name,desc=None,**child_labels):
-        self.verbose_name = verbose_name
-        self.desc = desc
-        self.child_labels = child_labels
+#~ class FieldSet:
+    #~ """
+    #~ A group of fields that have a common label (`verbose_name`)
+    #~ to be displayed and translated.
+    #~ """
+    #~ def __init__(self,verbose_name,desc=None,**child_labels):
+        #~ self.verbose_name = verbose_name
+        #~ self.desc = desc
+        #~ self.child_labels = child_labels
         
-    def get_child_label(self,name):
-        s = self.child_labels.get(name,None)
-        #~ logger.info('get_child_label(%r)->%s',name,unicode(s))
-        return s
+    #~ def get_child_label(self,name):
+        #~ s = self.child_labels.get(name,None)
+        #~ return s
         
 
 

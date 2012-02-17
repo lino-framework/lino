@@ -329,7 +329,16 @@ Lino.close_window = function(status_update) {
   }
   if (cw) cw.hide_really();
 };
-  
+
+Lino.kill_current_window = function() {
+  var cw = Lino.current_window;
+  Lino.current_window = null;
+  if (cw) cw.hide_really();
+};
+
+Lino.calling_window = function() {
+    if (Lino.window_history.length) return Lino.window_history[Lino.window_history.length-1];
+}
 
 Lino.PanelMixin = {
   get_containing_window : function (){
@@ -1975,11 +1984,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         { text: '[$_("Help Text Editor")]',
           handler: Lino.help_text_editor,
           qtip: "$_('Edit help texts for fields on this model.')",
-          scope: this},
-        { text: '[$_("Layout Editor")]',
-          handler: this.edit_detail_config,
-          qtip: "$_("Edit Detail layout")",
           scope: this}
+        //~ ,{ text: '[$_("Layout Editor")]',
+          //~ handler: this.edit_detail_config,
+          //~ qtip: "$_("Edit Detail layout")",
+          //~ scope: this}
       ])
     }
     //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
@@ -2326,7 +2335,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     this.loadMask.show();
     var rec = this.get_current_record();
     if (this.has_file_upload) this.form.fileUpload = true;
-    console.log('FormPanel.save()',rec);
+    //~ console.log('FormPanel.save()',rec);
     if (rec) {
       if (rec.phantom) {
         if (this.action_name != 'insert') 
@@ -2350,17 +2359,32 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             which will lead to an additional GET.
             ***/
             var url = this.ls_url;
-            Lino.close_window(function(ww){
-                if (ww.window.main_item instanceof Lino.FormPanel 
-                    && ww.window.main_item.ls_url == url) {
-                  //~ console.log("20120127 update_status: yes",ww);
-                  //~ ww.status.data_record = null,
-                  ww.status.record_id = action.result.record_id,
-                  ww.status.data_record = action.result.data_record
-                  //~ ww.status.record_id = action.result.record_id
-                }
-                //~ else console.log("20120127 update_status: no",ww);
-            });
+            var ww = Lino.calling_window();
+            if (ww && ww.window.main_item instanceof Lino.FormPanel 
+                   && ww.window.main_item.ls_url == this.ls_url) {
+                //~ console.log("20120217 case 1");
+                ww.status.record_id = action.result.record_id;
+                ww.status.data_record = action.result.data_record;
+                Lino.close_window();
+            } else if (this.ls_detail_handler) {
+                //~ console.log("20120217 case 2");
+                Lino.kill_current_window();
+                this.ls_detail_handler(null,{
+                    record_id:action.result.record_id,
+                    data_record: action.result.data_record,
+                    base_params:this.get_base_params()
+                });
+            } else {
+                //~ console.log("20120217 case 3");
+                Lino.close_window();
+            }
+            //~ Lino.close_window(function(ww){
+                //~ if (ww.window.main_item instanceof Lino.FormPanel 
+                    //~ && ww.window.main_item.ls_url == url) {
+                  //~ ww.status.record_id = action.result.record_id,
+                  //~ ww.status.data_record = action.result.data_record
+                //~ }
+            //~ });
           },
           failure: function() { 
             this.loadMask.hide();

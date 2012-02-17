@@ -23,6 +23,7 @@ from lino.ui import base
 from lino.ui.base import Handled
 from lino.core import fields
 from lino.core import actions
+from lino.core import layouts
 from lino.tools import resolve_model
 from lino.utils import curry
 
@@ -166,11 +167,6 @@ class ActorMetaClass(type):
                 cls.add_virtual_field(k,v)
                 #~ add_virtual_field(cls,k,v)
                 
-        dl = classDict.get('detail_layout',None)
-        if dl is not None:
-            dl._table = cls
-                
-                
                 
         #~ cls.params = []
         #~ for k,v in classDict.items():
@@ -202,7 +198,6 @@ class ActorMetaClass(type):
             #~ self.app_label = self.model._meta.app_label
             
         #~ cls.app_label = cls.__module__.split('.')[-2]
-            
         
         cls.actor_id = cls.app_label + '.' + cls.__name__
         cls._actions_list = []
@@ -210,6 +205,17 @@ class ActorMetaClass(type):
         cls._setup_done = False
         cls._setup_doing = False
         
+        dl = classDict.get('detail_layout',None)
+        dt = classDict.get('detail_template',None)
+        if dt is not None:
+            #~ assert dl is None
+            dl = layouts.DetailLayout(cls,dt)
+            cls.detail_layout = dl
+        elif dl is not None:
+            assert dl._table is None
+            dl._table = cls
+                
+                
         if classname not in (
             'Table','AbstractTable','VirtualTable',
             'Action','HandledActor','Actor','Frame'):
@@ -237,11 +243,14 @@ class Actor(Handled):
     
     app_label = None
     """
+    Specify this if you want to "override" an existing actor.
+    
     The default value is deduced from the module where the 
     subclass is defined.
-    Applications should not need to explicitly set this attribute, 
-    but :func:`lino.core.table.table_factory`
-    uses it to specify a value which overrides the default.
+    
+    Note that this attribute is not inherited from base classes.
+    
+    :func:`lino.core.table.table_factory` also uses this.
     """
     
     window_size = None
@@ -284,8 +293,6 @@ class Actor(Handled):
     Return `True` if the record as a whole should be read-only.
     Same remarks as for :attr:`disabled_fields`.
     """
-    
-    detail_action = None
     
     active_fields = []
     """A list of field names that are "active" (cause a save and 
@@ -339,6 +346,9 @@ class Actor(Handled):
     actor_id = None
     
     detail_layout = None
+    detail_template = None
+    detail_action = None
+    
     
     #~ submit_action = actions.SubmitDetail()
     
@@ -410,9 +420,22 @@ class Actor(Handled):
             #~ self._lino_detail = dtl
         #~ return dtl
         
-    #~ @classmethod
-    #~ def set_detail(self,dtl):
-        #~ self._lino_detail = dtl
+    @classmethod
+    def set_detail(self,dtl):
+        if isinstance(dtl,basestring):
+            dtl = layouts.DetailLayout(self,dtl)
+        else:
+            assert dtl._table is None
+            dtl._table = self
+        self.detail_layout = dtl
+        if self.detail_action is None:
+            """
+            todo: this is an ugly hack. if a table doesn't have a detail 
+            by default but gets one afterwards, we add the detail_action 
+            here.
+            """
+            self.detail_action = actions.ShowDetailAction(self)
+            self.add_action(self.detail_action)
         
     #~ @classmethod
     #~ def add_virtual_field(cls,name,vf): 

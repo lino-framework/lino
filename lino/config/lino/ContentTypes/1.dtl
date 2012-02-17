@@ -1,5 +1,0 @@
-:label_align: top
-
-main =
-    id name app_label model base_classes
-    lino.HelpTextsByModel

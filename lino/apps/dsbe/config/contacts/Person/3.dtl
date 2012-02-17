@@ -1,8 +1,0 @@
-:label: Education
-:label_align: top
-
-
-main = 
-  jobs.StudiesByPerson 
-  jobs.ExperiencesByPerson:40
-
