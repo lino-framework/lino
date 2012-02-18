@@ -16,6 +16,13 @@ Detail Layouts are no longer defined in separate `.dtl` files,
 and not even in separate `.py` files, they are just defined 
 in the code.
 
+One short-term disadvantage is that the "[Layout editor]" 
+button is no longer possible since the definition can 
+be more complex and spread across several source code 
+files.
+But I'm dreaming about a new button "Show Source Code" 
+that would open a "Source Code Inspector" with 
+optional "Edit" buttons...
 
 Advantages:
 
@@ -29,7 +36,7 @@ Advantages:
   who inherit from
   :class:`lino.apps.dsbe.models.CompanyDetail`.
 
-- for simple cases, e.g. :class:`lino.modlib.notes.models.EventType` 
+- For simple cases, e.g. :class:`lino.modlib.notes.models.EventType` 
   it easier to just say::
   
     detail_template = """
@@ -41,10 +48,6 @@ Advantages:
   than to create a file :file:`/lino/modlib/notes/config/notes/Note/1.dtl` 
   with basically the same content.
 
-
-Disadvantage:
-
-- A button "Layout editor" is no longer possible.
 
 Another side effect is that I finally found a solution for longterm layout bug.
 Here is how the detail of a note has been looking "from the beginning":

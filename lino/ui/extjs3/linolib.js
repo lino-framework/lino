@@ -1084,8 +1084,8 @@ Lino.delete_selected = function(panel) {
         for ( var i=0; i < recs.length; i++ ) {
           Lino.do_action(panel,{
               method:'DELETE',
-              url:ROOT_URL+'/api'+panel.ls_url+'/'+recs[i].id,
-              after_success:panel.after_delete.createDelegate(panel)
+              url: ROOT_URL + '/api' + panel.ls_url + '/' + recs[i].id,
+              after_success: panel.after_delete.createDelegate(panel)
           })
         }
         //~ caller.after_delete();
@@ -1151,14 +1151,14 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
 
 Lino.do_action = function(caller,action) {
   action.success = function(response) {
-    console.log('Lino.do_action()',action,'action success',response);
+    //~ console.log('Lino.do_action()',action,'action success',response);
     if (action.after_success) {
-        console.log('Lino.do_action() calling after_success');
+        //~ console.log('Lino.do_action() calling after_success');
         action.after_success();
     }
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
-      console.log('Lino.do_action()',action.name,'result is',result);
+      //~ console.log('Lino.do_action()',action.name,'result is',result);
       if (result.message) {
           if (result.alert) {
               //~ Ext.MessageBox.alert('Alert',result.alert_msg);
@@ -1187,7 +1187,7 @@ Lino.do_action = function(caller,action) {
   };
   Ext.applyIf(action,{
     waitMsg: 'Please wait...',
-    failure: Lino.ajax_error_handler
+    failure: Lino.ajax_error_handler(caller)
   });
   Ext.Ajax.request(action);
 };
@@ -1298,7 +1298,7 @@ Lino.MainPanel = {
                 //~ this.params_panel.hide();
             //~ else
                 //~ this.params_panel.show();
-            console.log("20120210 add_params_panel",this.params_panel);
+            console.log("20120210 add_params_panel",state,this.params_panel);
             if (state) this.params_panel.show();
             else this.params_panel.hide();
             this.get_containing_window().doLayout();
@@ -1352,10 +1352,19 @@ Lino.MainPanel = {
 };
 
 
-Lino.ajax_error_handler = function(response,options) {
-    //~ console.log('AJAX failure:',response,options);
-    Ext.MessageBox.alert('Action failed',
-      'Lino server did not respond to Ajax request');
+Lino.ajax_error_handler = function(panel) {
+  return function(response,options) {
+    console.log('Ajax failure:',response,options);
+    if (panel.loadMask) panel.loadMask.hide();
+    if (response.responseText) {
+      Ext.MessageBox.alert(
+        response.statusText,
+        response.responseText.replace(/\n/g,'<br/>'))
+    } else {
+      Ext.MessageBox.alert('Action failed',
+        'Lino server did not respond to Ajax request');
+    }
+  }
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
@@ -2200,10 +2209,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           }
         }
       },
-      failure: function() {
-        if (this.loadMask) this.loadMask.hide();
-        Lino.ajax_error_handler(arguments);
-      }
+      failure: Lino.ajax_error_handler(this)
     });
   },
 
@@ -2436,7 +2442,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         params: params, 
         method: 'PUT',
         url: ROOT_URL + '/detail_config' + _this.ls_url,
-        failure : Lino.ajax_error_handler,
+        failure : Lino.ajax_error_handler(this),
         success: Lino.action_handler( _this, function(result) {
           //~ console.log('detail_config/save success',result);
           win.close();
@@ -2475,10 +2481,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
 
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {
   if (record.phantom) {
-    //~ console.log(20101009);
+    console.log(20101009,record);
     //~ rowParams.bodyStyle = "color:red;background-color:blue";
     return 'lino-phantom-row';
     }
+  console.log('20101009 not a phantom:',record);
   return '';
 }
 
@@ -3007,7 +3014,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
     this.set_base_param('$URL_PARAM_FILTER',field.getValue()); 
-    this.refresh();
+    this.getTopToolbar().moveFirst();
+    //~ this.refresh();
   },
   
   apply_grid_config : function(index,grid_configs,rpt_columns) {
@@ -3176,9 +3184,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     var a = { 
       params:this.get_current_grid_config(), 
       method:'PUT',
-      url:ROOT_URL+'/grid_config'+this.ls_url,
+      url:ROOT_URL + '/grid_config' + this.ls_url,
       success: Lino.action_handler(this),
-      failure: Lino.ajax_error_handler
+      scope: this,
+      failure: Lino.ajax_error_handler(this)
     };
     this.loadMask.show(); // 20120211
     Ext.Ajax.request(a);
@@ -3267,24 +3276,25 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ Ext.apply(p,this.containing_window.config.base_params);
     p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'grid';
     var self = this;
-    var on_success = Lino.action_handler( this, function(result) {
-      self.getStore().commitChanges(); // get rid of the red triangles
-      self.getStore().reload();        // reload our datastore.
-    },true);
     var req = {
+        params:p,
         waitMsg: 'Saving your data...',
-        success: on_success,
-        params:p
+        success: Lino.action_handler( this, function(result) {
+          self.getStore().commitChanges(); // get rid of the red triangles
+          self.getStore().reload();        // reload our datastore.
+          },true),
+        scope: this,
+        failure: Lino.ajax_error_handler(this)
     };
     if (e.record.phantom) {
       Ext.apply(req,{
         method: 'POST',
-        url: ROOT_URL + '/api'+this.ls_url
+        url: ROOT_URL + '/api' + this.ls_url
       });
     } else {
       Ext.apply(req,{
         method: 'PUT',
-        url: ROOT_URL + '/api'+this.ls_url+'/'+e.record.id
+        url: ROOT_URL + '/api' + this.ls_url + '/' + e.record.id
       });
     }
     //~ console.log('20110406 on_afteredit',req);

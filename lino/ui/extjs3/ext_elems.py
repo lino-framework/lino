@@ -1495,7 +1495,7 @@ class DetailMainPanel(Panel):
 
 class ParameterPanel(DetailMainPanel):
     #~ value_template = "new Ext.form.FormPanel(%s)"
-    value_template = "new Ext.form.FormPanel({items:new Ext.Panel(%s)})"
+    value_template = "new Ext.form.FormPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
     #~ pass
     
 class unused_ParameterPanel(DetailMainPanel):

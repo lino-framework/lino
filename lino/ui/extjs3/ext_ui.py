@@ -478,7 +478,8 @@ def json_response(x,content_type='application/json'):
     
 
 ACTION_RESPONSES = frozenset((
-  'message','success','alert',
+  'message','success','alert', 
+  #~ 'errors',
   'refresh','refresh_all',
   'confirm_message', 'step',
   'open_url','open_davlink_url'))
@@ -2379,6 +2380,12 @@ tinymce.init({
             #~ kw.update(action_name=action.name)
         #~ kw.update(content_type=rh.report.content_type)
         
+        vc = dict(emptyText=_("No data to display."))
+        if rh.report.editable:
+            vc.update(getRowClass=js_code('Lino.getRowClass'))
+        kw.update(viewConfig=vc)
+        
+        
         
         kw.update(page_length=rh.report.page_length)
         kw.update(stripeRows=True)
@@ -2391,7 +2398,8 @@ tinymce.init({
         
         yield "  initComponent : function() {"
         
-        a = rh.report.get_action('detail')
+        #~ a = rh.report.get_action('detail')
+        a = rh.report.detail_action
         if a:
             yield "    this.ls_detail_handler = Lino.%s;" % a
         a = rh.report.get_action('insert')
@@ -2561,7 +2569,7 @@ tinymce.init({
         if kw:
             raise Exception("Unknown panel attributes %r" % kw)
         if name == 'main':
-            if isinstance(lh.layout,layouts.ListLayout): 
+            if isinstance(lh.layout,layouts.ListLayout):
                 #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
                 #~ return ext_elems.GridMainPanel(lh,name,lh.layout._table,*elems,**pkw)
                 return ext_elems.GridElement(lh,name,lh.layout._table,*elems,**pkw)

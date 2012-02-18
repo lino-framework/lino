@@ -1301,9 +1301,11 @@ class UsersWithClients(dd.VirtualTable):
         We store the corresponding request in the user object 
         under the name `my_persons`.
         """
-        for user in User.objects.filter(
-            Q(username=ar.get_user().username) | Q(is_spis=True)
-          ).order_by('username'):
+        if ar.get_user().is_superuser:
+            flt = Q(is_spis=True) 
+        else:
+            flt = Q(is_spis=True,is_superuser=False)
+        for user in User.objects.filter(flt).order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
             if r.get_total_count():
             #~ if len(r.data_iterator):
@@ -1715,6 +1717,8 @@ class CourseProvider(Company):
     """
     class Meta:
         app_label = 'dsbe'
+        verbose_name = _("Course provider")
+        verbose_name_plural = _("Course providers")
     #~ name = models.CharField(max_length=200,
           #~ verbose_name=_("Name"))
     #~ company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
@@ -1739,7 +1743,7 @@ class CourseProviders(Companies):
     #~ hide_details = [Contact]
     #~ use_as_default_report = False
     #~ app_label = 'dsbe'
-    label = _("Course providers")
+    #~ label = _("Course providers")
     model = CourseProvider
     detail_layout = CourseProviderDetail()
     #~ known_values = dict(is_courseprovider=True)
@@ -1802,7 +1806,8 @@ class CourseOffer(models.Model):
         
     @chooser()
     def provider_choices(cls):
-        return CourseProviders.request().queryset
+        #~ return CourseProviders.request().queryset
+        return CourseProviders.request().data_iterator
         
     #~ @classmethod
     #~ def setup_report(model,rpt):

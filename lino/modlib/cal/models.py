@@ -477,7 +477,8 @@ class Component(ComponentBase,
         return "%s@%s" % (self.pk,settings.LINO.uid)
             
     def save(self,*args,**kw):
-        if self.owner and self.user_modified:
+        if self.owner and not self.user_modified:
+        #~ if self.owner and self.user_modified:
             #~ if self.owner.__class__.__name__ == 'Person':
                 #~ self.person = self.owner
             #~ elif self.owner.__class__.__name__ == 'Company':
@@ -975,33 +976,34 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
         #~ defaults = owner.get_auto_task_defaults(**defaults)
         defaults.setdefault('user',user)
-        obj,must_save = model.objects.get_or_create(
+        obj,created = model.objects.get_or_create(
           defaults=defaults,
           owner_id=owner.pk,
           owner_type=ot,
           auto_type=autotype)
         if not obj.user_modified:
+            original_state = dict(obj.__dict__)
             if obj.user != user:
                 #~ logger.info("20120211 must save %s because user changed",obj.pk)
                 obj.user = user
-                must_save = True
+                #~ must_save = True
             summary = force_unicode(summary)
             if obj.summary != summary:
                 #~ logger.info("20120211 must save %s because summary changed",obj.pk)
                 obj.summary = summary
-                must_save = True
+                #~ must_save = True
             #~ obj.summary = summary
             if obj.start_date != date:
                 #~ logger.info("20120211 must save %s because start_date changed",obj.pk)
                 obj.start_date = date
-                must_save = True
+                #~ must_save = True
             #~ print "20111014 gonna save() task", task
             #~ for k,v in kw.items():
                 #~ setattr(obj,k,v)
             #~ obj.due_date = date - delta
             #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
             #~ owner.update_owned_task(task)
-            if must_save:
+            if created or obj.__dict__ != original_state:
                 obj.save()
         return obj
     else:
@@ -1248,7 +1250,7 @@ def update_reminders(user):
     n = 0 
     for obj in settings.LINO.get_reminder_generators_by_user(user):
         obj.update_reminders()
-        logger.info("--> %s",unicode(obj))
+        #~ logger.info("--> %s",unicode(obj))
         n += 1
     return n
       

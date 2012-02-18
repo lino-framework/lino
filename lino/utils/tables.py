@@ -463,6 +463,7 @@ class AbstractTable(actors.Actor):
     """
     Set this explicitly to True or False to make the 
     table per se editable or not.
+    Otherwise it will be set to `False` if the table has a `get_data_rows` method
     """
     
     def __init__(self,*args,**kw):

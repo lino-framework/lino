@@ -219,6 +219,8 @@ Short-term
 Medium-term
 -----------
 
+#.  Redundant code in js_render_GridPanel_class() and ext_elems.GridPanel.
+
 #.  Country, Region and City. Belgium is -despite their constant language 
     disputes- obviously a very *united* country since they don't need 
     a `region` field when entering a postal address. 
@@ -228,7 +230,7 @@ Medium-term
 
 #.  Für das zentrale Speichern der Versionsnummer sehe ich noch nicht klar.
     Meine setup.py macht ein ``import lino`` um sie rauszufinden. 
-    Das funktioniert auch, solange ich setup.py *für mich* den Entwickler 
+    Das funktioniert auch, solange ich setup.py nur für mich als Entwickler 
     benutze.
     Aber ein ``setup.py install`` würde natürlich nicht funktionieren.
 
