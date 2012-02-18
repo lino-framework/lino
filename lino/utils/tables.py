@@ -502,7 +502,7 @@ class AbstractTable(actors.Actor):
             
         self.default_action = actions.GridEdit(self)
         #~ self.setup_detail_layouts()
-        self.set_actions([])
+        #~ self.set_actions([])
         self.setup_actions()
         self.add_action(self.default_action)
         #~ if self.default_action.actor != self:

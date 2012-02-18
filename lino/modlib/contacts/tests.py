@@ -75,6 +75,15 @@ def test02(self):
     u.save()
     
     #~ settings.LINO.auto_makeui = False
+    
+    """
+    disable TIM2LINO_IS_IMPORTED_PARTNER otherwise 
+    disabled_fields may contain more than just the 'id' field.
+    """
+    def f(obj): 
+        return False
+    settings.TIM2LINO_IS_IMPORTED_PARTNER = f
+    
     luc = Person.objects.get(name__exact="Saffre Luc")
     url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
     if 'en' in babel.AVAILABLE_LANGUAGES:
@@ -91,7 +100,9 @@ def test02(self):
         self.assertEqual(result['data']['country'],"Estland")
         self.assertEqual(result['data']['gender'],u"Männlich")
         #~ self.assertEqual(result['data']['disabled_fields'],['contact_ptr_id','id'])
-        self.assertEqual(result['data']['disabled_fields'],['id'])
+        #~ self.assertEqual(result['data']['disabled_fields'],['id'])
+        self.assertEqual(result['data']['disabled_fields'],{'id': True})
+        
         
         # TODO: the following would fail if LINO.date_format_* have been modified
         self.assertEqual(result['data']['birth_date'],"01.06.1968")

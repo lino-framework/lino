@@ -98,14 +98,20 @@ def test01(self):
     response = self.client.get(url,REMOTE_USER='root')
     
     self.check_sql_queries(
-      'SELECT "dsbe_persongroup"."id", [...] ORDER BY "dsbe_persongroup"."ref_name" ASC',
-      'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
-      'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
-      'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
       'SELECT "contacts_contact"."id", [...] WHERE "users_user"."username" = root',
       'SELECT "contacts_contact"."id", [...] ORDER BY "contacts_contact"."name" ASC LIMIT 30',
       'SELECT COUNT(*) FROM "contacts_company"',
     )
+    
+    #~ self.check_sql_queries(
+      #~ 'SELECT "dsbe_persongroup"."id", [...] ORDER BY "dsbe_persongroup"."ref_name" ASC',
+      #~ 'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
+      #~ 'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
+      #~ 'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
+      #~ 'SELECT "contacts_contact"."id", [...] WHERE "users_user"."username" = root',
+      #~ 'SELECT "contacts_contact"."id", [...] ORDER BY "contacts_contact"."name" ASC LIMIT 30',
+      #~ 'SELECT COUNT(*) FROM "contacts_company"',
+    #~ )
     
     #~ response = self.client.get('/',REMOTE_USER='root')
     

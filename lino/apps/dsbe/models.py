@@ -1103,11 +1103,15 @@ class PersonsByCoach1(Persons):
 
 
 class MyPersons(Persons):
-    """
+    u"""
     Show only persons attended 
     by the requesting user (or another user, 
     specified via :attr:`lino.ui.requests.URL_PARAMS_SUBST_USER`),
     either as primary or as secondary attendant.
+    
+    Damit jemand als begleitet gilt, muss mindestens eines der 
+    beiden Daten coached_from und coached_until ausgefüllt sein.
+    
     """
     #~ app_label = 'contacts'
     use_as_default_report = False

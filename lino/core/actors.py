@@ -218,7 +218,8 @@ class ActorMetaClass(type):
                 
         if classname not in (
             'Table','AbstractTable','VirtualTable',
-            'Action','HandledActor','Actor','Frame'):
+            'Action','HandledActor','Actor','Frame',
+            'Listings'):
             if actor_classes is None:
                 #~ logger.debug("%s definition was after discover",cls)
                 pass
@@ -428,14 +429,14 @@ class Actor(Handled):
             assert dtl._table is None
             dtl._table = self
         self.detail_layout = dtl
-        if self.detail_action is None:
-            """
-            todo: this is an ugly hack. if a table doesn't have a detail 
-            by default but gets one afterwards, we add the detail_action 
-            here.
-            """
-            self.detail_action = actions.ShowDetailAction(self)
-            self.add_action(self.detail_action)
+        #~ if self.detail_action is None:
+            #~ """
+            #~ todo: this is an ugly hack. if a table doesn't have a detail 
+            #~ by default but gets one afterwards, we add the detail_action 
+            #~ here.
+            #~ """
+            #~ self.detail_action = actions.ShowDetailAction(self)
+            #~ self.add_action(self.detail_action)
         
     #~ @classmethod
     #~ def add_virtual_field(cls,name,vf): 
@@ -494,12 +495,12 @@ class Actor(Handled):
     def setup_actions(self):
         pass
         
-    @classmethod
-    def set_actions(self,actions):
-        self._actions_list = []
-        self._actions_dict = {}
-        for a in actions:
-            self.add_action(a)
+    #~ @classmethod
+    #~ def set_actions(self,actions):
+        #~ self._actions_list = []
+        #~ self._actions_dict = {}
+        #~ for a in actions:
+            #~ self.add_action(a)
             
     @classmethod
     def add_action(self,a):
@@ -586,7 +587,7 @@ class Frame(Actor):
             self.label = self.default_action.label
             #~ self.default_action.actor = self
         super(Frame,self).do_setup()
-        self.set_actions([])
+        #~ self.set_actions([])
         self.setup_actions()
         if self.default_action:
             self.add_action(self.default_action)

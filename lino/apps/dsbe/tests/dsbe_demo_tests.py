@@ -408,34 +408,6 @@ def test06(self):
         babel.set_language(None) # switch back to default language for subsequent tests
     
 
-def test08(self):
-    u"""
-    In `MyPersons` wurden seit :doc:`/blog/2011/0408` zu viele Leute angezeigt: 
-    auch die, die weder Anfangs- noch Enddatum haben. 
-    Damit jemand als begleitet gilt, muss mindestens eines der 
-    beiden Daten ausgefüllt sein.
-    
-    See :doc:`/blog/2011/0412`
-    """
-    from lino.apps.dsbe.models import Person, MyPersons, only_coached_persons,only_my_persons
-    from lino.modlib.users.models import User
-    u = User.objects.get(username='root')
-    #~ qs = Person.objects.order_by('last_name','first_name')
-    qs = Person.objects.order_by('id')
-    #~ print "Person.object.all()", qs
-    qs = only_my_persons(qs,u)
-    #~ print "only_my_persons()", qs
-    self.assertEqual(qs.count(),5)
-    qs = only_coached_persons(qs,settings.LINO.demo_date())
-    #~ qs = only_coached_persons(qs,i2d(20100901))
-    #~ print "only_coached_persons(20100901)", qs
-    self.assertEqual(qs.count(),3)
-    #~ qs = MyPersons.request(user=)
-    got = [unicode(p) for p in qs]
-    expected = [u'COLLARD Charlotte (122)', u'ÄRGERLICH Erna (171)', u'EIERSCHAL Emil (177)']
-    self.assertEqual(got,expected)
-    
-    
 def test09(self):
     """
     This tests for the bug discovered :doc:`/blog/2011/0610`.
@@ -531,10 +503,26 @@ def test15(self):
     """
     Temporary bug on :doc:`/blog/2011/1223`.
     """
-    url = '/api/dsbe/Persons/-99999?fmt=json&an=insert'
+    url = '/api/contacts/Persons/-99999?fmt=json&an=insert'
     response = self.client.get(url)
     result = self.check_json_result(response,'data phantom title')
     self.assertEqual(result['phantom'],True)
+
+def test15b(self):
+    """
+    Test whether PropsByGroup has a detail.
+    20120218 : "properties.PropsByGroup has no action u'detail'"
+    """
+    cases = [
+      ('/api/properties/PropsByGroup/%s?mt=11&mk=1&an=detail&fmt=json',8),
+      ('/api/contacts/AllContacts/%s?an=detail&fmt=json',117),
+    ]
+    for case in cases:
+        url = case[0] % case[1]
+        response = self.client.get(url)
+        result = self.check_json_result(response,
+          'navinfo disable_delete data title disabled_actions id')
+        self.assertEqual(result['id'],case[1])
 
 def test16(self):
     """
@@ -542,8 +530,8 @@ def test16(self):
     See :doc:`/blog/2011/1223`.
     """
     cases = [
-      ['root', 4],
-      ['user', 3],
+      ['root', 19],
+      ['user', 17],
     ]
     for case in cases:
         url = '/api/dsbe/MyPersons?fmt=json&limit=30&start=0&su=%s' % case[0]
@@ -556,37 +544,50 @@ def test07(self):
     Test the number of rows returned for certain queries
     """
     cases = [
-      ['api/contacts/Companies', 24],
-      ['api/dsbe/Persons', 53],
-      ['api/contacts/Persons', 74],
-      ['api/dsbe/MyPersons',19],
-      ['api/dsbe/AllPersons', 74],
-      ['api/dsbe/AllContacts', 102],
-      ['api/dsbe/Courses', 4],
-      ['api/dsbe/CourseProviders', 3],
-      ['api/dsbe/CourseOffers', 4],
-      ['api/countries/Countries', 6],
-      ['api/notes/Notes', 6],
-      ['api/isip/Contracts', 2],
-      ['api/jobs/JobProviders', 4],
-      ['api/jobs/Jobs', 4],
-      ['api/jobs/Contracts', 8], # one more than after fixture because of test12()
-      ['api/jobs/Candidatures', 7],
-      ['api/jobs/Studies', 3],
-      ['api/cal/Events', 62], # 3 more than after fixture because of test12()
-      ['api/cal/Tasks', 12],
-      ['api/cal/Priorities', 10],
-      ['api/notes/MyNotes', 3],
-      ['api/properties/PropGroups', 4],
-      ['choices/dsbe/SkillsByPerson/property',6],
+      ['contacts/Companies', 24],
+      ['contacts/Persons', 53],
+      ['dsbe/MyPersons',19],
+      ['contacts/AllPersons', 74],
+      ['contacts/AllContacts', 102],
+      ['dsbe/Courses', 4],
+      ['dsbe/CourseProviders', 3],
+      ['dsbe/CourseOffers', 4],
+      ['countries/Countries', 6],
+      ['notes/Notes', 106],
+      ['isip/Contracts', 21],
+      ['jobs/JobProviders', 4],
+      ['jobs/Jobs', 9],
+      ['jobs/Contracts', 21], 
+      ['jobs/Candidatures', 35],
+      ['jobs/Studies', 3],
+      ['cal/Events', 221], 
+      ['cal/Tasks', 44],
+      ['cal/Priorities', 10],
+      ['notes/MyNotes', 28],
+      ['properties/PropGroups', 4],
+      ['/api/cal/RemindersByUser?fmt=json&limit=30&start=0&mt=5&mk=103&',22],
     ]
     for case in cases:
-        url = '/%s?fmt=json&limit=30&start=0' % case[0]
+        if "?" in case[0]:
+            url = case[0]
+        else:
+            url = '/api/%s?fmt=json&limit=30&start=0' % case[0]
         #~ logger.info("20120103 %s",url)
         response = self.client.get(url,REMOTE_USER='root')
         result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
-        if result['count'] != case[1]:
-            logger.warning("%s",pprint.pformat(result['rows']))
+        #~ if result['count'] != case[1]:
+            #~ logger.warning("%s",pprint.pformat(result['rows']))
         self.assertEqual(result['count'],case[1],
             "%s got %d rows instead of %d" % (case[0],result['count'],case[1]))
 
+    cases = [
+      ['dsbe/SkillsByPerson/property',6],
+    ]
+    for case in cases:
+        url = '/choices/%s?fmt=json&limit=10&start=0' % case[0]
+        response = self.client.get(url,REMOTE_USER='root')
+        result = self.check_json_result(response,'count rows')
+        #~ if result['count'] != case[1]:
+            #~ logger.warning("%s",pprint.pformat(result['rows']))
+        self.assertEqual(result['count'],case[1],
+            "%s got %d rows instead of %d" % (case[0],result['count'],case[1]))

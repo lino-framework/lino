@@ -19,7 +19,7 @@ in the code.
 
 Advantages:
 
-- 
+- There is now a comprehensible solution for defining labelled field groups
 
 - Using inheritance and writing "intelligent" layouts are now possible.
   Examples are 
@@ -40,7 +40,11 @@ Advantages:
   
   than to create a file :file:`/lino/modlib/notes/config/notes/Note/1.dtl` 
   with basically the same content.
-  
+
+
+Disadvantage:
+
+- A button "Layout editor" is no longer possible.
 
 Another side effect is that I finally found a solution for longterm layout bug.
 Here is how the detail of a note has been looking "from the beginning":

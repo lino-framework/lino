@@ -19,16 +19,16 @@ Short-term
     
 #.  Checkboxen können nicht aktiv sein, weil sie aufs change-Event nicht reagieren. 
     Und das check-Event kann ich auch nicht nutzen, weil das auch schon beim 
-    loadRecord abgefeuert wird. Doof, aber (scheinbar) wahr.
+    loadRecord abgefeuert wird. Doof, aber scheinbar wahr.
     
     Stattdessen könnte ich ein spezielles `keyword attribute`
     für Checkboxen machen::
     
       all_day = ExtAllDayField(_("all day"),disables=('end_time','start_time'))
       
-    - :attr:`disables` : a list or tuple of names of fields which should be 
+    - :attr:`disables` : a list or tuple of names of fields which should become
       disabled when the field is checked (and enabled when it is unchecked)
-    - :attr:`enables` : a list or tuple of names of fields which should be 
+    - :attr:`enables` : a list or tuple of names of fields which should become
       enabled when the field is checked (and disabled when it is unchecked)
       
     Das hätte vor allem auch den Vorteil, dass dann überhaupt kein Ajax-Call 
@@ -218,6 +218,13 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Country, Region and City. Belgium is -despite their constant language 
+    disputes- obviously a very *united* country since they don't need 
+    a `region` field when entering a postal address. 
+    In many other countries such a field is required.
+    There should be a configuration option to handle this preference.
+    Also a Regions table.
 
 #.  Für das zentrale Speichern der Versionsnummer sehe ich noch nicht klar.
     Meine setup.py macht ein ``import lino`` um sie rauszufinden. 

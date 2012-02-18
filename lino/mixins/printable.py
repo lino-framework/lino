@@ -909,10 +909,12 @@ class Listings(dd.Table):
     
     @classmethod
     def init_label(self):
+        raise Exception("Sorry, this code is temporarily broken")
         return _(u"Listings «%s»") % self.model._meta.verbose_name
         
     @classmethod
     def setup_actions(self):
+        raise Exception("Sorry, this code is temporarily broken")
         #~ print 'lino.mixins.printable.Listings.setup_actions : ', self.model
         alist = []
         #~ if len(self.detail_layouts) > 0:
@@ -920,7 +922,8 @@ class Listings(dd.Table):
             self.detail_action = actions.ShowDetailAction(self)
             alist.append(self.detail_action)
             alist.append(actions.SubmitDetail())
-            alist.append(InitiateListing(self,label=self.model._meta.verbose_name)) # replaces InsertRow
+            alist.append(InitiateListing(self,
+                label=self.model._meta.verbose_name)) # replaces InsertRow
             alist.append(actions.SubmitInsert())
             self.default_action = actions.GridEdit(self)
             #~ alist.append(self.default_action)

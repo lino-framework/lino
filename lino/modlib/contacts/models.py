@@ -257,11 +257,47 @@ but e.g. :class:`PersonMixin` overrides this.
     #~ name_column.return_type = dd.DisplayField(_("Name"))
     
 
+class ContactDetail(dd.DetailLayout):
+  
+    main = """
+    address_box contact_box
+    bottom_box
+    """
+    
+    address_box = """
+    name 
+    country region
+    city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+    """
+
+    contact_box = """
+    id language
+    email:40 
+    url
+    phone
+    gsm fax
+    """
+
+    bottom_box = """
+    remarks 
+    is_person is_company is_user
+    """
+        
+    
+    def setup_handle(self,dh):
+        dh.address_box.label = _("Address")
+        dh.contact_box.label = _("Contact")
+  
+    
+    
 class Contacts(dd.Table):
     model = 'contacts.Contact'
     column_names = "name email * id" 
     order_by = ['name','id']
     #~ column_names = "name * id" 
+    detail_layout = ContactDetail()
     
     @classmethod
     def get_queryset(self):
@@ -640,7 +676,7 @@ class ContactDocument(models.Model):
     
 
 
-if dd.is_installed('contacts'):
+if True: # dd.is_installed('contacts'):
   
     from lino.models import SiteConfig
 

@@ -1,0 +1,4 @@
+20120218
+========
+
+Aufräumen nach der großen Operation: Test-Suite wieder ans Laufen kriegen.

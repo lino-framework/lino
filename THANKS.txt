@@ -1,0 +1,29 @@
+Thanks to
+=========
+
+Here is a list of other publications who are at least partially being 
+distributed with Lino.
+
+- :file:`media/extjs/Ext.ux.form.DateTime.js` :
+  Copyright (c) 2008, Ing. Jozef Sakáloš.
+
+
+- :file:`media/tinymce` :
+	Author: Andrew Mayorov et al.,
+	Copyright (c) 2008-2010 `BYTE-force <http://www.byte-force.com>`_.
+
+- :file:`media/filterRow` :
+  Author: Surinder singh Mattaur (Matoo) <surinder83singh@gmail.com>
+  <http://www.sencha.com/forum/member.php?75710-Surinder-singh> 
+  
+
+- `Sexy Tooltips with Just CSS
+  <http://sixrevisions.com/css/css-only-tooltips/>`_ 
+  by Alexander Dawson (2010-06-16):
+  The corresponding section in :file:`media/extjs/lino.css`
+  is inspired by this article, and the 
+  files :file:`Critical.png`,  :file:`Help.png`,
+  :file:`Info.png` and :file:`Warning.png`
+  in  :file:`media/extjs`
+  are unchanged copies.
+
