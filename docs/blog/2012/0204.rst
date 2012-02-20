@@ -35,7 +35,7 @@ Außerdem folgende Benutzeranfragen erledigt:
 
 
 Und somit beginnt der Endspurt vor dem Release 
-:doc:`/releases/2012/1.3.8`.
+:doc:`/releases/1.3.8`.
 
 Die 
 :func:`Datenmigration <lino.apps.dsbe.migrate.migrate_from_1_3_7>`
@@ -65,7 +65,7 @@ Was mir noch nicht gefällt: die Höhen des Quicklinks-Bereichs und des Panels
 Notfalls kann der neue Look übrigens durch Auskommentieren einer einzigen Zeile wieder rückgängig gemacht werden.
 
 
-:doc:`/releases/2012/1.3.8` raus und in Eupen installiert.
+:doc:`/releases/1.3.8` raus und in Eupen installiert.
 
 Ein Bug, den ich erst nach dem Release entdeckt habe: 
 beim *erneuten* Öffnen einer Grid machte er kein Refresh.

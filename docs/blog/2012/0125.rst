@@ -1,7 +1,7 @@
 20120125
 ========
 
-Bugfix-Release :doc:`/releases/2012/1.3.5` mit zwei scheinbar 
+Bugfix-Release :doc:`/releases/1.3.5` mit zwei scheinbar 
 kleinen Punkten, die aber viel Arbeit waren.
 
 Wenn ich height und width in Lino.Window setze, dann funktionierten FormPanels, 

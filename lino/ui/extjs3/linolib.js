@@ -2488,11 +2488,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
 
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {
   if (record.phantom) {
-    console.log(20101009,record);
+    //~ console.log(20101009,record);
     //~ rowParams.bodyStyle = "color:red;background-color:blue";
     return 'lino-phantom-row';
     }
-  console.log('20101009 not a phantom:',record);
+  //~ console.log('20101009 not a phantom:',record);
   return '';
 }
 
@@ -2969,7 +2969,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     ps -= 1; // leave room for a possible phantom row
     //~ return (ps > 1 ? ps : false);
     if (ps > 1) return ps;
-    console.log('calculatePageSize() found less than 1 row:',height,'/',rowHeight,'->',ps);
+    //~ console.log('calculatePageSize() found less than 1 row:',height,'/',rowHeight,'->',ps);
     //~ foo.bar = baz; // 20120213
     return 5;
     //~ if (second_attempt) {

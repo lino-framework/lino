@@ -1,7 +1,7 @@
 20120126
 ========
 
-Bugfix-Release :doc:`/releases/2012/1.3.6`.
+Bugfix-Release :doc:`/releases/1.3.6`.
 Außer den dort beschrieben sichtbaren Änderungen 
 folgende interne Änderungen:
 

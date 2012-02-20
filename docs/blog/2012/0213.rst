@@ -15,7 +15,7 @@ Nachtrag
   :meth:`lino.utils.choosers.Chooser.get_request_choices`
   die :attr:`known values <lino.core.actors.Actor.known_values>` ignorierte.
   
-Diese beiden Bugfixes sind nachträglich noch in der :doc:`/releases/2012/1.3.9` 
+Diese beiden Bugfixes sind nachträglich noch in der :doc:`/releases/1.3.9` 
 mit drin.
 
 Grids having the correct number of rows

@@ -89,5 +89,5 @@ if there are 2 coaches, then coach2 is responsible and gets the reminders.
 :meth:`lino.apps.dsbe.settigs.Lino.get_reminder_generators_by_user` 
 also works according to this rule.
 
-:doc:`/releases/2012/1.3.9`
+:doc:`/releases/1.3.9`
 

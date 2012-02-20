@@ -453,9 +453,9 @@ class Actor(Handled):
         cls._constants[name] = vf
         vf.name = name
         
-    @classmethod
-    def get_url(self,ui,**kw):
-        return ui.action_url_http(self,self.default_action,**kw)
+    #~ @classmethod
+    #~ def get_url(self,ui,**kw):
+        #~ return ui.action_url_http(self,self.default_action,**kw)
 
     @classmethod
     def setup(self):

@@ -7,7 +7,7 @@ Window management
 Mir ist über Nacht klargeworden, dass im 
 :doc:`neuen Windowing-System </tickets/58>`_
 noch ein Denkfehler war:
-Nachtrag "window_history" zur :doc:`/releases/2012/1.3.6`:
+Nachtrag "window_history" zur :doc:`/releases/1.3.6`:
 
 `Lino.current_window` holds the current window.
 

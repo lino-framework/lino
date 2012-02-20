@@ -1,16 +1,22 @@
 20120220
 ========
 
-Testing
--------
+Rosenmontag. Während die Jecken in Eupen sich zum Rosenmontagszug sammeln, 
+liege ich bequem unterm Computer und gehe meiner Lieblingsbeschäftigung nach.
+"Du legst mir größere Freude ins Herz, als andere haben bei Korn und Wein in Fülle."
+(Ps 4,7f)
+
+Endspurt vor dem Release
+------------------------
 
 Ein paar Bugs waren noch drin:
 
 - Das Detail einer Note war versehentlich wieder nur Ext.Container statt Ext.Panel
 
 - In lino.About würde ich ja gerne auch die Ext.version anzeigen. 
-  Über eine Stunde Wurstelei! 
-  Und das vorläufige Resultat ist noch immer nicht wirklich zufriedenstellend.
+  Über eine Stunde Wurstelei...
+  und das vorläufige Resultat ist noch immer nicht wirklich 
+  zufriedenstellend.
 
 - Wenn man in "Termine von Annette Arens" auf einem Termin doppelklickte 
   und dann das Detail-Fenster speicherte, dann stimmte der Fenstertitel 
@@ -22,6 +28,8 @@ Ein paar Bugs waren noch drin:
 
 Mails verschicken
 -----------------
+
+Die folgenden Gedanken müssen warten bis nach dem Release :doc:`/releases/1.4.0`
 
 Ich glaube erkannt zu haben, dass Notizen das Gleiche wie die momentanen 
 "ausgehenden Mails" sind.
@@ -46,13 +54,17 @@ Konsequenzen für die Benutzer:
   die enthält ob es to:, cc: oder bcc: ist. Bei bisherigen Drittpartnern 
   ist das Feld leer.
 
-Im Code: 
+Im Code werden folgende Änderungen kommen: 
 
 - Mailable kommt raus
 - Mail wird abstrakt, und pro Site muss es ein Model
   geben, das Mail erbt und konkretisiert.
 - notes.Note erbt nun Mail und nicht mehr Mailable
-- notes.Note erbt nun nicht mehr AutoUser
+- notes.Note erbt nun nicht mehr AutoUser. Der Inhalt des bisherigen Feldes 
+  `user` (FK nach User) kommt nach `sender` (FK nach Contact).
+  Bei eingehenden Mails ist der Absender ja nicht unbedingt ein User.
+  Statt `sender` würde es vielleicht besser `author` heißen, 
+  weil Notizen ja nicht unbedingt verschickt werden.
 - Neue Konfig-Option `mail_model`, or rather 
   automatic detection since there must be exactly 
   one model that implements Mail.
@@ -61,3 +73,10 @@ Im Code:
   - what to do with existing thirds?  
   - Note.user renamed to Mail.sender
   
+Actors and their actions
+------------------------
+
+- User Detail has UpdateReminders as *first* button. Das kommt dadurch, 
+  dass diese Aktion in der site_setup() von modlib.cal erstellt wird, was 
+  vor dem setup() der Tabellen geschieht.
+

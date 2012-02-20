@@ -28,7 +28,7 @@ from os.path import join, abspath, dirname, normpath
 __version__ = "1.4.0"
 """
 Lino version number. 
-The latest *released* version is :doc:`/releases/2012/1.3.9`.
+*Released* versions are listed under :doc:`/releases`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
