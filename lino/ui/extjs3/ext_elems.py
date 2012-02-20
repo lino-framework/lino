@@ -345,7 +345,8 @@ class ConstantElement(LayoutElement):
     vflex = True
     
     def __init__(self,lh,fld,**kw):
-        kw.update(html=fld.text)
+        kw.update(html=fld.text_fn(lh.layout._table,lh.ui))
+        #~ kw.update(html=fld.text)
         #~ kw.update(autoHeight=True)
         LayoutElement.__init__(self,lh,fld.name,**kw)
         #~ self.text = text
@@ -1328,11 +1329,11 @@ class Panel(Container):
           
         
     def ext_options(self,**d):
-        if not self.label and self.value_template == "new Ext.Panel(%s)":
-            #~ if not self.parent or len(self.parent.elements) == 1:
-            #~ if self.parent and len(self.parent.elements) > 1:
-            if self.parent is not None:
-                self.value_template = "new Ext.Container(%s)"
+        #~ if not self.label and self.value_template == "new Ext.Panel(%s)":
+            # if not self.parent or len(self.parent.elements) == 1:
+            # if self.parent and len(self.parent.elements) > 1:
+            #~ if self.parent is not None:
+                #~ self.value_template = "new Ext.Container(%s)"
             
         if self.label:
             if not isinstance(self.parent,TabPanel):

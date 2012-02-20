@@ -248,9 +248,19 @@ class VirtualField(FakeField): # (Field):
         
 class Constant(object):
     #~ get = None
-    def __init__(self,text):
-        self.text = text
+    def __init__(self,text_fn):
+        self.text_fn = text_fn
         
+def constant(verbose_name):
+    """
+    Decorator to turn a method into a Constant.
+    """
+    def decorator(fn):
+        def wrapped(*args):
+            #~ return classmethod(fn(*args))
+            return fn(*args)
+        return Constant(wrapped)
+    return decorator
 
 
 class RequestField(VirtualField):

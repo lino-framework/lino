@@ -1,0 +1,63 @@
+20120220
+========
+
+Testing
+-------
+
+Ein paar Bugs waren noch drin:
+
+- Das Detail einer Note war versehentlich wieder nur Ext.Container statt Ext.Panel
+
+- In lino.About würde ich ja gerne auch die Ext.version anzeigen. 
+  Über eine Stunde Wurstelei! 
+  Und das vorläufige Resultat ist noch immer nicht wirklich zufriedenstellend.
+
+- Wenn man in "Termine von Annette Arens" auf einem Termin doppelklickte 
+  und dann das Detail-Fenster speicherte, dann stimmte der Fenstertitel 
+  nicht mehr (lautet "Termine von None » Termin #18").
+  parse_req() hat jetzt einen neuen Parameter rqdata, der meistens 
+  dem request.REQUEST entspricht, außer bei PUT-Methoden wo Django 
+  das leider nicht überträgt und Lino es deshalb selber tut.
+
+
+Mails verschicken
+-----------------
+
+Ich glaube erkannt zu haben, dass Notizen das Gleiche wie die momentanen 
+"ausgehenden Mails" sind.
+
+Eine Notiz ist doch schon jetzt ein Dokument, das zu einem bestimmten Zeitpunkt 
+von einem bestimmten Benutzer erstellt wurde, das normalerweise eine bestimmte 
+Person (Projekt) betrifft, und das normalerweise entweder ausgedruckt oder 
+per E-Mail verschickt wird. Der Sonderfall von internen Notizen ist vergleichbar 
+mit einer Mail im Drafts-Folder eines Mail-Clients, die keine Empfänger hat und 
+nie verschickt wurde. Und das einzige, was Lino mit den Notizen noch nicht kann, 
+ist sie als E-Mail zu verschicken.
+
+Und incoming mails? Das sind ebenfalls Notizen.
+
+
+Konsequenzen für die Benutzer:
+
+- Jede Notiz kann höchstens einmal verschickt werden.
+- Neben "Druckdatum" kommen zwei weitere Felder "gesendet am" und "empfangen am"
+- Die Slave-Tabelle "Drittpartner" heißt jetzt "Empfänger".
+  In dieser Tabelle kommt eine neue Kolonne "Empfänger-Art", 
+  die enthält ob es to:, cc: oder bcc: ist. Bei bisherigen Drittpartnern 
+  ist das Feld leer.
+
+Im Code: 
+
+- Mailable kommt raus
+- Mail wird abstrakt, und pro Site muss es ein Model
+  geben, das Mail erbt und konkretisiert.
+- notes.Note erbt nun Mail und nicht mehr Mailable
+- notes.Note erbt nun nicht mehr AutoUser
+- Neue Konfig-Option `mail_model`, or rather 
+  automatic detection since there must be exactly 
+  one model that implements Mail.
+- thirds kommt raus
+- data migration : 
+  - what to do with existing thirds?  
+  - Note.user renamed to Mail.sender
+  

@@ -423,13 +423,21 @@ class About(dd.EmptyTable):
     lino.Models:70x10
     """
     
-    versions = dd.Constant(lino.welcome_html())
+    #~ versions = dd.Constant(lino.welcome_html())
     
     @classmethod
     def setup_actions(self):
         super(About,self).setup_actions()
         self.add_action(BuildLinoJS())
    
+    @dd.constant(_("Versions"))
+    def versions(cls,ui):
+        return lino.welcome_html(ui)
+        
+    #~ @dd.displayfield(_("Versions"))
+    #~ def versions(self,obj,ar):
+        #~ return lino.welcome_html(ar.ui)
+        
     #~ @dd.constantfield(_("Versions"))
     #~ def versions(cls,self,req):
         #~ return lino.welcome_html()

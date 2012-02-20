@@ -986,13 +986,13 @@ Lino.alert = function(msg) {
 };
 
 
-Lino.show_about = function() {
-  new Ext.Window({
-    width: 400, height: 400,
-    title: "About",
-    html: '<a href="http://www.extjs.com" target="_blank">ExtJS</a> version ' + Ext.version
-  }).show();
-};
+//~ Lino.show_about = function() {
+  //~ new Ext.Window({
+    //~ width: 400, height: 400,
+    //~ title: "About",
+    //~ html: '<a href="http://www.extjs.com" target="_blank">ExtJS</a> version ' + Ext.version
+  //~ }).show();
+//~ };
 
 Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
   console.log("on_store_exception: store=",store,
@@ -1357,9 +1357,15 @@ Lino.ajax_error_handler = function(panel) {
     console.log('Ajax failure:',response,options);
     if (panel.loadMask) panel.loadMask.hide();
     if (response.responseText) {
+      var lines = response.responseText.split('\n');
+      if (lines.length > 10) {
+          line = lines.splice(5,lines.length-10,"(...)");
+      }
       Ext.MessageBox.alert(
         response.statusText,
-        response.responseText.replace(/\n/g,'<br/>'))
+        lines.join('<br/>')
+        //~ response.responseText.replace(/\n/g,'<br/>'))
+      )
     } else {
       Ext.MessageBox.alert('Action failed',
         'Lino server did not respond to Ajax request');
@@ -2173,11 +2179,12 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ console.log('20110713 action_name=',this.containing_window.config.action_name,
       //~ 'base_params=',this.containing_window.config.base_params);
     if (this.action_name)
-        p['$ext_requests.URL_PARAM_ACTION_NAME'] = this.action_name;
+        p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
     //~ p.an = this.action_name;
     //~ p.an = this.containing_window.config.action_name;
     //~ p.fmt = 'json';
-    p.fmt = '$ext_requests.URL_FORMAT_JSON';
+    //~ p.fmt = '$ext_requests.URL_FORMAT_JSON';
+    p.$ext_requests.URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     this.add_param_values(p);
@@ -4168,6 +4175,281 @@ Lino.CalendarPanel = Ext.extend(Lino.CalendarPanel,{
     //~ Lino.CalendarPanel.superclass.initComponent.call(this);
   //~ }
 });
+
+/**
+Lino.CalendarAppPanel = Ext.extend(Ext.Panel,Lino.MainPanel);
+Lino.CalendarAppPanel = Ext.extend(CalendarAppPanel,{
+  //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
+  empty_title : "$site.modules.cal.Panel.label"
+  ,activeItem: 1 // 0: day, 1: week
+  ,eventStore: Lino.eventStore
+  ,ls_url: '/cal/Panel'
+  //~ ,disableCaching:true
+  ,calendarStore: Lino.calendarStore
+  ,listeners: { 
+    editdetails: Lino.on_editdetails
+    ,eventclick: Lino.on_eventclick
+    //~ ,eventadd: Lino.on_eventadd
+    //~ ,eventdelete: Lino.on_eventdelete
+    //~ ,eventresize: Lino.on_eventresize
+    ,afterrender : function(config) {
+      //~ console.log("20120211 render");
+      Lino.calendarStore.load();
+      var view = this.getActiveView();
+      var bounds = view.getViewBounds();
+      //~ var p = {sd:'05.02.2012',ed:'11.02.2012'};
+      var p = {};
+      p[view.dateParamStart] = bounds.start.format(view.dateParamFormat);
+      p[view.dateParamEnd] = bounds.end.format(view.dateParamFormat);
+      //~ console.log("20120211",p);
+      Lino.eventStore.load({params:p});
+      //~ Lino.CalendarPanel.superclass.constructor.call(this, config);
+      //~ console.log(20120118, config,this);
+    }
+    }
+  ,enableEditDetails: false
+  ,monthViewCfg: Lino.CalendarCfg
+  ,weekViewCfg: Lino.CalendarCfg
+  ,multiDayViewCfg: Lino.CalendarCfg
+  ,multiWeekViewCfg: Lino.CalendarCfg
+  ,dayViewCfg: Lino.CalendarCfg
+  
+            // This is the app UI layout code.  All of the calendar views are subcomponents of
+            // CalendarPanel, but the app title bar and sidebar/navigation calendar are separate
+            // pieces that are composed in app-specific layout code since they could be omitted
+            // or placed elsewhere within the application.
+            new Ext.Viewport({
+                layout: 'border',
+                items: [{
+                    id: 'app-header',
+                    region: 'north',
+                    height: 35,
+                    border: false,
+                    contentEl: 'app-header-content'
+                },{
+                    id: 'app-center',
+                    title: '...', // will be updated to the current view's date range
+                    region: 'center',
+                    layout: 'border',
+                    listeners: {
+                        'afterrender': function(){
+                            Ext.getCmp('app-center').header.addClass('app-center-header');
+                        }
+                    },
+                    items: [{
+                        id:'app-west',
+                        region: 'west',
+                        width: 176,
+                        border: false,
+                        items: [{
+                            xtype: 'datepicker',
+                            id: 'app-nav-picker',
+                            cls: 'ext-cal-nav-picker',
+                            listeners: {
+                                'select': {
+                                    fn: function(dp, dt){
+                                        App.calendarPanel.setStartDate(dt);
+                                    },
+                                    scope: this
+                                }
+                            }
+                        },{
+                            xtype: 'extensible.calendarlist',
+                            store: this.calendarStore,
+                            border: false,
+                            width: 175
+                        }]
+                    },{
+                        xtype: 'extensible.calendarpanel',
+                        eventStore: this.eventStore,
+                        calendarStore: this.calendarStore,
+                        border: false,
+                        id:'app-calendar',
+                        region: 'center',
+                        activeItem: 3, // month view
+                        
+                        // Any generic view options that should be applied to all sub views:
+                        viewConfig: {
+                            //enableFx: false,
+                            //ddIncrement: 10, //only applies to DayView and subclasses, but convenient to put it here
+                            //viewStartHour: 6,
+                            //viewEndHour: 18,
+                            //minEventDisplayMinutes: 15
+                        },
+                        
+                        // View options specific to a certain view (if the same options exist in viewConfig
+                        // they will be overridden by the view-specific config):
+                        monthViewCfg: {
+                            showHeader: true,
+                            showWeekLinks: true,
+                            showWeekNumbers: true
+                        },
+                        
+                        multiWeekViewCfg: {
+                            //weekCount: 3
+                        },
+                        
+                        // Some optional CalendarPanel configs to experiment with:
+                        //readOnly: true,
+                        //showDayView: false,
+                        //showMultiDayView: true,
+                        //showWeekView: false,
+                        //showMultiWeekView: false,
+                        //showMonthView: false,
+                        //showNavBar: false,
+                        //showTodayText: false,
+                        //showTime: false,
+                        //editModal: true,
+                        //enableEditDetails: false,
+                        //title: 'My Calendar', // the header of the calendar, could be a subtitle for the app
+                        
+                        // Once this component inits it will set a reference to itself as an application
+                        // member property for easy reference in other functions within App.
+                        initComponent: function() {
+                            App.calendarPanel = this;
+                            this.constructor.prototype.initComponent.apply(this, arguments);
+                        },
+                        
+                        listeners: {
+                            'eventclick': {
+                                fn: function(vw, rec, el){
+                                    this.clearMsg();
+                                },
+                                scope: this
+                            },
+                            'eventover': function(vw, rec, el){
+                                //console.log('Entered evt rec='+rec.data[Ext.ensible.cal.EventMappings.Title.name]', view='+ vw.id +', el='+el.id);
+                            },
+                            'eventout': function(vw, rec, el){
+                                //console.log('Leaving evt rec='+rec.data[Ext.ensible.cal.EventMappings.Title.name]+', view='+ vw.id +', el='+el.id);
+                            },
+                            'eventadd': {
+                                fn: function(cp, rec){
+                                    this.showMsg('Event '+ rec.data[Ext.ensible.cal.EventMappings.Title.name] +' was added');
+                                },
+                                scope: this
+                            },
+                            'eventupdate': {
+                                fn: function(cp, rec){
+                                    this.showMsg('Event '+ rec.data[Ext.ensible.cal.EventMappings.Title.name] +' was updated');
+                                },
+                                scope: this
+                            },
+                            'eventdelete': {
+                                fn: function(cp, rec){
+                                    //this.eventStore.remove(rec);
+                                    this.showMsg('Event '+ rec.data[Ext.ensible.cal.EventMappings.Title.name] +' was deleted');
+                                },
+                                scope: this
+                            },
+                            'eventcancel': {
+                                fn: function(cp, rec){
+                                    // edit canceled
+                                },
+                                scope: this
+                            },
+                            'viewchange': {
+                                fn: function(p, vw, dateInfo){
+                                    if(this.editWin){
+                                        this.editWin.hide();
+                                    };
+                                    if(dateInfo !== null){
+                                        // will be null when switching to the event edit form so ignore
+                                        Ext.getCmp('app-nav-picker').setValue(dateInfo.activeDate);
+                                        this.updateTitle(dateInfo.viewStart, dateInfo.viewEnd);
+                                    }
+                                },
+                                scope: this
+                            },
+                            'dayclick': {
+                                fn: function(vw, dt, ad, el){
+                                    this.clearMsg();
+                                },
+                                scope: this
+                            },
+                            'rangeselect': {
+                                fn: function(vw, dates, onComplete){
+                                    this.clearMsg();
+                                },
+                                scope: this
+                            },
+                            'eventmove': {
+                                fn: function(vw, rec){
+                                    rec.commit();
+                                    var time = rec.data[Ext.ensible.cal.EventMappings.IsAllDay.name] ? '' : ' \\a\\t g:i a';
+                                    this.showMsg('Event '+ rec.data[Ext.ensible.cal.EventMappings.Title.name] +' was moved to '+
+                                        rec.data[Ext.ensible.cal.EventMappings.StartDate.name].format('F jS'+time));
+                                },
+                                scope: this
+                            },
+                            'eventresize': {
+                                fn: function(vw, rec){
+                                    rec.commit();
+                                    this.showMsg('Event '+ rec.data[Ext.ensible.cal.EventMappings.Title.name] +' was updated');
+                                },
+                                scope: this
+                            },
+                            'eventdelete': {
+                                fn: function(win, rec){
+                                    this.eventStore.remove(rec);
+                                    this.showMsg('Event '+ rec.data[Ext.ensible.cal.EventMappings.Title.name] +' was deleted');
+                                },
+                                scope: this
+                            },
+                            'initdrag': {
+                                fn: function(vw){
+                                    if(this.editWin && this.editWin.isVisible()){
+                                        this.editWin.hide();
+                                    }
+                                },
+                                scope: this
+                            }
+                        }
+                    }]
+                }]
+            });
+        },
+        
+        // The CalendarPanel itself supports the standard Panel title config, but that title
+        // only spans the calendar views.  For a title that spans the entire width of the app
+        // we added a title to the layout's outer center region that is app-specific. This code
+        // updates that outer title based on the currently-selected view range anytime the view changes.
+        updateTitle: function(startDt, endDt){
+            var p = Ext.getCmp('app-center');
+            
+            if(startDt.clearTime().getTime() == endDt.clearTime().getTime()){
+                p.setTitle(startDt.format('F j, Y'));
+            }
+            else if(startDt.getFullYear() == endDt.getFullYear()){
+                if(startDt.getMonth() == endDt.getMonth()){
+                    p.setTitle(startDt.format('F j') + ' - ' + endDt.format('j, Y'));
+                }
+                else{
+                    p.setTitle(startDt.format('F j') + ' - ' + endDt.format('F j, Y'));
+                }
+            }
+            else{
+                p.setTitle(startDt.format('F j, Y') + ' - ' + endDt.format('F j, Y'));
+            }
+        },
+        
+        // This is an application-specific way to communicate CalendarPanel event messages back to the user.
+        // This could be replaced with a function to do "toast" style messages, growl messages, etc. This will
+        // vary based on application requirements, which is why it's not baked into the CalendarPanel.
+        showMsg: function(msg){
+            Ext.fly('app-msg').update(msg).removeClass('x-hidden');
+        },
+        
+        clearMsg: function(){
+            Ext.fly('app-msg').update('').addClass('x-hidden');
+        }
+    }
+
+
+
+****/
+
+
 
 
 

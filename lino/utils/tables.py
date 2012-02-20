@@ -148,9 +148,9 @@ class AbstractTableRequest(actions.ActionRequest):
         
         
     
-    def parse_req(self,request,**kw):
+    def parse_req(self,request,rqdata,**kw):
         rh = self.ah
-        kw = actions.ActionRequest.parse_req(self,request,**kw)
+        kw = actions.ActionRequest.parse_req(self,request,rqdata,**kw)
         #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
         
         #~ kw.update(self.report.known_values)
@@ -159,24 +159,24 @@ class AbstractTableRequest(actions.ActionRequest):
             #~ if v is not None:
                 #~ kw[fieldname] = v
                 
-        quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
+        quick_search = rqdata.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)
             
-        sort = request.REQUEST.get(ext_requests.URL_PARAM_SORT,None)
+        sort = rqdata.get(ext_requests.URL_PARAM_SORT,None)
         if sort:
             #~ self.sort_column = sort
-            sort_dir = request.REQUEST.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
+            sort_dir = rqdata.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
             if sort_dir == 'DESC':
                 sort = '-' + sort
                 #~ self.sort_direction = 'DESC'
             kw.update(order_by=[sort])
         
                 
-        offset = request.REQUEST.get(ext_requests.URL_PARAM_START,None)
+        offset = rqdata.get(ext_requests.URL_PARAM_START,None)
         if offset:
             kw.update(offset=int(offset))
-        limit = request.REQUEST.get(ext_requests.URL_PARAM_LIMIT,None)
+        limit = rqdata.get(ext_requests.URL_PARAM_LIMIT,None)
         if limit:
             kw.update(limit=int(limit))
         
@@ -194,8 +194,7 @@ class AbstractTableRequest(actions.ActionRequest):
         #~ if kv:
             #~ kw.update(known_values=kv)
         
-        kw = rh.report.parse_req(request,**kw)
-        return kw
+        return rh.report.parse_req(request,rqdata,**kw)
         
             
     def setup(self,
@@ -476,7 +475,7 @@ class AbstractTable(actors.Actor):
         
           
     @classmethod
-    def parse_req(self,request,**kw):
+    def parse_req(self,request,rqdata,**kw):
         return kw
     
     @classmethod

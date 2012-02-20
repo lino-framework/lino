@@ -418,12 +418,12 @@ class TableRequest(AbstractTableRequest):
     #~ sort_direction = None
     
     
-    def parse_req(self,request,**kw):
+    def parse_req(self,request,rqdata,**kw):
         #~ logger.info("20120121 %s.parse_req()",self)
         rh = self.ah
         master = kw.get('master',self.report.master)
         if master is ContentType or master is models.Model:
-            mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
+            mt = rqdata.get(ext_requests.URL_PARAM_MASTER_TYPE)
             try:
                 master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
             except ContentType.DoesNotExist,e:
@@ -433,7 +433,7 @@ class TableRequest(AbstractTableRequest):
                 
             #~ print kw
         if master is not None and not kw.has_key('master_instance'):
-            pk = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_PK,None)
+            pk = rqdata.get(ext_requests.URL_PARAM_MASTER_PK,None)
             #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
             #~ if pk in ('', '-99999'):
             if pk == '':
@@ -455,13 +455,13 @@ class TableRequest(AbstractTableRequest):
             exclude = dict()
             for f in rh.store.fields:
                 if f.field:
-                    filterOption = request.REQUEST.get('filter[%s_filterOption]' % f.field.name)
+                    filterOption = rqdata.get('filter[%s_filterOption]' % f.field.name)
                     if filterOption == 'empty':
                         kw[f.field.name + "__isnull"] = True
                     elif filterOption == 'notempty':
                         kw[f.field.name + "__isnull"] = False
                     else:
-                        filterValue = request.REQUEST.get('filter[%s]' % f.field.name)
+                        filterValue = rqdata.get('filter[%s]' % f.field.name)
                         if filterValue:
                             if not filterOption: filterOption = 'contains'
                             if filterOption == 'contains':
@@ -474,12 +474,12 @@ class TableRequest(AbstractTableRequest):
                 kw.update(exclude=exclude)
                 
         if settings.LINO.use_gridfilters:
-            filter = request.REQUEST.get(ext_requests.URL_PARAM_GRIDFILTER,None)
+            filter = rqdata.get(ext_requests.URL_PARAM_GRIDFILTER,None)
             if filter is not None:
                 filter = json.loads(filter)
                 kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
                 
-        kw = AbstractTableRequest.parse_req(self,request,**kw)
+        kw = AbstractTableRequest.parse_req(self,request,rqdata,**kw)
         #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
         return kw
         

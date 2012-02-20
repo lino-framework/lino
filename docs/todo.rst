@@ -12,6 +12,16 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  User Detail has UpdateReminders as *first* button. Das kommt dadurch, 
+    dass diese Aktion in der site_setup() von modlib.cal erstellt wird, was 
+    vor dem setup() der Tabellen geschieht.
+
+#.  Picker for calendar color. Or at least a ChoiceList with names.
+    http://ext.ensible.com/forum/viewtopic.php?f=2&t=339
+    See :file:`calendar-colors.css`
+
+    
+
 #.  http://www.sencha.com/learn/grid-faq/
 
 #.  http://code.google.com/p/support/wiki/ScriptedUploads
@@ -33,6 +43,10 @@ Short-term
       
     Das hätte vor allem auch den Vorteil, dass dann überhaupt kein Ajax-Call 
     nötig ist.
+    
+    En attendant ist das Feld Ganztags nicht aktiv, und die Uhrzeit-Felder 
+    werden *nicht* disabled wenn es angekreuzt ist. Weil man sonst nicht 
+    einfach einem Ganztagstermin eine Uhrzeit zuweisen kann.
       
     
 #.  When a user tries to sort a column on a RemoteField, the server says::
@@ -75,8 +89,6 @@ Short-term
           "Choices are: %s" % (name, ", ".join(names)))
 
 
-
-
 #.  Continue with BCSS-Connection: 
 
     - add more fields to existing first service
@@ -84,7 +96,12 @@ Short-term
     
 #.  Mails verschicken: notes.Note und mails.OutMail könnten 
     zusammengeführt werden. Kann sein, dass thirds.Third dann 
-    unnötig wird.
+    unnötig wird. Mein Vorschlag:
+    
+    - "Ereignis/Notiz" umbenennen nach "Notiz". Eine Notiz ist 
+      ein "ausgehendes Dokument", das ein bestimmter Benutzer 
+      (der Autor) erstellt hat.
+    - Statt 
     
 #.  User profiles and one lino.js per user profile. 
     Because this would save a lot of JS code to download for most users.
@@ -233,6 +250,7 @@ Medium-term
     Das funktioniert auch, solange ich setup.py nur für mich als Entwickler 
     benutze.
     Aber ein ``setup.py install`` würde natürlich nicht funktionieren.
+    Siehe auch http://stackoverflow.com/questions/6786555/automatic-version-number-both-in-setup-py-setuptools-and-source-code
 
 #.  Die virtuellen Felder `applies_from` und `applies_until` 
     in :class:`Meine Klienten <lino.apps.dsbe.models.MyPersons>` 

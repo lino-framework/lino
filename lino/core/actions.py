@@ -18,6 +18,8 @@ import traceback
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 from django.conf import settings
+from django import http
+
 
 import lino
 from lino.utils import AttrDict
@@ -356,7 +358,11 @@ class ActionRequest(object):
         self.ah = report.get_handle(ui)
         self.request = request
         if request is not None:
-            kw = self.parse_req(request,**kw)
+            if request.method == 'PUT':
+                rqdata = http.QueryDict(request.raw_post_data)
+            else:
+                rqdata = request.REQUEST
+            kw = self.parse_req(request,rqdata,**kw)
         self.setup(**kw)
         
     #~ def confirm(self,step,*messages):
@@ -392,7 +398,7 @@ class ActionRequest(object):
                 #~ kw[k] = v
         return obj
         
-    def parse_req(self,request,**kw):
+    def parse_req(self,request,rqdata,**kw):
         if self.report.parameters:
             kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
@@ -402,7 +408,7 @@ class ActionRequest(object):
         #~ if user is not None and user.is_superuser:
         #~ if True:
         if settings.LINO.user_model:
-            username = request.REQUEST.get(ext_requests.URL_PARAM_SUBST_USER,None)
+            username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
             if username:
                 try:
                     kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))

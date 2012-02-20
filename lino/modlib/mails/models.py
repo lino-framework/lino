@@ -55,98 +55,98 @@ from lino.utils.config import find_config_file
 from Cheetah.Template import Template as CheetahTemplate
 
 
+if True:
 
-class MailType(mixins.PrintableType,babel.BabelNamed):
-    "Deserves more documentation."
-  
-    templates_group = 'mails/Mail'
+
+  class MailType(mixins.PrintableType,babel.BabelNamed):
+      "Deserves more documentation."
     
-    class Meta:
-        verbose_name = _("Mail Type")
-        verbose_name_plural = _('Mail Types')
-
-class MailTypes(dd.Table):
-    model = MailType
-    column_names = 'name build_method template *'
-
-
-
-
-class CreateMailAction(dd.RowAction):
-    "Deserves more documentation."
-  
-    name = 'send'
-    label = _('Create email')
-    callable_from = None
-            
-    def run(self,rr,elem,**kw):
+      templates_group = 'mails/Mail'
       
-        tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
-        
-        fn = find_config_file(tplname)
-        logger.info("Using email template %s",fn)
-        tpl = CheetahTemplate(file(fn).read())
-        #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
-        tpl.instance = elem
-        html_content = unicode(tpl)
-        
-        from lino.modlib.mails.models import Mail
-        m = Mail(sender=rr.get_user(),subject=elem.get_subject(),body=html_content)
-        m.full_clean()
-        m.save()
-        #~ for t,n,a in elem.get_recipients():
-            #~ m.recipient_set.create(type=t,address=a,name=n)
-        for t,c in elem.get_mailable_contacts():
-            r = Recipient(mail=m,type=t,contact=c)
-            r.full_clean()
-            r.save()
-            #~ m.recipient_set.create(type=t,contact=c)
-        a = Attachment(mail=m,owner=elem)
-        a.save()
-        kw.update(open_url=rr.ui.get_detail_url(m))
-        return rr.ui.success_response(**kw)
-        
-    
-class Mailable(models.Model):
-    """
-    Mixin for models that provide a "Create Email" button.
-    Deserves more documentation.
-    """
+      class Meta:
+          verbose_name = _("Mail Type")
+          verbose_name_plural = _('Mail Types')
 
-    class Meta:
-        abstract = True
-        
-    #~ time_sent = models.DateTimeField(null=True,editable=False)
+  class MailTypes(dd.Table):
+      model = MailType
+      column_names = 'name build_method template *'
+
+
+  class CreateMailAction(dd.RowAction):
+      "Deserves more documentation."
     
-    @classmethod
-    def setup_report(cls,rpt):
-        rpt.add_action(CreateMailAction())
-        #~ call_optional_super(Mailable,cls,'setup_report',rpt)
+      name = 'send'
+      label = _('Create email')
+      callable_from = None
+              
+      def run(self,rr,elem,**kw):
         
-    def get_print_language(self,pm):
-        return babel.DEFAULT_LANGUAGE
-        
-    #~ def get_templates_group(self):
-        #~ return model_group(self)
-        
-    def get_subject(self):
-        """
-        Return the content of the `subject` 
-        field for the email to be created.
-        """
-        return unicode(self)
-        
-    #~ def get_recipients(self):
-        #~ "return or yield a list of (type,name,address) tuples"
-        #~ raise NotImplementedError()
-        
-    def get_mailable_contacts(self):
-        "return or yield a list of (type,contact) tuples"
-        return []
-        
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ rpt.add_action(CreateMailAction())
+          tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
+          
+          fn = find_config_file(tplname)
+          logger.info("Using email template %s",fn)
+          tpl = CheetahTemplate(file(fn).read())
+          #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
+          tpl.instance = elem
+          html_content = unicode(tpl)
+          
+          from lino.modlib.mails.models import Mail
+          m = Mail(sender=rr.get_user(),subject=elem.get_subject(),body=html_content)
+          m.full_clean()
+          m.save()
+          #~ for t,n,a in elem.get_recipients():
+              #~ m.recipient_set.create(type=t,address=a,name=n)
+          for t,c in elem.get_mailable_contacts():
+              r = Recipient(mail=m,type=t,contact=c)
+              r.full_clean()
+              r.save()
+              #~ m.recipient_set.create(type=t,contact=c)
+          a = Attachment(mail=m,owner=elem)
+          a.save()
+          kw.update(open_url=rr.ui.get_detail_url(m))
+          return rr.ui.success_response(**kw)
+          
+      
+  class Mailable(models.Model):
+      """
+      Mixin for models that provide a "Create Email" button.
+      Deserves more documentation.
+      """
+
+      class Meta:
+          abstract = True
+          
+      #~ time_sent = models.DateTimeField(null=True,editable=False)
+      
+      @classmethod
+      def setup_report(cls,rpt):
+          rpt.add_action(CreateMailAction())
+          #~ call_optional_super(Mailable,cls,'setup_report',rpt)
+          
+      def get_print_language(self,pm):
+          return babel.DEFAULT_LANGUAGE
+          
+      #~ def get_templates_group(self):
+          #~ return model_group(self)
+          
+      def get_subject(self):
+          """
+          Return the content of the `subject` 
+          field for the email to be created.
+          """
+          return unicode(self)
+          
+      #~ def get_recipients(self):
+          #~ "return or yield a list of (type,name,address) tuples"
+          #~ raise NotImplementedError()
+          
+      def get_mailable_contacts(self):
+          "return or yield a list of (type,contact) tuples"
+          return []
+          
+      #~ @classmethod
+      #~ def setup_report(cls,rpt):
+          #~ rpt.add_action(CreateMailAction())
 
 
 
@@ -234,13 +234,15 @@ class RecipientsByMail(Recipients):
 
 #~ class Mail(mixins.AutoUser):
 class Mail(mixins.TypedPrintable):
+#~ class Mail(models.Model):
     """
     Deserves more documentation.
     """
     
-    type = models.ForeignKey(MailType,null=True,blank=True)
+    #~ type = models.ForeignKey(MailType,null=True,blank=True)
     
     class Meta:
+        #~ abstract = True
         verbose_name = _("Mail Document")
         verbose_name_plural = _("Mail Documents")
         
@@ -282,12 +284,12 @@ class Mail(mixins.TypedPrintable):
     def __unicode__(self):
         return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.subject)
         
-    def add_attached_file(self,fn):
-        """Doesn't work. 
-        """
-        kv = dict(type=settings.LINO.config.residence_permit_upload_type)
-        r = uploads.UploadsByOwner.request(master_instance=self)
-        r.create_instance(**kv)
+    #~ def add_attached_file(self,fn):
+        #~ """Doesn't work. 
+        #~ """
+        #~ kv = dict(type=settings.LINO.config.residence_permit_upload_type)
+        #~ r = uploads.UploadsByOwner.request(master_instance=self)
+        #~ r.create_instance(**kv)
       
     @classmethod
     def setup_report(cls,rpt):

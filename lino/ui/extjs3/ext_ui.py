@@ -479,7 +479,7 @@ def json_response(x,content_type='application/json'):
 
 ACTION_RESPONSES = frozenset((
   'message','success','alert', 
-  #~ 'errors',
+  'errors',
   'refresh','refresh_all',
   'confirm_message', 'step',
   'open_url','open_davlink_url'))

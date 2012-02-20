@@ -90,15 +90,14 @@ if False:
 
 NOT_FOUND_MSG = '(not installed)'
 
-def using():
+def using(ui=None):
     """
     Yields a list of third-party software descriptors used by Lino.
     Each descriptor is a tuple (name, version, url).
     
     """
-    import sys
-    version = "%d.%d.%d" % sys.version_info[:3]
-    yield ("Python",version,"http://www.python.org/")
+    
+    yield ("Lino",__version__,"http://lino.saffre-rumma.net")
     
     import django
     yield ("Django",django.get_version(),"http://www.djangoproject.com")
@@ -154,17 +153,30 @@ def using():
     except ImportError:
         version = NOT_FOUND_MSG
     yield ("appy.pod",version ,"http://appyframework.org/pod.html")
+    
+    import sys
+    version = "%d.%d.%d" % sys.version_info[:3]
+    yield ("Python",version,"http://www.python.org/")
+    
+    if ui is not None:
+        #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
+        onclick = "alert('ExtJS client version is ' + Ext.version);"
+        tip = "Click to see ExtJS client version"
+        text = "(version)"
+        version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+        yield ("ExtJS",version ,"http://www.sencha.com")
 
 
 def welcome_text():
-    return "Lino version %s using %s" % (
-      __version__, 
-      ', '.join(["%s %s" % (n,v) for n,v,u in using()]))
+    #~ return "Lino version %s using %s" % (
+    return "Using %s" % (', '.join(["%s %s" % (n,v) for n,v,u in using()]))
 
-def welcome_html():
-    return "Lino version %s using %s" % (
-      __version__,
-      ', '.join(['<a href="%s" target="_blank">%s</a> %s' % (u,n,v) for n,v,u in using()]))
+def welcome_html(ui=None):
+    #~ return "Lino version %s using %s" % (
+      #~ __version__,
+      #~ ', '.join(['<a href="%s" target="_blank">%s</a> %s' % (u,n,v) for n,v,u in using(ui)]))
+    sep = '<br/>'
+    return sep.join(['<a href="%s" target="_blank">%s</a> %s' % (u,n,v) for n,v,u in using(ui)])
 
 
 class Lino(object):

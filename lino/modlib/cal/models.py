@@ -704,34 +704,21 @@ class EventDetail(dd.DetailLayout):
 class Events(dd.Table):
     model = 'cal.Event'
     column_names = 'start_date start_time summary status *'
-    active_fields = ['all_day']
+    #~ active_fields = ['all_day']
     
     detail_layout = EventDetail()
     
 
-    
-    
     #~ def setup_actions(self):
         #~ super(dd.Table,self).setup_actions()
         #~ self.add_action(mails.CreateMailAction())
         
-    @classmethod
-    def disabled_fields(self,obj,request):
-        #~ if obj.all_day:
-        if obj.start_time is None:
-            return ['start_time','end_time']
-        return []
-        
-    #~ def all_day_changed(self,old_value):
-        #~ # if self.all_day:
+    #~ @classmethod
+    #~ def disabled_fields(self,obj,request):
         #~ if obj.start_time is None:
-            #~ obj.end_time = None
-            #~ obj.start_time = None
-        #~ else:
-            #~ if not obj.start_time:
-                #~ obj.start_time = datetime.time(9,0,0)
-            #~ if not obj.end_time:
-                #~ obj.end_time = datetime.time(10,0,0)
+            #~ return ['start_time','end_time']
+        #~ return []
+        
         
     
 class EventsBySet(Events):
@@ -1156,16 +1143,16 @@ if settings.LINO.use_extensible:
             #~ return self.summary
             
         @classmethod
-        def parse_req(self,request,**kw):
+        def parse_req(self,request,rqdata,**kw):
             #~ filter = kw.get('filter',{})
             assert not kw.has_key('filter')
             filter = {}
             #~ logger.info("20120118 filter is %r", filter)
-            endDate = request.REQUEST.get('ed',None)
+            endDate = rqdata.get('ed',None)
             if endDate:
                 d = parsedate(endDate)
                 filter.update(start_date__lte=d)
-            startDate = request.REQUEST.get('sd',None)
+            startDate = rqdata.get('sd',None)
             if startDate:
                 d = parsedate(startDate)
                 #~ logger.info("startDate is %r", d)
