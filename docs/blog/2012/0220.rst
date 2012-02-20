@@ -90,8 +90,8 @@ Upps, das hat er gleich auch nach
 gepostet, 
 also weniger inoffiziell als ich es ursprünglich dachte...
 
-Noch kleine Bugs
-----------------
+Noch Kleinkram vor dem Release
+------------------------------
 
 - Zwei selten benutzte Menübefehle 
   :menuselection:`Konfigurierung --> Kontakte --> Funktionen` 
@@ -99,7 +99,11 @@ Noch kleine Bugs
   :menuselection:`Explorer --> Drittpartner` 
   fehlten.
 
-- newcomers.UsersByNewcomer hatte kein Detail weil es nicht von users.Users erbte.
+- :class:`lino.modlib.newcomers.models.UsersByNewcomer` hatte kein Detail 
+  weil es nicht von users.Users erbte.
+
+- :func:`lino.apps.dsbe.migrate.migrate_from_1_3_9`
+
 
 Automatic refresh when user changes table parameters
 ----------------------------------------------------
@@ -123,3 +127,7 @@ Mal probieren: ich mache einfach ``make sdist html upload``, und dann::
   
 Aha. Und wenn ich übers Web-Interface zuerst die Dateien lösche? Ja, dann geht es. 
 Dort kann ich auch sehen, dass dort "0 downloads" stand.
+
+
+Also alle heutigen Änderungen kommen noch mit in die 
+:doc:`/releases/1.4.0` rein.

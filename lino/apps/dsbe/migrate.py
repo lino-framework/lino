@@ -987,7 +987,11 @@ def migrate_from_1_3_8(globals_dict):
     return '1.3.9'
 
 def migrate_from_1_3_9(globals_dict): 
-    """No database changes."""
+    """
+    - remove table lino_datacontrollisting
+    """
     def lino_datacontrollisting_objects(): return None
     globals_dict.update(lino_datacontrollisting_objects=lino_datacontrollisting_objects)
+    def jobs_contractssituation_objects(): return None
+    globals_dict.update(jobs_contractssituation_objects=jobs_contractssituation_objects)
     return '1.4.0'

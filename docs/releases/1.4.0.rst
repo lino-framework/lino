@@ -13,8 +13,6 @@ Diesmal sind es immerhin
 Also leichter testbar. 
 
 
-Datenbankmäßig ändert sich nichts seit der :doc:`1.3.9`, insofern kann ein 
-Release leicht rückgängig gemacht werden.
 Außerdem ist die 1.4.0 ansonsten vor allem ein Bugfix-Release 
 für die 1.3.9, in der wir ja doch inzwischen eine stattliche Sammlung 
 von Bugs kennen.
