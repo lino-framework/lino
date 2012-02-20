@@ -1151,6 +1151,7 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
 
 Lino.do_action = function(caller,action) {
   action.success = function(response) {
+    if (caller.loadMask) caller.loadMask.hide();
     //~ console.log('Lino.do_action()',action,'action success',response);
     if (action.after_success) {
         //~ console.log('Lino.do_action() calling after_success');
@@ -1570,7 +1571,7 @@ Lino.row_action_handler = function(actionName,gridmode) {
         method: 'GET',
         url: url,
         params: p,
-        success: Lino.action_handler(panel,function(result){},gridmode,fn)
+        success: Lino.action_handler(panel,undefined,gridmode,fn)
       });
     });
   };
@@ -1589,7 +1590,7 @@ Lino.list_action_handler = function(actionName,gridmode) {
       method: 'GET',
       url: url,
       params: p,
-      success: Lino.action_handler(panel,function(result){},gridmode,fn)
+      success: Lino.action_handler(panel,undefined,gridmode,fn)
     });
   };
   return fn;

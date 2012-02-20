@@ -150,10 +150,18 @@ Simplified instructions::
   # unzip tinymce_language_pack.zip
   
   
-Set up your Python path
------------------------
+Set up the Python Path
+----------------------
 
-We suggest to add a 
+Another possibility is to define the Python Path in your 
+project's :xfile:`settings.py` file
+(one of the files we are going to create in the 
+section `Create a local Django project`_).
+In that case, just skip the rest of this section.
+
+If you chose to modify the global Python path on your server
+(which requires you to have root permission),
+then we suggest to add a 
 path configuration file :xfile:`local.pth` 
 to a directory that's already on your 
 `Python's path <http://www.python.org/doc/current/install/index.html>`_. 
@@ -169,7 +177,6 @@ The file :xfile:`local.pth` itself should have the following content::
 
 
   /var/snapshots/lino
-  /var/snapshots/django
   /var/snapshots/appy
   /usr/local/django  
   

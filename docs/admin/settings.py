@@ -1,5 +1,15 @@
 # -*- coding: UTF-8 -*-
 # Django settings for mysite project.
+
+
+## uncomment the following lines if you chose to not 
+## modify the global Python Path
+
+#~ import sys
+#~ sys.path.insert(0,'/var/snapshots/lino')
+#~ sys.path.insert(0,'/var/snapshots/appy')
+
+
 from os.path import join, dirname
 from lino.apps.dsbe.settings import *
 
