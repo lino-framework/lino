@@ -985,3 +985,9 @@ def migrate_from_1_3_8(globals_dict):
           )    
     globals_dict.update(create_cal_event=create_cal_event)
     return '1.3.9'
+
+def migrate_from_1_3_9(globals_dict): 
+    """No database changes."""
+    def lino_datacontrollisting_objects(): return None
+    globals_dict.update(lino_datacontrollisting_objects=lino_datacontrollisting_objects)
+    return '1.4.0'

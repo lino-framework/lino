@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ def new_content_type_id(m):
                     break
                 #~ print model.__name__, "depends on", [m.__name__ for m in deps]
         if unsorted:
-            dblogger.warning("models with circular dependencies : %s",[m.__name__ for m in unsorted])
+            dblogger.debug("models with circular dependencies : %s",[m.__name__ for m in unsorted])
             sorted.extend(unsorted)              
         return sorted      
     

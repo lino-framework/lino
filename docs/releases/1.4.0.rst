@@ -1,6 +1,8 @@
 Version 1.4.0 (20120220)
 ========================
 
+Download it from http://pypi.python.org/pypi/lino
+
 Ich habe die neue Version 1.4 genannt, weil sie wieder einige schöne 
 aber heftige interne Änderungen mitbringt. 
 Vor allem nehmen wir mit ihr Abschied von den .dtl-Dateien.
@@ -30,6 +32,12 @@ Sichtbare Änderungen
   
 - Insgesamt lässt Lino jetzt mehr Freiraum zwischen den Feldern, 
   so dass das Gesamtbild auch für Designer etwas ansprechender wirkt.
+  
+- Wenn man in den Parametern einer Tabelle etwas ändert, 
+  braucht man jetzt nicht mehr den Refresh-Button zu klicken.
+  Diese Feature könnte aber auch lästig sein in langsamen Listen.
+  Zu beobachten.
+  
 
 Behobene Bugs
 -------------
@@ -60,6 +68,12 @@ Behobene Bugs
   die Auswahlliste blieb leer
   (weil der Server dann ein "AttributeError 'TableRequest' object has no 
   attribute 'queryset'" machte).
+
+- Zwei selten benutzte Menübefehle 
+  :menuselection:`Konfigurierung --> Kontakte --> Funktionen` 
+  und
+  :menuselection:`Explorer --> Drittpartner` 
+  fehlten.
 
 
 

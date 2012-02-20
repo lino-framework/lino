@@ -108,3 +108,18 @@ Wenn man in den Parametern einer Tabelle etwas ändert,
 braucht man jetzt nicht mehr den Refresh-Button zu klicken.
 Diese Feature könnte aber auch lästig sein in langsamen Listen.
 Zu beobachten.
+
+
+Kann man auf PyPI ein Release überschreiben?
+--------------------------------------------
+
+Mal probieren: ich mache einfach ``make sdist html upload``, und dann::
+
+
+  Submitting docs/dist\lino-1.4.0.tar.gz to http://pypi.python.org/pypi
+  Upload failed (400): A file named "lino-1.4.0.tar.gz" already exists for  lino-1.4.0. To fix problems with that file you should create a new release.
+  Submitting docs/dist\lino-1.4.0.zip to http://pypi.python.org/pypi
+  Upload failed (400): A file named "lino-1.4.0.zip" already exists for  lino-1.4.0. To fix problems with that file you should create a new release.
+  
+Aha. Und wenn ich übers Web-Interface zuerst die Dateien lösche? Ja, dann geht es. 
+Dort kann ich auch sehen, dass dort "0 downloads" stand.
