@@ -49,30 +49,6 @@ ACTOR_SEP = '.'
 
 #~ from lino.core import actions
 
-def unused_resolve_action(spec,app_label=None):
-    if spec is None: return None
-    if isinstance(spec,actions.Action): return spec
-    s = spec.split('.')
-    if len(s) == 1:
-        if not app_label:
-            return None
-        actor = get_actor2(app_label,spec)
-    elif len(s) == 3:
-        actor = get_actor('.'.join(s[0:2]))
-        if actor is None:
-            model = models.get_model(s[0],s[1],False)
-            #~ print "20110712 actor is None, model is", model, s
-            if model is None:
-                return None
-            actor = model._lino_model_report
-        #~ print 20110627, actor, s, actor._actions_dict
-        return actor.get_action(s[2])
-    else:
-        actor = get_actor(spec)
-    if actor is None:
-        return None
-        #~ raise Exception("Actor %r does not exist" % spec)
-    return actor.default_action
   
 def register_actor(a):
     logger.debug("register_actor %s",a.actor_id)
@@ -200,7 +176,7 @@ class ActorMetaClass(type):
         #~ cls.app_label = cls.__module__.split('.')[-2]
         
         cls.actor_id = cls.app_label + '.' + cls.__name__
-        cls._actions_list = []
+        cls._actions_list = None
         cls._actions_dict = {}
         cls._setup_done = False
         cls._setup_doing = False
@@ -370,10 +346,10 @@ class Actor(Handled):
     def setup_request(self,req):
         pass
         
-    @classmethod
-    def debug_summary(self):
-        return "%s (%s)" % (self.__class__,','.join([
-            a.name for a in self._actions_list]))
+    #~ @classmethod
+    #~ def debug_summary(self):
+        #~ return "%s (%s)" % (self.__class__,','.join([
+            #~ a.name for a in self._actions_list]))
         
     @classmethod
     def get_permission(self,action,user,obj):
@@ -504,7 +480,7 @@ class Actor(Handled):
             
     @classmethod
     def add_action(self,a):
-        if hasattr(a,'actor') and a.actor is not self:
+        if a.actor is not None and a.actor is not self:
             raise Exception("20120103")
         if self._actions_dict.has_key(a.name):
             #~ logger.warning("%s action %r : %s overridden by %s",
@@ -513,7 +489,7 @@ class Actor(Handled):
               "%s action %r : %s overridden by %s" %
               (self,a.name,self._actions_dict[a.name],a))
         self._actions_dict[a.name] = a
-        self._actions_list.append(a)
+        #~ self._actions_list.append(a)
             
     @classmethod
     def get_action(self,name):
@@ -521,6 +497,11 @@ class Actor(Handled):
         
     @classmethod
     def get_actions(self,callable_from=None):
+        if self._actions_list is None:
+            self._actions_list = self._actions_dict.values()
+            def f(a,b):
+                return cmp(a.sort_index,b.sort_index)
+            self._actions_list.sort(f)
         if callable_from is None:
             return self._actions_list
         return [a for a in self._actions_list 

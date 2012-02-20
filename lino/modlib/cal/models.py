@@ -694,7 +694,7 @@ class EventDetail(dd.DetailLayout):
     
     main = """
     type summary user 
-    start end all_day #duration status 
+    start end #all_day #duration status 
     place priority access_class transparent rset 
     calendar owner created:20 modified:20 user_modified 
     description

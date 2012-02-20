@@ -719,7 +719,14 @@ def setup_my_menu(site,ui,user,m):
     pass
   
 def setup_config_menu(site,ui,user,m): 
-    pass
+    config_contacts = m.add_menu("contacts",_("Contacts"))
+    config_contacts.add_action(site.modules.countries.Countries)
+    config_contacts.add_action(site.modules.countries.Cities)
+    config_contacts.add_action(CompanyTypes)
+    #~ config_contacts.add_action('contacts.ContactTypes')
+    config_contacts.add_action(RoleTypes)
+    config_contacts.add_action(site.modules.countries.Languages)
+            
     #~ m  = m.add_menu("contacts",_("~Contacts"))
     #~ m.add_action('contacts.RoleTypes')
   

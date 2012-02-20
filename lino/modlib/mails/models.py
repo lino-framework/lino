@@ -149,43 +149,6 @@ if True:
           #~ rpt.add_action(CreateMailAction())
 
 
-
-class SendMailAction(dd.RowAction):
-    "Deserves more documentation."
-  
-    name = 'send'
-    label = _('Send email')
-    callable_from = None
-            
-    def run(self,rr,elem,**kw):
-        if elem.sent:
-            return rr.ui.error_response(message='Mail has already been sent.')
-        text_content = html2text(elem.body)
-        #~ subject = elem.subject
-        #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
-        sender = "%s <%s>" % (elem.sender.get_full_name(),elem.sender.email)
-        #~ recipients = list(elem.get_recipients_to())
-        msg = EmailMultiAlternatives(subject=elem.subject, 
-            from_email=sender,
-            body=text_content, 
-            to=[r.name_address() for r in elem.recipient_set.filter(type=RecipientType.to)])
-        msg.attach_alternative(elem.body, "text/html")
-        msg.send()
-      
-        elem.sent = datetime.datetime.now()
-        elem.save()
-        kw.update(refresh=True)
-        msg = "Email %s from %s has been sent to %s." % (
-            elem.id,elem.sender,', '.join([r.address for r in elem.recipient_set.all()]))
-        kw.update(message=msg)
-        #~ for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
-            #~ msg += "\n" + n + " = " + unicode(getattr(settings,n))
-        logger.info(msg)
-        return rr.ui.success_response(**kw)
-      
-
-
-
 class Recipient(models.Model):
 #~ class Recipient(mixins.Owned):
 
@@ -232,6 +195,44 @@ class RecipientsByMail(Recipients):
     #~ column_names = 'type owner_type owner_id'
     #~ column_names = 'type owner'
 
+
+
+class SendMailAction(dd.RowAction):
+    "Deserves more documentation."
+  
+    name = 'send'
+    label = _('Send email')
+    callable_from = None
+            
+    def run(self,rr,elem,**kw):
+        if elem.sent:
+            return rr.ui.error_response(message='Mail has already been sent.')
+        text_content = html2text(elem.body)
+        #~ subject = elem.subject
+        #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
+        sender = "%s <%s>" % (elem.sender.get_full_name(),elem.sender.email)
+        #~ recipients = list(elem.get_recipients_to())
+        msg = EmailMultiAlternatives(subject=elem.subject, 
+            from_email=sender,
+            body=text_content, 
+            to=[r.name_address() for r in elem.recipient_set.filter(type=RecipientType.to)])
+        msg.attach_alternative(elem.body, "text/html")
+        msg.send()
+      
+        elem.sent = datetime.datetime.now()
+        elem.save()
+        kw.update(refresh=True)
+        msg = "Email %s from %s has been sent to %s." % (
+            elem.id,elem.sender,', '.join([r.address for r in elem.recipient_set.all()]))
+        kw.update(message=msg)
+        #~ for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
+            #~ msg += "\n" + n + " = " + unicode(getattr(settings,n))
+        logger.info(msg)
+        return rr.ui.success_response(**kw)
+      
+
+
+
 #~ class Mail(mixins.AutoUser):
 class Mail(mixins.TypedPrintable):
 #~ class Mail(models.Model):
@@ -245,6 +246,8 @@ class Mail(mixins.TypedPrintable):
         #~ abstract = True
         verbose_name = _("Mail Document")
         verbose_name_plural = _("Mail Documents")
+        
+    send = SendMailAction()
         
     #~ outgoing = models.BooleanField(verbose_name=_('Outgoing'))
     
@@ -291,10 +294,10 @@ class Mail(mixins.TypedPrintable):
         #~ r = uploads.UploadsByOwner.request(master_instance=self)
         #~ r.create_instance(**kv)
       
-    @classmethod
-    def setup_report(cls,rpt):
-        mixins.TypedPrintable.setup_report(rpt)
-        rpt.add_action(SendMailAction())
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ mixins.TypedPrintable.setup_report(rpt)
+        #~ rpt.add_action(SendMailAction())
         
 #~ class InMail(Mail):
     #~ "Incoming Mail"

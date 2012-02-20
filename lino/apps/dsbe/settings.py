@@ -149,14 +149,7 @@ class Lino(Lino):
         if user.is_staff:
             cfg = main.add_menu("config",_("Configure"))
             
-            config_contacts = cfg.add_menu("contacts",_("Contacts"))
-            config_contacts.add_action(self.modules.countries.Countries)
-            config_contacts.add_action(self.modules.countries.Cities)
-            config_contacts.add_action(self.modules.contacts.CompanyTypes)
-            #~ config_contacts.add_action('contacts.ContactTypes')
-            #~ config_contacts.add_action('contacts.RoleTypes')
-            config_contacts.add_action(self.modules.countries.Languages)
-            
+            self.modules.contacts.setup_config_menu(self,ui,user,cfg)
             
             #~ config_notes    = cfg.add_menu("notes",_("~Notes"))
             config_dsbe     = cfg.add_menu("dsbe",_("SIS"))
@@ -231,6 +224,7 @@ class Lino(Lino):
             #~ m.add_action(self.modules.lino.ContentTypes)
             m.add_action(self.modules.properties.Properties)
             m.add_action(self.modules.dsbe.Courses)
+            m.add_action(self.modules.thirds.Thirds)
             
             self.modules.cal.setup_explorer_menu(self,ui,user,m)
             

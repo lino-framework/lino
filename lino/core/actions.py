@@ -116,6 +116,7 @@ class Action(object):
     """
     Abstract base class for all Actions
     """
+    sort_index = 99
     opens_a_slave = False
     label = None
     name = None
@@ -125,20 +126,39 @@ class Action(object):
     readonly = True
     hide_top_toolbar = False
     hide_navigator = False
+    actor = None
+    opens_a_window = False
     #~ can_view = perms.always
     
     
-    def __init__(self,name=None,label=None):
+    def __init__(self,actor=None,name=None,label=None,**kw):
         #~ self.actor = actor # actor who offers this action
+        if actor is not None:
+            self.actor = actor # actor who offers this action
+            #~ self.can_view = report.can_view
+            if actor.hide_top_toolbar:
+                self.hide_top_toolbar = True
+        
         if name is None:
-            name = self.name or self.__class__.__name__ 
-        elif not isinstance(name,basestring):
-            raise Exception("%s name %r is not a string" % (self.__class__,name))
-        self.name = name 
+            if self.name is None:
+                self.name = self.__class__.__name__ 
+        else:
+            self.name = name 
+        if not isinstance(self.name,basestring):
+            raise Exception("%s name %r is not a string" % (self.__class__,self.name))
         if label is None:
             label = self.label or self.name 
         self.label = label
         assert self.callable_from is None or isinstance(self.callable_from,(tuple,type)), "%s" % self
+        for k,v in kw.items():
+            if not hasattr(self,k):
+                raise Exception("Invalid keyword %s" % k)
+            setattr(self,k,v)
+        
+    def __str__(self):
+        if self.actor is None:
+            raise Exception("tried to call str() on general action %s" % self.name)
+        return str(self.actor) + '.' + self.name
         
     def __unicode__(self):
         return force_unicode(self.label)
@@ -152,37 +172,16 @@ class Action(object):
         object representing the context where the action is running.
         """
         raise NotImplementedError("%s has no run() method" % self.__class__)
-            
-        
-class WindowAction(Action):
-    pass
-    #~ client_side = False
-    #~ response_format = 'act' # ext_requests.FMT_RUN
-
-    #~ def run_action(self,ar):
-        #~ ar.show_action_window(self) 
-        
-                
-class OpenWindowAction(WindowAction):
-    pass
-    #~ action_type = 'open_window'
-    
-    
-class RedirectAction(Action):
-    #~ mimetype = None
-    def get_target_url(self,elem):
-        raise NotImplementedError
-        
 
 
-class ReportAction(Action):
+class TableAction(Action):
   
-    def __init__(self,actor,*args,**kw):
-        self.actor = actor # actor who offers this action
-        #~ self.can_view = report.can_view
-        if actor.hide_top_toolbar:
-            self.hide_top_toolbar = True
-        super(ReportAction,self).__init__(*args,**kw)
+    #~ def __init__(self,actor,*args,**kw):
+        #~ self.actor = actor # actor who offers this action
+        #~ # self.can_view = report.can_view
+        #~ if actor.hide_top_toolbar:
+            #~ self.hide_top_toolbar = True
+        #~ super(TableAction,self).__init__(*args,**kw)
 
     def get_button_label(self):
         if self is self.actor.default_action:
@@ -194,22 +193,50 @@ class ReportAction(Action):
     def get_action_title(self,rr):
         return rr.get_title()
         
-    def __str__(self):
-        return str(self.actor) + '.' + self.name
+
+class RowAction(Action):
+    """
+    Base class for actions that are executed server-side on an individual row.
+    """
+    
+    #~ def disabled_for(self,obj,request):
+        #~ return False
+            
+    def run(self,rr,elem,**kw):
+        raise NotImplementedError("%s has no run() method" % self.__class__)
+
+
+
+
+#~ class OpenWindowAction(Action):
+    #~ pass
+    #~ action_type = 'open_window'
+    
+    
+class RedirectAction(Action):
+    #~ mimetype = None
+    def get_target_url(self,elem):
+        raise NotImplementedError
         
 
 
-class GridEdit(ReportAction,OpenWindowAction):
+
+class GridEdit(TableAction):
   
+    opens_a_window = True
+
     callable_from = tuple()
     name = 'grid'
     
     def __init__(self,rpt):
         self.label = rpt.button_label or rpt.label
-        ReportAction.__init__(self,rpt)
+        TableAction.__init__(self,rpt)
 
 
-class ShowDetailAction(ReportAction,OpenWindowAction):
+class ShowDetailAction(RowAction):
+    opens_a_window = True
+  
+    #~ sort_index = 1
     callable_from = (GridEdit,)
     #~ show_in_detail = False
     #~ needs_selection = True
@@ -220,7 +247,12 @@ class ShowDetailAction(ReportAction,OpenWindowAction):
         #~ return _("%s (Detail)")  % unicode(elem)
         
 
-class InsertRow(ReportAction,OpenWindowAction):
+RowAction.callable_from = (GridEdit,ShowDetailAction)
+
+
+class InsertRow(TableAction):
+    opens_a_window = True
+    sort_index = 2
     hide_top_toolbar = True
     readonly = False
     callable_from = (GridEdit,ShowDetailAction)
@@ -234,7 +266,9 @@ class InsertRow(ReportAction,OpenWindowAction):
     def get_action_title(self,rr):
         return _("Insert into %s") % force_unicode(rr.get_title())
 
-class DuplicateRow(ReportAction,OpenWindowAction):
+class DuplicateRow(RowAction):
+    opens_a_window = True
+  
     readonly = False
     callable_from = (GridEdit,ShowDetailAction)
     name = 'duplicate'
@@ -259,7 +293,8 @@ class ShowEmptyTable(ShowDetailAction):
     #~ def __str__(self):
         #~ return str(self.actor)+'.'+self.name
         
-class Calendar(OpenWindowAction):
+class Calendar(Action):
+    opens_a_window = True
     label = _("Calendar")
     name = 'grid' # because...
     default_format = 'html'
@@ -275,18 +310,6 @@ class Calendar(OpenWindowAction):
 
     
 
-class RowAction(Action):
-    """
-    Base class for actions that are executed server-side on an individual row.
-    """
-    callable_from = (GridEdit,ShowDetailAction)
-    
-    #~ def disabled_for(self,obj,request):
-        #~ return False
-            
-    def run(self,rr,elem,**kw):
-        raise NotImplementedError("%s has no run() method" % self.__class__)
-
 class UpdateRowAction(RowAction):
     readonly = False
     
@@ -299,6 +322,7 @@ class ListAction(Action):
     
 
 class DeleteSelected(Action):
+    sort_index = 3
     readonly = False
     callable_from = (GridEdit,ShowDetailAction)
     #~ needs_selection = True
@@ -322,11 +346,12 @@ class SubmitInsert(SubmitDetail):
 
 
 """
-"General actions"
+"General actions" don't need to know their actor, so we can have 
+the same instance for all actors.
 """
-CREATE = SubmitInsert()
-UPDATE = SubmitDetail()
-DELETE = DeleteSelected()
+CREATE = SubmitInsert(sort_index=1)
+UPDATE = SubmitDetail(sort_index=1)
+DELETE = DeleteSelected(sort_index=5)
 
 
 

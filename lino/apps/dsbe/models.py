@@ -2570,9 +2570,10 @@ def site_setup(site):
     #~ from lino.modlib.cal import models as cal
 
     class EventDetail(cal.EventDetail):
+        # inherits the start and end panels
         main = """
         type summary user project
-        start end all_day #duration status 
+        start end #all_day #duration status 
         place priority access_class transparent rset 
         calendar owner created:20 modified:20 user_modified 
         description GuestsByEvent

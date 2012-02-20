@@ -1298,12 +1298,22 @@ Lino.MainPanel = {
                 //~ this.params_panel.hide();
             //~ else
                 //~ this.params_panel.show();
-            console.log("20120210 add_params_panel",state,this.params_panel);
+            //~ console.log("20120210 add_params_panel",state,this.params_panel);
             if (state) this.params_panel.show();
             else this.params_panel.hide();
             this.get_containing_window().doLayout();
           }
-        }])
+        }]);
+        var t = this;
+        Ext.each(this.params_panel.fields,function(f) {
+          //~ f.on('valid',function() {t.refresh()});
+          if (f instanceof Ext.form.Checkbox)
+              f.on('check',function() {t.refresh()});
+          else if (f instanceof Ext.form.TriggerField)
+              f.on('select',function() {t.refresh()});
+          else
+              f.on('change',function() {t.refresh()});
+          });
       }
       return tbar;
   }

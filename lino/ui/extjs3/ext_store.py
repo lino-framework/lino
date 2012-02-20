@@ -354,6 +354,8 @@ class RequestStoreField(StoreField):
         return self.format_value(ar,v)
         
     def format_value(self,ar,v):
+        if v is None:
+            raise Exception("Got None value for %s" % self)
         n = v.get_total_count()
         if n == 0:
             return ''

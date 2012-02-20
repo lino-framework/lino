@@ -476,16 +476,16 @@ def get_build_method(elem):
 
 #~ class PrintAction(actions.RedirectAction):
 class BasePrintAction(actions.RowAction):
-  
+    sort_index = 10
     name = 'print'
     label = _('Print')
     
     callable_from = (actions.GridEdit, actions.ShowDetailAction,
         actions.ShowEmptyTable)
     
-    def __init__(self,rpt,*args,**kw):
-        self.actor = rpt
-        actions.RowAction.__init__(self,*args,**kw)
+    #~ def __init__(self,rpt,*args,**kw):
+        #~ self.actor = rpt
+        #~ actions.RowAction.__init__(self,*args,**kw)
     
     def before_build(self,bm,elem):
         """Return the target filename if a document needs to be built,
@@ -556,11 +556,12 @@ class DirectPrintAction(BasePrintAction):
     A Print Action that uses a hard-coded template.
     """
     #~ def __init__(self,rpt,name,label,bmname,tplname):
-    def __init__(self,rpt,name=None,label=None,tplname='Default',build_method=None):
+    def __init__(self,rpt,name=None,label=None,tplname='Default',build_method=None,**kw):
         #~ if name is None: name = 'print'
         #~ if label is None: label = _("Print")
         #~ if tplname is None: tplname = 'Default'
-        BasePrintAction.__init__(self,rpt,name,label)
+        super(DirectPrintAction,self).__init__(rpt,name,label,**kw)
+        #~ BasePrintAction.__init__(self,rpt,name,label)
         #~ self.bm =  bm_dict.get(build_method or settings.LINO.preferred_build_method)
         self.build_method = build_method
         self.tplname = tplname
@@ -602,6 +603,7 @@ class ClearCacheAction(actions.RowAction):
     """
     Defines the :guilabel:`Clear cache` button on a Printable record.
     """
+    sort_index = 11
     name = 'clear'
     label = _('Clear cache')
     

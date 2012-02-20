@@ -1705,7 +1705,8 @@ tinymce.init({
             #~ fmt = request.GET.get('fmt',a.default_format)
             fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,a.default_format)
 
-            if isinstance(a,actions.OpenWindowAction):
+            #~ if isinstance(a,actions.OpenWindowAction):
+            if a.opens_a_window:
               
                 if fmt == ext_requests.URL_FORMAT_JSON:
                     if pk == '-99999':
@@ -1896,12 +1897,12 @@ tinymce.init({
                         f.write(ln + '\n')
                     
                 for a in rpt.get_actions():
-                    if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
-                        for ln in self.js_render_detail_action_FormPanel(rh,a):
-                              f.write(ln + '\n')
-                    #~ if isinstance(a,(table.WindowAction)):
-                    for ln in self.js_render_window_action(rh,a):
-                        f.write(ln + '\n')
+                    if a.opens_a_window:
+                        if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
+                            for ln in self.js_render_detail_action_FormPanel(rh,a):
+                                  f.write(ln + '\n')
+                        for ln in self.js_render_window_action(rh,a):
+                            f.write(ln + '\n')
 
 
             #~ f.write(jscompress(js))

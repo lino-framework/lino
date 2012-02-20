@@ -173,11 +173,13 @@ class NewClients(AllPersons):
     
         
 #~ class UsersByNewcomer(dd.VirtualTable):
-class UsersByNewcomer(dd.Table):
+#~ class UsersByNewcomer(dd.Table):
+class UsersByNewcomer(users.Users):
     """
     A list of the Users that are susceptible to become responsible for a Newcomer.
     """
-    model = users.User
+    #~ model = users.User
+    editable = False # even root should not edit here
     filter = models.Q(is_spis=True)
     label = _("Users by Newcomer")
     column_names = 'name primary_clients active_clients new_clients newcomer_quota newcomer_score'

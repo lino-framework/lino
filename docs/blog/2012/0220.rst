@@ -76,7 +76,35 @@ Im Code werden folgende Änderungen kommen:
 Actors and their actions
 ------------------------
 
+Auch der folgende Schönheitsfehler wird noch ein paar interne Änderungen brauchen:
+
 - User Detail has UpdateReminders as *first* button. Das kommt dadurch, 
   dass diese Aktion in der site_setup() von modlib.cal erstellt wird, was 
   vor dem setup() der Tabellen geschieht.
 
+Vielleicht kriege ich das bis Aschermittwoch fertig, dann käme es noch mit in die 
+:doc:`/releases/1.4.0` rein.
+Aber vorher ein Checkin und ein inoffizielles pre-release.
+Upps, das hat er gleich auch nach 
+`PyPI <http://pypi.python.org/pypi/lino/1.4.0>`
+gepostet, 
+also weniger inoffiziell als ich es ursprünglich dachte...
+
+Noch kleine Bugs
+----------------
+
+- Zwei selten benutzte Menübefehle 
+  :menuselection:`Konfigurierung --> Kontakte --> Funktionen` 
+  und
+  :menuselection:`Explorer --> Drittpartner` 
+  fehlten.
+
+- newcomers.UsersByNewcomer hatte kein Detail weil es nicht von users.Users erbte.
+
+Automatic refresh when user changes table parameters
+----------------------------------------------------
+
+Wenn man in den Parametern einer Tabelle etwas ändert, 
+braucht man jetzt nicht mehr den Refresh-Button zu klicken.
+Diese Feature könnte aber auch lästig sein in langsamen Listen.
+Zu beobachten.

@@ -465,6 +465,7 @@ class AbstractTable(actors.Actor):
     Otherwise it will be set to `False` if the table has a `get_data_rows` method
     """
     
+    
     def __init__(self,*args,**kw):
         raise NotImplementedError("20120104")
     
@@ -499,12 +500,12 @@ class AbstractTable(actors.Actor):
             self.grid_configs.append(gc)
             
         load_config_files(loader,'%s.*gc' % self)
-            
-        self.default_action = actions.GridEdit(self)
+        
+        self.default_action = actions.GridEdit(self) # 20120220 
         #~ self.setup_detail_layouts()
         #~ self.set_actions([])
-        self.setup_actions()
         self.add_action(self.default_action)
+        self.setup_actions()
         #~ if self.default_action.actor != self:
             #~ raise Exception("20120103 %r.do_setup() : default.action.actor is %r" % (
               #~ self,self.default_action.actor))
@@ -580,7 +581,8 @@ class AbstractTable(actors.Actor):
         :attr:`AbstractTable.slave_grid_format` is `html`.
         """
         def meth(master,ar):
-            ar = self.request(ui,request=ar.request,action=self.default_action,master_instance=master)
+            ar = self.request(ui,request=ar.request,
+                action=self.default_action,master_instance=master)
             ar.renderer = ui.ext_renderer
             #~ ar = TableRequest(ui,self,None,self.default_action,master_instance=master)
             s = ui.table2xhtml(ar).tostring()
@@ -591,8 +593,8 @@ class AbstractTable(actors.Actor):
 class VirtualTable(AbstractTable):
     """
     An :class:`AbstractTable` that works on an 
-    volatile (non persistent)
-    list of "rows", using only virtual fields.
+    volatile (non persistent) list of rows.
+    By nature it cannot have database fields, only virtual fields.
     """
     
     @classmethod
@@ -601,7 +603,6 @@ class VirtualTable(AbstractTable):
         if action is None:
             action = self.default_action
         return VirtualTableRequest(ui,self,request,action,**kw)
-        #~ return self.default_action.request(ui,**kw)
 
 
 
