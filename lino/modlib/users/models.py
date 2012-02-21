@@ -28,6 +28,9 @@ from lino.utils import mti
 #~ from lino.modlib.contacts.models import Contact
 from lino.modlib.contacts import models as contacts
 
+if not settings.LINO.is_installed('contacts'):
+    raise Exception("Cannot install modlib.users without installing modlib.contacts")
+
 
 class User(contacts.Contact,contacts.PersonMixin):
     """
@@ -136,11 +139,10 @@ class Users(dd.Table):
         if user is not None and user == obj: return True
         return False
           
-if dd.is_installed('contacts'):
   
-    dd.inject_field(contacts.Contact,
-        'is_user',
-        mti.EnableChild('users.User',verbose_name=_("is User")),
-        """Whether this Contact is also a User."""
-        )
+dd.inject_field(contacts.Contact,
+    'is_user',
+    mti.EnableChild('users.User',verbose_name=_("is User")),
+    """Whether this Contact is also a User."""
+    )
 

@@ -995,3 +995,9 @@ def migrate_from_1_3_9(globals_dict):
     def jobs_contractssituation_objects(): return None
     globals_dict.update(jobs_contractssituation_objects=jobs_contractssituation_objects)
     return '1.4.0'
+    
+def migrate_from_1_4_0(globals_dict): 
+    """
+    No database changes.
+    """
+    return '1.4.1'

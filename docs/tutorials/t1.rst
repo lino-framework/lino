@@ -37,14 +37,11 @@ When you've done and learned all this, we go further.
 
 Replace the :xfile:`settings.py` 
 of your project directory 
-with the following:
+with the following::
 
-.. literalinclude:: settings.py
+.. literalinclude:: /lino/tutorials/t1/settings.py
+
     
-The ``polls`` subdirectory which you created during the Django 
-Tutorial is not necessary for now, but you'll need it again 
-later.
-
 
 
 More about the `settings.py` file
@@ -101,11 +98,11 @@ Some more settings deserve our attention at this moment:
 
 - Lino requires a setting named ``LINO`` which must 
   be a :class:`lino.Lino` instance.
-  The first argument of the Lino instantiator 
+  The first argument of the instantiator for the Lino class
   is the built-in Python variable `__file__`.
-  That's how Lino knows the full path of your local settings file.
+  This way you tell Lino the full path of your local settings file.
   The second argument is the `global()` namespace of your settings module.
-  Lino will use this to fill intelligent default values to your settings.
+  Lino will use this to fill "intelligent default values" to your settings.
   That's why these lines should be at the *beginning* of your file.
 
 - More documentation about the :setting:`LOGGING` 
@@ -119,8 +116,8 @@ Some more settings deserve our attention at this moment:
   because Lino defines them for you.
 
 You might want to compare your files with our version 
-of this step of the tutorial. 
-See :srcref:`/lino/tutorials/t1a`.
+which you can see in the code repository at
+:srcref:`/lino/tutorials/t1`.
 
  
 Designing the user interface
@@ -138,15 +135,15 @@ A Table definition has
 attributes
 like `filter` and `sort_order` 
 which will be forwarded to the QuerySet 
-and which we sometimes call "horizontal layout" 
+and which we sometimes call "row parameters" 
 because they influence the rows to be selected.
-But it usually also has a "vertical layout", 
-for example `column_names` attribute.
+But it also has configurable attributes like 
+`column_names` or `detail_template` 
+who go beyond the concept of a QuerySet.
+You'll soon learn more about them.
 
-But also the Detail Window in Lino 
-(the form views used to display model instances one by one) 
-are always related to a Table.
-To define these Tables, you simply need to declare their classes.
+To define Tables, you simply need to declare their classes.
+Tables never get instantiated.
 Lino discovers and analyzes them when it initializes.
 
 Add the following code to the end your :file:`polls/models.py`::
@@ -159,7 +156,13 @@ Add the following code to the end your :file:`polls/models.py`::
       
   class Choices(dd.Table):
       "Displays a list of all Choices."
+      
       model = Choice
+      
+      detail_template = """
+        id question pub_date
+        polls.ChoicesByPoll
+        """
           
   class ChoicesByPoll(Choices):
       "Displays the Choices for a given Poll."
@@ -170,10 +173,9 @@ Each Table class must have at least one class attribute
 `model` defined. This points to the Model on which this 
 table will "work".
 
-There are quite some other options for tables, 
+There are a lot of other options for tables, 
 and they are documented in Lino's API doc for the
 :class:`lino.core.table.Table` class.
-
 
 Since tables are normal Python classes 
 they can use inheritance.
@@ -183,16 +185,17 @@ that's why we don't need to explicitly specify that
 
 Note also that `ChoicesByPoll` is a :term:`slave table`
 because it has a class attribute 
-:attr:`lino.dd.Table.master_key`.
-The `master_key` attribute of a Table is a string containing 
+:attr:`master_key <lino.core.table.Table.master_key>`.
+This is a string containing 
 the name of a ForeignKey field which must exist in the Table's 
 model.
 `ChoicesByPoll` is a table of `Choice` instances
 having a `Poll` instance as master. 
-A slave table needs to know on which master it is to execute.
+A slave table is a table who depends on a master.
+needs to know on which master it is to execute.
 
 Note that you can define more than one Table per Model.
-This is an important difference from Django's concept of 
+This is a fundamental difference from Django's concept of 
 the `ModelAdmin` class and `Model._meta` options.
 
 While you are in :file:`polls/models.py` you should also 
@@ -207,25 +210,24 @@ not be NULL. Django's `auto_now_add` option is one possible solution
 to this.
 
 Compare your :file:`models.py` to our model at
-:srcref:`/lino/tutorials/t1a/polls/models.py`.
-
+:srcref:`/lino/tutorials/t1/polls/models.py`.
 
 Then add a `setup_menu` method to the `Lino` class 
 defined in your :file:`settings.py`::
 
     class Lino(Lino):
         title = "Lino Tutorial"
+        
         def setup_menu(self,ui,user,main):
             m = main.add_menu("polls","~Polls")
-            m.add_action('polls.Polls')
+            m.add_action(self.modules.polls.Polls)
             
             m = main.add_menu("config","~Configure")
-            m.add_action('users.Users')
-        extjs_root = '/'
+            m.add_action(self.modules.users.Users)
         
         
 Compare your :xfile:`settings.py` to our model at
-:srcref:`/lino/tutorials/t1a/settings.py`.
+:srcref:`/lino/tutorials/t1/settings.py`.
 
 That's all! Now start the development server::
 
@@ -255,15 +257,9 @@ Defining your first data entry form
 
 You'll have noticed that there is currently 
 no way to enter Choices for a poll.
-We are going to fix that quickly:
-Create a :xfile:`config` directory for your polls application::
+We are going to fix that quickly!
+Add the following attribute to the declaration of your `Choices` table
 
-  $ mkdir /home/luc/mysite/polls/config/polls/Poll
-  
-and create a text file named `general.dtl` in that 
-directory with the following content::
-
-    main = 
       id question pub_date
       ChoicesByPoll
 

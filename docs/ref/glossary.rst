@@ -118,3 +118,9 @@ Glossary
     (engl. "Crossroads Bank for Social Security").
     See :doc:`/topics/bcss`.
     
+  PyPI
+    The Python Package Index.
+    Lino source releases are published there.
+    See http://pypi.python.org/pypi/lino
+    See http://pypi.python.org/pypi/lino/1.4.0
+  

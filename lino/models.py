@@ -43,6 +43,7 @@ from lino.utils import perms
 from lino.tools import obj2str, sorted_models_list
 from lino.tools import resolve_field
 from lino.utils.choosers import chooser
+from lino.core import actions
 
 class SiteConfig(models.Model):
     """
@@ -62,15 +63,70 @@ class SiteConfig(models.Model):
         #~ return r
    
     def __unicode__(self):
-        return force_unicode(_("Global Site Parameters"))
+        return force_unicode(_("Site Parameters"))
 
+#~ class SiteConfigDetail(dd.DetailLayout):
+    #~ about = """
+    #~ versions:40x5 startup_time:30
+    #~ lino.ModelsBySite:70x10
+    #~ """
+    #~ config = """
+    #~ default_build_method
+    #~ """
+    #~ main = "about config"
+    
+    #~ def setup_handle(self,lh):
+        #~ lh.config.label = _("Site Parameters")
+        #~ lh.about.label = _("About")
+    
 class SiteConfigs(dd.Table):
     model = SiteConfig
     #~ default_action_class = dd.OpenDetailAction
-    has_navigator = False
+    #~ has_navigator = False
+    hide_top_toolbar = True
     #~ can_delete = perms.never
-    detail_template = "default_build_method"
-
+    detail_template = """
+    default_build_method
+    lino.ModelsBySite
+    """
+    #~ detail_layout = SiteConfigDetail()
+    #~ editable = True
+    
+    #~ window_size = (700,400)
+    #~ detail_layout = AboutDetail()
+    #~ detail_template = """
+    #~ """
+    
+    @classmethod
+    def get_permission(self,action,user,obj):
+        if not user.is_superuser:
+            return action.readonly
+        #~ if isinstance(action,actions.DeleteSelected):
+            #~ return False
+        return True
+        
+    @classmethod
+    def setup_actions(self):
+        super(SiteConfigs,self).setup_actions()
+        self.add_action(BuildLinoJS())
+        #~ self.remove_action(actions.DeleteSelected
+   
+    #~ @dd.constant(_("Versions"))
+    #~ def versions(cls,ui):
+        #~ return lino.welcome_html(ui)
+        
+    #~ @dd.displayfield(_("Versions"))
+    #~ def versions(self,obj,ar):
+        #~ return lino.welcome_html(ar.ui)
+        
+    #~ @dd.constantfield(_("Versions"))
+    #~ def versions(cls,self,req):
+        #~ return lino.welcome_html()
+        
+    #~ @dd.virtualfield(models.DateTimeField(_("Server up since")))
+    #~ def startup_time(cls,self,req):
+        #~ return settings.LINO.startup_time
+    
 
     
     
@@ -93,36 +149,87 @@ def update_site_config(**kw):
         setattr(sc,k,v)
     sc.save()
 
+if settings.LINO.is_installed('contenttypes'):
 
-class ContentTypes(dd.Table):
-    """
-    Deserves more documentation.
-    """
-    model = contenttypes.ContentType
-    
-    detail_template = """
-    id name app_label model base_classes
-    lino.HelpTextsByModel
-    """
-    
-    @dd.displayfield(_("Base classes"))
-    def base_classes(self,obj,ar):
-        chunks = []
-        def add(cl):
-            for b in cl.__bases__:
-                add(b)
-            if issubclass(cl,models.Model) and cl is not models.Model and cl._meta.managed: # :
-                if getattr(cl,'_meta',False) and not cl._meta.abstract:
-                    logger.info("20120205 adding(%r)",cl)
-                    ct = contenttypes.ContentType.objects.get_for_model(cl)
-                    chunks.append(ar.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
-        if obj is not None:
-            #~ add(obj.model_class())
-            for b in obj.model_class().__bases__:
-                add(b)
-        return ', '.join(chunks)
-    
-    
+  class ContentTypes(dd.Table):
+      """
+      Deserves more documentation.
+      """
+      model = contenttypes.ContentType
+      
+      detail_template = """
+      id name app_label model base_classes
+      lino.HelpTextsByModel
+      """
+      
+      @dd.displayfield(_("Base classes"))
+      def base_classes(self,obj,ar):
+          chunks = []
+          def add(cl):
+              for b in cl.__bases__:
+                  add(b)
+              if issubclass(cl,models.Model) and cl is not models.Model and cl._meta.managed: # :
+                  if getattr(cl,'_meta',False) and not cl._meta.abstract:
+                      logger.info("20120205 adding(%r)",cl)
+                      ct = contenttypes.ContentType.objects.get_for_model(cl)
+                      chunks.append(ar.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
+          if obj is not None:
+              #~ add(obj.model_class())
+              for b in obj.model_class().__bases__:
+                  add(b)
+          return ', '.join(chunks)
+      
+      
+      
+  class HelpText(models.Model):
+      
+      class Meta:
+          verbose_name = _("Help Text")
+          verbose_name_plural = _("Help Texts")
+          
+      content_type = models.ForeignKey(contenttypes.ContentType,
+          verbose_name=_("Model"))
+      field = models.CharField(_("Field"),
+          max_length=200)
+
+      help_text = dd.RichTextField(_("HelpText"),
+          blank=True,null=True,format='plain')
+      
+      def __unicode__(self):
+          return self.content_type.app_label + '.' + self.content_type.name + '.' + self.field
+          
+      @chooser(simple_values=True)
+      def field_choices(cls,content_type):
+          l = []
+          if content_type is not None:
+              meta = content_type.model_class()._meta
+              #~ for f in meta.fields: yield f.name
+              #~ for f in meta.many_to_many: yield f.name
+              #~ for f in meta.virtual_fields: yield f.name
+              for f in meta.fields: 
+                  if not getattr(f,'_lino_babel_field',False):
+                      l.append(f.name)
+              for f in meta.many_to_many: l.append(f.name)
+              for f in meta.virtual_fields: l.append(f.name)
+          return l
+          
+      #~ def get_field_display(cls,fld):
+          #~ return fld
+
+      @dd.virtualfield(models.CharField(_("Verbose name"),max_length=200))
+      def verbose_name(self,request):
+          return resolve_field(unicode(self)).verbose_name
+              
+              
+              
+  class HelpTexts(dd.Table):
+      model = HelpText
+      column_names = "field verbose_name help_text id content_type"
+      
+  class HelpTextsByModel(HelpTexts):
+      master_key = 'content_type'
+
+
 if False:
   
     class DataControlListing(mixins.Listing):
@@ -155,57 +262,9 @@ if False:
             html = '<div class="htmlText">%s</div>' % html
             return html
         
-    
-class HelpText(models.Model):
-    
-    class Meta:
-        verbose_name = _("Help Text")
-        verbose_name_plural = _("Help Texts")
-        
-    content_type = models.ForeignKey(contenttypes.ContentType,
-        verbose_name=_("Model"))
-    field = models.CharField(_("Field"),
-        max_length=200)
 
-    help_text = dd.RichTextField(_("HelpText"),
-        blank=True,null=True,format='plain')
-    
-    def __unicode__(self):
-        return self.content_type.app_label + '.' + self.content_type.name + '.' + self.field
-        
-    @chooser(simple_values=True)
-    def field_choices(cls,content_type):
-        l = []
-        if content_type is not None:
-            meta = content_type.model_class()._meta
-            #~ for f in meta.fields: yield f.name
-            #~ for f in meta.many_to_many: yield f.name
-            #~ for f in meta.virtual_fields: yield f.name
-            for f in meta.fields: 
-                if not getattr(f,'_lino_babel_field',False):
-                    l.append(f.name)
-            for f in meta.many_to_many: l.append(f.name)
-            for f in meta.virtual_fields: l.append(f.name)
-        return l
-        
-    #~ def get_field_display(cls,fld):
-        #~ return fld
+if settings.LINO.is_installed('users'):
 
-    @dd.virtualfield(models.CharField(_("Verbose name"),max_length=200))
-    def verbose_name(self,request):
-        return resolve_field(unicode(self)).verbose_name
-            
-            
-            
-class HelpTexts(dd.Table):
-    model = HelpText
-    column_names = "field verbose_name help_text id content_type"
-    
-class HelpTextsByModel(HelpTexts):
-    master_key = 'content_type'
-
-if settings.LINO.user_model: 
-  
     class TextFieldTemplate(mixins.AutoUser):
         """A reusable block of text that can be selected from a text editor to be 
         inserted into the text being edited.
@@ -259,11 +318,47 @@ Please report any anomalies.""",
 
     
 
+class ModelsBySite(dd.VirtualTable):
+    label = _("Models")
+    #~ column_defaults = dict(width=8)
+    #~ column_names = "app name verbose_name docstring rows"
+    column_names = "app name docstring rows"
+    master = SiteConfig
+    
+    slave_grid_format = 'html'    
+  
+    @classmethod
+    def get_data_rows(self,ar):
+        for model in models.get_models():
+            yield model
+                
+    @dd.displayfield(_("app_label"))
+    def app(self,obj,ar):
+        return obj._meta.app_label
+        
+    @dd.displayfield(_("name"))
+    def name(self,obj,ar):
+        return obj.__name__
+        
+    #~ @dd.displayfield(_("verbose name"))
+    #~ def vebose_name(self,obj,ar):
+        #~ return unicode(obj._meta.vebose_name)
+        
+    @dd.displayfield(_("docstring"))
+    def docstring(self,obj,ar):
+        return obj.__doc__
+        
+    @dd.requestfield(_("Rows"))
+    def rows(self,obj,ar):
+        return obj._lino_model_report.request(ar.ui,
+          user=ar.get_user(),renderer=ar.renderer)
+        
 class Models(dd.VirtualTable):
     label = _("Models")
     #~ column_defaults = dict(width=8)
     #~ column_names = "app name verbose_name docstring rows"
     column_names = "app name docstring rows"
+    #~ master = SiteConfig
     
     slave_grid_format = 'html'    
   
@@ -430,7 +525,8 @@ class About(dd.EmptyTable):
         super(About,self).setup_actions()
         self.add_action(BuildLinoJS())
    
-    @dd.constant(_("Versions"))
+    #~ @dd.constant(_("Versions"))
+    @dd.constant()
     def versions(cls,ui):
         return lino.welcome_html(ui)
         
@@ -448,6 +544,54 @@ class About(dd.EmptyTable):
     
 
 
+class Home(dd.EmptyTable):
+    label = _("Home") 
+    hide_window_title = True
+    hide_top_toolbar = True
+    #~ detail_layout = HomeDetail()
+    detail_template = """
+    quick_links:80x1
+    welcome
+    """
+    
+    #~ @dd.virtualfield(dd.HtmlBox())
+    #~ def tasks_summary(cls,self,req):
+        #~ return cal.tasks_summary(req.ui,req.get_user())
+    
+    @dd.virtualfield(dd.HtmlBox())
+    def quick_links(cls,self,req):
+        quicklinks = settings.LINO.get_quicklinks(self,req.get_user())
+        if quicklinks.items:
+            return 'Quick Links: ' + ' '.join(
+              [req.ui.ext_renderer.action_href_js(mi.action,mi.params) 
+                for mi in quicklinks.items]
+              )
+      
+    #~ @dd.virtualfield(dd.HtmlBox())
+    #~ def missed_reminders(cls,self,req):
+        #~ return cal.reminders(req.ui,req.get_user(),days_back=90,
+          #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+          
+    #~ @dd.constant('')
+    @dd.constant()
+    def welcome(cls,ui):
+        return "Welcome to the <b>%s</b> server." % cgi.escape(settings.LINO.title)
+    
+    #~ @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
+    #~ def missed_reminders(cls,self,req):
+        #~ return cal.reminders(req.ui,req.get_user(),days_back=90,
+          #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+    #~ @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
+    #~ def coming_reminders(cls,self,req):
+        #~ return cal.reminders(req.ui,req.get_user(),days_forward=30,
+            #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+
+
+
+
+
 
 def add_site_menu(site):
     m = site.add_menu("site",_("~Site"))
@@ -456,7 +600,3 @@ def add_site_menu(site):
         label=_('Global Site Parameters'),
         can_view=perms.is_staff)
     return m
-    #~ m.add_action('lino.SiteConfigs.detail',
-      #~ label=_('Site Configuration'),
-      #~ can_view=perms.is_staff,
-      #~ params=dict(record_id=1))

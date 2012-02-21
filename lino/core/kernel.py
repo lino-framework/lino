@@ -48,6 +48,7 @@ from django.utils.safestring import mark_safe
 import lino
         
 from lino.core import table
+from lino.core import actions
 #~ from lino.core import layouts
 from lino.utils import perms
 from lino.utils import dblogger
@@ -128,14 +129,16 @@ def analyze_models(self):
                     """
                     f.verbose_name = f.rel.to._meta.verbose_name
                     
-    from django.db.utils import DatabaseError
-    try:
-        from lino.models import HelpText
-        for ht in HelpText.objects.filter(help_text__isnull=False):
-            resolve_field(unicode(ht)).help_text = ht.help_text
-    except DatabaseError,e:
-        logger.warning("No help texts : %s",e)
-        pass
+    if settings.LINO.is_installed('contenttypes'):
+      
+        from django.db.utils import DatabaseError
+        try:
+            from lino.models import HelpText
+            for ht in HelpText.objects.filter(help_text__isnull=False):
+                resolve_field(unicode(ht)).help_text = ht.help_text
+        except DatabaseError,e:
+            logger.warning("No help texts : %s",e)
+            pass
                     
 
 if False:
@@ -395,6 +398,22 @@ def setup_site(self,make_messages=False):
     #~ cls = type("Modules",tuple(),d)
     #~ self.modules = cls()
     #~ logger.info("20120102 modules: %s",self.modules)
+    
+    
+    spec = self.index_view_action
+    if spec:
+        if isinstance(spec,basestring):
+            spec = self.modules.resolve(spec)
+            if spec is None:
+                raise Exception("Could not resolve action specifier %r" % spec)
+        if isinstance(spec,actions.Action):
+            a = spec
+        elif isinstance(spec,type) and issubclass(spec,models.Model):
+            a = spec._lino_model_report.default_action
+        elif isinstance(spec,type) and issubclass(spec,actors.Actor):
+            a = spec.default_action
+        self.index_view_action = a
+    
       
     self._setup_done = True
     self._setting_up = False

@@ -12,14 +12,9 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  User Detail has UpdateReminders as *first* button. Das kommt dadurch, 
-    dass diese Aktion in der site_setup() von modlib.cal erstellt wird, was 
-    vor dem setup() der Tabellen geschieht.
-
 #.  Picker for calendar color. Or at least a ChoiceList with names.
     http://ext.ensible.com/forum/viewtopic.php?f=2&t=339
     See :file:`calendar-colors.css`
-
     
 
 #.  http://www.sencha.com/learn/grid-faq/

@@ -1,7 +1,33 @@
 20120221
 ========
 
-I understood that modifying the system-wide Python Path isn't 
-good practice and updated :doc:`/admin/install_debian`.
+Got Jana having the Lino version configured per project.
+Worked on :doc:`/admin/install_debian`.
 
-New tool :mod:`lino.utils.diag`
+SiteConfigs didn't have `hide_top_toolbar=True`.
+Title of a Detail Window on a table with `hide_top_toolbar=True` 
+no longer includes the table's title.
+Same for New and Delete buttons.
+
+Tried to put together SiteConfigs and About, 
+but understood that they are different.
+About should never show a "save" button...
+
+JobsOverview had some bugs:
+
+- there was no refresh button
+- didn't correctly check for parameter values.
+
+And another bug:
+quicklink "Detail" muss heißen "Detail Personen".
+Das kam, weil ShowDetail ja jetzt eine RowAction ist.
+
+Oops, there were meanwhile 88 downloads of the 1.4.0 
+tarball on :term:`PyPI`, so I should rather not touch these 
+files and create a new version instead:
+:doc:`/releases/1.4.1`.
+
+But a remark to those who downloaded Lino recently: 
+give us some feedback: 
+Why did you download it? 
+What did you expect? 

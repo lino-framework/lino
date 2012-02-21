@@ -552,7 +552,11 @@ def elem2rec_detailed(ar,elem,**rec):
     """
     rh = ar.ah
     rec = elem2rec1(ar,rh,elem,**rec)
-    rec.update(title=ar.get_title() + u" » " + unicode(elem))
+    if ar.report.hide_top_toolbar:
+        rec.update(title=unicode(elem))
+    else:
+        rec.update(title=ar.get_title() + u" » " + unicode(elem))
+    #~ rec.update(title=ar.actor.get_detail_title(ar,elem))
     #~ rec.update(title=rh.report.model._meta.verbose_name + u"«%s»" % unicode(elem))
     #~ rec.update(title=unicode(elem))
     rec.update(id=elem.pk)
@@ -667,12 +671,14 @@ class ExtUI(base.UI):
         #~ self.generate_linolib_messages()
         
     def create_layout_element(self,lh,name,**kw):
-        
-        try:
+        if True:
             de = lh.get_data_elem(name)
-        except Exception, e:
-            de = None
-            name += " (" + str(e) + ")"
+        else:
+            try:
+                de = lh.get_data_elem(name)
+            except Exception, e:
+                de = None
+                name += " (" + str(e) + ")"
             
         if isinstance(de,table.RemoteField):
             dummy = ext_elems.field2elem(lh,de.field,**kw)
@@ -1210,8 +1216,9 @@ tinymce.init({
 
     def index_view(self, request,**kw):
         #~ from lino.lino_site import lino_site
-        if True:
-            kw.update(on_ready=self.ext_renderer.action_call(settings.LINO.modules.dsbe.Home.default_action))
+        if settings.LINO.index_view_action:
+            kw.update(on_ready=self.ext_renderer.action_call(
+              settings.LINO.index_view_action))
         #~ kw.update(title=settings.LINO.modules.dsbe.Home.label)
         #~ kw.update(title=lino_site.title)
         #~ mnu = py2js(lino_site.get_site_menu(request.user))
@@ -2137,6 +2144,7 @@ tinymce.init({
                     params_template= ' '.join(h.report.parameters.keys())
                 pl = layouts.ParamsLayout(h.report,params_template)
                 h.params_layout = pl.get_handle(self)
+                #~ h.params_layout.main.update(hidden = h.report.params_panel_hidden)
                 #~ h.params_layout = layouts.LayoutHandle(self,pl)
                 #~ logger.info("20120121 %s params_layout is %s",h,h.params_layout)
             
@@ -2575,7 +2583,11 @@ tinymce.init({
                 #~ return ext_elems.GridMainPanel(lh,name,lh.layout._table,*elems,**pkw)
                 return ext_elems.GridElement(lh,name,lh.layout._table,*elems,**pkw)
             if isinstance(lh.layout,layouts.ParamsLayout) : 
-                return ext_elems.ParameterPanel(lh,name,vertical,*elems,**pkw)
+                return ext_elems.ParamsPanel(lh,name,vertical,*elems,**pkw)
+                #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
+                #~ if lh.layout._table.params_panel_hidden:
+                    #~ fkw.update(hidden=True)
+                #~ return ext_elems.FormPanel(**fkw)
             if isinstance(lh.layout,layouts.DetailLayout): 
                 if len(elems) == 1 or vertical:
                     return ext_elems.DetailMainPanel(lh,name,vertical,*elems,**pkw)

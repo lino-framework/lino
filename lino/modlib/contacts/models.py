@@ -676,7 +676,11 @@ class ContactDocument(models.Model):
     
 
 
-if True: # dd.is_installed('contacts'):
+if settings.LINO.is_installed('contacts'):
+  
+    """
+    Don't inject fields if contacts is just being imported from some other module.
+    """
   
     from lino.models import SiteConfig
 

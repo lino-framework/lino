@@ -186,10 +186,15 @@ class GridColumn(Component):
         
 class Toolbar(Component):
     value_template = "new Ext.Toolbar(%s)"
+    
 class ComboBox(Component):
     value_template = 'new Ext.form.ComboBox(%s)'
+    
 class ExtPanel(Component): # todo: rename this to Panel, and Panel to PanelElement or sth else
     value_template = "new Ext.Panel(%s)"
+
+#~ class FormPanel(Component): 
+    #~ value_template = "new Ext.form.FormPanel(%s)"
 
 class Calendar(Component): 
     value_template = "new Lino.CalendarPanel(%s)"
@@ -1494,7 +1499,28 @@ class DetailMainPanel(Panel):
         return kw
         
 
-class ParameterPanel(DetailMainPanel):
+class ParamsForm(DetailMainPanel):
+    #~ value_template = "new Ext.form.FormPanel(%s)"
+    value_template = "new Ext.form.FormPanel(%s)"
+    #~ pass
+
+class ParamsPanel(Panel):
+    #~ value_template = "new Ext.form.FormPanel(%s)"
+    value_template = "new Ext.form.FormPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
+    #~ pass
+    def __init__(self,lh,name,vertical,*elements,**kw):
+        Panel.__init__(self,lh,name,vertical,*elements,**kw)
+        
+        #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
+        if lh.layout._table.params_panel_hidden:
+            self.value_template = "new Ext.form.FormPanel({hidden:true, layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
+          
+            #~ fkw.update(hidden=True)
+        #~ self.value = 
+        #~ return ext_elems.FormPanel(**fkw)
+    
+
+class unused_ParamsPanel(DetailMainPanel):
     #~ value_template = "new Ext.form.FormPanel(%s)"
     value_template = "new Ext.form.FormPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
     #~ pass

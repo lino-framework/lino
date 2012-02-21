@@ -251,7 +251,8 @@ class Constant(object):
     def __init__(self,text_fn):
         self.text_fn = text_fn
         
-def constant(verbose_name):
+#~ def constant(verbose_name=None):
+def constant():
     """
     Decorator to turn a method into a Constant.
     """

@@ -1038,7 +1038,7 @@ class Store:
             
     def parse_params(self,request,**kw):
         pv = request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES)
-        
+        #~ logger.info("20120221 parse_params(%s)",pv)
         def parse(self,form_value):
             if form_value == '' and not self.field.empty_strings_allowed:
                 return self.form2obj_default
@@ -1060,5 +1060,6 @@ class Store:
         else:
             for i,f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f,'')
+        #~ logger.info("20120221 2 parse_params(%s) --> %r",pv,kw)
         return kw
         

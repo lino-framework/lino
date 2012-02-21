@@ -86,7 +86,7 @@ def get_data_elem(model,name):
     
     #~ rpt = get_slave(model,name)
     if rpt is not None: 
-        if rpt.master is not ContentType:
+        if rpt.master is not None and rpt.master is not ContentType:
             ok = True
             try:
                 if not issubclass(model,rpt.master):

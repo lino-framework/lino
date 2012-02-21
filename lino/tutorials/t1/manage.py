@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.tutorials.t1b.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.tutorials.t1.settings'
 
 import settings
 

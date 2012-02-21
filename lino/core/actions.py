@@ -164,7 +164,13 @@ class Action(object):
         return force_unicode(self.label)
         
     def get_button_label(self):
-        return self.label 
+        if self.actor is None:
+            return self.label 
+        if self is self.actor.default_action:
+            return self.label 
+        else:
+            return u"%s %s" % (self.label,self.actor.label)
+            
         
     def run(self,ar,**kw):
         """
@@ -176,20 +182,6 @@ class Action(object):
 
 class TableAction(Action):
   
-    #~ def __init__(self,actor,*args,**kw):
-        #~ self.actor = actor # actor who offers this action
-        #~ # self.can_view = report.can_view
-        #~ if actor.hide_top_toolbar:
-            #~ self.hide_top_toolbar = True
-        #~ super(TableAction,self).__init__(*args,**kw)
-
-    def get_button_label(self):
-        if self is self.actor.default_action:
-            return self.label 
-        else:
-            return u"%s %s" % (self.label,self.actor.label)
-            
-    #~ def get_list_title(self,rh):
     def get_action_title(self,rr):
         return rr.get_title()
         
@@ -199,9 +191,6 @@ class RowAction(Action):
     Base class for actions that are executed server-side on an individual row.
     """
     
-    #~ def disabled_for(self,obj,request):
-        #~ return False
-            
     def run(self,rr,elem,**kw):
         raise NotImplementedError("%s has no run() method" % self.__class__)
 

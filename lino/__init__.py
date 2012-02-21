@@ -24,7 +24,7 @@ import datetime
 from os.path import join, abspath, dirname, normpath
 
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 """
 Lino version number. 
 *Released* versions are listed under :doc:`/releases`.
@@ -304,7 +304,9 @@ class Lino(object):
     :mod:`lino.modlib.users.middleware`
     """
     
-    remote_user_header = "REMOTE_USER"
+    remote_user_header = None
+    
+    #~ remote_user_header = "REMOTE_USER"
     """
     The name of the header (set by the web server) that Lino consults 
     for finding the user of a request.
@@ -619,6 +621,8 @@ class Lino(object):
     :class:`lino.models.SiteConfig` instance.
     """
     
+    index_view_action = 'lino.Home'
+    
     # for internal use:
     _site_config = None
     
@@ -758,6 +762,9 @@ class Lino(object):
         return __file__
         
     def setup_main_menu(self):
+        """
+        To be implemented by applications.
+        """
         pass
 
     #~ def update(self,**kw):
@@ -781,10 +788,6 @@ class Lino(object):
     site_config = property(get_site_config)
         
         
-    def has_module(self,name):
-        from django.conf import settings
-        return name in settings.INSTALLED_APPS
-        
     def setup(self,**options):
         """
         This is called whenever a user interface 
@@ -795,6 +798,25 @@ class Lino(object):
         """
         from lino.core.kernel import setup_site
         setup_site(self,**options)
+        
+        
+    #~ def has_module(self,name):
+        #~ from django.conf import settings
+        #~ return name in settings.INSTALLED_APPS
+        
+    def is_installed(self,app_label):
+        """
+        Return `True` if :setting:`INSTALLED_APPS` contains an item
+        which ends with the specified `app_label`.
+        """
+        from django.conf import settings
+        if not '.' in app_label:
+            app_label = '.' + app_label
+        for s in settings.INSTALLED_APPS:
+            if s.endswith(app_label):
+                return True
+
+        
 
 
     def get_quicklinks(self,ui,user):
@@ -864,7 +886,8 @@ class Lino(object):
         if self.languages and len(self.languages) > 1:
             yield 'django.middleware.locale.LocaleMiddleware'
         #~ yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
-        if self.user_model:
+        #~ if self.user_model:
+        if self.remote_user_header:
             yield 'lino.utils.auth.RemoteUserMiddleware'
             yield 'django.middleware.doc.XViewMiddleware'
         else:

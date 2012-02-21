@@ -165,10 +165,10 @@ class Menu(MenuItem):
         self.items = newitems
                 
     def add_action(self,spec,action=None,**kw):
-        if isinstance(spec,basestring):
-            a = actors.resolve_action(spec)
-            if a is None:
-                raise Exception("Could not resolve action specifier %r" % spec)
+        #~ if isinstance(spec,basestring):
+            #~ a = actors.resolve_action(spec)
+            #~ if a is None:
+                #~ raise Exception("Could not resolve action specifier %r" % spec)
         if isinstance(spec,actions.Action):
             a = spec
         elif isinstance(spec,type) and issubclass(spec,models.Model):
@@ -181,20 +181,20 @@ class Menu(MenuItem):
                 a = spec.get_action(action)
             else:
                 a = spec.default_action
-                if a.actor is not spec:
-                    raise Exception("20120103 %r != %r" % (a.actor,spec))
+                #~ if a.actor is not spec:
+                    #~ raise Exception("20120103 %r != %r" % (a.actor,spec))
 
         else:
             raise Exception("(%r,%r) is not a valid action specifier" % (spec,action))
         if a is None:
             raise Exception("add_action(%r,%r,%r) found None" % (spec,action,kw))
-        if kw.has_key('params'):
-            if a.actor.__name__ == 'Contacts':
-              raise Exception("20120103")
+        #~ if kw.has_key('params'):
+            #~ if a.actor.__name__ == 'Contacts':
+              #~ raise Exception("20120103")
         return self._add_item(MenuItem(self,a,**kw))
         
-    def add_action_(self,action,**kw):
-        return self._add_item(MenuItem(self,action,**kw))
+    #~ def add_action_(self,action,**kw):
+        #~ return self._add_item(MenuItem(self,action,**kw))
 
     #~ def add_item(self,**kw):
         #~ return self._add_item(Action(self,**kw))

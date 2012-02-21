@@ -50,13 +50,18 @@ class Lino(Lino):
     
     languages = ('de', 'fr', 'nl', 'en')
     
+    index_view_action = "dsbe.Home"
+    
+    remote_user_header = "REMOTE_USER"
+    
     def get_app_source_file(self):
         return __file__
         
     def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons().detail)
         #~ tb.add_action(self.modules.contacts.Persons,'detail')
-        tb.add_action(self.modules.contacts.Persons,'detail')
+        #~ tb.add_action(self.modules.contacts.Persons,'detail')
+        tb.add_action(self.modules.contacts.Persons.detail_action)
         tb.add_action(self.modules.cal.Panel)
         tb.add_action(self.modules.dsbe.MyPersons)
         tb.add_action(self.modules.isip.MyContracts)

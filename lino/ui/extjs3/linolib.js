@@ -1293,15 +1293,17 @@ Lino.MainPanel = {
         tbar = tbar.concat([{ scope:this, 
           text: "$_("[parameters]")", // gear
           enableToggle: true,
-          pressed: ! this.params_panel_hidden,
+          pressed: ! this.params_panel.hidden,
           toggleHandler: function(btn,state) { 
             //~ if (this.params_panel.isVisible()) 
                 //~ this.params_panel.hide();
             //~ else
                 //~ this.params_panel.show();
             //~ console.log("20120210 add_params_panel",state,this.params_panel);
-            if (state) this.params_panel.show();
-            else this.params_panel.hide();
+            if (state) {
+              this.params_panel.show();
+              this.params_panel.doLayout();
+            } else this.params_panel.hide();
             this.get_containing_window().doLayout();
           }
         }]);
@@ -3943,7 +3945,7 @@ Lino.davlink_open = function(webdavURL) {
 
 #end if
 
-#if $settings.LINO.use_extensible and $settings.LINO.has_module('lino.modlib.cal')
+#if $settings.LINO.use_extensible and $settings.LINO.is_installed('lino.modlib.cal')
 
 
 /*

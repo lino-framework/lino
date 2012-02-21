@@ -24,6 +24,7 @@ from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
+from django.conf import settings
 #~ from django.contrib.auth import models as auth
 from django import forms
 from django.core.exceptions import ValidationError
@@ -764,7 +765,7 @@ class InvoicesByCustomer(SalesByCustomer):
 journals.register_doctype(Order,OrdersByJournal)
 journals.register_doctype(Invoice,InvoicesByJournal)
 
-if dd.is_installed('igen'):
+if settings.LINO.is_installed('igen'):
 
     from lino.modlib.contacts.models import Contact
 

@@ -25,8 +25,8 @@ from lino.utils.tables import VirtualTable
 
 from lino.tools import resolve_model, get_app, resolve_field
 
-from lino.core.table import fields_list, is_installed, inject_field
-from lino.core.table import has_fk, is_installed
+from lino.core.table import fields_list, inject_field
+from lino.core.table import has_fk
 from lino.core.table import Table
 #~ from lino.core import table
 #~ Table = table.Table

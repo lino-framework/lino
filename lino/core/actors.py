@@ -109,8 +109,10 @@ class ActorMetaClass(type):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
             
         
-        # attributes that are not inherited from base classes:
-        #~ classDict.setdefault('name',classname)
+        """
+        attributes that are not inherited from base classes:
+        """
+        # classDict.setdefault('name',classname)
         classDict.setdefault('label',None)
         classDict.setdefault('button_label',None)
         classDict.setdefault('title',None)
@@ -239,13 +241,8 @@ class Actor(Handled):
     default_list_action_name = 'grid'
     default_elem_action_name =  'detail'
     
-    hide_top_toolbar = False
+    #~ hide_top_toolbar = False
     
-    hide_window_title = False
-    """
-    This is set to `True` in lino.
-    """
-
     
     disabled_fields = None
     """
@@ -276,10 +273,22 @@ class Actor(Handled):
     refresh of a Detail or Insert form).
     """
     
-    has_navigator = True
+    hide_window_title = False
     """
-    Whether a Detail Form should have navigation buttons.
-    This option is False in :class:`lino.SiteConfigs`.
+    This is set to `True` in home pages
+    (e.g. :class:`lino.apps.dsbe.models.Home`).
+    """
+
+    #~ has_navigator = True
+    hide_top_toolbar = False
+    """
+    Whether a Detail Window should have navigation buttons, a "New" and a "Delete" buttons.
+    In ExtJS UI also influences the title of a Detail Window to specify only 
+    the current element without prefixing the Tables's title.
+    
+    This option is True in 
+    :class:`lino.models.SiteConfigs`.
+    :class:`lino.apps.dsbe.model.Home`.
     """
     
     known_values = {}
@@ -398,13 +407,18 @@ class Actor(Handled):
         #~ return dtl
         
     @classmethod
-    def set_detail(self,dtl):
-        if isinstance(dtl,basestring):
-            dtl = layouts.DetailLayout(self,dtl)
-        else:
-            assert dtl._table is None
-            dtl._table = self
-        self.detail_layout = dtl
+    def set_detail(self,dtl=None,**kw):
+        if dtl is not None:
+            if isinstance(dtl,basestring):
+                dtl = layouts.DetailLayout(self,dtl)
+            else:
+                assert dtl._table is None
+                dtl._table = self
+            self.detail_layout = dtl
+        if kw:
+            assert not hasattr(self.detail_layout,'_extjs3_handle')
+        for k,v in kw.items():
+            setattr(self.detail_layout,k,v)
         #~ if self.detail_action is None:
             #~ """
             #~ todo: this is an ugly hack. if a table doesn't have a detail 
@@ -578,7 +592,9 @@ class EmptyTable(Frame):
     A "Table" that has exactly one virtual row and thus is visible 
     only using a Detail view on that row.
     """
-    has_navigator = False
+    #~ has_navigator = False
+    #~ hide_top_toolbar = True
+    hide_navigator = True
     default_list_action_name = 'show'
     default_elem_action_name =  'show'
     
@@ -588,7 +604,8 @@ class EmptyTable(Frame):
         #~ if not self.__class__ is Frame:
         if self is not EmptyTable:
             assert self.default_action_class is None
-            assert self.label is not None
+            if self.label is None:
+                raise Exception("%r has no label" % self)
             self.default_action = actions.ShowEmptyTable(self)
             super(Frame,self).do_setup()
             self.setup_actions()

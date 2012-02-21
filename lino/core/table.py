@@ -71,7 +71,8 @@ from lino.ui import requests as ext_requests
 from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, get_data_elem
-from lino.utils.tables import AbstractTable, AbstractTableRequest, VirtualTable
+#~ from lino.utils.tables import AbstractTable, AbstractTableRequest, VirtualTable
+from lino.utils.tables import AbstractTable, TableRequest, VirtualTable
 #~ from lino.utils.tables import GridEdit #, ComputedColumn
 
 
@@ -107,15 +108,7 @@ def wildcard_data_elems(model):
     # todo: for slave in self.report.slaves
   
     #~ for de in data_elems(self.model): yield de
-      
     
-
-def is_installed(app_label):
-    if not '.' in app_label:
-        app_label = '.' + app_label
-    for s in settings.INSTALLED_APPS:
-        if s.endswith(app_label):
-            return True
 
 def inject_field(model,name,field,doc=None):
     """
@@ -336,7 +329,7 @@ def register_report(rpt):
         custom_tables.append(rpt)
 
     
-    
+
 def discover():
     """
     - Each model can receive a number of "slaves". 
@@ -401,183 +394,6 @@ def discover():
 
 
       
-
-class TableRequest(AbstractTableRequest):
-    """
-    An :class:`action request <lino.core.actions.ActionRequest>` 
-    on a :class:`Table`.
-    """
-    
-    master_instance = None
-    master = None
-    instance = None
-    extra = None
-    layout = None
-    
-    #~ sort_column = None
-    #~ sort_direction = None
-    
-    
-    def parse_req(self,request,rqdata,**kw):
-        #~ logger.info("20120121 %s.parse_req()",self)
-        rh = self.ah
-        master = kw.get('master',self.report.master)
-        if master is ContentType or master is models.Model:
-            mt = rqdata.get(ext_requests.URL_PARAM_MASTER_TYPE)
-            try:
-                master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
-            except ContentType.DoesNotExist,e:
-                pass
-                #~ master is None
-                #~ raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
-                
-            #~ print kw
-        if master is not None and not kw.has_key('master_instance'):
-            pk = rqdata.get(ext_requests.URL_PARAM_MASTER_PK,None)
-            #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
-            #~ if pk in ('', '-99999'):
-            if pk == '':
-                pk = None
-            if pk is None:
-                kw['master_instance'] = None
-            else:
-                try:
-                    kw['master_instance'] = master.objects.get(pk=pk)
-                except ValueError,e:
-                    raise Exception("Invalid primary key %r for %s",pk,master.__name__)
-                except master.DoesNotExist,e:
-                    # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
-                    raise Exception("There's no %s with primary key %r" % (master.__name__,pk))
-            #~ print '20100212', self #, kw['master_instance']
-        #~ print '20100406b', self.report,kw
-        
-        if settings.LINO.use_filterRow:
-            exclude = dict()
-            for f in rh.store.fields:
-                if f.field:
-                    filterOption = rqdata.get('filter[%s_filterOption]' % f.field.name)
-                    if filterOption == 'empty':
-                        kw[f.field.name + "__isnull"] = True
-                    elif filterOption == 'notempty':
-                        kw[f.field.name + "__isnull"] = False
-                    else:
-                        filterValue = rqdata.get('filter[%s]' % f.field.name)
-                        if filterValue:
-                            if not filterOption: filterOption = 'contains'
-                            if filterOption == 'contains':
-                                kw[f.field.name + "__icontains"] = filterValue
-                            elif filterOption == 'doesnotcontain':
-                                exclude[f.field.name + "__icontains"] = filterValue
-                            else:
-                                print "unknown filterOption %r" % filterOption
-            if len(exclude):
-                kw.update(exclude=exclude)
-                
-        if settings.LINO.use_gridfilters:
-            filter = rqdata.get(ext_requests.URL_PARAM_GRIDFILTER,None)
-            if filter is not None:
-                filter = json.loads(filter)
-                kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
-                
-        kw = AbstractTableRequest.parse_req(self,request,rqdata,**kw)
-        #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
-        return kw
-        
-            
-    def setup(self,
-            master=None,
-            master_instance=None,
-            master_id=None,
-            layout=None,
-            filter=None,
-            create_rows=None,
-            gridfilters=None,
-            exclude=None,
-            extra=None,
-            **kw):
-            
-        #~ logger.info("20120121 %s.setup()",self)
-        self.filter = filter
-        #~ if isinstance(self.action,GridEdit):
-            #~ self.expand_memos = expand_memos or self.report.expand_memos
-        self.gridfilters = gridfilters
-        self.exclude = exclude or self.report.exclude
-        self.extra = extra
-
-        #~ if selected_rows is not None:
-            #~ self.selected_rows = selected_rows
-        
-        if master is None:
-            master = self.report.master
-            # master might still be None
-        self.master = master
-        
-        #~ if self.report.params:
-            #~ raise Exception("%s.params is %r" % (self.report,self.report.params))
-        #~ kw.update(self.report.params)
-        #~ self.params = kw
-        
-        if master_id is not None:
-            assert master_instance is None
-            master_instance = self.master.objects.get(pk=master_id)
-            
-        self.create_kw = self.report.get_create_kw(master_instance)
-        self.master_instance = master_instance
-        
-        #~ if self.master and master_instance is None:
-            #~ raise Exception("20120121 %s : no master" % self)
-            
-        AbstractTableRequest.setup(self,**kw)
-        
-        #~ assert isinstance(self._data_iterator,models.query.QuerySet)
-        
-        
-        #~ self.total_count = self._data_iterator.count()
-        
-        if create_rows is None:
-            if self.create_kw is None:
-                create_rows = 0
-            #~ elif self.user is not None and self.report.can_add.passes(self.user):
-            #~ elif self.report.can_add.passes(self.user):
-            #~ elif self.report.get_permission(actors.CreatePermission,self.user):
-            #~ a = self.report.get_action('SubmitInsert')
-            #~ if a and self.report.get_permission(a,self.user):
-            elif self.report.editable and self.report.get_permission(actions.CREATE,self.user,None):
-                create_rows = 1
-            else:
-                create_rows = 0
-        self.create_rows = create_rows
-            
-        if self.ui is not None:
-            if layout is None:
-                layout = self.ah._layouts[self.report.default_layout]
-            else:
-                layout = self.ah._layouts[layout]
-            self.layout = layout
-        
-            
-        """
-        Table.page_length is not a default value for ReportRequest.limit
-        For example CSVReportRequest wants all rows.
-        """
-        self.page_length = self.report.page_length
-        
-        #~ logger.info("20120121 %s.setup() done",self)
-        
-    def __str__(self):
-        return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
-
-    def get_status(self,ui,**kw):
-        kw = AbstractTableRequest.get_status(self,ui,**kw)
-        #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
-            #~ print 20111223, self.known_values
-        bp = kw.setdefault('base_params',{})
-        if self.master_instance is not None:
-            bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
-            mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
-            bp[ext_requests.URL_PARAM_MASTER_TYPE] = mt
-        return kw
-        
 
         
         
@@ -644,8 +460,6 @@ class Table(AbstractTable):
     Set this to False if this Table should not become the model's default table.
     """
     
-    order_by = None
-    
     expand_memos = False
     """
     (No longer used; see :doc:`/tickets/44`). 
@@ -657,53 +471,15 @@ class Table(AbstractTable):
     #~ A permission descriptor that defines who can add (create) rows in this table.
     #~ """
     
-    extra = None
-    """
-    Examples::
-    
-      extra = dict(select=dict(lower_name='lower(name)'))
-      # (or if you prefer:) 
-      # extra = {'select':{'lower_name':'lower(name)'},'order_by'=['lower_name']}
-      
-    
-    List of SQL functions and which RDBMS supports them:
-    http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
-    
-    """
-    
-    filter = None
-    """
-    If specified, this must be a models.Q objectt
-    (and no longer a dict of (fieldname -> value) pairs)
-    which will be used as a filter.
-    
-    Unlike :attr:`known_values`, this can use the full range of 
-    Django's `field lookup methods 
-    <https://docs.djangoproject.com/en/dev/topics/db/queries/#field-lookups>`_
-    
-    Note that if the user can create rows in a filtered table, 
-    you should make sure that new records satisfy your filter condition 
-    by default, otherwise you can get surprising behaviour if the user 
-    creates a new row.
-    If your filter consists of simple static values on some known field, 
-    then you'll prefer to use :attr:`known_values` instead of :attr:`filter.`
-    """
-    exclude = None
-    
     master_key = None
     """
-    The name of the ForeignKey field of this report's model that points to it's master.
+    The name of the ForeignKey field of this Table's model that points to it's master.
     Setting this will turn the report into a slave report.
     """
     
     master_field = None
     """
     For internal use. Automatically set to the field descriptor of the :attr:`master_key`.
-    """
-    
-    master = None
-    """
-    For internal use. Automatically set to the model pointed to by the :attr:`master_key`.
     """
     
     handle_uploaded_files = None
@@ -879,12 +655,13 @@ class Table(AbstractTable):
                 if self.editable:
                     #~ self.add_action(self.submit_action)
                     self.add_action(actions.UPDATE)
-                    self.add_action(actions.InsertRow(self))
-                    #~ self.add_action(actions.DuplicateRow(self))
-                    #~ self.add_action(actions.SubmitInsert())
-                    self.add_action(actions.CREATE)
+                    if not self.hide_top_toolbar:
+                        self.add_action(actions.InsertRow(self))
+                        #~ self.add_action(actions.DuplicateRow(self))
+                        #~ self.add_action(actions.SubmitInsert())
+                        self.add_action(actions.CREATE)
               
-            if self.editable:
+            if self.editable and not self.hide_top_toolbar:
                 #~ self.add_action(actions.DeleteSelected())
                 self.add_action(actions.DELETE)
 
@@ -1052,41 +829,6 @@ class Table(AbstractTable):
             s = summary(ui,rr.data_iterator,row_separator)
             return s
         return meth
-        
-    @classmethod
-    def get_create_kw(self,master_instance,**kw):
-        return self.get_filter_kw(master_instance,**kw)
-        
-    @classmethod
-    def get_filter_kw(self,master_instance,**kw):
-        #logger.debug('%s.get_filter_kw(%r) master=%r',self,kw,self.master)
-        if self.master is None:
-            assert master_instance is None, "Table %s doesn't accept a master" % self.actor_id
-        elif self.master is models.Model:
-            pass
-        elif isinstance(self.master_field,generic.GenericForeignKey):
-        #~ elif self.master is ContentType:
-            #~ print 20110415
-            if master_instance is None:
-                pass
-                #~ kw[self.fk.ct_field] = None
-                #~ kw[self.fk.fk_field] = None
-            else:
-                ct = ContentType.objects.get_for_model(master_instance.__class__)
-                kw[self.master_field.ct_field] = ct
-                kw[self.master_field.fk_field] = master_instance.pk
-        elif self.master_field is not None:
-            if master_instance is None:
-                if not self.master_field.null:
-                    return # cannot add rows to this report
-            elif not isinstance(master_instance,self.master):
-                raise Exception("%r is not a %s (master_key is %r)" % (
-                  master_instance,self.master.__name__,self.master_field))
-            kw[self.master_field.name] = master_instance
-            
-        #~ else:
-            #~ kw['master'] = master_instance
-        return kw
         
     #~ def on_create(self,instance,request):
         #~ pass

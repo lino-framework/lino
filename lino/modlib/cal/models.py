@@ -860,6 +860,30 @@ class GuestsByContact(Guests):
     column_names = 'event role status remark * contact'
 
 
+
+from lino import models as lino
+
+class Home(lino.Home):
+    label = lino.Home.label
+    detail_template = """
+    quick_links:80x1
+    coming_reminders:40x16 missed_reminders:40x16
+    """
+    
+    @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
+    def missed_reminders(cls,self,ar):
+        return reminders(ar.ui,ar.get_user(),days_back=90,
+          max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+    @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
+    def coming_reminders(cls,self,ar):
+        return reminders(ar.ui,ar.get_user(),days_forward=30,
+            max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+
+
+
+
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """

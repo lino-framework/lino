@@ -1123,12 +1123,13 @@ if True: # settings.LINO.user_model:
 
 COLS = 8
 
-class JobsOverviewDetail(dd.DetailLayout):
-    main = "body"
+#~ class JobsOverviewDetail(dd.DetailLayout):
+    #~ main = "body"
 
 class JobsOverview(dd.EmptyTable):
     label = _("Contracts Situation") 
-    detail_layout = JobsOverviewDetail()
+    #~ detail_layout = JobsOverviewDetail()
+    detail_template = "body"
     
     parameters = dict(
       date = models.DateField(default=datetime.date.today),
@@ -1138,15 +1139,16 @@ class JobsOverview(dd.EmptyTable):
     params_panel_hidden = True
 
     @dd.displayfield(_("Body"))
-    def body(cls,self,req):
+    def body(cls,self,ar):
+        #~ logger.info("20120221 3 body(%s)",req)
         #~ logger.info("Waiting 5 seconds...")
         #~ time.sleep(5)
         today = self.date or datetime.date.today()
         html = ''
         rows = []
           
-        if self.job_type:
-            jobtypes = [self.job_type]
+        if ar.param_values.job_type:
+            jobtypes = [ar.param_values.job_type]
         else:
             jobtypes = JobType.objects.all()
         for jobtype in jobtypes:
@@ -1156,8 +1158,8 @@ class JobsOverview(dd.EmptyTable):
                 actives = []
                 candidates = []
                 qs = job.contract_set.all()
-                if self.contract_type:
-                    qs = qs.filter(type=self.contract_type)
+                if ar.param_values.contract_type:
+                    qs = qs.filter(type=ar.param_values.contract_type)
                 for ct in qs:
                     if ct.applies_from:
                         until = ct.date_ended or ct.applies_until

@@ -2487,56 +2487,32 @@ connection_created.connect(my_callback)
     
   
     
-class Home(dd.EmptyTable):
-    label = _("Home") 
-    hide_window_title = True
-    hide_top_toolbar = True
-    #~ detail_layout = HomeDetail()
+
+
+class Home(cal.Home):
+    label = cal.Home.label
     detail_template = """
     quick_links:80x1
     dsbe.UsersWithClients:80x8
     coming_reminders:40x16 missed_reminders:40x16
     """
-    
-    @dd.virtualfield(dd.HtmlBox())
-    def tasks_summary(cls,self,req):
-        return cal.tasks_summary(req.ui,req.get_user())
-    
-    @dd.virtualfield(dd.HtmlBox())
-    def quick_links(cls,self,req):
-        quicklinks = settings.LINO.get_quicklinks(self,req.get_user())
-        if quicklinks.items:
-            return 'Quick Links: ' + ' '.join(
-              [req.ui.ext_renderer.action_href_js(mi.action,mi.params) for mi in quicklinks.items]
-              )
-      
-    
-    @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
-    def missed_reminders(cls,self,req):
-        return cal.reminders(req.ui,req.get_user(),days_back=90,
-          max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
-    @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
-    def coming_reminders(cls,self,req):
-        return cal.reminders(req.ui,req.get_user(),days_forward=30,
-            max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
-
-
-
-
-
-
 
 
 def site_setup(site):
   
+    #~ site.modules.cal.Home.set_detail("""
+    #~ quick_links:80x1
+    #~ dsbe.UsersWithClients:80x8
+    #~ coming_reminders:40x16 missed_reminders:40x16
+    #~ """)
+    
     site.modules.lino.SiteConfigs.set_detail("""
     site_company default_build_method
     next_partner_id
     job_office
     propgroup_skills propgroup_softskills propgroup_obstacles
     residence_permit_upload_type work_permit_upload_type driving_licence_upload_type
+    lino.ModelsBySite
     """)
     
     site.modules.properties.Properties.set_detail("""
