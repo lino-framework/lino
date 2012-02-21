@@ -1,0 +1,7 @@
+20120221
+========
+
+I understood that modifying the system-wide Python Path isn't 
+good practice and updated :doc:`/admin/install_debian`.
+
+New tool :mod:`lino.utils.diag`

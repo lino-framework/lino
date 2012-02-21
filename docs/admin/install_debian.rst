@@ -102,7 +102,6 @@ To install Django 1.3::
   tar xzvf Django-1.3.tar.gz
   mv Django-1.3 django
 
-
 To install Django's latest development snapshot::
 
   cd /var/snapshots
@@ -110,9 +109,10 @@ To install Django's latest development snapshot::
   
 We recommend to not run Django's :file:`setup.py` since that's 
 not needed for Lino and removes flexibility to switch from one 
-version to the other. 
-Just `Set up your Python path`_ manually (see below).
-Comments on this are welcome.
+version to the other.
+Just remember where you installed it and 
+specify this path in your your :xfile:`settings.py` 
+(see later).
 
 Install other software
 ----------------------
@@ -150,37 +150,6 @@ Simplified instructions::
   # unzip tinymce_language_pack.zip
   
   
-Set up the Python Path
-----------------------
-
-Another possibility is to define the Python Path in your 
-project's :xfile:`settings.py` file
-(one of the files we are going to create in the 
-section `Create a local Django project`_).
-In that case, just skip the rest of this section.
-
-If you chose to modify the global Python path on your server
-(which requires you to have root permission),
-then we suggest to add a 
-path configuration file :xfile:`local.pth` 
-to a directory that's already on your 
-`Python's path <http://www.python.org/doc/current/install/index.html>`_. 
- 
-=============== ==============================================
-OS              Recommended directory
-=============== ==============================================
-Debian Lenny    :file:`/usr/local/lib/python2.5/site-packages`
-Debian Squeeze  :file:`/usr/local/lib/python2.6/dist-packages`
-=============== ==============================================
-
-The file :xfile:`local.pth` itself should have the following content::
-
-
-  /var/snapshots/lino
-  /var/snapshots/appy
-  /usr/local/django  
-  
-
 Create a MySQL database
 -----------------------
 

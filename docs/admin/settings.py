@@ -1,13 +1,18 @@
 # -*- coding: UTF-8 -*-
 # Django settings for mysite project.
 
+"""
+Adapt the following lines depending on where the sources of these 
+packages are installed. Instead of using 
+``sys.path.insert(0,DIRECTORY)``
+you might use
+``sys.path.append(DIRECTORY)``
 
-## uncomment the following lines if you chose to not 
-## modify the global Python Path
-
-#~ import sys
-#~ sys.path.insert(0,'/var/snapshots/lino')
-#~ sys.path.insert(0,'/var/snapshots/appy')
+"""
+import sys
+sys.path.insert(0,'/var/snapshots/lino')
+sys.path.insert(0,'/var/snapshots/django')
+sys.path.insert(0,'/var/snapshots/appy')
 
 
 from os.path import join, dirname

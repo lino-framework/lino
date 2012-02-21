@@ -13,12 +13,11 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Lino is a Python package to be used on Django sites.
-See :doc:`/admin/install` on how to use it.
+The ``lino`` module can be imported even from a Django :xfile:`settings.py` 
+file since it does not import any django module.
 
 """
 
-# NOTE: this module may not import any django module since it is being imported from settings.py files
 import os
 import sys
 import datetime
@@ -895,4 +894,3 @@ class Lino(object):
         """
         return []
         
-                

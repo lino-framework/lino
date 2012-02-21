@@ -1255,10 +1255,10 @@ class UpdateReminders(actions.RowAction):
         logger.info("Updating reminders for %s",user)
         n = update_reminders(user)
         kw.update(success=True)
-        kw.update(message=
-          _("%(num)d reminders for %(user)s have been updated.") 
-            % dict(user=user,num=n))
-        logger.info("%d reminders for %s have been updated",n,user)
+        msg = _("%(num)d reminders for %(user)s have been updated."
+          ) % dict(user=user,num=n)
+        kw.update(message=msg)
+        logger.info(msg)
         return ar.ui.success_response(**kw)
         
 class RemindersByUser(dd.Table):
