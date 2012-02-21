@@ -28,9 +28,6 @@ from lino.utils import mti
 #~ from lino.modlib.contacts.models import Contact
 from lino.modlib.contacts import models as contacts
 
-if not settings.LINO.is_installed('contacts'):
-    raise Exception("Cannot install modlib.users without installing modlib.contacts")
-
 
 class User(contacts.Contact,contacts.PersonMixin):
     """
@@ -140,9 +137,15 @@ class Users(dd.Table):
         return False
           
   
-dd.inject_field(contacts.Contact,
-    'is_user',
-    mti.EnableChild('users.User',verbose_name=_("is User")),
-    """Whether this Contact is also a User."""
-    )
+if settings.LINO.is_installed('contacts'):
+    """
+    Cannot install modlib.users without installing modlib.contacts.
+    But Sphinx's autodoc
+    """
+
+    dd.inject_field(contacts.Contact,
+        'is_user',
+        mti.EnableChild('users.User',verbose_name=_("is User")),
+        """Whether this Contact is also a User."""
+        )
 

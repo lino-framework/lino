@@ -604,8 +604,8 @@ class EmptyTable(Frame):
         #~ if not self.__class__ is Frame:
         if self is not EmptyTable:
             assert self.default_action_class is None
-            if self.label is None:
-                raise Exception("%r has no label" % self)
+            #~ if self.label is None:
+                #~ raise Exception("%r has no label" % self)
             self.default_action = actions.ShowEmptyTable(self)
             super(Frame,self).do_setup()
             self.setup_actions()

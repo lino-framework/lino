@@ -4,6 +4,8 @@ class Lino(Lino):
   
     title = "Lino Tutorial"
     
+    index_view_action = 'polls.Home'
+    
     def setup_menu(self,ui,user,main):
         m = main.add_menu("polls","~Polls")
         m.add_action(self.modules.polls.Polls)
@@ -25,8 +27,6 @@ DATABASES = {
 }
 
 INSTALLED_APPS = (
-  #~ 'django.contrib.contenttypes',
-  #~ 'lino.modlib.users',
   'lino',
   'lino.tutorials.t1.polls'
 )

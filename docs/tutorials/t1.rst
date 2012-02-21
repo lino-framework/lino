@@ -1,6 +1,9 @@
 Your first standalone Lino application
 ======================================
 
+(Work in progress. 
+Please don't blame me if the documentation grows less quickly than Lino...)
+
 In this tutorial you are going to write your first 
 standalone Lino application.
 Don't hesitate to send us your feedback 
@@ -37,9 +40,9 @@ When you've done and learned all this, we go further.
 
 Replace the :xfile:`settings.py` 
 of your project directory 
-with the following::
+with the following:
 
-.. literalinclude:: /lino/tutorials/t1/settings.py
+.. literalinclude:: ../../lino/tutorials/t1/settings.py
 
     
 
@@ -258,10 +261,13 @@ Defining your first data entry form
 You'll have noticed that there is currently 
 no way to enter Choices for a poll.
 We are going to fix that quickly!
-Add the following attribute to the declaration of your `Choices` table
+Add the following attribute to the declaration of your 
+`Choices` table::
 
+    detail_template = """
       id question pub_date
       ChoicesByPoll
+      """
 
 Then restart the server and double-click on one of the polls 
 you previously created. Or double-click on the last 
