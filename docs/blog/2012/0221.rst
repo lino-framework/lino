@@ -35,3 +35,21 @@ What did you expect?
 ˇThe first tutorial, :doc:`/tutorials/t1`, had become very 
 obsolete. Worked a bit to get it running again. 
 But this tutorial needs still more thinking...
+
+
+Dann habe ich noch was in der lino.css hinzugefügt::
+
+  .ext-gecko .x-window-body .x-form-item {
+          overflow: hidden;
+  }
+
+Das bewirkt, dass Labels einfach abgeschnitten werden, 
+wenn sie nicht an ihren Platz passen. Bisher zeigte er 
+in solchen Fällen zusätzliche Scrollbars pro Feld mit 
+überbreitem Label.
+
+Und noch was Subtiles: wenn man auf "Startseite" klickt, 
+macht er jetzt kein Reload der Seite mehr, sondern ruft 
+die neue Funktion `Lino.close_all_windows()`.
+Der Unterschied ist, dass das alles schneller geht und 
+dass die bereits gerenderten Fenster es bleiben.

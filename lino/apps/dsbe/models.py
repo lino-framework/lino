@@ -874,11 +874,12 @@ class PersonDetail(dd.DetailLayout):
     eid_panel
     """
 
-    t2box1 = """
+
+    status = """
     in_belgium_since:15 residence_type gesdos_id health_insurance
     #pharmacy
-    coach1 coach2 group coached_from coached_until
-    bank_account1 bank_account2
+    coach1:12 coach2:12 group:16 coached_from:12 coached_until:12
+    bank_account1:12 bank_account2:12 broker:12 faculty:12
     """
       
     income = """
@@ -888,26 +889,37 @@ class PersonDetail(dd.DetailLayout):
     income_misc  
     """
       
-    suche1 = """
+    suche = """
     is_seeking unemployed_since work_permit_suspended_until
     unavailable_until:15 unavailable_why:30
+    job_office_contact job_agents
+    dsbe.ExclusionsByPerson:50x5
     """
       
-    suche2 = """
+    papers = """
     needs_residence_permit needs_work_permit 
-    residence_permit work_permit  driving_licence
+    residence_permit work_permit driving_licence
+    uploads.UploadsByOwner
     """
+    
       
-    suche = """
-    suche1:40  suche2:40
-    job_office_contact job_agents broker faculty
-    income:20 dsbe.ExclusionsByPerson
-    """
-      
+    #~ t2left = """
+    #~ status:50
+    #~ suche:50 
+    #~ """
+    
+    #~ t2right = """
+    #~ income:30
+    #~ papers:30
+    #~ """
+    
+    #~ tab2 = "t2left t2right"
+    
     tab2 = """
-    t2box1:40 uploads.UploadsByOwner
-    suche
+    status:55 income:25
+    suche:40  papers:40
     """
+    
     
     tab3 = """
     jobs.StudiesByPerson 
@@ -973,6 +985,10 @@ class PersonDetail(dd.DetailLayout):
         lh.box2.label = _("Contact")
         lh.box3.label = _("Birth")
         lh.eid_panel.label = _("eID card")
+        
+        lh.papers.label = _("Papers")
+        #~ lh.income.label = _("Income")
+        lh.suche.label = _("Job search")
         
         # override default field labels
         #~ lh.eid_panel.card_number.label = _("number")

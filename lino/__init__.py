@@ -834,9 +834,11 @@ class Lino(object):
         url = self.root_url
         if not url: 
             url = "/"
+        url = "javascript:Lino.close_all_windows()"
         main.add_url_button(url,label=_("Home"))
-        main.add_separator("->")
+        
         if user:
+            main.add_separator("->")
             main.add_instance_action(user)
         
         return main

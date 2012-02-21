@@ -330,6 +330,16 @@ Lino.close_window = function(status_update) {
   if (cw) cw.hide_really();
 };
 
+Lino.close_all_windows = function() {
+  while (Lino.window_history.length > 0) {
+      Lino.close_window();
+      //~ Lino.window_history.pop().hide_really();
+  }
+  //~ Lino.current_window = null;
+  //~ Lino.close_window();
+  //~ var ww = 
+}
+
 Lino.kill_current_window = function() {
   var cw = Lino.current_window;
   Lino.current_window = null;
