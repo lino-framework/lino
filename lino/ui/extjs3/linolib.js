@@ -331,10 +331,12 @@ Lino.close_window = function(status_update) {
 };
 
 Lino.close_all_windows = function() {
-  while (Lino.window_history.length > 0) {
+  if (Lino.window_history.length == 0) {
+      location.replace(ROOT_URL);
+  } else while (Lino.window_history.length > 0) {
       Lino.close_window();
       //~ Lino.window_history.pop().hide_really();
-  }
+    }
   //~ Lino.current_window = null;
   //~ Lino.close_window();
   //~ var ww = 
