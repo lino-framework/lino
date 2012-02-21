@@ -1,0 +1,8 @@
+Version 1.4.1 (20120221)
+========================
+
+Just a small release with a few more internal optimizations 
+and some German translations.
+
+Download it from http://pypi.python.org/pypi/lino
+

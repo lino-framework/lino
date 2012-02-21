@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-15 09:00+0000\n"
-"PO-Revision-Date: 2011-10-02 11:17+0200\n"
+"POT-Creation-Date: 2012-02-21 17:56+0000\n"
+"PO-Revision-Date: 2012-02-21 20:01+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
 "MIME-Version: 1.0\n"
@@ -54,8 +54,7 @@ msgstr "Experte"
 #: .\models.py:68
 msgid ""
 "\n"
-"        Designates whether this user has access to functions that require "
-"expert rights.\n"
+"        Designates whether this user has access to functions that require expert rights.\n"
 "        "
 msgstr ""
 
@@ -89,8 +88,9 @@ msgstr "Zuletzt eingeloggt um"
 
 #: .\models.py:83
 msgid "date joined"
-msgstr ""
+msgstr "Konto erstellt am"
 
-#: .\models.py:143
+#: .\models.py:148
 msgid "is User"
 msgstr "ist Benutzer"
+

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.uploads\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-15 09:00+0000\n"
+"POT-Creation-Date: 2012-02-21 17:55+0000\n"
 "PO-Revision-Date: 2011-07-20 17:04+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -41,6 +41,6 @@ msgstr ""
 msgid "%s expires"
 msgstr "%s läuft aus"
 
-#: .\models.py:141
+#: .\models.py:152
 msgid "My uploads"
 msgstr "Meine Uploads"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-18 18:52+0000\n"
+"POT-Creation-Date: 2012-02-21 17:56+0000\n"
 "PO-Revision-Date: 2012-02-18 20:53+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -20,21 +20,15 @@ msgstr ""
 msgid "CEF level"
 msgstr "CEF-Kategorie"
 
-#: .\models.py:144
-#: .\models.py:145
-#: .\models.py:146
+#: .\models.py:144 .\models.py:145 .\models.py:146
 msgid "basic language skills"
 msgstr "Elementare Sprachverwendung"
 
-#: .\models.py:147
-#: .\models.py:148
-#: .\models.py:149
+#: .\models.py:147 .\models.py:148 .\models.py:149
 msgid "independent use of language"
 msgstr "Selbstständige Sprachverwendung"
 
-#: .\models.py:150
-#: .\models.py:151
-#: .\models.py:152
+#: .\models.py:150 .\models.py:151 .\models.py:152
 msgid "proficient use of language"
 msgstr "Exzellente Sprachverwendung"
 
@@ -74,8 +68,7 @@ msgstr "Fremdenregister"
 msgid "Waiting for registry"
 msgstr "Warteregister"
 
-#: .\models.py:192
-#: .\models.py:988
+#: .\models.py:192 .\models.py:988
 msgid "eID card type"
 msgstr "eID-Kartenart"
 
@@ -93,7 +86,9 @@ msgstr ""
 
 #: .\models.py:201
 msgid "Foreigner card A"
-msgstr "A (Bescheinigung der Eintragung im Ausländerregister - Vorübergehender Aufenthalt)"
+msgstr ""
+"A (Bescheinigung der Eintragung im Ausländerregister - Vorübergehender "
+"Aufenthalt)"
 
 #: .\models.py:205
 msgid "Foreigner card B"
@@ -147,9 +142,7 @@ msgstr "Bankkonto 2"
 msgid "Cannot delete companies and persons imported from TIM"
 msgstr "Aus TIM importierte Partner dürfen nicht gelöscht werden."
 
-#: .\models.py:331
-#: .\models.py:959
-#: .\models.py:1898
+#: .\models.py:331 .\models.py:959 .\models.py:1898
 msgid "Person"
 msgstr "Person"
 
@@ -181,10 +174,7 @@ msgstr "Integrationsphase"
 msgid "Coached from"
 msgstr "Begleitet seit"
 
-#: .\models.py:356
-#: .\models.py:401
-#: .\models.py:1609
-#: .\models.py:2124
+#: .\models.py:356 .\models.py:401 .\models.py:1609 .\models.py:2124
 msgid "until"
 msgstr "bis"
 
@@ -380,8 +370,7 @@ msgstr "Aus TIM importierte Partner dürfen nicht gelöscht werden."
 msgid "hourly rate"
 msgstr "Stundensatz"
 
-#: .\models.py:806
-#: .\models.py:2626
+#: .\models.py:806 .\models.py:2603
 msgid "General"
 msgstr "Allgemein"
 
@@ -505,8 +494,7 @@ msgstr "Aktive Klienten von %s"
 msgid "Data Test Clients"
 msgstr "Datenkontrolle Klienten"
 
-#: .\models.py:1185
-#: .\models.py:2116
+#: .\models.py:1185 .\models.py:2116
 msgid "Coached by"
 msgstr "Begleitet durch"
 
@@ -530,19 +518,15 @@ msgstr "Fehlermeldung"
 msgid "Users with their Clients"
 msgstr "Benutzer und ihre Klienten"
 
-#: .\models.py:1319
-#: .\models.py:1347
-#: .\models.py:1359
+#: .\models.py:1319 .\models.py:1347 .\models.py:1359
 msgid "Total"
 msgstr "Total"
 
-#: .\models.py:1323
-#: .\models.py:1357
+#: .\models.py:1323 .\models.py:1357
 msgid "Primary clients"
 msgstr "Komplette Akten"
 
-#: .\models.py:1327
-#: .\models.py:1358
+#: .\models.py:1327 .\models.py:1358
 msgid "Active clients"
 msgstr "Aktive Klienten"
 
@@ -578,18 +562,15 @@ msgstr "Sprachkenntnis"
 msgid "language knowledges"
 msgstr "Sprachkenntnisse"
 
-#: .\models.py:1444
-#: .\models.py:2155
+#: .\models.py:1444 .\models.py:2155
 msgid "Language"
 msgstr "Sprache"
 
-#: .\models.py:1447
-#: .\models.py:2156
+#: .\models.py:1447 .\models.py:2156
 msgid "spoken"
 msgstr "Wort"
 
-#: .\models.py:1448
-#: .\models.py:2157
+#: .\models.py:1448 .\models.py:2157
 msgid "written"
 msgstr "Schrift"
 
@@ -616,15 +597,11 @@ msgstr "%s (S)"
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: .\models.py:1489
-#: .\settings.py:179
+#: .\models.py:1489 .\settings.py:177
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: .\models.py:1495
-#: .\models.py:1610
-#: .\models.py:1848
-#: .\models.py:1939
+#: .\models.py:1495 .\models.py:1610 .\models.py:1848 .\models.py:1939
 msgid "Remark"
 msgstr "Bemerkung"
 
@@ -689,8 +666,7 @@ msgstr "Sozialhilfeart"
 msgid "aid types"
 msgstr "Sozialhilfearten"
 
-#: .\models.py:1720
-#: .\models.py:1797
+#: .\models.py:1720 .\models.py:1797
 msgid "Course provider"
 msgstr "Kursanbieter"
 
@@ -706,9 +682,7 @@ msgstr "Kursinhalt"
 msgid "Course Contents"
 msgstr "Kursinhalte"
 
-#: .\models.py:1768
-#: .\models.py:1785
-#: .\models.py:1840
+#: .\models.py:1768 .\models.py:1785 .\models.py:1840
 msgid "Name"
 msgstr ""
 
@@ -720,8 +694,7 @@ msgstr "Kursangebot"
 msgid "Course Offers"
 msgstr "Kursangebote"
 
-#: .\models.py:1791
-#: .\models.py:1904
+#: .\models.py:1791 .\models.py:1904
 msgid "Course content"
 msgstr "Kursinhalt"
 
@@ -733,9 +706,7 @@ msgstr "Beschreibung"
 msgid "Course"
 msgstr "Kurs"
 
-#: .\models.py:1833
-#: .\settings.py:121
-#: .\settings.py:167
+#: .\models.py:1833 .\settings.py:126 .\settings.py:165
 msgid "Courses"
 msgstr "Kurse"
 
@@ -751,8 +722,7 @@ msgstr "Kandidatenliste"
 msgid "List of participants"
 msgstr "Teilnehmerliste"
 
-#: .\models.py:1893
-#: .\models.py:1894
+#: .\models.py:1893 .\models.py:1894
 msgid "Course Requests"
 msgstr "Kursanfragen"
 
@@ -842,8 +812,7 @@ msgstr "Drucken"
 msgid "Wanted property"
 msgstr "Gesuchte Eigenschaft"
 
-#: .\models.py:2163
-#: .\models.py:2181
+#: .\models.py:2163 .\models.py:2181
 msgid "Wanted properties"
 msgstr "Gesuchte Eigenschaften"
 
@@ -851,8 +820,7 @@ msgstr "Gesuchte Eigenschaften"
 msgid "Unwanted property"
 msgstr "Unerwünschte Eigenschaft"
 
-#: .\models.py:2171
-#: .\models.py:2186
+#: .\models.py:2171 .\models.py:2186
 msgid "Unwanted properties"
 msgstr "Unerwünschte Eigenschaften"
 
@@ -908,58 +876,54 @@ msgstr "DSBE-Benutzer"
 msgid "usable in contracts"
 msgstr "erlaubt in Verträgen"
 
-#: .\models.py:2491
-msgid "Home"
-msgstr "Anfang"
-
-#: .\models.py:2514
-msgid "Missed reminders"
-msgstr "Rückblick"
-
-#: .\models.py:2519
-msgid "Upcoming reminders"
-msgstr "Ausblick"
-
-#: .\settings.py:76
-#: .\settings.py:152
+#: .\settings.py:81
 msgid "Contacts"
 msgstr "Kontakte"
 
-#: .\settings.py:94
+#: .\settings.py:99
 msgid "My menu"
 msgstr "Mein Menü"
 
-#: .\settings.py:126
+#: .\settings.py:131
 msgid "Newcomers"
 msgstr "Neuzugänge"
 
-#: .\settings.py:136
+#: .\settings.py:141
 msgid "Listings"
 msgstr ""
 
-#: .\settings.py:150
+#: .\settings.py:155
 msgid "Configure"
 msgstr "Konfigurierung"
 
-#: .\settings.py:162
+#: .\settings.py:160
 msgid "SIS"
 msgstr "DSBE"
 
-#: .\settings.py:164
+#: .\settings.py:162
 msgid "CV"
 msgstr ""
 
-#: .\settings.py:205
+#: .\settings.py:203
 msgid "System"
 msgstr ""
 
-#: .\settings.py:214
+#: .\settings.py:212
 msgid "Explorer"
 msgstr "Explorer"
 
-#: .\settings.py:243
+#: .\settings.py:242
 msgid "Site"
 msgstr "Site"
+
+#~ msgid "Home"
+#~ msgstr "Anfang"
+
+#~ msgid "Missed reminders"
+#~ msgstr "Rückblick"
+
+#~ msgid "Upcoming reminders"
+#~ msgstr "Ausblick"
 
 #~ msgid "Detail"
 #~ msgstr "Detail"

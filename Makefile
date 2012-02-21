@@ -18,7 +18,7 @@ help:
   
 
 mm:
-	$(DJANGO_ADMIN) dtl2py --settings lino.apps.dsbe.settings
+	#~ $(DJANGO_ADMIN) dtl2py --settings lino.apps.dsbe.settings
 	#~ $(DJANGO_ADMIN) dtl2py --settings lino.apps.igen.settings
 	pwd
 	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) makemessages -i 'modlib*' -i 'apps*' -i 'test_apps*' -s -a
@@ -55,7 +55,7 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.apps.igen.settings $(TESTS_OPTIONS)
 
 
-appdocs:
+unused_appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings docs/dsbe/appdocs
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
 

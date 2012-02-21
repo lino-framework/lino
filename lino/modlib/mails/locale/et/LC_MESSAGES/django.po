@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-15 09:00+0000\n"
+"POT-Creation-Date: 2012-02-21 17:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:65
+#: .\models.py:67
 msgid "Mail Type"
 msgstr ""
 
-#: .\models.py:66
+#: .\models.py:68
 msgid "Mail Types"
 msgstr ""
 
@@ -29,67 +29,67 @@ msgstr ""
 msgid "Create email"
 msgstr ""
 
-#: .\models.py:157
-msgid "Send email"
-msgstr ""
-
-#: .\models.py:195 .\models.py:199
+#: .\models.py:158 .\models.py:162
 msgid "Recipient"
 msgstr ""
 
-#: .\models.py:196 .\models.py:271
+#: .\models.py:159 .\models.py:276
 msgid "Recipients"
 msgstr ""
 
-#: .\models.py:202
+#: .\models.py:165
 msgid "Address"
 msgstr ""
 
-#: .\models.py:203
+#: .\models.py:166
 msgid "Name"
 msgstr ""
 
-#: .\models.py:244
+#: .\models.py:204
+msgid "Send email"
+msgstr ""
+
+#: .\models.py:247
 msgid "Mail Document"
 msgstr ""
 
-#: .\models.py:245
+#: .\models.py:248
 msgid "Mail Documents"
 msgstr ""
 
-#: .\models.py:250
+#: .\models.py:255
 msgid "Sender"
 msgstr ""
 
-#: .\models.py:253
+#: .\models.py:258
 msgid "Subject"
 msgstr ""
 
-#: .\models.py:257
+#: .\models.py:262
 msgid "Body"
 msgstr ""
 
-#: .\models.py:328
+#: .\models.py:333
 msgid "Attachment"
 msgstr ""
 
-#: .\models.py:329
+#: .\models.py:334
 msgid "Attachments"
 msgstr ""
 
-#: .\models.py:362
+#: .\models.py:367
 msgid "Mail Outbox"
 msgstr ""
 
-#: .\models.py:372
+#: .\models.py:377
 msgid "Sent Mails"
 msgstr ""
 
-#: .\models.py:378
+#: .\models.py:383
 msgid "My Mail Inbox"
 msgstr ""
 
-#: .\models.py:436 .\models.py:442 .\models.py:446
+#: .\models.py:441 .\models.py:447 .\models.py:451
 msgid "~Mails"
 msgstr ""
 
