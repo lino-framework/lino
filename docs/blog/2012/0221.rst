@@ -31,3 +31,7 @@ But a remark to those who downloaded Lino recently:
 give us some feedback: 
 Why did you download it? 
 What did you expect? 
+
+ˇThe first tutorial, :doc:`/tutorials/t1`, had become very 
+obsolete. Worked a bit to get it running again. 
+But this tutorial needs still more thinking...
