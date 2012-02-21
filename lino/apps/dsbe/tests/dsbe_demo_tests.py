@@ -494,7 +494,7 @@ def test14(self):
     """.splitlines():
       url = url.strip()
       if url and not url.startswith("#"):
-          response = self.client.get(url)
+          response = self.client.get(url,REMOTE_USER='root')
           result = self.check_json_result(response,'count rows')
           #~ self.assertEqual(result['title'],u"Choices for city")
           self.assertEqual(len(result['rows']),min(result['count'],10))
@@ -504,7 +504,7 @@ def test15(self):
     Temporary bug on :doc:`/blog/2011/1223`.
     """
     url = '/api/contacts/Persons/-99999?fmt=json&an=insert'
-    response = self.client.get(url)
+    response = self.client.get(url,REMOTE_USER='root')
     result = self.check_json_result(response,'data phantom title')
     self.assertEqual(result['phantom'],True)
 
@@ -519,7 +519,7 @@ def test15b(self):
     ]
     for case in cases:
         url = case[0] % case[1]
-        response = self.client.get(url)
+        response = self.client.get(url,REMOTE_USER='root')
         result = self.check_json_result(response,
           'navinfo disable_delete data title disabled_actions id')
         self.assertEqual(result['id'],case[1])
@@ -535,7 +535,7 @@ def test16(self):
     ]
     for case in cases:
         url = '/api/dsbe/MyPersons?fmt=json&limit=30&start=0&su=%s' % case[0]
-        response = self.client.get(url)
+        response = self.client.get(url,REMOTE_USER='root')
         result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
         self.assertEqual(result['count'],case[1])
         
