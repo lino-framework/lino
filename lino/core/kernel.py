@@ -313,6 +313,7 @@ def setup_site(self,make_messages=False):
     
     actors.discover()
     
+    
     #~ logger.debug("analyze_models() done")
     
     # set _lino_model_report for all models:
@@ -327,7 +328,8 @@ def setup_site(self,make_messages=False):
     
     #~ babel.discover() # would have to be called before model setup
     
-    self.modules = AttrDict()
+    #~ self.modules = AttrDict()
+    self.modules = actors.MODULES
 
     for a in models.get_apps():
         #~ for app_label,a in loading.cache.app_store.items():
@@ -343,8 +345,8 @@ def setup_site(self,make_messages=False):
         if not m._meta.abstract:
             self.modules.define(m._meta.app_label,m.__name__,m)
             
-    for a in actors.actors_list:
-        self.modules.define(a.app_label,a.__name__,a)
+    #~ for a in actors.actors_list:
+        #~ self.modules.define(a.app_label,a.__name__,a)
         
     #~ layouts.setup_layouts()
     
@@ -400,19 +402,19 @@ def setup_site(self,make_messages=False):
     #~ logger.info("20120102 modules: %s",self.modules)
     
     
-    spec = self.index_view_action
-    if spec:
-        if isinstance(spec,basestring):
-            spec = self.modules.resolve(spec)
-            if spec is None:
-                raise Exception("Could not resolve action specifier %r" % spec)
-        if isinstance(spec,actions.Action):
-            a = spec
-        elif isinstance(spec,type) and issubclass(spec,models.Model):
-            a = spec._lino_model_report.default_action
-        elif isinstance(spec,type) and issubclass(spec,actors.Actor):
-            a = spec.default_action
-        self.index_view_action = a
+    #~ spec = self.index_view_action
+    #~ if spec:
+        #~ if isinstance(spec,basestring):
+            #~ spec = self.modules.resolve(spec)
+            #~ if spec is None:
+                #~ raise Exception("Could not resolve action specifier %r" % spec)
+        #~ if isinstance(spec,actions.Action):
+            #~ a = spec
+        #~ elif isinstance(spec,type) and issubclass(spec,models.Model):
+            #~ a = spec._lino_model_report.default_action
+        #~ elif isinstance(spec,type) and issubclass(spec,actors.Actor):
+            #~ a = spec.default_action
+        #~ self.index_view_action = a
     
       
     self._setup_done = True

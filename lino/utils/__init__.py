@@ -486,6 +486,9 @@ class AttrDict(dict):
     def __getattr__(self, name):
         return self[name]
         
+    def define2(self,name,value):
+        return self.define(*name.split('.')+[value])
+        
     def define(self,*args):
         "args must be a series of names followed by the value"
         assert len(args) >= 2
@@ -496,13 +499,15 @@ class AttrDict(dict):
                 d = AttrDict()
                 s[n] = d
             s = d
-        #~ if d.has_key(args[-2]):
+        oldvalue = d.get(args[-2],None)
+        #~ if oldvalue is not None:
             #~ print 20120217, "Overriding %s from %r to %r" % (
               #~ '.'.join(args[:-1]),
-              #~ d[args[-2]],
+              #~ oldvalue,
               #~ args[-1]
               #~ )
         d[args[-2]] = args[-1]
+        return oldvalue
     
     def resolve(self,name,default=None):
         """

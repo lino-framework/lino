@@ -226,11 +226,6 @@ class LayoutHandle:
         #return self.vbox_class(self,name,*elems,**kw)
         #~ kw = self.ui.panel_attr2kw(**kw)
         #~ return panelclass(self,elemname,True,*elems,**kw)
-        if False:
-            label = kw.get('label',None)
-            if label:
-                self.layout.add_dummy_message(label)
-                kw.update(label = _(label))
         if len(elems) == 1 and elemname != 'main': # panelclass != self.main_class:
             #~ if label:
                 #~ elems[0].label = label

@@ -4,7 +4,7 @@ class Lino(Lino):
   
     title = "Lino Tutorial"
     
-    index_view_action = 'polls.Home'
+    #~ index_view_action = 'polls.Home'
     
     def setup_menu(self,ui,user,main):
         m = main.add_menu("polls","~Polls")

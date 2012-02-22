@@ -6,3 +6,23 @@ T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: documen
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\ref\modelattr.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:70: WARNING: py:class reference target not found: lino.modlib.jobs.models.Contracts
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:79: WARNING: py:class reference target not found: lino.modlib.jobs.models.Contracts
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:95: WARNING: py:class reference target not found: lino.modlib.jobs.models.Experiences
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:95: WARNING: py:class reference target not found: lino.modlib.jobs.models.HistoryByPerson
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:128: WARNING: py:class reference target not found: lino.apps.dsbe.models.CompanyDetail
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:140: WARNING: py:class reference target not found: lino.apps.dsbe.models.Companies
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:194: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:207: WARNING: py:attr reference target not found: lino.dd.Table.master_key
+T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:250: WARNING: py:class reference target not found: lino.modlib.jobs.models.HistoryByPerson
+T:\hgwork\lino\docs\autodoc\lino.utils.choosers.rst:17: WARNING: py:class reference target not found: lino.ui.extjs.ext_store.Store
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\blog\2012\0222.rst:11: WARNING: py:meth reference target not found: lino.utils.tables.AbstractTable.get_filter_kw
+T:\hgwork\lino\docs\blog\2012\0222.rst:19: WARNING: py:mod reference target not found: lino.modlib.uploads

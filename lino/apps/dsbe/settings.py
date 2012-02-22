@@ -50,7 +50,7 @@ class Lino(Lino):
     
     languages = ('de', 'fr', 'nl', 'en')
     
-    index_view_action = "dsbe.Home"
+    #~ index_view_action = "dsbe.Home"
     
     remote_user_header = "REMOTE_USER"
     
@@ -174,15 +174,7 @@ class Lino(Lino):
             config_dsbe.add_action(self.modules.dsbe.PersonGroups)
         
             if True: # user.is_expert:
-                config_props = cfg.add_menu("props",_("Properties"))
-                config_props.add_action(self.modules.properties.PropGroups)
-                config_props.add_action(self.modules.properties.PropTypes)
-                for pg in self.modules.properties.PropGroup.objects.all():
-                    #~ mm.add_request_action(properties.PropsByGroup().request(master_instance=pg),label=pg.name)
-                    config_props.add_action(
-                        self.modules.properties.PropsByGroup,
-                        params=dict(master_instance=pg),
-                        label=pg.name)
+                self.modules.properties.setup_config_menu(self,ui,user,cfg)
         
             config_cv.add_action(self.modules.dsbe.Activities)
             
@@ -199,37 +191,25 @@ class Lino(Lino):
             
             self.modules.cal.setup_config_menu(self,ui,user,cfg)
             self.modules.mails.setup_config_menu(self,ui,user,cfg)
+            self.modules.lino.setup_config_menu(self,ui,user,cfg)
             
-            config_etc      = cfg.add_menu("etc",_("System"))
-            #~ config_etc.add_action('links.LinkTypes')
-            config_etc.add_action(self.modules.lino.ContentTypes)
-            config_etc.add_action(self.modules.users.Users)
-            config_etc.add_action(self.modules.lino.HelpTexts)
-            #~ if self.use_tinymce:
-            config_etc.add_action(self.modules.lino.TextFieldTemplates)
-            config_etc.add_instance_action(self.site_config)
-        
             m = main.add_menu("explorer",_("Explorer"))
-            #m.add_action('properties.PropChoices')
-            #~ m.add_action('properties.PropValues')
             m.add_action(self.modules.contacts.AllPersons)
-            #~ m.add_action('contacts.Roles')
+            self.modules.contacts.setup_explorer_menu(self,ui,user,m)
             self.modules.notes.setup_explorer_menu(self,ui,user,m)
             self.modules.isip.setup_explorer_menu(self,ui,user,m)
             self.modules.jobs.setup_explorer_menu(self,ui,user,m)
             self.modules.newcomers.setup_explorer_menu(self,ui,user,m)
-            #~ links.setup_explorer_menu(self,ui,user,m)
-            #~ m.add_action('notes.Notes')
-            #~ m.add_action('lino.TextFieldTemplates')
-            #~ m.add_action('links.Links')
             m.add_action(self.modules.uploads.Uploads)
             m.add_action(self.modules.dsbe.Exclusions)
-            m.add_action(self.modules.dsbe.CourseRequests)
             m.add_action(self.modules.dsbe.PersonSearches)
             #~ m.add_action(self.modules.lino.ContentTypes)
             m.add_action(self.modules.properties.Properties)
-            m.add_action(self.modules.dsbe.Courses)
             m.add_action(self.modules.thirds.Thirds)
+            courses = m.add_menu("courses",_("Courses"))
+            courses.add_action(self.modules.dsbe.Courses)
+            courses.add_action(self.modules.dsbe.CourseRequests)
+            
             
             self.modules.cal.setup_explorer_menu(self,ui,user,m)
             
@@ -240,8 +220,7 @@ class Lino(Lino):
 
         
         m = main.add_menu("site",_("Site"))
-        m.add_action(self.modules.lino.About)
-        m.add_action(self.modules.lino.Inspector)
+        self.modules.lino.setup_site_menu(self,ui,user,m)
         
         #~ m = main.add_menu("help",_("Help"))
         #~ m.add_item('userman',_("~User Manual"),

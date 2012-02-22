@@ -545,6 +545,10 @@ class About(dd.EmptyTable):
 
 
 class Home(dd.EmptyTable):
+    """
+    This is the "home page" or "welcome screen", the window to be displayed 
+    when no other window is opened.
+    """
     label = _("Home") 
     hide_window_title = True
     hide_top_toolbar = True
@@ -554,6 +558,11 @@ class Home(dd.EmptyTable):
     welcome
     """
     
+    @classmethod
+    def setup_actions(self):
+        "Overrides the default method. Home page needs no print method."
+        pass
+        
     #~ @dd.virtualfield(dd.HtmlBox())
     #~ def tasks_summary(cls,self,req):
         #~ return cal.tasks_summary(req.ui,req.get_user())
@@ -593,10 +602,31 @@ class Home(dd.EmptyTable):
 
 
 
-def add_site_menu(site):
-    m = site.add_menu("site",_("~Site"))
-    #~ m.add_action('system.SiteConfigs',can_view=perms.is_staff,params=dict(pk=1))
-    m.add_instance_action(site.config,
-        label=_('Global Site Parameters'),
-        can_view=perms.is_staff)
-    return m
+#~ def add_site_menu(site):
+    #~ m = site.add_menu("site",_("~Site"))
+    #~ m.add_instance_action(site.config,
+        #~ label=_('Global Site Parameters'),
+        #~ can_view=perms.is_staff)
+    #~ return m
+
+
+def setup_main_menu(site,ui,user,m): pass
+
+def setup_my_menu(site,ui,user,m): pass
+  
+def setup_config_menu(site,ui,user,m):
+    config_etc      = m.add_menu("etc",_("System"))
+    #~ config_etc.add_action('links.LinkTypes')
+    config_etc.add_action(site.modules.lino.ContentTypes)
+    config_etc.add_action(site.modules.users.Users)
+    config_etc.add_action(site.modules.lino.HelpTexts)
+    #~ if site.use_tinymce:
+    config_etc.add_action(site.modules.lino.TextFieldTemplates)
+    config_etc.add_instance_action(site.site_config)
+        
+  
+def setup_explorer_menu(site,ui,user,m): pass
+  
+def setup_site_menu(site,ui,user,m): 
+    m.add_action(site.modules.lino.About)
+    m.add_action(site.modules.lino.Inspector)

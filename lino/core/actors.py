@@ -25,10 +25,9 @@ from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
 from lino.tools import resolve_model
-from lino.utils import curry
+from lino.utils import curry, AttrDict
 
 actor_classes = []
-#~ actors_dict = None
 actors_list = None
 
 ACTOR_SEP = '.'
@@ -49,13 +48,15 @@ ACTOR_SEP = '.'
 
 #~ from lino.core import actions
 
+MODULES = AttrDict()
   
 def register_actor(a):
-    logger.debug("register_actor %s",a.actor_id)
+    logger.debug("register_actor %s",a)
+    old = MODULES.define(a.app_label,a.__name__,a)
     #~ old = actors_dict.get(a.actor_id,None)
-    #~ if old is not None:
-        #~ logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old,a)
-        #~ actors_list.remove(old)
+    if old is not None:
+        logger.debug("register_actor %s : %r replaced by %r",a,old,a)
+        actors_list.remove(old)
     #~ actors_dict[a.actor_id] = a
     actors_list.append(a)
     return a
@@ -67,17 +68,16 @@ def register_actor(a):
 
 def discover():
     global actor_classes
-    #~ global actors_dict
     global actors_list
-    #~ assert actors_dict is None
     assert actors_list is None
-    #~ actors_dict = {}
     actors_list = []
     logger.debug("actors.discover() : setting up %d actors",len(actor_classes))
     for cls in actor_classes:
-        cls.class_init()
         register_actor(cls)
     actor_classes = None
+    
+    for a in actors_list:
+        a.class_init()
     
     #~ logger.debug("actors.discover() : setup %d actors",len(actors_list))
     #~ for a in actors_list:
@@ -92,10 +92,10 @@ def discover():
     #~ for a in actors_dict.values():
         #~ a.setup()
 
-def setup_actors():
-    for cls in actors_list:
-        #~ if not cls.__name__.startswith('unused_'):
-        cls.setup()
+#~ def setup_actors():
+    #~ for cls in actors_list:
+        #~ cls.class_init()
+        #~ cls.setup()
         
 def unused_add_virtual_field(cls,name,v):
     cls.virtual_fields[name] = v
@@ -183,10 +183,11 @@ class ActorMetaClass(type):
         cls._setup_done = False
         cls._setup_doing = False
         
-        dl = classDict.get('detail_layout',None)
         dt = classDict.get('detail_template',None)
+        dl = classDict.get('detail_layout',None)
         if dt is not None:
-            #~ assert dl is None
+            if dl is not None:
+                raise Exception("%r has both detail_template and detail_layout" % cls)
             dl = layouts.DetailLayout(cls,dt)
             cls.detail_layout = dl
         elif dl is not None:
@@ -338,6 +339,9 @@ class Actor(Handled):
     
     #~ submit_action = actions.SubmitDetail()
     
+    @classmethod
+    def class_init(self):
+        pass
 
     @classmethod
     def get_label(self):
@@ -417,8 +421,9 @@ class Actor(Handled):
             self.detail_layout = dtl
         if kw:
             assert not hasattr(self.detail_layout,'_extjs3_handle')
-        for k,v in kw.items():
-            setattr(self.detail_layout,k,v)
+            for k,v in kw.items():
+                setattr(self.detail_layout,k,v)
+                
         #~ if self.detail_action is None:
             #~ """
             #~ todo: this is an ugly hack. if a table doesn't have a detail 
@@ -455,9 +460,9 @@ class Actor(Handled):
             return True
         if self._setup_doing:
             if True: # severe error handling
-                raise Exception("%s.setup() called recursively" % self.actor_id)
+                raise Exception("%s.setup() called recursively" % self)
             else:
-                logger.warning("%s.setup() called recursively" % self.actor_id)
+                logger.warning("%s.setup() called recursively" % self)
                 return False
         #~ logger.debug("Actor.setup() %s", self)
         self._setup_doing = True
@@ -586,6 +591,7 @@ class Frame(Actor):
         self.setup_actions()
         if self.default_action:
             self.add_action(self.default_action)
+
 
 class EmptyTable(Frame):
     """

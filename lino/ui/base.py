@@ -36,9 +36,9 @@ class Handled(object):
     def do_setup(self):
         pass
         
-    @classmethod
-    def class_init(self):
-        pass
+    #~ @classmethod
+    #~ def class_init(self):
+        #~ pass
         #~ self._handles = {}
       
     #~ @classmethod

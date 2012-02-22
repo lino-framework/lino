@@ -671,7 +671,7 @@ class ExtUI(base.UI):
         #~ self.generate_linolib_messages()
         
     def create_layout_element(self,lh,name,**kw):
-        if True:
+        if False: 
             de = lh.get_data_elem(name)
         else:
             try:
@@ -1216,9 +1216,12 @@ tinymce.init({
 
     def index_view(self, request,**kw):
         #~ from lino.lino_site import lino_site
-        if settings.LINO.index_view_action:
-            kw.update(on_ready=self.ext_renderer.action_call(
-              settings.LINO.index_view_action))
+        #~ if settings.LINO.index_view_action:
+            #~ kw.update(on_ready=self.ext_renderer.action_call(
+              #~ settings.LINO.index_view_action))
+        #~ logger.info("20120222 index_view() uses %r",settings.LINO.modules.lino.Home)
+        kw.update(on_ready=self.ext_renderer.action_call(
+          settings.LINO.modules.lino.Home.default_action))
         #~ kw.update(title=settings.LINO.modules.dsbe.Home.label)
         #~ kw.update(title=lino_site.title)
         #~ mnu = py2js(lino_site.get_site_menu(request.user))

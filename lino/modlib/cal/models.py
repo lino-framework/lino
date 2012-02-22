@@ -861,29 +861,6 @@ class GuestsByContact(Guests):
 
 
 
-from lino import models as lino
-
-class Home(lino.Home):
-    label = lino.Home.label
-    detail_template = """
-    quick_links:80x1
-    coming_reminders:40x16 missed_reminders:40x16
-    """
-    
-    @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
-    def missed_reminders(cls,self,ar):
-        return reminders(ar.ui,ar.get_user(),days_back=90,
-          max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
-    @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
-    def coming_reminders(cls,self,ar):
-        return reminders(ar.ui,ar.get_user(),days_forward=30,
-            max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
-
-
-
-
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """
@@ -1287,7 +1264,7 @@ class UpdateReminders(actions.RowAction):
         
 class RemindersByUser(dd.Table):
     """
-    Shows the 
+    Shows the list of automatically generated tasks for this user.
     """
     model = Task
     label = _("Reminders")
@@ -1295,24 +1272,69 @@ class RemindersByUser(dd.Table):
     column_names = "start_date summary *"
     order_by = ["start_date"]
     filter = Q(auto_type__isnull=False)
+    
+
+from lino import models as lino
+
+class Home(lino.Home):
+    label = lino.Home.label
+    app_label = 'lino'
+    detail_template = """
+    quick_links:80x1
+    coming_reminders:40x16 missed_reminders:40x16
+    """
+    
+    @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
+    def missed_reminders(cls,self,ar):
+        return reminders(ar.ui,ar.get_user(),days_back=90,
+          max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+    @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
+    def coming_reminders(cls,self,ar):
+        return reminders(ar.ui,ar.get_user(),days_forward=30,
+            max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+
+#~ class MissedReminders(dd.Frame):
+    #~ label = _('Missed reminders')
+    
+    #~ @classmethod
+    #~ def value(cls,ar):
+        #~ return reminders(ar.ui,ar.get_user(),days_back=90,
+          #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+          
+#~ class ComingReminders(dd.Frame):
+    #~ label = _('Coming reminders')
+    
+    #~ @classmethod
+    #~ def value(cls,ar):
+        #~ return reminders(ar.ui,ar.get_user(),days_forward=30,
+            #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+
+    
 
 def site_setup(site):
     #~ from lino.modlib.users.models import Users
     site.modules.users.Users.add_action(UpdateReminders())
+    #~ site.modules.lino.Home.set_detail("""
+    #~ quick_links:80x1
+    #~ cal.ComingReminders:40x16 cal.MissedReminders:40x16
+    #~ """)
 
 
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    m  = m.add_menu("cal",_("~Calendar"))
+    m  = m.add_menu("cal",_("Calendar"))
     m.add_action(MyTasks)
     m.add_action(MyEvents)
-    if settings.LINO.use_extensible:
+    if site.use_extensible:
         m.add_action(Panel)
     #~ m.add_action_(actions.Calendar())
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("cal",_("~Calendar"))
+    m  = m.add_menu("cal",_("Calendar"))
     m.add_action(Places)
     m.add_action(Priorities)
     m.add_action(AccessClasses)
@@ -1324,7 +1346,7 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(Calendars)
   
 def setup_explorer_menu(site,ui,user,m):
-    m  = m.add_menu("cal",_("~Calendar"))
+    m  = m.add_menu("cal",_("Calendar"))
     m.add_action(Events)
     m.add_action(Tasks)
     m.add_action(Guests)

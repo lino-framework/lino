@@ -868,8 +868,8 @@ class Table(AbstractTable):
 def table_factory(model):
     """
     Automatically define a Table class for the specified model.
-    This is used during kernel setup to cerate default tables for 
-    models who have no table found.
+    This is used during kernel setup to create default tables for 
+    models who have no Table.
     """
     #~ logger.info('table_factory(%s)',model.__name__)
     bases = (Table,)
@@ -884,24 +884,24 @@ def table_factory(model):
     app_label = model._meta.app_label
     name = model.__name__ + "Table"
     cls = type(name,bases,dict(model=model,app_label=app_label))
-    cls.class_init()
+    #~ cls.class_init()
     #~ cls.setup()
     
-    """
-    20120104 We even add the factored class to the module because 
-    actor lookup needs it. Otherwise we'd get a 
-    `'module' object has no attribute 'DataControlListingTable'` error.
+    #~ """
+    #~ 20120104 We even add the factored class to the module because 
+    #~ actor lookup needs it. Otherwise we'd get a 
+    #~ `'module' object has no attribute 'DataControlListingTable'` error.
     
-    We cannot simply do ``setattr(settings.LINO.modules.get(app_label),name,cls)``
-    because this code is executed when `settings.LINO.modules` doesn't yet exist.
-    """
+    #~ We cannot simply do ``settings.LINO.modules.define(app_label,name,cls)``
+    #~ because this code is executed when `settings.LINO.modules` doesn't yet exist.
+    #~ """
     
-    m = import_module(model.__module__)
-    if getattr(m,name,None) is not None:
-        raise Exception(
-          "Name of factored class %s clashes with existing name in %s" 
-          %(cls,m))
-    setattr(m,name,cls)
+    #~ m = import_module(model.__module__)
+    #~ if getattr(m,name,None) is not None:
+        #~ raise Exception(
+          #~ "Name of factored class %s clashes with existing name in %s" 
+          #~ %(cls,m))
+    #~ setattr(m,name,cls)
     return actors.register_actor(cls)
 
 

@@ -377,8 +377,8 @@ def test07(self):
     expected = '''\
 id country city name addr1 street_prefix street street_no street_box 
 addr2 zip_code region language email url phone gsm fax remarks 
-contact_ptr vat_id type is_active newcomer is_deprecated activity 
-bank_account1 bank_account2 prefix hourly_rate'''.split()
+contact_ptr prefix vat_id type is_active newcomer is_deprecated activity 
+bank_account1 bank_account2 hourly_rate'''.split()
     
     s = ' '.join(wcde)
     #~ print s

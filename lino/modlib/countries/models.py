@@ -1,4 +1,4 @@
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -84,6 +84,10 @@ class Countries(dd.Table):
     model = 'countries.Country'
     order_by = ["name","isocode"]
     column_names = "name isocode *"
+    detail_template = """
+    isocode name short_code
+    countries.CitiesByCountry
+    """
     
     
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']

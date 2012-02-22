@@ -429,6 +429,44 @@ Optional `salutation_options` see :func:`get_salutation`.
         super(PersonMixin,self).full_clean(*args,**kw)
 
 
+
+
+
+class PersonDetail(dd.DetailLayout):
+  
+    main = """
+    address_box contact_box
+    bottom_box RolesByPerson
+    """
+    
+    address_box = """
+    last_name first_name:15 title:10
+    country region
+    city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+    """
+
+    contact_box = """
+    id language
+    email:40 
+    url
+    phone
+    gsm fax
+    """
+
+    bottom_box = """
+    gender birth_date age
+    remarks
+    """
+        
+    
+    def setup_handle(self,dh):
+        dh.address_box.label = _("Address")
+        dh.contact_box.label = _("Contact")
+  
+
+
 class Persons(dd.Table):
     """
     List of all Persons.
@@ -436,6 +474,7 @@ class Persons(dd.Table):
     model = settings.LINO.person_model
     order_by = ["last_name","first_name","id"]
     column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"
+    detail_layout = PersonDetail()
     
 
 
@@ -451,6 +490,7 @@ class CompanyMixin(models.Model):
         verbose_name = _("Company")
         verbose_name_plural = _("Companies")
     
+    prefix = models.CharField(max_length=200,blank=True) 
     vat_id = models.CharField(_("VAT id"),max_length=200,blank=True)
     """The national VAT identification number.
     """
@@ -473,10 +513,45 @@ class CompanyMixin(models.Model):
         #~ raise Exception('20110810')
 
 
+class CompanyDetail(dd.DetailLayout):
+  
+    box3 = """
+    country region
+    city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+    """
+
+    box4 = """
+    email:40 
+    url
+    phone
+    gsm
+    """
+
+    address_box = "box3 box4"
+
+    bottom_box = "remarks contacts.RolesByCompany"
+
+    intro_box = """
+    prefix name id language 
+    vat_id:12 type:20
+    """
+
+    main = """
+    intro_box
+    address_box
+    bottom_box
+    """
+    
+
+
+
               
 class Companies(Contacts):
     model = settings.LINO.company_model
     order_by = ["name"]
+    detail_layout = CompanyDetail()
     
     
     
@@ -724,16 +799,16 @@ def setup_my_menu(site,ui,user,m):
   
 def setup_config_menu(site,ui,user,m): 
     config_contacts = m.add_menu("contacts",_("Contacts"))
+    config_contacts.add_action(CompanyTypes)
+    config_contacts.add_action(RoleTypes)
     config_contacts.add_action(site.modules.countries.Countries)
     config_contacts.add_action(site.modules.countries.Cities)
-    config_contacts.add_action(CompanyTypes)
-    #~ config_contacts.add_action('contacts.ContactTypes')
-    config_contacts.add_action(RoleTypes)
     config_contacts.add_action(site.modules.countries.Languages)
             
     #~ m  = m.add_menu("contacts",_("~Contacts"))
     #~ m.add_action('contacts.RoleTypes')
   
 def setup_explorer_menu(site,ui,user,m):
-    pass
+    config_contacts = m.add_menu("contacts",_("Contacts"))
+    m.add_action(site.modules.contacts.Roles)
   

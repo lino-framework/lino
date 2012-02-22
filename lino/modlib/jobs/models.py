@@ -1279,6 +1279,7 @@ def setup_config_menu(site,ui,user,m):
   
 def setup_explorer_menu(site,ui,user,m):
     if user.is_spis:
+        m  = m.add_menu("jobs",_("~Jobs"))
         m.add_action(Contracts)
         m.add_action(Candidatures)
         m.add_action(Studies)

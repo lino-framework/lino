@@ -621,7 +621,7 @@ class Lino(object):
     :class:`lino.models.SiteConfig` instance.
     """
     
-    index_view_action = 'lino.Home'
+    #~ index_view_action = 'lino.Home'
     
     # for internal use:
     _site_config = None

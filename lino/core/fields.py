@@ -275,9 +275,10 @@ def virtualfield(return_type):
     Decorator to turn a method into a VirtualField.
     """
     def decorator(fn):
-        def wrapped(*args):
-            return fn(*args)
-        return VirtualField(return_type,wrapped)
+        #~ def wrapped(*args):
+            #~ return fn(*args)
+        #~ return VirtualField(return_type,wrapped)
+        return VirtualField(return_type,fn)
     return decorator
     
 def displayfield(*args,**kw):
@@ -292,9 +293,10 @@ def requestfield(*args,**kw):
     The method to decorate must return either None or a TableRequest object.
     """
     def decorator(fn):
-        def wrapped(*args):
-            return fn(*args)
-        return RequestField(wrapped,*args,**kw)
+        #~ def wrapped(*args):
+            #~ return fn(*args)
+        #~ return RequestField(wrapped,*args,**kw)
+        return RequestField(fn,*args,**kw)
     return decorator
     
         

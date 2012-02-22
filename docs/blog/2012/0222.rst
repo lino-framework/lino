@@ -18,3 +18,25 @@ Ich weiß wohl nicht, weshalb ich das auskommentiert hatte...
 
 In :mod:`lino.modlib.uploads` wurde der Text "expires" 
 nicht richtig übersetzt.
+
+Oops, und im Modul :mod:`lino.modlib.jobs` waren noch eine Serie 
+kleinerer .dtl-Dateien nicht konvertiert.
+
+Aber jetzt geht das Release raus: :doc:`/releases/1.4.1`.
+Die Änderungen ab nun kommen also in die nächste Version.
+
+
+Restarted to work on an experimental internal application `luc` 
+which might slowly become the next "real" Lino application.
+Continued to think and work on how to configure `lino.Home`.
+Removed `index_view_action` again since it is more natural to use 
+`app_label`.
+But then how will we make user-dependent layouts for the home page?
+
+There was a subtle bug in the kernel setup process: when a module 
+overrides an actor (by setting its `app_label` to the same value 
+as the actor it inherits from), then the overridden actor still remained in actors.actors_list. And if both of them have a detail_layout,  js_render_detail_FormPanel() 
+generated two FormPanels with the same name.
+
+Modified a test case in dsbe_demo_tests because the `Company.prefix` field 
+is now defined in contacts.CompanyMixin, no longer in dsbe.models.Company

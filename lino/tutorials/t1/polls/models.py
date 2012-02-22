@@ -58,6 +58,7 @@ class ChoicesByPoll(Choices):
 from lino import models as lino
 
 class Home(lino.Home):
+    app_label = 'lino'
     detail_template = """
     welcome
     """

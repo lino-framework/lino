@@ -55,6 +55,7 @@ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.modlib.cal import models as cal
+from lino.modlib.users import models as users
 from lino.utils.choicelists import HowWell, Gender
 from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
@@ -748,7 +749,7 @@ class Company(Partner,contacts.Contact,contacts.CompanyMixin):
         
     #~ vat_id = models.CharField(max_length=200,blank=True)
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
-    prefix = models.CharField(max_length=200,blank=True) 
+    #~ prefix = models.CharField(max_length=200,blank=True) 
     # todo: remove hourly_rate after data migration. this is now in Job
     hourly_rate = dd.PriceField(_("hourly rate"),blank=True,null=True)
     #~ is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
@@ -787,9 +788,9 @@ class CompanyDetail(dd.DetailLayout):
     bottom_box = "box5 contacts.RolesByCompany"
 
     intro_box = """
-      prefix name id language 
-      vat_id:12 activity:20 type:20 #hourly_rate
-      """
+    prefix name id language 
+    vat_id:12 activity:20 type:20 #hourly_rate
+    """
 
     general = """
     intro_box
@@ -2507,6 +2508,7 @@ connection_created.connect(my_callback)
 
 class Home(cal.Home):
     label = cal.Home.label
+    app_label = 'lino'
     detail_template = """
     quick_links:80x1
     dsbe.UsersWithClients:80x8
@@ -2516,10 +2518,10 @@ class Home(cal.Home):
 
 def site_setup(site):
   
-    #~ site.modules.cal.Home.set_detail("""
+    #~ site.modules.lino.Home.set_detail("""
     #~ quick_links:80x1
     #~ dsbe.UsersWithClients:80x8
-    #~ coming_reminders:40x16 missed_reminders:40x16
+    #~ cal.ComingReminders:40x16 cal.MissedReminders:40x16
     #~ """)
     
     site.modules.lino.SiteConfigs.set_detail("""
@@ -2575,7 +2577,8 @@ def site_setup(site):
     site.modules.cal.Events.set_detail(EventDetail())
     
     
-    class UserDetail(dd.DetailLayout):
+    #~ class UserDetail(dd.DetailLayout):
+    class UserDetail(users.UserDetail):
       
         box2 = """
         is_active 
@@ -2587,26 +2590,26 @@ def site_setup(site):
         newcomer_quota
         """
         
-        box3 = """
-        country region
-        city zip_code:10
-        street_prefix street:25 street_no street_box
-        addr2:40
-        """
+        #~ box3 = """
+        #~ country region
+        #~ city zip_code:10
+        #~ street_prefix street:25 street_no street_box
+        #~ addr2:40
+        #~ """
 
-        box4 = """
-        email:40 
-        url
-        phone
-        gsm
-        """
+        #~ box4 = """
+        #~ email:40 
+        #~ url
+        #~ phone
+        #~ gsm
+        #~ """
 
-        general = """
-        first_name last_name username language id
-        box3:40 box4:30 box2:20
-        date_joined last_login 
-        remarks 
-        """
+        #~ general = """
+        #~ first_name last_name username language id
+        #~ box3:40 box4:30 box2:20
+        #~ date_joined last_login 
+        #~ remarks 
+        #~ """
         
         #~ reminders = "cal.RemindersByUser"
         #~ newcomers = "newcomers.CompetencesByUser"
@@ -2622,4 +2625,25 @@ def site_setup(site):
 
     
     site.modules.users.Users.set_detail(UserDetail())
+    
+    class NoteDetail(dd.DetailLayout):
+        left = """
+        date:10 event_type:25 type:25
+        subject 
+        person company
+        id user:10 language:8 build_time
+        body
+        """
+        
+        right = """
+        uploads.UploadsByOwner
+        thirds.ThirdsByOwner:30
+        cal.TasksByOwner
+        """
+        
+        main = """
+        left:60 right:30
+        """
+        
+    site.modules.notes.Notes.set_detail(NoteDetail())
         

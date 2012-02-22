@@ -121,6 +121,40 @@ class User(contacts.Contact,contacts.PersonMixin):
         return ['is_superuser','is_active']
         
 
+
+class UserDetail(dd.DetailLayout):
+  
+    box2 = """
+    is_active 
+    is_staff 
+    is_expert 
+    is_superuser
+    """
+    
+    box3 = """
+    country region
+    city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+    """
+
+    box4 = """
+    email:40 
+    url
+    phone
+    gsm
+    """
+
+    general = """
+    first_name last_name username language id
+    box3:40 box4:30 box2:20
+    date_joined last_login 
+    remarks 
+    """
+    
+    main = "general"
+  
+
 class Users(dd.Table):
     """Shows the list of users on this site.
     """
@@ -128,6 +162,7 @@ class Users(dd.Table):
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
+    detail_layout = UserDetail()
 
     @classmethod
     def get_permission(cls,action,user,obj):

@@ -226,7 +226,7 @@ class NoteTypes(dd.Table):
     """
 
 class NoteDetail(dd.DetailLayout):
-    left = """
+    main = """
     date:10 event_type:25 type:25
     subject 
     person company
@@ -234,15 +234,6 @@ class NoteDetail(dd.DetailLayout):
     body
     """
     
-    right = """
-    uploads.UploadsByOwner
-    thirds.ThirdsByOwner:30
-    cal.TasksByOwner
-    """
-    
-    main = """
-    left:60 right:30
-    """
 
 
 

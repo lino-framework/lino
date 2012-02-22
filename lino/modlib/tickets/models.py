@@ -66,6 +66,12 @@ class Project(mixins.AutoUser,mixins.Printable):
     
 class Projects(dd.Table):
     model = 'tickets.Project'
+    detail_template = """
+    name summary type user 
+    description
+    TicketsByProject
+    # cal.EventsByProject
+    """
 
 
 
@@ -105,7 +111,12 @@ class Ticket(mixins.AutoUser,mixins.ProjectRelated,mixins.CreatedModified):
 
 
 class Tickets(dd.Table):
-    model = 'tickets.Ticket'
+    model = Ticket
+    detail_template = """
+    project summary user created modified
+    description
+    CommentsByTicket
+    """
 
 class TicketsByProject(Tickets):
     master_key = 'project'
@@ -126,23 +137,25 @@ class Comment(mixins.AutoUser,mixins.CreatedModified):
 class Comments(dd.Table):
     model = Comment
     column_names = 'created description user *'
+    detail_template = """
+    ticket user id created modified
+    description
+    """
     
 class CommentsByTicket(Comments):
     master_key = 'ticket'
 
 if settings.LINO.user_model:    
-    class MyProjects(mixins.ByUser):
-        model = 'tickets.Project'
+  
+    class MyProjects(Projects,mixins.ByUser):
         order_by = ["name"]
         column_names = 'name id summary *'
         
-    class MyTickets(mixins.ByUser):
-        model = 'tickets.Ticket'
+    class MyTickets(Tickets,mixins.ByUser):
         order_by = ["created","id"]
         column_names = 'created id project summary state *'
         
-    class MyComments(mixins.ByUser):
-        model = 'tickets.Comment'
+    class MyComments(Comments,mixins.ByUser):
         order_by = ["-modified"]
         column_names = 'modified description *'
     
@@ -166,18 +179,18 @@ def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("tickets",_("Tickets"))
-    m.add_action('tickets.MyProjects')
-    m.add_action('tickets.MyTickets')
-    m.add_action('tickets.MyComments')
+    m.add_action(MyProjects)
+    m.add_action(MyTickets)
+    m.add_action(MyComments)
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("tickets",_("Tickets"))
-    m.add_action('tickets.ProjectTypes')
-    m.add_action('tickets.TicketStates')
+    m.add_action(ProjectTypes)
+    m.add_action(TicketStates)
   
 def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("tickets",_("Tickets"))
-    m.add_action('tickets.Projects')
-    m.add_action('tickets.Tickets')
-    m.add_action('tickets.Comments')
+    m.add_action(Projects)
+    m.add_action(Tickets)
+    m.add_action(Comments)
   
