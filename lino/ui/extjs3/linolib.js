@@ -2066,9 +2066,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
     if (this.action_name == 'insert') {
       this.cascade(function(cmp){
-        //~ console.log('20110613 cascade',cmp);
+        // console.log('20110613 cascade',cmp);
         if (cmp.disabled_in_insert_window) {
-        //~ if (cmp instanceof Lino.GridPanel) {
             cmp.disable();
         }
       });

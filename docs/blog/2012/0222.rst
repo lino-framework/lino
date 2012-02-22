@@ -1,12 +1,20 @@
 20120222
 ========
 
-PUT eines Uploads geht nicht?
+PUT eines Uploads geht nicht? Habe das mit eigenen Aufen auf Rose 
+gesehen, es aber später nicht reproduzieren können.
 
-Klick auf "Startseite" bei leerer history funktionierte nicht, 
-wenn außerdem auch ROOT_URL leer war. Also `location.replace('')` 
-bewirkt nichts. Muss dann `location.replace('/')` heißen.
+Klick auf "Startseite" bei leerer History funktionierte nicht, 
+wenn außerdem auch `ROOT_URL` leer war. Also `location.replace('')` 
+bewirkt nichts. Es muss dann schon `location.replace('/')` heißen.
 
 TasksByOwner zeigt in einem Insert-Fenster alle Tasks an.
-Auch ein bestehender Upload, wenn er via permalink geöffnet wird:
-http://127.0.0.1:8000/api/uploads/Uploads/1?an=detail
+Auch ein bestehender Upload, wenn er via permalink geöffnet wird.
+Erklärung: 
+:meth:`lino.utils.tables.AbstractTable.get_filter_kw`
+setzte im Fall einer leeren `master_instance` die keywords nicht auf None 
+und gab dann also immer alle Records zurück. 
+Ich weiß wohl nicht, weshalb ich das auskommentiert hatte...
+
+In :mod:`lino.modlib.uploads` wurde der Text "expires" 
+nicht richtig übersetzt.

@@ -834,6 +834,10 @@ class AbstractTable(actors.Actor):
         
     @classmethod
     def get_filter_kw(self,master_instance,**kw):
+        """
+        Return a dict with the "master keywords" for this table 
+        and a given `master_instance`.
+        """
         #logger.debug('%s.get_filter_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
             assert master_instance is None, "Table %s doesn't accept a master" % self.actor_id
@@ -843,9 +847,15 @@ class AbstractTable(actors.Actor):
         #~ elif self.master is ContentType:
             #~ print 20110415
             if master_instance is None:
-                pass
-                #~ kw[self.fk.ct_field] = None
-                #~ kw[self.fk.fk_field] = None
+                """
+                20120222 : here was only `pass`, and the two other lines
+                were uncommented. don't remember why I commented them out.
+                But it caused all tasks to appear in UploadsByOwner of 
+                an insert window for uploads.
+                """
+                #~ pass
+                kw[self.master_field.ct_field] = None
+                kw[self.master_field.fk_field] = None
             else:
                 ct = ContentType.objects.get_for_model(master_instance.__class__)
                 kw[self.master_field.ct_field] = ct

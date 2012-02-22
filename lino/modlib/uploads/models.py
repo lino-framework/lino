@@ -100,11 +100,11 @@ class Upload(
         """
         Also called from :func:`lino.apps.dsbe.models.update_all_reminders`.
         """
-        logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
+        #~ logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
         
         update_reminder(1,self,self.user,
           self.valid_until,
-          _("%s expires" % (self.type)),
+          _("%s expires") % self.type,
           2,DurationUnit.months)
       
     def update_owned_instance(self,task):
