@@ -129,6 +129,10 @@ class Schedule(babel.BabelNamed):
 class Schedules(dd.Table):
     model = Schedule
     order_by = ['name']
+    detail_template = """
+    id name
+    ContractsBySchedule
+    """
 
 class Regime(babel.BabelNamed):
     """List of choices for `jobs.Contract.regime` field."""
@@ -139,6 +143,10 @@ class Regime(babel.BabelNamed):
 class Regimes(dd.Table):
     model = Regime
     order_by = ['name']
+    detail_template = """
+    id name
+    ContractsByRegime
+    """
 
 
 
@@ -239,6 +247,11 @@ class Sector(babel.BabelNamed):
 class Sectors(dd.Table):
     model = Sector
     order_by = ['name']
+    detail_template = """
+    id name
+    remark FunctionsBySector
+    CandidaturesBySector
+  """
 
 class Function(babel.BabelNamed):
     """Each Job may have a Function."""
@@ -254,10 +267,17 @@ class Function(babel.BabelNamed):
         #~ related_name="%(app_label)s_%(class)s_set_by_provider",
         #~ verbose_name=_("Job Provider"),
         #~ blank=True,null=True)
+        
 class Functions(dd.Table):
     model = Function
     column_names = 'name sector *'
     order_by = ['name']
+    detail_template = """
+    id name sector
+    remark
+    CandidaturesByFunction
+    ExperiencesByFunction
+    """
     
 class FunctionsBySector(Functions):
     master_key = 'sector'
@@ -530,6 +550,10 @@ class ContractsByJob(Contracts):
     master_key = 'job'
 
 class ContractsByRegime(Contracts):
+    """
+    Shows Job Contracts for a given Regime.
+    Used as slave grid in Regimes detail.
+    """
     master_key = 'regime'
     column_names = 'job applies_from applies_until user type *'
 
@@ -623,6 +647,12 @@ class Offer(SectorFunction):
   
 class Offers(dd.Table):
     model = Offer
+    detail_template = """
+    name provider sector function
+    selection_from selection_until start_date
+    remark 
+    ExperiencesByOffer CandidaturesByOffer
+    """
     
     
     
@@ -702,7 +732,13 @@ class StudiesByCountry(Studies):
     master_key = 'country'
     
 class StudiesByCity(Studies):
+    """
+    Lists all Studies in a given City. 
+    Used as slave grid in Cities detail.
+    """
     master_key = 'city'
+    column_names = 'school type person content started stopped success language  remarks *'
+    
     
 class StudiesByPerson(HistoryByPerson):
     "List of studies for a known person."
