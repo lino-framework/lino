@@ -49,7 +49,11 @@ in solchen Fällen zusätzliche Scrollbars pro Feld mit
 überbreitem Label.
 
 Und noch was Subtiles: wenn man auf "Startseite" klickt, 
-macht er jetzt kein Reload der Seite mehr, sondern ruft 
-die neue Funktion `Lino.close_all_windows()`.
-Der Unterschied ist, dass das alles schneller geht und 
-dass die bereits gerenderten Fenster es bleiben.
+macht er jetzt nicht mehr einfach ein Reload der Seite, 
+sondern er schließt lediglich alle Fenster.
+Der Unterschied ist, dass es deutlich schneller geht, 
+und die bereits gerenderten Fenster gerendert bleiben.
+Wenn man allerdings schon auf der Startseite ist und 
+dann nochmal "Startseite" klickt, *dann* lädt er die 
+Seite neu.
+Neue Funktion `Lino.close_all_windows()`.

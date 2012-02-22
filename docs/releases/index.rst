@@ -1,7 +1,7 @@
 Releases
 ========
 
-The current stable release is :doc:`1.4.0`.
+The current stable release is :doc:`1.4.1`.
 
 We're currently working on :doc:`coming`.
 

@@ -1,0 +1,12 @@
+20120222
+========
+
+PUT eines Uploads geht nicht?
+
+Klick auf "Startseite" bei leerer history funktionierte nicht, 
+wenn außerdem auch ROOT_URL leer war. Also `location.replace('')` 
+bewirkt nichts. Muss dann `location.replace('/')` heißen.
+
+TasksByOwner zeigt in einem Insert-Fenster alle Tasks an.
+Auch ein bestehender Upload, wenn er via permalink geöffnet wird:
+http://127.0.0.1:8000/api/uploads/Uploads/1?an=detail

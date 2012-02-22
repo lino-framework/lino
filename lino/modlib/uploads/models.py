@@ -15,8 +15,8 @@
 """
 """
 
-#~ import logging
-#~ logger = logging.getLogger(__name__)
+import logging
+logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -100,7 +100,7 @@ class Upload(
         """
         Also called from :func:`lino.apps.dsbe.models.update_all_reminders`.
         """
-        #~ logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
+        logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
         
         update_reminder(1,self,self.user,
           self.valid_until,

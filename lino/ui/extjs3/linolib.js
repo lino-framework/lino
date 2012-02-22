@@ -332,11 +332,16 @@ Lino.close_window = function(status_update) {
 
 Lino.close_all_windows = function() {
   if (Lino.window_history.length == 0) {
-      location.replace(ROOT_URL);
-  } else while (Lino.window_history.length > 0) {
+      //~ console.log("20120222 Lino.close_all_windows() : location.replace(",ROOT_URL,")");
+      //~ if (ROOT_URL) 
+      location.replace(ROOT_URL+"/");
+  } else {
+    //~ console.log("20120222 Lino.close_all_windows()",Lino.window_history);
+    while (Lino.window_history.length > 0) {
       Lino.close_window();
       //~ Lino.window_history.pop().hide_really();
     }
+  }
   //~ Lino.current_window = null;
   //~ Lino.close_window();
   //~ var ww = 

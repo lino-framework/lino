@@ -1,8 +1,14 @@
-Version 1.4.1 (20120221)
+Version 1.4.1 (20120222)
 ========================
 
-Just a few more internal optimizations and some German 
-translations.
+With a few more internal optimizations,
+some German translations, 
+some css fiddling and a 
+quicker "Home" button.
+
+Außerdem habe ich im Reiter "Status" im Detail einer Person 
+aufgeräumt: Uploads sind jetzt unten rechts, Einkommen oben 
+rechts.
 
 Download it from http://pypi.python.org/pypi/lino
 
