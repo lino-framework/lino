@@ -1,0 +1,14 @@
+20120223
+========
+
+Restarted work on BCSS connection:
+
+- :class:`lino.modlib.bcss.models.IdentifyPersonRequest` now inherits 
+  from :class:`lino.modlib.contacts.models.PersonMixin` and stores these 
+  fields on its own. Because otherwise it made no sense.
+  
+- Discovered and fixed a fundamental design bug in :mod:`lino.utils.xmlgen`.
+  It starts now to become possible for a human to "translate" an XSD into 
+  a set of xmlgen Python classes.
+  
+  Adapted :mod:`lino.utils.bcss` to these changes.

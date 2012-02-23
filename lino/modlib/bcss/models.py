@@ -37,6 +37,7 @@ from appy.shared.xml_parser import XmlUnmarshaller
 
 from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
+from lino.modlib.contacts import models as contacts
 
 class RequestStatus(ChoiceList):
     """
@@ -81,18 +82,27 @@ class SendAction(dd.RowAction):
 
 class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     """
-    Abstract Base class for models that represent 
+    Abstract Base Class for Models that represent 
     requests to the :term:`BCSS` (and responses).
     """
     class Meta:
         abstract = True
         
-    sent = models.DateTimeField(verbose_name=_("Sent"),
+    sent = models.DateTimeField(
+        verbose_name=_("Sent"),
         blank=True,null=True,
         editable=False)
-    request_xml = models.TextField(verbose_name=_("Request"),editable=False,blank=True)
-    response_xml = models.TextField(verbose_name=_("Response"),editable=False,blank=True)
+    """Read-only .
+    The date and time when this request has been executed. 
+    This is empty for requests than haven't been sent."""
+    
     status = RequestStatus.field(default=RequestStatus.new,editable=False)
+    
+    request_xml = models.TextField(verbose_name=_("Request"),
+        editable=False,blank=True)
+    """The raw XML string that has been (or will be) sent."""
+    
+    response_xml = models.TextField(verbose_name=_("Response"),editable=False,blank=True)
     
     def execute_request(self):
         """
@@ -147,11 +157,33 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
         
         
-class IdentifyPersonRequest(BCSSRequest):
+class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin):
     """
     Represents a request to the :term:`BCSS` IdentifyPerson service.
     
     """
+    national_id  = models.TextField(verbose_name=_("National ID"),
+        editable=False,blank=True)
+        
+    middle_name = models.CharField(max_length=200,
+      #~ blank=True,
+      verbose_name=_('Middle name'))
+    "Whatever this means..."
+    
+    def save(self,*args,**kw):
+        if self.project: 
+            person = self.project
+            if person.national_id and not self.national_id:
+                national_id = person.national_id.replace(' ','')
+                national_id = national_id.replace('-','')
+                self.national_id = national_id.replace('=','')
+            if not self.last_name:
+                self.last_name = person.last_name
+            if not self.first_name:
+                self.first_name = person.first_name
+                
+        super(IdentifyPersonRequest,self).save(*args,**kw)
+        
     def build_service(self):
         """
         If the person has her `national_id` field filled, 
@@ -160,34 +192,31 @@ class IdentifyPersonRequest(BCSSRequest):
         first_name and (if filled) birth_date and gender fields.
         """
         person = self.project
-        VD = bcss.IdentifyPersonRequest.VerificationData
-        SC = bcss.IdentifyPersonRequest.SearchCriteria
+        VD = bcss.ipr.VerificationData
+        SC = bcss.ipr.SearchCriteria
         PC = SC.PhoneticCriteria
-        if person.national_id:
-            national_id = person.national_id.replace(' ','')
-            national_id = national_id.replace('-','')
-            national_id = national_id.replace('=','')
-            return bcss.IdentifyPersonRequest.verify_request(
-              national_id,
-              LastName=person.last_name,
-              FirstName=person.first_name,
-              BirthDate=person.birth_date,
+        if self.national_id:
+            return bcss.ipr.verify_request(
+              self.national_id,
+              LastName=self.last_name,
+              FirstName=self.first_name,
+              BirthDate=self.birth_date,
               )
         else:
           pc = []
-          pc.append(PC.LastName(person.last_name))
-          pc.append(PC.FirstName(person.first_name))
-          pc.append(PC.MiddleName(''))
+          pc.append(PC.LastName(self.last_name))
+          pc.append(PC.FirstName(self.first_name))
+          pc.append(PC.MiddleName(self.middle_name))
           #~ if person.birth_date:
-          pc.append(PC.BirthDate(person.birth_date))
-          if person.gender == Gender.male:
+          pc.append(PC.BirthDate(self.birth_date))
+          if self.gender == Gender.male:
               pc.append(PC.Gender(1))
-          elif person.gender == Gender.female:
+          elif self.gender == Gender.female:
               pc.append(PC.Gender(2))
           else:
               pc.append(PC.Gender(0))
           pc.append(PC.Tolerance(0))
-          return bcss.IdentifyPersonRequest(SC(PC(*pc)))
+          return bcss.ipr.IdentifyPersonRequest(SC(PC(*pc)))
       
 class IdentifyPersonRequests(dd.Table):
     model = IdentifyPersonRequest

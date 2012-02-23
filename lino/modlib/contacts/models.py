@@ -379,11 +379,11 @@ class PersonMixin(models.Model):
     last_name = models.CharField(max_length=200,
       #~ blank=True,
       verbose_name=_('Last name'))
-    "Last name (family name)."
+    """Last name (family name)."""
     
     title = models.CharField(max_length=200,blank=True,
       verbose_name=_('Title'))
-    "Text to print as part of the first address line in front of first_name."
+    """Text to print as part of the first address line in front of first_name."""
         
     #~ gender = GenderField()
     gender = Gender.field()

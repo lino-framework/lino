@@ -17,32 +17,34 @@ Communicate with the :term:`BCSS` server.
 
 Example:
 
->>> req = IdentifyPersonRequest.verify_request("68060101234",
+>>> from lino.utils import bcss
+
+>>> req = bcss.ipr.verify_request("68060101234",
 ...   LastName="SAFFRE",BirthDate='1968-06-01')
 >>> print req.tostring(True)
-<ips:IdentifyPersonRequest xmlns:ips="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
-<ips:SearchCriteria>
-<ips:SSIN>68060101234</ips:SSIN>
-</ips:SearchCriteria>
-<ips:VerificationData>
-<ips:PersonData>
-<ips:LastName>SAFFRE</ips:LastName>
-<ips:BirthDate>1968-06-01</ips:BirthDate>
-</ips:PersonData>
-</ips:VerificationData>
-</ips:IdentifyPersonRequest>
+<ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+<ipr:SearchCriteria>
+<ipr:SSIN>68060101234</ipr:SSIN>
+</ipr:SearchCriteria>
+<ipr:VerificationData>
+<ipr:PersonData>
+<ipr:LastName>SAFFRE</ipr:LastName>
+<ipr:BirthDate>1968-06-01</ipr:BirthDate>
+</ipr:PersonData>
+</ipr:VerificationData>
+</ipr:IdentifyPersonRequest>
 
->>> req = PerformInvestigationRequest("6806010123",wait="0")
+>>> req = bcss.pir.perform_investigation("6806010123",wait="0")
 >>> print req.tostring(True)
-<ns1:PerformInvestigationRequest xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
-<ns1:SocialSecurityUser>6806010123</ns1:SocialSecurityUser>
-<ns1:DataGroups>
-<ns1:FamilyCompositionGroup>1</ns1:FamilyCompositionGroup>
-<ns1:CitizenGroup>1</ns1:CitizenGroup>
-<ns1:AddressHistoryGroup>1</ns1:AddressHistoryGroup>
-<ns1:WaitRegisterGroup>0</ns1:WaitRegisterGroup>
-</ns1:DataGroups>
-</ns1:PerformInvestigationRequest>
+<pir:PerformInvestigationRequest xmlns:pir="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
+<pir:SocialSecurityUser>6806010123</pir:SocialSecurityUser>
+<pir:DataGroups>
+<pir:FamilyCompositionGroup>1</pir:FamilyCompositionGroup>
+<pir:CitizenGroup>1</pir:CitizenGroup>
+<pir:AddressHistoryGroup>1</pir:AddressHistoryGroup>
+<pir:WaitRegisterGroup>0</pir:WaitRegisterGroup>
+</pir:DataGroups>
+</pir:PerformInvestigationRequest>
 
 The above examples are bare BCSS service requests.
 Before sending a request to the BCSS server, 
@@ -72,7 +74,7 @@ Here we go:
 
 >>> now = datetime.datetime(2011,10,31,15,41,10)
 >>> sr = req.ssdn_request(settings,'PIR # 5',now)
->>> print sr.tostring(True)
+>>> print sr.tostring(True,namespace=bcss.ssdn)
 <SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
 <RequestContext>
 <AuthorizedUser>
@@ -90,24 +92,24 @@ Here we go:
 <ServiceRequest>
 <ServiceId>OCMWCPASPerformInvestigation</ServiceId>
 <Version>20080604</Version>
-<ns1:PerformInvestigationRequest xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
-<ns1:SocialSecurityUser>6806010123</ns1:SocialSecurityUser>
-<ns1:DataGroups>
-<ns1:FamilyCompositionGroup>1</ns1:FamilyCompositionGroup>
-<ns1:CitizenGroup>1</ns1:CitizenGroup>
-<ns1:AddressHistoryGroup>1</ns1:AddressHistoryGroup>
-<ns1:WaitRegisterGroup>0</ns1:WaitRegisterGroup>
-</ns1:DataGroups>
-</ns1:PerformInvestigationRequest>
+<pir:PerformInvestigationRequest xmlns:pir="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
+<pir:SocialSecurityUser>6806010123</pir:SocialSecurityUser>
+<pir:DataGroups>
+<pir:FamilyCompositionGroup>1</pir:FamilyCompositionGroup>
+<pir:CitizenGroup>1</pir:CitizenGroup>
+<pir:AddressHistoryGroup>1</pir:AddressHistoryGroup>
+<pir:WaitRegisterGroup>0</pir:WaitRegisterGroup>
+</pir:DataGroups>
+</pir:PerformInvestigationRequest>
 </ServiceRequest>
 </SSDNRequest>
 
-Note that the XML chunk that starts with ``<ns1:`` 
+Note that the XML chunk that starts with ``<pir:`` 
 is exactly the same as before.
 
 Now we perform another wrapping of this SSDN request.
 
->>> print soap_request("Foo").tostring(True)
+>>> print bcss.soap_request("Foo").tostring(True)
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -118,7 +120,7 @@ Now we perform another wrapping of this SSDN request.
 
 Element-level validation:
 
->>> G = IdentifyPersonRequest.SearchCriteria.PhoneticCriteria.Gender
+>>> G = bcss.ipr.PhoneticCriteria.Gender
 
 >>> print G(4).tostring()
 Traceback (most recent call last):
@@ -131,7 +133,7 @@ Exception: Invalid value 4 (must be one of (0, 1, 2))
 Birth dates
 -----------
 
->>> B = IdentifyPersonRequest.SearchCriteria.PhoneticCriteria.BirthDate
+>>> B = bcss.ipr.PhoneticCriteria.BirthDate
 
 A birth date with missing month and day:
 
@@ -170,19 +172,23 @@ from lino.utils import IncompleteDate
 from lino.utils import xmlgen as xg
 
 class bcss(xg.Namespace):
-  url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
   
-  class xmlString(xg.Container):
-    pass
+    url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
+    
+    class xmlString(xg.Container):
+        pass
 
 class soap(xg.Namespace):
-  url = "http://schemas.xmlsoap.org/soap/envelope/" 
-  class Envelope(xg.Container):
+    url = "http://schemas.xmlsoap.org/soap/envelope/" 
+    class Envelope(xg.Container):
+        pass
     class Body(xg.Container):
         pass
 
 def soap_request(xmlString):
-    return soap.Envelope(soap.Envelope.Body(bcss.xmlString(xg.CDATA(xmlString))))
+    #~ xg.set_default_namespace(bcss)
+    body = bcss.xmlString(xg.CDATA(xmlString)).tostring()
+    return soap.Envelope(soap.Body(body))
     
   
 #~ class com(xg.Namespace):
@@ -230,45 +236,50 @@ class t_IncompleteDate(xg.Element):
         
       
   
+class common(xg.Namespace):
+    prefix = None
+    class AuthorizedUser(xg.Container):
+        class UserID(xg.String): pass
+        class Email(xg.EmailAddress): pass
+        class OrgUnit(xg.String): pass
+        class MatrixID(xg.String): pass
+        class MatrixSubID(xg.String): pass
+        def __init__(self,
+                    UserID=None,
+                    Email=None, 
+                    OrgUnit=None, 
+                    MatrixID=None, 
+                    MatrixSubID=None):
+            xg.Container.__init__(self,
+                self.UserID(UserID),
+                self.Email(Email),
+                self.OrgUnit(OrgUnit),
+                self.MatrixID(MatrixID),
+                self.MatrixSubID(MatrixSubID))
+              
+  
 class ssdn(xg.Namespace):
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Service"
 
-class SSDNRequest(xg.Container): 
-    """
-    General SSDN service request wrapper
-    """
-    namespace = ssdn
-    class RequestContext(xg.Container):
-      
-        class AuthorizedUser(xg.Container):
-            class UserID(xg.String): pass
-            class Email(xg.EmailAddress): pass
-            class OrgUnit(xg.String): pass
-            class MatrixID(xg.String): pass
-            class MatrixSubID(xg.String): pass
-            def __init__(self,
-                        UserID=None,
-                        Email=None, 
-                        OrgUnit=None, 
-                        MatrixID=None, 
-                        MatrixSubID=None):
-                xg.Container.__init__(self,
-                    self.UserID(UserID),
-                    self.Email(Email),
-                    self.OrgUnit(OrgUnit),
-                    self.MatrixID(MatrixID),
-                    self.MatrixSubID(MatrixSubID))
-              
-            
-        class Message(xg.Container):
-            class Reference(xg.String): pass
-            class TimeRequest(xg.DateTime): pass
-            
+    class SSDNRequest(xg.Container): 
+        """
+        General SSDN service request wrapper
+        """
+        #~ namespace = ssdn
+    
     class ServiceRequest(xg.Container):
       
         class ServiceId(xg.String): pass
         class Version(xg.String): pass
         #~ _any = ANY()
+        
+    class RequestContext(xg.Container):
+      
+            
+        class Message(xg.Container):
+            class Reference(xg.String): pass
+            class TimeRequest(xg.DateTime): pass
+            
 
 
 class Service(xg.Container):
@@ -285,25 +296,26 @@ class Service(xg.Container):
             #~ anyXML)
       
     def ssdn_request(self,settings,message_ref,dt):
-        #~ anyXML = self.tostring()
-        SR = SSDNRequest.ServiceRequest
+        #~ xg.set_default_namespace(None)
+        any = self.tostring()
+        SR = ssdn.ServiceRequest
         serviceRequest = SR(
             SR.ServiceId(self.service_id),
             SR.Version(self.service_version),
-            self)
+            xg.ANY(any))
         
-        RC = SSDNRequest.RequestContext
+        RC = ssdn.RequestContext
         context = RC(
-            RC.AuthorizedUser(**settings.LINO.bcss_user_params),
+            common.AuthorizedUser(**settings.LINO.bcss_user_params),
             RC.Message(
                 RC.Message.Reference(message_ref),
                 RC.Message.TimeRequest(dt)))
-        xg.set_default_namespace(ssdn)
-        return SSDNRequest(context,serviceRequest)
+        #~ xg.set_default_namespace(ssdn)
+        return ssdn.SSDNRequest(context,serviceRequest)
         
     def execute(self,settings,*args):
         
-        req = soap_request(self.ssdn_request(settings,*args).tostring())
+        req = soap_request(self.ssdn_request(settings,*args).tostring(namespace=ssdn))
         xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.tostring()
         
         #~ dblogger.info("Going to send request /******\n%s\n******/",xmlString)
@@ -325,61 +337,62 @@ class Service(xg.Container):
         #~ return reply
             
 
-class ips(xg.Namespace):
+class ipr(xg.Namespace):
     """
     Namespace of the IdentifyPerson service.
     
     """
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson"
-    
 
 
-class IdentifyPersonRequest(Service):
-    "A request for identifying a person or validating a persons identity"
-    namespace = ips
-    service_id = 'OCMWCPASIdentifyPerson'
-    service_version = '20050930'
+    class IdentifyPersonRequest(Service):
+        "A request for identifying a person or validating a person's identity"
+        #~ namespace = ipr
+        service_id = 'OCMWCPASIdentifyPerson'
+        service_version = '20050930'
+        
     class SearchCriteria(xg.Container):
         "criteria for identifying a person"
         #~ allowedChildren = [SSIN,PhoneticCriteria]
         class SSIN(SSIN):
             "Social Security Identification number of the person to identify"
             minOccurs = 0
-        class PhoneticCriteria(xg.Container): 
+            
+    class PhoneticCriteria(xg.Container): 
+        """
+        set of criteria for a phonetic search. 
+        all persons matching these criteria will be returned. 
+        Ignored if SSIN is also specified
+        """
+        minOccurs = 0
+        class LastName(xg.String): 
+            "last name to search for. Matched phonetically"
+        class FirstName(xg.String): pass
+        class MiddleName(xg.String): pass
+        class BirthDate(t_IncompleteDate):
             """
-            set of criteria for a phonetic search. 
-            all persons matching these criteria will be returned. 
-            Ignored if SSIN is also specified
+            birth date in the format yyyy-MM-dd. 
+            May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00.
+            If incomplete, Tolerance must be specified.
             """
-            minOccurs = 0
-            class LastName(xg.String): 
-                "last name to search for. Matched phonetically"
-            class FirstName(xg.String): pass
-            class MiddleName(xg.String): pass
-            class BirthDate(t_IncompleteDate):
-                """
-                birth date in the format yyyy-MM-dd. 
-                May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00.
-                If incomplete, Tolerance must be specified.
-                """
-            class Gender(xg.Integer):
-                "gender of the person. 0 = unknown, 1 = male, 2 = female"
-                allowedValues = (0,1,2)
-                
-            class Tolerance(xg.Integer):
-                """
-                tolerance on the bith date. 
-                specifies how much BirthDate may be off. 
-                the unit depends on the format of BirthDate. 
-                yyyy-MM-dd = days; 
-                yyyy-MM-00 = months; 
-                yyyy-00-00 = years.
-                """
-            class Maximum(xg.Integer):
-                """
-                maximum number of results returned. 
-                if not specified, maximum number is returned
-                """
+        class Gender(xg.Integer):
+            "gender of the person. 0 = unknown, 1 = male, 2 = female"
+            allowedValues = (0,1,2)
+            
+        class Tolerance(xg.Integer):
+            """
+            tolerance on the bith date. 
+            specifies how much BirthDate may be off. 
+            the unit depends on the format of BirthDate. 
+            yyyy-MM-dd = days; 
+            yyyy-MM-00 = months; 
+            yyyy-00-00 = years.
+            """
+        class Maximum(xg.Integer):
+            """
+            maximum number of results returned. 
+            if not specified, maximum number is returned
+            """
           
     class VerificationData(xg.Container):
         """
@@ -394,23 +407,24 @@ class IdentifyPersonRequest(Service):
             "ID of the person's SIS card"
         class IdentityCardNumber(xg.Container):
             "ID of the person's identity card"
-        class PersonData(xg.Container):
-            "set of personal data to match against"
-            class LastName(xg.String):
-                "last name to verify. matched exactly"
-            class FirstName(xg.String):
-                "first name to verify. matched exactly if present"
-            class MiddleName(xg.String):
-                "middle name to verify. matched exactly if present"
-            class BirthDate(t_IncompleteDate):
-                """
-                birth date in the format yyyy-MM-dd. 
-                May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00. 
-                If incomplete, Tolerance must be specified
-                """
+            
+    class PersonData(xg.Container):
+        "set of personal data to match against"
+        class LastName(xg.String):
+            "last name to verify. matched exactly"
+        class FirstName(xg.String):
+            "first name to verify. matched exactly if present"
+        class MiddleName(xg.String):
+            "middle name to verify. matched exactly if present"
+        class BirthDate(t_IncompleteDate):
+            """
+            birth date in the format yyyy-MM-dd. 
+            May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00. 
+            If incomplete, Tolerance must be specified
+            """
 
     @classmethod          
-    def verify_request(cls,ssin,**kw):
+    def verify_request(ipr,ssin,**kw):
         """
         possible keywords are the allowed children of
         :class:`IdentifyPersonRequest.VerificationData.PersonData`:
@@ -420,20 +434,51 @@ class IdentifyPersonRequest(Service):
         BirthDate.
         
         """
-        SC = IdentifyPersonRequest.SearchCriteria
-        VD = IdentifyPersonRequest.VerificationData
-        PD = VD.PersonData
+        SC = ipr.SearchCriteria
+        VD = ipr.VerificationData
+        PD = ipr.PersonData
         pd = []
         for k in ('LastName','FirstName','MiddleName','BirthDate'):
         #~ for k,v in kw.items():
             v = kw.get(k,None)
             if v: # ignore empty values
-                cl = getattr(VD.PersonData,k)
+                cl = getattr(PD,k)
                 pd.append(cl(v))
-        return cls(
+        return ipr.IdentifyPersonRequest(
           SC(SC.SSIN(ssin)),
-          VD(VD.PersonData(*pd)))
+          VD(PD(*pd)))
 
+
+class pir(xg.Namespace):
+    url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation"
+    
+    class PerformInvestigationRequest(Service):
+        #~ namespace = pir
+        service_id = 'OCMWCPASPerformInvestigation'
+        service_version = '20080604'
+    class SocialSecurityUser(xg.String): pass
+    class DataGroups(xg.Container):
+        """
+        The possible types of information that can be obtained. 
+        If not specified, all available information is returned.
+        """
+        class FamilyCompositionGroup(xg.String): pass
+        class CitizenGroup(xg.String): pass
+        class AddressHistoryGroup(xg.String): pass
+        class WaitRegisterGroup(xg.String): pass
+          
+    #~ def __init__(self,ssin,family='1',citizen='1',address='1',wait='1'):
+    @classmethod
+    def perform_investigation(pir,ssin,family='1',citizen='1',address='1',wait='1'):
+        DG = pir.DataGroups
+        return pir.PerformInvestigationRequest(
+            pir.SocialSecurityUser(ssin),
+            DG(
+              DG.FamilyCompositionGroup(family),
+              DG.CitizenGroup(citizen),
+              DG.AddressHistoryGroup(address),
+              DG.WaitRegisterGroup(wait)))
+            
 
 class ns2(xg.Namespace):
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance"
@@ -448,29 +493,17 @@ class ns2(xg.Namespace):
                 class EndDate(xg.Date): pass
         
 
-class ns1(xg.Namespace):
-    url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation"
-    
-class PerformInvestigationRequest(Service):
-    namespace = ns1
-    service_id = 'OCMWCPASPerformInvestigation'
-    service_version = '20080604'
-    class SocialSecurityUser(xg.String): pass
-    class DataGroups(xg.Container):
-        class FamilyCompositionGroup(xg.String): pass
-        class CitizenGroup(xg.String): pass
-        class AddressHistoryGroup(xg.String): pass
-        class WaitRegisterGroup(xg.String): pass
-    def __init__(self,ssin,family='1',citizen='1',address='1',wait='1'):
-        DG = PerformInvestigationRequest.DataGroups
-        xg.Container.__init__(self,
-          PerformInvestigationRequest.SocialSecurityUser(ssin),
-          DG(
-            DG.FamilyCompositionGroup(family),
-            DG.CitizenGroup(citizen),
-            DG.AddressHistoryGroup(address),
-            DG.WaitRegisterGroup(wait)))
-            
+
+
+
+
+
+
+
+
+
+
+
 def xml2reply(xmlString):
     u"""
     Parse the XML string and return a "reply handler".
