@@ -64,7 +64,7 @@ from lino.core import actions #, layouts #, commands
 from lino.core import table
 from lino.core import layouts
 from lino.utils import tables
-from lino.utils import xhtml as xhg
+from lino.utils.xmlgen import xhtml as xhg
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors

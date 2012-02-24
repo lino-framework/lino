@@ -1,0 +1,12 @@
+20120224
+========
+
+Statt was Sichtbares zu produzieren, habe ich die Dokumentation von 
+:mod:`lino.utils.xmlgen` aktualisiert. 
+Auch noch Änderungen: 
+
+- ANY, CDATA und TEXT sind jetzt ebenfalls Elemente.
+- Paradigma für `validate` geändert.
+- Neue Methoden 
+  :meth:`parse_value <lino.utils.xmlgen.Element.parse_value>` 
+  :meth:`badValue <lino.utils.xmlgen.Element.badValue>` 

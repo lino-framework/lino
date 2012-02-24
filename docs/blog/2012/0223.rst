@@ -12,3 +12,29 @@ Restarted work on BCSS connection:
   a set of xmlgen Python classes.
   
   Adapted :mod:`lino.utils.bcss` to these changes.
+
+
+Also beim Wiedereinlesen in die XSD-Dateien und Strukturen der BCSS-Requests 
+ist mir ein fundamentaler Denkfehler in meinem xmlgen-Modul aufgefallen, 
+den ich natürlich sogleich beheben musste. 
+
+Mindestens zwei Stunden habe ich dabei verbraten wegen eines Nebeneffekts, 
+der durch doctest verursacht war.  Ich hatte im docstring geschrieben::
+ 
+  >>> from lino.utils.xmlgen import *
+  
+Das war vielleicht eine subtile Mausefalle! Weil ich in meinem `__all__` am Ende 
+der `xmlgen.py` (natürlich) einige Namen vergessen hatte. gab es zwei quasi 
+identische Klassen `Node`: die aus dem Modul und die aus dem Docstring. 
+Und `isinstance(x,Node)` gab logischerweise False zurück, wenn ich einen Node 
+mit der "falschen" Klasse machte.
+  
+Und ich weiß ja noch immer nicht, ob ich mit meinem xmlgen nicht das Rad 
+am neuerfinden bin... Also wer diesen Blogeintrag liest und sich für das Thema 
+interessiert, der möge doch bitte mal in die Dokumentation 
+der folgenden Module schauen und mich schonend aufklären, 
+falls er dabei einen Eindruck von *déjà-vu* hat:
+
+- :mod:`lino.utils.xmlgen`
+- :mod:`lino.utils.xhtml`
+- :mod:`lino.utils.bcss` 

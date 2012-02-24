@@ -17,9 +17,7 @@ Communicate with the :term:`BCSS` server.
 
 Example:
 
->>> from lino.utils import bcss
-
->>> req = bcss.ipr.verify_request("68060101234",
+>>> req = ipr.verify_request("68060101234",
 ...   LastName="SAFFRE",BirthDate='1968-06-01')
 >>> print req.tostring(True)
 <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
@@ -34,7 +32,7 @@ Example:
 </ipr:VerificationData>
 </ipr:IdentifyPersonRequest>
 
->>> req = bcss.pir.perform_investigation("6806010123",wait="0")
+>>> req = pir.perform_investigation("6806010123",wait="0")
 >>> print req.tostring(True)
 <pir:PerformInvestigationRequest xmlns:pir="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
 <pir:SocialSecurityUser>6806010123</pir:SocialSecurityUser>
@@ -74,7 +72,7 @@ Here we go:
 
 >>> now = datetime.datetime(2011,10,31,15,41,10)
 >>> sr = req.ssdn_request(settings,'PIR # 5',now)
->>> print sr.tostring(True,namespace=bcss.ssdn)
+>>> print sr.tostring(True,namespace=ssdn)
 <SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
 <RequestContext>
 <AuthorizedUser>
@@ -109,7 +107,7 @@ is exactly the same as before.
 
 Now we perform another wrapping of this SSDN request.
 
->>> print bcss.soap_request("Foo").tostring(True)
+>>> print soap_request("Foo").tostring(True)
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -120,42 +118,42 @@ Now we perform another wrapping of this SSDN request.
 
 Element-level validation:
 
->>> G = bcss.ipr.PhoneticCriteria.Gender
+>>> G = ipr.PhoneticCriteria.Gender
 
->>> print G(4).tostring()
+>>> G(4)
 Traceback (most recent call last):
 ...
-Exception: Invalid value 4 (must be one of (0, 1, 2))
+Exception: Bad value 4 for Gender : Must be one of (0, 1, 2).
 
->>> print G(2).tostring()
+>>> print G(2).tostring(namespace=ipr,declare_namespaces=False)
 <Gender>2</Gender>
 
 Birth dates
 -----------
 
->>> B = bcss.ipr.PhoneticCriteria.BirthDate
+>>> B = ipr.PhoneticCriteria.BirthDate
 
 A birth date with missing month and day:
 
->>> print B('1978-00-00').tostring()
+>>> print B('1978-00-00').tostring(namespace=ipr,declare_namespaces=False)
 <BirthDate>1978-00-00</BirthDate>
 
 BCSS requires at least the year of a birth date:
 
->>> print B('0000-04-27')
+>>> node = B('0000-04-27')
 Traceback (most recent call last):
 ...
-Exception: Invalid date for BirthDate
+Exception: Bad value IncompleteDate('0000-04-27') for BirthDate : Year may not be 0
 
 A normal birth date instantiated from a `datetime.date`:
 
->>> print B(datetime.date(1968,6,1)).tostring()
+>>> print B(datetime.date(1968,6,1)).tostring(namespace=ipr,declare_namespaces=False)
 <BirthDate>1968-06-01</BirthDate>
 
 An empty birth date:
 
->>> print B('').tostring()
-<BirthDate></BirthDate>
+>>> print B('').tostring(namespace=ipr,declare_namespaces=False)
+<BirthDate/>
 
 
 """
@@ -200,27 +198,27 @@ class SSIN(xg.String):
     Belgian Social Security Identification Number.
     AKA as "Numéro d'identification au régistre national".
     """
-    def validate(self,v):
-        if len(v) != 11:
-            raise Exception("length must be 11")
-        if not v.isdigit():
-            raise Exception("must be a number")
-        return v
+    def validate(self):
+        if len(self.value) != 11:
+            self.badValue("length must be 11")
+        if not self.value.isdigit():
+            self.badValue("must be a number")
         
 
 class t_IncompleteDate(xg.Element):
     
-    def validate(self,value):
-        if value:
-            if isinstance(value,IncompleteDate):
-                pass
-            elif isinstance(value,datetime.date):
-                value = IncompleteDate.from_date(value)
-            elif isinstance(value,basestring):
-                    value = IncompleteDate.parse(value)
-            if value.year == 0:
-                raise Exception("Invalid date for %s" % self.elementname)
-        return xg.Element.validate(self,value)
+    def parse_value(self):
+        if isinstance(self.value,datetime.date):
+            self.value = IncompleteDate.from_date(self.value)
+        if isinstance(self.value,basestring):
+            self.value = IncompleteDate.parse(self.value)
+        
+    def validate(self):
+        if not isinstance(self.value,IncompleteDate):
+            self.badValue("Must be an IncompleteDate instance")
+        if self.value.year == 0:
+            self.badValue("Year may not be 0")
+        xg.Element.validate(self)
       
         #~ if isinstance(v,datetime.date):
             #~ v = IncompleteDate(v)

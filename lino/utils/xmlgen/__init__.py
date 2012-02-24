@@ -16,45 +16,132 @@
 
 This is a simplistic method for generating XML strings.
 
-Primary design goal is to avoid redundancy and to allow for concise code.
+The basic idea is to represent an XML schema in Python code.
+Unlike generateDS, we do not read an existing XSD and generate 
+Python code from it. With xmlgen you write yourself a Python 
+equivalent of an XSD.
+
+Primary design goal is to avoid redundancy and to allow for 
+concise code.
 
 There are probably still important lacks. Some known issues:
 
-- no structure checking is done
+- to be implemented: structure checking and more validation.
+  The current implementation is useful for generating XML destinated 
+  to a partner who will himself validate your result and give you 
+  feedback.
+  
+- to be implemented: generate an XSD from an xmlgen tree
+
 - it is not possible to generate XML strings with tags or attributes 
   consisting of non-asci characters
 
 Usage example
 -------------
 
->>> from lino.utils import xmlgen as xml
+For more concrete examples, see the modules that implement existing XML schemas:
 
-First we define the equivalent of an XML Schema by creating a set 
-of Namespace subclasses.
+- :mod:`lino.utils.xmlgen.xhtml`
+- :mod:`lino.utils.xmlgen.bcss`
+
+
+Define the equivalent of an XML Schema by creating a set 
+of Namespace classes.
+
+>>> class common(Namespace): 
+...   prefix = None # hide this namespace
+...   class NameType(String):
+...       def validate(self):
+...           String.validate(self)
+...           if len(self.value) < 3:
+...               self.badValue("Less than 3 chars long")
+
+>>> class foo(Namespace):
+...     url = "http://foobar.baz"
+...     class Foo(Container): pass
+...     class Bar(Container):
+...         class Name(common.NameType): pass
+...     class Baz(Bar):
+...         class Period(String): pass
+
+
+So the following instantiation should fail since the name is too short:
+
+>>> node = foo.Foo(foo.Baz.Name("X"))
+Traceback (most recent call last):
+...
+Exception: Bad value 'X' for Name : Less than 3 chars long
+
+Here is a longer name:
+
+>>> node = foo.Foo(foo.Baz.Name("Luc"))
+
+Now we can render it 
+using :meth:`Element.tostring()`
+(we also say `pretty=True` 
+in these examples to make the result more readable):
+
+>>> print node.tostring(True)
+<foo:Foo xmlns:foo="http://foobar.baz">
+<foo:Name>Luc</foo:Name>
+</foo:Foo>
+
+Another node:
+
+>>> node = foo.Foo(foo.Baz(
+...   foo.Baz.Name("Luc"),
+...   foo.Baz.Period("1968-2011")))
+
+>>> print node.tostring(True)
+<foo:Foo xmlns:foo="http://foobar.baz">
+<foo:Baz>
+<foo:Name>Luc</foo:Name>
+<foo:Period>1968-2011</foo:Period>
+</foo:Baz>
+</foo:Foo>
+
+Specifying a `namespace` to :meth:`Element.tostring()` 
+means that the generated XML should consider this 
+as the default namespace and 
+will look as follows:
+
+>>> print node.tostring(True,namespace=foo)
+<Foo xmlns="http://foobar.baz">
+<Baz>
+<Name>Luc</Name>
+<Period>1968-2011</Period>
+</Baz>
+</Foo>
+
+
+
+
+Older examples
+--------------
 
 For example, here is the definition of a SOAP envelope:
 
->>> class soap(xml.Namespace):
+>>> class soap(Namespace):
 ...     url = "http://schemas.xmlsoap.org/soap/envelope/"
-...     class Envelope(xml.Container): pass
-...     class Body(xml.Container): pass
+...     class Envelope(Container): pass
+...     class Body(Container): pass
 
 And here the definition of a :term:`BCSS` connector:
 
->>> class bcss(xml.Namespace):
+>>> class bcss(Namespace):
 ...     url = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
-...     class xmlString(xml.Container): pass
+...     class xmlString(Container): pass
 ...
 
 Then we instantiate these classes to create our XML tree:
 
->>> anyBody = bcss.xmlString(xml.CDATA("FooBar")).tostring(pretty=True)
+>>> anyBody = bcss.xmlString(CDATA("FooBar")).tostring(pretty=True)
 >>> print anyBody
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
 <![CDATA[FooBar]]>
 </bcss:xmlString>
 
->>> env = soap.Envelope(soap.Body(xml.ANY(anyBody))) 
+>>> env = soap.Envelope(soap.Body(ANY(anyBody))) 
 
 We render the XML string by calling the :meth:`Element.tostring` 
 method on the root element:
@@ -108,33 +195,6 @@ Or to hide it:
 </Envelope>
 
 
-
-Notes
------
-
-Another example:
-
->>> class Foo(Container): 
-...   class Bar(Container):
-...     class Name(String): pass
-...   class Baz(Container):
-...     class Name(String): pass
-...     class Period(String): pass
-
->>> print Foo(Foo.Baz.Name("Luc")).tostring(True)
-<Foo>
-<Name>Luc</Name>
-</Foo>
-
->>> print Foo(Foo.Bar(Foo.Baz.Period("1968-2011"))).tostring(True)
-<Foo>
-<Bar>
-<Period>1968-2011</Period>
-</Bar>
-</Foo>
-
-
-
 """
 
 unused = """
@@ -171,9 +231,10 @@ from django.utils.encoding import force_unicode
 
 class Writer(object):
 #~ class Writer:
-  
-    def __init__(self,file=None,namespace=None):
+    
+    def __init__(self,file=None,namespace=None,declare_namespaces=True):
         self._default_namespace = namespace
+        self.declare_namespaces = declare_namespaces
         self.file = file
         
     def write(self,s):
@@ -196,7 +257,7 @@ class Writer(object):
         #~ print "20120223 py2xml(%r)" % value
         if isinstance(value,basestring):
             self.write(value)
-        elif isinstance(value,Node):
+        elif isinstance(value,Element):
             #~ print "20120223 %r is a Node" % value
             value.__xml__(self)
         elif isinstance(value,types.GeneratorType):
@@ -270,40 +331,13 @@ class Attribute(object):
     def __init__(self,name=None,**kw):
         self.name = name
         
-class Node(object):
-    def __xml__(self,wr):
-        raise NotImplementedError()
+#~ class Node(object):
+    #~ def __xml__(self,wr):
+        #~ raise NotImplementedError()
     #~ def __str__(self):
         #~ return "%s(%r)" % (self.__class__.__name__,self.data)
     
-class ANY(Node):
-    def __init__(self,data):
-        assert isinstance(data,basestring)
-        #~ print "20120223 ANY.__init__(%r)" % data
-        self.data = data
-        #~ super(ANY,self).__init__()
-        
-    def __xml__(self,wr):
-        #~ print "20120223 ANY.__xml__(%r)" % self.data
-        wr.write(self.data)
-        
-    #~ def __str__(self):
-        #~ return "%s(%r)" % (self.__class__.__name__,self.data)
-    
-class CDATA(Node):
-    def __init__(self,data):
-        self.data = data
-    def __xml__(self,wr):
-        wr.write("<![CDATA[%s]]>" % self.data)
-    
-class TEXT(Node):
-    def __init__(self,data):
-        self.data = data
-    def __xml__(self,r):
-        r.py2xml(self.data)
-        #~ wr.write(self.data)
-    
-        
+
 class ElementMetaClass(type):
     def __new__(meta, classname, bases, classDict):
       
@@ -327,12 +361,13 @@ class ElementMetaClass(type):
         cls.allowedAttribs = allowedAttribs
         return cls
     
-class Element(Node):
+class Element(object):
     __metaclass__ = ElementMetaClass
     elementname = None
     namespace = None
     parent = None
     allowedValues = None
+    allowEmptyValue = True
     #~ is_root = False
     #~ default_namespace = None
     #~ used_namespaces = []
@@ -341,23 +376,47 @@ class Element(Node):
     def __init__(self,value=None,**kw):
         #~ if self.elementname is None:
             #~ self.elementname = self.__class__.__name__
-        self.value = self.validate(value)
         self._attribs = {}
+        self.value = value
+        if self.value == '':
+            self.value = None
+        if self.value is None:
+            if not self.allowEmptyValue:
+                self.badValue("Empty value not allowed.")
+        else:
+            self.parse_value()
+            self.validate()
         self.update(**kw)
         
-    def validate(self,v):
-        if self.allowedValues and not v in self.allowedValues:
-            raise Exception(
-              "Invalid value %r (must be one of %s)" % (
-                v,self.allowedValues))
-        return v
+    def __str__(self):
+        return "%s" % self.__class__.__name__
+        
+    def parse_value(self):
+        """
+        Convert self.value from any allowed representation format
+        to o Python object of proper type.
+        """
+        pass
+        
+    def validate(self):
+        """
+        Check self.value and raise an exception if necessary.
+        """
+        if self.allowedValues is not None and not self.value in self.allowedValues:
+            self.badValue("Must be one of %s.",self.allowedValues)
+        
+    def badValue(self,msg,*args,**kw):
+        """
+        Raise an Exception of style "Bad value X for Y : (your given message)"
+        """
+        if args:
+            msg = msg % args
+        if kw:
+            msg = msg % kw
+        raise Exception("Bad value %r for %s : %s" % (self.value,self,msg))
         
 
     def update(self,**kw):
-        # the default namespace is stored separately
-        #~ ns = kw.pop('defaultns',None)
-        #~ if ns:
-            #~ self.default_namespace = ns
         for k,v in kw.items():
             #assert not k in self.defaultAttribs.keys()
             try:
@@ -378,6 +437,10 @@ class Element(Node):
                 "%s instance has no attribute '%s'" % (
                 self.__class__.__name__, name))
         
+    @classmethod
+    def set_namespace(self,ns):
+        self.namespace = ns
+                
     def set_parent(self,p):
         self.parent = p
         
@@ -419,7 +482,7 @@ class Element(Node):
         #~ print "20120223 Element.__xml__(%r)" % self.value
         wr.write("<" + self.tag(wr))
         if self.parent is None:
-            self.declare_namespaces = True
+            self.declare_namespaces = wr.declare_namespaces
         self.writeAttribs(wr)
         
         if self.value is None:
@@ -460,9 +523,23 @@ class Element(Node):
             #~ wr.write("</"+self.tag()+">" )
     
 
-
-
-
+class ANY(Element):
+    def validate(self):
+        if not isinstance(self.value,basestring):
+            self.badValue("not a string")
+        
+    def __xml__(self,wr):
+        #~ print "20120223 ANY.__xml__(%r)" % self.data
+        wr.write(self.value)
+    
+class CDATA(Element):
+    def __xml__(self,wr):
+        wr.write("<![CDATA[%s]]>" % self.value)
+    
+class TEXT(Element):
+    def __xml__(self,r):
+        r.py2xml(self.value)
+        #~ wr.write(self.value)
 
 
 
@@ -493,21 +570,29 @@ class Container(Element):
     """
     allowedChildren = None
     
-    def __init__(self,*nodes,**attribs):
+    @classmethod
+    def set_namespace(self,ns):
+        self.namespace = ns
+        for k,v in self.__dict__.items():
+            if isinstance(v,type) and issubclass(v,Element):
+                v.set_namespace(ns)
+                
+    def __init__(self,*elements,**attribs):
         #~ self.used_namespaces = []
         #~ if self.namespace is not None:
             #~ self.used_namespaces.append(self.namespace)
-        for e in nodes:
+        for e in elements:
             if isinstance(e,Element):
                 e.set_parent(self)
                 #~ if e.namespace is None:
                     #~ for ns in e.used_namespaces:
                         #~ if not ns in self.used_namespaces:
                             #~ self.used_namespaces.append(ns)
-        Element.__init__(self,list(nodes),**attribs)
+        Element.__init__(self,list(elements),**attribs)
         
     def add_child(self,e):
         self.value.append(e)
+        e.parent = self
         return e
         
             
@@ -539,48 +624,14 @@ class NamespaceMetaClass(type):
           
             if not classDict.has_key('prefix'):
                 classDict['prefix'] = classname
-                
-            #~ classDict.setdefault('prefix',classname)
-            
-            #~ for k,v in classDict.items():
-                #~ if isinstance(v,type) and issubclass(v,Element):
-                    #~ v.collect_children(classDict,classname)
-                    
-            # verify that there is only one root element.
-            #~ root = None
-            #~ for k,v in classDict.items():
-                #~ if isinstance(v,type) and issubclass(v,Element):
-                    #~ if root is None:
-                        #~ root = v
-                    #~ else:
-                        #~ raise Exception(
-                          #~ "More than one root elements in namespace %s" 
-                          #~ % classname)
-          
-            #~ if root is None:
-                #~ raise Exception(
-                  #~ "No root element found in namespace %s" 
-                  #~ % classname)
-
-            #~ root.collect_children(classDict,classname)
-            
-            #~ children = {}
-            #~ extract_elements(ns,classDict,False)
-            
-        
-            #~ for k,v in children.items():
-                #~ if classDict.has_key(k):
-                    #~ raise Exception(
-                        #~ "Duplicate element name %r in namespace %r" 
-                        #~ % (k,classname))
-                #~ classDict[k] = v
         
         cls = type.__new__(meta, classname, bases, classDict)
         
         for k,v in classDict.items():
             if isinstance(v,type) and issubclass(v,Element):
-                assert v.namespace is None
-                v.namespace = cls
+                v.set_namespace(cls)
+                #~ assert v.namespace is None
+                #~ if v.namespace is None:
           
         return cls
   
@@ -608,29 +659,30 @@ class String(Element):
 
 class Integer(Element):
   
-    def validate(self,v):
-        if not isinstance(v,int):
-            raise Exception("%r is not an integer" % v)
-        return Element.validate(self,v)
+    def validate(self):
+        if not isinstance(self.value,int):
+            self.badValue("Not an integer")
+        Element.validate(self)
         
     def value2string(self,v):
         return str(v)
         
 class DateTime(Element):
   
-    def validate(self,v):
-        if not isinstance(v,datetime.datetime):
-            raise Exception("%r is not a datetime instance" % v)
-        return Element.validate(self,v)
+    def validate(self):
+        if not isinstance(self.value,datetime.datetime):
+            self.badValue("Not a datetime instance")
+        Element.validate(self)
         
     def value2string(self,v):
         return v.strftime("%Y%m%dT%H%M%S")
         
 class Date(Element):
-    def validate(self,v):
-        if isinstance(v,datetime.date):
-            return Element.validate(self,v)
-        raise Exception("%r is not a valid value for Date element" % v)
+    def validate(self):
+        if not isinstance(self.value,datetime.date):
+            self.badValue("not a datetime.date instance")
+        Element.validate(self)
+        
     def value2string(self,v):
         return v.strftime("%Y-%m-%d")
 

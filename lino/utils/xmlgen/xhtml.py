@@ -16,9 +16,8 @@
 
 First example:
 
->>> xg.set_default_namespace(xhtml)
 >>> doc = HTML(HEAD(TITLE("Hello")),BODY(P("Hello, world!")))
->>> print doc.tostring(True)
+>>> print doc.tostring(True,namespace=xhtml)
 <HTML xmlns="http://www.w3.org/1999/xhtml">
 <HEAD>
 <TITLE>Hello</TITLE>
@@ -41,7 +40,7 @@ Second example:
 ...     t.add_body_row("Estonia", "Tallinn", "1.1M")
 >>> add_table(TABLE)
 >>> add_table(HFBTABLE)
->>> print doc.tostring(True)
+>>> print doc.tostring(True,namespace=xhtml)
 <HTML xmlns="http://www.w3.org/1999/xhtml">
 <HEAD>
 <TITLE>Two tables</TITLE>
