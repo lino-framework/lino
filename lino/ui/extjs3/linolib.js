@@ -1408,12 +1408,31 @@ Lino.ajax_error_handler = function(panel) {
   
 #if $settings.LINO.use_quicktips
 
+// Apply a set of config properties to the singleton
+//~ Ext.apply(Ext.QuickTips.getQuickTip(), {
+Ext.apply(Ext.ToolTip, {
+    dismissDelay: 0,
+    //~ autoHide: false,
+    //~ closable: true,
+    //~ maxWidth: 200,
+    //~ minWidth: 100,
+    //~ showDelay: 50      // Show 50ms after entering target
+    //~ ,trackMouse: true
+});
+
 Ext.QuickTips.init();
+
+//~ Ext.apply(Ext.QuickTip, {
+    //~ dismissDelay: 0,
+//~ });
   
 Lino.quicktip_renderer = function(title,body) {
   return function(c) {
+    var t = c.getEl();
+    //~ t.dismissDelay = 0;
     Ext.QuickTips.register({
-      target: c.getEl(),
+      target: t,
+      //~ dismissDelay: 0,
       title: title,
       text: body
     });

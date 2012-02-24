@@ -46,33 +46,34 @@ Example:
 
 The above examples are bare BCSS service requests.
 Before sending a request to the BCSS server, 
-we must wrap it into a SSDN request.
+we must wrap it into a "SSDN request".
 The easiest way to do this is to use the 
 :meth:`Service.ssdn_request` method.
 
-:meth:`Service.ssdn_request` expects 
-the ``settings`` module of your Lino application.
-To use this method in this test, we 
-simulate a Django ``settings`` module that has 
-a fictive :attr:`lino.Lino.bcss_user_params`:
+:meth:`Service.ssdn_request` wants the 
+"user parameters" for the BCSS as a dict:
 
->>> from appy import Object
->>> settings = Object(LINO=Object(
-...   bcss_user_params = dict(
+>>> user_params = dict(
 ...     UserID='123456', 
 ...     Email='info@exemple.be', 
 ...     OrgUnit='0123456', 
 ...     MatrixID=17, 
-...     MatrixSubID=1)))
+...     MatrixSubID=1)
+
+(In a Lino application, these user parameters 
+are set once in your local :xfile:`settings.py` 
+module :attr:`lino.Lino.bcss_user_params`.)
 
 :meth:`Service.ssdn_request` also expects a unique reference 
-and a timestamp for your request.
+and a timestamp for your request:
+
+>>> now = datetime.datetime(2011,10,31,15,41,10)
+>>> unique_id = 'PIR # 5'
 
 Here we go:
 
->>> now = datetime.datetime(2011,10,31,15,41,10)
->>> sr = req.ssdn_request(settings,'PIR # 5',now)
->>> print sr.tostring(True,namespace=ssdn)
+>>> sr = req.ssdn_request(user_params,unique_id,now)
+>>> print sr.tostring(True,namespace=ssdn) #doctest: +ELLIPSIS
 <SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
 <RequestContext>
 <AuthorizedUser>
@@ -91,23 +92,14 @@ Here we go:
 <ServiceId>OCMWCPASPerformInvestigation</ServiceId>
 <Version>20080604</Version>
 <pir:PerformInvestigationRequest xmlns:pir="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
-<pir:SocialSecurityUser>6806010123</pir:SocialSecurityUser>
-<pir:DataGroups>
-<pir:FamilyCompositionGroup>1</pir:FamilyCompositionGroup>
-<pir:CitizenGroup>1</pir:CitizenGroup>
-<pir:AddressHistoryGroup>1</pir:AddressHistoryGroup>
-<pir:WaitRegisterGroup>0</pir:WaitRegisterGroup>
-</pir:DataGroups>
+...
 </pir:PerformInvestigationRequest>
 </ServiceRequest>
 </SSDNRequest>
 
-Note that the XML chunk that starts with ``<pir:`` 
-is exactly the same as before.
-
 Now we perform another wrapping of this SSDN request.
 
->>> print soap_request("Foo").tostring(True)
+>>> print soap.request("Foo").tostring(True)
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
@@ -177,23 +169,27 @@ class bcss(xg.Namespace):
         pass
 
 class soap(xg.Namespace):
+    """
+    Our simplified representation of the SOAP Schema
+    """
     url = "http://schemas.xmlsoap.org/soap/envelope/" 
     class Envelope(xg.Container):
         pass
     class Body(xg.Container):
         pass
 
-def soap_request(xmlString):
-    #~ xg.set_default_namespace(bcss)
-    body = bcss.xmlString(xg.CDATA(xmlString)).tostring()
-    return soap.Envelope(soap.Body(body))
-    
+    @classmethod
+    def request(soap,xmlString):
+        #~ xg.set_default_namespace(bcss)
+        body = bcss.xmlString(xg.CDATA(xmlString)).tostring()
+        return soap.Envelope(soap.Body(body))
+        
   
 #~ class com(xg.Namespace):
     #~ url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Common"
     #~ class SSIN(String): pass
       
-class SSIN(xg.String):
+class SSINType(xg.String):
     u"""
     Belgian Social Security Identification Number.
     AKA as "Numéro d'identification au régistre national".
@@ -293,7 +289,7 @@ class Service(xg.Container):
             #~ R.Version(self.service_version),
             #~ anyXML)
       
-    def ssdn_request(self,settings,message_ref,dt):
+    def ssdn_request(self,user_params,message_ref,dt):
         #~ xg.set_default_namespace(None)
         any = self.tostring()
         SR = ssdn.ServiceRequest
@@ -304,27 +300,25 @@ class Service(xg.Container):
         
         RC = ssdn.RequestContext
         context = RC(
-            common.AuthorizedUser(**settings.LINO.bcss_user_params),
+            common.AuthorizedUser(**user_params),
             RC.Message(
                 RC.Message.Reference(message_ref),
                 RC.Message.TimeRequest(dt)))
         #~ xg.set_default_namespace(ssdn)
         return ssdn.SSDNRequest(context,serviceRequest)
         
-    def execute(self,settings,*args):
+    def execute(self,user_params,url=None,*args):
         
-        req = soap_request(self.ssdn_request(settings,*args).tostring(namespace=ssdn))
+        req = soap.request(self.ssdn_request(user_params,*args).tostring(namespace=ssdn))
         xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.tostring()
         
         #~ dblogger.info("Going to send request /******\n%s\n******/",xmlString)
-        if not settings.LINO.bcss_soap_url:
-            #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
+        if not url:
+            #~ logger.info("Not actually sending because url is empty.")
             return None
         
-        server = Resource(settings.LINO.bcss_soap_url,measure=True)
-        
+        server = Resource(url,measure=True)
         res = server.soap(xmlString)
-        
         return res
 
         #~ print res.code
@@ -352,7 +346,7 @@ class ipr(xg.Namespace):
     class SearchCriteria(xg.Container):
         "criteria for identifying a person"
         #~ allowedChildren = [SSIN,PhoneticCriteria]
-        class SSIN(SSIN):
+        class SSIN(SSINType):
             "Social Security Identification number of the person to identify"
             minOccurs = 0
             
@@ -478,13 +472,13 @@ class pir(xg.Namespace):
               DG.WaitRegisterGroup(wait)))
             
 
-class ns2(xg.Namespace):
+class hir(xg.Namespace):
     url = "http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance"
     
     class HealthInsuranceRequest(Service):
         service_id = 'OCMWCPASHealthInsurance'
         service_version = '20070509'
-        class SSIN(SSIN): pass
+        class SSIN(SSINType): pass
         class Assurability(xg.Container):
             class Period(xg.Container):
                 class StartDate(xg.Date): pass
@@ -588,7 +582,7 @@ def unused_send_request(settings,xmlString):
     #~ xmlString = SOAP_ENVELOPE % xmlString
     
     xg.set_default_namespace(bcss)
-    xmlString = soap_request(xmlString).tostring()
+    xmlString = soap.request(xmlString).tostring()
     
     xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + xmlString
     

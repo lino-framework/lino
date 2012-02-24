@@ -107,6 +107,7 @@ class HtmlContainer(xg.Container):
     width = xg.Attribute()
 
 class xhtml(xg.Namespace):
+  prefix = None
   url = "http://www.w3.org/1999/xhtml"
   
   class HTML(HtmlContainer):

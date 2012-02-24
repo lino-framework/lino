@@ -98,21 +98,26 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     
     status = RequestStatus.field(default=RequestStatus.new,editable=False)
     
-    request_xml = models.TextField(verbose_name=_("Request"),
-        editable=False,blank=True)
-    """The raw XML string that has been (or will be) sent."""
+    #~ request_xml = models.TextField(verbose_name=_("Request"),
+        #~ editable=False,blank=True)
+    #~ """The raw XML string that has been (or will be) sent."""
     
     response_xml = models.TextField(verbose_name=_("Response"),editable=False,blank=True)
+    """
+    The response received, raw XML string. 
+    If the request failed with a local exception, then it contains a traceback.
+    """
     
     def execute_request(self):
         """
-        This is the general method executed when a user runs :class:`SendAction`.
+        This is the general method for all services,
+        executed when a user runs :class:`SendAction`.
         """
         if not self.id:
             self.save()
         srv = self.build_service()
         now = datetime.datetime.now()
-        self.request_xml = srv.toxml(True)
+        #~ self.request_xml = srv.tostring(True)
         self.status = RequestStatus.pending
         self.save()
         
@@ -157,18 +162,22 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
         
         
-class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin):
+class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
     """
     Represents a request to the :term:`BCSS` IdentifyPerson service.
     
     """
-    national_id  = models.TextField(verbose_name=_("National ID"),
-        editable=False,blank=True)
+    national_id = models.CharField(max_length=200,
+        blank=True,verbose_name=_("National ID")
+        #~ ,validators=[niss_validator]
+        )
         
     middle_name = models.CharField(max_length=200,
-      #~ blank=True,
+      blank=True,
       verbose_name=_('Middle name'))
     "Whatever this means..."
+    tolerance = models.IntegerField(verbose_name=_('Tolerance'),
+      default=0)
     
     def save(self,*args,**kw):
         if self.project: 
@@ -215,14 +224,18 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin):
               pc.append(PC.Gender(2))
           else:
               pc.append(PC.Gender(0))
-          pc.append(PC.Tolerance(0))
+          pc.append(PC.Tolerance(self.tolerance))
           return bcss.ipr.IdentifyPersonRequest(SC(PC(*pc)))
       
 class IdentifyPersonRequests(dd.Table):
     model = IdentifyPersonRequest
     detail_template = """
-    id project sent status 
-    request_xml
+    id project 
+    national_id
+    first_name middle_name last_name
+    birth_date tolerance  gender 
+    sent status 
+    # request_xml
     response_xml
     """
     

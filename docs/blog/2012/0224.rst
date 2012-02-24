@@ -1,12 +1,106 @@
 20120224
 ========
 
+xmlgen
+------
+
 Statt was Sichtbares zu produzieren, habe ich die Dokumentation von 
-:mod:`lino.utils.xmlgen` aktualisiert. 
-Auch noch Änderungen: 
+:mod:`lino.utils.xmlgen` aktualisiert...
+und auch noch Änderungen hinzugefügt: 
 
 - ANY, CDATA und TEXT sind jetzt ebenfalls Elemente.
 - Paradigma für `validate` geändert.
 - Neue Methoden 
   :meth:`parse_value <lino.utils.xmlgen.Element.parse_value>` 
   :meth:`badValue <lino.utils.xmlgen.Element.badValue>` 
+
+
+css tooltips
+------------
+
+Hier ein Bild des Problems:
+
+.. image:: 0224.jpg
+  :scale: 100
+  
+
+Gerd und ich haben jetzt immerhin nachgewiesen, dass es am `overflow` liegt.
+
+Hier der (um unwichtige Informationen bereinigte) HTML-Code::
+
+  <div id="ext-comp-1203" class=" x-panel x-panel-noborder">
+    <div class="x-panel-bwrap" id="ext-gen269">
+      <div class="x-panel-body x-panel-body-noheader x-panel-body-noborder x-box-layout-ct" id="ext-gen270">
+        <div class="x-box-inner" id="ext-gen281">
+          <div id="ext-comp-1204" class=" x-panel x-form-label-top x-box-item">
+            <div class="x-panel-bwrap" id="ext-gen282">
+              <div class="x-panel-body x-panel-body-noheader" id="ext-gen283">
+                <div tabindex="-1" class="x-form-item x-tab-item" id="ext-gen288">
+                  <label class="x-form-item-label" for="ext-comp-1205" id="ext-gen289">ID:</label>
+                  <div style="padding-left:0;" id="x-form-el-ext-comp-1205" class="x-form-element">
+                    <input type="text" id="ext-comp-1205" class="x-form-text x-form-field x-form-num-field x-item-disabled">
+                  </div>
+                  <div class="x-form-clear-left"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="ext-comp-1206" class=" x-panel x-form-label-top x-box-item">
+            <div class="x-panel-bwrap" id="ext-gen285">
+              <div class="x-panel-body x-panel-body-noheader" id="ext-gen286">
+                <div tabindex="-1" class="x-form-item x-tab-item" id="ext-gen290">
+                  <label class="x-form-item-label" style="width:auto;" for="ext-comp-1202" id="ext-gen291">
+                    <a href="#" class="tooltip">Sprache<span class="classic">Sprache für Dokumente</span></a>:
+                  </label>
+                  <div style="padding-left:0;" id="x-form-el-ext-comp-1202" class="x-form-element">
+                    <div class="x-form-field-wrap x-form-field-trigger-wrap" id="ext-gen292">
+                      <input type="hidden" id="ext-gen294" name="languageHidden" value="de">
+                      <input type="text" name="language" id="ext-comp-1202" class="x-form-text x-form-field">
+                      <img class="x-form-trigger x-form-arrow-trigger" src="..." id="ext-gen293">
+                    </div>
+                  </div>
+                  <div class="x-form-clear-left"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+For ``div`` tags:
+
+  x-panel 
+  x-panel-noborder
+  x-panel-bwrap
+  x-panel-body 
+  x-panel-body-noheader 
+  x-panel-body-noborder 
+  x-box-layout-ct
+  x-box-inner
+  x-form-label-top 
+  x-box-item
+  x-form-item 
+  x-tab-item
+  x-form-element
+  x-form-clear-left
+
+For ``input`` tags:
+
+  x-form-text 
+  x-form-field 
+  x-form-num-field 
+  x-item-disabled
+
+For ``label`` tags:
+
+  x-form-item-label
+
+
+
+But after another few hours of fiddling without success, I give up.
+
+Also tried to set Ext.QuickTips.dismissDelay to 0 as documented: doesn't work.
+

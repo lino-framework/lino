@@ -67,9 +67,35 @@ http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
 .x-form-item-label{
     white-space: nowrap; 
 }
+
+/*
+ 20120224 
+*/
 .ext-gecko .x-window-body .x-form-item {
-	overflow: hidden;
+	overflow: visible;
 }
+.x-panel-body .x-panel-body-noheader {
+	overflow: visible;
+}
+.x-panel-bwrap {
+	overflow: visible;
+}
+
+.x-box-inner {
+	overflow: visible;
+}
+.x-fieldset .x-form-label-top .x-box-item {
+	overflow: visible;
+}
+
+
+/* 
+.x-form-field { padding: 10px; }
+*/
+
+.x-panel-body-noheader { padding-left: 2px; padding-right: 2px; }
+.x-panel-body { padding-left: 2px; padding-right: 2px; }
+
 
 
 /* TinyMCE specific rules */
@@ -82,6 +108,12 @@ body.mceNonEditable {
   color: blue !important; 
 }
 
+/*
+
+To display "normal" HTML inside an ExtJS component, 
+wrap it into a <div class="htmlText">.
+
+*/
 
 .htmlText {
 	font-family: arial,tahoma;
@@ -136,47 +168,6 @@ But I didn't yet manage to get them work when defined on
 field labels inside an ExtJS form.
 */
 
-/* first attempts
-a.ttdef .tooltip {
-	border-bottom: 1px dotted #000000; color: #000000; outline: none;
-	cursor: help; text-decoration: none;
-	position: relative;
-}
-a.ttdef .tooltip span {
-	margin-left: -999em;
-	position: absolute;
-}
-a.ttdef .tooltip:hover span {
-	border-radius: 5px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; 
-	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.1); -moz-box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
-	font-family: Calibri, Tahoma, Geneva, sans-serif;
-	position: absolute; left: 1em; top: 2em; z-index: 99;
-	margin-left: 0; width: 250px;
-}
-a.ttdef .tooltip:hover img {
-	border: 0; margin: -10px 0 0 -55px;
-	float: left; position: absolute;
-}
-a.ttdef .tooltip:hover em {
-	font-family: Candara, Tahoma, Geneva, sans-serif; font-size: 1.2em; font-weight: bold;
-	display: block; padding: 0.2em 0 0.6em 0;
-}
-a.ttdef .classic { padding: 0.8em 1em; }
-a.ttdef .custom { padding: 0.5em 0.8em 0.8em 2em; }
-a.ttdef * html a:hover { background: transparent; }
-a.ttdef .classic {background: #FFFFAA; border: 1px solid #FFAD33; }
-a.ttdef .critical { background: #FFCCAA; border: 1px solid #FF3334;	}
-a.ttdef .help { background: #9FDAEE; border: 1px solid #2BB0D7;	}
-a.ttdef .info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
-a.ttdef .warning { background: #FFFFAA; border: 1px solid #FFAD33; }
-*/
-
-/* 
-.x-form-field { padding: 10px; }
-*/
-
-.x-panel-body-noheader { padding-left: 2px; padding-right: 2px; }
-.x-panel-body { padding-left: 2px; padding-right: 2px; }
 
 .x-form-item-label .tooltip {
 	border-bottom: 1px dotted #000000; color: #000000; outline: none;
@@ -196,6 +187,7 @@ a.ttdef .warning { background: #FFFFAA; border: 1px solid #FFAD33; }
 	font-family: Calibri, Tahoma, Geneva, sans-serif;
 	position: absolute; left: 1em; top: 2em; z-index: 99;
 	overflow: visible;
+    white-space: normal; 
 	margin-left: 0; width: 250px;
 	
 }
