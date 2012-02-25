@@ -263,7 +263,8 @@ if False:
             return html
         
 
-if settings.LINO.is_installed('users'):
+#~ if settings.LINO.is_installed('users'):
+if settings.LINO.user_model:
 
     class TextFieldTemplate(mixins.AutoUser):
         """A reusable block of text that can be selected from a text editor to be 
@@ -617,11 +618,15 @@ def setup_my_menu(site,ui,user,m): pass
 def setup_config_menu(site,ui,user,m):
     config_etc      = m.add_menu("etc",_("System"))
     #~ config_etc.add_action('links.LinkTypes')
-    config_etc.add_action(site.modules.lino.ContentTypes)
-    config_etc.add_action(site.modules.users.Users)
-    config_etc.add_action(site.modules.lino.HelpTexts)
+    if site.user_model:
+        config_etc.add_action(site.user_model)
+        config_etc.add_action(site.modules.lino.TextFieldTemplates)
+    #~ config_etc.add_action(site.modules.users.Users)
+    if site.is_installed('contenttypes'):
+    #~ if site.use_contenttypes:
+        config_etc.add_action(site.modules.lino.ContentTypes)
+        config_etc.add_action(site.modules.lino.HelpTexts)
     #~ if site.use_tinymce:
-    config_etc.add_action(site.modules.lino.TextFieldTemplates)
     config_etc.add_instance_action(site.site_config)
         
   

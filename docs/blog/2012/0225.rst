@@ -7,12 +7,18 @@ ist eine Etüde zu den Themen
 sowie
 "Länder, Provinzen, Städte, Dörfer, Straßen, Häuser".
 
-Ist ein User eine Person oder ein Contact?
+Ein User ist hier keine Person sondern ein Contact.
 
 Die sichtbare Neuerung zum bestehenden Modul 
 :mod:`lino.modlib.contacts` wäre, dass email, phone, fax, 
 gsm jetzt in einer eigenen Grid ständen.
 ContactsByPerson käme aus dem Sonstige-Reiter nach vorne.
 
-Einziges Problem ist die Synchronisierung mit TIM (watch_tim).
+Was ich noch nicht weiß, ist, 
+wieviel Arbeit die Anpassungen in watch_tim wären.
 Ein `Contact` hätte dann die Partnernummer aus TIM.
+
+lino.Lino.__init__ füllte project_dir auch dann nach FIXTURES_DIR, 
+wenn es zugleich das source_dir war. Was die subtile Folge hatte, 
+dass alle Fixtures doppet ausgeführt wurden. 
+Dieser Bug hat mich mindestens eine Stunde lang beschäftigt.

@@ -195,6 +195,7 @@ class Lino(Lino):
             self.modules.lino.setup_config_menu(self,ui,user,cfg)
             
             m = main.add_menu("explorer",_("Explorer"))
+            
             m.add_action(self.modules.contacts.AllPersons)
             self.modules.contacts.setup_explorer_menu(self,ui,user,m)
             self.modules.notes.setup_explorer_menu(self,ui,user,m)

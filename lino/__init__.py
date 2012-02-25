@@ -621,10 +621,10 @@ class Lino(object):
     :class:`lino.models.SiteConfig` instance.
     """
     
-    use_contenttypes = True
-    """
-    Set this to False if you don't want to use `django.contrib.contenttypes`.
-    """
+    #~ use_contenttypes = True
+    #~ """
+    #~ Set this to False if you don't want to use `django.contrib.contenttypes`.
+    #~ """
     
     #~ index_view_action = 'lino.Home'
     
@@ -663,7 +663,13 @@ class Lino(object):
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             
         settings_dict.update(MEDIA_ROOT = join(self.project_dir,'media'))
-        settings_dict.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
+        if self.project_dir != self.source_dir:
+            settings_dict.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
+            #~ lino.Lino.__init__ füllte project_dir auch dann nach FIXTURES_DIR, 
+            #~ wenn es zugleich das source_dir war. Was die subtile Folge hatte, 
+            #~ dass alle Fixtures doppelt ausgeführt wurden. 
+            #~ Dieser Bug hat mich mindestens eine Stunde lang beschäftigt.            
+
         settings_dict.update(TEMPLATE_DIRS = (
             join(abspath(self.project_dir),'templates'),
             join(abspath(self.source_dir),'templates'),

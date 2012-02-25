@@ -339,10 +339,12 @@ class DpyDeserializer:
     """
     
     def __init__(self):
+        #~ dblogger.info("20120225 DpyDeserializer.__init__()")
         self.save_later = {}
         self.saved = 0
   
     def deserialize(self,fp, **options):
+        #~ dblogger.info("20120225 DpyDeserializer.deserialize()")
         if isinstance(fp, basestring):
             raise NotImplementedError
         #~ global IS_DESERIALIZING
@@ -364,6 +366,7 @@ class DpyDeserializer:
                 yield FakeDeserializedObject(self,obj)
             elif hasattr(obj,'__iter__'):
             #~ if type(obj) is GeneratorType:
+                #~ dblogger.info("20120225 expand iterable %r",obj)
                 for o in obj: 
                     for so in expand(o): 
                         yield so

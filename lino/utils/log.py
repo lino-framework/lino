@@ -1,4 +1,4 @@
-## Copyright 2010 Luc Saffre
+## Copyright 2010-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -130,6 +130,15 @@ def configure(config):
     linoLogger.addHandler(aeh)
         
     if logfile is not None:
+      
+        if False and logfile.lower() == "auto":
+            # that's not possible: cannot import settings here!
+            import datetime
+            from django.conf import settings
+            from os.path import join
+            logfile = datetime.date.today().strftime('%Y-%m-%d.log')
+            logfile = join(settings.LINO.project_dir,'log',filename)
+      
         kw = {}
         for k in ('mode','encoding','maxBytes','backupCount'):
             if config.has_key(k):

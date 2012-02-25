@@ -12,6 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+#~ import logging
+#~ logger = logging.getLogger(__name__)
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -26,23 +29,60 @@ from lino.utils import Cycler
 
 from lino.sandbox.contacts import models as contacts
 
+print 20120225, 'settings.FIXTURE_DIRS is', settings.FIXTURE_DIRS
+
+dblogger.info("Imported contacts demo fixture")
+
+COUNT = 0
 
 #~ addresstype= Instantiator('contacts.AddressType',"name").build
 role = Instantiator('contacts.Role',"name").build
 #~ person = Instantiator('contacts.Person',"first_name last_name").build
-company = Instantiator('contacts.Company',"name").build
-contact = Instantiator('contacts.Contact').build
+#~ company = Instantiator('contacts.Company',"name").build
+#~ contact = Instantiator('contacts.Contact').build
 
 Company = contacts.Company
 Person = contacts.Person
+User = contacts.User
 City = resolve_model('countries.City')
 
 if not settings.LINO.abstract_address:
     Address = contacts.Address
     address = Instantiator(Address,"country zip_code city:name street street_no").build
 
-def objects():
 
+def company(name,country_id,zip_code,city,street,street_no):
+    if settings.LINO.abstract_address:
+        city = City.objects.get(name=city)
+        yield Company(name=name,country_id=country_id,zip_code=zip_code,
+          city=city,street=street,street_no=street_no)
+    else:
+        addr = address(country_id,zip_code,city,street,street_no)
+        yield addr
+        com = Company(name=name,address=addr)
+        yield com
+
+def person(first_name,last_name,country_id=None,zip_code='',city=None,**kw):
+    if settings.LINO.abstract_address:
+        if city is not None:
+            city = City.objects.get(name=city)
+        yield Person(first_name=first_name,last_name=last_name,
+          country_id=country_id,zip_code=zip_code,city=city)
+    else:
+        addr = address(country_id,zip_code,city)
+        yield addr
+        yield Person(first_name=first_name,last_name=last_name,address=addr)
+    
+    
+def contact(company,person,**kw):
+    return contacts.Contact(person=person,company=company,**kw)
+        
+
+def objects():
+    global COUNT
+    COUNT += 1
+    dblogger.info("Started contacts demo fixture %d",COUNT)
+    
     #~ yield addresstype(**babel_values('name',en="Default",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
     
     yield role(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
@@ -50,17 +90,6 @@ def objects():
     yield role(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär",et=u"Sekretär"))
     yield role(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))
     
-    
-    def company(name,country_id,zip_code,city,street,street_no):
-        if not settings.LINO.abstract_address:
-            addr = address(country_id,zip_code,city,street,street_no)
-            yield addr
-            com = Company(name=name,address=addr)
-            yield com
-        else:
-            city = City.objects.get(name=city)
-            yield Company(name=name,country_id=country_id,zip_code=zip_code,
-              city=city,street=street,street_no=street_no)
     
     yield company(u"Rumma & Ko OÜ", 'EE','10115','Tallinn',u'Tartu mnt','71')
     
@@ -79,18 +108,6 @@ def objects():
     yield company(u'Moulin Rouge',  'FR', '75018','Paris',u'Boulevard de Clichy','82')
     yield company(u'Auto École Verte','FR', '54000 ','Nancy',u'rue de Mon Désert','12')
     
-    
-    def person(first_name,last_name,country_id=None,zip_code='',city=None,**kw):
-        if not settings.LINO.abstract_address:
-            addr = address(country_id,zip_code,city)
-            yield addr
-            com = Person(first_name=first_name,last_name=last_name,address=addr)
-            yield com
-        else:
-            if city is not None:
-                city = City.objects.get(name=city)
-            yield Person(first_name=first_name,last_name=last_name,
-              country_id=country_id,zip_code=zip_code,city=city)
     
     
     #~ yield person(u'Luc',  u'Saffre', gender=Gender.male)
@@ -302,4 +319,21 @@ Weserstraße
             p.save()
       
         
+    PERSONS = Cycler(contacts.Person.objects.all())
+    COMPANIES = Cycler(contacts.Company.objects.all())
+    ROLES = Cycler(contacts.Role.objects.all())
+    for i in range(100):
+        com = COMPANIES.pop()
+        yield contact(com,PERSONS.pop(),role=ROLES.pop())
+        yield contact(com,PERSONS.pop(),role=ROLES.pop())
         
+    rumma = contacts.Company.objects.get(name=u"Rumma & Ko OÜ")
+    def user(first_name,last_name,**kw):
+        p = Person(first_name=first_name,last_name=last_name)
+        p.save()
+        return User(person=p,company=rumma,**kw)
+    
+    yield user("Alice","Imedemaal",is_superuser=True)
+    yield user("Bert","Sesamestreet")
+    yield user("Charles","Braun")
+    dblogger.info("Done contacts demo fixture")

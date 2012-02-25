@@ -1,7 +1,7 @@
 from lino.apps.std.settings import *
 class Lino(Lino):
-    user_model = None
-    use_contenttypes = False
+    user_model = 'contacts.User'
+    #~ use_contenttypes = False
     
     abstract_address = True
     """
@@ -22,17 +22,28 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
         
+        def doit(methodname,*args):
+            for a in models.get_apps():
+                meth = getattr(a,methodname,None)
+                if meth is not None:
+                    meth(*args)
+        
         m = main.add_menu("master",_("Master"))
-        self.modules.contacts.setup_main_menu(self,ui,user,m)
+        doit('setup_main_menu',self,ui,user,m)
+        
+        #~ self.modules.contacts.setup_main_menu(self,ui,user,m)
 
         m = main.add_menu("config",_("Configure"))
-        self.modules.contacts.setup_config_menu(self,ui,user,m)
+        doit('setup_config_menu',self,ui,user,m)
+        #~ self.modules.contacts.setup_config_menu(self,ui,user,m)
 
         m = main.add_menu("explorer",_("Explorer"))
-        self.modules.contacts.setup_explorer_menu(self,ui,user,m)
+        doit('setup_explorer_menu',self,ui,user,m)
+        #~ self.modules.contacts.setup_explorer_menu(self,ui,user,m)
         
         m = main.add_menu("site",_("Site"))
-        self.modules.lino.setup_site_menu(self,ui,user,m)
+        doit('setup_site_menu',self,ui,user,m)
+        #~ self.modules.lino.setup_site_menu(self,ui,user,m)
 
 LINO = Lino(__file__,globals())    
 
@@ -43,6 +54,12 @@ INSTALLED_APPS = (
   'lino.sandbox.contacts', 
 )
 
+import datetime
+filename = datetime.date.today().strftime('%Y-%m-%d.log')
+LOGGING = dict(filename=join(LINO.project_dir,'log',filename),level='DEBUG')
+
+
+
 DEBUG = True
 
 DATABASES = {
@@ -52,3 +69,5 @@ DATABASES = {
           #~ 'NAME': ':memory:'
       }
   }
+# uncomment for testing in temporary database:
+#~ DATABASES['default']['NAME'] = ':memory:'

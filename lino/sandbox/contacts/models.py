@@ -15,6 +15,7 @@
 """
 
 """
+import datetime
 
 from django.conf import settings
 from django.db import models
@@ -237,7 +238,12 @@ class Contact(models.Model):
     gsm = models.CharField(_('GSM'),max_length=200,blank=True)
     fax = models.CharField(_('Fax'),max_length=200,blank=True)
     
-    
+    def send_mail(self, subject, message, from_email=None):
+        "Sends an e-mail to this User."
+        from django.core.mail import send_mail
+        send_mail(subject, message, from_email, [self.email])
+        
+
     
 class Contacts(dd.Table):
     model = Contact
@@ -255,7 +261,58 @@ class ContactsByPerson(Contacts):
 class ContactsByCompany(Contacts):
     master_key = 'company'
     column_names = "email url phone gsm fax person role *"
+
+
+#~ class User(Person):
+class User(Contact):
+  
+    _lino_preferred_width = 15 
     
+    class Meta:
+        verbose_name = _('User')
+        verbose_name_plural = _('Users')
+
+    username = models.CharField(_('username'), max_length=30, 
+        unique=True, 
+        help_text=_("""
+        Required. 30 characters or fewer. 
+        Letters, numbers and @/./+/-/_ characters
+        """))
+    is_staff = models.BooleanField(_('is staff'), default=False, 
+        help_text=_("""
+        Designates whether the user can log into this admin site.
+        """))
+    is_expert = models.BooleanField(_('is expert'), default=False, 
+        help_text=_("""
+        Designates whether this user has access to functions that require expert rights.
+        """))
+    is_active = models.BooleanField(_('is active'), default=True, 
+        help_text=_("""
+        Designates whether this user should be treated as active. 
+        Unselect this instead of deleting accounts.
+        """))
+    is_superuser = models.BooleanField(_('is superuser'), 
+        default=False, 
+        help_text=_("""
+        Designates that this user has all permissions without 
+        explicitly assigning them.
+        """))
+    last_login = models.DateTimeField(_('last login'), default=datetime.datetime.now)
+    date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
+
+    def __unicode__(self):
+        return self.username
+
+    def full_clean(self,*args,**kw):
+        if not self.username and self.person:
+            self.username = self.person.first_name.lower()
+        super(User,self).full_clean(*args,**kw)
+        
+
+class Users(Contacts):
+    model = User
+    column_names = 'username person company is_superuser is_staff *'
+
     
 if settings.LINO.is_installed('contacts'):
     """
