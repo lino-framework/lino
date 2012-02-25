@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.sandbox.addresses.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.sandbox.contacts.settings'
 
 import settings
 

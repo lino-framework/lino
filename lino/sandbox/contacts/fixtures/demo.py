@@ -24,21 +24,21 @@ from lino.utils.choicelists import Gender
 from lino.utils import dblogger
 from lino.utils import Cycler
 
-from lino.sandbox.addresses import models as addresses
+from lino.sandbox.contacts import models as contacts
 
 
-addresstype= Instantiator('addresses.AddressType',"name").build
-role = Instantiator('addresses.Role',"name").build
-#~ person = Instantiator('addresses.Person',"first_name last_name").build
-company = Instantiator('addresses.Company',"name").build
-contact = Instantiator('addresses.Contact').build
+#~ addresstype= Instantiator('contacts.AddressType',"name").build
+role = Instantiator('contacts.Role',"name").build
+#~ person = Instantiator('contacts.Person',"first_name last_name").build
+company = Instantiator('contacts.Company',"name").build
+contact = Instantiator('contacts.Contact').build
 
-Company = addresses.Company
-Person = addresses.Person
+Company = contacts.Company
+Person = contacts.Person
 City = resolve_model('countries.City')
 
 if not settings.LINO.abstract_address:
-    Address = addresses.Address
+    Address = contacts.Address
     address = Instantiator(Address,"country zip_code city:name street street_no").build
 
 def objects():

@@ -1,9 +1,18 @@
 20120225
 ========
 
-:mod:`lino.sandbox.addresses` 
+:mod:`lino.sandbox.contacts` 
 ist eine Etüde zu den Themen 
 "Kontakte, Personen, Firmen"
 sowie
 "Länder, Provinzen, Städte, Dörfer, Straßen, Häuser".
 
+Ist ein User eine Person oder ein Contact?
+
+Die sichtbare Neuerung zum bestehenden Modul 
+:mod:`lino.modlib.contacts` wäre, dass email, phone, fax, 
+gsm jetzt in einer eigenen Grid ständen.
+ContactsByPerson käme aus dem Sonstige-Reiter nach vorne.
+
+Einziges Problem ist die Synchronisierung mit TIM (watch_tim).
+Ein `Contact` hätte dann die Partnernummer aus TIM.

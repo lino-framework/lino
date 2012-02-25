@@ -31,14 +31,14 @@ from lino.utils import join_words
 
 
 
-class AddressType(babel.BabelNamed):
-    class Meta:
-        verbose_name = _("Address Type")
-        verbose_name_plural = _("Address Types")
+#~ class AddressType(babel.BabelNamed):
+    #~ class Meta:
+        #~ verbose_name = _("Address Type")
+        #~ verbose_name_plural = _("Address Types")
    
-class AddressTypes(dd.Table):
-    model = AddressType
-    column_names = 'name *'
+#~ class AddressTypes(dd.Table):
+    #~ model = AddressType
+    #~ column_names = 'name *'
     
     
 class Role(babel.BabelNamed):
@@ -257,7 +257,7 @@ class ContactsByCompany(Contacts):
     column_names = "email url phone gsm fax person role *"
     
     
-if settings.LINO.is_installed('addresses'):
+if settings.LINO.is_installed('contacts'):
     """
     Don't inject fields if contacts is just being imported from some other module.
     """
@@ -290,7 +290,7 @@ def setup_my_menu(site,ui,user,m):
   
 def setup_config_menu(site,ui,user,m): 
     #~ m = m.add_menu(NAME,LABEL)
-    m.add_action(AddressTypes)
+    #~ m.add_action(AddressTypes)
     m.add_action(Roles)
     m.add_action(site.modules.countries.Countries)
     m.add_action(site.modules.countries.Cities)
