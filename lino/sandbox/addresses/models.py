@@ -1,3 +1,17 @@
+# -*- coding: UTF-8 -*-
+## Copyright 2008-2012 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
 """
 
 """
@@ -14,8 +28,6 @@ from lino.models import get_site_config
 from lino.utils.choicelists import Gender
 from lino.utils import join_words
 
-
-ADDRESS_TABLE = False
 
 
 
@@ -37,19 +49,11 @@ class Roles(dd.Table):
     model = Role
     column_names = 'name *'
 
-class AddressDetailMixin(dd.DetailLayout):
-    address = """
-    country region city zip_code
-    addr1
-    street_prefix street street_no street_box
-    addr2
-    """
-    
 
 class Address(CountryCity):
   
     class Meta:
-        abstract = True
+        abstract = settings.LINO.abstract_address
         verbose_name = _("Address")
         verbose_name_plural = _("Addresses")
   
@@ -116,14 +120,13 @@ class Address(CountryCity):
         for ln in self.address_person_lines() : yield ln
         for ln in self.address_location_lines() : yield ln
           
-    def address(self,linesep="\n"):
+    def postal_address(self,linesep="\n"):
         """
         The plain text full postal address (person and location). 
         Lines are separated by `linesep`.
         """
-        #~ return linesep.join(self.address_lines())
         return linesep.join(list(self.address_person_lines()) + list(self.address_location_lines()))
-    address.return_type = models.TextField(_("Address"))
+    postal_address.return_type = models.TextField(_("Address"))
     
     def address_location(self,linesep="\n"):
         """
@@ -132,15 +135,30 @@ class Address(CountryCity):
         """
         return linesep.join(self.address_location_lines())
         
+class AddressDetail(dd.DetailLayout):
+    address = """
+    country region city zip_code
+    addr1
+    street_prefix street street_no street_box
+    addr2
+    """
     
-        
-class Addresses(dd.Table):
-    model = Address
-    
-if ADDRESS_TABLE:
-    AddressableMixin = models.Model
-else:  
+if settings.LINO.abstract_address:
+  
     AddressableMixin = Address
+    
+else:  
+  
+    class AddressableMixin(models.Model):
+        class Meta:
+            abstract = True
+        address = models.ForeignKey(Address,null=True,blank=True)
+        
+    class Addresses(dd.Table):
+        model = Address
+        detail_layout = AddressDetail(main="address")
+    
+    
 
 
 class Person(AddressableMixin):
@@ -154,14 +172,12 @@ class Person(AddressableMixin):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     gender = Gender.field()
-    if ADDRESS_TABLE:
-        address = models.ForeignKey(Address,null=True,blank=True)
     def __unicode__(self):
         return self.first_name + ' ' + self.last_name
         
         
     
-class PersonDetail(AddressDetailMixin):
+class PersonDetail(AddressDetail):
     main = """
     title first_name last_name gender
     address
@@ -181,13 +197,11 @@ class Company(AddressableMixin):
         verbose_name_plural = _("Companies")
         
     name = models.CharField(max_length=50)
-    if ADDRESS_TABLE:
-        address = models.ForeignKey(Address,null=True,blank=True)
         
     def __unicode__(self):
         return self.name
         
-class CompanyDetail(AddressDetailMixin):
+class CompanyDetail(AddressDetail):
     main = """
     name
     address
@@ -236,11 +250,11 @@ class Contacts(dd.Table):
 
 class ContactsByPerson(Contacts):
     master_key = 'person'
-    column_names = "company role email url phone gsm fax"
+    column_names = "email url phone gsm fax company role *"
     
 class ContactsByCompany(Contacts):
     master_key = 'company'
-    column_names = "person role email url phone gsm fax"
+    column_names = "email url phone gsm fax person role *"
     
     
 if settings.LINO.is_installed('addresses'):
@@ -268,7 +282,7 @@ LABEL = _("Contacts")
 def setup_main_menu(site,ui,user,m):
     m.add_action(Companies)
     m.add_action(Persons)
-    m.add_action(Contacts)
+    #~ m.add_action(Contacts)
     
 
 def setup_my_menu(site,ui,user,m): 
@@ -285,5 +299,6 @@ def setup_config_menu(site,ui,user,m):
 def setup_explorer_menu(site,ui,user,m):
     #~ m = m.add_menu(NAME,LABEL)
     m.add_action(Contacts)
-    m.add_action(Addresses)
+    if not settings.LINO.abstract_address:
+        m.add_action(Addresses)
   

@@ -2,6 +2,13 @@ from lino.apps.std.settings import *
 class Lino(Lino):
     user_model = None
     use_contenttypes = False
+    
+    abstract_address = True
+    """
+    If True, then the Addresses model is abstract 
+    (i.e. we don't have a separate table for Addresses).
+    After changing this setting, you must rebuild the database.
+    """
 
     def get_app_source_file(self):
         return __file__

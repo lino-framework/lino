@@ -31,19 +31,19 @@ addresstype= Instantiator('addresses.AddressType',"name").build
 role = Instantiator('addresses.Role',"name").build
 #~ person = Instantiator('addresses.Person',"first_name last_name").build
 company = Instantiator('addresses.Company',"name").build
-#~ address = Instantiator('addresses.Address',"country zip_code city:name street street_no").build
 contact = Instantiator('addresses.Contact').build
 
 Company = addresses.Company
 Person = addresses.Person
 City = resolve_model('countries.City')
 
-if addresses.ADDRESS_TABLE:
+if not settings.LINO.abstract_address:
     Address = addresses.Address
+    address = Instantiator(Address,"country zip_code city:name street street_no").build
 
 def objects():
 
-    yield addresstype(**babel_values('name',en="Default",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
+    #~ yield addresstype(**babel_values('name',en="Default",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
     
     yield role(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
     yield role(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor",et=u"Direktor"))
@@ -52,7 +52,7 @@ def objects():
     
     
     def company(name,country_id,zip_code,city,street,street_no):
-        if addresses.ADDRESS_TABLE:
+        if not settings.LINO.abstract_address:
             addr = address(country_id,zip_code,city,street,street_no)
             yield addr
             com = Company(name=name,address=addr)
@@ -81,8 +81,8 @@ def objects():
     
     
     def person(first_name,last_name,country_id=None,zip_code='',city=None,**kw):
-        if addresses.ADDRESS_TABLE:
-            addr = address(country_id,zip_code,city,street,street_no)
+        if not settings.LINO.abstract_address:
+            addr = address(country_id,zip_code,city)
             yield addr
             com = Person(first_name=first_name,last_name=last_name,address=addr)
             yield com
@@ -277,8 +277,18 @@ Weserstraße
     
     streets_of_eupen = [ line.strip() for line in s.splitlines() if len(line.strip()) > 0 ]
     
-    if addresses.ADDRESS_TABLE:
+    if settings.LINO.abstract_address:
     
+        nr = 1
+        #~ CITIES = Cycler(City.objects.all())
+        eupen = City.objects.get(name="Eupen")
+        STREETS = Cycler(streets_of_eupen)
+        for p in Person.objects.filter(city=eupen):
+            p.street = STREETS.pop()
+            p.street_no = str(nr)
+            p.save()
+            nr += 1
+    else:
         nr = 1
         for street in streets_of_eupen:
             for i in range(3):
@@ -290,17 +300,6 @@ Weserstraße
         for p in Person.objects.all():
             p.address = ADDRESSES.pop()
             p.save()
-    else:
-      
-        nr = 1
-        #~ CITIES = Cycler(City.objects.all())
-        eupen = City.objects.get(name="Eupen")
-        STREETS = Cycler(streets_of_eupen)
-        for p in Person.objects.filter(city=eupen):
-            p.street = STREETS.pop()
-            p.street_no = str(nr)
-            p.save()
-            nr += 1
       
         
         

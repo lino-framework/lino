@@ -1,0 +1,9 @@
+20120225
+========
+
+:mod:`lino.sandbox.addresses` 
+ist eine Etüde zu den Themen 
+"Kontakte, Personen, Firmen"
+sowie
+"Länder, Provinzen, Städte, Dörfer, Straßen, Häuser".
+
