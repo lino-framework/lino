@@ -13,8 +13,10 @@ syntax: glob
 dist
 tmp
 lino/ui/qx/app/build/resource
-*\SciTE.session
+*/SciTE.session
 lino/tutorials/*/media
+lino/sandbox/*/media
+*/test.db
 docs/*/appdocs
 
 lino\demos\*\media\cache

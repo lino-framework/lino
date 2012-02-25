@@ -621,6 +621,11 @@ class Lino(object):
     :class:`lino.models.SiteConfig` instance.
     """
     
+    use_contenttypes = True
+    """
+    Set this to False if you don't want to use `django.contrib.contenttypes`.
+    """
+    
     #~ index_view_action = 'lino.Home'
     
     # for internal use:

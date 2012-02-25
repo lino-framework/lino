@@ -2277,7 +2277,7 @@ tinymce.init({
         
         yield "  layout: 'fit',"
         #~ yield "  content_type: %s," % py2js(dh.content_type)
-        if issubclass(tbl,table.Table):
+        if settings.LINO.use_contenttypes and issubclass(tbl,table.Table):
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
 
         
@@ -2382,7 +2382,8 @@ tinymce.init({
         if rh.store.pk is not None:
             kw.update(ls_id_property=rh.store.pk.name)
             kw.update(pk_index=rh.store.pk_index)
-            kw.update(content_type=ContentType.objects.get_for_model(rh.report.model).pk)
+            if settings.LINO.use_contenttypes:
+                kw.update(content_type=ContentType.objects.get_for_model(rh.report.model).pk)
         kw.update(ls_quick_edit=rh.report.cell_edit)
         kw.update(ls_bbar_actions=[
             rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])

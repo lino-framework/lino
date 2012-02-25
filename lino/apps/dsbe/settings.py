@@ -62,7 +62,8 @@ class Lino(Lino):
         #~ tb.add_action(self.modules.contacts.Persons,'detail')
         #~ tb.add_action(self.modules.contacts.Persons,'detail')
         tb.add_action(self.modules.contacts.Persons.detail_action)
-        tb.add_action(self.modules.cal.Panel)
+        if self.use_extensible:
+            tb.add_action(self.modules.cal.Panel)
         tb.add_action(self.modules.dsbe.MyPersons)
         tb.add_action(self.modules.isip.MyContracts)
         tb.add_action(self.modules.jobs.MyContracts)
