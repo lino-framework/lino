@@ -217,6 +217,54 @@ Ext.lib.Ajax.serializeForm = function(form) {
     return data.substr(0, data.length - 1);
 };
 
+
+/*
+http://www.sencha.com/forum/showthread.php?183515 
+*/
+Ext.override(Ext.QuickTip,{
+  showAt : function(xy){
+        var t = this.activeTarget;
+        //~ console.log("20120224 QuickTip.showAt",this.title,this.dismissDelay,t.dismissDelay);
+        if(t){
+            if(!this.rendered){
+                this.render(Ext.getBody());
+                this.activeTarget = t;
+            }
+            if(t.width){
+                this.setWidth(t.width);
+                this.body.setWidth(this.adjustBodyWidth(t.width - this.getFrameWidth()));
+                this.measureWidth = false;
+            } else{
+                this.measureWidth = true;
+            }
+            this.setTitle(t.title || '');
+            this.body.update(t.text);
+            this.autoHide = t.autoHide;
+            // bugfix by Luc 20120226
+            if (t.dismissDelay != undefined) this.dismissDelay = t.dismissDelay;
+            //~ this.dismissDelay = t.dismissDelay || this.dismissDelay;
+            if(this.lastCls){
+                this.el.removeClass(this.lastCls);
+                delete this.lastCls;
+            }
+            if(t.cls){
+                this.el.addClass(t.cls);
+                this.lastCls = t.cls;
+            }
+            if(this.anchor){
+                this.constrainPosition = false;
+            }else if(t.align){ 
+                xy = this.el.getAlignToXY(t.el, t.align);
+                this.constrainPosition = false;
+            }else{
+                this.constrainPosition = true;
+            }
+        }
+        Ext.QuickTip.superclass.showAt.call(this, xy);
+    }
+});
+
+
 Ext.namespace('Lino');
 
 /*
@@ -1408,19 +1456,21 @@ Lino.ajax_error_handler = function(panel) {
   
 #if $settings.LINO.use_quicktips
 
+Ext.QuickTips.init();
+
+/* setting QuickTips dismissDelay to 0 */
 // Apply a set of config properties to the singleton
 //~ Ext.apply(Ext.QuickTips.getQuickTip(), {
-Ext.apply(Ext.ToolTip, {
-    dismissDelay: 0,
+//~ Ext.apply(Ext.ToolTip, {
+    //~ dismissDelay: 0
     //~ autoHide: false,
     //~ closable: true,
     //~ maxWidth: 200,
     //~ minWidth: 100,
     //~ showDelay: 50      // Show 50ms after entering target
     //~ ,trackMouse: true
-});
+//~ });
 
-Ext.QuickTips.init();
 
 //~ Ext.apply(Ext.QuickTip, {
     //~ dismissDelay: 0,
@@ -1432,7 +1482,8 @@ Lino.quicktip_renderer = function(title,body) {
     //~ t.dismissDelay = 0;
     Ext.QuickTips.register({
       target: t,
-      //~ dismissDelay: 0,
+      dismissDelay: 0,
+      showDelay: 50,      // Show 50ms after entering target
       title: title,
       text: body
     });

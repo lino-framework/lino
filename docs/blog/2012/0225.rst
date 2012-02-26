@@ -1,6 +1,9 @@
 20120225
 ========
 
+Sandbox-Etüde "Kontakte"
+------------------------
+
 :mod:`lino.sandbox.contacts` 
 ist eine Etüde zu den Themen 
 "Kontakte, Personen, Firmen"
@@ -20,5 +23,77 @@ Ein `Contact` hätte dann die Partnernummer aus TIM.
 
 lino.Lino.__init__ füllte project_dir auch dann nach FIXTURES_DIR, 
 wenn es zugleich das source_dir war. Was die subtile Folge hatte, 
-dass alle Fixtures doppet ausgeführt wurden. 
+dass alle Fixtures doppelt ausgeführt wurden. 
 Dieser Bug hat mich mindestens eine Stunde lang beschäftigt.
+
+
+A bug in ExtJS 3.3.1 ?
+----------------------
+
+I posted the following as a bug report
+`Cannot set QuickTips dismissDelay to 0
+<http://www.sencha.com/forum/showthread.php?183515>`_
+to the Sencha forum.
+
+Problem: Cannot set QuickTips dismissDelay to 0.
+
+It seems this is a bug in ExtJS 3.3.1, 3.4 
+and maybe also in 4.0.
+I didn't yet test in other versions because of other unrelated problems.
+
+Here is how I try to set dismissDelay=0 for all QuickTips::
+
+  Ext.QuickTips.init();
+  // Apply a set of config properties to the singleton
+  Ext.apply(Ext.QuickTips.getQuickTip(), {
+      dismissDelay: 0
+  });
+
+I register all QuickTips using the following function::
+
+  Lino.quicktip_renderer = function(title,body) {
+    return function(c) {
+      var t = ;
+      Ext.QuickTips.register({
+        target: c.getEl(),
+        dismissDelay: 0,
+        title: title,
+        text: body
+      });
+    }
+  };
+
+
+Here is how I worked around this. 
+I changed the following line in
+Ext.QuickTip.showAt of `ext-all-debug.js`::
+
+
+    showAt : function(xy){
+        var t = this.activeTarget;
+        if(t){
+            ...
+            this.autoHide = t.autoHide;
+            // bugfix by Luc 20120226
+            if (t.dismissDelay != undefined) this.dismissDelay = t.dismissDelay;
+            //~ this.dismissDelay = t.dismissDelay || this.dismissDelay;
+            // end of bugfix by Luc 20120226
+            if(this.lastCls){
+            ...
+
+            if (t.dismissDelay != undefined) this.dismissDelay = t.dismissDelay;
+            //~ this.dismissDelay = t.dismissDelay || this.dismissDelay;
+
+
+In `ext-all.js` you must search for::
+
+  this.dismissDelay=a.dismissDelay||this.dismissDelay;
+  
+and replace it with::  
+  
+  if(t.dismissDelay!=undefined)this.dismissDelay=t.dismissDelay;
+  
+
+Note that this workaround still doesn't 
+help for setting the default (singleton) config.
+But at least it now works when specifying dismissDelay in register().

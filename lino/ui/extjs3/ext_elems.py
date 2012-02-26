@@ -467,22 +467,20 @@ class FieldElement(LayoutElement):
             kw.update(name=self.field.name)
             if self.label:
                 label = self.label
-                if self.field.help_text and settings.LINO.use_css_tooltips:
-                    #~ label = string_concat(
-                      #~ '<b>',
-                      #~ field.verbose_name,'</b>')
-                    #~ label = string_concat(
-                      #~ '<span style:border-bottom: 1px dotted #000000; color: #000000; outline: none;>',
-                      #~ label,'</span>')
-                    label = string_concat(
-                      '<a class="tooltip" href="#">',
-                      label,
-                      '<span class="classic">',
-                      self.field.help_text,
-                      '</span></a>')
-                    #~ label = string_concat(label,' [?]')
+                if self.field.help_text:
+                    if settings.LINO.use_css_tooltips:
+                        label = string_concat(
+                          '<a class="tooltip" href="#">',
+                          label,
+                          '<span class="classic">',
+                          self.field.help_text,
+                          '</span></a>')
+                    elif settings.LINO.use_quicktips:
+                        label = string_concat(
+                          '<span style="border-bottom: 1px dotted #000000;">',
+                          label,
+                          '</span>')
             
-                #~ kw.update(fieldLabel=unicode(self.label)) 20111111
                 kw.update(fieldLabel=label)
         if self.editable:
             if not self.field.blank:
