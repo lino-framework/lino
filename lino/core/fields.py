@@ -257,10 +257,10 @@ def constant():
     Decorator to turn a method into a Constant.
     """
     def decorator(fn):
-        def wrapped(*args):
-            #~ return classmethod(fn(*args))
-            return fn(*args)
-        return Constant(wrapped)
+        #~ def wrapped(*args):
+            #~ return fn(*args)
+        #~ return Constant(wrapped)
+        return Constant(fn)
     return decorator
 
 

@@ -158,6 +158,14 @@ wrap it into a <div class="htmlText">.
 	font-style: italic;
 	}
 
+/* 
+Thanks to http://de.selfhtml.org/css/formate/zentrale.htm
+*/
+table.htmlText tr td {
+	vertical-align: middle;
+	text-align: center;
+	}
+
 
 
 /* 
@@ -207,3 +215,4 @@ field labels inside an ExtJS form.
 .x-form-item-label .help { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 .x-form-item-label .info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 .x-form-item-label .warning { background: #FFFFAA; border: 1px solid #FFAD33; }
+

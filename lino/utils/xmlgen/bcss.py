@@ -154,6 +154,7 @@ An empty birth date:
 import datetime
 
 from appy.shared.dav import Resource
+#~ from appy import Object
 from appy.shared.xml_parser import XmlUnmarshaller
 
 #~ from lino.utils.xmlgen import *
@@ -308,14 +309,15 @@ class Service(xg.Container):
         return ssdn.SSDNRequest(context,serviceRequest)
         
     def execute(self,user_params,url=None,*args):
-        
-        req = soap.request(self.ssdn_request(user_params,*args).tostring(namespace=ssdn))
+        sr = self.ssdn_request(user_params,*args).tostring(namespace=ssdn)
+        req = soap.request(sr)
         xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + req.tostring()
         
         #~ dblogger.info("Going to send request /******\n%s\n******/",xmlString)
         if not url:
-            #~ logger.info("Not actually sending because url is empty.")
-            return None
+            raise Exception("Not actually sending because url is empty.")
+            #~ return Object(data=Object(xmlString="Not actually sending because url is empty."))
+            #~ return None
         
         server = Resource(url,measure=True)
         res = server.soap(xmlString)

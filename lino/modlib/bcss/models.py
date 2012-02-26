@@ -98,9 +98,9 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     
     status = RequestStatus.field(default=RequestStatus.new,editable=False)
     
-    #~ request_xml = models.TextField(verbose_name=_("Request"),
-        #~ editable=False,blank=True)
-    #~ """The raw XML string that has been (or will be) sent."""
+    request_xml = models.TextField(verbose_name=_("Request"),
+        editable=False,blank=True)
+    """The raw XML string that has been (or will be) sent."""
     
     response_xml = models.TextField(verbose_name=_("Response"),editable=False,blank=True)
     """
@@ -117,18 +117,18 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
             self.save()
         srv = self.build_service()
         now = datetime.datetime.now()
-        #~ self.request_xml = srv.tostring(True)
+        self.request_xml = srv.tostring(True)
         self.status = RequestStatus.pending
         self.save()
         
         try:
-            res = srv.execute(settings,str(self.id),now)
+            res = srv.execute(settings.LINO.bcss_user_params,
+              settings.LINO.bcss_soap_url,str(self.id),now)
         except Exception,e:
             self.status = RequestStatus.exception
             self.response_xml = traceback.format_exc(e)
             self.save()
             return
-            
         self.sent = now
         self.response_xml = res.data.xmlString
         reply = bcss.xml2reply(res.data.xmlString)
@@ -167,6 +167,10 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
     Represents a request to the :term:`BCSS` IdentifyPerson service.
     
     """
+    class Meta:
+        verbose_name = _("IdentifyPerson Request")
+        verbose_name_plural = _("IdentifyPerson Requests")
+        
     national_id = models.CharField(max_length=200,
         blank=True,verbose_name=_("National ID")
         #~ ,validators=[niss_validator]
@@ -174,11 +178,39 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
         
     middle_name = models.CharField(max_length=200,
       blank=True,
-      verbose_name=_('Middle name'))
-    "Whatever this means..."
+      verbose_name=_('Middle name'),
+      help_text="Whatever this means...")
     tolerance = models.IntegerField(verbose_name=_('Tolerance'),
-      default=0)
-    
+      default=0,
+      help_text=u"""
+      Falls Monat oder Tag des Geburtsdatums unbekannt sind, 
+      um wieviel Einheiten die Suche nach unten/oben ausgeweitet wird.
+      Gültige Werte: 0 bis 10.
+      <p>Zum Beispiel 
+      <table border=1 class="htmlText">
+      <tr>
+        <td>Geburtsdatum<td/>
+        <td colspan="3">Toleranz<td/>
+      </tr><tr>
+        <td><td/>
+        <td>0<td/>
+        <td>1</td>
+        <td>10</td>
+      </tr><tr>
+        <td> 1968-00-00  <td/>
+        <td> im Jahr 1968 <td/>
+        <td> von 1967 bis 1969 </td>
+        <td> 1958 bis 1978 <td/>
+      </tr><tr>
+        <td> 1968-06-00  <td/>
+        <td> im Juni 1968 <td/>
+        <td> von Mai  bis Juli 1968 </td>
+        <td>von Oktober 1967 bis April 1969</td>
+      </tr>
+      </table>
+      </p>
+      """)
+      
     def save(self,*args,**kw):
         if self.project: 
             person = self.project
@@ -203,7 +235,7 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
         person = self.project
         VD = bcss.ipr.VerificationData
         SC = bcss.ipr.SearchCriteria
-        PC = SC.PhoneticCriteria
+        PC = bcss.ipr.PhoneticCriteria
         if self.national_id:
             return bcss.ipr.verify_request(
               self.national_id,
@@ -227,17 +259,55 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
           pc.append(PC.Tolerance(self.tolerance))
           return bcss.ipr.IdentifyPersonRequest(SC(PC(*pc)))
       
-class IdentifyPersonRequests(dd.Table):
-    model = IdentifyPersonRequest
-    detail_template = """
-    id project 
+IdentifyPersonRequest._meta.get_field_by_name('first_name')[0].blank = True
+IdentifyPersonRequest._meta.get_field_by_name('last_name')[0].blank = True
+
+class IdentifyPersonRequestDetail(dd.DetailLayout):
+    box1 = """
+    id project user sent status
+    """
+    box2 = """
     national_id
+    spacer
+    """
+    box3 = """
     first_name middle_name last_name
     birth_date tolerance  gender 
-    sent status 
-    # request_xml
-    response_xml
     """
+    
+    box4 = """
+    request_xml response_xml
+    """
+    
+    main = """
+    box1
+    box2 box3
+    box4
+    """
+    
+    def setup_handle(self,lh):
+        lh.box1.label = _("Request information")
+        lh.box2.label = _("Using the national ID")
+        lh.box3.label = _("Using phonetic search")
+        lh.box4.label = _("Result")
+    
+
+class IdentifyPersonRequests(dd.Table):
+    #~ window_size = (500,400)
+    model = IdentifyPersonRequest
+    detail_layout = IdentifyPersonRequestDetail()
+    #~ detail_template = """
+    #~ id project 
+    #~ national_id
+    #~ first_name middle_name last_name
+    #~ birth_date tolerance  gender 
+    #~ sent status 
+    #~ request_xml
+    #~ response_xml
+    #~ """
+    
+    @dd.constant()
+    def spacer(self,ui):  return '<br/>'
     
 class IdentifyRequestsByPerson(IdentifyPersonRequests):
     master_key = 'project'
