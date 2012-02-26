@@ -12,6 +12,9 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Wenn UpdateReminders zu lange dauert, entscheidet der Browser scheinbar,
+    den AJAX-Call aufzugeben und bleibt dann mit der loadMask aktiv. 
+    
 #.  Picker for calendar color. Or at least a ChoiceList with names.
     http://ext.ensible.com/forum/viewtopic.php?f=2&t=339
     See :file:`calendar-colors.css`

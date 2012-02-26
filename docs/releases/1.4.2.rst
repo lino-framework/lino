@@ -1,0 +1,19 @@
+Version 1.4.2  (20120226)
+=========================
+
+- Hilfetexte sind jetzt (par défaut) wieder als QuickTips
+  implementiert. 
+  Die CSS-Tooltips habe ich auch nach einigen weiteren 
+  Versuchen nicht ans Funktionieren bekommen. 
+  
+  Aber die ExtJS-Quicktips bleiben jetzt angezeigt, 
+  bis man die Maus aus dem Feld rausbewegt  (dismissDelay ist 0). 
+  Auch sind die Labels punktiert unterstrichen, 
+  wenn ihr Feld einen Hilfetext hat. 
+
+- BCSS connection: im IdentifyPerson-Request sind jetzt ein paar 
+  Felder mehr. Im Reiter "Sonstige" gibt es einen Button zur 
+  benutzerfreundlichen Bedienung.
+
+    
+Download it from http://pypi.python.org/pypi/lino
