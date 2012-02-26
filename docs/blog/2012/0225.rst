@@ -97,3 +97,21 @@ and replace it with::
 Note that this workaround still doesn't 
 help for setting the default (singleton) config.
 But at least it now works when specifying dismissDelay in register().
+
+Vorläufiger Abschluss Tooltips
+------------------------------
+
+Also die CSS-Tooltips habe ich auch nach einigen weiteren 
+Versuchen nicht ans Funktionieren bekommen. 
+Aber die ExtJS-Quicktips bleiben jetzt angezeigt, 
+bis man die Maus aus dem Feld rausbewegt  (dismissDelay ist 0). 
+Auch sind die Labels punktiert unterstrichen, 
+wenn ihr Feld einen Hilfetext hat. 
+
+Ich möchte die Sache jetzt bis auf Weiteres ruhen lassen und 
+empfehle also, die beiden Parameter
+:attr:`lino.Lino.use_css_tooltips`
+und 
+:attr:`lino.Lino.use_quicktips`
+auf dem Standardwert stehen zu lassen.
+

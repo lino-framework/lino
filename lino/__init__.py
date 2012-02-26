@@ -375,14 +375,17 @@ class Lino(object):
     Whether to use the `Extensible <http://ext.ensible.com>`_ calendar library.
     """
     
-    use_quicktips = False
+    use_quicktips = True
     """
-    Whether to make use of `Ext.QuickTips <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_.
+    Whether to make use of `Ext.QuickTips
+    <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_
+    when displaying help texts defined in :class:`lino.models.HelpText`
     """
     
-    use_css_tooltips = True
+    use_css_tooltips = False
     """
-    Whether to make use of `Ext.QuickTips <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_.
+    Whether to make use of CSS tooltips
+    when displaying help texts defined in :class:`lino.models.HelpText`.
     """
     
     use_vinylfox = False
