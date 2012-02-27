@@ -1,0 +1,5 @@
+20120227
+========
+
+Worked on documentation of :mod:`lino.dd`.
+New function :func:`lino.dd.update_field`.

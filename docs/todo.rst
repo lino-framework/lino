@@ -12,6 +12,14 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  BCSS-Requests: Button "Execute" deaktivieren, wenn Request 
+    abgeschickt ist.
+
+#.  Neues Modul Schuldnerberatung (debt counselling) starten.
+
+#.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 
+    Basisklassen anzeigen. Der Unterschied ist für den Benutzer nicht wichtig.
+
 #.  Wenn UpdateReminders zu lange dauert, entscheidet der Browser scheinbar,
     den AJAX-Call aufzugeben und bleibt dann mit der loadMask aktiv. 
     

@@ -115,3 +115,7 @@ und
 :attr:`lino.Lino.use_quicktips`
 auf dem Standardwert stehen zu lassen.
 
+Lino 1.4.2 ist da
+-----------------
+
+Am Sonntagabend lass ich das nächste Release raus: :doc:`/releases/1.4.2`.

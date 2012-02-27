@@ -266,8 +266,9 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 #~ qs = self.company.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact = qs[0]
-                else:
-                    self.contact = None
+                #~ else:
+                    #~ print "20120227 clear contact!"
+                    #~ self.contact = None
         # severe test is ready but not yet activated :
         if False and self.person_id is not None:
             msg = OverlappingContractsTest(self.person).check(self)

@@ -18,14 +18,15 @@ whose value is rendered according to the current language.
 
 Usage example :
 
-(choicelists requires :setting:`DJANGO_SETTINGS_MODULE` to be set)
+(First two lines of code because `choicelists` 
+requires :setting:`DJANGO_SETTINGS_MODULE` 
+to be set)
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.std.settings'
 
 
 >>> from django.utils import translation
->>> from lino.utils.choicelists import Gender
 >>> translation.activate('en')
 >>> print unicode(Gender.male)
 Male

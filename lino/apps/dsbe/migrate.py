@@ -1001,3 +1001,9 @@ def migrate_from_1_4_0(globals_dict):
     No database changes.
     """
     return '1.4.1'
+    
+def migrate_from_1_4_1(globals_dict): 
+    """
+    Some new fields in IdentifyPersonRequest with default values.
+    """
+    return '1.4.2'

@@ -167,11 +167,12 @@ class Person(AddressableMixin):
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
         
-    title = models.CharField(max_length=200,blank=True,
-      verbose_name=_('Title'))
-    """Text to print as part of the first address line in front of first_name."""
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    title = models.CharField(_('Title'),max_length=200,blank=True,
+        help_text="""
+        Text to print as part of the first address line in front of first_name.
+        """)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     gender = Gender.field()
     def __unicode__(self):
         return self.first_name + ' ' + self.last_name

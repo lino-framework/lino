@@ -258,9 +258,11 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
               pc.append(PC.Gender(0))
           pc.append(PC.Tolerance(self.tolerance))
           return bcss.ipr.IdentifyPersonRequest(SC(PC(*pc)))
-      
-IdentifyPersonRequest._meta.get_field_by_name('first_name')[0].blank = True
-IdentifyPersonRequest._meta.get_field_by_name('last_name')[0].blank = True
+    
+dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
+dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
+#~ IdentifyPersonRequest._meta.get_field_by_name('first_name')[0].blank = True
+#~ IdentifyPersonRequest._meta.get_field_by_name('last_name')[0].blank = True
 
 class IdentifyPersonRequestDetail(dd.DetailLayout):
     box1 = """

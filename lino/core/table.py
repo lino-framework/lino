@@ -110,25 +110,6 @@ def wildcard_data_elems(model):
     #~ for de in data_elems(self.model): yield de
     
 
-def inject_field(model,name,field,doc=None):
-    """
-    Adds the given field to the given model.
-    See also :doc:`/tickets/49`.
-    """
-    #~ model = resolve_model(model)
-    if doc:
-        field.__doc__ = doc
-    model.add_to_class(name,field)
-    return field
-
-
-
-def fields_list(model,field_names):
-    #~ return tuple([get_field(model,n) for n in field_names.split()])
-    #~ if model.__name__ == 'Company':
-        #~ print 20110929, [get_field(model,n) for n in field_names.split()]
-    return [get_field(model,n).name for n in field_names.split()]
-
 
 #~ def summary_row(obj,ui,rr,**kw):
 def summary_row(obj,ui,**kw):
