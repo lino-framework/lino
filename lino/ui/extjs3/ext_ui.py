@@ -1266,6 +1266,7 @@ tinymce.init({
             
         try:
             elem.save(**kw2save)
+        #~ except Exception,e:
         except IntegrityError,e:
             return self.error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return json_response_kw(success=False,

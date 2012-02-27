@@ -449,7 +449,7 @@ Lino.edit_tinymce_text = function(panel,options) {
     if (saving) {alert('tried to save again'); return; }
     //~ var url = panel.containing_window.main_item.get_record_url(rec.id);
     var url = panel.containing_panel.get_record_url(rec.id);
-    var params = Ext.apply({},panel.get_base_params());
+    var params = Ext.apply({},panel.containing_panel.get_base_params());
     params[panel.editor.name] = editor.getValue();
     var a = { 
       params: params, 
@@ -1075,7 +1075,8 @@ Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
 //~ };
 
 Lino.on_submit_failure = function(form, action) {
-    Lino.notify();
+    //~ Lino.notify();
+  // action may be undefined
     switch (action.failureType) {
         case Ext.form.Action.CLIENT_INVALID:
             Ext.Msg.alert('Client-side failure', 'Form fields may not be submitted with invalid values');
@@ -1703,7 +1704,7 @@ Lino.show_detail = function(panel,btn) {
 };
 
 Lino.show_fk_detail = function(combo,handler) {
-    //~ console.log("Lino.show_fk_detail",combo,e,handler);
+    //~ console.log("Lino.show_fk_detail",combo,handler);
     pk = combo.getValue();
     if (pk) {
         handler({},{record_id: pk})
@@ -2498,9 +2499,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
                 //~ }
             //~ });
           },
-          failure: function() { 
+          failure: function(form,action) { 
             this.loadMask.hide();
-            Lino.on_submit_failure(arguments)},
+            Lino.on_submit_failure(form,action);
+          },
           clientValidation: true
         })
       } else {
@@ -2521,9 +2523,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             //~ this.refresh_with_after(after);
             //~ if (after) after(); else panel.refresh();
           },
-          failure: function() { 
+          failure: function(form,action) { 
             this.loadMask.hide();
-            Lino.on_submit_failure(arguments)},
+            Lino.on_submit_failure(form,action)},
           clientValidation: true
         })
       }

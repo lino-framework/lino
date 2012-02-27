@@ -384,34 +384,6 @@ class ActionRequest(object):
             #~ return
         #~ raise ConfirmationRequired(step,messages)
 
-    def confirm(self,*messages):
-        """
-        Calling this from an Action's :meth:`Action.run`
-        """
-        assert len(messages) > 0 and messages[0], "At least one non-empty message required"
-        self.step += 1
-        if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
-            return
-        raise ConfirmationRequired(self.step,messages)
-
-    def create_phantom_row(self,**kw):
-        obj = PhantomRow(self,**kw)
-        return obj
-      
-    def create_instance(self,**kw):
-        if self.create_kw:
-            kw.update(self.create_kw)
-        #logger.debug('%s.create_instance(%r)',self,kw)
-        if self.known_values:
-            kw.update(self.known_values)
-        obj = self.report.create_instance(self,**kw)
-        #~ if self.known_values is not None:
-            #~ self.ah.store.form2obj(self.known_values,obj,True)
-            #~ for k,v in self.known_values:
-                #~ field = self.model._meta.get_field(k) ...hier
-                #~ kw[k] = v
-        return obj
-        
     def parse_req(self,request,rqdata,**kw):
         if self.report.parameters:
             kw.update(param_values=self.ui.parse_params(self.ah,request))
@@ -468,6 +440,34 @@ class ActionRequest(object):
             #~ logger.info("20111223 %r %r", kw, self.report.known_values)
         self.known_values = kw
         
+        
+    def confirm(self,*messages):
+        """
+        Calling this from an Action's :meth:`Action.run`
+        """
+        assert len(messages) > 0 and messages[0], "At least one non-empty message required"
+        self.step += 1
+        if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
+            return
+        raise ConfirmationRequired(self.step,messages)
+
+    def create_phantom_row(self,**kw):
+        obj = PhantomRow(self,**kw)
+        return obj
+      
+    def create_instance(self,**kw):
+        if self.create_kw:
+            kw.update(self.create_kw)
+        #logger.debug('%s.create_instance(%r)',self,kw)
+        if self.known_values:
+            kw.update(self.known_values)
+        obj = self.report.create_instance(self,**kw)
+        #~ if self.known_values is not None:
+            #~ self.ah.store.form2obj(self.known_values,obj,True)
+            #~ for k,v in self.known_values:
+                #~ field = self.model._meta.get_field(k) ...hier
+                #~ kw[k] = v
+        return obj
         
     def get_data_iterator(self):
         raise NotImplementedError

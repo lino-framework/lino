@@ -26,7 +26,8 @@ http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
 
 /*.lino-phantom-row table.x-grid3-row-table {
 	color: blue; 
-}*/
+}
+*/
 .lino-phantom-row td {
 	/* font-style: italic; */
 	color:white;
@@ -68,8 +69,16 @@ http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
     white-space: nowrap; 
 }
 
+.ext-gecko .x-window-body .x-form-item {
+	overflow: hidden;
+}
+
 /*
  20120224 
+ 
+ Note 20120227 : setting all overflows to visible *did* cause a layout problem in 
+ http://127.0.0.1:8000/api/jobs/ContractsByPerson?mt=20&mk=126&an=insert
+ 
 .ext-gecko .x-window-body .x-form-item {
 	overflow: visible;
 }
@@ -173,13 +182,11 @@ Alexander Dawson's CSS tooltips
 from <http://sixrevisions.com/css/css-only-tooltips/>
 But I didn't yet manage to get them work when defined on 
 field labels inside an ExtJS form.
-*/
 
 
 .x-form-item-label .tooltip {
 	border-bottom: 1px dotted #000000; color: #000000; outline: none;
 	cursor: help; 
-	/* cursor: default; */
 	text-decoration: none;
 	position: relative;
 }
@@ -215,3 +222,4 @@ field labels inside an ExtJS form.
 .x-form-item-label .info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 .x-form-item-label .warning { background: #FFFFAA; border: 1px solid #FFAD33; }
 
+*/

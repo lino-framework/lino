@@ -214,6 +214,7 @@ def objects():
     Company = resolve_model(settings.LINO.company_model)
     #~ Contact = resolve_model('contacts.Contact')
     Role = resolve_model('contacts.Role')
+    RoleType = resolve_model('contacts.RoleType')
     #~ Link = resolve_model('links.Link')
     #~ Contract = resolve_model('jobs.Contract')
     JobProvider = resolve_model('jobs.JobProvider')
@@ -222,6 +223,10 @@ def objects():
     Note = resolve_model('notes.Note')
     User = resolve_model('users.User')
     Country = resolve_model('countries.Country')
+    
+    rt = RoleType.objects.get(pk=4) # It manager
+    rt.use_in_contracts = False
+    rt.save()
 
     person = Instantiator(Person).build
     company = Instantiator(Company).build
@@ -263,12 +268,14 @@ def objects():
     rcycle = company(name=u"R-Cycle Sperrgutsortierzentrum",city=eupen,country='BE')
     yield rcycle
     rcycle_dir = role(company=rcycle,person=andreas,type=1)
-    #~ rcycle_dir = link(a=rcycle,b=andreas,type=1)
     yield rcycle_dir
+    yield role(company=rcycle,person=erna,type=2)
+    yield role(company=rcycle,person=ulrike,type=4) # IT manager : no contracts
     yield company(name=u"Die neue Alternative V.o.G.",city=eupen,country='BE')
     proaktiv = company(name=u"Pro Aktiv V.o.G.",city=eupen,country='BE')
     yield proaktiv
     proaktiv_dir = role(company=proaktiv,person=hans,type=1)
+    yield role(company=proaktiv,person=ulrike,type=4) # IT manager : no contracts
     yield proaktiv_dir
     yield company(name=u"Werkstatt Cardijn V.o.G.",city=eupen,country='BE')
     yield company(name=u"Behindertenstätten Eupen",city=eupen,country='BE')

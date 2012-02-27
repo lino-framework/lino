@@ -3,3 +3,75 @@
 
 Worked on documentation of :mod:`lino.dd`.
 New function :func:`lino.dd.update_field`.
+
+
+Oops, ein Bug bei Eingabe eines jobs.Contract: 
+wenn Firma mehr als einen Ansprechpartner hatte,
+setzte er in full_clean das "Vertreten durch" 
+immer auf leer. Weil ein JobProvider nun mal keine Company ist, 
+auch wenn sie das Gleiche sind...
+
+Deshalb heißt es jetzt nicht mehr provider sondern 
+company, und beide sind 
+
+Demo-Fixture: RCycle hat jetzt zwei Kontaktpersonen, um den obigen 
+Fall testen zu können.
+Oder sogar drei: eine davon is IT manager, und die dürfen nicht in 
+der Auswahlliste stehen.
+Einen testcase dafür muss ich bei Gelegenheit allerdings noch schreiben...
+
+Außerdem war ein Bug in `Lino.show_fk_detail` bzw. 
+deren Aufruf, so dass ein Klick auf die Lupe eines 
+FK nicht mehr funktionierte.
+
+Und noch ein Bug: wenn man z.B. in MyContracts im Detail (jobs.Contract#7) 
+das Textfeld
+"Aufgabenbereich" in eigenem Fenster öffnete, dann funktionierte das 
+Speichern nicht. Er machte dann ein PUT nach 
+http://127.0.0.1:8000/api/jobs/MyContracts/7,
+worauf der Server antwortete::
+
+  Exception
+  There's no User with primary key u'7'
+
+  TRACEBACK:
+    File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 1699, in api_element_view
+      ar = rpt.request(self,request,a)
+
+    File "t:\hgwork\lino\lino\core\table.py", line 477, in request
+      return TableRequest(ui,self,request,action,**kw)
+
+    File "t:\hgwork\lino\lino\utils\tables.py", line 145, in __init__
+      actions.ActionRequest.__init__(self,ui,report,request,action,**kw)
+
+    File "t:\hgwork\lino\lino\core\actions.py", line 379, in __init__
+      kw = self.parse_req(request,rqdata,**kw)
+
+    File "t:\hgwork\lino\lino\utils\tables.py", line 328, in parse_req
+      raise Exception("There's no %s with primary key %r" % (master.__name__,pk))
+
+
+Das kam daher, dass das PUT mt=70 und mk=7 als Parameter mitschickte. 
+Aber mt und mk müssen hier leer sein.
+
+Und noch einer: wenn man im Insert-Fenster eines jobs.Contract die 
+Stelle nicht ausgefüllt hatte und auf Speichern klickte, dann kam statt 
+der Meldung "Server-side failure" ein Javascript-Fehler::
+
+  Uncaught TypeError: Cannot read property 'failureType' of undefined
+  Lino.on_submit_failurelino_de.js:1059
+  form.submit.failurelino_de.js:2472
+  callbackext-all-debug.js:5490
+  Ext.form.BasicForm.Ext.extend.afterActionext-all-debug.js:43105
+  Ext.extend.successext-all-debug.js:45075
+  Ext.extend.handleResponseext-all-debug.js:4074
+  handleTransactionResponseext-base-debug.js:1864
+  checkResponseext-base-debug.js:1912
+  (anonymous function)
+
+
+Außerdem ist jobs.Contract.job jetzt nicht mehr `blank=True,null=True`, 
+so dass auch das Feld `Stelle` jetzt (solange es leer ist) rot umrandet ist.

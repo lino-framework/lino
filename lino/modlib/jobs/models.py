@@ -305,13 +305,13 @@ class Contract(ContractBase):
         related_name="%(app_label)s_%(class)s_set_by_type",
         verbose_name=_("Contract Type"),blank=True)
     
-    provider = models.ForeignKey(JobProvider,
-        related_name="%(app_label)s_%(class)s_set_by_provider",
-        #~ verbose_name=_("Employer"),
-        blank=True,null=True)
-    job = models.ForeignKey("jobs.Job",
-        verbose_name=_("Job"),
-        blank=True,null=True)
+    #~ provider = models.ForeignKey(JobProvider,
+        #~ related_name="%(app_label)s_%(class)s_set_by_provider",
+        #~ blank=True,null=True)
+    job = models.ForeignKey("jobs.Job")
+    #~ job = models.ForeignKey("jobs.Job",
+        #~ verbose_name=_("Job"),
+        #~ blank=True,null=True)
         
     duration = models.IntegerField(_("duration (days)"),
         blank=True,null=True,default=None)
@@ -339,29 +339,30 @@ class Contract(ContractBase):
     #~ aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
     #~ aid_rate = models.CharField(_("aid rate"),max_length=100,blank=True)
     
-    @chooser()
-    def contact_choices(cls,provider):
-        if provider is not None:
-            #~ return provider.rolesbyparent.all()
-            #~ return provider.rolesbyparent.filter(type__use_in_contracts=True)
-            #~ return links.Link.objects.filter(type__use_in_contracts=True,a=provider)
-            return contacts.Role.objects.filter(
-                type__use_in_contracts=True,company=provider)
-        return []
+    #~ @chooser()
+    #~ def contact_choices(cls,provider):
+        #~ if provider is not None:
+            #~ return contacts.Role.objects.filter(
+                #~ type__use_in_contracts=True,company=provider)
+        #~ return []
         
-    def get_company(self):
-        return self.provider
-    company = property(get_company)
-    """for backwards compatibility. Document templates use a field `company`.
-    """
+    @chooser()
+    def company_choices(cls):
+        return JobProvider.objects.all()
+        
+    #~ def get_company(self):
+        #~ return self.provider
+    #~ company = property(get_company)
+    #~ """for backwards compatibility. Document templates use a field `company`.
+    #~ """
 
-    def get_recipient(self):
-        if self.contact:
-            return self.contact
-        if self.provider:
-            return self.provider
-        return self.person
-    recipient = property(get_recipient)
+    #~ def get_recipient(self):
+        #~ if self.contact:
+            #~ return self.contact
+        #~ if self.provider:
+            #~ return self.provider
+        #~ return self.person
+    #~ recipient = property(get_recipient)
     
     
     #~ def prepare_printable(self):
@@ -393,9 +394,9 @@ class Contract(ContractBase):
     
     def disabled_fields(self,request):
         df = []
-        if self.job:
+        if self.job_id is not None:
             if self.job.provider:
-                df.append('provider')
+                df.append('company')
             if self.job.contract_type:
                 df.append('type')
         if not self.build_time:
@@ -416,8 +417,8 @@ class Contract(ContractBase):
         more = []
         if self.person:
             more.append(ui.href_to(self.person))
-        if self.provider:
-            more.append(ui.href_to(self.provider))
+        if self.company:
+            more.append(ui.href_to(self.company))
         if self.user and self.user != user:
             more.append(cgi.escape(unicode(self.user)))
         if self.reminder_text:
@@ -482,18 +483,18 @@ class Contract(ContractBase):
                       self.applies_from,self.duration/26)  # [NOTE1]
               
         #~ if self.job_id is not None:
-        if self.job:
+        if self.job_id is not None:
             if self.job.provider is not None:
-                self.provider = self.job.provider
+                self.company = self.job.provider
             if self.job.contract_type is not None:
                 self.type = self.job.contract_type
             if self.hourly_rate is None:
                 self.hourly_rate = self.job.hourly_rate
             
-        if self.provider is not None:
-            if self.contact is not None:
-                if self.contact.company.pk != self.provider.company_ptr.pk:
-                    self.contact = None
+        #~ if self.company is not None:
+            #~ if self.contact is not None:
+                #~ if self.contact.company.pk != self.company.company_ptr.pk:
+                    #~ self.contact = None
                     
         super(Contract,self).full_clean(*args,**kw)
         
@@ -506,7 +507,7 @@ class Contract(ContractBase):
         #~ resolve_field('jobs.Contract.user').verbose_name=_("responsible (DSBE)")
         #~ lino.CONTRACT_PRINTABLE_FIELDS = dd.fields_list(cls,
         cls.PRINTABLE_FIELDS = dd.fields_list(cls,
-            'person job provider contact type '
+            'person job company contact type '
             'applies_from applies_until duration '
             'language schedule regime hourly_rate refund_rate '
             'reference_person responsibilities '
@@ -514,21 +515,38 @@ class Contract(ContractBase):
             'date_decided date_issued ')
         #~ super(Contract,cls).site_setup(lino)
 
+#~ class ContractDetail(dd.DetailLayout):
+    #~ box1 = """
+    #~ id:8 person:25 user:15 user_asd:15 language:8
+    #~ job type company contact:20     
+    #~ applies_from duration applies_until 
+    #~ regime:20 schedule:30 hourly_rate:10 refund_rate:10
+    #~ date_decided date_issued date_ended ending
+    #~ reference_person build_time
+    #~ """
+    
+    #~ main = """
+    #~ box1 responsibilities 
+    #~ cal.EventsByOwner cal.TasksByOwner 
+    #~ """
+    
+  
 class Contracts(dd.Table):
     model = Contract
     column_names = 'id job applies_from applies_until user type *'
     order_by = ['id']
-    active_fields = 'job provider contact'.split()
+    active_fields = 'job company contact'.split()
     
     detail_template = """
     id:8 person:25 user:15 user_asd:15 language:8
-    job type provider contact:20     
+    job type company contact:20     
     applies_from duration applies_until 
     regime:20 schedule:30 hourly_rate:10 refund_rate:10
     date_decided date_issued date_ended ending
     reference_person build_time
     responsibilities cal.TasksByOwner cal.EventsByOwner 
     """
+    #~ detail_layout = ContractDetail()
     
     
 class ContractsByPerson(Contracts):
@@ -537,7 +555,7 @@ class ContractsByPerson(Contracts):
 
         
 class ContractsByProvider(Contracts):
-    master_key = 'provider'
+    master_key = 'company'
     column_names = 'person job applies_from applies_until user type *'
 
 class ContractsByType(Contracts):

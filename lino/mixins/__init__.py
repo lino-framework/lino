@@ -65,7 +65,7 @@ if settings.LINO.user_model:
   
     class ByUser(dd.Table):
         master_key = 'user'
-        can_view = perms.is_authenticated
+        #~ can_view = perms.is_authenticated
         
         @classmethod
         def init_label(self):
@@ -80,7 +80,7 @@ if settings.LINO.user_model:
                 
 else:
   
-    # dummy report for userless sites
+    # dummy Table for userless sites
     class ByUser(dd.Table): pass 
   
 

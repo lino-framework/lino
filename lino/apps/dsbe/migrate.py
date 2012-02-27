@@ -1007,3 +1007,9 @@ def migrate_from_1_4_1(globals_dict):
     Some new fields in IdentifyPersonRequest with default values.
     """
     return '1.4.2'
+
+def migrate_from_1_4_2(globals_dict): 
+    """
+    jobs.contract.provider renamed to company
+    """
+    return '1.4.3'

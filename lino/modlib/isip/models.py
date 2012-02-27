@@ -158,7 +158,8 @@ class ContractEndings(dd.Table):
 def contract_contact_choices(company):
     return contacts.Role.objects.filter(
         type__use_in_contracts=True,
-        company__id=company.pk)
+        company=company)
+        #~ company__id=company.pk)
 
 
 
@@ -177,6 +178,11 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     person = models.ForeignKey(settings.LINO.person_model,
         related_name="%(app_label)s_%(class)s_set_by_person",
         verbose_name=_("Person"))
+        
+    company = models.ForeignKey(settings.LINO.company_model,
+        related_name="%(app_label)s_%(class)s_set_by_company",
+        verbose_name=_("Company"),
+        blank=True,null=True)
         
     #~ contact = models.ForeignKey("links.Link",
       #~ related_name="%(app_label)s_%(class)s_set_by_contact",
@@ -232,7 +238,28 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         #~ # return msg % dict(pk=self.pk, person=self.person, company=self.company)
         #~ return msg % self.pk
         
+    def get_recipient(self):
+        if self.contact:
+            return self.contact
+        if self.company:
+            return self.company
+        return self.person
+    recipient = property(get_recipient)
         
+        
+        
+        
+    @chooser()
+    def contact_choices(cls,company):
+        if company is not None:
+            #~ return company.rolesbyparent.all()
+            #~ return company.rolesbyparent.filter(type__use_in_contracts=True)
+            #~ return links.Link.objects.filter(type__use_in_contracts=True,a=company)
+            #~ return contacts.Role.objects.filter(
+                #~ type__use_in_contracts=True,company=company)
+            return contract_contact_choices(company)
+        return []
+
     def dsbe_person(self):
         """Used in document templates."""
         if self.person_id is not None:
@@ -261,14 +288,16 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
             if not self.exam_policy_id:
                 self.exam_policy_id = self.type.exam_policy_id
         if self.company:
-            if self.contact is None or self.contact.company != self.company:
+            if self.contact is None \
+              or self.contact.company is None \
+              or self.contact.company.pk != self.company.pk:
                 qs = contract_contact_choices(self.company)
                 #~ qs = self.company.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact = qs[0]
-                #~ else:
+                else:
                     #~ print "20120227 clear contact!"
-                    #~ self.contact = None
+                    self.contact = None
         # severe test is ready but not yet activated :
         if False and self.person_id is not None:
             msg = OverlappingContractsTest(self.person).check(self)
@@ -418,10 +447,6 @@ class Contract(ContractBase):
         related_name="%(app_label)s_%(class)s_set_by_type",
         verbose_name=_("Contract Type"),blank=True)
     
-    company = models.ForeignKey(settings.LINO.company_model,
-        verbose_name=_("Company"),
-        blank=True,null=True)
-        
     stages = dd.RichTextField(_("stages"),
         blank=True,null=True,format='html')
     goals = dd.RichTextField(_("goals"),
@@ -452,23 +477,6 @@ class Contract(ContractBase):
             'user user_asd exam_policy '
             'date_decided date_issued ')
         #~ super(Contract,cls).site_setup(lino)
-        
-    @chooser()
-    def contact_choices(cls,company):
-        if company is not None:
-            #~ return company.rolesbyparent.all()
-            #~ return company.rolesbyparent.filter(type__use_in_contracts=True)
-            #~ return links.Link.objects.filter(type__use_in_contracts=True,a=company)
-            return contract_contact_choices(company)
-        return []
-
-    def get_recipient(self):
-        if self.contact:
-            return self.contact
-        if self.company:
-            return self.company
-        return self.person
-    recipient = property(get_recipient)
         
     def disabled_fields(self,request):
         #~ if self.must_build:
