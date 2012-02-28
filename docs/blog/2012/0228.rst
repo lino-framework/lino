@@ -20,3 +20,88 @@ dans la région de Liège...
   :scale: 50
   
 (Il y a de quoi fignoler: générer également des NISS, des n° de GSM,...)
+
+Voici aussi le code source de cette *fixture* dans le repository de Lino: 
+:srcref:`/lino/modlib/contacts/fixtures/demo_fr.py`.
+
+
+No more `x-masked-relative`
+---------------------------
+
+The following effect happens in 1.4.3 in the insert window of a 
+jobs.Contract (and only there):
+
+.. image:: 0228b.jpg
+  :scale: 50
+  
+After clicking `Speichern`, Lino switches to the detail window where the effect 
+does *not* happen, although both windows use the same class `Lino.jobs.Contracts.FormPanel`:
+  
+.. image:: 0228e.jpg
+  :scale: 50
+  
+The difference is that the two grids in the lower hbox are 
+disabled when `action_name` is "insert".
+
+Back to the insert window, let's inspect those misplaced grids.
+The effect comes because the two disabled grids have 
+a css class `x-masked-relative` which sets their 
+`position` to "relative":
+
+.. image:: 0228c.jpg
+  :scale: 50
+
+The class `x-masked-relative` is defined in :file:`core.css` 
+and does nothing else than overriding that
+`position` property to "relative"::
+
+  .x-masked-relative {
+      position: relative !important;
+  }
+
+Manually disabling the rule visibly solves the problem: 
+
+.. image:: 0228d.jpg
+  :scale: 50
+
+Why do disabled panels have a class `x-masked-relative`?
+It is applied to elements during the `mask()` method, when 
+their position was "static"::
+
+  mask : function(msg, msgCls) {
+      ...
+      if (!(/^body/i.test(dom.tagName) && me.getStyle('position') == 'static')) {
+          me.addClass(XMASKEDRELATIVE);  // 20120228
+      }
+      ...
+      mask = dh.append(dom, {cls : "ext-el-mask"}, true);
+      ...      
+      return mask;
+  },
+
+
+But what's the purpose of that operation? 
+Why does the css class `x-masked-relative` exist? 
+I have no idea, but when I remove the 
+``me.addClass(XMASKEDRELATIVE)`` instruction 
+in above `Ext.Element.mask()`, everything seems to work fine.
+The future will tell us whether this hack causes side-effects.
+
+
+Note that I modified the general layout of that screen after this hack:
+
+.. image:: 0228f.jpg
+  :scale: 50
+  
+
+Und noch ein Bug
+----------------
+
+Hackerzacker, kaum habe ich nach fast zweistündigem Wursteln obigen Bug gelöst, 
+finde ich noch einen. Diesmal im Kalender-Panel und in meinem eigenen Code. 
+Für die Benutzer sah es so aus, dass das Popup-Fenster zum Einfügen eines 
+Termins sich nicht schloss, wenn man bestätigte.
+Lag daran, dass 
+:meth:`lino.modlib.cal.models.ExtAllDayField.set_value_in_object`
+selber ein `save()` aufrief.
+

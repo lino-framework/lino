@@ -515,20 +515,25 @@ class Contract(ContractBase):
             'date_decided date_issued ')
         #~ super(Contract,cls).site_setup(lino)
 
-#~ class ContractDetail(dd.DetailLayout):
-    #~ box1 = """
-    #~ id:8 person:25 user:15 user_asd:15 language:8
-    #~ job type company contact:20     
-    #~ applies_from duration applies_until 
-    #~ regime:20 schedule:30 hourly_rate:10 refund_rate:10
-    #~ date_decided date_issued date_ended ending
-    #~ reference_person build_time
-    #~ """
+class ContractDetail(dd.DetailLayout):
+    box1 = """
+    id:8 person:25 user:15 user_asd:15 language:8
+    job type company contact:20     
+    applies_from duration applies_until 
+    regime:20 schedule:30 hourly_rate:10 refund_rate:10
+    date_decided date_issued date_ended ending
+    reference_person build_time
+    responsibilities 
+    """
     
-    #~ main = """
-    #~ box1 responsibilities 
-    #~ cal.EventsByOwner cal.TasksByOwner 
-    #~ """
+    right = """
+    cal.EventsByOwner 
+    cal.TasksByOwner 
+    """
+    
+    main = """
+    box1:70 right:30
+    """
     
   
 class Contracts(dd.Table):
@@ -537,16 +542,16 @@ class Contracts(dd.Table):
     order_by = ['id']
     active_fields = 'job company contact'.split()
     
-    detail_template = """
-    id:8 person:25 user:15 user_asd:15 language:8
-    job type company contact:20     
-    applies_from duration applies_until 
-    regime:20 schedule:30 hourly_rate:10 refund_rate:10
-    date_decided date_issued date_ended ending
-    reference_person build_time
-    responsibilities cal.TasksByOwner cal.EventsByOwner 
-    """
-    #~ detail_layout = ContractDetail()
+    #~ detail_template = """
+    #~ id:8 person:25 user:15 user_asd:15 language:8
+    #~ job type company contact:20     
+    #~ applies_from duration applies_until 
+    #~ regime:20 schedule:30 hourly_rate:10 refund_rate:10
+    #~ date_decided date_issued date_ended ending
+    #~ reference_person build_time
+    #~ responsibilities cal.TasksByOwner cal.EventsByOwner 
+    #~ """
+    detail_layout = ContractDetail()
     
     
 class ContractsByPerson(Contracts):

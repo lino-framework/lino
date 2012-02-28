@@ -1241,6 +1241,7 @@ tinymce.init({
         #~ logger.info('20111217 form2obj_and_save %r', data)
         #~ print 'form2obj_and_save %r' % data
         
+        #~ logger.info('20120228 before store.form2obj , elem is %s' % obj2str(elem))
         # store normal form data (POST or PUT)
         try:
             rh.store.form2obj(request,data,elem,is_new)
@@ -1248,7 +1249,7 @@ tinymce.init({
             #~ raise
             return self.error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
-        #~ logger.info('store.form2obj passed')
+        #~ logger.info('20120228 store.form2obj passed, elem is %s' % obj2str(elem))
         
         if not is_new:
             dblogger.log_changes(request,elem)

@@ -557,7 +557,7 @@ class ExtAllDayField(dd.VirtualField):
                 obj.start_time = datetime.time(9,0,0)
             if not obj.end_time:
                 obj.end_time = datetime.time(10,0,0)
-        obj.save()
+        #~ obj.save()
         
     def value_from_object(self,request,obj):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))

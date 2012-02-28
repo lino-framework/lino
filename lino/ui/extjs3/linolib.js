@@ -264,6 +264,70 @@ Ext.override(Ext.QuickTip,{
     }
 });
 
+/*
+Another hack. See 
+*/
+Ext.Element.addMethods(
+    function() {
+        var VISIBILITY      = "visibility",
+            DISPLAY         = "display",
+            HIDDEN          = "hidden",
+            NONE            = "none",
+            XMASKED         = "x-masked",
+            XMASKEDRELATIVE = "x-masked-relative",
+            data            = Ext.Element.data;
+
+        return {
+            
+            mask : function(msg, msgCls) {
+                var me  = this,
+                    dom = me.dom,
+                    dh  = Ext.DomHelper,
+                    EXTELMASKMSG = "ext-el-mask-msg",
+                    el,
+                    mask;
+                // removed the following lines. See /docs/blog/2012/0228
+                //~ if (!(/^body/i.test(dom.tagName) && me.getStyle('position') == 'static')) {
+                    //~ console.log(20120228,dom.tagName,me);
+                    //~ me.addClass(XMASKEDRELATIVE); 
+                //~ }
+                if (el = data(dom, 'maskMsg')) {
+                    el.remove();
+                }
+                if (el = data(dom, 'mask')) {
+                    el.remove();
+                }
+
+                mask = dh.append(dom, {cls : "ext-el-mask"}, true);
+                data(dom, 'mask', mask);
+
+                me.addClass(XMASKED);
+                mask.setDisplayed(true);
+                
+                if (typeof msg == 'string') {
+                    var mm = dh.append(dom, {cls : EXTELMASKMSG, cn:{tag:'div'}}, true);
+                    data(dom, 'maskMsg', mm);
+                    mm.dom.className = msgCls ? EXTELMASKMSG + " " + msgCls : EXTELMASKMSG;
+                    mm.dom.firstChild.innerHTML = msg;
+                    mm.setDisplayed(true);
+                    mm.center(me);
+                }
+                
+                
+                if (Ext.isIE && !(Ext.isIE7 && Ext.isStrict) && me.getStyle('height') == 'auto') {
+                    mask.setSize(undefined, me.getHeight());
+                }
+                
+                return mask;
+            }
+
+            
+        };
+    }()
+);
+
+
+
 
 Ext.namespace('Lino');
 

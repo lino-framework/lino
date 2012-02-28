@@ -944,13 +944,12 @@ class Store:
             disabled_fields = set(self.report.disabled_fields(instance,request))
         else:
             disabled_fields = set()
-        #~ logger.info("%s Store.form2obj(%s), \ndisabled %s\n all_fields %s", 
+        #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
             #~ self.report,form_values,disabled_fields,self.all_fields)
         #~ print 20110406, disabled_fields
         for f in self.all_fields:
             #~ if f.field is None or not f.field.name in disabled_fields:
             if not f.name in disabled_fields:
-                #~ logger.info("20120211 %s Store.form2obj %s", self.report,f)
                 try:
                     f.form2obj(request,instance,form_values,is_new)
                 except exceptions.ValidationError,e:
@@ -959,7 +958,7 @@ class Store:
                     logger.warning("%s : %s", f.name,e)
                     logger.exception(e)
                     raise 
-                #~ logger.info("20111209 Store.form2obj %s -> %s", f, obj2str(instance))
+                #~ logger.info("20120228 Store.form2obj %s -> %s", f, obj2str(instance))
         #~ return instance
             
     def column_names(self):
