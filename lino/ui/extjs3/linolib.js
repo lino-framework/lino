@@ -3450,15 +3450,16 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ if (! this.enabled) return;
     //~ cmp = this;
     //~ console.log('Lino.GridPanel.on_master_changed()',this.title);
-    //~ if (! this.rendered) return; // 20120213
+    if (! this.rendered) return; // 20120213
     var todo = function() {
       if (this.disabled) return;
+      //~ if (this.disabled) return;
       //~ if (this.enabled) {
           //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
           //~ console.log(20111125, this.containing_window);
           //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
           //~ console.log('Lino.GridPanel.on_master_changed()',this.title,p);
-          this.refresh()
+          this.refresh();
           //~ this.set_base_params(this.master_panel.get_master_params());
           //~ this.getStore().load(); 
       //~ }

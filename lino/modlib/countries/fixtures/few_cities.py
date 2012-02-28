@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -22,46 +22,48 @@ from lino.utils.instantiator import Instantiator
 
 def objects():
     #~ dblogger.info("Installing countries few_cities fixture")
-    city = Instantiator('countries.City','name country').build
     City = resolve_model('countries.City')
-    #~ Country = resolve_model('countries.Country')
-    #~ BE = Country.objects.get(pk="BE")
-    try:
-        City.objects.get(country__isocode='BE',name="Eupen")
-    except City.DoesNotExist:
-        yield city('Eupen','BE',zip_code='4700')
-        yield city('Kelmis','BE',zip_code='4720')
-        yield city('Kettenis','BE',zip_code='4701')
-        yield city('Raeren','BE',zip_code='4730')
-        yield city('Angleur','BE',zip_code='4031')
-        yield city('Bruxelles','BE',zip_code='1000')
-        #~ yield city('Brussel','BE',zip_code='1000')
-        #~ yield city('Brüssel','BE',zip_code='1000')
-        yield city('Oostende','BE',zip_code='8400')
+    city = Instantiator(City,'name country').build
+    def make_city(name,country_id,**kw):
+        try:
+            return City.objects.get(country__isocode=country_id,name=name)
+        except City.DoesNotExist:
+            return city(name,country_id,**kw)
+        
+    yield make_city(u'Eupen','BE',zip_code='4700')
+    yield make_city(u'Kelmis','BE',zip_code='4720')
+    yield make_city(u'Kettenis','BE',zip_code='4701')
+    yield make_city(u'Raeren','BE',zip_code='4730')
+    yield make_city(u'Angleur','BE',zip_code='4031')
+    yield make_city(u'Liège','BE',zip_code='4000')
+    yield make_city(u'Bruxelles','BE',zip_code='1000')
+    #~ yield city('Brussel','BE',zip_code='1000')
+    #~ yield city(u'Brüssel','BE',zip_code='1000')
+    yield make_city(u'Oostende','BE',zip_code='8400')
     
-    yield city('Vigala','EE')
-    yield city('Tallinn','EE')
-    yield city(u'Pärnu','EE')
-    yield city(u'Tartu','EE')
-    yield city(u'Narva','EE')
-    yield city(u'Ääsmäe','EE')
+    yield make_city('Vigala','EE')
+    yield make_city('Tallinn','EE')
+    yield make_city(u'Pärnu','EE')
+    yield make_city(u'Tartu','EE')
+    yield make_city(u'Narva','EE')
+    yield make_city(u'Ääsmäe','EE')
 
-    yield city(u'Aachen','DE')
-    yield city(u'Köln','DE')
-    yield city(u'Berlin','DE')
-    yield city(u'Hamburg','DE')
-    yield city(u'München','DE')
+    yield make_city(u'Aachen','DE')
+    yield make_city(u'Köln','DE')
+    yield make_city(u'Berlin','DE')
+    yield make_city(u'Hamburg','DE')
+    yield make_city(u'München','DE')
     
-    yield city(u'Maastricht','NL')
-    yield city(u'Amsterdam','NL')
-    yield city(u'Den Haag','NL')
-    yield city(u'Rotterdam','NL')
-    yield city(u'Utrecht','NL')
-    yield city(u'Breda','NL')
+    yield make_city(u'Maastricht','NL')
+    yield make_city(u'Amsterdam','NL')
+    yield make_city(u'Den Haag','NL')
+    yield make_city(u'Rotterdam','NL')
+    yield make_city(u'Utrecht','NL')
+    yield make_city(u'Breda','NL')
     
-    yield city(u'Paris','FR')
-    yield city(u'Nice','FR')
-    yield city(u'Metz','FR')
-    yield city(u'Strasbourg','FR')
-    yield city(u'Nancy','FR')
-    yield city(u'Marseille','FR')
+    yield make_city(u'Paris','FR')
+    yield make_city(u'Nice','FR')
+    yield make_city(u'Metz','FR')
+    yield make_city(u'Strasbourg','FR')
+    yield make_city(u'Nancy','FR')
+    yield make_city(u'Marseille','FR')

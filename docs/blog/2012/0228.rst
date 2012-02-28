@@ -1,0 +1,22 @@
+20120228
+========
+
+Site de démonstration IMIO
+--------------------------
+
+Début des travaux pour un site de démonstration en collaboration 
+avec l'`IMIO <http://www.imio.be>`_.
+Pour avoir des données de démonstration un peu réalistes, j'ai 
+pris une `liste des noms de familles belges <http://www.lavoute.org/debuter/Belgique.htm>`_,
+une `liste des prénoms classiques en France
+<http://meilleursprenoms.com/site/LesClassiques/LesClassiques.htm>`_
+et une `liste des rues de Liège
+<http://fr.wikipedia.org/wiki/Liste_des_rues_de_Li%C3%A8ge>`_, 
+j'en fais un mix aléatoire pour obtenir 200 personnes fictives habitant 
+dans la région de Liège...
+
+
+.. image:: 0228.jpg
+  :scale: 50
+  
+(Il y a de quoi fignoler: générer également des NISS, des n° de GSM,...)

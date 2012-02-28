@@ -403,4 +403,4 @@ def objects():
             yield Country(isocode=code1,name=name)
             
             
-    logger.info("Installed %d countries",n)
+    #~ logger.info("Installed %d countries",n)

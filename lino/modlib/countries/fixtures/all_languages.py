@@ -797,5 +797,5 @@ def objects():
             yield Language(id=code,**kw)
         else:
             logger.debug("%r : no name for default babel language %s",code,DEFAULT_LANGUAGE)
-    logger.info("Installed %d languages",n)
+    #~ logger.info("Installed %d languages",n)
           
