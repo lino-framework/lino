@@ -105,3 +105,7 @@ Lag daran, dass
 :meth:`lino.modlib.cal.models.ExtAllDayField.set_value_in_object`
 selber ein `save()` aufrief.
 
+Preparing to release 1.4.3 
+--------------------------
+
+:func:`lino.apps.dsbe.migrate.migrate_from_1_4_2`

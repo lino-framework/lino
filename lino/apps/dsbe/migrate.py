@@ -1010,6 +1010,16 @@ def migrate_from_1_4_1(globals_dict):
 
 def migrate_from_1_4_2(globals_dict): 
     """
-    jobs.contract.provider renamed to company
+    Field `jobs.contract.provider` renamed to company
     """
+    jobs_Contract = resolve_model("jobs.Contract")
+    def create_jobs_contract(id, user_id, must_build, person_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, provider_id, job_id, duration, regime, schedule, hourly_rate, refund_rate, reference_person, responsibilities, remark):
+        return jobs_Contract(id=id,user_id=user_id,must_build=must_build,
+            person_id=person_id,contact_id=contact_id,language=language,applies_from=applies_from,
+            applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,
+            user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,
+            ending_id=ending_id,date_ended=date_ended,type_id=type_id,
+            company_id=provider_id,
+            job_id=job_id,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)    
+    globals_dict.update(create_jobs_contract=create_jobs_contract)
     return '1.4.3'
