@@ -1,0 +1,33 @@
+Version 1.4.3 (20120228)
+========================
+
+Behebt eine Serie von Bugs in der vorigen Version
+
+- Bug im Detail-Fenster von Verträgen: 
+  wenn Firma mehr als einen Ansprechpartner hatte,
+  setzte er in full_clean das "Vertreten durch" 
+  immer auf leer. Die Schnelllösung war nur ein Flicken, 
+  denn mit der setzte er "Vertreten durch" *nicht* auf leer, 
+  wenn die Organisation nicht mit der der Kontaktperson 
+  übereinstimmte (also die Organisation geändert worden war 
+  und "Vertreten durch" noch auf dem alten Wert stand.
+  
+- Layout-Problem im Insert-Fenster von Verträgen (nicht im Detail).
+  Detaillierte Beschreibung siehe :doc:`/blog/2012/0228`
+
+- Man konnte keinen Termine vom Kalender-Panel aus erstellen.
+  
+
+- Wenn man einen Kolonnenfilter setzte, kam auf dem Server ein Traceback
+  "global name 'json' is not defined", und der Filter wurde nicht aktiv.
+
+- Some more little bugs discovered internally, see :doc:`/blog/2012/0227` 
+  for details.
+
+
+Database migration required:
+:func:`lino.apps.dsbe.migrate.migrate_from_1_4_2`
+
+    
+Download it from http://pypi.python.org/pypi/lino
+
