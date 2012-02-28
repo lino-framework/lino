@@ -109,3 +109,8 @@ Preparing to release 1.4.3
 --------------------------
 
 :func:`lino.apps.dsbe.migrate.migrate_from_1_4_2`
+
+Zwischendurch auch noch ein ganz einfacher Bug:
+
+- Wenn man einen Kolonnenfilter setzte, kam auf dem Server ein Traceback
+  "global name 'json' is not defined"

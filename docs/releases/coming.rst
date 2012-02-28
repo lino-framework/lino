@@ -12,8 +12,14 @@ This is a mere bugfix release:
   übereinstimmte (also die Organisation geändert worden war 
   und "Vertreten durch" noch auf dem alten Wert stand.
   
-- Some more little bugs discovered internally :doc:`/blog/2012/0227`.
+- Layout-Problem bei ebendiesem Fenster.
 
+- Einen Termin vom Kalender-Panel aus erstellen funktionierte nicht.
+
+- Wenn man einen Kolonnenfilter setzte, kam auf dem Server ein Traceback
+  "global name 'json' is not defined"
+
+- Some more little bugs discovered internally :doc:`/blog/2012/0227`.
 
 Database migration required:
 :func:`lino.apps.dsbe.migrate.migrate_from_1_4_2`

@@ -45,6 +45,7 @@ u"""
 
 import yaml
 
+
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -52,6 +53,7 @@ from django.contrib.contenttypes import generic
 
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
+from django.utils import simplejson as json
 
 from lino.core import actors
 from lino.core import actions
