@@ -299,7 +299,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                     #~ print "20120227 clear contact!"
                     self.contact = None
         # severe test is ready but not yet activated :
-        if False and self.person_id is not None:
+        if self.person_id is not None:
             msg = OverlappingContractsTest(self.person).check(self)
             if msg:
                 raise ValidationError(msg)
