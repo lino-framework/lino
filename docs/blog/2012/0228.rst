@@ -28,27 +28,33 @@ Voici aussi le code source de cette *fixture* dans le repository de Lino:
 No more `x-masked-relative`
 ---------------------------
 
-The following effect happens in 1.4.3 in the insert window of a 
-jobs.Contract (and only there):
+The following effect happens in Lino/DSBE 1.4.2 in the insert window of a 
+:class:`Job Contract <lino.modlib.jobs.models.Contract>` (and only there):
 
 .. image:: 0228b.jpg
   :scale: 50
   
 After clicking `Speichern`, Lino switches to the detail window where the effect 
-does *not* happen, although both windows use the same class `Lino.jobs.Contracts.FormPanel`:
+does *not* happen, although both windows use the same class 
+`Lino.jobs.Contracts.FormPanel`:
   
 .. image:: 0228e.jpg
   :scale: 50
   
 The difference is that the two grids in the lower hbox are 
-disabled when `action_name` is "insert".
+**disabled** in the "insert" version of our FormPanel.
 
-Back to the insert window, let's inspect those misplaced grids.
-The effect comes because the two disabled grids have 
+Let's go back to the insert window and inspect those misplaced grids.
+Aha. The effect comes because the two disabled grids have 
 a css class `x-masked-relative` which sets their 
 `position` to "relative":
 
 .. image:: 0228c.jpg
+  :scale: 50
+
+Manually disabling the rule visibly solves the problem: 
+
+.. image:: 0228d.jpg
   :scale: 50
 
 The class `x-masked-relative` is defined in :file:`core.css` 
@@ -59,12 +65,8 @@ and does nothing else than overriding that
       position: relative !important;
   }
 
-Manually disabling the rule visibly solves the problem: 
-
-.. image:: 0228d.jpg
-  :scale: 50
-
 Why do disabled panels have a class `x-masked-relative`?
+Can I tell ExtJS to not use it? 
 It is applied to elements during the `mask()` method, when 
 their position was "static"::
 
@@ -80,15 +82,21 @@ their position was "static"::
   },
 
 
-But what's the purpose of that operation? 
-Why does the css class `x-masked-relative` exist? 
-I have no idea, but when I remove the 
+When I remove the 
 ``me.addClass(XMASKEDRELATIVE)`` instruction 
 in above `Ext.Element.mask()`, everything seems to work fine.
 The future will tell us whether this hack causes side-effects.
 
+Since I don't want to tell every Lino user to patch their ExtJS sources, 
+I overwrite that method in :xfile:`linolib.js`.
 
-Note that I modified the general layout of that screen after this hack:
+But what was the purpose of that operation? 
+Why does the css class `x-masked-relative` exist? 
+I have no idea...
+
+
+Independently of that problem, I modified the general layout 
+of that FormPanel after this :
 
 .. image:: 0228f.jpg
   :scale: 50
@@ -114,3 +122,24 @@ Zwischendurch auch noch ein ganz einfacher Bug:
 
 - Wenn man einen Kolonnenfilter setzte, kam auf dem Server ein Traceback
   "global name 'json' is not defined"
+  
+Und dann wollte ich eigentlich endlich die strenge Version des 
+:class:`OverlappingContractsTest <lino.modlib.isip.models.OverlappingContractsTest>`
+aktivieren, aber dann fand er doch noch eine ganze Serie von 
+Beanstandungen bei Datenimport.
+Wieso denn das? 
+Die Datenkontrollliste war doch leer?
+Tilt! Die Datenkontrollliste zeigte nur deshalb keine Fehlermeldungen an, 
+weil die Antwort des Servers mehr als 30 Sekunden brauchte.
+Das ist der Defaultwert für `Ext.Ajax.timeout`
+(ein Parameter, den ich gerade erst entdeckt habe).
+Statt den Timeout jetzt einfach zu erhöhen, sollte ich wohl besser mal 
+überlegen, wie Lino solche längeren Prozesse verwalten sollte. 
+Es gibt ja den `Ext.ProgressBar`.
+Jedenfalls bleibt der 
+:class:`OverlappingContractsTest <lino.modlib.isip.models.OverlappingContractsTest>`
+zunächst mal noch in der 
+Datenkontrollliste.
+
+
+Et voilà: released :doc:`/releases/1.4.3`.

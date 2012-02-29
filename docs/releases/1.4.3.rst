@@ -1,24 +1,33 @@
 Version 1.4.3 (20120228)
 ========================
 
-Behebt eine Serie von Bugs in der vorigen Version
+Sichtbare Änderung
+------------------
+
+- Ich habe mal auf eigene Faust im Detail-Fenster einer A607K aufgeräumt.
+
+Bugfixes
+--------
+
+Lino 1.4.3 behebt vor allem eine Serie von Bugs in der vorigen Version.
 
 - Bug im Detail-Fenster von Verträgen: 
   wenn Firma mehr als einen Ansprechpartner hatte,
-  setzte er in full_clean das "Vertreten durch" 
+  setzte er beim Speichern das "Vertreten durch" 
   immer auf leer. Die Schnelllösung war nur ein Flicken, 
-  denn mit der setzte er "Vertreten durch" *nicht* auf leer, 
+  denn die hatte den Nachteil, dass er "Vertreten durch" *nicht* 
+  auf leer setzte, 
   wenn die Organisation nicht mit der der Kontaktperson 
-  übereinstimmte (also die Organisation geändert worden war 
+  übereinstimmte (also wenn die Organisation geändert worden war 
   und "Vertreten durch" noch auf dem alten Wert stand.
   
-- Layout-Problem im Insert-Fenster von Verträgen (nicht im Detail).
-  Detaillierte Beschreibung siehe :doc:`/blog/2012/0228`
+- Layout-Bug im Insert-Fenster von Verträgen (nicht im Detail).
+  Detaillierte Beschreibung siehe :doc:`/blog/2012/0228`.
 
 - Man konnte keinen Termine vom Kalender-Panel aus erstellen.
-  
 
-- Wenn man einen Kolonnenfilter setzte, kam auf dem Server ein Traceback
+- Kolonnenfilter funktionierten nicht. 
+  Wenn man einen Kolonnenfilter setzte, kam auf dem Server ein Traceback
   "global name 'json' is not defined", und der Filter wurde nicht aktiv.
 
 - Some more little bugs discovered internally, see :doc:`/blog/2012/0227` 

@@ -31,4 +31,6 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:134: WARNING: unknown document: /
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:256: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:416: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:461: WARNING: py:attr reference target not found: Store.pk_index
-T:\hgwork\lino\docs\blog\2012\0228.rst:100: WARNING: py:meth reference target not found: lino.modlib.cal.models.ExtAllDayField.set_value_in_object
+T:\hgwork\lino\docs\autodoc\lino.utils.choosers.rst:17: WARNING: py:class reference target not found: lino.ui.extjs.ext_store.Store
+T:\hgwork\lino\docs\blog\2012\0224.rst:13: WARNING: py:meth reference target not found: lino.utils.xmlgen.Element.parse_value
+T:\hgwork\lino\docs\blog\2012\0224.rst:13: WARNING: py:meth reference target not found: lino.utils.xmlgen.Element.badValue

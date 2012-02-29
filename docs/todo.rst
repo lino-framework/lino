@@ -12,6 +12,12 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Handhabung lang dauernder Prozesse. 
+    Es gibt ja den `Ext.ProgressBar`.
+    Der Server muss bei längeren Prozessen einen Hintergrundprozess (Thread) starten 
+    und auf den Ajax-Call mit der Nummer des Threads antworten. Der Client muss dann 
+    mit einem Timer jede Sekunde den Status des Threads abfragen.
+
 #.  BCSS-Requests: Button "Execute" deaktivieren, wenn Request 
     abgeschickt ist.
 

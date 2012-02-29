@@ -1,0 +1,28 @@
+20120229
+========
+
+The "Sandbox étude" started 
+:doc:`a few days ago <0225>` 
+was still haunting 
+me.
+Opened ticket :doc:`/tickets/60` and understood that the existing 
+:mod:`lino.modlib.contacts` is in fact almost perfect, 
+except that some names are wrong. We should one day rename 
+"Contact" to "Partner", "Role" to "Contact" and "RoleType" to "Role".
+
+
+Posted a question about plain css tooltips 
+(abandoned :doc:`a few days ago <0224>`)
+to the `ExtJS4 forum <http://www.sencha.com/forum/showthread.php?184154>`_.
+
+Also re-activated the only-half-working css overrides 
+necessary for `use_css_tooltips` 
+in :srcref:`/media/xetjs/lino.css` since they did *not* 
+cause yesterday's layout problem.
+
+Und noch ein kleiner Geistesblitz zwischendurch: Slave-Grids sind ja 
+im Insert-Fenster disabled, weil man die erst nach dem ersten Speichern 
+eingeben darf (wenn der Record erstellt worden ist). 
+Störend war nur, dass diese Slave-Tabellen zwar disabled waren, 
+aber oft irgendwelche Daten enthielten von früheren Aufrufen enthielten.
+Lösung: Jetzt sind sie nicht mehr disabled, sondern hidden.

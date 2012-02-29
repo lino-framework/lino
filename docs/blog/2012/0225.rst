@@ -26,6 +26,8 @@ wenn es zugleich das source_dir war. Was die subtile Folge hatte,
 dass alle Fixtures doppelt ausgeführt wurden. 
 Dieser Bug hat mich mindestens eine Stunde lang beschäftigt.
 
+Weiterführende Analyse im Ticket :doc:`/tickets/60`.
+
 
 A bug in ExtJS 3.3.1 ?
 ----------------------

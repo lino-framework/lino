@@ -1,0 +1,86 @@
+#60 : What is a Contact? 
+------------------------
+
+We want :mod:`lino.modlib.contacts` to be flexible enough to handle 
+a majority of applications. 
+
+What should the contacts.Contact model be for 
+Companies, Persons, Families, Customers,...:
+(1) the MTI parent or (2) a refering model?
+
+Observations
+
+- Legal documents (contracts, invoices, offers,...) 
+  usually need to be linked to a single and well identified *Partner*. 
+  We call them **Partner Documents**.
+  
+- A **Partner** is either a Person or a Company (or a Family...) 
+  susceptible to receive a Partner Document.
+  A Partner is *either* a Person *or* a Company, not both.
+  
+- Lino does not require to differentiate between 
+  "customers" and "providers". A customer is a Partner who received 
+  at least on sales document, a provider is a Partner who received 
+  at least on purchase document.
+  
+- A partner document, besides the mandatory (legally responsible), 
+  partner, can have an optional second 
+  field to designate a "contact person". 
+  If the partner itself is a person, this field 
+  usually remains empty.
+
+- A Contact Person is a Person that has a given Role in a given Company.
+  
+- Persons can have different Roles in different Companies, and 
+  different contact information 
+  (phone, gsm, email, postal address) per role.
+  OTOH a Person can have many roles that do *not* have their own 
+  contact information.
+  
+- The term "contact information" is rather general. 
+  We should differentate:
+
+  - a *mobile phone number* is usually assigned to a given 
+    Person or Company. If a Person has different roles in different 
+    Companies, she will usually still have the same mobild phone number.
+  - a *phone number* is usually linked to a physical/geographical 
+    place and it's postal address.
+  - Every Partner (be it a Person or a Company) 
+    should have a known "official" address.
+  - an *email address* can be used for different partners
+  
+- An application might need to specify 
+  alternate contact information on a Partner Document. 
+  For example a separate delivery address.
+  A delivery address is a group of contact information, 
+  including postal address, email, phone numbers)
+  
+  In that case we suggest to create a Partner for each 
+  delivery address and to add a ForeignKey "parent" to 
+  the Partner model.
+  Applications can also add a slave table 
+  "Delivery addresses" to the Partner detail.
+  
+- Applications might want to provide a table of Persons 
+  who are not Partners. For example a song database has a list 
+  of Authors and Composers and might not even use the contacts 
+  module. That's why we have PersonMixin and Born, and why the 
+  contacts module doesn't itself define a concrete models for 
+  Persons and Companies.
+
+Conclusions
+
+- It is not useful to have an alphabetic list that melts together 
+  all Companies and Persons. But e.g. accountng applications 
+  need a list of Partners. 
+  
+  Any Person, Company, Family or User can become a Partner 
+  ("get a partner account"). A given Person, Company or Family 
+  cannot have *more than one* Partner account.
+
+- :mod:`lino.modlib.contacts` reflects these ideas 
+  almost perfectly, except that some names are wrong.
+  We should one day rename 
+  "Contact" to "Partner", "Role" to "Contact" and "RoleType" 
+  to "Role".
+
