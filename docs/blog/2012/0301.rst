@@ -1,18 +1,18 @@
 20120301
 ========
 
-xsd2xg
+xsd2py
 ------
 
 Yesterday I started some with first concrete attempts for the tx25 project.
 While watching the 
 :srcref:`XSD files </lino/sandbox/tx25/XSD>` I thought 
 "No, I won't convert them manually to an xmlgen module, I'd rather write 
-a tool like generateDS, but on that produces Python code which uses 
+a tool like generateDS, but one that produces Python code which uses 
 :mod:`lino.utils.xmlgen`".
-I called it `xsd2xg`.
-See :srcref:`/lino/sandbox/tx25` 
-for the source.
+I called it 
+:srcref:`xsd2py </lino/sandbox/tx25/xsd2py1.py>`.
+
 I then started to understand that Dave Kuhlmann's work is not really trivial. 
 
 Yes, I admit I'm crazy: I'm even going to continue. 
@@ -32,4 +32,19 @@ than I realized, far better than any other library. As a result,
 if it wasn’t for some persistent installation problems 
 (especially on Macs) I would recommend lxml for just about any HTML task."
 
-So I'm going to use `lxml <http://lxml.de/>`
+So I'm going to use `lxml <http://lxml.de>`_.
+
+After reading http://lxml.de/tutorial.html it was easy to 
+write a new version
+:srcref:`xsd2py </lino/sandbox/tx25/xsd2py2.py>`
+which produces the same output, but uses lxml instead of minidom.
+
+But then, when I reached the `E-factory <http://lxml.de/tutorial.html#the-e-factory>´_ 
+section, I started to understand 
+that this is the wheel my :mod:`lino.utils.xmlgen` is reinventing!
+
+Confirmation: I rewrote table2xhtml() using lxml instead of xmlgen.
+
+Next step is to do the same with lino.utils.xmlgen.bcss.
+
+So my xmlgen is going to be deprecated because lxml is much better and faster.

@@ -24,6 +24,9 @@ import cPickle as pickle
 from urllib import urlencode
 import codecs
 
+from lxml import etree
+
+
 #~ import Cheetah
 from Cheetah.Template import Template as CheetahTemplate
 
@@ -1503,7 +1506,8 @@ tinymce.init({
                 [NOTE] :doc:`/blog/2012/0211`:
                 
                 """
-                body = self.table2xhtml(ar).tostring().encode('utf-8')
+                #~ body = self.table2xhtml(ar).tostring().encode('utf-8')
+                body = etree.tostring(self.table2xhtml(ar))
                 #~ body = self.table2xhtml(ar).tostring()
                 #~ logger.info("20120122 body is %s",body)
                 context = dict(
@@ -1537,18 +1541,27 @@ tinymce.init({
             if fmt == ext_requests.URL_FORMAT_PRINTER:
                 if ar.get_total_count() > MAX_ROW_COUNT:
                     raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-              
                 ar.renderer = self.pdf_renderer
-                response = HttpResponse(content_type='text/html;charset="utf-8"')
-                #~ ar.render_to_html(self,response)
-                doc = xhg.HTML()
-                doc.set_title(ar.get_title())
-                #~ ar.ui = self.pdf_ui
-                t = self.table2xhtml(ar)
-                doc.add_to_body(t)
-                xhg.Writer(response).render(doc)
-                #~ doc.__xml__(response)
-                return response
+                
+                if False:
+                  
+                    response = HttpResponse(content_type='text/html;charset="utf-8"')
+                    doc = xhg.HTML()
+                    doc.set_title(ar.get_title())
+                    t = self.table2xhtml(ar)
+                    doc.add_to_body(t)
+                    xhg.Writer(response).render(doc)
+                    return response
+                
+                from lxml.html import builder as html
+                doc = html.BODY(
+                  html.HEAD(html.title(ar.get_title())),
+                  html.BODY(
+                    html.H1(ar.get_title()),
+                    self.table2xhtml(ar)
+                  )
+                )
+                return HttpResponse(etree.tostring(doc),content_type='text/html;charset="utf-8"')
                 
             raise Http404("Format %r not supported for GET on %s" % (fmt,rpt))
 
@@ -2515,6 +2528,72 @@ tinymce.init({
             
 
     def table2xhtml(self,ar,max_row_count=300):
+        """
+        """
+        from lxml.html import builder as html
+        
+        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+        
+        columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+        
+        if columns:
+            widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
+            fields = []
+            headers = []
+            for i,cn in enumerate(columns):
+                col = None
+                for e in ar.ah.list_layout.main.columns:
+                    if e.name == cn:
+                        col = e
+                        break
+                if col is None:
+                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
+                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
+                if not hiddens[i]:
+                    fields.append(col.field._lino_atomizer)
+                    headers.append(html.TH(unicode(col.label or col.name)),width=widths[i],**cellattrs)
+        else:
+            fields = ar.ah.store.list_fields
+            headers = [html.TH(unicode(col.label or col.name),**cellattrs) 
+                for col in ar.ah.list_layout.main.columns]
+        
+        def table_header_row(*headers,**kw):
+            return html.TR(*[html.TH(h,**kw) for h in headers])
+        def table_body_row(*cells,**kw):
+            return html.TR(*[html.TD(h,**kw) for h in cells])
+              
+        
+        def TD(x):
+            if not x: return html.TD(**cellattrs)
+            try:
+                return html.TD(etree.XML(x),**cellattrs)
+            except Exception,e:
+                print 20120301, repr(x)
+                raise
+            
+        def f():
+            sums  = [0 for col in fields]
+            yield html.TR(*headers)
+            
+            recno = 0
+            for row in ar.data_iterator:
+                recno += 1
+                cells = [TD(x) for x in ar.ah.store.row2html(ar,fields,row,sums)]
+                #~ yield html.TR(*cells,**cellattrs)
+                yield html.TR(*cells)
+                    
+            has_sum = False
+            for i in sums:
+                if i:
+                    has_sum = True
+                    break
+            if has_sum:
+                yield html.TR(
+                  *[html.TD(x,**cellattrs) for x in ar.ah.store.sums2html(ar,fields,sums)])
+        return html.TABLE(*list(f()),cellspacing="3px",bgcolor="#ffffff", width="100%")
+    
+    def old_table2xhtml(self,ar,max_row_count=300):
         """
         """
         widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]

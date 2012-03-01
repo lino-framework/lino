@@ -45,6 +45,7 @@ u"""
 
 import yaml
 
+from lxml import etree
 
 from django.db import models
 from django.conf import settings
@@ -825,8 +826,8 @@ class AbstractTable(actors.Actor):
             ar = self.request(ui,request=ar.request,
                 action=self.default_action,master_instance=master)
             ar.renderer = ui.ext_renderer
-            #~ ar = TableRequest(ui,self,None,self.default_action,master_instance=master)
-            s = ui.table2xhtml(ar).tostring()
+            #~ s = ui.table2xhtml(ar).tostring()
+            s = etree.tostring(ui.table2xhtml(ar))
             return s
         return meth
 
