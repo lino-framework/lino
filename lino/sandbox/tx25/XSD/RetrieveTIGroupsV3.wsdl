@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ============================================================================================================
+         * File Name :               	RetrieveTIGroups.wsdl
+         * Author :                    	Davy Tielens
+         * Owner :                    	CBSS
+         * Creation date :          	29-04-10
+         * Last revision date :    	09/03/2011
+         * Status :                    	Planned
+         * Description :             	WSDL for webservice enabling the PCSA's to fetch TI's from the NR
+         * Current version :        	0.2
+         * Revision History : 		0.1 - 29-04-10 - DTI - Initial version
+												0.2 - 29-07-10 - MDS - Completion of first version of WSDL
+												0.3  09/03/2011  ATI change schema RRN 2009 vs 2011
+												0.4  17/11/2011 ATI change schema RRN 201104 vs 20103
+============================================================================================================= -->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="RetrieveTIGroupsService" targetNamespace="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1">
+	<wsdl:types>
+		<xsd:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" xmlns:rtg="http://kszbcss.fgov.be/types/RetrieveTIGroups/v1" targetNamespace="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1">
+			<xsd:import namespace="http://kszbcss.fgov.be/types/RetrieveTIGroups/v1" schemaLocation="RetrieveTIGroupsV3.xsd"/>
+			<xsd:element name="retrieveTIGroupsRequest" type="rtg:RetrieveTIGroupsRequestType"/>
+			<xsd:element name="retrieveTIGroupsResponse" type="rtg:RetrieveTIGroupsResponseType"/>
+			<xsd:element name="retrieveTIGroupsFault" type="rtg:RetrieveTIGroupsFaultType"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="retrieveTIGroupsRequestMsg">
+		<wsdl:part element="tns:retrieveTIGroupsRequest" name="retrieveTIGroupsRequestParameters"/>
+	</wsdl:message>
+	<wsdl:message name="retrieveTIGroupsResponseMsg">
+		<wsdl:part element="tns:retrieveTIGroupsResponse" name="retrieveTIGroupsResponseParameters"/>
+	</wsdl:message>
+	<wsdl:message name="retrieveTIGroupsFaultMsg">
+		<wsdl:part element="tns:retrieveTIGroupsFault" name="retrieveTIGroupsFaultParameters"/>
+	</wsdl:message>
+	<wsdl:portType name="RetrieveTIGroupsPortType">
+		<wsdl:operation name="retrieveTI">
+			<wsdl:input message="tns:retrieveTIGroupsRequestMsg" name="retrieveTIGroupsRequest"/>
+			<wsdl:output message="tns:retrieveTIGroupsResponseMsg" name="retrieveTIGroupsResponse"/>
+			<wsdl:fault message="tns:retrieveTIGroupsFaultMsg" name="retrieveTIGroupsFault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="RetrieveTIGroupsServiceHTTPBinding" type="tns:RetrieveTIGroupsPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="retrieveTI">
+			<soap:operation soapAction="http://kszbcss.fgov.be/RetrieveTIGroupsService/retrieveTI"/>
+			<wsdl:input name="retrieveTIGroupsRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="retrieveTIGroupsResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="retrieveTIGroupsFault">
+				<soap:fault name="retrieveTIGroupsFault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="RetrieveTIGroupsService">
+		<wsdl:port binding="tns:RetrieveTIGroupsServiceHTTPBinding" name="RetrieveTIGroupsService">
+		<!-- soap:address location -->
+			<!--dvlp : bcssksz-services-test.smals.be -->
+			<!--acpt:bcssksz-services-acc.smals.be -->
+			<!-- prod:bcssksz-servicesprod.smals.be-->
+			<soap:address location="https:// bcssksz-services-test.smals.be:443/SOA4520/RetrieveTIGroupsService/retrieveTI"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

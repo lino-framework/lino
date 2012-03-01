@@ -673,14 +673,15 @@ class PartnerDocument(models.Model):
     class Meta:
         abstract = True
         
+    company = models.ForeignKey(settings.LINO.company_model,
+        blank=True,null=True,
+        #~ verbose_name=_("Company")
+        )
+        
     #~ person = models.ForeignKey("contacts.Person",
     person = models.ForeignKey(settings.LINO.person_model,
         blank=True,null=True,
         #~ verbose_name=_("Person")
-        )
-    company = models.ForeignKey(settings.LINO.company_model,
-        blank=True,null=True,
-        #~ verbose_name=_("Company")
         )
         
     def get_partner(self):

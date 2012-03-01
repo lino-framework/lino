@@ -68,8 +68,6 @@ Observations
   contacts module doesn't itself define a concrete models for 
   Persons and Companies.
 
-Conclusions
-
 - It is not useful to have an alphabetic list that melts together 
   all Companies and Persons. But e.g. accountng applications 
   need a list of Partners. 
@@ -78,9 +76,15 @@ Conclusions
   ("get a partner account"). A given Person, Company or Family 
   cannot have *more than one* Partner account.
 
-- :mod:`lino.modlib.contacts` reflects these ideas 
-  almost perfectly, except that some names are wrong.
-  We should one day rename 
-  "Contact" to "Partner", "Role" to "Contact" and "RoleType" 
-  to "Role".
+Conclusions
 
+The current :mod:`lino.modlib.contacts` reflects these ideas 
+almost perfectly, except that some names are wrong 
+and some details. To do:
+
+- move PersonMixin to a new module lino.mixins.person since it 
+  is available without the contacts module.
+- Rename "Contact" to "Partner"
+- Change Role.company(FK to Company) into Role.partner(FK to Partner)
+- (later) rename "Role" to "Contact" and "RoleType" to "Role"
+- (even later) 
