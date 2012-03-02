@@ -103,7 +103,8 @@ class StoreField(object):
         d[self.name] = v
 
     def value2html(self,ar,v):
-        return force_unicode(v)
+        return "<span>%s</span>" % force_unicode(v)
+        #~ return force_unicode(v)
       
     def parse_form_value(self,v,obj):
         #~ if v == '' and not self.field.empty_strings_allowed:
@@ -238,7 +239,7 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         #~ return req.ui.href_to(obj)
         
     def value2html(self,ar,v):
-        return ar.renderer.href_to(v)
+        return "<span>%s</span>" % ar.renderer.href_to(v)
         
     def get_value_text(self,v,obj):
         #~ v = self.full_value_from_object(None,obj)

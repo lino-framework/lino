@@ -67,7 +67,7 @@ from lino.core import actions #, layouts #, commands
 from lino.core import table
 from lino.core import layouts
 from lino.utils import tables
-from lino.utils.xmlgen import xhtml as xhg
+#~ from lino.utils.xmlgen import xhtml as xhg
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
@@ -1555,7 +1555,7 @@ tinymce.init({
                 
                 from lxml.html import builder as html
                 doc = html.BODY(
-                  html.HEAD(html.title(ar.get_title())),
+                  html.HEAD(html.TITLE(ar.get_title())),
                   html.BODY(
                     html.H1(ar.get_title()),
                     self.table2xhtml(ar)
@@ -2537,7 +2537,8 @@ tinymce.init({
         columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
         
         if columns:
-            widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+            widths = ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)
             hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
             fields = []
             headers = []
@@ -2552,7 +2553,7 @@ tinymce.init({
                     raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
                 if not hiddens[i]:
                     fields.append(col.field._lino_atomizer)
-                    headers.append(html.TH(unicode(col.label or col.name)),width=widths[i],**cellattrs)
+                    headers.append(html.TH(unicode(col.label or col.name),width=widths[i],**cellattrs))
         else:
             fields = ar.ah.store.list_fields
             headers = [html.TH(unicode(col.label or col.name),**cellattrs) 
@@ -2565,6 +2566,10 @@ tinymce.init({
               
         
         def TD(x):
+            #~ e = html.TD(**cellattrs)
+            #~ e.text = x
+            #~ return e
+            
             if not x: return html.TD(**cellattrs)
             try:
                 return html.TD(etree.XML(x),**cellattrs)

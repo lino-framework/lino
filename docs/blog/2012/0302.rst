@@ -1,0 +1,20 @@
+20120302
+========
+
+Wow Kinder, das waren zwei interessante Tage.
+Die BCSS-Connection funktioniert jetzt wie zuvor, 
+aber statt meines xmlgen verwendet sie lxml.
+Und mit einem wichtigen Unterschied, der bei lxml sozusagen 
+gratis mit dabei war: bevor der Request abgeschickt wird 
+(den ja immerhin mein möglicherweise fehlerhafter Code konstruiert hat), 
+validiert lxml ihn anhand der XSD.
+Zum Beispiel hatte ich bei den bisherigen Tests noch gar nicht bemerkt, 
+dass im IdentifyPersonRequest das Geburtsdatum obligatorisch ist, 
+wenn man die NISS nicht hat.
+
+Also meine Entscheidung, mein xmlgen wegzuwerfen und mich 
+auf lxml zu verlassen, war eindeutig richtig. 
+Schon während der Konvertierung hatte ich mehrmals begeistert festgestellt, 
+wie ähnlich lxml meinem xmlgen war,
+und wie die einzigen Unterschiede dort waren, 
+wo mein xmlgen falsch gedacht war.

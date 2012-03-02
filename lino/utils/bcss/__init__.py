@@ -1,0 +1,635 @@
+# -*- coding: UTF-8 -*-
+## Copyright 2011-2012 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+r"""
+Communicate with the :term:`BCSS` server.
+
+Example:
+
+Identify Person
+---------------
+
+This request has two variants: with known NISS or without.
+If a NISS is given, the other parameters are "verification data".
+
+>>> req = ipr.build_request("68060101234",
+...   last_name="SAFFRE",birth_date='1968-06-01')
+>>> print etree.tostring(req,pretty_print=True)
+<ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+  <ipr:SearchCriteria>
+    <ipr:SSIN>68060101234</ipr:SSIN>
+  </ipr:SearchCriteria>
+  <ipr:VerificationData>
+    <ipr:PersonData>
+      <ipr:LastName>SAFFRE</ipr:LastName>
+      <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+    </ipr:PersonData>
+  </ipr:VerificationData>
+</ipr:IdentifyPersonRequest>
+<BLANKLINE>
+
+If no NISS is given, the other parameters are "search criteria".
+
+>>> req = ipr.build_request(last_name="SAFFRE",birth_date='1968-06-01')
+>>> print etree.tostring(req,pretty_print=True)
+<ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+  <ipr:SearchCriteria>
+    <ipr:PhoneticCriteria>
+      <ipr:LastName>SAFFRE</ipr:LastName>
+      <ipr:FirstName></ipr:FirstName>
+      <ipr:MiddleName></ipr:MiddleName>
+      <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+    </ipr:PhoneticCriteria>
+  </ipr:SearchCriteria>
+</ipr:IdentifyPersonRequest>
+<BLANKLINE>
+
+>>> req = pir.build_request("6806010123",wait="0")
+>>> print etree.tostring(req,pretty_print=True)
+<pir:PerformInvestigationRequest xmlns:pir="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
+  <pir:SocialSecurityUser>6806010123</pir:SocialSecurityUser>
+  <pir:DataGroups>
+    <pir:FamilyCompositionGroup>1</pir:FamilyCompositionGroup>
+    <pir:CitizenGroup>1</pir:CitizenGroup>
+    <pir:AddressHistoryGroup>1</pir:AddressHistoryGroup>
+    <pir:WaitRegisterGroup>0</pir:WaitRegisterGroup>
+  </pir:DataGroups>
+</pir:PerformInvestigationRequest>
+<BLANKLINE>
+
+The above examples are bare BCSS service requests.
+Before sending a request to the BCSS server, 
+we must wrap it into a "SSDN request".
+The easiest way to do this is to use the 
+:meth:`Service.ssdn_request` method.
+
+:meth:`Service.ssdn_request` wants the 
+"user parameters" for the BCSS as a dict:
+
+>>> user_params = dict(
+...     UserID='123456', 
+...     Email='info@exemple.be', 
+...     OrgUnit='0123456', 
+...     MatrixID='17', 
+...     MatrixSubID='1')
+
+(In a Lino application, these user parameters 
+are defined in your local :xfile:`settings.py` 
+module :attr:`lino.Lino.bcss_user_params`.)
+
+:meth:`Service.ssdn_request` also expects a unique reference 
+and a timestamp for your request:
+
+>>> now = datetime.datetime(2011,10,31,15,41,10)
+>>> unique_id = 'PIR # 5'
+
+Here we go:
+
+>>> sr = pir.ssdn_request(req,user_params,unique_id,now)
+>>> print etree.tostring(sr,pretty_print=True) #doctest: +ELLIPSIS
+<SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
+  <RequestContext>
+    <AuthorizedUser>
+      <UserID>123456</UserID>
+      <Email>info@exemple.be</Email>
+      <OrgUnit>0123456</OrgUnit>
+      <MatrixID>17</MatrixID>
+      <MatrixSubID>1</MatrixSubID>
+    </AuthorizedUser>
+    <Message>
+      <Reference>PIR # 5</Reference>
+      <TimeRequest>20111031T154110</TimeRequest>
+    </Message>
+  </RequestContext>
+  <ServiceRequest>
+    <ServiceId>OCMWCPASPerformInvestigation</ServiceId>
+    <Version>20080604</Version>
+    <pir:PerformInvestigationRequest xmlns:pir="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
+    ...
+    </pir:PerformInvestigationRequest>
+  </ServiceRequest>
+</SSDNRequest>
+<BLANKLINE>
+
+
+Now we perform another wrapping of this SSDN request.
+
+>>> print etree.tostring(soap_request("Foo"),pretty_print=True)
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector"><![CDATA[Foo]]></bcss:xmlString>
+  </soap:Body>
+</soap:Envelope>
+<BLANKLINE>
+
+
+"""
+
+import os
+import datetime
+
+from appy.shared.dav import Resource
+from appy.shared.xml_parser import XmlUnmarshaller
+
+#~ from lino.utils import d2iso
+#~ from lino.utils import IncompleteDate
+
+
+from lxml import etree
+from lxml.builder import ElementMaker # lxml only !
+
+class SimpleException(Exception): pass
+
+
+#~ def py2str(value):
+#~ def py2str(*args):
+    #~ raise Exception("20120301 %r" % (args,))
+
+#~ def py2str(elem,value):
+    #~ if isinstance(value,int):
+        #~ return str(value)
+    #~ if isinstance(value,datetime.datetime):
+        #~ return value.strftime("%Y%m%dT%H%M%S")
+    #~ if isinstance(value,datetime.date):
+        #~ return value.strftime("%Y-%m-%d")
+    #~ if isinstance(value,IncompleteDate):
+        #~ if self.year == 0:
+            #~ raise Exception("%s : Year may not be 0" % elem)
+        #~ return str(value)
+    #~ raise Exception("%s : don't know how to format %r" % (elem,value))
+        
+    #~ if isinstance(value,basestring):
+        #~ return value
+    #~ return unicode(value)
+
+
+TYPEMAP = {
+  #~ datetime.datetime: py2str,
+  #~ IncompleteDate : lambda e,v : str(v),
+  datetime.datetime: lambda e,v : v.strftime("%Y%m%dT%H%M%S"),
+  datetime.date: lambda e,v : v.strftime("%Y-%m-%d"),
+  int: lambda e,v : str(v),
+}
+
+
+class Namespace(object):
+    def __init__(self,prefix=None,url=None,**kw):
+        if url:
+            kw.update(namespace=url)
+            #~ if prefix:
+            nsmap = kw.setdefault('nsmap',{})
+            nsmap[prefix] = url
+        kw.setdefault('typemap',TYPEMAP)
+        #~ self._element_maker = ElementMaker(namespace=url,nsmap={prefix:url})
+        self._element_maker = ElementMaker(**kw)
+        self._url = url
+        
+    def define(self,names):
+        for name in names.split():
+            assert not hasattr(self,name)
+            setattr(self,name,getattr(self._element_maker,name))
+
+#~ def MEM(prefix,url):
+    #~ return ElementMaker(namespace=url,nsmap={prefix:url})
+
+#~ bcss = MEM('bcss',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
+#~ soap = MEM('soap',"http://schemas.xmlsoap.org/soap/envelope/")
+#~ ipr = MEM('ipr',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
+#~ pir = MEM('pir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
+#~ hir = MEM('hir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
+
+soap = Namespace('soap',"http://schemas.xmlsoap.org/soap/envelope/")
+bcss = Namespace('bcss',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
+ssdn = Namespace(None,"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
+#~ ssdn = Namespace('ssdn',"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
+#~ ,nsmap={None:ssdn._url}
+
+ssdn.define("""
+SSDNRequest
+ServiceRequest
+ServiceId
+Version
+RequestContext
+Message
+Reference
+TimeRequest
+""")            
+
+
+
+bcss.define('xmlString')
+#~ xmlString = bcss.xmlString
+
+soap.define("Body Envelope")
+#~ Envelope = soap.Envelope
+#~ Body = soap.Body
+
+
+
+class Common(Namespace):
+  
+    def authorized_user(common,
+                UserID=None,
+                Email=None, 
+                OrgUnit=None, 
+                MatrixID=None, 
+                MatrixSubID=None):
+        return common.AuthorizedUser(
+            common.UserID(UserID),
+            common.Email(Email),
+            common.OrgUnit(OrgUnit),
+            common.MatrixID(MatrixID),
+            common.MatrixSubID(MatrixSubID))
+
+common = Common()
+common.define("""
+AuthorizedUser
+UserID
+Email
+OrgUnit
+MatrixID
+MatrixSubID
+""")
+
+
+
+
+
+
+class Service(Namespace):
+    """
+    Base class for the individual services.
+    """
+    service_id = None
+    service_version = None
+    xsd_filename = None
+      
+    def ssdn_request(self,srvReq,user_params,message_ref,dt):
+        #~ xg.set_default_namespace(None)
+        any = etree.tostring(srvReq)
+        serviceRequest = ssdn.ServiceRequest(
+            ssdn.ServiceId(self.service_id),
+            ssdn.Version(self.service_version),
+            etree.XML(any))
+        
+        context = ssdn.RequestContext(
+            common.authorized_user(**user_params),
+            ssdn.Message(
+                ssdn.Reference(message_ref),
+                ssdn.TimeRequest(dt)))
+        #~ xg.set_default_namespace(ssdn)
+        elem = ssdn.SSDNRequest(context,serviceRequest)
+        #~ elem.nsmap={None:self._url}
+        return elem
+        #~ return ssdn.SSDNRequest(context,serviceRequest)
+        
+    def validate_request(self,root):
+        if self.xsd_filename:
+            fn = os.path.abspath(os.path.dirname(__file__))
+            fn = os.path.join(fn,'XSD',self.xsd_filename)
+            xmlschema_doc = etree.parse(fn)
+            xmlschema = etree.XMLSchema(xmlschema_doc)
+            doc = etree.ElementTree(root)
+            xmlschema.assertValid(doc)
+            #~ if not xmlschema.validate(doc):
+                #~ raise SimpleException(
+                    #~ "Request failed to validate against %s" % fn)
+        return 
+            
+          
+    def execute(self,req,user_params,url=None,*args):
+        #~ print 20120302
+        if user_params is None:
+            raise SimpleException(
+                "Not actually sending because user_params is empty.")
+        self.validate_request(req)
+            
+        sr = self.ssdn_request(req,user_params,*args)
+        soap_body = etree.tostring(sr)
+        req = soap_request(soap_body)
+        #~ xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + 
+        xmlString = etree.tostring(req,xml_declaration=True)
+        
+        if not url:
+            raise SimpleException("""\
+Not actually sending because url is empty. Request would be:
+""" + xmlString)
+            raise Exception("Not actually sending because url is empty.")
+            #~ return Object(data=Object(xmlString="Not actually sending because url is empty."))
+            #~ return None
+        
+        server = Resource(url,measure=True)
+        res = server.soap(xmlString)
+        return res
+
+        #~ print res.code
+        #~ print res.data
+
+        #~ reply = XmlUnmarshaller().parse(str(res.data.xmlString))
+        
+        #~ return reply
+        
+
+
+
+
+        
+class IdentifyPersonRequest(Service):
+    "A request for identifying a person or validating a person's identity"
+    service_id = 'OCMWCPASIdentifyPerson'
+    service_version = '20050930'
+    xsd_filename = os.path.join('SSDN','OCMW_CPAS',
+        'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
+
+    #~ def verify_request(ipr,ssin,**kw):
+        #~ """
+        #~ possible keywords are the allowed children of
+        #~ :class:`IdentifyPersonRequest.VerificationData.PersonData`:
+        #~ LastName,
+        #~ FirstName,
+        #~ MiddleName and 
+        #~ BirthDate.
+        
+        #~ """
+        #~ pd = []
+        #~ for k in ('LastName','FirstName','MiddleName','BirthDate'):
+            #~ v = kw.get(k,None)
+            #~ if v: # ignore empty values
+                #~ cl = getattr(ipr,k)
+                #~ pd.append(cl(v))
+        #~ return ipr.IdentifyPersonRequest(
+          #~ ipr.SearchCriteria(ipr.SSIN(ssin)),
+          #~ ipr.VerificationData(ipr.PersonData(*pd)))
+          
+          
+    def build_request(ipr,
+        national_id='',
+        first_name='',
+        middle_name='',
+        last_name='',
+        birth_date=None,
+        gender=None,
+        tolerance=None
+        ):
+        """
+        If `national_id` is given, 
+        request a *verification* of the personal data,
+        Otherwise request a search on the person's last_name, 
+        first_name and (if filled) birth_date and gender fields.
+        """
+        if national_id:
+            pd = []
+            if last_name: pd.append(ipr.LastName(last_name))
+            if first_name: pd.append(ipr.FirstName(first_name))
+            if middle_name: pd.append(ipr.MiddleName(middle_name))
+            if birth_date: pd.append(ipr.BirthDate(birth_date))
+            if gender is not None: pd.append(ipr.Gender(gender))
+            if tolerance is not None: pd.append(ipr.Tolerance(tolerance))
+            
+            #~ for k in ('LastName','FirstName','MiddleName','BirthDate'):
+                #~ v = kw.get(k,None)
+                #~ if v: # ignore empty values
+                    #~ cl = getattr(ipr,k)
+                    #~ pd.append(cl(v))
+            return ipr.IdentifyPersonRequest(
+              ipr.SearchCriteria(ipr.SSIN(national_id)),
+              ipr.VerificationData(ipr.PersonData(*pd)))
+          
+            #~ return ipr.verify_request(
+              #~ national_id,
+              #~ LastName=last_name,
+              #~ MiddleName=middle_name,
+              #~ FirstName=first_name,
+              #~ BirthDate=birth_date,
+              #~ )
+        #~ VD = ipr.VerificationData
+        #~ SC = 
+        #~ PC = ipr.PhoneticCriteria
+        if birth_date is None:
+            raise SimpleException(
+                "Either national_id or birth date must be given")
+        pc = []
+        pc.append(ipr.LastName(last_name))
+        pc.append(ipr.FirstName(first_name))
+        pc.append(ipr.MiddleName(middle_name))
+        pc.append(ipr.BirthDate(birth_date))
+        #~ if gender is not None: pc.append(ipr.Gender(gender))
+        #~ if tolerance is not None: pc.append(ipr.Tolerance(tolerance))
+        return ipr.IdentifyPersonRequest(
+            ipr.SearchCriteria(ipr.PhoneticCriteria(*pc)))
+          
+
+
+class PerformInvestigationRequest(Service):
+    service_id = 'OCMWCPASPerformInvestigation'
+    service_version = '20080604'
+    xsd_filename = os.path.join('SSDN','OCMW_CPAS',
+        'PERFORMINVESTIGATION','PERFORMINVESTIGATIONREQUEST.XSD')
+    
+    def build_request(pir,ssin,family='1',citizen='1',address='1',wait='1'):
+        return pir.PerformInvestigationRequest(
+            pir.SocialSecurityUser(ssin),
+            pir.DataGroups(
+              pir.FamilyCompositionGroup(family),
+              pir.CitizenGroup(citizen),
+              pir.AddressHistoryGroup(address),
+              pir.WaitRegisterGroup(wait)))
+
+    
+    
+
+    
+        
+class HealthInsuranceRequest(Service):
+    service_id = 'OCMWCPASHealthInsurance'
+    service_version = '20070509'
+    
+    
+ipr = IdentifyPersonRequest('ipr',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
+pir = PerformInvestigationRequest('pir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
+hir = HealthInsuranceRequest('hir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
+
+ipr.define("""
+IdentifyPersonRequest
+SearchCriteria
+PhoneticCriteria
+SSIN
+LastName
+FirstName
+MiddleName
+BirthDate
+Gender
+Tolerance
+Maximum
+
+VerificationData
+SISCardNumber
+IdentityCardNumber
+PersonData 
+""")
+
+
+pir.define("""
+PerformInvestigationRequest
+SocialSecurityUser
+DataGroups
+FamilyCompositionGroup
+CitizenGroup
+AddressHistoryGroup
+WaitRegisterGroup
+""")
+
+hir.define("""
+HealthInsuranceRequest
+SSIN
+Assurability
+Period
+StartDate
+EndDate
+""")
+
+    
+
+
+
+
+
+def soap_request(s):
+    #~ xg.set_default_namespace(bcss)
+    if not isinstance(s,basestring):
+        raise Exception("Must give a string, not %r" % s)
+    body = bcss.xmlString()
+    body.text = etree.CDATA(s)
+    #~ body = etree.tostring(body)
+    return soap.Envelope(soap.Body(body))
+    
+
+
+def xml2reply(xmlString):
+    u"""
+    Parse the XML string and return a "reply handler".
+    
+    "Lorsque le détail sous-jacent ne contient pas d’erreur 
+    ou d’avertissement, le code possède la valeur 0. 
+    Si au moins un avertissement est présent, le code 
+    a la valeur 1. Si au moins une erreur est présente, 
+    le code sera égal à 10000. 
+    Veuillez noter que si des erreurs et des avertissements sont 
+    présents, le niveau le plus critique est pris en compte 
+    (en l’occurrence, l’erreur, donc le code sera égal à 10000)."
+    
+    """
+    return XmlUnmarshaller().parse(str(xmlString))
+
+    
+def reply2lines(reply):
+    """
+    Convert a reply into a 
+    """
+    yield "ReplyContext:"
+    yield "- ResultSummary:"
+    yield "  - Detail:"
+    yield "    - AuthorCodeList: %s" % reply.ReplyContext.ResultSummary.Detail.AuthorCodeList
+    yield "    - Diagnostic: %s" % reply.ReplyContext.ResultSummary.Detail.Diagnostic
+    yield "    - ReasonCode: %s" % reply.ReplyContext.ResultSummary.Detail.ReasonCode
+    yield "    - Severity: %s" % reply.ReplyContext.ResultSummary.Detail.Severity
+    
+    if False:
+        yield "- AuthorizedUser:"
+        yield "  - UserID: %s" % reply.ReplyContext.AuthorizedUser.UserID
+        yield "  - Email: %s" % reply.ReplyContext.AuthorizedUser.Email
+        yield "  - OrgUnit: %s" % reply.ReplyContext.AuthorizedUser.OrgUnit
+        yield "  - MatrixID: %s" % reply.ReplyContext.AuthorizedUser.MatrixID
+        yield "  - MatrixSubID: %s" % reply.ReplyContext.AuthorizedUser.MatrixSubID
+
+    yield "- Message:"
+    yield "  - TimeRequest: %s" % reply.ReplyContext.Message.TimeRequest
+    yield "  - TimeResponse: %s" % reply.ReplyContext.Message.TimeResponse
+    yield "  - TimeReceive: %s" % reply.ReplyContext.Message.TimeReceive
+    yield "  - Ticket: %s" % reply.ReplyContext.Message.Ticket
+    yield "  - Reference: %s" % reply.ReplyContext.Message.Reference
+
+    yield "ServiceReply:"
+    yield "- ServiceId: %s" % reply.ServiceReply.ServiceId
+    yield "- Version: %s" % reply.ServiceReply.Version
+    yield "- ResultSummary:"
+    yield "  - ReturnCode: %s" % reply.ServiceReply.ResultSummary.ReturnCode
+    for dtl in reply.ServiceReply.ResultSummary.Detail:
+        yield "  - Detail[]:"
+        yield "    - ReasonCode: %s" % dtl.ReasonCode
+        yield "    - Information: %s" % dtl.Information
+        #~ info = dtl.Information:
+        #~ yield "    - Information.FieldName[]: %s" % info.FieldName
+        #~ yield "    - Information.FieldValue[]: %s" % info.FieldValue
+        #~ yield "    - %s = %s" % (info.FieldName,info.FieldValue)
+        #~ yield "    - %s" % info
+    
+    
+def unused_test_connection(nr):
+  
+    xmlString = PerformInvestigationRequest(nr)
+    
+    reply = unused_send_request(xmlString)
+
+    #~ reply.ReplyContext.AuthorizedUser
+    #~ reply.ReplyContext.Message
+    dtl = reply.ReplyContext.ResultSummary.Detail
+    #~ dtl.AuthorCodeList
+    #~ dtl.Diagnostic
+    #~ dtl.ReasonCode
+    #~ dtl.Severity
+    print reply.ReplyContext.ResultSummary.ReturnCode
+    print dtl
+
+    import pdb
+    pdb.set_trace()
+
+def unused_send_request(settings,xmlString):
+    
+    #~ logger.info("Going to send request:\n%s",xmlString)
+    
+    #~ xmlString = SOAP_ENVELOPE % xmlString
+    
+    xg.set_default_namespace(bcss)
+    xmlString = soap.request(xmlString).tostring()
+    
+    xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + xmlString
+    
+    #~ xmlString = xmlString.encode('utf-8')
+    
+    if not settings.LINO.bcss_soap_url:
+        #~ logger.info("Not actually sending because Lino.bcss_soap_url is empty.")
+        return None
+    
+    server = Resource(settings.LINO.bcss_soap_url,measure=True)
+    
+    res = server.soap(xmlString)
+
+    #~ print res.code
+    #~ print res.data
+
+    reply = XmlUnmarshaller().parse(str(res.data.xmlString))
+    
+    return reply
+    
+  
+    
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" elementFormDefault="qualified" attributeFormDefault="unqualified" version="20060630" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../Common/NamespaceRoot.xsd"/>
+	<xs:simpleType name="OriginType">
+		<xs:annotation>
+			<xs:documentation>Origin of a piece of information</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="BCSS_KSZ"/>
+			<xs:enumeration value="RN_RR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="NameType">
+		<xs:annotation>
+			<xs:documentation>Represents a name</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LastName" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>the last name of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MiddleName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the middle name of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FirstName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the first name of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CompleteFirstName" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>indicates if the first name is complete</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="LocationType">
+		<xs:annotation>
+			<xs:documentation>Represents a NIS location</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Code" type="common:t_NISCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NIS code of the location</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="common:DescriptionType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Set of descriptions in different languages</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GenderType">
+		<xs:simpleContent>
+			<xs:extension base="GenderCodeType">
+				<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="GenderCodeType">
+		<xs:annotation>
+			<xs:documentation>The gender code  (0 = unspecified, 1 = male, 2 = female)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

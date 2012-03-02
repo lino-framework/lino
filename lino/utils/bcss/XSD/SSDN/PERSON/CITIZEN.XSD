@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" elementFormDefault="qualified" attributeFormDefault="unqualified" version="20060630" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../Common/CommonDataTypes.xsd"/>
+	<xs:include schemaLocation="AddressInformation.xsd"/>
+	<xs:element name="Citizen">
+		<xs:annotation>
+			<xs:documentation>Represents a citizen</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SocialSecurityUser" type="common:t_SSIN">
+					<xs:annotation>
+						<xs:documentation>SSIN of the person</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="InscriptionRegister" type="InscriptionRegisterType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>type of register the person is inscribed in</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="LegalData" type="LegalDataType">
+					<xs:annotation>
+						<xs:documentation>the legal data of the person</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="origin" type="OriginType" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="InscriptionRegisterType">
+		<xs:simpleContent>
+			<xs:extension base="xs:integer">
+				<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="LegalDataType">
+		<xs:annotation>
+			<xs:documentation>Represents the legal data of a person</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="NameType">
+				<xs:annotation>
+					<xs:documentation>information about the names of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Gender" type="GenderType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>gender code.  0 = unknown, 1 = male, 2 = female</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Birth" type="BirthDeceaseType">
+				<xs:annotation>
+					<xs:documentation>information regarding the birth of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CivilState" type="CivilStateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>civil state information</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Decease" type="BirthDeceaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>information regarding the decease of the person, if applicable</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="AddressInformation" minOccurs="0"/>
+			<xs:element name="Nationality" type="NationalityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>nationality of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BirthDeceaseType">
+		<xs:annotation>
+			<xs:documentation>Information about the birth or decease of the person</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Date" type="common:t_IncompleteDate">
+				<xs:annotation>
+					<xs:documentation>birth or deceasedate in yyyy-MM-dd format. May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Location" type="LocationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the location where this person is deceased</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="PartnerType">
+		<xs:annotation>
+			<xs:documentation>Information about a person's partner</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SocialSecurityUser" type="common:t_SSIN" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>SSIN of the spouse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="NameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>information about the names of the spouse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BirthDate" type="common:t_IncompleteDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Birthdate of the spouse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Gender" type="GenderCodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Gender of the spouse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CivilStateType">
+		<xs:annotation>
+			<xs:documentation>Information about the civil state of a person</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Code" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>code indicating the civil state of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Location" type="LocationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>location of the civil state act</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Partner" type="PartnerType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>spouse of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="NationalityType">
+		<xs:annotation>
+			<xs:documentation>Information about the nationality of a person</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="LocationType">
+				<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

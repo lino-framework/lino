@@ -25,15 +25,18 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from appy.shared.xml_parser import XmlUnmarshaller
+from lxml import etree
+
+
 from lino import mixins
 from lino import dd
 
 from lino.utils import babel
 from lino.utils import dblogger
 from lino.tools import resolve_model
-from lino.utils.xmlgen import bcss
+from lino.utils import bcss
 
-from appy.shared.xml_parser import XmlUnmarshaller
 
 from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
@@ -85,6 +88,12 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     Abstract Base Class for Models that represent 
     requests to the :term:`BCSS` (and responses).
     """
+    
+    bcss_namespace = NotImplementedError
+    """
+    Concrete subclasses must set this.
+    """
+    
     class Meta:
         abstract = True
         
@@ -115,15 +124,30 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
         """
         if not self.id:
             self.save()
-        srv = self.build_service()
-        now = datetime.datetime.now()
-        self.request_xml = srv.tostring(True)
+        kw = self.get_request_params()
+        try:
+            srvreq = self.bcss_namespace.build_request(**kw)
+        except bcss.SimpleException,e:
+            self.status = RequestStatus.exception
+            self.response_xml = unicode(e)
+            self.save()
+            return
+            
+        self.request_xml = etree.tostring(srvreq,pretty_print=True)
         self.status = RequestStatus.pending
         self.save()
         
+        now = datetime.datetime.now()
         try:
-            res = srv.execute(settings.LINO.bcss_user_params,
+            res = self.bcss_namespace.execute(
+              srvreq,
+              settings.LINO.bcss_user_params,
               settings.LINO.bcss_soap_url,str(self.id),now)
+        except bcss.SimpleException,e:
+            self.status = RequestStatus.exception
+            self.response_xml = unicode(e)
+            self.save()
+            return
         except Exception,e:
             self.status = RequestStatus.exception
             self.response_xml = traceback.format_exc(e)
@@ -167,6 +191,9 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
     Represents a request to the :term:`BCSS` IdentifyPerson service.
     
     """
+    
+    bcss_namespace = bcss.ipr
+    
     class Meta:
         verbose_name = _("IdentifyPerson Request")
         verbose_name_plural = _("IdentifyPerson Requests")
@@ -215,9 +242,7 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
         if self.project: 
             person = self.project
             if person.national_id and not self.national_id:
-                national_id = person.national_id.replace(' ','')
-                national_id = national_id.replace('-','')
-                self.national_id = national_id.replace('=','')
+                self.national_id = person.national_id
             if not self.last_name:
                 self.last_name = person.last_name
             if not self.first_name:
@@ -225,39 +250,52 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
                 
         super(IdentifyPersonRequest,self).save(*args,**kw)
         
-    def build_service(self):
+    def get_request_params(self,**kw):
         """
-        If the person has her `national_id` field filled, 
-        it does a *verification* of the personal data,
-        Otherwise it does a search request on the person's last_name, 
-        first_name and (if filled) birth_date and gender fields.
         """
-        person = self.project
-        VD = bcss.ipr.VerificationData
-        SC = bcss.ipr.SearchCriteria
-        PC = bcss.ipr.PhoneticCriteria
-        if self.national_id:
-            return bcss.ipr.verify_request(
-              self.national_id,
-              LastName=self.last_name,
-              FirstName=self.first_name,
-              BirthDate=self.birth_date,
-              )
+        national_id = self.national_id.replace('=','')
+        national_id = national_id.replace(' ','')
+        national_id = national_id.replace('-','')
+        kw.update(national_id=national_id)
+        kw.update(last_name=self.last_name)
+        kw.update(first_name=self.first_name)
+        kw.update(middle_name=self.middle_name)
+        if self.birth_date is not None:
+            kw.update(birth_date=str(self.birth_date))
+        kw.update(tolerance=self.tolerance)
+        if self.gender == Gender.male:
+            kw.update(gender=1)
+        elif self.gender == Gender.female:
+            kw.update(gender=2)
         else:
-          pc = []
-          pc.append(PC.LastName(self.last_name))
-          pc.append(PC.FirstName(self.first_name))
-          pc.append(PC.MiddleName(self.middle_name))
-          #~ if person.birth_date:
-          pc.append(PC.BirthDate(self.birth_date))
-          if self.gender == Gender.male:
-              pc.append(PC.Gender(1))
-          elif self.gender == Gender.female:
-              pc.append(PC.Gender(2))
-          else:
-              pc.append(PC.Gender(0))
-          pc.append(PC.Tolerance(self.tolerance))
-          return bcss.ipr.IdentifyPersonRequest(SC(PC(*pc)))
+            kw.update(gender=0)
+        return kw
+        
+        #~ VD = bcss.ipr.VerificationData
+        #~ SC = bcss.ipr.SearchCriteria
+        #~ PC = bcss.ipr.PhoneticCriteria
+        #~ if self.national_id:
+            #~ return bcss.ipr.verify_request(
+              #~ self.national_id,
+              #~ LastName=self.last_name,
+              #~ FirstName=self.first_name,
+              #~ BirthDate=self.birth_date,
+              #~ )
+        #~ else:
+          #~ pc = []
+          #~ pc.append(bcss.ipr.LastName(self.last_name))
+          #~ pc.append(bcss.ipr.FirstName(self.first_name))
+          #~ pc.append(bcss.ipr.MiddleName(self.middle_name))
+          #~ # if person.birth_date:
+          #~ pc.append(bcss.ipr.BirthDate(self.birth_date))
+          #~ if self.gender == Gender.male:
+              #~ pc.append(bcss.ipr.Gender(1))
+          #~ elif self.gender == Gender.female:
+              #~ pc.append(bcss.ipr.Gender(2))
+          #~ else:
+              #~ pc.append(bcss.ipr.Gender(0))
+          #~ pc.append(bcss.ipr.Tolerance(self.tolerance))
+          #~ return bcss.ipr.IdentifyPersonRequest(SC(PC(*pc)))
     
 dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
 dd.update_field(IdentifyPersonRequest,'last_name',blank=True)

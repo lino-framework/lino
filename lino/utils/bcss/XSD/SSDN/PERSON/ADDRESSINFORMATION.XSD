@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" elementFormDefault="qualified" attributeFormDefault="unqualified" version="20060630" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:include schemaLocation="CommonDataTypes.xsd"/>
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../Common/NamespaceRoot.xsd"/>
+	<xs:complexType name="MunicipalityType">
+		<xs:complexContent>
+			<xs:extension base="LocationType">
+				<xs:sequence>
+					<xs:element name="PostalCode" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PlainTextAddressType">
+		<xs:sequence>
+			<xs:element name="Country" type="LocationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the country of this address</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Address" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the actual address, in unformatted form</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="origin" type="OriginType" use="optional"/>
+		<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="StandardAddressType">
+		<xs:sequence>
+			<xs:element name="Country" type="LocationType">
+				<xs:annotation>
+					<xs:documentation>the country where this address is located</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Municipality" type="MunicipalityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the municipality (city or village)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="LocationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the street of this address</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HouseNumber" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the number of the house in the street on this address</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Box" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the box on this house number in the street </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="origin" type="OriginType" use="optional"/>
+		<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="ManagerLocationType">
+		<xs:complexContent>
+			<xs:extension base="LocationType">
+				<xs:sequence>
+					<xs:element name="LinguisticRegime" type="common:t_SimpleString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>linguistic regime of the location that manages the address information</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="origin" type="OriginType" use="optional"/>
+				<xs:attribute name="modificationDate" type="common:t_IncompleteDate" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="LegalAddressType">
+		<xs:choice>
+			<xs:element name="StandardAddress" type="StandardAddressType">
+				<xs:annotation>
+					<xs:documentation>a structured address</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DiplomaticPostAddress" type="PlainTextAddressType">
+				<xs:annotation>
+					<xs:documentation>address registered at a diplomatic post abroad</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:element name="AddressInformation">
+		<xs:annotation>
+			<xs:documentation>address information of the person</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ManagerLocation" type="ManagerLocationType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>the municipality, country, or diplomatic post where the address is registered</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="LegalAddress" type="LegalAddressType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>the legal address of the person</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="TemporaryAddress" type="PlainTextAddressType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>declared temporary address</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="PostAddressAbroad" type="PlainTextAddressType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>post address abroad. Can only be present if the person is registered at a diplomatic post</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

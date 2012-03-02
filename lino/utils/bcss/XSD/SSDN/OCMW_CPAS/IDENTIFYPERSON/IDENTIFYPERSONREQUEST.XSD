@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- !KSZBCSS! -->
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson" xmlns:person="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/NamespaceRoot.xsd"/>
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" schemaLocation="../../Person/NamespaceRoot.xsd"/>
+	<xs:element name="IdentifyPersonRequest">
+		<xs:annotation>
+			<xs:documentation>A request for identifying a person or validating a persons identity</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SearchCriteria" type="SearchCriteriaType">
+					<xs:annotation>
+						<xs:documentation>criteria for identifying a person</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="VerificationData" type="VerificationDataType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>data used for validating a persons identity. If this element is present, at least one of the subelements must be specified. Validation is successful if one of the subelements can be successfully validated. Ignored if SSIN is not present in the search criteria.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="SearchCriteriaType">
+		<xs:annotation>
+			<xs:documentation>Element containing the search criteria</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SSIN" type="common:t_SSIN" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Social Security Identification number of the person to identify</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhoneticCriteria" type="PhoneticCriteriaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>set of criteria for a phonetic search. all persons matching these criteria will be returned. Ignored if SSIN is also specified</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VerificationDataType">
+		<xs:annotation>
+			<xs:documentation>data used for validating a persons identity. If this element is present, at least one of the subelements must be specified. Validation is successful if one of the subelements can be successfully validated. Ignored if SSIN is not present</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SISCardNumber" type="common:t_SISCardNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ID of the persons SIS card</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IdentityCardNumber" type="common:t_IdentityCardNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ID of the persons identity card</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PersonData" type="PersonDataType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>set of personal data to match against</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PhoneticCriteriaType">
+		<xs:annotation>
+			<xs:documentation>set of criteria for a phonetic search. all persons matching these criteria will be returned. Ignored if SSIN is also specified</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LastName">
+				<xs:annotation>
+					<xs:documentation>last name to search for. Matched phonetically</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirstName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>First name to search for</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MiddleName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>middlename to search for</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BirthDate" type="common:t_IncompleteDate">
+				<xs:annotation>
+					<xs:documentation>birth date in the format yyyy-MM-dd. May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00. If incomplete, Tolerance must be specified</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Gender" type="person:GenderCodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>gender of the person. 0 = unknown, 1 = male, 2 = female</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Tolerance" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>tolerance on the bith date. specifies how much BirthDate may be off. the unit depends on the format of BirthDate. yyyy-MM-dd = days; yyyy-MM-00 = months; yyyy-00-00 = years.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Maximum" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>maximum number of results returned. if not specified, maximum number is returned</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="80"/>
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonDataType">
+		<xs:annotation>
+			<xs:documentation>set of personal data to match against</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LastName">
+				<xs:annotation>
+					<xs:documentation>last name to verify. matched exactly</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirstName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>first name to verify. matched exactly if present</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MiddleName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>middle name to verify. matched exactly if present</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BirthDate" type="common:t_IncompleteDate">
+				<xs:annotation>
+					<xs:documentation>birthdate to verify, in the format yyyy-MM-dd. may be an incomplete date (yyyy-MM-00 or yyyy-00-00). Matched exactly</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

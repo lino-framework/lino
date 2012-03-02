@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- !KSZBCSS! -->
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns:person="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/NamespaceRoot.xsd"/>
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Person" schemaLocation="../../Person/NamespaceRoot.xsd"/>
+	<xs:element name="IdentifyPersonReply">
+		<xs:annotation>
+			<xs:documentation>Reply to an IdentifyPersonRequest</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SearchResults" type="SearchResultsType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Persons matching the search criteria</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="SearchResultsType">
+		<xs:annotation>
+			<xs:documentation>The results of the IdentifyPerson search</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LimitedLegalData" maxOccurs="100">
+				<xs:annotation>
+					<xs:documentation>a search result, contains legal data about a person. Contains origin attribute to specify source of the information</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="LimitedLegalDataType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LimitedLegalDataType">
+		<xs:annotation>
+			<xs:documentation>a search result, contains legal data about a person. Contains origin attribute to specify source of the information</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Basic" type="BasicType">
+				<xs:annotation>
+					<xs:documentation>Basic legal data</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extended" type="ExtendedType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Extention to the basic legal data</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="origin" type="person:OriginType" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="BasicType">
+		<xs:annotation>
+			<xs:documentation>Basic legal information about the person</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SocialSecurityUser" type="common:t_SSIN">
+				<xs:annotation>
+					<xs:documentation>SSIN of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastName">
+				<xs:annotation>
+					<xs:documentation>Last name of the person</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirstName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>First name of the person</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MiddleName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Middle name of the person</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BirthDate" type="common:t_IncompleteDate">
+				<xs:annotation>
+					<xs:documentation>birthdate in yyyy-MM-dd format. May be an incomplete date in the format yyyy-MM-00 or yyyy-00-00</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Gender" type="person:GenderType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>code indicating the gender of the person. 0 = unknown, 1 = male, 2 = female</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Address" type="AddressType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>legal address of the person. used if the legal address is a fully specified address. Can not be present together with DiplomaticPost</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DiplomaticPost" type="DiplomaticPostType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>diplomatic post address of the person. Can not be present together with Address</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ExtendedType">
+		<xs:annotation>
+			<xs:documentation>extended set of legal data about the person. Only returned if the system can validate the identity</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CivilState" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>code indicating the civil state of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BirthLocationCode" type="common:t_NISCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NIS code of the birth location of the person. Can be a municipality or a country code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BirthLocation" type="common:DescriptionType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>name of the birth location</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DeceaseDate" type="common:t_IncompleteDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>decease date of the person, in the format yyyy-MM-dd. Can be an incomplete date in the format yyyy-MM-00 or yyyy-00-00</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InscriptionRegister" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>type of register the person is inscribed in</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NationalityCode" type="common:t_NISCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NIS code of the nationality of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AddressType">
+		<xs:annotation>
+			<xs:documentation>legal address of the person. used if the legal address is a fully specified address. Can not be present together with DiplomaticPost</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CountryCode" type="common:t_NISCode">
+				<xs:annotation>
+					<xs:documentation>NIS code of the country</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MunicipalityCode" type="common:t_NISCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NIS code of the municipality  the person lives in</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Municipality" type="common:DescriptionType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>name of the municipality</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostalCode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>postal code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StreetCode" type="common:t_NISCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NIS code of the street</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="common:DescriptionType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>name of the street</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HouseNumber" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of house in the steet</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Box" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>box number in the building</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DiplomaticPostType">
+		<xs:annotation>
+			<xs:documentation>diplomatic post address of the person. Can not be present together with Address</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CountryCode" type="common:t_NISCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NIS code of the country the person lives in</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Post" type="common:t_NISCode">
+				<xs:annotation>
+					<xs:documentation>NIS code of the diplomatic post the person is registered with</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AddressPlainText">
+				<xs:annotation>
+					<xs:documentation>the address of the person in unformatted form</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
