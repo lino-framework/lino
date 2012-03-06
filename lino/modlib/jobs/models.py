@@ -179,8 +179,6 @@ class JobProviderDetail(CompanyDetail):
         CompanyDetail.setup_handle(self,lh)
         lh.jobs.label = _("Jobs")
 
-      
-
   
 
 
@@ -188,7 +186,7 @@ class JobProviders(Companies):
     """
     List of Companies that have `Company.is_jobprovider` activated.
     """
-    use_as_default_report = False
+    #~ use_as_default_table = False
     model = JobProvider
     app_label = 'jobs'
     detail_layout = JobProviderDetail()
@@ -1125,7 +1123,7 @@ if True: # settings.LINO.user_model:
         """
         label = _("Job Contracts Search")
         
-        use_as_default_report = False
+        use_as_default_table = False
         
         parameters = dict(
           user = models.ForeignKey(USER_MODEL,blank=True),

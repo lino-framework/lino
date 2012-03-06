@@ -173,9 +173,9 @@ class Menu(MenuItem):
             a = spec
         elif isinstance(spec,type) and issubclass(spec,models.Model):
             if action:
-                a = spec._lino_model_report.get_action(action)
+                a = spec._lino_default_table.get_action(action)
             else:
-                a = spec._lino_model_report.default_action
+                a = spec._lino_default_table.default_action
         elif isinstance(spec,type) and issubclass(spec,actors.Actor):
             if action:
                 a = spec.get_action(action)

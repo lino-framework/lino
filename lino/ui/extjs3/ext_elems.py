@@ -144,7 +144,7 @@ class GridColumn(Component):
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
             def fk_renderer(fld,name):
-                rpt = fld.rel.to._lino_model_report
+                rpt = fld.rel.to._lino_default_table
                 if rpt.detail_action is not None:
                     return "Lino.fk_renderer('%s','Lino.%s')" % (
                       name + ext_requests.CHOICES_HIDDEN_SUFFIX,
@@ -893,7 +893,7 @@ class BooleanFieldElement(FieldElement):
                 #~ js = "Lino.show_mti_child('%s','%s')" % (self.field.name,url)
                 #~ label += """ (<a href="javascript:%s">%s</a>)""" % (js,_("show"))
             if isinstance(self.field,mti.EnableChild):
-                rpt = self.field.child_model._lino_model_report
+                rpt = self.field.child_model._lino_default_table
                 if rpt.detail_action is not None:
                     js = "Lino.show_mti_child('%s',Lino.%s)" % (
                       self.field.name,

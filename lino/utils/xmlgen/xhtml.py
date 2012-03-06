@@ -12,9 +12,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-raise Exception("No longer used since 20120301")
-
 """
+
+This module is deprecated. 
+Lino now uses http://www.lxml.de instead.
+See :doc:`/blog/2012/0301` and :doc:`/blog/2012/0302`
+
 
 First example:
 

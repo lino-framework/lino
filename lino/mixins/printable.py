@@ -738,7 +738,7 @@ class CachedPrintable(models.Model,Printable):
         
     def get_cache_filename(self):
         # TODO: too stupid that we must instantate an Action here...
-        a = PrintAction(self.__class__._lino_model_report)
+        a = PrintAction(self.__class__._lino_default_table)
         bm = get_build_method(self)
         return bm.get_target_name(a,self)
         

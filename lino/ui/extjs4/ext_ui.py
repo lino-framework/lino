@@ -1165,7 +1165,7 @@ class ExtUI(base.UI):
         elif field.choices:
             qs = field.choices
         elif isinstance(field,models.ForeignKey):
-            qs = field.rel.to._lino_model_report.request(self).get_queryset()
+            qs = field.rel.to._lino_default_table.request(self).get_queryset()
             #~ qs = get_default_qs(field.rel.to)
             #~ qs = field.rel.to.objects.all()
         else:
@@ -1388,8 +1388,8 @@ class ExtUI(base.UI):
         return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
-        #~ rpt = obj.__class__._lino_model_report
-        rpt = obj._lino_model_report
+        #~ rpt = obj.__class__._lino_default_table
+        rpt = obj._lino_default_table
         return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
         
         

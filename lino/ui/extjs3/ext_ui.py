@@ -252,10 +252,10 @@ class ExtRenderer(HtmlRenderer):
             
     def href_to(self,obj,text=None):
         url = self.js2url(self.instance_handler(obj))
-        #~ a = obj.__class__._lino_model_report.get_action('detail')
+        #~ a = obj.__class__._lino_default_table.get_action('detail')
         #~ url = self.action_url_js(a,None,dict(record_id=obj.pk))
         #~ onclick = self.instance_handler(obj)
-        #~ a = obj.__class__._lino_model_report.get_action('detail')
+        #~ a = obj.__class__._lino_default_table.get_action('detail')
         #~ onclick = 'Lino.%s(undefined,{},{record_id:%s})' % (a,py2js(obj.pk))
         #~ onclick = cgi.escape(onclick)
         #~ onclick = onclick.replace('"','&quot;')
@@ -356,9 +356,9 @@ class ExtRenderer(HtmlRenderer):
         return "Lino.%s()" % a
 
     def instance_handler(self,obj):
-        a = obj.__class__._lino_model_report.get_action('detail')
+        a = obj.__class__._lino_default_table.get_action('detail')
         if a is None:
-            raise Exception("No detail action for %s" % obj.__class__._lino_model_report)
+            raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
         return self.action_call(a,None,dict(record_id=obj.pk))
         
     def request_handler(self,rr,*args,**kw):
@@ -405,7 +405,7 @@ class ExtRenderer(HtmlRenderer):
         return self.build_url('api',rr.report.app_label,rr.report.__name__,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
-        #~ rpt = obj._lino_model_report
+        #~ rpt = obj._lino_default_table
         #~ return self.build_url('api',rpt.app_label,rpt.__name__,str(obj.pk),*args,**kw)
         return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
@@ -1572,7 +1572,7 @@ tinymce.init({
         x = getattr(settings.LINO.modules,app_label)
         cl = getattr(x,actor)
         if issubclass(cl,models.Model):
-            return cl._lino_model_report
+            return cl._lino_default_table
         return cl
         
     def parse_params(self,rh,request):
@@ -1989,7 +1989,7 @@ tinymce.init({
             #~ rpt = actors.get_actor2(app_label,actor)
             #~ if rpt is None:
                 #~ model = models.get_model(app_label,actor,False)
-                #~ rpt = model._lino_model_report
+                #~ rpt = model._lino_default_table
             try:
                 elem = rpt.model.objects.get(pk=pk)
             except ValueError:
@@ -2090,12 +2090,12 @@ tinymce.init({
             elif isinstance(field,models.ForeignKey):
                 m = field.rel.to
                 #~ cr = getattr(m,'_lino_choices_table',None)
-                t = getattr(m,'_lino_choices_table',m._lino_model_report)
-                #~ tblclass = getattr(m,'_lino_choices_table',m._lino_model_report)
+                t = getattr(m,'_lino_choices_table',m._lino_default_table)
+                #~ tblclass = getattr(m,'_lino_choices_table',m._lino_default_table)
                 #~ if tblclass is not None:
                     #~ tbl = tblclass()
                 #~ else:
-                    #~ tbl = m._lino_model_report
+                    #~ tbl = m._lino_default_table
                 qs = t.request(self,request).data_iterator
                 #~ ar = table.TableRequest(self,tbl,request,tbl.default_action)
                 #~ qs = ar.get_queryset()

@@ -683,7 +683,7 @@ class SignAction(actions.Action):
         context.refresh()
 
 class DocumentsToSign(Invoices):
-    use_as_default_report = False
+    use_as_default_table = False
     filter = dict(user__isnull=True)
     can_add = perms.never
     column_names = "number:4 order creation_date " \

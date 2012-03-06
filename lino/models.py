@@ -351,7 +351,7 @@ class ModelsBySite(dd.VirtualTable):
         
     @dd.requestfield(_("Rows"))
     def rows(self,obj,ar):
-        return obj._lino_model_report.request(ar.ui,
+        return obj._lino_default_table.request(ar.ui,
           user=ar.get_user(),renderer=ar.renderer)
         
 class Models(dd.VirtualTable):
@@ -386,7 +386,7 @@ class Models(dd.VirtualTable):
         
     @dd.requestfield(_("Rows"))
     def rows(self,obj,ar):
-        return obj._lino_model_report.request(ar.ui,
+        return obj._lino_default_table.request(ar.ui,
           user=ar.get_user(),renderer=ar.renderer)
         
 

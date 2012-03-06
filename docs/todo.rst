@@ -16,7 +16,16 @@ Short-term
     Es gibt ja den `Ext.ProgressBar`.
     Der Server muss bei längeren Prozessen einen Hintergrundprozess (Thread) starten 
     und auf den Ajax-Call mit der Nummer des Threads antworten. Der Client muss dann 
-    mit einem Timer jede Sekunde den Status des Threads abfragen.
+    mit einem Timer jede Sekunde den Status des Threads abfragen.    
+    Zum Beispiel 
+    
+    - wenn UpdateReminders zu lange dauert, entscheidet der Browser scheinbar,
+      den AJAX-Call aufzugeben und bleibt dann mit der loadMask aktiv. 
+    - Das Berechnen der ersten Seite der Datenkontrollliste für alle Personen 
+      dauert länger als 30 Sekunden, so dass die Liste leer scheint (obwohl 
+      sie es überhaupt nicht ist).
+    
+#.  Vertragsüberschneidungen bei save() statt Datenkontrollliste.
 
 #.  BCSS-Requests: Button "Execute" deaktivieren, wenn Request 
     abgeschickt ist.
@@ -26,13 +35,9 @@ Short-term
 #.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 
     Basisklassen anzeigen. Der Unterschied ist für den Benutzer nicht wichtig.
 
-#.  Wenn UpdateReminders zu lange dauert, entscheidet der Browser scheinbar,
-    den AJAX-Call aufzugeben und bleibt dann mit der loadMask aktiv. 
-    
 #.  Picker for calendar color. Or at least a ChoiceList with names.
     http://ext.ensible.com/forum/viewtopic.php?f=2&t=339
     See :file:`calendar-colors.css`
-    
 
 #.  http://www.sencha.com/learn/grid-faq/
 
@@ -59,7 +64,6 @@ Short-term
     En attendant ist das Feld Ganztags nicht aktiv, und die Uhrzeit-Felder 
     werden *nicht* disabled wenn es angekreuzt ist. Weil man sonst nicht 
     einfach einem Ganztagstermin eine Uhrzeit zuweisen kann.
-      
     
 #.  When a user tries to sort a column on a RemoteField, the server says::
 
@@ -848,12 +852,6 @@ Long-term
 #. Wir brauchen in :class:`notes.Note` noch eine Methode `type_choices` und 
    in :class:`notes.NoteType` ein Feld `only_for_owner_model`, das die Auswahlliste 
    für Notizart ggf. auf bestimmte Arten von Owner beschränkt.
-  
-#. Continue to reanimate iGen. See :doc:`/blog/2010/1028`.
-
-#. Mehrsprachige Dokumentvorlagen: um das zu ermöglichen, muss ich 
-   wahrscheinlich im doctemplates-Baum zusätzlich zu 'de', 'fr' usw. 
-   ein weiteres Verzeichnis `default` verwenden.
   
 #. Lässt sich mein System von config-Dateien unter Verwendung von 
    django.templates.loader neu implementieren? Erste Prognose lautet 

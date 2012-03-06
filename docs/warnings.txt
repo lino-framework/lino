@@ -1,9 +1,12 @@
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
 T:\hgwork\lino\docs\admin\pythonpath.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.utils.bcss.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\ref\modelattr.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.utils.bcss.rst:174: WARNING: py:meth reference target not found: Service.ssdn_request
+T:\hgwork\lino\docs\autodoc\lino.utils.bcss.rst:262: WARNING: py:class reference target not found: lino.utils.bcss.Namespace
+T:\hgwork\lino\docs\autodoc\lino.utils.bcss.rst:270: WARNING: py:class reference target not found: exceptions.Exception

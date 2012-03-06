@@ -221,8 +221,8 @@ def install_summary_rows():
     for model in models.get_models():
         m = get_class_attr(model,'summary_row') 
         if m is None:
-            #~ if model._lino_model_report._lino_detail:
-            if model._lino_model_report.detail_layout:
+            #~ if model._lino_default_table._lino_detail:
+            if model._lino_default_table.detail_layout:
                 def f(obj,ui,**kw):
                     return ui.ext_renderer.href_to(obj)
                     #~ return u'<a href="%s" target="_blank">%s</a>' % (
@@ -316,7 +316,7 @@ def setup_site(self,make_messages=False):
     
     #~ logger.debug("analyze_models() done")
     
-    # set _lino_model_report for all models:
+    # set _lino_default_table for all models:
     
     table.discover()
     
@@ -411,7 +411,7 @@ def setup_site(self,make_messages=False):
         #~ if isinstance(spec,actions.Action):
             #~ a = spec
         #~ elif isinstance(spec,type) and issubclass(spec,models.Model):
-            #~ a = spec._lino_model_report.default_action
+            #~ a = spec._lino_default_table.default_action
         #~ elif isinstance(spec,type) and issubclass(spec,actors.Actor):
             #~ a = spec.default_action
         #~ self.index_view_action = a

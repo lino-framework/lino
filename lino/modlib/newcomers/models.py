@@ -132,7 +132,7 @@ class Newcomers(AllPersons):
     
     #~ filter = dict(newcomer=True)
     known_values = dict(newcomer=True)
-    #~ use_as_default_report = False
+    #~ use_as_default_table = False
     column_names = "name_column broker faculty address_column *"
     
     @classmethod
@@ -141,7 +141,7 @@ class Newcomers(AllPersons):
         
 class NewClients(AllPersons):
     label = _("New Clients")
-    use_as_default_report = False
+    use_as_default_table = False
     
     parameters = dict(
         coached_by = models.ForeignKey(users.User,verbose_name=_("Coached by"),blank=True),

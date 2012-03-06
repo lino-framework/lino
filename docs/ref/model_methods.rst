@@ -1,16 +1,30 @@
-Special model methods
----------------------
+Special model attributes and methods
+------------------------------------
+
+.. modmeth:: _lino_default_table
+
+    Used internally. Lino chooses during the kernel startup, for each model, 
+    one of the discovered Table subclasses as the "default table".
 
 .. modmeth:: allow_cascaded_delete
+
+    Lino, like Django, by default forbids to delete an object that is 
+    referenced by other objects.
 
     Set this to `True` on models whose objects should get automatically 
     deleted if a related object gets deleted. 
     Example: Lino should not refuse to delete 
-    a Mail just because it has some 
-    Recipient. 
+    a Mail just because it has some Recipient. 
     When deleting a Mail, Lino should also delete its Recipients.
     That's why :class:`lino.modlib.mails.models.Recipient` 
     has ``allow_cascaded_delete = True``.
+    
+    Other examples of such models are 
+    :class:`lino.apps.dsbe.models.PersonProperty`
+    and
+    :class:`lino.apps.dsbe.models.LanguageKnowledge`.
+
+    
     
 .. modmeth:: disabled_fields
 

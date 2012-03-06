@@ -50,9 +50,9 @@ def get_slave(model,name):
                 #~ return rpt
 
 def get_model_report(model):
-    if not hasattr(model,'_lino_model_report'):
-        raise Exception("%r has no _lino_model_report" % model)
-    return model._lino_model_report
+    if not hasattr(model,'_lino_default_table'):
+        raise Exception("%r has no _lino_default_table" % model)
+    return model._lino_default_table
 
 def get_unbound_meth(cl,name):
     raise Exception("replaced by lino.utils.get_class_attr")

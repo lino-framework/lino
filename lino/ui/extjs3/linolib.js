@@ -4076,7 +4076,8 @@ Lino.show_mti_child = function(fieldname,detail_handler) {
       Lino.notify('Not allowed on phantom record.');
     }else if (rec.data[fieldname]) {
       //~ console.log('show_mti_child',rec.id);
-      detail_handler(Lino.current_window.main_item,{},{record_id:rec.id});
+      //~ detail_handler(Lino.current_window.main_item,{},{record_id:rec.id});
+      detail_handler({},{record_id:rec.id});
       //~ window.open(urlroot + '/' + rec.id);
       //~ document.location = urlroot + '/' + rec.id;
       //~ window.open(urlroot + '/' + rec.id,'_blank');

@@ -1123,7 +1123,7 @@ if settings.LINO.use_extensible:
         The report used for Ext.ensible CalendarPanel.
         """
         
-        use_as_default_report = False
+        use_as_default_table = False
         #~ filter = models.Q(start_date__isnull=False)
         
         column_names = 'id start_dt end_dt summary description user place calendar rset url all_day reminder'

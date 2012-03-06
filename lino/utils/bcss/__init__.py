@@ -13,20 +13,39 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Communicate with the :term:`BCSS` server.
+This document describes how to communicate with the :term:`BCSS` server 
+using Python and Lino. It covers the low-level aspects which might also 
+be useful from applications that do not use the other parts of Lino.
 
-Example:
+To run these examples, you need
+Python, Lino and the following Python modules:
 
-Identify Person
----------------
+  - :term:`lxml`
+  - :term:`appy.pod`
+  
+  
 
-This request has two variants: with known NISS or without.
-If a NISS is given, the other parameters are "verification data".
+
+Building SSDN requests
+----------------------
+
+This module currently supports the following "classical" SSDN requests:
+
+- :attr:`ipr` : IdentifyPerson
+- :attr:`pir` : PerformInvestigation
+- :attr:`hir` : HealthInsurance
+ 
+:attr:`ipr` has two variants: *with* known NISS or *without*.
+If a NISS is given, the other parameters are "verification data". 
+For example:
 
 >>> req = ipr.build_request("68060101234",
 ...   last_name="SAFFRE",birth_date='1968-06-01')
->>> print etree.tostring(req,pretty_print=True)
-<ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+
+To show what this request contains, we can use lxml's tostring method:
+
+>>> print etree.tostring(req,pretty_print=True) #doctest: +ELLIPSIS
+<ipr:IdentifyPersonRequest xmlns:ipr="http://.../IdentifyPerson">
   <ipr:SearchCriteria>
     <ipr:SSIN>68060101234</ipr:SSIN>
   </ipr:SearchCriteria>
@@ -39,11 +58,24 @@ If a NISS is given, the other parameters are "verification data".
 </ipr:IdentifyPersonRequest>
 <BLANKLINE>
 
-If no NISS is given, the other parameters are "search criteria".
+If no NISS is given, the other parameters are "search criteria", 
+and at least the birth date is then mandatory. If you don't give birth 
+date, you'll get a :class:`SimpleException` (i.e. an Exception whose 
+string is meant to be understandable by the user):
+
+>>> req = ipr.build_request(last_name="SAFFRE")
+Traceback (most recent call last):
+...
+SimpleException: Either national_id or birth date must be given
+
+Here is a valid ipr request:
 
 >>> req = ipr.build_request(last_name="SAFFRE",birth_date='1968-06-01')
->>> print etree.tostring(req,pretty_print=True)
-<ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+
+Again, we can look at the XML to see what it contains:
+
+>>> print etree.tostring(req,pretty_print=True) #doctest: +ELLIPSIS
+<ipr:IdentifyPersonRequest xmlns:ipr="http://.../IdentifyPerson">
   <ipr:SearchCriteria>
     <ipr:PhoneticCriteria>
       <ipr:LastName>SAFFRE</ipr:LastName>
@@ -55,10 +87,14 @@ If no NISS is given, the other parameters are "search criteria".
 </ipr:IdentifyPersonRequest>
 <BLANKLINE>
 
->>> req = pir.build_request("6806010123",wait="0")
->>> print etree.tostring(req,pretty_print=True)
-<pir:PerformInvestigationRequest xmlns:pir="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
-  <pir:SocialSecurityUser>6806010123</pir:SocialSecurityUser>
+
+
+Here is also a PerformInvestigation request:
+
+>>> req = pir.build_request("68060101234",wait="0")
+>>> print etree.tostring(req,pretty_print=True) #doctest: +ELLIPSIS
+<pir:PerformInvestigationRequest xmlns:pir="http://.../PerformInvestigation">
+  <pir:SocialSecurityUser>68060101234</pir:SocialSecurityUser>
   <pir:DataGroups>
     <pir:FamilyCompositionGroup>1</pir:FamilyCompositionGroup>
     <pir:CitizenGroup>1</pir:CitizenGroup>
@@ -68,35 +104,97 @@ If no NISS is given, the other parameters are "search criteria".
 </pir:PerformInvestigationRequest>
 <BLANKLINE>
 
+
+Executing SSDN requests
+-----------------------
+
 The above examples are bare BCSS service requests.
-Before sending a request to the BCSS server, 
-we must wrap it into a "SSDN request".
+In order to actually execute our request, 
+we need some more parameters:
+
+- The "user parameters" for the BCSS, specified as a normal Python `dict` 
+  object:
+
+  >>> user_params = dict(
+  ...     UserID='123456', 
+  ...     Email='info@exemple.be', 
+  ...     OrgUnit='0123456', 
+  ...     MatrixID='17', 
+  ...     MatrixSubID='1')
+
+  The document you are reading uses fictive user parameters and 
+  doesn't actually execute any real request, 
+  but if you have the permission to connect to the BCSS server
+  (see `www.ksz-bcss.fgov.be <http://www.ksz-bcss.fgov.be/fr/bcss/docutheque/content/websites/belgium/services/docutheque.html>`_),
+  you should be able to reproduce the examples using your correct user parameters.
+  
+  (In a Lino application, these user parameters 
+  are defined in your local :xfile:`settings.py` 
+  module :attr:`lino.Lino.bcss_user_params`.)
+  
+  
+
+- You also need a unique reference and a timestamp. 
+
+  >>> now = datetime.datetime(2011,10,31,15,41,10)
+  >>> unique_id = 'PIR # 5'
+
+  Your application is responsible for keeping a log of all 
+  requests (including also the user who issued the request).
+  Lino does this in :mod:`lino.modlib.bcss`.
+
+
+- And then we need the URL of the server. 
+  In a real configuration it looks something like this:
+
+  >>> bcss_soap_url = "https://bcssksz-services-test.smals.be" \
+  ...   + "/connectors/webservice/KSZBCSSWebServiceConnectorPort"
+
+  Since in this document we don't want to actually perform real 
+  requests, we'll set the URL to None:
+
+  >>> bcss_soap_url = None
+  
+  (In a Lino application, this is defined in 
+  your local :xfile:`settings.py` 
+  module :attr:`lino.Lino.bcss_soap_url`.)
+  
+  
+
+
+If you run the following call in a real environment
+(with permission to connect and correct data in `user_params`), 
+it won't raise the `SimpleException` but return a `response object`:
+
+>>> response = pir.execute(req,user_params,bcss_soap_url,unique_id,now) #doctest: +ELLIPSIS
+Traceback (most recent call last):
+...
+SimpleException: Not actually sending because url is empty. Request would be:
+<?xml version='1.0' encoding='ASCII'?>
+<soap:Envelope ...</soap:Envelope>
+
+The `response` is currently a simple wrapper around the XML structure 
+returned by the BCSS.
+Your application is responsible for treating and storing and using this data.
+Lino does this in :mod:`lino.modlib.bcss`.
+
+
+
+Internals
+---------
+
+Internally we must first wrap it into a "SSDN request".
 The easiest way to do this is to use the 
 :meth:`Service.ssdn_request` method.
 
-:meth:`Service.ssdn_request` wants the 
-"user parameters" for the BCSS as a dict:
-
->>> user_params = dict(
-...     UserID='123456', 
-...     Email='info@exemple.be', 
-...     OrgUnit='0123456', 
-...     MatrixID='17', 
-...     MatrixSubID='1')
-
-(In a Lino application, these user parameters 
-are defined in your local :xfile:`settings.py` 
-module :attr:`lino.Lino.bcss_user_params`.)
-
-:meth:`Service.ssdn_request` also expects a unique reference 
-and a timestamp for your request:
-
->>> now = datetime.datetime(2011,10,31,15,41,10)
->>> unique_id = 'PIR # 5'
-
-Here we go:
+Remember that we have in our variable ``req`` the 
+PerformInvestigation request from above. 
+Let's wrap this into an SSDN envelope:
 
 >>> sr = pir.ssdn_request(req,user_params,unique_id,now)
+
+Here is the bare XML of this wrapped SSDN request:
+
 >>> print etree.tostring(sr,pretty_print=True) #doctest: +ELLIPSIS
 <SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
   <RequestContext>
@@ -115,20 +213,20 @@ Here we go:
   <ServiceRequest>
     <ServiceId>OCMWCPASPerformInvestigation</ServiceId>
     <Version>20080604</Version>
-    <pir:PerformInvestigationRequest xmlns:pir="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation">
+    <pir:PerformInvestigationRequest xmlns:pir="http://.../PerformInvestigation">
     ...
     </pir:PerformInvestigationRequest>
   </ServiceRequest>
 </SSDNRequest>
 <BLANKLINE>
 
+Internally, the `execute` method wraps the SSDN request 
+into a SOAP envelope:
 
-Now we perform another wrapping of this SSDN request.
-
->>> print etree.tostring(soap_request("Foo"),pretty_print=True)
+>>> print etree.tostring(soap_request("Foo"),pretty_print=True) #doctest: +ELLIPSIS
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
-    <bcss:xmlString xmlns:bcss="http://ksz-bcss.fgov.be/connectors/WebServiceConnector"><![CDATA[Foo]]></bcss:xmlString>
+    <bcss:xmlString xmlns:bcss="http://.../WebServiceConnector"><![CDATA[Foo]]></bcss:xmlString>
   </soap:Body>
 </soap:Envelope>
 <BLANKLINE>
@@ -149,7 +247,11 @@ from appy.shared.xml_parser import XmlUnmarshaller
 from lxml import etree
 from lxml.builder import ElementMaker # lxml only !
 
-class SimpleException(Exception): pass
+class SimpleException(Exception): 
+    """
+    An Exception whose string is meant to be 
+    understandable by the user.
+    """
 
 
 #~ def py2str(value):
@@ -319,15 +421,13 @@ class Service(Namespace):
         soap_body = etree.tostring(sr)
         req = soap_request(soap_body)
         #~ xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + 
+        
         xmlString = etree.tostring(req,xml_declaration=True)
         
         if not url:
             raise SimpleException("""\
 Not actually sending because url is empty. Request would be:
 """ + xmlString)
-            raise Exception("Not actually sending because url is empty.")
-            #~ return Object(data=Object(xmlString="Not actually sending because url is empty."))
-            #~ return None
         
         server = Resource(url,measure=True)
         res = server.soap(xmlString)
@@ -352,27 +452,6 @@ class IdentifyPersonRequest(Service):
     xsd_filename = os.path.join('SSDN','OCMW_CPAS',
         'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
 
-    #~ def verify_request(ipr,ssin,**kw):
-        #~ """
-        #~ possible keywords are the allowed children of
-        #~ :class:`IdentifyPersonRequest.VerificationData.PersonData`:
-        #~ LastName,
-        #~ FirstName,
-        #~ MiddleName and 
-        #~ BirthDate.
-        
-        #~ """
-        #~ pd = []
-        #~ for k in ('LastName','FirstName','MiddleName','BirthDate'):
-            #~ v = kw.get(k,None)
-            #~ if v: # ignore empty values
-                #~ cl = getattr(ipr,k)
-                #~ pd.append(cl(v))
-        #~ return ipr.IdentifyPersonRequest(
-          #~ ipr.SearchCriteria(ipr.SSIN(ssin)),
-          #~ ipr.VerificationData(ipr.PersonData(*pd)))
-          
-          
     def build_request(ipr,
         national_id='',
         first_name='',
@@ -406,16 +485,6 @@ class IdentifyPersonRequest(Service):
               ipr.SearchCriteria(ipr.SSIN(national_id)),
               ipr.VerificationData(ipr.PersonData(*pd)))
           
-            #~ return ipr.verify_request(
-              #~ national_id,
-              #~ LastName=last_name,
-              #~ MiddleName=middle_name,
-              #~ FirstName=first_name,
-              #~ BirthDate=birth_date,
-              #~ )
-        #~ VD = ipr.VerificationData
-        #~ SC = 
-        #~ PC = ipr.PhoneticCriteria
         if birth_date is None:
             raise SimpleException(
                 "Either national_id or birth date must be given")
@@ -426,19 +495,25 @@ class IdentifyPersonRequest(Service):
         pc.append(ipr.BirthDate(birth_date))
         #~ if gender is not None: pc.append(ipr.Gender(gender))
         #~ if tolerance is not None: pc.append(ipr.Tolerance(tolerance))
-        return ipr.IdentifyPersonRequest(
+        root = ipr.IdentifyPersonRequest(
             ipr.SearchCriteria(ipr.PhoneticCriteria(*pc)))
+        ipr.validate_request(root)
+        return root 
           
 
 
 class PerformInvestigationRequest(Service):
+    """
+    A request to the PerformInvestigation BCSS service.
+    Net yet used in practice.
+    """
     service_id = 'OCMWCPASPerformInvestigation'
     service_version = '20080604'
     xsd_filename = os.path.join('SSDN','OCMW_CPAS',
         'PERFORMINVESTIGATION','PERFORMINVESTIGATIONREQUEST.XSD')
     
     def build_request(pir,ssin,family='1',citizen='1',address='1',wait='1'):
-        return pir.PerformInvestigationRequest(
+        root = pir.PerformInvestigationRequest(
             pir.SocialSecurityUser(ssin),
             pir.DataGroups(
               pir.FamilyCompositionGroup(family),
@@ -446,19 +521,27 @@ class PerformInvestigationRequest(Service):
               pir.AddressHistoryGroup(address),
               pir.WaitRegisterGroup(wait)))
 
+        pir.validate_request(root)
+        return root 
     
     
 
     
         
 class HealthInsuranceRequest(Service):
+    """
+    A request to the HealthInsurance BCSS service.
+    Net yet used in practice.
+    """
     service_id = 'OCMWCPASHealthInsurance'
     service_version = '20070509'
     
     
+    
 ipr = IdentifyPersonRequest('ipr',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
-pir = PerformInvestigationRequest('pir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
-hir = HealthInsuranceRequest('hir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
+"""
+The Namespace for :class:`IdentifyPersonRequest`.
+"""
 
 ipr.define("""
 IdentifyPersonRequest
@@ -480,6 +563,11 @@ PersonData
 """)
 
 
+pir = PerformInvestigationRequest('pir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
+"""
+The Namespace for :class:`PerformInvestigationRequest`.
+"""
+
 pir.define("""
 PerformInvestigationRequest
 SocialSecurityUser
@@ -489,6 +577,11 @@ CitizenGroup
 AddressHistoryGroup
 WaitRegisterGroup
 """)
+
+hir = HealthInsuranceRequest('hir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
+"""
+The Namespace for :class:`HealthInsuranceRequest`.
+"""
 
 hir.define("""
 HealthInsuranceRequest

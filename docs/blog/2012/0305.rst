@@ -1,0 +1,38 @@
+20120305
+========
+
+Zwei Bugs
+---------
+
+Da! Noch ein Bug: wenn man z.B. in der Liste der Stellen 
+auf einen Stellenanbieter klickte um dessen Detail zu sehen, 
+kam stattdessen ein Traceback::
+
+  TypeError at /api/jobs/JobProviderTable/3999
+  unsupported operand type(s) for +: 'NoneType' and 'unicode'
+  
+  
+
+Der Fehler verschwand, nachdem ich das
+`use_as_default_report = False`
+aus der 
+:class:`jobs.JobProviders`
+rausgeholt habe, das dort fälschlicherweise stand. 
+Dadurch machte er eine `JobProviderTable` als _lino_model_report
+
+Internally renamed `_lino_model_report` to 
+:modattr:`_lino_default_table`.
+
+Internally renamed `use_as_default_report` to 
+:attr:`lino.core.table.Table.use_as_default_table`.
+
+Und noch einer: die "(zeigen)"-Links im Detail Organisation und Person 
+funktionierten nicht. 
+`Lino.show_mti_child` rief den detail handler noch mit 
+caller als erstem Parameter auf. 
+
+
+Tests TX25
+----------
+
+sudo aptitude install python-suds

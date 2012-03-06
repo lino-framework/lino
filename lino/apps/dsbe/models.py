@@ -1062,7 +1062,7 @@ class Persons(AllPersons):
     All Persons except newcomers and inactive persons.
     """
     app_label = 'contacts'
-    #~ use_as_default_report = False 
+    #~ use_as_default_table = False 
     known_values = dict(is_active=True,newcomer=False)
     #~ filter = dict(is_active=True,newcomer=False)
     #~ label = Person.Meta.verbose_name_plural + ' ' + _("(unfiltered)")
@@ -1131,7 +1131,7 @@ class MyPersons(Persons):
     
     """
     #~ app_label = 'contacts'
-    use_as_default_report = False
+    use_as_default_table = False
     label = _("My clients")
     #~ order_by = ['last_name','first_name']
     #~ column_names = "name_column:20 coached_from coached_until national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
@@ -1758,7 +1758,7 @@ class CourseProviders(Companies):
     List of Companies that have `Company.is_courseprovider` activated.
     """
     #~ hide_details = [Contact]
-    #~ use_as_default_report = False
+    #~ use_as_default_table = False
     #~ app_label = 'dsbe'
     #~ label = _("Course providers")
     model = CourseProvider
@@ -2308,7 +2308,7 @@ class PersonsBySearch(AllPersons):
 
 class OverlappingContracts(dd.Table):
     model = Person
-    use_as_default_report = False
+    use_as_default_table = False
     #~ base_queryset = only_coached_persons(Person.objects.all())
     label = _("Overlapping Contracts")
     #~ def a(self):

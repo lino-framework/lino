@@ -60,6 +60,9 @@ Glossary
   appy.pod
     See http://appyframework.org/pod.html
   
+  lxml
+    See http://lxml.de
+  
   initdb
     See :mod:`lino.management.commands.initdb`
     

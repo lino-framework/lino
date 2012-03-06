@@ -39,7 +39,7 @@ You'll need the following Debian packages installed:
     
 * Packages needed by Lino to work::
 
-    python-dateutil python-yaml python-cheetah python-docutils python-vobject
+    python-dateutil python-yaml python-cheetah python-docutils python-vobject python-lxml
     
 * Some database frontend (choose one)::
 

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by bcss (KSZ-BCSS) -->
+<!--
+FileName: TestConnectionService.xsd
+Author: Gert-Jan van Egdom
+Owner: KSZ / CBSS
+Creation date: 29-07-09
+Description: Creation of the file.
+This application will test the connection from the client with the CBSS. 
+Current version: 0.1
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://kszbcss.fgov.be/types/TestConnectionService/v1" targetNamespace="http://kszbcss.fgov.be/types/TestConnectionService/v1" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+	<xsd:complexType name="SendTestMessageRequestType">
+		<xsd:sequence>
+			<xsd:element name="echo" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SendTestMessageResponseType">
+		<xsd:sequence>
+			<xsd:element name="informationCBSS" type="InformationCBSSType" minOccurs="0"/>
+			<xsd:element name="echo" type="xsd:string"/>
+			<xsd:element name="sslCertificate" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="StatusType">
+		<xsd:sequence>
+			<xsd:element name="value">
+				<xsd:annotation>
+					<xsd:documentation>Global status of the result.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="DATA_FOUND"/>
+						<xsd:enumeration value="NO_DATA_FOUND"/>
+						<xsd:enumeration value="NO_RESULT"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="code">
+				<xsd:annotation>
+					<xsd:documentation>The code of the status.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="16"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="description" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The description of the status.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="256"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="information" type="InformationType" minOccurs="0" maxOccurs="5"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="InformationCBSSType">
+		<xsd:annotation>
+			<xsd:documentation>Information block from CBSS.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ticketCBSS" type="UUIDType"/>
+			<xsd:element name="timestampReceive" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Time request was received by CBSS.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="timestampReply" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Time reply was sent by CBSS.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="InformationCustomerType">
+		<xsd:annotation>
+			<xsd:documentation>Information block that can be used by the customer for diagnostic use.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ticket" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Client can assign their own ticket reference for the request. Not mandatory.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="32"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="timestampSent" type="xsd:dateTime" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Timestamp when client sent request.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="customerIdentification" type="CustomerIdentificationType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CustomerIdentificationType">
+		<xsd:choice>
+			<xsd:element name="cbeNumber" type="CbeNumberType"/>
+			<xsd:sequence>
+				<xsd:element name="sector">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:unsignedShort">
+							<xsd:maxInclusive value="999"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="institution">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:unsignedShort">
+							<xsd:maxInclusive value="999"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:simpleType name="CbeNumberType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{9,10}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="MessageType">
+		<xsd:sequence>
+			<xsd:element name="severity" type="SeverityType"/>
+			<xsd:element name="reasonCode">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="16"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="diagnostic">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="256"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="authorCode">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="64"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="information" type="InformationType" minOccurs="0" maxOccurs="5"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="InformationType">
+		<xsd:sequence>
+			<xsd:element name="fieldName" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="64"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="fieldValue" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="256"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="SeverityType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="INFORMATION"/>
+			<xsd:enumeration value="WARNING"/>
+			<xsd:enumeration value="FATAL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UUIDType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

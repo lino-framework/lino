@@ -228,10 +228,10 @@ def setup(app):
       #~ indextemplate='pair: %s; model')
     #~ app.add_object_type(directivename='field',rolename='field',
       #~ indextemplate='pair: %s; field')
-    app.add_object_type(directivename='report',rolename='report',
-      indextemplate='pair: %s; report')
-    app.add_object_type(directivename='modmeth',rolename='modmeth',
-      indextemplate='pair: %s; model method')
+    app.add_object_type(directivename='table',rolename='table',
+      indextemplate='pair: %s; table')
+    app.add_object_type(directivename='modattr',rolename='modattr',
+      indextemplate='pair: %s; model attribute')
     app.add_object_type(directivename='model',rolename='model',
       indextemplate='pair: %s; model')
     #app.connect('build-finished', handle_finished)

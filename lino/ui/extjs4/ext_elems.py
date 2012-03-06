@@ -104,7 +104,7 @@ class GridColumn(Component):
                 rend = 'Lino.raw_renderer'
             elif isinstance(editor.field,models.ForeignKey):
                 # FK fields are clickable if their target has a detail view
-                rpt = editor.field.rel.to._lino_model_report
+                rpt = editor.field.rel.to._lino_default_table
                 if rpt.detail_action is not None:
                 #~ a = rpt.get_action('detail')
                 #~ if a is not None:

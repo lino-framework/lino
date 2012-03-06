@@ -17,8 +17,8 @@ Lino relies on Django's system of 'applications' and 'models'.
 
 
 
-The ``countries`` application label
------------------------------------
+The ``countries`` label
+-----------------------
 
 .. module:: countries
 
@@ -26,17 +26,17 @@ Implemented in :mod:`lino.modlib.countries`
 
 .. class:: Country
 
-  Implemented in :class:`lino.modlib.countries.models.Country`
+Implemented in :class:`lino.modlib.countries.models.Country`
 
 
 .. class:: City
 
-  Implemented in :class:`lino.modlib.countries.models.City`
+Implemented in :class:`lino.modlib.countries.models.City`
 
 
 
-The ``contacts`` application label
-----------------------------------
+The ``contacts`` label
+----------------------
 
 .. module:: contacts
 
@@ -54,7 +54,7 @@ in a certain :class:`Company`.
 
 .. class:: Contact
 
-  Abstract base class for :class:`Company` and :class:`Person`.
+Abstract base class for :class:`Company` and :class:`Person`.
 
 .. class:: Person
 
@@ -107,8 +107,8 @@ in a certain :class:`Company`.
 
 
 
-The ``links`` application label
--------------------------------
+The ``links`` label
+-------------------
 
 .. module:: links
 
@@ -125,5 +125,21 @@ Implemented in :mod:`lino.modlib.links`
 .. class:: LinkType
 
   Implemented in :class:`lino.modlib.links.models.LinkType`
+
+
+The ``jobs`` label
+------------------
+
+.. module:: jobs
+
+Implemented in :mod:`lino.modlib.jobs`
+
+.. class::  JobProvider
+
+Implemented in :class:`lino.modlib.jobs.models.JobProvider`
+  
+.. class::  JobProviders
+
+Implemented in :class:`lino.modlib.jobs.models.JobProviders`
 
 

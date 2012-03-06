@@ -297,9 +297,9 @@ def register_report(rpt):
             if not rpt.model._meta.abstract:
                 #~ logger.debug("20120102 register %s : master report", rpt.actor_id)
                 master_reports.append(rpt)
-            if not rpt.filter and not rpt.known_values and rpt.use_as_default_report:
+            if not rpt.filter and not rpt.known_values and rpt.use_as_default_table:
                 #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
-                rpt.model._lino_model_report = rpt
+                rpt.model._lino_default_table = rpt
         elif rpt.master is ContentType:
             #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
             generic_slaves[rpt.actor_id] = rpt
@@ -317,10 +317,11 @@ def discover():
       Slaves are tables whose data depends on an instance 
       of another model (their master).
       
-    - For each model we want to find out the "model table" ot "default table".
-      The "choices table" for a foreignkey field is also currently simply the pointed model's
+    - For each model we want to find out the "default table".
+      The "choices table" for a foreignkey field is also currently 
+      simply the pointed model's
       model_table.
-      `_lino_model_report`
+      :modattr:`_lino_default_table`
 
     """
               
@@ -337,13 +338,13 @@ def discover():
     logger.debug("Instantiate model tables...")
     for model in models.get_models():
         """Not getattr but __dict__.get because of the mixins.Listings trick."""
-        rpt = model.__dict__.get('_lino_model_report',None)
-        #~ rpt = getattr(model,'_lino_model_report',None)
-        #~ logger.debug('20111113 %s._lino_model_report = %s',model,rpt)
+        rpt = model.__dict__.get('_lino_default_table',None)
+        #~ rpt = getattr(model,'_lino_default_table',None)
+        #~ logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
         if rpt is None:
             rpt = table_factory(model)
             register_report(rpt)
-            model._lino_model_report = rpt
+            model._lino_default_table = rpt
             
             
     logger.debug("Analyze %d slave tables...",len(slave_reports))
@@ -436,7 +437,7 @@ class Table(AbstractTable):
     """See :doc:`/blog/2011/0701`.
     """
     
-    use_as_default_report = True
+    use_as_default_table = True
     """
     Set this to False if this Table should not become the model's default table.
     """
@@ -855,7 +856,7 @@ def table_factory(model):
     #~ logger.info('table_factory(%s)',model.__name__)
     bases = (Table,)
     for b in model.__bases__:
-        rpt = getattr(b,'_lino_model_report',None)
+        rpt = getattr(b,'_lino_default_table',None)
         if rpt is not None:
             if issubclass(model,rpt.model):
             #~ if issubclass(rpt.model,model):

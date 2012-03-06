@@ -17,6 +17,8 @@ de                                                en                            
 ================================================= ============================================ =================================================
 DSBE (Dienst für Sozial-Berufliche Eingliederung) SIS  (Social Integration Service)            SAIS (Service d’Aide à l’Intégration Sociale)
 VSE (Vertrag zur Sozialen Eingliederung)          ISIP (Individual social integration project) PIIS (Projet Individualisé d'Intégration Sociale)
+ÖSHZ (Öffentliches Sozialhilfezentrum)            PCSA (Public Centre for Social Action)       CPAS (Centre Public d'Action Sociale)
+NR (Nationalregister)                             NR (National Register)                       RN (Régistre National)
 ================================================= ============================================ =================================================
  
 The rest of this documentation is currently only in German 
