@@ -219,7 +219,8 @@ Ext.lib.Ajax.serializeForm = function(form) {
 
 
 /*
-http://www.sencha.com/forum/showthread.php?183515 
+My fix for the "Cannot set QuickTips dismissDelay to 0" bug,
+see http://www.sencha.com/forum/showthread.php?183515 
 */
 Ext.override(Ext.QuickTip,{
   showAt : function(xy){
@@ -265,7 +266,7 @@ Ext.override(Ext.QuickTip,{
 });
 
 /*
-Another hack. See 
+Another hack. See /docs/blog/2012/0228
 */
 Ext.Element.addMethods(
     function() {
@@ -330,85 +331,6 @@ Ext.Element.addMethods(
 
 
 Ext.namespace('Lino');
-
-/*
-Instead of serializing the fields of a params_panel, we want their values be stored into an object.
-
-The following code is a collage of serializeForm and Action.Submit.run()
-*/
-Lino.unused_form2dict = function(pp) {
-  
-    if(!pp.form.isValid()) {
-        console.log('20120203 WARNING form2dict found invalid data',pp);
-        //~ return;
-    }
-      
-    var frm = Ext.getDom(pp.form.el.dom)
-      //~ var frm = this.params_panel.form.el.dom
-    if (!frm) {
-        console.log('20120203 form2dict no frm',pp);
-        return;
-    }
-    
-    var fields = pp.form.items,
-        emptyFields = [],
-        setupEmptyFields = function(f){
-            if (f.el.getValue() == f.emptyText) {
-                emptyFields.push(f);
-                f.el.dom.value = "";
-            }
-            if(f.isComposite && f.rendered){
-                f.items.each(setupEmptyFields);
-            }
-        };
-        
-    fields.each(setupEmptyFields);
-        
-    var data = {};
-      
-    var fElements = frm.elements,
-        hasSubmit = false, 
-        name, 
-        type, 
-        hasValue;
-
-    Ext.each(fElements, function(element){
-        name = element.name;
-        type = element.type;
-        if (!element.disabled && name && !(type == 'checkbox' && element.readonly)) {
-            if (/select-(one|multiple)/i.test(type)) {
-                Ext.each(element.options, function(opt){
-                    if (opt.selected) {
-                        hasValue = opt.hasAttribute ? opt.hasAttribute('value') : opt.getAttributeNode('value').specified;
-                        data[name] = hasValue ? opt.value : opt.text;
-                    }
-                });
-            } else if (!(/file|undefined|reset|button/i.test(type))) {
-                //~ if (!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)) {
-                if (!(type == 'submit' && hasSubmit)) {
-                    if (type == 'checkbox') {
-                        //~ console.log('20111001',element,'data += ',encoder(name) + '=' + (element.checked ? 'on' : 'off') + '&');
-                        data[name] = (element.checked ? 'on' : 'off')
-                    } else {
-                        //~ console.log('20111001',element,'data += ',encoder(name) + '=' + encoder(element.value) + '&');
-                        data[name] = element.value
-                    }
-                    hasSubmit = /submit/i.test(type);
-                }
-            }
-        }
-    });
-    
-    Ext.each(emptyFields, function(f) {
-        if (f.applyEmptyText) {
-            f.applyEmptyText();
-        }
-    });
-      
-    return data;
-};
-
-
 
 
 Lino.current_window = null;
@@ -1547,9 +1469,11 @@ Lino.quicktip_renderer = function(title,body) {
     //~ t.dismissDelay = 0;
     Ext.QuickTips.register({
       target: t,
+      //~ cls: 'lino-quicktip-classical',
       dismissDelay: 0,
+      //~ autoHide: false,
       showDelay: 50,      // Show 50ms after entering target
-      title: title,
+      //~ title: title,
       text: body
     });
   }

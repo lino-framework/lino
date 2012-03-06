@@ -229,3 +229,41 @@ adapted for usage in an ExtJS application.
 }
 
 
+/* 
+.x-tip 
+  .x-tip-tl
+    .x-tip-tr
+      .x-tip-tc
+        .x-tip-header
+          .x-tip-header-text
+  .x-tip-bwrap
+    .x-tip-ml
+      .x-tip-mr
+        .x-tip-mc
+          .x-tip-body
+.x-tip-bwrap div {
+	background: #FFFFAA; 
+}	
+.x-tip-header-text { border: 0; }
+
+.x-tip div {
+	background: yellow; 
+}	
+.x-tip-bwrap div {
+	background: yellow; 
+}	
+.x-tip-ml div {
+	background: yellow; 
+}	
+.x-tip-mr div {
+	background: yellow; 
+}	
+.x-tip-mc div {
+	background: yellow; 
+}	
+.x-tip-body div {
+	background: yellow; 
+}	
+*/
+
+/* border: 1px solid #FFAD33;  */
