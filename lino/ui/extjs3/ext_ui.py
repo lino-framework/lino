@@ -2582,7 +2582,7 @@ tinymce.init({
                 #~ return html.TD(etree.XML(x),**cellattrs)
                 x = etree.XML(x)
             except Exception,e:
-                if True:
+                if False:
                     raise Exception("Invalid XML value %r" % x)
                 logger.warning("Invalid XML value %r",x)
                 raise
