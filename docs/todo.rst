@@ -12,19 +12,6 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Handhabung lang dauernder Prozesse. 
-    Es gibt ja den `Ext.ProgressBar`.
-    Der Server muss bei längeren Prozessen einen Hintergrundprozess (Thread) starten 
-    und auf den Ajax-Call mit der Nummer des Threads antworten. Der Client muss dann 
-    mit einem Timer jede Sekunde den Status des Threads abfragen.    
-    Zum Beispiel 
-    
-    - wenn UpdateReminders zu lange dauert, entscheidet der Browser scheinbar,
-      den AJAX-Call aufzugeben und bleibt dann mit der loadMask aktiv. 
-    - Das Berechnen der ersten Seite der Datenkontrollliste für alle Personen 
-      dauert länger als 30 Sekunden, so dass die Liste leer scheint (obwohl 
-      sie es überhaupt nicht ist).
-    
 #.  Vertragsüberschneidungen bei save() statt Datenkontrollliste.
 
 #.  BCSS-Requests: Button "Execute" deaktivieren, wenn Request 

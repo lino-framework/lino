@@ -1,0 +1,27 @@
+20120307
+========
+
+Ich hatte gestern ein wenig gesurft, gelesen und nachgedacht über die 
+Frage, 
+wie Lino mit langlaufenden Prozessen umgehen soll. 
+Die Idee ist, dass der Server dem Client auf manche Ajax-Calls 
+antworten kann "Das dauert was. 
+Hier hast du die Prozessnummer, 
+frag später nochmal nach, wie es gelaufen ist."
+:doc:`/tickets/61`.
+
+Um das zu ermöglichen bräuchte es rein serverseitig 
+schon eine ganze Menge von Zutaten, 
+die technisch interessant und relativ gut dokumentiert, 
+aber eben auch recht komplex sind:
+
+- http://celeryproject.org
+- http://ask.github.com/carrot/index.html
+- http://www.rabbitmq.com/how.html
+
+Und nach einer Nacht entscheide ich --zumindest bis auf weiteres--: 
+Nein, diese ganze Suppe ist nicht nötig! 
+Ich setze den timeout aller Ajax-Calls auf 0 und basta.
+Wem das drehende "Bitte warten" zu lang wird, der kann ja ein zweites 
+Lino-Fenster öffnen und dort parallel arbeiten.
+

@@ -81,6 +81,7 @@ As long as nobody protests, I'll save some time by writing in German.
   |br|
   :doc:`05 <0305>`
   :doc:`06 <0306>`
+  :doc:`07 <0307>`
    
 .. 
 

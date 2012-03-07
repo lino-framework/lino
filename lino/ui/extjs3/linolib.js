@@ -218,6 +218,13 @@ Ext.lib.Ajax.serializeForm = function(form) {
 };
 
 
+
+/*
+
+*/
+Ext.Ajax.timeout = 15 * 60 * 1000; /* fifteen minutes */
+
+
 /*
 My fix for the "Cannot set QuickTips dismissDelay to 0" bug,
 see http://www.sencha.com/forum/showthread.php?183515 

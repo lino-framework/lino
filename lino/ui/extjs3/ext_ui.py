@@ -1961,6 +1961,12 @@ tinymce.init({
         return os.path.join(os.path.dirname(__file__),'linolib.js')
         
     def linolib_template(self):
+        def docurl(ref):
+            if not ref.startswith('/'):
+                raise Exception("Invalid docref %r" % ref)
+            # todo: check if file exists...
+            return "http://lino.saffre-rumma.net" + ref
+            
         libname = self.linolib_template_name()
         tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
         tpl.ui = self
@@ -1970,6 +1976,7 @@ tinymce.init({
         tpl.site = settings.LINO
         tpl.settings = settings
         tpl.lino = lino
+        tpl.docurl = docurl
         tpl.ui = self
         tpl.ext_requests = ext_requests
         for k in ext_requests.URL_PARAMS:

@@ -1,0 +1,40 @@
+#61 : Handling long-running processes
+=====================================
+
+Zum Beispiel 
+
+- wenn UpdateReminders zu lange dauert, entscheidet der Browser,
+  den AJAX-Call aufzugeben und bleibt dann mit der loadMask aktiv. 
+
+- Das Berechnen der ersten Seite der Datenkontrollliste für alle Personen 
+  dauert länger als 30 Sekunden, so dass die Liste leer scheint (obwohl 
+  sie es beiweitem nicht ist).
+
+Die Idee ist, dass der Server dem Client auf manche Ajax-Calls 
+antworten kann "Das dauert was,
+hier hast du die Prozessnummer, 
+frag später nochmal nach, wie das gelaufen ist."
+
+Der Server müsste bei längeren Prozessen also einen 
+Hintergrundprozess (Thread) starten 
+und auf den Ajax-Call mit der Nummer des Threads antworten. Der Client muss dann 
+mit einem Timer jede Sekunde den Status des Threads abfragen.    
+
+
+Sellerie und Möhren
+-------------------
+
+Technisch ist der Hintergrundprozess kein Thread 
+(weil Django scheinbar nicht für threading vorgesehen ist), 
+sondern man muss eine Serie von zusätzlichen Libraries nutzen:
+
+http://celeryproject.org/
+http://ask.github.com/carrot/index.html
+http://www.rabbitmq.com/how.html
+
+Das scheint durchaus machbar.
+
+Schwieriger scheint es auf dem Client: ich habe bisher noch nicht 
+rausgefunden, inwiefern ein `Ext.grid.Store` 
+so eine Situation verwaltet. 
+Und wenn nicht, ob es leicht zu implementieren ist. 
