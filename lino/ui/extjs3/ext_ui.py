@@ -2586,7 +2586,7 @@ tinymce.init({
                     raise Exception("Invalid XML value %r" % x)
                 logger.warning("Invalid XML value %r",x)
                 raise
-             return html.TD(x,**cellattrs)
+            return html.TD(x,**cellattrs)
             
         def f():
             sums  = [0 for col in fields]
