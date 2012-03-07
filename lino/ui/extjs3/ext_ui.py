@@ -2579,10 +2579,14 @@ tinymce.init({
             
             if not x: return html.TD(**cellattrs)
             try:
-                return html.TD(etree.XML(x),**cellattrs)
+                #~ return html.TD(etree.XML(x),**cellattrs)
+                x = etree.XML(x)
             except Exception,e:
-                print 20120301, repr(x)
+                if True:
+                    raise Exception("Invalid XML value %r" % x)
+                logger.warning("Invalid XML value %r",x)
                 raise
+             return html.TD(x,**cellattrs)
             
         def f():
             sums  = [0 for col in fields]
