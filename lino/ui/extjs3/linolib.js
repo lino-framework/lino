@@ -220,9 +220,10 @@ Ext.lib.Ajax.serializeForm = function(form) {
 
 
 /*
-
+Set a long timeout of fifteen minutes. 
+See $docurl('/blog/2012/0307')
 */
-Ext.Ajax.timeout = 15 * 60 * 1000; /* fifteen minutes */
+Ext.Ajax.timeout = 15 * 60 * 1000; 
 
 
 /*
@@ -1628,7 +1629,8 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
     Lino.notify("There's no selected record.");
     return;
   }
-  if (rec.phantom) {
+  // 20120307 A VirtualTable with a Detail (lino.Models) has only "phantom" records.
+  if (panel.editable && rec.phantom) {
     if (phantom_fn) {
       phantom_fn(panel);
     } else {
@@ -3078,7 +3080,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   
   onCellDblClick : function(grid, row, col){
-      //~ console.log("onCellDblClick",grid, row, col);
+      console.log("20120307 onCellDblClick",this,grid, row, col);
       if (this.ls_detail_handler) {
           //~ Lino.notify('show detail');
           Lino.show_detail(this);

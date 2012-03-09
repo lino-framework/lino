@@ -1,0 +1,17 @@
+20120309
+========
+
+Added two new "useless" modules:
+
+- :mod:`lino.utils.intervat`  
+  is not yet being used by Lino, but it helped me to understand
+  these XML Schemas, and 
+  :mod:`lino.utils.intervat.validate` was useful when implementing 
+  them in TIM.
+
+- :mod:`lino.modlib.vocbook` will maybe some day become 
+  lino module, but currently it is usable only by people like 
+  me who are both Python programmer and French teacher.
+  I have been using this code for more than a year when I 
+  needed to print vocabulary lessons for my students.
+  

@@ -27,3 +27,11 @@ distributed with Lino.
   in  :file:`media/extjs`
   are unchanged copies.
 
+- :mod:`lino.utils.pyuca` 
+  is an unmodified copy of James Tauber's 
+  `Python Unicode Collation Algorithm
+  <http://jtauber.com/blog/2006/02/13/bug_fix_to_python_unicode_collation_algorithm/>`_
+  
+  `pyuca_allkeys.txt` is an unmodified copy of
+  http://www.unicode.org/Public/UCA/latest/allkeys.txt
+  

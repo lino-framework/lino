@@ -41,12 +41,13 @@ cm:
 	done
   
 tests:  
-	python lino/utils/choicelists.py
-	python lino\utils\jsgen.py
-	python lino\utils\__init__.py
+	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/choicelists.py
+	python lino/utils/jsgen.py
+	python lino/utils/__init__.py
 	#~ python lino\utils\xmlgen\__init__.py
 	#~ python lino\utils\xmlgen\bcss.py
-	python lino\utils\bcss.py
+	python lino/utils/bcss/__init__.py
+	python lino\utils\intervat\__init__.py
 	python lino\utils\rstgen.py
 	python lino\modlib\contacts\utils.py
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)

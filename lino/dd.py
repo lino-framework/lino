@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 r"""
-This module is a shortcut to classes and methods needed 
+A shortcut to classes and methods needed 
 when defining your database structure in a `models` module.
 The name "dd" stands for "Data Definition". 
 

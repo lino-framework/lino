@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/VAT629Consignment" xmlns:common="http://www.minfin.fgov.be/InputCommon" targetNamespace="http://www.minfin.fgov.be/VAT629Consignment" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/InputCommon" schemaLocation="IntervatInputCommon_v0_7.xsd"/>
+	<!-- Root Element -->
+	<xs:element name="VAT629Consignment">
+		<xs:annotation>
+			<xs:documentation xml:lang="nl">Gegroepeerde verzending van bijzondere btw aangiften 629, voorgelegd door een gevolmachtigde</xs:documentation>
+			<xs:documentation xml:lang="fr">Envoi regroupé de déclarations TVA spéciales 629, déposé par un mandataire</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Representative" type="common:Representative_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="nl">Gevolmachtigde: de persoon die de aangiften verzend naar de FOD Financien</xs:documentation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+						<xs:documentation xml:lang="de">Bevollmächtigter</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RepresentativeReference" type="common:RepresentativeReference_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="nlr">Door de gevolmachtigde aan de verzending toegekende referentie</xs:documentation>
+						<xs:documentation xml:lang="fr">Référence attribuée à l'envoi par le mandataire</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="VAT629Declaration" type="VAT629Declaration_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation xml:lang="nl">Bijzondere btw aangifte 629, voor één aangever en één kwartaal</xs:documentation>
+						<xs:documentation xml:lang="fr">Déclaration TVA spéciale 629, pour un déclarant et un trimestre</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="VAT629DeclarationsNbr" type="xs:positiveInteger" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Aantal aangiften in de verzending</xs:documentation>
+					<xs:documentation xml:lang="fr">Nombre de déclarations TVA 629 dans l'envoi</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<!-- definition of complex types -->
+	<xs:complexType name="VAT629Declaration_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="nl">Bijzondere btw aangifte 629, voor één angever en één kwartaal</xs:documentation>
+			<xs:documentation xml:lang="fr">Déclaration TVA spéciale 629, pour un déclarant et un trimestre</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReplacedVAT629Declaration" type="common:IntervatDeclarationReference_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Intervat referentie van een voorafgaande bijzondere btw aangifte 629 die door dit aangifte vervangen wordt (referentienummer gegeven in het ontvangstbericht van de oorspronkelijke aangifte 629)</xs:documentation>
+					<xs:documentation xml:lang="fr">Identifiant/Référence Intervat d'une déclaraton TVA 629 précédente qui est remplacée par cette déclaration-ci (référence donnée dans l'accusé de réception de la déclaration 629 originale)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Declarant" type="common:DeclarantBE_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Aangever (Belgische belastingplichtige)</xs:documentation>
+					<xs:documentation xml:lang="fr">Déclarant (assujetti belge)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="VAT629Period_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Aangifteperiode (één kwartaal)</xs:documentation>
+					<xs:documentation xml:lang="fr">Période couverte par la déclaration TVA 629 (un trimestre et une année)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Data" type="Data_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Aangegeven bedragen. Alle bedragen zijn in EUR uitgedrukt. (rooster 83 of 84 verplicht)</xs:documentation>
+					<xs:documentation xml:lang="fr">Montants déclarés. Tous les Montants sont exprimés en EUR (grille 83 ou 84 obligatoire)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileAttachment" type="common:FileAttachment_Type" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Informatie betreffende een bijlage</xs:documentation>
+					<xs:documentation xml:lang="fr">Informations concernant une annexe</xs:documentation>
+					<xs:documentation xml:lang="de">Informationen zu einer Anlage</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Vrije commentaar</xs:documentation>
+					<xs:documentation xml:lang="fr">Commentaire libre</xs:documentation>
+					<xs:documentation xml:lang="de">Freier Kommentar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="nl">Volgnummer van de aangifte in de zending</xs:documentation>
+				<xs:documentation xml:lang="fr">Numéro de séquence de la déclaration TVA 629 dans l'envoi</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DeclarantReference" type="common:DeclarantReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="nl">Door de aangever of gevolmachtigde aan de bijzondere aangifte 629 toegekende referentie</xs:documentation>
+				<xs:documentation xml:lang="fr">Référence attribuée à cette déclaration TVA spéciale 629 par le déclarant ou mandataire</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="VAT629Period_Type">
+		<xs:sequence>
+			<xs:element name="Quarter" type="common:Quarter_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Kwartaal</xs:documentation>
+					<xs:documentation xml:lang="fr">Trimestre</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Year" type="common:Year_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Jaar (formaat YYYY)</xs:documentation>
+					<xs:documentation xml:lang="fr">Année (format YYYY)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReplacedVATDeclaration_Type">
+		<xs:sequence>
+			<xs:element name="OriginalConsignmentID" type="xs:positiveInteger">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Intervat referentienummer van de zending waarin zich de te vervangen aangifte bevindt (referentie getoond op het ontvangstbewijs)</xs:documentation>
+					<xs:documentation xml:lang="fr">Référence Intervat de l'envoi dans lequel se trouve la déclaration à remplacer (numéro affiché dans l'accusé de réception PDF)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalDeclarantVATNumber" type="common:BEVATNumber">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Btw nummer van de aangever van welke aangifte wordt vervangen</xs:documentation>
+					<xs:documentation xml:lang="fr">Numéro de TVA du déclarant de la déclaration à remplacer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalPeriod" type="VAT629Period_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Periode van de te vervangen aangifte</xs:documentation>
+					<xs:documentation xml:lang="fr">Période de la déclaration à remplacer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Data_Type">
+		<xs:sequence>
+			<xs:element name="Amount" minOccurs="2" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="nl">Bedrag welk wordt opgenomen in de aangifte per rooster (in EUR)</xs:documentation>
+					<xs:documentation xml:lang="fr">Montant par grille (en EUR)</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="common:PositiveAmount_Type">
+							<xs:attribute name="GridNumber" type="GridNumberCode" use="required">
+								<xs:annotation>
+									<xs:documentation xml:lang="nl">Nummer van het rooster</xs:documentation>
+									<xs:documentation xml:lang="fr">Numéro de la case</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="GridNumberCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="71">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 71: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 71: Intracommunautaire verwervingen van andere goederen dan nieuwe vervoermiddelen en accijnsproducten.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="72">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 72: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 72: Intracommunautaire verwerving van nieuwe vervoermiddelen.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="73">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 73: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 73: Intracommunautaire verwerving van accijnsproducten.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="75">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 75: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 75: Intracommunautaire diensten met verlegging van heffing.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="76">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 76: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 76: Andere handelingen waarvoor de aangever de btw moet voldoen.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="77">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 77: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 77: Bedrag van de ontvangen creditnota's en negatieve verbeteringen m.b.t. de handelingen ingeschreven in de roosters 71, 72, 73 en 75.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="78">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 78: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 78: Bedrag van de ontvangen creditnota's en negatieve verbeteringen m.b.t. de handelingen ingeschreven het rooster 76.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="80">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 80: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 80: Bedrag van de belasting verschuldigd over de aangegeven handelingen.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="81">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 81: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 81: Herziening van de belasting in het voordeel van de staat.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="82">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 82: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 82: Herziening van de belasting in het nadeel van de staat.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="83">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 83: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 83: Aan de Staat verschuldigde belasting.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="84">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 84: </xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 84: Door de Staat verschuldigde belasting.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

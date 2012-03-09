@@ -1,6 +1,9 @@
 20120307
 ========
 
+Sellerie und Möhren nicht nötig
+-------------------------------
+
 Ich hatte gestern ein wenig gesurft, gelesen und nachgedacht über die 
 Frage, 
 wie Lino mit langlaufenden Prozessen umgehen soll. 
@@ -25,3 +28,108 @@ Ich setze den timeout aller Ajax-Calls auf 0 und basta.
 Wem das drehende "Bitte warten" zu lang wird, der kann ja ein zweites 
 Lino-Fenster öffnen und dort parallel arbeiten.
 
+Also einfach eine Codezeile in der :xfile:`linolib.js`::
+
+  Ext.Ajax.timeout = 15 * 60 * 1000; /* fifteen minutes */
+
+
+Um das zu probieren, mach ich ein Release auf Jana. Wenn ich auf der 
+Kontrollliste Klienten das Feld `nur aktive am` auf leer setze, 
+dann dauert das Erstellen (auf dem Server) der ersten Bildschirmseite 
+knapp anderthalb Minuten::
+
+  201203-07 07:48:57 INFO models : Building ClientsTest data rows...
+  201203-07 07:50:13 INFO models : Building ClientsTest data rows: done
+  
+Und voilà. Der Client wartet nun geduldig wie ein Lamm, 
+bis die Antwort kommt.
+Genau das wollte ich.
+Gefällt mir. 
+Also Sellerie und Möhren brauchen wir vorerst nicht!
+
+
+Noch ein XMLSyntaxError
+-----------------------
+
+Ups, da kommt im Fenster :class:`lino.About` noch ein Bug, 
+der durch die Umstellung von xmlgen nach lxml verursacht wird::
+
+
+  XMLSyntaxError
+  Opening and ending tag mismatch: CourseProvider line 5 and span, line 8, column 12
+
+  TRACEBACK:
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/ui/extjs3/ext_ui.py", line 1743, in api_element_view
+      elem = ar.create_instance()
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/core/actions.py", line 464, in create_instance
+      obj = self.report.create_instance(self,**kw)
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/core/actors.py", line 639, in create_instance
+      kw = req.ah.store.row2dict(req,obj)
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/ui/extjs3/ext_store.py", line 1002, in row2dict
+      v = fld.full_value_from_object(ar,row)
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/ui/extjs3/ext_store.py", line 621, in full_value_from_object
+      return unbound_meth(obj,request)
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/utils/tables.py", line 830, in meth
+      s = etree.tostring(ui.table2xhtml(ar))
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/ui/extjs3/ext_ui.py", line 2610, in table2xhtml
+      return html.TABLE(*list(f()),cellspacing="3px",bgcolor="#ffffff", width="100%")
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/ui/extjs3/ext_ui.py", line 2598, in f
+      cells = [TD(x) for x in ar.ah.store.row2html(ar,fields,row,sums)]
+
+    File "/usr/local/django/dsbe_eupen/using/lino/lino/ui/extjs3/ext_ui.py", line 2583, in TD
+      x = etree.XML(x)
+
+    File "lxml.etree.pyx", line 2512, in lxml.etree.XML (src/lxml/lxml.etree.c:48421)
+
+    File "parser.pxi", line 1545, in lxml.etree._parseMemoryDocument (src/lxml/lxml.etree.c:72245)
+
+    File "parser.pxi", line 1417, in lxml.etree._parseDoc (src/lxml/lxml.etree.c:71041)
+
+    File "parser.pxi", line 898, in lxml.etree._BaseParser._parseUnicodeDoc (src/lxml/lxml.etree.c:67581)
+
+    File "parser.pxi", line 539, in lxml.etree._ParserContext._handleParseResultDoc (src/lxml/lxml.etree.c:64257)
+
+    File "parser.pxi", line 625, in lxml.etree._handleParseResult (src/lxml/lxml.etree.c:65178)
+
+    File "parser.pxi", line 565, in lxml.etree._raiseParseError (src/lxml/lxml.etree.c:64521)
+
+
+Und in der Logdatei steht:
+
+  201203-07 07:43:20 WARNING ext_ui : Invalid XML value u'<span>\n    Ein konkreter Kurs, der an einem bestimmten Datum beginnt.\n    F\xfcr jeden Kurs muss ein entsprechendes Angebot existieren, \n    das u.A. den :class:`Kursinhalt <CourseContent>` \n    und :class:`Kursanbieter <CourseProvider>` \n    detailliert. Also selbst f\xfcr einen einmalig stattfindenden \n    Kurs muss ein Angebot erstellt werden.\n    </span>'
+  
+Aha. Ja, das kommt davon, wenn man alles so genau nimmt.  
+Genau genommen ist es ein Zufall, dass diese Zellen bisher einigermaßen 
+korrekt angezeigt wurden.
+
+Eigentlich müsste ich die docstrings vorher durch 
+:func:`restify <lino.utils.restify.restify>` laufen lassen...
+mal probieren: genau, damit geht es. Auch wenn restify sich natürlich 
+über
+"Unknown interpreted text role "term"." und 
+"Unknown interpreted text role "class"." beklagt.
+Das ist ein fundamentaleres Projekt: 
+die Sphinx-Dokumentation zum online-Konsultieren anbieten... 
+aber das lass ich für später.
+
+Schade, dass man in 
+:class:`lino.Models` 
+nicht per Doppelklick 
+die Felder eines Models ansehen kann...
+Neue Tabelle :class:`lino.FieldsByModel`.
+Aber weil :class:`lino.Models` eine VirtualTable 
+ist, geht das momentan noch nicht. 
+Das ist ungerecht! Auch virtuelle Tabekllen sollen 
+Details haben können.
+Ein Hindernis ist die Tatsache, dass die rows einer VirtualTable 
+keine id haben und deshalb vom GridStore als phantom rows behandelt werden.

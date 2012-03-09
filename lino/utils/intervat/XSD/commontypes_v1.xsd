@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns="urn:ec.europa.eu:taxud:fiscalis:common:v1" xmlns:cm="urn:ec.europa.eu:taxud:fiscalis:common:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ec.europa.eu:taxud:fiscalis:common:v1" elementFormDefault="qualified" version="1.6" xml:lang="en">
+	
+	<xs:annotation>
+		<xs:documentation xml:lang="en"><![CDATA[
+			List of Goods Description types and sub-types
+			=== HISTORY=== 
+			Version 1.6 - add Turkish to the list of languages
+			Version 1.5 - reduce size of VATNumberOrTIN_Type to 20 characters from 50 characters (20/03/2009)
+			Version 1.4 - first release of the schema to the Member States for VAT Refund 
+			]]></xs:documentation>
+	</xs:annotation>
+	<xs:include schemaLocation="isotypes_v1.xsd"/>
+	<xs:simpleType name="CountryIsoCodeAlpha2_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">ISO 3166 alpha 2 country code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:pattern value="[A-Z]{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CountryIsoCodeNum3_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">ISO 3166 numeric country code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:totalDigits value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CurrencyIsoCode_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">ISO 4217 currency code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:pattern value="[A-Z]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EUCountryIsoCodeAlpha2_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">The set of ISO 3166 alpha 2 country code values for the
+				EU member states, with the exception of the Hellenic Republic which is represented
+				by a non-standard code.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="MSCountryCode_Type"/>
+	</xs:simpleType>
+	<xs:simpleType name="EUCountryIsoCodeAlpha2List_Type">
+		<xs:annotation>
+			<xs:documentation>List of EU country codes</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="EUCountryIsoCodeAlpha2_Type"/>
+	</xs:simpleType>
+	<xs:simpleType name="EUCountryIsoCodeNum3_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">The set of ISO 3166 numeric country code values for the
+				EU member states</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="CountryIsoCodeNum3_Type">
+			<xs:enumeration value="040">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Austria</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="056">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Belgium</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="100">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Bulgaria</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="196">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Cyprus</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="203">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Czech Republic</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="208">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Denmark</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="233">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Estonia</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="246">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Finland</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="250">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">France</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="276">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Germany</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="300">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Greece</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="348">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Hungary</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="372">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Ireland</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="380">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Italy</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="428">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Latvia</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="440">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Lithuania</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="442">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Luxembourg</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="470">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Malta</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="528">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Netherlands</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="616">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Poland</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="620">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Portugal</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="642">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Romania</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="703">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Slovakia</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="705">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Slovenia</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="724">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Spain</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="752">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Sweden</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="826">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">United Kingdom</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EUCountryIsoCodeNum3List_Type">
+		<xs:annotation>
+			<xs:documentation>List of EU country code numbers</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="EUCountryIsoCodeNum3_Type"/>
+	</xs:simpleType>
+	<xs:simpleType name="EUCurrencyIsoCode_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">The set of currency code values for the EU member
+				states.Currencies that have been legal in recent years are included, even if
+				replaced by the Euro.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="CurrencyIsoCode_Type">
+			<xs:enumeration value="BGN">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Leva (Bulgaria)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CYP">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Pound (Cyprus)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CZK">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Koruny (Czech Republic)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DKK">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Krone (Denmark)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EEK">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Krooni (Estonia)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EUR">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Euro (Euro Zone)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="GBP">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Pounds sterling (United
+					Kingdom)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="HUF">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Forint (Hungary)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LTL">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Litai (Lithuania)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LVL">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Lati (Latvia)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MTL">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Liri (Malta)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PLN">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Zlotych (Poland)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ROL">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Lei (Romania)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SEK">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Krona (Sweden)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SKK">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Koruny (Slovakia)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SIT">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Tolars (Slovenia)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EULanguageCode_Type">
+		<xs:annotation>
+			<xs:documentation> The list of official languages of the EU.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="bg">
+				<xs:annotation>
+					<xs:documentation>Bulgarian</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cs">
+				<xs:annotation>
+					<xs:documentation>Czech</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="da">
+				<xs:annotation>
+					<xs:documentation>Danish</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="de">
+				<xs:annotation>
+					<xs:documentation>German</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="el">
+				<xs:annotation>
+					<xs:documentation>Greek</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="en">
+				<xs:annotation>
+					<xs:documentation>English</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="es">
+				<xs:annotation>
+					<xs:documentation>Spanish</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="et">
+				<xs:annotation>
+					<xs:documentation>Estonian</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fi">
+				<xs:annotation>
+					<xs:documentation>Finnish</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fr">
+				<xs:annotation>
+					<xs:documentation>French</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ga">
+				<xs:annotation>
+					<xs:documentation>Irish</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hu">
+				<xs:annotation>
+					<xs:documentation>Hungarian</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="it">
+				<xs:annotation>
+					<xs:documentation>Italian</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lt">
+				<xs:annotation>
+					<xs:documentation>Lithuanian</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lv">
+				<xs:annotation>
+					<xs:documentation>Latvian</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mt">
+				<xs:annotation>
+					<xs:documentation>Maltese</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="nl">
+				<xs:annotation>
+					<xs:documentation>Dutch</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pl">
+				<xs:annotation>
+					<xs:documentation>Polish</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pt">
+				<xs:annotation>
+					<xs:documentation>Portuguese</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ro">
+				<xs:annotation>
+					<xs:documentation>Romanian</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sk">
+				<xs:annotation>
+					<xs:documentation>Slovak </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sl">
+				<xs:annotation>
+					<xs:documentation>Slovenian </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sv">
+				<xs:annotation>
+					<xs:documentation>Swedish</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		<xs:enumeration value="tr">
+			<xs:annotation>
+				<xs:documentation>Turkish</xs:documentation>
+			</xs:annotation>
+		</xs:enumeration>
+
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EULanguageList_Type">
+		<xs:annotation>
+			<xs:documentation>List of EU Languages</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="EULanguageCode_Type"/>
+	</xs:simpleType>
+	<xs:simpleType name="AddressFree_Type">
+		<xs:annotation>
+			<xs:documentation>An unstructured address</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="AddressStatus_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="known"/>
+			<xs:enumeration value="assumed"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AmountValue_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">A decimal amount, resticted to two decimal
+			places</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ApplicationId_Type">
+		<xs:annotation>
+			<xs:documentation>Application Identifier</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="ecommerce">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">The VAT on e-services application (Council
+						Directive 2002/38/EC)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EMail_Type">
+		<xs:annotation>
+			<xs:documentation>An email address</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">A regular expression for email addresses.
+						Matches something@someserver.com, firstname.lastname@mailserver.domain.com,
+						username-something@some-server.tld</xs:documentation>
+				</xs:annotation>
+			</xs:pattern>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Gender_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">This element can be used to indicate Gender for
+				individuals.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="M"/>
+			<xs:enumeration value="F"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IBAN_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">The International Bank Account Number has to be given
+				here for the account into which the payment in question has been made. Depending on
+				the transmission type this element is optional. Its structure is: Country code, 2
+				letters/Check digits, 2 digits/Basic Bank Account Number (BBAN), 10 to 30
+				alphanumeric characters </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{2}[0-9]{2}[0-9,A-Z]{10,30}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MsgId_Type">
+		<xs:annotation>
+			<xs:documentation>Message Identifier</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="64"/>
+			<xs:pattern value="[a-zA-Z0-9\-_:@\.]*">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">The pattern caters for the 'ad-hoc' (MS ISO code
+						+ date + counter), RFC 2392-like mid, and UUID.</xs:documentation>
+				</xs:annotation>
+			</xs:pattern>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NameFree_Type">
+		<xs:annotation>
+			<xs:documentation>An unstructured name</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="nameType_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="indiv"/>
+			<xs:enumeration value="alias"/>
+			<xs:enumeration value="nick"/>
+			<xs:enumeration value="aka"/>
+			<xs:enumeration value="dba"/>
+			<xs:enumeration value="legal"/>
+			<xs:enumeration value="atbirth"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NumberLength3_Type">
+		<xs:annotation>
+			<xs:documentation>A number with 3 digits</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:maxInclusive value="999"/>
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PhoneNumber_Type">
+		<xs:annotation>
+			<xs:documentation>A telephone number</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\+)?[0-9]{1,20}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Quarter_Type">
+		<xs:annotation>
+			<xs:documentation>A quarter (Q1, Q2, Q3, Q4)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:maxInclusive value="4"/>
+			<xs:minInclusive value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VATNumber_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Za-z0-9\+\*]{1,12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VATNumberOrTIN_Type">
+		<xs:annotation>
+			<xs:documentation>A tax identifier, VAT or other</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VatRate_Type">
+		<xs:annotation>
+			<xs:documentation>VAT rate</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:decimal">
+			<xs:minInclusive value="0.00"/>
+			<xs:maxInclusive value="100.00"/>
+			<xs:fractionDigits value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AddressStruct_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Structure of the address for a party broken down into
+				its logical parts, recommended for easy matching. The 'City' element is the only
+				required subelement. All of the subelements are simple text - data type 'string'.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Street" type="xs:string" minOccurs="0"/>
+			<xs:element name="BuildingIdentifier" type="xs:string" minOccurs="0"/>
+			<xs:element name="SuiteIdentifier" type="xs:string" minOccurs="0"/>
+			<xs:element name="FloorIdentifier" type="xs:string" minOccurs="0"/>
+			<xs:element name="DistrictName" type="xs:string" minOccurs="0"/>
+			<xs:element name="POB" type="xs:string" minOccurs="0"/>
+			<xs:element name="PostCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="City" type="xs:string"/>
+			<xs:element name="CountrySubentity" type="xs:string" minOccurs="0"/>
+			<xs:element name="OtherLocalId" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute/>
+	</xs:complexType>
+	<xs:complexType name="EUMoneyAmount_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">An amount for the EU currencies</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:restriction base="MoneyAmount_Type">
+				<xs:attribute name="currency" type="EUCurrencyIsoCode_Type" use="required"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Header_Type">
+		<xs:annotation>
+			<xs:documentation>Header of generic tax message</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OriginatingCountry" type="EUCountryIsoCodeAlpha2_Type"/>
+			<xs:element name="DestinationCountries" type="EUCountryIsoCodeAlpha2List_Type"/>
+			<xs:element name="MessageId" type="MsgId_Type"/>
+			<xs:element name="CorrelationId" type="MsgId_Type" minOccurs="0"/>
+			<xs:element name="Timestamp" type="xs:dateTime"/>
+			<xs:element name="ResponseRequired" type="xs:date" minOccurs="0"/>
+			<xs:element name="Language" type="xs:language" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">The language of the document. May be overloaded
+						in some elements by a language attribute</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="I18nString_Type">
+		<xs:annotation>
+			<xs:documentation>Internationalised string</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="lang" type="xs:language" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Individual_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">An individual</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="NameFree_Type" minOccurs="0"/>
+			<xs:element name="BirthDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="Address" type="cm:AddressFree_Type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="indivQlf" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="IndivPersData_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Data (other than Name and Address) to describe and
+				identify an Individual. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Gender" type="Gender_Type" minOccurs="0"/>
+			<xs:element name="Nationality" type="CountryIsoCodeAlpha2_Type" minOccurs="0"/>
+			<xs:element name="BirthDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="BirthCity" type="xs:string" minOccurs="0"/>
+			<xs:element name="BirthCitySubentity" type="xs:string" minOccurs="0"/>
+			<xs:element name="BirthCountryCode" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IndivPersBirthData_Type">
+		<xs:annotation>
+			<xs:documentation>A simplified version of IndivPersData_Type</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="IndivPersData_Type">
+				<xs:sequence>
+					<xs:element name="Gender" type="Gender_Type" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="Nationality" type="CountryIsoCodeAlpha2_Type" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="BirthDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="BirthCity" type="xs:string" minOccurs="0"/>
+					<xs:element name="BirthCitySubentity" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="BirthCountryCode" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IndividualWithAddress_Type">
+		<xs:complexContent>
+			<xs:restriction base="Individual_Type">
+				<xs:sequence>
+					<xs:element name="Name" type="NameFree_Type" minOccurs="0"/>
+					<xs:element name="BirthDate" type="xs:date" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="Address" type="cm:AddressFree_Type" minOccurs="0"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IndividualWithBirthDate_Type">
+		<xs:complexContent>
+			<xs:restriction base="Individual_Type">
+				<xs:sequence>
+					<xs:element name="Name" type="NameFree_Type" minOccurs="0"/>
+					<xs:element name="BirthDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="Address" type="cm:AddressFree_Type" minOccurs="0" maxOccurs="0"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="LegalEntity_Type">
+		<xs:annotation>
+			<xs:documentation>A legal entity</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="NameFree_Type"/>
+			<xs:element name="LegalStatus" type="xs:string"/>
+			<xs:element name="Address" type="AddressStruct_Type"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MoneyAmount_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">An amount: a value with a currency
+			attribute</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="AmountValue_Type">
+				<xs:attribute name="currency" type="CurrencyIsoCode_Type" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="NameStruct_Type">
+		<xs:sequence>
+			<xs:element name="PrecedingTitle" type="xs:string" minOccurs="0"/>
+			<xs:element name="Title" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="FirstName" type="xs:string"/>
+			<xs:element name="MiddleName" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="NamePrefix" type="xs:string" minOccurs="0"/>
+			<xs:element name="LastName" type="xs:string"/>
+			<xs:element name="GenerationIdentifier" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Suffix" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="GeneralSuffix" type="xs:string" minOccurs="0"/>
+			<xs:element name="MaidenName" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Name_Type">
+		<xs:choice>
+			<xs:element name="NameFree" type="xs:string"/>
+			<xs:sequence>
+				<xs:element name="NameStruct" type="NameStruct_Type"/>
+				<xs:element name="NameFree" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:choice>
+		<xs:attribute name="nameType" type="nameType_Type" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="NameReducedFix_Type">
+		<xs:complexContent>
+			<xs:restriction base="NameStruct_Type">
+				<xs:sequence>
+					<xs:element name="PrecedingTitle" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="Title" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="FirstName" type="xs:string"/>
+					<xs:element name="MiddleName" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="NamePrefix" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="LastName" type="xs:string"/>
+					<xs:element name="GenerationIdentifier" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="Suffix" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="GeneralSuffix" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="MaidenName" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="OrderedString_Type">
+		<xs:annotation>
+			<xs:documentation>A string with an attribute that allows ordering in a
+			list.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="order" type="xs:byte" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="NVPair_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">A type that holds a name value pair. The name is stored
+				in the 'name' attribute, and the value as a string in the element value
+			itself</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:token" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Period_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Represents a period of time specified by a start date
+				and an end date. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date"/>
+			<xs:element name="EndDate" type="xs:date"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Person_Type">
+		<xs:annotation>
+			<xs:documentation>A person</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="NameStruct_Type"/>
+			<xs:element name="IndivPersData" type="IndivPersData_Type"/>
+			<xs:element name="Address" type="AddressStruct_Type"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShortAddressStruct_Type">
+		<xs:annotation>
+			<xs:documentation>A shortenedform of Address_Fix with a mandatory status
+			attribute</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cm:AddressStruct_Type">
+				<xs:sequence>
+					<xs:element name="Street" type="xs:string" minOccurs="0"/>
+					<xs:element name="BuildingIdentifier" type="xs:string" minOccurs="0"/>
+					<xs:element name="SuiteIdentifier" type="xs:string" minOccurs="0"/>
+					<xs:element name="FloorIdentifier" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="DistrictName" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="POB" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<xs:element name="PostCode" type="xs:string" minOccurs="0"/>
+					<xs:element name="City" type="xs:string"/>
+					<xs:element name="CountrySubentity" type="xs:string" minOccurs="0" maxOccurs="0"/>
+					<!--					<xs:element name="Country" type="CountryIsoCodeAlpha2_Type" minOccurs="0"/> -->
+				</xs:sequence>
+				<xs:attribute name="status" type="AddressStatus_Type" use="required"/>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

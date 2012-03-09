@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/ClientListingConsignment" xmlns:iso="http://www.minfin.fgov.be/IsoTypes" xmlns:common="http://www.minfin.fgov.be/InputCommon" targetNamespace="http://www.minfin.fgov.be/ClientListingConsignment" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/InputCommon" schemaLocation="IntervatInputCommon_v0_7.xsd"/>
+    <xs:import namespace="http://www.minfin.fgov.be/IsoTypes" schemaLocation="IntervatIsoTypes_v0_7.xsd"/>
+	
+	<!-- Root Element -->
+	<xs:element name="ClientListingConsignment">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Envoi regroupé de listings clients, déposé par un mandataire</xs:documentation>
+			<xs:documentation xml:lang="nl">Gegroepeerde verzending van klantenlistings, voorgelegd door een gevolmachtigde</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Representative" type="common:Representative_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Gevolmachtigde</xs:documentation>
+						<xs:documentation xml:lang="de">Bevollmächtigter</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RepresentativeReference" type="common:RepresentativeReference_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Référence attribuée à l'envoi par le mandataire</xs:documentation>	
+						<xs:documentation xml:lang="nl">Toegekende referentie aan de zending door de mandataris</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ClientListing" type="ClientListing_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Listing clients, pour un déclarant et une année</xs:documentation>
+						<xs:documentation xml:lang="nl">klantenlijst, voor een belastingplichtige en een jaar</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="ClientListingsNbr" type="xs:positiveInteger" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nombre de listings clients dans l'envoi</xs:documentation>
+					<xs:documentation xml:lang="nl">Aantal klanten in de zending</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<!-- definition of complex types -->
+	<xs:complexType name="ClientListing_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Lisintg clients, pour un déclarant et une année</xs:documentation>
+			<xs:documentation xml:lang="nl">klantenlijst, voor een belastingplichtige en een jaar</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReplacedClientListing" type="common:IntervatDeclarationReference_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant/Référence Intervat d'un listing clients précédent qui est remplacé par ce listing (référence donnée dans l'accusé de réception du listing original)</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie/Referentie Intervat van een vorige klantenlijst welke wordt vervangen door deze klantenlijst(referentie terug te vinden in de ontvangstbevestiging van de originele klantenlijst)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Declarant" type="common:Declarant_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Déclarant (assujetti belge)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aangever (Belgische belastingplichtige)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="common:Year_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Période couverte par le listing (année au format YYYY)</xs:documentation>
+					<xs:documentation xml:lang="nl">Periode waarop de klantenlijst betrekking heeft (jaar in het formaat YYYY)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TurnOver" type="common:SignedAmount_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pour les petites entreprises: chiffre d'affaires. Montant signé exprimé en EUR à l'eurocent près.</xs:documentation>
+					<xs:documentation xml:lang="nl">Voor de kleine ondernemingen: omzetcijfer.  Bedrag uitgedrukt in EUR tot op de eurocent na.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Farmer" type="common:YesNo_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pour un exploitant agricole: "YES" s'il déclare être tenu au dépôt du relevé intracommunautaire annuel, "NO" s'il n'y est pas tenu. Tag absent pour les non-exploitants agricoles.</xs:documentation>
+					<xs:documentation xml:lang="nl"> Voor een landbouwer:"YES" wanneer hij ertoe gehouden is een jaarlijkse intracommunautaire opgave in te dienenn "NO" wanneer hij hier niet is toe gehouden. Tag is afwezig voor de niet-landbouwers.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Client" type="Client_Type" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Informations concernant un client du listing</xs:documentation>
+					<xs:documentation xml:lang="nl">Informatie betreffende een klant in de listing</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileAttachment" type="common:FileAttachment_Type" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Informations concernant une annexe</xs:documentation>
+					<xs:documentation xml:lang="nl">Informatie betreffende een bijlage</xs:documentation>
+					<xs:documentation xml:lang="de">Informationen zu einer Anlage</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="common:Comment_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Commentaire libre</xs:documentation>
+					<xs:documentation xml:lang="nl">Vrije commentaar</xs:documentation>
+					<xs:documentation xml:lang="de">Freier Kommentar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Numéro de séquence du listing dans l'envoi</xs:documentation>
+				<xs:documentation xml:lang="nl">Volgnummer van de listing in de zending</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ClientsNbr" type="xs:unsignedInt" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Nombre de clients dans le listing</xs:documentation>
+				<xs:documentation xml:lang="nl">Aantal klanten in de listing</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DeclarantReference" type="common:DeclarantReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Référence attribuée à ce listing clients par le déclarant ou mandataire.</xs:documentation>
+				<xs:documentation xml:lang="nl">Toegekende referentie aan de klantenlijst door de belastingplichtige of de mandataris.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="TurnOverSum" type="common:UnlimitedSignedAmount_Type" use="required">
+			<xs:annotation>
+					<xs:documentation xml:lang="fr">Somme des chiffres d'affaires (hors TVA) pour tous les clients. Montant signé exprimé en EUR à l'eurocent près.</xs:documentation>
+					<xs:documentation xml:lang="nl">Som omzetcijfer(zonder BTW) voor alle klanten. Bedrag uitgedrukt in EUR tot op de eurocent na.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="VATAmountSum" type="common:UnlimitedSignedAmount_Type" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Somme des montants TVA pour tous les clients. Montant signé exprimé en EUR à l'eurocent près.</xs:documentation>
+				<xs:documentation xml:lang="nl">Som van het bedrag aan BTW voor alle klanten. Bedrag uitgedrukt in EUR tot op de eurocent na.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Client_Type">
+		<xs:sequence>
+			<xs:element name="CompanyVATNumber" type="ClientVATNumber_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">N° de TVA du client (assujetti belge).</xs:documentation>
+					<xs:documentation xml:lang="nl">BTW n° van de klant (Belgisch belastingplichtige.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TurnOver" type="common:SignedAmount_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Chiffre d'affaires (hors TVA). Montant signé exprimé en EUR à l'eurocent près.</xs:documentation>
+					<xs:documentation xml:lang="nl">Omzetcijfer (zonder BTW) Bedrag uitgedrukt in EUR tot op de eurocent na.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VATAmount" type="common:SignedAmount_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant TVA. Montant signé exprimé en EUR à l'eurocent près.</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag BTW. Bedrag uitgedrukt in EUR tot op de eurocent na.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">N° de séquence du client dans le listing</xs:documentation>				
+				<xs:documentation xml:lang="nl">Volgnummer van de klant in de listing </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ClientVATNumber_Type">
+		<xs:simpleContent>
+			<xs:extension base="common:BEVATNumber">
+				<xs:attribute name="issuedBy" type="iso:BECountryCode" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Etat membre qui a attribué le n° de TVA (toujours "BE")</xs:documentation>
+						<xs:documentation xml:lang="nl">Lidstaat die de btw-nummer heeft toegekend (altijd "BE")</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

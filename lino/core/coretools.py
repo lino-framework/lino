@@ -75,29 +75,6 @@ def get_data_elem(model,name):
     #~ else:
         #~ raise Exception("Invalid data element name %r" % name)
     
-    s = name.split('.')
-    if len(s) == 1:
-        #~ app_label = model._meta.app_label
-        rpt = settings.LINO.modules[model._meta.app_label].get(name,None)
-    elif len(s) == 2:
-        rpt = settings.LINO.modules[s[0]].get(s[1],None)
-    else:
-        raise Exception("Invalid data element name %r" % name)
-    
-    #~ rpt = get_slave(model,name)
-    if rpt is not None: 
-        if rpt.master is not None and rpt.master is not ContentType:
-            ok = True
-            try:
-                if not issubclass(model,rpt.master):
-                    ok = False
-            except TypeError,e: # e.g. issubclass() arg 1 must be a class
-                ok = False
-            if not ok:
-                #~ return None
-                raise Exception("%s.master is %r, must be subclass of %r" % (
-                    name,rpt.master,model))
-        return rpt
     v = get_class_attr(model,name)
     if v is not None: return v
     

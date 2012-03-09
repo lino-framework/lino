@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/IntraConsignment" xmlns:iso="http://www.minfin.fgov.be/IsoTypes" xmlns:common="http://www.minfin.fgov.be/InputCommon" targetNamespace="http://www.minfin.fgov.be/IntraConsignment" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/InputCommon" schemaLocation="IntervatInputCommon_v0_7.xsd"/>
+    <xs:import namespace="http://www.minfin.fgov.be/IsoTypes" schemaLocation="IntervatIsoTypes_v0_7.xsd"/>
+	 
+	<!-- Root Element -->
+	<xs:element name="IntraConsignment">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Envoi regroupé de relevés intracommunautaires, déposé par un mandataire</xs:documentation>
+			<xs:documentation xml:lang="nl">Gegroepeerde verzending van klantenlistings, voorgelegd door een gevolmachtigde</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Representative" type="common:Representative_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Gevolmachtigde</xs:documentation>
+						<xs:documentation xml:lang="de">Bevollmächtigter</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RepresentativeReference" type="common:RepresentativeReference_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Référence attribuée à l'envoi par le mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Toegekende referentie aan de zending door de gevolmachtigde</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="IntraListing" type="IntraListing_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Relevé intracommunautaire, pour un déclarant et une période</xs:documentation>
+						<xs:documentation xml:lang="nl">Intracommunautaire opgave, voor een belastingplichtige en een periode</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="IntraListingsNbr" type="xs:positiveInteger" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nombre de relevés intracommunautaires dans l'envoi</xs:documentation>
+					<xs:documentation xml:lang="nl">Aantal intracommunautaire opgave in de zending</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<!-- definition of complex types -->
+	<xs:complexType name="IntraListing_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Listing clients, pour un déclarant et une année</xs:documentation>
+			<xs:documentation xml:lang="nl">Listing klanten, voor een belastingplichtige en voor een jaar  </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReplacedIntraListing" type="common:IntervatDeclarationReference_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant/Référence Intervat d'un relevé intracommunautaire précédent qui est remplacé par ce relevé (référence donnée dans l'accusé de réception du relevé original)</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie/Referentie Intervat van een vorige intracommunautaire opgave welke wordt vervangen door deze opgave(referentie terug te vinden in de ontvangstbevestiging van de originele opgave)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Declarant" type="common:Declarant_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Déclarant (assujetti belge)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aangever (Belgische belastingplichtige)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="IntraPeriod_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Période couverte par le relevé</xs:documentation>
+					<xs:documentation xml:lang="nl">Periode waarop de opgave betrekking heeft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IntraClient" type="IntraClient_Type" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Informations concernant un client du relevé intracommunautaire</xs:documentation>
+					<xs:documentation xml:lang="nl">Informatie in verband met een klant in de intracommunautaire opgave</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileAttachment" type="common:FileAttachment_Type" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Informations concernant une annexe</xs:documentation>
+					<xs:documentation xml:lang="nl">Informatie betreffende een bijlage</xs:documentation>
+					<xs:documentation xml:lang="de">Informationen zu einer Anlage</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="common:Comment_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Commentaire libre</xs:documentation>
+					<xs:documentation xml:lang="nl">Vrije commentaar</xs:documentation>
+					<xs:documentation xml:lang="de">Freier Kommentar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Numéro de séquence du relevé dans l'envoi</xs:documentation>
+				<xs:documentation xml:lang="nl">Volgnummer van de opgave in de zending</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ClientsNbr" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Nombre de clients dans le relevé</xs:documentation>
+				<xs:documentation xml:lang="nl">Aantal klanten in de opgave</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DeclarantReference" type="common:DeclarantReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Référence attribuée à ce relevé intracommunautaire par le déclarant ou mandataire.</xs:documentation>
+				<xs:documentation xml:lang="nl">Toegekende referentie de intracommunautaire opgave door de belastingplichtige of de mandataris.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="AmountSum" type="common:UnlimitedSignedAmount_Type" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Somme des montants pour tous les clients. Montant signé exprimé en EUR à l'eurocent près.</xs:documentation>
+				<xs:documentation xml:lang="nl">De som van de bedragen voor alle klanten.  Bedrag uitgedrukt in EUR tot op de eurocent na.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="IntraPeriod_Type">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="Month" type="common:Month_Type">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mois de la période</xs:documentation>
+						<xs:documentation xml:lang="nl">Maand van de periode</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Quarter" type="common:Quarter_Type">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Trimestre de la periode</xs:documentation>
+						<xs:documentation xml:lang="nl">Kwartaal van de periode</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="Year" type="common:Year_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Année de la période (format YYYY)</xs:documentation>
+					<xs:documentation xml:lang="nl">Jaar van de periode (formaat YYYY)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IntraClient_Type">
+		<xs:sequence>
+			<xs:element name="CompanyVATNumber" type="IntraClientVATNumber_Type">
+				<xs:annotation>
+					<xs:documentation>N° de TVA du client (n° de TVA étranger)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Code" type="IntraCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">L, S ou T (si CorrectingPeriod ou période du relevé avant 2010, uniquement L ou T)</xs:documentation>
+					<xs:documentation xml:lang="nl">L, S of T (wanneer de periode van verbetering of de periode van de opgave voor 2010 is, dan enkel L of T)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Amount" type="common:SignedAmount_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant signé exprimé en EUR à l'eurocent près.</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag uitgedrukt in EUR tot op de eurocent na</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CorrectingPeriod" type="IntraPeriod_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Si correction par rapport à un client mentionné dans un relevé précédent, période de ce relevé.</xs:documentation>
+					<xs:documentation xml:lang="nl">Indien verbetering met betrekking tot de vermelde klant in een voorgaande opgave, periode van deze opgave.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">N° de séquence du client dans le relevé</xs:documentation>
+				<xs:documentation xml:lang="nl">Volgnummer van de klant in de opgave</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="IntraClientVATNumber_Type">
+		<xs:simpleContent>
+			<xs:extension base="common:EUVATNumber">
+				<xs:attribute name="issuedBy" type="iso:MSCountryCodeExclBE" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Etat membre qui a attribué le n° de TVA (autre que "BE")</xs:documentation>
+						<xs:documentation xml:lang="nl">Lidstaat die de btw-nummer heeft toegekend (autre que "BE")</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="IntraCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="L"/>
+			<xs:enumeration value="S"/>
+			<xs:enumeration value="T"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="urn:ec.europa.eu:taxud:fiscalis:message:v1" xmlns:cm="urn:ec.europa.eu:taxud:fiscalis:common:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ec.europa.eu:taxud:fiscalis:message:v1" elementFormDefault="qualified" version="1.0" xml:lang="en">
+	<xs:annotation>
+		<xs:documentation xml:lang="en">
+		=== HISTORY===
+		- Version 1.0: first issue of the schema as part of the Technical Specifications.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:import namespace="urn:ec.europa.eu:taxud:fiscalis:common:v1" schemaLocation="commontypes_v1.xsd"/>
+	<xs:element name="FiscalisMessage">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Header" type="Header_Type"/>
+				<xs:element name="Body" type="Body_Type"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Body_Type">
+		<xs:sequence>
+			<xs:element ref="AbstractBody"/>
+		</xs:sequence>
+		<xs:attribute name="applicationId" use="required"/>
+	</xs:complexType>
+	<xs:element name="AbstractBody" abstract="true"/>
+	<xs:complexType name="Header_Type">
+		<xs:annotation>
+			<xs:documentation>Header of generic tax message</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OriginatingCountry" type="cm:EUCountryIsoCodeAlpha2_Type"/>
+			<xs:element name="DestinationCountries" type="cm:EUCountryIsoCodeAlpha2List_Type"/>
+			<xs:element name="MessageId" type="cm:MsgId_Type"/>
+			<xs:element name="CorrelationId" type="cm:MsgId_Type" minOccurs="0"/>
+			<xs:element name="Timestamp" type="xs:dateTime"/>
+			<xs:element name="ResponseRequired" type="xs:date" minOccurs="0"/>
+			<xs:element name="Language" type="xs:language" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">The language of the document. May be overloaded in some elements by a language attribute</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/ProRataRateAdjustmentConsignment" xmlns:common="http://www.minfin.fgov.be/InputCommon" targetNamespace="http://www.minfin.fgov.be/ProRataRateAdjustmentConsignment" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/InputCommon" schemaLocation="IntervatInputCommon_v0_7.xsd"/>
+
+	<xs:element name="ProRataRateAdjustmentConsignment">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Envoi regroupé de modifications de prorata, déposé par un mandataire</xs:documentation>
+			<xs:documentation xml:lang="nl">Gegroepeerde verzending van aanpassingen van prorata, ingediend door één gevolmachtigde</xs:documentation>
+			<xs:documentation xml:lang="de">Zusammengefasste Sendung der Änderungen des Pro-rata-Satzes, die von einem Bevollmächtigten hinterlegt wurden.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Representative" type="common:VR_Representative_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Gevolmachtigde</xs:documentation>
+						<xs:documentation xml:lang="de">Bevollmächtigter</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RepresentativeReference" type="common:RepresentativeReference_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Référence assignée à l'envoi par le mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Door de gevolmachtigde aan de verzending toegekende referentie </xs:documentation>
+						<xs:documentation xml:lang="de">Vom Bevollmächtigten für die Versendung zugewiesene Referenzangabe</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ProRataRateAdjustment" type="ProRataRateAdjustment_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Modification du prorata pour un requérant</xs:documentation>
+						<xs:documentation xml:lang="nl">Aanpassing van de prorata voor één aanvrager</xs:documentation>
+						<xs:documentation xml:lang="de">Änderung des Pro-rata-Satzes für einen Antragsteller</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="ProRataRateAdjustmentsNbr" type="xs:positiveInteger" use="required">
+				<xs:annotation>
+					<xs:documentation>Nombre de modifications du prorata dans l'envoi</xs:documentation>
+					<xs:documentation xml:lang="nl">Aantal wijzigingen prorata in de zending</xs:documentation>
+				</xs:annotation>
+
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ProRataRateAdjustment_Type">
+		<xs:sequence>
+			<xs:element name="Applicant" type="common:VR_Declarant_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Requérant de la modification du prorata (assujetti belge)</xs:documentation>
+					<xs:documentation xml:lang="nl"> Aanvrager van de wijziging prorata (Belgische belastingplichtige)</xs:documentation>
+					<xs:documentation xml:lang="de">Antragsteller der Änderung des Pro-rata-Sates (belgischer Steuerpflichtiger)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="common:Year_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Période à laquelle se rapporte la modification du prorata (année complète, format YYYY)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aanvrager van de aanpassing van de prorata (Belgische belasting-plichtige)</xs:documentation>
+					<xs:documentation xml:lang="de">Antragsteller der Änderung des Pro-rata-Sates (belgischer Steuerpflichtiger)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdjustedValue">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Prorata définitif pour cette période (entier entre 1 et 100)</xs:documentation>
+					<xs:documentation xml:lang="nl">Definitieve prorata voor deze periode (geheel getal tussen 1 en 100)</xs:documentation>
+					<xs:documentation xml:lang="de">Endgültiger Pro-rata-Satz für diesen Zeitraum  (ganze Zahl zwischen 1 und 100)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Comment" type="common:Comment_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Commentaire libre</xs:documentation>
+					<xs:documentation xml:lang="nl">Vrije commentaar</xs:documentation>
+					<xs:documentation xml:lang="de">Freier Kommentar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Numéro de séquence de la modification du prorata dans l'envoi</xs:documentation>
+				<xs:documentation xml:lang="nl">Volgnummer van de wijziging prorata in de zending</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DeclarantReference" type="common:DeclarantReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Référence attribuée à cette modification de prorata par le déclarant ou mandataire.</xs:documentation>
+				<xs:documentation xml:lang="nl">Door de aangever of gevolmachtigde aan de aanpassing van prorata toegekende referentie</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

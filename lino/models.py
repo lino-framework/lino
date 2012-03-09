@@ -43,6 +43,7 @@ from lino.utils import perms
 from lino.tools import obj2str, sorted_models_list
 from lino.tools import resolve_field
 from lino.utils.choosers import chooser
+from lino.utils.restify import restify
 from lino.core import actions
 
 class SiteConfig(models.Model):
@@ -80,6 +81,10 @@ class SiteConfig(models.Model):
         #~ lh.about.label = _("About")
     
 class SiteConfigs(dd.Table):
+    """
+    The table used to present the :class:`SiteConfig` row in a Detail form.
+    Deserves more documentation.
+    """
     model = SiteConfig
     #~ default_action_class = dd.OpenDetailAction
     #~ has_navigator = False
@@ -87,7 +92,7 @@ class SiteConfigs(dd.Table):
     #~ can_delete = perms.never
     detail_template = """
     default_build_method
-    lino.ModelsBySite
+    # lino.ModelsBySite
     """
     #~ detail_layout = SiteConfigDetail()
     #~ editable = True
@@ -319,40 +324,35 @@ Please report any anomalies.""",
 
     
 
-class ModelsBySite(dd.VirtualTable):
-    label = _("Models")
-    #~ column_defaults = dict(width=8)
-    #~ column_names = "app name verbose_name docstring rows"
-    column_names = "app name docstring rows"
-    master = SiteConfig
+#~ class ModelsBySite(dd.VirtualTable):
+    #~ label = _("Models")
+    #~ column_names = "app name docstring rows"
+    #~ master = SiteConfig
     
-    slave_grid_format = 'html'    
+    #~ slave_grid_format = 'html'    
   
-    @classmethod
-    def get_data_rows(self,ar):
-        for model in models.get_models():
-            yield model
+    #~ @classmethod
+    #~ def get_data_rows(self,ar):
+        #~ for model in models.get_models():
+            #~ yield model
                 
-    @dd.displayfield(_("app_label"))
-    def app(self,obj,ar):
-        return obj._meta.app_label
+    #~ @dd.displayfield(_("app_label"))
+    #~ def app(self,obj,ar):
+        #~ return obj._meta.app_label
         
-    @dd.displayfield(_("name"))
-    def name(self,obj,ar):
-        return obj.__name__
+    #~ @dd.displayfield(_("name"))
+    #~ def name(self,obj,ar):
+        #~ return obj.__name__
         
-    #~ @dd.displayfield(_("verbose name"))
-    #~ def vebose_name(self,obj,ar):
-        #~ return unicode(obj._meta.vebose_name)
+    #~ @dd.displayfield(_("docstring"))
+    #~ def docstring(self,obj,ar):
+        #~ return obj.__doc__
         
-    @dd.displayfield(_("docstring"))
-    def docstring(self,obj,ar):
-        return obj.__doc__
+    #~ @dd.requestfield(_("Rows"))
+    #~ def rows(self,obj,ar):
+        #~ return obj._lino_default_table.request(ar.ui,
+          #~ user=ar.get_user(),renderer=ar.renderer)
         
-    @dd.requestfield(_("Rows"))
-    def rows(self,obj,ar):
-        return obj._lino_default_table.request(ar.ui,
-          user=ar.get_user(),renderer=ar.renderer)
         
 class Models(dd.VirtualTable):
     label = _("Models")
@@ -360,6 +360,10 @@ class Models(dd.VirtualTable):
     #~ column_names = "app name verbose_name docstring rows"
     column_names = "app name docstring rows"
     #~ master = SiteConfig
+    detail_template = """
+    app name docstring rows
+    lino.FieldsByModel
+    """
     
     slave_grid_format = 'html'    
   
@@ -382,13 +386,41 @@ class Models(dd.VirtualTable):
         
     @dd.displayfield(_("docstring"))
     def docstring(self,obj,ar):
-        return obj.__doc__
+        #~ return obj.__doc__
+        return restify(unicode(obj.__doc__))
         
     @dd.requestfield(_("Rows"))
     def rows(self,obj,ar):
         return obj._lino_default_table.request(ar.ui,
           user=ar.get_user(),renderer=ar.renderer)
+
+
+class FieldsByModel(dd.VirtualTable):
+    label = _("Fields")
+    #~ master_key = "model"
+    master = Models
+    column_names = "name verbose_name help_text"
+    
+    @classmethod
+    def get_data_rows(self,ar):
+        model = ar.master_instance
+        if model:
+            for (fld,remote) in model._meta.get_fields_with_model():
+                yield fld
+                
+    @dd.displayfield(_("name"))
+    def name(self,fld,ar):
+        return fld.name
         
+    @dd.displayfield(_("verbose name"))
+    def verbose_name(self,fld,ar):
+        return unicode(fld.vebose_name)
+        
+    @dd.displayfield(_("help text"))
+    def help_text(self,obj,ar):
+        #~ return obj.__doc__
+        return restify(unicode(obj.help_text))
+
 
 import inspect
 import types
@@ -402,6 +434,11 @@ class Inspected(object):
         self.value = value
 
 class Inspector(dd.VirtualTable):
+    """
+    Shows a simplistic "inspector" which once helped me for debugging.
+    Needs more work to become seriously useful...
+    
+    """
     label = _("Inspector")
     column_names = "i_name i_type i_value"
     parameters = dict(

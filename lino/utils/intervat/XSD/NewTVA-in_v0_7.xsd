@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/VATConsignment" xmlns:common="http://www.minfin.fgov.be/InputCommon" targetNamespace="http://www.minfin.fgov.be/VATConsignment" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/InputCommon" schemaLocation="IntervatInputCommon_v0_7.xsd"/>
+	
+	<!-- Root Element -->
+	<xs:element name="VATConsignment">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Envoi regroupé de déclarations TVA périodiques, déposé par un mandataire</xs:documentation>
+			<xs:documentation xml:lang="nl">Gegroepeerde verzending van periodische btw aangiften, voorgelegd door een gevolmachtigde</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Representative" type="common:Representative_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Gevolmachtigde</xs:documentation>
+						<xs:documentation xml:lang="de">Bevollmächtigter</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RepresentativeReference" type="common:RepresentativeReference_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Référence attribuée à l'envoi par le mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Toegekende referentie aan de zending door de gevolmachtigde</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="VATDeclaration" type="VATDeclaration_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Déclaration périodique à la TVA, pour un déclarant et une période</xs:documentation>
+						<xs:documentation xml:lang="nl">Periodieke aangifte, voor een belastingplichtige en een periode</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="VATDeclarationsNbr" type="xs:positiveInteger" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nombre de déclarations TVA périodiques dans l'envoi</xs:documentation>
+					<xs:documentation xml:lang="nl">Aantal periodieke aangiften in de zending</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<!-- definition of complex types -->
+	<xs:complexType name="VATDeclaration_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Déclaration TVA périodique, pour un déclarant et une période</xs:documentation>
+			<xs:documentation xml:lang="nl">Periodieke aangifte, voor een aangever en een periode</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReplacedVATDeclaration" type="common:IntervatDeclarationReference_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant/Référence Intervat d'une déclaraton TVA périodique précédente qui est remplacée par cette déclaration (référence donnée dans l'accusé de réception de la déclaration originale)</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie/Referentie Intervat van een vorige aangifte welke wordt vervangen door deze aangifte(referentie terug te vinden in de ontvangstbevestiging van de originele aangifte)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Declarant" type="common:Declarant_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Déclarant (assujetti belge)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aangever (Belgische belastingplichtige)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="VATPeriod_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Période couverte par la déclaration TVA périodique (un mois ou un trimestre d'une année)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Data" type="Data_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montants déclarés. Tous les montants sont exprimés en EUR à l'eurocent près. (grille 71 ou 72 obligatoire)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aangegeven bedragen. Alle bedragen zijn in Euro uitgedrukt. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ClientListingNihil" type="common:YesNo_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Concerne uniquement la dernière déclaration civile ou celle relative à la cessation d'activité: pas de clients à reprendre sur le listing des clients.</xs:documentation>
+					<xs:documentation xml:lang="nl">Betreft uitsluitend de laatste aangifte van het kalenderjaar of de aangifte met betrekking tot de stopzetting van activiteit: geen klanten op te nemen in de klantenlisting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Ask">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Demandes liées à la déclaration (remboursement et formulaires de paiement)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aanvragen verbonden aan de aangifte (terugbetaling en betaalformulieren) </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="Restitution" type="common:YesNo_Type" use="required">
+						<xs:annotation>
+							<xs:documentation xml:lang="fr">Demande de restitution</xs:documentation>
+							<xs:documentation xml:lang="nl">Aanvraag om terugbetaling</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="Payment" type="common:YesNo_Type" use="required">
+						<xs:annotation>
+							<xs:documentation xml:lang="fr">Demande de formulaires de paiement</xs:documentation>
+							<xs:documentation xml:lang="nl">Aanvraag van betaalformulieren</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FileAttachment" type="common:FileAttachment_Type" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Informations concernant une annexe</xs:documentation>
+					<xs:documentation xml:lang="nl">Informatie betreffende een bijlage</xs:documentation>
+					<xs:documentation xml:lang="de">Informationen zu einer Anlage</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="common:Comment_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Commentaire libre</xs:documentation>
+					<xs:documentation xml:lang="nl">Vrije commentaar</xs:documentation>
+					<xs:documentation xml:lang="de">Freier Kommentar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Numéro de séquence de la déclaration TVA périodique dans l'envoi</xs:documentation>
+				<xs:documentation xml:lang="nl">Volgnummer van de aangifte in de zending</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DeclarantReference" type="common:DeclarantReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Référence attribuée à cette déclaration TVA périodique par le déclarant ou mandataire</xs:documentation>
+				<xs:documentation xml:lang="nl">Toegekende referentie aan de aangifte door de aangever of de mandataris</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="VATPeriod_Type">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="Month" type="common:Month_Type">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mois de la période</xs:documentation>
+						<xs:documentation xml:lang="nl">Maand van de periode</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Quarter" type="common:Quarter_Type">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Trimestre de la periode</xs:documentation>
+						<xs:documentation xml:lang="nl">Kwartaal van de periode</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="Year" type="common:Year_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Année de la période (format YYYY)</xs:documentation>
+					<xs:documentation xml:lang="nl">Jaar van de periode (formaat YYYY)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Data_Type">
+		<xs:sequence>
+			<xs:element name="Amount" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Montant en EUR</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="common:PositiveAmount_Type">
+							<xs:attribute name="GridNumber" type="GridNumberCode" use="required">
+								<xs:annotation>
+									<xs:documentation>Numéro de la case</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="GridNumberCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 00: opérations soumises à un régime particulier</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 00: handelingen onderworpen aan een bijzondere regeling</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 01: opérations pour lesquelles la T.V.A. est due par le déclarant au taux de 6%</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 01: Handelingen waarvoor de btw verschuldigd is door de aangever aan het tarief van 6%</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 02: opérations pour lesquelles la T.V.A. est due par le déclarant au taux de 12%</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 02: Handelingen waarvoor de btw verschuldigd is door de aangever aan het tarief van 12%.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 03: opérations pour lesquelles la T.V.A. est due par le déclarant au taux de 21%</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 03: handelingen waarvoor de btw verschuldigd is door de aangever aan het tarief van 21%.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="44">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 44: services pour lesquels la T.V.A. étrangère est due par le cocontractant</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 44: diensten waarvoor de buitenlandse btw verschuldigd is door de medecontractant</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="45">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 45: opérations pour lesquelles la T.V.A. est due par le cocontractant</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 45: handelingen waarvoor de btw verschuldigd is door de medecontractant</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="46">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 46: livraisons intracommunautaires exemptées effectuées en Belgique et ventes ABC</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 46: vrijgestelde intracommunautaire leveringen in België en ABC-verkopen</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="47">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 47: autres opérations exemptées et autres opérations effectuées à l'étranger</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 47: andere vrijgestelde handelingen en andere handelingen verricht in het buitenland</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="48">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 48: Montant des notes de crédit délivrées et des corrections négatives relatif aux opérations inscrites en grilles 44 et 46</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 48: bedrag van de uitgereikte creditnota's en de negatieve verbeteringen met betrekking tot de handelingen ingeschreven in roosters 44 en 46</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="49">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 49: Montant des notes de crédit délivrées et des corrections négatives relatif aux autres opérations du cadre II</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 49: bedrag van de uitgereikte creditnota's en de negatieve verbeteringen met betrekking tot andere handelingen van kader II</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="54">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 54: T.V.A. relative aux opérations déclarées en grilles 01, 02 et 03</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 54: btw op handelingen aangegeven in de roosters 01, 02 et 03</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="55">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 55: T.V.A. relative aux opérations déclarées en grilles 86 et 88</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 55: btw op handelingen aangegeven in roosters 86 en 88</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="56">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 56: T.V.A. relative aux opérations déclarées en grille 87, à l'exception des importations avec report de perception</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 56: btw op handelingen aangegeven in rooster 87, met uitzondering van invoeren met verlegging van heffing</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="57">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 57: T.V.A. relative aux importations avec report de perception</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 57: btw op invoeren met verlegging van heffing</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="59">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 59: T.V.A. déductible</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 59: Aftrekbare btw</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="61">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 61: diverses régularisations T.V.A. en faveur de l'Etat</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 61: diverse btw-regularisaties in het voordeel van de Staat</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="62">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 62: diverses régularisations T.V.A. en faveur du déclarant</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 62: diverse btw-regularisaties in het voordeel van de aangever</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="63">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 63: T.V.A. à reverser mentionnée sur les notes de crédit reçues</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 63: terug te storten btw vermeld op ontvangen creditnota's</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="64">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 64: T.V.A. à récupérer mentionnée sur les notes de crédit délivrées</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 64: te recupereren btw vermeld op uitgereikte creditnota's</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="71">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 71: taxe due à l'Etat</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 71: aan de Staat verschuldigde belasting</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="72">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 72: sommes dues par l'Etat</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 72: sommen verschuldigd door de Staat</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="81">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 81: Montant des opérations à l'entrée compte tenu des notes de crédit reçues et autres corrections : marchandises, matières premières et matières auxiliaires</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 81: bedrag van de inkomende handelingen rekening houdend met de ontvangen creditnota's en andere verbeteringen: handelsgoederen, grond- en hulpstoffen </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="82">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 82: Montant des opérations à l'entrée compte tenu des notes de crédit reçues et autres corrections :services et biens divers</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 82: bedrag van de inkomende handelingen rekening houdend met de ontvangen creditnota's en andere verbeteringen: diensten en diverse goederen </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="83">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 83: Montant des opérations à l'entrée compte tenu des notes de crédit reçues et autres corrections : biens d'investissement</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 83: bedrag van de inkomende handelingen rekening houdend met de ontvangen creditnota's en andere verbeteringen: bedrijfsmiddelen</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="84">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 84: Montant des notes de crédit reçues et des corrections négatives relatif aux opérations inscrites en grilles 86 et 88</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 84: bedrag van de ontvangen creditnota's en de negatieve verbeteringen met betrekking tot de handelingen ingeschreven in roosters 86 en 88</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="85">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 85: Montant des notes de crédit reçues et des corrections négatives : relatif aux autres opérations du cadre III</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 85: bedrag van de ontvangen creditnota's en de negatieve verbeteringen met betrekking tot de andere handelingen van kader III</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="86">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 86: acquisitions intracommunautaires effectuées en Belgique et vente ABC</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 86: intracommunautaire verwervingen verricht in België en ABC-verkopen</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="87">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 87: autres opérations à l'entrée pour lesquelles la T.V.A. est due par le déclarant</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 87: andere inkomende handelingen waarvoor de btw verschuldigd is
+door de aangever</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="88">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant déclaré en grille 88: services intracommunautaires avec report de perception</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aangegeven in rooster 88: intracommunautaire diensten met verlegging van heffing</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="91">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Concerne uniquement la déclaration mensuelle de décembre: Montant déclaré en grille 91: T.V.A. réellement due pour la période du 1er au 20 décembre</xs:documentation>
+					<xs:documentation xml:lang="nl">Betreft uitsluitend de maandaangifte van december: bedrag aangegeven in rooster 91: werkelijk verschuldigde btw voor de periode van 1 tot 20 december </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

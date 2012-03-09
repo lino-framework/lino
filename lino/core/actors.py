@@ -51,7 +51,7 @@ ACTOR_SEP = '.'
 MODULES = AttrDict()
   
 def register_actor(a):
-    logger.debug("register_actor %s",a)
+    #~ logger.debug("register_actor %s",a)
     old = MODULES.define(a.app_label,a.__name__,a)
     #~ old = actors_dict.get(a.actor_id,None)
     if old is not None:
@@ -488,7 +488,12 @@ class Actor(Handled):
         
     @classmethod
     def setup_actions(self):
-        pass
+        #~ if str(self) == "lino.Models":
+            #~ logger.info("20120307 Actor.setup_actions() %s %s",self,self.detail_layout)
+        if self.detail_layout:
+        #~ if self._lino_detail:
+            self.detail_action = actions.ShowDetailAction(self)
+            self.add_action(self.detail_action)
         
     #~ @classmethod
     #~ def set_actions(self,actions):
@@ -539,13 +544,36 @@ class Actor(Handled):
         c = self._constants.get(name,None)
         if c is not None:
             return c
-        return self.virtual_fields.get(name,None)
-        #~ vf = self.virtual_fields.get(name,None)
-        #~ if vf is not None:
+        #~ return self.virtual_fields.get(name,None)
+        vf = self.virtual_fields.get(name,None)
+        if vf is not None:
             #~ logger.info("20120202 Actor.get_data_elem found vf %r",vf)
-            #~ return vf
+            return vf
+        
+        #~ logger.info("20120307 lino.core.coretools.get_data_elem %r,%r",self,name)
+        s = name.split('.')
+        if len(s) == 1:
+            #~ app_label = model._meta.app_label
+            rpt = settings.LINO.modules[self.app_label].get(name,None)
+        elif len(s) == 2:
+            rpt = settings.LINO.modules[s[0]].get(s[1],None)
+        else:
+            raise Exception("Invalid data element name %r" % name)
+        #~ rpt = get_slave(model,name)
+        if rpt is not None: 
+            #~ if rpt.master is not None and rpt.master is not ContentType:
+                #~ ok = True
+                #~ try:
+                    #~ if not issubclass(model,rpt.master):
+                        #~ ok = False
+                #~ except TypeError,e: # e.g. issubclass() arg 1 must be a class
+                    #~ ok = False
+                #~ if not ok:
+                    #~ raise Exception("%s.master is %r, must be subclass of %r" % (
+                        #~ name,rpt.master,model))
+            return rpt
         #~ logger.info("20120202 Actor.get_data_elem found nothing")
-        #~ return None
+        return None
               
     @classmethod
     def request(cls,ui=None,request=None,action=None,**kw):

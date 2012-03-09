@@ -136,6 +136,7 @@ we need some more parameters:
 
 - You also need a unique reference and a timestamp. 
 
+  >>> import datetime
   >>> now = datetime.datetime(2011,10,31,15,41,10)
   >>> unique_id = 'PIR # 5'
 
@@ -159,8 +160,6 @@ we need some more parameters:
   your local :xfile:`settings.py` 
   module :attr:`lino.Lino.bcss_soap_url`.)
   
-  
-
 
 If you run the following call in a real environment
 (with permission to connect and correct data in `user_params`), 
@@ -235,81 +234,22 @@ into a SOAP envelope:
 """
 
 import os
-import datetime
 
 from appy.shared.dav import Resource
 from appy.shared.xml_parser import XmlUnmarshaller
 
+from lxml import etree
+
 #~ from lino.utils import d2iso
 #~ from lino.utils import IncompleteDate
+from lino.utils.xmlgen import SimpleException, Namespace
+
+def xsdpath(*parts):
+    p1 = os.path.abspath(os.path.dirname(__file__))
+    return os.path.join(p1,'XSD',*parts)
 
 
-from lxml import etree
-from lxml.builder import ElementMaker # lxml only !
 
-class SimpleException(Exception): 
-    """
-    An Exception whose string is meant to be 
-    understandable by the user.
-    """
-
-
-#~ def py2str(value):
-#~ def py2str(*args):
-    #~ raise Exception("20120301 %r" % (args,))
-
-#~ def py2str(elem,value):
-    #~ if isinstance(value,int):
-        #~ return str(value)
-    #~ if isinstance(value,datetime.datetime):
-        #~ return value.strftime("%Y%m%dT%H%M%S")
-    #~ if isinstance(value,datetime.date):
-        #~ return value.strftime("%Y-%m-%d")
-    #~ if isinstance(value,IncompleteDate):
-        #~ if self.year == 0:
-            #~ raise Exception("%s : Year may not be 0" % elem)
-        #~ return str(value)
-    #~ raise Exception("%s : don't know how to format %r" % (elem,value))
-        
-    #~ if isinstance(value,basestring):
-        #~ return value
-    #~ return unicode(value)
-
-
-TYPEMAP = {
-  #~ datetime.datetime: py2str,
-  #~ IncompleteDate : lambda e,v : str(v),
-  datetime.datetime: lambda e,v : v.strftime("%Y%m%dT%H%M%S"),
-  datetime.date: lambda e,v : v.strftime("%Y-%m-%d"),
-  int: lambda e,v : str(v),
-}
-
-
-class Namespace(object):
-    def __init__(self,prefix=None,url=None,**kw):
-        if url:
-            kw.update(namespace=url)
-            #~ if prefix:
-            nsmap = kw.setdefault('nsmap',{})
-            nsmap[prefix] = url
-        kw.setdefault('typemap',TYPEMAP)
-        #~ self._element_maker = ElementMaker(namespace=url,nsmap={prefix:url})
-        self._element_maker = ElementMaker(**kw)
-        self._url = url
-        
-    def define(self,names):
-        for name in names.split():
-            assert not hasattr(self,name)
-            setattr(self,name,getattr(self._element_maker,name))
-
-#~ def MEM(prefix,url):
-    #~ return ElementMaker(namespace=url,nsmap={prefix:url})
-
-#~ bcss = MEM('bcss',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
-#~ soap = MEM('soap',"http://schemas.xmlsoap.org/soap/envelope/")
-#~ ipr = MEM('ipr',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
-#~ pir = MEM('pir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
-#~ hir = MEM('hir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
 
 soap = Namespace('soap',"http://schemas.xmlsoap.org/soap/envelope/")
 bcss = Namespace('bcss',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
@@ -317,25 +257,22 @@ ssdn = Namespace(None,"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
 #~ ssdn = Namespace('ssdn',"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
 #~ ,nsmap={None:ssdn._url}
 
-ssdn.define("""
-SSDNRequest
-ServiceRequest
-ServiceId
-Version
-RequestContext
-Message
-Reference
-TimeRequest
-""")            
+#~ ssdn.define("""
+#~ SSDNRequest
+#~ ServiceRequest
+#~ ServiceId
+#~ Version
+#~ RequestContext
+#~ Message
+#~ Reference
+#~ TimeRequest
+#~ """)            
 
 
 
-bcss.define('xmlString')
-#~ xmlString = bcss.xmlString
+#~ bcss.define('xmlString')
 
-soap.define("Body Envelope")
-#~ Envelope = soap.Envelope
-#~ Body = soap.Body
+#~ soap.define("Body Envelope")
 
 
 
@@ -355,14 +292,14 @@ class Common(Namespace):
             common.MatrixSubID(MatrixSubID))
 
 common = Common()
-common.define("""
-AuthorizedUser
-UserID
-Email
-OrgUnit
-MatrixID
-MatrixSubID
-""")
+#~ common.define("""
+#~ AuthorizedUser
+#~ UserID
+#~ Email
+#~ OrgUnit
+#~ MatrixID
+#~ MatrixSubID
+#~ """)
 
 
 
@@ -375,7 +312,6 @@ class Service(Namespace):
     """
     service_id = None
     service_version = None
-    xsd_filename = None
       
     def ssdn_request(self,srvReq,user_params,message_ref,dt):
         #~ xg.set_default_namespace(None)
@@ -396,26 +332,12 @@ class Service(Namespace):
         return elem
         #~ return ssdn.SSDNRequest(context,serviceRequest)
         
-    def validate_request(self,root):
-        if self.xsd_filename:
-            fn = os.path.abspath(os.path.dirname(__file__))
-            fn = os.path.join(fn,'XSD',self.xsd_filename)
-            xmlschema_doc = etree.parse(fn)
-            xmlschema = etree.XMLSchema(xmlschema_doc)
-            doc = etree.ElementTree(root)
-            xmlschema.assertValid(doc)
-            #~ if not xmlschema.validate(doc):
-                #~ raise SimpleException(
-                    #~ "Request failed to validate against %s" % fn)
-        return 
-            
-          
     def execute(self,req,user_params,url=None,*args):
         #~ print 20120302
         if user_params is None:
             raise SimpleException(
                 "Not actually sending because user_params is empty.")
-        self.validate_request(req)
+        #~ self.validate_against_xsd(req)
             
         sr = self.ssdn_request(req,user_params,*args)
         soap_body = etree.tostring(sr)
@@ -441,15 +363,12 @@ Not actually sending because url is empty. Request would be:
         #~ return reply
         
 
-
-
-
         
 class IdentifyPersonRequest(Service):
     "A request for identifying a person or validating a person's identity"
     service_id = 'OCMWCPASIdentifyPerson'
     service_version = '20050930'
-    xsd_filename = os.path.join('SSDN','OCMW_CPAS',
+    xsd_filename = xsdpath('SSDN','OCMW_CPAS',
         'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
 
     def build_request(ipr,
@@ -497,7 +416,7 @@ class IdentifyPersonRequest(Service):
         #~ if tolerance is not None: pc.append(ipr.Tolerance(tolerance))
         root = ipr.IdentifyPersonRequest(
             ipr.SearchCriteria(ipr.PhoneticCriteria(*pc)))
-        ipr.validate_request(root)
+        ipr.validate_root(root)
         return root 
           
 
@@ -509,7 +428,7 @@ class PerformInvestigationRequest(Service):
     """
     service_id = 'OCMWCPASPerformInvestigation'
     service_version = '20080604'
-    xsd_filename = os.path.join('SSDN','OCMW_CPAS',
+    xsd_filename = xsdpath('SSDN','OCMW_CPAS',
         'PERFORMINVESTIGATION','PERFORMINVESTIGATIONREQUEST.XSD')
     
     def build_request(pir,ssin,family='1',citizen='1',address='1',wait='1'):
@@ -521,7 +440,7 @@ class PerformInvestigationRequest(Service):
               pir.AddressHistoryGroup(address),
               pir.WaitRegisterGroup(wait)))
 
-        pir.validate_request(root)
+        pir.validate_root(root)
         return root 
     
     
@@ -538,59 +457,59 @@ class HealthInsuranceRequest(Service):
     
     
     
-ipr = IdentifyPersonRequest('ipr',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
+ipr = IdentifyPersonRequest('ipr') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
 """
 The Namespace for :class:`IdentifyPersonRequest`.
 """
 
-ipr.define("""
-IdentifyPersonRequest
-SearchCriteria
-PhoneticCriteria
-SSIN
-LastName
-FirstName
-MiddleName
-BirthDate
-Gender
-Tolerance
-Maximum
+#~ ipr.define("""
+#~ IdentifyPersonRequest
+#~ SearchCriteria
+#~ PhoneticCriteria
+#~ SSIN
+#~ LastName
+#~ FirstName
+#~ MiddleName
+#~ BirthDate
+#~ Gender
+#~ Tolerance
+#~ Maximum
 
-VerificationData
-SISCardNumber
-IdentityCardNumber
-PersonData 
-""")
+#~ VerificationData
+#~ SISCardNumber
+#~ IdentityCardNumber
+#~ PersonData 
+#~ """)
 
 
-pir = PerformInvestigationRequest('pir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
+pir = PerformInvestigationRequest('pir') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
 """
 The Namespace for :class:`PerformInvestigationRequest`.
 """
 
-pir.define("""
-PerformInvestigationRequest
-SocialSecurityUser
-DataGroups
-FamilyCompositionGroup
-CitizenGroup
-AddressHistoryGroup
-WaitRegisterGroup
-""")
+#~ pir.define("""
+#~ PerformInvestigationRequest
+#~ SocialSecurityUser
+#~ DataGroups
+#~ FamilyCompositionGroup
+#~ CitizenGroup
+#~ AddressHistoryGroup
+#~ WaitRegisterGroup
+#~ """)
 
-hir = HealthInsuranceRequest('hir',"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
+hir = HealthInsuranceRequest('hir') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
 """
 The Namespace for :class:`HealthInsuranceRequest`.
 """
 
-hir.define("""
-HealthInsuranceRequest
-SSIN
-Assurability
-Period
-StartDate
-EndDate
-""")
+#~ hir.define("""
+#~ HealthInsuranceRequest
+#~ SSIN
+#~ Assurability
+#~ Period
+#~ StartDate
+#~ EndDate
+#~ """)
 
     
 

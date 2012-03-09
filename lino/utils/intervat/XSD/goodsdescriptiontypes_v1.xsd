@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ec.europa.eu:taxud:fiscalis:vatrefund:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.01">
+	<xs:annotation>
+		<xs:documentation xml:lang="en"><![CDATA[
+			List of Goods Description types and sub-types
+			=== HISTORY=== 
+			Version 1.02 - Modify pattern of the GoodsDescriptionSubCode_Type (20/08/2010)
+									   to have x.y.z with y and z both optional
+			Version 1.01 - add pattern to the GoodsDescriptionSubCode_Type (20/03/2009)
+			Version 1.00 - first release of the schema to the Member States 
+			]]></xs:documentation>
+	</xs:annotation>
+	<xs:simpleType name="GoodsDescriptionCode_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				fuel
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				hiring of means of transport
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				expenditure relating to means of transport (other than the goods and services referred to under codes 1 and 2
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="4">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				road tolls and road user charge
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="5">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				travel expenses, such as taxi fares, public transport fares
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="6">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				accommodation
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="7">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				food, drink and restaurant services
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="8">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				admissions to fares and exhibitions
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="9">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				expenditure on luxuries, amusements and entertainment
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="10">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				other
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="GoodsDescriptionSubCode_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([0-9]{1,2}){1}(\.\d{1,2}){0,2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/VATRefundConsignment" xmlns:iso="http://www.minfin.fgov.be/IsoTypes" xmlns:common="http://www.minfin.fgov.be/InputCommon" targetNamespace="http://www.minfin.fgov.be/VATRefundConsignment" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/InputCommon" schemaLocation="IntervatInputCommon_v0_7.xsd"/>
+    <xs:import namespace="http://www.minfin.fgov.be/IsoTypes" schemaLocation="IntervatIsoTypes_v0_7.xsd"/>
+
+	<!-- Root Element -->
+	<xs:element name="VATRefundConsignment">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Envoi regroupé de demandes VatRefund globales, déposé par un mandataire</xs:documentation>
+			<xs:documentation xml:lang="nl">Gegroepeerde verzending van globale VATRefund aanvragen, voorgelegd door een gevolmachtigde</xs:documentation>
+			<xs:documentation xml:lang="de">Zusammengefasste Sendung der von einem Bevollmächtigten hinterlegten globalen VatRefund-Anträge </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Representative" type="common:VR_Representative_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Gevolmachtigde</xs:documentation>
+						<xs:documentation xml:lang="de">Bevollmächtigter</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RepresentativeReference" type="common:RepresentativeReference_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Référence assignée à l'envoi par le mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Door de gevolmachtigde aan de verzending toegekende referentie</xs:documentation>
+						<xs:documentation xml:lang="de">Vom Bevollmächtigten für die Versendung zugewiesene Referenzangabe</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="GlobalVatRefundApplication" type="GlobalVatRefundApplicationType" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Demande VatRefund Globale pour un requérant et une période, mais pour plusieurs pays</xs:documentation>
+						<xs:documentation xml:lang="nl">Globale VatRefund aanvraag voor één aanvrager en één periode, maar voor verschillende landen</xs:documentation>
+						<xs:documentation xml:lang="de">Globaler VatRefund-Antrag für einen Antragsteller und einen Zeitraum, aber für mehrere Länder</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="GlobalVatRefundApplicationsNbr" type="xs:positiveInteger" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nombre de demandes VATRefund globales dans l'envoi</xs:documentation>
+					<xs:documentation xml:lang="nl">Aantal globale aanvragen VATRefund in de zending</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<!-- definition of simple types -->
+	<xs:simpleType name="TaxReferenceStringType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ProRataType">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- definition of complex types -->
+	<xs:complexType name="GlobalVatRefundApplicationType">
+		<xs:sequence>
+			<xs:element name="GlobalVatRefundReference" type="common:STIRINTReference_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Référence d'une demande globale précédente qui est corrigée (référence reçue par mail)</xs:documentation>
+					<xs:documentation xml:lang="nl">Referentie van een eerdere globale aanvraag die wordt verbeterd (referentie door mail gekregen)</xs:documentation>
+					<xs:documentation xml:lang="de">Referenzangabe eines vorhergehenden globalen Antrags, der berichtigt wurde</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Applicant" type="common:VR_Declarant_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Requérant des remboursements (assujetti belge)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aanvrager van de terugbetalingen (Belgische belastingplichtige)</xs:documentation>
+					<xs:documentation xml:lang="de">Antragsteller der Erstattungen (belgischer Steuerpflichtiger)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RefundPeriod" type="RefundPeriodType">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Période couverte par la demande globale (un ou plusieurs trimestres ou une année complète)</xs:documentation>
+					<xs:documentation xml:lang="nl">Periode die de globale aanvraag omvat (één of verschillende kwartalen of een volledig jaar)</xs:documentation>
+					<xs:documentation xml:lang="de">Vom globalen Antrag abgedeckter Zeitraum (ein oder mehrere Quartale oder ein vollständiges Jahr)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BusinessDescription" type="BusinessDescriptionType">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Description de l'activité du requérant</xs:documentation>
+					<xs:documentation xml:lang="nl">Beschrijving van de activiteit van de aanvrager</xs:documentation>
+					<xs:documentation xml:lang="de">Beschreibung der Tätigkeit des Antragstellers</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DefaultBankAccount" type="DetailedBankAccount_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Compte financier à utiliser pour les remboursements</xs:documentation>
+					<xs:documentation xml:lang="nl">Bankrekening, aan te wenden voor de terugbetalingen</xs:documentation>
+					<xs:documentation xml:lang="de">Für Erstattungen zu verwendendes Bankkonto</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StandardDeclaration" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Déclaration standardisée relative à la non réalisation dans l'EM de remboursement d'opérations taxables</xs:documentation>
+					<xs:documentation xml:lang="nl">Standaardverklaring met betrekking tot het niet-verrichten van belastbare handelingen in de lidstaat van terugbetaling</xs:documentation>
+					<xs:documentation xml:lang="de">Standardisierte Erklärung über Nicht-Verwirklichung von steuerbaren Umsätzen in einem Mitgliedstaat </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="common:Comment_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Commentaire libre</xs:documentation>
+					<xs:documentation xml:lang="nl">Vrije commentaar</xs:documentation>
+					<xs:documentation xml:lang="de">Freier Kommentar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VATRefundRequests" type="VATRefundRequestsType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Groupe de demandes VATRefund pour un Etat membre</xs:documentation>
+					<xs:documentation xml:lang="nl">Groep van VatRefund aanvragen voor één lidstaat</xs:documentation>
+					<xs:documentation xml:lang="de">Gruppe von VATRefund-Anträgen für einen Mitgliedstaat</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Numéro de séquence de la demande globale dans l'envoi</xs:documentation>
+				<xs:documentation xml:lang="nl">Volgnummer van de globale aanvraag in de zending</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="VATRefundRequestsNbr" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Nombre de groupe de demandes VATRefund pour un Etat membre dans cette demande globale</xs:documentation>
+				<xs:documentation xml:lang="nl">Aantal gegroepeerde aanvragen VATRefund voor een lidstaat binnen deze globale aanvraag</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DeclarantReference" type="common:DeclarantReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Référence attribuée à cette demande globale par le déclarant ou mandataire.</xs:documentation>
+				<xs:documentation xml:lang="nl">Door de aangever of gevolmachtigde aan de globale aanvraag toegekende referentie</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="RefundPeriodType">
+		<xs:sequence>
+			<xs:element name="Quarter" type="common:Quarter_Type" minOccurs="0" maxOccurs="4">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Trimestre civil</xs:documentation>
+					<xs:documentation xml:lang="nl">Kalenderkwartaal</xs:documentation>
+					<xs:documentation xml:lang="de">Kalenderquartal</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Year" type="common:Year_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Année civile</xs:documentation>
+					<xs:documentation xml:lang="nl">Kalenderjaar</xs:documentation>
+					<xs:documentation xml:lang="de">Kalenderjahr</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BusinessDescriptionType">
+		<xs:sequence>
+			<xs:element name="BusinessActivity" type="BusinessActivity_Type" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Activité du requérant identifiée par un code NACE</xs:documentation>
+					<xs:documentation xml:lang="nl">Activiteit van de aanvrager, geïdentificeerd door een NACE-code</xs:documentation>
+					<xs:documentation xml:lang="de">Tätigkeit des mit einer NACE-Kennzahl identifizierten Antragstellers</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VATRefundRequestsType">
+		<xs:sequence>
+			<xs:element name="RefundingCountryCode" type="iso:MSCountryCodeExclBE">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Etat membre auquel les demandes sont faites</xs:documentation>
+					<xs:documentation xml:lang="nl">Lidstaat aan dewelke de aanvragen zijn gericht</xs:documentation>
+					<xs:documentation xml:lang="de">Mitgliedstaat, bei dem die Anträge bereits gestellt wurden</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="ImportInformation" type="ImportInformationType">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Demande de remboursement pour des importations faites dans l'Etat membre concerné</xs:documentation>
+						<xs:documentation xml:lang="nl">Terugbetalingsaanvraag voor invoeren, gedaan in de betrokken lidstaat</xs:documentation>
+						<xs:documentation xml:lang="de">Erstattungsantrag für Einfuhren in den betreffenden Mitgliedstaat</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="PurchaseInformation" type="PurchaseInformationType">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Demande de remboursement pour des achats faits dans l'Etat membre concerné</xs:documentation>
+						<xs:documentation xml:lang="nl">Terugbetalingsaanvraag voor aankopen, gedaan in de betrokken lidstaat</xs:documentation>
+						<xs:documentation xml:lang="de">Erstattungsantrag für Ankäufe in den betreffenden Mitgliedstaat</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="FileAttachment" type="common:FileAttachment_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Informations concernant une annexe</xs:documentation>
+					<xs:documentation xml:lang="nl">Informatie betreffende een bijlage</xs:documentation>
+					<xs:documentation xml:lang="de">Informationen zu einer Anlage</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ImportInformationType">
+		<xs:sequence>
+			<xs:element name="SequenceNumber" type="SequenceNumber_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">N° unique pour la demande globale</xs:documentation>
+					<xs:documentation xml:lang="nl">Enig nummer voor de globale aanvraag</xs:documentation>
+					<xs:documentation xml:lang="de">Einmalige Nummer für den globalen Antrag</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:element name="ReferenceNumber" type="ReferenceNumber18_Type">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">MRN du document d'importation</xs:documentation>
+						<xs:documentation xml:lang="nl">MRN van het invoerdocument</xs:documentation>
+						<xs:documentation xml:lang="de">MRN des Einfuhrdokuments</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ReferenceInformation" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Référence du document d'importation s'il n'est pas identifié par un MRN</xs:documentation>
+						<xs:documentation xml:lang="nl">Referentie van het invoerdocument indien het geen MRN-identificatie heeft</xs:documentation>
+						<xs:documentation xml:lang="de">Referenzangabe des Einfuhrdokuments, wenn es nicht durch eine MRN gekennzeichnet ist</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="IssuingDate" type="common:RestrictedDate_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Date du document d'importation</xs:documentation>
+					<xs:documentation xml:lang="nl">Datum van het invoerdocument</xs:documentation>
+					<xs:documentation xml:lang="de">Datum des Einfuhrdokuments</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Supplier" type="TraderType">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Fournisseur des biens ou services</xs:documentation>
+					<xs:documentation xml:lang="nl">Leverancier van de goederen of diensten</xs:documentation>
+					<xs:documentation xml:lang="de">Lieferer der Güter oder Dienstleistungen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GoodsDescription" type="GoodsDescription_Type" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Description des biens et services</xs:documentation>
+					<xs:documentation xml:lang="nl">Omschrijving van de goederen en diensten</xs:documentation>
+					<xs:documentation xml:lang="de">Beschreibung der Güter und Dienstleistungen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionDescription" type="TransactionDescription_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Description de la transaction</xs:documentation>
+					<xs:documentation xml:lang="nl">Omschrijving van de transactie</xs:documentation>
+					<xs:documentation xml:lang="de">Beschreibung der Transaktion</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Deduction" type="DeductionType">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Information sur la déduction de la TVA</xs:documentation>
+					<xs:documentation xml:lang="nl">Informatie over de aftrek van de btw</xs:documentation>
+					<xs:documentation xml:lang="de">Information über den Abzug der MwSt.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PurchaseInformationType">
+		<xs:sequence>
+			<xs:element name="SequenceNumber" type="SequenceNumber_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">N° unique pour la demande globale</xs:documentation>
+					<xs:documentation xml:lang="nl">Enig nummer voor de globale aanvraag</xs:documentation>
+					<xs:documentation xml:lang="de">Einmalige Nummer für den globalen Antrag</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceNumber" type="xs:token">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">N° de la facture</xs:documentation>
+					<xs:documentation xml:lang="nl">Factuurnummer</xs:documentation>
+					<xs:documentation xml:lang="de">Rechnungsnummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IssuingDate" type="common:RestrictedDate_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Date de la facture</xs:documentation>
+					<xs:documentation xml:lang="nl">Factuurdatum</xs:documentation>
+					<xs:documentation xml:lang="de">Datum der Rechnung</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EUSupplier" type="EUTraderType">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Fournisseur des biens ou services</xs:documentation>
+					<xs:documentation xml:lang="nl">Leverancier van de goederen of diensten</xs:documentation>
+					<xs:documentation xml:lang="de">Lieferer der Güter oder Dienstleistungen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GoodsDescription" type="GoodsDescription_Type" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Description des biens et services</xs:documentation>
+					<xs:documentation xml:lang="nl">Omschrijving van de goederen en diensten</xs:documentation>
+					<xs:documentation xml:lang="de">Beschreibung der Güter und Dienstleistungen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionDescription" type="TransactionDescription_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Description de la transaction</xs:documentation>
+					<xs:documentation xml:lang="nl">Omschrijving van de transactie</xs:documentation>
+					<xs:documentation xml:lang="de">Beschreibung der Transaktion</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Deduction" type="DeductionType">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Information sur la déduction de la TVA</xs:documentation>
+					<xs:documentation xml:lang="nl">Informatie over de aftrek van de btw</xs:documentation>
+					<xs:documentation xml:lang="de">Information über den Abzug der MwSt.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="simplifiedInvoice" type="xs:boolean" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Indique si une facture simplifiée a été utilisée</xs:documentation>
+				<xs:documentation xml:lang="nl">Geeft aan of een vereenvoudigde factuur werd gebruikt</xs:documentation>
+				<xs:documentation xml:lang="de">Gibt an, ob eine vereinfachte Rechnung benutzt wurde</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="TraderType">
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom du fournisseur</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam van de leverancier</xs:documentation>
+					<xs:documentation xml:lang="de">Name des Lieferers</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:CountryCode" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays</xs:documentation>
+					<xs:documentation xml:lang="nl">Land</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EUTraderType">
+		<xs:sequence>
+			<xs:element name="EUTraderID" type="EUTraderIDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant du fournisseur</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie van de leverancier</xs:documentation>
+					<xs:documentation xml:lang="de">Kennung des Lieferers</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">PostCode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:MSCountryCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays</xs:documentation>
+					<xs:documentation xml:lang="nl">Land</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EUTraderIDType">
+		<xs:choice>
+			<xs:element name="VATIdentificationNumber" type="VATIdentificationNumberType">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">N° TVA du fournisseur</xs:documentation>
+					<xs:documentation xml:lang="nl">Btw-nr. van de leverancier</xs:documentation>
+					<xs:documentation xml:lang="de">MwSt.-Nummer des Lieferers</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxReferenceNumber" type="TaxReferenceNumberType">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant (autre que TVA) du fournisseur - seulement pour l'Allemagne</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie (anders dan btw) van de leverancier - enkel voor Duitsland</xs:documentation>
+					<xs:documentation xml:lang="de">Kennung (anders als MwSt.) des Lieferers - nur für Deutschland</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="VATIdentificationNumberType">
+		<xs:simpleContent>
+			<xs:extension base="common:EUVATNumber">
+				<xs:attribute name="issuedBy" type="iso:MSCountryCode" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Pays qui a attribué le n° TVA</xs:documentation>
+						<xs:documentation xml:lang="nl">Land dat het btw-nr. heeft toegekend</xs:documentation>
+						<xs:documentation xml:lang="de">Land, das die MwSt.-Nummer zuerkannt hat</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="TaxReferenceNumberType">
+		<xs:simpleContent>
+			<xs:extension base="TaxReferenceStringType">
+				<xs:attribute name="issuedBy" type="iso:DECountryCode" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Pays qui a attribué le TaxReferenceNumber</xs:documentation>
+						<xs:documentation xml:lang="nl">Land dat de TaxReferenceNumber heeft toegekend</xs:documentation>
+						<xs:documentation xml:lang="de">Land, das die TaxReferenceNumber zuerkannt hat</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DeductionType">
+		<xs:sequence>
+			<xs:element name="ProRataRate" type="ProRataType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Prorata de déduction</xs:documentation>
+					<xs:documentation xml:lang="nl">Aftrekprorata</xs:documentation>
+					<xs:documentation xml:lang="de">Pro-rata-Satz des Abzugs</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DeductibleVATAmount" type="SignedMoneyAmount_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant TVA déductible</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag aftrekbare btw</xs:documentation>
+					<xs:documentation xml:lang="de">Betrag der abziehbaren MwSt.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Definitions coming from the european xsd schemas -->
+	<!-- 1) Types defined in the "vatrefund" european schema-->
+	<xs:simpleType name="BusinessActivity_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="DetailedBankAccount_Type">
+		<xs:sequence>
+			<xs:element name="OwnerName" type="AccountName_Type"/>
+			<xs:element name="OwnerType" type="BankAccountOwnerType_Type"/>
+			<xs:element name="IBAN" type="MSIBAN_Type"/>
+			<xs:element name="BIC" type="BIC_Type"/>
+			<xs:element name="Currency" type="iso:CurrencyCode"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="AccountName_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="35"/>
+			<xs:minLength value="1"/>
+			<xs:pattern value="[A-Za-z0-9/\-?:().,'+ ]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BankAccountOwnerType_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="applicant"/>
+			<xs:enumeration value="representative"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MSIBAN_Type">
+		<xs:restriction base="IBAN_Type">
+			<xs:pattern value="(AT|BE|BG|CY|CZ|DE|DK|EE|GR|ES|FI|FR|GB|HU|IE|IT|LT|LU|LV|MT|NL|PL|PT|RO|SE|SI|SK){1}.*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BIC_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Bank Identifer Code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3}){0,1}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SequenceNumber_Type">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReferenceNumber18_Type">
+		<xs:restriction base="ReferenceNumber_Type">
+			<xs:maxLength value="18"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReferenceNumber_Type">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="\p{IsBasicLatin}*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="GoodsDescription_Type">
+		<xs:sequence>
+			<xs:element name="Code" type="GoodsDescriptionCode"/>
+			<xs:element name="SubCode" type="GoodsDescriptionSubCode_Type" minOccurs="0"/>
+			<xs:element name="FreeText" type="TextualDescription_Type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TextualDescription_Type">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="language" type="iso:EULanguageCode" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="TransactionDescription_Type">
+		<xs:sequence>
+			<xs:element name="TaxableAmount" type="SignedMoneyAmount_Type"/>
+			<xs:element name="VATAmount" type="SignedMoneyAmount_Type"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SignedMoneyAmount_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">An amount: a value with a currency attribute</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="common:UnlimitedSignedAmount_Type">
+				<xs:attribute name="currency" type="iso:MSCurrencyCode" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 2) Types defined in the "common" european schema-->
+	<xs:simpleType name="IBAN_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">The International Bank Account Number has to be given
+				here for the account into which the payment in question has been made. Depending on
+				the transmission type this element is optional. Its structure is: Country code, 2
+				letters/Check digits, 2 digits/Basic Bank Account Number (BBAN), 10 to 30
+				alphanumeric characters </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{2}[0-9]{2}[0-9,A-Z]{10,30}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- 3) Types defined in the "goodsdescription_types" european schema-->
+	<xs:simpleType name="GoodsDescriptionCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">fuel</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">hiring of means of transport</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">expenditure relating to means of transport (other than the goods and services referred to under codes 1 and 2</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="4">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">road tolls and road user charge</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="5">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">travel expenses, such as taxi fares, public transport fares</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="6">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">accommodation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="7">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">food, drink and restaurant services</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="8">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">admissions to fares and exhibitions</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="9">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">expenditure on luxuries, amusements and entertainment</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="10">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">other</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="GoodsDescriptionSubCode_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([0-9]{1,2}){1}(\.\d{1,2}){1,2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

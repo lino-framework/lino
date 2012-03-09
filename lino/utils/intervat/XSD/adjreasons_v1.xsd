@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vr="urn:ec.europa.eu:taxud:fiscalis:vatrefund:v1" targetNamespace="urn:ec.europa.eu:taxud:fiscalis:vatrefund:v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:documentation xml:lang="en"><![CDATA[
+			List of Pro-Rata Rate Adjustment Justification Reason Codes
+			=== HISTORY=== 
+			Version 1.00 - first release of the schema to the Member States 
+			]]></xs:documentation>
+	</xs:annotation>
+	<xs:simpleType name="ProRataRateAdjustmentJustificationReasonCode_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="01">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				Period is invalid or does not correspond to a period allowed by the legislation;
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="02">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				Adjusted pro-rata rate appears to be incorrect with regard to the information provided by the competent authority of your Member State of establishment
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="99">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Other
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

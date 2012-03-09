@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 rel. 3 U (http://www.altova.com) by Kris Verhoye (Ministerie des finances) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/MTNConsignment" xmlns:iso="http://www.minfin.fgov.be/IsoTypes" xmlns:common="http://www.minfin.fgov.be/InputCommon" targetNamespace="http://www.minfin.fgov.be/MTNConsignment" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/InputCommon" schemaLocation="IntervatInputCommon_v0_7.xsd"/>
+    <xs:import namespace="http://www.minfin.fgov.be/IsoTypes" schemaLocation="IntervatIsoTypes_v0_7.xsd"/>
+
+	<xs:element name="MTNConsignment">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Envoi regroupé, déposé par un mandataire, de déclarations de livraisons intracommunautaires de moyens de transport neufs à des personnes ne disposant pas d'un numéro d'identification à la TVA valable dans un autre Etat membre</xs:documentation>
+			<xs:documentation xml:lang="nl">Gegroepeerde verzending, ingediend door een gevolmachtigde, van aangiften van intracommunautaire leveringen van nieuwe vervoermiddelen aan personen die niet beschikken over een geldig btw-identificatienummer in een andere lidstaat</xs:documentation>
+			<xs:documentation xml:lang="de">Sammelsendung der von einem Bevollmächtigten hinterlegten Erklärungen innergemeinschaftlicher Lieferungen von neuen Fahrzeugen an Personen, die über keine gültige MwSt.-Identifikationsnummer in einem anderen Mitgliedstaat verfügen.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Representative" type="common:Representative_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Gevolmachtigde</xs:documentation>
+						<xs:documentation xml:lang="de">Bevollmächtigter</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RepresentativeReference" type="common:RepresentativeReference_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Référence attribuée à l'envoi par le mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Door de gevolmachtigde aan de verzending toegekende referentie </xs:documentation>
+						<xs:documentation xml:lang="de">Vom Bevollmächtigten für die Versendung zugewiesene Referenzangabe</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="MTNDeclaration" type="MTNDeclaration_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Déclaration, pour un déclarant/fournisseur et un trimestre, de livraisons intracommunautaires de moyens de transport neufs à des personnes ne disposant pas d'un numéro d'identification à la TVA valable dans un autre Etat membre</xs:documentation>
+						<xs:documentation xml:lang="nl">Aangifte, voor één aangever/leverancier et één kwartaal, van intracommunautaire leveringen van nieuwe vervoermiddelen aan personen die niet beschikken over een geldig btw-identificatienummer in een andere lidstaat</xs:documentation>
+						<xs:documentation xml:lang="de">Erklärung für einen Anmeldepflichtigen/Lieferer und ein Quartal von innergemeinschaftlichen Lieferungen neuer Fahrzeuge an Personen, die über keine gültige MwSt.-Identifikationsnummer in einem anderen Mitgliedstaat verfügen</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="MTNDeclarationsNbr" type="xs:positiveInteger" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nombre de déclarations MTN dans l'envoi</xs:documentation>
+					<xs:documentation xml:lang="nl">Aantal MTN-aangiften in de verzending</xs:documentation>
+					<xs:documentation xml:lang="de">Anzahl NeuFz-Erklärungen in der Sendung</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="MTNDeclaration_Type">
+		<xs:sequence>
+			<xs:element name="ReplacedMTNDeclaration" type="common:IntervatDeclarationReference_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant/Référence Intervat d'une déclaration MTN précédente qui est remplacé par cette déclaration (référence donnée dans l'accusé de réception de la déclaration originale)</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie/Referentie Intervat van een vorige aangifte MTN welke wordt vervangen door deze aangifte(referentie terug te vinden in de ontvangstbevestiging van de originele aangifte)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Declarant" type="common:MTN_Declarant_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Déclarant / fournisseur (assujetti belge)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aangever/leverancier (Belgische belastingplichtige)</xs:documentation>
+					<xs:documentation xml:lang="de">Anmeldepflichtiger/Lieferer (belgischer Steuerpflichtiger)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="MTNPeriod_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Période couverte par la déclaration (trimestre)</xs:documentation>
+					<xs:documentation xml:lang="nl">Periode (kwartaal) die de aangifte omvat</xs:documentation>
+					<xs:documentation xml:lang="de">Erklärungszeitraum (Quartal)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MTNSupply" type="MTNSupply_Type" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Détails de la livraison intracomunautaire d'un moyen de transport neuf</xs:documentation>
+					<xs:documentation xml:lang="nl">Details over de intracommunautaire levering van een nieuw vervoermiddel</xs:documentation>
+					<xs:documentation xml:lang="de">Einzelheiten der innergemeinschaftlichen Lieferung eines neuen Fahrzeugs</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="common:Comment_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Commentaire libre</xs:documentation>
+					<xs:documentation xml:lang="nl">Vrije commentaar</xs:documentation>
+					<xs:documentation xml:lang="de">Freier Kommentar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Numéro de séquence de la déclaration MTN dans l'envoi</xs:documentation>
+				<xs:documentation xml:lang="nl">Volgnummer van de aangifte MTN in de zending</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="MTNSuppliesNbr" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Nombre de livraisons intracommunautaires de moyens de transport neufs pour ce déclarant et cette période</xs:documentation>
+				<xs:documentation xml:lang="nl">Aantal intracommunautaire leveringen van nieuwe vervoermiddelen voor deze aangever/leverancier en dit kwartaal</xs:documentation>
+				<xs:documentation xml:lang="de">Anzahl innergemeinschaftliche Lieferungen neuer Fahrzeuge für diesen Anmeldepflichtigen/Lieferer und dieses Quartal</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DeclarantReference" type="common:DeclarantReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Référence attribuée à  cette déclaration MTN par le déclarant ou mandataire</xs:documentation>
+				<xs:documentation xml:lang="nl">Toegekende referentie aan de aangifte MTN door de aangever of de mandataris</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="MTNPeriod_Type">
+		<xs:sequence>
+			<xs:element name="Quarter" type="common:Quarter_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Trimestre</xs:documentation>
+					<xs:documentation xml:lang="nl">Kwartaal</xs:documentation>
+					<xs:documentation xml:lang="de">Quartal</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Year" type="common:Year_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Année au format YYYY</xs:documentation>
+					<xs:documentation xml:lang="nl">Jaar (YYYY)</xs:documentation>
+					<xs:documentation xml:lang="de">Jahr (YYYY)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MTNSupply_Type">
+		<xs:sequence>
+			<xs:element name="Invoice" type="Invoice_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Facture</xs:documentation>
+					<xs:documentation xml:lang="nl">Factuur</xs:documentation>
+					<xs:documentation xml:lang="de">Rechnung</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Customer" type="Customer_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Acquéreur du moyen de transport neuf</xs:documentation>
+					<xs:documentation xml:lang="nl">Verwerver van het nieuw vervoermiddel</xs:documentation>
+					<xs:documentation xml:lang="de">Erwerber des neuen Fahrzeugs</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DestinationCountryCode" type="iso:MSCountryCodeExclBE">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de destination du moyen de transport neuf</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van bestemming van het nieuw vervoermiddel</xs:documentation>
+					<xs:documentation xml:lang="de">Bestimmungsland des neuen Fahrzeugs</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DeliveryDate" type="common:RestrictedDate_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Date de livraison</xs:documentation>
+					<xs:documentation xml:lang="nl">Datum van levering</xs:documentation>
+					<xs:documentation xml:lang="de">Lieferdatum</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MeanOfTransport" type="MeanOfTransport_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Description du moyen de transport neuf</xs:documentation>
+					<xs:documentation xml:lang="nl">Beschrijving van het nieuw vervoermiddel</xs:documentation>
+					<xs:documentation xml:lang="de">Beschreibung des neuen Fahrzeugs</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CorrectionPeriod" type="MTNPeriod_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">S'il s'agit d'une correction d'une facture précédente, période de la déclaration dans laquelle la facture était déclarée initialement</xs:documentation>
+					<xs:documentation xml:lang="nl">Ingeval van rechtzetting van een vorige factuur, periode van de aangifte waarin de factuur oorspronkelijk werd aangegeven</xs:documentation>
+					<xs:documentation xml:lang="de">Wenn es sich um die Berichtigung einer vorherigen Rechnung handelt, den Erklärungszeitraum in dem die Rechnung ursprünglich erklärt wurde</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileAttachment" type="common:FileAttachment_Type" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Informations concernant une annexe</xs:documentation>
+					<xs:documentation xml:lang="nl">Inlichtingen betreffende een bijlage</xs:documentation>
+					<xs:documentation xml:lang="de">Informationen zu einer Anlage</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Invoice_Type">
+		<xs:sequence>
+			<xs:element name="InvoiceType" type="InvoiceTypeCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Type de facture: "invoice" = facture, "creditNote" = note de crédit</xs:documentation>
+					<xs:documentation xml:lang="nl">Type factuur: "invoice" = factuur, "creditNote" = creditnota</xs:documentation>
+					<xs:documentation xml:lang="de">Art der Rechnung: "invoice" = Rechnung, "creditNote" = Gutschrift</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceDate" type="common:RestrictedDate_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Date de la facture</xs:documentation>
+					<xs:documentation xml:lang="nl">Datum van de factuur</xs:documentation>
+					<xs:documentation xml:lang="de">Datum der Rechnung</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceReference">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Référence de la facture</xs:documentation>
+					<xs:documentation xml:lang="nl">Referentie van de factuur</xs:documentation>
+					<xs:documentation xml:lang="de">Referenz der Rechnung</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceAmount" type="common:UnlimitedSignedAmount_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Montant de la facture exprimé en EUR, à l'eurocent près. Montant positif pour une facture, négatif pour une note de crédit.</xs:documentation>
+					<xs:documentation xml:lang="nl">Bedrag van de factuur uitgedrukt in EUR, op de eurocent na. Positief bedrag voor een factuur, negatief voor een creditnota.</xs:documentation>
+					<xs:documentation xml:lang="de">Betrag der Rechnung in EUR, auf den Cent genau. Positiver Betrag für eine Rechnung, negativer Betrag für eine Gutschrift.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Customer_Type">
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße und Hausnummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:MSCountryCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres</xs:documentation>
+					<xs:documentation xml:lang="de">Land der Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MeanOfTransport_Type">
+		<xs:choice>
+			<xs:element name="LandVehicle">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Véhicule terrestre. Remarque: Il est obligatoire de mentionner au moins la cylindrée ou la puissance.</xs:documentation>
+					<xs:documentation xml:lang="nl">Landvoertuig. Opmerking: het is verplicht om minstens de cylinderinhoud of het vermogen te vermelden.</xs:documentation>
+					<xs:documentation xml:lang="de">Landfahrzeug. Bemerkung: es ist obligatorisch mindestens Hubraum oder Leistung einzutragen.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="IdentificationNumber" type="xs:token">
+							<xs:annotation>
+								<xs:documentation xml:lang="fr">Numéro du châssis ou n° d'identification du véhicule</xs:documentation>
+								<xs:documentation xml:lang="nl">Chassisnummer of identificatienummer van het voertuig</xs:documentation>
+								<xs:documentation xml:lang="de">Fahrgestellnr. oder Fahrzeugidentifizierungsnr.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Mark" type="Mark_Type"/>
+						<xs:element name="Type" type="Type_Type"/>
+						<xs:element name="Capacity" type="xs:positiveInteger" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fr">Cylindrée du véhicule, exprimée en cc</xs:documentation>
+								<xs:documentation xml:lang="nl">Cylinderinhoud van het voertuig, uitgedrukt in cc</xs:documentation>
+								<xs:documentation xml:lang="de">Hubraum des Fahrzeugs in cc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Power" type="xs:positiveInteger" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation xml:lang="fr">Puissance du véhicule, exprimée en kW</xs:documentation>
+								<xs:documentation xml:lang="nl">Vermogen van het voertuig, uitgedrukt in kW</xs:documentation>
+								<xs:documentation xml:lang="de">Leistung des Fahrzeugs in kW</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AlreadyInService" type="AlreadyInService_Type" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Vessel">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Bateau</xs:documentation>
+					<xs:documentation xml:lang="nl">Boot</xs:documentation>
+					<xs:documentation xml:lang="de">Schiff</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="IdentificationNumber" type="xs:token">
+							<xs:annotation>
+								<xs:documentation xml:lang="fr">Numéro du moteur</xs:documentation>
+								<xs:documentation xml:lang="nl">Nr. van de motor</xs:documentation>
+								<xs:documentation xml:lang="de">Motornr.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Mark" type="Mark_Type"/>
+						<xs:element name="Type" type="Type_Type"/>
+						<xs:element name="Length">
+							<xs:annotation>
+								<xs:documentation xml:lang="fr">Longueur du bateau, exprimée en mètres au cm près</xs:documentation>
+								<xs:documentation xml:lang="nl">Lengte van de boot, uitgedrukt in meters op de cm na</xs:documentation>
+								<xs:documentation xml:lang="de">Länge des Schiffes, in Meter bis auf den cm genau</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:fractionDigits value="2"/>
+									<xs:minExclusive value="0.00"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AlreadyInService" type="AlreadyInService_Type" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Aircraft">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Aéronef</xs:documentation>
+					<xs:documentation xml:lang="nl">Luchtvaartuig</xs:documentation>
+					<xs:documentation xml:lang="de">Flugzeug</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="IdentificationNumber" type="xs:token">
+							<xs:annotation>
+								<xs:documentation xml:lang="fr">Numéro du fuselage</xs:documentation>
+								<xs:documentation xml:lang="nl">Nr. van de romp</xs:documentation>
+								<xs:documentation xml:lang="de">Rumpfnr.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Mark" type="Mark_Type"/>
+						<xs:element name="Type" type="Type_Type"/>
+						<xs:element name="Weight" type="xs:unsignedLong">
+							<xs:annotation>
+								<xs:documentation xml:lang="fr">Poids de l'aéronef au décollage, exprimé en kg</xs:documentation>
+								<xs:documentation xml:lang="nl">Opstijggewicht van het luchtvaartuig, uitgedrukt in kg</xs:documentation>
+								<xs:documentation xml:lang="de">Startgewicht des Flugzeugs in kg</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AlreadyInService" type="AlreadyInService_Type" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="AlreadyInService_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Informations nécessaires au cas où le moyen de transport a déjà été mis en service</xs:documentation>
+			<xs:documentation xml:lang="nl">Vereiste inlichtingen ingeval het vervoermiddel reeds in gebruik is genomen</xs:documentation>
+			<xs:documentation xml:lang="de">Informationen, die notwendig sind, wenn das Fahrzeug bereits in Betrieb genommen wurde</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FirstEntryInServiceDate" type="common:RestrictedDate_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Date de première mise en service</xs:documentation>
+					<xs:documentation xml:lang="nl">Datum van eerste ingebruikneming</xs:documentation>
+					<xs:documentation xml:lang="de">Datum der ersten Inbetriebnahme</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Usage" type="xs:positiveInteger">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Véhicule terrestre: nombre de km déjà effectués; Bateau: nombre d'heures de navigation déjà effectuées; Aéronef: nombre d'heures de vol déjà effectuées</xs:documentation>
+					<xs:documentation xml:lang="nl">Landvoertuig: aantal reeds afgelegde km; Boot: aantal reeds gevaren uren; Luchtvaartuig: aantal reeds gevlogen uren</xs:documentation>
+					<xs:documentation xml:lang="de">Landfahrzeug: Anzahl bereits hinterlegter km; Schiff: Anzahl bereits zurückgelegter Segelstunden; Flugzeug: Anzahl bereits zurückgelegter Flugstunden</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="InvoiceTypeCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="invoice"/>
+			<xs:enumeration value="creditNote"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Mark_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Marque</xs:documentation>
+			<xs:documentation xml:lang="nl">Merk</xs:documentation>
+			<xs:documentation xml:lang="de">Marke</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Type_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Type (modèle) du véhicule terrestre, du bateau ou de l'aéronef</xs:documentation>
+			<xs:documentation xml:lang="nl">Type (model)</xs:documentation>
+			<xs:documentation xml:lang="de">Typ</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

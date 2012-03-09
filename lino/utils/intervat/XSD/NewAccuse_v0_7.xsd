@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/IntervatSuccessReceipt" xmlns:common="http://www.minfin.fgov.be/InputCommon" targetNamespace="http://www.minfin.fgov.be/IntervatSuccessReceipt" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/InputCommon" schemaLocation="IntervatInputCommon_v0_7.xsd"/>
+
+	<!-- Root Element -->
+	<xs:element name="IntervatSuccessReceipt">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Accusé de réception d'un envoi dans Intervat</xs:documentation>
+			<xs:documentation xml:lang="nl">Ontvangstbevestiging van de zending in Intervat</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Representative" type="common:ACK_Representative_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Gevolmachtigde</xs:documentation>
+						<xs:documentation xml:lang="de">Bevollmächtigter</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RepresentativeReference" type="common:RepresentativeReference_Type" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Référence attribuée à l'envoi par le mandataire</xs:documentation>
+						<xs:documentation xml:lang="nl">Toegekende referentie aan de zending door de gevolmachtigde</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DeclarationSuccessReceipt" type="DeclarationSuccessReceipt_Type" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Déclaration-listing-relevé-demande globale déposé dans Intervat avec succès</xs:documentation>
+						<xs:documentation xml:lang="nl">Aangifte-listing-opgave-globale aanvraag indienen in Intervat met succes</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="ConsignmentType" type="ConsignmentTypeCode" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Type de l'envoi</xs:documentation>
+					<xs:documentation xml:lang="nl">Type zending</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="IntervatConsignmentReference" type="common:IntervatConsignmentReference_Type" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Référence de l'envoi dans Intervat</xs:documentation>
+					<xs:documentation xml:lang="nl">Referentie van de zending in Intervat</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="ConsignmentTimestamp" type="common:RestrictedDateTime_Type" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Timestamp du dépôt de l'envoi dans Intervat</xs:documentation>
+					<xs:documentation xml:lang="nl">Timestamp van de indiening van de zending in Intervat</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="DeclarationsNbr" type="xs:positiveInteger" use="required">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nombre de déclarations-listings-relevés-demandes globales dans l'envoi</xs:documentation>
+					<xs:documentation xml:lang="nl">Aantal aangiften -listings-opgave-globale aanvragen in de zending</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<!-- definition of complex types -->
+	<xs:complexType name="DeclarationSuccessReceipt_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Listing clients, pour un déclarant et une année</xs:documentation>
+			<xs:documentation xml:lang="nl">Listing clients, voor een  belastingplichtige en een jaar</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReplacedDeclaration" type="common:IntervatOrSTIRINTDeclReference_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant/référence Intervat de la "déclaration" que cette "déclaration" remplace (où "déclaration" signifie déclaration, listing, relevé ou demande globale). Pour les demandes VATRefund: référence reçue par mail de la demande originale.</xs:documentation>	
+					<xs:documentation xml:lang="nl">Identificatie/referentie Intervat van de "aangifte" dat deze "aangifte" vervangt(aangifte betekent aangifte, listing, opgave of globale aanvraag) Vour de aanvragen VATRefund: referentie ontvangen per mail van de originele aanvraag. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Declarant" type="common:ACK_Declarant_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Déclarant ou requérant (assujetti belge)</xs:documentation>
+					<xs:documentation xml:lang="nl">Aangever (Belgische belastingplichtige)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Période</xs:documentation>
+					<xs:documentation xml:lang="nl">Periode</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:choice minOccurs="0">
+							<xs:element name="Month" type="common:Month_Type">
+								<xs:annotation>
+									<xs:documentation xml:lang="fr">Mois</xs:documentation>
+									<xs:documentation xml:lang="nl">Maand</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Quarter" type="common:Quarter_Type" maxOccurs="4">
+								<xs:annotation>
+									<xs:documentation xml:lang="fr">Trimestre</xs:documentation>
+									<xs:documentation xml:lang="nl">Kwartaal</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:choice>
+						<xs:element name="Year" type="common:Year_Type">
+							<xs:annotation>
+								<xs:documentation xml:lang="fr">Année</xs:documentation>
+								<xs:documentation xml:lang="nl">Jaar</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="IntervatWarning" type="IntervatWarning_Type" minOccurs="0" maxOccurs="unbounded">
+			<xs:annotation>
+					<xs:documentation xml:lang="fr">Avertissement généré par Intervat</xs:documentation>
+					<xs:documentation xml:lang="nl">Waarschuwing aangemaakt door Intervat</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="SequenceNumber" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Numéro de séquence de la déclaration-relevé-listing-demande globale dans l'envoi</xs:documentation>
+				<xs:documentation xml:lang="nl">Volgnummer van de aangifte-listing-opgave-globale aanvraag in de zending</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DeclarantReference" type="common:DeclarantReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Référence attribuée à la déclaration-relevé-listing-demande globale par le déclarant ou le mandataire</xs:documentation>
+				<xs:documentation xml:lang="nl">Toegekende referentie aan de aangifte-opgave-listing-globale aanvraag door de belastingplichtige of de mandataris</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="IntervatDeclarationReference" type="common:IntervatDeclarationReference_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Identifiant généré par Intervat pour cette déclaration-relevé-listing. C'est cette référence qui doit être utilisée si l'on veut remlplacer ultérieurement cette déclaration- ce relevé - ce listing (sauf pour les demandes VATRefund pour lesquelles vous devez utiliser la référence reçue par e-mail).</xs:documentation>
+				<xs:documentation xml:lang="nl">Identificatie aangemaakt door Intervat voor deze aangifte-opgave-listing.  Het is deze referentie die moet worden gebruikt als men een aangifte-opgave-listing wilt verbeteren (uitgezonderd voor de aanvragen VATRefund waar u de referentie welke u per mail hebt ontvangen, moet gebruiken).</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ClientsNbr" type="xs:unsignedInt">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Pour les listings clients et les relevés intracommunautaires: nombre de clients</xs:documentation>
+				<xs:documentation xml:lang="nl">Voor de klantenlijsten en de intracommunautaire opgave: het aantal klanten</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Result" type="common:UnlimitedSignedAmount_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Montant exprimé en EUR. Déclaration TVA périodique: montant de la grille 71 ou 72. Listing clients et relevé intracommunauatire:total du chiffres d'affaires. Déclaration spéciale 629: montant de la grille 83 (à payer) ou 84 (remboursé). MTN: somme des montants des factures.</xs:documentation>
+				<xs:documentation xml:lang="nl">Bedrag uitgedrukt in EUR. Periodieke BTW aangifte: bedrag in rooster 71 of 72. Klantenlijsten of intracommunautaire opgaven: totaal van het omzetcijfer. Bijzondere BTW aangifte 629: bedrag van het rooster 83 (te betalen) of 84 (terug te betalen). MTN: som van de factuurbedragen.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="FileAttachmentsNbr" type="xs:unsignedInt" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Nombre d'annexes dans la déclaration-listing-relevé-demande globale</xs:documentation>
+				<xs:documentation xml:lang="nl">Aantal bijlagen in de aangifte -listing-opgave-globale aanvraag</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="PaymentStructuredCommunication" type="StructuredCommunication_Type">
+			<xs:annotation>
+				<xs:documentation xml:lang="fr">Pour les déclarations spéciales 629: communication structurée à utiliser pour le paiement.</xs:documentation>
+				<xs:documentation xml:lang="nl">Voor de bijzondere BTW aangifte 629: gestructureerde mededeling welke moet worden gebruikt bij de betaling.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="IntervatWarning_Type">
+		<xs:sequence>
+			<xs:element name="Code" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code de l'avertissement</xs:documentation>
+					<xs:documentation xml:lang="nl">Waarschuwingcode</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="xs:string">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Description de l'avertissement dans la langue utilisée lors du dépôt dans Intervat</xs:documentation>
+					<xs:documentation xml:lang="nl">Beschrijving van de waarschuwing in de gebruikte taal voor de zending in Intervat</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="StructuredCommunication_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ConsignmentTypeCode">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="VAT"/>
+			<xs:enumeration value="CLIENT_LISTING"/>
+			<xs:enumeration value="INTRA_LISTING"/>
+			<xs:enumeration value="VATREFUND"/>
+			<xs:enumeration value="PRORATA"/>
+			<xs:enumeration value="MTN"/>
+			<xs:enumeration value="DECL_629"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

@@ -2530,7 +2530,7 @@ def site_setup(site):
     job_office
     propgroup_skills propgroup_softskills propgroup_obstacles
     residence_permit_upload_type work_permit_upload_type driving_licence_upload_type
-    lino.ModelsBySite
+    # lino.ModelsBySite
     """)
     
     site.modules.properties.Properties.set_detail("""

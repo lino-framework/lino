@@ -1,4 +1,4 @@
-#coding: utf-8
+# -*- coding: UTF-8 -*-
 """
 Just a copy & paste of the :mod:`docutils.examples` module (as instructed there).
 

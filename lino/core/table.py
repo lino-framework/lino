@@ -516,6 +516,18 @@ class Table(AbstractTable):
                 #~ return vf
         #~ return cls.model._meta.get_field(name)
     
+    @classmethod
+    def get_row_by_pk(self,pk):
+        try:
+            return self.model.objects.get(pk=pk)
+        except ValueError:
+            return None
+            #~ msg = "Invalid primary key %r for %s." % (pk,self)
+            #~ raise Http404(msg)
+        except self.model.DoesNotExist:
+            return None
+            #~ raise Http404("%s %s does not exist." % (self,pk))
+                
             
     @classmethod
     def wildcard_data_elems(self):
@@ -627,13 +639,15 @@ class Table(AbstractTable):
         
     @classmethod
     def setup_actions(self):
+        super(Table,self).setup_actions()
         if self.model is not None:
             #~ if len(self.detail_layouts) > 0:
             #~ if self.model._lino_detail:
-            if self.detail_layout:
+            #~ if self.detail_layout:
+            if self.detail_action:
             #~ if self._lino_detail:
-                self.detail_action = actions.ShowDetailAction(self)
-                self.add_action(self.detail_action)
+                #~ self.detail_action = actions.ShowDetailAction(self)
+                #~ self.add_action(self.detail_action)
                 if self.editable:
                     #~ self.add_action(self.submit_action)
                     self.add_action(actions.UPDATE)

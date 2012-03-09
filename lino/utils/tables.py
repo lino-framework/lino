@@ -257,10 +257,15 @@ class AbstractTableRequest(actions.ActionRequest):
             #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
         return kw
             
+    @classmethod
+    def get_row_by_pk(self,pk):
+        return self.data_iterator[int(pk) - 1]
+        
     def get_data_iterator(self):
         if self.report.get_data_rows:
             l = []
             for row in self.report.get_data_rows(self):
+                #~ l.append(row)
                 group = self.report.group_from_row(row)
                 group.process_row(l,row)
             return l

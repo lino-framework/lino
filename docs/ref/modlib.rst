@@ -132,14 +132,14 @@ The ``jobs`` label
 
 .. module:: jobs
 
-Implemented in :mod:`lino.modlib.jobs`
+Implemented by :mod:`lino.modlib.jobs`
 
 .. class::  JobProvider
 
-Implemented in :class:`lino.modlib.jobs.models.JobProvider`
+Implemented by :class:`lino.modlib.jobs.models.JobProvider`
   
 .. class::  JobProviders
 
-Implemented in :class:`lino.modlib.jobs.models.JobProviders`
+Implemented by :class:`lino.modlib.jobs.models.JobProviders`
 
 

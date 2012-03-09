@@ -799,6 +799,7 @@ class ExtUI(base.UI):
         else:
             msg = "Unknown element %r referred in layout %s." % (
                 name,lh.layout)
+            msg += "Cannot handle %r" % de
         raise KeyError(msg)
         
 
@@ -1611,15 +1612,20 @@ tinymce.init({
         rpt = self.requested_report(request,app_label,actor)
         a = rpt.default_action
         
-        elem = None
-        if pk is not None:
-            try:
-                elem = rpt.model.objects.get(pk=pk)
-            except ValueError:
-                msg = "Invalid primary key %r for %s." % pk,full_model_name(rpt.model)
-                raise Http404(msg)
-            except rpt.model.DoesNotExist:
-                raise Http404("%s %s does not exist." % (rpt,pk))
+        if pk is None:
+            elem = None
+        else:
+            elem = rpt.get_row_by_pk(pk)
+        
+        #~ elem = None
+        #~ if pk is not None:
+            #~ try:
+                #~ elem = rpt.model.objects.get(pk=pk)
+            #~ except ValueError:
+                #~ msg = "Invalid primary key %r for %s." % pk,full_model_name(rpt.model)
+                #~ raise Http404(msg)
+            #~ except rpt.model.DoesNotExist:
+                #~ raise Http404("%s %s does not exist." % (rpt,pk))
         
         
         ar = rpt.request(self,request,a)
@@ -1687,18 +1693,12 @@ tinymce.init({
         #~ if not ah.report.can_view.passes(request.user):
             #~ msg = "User %s cannot view %s." % (request.user,ah.report)
             #~ return http.HttpResponseForbidden()
-            
-        elem = None
         
-        if pk != '-99999' and pk != '-99998':
-            try:
-                elem = rpt.model.objects.get(pk=pk)
-            except ValueError:
-                msg = "Invalid primary key %r for %s." % (pk,rpt)
-                raise Http404(msg)
-            except rpt.model.DoesNotExist:
-                raise Http404("%s %s does not exist." % (rpt,pk))
-                
+        if pk and pk != '-99999' and pk != '-99998':
+            elem = rpt.get_row_by_pk(pk)
+        else:
+            elem = None
+        
         if request.method == 'DELETE':
             return self.delete_element(request,rpt,elem)
             
@@ -1914,7 +1914,9 @@ tinymce.init({
                     f.write(ln + '\n')
             
             for rpt in actors_list:
-                     
+                if str(rpt) == "lino.Models":
+                    logger.info("20120307 %s %s",rpt,rpt.get_actions())
+                
                 rh = rpt.get_handle(self) 
                 
                 if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
@@ -1965,7 +1967,7 @@ tinymce.init({
             if not ref.startswith('/'):
                 raise Exception("Invalid docref %r" % ref)
             # todo: check if file exists...
-            return "http://lino.saffre-rumma.net" + ref
+            return "http://lino.saffre-rumma.net" + ref + ".html"
             
         libname = self.linolib_template_name()
         tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
@@ -1997,12 +1999,18 @@ tinymce.init({
             #~ if rpt is None:
                 #~ model = models.get_model(app_label,actor,False)
                 #~ rpt = model._lino_default_table
-            try:
-                elem = rpt.model.objects.get(pk=pk)
-            except ValueError:
-                msg = "Invalid primary key %r for %s.%s." % (pk,rpt.model._meta.app_label,rpt.model.__name__)
-                raise Http404(msg)
-            except rpt.model.DoesNotExist:
+                
+            elem = rpt.get_row_by_pk(pk)
+
+            #~ try:
+                #~ elem = rpt.model.objects.get(pk=pk)
+            #~ except ValueError:
+                #~ msg = "Invalid primary key %r for %s.%s." % (pk,rpt.model._meta.app_label,rpt.model.__name__)
+                #~ raise Http404(msg)
+            #~ except rpt.model.DoesNotExist:
+                #~ raise Http404("%s %s does not exist." % (rpt,pk))
+                
+            if elem is None:
                 raise Http404("%s %s does not exist." % (rpt,pk))
                 
             #~ TextFieldTemplate.templates

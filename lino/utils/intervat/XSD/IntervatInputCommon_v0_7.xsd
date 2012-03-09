@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.minfin.fgov.be/InputCommon" xmlns:iso="http://www.minfin.fgov.be/IsoTypes" xmlns:cm="urn:ec.europa.eu:taxud:fiscalis:common:v1" targetNamespace="http://www.minfin.fgov.be/InputCommon" elementFormDefault="qualified" version="1.0" xml:lang="en">
+	<xs:import namespace="http://www.minfin.fgov.be/IsoTypes" schemaLocation="IntervatIsoTypes_v0_7.xsd"/>
+	<xs:import namespace="urn:ec.europa.eu:taxud:fiscalis:common:v1" schemaLocation="commontypes_v1.xsd"/>
+	
+	<xs:annotation>
+		<xs:documentation xml:lang="en"><![CDATA[
+
+			=== HISTORY=== 
+				1.1 => import commonTypes_v1.xsd and add the phoneNumber to the Representative_Type
+			]]></xs:documentation>
+	</xs:annotation>
+	<!-- definition of complex types -->
+	<xs:complexType name="Representative_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Mandataire d'un envoi de type TVA, listing clients, relevé intracommunautaire, déclaration spéciale 629 ou MTN.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RepresentativeID" type="RepresentativeID_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant du mandataire</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie van de gevolmachtigde</xs:documentation>
+					<xs:documentation xml:lang="de">Kennung des Bevollmächtigten</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Name_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="Street_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="PostCode_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="City_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:CountryCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddress" type="EMail_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Adresse e-mail</xs:documentation>
+					<xs:documentation xml:lang="nl">E-mail adres</xs:documentation>
+					<xs:documentation xml:lang="de">E-Mail-Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element  name="Phone" type="cm:PhoneNumber_Type">
+					<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de téléphone</xs:documentation>
+					<xs:documentation xml:lang="nl">Telefoon nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Telefoon nummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RepresentativeID_Type">
+		<xs:simpleContent>
+			<xs:extension base="xs:token">
+				<xs:attribute name="issuedBy" type="iso:MSCountryCode" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Etat membre qui a attribué l'identifiant</xs:documentation>
+						<xs:documentation xml:lang="nl">Lidstaat die de identificatie heeft toegekend</xs:documentation>
+						<xs:documentation xml:lang="de">Mitgliedstaat, der die Kennung zuerkannt hat</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="identificationType" type="RepresentativeIDType_Type" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Type d'identifiant (NVAT, TIN, other)</xs:documentation>
+						<xs:documentation xml:lang="nl">Identificatietype (NVAT, TIN, other)</xs:documentation>
+						<xs:documentation xml:lang="de">Kennungstyp (NVAT, TIN, other)</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="otherQlf" type="xs:token" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="fr">Description d'un type d'identifiant 'other'</xs:documentation>
+						<xs:documentation xml:lang="nl">Omschrijving van een identificatie van het type 'other'</xs:documentation>
+						<xs:documentation xml:lang="de">Beschreibung eines Kennungstyps 'other'</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Declarant_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Déclarant d'un envoi de type TVA, listing clients, relevé intracommunautaire.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VATNumber" type="BEVATNumber">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de TVA de l'assujetti (numéro de TVA belge sans "BE")</xs:documentation>
+					<xs:documentation xml:lang="nl">Btw-nummer van de belastingplichtige</xs:documentation>
+					<xs:documentation xml:lang="de">MwSt.-Nr. des Steuerpflichtigen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Name_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="Street_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="PostCode_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="City_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:MSCountryCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddress" type="EMail_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Adresse e-mail</xs:documentation>
+					<xs:documentation xml:lang="nl">E-mail adres</xs:documentation>
+					<xs:documentation xml:lang="de">E-Mail-Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element  name="Phone" type="cm:PhoneNumber_Type" minOccurs="0">
+					<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de téléphone</xs:documentation>
+					<xs:documentation xml:lang="nl">Telefoon nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Telefoon nummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+    	<xs:complexType name="MTN_Declarant_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Déclarant d'un envoi de type  MTN.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VATNumber" type="BEVATNumber">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de TVA de l'assujetti (numéro de TVA belge sans "BE")</xs:documentation>
+					<xs:documentation xml:lang="nl">Btw-nummer van de belastingplichtige</xs:documentation>
+					<xs:documentation xml:lang="de">MwSt.-Nr. des Steuerpflichtigen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Name_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="Street_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="PostCode_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="City_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:MSCountryCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddress" type="EMail_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Adresse e-mail</xs:documentation>
+					<xs:documentation xml:lang="nl">E-mail adres</xs:documentation>
+					<xs:documentation xml:lang="de">E-Mail-Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element  name="Phone" type="cm:PhoneNumber_Type" minOccurs="0">
+					<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de téléphone</xs:documentation>
+					<xs:documentation xml:lang="nl">Telefoon nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Telefoon nummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DeclarantBE_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Déclarant d'un envoi de type déclaration spéciale 629, VATRefund ou modification du prorata VATRefund (pays de l'adresse en Belgique).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VATNumber" type="BEVATNumber">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de TVA de l'assujetti (numéro de TVA belge sans "BE")</xs:documentation>
+					<xs:documentation xml:lang="nl">Btw-nummer van de belastingplichtige</xs:documentation>
+					<xs:documentation xml:lang="de">MwSt.-Nr. des Steuerpflichtigen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Name_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="Street_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="PostCode_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="City_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:BECountryCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse (BE)</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres (BE)</xs:documentation>
+					<xs:documentation xml:lang="de">Land (BE)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddress" type="EMail_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Adresse email</xs:documentation>
+					<xs:documentation xml:lang="nl">E-mail adres</xs:documentation>
+					<xs:documentation xml:lang="de">E-Mail-Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element  name="Phone" type="cm:PhoneNumber_Type" minOccurs="0">
+					<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de téléphone</xs:documentation>
+					<xs:documentation xml:lang="nl">Telefoon nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Telefoon nummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FileAttachment_Type">
+		<xs:sequence>
+			<xs:element name="FileType" type="FileTypeCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Type de l'annexe</xs:documentation>
+					<xs:documentation xml:lang="nl">Type van de bijlage</xs:documentation>
+					<xs:documentation xml:lang="de">Typ der Anlage</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileName" type="xs:token">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom du fichier (=nom du fichier dans le fichier zip qui inclut ce message et ses annexes)</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam van het bestand (= naam van het bestand in het zip-bestand dat dit bericht en zijn bijlagen bevat)</xs:documentation>
+					<xs:documentation xml:lang="de">Name der Datei (= Name der Datei in der Zip-Datei, die diese Mitteilung und ihre Anlagen enthält)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileDescription" type="xs:token" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Information supplémentaire sur le fichier</xs:documentation>
+					<xs:documentation xml:lang="nl">Aanvullende informatie over het bestand</xs:documentation>
+					<xs:documentation xml:lang="de">Zusätzliche Information über die Datei</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- definition of simple types -->
+	<xs:simpleType name="RepresentativeIDType_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NVAT"/>
+			<xs:enumeration value="TIN"/>
+			<xs:enumeration value="other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EUVATNumber">
+		<xs:restriction base="xs:token">
+			<xs:maxLength value="12"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BEVATNumber">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{10}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RepresentativeReference_Type">
+		<xs:restriction base="xs:token">
+			<xs:maxLength value="14"/>
+		</xs:restriction>
+	</xs:simpleType>
+    <xs:simpleType name="DeclarantReference_Type">
+		<xs:restriction base="xs:token">
+			<xs:maxLength value="14"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IntervatConsignmentReference_Type">
+		<xs:restriction base="xs:positiveInteger"/>
+	</xs:simpleType>
+	<xs:simpleType name="IntervatDeclarationReference_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]+-[0-9]{10}-[0-9]{6}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="STIRINTReference_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="BE[0-9]{16}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IntervatOrSTIRINTDeclReference_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([0-9]+-[0-9]{10}-[0-9]{6})|(BE[0-9]{16})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FileTypeCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="application/pdf"/>
+			<xs:enumeration value="image/jpeg"/>
+			<xs:enumeration value="image/tiff"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Month_Type">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="12"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Quarter_Type">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Year_Type">
+		<xs:restriction base="xs:unsignedLong">
+			<xs:totalDigits value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PositiveAmount_Type">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2"/>
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="99999999999.99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SignedAmount_Type">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2"/>
+			<xs:minInclusive value="-99999999999.99"/>
+			<xs:maxInclusive value="99999999999.99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="UnlimitedSignedAmount_Type">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="YesNo_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="YES"/>
+			<xs:enumeration value="NO"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RestrictedDateTime_Type">
+		<xs:restriction base="xs:dateTime">
+			<xs:pattern value="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RestrictedDate_Type">
+		<xs:restriction base="xs:date">
+			<xs:pattern value="\d{4}-\d{2}-\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Name_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="200"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Street_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="200"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PostCode_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="15"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="City_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="184"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EMail_Type">
+		<xs:annotation>
+			<xs:documentation>An email address</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">A regular expression for email addresses.
+						Matches something@someserver.com, firstname.lastname@mailserver.domain.com,
+						username-something@some-server.tld</xs:documentation>
+				</xs:annotation>
+			</xs:pattern>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Comment_Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<!-- Types specific to VATRefund and Prorata -->
+	<xs:complexType name="VR_Representative_Type">
+		<xs:annotation>
+			<xs:documentation xml:lang="fr">Mandataire d'un envoi de type VATRefund ou modification du prorata VATRefund (pays de l'adresse limité aux Etats Membres)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RepresentativeID" type="RepresentativeID_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant du mandataire</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie van de gevolmachtigde</xs:documentation>
+					<xs:documentation xml:lang="de">Kennung des Bevollmächtigten</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Name_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="Street_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="PostCode_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="City_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:MSCountryCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddress" type="EMail_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Adresse e-mail</xs:documentation>
+					<xs:documentation xml:lang="nl">E-mail adres</xs:documentation>
+					<xs:documentation xml:lang="de">E-Mail-Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element  name="Phone" type="cm:PhoneNumber_Type">
+					<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de téléphone</xs:documentation>
+					<xs:documentation xml:lang="nl">Telefoon nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Telefoon nummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VR_Declarant_Type">
+		<xs:sequence>
+			<xs:element name="VATNumber" type="BEVATNumber">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de TVA de l'assujetti</xs:documentation>
+					<xs:documentation xml:lang="nl">Btw-nummer van de belastingplichtige</xs:documentation>
+					<xs:documentation xml:lang="de">MwSt.-Nr. des Steuerpflichtigen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Name_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="Street_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="PostCode_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="City_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:BECountryCode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddress" type="EMail_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Adresse e-mail</xs:documentation>
+					<xs:documentation xml:lang="nl">E-mail adres</xs:documentation>
+					<xs:documentation xml:lang="de">E-Mail-Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element  name="Phone" type="cm:PhoneNumber_Type" minOccurs="0">
+					<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de téléphone</xs:documentation>
+					<xs:documentation xml:lang="nl">Telefoon nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Telefoon nummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<!-- Specificity vs. Declarant_Type:  e-mail required + countrycode of address always "BE"  -->
+	</xs:complexType>
+	<!-- Types specific to Accusé de réception -->
+	<xs:complexType name="ACK_Representative_Type">
+		<xs:sequence>
+			<xs:element name="RepresentativeID" type="RepresentativeID_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Identifiant du mandataire</xs:documentation>
+					<xs:documentation xml:lang="nl">Identificatie van de gevolmachtigde</xs:documentation>
+					<xs:documentation xml:lang="de">Kennung des Bevollmächtigten</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Name_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="Street_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="PostCode_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="City_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:CountryCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddress" type="EMail_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Adresse e-mail</xs:documentation>
+					<xs:documentation xml:lang="nl">E-mail adres</xs:documentation>
+					<xs:documentation xml:lang="de">E-Mail-Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element  name="Phone" type="cm:PhoneNumber_Type">
+					<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de téléphone</xs:documentation>
+					<xs:documentation xml:lang="nl">Telefoon nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Telefoon nummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ACK_Declarant_Type">
+		<xs:sequence>
+			<xs:element name="VATNumber" type="BEVATNumber">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">N° TVA de l'assujetti</xs:documentation>
+					<xs:documentation xml:lang="nl">Btw-numer van de belastingplichtige</xs:documentation>
+					<xs:documentation xml:lang="de">MwSt.-Nr. des Steuerpflichtigen</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Name_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Nom</xs:documentation>
+					<xs:documentation xml:lang="nl">Naam</xs:documentation>
+					<xs:documentation xml:lang="de">Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="Street_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Rue et numéro</xs:documentation>
+					<xs:documentation xml:lang="nl">Straat en nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Straße</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostCode" type="PostCode_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Code postal</xs:documentation>
+					<xs:documentation xml:lang="nl">Postcode</xs:documentation>
+					<xs:documentation xml:lang="de">Postleitzahl</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="City_Type">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Localité</xs:documentation>
+					<xs:documentation xml:lang="nl">Gemeente</xs:documentation>
+					<xs:documentation xml:lang="de">Ortschaft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCode" type="iso:MSCountryCode">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Pays de l'adresse</xs:documentation>
+					<xs:documentation xml:lang="nl">Land van het adres</xs:documentation>
+					<xs:documentation xml:lang="de">Land</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddress" type="EMail_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="fr">Adresse e-mail</xs:documentation>
+					<xs:documentation xml:lang="nl">E-mail adres</xs:documentation>
+					<xs:documentation xml:lang="de">E-Mail-Adresse</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element  name="Phone" type="cm:PhoneNumber_Type" minOccurs="0">
+					<xs:annotation>
+					<xs:documentation xml:lang="fr">Numéro de téléphone</xs:documentation>
+					<xs:documentation xml:lang="nl">Telefoon nummer</xs:documentation>
+					<xs:documentation xml:lang="de">Telefoon nummer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

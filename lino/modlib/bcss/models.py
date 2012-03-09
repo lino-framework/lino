@@ -126,7 +126,7 @@ class BCSSRequest(mixins.ProjectRelated,mixins.AutoUser):
             self.save()
         kw = self.get_request_params()
         try:
-            srvreq = self.bcss_namespace.build_request(**kw)
+            srvreq = self.bcss_namespace('ns1').build_request(**kw)
         except bcss.SimpleException,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
@@ -192,7 +192,7 @@ class IdentifyPersonRequest(BCSSRequest,contacts.PersonMixin,contacts.Born):
     
     """
     
-    bcss_namespace = bcss.ipr
+    bcss_namespace = bcss.IdentifyPersonRequest
     
     class Meta:
         verbose_name = _("IdentifyPerson Request")

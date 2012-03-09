@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vr="urn:ec.europa.eu:taxud:fiscalis:vatrefund:v1" targetNamespace="urn:ec.europa.eu:taxud:fiscalis:vatrefund:v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:documentation xml:lang="en"><![CDATA[
+			List of VAT Refund Decision Justification Reason Codes
+			=== HISTORY=== 
+			Version 1.01 - Correct code for "Partial decision of repayment" - 87 -> 95
+						 Add codes agreed at March workshop (codes 64 to 68 inclusive)
+			Version 1.00 - first release of the schema to the Member States 
+			]]></xs:documentation>
+	</xs:annotation>
+	<xs:simpleType name="RefundDecisionJustificationReasonCode_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="01">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				the refund period is invalid
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="02">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				the total claimed amount is smaller than the minimal allowed amount for the mentioned period
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="03">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+				the description of the business activity via NACE Level 4 code(s) is required.
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="04">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+	data of the mentioned bank account is incomplete or incorrect
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="05">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+your business activities imply to specify a pro-rata rate
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="06">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+after verification it appears that you were involved in the supply of goods or services in our territory and that the latter are not covered by the exemption defined in the legislation
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="07">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+  after verification, it has been found out that you have a permanent establishment in our territory from which you do business activities
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="08">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+  The application is received outside of the allowed period.
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="09">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+  The application shall submit a refund application for either the whole year or a calendar quarter. The application is to be submitted when the refund period has been completed. However, the application has been sent in advance.
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="20">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the request for refund has already been handled in another VAT refund application
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="21">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the currency is not the national currency
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="22">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+a sub-classification code is required for the classification code specified
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="23">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the nature of the goods and services must be clearly specified in case classification code "10" is used
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="24">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the purchase of goods or services was not performed on our territory
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="25">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the importation of the goods was not performed on our territory
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="40">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the VAT Identification number or tax reference number mentioned for the supplier is unknown or was not active for the date specified
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="41">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the VAT supplier name and address do not correspond to the ones associated with the VAT identification number or tax reference number
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="42">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the information about the supplier is not the one specified in the import/invoice document
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="60">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+a copy of the import/invoice document is required
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="61">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the original of the import/invoice document was requested but was not provided in time
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="62">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+the import/invoice document appears to be a forgery
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="63">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+Copy of the invoice/import document is not readable
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="64">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+One or several invoices have not been issued with the name of the refund applicant.
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="65">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+One or several invoices are not deemed to be valid. Invoices must contain the name, VAT number and address of the seller and the buyer, description of the operation, taxable amount, VAT rate, VAT amount, invoice number, place and date where the invoice was issued.
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="66">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+Operations included within the special scheme of Travel Agencies, under which VAT is not deductible.
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="67">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+The applicant provides financial services, which are deemed to be exempt. Exempt activities do not allow to obtain the repayment of input tax.
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="68">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+One or several invoices or import documents belong to a period different from the period of the refund application. The application is submitted in reference to a specific period (1T, 2T, 3T or annual) and input tax in other periods is not considered.
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="70">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+Additional information was requested but was not provided in time
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="80">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+The pro-rata rate mentioned in the request appears to be incorrect with regards to the information provided by the competent authority of your Member State of establishment
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="81">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+The taxable amount or/and VAT amount specified in the request are not the ones specified in the import/invoice document
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="82">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+The claimed amount does not correspond to a legitimate VAT
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="83">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+The nature of the goods and services does not justify a VAT refund with regards to the specified business activities
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="84">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+The classification code or sub-code is incorrect with regards to the information available on the import/invoice document
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="85">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+Based on the nature of the goods and services, the deductible VAT amount is limited to a given percentage
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="95">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+VAT Refund application partially evaluated (Non-final decision)
+			</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
