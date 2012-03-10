@@ -105,14 +105,10 @@ Here is how we suggest to set attributes:
 ...     mimetype="application/vnd.oasis.opendocument.text")
 >>> validate(root)
 
-Some alternative approaches are:
+An alternative approach might be:
 
 >>> root.set(office.version().tag,"1.2")
 >>> root.set(office.mimetype().tag,"application/vnd.oasis.opendocument.text")
-
->>> xg.update_attribs(root,
-...     office.version("1.2"),
-...     office.mimetype("application/vnd.oasis.opendocument.text"))
 
 
 >>> print etree.tostring(root,pretty_print=True) #doctest: +ELLIPSIS

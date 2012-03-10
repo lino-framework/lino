@@ -35,7 +35,7 @@ from lino import dd
 from lino.utils import babel
 from lino.utils import dblogger
 from lino.tools import resolve_model
-from lino.utils import bcss
+from lino.utils.xmlgen import bcss
 
 
 from lino.utils.choicelists import ChoiceList

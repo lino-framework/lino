@@ -38,9 +38,12 @@ extension.
     lino.utils.daemoncommand
     lino.utils.choicelists
     lino.utils.babel
-    lino.utils.bcss
     lino.utils.choosers
     lino.utils.tables
     lino.utils.test
+    lino.utils.xmlgen
+    lino.utils.xmlgen.odf
+    lino.utils.xmlgen.bcss
+    lino.utils.xmlgen.intervat
 
     lino.test_apps

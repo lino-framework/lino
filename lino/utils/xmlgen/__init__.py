@@ -13,6 +13,13 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+This adds some more luxus to lxml's `E-factory
+<http://lxml.de/tutorial.html#the-e-factory>`
+and is used by modules 
+:mod:`lino.utils.xmlgen.odf`,
+:mod:`lino.utils.xmlgen.bcss` or
+:mod:`lino.utils.xmlgen.intervat`.
+
 """
 
 import logging
@@ -33,28 +40,6 @@ class SimpleException(Exception):
     """
 
 
-#~ def py2str(value):
-#~ def py2str(*args):
-    #~ raise Exception("20120301 %r" % (args,))
-
-#~ def py2str(elem,value):
-    #~ if isinstance(value,int):
-        #~ return str(value)
-    #~ if isinstance(value,datetime.datetime):
-        #~ return value.strftime("%Y%m%dT%H%M%S")
-    #~ if isinstance(value,datetime.date):
-        #~ return value.strftime("%Y-%m-%d")
-    #~ if isinstance(value,IncompleteDate):
-        #~ if self.year == 0:
-            #~ raise Exception("%s : Year may not be 0" % elem)
-        #~ return str(value)
-    #~ raise Exception("%s : don't know how to format %r" % (elem,value))
-        
-    #~ if isinstance(value,basestring):
-        #~ return value
-    #~ return unicode(value)
-
-
 TYPEMAP = {
   #~ datetime.datetime: py2str,
   #~ IncompleteDate : lambda e,v : str(v),
@@ -65,7 +50,9 @@ TYPEMAP = {
 
 
 class Namespace(object):
-  
+    """
+    A Namespace is a wrapper around an etree.ElementTree.
+    """
     #~ rng_filename = None
     xsd_filename = None
     xsd_tree = None
@@ -161,11 +148,6 @@ class Namespace(object):
         for ee in e:
             self.define_names_from(ee)
 
-def update_attribs(root,*elems):
-    for e in elems:
-        root.set(e.tag,e.text)
-        #~ root.attribs[e.tag] = e.text
-        
 
 
 def _test():
