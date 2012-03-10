@@ -1,5 +1,6 @@
 20120310
 ========
 
-New module :mod:`lino.utils.xmlgen.odf`
+- New module :mod:`lino.utils.xmlgen.odf`.
+
 

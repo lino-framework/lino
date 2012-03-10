@@ -130,23 +130,26 @@ contains control code::
   do text
   from body()
   
-And here is the body() function called there::
+And here is the body() function called there:
 
 >>> mystory = text.p("Hello world!")
 >>> def body():
 ...     return etree.tostring(mystory)
 
-Here is an example on how to use it::
+Here is an example on how to use it:
 
 >>> from appy.pod.renderer import Renderer
->>> template_file = os.path.abspath(os.path.dirname(__file__))
->>> template_file = os.path.join(template_file,"Template.odt")
->>> target_file = "tmp.odt"
+>>> dir = os.path.abspath(os.path.dirname(__file__))
+>>> template_file = os.path.join(dir,"Template.odt")
+>>> target_file = os.path.join(dir,"tmp.odt")
 >>> if os.path.exists(target_file):
 ...     os.remove(target_file)
->>> context = dict(body=body,self=target_file)
+>>> context = dict(body=body,self="lino.utils.xmlgen.odf example")
 >>> renderer = Renderer(template_file, context, target_file)
 >>> renderer.run()
+>>> if False: os.startfile(target_file)
+
+
 
 """
 

@@ -264,7 +264,8 @@ class Section:
         self.children.append(self.current_lesson)
 
     def add_after(self,chunk):
-        self.current_lesson.body.append(chunk)
+        #~ self.current_lesson.body.append(chunk)
+        self.current_lesson.after.append(chunk)
         
     def parse_words(self,cl,lines):
         self.current_lesson.parse_words(cl,lines)
@@ -278,7 +279,8 @@ class Section:
                 parts = ['%02d' % p.number] + parts
                 number = str(p.number) + "." + number
             p = p.parent
-        return ':doc:`%s </%s>`' % (number,'/'.join(parts))
+        #~ return ':doc:`%s </%s>`' % (number,'/'.join(parts))
+        return ':doc:`%s </%s>`' % (self.title,'/'.join(parts))
         
     def html_ref_to(self):
         parts = self.name_parts()
@@ -304,18 +306,25 @@ class Section:
             title = self.title
         else:
             title = "%s %s" % (self.html_ref_to(),self.title)
-        yield htmlgen.H(level,title)
+        #~ yield htmlgen.H(level,htmlgen.restify(title))
+        title = htmlgen.restify(title)
+        tag = "H%d" % level
+        title = title.replace("<p>","<"+tag+">")
+        title = title.replace("</p>","</"+tag+">")
+        yield title
+        #~ yield "<H%d>%s</H%d>" % (level,,level)
         
         if self.intro:
             yield htmlgen.restify(self.intro)
             
-        for chunk in self.body:
-            yield htmlgen.restify(chunk)
-        
         if self.children:
             for s in self.children:
                 for ln in s.html_lines(level+1):
                     yield ln
+                    
+        for chunk in self.body:
+            yield htmlgen.restify(chunk)
+        
         
     def name_parts(self):
         if self.number is None:
@@ -354,8 +363,8 @@ class Section:
         if self.number is None:
             write_header(fd,1,"%s" % self.title)
         else:
-            #~ write_header(fd,1,"%d. %s" % (self.number,self.title))
-            write_header(fd,1,"%s %s" % (self.html_ref_to(),self.title))
+            write_header(fd,1,"%d. %s" % (self.number,self.title))
+            #~ write_header(fd,1,"%s %s" % (self.html_ref_to(),self.title))
         self.write_body(fd)
         fd.close()
         for s in self.children:
@@ -398,7 +407,9 @@ class Unit(Section):
         if not title:
             title = u"Leçon %d" % number
         Section.__init__(self,parent,number,title,intro)
-        self.after = after
+        self.after = []
+        if after:
+            self.add_after(after)
         self.words = []
         
     #~ def add_word(self,w):
@@ -453,30 +464,21 @@ class Unit(Section):
             rows = [row(w) for w in words]
             for ln in t.html_lines(rows):
                 yield ln
-        if self.after:
-            yield restify(self.after)
+        for chunk in self.after:
+            yield restify(chunk)
             
     def write_body(self,fd):
       
         Section.write_body(self,fd)
         
-        #~ t = SimpleTable(["FR",u"hääldamine","ET"])
-        
         words = [w for w in self.words if w.parent is None]
-        #~ words = [w for w in self.book.words if self in w.lessons and w.parent is None]
         if words:
             t = SimpleTable([col.label for col in self.columns],
                     show_headers=self.show_headers)
             t.write(fd,[self.tablerow(w) for w in words])
           
-            #~ t.write(fd,[(
-                        #~ html2rst(w.html_fr()),
-                        #~ w.pronounciation,
-                        #~ w.et) for w in words])
-        #~ else:
-            #~ logger.warning("No words in %r",self.title)
-        if self.after:
-            fd.write('\n\n' + self.after + '\n\n')
+        for chunk in self.after:
+            fd.write('\n\n' + chunk + '\n\n')
             
 
 
