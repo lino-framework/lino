@@ -66,30 +66,55 @@ TYPEMAP = {
 
 class Namespace(object):
   
+    #~ rng_filename = None
     xsd_filename = None
+    xsd_tree = None
     targetNamespace = None
     used_namespaces = None
     
-    def __init__(self,prefix=None,targetNamespace=None,**kw):
+    def __init__(self,prefix=None,targetNamespace=None,
+          used_namespaces=None,
+          validator=None,**kw):
         self.prefix = prefix
-        if targetNamespace is None and self.xsd_filename:
-            tree = etree.parse(self.xsd_filename) 
-            root = tree.getroot()
-            targetNamespace = str(root.get('targetNamespace'))
+        kw.setdefault('typemap',TYPEMAP)
+        nsmap = kw.setdefault('nsmap',{})
+        if self.xsd_filename:
+            self.xsd_tree = etree.parse(self.xsd_filename) 
+        if self.xsd_tree is not None:
+            if targetNamespace is None:
+                root = self.xsd_tree.getroot()
+                targetNamespace = str(root.get('targetNamespace'))
+            #~ elif self.rng_filename:
+                #~ tree = etree.parse(self.rng_filename) 
+                #~ rng = etree.RelaxNG(tree)
+                #~ # tree = etree.RelaxNG(file=self.rng_filename)
+                #~ e = tree.getroot()
+                #~ nsmap.update(e.nsmap)
+                #~ # raise Exception("20120310")
+            if validator is None:
+                validator = etree.XMLSchema(self.xsd_tree)
+                
+          
+        self.validator = validator
         
         if targetNamespace is not None:
             kw.update(namespace=targetNamespace)
             #~ if prefix:
-            nsmap = kw.setdefault('nsmap',{})
             nsmap[prefix] = targetNamespace
             self.targetNamespace = targetNamespace
-            if self.used_namespaces:
-                for ns in self.used_namespaces:
-                    nsmap[ns.prefix] = ns.targetNamespace
-        kw.setdefault('typemap',TYPEMAP)
+        if used_namespaces is not None:
+            self.used_namespaces = used_namespaces
+        if self.used_namespaces is not None:
+            for ns in self.used_namespaces:
+                nsmap[ns.prefix] = ns.targetNamespace
         #~ self._element_maker = ElementMaker(namespace=url,nsmap={prefix:url})
         self._element_maker = ElementMaker(**kw)
         self._source_elements = {}
+        
+    def update_attribs(self,root,**kw):
+        for k,v in kw.items():
+            e = self.__getattr__(k)()
+            root.set(e.tag,v)
         
     def __getattr__(self,name):
         return self._element_maker.__getattr__(name)
@@ -105,11 +130,8 @@ class Namespace(object):
         self.validate_doc(etree.ElementTree(root))
         
     def validate_doc(self,doc):
-        if self.xsd_filename:
-            xmlschema_doc = etree.parse(self.xsd_filename)
-            xmlschema = etree.XMLSchema(xmlschema_doc)
-            xmlschema.assertValid(doc)
-        return 
+        if self.validator is not None:
+            self.validator.assertValid(doc)
         
         
     def unused_discover_from_xsd(self):
@@ -138,7 +160,13 @@ class Namespace(object):
         
         for ee in e:
             self.define_names_from(ee)
-                
+
+def update_attribs(root,*elems):
+    for e in elems:
+        root.set(e.tag,e.text)
+        #~ root.attribs[e.tag] = e.text
+        
+
 
 def _test():
     import doctest

@@ -15,7 +15,7 @@
 """
 
 This module is deprecated. 
-Lino now uses http://www.lxml.de instead.
+Lino now uses :term:`lxml` instead.
 See :doc:`/blog/2012/0301` and :doc:`/blog/2012/0302`
 
 
@@ -95,13 +95,6 @@ Second example:
 """
 
 
-import datetime
-
-from appy.shared.dav import Resource
-from appy.shared.xml_parser import XmlUnmarshaller
-
-from lino.utils import d2iso
-from lino.utils import IncompleteDate
 from lino.utils import xmlgen as xg
 
 Writer = xg.Writer
