@@ -45,7 +45,7 @@ that this is the wheel my :mod:`lino.utils.xmlgen` is reinventing!
 
 Confirmation: I rewrote table2xhtml() using lxml instead of xmlgen.
 
-Next step weill be to do the same with lino.utils.xmlgen.bcss.
+Next step weill be to do the same with :mod:`lino.utils.xmlgen.bcss`.
 
 So my xmlgen is going to be deprecated because lxml is much better and faster.
 

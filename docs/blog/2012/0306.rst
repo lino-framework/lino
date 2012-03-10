@@ -1,4 +1,4 @@
 20120306
 ========
 
-Worked on the documentation of :mod:`lino.utils.bcss`.
+Worked on the documentation of :mod:`lino.utils.xmlgen.bcss`.

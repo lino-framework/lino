@@ -3,10 +3,10 @@
 
 Added two new "useless" modules:
 
-- :mod:`lino.utils.intervat`  
+- :mod:`lino.utils.xmlgen.intervat`  
   is not yet being used by Lino, but it helped me to understand
   these XML Schemas, and 
-  :mod:`lino.utils.intervat.validate` was useful when implementing 
+  :mod:`lino.utils.xmlgen.intervat.validate` was useful when implementing 
   them in TIM.
 
 - :mod:`lino.modlib.vocbook` will maybe some day become 

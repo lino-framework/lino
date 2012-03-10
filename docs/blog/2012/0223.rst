@@ -11,7 +11,7 @@ Restarted work on BCSS connection:
   It starts now to become possible for a human to "translate" an XSD into 
   a set of xmlgen Python classes.
   
-  Adapted :mod:`lino.utils.bcss` to these changes.
+  Adapted :mod:`lino.utils.xmlgen.bcss` to these changes.
 
 
 Also beim Wiedereinlesen in die XSD-Dateien und Strukturen der BCSS-Requests 
