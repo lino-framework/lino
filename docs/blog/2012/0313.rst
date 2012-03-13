@@ -1,0 +1,21 @@
+20120313
+========
+
+Heute nur noch ein paar letzte Änderungen in :mod:`lino.modlib.vocbook`.
+Der Französischkurs (für den ich dieses Modul benutze) ist jetzt endlich 
+ausgedruckt.
+
+Diese Modul vocbook müsste ich bei Gelegenheit mal weiter ausbauen. 
+Es ist eigentlich ein Doppelmodul: 
+einerseits ein Autorensystem bzw. content management, 
+andererseits eine linguistische Anwendung zum Verwalten 
+von Wörterbüchern.
+Dass ich daran seit Freitag ziemlich viel gearbeitet habe, kam vor 
+allem, weil ich besagten Französischkurs für übermorgen fertig haben 
+musste. Andererseits war es auch eine Studie zum Problem der 
+Kolonnenbreiten im [pdf]-Ausdruck. Dafür habe ich leider immer 
+noch keine Lösung gefunden: auch http://xhtml2odt.org/ (sh. letzten Samstag) 
+scheint die Kolonnenbreiten nicht korrekt nach ODF zu übertragen und 
+ist insofern zumindest keine schnelle Lösung. Der Weg über XSLT scheint 
+mir jedoch intuitiv "gesünder" als der eigene selbstgestrickte Parser, 
+den :term:`appy.pod` macht.

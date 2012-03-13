@@ -1,6 +1,97 @@
 20120310
 ========
 
-- New module :mod:`lino.utils.xmlgen.odf`.
+Started new module :mod:`lino.utils.xmlgen.odf`.
 
+Oh je: appy.pod hat scheinbar noch einen Bug in der Konvertierung von xhtml nach ODF.
+Hier das XHTML-Fragment, das ich ihm schicke::
+  
+
+  <p>&quot;Mesilash\xe4\xe4likud&quot; on <strong>s</strong>, <strong>\u0161</strong>, <strong>z</strong> ja <strong>\u017e</strong>.
+  Nad on eesti keeles ka olemas, aga nende erinevus
+  ei ole meil v\xe4ga t\xe4htis. Prantslastele aga k\xfcll.</p>
+  <blockquote>
+  <table border="1" class="docutils">
+  <colgroup>
+  <col width="29%" />
+  <col width="71%" />
+  </colgroup>
+  <thead valign="bottom">
+  <tr><th class="head">terav</th>
+  <th class="head">pehme</th>
+  </tr>
+  </thead>
+  <tbody valign="top">
+  <tr><td><strong>s</strong>upp</td>
+  <td><strong>z</strong>oom</td>
+  </tr>
+  <tr><td><strong>\u0161</strong>okk</td>
+  <td><strong>\u017e</strong>urnaal, <strong>\u017e</strong>anre</td>
+  </tr>
+  </tbody>
+  </table>
+  </blockquote>
+  
+Aus heiterem Himmel vergisst er (hinter dem Wort "terav") einen ``<text:p>`` zu schließen::
+
+  <text:p>&quot;Mesilashäälikud&quot; on <text:span text:style-name="podBold">s</text:span>, <text:span text:style-name="podBold">š</text:span>, <text:span text:style-name="podBold">z</text:span> ja <text:span text:style-name="podBold">ž</text:span>.
+  Nad on eesti keeles ka olemas, aga nende erinevus
+  ei ole meil väga tähtis. Prantslastele aga küll.</text:p><table:table table:style-name="podTable"><table:table-column/><table:table-column/><table:table-header-rows><table:table-row><table:table-cell table:style-name="podHeaderCell"><text:p>terav</table:table-cell><table:table-cell table:style-name="podHeaderCell"><text:p>pehme</text:p></table:table-cell></table:table-row></table:table-header-rows><table:table-row><table:table-cell table:style-name="podCell"><text:p><text:span text:style-name="podBold">s</text:span>upp</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p><text:span text:style-name="podBold">z</text:span>oom</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p><text:span text:style-name="podBold">š</text:span>okk</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p><text:span text:style-name="podBold">ž</text:span>urnaal, <text:span text:style-name="podBold">ž</text:span>anre</text:p></table:table-cell></table:table-row></table:table></text:p><table:table table:style-name="podTable"><table:table-column/><table:table-column/><table:table-column/><table:table-row><table:table-cell table:style-name="podCell"><text:p>la <text:span text:style-name="podBold">soupe</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[sup]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>supp</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p>le <text:span text:style-name="podBold">garage</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[ga&apos;raaž]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>garaaž</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p>le <text:span text:style-name="podBold">genre</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[žA~rə]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>žanre</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p>le <text:span text:style-name="podBold">journal</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[žur&apos;nal]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>(1) päevik; (2) ajaleht</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p>le <text:span text:style-name="podBold">choc</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[žok]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>(1) šokk; (2) löök</text:p></table:table-cell></table:table-row></table:table>
+
+
+Und ich nun restify() mit odtwriter statt htmlwriter aufriefe? 
+Linos neue Funktion :func:`lino.utils.restify.rst2odt` tut ungefähr 
+das Gleiche wie Dave Kuhlmans Skript, aber wird im gleichen 
+Python-Prozess aufgerufen.
+Und weil ich nur einen kleinen Teil eines .odt-Dokuments will, 
+subclasse ich seinen Writer.
+Geht fein... aber er verwendet ja natürlich andere Style mappings als 
+`appy.pod`.
+
+Ich merke schon, dass mein :mod:`lino.utils.xmlgen.odf` vielleicht Unsinn ist.
+
+
+Und ich habe keine Ahnung, wodurch der Bug ausgelöst wurde 
+(also wie ich ihn umgehen kann).
+Dabei würde ich doch so gern für Donnerstag 
+meinen Französischkurs auch ausdrucken...
+Mit der `Web-Version <http://sites.saffre-rumma.net/cfr/>`_ 
+fange ich an, einigermaßen zufrieden zu sein.
+Aber für die Schüler müsste ich eine Verson auf Papier machen.
+
+
+That's why I discovered http://xhtml2odt.org/ and did some tests.
+Unlike appy.pod it uses XSL translation to convert xhtml to odt.
+
+
+  Error while evaluating the expression "self.as_odt()" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "t:\hgwork\lino\lino\modlib\vocbook\base.py", line 614, in as_odt
+  xhtml = odtfile.xhtml_to_odt(xhtml)
+  File "l:\snapshots\xhtml2odt-1.3\xhtml2odt.py", line 291, in xhtml_to_odt
+  odt = transform(xhtml, **params)
+  File "xslt.pxi", line 568, in lxml.etree.XSLT.__call__ (src/lxml/lxml.etree.c:120289)
+  <class 'lxml.etree.XSLTApplyError'>: xsl:comment : '--' or ending '-' not allowed in comment
+
+
+The above error caused me some headache.
+It comes when there is an unknown tag in my source (and when verbose is True).
+It is caused by the following rule in `xhtml2odt.xsl`::
+
+  <!-- Leave alone unknown tags -->
+  <xsl:template match="*">
+      <xsl:if test="$debug">
+          <xsl:comment>Unknown tag : <xsl:value-of select="name(.)"/><xsl:value-of select="."/></xsl:comment>
+      </xsl:if>
+      <xsl:copy>
+          <xsl:copy-of select="@*"/>
+          <xsl:apply-templates/>
+      </xsl:copy>
+  </xsl:template>
+  
+When the case happens, I temporarily replace the 
+``<xsl:comment>`` by ``<text:p>`` so I can at least see the reason.
+
+
+I stopped again because 
 

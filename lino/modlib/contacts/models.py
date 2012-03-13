@@ -709,15 +709,17 @@ class PartnerDocument(models.Model):
             
     #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ui,**kw):
-        s = ui.href_to(self)
+        href_to = ui.ext_renderer.href_to
+        s = href_to(self)
         #~ if self.person and not dd.has_fk(rr,'person'):
         if self.person:
             if self.company:
-                s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
+                s += " (" + href_to(self.person) \
+                    + "/" + href_to(self.company) + ")"
             else:
-                s += " (" + ui.href_to(self.person) + ")"
+                s += " (" + href_to(self.person) + ")"
         elif self.company:
-            s += " (" + ui.href_to(self.company) + ")"
+            s += " (" + href_to(self.company) + ")"
         return s
             
     def update_owned_instance(self,task):

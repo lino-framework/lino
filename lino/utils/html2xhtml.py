@@ -51,7 +51,9 @@ class MyHTMLParser(HTMLParser):
     def handle_entityref(self,name):
         """process a general entity reference of the form "&name;"."""
         if name in ('lt','gt','amp','quot'):
-            self.handle_data('<![CDATA['+unichr(name2codepoint[name])+']]>')
+            # 20120311 
+            #~ self.handle_data('<![CDATA['+unichr(name2codepoint[name])+']]>')
+            self.handle_data(unichr(name2codepoint[name]))
             return
         self.handle_data(unichr(name2codepoint[name]))
 

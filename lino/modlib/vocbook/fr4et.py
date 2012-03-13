@@ -12,34 +12,54 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import os
+import sys
+
 from lino.modlib.vocbook.fr import French, Autre, Nom, NomPropre, Adjectif, Numerique, Verbe, NomGeographique
 from lino.modlib.vocbook.et import Estonian
 from lino.modlib.vocbook.base import Book, FR, M, F, ET, PRON, GEON, GEOM, GEOF
 
-book = Book(French,Estonian,u"Kutsealane prantsuse keel kokadele")
+if len(sys.argv) != 3:
+    raise Exception("""
+Usage : %(cmd)s rst OUTPUT_ROOT_DIR
+    %(cmd)s odt OUTPUT_FILE
+""" % dict(cmd=sys.argv[0]))
+fmt = sys.argv[1]
+if fmt == "rst":
+    FULL_CONTENT = True
+else:
+    FULL_CONTENT = False
 
-Pronounciation = book.add_section(1,u"Hääldamine",intro=u"""
+book = Book(French,Estonian,
+    title=u"Kutsealane prantsuse keel kokkadele",
+    input_template=os.path.join(os.path.dirname(__file__),'Default.odt'))
+    #~ os.path.join(os.path.dirname(__file__),'cfr.odt')
+
+Pronounciation = book.add_section(u"Hääldamine",intro=u"""
 Esimeses osas keskendume hääldamisele.
-Pole vaja meelde jätma kõik need sõnad, mida tuuakse näiteks, 
-vaid et õpilane oskaks neid ette lugeda õigesti hääldades 
-ka siis kui hääldamiskirjeldust on peidetud.
+Siin pole vaja meelde jätta näidissõnu,
+vaid et sa oskaksid neid ette lugeda õigesti hääldades.
 """)
-Intro = Pronounciation.add_section(1,u"Kirjeldus",intro=u"""
+Intro = Pronounciation.add_section(u"Kirjeldus",intro=u"""
 """)
-Reeglid = Pronounciation.add_section(2,u"Reeglid")
-Eesti = Pronounciation.add_section(3,u"Veel")
+Reeglid = Pronounciation.add_section(u"Reeglid")
+if FULL_CONTENT:
+    Eesti = Pronounciation.add_section(u"Veel")
 
-Vocabulary = book.add_section(2,u"Sõnavara",intro=u"""
-Teises osa hakkame õpima sõnavara,
-oletades et hääldamine on enam vähem selge.
-""")
-General = Vocabulary.add_section(1,u"Üldiselt")
-Kokadele = Vocabulary.add_section(2,u"Kokadele")
-Fun = Vocabulary.add_section(3,u"Fun")
+#~ Vocabulary = book.add_section(u"Sõnavara",intro=u"""
+#~ Teises osa hakkame õpima sõnavara,
+#~ oletades et hääldamine on enam vähem selge.
+#~ """)
+Vocabulary = book
+#~ General = Vocabulary.add_section(u"Üldiselt")
+General = Vocabulary.add_section(u"Üldine sõnavara")
+Kokadele = Vocabulary.add_section(u"Kulinaaria")
+if FULL_CONTENT:
+  Fun = Vocabulary.add_section(u"Fun")
 
 
-Intro.add_lesson(u"Tuntud sõnad", u"""
-Mõned sõnad, mida te juba teate.
+Intro.add_lesson(u"Tuntud sõnad", intro=u"""
+Mõned sõnad, mida sa juba tead.
 Tutvumine hääldamiskirjaga.
 """)
 Intro.parse_words(None,u"""
@@ -65,55 +85,57 @@ Seda teeme sõnade taha nurksulgudes (**[]**).
 - Prantsuse keeles on raske ette teada, kas täishäälikuid 
   hääldatakse lühikesena või pikana.
   Hääldamiskirjelduses kirjutame pikad 
-  kaashälikud topelt.
+  kaashäälikud topelt.
 
 - Prantsuse keeles on rõhk tavaliselt viimasel silbil.
-  Hääldamiskirjelduses paneme apostrofi (') rõhutatud silbi ette.
+  Hääldamiskirjelduses paneme apostroofi (') rõhutatud silbi ette.
  
 """)
 
 
-Intro.add_lesson(u"Hääldamiskirjeldus", u"""
-Hääldamiskirjeldustes kasutame kohandatud
-`X-SAMPA <http://fr.wiktionary.org/wiki/Annexe:Prononciation/fran%C3%A7ais>`_
-variant, mis on eestlastele intuitiivsem õppida 
-kui näiteks 
-`IPA <http://en.wiktionary.org/wiki/Wiktionary:IPA>`_ 
-(International Phonetic Alphabet).
+Intro.add_lesson(u"Hääldamiskirjeldus", intro=u"""
+Hääldamiskirjeldustes kasutame 
+kohandatud `X-SAMPA 
+<http://fr.wiktionary.org/wiki/Annexe:Prononciation/fran%C3%A7ais>`_ variant, 
+mis on eestlastele intuitiivsem õppida 
+kui näiteks `IPA 
+<http://en.wiktionary.org/wiki/Wiktionary:IPA>`_ (International 
+Phonetic Alphabet).
 
 Üldiselt loed lihtsalt seda, mis on nurksulgudes.
 Välja arvatud mõned helid, mida tuleb õppida:
 
-==== ================== =================== ===============================
-täht selgitus           näided
-==== ================== =================== ===============================
+==== ================== =================== =======================================
+täht selgitus           näided e.k.         näided pr.k.
+==== ================== =================== =======================================
 [ə]  tumm e             Lott\ **e**         **je** [žə], **ne** [nə]
 [o]  kinnine o          L\ **oo**\ ne       **mot** [mo], **beau** [boo]
 [O]  avatud o           L\ **o**\ tte       **bonne** [bOn], **mort** [mOOr]
 [ö]  kinnine ö          l\ **öö**\ ve       **feu** [föö], **peu** [pöö]
 [Ö]  avatud ö           ingl. "g\ *ir*\ l"  **beurre** [bÖÖr], **jeune** [žÖÖn]
 [w]  ingl. k. "where"   ingl. "\ **w**\ e"  **trois** [trw'a], **foie** [fw'a]
-[O~] nasaalne [O]                           **bonjour** [bO~'žuur], **mon** [mO~]
-[A~] nasaalne [A]                           **tante** ['tA~tə], **prendre** ['prA~drə]
-[Ö~] nasaalne [Ö]                           **un** [Ö~], **parfum** [par'fÖ~]
-[Ä~] nasaalne Ä                             **chien** [šiÄ~], **rien** [riÄ~]
-==== ================== =================== ===============================
+[O~] nasaalne [O]       -                   **bonjour** [bO~'žuur], **mon** [mO~]
+[A~] nasaalne [A]       -                   **tante** ['tA~tə], **prendre** ['prA~drə]
+[Ö~] nasaalne [Ö]       -                   **un** [Ö~], **parfum** [par'fÖ~]
+[Ä~] nasaalne Ä         -                   **chien** [šiÄ~], **rien** [riÄ~]
+==== ================== =================== =======================================
 
  
 
 """)
 
-Intro.add_lesson(u"Mesilashäälikud", u"""
+Intro.add_lesson(u"Mesilashäälikud", intro=u"""
 "Mesilashäälikud" on **s**, **š**, **z** ja **ž**.
-Nad on eesti keeles ka olemas, aga nende erinevus 
-ei ole meil väga tähtis. Prantslastele aga küll.
   
-  =========== ===========================
-  terav       pehme
-  =========== ===========================
-  **s**\ upp  **z**\ oom
-  **š**\ okk  **ž**\ urnaal, **ž**\ anre
-  =========== ===========================
+=========== ===========================
+terav       pehme
+=========== ===========================
+**s**\ upp  **z**\ oom
+**š**\ okk  **ž**\ urnaal, **ž**\ anre
+=========== ===========================
+  
+Nad on eesti keeles ka olemas, aga prantsuse keeles on
+nende erinevus palju olulisem.
 """)
 Intro.parse_words(None,u"""
 la soupe [sup] : supp
@@ -126,23 +148,23 @@ le choc [žok] : šokk | löök
 
 
 
-Intro.add_lesson(u"Artikkel", u"""
+Intro.add_lesson(u"Artikkel", intro=u"""
 Prantsuse keeles on kõikidel asjadel oma sugu.
 Näiteks laud (*la table*) on naissoost, 
 raamat (*le livre*) on meessoost.
 
 Kui sul on mitu lauda või mitu raamatu, 
-siis on neil sama artikkel **les**:
-*les tables*, *les livres*.
+siis on neil sama artikkel **les** (nt. *les tables*, *les livres*).
 
-Sõnavara õppimisel pannakse nimisõnadel alati artikkel 
-ette: **le** kui asi on meessoost, **la** kui asi on naissoost.
+Kui sõna algab täishäälikuga, siis kaob 
+artiklitest *le* ja *la* viimane 
+täht ära ja nad muutuvad  mõlemad **l'**-ks.
 
-Artiklid *le* ja *la* nimetatakse *määravaks* artikliteks.
-Võib ka juhtuda, et *määrava* artikli asemel
-on *umbmäärane* artikkel: **un** (meessoost) või  **une** (naissoost).
+Artiklid *le*, *la* ja *les* nimetatakse *määravaks* artikliteks.
 
-Ka inglise keeles on olemas määrav 
+Mmäärava artikli asemel võib ka olla **umbmäärane** artikkel: **un** (meessoost) 
+või **une** (naissoost).
+Erinevus on nagu inglise keeles, kus on olemas määrav 
 artikkel **the** ja umbmäärane artikel **a**.
 Olenevalt kontekstist kasutatakse kas see või teine.
 Näiteks
@@ -150,35 +172,34 @@ Näiteks
 ja 
 "I am **the** man you need".
 
-Mitmuses on umbmäärane artikkel **des**
+Mitmuses on umbmäärane artikkel **des** sama mõlemas soos.
 
-========== ====== ==========
-sugu       määrav umbmäärane
-========== ====== ==========
-meessoost  le     un 
-naissoost  la     une
-mitmus     les    des
-========== ====== ==========
+Nii et kokkuvõteks:
 
-Kui sõna algab täishäälikuga, siis kaob artiklitest *le* ja *la* 
-viimane täht ära ja nad muutuvad  mõlemad *l'*-ks.
+========== ============= =============
+sugu       määrav        umbmäärane
+========== ============= =============
+meessoost  **le** [lə]   **un** [Ö~]
+naissoost  **la** [la]   **une** [ün]
+mitmus     **les** [lä]  **des** [dä]
+========== ============= =============
 
 """)
-Intro.parse_words(Autre,u"""
-le [lə] : (määrav meessoost artikkel)
-la [la] : (määrav naissoost artikkel)
-les [lä] : (määrav artikkel mitmus)
-""")
-Intro.parse_words(Autre,u"""
-un [Ö~] : (umbmäärane meessoost artikkel)
-une [ün] : (umbmäärane naissoost artikkel)
-des [dä] : (umbmäärane artikkel mitmus)
-""")
+#~ Intro.parse_words(Autre,u"""
+#~ le [lə] : (määrav meessoost artikkel)
+#~ la [la] : (määrav naissoost artikkel)
+#~ les [lä] : (määrav artikkel mitmus)
+#~ """)
+#~ Intro.parse_words(Autre,u"""
+#~ un [Ö~] : (umbmäärane meessoost artikkel)
+#~ une [ün] : (umbmäärane naissoost artikkel)
+#~ des [dä] : (umbmäärane artikkel mitmus)
+#~ """)
 
-Intro.add_lesson(u"Rõhutud, aga lühike!", u"""
+Intro.add_lesson(u"Rõhutud, aga lühike!", intro=u"""
 Rõhutatud täishäälikud ei ole sellepärast tingimata pikad.
-Prantsuse keeles tuleb tihti ette, et sõna lõpeb *lühikese* 
-täishäälikuga.
+Prantsuse keeles tuleb tihti ette, et sõna 
+lõpeb *lühikese* täishäälikuga.
 """)
 Intro.parse_words(Nom,u"""
 le menu [mə'nü] : menüü
@@ -191,9 +212,8 @@ le paradis [para'di] : paradiis
 
 
 
-Reeglid.add_lesson(u"u", u"""
-Kirjatäht **u**
-(siis kui see pole teise täishäälikuga koos)
+Reeglid.add_lesson(u"u", intro=u"""
+Kirjatäht **u** (siis kui see pole teise täishäälikuga koos)
 hääldatakse **[ü]** või **[üü]**.
 
 """)
@@ -208,11 +228,10 @@ la pute [püt] : hoor
 le sucre ['sükrə] : suhkur
 """)
 
-Reeglid.add_lesson(u"ou", u"""
+Reeglid.add_lesson(u"ou", intro=u"""
 Tähekombinatsioon **ou** hääldatakse **[u]** või **[uu]**.
 """)
 Reeglid.parse_words(None,u"""
-oui [wi] : jah
 le cours [kuur] : kursus | tund (koolis)
 le cou [ku] : kael
 le goût [gu] : maitse
@@ -229,9 +248,9 @@ le jour [žuur] : päev
 court (m) [kuur] : lühike
 mou (m) [mu] : pehme
 """)
-Reeglid.parse_words(NomPropre,u"""
-Winnetou [winə'tu] : (isegi maailmakuulsa apatši pealiku nime hääldavad prantslased valesti)
-""")
+#~ Reeglid.parse_words(NomPropre,u"""
+#~ Winnetou [winə'tu] : (isegi maailmakuulsa apatši pealiku nime hääldavad prantslased valesti)
+#~ """)
 
 
 Reeglid.add_lesson(u"oi", 
@@ -265,19 +284,19 @@ une auberge [o'bäržə] : võõrastemaja
 un auteur [o'tÖÖr] : autor
 le château [ža'too] : loss
 le bateau [ba'too] : laev
-une eau [oo] : vesi
+la eau [oo] : vesi
 """)
 
 
 
 Reeglid.add_lesson(u"y", u"""
-Kirjatäht **y** 
-hääldatakse alati **[i]** ja mitte kunagi **[ü]**.
+Kirjatäht **y** hääldatakse 
+alati **[i]** ja mitte kunagi **[ü]**.
 """)
 Reeglid.parse_words(Nom,u"""
 le cygne ['sinjə] : luik
 le système [sis'tääm] : süsteem
-le mythe [mit] : müütos
+le mythe [mit] : müüt
 """)
 
 
@@ -341,7 +360,7 @@ Kui hääldamine on [gi], [ge], [gə], [gä] või [gi], siis lisatakse tumm **u*
 Reeglid.parse_words(None,u"""
 le gorille [go'rij] : gorilla
 la giraffe [ži'raf] : kaelkirjak
-la gazelle [ga'zäl] : gazell?
+la gazelle [ga'zäl] : gasell
 le guépard [ge'paar] : gepard
 le guide [giid] : reisijuht
 la guitare [gi'taar] : kitarr
@@ -405,18 +424,16 @@ le maçon [ma'sO~] : müürsepp
 #~ le boudoir [bud'waar] : buduaar
 #~ """)
 
-Intro.add_lesson(u"Jah ja ei", u"""
-""")
-Intro.parse_words(None,u"""
-oui [wi] : jah
-non [nO~] : ei
-""")
+#~ Intro.add_lesson(u"Jah ja ei", u"""
+#~ """)
+#~ Intro.parse_words(None,u"""
+#~ """)
 
 
 Reeglid.add_lesson(u"ui", 
 u"""
-Tähekombinatsioon **ui** hääldatakse **[wi]** 
-või **[wii]** (mida kirjutatakse vahest ka **[üi]** või **[üii]**).
+Tähekombinatsioon **ui** hääldatakse **[wi]** või **[wii]** (mida 
+kirjutatakse vahest ka **[üi]** või **[üii]**).
 
 """)
 Reeglid.parse_words(None,u"""
@@ -449,7 +466,7 @@ Verdun [vär'dÖ~] : -
 Reeglid.parse_words(Adjectif,u"""
 brun [brÖ~] | brune [brün] : pruun
 aucun [o'kÖ~] | aucune [o'kün] : mitte üks
-parfumé [parfü'mee] | parfumée [parfü'mee] : parfümeeritud
+parfumé [parfü'mee] | parfumée [parfü'mee] : lõhnastatud
 """)
 
 #~ chacun [ža'kÖ~] | chacun [ža'kün] : igaüks
@@ -476,49 +493,52 @@ le bouleau [bu'loo] : kask
 le bureau [bü'roo] : büroo
 """)
 
+if FULL_CONTENT:
 
-Fun.add_lesson(u"Frère Jacques", 
-u"""
-| Frère Jacques, frère Jacques,
-| dormez-vous? Dormez-vous? 
-| Sonnez les matines, sonnez les matines
-| ding, dang, dong! Ding, dang, dong!
-""")
-Fun.parse_words(NomPropre,u"""
-Jacques [žaak] : Jaak
-""")
-Fun.parse_words(None,u"""
-le frère [fräär] : vend
-dormez-vous? [dOrme'vu] : kas Te magate?
-Sonnez les matines [sO'ne lä ma'tinə] : lööge hommikukellad
-""")
+    Fun.add_lesson(u"Frère Jacques", 
+    u"""
+    | Frère Jacques, frère Jacques,
+    | dormez-vous? Dormez-vous? 
+    | Sonnez les matines, sonnez les matines
+    | ding, dang, dong! Ding, dang, dong!
+    """)
+    Fun.parse_words(NomPropre,u"""
+    Jacques [žaak] : Jaak
+    """)
+    Fun.parse_words(None,u"""
+    le frère [fräär] : vend
+    dormez-vous? [dOrme'vu] : kas Te magate?
+    Sonnez les matines [sO'ne lä ma'tinə] : lööge hommikukellad
+    """)
 
-Fun.add_lesson(u"Minu onu...", 
-u"""
-| Mon tonton et ton tonton sont deux tontons,
-| mon tonton tond ton tonton 
-| et ton tonton tond mon tonton.
-| Qu'est-ce qui reste?
+if FULL_CONTENT:
 
-""")
-Fun.parse_words(None,u"""
-mon [mO~] : minu
-ton [tO~]: sinu
-ils sont [sO~]: nad on
-""")
-Fun.parse_words(Numerique,u"""
-deux [döö] : kaks
-""")
-Fun.parse_words(Nom,u"""
-un tonton [tO~'tO~] : onu
-""")
-Fun.parse_words(Verbe,u"""
-tondre [tO~drə] : pügama
-rester [räs'tee] : üle jääma
-""")
-Fun.parse_words(None,u"""
-Qu'est-ce qui reste? [käski'räst?] : Mis jääb üle?
-""")
+    Fun.add_lesson(u"Minu onu...", 
+    u"""
+    | Mon tonton et ton tonton sont deux tontons,
+    | mon tonton tond ton tonton 
+    | et ton tonton tond mon tonton.
+    | Qu'est-ce qui reste?
+
+    """)
+    Fun.parse_words(None,u"""
+    mon [mO~] : minu
+    ton [tO~]: sinu
+    ils sont [sO~]: nad on
+    """)
+    Fun.parse_words(Numerique,u"""
+    deux [döö] : kaks
+    """)
+    Fun.parse_words(Nom,u"""
+    un tonton [tO~'tO~] : onu
+    """)
+    Fun.parse_words(Verbe,u"""
+    tondre [tO~drə] : pügama
+    rester [räs'tee] : üle jääma
+    """)
+    Fun.parse_words(None,u"""
+    Qu'est-ce qui reste? [käski'räst?] : Mis jääb üle?
+    """)
 
 
 #~ """
@@ -577,7 +597,7 @@ le salon [sa’lO~] : salong (= uhke tuba)
 un oncle [O~klə] : onu
 la bombe ['bO~mbə] : pomm
 """)
-Reeglid.parse_words(None,u"""
+Reeglid.parse_words(Autre,u"""
 bonjour [bO~'žuur] : tere | head päeva | tere hommikust
 bonne nuit [bOn'nwi] : head ööd
 bon appétit [bOnappe'ti] : head isu
@@ -687,9 +707,9 @@ le soleil [so'leij] : päike
 la merveille [mär'veij] : ime
 merveilleux [märvei'jöö] : imeline
 le réveillon [revei'jO~] : vana-aasta õhtu söök
-la groseille [gro'zeij] : sõstras (punane v. valge) | tiker
+la groseille [gro'zeij] : sõstar (punane v. valge) | tikker
 vieille (f) [vjeij] : vana
-la veille [veij] : eesõhtu
+# la veille [veij] : pühalaupäev
 """)
 Reeglid.add_lesson(u"ueil", 
 u"""
@@ -702,15 +722,15 @@ un écureuil [ekü'rÖj] : orav
 """)
 
 Reeglid.add_lesson(u"ill", u"""
-Tähekombinatsioon **ill** hääldatakse **[ij]** või **[iij]**.
+Tähekombinatsioon **ill** hääldatakse **[ii]** või  **[ij]**.
 Erandid on sõnad *ville* ja *mille*.
 """)
 Reeglid.parse_words(None,u"""
-la bille [bij] : kuul
-une anguille [A~'giij] : angerjas
-la myrtille [mir'tiij] : mustikas
-la famille [fa'miij] : perekond
-tranquille [trA~kiij] : rahulik
+la bille [bii] : kuul
+une anguille [A~'gii] : angerjas
+la myrtille [mir'tii] : mustikas
+la famille [fa'mii] : perekond
+tranquille [trA~kii] : rahulik
 la cuillère [kwi'jäär] : lusikas
 le million [mi'jO~] : miljon
 le pillage [pij'aaž] : rüüstamine
@@ -739,23 +759,25 @@ le hôtel [o'täl] : hotell
 le autel [o'täl] : altar
 """)
 
-Reeglid.add_lesson(u"h aspiré", u"""
-Kuigi kirjatähe **h** ei hääldata kunagi,
-on neid kaks tüüpi: «h muet» (tumm h) 
-ja «h aspiré» (sisse hingatud h).
-Viimane tähistatakse sõnaraamatutes tärniga (*).
-Erinevus koosneb selles, kuidas nad liituvad eesoleva sõnaga.
-Artiklitest "le" ja "la" kaob "e" või "a" 
-siis kui järgnev sõna algab täishäälikuga.
-""")
-Reeglid.parse_words(Nom,u"""
-le hélicoptère [elikop'täär] : helikopter
-le hôtel [o'täl] : hotell
-le homme [Om] : mees
-le *haricot [ari'ko] : uba
-le *héros [e'ro] : kangelane
-le *hibou [i'bu] : öökull
-""")
+if FULL_CONTENT:
+  
+  Reeglid.add_lesson(u"h aspiré", u"""
+  Kuigi kirjatähe **h** ei hääldata kunagi,
+  on neid kaks tüüpi: «h muet» (tumm h) 
+  ja «h aspiré» (sisse hingatud h).
+  Viimane tähistatakse sõnaraamatutes tärniga (*).
+  Erinevus koosneb selles, kuidas nad liituvad eesoleva sõnaga.
+  Artiklitest "le" ja "la" kaob "e" või "a" 
+  siis kui järgnev sõna algab täishäälikuga.
+  """)
+  Reeglid.parse_words(Nom,u"""
+  le hélicoptère [elikop'täär] : helikopter
+  le hôtel [o'täl] : hotell
+  le homme [Om] : mees
+  le *haricot [ari'ko] : uba
+  le *héros [e'ro] : kangelane
+  le *hibou [i'bu] : öökull
+  """)
 
 
 
@@ -818,51 +840,52 @@ la ligne ['linjə] : liin | rida
 
 
 
+if FULL_CONTENT:
 
-Eesti.add_lesson(u"b ja p", u"""
-b ja p on prantsuse keeles selgelt erinevad.
-""")
-Eesti.parse_words(None,u"""
-la bière [bjäär] : õlu
-la pierre [pjäär] : kivi
-le bon [bO~] : tšekk | talong
-le pont [pO~] : sild
-le bon ton [bO~'tO~] : viisakus
-le ponton [pO~'tO~] : pontoon (nt. pontoonsild)
-la peau [poo] : nahk
-beau (m.) : ilus
-le bois [bwa] : puu (materjal) | mets
-le poids [pwa] : kaal
-""")
+    Eesti.add_lesson(u"b ja p", u"""
+    b ja p on prantsuse keeles selgelt erinevad.
+    """)
+    Eesti.parse_words(None,u"""
+    la bière [bjäär] : õlu
+    la pierre [pjäär] : kivi
+    le bon [bO~] : tšekk | talong
+    le pont [pO~] : sild
+    le bon ton [bO~'tO~] : viisakus
+    le ponton [pO~'tO~] : pontoon (nt. pontoonsild)
+    la peau [poo] : nahk
+    beau (m.) : ilus
+    le bois [bwa] : puu (materjal) | mets
+    le poids [pwa] : kaal
+    """)
 
 
 
-Eesti.add_lesson(u"d ja t", u"""
-d ja t on prantsuse keeles selgelt erinevad.
-""")
-Eesti.parse_words(None,u"""
-le don [dO~] : annetus
-le ton [tO~] : toon
-le centre ['sA~trə] : keskus
-la cendre ['sA~drə] : tuhk
-je donne [dOn] : ma annan
-la tonne [tOn] : tonn
-le toit [twa] : katus
-le doigt [dwa] : sõrm
-""")
+    Eesti.add_lesson(u"d ja t", u"""
+    d ja t on prantsuse keeles selgelt erinevad.
+    """)
+    Eesti.parse_words(None,u"""
+    le don [dO~] : annetus
+    le ton [tO~] : toon
+    le centre ['sA~trə] : keskus
+    la cendre ['sA~drə] : tuhk
+    je donne [dOn] : ma annan
+    la tonne [tOn] : tonn
+    le toit [twa] : katus
+    le doigt [dwa] : sõrm
+    """)
 
-Eesti.add_lesson(u"g ja k", u"""
-g ja k on prantsuse keeles selgelt erinevad.
-""")
-Eesti.parse_words(None,u"""
-le gond [gO~] : uksehing
-le con [kO~] : loll
-la gare [gaar] : raudteejaam
-le car [kaar] : reisibuss
-car [kaar] : sest
-le garçon [gar'sO~] : poiss
-Qui est Guy? [ki ä gi] : Kes on Guy?
-""")
+    Eesti.add_lesson(u"g ja k", u"""
+    g ja k on prantsuse keeles selgelt erinevad.
+    """)
+    Eesti.parse_words(None,u"""
+    le gond [gO~] : uksehing
+    le con [kO~] : loll
+    la gare [gaar] : raudteejaam
+    le car [kaar] : reisibuss
+    car [kaar] : sest
+    le garçon [gar'sO~] : poiss
+    Qui est Guy? [ki ä gi] : Kes on Guy?
+    """)
 
 
 
@@ -884,67 +907,67 @@ if False:
     """)
 
 
+if FULL_CONTENT:
+  
+    Eesti.add_lesson(u"v ja f", u"""
+    Ettevaatust, **v** ei ole **f**!
+    """)
+    Eesti.parse_words(None,u"""
+    vous [vu] : teie
+    fou [fu] : hull
+    # vous êtes fous [vu'zäät fu] : te olete lollid
+    je veux [žə vöö] : ma tahan
+    le feu [föö] : tuli
+    la fille [fii] : tüdruk | tütar
+    la vie [vii] : elu
+    la fin [fÄ~] : lõpp
+    le vin [vÄ~] : vein
+    """)
 
-Eesti.add_lesson(u"v ja f", u"""
-Ettevaatust, **v** ei ole **f**!
-""")
-Eesti.parse_words(None,u"""
-vous [vu] : teie
-fou [fu] : hull
-# vous êtes fous [vu'zäät fu] : te olete lollid
-je veux [žə vöö] : ma tahan
-le feu [föö] : tuli
-la fille [fii] : tüdruk | tütar
-la vie [vii] : elu
-la fin [fÄ~] : lõpp
-le vin [vÄ~] : vein
-""")
+    Eesti.add_lesson(u"Ahv pole märk", u"""
+    Ettevaatust, **gn** ei ole **ng**!
+    """)
+    Eesti.parse_words(Nom,u"""
+    le singe [sÄ~ž] : ahv
+    le signe ['sinjə] : märk
+    le linge [lÄ~ž] : pesu
+    la ligne ['linjə] : liin | rida
+    """)
 
-Eesti.add_lesson(u"Ahv pole märk", u"""
-Ettevaatust, **gn** ei ole **ng**!
-""")
-Eesti.parse_words(Nom,u"""
-le singe [sÄ~ž] : ahv
-le signe ['sinjə] : märk
-le linge [lÄ~ž] : pesu
-la ligne ['linjə] : liin | rida
-""")
-
-Eesti.add_lesson(u"Sugu on oluline", u"""
-Siin mõned näited, et sugu pole sugugi ebatähtis.
-""")
-Eesti.parse_words(Nom,u"""
-le père [päär] : isa
-la paire [päär] : paar
-le maire [määr] : linnapea
-la mère [määr] : ema
-le tour [tuur] : tiir
-la tour [tuur] : torn
-le mur [müür] : sein | müür
-la mûre [müür] : põldmari
-le cours [kuur] : kursus | tund (koolis)
-la cour [kuur] : õu, hoov | kohus
-""")
+    Eesti.add_lesson(u"Sugu on oluline", u"""
+    Siin mõned näited, et sugu pole sugugi ebatähtis.
+    """)
+    Eesti.parse_words(Nom,u"""
+    le père [päär] : isa
+    la paire [päär] : paar
+    le maire [määr] : linnapea
+    la mère [määr] : ema
+    le tour [tuur] : tiir
+    la tour [tuur] : torn
+    le mur [müür] : sein | müür
+    la mûre [müür] : põldmari
+    le cours [kuur] : kursus | tund (koolis)
+    la cour [kuur] : õu, hoov | kohus
+    """)
 
 
-
-Eesti.add_lesson(u"Ära aja segamini!", u"""
-Mõned ilusad harjutused veel.
-""")
-Eesti.parse_words(Autre,u"""
-ces ingrédients [säz Ä~gre'djA~] : need koostisained
-c'est un crétin [sätÖ~ kre’tÄ~] : ta on kretiin
-je dors [žə dOOr] : ma magan
-j'ai tort [že tOOr] : ma eksin
-""")
-Eesti.parse_words(Nom,u"""
-la jambe [žA~mbə] : jalg
-la chambre [šA~mbrə] : tuba
-un agent [la' žA~] : agent
-le chant [lə šA~] : laul
-les gens [žA~] : inimesed, rahvas
-les chants [šA~] : laulud
-""")
+    Eesti.add_lesson(u"Ära aja segamini!", u"""
+    Mõned ilusad harjutused veel.
+    """)
+    Eesti.parse_words(Autre,u"""
+    ces ingrédients [säz Ä~gre'djA~] : need koostisained
+    c'est un crétin [sätÖ~ kre’tÄ~] : ta on kretiin
+    je dors [žə dOOr] : ma magan
+    j'ai tort [že tOOr] : ma eksin
+    """)
+    Eesti.parse_words(Nom,u"""
+    la jambe [žA~mbə] : jalg
+    la chambre [šA~mbrə] : tuba
+    un agent [la' žA~] : agent
+    le chant [lə šA~] : laul
+    les gens [žA~] : inimesed, rahvas
+    les chants [šA~] : laulud
+    """)
 
 
 
@@ -970,38 +993,40 @@ Comment vas-tu? [ko'mA~va'tü] : Kuidas sul läheb?
 s'il vous plaît [silvu'plä] : palun (Teid)
 s'il te plaît [siltə'plä] : palun (Sind)
 merci [mär'si] : aitäh
+oui [wi] : jah
+non [nO~] : ei
 """)
 
 
-General.add_lesson(u"Prantsuse automargid", u"""
-""",columns=[FR,PRON],show_headers=False)
-General.parse_words(NomPropre,u"""
-Peugeot [pö'žo] : - 
-Citroën [sitro'än] : - 
-Renault [re'noo] : - 
-""")
+if FULL_CONTENT:
+  
+    General.add_lesson(u"Prantsuse automargid",columns=[FR,PRON],show_headers=False)
+    General.parse_words(NomPropre,u"""
+    Peugeot [pö'žo] : - 
+    Citroën [sitro'än] : - 
+    Renault [re'noo] : - 
+    """)
 
 
-
-General.add_lesson(u"Prantsuse eesnimed", u"""
-""")
-General.parse_words(NomPropre,u"""
-Albert [al'bäär] : - 
-André [A~'dree] : Andre
-Anne [anə] : Anne
-Bernard [bär'naar] : - 
-Catherine [kat'rin] : Katrin
-Charles [šarl] : Karl
-François [frA~'swa] : -
-Isabelle [iza'bäl] : Isabel
-Jacques [žaak] : Jaak
-Jean [žA~] : Jaan
-Luc [lük] : Luukas
-Marie [ma'rii] : Maria
-Paul [pOl] : Paul
-Philippe [fi'lip] : Filip
-Pierre [pjäär] : Peeter
-""")
+    General.add_lesson(u"Prantsuse eesnimed", u"""
+    """)
+    General.parse_words(NomPropre,u"""
+    Albert [al'bäär] : - 
+    André [A~'dree] : Andre
+    Anne [anə] : Anne
+    Bernard [bär'naar] : - 
+    Catherine [kat'rin] : Katrin
+    Charles [šarl] : Karl
+    François [frA~'swa] : -
+    Isabelle [iza'bäl] : Isabel
+    Jacques [žaak] : Jaak
+    Jean [žA~] : Jaan
+    Luc [lük] : Luukas
+    Marie [ma'rii] : Maria
+    Paul [pOl] : Paul
+    Philippe [fi'lip] : Filip
+    Pierre [pjäär] : Peeter
+    """)
 
 General.add_lesson(u"Taluloomad", u"""
 """)
@@ -1015,7 +1040,6 @@ la vache [vaš] : lehm
 le taureau [to'roo] : pull
 le veau [voo] : vasikas
 le bœuf [bÖff] : härg
-la souris [su'ri] : hiir
 """)
 
 General.add_lesson(u"Metsloomad", u"""
@@ -1027,10 +1051,11 @@ le chevreuil [šəv'rÖj] : metskits
 le cerf [säär] : hirv
 la biche [biš] : emahirv
 un élan [e'lA~] : põder
-le lapin [lapÄ~] : küünik
+le lapin [la'pÄ~] : küülik
 le lièvre [li'äävrə] : jänes
 le renard [rə'naar] : rebane
 un écureuil [ekü'rÖj] : orav
+la souris [su'ri] : hiir
 le blaireau [blä'roo] : mäger | habemeajamispintsel
 le *hérisson [eri'sO~] : siil
 la hermine [är'min] : hermeliin
@@ -1045,30 +1070,32 @@ le marcassin [marka'sÄ~] : metsseapõrsas
 
 # belette : nirk 
 
-Fun.add_lesson(u"Põdral maja", u"""
-| Dans sa maison un grand cerf 
-| regardait par la fenêtre
-| un lapin venir à lui         
-| et frapper ainsi.
-| «Cerf, cerf, ouvre moi
-| ou le chasseur me tuera!»    
-| «Lapin, lapin entre et viens 
-| me serrer la main.»          
-""")
-Fun.parse_words(Verbe,u"""
-regarder [rəgar'dee] : vaatama
-ouvrir [uv'riir] : avama
-tuer [tü'ee] : tapma
-serrer [sä'ree] : suruma
-""")
-Fun.parse_words(Nom,u"""
-la maison [mä'zO~] : maja
-la fenêtre [fə'näätrə] : aken
-le cerf [säär] : hirv
-le lapin [lapÄ~] : küünik
-le chasseur [ša'sÖÖr] : jahimees
-la main [mÄ~] : käsi
-""")
+if FULL_CONTENT:
+
+  Fun.add_lesson(u"Põdral maja", u"""
+  | Dans sa maison un grand cerf 
+  | regardait par la fenêtre
+  | un lapin venir à lui         
+  | et frapper ainsi.
+  | «Cerf, cerf, ouvre moi
+  | ou le chasseur me tuera!»    
+  | «Lapin, lapin entre et viens 
+  | me serrer la main.»          
+  """)
+  Fun.parse_words(Verbe,u"""
+  il regardait [rəgar'dä] : ta vaatas
+  ouvrir [uv'riir] : avama
+  tuer [tü'ee] : tapma
+  serrer [sä'ree] : suruma
+  """)
+  Fun.parse_words(Nom,u"""
+  la maison [mä'zO~] : maja
+  la fenêtre [fə'näätrə] : aken
+  le cerf [säär] : hirv
+  le lapin [lapÄ~] : küünik
+  le chasseur [ša'sÖÖr] : jahimees
+  la main [mÄ~] : käsi
+  """)
 
 General.add_lesson(u"Linnud", u"""
 """)
@@ -1087,7 +1114,7 @@ General.parse_words(Nom,u"""
 le brochet [bro'šä] : haug
 une anguille [A~'gii] : angerjas
 la perche [pärš] : ahven
-le hareng [ar'~A] : heringas
+le *hareng [ar'~A] : heeringas
 le sprat [sprat] : sprot
 le thon [tO~] : tuunikala
 le requin [rə'kÄ~] : haikala
@@ -1112,6 +1139,53 @@ la tasse [tas] : tass
 le plat [pla] : kauss
 """)
 
+Kokadele.add_lesson(u"Joogid", u"""""")
+Kokadele.parse_words(Nom,u"""
+la boisson [bwa'sO~] : jook
+la bière [bjäär] : õlu
+la eau [oo] : vesi
+le jus [žu] : mahl
+le café [ka'fee] : kohv
+le thé [tee] : tee
+
+le vin rouge [vÄ~ 'ruuz]: punane vein
+le vin blanc [vÄ~ 'blA~]: valge vein
+le vin rosé [vÄ~ ro'zee] : roosa vein
+le cidre ['siidrə] : siider
+la région [rež'jO~] : regioon, ala
+le terroir [ter'waar] : geograafiline veinirühm
+une appellation d'origine contrôlée (AOC) [apela'sjO~ dori'žin kO~trO'lee] : kontrollitud päritolumaa nimetus
+
+la bavaroise [bavaru'aaz] : jook teest, piimast ja liköörist
+""")
+
+Kokadele.add_lesson(u"Menüü", intro=u"""""")
+Kokadele.parse_words(Nom,u"""
+le plat [pla] : roog 
+le plat du jour [pla dü žuur] : päevapraad
+le *hors d'œuvre [OOr 'dÖÖvrə] : eelroog
+le dessert [des'säär] : magustoit
+""")
+
+Kokadele.add_lesson(u"Supid", u"""
+""")
+Kokadele.parse_words(Nom,u"""
+la soupe [sup] : supp 
+le potage [po'taažə] : juurviljasupp
+le potage purée [po'taažə pü'ree] : püreesupp
+le velouté [vəlu'tee] : koorene püreesupp
+le velouté Dubarry [vəlu'tee düba'ri] : koorene püreesupp lillkapsaga
+le bouillon [bui'jO~] :  puljong 
+le consommé [kO~som'mee] : selge puljong 
+le consommé de volaille [kO~som'mee də vo'laj] : linnulihast puljong 
+le consommé de gibier [kO~som'mee də žib'jee] : ulukilihast puljong 
+le consommé de poisson [kO~som'mee də pwa'sO~] : kala puljong 
+le consommé double [kO~som'mee 'duublə] : kahekordne puljong 
+#rammuleem?
+""")
+
+
+
 Kokadele.add_lesson(u"Liha", u"""
 """)
 Kokadele.parse_words(Nom,u"""
@@ -1120,6 +1194,7 @@ la viande [vjA~də] : liha
 la volaille [vo'laij] : linnuliha
 le gibier [žibiee] : jahiloomad
 le poisson [pwa'sO~] : kala
+le lard [laar] : pekk
 un os [os] : kont
 la côte [koot] : ribi
 le dos [do] : selg
@@ -1136,15 +1211,15 @@ les abats [a'ba] : subproduktid (maks,süda, neerud, keel, jalad)
 
 Kokadele.add_lesson(u"Liharoad", u"""""")
 Kokadele.parse_words(Nom,u"""
-l'escalope (f) [eska'lOp] : eskalopp, žnitsel
+l'escalope (f) [eska'lOp] : eskalopp, šnitsel
 le ragoût [ra'gu] : raguu
 la roulade [ru'laadə] : rulaad
 la paupiette [pop'jät] : liharull
 l'aspic (m) [as'pik] : sült
 le filet [fi'lä] : filee | võrk
 le bifteck [bif'täk] : biifsteek
-la brochette [bro'šät] : šašlõk
-les attereaux [attə'roo] : fritüüris praetud varas, paneeritud šašlõk
+la brochette [bro'šät] : lihavarras, šašlõk
+les attereaux [attə'roo] : fritüüris praetud varras, paneeritud šašlõk
 la côtelette [kot'lät] : naturaalne kotlet
 la côtelette de porc [kot'lät də pOOr] : sealiha kotlet
 la noisette de porc [nwa'zät də pOOr] : filee sealiha
@@ -1169,18 +1244,34 @@ la selle de mouton [säl də mu'tO~] : lamba (talle) sadul
 """)
 
 
-Kokadele.add_lesson(u"Piimatooded", u"""""")
+Kokadele.add_lesson(u"Road", intro=u"""""")
+Kokadele.parse_words(Nom,u"""
+la purée [pü'ree] : püree
+un œuf [Öf] : muna
+les œufs brouillés [öö brui'jee] : omlett
+les œufs pochés [öö po'šee] : ilma kooreta keedetud muna
+le gratin [gra'tÄ~] : gratään (ahjus üleküpsetatud roog)
+le gratin dauphinois [gra'tÄ~ dofinw'a] : (tuntud retsept)
+le gratin savoyard [gra'tÄ~ savwa'jaar] : (juustuga gratin dauphinois)
+le soufflé [suff'lee] : suflee
+
+la fondue [fO~'düü] : fondüü
+le fumet [fü'mä] : hea lõhn (nt. veini, liha kohta)
+le pâté [pa'tee] : pasteet
+le pâté en croûte [pa'tee A~'krut] : küpsetatud taignas pasteet
+le pâté en terrine [pa'tee A~ter'rin] : küpsetatud pasteet kausis
+la galantine [galA~'tin] : galantiin
+le cassoulet [kasu'lä] : Languedoc'ist pärit ühepajatoit ubadest ja lihast, mida küpsetatakse mitu tundi madala temperatuuriga ahjus.
+le pot-au-feu [poto'föö] : ühepajatoit
+""")
+
+
+
+Kokadele.add_lesson(u"Juust", u"""""")
 Kokadele.parse_words(None,u"""
-le lait [lä] : piim
-le beurre [bÖÖr]: või
-la crème [kr’ääm] : kreem | koor
 le fromage [fro'maaž] : juust
 la caillebotte [kai'bott] : (kodujuust)
 la raclette [rak'lett] : kuumaga sulatud juust
-""")
-
-Kokadele.add_lesson(u"Juustu nimed", u"""""")
-Kokadele.parse_words(None,u"""
 le Camembert [kamA~'bäär] : (valgehallitusjuust)
 le Emmental [emən'taal] : -
 le Rocquefort [rOk'fOOr] : (sinihallitusjuust)
@@ -1211,12 +1302,12 @@ le parfait [par'fä] : parfee
 le gâteau [ga'too] : kook
 la gaufre ['goofrə] : vahvel
 la tarte [tart] : tort
-la compote [kO~'pOt] : kompot
+la compote [kO~'pOt] : kompott
 la gelée [žə'lee] : tarretis
 la confiture [kO~fi'tüür] : moos
 la mousse [mus] : vaht
 la tarte aux prunes [tarto'prün] : ploomikook
-la salade de fruits [sa'laad də frü'i] : puuvilisalat
+la salade de fruits [sa'laad də frü'i] : puuviljasalat
 la salade de baies [sa'laad də bä] : marjasalat
 un petit-beurre [pəti'bÖÖr]: (kuiv küpsis)
 """)
@@ -1242,10 +1333,10 @@ Kokadele.add_lesson(u"Marjad", u"""""")
 Kokadele.parse_words(Nom,u"""
 la baie [bä] : mari
 la fraise [frääz] : maasikas
-la myrtille [mir'tij] : mustikas
+la myrtille [mir'tii] : mustikas
 la mûre [müür] : põldmari
-la groseille [gro'zeij] : sõstras (punane v. valge) | tiker
-le cassis [ka'sis] : mustsõstras 
+la groseille [gro'zeij] : sõstar (punane v. valge) | tikker
+le cassis [ka'sis] : mustsõstar 
 """)
 
 
@@ -1254,12 +1345,21 @@ Kokadele.parse_words(Nom,u"""
 la légume [le'güm] : juurvili
 la pomme de terre [pom də 'täär] : kartul
 la tomate [to'mat] : tomat
+la carotte [ka'rOt] : porgand
+# la betterave []
+# le panais
+# le radis
+# le salsifis
+# le cerfeuil
+la asperge [as'pärž] : spargel
+le épinard [epi'naar] : spinat
 le concombre [kO~kO~brə]: kurk
 un *haricot [ari'ko] : uba
 la salade [sa'laadə] : salat
-la gousse d'ail [guss 'daij] : küüslaugu küün
-l'ail (m) [aj] : küüslauk
-un oignon [on'jO~] : sibul
+la endive [A~'diiv] : endiiv
+# le chicon [ši'kO~] : 
+le chou [šu] : kapsas
+le chou-fleur [šu 'flÖÖr] : lillkapsas
 """)
 
 Kokadele.add_lesson(u"Teraviljad", u"""""")
@@ -1284,123 +1384,105 @@ le gruau [grü'oo] : puder
 le pain [pÄ~] : sai | leib
 la tartine [tar'tin] : võileib
 la baguette [ba'gät] : prantsuse pikk sai
-le croustillon [krusti'jO~] : sõõrik (?)
+le croustillon [krusti'jO~] : õlis praetud kohupiimapall
+""")
+
+
+Kokadele.add_lesson(u"Koostisosad", u"""""")
+Kokadele.parse_words(Nom,u"""
+le ingrédient [Ä~gre'djA~] : koostisosa 
+le lait [lä] : piim
+le beurre [bÖÖr]: või
+la crème [kr’ääm] : kreem | koor
+le sucre ['sükrə] : suhkur
+le sel [säl] : sool
+le poivre ['pwaavrə] : pipar
 """)
 
 
 Kokadele.add_lesson(u"Ürdid", u"""""")
 Kokadele.parse_words(Nom,u"""
-le sel [säl] : sool
-le poivre ['pwaavrə] : pipar
-un assaisonnement [asäzonn'mA~] : maitsestamine
+un assaisonnement [asäzon'mA~] : maitsestamine
 le condiment [kO~di'mA~] : maitseaine
 une épice [e'pis] : vürts
 les fines herbes [fin'zärbə] : fines herbes ("peened ürdid")
 une herbe [ärbə] : ürt
 le persil [pär'sil] : petersell
 le céléri [sele'ri] : seller
-la câpre ['kaaprə] : kaaper
+la gousse d'ail [guss 'daij] : küüslaugu küün
+l'ail (m) [aj] : küüslauk
+un oignon [on'jO~] : sibul
+la ciboulette [sibu'lät] : murulauk
+la câpre ['kaaprə] : kappar
 le gingembre [žÄ~žA~brə] : ingver
 """)
+
+
+Kokadele.add_lesson(u"Köögiriistad", u"""""")
+Kokadele.parse_words(Nom,u"""
+la cuisine [kwi'zin] : köök
+la cuisinière [kwizin'jäär] : pliit
+le four [fuur] : ahi
+le four à micro-ondes [fuur a mikro 'O~də] : mikrolaine ahi
+le fouet [fu'ä] : vispel
+le moulin [mu'lÄ~] : veski
+la alumette [alu'mät] : tuletikk
+la coquille [ko'kiij] : merekarp
+la cocotte [ko'kot] : malmkastrul, kokott
+la poêle [pwal] : pann
+la râpe [rap] : riiv
+la casserole [kas'roll] : kastrul
+la marmite [mar'mit] : katel
+la braisière [bräz'jäär] : pott smoorimiseks 
+le caquelon [kak'lO~] : fondüüpott
+le bain-marie [bÄ~ma'rii] : veevann
+""")
+
+
+Kokadele.add_lesson(u"Mida kokk teeb", intro=u"""
+""")
+Kokadele.parse_words(Verbe,u"""
+préparer [prepa'ree] : ette valmistama
+# composer [kO~po'zee] : koostama
+# baisser [bäs'see] : alla laskma, madaldama
+# porter [por'tee] : kandma
+laver [la'vee] : pesema
+concasser [kO~kas'see] : peenestama (tükkideks)
+farcir [far'siir] : farssima (täidisega täitma)
+*hacher [a'šee] : hakkima
+éplucher [eplü'šee]: koorima
+émincer [émÄ~'see] : lõikama viiludeks
+tourner [tur'nee] : keerama, pöörama
+# utiliser [ütili'zee] : kasutama
+préchauffer [préšoo'fee] : ette kütma
+""")
+
 
 Kokadele.add_lesson(u"Pliidil", u"""""")
 Kokadele.parse_words(Nom,u"""
 la cuisson [küis'sO~] : keetmine
-le blanchiment [blA~ši'mA~] : blanžeerimine
+le blanchiment [blA~ši'mA~] : blanšeerimine
 le rôtissage [rotis'saaž] : praadimine (panni peal)
-la friture [fri'tüür] : praadimine (õlis või rasvas)
+le rissolement [risol'mA~] : praadimine 
+la friture [fri'tüür] : friipraadimine (õlis või rasvas)
 le grillage [gri'jaaž] : röstimine
-le braisage [bre'zaaž] : moorimine
+le braisage [bre'zaaž] : smoorimine
 """)
 
 #~ le bain marie [bÄ~ ma'rii] : 
 
 Kokadele.parse_words(Verbe,u"""
-rissoler [risso'lee]: (rasvas) pruunistama
 cuire [kwiir] : keetma
-blanchir [blA~'šiir] : blanžeerima
+blanchir [blA~'šiir] : blanšeerima
 rôtir [ro'tiir] : praadima (panni peal)
+rissoler [risso'lee]: (rasvas) pruunistama
 frire [friir] :  praadima (õlis)
 griller [gri'jee] : röstima
-braiser [brä'zee] : moorima
+braiser [brä'zee] : smoorima
 """)
 
 
 
-Kokadele.add_lesson(u"Köögiriistad", u"""""")
-Kokadele.parse_words(Nom,u"""
-le fouet [fu'ä] : vispel
-une alumette [alu'mät] : tuletikk
-la braisière [bräz'jäär] : grosse marmite de cuisson souvent en cuivre étamé ou en terre cuite qui permet de braiser de grosses pièces de viande.
-la coquille [ko'kiij] : merekarp
-la cocotte [ko'kot] : malmkastrul, kokott
-la poêle [pwal] : pann
-la râpe [rap] : riivija
-la cuisinière [kwizin'jäär] : pliit
-le four [fuur] : ahi
-le four à micro-ondes [fuur a mikro 'O~də] : mikrolaine ahi
-""")
-
-Kokadele.add_lesson(u"Joogid", u"""""")
-Kokadele.parse_words(Nom,u"""
-le café [ka'fee] : kohv
-le thé [tee] : tee
-le vin rouge [vÄ~ 'ruuz]: punane vein
-le vin blanc [vÄ~ 'blA~]: valge vein
-le vin rosé [vÄ~ ro'zee] : roozé vein
-la bière [bjäär] : õlu
-le cidre ['siidrə] : siider
-le jus [žu] : mahl
-une eau [oo] : vesi
-la bavaroise [bavaru'aaz] : gastronoomiline jook valmistatud teest, piimast ja liköörist
-""")
-
-
-
-Kokadele.add_lesson(u"Veinialad Prantsusmaal", u"""
-""")
-Kokadele.parse_words(None,u"""
-la région [rež'jO~] : ala
-le terroir [ter'waar] : geograafiline veinirühm
-""")
-Kokadele.parse_words(NomGeographique,u"""
-Alsace [al'zas] : Elsass
-Beaujolais [boožo'lä] : -
-Bordeaux [bOr'doo] : -
-Bourgogne [bur'gonjə] : -
-Champagne [šA~'panjə] : -
-Charente [ša'rA~tə] : -
-Poitou [pwa'tu] : -
-Corse ['korsə] : Korsika
-Jura [žü'ra] : -
-Savoie [savu'a] : -
-Languedoc [lA~gə'dok] : -
-Roussillon [russi'jO~] : -
-Provence [pro'vA~sə] : - 
-Sud-Ouest [süd'uest] : - 
-Gascogne [gas'konjə] : -
-Val de Loire [val də 'lwaarə] : Loire'i org
-Vallée du Rhône [val'lee dü roonə] : Rhône'i org
-""")
-
-Kokadele.add_lesson(u"Prantsuse veinid", u"""
-Prantsuse veinid on üle 400, siin ainult mõned.
-""")
-Kokadele.parse_words(Nom,u"""
-une appellation d'origine contrôlée (AOC) [apela'sjO~ dori'žin kO~trO'lee] : kontrollitud päritolumaa nimetus
-le Chasselas [šas'la] : -
-le Grand Cru [grA~'krü] : - 
-le Pinot Noir [pi'no nwaar] : - 
-le Côte de Brouilly [koot də bru'ji] : -
-le Saint-Amour [sÄ~ta'muur] : - 
-le Bordeaux clairet [bOr'doo klä're] : - 
-le Médoc [me'dok] : - 
-le Saint-Émilion [sÄ~temi'jO~] : - 
-le Beaune [boon] : - 
-le Côtes du Ventoux [koot du vA~'tu] : -
-le Minervois [minerv'wa] : - 
-le Côtes d'Auvergne [koot do'värnjə] : -
-""")
 
 
 
@@ -1411,8 +1493,7 @@ uniquement quand l’adjectif est employé comme
 nom pour désigner une personne. 
 Ex. : Les Français parlent en français à leurs amis français
 """
-General.add_lesson(u"Riigid", u"""
-""",columns=[GEON("Riik"), GEOM, GEOF, ET])
+General.add_lesson(u"Riigid",columns=[GEON("Riik"), GEOM, GEOF, ET])
 General.parse_words(None,u"""
 la France [frA~s] | français [fra~'sä] | française [fra~'sääz] : Prantsusmaa
 l'Estonie (f) [ästo'nii] | estonien [esto'njÄ~] | estonienne [esto'njän] : Eesti
@@ -1424,21 +1505,20 @@ l'Espagne (f) [es'panjə] | espagnol [espan'jol] | espagnole [espan'jol] : Hispa
 l'Italie (f) [ita'lii] | italien [ital'jÄ~]| italienne [ital'jen] : Itaalia
 """)
 
-General.add_lesson(u"Linnad prantsusmaal", u"""
-Ainult mõned.
-""",columns=[GEON("Linn"), GEOM, GEOF])
-General.parse_words(NomGeographique,u"""
-Avignon [avin'jO~] | avignonnais [avinjo'nä] | avignonnaise [avinjo'nääz] : -
-Bordeaux [bor'doo] | bordelais [bordə'lä] | bordelaise [bordə'lääz] : -
-Bourgogne [burgOnjə] | bourguignon [burgin'jO~] | bourguignonne [burgin'jOnn] : -
-Dijon [di'žO~] | dijonnais [dižon'nä] | dijonnaise [dižon'nääz] : -
-Lyon [li'O~] | lyonnais [lio'nä] | lyonnaise [lio'nääz] : -
-Marseilles [mar'säij] | marseillais [marsäi'jä]| marseillaise [marsäi'jääz] : - 
-Paris [pa'ri] | parisien [pariz'jÄ~]| parisienne [pariz'jenn] : Pariis
-Reims [rÄ~s] | rémois [rem'wa]| rémoise [rem'waaz] : Reims
-Verdun [vär'dÖ~] | verdunois [värdü'nwa]| verdunoise [värdü'nwaaz] : -
-Versailles [ver'saj] | versaillais [värsa'jä] | versaillaise [värsa'jääz] : -
-""")
+if FULL_CONTENT:
+    General.add_lesson(u"Linnad prantsusmaal",columns=[GEON("Linn"), GEOM, GEOF])
+    General.parse_words(NomGeographique,u"""
+    Avignon [avin'jO~] | avignonnais [avinjo'nä] | avignonnaise [avinjo'nääz] : -
+    Bordeaux [bor'doo] | bordelais [bordə'lä] | bordelaise [bordə'lääz] : -
+    Bourgogne [burgOnjə] | bourguignon [burgin'jO~] | bourguignonne [burgin'jOnn] : -
+    Dijon [di'žO~] | dijonnais [dižon'nä] | dijonnaise [dižon'nääz] : -
+    Lyon [li'O~] | lyonnais [lio'nä] | lyonnaise [lio'nääz] : -
+    Marseilles [mar'säij] | marseillais [marsäi'jä]| marseillaise [marsäi'jääz] : - 
+    Paris [pa'ri] | parisien [pariz'jÄ~]| parisienne [pariz'jenn] : Pariis
+    Reims [rÄ~s] | rémois [rem'wa]| rémoise [rem'waaz] : Reims
+    Verdun [vär'dÖ~] | verdunois [värdü'nwa]| verdunoise [värdü'nwaaz] : -
+    Versailles [ver'saj] | versaillais [värsa'jä] | versaillaise [värsa'jääz] : -
+    """)
 #~ Vocabulary.parse_words(NomGeographique,u"""
 #~ la France [frA~s] : Prantsusmaa
 #~ la Belgique [bel'žik] : Belgia
@@ -1456,69 +1536,40 @@ Versailles [ver'saj] | versaillais [värsa'jä] | versaillaise [värsa'jääz] :
 #~ hollandais [olA~'dä] | hollandaise [olA~'dääz]: holandi
 #~ """)
 
-Kokadele.add_lesson(u"Omadussõnad (kulinaaria)", u"""
-Sellised omadussõnu leidub erinevates kulinaaria väljundites.
+Kokadele.add_lesson(u"Omadussõnad (kulinaaria)", intro=u"""
+Selliseid omadussõnu leidub erinevates kulinaaria väljundites.
 """,columns=[M, F, ET])
 Kokadele.parse_words(Adjectif,u"""
 beurré [bÖÖ'ree] | beurrée [bÖÖ'ree]: võiga
 bouilli [bui'ji] | bouillie [bui'jii] : keedetud
-braisé [brä'zee] | braisée [brä'zee] : mooritud
+braisé [brä'zee] | braisée [brä'zee] : smooritud
 coupé [ku'pee] | coupée [ku'pee] : lõigatud
 épicé [epi'see] | épicée [epi'see] : vürtsitatud, vürtsikas
 glacé [glas'see] | glacée [glas'see] : jäätunud
-gourmand [gur'mA~] | gourmande [gur'mA~d] : maiasmokk
 haché [a'šee] | hachée [a'šee] : hakkitud
 manié [man'jee] | maniée [man'jee] : käsitletud
-paysan [pei'zA~] | paysanne [pei'zann] : talu-, talupoja-
-suprême (mf) [sü'prääm] : ülem, kõrgem, ülim
 poché [po'še] | pochée [po'šee] : uputatud keeva vette
 rissolé [riso'lee] | rissolée [riso'lee] :  (rasvas) pruunistatud
-royal [rwa'jal] | royale [rwa'jal] : kuninglik
 sauté [soo'tee] | sautée [soo'tee] : rasvas praetud
 velouté [velu'tee] | veloutée [velu'tee] : sametine, sametitaoline
+croustillant [krusti'jA~] | croustillante [krusti'jA~t] : krõbe
+gourmand [gur'mA~] | gourmande [gur'mA~d] : maiasmokk
+paysan [pei'zA~] | paysanne [pei'zann] : talu-, talupoja-
+royal [rwa'jal] | royale [rwa'jal] : kuninglik
+suprême (mf) [sü'prääm] : ülem, kõrgem, ülim
 """)
 
 
 
-Kokadele.add_lesson(u"Supid", u"""""")
-Kokadele.parse_words(Nom,u"""
-le bouillon [bui'jO~] :  puljong | leem
-le potage [po'taažə] : püreesupp
-le consommé [kO~som'mee] : selge puljong 
-#rammuleem?
-""")
 
-Kokadele.add_lesson(u"Menüü", u"""""")
-Kokadele.parse_words(Nom,u"""
-le plat [pla] : roog 
-
-la purée [pü'ree] : püree
-un œuf [Öf] : muna
-les œufs brouillés [öö brui'jee] : omlett
-les œufs pochés [öö po'šee] : ilma kooreta keedetud muna
-le gratin [gra'tÄ~] : gratään (ahjus üleküpsetatud roog)
-le hors d'œuvre [OOr 'dÖÖvrə] : eelroog
-le soufflé [suff'lee] : suflee
-
-la fondue [fO~'düü] : fondüü
-le fumet [fü'mä] : hea lõhn (nt. veini, liha kohta)
-le pâté [pa'tee] : pasteet
-le pâté en croûte [pa'tee A~'krut] : taignas pasteet
-le pâté en terrine [pa'tee A~ter'rin] : pasteet kaussis
-la galantine [galA~'tin] : galantiin
-le cassoulet [kassu'lä] : Languedoc'ist pärit ühepajatoit ubadest ja lihast, mida küpsetatakse mitu tundi madala temperatuuriga ahjus.
-le pot-au-feu [pOto'föö] : ühepajatoit
-""")
-
-
-Kokadele.add_lesson(u"Kastmete valmistamine", u"""""")
+Kokadele.add_lesson(u"Kastmete valmistamine", intro=u"""""")
 Kokadele.parse_words(Nom,u"""
 la sauce [soos] : kaste
 
 la moutarde [mu'tardə] : sinep
 le vinaîgre [vin'äägrə] : äädikas
 la mayonnaise [majo'nääz] : majonees
-la vinaîgrette [vine'grätt] : vinegrett
+la vinaîgrette [vine'grät] : vinegrett
 
 le beurre manié [bÖÖr man'jee]: jahuvõi
 le roux [ru] : rasvas kuumutatud jahu
@@ -1531,12 +1582,14 @@ le jus de rôti [žu də ro'ti] : redutseeritud puljong, "praeliha mahl"
 le jus lié [žu li'ee] : maisi või nooljuurejahuga pruun kaste
 
 le mirepoix [mirə'pwa] : praetud kuubikud (sibul, porgand, seller)
-la coupe en brunoise [kup A~ brün'waaz] : juur- või puuvili kuubikud (2mm)
-la coupe julienne [kup jül'jän] : juurvilja lõikamise viis ribadeks
-la coupe à la paysanne [kup ala päi'zan] : juurvilja lõikamise viis ketasteks
+
+la coupe en brunoise [kup A~ brün'waaz] : juur- või puuvilja kuubikud (2mm)
+la coupe julienne [kup jül'jän] : juurvilja lõikamine ribadeks (2mm)
+la coupe jardinière [kup žardin'jäär] : juurvilja lõikamine ribadeks
+la coupe à la paysanne [kup ala päi'zan] : juurvilja lõikamine ketasteks
 """)
 
-Kokadele.add_lesson(u"Kastmed", u"""""")
+Kokadele.add_lesson(u"Kastmed", intro=u"""""")
 Kokadele.parse_words(Nom,u"""
 la sauce paysanne [pei'zan] : talupoja kaste
 la sauce chasseur [ša'sÖÖr] : jahimehe kaste
@@ -1569,206 +1622,215 @@ la sauce Foyot [fwa'jo] : foyotkaste
 la macédoine [mase'dwan] : juurviljasalat
 """)
 
-
-Kokadele.add_lesson(u"Mida kokk teeb", u"""
-""")
-Kokadele.parse_words(Verbe,u"""
-tourner [tur'nee] : keerama, pöörama
-composer [kO~po'zee] : koostama
-baisser [bäs'see] : alla laskma, madaldama
-porter [por'tee] : kandma
-laver [la'vee] : pesema
-concasser [kO~kas'see] : peenestama (tükkideks)
-farcir [far'siir] : farssima (täidisega täitma)
-*hacher [a'šee] : hakkima
-éplucher [eplü'šee]: koorima
-émincer [émÄ~'see] : lõikama viiludeks
-utiliser [ütili'zee] : kasutama
-préparer [prepa'ree] : ette valmistama
-préchauffer [préšoo'fee] : ette kütma
-""")
-
-
-
-General.add_lesson(u"Omadussõnad (üld)", u"""
-Omadussõnad, mis lõpevad "e"-ga, ei muutu soo järgi.
-""",columns=[M, F, ET])
-General.parse_words(Adjectif,u"""
-chaud [šoo] | chaude [šoodə] : kuum
-froid [fru'a] | froide [fru'aadə] : külm
-gros [gro] | grosse [grossə] : paks
-mince (mf) [mÄ~s] : õhuke
-bon [bO~] | bonne [bonnə] : hea
-beau [boo] | belle [bellə] : ilus
-joli [žo'li] | jolie [žo'lii] : ilus
-demi [də'mi] | demie [də'mii]: pool
-entier [A~'tjee] | entière [A~'tjäär] : terve, täis
-double (mf) ['duublə] : topelt
-facile (mf) [fa'sil] : lihtne
-possible (mf) [po'siblə] : võimalik
+Kokadele.add_lesson(u"Veinialad Prantsusmaal", u"""
+""",columns=[FR,PRON])
+Kokadele.parse_words(NomGeographique,u"""
+Alsace [al'zas] : Elsass
+Beaujolais [boožo'lä] : -
+Bordeaux [bOr'doo] : -
+Bourgogne [bur'gonjə] : -
+Champagne [šA~'panjə] : -
+Charente [ša'rA~tə] : -
+Poitou [pwa'tu] : -
+Corse ['korsə] : Korsika
+Jura [žü'ra] : -
+Savoie [savu'a] : -
+Languedoc [lA~gə'dok] : -
+Roussillon [russi'jO~] : -
+Provence [pro'vA~sə] : - 
+Sud-Ouest [süd'uest] : - 
+Gascogne [gas'konjə] : -
+Val de Loire [val də 'lwaarə] : Loire'i org
+Vallée du Rhône [val'lee dü roonə] : Rhône'i org
 """)
 
-
-
-General.add_lesson(u"Loeme kümneni", u"""""")
-General.parse_words(Numerique,u"""
-un [Ö~] : üks
-deux [döö] : kaks
-trois [trwa] : kolm
-quatre [katrə] : neli
-cinq [sÄ~k] : viis
-six [sis] : kuus
-sept [sät] : seitse
-huit [üit] : kaheksa
-neuf [nÖf] : üheksa
-dix [dis] : kümme
-""")
-
-
-General.add_lesson(u"Värvid", u"""""",columns=[M, F, ET])
-General.parse_words(Adjectif,u"""
-brun [brÖ~] | brune [brünn] : pruun
-vert [väär] | verte [värtə] : roheline
-bleu [blöö] | bleue [blöö] : sinine
-rouge (mf) [ruuž] : punane
-jaune (mf) [žoon] : kollane
-blond [blO~] | blonde [blO~də] : blond 
-beige (mf) [bääž]  : beež
-orange (mf) [o'ra~ž]  : oranž
-blanc [blA~] | blanche [blA~š] : valge
-noir [nwaar] | noire [nwaar] : must
+Kokadele.add_lesson(u"Prantsuse veinid", u"""
+Prantsuse veinid on üle 400, siin ainult mõned.
+""",columns=[FR,PRON])
+Kokadele.parse_words(Nom,u"""
+le Chasselas [šas'la] : -
+le Grand Cru [grA~'krü] : - 
+le Pinot Noir [pi'no nwaar] : - 
+la Côte de Brouilly [koot də bru'ji] : -
+le Saint-Amour [sÄ~ta'muur] : - 
+le Bordeaux clairet [bOr'doo klä'rä] : - 
+le Médoc [me'dok] : - 
+le Saint-Émilion [sÄ~temi'jO~] : - 
+la Côte de Beaune [koot də boon] : - 
+les Côtes du Ventoux [kootə du vA~'tu] : -
+le Minervois [minerv'wa] : - 
+les Côtes d'Auvergne [kootə do'värnjə] : -
 """)
 
 
 
-General.add_lesson(u"Kuulsad inimesed", u"""
-""")
-General.parse_words(NomPropre,u"""
-Jacques Chirac [žaak ši'rak] : # endine president
-Georges Brassens [žorž bra'sÄ~s] : # laulja
-Brigitte Bardot [bri'žit bar'do] : # laulja
-Louis de Funès [lu'i də fü'nääz] : # näitleja
-""")
 
-General.add_lesson(u"Kuud", u"""
-""")
-General.parse_words(NomPropre,u"""
-janvier [žA~'vjee] : jaanuar
-février [fevri'ee] : veebruar
-mars [mars] : märts
-avril [a'vril] : aprill
-mai [mä] : mai
-juin [žwÄ~] : juuni
-juillet [žüi'jä] : juuli
-août [ut] : august
-septembre [sep'tA~brə] : september
-octobre [ok'tOObrə] : oktoober
-novembre [no'vA~brə] : november
-décembre [de'sA~brə] : detsember
-""")
+if FULL_CONTENT:
 
-General.add_lesson(u"Majad ja nende osad", 
-u"""
-""")
-General.parse_words(Nom,u"""
-la maison [mä'zO~] : maja
-la cave [kaav] : kelder
-la cuisine [kwi'zin] : köök
-la salle de bain : vannituba
-la chambre à coucher : magamistuba
-le salon [sa’lO~] : elutuba
-un escalier [eskal'jee] : trepp
-la fenêtre [fə'näätrə] : aken
-le parterre [par'täär] : esimene korrus
-le premier étage : teine korrus
-le jardin [žar'dÄ~] : aed
-""")
+    General.add_lesson(u"Omadussõnad (üld)", intro=u"""
+    Omadussõnad, mis lõpevad "e"-ga, ei muutu soo järgi.
+    """,columns=[M, F, ET])
+    General.parse_words(Adjectif,u"""
+    chaud [šoo] | chaude [šoodə] : kuum
+    froid [fru'a] | froide [fru'aadə] : külm
+    gros [gro] | grosse [grossə] : paks
+    mince (mf) [mÄ~s] : õhuke
+    bon [bO~] | bonne [bonnə] : hea
+    beau [boo] | belle [bellə] : ilus
+    joli [žo'li] | jolie [žo'lii] : ilus
+    demi [də'mi] | demie [də'mii]: pool
+    entier [A~'tjee] | entière [A~'tjäär] : terve, täis
+    double (mf) ['duublə] : topelt
+    facile (mf) [fa'sil] : lihtne
+    possible (mf) [po'siblə] : võimalik
+    """)
 
 
 
-Fun.add_lesson(u"Virelangues", u"""
-#. Poisson sans boisson est poison. 
-#. Un chasseur sachant chasser doit savoir chasser sans son chien. 
-#. Ecartons ton carton, car ton carton me gêne. 
-#. Ton thé t'a-t-il ôté ta toux? 
-#. Chacun cherche son chat.
-#. Tante, en ton temps teintais-tu tes tempes?
-""")
-Fun.parse_words(Nom,u"""
-le poisson [pwa'sO~] : kala
-le poison [pwa'zO~] : mürk
-la boisson [bwa'sO~] : jook
-le chasseur [ša'sÖÖr] : jahimees
-le chien [šiÄ~] : koer
-la toux [tu] : köha
-""")
-Fun.parse_words(Verbe,u"""
-savoir [sa'vuaar] : teadma | oskama
-chercher [šär'šee] : otsima
-écarter [ekar'tee] : eest ära liigutama
-ôter [oo'tee] : ära võtma
-""")
-Fun.parse_words(Autre,u"""
-sans [sA~] : ilma
-chacun [ža'kÖ~] : igaüks
-""")
+    General.add_lesson(u"Loeme kümneni", intro=u"""""")
+    General.parse_words(Numerique,u"""
+    un [Ö~] : üks
+    deux [döö] : kaks
+    trois [trwa] : kolm
+    quatre [katrə] : neli
+    cinq [sÄ~k] : viis
+    six [sis] : kuus
+    sept [sät] : seitse
+    huit [üit] : kaheksa
+    neuf [nÖf] : üheksa
+    dix [dis] : kümme
+    """)
 
-General.add_lesson(u"Lisa", u"""
-""")
-General.parse_words(Autre,u"""
-environ [A~vi'rO~] : umbes
-facilement [fasil'mA~] : lihtsalt
-rapidement [rapidə'mA~]: kiiresti
-le autre [ootrə] : teine
-le même [määm] : sama
-""")
 
-General.parse_words(Verbe,u"""
-filer [fi'lee] : ketrama
-baiser [bä'zee] : musitama
-sauter [soo'tee] : hüppama
-""")
+    General.add_lesson(u"Värvid", columns=[M, F, ET])
+    General.parse_words(Adjectif,u"""
+    brun [brÖ~] | brune [brünn] : pruun
+    vert [väär] | verte [värtə] : roheline
+    bleu [blöö] | bleue [blöö] : sinine
+    rouge (mf) [ruuž] : punane
+    jaune (mf) [žoon] : kollane
+    blond [blO~] | blonde [blO~də] : blond 
+    beige (mf) [bääž]  : beež
+    orange (mf) [o'ra~ž]  : oranž
+    blanc [blA~] | blanche [blA~š] : valge
+    noir [nwaar] | noire [nwaar] : must
+    """)
 
-General.parse_words(Nom,u"""
-le midi [mi'di] : lõun | keskpäev
-le soir [swaar] : õhtu
-le matin [ma'tÄ~] : hommik
-le sucre ['sükrə] : suhkur
-la tranche [trA~š] : lõik | viilukas
-la coupe [kupp] : lõikamine | pokaal
-la casserole [kas'roll] : pott
-la marmite [mar'mit] : pott
-le caquelon [kak'lO~] : fondüüpott
-le moulin [mu'lÄ~] : veski
-une ébullition [ebüjis'jO~] : keemine
-le feu [föö] : tuli
-le baiser [bä'zee] : suudlus
-un appétit [appe'ti] : isu
-""")
 
-unused = u"""
-une aurore [or'Or] : koit
-le fil [fil] : niit | lõng | nöör
-une heure [ÖÖr] : tund
-le dauphinois [dofinw'a] : lõunaprantsuse dialekt
-"""
+if FULL_CONTENT:
+    General.add_lesson(u"Kuulsad inimesed")
+    General.parse_words(NomPropre,u"""
+    Jacques Chirac [žaak ši'rak] : # endine president
+    Georges Brassens [žorž bra'sÄ~s] : # laulja
+    Brigitte Bardot [bri'žit bar'do] : # laulja
+    Louis de Funès [lu'i də fü'nääz] : # näitleja
+    """)
 
-book.add_index(3,u"Prantsuse-Eesti")
+    General.add_lesson(u"Kuud")
+    General.parse_words(NomPropre,u"""
+    janvier [žA~'vjee] : jaanuar
+    février [fevri'ee] : veebruar
+    mars [mars] : märts
+    avril [a'vril] : aprill
+    mai [mä] : mai
+    juin [žwÄ~] : juuni
+    juillet [žüi'jä] : juuli
+    août [ut] : august
+    septembre [sep'tA~brə] : september
+    octobre [ok'tOObrə] : oktoober
+    novembre [no'vA~brə] : november
+    décembre [de'sA~brə] : detsember
+    """)
+
+    General.add_lesson(u"Majad ja nende osad")
+    General.parse_words(Nom,u"""
+    la maison [mä'zO~] : maja
+    la cave [kaav] : kelder
+    la cuisine [kwi'zin] : köök
+    la salle de bain : vannituba
+    la chambre à coucher : magamistuba
+    le salon [sa’lO~] : elutuba
+    un escalier [eskal'jee] : trepp
+    la fenêtre [fə'näätrə] : aken
+    le parterre [par'täär] : esimene korrus
+    le premier étage [prəm'jeer_etaaž] : teine korrus
+    le jardin [žar'dÄ~] : aed
+    """)
+
+if FULL_CONTENT:
+
+
+    Fun.add_lesson(u"Virelangues", intro=u"""
+    #. Poisson sans boisson est poison. 
+    #. Un chasseur sachant chasser doit savoir chasser sans son chien. 
+    #. Ecartons ton carton, car ton carton me gêne. 
+    #. Ton thé t'a-t-il ôté ta toux? 
+    #. Chacun cherche son chat.
+    #. Tante, en ton temps teintais-tu tes tempes?
+    """)
+    Fun.parse_words(Nom,u"""
+    le poisson [pwa'sO~] : kala
+    le poison [pwa'zO~] : mürk
+    la boisson [bwa'sO~] : jook
+    le chasseur [ša'sÖÖr] : jahimees
+    le chien [šiÄ~] : koer
+    la toux [tu] : köha
+    """)
+    Fun.parse_words(Verbe,u"""
+    savoir [sa'vuaar] : teadma | oskama
+    chercher [šär'šee] : otsima
+    écarter [ekar'tee] : eest ära liigutama
+    ôter [oo'tee] : ära võtma
+    """)
+    Fun.parse_words(Autre,u"""
+    sans [sA~] : ilma
+    chacun [ža'kÖ~] : igaüks
+    """)
+
+
+if FULL_CONTENT:
+
+    General.add_lesson(u"Lisa", intro=u"""
+    """)
+    General.parse_words(Autre,u"""
+    environ [A~vi'rO~] : umbes
+    facilement [fasil'mA~] : lihtsalt
+    rapidement [rapidə'mA~]: kiiresti
+    le autre [ootrə] : teine
+    le même [määm] : sama
+    """)
+
+    General.parse_words(Verbe,u"""
+    filer [fi'lee] : ketrama
+    baiser [bä'zee] : musitama
+    sauter [soo'tee] : hüppama
+    """)
+
+    General.parse_words(Nom,u"""
+    le midi [mi'di] : lõun | keskpäev
+    le soir [swaar] : õhtu
+    le matin [ma'tÄ~] : hommik
+    la tranche [trA~š] : lõik | viilukas
+    la coupe [kupp] : lõikamine | pokaal
+    une ébullition [ebüjis'jO~] : keemine
+    le feu [föö] : tuli
+    le baiser [bä'zee] : suudlus
+    un appétit [appe'ti] : isu
+    """)
+
+    unused = u"""
+    une aurore [or'Or] : koit
+    le fil [fil] : niit | lõng | nöör
+    une heure [ÖÖr] : tund
+    le dauphinois [dofinw'a] : lõunaprantsuse dialekt
+    """
 
 if __name__ == '__main__':
-    import os
-    import sys
-    if len(sys.argv) != 3:
-        raise Exception("""
-Usage : %(cmd)s rst OUTPUT_ROOT_DIR
-        %(cmd)s odt OUTPUT_FILE
-""" % dict(cmd=sys.argv[0]))
-    fmt = sys.argv[1]
     if fmt == "rst":
+        book.add_index(u"Sõnaraamat")
         book.write_rst_files(sys.argv[2])
     elif fmt == "odt":
-        tpl = os.path.join(os.path.dirname(__file__),'cfr.odt')
+        book.add_dictionary(u"Sõnade nimekiri")
         fn = sys.argv[2]
-        assert os.path.abspath(tpl) != os.path.abspath(fn)
-        book.write_odt_file(tpl,fn)
+        book.write_odt_file(fn)
         os.startfile(fn)

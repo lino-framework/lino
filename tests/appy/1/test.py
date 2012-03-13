@@ -13,7 +13,7 @@ from appy import version
 APPY_PARAMS = dict()
 
 #~ ACTIVE_TESTS = None # run all tests
-ACTIVE_TESTS = [ 14 ] # run only specified tests
+ACTIVE_TESTS = [ 15 ] # run only specified tests
 
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
@@ -259,4 +259,33 @@ html = """
 </TABLE>
 """
 run_test(14,"20120211",XHTML=html)
+
+#~ # 15 : 
+
+html = u"""
+<p>bla bla</p>
+<blockquote>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">terav</th>
+<th class="head">pehme</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><strong>s</strong>upp</td>
+<td><strong>z</strong>oom</td>
+</tr>
+<tr><td><strong>\u0161</strong>okk</td>
+<td><strong>\u017e</strong>urnaal, <strong>\u017e</strong>anre</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+"""
+run_test(15,"20120311",XHTML=html)
+# explanation: the blockquote around our table disturbs. when removed, everything is okay
 

@@ -1630,7 +1630,8 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
     return;
   }
   // 20120307 A VirtualTable with a Detail (lino.Models) has only "phantom" records.
-  if (panel.editable && rec.phantom) {
+  if (rec.phantom) {
+    //~ if (!panel.editable) { console.log("20120312 not editable:",panel)}
     if (phantom_fn) {
       phantom_fn(panel);
     } else {
@@ -1684,7 +1685,8 @@ Lino.list_action_handler = function(actionName,gridmode) {
 };
 
 Lino.show_detail = function(panel,btn) {
-  Lino.do_on_current_record(panel, function(rec) {
+  Lino.do_on_current_record(panel, 
+    function(rec) {
       //~ panel.loadMask.show();
       panel.ls_detail_handler({
         //~ listeners: {show: function() {panel.loadMask.hide();}}

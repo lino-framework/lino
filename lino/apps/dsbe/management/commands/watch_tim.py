@@ -145,6 +145,7 @@ class Controller:
         return self.model()
                     
     def POST(self,**kw):
+        #~ dblogger.info("%s.POST(%s)",self.__class__.__name__,kw)
         #~ self.prepare_data(kw['data'])
         obj = self.get_object(kw)
         if obj is None:
@@ -161,6 +162,7 @@ class Controller:
         dblogger.debug("%s:%s (%s) : POST %s",kw['alias'],kw['id'],obj2str(obj),kw['data'])
         
     def PUT(self,**kw):
+        #~ dblogger.info("%s.PUT(%s)",self.__class__.__name__,kw)
         obj = self.get_object(kw)
         if obj is None:
             if self.allow_put2post:

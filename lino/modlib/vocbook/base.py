@@ -24,10 +24,38 @@ import locale
 import re
 
 
+from lino.utils import AttrDict
+from lino.utils import iif
+from lino.utils.html2xhtml import html2xhtml
+
 from lino.utils.restify import restify
 from lino.utils.rstgen import SimpleTable, write_header, html2rst
 from lino.utils import htmlgen
 from lino.utils import uca_collator
+
+
+from Cheetah.Template import Template as CheetahTemplate
+import xhtml2odt
+class MyODTFile(xhtml2odt.ODTFile):
+  
+    def render(self,context):
+        self.open()
+        tpl = CheetahTemplate(self.xml['content'],namespaces=[context])
+        nc = unicode(tpl) #.encode('utf-8')
+        if nc.startswith('<?xml version'):
+            #~ nc = nc.replace('<?xml version="1.0" encoding="UTF-8"?>','')
+            nc = nc.split('\n',1)[1]
+        self.xml['content'] = nc
+        #~ odt = self.xhtml_to_odt(xhtml)
+        #~ self.insert_content(odt)
+        if True:
+            f = open("content.xml","wt")
+            f.write(self.xml['content'].encode('utf-8'))
+            f.close()
+        self.add_styles()
+        self.save(self.options.output)
+
+
 
 pronunciationRE=re.compile("^(.*)\s*(\[.*\])\s*",re.DOTALL)
 
@@ -208,7 +236,8 @@ class GEOM(Column):
             return ''
         w = w.adjectif
         w = w.get_partner(cls.gender)
-        return html2rst('<b>%s</b>' % w.text) + ' ' + w.get_pron_html()
+        return '<b>%s</b>' % w.text + ' ' + w.get_pron_html()
+        #~ return html2rst('<b>%s</b>' % w.text) + ' ' + w.get_pron_html()
         
 class GEOF(GEOM):
     label = u'omadussõna (n)'
@@ -226,7 +255,8 @@ def sort_by_fr(a,b):
 
 class Section:
     def __init__(self,
-            parent,number,title=None,intro=None,
+            parent,title=None,intro=None,
+            number=None,
             from_language=None,
             to_language=None):
         if from_language is None:
@@ -241,6 +271,8 @@ class Section:
         if number is not None:
             if not isinstance(number,int):
                 raise Exception("Section %r got invalid number %r" % (title,number))
+        elif parent is not None:
+            number = len(parent.children) + 1
         self.number = number
         self.title = title
         self.intro = intro
@@ -259,8 +291,13 @@ class Section:
         self.children.append(sect)
         return sect
         
+    def add_dictionary(self,*args,**kw):
+        sect = Dictionary(self,*args,**kw)
+        self.children.append(sect)
+        return sect
+        
     def add_lesson(self,*args,**kw):
-        self.current_lesson = Unit(self,len(self.children)+1,*args,**kw)
+        self.current_lesson = Unit(self,*args,**kw)
         self.children.append(self.current_lesson)
 
     def add_after(self,chunk):
@@ -306,15 +343,26 @@ class Section:
             title = self.title
         else:
             title = "%s %s" % (self.html_ref_to(),self.title)
-        #~ yield htmlgen.H(level,htmlgen.restify(title))
-        title = htmlgen.restify(title)
-        tag = "H%d" % level
-        title = title.replace("<p>","<"+tag+">")
-        title = title.replace("</p>","</"+tag+">")
-        yield title
-        #~ yield "<H%d>%s</H%d>" % (level,,level)
+        if True:
+            if self.parent is not None:
+                title = htmlgen.restify(title).strip()
+                if title.startswith('<p>') and title.endswith('</p>'):
+                    title = title[3:-4]
+                    #~ logger.info("20120311 title is %r", title)
+                else:
+                    raise Exception("20120311 title is %r" % title)
+                    
+                yield htmlgen.H(level,title)
+        else:
+            tag = "H%d" % level
+            title = title.replace("<p>","<"+tag+">")
+            title = title.replace("</p>","</"+tag+">")
+            yield title
+            #~ yield "<H%d>%s</H%d>" % (level,,level)
         
         if self.intro:
+            #~ if title == u"1.1.3 Mesilashäälikud":
+                #~ logger.info("restify: %r", htmlgen.restify(self.intro))
             yield htmlgen.restify(self.intro)
             
         if self.children:
@@ -393,9 +441,7 @@ class Section:
 
 class Unit(Section):
     columns = [FR,PRON,ET]
-    def __init__(self,parent,number,title,intro=None,
-            after=None,
-            columns=None,show_headers=None):
+    def __init__(self,parent,title=None,intro=None,columns=None,show_headers=None,**kw):
         if columns is not None:
             self.columns = columns
             if show_headers is None:
@@ -403,13 +449,13 @@ class Unit(Section):
         elif show_headers is None:
             show_headers = False
         self.show_headers = show_headers
-        self.parent = parent
-        if not title:
-            title = u"Leçon %d" % number
-        Section.__init__(self,parent,number,title,intro)
+        #~ self.parent = parent
+        Section.__init__(self,parent,title=title,intro=intro,**kw)
+        if not self.title:
+            self.title = u"Leçon %d" % self.number
         self.after = []
-        if after:
-            self.add_after(after)
+        #~ if after:
+            #~ self.add_after(after)
         self.words = []
         
     #~ def add_word(self,w):
@@ -421,6 +467,7 @@ class Unit(Section):
     def parse_words(self,cl,lines):
         #~ lesson = self.current_lesson
         for ln in lines.splitlines():
+            ln = ln.strip()
             if ln and not ln.startswith('#'):
                 a = ln.split(':')
                 if len(a) != 2:
@@ -492,6 +539,24 @@ def uca_sort(l):
             
             
             
+class Dictionary(Section):
+    columns = [FR,PRON,ET]
+    show_headers = True
+    def html_lines(self,level=1):
+        for ln in Section.html_lines(self,level):
+            yield ln
+        words = [w for w in self.from_language.words if w.parent is None]
+        if words:
+            uca_sort(words)
+            t = htmlgen.TABLE([col.label for col in self.columns],
+                    show_headers=self.show_headers)
+            def row(w):
+                return [col.word2html(w,self) for col in self.columns]
+            rows = [row(w) for w in words]
+            for ln in t.html_lines(rows):
+                yield ln
+            
+  
 class Index(Section):
     def html_lines(self,level=1):
         for ln in Section.html_lines(self,level):
@@ -523,18 +588,100 @@ class Index(Section):
 
 
 class Book:
-    def __init__(self,from_language,to_language,title=None):
-        self.main = Section(None,None,title,from_language=from_language,to_language=to_language)
+    def __init__(self,from_language,to_language,
+          title=None,input_template=None):
+        self.input_template = input_template
+        self.main = Section(None,title,
+            from_language=from_language,to_language=to_language)
 
-    def add_section(self,*args,**kw):
-        return self.main.add_section(*args,**kw)
+    def add_section(self,*args,**kw): return self.main.add_section(*args,**kw)
+    def add_index(self,*args,**kw): return self.main.add_index(*args,**kw)
+    def add_dictionary(self,*args,**kw): return self.main.add_dictionary(*args,**kw)
         
-    def add_index(self,*args,**kw):
-        return self.main.add_index(*args,**kw)
+    def old_as_odt(self):
+        from xhtml2odt import ODTFile
+        from lino.utils import AttrDict
+        from lino.utils.html2xhtml import html2xhtml
+        options = AttrDict(
+          url = "",
+          with_network = False,
+          verbose = True,
+          template = self.input_template,
+          top_header_level = 1,
+          img_width = "8cm",
+          img_height = "6cm",
+          )
+        
+        #~ version=False # help="Show the version and exit")
+        #~ input=input", metavar="FILE",
+                          #~ help="Read the html from this file")
+        #~ parser.add_option("-o", "--output", dest="output", metavar="FILE",
+                          #~ help="Location of the output ODT file")
+        #~ parser.add_option("-t", "--template", dest="template", metavar="FILE",
+                          #~ help="Location of the template ODT file")
+        #~ parser.add_option("-u", "--url", dest="url",
+                          #~ help="Use this URL for relative links")
+        #~ parser.add_option("-v", "--verbose", dest="verbose",
+                          #~ action="store_true", default=False,
+                          #~ help="Show what's going on")
+        #~ parser.add_option("--html-id", dest="htmlid", metavar="ID",
+                          #~ help="Only export from the element with this ID")
+        #~ parser.add_option("--replace", dest="replace_keyword",
+                          #~ default="ODT-INSERT", metavar="KEYWORD",
+                          #~ help="Keyword to replace in the ODT template "
+                          #~ "(default is %default)")
+        #~ parser.add_option("--cut-start", dest="cut_start",
+                          #~ default="ODT-CUT-START", metavar="KEYWORD",
+                          #~ help="Keyword to start cutting text from the ODT "
+                          #~ "template (default is %default)")
+        #~ parser.add_option("--cut-stop", dest="cut_stop",
+                          #~ default="ODT-CUT-STOP", metavar="KEYWORD",
+                          #~ help="Keyword to stop cutting text from the ODT "
+                          #~ "template (default is %default)")
+        #~ parser.add_option("--top-header-level", dest="top_header_level",
+                          #~ type="int", default="1", metavar="LEVEL",
+                          #~ help="Level of highest header in the HTML "
+                          #~ "(default is %default)")
+        #~ parser.add_option("--img-default-width", dest="img_width",
+                          #~ metavar="WIDTH", default="8cm",
+                          #~ help="Default image width (default is %default)")
+        #~ parser.add_option("--img-default-height", dest="img_height",
+                          #~ metavar="HEIGHT", default="6cm",
+                          #~ help="Default image height (default is %default)")
+        #~ parser.add_option("--dpi", dest="img_dpi", type="int",
+                          #~ default=96, metavar="DPI", help="Screen resolution "
+                          #~ "in Dots Per Inch (default is %default)")
+        #~ parser.add_option("--no-network", dest="with_network",
+                          #~ action="store_false", default=True,
+                          #~ help="Do not download remote images")
+        #~ options, args = parser.parse_args()
+        odtfile = ODTFile(options)
+        odtfile.open()
+        
+        xhtml = ''.join([ln for ln in self.main.html_lines()])
+        xhtml = html2xhtml(xhtml)
+        #~ xhtml = "<DIV>%s</DIV>" % xhtml
+        xhtml = """\
+<html xmlns="http://www.w3.org/1999/xhtml"><body>%s</body></html>""" % xhtml
+        #~ xhtml = "<p>%s</p>" % xhtml
+        if True:
+            f = open("before.xml","wt")
+            f.write(xhtml.encode('utf-8'))
+            f.close()
+        
+        #~ logger.info("Gonna do it with %r",xhtml)
+        xhtml = odtfile.xhtml_to_odt(xhtml)
+        if True:
+            f = open("after.xml","wt")
+            f.write(xhtml)
+            #~ f.write(xhtml.encode('utf-8'))
+            f.close()
+        return xhtml
         
     def html(self):
-        #~ s = '\n'.join([ln for ln in self.main.html_lines()])
-        s = htmlgen.DIV(self.main.html_lines)
+        #~ s = htmlgen.DIV(self.main.html_lines)
+        s = ''.join([ln for ln in self.main.html_lines()])
+        s = "<div>%s</div>" % s
         #~ logger.info(s)
         return s
         
@@ -556,19 +703,112 @@ class Book:
                     for i,w in enumerate(words_et)])
             fd.close()
 
-    def write_odt_file(self,tpl,target):
+    def write_odt_file(self,target):
         from appy.pod.renderer import Renderer
         from lino.utils import iif
         from lino.utils.appy_pod import setup_renderer
+        assert os.path.abspath(self.input_template) != os.path.abspath(target)
+        if os.path.exists(target):
+            os.remove(target)
         #~ tpl = os.path.join(os.path.dirname(__filename__),'cfr.odt')
         context = dict(
             self=self,
             iif=iif,
             )
         appy_params = dict()
-        logger.info(u"appy.pod render %s -> %s (params=%s)",tpl,target,appy_params)
-        renderer = Renderer(tpl, context, target,**appy_params)
+        logger.info(u"appy.pod render %s -> %s (params=%s)",self.input_template,target,appy_params)
+        renderer = Renderer(self.input_template, context, target,**appy_params)
         setup_renderer(renderer)
         #~ renderer.context.update(restify=debug_restify)
         renderer.run()
+        
+    def new_write_odt_file(self,target):
+        #~ from lino.utils import iif
+        #~ from lino.utils import AttrDict
+        #~ from lino.utils.html2xhtml import html2xhtml
+        
+        assert os.path.abspath(self.input_template) != os.path.abspath(target)
+        if os.path.exists(target):
+            os.remove(target)
+            
+        options = AttrDict(
+          url = "",
+          template = self.input_template,
+          output = target,
+          with_network = True,
+          verbose = True,
+          top_header_level = 1,
+          img_width = "8cm",
+          img_height = "6cm",
+          )
+        
+        #~ version=False # help="Show the version and exit")
+        #~ input=input", metavar="FILE",
+                          #~ help="Read the html from this file")
+        #~ parser.add_option("-o", "--output", dest="output", metavar="FILE",
+                          #~ help="Location of the output ODT file")
+        #~ parser.add_option("-t", "--template", dest="template", metavar="FILE",
+                          #~ help="Location of the template ODT file")
+        #~ parser.add_option("-u", "--url", dest="url",
+                          #~ help="Use this URL for relative links")
+        #~ parser.add_option("-v", "--verbose", dest="verbose",
+                          #~ action="store_true", default=False,
+                          #~ help="Show what's going on")
+        #~ parser.add_option("--html-id", dest="htmlid", metavar="ID",
+                          #~ help="Only export from the element with this ID")
+        #~ parser.add_option("--replace", dest="replace_keyword",
+                          #~ default="ODT-INSERT", metavar="KEYWORD",
+                          #~ help="Keyword to replace in the ODT template "
+                          #~ "(default is %default)")
+        #~ parser.add_option("--cut-start", dest="cut_start",
+                          #~ default="ODT-CUT-START", metavar="KEYWORD",
+                          #~ help="Keyword to start cutting text from the ODT "
+                          #~ "template (default is %default)")
+        #~ parser.add_option("--cut-stop", dest="cut_stop",
+                          #~ default="ODT-CUT-STOP", metavar="KEYWORD",
+                          #~ help="Keyword to stop cutting text from the ODT "
+                          #~ "template (default is %default)")
+        #~ parser.add_option("--top-header-level", dest="top_header_level",
+                          #~ type="int", default="1", metavar="LEVEL",
+                          #~ help="Level of highest header in the HTML "
+                          #~ "(default is %default)")
+        #~ parser.add_option("--img-default-width", dest="img_width",
+                          #~ metavar="WIDTH", default="8cm",
+                          #~ help="Default image width (default is %default)")
+        #~ parser.add_option("--img-default-height", dest="img_height",
+                          #~ metavar="HEIGHT", default="6cm",
+                          #~ help="Default image height (default is %default)")
+        #~ parser.add_option("--dpi", dest="img_dpi", type="int",
+                          #~ default=96, metavar="DPI", help="Screen resolution "
+                          #~ "in Dots Per Inch (default is %default)")
+        #~ parser.add_option("--no-network", dest="with_network",
+                          #~ action="store_false", default=True,
+                          #~ help="Do not download remote images")
+        #~ options, args = parser.parse_args()
+        self.odtfile = MyODTFile(options)
+        
+        context = dict(iif=iif)
+        context.update(book=self)
+        self.odtfile.render(context)
+
+    def new_as_odt(self):
+        xhtml = ''.join([ln for ln in self.main.html_lines()])
+        xhtml = html2xhtml(xhtml)
+        #~ xhtml = "<div>%s</div>" % xhtml
+        #~ xhtml = "<p>%s</p>" % xhtml
+        #~ xhtml = '<html><body>%s</body></html>' % xhtml
+        xhtml = '<html xmlns="http://www.w3.org/1999/xhtml"><body>%s</body></html>' % xhtml
+        if not True:
+            f = open("before.xml","wt")
+            f.write(xhtml.encode('utf-8'))
+            f.close()
+        
+        #~ logger.info("Gonna do it with %r",xhtml)
+        xhtml = self.odtfile.xhtml_to_odt(xhtml)
+        if True:
+            f = open("after.xml","wt")
+            f.write(xhtml)
+            #~ f.write(xhtml.encode('utf-8'))
+            f.close()
+        return xhtml.decode('utf-8')
         

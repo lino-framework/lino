@@ -129,6 +129,59 @@ def restify(input_string,source_path=None, destination_path=None,
     #~ print __file__, repr(fragment)
     return fragment
     
+def rst2odt(input_string,source_path=None, destination_path=None,
+            input_encoding='unicode', doctitle=1, initial_header_level=1):
+    u"""
+    Renders the given reST string into 
+    """
+    from docutils.writers.odf_odt import Writer, Reader
+    
+    class MyWriter(Writer):
+        def assemble_my_parts(self):
+            writers.Writer.assemble_parts(self)
+            self.parts['content'] = self.visitor.content_astext()
+            #~ f = tempfile.NamedTemporaryFile()
+            #~ zfile = zipfile.ZipFile(f, 'w', zipfile.ZIP_DEFLATED)
+            #~ content = self.visitor.content_astext()
+            #~ self.write_zip_str(zfile, 'content.xml', content)
+            #~ self.write_zip_str(zfile, 'mimetype', self.MIME_TYPE)
+            #~ s1 = self.create_manifest()
+            #~ self.write_zip_str(zfile, 'META-INF/manifest.xml', s1)
+            #~ s1 = self.create_meta()
+            #~ self.write_zip_str(zfile, 'meta.xml', s1)
+            #~ s1 = self.get_stylesheet()
+            #~ self.write_zip_str(zfile, 'styles.xml', s1)
+            #~ s1 = self.get_settings()
+            #~ self.write_zip_str(zfile, 'settings.xml', s1)
+            #~ self.store_embedded_files(zfile)
+            #~ zfile.close()
+            #~ f.seek(0)
+            #~ whole = f.read()
+            #~ f.close()
+            #~ self.parts['whole'] = whole
+            #~ self.parts['encoding'] = self.document.settings.output_encoding
+            #~ self.parts['version'] = docutils.__version__
+      
+
+    overrides = {'input_encoding': input_encoding,
+                 'doctitle_xform': doctitle,
+                 'initial_header_level': initial_header_level}
+    parts = core.publish_parts(
+        source=input_string, source_path=source_path,
+        destination_path=destination_path,
+        writer=MyWriter(), 
+        reader=Reader(), 
+        settings_overrides=overrides)
+    print 20120311, parts.keys()
+    print 20120311, parts['content']
+    raise Exception("20120311")
+    fragment = parts['whole']
+    fragment = parts['html_body']
+    #~ if output_encoding != 'unicode':
+        #~ fragment = fragment.encode(output_encoding)
+    #~ print __file__, repr(fragment)
+    return fragment
+    
   
 def old_restify(s,**kw):
     """
@@ -239,10 +292,21 @@ A list:
   - item 1
   - item 2
   - item 3
+  
+A table:
+
+  =========== ===========================
+  terav       pehme
+  =========== ===========================
+  **s**\ upp  **z**\ oom
+  **š**\ okk  **ž**\ urnaal, **ž**\ anre
+  =========== ===========================
+
 
 
 """
-    print restify(test)
+    print rst2odt(test)
+    #~ print restify(test)
     #~ print latex_body(test)
 
 

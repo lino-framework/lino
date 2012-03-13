@@ -1,0 +1,6 @@
+20120312
+========
+
+Beim Speichern einer Notiz, für die ein Drittparter existierte, 
+kam eine Fehlermeldung "Ajax communication failed".
+

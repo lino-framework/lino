@@ -4,6 +4,10 @@ Thanks to
 Here is a list of other publications who are at least partially being 
 distributed with Lino.
 
+- :file:`lino/utils/daemoncommand.py` :
+  Copyright (c) 2009, Sean Creeley.
+  Modifications by Luc Saffre.
+
 - :file:`media/extjs/Ext.ux.form.DateTime.js` :
   Copyright (c) 2008, Ing. Jozef Sakáloš.
 
