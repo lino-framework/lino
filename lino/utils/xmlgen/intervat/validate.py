@@ -16,7 +16,7 @@
 USAGE = """
 Usage:
 
-  python -m lino.utils.intervat.validate SCHEMA XMLFILE
+  python -m lino.utils.xmlgen.intervat.validate SCHEMA XMLFILE
 
 Arguments:
 
@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     import sys
     from lxml import etree
-    from lino.utils import intervat
+    from lino.utils.xmlgen import intervat
 
     if len(sys.argv) < 3:
         #~ raise Exception("Usage: python -m %s name of the file to be validated" % __name__)

@@ -1,0 +1,5 @@
+20120314
+========
+
+
+- Fixed ImportError in :mod:`lino.utils.xmlgen.intervat.validate`.

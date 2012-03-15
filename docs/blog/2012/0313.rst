@@ -19,3 +19,10 @@ scheint die Kolonnenbreiten nicht korrekt nach ODF zu übertragen und
 ist insofern zumindest keine schnelle Lösung. Der Weg über XSLT scheint 
 mir jedoch intuitiv "gesünder" als der eigene selbstgestrickte Parser, 
 den :term:`appy.pod` macht.
+
+Check-in mit den Änderungen seit Samstag.
+
+TODO:
+
+- phantom records in virtualtable
+- weiter BCSS connection 

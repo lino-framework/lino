@@ -1,0 +1,17 @@
+201203015
+=========
+
+Letzte Änderungen vor unserer Reise nach Belgien:
+
+- Nein es war Quatsch, dass auch :class:`lino.utils.xmlgen.Namespace` 
+  ein ElementMaker war, indem sie folgendes machte::
+
+    def __getattr__(self,name):
+        return self._element_maker.__getattr__(name)
+  
+  Denn erstens wollen wir uns ja vor Tippfehlern bei Elementnamen schützen,
+  und zweitens sind dann Namen wie 
+  
+  Hurra, Lino hat seine erste selbst generieter ODF-Tabelle gemacht!
+  
+  Checkin. 

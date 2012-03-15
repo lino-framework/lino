@@ -1434,17 +1434,9 @@ tinymce.init({
                   disabled_actions=rpt.disabled_actions(ar,None),
                   gc_choices=[gc.data for gc in rpt.grid_configs])
                     
-            #~ if fmt == 'html':
             if fmt == ext_requests.URL_FORMAT_HTML:
                 ar.renderer = self.ext_renderer
-                #~ kw = {}
                 after_show = ar.get_status(self)
-                #~ bp = self.request2kw(ar)
-                
-                #~ params = dict()
-                #~ after_show = dict(base_params=bp)
-                
-                #~ after_show = {}
                 if isinstance(ar.action,actions.InsertRow):
                     elem = ar.create_instance()
                     rec = elem2rec_insert(ar,rh,elem)
@@ -1452,10 +1444,6 @@ tinymce.init({
 
                 kw = dict(on_ready=
                     self.ext_renderer.action_call(ar.action,None,after_show))
-                #~ kw.update(on_ready=['Lino.%s(undefined,%s,%s);' % (
-                    #~ ar.action,
-                    #~ py2js(params),
-                    #~ py2js(after_show))])
                 #~ print '20110714 on_ready', params
                 kw.update(title=ar.get_title())
                 return HttpResponse(self.html_page(request,**kw))

@@ -19,8 +19,6 @@ Tools for generating
 files and chunks thereof.
 
 
-
-
 Generating validated chunks of ODF
 ----------------------------------
 
@@ -34,7 +32,7 @@ We instantiate a simple chunk of ODF...
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Hello world!</text:p>
 <BLANKLINE>
 
-What if we want to make sure that our chunk is syntactivally 
+What if we want to make sure that our chunk is syntactically 
 correct?
 
 >>> validate(mystory) #doctest: +ELLIPSIS
@@ -87,7 +85,7 @@ Here is how we suggest to set attributes:
 ...     mimetype="application/vnd.oasis.opendocument.text")
 >>> validate(root)
 
-An alternative approach might be:
+This is functionally equivalent (but more easy to code) :
 
 >>> root.set(office.version().tag,"1.2")
 >>> root.set(office.mimetype().tag,"application/vnd.oasis.opendocument.text")
@@ -102,7 +100,7 @@ An alternative approach might be:
 </office:document>
 <BLANKLINE>
 
-And the shortcut for the above wrapping work is:
+There is also a shortcut function `validate_chunks` which does all this wrapping work:
 
 >>> validate_chunks(text.p("Hello world!"))
 
@@ -133,21 +131,37 @@ contains control code::
 And here is the body() function called there:
 
 >>> mystory = text.p("Hello world!")
->>> def body():
-...     return etree.tostring(mystory)
 
 Here is an example on how to use it:
 
->>> from appy.pod.renderer import Renderer
->>> dir = os.path.abspath(os.path.dirname(__file__))
->>> template_file = os.path.join(dir,"Template.odt")
->>> target_file = os.path.join(dir,"tmp.odt")
->>> if os.path.exists(target_file):
-...     os.remove(target_file)
->>> context = dict(body=body,self="lino.utils.xmlgen.odf example")
->>> renderer = Renderer(template_file, context, target_file)
->>> renderer.run()
->>> if False: os.startfile(target_file)
+>>> print render_to_odt("xmlgen_odf_1.odt",
+...   body=etree.tostring(mystory),
+...   title="lino.utils.xmlgen.odf example 1")
+File xmlgen_odf_1.odt has been created.
+
+
+Examples
+--------
+
+>>> t = table.table(
+...   table.makeattribs(name="Mytable",style_name="Mytable"),
+...   table.table_column(table.makeattribs(style_name="A",number_columns_repeated="2")),
+...   table.table_row(
+...     table.table_cell(text.p("First"),table.makeattribs(value_type="string")),
+...     table.table_cell(text.p("Second"),table.makeattribs(value_type="string")),
+...   ),
+...   table.table_row(
+...     table.table_cell(text.p("Third"),table.makeattribs(value_type="string")),
+...     table.table_cell(text.p("Fourth"),table.makeattribs(value_type="string")),
+...   ),
+... )
+>>> validate_chunks(t)
+>>> print render_to_odt("xmlgen_odf_2.odt",
+...   body=etree.tostring(t),
+...   title="lino.utils.xmlgen.odf example 2")
+File xmlgen_odf_2.odt has been created.
+
+
 
 
 
@@ -166,11 +180,41 @@ def rngpath(*parts):
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:db="urn:oasis:names:tc:opendocument:xmlns:database:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:anim="urn:oasis:names:tc:opendocument:xmlns:animation:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:smil="urn:oasis:names:tc:opendocument:xmlns:smil-compatible:1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
 """
 
+class Text(xg.Namespace):
+    def setup_namespace(self):
+        self.define_names("p")
 
-text = xg.Namespace('text',"urn:oasis:names:tc:opendocument:xmlns:text:1.0")
-table = xg.Namespace('table',"urn:oasis:names:tc:opendocument:xmlns:table:1.0")
-office = xg.Namespace('office',"urn:oasis:names:tc:opendocument:xmlns:office:1.0",
-  used_namespaces=[text,table])
+text = Text('text',"urn:oasis:names:tc:opendocument:xmlns:text:1.0")
+#~ text = xg.Namespace('text',"urn:oasis:names:tc:opendocument:xmlns:text:1.0")
+
+class Table(xg.Namespace):
+    def setup_namespace(self):
+        self.define_names("""
+        table
+        name
+        style-name
+        number-columns-repeated
+        table-row
+        table-cell
+        table-column
+        """)
+table = Table('table',"urn:oasis:names:tc:opendocument:xmlns:table:1.0")
+#~ table = xg.Namespace('table',"urn:oasis:names:tc:opendocument:xmlns:table:1.0")
+
+class Office(xg.Namespace):
+    used_namespaces=[text,table]
+    def setup_namespace(self):
+        self.define_names("""
+        document body text 
+        version mimetype
+        value-type
+        """)
+
+office = Office('office',"urn:oasis:names:tc:opendocument:xmlns:office:1.0")
+#~ office = xg.Namespace('office',"urn:oasis:names:tc:opendocument:xmlns:office:1.0",
+    #~ used_namespaces=[text,table])
+
+table.value_type = office.value_type
 
 
 
@@ -199,6 +243,23 @@ def validate_chunks(*chunks):
         mimetype="application/vnd.oasis.opendocument.text")
     validate(root)
   
+
+
+def render_to_odt(target_file,startfile=False,**context):
+    """
+    Render a chunk to an odt file using a default template.
+    """
+    from appy.pod.renderer import Renderer
+    dir = os.path.abspath(os.path.dirname(__file__))
+    template_file = os.path.join(dir,"Template.odt")
+    #~ target_file = os.path.join(dir,"tmp.odt")
+    if os.path.exists(target_file):
+        os.remove(target_file)
+    #~ context = dict(body=body,self="lino.utils.xmlgen.odf example")
+    renderer = Renderer(template_file, context, target_file)
+    renderer.run()
+    if startfile: os.startfile(target_file)
+    return "File %s has been created." % target_file
 
 
 #~ class OpenDocument(xg.Namespace):

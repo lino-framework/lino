@@ -64,6 +64,7 @@ class Namespace(object):
           validator=None,**kw):
         self.prefix = prefix
         kw.setdefault('typemap',TYPEMAP)
+        #~ kw.setdefault('makeelement',self.makeelement)
         nsmap = kw.setdefault('nsmap',{})
         if self.xsd_filename:
             self.xsd_tree = etree.parse(self.xsd_filename) 
@@ -97,21 +98,75 @@ class Namespace(object):
         #~ self._element_maker = ElementMaker(namespace=url,nsmap={prefix:url})
         self._element_maker = ElementMaker(**kw)
         self._source_elements = {}
+        if self.xsd_tree is not None:
+            #~ self.targetNamespace = str(root.get('targetNamespace'))
+            #~ root = self.xsd_tree.getroot()
+            self.define_names_from(self.xsd_tree.getroot())
+        self.setup_namespace()
         
+    def setup_namespace(self):
+        pass
+        
+    def makeattribs(self,*args,**kw):
+        xkw = dict()
+        for k,v in kw.items():
+            e = getattr(self,k)()
+            xkw[e.tag] = v
+        return xkw
+        
+    def unused_makeelement(self,*args,**kw):
+        xkw = dict()
+        for k,v in kw.items():
+            e = getattr(self,k,None)
+            if e is None:
+                raise Exception("%s has no name %s" % (self.__class__.__name__,k))
+                xkw[k] = v
+            else:
+                xkw[e().tag] = v
+        return etree.Element(*args,**xkw)
+        
+    
+        
+    def define_names(self,names):
+        for name in names.split():
+            iname = name.replace("-","_")
+            if self.xsd_tree is None:
+                #~ assert not hasattr(self,name)
+                if hasattr(self,iname):
+                    raise Exception("%s has attribute %s" % (self.__class__.__name__,name))
+                setattr(self,iname,getattr(self._element_maker,name))
+            else:
+                if not hasattr(self,iname):
+                    raise Exception("%s has no attribute %s" % (self.__class__.__name__,name))
+
     def update_attribs(self,root,**kw):
         for k,v in kw.items():
-            e = self.__getattr__(k)()
+            e = getattr(self,k)()
+            #~ e = self.__getattr__(k)()
             root.set(e.tag,v)
         
-    def __getattr__(self,name):
-        return self._element_maker.__getattr__(name)
-        #~ return self._element_maker(*args,**kw)
-        #~ return self._element_maker(name,*args,**kw)
+        
+    def define_names_from(self,e):
+        name = e.get('name',None)
+        if name is not None:
+            cv = self._source_elements.get(name,None)
+            #~ cv = getattr(self,name,None)
+            if cv is None:
+                iname = name.replace("-","_")
+                setattr(self,iname,getattr(self._element_maker,name))
+                self._source_elements[name] = e
+            #~ else:
+                #~ logger.warning(
+                  #~ "20120309 %s name %r is already used by %s",
+                  #~ e,name,cv)
+        
+        for ee in e:
+            self.define_names_from(ee)
 
-    #~ def define(self,names):
-        #~ for name in names.split():
-            #~ assert not hasattr(self,name)
-            #~ setattr(self,name,getattr(self._element_maker,name))
+    #~ def __getattr__(self,name):
+        #~ return self._element_maker.__getattr__(name)
+        #~ # return self._element_maker(*args,**kw)
+        #~ # return self._element_maker(name,*args,**kw)
 
     def validate_root(self,root):
         self.validate_doc(etree.ElementTree(root))
@@ -121,33 +176,6 @@ class Namespace(object):
             self.validator.assertValid(doc)
         
         
-    def unused_discover_from_xsd(self):
-        
-        #~ XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
-        #~ XSD = "{%s}" % XSD_NAMESPACE
-        #~ NSMAP = dict(xsd=XSD_NAMESPACE)
-
-        tree = etree.parse(self.xsd_filename) 
-        root = tree.getroot()
-        self.targetNamespace = str(root.get('targetNamespace'))
-        self.define_names_from(root)
-        
-    def unused_define_names_from(self,e):
-        name = e.get('name',None)
-        if name is not None:
-            cv = self._source_elements.get(name,None)
-            #~ cv = getattr(self,name,None)
-            if cv is None:
-                setattr(self,name,getattr(self._element_maker,name))
-                self._source_elements[name] = e
-            else:
-                logger.warning(
-                  "20120309 %s name %r is already used by %s",
-                  e,name,cv)
-        
-        for ee in e:
-            self.define_names_from(ee)
-
 
 
 def _test():

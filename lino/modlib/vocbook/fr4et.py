@@ -326,7 +326,7 @@ le travail [tra'vaj] : töö
 le détail [detaj] : detail
 """)
 Reeglid.parse_words(NomGeographique,u"""
-Versailles [ver'saj] : Versailles
+Versailles [ver'sajə] : Versailles
 """)
 
 
@@ -350,30 +350,31 @@ Josephe [žo'zäf] : Joosep
 
 Reeglid.add_lesson(u"g", 
 u"""
-Kirjatäht **g** hääldatakse 
-
-- [ž] kui järgneb **e**, **i** või **y**,
-- [g] kui järgneb **a**, **o**, **u**.
-
-Kui hääldamine on [gi], [ge], [gə], [gä] või [gi], siis lisatakse tumm **u**.
+Kirjatäht **g** hääldatakse **[g]** kui järgneb **a**, **o**, **u** 
+või kaashäälik, aga **[ž]** kui järgneb **e**, **i** või **y**.
 """)
 Reeglid.parse_words(None,u"""
-le gorille [go'rij] : gorilla
-la giraffe [ži'raf] : kaelkirjak
+le gorille [go'rijə] : gorilla
 la gazelle [ga'zäl] : gasell
-le guépard [ge'paar] : gepard
-le guide [giid] : reisijuht
-la guitare [gi'taar] : kitarr
+la giraffe [ži'raf] : kaelkirjak
 le gymnase [žim'naaz] : gümnaasium
 le juge [žüüž] : kohtunik
 la géologie [žeolo'žii] : geoloogia
 général [žene'ral] : üldine
-la guerre [gäär] : sõda
 """)
 
-
-
-
+Reeglid.add_lesson(u"gue, gui, guy", 
+u"""
+Kui hääldamine on [ge], [gə], [gä] või [gi], 
+siis lisatakse tumm **u**: *gui*, *gue*, *guy*
+""")
+Reeglid.parse_words(None,u"""
+le guépard [ge'paar] : gepard
+le guide [giid] : reisijuht
+la guitare [gi'taar] : kitarr
+la guerre [gäär] : sõda
+Guy [gi] : (eesnimi)
+""")
 
 
 
@@ -704,12 +705,12 @@ Tähekombinatsioon **eil** hääldatakse **[eij]**.
 Reeglid.parse_words(None,u"""
 le réveil [re'veij] : äratuskell
 le soleil [so'leij] : päike
-la merveille [mär'veij] : ime
+la merveille [mär'veijə] : ime
 merveilleux [märvei'jöö] : imeline
 le réveillon [revei'jO~] : vana-aasta õhtu söök
-la groseille [gro'zeij] : sõstar (punane v. valge) | tikker
-vieille (f) [vjeij] : vana
-# la veille [veij] : pühalaupäev
+la groseille [gro'zeijə] : sõstar (punane v. valge) | tikker
+vieille (f) [vjeijə] : vana
+# la veille [veijə] : pühalaupäev
 """)
 Reeglid.add_lesson(u"ueil", 
 u"""
@@ -722,23 +723,23 @@ un écureuil [ekü'rÖj] : orav
 """)
 
 Reeglid.add_lesson(u"ill", u"""
-Tähekombinatsioon **ill** hääldatakse **[ii]** või  **[ij]**.
+Tähekombinatsioon **ill** hääldatakse **[iij]** või  **[ij]**.
 Erandid on sõnad *ville* ja *mille*.
 """)
 Reeglid.parse_words(None,u"""
-la bille [bii] : kuul
-une anguille [A~'gii] : angerjas
-la myrtille [mir'tii] : mustikas
-la famille [fa'mii] : perekond
-tranquille [trA~kii] : rahulik
+la bille [biije] : kuul
+une anguille [A~'giije] : angerjas
+la myrtille [mir'tiije] : mustikas
+la famille [fa'miije] : perekond
+tranquille [trA~kiije] : rahulik
 la cuillère [kwi'jäär] : lusikas
-le million [mi'jO~] : miljon
 le pillage [pij'aaž] : rüüstamine
 """)
 
 Reeglid.parse_words(None,u"""
 la ville [vil] : linn
 mille [mil] : tuhat
+le million [mil'jO~] : miljon
 """)
 
 
@@ -918,7 +919,7 @@ if FULL_CONTENT:
     # vous êtes fous [vu'zäät fu] : te olete lollid
     je veux [žə vöö] : ma tahan
     le feu [föö] : tuli
-    la fille [fii] : tüdruk | tütar
+    la fille [fiijə] : tüdruk | tütar
     la vie [vii] : elu
     la fin [fÄ~] : lõpp
     le vin [vÄ~] : vein
@@ -1112,7 +1113,7 @@ General.add_lesson(u"Kalad", u"""
 """)
 General.parse_words(Nom,u"""
 le brochet [bro'šä] : haug
-une anguille [A~'gii] : angerjas
+une anguille [A~'giijə] : angerjas
 la perche [pärš] : ahven
 le *hareng [ar'~A] : heeringas
 le sprat [sprat] : sprot
@@ -1177,7 +1178,7 @@ le velouté [vəlu'tee] : koorene püreesupp
 le velouté Dubarry [vəlu'tee düba'ri] : koorene püreesupp lillkapsaga
 le bouillon [bui'jO~] :  puljong 
 le consommé [kO~som'mee] : selge puljong 
-le consommé de volaille [kO~som'mee də vo'laj] : linnulihast puljong 
+le consommé de volaille [kO~som'mee də vo'lajə] : linnulihast puljong 
 le consommé de gibier [kO~som'mee də žib'jee] : ulukilihast puljong 
 le consommé de poisson [kO~som'mee də pwa'sO~] : kala puljong 
 le consommé double [kO~som'mee 'duublə] : kahekordne puljong 
@@ -1191,7 +1192,7 @@ Kokadele.add_lesson(u"Liha", u"""
 Kokadele.parse_words(Nom,u"""
 la boucherie [bušə'rii] : lihakauplus, lihakarn
 la viande [vjA~də] : liha
-la volaille [vo'laij] : linnuliha
+la volaille [vo'lajə] : linnuliha
 le gibier [žibiee] : jahiloomad
 le poisson [pwa'sO~] : kala
 le lard [laar] : pekk
@@ -1270,7 +1271,7 @@ le pot-au-feu [poto'föö] : ühepajatoit
 Kokadele.add_lesson(u"Juust", u"""""")
 Kokadele.parse_words(None,u"""
 le fromage [fro'maaž] : juust
-la caillebotte [kai'bott] : (kodujuust)
+la caillebotte [kajə'bott] : (kodujuust)
 la raclette [rak'lett] : kuumaga sulatud juust
 le Camembert [kamA~'bäär] : (valgehallitusjuust)
 le Emmental [emən'taal] : -
@@ -1293,7 +1294,7 @@ la crème fraiche [krääm 'fräš] : rõõsk koor
 la crème brûlée [krääm brü'lee] : põletud koor
 la crème bavaroise [krääm bavaru'aaz] : muna-piima-seguga kreem želatiiniga 
 la sauce melba [soos mel'ba] : melba kaste
-la sauce vanille [soos va'niij] : vanillikaste
+la sauce vanille [soos va'niijə] : vanillikaste
 la sauce caramel [soos kara'mäl] : karamellkaste
 la crêpe [kräp] : pannkook
 la glace [glass] : jäätis
@@ -1333,9 +1334,9 @@ Kokadele.add_lesson(u"Marjad", u"""""")
 Kokadele.parse_words(Nom,u"""
 la baie [bä] : mari
 la fraise [frääz] : maasikas
-la myrtille [mir'tii] : mustikas
+la myrtille [mir'tiijə] : mustikas
 la mûre [müür] : põldmari
-la groseille [gro'zeij] : sõstar (punane v. valge) | tikker
+la groseille [gro'zeijə] : sõstar (punane v. valge) | tikker
 le cassis [ka'sis] : mustsõstar 
 """)
 
@@ -1427,7 +1428,7 @@ le four à micro-ondes [fuur a mikro 'O~də] : mikrolaine ahi
 le fouet [fu'ä] : vispel
 le moulin [mu'lÄ~] : veski
 la alumette [alu'mät] : tuletikk
-la coquille [ko'kiij] : merekarp
+la coquille [ko'kiijə] : merekarp
 la cocotte [ko'kot] : malmkastrul, kokott
 la poêle [pwal] : pann
 la râpe [rap] : riiv
@@ -1512,9 +1513,9 @@ if FULL_CONTENT:
     Bordeaux [bor'doo] | bordelais [bordə'lä] | bordelaise [bordə'lääz] : -
     Bourgogne [burgOnjə] | bourguignon [burgin'jO~] | bourguignonne [burgin'jOnn] : -
     Dijon [di'žO~] | dijonnais [dižon'nä] | dijonnaise [dižon'nääz] : -
-    Lyon [li'O~] | lyonnais [lio'nä] | lyonnaise [lio'nääz] : -
-    Marseilles [mar'säij] | marseillais [marsäi'jä]| marseillaise [marsäi'jääz] : - 
-    Paris [pa'ri] | parisien [pariz'jÄ~]| parisienne [pariz'jenn] : Pariis
+    Lyon [li'O~] | lyonnais [lio'nä] | lyonnaise [lio'nääzə] : -
+    Marseilles [mar'säijə] | marseillais [marsäi'jä]| marseillaise [marsäi'jääz] : - 
+    Paris [pa'ri] | parisien [pariz'jÄ~]| parisienne [pariz'jän] : Pariis
     Reims [rÄ~s] | rémois [rem'wa]| rémoise [rem'waaz] : Reims
     Verdun [vär'dÖ~] | verdunois [värdü'nwa]| verdunoise [värdü'nwaaz] : -
     Versailles [ver'saj] | versaillais [värsa'jä] | versaillaise [värsa'jääz] : -
@@ -1734,7 +1735,7 @@ if FULL_CONTENT:
     avril [a'vril] : aprill
     mai [mä] : mai
     juin [žwÄ~] : juuni
-    juillet [žüi'jä] : juuli
+    juillet [žwi'jä] : juuli
     août [ut] : august
     septembre [sep'tA~brə] : september
     octobre [ok'tOObrə] : oktoober

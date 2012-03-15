@@ -20,8 +20,8 @@ be useful from applications that do not use the other parts of Lino.
 To run these examples, you need
 Python, Lino and the following Python modules:
 
-  - :term:`lxml`
-  - :term:`appy.pod`
+- :term:`lxml`
+- :term:`appy.pod`
   
   
 
@@ -251,33 +251,50 @@ def xsdpath(*parts):
 
 
 
-soap = Namespace('soap',"http://schemas.xmlsoap.org/soap/envelope/")
-bcss = Namespace('bcss',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
-ssdn = Namespace(None,"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
 #~ ssdn = Namespace('ssdn',"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
 #~ ,nsmap={None:ssdn._url}
 
-#~ ssdn.define("""
-#~ SSDNRequest
-#~ ServiceRequest
-#~ ServiceId
-#~ Version
-#~ RequestContext
-#~ Message
-#~ Reference
-#~ TimeRequest
-#~ """)            
+class SOAP(Namespace):
+    def setup_namespace(self):
+        self.define_names("Body Envelope")
+#~ soap = Namespace('soap',"http://schemas.xmlsoap.org/soap/envelope/")
+soap = SOAP('soap',"http://schemas.xmlsoap.org/soap/envelope/")
+        
+class BCSS(Namespace):
+    def setup_namespace(self):
+        self.define_names("xmlString")
+#~ bcss = Namespace('bcss',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
+bcss = BCSS('bcss',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
+        
+class SSDN(Namespace):
+    def setup_namespace(self):
+        self.define_names("""
+        SSDNRequest
+        ServiceRequest
+        ServiceId
+        Version
+        RequestContext
+        Message
+        Reference
+        TimeRequest
+        """)            
 
-
-
-#~ bcss.define('xmlString')
-
-#~ soap.define("Body Envelope")
+ssdn = SSDN(None,"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
 
 
 
 class Common(Namespace):
   
+    def setup_namespace(self):
+        self.define_names("""
+        AuthorizedUser
+        UserID
+        Email
+        OrgUnit
+        MatrixID
+        MatrixSubID
+        """)
+        
     def authorized_user(common,
                 UserID=None,
                 Email=None, 
@@ -292,14 +309,6 @@ class Common(Namespace):
             common.MatrixSubID(MatrixSubID))
 
 common = Common()
-#~ common.define("""
-#~ AuthorizedUser
-#~ UserID
-#~ Email
-#~ OrgUnit
-#~ MatrixID
-#~ MatrixSubID
-#~ """)
 
 
 
@@ -370,6 +379,28 @@ class IdentifyPersonRequest(Service):
     service_version = '20050930'
     xsd_filename = xsdpath('SSDN','OCMW_CPAS',
         'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
+        
+    def setup_namespace(self):
+        self.define_names("""
+        IdentifyPersonRequest
+        SearchCriteria
+        PhoneticCriteria
+        SSIN
+        LastName
+        FirstName
+        MiddleName
+        BirthDate
+        Gender
+        Tolerance
+        Maximum
+
+        VerificationData
+        SISCardNumber
+        IdentityCardNumber
+        PersonData 
+        """)
+
+        
 
     def build_request(ipr,
         national_id='',
@@ -431,6 +462,17 @@ class PerformInvestigationRequest(Service):
     xsd_filename = xsdpath('SSDN','OCMW_CPAS',
         'PERFORMINVESTIGATION','PERFORMINVESTIGATIONREQUEST.XSD')
     
+    def setup_namespace(self):
+        self.define_names("""
+        PerformInvestigationRequest
+        SocialSecurityUser
+        DataGroups
+        FamilyCompositionGroup
+        CitizenGroup
+        AddressHistoryGroup
+        WaitRegisterGroup
+        """)
+        
     def build_request(pir,ssin,family='1',citizen='1',address='1',wait='1'):
         root = pir.PerformInvestigationRequest(
             pir.SocialSecurityUser(ssin),
@@ -455,61 +497,34 @@ class HealthInsuranceRequest(Service):
     service_id = 'OCMWCPASHealthInsurance'
     service_version = '20070509'
     
+    def setup_namespace(self):
+        self.define_names("""
+        HealthInsuranceRequest
+        SSIN
+        Assurability
+        Period
+        StartDate
+        EndDate
+        """)
     
     
 ipr = IdentifyPersonRequest('ipr') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
 """
-The Namespace for :class:`IdentifyPersonRequest`.
+The Namespace instance for :class:`IdentifyPersonRequest`.
 """
-
-#~ ipr.define("""
-#~ IdentifyPersonRequest
-#~ SearchCriteria
-#~ PhoneticCriteria
-#~ SSIN
-#~ LastName
-#~ FirstName
-#~ MiddleName
-#~ BirthDate
-#~ Gender
-#~ Tolerance
-#~ Maximum
-
-#~ VerificationData
-#~ SISCardNumber
-#~ IdentityCardNumber
-#~ PersonData 
-#~ """)
 
 
 pir = PerformInvestigationRequest('pir') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
 """
-The Namespace for :class:`PerformInvestigationRequest`.
+The Namespace instance for :class:`PerformInvestigationRequest`.
 """
 
-#~ pir.define("""
-#~ PerformInvestigationRequest
-#~ SocialSecurityUser
-#~ DataGroups
-#~ FamilyCompositionGroup
-#~ CitizenGroup
-#~ AddressHistoryGroup
-#~ WaitRegisterGroup
-#~ """)
 
 hir = HealthInsuranceRequest('hir') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
 """
-The Namespace for :class:`HealthInsuranceRequest`.
+The Namespace instance for :class:`HealthInsuranceRequest`.
 """
 
-#~ hir.define("""
-#~ HealthInsuranceRequest
-#~ SSIN
-#~ Assurability
-#~ Period
-#~ StartDate
-#~ EndDate
-#~ """)
 
     
 
