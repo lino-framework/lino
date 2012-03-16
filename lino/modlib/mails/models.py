@@ -97,10 +97,10 @@ if True:
           #~ for t,n,a in elem.get_recipients():
               #~ m.recipient_set.create(type=t,address=a,name=n)
           for t,c in elem.get_mailable_contacts():
-              r = Recipient(mail=m,type=t,contact=c)
+              r = Recipient(mail=m,type=t,partner=c)
               r.full_clean()
               r.save()
-              #~ m.recipient_set.create(type=t,contact=c)
+              #~ m.recipient_set.create(type=t,partner=c)
           a = Attachment(mail=m,owner=elem)
           a.save()
           kw.update(open_url=rr.ui.get_detail_url(m))
@@ -141,7 +141,7 @@ if True:
           #~ raise NotImplementedError()
           
       def get_mailable_contacts(self):
-          "return or yield a list of (type,contact) tuples"
+          "return or yield a list of (type,partner) tuples"
           return []
           
       #~ @classmethod
@@ -158,8 +158,8 @@ class Recipient(models.Model):
         verbose_name = _("Recipient")
         verbose_name_plural = _("Recipients")
     mail = models.ForeignKey('mails.Mail')
-    contact = models.ForeignKey('contacts.Contact',
-        verbose_name=_("Recipient"),
+    partner = models.ForeignKey('contacts.Partner',
+        #~ verbose_name=_("Recipient"),
         blank=True,null=True)
     type = RecipientType.field()
     address = models.EmailField(_("Address"))
@@ -176,11 +176,11 @@ class Recipient(models.Model):
         #~ return "[%s]" % unicode(self.address)
         
     def full_clean(self):
-        if self.contact:
+        if self.partner:
             if not self.address:
-                self.address = self.contact.email
+                self.address = self.partner.email
             if not self.name:
-                self.name = self.contact.get_full_name(salutation=False)
+                self.name = self.partner.get_full_name(salutation=False)
         super(Recipient,self).full_clean()
         
 
@@ -191,7 +191,7 @@ class Recipients(dd.Table):
 
 class RecipientsByMail(Recipients):
     master_key = 'mail'
-    column_names = 'type:10 contact:20 address:20 name:20 *'
+    column_names = 'type:10 partner:20 address:20 name:20 *'
     #~ column_names = 'type owner_type owner_id'
     #~ column_names = 'type owner'
 
@@ -251,7 +251,7 @@ class Mail(mixins.TypedPrintable):
         
     #~ outgoing = models.BooleanField(verbose_name=_('Outgoing'))
     
-    sender = models.ForeignKey('contacts.Contact',
+    sender = models.ForeignKey('contacts.Partner',
         verbose_name=_("Sender"),
         related_name='mails_by_sender',
         blank=True,null=True)
@@ -387,14 +387,14 @@ class MyInbox(InMails):
     
     @classmethod
     def get_request_queryset(self,rr):
-        q1 = Recipient.objects.filter(contact=rr.get_user()).values('mail').query
+        q1 = Recipient.objects.filter(partner=rr.get_user()).values('mail').query
         qs = Mail.objects.filter(id__in=q1)
         qs = qs.order_by('received')
         return qs
 
 
 class MailsByContact(object):
-    master = 'contacts.Contact'
+    master = 'contacts.Partner'
     can_add = perms.never
     
 
@@ -404,7 +404,7 @@ class InMailsByContact(MailsByContact,InMails):
     
     @classmethod
     def get_request_queryset(self,rr):
-        q1 = Recipient.objects.filter(contact=rr.master_instance).values('mail').query
+        q1 = Recipient.objects.filter(partner=rr.master_instance).values('mail').query
         qs = Mail.objects.filter(id__in=q1)
         qs = qs.order_by('received')
         return qs

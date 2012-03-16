@@ -1,0 +1,10 @@
+20120316
+========
+
+Neue Anwendung 
+:mod:`lino.apps.az`.
+
+db changes to be migrated:
+- :mod:`lino.modlib.contacts` : renamed "Contact" to "Partner".
+- :mod:`lino.modlib.mails` : renamed "Mail.contact" to "Mail.partner".
+

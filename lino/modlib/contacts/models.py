@@ -105,7 +105,8 @@ class CompanyTypes(dd.Table):
 
 
 
-class Contact(mti.MultiTableBase,CountryCity):
+#~ class Contact(mti.MultiTableBase,CountryCity):
+class Partner(mti.MultiTableBase,CountryCity):
     """
     Base class for anything that has contact information 
     (postal address, email, phone,...).
@@ -113,15 +114,15 @@ class Contact(mti.MultiTableBase,CountryCity):
     """
     
     """
-    preferred width for ForeignKey fields to a Contact
+    preferred width for ForeignKey fields to a Partner
     """
     _lino_preferred_width = 20 
     
   
     class Meta:
         #~ abstract = True
-        verbose_name = _("Contact")
-        verbose_name_plural = _("Contacts")
+        verbose_name = _("Partner")
+        verbose_name_plural = _("Partners")
   
     name = models.CharField(max_length=200,verbose_name=_('Name'))
     addr1 = models.CharField(_("Address line before street"),
@@ -165,7 +166,7 @@ class Contact(mti.MultiTableBase,CountryCity):
                 self.id = sc.next_partner_id
                 sc.next_partner_id += 1
                 sc.save()
-        super(Contact,self).save(*args,**kw)
+        super(Partner,self).save(*args,**kw)
         
     def __unicode__(self):
         return self.name
@@ -176,7 +177,7 @@ class Contact(mti.MultiTableBase,CountryCity):
         
     def get_full_name(self,*args,**kw):
         """\
-Returns a one-line string representing this Contact.
+Returns a one-line string representing this Partner.
 The default returns simply the `name` field, ignoring any parameters, 
 but e.g. :class:`PersonMixin` overrides this.
         """
@@ -257,7 +258,7 @@ but e.g. :class:`PersonMixin` overrides this.
     #~ name_column.return_type = dd.DisplayField(_("Name"))
     
 
-class ContactDetail(dd.DetailLayout):
+class PartnerDetail(dd.DetailLayout):
   
     main = """
     address_box contact_box
@@ -292,30 +293,30 @@ class ContactDetail(dd.DetailLayout):
   
     
     
-class Contacts(dd.Table):
-    model = 'contacts.Contact'
+class Partners(dd.Table):
+    model = 'contacts.Partner'
     column_names = "name email * id" 
     order_by = ['name','id']
     #~ column_names = "name * id" 
-    detail_layout = ContactDetail()
+    detail_layout = PartnerDetail()
     
     @classmethod
     def get_queryset(self):
         return self.model.objects.select_related('country','city')
 
 
-class AllContacts(Contacts):
+class AllPartners(Partners):
   
     @classmethod
     def init_label(self):
         return _("All %s") % self.model._meta.verbose_name_plural
         
-class ContactsByCity(Contacts):
+class PartnersByCity(Partners):
     master_key = 'city'
     order_by = 'street street_no street_box addr2'.split()
     column_names = "street street_no street_box addr2 name language *"
     
-class ContactsByCountry(Contacts):
+class PartnersByCountry(Partners):
     master_key = 'country'
     column_names = "city street street_no name language *"
     order_by = "city street street_no".split()
@@ -547,7 +548,7 @@ class CompanyDetail(dd.DetailLayout):
 
 
               
-class Companies(Contacts):
+class Companies(Partners):
     model = settings.LINO.company_model
     order_by = ["name"]
     detail_layout = CompanyDetail()
@@ -661,12 +662,9 @@ class RolesByPerson(Roles):
     
 class PartnerDocument(models.Model):
     """
-    Maybe deprecated. 
-    This adds two fields 'person' and 'company' to this model, 
+    Adds two fields 'partner' and 'person' to this model, 
     making it something that refers to a "partner". 
-    If `company` is empty, the "partner" is a private person.
-    If `company` is filled, then `person` means a "contact person" 
-    for this company.
+    `person` means a "contact person" for the partner.
     
     """
     
@@ -728,17 +726,18 @@ class PartnerDocument(models.Model):
         
 class ContactDocument(models.Model):
     """
-    A document whose recipient is a :class:`Contact`.
+    A document whose recipient is a :class:`Partner`.
     """
   
     class Meta:
         abstract = True
         
-    contact = models.ForeignKey("contacts.Contact",
+    contact = models.ForeignKey(Partner,
         #~ blank=True,null=True,
         related_name="%(app_label)s_%(class)s_by_contact",
         #~ related_name="%(app_label)s_%(class)s_related",
-        verbose_name=_("Contact"))
+        #~ verbose_name=_("Partner")
+        )
     language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
     def get_mailable_contacts(self):
@@ -779,16 +778,16 @@ if settings.LINO.is_installed('contacts'):
         """The Company to be used as sender in documents.""")
         
 
-    dd.inject_field(Contact,
+    dd.inject_field(Partner,
         'is_person',
         #~ mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
         mti.EnableChild(settings.LINO.person_model,verbose_name=_("is Person")),
-        """Whether this Contact is also a Person."""
+        """Whether this Partner is a Person."""
         )
-    dd.inject_field(Contact,
+    dd.inject_field(Partner,
         'is_company',
         mti.EnableChild(settings.LINO.company_model,verbose_name=_("is Company")),
-        """Whether this Contact is also a Company."""
+        """Whether this Partner is a Company."""
         )
 
 

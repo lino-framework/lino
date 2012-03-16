@@ -29,7 +29,7 @@ from lino.utils import mti
 from lino.modlib.contacts import models as contacts
 
 
-class User(contacts.Contact,contacts.PersonMixin):
+class User(contacts.Partner,contacts.PersonMixin):
     """
     Represents a User of this site.
     
@@ -178,9 +178,9 @@ if settings.LINO.is_installed('contacts'):
     But Sphinx's autodoc
     """
 
-    dd.inject_field(contacts.Contact,
+    dd.inject_field(contacts.Partner,
         'is_user',
         mti.EnableChild('users.User',verbose_name=_("is User")),
-        """Whether this Contact is also a User."""
+        """Whether this Partner is also a User."""
         )
 
