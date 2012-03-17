@@ -14,9 +14,11 @@
 
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 
 from django.utils.translation import ugettext as _
 
+from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import babel_values, DEFAULT_LANGUAGE, AVAILABLE_LANGUAGES
 
@@ -117,3 +119,24 @@ def objects():
     yield roletype(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor",et=u"Direktor"))
     yield roletype(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär",et=u"Sekretär"))
     yield roletype(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))
+
+
+    I = Instantiator('lino.HelpText','content_type field help_text').build
+    
+    Person = resolve_model(settings.LINO.person_model)
+    t = ContentType.objects.get_for_model(Person)
+    yield I(t,'birth_date',u"""\
+Unkomplette Geburtsdaten sind erlaubt, z.B. 
+<ul>
+<li>00.00.1980 : irgendwann in 1980</li>
+<li>00.07.1980 : im Juli 1980</li>
+<li>23.07.0000 : Geburtstag am 23. Juli, Alter unbekannt</li>
+</ul>    
+""")
+    
+    Partner = resolve_model('contacts.Partner')
+    t = ContentType.objects.get_for_model(Partner)
+    yield I(t,'language',u"""\
+Die Sprache, in der Dokumente ausgestellt werden sollen.
+""")
+    

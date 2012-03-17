@@ -800,8 +800,8 @@ class TypedPrintable(CachedPrintable):
         return [ tplname ]
         #~ return [ ptype.get_templates_group() + '/' + ptype.template ]
         
-    def get_print_language(self,bm):
-        return self.language
+    #~ def get_print_language(self,bm):
+        #~ return self.language
 
 
 

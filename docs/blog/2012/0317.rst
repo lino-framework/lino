@@ -1,0 +1,26 @@
+20120317
+========
+
+In der neuen Anwendung :mod:`lino.apps.az` 
+will ich erstmals das Modul :mod:`lino.modlib.mails` 
+benutzbar machen, das bisher lediglich in theoretischem 
+Dasein vor sich hin dümpelte.
+
+`mails.Mail` (verbose name "Mail Message") : 
+deutsche Übersetzung nicht mehr 
+"Korrespondenzdokument", sondern schlicht "Nachricht".
+Eine "Nachricht" hat immer exakt *einen* "Absender".
+"Empfänger" dagegen kann sie einen, keinen einzigen, oder viele haben.
+Eine Nachricht ist entweder incoming oder outgoing. 
+
+Wenn ein Benutzer eine Nachricht an einen anderen Benutzer schickt
+(und wenn die Nachricht über das zukünftige getmail-Modul wieder eintrifft), 
+dann haben wir zwei Nachrichten in der Tabelle `Mail`: eine, 
+deren `sent` unleer ist, und eine andere, deren `received` unleer ist. 
+Die abgesendete Nachricht hat eventuell Mail.type und Mail.person ausgefüllt. 
+Das hat die eingegangene Nachricht nicht
+
+Mail.sent ist 
+
+Brauchen wir das Erstelldatum einer Nachricht.
+

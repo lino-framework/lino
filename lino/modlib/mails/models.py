@@ -39,7 +39,7 @@ from lino import dd
 #~ from lino.utils.babel import default_language
 #~ from lino import reports
 #~ from lino import layouts
-from lino.utils import perms
+#~ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils import babel
@@ -234,18 +234,18 @@ class SendMailAction(dd.RowAction):
 
 
 #~ class Mail(mixins.AutoUser):
-class Mail(mixins.TypedPrintable):
+class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
 #~ class Mail(models.Model):
     """
     Deserves more documentation.
     """
     
-    #~ type = models.ForeignKey(MailType,null=True,blank=True)
+    type = models.ForeignKey(MailType,null=True,blank=True)
     
     class Meta:
         #~ abstract = True
-        verbose_name = _("Mail Document")
-        verbose_name_plural = _("Mail Documents")
+        verbose_name = _("Mail Message")
+        verbose_name_plural = _("Mail Messages")
         
     send = SendMailAction()
         
@@ -275,6 +275,10 @@ class Mail(mixins.TypedPrintable):
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         
+    def get_print_language(self,bm):
+        if self.sender is not None:
+            return self.sender.language
+        return super(Mail,self).get_print_language(bm)
         
     #~ def recipients_to(self,rr):
         #~ kv = dict(type=RecipientType.to)
@@ -351,18 +355,26 @@ class AttachmentsByMail(Attachments):
     slave_grid_format = 'summary'
 
 class Mails(dd.Table):
-    model = 'mails.Mail'
-    
-class InMails(Mails):
+    model = Mail
+    detail_template = """
+    id sender type sent received build_time
+    subject
+    RecipientsByMail:50x5 uploads.UploadsByOwner:20x5 AttachmentsByMail:20x5
+    body:90x10
+    """
+  
+class Inbox(Mails):
+    label = _("Inbox")
     column_names = "received sender subject * body"
     order_by = ["received"]
     filter = models.Q(received__isnull=False)
 
-class OutMails(Mails):
+class Outbox(Mails):
+    label = _("Outbox")
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
     
-class MyOutbox(OutMails):
+class MyOutbox(Outbox):
     #~ known_values = dict(outgoing=True)
     label = _("Mail Outbox")
     filter = models.Q(sent__isnull=True)
@@ -378,12 +390,12 @@ class MySent(MyOutbox):
     filter = models.Q(sent__isnull=False)
     
 
-class MyInbox(InMails): 
+class MyInbox(Inbox): 
     #~ known_values = dict(outgoing=False)
-    label = _("My Mail Inbox")
+    label = _("My Inbox")
 
-    can_add = perms.never
-    can_change = perms.never
+    #~ can_add = perms.never
+    #~ can_change = perms.never
     
     @classmethod
     def get_request_queryset(self,rr):
@@ -393,12 +405,13 @@ class MyInbox(InMails):
         return qs
 
 
-class MailsByContact(object):
+class MailsByPartner(object):
     master = 'contacts.Partner'
-    can_add = perms.never
+    #~ can_add = perms.never
     
 
-class InMailsByContact(MailsByContact,InMails):
+class InboxByPartner(MailsByPartner,Inbox):
+    label = _("Inbox")
     column_names = 'received subject sender'
     order_by = ['received']
     
@@ -410,7 +423,8 @@ class InMailsByContact(MailsByContact,InMails):
         return qs
         
   
-class OutMailsByContact(MailsByContact,OutMails):
+class OutboxByPartner(Outbox,MailsByPartner):
+    label = _("Outbox")
     column_names = 'sent subject recipients'
     order_by = ['sent']
     master_key = 'sender'

@@ -140,7 +140,7 @@ INSTALLED_APPS = (
   #~ 'lino.az.notes',
   'lino.apps.az.courses',
   #~ 'lino.modlib.links',
-  #~ 'lino.modlib.uploads',
+  'lino.modlib.uploads',
   #~ 'lino.modlib.thirds',
   'lino.modlib.cal',
   'lino.modlib.mails',

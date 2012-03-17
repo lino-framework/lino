@@ -29,7 +29,49 @@ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
         #~ verbose_name = _("Person")
         #~ verbose_name_plural = _("Persons")
 
-                  
+
+class PersonDetail(contacts.PersonDetail):
+#~ class PersonDetail(dd.DetailLayout):
+   
+    
+    #~ contact = contacts.PersonDetail.main
+    
+    mails = """
+    mails.InboxByPartner
+    mails.OutboxByPartner
+    """
+    
+    main = "contact mails"
+
+    contact = """
+    box1 box2
+    remarks contacts.RolesByPerson
+    """
+    
+    box1 = """
+    last_name first_name:15 #title:10
+    country city zip_code:10
+    #street_prefix street:25 street_no street_box
+    addr2:40
+    """
+    
+    box2 = """
+    id:12 language
+    email
+    phone fax
+    gsm
+    gender birth_date age:10 
+    """
+    
+    
+    def setup_handle(self,lh):
+      
+        lh.contact.label = _("Contact")
+        lh.mails.label = _("Mails")
+
+
+
+
 class Company(contacts.Partner,contacts.CompanyMixin):
     class Meta(contacts.CompanyMixin.Meta):
         app_label = 'contacts'
@@ -46,3 +88,6 @@ class Task(cal.Task):
         app_label = 'cal'
      
      
+def site_setup(site):
+    site.modules.contacts.Persons.set_detail(PersonDetail())
+

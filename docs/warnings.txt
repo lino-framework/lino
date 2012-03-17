@@ -1,14 +1,19 @@
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:23: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.models', it reported error: "cannot import name Contact", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:61: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.fixtures.pp2lino', it reported error: "cannot import name Contact", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:79: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_tests', it reported error: "cannot import name Contact", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:86: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_demo_tests', it reported error: "cannot import name Contact", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:93: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_sql_tests', it reported error: "cannot import name Contact", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:12: (WARNING/2) autodoc can't import/find module 'lino.utils.xmlgen.xhtml', it reported error: "No module named xhtml", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:223: WARNING: duplicate object description of lino.utils.xmlgen.bcss.HealthInsuranceRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:232: WARNING: duplicate object description of lino.utils.xmlgen.bcss.IdentifyPersonRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:240: WARNING: duplicate object description of lino.utils.xmlgen.bcss.IdentifyPersonRequest.build_request, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:249: WARNING: duplicate object description of lino.utils.xmlgen.bcss.PerformInvestigationRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:258: WARNING: duplicate object description of lino.utils.xmlgen.bcss.Service, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:266: WARNING: duplicate object description of lino.utils.xmlgen.bcss.hir, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:273: WARNING: duplicate object description of lino.utils.xmlgen.bcss.ipr, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:280: WARNING: duplicate object description of lino.utils.xmlgen.bcss.pir, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:287: WARNING: duplicate object description of lino.utils.xmlgen.bcss.reply2lines, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:294: WARNING: duplicate object description of lino.utils.xmlgen.bcss.xml2reply, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:247: WARNING: duplicate object description of lino.utils.xmlgen.bcss.HealthInsuranceRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:270: WARNING: duplicate object description of lino.utils.xmlgen.bcss.IdentifyPersonRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:278: WARNING: duplicate object description of lino.utils.xmlgen.bcss.IdentifyPersonRequest.build_request, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:306: WARNING: duplicate object description of lino.utils.xmlgen.bcss.PerformInvestigationRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:358: WARNING: duplicate object description of lino.utils.xmlgen.bcss.Service, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:384: WARNING: duplicate object description of lino.utils.xmlgen.bcss.hir, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:391: WARNING: duplicate object description of lino.utils.xmlgen.bcss.ipr, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:398: WARNING: duplicate object description of lino.utils.xmlgen.bcss.pir, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:405: WARNING: duplicate object description of lino.utils.xmlgen.bcss.reply2lines, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:424: WARNING: duplicate object description of lino.utils.xmlgen.bcss.xml2reply, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
 T:\hgwork\lino\docs\admin\pythonpath.rst:: WARNING: document isn't included in any toctree
@@ -17,37 +22,37 @@ T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in a
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.modlib.bcss.rst:22: WARNING: py:class reference target not found: NotImplementedError
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:mod reference target not found: base
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:25: WARNING: py:mod reference target not found: requests
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference target not found: urls
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:103: WARNING: py:class reference target not found: lino.core.table.TableRequest
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:261: WARNING: term not in glossary: dtl2py
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:324: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:340: WARNING: py:class reference target not found: lino.core.table.TableRequest
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:353: WARNING: py:class reference target not found: lino.core.table.TableRequest
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:367: WARNING: py:class reference target not found: django.http.HttpResponse
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:408: WARNING: unknown document: /blog/2010/0716
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:408: WARNING: unknown document: /blog/2010/0721
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:408: WARNING: unknown document: /blog/2010/1116
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:408: WARNING: unknown document: /blog/2010/1207
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:34: WARNING: py:mod reference target not found: ext_windows
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:8: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:42: WARNING: py:mod reference target not found: ext_store
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:134: WARNING: unknown document: /blog/2010/0803
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:256: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:416: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:461: WARNING: py:attr reference target not found: Store.pk_index
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:25: WARNING: py:func reference target not found: lino.modlib.cal.update_reminders
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:70: WARNING: py:class reference target not found: lino.fields.IncompleteDate
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:98: WARNING: py:class reference target not found: lino.mixins.printable.CachedPrintable
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1210
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1211
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1214
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:12: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:21: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:59: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:66: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:116: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:127: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:150: WARNING: py:func reference target not found: lino.apps.dsbe.tests.dsbe_tests.test04
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:150: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:166: WARNING: py:func reference target not found: lino.apps.dsbe.tests.dsbe_tests.test04
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:166: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:202: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:204: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:204: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:42: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:64: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:12: WARNING: py:class reference target not found: Event
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:4: WARNING: py:mod reference target not found: django.contrib.auth
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:11: WARNING: py:mod reference target not found: django.contrib.sessions
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:12: WARNING: unknown document: /topics/http_auth
 T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:15: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:23: WARNING: py:class reference target not found: exceptions.Exception
 T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:9: WARNING: py:mod reference target not found: xhtml
 T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:18: WARNING: py:mod reference target not found: bcss
 T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:49: WARNING: py:class reference target not found: SimpleException
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst:49: WARNING: py:class reference target not found: SimpleException
 T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
 T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
 T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
@@ -56,4 +61,4 @@ T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/122
 T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
 T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
 T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2012\0314.rst:5: WARNING: py:mod reference target not found: lino.utils.xmlgen.intervat.validate
+T:\hgwork\lino\docs\blog\2012\0316.rst:4: WARNING: py:mod reference target not found: lino.apps.az

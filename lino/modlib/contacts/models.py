@@ -792,7 +792,6 @@ if settings.LINO.is_installed('contacts'):
 
 
 
-
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 

@@ -1,5 +1,0 @@
-main = 
-  id sender type sent received
-  subject
-  RecipientsByMail:50x5 uploads.UploadsByOwner:20x5 AttachmentsByMail:20x5
-  body:90x10
