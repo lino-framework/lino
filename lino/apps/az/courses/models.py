@@ -84,92 +84,66 @@ from lino.tools import resolve_model, UnresolvedModel
 if settings.LINO.user_model:
     User = resolve_model(settings.LINO.user_model,strict=True)
 
-Company = resolve_model('contacts.Company',strict=True)
+#~ Company = resolve_model('contacts.Company',strict=True)
+Person = resolve_model('contacts.Person',strict=True)
 
 
-#
-# COURSE ENDINGS
-#
-class CourseEnding(models.Model):
-    u"""
-    Eine Kursbeendigung ist eine *Art und Weise, wie eine Kursanfrage beendet wurde*.
-    Später können wir dann Statistiken machen, wieviele Anfragen auf welche Art und 
-    Weise beendet wurden.
-    """
+
+class PresenceStatus(babel.BabelNamed):
     class Meta:
-        verbose_name = _("Course Ending")
-        verbose_name_plural = _('Course Endings')
+        verbose_name = _("Presence Status")
+        verbose_name_plural = _("Presence Statuses")
         
-    name = models.CharField(_("designation"),max_length=200)
-    
-    def __unicode__(self):
-        return unicode(self.name)
+class PresenceStatuses(dd.Table):
+    model = PresenceStatus
         
-class CourseEndings(dd.Table):
-    model = CourseEnding
-    column_names = 'name *'
-    order_by = ['name']
-
-
-
-#
-# COURSES
-#
-
-
-class CourseProvider(Company):
-    """
-    A CourseProvider is a Company that offers Courses. 
-    """
+        
+class Teacher(Person):
     class Meta:
         app_label = 'courses'
-        verbose_name = _("Course provider")
-        verbose_name_plural = _("Course providers")
-    #~ name = models.CharField(max_length=200,
-          #~ verbose_name=_("Name"))
-    #~ company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
+        verbose_name = _("Teacher")
+        verbose_name_plural = _("Teachers")
     
-class CourseProviderDetail(contacts.CompanyDetail):
-    """
-    This is the same as CompanyDetail, except that we
-    
-    - remove MTI fields
-    - add a new tab "Courses"
-    
-    """
+class TeacherDetail(contacts.PersonDetail):
     box5 = "remarks" 
-    general = contacts.CompanyDetail.main
-    main = "general CourseOffersByProvider"
+    general = contacts.PersonDetail.main
+    main = "general LessonsByTeacher"
 
     def setup_handle(self,lh):
       
         lh.general.label = _("General")
         #~ lh.notes.label = _("Notes")
 
+class Teachers(contacts.Persons):
+    model = Teacher
+    detail_layout = TeacherDetail()
   
 
-class CourseProviders(contacts.Companies):
-    """
-    List of Companies that have `Company.is_courseprovider` activated.
-    """
-    #~ hide_details = [Contact]
-    #~ use_as_default_table = False
-    #~ app_label = 'dsbe'
-    #~ label = _("Course providers")
-    model = CourseProvider
-    detail_layout = CourseProviderDetail()
-    #~ known_values = dict(is_courseprovider=True)
-    #~ filter = dict(is_courseprovider__exact=True)
+class Pupil(Person):
+    class Meta:
+        app_label = 'courses'
+        verbose_name = _("Pupil")
+        verbose_name_plural = _("Pupils")
     
-    #~ def create_instance(self,req,**kw):
-        #~ instance = super(CourseProviders,self).create_instance(req,**kw)
-        #~ instance.is_courseprovider = True
-        #~ return instance
+class PupilDetail(contacts.PersonDetail):
+    box5 = "remarks" 
+    general = contacts.PersonDetail.main
+    main = "general PresencesByPupil"
+
+    def setup_handle(self,lh):
+      
+        lh.general.label = _("General")
+        #~ lh.notes.label = _("Notes")
+
+class Pupils(contacts.Persons):
+    model = Pupil
+    detail_layout = PupilDetail()
   
-class CourseContent(models.Model):
-    u"""
-    Ein Kursinhalt (z.B. "Französisch", "Deutsch", "Alphabétisation",...)
-    """
+
+
+
+
+class Content(models.Model):
     
     class Meta:
         verbose_name = _("Course Content")
@@ -178,341 +152,101 @@ class CourseContent(models.Model):
     name = models.CharField(max_length=200,
           blank=True,# null=True,
           verbose_name=_("Name"))
-    u"""
-    Bezeichnung des Kursinhalts.
-    """
           
     def __unicode__(self):
         return unicode(self.name)
         
   
-class CourseOffer(models.Model):
-    """
-    """
+    
+class Lesson(models.Model,mixins.Printable):
     class Meta:
-        verbose_name = _("Course Offer")
-        verbose_name_plural = _('Course Offers')
+        verbose_name = _("Lesson")
+        verbose_name_plural = _('Lessons')
         
-    title = models.CharField(max_length=200,
-        verbose_name=_("Name"))
-    u"""
-    Der Titel des Kurses. Maximal 200 Zeichen.
-    """
+        
+    teacher = models.ForeignKey(Teacher)
     
-    content = models.ForeignKey(CourseContent)
-    """
-    Der Inhalt des Kurses (ein :class:`CourseContent`)
-    """
-    
-    provider = models.ForeignKey(CourseProvider,
-        verbose_name=_("Course provider"))
-    """
-    Der Kursanbieter (eine :class:`Company`)
-    """
-    
-    description = dd.RichTextField(_("Description"),blank=True,format='html')
-    
-    def __unicode__(self):
-        return u'%s (%s)' % (self.title,self.provider)
-        
-    @chooser()
-    def provider_choices(cls):
-        #~ return CourseProviders.request().queryset
-        return CourseProviders.request().data_iterator
-        
-    #~ @classmethod
-    #~ def setup_report(model,rpt):
-        #~ rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates'))
-        
-    def get_print_language(self,pm):
-        "Used by DirectPrintAction"
-        return DEFAULT_LANGUAGE
-        
-        
-    
-class Course(models.Model,mixins.Printable):
-    u"""
-    Ein konkreter Kurs, der an einem bestimmten Datum beginnt.
-    Für jeden Kurs muss ein entsprechendes Angebot existieren, 
-    das u.A. den :class:`Kursinhalt <CourseContent>` 
-    und :class:`Kursanbieter <CourseProvider>` 
-    detailliert. Also selbst für einen einmalig stattfindenden 
-    Kurs muss ein Angebot erstellt werden.
-    """
-    class Meta:
-        verbose_name = _("Course")
-        verbose_name_plural = _('Courses')
-        
-        
-    offer = models.ForeignKey(CourseOffer)
-    
-    title = models.CharField(max_length=200,
-        blank=True,
-        verbose_name=_("Name"))
-        
-    start_date = models.DateField(_("start date"))
-    
-    #~ content = models.ForeignKey(CourseContent)
+    date = models.DateField(_("date"))
+    start_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Start time"))
+    end_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("End time"))
   
     remark = models.CharField(max_length=200,
         blank=True,# null=True,
         verbose_name=_("Remark"))
-    u"""
-    Bemerkung über diesen konkreten Kurs. Maximal 200 Zeichen.
-    """
         
     def __unicode__(self):
-        #~ s = u"%s %s (%s)" % (self._meta.verbose_name,self.pk,babel.dtos(self.start_date))
-        s = babel.dtos(self.start_date)
-        if self.title:
-            s += " " + self.title
-        if self.offer:
-            s += " " + unicode(self.offer)
-        return s
+        return u"%s %s-%s (%s)" % (
+          babel.dtos(self.start_date),
+          self.start_time,
+          self.end_time,
+          self.teacher)
   
-    @classmethod
-    def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction(rpt,'candidates',_("List of candidates"),'candidates'))
-        rpt.add_action(DirectPrintAction(rpt,'participants',_("List of participants"),'participants'))
-        
-    def get_print_language(self,pm):
-        "Used by DirectPrintAction"
-        return DEFAULT_LANGUAGE
-        
-    def participants(self):
-        u"""
-        Liste von :class:`CourseRequest`-Instanzen, 
-        die in diesem Kurs eingetragen sind. 
-        """
-        return ParticipantsByCourse.request(master_instance=self).data_iterator
-        
-    def candidates(self):
-        u"""
-        Liste von :class:`CourseRequest`-Instanzen, 
-        die noch in keinem Kurs eingetragen sind, aber für diesen Kurs in Frage 
-        kommen. 
-        """
-        return CandidatesByCourse.request(master_instance=self).data_iterator
-        
-        
-class CourseRequest(models.Model):
+
+class Lessons(dd.Table):
+    model = Lesson
+    order_by = ['date start_time']
+    detail_template = """
+    id:8 teacher start_time end_time 
+    remark
+    courses.PresencesByLesson
     """
-    A Course Request is created when a certain Person expresses her 
-    wish to participate in a Course with a certain CourseContent.
-    """
+    
+class Presences(dd.Table):
+    model = Presence
+    #~ order_by = ['date start_time']
+
+class PresencesByPupil(Presences):
+    master_key = Pupil
+    
+class LessonsByTeacher(Lessons):
+    master_key = "teacher"
+
+class Presence(models.Model):
     class Meta:
-        verbose_name = _("Course Requests")
-        verbose_name_plural = _('Course Requests')
-        
-    #~ person = models.ForeignKey("contacts.Person",
-    person = models.ForeignKey(settings.LINO.person_model,
-        help_text=u"Die Person, die die Anfrage macht.")
-    
-    offer = models.ForeignKey(CourseOffer,blank=True,null=True)
-    
-    content = models.ForeignKey(CourseContent,
-        help_text=u"Der gewünschte Kursinhalt.")
-    
-    date_submitted = models.DateField(_("date submitted"),
-        help_text=u"Das Datum, an dem die Anfrage erstellt wurde.")
-    
-    course = models.ForeignKey(Course,blank=True,null=True,
-        verbose_name=_("Course found"))
-    u"""
-    Der Kurs, durch den diese Anfrage befriedigt wurde.
-    So lange dieses Feld leer ist, gilt die Anfrage als offen.
-    """
-        
-    #~ """
-    #~ The person's feedback about how satisfied she was.
-    #~ """
-    #~ satisfied = StrengthField(verbose_name=_("Satisfied"),blank=True,null=True)
-    
-    #~ remark = models.CharField(max_length=200,
-    remark = models.TextField(
-        blank=True,null=True,
-        verbose_name=_("Remark"))
-    u"""
-    Bemerkung zu dieser konkreten Kursanfrage oder -teilnahme.
-    """
-        
-    date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
-    u"""
-    Datum der effektives Beendigung dieser Kursteilname.
-    """
-    
-    ending = models.ForeignKey(CourseEnding,blank=True,null=True)
-    u"""
-    Die Art der Beendigung 
-    (ein Objekt vom Typ :class:`CourseEnding`.)
-    Das wird benutzt für spätere Statistiken.
-    """
-    
-    def save(self,*args,**kw):
-        if self.offer and self.offer.content:
-            self.content = self.offer.content
-        super(CourseRequest,self).save(*args,**kw)
-        
-    @chooser()
-    def offer_choices(cls,content):
-        if content:
-            return CourseOffer.objects.filter(content=content)
-        return CourseOffer.objects.all()
-        
-    
-    def on_create(self,req):
-        self.date_submitted = datetime.date.today()
-    
-        
-class Courses(dd.Table):
-    model = Course
-    order_by = ['start_date']
-    detail_template = """
-    id:8 start_date offer title 
-    remark
-    courses.ParticipantsByCourse
-    courses.CandidatesByCourse
-    """
-    
-class CoursesByOffer(Courses):
-    master_key = 'offer'
-    column_names = 'start_date * id'
+        verbose_name = _("Presence")
+        verbose_name_plural = _('Presences')
 
-class CourseContents(dd.Table):
-    model = CourseContent
-    order_by = ['name']
+    teacher = models.ForeignKey(Teacher)
+    pupil = models.ForeignKey(Pupil)
+    status = models.ForeignKey(PresenceStatus)
 
-class CourseOffers(dd.Table):
-    model = CourseOffer
-    detail_template = """
-    id:8 title content provider
-    description
-    CoursesByOffer
-    """
-    
-class CourseOffersByProvider(CourseOffers):
-    master_key = 'provider'
-
-class CourseRequests(dd.Table):
-    model = CourseRequest
-    
-    detail_template = """
-    date_submitted person content offer 
-    course date_ended ending id:8 
-    remark
-    """
-    
-    order_by = ['date_submitted']
-    active_fields = ['offer']
-
-class CourseRequestsByPerson(CourseRequests):
-    master_key = 'person'
-    column_names = 'date_submitted:10 content:15 offer:15 course:20 * id'
-
-class RequestsByCourse(CourseRequests):
-    master_key = 'course'
-  
-    @classmethod
-    def create_instance(self,req,**kw):
-        obj = super(RequestsByCourse,self).create_instance(req,**kw)
-        if obj.course is not None:
-            obj.content = obj.course.offer.content
-        return obj
-    
-class RegisterCandidate(dd.RowAction):
-    """
-    Register the given :class:`Candidate` for the given :class:`Course`.
-    This action is available on a row of :class:`CandidatesByCourse`.
-    """
-    label = _("Register")
-    name = "register"
-    def run(self,rr,elem):
-        elem.course = rr.master_instance
-        elem.save()
-        return rr.ui.success_response(refresh_all=True,
-          message=_("%(person)s has been registered to %(course)s") % dict(
-              person=elem.person,course=elem.course))
-
-class UnregisterCandidate(dd.RowAction):
-    """
-    Unregister the given :class:`Candidate` for the given :class:`Course`.
-    This action is available on a row of :class:`ParticipantsByCourse`.
-    """
-    label = _("Unregister")
-    name = "unregister"
-    def run(self,rr,elem):
-        course = elem.course
-        elem.course = None
-        elem.save()
-        return rr.ui.success_response(refresh_all=True,
-          message=_("%(person)s has been unregistered from %(course)s") % dict(person=elem.person,course=course))
-
-class ParticipantsByCourse(RequestsByCourse):
-    """
-    List of participating :class:`Candidates <Candidate>` for the given :class:`Course`.
-    """
-    label = _("Participants")
-    column_names = 'person remark date_ended ending'
-    
-    @classmethod
-    def setup_actions(self):
-        self.add_action(UnregisterCandidate())
-
-class CandidatesByCourse(RequestsByCourse):
-    """
-    List of :class:`Candidates <Candidate>` for the given :class:`Course`
-    which are not registiered.
-    """
-    label = _("Candidates")
-    column_names = 'person remark content date_submitted'
-    #~ can_add = perms.never
-    
-    @classmethod
-    def setup_actions(self):
-        self.add_action(RegisterCandidate())
-    
-    @classmethod
-    def get_request_queryset(self,rr):
-        if rr.master_instance is None:
-            return []
-        return self.model.objects.filter(course__isnull=True,
-            content__exact=rr.master_instance.offer.content)
-    
-    @classmethod
-    def create_instance(self,req,**kw):
-        """Manually clear the `course` field.
-        """
-        obj = super(CandidatesByCourse,self).create_instance(req,**kw)
-        obj.course = None
-        return obj
 
 
 
 from lino.models import SiteConfig
 
-dd.inject_field(Company,
-    'is_courseprovider',
-    mti.EnableChild(CourseProvider,verbose_name=_("is Course Provider")),
-    """Whether this Company is also a Course Provider."""
+dd.inject_field(Person,
+    'is_teacher',
+    mti.EnableChild(Teacher,verbose_name=_("is a teacher")),
+    """Whether this Person is also a Teacher."""
+    )
+dd.inject_field(Person,
+    'is_pupil',
+    mti.EnableChild(Pupil,verbose_name=_("is a pupil")),
+    """Whether this Person is also a Pupil."""
     )
 
     
 def setup_main_menu(site,ui,user,m): 
     m = m.add_menu("courses",_("Courses"))
-    m.add_action(CourseProviders)
-    m.add_action(CourseContents)
-    m.add_action(CourseOffers)
-    m.add_action(Courses)
+    m.add_action(Teachers)
+    m.add_action(Pupils)
+    #~ m.add_action(CourseOffers)
+    #~ m.add_action(Courses)
             
 
 def setup_my_menu(site,ui,user,m): pass
   
 def setup_config_menu(site,ui,user,m):
     m = m.add_menu("courses",_("Courses"))
-    m.add_action(CourseEndings)
+    m.add_action(PresenceStatuses)
   
 def setup_explorer_menu(site,ui,user,m):
     m = m.add_menu("courses",_("Courses"))
-    m.add_action(CourseRequests)
-    m.add_action(Courses)
+    m.add_action(Presences)
+    m.add_action(Lessons)
   
