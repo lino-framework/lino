@@ -107,7 +107,7 @@ class Teacher(Person):
 class TeacherDetail(contacts.PersonDetail):
     box5 = "remarks" 
     general = contacts.PersonDetail.main
-    main = "general LessonsByTeacher"
+    main = "general courses.LessonsByTeacher"
 
     def setup_handle(self,lh):
       
@@ -180,7 +180,7 @@ class Lesson(models.Model,mixins.Printable):
         
     def __unicode__(self):
         return u"%s %s-%s (%s)" % (
-          babel.dtos(self.start_date),
+          babel.dtos(self.date),
           self.start_time,
           self.end_time,
           self.teacher)
@@ -188,9 +188,9 @@ class Lesson(models.Model,mixins.Printable):
 
 class Lessons(dd.Table):
     model = Lesson
-    order_by = ['date start_time']
+    order_by = ['date','start_time']
     detail_template = """
-    id:8 teacher start_time end_time 
+    id:8 teacher date start_time end_time 
     remark
     courses.PresencesByLesson
     """
@@ -204,14 +204,13 @@ class Presence(models.Model):
     #~ teacher = models.ForeignKey(Teacher)
     lesson = models.ForeignKey(Lesson)
     pupil = models.ForeignKey(Pupil)
-    status = models.ForeignKey(PresenceStatus)
+    status = models.ForeignKey(PresenceStatus,null=True,blank=True)
 
 
 
 
 class Presences(dd.Table):
     model = Presence
-    #~ order_by = ['date start_time']
 
 class PresencesByPupil(Presences):
     master_key = "pupil"

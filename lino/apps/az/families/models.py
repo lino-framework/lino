@@ -42,16 +42,25 @@ from lino.modlib.contacts import models as contacts
 
 
 class Family(contacts.Partner):
+    """
+    """
     class Meta:
         verbose_name = _("Family")
         verbose_name_plural = _("Families")
     
+    dummy = models.CharField(max_length=1,blank=True) 
+    # workaround for https://code.djangoproject.com/ticket/13864
+        
     #~ def get_full_name(self,**salutation_options):
     def get_full_name(self,salutation=True,**salutation_options):
         """Deserves more documentation."""
         return join_words(_("Family"),self.name)
     full_name = property(get_full_name)
     
+    def __unicode__(self):
+        return unicode(join_words(_("Family"),self.name))
+        #~ return self.name
+
 
 class FamilyDetail(dd.DetailLayout):
   
@@ -165,10 +174,10 @@ class MembersByPartner(Members):
     master_key = 'partner'
     column_names = 'person type *'
 
-class MembersByPerson(Member):
+class MembersByPerson(Members):
     label = _("Member of")
     master_key = 'person'
-    column_names = 'family type *'
+    column_names = 'partner type *'
     
     
     

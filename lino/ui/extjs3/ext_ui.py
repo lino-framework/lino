@@ -1684,6 +1684,9 @@ tinymce.init({
         
         if pk and pk != '-99999' and pk != '-99998':
             elem = rpt.get_row_by_pk(pk)
+            if elem is None:
+                raise Http404("%s has no row with prmiary key %r" % (rpt,pk))
+                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
         else:
             elem = None
         

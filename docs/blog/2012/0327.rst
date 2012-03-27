@@ -33,6 +33,15 @@ können (eine Quote geben). Machbar?
 Continued on :mod:`lino.apps.az`
 --------------------------------
 
+Die neue Anwendung :mod:`lino.apps.az` 
+ist eine Studie für die Hausaufgabenschule im AZ Ephata. 
+Ziel des Projekts ist es, ihnen mit wenig Aufwand eine Anwendung für 
+die Verwaltung der Anwesenheiten maßzuschneidern.
+Ich habe dieses Pilotprojekt ausgewählt wegen der günstigen Rahmenbedingungen:
+es gibt dort einen spezifischen Bedarf, weder zu simpel noch zu komplex,
+sowie einen funktionierenden Server nebst Systemverwalter.
+
+Oho, hier war ein Schöner::
 
   TypeError
   unbound method age() must be called with Teacher instance as first argument (got Person instance instead)
@@ -43,3 +52,39 @@ Continued on :mod:`lino.apps.az`
 
   File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 621, in full_value_from_object
   return unbound_meth(obj,request)
+
+Der verschwand, nachdem ich :meth:`lino.modlib.contacts.models.Born.age` 
+in ein `@displayfield` verändert hatte (statt bisher 
+des altmodischen `return_type`).
+
+Und noch ein Bug: wenn man eine Familie speichert, 
+meldet Lino "Ajax communication failed" mit folgendem traceback::
+
+  DatabaseError
+  Forced update did not affect any rows.
+
+  TRACEBACK:
+    File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 1704, in api_element_view
+      return self.form2obj_and_save(ar,data,elem,False,False) # force_update=True)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 1273, in form2obj_and_save
+      elem.save(**kw2save)
+
+    File "t:\hgwork\lino\lino\modlib\contacts\models.py", line 174, in save
+      super(Partner,self).save(*args,**kw)
+
+    File "l:\snapshots\django\django\db\models\base.py", line 464, in save
+      self.save_base(using=using, force_insert=force_insert, force_update=force_update)
+
+    File "l:\snapshots\django\django\db\models\base.py", line 532, in save_base
+      raise DatabaseError("Forced update did not affect any rows.")
+
+Das liegt an :djangoticket:`13864`. Um es zu umgehen, muss ich irgendein 
+Datenbankfeld definieren.
+
+Insgesamt funktioniert es jetzt so, wie ich mir das nach dem Interview 
+mit Marie und Henry gedacht hatte. 
+Aber bevor es benutzbar wird, muss ich noch einige weitere Details bedenken.

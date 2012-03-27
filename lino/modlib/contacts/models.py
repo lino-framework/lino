@@ -19,6 +19,10 @@ It defines tables like `Person` and `Company`
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -166,6 +170,7 @@ class Partner(mti.MultiTableBase,CountryCity):
                 self.id = sc.next_partner_id
                 sc.next_partner_id += 1
                 sc.save()
+        #~ logger.info("20120327 Partner.save(%s,%s)",args,kw)
         super(Partner,self).save(*args,**kw)
         
     def __unicode__(self):
@@ -341,7 +346,8 @@ class Born(models.Model):
     #~ birth_date_circa = models.BooleanField(
         #~ default=False,
         #~ verbose_name=_("not exact"))
-        
+    
+    @dd.displayfield(_("Age"))
     def age(self,request,today=None):
         if self.birth_date and self.birth_date.year:
             if today is None:
@@ -356,7 +362,7 @@ class Born(models.Model):
                     return s
                 return u"±" + s
         return _('unknown')
-    age.return_type = dd.DisplayField(_("Age"))
+    #~ age.return_type = dd.DisplayField(_("Age"))
     
 
 

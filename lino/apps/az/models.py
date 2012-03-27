@@ -45,7 +45,7 @@ class PersonDetail(contacts.PersonDetail):
 
     contact = """
     box1 box2
-    remarks contacts.RolesByPerson
+    remarks contacts.RolesByPerson families.MembersByPerson
     """
     
     box1 = """
@@ -53,6 +53,7 @@ class PersonDetail(contacts.PersonDetail):
     country city zip_code:10
     #street_prefix street:25 street_no street_box
     addr2:40
+    is_pupil is_teacher
     """
     
     box2 = """

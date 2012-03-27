@@ -613,7 +613,7 @@ class FileFieldStoreField(StoreField):
         return ff.name
         
 class MethodStoreField(StoreField):
-  
+    "Deprecated. See :doc:`/blog/2012/0327`."
     def full_value_from_object(self,request,obj):
         unbound_meth = self.field._return_type_for_method
         assert unbound_meth.func_code.co_argcount >= 2, (self.name, unbound_meth.func_code.co_varnames)
@@ -995,10 +995,11 @@ class Store:
       
     def row2dict(self,ar,row,fields=None,**d):
         #~ assert isinstance(ar,table.AbstractTableRequest)
-        #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
+        logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         if fields is None:
             fields = self.detail_fields
         for fld in fields:
+            #~ logger.info("20111209 Store.row2dict %s %s", row,fld)
             v = fld.full_value_from_object(ar,row)
             fld.value2dict(ar.ui,v,d,row)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
