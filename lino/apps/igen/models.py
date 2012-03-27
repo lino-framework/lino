@@ -75,7 +75,7 @@ if True: # dd.is_installed('igen'):
 
     #~ class Person(contacts.Person,contacts.Contact):
     #~ class Person(contacts.Contact,contacts.Born,contacts.Person):
-    class Person(contacts.PersonMixin,contacts.Contact,contacts.Born):
+    class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
         class Meta(contacts.PersonMixin.Meta):
             app_label = 'contacts'
             #~ # see :doc:`/tickets/14`
@@ -83,7 +83,7 @@ if True: # dd.is_installed('igen'):
             verbose_name_plural = _("Persons")
 
                   
-    class Company(contacts.Contact,contacts.CompanyMixin):
+    class Company(contacts.Partner,contacts.CompanyMixin):
         class Meta(contacts.CompanyMixin.Meta):
             app_label = 'contacts'
             #~ # see :doc:`/tickets/14`

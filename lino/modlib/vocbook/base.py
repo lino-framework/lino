@@ -33,27 +33,30 @@ from lino.utils.rstgen import SimpleTable, write_header, html2rst
 from lino.utils import htmlgen
 from lino.utils import uca_collator
 
+USE_XHTML2ODT = False
 
-from Cheetah.Template import Template as CheetahTemplate
-import xhtml2odt
-class MyODTFile(xhtml2odt.ODTFile):
-  
-    def render(self,context):
-        self.open()
-        tpl = CheetahTemplate(self.xml['content'],namespaces=[context])
-        nc = unicode(tpl) #.encode('utf-8')
-        if nc.startswith('<?xml version'):
-            #~ nc = nc.replace('<?xml version="1.0" encoding="UTF-8"?>','')
-            nc = nc.split('\n',1)[1]
-        self.xml['content'] = nc
-        #~ odt = self.xhtml_to_odt(xhtml)
-        #~ self.insert_content(odt)
-        if True:
-            f = open("content.xml","wt")
-            f.write(self.xml['content'].encode('utf-8'))
-            f.close()
-        self.add_styles()
-        self.save(self.options.output)
+if USE_XHTML2ODT:
+
+    from Cheetah.Template import Template as CheetahTemplate
+    import xhtml2odt
+    class MyODTFile(xhtml2odt.ODTFile):
+      
+        def render(self,context):
+            self.open()
+            tpl = CheetahTemplate(self.xml['content'],namespaces=[context])
+            nc = unicode(tpl) #.encode('utf-8')
+            if nc.startswith('<?xml version'):
+                #~ nc = nc.replace('<?xml version="1.0" encoding="UTF-8"?>','')
+                nc = nc.split('\n',1)[1]
+            self.xml['content'] = nc
+            #~ odt = self.xhtml_to_odt(xhtml)
+            #~ self.insert_content(odt)
+            if True:
+                f = open("content.xml","wt")
+                f.write(self.xml['content'].encode('utf-8'))
+                f.close()
+            self.add_styles()
+            self.save(self.options.output)
 
 
 
@@ -586,7 +589,7 @@ class Index(Section):
             fd.write("| %s\n" % html2rst(fmt(w)))
                 
 
-
+  
 class Book:
     def __init__(self,from_language,to_language,
           title=None,input_template=None):
@@ -722,7 +725,13 @@ class Book:
         #~ renderer.context.update(restify=debug_restify)
         renderer.run()
         
-    def new_write_odt_file(self,target):
+        
+if USE_XHTML2ODT:
+
+  class Book2(Book):
+        
+        
+    def write_odt_file(self,target):
         #~ from lino.utils import iif
         #~ from lino.utils import AttrDict
         #~ from lino.utils.html2xhtml import html2xhtml
@@ -791,7 +800,7 @@ class Book:
         context.update(book=self)
         self.odtfile.render(context)
 
-    def new_as_odt(self):
+    def as_odt(self):
         xhtml = ''.join([ln for ln in self.main.html_lines()])
         xhtml = html2xhtml(xhtml)
         #~ xhtml = "<div>%s</div>" % xhtml

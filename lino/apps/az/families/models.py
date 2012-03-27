@@ -188,23 +188,17 @@ if settings.LINO.is_installed('family'):
 
 
 
-def setup_main_menu(site,ui,user,m): pass
+def setup_main_menu(site,ui,user,m): 
+    m.add_action(Families)
 
 def setup_my_menu(site,ui,user,m): 
     pass
-  
+    
 def setup_config_menu(site,ui,user,m): 
-    config_contacts = m.add_menu("contacts",_("Contacts"))
-    config_contacts.add_action(CompanyTypes)
-    config_contacts.add_action(RoleTypes)
-    config_contacts.add_action(site.modules.countries.Countries)
-    config_contacts.add_action(site.modules.countries.Cities)
-    config_contacts.add_action(site.modules.countries.Languages)
-            
-    #~ m  = m.add_menu("contacts",_("~Contacts"))
-    #~ m.add_action('contacts.RoleTypes')
+    m = m.add_menu("families",_("Families"))
+    m.add_action(Roles)
   
 def setup_explorer_menu(site,ui,user,m):
-    config_contacts = m.add_menu("contacts",_("Contacts"))
-    m.add_action(site.modules.contacts.Roles)
+    m = m.add_menu("families",_("Families"))
+    m.add_action(Members)
   

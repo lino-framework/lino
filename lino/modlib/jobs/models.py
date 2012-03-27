@@ -37,7 +37,7 @@ from django.utils.encoding import force_unicode
 #~ from django.utils import translation
 
 
-
+ONE_DAY = datetime.timedelta(days=1)
 
 
 from lino import dd
@@ -79,7 +79,8 @@ from lino.modlib.properties.models import Property
 from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
 from lino.modlib.isip.models import ContractBase
-from lino.apps.dsbe.models import Company, Companies, CompanyDetail
+#~ from lino.apps.dsbe.models import Company, Companies, CompanyDetail
+from lino.apps.dsbe import models as dsbe
 
 
 #~ SCHEDULE_CHOICES = {
@@ -151,7 +152,7 @@ class Regimes(dd.Table):
 
 
 
-class JobProvider(Company):
+class JobProvider(dsbe.Company):
     """Stellenanbieter (BISA, BW, ...) 
     """
     class Meta:
@@ -160,7 +161,7 @@ class JobProvider(Company):
         verbose_name_plural = _('Job Providers')
     
 
-class JobProviderDetail(CompanyDetail):
+class JobProviderDetail(dsbe.CompanyDetail):
     """
     This is the same as CompanyDetail, except that we
     
@@ -176,13 +177,13 @@ class JobProviderDetail(CompanyDetail):
     main = "general notes jobs"
     
     def setup_handle(self,lh):
-        CompanyDetail.setup_handle(self,lh)
+        dsbe.CompanyDetail.setup_handle(self,lh)
         lh.jobs.label = _("Jobs")
 
   
 
 
-class JobProviders(Companies):
+class JobProviders(dsbe.Companies):
     """
     List of Companies that have `Company.is_jobprovider` activated.
     """
@@ -287,7 +288,7 @@ class Contract(ContractBase):
     """
     A Contract
     
-    [NOTE1] I applies_from and duration are set, then the default value 
+    [NOTE1] If applies_from and duration are set, then the default value 
     for applies_until is computed 26 workdays per month:
     
     - duration `312` -> 12 months 
@@ -476,9 +477,10 @@ class Contract(ContractBase):
                             self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
                             
                 if self.duration and not self.applies_until:
+                    # [NOTE1]
                     #~ self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
                     self.applies_until = DurationUnit.months.add_duration(
-                      self.applies_from,self.duration/26)  # [NOTE1]
+                      self.applies_from,self.duration/26) - ONE_DAY
               
         #~ if self.job_id is not None:
         if self.job_id is not None:
@@ -952,7 +954,7 @@ class Candidature(SectorFunction):
     
     #~ date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
     date_submitted = models.DateField(_("date submitted"))
-    u"Das Datum, an dem die Anfrage erstellt wurde."
+    u"Datum, an dem die Anfrage erstellt wurde."
     
     #~ contract = models.ForeignKey("jobs.Contract",blank=True,null=True,
         #~ verbose_name=_("Contract found"))
@@ -1214,7 +1216,8 @@ class JobsOverview(dd.EmptyTable):
             for job in jobtype.job_set.order_by('provider'):
                 actives = []
                 candidates = []
-                qs = job.contract_set.all()
+                #~ qs = job.contract_set.all()
+                qs = job.contract_set.order_by('applies_from')
                 if ar.param_values.contract_type:
                     qs = qs.filter(type=ar.param_values.contract_type)
                 for ct in qs:
@@ -1222,9 +1225,12 @@ class JobsOverview(dd.EmptyTable):
                         until = ct.date_ended or ct.applies_until
                         if not until or (ct.applies_from <= today and until >= today):
                             actives.append(ct)
-                for req in job.candidature_set.all():
+                qs = job.candidature_set.order_by('date_submitted')
+                qs = dsbe.only_coached_persons(qs,today,
+                    'person__coached_from','person__coached_until')
+                for cand in qs:
                     #~ if not req.contract:
-                    candidates.append(req)
+                    candidates.append(cand)
                 if candidates + actives:
                     s = "<p>"
                     s += "<b>%s (%s)</b>" % (
@@ -1265,7 +1271,7 @@ class JobsOverview(dd.EmptyTable):
 
 if True: # dd.is_installed('contacts') and dd.is_installed('jobs'):
   
-    dd.inject_field(Company,
+    dd.inject_field(dsbe.Company,
         'is_jobprovider',
         mti.EnableChild('jobs.JobProvider',verbose_name=_("is Job Provider")),
         """Whether this Company is also a Job Provider."""

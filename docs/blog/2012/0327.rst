@@ -1,0 +1,45 @@
+20120327
+========
+
+Miscellaneous changes DSBE
+--------------------------
+
+Wäre es auch möglich die Reihenfolge der Kandidaten in der Übersicht
+sehen zu können (apparaît en haut de la liste des candiddats la personne
+qui été enregsitrée en premier comme candidate et ainsi de suite / Datum
+der Anfrage). Möglich? Noch besser wäre es diese Reihenfolge ändern zu
+können (eine Quote geben). Machbar?
+
+- Änderungen in :class:`jobs.JobsOverview`:
+
+  - die aktiven Stellenbesetzer sind jetzt nach `Contract.applies_from` 
+    (Beginndatum des Vertrags) sortiert. 
+    Bisher war die Reihenfolge zufällig.
+    
+  - die Kandidaten sind jetzt nach `Candidature.date_submitted` 
+    (Datum der Anfrage) sortiert. Bisher war die Reihenfolge zufällig.
+    
+  - In "Kandidaten" wurden fälschlicherweise auch Personen angezeigt, 
+    die nicht mehr begleitet sind (aber für die eine Stellenanfrage gemacht 
+    worden war).
+  
+ 
+- Art 60/7 Konvention Enddatum: soll immer 1 Tag früher sein als jetzt.
+  zB: 01/01/2012 bis 31/12/2013 und nicht bis 01/01/2013
+  
+- Anpassungen nach den Änderungen "contacts.Contact -> contacts.Partner" vom  :doc:`0316`.
+
+
+Continued on :mod:`lino.apps.az`
+--------------------------------
+
+
+  TypeError
+  unbound method age() must be called with Teacher instance as first argument (got Person instance instead)
+
+  TRACEBACK:
+  File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+  (...)
+
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 621, in full_value_from_object
+  return unbound_meth(obj,request)

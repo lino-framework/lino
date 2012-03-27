@@ -22,5 +22,5 @@ Das hat die eingegangene Nachricht nicht
 
 Mail.sent ist 
 
-Brauchen wir das Erstelldatum einer Nachricht.
+Brauchen wir das Erstelldatum einer Nachricht?
 

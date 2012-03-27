@@ -26,7 +26,7 @@ from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.cal import models as cal
 
-class Person(contacts.Contact,contacts.Born,contacts.PersonMixin):
+class Person(contacts.Partner,contacts.Born,contacts.PersonMixin):
     class Meta(contacts.PersonMixin.Meta):
         app_label = 'contacts'
     died_date = models.DateField(
@@ -34,7 +34,7 @@ class Person(contacts.Contact,contacts.Born,contacts.PersonMixin):
         verbose_name=_("Died date"))
 
               
-class Company(contacts.Contact,contacts.CompanyMixin):
+class Company(contacts.Partner,contacts.CompanyMixin):
     pass
     #~ class Meta(contacts.CompanyMixin.Meta):
         #~ app_label = 'contacts'

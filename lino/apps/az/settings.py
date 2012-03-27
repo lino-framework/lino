@@ -55,13 +55,13 @@ class Lino(Lino):
         #~ ]
         
         m = main.add_menu("master",_("Master"))
-        m.add_action(self.modules.families.Families)
         m.add_action(self.modules.contacts.Persons)
         m.add_action(self.modules.contacts.Companies)
         #~ m.add_action(self.modules.dsbe.MyPersonSearches)
         #~ m.add_action(self.modules.contacts.AllContacts)
         #~ m.add_action(self.modules.dsbe.Newcomers)
 
+        self.modules.families.setup_main_menu(self,ui,user,m)
         self.modules.courses.setup_main_menu(self,ui,user,m)
 
         #~ if user is None:
@@ -72,6 +72,7 @@ class Lino(Lino):
         self.modules.cal.setup_my_menu(self,ui,user,m)
         self.modules.mails.setup_my_menu(self,ui,user,m)
         self.modules.courses.setup_my_menu(self,ui,user,m)
+        self.modules.families.setup_my_menu(self,ui,user,m)
         m.add_action(self.modules.lino.MyTextFieldTemplates)
 
         #~ m.add_instance_action(user,label="My user preferences")
@@ -81,6 +82,7 @@ class Lino(Lino):
             cfg = main.add_menu("config",_("Configure"))
             
             self.modules.contacts.setup_config_menu(self,ui,user,cfg)
+            self.modules.families.setup_config_menu(self,ui,user,cfg)
             self.modules.courses.setup_config_menu(self,ui,user,cfg)
             
             #~ self.modules.notes.setup_config_menu(self,ui,user,cfg)
@@ -92,6 +94,7 @@ class Lino(Lino):
             m = main.add_menu("explorer",_("Explorer"))
             
             self.modules.contacts.setup_explorer_menu(self,ui,user,m)
+            self.modules.families.setup_explorer_menu(self,ui,user,m)
             self.modules.courses.setup_explorer_menu(self,ui,user,m)
             self.modules.cal.setup_explorer_menu(self,ui,user,m)
             

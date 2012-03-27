@@ -239,6 +239,8 @@ Short-term
 Medium-term
 -----------
 
+#.  Rechtschreibungshilfe in TinyMCE? 
+
 #.  Redundant code in js_render_GridPanel_class() and ext_elems.GridPanel.
 
 #.  Country, Region and City. Belgium is -despite their constant language 

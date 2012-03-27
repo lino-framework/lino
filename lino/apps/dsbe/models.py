@@ -77,7 +77,7 @@ from lino.tools import obj2str
 from lino.modlib.countries.models import CountryCity
 #~ from lino.modlib.cal.models import DurationUnit, update_auto_task
 from lino.modlib.cal.models import DurationUnit, update_reminder
-from lino.modlib.contacts.models import Contact
+#~ from lino.modlib.contacts.models import Contact
 from lino.tools import resolve_model, UnresolvedModel
 
 #~ # not used here, but these modules are required in INSTALLED_APPS, 
@@ -276,7 +276,7 @@ add('18', _("Foreigner card F+"))
 
 
 
-class Partner(mixins.DiffingMixin,models.Model):
+class CpasPartner(mixins.DiffingMixin,models.Model):
 #~ class Partner(mixins.DiffingMixin,contacts.Contact):
     """
     """
@@ -321,7 +321,7 @@ class Partner(mixins.DiffingMixin,models.Model):
           
 
 
-class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printable):
+class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Printable):
     """
     Represents a physical person.
     
@@ -696,12 +696,14 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
               master_instance=self)
         return rr.renderer.quick_add_buttons(r)
 
-class Contacts(contacts.Contacts):
+class Partners(contacts.Partners):
     """
     Base class for Companies and Persons tables. 
     Manages disabled_fields using a list of `imported_fields` 
     defined by subclasses.
     """
+    
+    #~ app_label = 'contacts'
     
     imported_fields = []
     
@@ -715,12 +717,12 @@ class Contacts(contacts.Contacts):
     def disable_delete(self,obj,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
             return _("Cannot delete contacts imported from TIM")
-        return super(Contacts,self).disable_delete(obj,request)
+        return super(Partners,self).disable_delete(obj,request)
         
     @classmethod
     def do_setup(self):
-        super(contacts.Contacts,self).do_setup()
-        self.imported_fields = dd.fields_list(contacts.Contact,
+        super(contacts.Partners,self).do_setup()
+        self.imported_fields = dd.fields_list(contacts.Partner,
           '''name remarks region 
           zip_code city country 
           street_prefix street street_no street_box 
@@ -730,11 +732,11 @@ class Contacts(contacts.Contacts):
           is_person is_company
           ''')
         
-class AllContacts(contacts.AllContacts,Contacts):
+class AllPartners(contacts.AllPartners,Partners):
     app_label = 'contacts'
     #~ pass
 
-class Company(Partner,contacts.Contact,contacts.CompanyMixin):
+class Company(CpasPartner,contacts.Partner,contacts.CompanyMixin):
   
     """
     Inner class Meta is necessary because of :doc:`/tickets/14`.
@@ -812,7 +814,7 @@ class CompanyDetail(dd.DetailLayout):
 
 #~ class Companies(reports.Report):
 #~ class Companies(contacts.Contacts):
-class Companies(Contacts):
+class Companies(Partners):
     #~ hide_details = [Contact]
     model = settings.LINO.company_model
     detail_layout = CompanyDetail()
@@ -1008,7 +1010,7 @@ class PersonDetail(dd.DetailLayout):
             
 
 #~ class AllPersons(contacts.Persons):
-class AllPersons(Contacts):
+class AllPersons(Partners):
     """
     List of all Persons.
     """
@@ -1086,14 +1088,16 @@ def only_coached_persons(qs,*args,**kw):
     return qs.filter(only_coached_persons_filter(*args,**kw))
     
 
-def only_coached_persons_filter(today):
+def only_coached_persons_filter(today,
+      d1field='coached_from',
+      d2field='coached_until'):
     """
     coached_from and coached_until
     """
     #~ period_until = period_until or period_from
     # Person with both fields empty is not considered coached:
-    q1 = Q(coached_until__isnull=False) | Q(coached_from__isnull=False)
-    return Q(q1,range_filter(today,'coached_from','coached_until'))
+    q1 = Q(**{d2field+'__isnull':False}) | Q(**{d1field+'__isnull':False})
+    return Q(q1,range_filter(today,d1field,d2field))
     
   
 def only_my_persons(qs,user):
@@ -2541,7 +2545,7 @@ def site_setup(site):
     
     site.modules.countries.Cities.set_detail("""
     name country 
-    contacts.ContactsByCity jobs.StudiesByCity
+    contacts.PartnersByCity jobs.StudiesByCity
     """)
     
     site.modules.countries.Countries.set_detail("""

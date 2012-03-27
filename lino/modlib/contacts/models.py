@@ -436,7 +436,7 @@ class PersonDetail(dd.DetailLayout):
   
     main = """
     address_box contact_box
-    bottom_box RolesByPerson
+    bottom_box contacts.RolesByPerson
     """
     
     address_box = """

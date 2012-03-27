@@ -194,25 +194,33 @@ class Lessons(dd.Table):
     remark
     courses.PresencesByLesson
     """
-    
+
+class Presence(models.Model):
+  
+    class Meta:
+        verbose_name = _("Presence")
+        verbose_name_plural = _('Presences')
+
+    #~ teacher = models.ForeignKey(Teacher)
+    lesson = models.ForeignKey(Lesson)
+    pupil = models.ForeignKey(Pupil)
+    status = models.ForeignKey(PresenceStatus)
+
+
+
+
 class Presences(dd.Table):
     model = Presence
     #~ order_by = ['date start_time']
 
 class PresencesByPupil(Presences):
-    master_key = Pupil
+    master_key = "pupil"
+
+class PresencesByLesson(Presences):
+    master_key = "lesson"
     
 class LessonsByTeacher(Lessons):
     master_key = "teacher"
-
-class Presence(models.Model):
-    class Meta:
-        verbose_name = _("Presence")
-        verbose_name_plural = _('Presences')
-
-    teacher = models.ForeignKey(Teacher)
-    pupil = models.ForeignKey(Pupil)
-    status = models.ForeignKey(PresenceStatus)
 
 
 

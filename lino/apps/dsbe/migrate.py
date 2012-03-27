@@ -1026,3 +1026,11 @@ def migrate_from_1_4_2(globals_dict):
           job_id=job_id,duration=duration,regime_id=regime_id,schedule_id=schedule_id,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)    
     globals_dict.update(create_jobs_contract=create_jobs_contract)
     return '1.4.3'
+
+def migrate_from_1_4_3(globals_dict): 
+    """
+    - :mod:`lino.modlib.contacts` : renamed "Contact" to "Partner".
+    - :mod:`lino.modlib.mails` : renamed "Mail.contact" to "Mail.partner".
+    """
+    raise NotImplementedError()
+    return '1.4.4'

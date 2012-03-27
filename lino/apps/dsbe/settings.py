@@ -86,7 +86,7 @@ class Lino(Lino):
             #~ m.add_action('contacts.Persons.detail')
             #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
             m.add_action(self.modules.dsbe.MyPersonSearches)
-            m.add_action(self.modules.contacts.AllContacts)
+            m.add_action(self.modules.contacts.AllPartners)
             #~ m.add_action(self.modules.dsbe.Newcomers)
         self.modules.isip.setup_main_menu(self,ui,user,m)
         self.modules.newcomers.setup_main_menu(self,ui,user,m)

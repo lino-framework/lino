@@ -250,8 +250,8 @@ Unkomplette Geburtsdaten sind erlaubt, z.B.
 </ul>    
 """)
     
-    Contact = resolve_model('contacts.Contact')
-    t = ContentType.objects.get_for_model(Contact)
+    Partner = resolve_model('contacts.Partner')
+    t = ContentType.objects.get_for_model(Partner)
     yield I(t,'language',u"""\
     Die Sprache, in der Dokumente ausgestellt werden sollen.
 """)

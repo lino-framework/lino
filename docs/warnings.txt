@@ -1,64 +1,204 @@
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:23: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.models', it reported error: "cannot import name Contact", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:61: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.fixtures.pp2lino', it reported error: "cannot import name Contact", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:79: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_tests', it reported error: "cannot import name Contact", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:86: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_demo_tests', it reported error: "cannot import name Contact", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:93: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_sql_tests', it reported error: "cannot import name Contact", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:12: (WARNING/2) autodoc can't import/find module 'lino.utils.xmlgen.xhtml', it reported error: "No module named xhtml", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:247: WARNING: duplicate object description of lino.utils.xmlgen.bcss.HealthInsuranceRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:270: WARNING: duplicate object description of lino.utils.xmlgen.bcss.IdentifyPersonRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:278: WARNING: duplicate object description of lino.utils.xmlgen.bcss.IdentifyPersonRequest.build_request, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:306: WARNING: duplicate object description of lino.utils.xmlgen.bcss.PerformInvestigationRequest, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:358: WARNING: duplicate object description of lino.utils.xmlgen.bcss.Service, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:384: WARNING: duplicate object description of lino.utils.xmlgen.bcss.hir, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:391: WARNING: duplicate object description of lino.utils.xmlgen.bcss.ipr, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:398: WARNING: duplicate object description of lino.utils.xmlgen.bcss.pir, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:405: WARNING: duplicate object description of lino.utils.xmlgen.bcss.reply2lines, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:424: WARNING: duplicate object description of lino.utils.xmlgen.bcss.xml2reply, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.bcss.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\admin\install_debian.rst:83: (ERROR/3) Unknown target name: "set up your python path".
+T:\hgwork\lino\docs\admin\oood.rst:47: (WARNING/2) Literal block expected; none found.
+t:\hgwork\lino\lino\apps\igen\models.py:docstring of lino.apps.igen.models:35: (WARNING/2) Literal block ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.sales.models', it reported error: "'module' object has no attribute 'Contact'", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:15: (WARNING/2) autodoc can't import/find module 'lino.sandbox.bcss.test2', it reported error: "No module named fpconst", please check your spelling and sys.path
+t:\hgwork\lino\lino\utils\test.py:docstring of lino.utils.test.TestCase.test_them_all:1: (ERROR/3) Unknown target name: "test".
+T:\hgwork\lino\docs\blog\2011\0302.rst:50: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2011\0523.rst:31: (ERROR/3) Unknown interpreted text role "field".
+T:\hgwork\lino\docs\blog\2011\0524.rst:37: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\blog\2011\0717.rst:12: (ERROR/3) Unknown interpreted text role "settings".
+T:\hgwork\lino\docs\blog\2011\0720.rst:105: (WARNING/2) Literal block ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2011\0830.rst:7: (ERROR/3) Unknown interpreted text role "modmeth".
+T:\hgwork\lino\docs\blog\2011\0906.rst:15: (ERROR/3) Unknown interpreted text role "modmeth".
+T:\hgwork\lino\docs\blog\2011\0914.rst:24: (ERROR/3) Unknown interpreted text role "modmeth".
+T:\hgwork\lino\docs\blog\2011\0914.rst:24: (ERROR/3) Unknown interpreted text role "modelmeth".
+T:\hgwork\lino\docs\blog\2011\0914.rst:40: (ERROR/3) Unknown interpreted text role "modmeth".
+T:\hgwork\lino\docs\blog\2011\0914.rst:45: (WARNING/2) Inline substitution_reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2011\0914.rst:45: (WARNING/2) Inline substitution_reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2011\0914.rst:45: (WARNING/2) Inline substitution_reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2011\0914.rst:45: (WARNING/2) Inline substitution_reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2011\0915.rst:30: (WARNING/2) Inline substitution_reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2011\0915.rst:30: (WARNING/2) Inline substitution_reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2011\0915.rst:30: (WARNING/2) Inline substitution_reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2011\1216.rst:23: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\blog\2011\1216.rst:24: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0108.rst:85: (WARNING/2) Inline emphasis start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\0127.rst:7: (WARNING/2) Mismatch: both interpreted text role prefix and reference suffix.
+T:\hgwork\lino\docs\blog\2012\0131.rst:39: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:25: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:28: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:31: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:33: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0210.rst:34: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0210.rst:38: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:39: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0210.rst:41: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0210.rst:42: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0213.rst:57: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
+T:\hgwork\lino\docs\igen\appdocs\igen.rst:45: (WARNING/2) Literal block ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\ref\model_methods.rst:4: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: _lino_default_table
+
+    Used internally. Lino chooses during the kernel startup, for each model,
+    one of the discovered Table subclasses as the "default table".
+T:\hgwork\lino\docs\ref\model_methods.rst:9: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: allow_cascaded_delete
+
+    Lino, like Django, by default forbids to delete an object that is
+    referenced by other objects.
+
+    Set this to `True` on models whose objects should get automatically
+    deleted if a related object gets deleted.
+    Example: Lino should not refuse to delete
+    a Mail just because it has some Recipient.
+    When deleting a Mail, Lino should also delete its Recipients.
+    That's why :class:`lino.modlib.mails.models.Recipient`
+    has ``allow_cascaded_delete = True``.
+
+    Other examples of such models are
+    :class:`lino.apps.dsbe.models.PersonProperty`
+    and
+    :class:`lino.apps.dsbe.models.LanguageKnowledge`.
+T:\hgwork\lino\docs\ref\model_methods.rst:29: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: disabled_fields
+
+    return a list of names of fields that should be disabled (not editable)
+    for this record.
+
+    Example::
+
+      def disabled_fields(self,request):
+          if self.user == request.user: return []
+          df = ['field1']
+          if self.foo:
+            df.append('field2')
+          return df
+T:\hgwork\lino\docs\ref\model_methods.rst:43: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: disable_delete
+
+    Hook to decide whether a given record may be deleted.
+    Return a non-empty string with a message that explains why this record cannot be deleted.
+
+    Example::
+
+      def disable_delete(self,request):
+          if self.is_imported:
+              return _("Cannot delete imported records.")
+T:\hgwork\lino\docs\ref\model_methods.rst:56: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: disable_editing
+
+  ``disable_editing(self,request)``
+      Return `True` if the whole record should be read-only.
+T:\hgwork\lino\docs\ref\model_methods.rst:62: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: FOO_choices
+
+  Return a queryset or list of allowed choices for field FOO.
+  Must be decorated by a :func:`lino.utils.choosers.chooser`.
+  Example of a context-sensitive chooser method::
+
+
+      country = models.ForeignKey("countries.Country",blank=True,null=True,
+          verbose_name=_("Country"))
+      city = models.ForeignKey('countries.City',blank=True,null=True,
+          verbose_name=_('City'))
+
+      @chooser()
+      def city_choices(cls,country):
+          if country is not None:
+              return country.city_set.order_by('name')
+          return cls.city.field.rel.to.objects.order_by('name')
+T:\hgwork\lino\docs\ref\model_methods.rst:82: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: FOO_changed
+
+    Called when field FOO of an instance of this model has been modified through the user interface.
+    Example::
+
+      def city_changed(self,oldvalue):
+          print "City changed from %s to %s!" % (oldvalue,self.city)
+T:\hgwork\lino\docs\ref\model_methods.rst:91: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: get_queryset
+
+    Return a customized default queryset
+
+    Example::
+
+      def get_queryset(self):
+          return self.model.objects.select_related('country','city','coach1','coach2','nationality')
+T:\hgwork\lino\docs\ref\model_methods.rst:101: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: data_control
+
+  Used by :class:`lino.models.DataControlListing`.
+
+  Example::
+
+      def data_control(self):
+T:\hgwork\lino\docs\ref\model_methods.rst:110: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: on_user_change
+
+  Called when a record has been modified through the user interface.
+
+  Example::
+
+    def on_user_change(self,request):
+T:\hgwork\lino\docs\ref\model_methods.rst:119: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: save_auto_tasks
+
+  Example::
+
+    def save_auto_tasks(self):
+T:\hgwork\lino\docs\ref\model_methods.rst:126: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: setup_report
+
+  Example::
+
+      @classmethod
+      def setup_report(model,rpt):
+T:\hgwork\lino\docs\ref\model_methods.rst:133: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: summary_row
+
+  Return a HTML fragment that describes this record in a summary
+
+  Example::
+
+    def summary_row(self,ui,rr,**kw):
+        s = ui.href_to(self)
+        if settings.LINO.projects_model:
+            if self.project and not reports.has_fk(rr,'project'):
+                s += " (" + ui.href_to(self.project) + ")"
+        return s
+T:\hgwork\lino\docs\ref\model_methods.rst:148: (ERROR/3) Unknown directive type "modmeth".
+
+.. modmeth:: update_owned_task
+
+  Example::
+
+    def update_owned_task(self,task):
+        task.person = self
+T:\hgwork\lino\docs\tickets\28.rst:4: (WARNING/2) Inline literal start-string without end-string.
+T:\hgwork\lino\docs\tickets\56.rst:27: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+T:\hgwork\lino\docs\todo.rst:326: (WARNING/2) Enumerated list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\todo.rst:330: (ERROR/3) Unexpected indentation.
+T:\hgwork\lino\docs\todo.rst:331: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\admin\pythonpath.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:25: WARNING: py:func reference target not found: lino.modlib.cal.update_reminders
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:70: WARNING: py:class reference target not found: lino.fields.IncompleteDate
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:98: WARNING: py:class reference target not found: lino.mixins.printable.CachedPrintable
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1210
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1211
-T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: unknown document: /blog/2010/1214
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:12: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:21: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:59: WARNING: py:class reference target not found: Company
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:66: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:116: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:127: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:150: WARNING: py:func reference target not found: lino.apps.dsbe.tests.dsbe_tests.test04
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:150: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:166: WARNING: py:func reference target not found: lino.apps.dsbe.tests.dsbe_tests.test04
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:166: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:202: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:204: WARNING: py:class reference target not found: Person
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:204: WARNING: py:class reference target not found: Company
-T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:42: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:64: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:12: WARNING: py:class reference target not found: Event
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:4: WARNING: py:mod reference target not found: django.contrib.auth
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:11: WARNING: py:mod reference target not found: django.contrib.sessions
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:12: WARNING: unknown document: /topics/http_auth
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:15: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:23: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:9: WARNING: py:mod reference target not found: xhtml
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:18: WARNING: py:mod reference target not found: bcss
-T:\hgwork\lino\docs\autodoc\lino.utils.xmlgen.rst:49: WARNING: py:class reference target not found: SimpleException
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2012\0316.rst:4: WARNING: py:mod reference target not found: lino.apps.az
+Interrupted while building, starting debugger:

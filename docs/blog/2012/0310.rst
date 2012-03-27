@@ -3,6 +3,9 @@
 
 Started new module :mod:`lino.utils.xmlgen.odf`.
 
+A bug in appy.pod
+-----------------
+
 Oh je: appy.pod hat scheinbar noch einen Bug in der Konvertierung von xhtml nach ODF.
 Hier das XHTML-Fragment, das ich ihm schicke::
   
@@ -39,7 +42,7 @@ Aus heiterem Himmel vergisst er (hinter dem Wort "terav") einen ``<text:p>`` zu 
   ei ole meil väga tähtis. Prantslastele aga küll.</text:p><table:table table:style-name="podTable"><table:table-column/><table:table-column/><table:table-header-rows><table:table-row><table:table-cell table:style-name="podHeaderCell"><text:p>terav</table:table-cell><table:table-cell table:style-name="podHeaderCell"><text:p>pehme</text:p></table:table-cell></table:table-row></table:table-header-rows><table:table-row><table:table-cell table:style-name="podCell"><text:p><text:span text:style-name="podBold">s</text:span>upp</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p><text:span text:style-name="podBold">z</text:span>oom</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p><text:span text:style-name="podBold">š</text:span>okk</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p><text:span text:style-name="podBold">ž</text:span>urnaal, <text:span text:style-name="podBold">ž</text:span>anre</text:p></table:table-cell></table:table-row></table:table></text:p><table:table table:style-name="podTable"><table:table-column/><table:table-column/><table:table-column/><table:table-row><table:table-cell table:style-name="podCell"><text:p>la <text:span text:style-name="podBold">soupe</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[sup]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>supp</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p>le <text:span text:style-name="podBold">garage</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[ga&apos;raaž]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>garaaž</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p>le <text:span text:style-name="podBold">genre</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[žA~rə]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>žanre</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p>le <text:span text:style-name="podBold">journal</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[žur&apos;nal]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>(1) päevik; (2) ajaleht</text:p></table:table-cell></table:table-row><table:table-row><table:table-cell table:style-name="podCell"><text:p>le <text:span text:style-name="podBold">choc</text:span></text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>[žok]</text:p></table:table-cell><table:table-cell table:style-name="podCell"><text:p>(1) šokk; (2) löök</text:p></table:table-cell></table:table-row></table:table>
 
 
-Und ich nun restify() mit odtwriter statt htmlwriter aufriefe? 
+Und wenn ich nun restify() mit odtwriter statt htmlwriter aufriefe? 
 Linos neue Funktion :func:`lino.utils.restify.rst2odt` tut ungefähr 
 das Gleiche wie Dave Kuhlmans Skript, aber wird im gleichen 
 Python-Prozess aufgerufen.
@@ -50,7 +53,6 @@ Geht fein... aber er verwendet ja natürlich andere Style mappings als
 
 Ich merke schon, dass mein :mod:`lino.utils.xmlgen.odf` vielleicht Unsinn ist.
 
-
 Und ich habe keine Ahnung, wodurch der Bug ausgelöst wurde 
 (also wie ich ihn umgehen kann).
 Dabei würde ich doch so gern für Donnerstag 
@@ -60,9 +62,17 @@ fange ich an, einigermaßen zufrieden zu sein.
 Aber für die Schüler müsste ich eine Verson auf Papier machen.
 
 
-That's why I discovered http://xhtml2odt.org/ and did some tests.
-Unlike appy.pod it uses XSL translation to convert xhtml to odt.
+xhtml2odt
+---------
 
+The bug described in the previous section made me discover http://xhtml2odt.org/.
+`xhtml2odt <http://xhtml2odt.org>`_, like :term:`appy.pod`, generates .odt files. 
+But unlike :term:`appy.pod` it uses XSL translation to convert xhtml to odt.
+I played around and got some results (see :srcref:`/lino/modlib/vocbook/base.py`).
+My idea was to feed the content.xml as a template through Cheetah in order to 
+replace variable content.
+
+The following error caused me some headache::
 
   Error while evaluating the expression "self.as_odt()" defined in the "from" part of a statement.
   File "<string>", line 1, in <module>
@@ -73,8 +83,6 @@ Unlike appy.pod it uses XSL translation to convert xhtml to odt.
   File "xslt.pxi", line 568, in lxml.etree.XSLT.__call__ (src/lxml/lxml.etree.c:120289)
   <class 'lxml.etree.XSLTApplyError'>: xsl:comment : '--' or ending '-' not allowed in comment
 
-
-The above error caused me some headache.
 It comes when there is an unknown tag in my source (and when verbose is True).
 It is caused by the following rule in `xhtml2odt.xsl`::
 
@@ -91,7 +99,15 @@ It is caused by the following rule in `xhtml2odt.xsl`::
   
 When the case happens, I temporarily replace the 
 ``<xsl:comment>`` by ``<text:p>`` so I can at least see the reason.
+Couldn't decide whether or not this is a bug in xhtml2odt...
 
+Anyway I stopped this direction again 
+(`USE_XHTML2ODT = False` in the source code)
+because I discovered a workaround for the urgent appy.pod problem, 
+and because I understood that my idea might not be trivial to finish.
+appy.pod seems more suited for my use case, also concerning management of styles.
 
-I stopped again because 
+Still I have a feeling that Aurélien's approach of using XSLT is more "healthy" 
+than Gaëtan's self-written parser. Is it possible to combine both?
+
 
