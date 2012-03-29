@@ -12,12 +12,12 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Neues Modul Schuldnerberatung (debt counselling) starten.
+
 #.  Vertragsüberschneidungen bei save() statt Datenkontrollliste.
 
 #.  BCSS-Requests: Button "Execute" deaktivieren, wenn Request 
     abgeschickt ist.
-
-#.  Neues Modul Schuldnerberatung (debt counselling) starten.
 
 #.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 
     Basisklassen anzeigen. Der Unterschied ist für den Benutzer nicht wichtig.

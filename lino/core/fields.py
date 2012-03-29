@@ -657,3 +657,12 @@ class IncompleteDateField(models.CharField):
         
 
 
+class RecurrenceField(models.CharField):
+    """
+    """
+    #~ __metaclass__ = models.SubfieldBase
+
+    def __init__(self,*args,**kw):
+        kw.setdefault('max_length',200)
+        models.CharField.__init__(self,*args,**kw)
+      

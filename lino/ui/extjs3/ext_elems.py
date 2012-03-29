@@ -941,6 +941,9 @@ class GenericForeignKeyElement(DisplayElement):
         pass
     
     
+class RecurrenceElement(DisplayElement):
+    value_template = "new Ext.ensible.cal.RecurrenceField(%s)"
+    
 class HtmlBoxElement(DisplayElement):
     ext_suffix = "_htmlbox"
     #~ declare_type = jsgen.DECLARE_VAR
@@ -1620,6 +1623,7 @@ class FormPanel(jsgen.Component):
 
 _FIELD2ELEM = (
     #~ (dd.Constant, ConstantElement),
+    (dd.RecurrenceField, RecurrenceElement),
     (dd.HtmlBox, HtmlBoxElement),
     #~ (dd.QuickAction, QuickActionElement),
     (dd.DisplayField, DisplayElement),

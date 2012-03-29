@@ -96,6 +96,32 @@ class PresenceStatus(babel.BabelNamed):
         
 class PresenceStatuses(dd.Table):
     model = PresenceStatus
+    
+class Content(babel.BabelNamed):
+    class Meta:
+        verbose_name = _("Course Content")
+        verbose_name_plural = _('Course Contents')
+    #~ name = models.CharField(max_length=200,
+          #~ blank=True,# null=True,
+          #~ verbose_name=_("Name"))
+    #~ def __unicode__(self):
+        #~ return unicode(self.name)
+        
+class Contents(dd.Table):
+    model = Content
+    detail_template = """
+    id name
+    courses.CoursesByContent
+    """
+    
+        
+class Room(babel.BabelNamed):
+    class Meta:
+        verbose_name = _("Classroom")
+        verbose_name_plural = _("Classrooms")
+        
+class Rooms(dd.Table):
+    model = Room
         
         
 class Teacher(Person):
@@ -107,7 +133,7 @@ class Teacher(Person):
 class TeacherDetail(contacts.PersonDetail):
     box5 = "remarks" 
     general = contacts.PersonDetail.main
-    main = "general courses.LessonsByTeacher"
+    main = "general courses.LessonsByTeacher courses.CoursesByTeacher"
 
     def setup_handle(self,lh):
       
@@ -128,43 +154,95 @@ class Pupil(Person):
 class PupilDetail(contacts.PersonDetail):
     box5 = "remarks" 
     general = contacts.PersonDetail.main
-    main = "general PresencesByPupil"
+    courses = """
+    EnrolmentsByPupil 
+    PresencesByPupil
+    """
+    main = "general courses"
 
     def setup_handle(self,lh):
       
         lh.general.label = _("General")
+        lh.courses.label = _("Courses")
         #~ lh.notes.label = _("Notes")
 
 class Pupils(contacts.Persons):
     model = Pupil
     detail_layout = PupilDetail()
+
+
+
+
   
-
-
-
-
-class Content(models.Model):
     
+class Course(models.Model,mixins.Printable):
     class Meta:
-        verbose_name = _("Course Content")
-        verbose_name_plural = _('Course Contents')
+        verbose_name = _("Course")
+        verbose_name_plural = _('Courses')
         
-    name = models.CharField(max_length=200,
-          blank=True,# null=True,
-          verbose_name=_("Name"))
-          
-    def __unicode__(self):
-        return unicode(self.name)
-        
-  
+    content = models.ForeignKey(Content)
+    teacher = models.ForeignKey(Teacher)
+    room = models.ForeignKey(Room,blank=True,null=True)
     
+    rrule = dd.RecurrenceField(
+        blank=True,# null=True,
+        verbose_name=_("Recurrence"))
+        
+    remark = models.CharField(max_length=200,
+        blank=True,# null=True,
+        verbose_name=_("Remark"))
+        
+    def __unicode__(self):
+        return u"%s (%s)" % (
+          self.content,
+          self.teacher)
+  
+
+class Courses(dd.Table):
+    model = Course
+    #~ order_by = ['date','start_time']
+    detail_template = """
+    id:8 teacher content room
+    remark
+    rrule
+    courses.LessonsByCourse
+    """
+
+class CoursesByTeacher(Courses):
+    master_key = "teacher"
+
+class CoursesByContent(Courses):
+    master_key = "content"
+
+
+class Enrolment(models.Model):
+  
+    class Meta:
+        verbose_name = _("Enrolment")
+        verbose_name_plural = _('Enrolments')
+
+    #~ teacher = models.ForeignKey(Teacher)
+    course = models.ForeignKey(Course)
+    pupil = models.ForeignKey(Pupil)
+
+class Enrolments(dd.Table):
+    model = Enrolment
+
+class EnrolmentsByPupil(Enrolments):
+    master_key = "pupil"
+
+
+
+
+
 class Lesson(models.Model,mixins.Printable):
     class Meta:
         verbose_name = _("Lesson")
         verbose_name_plural = _('Lessons')
         
         
-    teacher = models.ForeignKey(Teacher)
+    course = models.ForeignKey(Course)
+    teacher = models.ForeignKey(Teacher,blank=True)
     
     date = models.DateField(_("date"))
     start_time = models.TimeField(
@@ -177,6 +255,14 @@ class Lesson(models.Model,mixins.Printable):
     remark = models.CharField(max_length=200,
         blank=True,# null=True,
         verbose_name=_("Remark"))
+        
+    def save(self,*args,**kw):
+        if self.teacher_id is None:
+            self.teacher = self.course.teacher
+        super(Lesson,self).save(*args,**kw)
+        if self.presence_set().count() == 0:
+            for e in self.course.enrolment_set():
+                Presence(pupil=e.pupil,lesson=self).save()
         
     def __unicode__(self):
         return u"%s %s-%s (%s)" % (
@@ -195,6 +281,13 @@ class Lessons(dd.Table):
     courses.PresencesByLesson
     """
 
+class LessonsByTeacher(Lessons):
+    master_key = "teacher"
+
+class LessonsByCourse(Lessons):
+    master_key = "course"
+
+
 class Presence(models.Model):
   
     class Meta:
@@ -206,9 +299,6 @@ class Presence(models.Model):
     pupil = models.ForeignKey(Pupil)
     status = models.ForeignKey(PresenceStatus,null=True,blank=True)
 
-
-
-
 class Presences(dd.Table):
     model = Presence
 
@@ -218,9 +308,6 @@ class PresencesByPupil(Presences):
 class PresencesByLesson(Presences):
     master_key = "lesson"
     
-class LessonsByTeacher(Lessons):
-    master_key = "teacher"
-
 
 
 
@@ -250,10 +337,14 @@ def setup_my_menu(site,ui,user,m): pass
   
 def setup_config_menu(site,ui,user,m):
     m = m.add_menu("courses",_("Courses"))
+    m.add_action(Rooms)
+    m.add_action(Contents)
     m.add_action(PresenceStatuses)
   
 def setup_explorer_menu(site,ui,user,m):
     m = m.add_menu("courses",_("Courses"))
     m.add_action(Presences)
     m.add_action(Lessons)
+    m.add_action(Courses)
+    m.add_action(Enrolments)
   

@@ -33,6 +33,7 @@ Extended Fields:
 - :class:`PriceField<lino.core.fields.PriceField>`
 - :class:`GenericForeignKey <lino.core.fields.GenericForeignKey>`
 - :class:`GenericForeignKeyIdField <lino.core.fields.GenericForeignKeyIdField>`
+- :class:`RecurrenceField <lino.core.fields.RecurrenceField >`
 
 Virtual Fields:
 
@@ -77,6 +78,7 @@ from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
 from lino.core.actions import Calendar
 
+from lino.core.fields import RecurrenceField 
 from lino.core.fields import GenericForeignKey
 from lino.core.fields import GenericForeignKeyIdField
 from lino.core.fields import IncompleteDateField
