@@ -1543,10 +1543,11 @@ tinymce.init({
                     return response
                 
                 from lxml.html import builder as html
+                title = unicode(ar.get_title())
                 doc = html.BODY(
-                  html.HEAD(html.TITLE(ar.get_title())),
+                  html.HEAD(html.TITLE(title)),
                   html.BODY(
-                    html.H1(ar.get_title()),
+                    html.H1(title),
                     self.table2xhtml(ar)
                   )
                 )
@@ -2577,14 +2578,15 @@ tinymce.init({
             #~ return e
             
             if not x: return html.TD(**cellattrs)
-            try:
-                #~ return html.TD(etree.XML(x),**cellattrs)
-                x = etree.XML(x)
-            except Exception,e:
-                if False:
-                    raise Exception("Invalid XML value %r" % x)
-                logger.warning("Invalid XML value %r",x)
-                raise
+            if x[0] == '<':
+                try:
+                    #~ return html.TD(etree.XML(x),**cellattrs)
+                    x = etree.XML(x)
+                except Exception,e:
+                    if True:
+                        raise Exception("Invalid XML value %r" % x)
+                    logger.warning("Invalid XML value %r",x)
+                    raise
             return html.TD(x,**cellattrs)
             
         def f():
