@@ -2572,7 +2572,7 @@ def site_setup(site):
         main = """
         type summary user project
         start end #all_day #duration status 
-        place priority access_class transparent rset 
+        place priority access_class transparent #rset 
         calendar owner created:20 modified:20 user_modified 
         description GuestsByEvent
         """

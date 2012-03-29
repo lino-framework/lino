@@ -2,5 +2,5 @@
 ========
 
 
-Continued on :mod:`lino.apps.az`
---------------------------------
+Continued on :mod:`lino.apps.az`.
+New models Enrolment, Course, Room in `lino.apps.az.courses`.

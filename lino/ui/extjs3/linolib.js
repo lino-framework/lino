@@ -4063,20 +4063,6 @@ Ext.ensible.cal.CalendarRecord.reconfigure();
 Mappings towards lino.modlib.cal.models.PanelEvents 
 */
 #set $S = $site.modules.cal.PanelEvents.get_handle($ui).store
-//~ Ext.ensible.cal.EventMappings = {
-    //~ EventId:     {name: 'ID', mapping: $S.column_index('id'), type:'int'},
-    //~ CalendarId:  {name: 'CalID', mapping: $S.column_index('calendarHidden'), type: 'int'},
-    //~ Title:       {name: 'EvtTitle', mapping: $S.column_index('summary')},
-    //~ StartDate:   {name: 'StartDt', mapping: $S.column_index('start_dt'), type: 'date', dateFormat: 'c'},
-    //~ EndDate:     {name: 'EndDt', mapping: $S.column_index('end_dt'), type: 'date', dateFormat: 'c'},
-    //~ RRule:       {name: 'RecurRule', mapping: $S.column_index('rsetHidden')},
-    //~ Location:    {name: 'Location', mapping: $S.column_index('placeHidden')},
-    //~ Notes:       {name: 'Desc', mapping: $S.column_index('description')},
-    //~ Url:         {name: 'LinkUrl', mapping: $S.column_index('url')},
-    //~ IsAllDay:    {name: 'AllDay', mapping: $S.column_index('all_day'), type: 'boolean'},
-    //~ Reminder:    {name: 'Reminder', mapping: $S.column_index('reminder')}
-    
-//~ };
 Ext.ensible.cal.EventMappings = {
     EventId:     {name: 'ID',        mapping: 'id', type:'int'},
     CalendarId:  {name: 'CalID',     mapping: 'calendarHidden', type: 'int'},
@@ -4119,41 +4105,6 @@ Lino.on_eventdelete = function() {
   console.log("Lino.on_eventdelete",arguments);
 };
 
-Lino.unused_on_eventadd  = function(cp,rec,el) {
-  var M = Ext.ensible.cal.EventMappings;
-  var params = {
-    //~ id: rec.data[M.EventId.name],
-    calendarHidden: rec.data[M.CalendarId.name],
-    summary: rec.data[M.Title.name],
-    start_date: rec.data[M.StartDate.name].dateFormat("$settings.LINO.date_format_extjs"),
-    start_time: Lino.format_time(rec.data[M.StartDate.name]),
-    end_date: rec.data[M.EndDate.name].dateFormat("$settings.LINO.date_format_extjs"),
-    end_time: Lino.format_time(rec.data[M.EndDate.name]),
-    description: rec.data[M.Notes.name]
-    //~ StartDate:   {name: 'StartDt', mapping: $S.column_index('start_dt'), type: 'date', dateFormat: 'c'},
-    //~ EndDate:     {name: 'EndDt', mapping: $S.column_index('end_dt'), type: 'date', dateFormat: 'c'},
-    //~ RRule:       {name: 'RecurRule', mapping: $S.column_index('rsetHidden')},
-    //~ Location:    {name: 'Location', mapping: $S.column_index('placeHidden')},
-    //~ Notes:       {name: 'Desc', mapping: $S.column_index('description')},
-    //~ Url:         {name: 'LinkUrl', mapping: $S.column_index('url')},
-    //~ IsAllDay:    {name: 'AllDay', mapping: $S.column_index('all_day'), type: 'boolean'},
-    //~ Reminder:    {name: 'Reminder', mapping: $S.column_index('reminder')}
-    };
-  console.log("Lino.on_eventadd ",rec,M,params);
-  return params;
-  //~ var a = {
-    //~ url: ROOT_URL + '/api/cal/Events',
-    //~ method: 'POST',
-    //~ params: params, 
-    //~ success: function(form, action) {
-    //~ }
-  //~ }
-  //~ console.log("Lino.on_eventadd ",a);
-  //~ return a;
-  //~ Ext.Ajax.request(a);
-  //~ Lino.cal.Events.insert(cp,{});
-  //~ return false;
-}
 Lino.on_eventadd  = function(cp,rec,el) {
   console.log("Lino.on_eventadd ",arguments);
   return false;

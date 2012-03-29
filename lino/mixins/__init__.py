@@ -44,22 +44,28 @@ class AutoUser(models.Model):
     class Meta:
         abstract = True
         
-    if settings.LINO.user_model: 
-      
-        user = models.ForeignKey(settings.LINO.user_model,
-            verbose_name=_("user"),
-            related_name="%(app_label)s_%(class)s_set_by_user",
-            blank=True,null=True
-            )
-        
-        def on_create(self,req):
-            if self.user is None:
-                u = req.get_user()
-                if u is not None:
-                    self.user = u
+    user = models.ForeignKey('contacts.Partner',
+        verbose_name=_("user"),
+        related_name="%(app_label)s_%(class)s_set_by_user",
+        blank=True,null=True
+        )
             
-        def update_owned_instance(self,task):
-            task.user = self.user
+    #~ if settings.LINO.user_model: 
+      
+        #~ user = models.ForeignKey(settings.LINO.user_model,
+            #~ verbose_name=_("user"),
+            #~ related_name="%(app_label)s_%(class)s_set_by_user",
+            #~ blank=True,null=True
+            #~ )
+        
+    def on_create(self,req):
+        if self.user is None:
+            u = req.get_user()
+            if u is not None:
+                self.user = u
+        
+    def update_owned_instance(self,task):
+        task.user = self.user
 
 if settings.LINO.user_model: 
   

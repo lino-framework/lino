@@ -1,0 +1,24 @@
+20120329
+========
+
+Still continuing on :mod:`lino.apps.az`
+
+Renamed `lino.apps.az.courses` to `lino.apps.az.school`.
+
+Mir ist aufgefallen, dass 
+school.Lesson eigentlich ein erweitertes cal.Event ist.
+Der bisherige `teacher` einer Lesson steht jetzt im `user` des `Event`.
+
+- Änderungen im Modul `lino.modlib.cal` 
+  - Klasse `Event` ist jetzt abstract und heißt `EventBase`
+
+:class:`lino.modlib.cal.models.RecurrenceSet` ist jetzt abstract und wird geerbt von 
+:class:`isip.ExamPolicy` sowie :class:`lino.apps.az.school.models.Course`.
+
+`lino.mixins.AutoUser` : 
+`user` ist jetzt ein FK nach `contacts.Partner` 
+statt bisher nach `Users.User`.
+
+
+Wenn man an den Haaren zieht, ist auch school.Presence 
+eigentlich ein cal.Guest

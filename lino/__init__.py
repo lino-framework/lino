@@ -624,6 +624,12 @@ class Lino(object):
     :class:`lino.models.SiteConfig` instance.
     """
     
+    max_auto_events = 36
+    """
+    Maximum number of automatic events to be generated 
+    by :class:`lino.modlib.cal.models.EventOwner`.
+    """
+    
     #~ use_contenttypes = True
     #~ """
     #~ Set this to False if you don't want to use `django.contrib.contenttypes`.
@@ -631,7 +637,11 @@ class Lino(object):
     
     #~ index_view_action = 'lino.Home'
     
+    
+    
+    
     # for internal use:
+    
     _site_config = None
     
     

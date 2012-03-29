@@ -295,10 +295,10 @@ class FakeDeserializedObject(base.DeserializedObject):
             dblogger.debug("%s has been saved" % obj2str(obj))
             self.deserializer.register_success()
             return True
-        #~ except ValidationError,e:
+        except ValidationError,e:
         #~ except ObjectDoesNotExist,e:
         #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
-        except Exception, e:
+        #~ except Exception, e:
             if obj.pk is None:
                 dblogger.exception(e)
                 raise Exception(

@@ -80,9 +80,9 @@ class Company(contacts.Partner,contacts.CompanyMixin):
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
         
-class Event(cal.Event):
-    class Meta(cal.Event.Meta):
-        app_label = 'cal'
+#~ class Event(cal.Event):
+    #~ class Meta(cal.Event.Meta):
+        #~ app_label = 'cal'
 
 class Task(cal.Task):
     class Meta(cal.Task.Meta):
@@ -91,4 +91,12 @@ class Task(cal.Task):
      
 def site_setup(site):
     site.modules.contacts.Persons.set_detail(PersonDetail())
+    
+    # remove `project` field
+    site.modules.cal.Tasks.set_detail("""
+    start_date status due_date done user id
+    summary 
+    calendar owner created:20 modified:20 user_modified  
+    description #notes.NotesByTask    
+    """)
 

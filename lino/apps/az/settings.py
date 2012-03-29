@@ -26,7 +26,8 @@ class Lino(Lino):
     #~ migration_module = 'lino.apps.dsbe.migrate'
     
     #~ project_model = 'contacts.Person'
-    project_model = 'contacts.Person'
+    #~ project_model = 'contacts.Person'
+    project_model = None
     
     languages = ('de', 'fr')
     
@@ -62,7 +63,7 @@ class Lino(Lino):
         #~ m.add_action(self.modules.dsbe.Newcomers)
 
         self.modules.families.setup_main_menu(self,ui,user,m)
-        self.modules.courses.setup_main_menu(self,ui,user,m)
+        self.modules.school.setup_main_menu(self,ui,user,m)
 
         #~ if user is None:
             #~ return main
@@ -71,7 +72,7 @@ class Lino(Lino):
         
         self.modules.cal.setup_my_menu(self,ui,user,m)
         self.modules.mails.setup_my_menu(self,ui,user,m)
-        self.modules.courses.setup_my_menu(self,ui,user,m)
+        self.modules.school.setup_my_menu(self,ui,user,m)
         self.modules.families.setup_my_menu(self,ui,user,m)
         m.add_action(self.modules.lino.MyTextFieldTemplates)
 
@@ -83,7 +84,7 @@ class Lino(Lino):
             
             self.modules.contacts.setup_config_menu(self,ui,user,cfg)
             self.modules.families.setup_config_menu(self,ui,user,cfg)
-            self.modules.courses.setup_config_menu(self,ui,user,cfg)
+            self.modules.school.setup_config_menu(self,ui,user,cfg)
             
             #~ self.modules.notes.setup_config_menu(self,ui,user,cfg)
             
@@ -95,7 +96,7 @@ class Lino(Lino):
             
             self.modules.contacts.setup_explorer_menu(self,ui,user,m)
             self.modules.families.setup_explorer_menu(self,ui,user,m)
-            self.modules.courses.setup_explorer_menu(self,ui,user,m)
+            self.modules.school.setup_explorer_menu(self,ui,user,m)
             self.modules.cal.setup_explorer_menu(self,ui,user,m)
             
         
@@ -141,7 +142,7 @@ INSTALLED_APPS = (
   #~ 'lino.modlib.projects',
   'lino.apps.az.families',
   #~ 'lino.az.notes',
-  'lino.apps.az.courses',
+  'lino.apps.az.school',
   #~ 'lino.modlib.links',
   'lino.modlib.uploads',
   #~ 'lino.modlib.thirds',

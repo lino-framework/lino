@@ -59,17 +59,9 @@ from lino.mixins.printable import DirectPrintAction
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str, models_by_abc
 
-from lino.modlib.countries.models import CountryCity
-from lino.modlib.cal.models import DurationUnit, update_auto_task, update_auto_event
+#~ from lino.modlib.cal.models import update_auto_task
 
-# not used here, but these modules are required in INSTALLED_APPS, 
-# and other code may import them using 
-# ``from lino.apps.dsbe.models import Property``
-
-from lino.modlib.properties.models import Property
-from lino.modlib.notes.models import NoteType
-from lino.modlib.countries.models import Country, City
-from lino.apps.dsbe.models import Company, Companies
+from lino.modlib.cal import models as cal
 
 
 #
@@ -112,16 +104,11 @@ class ContractTypes(dd.Table):
 #
 # EXAMINATION POLICIES
 #
-class ExamPolicy(babel.BabelNamed):
+class ExamPolicy(babel.BabelNamed,cal.RecurrenceSet):
     """
     Examination policy. 
     This also decides about automatic tasks to be created.
     """
-    every = models.IntegerField(_("Evaluation every X months"),
-        default=0)
-    every_unit = DurationUnit.field(_("Duration unit"),
-        default=DurationUnit.months,
-        blank=True) # iCal:DURATION
     class Meta:
         verbose_name = _("Examination Policy")
         verbose_name_plural = _('Examination Policies')
@@ -163,7 +150,8 @@ def contract_contact_choices(company):
 
 
 
-class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
+
+class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventOwner):
     """Abstract base class for 
     :class:`lino.modlib.jobs.models.Contract`
     and
@@ -174,6 +162,10 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     
     class Meta:
         abstract = True
+        
+    eventowner = models.OneToOneField(cal.EventOwner,
+        related_name="%(app_label)s_%(class)s_ptr",
+        parent_link=True)
   
     person = models.ForeignKey(settings.LINO.person_model,
         related_name="%(app_label)s_%(class)s_set_by_person",
@@ -247,8 +239,6 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     recipient = property(get_recipient)
         
         
-        
-        
     @chooser()
     def contact_choices(cls,company):
         if company is not None:
@@ -319,55 +309,33 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
             self.update_reminders()
         
         
-    def save(self,*args,**kw):
-        super(ContractBase,self).save(*args,**kw)
-        self.update_reminders()
+    def update_cal_rset(self):
+        return self.exam_policy
+        
+    def update_cal_from(self):
+        return self.applies_from
+        
+    def update_cal_until(self):
+        return self.date_ended or self.applies_until
+        
+    def update_cal_subject(self,i):
+        return _("Evaluation %d") % (i + 1)
         
     def update_reminders(self):
-        """
-        Generate automatic calendar events owned by this contract.
+        super(ContractBase,self).update_reminders()
+        if self.applies_until:
+            date = cal.DurationUnit.months.add_duration(self.applies_until,-1)
+        else:
+            date = None
+        cal.update_auto_task(
+          self.TASKTYPE_CONTRACT_APPLIES_UNTIL,
+          self.user,
+          date,
+          _("Contract ends in a month"),
+          self)
+          #~ alarm_value=1,alarm_unit=DurationUnit.months)
         
-        [NOTE1] if one event has been manually rescheduled, all following events
-        adapt to the new rythm.
-        
-        """
-        MAX_AUTO_EVENTS = 36
-        if self.user:
-            if self.applies_from and self.exam_policy_id \
-                and self.exam_policy.every > 0 \
-                and self.exam_policy.every_unit:
-                date = self.applies_from
-            else:
-                date = None
-            until = self.date_ended or self.applies_until
-            if not until:
-                date = None
-            for i in range(MAX_AUTO_EVENTS):
-                if date:
-                    date = self.exam_policy.every_unit.add_duration(date,self.exam_policy.every)
-                    #~ date = DurationUnit.months.add_duration(
-                            #~ date,self.exam_policy.every)
-                    if until and date > until:
-                        date = None
-                subject = _("Evaluation %d") % (i + 1)
-                e = update_auto_event(
-                  i + 1,
-                  self.user,
-                  date,subject,self)
-                if e: # [NOTE1]
-                    date = e.start_date
                         
-            if self.applies_until:
-                date = DurationUnit.months.add_duration(self.applies_until,-1)
-            else:
-                date = None
-            update_auto_task(
-              self.TASKTYPE_CONTRACT_APPLIES_UNTIL,
-              self.user,
-              date,
-              _("Contract ends in a month"),
-              self)
-              #~ alarm_value=1,alarm_unit=DurationUnit.months)
               
     #~ def overlaps_with(self,b):
         #~ if b == self: 

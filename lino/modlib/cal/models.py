@@ -215,6 +215,69 @@ class Place(babel.BabelNamed):
 class Places(dd.Table):
     model = Place
     
+    
+    
+class EventOwner(mixins.AutoUser):
+    """
+    Base class for things that generate a suite of events.
+    Examples
+    :class:`isip.Contract`,     :class:`jobs.Contract`, 
+    :class:`schools.Course`
+    """
+    def save(self,*args,**kw):
+        super(EventOwner,self).save(*args,**kw)
+        self.update_reminders()
+  
+    def update_cal_rset(self):
+        return self.exam_policy
+        
+    def update_cal_from(self):
+        return self.applies_from
+        
+    def update_cal_until(self):
+        return self.date_ended or self.applies_until
+        
+    def update_cal_subject(self,i):
+        return _("Evaluation %d") % (i + 1)
+
+    def update_reminders(self):
+        """
+        Generate automatic calendar events owned by this contract.
+        
+        [NOTE1] if one event has been manually rescheduled, all following events
+        adapt to the new rythm.
+        
+        """
+        #~ MAX_AUTO_EVENTS = 36
+        if True: # self.user:
+            rset = self.update_cal_rset()
+            if rset and rset.every > 0 and rset.every_unit:
+                date = self.update_cal_from()
+                defaults = dict(start_time=rset.start_time,end_time=rset.end_time)
+            else:
+                date = None
+                defaults = dict()
+            until = self.update_cal_until()
+            if not until:
+                date = None
+            for i in range(settings.LINO.max_auto_events):
+                if date:
+                    date = rset.every_unit.add_duration(date,rset.every)
+                    #~ date = DurationUnit.months.add_duration(
+                            #~ date,self.exam_policy.every)
+                    if until and date > until:
+                        date = None
+                #~ subject = _("Evaluation %d") % (i + 1)
+                subject = self.update_cal_subject(i)
+                e = update_auto_event(
+                  i + 1,
+                  self.user,
+                  date,subject,self,
+                  **defaults)
+                if e: # [NOTE1]
+                    date = e.start_date
+    
+    
 
 class EventStatus(babel.BabelNamed):
     "The status of an Event."
@@ -315,9 +378,20 @@ class CalendarRelated(models.Model):
             #~ print "20111217 calendar_id was empty. set to", self.calendar, "because", self.user
             
 
+class Ended(models.Model):
+    class Meta:
+        abstract = True
+    end_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("End Date"))
+    end_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("End Time"))
+    #~ end = dd.FieldSet(_("End"),'end_date end_time')
+    
   
     
-class ComponentBase(CalendarRelated,mixins.ProjectRelated):
+class ComponentBase(mixins.ProjectRelated):
     class Meta:
         abstract = True
         
@@ -326,6 +400,7 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
         blank=True) # ,null=True)
 
     start_date = models.DateField(
+        blank=True,null=True,
         verbose_name=_("Start date")) # iCal:DTSTART
     start_time = models.TimeField(
         blank=True,null=True,
@@ -374,7 +449,7 @@ class ComponentBase(CalendarRelated,mixins.ProjectRelated):
             return datetime.datetime(d.year,d.month,d.day)
         
 
-class RecurrenceSet(ComponentBase):
+class RecurrenceSet(ComponentBase,Ended):
     """
     Groups together all instances of a set of recurring calendar components.
     
@@ -382,13 +457,20 @@ class RecurrenceSet(ComponentBase):
     
     """
     class Meta:
+        abstract = True
         verbose_name = _("Recurrence Set")
         verbose_name_plural = _("Recurrence Sets")
     
-    rdates = models.TextField(_("Recurrence dates"),blank=True)
-    exdates = models.TextField(_("Excluded dates"),blank=True)
-    rrules = models.TextField(_("Recurrence Rules"),blank=True)
-    exrules = models.TextField(_("Exclusion Rules"),blank=True)
+    every = models.IntegerField(_("Evaluation every X months"),
+        default=0)
+    every_unit = DurationUnit.field(_("Duration unit"),
+        default=DurationUnit.months,
+        blank=True) # iCal:DURATION
+        
+    #~ rdates = models.TextField(_("Recurrence dates"),blank=True)
+    #~ exdates = models.TextField(_("Excluded dates"),blank=True)
+    #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
+    #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
     
 class RecurrenceSets(dd.Table):
     """
@@ -398,12 +480,16 @@ class RecurrenceSets(dd.Table):
     
     detail_template = """
     id calendar uid summary start_date start_time
-    rdates exdates rrules exrules
-    EventsBySet    
+    description
     """
+    #~ """
+    #~ ## rdates exdates rrules exrules
+    #~ ## EventsBySet    
+    #~ """
     
     
 class Component(ComponentBase,
+                CalendarRelated,
                 mixins.Owned,
                 mixins.AutoUser,
                 mixins.CreatedModified):
@@ -446,9 +532,9 @@ class Component(ComponentBase,
     user_modified = models.BooleanField(_("modified by user"),
         default=False,editable=False) 
     
-    rset = models.ForeignKey(RecurrenceSet,
-        verbose_name=_("Recurrence Set"),
-        blank=True,null=True)
+    #~ rset = models.ForeignKey(RecurrenceSet,
+        #~ verbose_name=_("Recurrence Set"),
+        #~ blank=True,null=True)
     #~ rparent = models.ForeignKey('self',verbose_name=_("Recurrence parent"),blank=True,null=True)
     #~ rdate = models.TextField(_("Recurrence date"),blank=True)
     #~ exdate = models.TextField(_("Excluded date(s)"),blank=True)
@@ -565,24 +651,17 @@ class ExtAllDayField(dd.VirtualField):
         
 
 
-class Event(Component,mixins.TypedPrintable,mails.Mailable):
+class Event(Component,Ended,mixins.TypedPrintable,mails.Mailable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
     is a scheduled lapse of time where something happens.
     """
   
     class Meta:
+        #~ abstract = True
         verbose_name = _("Event")
         verbose_name_plural = _("Events")
-        #~ abstract = True
         
-    end_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("End Date"))
-    end_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("End Time"))
-    #~ end = dd.FieldSet(_("End"),'end_date end_time')
     transparent = models.BooleanField(_("Transparent"),default=False)
     type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
@@ -647,7 +726,7 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
     #~ reminder.return_type = dd.DisplayField(_("Reminder"))
 
     def get_print_language(self,bm):
-        if self.project:
+        if settings.LINO.project_model is not None and self.project:
             return self.project.get_print_language(bm)
         return self.user.language
         
@@ -695,7 +774,7 @@ class EventDetail(dd.DetailLayout):
     main = """
     type summary user 
     start end #all_day #duration status 
-    place priority access_class transparent rset 
+    place priority access_class transparent #rset 
     calendar owner created:20 modified:20 user_modified 
     description
     GuestsByEvent
@@ -721,11 +800,14 @@ class Events(dd.Table):
         
         
     
-class EventsBySet(Events):
-    master_key = 'rset'
+#~ class EventsBySet(Events):
+    #~ master_key = 'rset'
     
 class EventsByCalendar(Events):
     master_key = 'calendar'
+    
+class EventsByPartner(Events):
+    master_key = 'user'
     
 class EventsByPlace(Events):
     """
@@ -1101,7 +1183,7 @@ class ExtSummaryField(dd.VirtualField):
         
     def value_from_object(self,request,obj):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
-        if obj.project:
+        if settings.LINO.project_model is not None and obj.project is not None:
             return u"%s %s" % (obj.project,obj.summary)
         return obj.summary
 
@@ -1126,7 +1208,7 @@ if settings.LINO.use_extensible:
         use_as_default_table = False
         #~ filter = models.Q(start_date__isnull=False)
         
-        column_names = 'id start_dt end_dt summary description user place calendar rset url all_day reminder'
+        column_names = 'id start_dt end_dt summary description user place calendar #rset url all_day reminder'
         can_add = perms.never
         
         start_dt = ExtDateTimeField('start',None,_("Start"))
@@ -1350,5 +1432,5 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(Events)
     m.add_action(Tasks)
     m.add_action(Guests)
-    m.add_action(RecurrenceSets)
+    #~ m.add_action(RecurrenceSets)
   

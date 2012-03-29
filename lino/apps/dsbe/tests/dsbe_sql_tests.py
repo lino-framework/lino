@@ -87,9 +87,9 @@ def test01(self):
       'SELECT "lino_siteconfig"."id", [...] WHERE "lino_siteconfig"."id" = 1',
       'SELECT (1) AS "a" FROM "lino_siteconfig" [...]',
       'INSERT INTO "lino_siteconfig" [...]',
-      'SELECT (1) AS "a" [...] WHERE "contacts_contact"."id" = 100  LIMIT 1',
-      'INSERT INTO "contacts_contact" [...]',
-      'SELECT (1) AS "a" FROM "users_user" WHERE "users_user"."contact_ptr_id" = 100  LIMIT 1',
+      'SELECT (1) AS "a" [...] WHERE "contacts_partner"."id" = 100  LIMIT 1',
+      'INSERT INTO "contacts_partner" [...]',
+      'SELECT (1) AS "a" FROM "users_user" WHERE "users_user"."partner_ptr_id" = 100  LIMIT 1',
       'INSERT INTO "users_user" [...]'
     )
 
@@ -98,8 +98,8 @@ def test01(self):
     response = self.client.get(url,REMOTE_USER='root')
     
     self.check_sql_queries(
-      'SELECT "contacts_contact"."id", [...] WHERE "users_user"."username" = root',
-      'SELECT "contacts_contact"."id", [...] ORDER BY "contacts_contact"."name" ASC LIMIT 30',
+      'SELECT "contacts_partner"."id", [...] WHERE "users_user"."username" = root',
+      'SELECT "contacts_partner"."id", [...] ORDER BY "contacts_partner"."name" ASC LIMIT 30',
       'SELECT COUNT(*) FROM "contacts_company"',
     )
     

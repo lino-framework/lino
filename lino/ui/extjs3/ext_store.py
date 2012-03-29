@@ -995,7 +995,7 @@ class Store:
       
     def row2dict(self,ar,row,fields=None,**d):
         #~ assert isinstance(ar,table.AbstractTableRequest)
-        logger.info("20111209 Store.row2dict(%s)", obj2str(row))
+        #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         if fields is None:
             fields = self.detail_fields
         for fld in fields:

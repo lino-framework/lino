@@ -69,7 +69,7 @@ from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 #~ from lino.modlib.cal.models import DurationUnit, update_auto_task
-from lino.modlib.cal.models import DurationUnit, update_reminder
+from lino.modlib.cal import models as cal
 from lino.modlib.contacts.models import Partner
 from lino.tools import resolve_model, UnresolvedModel
 
@@ -89,13 +89,13 @@ Person = resolve_model('contacts.Person',strict=True)
 
 
 
-class PresenceStatus(babel.BabelNamed):
-    class Meta:
-        verbose_name = _("Presence Status")
-        verbose_name_plural = _("Presence Statuses")
+#~ class PresenceStatus(babel.BabelNamed):
+    #~ class Meta:
+        #~ verbose_name = _("Presence Status")
+        #~ verbose_name_plural = _("Presence Statuses")
         
-class PresenceStatuses(dd.Table):
-    model = PresenceStatus
+#~ class PresenceStatuses(dd.Table):
+    #~ model = PresenceStatus
     
 class Content(babel.BabelNamed):
     class Meta:
@@ -111,29 +111,30 @@ class Contents(dd.Table):
     model = Content
     detail_template = """
     id name
-    courses.CoursesByContent
+    school.CoursesByContent
     """
     
         
-class Room(babel.BabelNamed):
-    class Meta:
-        verbose_name = _("Classroom")
-        verbose_name_plural = _("Classrooms")
+#~ class Room(babel.BabelNamed):
+    #~ class Meta:
+        #~ verbose_name = _("Classroom")
+        #~ verbose_name_plural = _("Classrooms")
         
-class Rooms(dd.Table):
-    model = Room
+#~ class Rooms(dd.Table):
+    #~ model = Room
         
         
 class Teacher(Person):
     class Meta:
-        app_label = 'courses'
+        #~ app_label = 'school'
         verbose_name = _("Teacher")
         verbose_name_plural = _("Teachers")
     
 class TeacherDetail(contacts.PersonDetail):
     box5 = "remarks" 
     general = contacts.PersonDetail.main
-    main = "general courses.LessonsByTeacher courses.CoursesByTeacher"
+    #~ main = "general school.EventsByTeacher school.CoursesByTeacher"
+    main = "general cal.EventsByPartner school.CoursesByTeacher"
 
     def setup_handle(self,lh):
       
@@ -147,23 +148,23 @@ class Teachers(contacts.Persons):
 
 class Pupil(Person):
     class Meta:
-        app_label = 'courses'
+        #~ app_label = 'courses'
         verbose_name = _("Pupil")
         verbose_name_plural = _("Pupils")
     
 class PupilDetail(contacts.PersonDetail):
     box5 = "remarks" 
     general = contacts.PersonDetail.main
-    courses = """
+    school = """
     EnrolmentsByPupil 
     PresencesByPupil
     """
-    main = "general courses"
+    main = "general school"
 
     def setup_handle(self,lh):
       
         lh.general.label = _("General")
-        lh.courses.label = _("Courses")
+        lh.school.label = _("School")
         #~ lh.notes.label = _("Notes")
 
 class Pupils(contacts.Persons):
@@ -175,41 +176,86 @@ class Pupils(contacts.Persons):
 
   
     
-class Course(models.Model,mixins.Printable):
+#~ class Course(cal.RecurrenceSet,mixins.Printable):
+  
+class Course(cal.EventOwner,cal.RecurrenceSet,mixins.Printable):
     class Meta:
         verbose_name = _("Course")
         verbose_name_plural = _('Courses')
         
     content = models.ForeignKey(Content)
-    teacher = models.ForeignKey(Teacher)
-    room = models.ForeignKey(Room,blank=True,null=True)
+    #~ teacher = models.ForeignKey(Teacher)
+    #~ place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
+    #~ room = models.ForeignKey(Room,blank=True,null=True)
+    place = models.ForeignKey(cal.Place,blank=True,null=True)
     
-    rrule = dd.RecurrenceField(
-        blank=True,# null=True,
-        verbose_name=_("Recurrence"))
+    #~ start_time = models.TimeField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Start time"))
+    #~ end_time = models.TimeField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("End time"))
+    
+    #~ rrule = dd.RecurrenceField(
+        #~ blank=True,# null=True,
+        #~ verbose_name=_("Recurrence"))
         
-    remark = models.CharField(max_length=200,
-        blank=True,# null=True,
-        verbose_name=_("Remark"))
+    #~ remark = models.CharField(max_length=200,
+        #~ blank=True,# null=True,
+        #~ verbose_name=_("Remark"))
         
     def __unicode__(self):
         return u"%s (%s)" % (
           self.content,
-          self.teacher)
+          self.user)
+          
+    def update_cal_rset(self):
+        return self
+        
+    def update_cal_from(self):
+        return self.start_date
+        
+    def update_cal_until(self):
+        return self.end_date
+        
+    def update_cal_subject(self,i):
+        return _("Lesson %d") % (i + 1)
+        
+          
+    def update_owned_instance(self,ev):
+        #~ if self.course is not None:
+        #~ if isinstance(self.owner,Course):
+        if ev.presence_set.count() == 0:
+            for e in self.enrolment_set.all():
+                Presence(pupil=e.pupil,event=ev).save()
+        
   
 
+class CourseDetail(dd.DetailLayout):
+    start = "start_date start_time"
+    end = "end_date end_time"
+    freq = "every every_unit"
+    main = """
+    id:8 user content place summary
+    start end freq
+    description
+    #remark
+    #rrule
+    cal.EventsByOwner
+    """
+    
+    def setup_handle(self,dh):
+        dh.start.label = _("Start")
+        dh.end.label = _("End")
+        dh.freq.label = _("Frequency")
+  
 class Courses(dd.Table):
     model = Course
     #~ order_by = ['date','start_time']
-    detail_template = """
-    id:8 teacher content room
-    remark
-    rrule
-    courses.LessonsByCourse
-    """
+    detail_layout = CourseDetail() 
 
 class CoursesByTeacher(Courses):
-    master_key = "teacher"
+    master_key = "user"
 
 class CoursesByContent(Courses):
     master_key = "content"
@@ -235,57 +281,51 @@ class EnrolmentsByPupil(Enrolments):
 
 
 
-class Lesson(models.Model,mixins.Printable):
-    class Meta:
-        verbose_name = _("Lesson")
-        verbose_name_plural = _('Lessons')
+#~ class Lesson(models.Model,mixins.Printable):
+#~ class Event(cal.EventBase):
+    #~ class Meta:
+        #~ app_label = 'cal'
+        #~ verbose_name = _("Lesson")
+        #~ verbose_name_plural = _('Lessons')
         
-        
-    course = models.ForeignKey(Course)
-    teacher = models.ForeignKey(Teacher,blank=True)
-    
-    date = models.DateField(_("date"))
-    start_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("Start time"))
-    end_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("End time"))
-  
-    remark = models.CharField(max_length=200,
-        blank=True,# null=True,
-        verbose_name=_("Remark"))
-        
-    def save(self,*args,**kw):
-        if self.teacher_id is None:
-            self.teacher = self.course.teacher
-        super(Lesson,self).save(*args,**kw)
-        if self.presence_set().count() == 0:
-            for e in self.course.enrolment_set():
-                Presence(pupil=e.pupil,lesson=self).save()
-        
-    def __unicode__(self):
-        return u"%s %s-%s (%s)" % (
-          babel.dtos(self.date),
-          self.start_time,
-          self.end_time,
-          self.teacher)
+    #~ def __unicode__(self):
+        #~ return u"%s %s (%s)" % (
+          #~ babel.dtos(self.start_date),
+          #~ self.start_time,
+          #~ self.user)
   
 
-class Lessons(dd.Table):
-    model = Lesson
-    order_by = ['date','start_time']
-    detail_template = """
-    id:8 teacher date start_time end_time 
-    remark
-    courses.PresencesByLesson
+class EventDetail(cal.EventDetail):
+    lesson = """
+    owner start_date start_time end_time place 
+    school.PresencesByEvent
     """
+    event = """
+    id:8 user priority access_class transparent #rset 
+    type summary status 
+    calendar created:20 modified:20 user_modified 
+    description
+    cal.GuestsByEvent 
+    """
+    main = "lesson event"
 
-class LessonsByTeacher(Lessons):
-    master_key = "teacher"
+    def setup_handle(self,lh):
+      
+        lh.lesson.label = _("Lesson")
+        lh.event.label = _("Event")
+        #~ lh.notes.label = _("Notes")
 
-class LessonsByCourse(Lessons):
-    master_key = "course"
+
+#~ class Events(dd.Table):
+    #~ model = Event
+    #~ order_by = ['start_date','start_time']
+    #~ detail_layout = EventDetail()
+
+#~ class EventsByTeacher(Events):
+    #~ master_key = "user"
+
+#~ class EventsByCourse(Events):
+    #~ master_key = "course"
 
 
 class Presence(models.Model):
@@ -295,18 +335,31 @@ class Presence(models.Model):
         verbose_name_plural = _('Presences')
 
     #~ teacher = models.ForeignKey(Teacher)
-    lesson = models.ForeignKey(Lesson)
+    event = models.ForeignKey(cal.Event)
     pupil = models.ForeignKey(Pupil)
-    status = models.ForeignKey(PresenceStatus,null=True,blank=True)
+    absent = models.BooleanField(_("Absent"))
+    excused = models.BooleanField(_("Excused"))
+    remark = models.CharField(_("Remark"),max_length=200,blank=True)
+    #~ status = models.ForeignKey(PresenceStatus,null=True,blank=True)
+    
+    def save(self,*args,**kw):
+        if self.excused and not self.absent:
+            self.absent = True
+        super(Presence,self).save(*args,**kw)
+        
+    def absent_changed(self,rr):
+        if not self.absent:
+            self.excused = False
 
 class Presences(dd.Table):
     model = Presence
+    order_by = ['event__start_date','event__start_time']
 
 class PresencesByPupil(Presences):
     master_key = "pupil"
 
-class PresencesByLesson(Presences):
-    master_key = "lesson"
+class PresencesByEvent(Presences):
+    master_key = "event"
     
 
 
@@ -324,9 +377,12 @@ dd.inject_field(Person,
     """Whether this Person is also a Pupil."""
     )
 
+def site_setup(site):
+    site.modules.cal.Events.set_detail(EventDetail())
+
     
 def setup_main_menu(site,ui,user,m): 
-    m = m.add_menu("courses",_("Courses"))
+    m = m.add_menu("school",_("School"))
     m.add_action(Teachers)
     m.add_action(Pupils)
     #~ m.add_action(CourseOffers)
@@ -336,15 +392,15 @@ def setup_main_menu(site,ui,user,m):
 def setup_my_menu(site,ui,user,m): pass
   
 def setup_config_menu(site,ui,user,m):
-    m = m.add_menu("courses",_("Courses"))
-    m.add_action(Rooms)
+    m = m.add_menu("school",_("School"))
+    #~ m.add_action(Rooms)
     m.add_action(Contents)
-    m.add_action(PresenceStatuses)
+    #~ m.add_action(PresenceStatuses)
   
 def setup_explorer_menu(site,ui,user,m):
-    m = m.add_menu("courses",_("Courses"))
+    m = m.add_menu("school",_("School"))
     m.add_action(Presences)
-    m.add_action(Lessons)
+    #~ m.add_action(Events)
     m.add_action(Courses)
     m.add_action(Enrolments)
   

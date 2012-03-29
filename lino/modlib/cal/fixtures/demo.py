@@ -91,8 +91,15 @@ def objects():
           en=u"at employer's",
           ))
 
-    event = Instantiator('cal.Event','user:username').build
-    yield event("user",start_date=settings.LINO.demo_date(),type=1)
-    yield event("user",start_date=settings.LINO.demo_date(days=1),type=2)
-    yield event("user",start_date=settings.LINO.demo_date(days=2),type=2)
+    #~ event = Instantiator('cal.Event','user:username').build
+    #~ yield event("user",start_date=settings.LINO.demo_date(),type=1)
+    #~ yield event("user",start_date=settings.LINO.demo_date(days=1),type=2)
+    #~ yield event("user",start_date=settings.LINO.demo_date(days=2),type=2)
+    User = resolve_model('users.User')
+    #~ Event = resolve_model('cal.Event')
+    user = User.objects.get(username='user')
+    event = Instantiator('cal.Event').build
+    yield event(user=user,start_date=settings.LINO.demo_date(),type=1)
+    yield event(user=user,start_date=settings.LINO.demo_date(days=1),type=2)
+    yield event(user=user,start_date=settings.LINO.demo_date(days=2),type=2)
     

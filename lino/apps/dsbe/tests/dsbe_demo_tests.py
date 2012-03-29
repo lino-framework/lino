@@ -334,7 +334,7 @@ def test04(self):
       }
     """
     for value in ('01.03.2011','15.03.2011'):
-        url ='/api/jobs/Contracts/1'
+        url = '/api/jobs/Contracts/1'
         data =  'applies_from='+value+'&applies_until=17.05.2009&company=R-Cycle%20'
         'Sperrgutsortierzentrum&companyHidden=83&contact=Arens%20Andreas%20(1'
         '4)%20(Gesch%C3%A4ftsf%C3%BChrer)&contactHidden=2&date_decided=&date_e'
