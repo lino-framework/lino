@@ -11,6 +11,7 @@ service = 'TestConnectionService'
 url = abspath(dirname(__file__)).replace(os.path.sep,"/")
 url += '/XSD/%s.wsdl' % service
 url = 'file:///' + url 
+print "Instantiate Client at", url
 suds_options = dict()
 #~ suds_options.update(location="")
 client = Client(url,**suds_options)
