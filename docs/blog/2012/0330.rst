@@ -4,5 +4,9 @@
 Continued with "Retrieve TI Groups" Service of the CBSS 
 (:doc:`/topics/bcss`).
 
+
+::
+
+  export PYTHONPATH=/var/snapshots/lino_dev
   python -m lino.utils.xmlgen.bcss.20120305
   
