@@ -1,0 +1,8 @@
+20120330
+========
+
+Continued with "Retrieve TI Groups" Service of the CBSS 
+(:doc:`/topics/bcss`).
+
+  python -m lino.utils.xmlgen.bcss.20120305
+  

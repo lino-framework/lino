@@ -17,8 +17,8 @@ Der bisherige `teacher` einer Lesson steht jetzt im `user` des `Event`.
 
 `lino.mixins.AutoUser` : 
 `user` ist jetzt ein FK nach `contacts.Partner` 
-statt bisher nach `Users.User`.
+statt bisher nach `Users.User`. Jedenfalls braucht der Veranstalter eines Termins nicht 
+unbedingt ein Benutzer zu sein.
+Bin mal gespannt, was das für Nebeneffekte haben wird...
 
 
-Wenn man an den Haaren zieht, ist auch school.Presence 
-eigentlich ein cal.Guest
