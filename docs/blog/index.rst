@@ -19,8 +19,6 @@ but you can view their raw text in the source code repository under
 .. toctree::
    :maxdepth: 1
    
-   2009/index
-   2010/index
    2011/index
    2012/index
    

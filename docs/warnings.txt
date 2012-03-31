@@ -1,16 +1,5 @@
-T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.sales.models', it reported error: "'module' object has no attribute 'Contact'", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:15: (WARNING/2) autodoc can't import/find module 'lino.sandbox.bcss.test2', it reported error: "No module named fpconst", please check your spelling and sys.path
-T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2009/index'
-T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2010/index'
 T:\hgwork\lino\docs\admin\pythonpath.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\jobs.ContractsSituation2.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\links.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\notes.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:2: WARNING: py:mod reference target not found: lino.sandbox.bcss
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:12: WARNING: py:mod reference target not found: lino.sandbox.bcss.test2
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:4: WARNING: term not in glossary: appy
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:11: WARNING: py:class reference target not found: appy.shared.xml_parser.XmlMarshaller
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:4: WARNING: term not in glossary: appy
-T:\hgwork\lino\docs\autodoc\lino.sandbox.bcss.rst:14: WARNING: py:class reference target not found: appy.shared.xml_parser.XmlMarshaller

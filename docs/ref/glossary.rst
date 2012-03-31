@@ -12,6 +12,9 @@ Glossary
   generateDS
     http://www.rexx.com/~dkuhlman/generateDS.html
   
+  SUDS
+    https://fedorahosted.org/suds/
+  
   Tups
      The machine that served the `saffre-rumma.net` 
      domain until 2010
@@ -116,9 +119,12 @@ Glossary
     Generic ForeignKey. This is a ForeignKey that can point to 
     different tables.
     
+  CBSS
+    Crossroads Bank for Social Security.
+    See :doc:`/topics/bcss`.
+    
   BCSS
     Banque Carrefour de la Sécurité Sociale 
-    (engl. "Crossroads Bank for Social Security").
     See :doc:`/topics/bcss`.
     
   PyPI

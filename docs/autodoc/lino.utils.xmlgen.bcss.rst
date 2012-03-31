@@ -6,3 +6,12 @@
     :members:
     :show-inheritance:
 
+
+
+:mod:`lino.utils.xmlgen.bcss.20120305`
+======================================
+
+.. automodule:: lino.utils.xmlgen.bcss.20120305
+    :members:
+    :show-inheritance:
+

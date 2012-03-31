@@ -12,7 +12,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
 """
 
 """
@@ -194,9 +193,9 @@ def get_sales_rule(doc):
             return r
             
 
-class Customer(contacts.Contact):
+class Customer(contacts.Partner):
     """
-    A Customer is a Contact that can receive sales invoices.
+    A Customer is a :class:`contacts.Partner` that can receive sales invoices.
     """    
     class Meta:
         verbose_name =_("Customer")
@@ -767,12 +766,12 @@ journals.register_doctype(Invoice,InvoicesByJournal)
 
 if settings.LINO.is_installed('igen'):
 
-    from lino.modlib.contacts.models import Contact
+    #~ from lino.modlib.contacts.models import Contact
 
-    dd.inject_field(Contact,
+    dd.inject_field(contacts.Partner,
         'is_customer',
         mti.EnableChild('sales.Customer',verbose_name=_("is Customer")),
-        """Whether this Contact is also a Customer."""
+        """Whether this Partner is also a Customer."""
         )
 
 

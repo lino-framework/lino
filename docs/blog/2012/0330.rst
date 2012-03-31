@@ -1,12 +1,16 @@
 20120330
 ========
 
-Continued with "Retrieve TI Groups" Service of the CBSS 
-(:doc:`/topics/bcss`).
+First success with the :term:`CBSS` "new style services"!
+See :mod:`lino.utils.xmlgen.bcss.20120305`.
 
-
-::
-
-  export PYTHONPATH=/var/snapshots/lino_dev
-  python -m lino.utils.xmlgen.bcss.20120305
-  
+Okay, also nach drei Wochen Grübel- und Wartezeit 
+glaube ich jetzt kapiert zu haben, dass die BCSS keine online-URL für die 
+WSDL-Beschreibung machen kann, weil sie über einen  reverse proxy arbeitet.
+In der Tat haben wir bei der BCSS ja die drei Umgebungen "test", 
+"acceptation" und "production".
+In der von der BCSS gelieferten wsdl-Datei steht die Adresse der 
+"test"-Variante, und in Kommentaren die beiden anderen Möglichkeiten.
+Aber ich will diese Auswahl ja konfigurierbar haben,
+und dass die Benutzer eine lokale Kopie der .wsdl-Datei anvertraut kriegen, 
+wäre wohl unelegant.
