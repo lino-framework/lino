@@ -369,7 +369,7 @@ def setup_site(self,make_messages=False):
             
     """
     Actor.setup() must be called after site_setup(). 
-    Example: dsbe.site_setup() adds a detail to properties.Properties, 
+    Example: pcsw.site_setup() adds a detail to properties.Properties, 
     the base class for properties.PropsByGroup. The latter would not 
     install a detail action during her setup() and also would never 
     get it later.

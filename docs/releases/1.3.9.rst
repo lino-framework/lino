@@ -65,7 +65,7 @@ Sichtbare Änderungen
     :attr:`Vertreten durch <lino.modlib.isip.ContractBase.contact>` 
     überschrieben.
   
-- :class:`Kursanfragen <lino.apps.dsbe.models.CourseRequest>`: 
+- :class:`Kursanfragen <lino.apps.pcsw.models.CourseRequest>`: 
   statt "Dringend" heißt es jetzt "zwecks beruflicher Eingliederung"
   
 - Beim Speichern eines Uploads mit ausgefülltem :guilabel:`Gültig bis` 

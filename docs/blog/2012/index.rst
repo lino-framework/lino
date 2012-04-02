@@ -106,6 +106,7 @@ As long as nobody protests, I'll save some time by writing in German.
 
 .. |Apr| replace::  **April**
   |br| 
+  :doc:`02 <0402>`
   
 .. |May| replace::  **May**
   |br| 

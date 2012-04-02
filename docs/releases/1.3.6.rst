@@ -38,7 +38,7 @@ Sichtbare Änderungen:
 
 - Die Liste "Übersicht Klienten" (`OverviewClientsByUser`) 
   habe ich umbenannt nach "Benutzer mit Klienten" 
-  (:class:`UsersWithClients <lino.apps.dsbe.models.UsersWithClients>`).
+  (:class:`UsersWithClients <lino.apps.pcsw.models.UsersWithClients>`).
   Diese Liste ist inhaltlich die Gleiche wie die Tabelle auf der Startseite.
 
 

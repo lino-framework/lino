@@ -3,17 +3,17 @@
 
 Some day I'll do the following renames::
 
-  lino.apps.dsbe --> lino.cpas
-  lino.cpas.courses : split out of lino.apps.dsbe
-  lino.cpas.contacts : split out of lino.apps.dsbe
-  lino.modlib.links --> lino.cpas.links
-  lino.modlib.newcomers --> lino.cpas.newcomers
-  lino.modlib.jobs --> lino.cpas.jobs 
-  lino.modlib.bcss --> lino.cpas.bcss
+  lino.apps.dsbe --> lino.apps.pcsw
+  lino.apps.pcsw.courses : split out of lino.apps.pcsw
+  lino.apps.pcsw.contacts : split out of lino.apps.pcsw
+  lino.modlib.links --> lino.apps.pcsw.links
+  lino.modlib.newcomers --> lino.apps.pcsw.newcomers
+  lino.modlib.jobs --> lino.apps.pcsw.jobs 
+  lino.modlib.cbss --> lino.apps.pcsw.cbss
 
 Maybe also:
 
 -> "jobs" --> "pips" ("(Socio-)Professional Integration Projects")
 -> "isip" --> "sips" ("Social Integration Projects")
 
-Later I'll split `lino.cpas` out to a spearate googlecode project "linocpas".
+Later I'll split `lino.apps.pcsw` out to a spearate googlecode project "lino-pcsw".

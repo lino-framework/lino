@@ -102,7 +102,7 @@ Noch Kleinkram vor dem Release
 - :class:`lino.modlib.newcomers.models.UsersByNewcomer` hatte kein Detail 
   weil es nicht von users.Users erbte.
 
-- :func:`lino.apps.dsbe.migrate.migrate_from_1_3_9`
+- :func:`lino.apps.pcsw.migrate.migrate_from_1_3_9`
 
 
 Automatic refresh when user changes table parameters

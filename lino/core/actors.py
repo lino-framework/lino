@@ -277,7 +277,7 @@ class Actor(Handled):
     hide_window_title = False
     """
     This is set to `True` in home pages
-    (e.g. :class:`lino.apps.dsbe.models.Home`).
+    (e.g. :class:`lino.apps.pcsw.models.Home`).
     """
 
     #~ has_navigator = True
@@ -289,7 +289,7 @@ class Actor(Handled):
     
     This option is True in 
     :class:`lino.models.SiteConfigs`.
-    :class:`lino.apps.dsbe.model.Home`.
+    :class:`lino.apps.pcsw.model.Home`.
     """
     
     known_values = {}

@@ -185,7 +185,7 @@ Short-term
     Firma verloren gehen. Kann ggf. als Drittpartner eingegeben 
     werden. Betroffen sind folgende Notizen::
     
-      >>> from lino.apps.dsbe.models import Note
+      >>> from lino.apps.pcsw.models import Note
       >>> [int(n.pk) for n in Note.objects.filter(company__isnull=False)]
       [499, 501, 616, 349, 1019, 825, 425, 996, 117, 508, 822, 342, 841, 842]
       
@@ -258,7 +258,7 @@ Medium-term
     Siehe auch http://stackoverflow.com/questions/6786555/automatic-version-number-both-in-setup-py-setuptools-and-source-code
 
 #.  Die virtuellen Felder `applies_from` und `applies_until` 
-    in :class:`Meine Klienten <lino.apps.dsbe.models.MyPersons>` 
+    in :class:`Meine Klienten <lino.apps.pcsw.models.MyPersons>` 
     machen jedes seinen eigenen Datenbank-Request 
     Also zwei zusätzlichen Requests für jede Zeile. 
     Einer für beide Felder würde reichen. 
@@ -378,7 +378,7 @@ Medium-term
 #.  Custom Quick filters 
     See :doc:`/blog/2011/1207`.
 
-#.  lino.apps.dsbe has a database design flaw: 
+#.  lino.apps.pcsw has a database design flaw: 
     Person should be split into "Clients" and "normal" persons.
     Contact Persons of a Company currently need to have an entry in the Person table.
     This is also the reason for many deferred save()s when loading a full backup.
@@ -407,7 +407,7 @@ Medium-term
     In `reports.add_gridfilters` there's an exception 
     "Join on field 'native' not permitted. Did you misspell 'equals' for the lookup type?" when 
 
-http://lino/api/dsbe/LanguageKnowledgesByPerson?_dc=1315554805581&sort=written&dir=DESC&filter=%5B%7B%22type%22%3A%22boolean%22%2C%22value%22%3Atrue%2C%22field%22%3A%22native%22%7D%5D&fmt=json&mt=20&mk=20069
+http://lino/api/pcsw/LanguageKnowledgesByPerson?_dc=1315554805581&sort=written&dir=DESC&filter=%5B%7B%22type%22%3A%22boolean%22%2C%22value%22%3Atrue%2C%22field%22%3A%22native%22%7D%5D&fmt=json&mt=20&mk=20069
 
 
 
@@ -483,12 +483,12 @@ Later
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
     Vorschläge: 
     
-    - lino.apps.dsbe.models.Study.content
+    - lino.apps.pcsw.models.Study.content
     
 #.  igen : Partner.get_invoice_suggestions()
 
 #.  MTI auch für Personen anwenden: 
-    in lino.dsbe für "normale" Personen nur die 
+    in lino.pcsw für "normale" Personen nur die 
     Standard-Kontaktangaben speichern, und die DSBE-spezifischen Felder 
     in einer eigenen Tabelle. 
 
@@ -511,7 +511,7 @@ Later
     `work_permit_upload_type` und 
     `driving_licence_upload_type`, 
     die momentan als Klassenattribute 
-    in :class:`lino.apps.dsbe.settings.Lino`
+    in :class:`lino.apps.pcsw.settings.Lino`
     implementiert sind, sollten 
     ebenfalls zu Feldern in der SiteConfig konvertiert werden.
     Aber Vorsicht, denn wenn die verändert werden muss 
@@ -571,7 +571,7 @@ Later
 
 
 #.  Idee: Vielleicht müsste contacts.Person doch nicht abstract sein, und
-    lino.dsbe stattdessen ein neues Modell CoachedPerson(contacts.Person) 
+    lino.pcsw stattdessen ein neues Modell CoachedPerson(contacts.Person) 
     definieren. 
     Dann hätten "normale" Kontaktpersonen von Firmen gar 
     nicht die vielen Felder des DSBE.
@@ -579,8 +579,8 @@ Later
   
 #.  Idee: Module umstrukturieren:
 
-    | lino.dsbe.models : Contract usw.
-    | lino.dsbe.contacts.models : Person, Company,...
+    | lino.pcsw.models : Contract usw.
+    | lino.pcsw.contacts.models : Person, Company,...
     
     also nicht mehr mit einem manuellen `app_label` arbeiten. 
     Kann sein, dass South dann funktioniert.
@@ -619,7 +619,7 @@ Later
 #. Im Detail eines Links wäre dessen Vorschau interessant.
 
 #. RtfPrintMethod geht nicht immer: 
-   http://127.0.0.1:8000/api/dsbe/ContractsByPerson/2?mt=14&mk=16&fmt=print 
+   http://127.0.0.1:8000/api/pcsw/ContractsByPerson/2?mt=14&mk=16&fmt=print 
    sagt "ValueError: 'allowed_path' has to be a directory."
 
 #. Ein ``<a href="..." target="blank">`` öffnet zumindest in Chrome kein neues Fenster, 
@@ -705,7 +705,7 @@ Long-term
    Menübefehls muss also ein ReportRequest instanziert werden, oder 
    vielleicht nur `Report.get_master_kw(master_instance)` rufen.
   
-#. (:mod:`lino.modlib.dsbe` : 
+#. (:mod:`lino.modlib.pcsw` : 
    Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person 
    nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? 
    Etwa ein eigenes Feld `Company.is_health_insurance`?
@@ -766,7 +766,7 @@ Long-term
 #. Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
 
 #. Benutzerverwaltung von der Kommandozeile aus. 
-   In Lino-DSBE gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.
+   In Lino-PCSW gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.
   
 #. Im Fenster :menuselection:`System --> Site Configuration` müssten Delete und Insert noch weg. 
 
@@ -775,7 +775,7 @@ Long-term
    http://www.sencha.com/blog/2009/06/10/building-a-rating-widget-with-ext-core-30-final-and-google-cdn/
    lesen.  
   
-#. Feldgruppen. Z.B. bei den 3 Feldern für Arbeitserlaubnis (:attr:`dsbe.models.Person.work_permit`) in DSBE wäre es interessant, 
+#. Feldgruppen. Z.B. bei den 3 Feldern für Arbeitserlaubnis (:attr:`pcsw.models.Person.work_permit`) in DSBE wäre es interessant, 
    dass das Label "Arbeitserlaubnis" einmal über der Gruppe steht und in den Labels der einzelnen Felder nicht wiederholt wird.
 
   
@@ -867,9 +867,6 @@ Long-term
     
    Lino could use this to have an automatic refresh of each window that displays data. Maybe rather only one central event manager because if any data gets changed, basically all open windows may need a refresh.
 
-#. lino.modlib.dsbe und lino.modlib.igen sind ja eigentlich keine 
-   normalen "Django applications", sondern Endmodule für Lino... das ist noch unklar.
-  
 #. :doc:`/tickets/16`
 
 #. Mehr über Nuxeo lesen: http://doc.nuxeo.org/5.3/books/nuxeo-book/html/index.html
@@ -879,11 +876,6 @@ Long-term
   
 #. Check whether the approach at http://djangosnippets.org/snippets/14/ 
    is easier than south
-  
-#. Wenn man im Detail speichert, wird anschließend immer ein Refresh gemacht. 
-   Das ist bisher nur bei dsbe.Contract nötig, und statt ein Refresh anzufordern, 
-   könnte er auch gleich den aktualisierten Record zurückgeben...
-   Da ist also Spielraum zum Optimieren.
   
 #. Warnung, wenn das gleiche Feld mehrmals in einem Detail vorkommt.
    Oder besser: diesen Fall zulassen.

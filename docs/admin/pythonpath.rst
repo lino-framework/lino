@@ -18,8 +18,7 @@ with a development version of Django or some other Python package.
 It requires you to have root permission.
 
 Add a path configuration file :xfile:`local.pth` 
-Python Pathto a directory that's already on your 
-. 
+to a directory that's already on your Python Path. 
  
 =============== ==============================================
 OS              Recommended directory

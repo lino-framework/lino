@@ -37,6 +37,6 @@ die Auswahlliste blieb leer, weil der Server dann ein traceback machte::
     return self.meth(*args)
   File "t:\hgwork\lino\lino\utils\choosers.py", line 222, in wrapped
     return fn(*args)
-  File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 1807, in provider_choices
+  File "t:\hgwork\lino\lino\apps\pcsw\models.py", line 1807, in provider_choices
     return CourseProviders.request().queryset
 

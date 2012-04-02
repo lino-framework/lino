@@ -198,11 +198,11 @@ def babelattr(obj,attrname,*args):
 
       babelattr(self.type,'name')
 
-    When generating a Contract in french (:attr:`dsbe.Contract.language` is ``fr``), 
-    the expression will return :attr:`dsbe.ContractType.name_fr` if this field is not blank. 
+    When generating a Contract in french (:attr:`isip.Contract.language` is ``fr``), 
+    the expression will return :attr:`isip.ContractType.name_fr` if this field is not blank. 
     Otherwise (if the contract's language is not ``fr``, 
     of if this contract's type's `name_fr` field is blank) 
-    it returns :attr:`dsbe.ContractType.name`.
+    it returns :attr:`isip.ContractType.name`.
 
     Not tested for other field types than CHAR.
     

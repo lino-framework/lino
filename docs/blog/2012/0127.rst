@@ -46,7 +46,7 @@ VirtualFields in Grid Views
 
 I discovered that by mistake all VirtualFields were 
 considered wildcard data elements. 
-New testcase :func:`lino.apps.dsbe.tests.dsbe_tests.test07` 
+New testcase :func:`lino.apps.pcsw.tests.pcsw_tests.test07` 
 to avoid this infuture releases.
 
 py2xml() on iterables
@@ -66,7 +66,7 @@ soll.
 
 Tests auf Jana mit einer Liste von 7825 Personen.
 Der Request 
-http://jana/api/dsbe/Persons?fmt=printer 
+http://jana/api/pcsw/Persons?fmt=printer 
 dauert ca. 5 Minuten.
 
 *Vor* dieser Änderung ging dem Server die Luft aus 

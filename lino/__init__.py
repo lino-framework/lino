@@ -185,7 +185,7 @@ class Lino(object):
     Subclasses of this can be defined and instantiated in Django settings files.
     
     This class is first defined in :mod:`lino`, then subclassed by 
-    :mod:`lino.apps.dsbe.settings` or 
+    :mod:`lino.apps.pcsw.settings` or 
     :mod:`lino.apps.igen.settings`,
     which is imported into your local :xfile:`settings.py`,
     where you may subclass it another time.
@@ -556,20 +556,25 @@ class Lino(object):
     If you change this setting, you also need to override :meth:`parse_datetime`.
     """
     
-    bcss_soap_url = None
+    #~ bcss_soap_url = None
+    #~ """
+    #~ URL of BCSS SOAP server
+    #~ """
+    
+    cbss_environment = 'test'
     """
-    URL of BCSS SOAP server
+    One of 'test', 'acpt' or 'prod'.
     """
     
-    bcss_user_params = None
+    cbss_user_params = None
     u"""
-    User parameters for BCSS access.
+    User parameters for CBSS SSDN services.
     
     Example::
 
       class Lino(Lino):
           ...
-          bcss_user_params = dict(
+          cbss_user_params = dict(
                 UserID='123', 
                 Email='123@example.com', 
                 OrgUnit='123', 
@@ -591,6 +596,11 @@ class Lino(object):
     « OrgUnit » est un identifiant pour l’organisme demandeur; 
     dans le cas des CPAS, le numéro KBO est utilisé.
 
+    """
+    
+    cbss2_user_params = None
+    u"""
+    User parameters for CBSS new style services.
     """
     
     use_davlink = False
@@ -871,7 +881,7 @@ class Lino(object):
         """Override this 
         in application-specific (or even local) :xfile:`settings.py` files 
         to define a series of *quick links* to appear below the main menu bar.
-        Example see :meth:`lino.apps.dsbe.settings.Lino.setup_quicklinks`.
+        Example see :meth:`lino.apps.pcsw.settings.Lino.setup_quicklinks`.
         """
         pass
         

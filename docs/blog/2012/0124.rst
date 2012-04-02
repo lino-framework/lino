@@ -16,7 +16,7 @@ aufgefallen war.
 Erst bei 5000 Records machte es sich bemerkbar.
 
 Um das rauszufinden, habe ich übrigens zunächst mal einen TestCase 
-geschrieben: new module :mod:`lino.apps.dsbe.tests.dsbe_sql_tests`.
+geschrieben: new module :mod:`lino.apps.pcsw.tests.pcsw_sql_tests`.
 
 Das war nicht ganz leicht, eigentlich musste ich zunächst mal ein 
 Test-Framework zum Testen der SQL-Queries aufbauen:
@@ -76,16 +76,16 @@ Noch Kleinkram:
 
     Error while evaluating expression "self.candidates()".
     File "<string>", line 1, in <module>
-    File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 1754, in candidates
+    File "t:\hgwork\lino\lino\apps\pcsw\models.py", line 1754, in candidates
     return CandidatesByCourse().request(master_instance=self)
     File "t:\hgwork\lino\lino\utils\tables.py", line 439, in __init__
     raise NotImplementedError("20120104")
     <type 'exceptions.NotImplementedError'>: 20120104
 
   Erklärung: 
-  :meth:`lino.apps.dsbe.models.Course.participants`
+  :meth:`lino.apps.pcsw.models.Course.participants`
   und
-  :meth:`lino.apps.dsbe.models.Course.candidates`
+  :meth:`lino.apps.pcsw.models.Course.candidates`
   versuchten, die Tabelle zu instanziieren. Was jetzt ja nicht mehr nötig ist.
   
   Außerdem ist ein TableRequest per se jetzt nicht mehr iterable. 

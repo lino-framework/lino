@@ -20,9 +20,9 @@ Special model attributes and methods
     has ``allow_cascaded_delete = True``.
     
     Other examples of such models are 
-    :class:`lino.apps.dsbe.models.PersonProperty`
+    :class:`lino.apps.pcsw.models.PersonProperty`
     and
-    :class:`lino.apps.dsbe.models.LanguageKnowledge`.
+    :class:`lino.apps.pcsw.models.LanguageKnowledge`.
 
     
     

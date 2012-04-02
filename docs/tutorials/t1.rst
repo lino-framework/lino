@@ -59,7 +59,7 @@ especially if you maintain Lino sites for several customers.
 
 At the beginning of the file are the following four lines of code::
 
-    from lino.apps.dsbe.settings import *
+    from lino.apps.pcsw.settings import *
     class Lino(Lino):
         title = "Lino Tutorial"
     LINO = Lino(__file__,globals()) 
@@ -67,7 +67,7 @@ At the beginning of the file are the following four lines of code::
 The first line caused your settings to "inherit" 
 from one of the predefined Lino applications.
 Since this is going to be your own application, 
-replace the ``dsbe`` or ``igen`` by ``std``::
+replace the ``pcsw`` or ``igen`` by ``std``::
 
     from lino.apps.std.settings import *
     

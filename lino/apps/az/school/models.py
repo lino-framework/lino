@@ -75,7 +75,6 @@ from lino.tools import resolve_model, UnresolvedModel
 
 #~ # not used here, but these modules are required in INSTALLED_APPS, 
 #~ # and other code may import them using 
-#~ # ``from lino.apps.dsbe.models import Property``
 
 #~ from lino.modlib.properties.models import Property
 #~ # from lino.modlib.notes.models import NoteType

@@ -12,8 +12,8 @@ Subpackages
 
 .. toctree::
 
-    lino.modlib.bcss
     lino.modlib.cal
+    lino.modlib.cbss
     lino.modlib.countries
     lino.modlib.contacts
     lino.modlib.isip

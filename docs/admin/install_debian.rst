@@ -181,7 +181,7 @@ or get somebody else write it for you,
 but in a first step we suggest that you choose one 
 of the "batteries included" applications:
 
-- :mod:`lino.apps.dsbe` 
+- :mod:`lino.apps.pcsw` 
   (a database for social assistants who assist 
   people in finding jobs or education).
 
@@ -323,7 +323,7 @@ This should run something like::
   Validating models...
 
   0 errors found
-  Django version 1.4 pre-alpha SVN-16376, using settings 'dsbe.settings'
+  Django version 1.4 pre-alpha SVN-16376, using settings 'pcsw.settings'
   Development server is running at http://127.0.0.1:8000/
   Quit the server with CTRL-BREAK.
   
@@ -350,3 +350,8 @@ Where to go from here
   read :doc:`install_apache` and get Lino running under `mod_wsgi`.
 
 
+
+.. toctree::
+    :maxdepth: 2
+
+    pythonpath

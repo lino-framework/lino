@@ -1226,7 +1226,7 @@ tinymce.init({
         #~ logger.info("20120222 index_view() uses %r",settings.LINO.modules.lino.Home)
         kw.update(on_ready=self.ext_renderer.action_call(
           settings.LINO.modules.lino.Home.default_action))
-        #~ kw.update(title=settings.LINO.modules.dsbe.Home.label)
+        #~ kw.update(title=settings.LINO.modules.pcsw.Home.label)
         #~ kw.update(title=lino_site.title)
         #~ mnu = py2js(lino_site.get_site_menu(request.user))
         #~ print mnu

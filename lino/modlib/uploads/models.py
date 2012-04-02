@@ -98,7 +98,7 @@ class Upload(
         
     def update_reminders(self):
         """
-        Also called from :func:`lino.apps.dsbe.models.update_all_reminders`.
+        Also called from :func:`lino.apps.pcsw.models.update_all_reminders`.
         """
         #~ logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
         

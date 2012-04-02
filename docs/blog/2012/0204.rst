@@ -27,7 +27,7 @@ Außerdem folgende Benutzeranfragen erledigt:
 - Fachbereiche Feld “body” kann weg
 
 - Neue Checkbox-Kolonne "Dringend" 
-  in :class:`Kursanfragen <lino.apps.dsbe.models.CourseRequest>`, 
+  in :class:`Kursanfragen <lino.apps.pcsw.models.CourseRequest>`, 
   die anzukreuzen ist, wenn der Kurs für die Arbeitssuche benötigt wird.
   Eine Combobox mit konfigurierbarer Auswahlliste wäre auch möglich,
   aber ich warte dazu auf euer Feedback, denn das wäre dann mindestens 
@@ -38,7 +38,7 @@ Und somit beginnt der Endspurt vor dem Release
 :doc:`/releases/1.3.8`.
 
 Die 
-:func:`Datenmigration <lino.apps.dsbe.migrate.migrate_from_1_3_7>`
+:func:`Datenmigration <lino.apps.pcsw.migrate.migrate_from_1_3_7>`
 war nicht schwer.
 
 
@@ -59,7 +59,7 @@ Und eins nachher:
   :scale: 60
 
 Was mir noch nicht gefällt: die Höhen des Quicklinks-Bereichs und des Panels
-  :class:`Benutzer und ihre Klienten <lino.apps.dsbe.models.UsersWithClients>` 
+  :class:`Benutzer und ihre Klienten <lino.apps.pcsw.models.UsersWithClients>` 
   sollten automatisch ausgerichtet werden. Aber das ist für später. 
   
 Notfalls kann der neue Look übrigens durch Auskommentieren einer einzigen Zeile wieder rückgängig gemacht werden.

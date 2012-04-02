@@ -21,13 +21,13 @@ Sichtbare Änderungen
 
 - Zwei neue virtuelle Kolonnen mit Anfangs- und Enddatum des aktuellen Vertrags
   (wenn es einen gibt)
-  in :class:`Meine Klienten <lino.apps.dsbe.models.MyPersons>` 
+  in :class:`Meine Klienten <lino.apps.pcsw.models.MyPersons>` 
   und allen Untervarianten.
   Kann sein, dass Lino sich noch manchmal irrt bei der Entscheidung, 
   ob es einen "aktuellen Vertrag" gibt. Fehler bitte melden.
   
 - Neue Checkbox-Kolonne "Dringend" 
-  in :class:`Kursanfragen <lino.apps.dsbe.models.CourseRequest>`, 
+  in :class:`Kursanfragen <lino.apps.pcsw.models.CourseRequest>`, 
   die anzukreuzen ist, wenn der Kurs für die Arbeitssuche benötigt wird.
   Eine Combobox mit konfigurierbarer Auswahlliste wäre auch möglich,
   aber ich warte dazu auf euer Feedback, denn das wäre dann mindestens 

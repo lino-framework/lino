@@ -17,7 +17,7 @@ This adds some more luxus to lxml's `E-factory
 <http://lxml.de/tutorial.html#the-e-factory>`
 and is used by modules 
 :mod:`lino.utils.xmlgen.odf`,
-:mod:`lino.utils.xmlgen.bcss` or
+:mod:`lino.utils.xmlgen.cbss` or
 :mod:`lino.utils.xmlgen.intervat`.
 
 """
@@ -81,15 +81,15 @@ class Namespace(object):
                 #~ # raise Exception("20120310")
             if validator is None:
                 validator = etree.XMLSchema(self.xsd_tree)
-                
           
         self.validator = validator
         
         if targetNamespace is not None:
-            kw.update(namespace=targetNamespace)
-            #~ if prefix:
-            nsmap[prefix] = targetNamespace
             self.targetNamespace = targetNamespace
+        if self.targetNamespace is not None:
+            kw.update(namespace=self.targetNamespace)
+            #~ if prefix:
+            nsmap[prefix] = self.targetNamespace
         if used_namespaces is not None:
             self.used_namespaces = used_namespaces
         if self.used_namespaces is not None:
@@ -134,10 +134,10 @@ class Namespace(object):
                 #~ assert not hasattr(self,name)
                 if hasattr(self,iname):
                     raise Exception("%s has attribute %s" % (self.__class__.__name__,name))
-                setattr(self,iname,getattr(self._element_maker,name))
-            else:
-                if not hasattr(self,iname):
-                    raise Exception("%s has no attribute %s" % (self.__class__.__name__,name))
+            #~ else:
+                #~ if not hasattr(self,iname):
+                    #~ raise Exception("%s has no attribute %s" % (self.__class__.__name__,name))
+            setattr(self,iname,getattr(self._element_maker,name))
 
     def update_attribs(self,root,**kw):
         for k,v in kw.items():

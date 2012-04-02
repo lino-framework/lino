@@ -16,7 +16,7 @@ This is for writing fixtures that import data from an MS-Access
 database (:xfile:`.mdb`) into Lino.
 
 Usage examples see 
-:mod:`lino.apps.dsbe.fixtures.pp2lino`
+:mod:`lino.apps.pcsw.fixtures.pp2lino`
 and
 :mod:`lino.apps.crl.fixtures.hs2lino`.
 

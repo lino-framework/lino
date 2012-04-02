@@ -16,7 +16,7 @@ running in a Belgian
 These users and their system adminstrator 
 are so satisfied that other similar centres showed their interest.
 That's why this particular Lino application 
-:doc:`Lino-PCSW </dsbe/index>` 
+:doc:`Lino-PCSW </pcsw/index>` 
 is currently using up most of our human resources.
 
 But Lino is a *framework*. This means that there 

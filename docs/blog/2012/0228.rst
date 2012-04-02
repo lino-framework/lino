@@ -28,7 +28,7 @@ Voici aussi le code source de cette *fixture* dans le repository de Lino:
 No more `x-masked-relative`
 ---------------------------
 
-The following effect happens in Lino/DSBE 1.4.2 in the insert window of a 
+The following effect happens in Lino/PCSW 1.4.2 in the insert window of a 
 :class:`Job Contract <lino.modlib.jobs.models.Contract>` (and only there):
 
 .. image:: 0228b.jpg
@@ -116,7 +116,7 @@ selber ein `save()` aufrief.
 Preparing to release 1.4.3 
 --------------------------
 
-:func:`lino.apps.dsbe.migrate.migrate_from_1_4_2`
+:func:`lino.apps.pcsw.migrate.migrate_from_1_4_2`
 
 Zwischendurch auch noch ein ganz einfacher Bug:
 

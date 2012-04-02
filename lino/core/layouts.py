@@ -211,7 +211,7 @@ class LayoutHandle:
             for x in desc.split():
                 if not x.startswith("#"):
                     """
-                    20100214 dsbe.PersonDetail hatte 2 MainPanels, 
+                    20100214 pcsw.PersonDetail hatte 2 MainPanels, 
                     weil PageLayout kein einzeiliges (horizontales) `main` vertrug
                     """
                     e = self.create_element(x)

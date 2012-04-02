@@ -19,11 +19,11 @@ by looping through :setting:`INSTALLED_APPS` that have a :xfile:`config`
 subdir.
 
 Die Reihenfolge in :setting:`INSTALLED_APPS` sollte sein: zuerst 
-`django.contrib.*`, dann ``lino``, dann `lino.modlib.*` und dann `lino.apps.dsbe`. 
+`django.contrib.*`, dann ``lino``, dann `lino.modlib.*` und dann `lino.apps.pcsw`. 
 Also vom Allgemeineren zum Spezifischeren. Und bei den config-Dirs soll diese 
 Liste umgekehrt abgeklappert werden (und die Suche beim 
 ersten Treffer aufhören): zuerst das eventuelle lokale `config_dir`, 
-dann `lino.apps.dsbe`, dann die diversen `lino.modlib.*` usw. 
+dann `lino.apps.pcsw`, dann die diversen `lino.modlib.*` usw. 
 
 """
 

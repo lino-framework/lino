@@ -35,7 +35,7 @@ Lino 1.4.3 behebt vor allem eine Serie von Bugs in der vorigen Version.
 
 
 Database migration required:
-:func:`lino.apps.dsbe.migrate.migrate_from_1_4_2`
+:func:`lino.apps.pcsw.migrate.migrate_from_1_4_2`
 
     
 Download it from http://pypi.python.org/pypi/lino

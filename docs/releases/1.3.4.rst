@@ -73,7 +73,7 @@ Upgrade instructions
 --------------------
 
 - Database migration required.
-  See :func:`lino.apps.dsbe.migrate.migrate_from_1_3_3`.
+  See :func:`lino.apps.pcsw.migrate.migrate_from_1_3_3`.
 
 - Lokale Datei `contacts/Person/eid-content.odt` löschen.
   

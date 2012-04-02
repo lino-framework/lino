@@ -16,7 +16,7 @@ sys.path.insert(0,'/var/snapshots/appy')
 
 
 from os.path import join, dirname
-from lino.apps.dsbe.settings import *
+from lino.apps.pcsw.settings import *
 
 class Lino(Lino):
 

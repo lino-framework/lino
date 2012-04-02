@@ -29,8 +29,8 @@ Glossary
   DSBE
      "Dienst für Sozial-Berufliche Eingliederung"     
      A public service in Eupen (Belgium), 
-     the first serious user of a Lino application.
-     :mod:`lino.apps.dsbe`.
+     the first real user of a Lino application
+     :mod:`lino.apps.pcsw`.
      
   ExtJS
     http://www.sencha.com/products/js/
@@ -70,11 +70,11 @@ Glossary
     See :mod:`lino.management.commands.initdb`
     
   initdb_tim
-    See :mod:`lino.apps.dsbe.management.commands.initdb_tim`
+    See :mod:`lino.apps.pcsw.management.commands.initdb_tim`
     
   watch_tim
     A daemon process that synchronizes data from TIM to Lino.
-    See :mod:`lino.apps.dsbe.management.commands.watch_tim`
+    See :mod:`lino.apps.pcsw.management.commands.watch_tim`
 
   watch_calendars
     A daemon process that synchronizes remote calendars 

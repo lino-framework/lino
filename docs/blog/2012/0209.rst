@@ -61,7 +61,7 @@ Jetzt lautet der automatische Text "eID-Karte läuft ab in 2 Monaten".
 
 Neue Funktion :func:`lino.modlib.cal.utils.update_reminder`
 
-Neue Funktion :func:`lino.apps.dsbe.models.update_all_reminders`
+Neue Funktion :func:`lino.apps.pcsw.models.update_all_reminders`
 
 Neuer Button "Update reminders" pro User.
 

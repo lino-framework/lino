@@ -14,7 +14,7 @@ Die folgenden Bugs sind nun in der Development-Version behoben:
 
 Details und Bemerkungen
 
-In der :mod:`lino.apps.dsbe.settings` machte ich::
+In der :mod:`lino.apps.pcsw.settings` machte ich::
 
     def setup_quicklinks(self,ui,user,tb):
         tb.add_action(self.modules.contacts.Persons,'detail')
@@ -23,12 +23,12 @@ In der :mod:`lino.apps.dsbe.settings` machte ich::
 Stattdessen musste es sein::
 
     def setup_quicklinks(self,ui,user,tb):
-        tb.add_action(self.modules.dsbe.Persons,'detail')
+        tb.add_action(self.modules.pcsw.Persons,'detail')
         ...
 
 Der Effekt war, dass man importierte Felder bearbeiten konnte.
 Das ist eine Mausefalle, die nicht gekommen wäre, wenn das `app_label` 
-von :class:`lino.apps.dsbe.models.Persons` weiterhin `contacts` wäre. 
+von :class:`lino.apps.pcsw.models.Persons` weiterhin `contacts` wäre. 
 Soll ich wieder forcieren, dass dass `app_label` vererbt wird?
 Aber ich glaube es gibt andere Fälle, wo diese Möglichkeit wichtig ist...
 

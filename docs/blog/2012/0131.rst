@@ -62,13 +62,13 @@ Oh, hier ist was Schönes::
     File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
       __import__(name)
     File "t:\hgwork\lino\lino\modlib\newcomers\models.py", line 44, in <module>
-      from lino.apps.dsbe.models import Person, AllPersons, only_my_persons, PersonsByCoach1, MyActivePersons
-    File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 124, in <module>
+      from lino.apps.pcsw.models import Person, AllPersons, only_my_persons, PersonsByCoach1, MyActivePersons
+    File "t:\hgwork\lino\lino\apps\pcsw\models.py", line 124, in <module>
       class CefLevel(ChoiceList):
     File "t:\hgwork\lino\lino\utils\choicelists.py", line 91, in __new__
       register_choicelist(cls)
     File "t:\hgwork\lino\lino\utils\choicelists.py", line 68, in register_choicelist
       (k,CHOICELISTS[k]))
-  Exception: ChoiceList name 'CefLevel' already defined by <class 'lino.apps.dsbe.models.CefLevel'>
+  Exception: ChoiceList name 'CefLevel' already defined by <class 'lino.apps.pcsw.models.CefLevel'>
   
 So eine Fehlermeldung kann durch einen redundanten ``import`` kommen.

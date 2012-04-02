@@ -51,7 +51,7 @@ class QuickTest(TestCase):
 def test01(self):
     """
     Used on :doc:`/blog/2011/0414`.
-    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
+    See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_tests.py`.
     """
 
     Person = resolve_model(settings.LINO.person_model)
@@ -94,7 +94,7 @@ def test01(self):
         link.a = p1
     except ValueError,e:
         self.assertEqual(str(e),
-            "Expected <class 'lino.apps.dsbe.models.Company'> instance but got <Person: First PERSON (100)>")
+            "Expected <class 'lino.apps.pcsw.models.Company'> instance but got <Person: First PERSON (100)>")
     else:
         self.fail("Failed to raise ValueError")
     

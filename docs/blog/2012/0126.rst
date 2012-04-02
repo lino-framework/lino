@@ -10,9 +10,9 @@ folgende interne Änderungen:
 - Die Liste "Übersicht Klienten" (`OverviewClientsByUser`) 
   habe ich umbenannt nach 
   "Benutzer mit Klienten" 
-  (:class:`UsersWithClients <lino.apps.dsbe.models.UsersWithClients>`).
+  (:class:`UsersWithClients <lino.apps.pcsw.models.UsersWithClients>`).
 
-- In :class:`UsersWithClients <lino.apps.dsbe.models.UsersWithClients>` 
+- In :class:`UsersWithClients <lino.apps.pcsw.models.UsersWithClients>` 
   wurde in der ersten Kolonne der Benutzername nicht 
   angezeigt. 
   Das kam, weil für das EditorGridPanel alle Zeilen einer VirtualTable 

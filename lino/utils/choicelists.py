@@ -172,7 +172,7 @@ class ChoiceList(object):
     @classmethod
     def display_text(cls,bc):
         """Override this to customize the display text of choices.
-        Example: :class:`lino.apps.dsbe.models.CefLevel`
+        Example: :class:`lino.apps.pcsw.models.CefLevel`
         """
         return lazy(unicode,unicode)(bc)
         #~ return bc
@@ -254,8 +254,8 @@ class HowWell(ChoiceList):
     which are stored in the database as '0' to '4',
     and whose `__unicode__()` returns their translated text.
 
-    `lino.apps.dsbe.models.Languageknowledge.spoken` 
-    `lino.apps.dsbe.models.Languageknowledge.written` 
+    `lino.apps.pcsw.models.Languageknowledge.spoken` 
+    `lino.apps.pcsw.models.Languageknowledge.written` 
     """
     label = _("not at all...very well")
     

@@ -750,7 +750,7 @@ class ExtUI(base.UI):
 
 
     def menu_view(self,request):
-        "used only by lino.modlib.dsbe.tests"
+        "used only by lino.modlib.pcsw.tests"
         #~ from lino.lino_site import lino_site
         #~ from lino import lino_site
         return json_response_kw(success=True,
@@ -1101,7 +1101,7 @@ class ExtUI(base.UI):
         """
         #~ for app_label in site.
         fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
-        #~ fn = r'c:\temp\dsbe.js'
+        #~ fn = r'c:\temp\pcsw.js'
         
         if not os.path.isdir(settings.MEDIA_ROOT):
             logger.info("Directory '%s' (settings.MEDIA_ROOT) does not exist.", settings.MEDIA_ROOT)

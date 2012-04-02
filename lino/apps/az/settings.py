@@ -23,7 +23,7 @@ class Lino(Lino):
     source_dir = os.path.dirname(__file__)
     title = "Lino/AZ"
     help_url = "http://lino.saffre-rumma.net/az/index.html"
-    #~ migration_module = 'lino.apps.dsbe.migrate'
+    #~ migration_module = 'lino.apps.az.migrate'
     
     #~ project_model = 'contacts.Person'
     #~ project_model = 'contacts.Person'

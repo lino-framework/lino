@@ -38,5 +38,5 @@ overrides an actor (by setting its `app_label` to the same value
 as the actor it inherits from), then the overridden actor still remained in actors.actors_list. And if both of them have a detail_layout,  js_render_detail_FormPanel() 
 generated two FormPanels with the same name.
 
-Modified a test case in dsbe_demo_tests because the `Company.prefix` field 
-is now defined in contacts.CompanyMixin, no longer in dsbe.models.Company
+Modified a test case in pcsw_demo_tests because the `Company.prefix` field 
+is now defined in contacts.CompanyMixin, no longer in pcsw.models.Company

@@ -41,7 +41,7 @@ from lino.modlib.users import models as users
 from lino.modlib.cal.utils import DurationUnit
 
 
-from lino.apps.dsbe.models import Person, AllPersons, only_my_persons, PersonsByCoach1, MyActivePersons
+from lino.apps.pcsw.models import Person, AllPersons, only_my_persons, PersonsByCoach1, MyActivePersons
 
 def amonthago():
   return DurationUnit.months.add_duration(datetime.date.today(),-1)

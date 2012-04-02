@@ -22,7 +22,7 @@ has a certain :class:`Property`.
 "Property owner" can be anything: 
 a person, a company, a product, an upload, 
 it depends on the implentation of :class:`PropOccurence`.
-For example :mod:`lino.apps.dsbe.models.PersonProperty`.
+For example :mod:`lino.apps.pcsw.models.PersonProperty`.
 
 A :class:`Property` defines the configuration of a property.
 
@@ -204,9 +204,9 @@ class PropertyOccurence(models.Model):
     A Property Occurence is when a Property occurs, possibly having a certain value.
     
     Abstract base class for 
-    | :class:`lino.apps.dsbe.models.PersonProperty`,
-    | :class:`lino.apps.dsbe.models.WantedProperty`, 
-    | :class:`lino.apps.dsbe.models.AvoidedProperty`,
+    | :class:`lino.apps.pcsw.models.PersonProperty`,
+    | :class:`lino.apps.pcsw.models.WantedProperty`, 
+    | :class:`lino.apps.pcsw.models.AvoidedProperty`,
     | ...
     
     """

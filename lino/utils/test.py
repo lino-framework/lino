@@ -14,7 +14,7 @@
 """
 Extensions to the `django.test` package.
 
-Used in :mod:`lino.modlib.dsbe.tests.dsbe_tests`
+Used in :mod:`lino.modlib.pcsw.tests.pcsw_tests`
 
 """
 

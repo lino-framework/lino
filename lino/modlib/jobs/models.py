@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-See also :doc:`/dsbe/models`.
+See also :doc:`/pcsw/models`.
 
 """
 import logging
@@ -73,14 +73,14 @@ from lino.modlib.cal.models import DurationUnit
 
 # not used here, but these modules are required in INSTALLED_APPS, 
 # and other code may import them using 
-# ``from lino.apps.dsbe.models import Property``
+# ``from lino.apps.pcsw.models import Property``
 
 from lino.modlib.properties.models import Property
 from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
 from lino.modlib.isip.models import ContractBase
-#~ from lino.apps.dsbe.models import Company, Companies, CompanyDetail
-from lino.apps.dsbe import models as dsbe
+#~ from lino.apps.pcsw.models import Company, Companies, CompanyDetail
+from lino.apps.pcsw import models as pcsw
 
 
 #~ SCHEDULE_CHOICES = {
@@ -152,7 +152,7 @@ class Regimes(dd.Table):
 
 
 
-class JobProvider(dsbe.Company):
+class JobProvider(pcsw.Company):
     """Stellenanbieter (BISA, BW, ...) 
     """
     class Meta:
@@ -161,7 +161,7 @@ class JobProvider(dsbe.Company):
         verbose_name_plural = _('Job Providers')
     
 
-class JobProviderDetail(dsbe.CompanyDetail):
+class JobProviderDetail(pcsw.CompanyDetail):
     """
     This is the same as CompanyDetail, except that we
     
@@ -177,13 +177,13 @@ class JobProviderDetail(dsbe.CompanyDetail):
     main = "general notes jobs"
     
     def setup_handle(self,lh):
-        dsbe.CompanyDetail.setup_handle(self,lh)
+        pcsw.CompanyDetail.setup_handle(self,lh)
         lh.jobs.label = _("Jobs")
 
   
 
 
-class JobProviders(dsbe.Companies):
+class JobProviders(pcsw.Companies):
     """
     List of Companies that have `Company.is_jobprovider` activated.
     """
@@ -1226,7 +1226,7 @@ class JobsOverview(dd.EmptyTable):
                         if not until or (ct.applies_from <= today and until >= today):
                             actives.append(ct)
                 qs = job.candidature_set.order_by('date_submitted')
-                qs = dsbe.only_coached_persons(qs,today,
+                qs = pcsw.only_coached_persons(qs,today,
                     'person__coached_from','person__coached_until')
                 for cand in qs:
                     #~ if not req.contract:
@@ -1271,7 +1271,7 @@ class JobsOverview(dd.EmptyTable):
 
 if True: # dd.is_installed('contacts') and dd.is_installed('jobs'):
   
-    dd.inject_field(dsbe.Company,
+    dd.inject_field(pcsw.Company,
         'is_jobprovider',
         mti.EnableChild('jobs.JobProvider',verbose_name=_("is Job Provider")),
         """Whether this Company is also a Job Provider."""

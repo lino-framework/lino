@@ -62,7 +62,7 @@ Abstract base class for :class:`Company` and :class:`Person`.
   :class:`lino.modlib.contacts.models.Person`
   
   Concrete implementations in 
-  :class:`dsbe <lino.apps.dsbe.models.Person>`
+  :class:`pcsw <lino.apps.pcsw.models.Person>`
   and :class:`igen <lino.modlib.igen.models.Person>`
 
 
@@ -72,7 +72,7 @@ Abstract base class for :class:`Company` and :class:`Person`.
   :class:`lino.modlib.contacts.models.Company`
   
   Concrete implementations in 
-  :class:`dsbe <lino.apps.dsbe.models.Company>`
+  :class:`pcsw <lino.apps.pcsw.models.Company>`
   and :class:`igen <lino.apps.igen.models.Company>`
 
 .. class:: ContactType
@@ -101,7 +101,7 @@ Abstract base class for :class:`Company` and :class:`Person`.
   
   .. attribute:: contract_type
     
-      Only :doc:`/dsbe/index`.
+      Only :doc:`/pcsw/index`.
       
       The default ContractType to apply on contracts with a company of this CompanyType.
 

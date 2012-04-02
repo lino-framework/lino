@@ -31,11 +31,11 @@ are fictitious.
 Any resemblance to real persons, living or dead, is purely coincidental.
 
 
-`DSBE <http://dsbe-demo.saffre-rumma.net>`__
+`PCSW <http://pcsw-demo.saffre-rumma.net>`__
   A tool for social assistants that  
   help receivers of public aid to 
   find a suitable job or education.
-  :doc:`More about Lino DSBE </dsbe/index>`
+  :doc:`More about Lino PCSW </pcsw/index>`
 
 `iGen <http://igen-demo.saffre-rumma.net>`__ 
   An accounting tool focussed on     
@@ -51,5 +51,5 @@ Any resemblance to real persons, living or dead, is purely coincidental.
    :maxdepth: 2
    :hidden:
 
-   dsbe/index
+   pcsw/index
    igen/index

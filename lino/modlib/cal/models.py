@@ -1111,7 +1111,7 @@ def migrate_reminder(obj,reminder_date,reminder_text,
                          delay_value,delay_type,reminder_done):
     """
     This was used only for migrating to 1.2.0, 
-    see :mod:`lino.apps.dsbe.migrate`.
+    see :mod:`lino.apps.pcsw.migrate`.
     """
     raise NotImplementedError("No longer needed (and no longer supported after 20111026).")
     def delay2alarm(delay_type):
@@ -1121,7 +1121,7 @@ def migrate_reminder(obj,reminder_date,reminder_text,
         if delay_type == 'Y': return DurationUnit.years
       
     #~ # These constants must be unique for the whole Lino Site.
-    #~ # Keep in sync with auto types defined in lino.apps.dsbe.models.Person
+    #~ # Keep in sync with auto types defined in lino.apps.pcsw.models.Person
     #~ REMINDER = 5
     
     if reminder_text:

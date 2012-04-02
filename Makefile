@@ -45,7 +45,7 @@ tests:
 	python lino/utils/jsgen.py
 	python lino/utils/__init__.py
 	#~ python lino\utils\xmlgen\__init__.py
-	python lino/utils/xmlgen/bcss/__init__.py
+	python lino/utils/xmlgen/cbss/__init__.py
 	python lino/utils/xmlgen/intervat/__init__.py
 	python lino/utils/xmlgen/odf/__init__.py
 	python lino\utils\rstgen.py
