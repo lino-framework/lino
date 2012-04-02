@@ -1,7 +1,7 @@
 DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
-APPS = dsbe igen
+APPS = pcsw igen
 MODULES = isip mails cal jobs thirds products properties contacts countries notes sales finan links uploads users newcomers
 TESTS_OPTIONS = --verbosity=2 --traceback
 
@@ -18,7 +18,7 @@ help:
   
 
 mm:
-	#~ $(DJANGO_ADMIN) dtl2py --settings lino.apps.dsbe.settings
+	#~ $(DJANGO_ADMIN) dtl2py --settings lino.apps.pcsw.settings
 	#~ $(DJANGO_ADMIN) dtl2py --settings lino.apps.igen.settings
 	pwd
 	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) makemessages -i 'modlib*' -i 'apps*' -i 'test_apps*' -s -a
@@ -53,12 +53,12 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings
-	$(DJANGO_ADMIN) test --settings=lino.apps.dsbe.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.apps.pcsw.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.igen.settings $(TESTS_OPTIONS)
 
 
 unused_appdocs:
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings docs/dsbe/appdocs
+	$(DJANGO_ADMIN) makedocs --settings lino.apps.pcsw.settings docs/pcsw/appdocs
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
 
 sdist:

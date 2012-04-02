@@ -1,14 +1,21 @@
 20120402
 ========
 
-Worked on BCSS connection. 
+CBSS connection
+---------------
+
 New command :mod:`lino.modlib.cbss.cbss_testconnection`
 
-Renamed "BCSS" to "CBSS". 
 
-Renamed `lino.apps.dsbe` to :mod:`lino.apps.pcsw`
-which seems the most official English abbreviation for an 
-OCMW/CPAS/ÖSHZ
+Ticket 59
+---------
+
+Renamed "BCSS" to "CBSS" and `lino.apps.dsbe` to :mod:`lino.apps.pcsw`.
+Das hatte ich ja schon seit längerem vor (:doc:`/tickets/59`).
+
+PCSW seems the most official English 
+abbreviation for a 
+CPAS/ÖSHZ/OCMW
 (according to 
 `Wikipedia <http://en.wikipedia.org/wiki/Public_Centre_for_Social_Welfare>`_)
 
@@ -31,6 +38,13 @@ List of concerned tables::
   cbss_identifypersonrequest
 
 
-Ein seltsamer Effekt, der schon seit längerem drin war: 
-in :mod:`lino.apps.pcsw.fixtures.demo`, 
-autofield counter doesn't seem to get reset between isip.Contract and jobs.Contract
+test suite
+----------
+
+Die Testsuite läuft erstmals nach längerer Zeit noch mal wieder durch...
+
+Ein seltsamer Effekt, der schon seit längerem drin sein könnte: 
+in :mod:`lino.apps.pcsw.fixtures.demo` werden 40 Verträge erstellt, 
+zuerst 20 isip.Contract und dann 20 jobs.Contract.
+
+autofield counter doesn't seem to get reset between isip.Contract and jobs.Contract.

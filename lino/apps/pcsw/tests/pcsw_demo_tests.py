@@ -456,7 +456,7 @@ def test11(self):
     is solved.
     """
     from lino.modlib.jobs.models import Contract
-    obj = Contract.objects.get(pk=5)
+    obj = Contract.objects.get(pk=25)
     translation.activate('de')
     self.assertEqual(obj.contact.person.get_full_name(),"Herrn Hans ALTENBERG")
     #~ babel.set_language(None)
@@ -515,7 +515,7 @@ def test15b(self):
     """
     cases = [
       ('/api/properties/PropsByGroup/%s?mt=11&mk=1&an=detail&fmt=json',8),
-      ('/api/contacts/AllContacts/%s?an=detail&fmt=json',117),
+      ('/api/contacts/AllPartners/%s?an=detail&fmt=json',117),
     ]
     for case in cases:
         url = case[0] % case[1]
@@ -560,7 +560,7 @@ def test07(self):
       ['jobs/Contracts', 21], 
       ['jobs/Candidatures', 35],
       ['jobs/Studies', 3],
-      ['cal/Events', 221], 
+      ['cal/Events', 205], 
       ['cal/Tasks', 44],
       ['cal/Priorities', 10],
       ['notes/MyNotes', 28],
