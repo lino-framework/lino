@@ -151,7 +151,7 @@ def contract_contact_choices(company):
 
 
 
-class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventOwner):
+class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator):
     """Abstract base class for 
     :class:`lino.modlib.jobs.models.Contract`
     and
@@ -163,7 +163,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventOwner):
     class Meta:
         abstract = True
         
-    eventowner = models.OneToOneField(cal.EventOwner,
+    eventgenerator = models.OneToOneField(cal.EventGenerator,
         related_name="%(app_label)s_%(class)s_ptr",
         parent_link=True)
   

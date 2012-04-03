@@ -54,6 +54,16 @@ def setkw(obj,**kw):
                               
 
 
+class Weekday(ChoiceList):
+    label = _("Weekday")
+add = Weekday.add_item
+add('1', _('Monday'),alias='monday')
+add('2', _('Tuesday'),alias='tuesday')
+add('3', _('Wednesday'),alias='wednesday')
+add('4', _('Thursday'),alias='thursday')
+add('5', _('Friday'),alias='friday')
+add('6', _('Saturday'),alias='saturday')
+add('7', _('Sunday'),alias='sunday')
 
 class DurationUnit(ChoiceList):
     """A list of possible values for the `duration_unit` field of an :class:`Event`.

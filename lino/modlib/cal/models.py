@@ -47,7 +47,7 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.mails import models as mails # import Mailable
 
 from lino.modlib.cal.utils import \
-    DurationUnit, setkw, dt2kw
+    Weekday, DurationUnit, setkw, dt2kw
 #~ from lino.modlib.cal.utils import EventStatus, \
     #~ TaskStatus, DurationUnit, Priority, AccessClass, \
     #~ GuestStatus, setkw, dt2kw
@@ -217,7 +217,7 @@ class Places(dd.Table):
     
     
     
-class EventOwner(mixins.AutoUser):
+class EventGenerator(mixins.AutoUser):
     """
     Base class for things that generate a suite of events.
     Examples
@@ -225,7 +225,7 @@ class EventOwner(mixins.AutoUser):
     :class:`schools.Course`
     """
     def save(self,*args,**kw):
-        super(EventOwner,self).save(*args,**kw)
+        super(EventGenerator,self).save(*args,**kw)
         self.update_reminders()
   
     def update_cal_rset(self):
@@ -378,6 +378,18 @@ class CalendarRelated(models.Model):
             #~ print "20111217 calendar_id was empty. set to", self.calendar, "because", self.user
             
 
+class Started(models.Model):
+    class Meta:
+        abstract = True
+        
+    start_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Start date")) # iCal:DTSTART
+    start_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Start time"))# iCal:DTSTART
+    #~ start = dd.FieldSet(_("Start"),'start_date start_time')
+
 class Ended(models.Model):
     class Meta:
         abstract = True
@@ -391,7 +403,8 @@ class Ended(models.Model):
     
   
     
-class ComponentBase(mixins.ProjectRelated):
+class ComponentBase(mixins.ProjectRelated,Started):
+  
     class Meta:
         abstract = True
         
@@ -399,13 +412,6 @@ class ComponentBase(mixins.ProjectRelated):
         max_length=200,
         blank=True) # ,null=True)
 
-    start_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Start date")) # iCal:DTSTART
-    start_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("Start time"))# iCal:DTSTART
-    #~ start = dd.FieldSet(_("Start"),'start_date start_time')
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = dd.RichTextField(_("Description"),blank=True,format='html')
     

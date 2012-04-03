@@ -60,6 +60,26 @@ def objects():
           fr=u"Français débutants",
           en=u"French beginners",
           ))
+          
+    #~ def slotkw(weekday,hour,**kw):
+        #~ if hour == 1:
+            #~ kw.update(start_time="13:00",end_time="14:00")
+        #~ elif hour == 2:
+            #~ kw.update(start_time="14:00",end_time="15:00")
+        #~ elif hour == 3:
+            #~ kw.update(start_time="15:00",end_time="16:00")
+        #~ elif hour == 4:
+            #~ kw.update(start_time="16:00",end_time="17:00")
+        #~ elif hour == 5:
+            #~ kw.update(start_time="17:00",end_time="18:00")
+        #~ elif hour == 6:
+            #~ kw.update(start_time="18:00",end_time="19:00")
+        #~ return kw
+        
+    #~ for weekday in ("1","2","3","4","5"):
+        #~ for n in [i+1 for i in range(5)]:
+            #~ yield school.Slot(weekday=weekday,n,**slotkw(weekday,n))
+            
     #~ yield school.Room(name="A")
     yield cal.Place(name="A")
     yield cal.Place(name="B")
@@ -79,6 +99,8 @@ def objects():
     #~ PS = Cycler(school.PresenceStatus.objects.all())
     CONTENTS = Cycler(school.Content.objects.all())
     TEACHERS = Cycler(school.Teacher.objects.all())
+    #~ SLOTS = Cycler(school.Slot.objects.all())
+    SLOTS = Cycler(1,2,3,4)
     PUPILS = Cycler(school.Pupil.objects.all())
     PLACES = Cycler(cal.Place.objects.all())
     #~ Event = settings.LINO.modules.cal.Event
@@ -95,8 +117,8 @@ def objects():
           end_date=datetime.date(year+1,6,30),
           every=1,
           every_unit=DurationUnit.weeks,
-          #~ end_date=settings.LINO.demo_date(300)
-          start_time="17:00",end_time="18:00")
+          slot=SLOTS.pop(),
+          )
         yield c
         for j in range(5):
             yield school.Enrolment(pupil=PUPILS.pop(),course=c)

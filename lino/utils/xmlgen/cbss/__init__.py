@@ -360,7 +360,11 @@ Not actually sending because environment is empty. Request would be:
         
 
 class NewStyleService(Service):
-    pass
+    
+    def wrap_request(self,srvReq,message_ref,dt,user_params):
+        soap = SOAP('soap',used_namespaces=[self])
+        return soap.Envelope(soap.Header(),soap.Body(srvReq))
+
     
 class TestConnectionService(NewStyleService):
     #~ xsd_filename = xsdpath('TestConnectionServiceV1.xsd')
@@ -379,10 +383,6 @@ class TestConnectionService(NewStyleService):
         url += "/TestConnectionServiceService/sendTestMessage"
         return url
         
-    def wrap_request(self,srvReq,message_ref,dt,user_params):
-        soap = SOAP('soap',used_namespaces=[self])
-        return soap.Envelope(soap.Header(),soap.Body(srvReq))
-
 tcs = TestConnectionService('tcs')
 
 class SSDNService(Service):

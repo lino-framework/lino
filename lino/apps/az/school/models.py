@@ -68,8 +68,8 @@ from lino.mixins.printable import DirectPrintAction, Printable
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-#~ from lino.modlib.cal.models import DurationUnit, update_auto_task
 from lino.modlib.cal import models as cal
+#~ from lino.modlib.cal.utils import DurationUnit
 from lino.modlib.contacts.models import Partner
 from lino.tools import resolve_model, UnresolvedModel
 
@@ -177,7 +177,64 @@ class Pupils(contacts.Persons):
     
 #~ class Course(cal.RecurrenceSet,mixins.Printable):
   
-class Course(cal.EventOwner,cal.RecurrenceSet,mixins.Printable):
+#~ class Slot(models.Model):
+    #~ """
+    #~ """
+    #~ class Meta:
+        #~ verbose_name = _("Timetable Slot") # Zeitnische
+        #~ verbose_name_plural = _('Timetable Slots')
+        
+    #~ name = models.CharField(max_length=20,
+          #~ blank=True,
+          #~ verbose_name=_("Name"))
+    #~ weekday = cal.Weekday.field()
+    #~ start_time = models.TimeField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Start Time"))
+    #~ end_time = models.TimeField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("End Time"))
+  
+#~ class Slots(dd.Table):
+    #~ model = Slot
+    #~ detail_template = """
+    #~ weekday start_time end_time
+    #~ school.CoursesBySlot
+    #~ """
+    
+
+#~ def on_event_generated(self,course,ev):
+def setup_course_event(self,course,ev):
+    if not course.slot: 
+        return
+    if not ev.start_date: 
+        #~ raise Exception("20120403 %s" % obj2str(ev))
+        return
+    start_time = datetime.time(16)
+    skip = datetime.timedelta(minutes=60)
+    wd = ev.start_date.isoweekday() # Monday:1, Tuesday:2 ... Sunday:7
+    if wd in (1,2,4,5):
+        pass
+    elif wd == 3:
+        start_time = datetime.time(13)
+    else:
+        return
+    start_time = datetime.datetime.combine(ev.start_date,start_time)
+    start_time = start_time + skip * (course.slot - 1)
+    ev.set_datetime('start',start_time)
+    ev.set_datetime('end',start_time + skip)
+    
+if not hasattr(settings.LINO,'setup_course_event'):
+    #~ raise Exception("20120403")
+    #~ setattr(site.__class__,'setup_course_event',setup_course_event)
+    settings.LINO.__class__.setup_course_event = setup_course_event
+    
+    
+class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
+    """
+    A Course is a group of pupils that regularily 
+    meet with a given teacher in a given place.
+    """
     class Meta:
         verbose_name = _("Course")
         verbose_name_plural = _('Courses')
@@ -187,22 +244,10 @@ class Course(cal.EventOwner,cal.RecurrenceSet,mixins.Printable):
     #~ place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     place = models.ForeignKey(cal.Place,blank=True,null=True)
+    #~ slot = models.ForeignKey(Slot,blank=True,null=True)
+    slot = models.PositiveSmallIntegerField(_("Time slot"),
+        blank=True,null=True)
     
-    #~ start_time = models.TimeField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Start time"))
-    #~ end_time = models.TimeField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("End time"))
-    
-    #~ rrule = dd.RecurrenceField(
-        #~ blank=True,# null=True,
-        #~ verbose_name=_("Recurrence"))
-        
-    #~ remark = models.CharField(max_length=200,
-        #~ blank=True,# null=True,
-        #~ verbose_name=_("Remark"))
-        
     def __unicode__(self):
         return u"%s (%s)" % (
           self.content,
@@ -224,6 +269,7 @@ class Course(cal.EventOwner,cal.RecurrenceSet,mixins.Printable):
     def update_owned_instance(self,ev):
         #~ if self.course is not None:
         #~ if isinstance(self.owner,Course):
+        settings.LINO.setup_course_event(self,ev)
         if ev.presence_set.count() == 0:
             for e in self.enrolment_set.all():
                 Presence(pupil=e.pupil,event=ev).save()
@@ -231,22 +277,23 @@ class Course(cal.EventOwner,cal.RecurrenceSet,mixins.Printable):
   
 
 class CourseDetail(dd.DetailLayout):
-    start = "start_date start_time"
-    end = "end_date end_time"
-    freq = "every every_unit"
+    #~ start = "start_date start_time"
+    #~ end = "end_date end_time"
+    #~ freq = "every every_unit"
+    #~ start end freq
     main = """
     id:8 user content place summary
-    start end freq
+    start_date slot every every_unit
     description
     #remark
     #rrule
     cal.EventsByOwner
     """
     
-    def setup_handle(self,dh):
-        dh.start.label = _("Start")
-        dh.end.label = _("End")
-        dh.freq.label = _("Frequency")
+    #~ def setup_handle(self,dh):
+        #~ dh.start.label = _("Start")
+        #~ dh.end.label = _("End")
+        #~ dh.freq.label = _("Frequency")
   
 class Courses(dd.Table):
     model = Course
@@ -259,6 +306,8 @@ class CoursesByTeacher(Courses):
 class CoursesByContent(Courses):
     master_key = "content"
 
+#~ class CoursesBySlot(Courses):
+    #~ master_key = "slot"
 
 class Enrolment(models.Model):
   
@@ -394,6 +443,7 @@ def setup_config_menu(site,ui,user,m):
     m = m.add_menu("school",_("School"))
     #~ m.add_action(Rooms)
     m.add_action(Contents)
+    #~ m.add_action(Slots)
     #~ m.add_action(PresenceStatuses)
   
 def setup_explorer_menu(site,ui,user,m):
