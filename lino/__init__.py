@@ -958,9 +958,9 @@ class Lino(object):
         Called from dpy dumps.
         New in version 1.4.4. (replaces the previous migrations_module) 
         """
-        #~ import logging
-        #~ logger = logging.getLogger(__name__)
-        from lino.utils import dblogger
+        import logging
+        dblogger = logging.getLogger(__name__)
+        #~ from lino.utils import dblogger
         if globals_dict['SOURCE_VERSION'] == __version__:
             dblogger.info("Source version is %s : no migration needed", __version__)
             return
