@@ -296,6 +296,13 @@ class Lino(Lino):
                 end_date=end_date,end_time=end_time,transparent=transparent,type_id=type_id,place_id=place_id,priority_id=priority_id,status_id=status_id)
         globals_dict.update(create_cal_event=create_cal_event)
         
+        cal_Task = resolve_model("cal.Task")
+        def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, project_id, calendar_id, uid, start_date, start_time, summary, description, access_class_id, sequence, auto_type, user_modified, rset_id, due_date, due_time, done, percent, status_id):
+            owner_type_id = new_content_type_id(owner_type_id)
+            return cal_Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,user_modified=user_modified,
+                #~ rset_id=rset_id,
+                due_date=due_date,due_time=due_time,done=done,percent=percent,status_id=status_id)
+        globals_dict.update(create_cal_task=create_cal_task)
     
         return '1.4.4'
                 
