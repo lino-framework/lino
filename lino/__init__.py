@@ -958,16 +958,21 @@ class Lino(object):
         Called from dpy dumps.
         New in version 1.4.4. (replaces the previous migrations_module) 
         """
-        import logging
-        dblogger = logging.getLogger(__name__)
-        #~ from lino.utils import dblogger
+        #~ import logging
+        #~ dblogger = logging.getLogger(__name__)
+        from lino.utils import dblogger
+        from django.utils.importlib import import_module
         if globals_dict['SOURCE_VERSION'] == __version__:
             dblogger.info("Source version is %s : no migration needed", __version__)
             return
+        if self.migration_module:
+            migmod = import_module(self.migration_module)
+        else:
+            migmod = self
         while True:
             from_version = globals_dict['SOURCE_VERSION']
             funcname = 'migrate_from_' + from_version.replace('.','_')
-            m = getattr(self,funcname,None)
+            m = getattr(migmod,funcname,None)
             #~ func = globals().get(funcname,None)
             if m:
                 #~ dblogger.info("Found %s()", funcname)

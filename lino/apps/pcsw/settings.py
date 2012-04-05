@@ -253,59 +253,6 @@ class Lino(Lino):
                 yield obj
                 
                 
-    def migrate_from_1_4_3(self,globals_dict): 
-        """
-        - :mod:`lino.modlib.contacts` : renamed "Contact" to "Partner".
-        - :mod:`lino.modlib.mails` : renamed "Mail.contact" to "Mail.partner".
-        - renamed "bcss" to "cbss"
-        - renamed "lino.apps.dsbe" to "lino.apps.pcsw"
-        - cal.Event.rset
-        """
-        from lino.tools import resolve_model
-        #~ from lino.utils import mti
-        #~ from lino.utils import dblogger
-        
-        globals_dict.update(bcss_IdentifyPersonRequest = resolve_model("cbss.IdentifyPersonRequest"))
-        globals_dict.update(contacts_Contact=resolve_model("contacts.Partner"))
-        globals_dict.update(dsbe_Activity = resolve_model("pcsw.Activity"))
-        globals_dict.update(dsbe_AidType = resolve_model("pcsw.AidType"))
-        globals_dict.update(dsbe_Course = resolve_model("courses.Course"))
-        globals_dict.update(dsbe_CourseContent = resolve_model("courses.CourseContent"))
-        globals_dict.update(dsbe_CourseEnding = resolve_model("courses.CourseEnding"))
-        globals_dict.update(dsbe_CourseOffer = resolve_model("courses.CourseOffer"))
-        globals_dict.update(dsbe_CourseProvider = resolve_model("courses.CourseProvider"))
-        globals_dict.update(dsbe_CourseRequest = resolve_model("courses.CourseRequest"))
-        globals_dict.update(dsbe_Exclusion = resolve_model("pcsw.Exclusion"))
-        globals_dict.update(dsbe_ExclusionType = resolve_model("pcsw.ExclusionType"))
-        globals_dict.update(dsbe_LanguageKnowledge = resolve_model("cv.LanguageKnowledge"))
-        globals_dict.update(dsbe_PersonGroup = resolve_model("pcsw.PersonGroup"))
-        globals_dict.update(dsbe_PersonSearch = resolve_model("pcsw.PersonSearch"))
-        globals_dict.update(dsbe_WantedLanguageKnowledge = resolve_model("pcsw.WantedLanguageKnowledge"))
-        
-        mails_Recipient = resolve_model("mails.Recipient")
-        def create_mails_recipient(id, mail_id, contact_id, type, address, name):
-            return mails_Recipient(id=id,mail_id=mail_id,partner_id=contact_id,type=type,address=address,name=name)
-        globals_dict.update(create_mails_recipient=create_mails_recipient)
-        
-        cal_Event = resolve_model("cal.Event")
-        new_content_type_id = globals_dict['new_content_type_id']
-        def create_cal_event(id, user_id, created, modified, owner_type_id, owner_id, project_id, build_time, calendar_id, uid, start_date, start_time, summary, description, access_class_id, sequence, auto_type, user_modified, rset_id, end_date, end_time, transparent, type_id, place_id, priority_id, status_id):
-            owner_type_id = new_content_type_id(owner_type_id)
-            return cal_Event(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,build_time=build_time,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,user_modified=user_modified,
-                #~ rset_id=rset_id,
-                end_date=end_date,end_time=end_time,transparent=transparent,type_id=type_id,place_id=place_id,priority_id=priority_id,status_id=status_id)
-        globals_dict.update(create_cal_event=create_cal_event)
-        
-        cal_Task = resolve_model("cal.Task")
-        def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, project_id, calendar_id, uid, start_date, start_time, summary, description, access_class_id, sequence, auto_type, user_modified, rset_id, due_date, due_time, done, percent, status_id):
-            owner_type_id = new_content_type_id(owner_type_id)
-            return cal_Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,user_modified=user_modified,
-                #~ rset_id=rset_id,
-                due_date=due_date,due_time=due_time,done=done,percent=percent,status_id=status_id)
-        globals_dict.update(create_cal_task=create_cal_task)
-    
-        return '1.4.4'
-                
 
 LINO = Lino(__file__,globals())
 
