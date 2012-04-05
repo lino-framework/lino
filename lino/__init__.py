@@ -953,3 +953,35 @@ class Lino(object):
         """
         return []
         
+    def install_migrations(self,globals_dict):
+        """
+        Called from dpy dumps.
+        New in version 1.4.4. (replaces the previous migrations_module) 
+        """
+        #~ import logging
+        #~ logger = logging.getLogger(__name__)
+        from lino.utils import dblogger
+        if globals_dict['SOURCE_VERSION'] == __version__:
+            dblogger.info("Source version is %s : no migration needed", __version__)
+            return
+        while True:
+            from_version = globals_dict['SOURCE_VERSION']
+            funcname = 'migrate_from_' + from_version.replace('.','_')
+            m = getattr(self,funcname,None)
+            #~ func = globals().get(funcname,None)
+            if m:
+                #~ dblogger.info("Found %s()", funcname)
+                to_version = m(globals_dict)
+                if not isinstance(to_version,basestring):
+                    raise Exception("Oops: %s didn't return a string!" % m)
+                msg = "Migrating from version %s to %s" % (from_version, to_version)
+                if m.__doc__:
+                    msg += ":\n" + m.__doc__
+                dblogger.info(msg)
+                globals_dict['SOURCE_VERSION'] = to_version
+            else:
+                if from_version != __version__:
+                    dblogger.warning("No method for migrating from version %s to %s",from_version,__version__)
+                break
+
+          

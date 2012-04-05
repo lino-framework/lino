@@ -108,6 +108,8 @@ As long as nobody protests, I'll save some time by writing in German.
   |br| 
   :doc:`02 <0402>`
   :doc:`03 <0403>`
+  04
+  :doc:`05 <0405>`
   
 .. |May| replace::  **May**
   |br| 

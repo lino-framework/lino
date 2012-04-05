@@ -380,7 +380,7 @@ def objects():
     
     #~ project = Instantiator('projects.Project').build
     note = Instantiator('notes.Note').build
-    langk = Instantiator('pcsw.LanguageKnowledge').build
+    langk = Instantiator('cv.LanguageKnowledge').build
 
     #~ prj = project(name="Testprojekt",company=oshz)
     #~ yield prj 
@@ -623,7 +623,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
 
     #~ from lino.sites.pcsw.models import Course, CourseContent, CourseRequest
     
-    courseprovider = Instantiator('pcsw.CourseProvider').build
+    courseprovider = Instantiator('courses.CourseProvider').build
     #~ oikos = company(name=u"Oikos",city=eupen,country='BE',
       #~ is_courseprovider=True)
     oikos = courseprovider(name=u"Oikos",city=eupen,country='BE')
@@ -634,17 +634,17 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     kap = courseprovider(name=u"KAP",city=eupen,country='BE')
     yield kap
     
-    CourseContent = resolve_model('pcsw.CourseContent')
+    CourseContent = resolve_model('courses.CourseContent')
     yield CourseContent(id=1,name=u"Deutsch")
     yield CourseContent(id=2,name=u"Französisch")
     
-    creq = Instantiator('pcsw.CourseRequest').build
+    creq = Instantiator('courses.CourseRequest').build
     yield creq(person=ulrike,content=1,date_submitted=settings.LINO.demo_date(-30))
     yield creq(person=tatjana,content=1,date_submitted=settings.LINO.demo_date(-30))
     yield creq(person=erna,content=2,date_submitted=settings.LINO.demo_date(-30))
     
-    offer = Instantiator('pcsw.CourseOffer').build
-    course = Instantiator('pcsw.Course').build
+    offer = Instantiator('courses.CourseOffer').build
+    course = Instantiator('courses.Course').build
     yield offer(provider=oikos,title=u"Deutsch für Anfänger",content=1)
     #~ yield course(offer=1,start_date=i2d(20110110))
     yield course(offer=1,start_date=settings.LINO.demo_date(+30))
@@ -679,7 +679,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
             i += 1
             yield pp(p,prop,prop.type.default_value)
             
-    langk = Instantiator('pcsw.LanguageKnowledge',
+    langk = Instantiator('cv.LanguageKnowledge',
         'person:name language written spoken').build
     yield langk(u"Ausdemwald Alfons",'est','1','1')
     yield langk(u"Ausdemwald Alfons",'ger','4','3')

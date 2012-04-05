@@ -17,7 +17,7 @@ This is a real-world example of how the application developer
 can provide automatic data migrations for 
 :mod:`lino.utils.dpy` dumps.
 
-This module is used when loading a dpy dump back.
+This module is used when loading a dpy dump that was created by a previous version.
 Lino writes the corresponding ``import`` statement into every dpy dump because
 :mod:`lino.apps.pcsw.settings.Lino` has
 :attr:`lino.Lino.migration_module` 
@@ -1034,5 +1034,91 @@ def migrate_from_1_4_3(globals_dict):
     - renamed "bcss" to "cbss"
     - renamed "lino.apps.dsbe" to "lino.apps.pcsw"
     """
-    raise NotImplementedError()
+    
+    globals_dict.update(bcss_IdentifyPersonRequest = resolve_model("cbss.IdentifyPersonRequest"))
+    globals_dict.update(contacts_Contact=resolve_model("contacts.Partner"))
+    globals_dict.update(dsbe_Activity = resolve_model("pcsw.Activity"))
+    globals_dict.update(dsbe_AidType = resolve_model("pcsw.AidType"))
+    globals_dict.update(dsbe_Course = resolve_model("courses.Course"))
+    globals_dict.update(dsbe_CourseContent = resolve_model("courses.CourseContent"))
+    globals_dict.update(dsbe_CourseEnding = resolve_model("courses.CourseEnding"))
+    globals_dict.update(dsbe_CourseOffer = resolve_model("courses.CourseOffer"))
+    globals_dict.update(dsbe_CourseProvider = resolve_model("courses.CourseProvider"))
+    globals_dict.update(dsbe_CourseRequest = resolve_model("courses.CourseRequest"))
+    globals_dict.update(dsbe_Exclusion = resolve_model("pcsw.Exclusion"))
+    globals_dict.update(dsbe_ExclusionType = resolve_model("pcsw.ExclusionType"))
+    globals_dict.update(dsbe_LanguageKnowledge = resolve_model("cv.LanguageKnowledge"))
+    globals_dict.update(dsbe_PersonGroup = resolve_model("pcsw.PersonGroup"))
+    globals_dict.update(dsbe_PersonSearch = resolve_model("pcsw.PersonSearch"))
+    globals_dict.update(dsbe_WantedLanguageKnowledge = resolve_model("pcsw.WantedLanguageKnowledge"))
+    
+    mails_Recipient = resolve_model("mails.Recipient")
+    def create_mails_recipient(id, mail_id, contact_id, type, address, name):
+        return mails_Recipient(id=id,mail_id=mail_id,partner_id=contact_id,type=type,address=address,name=name)
+    globals_dict.update(create_mails_recipient=create_mails_recipient)
+    
+    
+    #~ contacts_Contact = resolve_model("contacts.Partner")
+    #~ globals_dict.update(contacts_Contact=contacts_Contact)
+    #~ contacts_Company = resolve_model("contacts.Company")
+    #~ globals_dict.update(contacts_Company=contacts_Company)
+    #~ contacts_Person = resolve_model("contacts.Person")
+    #~ globals_dict.update(contacts_Person=contacts_Person)
+    #~ def create_contacts_company(contact_ptr_id, prefix, vat_id, type_id, is_active, newcomer, is_deprecated, activity_id, bank_account1, bank_account2, hourly_rate):
+        #~ return create_child(contacts_Contact,contact_ptr_id,contacts_Company,prefix=prefix,vat_id=vat_id,type_id=type_id,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,hourly_rate=hourly_rate)
+    #~ globals_dict.update(create_contacts_company=create_contacts_company)
+    #~ def create_contacts_contact(id, country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks):
+        #~ return contacts_Contact(id=id,country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks)
+    #~ globals_dict.update(create_contacts_contact=create_contacts_contact)
+    #~ def create_contacts_person(contact_ptr_id, birth_date, first_name, last_name, title, gender, is_active, newcomer, is_deprecated, activity_id, bank_account1, bank_account2, remarks2, gesdos_id, is_cpas, is_senior, group_id, coached_from, coached_until, coach1_id, coach2_id, birth_place, birth_country_id, civil_state, national_id, health_insurance_id, pharmacy_id, nationality_id, card_number, card_valid_from, card_valid_until, card_type, card_issuer, noble_condition, residence_type, in_belgium_since, unemployed_since, needs_residence_permit, needs_work_permit, work_permit_suspended_until, aid_type_id, income_ag, income_wg, income_kg, income_rente, income_misc, is_seeking, unavailable_until, unavailable_why, obstacles, skills, job_agents, job_office_contact_id, broker_id, faculty_id):
+        #~ return create_child(contacts_Contact,contact_ptr_id,contacts_Person,birth_date=birth_date,first_name=first_name,last_name=last_name,title=title,gender=gender,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,remarks2=remarks2,gesdos_id=gesdos_id,is_cpas=is_cpas,is_senior=is_senior,group_id=group_id,coached_from=coached_from,coached_until=coached_until,coach1_id=coach1_id,coach2_id=coach2_id,birth_place=birth_place,birth_country_id=birth_country_id,civil_state=civil_state,national_id=national_id,health_insurance_id=health_insurance_id,pharmacy_id=pharmacy_id,nationality_id=nationality_id,card_number=card_number,card_valid_from=card_valid_from,card_valid_until=card_valid_until,card_type=card_type,card_issuer=card_issuer,noble_condition=noble_condition,residence_type=residence_type,in_belgium_since=in_belgium_since,unemployed_since=unemployed_since,needs_residence_permit=needs_residence_permit,needs_work_permit=needs_work_permit,work_permit_suspended_until=work_permit_suspended_until,aid_type_id=aid_type_id,income_ag=income_ag,income_wg=income_wg,income_kg=income_kg,income_rente=income_rente,income_misc=income_misc,is_seeking=is_seeking,unavailable_until=unavailable_until,unavailable_why=unavailable_why,obstacles=obstacles,skills=skills,job_agents=job_agents,job_office_contact_id=job_office_contact_id,broker_id=broker_id,faculty_id=faculty_id)
+    #~ globals_dict.update(create_contacts_person=create_contacts_person)
+    #~ def create_users_user(contact_ptr_id, first_name, last_name, title, gender, username, is_staff, is_expert, is_active, is_superuser, last_login, date_joined, is_spis, is_newcomers, newcomer_quota):
+        #~ return create_child(contacts_Contact,contact_ptr_id,users_User,first_name=first_name,last_name=last_name,title=title,gender=gender,username=username,is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,last_login=last_login,date_joined=date_joined,is_spis=is_spis,is_newcomers=is_newcomers,newcomer_quota=newcomer_quota)
+    #~ globals_dict.update(create_contacts_user=create_contacts_user)
+    
+    
+    #~ dsbe_Activity = resolve_model("pcsw.Activity")
+    #~ def create_dsbe_activity(id, name, lst104):
+        #~ return dsbe_Activity(id=id,name=name,lst104=lst104)
+    #~ globals_dict.update(create_dsbe_activity=create_dsbe_activity)
+    
+    
+    #~ dsbe_AidType = resolve_model("pcsw.AidType")
+    #~ def create_dsbe_aidtype(id, name, name_fr, name_en):
+        #~ return dsbe_AidType(id=id,name=name,name_fr=name_fr,name_en=name_en)
+    #~ globals_dict.update(create_dsbe_aidtype=create_dsbe_aidtype)
+    
+    #~ dsbe_Course = resolve_model("courses.Course")
+    #~ def create_dsbe_course(id, offer_id, title, start_date, remark):
+        #~ return dsbe_Course(id=id,offer_id=offer_id,title=title,start_date=start_date,remark=remark)
+    #~ globals_dict.update(create_dsbe_course=create_dsbe_course)
+    
+    #~ dsbe_CourseContent = resolve_model("courses.CourseContent")
+    #~ def create_dsbe_coursecontent(id, name):
+        #~ return dsbe_CourseContent(id=id,name=name)
+    #~ globals_dict.update(create_dsbe_coursecontent=create_dsbe_coursecontent)
+    
+    #~ dsbe_CourseEnding = resolve_model("courses.CourseEnding")
+    #~ def create_dsbe_courseending(id, name):
+        #~ return dsbe_CourseEnding(id=id,name=name)
+    #~ globals_dict.update(create_dsbe_courseending=create_dsbe_courseending)
+    
+    #~ dsbe_CourseOffer = resolve_model("courses.CourseOffer")
+    #~ def create_dsbe_courseoffer(id, title, content_id, provider_id, description):
+        #~ return dsbe_CourseOffer(id=id,title=title,content_id=content_id,provider_id=provider_id,description=description)
+    #~ globals_dict.update(create_dsbe_courseoffer=create_dsbe_courseoffer)
+    
+    #~ dsbe_CourseProvider = resolve_model("courses.CourseProvider")
+    #~ def create_dsbe_courseprovider(company_ptr_id):
+        #~ return create_child(contacts_Company,company_ptr_id,dsbe_CourseProvider)
+    #~ globals_dict.update(create_dsbe_courseprovider=create_dsbe_courseprovider)
+    
+    #~ dsbe_CourseRequest = resolve_model("courses.CourseRequest")
+    #~ def create_dsbe_courserequest(id, person_id, offer_id, content_id, date_submitted, urgent, course_id, remark, date_ended, ending_id):
+        #~ return dsbe_CourseRequest(id=id,person_id=person_id,offer_id=offer_id,content_id=content_id,date_submitted=date_submitted,urgent=urgent,course_id=course_id,remark=remark,date_ended=date_ended,ending_id=ending_id)
+    #~ globals_dict.update(create_dsbe_courserequest=create_dsbe_courserequest)
+    
+    
+
     return '1.4.4'

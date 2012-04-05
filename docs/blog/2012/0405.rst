@@ -1,0 +1,19 @@
+20120405
+========
+
+lino.apps.pcsw.models was too big, so I split two new modules out of it:
+
+- lino.modlib.cv.models : LanguageKnowlege and PersonProperty 
+- lino.apps.pcsw.courses.models : CourseEnding, Course, CourseOffer, CourseProvider
+
+
+Bemerkung:
+`cv` steht in modlib, denn man könnte es theoretisch 
+auch für andere Anwendungen als `pcsw` verwenden.
+Für `courses` gilt das leider nicht.
+CourseProvider und dessen Tabellen erben von 
+Company bzw. Companies. 
+Und die sind ja in `pcsw` verändert.
+Und leider sehe ich momentan noch keine Methode, 
+wie ich all diese Veränderungen einkapseln kann.
+

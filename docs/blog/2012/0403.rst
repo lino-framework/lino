@@ -1,0 +1,49 @@
+20120403
+========
+
+CBSS connection
+---------------
+
+Tested the new command :mod:`lino.modlib.cbss.cbss_testconnection`.
+Since this needs to run on the customer's machine and since 
+we don't yet want to make a release, I first had to create a 
+new project on that machine.
+
+Aha, here is the next problem::
+
+  lsaffre@lino:/usr/local/django/test_dsbe$ python manage.py cbss_testconnection
+  Sending request...
+  Traceback (most recent call last):
+    File "manage.py", line 19, in <module>
+      execute_manager(settings)
+    File "/var/snapshots/django/django/core/management/__init__.py", line 442, in execute_manager
+      utility.execute()
+    File "/var/snapshots/django/django/core/management/__init__.py", line 379, in execute
+      self.fetch_command(subcommand).run_from_argv(self.argv)
+    File "/var/snapshots/django/django/core/management/base.py", line 191, in run_from_argv
+      self.execute(*args, **options.__dict__)
+    File "/var/snapshots/django/django/core/management/base.py", line 220, in execute
+      output = self.handle(*args, **options)
+    File "/var/snapshots/lino_dev/lino/modlib/cbss/management/commands/cbss_testconnection.py", line 32, in handle
+      print tcs.execute('test',req,settings.LINO.cbss2_user_params)
+    File "/var/snapshots/lino_dev/lino/utils/xmlgen/cbss/__init__.py", line 350, in execute
+      res = server.soap(xml)
+    File "/var/snapshots/appy-current/appy/shared/dav.py", line 274, in soap
+      res = self.post(data, uri, headers=headers, encode=None)
+    File "/var/snapshots/appy-current/appy/shared/dav.py", line 264, in post
+      return self.send('POST', uri, headers=headers, body=body)
+    File "/var/snapshots/appy-current/appy/shared/dav.py", line 189, in send
+      body = conn.getfile().read()
+    File "/usr/lib/python2.6/httplib.py", line 1244, in read
+      return s + self._file.read()
+    File "/usr/lib/python2.6/socket.py", line 348, in read
+      data = self._sock.recv(rbufsize)
+  socket.error: [Errno 104] Connection reset by peer
+
+
+lino.modlib.schools
+-------------------
+
+Continued on `lino.modlib.schools`. 
+Introduced the notion of "time slot" (Zeitnische).
+Still searching...

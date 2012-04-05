@@ -43,7 +43,7 @@ from lino.utils import perms
 from lino import mixins
 #~ from lino import actions
 #~ from lino import fields
-from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 #~ from lino.modlib.uploads import models as uploads
@@ -71,7 +71,7 @@ from lino.modlib.countries.models import CountryCity
 from lino.modlib.cal import models as cal
 #~ from lino.modlib.cal.utils import DurationUnit
 from lino.modlib.contacts.models import Partner
-from lino.tools import resolve_model, UnresolvedModel
+from lino.tools import resolve_app, resolve_model
 
 #~ # not used here, but these modules are required in INSTALLED_APPS, 
 #~ # and other code may import them using 
@@ -83,7 +83,8 @@ from lino.tools import resolve_model, UnresolvedModel
 if settings.LINO.user_model:
     User = resolve_model(settings.LINO.user_model,strict=True)
 
-#~ Company = resolve_model('contacts.Company',strict=True)
+contacts = resolve_app('contacts')
+Company = resolve_model('contacts.Company',strict=True)
 Person = resolve_model('contacts.Person',strict=True)
 
 

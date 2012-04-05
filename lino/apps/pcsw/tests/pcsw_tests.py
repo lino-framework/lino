@@ -39,12 +39,13 @@ from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 
-#~ Person = resolve_model('contacts.Person')
-#~ Property = resolve_model('properties.Property')
-#~ PersonProperty = resolve_model('properties.PersonProperty')
+Person = resolve_model('contacts.Person')
+Property = resolve_model('properties.Property')
+PersonProperty = resolve_model('properties.PersonProperty')
 
-from lino.apps.pcsw.models import Person, PersonProperty
-from lino.modlib.properties.models import Property
+#~ from lino.apps.pcsw.models import Person
+#~ from lino.modlib.cv.models import PersonProperty
+#~ from lino.modlib.properties.models import Property
 
 
 

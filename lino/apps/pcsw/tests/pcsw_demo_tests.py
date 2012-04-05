@@ -89,7 +89,7 @@ def test02(self):
     u.language = '' # HTTP_ACCEPT_LANGUAGE works only when User.language empty
     u.save()
     
-    url = '/api/pcsw/SoftSkillsByPerson?mt=22&mk=124&fmt=json'
+    url = '/api/cv/SoftSkillsByPerson?mt=22&mk=124&fmt=json'
     
     if 'en' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
@@ -549,9 +549,9 @@ def test07(self):
       ['pcsw/MyPersons',19],
       ['contacts/AllPersons', 74],
       ['contacts/AllPartners', 102],
-      ['pcsw/Courses', 4],
-      ['pcsw/CourseProviders', 3],
-      ['pcsw/CourseOffers', 4],
+      ['courses/Courses', 4],
+      ['courses/CourseProviders', 3],
+      ['courses/CourseOffers', 4],
       ['countries/Countries', 6],
       ['notes/Notes', 106],
       ['isip/Contracts', 21],
@@ -560,7 +560,7 @@ def test07(self):
       ['jobs/Contracts', 21], 
       ['jobs/Candidatures', 35],
       ['jobs/Studies', 3],
-      ['cal/Events', 205], 
+      ['cal/Events', 204], 
       ['cal/Tasks', 44],
       ['cal/Priorities', 10],
       ['notes/MyNotes', 28],
@@ -581,7 +581,7 @@ def test07(self):
             "%s got %d rows instead of %d" % (case[0],result['count'],case[1]))
 
     cases = [
-      ['pcsw/SkillsByPerson/property',6],
+      ['cv/SkillsByPerson/property',6],
     ]
     for case in cases:
         url = '/choices/%s?fmt=json&limit=10&start=0' % case[0]
