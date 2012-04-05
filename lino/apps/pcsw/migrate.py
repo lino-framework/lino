@@ -1028,7 +1028,7 @@ def migrate_from_1_4_2(globals_dict):
     return '1.4.3'
 
 
-def migrate_from_1_4_3(self,globals_dict): 
+def migrate_from_1_4_3(globals_dict): 
     """
     - :mod:`lino.modlib.contacts` : renamed "Contact" to "Partner".
     - :mod:`lino.modlib.mails` : renamed "Mail.contact" to "Mail.partner".

@@ -17,9 +17,16 @@ Und die sind ja in `pcsw` verändert.
 Und leider sehe ich momentan noch keine Methode, 
 wie ich all diese Veränderungen einkapseln kann.
 
+
 Optimized the migration process: 
 a :attr:`lino.Lino.migration_module` attribute and a separate module 
 for migrations is no longer required. 
+Application developers can write their migration methods directly as methods 
+of their Lino site class::
+
+  def migrate_from_1_0_0(self,globals_dict):
+      ...
+      
 dpy dumps now no longer do::
 
     from <settings.LINO.migration_module> import install
@@ -28,3 +35,4 @@ dpy dumps now no longer do::
 they just do::
 
     settings.LINO.install_migrations(globals())
+
