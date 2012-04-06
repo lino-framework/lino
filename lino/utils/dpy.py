@@ -302,14 +302,18 @@ class FakeDeserializedObject(base.DeserializedObject):
         except (ValidationError,ObjectDoesNotExist), e:
         #~ except Exception, e:
             if obj.pk is None:
-                dblogger.exception(e)
-                raise Exception(
-                    "Failed to save %s (and %s is None). Abandoned." 
-                    % (obj2str(obj),obj._meta.pk.attname))
+                if True:
+                    msg = "Failed to save %s without %s: %s." % (
+                        obj.__class__,obj._meta.pk.attname,obj2str(obj))
+                    dblogger.warning(msg)
+                    raise
+                else:
+                    dblogger.exception(e)
+                    raise Exception(msg)
             deps = [f.rel.to for f in obj._meta.fields if f.rel is not None]
             if not deps:
                 dblogger.exception(e)
-                raise Exception("Failed to save independent %s. Abandoned." % obj2str(obj))
+                raise Exception("Failed to save independent %s." % obj2str(obj))
             self.deserializer.register_failure(self,e)
             return False
         #~ except Exception,e:
