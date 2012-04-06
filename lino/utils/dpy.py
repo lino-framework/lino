@@ -299,8 +299,8 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except ValidationError,e:
         #~ except ObjectDoesNotExist,e:
         #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
-        except (ValidationError,ObjectDoesNotExist), e:
-        #~ except Exception, e:
+        #~ except (ValidationError,ObjectDoesNotExist), e:
+        except Exception, e:
             if obj.pk is None:
                 if True:
                     msg = "Failed to save %s without %s: %s." % (
