@@ -163,9 +163,9 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
     class Meta:
         abstract = True
         
-    eventgenerator = models.OneToOneField(cal.EventGenerator,
-        related_name="%(app_label)s_%(class)s_ptr",
-        parent_link=True)
+    #~ eventgenerator = models.OneToOneField(cal.EventGenerator,
+        #~ related_name="%(app_label)s_%(class)s_ptr",
+        #~ parent_link=True)
   
     person = models.ForeignKey(settings.LINO.person_model,
         related_name="%(app_label)s_%(class)s_set_by_person",
