@@ -298,7 +298,8 @@ class FakeDeserializedObject(base.DeserializedObject):
             return True
         #~ except ValidationError,e:
         #~ except ObjectDoesNotExist,e:
-        except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
+        #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
+        except (ValidationError,ObjectDoesNotExist), e:
         #~ except Exception, e:
             if obj.pk is None:
                 dblogger.exception(e)
