@@ -131,7 +131,8 @@ class QuantityField(models.DecimalField):
         fld.widget.attrs['style'] = "text-align:right;"
         return fld
 
-class FakeField:
+class FakeField(object):
+    choices = None
     primary_key = False
     editable = False
     name = None
@@ -143,6 +144,22 @@ class FakeField:
     def has_default(self):
         return False
         
+
+class RemoteField(FakeField):
+    """
+    Represents a field on a related object.
+    LayoutHandle instantiates a RemoteField for example when 
+    """
+    #~ primary_key = False
+    #~ editable = False
+    def __init__(self,func,name,fld,**kw):
+        self.func = func
+        self.name = name
+        self.field = fld
+        self.rel = self.field.rel
+        self.verbose_name = fld.verbose_name
+        self.max_length = getattr(fld,'max_length',None)
+
 
         
 

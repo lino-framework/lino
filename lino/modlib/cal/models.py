@@ -53,7 +53,6 @@ from lino.modlib.cal.utils import \
     #~ GuestStatus, setkw, dt2kw
 
 from lino.utils.babel import dtosl
-#~ from lino.utils.dpy import is_deserializing
 
 
 

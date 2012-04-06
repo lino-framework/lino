@@ -683,9 +683,11 @@ class ExtUI(base.UI):
                 de = None
                 name += " (" + str(e) + ")"
             
-        if isinstance(de,table.RemoteField):
+        if False and isinstance(de,fields.RemoteField):
             dummy = ext_elems.field2elem(lh,de.field,**kw)
             dummy.editable = False
+            dummy.name = de.name
+            #~ dummy.field = de
             lh.add_store_field(de)
             return dummy
             
@@ -696,6 +698,8 @@ class ExtUI(base.UI):
         if isinstance(de,fields.Constant):
             return ext_elems.ConstantElement(lh,de,**kw)
             
+        if isinstance(de,fields.RemoteField):
+            return self.create_field_element(lh,de,**kw)
         if isinstance(de,models.Field):
             if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
                 if len(babel.BABEL_LANGS) > 0:
@@ -1906,8 +1910,8 @@ tinymce.init({
                     f.write(ln + '\n')
             
             for rpt in actors_list:
-                if str(rpt) == "lino.Models":
-                    logger.info("20120307 %s %s",rpt,rpt.get_actions())
+                #~ if str(rpt) == "lino.Models":
+                    #~ logger.info("20120307 %s %s",rpt,rpt.get_actions())
                 
                 rh = rpt.get_handle(self) 
                 

@@ -1,0 +1,88 @@
+20120406
+========
+
+Avaaz mobilisert gegen CISCA
+----------------------------
+
+Ja, auch ich habe bei Avaaz 
+`gegen CISCA <http://www.avaaz.org/de/stop_cispa/?cDiLbab>`_
+unterzeichnet.
+Dieses Gesetz will amerikanische ISPs dazu verpflichten, 
+Zugriffsdaten auf Anfrage einer Behörde weiterzuleiten
+`[*]
+<http://www.netzwoche.ch/de-CH/News/2012/04/05/Aktivisten-warnen-vor-neuem-Internetgesetz.aspx>`_.
+
+Einige meiner Beweggründe:
+  
+- Ob das nun gegen Raubkopierer oder gegen Terroristen geht, 
+  tut nichts zur Sache: dadurch würden die Grundfesten des Internet 
+  vernichtet.
+- Die Aufgabe einer Regierung 
+  ist das Wohlergehen der *Menschen*,
+  das Wohlergehen der *Firmen* kommt erst an zweiter Stelle.
+- Ich glaube nicht, dass wir gewalttätige Untoleranz (Terror)
+  durch "einen noch härteren Griff" bekämpfen können. 
+  Gewalt ist immer auch Ausdruck von Verzweiflung im weltweiten Wertekonflikt.
+  Bei Wertekonflikten kommt man nicht weiter, wenn man die 
+  Fehler des Anderen anprangert und auf seinem Recht beharrt.
+  
+Der auslösende Impuls war jedoch: das `House of Intelligence
+<http://intelligence.house.gov/bill/cyber-intelligence-sharing-and-protection-act-2011>`_
+präsentiert den Gesetzesvorschlag doch tatsächlich 
+**mit** einer Liste von Zitaten der *Befürworter* 
+und **ohne** eine solche Liste der *Gegner*!
+                                                                  
+
+
+Ein besserer Name für "dpy"?
+----------------------------
+
+Das, was ich bisher aus historischen Gründen "dpy" nenne, 
+ist ja ein Serializer (Deserializer), der Python-Code generiert (einliest).
+
+Also serpy, pyserial, serialpy?
+
+dpy macht einerseits "Python Dumps" und 
+andererseits "intelligente Fixtures".
+Ein "Python-Dump" ist eine .py-Datei, die mit 
+Djangos `dumpdata` und dessen ``--format py``
+erstellt wurde und ein komplettes Backup (einen Dump) 
+der gesamten Datenbank enthält.
+So ein Python Dump 
+kann wie jede andere Fixture mit 
+Djangos `loaddata` eingelesen werden.
+
+Also pydump, dumpy
+
+Grübel... Spontan gefällt mir "dumpy" am besten. 
+Dass der Name selbstironisch gemeint ist, 
+also dass Lino's Python-Dumps nicht tatsächlich plump sein wollen, 
+halte ich für selbstverständlich.
+
+
+PendingCourseRequests
+---------------------
+
+Neue Tabelle 
+:class:`Offene Kursanfragen 
+<lino.apps.pcsw.courses.models.PendingCourseRequests>`.
+
+
+Bugs with remote fields
+-----------------------
+
+Remote fields are currently used only in jobs.ContractsSearch
+(:menuselection:`Stellen --> Suche Art-60-7-Konventionen`).
+Clicking the :guilabel:`[html]` button on that table causes a server traceback.
+
+- :guilabel:`[html]` meldet 'CourseRequest' object has no attribute 'gsm'
+
+Another problem with remote fields:
+
+- Lino doesn't yet support remote fields to a virtual field.
+  That's why we don't have columns `person__age` 
+  and `person__address_column` in :class:`Offene Kursanfragen 
+  <lino.apps.pcsw.courses.models.PendingCourseRequests>`.
+
+
+

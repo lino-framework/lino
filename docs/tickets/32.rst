@@ -1,5 +1,5 @@
-#32 [closed]: loaddata and processing order of fixtures
-=======================================================
+#32 [closed] : loaddata and processing order of fixtures
+========================================================
 
 Running ``manage.py test`` for :doc:`/dsbe/index` fails, saying::
   

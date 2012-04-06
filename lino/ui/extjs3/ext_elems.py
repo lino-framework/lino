@@ -441,7 +441,8 @@ class FieldElement(LayoutElement):
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
         #~ kw.update(xtype='gridcolumn')
-        kw.update(dataIndex=self.field.name)
+        #~ kw.update(dataIndex=self.field.name)
+        kw.update(dataIndex=self.name)
         #~ if self.label is None:
             #~ kw.update(header=self.field.name)
         #~ else:
@@ -463,6 +464,7 @@ class FieldElement(LayoutElement):
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
         # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
+        # Also don't set a label then.
         if not isinstance(self.layout_handle.layout,layouts.ListLayout):
             kw.update(name=self.field.name)
             if self.label:
@@ -1679,6 +1681,8 @@ def field2elem(layout_handle,field,**kw):
     selector_field = field
     if isinstance(field,dd.VirtualField):
         selector_field = field.return_type
+    elif isinstance(field,fields.RemoteField):
+        selector_field = field.field
     
     if isinstance(selector_field,models.BooleanField) and not field.editable:
         return BooleanDisplayElement(layout_handle,field,**kw)
@@ -1689,4 +1693,7 @@ def field2elem(layout_handle,field,**kw):
     if isinstance(field,dd.VirtualField):
         raise NotImplementedError("No LayoutElement for VirtualField %s on %s" % (
           field.name,field.return_type.__class__))
+    if isinstance(field,fields.RemoteField):
+        raise NotImplementedError("No LayoutElement for RemoteField %s on %s" % (
+          field.name,field.field.__class__))
     raise NotImplementedError("No LayoutElement for %s" % field.__class__)

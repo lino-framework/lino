@@ -513,3 +513,95 @@ class CandidatesByCourse(RequestsByCourse):
         obj.course = None
         return obj
 
+class PendingCourseRequests(CourseRequests):
+    """
+    List of pending course requests.
+    """
+    label = _("Pending Course Requests")
+    order_by = ['date_submitted']
+    filter = models.Q(course__isnull=True)
+    
+    
+    @classmethod
+    def setup_columns(self):
+        """
+        Builds columns dynamically from the :class:`PersonGroup` database table.
+        Called when kernel setup is done, 
+        before the UI handle is being instantiated.
+        """
+        self.column_names = 'date_submitted person age '
+        self.column_names += 'person__gsm person__phone person__coach1 '
+        #~ self.column_names += 'person__address_column person__age ' 
+        self.column_names += 'content urgent remark'
+        age_slices = [(16,24), (25,30), (31,40), (41,50),(51,60),(61,None)]
+        for sl in age_slices:
+            if sl[1] is None:
+                label = ">%d" % sl[0]
+            else:
+                label = "%d-%d" % sl
+
+            def w(sl):
+                def func(self,obj,ar):
+                    if obj._age_in_years is None: return None
+                    if obj._age_in_years < sl[0]: return None
+                    if obj._age_in_years > sl[1]: return None
+                    return 1
+                return func
+            vf = dd.VirtualField(models.IntegerField(label),w(sl))
+            self.add_virtual_field('a'+str(sl[0]),vf)
+            self.column_names += ' ' + vf.name
+                
+        self.column_names += ' ax'
+    
+        
+    @classmethod
+    def get_data_rows(self,ar):
+        qs = super(PendingCourseRequests,self).get_request_queryset(ar)
+        for obj in qs:
+            age = obj.person.get_age_years()
+            if age is not None: age = age.days / 365
+            obj._age_in_years = age
+            yield obj
+    
+
+    #~ @dd.virtualfield(models.IntegerField(_("Age")))
+    @dd.displayfield(_("Age"))
+    def age(self,obj,request):
+        if obj._age_in_years is None: return ''
+        return str(obj._age_in_years)
+        
+    #~ @dd.virtualfield(models.BooleanField(_("unknown age")))
+    @dd.virtualfield(models.IntegerField(_("unknown age")))
+    def ax(self,obj,request):
+        if obj._age_in_years is None: return 1
+        return 0
+        #~ return obj._age_in_years is None
+        
+    #~ @dd.virtualfield(models.IntegerField(_("16-24")))
+    #~ def a24(self,obj,request):
+        #~ if obj._age_in_years is None : return 0
+        #~ if obj._age_in_years <= 24 : return 1
+        #~ return 0
+        
+    #~ @dd.virtualfield(models.IntegerField(_("25-30")))
+    #~ def a30(self,obj,request):
+        #~ if obj._age_in_years is None : return 0
+        #~ if obj._age_in_years <= 24: return 0
+        #~ if obj._age_in_years > 30: return 0
+        #~ return 1
+        
+    #~ @dd.virtualfield(models.IntegerField(_("31-40")))
+    #~ def a40(self,obj,request):
+        #~ if obj._age_in_years is None : return 0
+        #~ if obj._age_in_years <= 30: return 0
+        #~ if obj._age_in_years > 40: return 0
+        #~ return 1
+        
+    #~ @dd.virtualfield(models.IntegerField(_("41-50")))
+    #~ def a50(self,obj,request):
+        #~ if obj._age_in_years is None : return 0
+        #~ if obj._age_in_years <= 40: return 0
+        #~ if obj._age_in_years > 50: return 0
+        #~ return 1
+        
+        

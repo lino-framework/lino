@@ -392,12 +392,6 @@ def model2report(m):
     return classmethod(f)
 
 
-class RemoteField(object):
-    primary_key = False
-    def __init__(self,func,name,fld,**kw):
-        self.func = func
-        self.name = name
-        self.field = fld
 
 
 
@@ -664,6 +658,11 @@ class Table(AbstractTable):
 
     @classmethod
     def get_data_elem(self,name):
+        """
+        Adds the possibility to specify 
+        :class:`remote fields <lino.core.fields.RemoteField>`
+        in a layout template.
+        """
         cc = super(Table,self).get_data_elem(name)
         #~ cc = AbstractTable.get_data_elem(self,name)
         if cc:
@@ -671,15 +670,18 @@ class Table(AbstractTable):
         
         parts = name.split('__')
         if len(parts) > 1:
+            #~ logger.warning("20120406 RemoteField %s in %s",name,self)
             model = self.model
             for n in parts:
+                assert model is not None
                 fld = get_data_elem(model,n)
                 if fld is None:
                     raise Exception("Part %s of %s got None" % (n,model))
                 if fld.rel:
                     model = fld.rel.to
                 else:
-                    model = False
+                    #~ model = False
+                    model = None
             def func(obj):
                 #~ logger.info('20120109 %s',name)
                 #~ print '20120109', name
@@ -691,9 +693,7 @@ class Table(AbstractTable):
                 except Exception,e:
                     return None
             #~ de = get_data_elem(model,name)
-            return RemoteField(func,name,fld)
-            #~ col = RemoteField(func,name,fld)
-            #~ return self._add_column(col)
+            return fields.RemoteField(func,name,fld)
             
             #~ return self.add_column(fn,name=name,
               #~ verbose_name=fld.verbose_name)

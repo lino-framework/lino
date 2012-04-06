@@ -21,7 +21,7 @@ commands to load the specified fixtures for all applications.
 Also writes log entries to your dblogger.
 
 That may sound dangerous, but that's what we want when we have a 
-:doc:`dpy dump </topics/dpy>` to restore our database.
+:doc:`python dump </topics/dumpy>` to restore our database.
 You know that you should rather not let 
 Lino and some other application share the same database!
 

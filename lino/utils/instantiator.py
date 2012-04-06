@@ -13,7 +13,7 @@
 
 """
 Defines the :class:`Instantiator` class and some other utilities 
-used mainly for :doc:`/topics/dpy`.
+used mainly for :doc:`/topics/dumpy`.
 """
 
 import logging
@@ -29,7 +29,7 @@ from django.contrib.contenttypes.models import ContentType
 #~ import lino
 from lino.tools import resolve_model
 
-from lino.utils import i2d # for backward compatibility of .dpy fixtures
+from lino.utils import i2d # for backward compatibility of .py fixtures
 from lino.core import fields
     
 

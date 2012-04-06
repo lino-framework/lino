@@ -29,8 +29,8 @@ from lino.modlib.properties.models import PropType
 
 
 def objects():
-    onoff = PropType.objects.get(pk=1)  # created in std.dpy
-    appraisal = PropType.objects.get(pk=2) # created in std.dpy
+    onoff = PropType.objects.get(pk=1)  # created in std fixture
+    appraisal = PropType.objects.get(pk=2) # created in std fixture
     
     pgroup = Instantiator('properties.PropGroup').build
     

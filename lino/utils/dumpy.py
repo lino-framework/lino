@@ -13,7 +13,7 @@
 
 
 """
-See :doc:`/topics/dpy`
+See :doc:`/topics/dumpy`
 
 """
 

@@ -1,6 +1,12 @@
 Coming
 ======
 
+
+- Neue Tabelle 
+  :class:`Offene Kursanfragen 
+  <lino.apps.pcsw.courses.models.PendingCourseRequests>`.
+
+
 Bugfixes
 --------
 
@@ -12,6 +18,13 @@ Bugfixes
 - Die "(zeigen)"-Links im Detail Organisation und Person 
   funktionierten nicht. 
   (:doc:`/blog/2012/0305`)
+  
+- "Remote fields" funktionierte noch nicht. 
+  Kamen allerdings bisher erst in 
+  :menuselection:`Stellen --> Suche Art-60-7-Konventionen` vor (Kolonnen Stadt, NR-Nummer und Geschlecht)
+
+- Clicking the :guilabel:`[html]` button on that table causes a server traceback.
+  
 
 Internal changes
 ----------------

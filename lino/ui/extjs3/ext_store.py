@@ -37,6 +37,7 @@ from lino.ui import requests as ext_requests
 
 import lino
 from lino.core import table
+from lino.core import fields
 from lino.core import actions
 from lino.core import actors
 from lino import dd
@@ -309,6 +310,7 @@ class VirtStoreField(StoreField):
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
         self.set_value_in_object = vf.set_value_in_object
+        #~ self.value_from_object = vf.value_from_object
         
         #~ self.delegate = delegate
 
@@ -549,13 +551,22 @@ class BooleanStoreField(StoreField):
 
         
     def value2html(self,ar,v):
-        return iif(v,_("Yes"),_("No"))
+        return force_unicode(iif(v,_("Yes"),_("No")))
+        
+    def value2int(self,v):
+        if v: return 1
+        return 0
       
 
 class IntegerStoreField(StoreField):
     def __init__(self,field,name,**kw):
         kw['type'] = 'int'
         StoreField.__init__(self,field,name,**kw)
+        
+    def value2int(self,v):
+        return v
+        
+        
         
 class AutoStoreField(StoreField):
     def __init__(self,field,name,**kw):
@@ -865,7 +876,7 @@ class Store:
                 self.add_field_for(fields,self.pk)
         
     def create_field(self,fld,name):
-        if isinstance(fld,table.RemoteField):
+        if isinstance(fld,fields.RemoteField):
             """
             Hack: we create a StoreField based on the remote field,
             then modify its behaviour.
@@ -876,11 +887,14 @@ class Store:
                 return m(obj)
                 
             def full_value_from_object(sf,ar,obj):
+                #~ logger.info("20120406 %s.full_value_from_object(%s)",sf.name,sf)
                 m = fld.func
                 return m(obj)
                 
             sf.value_from_object = curry(value_from_object,sf)
             sf.full_value_from_object = curry(full_value_from_object,sf)
+            #~ sf.field = fld.field
+            #~ sf.value2list = curry(value2list,sf)
             return sf
         #~ if isinstance(fld,tables.ComputedColumn):
             #~ logger.info("20111230 Store.create_field(%s)", fld)
@@ -989,8 +1003,11 @@ class Store:
         else:
             for fld in self.list_fields:
                 v = fld.full_value_from_object(request,row)
+                #~ if fld.name == 'person__age':
+                    #~ logger.info("20120406 Store.row2list %s -> %s", fld, v)
                 fld.value2list(request,v,l,row)
-            #~ logger.info("20111209 Store.row2list %s -> %s", fld, l)
+                #~ if fld.name == 'person__age':
+                    #~ logger.info("20120406 Store.row2list %s -> %s", fld, l)
         return l
       
     def row2dict(self,ar,row,fields=None,**d):
@@ -1024,6 +1041,9 @@ class Store:
             #~ print 20120115, fld.field.name
             #~ if not isinstance(fld,SpecialStoreField):
             if fld.field is not None:
+                #~ if fld.name == 'person__gsm':
+                #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
+                #~ import pdb; pdb.set_trace()
                 v = fld.full_value_from_object(request,row)
                 if v is None:
                     yield ''

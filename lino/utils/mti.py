@@ -212,7 +212,7 @@ class EnableChild(VirtualField):
 def create_child(parent_model,pk_,child_model,**kw):
     """
     Similar to :func:`insert_child`, but very tricky. 
-    Used by :mod:`lino.utils.dpy`
+    Used by :mod:`lino.utils.dumpy`
     See :mod:`lino.test_apps.1.models`.
     """
     parent_link_field = child_model._meta.parents.get(parent_model,None)
@@ -237,7 +237,7 @@ def create_child(parent_model,pk_,child_model,**kw):
         attrs = {}
         attrs[parent_link_field.name+"_id"] = pk_
         #~ for lf in child_model._meta.local_fields:
-        # backwards compat 20111211 : dpy fixtures created by Version 1.2.8 still 
+        # backwards compat 20111211 : python fixtures created by Version 1.2.8 still 
         # specify also field values of parent_model. Ignore these silently
         # otherwise Django would also try to create a parent_model record.
         for f,m in child_model._meta.get_fields_with_model():

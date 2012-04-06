@@ -347,22 +347,40 @@ class Born(models.Model):
         #~ default=False,
         #~ verbose_name=_("not exact"))
     
-    @dd.displayfield(_("Age"))
-    def age(self,request,today=None):
+    def get_age_years(self,today=None):
         if self.birth_date and self.birth_date.year:
             if today is None:
                 today = datetime.date.today()
             try:
-                dd = today - self.birth_date.as_date()
+                return today - self.birth_date.as_date()
             except ValueError:
                 pass
-            else:
-                s = _("%d years") % (dd.days / 365)
-                if self.birth_date.is_complete():
-                    return s
-                return u"±" + s
-        return _('unknown')
-    #~ age.return_type = dd.DisplayField(_("Age"))
+      
+    @dd.displayfield(_("Age"))
+    def age(self,request,today=None):
+        a = self.get_age_years(today)
+        if a is None:
+            return _('unknown')
+        s = _("%d years") % (a.days / 365)
+        if self.birth_date and self.birth_date.is_complete():
+            return s
+        return u"±" + s
+    
+    #~ @dd.displayfield(_("Age"))
+    #~ def age(self,request,today=None):
+        #~ if self.birth_date and self.birth_date.year:
+            #~ if today is None:
+                #~ today = datetime.date.today()
+            #~ try:
+                #~ dd = today - self.birth_date.as_date()
+            #~ except ValueError:
+                #~ pass
+            #~ else:
+                #~ s = _("%d years") % (dd.days / 365)
+                #~ if self.birth_date.is_complete():
+                    #~ return s
+                #~ return u"±" + s
+        #~ return _('unknown')
     
 
 

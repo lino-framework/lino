@@ -1,10 +1,10 @@
-# 28 : Automated data migrations
---------------------------------
+# 28 [closed] : Automated data migrations
+-----------------------------------------
 
 Siehe auch :doc:``/blog/2011/0303`.
 
 Grundidee: 
-`dpy.Serializer` 
+`dumpy.Serializer` 
 muss hinter die verschiedenen Abschnitte der "Präambel" 
 nicht in die .dpy-Datei schreiben, sondern nur ein 
 Import-Statement::

@@ -127,6 +127,7 @@ class Lino(Lino):
             m = main.add_menu("courses",_("Courses"))
             m.add_action(self.modules.courses.CourseProviders)
             m.add_action(self.modules.courses.CourseOffers)
+            m.add_action(self.modules.courses.PendingCourseRequests)
             
         if user.is_newcomers:
             m  = main.add_menu("newcomers",_("Newcomers"))

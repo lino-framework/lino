@@ -2,7 +2,7 @@
 Python fixtures
 ===============
 
-The :mod:`lino.utils.dpy` module defines 
+The :mod:`lino.utils.dumpy` module defines 
 a Django data serializer that dumps data into a Python module, 
 and a deserializer that loads Python modules as fixtures.
 
@@ -21,7 +21,7 @@ This is possible thanks to Django's
 :setting:`SERIALIZATION_MODULES` setting, which Lino uses as follows::
 
   SERIALIZATION_MODULES = {
-       "py" : "lino.utils.dpy",
+       "py" : "lino.utils.dumpy",
   }
   
 When developing or using Lino applications you 
@@ -29,14 +29,14 @@ don't need to worry about this setting, you get it
 automatically when you 
 do ``from lino.apps.FOO.settings import *`` in your :xfile:`settings.py`.
 Only if you define your own local serialization modules,
-don't forget to include Lino's :mod:`lino.utils.dpy` module.
+don't forget to include Lino's :mod:`lino.utils.dumpy` module.
 
 This module should also be usable for normal Django projects.
 Just add the above setting in your :xfile:`settings.py` and 
 try a ``manage.py dump --format py``.
 
 If you don't want to install Lino, you can alternatively 
-download only the :srcref:`dpy module itself </lino/utils/dpy.py>` 
+download only the :srcref:`dumpy module itself </lino/utils/dumpy.py>` 
 and make a few changes concerning logging. 
 (Just don't afterwards publish your changes using 
 a license that is incompatible with the GPL, see :doc:`/about/why_gpl`)

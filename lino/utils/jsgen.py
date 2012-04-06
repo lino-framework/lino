@@ -206,8 +206,8 @@ def py2js(v):
     #return simplejson.encoder.encode_basestring(v)
     #print repr(v)
     # http://docs.djangoproject.com/en/dev/topics/serialization/
-    if not isinstance(v, (str,unicode)):
-        raise Exception("20120121 %r is of type %s" % (v,type(v)))
+    #~ if not isinstance(v, (str,unicode)):
+        #~ raise Exception("20120121 %r is of type %s" % (v,type(v)))
     return simplejson.dumps(v)
     #~ return simplejson.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
     

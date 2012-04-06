@@ -23,10 +23,10 @@ The :mod:`dbfreader` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`dpy` Module
----------------------
+The :mod:`dumpy` Module
+-----------------------
 
-.. automodule:: lino.utils.dpy
+.. automodule:: lino.utils.dumpy
     :members:
     :undoc-members:
     :show-inheritance:
