@@ -224,6 +224,10 @@ class EventGenerator(mixins.AutoUser):
     :class:`isip.Contract`,     :class:`jobs.Contract`, 
     :class:`schools.Course`
     """
+    
+    class Meta:
+        abstract = True
+        
     def save(self,*args,**kw):
         super(EventGenerator,self).save(*args,**kw)
         self.update_reminders()
