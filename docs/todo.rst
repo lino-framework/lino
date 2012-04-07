@@ -239,6 +239,11 @@ Short-term
 Medium-term
 -----------
 
+#.  Lino doesn't yet support remote fields to a virtual field.
+    That's why we don't have columns `person__age` 
+    and `person__address_column` in :class:`Offene Kursanfragen 
+    <lino.apps.pcsw.courses.models.PendingCourseRequests>`.
+
 #.  Rechtschreibungshilfe in TinyMCE? 
 
 #.  Redundant code in js_render_GridPanel_class() and ext_elems.GridPanel.

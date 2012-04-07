@@ -1,0 +1,22 @@
+20120407
+========
+
+Careful when using resolve_model in middleware
+----------------------------------------------
+
+A subtle bug that took me almost 4 hours: 
+
+One of the first steps when a Django process starts up is to 
+instantiate once each of the classes listed in 
+:setting:`MIDDLEWARE_CLASSES`. 
+At that moment it is "not yet allowed" to trigger 
+`django.db.models.loading.cache._populate()`.
+
+But :mod:`lino.utils.auth` 
+(where :class:`RemoteUserMiddleware <lino.utils.auth.RemoteUserMiddleware>` 
+is defined)
+did exactly this. 
+It called, at the module level,
+:func:`lino.tools.resolve_model` on the 
+:attr:`lino.Lino.user_model`.
+

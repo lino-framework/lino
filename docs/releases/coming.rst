@@ -10,6 +10,8 @@ Coming
 Bugfixes
 --------
 
+- Felder eID-Karte gültig von und gültig bis waren zu klein.
+
 - Wenn man z.B. in der Liste der Stellen 
   auf einen Stellenanbieter klickte um dessen Detail zu sehen, 
   kam stattdessen ein Traceback auf dem Server.

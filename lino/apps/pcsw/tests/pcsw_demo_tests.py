@@ -334,7 +334,7 @@ def test04(self):
       }
     """
     for value in ('01.03.2011','15.03.2011'):
-        url = '/api/jobs/Contracts/21'
+        url = '/api/jobs/Contracts/1'
         data =  'applies_from='+value+'&applies_until=17.05.2009&company=R-Cycle%20'
         'Sperrgutsortierzentrum&companyHidden=83&contact=Arens%20Andreas%20(1'
         '4)%20(Gesch%C3%A4ftsf%C3%BChrer)&contactHidden=2&date_decided=&date_e'
@@ -350,7 +350,7 @@ def test04(self):
         self.assertEqual(result['success'],True)
         self.assertEqual(result['data_record']['data']['applies_from'],value)
         
-        url = "/api/jobs/Contracts/21?fmt=json"
+        url = "/api/jobs/Contracts/1?fmt=json"
         response = self.client.get(url,REMOTE_USER='root')
         #~ print 20110723, response
         result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
@@ -456,7 +456,7 @@ def test11(self):
     is solved.
     """
     from lino.modlib.jobs.models import Contract
-    obj = Contract.objects.get(pk=25)
+    obj = Contract.objects.get(pk=5)
     translation.activate('de')
     self.assertEqual(obj.contact.person.get_full_name(),"Herrn Hans ALTENBERG")
     #~ babel.set_language(None)

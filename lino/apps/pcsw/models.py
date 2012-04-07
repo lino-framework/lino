@@ -836,7 +836,7 @@ class PersonDetail(dd.DetailLayout):
     """
     
     eid_panel = """
-    card_number card_valid_from card_valid_until card_issuer card_type:20
+    card_number:12 card_valid_from:12 card_valid_until:12 card_issuer:10 card_type:12
     """
 
     box4 = """

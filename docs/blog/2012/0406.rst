@@ -63,21 +63,27 @@ halte ich für selbstverständlich.
 PendingCourseRequests
 ---------------------
 
-Neue Tabelle 
-:class:`Offene Kursanfragen 
-<lino.apps.pcsw.courses.models.PendingCourseRequests>`.
+Neue Tabelle :class:`Offene Kursanfragen 
+<lino.apps.pcsw.courses.models.PendingCourseRequests>`
+teilt die Anfragen nach Alter des Klienten auf.
+Was noch fehlt, sind zwei zusätzliche Totale 
+"berufliche Eingliederung" und "soziale Eingliederung".
+
 
 
 Bugs with remote fields
 -----------------------
 
-Remote fields are currently used only in jobs.ContractsSearch
+Until now, remote fields were used only in jobs.ContractsSearch
 (:menuselection:`Stellen --> Suche Art-60-7-Konventionen`).
-Clicking the :guilabel:`[html]` button on that table causes a server traceback.
+The new :class:`Offene Kursanfragen 
+<lino.apps.pcsw.courses.models.PendingCourseRequests>` table revealed some bugs:
 
-- :guilabel:`[html]` meldet 'CourseRequest' object has no attribute 'gsm'
+- Clicking the :guilabel:`[html]` button on a table with RemoteField columns 
+  caused a server traceback.
+- Columns of remote fields did never show any value.
 
-Another problem with remote fields:
+Another problem with remote fields (less urgent and not yet solved):
 
 - Lino doesn't yet support remote fields to a virtual field.
   That's why we don't have columns `person__age` 

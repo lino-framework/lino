@@ -1,32 +1,22 @@
 # -*- coding: UTF-8 -*-
-# Django settings for mysite project.
-
-"""
-Adapt the following lines depending on where the sources of these 
-packages are installed. Instead of using 
-``sys.path.insert(0,DIRECTORY)``
-you might use
-``sys.path.append(DIRECTORY)``
-
-"""
 import sys
-sys.path.insert(0,'/var/snapshots/lino')
-sys.path.insert(0,'/var/snapshots/django')
-sys.path.insert(0,'/var/snapshots/appy')
+from os.path import join
 
+LINO_ROOT = '/var/snapshots/lino'
+try:
+    # make sure that there is no duplicate lino in the PYTHONPATH.
+    import lino
+    if not lino.__file__.startswith(LINO_ROOT):
+        raise Exception("Duplicate lino module: %s is not in %s" % (lino.__file__,LINO_ROOT))
+except ImportError:
+    sys.path.append(LINO_ROOT)
 
-from os.path import join, dirname
 from lino.apps.pcsw.settings import *
-
 class Lino(Lino):
-
     title = u"My first Lino site"
     csv_params = dict(delimiter=',',encoding='utf-16')
-
+    languages = ('en','fr','nl')
 LINO = Lino(__file__,globals())
-
-LANGUAGE_CODE = 'en' # "main" language
-LANGUAGES = language_choices('en','fr','nl')
 
 LINO.appy_params.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
 
@@ -55,9 +45,6 @@ DATABASES = {
         'NAME': join(LINO.project_dir,'mysite.db')
     }
 }
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
 
 EMAIL_HOST = "mail.example.com"
 #EMAIL_PORT = ""

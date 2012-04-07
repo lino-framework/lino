@@ -198,10 +198,10 @@ def test01b(self):
         self.assertEqual(
           result['message'],
           u"""\
-Action "Print" failed for Job Contract "Job Contract#1 (Max MUSTERMANN)":
 Invalid template '' configured for ContractType u'Art.60\\xa77' (expected filename ending with '.pisa.html').
 An error report has been sent to the system administrator.""")
 
+    #~ Action "Print" failed for Job Contract "Job Contract#1 (Max MUSTERMANN)":
     
     #~ a = PrintAction()
     #~ from django.conf import settings
