@@ -91,13 +91,20 @@ def resolve_model(model_spec,app_label=None,strict=False):
     """
     #~ models.get_apps() # trigger django.db.models.loading.cache._populate()
     if isinstance(model_spec,basestring):
-        try:
+        if '.' in model_spec:
             app_label, model_name = model_spec.split(".")
-        except ValueError:
-            # If we can't split, assume a model in current app
-            #app_label = rpt.app_label
+        else:
             model_name = model_spec
-        model = models.get_model(app_label,model_name,seed_cache=False)
+            
+        #~ try:
+            #~ app_label, model_name = model_spec.split(".")
+        #~ except ValueError:
+            #~ # If we can't split, assume a model in current app
+            #~ #app_label = rpt.app_label
+            #~ model_name = model_spec
+            
+        #~ model = models.get_model(app_label,model_name,seed_cache=False)
+        model = models.get_model(app_label,model_name)
     else:
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):

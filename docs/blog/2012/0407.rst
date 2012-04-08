@@ -1,22 +1,59 @@
 20120407
 ========
 
-Careful when using resolve_model in middleware
-----------------------------------------------
+Django and lxml
+---------------
 
-A subtle bug that took me almost 4 hours: 
+Yesterday evening already, after the changes on migrate were finished 
+and a full dump from a 1.4.3 database sucessfully loaded into 1.4.4, 
+I noticed that I couldn't see the result because the server process 
+locked when a web request cam in.
+
+Today it continued to lock.
+
+I fiddled with the Apache configuration.
+After 4 hours I believed that the following was the cause of the problem:
 
 One of the first steps when a Django process starts up is to 
 instantiate once each of the classes listed in 
 :setting:`MIDDLEWARE_CLASSES`. 
 At that moment it is "not yet allowed" to trigger 
 `django.db.models.loading.cache._populate()`.
-
 But :mod:`lino.utils.auth` 
 (where :class:`RemoteUserMiddleware <lino.utils.auth.RemoteUserMiddleware>` 
-is defined)
-did exactly this. 
+is defined) did exactly this. 
 It called, at the module level,
 :func:`lino.tools.resolve_model` on the 
 :attr:`lino.Lino.user_model`.
+
+But it turned out that this was just another detail which didn't 
+lead to a normal error message because of the freeze.
+
+Using ``print`` statements I tracked down that the following code 
+in :mod:`lino.utils.xmlgen` caused the freeze:
+
+        if self.xsd_filename:
+            self.xsd_tree = etree.parse(self.xsd_filename) 
+        if self.xsd_tree is not None:
+            if targetNamespace is None:
+                root = self.xsd_tree.getroot()
+                targetNamespace = str(root.get('targetNamespace'))
+            if validator is None:
+                validator = etree.XMLSchema(self.xsd_tree)  # LOCK
+
+The process never returned when trying to instantiate 
+an `etree.XMLSchema`.
+
+After 8 hours I found the following post, which finally explains
+into what mousetrap I had stepped:
+`Django, lxml, WSGI, and Python sub-interpreter magic
+<https://techknowhow.library.emory.edu/blogs/branker/2010/07/30/django-lxml-wsgi-and-python-sub-interpreter-magic>`_
+(posted Fri, 07/30/2010 - 18:21 by branker).
+
+The reason for the freeze was an incompatibility between mod_wsgi and lxml,
+and the solution was indeed to add a line ``WSGIApplicationGroup %{GLOBAL}`` 
+to Apache's configuration.
+More explanations also `here 
+<http://code.google.com/p/modwsgi/wiki/ApplicationIssues#Python_Simplified_GIL_State_API>`.
+
 

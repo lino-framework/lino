@@ -48,8 +48,8 @@ TYPEMAP = {
   int: lambda e,v : str(v),
 }
 
-import threading
-write_lock = threading.RLock()
+#~ import threading
+#~ write_lock = threading.RLock()
 
 class Namespace(object):
     """
@@ -64,51 +64,51 @@ class Namespace(object):
     def __init__(self,prefix=None,targetNamespace=None,
           used_namespaces=None,
           validator=None,**kw):
-        write_lock.acquire()
-        try:
-            self.prefix = prefix
-            kw.setdefault('typemap',TYPEMAP)
-            #~ kw.setdefault('makeelement',self.makeelement)
-            nsmap = kw.setdefault('nsmap',{})
-            if self.xsd_filename:
-                self.xsd_tree = etree.parse(self.xsd_filename) 
-            if self.xsd_tree is not None:
-                if targetNamespace is None:
-                    root = self.xsd_tree.getroot()
-                    targetNamespace = str(root.get('targetNamespace'))
-                #~ elif self.rng_filename:
-                    #~ tree = etree.parse(self.rng_filename) 
-                    #~ rng = etree.RelaxNG(tree)
-                    #~ # tree = etree.RelaxNG(file=self.rng_filename)
-                    #~ e = tree.getroot()
-                    #~ nsmap.update(e.nsmap)
-                    #~ # raise Exception("20120310")
-                if validator is None:
-                    validator = etree.XMLSchema(self.xsd_tree)
-              
-            self.validator = validator
-            
-            if targetNamespace is not None:
-                self.targetNamespace = targetNamespace
-            if self.targetNamespace is not None:
-                kw.update(namespace=self.targetNamespace)
-                #~ if prefix:
-                nsmap[prefix] = self.targetNamespace
-            if used_namespaces is not None:
-                self.used_namespaces = used_namespaces
-            if self.used_namespaces is not None:
-                for ns in self.used_namespaces:
-                    nsmap[ns.prefix] = ns.targetNamespace
-            #~ self._element_maker = ElementMaker(namespace=url,nsmap={prefix:url})
-            self._element_maker = ElementMaker(**kw)
-            self._source_elements = {}
-            if self.xsd_tree is not None:
-                #~ self.targetNamespace = str(root.get('targetNamespace'))
-                #~ root = self.xsd_tree.getroot()
-                self.define_names_from(self.xsd_tree.getroot())
-            self.setup_namespace()
-        finally:
-            write_lock.release()
+        #~ write_lock.acquire()
+        #~ try:
+        self.prefix = prefix
+        kw.setdefault('typemap',TYPEMAP)
+        #~ kw.setdefault('makeelement',self.makeelement)
+        nsmap = kw.setdefault('nsmap',{})
+        if self.xsd_filename:
+            self.xsd_tree = etree.parse(self.xsd_filename) 
+        if self.xsd_tree is not None:
+            if targetNamespace is None:
+                root = self.xsd_tree.getroot()
+                targetNamespace = str(root.get('targetNamespace'))
+            #~ elif self.rng_filename:
+                #~ tree = etree.parse(self.rng_filename) 
+                #~ rng = etree.RelaxNG(tree)
+                #~ # tree = etree.RelaxNG(file=self.rng_filename)
+                #~ e = tree.getroot()
+                #~ nsmap.update(e.nsmap)
+                #~ # raise Exception("20120310")
+            if validator is None:
+                validator = etree.XMLSchema(self.xsd_tree)
+          
+        self.validator = validator
+        
+        if targetNamespace is not None:
+            self.targetNamespace = targetNamespace
+        if self.targetNamespace is not None:
+            kw.update(namespace=self.targetNamespace)
+            #~ if prefix:
+            nsmap[prefix] = self.targetNamespace
+        if used_namespaces is not None:
+            self.used_namespaces = used_namespaces
+        if self.used_namespaces is not None:
+            for ns in self.used_namespaces:
+                nsmap[ns.prefix] = ns.targetNamespace
+        #~ self._element_maker = ElementMaker(namespace=url,nsmap={prefix:url})
+        self._element_maker = ElementMaker(**kw)
+        self._source_elements = {}
+        if self.xsd_tree is not None:
+            #~ self.targetNamespace = str(root.get('targetNamespace'))
+            #~ root = self.xsd_tree.getroot()
+            self.define_names_from(self.xsd_tree.getroot())
+        self.setup_namespace()
+        #~ finally:
+            #~ write_lock.release()
         
     def setup_namespace(self):
         pass

@@ -298,7 +298,6 @@ def setup_site(self,make_messages=False):
     if self._setup_done:
         #~ logger.warning("LinoSite setup already done ?!")
         return
-    #~ self.write
     write_lock.acquire()
     try:
     
