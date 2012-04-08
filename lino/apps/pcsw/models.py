@@ -781,6 +781,8 @@ class CompanyDetail(dd.DetailLayout):
         lh.notes.label = _("Notes")
 
 
+#~ if settings.LINO.company_model is None:
+    #~ raise Exception("settings.LINO.company_model is None")
 
 #~ class Companies(reports.Report):
 #~ class Companies(contacts.Contacts):
@@ -795,6 +797,8 @@ class Companies(Partners):
     
     @classmethod
     def do_setup(cls):
+        #~ if cls.model is None:
+            #~ raise Exception("%r.model is None" % cls)
         super(Companies,cls).do_setup()
         cls.imported_fields = dd.fields_list(cls.model,
             '''name remarks

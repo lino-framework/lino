@@ -52,7 +52,7 @@ def get_app(app_label):
             return import_module('.models', app_name)
     #~ if not emptyOK:
     raise ImportError("No application labeled %r." % app_label)
-resolve_app = get_app      
+resolve_app = get_app
 
 def get_models_for(app_label):
     a = models.get_app(app_label)
@@ -87,9 +87,9 @@ class UnresolvedModel:
 
 def resolve_model(model_spec,app_label=None,strict=False):
     """
-    Similar logic as in django.db.models.fields.related.add_lazy_relation()
+    See also django.db.models.fields.related.add_lazy_relation()
     """
-    models.get_apps() # trigger django.db.models.loading.cache._populate()
+    #~ models.get_apps() # trigger django.db.models.loading.cache._populate()
     if isinstance(model_spec,basestring):
         try:
             app_label, model_name = model_spec.split(".")
@@ -97,7 +97,29 @@ def resolve_model(model_spec,app_label=None,strict=False):
             # If we can't split, assume a model in current app
             #app_label = rpt.app_label
             model_name = model_spec
-        model = models.get_model(app_label,model_name,False)
+        model = models.get_model(app_label,model_name,seed_cache=False)
+    else:
+        model = model_spec
+    if not isinstance(model,type) or not issubclass(model,models.Model):
+        if strict:
+            raise Exception(
+                "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
+                model_spec,app_label,model,settings.SETTINGS_MODULE))
+        return UnresolvedModel(model_spec,app_label)
+    return model
+    
+def old_resolve_model(model_spec,app_label=None,strict=False):
+    """
+    doesn't work for contacts.Company because the model is defined somewhere else.
+    """
+    models.get_apps() # trigger django.db.models.loading.cache._populate()
+    if isinstance(model_spec,basestring):
+        if '.' in model_spec:
+            app_label, model_name = model_spec.split(".")
+        else:
+            model_name = model_spec
+        app = resolve_app(app_label)
+        model = getattr(app,model_name,None)
     else:
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):

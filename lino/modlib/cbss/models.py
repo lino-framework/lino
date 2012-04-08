@@ -34,7 +34,7 @@ from lino import dd
 
 from lino.utils import babel
 from lino.utils import dblogger
-from lino.tools import resolve_model
+#~ from lino.tools import resolve_model
 from lino.utils.xmlgen import cbss
 
 

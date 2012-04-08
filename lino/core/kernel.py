@@ -277,6 +277,8 @@ class DisableDeleteHandler():
                     return msg
         return None
         
+import threading
+write_lock = threading.RLock()
 
 def setup_site(self,make_messages=False):
     """
@@ -296,129 +298,137 @@ def setup_site(self,make_messages=False):
     if self._setup_done:
         #~ logger.warning("LinoSite setup already done ?!")
         return
-    if self._setting_up:
-        #~ logger.warning("LinoSite.setup() called recursively.")
-        #~ return 
-        raise Exception("LinoSite.setup() called recursively.")
-    #~ try:
-    self._setting_up = True
+    #~ self.write
+    write_lock.acquire()
+    try:
     
-    #~ self.configure(get_site_config())
-    #~ self._siteconfig = get_site_config()
-  
-    analyze_models(self)
-    
-    if self.user_model:
-        self.user_model = resolve_model(self.user_model)
-    
-    actors.discover()
-    
-    
-    #~ logger.debug("analyze_models() done")
-    
-    # set _lino_default_table for all models:
-    
-    table.discover()
-    
-    choosers.discover()
-    
-    #~ load_details(make_messages)
-    
-    #~ logger.debug("actors.discover() done")
-    
-    #~ babel.discover() # would have to be called before model setup
-    
-    #~ self.modules = AttrDict()
-    self.modules = actors.MODULES
-
-    for a in models.get_apps():
-        #~ for app_label,a in loading.cache.app_store.items():
-        app_label = a.__name__.split('.')[-2]
-        #~ logger.info("Installing %s = %s" ,app_label,a)
+        if self._setting_up:
+            #~ logger.warning("LinoSite.setup() called recursively.")
+            #~ return 
+            raise Exception("LinoSite.setup() called recursively.")
+        #~ try:
+        self._setting_up = True
         
-        for k,v in a.__dict__.items():
-            #~ if isinstance(v,type)  and issubclass(v,dd.Module):
-                #~ logger.info("20120128 Found module %s",v)
-            if k.startswith('setup_'):
-                self.modules.define(app_label,k,v)
-    for m in models.get_models():
-        if not m._meta.abstract:
-            self.modules.define(m._meta.app_label,m.__name__,m)
-            
-    #~ for a in actors.actors_list:
-        #~ self.modules.define(a.app_label,a.__name__,a)
-        
-    #~ layouts.setup_layouts()
-    
-    #~ for a in actors.actors_list:
-        #~ if not hasattr(a,'_lino_detail'):
-            #~ a._lino_detail = None
-    
-    
-    #~ actors.setup_actors()
-        
-        
-    #~ import pprint
-    #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
-    #~ logger.info("settings.LINO.modules['cal']['main'] is %r" ,self.modules['cal']['main'])
-                
-    for a in models.get_apps():
-        fn = getattr(a,'site_setup',None)
-        if fn is not None:
-            fn(self)
-            
-    """
-    Actor.setup() must be called after site_setup(). 
-    Example: pcsw.site_setup() adds a detail to properties.Properties, 
-    the base class for properties.PropsByGroup. The latter would not 
-    install a detail action during her setup() and also would never 
-    get it later.
-    """
-    
-    for a in actors.actors_list:
-        a.setup()
-            
-    """
-    this comes after site_setup() because site_setup() might 
-    install detail_layouts on model tables.
-    """
-    #~ install_summary_rows()
-    
-    #~ if settings.MODEL_DEBUG:
-    if False:
-        logger.debug("ACTORS:")
-        for k in sorted(actors.actors_dict.keys()):
-            a = actors.actors_dict[k]
-            #~ logger.debug("%s -> %r",k,a.__class__)
-            logger.debug("%s -> %r",k,a.debug_summary())
-            
-    #~ d = dict()
-    #~ for a in loading.get_apps():
-        #~ d[a.__name__.split('.')[-2]] = a
-    #~ self.modules = IterableUserDict(d)
-    
-    #~ cls = type("Modules",tuple(),d)
-    #~ self.modules = cls()
-    #~ logger.info("20120102 modules: %s",self.modules)
-    
-    
-    #~ spec = self.index_view_action
-    #~ if spec:
-        #~ if isinstance(spec,basestring):
-            #~ spec = self.modules.resolve(spec)
-            #~ if spec is None:
-                #~ raise Exception("Could not resolve action specifier %r" % spec)
-        #~ if isinstance(spec,actions.Action):
-            #~ a = spec
-        #~ elif isinstance(spec,type) and issubclass(spec,models.Model):
-            #~ a = spec._lino_default_table.default_action
-        #~ elif isinstance(spec,type) and issubclass(spec,actors.Actor):
-            #~ a = spec.default_action
-        #~ self.index_view_action = a
-    
+        #~ self.configure(get_site_config())
+        #~ self._siteconfig = get_site_config()
       
-    self._setup_done = True
-    self._setting_up = False
+        analyze_models(self)
+        
+        if self.user_model:
+            self.user_model = resolve_model(self.user_model)
+        
+        actors.discover()
+        
+        
+        #~ logger.debug("analyze_models() done")
+        
+        # set _lino_default_table for all models:
+        
+        table.discover()
+        
+        choosers.discover()
+        
+        #~ load_details(make_messages)
+        
+        #~ logger.debug("actors.discover() done")
+        
+        #~ babel.discover() # would have to be called before model setup
+        
+        #~ self.modules = AttrDict()
+        self.modules = actors.MODULES
+
+        for a in models.get_apps():
+            #~ for app_label,a in loading.cache.app_store.items():
+            app_label = a.__name__.split('.')[-2]
+            #~ logger.info("Installing %s = %s" ,app_label,a)
+            
+            for k,v in a.__dict__.items():
+                #~ if isinstance(v,type)  and issubclass(v,dd.Module):
+                    #~ logger.info("20120128 Found module %s",v)
+                if k.startswith('setup_'):
+                    self.modules.define(app_label,k,v)
+        for m in models.get_models():
+            if not m._meta.abstract:
+                self.modules.define(m._meta.app_label,m.__name__,m)
+                
+        #~ for a in actors.actors_list:
+            #~ self.modules.define(a.app_label,a.__name__,a)
+            
+        #~ layouts.setup_layouts()
+        
+        #~ for a in actors.actors_list:
+            #~ if not hasattr(a,'_lino_detail'):
+                #~ a._lino_detail = None
+        
+        
+        #~ actors.setup_actors()
+            
+            
+        #~ import pprint
+        #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
+        #~ logger.info("settings.LINO.modules['cal']['main'] is %r" ,self.modules['cal']['main'])
+                    
+        for a in models.get_apps():
+            fn = getattr(a,'site_setup',None)
+            if fn is not None:
+                fn(self)
+                
+        """
+        Actor.setup() must be called after site_setup(). 
+        Example: pcsw.site_setup() adds a detail to properties.Properties, 
+        the base class for properties.PropsByGroup. The latter would not 
+        install a detail action during her setup() and also would never 
+        get it later.
+        """
+        
+        for a in actors.actors_list:
+            a.setup()
+                
+        """
+        this comes after site_setup() because site_setup() might 
+        install detail_layouts on model tables.
+        """
+        #~ install_summary_rows()
+        
+        #~ if settings.MODEL_DEBUG:
+        if False:
+            logger.debug("ACTORS:")
+            for k in sorted(actors.actors_dict.keys()):
+                a = actors.actors_dict[k]
+                #~ logger.debug("%s -> %r",k,a.__class__)
+                logger.debug("%s -> %r",k,a.debug_summary())
+                
+        #~ d = dict()
+        #~ for a in loading.get_apps():
+            #~ d[a.__name__.split('.')[-2]] = a
+        #~ self.modules = IterableUserDict(d)
+        
+        #~ cls = type("Modules",tuple(),d)
+        #~ self.modules = cls()
+        #~ logger.info("20120102 modules: %s",self.modules)
+        
+        
+        #~ spec = self.index_view_action
+        #~ if spec:
+            #~ if isinstance(spec,basestring):
+                #~ spec = self.modules.resolve(spec)
+                #~ if spec is None:
+                    #~ raise Exception("Could not resolve action specifier %r" % spec)
+            #~ if isinstance(spec,actions.Action):
+                #~ a = spec
+            #~ elif isinstance(spec,type) and issubclass(spec,models.Model):
+                #~ a = spec._lino_default_table.default_action
+            #~ elif isinstance(spec,type) and issubclass(spec,actors.Actor):
+                #~ a = spec.default_action
+            #~ self.index_view_action = a
+        
+          
+        self._setup_done = True
+        self._setting_up = False
+        
+    finally:
+        write_lock.release()
+        
     
     dblogger.info("Lino Site %r started. Languages: %s", 
         self.title, ', '.join(babel.AVAILABLE_LANGUAGES))

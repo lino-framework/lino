@@ -79,29 +79,6 @@ def discover():
     for a in actors_list:
         a.class_init()
     
-    #~ logger.debug("actors.discover() : setup %d actors",len(actors_list))
-    #~ for a in actors_list:
-        #~ a.setup()
-        
-    #~ logger.debug("actors.discover() done")
-        #~ a = cls()
-        #~ old = actors_dict.get(a.actor_id,None)
-        #~ if old is not None:
-            #~ logger.debug("Actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
-        #~ actors_dict[a.actor_id] = a
-    #~ for a in actors_dict.values():
-        #~ a.setup()
-
-#~ def setup_actors():
-    #~ for cls in actors_list:
-        #~ cls.class_init()
-        #~ cls.setup()
-        
-def unused_add_virtual_field(cls,name,v):
-    cls.virtual_fields[name] = v
-    v.name = name
-    #~ vf.lino_kernel_setup(cls,name)
-    v.get = curry(v.get,cls)
 
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):

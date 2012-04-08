@@ -44,6 +44,7 @@ from django.utils import translation
 from django.conf import settings
 
 from lino.utils import babel
+from lino.tools import resolve_model
 
 class NoUserMiddleware(object):
     """
@@ -58,6 +59,8 @@ class NoUserMiddleware(object):
 
 if settings.LINO.user_model:
   
+    USER_MODEL = resolve_model(settings.LINO.user_model)
+    
     class RemoteUserMiddleware(object):
         """
         This does the same as
@@ -85,14 +88,14 @@ if settings.LINO.user_model:
             Und Lino legte brav einen neuen User " alicia" an.
             """
             username = username.strip()
-            User = settings.LINO.user_model        
+            #~ User = settings.LINO.user_model        
             try:
-                request.user = User.objects.get(username=username)
+                request.user = USER_MODEL.objects.get(username=username)
                 if len(babel.AVAILABLE_LANGUAGES) > 1:
                     if request.user.language:
                         translation.activate(request.user.language)
                         request.LANGUAGE_CODE = translation.get_language()
-            except User.DoesNotExist,e:
+            except USER_MODEL.DoesNotExist,e:
                 # [C1]
                 request.user = None  
                 logger.error("Unknown username %s from request %s",request)
