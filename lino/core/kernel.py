@@ -277,8 +277,8 @@ class DisableDeleteHandler():
                     return msg
         return None
         
-import threading
-write_lock = threading.RLock()
+#~ import threading
+#~ write_lock = threading.RLock()
 
 def setup_site(self,make_messages=False):
     """
@@ -298,7 +298,7 @@ def setup_site(self,make_messages=False):
     if self._setup_done:
         #~ logger.warning("LinoSite setup already done ?!")
         return
-    write_lock.acquire()
+    #~ write_lock.acquire()
     try:
     
         if self._setting_up:
@@ -422,16 +422,15 @@ def setup_site(self,make_messages=False):
             #~ self.index_view_action = a
         
           
+            
+        dblogger.info("Lino Site %r started. Languages: %s", 
+            self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
+        dblogger.info(lino.welcome_text())
+    finally:
+        #~ write_lock.release()
         self._setup_done = True
         self._setting_up = False
-        
-    finally:
-        write_lock.release()
-        
     
-    dblogger.info("Lino Site %r started. Languages: %s", 
-        self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
-    dblogger.info(lino.welcome_text())
     #~ except Exception,e:
         #~ logger.exception(e)
         #~ raise
