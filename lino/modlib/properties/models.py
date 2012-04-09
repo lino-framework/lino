@@ -177,12 +177,6 @@ class PropGroup(babel.BabelNamed):
         verbose_name = _("Property Group")
         verbose_name_plural = _("Property Groups")
         
-    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
-    
-    #~ def __unicode__(self):
-        #~ return babel.babelattr(self,'name')
-
-#~ add_babel_field(PropGroup,'name')
 
 
 class Property(babel.BabelNamed):
@@ -268,6 +262,10 @@ class PropertyOccurence(models.Model):
 
 class PropGroups(dd.Table):
     model = PropGroup
+    detail_template = """
+    id name 
+    PropsByGroup
+    """
 
 class PropTypes(dd.Table):
     model = PropType

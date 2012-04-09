@@ -17,4 +17,5 @@
   aber wenn man versuchte, die Checkbox "Stellenanbieter" abzuschalten, 
   meldete Lino "Aus TIM importierte Partner dürfen nicht gelöscht werden."
   
-  
+  Dazu habe ich auch einen Testfall geschrieben.
+  Und dann en passant einige weitere Testfälle optimiert.

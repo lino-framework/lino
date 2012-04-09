@@ -67,7 +67,7 @@ def objects():
           fr=u"Jardinier",
           en=u"Gardener",
           ))
-    yield softskill(**babel_values('name',
+    yield softskill(id=2,**babel_values('name', # id is used for lookup in some test cases
           de=u"Gehorsam",
           fr=u"Obéissant",
           en=u"Obedient",

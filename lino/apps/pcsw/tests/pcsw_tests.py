@@ -173,6 +173,7 @@ def test01b(self):
     from lino.apps.pcsw.models import Person
     root = User(username='root') # ,last_name="Superuser")
     root.save()
+    
     jp = JobProvider(name="Test")
     jp.save()
     person = Person(first_name="Max",last_name="Mustermann")
@@ -189,7 +190,8 @@ def test01b(self):
     
     
     if 'en' in babel.AVAILABLE_LANGUAGES:
-    
+        root.language='en'
+        root.save()
         url = '/api/jobs/Contract/1?an=print'
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
         result = self.check_json_result(response,'success message alert')
@@ -201,32 +203,6 @@ def test01b(self):
 Invalid template '' configured for ContractType u'Art.60\\xa77' (expected filename ending with '.pisa.html').
 An error report has been sent to the system administrator.""")
 
-    #~ Action "Print" failed for Job Contract "Job Contract#1 (Max MUSTERMANN)":
-    
-    #~ a = PrintAction()
-    #~ from django.conf import settings
-    #~ from django.utils.importlib import import_module
-    #~ urls = import_module(settings.ROOT_URLCONF)
-    #~ ui = urls.ui
-    #~ try:
-        #~ kw = a.run_(ui,n)
-    #~ except Exception,e:
-        #~ self.assertEqual(str(e),
-          #~ u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.pisa.html'.")
-          
-          #~ u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.pisa.html'."
-          
-    #~ t.template='Default.odt'
-    #~ t.save()
-    #~ n = Contract.objects.get(id=1)
-    #~ kw = a.run_(n)
-    
-    #~ print kw
-    
-    #~ response = self.client.get('/api/pcsw/Contracts/1?fmt=print',REMOTE_USER='root')
-    #~ print response
-    #~ result = self.check_json_result(response,'message success alert')
-    #~ self.assertEqual(result['message'],'...')
     
 
     

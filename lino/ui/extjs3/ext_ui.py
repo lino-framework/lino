@@ -122,7 +122,7 @@ def is_devserver():
     """
     return len(sys.argv) > 1 and sys.argv[1] == 'runserver'
     
-
+    
 
 class HtmlRenderer(object):
     """

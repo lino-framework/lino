@@ -558,6 +558,9 @@ class Cycler:
             self.current = 0
         return item
         
+    def __len__(self):
+        return len(self.items)
+        
 
 
 def uca_collator():

@@ -98,12 +98,13 @@ def test002(self):
     u.language = '' # HTTP_ACCEPT_LANGUAGE works only when User.language empty
     u.save()
     
-    url = '/api/cv/SoftSkillsByPerson?mt=22&mk=124&fmt=json'
+    pk = 128
+    url = '/api/cv/SoftSkillsByPerson?mt=22&mk=%d&fmt=json' % pk
     
     if 'en' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
         result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
-        self.assertEqual(result['title'],"Properties of CHANTRAINE Marc (124)")
+        self.assertEqual(result['title'],"Properties of EVERTZ Bernd (%d)" % pk)
         self.assertEqual(len(result['rows']),2)
         row = result['rows'][0]
         self.assertEqual(row[0],"Obedient")
@@ -114,7 +115,7 @@ def test002(self):
     if 'de' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
         result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
-        self.assertEqual(result['title'],"Eigenschaften von CHANTRAINE Marc (124)")
+        self.assertEqual(result['title'],"Eigenschaften von EVERTZ Bernd (%d)" % pk)
         self.assertEqual(len(result['rows']),2)
         row = result['rows'][0]
         self.assertEqual(row[0],"Gehorsam")
@@ -398,23 +399,24 @@ def test006(self):
     annette = Person.objects.get(pk=118)
     self.assertEquals(unicode(annette), "ARENS Annette (118)")
     
+    p = Property.objects.get(id=2) # "Obedient"
+    pp = PersonProperty.objects.filter(property=p)[0]
     if 'en' in babel.AVAILABLE_LANGUAGES:
         babel.set_language('en')
-        p = Property.objects.get(name_en="Obedient")
-        pp = PersonProperty.objects.get(person=annette,property__name_en="Obedient")
-            
-        if 'de' in babel.AVAILABLE_LANGUAGES:
-            babel.set_language('de')
-            self.assertEquals(unicode(p), u"Gehorsam")
-            self.assertEquals(unicode(pp), u"mittelmäßig")
-            #~ self.assertEquals(unicode(pp), u"Sozialkompetenzen.Gehorsam=mittelmäßig")
-        
-        if 'fr' in babel.AVAILABLE_LANGUAGES:
-            babel.set_language('fr')
-            self.assertEquals(unicode(p), u"Obéissant")
-            self.assertEquals(unicode(pp), u"moyennement")
-        
-        babel.set_language(None) # switch back to default language for subsequent tests
+        self.assertEquals(unicode(p), u"Obedient")
+        self.assertEquals(unicode(pp), u"not at all")
+
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('de')
+        self.assertEquals(unicode(p), u"Gehorsam")
+        self.assertEquals(unicode(pp), u"gar nicht")
+    
+    if 'fr' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('fr')
+        self.assertEquals(unicode(p), u"Obéissant")
+        self.assertEquals(unicode(pp), u"pas du tout")
+    
+    babel.set_language(None) # switch back to default language for subsequent tests
     
 
 def test007(self):
