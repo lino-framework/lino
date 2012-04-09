@@ -155,13 +155,21 @@ Create a MySQL database
 
 If you decided to use MySQL as database frontend, 
 you must now create a database for your project and a 
-user ``django@localhost``::
+user ``django@localhost``.
+
+To install mysql on your site::
 
     $ sudo aptitude install mysql-server python-mysqldb
     
+For your first project, you create a user::
+    
+    $ mysql -u root -p 
+    mysql> create user 'django'@'localhost' identified by 'my cool password';
+    
+For each new project::
+    
     $ mysql -u root -p 
     mysql> create database mysite charset 'utf8';
-    mysql> create user 'django'@'localhost' identified by 'my cool password';
     mysql> grant all on mysite.* to django with grant option;
     mysql> grant all on test_mysite.* to django with grant option;
     mysql> quit;

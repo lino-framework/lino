@@ -679,6 +679,8 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
             i += 1
             yield pp(p,prop,prop.type.default_value)
             
+            
+            
     langk = Instantiator('cv.LanguageKnowledge',
         'person:name language written spoken').build
     yield langk(u"Ausdemwald Alfons",'est','1','1')

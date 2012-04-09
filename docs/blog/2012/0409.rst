@@ -1,8 +1,6 @@
 20120409
 ========
 
------------------
-
 - :class:`Übersicht Art-60-7-Konventionen <jobs.JobsOverview>`: 
   das Datum der Liste stand fälschlicherweise par défaut immer 
   auf dem Tag, an dem die lino.js zuletzt generiert worden war 
@@ -11,3 +9,12 @@
   Das war ein Denkfehler in der 
   :meth:`ext_elems.FieldElement.add_default_value`.
 
+- After yesterday's discoveries, tested to run 
+  several Lino sites on a single apache.  
+  Updated :doc:`/admin/install_apache` 
+  
+- "Gericht Erster Instanz" ist kein Stellenanbieter mehr,
+  aber wenn man versuchte, die Checkbox "Stellenanbieter" abzuschalten, 
+  meldete Lino "Aus TIM importierte Partner dürfen nicht gelöscht werden."
+  
+  

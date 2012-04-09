@@ -79,8 +79,17 @@ Django docs on Apache and mod_wsgi:
   - :doc:`/tickets/10`
   
   
-The `WSGIApplicationGroup %{GLOBAL}` instruction is necessary when your Lino 
-application uses :term:`lxml`.
+The `WSGIApplicationGroup %{GLOBAL}` instruction is necessary 
+when your Lino application uses :term:`lxml`. 
+It tells mod_wsgi to not use multiple Python interpreters 
+(a feature that is not supported by lxml).
+
+If you run multiple Django sites on your Apache server and need `WSGIApplicationGroup %{GLOBAL}`, 
+then you *must* use daemon mode and delegate each Django site to a separate daemon process group. 
+(`* <http://stackoverflow.com/questions/3405533/problem-using-wsgiapplicationgroup-global-in-apache-configuration>`_
+`* <http://stackoverflow.com/questions/5021424/mod-wsgi-daemon-mode-wsgiapplicationgroup-and-python-interpreter-separation>`_)
+
+
 
 You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 
@@ -121,7 +130,6 @@ symbolic links to the library paths.
 
 Miscellaneous
 -------------
-
 
 When :mod:`initdb <lino.management.commands.initdb>` is done, 
 you must check that user `www-data` has write access 

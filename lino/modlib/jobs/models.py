@@ -160,6 +160,8 @@ class JobProvider(pcsw.Company):
         verbose_name = _("Job Provider")
         verbose_name_plural = _('Job Providers')
     
+    def disable_delete(self,request):
+        pass
 
 class JobProviderDetail(pcsw.CompanyDetail):
     """

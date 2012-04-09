@@ -22,7 +22,10 @@ To run only this test suite::
 
   python manage.py test pcsw.DemoTest
   
-  
+See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`
+
+Functions named `test0*` do not modify any data.
+
 """
 
 import logging
@@ -34,6 +37,7 @@ from django.db.utils import IntegrityError
 from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.utils import translation
+from django.core.exceptions import ValidationError
 
 
 #~ from django.utils import unittest
@@ -62,9 +66,14 @@ class DemoTest(TestCase):
     #~ def setUp(self):
         #~ settings.LINO.auto_makeui = False
         #~ super(DemoTest,self).setUp()
-    
+
+
+class PseudoRequest:
+    def __init__(self,name):
+        self.user = settings.LINO.user_model.objects.get(username=name)
+
             
-def test01(self):
+def test001(self):
     """
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
     """
@@ -76,7 +85,7 @@ def test01(self):
     
     
         
-def test02(self):
+def test002(self):
     """
     Tests whether SoftSkillsByPerson works and whether it returns language-specific labels.
     Bug discovered :doc:`/blog/2011/0228`.
@@ -135,7 +144,7 @@ def test02(self):
     
 
 
-def test03(self):
+def test003(self):
     """
     Test whether the AJAX call issued for Detail of Annette Arens is correct.
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
@@ -268,7 +277,7 @@ def test03(self):
         self.assertEqual(result['navinfo']['last'],case[6])
             
             
-def test04(self):
+def test004(self):
     """
     This tests whether date fields are correctly parsed.
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
@@ -356,7 +365,7 @@ def test04(self):
         result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
         self.assertEqual(result['data']['applies_from'],value)
 
-def test05(self):
+def test005(self):
     """
     Simplification of test04, used to write :doc:`/tickets/27`.
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
@@ -376,7 +385,7 @@ def test05(self):
     self.assertEqual(result['data']['name'],value)
 
 
-def test06(self):
+def test006(self):
     """
     Testing BabelValues.
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
@@ -408,7 +417,65 @@ def test06(self):
         babel.set_language(None) # switch back to default language for subsequent tests
     
 
-def test09(self):
+def test007(self):
+    """
+    Test the number of rows returned for certain queries
+    """
+    cases = [
+      ['contacts/Companies', 24],
+      ['contacts/Persons', 53],
+      ['pcsw/MyPersons',19],
+      ['contacts/AllPersons', 74],
+      ['contacts/AllPartners', 102],
+      ['courses/Courses', 4],
+      ['courses/CourseProviders', 3],
+      ['courses/CourseOffers', 4],
+      ['countries/Countries', 6],
+      ['notes/Notes', 106],
+      ['isip/Contracts', 21],
+      ['jobs/JobProviders', 4],
+      ['jobs/Jobs', 9],
+      ['jobs/Contracts', 21], 
+      ['jobs/Candidatures', 35],
+      ['jobs/Studies', 3],
+      ['cal/Events', (204,205)], # seems that sometimes 204 is the correct number (depending on demo_date)
+      ['cal/Tasks', 44],
+      ['cal/Priorities', 10],
+      ['notes/MyNotes', 28],
+      ['properties/PropGroups', 4],
+      ['/api/cal/RemindersByUser?fmt=json&limit=30&start=0&mt=5&mk=103&',22],
+    ]
+    for case in cases:
+        if "?" in case[0]:
+            url = case[0]
+        else:
+            url = '/api/%s?fmt=json&limit=30&start=0' % case[0]
+        #~ logger.info("20120103 %s",url)
+        response = self.client.get(url,REMOTE_USER='root')
+        result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
+        #~ if result['count'] != case[1]:
+            #~ logger.warning("%s",pprint.pformat(result['rows']))
+        num = case[1]
+        if not isinstance(num,tuple):
+            num = [num]
+        if not result['count'] in num:
+            self.fail(
+                "%s got %d rows instead of %d" % (case[0],result['count'],num))
+
+    cases = [
+      ['cv/SkillsByPerson/property',6],
+    ]
+    for case in cases:
+        url = '/choices/%s?fmt=json&limit=10&start=0' % case[0]
+        response = self.client.get(url,REMOTE_USER='root')
+        result = self.check_json_result(response,'count rows')
+        #~ if result['count'] != case[1]:
+            #~ logger.warning("%s",pprint.pformat(result['rows']))
+        self.assertEqual(result['count'],case[1],
+            "%s got %d rows instead of %d" % (case[0],result['count'],case[1]))
+
+
+def test009(self):
     """
     This tests for the bug discovered :doc:`/blog/2011/0610`.
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
@@ -421,7 +488,7 @@ def test09(self):
     self.assertEqual(len(result['rows']),30)
     #~ babel.set_language(None) # switch back to default language for subsequent tests
 
-def test10(self):
+def test010(self):
     """
     Test the unique_together validation of City
     See :doc:`/blog/2011/0610` and :doc:`/blog/2011/0611`.
@@ -449,7 +516,7 @@ def test10(self):
             self.fail("Expected IntegrityError")
         
     
-def test11(self):
+def test011(self):
     """
     Tests whether the user problem 
     described in :doc:`/blog/2011/1206` 
@@ -463,7 +530,7 @@ def test11(self):
     translation.deactivate()
     
     
-def test12(self):
+def test012(self):
     """
     Test whether the contact person of a jobs contract is correctly filled in
     when the provider has exactly one contact person.
@@ -483,7 +550,7 @@ def test12(self):
     #~ self.assertEqual(c.applies_until,p.coached_from+datetime.timedelta(days=))
     
 
-def test14(self):
+def test014(self):
     """
     Tests for the bug discovered :doc:`/blog/2011/1222`.
     """
@@ -499,7 +566,7 @@ def test14(self):
           #~ self.assertEqual(result['title'],u"Choices for city")
           self.assertEqual(len(result['rows']),min(result['count'],10))
 
-def test15(self):
+def test015(self):
     """
     Temporary bug on :doc:`/blog/2011/1223`.
     """
@@ -508,7 +575,7 @@ def test15(self):
     result = self.check_json_result(response,'data phantom title')
     self.assertEqual(result['phantom'],True)
 
-def test15b(self):
+def test015b(self):
     """
     Test whether PropsByGroup has a detail.
     20120218 : "properties.PropsByGroup has no action u'detail'"
@@ -524,7 +591,7 @@ def test15b(self):
           'navinfo disable_delete data title disabled_actions id')
         self.assertEqual(result['id'],case[1])
 
-def test16(self):
+def test016(self):
     """
     All rows of persons_by_user now clickable.
     See :doc:`/blog/2011/1223`.
@@ -539,55 +606,47 @@ def test16(self):
         result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
         self.assertEqual(result['count'],case[1])
         
-def test07(self):
+def test101(self):
     """
-    Test the number of rows returned for certain queries
+    First we try to uncheck the is_jobprovider checkbox on 
+    the Company view of a JobProvider. 
+    This should fail since the JP has Jobs and Contracts.
     """
-    cases = [
-      ['contacts/Companies', 24],
-      ['contacts/Persons', 53],
-      ['pcsw/MyPersons',19],
-      ['contacts/AllPersons', 74],
-      ['contacts/AllPartners', 102],
-      ['courses/Courses', 4],
-      ['courses/CourseProviders', 3],
-      ['courses/CourseOffers', 4],
-      ['countries/Countries', 6],
-      ['notes/Notes', 106],
-      ['isip/Contracts', 21],
-      ['jobs/JobProviders', 4],
-      ['jobs/Jobs', 9],
-      ['jobs/Contracts', 21], 
-      ['jobs/Candidatures', 35],
-      ['jobs/Studies', 3],
-      ['cal/Events', 205], # seems that sometimes 204 is the correct number (depending on demo_date)
-      ['cal/Tasks', 44],
-      ['cal/Priorities', 10],
-      ['notes/MyNotes', 28],
-      ['properties/PropGroups', 4],
-      ['/api/cal/RemindersByUser?fmt=json&limit=30&start=0&mt=5&mk=103&',22],
-    ]
-    for case in cases:
-        if "?" in case[0]:
-            url = case[0]
-        else:
-            url = '/api/%s?fmt=json&limit=30&start=0' % case[0]
-        #~ logger.info("20120103 %s",url)
-        response = self.client.get(url,REMOTE_USER='root')
-        result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
-        #~ if result['count'] != case[1]:
-            #~ logger.warning("%s",pprint.pformat(result['rows']))
-        self.assertEqual(result['count'],case[1],
-            "%s got %d rows instead of %d" % (case[0],result['count'],case[1]))
-
-    cases = [
-      ['cv/SkillsByPerson/property',6],
-    ]
-    for case in cases:
-        url = '/choices/%s?fmt=json&limit=10&start=0' % case[0]
-        response = self.client.get(url,REMOTE_USER='root')
-        result = self.check_json_result(response,'count rows')
-        #~ if result['count'] != case[1]:
-            #~ logger.warning("%s",pprint.pformat(result['rows']))
-        self.assertEqual(result['count'],case[1],
-            "%s got %d rows instead of %d" % (case[0],result['count'],case[1]))
+    Company = resolve_model('contacts.Company')
+    JobProvider = resolve_model('jobs.JobProvider')
+    Job = resolve_model('jobs.Job')
+    Contract = resolve_model('jobs.Contract')
+    bisaProvider = JobProvider.objects.get(pk=185)
+    bisaCompany = Company.objects.get(pk=185)
+    
+    # it should work even on an imported partner
+    save_iip = settings.LINO.is_imported_partner
+    def f(obj): return True
+    settings.LINO.is_imported_partner = f
+    
+    JOBS = Job.objects.filter(provider=bisaProvider)
+    self.assertEqual(JOBS.count(),3)
+    rr = PseudoRequest('root')
+    try:
+        Company.is_jobprovider.set_value_in_object(rr,bisaCompany,False)
+        self.fail("Expected ValidationError")
+    except ValidationError, e:
+        # cannot delete because there are 3 Jobs referring to BISA
+        pass
+    for job in JOBS:
+        for cont in Contract.objects.filter(job=job):
+            cont.delete()
+        job.delete()
+    Company.is_jobprovider.set_value_in_object(rr,bisaCompany,False)
+    
+    bisaCompany = Company.objects.get(pk=185) # still exists
+    
+    try:
+        bisaProvider = JobProvider.objects.get(pk=185)
+        self.fail("Expected JobProvider.DoesNotExist")
+    except JobProvider.DoesNotExist,e:
+        pass
+    
+    # restore is_imported_partner method
+    settings.LINO.is_imported_partner = save_iip
+    

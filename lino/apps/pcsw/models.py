@@ -287,7 +287,8 @@ class CpasPartner(mixins.DiffingMixin,models.Model):
         verbose_name=_("Bank account 2"))
         
     def disable_delete(self,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+        #~ if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+        if settings.LINO.is_imported_partner(self):
             return _("Cannot delete companies and persons imported from TIM")
           
 
@@ -680,13 +681,14 @@ class Partners(contacts.Partners):
     
     @classmethod
     def disabled_fields(self,obj,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
+        if settings.LINO.is_imported_partner(obj):
             return self.imported_fields
         return []
         
     @classmethod
     def disable_delete(self,obj,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
+        #~ if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
+        if settings.LINO.is_imported_partner(obj):
             return _("Cannot delete contacts imported from TIM")
         return super(Partners,self).disable_delete(obj,request)
         

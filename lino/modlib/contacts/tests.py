@@ -77,12 +77,12 @@ def test02(self):
     #~ settings.LINO.auto_makeui = False
     
     """
-    disable TIM2LINO_IS_IMPORTED_PARTNER otherwise 
+    disable LINO.is_imported_partner() otherwise 
     disabled_fields may contain more than just the 'id' field.
     """
-    def f(obj): 
-        return False
-    settings.TIM2LINO_IS_IMPORTED_PARTNER = f
+    save_iip = settings.LINO.is_imported_partner
+    def f(obj): return False
+    settings.LINO.is_imported_partner = f
     
     luc = Person.objects.get(name__exact="Saffre Luc")
     url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
@@ -115,3 +115,5 @@ def test02(self):
         
     u.language = lang
     u.save()
+    # restore is_imported_partner method
+    settings.LINO.is_imported_partner = save_iip

@@ -109,7 +109,7 @@ def delete_child(obj,child_model,using=None,request=None):
         msg = child_model._lino_ddh.disable_delete(child,request)
         if msg:
             raise ValidationError(msg)
-    logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
+    #~ logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
     collector = ChildCollector(using=using)
     collector.collect([child],source=obj.__class__,nullable=True,collect_parents=False)
     collector.delete()
