@@ -428,13 +428,12 @@ class FieldElement(LayoutElement):
     def cell_html(self,ui,row):
         return getattr(row,self.field.name)
             
-    #~ def submit_fields(self):
-        #~ return [self.field.name]
     def add_default_value(self,kw):
         if self.field.has_default():
             dv = self.field.default
             if callable(dv):
-                dv = dv()
+                return 
+                #~ dv = dv()
             kw.update(value=dv)
             
         
@@ -877,7 +876,8 @@ class BooleanFieldElement(FieldElement):
         if self.field.has_default():
             dv = self.field.default
             if callable(dv):
-                dv = dv()
+                return 
+                #~ dv = dv()
             kw.update(checked=dv)
             #~ self.remove('value')
 

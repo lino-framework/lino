@@ -32,7 +32,8 @@ Afterwards you'll have to manually adapt them:
 Set up Apache and `mod_wsgi`
 ----------------------------
 
-Create a file `django.wsgi` in `/usr/local/django/myproject/apache`::
+Create a file `wsgi.py` in `/usr/local/django/myproject` 
+directory::
 
   import os
 
@@ -50,7 +51,8 @@ And in your Apache config file::
     WSGIDaemonProcess example.com processes=2 threads=15
     #WSGIDaemonProcess example.com threads=15
     WSGIProcessGroup example.com
-    WSGIScriptAlias / /usr/local/django/myproject/apache/django.wsgi
+    WSGIScriptAlias / /usr/local/django/myproject/wsgi.py
+    WSGIApplicationGroup %{GLOBAL}
 
     ErrorLog /var/log/apache2/myproject.error.log
 
@@ -75,6 +77,10 @@ Django docs on Apache and mod_wsgi:
   - http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango
   - :doc:`/tickets/9`
   - :doc:`/tickets/10`
+  
+  
+The `WSGIApplicationGroup %{GLOBAL}` instruction is necessary when your Lino 
+application uses :term:`lxml`.
 
 You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 
@@ -89,6 +95,7 @@ Lino uses the following types of static files:
 Prefix                      Description                                 
 =========================== =========================================== 
 /media/extjs/               ExtJS library                               
+/media/extensible/          Ext.ensible library                        
 /media/tinymce/             TinyMCE library                             
 /media/lino/                lino.css                                    
 /media/cache/               temporary files created by Lino
@@ -97,15 +104,20 @@ Prefix                      Description
 /media/webdav/              User-editable files 
 =========================== =========================================== 
 
-While the development server does these mappings 
-automatically.
+The **development server** does these mappings 
+automatically (for the loirbraries you need to configure 
+their respective installation paths in your:xfile:`settings.py`:
+:attr:`lino.Lino.extjs_root`,
+:attr:`lino.Lino.extensible_root`,
+:attr:`lino.Lino.tinymce_root`)
 
-On a production server you then add a line like the following 
+On a **production server** you add a line like the following 
 to your Apache config::
 
   Alias /media/ /usr/local/django/myproject/media/
   
-
+This is your project's "media" directory where you manually create 
+symbolic links to the library paths.
 
 Miscellaneous
 -------------

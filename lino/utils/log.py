@@ -26,6 +26,7 @@ See also :doc:`/tickets/15`
 import os
 import sys
 import logging
+
 from logging.handlers import RotatingFileHandler
 
 from django.utils.log import AdminEmailHandler
@@ -111,19 +112,24 @@ def configure(config):
     determine whether that is the case or not.".
     
     """
+    
+    djangoLogger = logging.getLogger('django')
+    linoLogger = logging.getLogger('lino')
+    
+    if len(linoLogger.handlers) != 0:
+        raise Exception("Lino logger has already %d handlers: %s",len(linoLogger.handlers),linoLogger.handlers)
+    
+    
     #~ print 20101225, config
     encoding = config.get('encoding','UTF-8')
     logfile = config.get('filename',None)
     rotate = config.get('rotate',True)
     level = getattr(logging,config.get('level','notset').upper())
     
-    djangoLogger = logging.getLogger('django')
     aeh = AdminEmailHandler(include_html=True)
     #~ aeh = AdminEmailHandler()
     aeh.setLevel(logging.ERROR)
     djangoLogger.addHandler(aeh)
-    
-    linoLogger = logging.getLogger('lino')
     
     linoLogger.setLevel(level)
     
@@ -168,5 +174,7 @@ def configure(config):
             linoLogger.addHandler(h)
     except IOError:
         # happens under mod_wsgi
-        pass
+        linoLogger.info("mod_wsgi mode (no sys.stdout)")
+        #~ pass
         
+    #~ linoLogger.info("20120408 linoLogger.handlers: %s", linoLogger.handlers)

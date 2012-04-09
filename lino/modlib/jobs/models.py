@@ -1182,8 +1182,6 @@ if True: # settings.LINO.user_model:
 
 COLS = 8
 
-#~ class JobsOverviewDetail(dd.DetailLayout):
-    #~ main = "body"
 
 class JobsOverview(dd.EmptyTable):
     label = _("Contracts Situation") 

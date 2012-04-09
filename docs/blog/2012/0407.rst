@@ -30,7 +30,7 @@ But it turned out that this was just another detail which didn't
 lead to a normal error message because of the freeze.
 
 Using ``print`` statements I tracked down that the following code 
-in :mod:`lino.utils.xmlgen` caused the freeze:
+in :mod:`lino.utils.xmlgen` caused the freeze::
 
         if self.xsd_filename:
             self.xsd_tree = etree.parse(self.xsd_filename) 
@@ -52,8 +52,8 @@ into what mousetrap I had stepped:
 
 The reason for the freeze was an incompatibility between mod_wsgi and lxml,
 and the solution was indeed to add a line ``WSGIApplicationGroup %{GLOBAL}`` 
-to Apache's configuration.
-More explanations also `here 
-<http://code.google.com/p/modwsgi/wiki/ApplicationIssues#Python_Simplified_GIL_State_API>`.
+to Apache's configuration. More explanations 
+also `here 
+<http://code.google.com/p/modwsgi/wiki/ApplicationIssues#Python_Simplified_GIL_State_API>`_.
 
 
