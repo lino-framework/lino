@@ -1,15 +1,17 @@
 # -*- coding: UTF-8 -*-
 import sys
-from os.path import join
-
-LINO_ROOT = '/var/snapshots/lino'
+from os.path import abspath, dirname, join
+lino_root = '/var/snapshots/lino'
+#lino_root = abspath(join(dirname(__file__),'using','lino'))
+# see docs/admin/using
 try:
-    # make sure that there is no duplicate lino in the PYTHONPATH.
+    # Make sure that there is no duplicate lino in the PYTHONPATH.
+    # But remember that Django imports the settings module twice.
     import lino
-    if not lino.__file__.startswith(LINO_ROOT):
-        raise Exception("Duplicate lino module: %s is not in %s" % (lino.__file__,LINO_ROOT))
+    if not lino.__file__.startswith(lino_root):
+        raise Exception("Duplicate lino module: %s is not in %s" % (lino.__file__,lino_root))
 except ImportError:
-    sys.path.append(LINO_ROOT)
+    sys.path.append(lino_root)
 
 from lino.apps.pcsw.settings import *
 class Lino(Lino):

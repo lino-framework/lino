@@ -117,8 +117,8 @@ def is_devserver():
     `How can I tell whether my Django application is running on development server or not?
     <http://stackoverflow.com/questions/1291755>`_
     
-    Added the `len(sys.argv) > 1` test because under 
-    mod_wsgi the process is called without arguments.
+    Added the `len(sys.argv) > 1` test because in a 
+    wsgi application the process is called without arguments.
     """
     return len(sys.argv) > 1 and sys.argv[1] == 'runserver'
     
@@ -902,70 +902,52 @@ class ExtUI(base.UI):
                 (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)/(?P<tplname>\w+)$', 
                     self.templates_view),
             )
-            
+
+        from os.path import exists, join, abspath, dirname
         
+        logger.info("Checking /media URLs ")
+        prefix = settings.MEDIA_URL[1:]
+        assert prefix.endswith('/')
+        
+        def setup_media_link(short_name,attr_name=None,source=None):
+            target = join(settings.MEDIA_ROOT,short_name)
+            if exists(target):
+                return
+            #~ if settings.LINO.extjs_root:
+            if attr_name:
+                source = getattr(settings.LINO,attr_name)
+                if not source:
+                    raise Exception("LINO.%s is not set." % attr_name)
+            if not exists(source):
+                raise Exception("LINO.%s (%s) does not exist" % (attr_name,p))
+            if is_devserver():
+                #~ urlpatterns += patterns('django.views.static',
+                urlpatterns.extend(patterns('django.views.static',
+                (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 
+                    'serve', {
+                    'document_root': source,
+                    'show_indexes': False })))
+            else:
+                os.symlink(source,target)
+            
+        setup_media_link('extjs','extjs_root')
+        if settings.LINO.use_extensible:
+            setup_media_link('extensible','extensible_root')
+        if settings.LINO.use_tinymce:
+            setup_media_link('tinymce','tinymce_root')
+            
+        lino_root = join(settings.LINO.project_dir,'using','lino')
+        if not exists(lino_root):
+            lino_root = join(dirname(lino.__file__),'..')
+        setup_media_link('lino',source=join(lino_root,'media'))
 
         if is_devserver():
-          
-            from os.path import exists, join, abspath, dirname
-          
-            logger.info("Running on a development server: install /media URLs ")
-            
-            def must_exist(s):
-                p = getattr(settings.LINO,s)
-                if not p:
-                    raise Exception("LINO.%s is not set." % s)
-                if not exists(p):
-                    raise Exception("LINO.%s (%s) does not exist" % (s,p))
-                    
-            if not exists(join(settings.MEDIA_ROOT,'extjs')):
-                #~ if settings.LINO.extjs_root:
-                must_exist('extjs_root')
-                    
-                prefix = settings.MEDIA_URL[1:]
-                assert prefix.endswith('/')
-                
-                urlpatterns += patterns('django.views.static',
-                (r'^%sextjs/(?P<path>.*)$' % prefix, 
-                    'serve', {
-                    'document_root': settings.LINO.extjs_root,
-                    'show_indexes': True }))
-                    
-            if settings.LINO.use_extensible:
-                if not exists(join(settings.MEDIA_ROOT,'extensible')):
-                    must_exist('extensible_root')
-                    urlpatterns += patterns('django.views.static',
-                        (r'^%sextensible/(?P<path>.*)$' % prefix, 
-                            'serve', {
-                            'document_root': settings.LINO.extensible_root,
-                            'show_indexes': True }))
-                
-            if settings.LINO.use_tinymce:
-                if not exists(join(settings.MEDIA_ROOT,'tinymce')):
-                    #~ if settings.LINO.tinymce_root:
-                    must_exist('tinymce_root')
-                    urlpatterns += patterns('django.views.static',
-                        (r'^%stinymce/(?P<path>.*)$' % prefix, 
-                            'serve', {
-                            'document_root': settings.LINO.tinymce_root,
-                            'show_indexes': True }))
-                
-            if not exists(join(settings.MEDIA_ROOT,'lino')):
-                lino_media = abspath(join(dirname(lino.__file__),'..','media'))
-                
-                urlpatterns += patterns('django.views.static',
-                    (r'^%slino/(?P<path>.*)$' % prefix, 
-                        'serve', {
-                        'document_root': lino_media,
-                        'show_indexes': True }))
-
             urlpatterns += patterns('django.views.static',
                 (r'^%s(?P<path>.*)$' % prefix, 'serve', 
                   { 'document_root': settings.MEDIA_ROOT, 
                     'show_indexes': True }),
             )
 
-        #~ print '\n'.join([repr(i) for i in urlpatterns])
         return urlpatterns
 
     def html_page(self,*args,**kw):
@@ -974,11 +956,9 @@ class ExtUI(base.UI):
     def html_lines(self,request,title=None,on_ready='',**kw):
         """Generates the lines of Lino's HTML reponse.
         """
-        
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-        #~ title = kw.get('title',None)
         #~ if title:
             #~ yield '<title id="title">%s (%s) </title>' % (unicode(title),settings.LINO.title)
         #~ else:
@@ -1160,14 +1140,6 @@ tinymce.init({
                   ) + '<br/>' + html
             main.update(html=html)
         
-        #~ if quicklinks.items:
-            #~ main.update(xtype='panel',tbar=quicklinks)
-#~ if not on_ready:
-            #~ on_ready = [
-              #~ 'new Lino.IndexWrapper({html:%s}).show();' % 
-                #~ py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
-            #~ main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
-        #~ main.update(id='main_area',region='center')
         win = dict(
           layout='fit',
           #~ maximized=True,

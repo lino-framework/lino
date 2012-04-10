@@ -8,13 +8,16 @@ Installation
     :maxdepth: 2
 
     install
+    media
+    install_apache
     ApacheHttpAuth
-    apache_webdav
     django_tests
     upgrade
     datamig
-    translate
+    apache_webdav
+    using
     webdav
+    install_shell_scripts
     oood
     watch_tim
    
@@ -23,8 +26,8 @@ Other
 
 .. toctree::
     :maxdepth: 2
-
    
+    translate
     using_appy_pod
     printable
     ConfigureNotesTemplates

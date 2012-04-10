@@ -32,7 +32,7 @@ def name2kw(s,last_name_first=True):
     """
 Split a string that contains both last_name and first_name.
 The caller must indicate whether the string contains 
-last_name first (e.g. Saffre Luc) or first_name first (e.g. Luc Saffre)
+last_name first (e.g. Saffre Luc) or first_name first (e.g. Luc Saffre).
 
 Examples:
 
@@ -52,7 +52,7 @@ In more complicated cases, a comma is required to help:
 >>> name2kw("Mombanga born Ngungi, Maria Magdalena")
 {'first_name': 'Maria Magdalena', 'last_name': 'Mombanga born Ngungi'}
 
-
+Some examples with `first_name` first:
 
 >>> name2kw("Luc Saffre",False)
 {'first_name': 'Luc', 'last_name': 'Saffre'}
@@ -65,6 +65,10 @@ In more complicated cases, a comma is required to help:
 >>> name2kw("Marc Antoine Bernard Van den Bossche",False)
 {'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
 
+Edge cases:
+
+>>> name2kw("")
+{}
 
 
 Bibliography:
@@ -80,7 +84,9 @@ Bibliography:
         if last_name_first:
             return dict(last_name=a[0].strip(),first_name= a[1].strip())
     a = s.strip().split()
-    if len(a) == 1:
+    if len(a) == 0:
+        return dict()
+    elif len(a) == 1:
         return dict(last_name=a[0])
     elif len(a) == 2:
         if last_name_first:
@@ -150,6 +156,11 @@ Examples:
 
 >>> street2kw(u"Neustr. 1 (Referenzadr.)")
 {'addr2': u'(Referenzadr.)', 'street': u'Neustr.', 'street_no': u'1'}
+
+Edge cases:
+
+>>> street2kw("")
+{}
     
     """
     #~ m = re.match(r"(\D+),?\s*(\d+)\s*(\w*)", s)
@@ -163,7 +174,9 @@ Examples:
         else:
             kw['street_box'] = street_box
     else:
-        kw['street'] = s
+        s = s.strip()
+        if len(s):
+            kw['street'] = s
     return kw
 
 
