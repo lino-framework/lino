@@ -940,7 +940,7 @@ class ExtUI(base.UI):
         #~ if not exists(lino_root):
             #~ lino_root = 
         #~ setup_media_link('lino',source=join(lino_root,'media'))
-        setup_media_link('lino',source=join(dirname(lino.__file__),'..','media')))
+        setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
 
         if is_devserver():
             urlpatterns += patterns('django.views.static',

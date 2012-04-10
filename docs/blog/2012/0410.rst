@@ -10,3 +10,19 @@ and
 now both return an empty dict when given an empty string.
 Until now, `street2kw()` returned ``{'street':''}`` and 
 `name2kw` caused an `IndexError "list index out of range"`.
+
+
+Installation
+------------
+
+Lino now creates automatically the following symbolic links 
+if they don't exist:
+
+- /media/lino/ :       Lino's :srcref`/media` directory
+- /media/extjs/ :      ExtJS library (:attr:`lino.Lino.extjs_root`)
+- /media/extensible/ : Ext.ensible library (:attr:`lino.Lino.extensible_root`)
+- /media/tinymce/ :    TinyMCE library (:attr:`lino.Lino.tinymce_root`)
+
+
+Updated :doc:`/admin/media`, :doc:`/admin/using`,...
+
