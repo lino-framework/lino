@@ -936,10 +936,11 @@ class ExtUI(base.UI):
         if settings.LINO.use_tinymce:
             setup_media_link('tinymce','tinymce_root')
             
-        lino_root = join(settings.LINO.project_dir,'using','lino')
-        if not exists(lino_root):
-            lino_root = join(dirname(lino.__file__),'..')
-        setup_media_link('lino',source=join(lino_root,'media'))
+        #~ lino_root = join(settings.LINO.project_dir,'using','lino')
+        #~ if not exists(lino_root):
+            #~ lino_root = 
+        #~ setup_media_link('lino',source=join(lino_root,'media'))
+        setup_media_link('lino',source=join(dirname(lino.__file__),'..','media')))
 
         if is_devserver():
             urlpatterns += patterns('django.views.static',

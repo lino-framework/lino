@@ -1,0 +1,12 @@
+20120410
+========
+
+list index out of range
+-----------------------
+
+:func:`name2kw <lino.modlib.contacts.utils.name2kw>`
+and
+:func:`street2kw <lino.modlib.contacts.utils.street2kw>`
+now both return an empty dict when given an empty string.
+Until now, `street2kw()` returned ``{'street':''}`` and 
+`name2kw` caused an `IndexError "list index out of range"`.
