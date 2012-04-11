@@ -115,6 +115,7 @@ As long as nobody protests, I'll save some time by writing in German.
   |br| 
   :doc:`09 <0409>`
   :doc:`10 <0410>`
+  :doc:`11 <0411>`
   
 .. |May| replace::  **May**
   |br| 

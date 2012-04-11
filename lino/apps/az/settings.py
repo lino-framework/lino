@@ -50,11 +50,6 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
         
-        #~ LISTINGS = [
-          #~ self.modules.jobs.ContractsSituation,
-          #~ self.modules.lino.DataControlListing,
-        #~ ]
-        
         m = main.add_menu("master",_("Master"))
         m.add_action(self.modules.contacts.Persons)
         m.add_action(self.modules.contacts.Companies)
@@ -62,14 +57,15 @@ class Lino(Lino):
         #~ m.add_action(self.modules.contacts.AllContacts)
         #~ m.add_action(self.modules.dsbe.Newcomers)
 
-        self.modules.families.setup_main_menu(self,ui,user,m)
-        self.modules.school.setup_main_menu(self,ui,user,m)
+        self.modules.families.setup_master_menu(self,ui,user,m)
+        self.modules.school.setup_master_menu(self,ui,user,m)
 
         #~ if user is None:
             #~ return main
             
-        m = main.add_menu("my",_("My menu"))
+        self.modules.families.setup_main_menu(self,ui,user,m)
         
+        m = main.add_menu("my",_("My menu"))
         self.modules.cal.setup_my_menu(self,ui,user,m)
         self.modules.mails.setup_my_menu(self,ui,user,m)
         self.modules.school.setup_my_menu(self,ui,user,m)
@@ -140,7 +136,7 @@ INSTALLED_APPS = (
   #~ 'lino.modlib.properties',
   'lino.modlib.contacts',
   #~ 'lino.modlib.projects',
-  'lino.apps.az.families',
+  'lino.apps.modlib.families',
   #~ 'lino.az.notes',
   'lino.apps.az.school',
   #~ 'lino.modlib.links',

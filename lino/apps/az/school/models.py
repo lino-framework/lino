@@ -430,8 +430,10 @@ def site_setup(site):
     site.modules.cal.Events.set_detail(EventDetail())
 
     
-def setup_main_menu(site,ui,user,m): 
-    m = m.add_menu("school",_("School"))
+def setup_main_menu(site,ui,user,m): pass
+  
+def setup_master_menu(site,ui,user,m): 
+    #~ m = m.add_menu("school",_("School"))
     m.add_action(Teachers)
     m.add_action(Pupils)
     #~ m.add_action(CourseOffers)

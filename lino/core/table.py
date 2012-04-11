@@ -571,6 +571,8 @@ class Table(AbstractTable):
                     fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.master_key)
                     assert direct
                     assert not m2m
+                    if fk.rel is None:
+                        raise Exception("%s.master_key %r is not a RelatedField" % (self,self.master_key))
                     master = fk.rel.to
                 except models.FieldDoesNotExist,e:
                     #~ logger.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.master_key)

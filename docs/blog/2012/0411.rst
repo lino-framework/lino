@@ -1,0 +1,59 @@
+========
+20120411
+========
+
+Ich habe mit der Implementiertung des neuen Moduls "Schuldnerberatung"
+begonnen.
+Ziel des Moduls ist die Erstellung von "Haushaltsplänen" 
+zwecks Beratung Personen, die verschuldet oder bankrott sind.
+
+.. currentmodule:: lino.modlib.debts.models
+
+
+Tabellen:
+
+- :class:`Budget` : Haushaltspläne (HP), mit Feldern wie Datum, Autor (erstellender
+  Mitarbeiter),... aber die meisten Angaben befinden sich in den
+  folgenden Slave-Tabellen.
+  Im Detail eines HP können dann die eigentlichen Daten erfasst werden.
+
+- :class:`Actor` "Akteure eines HP", mit Feldern wie
+
+  - HP (Verweis auf den HP)
+  - Verweis auf existierende Person in Lino
+  - Berufliche Lage :  freies Textfeld. z.B. Arbeitslos, Invalid,
+    Arbeiter, Angestellter.
+
+- :class:`Account` : "HP-Konten", mit Feldern wie
+
+  - Art : Laufende (Einkommen/Ausgaben) oder Situation (Schuld/Guthaben)
+  - Bezeichnung
+  - Checkbox "Summe in Zusammenfassung"
+
+- :class:`Item` "HP-Posten" ist eine globale Liste aller möglichen Einträge
+  mit Feldern wie
+
+  - `name` : Bezeichnung
+  - Hilfetext
+  - `account` : FK to :class:`Account`
+  - Art : Laufende (Einkommen/Ausgaben) oder Situation (Schuld/Guthaben)
+  - Checkbox "Optional" : ob für diesen Posten in einem neuen HP ein
+    Eintrag vorgesehen wird.
+  - Ob Angaben sich (Monatlich, Jährlich) verstehen
+
+- :class:`Entry` "HP-Einträge Laufende Angaben" mit Feldern wie
+  - HP (Verweis auf den HP)
+  - Person : Verweis zu einer der HP-Personen (leer bedeutet: Angabe
+    bezieht sich auf den Haushalt)
+  - Kategorie (Verweis zu einer HP-Kategorie Einnahme oder Ausgaben)
+  - Posten : Verweis zu einem der HP-Posten
+  - Checkbox "schätzungsweise"
+  - Bemerkung : freies Textfeld
+  - Wert : ein Betrag
+
+- "HP-Einträge Situationsangaben" mi den gleichen Feldern wie Laufende
+  Angaben, aber weiteren Felder wie
+  - Gläubiger und Zweck
+  - Referenzen
+  - Monatsrate
+

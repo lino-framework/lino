@@ -1415,6 +1415,7 @@ def site_setup(site):
 
 
 def setup_main_menu(site,ui,user,m): pass
+def setup_master_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("Calendar"))
@@ -1442,4 +1443,3 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(Tasks)
     m.add_action(Guests)
     #~ m.add_action(RecurrenceSets)
-  

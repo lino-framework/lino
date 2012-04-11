@@ -282,7 +282,15 @@ class Module(dd.Module):
   
   
 def setup_main_menu(site,ui,user,m):
-    pass
+    if user.is_newcomers:
+        m  = m.add_menu("newcomers",_("Newcomers"))
+        m.add_action(Newcomers)
+        m.add_action(UsersByNewcomer)
+        m.add_action(NewClients)
+            
+  
+def setup_master_menu(site,ui,user,m): pass
+  
 def setup_my_menu(site,ui,user,m): 
     pass
     

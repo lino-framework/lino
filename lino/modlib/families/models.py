@@ -80,7 +80,7 @@ class FamilyDetail(dd.DetailLayout):
 
     address_box = "box3 box4"
 
-    bottom_box = "remarks MembersByPartner"
+    bottom_box = "remarks MembersByFamily"
 
     intro_box = """
     name id language 
@@ -119,10 +119,7 @@ class Roles(dd.Table):
     model = Role
 
 
-#~ class Contact(models.Model):
-#~ class RoleOccurence(models.Model):
 class Member(models.Model):
-#~ class unused_Role(object):
     """
     The role of a given :class:`Person` in a given :class:`Family`.
     """
@@ -131,53 +128,49 @@ class Member(models.Model):
         verbose_name = _("Family Member")
         verbose_name_plural = _("Family Members")
         
-    type = models.ForeignKey(Role,
+    role = models.ForeignKey(Role,
       blank=True,null=True,
       )
-    partner = models.ForeignKey(contacts.Partner,
-        related_name='membersbypartner')
+    #~ partner = models.ForeignKey(contacts.Partner,
+        #~ related_name='membersbypartner')
+    family = models.ForeignKey(Family,
+        related_name='membersbyfamily')
     person = models.ForeignKey(settings.LINO.person_model,
         related_name='membersbyperson')
     #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       #~ verbose_name=_("contact type"))
 
-    #~ def __unicode__(self):
-        #~ if self.person_id is None:
-            #~ return super(Contact,self).__unicode__()
-        #~ if self.type is None:
-            #~ return unicode(self.person)
-        #~ return u"%s (%s)" % (self.person, self.type)
     def __unicode__(self):
         if self.person_id is None:
             return super(Member,self).__unicode__()
         if self.type is None:
             return unicode(self.person)
         return u"%s (%s)" % (self.person, self.type)
-            
+
     def address_lines(self):
         for ln in self.person.address_person_lines():
             yield ln
-        if self.partner:
-            for ln in self.partner.address_person_lines():
+        if self.family:
+            for ln in self.family.address_person_lines():
                 yield ln
-            for ln in self.partner.address_location_lines():
+            for ln in self.family.address_location_lines():
                 yield ln
         else:
-            for ln in self.family.address_location_lines():
+            for ln in self.address_location_lines():
                 yield ln
 
 class Members(dd.Table):
     model = Member
     
-class MembersByPartner(Members):
+class MembersByFamily(Members):
     label = _("Family Members")
-    master_key = 'partner'
-    column_names = 'person type *'
+    master_key = 'family'
+    column_names = 'person role *'
 
 class MembersByPerson(Members):
     label = _("Member of")
     master_key = 'person'
-    column_names = 'partner type *'
+    column_names = 'family role *'
     
     
     
@@ -197,7 +190,9 @@ if settings.LINO.is_installed('family'):
 
 
 
-def setup_main_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,user,m): pass
+    
+def setup_master_menu(site,ui,user,m): 
     m.add_action(Families)
 
 def setup_my_menu(site,ui,user,m): 

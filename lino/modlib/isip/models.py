@@ -510,6 +510,7 @@ class MyContracts(Contracts,mixins.ByUser):
 
 
 def setup_main_menu(site,ui,user,m): pass
+def setup_master_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
     if user.is_spis:

@@ -137,7 +137,8 @@ class Sequenced(models.Model):
         verbose_name=_("Seq.No."))
     
     def set_seqno(self):
-        """The default implementation sets a global sequencing. 
+        """
+        The default implementation sets a global sequencing. 
         Overridden in :class:`lino.modlib.thirds.models.Third`.
         """
         qs = self.__class__.objects.order_by('seqno')

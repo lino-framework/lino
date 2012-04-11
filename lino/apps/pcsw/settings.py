@@ -74,11 +74,7 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
         
-        #~ LISTINGS = [
-          #~ self.modules.jobs.ContractsSituation,
-          #~ self.modules.lino.DataControlListing,
-        #~ ]
-        
+        m = main.add_menu("master",_("Master"))
         m = main.add_menu("contacts",_("Contacts"))
         if user.is_spis:
             m.add_action(self.modules.contacts.Companies)
@@ -88,8 +84,10 @@ class Lino(Lino):
             m.add_action(self.modules.pcsw.MyPersonSearches)
             m.add_action(self.modules.contacts.AllPartners)
             #~ m.add_action(self.modules.pcsw.Newcomers)
-        self.modules.isip.setup_main_menu(self,ui,user,m)
+        self.modules.isip.setup_master_menu(self,ui,user,m)
+        self.modules.families.setup_master_menu(self,ui,user,m)
         self.modules.newcomers.setup_main_menu(self,ui,user,m)
+        self.modules.debts.setup_main_menu(self,ui,user,m)
         #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')
 
@@ -114,7 +112,9 @@ class Lino(Lino):
             
         self.modules.isip.setup_my_menu(self,ui,user,m)
         self.modules.jobs.setup_my_menu(self,ui,user,m)
+        self.modules.families.setup_my_menu(self,ui,user,m)
         self.modules.newcomers.setup_my_menu(self,ui,user,m)
+        self.modules.debts.setup_my_menu(self,ui,user,m)
         
         self.modules.cal.setup_my_menu(self,ui,user,m)
         self.modules.mails.setup_my_menu(self,ui,user,m)
@@ -129,12 +129,7 @@ class Lino(Lino):
             m.add_action(self.modules.courses.CourseOffers)
             m.add_action(self.modules.courses.PendingCourseRequests)
             
-        if user.is_newcomers:
-            m  = main.add_menu("newcomers",_("Newcomers"))
-            m.add_action(self.modules.newcomers.Newcomers)
-            m.add_action(self.modules.newcomers.UsersByNewcomer)
-            m.add_action(self.modules.newcomers.NewClients)
-            
+        self.modules.newcomers.setup_main_menu(self,ui,user,m)
         
         self.modules.jobs.setup_main_menu(self,ui,user,main)
         
@@ -172,6 +167,7 @@ class Lino(Lino):
             self.modules.isip.setup_config_menu(self,ui,user,cfg)
             self.modules.jobs.setup_config_menu(self,ui,user,cfg)
             self.modules.newcomers.setup_config_menu(self,ui,user,cfg)
+            self.modules.debts.setup_config_menu(self,ui,user,cfg)
             
             config_pcsw.add_action(self.modules.pcsw.PersonGroups)
         
@@ -202,6 +198,7 @@ class Lino(Lino):
             self.modules.isip.setup_explorer_menu(self,ui,user,m)
             self.modules.jobs.setup_explorer_menu(self,ui,user,m)
             self.modules.newcomers.setup_explorer_menu(self,ui,user,m)
+            self.modules.debts.setup_explorer_menu(self,ui,user,m)
             m.add_action(self.modules.uploads.Uploads)
             m.add_action(self.modules.pcsw.Exclusions)
             m.add_action(self.modules.pcsw.PersonSearches)
@@ -301,6 +298,8 @@ INSTALLED_APPS = (
   'lino.modlib.isip',
   'lino.modlib.cbss',
   'lino.modlib.newcomers',
+  'lino.modlib.families',
+  'lino.modlib.debts',
   'lino.apps.pcsw',
   'lino.apps.pcsw.courses',
   #~ 'south', # http://south.aeracode.org
