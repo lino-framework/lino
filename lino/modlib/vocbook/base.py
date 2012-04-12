@@ -25,7 +25,8 @@ import re
 
 
 from lino.utils import AttrDict
-from lino.utils import iif
+from lino.utils import iif, curry
+from lino.utils import memo
 from lino.utils.html2xhtml import html2xhtml
 
 from lino.utils.restify import restify
@@ -58,9 +59,7 @@ if USE_XHTML2ODT:
             self.add_styles()
             self.save(self.options.output)
 
-
-
-pronunciationRE=re.compile("^(.*)\s*(\[.*\])\s*",re.DOTALL)
+pronunciationRE = re.compile("^(.*)\s*(\[.*\])\s*",re.DOTALL)
 
 
 def makedirs_if_missing(dirname):
@@ -257,9 +256,9 @@ def sort_by_fr(a,b):
     
 
 class Section:
-    def __init__(self,
-            parent,title=None,intro=None,
-            number=None,
+    def __init__(self,book,parent,
+            title=None,intro=None,
+            number=None,ref=None,
             from_language=None,
             to_language=None):
         if from_language is None:
@@ -277,30 +276,36 @@ class Section:
         elif parent is not None:
             number = len(parent.children) + 1
         self.number = number
+        self.book = book
+        self.ref = ref
         self.title = title
         self.intro = intro
         self.body = []
         self.words = []
         self.children = []
         self.current_lesson = None
+        if self.ref:
+            if self.ref in self.book.ref2sect:
+                raise Exception("Duplicate reference %r" % self.ref)
+            self.book.ref2sect[self.ref] = self
         
     def add_section(self,*args,**kw):
-        sect = Section(self,*args,**kw)
+        sect = Section(self.book,self,*args,**kw)
         self.children.append(sect)
         return sect
         
     def add_index(self,*args,**kw):
-        sect = Index(self,*args,**kw)
+        sect = Index(self.book,self,*args,**kw)
         self.children.append(sect)
         return sect
         
     def add_dictionary(self,*args,**kw):
-        sect = Dictionary(self,*args,**kw)
+        sect = Dictionary(self.book,self,*args,**kw)
         self.children.append(sect)
         return sect
         
     def add_lesson(self,*args,**kw):
-        self.current_lesson = Unit(self,*args,**kw)
+        self.current_lesson = Unit(self.book,self,*args,**kw)
         self.children.append(self.current_lesson)
 
     def add_after(self,chunk):
@@ -310,45 +315,59 @@ class Section:
     def parse_words(self,cl,lines):
         self.current_lesson.parse_words(cl,lines)
         
-    def rst_ref_to(self):
+    def name_parts(self):
+        if self.parent is None:
+            return ['index' ]
+        elif self.children:
+            return [ self.get_ref(), 'index' ]
+        else:
+            return [ self.get_ref() ]
+      
+    def get_ref(self):
+        if self.ref:
+            return self.ref
+        if self.number is not None:
+            #~ return str(self.number)
+            return '%02d' % self.number
+        
+    def rst_ref_to(self,text=None):
         parts = self.name_parts()
+        #~ ref = self.get_ref()
+        p = self.parent
+        while p is not None:
+            pref = p.get_ref()
+            #~ if p.number is not None:
+            if pref is not None:
+                #~ parts = ['%02d' % p.number] + parts
+                parts = [pref] + parts
+            p = p.parent
+        if not text:
+            text = self.get_ref_text()
+        if text:
+            return ':doc:`%s </%s>`' % (text,'/'.join(parts))
+        return ':doc:`/%s`' % '/'.join(parts)
+        #~ return ':doc:`%s </%s>`' % (self.title,'/'.join(parts))
+        
+    def get_full_number(self):
         number = str(self.number)
         p = self.parent
         while p is not None:
             if p.number is not None:
-                parts = ['%02d' % p.number] + parts
                 number = str(p.number) + "." + number
             p = p.parent
-        #~ return ':doc:`%s </%s>`' % (number,'/'.join(parts))
-        return ':doc:`%s </%s>`' % (self.title,'/'.join(parts))
+        return number
         
-    def html_ref_to(self):
-        parts = self.name_parts()
-        number = str(self.number)
-        p = self.parent
-        while p is not None:
-            if p.number is not None:
-                parts = ['%02d' % p.number] + parts
-                number = str(p.number) + "." + number
-            p = p.parent
-        #~ return ':doc:`%s </%s>`' % (number,'/'.join(parts))
-        return str(number)
-        
-    #~ def get_name_parts(self):
-        #~ name = [,'index']
-        #~ if self.parent is None:
-            #~ return name
-        #~ return self.parent.get_name_parts() + name
-        #~ return self.parent.get_name_parts() + [self]
+    def get_ref_text(self):
+        return self.title
         
     def html_lines(self,level=1):
         if self.number is None:
             title = self.title
         else:
-            title = "%s %s" % (self.html_ref_to(),self.title)
+            title = "%s %s" % (self.get_full_number(),self.title)
         if True:
             if self.parent is not None:
-                title = htmlgen.restify(title).strip()
+                title = htmlgen.restify(self.memo2rst(title)).strip()
                 if title.startswith('<p>') and title.endswith('</p>'):
                     title = title[3:-4]
                     #~ logger.info("20120311 title is %r", title)
@@ -364,9 +383,7 @@ class Section:
             #~ yield "<H%d>%s</H%d>" % (level,,level)
         
         if self.intro:
-            #~ if title == u"1.1.3 Mesilashäälikud":
-                #~ logger.info("restify: %r", htmlgen.restify(self.intro))
-            yield htmlgen.restify(self.intro)
+            yield htmlgen.restify(self.memo2rst(self.intro))
             
         if self.children:
             for s in self.children:
@@ -374,48 +391,26 @@ class Section:
                     yield ln
                     
         for chunk in self.body:
-            yield htmlgen.restify(chunk)
+            yield htmlgen.restify(self.memo2rst(chunk))
         
-        
-    def name_parts(self):
-        if self.number is None:
-            return ['index' ]
-        else:
-            if self.children:
-                return [ '%02d' % self.number, 'index' ]
-            else:
-                return [ "%02d" % self.number ]
-      
         
     def write_rst_files(self,root):
-        #~ if self.number is not None:
-            #~ name_parts = name_parts + 
-            #~ leafname = 
-        #~ fn = os.path.join('lessons','%02d.rst' % self.number)
-        #~ fn = os.path.join(['%02d' % s.number for s in self.get_name_parts()]
-        #~ fn = os.path.join(self.get_name_parts())
-        #~ fn = os.path.join(root,*name_parts)
-        #~ fn = root
         fn = os.path.join(root,*self.name_parts()) + ".rst"
-        #~ if self.number is None:
-            #~ fn = os.path.join(fn,'index')
-        #~ else:
-            #~ if self.children:
-                #~ root = os.path.join(root,'%02d' % self.number)
-                #~ fn = os.path.join(fn,'%02d' % self.number,'index')
-            #~ else:
-                #~ fn = os.path.join(fn,"%02d" % self.number)
-          
-        #~ fn += '.rst'
         logger.info("Generate %s",fn)
         newroot = os.path.dirname(fn)
         makedirs_if_missing(newroot)
         fd = codecs.open(fn,'w','utf-8')
+        
         if self.number is None:
-            write_header(fd,1,"%s" % self.title)
+            title = self.title
         else:
-            write_header(fd,1,"%d. %s" % (self.number,self.title))
-            #~ write_header(fd,1,"%s %s" % (self.html_ref_to(),self.title))
+            title = "%d. %s" % (self.number,self.title)
+            
+        #~ if self.number is None:
+            #~ write_header(fd,1,"%s" % self.title)
+        #~ else:
+            #~ write_header(fd,1,"%d. %s" % (self.number,self.title))
+        write_header(fd,1,self.memo2rst(title))
         self.write_body(fd)
         fd.close()
         for s in self.children:
@@ -423,10 +418,10 @@ class Section:
 
     def write_body(self,fd):
         if self.intro:
-            fd.write(self.intro + '\n\n')
+            fd.write(self.memo2rst(self.intro) + '\n\n')
             
         for chunk in self.body:
-            fd.write(chunk + '\n\n')
+            fd.write(self.memo2rst(chunk) + '\n\n')
         
 
         if self.children:
@@ -440,11 +435,14 @@ class Section:
             fd.write('\n\n')
 
 
+    def memo2rst(self,s):
+        return self.book.memo2rst(s)
+
 
 
 class Unit(Section):
     columns = [FR,PRON,ET]
-    def __init__(self,parent,title=None,intro=None,columns=None,show_headers=None,**kw):
+    def __init__(self,book,parent,title=None,intro=None,columns=None,show_headers=None,**kw):
         if columns is not None:
             self.columns = columns
             if show_headers is None:
@@ -453,7 +451,7 @@ class Unit(Section):
             show_headers = False
         self.show_headers = show_headers
         #~ self.parent = parent
-        Section.__init__(self,parent,title=title,intro=intro,**kw)
+        Section.__init__(self,book,parent,title=title,intro=intro,**kw)
         if not self.title:
             self.title = u"Leçon %d" % self.number
         self.after = []
@@ -515,7 +513,7 @@ class Unit(Section):
             for ln in t.html_lines(rows):
                 yield ln
         for chunk in self.after:
-            yield restify(chunk)
+            yield restify(self.memo2rst(chunk))
             
     def write_body(self,fd):
       
@@ -571,7 +569,7 @@ class Index(Section):
             return self.from_language.word2html(w) \
             + " " + ET.word2html(w,self) \
             + " " \
-            + ", ".join([u.html_ref_to() for u in w.units])
+            + ", ".join([u.get_full_number() for u in w.units])
         for w in self.from_language.words:
             yield "<br>" + fmt(w)
             
@@ -588,18 +586,66 @@ class Index(Section):
         for w in self.from_language.words:
             fd.write("| %s\n" % html2rst(fmt(w)))
                 
+class MemoParser(memo.Parser):
+    def __init__(self,book,*args,**kw):
+        self.book = book
+        memo.Parser.__init__(self,*args,**kw)
+        self.register_command('ref',self.cmd_ref)
+        self.register_command('item',curry(self.cmd_item,'- '))
+        self.register_command('oitem',curry(self.cmd_item,'#. '))
+        self.register_command('ruleslist',self.cmd_ruleslist)
+        
+    def cmd_ref(self,s):
+        sect = self.book.ref2sect[s]
+        return sect.rst_ref_to()
 
+    def cmd_item(self,prefix,ref,rulesmode=False):
+        indent = " " * len(prefix)
+        sect = self.book.ref2sect[ref]
+        r = prefix 
+        if not rulesmode:
+            r += sect.rst_ref_to() 
+            if sect.intro:
+                r += " -- "
+        if sect.intro:
+            intro = self.book.memo2rst(sect.intro.strip())
+            if "\n\n" in intro:
+                r += "\n"
+                for ln in intro.splitlines():
+                    r += indent + ln + "\n"
+                r += "\n"
+            else:
+                intro = intro.replace('\n','\n'+indent)
+                r += intro
+        if rulesmode:
+            r += "\n" + indent + "-- " + sect.rst_ref_to(text=sect.get_full_number())
+        r += "\n"
+        return r
+        
+    def cmd_ruleslist(self,s):
+        r = ''
+        for ref in s.split():
+            r += self.cmd_item('#. ',ref,rulesmode=True)
+        return r
+            
   
 class Book:
     def __init__(self,from_language,to_language,
-          title=None,input_template=None):
+          title=None,input_template=None,
+          memo_parser=None):
         self.input_template = input_template
-        self.main = Section(None,title,
+        self.ref2sect = dict()
+        self.memo_parser = memo_parser or MemoParser(self)
+        self.main = Section(self,None,title,
             from_language=from_language,to_language=to_language)
+
+    def memo2rst(self,s):
+        return self.memo_parser.parse(s)
 
     def add_section(self,*args,**kw): return self.main.add_section(*args,**kw)
     def add_index(self,*args,**kw): return self.main.add_index(*args,**kw)
     def add_dictionary(self,*args,**kw): return self.main.add_dictionary(*args,**kw)
+      
         
     def old_as_odt(self):
         from xhtml2odt import ODTFile
@@ -820,4 +866,5 @@ if USE_XHTML2ODT:
             #~ f.write(xhtml.encode('utf-8'))
             f.close()
         return xhtml.decode('utf-8')
+        
         

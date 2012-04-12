@@ -28,4 +28,5 @@ Subpackages
     lino.modlib.properties
     lino.modlib.tickets
     lino.modlib.users
+    lino.modlib.vocbook
 

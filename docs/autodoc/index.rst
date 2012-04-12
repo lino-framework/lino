@@ -39,6 +39,7 @@ extension.
     lino.utils.choicelists
     lino.utils.babel
     lino.utils.choosers
+    lino.utils.memo
     lino.utils.tables
     lino.utils.test
     lino.utils.xmlgen
