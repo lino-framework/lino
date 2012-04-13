@@ -107,4 +107,8 @@ def objects():
     budget = Instantiator('debts.Budget').build
     from lino.modlib.users.models import User
     root = User.objects.get(username='root')
-    yield budget(partner_id=118,user=root)
+    
+    Family = resolve_model('families.Family')
+    for fam in Family.objects.all():
+        #~ yield budget(partner_id=118,user=root)
+        yield budget(partner=fam,user=root)

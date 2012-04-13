@@ -35,6 +35,11 @@ Extended Fields:
 - :class:`GenericForeignKeyIdField <lino.core.fields.GenericForeignKeyIdField>`
 - :class:`RecurrenceField <lino.core.fields.RecurrenceField >`
 
+Babel fields:
+
+- :class:`BabelCharField <lino.utils.babel.BabelCharField>`
+- :class:`BabelTextField <lino.utils.babel.BabelTextField>`
+
 Virtual Fields:
 
 - :class:`Constant <lino.core.fields.Constant>` and 
@@ -92,9 +97,10 @@ from lino.core.fields import DisplayField, displayfield
 from lino.core.fields import VirtualField, virtualfield
 from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
+from lino.utils.babel import BabelCharField, BabelTextField
 #~ from lino.core.fields import MethodField
 
-from lino.utils import perms
+#~ from lino.utils import perms
 
 from lino.core.layouts import DetailLayout
 

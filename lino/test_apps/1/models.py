@@ -142,7 +142,7 @@ That's why the following ``obj.is_restaurant`` does not
 give ``False`` as you might expect.
 
 >>> obj.is_restaurant
-<lino.utils.mti.EnableChild instance at ...>
+<lino.utils.mti.EnableChild object at ...>
 
 This is not implemented because the only 
 need for it would be to make the following 

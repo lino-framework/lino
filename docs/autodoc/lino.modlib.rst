@@ -14,8 +14,11 @@ Subpackages
 
     lino.modlib.cal
     lino.modlib.cbss
-    lino.modlib.countries
     lino.modlib.contacts
+    lino.modlib.countries
+    lino.modlib.cv
+    lino.modlib.debts
+    lino.modlib.families
     lino.modlib.isip
     lino.modlib.jobs
     lino.modlib.journals

@@ -1,2 +1,6 @@
 T:\hgwork\lino\docs\igen\index.rst:11: (WARNING/2) toctree contains reference to nonexisting document u'igen/appdocs/index'
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.modlib.families.rst:29: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.families.rst:31: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\autodoc\lino.modlib.families.rst:7: WARNING: py:class reference target not found: families.Role
+T:\hgwork\lino\docs\blog\2012\0413.rst:27: WARNING: py:mod reference target not found: lino.modlib.debts.fixtures.demo

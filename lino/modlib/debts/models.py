@@ -27,6 +27,9 @@ import os
 import cgi
 import datetime
 
+from lxml import etree
+
+
 from django.db import models
 from django.db.models import Q
 from django.db.utils import DatabaseError
@@ -117,7 +120,7 @@ add('L', _("Liability"),alias="liability") # capital acquired from others Guthab
 #~ class Accounts(dd.Table):
     #~ model = Account
 
-class Budget(mixins.AutoUser):
+class Budget(mixins.AutoUser,mixins.CachedPrintable):
     """
     Deserves more documentation.
     """
@@ -152,12 +155,58 @@ class Budget(mixins.AutoUser):
         if self.actor_set.all().count() == 0:
             try:
                 fam = self.partner.family
-                for m in self.partner.family.membersbyfamily.all():
-                    a = Actor(person=m.person,budget=self)
-                    a.full_clean()
-                    a.save()
             except families.Family.DoesNotExist:
                 pass
+            else:
+                for p in [fam.father,fam.mother]:
+                    if p is not None:
+                        a = Actor(
+                            person=p,
+                            budget=self,
+                            header=unicode(p.get_salutation(nominative=True))
+                            )
+                        a.full_clean()
+                        a.save()
+                    
+                #~ for m in self.partner.family.membersbyfamily.all():
+                    #~ a = Actor(person=m.person,budget=self)
+                
+    #~ def __unicode__(self):
+        #~ return "%s #unicode(join_words(_("Family"),self.name))
+                
+    @property
+    def actor1(self):
+        qs = self.actor_set.all()
+        if qs.count() > 0:
+            return qs[0]
+            
+    @property
+    def actor2(self):
+        qs = self.actor_set.all()
+        if qs.count() > 1:
+            return qs[1]
+            
+    def entries_by_group(self,ar):
+        xml = ''
+        ar.renderer = ar.ui.pdf_renderer
+        for group in ItemGroup.objects.all():
+            sub_ar = ar.spawn_request(EntriesByBudget,
+                master_instance=self,
+                item__group=group)
+            #~ xml += ui.table2xhtml(sub_ar)
+            xml += "<h2>%s</h2>" % group
+            xml += etree.tostring(sub_ar.table2xhtml())
+            #~ xml += sub_ar.table2xhtml()
+            #~ xml += "<text:p>%s</text:p>" % etree.tostring(sub_ar.table2xhtml())
+        sub_ar = ar.spawn_request(DebtsByBudget,
+            master_instance=self)
+        #~ xml += u"<h2>%s</h2>" % force_unicode(sub_ar.get_title())
+        xml += "<h2>Schulden</h2>"
+        xml += etree.tostring(sub_ar.table2xhtml())
+        xml = "<div>%s</div>" % xml
+        return xml
+        #~ return self.entries_set.
+            
         
       
 class BudgetDetail(dd.DetailLayout):
@@ -295,10 +344,11 @@ class Entries(dd.Table):
     
 class EntriesByBudget(Entries):
     master_key = 'budget'
-    column_names = "item name amount1 amount2 amount3 circa todo remark"
+    column_names = "name amount1 amount2 amount3"
     
 class EntriesByBudgetAndType(EntriesByBudget):
   
+    column_names = "item name amount1 amount2 amount3 circa todo remark"
     _account_type = None
     
     @classmethod

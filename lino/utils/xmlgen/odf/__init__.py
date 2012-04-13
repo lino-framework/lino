@@ -38,7 +38,7 @@ correct?
 >>> validate(mystory) #doctest: +ELLIPSIS
 Traceback (most recent call last):
 ...
-SimpleException: ... Did not expect element p there
+Warning: ... Did not expect element p there
 
 Yes, in order to validate our chunk of XML, we need to wrap it 
 into a document:
@@ -53,7 +53,7 @@ into a document:
 >>> validate(root) #doctest: +ELLIPSIS
 Traceback (most recent call last):
 ...
-SimpleException: ... Element document failed to validate attributes
+Warning: ... Element document failed to validate attributes
 
 That's almost good, except for a little detail.
 That error comes because we didn't specify a namespace for 
@@ -111,7 +111,7 @@ Here an example of invalid tree:
 >>> validate_chunks(mystory) #doctest: +ELLIPSIS
 Traceback (most recent call last):
 ...
-SimpleException: ... Element p has extra content: text
+Warning: ... Element p has extra content: text
 
 
 
@@ -231,7 +231,7 @@ if False:
 
 def validate(root):
     if not validator.validate(root):
-        raise xg.SimpleException(validator.error_log.last_error)
+        raise xg.Warning(validator.error_log.last_error)
 
 def validate_chunks(*chunks):
     root = office.document(

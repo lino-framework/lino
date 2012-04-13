@@ -151,7 +151,7 @@ class BuildMethod:
         #~ return settings.MEDIA_URL + "/".join(self.get_target_parts(action,elem))
         return ui.media_url(*self.get_target_parts(action,elem))
             
-    def build(self,action,elem):
+    def build(self,ar,action,elem):
         raise NotImplementedError
         
     #~ def get_template_url(self,action,elem):
@@ -162,12 +162,12 @@ class DjangoBuildMethod(BuildMethod):
     def get_template(self,action,elem):
         tpls = action.get_print_templates(self,elem)
         if len(tpls) == 0:
-            raise Exception("No templates defined for %r" % elem)
+            raise actions.Warning("No templates defined for %r" % elem)
         #~ logger.debug('make_pisa_html %s',tpls)
         try:
             return select_template(tpls)
         except TemplateDoesNotExist,e:
-            raise Exception("No template found for %s (%s)" % (e,tpls))
+            raise actions.Warning("No template found for %s (%s)" % (e,tpls))
 
     def render_template(self,elem,tpl): # ,MEDIA_URL=settings.MEDIA_URL):
         context = dict(
@@ -186,7 +186,7 @@ class PisaBuildMethod(DjangoBuildMethod):
     #~ button_label = _("PDF")
     template_ext = '.pisa.html'  
     
-    def build(self,action,elem):
+    def build(self,ar,action,elem):
         tpl = self.get_template(action,elem) 
         filename = action.before_build(self,elem)
         if filename is None:
@@ -243,7 +243,7 @@ class SimpleBuildMethod(BuildMethod):
         #~ tpl = self.get_template_leaf(action,elem)
         #~ return self.templates_url + '/' + tpl
         
-    def build(self,action,elem):
+    def build(self,ar,action,elem):
         #~ if elem is None:
             #~ return
         from lino.utils.config import find_config_file
@@ -253,11 +253,11 @@ class SimpleBuildMethod(BuildMethod):
         tpl_leaf = self.get_template_leaf(action,elem)
         tplfile = find_config_file(tpl_leaf,self.get_group(elem))
         if not tplfile:
-            raise Exception("No file %s / %s" % (self.get_group(elem),tpl_leaf))
+            raise actions.Warning("No file %s / %s" % (self.get_group(elem),tpl_leaf))
         #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
-        return self.simple_build(elem,tplfile,target)
+        return self.simple_build(ar,elem,tplfile,target)
         
-    def simple_build(self,elem,tpl,target):
+    def simple_build(self,ar,elem,tpl,target):
         raise NotImplementedError
         
 class AppyBuildMethod(SimpleBuildMethod):
@@ -272,10 +272,10 @@ class AppyBuildMethod(SimpleBuildMethod):
     templates_name = 'appy' # subclasses use the same templates directory
     default_template = 'Default.odt'
     
-    def simple_build(self,elem,tpl,target):
+    def simple_build(self,ar,elem,tpl,target):
         #~ from lino.models import get_site_config
         from appy.pod.renderer import Renderer
-        renderer = None
+        #~ renderer = None
         context = dict(self=elem,
             dtos=babel.dtos,
             dtosl=babel.dtosl,
@@ -285,6 +285,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             tr=babel.babelitem,
             iif=iif,
             settings=settings,
+            ar=ar,
             #~ restify=restify,
             #~ site_config = get_site_config(),
             site_config = settings.LINO.site_config,
@@ -356,7 +357,7 @@ class LatexBuildMethod(BuildMethod):
     target_ext = '.pdf'
     template_ext = '.tex'  
     
-    def simple_build(self,elem,tpl,target):
+    def simple_build(self,ar,elem,tpl,target):
         context = dict(instance=elem)
         raise NotImplementedError
             
@@ -372,7 +373,7 @@ class RtfBuildMethod(SimpleBuildMethod):
     cache_name = 'userdocs'
     #~ cache_name = 'webdav'
     
-    def simple_build(self,elem,tpl,target):
+    def simple_build(self,ar,elem,tpl,target):
         context = dict(instance=elem)
         t = pyratemp.Template(filename=tpl)
         try:
@@ -522,11 +523,12 @@ class PrintAction(BasePrintAction):
     def get_print_templates(self,bm,elem):
         return elem.get_print_templates(bm,self)
         
-    def run_(self,request,ui,elem,**kw):
+    #~ def run_(self,request,ui,elem,**kw):
+    def run_(self,ar,elem,**kw):
         bm = get_build_method(elem)
         #~ if elem.must_build:
         if not elem.build_time:
-            t = bm.build(self,elem)
+            t = bm.build(ar,self,elem)
             if t is None:
                 raise Exception("%s : build() returned None?!")
                 #~ kw.update(message=_("%s printable has been built.") % elem)
@@ -539,7 +541,7 @@ class PrintAction(BasePrintAction):
                 kw.update(message=_("%s printable has been built.") % elem)
         else:
             kw.update(message=_("Reused %s printable from cache.") % elem)
-        url = bm.get_target_url(self,elem,ui)
+        url = bm.get_target_url(self,elem,ar.ui)
         if bm.use_webdav and settings.LINO.use_davlink:
             kw.update(open_davlink_url=request.build_absolute_uri(url))
         else:
@@ -548,7 +550,8 @@ class PrintAction(BasePrintAction):
         #~ return rr.ui.success_response(open_url=target,**kw)
         
     def run(self,rr,elem,**kw):
-        kw = self.run_(rr.request,rr.ui,elem,**kw)
+        #~ kw = self.run_(rr.request,rr.ui,elem,**kw)
+        kw = self.run_(rr,elem,**kw)
         return rr.ui.success_response(**kw)
       
 class DirectPrintAction(BasePrintAction):
@@ -574,21 +577,23 @@ class DirectPrintAction(BasePrintAction):
         #~ return super(DirectPrintAction,self).get_print_templates(bm,elem)
         
         
-    def run(self,rr,elem,**kw):
-        bm =  bm_dict.get(self.build_method or settings.LINO.site_config.default_build_method)
+    def run(self,ar,elem,**kw):
+        bm =  bm_dict.get(
+            self.build_method or 
+            settings.LINO.site_config.default_build_method)
         #~ if self.tplname:
             #~ if not self.tplname.endswith(bm.template_ext):
                 #~ raise Exception("Invalid template for build method %r" % bm.name)
-        bm.build(self,elem)
+        bm.build(rr,self,elem)
         #~ target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         #~ return rr.ui.success_response(open_url=target,**kw)
-        url = bm.get_target_url(self,elem,rr.ui)
+        url = bm.get_target_url(self,elem,ar.ui)
         if bm.use_webdav and settings.LINO.use_davlink:
-            url = rr.request.build_absolute_uri(url)
+            url = ar.request.build_absolute_uri(url)
             kw.update(open_davlink_url=url)
         else:
             kw.update(open_url=url)
-        return rr.ui.success_response(**kw)
+        return ar.ui.success_response(**kw)
     
 #~ class EditTemplateAction(dd.RowAction):
     #~ name = 'tpledit'
@@ -794,7 +799,7 @@ class TypedPrintable(CachedPrintable):
             return super(TypedPrintable,self).get_print_templates(bm,action)
         tplname = ptype.template or bm.default_template
         if not tplname.endswith(bm.template_ext):
-            raise Exception(
+            raise actions.Warning(
               "Invalid template %r configured for %s %r (expected filename ending with %r)" %
               (tplname,ptype.__class__.__name__,unicode(ptype),bm.template_ext))
         return [ tplname ]
@@ -804,132 +809,132 @@ class TypedPrintable(CachedPrintable):
         #~ return self.language
 
 
-
+if False:
   
-import cgi
+    import cgi
 
 
-class Listing(CachedPrintable):
-    """
-    Abstract base class for all Listings. 
-    A Listing is a printable report that requires some parameters given by the user.
-    Subclasses must implement the :meth:`body` method.
-    Each time a user asks to print a Listing, Lino will create a new record.
-    """
-    #~ template_name = 'Listing.odt'
-    template_name = None
-    build_method = None
-    
-    class Meta:
-        abstract = True
-    
-    date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Date"))
-    #~ header_html = dd.RichTextField(_("Header"),editable=False)
-    #~ footer_html = dd.RichTextField(_("Footer"),editable=False)
-    body_html = fields.RichTextField(_("Body"),editable=False)
-        
-    #~ title = models.CharField(max_length=200,
-      #~ verbose_name=_("Title"),
-      #~ blank=True)
-    #~ """
-    #~ The title of the listing.
-    #~ """
-    
-    @classmethod
-    def unused_setup_report(model,rpt):
-        u"""
+    class Listing(CachedPrintable):
         """
-        # to not call call_optional_super(Listing,self,'setup_report',rpt)
-        #~ rpt.get_action('listing').label = model.__name__
-        rpt.add_action(DirectPrintAction(rpt,'print',_("Print"),
-          model.template_name,model.build_method))
-        #~ rpt.add_action(InititateListing('listing',_("Print"),'listing.odt'))
-        
-    def __unicode__(self):
-        return force_unicode(self.title)
-        #~ return self.get_title()
-        
-    #~ def get_templates_group(self):
-        #~ return ''
-        
-    def get_title(self):
-        return self._meta.verbose_name # "Untitled Listing"
-    title = property(get_title)
-        
-    #~ def header(self):
-        #~ return '<p align="center"><b>%s</b></p>' % cgi.escape(self.title)
-        
-    #~ def footer(self):
-        #~ html = '<td align="left">%s</td>' % 'left footer'
-        #~ html += '<td align="right">Page X of Y</td>'
-        #~ html = '<table width="100%%"><tr>%s</tr></table>' % html
-        #~ return html
-        
-    def body(self):
+        Abstract base class for all Listings. 
+        A Listing is a printable report that requires some parameters given by the user.
+        Subclasses must implement the :meth:`body` method.
+        Each time a user asks to print a Listing, Lino will create a new record.
         """
-        To be implemented by subclasses.
-        Build the XHTML content of the listing to be printed.
+        #~ template_name = 'Listing.odt'
+        template_name = None
+        build_method = None
+        
+        class Meta:
+            abstract = True
+        
+        date = models.DateField(
+            blank=True,null=True,
+            verbose_name=_("Date"))
+        #~ header_html = dd.RichTextField(_("Header"),editable=False)
+        #~ footer_html = dd.RichTextField(_("Footer"),editable=False)
+        body_html = fields.RichTextField(_("Body"),editable=False)
+            
+        #~ title = models.CharField(max_length=200,
+          #~ verbose_name=_("Title"),
+          #~ blank=True)
+        #~ """
+        #~ The title of the listing.
+        #~ """
+        
+        @classmethod
+        def unused_setup_report(model,rpt):
+            u"""
+            """
+            # to not call call_optional_super(Listing,self,'setup_report',rpt)
+            #~ rpt.get_action('listing').label = model.__name__
+            rpt.add_action(DirectPrintAction(rpt,'print',_("Print"),
+              model.template_name,model.build_method))
+            #~ rpt.add_action(InititateListing('listing',_("Print"),'listing.odt'))
+            
+        def __unicode__(self):
+            return force_unicode(self.title)
+            #~ return self.get_title()
+            
+        #~ def get_templates_group(self):
+            #~ return ''
+            
+        def get_title(self):
+            return self._meta.verbose_name # "Untitled Listing"
+        title = property(get_title)
+            
+        #~ def header(self):
+            #~ return '<p align="center"><b>%s</b></p>' % cgi.escape(self.title)
+            
+        #~ def footer(self):
+            #~ html = '<td align="left">%s</td>' % 'left footer'
+            #~ html += '<td align="right">Page X of Y</td>'
+            #~ html = '<table width="100%%"><tr>%s</tr></table>' % html
+            #~ return html
+            
+        def body(self):
+            """
+            To be implemented by subclasses.
+            Build the XHTML content of the listing to be printed.
+            """
+            raise NotImplementedError
+            
+        #~ def preview(self,request):
+            #~ return self.header() + self.body() + self.footer()
+        #~ preview.return_type = fields.HtmlBox(_("Preview"))
+        def save(self,*args,**kw):
+            #~ self.header_html = self.header()
+            #~ self.footer_html = self.footer()
+            if not self.body_html:
+                self.body_html = self.body()
+            super(Listing,self).save(*args,**kw)
+        
+        def get_preview(self,request):
+            return self.body_html
+            #~ return self.header_html + self.body_html + self.footer_html
+        preview = fields.VirtualField(fields.HtmlBox(_("Preview")),get_preview)
+        
+        
+    class InitiateListing(actions.InsertRow):
         """
-        raise NotImplementedError
+        This is the (otherwise invisible) action which is used 
+        for the main menu entry of a :class:`Listing`.
+        """
+        callable_from = tuple()
+        name = 'listing'
+        #~ label = _("Initiate")
+        key = None
         
-    #~ def preview(self,request):
-        #~ return self.header() + self.body() + self.footer()
-    #~ preview.return_type = fields.HtmlBox(_("Preview"))
-    def save(self,*args,**kw):
-        #~ self.header_html = self.header()
-        #~ self.footer_html = self.footer()
-        if not self.body_html:
-            self.body_html = self.body()
-        super(Listing,self).save(*args,**kw)
-    
-    def get_preview(self,request):
-        return self.body_html
-        #~ return self.header_html + self.body_html + self.footer_html
-    preview = fields.VirtualField(fields.HtmlBox(_("Preview")),get_preview)
-    
-    
-class InitiateListing(actions.InsertRow):
-    """
-    This is the (otherwise invisible) action which is used 
-    for the main menu entry of a :class:`Listing`.
-    """
-    callable_from = tuple()
-    name = 'listing'
-    #~ label = _("Initiate")
-    key = None
-    
-    def get_action_title(self,rh):
-        return _(u"Initiate Listing «%s»") % self.actor.model._meta.verbose_name
-  
-    def get_button_label(self):
-        return self.actor.model._meta.verbose_name
+        def get_action_title(self,rh):
+            return _(u"Initiate Listing «%s»") % self.actor.model._meta.verbose_name
+      
+        def get_button_label(self):
+            return self.actor.model._meta.verbose_name
+            
+    class Listings(dd.Table):
+        model = Listing
         
-class Listings(dd.Table):
-    model = Listing
-    
-    @classmethod
-    def init_label(self):
-        raise Exception("Sorry, this code is temporarily broken")
-        return _(u"Listings «%s»") % self.model._meta.verbose_name
+        @classmethod
+        def init_label(self):
+            raise Exception("Sorry, this code is temporarily broken")
+            return _(u"Listings «%s»") % self.model._meta.verbose_name
+            
+        @classmethod
+        def setup_actions(self):
+            raise Exception("Sorry, this code is temporarily broken")
+            #~ print 'lino.mixins.printable.Listings.setup_actions : ', self.model
+            alist = []
+            #~ if len(self.detail_layouts) > 0:
+            if True:
+                self.detail_action = actions.ShowDetailAction(self)
+                alist.append(self.detail_action)
+                alist.append(actions.SubmitDetail())
+                alist.append(InitiateListing(self,
+                    label=self.model._meta.verbose_name)) # replaces InsertRow
+                alist.append(actions.SubmitInsert())
+                self.default_action = actions.GridEdit(self)
+                #~ alist.append(self.default_action)
+            alist.append(actions.DeleteSelected())
+            self.set_actions(alist)
+            
         
-    @classmethod
-    def setup_actions(self):
-        raise Exception("Sorry, this code is temporarily broken")
-        #~ print 'lino.mixins.printable.Listings.setup_actions : ', self.model
-        alist = []
-        #~ if len(self.detail_layouts) > 0:
-        if True:
-            self.detail_action = actions.ShowDetailAction(self)
-            alist.append(self.detail_action)
-            alist.append(actions.SubmitDetail())
-            alist.append(InitiateListing(self,
-                label=self.model._meta.verbose_name)) # replaces InsertRow
-            alist.append(actions.SubmitInsert())
-            self.default_action = actions.GridEdit(self)
-            #~ alist.append(self.default_action)
-        alist.append(actions.DeleteSelected())
-        self.set_actions(alist)
-        
-    

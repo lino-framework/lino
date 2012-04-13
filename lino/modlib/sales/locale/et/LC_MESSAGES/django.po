@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.sales\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-21 17:55+0000\n"
+"POT-Creation-Date: 2012-04-13 07:31+0100\n"
 "PO-Revision-Date: 2011-03-02 21:33+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -16,73 +16,73 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\models.py:66
+#: .\models.py:65
 #, fuzzy
 msgid "Payment Term"
 msgstr "Tasumistingimused"
 
-#: .\models.py:67
+#: .\models.py:66
 #, fuzzy
 msgid "Payment Terms"
 msgstr "Tasumistingimused"
 
-#: .\models.py:104
+#: .\models.py:103
 msgid "Channel"
 msgstr ""
 
-#: .\models.py:108
+#: .\models.py:107
 msgid "Paper"
 msgstr ""
 
-#: .\models.py:109
+#: .\models.py:108
 msgid "E-mail"
 msgstr ""
 
-#: .\models.py:116
+#: .\models.py:115
 #, fuzzy
 msgid "Invoicing Mode"
 msgstr "Arve koostamise viis"
 
-#: .\models.py:117
+#: .\models.py:116
 #, fuzzy
 msgid "Invoicing Modes"
 msgstr "Arve koostamise viis"
 
-#: .\models.py:166
+#: .\models.py:165
 #, fuzzy
 msgid "Shipping Mode"
 msgstr "Kättetoimatamise viis"
 
-#: .\models.py:167
+#: .\models.py:166
 #, fuzzy
 msgid "Shipping Modes"
 msgstr "Kättetoimatamise viis"
 
-#: .\models.py:180
+#: .\models.py:179
 msgid "Sales Rule"
 msgstr ""
 
-#: .\models.py:181
+#: .\models.py:180
 msgid "Sales Rules"
 msgstr ""
 
-#: .\models.py:202
+#: .\models.py:201
 msgid "Customer"
 msgstr ""
 
-#: .\models.py:203
+#: .\models.py:202
 msgid "Customers"
 msgstr ""
 
-#: .\models.py:558
+#: .\models.py:557
 msgid "Description"
 msgstr "Nimetus"
 
-#: .\models.py:774
+#: .\models.py:773
 msgid "is Customer"
 msgstr ""
 
-#: .\models.py:811 .\config\sales\Customer\sales.dtl.py:3
+#: .\models.py:810 .\config\sales\Customer\sales.dtl.py:3
 msgid "Sales"
 msgstr ""
 

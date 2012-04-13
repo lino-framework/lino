@@ -33,6 +33,7 @@ from lino import dd
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
+from lino.utils.choicelists import Gender
 from lino.utils import babel
 from lino.models import get_site_config
 
@@ -40,16 +41,48 @@ from lino.utils import mti
 from lino.modlib.contacts import models as contacts
 
 
-
 class Family(contacts.Partner):
     """
+    A Family is a Partner who has a father, a mother and a 
+    list of :class:`members <Member>`.
     """
     class Meta:
         verbose_name = _("Family")
         verbose_name_plural = _("Families")
     
-    dummy = models.CharField(max_length=1,blank=True) 
-    # workaround for https://code.djangoproject.com/ticket/13864
+    father = models.ForeignKey(settings.LINO.person_model,
+        related_name='father_for',blank=True,null=True,
+        verbose_name=_("Father"))
+    mother = models.ForeignKey(settings.LINO.person_model,
+        related_name='mother_for',blank=True,null=True,
+        verbose_name=_("Mother"))
+        
+    #~ dummy = models.CharField(max_length=1,blank=True) 
+    #~ # workaround for https://code.djangoproject.com/ticket/13864
+        
+    def full_clean(self,*args,**kw):
+        if not self.name:
+            l = []
+            if self.father:
+                l.append(self.father.last_name)
+            if self.mother:
+                l.append(self.mother.last_name)
+            self.name = '-'.join(l)
+        super(Family,self).full_clean(*args,**kw)
+        
+    @chooser()
+    def father_choices(cls):
+        #~ Person = dd.resolve_model('contacts.Person')
+        Person = settings.LINO.person_model
+        return Person.objects.filter(gender=Gender.male)
+        
+    @chooser()
+    def mother_choices(cls):
+        #~ Person = dd.resolve_model('contacts.Person')
+        Person = settings.LINO.person_model
+        return Person.objects.filter(gender=Gender.female)
+        
+        
         
     #~ def get_full_name(self,**salutation_options):
     def get_full_name(self,salutation=True,**salutation_options):
@@ -83,7 +116,7 @@ class FamilyDetail(dd.DetailLayout):
     bottom_box = "remarks MembersByFamily"
 
     intro_box = """
-    name id language 
+    father mother language name id 
     """
 
     main = """
@@ -103,6 +136,7 @@ class Families(contacts.Partners):
     
     
 
+from django.utils.translation import string_concat
 
 
 # class ContactType(babel.BabelNamed):
@@ -114,9 +148,20 @@ class Role(babel.BabelNamed):
         verbose_name = _("Family Role")
         verbose_name_plural = _("Family Roles")
 
+    male = dd.BabelCharField(max_length=200,
+        verbose_name=string_concat(_("Designation"),' ',Gender.male.text))
+    female = dd.BabelCharField(max_length=200,
+        verbose_name=string_concat(_("Designation"),' ',Gender.female.text))
+    
 
 class Roles(dd.Table):
     model = Role
+    detail_template = """
+    name
+    male
+    female
+    MembersByRole
+    """
 
 
 class Member(models.Model):
@@ -143,9 +188,9 @@ class Member(models.Model):
     def __unicode__(self):
         if self.person_id is None:
             return super(Member,self).__unicode__()
-        if self.type is None:
+        if self.role is None:
             return unicode(self.person)
-        return u"%s (%s)" % (self.person, self.type)
+        return u"%s (%s)" % (self.person, self.role)
 
     def address_lines(self):
         for ln in self.person.address_person_lines():
@@ -171,11 +216,15 @@ class MembersByPerson(Members):
     label = _("Member of")
     master_key = 'person'
     column_names = 'family role *'
+
+class MembersByRole(Members):
+    master_key = 'role'
+    column_names = 'person family *'
     
     
     
 
-if settings.LINO.is_installed('family'):
+if settings.LINO.is_installed('families'):
     #~ Don't inject fields if contacts is just being imported from some other module.
   
     from lino.models import SiteConfig

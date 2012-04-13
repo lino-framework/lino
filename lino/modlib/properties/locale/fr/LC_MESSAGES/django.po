@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-21 17:55+0000\n"
+"POT-Creation-Date: 2012-04-13 07:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:72 .\models.py:157 .\models.py:195
+#: .\models.py:72 .\models.py:157 .\models.py:189
 msgid "Property Type"
 msgstr "Type de propriété"
 
@@ -49,7 +49,7 @@ msgstr "Choix de propriété"
 msgid "Property Choices"
 msgstr "Choix de propriétés"
 
-#: .\models.py:158 .\models.py:222
+#: .\models.py:158 .\models.py:216
 msgid "Value"
 msgstr "Valeur"
 
@@ -57,7 +57,7 @@ msgstr "Valeur"
 msgid "Designation"
 msgstr "Désignation"
 
-#: .\models.py:177 .\models.py:194
+#: .\models.py:177 .\models.py:188
 msgid "Property Group"
 msgstr "Groupe de propriétés"
 
@@ -65,14 +65,14 @@ msgstr "Groupe de propriétés"
 msgid "Property Groups"
 msgstr "Groupes de propriétés"
 
-#: .\models.py:190 .\models.py:220
+#: .\models.py:184 .\models.py:214
 msgid "Property"
 msgstr "Propriété"
 
-#: .\models.py:191
+#: .\models.py:185 .\models.py:300
 msgid "Properties"
 msgstr "Propriétés"
 
-#: .\models.py:218
+#: .\models.py:212
 msgid "Property group"
 msgstr "Groupe de propriétés"

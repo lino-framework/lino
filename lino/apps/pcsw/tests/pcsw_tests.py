@@ -258,21 +258,24 @@ def test04(self):
     Created :doc:`/blog/2011/0615`.
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_tests.py`.
     """
+    from lino.utils.choicelists import Gender
+    from lino.apps.pcsw.models import Person, Company
+    Country = resolve_model('countries.Country')
+    City = resolve_model('countries.City')
+    be = Country(isocode="BE",name="Belgique")
+    be.save()
+    bxl = City(name="Bruxelles",country=be)
+    bxl.save()
+    p = Person(
+      first_name="Jean Louis",last_name="Dupont",
+      street_prefix="Avenue de la", street="gare", street_no="3", street_box="b",
+      city=bxl, gender=Gender.male
+      )
+    p.full_clean()
+    p.save()
+    
     if 'fr' in babel.AVAILABLE_LANGUAGES:
-        from lino.apps.pcsw.models import Person, Company, Country, City
-        from lino.utils.choicelists import Gender
         babel.set_language('fr')
-        be = Country(isocode="BE",name="Belgique")
-        be.save()
-        bxl = City(name="Bruxelles",country=be)
-        bxl.save()
-        p = Person(
-          first_name="Jean Louis",last_name="Dupont",
-          street_prefix="Avenue de la", street="gare", street_no="3", street_box="b",
-          city=bxl, gender=Gender.male
-          )
-        p.full_clean()
-        p.save()
         #~ self.assertEqual(p.get_titled_name,"Mr Jean Louis DUPONT")
         self.assertEqual(p.full_name,"M. Jean Louis DUPONT")
         self.assertEqual('\n'.join(p.address_lines()),u"""\
@@ -281,14 +284,13 @@ Avenue de la gare 3 b
 Bruxelles
 Belgique""")
     
-        if 'de' in babel.AVAILABLE_LANGUAGES:
-            babel.set_language('de')
-            self.assertEqual(p.full_name,"Herrn Jean Louis DUPONT")
-            self.assertEqual(p.get_full_name(nominative=True),"Herr Jean Louis DUPONT")
-            self.assertEqual(p.get_full_name(salutation=False),"Jean Louis DUPONT")
-        
-        babel.set_language(None)
-        
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('de')
+        self.assertEqual(p.full_name,"Herrn Jean Louis DUPONT")
+        self.assertEqual(p.get_full_name(nominative=True),"Herr Jean Louis DUPONT")
+        self.assertEqual(p.get_full_name(salutation=False),"Jean Louis DUPONT")
+    
+    babel.set_language(None)
         
         
 def test05(self):

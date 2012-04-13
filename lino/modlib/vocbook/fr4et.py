@@ -972,7 +972,7 @@ Ettevaatust, **gn** ei ole **ng**!
     ces ingrédients [säz Ä~gre'djA~] : need koostisained
     c'est un crétin [sätÖ~ kre’tÄ~] : ta on kretiin
     je dors [žə dOOr] : ma magan
-    j'ai tort [že tOOr] : ma eksin
+    j'ai tort [žee tOOr] : ma eksin
     """)
     Eesti.parse_words(Nom,u"""
     la jambe [žA~mbə] : jalg
@@ -1006,9 +1006,15 @@ Comment vas-tu? [ko'mA~va'tü] : Kuidas sul läheb?
 
 s'il vous plaît [silvu'plä] : palun (Teid)
 s'il te plaît [siltə'plä] : palun (Sind)
-merci [mär'si] : aitäh
+merci [mer'si] : aitäh
+
 oui [wi] : jah
 non [nO~] : ei
+
+bon appétit [bOnappe'ti] : head isu
+j'ai faim [žee fÄ~] : mul on kõht tühi
+j'ai soif [žee swaf] : mul on janu
+je suis fatigué [žə swi fati'gee] : ma olen väsinud
 """)
 
 
@@ -1203,12 +1209,16 @@ le consommé double [kO~som'mee 'duublə] : kahekordne puljong
 Kokadele.add_lesson(u"Liha", u"""
 """)
 Kokadele.parse_words(Nom,u"""
-la boucherie [bušə'rii] : lihakauplus, lihakarn
 la viande [vjA~də] : liha
 la volaille [vo'lajə] : linnuliha
 le gibier [žibiee] : jahiloomad
 le poisson [pwa'sO~] : kala
+
+la boucherie [bušə'rii] : lihakauplus, lihakarn
 le lard [laar] : pekk
+le jambon [žA~'bO~] : sink
+la saucisse [soo'sis] : vorst
+
 un os [os] : kont
 la côte [koot] : ribi
 le dos [do] : selg
@@ -1399,6 +1409,7 @@ le pain [pÄ~] : sai | leib
 la tartine [tar'tin] : võileib
 la baguette [ba'gät] : prantsuse pikk sai
 le croustillon [krusti'jO~] : õlis praetud kohupiimapall
+le crouton [kru'tO~] : krutoon
 """)
 
 

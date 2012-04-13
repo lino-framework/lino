@@ -11,6 +11,13 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+The `std` fixture for `families`
+================================
+
+Adds some :class:`family roles <families.Role>`.
+
+"""
 
 #~ from django.contrib.contenttypes.models import ContentType
 #~ from lino.utils.instantiator import Instantiator, i2d
@@ -27,24 +34,57 @@ Role = resolve_model('families.Role')
 
 def objects():
   
-    yield Role(**babel_values('name',
-          de=u"Vater",
-          fr=u"père",
-          en=u"father",
-          ))
-    yield Role(**babel_values('name',
-          de=u"Mutter",
-          fr=u"mère",
-          en=u"mother",
-          ))
-    yield Role(**babel_values('name',
-          de=u"Tochter",
-          fr=u"fille",
-          en=u"daughter",
-          ))
-    yield Role(**babel_values('name',
-          de=u"Sohn",
-          fr=u"fils",
-          en=u"son",
-          ))
+    #~ yield Role(**babel_values('name',
+          #~ de=u"Vater",
+          #~ fr=u"père",
+          #~ en=u"father",
+          #~ ))
+    #~ yield Role(**babel_values('name',
+          #~ de=u"Mutter",
+          #~ fr=u"mère",
+          #~ en=u"mother",
+          #~ ))
+    #~ yield Role(**babel_values('name',
+          #~ de=u"Tochter",
+          #~ fr=u"fille",
+          #~ en=u"daughter",
+          #~ ))
+    #~ yield Role(**babel_values('name',
+          #~ de=u"Sohn",
+          #~ fr=u"fils",
+          #~ en=u"son",
+          #~ ))
     
+    kw = babel_values('name',
+          de=u"Kind",
+          fr=u"Enfant",
+          en=u"Child",
+          )
+    kw.update(babel_values('male',
+          de=u"Sohn",
+          fr=u"Fils",
+          en=u"Son",
+          ))
+    kw.update(babel_values('female',
+          de=u"Tochter",
+          fr=u"Fille",
+          en=u"Daughter",
+          ))
+    yield Role(**kw)
+    
+    kw = babel_values('name',
+          de=u"Adoptivkind",
+          fr=u"Enfant adopté",
+          en=u"Adopted child",
+          )
+    kw.update(babel_values('male',
+          de=u"Adoptivsohn",
+          fr=u"Fils adoptif",
+          en=u"Adopted son",
+          ))
+    kw.update(babel_values('female',
+          de=u"Adoptivtochter",
+          fr=u"Fille adoptive",
+          en=u"Adopted daughter",
+          ))
+    yield Role(**kw)

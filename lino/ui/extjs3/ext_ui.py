@@ -251,7 +251,10 @@ class ExtRenderer(HtmlRenderer):
         return self.href(url,text or cgi.escape(force_unicode(rr.label)))
             
     def href_to(self,obj,text=None):
-        url = self.js2url(self.instance_handler(obj))
+        h = self.instance_handler(obj)
+        if h is None:
+            return cgi.escape(force_unicode(obj))
+        url = self.js2url(h)
         #~ a = obj.__class__._lino_default_table.get_action('detail')
         #~ url = self.action_url_js(a,None,dict(record_id=obj.pk))
         #~ onclick = self.instance_handler(obj)
@@ -325,7 +328,9 @@ class ExtRenderer(HtmlRenderer):
             elif v.request is not None:
                 url = self.get_request_url(v.request)
             elif v.instance is not None:
-                return handler_item(v,self.instance_handler(v.instance))
+                h = self.instance_handler(v.instance)
+                assert h is not None
+                return handler_item(v,h)
                 #~ handler = "function(){%s}" % self.instance_handler(v.instance)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
               
@@ -357,9 +362,9 @@ class ExtRenderer(HtmlRenderer):
 
     def instance_handler(self,obj):
         a = obj.__class__._lino_default_table.get_action('detail')
-        if a is None:
-            raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
-        return self.action_call(a,None,dict(record_id=obj.pk))
+        if a is not None:
+            #~ raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
+            return self.action_call(a,None,dict(record_id=obj.pk))
         
     def request_handler(self,rr,*args,**kw):
         #~ bp = rr.request2kw(self.ui,**kw)
@@ -928,7 +933,9 @@ class ExtUI(base.UI):
                     'document_root': source,
                     'show_indexes': False })))
             else:
-                os.symlink(source,target)
+                symlink = getattr(os,'symlink',None)
+                if symlink is not None:
+                    symlink(source,target)
             
         setup_media_link('extjs','extjs_root')
         if settings.LINO.use_extensible:
@@ -1759,17 +1766,23 @@ tinymce.init({
                       confirm_message='\n'.join([unicode(m) for m in e.messages]),
                       step=e.step)
                     return action_response(r)
+                except actions.Warning,e:
+                    r = dict(
+                      success=False,
+                      message=unicode(e),
+                      alert=True)
+                    return action_response(r)
                 except Exception,e:
-                    msg = unicode(e)
-                    #~ if elem is None:
-                        #~ msg = unicode(e)
-                    #~ else:
-                        #~ msg = _("Action \"%(action)s\" failed for %(record)s:") % dict(
-                            #~ action=a,
-                            #~ record=obj2unicode(elem))
-                        #~ msg += "\n" + unicode(e)
-                      
-                    msg += '.\n' + _("An error report has been sent to the system administrator.")
+                    if elem is None:
+                        msg = unicode(e)
+                    else:
+                        msg = _(
+                          "Action \"%(action)s\" failed for %(record)s:") % dict(
+                          action=a,
+                          record=obj2unicode(elem))
+                        msg += "\n" + unicode(e)
+                    msg += '.\n' + _(
+                      "An error report has been sent to the system administrator.")
                     logger.warning(msg)
                     logger.exception(e)
                     return self.error_response(e,msg)

@@ -316,6 +316,9 @@ def setup_site(self,make_messages=False):
         if self.user_model:
             self.user_model = resolve_model(self.user_model)
         
+        if self.person_model:
+            self.person_model = resolve_model(self.person_model)
+        
         actors.discover()
         
         

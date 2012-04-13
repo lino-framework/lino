@@ -111,6 +111,13 @@ class ConfirmationRequired(Exception):
         self.messages = messages
         Exception.__init__(self)
 
+#~ class SimpleException(Exception): 
+class Warning(Exception): 
+    """
+    An Exception whose string is meant to be 
+    understandable by the user.
+    """
+
 
 class Action(object): 
     """
@@ -514,3 +521,11 @@ class ActionRequest(object):
         return kw
         
 
+    def spawn_request(self,rpt,**kw):
+        #~ rh = rpt.get_handle(self.ui)
+        kw.update(user=self.user)
+        kw.update(renderer=self.renderer)
+        #~ kw.update(request=self.request)
+        #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
+        return self.__class__(self.ui,rpt,self.request,rpt.default_action,**kw)
+        

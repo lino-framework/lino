@@ -31,14 +31,7 @@ import datetime
 
 from lxml import etree
 from lxml.builder import ElementMaker # lxml only !
-
-
-class SimpleException(Exception): 
-    """
-    An Exception whose string is meant to be 
-    understandable by the user.
-    """
-
+from lino.core.actions import Warning
 
 TYPEMAP = {
   #~ datetime.datetime: py2str,

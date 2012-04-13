@@ -128,7 +128,7 @@ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
         try:
             #~ srvreq = self.cbss_namespace('ns1').build_request(**kw)
             srvreq = self.cbss_namespace.build_request(**kw)
-        except cbss.SimpleException,e:
+        except cbss.Warning,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
             self.save()
@@ -152,7 +152,7 @@ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
               srvreq,
               up,
               str(self.id),now)
-        except cbss.SimpleException,e:
+        except cbss.Warning,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
             self.save()

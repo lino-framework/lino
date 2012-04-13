@@ -16,11 +16,13 @@ u"""
 Utility for defining hard-coded multi-lingual choice lists 
 whose value is rendered according to the current language.
 
-Usage example :
+:class:`Gender`, :class:`DoYouLike` and :class:`HowWell` 
+are "batteries included" usage examples.
 
-(First two lines of code because `choicelists` 
-requires :setting:`DJANGO_SETTINGS_MODULE` 
-to be set)
+Usage:
+
+(Doctesting this module requires the Django translation machine, 
+so we must set :setting:`DJANGO_SETTINGS_MODULE`)
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.std.settings'
@@ -28,18 +30,26 @@ to be set)
 
 >>> from django.utils import translation
 >>> translation.activate('en')
+>>> for value,text in choicelist_choices():
+...     print "%s : %s" % (value, unicode(text))
+DoYouLike : certainly not...very much
+Gender : Gender
+HowWell : not at all...very well
+
+>>> for bc,text in Gender.get_choices():
+...     print "%s : %s" % (bc.value, unicode(text))
+M : Male
+F : Female
+
 >>> print unicode(Gender.male)
 Male
+
 >>> translation.activate('de')
 >>> print unicode(Gender.male)
 Männlich
 
 
-:class:`Gender`, 
-:class:`DoYouLike` and :class:`HowWell` 
-are "batteries included" usage examples.
-
-Example on how to use them in your model::
+Example on how to use a ChoiceList in your model::
 
   from django.db.models import Model
   from lino.utils.choicelists import HowWell

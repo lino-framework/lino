@@ -229,14 +229,9 @@ class AbstractTableRequest(actions.ActionRequest):
             self.limit = limit
         
         self.report.setup_request(self)
-        
-        
-    def spawn_request(self,rpt,**kw):
-        #~ rh = rpt.get_handle(self.ui)
-        kw.update(user=self.user)
-        kw.update(renderer=self.renderer)
-        #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
-        return self.__class__(self.ui,rpt,None,rpt.default_action,**kw)
+    
+    def table2xhtml(self):
+        return self.ui.table2xhtml(self)
         
     def get_status(self,ui,**kw):
         kw = actions.ActionRequest.get_status(self,ui,**kw)

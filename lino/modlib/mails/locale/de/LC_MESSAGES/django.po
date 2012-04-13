@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-21 17:55+0000\n"
+"POT-Creation-Date: 2012-04-13 07:31+0100\n"
 "PO-Revision-Date: 2011-12-18 18:57+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -28,7 +28,7 @@ msgstr "Korrespondenzarten"
 msgid "Create email"
 msgstr "E-Mail oder Brief erstellen"
 
-#: .\models.py:158 .\models.py:162
+#: .\models.py:158
 msgid "Recipient"
 msgstr "Empfänger"
 
@@ -49,12 +49,14 @@ msgid "Send email"
 msgstr "E-Mail senden"
 
 #: .\models.py:247
-msgid "Mail Document"
-msgstr "Korrespondenzdokument"
+#, fuzzy
+msgid "Mail Message"
+msgstr "Korrespondenzarten"
 
 #: .\models.py:248
-msgid "Mail Documents"
-msgstr "Korrespondenzdokumente"
+#, fuzzy
+msgid "Mail Messages"
+msgstr "Korrespondenzarten"
 
 #: .\models.py:255
 msgid "Sender"
@@ -68,27 +70,37 @@ msgstr "Betreff"
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:333
+#: .\models.py:337
 msgid "Attachment"
 msgstr "Anhang"
 
-#: .\models.py:334
+#: .\models.py:338
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: .\models.py:367
+#: .\models.py:367 .\models.py:414
+msgid "Inbox"
+msgstr ""
+
+#: .\models.py:373 .\models.py:427
+#, fuzzy
+msgid "Outbox"
+msgstr "Postausgang"
+
+#: .\models.py:379
 msgid "Mail Outbox"
 msgstr "Postausgang"
 
-#: .\models.py:377
+#: .\models.py:389
 msgid "Sent Mails"
 msgstr "Gesendete Mails"
 
-#: .\models.py:383
-msgid "My Mail Inbox"
+#: .\models.py:395
+#, fuzzy
+msgid "My Inbox"
 msgstr "Posteingang"
 
-#: .\models.py:441 .\models.py:447 .\models.py:451
+#: .\models.py:455 .\models.py:461 .\models.py:465
 msgid "~Mails"
 msgstr "~Korrespondenz"
 
@@ -108,9 +120,14 @@ msgstr "Blindkopie an"
 msgid "to"
 msgstr "Empfänger"
 
-#: .\config\contacts\Contact\80_mails.dtl.py:3
-msgid "Mails"
-msgstr "Korrespondenz"
+#~ msgid "Mail Document"
+#~ msgstr "Korrespondenzdokument"
+
+#~ msgid "Mail Documents"
+#~ msgstr "Korrespondenzdokumente"
+
+#~ msgid "Mails"
+#~ msgstr "Korrespondenz"
 
 #~ msgid "Contact"
 #~ msgstr "Kontakt"

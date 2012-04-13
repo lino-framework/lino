@@ -60,13 +60,13 @@ To show what this request contains, we can use lxml's tostring method:
 
 If no NISS is given, the other parameters are "search criteria", 
 and at least the birth date is then mandatory. If you don't give birth 
-date, you'll get a :class:`SimpleException` (i.e. an Exception whose 
+date, you'll get a :class:`Warning` (i.e. an Exception whose 
 string is meant to be understandable by the user):
 
 >>> req = ipr.build_request(last_name="SAFFRE")
 Traceback (most recent call last):
 ...
-SimpleException: Either national_id or birth date must be given
+Warning: Either national_id or birth date must be given
 
 Here is a valid ipr request:
 
@@ -160,12 +160,12 @@ The :meth:`execute` method takes four parameters:
 
 If you run the following call in a real environment
 (with permission to connect, and with correct data in `user_params`), 
-it won't raise the `SimpleException` but return a `response object`:
+it won't raise the `Warning` but return a `response object`:
 
 >>> response = pir.execute(None,req,user_params,unique_id,now) #doctest: +ELLIPSIS
 Traceback (most recent call last):
 ...
-SimpleException: Not actually sending because environment is empty. Request would be:
+Warning: Not actually sending because environment is empty. Request would be:
 <?xml version='1.0' encoding='ASCII'?>
 <soap:Envelope ...</soap:Envelope>
 
@@ -199,7 +199,7 @@ A `TestConnectionService` request doesn't need a unique_id and timestamp.
 >>> response = tcs.execute(None,req,user_params) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 Traceback (most recent call last):
 ...
-SimpleException: Not actually sending because environment is empty. Request would be:
+Warning: Not actually sending because environment is empty. Request would be:
 <?xml version='1.0' encoding='ASCII'?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tcs="http://kszbcss.fgov.be/intf/TestConnectionServiceService/v1"><soap:Header/><soap:Body><tcs:sendTestMessageRequest><tcs:echo>hello cbss service</tcs:echo></tcs:sendTestMessageRequest></soap:Body></soap:Envelope>
 
@@ -219,7 +219,7 @@ from lxml import etree
 
 #~ from lino.utils import d2iso
 #~ from lino.utils import IncompleteDate
-from lino.utils.xmlgen import SimpleException, Namespace
+from lino.utils.xmlgen import Warning, Namespace
 
 def xsdpath(*parts):
     p1 = os.path.abspath(os.path.dirname(__file__))
@@ -326,7 +326,7 @@ class Service(Namespace):
     def execute(self,env,req,user_params=None,unique_id=None,dt=None):
         #~ print 20120302
         #~ if user_params is None:
-            #~ raise SimpleException(
+            #~ raise Warning(
                 #~ "Not actually sending because user_params is empty.")
         #~ self.validate_against_xsd(req)
             
@@ -335,7 +335,7 @@ class Service(Namespace):
         xml = etree.tostring(req,xml_declaration=True)
         
         if not env:
-            raise SimpleException("""\
+            raise Warning("""\
 Not actually sending because environment is empty. Request would be:
 """ + xml)
 
@@ -480,7 +480,7 @@ class IdentifyPersonRequest(SSDNService):
               ipr.VerificationData(ipr.PersonData(*pd)))
           
         if birth_date is None:
-            raise SimpleException(
+            raise Warning(
                 "Either national_id or birth date must be given")
         pc = []
         pc.append(ipr.LastName(last_name))

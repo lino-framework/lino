@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.properties\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-21 17:55+0000\n"
+"POT-Creation-Date: 2012-04-13 07:31+0100\n"
 "PO-Revision-Date: 2011-07-20 15:20+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:72 .\models.py:157 .\models.py:195
+#: .\models.py:72 .\models.py:157 .\models.py:189
 msgid "Property Type"
 msgstr "Eigenschafts-Datentyp"
 
@@ -48,7 +48,7 @@ msgstr "Auswahlmöglichkeit"
 msgid "Property Choices"
 msgstr "Auswahlmöglichkeiten"
 
-#: .\models.py:158 .\models.py:222
+#: .\models.py:158 .\models.py:216
 msgid "Value"
 msgstr "Wert"
 
@@ -56,7 +56,7 @@ msgstr "Wert"
 msgid "Designation"
 msgstr "Beschreibung"
 
-#: .\models.py:177 .\models.py:194
+#: .\models.py:177 .\models.py:188
 msgid "Property Group"
 msgstr "Eigenschaftsgruppe"
 
@@ -64,15 +64,15 @@ msgstr "Eigenschaftsgruppe"
 msgid "Property Groups"
 msgstr "Eigenschaftsgruppen"
 
-#: .\models.py:190 .\models.py:220
+#: .\models.py:184 .\models.py:214
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: .\models.py:191
+#: .\models.py:185 .\models.py:300
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: .\models.py:218
+#: .\models.py:212
 msgid "Property group"
 msgstr "Eigenschaftsgruppe"
 

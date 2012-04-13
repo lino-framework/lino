@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-21 17:55+0000\n"
+"POT-Creation-Date: 2012-04-13 07:31+0100\n"
 "PO-Revision-Date: 2011-11-11 11:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -32,11 +32,11 @@ msgstr "Pays"
 msgid "Countries"
 msgstr "Pays"
 
-#: .\models.py:101
+#: .\models.py:105
 msgid "City"
 msgstr "Ville"
 
-#: .\models.py:102
+#: .\models.py:106
 msgid "Cities"
 msgstr "Villes"
 

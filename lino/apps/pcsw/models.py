@@ -668,6 +668,14 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
               master_instance=self)
         return rr.renderer.quick_add_buttons(r)
 
+
+class PartnerDetail(contacts.PartnerDetail):
+    bottom_box = """
+    remarks 
+    is_person is_company is_user is_family
+    """
+    
+
 class Partners(contacts.Partners):
     """
     Base class for Companies and Persons tables. 
@@ -678,6 +686,7 @@ class Partners(contacts.Partners):
     #~ app_label = 'contacts'
     
     imported_fields = []
+    detail_layout = PartnerDetail()
     
     @classmethod
     def disabled_fields(self,obj,request):
@@ -696,8 +705,7 @@ class Partners(contacts.Partners):
     def do_setup(self):
         super(contacts.Partners,self).do_setup()
         self.imported_fields = dd.fields_list(contacts.Partner,
-          '''name remarks region 
-          zip_code city country 
+          '''name remarks region zip_code city country 
           street_prefix street street_no street_box 
           addr2
           language 
@@ -705,6 +713,7 @@ class Partners(contacts.Partners):
           is_person is_company
           ''')
         
+
 class AllPartners(contacts.AllPartners,Partners):
     app_label = 'contacts'
     #~ pass
