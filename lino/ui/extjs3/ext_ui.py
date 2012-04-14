@@ -1452,13 +1452,24 @@ tinymce.init({
                     w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
                 return response
                 
+            if fmt == ext_requests.URL_FORMAT_ODT:
+                if ar.get_total_count() > MAX_ROW_COUNT:
+                    raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
+                target_parts = ['cache', 'odt', 
+                    rpt.app_label + '.' + rpt.__name__ + '.odt']
+                target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
+                target_url = self.media_url(*target_parts)
+                ar.renderer = self.pdf_renderer
+                if os.path.exists(target_file):
+                    os.remove(target_file)
+                logger.info(u"odfpy render %s -> %s",rpt,target_file)
+                self.table2odt(ar,target_file)
+                return http.HttpResponseRedirect(target_url)
+            
             if fmt == ext_requests.URL_FORMAT_PDF:
-            #~ if fmt == 'pdf':
-                #~ max_row_count = 10
                 if ar.get_total_count() > MAX_ROW_COUNT:
                     raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
             
-              
                 from lino.utils.appy_pod import setup_renderer
                 from appy.pod.renderer import Renderer
                 
@@ -2689,3 +2700,92 @@ tinymce.init({
                     return ext_elems.TabPanel(lh,name,*elems,**pkw)
             raise Exception("No element class for layout %r" % lh.layout)
         return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
+
+
+    def table2odt(self,ar,output_file):
+        """
+        """
+        #~ from lino.utils.xmlgen import odf
+        
+        columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+        
+        if columns:
+            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+            all_widths = ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)
+            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
+            fields = []
+            widths = []
+            headers = []
+            for i,cn in enumerate(columns):
+                col = None
+                for e in ar.ah.list_layout.main.columns:
+                    if e.name == cn:
+                        col = e
+                        break
+                if col is None:
+                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
+                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
+                if not hiddens[i]:
+                    fields.append(col.field._lino_atomizer)
+                    headers.append(unicode(col.label or col.name))
+                    widths.append(int(all_widths[i]))
+        else:
+            fields = ar.ah.store.list_fields
+            headers = [unicode(col.label or col.name) 
+                for col in ar.ah.list_layout.main.columns]
+            widths = [(col.width or col.preferred_width)
+                for col in ar.ah.list_layout.main.columns]
+                  
+        tw = sum(widths)
+        width_specs = ["%d%%" % (w*100/tw) for w in widths]
+        
+        #~ odf.table2odt(headers,fields,widths,,row2cells)
+        
+        from odf.opendocument import OpenDocumentText
+        from odf.style import Style, TextProperties, ParagraphProperties
+        from odf.style import TableColumnProperties
+        from odf.text import P
+        from odf.table import Table, TableColumn, TableRow, TableCell
+
+        doc = OpenDocumentText()
+        # Create a style for the table content. One we can modify
+        # later in the word processor.
+        tablecontents = Style(name="Table Contents", family="paragraph")
+        tablecontents.addElement(ParagraphProperties(numberlines="false", linenumber="0"))
+        doc.styles.addElement(tablecontents)
+        
+        table = Table()
+        colstyles = []
+        for i,fld in enumerate(fields):
+            cs = Style(name=fld.field.name, family="table-column")
+            cs.addElement(TableColumnProperties(columnwidth=width_specs[i]))
+            doc.automaticstyles.addElement(cs)
+            table.addElement(TableColumn(stylename=cs))
+            
+        def value2odt(fld,ar,val):
+            text = fld.value2html(ar,val)
+            yield P(stylename=tablecontents,text=text)
+            
+        sums  = [0 for col in fields]
+          
+        for row in ar.data_iterator:
+            tr = TableRow()
+            table.addElement(tr)
+            
+            for i,fld in enumerate(fields):
+                tc = TableCell()
+                #~ if fld.field is not None:
+                v = fld.full_value_from_object(ar,row)
+                if v is None:
+                    tc.addElement(P(stylename=tablecontents,text=''))
+                else:
+                    for e in value2odt(fld,ar,v):
+                        tc.addElement(e)
+                    sums[i] += fld.value2int(v)
+                tr.addElement(tc)
+
+        doc.text.addElement(table)
+        doc.save(output_file) # , True)
+
+
+

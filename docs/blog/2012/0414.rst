@@ -1,0 +1,11 @@
+20120414
+========
+
+:mod:`lino.utils.xmlgen.odf` is probably useless:
+I discovered 
+`ODFPY <https://joinup.ec.europa.eu/software/odfpy>`_,
+a library by Søren ROUG
+for manipulating OpenDocument documents (.odt, .ods,...): 
+read existing files, modify, create new files from scratch
+(read more on `PyPI <http://pypi.python.org/pypi/odfpy>`_).
+

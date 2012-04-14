@@ -104,8 +104,8 @@ class StoreField(object):
         d[self.name] = v
 
     def value2html(self,ar,v):
-        return "<span>%s</span>" % force_unicode(v)
-        #~ return force_unicode(v)
+        #~ return "<span>%s</span>" % force_unicode(v)
+        return force_unicode(v)
       
     def parse_form_value(self,v,obj):
         #~ if v == '' and not self.field.empty_strings_allowed:
@@ -1056,6 +1056,17 @@ class Store:
         return [fld.sum2html(request.ui,sums[i])
           #~ for i,fld in enumerate(self.list_fields)]
           for i,fld in enumerate(fields)]
+            
+    #~ def row2odt(self,request,fields,row,sums):
+        #~ for i,fld in enumerate(fields):
+            #~ if fld.field is not None:
+                #~ v = fld.full_value_from_object(request,row)
+                #~ if v is None:
+                    #~ yield ''
+                #~ else:
+                    #~ sums[i] += fld.value2int(v)
+                    #~ yield fld.value2odt(request,v)
+            
             
     def parse_params(self,request,**kw):
         pv = request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES)

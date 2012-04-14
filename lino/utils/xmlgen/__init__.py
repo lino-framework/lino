@@ -31,7 +31,7 @@ import datetime
 
 from lxml import etree
 from lxml.builder import ElementMaker # lxml only !
-from lino.core.actions import Warning
+from lino.utils import Warning
 
 TYPEMAP = {
   #~ datetime.datetime: py2str,

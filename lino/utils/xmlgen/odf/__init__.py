@@ -55,9 +55,10 @@ Traceback (most recent call last):
 ...
 Warning: ... Element document failed to validate attributes
 
-That's almost good, except for a little detail.
-That error comes because we didn't specify a namespace for 
-the attruibutes (`version` and `mimetype`).
+That's almost good, except for a little "detail":
+when using Python syntax, we cannot specify a namespace 
+for attributes (here `version` and `mimetype`).
+
 How to specify the namespace of attributes? 
 
 First attempt:
@@ -199,10 +200,15 @@ class Table(xg.Namespace):
         table-column
         """)
 table = Table('table',"urn:oasis:names:tc:opendocument:xmlns:table:1.0")
-#~ table = xg.Namespace('table',"urn:oasis:names:tc:opendocument:xmlns:table:1.0")
+
+class Style(xg.Namespace):
+    def setup_namespace(self):
+        self.define_names("""
+        """)
+style = Style('style',"urn:oasis:names:tc:opendocument:xmlns:style:1.0")
 
 class Office(xg.Namespace):
-    used_namespaces=[text,table]
+    used_namespaces=[text,table,style]
     def setup_namespace(self):
         self.define_names("""
         document body text 
@@ -235,13 +241,23 @@ def validate(root):
 
 def validate_chunks(*chunks):
     root = office.document(
+        office.makeattribs(
+            version="1.2",
+            mimetype="application/vnd.oasis.opendocument.text"),
         office.body(
           office.text(*chunks)),
     )
-    office.update_attribs(root,
-        version="1.2",
-        mimetype="application/vnd.oasis.opendocument.text")
     validate(root)
+
+#~ def validate_chunks(*chunks):
+    #~ root = office.document(
+        #~ office.body(
+          #~ office.text(*chunks)),
+    #~ )
+    #~ office.update_attribs(root,
+        #~ version="1.2",
+        #~ mimetype="application/vnd.oasis.opendocument.text")
+    #~ validate(root)
   
 
 
@@ -266,6 +282,48 @@ def render_to_odt(target_file,startfile=False,**context):
     #~ rng_filename = rngpath('OpenDocument-v1.2-os-schema.rng')
     #~ used_namespaces = [ iic ]
 #~ odf = OpenDocument()
+
+
+def unused_table2odt(headers,fields,widths,rows):
+    """
+    Not finished because I discovered the `ODFPY <https://joinup.ec.europa.eu/software/odfpy>`_ library    
+    """
+    sums  = [0 for col in fields]
+      
+    story = []
+    story.append(office.automatic_styles())
+    t = table.table(
+      table.makeattribs(name="Mytable",style_name="Mytable"),
+      table.table_column(table.makeattribs(style_name="A",number_columns_repeated="2")),
+      table.table_row(
+        table.table_cell(text.p("First"),table.makeattribs(value_type="string")),
+        table.table_cell(text.p("Second"),table.makeattribs(value_type="string")),
+      ),
+      table.table_row(
+        table.table_cell(text.p("Third"),table.makeattribs(value_type="string")),
+        table.table_cell(text.p("Fourth"),table.makeattribs(value_type="string")),
+      ),
+    )
+    validate_chunks(t)
+      
+    yield html.TR(*headers)
+    
+    recno = 0
+    for row in rows:
+        recno += 1
+        cells = [TD(x) for x in row2cells(row,sums)]
+        #~ yield html.TR(*cells,**cellattrs)
+        yield html.TR(*cells)
+            
+    has_sum = False
+    for i in sums:
+        if i:
+            has_sum = True
+            break
+    if has_sum:
+        yield html.TR(
+          *[html.TD(x,**cellattrs) for x in ar.ah.store.sums2html(ar,fields,sums)])
+
 
 
 def _test():

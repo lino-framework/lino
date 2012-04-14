@@ -24,6 +24,7 @@ from django import http
 import lino
 from lino.utils import AttrDict
 from lino.utils import babel
+from lino.utils import Warning
 
 from lino.ui import requests as ext_requests
 
@@ -110,13 +111,6 @@ class ConfirmationRequired(Exception):
         self.step = step
         self.messages = messages
         Exception.__init__(self)
-
-#~ class SimpleException(Exception): 
-class Warning(Exception): 
-    """
-    An Exception whose string is meant to be 
-    understandable by the user.
-    """
 
 
 class Action(object): 

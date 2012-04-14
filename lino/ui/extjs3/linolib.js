@@ -2813,7 +2813,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             Ext.apply(p,this.get_base_params());
             //~ var p = Ext.apply({},this.get_base_params());
             //~ p['fmt'] = 'pdf';
-            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PDF";
+            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_ODT";
             this.add_param_values(p);
             //~ url += "?" + Ext.urlEncode(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 

@@ -101,6 +101,7 @@ URL_PARAMS = [
 
 URL_FORMAT_JSON = 'json'
 URL_FORMAT_PDF = 'pdf'
+URL_FORMAT_ODT = 'odt'
 URL_FORMAT_PRINTER = 'printer'
 URL_FORMAT_HTML = 'html'
 

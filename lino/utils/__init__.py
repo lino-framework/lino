@@ -575,6 +575,11 @@ def uca_collator():
     return c
     
 
+class Warning(Exception): 
+    """
+    An Exception whose message is meant to be 
+    understandable by the user.
+    """
 
 
 def _test():
