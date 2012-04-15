@@ -19,6 +19,8 @@ Defines the `Store` class and its fields
 import logging
 logger = logging.getLogger(__name__)
 
+import odf
+
 import datetime
 #~ from dateutil import parser as dateparser
 
@@ -104,8 +106,18 @@ class StoreField(object):
         d[self.name] = v
 
     def value2html(self,ar,v):
-        #~ return "<span>%s</span>" % force_unicode(v)
-        return force_unicode(v)
+        """
+        Return a HTML chunk that renders the given value.
+        """
+        return "<span>%s</span>" % force_unicode(v)
+        #~ return force_unicode(v)
+      
+    def value2odt(self,ar,v,tc,**params):
+        """
+        Add the necessary :term:`odfpy` element(s) to the containing element `tc`.
+        """
+        params.update(text=force_unicode(v))
+        tc.addElement(odf.text.P(**params))
       
     def parse_form_value(self,v,obj):
         #~ if v == '' and not self.field.empty_strings_allowed:
@@ -240,7 +252,9 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         #~ return req.ui.href_to(obj)
         
     def value2html(self,ar,v):
-        return "<span>%s</span>" % ar.renderer.href_to(v)
+        #~ return "<span>%s</span>" % ar.renderer.href_to(v)
+        return ar.renderer.href_to(v)
+        
         
     def get_value_text(self,v,obj):
         #~ v = self.full_value_from_object(None,obj)
@@ -355,6 +369,12 @@ class RequestStoreField(StoreField):
 
     def value2html(self,ar,v):
         return self.format_value(ar,v)
+
+    def value2odt(self,ar,v,tc,**params):
+        params.update(text=self.format_value(ar,v))
+        tc.addElement(odf.text.P(**params))
+        
+
         
     def format_value(self,ar,v):
         if v is None:
@@ -552,6 +572,10 @@ class BooleanStoreField(StoreField):
         
     def value2html(self,ar,v):
         return force_unicode(iif(v,_("Yes"),_("No")))
+        
+    def value2odt(self,ar,v,tc,**params):
+        params.update(text=self.value2html(ar,v))
+        tc.addElement(odf.text.P(**params))
         
     def value2int(self,v):
         if v: return 1

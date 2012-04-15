@@ -5,6 +5,13 @@ Glossary
 
 .. glossary::
   :sorted:
+  
+  ODFPy
+    A Python library for manipulating OpenDocument documents 
+    (.odt, .ods, .odp, ...): 
+    read existing files, modify, create new files from scratch.
+    Read more on `PyPI <http://pypi.python.org/pypi/odfpy>`_.
+    Project home page https://joinup.ec.europa.eu/software/odfpy
 
   DavLink
     See :doc:`/davlink/index`

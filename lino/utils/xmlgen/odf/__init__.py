@@ -18,6 +18,11 @@ Tools for generating
 <http://lists.oasis-open.org/archives/tc-announce/201201/msg00001.html>`_ 
 files and chunks thereof.
 
+This module is no longer maintained because I discovered Søren Roug's
+`ODFPY <https://joinup.ec.europa.eu/software/odfpy>`_ library 
+which does it better.
+
+
 
 Generating validated chunks of ODF
 ----------------------------------

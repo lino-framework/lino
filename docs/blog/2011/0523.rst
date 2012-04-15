@@ -129,7 +129,7 @@ konvertieren zu lassen. Effizienter wäre doch, wenn ich direkt
 ODF-XML schreibe. Und einen Anfang zufür habe ich ja schon, 
 nämlich in timtools.gendoc und timtools.oogen.
 Also könnte ich es mal auf die selbstgeschneiderte Art versuchen:
-:mod:`lino.utils.html2odt`.
+:mod:`lino.utils.html2odt_old`.
 Dachte ich mir. 
 Aber nach einigem Hantieren habe ich diesen Weg wieder 
 aufgegeben, bevor ich erste Resultate gesehen habe. 

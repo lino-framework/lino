@@ -2737,7 +2737,11 @@ tinymce.init({
                 for col in ar.ah.list_layout.main.columns]
                   
         tw = sum(widths)
-        width_specs = ["%d%%" % (w*100/tw) for w in widths]
+        #~ width_specs = ["%d%%" % (w*100/tw) for w in widths]
+        
+        aw = 180 # available width 18cm = 180mm
+        width_specs = ["%dmm" % (aw*w/tw) for w in widths]
+        #~ print 20120415, width_specs 
         
         #~ odf.table2odt(headers,fields,widths,,row2cells)
         
@@ -2746,25 +2750,48 @@ tinymce.init({
         from odf.style import TableColumnProperties
         from odf.text import P
         from odf.table import Table, TableColumn, TableRow, TableCell
+        #~ from lino.utils import html2odt
 
         doc = OpenDocumentText()
         # Create a style for the table content. One we can modify
         # later in the word processor.
         tablecontents = Style(name="Table Contents", family="paragraph")
-        tablecontents.addElement(ParagraphProperties(numberlines="false", linenumber="0"))
+        tablecontents.addElement(ParagraphProperties(numberlines="false", 
+            linenumber="0"))
         doc.styles.addElement(tablecontents)
         
+        tableheader = Style(name="Table Column Header", family="paragraph")
+        tableheader.addElement(ParagraphProperties(numberlines="false", 
+            linenumber="0"))
+        doc.styles.addElement(tableheader)
+        
         table = Table()
-        colstyles = []
+        
         for i,fld in enumerate(fields):
-            cs = Style(name=fld.field.name, family="table-column")
+            #~ print 20120415, repr(fld.name)
+            cs = Style(name=fld.name, family="table-column")
             cs.addElement(TableColumnProperties(columnwidth=width_specs[i]))
             doc.automaticstyles.addElement(cs)
             table.addElement(TableColumn(stylename=cs))
             
         def value2odt(fld,ar,val):
-            text = fld.value2html(ar,val)
-            yield P(stylename=tablecontents,text=text)
+            #~ text = html2odt.html2odt(fld.value2html(ar,val))
+            #~ e = html2odt.RawXML(html2odt.html2odt(fld.value2html(ar,val)))
+            e = fld.value2odt(ar,val)
+            p = P(stylename=tablecontents)
+            p.addElement(e)
+            yield p
+            #~ yield P(stylename=tablecontents,text=text)
+            
+        # header
+        hr = TableRow()
+        for fld in fields:
+            tc = TableCell()
+            tc.addElement(P(
+                stylename=tableheader,
+                text=force_unicode(fld.field.verbose_name or fld.name)))
+            hr.addElement(tc)
+        table.addElement(hr)
             
         sums  = [0 for col in fields]
           
@@ -2779,8 +2806,9 @@ tinymce.init({
                 if v is None:
                     tc.addElement(P(stylename=tablecontents,text=''))
                 else:
-                    for e in value2odt(fld,ar,v):
-                        tc.addElement(e)
+                    fld.value2odt(ar,v,tc,stylename=tablecontents)
+                    #~ for e in value2odt(fld,ar,v):
+                        #~ tc.addElement(e)
                     sums[i] += fld.value2int(v)
                 tr.addElement(tc)
 

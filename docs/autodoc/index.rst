@@ -35,6 +35,9 @@ extension.
     lino.utils.sqllog
     lino.utils.log
     lino.utils.dblogger
+    lino.utils.dumpy
+    lino.utils.jsgen
+    lino.utils.mti
     lino.utils.daemoncommand
     lino.utils.choicelists
     lino.utils.babel

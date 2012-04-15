@@ -27,51 +27,88 @@ takes 3 men and 3 women and creates three families.
 Und in :mod:`lino.modlib.debts.fixtures.demo` kommen die armen 
 jungvermählten Paare dann schon gleich in die Schuldnerberatung.
 
+Hier als Andenken zwei der ca. 20 Tracebacks, 
+die ich heute bearbeitet habe::
+
+  Error while evaluating the expression "self.entries_by_group(ui)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "t:\hgwork\lino\lino\modlib\debts\models.py", line 191, in entries_by_group
+  group=group)
+  File "t:\hgwork\lino\lino\core\table.py", line 472, in request
+  return TableRequest(ui,self,request,action,**kw)
+  File "t:\hgwork\lino\lino\utils\tables.py", line 150, in __init__
+  self.data_iterator = self.get_data_iterator()
+  File "t:\hgwork\lino\lino\utils\tables.py", line 272, in get_data_iterator
+  return self.report.get_request_queryset(self)
+  File "t:\hgwork\lino\lino\core\table.py", line 784, in get_request_queryset
+  qs = qs.filter(**d)
+  File "l:\snapshots\django\django\db\models\query.py", line 542, in filter
+  return self._filter_or_exclude(False, *args, **kwargs)
+  File "l:\snapshots\django\django\db\models\query.py", line 560, in _filter_or_exclude
+  clone.query.add_q(Q(*args, **kwargs))
+  File "l:\snapshots\django\django\db\models\sql\query.py", line 1217, in add_q
+  can_reuse=used_aliases, force_having=force_having)
+  File "l:\snapshots\django\django\db\models\sql\query.py", line 1089, in add_filter
+  process_extras=process_extras)
+  File "l:\snapshots\django\django\db\models\sql\query.py", line 1283, in setup_joins
+  "Choices are: %s" % (name, ", ".join(names)))
+  <class 'django.core.exceptions.FieldError'>: Cannot resolve keyword 'group' into field. Choices are: account_type, amount1, amount2, amount3, budget, circa, id, item, name, remark, seqno, todo
 
 
-Error while evaluating the expression "self.entries_by_group(ui)" defined in the "from" part of a statement.
-File "<string>", line 1, in <module>
-File "t:\hgwork\lino\lino\modlib\debts\models.py", line 191, in entries_by_group
-group=group)
-File "t:\hgwork\lino\lino\core\table.py", line 472, in request
-return TableRequest(ui,self,request,action,**kw)
-File "t:\hgwork\lino\lino\utils\tables.py", line 150, in __init__
-self.data_iterator = self.get_data_iterator()
-File "t:\hgwork\lino\lino\utils\tables.py", line 272, in get_data_iterator
-return self.report.get_request_queryset(self)
-File "t:\hgwork\lino\lino\core\table.py", line 784, in get_request_queryset
-qs = qs.filter(**d)
-File "l:\snapshots\django\django\db\models\query.py", line 542, in filter
-return self._filter_or_exclude(False, *args, **kwargs)
-File "l:\snapshots\django\django\db\models\query.py", line 560, in _filter_or_exclude
-clone.query.add_q(Q(*args, **kwargs))
-File "l:\snapshots\django\django\db\models\sql\query.py", line 1217, in add_q
-can_reuse=used_aliases, force_having=force_having)
-File "l:\snapshots\django\django\db\models\sql\query.py", line 1089, in add_filter
-process_extras=process_extras)
-File "l:\snapshots\django\django\db\models\sql\query.py", line 1283, in setup_joins
-"Choices are: %s" % (name, ", ".join(names)))
-<class 'django.core.exceptions.FieldError'>: Cannot resolve keyword 'group' into field. Choices are: account_type, amount1, amount2, amount3, budget, circa, id, item, name, remark, seqno, todo
+  Error while evaluating the expression "self.entries_by_group(ar)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "t:\hgwork\lino\lino\modlib\debts\models.py", line 193, in entries_by_group
+  xml += sub_ar.table2xhtml()
+  File "t:\hgwork\lino\lino\utils\tables.py", line 234, in table2xhtml
+  return self.ui.table2xhtml(self)
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 2596, in table2xhtml
+  return html.TABLE(*list(f()),cellspacing="3px",bgcolor="#ffffff", width="100%")
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 2584, in f
+  cells = [TD(x) for x in ar.ah.store.row2html(ar,fields,row,sums)]
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 1052, in row2html
+  yield fld.value2html(request,v)
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 243, in value2html
+  return "<span>%s</span>" % ar.renderer.href_to(v)
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 254, in href_to
+  url = self.js2url(self.instance_handler(obj))
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 361, in instance_handler
+  raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
+  <type 'exceptions.Exception'>: No detail action for debts.Items
 
 
+Und dann,
+nach knapp 12 Arbeitsstunden an 2 Tagen 
+ein schönes Erfolgserlebnis, 
+mit dem ich 
+nun zufrieden ins WE gehen kann:
+das Hauptziel des neuen Moduls "Schuldnerberatung"
+ist druckbar: `0413/debts.Budget-1 (20).odt`_.
+Der Hauptteil dieses Dokuments wird durch folgenden Code produziert::
 
-Error while evaluating the expression "self.entries_by_group(ar)" defined in the "from" part of a statement.
-File "<string>", line 1, in <module>
-File "t:\hgwork\lino\lino\modlib\debts\models.py", line 193, in entries_by_group
-xml += sub_ar.table2xhtml()
-File "t:\hgwork\lino\lino\utils\tables.py", line 234, in table2xhtml
-return self.ui.table2xhtml(self)
-File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 2596, in table2xhtml
-return html.TABLE(*list(f()),cellspacing="3px",bgcolor="#ffffff", width="100%")
-File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 2584, in f
-cells = [TD(x) for x in ar.ah.store.row2html(ar,fields,row,sums)]
-File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 1052, in row2html
-yield fld.value2html(request,v)
-File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 243, in value2html
-return "<span>%s</span>" % ar.renderer.href_to(v)
-File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 254, in href_to
-url = self.js2url(self.instance_handler(obj))
-File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 361, in instance_handler
-raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
-<type 'exceptions.Exception'>: No detail action for debts.Items
+    def entries_by_group(self,ar):
+        xml = ''
+        ar.renderer = ar.ui.pdf_renderer
+        for group in ItemGroup.objects.all():
+            sub_ar = ar.spawn_request(EntriesByBudget,
+                master_instance=self,
+                item__group=group)
+            xml += "<h2>%s</h2>" % group
+            xml += etree.tostring(sub_ar.table2xhtml())
+        sub_ar = ar.spawn_request(DebtsByBudget,
+            master_instance=self)
+        xml += "<h2>Schulden</h2>"
+        xml += etree.tostring(sub_ar.table2xhtml())
+        xml = "<div>%s</div>" % xml
+        return xml
+        
+(Ist der nicht wunderschön kompakt? ("ar" steht für "action request")
+        
+Aber bon. Bevor das brauchbar wird, gilt es noch ein seit langem
+bekanntes und gefürchtetes "Detail" zu lösen: wie man sieht, stimmen die
+Kolonnenbreiten im Dokument (und damit verbunden Zellnformatierungen wie
+rechtsbündig) nicht. Das wird noch Fritzelei. 
+Siehe https://answers.launchpad.net/appy/+question/187455
+Gaëtan wird sich freuen, wenn ich das schaffe...
 
+Ansonsten fehlen dann (neben den ganz simplen Details) nur noch die
+Summen, und dann ist der Prototyp bereit für die erste Begutachtung.

@@ -12,7 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-This is abandoned. See :doc:`/blog/2011/0523`
+This is abandoned. 
+See :doc:`/blog/2011/0523`,
+:doc:`/blog/2012/0414`
 """
 
 from HTMLParser import HTMLParser

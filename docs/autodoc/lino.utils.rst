@@ -23,14 +23,6 @@ The :mod:`dbfreader` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`dumpy` Module
------------------------
-
-.. automodule:: lino.utils.dumpy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 The :mod:`html2xhtml` Module
 ----------------------------
 
@@ -43,14 +35,6 @@ The :mod:`instantiator` Module
 ------------------------------
 
 .. automodule:: lino.utils.instantiator
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`jsgen` Module
------------------------
-
-.. automodule:: lino.utils.jsgen
     :members:
     :undoc-members:
     :show-inheritance:
@@ -91,14 +75,6 @@ The :mod:`restify` Module
 -------------------------
 
 .. automodule:: lino.utils.restify
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`mti` Module
----------------------
-
-.. automodule:: lino.utils.mti
     :members:
     :undoc-members:
     :show-inheritance:
