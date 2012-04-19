@@ -54,7 +54,7 @@ from lino.utils import babel
 from lino.utils.choosers import chooser
 from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
-from lino.utils import overlap, overlap2, encompass
+from lino.utils.ranges import isrange, overlap, overlap2, encompass
 from lino.mixins.printable import DirectPrintAction
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str, models_by_abc
@@ -274,6 +274,10 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
         self.person_changed(request)
       
     def full_clean(self,*args,**kw):
+        r = self.active_period()
+        if not isrange(*r):
+            raise ValidationError(u'Contracts ends before it started.')
+        
         if self.type_id and self.type.exam_policy_id:
             if not self.exam_policy_id:
                 self.exam_policy_id = self.type.exam_policy_id
@@ -348,6 +352,9 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
         
     def active_period(self):
         return (self.applies_from, self.date_ended or self.applies_until)
+        #~ r = (self.applies_from, self.date_ended or self.applies_until)
+        #~ if isrange(r): return r
+        #~ return None
         
         
     #~ def data_control(self):
@@ -367,26 +374,26 @@ class OverlappingContractsTest:
         """
         Test whether this person has overlapping contracts.
         """
-        from lino.modlib.isip.models import ContractBase
+        #~ from lino.modlib.isip.models import ContractBase
         self.person = person
         self.actives = []
         for model in models_by_abc(ContractBase):
             for con1 in model.objects.filter(person=person):
                 p1 = con1.active_period()
-                if p1:
-                    self.actives.append((p1,con1))
+                #~ if p1:
+                self.actives.append((p1,con1))
         
     def check(self,con1):
         ap = con1.active_period()
-        if ap:
-            if not encompass((self.person.coached_from,self.person.coached_until),ap):
-                return _("Date range lies outside of coached period")
-            for (p2,con2) in self.actives:
-                if con1 != con2 and overlap2(ap,p2):
-                    return _("Date range overlaps with %(ctype)s #%(id)s") % dict(
-                      ctype=con2.__class__._meta.verbose_name,
-                      id=con2.pk
-                    )
+        #~ if ap:
+        if not encompass((self.person.coached_from,self.person.coached_until),ap):
+            return _("Date range lies outside of coached period")
+        for (p2,con2) in self.actives:
+            if con1 != con2 and overlap2(ap,p2):
+                return _("Date range overlaps with %(ctype)s #%(id)s") % dict(
+                  ctype=con2.__class__._meta.verbose_name,
+                  id=con2.pk
+                )
         return None
         
     def check_all(self):

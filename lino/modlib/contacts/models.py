@@ -835,4 +835,5 @@ def setup_config_menu(site,ui,user,m):
 def setup_explorer_menu(site,ui,user,m):
     config_contacts = m.add_menu("contacts",_("Contacts"))
     m.add_action(site.modules.contacts.Roles)
+    m.add_action(site.modules.countries.Cities)
   

@@ -2145,47 +2145,42 @@ tinymce.init({
 
     def setup_handle(self,h):
         #~ logger.debug('20120103 ExtUI.setup_handle() %s',h)
-        #~ if isinstance(h,layouts.TabPanelHandle):
-            #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
-          
-        #~ if isinstance(h,layouts.DetailHandle): self.setup_detail_handle(h)
-        #~ else:
-            if isinstance(h,tables.TableHandle):
-                if issubclass(h.report,table.Table):
-                    if h.report.model is None \
-                        or h.report.model is models.Model \
-                        or h.report.model._meta.abstract:
-                        return
-                ll = layouts.ListLayout(h.report,h.report.column_names,hidden_elements=h.report.hidden_columns)
-                #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.report.hidden_columns)
-                h.list_layout = ll.get_handle(self)
-            else:
-                h.list_layout = None
-                    
-            if h.report.parameters:
-                if h.report.params_template:
-                    params_template = h.report.params_template
-                else:
-                    #~ params_template= ' '.join([pf.name for pf in h.report.params])
-                    params_template= ' '.join(h.report.parameters.keys())
-                pl = layouts.ParamsLayout(h.report,params_template)
-                h.params_layout = pl.get_handle(self)
-                #~ h.params_layout.main.update(hidden = h.report.params_panel_hidden)
-                #~ h.params_layout = layouts.LayoutHandle(self,pl)
-                #~ logger.info("20120121 %s params_layout is %s",h,h.params_layout)
-            
-            h.store = ext_store.Store(h)
-            
-            #~ if h.store.param_fields:
-                #~ logger.info("20120121 %s param_fields is %s",h,h.store.param_fields)
-            
-            if h.list_layout:
-                h.on_render = self.build_on_render(h.list_layout.main)
+        if isinstance(h,tables.TableHandle):
+            if issubclass(h.report,table.Table):
+                if h.report.model is None \
+                    or h.report.model is models.Model \
+                    or h.report.model._meta.abstract:
+                    return
+            ll = layouts.ListLayout(h.report,h.report.column_names,hidden_elements=h.report.hidden_columns)
+            #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.report.hidden_columns)
+            h.list_layout = ll.get_handle(self)
+        else:
+            h.list_layout = None
                 
-            #~ elif isinstance(h,table.FrameHandle):
-                #~ if issubclass(h.report,table.EmptyTable):
-                    #~ h.store = ext_store.Store(h)
-              
+        if h.report.parameters:
+            if h.report.params_template:
+                params_template = h.report.params_template
+            else:
+                #~ params_template= ' '.join([pf.name for pf in h.report.params])
+                params_template= ' '.join(h.report.parameters.keys())
+            pl = layouts.ParamsLayout(h.report,params_template)
+            h.params_layout = pl.get_handle(self)
+            #~ h.params_layout.main.update(hidden = h.report.params_panel_hidden)
+            #~ h.params_layout = layouts.LayoutHandle(self,pl)
+            #~ logger.info("20120121 %s params_layout is %s",h,h.params_layout)
+        
+        h.store = ext_store.Store(h)
+        
+        #~ if h.store.param_fields:
+            #~ logger.info("20120121 %s param_fields is %s",h,h.store.param_fields)
+        
+        if h.list_layout:
+            h.on_render = self.build_on_render(h.list_layout.main)
+            
+        #~ elif isinstance(h,table.FrameHandle):
+            #~ if issubclass(h.report,table.EmptyTable):
+                #~ h.store = ext_store.Store(h)
+          
                 
                       
     def source_dir(self):
@@ -2702,12 +2697,14 @@ tinymce.init({
         return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
 
 
-    def table2odt(self,ar,output_file):
+    def old_table2odt(self,ar,output_file=None):
         """
         """
         #~ from lino.utils.xmlgen import odf
-        
-        columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+        if ar.request is None:
+            columns = None
+        else:
+            columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
         
         if columns:
             #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
@@ -2730,18 +2727,19 @@ tinymce.init({
                     headers.append(unicode(col.label or col.name))
                     widths.append(int(all_widths[i]))
         else:
-            fields = ar.ah.store.list_fields
+            #~ fields = ar.ah.store.list_fields
             headers = [unicode(col.label or col.name) 
                 for col in ar.ah.list_layout.main.columns]
             widths = [(col.width or col.preferred_width)
                 for col in ar.ah.list_layout.main.columns]
+            fields = [col.field._lino_atomizer for col in ar.ah.list_layout.main.columns]
                   
         tw = sum(widths)
         #~ width_specs = ["%d%%" % (w*100/tw) for w in widths]
         
         aw = 180 # available width 18cm = 180mm
         width_specs = ["%dmm" % (aw*w/tw) for w in widths]
-        #~ print 20120415, width_specs 
+        #~ print 20120415, width_specs , len(width_specs), len(fields)
         
         #~ odf.table2odt(headers,fields,widths,,row2cells)
         
@@ -2813,7 +2811,8 @@ tinymce.init({
                 tr.addElement(tc)
 
         doc.text.addElement(table)
-        doc.save(output_file) # , True)
-
+        if output_file:
+            doc.save(output_file) # , True)
+        return doc
 
 

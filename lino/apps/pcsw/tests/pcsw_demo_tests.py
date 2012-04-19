@@ -260,8 +260,8 @@ def test003(self):
     """
     cases = [
     #  [ id,         name, recno, first, prev, next, last ]
-       [ 119, "Altenberg",     1,   119,  None,  117, 195  ],
-       [ 117,     "Arens",     2,   119,  119,   118, 195  ],
+       [ 119, "Altenberg",     1,   119,  None,  117, 198  ],
+       [ 117,     "Arens",     2,   119,  119,   118, 198  ],
     ]
     # 
     for case in cases:
@@ -280,80 +280,20 @@ def test003(self):
             
 def test004(self):
     """
-    This tests whether date fields are correctly parsed.
-    See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
-    
-    ::
-    
-      {
-        "navinfo": {
-            "last": 2,
-            "recno": 1,
-            "prev": null,
-            "message": "Record  1 von 2",
-            "first": 1,
-            "next": 2
-        },
-        "disable_delete": null,
-        "data": {
-            "user_asdHidden": null,
-            "date_ended": null,
-            "languageHidden": "de",
-            "duties_company": null,
-            "ending": null,
-            "duties_asd": null,
-            "exam_policyHidden": null,
-            "duration": null,
-            "id": 1,
-            "regime": null,
-            "applies_from": '01.03.2010',
-            "refund_rate": null,
-            "endingHidden": null,
-            "userHidden": 4,
-            "responsibilities": null,
-            "personHidden": 16,
-            "delay_type": "Tage",
-            "reminder_text": "demo reminder",
-            "hourly_rate": null,
-            "type": "Konvention Art.60\u00a77 Sozial\u00f6konomie",
-            "schedule": null,
-            "reminder_date": '11.11.2010',
-            "company": "R-Cycle Sperrgutsortierzentrum",
-            "date_issued": null,
-            "contactHidden": 2,
-            "exam_policy": null,
-            "applies_until": '17.05.2009',
-            "user_asd": null,
-            "user": "root",
-            "reference_person": null,
-            "delay_value": 0,
-            "companyHidden": 83,
-            "disabled_fields": ["id"],
-            "language": "Deutsch",
-            "typeHidden": 1,
-            "person": "Altenberg Hans (16)",
-            "contact": "Arens Andreas (14) (Gesch\u00e4ftsf\u00fchrer)",
-            "delay_typeHidden": "D",
-            "goals": null,
-            "duties_dsbe": null,
-            "stages": null,
-            "date_decided": null
-        },
-        "id": 1,
-        "title": "Vertrag Nr. 1"
-      }
+    Test whether date fields are correctly parsed.
     """
     for value in ('01.03.2011','15.03.2011'):
         url = '/api/jobs/Contracts/1'
-        data =  'applies_from='+value+'&applies_until=17.05.2009&company=R-Cycle%20'
-        'Sperrgutsortierzentrum&companyHidden=83&contact=Arens%20Andreas%20(1'
-        '4)%20(Gesch%C3%A4ftsf%C3%BChrer)&contactHidden=2&date_decided=&date_e'
-        'nded=&date_issued=&delay_type=Tage&delay_typeHidden=D&delay_value=0&du'
-        'ration=&ending=Vertragsbeendigung%20ausw%C3%A4hlen...&endingHidden=&lan'
-        'guage=Deutsch&languageHidden=de&person=Altenberg%20Hans%20(16)&personHi'
-        'dden=16&reminder_date=11.11.2010&reminder_text=demo%20reminder&type=Kon'
-        'vention%20Art.60%C2%A77%20Sozial%C3%B6konomie&typeHidden=1&user=root&us'
-        'erHidden=4&user_asd=Benutzer%20ausw%C3%A4hlen...&user_asdHidden='
+        #~ data =  'applies_from='+value+'&applies_until=17.05.2009&company=R-Cycle%20'
+        #~ 'Sperrgutsortierzentrum&companyHidden=83&contact=Arens%20Andreas%20(1'
+        #~ '4)%20(Gesch%C3%A4ftsf%C3%BChrer)&contactHidden=2&date_decided=&date_e'
+        #~ 'nded=&date_issued=&delay_type=Tage&delay_typeHidden=D&delay_value=0&du'
+        #~ 'ration=&ending=Vertragsbeendigung%20ausw%C3%A4hlen...&endingHidden=&lan'
+        #~ 'guage=Deutsch&languageHidden=de&person=Altenberg%20Hans%20(16)&personHi'
+        #~ 'dden=16&reminder_date=11.11.2010&reminder_text=demo%20reminder&type=Kon'
+        #~ 'vention%20Art.60%C2%A77%20Sozial%C3%B6konomie&typeHidden=1&user=root&us'
+        #~ 'erHidden=4&user_asd=Benutzer%20ausw%C3%A4hlen...&user_asdHidden='
+        data =  'applies_from='+value
         
         response = self.request_PUT(url,data,REMOTE_USER='root')
         result = self.check_json_result(response,'message success data_record')
@@ -428,7 +368,7 @@ def test007(self):
       ['contacts/Persons', 53],
       ['pcsw/MyPersons',19],
       ['contacts/AllPersons', 74],
-      ['contacts/AllPartners', 102],
+      ['contacts/AllPartners', 105],
       ['courses/Courses', 4],
       ['courses/CourseProviders', 3],
       ['courses/CourseOffers', 4],
@@ -440,7 +380,8 @@ def test007(self):
       ['jobs/Contracts', 21], 
       ['jobs/Candidatures', 35],
       ['jobs/Studies', 3],
-      ['cal/Events', (204,205)], # seems that sometimes 204 is the correct number (depending on demo_date)
+      #~ ['cal/Events', (204,205)], # seems that sometimes 204 is the correct number (depending on demo_date)
+      ['cal/Events', (220,221)], # exact number can vary depending on demo_date
       ['cal/Tasks', 44],
       ['cal/Priorities', 10],
       ['notes/MyNotes', 28],
@@ -462,7 +403,7 @@ def test007(self):
             num = [num]
         if not result['count'] in num:
             self.fail(
-                "%s got %d rows instead of %d" % (case[0],result['count'],num))
+                "%s got %s rows instead of %s" % (case[0],result['count'],num))
 
     cases = [
       ['cv/SkillsByPerson/property',6],

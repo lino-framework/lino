@@ -44,6 +44,7 @@ tests:
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/choicelists.py
 	python lino/utils/jsgen.py
 	python lino/utils/__init__.py
+	python lino/utils/ranges.py
 	#~ python lino\utils\xmlgen\__init__.py
 	python lino/utils/xmlgen/cbss/__init__.py
 	python lino/utils/xmlgen/intervat/__init__.py

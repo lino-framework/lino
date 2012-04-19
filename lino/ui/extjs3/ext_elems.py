@@ -30,7 +30,7 @@ from lino import dd
 from lino.core import table
 from lino.core import layouts
 from lino.core import fields
-from lino.utils import constrain
+from lino.utils.ranges import constrain
 from lino.utils import jsgen
 from lino.utils import mti
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code

@@ -1,0 +1,19 @@
+20120419
+========
+
+Uff! After about 23 hours of experimenting I have now for the 
+first time a solution for the problem of rendering a formatted 
+table to odt (or pdf or rtf) using :term:`appy.pod`.
+:term:`ODFPy` has only a marginal role for generating the chunks of XML, 
+the main work is done by the `finalizeFunction` of 
+the :term:`appy.pod` renderer which inserts the additional "dynamic" 
+styles *afterwards*  (when the document has been processed).
+
+Concretely this is done in :mod:`lino.utils.appy_pod`
+and demonstrated in 
+:srcref:`/tests/appy/20120419/test.py`,
+:srcref:`/tests/appy/20120419/test_template.odt`
+and
+:srcref:`/tests/appy/20120419/test_result.odt`.
+
+Added a new minimal application :mod:`lino.apps.pim`.

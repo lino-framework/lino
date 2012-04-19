@@ -363,14 +363,14 @@ class ActionRequest(object):
     create_kw = None
     renderer = None
     
-    def __init__(self,ui,report,request,action,renderer=None,**kw):
+    def __init__(self,ui,actor,request,action,renderer=None,**kw):
         #~ ActionRequest.__init__(self,ui,action)
         self.ui = ui
         self.renderer = renderer
         self.action = action
         self.step = 0 # confirmation counter
-        self.report = report
-        self.ah = report.get_handle(ui)
+        self.report = actor
+        self.ah = actor.get_handle(ui)
         self.request = request
         if request is not None:
             if request.method == 'PUT':

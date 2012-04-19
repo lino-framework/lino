@@ -70,6 +70,8 @@ from lino.utils.babel import language_choices
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils import mti
+from lino.utils.ranges import isrange
+
 from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str
@@ -485,6 +487,11 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
             if qs1.count() == 1: return qs1[0]
             if qs2.count() == 1: return qs2[0]
         
+    def full_clean(self,*args,**kw):
+        if not isrange(self.coached_from,self.coached_until):
+            raise ValidationError(u'Coaching period ends before it started.')
+        super(Person,self).full_clean(*args,**kw)
+            
     #~ def clean(self):
         #~ if self.job_office_contact: 
             #~ if self.job_office_contact.b == self:

@@ -43,6 +43,7 @@ extension.
     lino.utils.babel
     lino.utils.choosers
     lino.utils.memo
+    lino.utils.ranges
     lino.utils.tables
     lino.utils.test
     lino.utils.xmlgen

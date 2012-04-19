@@ -885,8 +885,33 @@ class Lino(object):
         """
         pass
         
-    def setup_menu(self,ui,user,menu):
+    def old_setup_menu(self,ui,user,menu):
         raise NotImplementedError
+        
+    def setup_menu(self,ui,user,main):
+        from django.utils.translation import ugettext_lazy as _
+        m = main.add_menu("master",_("Master"))
+        self.on_each_app('setup_master_menu',self,ui,user,m)
+        m = main.add_menu("my",_("My menu"))
+        self.on_each_app('setup_my_menu',self,ui,user,m)
+        m = main.add_menu("config",_("Configure"))
+        self.on_each_app('setup_config_menu',self,ui,user,m)
+        m = main.add_menu("explorer",_("Explorer"))
+        self.on_each_app('setup_explorer_menu',self,ui,user,m)
+        m = main.add_menu("site",_("Site"))
+        self.on_each_app('setup_site_menu',self,ui,user,m)
+        return main
+
+
+    def on_each_app(self,methname,*args):
+        from django.conf import settings
+        from django.utils.importlib import import_module
+        for app_name in settings.INSTALLED_APPS:
+            mod = import_module('.models', app_name)
+            meth = getattr(mod,methname,None)
+            if meth is not None:
+                meth(*args)
+        
         
     #~ def get_calendar_color(self,calendar,request):
         #~ if calendar.user == request.user:

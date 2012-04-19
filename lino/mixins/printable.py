@@ -44,7 +44,7 @@ from lino.utils import iif
 from lino.utils import babel 
 #~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
-from lino.utils.appy_pod import setup_renderer
+from lino.utils.appy_pod import Renderer
 from lino.tools import makedirs_if_missing
 
 
@@ -274,7 +274,7 @@ class AppyBuildMethod(SimpleBuildMethod):
     
     def simple_build(self,ar,elem,tpl,target):
         #~ from lino.models import get_site_config
-        from appy.pod.renderer import Renderer
+        #~ from appy.pod.renderer import Renderer
         #~ renderer = None
         context = dict(self=elem,
             dtos=babel.dtos,
@@ -300,7 +300,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ locale.setlocale(locale.LC_ALL,ls)
         #~ Error: unsupported locale setting
         renderer = Renderer(tpl, context, target,**settings.LINO.appy_params)
-        setup_renderer(renderer)
+        #~ setup_renderer(renderer)
         #~ renderer.context.update(restify=debug_restify)
         renderer.run()
         babel.set_language(savelang)

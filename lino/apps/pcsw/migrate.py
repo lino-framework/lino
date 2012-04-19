@@ -1030,6 +1030,9 @@ def migrate_from_1_4_3(globals_dict):
     - renamed "bcss" to "cbss"
     - renamed "lino.apps.dsbe" to "lino.apps.pcsw"
     - cal.Event.rset
+    
+    When migrating to the new version, we need to expect and manually 
+    handle invalid contracts and persons. See :doc:`/blog/2012/0418`.
     """
     from lino.tools import resolve_model
     #~ from lino.utils import mti

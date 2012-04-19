@@ -1,0 +1,34 @@
+20120418
+========
+
+
+Range 1 ends before it started
+------------------------------
+
+The server produced a ValueError "Range 1 ends before it started" 
+when :class:`lino.apps.pcsw.models.ClientsTest` 
+was faced with a contract that ends before it started. 
+
+A nice case of a Murphy time bomb. Lino accepted contracts that 
+end before they started. The error message should have come when 
+trying to save the contract.
+
+Solution:
+New module :mod:`lino.utils.ranges` 
+contains utility methods for working with "ranges".
+Most of it was previously in :mod:`lino.utils` at the top-level.
+But it has one new function :mod:`lino.utils.ranges.isrange` 
+that is now used in 
+the `full_clean` methods of
+:class:`lino.apps.pcsw.models.Person`
+and
+:class:`lino.apps.isip.models.ContractBase`
+to raise ValidationError(
+"Coaching period ends before it started." and 
+"Contracts ends before it started.".
+
+Even :mod:`lino.apps.pcsw.fixtures.demo` produced invalid ISIP Contracts.
+
+When migrating the customer's data to the new version, we need to expect 
+and manually handle contracts and persons that fall into this category.
+See :func:`lino.apps.pcsw.migrate.migrate_from_1_4_3`.

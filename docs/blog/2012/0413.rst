@@ -81,9 +81,10 @@ nach knapp 12 Arbeitsstunden an 2 Tagen
 ein schönes Erfolgserlebnis, 
 mit dem ich 
 nun zufrieden ins WE gehen kann:
-das Hauptziel des neuen Moduls "Schuldnerberatung"
-ist druckbar: `0413/debts.Budget-1 (20).odt`_.
-Der Hauptteil dieses Dokuments wird durch folgenden Code produziert::
+das Hauptziel des neuen Moduls "Schuldnerberatung", 
+eine so genannte Budgetplanung, ist druckbar.
+Der Hauptteil dieses Dokuments wird durch folgenden Code produziert
+("ar" steht für "action request")::
 
     def entries_by_group(self,ar):
         xml = ''
@@ -101,8 +102,7 @@ Der Hauptteil dieses Dokuments wird durch folgenden Code produziert::
         xml = "<div>%s</div>" % xml
         return xml
         
-(Ist der nicht wunderschön kompakt? ("ar" steht für "action request")
-        
+Gefällt mir.         
 Aber bon. Bevor das brauchbar wird, gilt es noch ein seit langem
 bekanntes und gefürchtetes "Detail" zu lösen: wie man sieht, stimmen die
 Kolonnenbreiten im Dokument (und damit verbunden Zellnformatierungen wie

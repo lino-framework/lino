@@ -60,14 +60,20 @@ In fact we need to integrate both projects:
 `do text from <http://appyframework.org/podWritingAdvancedTemplates.html>`_ 
 currently simply expects a chunk of XML to be 
 inserted at that place of the template. 
-But to specify widths of table columns, 
-we also need to add styles to the document:
+But it seems that we need more. 
+In order to specify widths of table columns, 
+we also need to be able add styles to the document:
 at least one automatic style for each column that has a width specified.
 This cannot be done using a simple XML chunk.
-The `appy.pod.parts.OdtTable´ is probably useless.
-My idea is to extend the `do text from` clause so that 
-the user function may return a 
-`odf.opendocument.OpenDocumentText 
+The `appy.pod.parts.OdtTable´ is useless as long 
+as it cannot do more than returning an XML chunk.
+
+My suggestion for :term:`appy.pod` is to extend 
+the `do text from` clause so that 
+the user function may return something else than a string. 
+For example a `dict` with different keys "content", "styles", 
+"automaticstyles"...
+or an `odf.opendocument.OpenDocumentText 
 <https://joinup.ec.europa.eu/svn/odfpy/trunk/odf/opendocument.py>`_ 
 instance, and in that case appy.pod would 
 (1) inspect the `styles` and `automaticstyles` 
@@ -75,3 +81,5 @@ of this instance and add them to the styles and automatic styles
 of the template, (2) consider the whole `text` part 
 of the document instance as the XML chunk to be inserted.
 
+(Added this as a comment 
+to https://answers.launchpad.net/appy/+question/187455)

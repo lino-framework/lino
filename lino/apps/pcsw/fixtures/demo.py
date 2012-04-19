@@ -13,8 +13,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import decimal
-from dateutil.relativedelta import relativedelta
-ONE_DAY = relativedelta(days=1)
+#~ from dateutil.relativedelta import relativedelta
+#~ ONE_DAY = relativedelta(days=1)
+import datetime
+ONE_DAY = datetime.timedelta(days=1)
 
 from django.db import models
 from django.conf import settings
@@ -464,7 +466,6 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     
     from lino.modlib.isip.models import ContractType, Contract
     
-    
     def check_contract(cont):
         #~ cont.save() # otherwise autofield counter not reset between isip.Contract and jobs.Contract
         modified = False
@@ -497,9 +498,11 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     CTYPES = Cycler(ContractType.objects.all())
     
     for i in range(20):
+        af = settings.LINO.demo_date(-100+i*7)
         yield check_contract(Contract(type=CTYPES.pop(),
-            applies_from=settings.LINO.demo_date(-100+i*7),
-            applies_until=settings.LINO.demo_date(-i*7+DURATIONS.pop()),
+            applies_from=af,
+            applies_until=af+datetime.timedelta(days=DURATIONS.pop()),
+            #~ applies_until=settings.LINO.demo_date(-i*7+DURATIONS.pop()),
             person=CLIENTS.pop(),user=USERS.pop()))
         
     
