@@ -31,6 +31,7 @@ extension.
     
     lino.tools
     lino.utils
+    lino.utils.appy_pod
     lino.utils.auth
     lino.utils.sqllog
     lino.utils.log

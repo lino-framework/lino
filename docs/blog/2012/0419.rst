@@ -17,3 +17,4 @@ and
 :srcref:`/tests/appy/20120419/test_result.odt`.
 
 Added a new minimal application :mod:`lino.apps.pim`.
+

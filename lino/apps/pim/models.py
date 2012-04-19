@@ -11,6 +11,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+PIM stands for Personal Information Manager, 
+but in fact it is just a minimal application used for 
+tests, demonstrations and didactical purposes.
+"""
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
