@@ -1,0 +1,7 @@
+20120420
+========
+
+Digesting yesterday's success
+-----------------------------
+
+The [pdf] button now produces a pdf with correct column widths.

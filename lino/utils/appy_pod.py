@@ -44,6 +44,8 @@ from appy.pod.renderer import Renderer as AppyRenderer
 
 from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
+from lino.ui import requests as ext_requests
+
 
 from django.utils.encoding import force_unicode
 

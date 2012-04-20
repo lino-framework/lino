@@ -1452,26 +1452,26 @@ tinymce.init({
                     w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
                 return response
                 
-            if fmt == ext_requests.URL_FORMAT_ODT:
+            #~ if fmt == ext_requests.URL_FORMAT_ODT:
+                #~ if ar.get_total_count() > MAX_ROW_COUNT:
+                    #~ raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
+                #~ target_parts = ['cache', 'odt', str(rpt) + '.odt']
+                #~ target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
+                #~ target_url = self.media_url(*target_parts)
+                #~ ar.renderer = self.pdf_renderer
+                #~ if os.path.exists(target_file):
+                    #~ os.remove(target_file)
+                #~ logger.info(u"odfpy render %s -> %s",rpt,target_file)
+                #~ self.table2odt(ar,target_file)
+                #~ return http.HttpResponseRedirect(target_url)
+            
+            if fmt in (ext_requests.URL_FORMAT_PDF,ext_requests.URL_FORMAT_ODT):
                 if ar.get_total_count() > MAX_ROW_COUNT:
                     raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-                target_parts = ['cache', 'odt', 
-                    rpt.app_label + '.' + rpt.__name__ + '.odt']
-                target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
-                target_url = self.media_url(*target_parts)
-                ar.renderer = self.pdf_renderer
-                if os.path.exists(target_file):
-                    os.remove(target_file)
-                logger.info(u"odfpy render %s -> %s",rpt,target_file)
-                self.table2odt(ar,target_file)
-                return http.HttpResponseRedirect(target_url)
             
-            if fmt == ext_requests.URL_FORMAT_PDF:
-                if ar.get_total_count() > MAX_ROW_COUNT:
-                    raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-            
-                from lino.utils.appy_pod import setup_renderer
-                from appy.pod.renderer import Renderer
+                #~ from lino.utils.appy_pod import setup_renderer
+                from lino.utils.appy_pod import Renderer
+                #~ from appy.pod.renderer import Renderer
                 
                 tpl_leaf = "Table.odt" 
                 #~ tplgroup = rpt.app_label + '/' + rpt.__name__
@@ -1480,8 +1480,9 @@ tinymce.init({
                 if not tplfile:
                     raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
                     
-                target_parts = ['cache', 'appypdf', 
-                    rpt.app_label + '.' + rpt.__name__ + '.pdf']
+                #~ target_parts = ['cache', 'appypdf', str(rpt) + '.odt']
+                #~ target_parts = ['cache', 'appypdf', str(rpt) + '.pdf']
+                target_parts = ['cache', 'appypdf', str(rpt) + '.' + fmt]
                 target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
                 target_url = self.media_url(*target_parts)
                 ar.renderer = self.pdf_renderer
@@ -1490,13 +1491,12 @@ tinymce.init({
                 [NOTE] :doc:`/blog/2012/0211`:
                 
                 """
-                #~ body = self.table2xhtml(ar).tostring().encode('utf-8')
-                body = etree.tostring(self.table2xhtml(ar))
-                #~ body = self.table2xhtml(ar).tostring()
+                #~ body = etree.tostring(self.table2xhtml(ar))
                 #~ logger.info("20120122 body is %s",body)
                 context = dict(
-                    self=unicode(ar.get_title()),
-                    table_body=body,
+                    ar=ar,
+                    title=unicode(ar.get_title()),
+                    #~ table_body=body,
                     dtos=babel.dtos,
                     dtosl=babel.dtosl,
                     dtomy=babel.dtomy,
@@ -1517,7 +1517,7 @@ tinymce.init({
                 logger.info(u"appy.pod render %s -> %s (params=%s",
                     tplfile,target_file,settings.LINO.appy_params)
                 renderer = Renderer(tplfile, context, target_file,**settings.LINO.appy_params)
-                setup_renderer(renderer)
+                #~ setup_renderer(renderer)
                 #~ renderer.context.update(restify=debug_restify)
                 renderer.run()
                 return http.HttpResponseRedirect(target_url)

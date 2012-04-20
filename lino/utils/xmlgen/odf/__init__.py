@@ -13,15 +13,16 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 u"""
-Tools for generating 
-`Open Document 
+Tools for generating `Open Document 
 <http://lists.oasis-open.org/archives/tc-announce/201201/msg00001.html>`_ 
 files and chunks thereof.
 
-This module is no longer maintained because I discovered Søren Roug's
-`ODFPY <https://joinup.ec.europa.eu/software/odfpy>`_ library 
-which does it better.
+It uses :term:`lxml` and a copy of the original RelaxNG schema
+(:srcref:`/lino/utils/xmlgen/odf/relaxng/OpenDocument-v1.2-os-schema.rng`)
 
+Unlike Søren Roug's
+`ODFPY <https://joinup.ec.europa.eu/software/odfpy>`_ 
+library, validation is done only upon request.
 
 
 Generating validated chunks of ODF
@@ -106,7 +107,8 @@ This is functionally equivalent (but more easy to code) :
 </office:document>
 <BLANKLINE>
 
-There is also a shortcut function `validate_chunks` which does all this wrapping work:
+There is also a shortcut function `validate_chunks` 
+which does all this wrapping work:
 
 >>> validate_chunks(text.p("Hello world!"))
 
@@ -212,6 +214,12 @@ class Style(xg.Namespace):
         """)
 style = Style('style',"urn:oasis:names:tc:opendocument:xmlns:style:1.0")
 
+class FO(xg.Namespace):
+    def setup_namespace(self):
+        self.define_names("""
+        """)
+fo = FO('fo',"urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0")
+
 class Office(xg.Namespace):
     used_namespaces=[text,table,style]
     def setup_namespace(self):
@@ -222,13 +230,8 @@ class Office(xg.Namespace):
         """)
 
 office = Office('office',"urn:oasis:names:tc:opendocument:xmlns:office:1.0")
-#~ office = xg.Namespace('office',"urn:oasis:names:tc:opendocument:xmlns:office:1.0",
-    #~ used_namespaces=[text,table])
 
 table.value_type = office.value_type
-
-
-
 
 rng_tree = etree.parse(rngpath('OpenDocument-v1.2-os-schema.rng'))
 validator = etree.RelaxNG(rng_tree)
@@ -254,16 +257,6 @@ def validate_chunks(*chunks):
     )
     validate(root)
 
-#~ def validate_chunks(*chunks):
-    #~ root = office.document(
-        #~ office.body(
-          #~ office.text(*chunks)),
-    #~ )
-    #~ office.update_attribs(root,
-        #~ version="1.2",
-        #~ mimetype="application/vnd.oasis.opendocument.text")
-    #~ validate(root)
-  
 
 
 def render_to_odt(target_file,startfile=False,**context):
