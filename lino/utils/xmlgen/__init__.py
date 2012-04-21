@@ -20,10 +20,22 @@ and is used by modules
 :mod:`lino.utils.xmlgen.cbss` or
 :mod:`lino.utils.xmlgen.intervat`.
 
+>>> foo = Namespace('foo','http://foo.com')
+>>> foo.define_names("bar baz")
+>>> bar = foo.bar()
+>>> baz = bar.add_child('baz')
+>>> print tostring(baz)
+
+
+>>> e = etree.Element("{http://foo.com}e")
+>>> print tostring(e)
+<ns0:e xmlns:ns0="http://foo.com"/>
+>>> print e.nsmap
+
 """
 
 import logging
-logging.basicConfig(level=logging.INFO)
+#~ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -31,6 +43,9 @@ import datetime
 
 from lxml import etree
 from lxml.builder import ElementMaker # lxml only !
+
+tostring = etree.tostring
+
 from lino.utils import Warning
 
 TYPEMAP = {
@@ -81,6 +96,17 @@ class Namespace(object):
           
         self.validator = validator
         
+        #~ class NSElement(etree.ElementBase):
+            #~ def add_child(elem,name,*args,**kw):
+                #~ ecl = getattr(self,name)
+                #~ kw = self.makeattribs(**kw)
+                #~ child = ecl(*args,**kw)
+                #~ elem.append(child)
+                #~ return child
+                
+        #~ kw.update(makeelement=NSElement)
+
+        
         if targetNamespace is not None:
             self.targetNamespace = targetNamespace
         if self.targetNamespace is not None:
@@ -106,13 +132,6 @@ class Namespace(object):
     def setup_namespace(self):
         pass
         
-    def makeattribs(self,*args,**kw):
-        xkw = dict()
-        for k,v in kw.items():
-            e = getattr(self,k)()
-            xkw[e.tag] = v
-        return xkw
-        
     def unused_makeelement(self,*args,**kw):
         xkw = dict()
         for k,v in kw.items():
@@ -123,9 +142,7 @@ class Namespace(object):
             else:
                 xkw[e().tag] = v
         return etree.Element(*args,**xkw)
-        
     
-        
     def define_names(self,names):
         for name in names.split():
             iname = name.replace("-","_")
@@ -138,13 +155,6 @@ class Namespace(object):
                     #~ raise Exception("%s has no attribute %s" % (self.__class__.__name__,name))
             setattr(self,iname,getattr(self._element_maker,name))
 
-    def update_attribs(self,root,**kw):
-        for k,v in kw.items():
-            e = getattr(self,k)()
-            #~ e = self.__getattr__(k)()
-            root.set(e.tag,v)
-        
-        
     def define_names_from(self,e):
         name = e.get('name',None)
         if name is not None:
@@ -162,6 +172,37 @@ class Namespace(object):
         for ee in e:
             self.define_names_from(ee)
 
+    def getnsattr(self,elem,name):
+        #~ if self.targetNamespace is None or name.startswith('{'):
+            #~ return elem.get(name)
+        return elem.get(self._element_maker._namespace + name)
+        
+    def makeattribs(self,**kw):
+        #~ ns = self._element_maker._namespace
+        #~ if ns is None: return kw
+        xkw = dict()
+        for k,v in kw.items():
+            e = getattr(self,k)()
+            xkw[e.tag] = v
+            #~ xkw[ns + k] = v
+        return xkw
+        
+    #~ def update_attribs(self,root,**kw):
+    def update(self,root,**kw):
+        for k,v in kw.items():
+            e = getattr(self,k)()
+            #~ e = self.__getattr__(k)()
+            root.set(e.tag,v)
+            
+    def add_child(self,parent,_name,**kw):
+        ecl = getattr(self,_name)
+        kw = self.makeattribs(**kw)
+        #~ print 20120420, kw
+        e = ecl(**kw)
+        parent.append(e)
+        return e
+        
+        
     #~ def __getattr__(self,name):
         #~ return self._element_maker.__getattr__(name)
         #~ # return self._element_maker(*args,**kw)

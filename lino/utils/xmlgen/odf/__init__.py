@@ -180,6 +180,8 @@ import os
 from lxml import etree
 from lino.utils import xmlgen as xg
 
+tostring = xg.tostring
+
 def rngpath(*parts):
     p1 = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(p1,'relaxng',*parts)
@@ -190,7 +192,9 @@ def rngpath(*parts):
 
 class Text(xg.Namespace):
     def setup_namespace(self):
-        self.define_names("p")
+        self.define_names("""
+        p style-name
+        """)
 
 text = Text('text',"urn:oasis:names:tc:opendocument:xmlns:text:1.0")
 #~ text = xg.Namespace('text',"urn:oasis:names:tc:opendocument:xmlns:text:1.0")
@@ -202,21 +206,43 @@ class Table(xg.Namespace):
         name
         style-name
         number-columns-repeated
+        table-rows
+        table-header-rows
         table-row
         table-cell
+        table-columns
         table-column
+        table-column-group
         """)
 table = Table('table',"urn:oasis:names:tc:opendocument:xmlns:table:1.0")
 
 class Style(xg.Namespace):
     def setup_namespace(self):
         self.define_names("""
+        styles automaticstyles
+        style name family
+        parent-style-name
+        paragraph-properties
+        text-properties
+        number-lines
+        line-number
+        table-column-properties
+        table-cell-properties
+        table-row-properties
+        column-width
         """)
 style = Style('style',"urn:oasis:names:tc:opendocument:xmlns:style:1.0")
 
 class FO(xg.Namespace):
     def setup_namespace(self):
         self.define_names("""
+        text-align justify-single-word
+        margin-top margin-bottom
+        margin-left margin-right
+        padding border
+        padding-left padding-right padding-top padding-bottom
+        font-weight
+        background-color
         """)
 fo = FO('fo',"urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0")
 
@@ -244,8 +270,9 @@ if False:
 
 
 def validate(root):
-    if not validator.validate(root):
-        raise xg.Warning(validator.error_log.last_error)
+    validator.assertValid(root)
+    #~ if not validator.validate(root):
+        #~ raise xg.Warning(validator.error_log.last_error)
 
 def validate_chunks(*chunks):
     root = office.document(

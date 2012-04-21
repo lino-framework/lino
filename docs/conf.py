@@ -260,8 +260,9 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
     
     
 extlinks = {
-  'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'issue '),
-  'srcref': ('http://code.google.com/p/lino/source/browse%s', 'file '),
+  'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
+  'checkin': ('http://code.google.com/p/lino/source/detail?r=%s', 'Checkin '),
+  'srcref': ('http://code.google.com/p/lino/source/browse%s', ''),
   'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
   'extux': ('http://extjs-ux.org/ext-docs/?class=%s', ''),
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),

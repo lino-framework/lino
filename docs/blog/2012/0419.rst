@@ -4,6 +4,7 @@
 Uff! After about 23 hours of experimenting I have now for the 
 first time a solution for the problem of rendering a formatted 
 table to odt (or pdf or rtf) using :term:`appy.pod`.
+
 :term:`ODFPy` has only a marginal role for generating the chunks of XML, 
 the main work is done by the `finalizeFunction` of 
 the :term:`appy.pod` renderer which inserts the additional "dynamic" 

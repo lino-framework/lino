@@ -1,7 +1,62 @@
 20120420
 ========
 
-Digesting yesterday's success
------------------------------
+How to generate chunks of ODF XML
+---------------------------------
 
-The [pdf] button now produces a pdf with correct column widths.
+The `[pdf]` button now produces a pdf with correct column widths.
+:checkin:`abf9ee80039f`.
+
+Now I'll take some time to find the "best" method for 
+generating chunks of ODF XML.
+Currently I'm using :term:`odfpy` which looks something like::
+
+    doc = OpenDocumentText()
+    
+    tablecontents = Style(name="Table Contents", family="paragraph")
+    tablecontents.addElement(ParagraphProperties(numberlines="false", 
+        linenumber="0"))
+    doc.styles.addElement(tablecontents)
+    
+    tableheader = Style(name="Table Column Header", family="paragraph")
+    tableheader.addElement(ParagraphProperties(numberlines="false", 
+        linenumber="0"))
+    doc.styles.addElement(tableheader)
+    
+    table = Table()
+    doc.text.addElement(table)
+    
+    for i,fld in enumerate(fields):
+        cs = Style(name=fld.name, family="table-column")
+        cs.addElement(TableColumnProperties(columnwidth=width_specs[i]))
+        doc.automaticstyles.addElement(cs)
+        table.addElement(TableColumn(stylename=cs))
+        
+    # header
+    hr = TableRow()
+    table.addElement(hr)
+    for fld in fields:
+        tc = TableCell()
+        tc.addElement(P(
+            stylename=tableheader,
+            text=force_unicode(fld.field.verbose_name or fld.name)))
+        hr.addElement(tc)
+        
+    for row in ar.data_iterator:
+        tr = TableRow()
+        table.addElement(tr)
+        
+        for i,fld in enumerate(fields):
+            tc = TableCell()
+            v = fld.full_value_from_object(ar,row)
+            tc.addElement(P(stylename=tablecontents,text=unicode(v)))
+            tr.addElement(tc)
+    doc.save(output_file) # , True)
+
+
+The problem with :term:`odfpy` is that it 
+is not really used and probably will not be maintained.
+So I'm going to try and do the same using my own 
+:mod:`lino.utils.xmlgen.odf`
+module (which in turn is in fact just a wrapper around :term:`lxml`).
+

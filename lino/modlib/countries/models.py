@@ -117,7 +117,7 @@ class Cities(dd.Table):
     column_names = "country name zip_code *"
     
 class CitiesByCountry(Cities):
-    column_names = "name zip_code country *"
+    column_names = "name zip_code *"
     master_key = 'country'
 
 
