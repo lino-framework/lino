@@ -186,11 +186,14 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
         if qs.count() > 1:
             return qs[1]
             
-    def entries_by_group(self,ar):
+    def item_groups(self):
+        return ItemGroup.objects.all()
+        
+    def unused_entries_by_group(self,ar):
         xml = ''
         ar.renderer = ar.ui.pdf_renderer
         for group in ItemGroup.objects.all():
-            sub_ar = ar.spawn_request(EntriesByBudget,
+            sub_ar = ar.spawn(EntriesByBudget,
                 master_instance=self,
                 item__group=group)
             #~ xml += ui.table2xhtml(sub_ar)
@@ -198,7 +201,7 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
             xml += etree.tostring(sub_ar.table2xhtml())
             #~ xml += sub_ar.table2xhtml()
             #~ xml += "<text:p>%s</text:p>" % etree.tostring(sub_ar.table2xhtml())
-        sub_ar = ar.spawn_request(DebtsByBudget,
+        sub_ar = ar.spawn(DebtsByBudget,
             master_instance=self)
         #~ xml += u"<h2>%s</h2>" % force_unicode(sub_ar.get_title())
         xml += "<h2>Schulden</h2>"

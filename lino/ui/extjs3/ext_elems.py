@@ -684,8 +684,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         if pw is not None:
             kw.setdefault('preferred_width',pw)
             #~ kw.update(preferred_width=pw)
-        self.report = table.get_model_report(field.rel.to)
-        a = self.report.detail_action
+        self.actor = table.get_model_report(field.rel.to)
+        a = self.actor.detail_action
         if a is not None:
             if not isinstance(layout_handle.layout,layouts.ListLayout):
                 self.value_template = "new Lino.TwinCombo(%s)"
@@ -700,8 +700,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         
     def get_field_options(self,**kw):
         kw = super(ForeignKeyElement,self).get_field_options(**kw)
-        kw.update(pageSize=self.report.page_length)
-        kw.update(emptyText=_('Select a %s...') % self.report.model._meta.verbose_name)
+        kw.update(pageSize=self.actor.page_length)
+        kw.update(emptyText=_('Select a %s...') % self.actor.model._meta.verbose_name)
         return kw
 
     def cell_html(self,ui,row):
@@ -748,13 +748,13 @@ class DateFieldElement(FieldElement):
     
     #~ def get_field_options(self,**kw):
         #~ kw = FieldElement.get_field_options(self,**kw)
-        #~ kw.update(format=self.layout_handle.rh.report.date_format)
+        #~ kw.update(format=self.layout_handle.rh.actor.date_format)
         #~ return kw
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='datecolumn')
-        #~ kw.update(format=self.layout_handle.rh.report.date_format)
+        #~ kw.update(format=self.layout_handle.rh.actor.date_format)
         kw.update(format=settings.LINO.date_format_extjs)
         return kw
     
@@ -931,7 +931,7 @@ class GenericForeignKeyElement(DisplayElement):
     """
     def __init__(self,layout_handle,field,**kw):
         #~ if not hasattr(field,'name'):
-            #~ raise Exception("Field %s.%s has no name!" % (layout_handle.rh.report,field))
+            #~ raise Exception("Field %s.%s has no name!" % (layout_handle.rh.actor,field))
         #~ assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = False
@@ -1395,7 +1395,7 @@ class GridElement(Container):
         """
         #~ assert isinstance(rpt,dd.AbstractTable), "%r is not a Table!" % rpt
         self.value_template = "new Lino.%s.GridPanel(%%s)" % rpt
-        self.report = rpt
+        self.actor = rpt
         if len(columns) == 0:
             self.rh = rpt.get_handle(layout_handle.ui)
             if not hasattr(self.rh,'list_layout'):

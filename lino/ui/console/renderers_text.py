@@ -143,7 +143,7 @@ class DetailColumn(Column):
     is_filter = False
     def __init__(self,renderer,name,dtlrep,*args):
         #print field.var_name
-        Column.__init__(self,renderer.report,name,*args)
+        Column.__init__(self,renderer.actor,name,*args)
         self.name = name
         self.renderer = renderer
         self.dtlrep = dtlrep
@@ -188,9 +188,9 @@ class ColumnsReportRequest(reports.ReportActionRequest):
         reports.ReportRequest.__init__(self,rh,*args,**kw)
         self.columns_by_name = {}
         columns = []
-        meta = rh.report.model._meta
-        if rh.report.column_names:
-            for colname in rh.report.column_names.split() :
+        meta = rh.actor.model._meta
+        if rh.actor.column_names:
+            for colname in rh.actor.column_names.split() :
                 a = colname.split(":")
                 if len(a) == 1:
                     fieldname = colname
@@ -203,7 +203,7 @@ class ColumnsReportRequest(reports.ReportActionRequest):
                       meta.get_field_by_name(fieldname)
                     #print field, model, direct, m2m 
                 except models.FieldDoesNotExist,e:
-                    dtlrep = rh.report.list_layout._inlines.get(fieldname,None)
+                    dtlrep = rh.actor.list_layout._inlines.get(fieldname,None)
                     if dtlrep != None:
                         col = DetailColumn(self,
                                            fieldname,
@@ -266,7 +266,7 @@ class TextReportRequest(ColumnsReportRequest):
         if self.columnWidths is not None:
             i = 0
             for item in self.columnWidths.split():
-                col = self.report.columns[i]
+                col = self.actor.columns[i]
                 if item.lower() == "d":
                     col.width = col.getMinWidth()
                 elif item == "*":

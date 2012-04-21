@@ -553,10 +553,10 @@ class Actor(Handled):
         return None
               
     @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls
-        if action is None:
-            action = self.default_action
+    def request(self,ui=None,request=None,action=None,**kw):
+        #~ self = cls
+        #~ if action is None:
+            #~ action = self.default_action
         return actions.ActionRequest(ui,self,request,action,**kw)
 
         
@@ -564,14 +564,14 @@ class Actor(Handled):
 class FrameHandle(base.Handle): 
     def __init__(self,ui,frame):
         #~ assert issubclass(frame,Frame)
-        self.report = frame
+        self.actor = frame
         base.Handle.__init__(self,ui)
 
     def get_actions(self,*args,**kw):
-        return self.report.get_actions(*args,**kw)
+        return self.actor.get_actions(*args,**kw)
         
     def __str__(self):
-        return "%s on %s" %(self.__class__.__name__,self.report)
+        return "%s on %s" %(self.__class__.__name__,self.actor)
 
 
 

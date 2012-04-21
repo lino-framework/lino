@@ -45,7 +45,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-from cStringIO import StringIO
 
 from appy.pod.renderer import Renderer as AppyRenderer
 
@@ -66,10 +65,11 @@ def elem2str(e):
 OAS = '<office:automatic-styles>'
 OFFICE_STYLES = '<office:styles>'
 
-def unused_elem2str(e):
-    xml = StringIO()
-    e.toXml(0, xml)
-    return xml.getvalue()
+#~ from cStringIO import StringIO
+#~ def elem2str(e):
+    #~ xml = StringIO()
+    #~ e.toXml(0, xml)
+    #~ return xml.getvalue()
         
 
 
@@ -170,7 +170,7 @@ class Renderer(AppyRenderer):
         else:
             if column_names:
                 from lino.core import layouts
-                ll = layouts.ListLayout(ar.report,column_names)
+                ll = layouts.ListLayout(ar.actor,column_names)
                 list_layout = ll.get_handle(self.ui)
                 columns = list_layout.main.columns
             else:
@@ -237,7 +237,7 @@ class Renderer(AppyRenderer):
         
         for i,fld in enumerate(fields):
             #~ print 20120415, repr(fld.name)
-            k = str(ar.report)+"."+fld.name
+            k = str(ar.actor)+"."+fld.name
             st = odf.style.add_child(self.my_automaticstyles,'style',name=k,family="table-column")
             if use_relative_widths:
                 odf.style.add_child(st,'table_column_properties',
@@ -290,7 +290,7 @@ class Renderer(AppyRenderer):
         # header
         hr = odf.table.add_child(table_header_rows,'table_row',style_name=HEADER_ROW_STYLE_NAME)
         for fld in fields:
-            #~ k = str(ar.report)+"."+fld.name
+            #~ k = str(ar.actor)+"."+fld.name
             tc = odf.table.add_child(hr,'table_cell',style_name=CELL_STYLE_NAME)
             e = odf.text.add_child(tc,'p')
             odf.text.update(e,style_name="Table Column Header")
@@ -308,7 +308,7 @@ class Renderer(AppyRenderer):
             #~ table.addElement(tr)
             
             for i,fld in enumerate(fields):
-                #~ k = str(ar.report)+"."+fld.name
+                #~ k = str(ar.actor)+"."+fld.name
                 style_name = fldstyle(fld)
                 tc = odf.table.add_child(tr,'table_cell',style_name=CELL_STYLE_NAME)
                 #~ tc = TableCell()
@@ -430,7 +430,7 @@ class Renderer(AppyRenderer):
         else:
             if column_names:
                 from lino.core import layouts
-                ll = layouts.ListLayout(ar.report,column_names)
+                ll = layouts.ListLayout(ar.actor,column_names)
                 list_layout = ll.get_handle(self.ui)
                 columns = list_layout.main.columns
             else:
@@ -483,7 +483,7 @@ class Renderer(AppyRenderer):
         
         for i,fld in enumerate(fields):
             #~ print 20120415, repr(fld.name)
-            cs = Style(name=str(ar.report)+"."+fld.name, family="table-column")
+            cs = Style(name=str(ar.actor)+"."+fld.name, family="table-column")
             if use_relative_widths:
                 cs.addElement(TableColumnProperties(relcolumnwidth=width_specs[i]))
             else:

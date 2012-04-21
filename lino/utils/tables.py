@@ -141,11 +141,10 @@ class AbstractTableRequest(actions.ActionRequest):
     create_rows = None
     
     #~ def __init__(self,ui,report,request,action,*args,**kw):
-    def __init__(self,ui,report,request,action,**kw):
-        if not (isinstance(report,type) and issubclass(report,AbstractTable)):
-            raise Exception("Expected an AbstractTable subclass, got %r" % report)
-        #~ reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
-        actions.ActionRequest.__init__(self,ui,report,request,action,**kw)
+    def __init__(self,ui,actor,request=None,action=None,**kw):
+        if not (isinstance(actor,type) and issubclass(actor,AbstractTable)):
+            raise Exception("Expected an AbstractTable subclass, got %r" % actor)
+        actions.ActionRequest.__init__(self,ui,actor,request,action,**kw)
         #~ self.setup(*args,**kw)
         self.data_iterator = self.get_data_iterator()
         self.sliced_data_iterator = self.data_iterator
@@ -202,7 +201,7 @@ class AbstractTableRequest(actions.ActionRequest):
         #~ if kv:
             #~ kw.update(known_values=kv)
         
-        return rh.report.parse_req(request,rqdata,**kw)
+        return rh.actor.parse_req(request,rqdata,**kw)
         
             
     def setup(self,
@@ -228,7 +227,7 @@ class AbstractTableRequest(actions.ActionRequest):
         if limit is not None:
             self.limit = limit
         
-        self.report.setup_request(self)
+        self.actor.setup_request(self)
     
     def table2xhtml(self):
         return self.ui.table2xhtml(self)
@@ -245,7 +244,7 @@ class AbstractTableRequest(actions.ActionRequest):
         if self.known_values:
             #~ kv = dict()
             for k,v in self.known_values.items():
-                if self.report.known_values.get(k,None) != v:
+                if self.actor.known_values.get(k,None) != v:
                     bp[k] = v
             #~ kw.update(known_values = kv)
                 
@@ -257,14 +256,14 @@ class AbstractTableRequest(actions.ActionRequest):
         return self.data_iterator[int(pk) - 1]
         
     def get_data_iterator(self):
-        if self.report.get_data_rows:
+        if self.actor.get_data_rows:
             l = []
-            for row in self.report.get_data_rows(self):
+            for row in self.actor.get_data_rows(self):
                 #~ l.append(row)
-                group = self.report.group_from_row(row)
+                group = self.actor.group_from_row(row)
                 group.process_row(l,row)
             return l
-        return self.report.get_request_queryset(self)
+        return self.actor.get_request_queryset(self)
         
     def get_total_count(self):
         """
@@ -302,7 +301,7 @@ class TableRequest(AbstractTableRequest):
     def parse_req(self,request,rqdata,**kw):
         #~ logger.info("20120121 %s.parse_req()",self)
         rh = self.ah
-        master = kw.get('master',self.report.master)
+        master = kw.get('master',self.actor.master)
         if master is ContentType or master is models.Model:
             mt = rqdata.get(ext_requests.URL_PARAM_MASTER_TYPE)
             try:
@@ -315,7 +314,7 @@ class TableRequest(AbstractTableRequest):
             #~ print kw
         if master is not None and not kw.has_key('master_instance'):
             pk = rqdata.get(ext_requests.URL_PARAM_MASTER_PK,None)
-            #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
+            #~ print '20100406a', self.actor,URL_PARAM_MASTER_PK,"=",pk
             #~ if pk in ('', '-99999'):
             if pk == '':
                 pk = None
@@ -330,7 +329,7 @@ class TableRequest(AbstractTableRequest):
                     # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
                     raise Exception("There's no %s with primary key %r" % (master.__name__,pk))
             #~ print '20100212', self #, kw['master_instance']
-        #~ print '20100406b', self.report,kw
+        #~ print '20100406b', self.actor,kw
         
         if settings.LINO.use_filterRow:
             exclude = dict()
@@ -380,29 +379,29 @@ class TableRequest(AbstractTableRequest):
         #~ logger.info("20120121 %s.setup()",self)
         self.filter = filter
         #~ if isinstance(self.action,GridEdit):
-            #~ self.expand_memos = expand_memos or self.report.expand_memos
+            #~ self.expand_memos = expand_memos or self.actor.expand_memos
         self.gridfilters = gridfilters
-        self.exclude = exclude or self.report.exclude
+        self.exclude = exclude or self.actor.exclude
         self.extra = extra
 
         #~ if selected_rows is not None:
             #~ self.selected_rows = selected_rows
         
         if master is None:
-            master = self.report.master
+            master = self.actor.master
             # master might still be None
         self.master = master
         
-        #~ if self.report.params:
-            #~ raise Exception("%s.params is %r" % (self.report,self.report.params))
-        #~ kw.update(self.report.params)
+        #~ if self.actor.params:
+            #~ raise Exception("%s.params is %r" % (self.actor,self.actor.params))
+        #~ kw.update(self.actor.params)
         #~ self.params = kw
         
         if master_id is not None:
             assert master_instance is None
             master_instance = self.master.objects.get(pk=master_id)
             
-        self.create_kw = self.report.get_create_kw(master_instance)
+        self.create_kw = self.actor.get_create_kw(master_instance)
         self.master_instance = master_instance
         
         #~ if self.master and master_instance is None:
@@ -418,12 +417,12 @@ class TableRequest(AbstractTableRequest):
         if create_rows is None:
             if self.create_kw is None:
                 create_rows = 0
-            #~ elif self.user is not None and self.report.can_add.passes(self.user):
-            #~ elif self.report.can_add.passes(self.user):
+            #~ elif self.user is not None and self.actor.can_add.passes(self.user):
+            #~ elif self.actor.can_add.passes(self.user):
             #~ elif self.report.get_permission(actors.CreatePermission,self.user):
             #~ a = self.report.get_action('SubmitInsert')
             #~ if a and self.report.get_permission(a,self.user):
-            elif self.report.editable and self.report.get_permission(actions.CREATE,self.user,None):
+            elif self.actor.editable and self.actor.get_permission(actions.CREATE,self.user,None):
                 create_rows = 1
             else:
                 create_rows = 0
@@ -441,12 +440,12 @@ class TableRequest(AbstractTableRequest):
         Table.page_length is not a default value for ReportRequest.limit
         For example CSVReportRequest wants all rows.
         """
-        self.page_length = self.report.page_length
+        self.page_length = self.actor.page_length
         
         #~ logger.info("20120121 %s.setup() done",self)
         
     def __str__(self):
-        return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
+        return self.__class__.__name__ + '(' + self.actor.actor_id + ",%r,...)" % self.master_instance
 
     def get_status(self,ui,**kw):
         kw = AbstractTableRequest.get_status(self,ui,**kw)
@@ -481,12 +480,12 @@ class TableHandle(base.Handle):
   
     _layouts = None
     
-    def __init__(self,ui,report):
-        self.report = report
+    def __init__(self,ui,actor):
+        self.actor = actor
         base.Handle.__init__(self,ui)
   
     def __str__(self):
-        return str(self.report) + 'Handle'
+        return str(self.actor) + 'Handle'
             
     def setup_layouts(self):
         if self._layouts is not None:
@@ -494,7 +493,7 @@ class TableHandle(base.Handle):
         self._layouts = [ self.list_layout ] 
               
     def get_actor_url(self,*args,**kw):
-        return self.ui.get_actor_url(self.report,*args,**kw)
+        return self.ui.get_actor_url(self.actor,*args,**kw)
         
     def submit_elems(self):
         return []
@@ -509,22 +508,22 @@ class TableHandle(base.Handle):
         return lh.main.columns
         
     def get_slaves(self):
-        return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
+        return [ sl.get_handle(self.ui) for sl in self.actor._slaves ]
             
     def get_action(self,name):
-        return self.report.get_action(name)
+        return self.actor.get_action(name)
     def get_actions(self,*args,**kw):
-        return self.report.get_actions(*args,**kw)
+        return self.actor.get_actions(*args,**kw)
         
     def update_detail(self,tab,desc):
         #~ raise Exception("Not yet fully converted to Lino 1.3.0")
-        old_dl = self.report.get_detail().layouts[tab]
+        old_dl = self.actor.get_detail().layouts[tab]
         dtl = DetailLayout(desc,old_dl.filename,old_dl.cd)
-        self.report.get_detail().layouts[tab] = dtl
+        self.actor.get_detail().layouts[tab] = dtl
         #~ dh = dtl.get_handle(self.ui)
-        #~ self._layouts[tab+1] = LayoutHandle(self.ui,self.report.model,dtl)
+        #~ self._layouts[tab+1] = LayoutHandle(self.ui,self.actor.model,dtl)
         self.ui.setup_handle(self)
-        #~ self.report.save_config()
+        #~ self.actor.save_config()
         dtl.save_config()
 
 class Group(object):

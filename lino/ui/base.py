@@ -130,9 +130,9 @@ class UI:
     def setup_handle(self,h):
         pass
         
-    def request(self,actor,*args,**kw):
+    def request(self,actor,**kw):
         if isinstance(actor,basestring):
             actor = settings.LINO.modules.resolve(actor)
         #~ kw.update(ui=self)
-        return actor.request(self,*args,**kw)
+        return actor.request(self,**kw)
         

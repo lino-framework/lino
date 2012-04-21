@@ -381,7 +381,7 @@ def discover():
         
 def has_fk(rr,name):
     if isinstance(rr,TableRequest):
-        return rr.report.master_key == name
+        return rr.actor.master_key == name
     return False
 
         

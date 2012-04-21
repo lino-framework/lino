@@ -37,4 +37,32 @@ because my method is not as beautiful and because :term:`lxml`
 has a disadvantage of not playing well with mod_wsgi in certain 
 configurations (see :doc:`0407`).
 
+:checkin:`c7fdd9107495`
+
+Continued with debts.Budget template
+------------------------------------
+
+Internal changes: 
+The actor of ActionRequests and TableHandles was internally still stored in an attribute `report`.
+Changed to `actor`.
+Renamed ActionRequest.spawn_request to :meth:`spawn <lino.core.actions.ActionRequest.spawn>`.
+
+Adapted the default template to the new possibility.
+Here  is how it looked before:
+
+.. image:: 0421/0421a.jpg
+  :scale: 50
+  
+An `entries_by_group` method (see :doc:`0413`) is no longer necessary.
+Here is the new template:
+
+.. image:: 0421/0421b.jpg
+  :scale: 50
+
+And a result (where the important evolution against 
+:doc:`last week  <0413>` is the formatting of tables):
+
+.. image:: 0421/0421c.jpg
+  :scale: 50
+
 

@@ -521,7 +521,8 @@ class Inspector(dd.VirtualTable):
             pv.update(inspected=ar.param_values.inspected+obj.prefix+obj.name)
         else:
             pv.update(inspected=obj.name)
-        newreq = ar.report.request(ar.ui,user=ar.user,renderer=ar.renderer,param_values=pv)
+        #~ newreq = ar.spawn(ar.ui,user=ar.user,renderer=ar.renderer,param_values=pv)
+        newreq = ar.spawn(param_values=pv)
         return ar.renderer.href_to_request(newreq,obj.name)
         #~ return obj.name
         

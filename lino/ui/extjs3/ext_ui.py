@@ -155,7 +155,7 @@ class HtmlRenderer(object):
         
         #~ params = tr.get_status(self)
         #~ after_show = dict()
-        a = tr.report.get_action('insert')
+        a = tr.actor.get_action('insert')
         if a is not None:
             elem = tr.create_instance()
             after_show.update(data_record=elem2rec_insert(tr,tr.ah,elem))
@@ -166,7 +166,7 @@ class HtmlRenderer(object):
         if n > 0:
             obj = tr.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
-            s += ' ' + self.action_href_js(tr.ah.report.detail_action,params,after_show,_("Show Last"))
+            s += ' ' + self.action_href_js(tr.ah.actor.detail_action,params,after_show,_("Show Last"))
             s += ' ' + self.href_to_request(tr,_("Show All"))
         return s
                 
@@ -189,7 +189,7 @@ class HtmlRenderer(object):
         #~ after_show = dict(base_params=rr.get_status(self))
         #~ after_show = dict()
         if rr.get_total_count() == 0:
-            a = rr.report.get_action('insert')
+            a = rr.actor.get_action('insert')
             if a is not None:
                 elem = rr.create_instance()
                 after_show.update(data_record=elem2rec_insert(rr,rr.ah,elem))
@@ -202,10 +202,10 @@ class HtmlRenderer(object):
             s += ' [<a href="%s" target="_blank">show</a>]' % (self.ui.media_url(obj.file.name))
             if True:
                 after_show.update(record_id=obj.pk)
-                s += ' ' + self.action_href_js(rr.ah.report.detail_action,params,after_show,_("Edit"))
+                s += ' ' + self.action_href_js(rr.ah.actor.detail_action,params,after_show,_("Edit"))
             else:
                 after_show.update(record_id=obj.pk)
-                s += ' ' + self.action_href_http(rr.ah.report.detail_action,_("Edit"),params,after_show)
+                s += ' ' + self.action_href_http(rr.ah.actor.detail_action,_("Edit"),params,after_show)
             return s
         return '[?!]'
 
@@ -407,7 +407,7 @@ class ExtRenderer(HtmlRenderer):
         raise Exception("20120203")
         kw = rr.get_status(self,**kw)
         #~ kw = self.request2kw(rr,**kw)
-        return self.build_url('api',rr.report.app_label,rr.report.__name__,*args,**kw)
+        return self.build_url('api',rr.actor.app_label,rr.actor.__name__,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
         #~ rpt = obj._lino_default_table
@@ -560,23 +560,23 @@ def elem2rec_detailed(ar,elem,**rec):
     """
     rh = ar.ah
     rec = elem2rec1(ar,rh,elem,**rec)
-    if ar.report.hide_top_toolbar:
+    if ar.actor.hide_top_toolbar:
         rec.update(title=unicode(elem))
     else:
         rec.update(title=ar.get_title() + u" » " + unicode(elem))
     #~ rec.update(title=ar.actor.get_detail_title(ar,elem))
-    #~ rec.update(title=rh.report.model._meta.verbose_name + u"«%s»" % unicode(elem))
+    #~ rec.update(title=rh.actor.model._meta.verbose_name + u"«%s»" % unicode(elem))
     #~ rec.update(title=unicode(elem))
     rec.update(id=elem.pk)
-    #~ if rh.report.disable_delete:
-    rec.update(disabled_actions=rh.report.disabled_actions(ar,elem))
-    rec.update(disable_delete=rh.report.disable_delete(elem,ar.request))
-    if rh.report.show_detail_navigator:
+    #~ if rh.actor.disable_delete:
+    rec.update(disabled_actions=rh.actor.disabled_actions(ar,elem))
+    rec.update(disable_delete=rh.actor.disable_delete(elem,ar.request))
+    if rh.actor.show_detail_navigator:
         first = None
         prev = None
         next = None
         last = None
-        #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+        #~ ar = ext_requests.ViewReportRequest(request,rh,rh.actor.default_action)
         recno = 0
         #~ if len(ar.data_iterator) > 0:
         LEN = ar.get_total_count()
@@ -799,9 +799,9 @@ class ExtUI(base.UI):
                   #~ % (value,lh.layout.__name__,name))
         if hasattr(lh,'rh'):
             msg = "Unknown element %r referred in layout %s of %s." % (
-                name,lh.layout,lh.rh.report)
-            l = [de.name for de in lh.rh.report.wildcard_data_elems()]
-            model = getattr(lh.rh.report,'model',None) # VirtualTables don't have a model
+                name,lh.layout,lh.rh.actor)
+            l = [de.name for de in lh.rh.actor.wildcard_data_elems()]
+            model = getattr(lh.rh.actor,'model',None) # VirtualTables don't have a model
             if getattr(model,'_lino_slaves',None):
                 l += [str(rpt) for rpt in model._lino_slaves.values()]
             msg += " Possible names are %s." % ', '.join(l)
@@ -831,7 +831,7 @@ class ExtUI(base.UI):
             #~ , (name, meth.func_code.co_varnames)
         #~ kw.update(editable=False)
         e = self.create_field_element(lh,rt,**kw)
-        #~ if lh.rh.report.actor_id == 'contacts.Persons':
+        #~ if lh.rh.actor.actor_id == 'contacts.Persons':
             #~ print 'ext_ui.py create_meth_element',name,'-->',e
         #~ if name == 'preview':
             #~ print 20110714, 'ext_ui.create_meth_element', meth, repr(e)
@@ -1380,14 +1380,14 @@ tinymce.init({
         if request.method == 'POST':
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
-            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
-            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.actor.list_action)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.actor.default_action)
             elem = ar.create_instance()
             # store uploaded files. 
             # html forms cannot send files with PUT or GET, only with POST
             #~ logger.info("20120208 list POST %s",obj2str(elem,force_detailed=True))
-            if rh.report.handle_uploaded_files is not None:
-                rh.report.handle_uploaded_files(elem,request)
+            if rh.actor.handle_uploaded_files is not None:
+                rh.actor.handle_uploaded_files(elem,request)
                 file_upload = True
             else:
                 file_upload = False
@@ -1439,11 +1439,11 @@ tinymce.init({
                   content_type='text/csv;charset="%s"' % charset)
                 if False:
                     response['Content-Disposition'] = \
-                        'attachment; filename="%s.csv"' % ar.report
+                        'attachment; filename="%s.csv"' % ar.actor
                 else:
                     #~ response = HttpResponse(content_type='application/csv')
                     response['Content-Disposition'] = \
-                        'inline; filename="%s.csv"' % ar.report
+                        'inline; filename="%s.csv"' % ar.actor
                   
                 #~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
                 w = ucsv.UnicodeWriter(response,**settings.LINO.csv_params)
@@ -1634,13 +1634,13 @@ tinymce.init({
         if request.method == 'POST':
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
-            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
-            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.actor.list_action)
+            #~ ar = ext_requests.ViewReportRequest(request,rh,rh.actor.default_action)
             instance = ar.create_instance()
             # store uploaded files. 
             # html forms cannot send files with PUT or GET, only with POST
-            if rh.report.handle_uploaded_files is not None:
-                rh.report.handle_uploaded_files(instance,request)
+            if rh.actor.handle_uploaded_files is not None:
+                rh.actor.handle_uploaded_files(instance,request)
                 
             data = request.POST.get('rows')
             #~ logger.info("20111217 Got POST %r",data)
@@ -1674,8 +1674,8 @@ tinymce.init({
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         rpt = self.requested_report(request,app_label,actor)
-        #~ if not ah.report.can_view.passes(request.user):
-            #~ msg = "User %s cannot view %s." % (request.user,ah.report)
+        #~ if not ah.actor.can_view.passes(request.user):
+            #~ msg = "User %s cannot view %s." % (request.user,ah.actor)
             #~ return http.HttpResponseForbidden()
         
         if pk and pk != '-99999' and pk != '-99998':
@@ -1803,8 +1803,8 @@ tinymce.init({
               
         return self.error_response(None,
             "Method %r not supported for elements of %s." % (
-                request.method,ah.report))
-        #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
+                request.method,ah.actor))
+        #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.actor))
         
         
     def error_response(self,*args,**kw):
@@ -2146,26 +2146,26 @@ tinymce.init({
     def setup_handle(self,h):
         #~ logger.debug('20120103 ExtUI.setup_handle() %s',h)
         if isinstance(h,tables.TableHandle):
-            if issubclass(h.report,table.Table):
-                if h.report.model is None \
-                    or h.report.model is models.Model \
-                    or h.report.model._meta.abstract:
+            if issubclass(h.actor,table.Table):
+                if h.actor.model is None \
+                    or h.actor.model is models.Model \
+                    or h.actor.model._meta.abstract:
                     return
-            ll = layouts.ListLayout(h.report,h.report.column_names,hidden_elements=h.report.hidden_columns)
-            #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.report.hidden_columns)
+            ll = layouts.ListLayout(h.actor,h.actor.column_names,hidden_elements=h.actor.hidden_columns)
+            #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.actor.hidden_columns)
             h.list_layout = ll.get_handle(self)
         else:
             h.list_layout = None
                 
-        if h.report.parameters:
-            if h.report.params_template:
-                params_template = h.report.params_template
+        if h.actor.parameters:
+            if h.actor.params_template:
+                params_template = h.actor.params_template
             else:
-                #~ params_template= ' '.join([pf.name for pf in h.report.params])
-                params_template= ' '.join(h.report.parameters.keys())
-            pl = layouts.ParamsLayout(h.report,params_template)
+                #~ params_template= ' '.join([pf.name for pf in h.actor.params])
+                params_template= ' '.join(h.actor.parameters.keys())
+            pl = layouts.ParamsLayout(h.actor,params_template)
             h.params_layout = pl.get_handle(self)
-            #~ h.params_layout.main.update(hidden = h.report.params_panel_hidden)
+            #~ h.params_layout.main.update(hidden = h.actor.params_panel_hidden)
             #~ h.params_layout = layouts.LayoutHandle(self,pl)
             #~ logger.info("20120121 %s params_layout is %s",h,h.params_layout)
         
@@ -2351,7 +2351,7 @@ tinymce.init({
         
         
     def js_render_detail_action_FormPanel(self,rh,action):
-        rpt = rh.report
+        rpt = rh.actor
         yield ""
         #~ yield "// js_render_detail_action_FormPanel %s" % action
         #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,full_model_name(rpt.model))
@@ -2365,7 +2365,7 @@ tinymce.init({
         if action.hide_navigator:
             yield "  hide_navigator: true,"
             
-        if rh.report.params_panel_hidden:
+        if rh.actor.params_panel_hidden:
             yield "  params_panel_hidden: true,"
             
 
@@ -2392,50 +2392,50 @@ tinymce.init({
         
         yield ""
         #~ yield "// js_render_GridPanel_class"
-        yield "Lino.%s.GridPanel = Ext.extend(Lino.GridPanel,{" % rh.report
+        yield "Lino.%s.GridPanel = Ext.extend(Lino.GridPanel,{" % rh.actor
         
         kw = dict()
-        #~ kw.update(empty_title=%s,rh.report.get_button_label()
-        kw.update(ls_url=ext_elems.rpt2url(rh.report))
+        #~ kw.update(empty_title=%s,rh.actor.get_button_label()
+        kw.update(ls_url=ext_elems.rpt2url(rh.actor))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
         if rh.store.pk is not None:
             kw.update(ls_id_property=rh.store.pk.name)
             kw.update(pk_index=rh.store.pk_index)
             #~ if settings.LINO.use_contenttypes:
             if settings.LINO.is_installed('contenttypes'):
-                kw.update(content_type=ContentType.objects.get_for_model(rh.report.model).pk)
-        kw.update(ls_quick_edit=rh.report.cell_edit)
+                kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
+        kw.update(ls_quick_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=[
-            rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
-        kw.update(ls_grid_configs=[gc.data for gc in rh.report.grid_configs])
+            rh.ui.a2btn(a) for a in rh.get_actions(rh.actor.default_action)])
+        kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
-        #~ if action != rh.report.default_action:
+        #~ if action != rh.actor.default_action:
             #~ kw.update(action_name=action.name)
         #~ kw.update(content_type=rh.report.content_type)
         
         vc = dict(emptyText=_("No data to display."))
-        if rh.report.editable:
+        if rh.actor.editable:
             vc.update(getRowClass=js_code('Lino.getRowClass'))
         kw.update(viewConfig=vc)
         
         
         
-        kw.update(page_length=rh.report.page_length)
+        kw.update(page_length=rh.actor.page_length)
         kw.update(stripeRows=True)
 
-        #~ if rh.report.master:
-        kw.update(title=rh.report.label)
+        #~ if rh.actor.master:
+        kw.update(title=rh.actor.label)
         
         for k,v in kw.items():
             yield "  %s : %s," % (k,py2js(v))
         
         yield "  initComponent : function() {"
         
-        #~ a = rh.report.get_action('detail')
-        a = rh.report.detail_action
+        #~ a = rh.actor.get_action('detail')
+        a = rh.actor.detail_action
         if a:
             yield "    this.ls_detail_handler = Lino.%s;" % a
-        a = rh.report.get_action('insert')
+        a = rh.actor.get_action('insert')
         if a:
             yield "    this.ls_insert_handler = Lino.%s;" % a
         
@@ -2453,7 +2453,7 @@ tinymce.init({
             yield "    this.onRender = function(ct, position) {"
             for ln in rh.on_render:
                 yield "      " + ln
-            yield "      Lino.%s.GridPanel.superclass.onRender.call(this, ct, position);" % rh.report
+            yield "      Lino.%s.GridPanel.superclass.onRender.call(this, ct, position);" % rh.actor
             yield "    }"
             
             
@@ -2466,7 +2466,7 @@ tinymce.init({
         #~ 20111125 see ext_elems.py too
         #~ if self.main.listeners:
             #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
-        yield "    Lino.%s.GridPanel.superclass.initComponent.call(this);" % rh.report
+        yield "    Lino.%s.GridPanel.superclass.initComponent.call(this);" % rh.actor
         yield "  }"
         yield "});"
         yield ""
@@ -2474,7 +2474,7 @@ tinymce.init({
             
     def js_render_window_action(self,rh,action):
       
-        rpt = rh.report
+        rpt = rh.actor
         
         if isinstance(action,actions.ShowDetailAction):
             s = "Lino.%sPanel" % action

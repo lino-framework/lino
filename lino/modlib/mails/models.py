@@ -282,7 +282,7 @@ class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
         
     #~ def recipients_to(self,rr):
         #~ kv = dict(type=RecipientType.to)
-        #~ r = rr.spawn_request(RecipientsByMail(),
+        #~ r = rr.spawn(RecipientsByMail(),
               #~ master_instance=self,
               #~ known_values=kv)
         #~ return rr.ui.quick_upload_buttons(r)

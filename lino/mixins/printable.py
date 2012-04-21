@@ -584,7 +584,7 @@ class DirectPrintAction(BasePrintAction):
         #~ if self.tplname:
             #~ if not self.tplname.endswith(bm.template_ext):
                 #~ raise Exception("Invalid template for build method %r" % bm.name)
-        bm.build(rr,self,elem)
+        bm.build(ar,self,elem)
         #~ target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         #~ return rr.ui.success_response(open_url=target,**kw)
         url = bm.get_target_url(self,elem,ar.ui)

@@ -363,13 +363,14 @@ class ActionRequest(object):
     create_kw = None
     renderer = None
     
-    def __init__(self,ui,actor,request,action,renderer=None,**kw):
+    def __init__(self,ui,actor,request=None,action=None,renderer=None,**kw):
         #~ ActionRequest.__init__(self,ui,action)
         self.ui = ui
         self.renderer = renderer
-        self.action = action
+        self.action = action or actor.default_action
         self.step = 0 # confirmation counter
-        self.report = actor
+        #~ self.report = actor
+        self.actor = actor
         self.ah = actor.get_handle(ui)
         self.request = request
         if request is not None:
@@ -386,7 +387,7 @@ class ActionRequest(object):
         #~ raise ConfirmationRequired(step,messages)
 
     def parse_req(self,request,rqdata,**kw):
-        if self.report.parameters:
+        if self.actor.parameters:
             kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
         
@@ -415,9 +416,9 @@ class ActionRequest(object):
         if renderer is not None:
             self.renderer = renderer
         #~ self.param_values = param_values
-        if self.report.parameters:
+        if self.actor.parameters:
             self.param_values = AttrDict()
-            for k,pf in self.report.parameters.items():
+            for k,pf in self.actor.parameters.items():
                 v = param_values.get(k,None)
                 if v is None:
                     v = pf.get_default()
@@ -433,7 +434,7 @@ class ActionRequest(object):
         #~ self.known_values = known_values or self.report.known_values
         #~ if self.report.known_values:
         #~ d = dict(self.report.known_values)
-        for k,v in self.report.known_values.items():
+        for k,v in self.actor.known_values.items():
             kw.setdefault(k,v)
         if known_values:
             kw.update(known_values)
@@ -462,7 +463,7 @@ class ActionRequest(object):
         #logger.debug('%s.create_instance(%r)',self,kw)
         if self.known_values:
             kw.update(self.known_values)
-        obj = self.report.create_instance(self,**kw)
+        obj = self.actor.create_instance(self,**kw)
         #~ if self.known_values is not None:
             #~ self.ah.store.form2obj(self.known_values,obj,True)
             #~ for k,v in self.known_values:
@@ -474,18 +475,9 @@ class ActionRequest(object):
         raise NotImplementedError
         
     def get_base_filename(self):
-        return str(self.report)
+        return str(self.actor)
         #~ s = self.get_title()
         #~ return s.encode('us-ascii','replace')
-        
-    #~ def __iter__(self):
-        #~ return self._sliced_data_iterator.__iter__()
-        
-    #~ def __getitem__(self,*args):
-        #~ return self._data_iterator.__getitem__(*args)
-        
-    #~ def __len__(self):
-        #~ return self._data_iterator.__len__()
         
     def get_user(self):
         return self.subst_user or self.user
@@ -494,7 +486,7 @@ class ActionRequest(object):
         return self.action.get_action_title(self)
         
     def get_title(self):
-        return self.report.get_title(self)
+        return self.actor.get_title(self)
         
     def render_to_dict(self):
         return self.action.render_to_dict(self)
@@ -507,7 +499,7 @@ class ActionRequest(object):
         return self.ui.get_request_url(self,*args,**kw)
 
     def get_status(self,ui,**kw):
-        if self.report.parameters:
+        if self.actor.parameters:
             #~ pv = kw.setdefault('param_values',{})
             #~ kw.update(param_values=self.ah.store.pv2list(self.param_values))
             kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
@@ -515,11 +507,18 @@ class ActionRequest(object):
         return kw
         
 
-    def spawn_request(self,rpt,**kw):
+    def spawn(self,actor=None,**kw):
+        """
+        Create a new ActionRequest, taking default values from this one.
+        """
         #~ rh = rpt.get_handle(self.ui)
-        kw.update(user=self.user)
-        kw.update(renderer=self.renderer)
+        kw.setdefault('user',self.user)
+        kw.setdefault('renderer',self.renderer)
+        kw.setdefault('request',self.request)
+        if actor is None:
+            actor = self.actor
         #~ kw.update(request=self.request)
         #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
-        return self.__class__(self.ui,rpt,self.request,rpt.default_action,**kw)
+        #~ return self.__class__(self.ui,actor,**kw)
+        return self.ui.request(actor,**kw)
         

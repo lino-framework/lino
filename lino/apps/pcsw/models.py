@@ -642,7 +642,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     @dd.displayfield(_("Residence permit"))
     def residence_permit(self,rr):
         kv = dict(type=settings.LINO.site_config.residence_permit_upload_type)
-        r = rr.spawn_request(uploads.UploadsByOwner,
+        r = rr.spawn(uploads.UploadsByOwner,
               master_instance=self,
               known_values=kv)
         return rr.renderer.quick_upload_buttons(r)
@@ -653,7 +653,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     @dd.displayfield(_("Work permit"))
     def work_permit(self,rr):
         kv = dict(type=settings.LINO.site_config.work_permit_upload_type)
-        r = rr.spawn_request(uploads.UploadsByOwner,
+        r = rr.spawn(uploads.UploadsByOwner,
               master_instance=self,
               known_values=kv)
         return rr.renderer.quick_upload_buttons(r)
@@ -663,14 +663,14 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     #~ @dd.virtualfield(dd.DisplayField(_("driving licence")))
     def driving_licence(self,rr):
         kv = dict(type=settings.LINO.site_config.driving_licence_upload_type)
-        r = rr.spawn_request(uploads.UploadsByOwner,
+        r = rr.spawn(uploads.UploadsByOwner,
               master_instance=self,known_values=kv)
         return rr.renderer.quick_upload_buttons(r)
     #~ driving_licence.return_type = dd.DisplayField(_("driving licence"))
     
     @dd.displayfield(_("CBSS Identify Person"))
     def cbss_identify_person(self,rr):
-        r = rr.spawn_request(
+        r = rr.spawn(
               settings.LINO.modules.cbss.IdentifyRequestsByPerson,
               master_instance=self)
         return rr.renderer.quick_add_buttons(r)

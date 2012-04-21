@@ -455,12 +455,12 @@ class DisabledFieldsStoreField(SpecialStoreField):
     name = 'disabled_fields'
     
     def full_value_from_object(self,request,obj):
-        #~ l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
+        #~ l = [ f.name for f in self.store.actor.disabled_fields(request,obj)]
         d = dict()
-        if self.store.report.disabled_fields is not None:
-            for name in self.store.report.disabled_fields(obj,request):
+        if self.store.actor.disabled_fields is not None:
+            for name in self.store.actor.disabled_fields(obj,request):
                 d[name] = True
-        #~ l = list(self.store.report.disabled_fields(obj,request))
+        #~ l = list(self.store.actor.disabled_fields(obj,request))
         # disable also the primary key field
         if self.store.pk is not None and obj.pk is not None:
             d[self.store.pk.attname] = True
@@ -486,14 +486,14 @@ class DisableEditingStoreField(SpecialStoreField):
     name = 'disable_editing'
         
     def full_value_from_object(self,ar,obj):
-        #~ return self.store.report.disable_editing(obj,request)
-        #~ a = self.store.report.submit_action
+        #~ return self.store.actor.disable_editing(obj,request)
+        #~ a = self.store.actor.submit_action
         #~ m = getattr(obj,'get_permission',None)
         #~ u = ar.get_user()
-        #~ if not self.store.report.get_permission(a,u) or (m is not None and not m(a,u)):
-        #~ if not self.store.report.get_permission(a,u,obj):
-        return not self.store.report.get_permission(actions.UPDATE,ar.get_user(),obj)
-        #~ if not self.store.report.get_permission(actions.UPDATE,ar.get_user(),obj):
+        #~ if not self.store.actor.get_permission(a,u) or (m is not None and not m(a,u)):
+        #~ if not self.store.actor.get_permission(a,u,obj):
+        return not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj)
+        #~ if not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj):
             #~ return True
         #~ return False
         #~ if not self.store.report.get_permission(ar.get_user(),):
@@ -755,7 +755,7 @@ class Store:
         #~ assert isinstance(rh,tables.TableHandle)
         #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
-        self.report = rh.report
+        self.actor = rh.actor
         """
         MTI children have two primary keys. Example::
         >>> from lino.apps.pcsw.models import Person
@@ -789,17 +789,17 @@ class Store:
             self.list_fields.append(sf)
             self.detail_fields.append(sf)
             
-        if not issubclass(rh.report,actors.Frame):
+        if not issubclass(rh.actor,actors.Frame):
             self.collect_fields(self.list_fields,rh.get_list_layout())
             
-        dtl = rh.report.get_detail()
+        dtl = rh.actor.get_detail()
         if dtl:
             dh = dtl.get_handle(rh.ui)
             #~ self.collect_fields(self.detail_fields,*dh.lh_list)
             self.collect_fields(self.detail_fields,dh)
         
         
-        if issubclass(rh.report,table.Table):
+        if issubclass(rh.actor,table.Table):
             self.pk_index = 0
             found = False
             for fld in self.list_fields:
@@ -823,7 +823,7 @@ class Store:
         
         self.param_fields = []
         
-        if rh.report.parameters:
+        if rh.actor.parameters:
             for pf in rh.params_layout._store_fields:
             #~ for pf in rh.report.params:
                 self.param_fields.append(self.create_field(pf,pf.name))
@@ -840,7 +840,7 @@ class Store:
             #~ self.detail_fields.append(sf)
         #~ if rh.report.disable_editing is not None:
         #~ if rh.report.submit_action is not None:
-        if rh.report.editable:
+        if rh.actor.editable:
             addfield(DisableEditingStoreField(self))
             
         #~ self.fields.append(PropertiesStoreField)
@@ -893,9 +893,9 @@ class Store:
                         self.pk = df
                 #~ fields.add(fld)
         #~ if not self.pk in fields:
-        if issubclass(self.rh.report,table.Table):
+        if issubclass(self.rh.actor,table.Table):
             if self.pk is None:
-                self.pk = self.report.model._meta.pk
+                self.pk = self.actor.model._meta.pk
             if not pk_found:
                 self.add_field_for(fields,self.pk)
         
@@ -979,8 +979,8 @@ class Store:
 
     def form2obj(self,request,form_values,instance,is_new):
         #~ raise Exception('20120211')
-        if self.report.disabled_fields:
-            disabled_fields = set(self.report.disabled_fields(instance,request))
+        if self.actor.disabled_fields:
+            disabled_fields = set(self.actor.disabled_fields(instance,request))
         else:
             disabled_fields = set()
         #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
