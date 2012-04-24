@@ -91,7 +91,9 @@ class Renderer(AppyRenderer):
   
     def restify_func(self,unicode_string,**kw):
         """
-        Renders a string in reStructuredText markup.
+        Renders a string in reStructuredText markup by passing it to 
+        :func:`lino.utils.restify.restify` to convert it to XHTML, 
+        then through :term:`appy.pod`'s built in `xhtml` function.
         """
         if not unicode_string:
             return ''
@@ -141,7 +143,7 @@ class Renderer(AppyRenderer):
         This is the function that gets called when a template contains a 
         ``do text from table(...)`` statement.
         """
-            
+        from lino.ui.extjs3 import ext_store
         if ar.request is None:
             columns = None
         else:
@@ -195,10 +197,6 @@ class Renderer(AppyRenderer):
             width_specs = ["%dmm" % (aw*w/tw) for w in widths]
         #~ print 20120419, width_specs 
         
-        #~ odf.table2odt(headers,fields,widths,,row2cells)
-        
-        #~ from lino.utils import html2odt
-        
         CELL_STYLE_NAME = "Lino Cell Style"
         HEADER_ROW_STYLE_NAME = "Lino Header Row"
 
@@ -233,7 +231,7 @@ class Renderer(AppyRenderer):
                     
         st = odf.style.add_child(self.my_automaticstyles,'style',name=HEADER_ROW_STYLE_NAME,family="table-row")
         cp = odf.style.add_child(st,'table_row_properties')
-        odf.fo.update(cp,background_color="#cccccc")
+        odf.fo.update(cp,background_color="#eeeeee")
         
         for i,fld in enumerate(fields):
             #~ print 20120415, repr(fld.name)
@@ -263,7 +261,6 @@ class Renderer(AppyRenderer):
             #~ return tablecontents
             return "Table Contents"
             
-        from lino.ui.extjs3 import ext_store
         
         def value2cell(ar,i,fld,val,style_name,tc):
             #~ print "20120420 value2cell", val
@@ -301,8 +298,22 @@ class Renderer(AppyRenderer):
             
         sums  = [0 for col in fields]
           
+        ar.init_totals(len(fields))
+          
+        def init_totals(self,count):
+            self.sums = [0] * count
+            
+        def collect_value(self,row,i,value):
+            self.sums[i] += value
+            
+        def group_headers(self,row):
+            if False:
+                yield None
+            
         # data
         for row in ar.data_iterator:
+            for grp in ar.group_headers(row):
+                raise NotImplementedError()
             tr = odf.table.add_child(table_rows,'table_row')
             #~ tr = TableRow()
             #~ table.addElement(tr)
@@ -323,7 +334,7 @@ class Renderer(AppyRenderer):
                     #~ fld.value2odt(ar,v,tc,stylename=tablecontents)
                     #~ for e in value2odt(fld,ar,v):
                         #~ tc.addElement(e)
-                    sums[i] += fld.value2int(v)
+                    ar.collect_value(row,i,fld.value2int(v))
                 #~ tr.addElement(tc)
         #~ odf.validate_chunks(table)
         #~ doc.text.addElement(table)

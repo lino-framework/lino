@@ -159,6 +159,7 @@ class RemoteField(FakeField):
         self.rel = self.field.rel
         self.verbose_name = fld.verbose_name
         self.max_length = getattr(fld,'max_length',None)
+        #~ print 20120424, self.name
 
 
         

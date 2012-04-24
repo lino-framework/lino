@@ -1278,6 +1278,9 @@ le gratin [gra'tÄ~] : gratään (ahjus üleküpsetatud roog)
 le gratin dauphinois [gra'tÄ~ dofinw'a] : (tuntud retsept)
 le gratin savoyard [gra'tÄ~ savwa'jaar] : (juustuga gratin dauphinois)
 le soufflé [suff'lee] : suflee
+la quiche lorraine [kiš lo'rään] : quiche
+la pâte brisée [paat bri'zee] : (Mürbeteig, shortcrust pastry)
+la tourte [turt] : (ingl. *pie*)
 
 la fondue [fO~'düü] : fondüü
 le fumet [fü'mä] : hea lõhn (nt. veini, liha kohta)

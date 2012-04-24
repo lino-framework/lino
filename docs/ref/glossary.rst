@@ -20,6 +20,8 @@ Glossary
     http://www.rexx.com/~dkuhlman/generateDS.html
   
   SUDS
+    Suds is a lightweight SOAP python client for consuming Web Services.
+    Author Jeff Ortel.
     https://fedorahosted.org/suds/
   
   Tups

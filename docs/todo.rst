@@ -12,7 +12,10 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Neues Modul Schuldnerberatung (debt counselling) starten.
+#.  Uwe hat einen Bug gefunden: man kann in der Liste "Meine Klienten" 
+    momentan noch nicht auf die Kolonnen "Vertrag beginnt" und 
+    "Vertrag endet" sortieren. (Liegt daran, dass das virtual fields sind)
+
 
 #.  Vertragsüberschneidungen bei save() statt Datenkontrollliste.
 
@@ -20,7 +23,8 @@ Short-term
     abgeschickt ist.
 
 #.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 
-    Basisklassen anzeigen. Der Unterschied ist für den Benutzer nicht wichtig.
+    Basisklassen anzeigen. 
+    Der Unterschied ist für den Benutzer nicht wichtig.
 
 #.  Picker for calendar color. Or at least a ChoiceList with names.
     http://ext.ensible.com/forum/viewtopic.php?f=2&t=339
