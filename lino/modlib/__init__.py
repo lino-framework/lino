@@ -1,4 +1,3 @@
-#coding: UTF-8
 ## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -13,7 +12,5 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-:mod:`lino.modlib` is a collection of Django applications designed to use Lino.
-See also :doc:`/ref/modlib`
-
+See :doc:`/ref/modlib`
 """

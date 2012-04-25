@@ -12,8 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-PIM stands for Personal Information Manager, 
-but in fact it is just a minimal application used for 
+A small minimal application used for 
 tests, demonstrations and didactical purposes.
 """
 

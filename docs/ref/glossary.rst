@@ -2,28 +2,12 @@
 Glossary
 ========
 
-
 .. glossary::
   :sorted:
   
-  ODFPy
-    A Python library for manipulating OpenDocument documents 
-    (.odt, .ods, .odp, ...): 
-    read existing files, modify, create new files from scratch.
-    Read more on `PyPI <http://pypi.python.org/pypi/odfpy>`_.
-    Project home page https://joinup.ec.europa.eu/software/odfpy
-
   DavLink
     See :doc:`/davlink/index`
     
-  generateDS
-    http://www.rexx.com/~dkuhlman/generateDS.html
-  
-  SUDS
-    Suds is a lightweight SOAP python client for consuming Web Services.
-    Author Jeff Ortel.
-    https://fedorahosted.org/suds/
-  
   Tups
      The machine that served the `saffre-rumma.net` 
      domain until 2010
@@ -41,12 +25,6 @@ Glossary
      the first real user of a Lino application
      :mod:`lino.apps.pcsw`.
      
-  ExtJS
-    http://www.sencha.com/products/js/
-    
-  Django
-    http://docs.djangoproject.com
-    
   dump
     "To dump" means to write the content of a database into a text file.
     This is used to backup data and for Data Migration.
@@ -63,18 +41,9 @@ Glossary
     Grid Configuration. 
     See :doc:`/blog/2010/0809`,...
     
-  TIM
-    http://code.google.com/p/tim
-      
   disabled fields
     Fields that the user cannot edit (read-only fields). 
     
-  appy.pod
-    See http://appyframework.org/pod.html
-  
-  lxml
-    See http://lxml.de
-  
   initdb
     See :mod:`lino.management.commands.initdb`
     
@@ -105,11 +74,11 @@ Glossary
     installed on this site.
     :mod:`lino.management.commands.makedocs`
     
-  Report
+  Table
     One of Lino's central concepts. 
-    A report defines metadata about a certain view of the database.
-    Deserves more documentation.
-    :class:`lino.reports.Report`.
+    A table defines metadata about a certain view of the database.
+    :class:`lino.core.table.Table`.
+    :class:`lino.utils.tables.AbstractTable`.
     
   Slave Report
     A Slave Report is a :term:`Report` that needs a master 
@@ -128,17 +97,9 @@ Glossary
     Generic ForeignKey. This is a ForeignKey that can point to 
     different tables.
     
-  CBSS
-    Crossroads Bank for Social Security.
-    See :doc:`/topics/bcss`.
-    
-  BCSS
-    Banque Carrefour de la Sécurité Sociale 
-    See :doc:`/topics/bcss`.
-    
-  PyPI
-    The Python Package Index.
-    Lino source releases are published there.
-    See http://pypi.python.org/pypi/lino
-    See http://pypi.python.org/pypi/lino/1.4.0
-  
+  Minimal application
+    Minimal applications are for testing, demonstrations and didactical use.
+    They are minimal in the sense that they don't define any applicaton logic 
+    for themselves, they just use a combination of modules 
+    from :doc:`/ref/modlib`.  
+    Currently Lino has two of them :mod:`lino.apps.min1` and :mod:`lino.apps.min2`.

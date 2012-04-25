@@ -251,5 +251,6 @@ class ProjectRelated(models.Model):
 
 from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable #, Listing
 from lino.mixins.uploadable import Uploadable
+#~ from lino.mixins.mails import Recipient, Mail
 from lino.utils.dblogger import DiffingMixin
 #~ from lino.mixins.personal import SexField, PersonMixin

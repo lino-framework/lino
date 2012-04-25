@@ -1,15 +1,22 @@
-=========================
-Model Library Conventions
-=========================
+======================
+The Lino Model Library 
+======================
 
-Lino comes with a library of reusable models in the 
-:mod:`lino.modlib` package.
-There may come other such packages, developed by other authors. 
-In order to be useable in Lino, 
-they should adhere to Lino's 
-Model Library Conventions.
+Lino comes with a collection of reusable models 
+in the :mod:`lino.modlib` package.
 
-Lino relies on Django's system of 'applications' and 'models'.
+There may come other such collections, developed by other authors. 
+
+Vocabulary: 
+:mod:`lino.modlib` is a collection of 
+*Django applications* (Lino calls them *modules*)
+designed to be used by Lino applications.
+There is also collection of Lino *applications* 
+(a concept for which Django has no word) 
+in :mod:`lino.apps`.
+An application is a defined set of modules that have been 
+"glued together".
+
 
 .. contents::
   :depth: 2
@@ -42,11 +49,14 @@ The ``contacts`` label
 
 Depends on :mod:`countries`.
 
-:class:`Person` is for physical persons,
-:class:`Company` for companies, organisations and any kind, non-formal groups that are 
-:class:`addressable <lino.mixins.addressable.Addressable>`.
+A :class:`Partner` is anything that can act as a business partner.
+A Partner has at least a name and usually also one "official" address.
+Predefined subclasses of Partners are
+:class:`Person` for physical persons and
+:class:`Company` for companies, organisations and any kind of 
+non-formal Partners.
 
-A :class:`Contact` is a :class:`Person` (physical persons) 
+A :class:`Contact` is a :class:`Person` 
 that has a certain role :class:`ContactType` 
 in a certain :class:`Company`. 
   

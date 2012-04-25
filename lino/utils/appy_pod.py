@@ -15,27 +15,11 @@
 An extended `appy.pod` renderer that installs additional functions:
 
 - :meth:`restify <Renderer.restify_func>`: 
-  Render a string in reStructuredText markup.
+  Render a string that is in reStructuredText markup.
 - :meth:`html <Renderer.html_func>` :
   Render a string that is in HTML (not XHTML).
 - :meth:`table <Renderer.insert_table>`
   Render a Lino Action Request as a table.
-
-We wanted to be 
-able to insert rst formatted plain text using a simple comment 
-like this::
-
-  do text
-  from restify(self.body)
-    
-Without this hack, users would have to write each time something 
-like::
-
-  do text
-  from xhtml(restify(self.body).encode('utf-8'))
-    
-  do text
-  from xhtml(restify(self.body,output_encoding='utf-8'))
 
 
 """
@@ -59,17 +43,17 @@ from django.utils.encoding import force_unicode
 from lino.utils.xmlgen import odf
 from lxml import etree
 
-def elem2str(e):
-    return etree.tostring(e)
+#~ def elem2str(e):
+    #~ return etree.tostring(e)
 
 OAS = '<office:automatic-styles>'
 OFFICE_STYLES = '<office:styles>'
 
-#~ from cStringIO import StringIO
-#~ def elem2str(e):
-    #~ xml = StringIO()
-    #~ e.toXml(0, xml)
-    #~ return xml.getvalue()
+from cStringIO import StringIO
+def elem2str(e):
+    xml = StringIO()
+    e.toXml(0, xml)
+    return xml.getvalue()
         
 
 
@@ -86,14 +70,27 @@ class Renderer(AppyRenderer):
         context.update(ui=self.ui)
         kw.update(finalizeFunction=self.finalize_func)
         AppyRenderer.__init__(self,template,context,result, **kw)
-        self.my_automaticstyles = odf.style.automaticstyles()
-        self.my_styles = odf.style.styles()
+        #~ self.my_automaticstyles = odf.style.automaticstyles()
+        #~ self.my_styles = odf.style.styles()
+        self.my_automaticstyles = []
+        self.my_styles = []
   
     def restify_func(self,unicode_string,**kw):
         """
         Renders a string in reStructuredText markup by passing it to 
         :func:`lino.utils.restify.restify` to convert it to XHTML, 
         then through :term:`appy.pod`'s built in `xhtml` function.
+        
+        Without this, users would have to write each time something 
+        like::
+
+          do text
+          from xhtml(restify(self.body).encode('utf-8'))
+            
+          do text
+          from xhtml(restify(self.body,output_encoding='utf-8'))
+
+        
         """
         if not unicode_string:
             return ''
@@ -127,23 +124,48 @@ class Renderer(AppyRenderer):
             html = html.encode('utf-8')
         return renderer.renderXhtml(html,**kw)
         
-    def add_style(self,name,**kw):
+    def finalize_func(self,fn):
+        #~ print "finalize_func()", self.automaticstyles.values()
+        #~ fn = os.path.join(fn,'..','content.xml')
+        #~ fn = os.path.join(fn,'content.xml')
+        self.insert_chunk(fn,'content.xml',OAS,''.join(
+          [elem2str(e) for e in self.my_automaticstyles]))
+        self.insert_chunk(fn,'styles.xml',OFFICE_STYLES,''.join(
+          [elem2str(e) for e in self.my_styles]))
+        
+    def insert_chunk(self,root,leaf,insert_marker,chunk):
+        """
+        post-process specified xml file by inserting a chunk of XML text after the specified insert_marker 
+        """
+        fn = os.path.join(root,leaf)
+        fd = open(fn)
+        s = fd.read()
+        fd.close()
+        chunks = s.split(insert_marker)
+        if len(chunks) != 2:
+            raise Exception("%s contains more than one %s element ?!" % (fn,insert_marker))
+        #~ ss = ''.join(self.my_automaticstyles.values())
+        #~ print 20120419, ss
+        s = chunks[0] + insert_marker + chunk + chunks[1]
+        #~ fd = open('tmp.xml',"w")
+        fd = open(fn,"w")
+        fd.write(s)
+        fd.close()
+        #~ raise Exception(fn)
+        
+
+    def unused_add_style(self,name,**kw):
         kw.update(name=name)
-        #~ e = odf.style.style(odf.style.makeattribs(**kw))
         e = odf.style.add_child(self.my_styles,'style')
         odf.style.update(e,**kw)
-        #~ e.style_name = name
-        #~ k = e.get('name')
-        #~ self.my_styles[name] = e
         return e
         
-    def insert_table(self,ar,column_names=None):
+    def unused_insert_table(self,ar,column_names=None):
         """
         Render an :class:`lino.core.actions.ActionRequest` as an OpenDocument table.
         This is the function that gets called when a template contains a 
         ``do text from table(...)`` statement.
         """
-        from lino.ui.extjs3 import ext_store
         if ar.request is None:
             columns = None
         else:
@@ -233,6 +255,7 @@ class Renderer(AppyRenderer):
         cp = odf.style.add_child(st,'table_row_properties')
         odf.fo.update(cp,background_color="#eeeeee")
         
+        # create table columns and automatic table-column styles 
         for i,fld in enumerate(fields):
             #~ print 20120415, repr(fld.name)
             k = str(ar.actor)+"."+fld.name
@@ -251,6 +274,7 @@ class Renderer(AppyRenderer):
             #~ self.my_automaticstyles[k] = cs
             odf.table.add_child(table_columns,'table_column',style_name=k)
             
+        from lino.ui.extjs3 import ext_store
         def fldstyle(fld):
             if isinstance(fld,(
                 ext_store.DecimalStoreField,
@@ -284,7 +308,7 @@ class Renderer(AppyRenderer):
             #~ p.addElement(e)
             #~ tc.addElement(p)
             
-        # header
+        # create header row
         hr = odf.table.add_child(table_header_rows,'table_row',style_name=HEADER_ROW_STYLE_NAME)
         for fld in fields:
             #~ k = str(ar.actor)+"."+fld.name
@@ -364,55 +388,33 @@ class Renderer(AppyRenderer):
         
 
 
-    def finalize_func(self,fn):
-        #~ print "finalize_func()", self.automaticstyles.values()
-        #~ fn = os.path.join(fn,'..','content.xml')
-        #~ fn = os.path.join(fn,'content.xml')
-        self.insert_chunk(fn,'content.xml',OAS,''.join(
-          [elem2str(e) for e in self.my_automaticstyles]))
-        self.insert_chunk(fn,'styles.xml',OFFICE_STYLES,''.join(
-          [elem2str(e) for e in self.my_styles]))
-        
-    def insert_chunk(self,root,leaf,insert_marker,chunk):
-        """
-        post-process specified xml file by inserting a chunk of XML text after the specified insert_marker 
-        """
-        fn = os.path.join(root,leaf)
-        fd = open(fn)
-        s = fd.read()
-        fd.close()
-        chunks = s.split(insert_marker)
-        if len(chunks) != 2:
-            raise Exception("%s contains more than one %s element ?!" % (fn,insert_marker))
-        #~ ss = ''.join(self.my_automaticstyles.values())
-        #~ print 20120419, ss
-        s = chunks[0] + insert_marker + chunk + chunks[1]
-        #~ fd = open('tmp.xml',"w")
-        fd = open(fn,"w")
-        fd.write(s)
-        fd.close()
-        #~ raise Exception(fn)
-        
 
-
-    def unused_insert_table(self,ar,column_names=None):
+    def add_style(self,name,**kw):
+        kw.update(name=name)
+        #~ e = odf.style.style(odf.style.makeattribs(**kw))
+        e = odf.style.add_child(self.my_styles,'style')
+        odf.style.update(e,**kw)
+        #~ e.style_name = name
+        #~ k = e.get('name')
+        #~ self.my_styles[name] = e
+        return e
+        
+    def insert_table(self,ar,column_names=None):
         """
-        This is where I stopped using :term:`ODFPy`.
+        Render an :class:`lino.core.actions.ActionRequest` as an OpenDocument table.
+        This is the function that gets called when a template contains a 
+        ``do text from table(...)`` statement.
+        
         """
         
         from odf.opendocument import OpenDocumentText
         from odf.style import Style, TextProperties, ParagraphProperties
-        from odf.style import TableColumnProperties
+        from odf.style import TableColumnProperties, TableRowProperties, TableCellProperties
         #~ from odf.text import P
         from odf import text
-        from odf.table import Table, TableColumn, TableRow, TableCell
+        from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
-
-        #~ from lino.ui.extjs3 import urls
-        #~ doc = urls.ui.table2odt(ar)
         
-        
-        #~ from lino.utils.xmlgen import odf
         if ar.request is None:
             columns = None
         else:
@@ -455,7 +457,7 @@ class Renderer(AppyRenderer):
         """
         specifying relative widths doesn't seem to work
         (and that's a pity because absolute widths requires a 
-        hard-coded table width)
+        hard-coded table width). 
         """
         use_relative_widths = False
         if use_relative_widths:
@@ -466,59 +468,81 @@ class Renderer(AppyRenderer):
             width_specs = ["%dmm" % (aw*w/tw) for w in widths]
         #~ print 20120419, width_specs 
         
-        #~ odf.table2odt(headers,fields,widths,,row2cells)
-        
-        #~ from lino.utils import html2odt
+        doc = OpenDocumentText()
+        def add_style(**kw):
+            st = Style(**kw)
+            doc.styles.addElement(st)
+            self.my_styles.append(st)
+            return st
 
-        #~ doc = OpenDocumentText()
-        # Create a style for the table content. One we can modify
-        # later in the word processor.
-        tablecontents = self.add_style(name="Table Contents", family="paragraph")
-        #~ tablecontents = Style(name="Table Contents", family="paragraph")
-        tablecontents.addElement(ParagraphProperties(numberlines="false", 
+        # create some visible styles
+        
+        st = add_style(name="Table Contents", family="paragraph",parentstylename="Default")
+        st.addElement(ParagraphProperties(numberlines="false", 
             linenumber="0"))
             
-        numbercell = self.add_style(name="Number Cell", family="paragraph")
-        #~ tablecontents = Style(name="Table Contents", family="paragraph")
-        numbercell.addElement(ParagraphProperties(numberlines="false", 
+        st = add_style(name="Number Cell", family="paragraph",parentstylename="Table Contents")
+        st.addElement(ParagraphProperties(numberlines="false", 
             textalign="end", justifysingleword="true",
             linenumber="0"))
-        #~ doc.my_styles.addElement(tablecontents)
         
-        tableheader = self.add_style(name="Table Column Header", family="paragraph")
-        tableheader.addElement(ParagraphProperties(numberlines="false", 
+        st = add_style(name="Table Column Header", family="paragraph",parentstylename="Table Contents")
+        st.addElement(ParagraphProperties(numberlines="false", 
             linenumber="0"))
-        #~ doc.styles.addElement(tableheader)
+        st.addElement(TextProperties(fontweight="bold"))
+        
+        # create some automatic styles
+        
+        def add_style(**kw):
+            st = Style(**kw)
+            doc.automaticstyles.addElement(st)
+            self.my_automaticstyles.append(st)
+            return st
+            
+        cell_style = add_style(name="Lino Cell Style",family="table-cell")
+        cell_style.addElement(TableCellProperties(
+            paddingleft="1mm",paddingright="1mm",
+            paddingtop="1mm",paddingbottom="0.5mm",
+            border="0.002cm solid #000000"))
+            
+        header_row_style = add_style(name="Lino Header Row",family="table-row")
+        header_row_style.addElement(TableRowProperties(backgroundcolor="#eeeeee"))
         
         table = Table()
+        table_columns = TableColumns()
+        table.addElement(table_columns)
+        table_header_rows = TableHeaderRows()
+        table.addElement(table_header_rows)
+        table_rows = TableRows()
+        table.addElement(table_rows)
         
+        # create table columns and automatic table-column styles 
         for i,fld in enumerate(fields):
             #~ print 20120415, repr(fld.name)
-            cs = Style(name=str(ar.actor)+"."+fld.name, family="table-column")
+            name = str(ar.actor)+"."+fld.name
+            cs = add_style(name=name, family="table-column")
             if use_relative_widths:
                 cs.addElement(TableColumnProperties(relcolumnwidth=width_specs[i]))
             else:
                 cs.addElement(TableColumnProperties(columnwidth=width_specs[i]))
             #~ cs.addElement(TableColumnProperties(useoptimalcolumnwidth='true'))
-            #~ doc.automaticstyles.addElement(cs)
-            k = cs.getAttribute('name')
+            #~ k = cs.getAttribute('name')
             #~ renderer.stylesManager.styles[k] = elem2str(e)
-            self.my_automaticstyles[k] = cs
-            table.addElement(TableColumn(stylename=cs))
-            
-        def fldstyle(fld):
-            if isinstance(fld,ext_store.DecimalStoreField):
-                return numbercell
-            if isinstance(fld,ext_store.IntegerStoreField):
-                return numbercell
-            if isinstance(fld,ext_store.AutoStoreField):
-                #~ print "20120419", elem2str(numbercell)
-                return numbercell
-            return tablecontents
+            #~ doc.automaticstyles.addElement(cs)
+            #~ self.my_automaticstyles.append(cs)
+            table_columns.addElement(TableColumn(stylename=name))
             
         from lino.ui.extjs3 import ext_store
+        def fldstyle(fld):
+            if isinstance(fld,(
+                ext_store.DecimalStoreField,
+                ext_store.IntegerStoreField,
+                ext_store.AutoStoreField
+                )):
+                return "Number Cell"
+            return "Table Contents"
         
-        def value2cell(ar,i,fld,val,style,tc):
+        def value2cell(ar,i,fld,val,style_name,tc):
             #~ text = html2odt.html2odt(fld.value2html(ar,val))
             params = dict()
             if isinstance(fld,ext_store.BooleanStoreField):
@@ -528,7 +552,7 @@ class Renderer(AppyRenderer):
                 params.update(text=fld.format_value(ar,v))
             else:
                 params.update(text=force_unicode(val))
-            params.update(stylename=style)
+            params.update(stylename=style_name)
             #~ e = fld.value2odt(ar,val)
             p = text.P(**params)
             #~ p.addElement(e)
@@ -536,38 +560,43 @@ class Renderer(AppyRenderer):
             tc.addElement(p)
             #~ yield P(stylename=tablecontents,text=text)
             
-        # header
-        hr = TableRow()
+        # create header row
+        #~ hr = TableRow(stylename=HEADER_ROW_STYLE_NAME)
+        hr = TableRow(stylename=header_row_style)
+        table_header_rows.addElement(hr)
         for fld in fields:
-            tc = TableCell()
+            #~ tc = TableCell(stylename=CELL_STYLE_NAME)
+            tc = TableCell(stylename=cell_style)
             tc.addElement(text.P(
-                stylename=tableheader,
+                stylename="Table Column Header",
                 text=force_unicode(fld.field.verbose_name or fld.name)))
             hr.addElement(tc)
-        table.addElement(hr)
             
         sums  = [0 for col in fields]
           
         for row in ar.data_iterator:
+            #~ for grp in ar.group_headers(row):
+                #~ raise NotImplementedError()
             tr = TableRow()
-            table.addElement(tr)
+            table_rows.addElement(tr)
             
             for i,fld in enumerate(fields):
-                tc = TableCell()
+                #~ tc = TableCell(stylename=CELL_STYLE_NAME)
+                tc = TableCell(stylename=cell_style)
                 #~ if fld.field is not None:
                 v = fld.full_value_from_object(ar,row)
-                style = fldstyle(fld)
+                stylename = fldstyle(fld)
                 if v is None:
-                    tc.addElement(text.P(stylename=style,text=''))
+                    tc.addElement(text.P(stylename=stylename,text=''))
                 else:
-                    value2cell(ar,i,fld,v,style,tc)
+                    value2cell(ar,i,fld,v,stylename,tc)
                     #~ fld.value2odt(ar,v,tc,stylename=tablecontents)
                     #~ for e in value2odt(fld,ar,v):
                         #~ tc.addElement(e)
                     sums[i] += fld.value2int(v)
                 tr.addElement(tc)
 
-        #~ doc.text.addElement(table)
+        doc.text.addElement(table)
         return elem2str(table)
         #~ if output_file:
             #~ doc.save(output_file) # , True)

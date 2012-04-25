@@ -44,7 +44,8 @@ from lino.tools import resolve_model, obj2str
 
 from lino.modlib.contacts import models as contacts
 
-from lino.modlib.mails import models as mails # import Mailable
+#~ from lino.modlib.mails import models as mails # import Mailable
+from lino.modlib.outbox import models as outbox # import Mailable
 
 from lino.modlib.cal.utils import \
     Weekday, DurationUnit, setkw, dt2kw
@@ -660,7 +661,8 @@ class ExtAllDayField(dd.VirtualField):
         
 
 
-class Event(Component,Ended,mixins.TypedPrintable,mails.Mailable):
+#~ class Event(Component,Ended,mixins.TypedPrintable,mails.Mailable):
+class Event(Component,Ended,mixins.TypedPrintable,outbox.Mailable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
     is a scheduled lapse of time where something happens.
@@ -715,7 +717,7 @@ class Event(Component,Ended,mixins.TypedPrintable,mails.Mailable):
     @classmethod
     def setup_report(cls,rpt):
         mixins.TypedPrintable.setup_report(rpt)
-        mails.Mailable.setup_report(rpt)
+        outbox.Mailable.setup_report(rpt)
         
     @classmethod
     def site_setup(cls,lino):
@@ -899,7 +901,7 @@ class GuestRoles(dd.Table):
 
 class Guest(contacts.ContactDocument,
             mixins.CachedPrintable,
-            mails.Mailable):
+            outbox.Mailable):
     """
     A Guest is a Contact who is invited to an :class:`Event`.
     """
@@ -933,7 +935,7 @@ class Guest(contacts.ContactDocument,
     @classmethod
     def setup_report(cls,rpt):
         mixins.CachedPrintable.setup_report(rpt)
-        mails.Mailable.setup_report(rpt)
+        outbox.Mailable.setup_report(rpt)
         
 class Guests(dd.Table):
     model = Guest

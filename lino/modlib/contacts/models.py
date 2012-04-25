@@ -266,20 +266,20 @@ but e.g. :class:`PersonMixin` overrides this.
 class PartnerDetail(dd.DetailLayout):
   
     main = """
-    address_box contact_box
+    address_box:60 contact_box:30
     bottom_box
     """
     
     address_box = """
-    name 
-    country region
-    city zip_code:10
+    name_box
+    country region city zip_code:10
+    addr1
     street_prefix street:25 street_no street_box
-    addr2:40
+    addr2
     """
-
+    
     contact_box = """
-    id language
+    info_box
     email:40 
     url
     phone
@@ -291,6 +291,9 @@ class PartnerDetail(dd.DetailLayout):
     is_person is_company is_user
     """
         
+    name_box = "name"
+    info_box = "id language"
+    
     
     def setup_handle(self,dh):
         dh.address_box.label = _("Address")
@@ -456,38 +459,23 @@ Optional `salutation_options` see :func:`get_salutation`.
 
 
 
-class PersonDetail(dd.DetailLayout):
+class PersonDetail(PartnerDetail):
   
-    main = """
-    address_box contact_box
-    bottom_box contacts.RolesByPerson
-    """
+    #~ main = """
+    #~ address_box contact_box
+    #~ bottom_box contacts.RolesByPerson
+    #~ """
     
-    address_box = """
-    last_name first_name:15 title:10
-    country region
-    city zip_code:10
-    street_prefix street:25 street_no street_box
-    addr2:40
-    """
+    name_box = "last_name first_name:15 gender title:10"
+    info_box = "id:5 language:10 birth_date:10"
 
-    contact_box = """
-    id language
-    email:40 
-    url
-    phone
-    gsm fax
-    """
-
-    bottom_box = """
-    gender birth_date age
-    remarks
-    """
+    bottom_box = "remarks contacts.RolesByPerson"
         
     
-    def setup_handle(self,dh):
-        dh.address_box.label = _("Address")
-        dh.contact_box.label = _("Contact")
+    #~ def setup_handle(self,dh):
+        #~ PartnerDetail.setup_handle(self,dh)
+        #~ dh.address_box.label = _("Address")
+        #~ dh.contact_box.label = _("Contact")
   
 
 
@@ -537,37 +525,12 @@ class CompanyMixin(models.Model):
         #~ raise Exception('20110810')
 
 
-class CompanyDetail(dd.DetailLayout):
+class CompanyDetail(PartnerDetail):
   
-    box3 = """
-    country region
-    city zip_code:10
-    street_prefix street:25 street_no street_box
-    addr2:40
-    """
-
-    box4 = """
-    email:40 
-    url
-    phone
-    gsm
-    """
-
-    address_box = "box3 box4"
-
     bottom_box = "remarks contacts.RolesByCompany"
 
-    intro_box = """
-    prefix name id language 
-    vat_id:12 type:20
-    """
-
-    main = """
-    intro_box
-    address_box
-    bottom_box
-    """
-    
+    name_box = """prefix name type:20"""
+    info_box = "id:5 language:10 vat_id:12"
 
 
 

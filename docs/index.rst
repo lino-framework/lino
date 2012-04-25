@@ -4,8 +4,6 @@ Lino -- a framework for database applications
 
 Welcome to the Lino Website. 
 
-
-
 - :doc:`What is Lino </about/index>`?
 
 - Linux administrators! give Lino a try,
@@ -29,17 +27,6 @@ consider lending a helping hand.
 Don't hesitate to contact the author directly 
 (luc.saffre@gmail.com).
   
-.. admonition:: **Special offer** for Python & Javascript programmers
-
-  Invest a week of your life 
-  and get a **free one-week holiday** 
-  with the author and his family in 
-  `Vigala (Estonia) <http://en.wikipedia.org/wiki/Vigala_Parish>`_
-  to check out whether you and Lino fit together!
-  
-  
-
-
 Some external links:
 
 - `Project page on Googlecode <http://code.google.com/p/lino>`__

@@ -15,7 +15,7 @@ APPY_PARAMS = dict()
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
 
 def init_demo():
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.pim.settings'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.min1.settings'
     from django.conf import settings
     from django.core.management import call_command
     assert settings.DATABASES['default']['NAME'] == ':memory:'

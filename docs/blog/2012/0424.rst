@@ -2,3 +2,48 @@
 ========
 
 Continued on `Tx25 (new style CBSS connection)`.
+
+After weeks of trying and fiddling, we finally got a first 
+RetrieveTIGroups request working using :term:`suds`::
+
+  import logging
+  logging.basicConfig(level=logging.INFO)
+  logging.getLogger('suds.client').setLevel(logging.DEBUG)
+  import datetime
+  from suds.client import Client
+  url = '/path/to/local/RetrieveTIGroupsV3.wsdl'
+  url = 'file://' + url
+
+  USERNAME = 'E1234567890'
+  PASSWORD = 'p1234567890123456789012345678'
+  CBE_NO = '0123456789'
+
+  client = Client(url, username=USERNAME, password=PASSWORD)
+
+  ci = client.factory.create('ns0:CustomerIdentificationType')
+  cbeNumber = client.factory.create('ns0:CbeNumberType')
+  ci.cbeNumber = CBE_NO
+  ic = client.factory.create('ns0:InformationCustomerType')
+  ic.ticket = "test-123456"
+  ic.timestampSent = datetime.datetime.now()
+  ic.customerIdentification = ci
+
+  si = client.factory.create('ns0:SearchInformationType')
+  si.ssin = "70100853190" # one of the demo SSIN
+  si.language = "fr"
+  si.history = True
+
+  print client.service.retrieveTI(ic,None,si)
+
+
+The main obstacle was: to access the CBSS, we cannot query 
+the WSDL online, we must use a locally stored file which contains 
+the "hard-coded" location.
+
+Der SOAP-Server der BCSS antwortet auf einen Request "...?wsdl" 
+zwar mit einer WSDL-Definition, aber die kann
+unmöglich gültig sein, weil der Server nicht wissen kann, über welchen
+Namen wir ihn anrufen. Weil er hinter einem reverse proxy steht. Wir
+müssen mit einer lokalen wsdl-Datei arbeiten. Ist auch prinzipiell kein
+Problem.
+

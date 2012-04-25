@@ -117,7 +117,13 @@ def configure(config):
     linoLogger = logging.getLogger('lino')
     
     if len(linoLogger.handlers) != 0:
-        raise Exception("Lino logger has already %d handlers: %s",len(linoLogger.handlers),linoLogger.handlers)
+        if False:
+            raise Exception("Lino logger has already %d handlers: %s",
+                len(linoLogger.handlers),linoLogger.handlers)
+        linoLogger.info(
+            "Not configuring logger because it has already %d handlers: %s",
+            len(linoLogger.handlers),linoLogger.handlers)
+        return 
     
     
     #~ print 20101225, config

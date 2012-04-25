@@ -16,8 +16,6 @@
 Defines models for :mod:`lino.modlib.mails`.
 """
 
-raise Exception("split into inbox and outbox")
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -36,6 +34,7 @@ from django.utils.encoding import force_unicode
 
 
 from lino import mixins
+from lino.mixins import mails
 from lino import tools
 from lino import dd
 #~ from lino.utils.babel import default_language
@@ -49,7 +48,7 @@ from lino.utils import babel
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 
-from lino.modlib.mails.utils import RecipientType
+#~ from lino.modlib.mails.utils import RecipientType
 
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
@@ -92,7 +91,7 @@ if True:
           tpl.instance = elem
           html_content = unicode(tpl)
           
-          from lino.modlib.mails.models import Mail
+          #~ from lino.modlib.mails.models import Mail
           m = Mail(sender=rr.get_user(),subject=elem.get_subject(),body=html_content)
           m.full_clean()
           m.save()
@@ -151,43 +150,11 @@ if True:
           #~ rpt.add_action(CreateMailAction())
 
 
-class Recipient(models.Model):
-#~ class Recipient(mixins.Owned):
-
-    allow_cascaded_delete = True
-    
-    class Meta:
-        verbose_name = _("Recipient")
-        verbose_name_plural = _("Recipients")
-    mail = models.ForeignKey('mails.Mail')
-    partner = models.ForeignKey('contacts.Partner',
-        #~ verbose_name=_("Recipient"),
-        blank=True,null=True)
-    type = RecipientType.field()
-    address = models.EmailField(_("Address"))
-    name = models.CharField(_("Name"),max_length=200)
-    #~ address_type = models.ForeignKey(ContentType)
-    #~ address_id = models.PositiveIntegerField()
-    #~ address = generic.GenericForeignKey('address_type', 'address_id')
-    
-    def name_address(self):
-        return '%s <%s>' % (self.name,self.address)      
-        
-    def __unicode__(self):
-        return "[%s]" % unicode(self.name or self.address)
-        #~ return "[%s]" % unicode(self.address)
-        
-    def full_clean(self):
-        if self.partner:
-            if not self.address:
-                self.address = self.partner.email
-            if not self.name:
-                self.name = self.partner.get_full_name(salutation=False)
-        super(Recipient,self).full_clean()
-        
+class Recipient(mails.Recipient):
+    mail = models.ForeignKey('outbox.Mail')
 
 class Recipients(dd.Table):
-    model = 'mails.Recipient'
+    model = Recipient
     #~ column_names = 'mail  type *'
     #~ order_by = ["address"]
 
@@ -207,8 +174,8 @@ class SendMailAction(dd.RowAction):
     callable_from = None
             
     def run(self,rr,elem,**kw):
-        if elem.sent:
-            return rr.ui.error_response(message='Mail has already been sent.')
+        #~ if elem.sent:
+            #~ return rr.ui.error_response(message='Mail has already been sent.')
         text_content = html2text(elem.body)
         #~ subject = elem.subject
         #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
@@ -217,7 +184,8 @@ class SendMailAction(dd.RowAction):
         msg = EmailMultiAlternatives(subject=elem.subject, 
             from_email=sender,
             body=text_content, 
-            to=[r.name_address() for r in elem.recipient_set.filter(type=RecipientType.to)])
+            to=[r.name_address() for r in elem.recipient_set.filter(
+                  type=mails.RecipientType.to)])
         msg.attach_alternative(elem.body, "text/html")
         msg.send()
       
@@ -225,50 +193,36 @@ class SendMailAction(dd.RowAction):
         elem.save()
         kw.update(refresh=True)
         msg = "Email %s from %s has been sent to %s." % (
-            elem.id,elem.sender,', '.join([r.address for r in elem.recipient_set.all()]))
+            elem.id,elem.sender,', '.join([
+                r.address for r in elem.recipient_set.all()]))
         kw.update(message=msg)
         #~ for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
             #~ msg += "\n" + n + " = " + unicode(getattr(settings,n))
         logger.info(msg)
         return rr.ui.success_response(**kw)
-      
 
 
 
-#~ class Mail(mixins.AutoUser):
-class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
-#~ class Mail(models.Model):
-    """
-    Deserves more documentation.
-    """
-    
+class Mail(mails.Mail,mixins.ProjectRelated):
+  
+    class Meta:
+        verbose_name = _("Outgoing Mail")
+        verbose_name_plural = _("Outgoing Mails")
+        
     type = models.ForeignKey(MailType,null=True,blank=True)
     
-    class Meta:
-        #~ abstract = True
-        verbose_name = _("Mail Message")
-        verbose_name_plural = _("Mail Messages")
+    #~ send = SendMailAction()
         
-    send = SendMailAction()
-        
-    #~ outgoing = models.BooleanField(verbose_name=_('Outgoing'))
-    
-    sender = models.ForeignKey('contacts.Partner',
-        verbose_name=_("Sender"),
-        related_name='mails_by_sender',
-        blank=True,null=True)
-    subject = models.CharField(_("Subject"),
-        max_length=200,blank=True,
-        #null=True
-        )
-    body = dd.RichTextField(_("Body"),blank=True,format='html')
-    received = models.DateTimeField(null=True,editable=False)
+    sender = models.ForeignKey(settings.LINO.user_model,
+        verbose_name=_("Sender"))
+        #~ related_name='outmails_by_sender',
+        #~ blank=True,null=True)
     sent = models.DateTimeField(null=True,editable=False)
-    
+
     def get_recipients(self,rr):
         #~ recs = []
         recs = [ unicode(r) for r in 
-            Recipient.objects.filter(mail=self,type=RecipientType.to)]
+            Recipient.objects.filter(mail=self,type=mails.RecipientType.to)]
           
             #~ s = rr.ui.href_to(r.owner)
             #~ if r.type != RecipientType.to:
@@ -277,34 +231,14 @@ class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         
-    def get_print_language(self,bm):
-        if self.sender is not None:
-            return self.sender.language
-        return super(Mail,self).get_print_language(bm)
-        
-    #~ def recipients_to(self,rr):
-        #~ kv = dict(type=RecipientType.to)
-        #~ r = rr.spawn(RecipientsByMail(),
-              #~ master_instance=self,
-              #~ known_values=kv)
-        #~ return rr.ui.quick_upload_buttons(r)
-    #~ recipients_to.return_type = dd.DisplayField(_("to"))
-    
-    def __unicode__(self):
-        return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.subject)
-        
-    #~ def add_attached_file(self,fn):
-        #~ """Doesn't work. 
-        #~ """
-        #~ kv = dict(type=settings.LINO.config.residence_permit_upload_type)
-        #~ r = uploads.UploadsByOwner.request(master_instance=self)
-        #~ r.create_instance(**kv)
-      
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ mixins.TypedPrintable.setup_report(rpt)
-        #~ rpt.add_action(SendMailAction())
-        
+    @classmethod
+    def setup_report(cls,rpt):
+        #~ call_optional_super(CachedPrintable,cls,'setup_report',rpt)
+        rpt.add_action(SendMailAction(rpt))
+        mails.Mail.setup_report(rpt)
+        #~ rpt.add_action(ClearCacheAction())
+
+
 #~ class InMail(Mail):
     #~ "Incoming Mail"
     
@@ -331,54 +265,20 @@ class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
         #~ rpt.add_action(SendMailAction())
 
 
-class Attachment(mixins.Owned):
-  
-    allow_cascaded_delete = True
-    
-    class Meta:
-        verbose_name = _("Attachment")
-        verbose_name_plural = _("Attachments")
-        
-    mail = models.ForeignKey('mails.Mail')
-    
-    def __unicode__(self):
-        if self.owner_id:
-            return unicode(self.owner)
-        return unicode(self.id)
-        
-class Attachments(dd.Table):
-    model = 'mails.Attachment'
-    
-class AttachmentsByOwner(Attachments):
-    master_key = 'owner'
-
-class AttachmentsByMail(Attachments):
-    master_key = 'mail'
-    slave_grid_format = 'summary'
-
 class Mails(dd.Table):
     model = Mail
-    detail_template = """
-    id sender type sent received build_time
-    subject
-    RecipientsByMail:50x5 uploads.UploadsByOwner:20x5 AttachmentsByMail:20x5
-    body:90x10
-    """
-  
-class Inbox(Mails):
-    label = _("Inbox")
-    column_names = "received sender subject * body"
-    order_by = ["received"]
-    filter = models.Q(received__isnull=False)
-
-class Outbox(Mails):
-    label = _("Outbox")
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
+    detail_template = """
+    id sender type sent build_time
+    subject
+    RecipientsByMail:50x5 uploads.UploadsByOwner:20x5
+    body:90x10
+    """
     
-class MyOutbox(Outbox):
+class MyOutbox(Mails):
     #~ known_values = dict(outgoing=True)
-    label = _("Mail Outbox")
+    label = _("My Outbox")
     filter = models.Q(sent__isnull=True)
     master_key = 'sender'
     
@@ -392,63 +292,36 @@ class MySent(MyOutbox):
     filter = models.Q(sent__isnull=False)
     
 
-class MyInbox(Inbox): 
-    #~ known_values = dict(outgoing=False)
-    label = _("My Inbox")
 
+#~ class MailsByPartner(object):
+    #~ master = 'contacts.Partner'
     #~ can_add = perms.never
-    #~ can_change = perms.never
     
-    @classmethod
-    def get_request_queryset(self,rr):
-        q1 = Recipient.objects.filter(partner=rr.get_user()).values('mail').query
-        qs = Mail.objects.filter(id__in=q1)
-        qs = qs.order_by('received')
-        return qs
 
-
-class MailsByPartner(object):
+  
+#~ class OutboxByPartner(Outbox,MailsByPartner):
+class OutboxByUser(Mails):
+    label = _("Outbox")
+    column_names = 'sent subject recipients'
+    order_by = ['sent']
+    master_key = 'sender'
+    
+class SentByPartner(Mails):
     master = 'contacts.Partner'
-    #~ can_add = perms.never
-    
-
-class InboxByPartner(MailsByPartner,Inbox):
-    label = _("Inbox")
-    column_names = 'received subject sender'
-    order_by = ['received']
+    label = _("Sent Mails")
+    column_names = 'sent subject sender'
+    order_by = ['sent']
     
     @classmethod
     def get_request_queryset(self,rr):
         q1 = Recipient.objects.filter(partner=rr.master_instance).values('mail').query
         qs = Mail.objects.filter(id__in=q1)
-        qs = qs.order_by('received')
+        qs = qs.order_by('sent')
         return qs
-        
-  
-class OutboxByPartner(Outbox,MailsByPartner):
-    label = _("Outbox")
-    column_names = 'sent subject recipients'
-    order_by = ['sent']
-    master_key = 'sender'
-  
-
-#~ class MailsByPerson(object):
-    #~ master = 'contacts.Person'
-    #~ can_add = perms.never
     
-    #~ def get_filter_kw(self,master_instance,**kw):
-        #~ q1 = Recipient.objects.filter(address=master_instance.email).values('mail').query
-        #~ kw['id__in'] = q1
-        #~ return kw
+  
 
   
-#~ class InMailsByPerson(MailsByPerson,InMails):
-    #~ column_names = 'received subject sender'
-    #~ order_by = ['received']
-
-#~ class OutMailsByPerson(MailsByPerson,OutMails): 
-    #~ column_names = 'sent subject recipients'
-    #~ order_by = ['sent']
 
 MODULE_NAME = _("~Mails")
   
@@ -456,7 +329,7 @@ def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("mails",MODULE_NAME)
-    m.add_action(MyInbox)
+    #~ m.add_action(MyInbox)
     m.add_action(MyOutbox)
     m.add_action(MySent)
   

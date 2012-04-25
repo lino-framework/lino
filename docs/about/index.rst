@@ -31,11 +31,34 @@ Some of Lino's features:
 
 - Designed for rapid prototyping and short release cycles.
 - Innovative solutions for 
-  :doc:`data migrations </topics/datamig>`,
+  :doc:`data migration </topics/datamig>`,
   :doc:`polymorphism  </topics/mti>`,
-  :doc:`user-interface agnostic form design </topics/dtl>` 
+  :doc:`user-interface agnostic form design </topics/dtl>`
   and
   :doc:`multilingual database content </topics/babel>`.
+
+The user interface
+------------------
+
+People tend to judge a framework by it's user interface (UI). 
+This approach is not completely wrong since the UI is the 
+first "visible" part.
+
+On the other hand, optimizing a UI is a rather boring work, 
+and there are many other, more interesting tasks that are 
+waiting to be done.
+
+Lino is designed to have many possible user interfaces.
+But since Lino is young, your choice is currently limited 
+to the :term:`ExtJS` UI. This means that Lino applications currently 
+always have the look of a web-based Rich Internet Application that 
+runs inside a browser.
+
+Although we are satisfied with ExtJS, 
+we also started working on a first alternative user interface 
+which  will be using the :doc:`Qooxdoo library </topics/qooxdoo>`.
+And we can imagine to write other interfaces in the future 
+(simple HTML, curses, Qt, ...).
 
 
 History
@@ -45,7 +68,7 @@ Luc Saffre, the author of Lino, is also the author of :term:`TIM`,
 a DOS-based framework for writing database applications for small enterprises. 
 Lino is a successor for TIM.
 TIM is over 15 years old, but Luc continues to live from maintaining 
-it and giving support to its users. 
+it and giving professional support to its users. 
 TIM users have relatively wide-spread profiles, 
 ranging from the independant craftsman who writes 50 invoices per year 
 to the government agency with 30 users and hundreds of documents per day.
@@ -55,7 +78,7 @@ He has done and dropped projects in C++, PHP and Java.
 Since August 2004 he's mostly working in Python. 
 In March 2009 he discovered :term:`Django` whose database model and application 
 server concepts seem ideal for Lino. 
-In August 2009 he started to use the ExtJS Javascript framework.
+In August 2009 he started to use the :term:`ExtJS` Javascript framework.
 Since January 2011 a first Lino application is being 
 used on a real (non-public) site.
 
@@ -72,16 +95,9 @@ has obviously not been designed to write complete database applications.
 That's why I started to write Lino.
 Lino is an alternative for Django's `django.contrib.admin` module."
 
-Unlike Django developers, 
+Unlike a Django application developer, 
 a Lino application developer doesn't write a single 
 line of HTML, CSS or Javascript. 
-Since Lino is young, your choice is currently limited 
-to the :term:`ExtJS` UI.
-Although we are satisfied with ExtJS, 
-we also started working on a first alternative user interface 
-which  will be using the :doc:`Qooxdoo library </topics/qooxdoo>`.
-And we can imagine to write other interfaces in the future 
-(simple HTML, curses, Qt, ...).
 
 
 
@@ -93,3 +109,4 @@ See also :doc:`/tutorials/t1`
    
    why_gpl
    why_extjs
+   compared

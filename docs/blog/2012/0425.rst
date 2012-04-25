@@ -1,0 +1,30 @@
+20120425
+========
+
+Sending mails from Lino
+-----------------------
+
+Renamed lino.apps.pim to :mod:`lino.apps.min1`.
+See :term:`Minimal application`.
+Added new application :mod:`lino.apps.min2`
+to test and demonstrate Lino's mails and calendar funtionality.
+
+Split :mod:`lino.modlib.mails`
+into :mod:`lino.modlib.outbox` and :mod:`lino.modlib.inbox`.
+The latter is for later, but the former now works and can actually send real mails.
+
+Lino and :term:`ODFPy`
+----------------------
+
+As I said in :doc:`0421`,
+"I remain open to the idea of getting back to ODFPy 
+in case it turns out that Søren continues to maintain ODFPy,
+because my method is not as beautiful and because :term:`lxml` 
+has a disadvantage of not playing well with mod_wsgi in certain 
+configurations (see )."
+
+Søren confirmed that he does continue to maintain :term:`ODFPy`, 
+so I converted 
+:meth:`lino.utils.appy_pod.Renderer.insert_table` 
+back to use :term:`ODFPy`.
+

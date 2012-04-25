@@ -1,0 +1,128 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lino.modlib.mails\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-13 07:31+0100\n"
+"PO-Revision-Date: 2011-09-14 21:28+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: .\models.py:67
+msgid "Mail Type"
+msgstr ""
+
+#: .\models.py:68
+#, fuzzy
+msgid "Mail Types"
+msgstr "Courriers"
+
+#: .\models.py:79
+msgid "Create email"
+msgstr "Céer courrier"
+
+#: .\models.py:158
+msgid "Recipient"
+msgstr "Destinataire"
+
+#: .\models.py:159 .\models.py:276
+msgid "Recipients"
+msgstr "DestinataireDestinataires"
+
+#: .\models.py:165
+msgid "Address"
+msgstr "Adresse"
+
+#: .\models.py:166
+msgid "Name"
+msgstr "Nom"
+
+#: .\models.py:204
+msgid "Send email"
+msgstr "Envoyer"
+
+#: .\models.py:247
+#, fuzzy
+msgid "Mail Message"
+msgstr "Courriers"
+
+#: .\models.py:248
+#, fuzzy
+msgid "Mail Messages"
+msgstr "Courriers"
+
+#: .\models.py:255
+msgid "Sender"
+msgstr "Expéditeur"
+
+#: .\models.py:258
+msgid "Subject"
+msgstr "Objet"
+
+#: .\models.py:262
+msgid "Body"
+msgstr "Contenu"
+
+#: .\models.py:337
+msgid "Attachment"
+msgstr "Pièce jointe"
+
+#: .\models.py:338
+msgid "Attachments"
+msgstr "Pièces jointes"
+
+#: .\models.py:367 .\models.py:414
+msgid "Inbox"
+msgstr ""
+
+#: .\models.py:373 .\models.py:427
+#, fuzzy
+msgid "Outbox"
+msgstr "Courrier sortant"
+
+#: .\models.py:379
+msgid "Mail Outbox"
+msgstr "Courrier sortant"
+
+#: .\models.py:389
+msgid "Sent Mails"
+msgstr "Courriers envoyés"
+
+#: .\models.py:395
+#, fuzzy
+msgid "My Inbox"
+msgstr "Courrier entrant"
+
+#: .\models.py:455 .\models.py:461 .\models.py:465
+msgid "~Mails"
+msgstr "~Courrier"
+
+#: .\utils.py:28
+msgid "Recipient Type"
+msgstr "Type de destinataire"
+
+#: .\utils.py:34
+msgid "cc"
+msgstr ""
+
+#: .\utils.py:35
+msgid "bcc"
+msgstr ""
+
+#: .\utils.py:36
+msgid "to"
+msgstr ""
+
+#~ msgid "Mails"
+#~ msgstr "Courriers"
+
+#~ msgid "Contact"
+#~ msgstr "Contact"

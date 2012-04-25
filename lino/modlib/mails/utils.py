@@ -16,6 +16,8 @@
 This module deserves more documentation.
 
 """
+raise Exception("split into inbox and outbox")
+
 import datetime
 
 from django.utils.translation import ugettext_lazy as _

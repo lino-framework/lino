@@ -1,0 +1,118 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-13 07:31+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:67
+msgid "Mail Type"
+msgstr ""
+
+#: .\models.py:68
+msgid "Mail Types"
+msgstr ""
+
+#: .\models.py:79
+msgid "Create email"
+msgstr ""
+
+#: .\models.py:158
+msgid "Recipient"
+msgstr ""
+
+#: .\models.py:159 .\models.py:276
+msgid "Recipients"
+msgstr ""
+
+#: .\models.py:165
+msgid "Address"
+msgstr ""
+
+#: .\models.py:166
+msgid "Name"
+msgstr ""
+
+#: .\models.py:204
+msgid "Send email"
+msgstr ""
+
+#: .\models.py:247
+msgid "Mail Message"
+msgstr ""
+
+#: .\models.py:248
+msgid "Mail Messages"
+msgstr ""
+
+#: .\models.py:255
+msgid "Sender"
+msgstr ""
+
+#: .\models.py:258
+msgid "Subject"
+msgstr ""
+
+#: .\models.py:262
+msgid "Body"
+msgstr ""
+
+#: .\models.py:337
+msgid "Attachment"
+msgstr ""
+
+#: .\models.py:338
+msgid "Attachments"
+msgstr ""
+
+#: .\models.py:367 .\models.py:414
+msgid "Inbox"
+msgstr ""
+
+#: .\models.py:373 .\models.py:427
+msgid "Outbox"
+msgstr ""
+
+#: .\models.py:379
+msgid "Mail Outbox"
+msgstr ""
+
+#: .\models.py:389
+msgid "Sent Mails"
+msgstr ""
+
+#: .\models.py:395
+msgid "My Inbox"
+msgstr ""
+
+#: .\models.py:455 .\models.py:461 .\models.py:465
+msgid "~Mails"
+msgstr ""
+
+#: .\utils.py:28
+msgid "Recipient Type"
+msgstr ""
+
+#: .\utils.py:34
+msgid "cc"
+msgstr ""
+
+#: .\utils.py:35
+msgid "bcc"
+msgstr ""
+
+#: .\utils.py:36
+msgid "to"
+msgstr ""

@@ -20,7 +20,7 @@ from lino.apps.std.settings import *
 
 class Lino(Lino):
     source_dir = os.path.dirname(__file__)
-    title = "Lino/PIM"
+    title = "Lino/MinimalApp 1"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.apps.az.migrate'
     
@@ -74,7 +74,7 @@ INSTALLED_APPS = (
   #~ 'lino.modlib.isip',
   #~ 'lino.modlib.bcss',
   #~ 'lino.modlib.newcomers',
-  'lino.apps.pim',
+  'lino.apps.min1',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',
   #~ 'south', # http://south.aeracode.org
