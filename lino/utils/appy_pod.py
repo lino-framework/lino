@@ -505,8 +505,11 @@ class Renderer(AppyRenderer):
             paddingtop="1mm",paddingbottom="0.5mm",
             border="0.002cm solid #000000"))
             
-        header_row_style = add_style(name="Lino Header Row",family="table-row")
+        header_row_style = add_style(name="Lino Header Row",family="table-row",parentstylename=cell_style)
         header_row_style.addElement(TableRowProperties(backgroundcolor="#eeeeee"))
+        
+        total_row_style = add_style(name="Lino Total Row",family="table-row",parentstylename=cell_style)
+        total_row_style.addElement(TableRowProperties(backgroundcolor="#ffffff"))
         
         table = Table()
         table_columns = TableColumns()
@@ -537,6 +540,7 @@ class Renderer(AppyRenderer):
             if isinstance(fld,(
                 ext_store.DecimalStoreField,
                 ext_store.IntegerStoreField,
+                ext_store.RequestStoreField,
                 ext_store.AutoStoreField
                 )):
                 return "Number Cell"
@@ -546,7 +550,7 @@ class Renderer(AppyRenderer):
             #~ text = html2odt.html2odt(fld.value2html(ar,val))
             params = dict()
             if isinstance(fld,ext_store.BooleanStoreField):
-                params.update(text=fld.value2html(val))
+                params.update(text=fld.value2html(ar,val))
             elif isinstance(fld,ext_store.RequestStoreField):
                 #~ params.update(text=force_unicode(val))
                 params.update(text=fld.format_value(ar,v))
@@ -595,29 +599,26 @@ class Renderer(AppyRenderer):
                         #~ tc.addElement(e)
                     sums[i] += fld.value2int(v)
                 tr.addElement(tc)
+                
+        if sums != [0 for col in fields]:
+            tr = TableRow(stylename=total_row_style)
+            table_rows.addElement(tr)
+            for i,fld in enumerate(fields):
+                tc = TableCell(stylename=cell_style)
+                v = sums[i]
+                stylename = fldstyle(fld)
+                if v == 0:
+                    s = ''
+                else:
+                    s = str(v)
+                tc.addElement(text.P(stylename=stylename,text=s))
+                tr.addElement(tc)
+            
 
         doc.text.addElement(table)
         return elem2str(table)
         #~ if output_file:
             #~ doc.save(output_file) # , True)
         #~ return doc
-        
-        
-        #~ print doc.automaticstyles.tagName
-        #~ inserts = renderer.contentParser.env.inserts
-        #~ for e in doc.automaticstyles.childNodes:
-            #~ k = e.getAttribute('name')
-            #~ renderer.stylesManager.styles[k] = elem2str(e)
-            #~ self.automaticstyles[k] = elem2str(e)
-            #~ inserts[k] = OdInsert(elem2str(e),doc.automaticstyles.tagName)
-            #~ print "20120419 added style %r = %r" % (k,e)
-        #~ return '<text:p>yo</text:p>'
-            
-        #~ print "20120419 inserts", renderer.contentParser.env.inserts
-        #~ return ''.join([elem2str(n) for n in doc.text.childNodes])
-        #~ doc.text.childNodes[0]
-        #~ print 20120419, elem2str(doc.text)
-        #~ return elem2str(doc.text)
-        #~ return elem2str(doc.text)
         
         

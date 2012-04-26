@@ -319,13 +319,20 @@ class Entry(SequencedBudgetComponent):
     account_type = AccountType.field()
     item = models.ForeignKey(Item)
     name = models.CharField(_("Description"),max_length=200,blank=True)
-    amount1 = dd.PriceField(_("Amount") + " 1",blank=True,null=True)
-    amount2 = dd.PriceField(_("Amount") + " 2",blank=True,null=True)
-    amount3 = dd.PriceField(_("Amount") + " 3",blank=True,null=True)
+    #~ amount1 = dd.PriceField(_("Amount") + " 1",blank=True,null=True)
+    #~ amount2 = dd.PriceField(_("Amount") + " 2",blank=True,null=True)
+    #~ amount3 = dd.PriceField(_("Amount") + " 3",blank=True,null=True)
+    amount1 = dd.PriceField(_("Amount") + " 1",default=0)
+    amount2 = dd.PriceField(_("Amount") + " 2",default=0)
+    amount3 = dd.PriceField(_("Amount") + " 3",default=0)
     circa = models.BooleanField(verbose_name=_("Circa"))
     todo = models.BooleanField(verbose_name=_("To Do"))
     remark = models.CharField(_("Remark"),max_length=200,blank=True)
 
+    @dd.virtualfield(dd.PriceField(_("Total")))
+    def total(self,ar):
+        return self.amount1 + self.amount2 + self.amount3
+    
     @chooser()
     def item_choices(cls,account_type):
         return Item.objects.filter(account_type=account_type)
@@ -347,11 +354,11 @@ class Entries(dd.Table):
     
 class EntriesByBudget(Entries):
     master_key = 'budget'
-    column_names = "name amount1 amount2 amount3"
+    column_names = "name amount1 amount2 amount3 total circa"
     
 class EntriesByBudgetAndType(EntriesByBudget):
   
-    column_names = "item name amount1 amount2 amount3 circa todo remark"
+    column_names = "item name amount1 amount2 amount3 total circa todo remark"
     _account_type = None
     
     @classmethod

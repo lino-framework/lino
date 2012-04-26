@@ -1258,7 +1258,8 @@ tinymce.init({
         else:
             kw.update(message=_("%s has been saved.") % obj2unicode(elem))
         if restful:
-            kw.update(rows=[rh.store.row2dict(ar,elem)])
+            # restful mode (used only for Ext.ensible) needs list_fields, not detail_fields
+            kw.update(rows=[rh.store.row2dict(ar,elem,rh.store.list_fields)])
         elif file_upload:
             kw.update(record_id=elem.pk)
             return json_response(kw,content_type='text/html')

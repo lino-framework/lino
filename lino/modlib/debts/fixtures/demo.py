@@ -112,3 +112,18 @@ def objects():
     for fam in Family.objects.all():
         #~ yield budget(partner_id=118,user=root)
         yield budget(partner=fam,user=root)
+        
+    Budget = resolve_model('debts.Budget')
+    Debt = resolve_model('debts.Debt')
+    Company = resolve_model('contacts.Company')
+    #~ AMOUNTS = Cycler(10,200,0,30,40,0,0,50)
+    AMOUNTS = Cycler([i*5 for i in range(10)])
+    PARTNERS = Cycler(Company.objects.all())
+    for b in Budget.objects.all():
+        n = min(3,b.actor_set.count())
+        for e in b.entry_set.all():
+            for i in range(n):
+                setattr(e,'amount%d'%(i+1),AMOUNTS.pop())
+                e.save()
+        for i in range(3):
+            yield Debt(budget=b,partner=PARTNERS.pop(),amount=AMOUNTS.pop()*5)

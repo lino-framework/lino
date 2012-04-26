@@ -117,7 +117,7 @@ class Lino(Lino):
         self.modules.debts.setup_my_menu(self,ui,user,m)
         
         self.modules.cal.setup_my_menu(self,ui,user,m)
-        self.modules.mails.setup_my_menu(self,ui,user,m)
+        self.modules.outbox.setup_my_menu(self,ui,user,m)
         m.add_action(self.modules.uploads.MyUploads)
         m.add_action(self.modules.lino.MyTextFieldTemplates)
 
@@ -187,7 +187,7 @@ class Lino(Lino):
             config_pcsw.add_action(self.modules.uploads.UploadTypes)
             
             self.modules.cal.setup_config_menu(self,ui,user,cfg)
-            self.modules.mails.setup_config_menu(self,ui,user,cfg)
+            self.modules.outbox.setup_config_menu(self,ui,user,cfg)
             self.modules.lino.setup_config_menu(self,ui,user,cfg)
             
             m = main.add_menu("explorer",_("Explorer"))
@@ -292,7 +292,7 @@ INSTALLED_APPS = (
   'lino.modlib.uploads',
   'lino.modlib.thirds',
   'lino.modlib.cal',
-  'lino.modlib.mails',
+  'lino.modlib.outbox',
   'lino.modlib.cv',
   'lino.modlib.jobs',
   'lino.modlib.isip',

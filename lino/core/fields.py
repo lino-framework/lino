@@ -212,6 +212,7 @@ class VirtualField(FakeField): # (Field):
         #~ Field.__init__(self)
         for k in ('''to_python choices save_form_data 
           value_to_string verbose_name max_length rel
+          max_digits decimal_places
           blank'''.split()):
             setattr(self,k,getattr(return_type,k,None))
             

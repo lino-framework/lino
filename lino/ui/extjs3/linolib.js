@@ -853,6 +853,7 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
   
 */
 Ext.override(Ext.grid.CellSelectionModel, {
+//~ var dummy = {
 
     handleKeyDown : function(e){
         /* removed because F2 wouldn't pass
@@ -1019,6 +1020,7 @@ Ext.override(Ext.grid.CellSelectionModel, {
     }
 
 
+//~ };
 });
 
  

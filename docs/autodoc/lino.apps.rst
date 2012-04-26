@@ -16,6 +16,7 @@ Subpackages
     lino.apps.pcsw
     lino.apps.igen
     lino.apps.crl
-    lino.apps.pim
+    lino.apps.min1
+    lino.apps.min2
 
 

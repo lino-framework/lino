@@ -35,6 +35,8 @@ See also ticket :doc:`/tickets/50`.
 
 """
 
+#~ print 20120426
+
 import logging
 from optparse import make_option 
 
@@ -147,3 +149,5 @@ class Command(BaseCommand):
         call_command('loaddata',*args,**options)
         
         dblogger.info("Lino initdb done %s on database %s.", args, dbname)
+
+#~ print 20120426, 'ok'

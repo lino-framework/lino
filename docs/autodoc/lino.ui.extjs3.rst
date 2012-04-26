@@ -31,13 +31,6 @@ The :mod:`ext_ui` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`ext_windows` Module
------------------------------
-
-.. automodule:: lino.ui.extjs3.ext_windows
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 The :mod:`ext_store` Module
 ---------------------------

@@ -16,6 +16,7 @@ A :term:`minimal application` used for
 tests, demonstrations and didactical purposes.
 """
 
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -42,12 +43,12 @@ class CompanyDetail(contacts.CompanyDetail):
     main = "general outbox.SentByPartner"
     def setup_handle(self,dh):
         dh.general.label = _("General")
-    
 
 def site_setup(site):
     contacts.Persons.set_detail(PersonDetail())
     contacts.Companies.set_detail(CompanyDetail())
 
-def setup_master_menu(site,ui,user,m):
-    m.add_action(site.modules.contacts.Persons)
-    m.add_action(site.modules.contacts.Companies)
+#~ def setup_master_menu(site,ui,user,m):
+    #~ m.add_action(site.modules.contacts.Persons)
+    #~ m.add_action(site.modules.contacts.Companies)
+

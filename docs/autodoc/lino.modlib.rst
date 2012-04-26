@@ -25,7 +25,7 @@ Subpackages
     lino.modlib.sales
     lino.modlib.ledger
     lino.modlib.links
-    lino.modlib.mails
+    lino.modlib.outbox
     lino.modlib.newcomers
     lino.modlib.notes
     lino.modlib.properties

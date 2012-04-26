@@ -14,8 +14,67 @@ Posted a `feature request
 <https://code.djangoproject.com/ticket/18213>`_.
 
 En attendant, Lino now at least issues a helpful error message 
-explaining the true reason:
+explaining the true reason::
 
   Exception: Fixture t:\hgwork\lino\lino\fixtures\std.py decided to not create any object.
   We're sorry, but Django doesn't like that.
   See <https://code.djangoproject.com/ticket/18213>.
+  
+  
+There was an internal bug in the calendar panel:
+Restful mode (used only for Ext.ensible) 
+needs list_fields, not detail_fields.
+
+Schuldnerberatung
+-----------------
+
+Continued on :mod:`lino.modlib.debts`.
+
+Im `[pdf]` sowie in table() (also im Ausdruck eines Budgets) 
+werden jetzt die Summen angezeigt.
+
+Todo:
+
+- Kolonne "Total" ist noch nicht rechtsbündig, weil es ein VirtualField ist.
+  Eventuell einfach ein neues Attribut `StoreField.summable` und den 
+  cell_style daran aufhängen.
+  
+- Eingabe in der Grid ist umständlich:
+  - handleKeyDown optimieren
+  - nicht nach jeder Zelle ein refresh machen
+  
+- Circa- und Todo-Angaben: 
+  - wie darstellen beim Ausdruck? 
+  - sind momentan pro Entry, sollten aber pro Betrag sein. 
+  
+- Jährlichen Beträgen
+
+- Debt.status : "Kredit", "Schuld", "Gerichtsvollzieher"
+- Debt.rate (Monatsrate)
+
+- Idee: Entry.actor und nur noch ein Entry.amount. 
+  Und "Akteure" werden zu "Unter-Budgets": nicht Actor.person, sondern Actor.budget.
+  Also pro Akteur eines Budgets muss man zunächst ein eigenes Budget eingeben, 
+  die erst danach (bzw. sobald die UB angelegt sind) zu einem Oberbudget gruppiert werden.
+  Budget.partner nicht mehr obligatorisch. Feld Budget.name.
+  
+  Und Budgets könnten dann beliebig miteinander verschachtelt werden. 
+  Zum Beispiel:
+  
+  - Familie:
+  
+    - Eltern:
+    
+      - Herr
+      - Frau
+      
+    - Kinder:
+    
+      - Paul & Freundin
+        
+        - Paul
+        - Freundin
+        
+      - Anna
+    
+  Da könnte man dann auch bestehende Budgets wiederverwerten.

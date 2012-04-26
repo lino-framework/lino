@@ -45,13 +45,6 @@ class Lino(Lino):
 LINO = Lino(__file__,globals())
 
 
-import datetime
-filename = datetime.date.today().strftime('%Y-%m-%d.log')
-#~ LOGGING = dict(filename=filename,level='DEBUG',rotate=False)  
-LOGGING = dict(filename=join(LINO.project_dir,'log',filename),level='DEBUG')
-#~ LOGGING = dict(filename=join(LINO.project_dir,'log',filename),level='INFO')
-
-
 
 INSTALLED_APPS = (
   #~ 'django.contrib.auth',

@@ -780,6 +780,13 @@ if settings.LINO.is_installed('contacts'):
 
 MODULE_NAME = _("Contacts")
 
+def site_setup(site):
+    site.modules.countries.Cities.set_detail("""
+    name country 
+    contacts.PartnersByCity
+    """)
+
+
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 

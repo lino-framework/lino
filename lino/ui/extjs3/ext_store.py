@@ -80,6 +80,7 @@ class StoreField(object):
         return py2js(self.options)
         
     def value2int(self,v):
+        #~ print "20120426 %s value2int(%s)" % (self,v)
         return 0
         
     def sum2html(self,ui,v):
@@ -534,6 +535,9 @@ class DecimalStoreField(StoreField):
             raise Exception("Invalid decimal value %r" % v)
         return v.replace(',','.')
 
+    def value2int(self,v):
+        #~ print "20120426 %s value2int(%s)" % (self,v)
+        return v
   
 class BooleanStoreField(StoreField):
     """

@@ -130,6 +130,7 @@ As long as nobody protests, I'll save some time by writing in German.
   23
   :doc:`24 <0424>`
   :doc:`25 <0425>`
+  :doc:`26 <0426>`
   
 .. |May| replace::  **May**
   |br| 
