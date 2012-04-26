@@ -1,8 +1,8 @@
-===============================================
-#31 : [RFC] The :mod:`lino.modlib.users` module
-===============================================
+=========================================
+#31 : The :mod:`lino.modlib.users` module
+=========================================
 
-Suggested readings before entering the discussion:
+Suggested readings related to the topic:
 
 - Documentation of module :mod:`lino.modlib.users`
 - The `Other authentication sources
@@ -10,7 +10,9 @@ Suggested readings before entering the discussion:
   section in the Django docs.
 - `Authentication using REMOTE_USER
   <http://docs.djangoproject.com/en/dev/howto/auth-remote-user/>`_
-
+- `Role-based access control
+  <http://en.wikipedia.org/wiki/Role-based_access_control>`_  
+  
 Request for Comments
 --------------------
 
@@ -23,10 +25,17 @@ help me to understand if I were missing something.
   where a central user management system is already 
   running.
 
-- Django's `django.contrib.users <https://docs.djangoproject.com/en/dev/topics/auth/>`_ 
+- Django's 
+  `django.contrib.users <https://docs.djangoproject.com/en/dev/topics/auth/>`_ 
   module is overkill in such cases.
   
-- Not only overkill, but also it's tests suite reports many 
+- Not only overkill, but also it's tests suite reports 
   failures for things that are not used in the above 
   configuration.
   
+The `Django documentation 
+<https://docs.djangoproject.com/en/dev/topics/auth/#permissions>`_ says:
+
+  Permissions are set globally per type of object, not per specific object instance. For example, it's possible to say "Mary may change news stories," but it's not currently possible to say "Mary may change news stories, but only the ones she created herself" or "Mary may only change news stories that have a certain status, publication date or ID." The latter functionality is something Django developers are currently discussing.  
+
+

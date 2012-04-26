@@ -243,6 +243,7 @@ class LayoutHandle:
         if desc is not None:
             return self.define_panel(name,desc,**kw)
         e = self.ui.create_layout_element(self,name,**kw)
+        if e is None: return None # e.g. NullField
         # todo: cannot hide babelfields
         if name in self.layout.hidden_elements:
             e.hidden = True

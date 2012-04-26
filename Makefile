@@ -2,7 +2,7 @@ DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 APPS = pcsw igen
-MODULES = debts families cv isip mails cal jobs thirds products properties contacts countries notes sales finan links uploads users newcomers
+MODULES = debts families cv isip outbox cal jobs thirds products properties contacts countries notes sales finan links uploads users newcomers
 TESTS_OPTIONS = --verbosity=2 --traceback
 
 #LANGUAGES = de fr nl et

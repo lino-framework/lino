@@ -145,6 +145,10 @@ class FakeField(object):
         return False
         
 
+#~ class NullField(FakeField):
+    #~ def __init__(self,name):
+        #~ self.name = name
+    
 class RemoteField(FakeField):
     """
     Represents a field on a related object.

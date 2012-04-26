@@ -1,0 +1,21 @@
+20120426
+========
+
+Started working on :doc:`/tickets/62`.
+
+Preliminary studies using :mod:`lino.apps.min1`.
+I wanted to make it a really minimal application by also removing 
+:mod:`lino.modlib.users` and 
+`django.contrib.contenttypes`
+The former is now done, 
+but the latter is still needed because for a very stupid reason:
+Django's `loaddata` command doesn't allow empty fixtures.
+Posted a `feature request 
+<https://code.djangoproject.com/ticket/18213>`_.
+
+En attendant, Lino now at least issues a helpful error message 
+explaining the true reason:
+
+  Exception: Fixture t:\hgwork\lino\lino\fixtures\std.py decided to not create any object.
+  We're sorry, but Django doesn't like that.
+  See <https://code.djangoproject.com/ticket/18213>.

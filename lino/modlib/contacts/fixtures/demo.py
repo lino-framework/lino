@@ -21,7 +21,6 @@ from lino.utils import dblogger
 #from lino import reports
 #contacts = reports.get_app('contacts')
 
-
 def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
     

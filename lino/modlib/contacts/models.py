@@ -288,7 +288,7 @@ class PartnerDetail(dd.DetailLayout):
 
     bottom_box = """
     remarks 
-    is_person is_company is_user
+    is_person is_company #is_user
     """
         
     name_box = "name"
@@ -778,14 +778,21 @@ if settings.LINO.is_installed('contacts'):
         )
 
 
+MODULE_NAME = _("Contacts")
 
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
     pass
   
+def setup_master_menu(site,ui,user,m): 
+    config_contacts = m.add_menu("contacts",MODULE_NAME)
+    config_contacts.add_action(Persons)
+    config_contacts.add_action(Companies)
+    config_contacts.add_action(Partners)
+    
 def setup_config_menu(site,ui,user,m): 
-    config_contacts = m.add_menu("contacts",_("Contacts"))
+    config_contacts = m.add_menu("contacts",MODULE_NAME)
     config_contacts.add_action(CompanyTypes)
     config_contacts.add_action(RoleTypes)
     config_contacts.add_action(site.modules.countries.Countries)
@@ -796,7 +803,7 @@ def setup_config_menu(site,ui,user,m):
     #~ m.add_action('contacts.RoleTypes')
   
 def setup_explorer_menu(site,ui,user,m):
-    config_contacts = m.add_menu("contacts",_("Contacts"))
+    config_contacts = m.add_menu("contacts",MODULE_NAME)
     m.add_action(site.modules.contacts.Roles)
     m.add_action(site.modules.countries.Cities)
   

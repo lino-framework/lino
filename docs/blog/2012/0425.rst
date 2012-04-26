@@ -28,3 +28,4 @@ so I converted
 :meth:`lino.utils.appy_pod.Renderer.insert_table` 
 back to use :term:`ODFPy`.
 
+:checkin:`ffbaf2280822`.

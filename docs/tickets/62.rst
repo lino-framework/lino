@@ -1,0 +1,8 @@
+====================================
+#62 : Authentication using BEID card
+====================================
+
+It seems that we'll need Session-based authentication for that.
+Until now Lino supports only :doc:`/topics/auth`.
+See also :doc:`/tickets/31`.
+

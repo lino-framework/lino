@@ -11,11 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
-"""
-See :doc:`/topics/dumpy`
-
-"""
+"Documented in :doc:`/topics/dumpy`."
 
 from StringIO import StringIO
 import os
@@ -255,7 +251,16 @@ def new_content_type_id(m):
     #~ def getvalue(self):
         #~ return self.objects
 
+SUPPORT_EMPTY_FIXTURES = False # trying, but doesn't yet work
 
+if SUPPORT_EMPTY_FIXTURES:
+    from lino.utils import AttrDict
+    class DummyDeserializedObject(base.DeserializedObject):
+        class FakeObject:
+            _meta = AttrDict(db_table='')
+        object = FakeObject()
+        def __init__(self): pass
+        def save(self, *args,**kw): pass
 
 class FakeDeserializedObject(base.DeserializedObject):
     """
@@ -384,9 +389,21 @@ class DpyDeserializer:
             else:
                 dblogger.warning("Ignored unknown object %r",obj)
                 
+        empty_fixture = True
         for obj in module.objects():
-            for o in expand(obj): yield o
-              
+            for o in expand(obj): 
+                empty_fixture = False
+                yield o
+        if empty_fixture:
+            if SUPPORT_EMPTY_FIXTURES:
+                yield DummyDeserializedObject() # avoid Django interpreting empty fixtures as an error
+            else:
+                raise Exception("""\
+Fixture %s decided to not create any object.
+We're sorry, but Django doesn't like that. 
+See <https://code.djangoproject.com/ticket/18213>.
+""" % fp.name)
+          
         dblogger.info("Saved %d instances from %s.",self.saved,fp.name)
                     
         while self.saved and self.save_later:

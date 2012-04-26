@@ -688,17 +688,12 @@ class ExtUI(base.UI):
                 de = None
                 name += " (" + str(e) + ")"
             
-        if False and isinstance(de,fields.RemoteField):
-            dummy = ext_elems.field2elem(lh,de.field,**kw)
-            dummy.editable = False
-            dummy.name = de.name
-            #~ dummy.field = de
-            lh.add_store_field(de)
-            return dummy
-            
         #~ if isinstance(de,fields.FieldSet):
             #~ # return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
             #~ return lh.desc2elem(name,de.desc,**kw)
+            
+        #~ if isinstance(de,fields.NullField):
+            #~ return None
             
         if isinstance(de,fields.Constant):
             return ext_elems.ConstantElement(lh,de,**kw)
@@ -787,16 +782,10 @@ class ExtUI(base.UI):
                 return self.create_meth_element(lh,name,de,rt,**kw)
                 
         if not name in ('__str__','__unicode__','name','label'):
-            #~ value = getattr(lh.layout,name,None)
             value = getattr(lh,name,None)
             if value is not None:
                 return value
                 
-                #~ if isinstance(value,basestring):
-                    #~ return lh.desc2elem(panelclass,name,value,**kw)
-                #~ raise KeyError(
-                  #~ "Cannot handle value %r in %s.%s." 
-                  #~ % (value,lh.layout.__name__,name))
         if hasattr(lh,'rh'):
             msg = "Unknown element %r referred in layout %s of %s." % (
                 name,lh.layout,lh.rh.actor)

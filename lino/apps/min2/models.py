@@ -12,8 +12,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-A :term:`minimal application` that uses only the 
-:mod:`lino.modlib.contacts` module.
+A :term:`minimal application` used for 
+tests, demonstrations and didactical purposes.
 """
 
 from django.db import models
@@ -27,11 +27,27 @@ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
     class Meta(contacts.PersonMixin.Meta):
         app_label = 'contacts'
 
+class PersonDetail(contacts.PersonDetail):
+    general = contacts.PersonDetail.main
+    main = "general outbox.SentByPartner"
+    def setup_handle(self,dh):
+        dh.general.label = _("General")
+    
 class Company(contacts.Partner,contacts.CompanyMixin):
     class Meta(contacts.CompanyMixin.Meta):
         app_label = 'contacts'
         
+class CompanyDetail(contacts.CompanyDetail):
+    general = contacts.CompanyDetail.main
+    main = "general outbox.SentByPartner"
+    def setup_handle(self,dh):
+        dh.general.label = _("General")
+    
 
-#~ def setup_master_menu(site,ui,user,m):
-    #~ m.add_action(site.modules.contacts.Persons)
-    #~ m.add_action(site.modules.contacts.Companies)
+def site_setup(site):
+    contacts.Persons.set_detail(PersonDetail())
+    contacts.Companies.set_detail(CompanyDetail())
+
+def setup_master_menu(site,ui,user,m):
+    m.add_action(site.modules.contacts.Persons)
+    m.add_action(site.modules.contacts.Companies)

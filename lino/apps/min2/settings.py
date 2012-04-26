@@ -20,22 +20,20 @@ from lino.apps.std.settings import *
 
 class Lino(Lino):
     source_dir = os.path.dirname(__file__)
-    title = "Lino/MinimalApp 1"
+    title = "Lino/MinimalApp 2"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.apps.az.migrate'
     
-    use_extensible = False
     #~ project_model = 'contacts.Person'
     #~ project_model = 'contacts.Person'
-    project_model = None
-    user_model = None
+    project_model = 'projects.Project'
     
     #~ languages = ('de', 'fr')
     languages = ['en']
     
     #~ index_view_action = "dsbe.Home"
     
-    #~ remote_user_header = "REMOTE_USER"
+    remote_user_header = "REMOTE_USER"
     
     def get_app_source_file(self):  return __file__
         
@@ -47,7 +45,12 @@ class Lino(Lino):
 LINO = Lino(__file__,globals())
 
 
-TIME_ZONE = None
+import datetime
+filename = datetime.date.today().strftime('%Y-%m-%d.log')
+#~ LOGGING = dict(filename=filename,level='DEBUG',rotate=False)  
+LOGGING = dict(filename=join(LINO.project_dir,'log',filename),level='DEBUG')
+#~ LOGGING = dict(filename=join(LINO.project_dir,'log',filename),level='INFO')
+
 
 
 INSTALLED_APPS = (
@@ -56,11 +59,28 @@ INSTALLED_APPS = (
   #~ 'django.contrib.sessions',
   #~ 'django.contrib.sites',
   #~ 'django.contrib.markup',
+  #~ 'lino.modlib.system',
   'lino',
-  #~ 'lino.modlib.users',
+  'lino.modlib.users',
   'lino.modlib.countries',
+  #~ 'lino.modlib.documents',
+  #~ 'lino.modlib.properties',
   'lino.modlib.contacts',
-  'lino.apps.min1',
+  'lino.modlib.projects',
+  #~ 'lino.apps.modlib.families',
+  #~ 'lino.az.notes',
+  #~ 'lino.apps.az.school',
+  #~ 'lino.modlib.links',
+  'lino.modlib.uploads',
+  #~ 'lino.modlib.thirds',
+  'lino.modlib.cal',
+  #~ 'lino.modlib.mails',
+  'lino.modlib.outbox',
+  #~ 'lino.modlib.jobs',
+  #~ 'lino.modlib.isip',
+  #~ 'lino.modlib.bcss',
+  #~ 'lino.modlib.newcomers',
+  'lino.apps.min2',
 )
 
 
