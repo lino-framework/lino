@@ -299,7 +299,7 @@ INSTALLED_APPS = (
   'lino.modlib.cbss',
   'lino.modlib.newcomers',
   'lino.modlib.families',
-  'lino.modlib.debts',
+  'lino.sandbox.debts',
   'lino.apps.pcsw',
   'lino.apps.pcsw.courses',
   #~ 'south', # http://south.aeracode.org

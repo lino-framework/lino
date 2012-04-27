@@ -136,12 +136,19 @@ class Sequenced(models.Model):
         blank=True,null=False,
         verbose_name=_("Seq.No."))
     
-    def set_seqno(self):
+    def get_siblings(self):
         """
-        The default implementation sets a global sequencing. 
+        The default implementation sets a global sequencing
+        by returning all objects of this model.
         Overridden in :class:`lino.modlib.thirds.models.Third`.
         """
-        qs = self.__class__.objects.order_by('seqno')
+        return self.__class__.objects.order_by('seqno')      
+        
+    def set_seqno(self):
+        """
+        Initialize `seqno` to the `seqno` of eldest sibling + 1.
+        """
+        qs = self.get_siblings()
         n = qs.count()
         if n == 0:
             self.seqno = 1

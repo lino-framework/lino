@@ -32,6 +32,11 @@ Continued on :mod:`lino.modlib.debts`.
 
 Im `[pdf]` sowie in table() (also im Ausdruck eines Budgets) 
 werden jetzt die Summen angezeigt.
+Die demo-Fixture schreibt jetzt auch einige Beträge in die 
+Entries rein (die waren bisher leer, da gabs nix zu summieren).
+
+:checkin:`adbceccbf48c`.
+
 
 Todo:
 
@@ -78,3 +83,4 @@ Todo:
       - Anna
     
   Da könnte man dann auch bestehende Budgets wiederverwerten.
+  
