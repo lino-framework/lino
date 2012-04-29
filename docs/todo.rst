@@ -14,7 +14,14 @@ Short-term
 
 #.  Uwe hat einen Bug gefunden: man kann in der Liste "Meine Klienten" 
     momentan noch nicht auf die Kolonnen "Vertrag beginnt" und 
-    "Vertrag endet" sortieren. (Liegt daran, dass das virtual fields sind)
+    "Vertrag endet" sortieren. 
+    Liegt daran, dass das virtual fields sind.
+    Es ist zumindest nicht einfach, das zu ermöglichen. 
+    Wahrscheinlich müssten wir dazu custom functions definieren, 
+    was nicht alle db-Backends können.
+    Eher stelle ich mir die Frage, ob da nicht ein Analysefehler 
+    vorliegt. Eigentlich müsstet ihr das über die Befehle `Meine VSEs` 
+    und Meine `Art-60-7-Konventionen`.
 
 
 #.  Vertragsüberschneidungen bei save() statt Datenkontrollliste.

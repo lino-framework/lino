@@ -59,11 +59,13 @@ Bugfixes
   "TypeError at /api/jobs/JobProviderTable/3999 / 
   unsupported operand type(s) for +: 'NoneType' and 'unicode'"
   
-- die “(zeigen)”-Links im Detail Organisation und Person funktionierten nicht. 
-
 - "Gericht Erster Instanz" ist kein Stellenanbieter mehr,
   aber wenn man versuchte, die Checkbox "Stellenanbieter" abzuschalten, 
   meldete Lino "Aus TIM importierte Partner dürfen nicht gelöscht werden."
+  
+- Traceback "ExtUI instance has no attribute 'href_to'" 
+  in :meth:`lino.modlib.contacts.models.PartnerDocument.summary_row`
+
   
 
 Internal changes

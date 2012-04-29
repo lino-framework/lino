@@ -52,7 +52,7 @@ Todo:
   - wie darstellen beim Ausdruck? 
   - sind momentan pro Entry, sollten aber pro Betrag sein. 
   
-- Jährlichen Beträgen
+- Jährliche Beträge
 
 - Debt.status : "Kredit", "Schuld", "Gerichtsvollzieher"
 - Debt.rate (Monatsrate)

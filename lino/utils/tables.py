@@ -579,7 +579,7 @@ class AbstractTable(actors.Actor):
     to return or yield the list of "rows"::
     
         @classmethod
-        def get_data_rows(self,request):
+        def get_data_rows(self,ar):
             ...
             yield somerow
             

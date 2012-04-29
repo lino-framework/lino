@@ -215,7 +215,8 @@ if False:
 def install_summary_rows():
   
     """ 
-    Install a summary_row() method to models.
+    Install a :modmeth:`summary_row` method to models that 
+    don't have their own.
     """
           
     for model in models.get_models():
@@ -232,7 +233,7 @@ def install_summary_rows():
             else:
                 def f(obj,ui,**kw):
                     return unicode(obj)
-                logger.info('20120217 %s : installed plain summary_row', model)
+                #~ logger.info('20120217 %s : installed plain summary_row', model)
             model.summary_row = f
         else:
             logger.info('20120217 %s : use model summary_row defined in %s', model,m.__module__)

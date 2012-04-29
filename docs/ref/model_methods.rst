@@ -132,7 +132,8 @@ Special model attributes and methods
 
 .. modmeth:: summary_row
 
-  Return a HTML fragment that describes this record in a summary
+  Return a HTML fragment that describes this record in a 
+  :func:`lino.core.tables.summary`.
   
   Example::
   

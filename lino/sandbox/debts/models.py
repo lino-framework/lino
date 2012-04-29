@@ -63,6 +63,7 @@ from lino.tools import resolve_field
 from lino.tools import range_filter
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
+from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
@@ -122,8 +123,8 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
     intro = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
                 
-    #~ def __unicode__(self):
-        #~ return "%s #unicode(join_words(_("Family"),self.name))
+    def __unicode__(self):
+        return force_unicode(_("Budget for %s") % self.partner)
                 
     @property
     def actor1(self):
@@ -140,18 +141,68 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
     def item_groups(self):
         return ItemGroup.objects.all()
         
+    def save(self,*args,**kw):
+        super(Budget,self).save(*args,**kw)
+        
+        #~ if self.actor_set.all().count() == 0:
+          
+        #~ if self.actor_set.all().count() == 0:
+            #~ return 
+        required = Item.objects.filter(optional=False).order_by('seqno').values_list('id',flat=True)
+        missing = set(required)
+        seqno = 1
+        for e in Entry.objects.filter(budget=self).order_by('seqno'):
+            #~ if e.item.pk in required:
+            missing.remove(e.item.pk)
+            seqno = max(seqno,e.seqno)
+        #~ print 20120411, required, missing
+        for pk in required:
+            if pk in missing:
+                seqno += 1
+                e = Entry(item_id=pk,budget=self,seqno=seqno)
+                e.full_clean()
+                e.save()
+                #~ print e
+        #~ if self.actor_set.all().count() == 0:
+            #~ try:
+                #~ fam = self.partner.family
+            #~ except families.Family.DoesNotExist:
+                #~ pass
+            #~ else:
+                #~ for p in [fam.father,fam.mother]:
+                    #~ if p is not None:
+                        #~ a = Actor(
+                            #~ person=p,
+                            #~ budget=self,
+                            #~ header=unicode(p.get_salutation(nominative=True))
+                            #~ )
+                        #~ a.full_clean()
+                        #~ a.save()
+                    
+                #~ for m in self.partner.family.membersbyfamily.all():
+                    #~ a = Actor(person=m.person,budget=self)
             
         
       
 class BudgetDetail(dd.DetailLayout):
-    main = "general ExpensesByBudget IncomesByBudget DebtsByBudget"
+    main = "general entries result"
     general = """
     date partner id user closed
     intro 
     ActorsByBudget
     """
+    
+    entries = """
+    ExpensesByBudget IncomesByBudget 
+    DebtsByBudget"""
+    
+    result= """
+    ExpensesSummaryByBudget IncomesSummaryByBudget 
+    """
     def setup_handle(self,h):
         h.general.label = _("General")
+        h.entries.label = _("Entries")
+        h.result.label = _("Result")
     
 class Budgets(dd.Table):
     model = Budget
@@ -210,10 +261,11 @@ class Actor(mixins.Sequenced):
         verbose_name = _("Budget Actor")
         verbose_name_plural = _("Budget Actors")
         
-    budget = models.ForeignKey(Budget,related_name="actors")
+    #~ budget = models.ForeignKey(Budget,related_name="actors")
+    budget = models.ForeignKey(Budget)
     child = models.ForeignKey(Budget,
-        related_name="using_actors",
-        blank=True,null=True)
+        verbose_name=_("Sub-Budgets"),
+        related_name="used_by")
     header = models.CharField(_("Header"),max_length=20,blank=True)
     remark = dd.RichTextField(_("Remark"),format="html",blank=True)
     #~ remark = models.CharField(_("Remark"),max_length=200,blank=True)
@@ -223,71 +275,31 @@ class Actor(mixins.Sequenced):
         "Overrides :meth:`lino.mixins.Sequenced.get_siblings`"
         return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
         
-    def save(self,*args,**kw):
-        super(Actor,self).save(*args,**kw)
         
-        #~ if self.actor_set.all().count() == 0:
-          
-        #~ if self.actor_set.all().count() == 0:
-            #~ return 
-        required = Item.objects.filter(optional=False).order_by('seqno').values_list('id',flat=True)
-        missing = set(required)
-        seqno = 1
-        for e in Entry.objects.filter(actor=self).order_by('seqno'):
-            #~ if e.item.pk in required:
-            missing.remove(e.item.pk)
-            seqno = max(seqno,e.seqno)
-        #~ print 20120411, required, missing
-        for pk in required:
-            if pk in missing:
-                seqno += 1
-                e = Entry(item_id=pk,budget=self.budget,actor=self,seqno=seqno)
-                e.full_clean()
-                e.save()
-                #~ print e
-        #~ if self.actor_set.all().count() == 0:
-            #~ try:
-                #~ fam = self.partner.family
-            #~ except families.Family.DoesNotExist:
-                #~ pass
-            #~ else:
-                #~ for p in [fam.father,fam.mother]:
-                    #~ if p is not None:
-                        #~ a = Actor(
-                            #~ person=p,
-                            #~ budget=self,
-                            #~ header=unicode(p.get_salutation(nominative=True))
-                            #~ )
-                        #~ a.full_clean()
-                        #~ a.save()
-                    
-                #~ for m in self.partner.family.membersbyfamily.all():
-                    #~ a = Actor(person=m.person,budget=self)
-        
-class ActorDetail(dd.DetailLayout):
-    main = "general ExpensesByActor IncomesByActor DebtsByActor"
-    general = """
-    budget seqno child header
-    remark
-    """
-    def setup_handle(self,h):
-        h.general.label = _("General")
+#~ class ActorDetail(dd.DetailLayout):
+    #~ main = "general ExpensesByActor IncomesByActor DebtsByActor"
+    #~ general = """
+    #~ budget seqno child header
+    #~ remark
+    #~ """
+    #~ def setup_handle(self,h):
+        #~ h.general.label = _("General")
     
     
 class Actors(dd.Table):
     model = Actor
-    detail_layout = ActorDetail()
+    #~ detail_layout = ActorDetail()
 
 class ActorsByBudget(Actors):
     master_key = 'budget'
     
-class SequencedActorComponent(mixins.Sequenced):
+class SequencedBudgetComponent(mixins.Sequenced):
 
     class Meta:
         abstract = True
         
     budget = models.ForeignKey(Budget)
-    actor = models.ForeignKey(Actor)
+    #~ actor = models.ForeignKey(Actor)
     #~ actor = models.ForeignKey(Actor,blank=True,null=True)
     
     #~ @chooser()
@@ -296,14 +308,15 @@ class SequencedActorComponent(mixins.Sequenced):
         
     def get_siblings(self):
         "Overrides :meth:`lino.mixins.Sequenced.get_siblings`"
-        return self.__class__.objects.filter(actor=self.actor).order_by('seqno')
+        return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
         
 
-class Entry(SequencedActorComponent):
+class Entry(SequencedBudgetComponent):
     class Meta:
         verbose_name = _("Budget Entry")
         verbose_name_plural = _("Budget Entries")
-        unique_together = ['actor','item']
+        #~ unique_together = ['budget','item','name']
+        #~ unique_together = ['actor','item']
     
     #~ group = models.ForeignKey(ItemGroup)
     account_type = AccountType.field()
@@ -349,52 +362,10 @@ class EntriesByType(Entries):
             #~ print 20120411, unicode(self.label)
             self.known_values = dict(account_type=self._account_type)
             
-class EntriesByActor(Entries):
-    master_key = 'actor'
-    column_names = "item name amount circa todo remark"
-    
-
-class ExpensesByActor(EntriesByActor,EntriesByType):
-    _account_type = AccountType.expense
-        
-class IncomesByActor(EntriesByActor,EntriesByType):
-    _account_type = AccountType.income
-    
-    
-class ActorSummary(dd.Table):
-  
-    column_names = "name amount1 amount2 amount3 total"
-    
-    @dd.virtualfield(dd.PriceField(_("Amount")+" 1"))
-    def amount1(self,entry,ar):
-        #~ if entry.actor is None: return entry.amount
-        if entry.actor.seqno == 1: return entry.amount
-        return 0
-        
-    @dd.virtualfield(dd.PriceField(_("Amount")+" 2"))
-    def amount2(self,entry,ar):
-        #~ if entry.actor is not None and entry.actor.seqno == 1: return entry.amount
-        if entry.actor.seqno == 2: return entry.amount
-        return 0
-        
-    @dd.virtualfield(dd.PriceField(_("Amount")+" 3"))
-    def amount3(self,entry,ar):
-        if entry.actor.seqno == 3: return entry.amount
-        #~ if entry.actor is not None and entry.actor.seqno == 2: return entry.amount
-        return 0
-        
-    @dd.virtualfield(dd.PriceField(_("Total")))
-    def total(self,entry,ar):
-        #~ return sum([e.amount for e in entry.budget.entry_set()])
-        return entry.budget.entry_set.aggregate(models.Sum('amount'))
-    
-  
-class EntriesByBudget(Entries,ActorSummary):
-    """
-    Used in print template.
-    """
+class EntriesByBudget(Entries):
     master_key = 'budget'
-    
+    column_names = "item name amount circa todo remark"
+
 class ExpensesByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.expense
         
@@ -403,8 +374,7 @@ class IncomesByBudget(EntriesByBudget,EntriesByType):
     
     
 
-
-class Debt(SequencedActorComponent):
+class Debt(SequencedBudgetComponent):
     class Meta:
         verbose_name = _("Debt")
         verbose_name_plural = _("Debts")
@@ -416,14 +386,82 @@ class Debt(SequencedActorComponent):
 class Debts(dd.Table):
     model = Debt
     
-class DebtsByActor(Debts):
-    master_key = 'actor'
+   
+class DebtsByBudget(Debts):
+    master_key = 'budget'
     column_names = 'partner amount remark'
     
-class DebtsByBudget(Debts,ActorSummary):
+MAX_SUB_BUDGETS = 3
+
+#~ class VirtualRow(object):
+class EntriesSummaryRow(actions.VirtualRow):
+    def __init__(self,seqno,item,name):
+        self.id = seqno
+        self.pk = seqno
+        self.item = item
+        self.name = name
+        self.amounts = [0] * MAX_SUB_BUDGETS
+
+class EntriesSummaryByBudget(EntriesByType):
     master_key = 'budget'
-    column_names = 'partner amount1 amount2 amount3 total'
+    column_names = "name amount1 amount2 amount3 total"
     
+    @classmethod
+    def get_data_rows(self,ar):
+        master = ar.master_instance
+        if master is None:
+            return
+        #~ print 20120429, master
+        budget_pks = tuple([master.pk] + [a.child.pk for a in master.actor_set.filter(child__isnull=False)])
+        assert len(budget_pks) <= MAX_SUB_BUDGETS
+        cols_dict = dict()
+        for i,pk in enumerate(budget_pks):
+            cols_dict[pk] = i
+        row = None
+        i = 0
+        fkw = dict(budget_id__in=budget_pks)
+        fkw.update(account_type=self._account_type)
+        for e in self.model.objects.filter(**fkw).order_by('item','seqno'):
+            if row is not None and (row.item != e.item or row.name != e.name):
+                yield row
+                row = None
+            if row is None:
+                i += 1
+                row = EntriesSummaryRow(i,e.item,e.name)
+            row.amounts[cols_dict[e.budget.pk]] += e.amount
+        if row is not None:
+            yield row
+    
+    @dd.virtualfield(dd.PriceField(_("Amount")+" 1"))
+    def amount1(self,row,ar): return row.amounts[0]
+        
+    @dd.virtualfield(dd.PriceField(_("Amount")+" 2"))
+    def amount2(self,row,ar): return row.amounts[1]
+    #~ def amount2(self,entry,ar):
+        #~ if entry.seqno == 2: return entry.amount
+        #~ return 0
+        
+    @dd.virtualfield(dd.PriceField(_("Amount")+" 3"))
+    def amount3(self,row,ar): return row.amounts[2]
+    #~ def amount3(self,entry,ar):
+        #~ if entry.seqno == 3: return entry.amount
+        #~ return 0
+        
+    @dd.virtualfield(dd.PriceField(_("Total")))
+    def total(self,row,ar):
+        return sum(row.amounts)
+        #~ return sum([e.amount for e in entry.budget.entry_set()])
+        #~ return entry.budget.entry_set.aggregate(models.Sum('amount'))
+
+    
+class ExpensesSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
+    _account_type = AccountType.expense
+        
+class IncomesSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
+    _account_type = AccountType.income
+
+
+
 
 if settings.LINO.user_model:
   

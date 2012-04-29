@@ -1028,6 +1028,9 @@ class Store:
         if isinstance(row,actions.PhantomRow):
             for fld in self.list_fields:
                 fld.value2list(request,None,l,row)
+        #~ elif isinstance(row,actions.VirtualRow):
+            #~ for fld in self.list_fields:
+                #~ fld.value2list(request,None,l,row)
         else:
             for fld in self.list_fields:
                 v = fld.full_value_from_object(request,row)

@@ -1,0 +1,59 @@
+20120427
+========
+
+:mod:`lino.sandbox.debts` is a proof of concept for yesterday's 
+idea of a structural change.
+
+Ein Budget hat einen Partner (die Person oder Familie, für die es erstellt wurde) 
+sowie eventuell ein oder mehrere "Unterbudgets". 
+Pro `Entry` gibt es immer nur einen `amount`.
+
+Pro Akteur eines Budgets muss man zunächst ein eigenes 
+Budget eingeben, die danach zu einem Oberbudget gruppiert werden können.
+ 
+Budgets können nun beliebig miteinander verschachtelt werden. 
+Zum Beispiel:
+  
+  - Familie Meyer:
+  
+    - Eltern:
+    
+      - Herr Meyer
+      - Frau Meyer
+      
+    - Kinder:
+    
+      - Paul & Freundin
+        
+        - Paul
+        - Freundin
+        
+      - Anna
+    
+Jedes dieser Budgets kann auch unabhängig für sich ausgedruckt werden.
+
+Gefällt mir. 
+
+
+Todo:
+
+- SummaryTable für Schulden. Dieser werden nicht gruppiert, aber wohl in die Kolonne 
+  ihres Akteurs eingetragen und insgesamt nach Datum o.ä. sortiert. 
+  
+- Vorlage für Ausdruck muss noch angepasst werden
+  
+- Kolonne "Total" ist noch nicht rechtsbündig, weil es ein VirtualField ist.
+  Eventuell einfach ein neues Attribut `StoreField.summable` und den 
+  cell_style daran aufhängen.
+  
+- Eingabe in der Grid ist umständlich:
+  - handleKeyDown optimieren
+  - nicht nach jeder Zelle ein refresh machen
+  
+- Jährliche Beträge
+
+- Debt.status : "Kredit", "Schuld", "Gerichtsvollzieher"
+
+- Debt.rate (Monatsrate)
+
+- Analysetabelle mit Zusammenfassung fehlt noch.
