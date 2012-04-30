@@ -300,17 +300,18 @@ class Lino(object):
     no REMOTE_USER header makes its way through to Lino. 
     Which may happen on a development server and if Apache is 
     configured to allow it.
-    Used by :mod:`lino.utils.auth`
-    :mod:`lino.modlib.users.middleware`
+    Used by :mod:`lino.utils.auth`.
     """
     
-    remote_user_header = None
-    
     #~ remote_user_header = "REMOTE_USER"
+    remote_user_header = None
     """
     The name of the header (set by the web server) that Lino consults 
     for finding the user of a request.
+    This is usually set to ``"REMOTE_USER"``
+    The default `None` means that http authentication is not used at all.
     """
+    
     #~ simulate_remote_user = False
     
     

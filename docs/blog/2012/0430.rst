@@ -61,3 +61,9 @@ Oops, the following is appearently invalid syntax in Python 2.5::
   html.TABLE(*list(f()),cellspacing="3px",bgcolor="#ffffff", width="100%")
   
   
+And oops, even :term:`lxml` builder doesn't seem to work on that old server::
+
+  from lxml.html import builder as html  
+  
+So I returned back to use my :mod:`lino.utils.xmlgen.html` version of 
+:meth:`lino.ui.extjs3.ext_ui.ExtUI.table2xhtml`.

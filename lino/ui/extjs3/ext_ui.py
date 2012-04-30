@@ -2520,8 +2520,9 @@ tinymce.init({
         yield "};"
             
 
-    def table2xhtml(self,ar,max_row_count=300):
+    def lxml_table2xhtml(self,ar,max_row_count=300):
         """
+        Using lxml.html (not available on older lxml.
         """
         from lxml.html import builder as html
         
@@ -2597,8 +2598,9 @@ tinymce.init({
         to = dict(cellspacing="3px",bgcolor="#ffffff", width="100%")
         return html.TABLE(*list(f()),**to)
     
-    def old_table2xhtml(self,ar,max_row_count=300):
+    def table2xhtml(self,ar,max_row_count=300):
         """
+        Using lino.utils.xmlgen.html
         """
         widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
         columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
