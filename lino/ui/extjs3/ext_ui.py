@@ -2594,7 +2594,8 @@ tinymce.init({
             if has_sum:
                 yield html.TR(
                   *[html.TD(x,**cellattrs) for x in ar.ah.store.sums2html(ar,fields,sums)])
-        return html.TABLE(*list(f()),cellspacing="3px",bgcolor="#ffffff", width="100%")
+        to = dict(cellspacing="3px",bgcolor="#ffffff", width="100%")
+        return html.TABLE(*list(f()),**to)
     
     def old_table2xhtml(self,ar,max_row_count=300):
         """

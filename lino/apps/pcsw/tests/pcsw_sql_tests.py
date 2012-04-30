@@ -63,12 +63,16 @@ def create_user(*args):
 
 from lino.utils.test import TestCase 
 
-@override_settings(DEBUG=True) 
+#~ @override_settings(DEBUG=True) 
+#~ class SqlTest(TestCase):
+    #~ defining_module = __name__  # [Note1]
+    
 class SqlTest(TestCase):
-    defining_module = __name__  # [Note1]
+    pass
     
   
   
+@override_settings(DEBUG=True) 
 def test01(self):
     """
     Test the number of SQL queries for certain requests.

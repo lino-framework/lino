@@ -5,3 +5,59 @@ Installing Lino on a server with Python 2.5
 
 Removed some ``import json`` statements which weren't even used 
 but caused an import error on Python 2.5.
+
+Temporarily didsabled USE_XSD_FILES in :mod:`lino.utils.xmlgen.cbss` 
+because it seems to not work with the older lxml version on that server. Didn't find out which version.
+
+Class decorators aren't yet possible in Python 2.5, so we needed to adapt 
+:mod:`lino.apps.pcsw.tests.pcsw_sql_test`::
+
+  #~ @override_settings(DEBUG=True) 
+  #~ class SqlTest(TestCase):
+      #~ defining_module = __name__  # [Note1]
+      
+  class SqlTest(TestCase):
+      pass
+      
+    
+    
+  @override_settings(DEBUG=True) 
+  def test01(self):
+  ...
+
+A simple "permission denied" when opening the log file took me 
+almost half an hour because Django swallows the traceback 
+and consideres the failed import as normal. 
+Had to hack in ~/snapshots/django/django/core/management/__init__.py::
+
+
+  def get_commands():
+      global _commands
+      if _commands is None:
+          _commands = dict([(name, 'django.core') for name in find_commands(__path__[0])])
+          # Find the installed apps
+          try:
+              from django.conf import settings
+              apps = settings.INSTALLED_APPS
+          except (AttributeError, EnvironmentError, ImportError):
+              raise # LS 20120430
+              apps = []
+
+          # Find and load the management module for each installed app.
+          for app_name in apps:
+              try:
+                  path = find_management_module(app_name)
+                  _commands.update(dict([(name, app_name)
+                                         for name in find_commands(path)]))
+              except ImportError:
+                  pass # No management module - ignore this app
+
+      return _commands            
+
+
+
+Oops, the following is appearently invalid syntax in Python 2.5::
+
+  html.TABLE(*list(f()),cellspacing="3px",bgcolor="#ffffff", width="100%")
+  
+  
