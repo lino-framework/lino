@@ -65,5 +65,5 @@ And oops, even :term:`lxml` builder doesn't seem to work on that old server::
 
   from lxml.html import builder as html  
   
-So I returned back to use my :mod:`lino.utils.xmlgen.html` version of 
+So I returned back to use my :mod:`lino.utils.xmlgen.xhtml` version of 
 :meth:`lino.ui.extjs3.ext_ui.ExtUI.table2xhtml`.
