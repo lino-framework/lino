@@ -210,6 +210,8 @@ Don't know yet whether this is okay.
 
 """
 
+USE_XSD_FILES = False
+
 import os
 
 from appy.shared.dav import Resource
@@ -421,8 +423,9 @@ class IdentifyPersonRequest(SSDNService):
     "A request for identifying a person or validating a person's identity"
     service_id = 'OCMWCPASIdentifyPerson'
     service_version = '20050930'
-    xsd_filename = xsdpath('SSDN','OCMW_CPAS',
-        'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
+    if USE_XSD_FILES:
+        xsd_filename = xsdpath('SSDN','OCMW_CPAS',
+            'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
         
     def setup_namespace(self):
         self.define_names("""
@@ -503,8 +506,9 @@ class PerformInvestigationRequest(SSDNService):
     """
     service_id = 'OCMWCPASPerformInvestigation'
     service_version = '20080604'
-    xsd_filename = xsdpath('SSDN','OCMW_CPAS',
-        'PERFORMINVESTIGATION','PERFORMINVESTIGATIONREQUEST.XSD')
+    if USE_XSD_FILES:
+        xsd_filename = xsdpath('SSDN','OCMW_CPAS',
+            'PERFORMINVESTIGATION','PERFORMINVESTIGATIONREQUEST.XSD')
     
     def setup_namespace(self):
         self.define_names("""

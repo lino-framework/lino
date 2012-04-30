@@ -1,0 +1,7 @@
+20120430
+========
+
+Installing Lino on a server with Python 2.5
+
+Removed some ``import json`` statements which weren't even used 
+but caused an import error on Python 2.5.
