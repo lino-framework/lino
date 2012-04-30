@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import sys
+
 from os.path import abspath, dirname, join
 lino_root = '/var/snapshots/lino'
 #lino_root = abspath(join(dirname(__file__),'using','lino'))
@@ -22,7 +23,7 @@ LINO = Lino(__file__,globals())
 
 LINO.appy_params.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
 
-LOGGING = dict(filename='/var/log/lino/system.log'),level='DEBUG')
+LOGGING = dict(filename='/var/log/lino/system.log',level='DEBUG')
 # some alternative examples:
 # LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
 # LOGGING = dict(filename=None,level='DEBUG')
@@ -43,7 +44,7 @@ LOGGING = dict(filename='/var/log/lino/system.log'),level='DEBUG')
 # sqlite
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite', 
+        'ENGINE': 'django.db.backends.sqlite3', 
         'NAME': join(LINO.project_dir,'mysite.db')
     }
 }

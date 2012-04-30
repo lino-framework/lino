@@ -14,7 +14,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-import json
 import cgi
 import os
 import sys

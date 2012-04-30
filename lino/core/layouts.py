@@ -54,7 +54,6 @@ a newline somewhere in your main's template. Example::
 import logging
 logger = logging.getLogger(__name__)
 
-import json
 import cgi
 import os
 import sys

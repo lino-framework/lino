@@ -91,23 +91,23 @@ python-django
 The Django version 1.2.3 provided 
 by the Debian Squeeze `python-django` package 
 is too old for Lino, so you need either the latest 
-released Django version 1.3, or (if you don't 
+released Django version 1.4, or (if you don't 
 need production server quality) Django's 
 development version. 
 
-To install Django 1.3::
+To install Django 1.4::
 
   cd /var/snapshots
-  wget http://media.djangoproject.com/releases/1.3/Django-1.3.tar.gz
-  tar xzvf Django-1.3.tar.gz
-  mv Django-1.3 django
+  wget https://www.djangoproject.com/m/releases/1.4/Django-1.4.tar.gz
+  tar xzvf Django-1.4.tar.gz
+  ln -s Django-1.4 django
 
 To install Django's latest development snapshot::
 
   cd /var/snapshots
   svn co http://code.djangoproject.com/svn/django/trunk/ django
   
-We recommend to not run Django's :file:`setup.py` since that's 
+We suggest to *not* run Django's :file:`setup.py` since that's 
 not needed for Lino and removes flexibility to switch from one 
 version to the other.
 Just remember where you installed it and 
@@ -268,6 +268,31 @@ We suggest the following :doc:`optimized </blog/2011/0531>`
 
     if __name__ == "__main__":
         execute_manager(settings)
+        
+Or, after Django 1.4::        
+        
+    #!/usr/bin/env python
+    import os
+    import sys
+
+    if __name__ == "__main__":
+        import os
+        prj = os.path.split(os.path.dirname(os.path.abspath(__file__)))[-1]
+        os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_local.' + prj + '.settings'
+
+        from django.core.management import execute_from_command_line
+
+        execute_from_command_line(sys.argv)        
+
+
+Note: if you prefer, you can replace the lines::
+
+    prj = os.path.split(os.path.dirname(os.path.abspath(__file__)))[-1]
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_local.' + prj + '.settings'
+
+by::
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mypy.demo1.settings")
 
 
 
