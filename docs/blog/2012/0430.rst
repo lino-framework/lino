@@ -63,7 +63,11 @@ Oops, the following is appearently invalid syntax in Python 2.5::
   
 And oops, even :term:`lxml` builder doesn't seem to work on that old server::
 
-  from lxml.html import builder as html  
+  from lxml.html import builder as html
   
-So I returned back to use my :mod:`lino.utils.xmlgen.xhtml` version of 
-:meth:`lino.ui.extjs3.ext_ui.ExtUI.table2xhtml`.
+It's a pity that lxml doesn't even seem to tell its version easily...
+  
+So I'll maybe return back to a selfmade 
+:mod:`lino.utils.xmlgen.xhtml` (based on xml.etree) 
+for :meth:`lino.ui.extjs3.ext_ui.ExtUI.table2xhtml`.
+Still experimenting.

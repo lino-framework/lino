@@ -40,8 +40,8 @@ from lino.ui import requests as ext_requests
 from django.utils.encoding import force_unicode
 
 
-from lino.utils.xmlgen import odf
-from lxml import etree
+#~ from lino.utils.xmlgen import odf
+#~ from lxml import etree
 
 #~ def elem2str(e):
     #~ return etree.tostring(e)

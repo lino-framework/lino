@@ -1,0 +1,5 @@
+20120501
+========
+
+The [html] button and the rendering of a slave table in a HtmlPanel 
+now work using :mod:`lino.utils.xmlgen.html` (without :term:`lxml`).

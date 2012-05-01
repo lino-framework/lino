@@ -13,40 +13,54 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This adds some more luxus to lxml's `E-factory
-<http://lxml.de/tutorial.html#the-e-factory>`
-and is used by modules 
-:mod:`lino.utils.xmlgen.odf`,
-:mod:`lino.utils.xmlgen.cbss` or
-:mod:`lino.utils.xmlgen.intervat`.
 
->>> foo = Namespace('foo','http://foo.com')
->>> foo.define_names("bar baz")
->>> bar = foo.bar()
->>> baz = bar.add_child('baz')
->>> print tostring(baz)
+Inspired by Frederik Lundh's ElementTree Builder
+<http://effbot.org/zone/element-builder.htm>
 
 
->>> e = etree.Element("{http://foo.com}e")
->>> print tostring(e)
-<ns0:e xmlns:ns0="http://foo.com"/>
->>> print e.nsmap
+>>> ns = Namespace('http://my.ns',
+...    "bar baz bar-o-baz foo-bar class def")
+
+>>> bob = ns.bar_o_baz()
+>>> baz = ns.add_child(bob,'baz',class_='first')
+>>> print ns.tostring(baz)
+<baz xmlns="http://my.ns" class="first" />
+
+>>> bob = ns.bar_o_baz('Hello',class_='first',foo_bar="3")
+>>> print ns.tostring(bob)
+<bar-o-baz xmlns="http://my.ns" class="first" foo-bar="3">Hello</bar-o-baz>
+
 
 """
 
-import logging
-#~ logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
 import datetime
+from functools import partial
 
-from lxml import etree
-from lxml.builder import ElementMaker # lxml only !
+from xml.dom import minidom
 
-tostring = etree.tostring
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    # from http://renesd.blogspot.com/2007/05/pretty-print-xml-with-python.html
+    # via http://broadcast.oreilly.com/2010/03/pymotw-creating-xml-documents.html
+    rough_string = ET.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")
 
+
+
+from xml.etree import ElementTree as ET
 from lino.utils import Warning
+
+RESERVED_WORDS = frozenset("""
+and       del       from      not       while
+as        elif      global    or        with
+assert    else      if        pass      yield
+break     except    import    print
+class     exec      in        raise
+continue  finally   is        return
+def       for       lambda    try
+""".split())
 
 TYPEMAP = {
   #~ datetime.datetime: py2str,
@@ -56,166 +70,130 @@ TYPEMAP = {
   int: lambda e,v : str(v),
 }
 
+
 #~ import threading
 #~ write_lock = threading.RLock()
 
 class Namespace(object):
     """
-    A Namespace is a wrapper around an etree.ElementTree.
     """
-    #~ rng_filename = None
-    xsd_filename = None
-    xsd_tree = None
+    #~ prefix = None
     targetNamespace = None
-    used_namespaces = None
     
-    def __init__(self,prefix=None,targetNamespace=None,
-          used_namespaces=None,
-          validator=None,**kw):
-        #~ write_lock.acquire()
-        #~ try:
-        self.prefix = prefix
-        kw.setdefault('typemap',TYPEMAP)
+    def __init__(self,targetNamespace=None,names=None):
+        #~ if prefix is not None:
+            #~ self.prefix = prefix
+        #~ kw.setdefault('typemap',TYPEMAP)
         #~ kw.setdefault('makeelement',self.makeelement)
-        nsmap = kw.setdefault('nsmap',{})
-        if self.xsd_filename:
-            self.xsd_tree = etree.parse(self.xsd_filename) 
-        if self.xsd_tree is not None:
-            if targetNamespace is None:
-                root = self.xsd_tree.getroot()
-                targetNamespace = str(root.get('targetNamespace'))
-            #~ elif self.rng_filename:
-                #~ tree = etree.parse(self.rng_filename) 
-                #~ rng = etree.RelaxNG(tree)
-                #~ # tree = etree.RelaxNG(file=self.rng_filename)
-                #~ e = tree.getroot()
-                #~ nsmap.update(e.nsmap)
-                #~ # raise Exception("20120310")
-            if validator is None:
-                validator = etree.XMLSchema(self.xsd_tree)
-          
-        self.validator = validator
+        #~ nsmap = kw.setdefault('nsmap',{})
         
-        #~ class NSElement(etree.ElementBase):
-            #~ def add_child(elem,name,*args,**kw):
-                #~ ecl = getattr(self,name)
-                #~ kw = self.makeattribs(**kw)
-                #~ child = ecl(*args,**kw)
-                #~ elem.append(child)
-                #~ return child
-                
-        #~ kw.update(makeelement=NSElement)
-
         
         if targetNamespace is not None:
             self.targetNamespace = targetNamespace
         if self.targetNamespace is not None:
-            kw.update(namespace=self.targetNamespace)
+            #~ kw.update(namespace=self.targetNamespace)
+            
+            self._ns = '{' + self.targetNamespace + '}'
             #~ if prefix:
-            nsmap[prefix] = self.targetNamespace
-        if used_namespaces is not None:
-            self.used_namespaces = used_namespaces
-        if self.used_namespaces is not None:
-            for ns in self.used_namespaces:
-                nsmap[ns.prefix] = ns.targetNamespace
-        #~ self._element_maker = ElementMaker(namespace=url,nsmap={prefix:url})
-        self._element_maker = ElementMaker(**kw)
-        self._source_elements = {}
-        if self.xsd_tree is not None:
-            #~ self.targetNamespace = str(root.get('targetNamespace'))
-            #~ root = self.xsd_tree.getroot()
-            self.define_names_from(self.xsd_tree.getroot())
+            #~ nsmap[prefix] = self.targetNamespace
+        #~ if used_namespaces is not None:
+            #~ self.used_namespaces = used_namespaces
+        #~ if self.used_namespaces is not None:
+            #~ for ns in self.used_namespaces:
+                #~ nsmap[ns.prefix] = ns.targetNamespace
+        #~ self._element_maker = ElementMaker(**kw)
+        #~ self._source_elements = {}
+        if names is not None:
+            self.define_names(names)
         self.setup_namespace()
-        #~ finally:
-            #~ write_lock.release()
         
     def setup_namespace(self):
         pass
         
-    def unused_makeelement(self,*args,**kw):
-        xkw = dict()
-        for k,v in kw.items():
-            e = getattr(self,k,None)
-            if e is None:
-                raise Exception("%s has no name %s" % (self.__class__.__name__,k))
-                xkw[k] = v
-            else:
-                xkw[e().tag] = v
-        return etree.Element(*args,**xkw)
-    
-    def define_names(self,names):
-        for name in names.split():
-            iname = name.replace("-","_")
-            if self.xsd_tree is None:
-                #~ assert not hasattr(self,name)
-                if hasattr(self,iname):
-                    raise Exception("%s has attribute %s" % (self.__class__.__name__,name))
-            #~ else:
-                #~ if not hasattr(self,iname):
-                    #~ raise Exception("%s has no attribute %s" % (self.__class__.__name__,name))
-            setattr(self,iname,getattr(self._element_maker,name))
-
-    def define_names_from(self,e):
-        name = e.get('name',None)
-        if name is not None:
-            cv = self._source_elements.get(name,None)
-            #~ cv = getattr(self,name,None)
-            if cv is None:
-                iname = name.replace("-","_")
-                setattr(self,iname,getattr(self._element_maker,name))
-                self._source_elements[name] = e
-            #~ else:
-                #~ logger.warning(
-                  #~ "20120309 %s name %r is already used by %s",
-                  #~ e,name,cv)
+    def tostring(self,element,*args,**kw):
+        class dummy:
+            pass
+        data = []
+        file = dummy()
+        file.write = data.append
+        if self.targetNamespace is not None:
+            kw.setdefault('default_namespace',self.targetNamespace)
+        ET.ElementTree(element).write(file,*args,**kw)
+        return "".join(data)
         
-        for ee in e:
-            self.define_names_from(ee)
-
-    def getnsattr(self,elem,name):
-        #~ if self.targetNamespace is None or name.startswith('{'):
-            #~ return elem.get(name)
-        return elem.get(self._element_maker._namespace + name)
+    def tostring_pretty(self,*args,**kw):
+        #~ kw.setdefault('xml_declaration',False)
+        #~ kw.setdefault('encoding','utf-8')
+        #~ kw.update(xml_declaration=False)
+        #~ kw.update(encoding='utf-8')
+        s = self.tostring(*args,**kw)
+        #~ return s
+        return minidom.parseString(s).toprettyxml(indent="  ")
+        
+        
+        
+    def addns(self,tag):
+        if self.targetNamespace is None or tag[0] == "{":
+            return tag
+        return self._ns + tag
         
     def makeattribs(self,**kw):
         #~ ns = self._element_maker._namespace
         #~ if ns is None: return kw
         xkw = dict()
         for k,v in kw.items():
-            e = getattr(self,k)()
-            xkw[e.tag] = v
-            #~ xkw[ns + k] = v
+            k = getattr(self,k).args[0] # convert iname to tagname
+            xkw[self.addns(k)] = v
         return xkw
+        
+    def create_element(self, tag, *children, **attrib):
+        nsattrib = self.makeattribs(**attrib)
+        tag = self.addns(tag)
+        elem = ET.Element(tag, nsattrib)
+        for item in children:
+            if isinstance(item, dict):
+                elem.attrib.update(self.makeattribs(**item))
+            elif isinstance(item, basestring):
+                if len(elem):
+                    elem[-1].tail = (elem[-1].tail or "") + item
+                else:
+                    elem.text = (elem.text or "") + item
+            elif ET.iselement(item):
+                elem.append(item)
+            else:
+                raise TypeError("bad argument: %r" % item)
+        return elem
+        
+    
+    def define_names(self,names):
+        for tag in names.split():
+            iname = tag.replace("-","_")
+            #~ if iname in ('class','for','in','def'):
+            if iname in RESERVED_WORDS:
+                iname += "_"
+            #~ setattr(self,iname,getattr(self._element_maker,name))
+            p = partial(self.create_element, tag)
+            setattr(self,iname,p)
+
+    def getnsattr(self,elem,name):
+        #~ if self.targetNamespace is None or name.startswith('{'):
+            #~ return elem.get(name)
+        return elem.get(self._element_maker._namespace + name)
+        
         
     #~ def update_attribs(self,root,**kw):
     def update(self,root,**kw):
-        for k,v in kw.items():
-            e = getattr(self,k)()
-            #~ e = self.__getattr__(k)()
-            root.set(e.tag,v)
+        root.attrib.update(self.makeattribs(**kw))
             
-    def add_child(self,parent,_name,**kw):
+    def add_child(self,parent,_name,*args,**kw):
         ecl = getattr(self,_name)
-        kw = self.makeattribs(**kw)
+        #~ kw = self.makeattribs(**kw)
         #~ print 20120420, kw
-        e = ecl(**kw)
+        e = ecl(*args,**kw)
         parent.append(e)
         return e
         
-        
-    #~ def __getattr__(self,name):
-        #~ return self._element_maker.__getattr__(name)
-        #~ # return self._element_maker(*args,**kw)
-        #~ # return self._element_maker(name,*args,**kw)
-
-    def validate_root(self,root):
-        self.validate_doc(etree.ElementTree(root))
-        
-    def validate_doc(self,doc):
-        if self.validator is not None:
-            self.validator.assertValid(doc)
-        
-        
+RAW = ET.XML
 
 
 def _test():

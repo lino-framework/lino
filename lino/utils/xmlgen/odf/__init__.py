@@ -180,7 +180,7 @@ import os
 from lxml import etree
 from lino.utils import xmlgen as xg
 
-tostring = xg.tostring
+#~ tostring = xg.tostring
 
 def rngpath(*parts):
     p1 = os.path.abspath(os.path.dirname(__file__))

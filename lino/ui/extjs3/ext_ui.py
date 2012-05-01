@@ -67,7 +67,7 @@ from lino.core import actions #, layouts #, commands
 from lino.core import table
 from lino.core import layouts
 from lino.utils import tables
-from lino.utils.xmlgen import xhtml as xhg
+#~ from lino.utils.xmlgen import xhtml as xhg
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
@@ -84,6 +84,7 @@ from lino.utils import isiterable
 from lino.utils import codetime
 from lino.utils.config import find_config_file
 from lino.utils.jsgen import py2js, js_code, id2js
+from lino.utils.xmlgen import html as xghtml
 
 from lino.utils.jscompressor import JSCompressor
 if False:
@@ -1518,7 +1519,6 @@ tinymce.init({
                 ar.renderer = self.pdf_renderer
                 
                 if False:
-                  
                     response = HttpResponse(content_type='text/html;charset="utf-8"')
                     doc = xhg.HTML()
                     doc.set_title(ar.get_title())
@@ -1527,16 +1527,27 @@ tinymce.init({
                     xhg.Writer(response).render(doc)
                     return response
                 
-                from lxml.html import builder as html
-                title = unicode(ar.get_title())
-                doc = html.BODY(
-                  html.HEAD(html.TITLE(title)),
-                  html.BODY(
-                    html.H1(title),
-                    self.table2xhtml(ar)
-                  )
-                )
-                return HttpResponse(etree.tostring(doc),content_type='text/html;charset="utf-8"')
+                if True:
+                    response = HttpResponse(content_type='text/html;charset="utf-8"')
+                    doc = xghtml.Document(force_unicode(ar.get_title()))
+                    doc.body.append(xghtml.E.h1(doc.title))
+                    t = doc.add_table()
+                    self.ar2html(ar,t)
+                    doc.write(response,encoding='utf-8')
+                    #~ xhg.Writer(response).render(doc)
+                    return response
+                
+                if False:
+                    from lxml.html import builder as html
+                    title = unicode(ar.get_title())
+                    doc = html.BODY(
+                      html.HEAD(html.TITLE(title)),
+                      html.BODY(
+                        html.H1(title),
+                        self.table2xhtml(ar)
+                      )
+                    )
+                    return HttpResponse(etree.tostring(doc),content_type='text/html;charset="utf-8"')
                 
             raise Http404("Format %r not supported for GET on %s" % (fmt,rpt))
 
@@ -2598,7 +2609,7 @@ tinymce.init({
         to = dict(cellspacing="3px",bgcolor="#ffffff", width="100%")
         return html.TABLE(*list(f()),**to)
     
-    def table2xhtml(self,ar,max_row_count=300):
+    def old_table2xhtml(self,ar,max_row_count=300):
         """
         Using lino.utils.xmlgen.html
         """
@@ -2660,6 +2671,68 @@ tinymce.init({
             if has_sum:
                 yield xhg.table_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
         return xhg.HFBTABLE(f(),cellspacing="3px",bgcolor="#ffffff", width="100%")
+    
+    def table2xhtml(self,ar,max_row_count=300):
+        doc = xghtml.Document(force_unicode(ar.get_title()))
+        t = doc.add_table()
+        self.ar2html(ar,t)
+        return xghtml.E.tostring(t.as_element())
+        
+    def ar2html(self,ar,tble):
+        """
+        Using lino.utils.xmlgen.html
+        """
+        tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
+        
+        widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+        columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+        hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
+        
+        fields = ar.ah.store.list_fields
+        headers = [force_unicode(col.label or col.name) for col in ar.ah.list_layout.main.columns]
+        cellwidths = None
+        
+        if columns:
+            fields = []
+            headers = []
+            cellwidths = []
+            for i,cn in enumerate(columns):
+                col = None
+                for e in ar.ah.list_layout.main.columns:
+                    if e.name == cn:
+                        col = e
+                        break
+                #~ col = ar.ah.list_layout._main.find_by_name(cn)
+                #~ col = ar.ah.list_layout._main.columns[ci]
+                if col is None:
+                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
+                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
+                if not hiddens[i]:
+                    fields.append(col.field._lino_atomizer)
+                    headers.append(force_unicode(col.label or col.name))
+                    cellwidths.append(widths[i])
+        
+        sums  = [0 for col in fields]
+        #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
+        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+        hr = tble.add_header_row(*headers,**cellattrs)
+        if cellwidths:
+            for i,td in enumerate(hr): 
+                td.attrib.update(width=cellwidths[i])
+        
+        recno = 0
+        for row in ar.data_iterator:
+            recno += 1
+            cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums)]
+            tble.add_body_row(*cells,**cellattrs)
+                
+        has_sum = False
+        for i in sums:
+            if i:
+                has_sum = True
+                break
+        if has_sum:
+            tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
     
     def create_layout_panel(self,lh,name,vertical,elems,**kw):
         pkw = dict()

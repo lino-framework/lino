@@ -826,8 +826,9 @@ class AbstractTable(actors.Actor):
                 action=self.default_action,master_instance=master)
             ar.renderer = ui.ext_renderer
             #~ s = ui.table2xhtml(ar).tostring()
-            s = etree.tostring(ui.table2xhtml(ar))
-            return s
+            return ui.table2xhtml(ar)
+            #~ s = etree.tostring(ui.table2xhtml(ar))
+            #~ return s
         return meth
 
     @classmethod

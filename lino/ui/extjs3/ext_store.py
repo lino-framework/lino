@@ -51,6 +51,8 @@ from lino.tools import obj2str
 from lino.utils import IncompleteDate
 from lino.utils import tables
 
+from lino.utils.xmlgen import html as xghtml
+
 class StoreField(object):
     """
     Base class for the fields of a :class:`Store`.
@@ -254,7 +256,7 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         
     def value2html(self,ar,v):
         #~ return "<span>%s</span>" % ar.renderer.href_to(v)
-        return ar.renderer.href_to(v)
+        return xghtml.RAW(ar.renderer.href_to(v))
         
         
     def get_value_text(self,v,obj):
@@ -369,7 +371,9 @@ class RequestStoreField(StoreField):
         #~ d[self.field.name] = v
 
     def value2html(self,ar,v):
-        return self.format_value(ar,v)
+        s = self.format_value(ar,v)
+        if not s: return s
+        return xghtml.RAW(s)
 
     #~ def value2odt(self,ar,v,tc,**params):
         #~ params.update(text=self.format_value(ar,v))
