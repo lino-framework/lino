@@ -18,6 +18,7 @@ connection visible.
 
 """
 
+import os
 import traceback
 import datetime
 
@@ -41,10 +42,14 @@ from lino.utils.xmlgen import cbss
 from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
 from lino.modlib.contacts import models as contacts
+from lino.tools import makedirs_if_missing
+
+WSDL_PARTS = ('cache','wsdl','cbss.wsdl')
+ENVS = ('test', 'acpt', 'prod')
 
 class RequestStatus(ChoiceList):
     """
-    The status of a :class:`CBSSRequest`.
+    The status of a :class:`CBSSRequest` or :class:`SSDNRequest`.
     """
     label = _("Status")
 
@@ -63,7 +68,10 @@ add('5',_("Errors"),alias='errors')
 
 class SendAction(dd.RowAction):
     """
-    This defines the "Execute" button on a :class:`CBSSRequest` record.
+    This defines the "Execute" button on a 
+    :class:`CBSSRequest` or
+    :class:`SSDNRequest` 
+    record.
     """
     name = 'sendcbss'
     label = _('Execute')
@@ -75,7 +83,7 @@ class SendAction(dd.RowAction):
             return True
     
     def run(self,rr,elem,**kw):
-        elem.execute_request()
+        elem.execute_request(rr)
         if elem.status == RequestStatus.warnings:
             kw.update(message=_("There were warnings but no errors."))
             kw.update(alert=True)
@@ -83,10 +91,10 @@ class SendAction(dd.RowAction):
         return rr.ui.success_response(**kw)
 
 
-class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
+class SSDNRequest(mixins.ProjectRelated,mixins.AutoUser):
     """
     Abstract Base Class for Models that represent 
-    requests to the :term:`CBSS` (and responses).
+    SSDN ("classic") requests to the :term:`CBSS` (and responses).
     """
     
     cbss_namespace = NotImplementedError
@@ -100,24 +108,26 @@ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     sent = models.DateTimeField(
         verbose_name=_("Sent"),
         blank=True,null=True,
-        editable=False)
-    """Read-only .
-    The date and time when this request has been executed. 
-    This is empty for requests than haven't been sent."""
+        editable=False,
+        help_text="""\
+The date and time when this request has been executed. 
+This is empty for requests than haven't been sent.
+Read-only.""")
     
     status = RequestStatus.field(default=RequestStatus.new,editable=False)
     
     request_xml = models.TextField(verbose_name=_("Request"),
-        editable=False,blank=True)
-    """The raw XML string that has been (or will be) sent."""
+        editable=False,blank=True,
+        help_text="""The raw XML string that has been (or will be) sent.""")
     
-    response_xml = models.TextField(verbose_name=_("Response"),editable=False,blank=True)
-    """
-    The response received, raw XML string. 
-    If the request failed with a local exception, then it contains a traceback.
-    """
+    response_xml = models.TextField(
+        verbose_name=_("Response"),
+        editable=False,blank=True,
+        help_text="""\
+The response received, raw XML string. 
+If the request failed with a local exception, then it contains a traceback.""")
     
-    def execute_request(self):
+    def execute_request(self,rr):
         """
         This is the general method for all services,
         executed when a user runs :class:`SendAction`.
@@ -139,18 +149,18 @@ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
         self.save()
         
         now = datetime.datetime.now()
-        if isinstance(self.cbss_namespace,cbss.NewStyleService):
-            up = settings.LINO.cbss2_user_params
-        elif isinstance(self.cbss_namespace,cbss.SSDNService):
-            up = settings.LINO.cbss_user_params
-        else:
-            raise Exception("Invalid cbss_namespace %r" % self.cbss_namespace)
+        #~ if isinstance(self.cbss_namespace,cbss.NewStyleService):
+            #~ up = settings.LINO.cbss2_user_params
+        #~ elif isinstance(self.cbss_namespace,cbss.SSDNService):
+            #~ up = settings.LINO.cbss_user_params
+        #~ else:
+            #~ raise Exception("Invalid cbss_namespace %r" % self.cbss_namespace)
             
         try:
             res = self.cbss_namespace.execute(
               settings.LINO.cbss_environment,
               srvreq,
-              up,
+              settings.LINO.cbss_user_params,
               str(self.id),now)
         except cbss.Warning,e:
             self.status = RequestStatus.exception
@@ -195,7 +205,128 @@ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
         
         
-class IdentifyPersonRequest(CBSSRequest,contacts.PersonMixin,contacts.Born):
+class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
+    """
+    Abstract Base Class for Models that represent 
+    requests to the :term:`CBSS` (and responses).
+    """
+    
+    cbss_namespace = NotImplementedError
+    """
+    Concrete subclasses must set this.
+    """
+    
+    class Meta:
+        abstract = True
+        
+    sent = models.DateTimeField(
+        verbose_name=_("Sent"),
+        blank=True,null=True,
+        editable=False,
+        help_text="""\
+The date and time when this request has been executed. 
+This is empty for requests than haven't been sent.
+Read-only.""")
+    
+    status = RequestStatus.field(default=RequestStatus.new,editable=False)
+    
+    request_xml = models.TextField(verbose_name=_("Request"),
+        editable=False,blank=True,
+        help_text="""The raw XML string that has been (or will be) sent.""")
+    
+    response_xml = models.TextField(
+        verbose_name=_("Response"),
+        editable=False,blank=True,
+        help_text="""\
+The response received, raw XML string. 
+If the request failed with a local exception, then it contains a traceback.""")
+    
+    def execute_request(self,ar):
+        """
+        This is the general method for all services,
+        executed when a user runs :class:`SendAction`.
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        now = datetime.datetime.now()
+        
+        self.status = RequestStatus.pending
+        self.save()
+        
+        url = ar.ui.media_url(*WSDL_PARTS)
+        
+        logger.info("Instantiate Client at %s", url)
+        from suds.client import Client
+        from suds.transport.http import HttpAuthenticated
+        t = HttpAuthenticated(
+            username=settings.LINO.username, 
+            password=settings.LINO.password)
+        client = Client(url, transport=t)
+        #print client
+
+        ci = client.factory.create('ns0:CustomerIdentificationType')
+        cbeNumber = client.factory.create('ns0:CbeNumberType')
+        ci.cbeNumber = settings.LINO.cbss_cbe_number
+        ic = client.factory.create('ns0:InformationCustomerType')
+        ic.ticket = str(self.id)
+        ic.timestampSent = now
+        ic.customerIdentification = ci
+
+        si = client.factory.create('ns0:SearchInformationType')
+        si.ssin = self.ssin 
+        si.language = "fr"
+        si.history = True
+
+        
+        try:
+            res = client.service.retrieveTI(ic,None,si)        
+        except cbss.Warning,e:
+            self.status = RequestStatus.exception
+            self.response_xml = unicode(e)
+            self.save()
+            return
+        except Exception,e:
+            self.status = RequestStatus.exception
+            self.response_xml = traceback.format_exc(e)
+            self.save()
+            return
+        self.sent = now
+        self.response_xml = unicode(res)
+        
+        if False:
+            reply = cbss.xml2reply(res.data.xmlString)
+            rc = reply.ServiceReply.ResultSummary.ReturnCode
+            if rc == '0':
+                self.status = RequestStatus.ok
+            elif rc == '1':
+                self.status = RequestStatus.warnings
+            elif rc == '10000':
+                self.status = RequestStatus.errors
+            self.save()
+            
+            if self.status != RequestStatus.ok:
+                msg = '\n'.join(list(cbss.reply2lines(reply)))
+                raise Exception(msg)
+            
+        self.on_cbss_ok(reply)
+        
+    def on_cbss_ok(self,reply):
+        """
+        Called when a successful reply has been received.
+        """
+        pass
+        
+    @classmethod
+    def setup_report(cls,rpt):
+        #~ call_optional_super(CBSSRequest,cls,'setup_report',rpt)
+        rpt.add_action(SendAction())
+        
+    def __unicode__(self):
+        return u"%s#%s" % (self.__class__.__name__,self.pk)
+        
+        
+class IdentifyPersonRequest(SSDNRequest,contacts.PersonMixin,contacts.Born):
     """
     Represents a request to the :term:`CBSS` IdentifyPerson service.
     
@@ -360,4 +491,33 @@ class IdentifyPersonRequests(dd.Table):
     
 class IdentifyRequestsByPerson(IdentifyPersonRequests):
     master_key = 'project'
+    
+    
+def setup_site_cache(self,mtime,force):
+    """Called from :meth:`build_lino_js`. 
+    First argment is the LINO instance."""
+    
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    cbss_environment = settings.LINO.cbss_environment
+    if cbss_environment is None:
+        return # silently return
+        
+    if not cbss_environment in ENVS:
+        raise Exception("Invalid `cbss_environment` %r: must be one of %s." % (
+          cbss_environment,ENVS))
+    
+    
+    #~ makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,*WSDL_PARTS[:-1]))
+    fn = os.path.join(settings.MEDIA_ROOT,*WSDL_PARTS) 
+    if not force and os.path.exists(fn):
+        if os.stat(fn).st_mtime > mtime:
+            logger.info("NOT generating %s because it is newer than the code.",fn)
+            return
+    s = file(os.path.join(os.path.dirname(__file__),'XSD','RetrieveTIGroupsV3.wsdl')).read()
+    s = s % dict(cbss_environment=cbss_environment)
+    makedirs_if_missing(os.path.dirname(fn))
+    open(fn,'wt').write(s)
+    logger.info("Generated %s for environment %r.",fn,cbss_environment)
     

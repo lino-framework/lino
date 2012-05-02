@@ -114,6 +114,12 @@ class Controller:
         
     def validate_and_save(self,obj):
         "Deserves more documentation."
+        obj.full_clean()
+        dblogger.log_changes(REQUEST,obj)
+        obj.save()
+                
+    def old_validate_and_save(self,obj):
+        "Deserves more documentation."
         try:
             obj.full_clean()
             dblogger.log_changes(REQUEST,obj)
@@ -234,8 +240,8 @@ class PAR(Controller):
                         obj.coach1 = auth.User.objects.get(username=username)
                     except auth.User.DoesNotExist,e:
                         dblogger.warning(
-                          u"%s : PAR->IdUsr %r (converted to %r) doesn't exist!",
-                          obj2str(obj),data['IDUSR'],username)
+                          u"PAR->IdUsr %r (converted to %r) doesn't exist! while saving %s",
+                          data['IDUSR'],username,obj2str(obj))
                 else:
                     obj.coach1 = None
                     #~ obj.user = None
@@ -484,7 +490,9 @@ def watch(data_dir):
             dblogger.warning(
                 "Exception '%s' while processing changelog line:\n%s", 
                 e,ln)
-            dblogger.exception(e)
+            # for ValidationError we don't want a full traceback with mail to the admins.
+            if not isinstance(e,ValidationError):
+                dblogger.exception(e)
             #~ raise
     fd_watching.close()
     fd_failed.close()

@@ -1,0 +1,37 @@
+20120502
+========
+
+Miscellaneous
+-------------
+
+- Trying to get Lino running on an Ubuntu 08.04 (Hardy): 
+  Après avoir dépanné pour :term:`lxml` (en ne plus l'utilisant au
+  moins pour les fonctions fondamentales) je constate qu'il y a encore des
+  problèmes venant du fait que c'est un vieux Ubuntu: je devrais installer
+  tinymce manuellement... et probablement aussi un headless openoffice...
+
+  Le feature "ça tourne même sur un Ubuntu de 2008" est bien
+  intéressant et ne semble pas impossible, mais il y a tellement à faire
+  dans Lino que ce n'est pas prioritaire en ce moment. D'autre part il
+  serait bien-sûr bon d'avancer avec la première démo publique.
+
+- A ValidationError during :term:`watch_tim` used to cause 
+  a full traceback with mail to the admins.
+  (e.g. "ValidationError {'first_name': [u'This field cannot be blank.']}").
+  Now it just logs a warning. 
+
+
+CBSS connection
+---------------
+
+Lots of tests and experiments. 
+Converted lino.utils.xmlgen.cbss from lxml to ElementTree.
+Discovered that persons aren't integrated in the acpt environment.
+We need to integrate fictive persons using ManageAccessRequest.
+New magic function :func:`lino.modlib.cbss.models.setup_site_cache`.
+OOps: ElementTree doesn't suppot CDATA.
+Found a workaround :mod:`lino.utils.xmlgen.etree`.
+
+TODO:
+
+- Try whether I can use suds also for SSDN requests.

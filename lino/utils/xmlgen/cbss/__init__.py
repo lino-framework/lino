@@ -22,8 +22,6 @@ Python, Lino and the following Python modules:
 
 - :term:`lxml`
 - :term:`appy.pod`
-  
-  
 
 
 Building SSDN requests
@@ -31,20 +29,20 @@ Building SSDN requests
 
 This module currently supports the following "classical" SSDN requests:
 
-- :attr:`ipr` : IdentifyPerson
-- :attr:`pir` : PerformInvestigation
-- :attr:`hir` : HealthInsurance
+- :attr:`IPR` : IdentifyPerson
+- :attr:`PIR` : PerformInvestigation
+- :attr:`HIR` : HealthInsurance
  
-:attr:`ipr` has two variants: *with* known NISS or *without*.
+:attr:`IPR` has two variants: *with* known NISS or *without*.
 If a NISS is given, the other parameters are "verification data". 
 For example:
 
->>> req = ipr.build_request("68060101234",
+>>> req = IPR.build_request("68060101234",
 ...   last_name="SAFFRE",birth_date='1968-06-01')
 
 To show what this request contains, we can use lxml's tostring method:
 
->>> print etree.tostring(req,pretty_print=True) #doctest: +ELLIPSIS
+>>> print pretty_print(req) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 <ipr:IdentifyPersonRequest xmlns:ipr="http://.../IdentifyPerson">
   <ipr:SearchCriteria>
     <ipr:SSIN>68060101234</ipr:SSIN>
@@ -63,35 +61,34 @@ and at least the birth date is then mandatory. If you don't give birth
 date, you'll get a :class:`Warning` (i.e. an Exception whose 
 string is meant to be understandable by the user):
 
->>> req = ipr.build_request(last_name="SAFFRE")
+>>> req = IPR.build_request(last_name="SAFFRE")
 Traceback (most recent call last):
 ...
 Warning: Either national_id or birth date must be given
 
 Here is a valid ipr request:
 
->>> req = ipr.build_request(last_name="SAFFRE",birth_date='1968-06-01')
+>>> req = IPR.build_request(last_name="SAFFRE",birth_date='1968-06-01')
 
 Again, we can look at the XML to see what it contains:
 
->>> print etree.tostring(req,pretty_print=True) #doctest: +ELLIPSIS
+>>> print pretty_print(req) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 <ipr:IdentifyPersonRequest xmlns:ipr="http://.../IdentifyPerson">
   <ipr:SearchCriteria>
     <ipr:PhoneticCriteria>
       <ipr:LastName>SAFFRE</ipr:LastName>
-      <ipr:FirstName></ipr:FirstName>
-      <ipr:MiddleName></ipr:MiddleName>
+      <ipr:FirstName />
+      <ipr:MiddleName />
       <ipr:BirthDate>1968-06-01</ipr:BirthDate>
     </ipr:PhoneticCriteria>
   </ipr:SearchCriteria>
 </ipr:IdentifyPersonRequest>
-<BLANKLINE>
 
 
 Here is also a PerformInvestigation request:
 
->>> req = pir.build_request("68060101234",wait="0")
->>> print etree.tostring(req,pretty_print=True) #doctest: +ELLIPSIS
+>>> req = PIR.build_request("68060101234",wait="0")
+>>> print pretty_print(req) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 <pir:PerformInvestigationRequest xmlns:pir="http://.../PerformInvestigation">
   <pir:SocialSecurityUser>68060101234</pir:SocialSecurityUser>
   <pir:DataGroups>
@@ -101,7 +98,6 @@ Here is also a PerformInvestigation request:
     <pir:WaitRegisterGroup>0</pir:WaitRegisterGroup>
   </pir:DataGroups>
 </pir:PerformInvestigationRequest>
-<BLANKLINE>
 
 
 Executing SSDN requests
@@ -122,7 +118,7 @@ The :meth:`execute` method takes four parameters:
 - The request itself (the object returned by `build_request` 
   as explained in the previous section):
 
-  >>> req = pir.build_request("68060101234",wait="0")
+  >>> req = PIR.build_request("68060101234",wait="0")
   
 - The "environment" to use: ``test``, ``acpt`` or ``prod``.
   In the following examples we leave this *empty* to avoid any actual connection.
@@ -140,9 +136,8 @@ The :meth:`execute` method takes four parameters:
   requests (including also the user who issued the request).
   Lino does this in :mod:`lino.modlib.cbss`.
   
-- The "user parameters" required by the CBSS, 
-  specified as a normal Python `dict` 
-  object. 
+- The "user parameters" required by the CBSS, specified as a normal 
+  Python `dict` object. 
   
   For SSDN request it is something like:
 
@@ -162,12 +157,20 @@ If you run the following call in a real environment
 (with permission to connect, and with correct data in `user_params`), 
 it won't raise the `Warning` but return a `response object`:
 
->>> response = pir.execute(None,req,user_params,unique_id,now) #doctest: +ELLIPSIS
+>>> response = PIR.execute(None,req,user_params,unique_id,now) #doctest: +ELLIPSIS
 Traceback (most recent call last):
 ...
 Warning: Not actually sending because environment is empty. Request would be:
-<?xml version='1.0' encoding='ASCII'?>
-<soap:Envelope ...</soap:Envelope>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsc="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">
+<soap:Body>
+<wsc:xmlString>
+<![CDATA[<ns0:SSDNRequest...</ns0:SSDNRequest>]]>
+</wsc:xmlString>
+</soap:Body>
+</soap:Envelope>
+
+
+
 
 
 The `response` is currently a simple wrapper around the XML structure 
@@ -182,13 +185,15 @@ New style services
 A `TestConnectionService` request
 ---------------------------------
 
->>> req = tcs.build_request("hello cbss service")
+(dicontinued. implemented using suds.)
+
+>> req = TCS.build_request("hello cbss service")
 
 New style services have a different authentication method that requires 
 just a username and a password. The `user_params` is also a `dict`, 
 but with different keywords:
 
->>> user_params = dict(username='E123456789', password='p123abc')
+>> user_params = dict(username='E123456789', password='p123abc')
 
 In a Lino application, this is defined in the 
 :attr:`cbss2_user_params <lino.Lino.cbss2_user_params>` setting
@@ -196,7 +201,7 @@ of your local :xfile:`settings.py` module.
 
 A `TestConnectionService` request doesn't need a unique_id and timestamp.
 
->>> response = tcs.execute(None,req,user_params) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+>> response = tcs.execute(None,req,user_params) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 Traceback (most recent call last):
 ...
 Warning: Not actually sending because environment is empty. Request would be:
@@ -217,15 +222,30 @@ import os
 from appy.shared.dav import Resource
 from appy.shared.xml_parser import XmlUnmarshaller
 
-from lxml import etree
+#~ from lxml import etree
+#~ from xml. import etree
+#~ from lino.utils.xmlgen.recipe576536 import CDATA
+#~ from xml.etree import ElementTree as etree
+from lino.utils.xmlgen import etree 
+#~ import ElementTree as etree
+
 
 #~ from lino.utils import d2iso
 #~ from lino.utils import IncompleteDate
-from lino.utils.xmlgen import Warning, Namespace
+from lino.utils.xmlgen import Warning, Namespace, pretty_print, prettify
 
 def xsdpath(*parts):
     p1 = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(p1,'XSD',*parts)
+
+import datetime
+
+def format(v):
+    if isinstance(v,datetime.datetime):
+        return v.strftime("%Y%m%dT%H%M%S")
+    if isinstance(v,datetime.date):
+        return v.strftime("%Y-%m-%d")
+    return str(v)
 
 
 
@@ -233,16 +253,22 @@ def xsdpath(*parts):
 #~ ssdn = Namespace('ssdn',"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
 #~ ,nsmap={None:ssdn._url}
 
-class SOAP(Namespace):
-    targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/"
-    def setup_namespace(self):
-        self.define_names("Body Envelope Header")
-soap = SOAP('soap')
+#~ class SOAP(Namespace):
+    #~ targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/"
+    #~ def setup_namespace(self):
+        #~ self.define_names("Body Envelope Header")
+#~ soap = SOAP('soap')
+
+SOAP = Namespace(
+  "http://schemas.xmlsoap.org/soap/envelope/",
+  names="Body Envelope Header",prefix="soap")
         
-class WSC(Namespace):
+class WebServiceConnector(Namespace):
     """
     The WebServiceConnector namespace used for wrapping "classical" CBSS services.
     """
+    targetNamespace = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
+    prefix = 'wsc'
     def setup_namespace(self):
         self.define_names("xmlString")
         
@@ -250,30 +276,30 @@ class WSC(Namespace):
         #~ xg.set_default_namespace(bcss)
         if not isinstance(s,basestring):
             raise Exception("Must give a string, not %r" % s)
-        body = self.xmlString()
-        body.text = etree.CDATA(s)
+        body = self.xmlString(etree.CDATA(s))
+        #~ body.text = 
         #~ body = etree.tostring(body)
-        return soap.Envelope(soap.Body(body))
+        return SOAP.Envelope(SOAP.Body(body))
         
-wsc = WSC('wsc',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
+WSC = WebServiceConnector()
         
-class SSDN(Namespace):
+class SSDNns(Namespace):
     """
     The SSDN namespace used for wrapping "classical" CBSS services.
     """
-    def setup_namespace(self):
-        self.define_names("""
-        SSDNRequest
-        ServiceRequest
-        ServiceId
-        Version
-        RequestContext
-        Message
-        Reference
-        TimeRequest
-        """)            
+    targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/Service"
+    names = """
+    SSDNRequest
+    ServiceRequest
+    ServiceId
+    Version
+    RequestContext
+    Message
+    Reference
+    TimeRequest
+    """
 
-ssdn = SSDN(None,"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
+SSDN = SSDNns()
 
 
 
@@ -334,12 +360,13 @@ class Service(Namespace):
             
         req = self.wrap_request(req,unique_id,dt,user_params)
         
-        xml = etree.tostring(req,xml_declaration=True)
+        #~ xml = etree.tostring(req,xml_declaration=True)
+        xml = etree.tostring(req)
         
         if not env:
             raise Warning("""\
 Not actually sending because environment is empty. Request would be:
-""" + xml)
+""" + prettify(xml))
 
         assert env in (ENV_TEST, ENV_ACPT, ENV_PROD)
 
@@ -361,31 +388,31 @@ Not actually sending because environment is empty. Request would be:
         raise NotImplementedError
         
 
-class NewStyleService(Service):
+#~ class NewStyleService(Service):
     
-    def wrap_request(self,srvReq,message_ref,dt,user_params):
-        soap = SOAP('soap',used_namespaces=[self])
-        return soap.Envelope(soap.Header(),soap.Body(srvReq))
+    #~ def wrap_request(self,srvReq,message_ref,dt,user_params):
+        #~ # soap = SOAP('soap',used_namespaces=[self])
+        #~ return SOAP.Envelope(SOAP.Header(),SOAP.Body(srvReq))
 
     
-class TestConnectionService(NewStyleService):
-    #~ xsd_filename = xsdpath('TestConnectionServiceV1.xsd')
-    targetNamespace = "http://kszbcss.fgov.be/intf/TestConnectionServiceService/v1"
+#~ class TestConnectionService(NewStyleService):
+    #~ # xsd_filename = xsdpath('TestConnectionServiceV1.xsd')
+    #~ targetNamespace = "http://kszbcss.fgov.be/intf/TestConnectionServiceService/v1"
   
-    def setup_namespace(self):
-        self.define_names("sendTestMessageRequest echo")
+    #~ def setup_namespace(self):
+        #~ self.define_names("sendTestMessageRequest echo")
 
-    def build_request(self,helloString):
-        return self.sendTestMessageRequest(self.echo(helloString))
-        #~ self.validate_root(root)
-        #~ return root 
+    #~ def build_request(self,helloString):
+        #~ return self.sendTestMessageRequest(self.echo(helloString))
+        #~ # self.validate_root(root)
+        #~ # return root 
         
-    def get_url(self,env):
-        url = "https://bcssksz-services-%s.smals.be:443/SOA4520" % env
-        url += "/TestConnectionServiceService/sendTestMessage"
-        return url
+    #~ def get_url(self,env):
+        #~ url = "https://bcssksz-services-%s.smals.be:443/SOA4520" % env
+        #~ url += "/TestConnectionServiceService/sendTestMessage"
+        #~ return url
         
-tcs = TestConnectionService('tcs')
+#~ tcs = TestConnectionService('tcs')
 
 class SSDNService(Service):
   
@@ -399,20 +426,20 @@ class SSDNService(Service):
     def wrap_request(self,srvReq,message_ref,dt,user_params):
         #~ xg.set_default_namespace(None)
         any = etree.tostring(srvReq)
-        serviceRequest = ssdn.ServiceRequest(
-            ssdn.ServiceId(self.service_id),
-            ssdn.Version(self.service_version),
+        serviceRequest = SSDN.ServiceRequest(
+            SSDN.ServiceId(self.service_id),
+            SSDN.Version(self.service_version),
             etree.XML(any))
         
-        context = ssdn.RequestContext(
+        context = SSDN.RequestContext(
             common.authorized_user(**user_params),
-            ssdn.Message(
-                ssdn.Reference(message_ref),
-                ssdn.TimeRequest(dt)))
-        #~ xg.set_default_namespace(ssdn)
-        elem = ssdn.SSDNRequest(context,serviceRequest)
+            SSDN.Message(
+                SSDN.Reference(message_ref),
+                SSDN.TimeRequest(format(dt))))
+        #~ xg.set_default_namespace(SSDN)
+        elem = SSDN.SSDNRequest(context,serviceRequest)
         #~ elem.nsmap={None:self._url}
-        elem = wsc.soap_request(etree.tostring(elem))
+        elem = WSC.soap_request(etree.tostring(elem))
         #~ xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + 
         return elem
         #~ return ssdn.SSDNRequest(context,serviceRequest)
@@ -423,6 +450,8 @@ class IdentifyPersonRequest(SSDNService):
     "A request for identifying a person or validating a person's identity"
     service_id = 'OCMWCPASIdentifyPerson'
     service_version = '20050930'
+    targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson"
+    prefix = "ipr"
     if USE_XSD_FILES:
         xsd_filename = xsdpath('SSDN','OCMW_CPAS',
             'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
@@ -494,7 +523,7 @@ class IdentifyPersonRequest(SSDNService):
         #~ if tolerance is not None: pc.append(ipr.Tolerance(tolerance))
         root = ipr.IdentifyPersonRequest(
             ipr.SearchCriteria(ipr.PhoneticCriteria(*pc)))
-        ipr.validate_root(root)
+        #~ ipr.validate_root(root)
         return root 
           
 
@@ -506,6 +535,9 @@ class PerformInvestigationRequest(SSDNService):
     """
     service_id = 'OCMWCPASPerformInvestigation'
     service_version = '20080604'
+    targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation"
+    prefix = 'pir'
+    
     if USE_XSD_FILES:
         xsd_filename = xsdpath('SSDN','OCMW_CPAS',
             'PERFORMINVESTIGATION','PERFORMINVESTIGATIONREQUEST.XSD')
@@ -521,22 +553,38 @@ class PerformInvestigationRequest(SSDNService):
         WaitRegisterGroup
         """)
         
-    def build_request(pir,ssin,family='1',citizen='1',address='1',wait='1'):
-        root = pir.PerformInvestigationRequest(
-            pir.SocialSecurityUser(ssin),
-            pir.DataGroups(
-              pir.FamilyCompositionGroup(family),
-              pir.CitizenGroup(citizen),
-              pir.AddressHistoryGroup(address),
-              pir.WaitRegisterGroup(wait)))
+    def build_request(self,ssin,family='1',citizen='1',address='1',wait='1'):
+        root = self.PerformInvestigationRequest(
+            self.SocialSecurityUser(ssin),
+            self.DataGroups(
+              self.FamilyCompositionGroup(family),
+              self.CitizenGroup(citizen),
+              self.AddressHistoryGroup(address),
+              self.WaitRegisterGroup(wait)))
 
-        pir.validate_root(root)
+        #~ pir.validate_root(root)
         return root 
     
     
 
     
         
+class ManageAccessRequest(SSDNService):
+    targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess"
+    prefix = 'mar'
+    service_id = 'OCMWCPASManageAccess'
+    service_version = '20070509'
+    names = """
+    ManageAccessRequest
+    SSIN
+    Purpose
+    Period
+    Action
+    Sector
+    QueryRegister
+    ProofOfAuthentication
+    """
+    
 class HealthInsuranceRequest(SSDNService):
     """
     A request to the HealthInsurance BCSS service.
@@ -544,6 +592,7 @@ class HealthInsuranceRequest(SSDNService):
     """
     service_id = 'OCMWCPASHealthInsurance'
     service_version = '20070509'
+    targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance"
     
     def setup_namespace(self):
         self.define_names("""
@@ -556,23 +605,27 @@ class HealthInsuranceRequest(SSDNService):
         """)
     
     
-ipr = IdentifyPersonRequest('ipr') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
+IPR = IdentifyPersonRequest()
 """
 The Namespace instance for :class:`IdentifyPersonRequest`.
 """
 
 
-pir = PerformInvestigationRequest('pir') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
+PIR = PerformInvestigationRequest() # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
 """
 The Namespace instance for :class:`PerformInvestigationRequest`.
 """
 
 
-hir = HealthInsuranceRequest('hir') # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance")
+HIR = HealthInsuranceRequest()
 """
 The Namespace instance for :class:`HealthInsuranceRequest`.
 """
 
+MAR = ManageAccessRequest()
+"""
+The Namespace instance for :class:`ManageAccessRequest`.
+"""
 
     
 

@@ -36,9 +36,10 @@ Bugfixes
   (d.h. praktisch das Datum des letzten Releases). 
   Jetzt ist das Feld par défaut leer (was dann "heute" bedeutet).
 
-- Beim Speichern einer Notiz, für die ein Drittparter existierte, kam eine Fehlermeldung “Ajax communication failed”.
+- Beim Speichern einer Notiz, für die ein Drittparter existierte, 
+  kam eine Fehlermeldung “Ajax communication failed”.
 
-- Felder eID-Karte gültig von und gültig bis waren zu klein.
+- Felder "eID-Karte gültig von" und "gültig bis" waren zu klein.
 
 - Wenn man z.B. in der Liste der Stellen 
   auf einen Stellenanbieter klickte um dessen Detail zu sehen, 
@@ -66,6 +67,10 @@ Bugfixes
 - Traceback "ExtUI instance has no attribute 'href_to'" 
   in :meth:`lino.modlib.contacts.models.PartnerDocument.summary_row`
 
+- Wenn watch_tim eine Person ohne Vorname zu speichern versuchte,
+  machte der Server einen Traceback 
+  (z.B. "ValidationError {'first_name': [u'This field cannot be blank.']}").
+  Jetzt nur noch eine Warnung in der Log-Datei.
   
 
 Internal changes

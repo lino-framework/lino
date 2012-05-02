@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+FileName: TestConnectionService.wsdl
+Author: Gert-Jan van Egdom
+Owner: KSZ / CBSS
+Creation date: 29-07-09
+Description: Creation of the file.
+This application will test the connection from the client with the CBSS. 
+Current version: 0.1
+-->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://kszbcss.fgov.be/intf/TestConnectionServiceService/v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://kszbcss.fgov.be/intf/TestConnectionServiceService/v1" name="TestConnectionServiceService">
+	<wsdl:types>
+		<xsd:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" xmlns:test="http://kszbcss.fgov.be/types/TestConnectionService/v1" targetNamespace="http://kszbcss.fgov.be/intf/TestConnectionServiceService/v1">
+			<xsd:import namespace="http://kszbcss.fgov.be/types/TestConnectionService/v1" schemaLocation="TestConnectionServiceV1.xsd"/>
+			<xsd:element name="sendTestMessageRequest" type="test:SendTestMessageRequestType"/>
+			<xsd:element name="sendTestMessageResponse" type="test:SendTestMessageResponseType"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="sendTestMessageRequestMsg">
+		<wsdl:part name="sendTestMessageRequestParameters" element="tns:sendTestMessageRequest"/>
+	</wsdl:message>
+	<wsdl:message name="sendTestMessageResponseMsg">
+		<wsdl:part name="sendTestMessageResponseParameters" element="tns:sendTestMessageResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="TestConnectionServicePortType">
+		<wsdl:operation name="sendTestMessage">
+			<wsdl:input name="sendTestMessageRequest" message="tns:sendTestMessageRequestMsg"/>
+			<wsdl:output name="sendTestMessageResponse" message="tns:sendTestMessageResponseMsg"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="TestConnectionServiceServiceHTTPBinding" type="tns:TestConnectionServicePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="sendTestMessage">
+			<soap:operation soapAction="http://kszbcss.fgov.be/TestConnectionServiceService/sendTestMessage"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="TestConnectionServiceService">
+		<wsdl:port name="TestConnectionServiceService" binding="tns:TestConnectionServiceServiceHTTPBinding">
+			<!-- soap:address location -->
+			<!--dlp : bcssksz-services-test.smals.be -->
+			<!--acpt:bcssksz-services-acpt.smals.be -->
+			<!-- prod:bcssksz-servicesprod.smals.be-->
+			<soap:address location="https://bcssksz-services-test.smals.be:443/SOA4520/TestConnectionServiceService/sendTestMessage"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

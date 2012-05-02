@@ -36,21 +36,26 @@ Inspired by Frederik Lundh's ElementTree Builder
 import datetime
 from functools import partial
 
-from xml.dom import minidom
+#~ from xml.etree import ElementTree as ET
+from lino.utils.xmlgen import etree
+from lino.utils import Warning
 
-def prettify(elem):
+
+def pretty_print(elem):
     """Return a pretty-printed XML string for the Element.
     """
+    return prettify(etree.tostring(elem, 'utf-8'))
+    # the following also indented:
     # from http://renesd.blogspot.com/2007/05/pretty-print-xml-with-python.html
     # via http://broadcast.oreilly.com/2010/03/pymotw-creating-xml-documents.html
-    rough_string = ET.tostring(elem, 'utf-8')
-    reparsed = minidom.parseString(rough_string)
-    return reparsed.toprettyxml(indent="  ")
+    #~ from xml.dom import minidom
+    #~ rough_string = etree.tostring(elem, 'utf-8')
+    #~ reparsed = minidom.parseString(rough_string)
+    #~ return reparsed.toprettyxml(indent="  ")
 
+def prettify(s):
+    return s.replace('><','>\n<')
 
-
-from xml.etree import ElementTree as ET
-from lino.utils import Warning
 
 RESERVED_WORDS = frozenset("""
 and       del       from      not       while
@@ -71,16 +76,16 @@ TYPEMAP = {
 }
 
 
-#~ import threading
-#~ write_lock = threading.RLock()
+
 
 class Namespace(object):
     """
     """
-    #~ prefix = None
+    prefix = None
     targetNamespace = None
+    names = None
     
-    def __init__(self,targetNamespace=None,names=None):
+    def __init__(self,targetNamespace=None,names=None,prefix=None):
         #~ if prefix is not None:
             #~ self.prefix = prefix
         #~ kw.setdefault('typemap',TYPEMAP)
@@ -88,12 +93,18 @@ class Namespace(object):
         #~ nsmap = kw.setdefault('nsmap',{})
         
         
+        if prefix is not None:
+            self.prefix = prefix
+        if names is not None:
+            self.names = names
         if targetNamespace is not None:
             self.targetNamespace = targetNamespace
         if self.targetNamespace is not None:
             #~ kw.update(namespace=self.targetNamespace)
             
             self._ns = '{' + self.targetNamespace + '}'
+            if self.prefix is not None:
+                etree.register_namespace(self.prefix,self.targetNamespace)
             #~ if prefix:
             #~ nsmap[prefix] = self.targetNamespace
         #~ if used_namespaces is not None:
@@ -103,8 +114,8 @@ class Namespace(object):
                 #~ nsmap[ns.prefix] = ns.targetNamespace
         #~ self._element_maker = ElementMaker(**kw)
         #~ self._source_elements = {}
-        if names is not None:
-            self.define_names(names)
+        if self.names is not None:
+            self.define_names(self.names)
         self.setup_namespace()
         
     def setup_namespace(self):
@@ -118,7 +129,7 @@ class Namespace(object):
         file.write = data.append
         if self.targetNamespace is not None:
             kw.setdefault('default_namespace',self.targetNamespace)
-        ET.ElementTree(element).write(file,*args,**kw)
+        etree.ElementTree(element).write(file,*args,**kw)
         return "".join(data)
         
     def tostring_pretty(self,*args,**kw):
@@ -128,7 +139,8 @@ class Namespace(object):
         #~ kw.update(encoding='utf-8')
         s = self.tostring(*args,**kw)
         #~ return s
-        return minidom.parseString(s).toprettyxml(indent="  ")
+        #~ return minidom.parseString(s).toprettyxml(indent="  ")
+        return prettify(s)
         
         
         
@@ -149,7 +161,7 @@ class Namespace(object):
     def create_element(self, tag, *children, **attrib):
         nsattrib = self.makeattribs(**attrib)
         tag = self.addns(tag)
-        elem = ET.Element(tag, nsattrib)
+        elem = etree.Element(tag, nsattrib)
         for item in children:
             if isinstance(item, dict):
                 elem.attrib.update(self.makeattribs(**item))
@@ -158,7 +170,7 @@ class Namespace(object):
                     elem[-1].tail = (elem[-1].tail or "") + item
                 else:
                     elem.text = (elem.text or "") + item
-            elif ET.iselement(item):
+            elif etree.iselement(item):
                 elem.append(item)
             else:
                 raise TypeError("bad argument: %r" % item)
@@ -193,7 +205,7 @@ class Namespace(object):
         parent.append(e)
         return e
         
-RAW = ET.XML
+RAW = etree.XML
 
 
 def _test():

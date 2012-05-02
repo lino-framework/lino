@@ -1856,6 +1856,8 @@ tinymce.init({
         started = time.time()
         count = 0
         
+        settings.LINO.on_each_app('setup_site_cache',mtime,force)
+        
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
         

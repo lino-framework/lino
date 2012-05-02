@@ -562,14 +562,9 @@ class Lino(object):
     #~ URL of BCSS SOAP server
     #~ """
     
-    cbss_environment = 'test'
-    """
-    One of 'test', 'acpt' or 'prod'.
-    """
-    
     cbss_user_params = None
     u"""
-    User parameters for CBSS SSDN services.
+    User parameters for CBSS SSDN (classic) services.
     
     Example::
 
@@ -599,10 +594,33 @@ class Lino(object):
 
     """
     
-    cbss2_user_params = None
-    u"""
-    User parameters for CBSS new style services.
+    #~ cbss2_user_params = None
+    #~ u"""
+    #~ User parameters for CBSS new style services.
+    #~ """
+    
+    cbss_environment = None
     """
+    Either `None` or one of 'test', 'acpt' or 'prod'.
+    See :mod:`lino.modlib.cbss.models`.
+    Leaving this to `None` means that the cbss module is "inactive" even if installed.
+    """
+    cbss_cbe_number = '0123456789'
+    """
+    Either `None` or a string of style '0123456789'
+    Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.
+    """
+    cbss_username = None
+    """
+    Either `None` or a string of style 'E0123456789'
+    Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.
+    """
+    cbss_password = None
+    """
+    Either `None` or a string of style 'p1234567890abcd1234567890abcd'
+    Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.
+    """
+    
     
     use_davlink = False
     """
@@ -892,15 +910,15 @@ class Lino(object):
     def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
         m = main.add_menu("master",_("Master"))
-        self.on_each_app('setup_master_menu',self,ui,user,m)
+        self.on_each_app('setup_master_menu',ui,user,m)
         m = main.add_menu("my",_("My menu"))
-        self.on_each_app('setup_my_menu',self,ui,user,m)
+        self.on_each_app('setup_my_menu',ui,user,m)
         m = main.add_menu("config",_("Configure"))
-        self.on_each_app('setup_config_menu',self,ui,user,m)
+        self.on_each_app('setup_config_menu',ui,user,m)
         m = main.add_menu("explorer",_("Explorer"))
-        self.on_each_app('setup_explorer_menu',self,ui,user,m)
+        self.on_each_app('setup_explorer_menu',ui,user,m)
         m = main.add_menu("site",_("Site"))
-        self.on_each_app('setup_site_menu',self,ui,user,m)
+        self.on_each_app('setup_site_menu',ui,user,m)
         return main
 
 
@@ -911,7 +929,7 @@ class Lino(object):
             mod = import_module('.models', app_name)
             meth = getattr(mod,methname,None)
             if meth is not None:
-                meth(*args)
+                meth(self,*args)
         
         
     #~ def get_calendar_color(self,calendar,request):
