@@ -332,7 +332,7 @@ class IdentifyPersonRequest(SSDNRequest,contacts.PersonMixin,contacts.Born):
     
     """
     
-    cbss_namespace = cbss.ipr # IdentifyPersonRequest
+    cbss_namespace = cbss.IPR # IdentifyPersonRequest
     
     class Meta:
         verbose_name = _("IdentifyPerson Request")

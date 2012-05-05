@@ -85,7 +85,7 @@ class Lino(Lino):
             m.add_action(self.modules.contacts.AllPartners)
             #~ m.add_action(self.modules.pcsw.Newcomers)
         self.modules.isip.setup_master_menu(self,ui,user,m)
-        self.modules.families.setup_master_menu(self,ui,user,m)
+        self.modules.households.setup_master_menu(self,ui,user,m)
         self.modules.newcomers.setup_main_menu(self,ui,user,m)
         self.modules.debts.setup_main_menu(self,ui,user,m)
         #~ jobs.setup_main_menu(self,ui,user,m)
@@ -109,15 +109,16 @@ class Lino(Lino):
                   params=dict(master_instance=pg))
                 #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
                 #~ params=dict(master_id=pg.pk))
-            
-        self.modules.isip.setup_my_menu(self,ui,user,m)
-        self.modules.jobs.setup_my_menu(self,ui,user,m)
-        self.modules.families.setup_my_menu(self,ui,user,m)
-        self.modules.newcomers.setup_my_menu(self,ui,user,m)
-        self.modules.debts.setup_my_menu(self,ui,user,m)
         
-        self.modules.cal.setup_my_menu(self,ui,user,m)
-        self.modules.outbox.setup_my_menu(self,ui,user,m)
+        self.on_each_app('setup_my_menu',ui,user,m)
+        #~ self.modules.isip.setup_my_menu(self,ui,user,m)
+        #~ self.modules.jobs.setup_my_menu(self,ui,user,m)
+        #~ self.modules.households.setup_my_menu(self,ui,user,m)
+        #~ self.modules.newcomers.setup_my_menu(self,ui,user,m)
+        #~ self.modules.debts.setup_my_menu(self,ui,user,m)
+        
+        #~ self.modules.cal.setup_my_menu(self,ui,user,m)
+        #~ self.modules.outbox.setup_my_menu(self,ui,user,m)
         m.add_action(self.modules.uploads.MyUploads)
         m.add_action(self.modules.lino.MyTextFieldTemplates)
 
@@ -298,7 +299,7 @@ INSTALLED_APPS = (
   'lino.modlib.isip',
   'lino.modlib.cbss',
   'lino.modlib.newcomers',
-  'lino.modlib.families',
+  'lino.modlib.households',
   'lino.sandbox.debts',
   'lino.apps.pcsw',
   'lino.apps.pcsw.courses',

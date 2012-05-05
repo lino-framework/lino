@@ -40,62 +40,89 @@ from lino.models import get_site_config
 from lino.utils import mti
 from lino.modlib.contacts import models as contacts
 
-
-class Family(contacts.Partner):
+class Type(babel.BabelNamed):
     """
-    A Family is a Partner who has a father, a mother and a 
+    Type of a household.
+    http://www.belgium.be/fr/famille/couple/cohabitation/
+    """
+    class Meta:
+        verbose_name = _("Household Type")
+        verbose_name_plural = _("Household Types")
+
+class Types(dd.Table):
+    model = Type
+    detail_template = """
+    name 
+    HouseholdsByType
+    """
+
+
+
+class Household(contacts.Partner):
+    """
+    A Household is a Partner that represents several Persons living together.
     list of :class:`members <Member>`.
     """
     class Meta:
-        verbose_name = _("Family")
-        verbose_name_plural = _("Families")
+        verbose_name = _("Household")
+        verbose_name_plural = _("Households")
     
-    father = models.ForeignKey(settings.LINO.person_model,
-        related_name='father_for',blank=True,null=True,
-        verbose_name=_("Father"))
-    mother = models.ForeignKey(settings.LINO.person_model,
-        related_name='mother_for',blank=True,null=True,
-        verbose_name=_("Mother"))
+    prefix = models.CharField(max_length=200,blank=True) 
+    type = models.ForeignKey(Type)
+    #~ father = models.ForeignKey(settings.LINO.person_model,
+        #~ related_name='father_for',blank=True,null=True,
+        #~ verbose_name=_("Father"))
+    #~ mother = models.ForeignKey(settings.LINO.person_model,
+        #~ related_name='mother_for',blank=True,null=True,
+        #~ verbose_name=_("Mother"))
         
     #~ dummy = models.CharField(max_length=1,blank=True) 
-    #~ # workaround for https://code.djangoproject.com/ticket/13864
+    # workaround for https://code.djangoproject.com/ticket/13864
         
     def full_clean(self,*args,**kw):
-        if not self.name:
+        if not self.name or self.name == '-':
             l = []
-            if self.father:
-                l.append(self.father.last_name)
-            if self.mother:
-                l.append(self.mother.last_name)
-            self.name = '-'.join(l)
-        super(Family,self).full_clean(*args,**kw)
+            for m in self.member_set.all():
+                if m.role.name_giving:
+                    l.append(m.person.last_name)
+            #~ if self.father:
+                #~ l.append(self.father.last_name)
+            #~ if self.mother:
+                #~ l.append(self.mother.last_name)
+            if len(l):
+                self.name = '-'.join(l)
+            else:
+                self.name = "-"
+        super(Household,self).full_clean(*args,**kw)
         
-    @chooser()
-    def father_choices(cls):
-        #~ Person = dd.resolve_model('contacts.Person')
-        Person = settings.LINO.person_model
-        return Person.objects.filter(gender=Gender.male)
+    #~ @chooser()
+    #~ def father_choices(cls):
+        # Person = dd.resolve_model('contacts.Person')
+        #~ Person = settings.LINO.person_model
+        #~ return Person.objects.filter(gender=Gender.male)
         
-    @chooser()
-    def mother_choices(cls):
-        #~ Person = dd.resolve_model('contacts.Person')
-        Person = settings.LINO.person_model
-        return Person.objects.filter(gender=Gender.female)
+    #~ @chooser()
+    #~ def mother_choices(cls):
+        # Person = dd.resolve_model('contacts.Person')
+        #~ Person = settings.LINO.person_model
+        #~ return Person.objects.filter(gender=Gender.female)
         
         
         
     #~ def get_full_name(self,**salutation_options):
     def get_full_name(self,salutation=True,**salutation_options):
         """Deserves more documentation."""
-        return join_words(_("Family"),self.name)
+        if self.prefix:
+            return join_words(self.prefix,self.name)
+        return join_words(_("Household"),self.name)
     full_name = property(get_full_name)
     
     def __unicode__(self):
-        return unicode(join_words(_("Family"),self.name))
+        return unicode(self.get_full_name())
         #~ return self.name
 
 
-class FamilyDetail(dd.DetailLayout):
+class HouseholdDetail(dd.DetailLayout):
   
     box3 = """
     country region
@@ -113,10 +140,10 @@ class FamilyDetail(dd.DetailLayout):
 
     address_box = "box3 box4"
 
-    bottom_box = "remarks MembersByFamily"
+    bottom_box = "remarks MembersByHousehold"
 
     intro_box = """
-    father mother language name id 
+    type prefix name language:10 id 
     """
 
     main = """
@@ -128,11 +155,16 @@ class FamilyDetail(dd.DetailLayout):
 
 
               
-class Families(contacts.Partners):
-    model = Family
+class Households(contacts.Partners):
+    model = Household
     order_by = ["name"]
-    detail_layout = FamilyDetail()
+    detail_layout = HouseholdDetail()
     
+class HouseholdsByType(Households):
+    #~ label = _("Households")
+    master_key = 'type'
+    #~ column_names = 'person role *'
+
     
     
 
@@ -145,41 +177,41 @@ class Role(babel.BabelNamed):
     Deserves more documentation.
     """
     class Meta:
-        verbose_name = _("Family Role")
-        verbose_name_plural = _("Family Roles")
+        verbose_name = _("Household Role")
+        verbose_name_plural = _("Household Roles")
 
-    male = dd.BabelCharField(max_length=200,
-        verbose_name=string_concat(_("Designation"),' ',Gender.male.text))
-    female = dd.BabelCharField(max_length=200,
-        verbose_name=string_concat(_("Designation"),' ',Gender.female.text))
+    name_giving = models.BooleanField(verbose_name="name-giving",default=False)
+    #~ male = dd.BabelCharField(max_length=200,
+        #~ verbose_name=string_concat(_("Designation"),' ',Gender.male.text))
+    #~ female = dd.BabelCharField(max_length=200,
+        #~ verbose_name=string_concat(_("Designation"),' ',Gender.female.text))
     
 
 class Roles(dd.Table):
     model = Role
     detail_template = """
-    name
-    male
-    female
+    name name_giving
+    #male
+    #female
     MembersByRole
     """
 
 
 class Member(models.Model):
     """
-    The role of a given :class:`Person` in a given :class:`Family`.
+    The role of a given :class:`Person` in a given :class:`Household`.
     """
   
     class Meta:
-        verbose_name = _("Family Member")
-        verbose_name_plural = _("Family Members")
+        verbose_name = _("Household Member")
+        verbose_name_plural = _("Household Members")
         
-    role = models.ForeignKey(Role,
-      blank=True,null=True,
-      )
+    role = models.ForeignKey(Role)
+      #~ blank=True,null=True,
+      #~ )
     #~ partner = models.ForeignKey(contacts.Partner,
         #~ related_name='membersbypartner')
-    family = models.ForeignKey(Family,
-        related_name='membersbyfamily')
+    household = models.ForeignKey(Household)
     person = models.ForeignKey(settings.LINO.person_model,
         related_name='membersbyperson')
     #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
@@ -195,10 +227,10 @@ class Member(models.Model):
     def address_lines(self):
         for ln in self.person.address_person_lines():
             yield ln
-        if self.family:
-            for ln in self.family.address_person_lines():
+        if self.household:
+            for ln in self.household.address_person_lines():
                 yield ln
-            for ln in self.family.address_location_lines():
+            for ln in self.household.address_location_lines():
                 yield ln
         else:
             for ln in self.address_location_lines():
@@ -207,33 +239,33 @@ class Member(models.Model):
 class Members(dd.Table):
     model = Member
     
-class MembersByFamily(Members):
-    label = _("Family Members")
-    master_key = 'family'
+class MembersByHousehold(Members):
+    label = _("Household Members")
+    master_key = 'household'
     column_names = 'person role *'
 
 class MembersByPerson(Members):
     label = _("Member of")
     master_key = 'person'
-    column_names = 'family role *'
+    column_names = 'household role *'
 
 class MembersByRole(Members):
     master_key = 'role'
-    column_names = 'person family *'
+    column_names = 'person household *'
     
     
     
 
-if settings.LINO.is_installed('families'):
-    #~ Don't inject fields if contacts is just being imported from some other module.
+if settings.LINO.is_installed('households'):
+    #~ Don't inject fields if this is just being imported from some other module.
   
     from lino.models import SiteConfig
 
     dd.inject_field(contacts.Partner,
-        'is_family',
+        'is_household',
         #~ mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
-        mti.EnableChild(Family,verbose_name=_("is Family")),
-        """Whether this Partner is a Family."""
+        mti.EnableChild(Household,verbose_name=_("is Household")),
+        """Whether this Partner is a Household."""
         )
 
 
@@ -242,16 +274,16 @@ if settings.LINO.is_installed('families'):
 def setup_main_menu(site,ui,user,m): pass
     
 def setup_master_menu(site,ui,user,m): 
-    m.add_action(Families)
+    m.add_action(Households)
 
 def setup_my_menu(site,ui,user,m): 
     pass
     
 def setup_config_menu(site,ui,user,m): 
-    m = m.add_menu("families",_("Families"))
+    m = m.add_menu("households",_("Households"))
     m.add_action(Roles)
   
 def setup_explorer_menu(site,ui,user,m):
-    m = m.add_menu("families",_("Families"))
+    m = m.add_menu("households",_("Households"))
     m.add_action(Members)
   

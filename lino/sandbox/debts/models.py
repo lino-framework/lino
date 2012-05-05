@@ -73,7 +73,7 @@ from lino.tools import obj2str
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.properties import models as properties
 #~ from lino.modlib.cal.models import DurationUnit, update_reminder
-from lino.modlib.families import models as families
+from lino.modlib.households import models as households
 #~ from lino.modlib.contacts.models import Contact
 #~ from lino.tools import resolve_model, UnresolvedModel
 
@@ -163,24 +163,18 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
                 e.full_clean()
                 e.save()
                 #~ print e
-        #~ if self.actor_set.all().count() == 0:
-            #~ try:
-                #~ fam = self.partner.family
-            #~ except families.Family.DoesNotExist:
-                #~ pass
-            #~ else:
-                #~ for p in [fam.father,fam.mother]:
-                    #~ if p is not None:
-                        #~ a = Actor(
-                            #~ person=p,
-                            #~ budget=self,
-                            #~ header=unicode(p.get_salutation(nominative=True))
-                            #~ )
-                        #~ a.full_clean()
-                        #~ a.save()
-                    
-                #~ for m in self.partner.family.membersbyfamily.all():
-                    #~ a = Actor(person=m.person,budget=self)
+        if self.actor_set.all().count() == 0:
+            try:
+                hh = self.partner.household
+            except households.Household.DoesNotExist:
+                pass
+            else:
+                for m in hh.member_set.all():
+                    qs = Budget.objects.filter(partner_id=m.person_id)
+                    if qs.count():
+                        a = Actor(budget=self,sub_budget=qs[qs.count()-1])
+                        a.full_clean()
+                        a.save()
             
         
       
@@ -214,6 +208,9 @@ class Budgets(dd.Table):
 
 class MyBudgets(Budgets,mixins.ByUser):
     pass
+    
+class BudgetsByPartner(Budgets):
+    master_key = 'partner'
     
 
 class ItemGroup(mixins.Sequenced,babel.BabelNamed):
@@ -263,7 +260,7 @@ class Actor(mixins.Sequenced):
         
     #~ budget = models.ForeignKey(Budget,related_name="actors")
     budget = models.ForeignKey(Budget)
-    child = models.ForeignKey(Budget,
+    sub_budget = models.ForeignKey(Budget,
         verbose_name=_("Sub-Budgets"),
         related_name="used_by")
     header = models.CharField(_("Header"),max_length=20,blank=True)

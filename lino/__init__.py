@@ -923,6 +923,9 @@ class Lino(object):
 
 
     def on_each_app(self,methname,*args):
+        """Call the named method on each module in :setting:`INSTALLED_APPS`
+        that defines it.
+        """
         from django.conf import settings
         from django.utils.importlib import import_module
         for app_name in settings.INSTALLED_APPS:

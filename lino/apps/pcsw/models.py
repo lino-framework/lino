@@ -679,7 +679,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
 class PartnerDetail(contacts.PartnerDetail):
     bottom_box = """
     remarks 
-    is_person is_company is_user is_family
+    is_person is_company is_user is_household
     """
     
 

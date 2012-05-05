@@ -104,29 +104,34 @@ def objects():
           en=u""
           ))
 
-    budget = Instantiator('debts.Budget').build
+    #~ budget = Instantiator('debts.Budget').build
     from lino.modlib.users.models import User
     root = User.objects.get(username='root')
     
-    #~ Family = resolve_model('families.Family')
-    #~ for fam in Family.objects.all():
-        #~ member_budgets = []
-        #~ for p in fam.member_set.all():
-            #~ b = budget(partner=p,user=root)
-            #~ member_budgets.append(b)
+    Household = resolve_model('households.Household')
+    Budget = resolve_model('debts.Budget')
+    Actor = resolve_model('debts.Actor')
+    for hh in Household.objects.all():
+        #~ sub_budgets = []
+        for p in hh.member_set.all():
+            yield Budget(partner_id=p.person.id,user=root)
+            #~ sub_budgets.append(b)
             #~ yield b
-        #~ yield budget(partner=fam,user=root)
+        yield Budget(partner_id=hh.id,user=root)
+        #~ yield b
+        #~ for sb in sub_budgets:
+            #~ yield Actor(budget=b,sub_budget=sb)
         
-    #~ Budget = resolve_model('debts.Budget')
-    #~ Debt = resolve_model('debts.Debt')
-    #~ Company = resolve_model('contacts.Company')
-    #~ AMOUNTS = Cycler([i*5 for i in range(10)])
-    #~ PARTNERS = Cycler(Company.objects.all())
-    #~ for b in Budget.objects.all():
+    Budget = resolve_model('debts.Budget')
+    Debt = resolve_model('debts.Debt')
+    Company = resolve_model('contacts.Company')
+    AMOUNTS = Cycler([i*5 for i in range(10)])
+    PARTNERS = Cycler(Company.objects.all())
+    for b in Budget.objects.all():
         #~ n = min(3,b.actor_set.count())
-        #~ for e in b.entry_set.all():
+        for e in b.entry_set.all():
             #~ for i in range(n):
-                #~ e.amount = AMOUNTS.pop()
-                #~ e.save()
-        #~ for i in range(3):
-            #~ yield Debt(budget=b,partner=PARTNERS.pop(),amount=AMOUNTS.pop()*5)
+            e.amount = AMOUNTS.pop()
+            e.save()
+        for i in range(3):
+            yield Debt(budget=b,partner=PARTNERS.pop(),amount=AMOUNTS.pop()*5)

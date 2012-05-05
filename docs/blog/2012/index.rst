@@ -140,6 +140,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`30 <0430>`
   :doc:`01 <0501>`
   :doc:`02 <0502>`
+  03 04
+  :doc:`05 <0505>`
 
 .. |Jun| replace::  **June**
   |br| 

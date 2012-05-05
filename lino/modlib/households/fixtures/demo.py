@@ -12,10 +12,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-The `demo` fixture for `families`
-=================================
+The `demo` fixture for `households`
+===================================
 
-Creates some families by marrying a few Persons.
+Creates some households by marrying a few Persons.
 
 """
 
@@ -35,20 +35,20 @@ from lino.utils.choicelists import Gender
 
 def objects():
   
-    Role = resolve_model('families.Role')
-    Member = resolve_model('families.Member')
-    Family = resolve_model('families.Family')
+    Role = resolve_model('households.Role')
+    Member = resolve_model('households.Member')
+    Household = resolve_model('households.Household')
     Person = resolve_model('contacts.Person')
     
     MEN = Cycler(Person.objects.filter(gender=Gender.male).order_by('birth_date'))
     WOMEN = Cycler(Person.objects.filter(gender=Gender.female).order_by('birth_date'))
     
     for i in range(3):
-        #~ he = MEN.pop()
-        #~ she = WOMEN.pop()
-        fam = Family(father=MEN.pop(),mother=WOMEN.pop())
-        #~ fam = Family(name=he.last_name+"-"+she.last_name)
+        he = MEN.pop()
+        she = WOMEN.pop()
+        #~ fam = Household(father=MEN.pop(),mother=WOMEN.pop())
+        fam = Household(name=he.last_name+"-"+she.last_name,type_id=3)
         yield fam
-        #~ yield Member(family=fam,person=he,role=Role.objects.get(pk=1))
-        #~ yield Member(family=fam,person=she,role=Role.objects.get(pk=2))
+        yield Member(household=fam,person=he,role=Role.objects.get(pk=1))
+        yield Member(household=fam,person=she,role=Role.objects.get(pk=2))
     

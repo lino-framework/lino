@@ -1,0 +1,12 @@
+20120505
+========
+
+Renamed :mod:`lino.modlib.families` to :mod:`lino.modlib.households`
+because a "Household" is more general than a "Family". 
+It has no `father` and `mother`, just a list of members.
+Added model :mod:`lino.modlib.households.models.Type`.
+Household types might be "Married couple", "Family", "Cohabitation", "Ménage de fait",...
+Updated demo fixtures for housholds and :mod:`lino.modlib.debts`.
+
+Todo: display BudgetsByPartner (taking care that Users without `is_debts` 
+should not see whether a Partner has any budgets). Easiest solution is to have a separate tab "Debts Mediation" on each Partner Detail. OTOH it's a pity to use a full tab for displaying a single grid that will usually not contain more than a few records...
