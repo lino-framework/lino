@@ -677,10 +677,14 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
 
 
 class PartnerDetail(contacts.PartnerDetail):
+    #~ general = contacts.PartnerDetail.main
+    #~ main = "general debts.BudgetsByPartner"
     bottom_box = """
     remarks 
     is_person is_company is_user is_household
     """
+    #~ def setup_handle(self,h):
+        #~ h.general.label = _("General")
     
 
 class Partners(contacts.Partners):

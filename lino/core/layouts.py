@@ -103,12 +103,16 @@ class LayoutHandle:
         self.define_panel('main',layout.main)
         
         if self.main is None:
-            raise Exception("Failed to create main element %r for %s." % (layout.main,layout))
+            raise Exception(
+                "Failed to create main element %r for %s." % (
+                layout.main,layout))
         
         self.width = self.main.width
         self.height = self.main.height
         
         self.layout.setup_handle(self)
+        for k,v in self.layout._labels.items():
+            getattr(self,k).label = v
         
         
                 
@@ -322,12 +326,13 @@ class BaseLayout(object):
     _table = None
     
     def __init__(self,table=None,main=None,hidden_elements=frozenset()):
+        self._labels = dict()
         self._table = table
         self.hidden_elements = hidden_elements 
-        if main:
+        if main is not None:
             self.main = main
-        if not hasattr(self,'main'):
-            raise Exception("Cannot instantiate %s with empty main" % self.__class__)
+        elif not hasattr(self,'main'):
+            raise Exception("Cannot instantiate %s without `main`." % self.__class__)
     
     def get_data_elem(self,name): 
         return self._table.get_data_elem(name)

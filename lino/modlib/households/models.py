@@ -68,7 +68,7 @@ class Household(contacts.Partner):
         verbose_name_plural = _("Households")
     
     prefix = models.CharField(max_length=200,blank=True) 
-    type = models.ForeignKey(Type)
+    type = models.ForeignKey(Type,blank=True,null=True)
     #~ father = models.ForeignKey(settings.LINO.person_model,
         #~ related_name='father_for',blank=True,null=True,
         #~ verbose_name=_("Father"))
@@ -112,9 +112,9 @@ class Household(contacts.Partner):
     #~ def get_full_name(self,**salutation_options):
     def get_full_name(self,salutation=True,**salutation_options):
         """Deserves more documentation."""
-        if self.prefix:
-            return join_words(self.prefix,self.name)
-        return join_words(_("Household"),self.name)
+        #~ if self.prefix:
+        return join_words(self.prefix,self.name)
+        #~ return join_words(_("Household"),self.name)
     full_name = property(get_full_name)
     
     def __unicode__(self):
@@ -282,6 +282,7 @@ def setup_my_menu(site,ui,user,m):
 def setup_config_menu(site,ui,user,m): 
     m = m.add_menu("households",_("Households"))
     m.add_action(Roles)
+    m.add_action(Types)
   
 def setup_explorer_menu(site,ui,user,m):
     m = m.add_menu("households",_("Households"))

@@ -175,7 +175,7 @@ class Partner(mti.MultiTableBase,CountryCity):
         
     def __unicode__(self):
         return self.name
-
+        
     def address_person_lines(self):
         #~ yield self.name
         yield self.get_full_name()

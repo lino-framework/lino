@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 import lino
 from lino.ui import base
@@ -32,21 +33,6 @@ actors_list = None
 
 ACTOR_SEP = '.'
 
-#~ class ReadPermission: pass
-#~ class UpdatePermission: pass
-#~ class CreatePermission: pass
-          
-
-
-
-
-
-
-
-
-
-
-#~ from lino.core import actions
 
 MODULES = AttrDict()
   
@@ -363,29 +349,11 @@ class Actor(Handled):
                     #~ l.append(a.name)
         return d
         
-    #~ @classmethod
-    #~ def get_detail_sets(self):
-        #~ """
-        #~ Yield a list of (app_label,name) tuples for which the kernel 
-        #~ should try to create a Detail Set.
-        #~ """
-        #~ yield self.app_label + '/' + self.__name__
             
     @classmethod
     def get_detail(self):
-        #~ if self.detail_layout is None:
-            #~ return None
-        #~ if self.detail_layout._table is None:
-            #~ self.detail_layout._table = self
-        #~ if not issubclass(self,self.detail_layout._table):
-            #~ raise Exception("20120216 %s not a subclass of %s" % (self,self.detail_layout._table))
         return self.detail_layout
 
-        #~ dtl = getattr(self,'_lino_detail',None)
-        #~ if dtl is None:
-            #~ dtl = self.detail_layout
-            #~ self._lino_detail = dtl
-        #~ return dtl
         
     @classmethod
     def set_detail(self,dtl=None,**kw):
@@ -397,23 +365,30 @@ class Actor(Handled):
                 dtl._table = self
             self.detail_layout = dtl
         if kw:
-            assert not hasattr(self.detail_layout,'_extjs3_handle')
+            if hasattr(self.detail_layout,'_extjs3_handle'):
+                raise Exception("Cannot set_detail after UI has been set up.")
             for k,v in kw.items():
                 setattr(self.detail_layout,k,v)
-                
-        #~ if self.detail_action is None:
-            #~ """
-            #~ todo: this is an ugly hack. if a table doesn't have a detail 
-            #~ by default but gets one afterwards, we add the detail_action 
-            #~ here.
-            #~ """
-            #~ self.detail_action = actions.ShowDetailAction(self)
-            #~ self.add_action(self.detail_action)
-        
-    #~ @classmethod
-    #~ def add_virtual_field(cls,name,vf): 
-        #~ add_virtual_field(cls,name,vf)
-        
+    @classmethod
+    #~ def add_detail_tab(self,tpl,label=None):
+    def add_detail_tab(self,tpl):
+        if '\n' in tpl:
+           raise Exception("tpl may not contain any newline") 
+        if ' ' in tpl:
+           raise Exception("tpl may not contain any whitespace") 
+        if hasattr(self.detail_layout,'_extjs3_handle'):
+            raise Exception("Cannot set_detail after UI has been set up.")
+        if '\n' in self.detail_layout.main:
+            if hasattr(self.detail_layout,'general'):
+                raise NotImplementedError()
+            self.detail_layout.general = self.detail_layout.main
+            self.detail_layout.main = "general " + tpl
+            self.detail_layout._labels['general'] = _("General")
+        else:
+            self.detail_layout.main += " " + tpl
+        #~ if label is not None:
+            #~ self.detail_layout._labels[tpl] = label
+
     @classmethod
     def add_virtual_field(cls,name,vf):
         cls.virtual_fields[name] = vf

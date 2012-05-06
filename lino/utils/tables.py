@@ -668,8 +668,8 @@ class AbstractTable(actors.Actor):
     
     filter = None
     """
-    If specified, this must be a models.Q objectt
-    (and no longer a dict of (fieldname -> value) pairs)
+    If specified, this must be a `models.Q` object
+    (not a dict of (fieldname -> value) pairs)
     which will be used as a filter.
     
     Unlike :attr:`known_values`, this can use the full range of 
@@ -698,7 +698,6 @@ class AbstractTable(actors.Actor):
       extra = dict(select=dict(lower_name='lower(name)'))
       # (or if you prefer:) 
       # extra = {'select':{'lower_name':'lower(name)'},'order_by'=['lower_name']}
-      
     
     List of SQL functions and which RDBMS supports them:
     http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions

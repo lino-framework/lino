@@ -125,18 +125,37 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
                 
     def __unicode__(self):
         return force_unicode(_("Budget for %s") % self.partner)
+        
+    def get_actor(self,n):
+        attname = "_actor%d_cached" % (n+1)
+        if hasattr(self,attname):
+            return getattr(self,attname)
+        qs = self.actors.all()
+        if qs.count() > n:
+            a = qs[n]
+            #~ a = qs[n].sub_budget.partner.get_mti_child('person','household')
+        else:
+            a = None
+        setattr(self,attname,a)
+        return a
+        
+
                 
     @property
     def actor1(self):
-        qs = self.actor_set.all()
-        if qs.count() > 0:
-            return qs[0]
-            
+        return self.get_actor(0)
     @property
     def actor2(self):
-        qs = self.actor_set.all()
-        if qs.count() > 1:
-            return qs[1]
+        return self.get_actor(1)
+    @property
+    def actor3(self):
+        return self.get_actor(2)
+            
+    #~ @property
+    #~ def actor2(self):
+        #~ qs = self.actor_set.all()
+        #~ if qs.count() > 1:
+            #~ return qs[1]
             
     def item_groups(self):
         return ItemGroup.objects.all()
@@ -163,7 +182,7 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
                 e.full_clean()
                 e.save()
                 #~ print e
-        if self.actor_set.all().count() == 0:
+        if self.actors.all().count() == 0:
             try:
                 hh = self.partner.household
             except households.Household.DoesNotExist:
@@ -259,7 +278,7 @@ class Actor(mixins.Sequenced):
         verbose_name_plural = _("Budget Actors")
         
     #~ budget = models.ForeignKey(Budget,related_name="actors")
-    budget = models.ForeignKey(Budget)
+    budget = models.ForeignKey(Budget,related_name="actors")
     sub_budget = models.ForeignKey(Budget,
         verbose_name=_("Sub-Budgets"),
         related_name="used_by")
@@ -272,6 +291,22 @@ class Actor(mixins.Sequenced):
         "Overrides :meth:`lino.mixins.Sequenced.get_siblings`"
         return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
         
+    @property
+    def partner(self):
+        return self.sub_budget.partner
+        
+    @property
+    def person(self):
+        return self.sub_budget.partner.get_mti_child('person')
+        
+    @property
+    def household(self):
+        return self.sub_budget.partner.get_mti_child('household')        
+        
+    def save(self,*args,**kw):
+        if not self.header:
+            self.header = _("Actor") + " " + str(self.seqno)
+        super(Actor,self).save(*args,**kw)
         
 #~ class ActorDetail(dd.DetailLayout):
     #~ main = "general ExpensesByActor IncomesByActor DebtsByActor"
@@ -409,7 +444,7 @@ class EntriesSummaryByBudget(EntriesByType):
         if master is None:
             return
         #~ print 20120429, master
-        budget_pks = tuple([master.pk] + [a.child.pk for a in master.actor_set.filter(child__isnull=False)])
+        budget_pks = tuple([master.pk] + [a.sub_budget.pk for a in master.actors.filter(sub_budget__isnull=False)])
         assert len(budget_pks) <= MAX_SUB_BUDGETS
         cols_dict = dict()
         for i,pk in enumerate(budget_pks):
@@ -417,7 +452,8 @@ class EntriesSummaryByBudget(EntriesByType):
         row = None
         i = 0
         fkw = dict(budget_id__in=budget_pks)
-        fkw.update(account_type=self._account_type)
+        if self._account_type is not None:
+            fkw.update(account_type=self._account_type)
         for e in self.model.objects.filter(**fkw).order_by('item','seqno'):
             if row is not None and (row.item != e.item or row.name != e.name):
                 yield row
@@ -472,7 +508,10 @@ if settings.LINO.user_model:
         """)
 
 
-def site_setup(site):  pass
+def site_setup(site):
+    site.modules.contacts.Partners.add_detail_tab('debts.BudgetsByPartner')
+    site.modules.contacts.AllPersons.add_detail_tab('debts.BudgetsByPartner')
+    site.modules.households.Households.add_detail_tab('debts.BudgetsByPartner')
 
 def setup_main_menu(site,ui,user,m):  pass
   

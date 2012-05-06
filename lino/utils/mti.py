@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.db import router
 from django.db.models.deletion import Collector
+from django.core.exceptions import ObjectDoesNotExist
 
 from lino.tools import resolve_model
 from lino.core.fields import VirtualField
@@ -48,6 +49,14 @@ class MultiTableBase(models.Model):
         related_name = model.__name__.lower()
         return getattr(self,related_name)
         
+    def get_mti_child(self,*args):
+        for a in args:
+            try:
+                return getattr(self,a)
+            except ObjectDoesNotExist:
+                pass
+        return self
+
     def insert_child(self,*args,**attrs):
         return insert_child(self,*args,**attrs)
 
