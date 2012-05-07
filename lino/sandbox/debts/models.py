@@ -111,6 +111,9 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
     """
     Deserves more documentation.
     """
+    
+    #~ _lino_preferred_width = 30
+    
     class Meta:
         verbose_name = _("Budget")
         verbose_name_plural = _("Budgets")
@@ -143,13 +146,13 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
                 
     @property
     def actor1(self):
-        return self.get_actor(0)
+        return MainActor(self)
     @property
     def actor2(self):
-        return self.get_actor(1)
+        return self.get_actor(0)
     @property
     def actor3(self):
-        return self.get_actor(2)
+        return self.get_actor(1)
             
     #~ @property
     #~ def actor2(self):
@@ -162,12 +165,18 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
         
     def save(self,*args,**kw):
         super(Budget,self).save(*args,**kw)
-        
-        #~ if self.actor_set.all().count() == 0:
-          
-        #~ if self.actor_set.all().count() == 0:
-            #~ return 
-        required = Item.objects.filter(optional=False).order_by('seqno').values_list('id',flat=True)
+        #~ if self.closed:
+        if self.build_time:
+            return
+        if not self.partner:
+            return
+        fkw = dict()
+        if self.partner.get_mti_child('household'):
+            fkw.update(required_for_household=True)
+        if self.partner.get_mti_child('person'):
+            fkw.update(required_for_person=True)
+        required = Item.objects.filter(**fkw)\
+            .order_by('seqno').values_list('id',flat=True)
         missing = set(required)
         seqno = 1
         for e in Entry.objects.filter(budget=self).order_by('seqno'):
@@ -250,7 +259,11 @@ class Item(mixins.Sequenced,babel.BabelNamed):
     group = models.ForeignKey(ItemGroup)
     account_type = AccountType.field()
     #~ account = models.ForeignKey(Account)
-    optional = models.BooleanField(_("Optional"),default=False)
+    required_for_household = models.BooleanField(
+        _("Required for Households"),default=False)
+    required_for_person = models.BooleanField(
+        _("Required for Persons"),default=False)
+    #~ optional = models.BooleanField(_("Optional"),default=False)
     yearly = models.BooleanField(_("Yearly"),default=False)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
@@ -269,10 +282,28 @@ class Items(dd.Table):
     
     
 
-
+class ActorBase:
+    ""
+    @property
+    def person(self):
+        return self.partner.get_mti_child('person')
+        
+    @property
+    def household(self):
+        return self.partner.get_mti_child('household')        
+        
+class MainActor(ActorBase):
+    "A volatile object that mimicks a 'real' Actor for actor1"
+    def __init__(self,budget):
+        self.budget = budget
+        self.partner = budget.partner
+        self.header = _("Common")
+        
     
   
-class Actor(mixins.Sequenced):
+class Actor(mixins.Sequenced,ActorBase):
+    """
+    """
     class Meta:
         verbose_name = _("Budget Actor")
         verbose_name_plural = _("Budget Actors")
@@ -294,14 +325,6 @@ class Actor(mixins.Sequenced):
     @property
     def partner(self):
         return self.sub_budget.partner
-        
-    @property
-    def person(self):
-        return self.sub_budget.partner.get_mti_child('person')
-        
-    @property
-    def household(self):
-        return self.sub_budget.partner.get_mti_child('household')        
         
     def save(self,*args,**kw):
         if not self.header:
@@ -438,6 +461,14 @@ class EntriesSummaryByBudget(EntriesByType):
     master_key = 'budget'
     column_names = "name amount1 amount2 amount3 total"
     
+    @classmethod
+    def override_column_headers(self,ar):
+        d = dict()
+        d.update(amount1=ar.master_instance.actor1.header)
+        d.update(amount2=ar.master_instance.actor2.header)
+        d.update(amount3=ar.master_instance.actor3.header)
+        return d
+        
     @classmethod
     def get_data_rows(self,ar):
         master = ar.master_instance

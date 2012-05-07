@@ -22,6 +22,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
+from django.db import IntegrityError
 from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
@@ -306,6 +307,9 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
         #~ except (ValidationError,ObjectDoesNotExist), e:
         except Exception, e:
+            if not settings.LINO.loading_from_dump:
+                # hand-written fixtures are designed to not raise any exception
+                raise
             if obj.pk is None:
                 if True:
                     msg = "Failed to save %s without %s: %s." % (

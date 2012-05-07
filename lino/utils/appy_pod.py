@@ -452,6 +452,15 @@ class Renderer(AppyRenderer):
             headers = [unicode(col.label or col.name) for col in columns]
             widths = [(col.width or col.preferred_width) for col in columns]
             fields = [col.field._lino_atomizer for col in columns]
+              
+        oh = ar.actor.override_column_headers(ar)
+        if oh:
+            for i,e in enumerate(columns):
+                header = oh.get(e.name,None)
+                if header is not None:
+                    headers[i] = header
+            #~ print 20120507, oh, headers
+            
                   
         tw = sum(widths)
         """
@@ -537,6 +546,8 @@ class Renderer(AppyRenderer):
             
         from lino.ui.extjs3 import ext_store
         def fldstyle(fld):
+            if isinstance(fld,ext_store.VirtStoreField):
+                fld = fld.delegate
             if isinstance(fld,(
                 ext_store.DecimalStoreField,
                 ext_store.IntegerStoreField,
@@ -568,12 +579,14 @@ class Renderer(AppyRenderer):
         #~ hr = TableRow(stylename=HEADER_ROW_STYLE_NAME)
         hr = TableRow(stylename=header_row_style)
         table_header_rows.addElement(hr)
-        for fld in fields:
+        for h in headers:
+        #~ for fld in fields:
             #~ tc = TableCell(stylename=CELL_STYLE_NAME)
             tc = TableCell(stylename=cell_style)
             tc.addElement(text.P(
                 stylename="Table Column Header",
-                text=force_unicode(fld.field.verbose_name or fld.name)))
+                #~ text=force_unicode(fld.field.verbose_name or fld.name)))
+                text=force_unicode(h)))
             hr.addElement(tc)
             
         sums  = [0 for col in fields]

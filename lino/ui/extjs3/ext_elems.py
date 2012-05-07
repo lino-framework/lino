@@ -675,6 +675,8 @@ class LinkedForeignKeyElement(ComplexRemoteComboFieldElement):
     pass
   
 class ForeignKeyElement(ComplexRemoteComboFieldElement):
+  
+    preferred_width = 20
     
     def __init__(self,layout_handle,field,**kw):
     #~ def __init__(self,*args,**kw):

@@ -1,0 +1,8 @@
+#63 : Debts mediation
+=====================
+
+ This project encompasses the new modules 
+ :mod:`lino.modlib.debts` and 
+ :mod:`lino.modlib.households`
+ and their integration into 
+ :mod:`lino.apps.pcsw`.

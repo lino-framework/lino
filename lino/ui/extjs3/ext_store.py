@@ -329,7 +329,7 @@ class VirtStoreField(StoreField):
         self.set_value_in_object = vf.set_value_in_object
         #~ self.value_from_object = vf.value_from_object
         
-        #~ self.delegate = delegate
+        self.delegate = delegate
 
     def __repr__(self):
         return self.vf.__class__.__name__ + ' ' + self.name + '(virtual)' 

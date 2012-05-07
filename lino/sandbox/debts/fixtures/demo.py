@@ -38,17 +38,17 @@ def objects():
           ))
     yield g
     item = Instantiator('debts.Item',group=g).build
-    yield item(**babel_values('name',
+    yield item(required_for_person=True,**babel_values('name',
           de=u"Gehälter",
           fr=u"Salaires",
           en=u"Salaries"
           ))
-    yield item(**babel_values('name',
+    yield item(required_for_person=True,**babel_values('name',
           de=u"Renten",
           fr=u"Pension",
           en=u"Pension"
           ))
-    yield item(**babel_values('name',
+    yield item(required_for_person=True,**babel_values('name',
           de=u"Integrationszulage",
           fr=u"Allocation d'intégration",
           en=u"Integration aid"
@@ -61,12 +61,12 @@ def objects():
           ))
     yield g
     item = Instantiator('debts.Item',group=g).build
-    yield item(**babel_values('name',
+    yield item(required_for_person=True,**babel_values('name',
           de=u"Urlaubsgeld",
           fr=u"Congé payé",
           en=u""
           ))
-    yield item(**babel_values('name',
+    yield item(required_for_person=True,**babel_values('name',
           de=u"Jahresendzulage",
           fr=u"Prime de fin d'année",
           en=u""
@@ -79,12 +79,12 @@ def objects():
           ))
     yield g
     item = Instantiator('debts.Item',group=g).build
-    yield item(**babel_values('name',
+    yield item(required_for_household=True,**babel_values('name',
           de=u"Miete",
           fr=u"Loyer",
           en=u""
           ))
-    yield item(**babel_values('name',
+    yield item(required_for_household=True,**babel_values('name',
           de=u"Strom",
           fr=u"Electricité",
           en=u"Electricity"
@@ -98,7 +98,7 @@ def objects():
           ))
     yield g
     item = Instantiator('debts.Item',group=g,yearly=True).build
-    yield item(**babel_values('name',
+    yield item(required_for_household=True,**babel_values('name',
           de=u"Müllsteuer",
           fr=u"Taxe déchets",
           en=u""

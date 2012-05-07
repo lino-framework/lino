@@ -1,6 +1,13 @@
 Special model attributes and methods
 ------------------------------------
 
+.. modmeth:: _lino_preferred_width
+
+    Used to set an explicit default `preferred_width` (in characters) 
+    for ForeignKey fields to this model. 
+    If not specified, the default default `preferred_width` 
+    for ForeignKey fields is *20*.
+    
 .. modmeth:: _lino_default_table
 
     Used internally. Lino chooses during the kernel startup, for each model, 

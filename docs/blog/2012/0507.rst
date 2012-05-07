@@ -1,0 +1,46 @@
+20120507
+========
+
+Worked on :doc:`/tickets/63`.
+
+When configuring :class:`debts.Items`, it was too simplistic to just specify 
+whether an Item is "optional" or not. 
+That's why we now have two fields `required_for_person` and `required_for_household`.
+For example an Item "Salary" is required for Persons, but not for Households,
+while an Item "Müllsteuer" is required for Households and not for Persons.
+
+The default value for :modmeth:`_lino_preferred_width` has always been 10, 
+but that's usually too small. Increased it to 20.
+
+Two more todo's done:
+
+- Kolonne "Total" ist noch nicht rechtsbündig, weil es ein VirtualField ist.
+  Eventuell einfach ein neues Attribut `StoreField.summable` und den 
+  cell_style daran aufhängen.
+  
+- dynamic column headers: zumindest beim Ausdruck 
+  sollte nicht "Betrag 1" da stehen, sondern der `header` des Actors.
+
+
+Remains to do:
+
+- Hide the "Debts Mediation" tab (BudgetsByPartner) for Users without `is_debts`. 
+
+- SummaryTable für Schulden. Diese werden nicht gruppiert, aber wohl in die Kolonne 
+  ihres Akteurs eingetragen und insgesamt nach Datum o.ä. sortiert. 
+  
+- Vorlage für Ausdruck muss noch fertig angepasst werden
+  
+- Eingabe in der Grid ist umständlich:
+
+  - handleKeyDown optimieren
+  - nicht nach jeder Zelle ein refresh machen
+  
+- Jährliche Beträge
+
+- Debt.status : "Kredit", "Schuld", "Gerichtsvollzieher"
+
+- Debt.rate (Monatsrate)
+
+- Entries are printed by Group, but displayed on screen by type...
+

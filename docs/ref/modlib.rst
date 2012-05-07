@@ -153,3 +153,18 @@ Implemented by :class:`lino.modlib.jobs.models.JobProvider`
 Implemented by :class:`lino.modlib.jobs.models.JobProviders`
 
 
+The ``debts`` module
+--------------------
+
+.. module:: debts
+
+Implemented by :mod:`lino.modlib.debts`
+
+.. class::  Item
+
+Implemented by :class:`lino.modlib.debts.models.Item`
+  
+.. class::  Items
+
+Implemented by :class:`lino.modlib.debts.models.Items`
+  

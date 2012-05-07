@@ -1,6 +1,8 @@
 20120505
 ========
 
+Worked on :doc:`/tickets/63`.
+
 Renamed :mod:`lino.modlib.families` to :mod:`lino.modlib.households`
 because a "Household" is more general than a "Family". 
 It has no `father` and `mother`, just a list of members.
@@ -8,5 +10,38 @@ Added model :mod:`lino.modlib.households.models.Type`.
 Household types might be "Married couple", "Family", "Cohabitation", "Ménage de fait",...
 Updated demo fixtures for housholds and :mod:`lino.modlib.debts`.
 
-Todo: display BudgetsByPartner (taking care that Users without `is_debts` 
-should not see whether a Partner has any budgets). Easiest solution is to have a separate tab "Debts Mediation" on each Partner Detail. OTOH it's a pity to use a full tab for displaying a single grid that will usually not contain more than a few records...
+New class method `add_detail_tab` used for BudgetsByPartner.
+It's somewhat a pity to use a full tab for displaying a single grid that will usually not contain more than a few records...
+Easiest solution was to have a separate tab "Debts Mediation" on each Partner Detail. 
+
+Vorlage für Ausdruck ist vorangekommen.
+
+Todo:
+
+- Hide the "Debts Mediation" tab (BudgetsByPartner) for Users without `is_debts`. 
+
+- SummaryTable für Schulden. Diese werden nicht gruppiert, aber wohl in die Kolonne 
+  ihres Akteurs eingetragen und insgesamt nach Datum o.ä. sortiert. 
+  
+- Vorlage für Ausdruck muss noch fertig angepasst werden
+  
+- Kolonne "Total" ist noch nicht rechtsbündig, weil es ein VirtualField ist.
+  Eventuell einfach ein neues Attribut `StoreField.summable` und den 
+  cell_style daran aufhängen.
+  
+- dynamic column headers: zumindest beim Ausdruck 
+  sollte nicht "Betrag 1" da stehen, sondern der `header` des Actors.
+
+- Eingabe in der Grid ist umständlich:
+
+  - handleKeyDown optimieren
+  - nicht nach jeder Zelle ein refresh machen
+  
+- Jährliche Beträge
+
+- Debt.status : "Kredit", "Schuld", "Gerichtsvollzieher"
+
+- Debt.rate (Monatsrate)
+
+- Entries are printed by Group, but displayed on screen by type...
+

@@ -351,6 +351,10 @@ class Actor(Handled):
         
             
     @classmethod
+    def override_column_headers(self,ar):
+        return {}
+        
+    @classmethod
     def get_detail(self):
         return self.detail_layout
 

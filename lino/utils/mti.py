@@ -26,6 +26,8 @@ from django.db import models
 from django.db import router
 from django.db.models.deletion import Collector
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ValidationError
+
 
 from lino.tools import resolve_model
 from lino.core.fields import VirtualField
@@ -50,12 +52,18 @@ class MultiTableBase(models.Model):
         return getattr(self,related_name)
         
     def get_mti_child(self,*args):
+        """
+        Return the specified specialization or `None`.
+        For example if you have two models `Place(Model)` and `Restaurant(Place)` 
+        and a `Place` instance ``p`` which is *not* also a Restaurant, then 
+        `p.get_mti_child('restaurant')` will return `None`.
+        """
         for a in args:
             try:
                 return getattr(self,a)
             except ObjectDoesNotExist:
                 pass
-        return self
+        #~ return self
 
     def insert_child(self,*args,**attrs):
         return insert_child(self,*args,**attrs)
@@ -98,13 +106,11 @@ class ChildCollector(Collector):
                                  source_attr=relation.rel.related_name,
                                  nullable=True)
   
-from django.core.exceptions import ValidationError
-
 def get_child(obj,child_model):
     try:
         return child_model.objects.get(pk=obj.pk)
     except child_model.DoesNotExist:
-        raise Exception("%s has no child in %s" % (obj,child_model.__name__))
+        return None
   
 def delete_child(obj,child_model,using=None,request=None):
     """
@@ -114,6 +120,8 @@ def delete_child(obj,child_model,using=None,request=None):
     #~ logger.info(u"delete_child %s from %s",child_model.__name__,obj)
     using = using or router.db_for_write(obj.__class__, instance=obj)
     child = get_child(obj,child_model)
+    if child is None:
+        raise Exception("%s has no child in %s" % (obj,child_model.__name__))
     if request is not None:
         msg = child_model._lino_ddh.disable_delete(child,request)
         if msg:
