@@ -11,19 +11,22 @@ Added by LS:
 """
 import xml.etree.ElementTree as etree
 
-def CDATA(text=None):
-    element = etree.Element('![CDATA[')
-    element.text = text
-    return element
+if hasattr(etree,'_serialize_xml'):
 
-_original_serialize_xml = etree._serialize_xml
-def _serialize_xml(write, elem, *args):
-    if elem.tag == '![CDATA[':
-        write("\n<%s%s]]>\n" % (
-                elem.tag, elem.text))
-        return
-    return _original_serialize_xml(write, elem, *args)
-etree._serialize_xml = etree._serialize['xml'] = _serialize_xml
+    def CDATA(text=None):
+        element = etree.Element('![CDATA[')
+        element.text = text
+        return element
 
+    _original_serialize_xml = etree._serialize_xml
+    def _serialize_xml(write, elem, *args):
+        if elem.tag == '![CDATA[':
+            write("\n<%s%s]]>\n" % (
+                    elem.tag, elem.text))
+            return
+        return _original_serialize_xml(write, elem, *args)
+    etree._serialize_xml = etree._serialize['xml'] = _serialize_xml
+
+    register_namespace = etree.register_namespace 
+    
 from xml.etree.ElementTree import * 
-register_namespace = etree.register_namespace 
