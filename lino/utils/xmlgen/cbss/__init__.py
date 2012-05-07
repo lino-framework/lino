@@ -379,10 +379,10 @@ Not actually sending because environment is empty. Request would be:
         url = self.get_url(env)
         
         if True:
-            x = etree.tostring(elem)
+            #~ x = etree.tostring(elem)
             from suds.client import Client
             client = Client(url+'?WSDL')
-            res = client.sendXML(x)
+            res = client.sendXML(xml)
         else:
             
             if isinstance(self,NewStyleService):
