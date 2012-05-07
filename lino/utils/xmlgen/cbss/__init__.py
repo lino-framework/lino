@@ -381,7 +381,10 @@ Not actually sending because environment is empty. Request would be:
         if True:
             #~ x = etree.tostring(elem)
             from suds.client import Client
-            client = Client(url+'?WSDL')
+            url += '?WSDL'
+            client = Client(url)
+            print 20120507, url
+            print client
             res = client.sendXML(xml)
         else:
             
