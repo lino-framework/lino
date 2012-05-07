@@ -45,7 +45,6 @@ from lino.modlib.contacts import models as contacts
 from lino.tools import makedirs_if_missing
 
 WSDL_PARTS = ('cache','wsdl','cbss.wsdl')
-ENVS = ('test', 'acpt', 'prod')
 
 class RequestStatus(ChoiceList):
     """
@@ -157,11 +156,7 @@ If the request failed with a local exception, then it contains a traceback.""")
             #~ raise Exception("Invalid cbss_namespace %r" % self.cbss_namespace)
             
         try:
-            res = self.cbss_namespace.execute(
-              settings.LINO.cbss_environment,
-              srvreq,
-              settings.LINO.cbss_user_params,
-              str(self.id),now)
+            res = self.cbss_namespace.execute(srvreq,str(self.id),now)
         except cbss.Warning,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
@@ -504,9 +499,9 @@ def setup_site_cache(self,mtime,force):
     if cbss_environment is None:
         return # silently return
         
-    if not cbss_environment in ENVS:
+    if not cbss_environment in cbss.CBSS_ENVS:
         raise Exception("Invalid `cbss_environment` %r: must be one of %s." % (
-          cbss_environment,ENVS))
+          cbss_environment,cbss.CBSS_ENVS))
     
     
     #~ makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,*WSDL_PARTS[:-1]))

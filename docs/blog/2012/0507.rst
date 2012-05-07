@@ -1,7 +1,8 @@
 20120507
 ========
 
-Worked on :doc:`/tickets/63`.
+Worked on :doc:`/tickets/63`
+----------------------------
 
 When configuring :class:`debts.Items`, it was too simplistic to just specify 
 whether an Item is "optional" or not. 
@@ -43,4 +44,35 @@ Remains to do:
 - Debt.rate (Monatsrate)
 
 - Entries are printed by Group, but displayed on screen by type...
+
+
+CBSS connection
+---------------
+
+In :mod:`lino.utils.xmlgen.cbss`, even SSDN requests are currently broken
+because ElementTree seems somewhat unwilling to treat with CDATA and ANY.
+But since :term:`suds` was so great when implementing the communication 
+with "new style services", I'll try to do also SSDN services using suds. 
+Here is a first success::
+
+  from suds.client import Client
+  url = 'https://bcssksz-services-test.smals.be/connectors/webservice/KSZBCSSWebServiceConnectorPort?WSDL'
+  client = Client(url)
+  print client
+
+Output::
+
+  Service ( KSZBCSSWebService ) tns="http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
+     Prefixes (1)
+        ns0 = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
+     Ports (1):
+        (KSZBCSSWebServiceConnectorPort)
+           Methods (1):
+              sendXML(xs:string xmlString, )
+           Types (1):
+              NewComplexType
+              
+
+That's as expected. 
+Now I must integrate that into the existing code...
 

@@ -171,8 +171,6 @@ Warning: Not actually sending because environment is empty. Request would be:
 
 
 
-
-
 The `response` is currently a simple wrapper around the XML structure 
 returned by the CBSS.
 Your application is responsible for treating and storing and using this data.
@@ -216,6 +214,9 @@ Don't know yet whether this is okay.
 """
 
 USE_XSD_FILES = False
+
+CBSS_ENVS = ('test', 'acpt', 'prod')
+
 
 import os
 
@@ -281,7 +282,7 @@ class WebServiceConnector(Namespace):
         #~ body = etree.tostring(body)
         return SOAP.Envelope(SOAP.Body(body))
         
-WSC = WebServiceConnector()
+unused_WSC = WebServiceConnector()
         
 class SSDNns(Namespace):
     """
@@ -351,12 +352,16 @@ class Service(Namespace):
     def build_request(self,*args,**kw):
         raise NotImplementedError
         
-    def execute(self,env,req,user_params=None,unique_id=None,dt=None):
+    #~ def execute(self,req,env,user_params=None,unique_id=None,dt=None):
+    def execute(self,req,unique_id=None,dt=None):
         #~ print 20120302
         #~ if user_params is None:
             #~ raise Warning(
                 #~ "Not actually sending because user_params is empty.")
         #~ self.validate_against_xsd(req)
+        from django.conf import settings
+        env = settings.LINO.cbss_environment
+        user_params = settings.LINO.cbss_user_params
             
         req = self.wrap_request(req,unique_id,dt,user_params)
         
@@ -368,15 +373,23 @@ class Service(Namespace):
 Not actually sending because environment is empty. Request would be:
 """ + prettify(xml))
 
-        assert env in (ENV_TEST, ENV_ACPT, ENV_PROD)
+        #~ assert env in (ENV_TEST, ENV_ACPT, ENV_PROD)
+        assert env in CBSS_ENVS
 
         url = self.get_url(env)
         
-        if isinstance(self,NewStyleService):
-            server = Resource(url,measure=True,**user_params)
+        if True:
+            x = etree.tostring(elem)
+            from suds.client import Client
+            client = Client(url+'?WSDL')
+            res = client.sendXML(x)
         else:
-            server = Resource(url,measure=True)
-        res = server.soap(xml)
+            
+            if isinstance(self,NewStyleService):
+                server = Resource(url,measure=True,**user_params)
+            else:
+                server = Resource(url,measure=True)
+            res = server.soap(xml)
         return res
         
         #~ print res.code
@@ -439,7 +452,11 @@ class SSDNService(Service):
         #~ xg.set_default_namespace(SSDN)
         elem = SSDN.SSDNRequest(context,serviceRequest)
         #~ elem.nsmap={None:self._url}
-        elem = WSC.soap_request(etree.tostring(elem))
+        #~ elem = WSC.soap_request(etree.tostring(elem))
+        if True:
+            return elem
+        else:
+            elem = WSC.soap_request(etree.tostring(elem))
         #~ xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + 
         return elem
         #~ return ssdn.SSDNRequest(context,serviceRequest)
