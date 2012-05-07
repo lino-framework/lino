@@ -45,7 +45,7 @@ u"""
 
 import yaml
 
-from lxml import etree
+#~ from lxml import etree
 
 from django.db import models
 from django.conf import settings

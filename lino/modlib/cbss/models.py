@@ -16,26 +16,36 @@
 Lino-specific extensions to make the :term:`CBSS` 
 connection visible.
 
+from lino.modlib.cbss.models import IdentifyPersonRequest
+ipr = IdentifyPersonRequest(last_name="SAFFRE",birth_date=IncompleteDate('1968-06-01'))
+ar = ActionRequest(...)
+ipr.execute_request(ar)
+
 """
 
 import os
 import traceback
 import datetime
 
+from suds.client import Client
+from suds.transport.http import HttpAuthenticated
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from appy.shared.xml_parser import XmlUnmarshaller
-from lxml import etree
+#~ from lxml import etree
 
 
 from lino import mixins
 from lino import dd
+from lino.utils import Warning
 
 from lino.utils import babel
 from lino.utils import dblogger
 #~ from lino.tools import resolve_model
+from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import cbss
 
 
@@ -44,7 +54,8 @@ from lino.utils.choicelists import Gender
 from lino.modlib.contacts import models as contacts
 from lino.tools import makedirs_if_missing
 
-WSDL_PARTS = ('cache','wsdl','cbss.wsdl')
+RTI_PARTS = ('cache','wsdl','RetrieveTIGroupsV3.wsdl')
+WSC_PARTS = ('cache','wsdl','WebServiceConnector.wsdl')
 
 class RequestStatus(ChoiceList):
     """
@@ -128,32 +139,64 @@ If the request failed with a local exception, then it contains a traceback.""")
     
     def execute_request(self,rr):
         """
-        This is the general method for all services,
+        This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
         """
+        self.status = RequestStatus.pending
         if not self.id:
             self.save()
         kw = self.get_request_params()
         try:
             #~ srvreq = self.cbss_namespace('ns1').build_request(**kw)
             srvreq = self.cbss_namespace.build_request(**kw)
-        except cbss.Warning,e:
+        except Warning,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
             self.save()
             return
-            
-        self.request_xml = etree.tostring(srvreq,pretty_print=True)
-        self.status = RequestStatus.pending
-        self.save()
         
         now = datetime.datetime.now()
-        #~ if isinstance(self.cbss_namespace,cbss.NewStyleService):
-            #~ up = settings.LINO.cbss2_user_params
-        #~ elif isinstance(self.cbss_namespace,cbss.SSDNService):
-            #~ up = settings.LINO.cbss_user_params
-        #~ else:
-            #~ raise Exception("Invalid cbss_namespace %r" % self.cbss_namespace)
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        url = ar.ui.media_url(*WSC_PARTS)
+        
+        logger.info("Instantiate Client at %s", url)
+        client = Client(url)
+        print 20120507, client
+        
+        request_xml = etree.tostring(srvreq)
+        try:
+            res = client.service.sendXML(request_xml)        
+        except Warning,e:
+            self.status = RequestStatus.exception
+            self.response_xml = unicode(e)
+            self.save()
+            return
+        except Exception,e:
+            self.status = RequestStatus.exception
+            self.response_xml = traceback.format_exc(e)
+            self.save()
+            return
+        self.sent = now
+        self.response_xml = unicode(res)
+        
+        if False:
+            reply = cbss.xml2reply(res.data.xmlString)
+            rc = reply.ServiceReply.ResultSummary.ReturnCode
+            if rc == '0':
+                self.status = RequestStatus.ok
+            elif rc == '1':
+                self.status = RequestStatus.warnings
+            elif rc == '10000':
+                self.status = RequestStatus.errors
+            self.save()
+            
+            if self.status != RequestStatus.ok:
+                msg = '\n'.join(list(cbss.reply2lines(reply)))
+                raise Exception(msg)
+            
+        self.on_cbss_ok(reply)
             
         try:
             res = self.cbss_namespace.execute(srvreq,str(self.id),now)
@@ -203,7 +246,7 @@ If the request failed with a local exception, then it contains a traceback.""")
 class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     """
     Abstract Base Class for Models that represent 
-    requests to the :term:`CBSS` (and responses).
+    "new style" requests to the :term:`CBSS` (and responses).
     """
     
     cbss_namespace = NotImplementedError
@@ -249,11 +292,9 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.status = RequestStatus.pending
         self.save()
         
-        url = ar.ui.media_url(*WSDL_PARTS)
+        url = ar.ui.media_url(*RTI_PARTS)
         
         logger.info("Instantiate Client at %s", url)
-        from suds.client import Client
-        from suds.transport.http import HttpAuthenticated
         t = HttpAuthenticated(
             username=settings.LINO.username, 
             password=settings.LINO.password)
@@ -489,7 +530,8 @@ class IdentifyRequestsByPerson(IdentifyPersonRequests):
     
     
 def setup_site_cache(self,mtime,force):
-    """Called from :meth:`build_lino_js`. 
+    """
+    Called from :meth:`build_lino_js`. 
     First argment is the LINO instance."""
     
     import logging
@@ -503,16 +545,19 @@ def setup_site_cache(self,mtime,force):
         raise Exception("Invalid `cbss_environment` %r: must be one of %s." % (
           cbss_environment,cbss.CBSS_ENVS))
     
-    
-    #~ makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,*WSDL_PARTS[:-1]))
-    fn = os.path.join(settings.MEDIA_ROOT,*WSDL_PARTS) 
-    if not force and os.path.exists(fn):
-        if os.stat(fn).st_mtime > mtime:
-            logger.info("NOT generating %s because it is newer than the code.",fn)
-            return
-    s = file(os.path.join(os.path.dirname(__file__),'XSD','RetrieveTIGroupsV3.wsdl')).read()
-    s = s % dict(cbss_environment=cbss_environment)
-    makedirs_if_missing(os.path.dirname(fn))
-    open(fn,'wt').write(s)
-    logger.info("Generated %s for environment %r.",fn,cbss_environment)
+    context = dict(cbss_environment=cbss_environment)
+    def make_wsdl(template,parts):
+        fn = os.path.join(settings.MEDIA_ROOT,*parts) 
+        if not force and os.path.exists(fn):
+            if os.stat(fn).st_mtime > mtime:
+                logger.info("NOT generating %s because it is newer than the code.",fn)
+                return
+        s = file(os.path.join(os.path.dirname(__file__),'XSD',template)).read()
+        s = s % context
+        makedirs_if_missing(os.path.dirname(fn))
+        open(fn,'wt').write(s)
+        logger.info("Generated %s for environment %r.",fn,cbss_environment)
+        
+    make_wsdl('RetrieveTIGroupsV3.wsdl',RTI_PARTS)
+    make_wsdl('WebServiceConnector.wsdl',WSC_PARTS)
     

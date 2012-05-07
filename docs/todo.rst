@@ -20,8 +20,12 @@ Short-term
     Wahrscheinlich müssten wir dazu custom functions definieren, 
     was nicht alle db-Backends können.
     Eher stelle ich mir die Frage, ob da nicht ein Analysefehler 
-    vorliegt. Eigentlich müsstet ihr das über die Befehle `Meine VSEs` 
-    und Meine `Art-60-7-Konventionen`.
+    vorliegt. 
+    Der Vorfall bestätigt Gerds Bedenken, als die Benutzerfrage kam.
+    Eigentlich müsstet ihr die gleichen Infos auch 
+    über die Befehle `Meine VSEs` und `Meine Art-60-7-Konventionen` 
+    kriegen können.
+    Zu analysieren mit den Benutzern.
 
 
 #.  Vertragsüberschneidungen bei save() statt Datenkontrollliste.

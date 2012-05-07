@@ -228,7 +228,7 @@ of your Django project directory
 `/usr/local/django/mysite`.
 
 Replace your :xfile:`settings.py` with the following 
-(but maintaining the DATABASES setting you chose during the Django Tutorial)::
+(but maintaining the DATABASES setting you chose during the Django Tutorial):
 
 .. literalinclude:: settings.py
     
