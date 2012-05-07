@@ -383,9 +383,9 @@ Not actually sending because environment is empty. Request would be:
             from suds.client import Client
             url += '?WSDL'
             client = Client(url)
-            print 20120507, url
-            print client
-            res = client.sendXML(xml)
+            #~ print 20120507, url
+            #~ print client
+            res = client.service.sendXML(xml)
         else:
             
             if isinstance(self,NewStyleService):
