@@ -29,4 +29,8 @@ if hasattr(etree,'_serialize_xml'):
 
     register_namespace = etree.register_namespace 
     
+else:
+    def register_namespace(*args,**kw):
+        pass
+    
 from xml.etree.ElementTree import * 
