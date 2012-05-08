@@ -29,6 +29,8 @@ import datetime
 
 from suds.client import Client
 from suds.transport.http import HttpAuthenticated
+from suds.transport.http import HttpTransport
+from suds.sax.element import Element as E
 
 from django.conf import settings
 from django.db import models
@@ -45,8 +47,8 @@ from lino.utils import Warning
 from lino.utils import babel
 from lino.utils import dblogger
 #~ from lino.tools import resolve_model
-from lino.utils.xmlgen import etree
-from lino.utils.xmlgen import cbss
+#~ from lino.utils.xmlgen import etree
+#~ from lino.utils.xmlgen import cbss
 
 
 from lino.utils.choicelists import ChoiceList
@@ -56,6 +58,9 @@ from lino.tools import makedirs_if_missing
 
 RTI_PARTS = ('cache','wsdl','RetrieveTIGroupsV3.wsdl')
 WSC_PARTS = ('cache','wsdl','WebServiceConnector.wsdl')
+
+CBSS_ENVS = ('test', 'acpt', 'prod')
+
 
 class RequestStatus(ChoiceList):
     """
@@ -137,7 +142,38 @@ Read-only.""")
 The response received, raw XML string. 
 If the request failed with a local exception, then it contains a traceback.""")
     
-    def execute_request(self,rr):
+    def wrap_ssdn_request(self,srvreq,dt):
+        #~ up  = settings.LINO.ssdn_user_params
+        up  = settings.LINO.cbss_user_params
+        au = E('AuthorizedUser')
+        au.append(E('UserID').setText(up['UserID']))
+        au.append(E('Email').setText(up['Email']))
+        au.append(E('OrgUnit').setText(up['OrgUnit']))
+        au.append(E('MatrixID').setText(up['MatrixID']))
+        au.append(E('MatrixSubID').setText(up['MatrixSubID']))
+        
+        ref = "%s # %s" % (self.__class__.__name__,self.id)
+        msg = E('Message')
+        msg.append(E('Reference').setText(ref))
+        msg.append(E('TimeRequest').setText(format(dt)))
+        
+        context = E('RequestContext')
+        context.append(au)
+        context.append(msg)
+        
+        sr = E('ServiceRequest')
+        sr.append(E('ServiceId').setText(self.ssdn_service_id))
+        sr.append(E('Version').setText(self.ssdn_service_version))
+        sr.append(srvreq)
+        
+        
+        #~ xg.set_default_namespace(SSDN)
+        e = E('SSDNRequest')
+        e.append(context)
+        e.append(sr)
+        return e
+      
+    def execute_request(self,ar):
         """
         This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
@@ -145,29 +181,34 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.status = RequestStatus.pending
         if not self.id:
             self.save()
-        kw = self.get_request_params()
+        #~ kw = self.get_request_params()
+        now = datetime.datetime.now()
         try:
             #~ srvreq = self.cbss_namespace('ns1').build_request(**kw)
-            srvreq = self.cbss_namespace.build_request(**kw)
+            #~ srvreq = self.cbss_namespace.build_request(**kw)
+            srvreq = self.build_request()
+            srvreq = self.wrap_ssdn_request(srvreq,now)
         except Warning,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
             self.save()
             return
         
-        now = datetime.datetime.now()
         import logging
         logger = logging.getLogger(__name__)
         
         url = ar.ui.media_url(*WSC_PARTS)
         
         logger.info("Instantiate Client at %s", url)
-        client = Client(url)
-        print 20120507, client
+        t = HttpTransport()
+        client = Client(url, transport=t)
+        #~ client = Client(url)
+        #~ print 20120507, client
         
-        request_xml = etree.tostring(srvreq)
+        #~ request_xml = etree.tostring(srvreq)
         try:
-            res = client.service.sendXML(request_xml)        
+            #~ res = client.service.sendXML(request_xml)        
+            res = client.service.sendXML(srvreq)        
         except Warning,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
@@ -197,36 +238,38 @@ If the request failed with a local exception, then it contains a traceback.""")
                 raise Exception(msg)
             
         self.on_cbss_ok(reply)
-            
-        try:
-            res = self.cbss_namespace.execute(srvreq,str(self.id),now)
-        except cbss.Warning,e:
-            self.status = RequestStatus.exception
-            self.response_xml = unicode(e)
+           
+        if False:
+          
+            try:
+                res = self.cbss_namespace.execute(srvreq,str(self.id),now)
+            except cbss.Warning,e:
+                self.status = RequestStatus.exception
+                self.response_xml = unicode(e)
+                self.save()
+                return
+            except Exception,e:
+                self.status = RequestStatus.exception
+                self.response_xml = traceback.format_exc(e)
+                self.save()
+                return
+            self.sent = now
+            self.response_xml = res.data.xmlString
+            reply = cbss.xml2reply(res.data.xmlString)
+            rc = reply.ServiceReply.ResultSummary.ReturnCode
+            if rc == '0':
+                self.status = RequestStatus.ok
+            elif rc == '1':
+                self.status = RequestStatus.warnings
+            elif rc == '10000':
+                self.status = RequestStatus.errors
             self.save()
-            return
-        except Exception,e:
-            self.status = RequestStatus.exception
-            self.response_xml = traceback.format_exc(e)
-            self.save()
-            return
-        self.sent = now
-        self.response_xml = res.data.xmlString
-        reply = cbss.xml2reply(res.data.xmlString)
-        rc = reply.ServiceReply.ResultSummary.ReturnCode
-        if rc == '0':
-            self.status = RequestStatus.ok
-        elif rc == '1':
-            self.status = RequestStatus.warnings
-        elif rc == '10000':
-            self.status = RequestStatus.errors
-        self.save()
-        
-        if self.status != RequestStatus.ok:
-            msg = '\n'.join(list(cbss.reply2lines(reply)))
-            raise Exception(msg)
             
-        self.on_cbss_ok(reply)
+            if self.status != RequestStatus.ok:
+                msg = '\n'.join(list(cbss.reply2lines(reply)))
+                raise Exception(msg)
+                
+            self.on_cbss_ok(reply)
         
     def on_cbss_ok(self,reply):
         """
@@ -368,7 +411,10 @@ class IdentifyPersonRequest(SSDNRequest,contacts.PersonMixin,contacts.Born):
     
     """
     
-    cbss_namespace = cbss.IPR # IdentifyPersonRequest
+    ssdn_service_id = 'OCMWCPASIdentifyPerson'
+    ssdn_service_version = '20050930'
+    
+    #~ cbss_namespace = cbss.IPR # IdentifyPersonRequest
     
     class Meta:
         verbose_name = _("IdentifyPerson Request")
@@ -425,6 +471,87 @@ class IdentifyPersonRequest(SSDNRequest,contacts.PersonMixin,contacts.Born):
                 self.first_name = person.first_name
                 
         super(IdentifyPersonRequest,self).save(*args,**kw)
+        
+    def build_request(self):
+        """
+https://fedorahosted.org/suds/wiki/TipsAndTricks#IncludingLiteralXML
+
+For example, you want to pass the following XML as a parameter:
+
+<query>
+  <name>Elmer Fudd</name>
+  <age unit="years">33</age>
+  <job>Wabbit Hunter</job>
+</query>
+The can be done as follows:
+
+from suds.sax.element import Element
+query = Element('query')
+name = Element('name').setText('Elmer Fudd')
+age = Element('age').setText('33')
+age.set('units', 'years')
+job = Element('job').setText('Wabbit Hunter')
+query.append(name)
+query.append(age)
+query.append(job)
+client.service.runQuery(query)
+
+        """
+        national_id = self.national_id.replace('=','')
+        national_id = national_id.replace(' ','')
+        national_id = national_id.replace('-','')
+        last_name=self.last_name
+        first_name=self.first_name
+        middle_name=self.middle_name
+        #~ if self.birth_date is not None:
+            #~ birth_date=str(self.birth_date)
+        birth_date=self.birth_date
+        tolerance=self.tolerance
+        if self.gender == Gender.male:
+            gender=1
+        elif self.gender == Gender.female:
+            gender=2
+        else:
+            gender=0
+            
+            
+            
+        if national_id:
+            pd = []
+            if last_name: pd.append(E('LastName').setText(last_name))
+            if first_name: pd.append(E('FirstName').setText(first_name))
+            if middle_name: pd.append(E('MiddleName').setText(middle_name))
+            if birth_date: pd.append(E('BirthDate').setText(birth_date))
+            if gender is not None: pd.append(E('Gender').setText(gender))
+            if tolerance is not None: pd.append(E('Tolerance').setText(tolerance))
+            
+            #~ for k in ('LastName','FirstName','MiddleName','BirthDate'):
+                #~ v = kw.get(k,None)
+                #~ if v: # ignore empty values
+                    #~ cl = getattr(ipr,k)
+                    #~ pd.append(cl(v))
+            e = E('IdentifyPersonRequest')
+            e.append(E('SearchCriteria').append(E('SSIN').setText(national_id)))
+            e.append(E('VerificationData').append(E('PersonData').append(pd)))
+            return e
+          
+        if self.birth_date is None:
+            raise Warning(
+                "Either national_id or birth date must be given")
+        pc = []
+        pc.append(E('LastName').setText(last_name))
+        pc.append(E('FirstName').setText(first_name))
+        pc.append(E('MiddleName').setText(middle_name))
+        pc.append(E('BirthDate').setText(str(birth_date)))
+        #~ if gender is not None: pc.append(ipr.Gender(gender))
+        #~ if tolerance is not None: pc.append(ipr.Tolerance(tolerance))
+        root = E('IdentifyPersonRequest').append(
+          E('SearchCriteria').append(
+            E('PhoneticCriteria').append(
+              pc)))
+        #~ ipr.validate_root(root)
+        return root 
+            
         
     def get_request_params(self,**kw):
         """
@@ -541,9 +668,9 @@ def setup_site_cache(self,mtime,force):
     if cbss_environment is None:
         return # silently return
         
-    if not cbss_environment in cbss.CBSS_ENVS:
+    if not cbss_environment in CBSS_ENVS:
         raise Exception("Invalid `cbss_environment` %r: must be one of %s." % (
-          cbss_environment,cbss.CBSS_ENVS))
+          cbss_environment,CBSS_ENVS))
     
     context = dict(cbss_environment=cbss_environment)
     def make_wsdl(template,parts):
@@ -560,4 +687,14 @@ def setup_site_cache(self,mtime,force):
         
     make_wsdl('RetrieveTIGroupsV3.wsdl',RTI_PARTS)
     make_wsdl('WebServiceConnector.wsdl',WSC_PARTS)
+    
+    
+def setup_main_menu(site,ui,user,m): pass
+def setup_master_menu(site,ui,user,m): pass
+def setup_my_menu(site,ui,user,m): pass
+def setup_config_menu(site,ui,user,m): pass
+  
+def setup_explorer_menu(site,ui,user,m):
+    m  = m.add_menu("cbss",_("CBSS"))
+    m.add_action(IdentifyPersonRequests)
     

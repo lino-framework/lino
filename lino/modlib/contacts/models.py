@@ -796,10 +796,10 @@ def setup_my_menu(site,ui,user,m):
     pass
   
 def setup_master_menu(site,ui,user,m): 
-    config_contacts = m.add_menu("contacts",MODULE_NAME)
-    config_contacts.add_action(Persons)
-    config_contacts.add_action(Companies)
-    config_contacts.add_action(Partners)
+    m = m.add_menu("contacts",MODULE_NAME)
+    m.add_action(Persons)
+    m.add_action(Companies)
+    m.add_action(Partners)
     
 def setup_config_menu(site,ui,user,m): 
     config_contacts = m.add_menu("contacts",MODULE_NAME)
@@ -813,7 +813,7 @@ def setup_config_menu(site,ui,user,m):
     #~ m.add_action('contacts.RoleTypes')
   
 def setup_explorer_menu(site,ui,user,m):
-    config_contacts = m.add_menu("contacts",MODULE_NAME)
+    m = m.add_menu("contacts",MODULE_NAME)
     m.add_action(site.modules.contacts.Roles)
     m.add_action(site.modules.countries.Cities)
   

@@ -194,12 +194,15 @@ class Lino(Lino):
             m = main.add_menu("explorer",_("Explorer"))
             
             m.add_action(self.modules.contacts.AllPersons)
-            self.modules.contacts.setup_explorer_menu(self,ui,user,m)
-            self.modules.notes.setup_explorer_menu(self,ui,user,m)
-            self.modules.isip.setup_explorer_menu(self,ui,user,m)
-            self.modules.jobs.setup_explorer_menu(self,ui,user,m)
-            self.modules.newcomers.setup_explorer_menu(self,ui,user,m)
-            self.modules.debts.setup_explorer_menu(self,ui,user,m)
+            
+            self.on_each_app('setup_explorer_menu',ui,user,m)
+            
+            #~ self.modules.contacts.setup_explorer_menu(self,ui,user,m)
+            #~ self.modules.notes.setup_explorer_menu(self,ui,user,m)
+            #~ self.modules.isip.setup_explorer_menu(self,ui,user,m)
+            #~ self.modules.jobs.setup_explorer_menu(self,ui,user,m)
+            #~ self.modules.newcomers.setup_explorer_menu(self,ui,user,m)
+            #~ self.modules.debts.setup_explorer_menu(self,ui,user,m)
             m.add_action(self.modules.uploads.Uploads)
             m.add_action(self.modules.pcsw.Exclusions)
             m.add_action(self.modules.pcsw.PersonSearches)
@@ -212,7 +215,7 @@ class Lino(Lino):
             courses.add_action(self.modules.courses.CourseRequests)
             
             
-            self.modules.cal.setup_explorer_menu(self,ui,user,m)
+            #~ self.modules.cal.setup_explorer_menu(self,ui,user,m)
             
             #~ lst = m.add_menu("lst",_("Listings"))
             #~ for listing in LISTINGS:

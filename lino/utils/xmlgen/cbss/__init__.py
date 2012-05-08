@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise Exception("No longer used since 20120508")
+
 r"""
 This document describes how to communicate with the :term:`CBSS` server 
 using Python and Lino. It covers the low-level aspects which might also 
