@@ -262,8 +262,8 @@ class CpasPartner(mixins.DiffingMixin,models.Model):
     #~ id = models.CharField(max_length=10,primary_key=True,verbose_name=_("ID"))
     
     is_active = models.BooleanField(
-        verbose_name=_("is active"),default=True)
-    "Only active Persons may be used when creating new operations."
+        verbose_name=_("is active"),default=True,
+        help_text = "Only active Persons may be used when creating new operations.")
     
     newcomer = models.BooleanField(
         verbose_name=_("newcomer"),default=False)
@@ -675,6 +675,13 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
               master_instance=self)
         return rr.renderer.quick_add_buttons(r)
 
+    @dd.displayfield(_("CBSS Retrieve TI Groups"))
+    def cbss_retrieve_ti_groups(self,rr):
+        r = rr.spawn(
+              settings.LINO.modules.cbss.RetrieveTIGroupsRequestsByPerson,
+              master_instance=self)
+        return rr.renderer.quick_add_buttons(r)
+
 
 class PartnerDetail(contacts.PartnerDetail):
     #~ general = contacts.PartnerDetail.main
@@ -835,7 +842,7 @@ class PersonDetail(dd.DetailLayout):
   
     #~ actor = 'contacts.Person'
     
-    main = "tab1 tab2 tab3 tab4 tab5 tab5b history contracts calendar misc cbss"
+    main = "tab1 tab2 tab3 tab4 tab5 tab5b history contracts calendar misc"
     
     tab1 = """
     box1 box2
@@ -952,14 +959,10 @@ class PersonDetail(dd.DetailLayout):
     """
     
     misc = """
-    activity pharmacy cbss_identify_person
+    activity pharmacy 
     is_active is_cpas is_senior is_deprecated newcomer
     remarks:30 remarks2:30 contacts.RolesByPerson:30
     # links.LinksToThis:30 links.LinksFromThis:30 
-    """
-    
-    cbss = """
-    cbss.IdentifyRequestsByPerson
     """
     
     def setup_handle(self,lh):

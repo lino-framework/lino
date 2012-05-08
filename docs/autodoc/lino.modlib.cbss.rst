@@ -15,3 +15,11 @@
     :show-inheritance:
 
 
+:mod:`lino.modlib.cbss.tests.cbss_tests`
+----------------------------------------
+
+.. automodule:: lino.modlib.cbss.tests.cbss_tests
+    :members:
+    :show-inheritance:
+
+

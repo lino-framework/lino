@@ -381,7 +381,7 @@ def test007(self):
       ['jobs/Candidatures', 35],
       ['jobs/Studies', 3],
       #~ ['cal/Events', (204,205)], # seems that sometimes 204 is the correct number (depending on demo_date)
-      ['cal/Events', (219,220,221)], # exact number can vary depending on demo_date
+      ['cal/Events', (219,220,221,222)], # exact number can vary depending on demo_date
       ['cal/Tasks', 46],
       ['cal/Priorities', 10],
       ['notes/MyNotes', 28],

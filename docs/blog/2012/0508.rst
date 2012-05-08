@@ -1,5 +1,26 @@
 20120508
 ========
 
+CBSS connection
+---------------
+
+After having fiddled and fought with `lino.utils.xmlgen`, `lxml` and `elementtree`, 
+there is now hope that I now finally found what I have been lokking for:
+I discovered the `suds.sax` module for which 
+`the docs <https://fedorahosted.org/suds/wiki/Documentation#TECHNICALFYINOTES>`_ say
+say that it
+"was written because elementtree and other python XML packages 
+either: 
+have a DOM API which is very unfriendly 
+or: (in the case of elementtree) do not 
+deal with namespaces and especially prefixes sufficiently."
+
 :mod:`lino.utils.xmlgen.cbss` is no longer used. 
 Everything is now in :mod:`lino.modlib.cbss` and uses :term:`suds`.
+New table RetrieveTIGroupsRequest.
+
+Added test cases :mod:`lino.modlib.cbss.tests.cbss_tests`
+Seems that I'm now ready to run these tests at the customer 
+from behind a registered IP address.
+This requires to set up a test instance on their server,
+and that's for tomorrow.

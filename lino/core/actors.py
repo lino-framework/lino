@@ -375,23 +375,26 @@ class Actor(Handled):
                 setattr(self.detail_layout,k,v)
     @classmethod
     #~ def add_detail_tab(self,tpl,label=None):
-    def add_detail_tab(self,tpl):
-        if '\n' in tpl:
-           raise Exception("tpl may not contain any newline") 
-        if ' ' in tpl:
-           raise Exception("tpl may not contain any whitespace") 
+    def add_detail_tab(self,name,tpl=None,label=None):
+        if '\n' in name:
+           raise Exception("name may not contain any newline") 
+        if ' ' in name:
+           raise Exception("name may not contain any whitespace") 
         if hasattr(self.detail_layout,'_extjs3_handle'):
             raise Exception("Cannot set_detail after UI has been set up.")
         if '\n' in self.detail_layout.main:
             if hasattr(self.detail_layout,'general'):
                 raise NotImplementedError()
             self.detail_layout.general = self.detail_layout.main
-            self.detail_layout.main = "general " + tpl
+            self.detail_layout.main = "general " + name
             self.detail_layout._labels['general'] = _("General")
         else:
-            self.detail_layout.main += " " + tpl
-        #~ if label is not None:
-            #~ self.detail_layout._labels[tpl] = label
+            self.detail_layout.main += " " + name
+        if tpl is not None:
+            assert not hasattr(self.detail_layout,name)
+            setattr(self.detail_layout,name,tpl)
+        if label is not None:
+            self.detail_layout._labels[name] = label
 
     @classmethod
     def add_virtual_field(cls,name,vf):
