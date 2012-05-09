@@ -643,6 +643,7 @@ class NewStyleRequest(CBSSRequest):
         
         now = datetime.datetime.now()
         
+        self.environment = settings.LINO.cbss_environment or ''
         self.status = RequestStatus.pending
         self.save()
         
