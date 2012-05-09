@@ -311,10 +311,13 @@ class SSDNRequest(CBSSRequest):
         try:
             #~ res = client.service.sendXML(request_xml)        
             #~ xmlString = client.factory.create('wsc:xmlString')
+            s = unicode(wrapped_srvreq)
             xmlString = E('wsc:xmlString',ns=NSWSC)
-            xmlString.setText(unicode(wrapped_srvreq))
+            xmlString.setText(s)
+            #~ logger.debug("About to send:\n%s",s)
             if not settings.LINO.cbss_live_tests:
-                raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
+                #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
+                raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
             #~ xmlString.append(wrapped_srvreq)
             res = client.service.sendXML(xmlString)
             #~ res = client.service.sendXML(wrapped_srvreq)
