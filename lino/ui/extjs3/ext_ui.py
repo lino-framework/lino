@@ -923,7 +923,7 @@ class ExtUI(base.UI):
                     'document_root': source,
                     'show_indexes': False })))
             else:
-                logger.info("Setting up symlink %s -> %s.",source,target)
+                logger.info("Setting up symlink %s -> %s.",target,source)
                 symlink = getattr(os,'symlink',None)
                 if symlink is not None:
                     symlink(source,target)

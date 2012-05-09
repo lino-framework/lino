@@ -68,20 +68,32 @@ def test01(self):
     """
     Execute an IdentifyPersonRequest.
     """
-    from lino.ui.extjs3 import urls # create cache/wsdl files
-    #~ settings.LINO.setup() 
     
+    from lino.ui.extjs3 import urls # create cache/wsdl files
+    
+    # save site settings
     saved_cbss_environment = settings.LINO.cbss_environment
+    saved_cbss_user_params = settings.LINO.cbss_user_params
+    
+    # set fictive user params
+    
+    settings.LINO.cbss_user_params = dict(
+          UserID='123', 
+          Email='123@example.be', 
+          OrgUnit='123', 
+          MatrixID=12, 
+          MatrixSubID=3)
+    
 
     # create an IPR
     
     IdentifyPersonRequest = resolve_model('cbss.IdentifyPersonRequest')
-    ipr = IdentifyPersonRequest(last_name="MUSTERMANN",birth_date=IncompleteDate(1968,6,1))
+    req = IdentifyPersonRequest(last_name="MUSTERMANN",birth_date=IncompleteDate(1968,6,1))
     
     # try it without environment to see the XML
     
     settings.LINO.cbss_environment = ''
-    ipr.execute_request(None)
+    req.execute_request(None,validate=True)
     expected = """\
 Not actually sending because environment is empty. Request would be:
 <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
@@ -94,25 +106,28 @@ Not actually sending because environment is empty. Request would be:
       </ipr:PhoneticCriteria>
    </ipr:SearchCriteria>
 </ipr:IdentifyPersonRequest>"""
-    self.assertEqual(ipr.response_xml,expected)
+    self.assertEqual(req.response_xml,expected)
     
-    if settings.LINO.cbss_user_params:
+    if settings.LINO.cbss_live_tests:
         # try it in test environment
         settings.LINO.cbss_environment = 'test'
-        ipr.execute_request(None)
+        req.execute_request(None)
         
-        if ipr.response_xml == TIMEOUT_MESSAGE:
+        if req.response_xml == TIMEOUT_MESSAGE:
             self.fail("""\
 We got a timeout. 
 That's normal when this test is run behind an IP address that is not registered.
-Set your `cbss_user_params` settings to None to skip this test.
+Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
 """)
         expected = """\
         """
-        print ipr.response_xml
-        self.assertEqual(ipr.response_xml,expected)
+        print req.response_xml
+        self.assertEqual(req.response_xml,expected)
+    
+    # restore settings
     
     settings.LINO.cbss_environment = saved_cbss_environment 
+    settings.LINO.cbss_user_params = saved_cbss_user_params 
 
 def test02(self):
     """
@@ -125,10 +140,10 @@ def test02(self):
     RetrieveTIGroupsRequest = resolve_model('cbss.RetrieveTIGroupsRequest')
     req = RetrieveTIGroupsRequest(national_id='12345678901')
     
-    # try it without environment to see the XML
+    # try it without environment to validate and see the XML
     
     settings.LINO.cbss_environment = ''
-    req.execute_request(None)
+    req.execute_request(None,validate=True)
     #~ print req.response_xml
     expected = """\
 Not actually sending because environment is empty. Request would be:

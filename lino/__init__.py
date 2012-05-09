@@ -563,6 +563,16 @@ class Lino(object):
     #~ URL of BCSS SOAP server
     #~ """
     
+    cbss_live_tests = False
+    """
+    Whether unit tests should try to really connect to the cbss.
+    Some test cases of the test suite would fail with a timeout if run 
+    from behind an IP address that is not registered at the :term:`CBSS`.
+    These tests are skiped by default. To activate them, 
+    set `cbss_live_tests` to `True` in your :xfile:`settings.py`.
+    
+    """
+    
     cbss_user_params = None
     u"""
     User parameters for CBSS SSDN (classic) services.

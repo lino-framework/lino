@@ -41,7 +41,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from appy.shared.xml_parser import XmlUnmarshaller
-#~ from lxml import etree
 
 
 from lino import mixins
@@ -62,6 +61,12 @@ from lino.tools import makedirs_if_missing
 
 
 CBSS_ENVS = ('test', 'acpt', 'prod')
+
+def xsdpath(*parts):
+    p1 = os.path.abspath(os.path.dirname(__file__))
+    return os.path.join(p1,'XSD',*parts)
+
+
 
 
 class RequestStatus(ChoiceList):
@@ -178,7 +183,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         return u"%s#%s" % (self.__class__.__name__,self.pk)
         
 
-    def execute_request(self,ar):
+    def execute_request(self,ar,validate=True):
         raise NotImplementedError()
 
     def get_wsdl_uri(self):
@@ -220,7 +225,6 @@ class CBSSRequestDetail(dd.DetailLayout):
         lh.parameters.label = _("Parameters")
     
 
-
 class SSDNRequest(CBSSRequest):
     """
     Abstract Base Class for Models that represent 
@@ -229,11 +233,29 @@ class SSDNRequest(CBSSRequest):
     
     wsdl_parts = ('cache','wsdl','WebServiceConnector.wsdl')
     
+    xsd_filename = None
+    
     class Meta:
         abstract = True
         
+    def validate_against_xsd(self,srvreq,xsd_filename):
+        from lxml import etree
+        s = unicode(srvreq)
+        doc = etree.fromstring(s)
+        schema_doc = etree.parse(xsd_filename)
+        schema = etree.XMLSchema(schema_doc)
+        schema.validate(doc)
+      
+    def validate_wrapped(self,srvreq):
+        self.validate_against_xsd(srvreq,xsdpath('SSDN','Service','SSDNRequest.xsd'))
+        
+        
+    def validate_inner(self,srvreq):
+        if not self.xsd_filename: return
+        self.validate_against_xsd(srvreq,self.xsd_filename)
+        
     
-    def execute_request(self,ar):
+    def execute_request(self,ar,validate=False):
         """
         This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
@@ -251,8 +273,12 @@ class SSDNRequest(CBSSRequest):
             #~ srvreq = self.cbss_namespace('ns1').build_request(**kw)
             #~ srvreq = self.cbss_namespace.build_request(**kw)
             srvreq = self.build_request()
+            wrapped_srvreq = self.wrap_ssdn_request(srvreq,now)
+            if validate:
+                self.validate_inner(srvreq)
+                self.validate_wrapped(wrapped_srvreq)
+                logger.info("XSD validation passed.")
             self.check_environment(srvreq)
-            srvreq = self.wrap_ssdn_request(srvreq,now)
         except Warning,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
@@ -263,7 +289,7 @@ class SSDNRequest(CBSSRequest):
         
         #~ url = os.path.join(settings.MEDIA_ROOT,*WSC_PARTS) 
         
-        logger.info("Instantiate Client at %s", url)
+        #~ logger.info("Instantiate Client at %s", url)
         t = HttpTransport()
         client = Client(url, transport=t)
         client.add_prefix(*NSCOMMON)
@@ -276,7 +302,7 @@ class SSDNRequest(CBSSRequest):
         #~ request_xml = etree.tostring(srvreq)
         try:
             #~ res = client.service.sendXML(request_xml)        
-            res = client.service.sendXML(srvreq)        
+            res = client.service.sendXML(wrapped_srvreq)        
         except (IOError,Warning),e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
@@ -395,6 +421,8 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.PersonMixin,contacts.Born)
     
     ssdn_service_id = 'OCMWCPASIdentifyPerson'
     ssdn_service_version = '20050930'
+    xsd_filename = xsdpath('SSDN','OCMW_CPAS',
+        'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
     
     #~ cbss_namespace = cbss.IPR # IdentifyPersonRequest
     
@@ -607,7 +635,7 @@ class NewStyleRequest(CBSSRequest):
     class Meta:
         abstract = True
         
-    def execute_request(self,ar):
+    def execute_request(self,ar,validate=False):
         """
         This is the general method for all services,
         executed when a user runs :class:`SendAction`.
@@ -620,7 +648,7 @@ class NewStyleRequest(CBSSRequest):
         
         url = self.get_wsdl_uri()
         
-        logger.info("Instantiate Client at %s", url)
+        #~ logger.info("Instantiate Client at %s", url)
         t = HttpAuthenticated(
             username=settings.LINO.cbss_username, 
             password=settings.LINO.cbss_password)
@@ -637,7 +665,7 @@ class NewStyleRequest(CBSSRequest):
         
 
         try:
-            res = self.execute_newstyle(client,info)
+            res = self.execute_newstyle(client,info,validate)
         except (IOError,Warning),e:
         #~ except Warning,e:
             self.status = RequestStatus.exception
@@ -683,7 +711,7 @@ class NewStyleRequest(CBSSRequest):
     def __unicode__(self):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
         
-    def execute_newstyle(self,client,infoCustomer):
+    def execute_newstyle(self,client,infoCustomer,validate):
         raise NotImplementedError()
         
 class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
@@ -699,11 +727,13 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         help_text = "Whatever this means.")
     
         
-    def execute_newstyle(self,client,infoCustomer):
+    def execute_newstyle(self,client,infoCustomer,validate):
         si = client.factory.create('ns0:SearchInformationType')
         si.ssin = self.get_ssin()
         si.language = self.language
         si.history = self.history
+        #~ if validate:
+            #~ self.validate_newstyle(srvreq)
         self.check_environment(si)
         return client.service.retrieveTI(infoCustomer,None,si)        
 
@@ -746,7 +776,7 @@ def setup_site_cache(self,mtime,force):
             if os.stat(fn).st_mtime > mtime:
                 logger.info("NOT generating %s because it is newer than the code.",fn)
                 return
-        s = file(os.path.join(os.path.dirname(__file__),'XSD',template)).read()
+        s = file(os.path.join(os.path.dirname(__file__),'WSDL',template)).read()
         s = s % context
         makedirs_if_missing(os.path.dirname(fn))
         open(fn,'wt').write(s)
@@ -754,6 +784,10 @@ def setup_site_cache(self,mtime,force):
         
     make_wsdl('RetrieveTIGroupsV3.wsdl',RetrieveTIGroupsRequest.wsdl_parts)
     make_wsdl('WebServiceConnector.wsdl',SSDNRequest.wsdl_parts)
+    #~ make_wsdl('TestConnectionService.wsdl',TestConnectionRequest.wsdl_parts)
+    
+    # The following xsd files are needed, unmodified but in the same directory
+    #~ for fn in 'RetrieveTIGroupsV3.xsd', 'rn25_Release201104.xsd', 'TestConnectionServiceV1.xsd':
     for fn in 'RetrieveTIGroupsV3.xsd', 'rn25_Release201104.xsd':
         src = os.path.join(os.path.dirname(__file__),'XSD',fn)
         target = os.path.join(settings.MEDIA_ROOT,'cache','wsdl',fn) 

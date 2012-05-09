@@ -7,7 +7,7 @@ Renamed `build_lino_js` to `build_site_cache`.
 Renamed `auto_makeui` to `auto_build_site_cache`.
 
 And after 2 hours I finally reached the place where it tries to execute real requests.
-Here is only the first traceback::
+Here are some of the tracebacks::
 
   Traceback (most recent call last):
     File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 279, in execute_request
@@ -24,3 +24,33 @@ Here is only the first traceback::
       raise WebFault(p, faultroot)
   WebFault: Server raised fault: 'org.xml.sax.SAXParseException: 
   The prefix "ssdn" for element "ssdn:SSDNRequest" is not bound.'
+  
+This was easy: the `ns` parameter must of course be specified at the first element that uses it.
+
+The following is less trivial::
+  
+  Traceback (most recent call last):
+    File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 279, in execute_request
+      res = client.service.sendXML(srvreq)
+    File "/usr/lib/pymodules/python2.6/suds/client.py", line 539, in __call__
+      return client.invoke(args, kwargs)
+    File "/usr/lib/pymodules/python2.6/suds/client.py", line 598, in invoke
+      result = self.send(msg)
+    File "/usr/lib/pymodules/python2.6/suds/client.py", line 633, in send
+      result = self.failed(binding, e)
+    File "/usr/lib/pymodules/python2.6/suds/client.py", line 684, in failed
+      r, p = binding.get_fault(reply)
+    File "/usr/lib/pymodules/python2.6/suds/bindings/binding.py", line 238, in get_fault
+      raise WebFault(p, faultroot)
+  WebFault: Server raised fault: 'org.xml.sax.SAXException: 
+  SimpleDeserializer encountered a child element, which is NOT expected, 
+  in something it was trying to deserialize.'  
+  
+It says that there is (of course) some structural error in the XML chanks I generate. 
+But the message "SimpleDeserializer encountered a child element, which is NOT expected" 
+is of course not helpful for finding out where the error is.
+I could use :term:`lxml` to validate my XML chunks. Since we are in a test suite, 
+a possible collision with mod_wsgi is not an issue.
+  
+  
+New setting :attr:`lino.Lino.cbss_live_tests`.
