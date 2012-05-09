@@ -1,3 +1,6 @@
 20120509
 ========
 
+renamed `build_lino_js` to `build_site_cache`.
+
+renamed `auto_makeui` to `auto_build_site_cache`

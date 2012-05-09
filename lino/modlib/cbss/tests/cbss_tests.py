@@ -51,9 +51,10 @@ from lino.utils import IncompleteDate
 
 
 class QuickTest(TestCase):
-    pass
+    auto_build_site_cache = True
+    #~ pass
     #~ def setUp(self):
-        #~ settings.LINO.auto_makeui = False
+        #~ settings.LINO.auto_build_site_cache = False
         #~ super(DemoTest,self).setUp()
             
 TIMEOUT_MESSAGE = '<urlopen error [Errno 10060] A connection attempt '\
@@ -67,8 +68,8 @@ def test01(self):
     """
     Execute an IdentifyPersonRequest.
     """
-    
-    settings.LINO.setup() # create cache/wsdl files
+    from lino.ui.extjs3 import urls # create cache/wsdl files
+    #~ settings.LINO.setup() 
     
     saved_cbss_environment = settings.LINO.cbss_environment
 

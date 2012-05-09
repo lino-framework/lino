@@ -676,7 +676,7 @@ class ExtUI(base.UI):
         fn = find_config_file('welcome.html')
         logger.info("Using welcome template %s",fn)
         self.welcome_template = CheetahTemplate(file(fn).read())
-        self.build_lino_js()
+        self.build_site_cache()
         #~ self.generate_linolib_messages()
         
     def create_layout_element(self,lh,name,**kw):
@@ -856,7 +856,7 @@ class ExtUI(base.UI):
         #~ pickle.dump(self.window_configs,f)
         #~ f.close()
         #~ logger.debug("save_window_config(%r) -> %s",wc,a)
-        #~ self.build_lino_js()
+        #~ self.build_site_cache()
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
             #~ lh.window_wrapper.try_apply_window_config(wc)
@@ -1299,7 +1299,7 @@ tinymce.init({
                 logger.exception(e)
                 return json_response_kw(success=False,
                     message=unicode(e),alert=True)
-            self.build_lino_js(True)
+            self.build_site_cache(True)
             return json_response_kw(success=True)
             #detail_layout
       
@@ -1338,7 +1338,7 @@ tinymce.init({
                     report=rpt,error=e)
                 return self.error_response(None,msg)
             #~ logger.info(msg)
-            self.build_lino_js(True)            
+            self.build_site_cache(True)            
             return self.success_response(msg)
             
         raise NotImplementedError
@@ -1840,11 +1840,11 @@ tinymce.init({
         #~ return ('cache','js','lino.js')
         return ('cache','js','lino_'+translation.get_language()+'.js')
         
-    def build_lino_js(self,force=False):
-        """Generate :xfile:`lino.js`.
+    def build_site_cache(self,force=False):
+        """Generate :xfile:`lino.js` and other.
         """
-        if not force and not settings.LINO.auto_makeui:
-            logger.info("NOT generating `lino.js` because `settings.LINO.auto_makeui` is False")
+        if not force and not settings.LINO.auto_build_site_cache:
+            logger.info("NOT generating site cache because `settings.LINO.auto_build_site_cache` is False")
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
             logger.warning("Not generating site cache because "+

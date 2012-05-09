@@ -74,7 +74,7 @@ def test02(self):
     u.language = ''
     u.save()
     
-    #~ settings.LINO.auto_makeui = False
+    #~ settings.LINO.auto_build_site_cache = False
     
     """
     disable LINO.is_imported_partner() otherwise 

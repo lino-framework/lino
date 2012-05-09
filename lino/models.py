@@ -312,7 +312,7 @@ class BuildLinoJS(dd.RowAction):
     def run(self,rr,elem):
         rr.confirm(_("Are you sure?"))
         #~ rr.confirm(_("Are you really sure?"))
-        rr.ui.build_lino_js(True)
+        rr.ui.build_site_cache(True)
         return rr.ui.success_response(
             """\
 Seems that it worked. Refresh your browser. 

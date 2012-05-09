@@ -202,7 +202,8 @@ class Lino(object):
     
     """
     
-    auto_makeui = True
+    #~ auto_makeui = True
+    auto_build_site_cache = True
     """
     useful when debugging directly on the generated `lino.js`
     """

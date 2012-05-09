@@ -76,6 +76,12 @@ class TestCase(DjangoTestCase):
     
     """
     
+    auto_build_site_cache = False
+    """
+    Test cases usually don't need the site cache, so this is switched off.
+    But e.g. :mod:`lino.modlib.cbss.tests.cbss_tests` switches it on because there it is needed.
+    """
+    
     defining_module = None
     """
     When you decorate your subclass of TestCase, you must also specify::
@@ -101,7 +107,7 @@ class TestCase(DjangoTestCase):
                     #~ v(self)
                   
     def setUp(self):
-        settings.LINO.auto_makeui = False
+        settings.LINO.auto_build_site_cache = self.auto_build_site_cache
         super(TestCase,self).setUp()
         
     def test_them_all(self):

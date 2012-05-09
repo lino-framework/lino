@@ -725,7 +725,7 @@ class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     
 def setup_site_cache(self,mtime,force):
     """
-    Called from :meth:`build_lino_js`. 
+    Called from :meth:`build_site_cache`. 
     First argument is the LINO instance."""
     
     import logging
@@ -756,7 +756,7 @@ def setup_site_cache(self,mtime,force):
     make_wsdl('WebServiceConnector.wsdl',SSDNRequest.wsdl_parts)
     for fn in 'RetrieveTIGroupsV3.xsd', 'rn25_Release201104.xsd':
         src = os.path.join(os.path.dirname(__file__),'XSD',fn)
-        target = os.path.join(settings.MEDIA_ROOT,'media','cache','wsdl',fn) 
+        target = os.path.join(settings.MEDIA_ROOT,'cache','wsdl',fn) 
         if not os.path.exists(target):
             shutil.copy(src,target)
     
