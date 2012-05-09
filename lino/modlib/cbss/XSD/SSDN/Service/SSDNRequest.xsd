@@ -24,7 +24,8 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:any namespace="##any">
+      <!-- LS 20120509 : added processContents="lax" -->
+			<xs:any namespace="##any" processContents="lax">
 				<xs:annotation>
 					<xs:documentation>replace with the actual service request body</xs:documentation>
 				</xs:annotation>

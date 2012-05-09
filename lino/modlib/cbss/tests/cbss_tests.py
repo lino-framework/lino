@@ -78,7 +78,7 @@ def test01(self):
     # set fictive user params
     
     settings.LINO.cbss_user_params = dict(
-          UserID='123', 
+          UserID='12345678901', 
           Email='123@example.be', 
           OrgUnit='123', 
           MatrixID=12, 

@@ -5,6 +5,7 @@ Getting to run a test site on a customer's server where a production site is alr
 Lots of little optimizations.
 Renamed `build_lino_js` to `build_site_cache`.
 Renamed `auto_makeui` to `auto_build_site_cache`.
+New setting :attr:`lino.Lino.cbss_live_tests`.
 
 And after 2 hours I finally reached the place where it tries to execute real requests.
 Here are some of the tracebacks::
@@ -52,5 +53,172 @@ is of course not helpful for finding out where the error is.
 I could use :term:`lxml` to validate my XML chunks. Since we are in a test suite, 
 a possible collision with mod_wsgi is not an issue.
   
+It wasn't too difficult to add validation against the XSD files since 
+I had done this before in :mod:`lino.utils.xmlgen`. 
+And I remember that it was helpful to discover structure 
+bugs locally before even sending them.
+But now it seems to not find any error::
+
+  INFO Validated <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+     <ipr:SearchCriteria>
+        <ipr:PhoneticCriteria>
+           <ipr:LastName>MUSTERMANN</ipr:LastName>
+           <ipr:FirstName></ipr:FirstName>
+           <ipr:MiddleName></ipr:MiddleName>
+           <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+        </ipr:PhoneticCriteria>
+     </ipr:SearchCriteria>
+  </ipr:IdentifyPersonRequest> against t:\hgwork\lino\lino\modlib\cbss\XSD\SSDN\OCMW_CPAS\IDENTIFYPERSON\IDENTIFYPERSONREQ
+  UEST.XSD
+
+  INFO Validated <ssdn:SSDNRequest xmlns:ssdn="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
+     <ssdn:RequestContext>
+        <common:AuthorizedFooUser xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+           <common:UserID>123</common:UserID>
+           <common:Email>123@example.be</common:Email>
+           <common:OrgUnit>123</common:OrgUnit>
+           <common:MatrixID>12</common:MatrixID>
+           <common:MatrixSubID>3</common:MatrixSubID>
+        </common:AuthorizedFooUser>
+        <ssdn:Message>
+           <ssdn:Reference>IdentifyPersonRequest # 1</ssdn:Reference>
+           <ssdn:TimeRequest>2012-05-09 13:07:52.312000</ssdn:TimeRequest>
+        </ssdn:Message>
+     </ssdn:RequestContext>
+     <ssdn:ServiceRequest>
+        <ssdn:ServiceId>OCMWCPASIdentifyPerson</ssdn:ServiceId>
+        <ssdn:Version>20050930</ssdn:Version>
+        <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+           <ipr:SearchCriteria>
+              <ipr:PhoneticCriteria>
+                 <ipr:LastName>MUSTERMANN</ipr:LastName>
+                 <ipr:FirstName></ipr:FirstName>
+                 <ipr:MiddleName></ipr:MiddleName>
+                 <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+              </ipr:PhoneticCriteria>
+           </ipr:SearchCriteria>
+        </ipr:IdentifyPersonRequest>
+     </ssdn:ServiceRequest>
+  </ssdn:SSDNRequest> against t:\hgwork\lino\lino\modlib\cbss\XSD\SSDN\Service\SSDNRequest.xsd
+  INFO XSD validation passed.
   
-New setting :attr:`lino.Lino.cbss_live_tests`.
+And the response is still "SimpleDeserializer encountered a child element, which is NOT expected".
+Hmm... 
+
+Tilt! it was a simple mousetrap:
+I forgot that lxml's `XMLSchema's <http://lxml.de/validation.html#xmlschema>`_ 
+`validate()` method simply returns True or False.
+For my purposes I must call `assertValid()` to get a traceback!
+
+Here is now a real validation error message::
+
+  Traceback (most recent call last):
+    File "t:\hgwork\lino\lino\utils\test.py", line 124, in test_them_all
+      v(self)
+    File "t:\hgwork\lino\lino\modlib\cbss\tests\cbss_tests.py", line 96, in test01
+      req.execute_request(None,validate=True)
+    File "t:\hgwork\lino\lino\modlib\cbss\models.py", line 281, in execute_request
+      self.validate_wrapped(wrapped_srvreq)
+    File "t:\hgwork\lino\lino\modlib\cbss\models.py", line 252, in validate_wrapped
+      self.validate_against_xsd(srvreq,xsdpath('SSDN','Service','SSDNRequest.xsd'))
+    File "t:\hgwork\lino\lino\modlib\cbss\models.py", line 247, in validate_against_xsd
+      schema.assertValid(doc)
+    File "lxml.etree.pyx", line 3006, in lxml.etree._Validator.assertValid (src/lxml/lxml.etree.c:125415)
+  DocumentInvalid: Element '{http://www.ksz-bcss.fgov.be/XSD/SSDN/Common}AuthorizedUser': 
+  This element is not expected. Expected is 
+  ( {http://www.ksz-bcss.fgov.be/XSD/SSDN/Service}AuthorizedUser )., line 3
+
+And some other ones (XSD validation is really a must! Imagine that I would have 
+to fix all these bugs while working with live connections...)::
+
+  DocumentInvalid: Element '{http://www.ksz-bcss.fgov.be/XSD/SSDN/Service}TimeRequest': [facet 'pattern'] 
+  The value '2012-05-09 13:19:51.578000' is not accepted by the pattern '[1-2][0-9]{3}[0-1][0-9][0-3][0-9]T[0-2][0-9][0-5][0-9][0-5][0-9]'., line 12
+
+  DocumentInvalid: Element '{http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson}IdentifyPersonRequest': 
+  No matching global element declaration available, but demanded by the strict wildcard., line 18
+  
+This last error message was for the following XML::
+  
+  <ssdn:SSDNRequest xmlns:ssdn="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
+     <ssdn:RequestContext>
+        <ssdn:AuthorizedUser>
+           <ssdn:UserID>12345678901</ssdn:UserID>
+           <ssdn:Email>123@example.be</ssdn:Email>
+           <ssdn:OrgUnit>123</ssdn:OrgUnit>
+           <ssdn:MatrixID>12</ssdn:MatrixID>
+           <ssdn:MatrixSubID>3</ssdn:MatrixSubID>
+        </ssdn:AuthorizedUser>
+        <ssdn:Message>
+           <ssdn:Reference>IdentifyPersonRequest # 1</ssdn:Reference>
+           <ssdn:TimeRequest>20120509T134128</ssdn:TimeRequest>
+        </ssdn:Message>
+     </ssdn:RequestContext>
+     <ssdn:ServiceRequest>
+        <ssdn:ServiceId>OCMWCPASIdentifyPerson</ssdn:ServiceId>
+        <ssdn:Version>20050930</ssdn:Version>
+        <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+           <ipr:SearchCriteria>
+              <ipr:PhoneticCriteria>
+                 <ipr:LastName>MUSTERMANN</ipr:LastName>
+                 <ipr:FirstName></ipr:FirstName>
+                 <ipr:MiddleName></ipr:MiddleName>
+                 <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+              </ipr:PhoneticCriteria>
+           </ipr:SearchCriteria>
+        </ipr:IdentifyPersonRequest>
+     </ssdn:ServiceRequest>
+  </ssdn:SSDNRequest>  
+
+I first thought that means that I must collect all `xmlns` attribs in the root element.
+So I tried with this::
+
+  <ssdn:SSDNRequest 
+    xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson"
+    xmlns:ssdn="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
+     <ssdn:RequestContext>
+        <ssdn:AuthorizedUser>
+           <ssdn:UserID>12345678901</ssdn:UserID>
+           <ssdn:Email>123@example.be</ssdn:Email>
+           <ssdn:OrgUnit>123</ssdn:OrgUnit>
+           <ssdn:MatrixID>12</ssdn:MatrixID>
+           <ssdn:MatrixSubID>3</ssdn:MatrixSubID>
+        </ssdn:AuthorizedUser>
+        <ssdn:Message>
+           <ssdn:Reference>IdentifyPersonRequest # 1</ssdn:Reference>
+           <ssdn:TimeRequest>20120509T141618</ssdn:TimeRequest>
+        </ssdn:Message>
+     </ssdn:RequestContext>
+     <ssdn:ServiceRequest>
+        <ssdn:ServiceId>OCMWCPASIdentifyPerson</ssdn:ServiceId>
+        <ssdn:Version>20050930</ssdn:Version>
+        <ipr:IdentifyPersonRequest>
+           <ipr:SearchCriteria>
+              <ipr:PhoneticCriteria>
+                 <ipr:LastName>MUSTERMANN</ipr:LastName>
+                 <ipr:FirstName></ipr:FirstName>
+                 <ipr:MiddleName></ipr:MiddleName>
+                 <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+              </ipr:PhoneticCriteria>
+           </ipr:SearchCriteria>
+        </ipr:IdentifyPersonRequest>
+     </ssdn:ServiceRequest>
+  </ssdn:SSDNRequest>
+
+No, that gives the same error message. So this wasn't the problem.
+It's maybe similar to a 
+`problem reported by Heiko Klein in 2008
+<http://mail.gnome.org/archives/xml/2008-November/msg00094.html>`_
+which never got any answer.
+
+Inspired by a `post by Benjamin Kalytta in 2007
+<http://www.velocityreviews.com/forums/t518913-include-elements-from-other-namespace-in-own-xml.html>`_,
+I added a `processContents="lax"` to the xs:any in `SSDNRequest.xsd`::
+
+    <xs:any namespace="##any" processContents="lax">
+            <xs:annotation>
+                    <xs:documentation>replace with the actual service request body</xs:documentation>
+            </xs:annotation>
+    </xs:any>
+    
+This helped. I agree that it's a little bit cheated... 
+So if you see a better solution, I'd be glad to hear your suggestions.

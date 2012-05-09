@@ -240,11 +240,15 @@ class SSDNRequest(CBSSRequest):
         
     def validate_against_xsd(self,srvreq,xsd_filename):
         from lxml import etree
-        s = unicode(srvreq)
-        doc = etree.fromstring(s)
+        xml = unicode(srvreq)
+        #~ print xml
+        doc = etree.fromstring(xml)
         schema_doc = etree.parse(xsd_filename)
         schema = etree.XMLSchema(schema_doc)
-        schema.validate(doc)
+        #~ if not schema.validate(doc):
+            #~ print xml
+        schema.assertValid(doc)
+        logger.info("Validated %s against %s", xml,xsd_filename)
       
     def validate_wrapped(self,srvreq):
         self.validate_against_xsd(srvreq,xsdpath('SSDN','Service','SSDNRequest.xsd'))
@@ -273,11 +277,12 @@ class SSDNRequest(CBSSRequest):
             #~ srvreq = self.cbss_namespace('ns1').build_request(**kw)
             #~ srvreq = self.cbss_namespace.build_request(**kw)
             srvreq = self.build_request()
-            wrapped_srvreq = self.wrap_ssdn_request(srvreq,now)
             if validate:
                 self.validate_inner(srvreq)
+            wrapped_srvreq = self.wrap_ssdn_request(srvreq,now)
+            if validate:
                 self.validate_wrapped(wrapped_srvreq)
-                logger.info("XSD validation passed.")
+                #~ logger.info("XSD validation passed.")
             self.check_environment(srvreq)
         except Warning,e:
             self.status = RequestStatus.exception
@@ -292,10 +297,10 @@ class SSDNRequest(CBSSRequest):
         #~ logger.info("Instantiate Client at %s", url)
         t = HttpTransport()
         client = Client(url, transport=t)
-        client.add_prefix(*NSCOMMON)
-        client.add_prefix(*NSSSDN)
-        client.add_prefix(*NSIPR)
-        client.add_prefix(*NSMAR)
+        #~ client.add_prefix(*NSCOMMON)
+        #~ client.add_prefix(*NSSSDN)
+        #~ client.add_prefix(*NSIPR)
+        #~ client.add_prefix(*NSMAR)
         #~ client = Client(url)
         #~ print 20120507, client
         
@@ -368,17 +373,23 @@ class SSDNRequest(CBSSRequest):
     def wrap_ssdn_request(self,srvreq,dt):
         #~ up  = settings.LINO.ssdn_user_params
         up  = settings.LINO.cbss_user_params
-        au = E('common:AuthorizedUser',ns=NSCOMMON)
-        au.append(E('common:UserID').setText(up['UserID']))
-        au.append(E('common:Email').setText(up['Email']))
-        au.append(E('common:OrgUnit').setText(up['OrgUnit']))
-        au.append(E('common:MatrixID').setText(up['MatrixID']))
-        au.append(E('common:MatrixSubID').setText(up['MatrixSubID']))
+        #~ au = E('common:AuthorizedUser',ns=NSCOMMON)
+        #~ au.append(E('common:UserID').setText(up['UserID']))
+        #~ au.append(E('common:Email').setText(up['Email']))
+        #~ au.append(E('common:OrgUnit').setText(up['OrgUnit']))
+        #~ au.append(E('common:MatrixID').setText(up['MatrixID']))
+        #~ au.append(E('common:MatrixSubID').setText(up['MatrixSubID']))
+        au = E('ssdn:AuthorizedUser')
+        au.append(E('ssdn:UserID').setText(up['UserID']))
+        au.append(E('ssdn:Email').setText(up['Email']))
+        au.append(E('ssdn:OrgUnit').setText(up['OrgUnit']))
+        au.append(E('ssdn:MatrixID').setText(up['MatrixID']))
+        au.append(E('ssdn:MatrixSubID').setText(up['MatrixSubID']))
         
         ref = "%s # %s" % (self.__class__.__name__,self.id)
         msg = E('ssdn:Message')
         msg.append(E('ssdn:Reference').setText(ref))
-        msg.append(E('ssdn:TimeRequest').setText(format(dt)))
+        msg.append(E('ssdn:TimeRequest').setText(dt.strftime("%Y%m%dT%H%M%S")))
         
         context = E('ssdn:RequestContext')
         context.append(au)
@@ -394,6 +405,8 @@ class SSDNRequest(CBSSRequest):
         e = E('ssdn:SSDNRequest',ns=NSSSDN)
         e.append(context)
         e.append(sr)
+        #~ if srvreq.prefix != e.prefix:
+            #~ e.addPrefix(srvreq.prefix,srvreq.nsprefixes[srvreq.prefix])
         
         return e
       
@@ -499,6 +512,7 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.PersonMixin,contacts.Born)
         #~ https://fedorahosted.org/suds/wiki/TipsAndTricks#IncludingLiteralXML
             
         main = E('ipr:IdentifyPersonRequest',ns=NSIPR)
+        #~ main = E('ipr:IdentifyPersonRequest')
         sc = E('ipr:SearchCriteria') 
         main.append(sc)
         if national_id:
