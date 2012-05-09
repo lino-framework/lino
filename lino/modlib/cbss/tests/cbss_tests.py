@@ -167,6 +167,6 @@ Set your `cbss_user_params` settings to None to skip this test.
 """)
         expected = """\
         """
-        self.assertEqual(ipr.response_xml,expected)
+        self.assertEqual(req.response_xml,expected)
     
     settings.LINO.cbss_environment = saved_cbss_environment 
