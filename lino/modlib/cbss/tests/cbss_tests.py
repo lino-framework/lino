@@ -162,6 +162,7 @@ We got a timeout.
 That's normal when this test is run behind an IP address that is not registered.
 Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
 """)
+        print req.response_xml
         expected = ''
         self.assertEqual(req.response_xml,expected)
 
