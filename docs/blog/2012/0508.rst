@@ -5,7 +5,7 @@ CBSS connection
 ---------------
 
 After having fiddled and fought with `lino.utils.xmlgen`, `lxml` and `elementtree`, 
-there is now hope that I now finally found what I have been lokking for:
+there is now hope that I finally found what I have been looking for:
 I discovered the `suds.sax` module for which 
 `the docs <https://fedorahosted.org/suds/wiki/Documentation#TECHNICALFYINOTES>`_ say
 say that it
@@ -24,3 +24,22 @@ Seems that I'm now ready to run these tests at the customer
 from behind a registered IP address.
 This requires to set up a test instance on their server,
 and that's for tomorrow.
+
+:checkin:`cf29f855b734` at 1:33, long after I should have gone to bed.
+
+Note: when Lino starts up, 
+it generates two files to `WebServiceConnector.wsdl`
+and `RetrieveTIGroupsV3.wsdl` into :xfile:`media/cache/wsdl`. 
+These are needed for the suds Client, and Lino must generate 
+them from the original files provided by the :term:`CBSS`, 
+of which the copy is stored in Lino's source repository 
+:srcref:`lino/modlib/cbss/XSD` (in fact this is not a simple 
+copy but a template, containing a pattern `%s(cbss_environment)s` 
+where the real location must get filled in.
+There are also (currently) two xsd files 
+`RetrieveTIGroupsV3.xsd`
+and `rn25_Release201104.xsd`
+which are a completely 
+unmodified copy of the original CBSS files. But they also 
+need to be in the same directory :xfile:`media/cache/wsdl`.
+

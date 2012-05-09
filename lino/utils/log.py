@@ -115,7 +115,7 @@ def configure(config):
     
     djangoLogger = logging.getLogger('django')
     linoLogger = logging.getLogger('lino')
-    sudsLogger = logging.getLogger('suds')
+    #~ sudsLogger = logging.getLogger('suds')
     
     if len(linoLogger.handlers) != 0:
         if False:
@@ -134,7 +134,7 @@ def configure(config):
     level = getattr(logging,config.get('level','notset').upper())
     
     linoLogger.setLevel(level)
-    sudsLogger.setLevel(level)
+    #~ sudsLogger.setLevel(level)
     #~ djangoLogger.setLevel(level)
     
     aeh = AdminEmailHandler(include_html=True)
@@ -142,7 +142,7 @@ def configure(config):
     aeh.setLevel(logging.ERROR)
     djangoLogger.addHandler(aeh)
     linoLogger.addHandler(aeh)
-    sudsLogger.addHandler(aeh)
+    #~ sudsLogger.addHandler(aeh)
     
         
     if logfile is not None:
@@ -163,7 +163,7 @@ def configure(config):
         #~ h.setLevel(level)
         linoLogger.addHandler(h)
         djangoLogger.addHandler(h)
-        sudsLogger.addHandler(h)
+        #~ sudsLogger.addHandler(h)
         #~ print __file__, level, logfile
         
         #~ dblogger = logging.getLogger('db')
@@ -183,7 +183,7 @@ def configure(config):
             fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
             h.setFormatter(fmt)
             linoLogger.addHandler(h)
-            sudsLogger.addHandler(h)
+            #~ sudsLogger.addHandler(h)
             djangoLogger.addHandler(h)
     except IOError:
         # happens under mod_wsgi

@@ -24,6 +24,7 @@ ipr.execute_request(ar)
 """
 
 import os
+import shutil
 import traceback
 import datetime
 import logging
@@ -753,6 +754,11 @@ def setup_site_cache(self,mtime,force):
         
     make_wsdl('RetrieveTIGroupsV3.wsdl',RetrieveTIGroupsRequest.wsdl_parts)
     make_wsdl('WebServiceConnector.wsdl',SSDNRequest.wsdl_parts)
+    for fn in 'RetrieveTIGroupsV3.xsd', 'rn25_Release201104.xsd':
+        src = os.path.join(os.path.dirname(__file__),'XSD',fn)
+        target = os.path.join(settings.MEDIA_ROOT,'media','cache','wsdl',fn) 
+        if not os.path.exists(target):
+            shutil.copy(src,target)
     
 def site_setup(self):
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""

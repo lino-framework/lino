@@ -847,7 +847,8 @@ class Lino(object):
         (:class:`lino.ui.base.UI`) gets instantiated (which usually 
         happenes in some URLConf, for example in:mod:`lino.ui.extjs3.urls`). 
         #~ Also called by :term:`makedocs` with keyword argument `make_messages`.
-        Also called by :term:`dtl2py` with keyword argument `make_messages`.
+        #~ Also called by :term:`dtl2py` with keyword argument `make_messages`.
+        Also called by some test cases.
         """
         from lino.core.kernel import setup_site
         setup_site(self,**options)

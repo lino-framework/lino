@@ -1,6 +1,10 @@
 Files
 =====
 
+.. xfile:: media/cache/wsdl
+
+  See :doc:`/blog/2012/0508`.
+  
 .. xfile:: .dtl
 
 Configuration file that describes the layout of (one tab of) 

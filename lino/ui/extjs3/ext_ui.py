@@ -1847,7 +1847,7 @@ tinymce.init({
             logger.info("NOT generating `lino.js` because `settings.LINO.auto_makeui` is False")
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
-            logger.warning("Not generating `lino.js` because "+
+            logger.warning("Not generating site cache because "+
             "directory '%s' (settings.MEDIA_ROOT) does not exist.", 
             settings.MEDIA_ROOT)
             return

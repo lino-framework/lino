@@ -67,6 +67,9 @@ def test01(self):
     """
     Execute an IdentifyPersonRequest.
     """
+    
+    settings.LINO.setup() # create cache/wsdl files
+    
     saved_cbss_environment = settings.LINO.cbss_environment
 
     # create an IPR
