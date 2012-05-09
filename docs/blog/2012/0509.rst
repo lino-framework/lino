@@ -1,6 +1,26 @@
 20120509
 ========
 
-renamed `build_lino_js` to `build_site_cache`.
+Getting to run a test site on a customer's server where a production site is already running.
+Lots of little optimizations.
+Renamed `build_lino_js` to `build_site_cache`.
+Renamed `auto_makeui` to `auto_build_site_cache`.
 
-renamed `auto_makeui` to `auto_build_site_cache`
+And after 2 hours I finally reached the place where it tries to execute real requests.
+Here is only the first traceback::
+
+  Traceback (most recent call last):
+    File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 279, in execute_request
+      res = client.service.sendXML(srvreq)
+    File "/usr/lib/pymodules/python2.6/suds/client.py", line 539, in __call__
+      return client.invoke(args, kwargs)
+    File "/usr/lib/pymodules/python2.6/suds/client.py", line 598, in invoke
+      result = self.send(msg)
+    File "/usr/lib/pymodules/python2.6/suds/client.py", line 633, in send
+      result = self.failed(binding, e)
+    File "/usr/lib/pymodules/python2.6/suds/client.py", line 684, in failed
+      r, p = binding.get_fault(reply)
+    File "/usr/lib/pymodules/python2.6/suds/bindings/binding.py", line 238, in get_fault
+      raise WebFault(p, faultroot)
+  WebFault: Server raised fault: 'org.xml.sax.SAXParseException: 
+  The prefix "ssdn" for element "ssdn:SSDNRequest" is not bound.'

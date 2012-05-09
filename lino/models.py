@@ -304,10 +304,10 @@ if settings.LINO.user_model:
 
 class BuildLinoJS(dd.RowAction):
     """
-    Rebuild the :xfile`lino.js` files.
+    Rebuild the site cache.
     This action is available on :class:`About`.
     """
-    label = _("Build lino*.js files")
+    label = _("Rebuild site cache")
     name = "buildjs"
     def run(self,rr,elem):
         rr.confirm(_("Are you sure?"))

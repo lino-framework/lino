@@ -350,7 +350,7 @@ class SSDNRequest(CBSSRequest):
         au.append(E('common:MatrixSubID').setText(up['MatrixSubID']))
         
         ref = "%s # %s" % (self.__class__.__name__,self.id)
-        msg = E('ssdn:Message',ns=NSSSDN)
+        msg = E('ssdn:Message')
         msg.append(E('ssdn:Reference').setText(ref))
         msg.append(E('ssdn:TimeRequest').setText(format(dt)))
         
@@ -365,7 +365,7 @@ class SSDNRequest(CBSSRequest):
         
         
         #~ xg.set_default_namespace(SSDN)
-        e = E('ssdn:SSDNRequest')
+        e = E('ssdn:SSDNRequest',ns=NSSSDN)
         e.append(context)
         e.append(sr)
         
