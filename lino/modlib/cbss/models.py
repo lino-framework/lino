@@ -126,6 +126,7 @@ NSCOMMON = ('common','http://www.ksz-bcss.fgov.be/XSD/SSDN/Common')
 NSSSDN = ('ssdn','http://www.ksz-bcss.fgov.be/XSD/SSDN/Service')
 NSIPR = ('ipr',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
 NSMAR = ('mar',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess")
+NSWSC = ('wsc',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
 
 
 class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
@@ -259,7 +260,7 @@ class SSDNRequest(CBSSRequest):
         self.validate_against_xsd(srvreq,self.xsd_filename)
         
     
-    def execute_request(self,ar,validate=False):
+    def execute_request(self,ar,validate=False,now=None):
         """
         This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
@@ -272,7 +273,8 @@ class SSDNRequest(CBSSRequest):
         #~ if not self.id:
         self.save()
         #~ kw = self.get_request_params()
-        now = datetime.datetime.now()
+        if now is None:
+            now = datetime.datetime.now()
         try:
             #~ srvreq = self.cbss_namespace('ns1').build_request(**kw)
             #~ srvreq = self.cbss_namespace.build_request(**kw)
@@ -301,13 +303,21 @@ class SSDNRequest(CBSSRequest):
         #~ client.add_prefix(*NSSSDN)
         #~ client.add_prefix(*NSIPR)
         #~ client.add_prefix(*NSMAR)
+        #~ client.add_prefix(*NSWSC)
         #~ client = Client(url)
         #~ print 20120507, client
         
         #~ request_xml = etree.tostring(srvreq)
         try:
             #~ res = client.service.sendXML(request_xml)        
-            res = client.service.sendXML(wrapped_srvreq)        
+            #~ xmlString = client.factory.create('wsc:xmlString')
+            xmlString = E('wsc:xmlString',ns=NSWSC)
+            xmlString.setText(unicode(wrapped_srvreq))
+            if not settings.LINO.cbss_live_tests:
+                raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
+            #~ xmlString.append(wrapped_srvreq)
+            res = client.service.sendXML(xmlString)
+            #~ res = client.service.sendXML(wrapped_srvreq)
         except (IOError,Warning),e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)

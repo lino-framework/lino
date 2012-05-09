@@ -20,6 +20,7 @@ without any fixture. You can run only these tests by issuing::
 
   
 """
+import datetime
 import logging
 logger = logging.getLogger(__name__)
 
@@ -74,6 +75,7 @@ def test01(self):
     # save site settings
     saved_cbss_environment = settings.LINO.cbss_environment
     saved_cbss_user_params = settings.LINO.cbss_user_params
+    saved_cbss_live_tests = settings.LINO.cbss_live_tests
     
     # set fictive user params
     
@@ -108,26 +110,57 @@ Not actually sending because environment is empty. Request would be:
 </ipr:IdentifyPersonRequest>"""
     self.assertEqual(req.response_xml,expected)
     
-    if settings.LINO.cbss_live_tests:
-        # try it in test environment
-        settings.LINO.cbss_environment = 'test'
-        req.execute_request(None)
-        
-        if req.response_xml == TIMEOUT_MESSAGE:
-            self.fail("""\
+    settings.LINO.cbss_live_tests = False
+    # try it in test environment
+    settings.LINO.cbss_environment = 'test'
+    now = datetime.datetime(2012,5,9,18,34,50)
+    req.execute_request(None,now=now)
+    
+    if req.response_xml == TIMEOUT_MESSAGE:
+        self.fail("""\
 We got a timeout. 
 That's normal when this test is run behind an IP address that is not registered.
 Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
 """)
-        expected = """\
-        """
-        print req.response_xml
-        self.assertEqual(req.response_xml,expected)
+    #~ print req.response_xml
+    expected = """\
+NOT sending because `cbss_live_tests` is False:
+<wsc:xmlString xmlns:wsc="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">&lt;ssdn:SSDNRequest xmlns:ssdn=&quot;http://www.ksz-bcss.fgov.be/XSD/SSDN/Service&quot;&gt;
+   &lt;ssdn:RequestContext&gt;
+      &lt;ssdn:AuthorizedUser&gt;
+         &lt;ssdn:UserID&gt;12345678901&lt;/ssdn:UserID&gt;
+         &lt;ssdn:Email&gt;123@example.be&lt;/ssdn:Email&gt;
+         &lt;ssdn:OrgUnit&gt;123&lt;/ssdn:OrgUnit&gt;
+         &lt;ssdn:MatrixID&gt;12&lt;/ssdn:MatrixID&gt;
+         &lt;ssdn:MatrixSubID&gt;3&lt;/ssdn:MatrixSubID&gt;
+      &lt;/ssdn:AuthorizedUser&gt;
+      &lt;ssdn:Message&gt;
+         &lt;ssdn:Reference&gt;IdentifyPersonRequest # 1&lt;/ssdn:Reference&gt;
+         &lt;ssdn:TimeRequest&gt;20120509T183450&lt;/ssdn:TimeRequest&gt;
+      &lt;/ssdn:Message&gt;
+   &lt;/ssdn:RequestContext&gt;
+   &lt;ssdn:ServiceRequest&gt;
+      &lt;ssdn:ServiceId&gt;OCMWCPASIdentifyPerson&lt;/ssdn:ServiceId&gt;
+      &lt;ssdn:Version&gt;20050930&lt;/ssdn:Version&gt;
+      &lt;ipr:IdentifyPersonRequest xmlns:ipr=&quot;http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson&quot;&gt;
+         &lt;ipr:SearchCriteria&gt;
+            &lt;ipr:PhoneticCriteria&gt;
+               &lt;ipr:LastName&gt;MUSTERMANN&lt;/ipr:LastName&gt;
+               &lt;ipr:FirstName&gt;&lt;/ipr:FirstName&gt;
+               &lt;ipr:MiddleName&gt;&lt;/ipr:MiddleName&gt;
+               &lt;ipr:BirthDate&gt;1968-06-01&lt;/ipr:BirthDate&gt;
+            &lt;/ipr:PhoneticCriteria&gt;
+         &lt;/ipr:SearchCriteria&gt;
+      &lt;/ipr:IdentifyPersonRequest&gt;
+   &lt;/ssdn:ServiceRequest&gt;
+&lt;/ssdn:SSDNRequest&gt;</wsc:xmlString>"""
+    self.assertEqual(req.response_xml,expected)
     
-    # restore settings
+    # restore site settings
     
     settings.LINO.cbss_environment = saved_cbss_environment 
     settings.LINO.cbss_user_params = saved_cbss_user_params 
+    settings.LINO.cbss_live_tests = saved_cbss_live_tests
 
 def test02(self):
     """
