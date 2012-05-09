@@ -82,7 +82,6 @@ def test01(self):
     
     settings.LINO.cbss_environment = ''
     ipr.execute_request(None)
-    print ipr.response_xml
     expected = """\
 Not actually sending because environment is empty. Request would be:
 <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
@@ -110,6 +109,7 @@ Set your `cbss_user_params` settings to None to skip this test.
 """)
         expected = """\
         """
+        print ipr.response_xml
         self.assertEqual(ipr.response_xml,expected)
     
     settings.LINO.cbss_environment = saved_cbss_environment 
