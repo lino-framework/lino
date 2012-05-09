@@ -149,8 +149,11 @@ NOT sending because `cbss_live_tests` is False:
 &lt;/ssdn:SSDNRequest&gt;</wsc:xmlString>"""
     self.assertEqual(req.response_xml,expected)
     
-    if saved_cbss_live_tests:
-        settings.LINO.cbss_live_tests = True
+    settings.LINO.cbss_user_params = saved_cbss_user_params
+    settings.LINO.cbss_environment = saved_cbss_environment 
+    settings.LINO.cbss_live_tests = saved_cbss_live_tests
+    
+    if settings.LINO.cbss_live_tests:
         req.execute_request(None)
     
         if req.response_xml == TIMEOUT_MESSAGE:
@@ -163,11 +166,7 @@ Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
         self.assertEqual(req.response_xml,expected)
 
 
-    # restore site settings
     
-    settings.LINO.cbss_environment = saved_cbss_environment 
-    settings.LINO.cbss_user_params = saved_cbss_user_params 
-    settings.LINO.cbss_live_tests = saved_cbss_live_tests
 
 def test02(self):
     """
