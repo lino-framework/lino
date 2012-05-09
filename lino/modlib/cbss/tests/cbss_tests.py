@@ -147,6 +147,39 @@ NOT sending because `cbss_live_tests` is False:
       &lt;/ipr:IdentifyPersonRequest&gt;
    &lt;/ssdn:ServiceRequest&gt;
 &lt;/ssdn:SSDNRequest&gt;</wsc:xmlString>"""
+
+    expected = """\
+NOT sending because `cbss_live_tests` is False:
+<ssdn:SSDNRequest xmlns:ssdn="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
+   <ssdn:RequestContext>
+      <ssdn:AuthorizedUser>
+         <ssdn:UserID>12345678901</ssdn:UserID>
+         <ssdn:Email>123@example.be</ssdn:Email>
+         <ssdn:OrgUnit>123</ssdn:OrgUnit>
+         <ssdn:MatrixID>12</ssdn:MatrixID>
+         <ssdn:MatrixSubID>3</ssdn:MatrixSubID>
+      </ssdn:AuthorizedUser>
+      <ssdn:Message>
+         <ssdn:Reference>IdentifyPersonRequest # 1</ssdn:Reference>
+         <ssdn:TimeRequest>20120509T183450</ssdn:TimeRequest>
+      </ssdn:Message>
+   </ssdn:RequestContext>
+   <ssdn:ServiceRequest>
+      <ssdn:ServiceId>OCMWCPASIdentifyPerson</ssdn:ServiceId>
+      <ssdn:Version>20050930</ssdn:Version>
+      <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+         <ipr:SearchCriteria>
+            <ipr:PhoneticCriteria>
+               <ipr:LastName>MUSTERMANN</ipr:LastName>
+               <ipr:FirstName></ipr:FirstName>
+               <ipr:MiddleName></ipr:MiddleName>
+               <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+            </ipr:PhoneticCriteria>
+         </ipr:SearchCriteria>
+      </ipr:IdentifyPersonRequest>
+   </ssdn:ServiceRequest>
+</ssdn:SSDNRequest>"""
+
     self.assertEqual(req.response_xml,expected)
     
     settings.LINO.cbss_user_params = saved_cbss_user_params
