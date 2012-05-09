@@ -315,7 +315,7 @@ class SSDNRequest(CBSSRequest):
             xmlString = E('wsc:xmlString',ns=NSWSC)
             xmlString.setText(s)
             if settings.LINO.cbss_live_tests:
-                logger.debug("Gonna sendXML(<xmlString>):\n%s",s)
+                logger.info("Gonna sendXML(<xmlString>):\n%s",s)
             else:
                 #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
                 raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
