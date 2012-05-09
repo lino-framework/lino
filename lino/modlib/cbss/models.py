@@ -314,8 +314,9 @@ class SSDNRequest(CBSSRequest):
             s = unicode(wrapped_srvreq)
             xmlString = E('wsc:xmlString',ns=NSWSC)
             xmlString.setText(s)
-            #~ logger.debug("About to send:\n%s",s)
-            if not settings.LINO.cbss_live_tests:
+            if settings.LINO.cbss_live_tests:
+                logger.debug("Gonna sendXML(<xmlString>):\n%s",s)
+            else:
                 #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
                 raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
             #~ xmlString.append(wrapped_srvreq)
