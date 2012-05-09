@@ -346,7 +346,7 @@ class SSDNRequest(CBSSRequest):
                 msg = '\n'.join(list(cbss.reply2lines(reply)))
                 raise Exception(msg)
             
-        self.on_cbss_ok(reply)
+            self.on_cbss_ok(reply)
            
         if False:
           
