@@ -115,13 +115,6 @@ Not actually sending because environment is empty. Request would be:
     settings.LINO.cbss_environment = 'test'
     now = datetime.datetime(2012,5,9,18,34,50)
     req.execute_request(None,now=now)
-    
-    if req.response_xml == TIMEOUT_MESSAGE:
-        self.fail("""\
-We got a timeout. 
-That's normal when this test is run behind an IP address that is not registered.
-Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
-""")
     #~ print req.response_xml
     expected = """\
 NOT sending because `cbss_live_tests` is False:
@@ -156,6 +149,20 @@ NOT sending because `cbss_live_tests` is False:
 &lt;/ssdn:SSDNRequest&gt;</wsc:xmlString>"""
     self.assertEqual(req.response_xml,expected)
     
+    if saved_cbss_live_tests:
+        settings.LINO.cbss_live_tests = True
+        req.execute_request(None)
+    
+        if req.response_xml == TIMEOUT_MESSAGE:
+            self.fail("""\
+We got a timeout. 
+That's normal when this test is run behind an IP address that is not registered.
+Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
+""")
+        expected = ''
+        self.assertEqual(req.response_xml,expected)
+
+
     # restore site settings
     
     settings.LINO.cbss_environment = saved_cbss_environment 
