@@ -115,7 +115,7 @@ Not actually sending because environment is empty. Request would be:
     settings.LINO.cbss_environment = 'test'
     now = datetime.datetime(2012,5,9,18,34,50)
     req.execute_request(None,now=now)
-    #~ print req.response_xml
+    print req.response_xml
     expected = """\
 NOT sending because `cbss_live_tests` is False:
 <wsc:xmlString xmlns:wsc="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">&lt;ssdn:SSDNRequest xmlns:ssdn=&quot;http://www.ksz-bcss.fgov.be/XSD/SSDN/Service&quot;&gt;
