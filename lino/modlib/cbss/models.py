@@ -31,11 +31,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from suds.client import Client
-from suds.transport.http import HttpAuthenticated
-from suds.transport.http import HttpTransport
-from suds.sax.element import Element as E
-
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -58,6 +53,16 @@ from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
 from lino.modlib.contacts import models as contacts
 from lino.tools import makedirs_if_missing
+
+try:
+  
+    from suds.client import Client
+    from suds.transport.http import HttpAuthenticated
+    from suds.transport.http import HttpTransport
+    from suds.sax.element import Element as E
+
+except ExportError, e:
+    pass
 
 
 CBSS_ENVS = ('test', 'acpt', 'prod')

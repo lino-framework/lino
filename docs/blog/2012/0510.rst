@@ -1,0 +1,4 @@
+20120510
+========
+
+Installing Lino on a dreamhost.com account.

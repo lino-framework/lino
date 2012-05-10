@@ -65,9 +65,9 @@ Create directories
 
 Create the following directories and make them writeable by www-data::
 
-  # mkdir /var/snapshots /var/log/lino /usr/local/django
-  # chgrp -R www-data /var/snapshots /var/log/lino /usr/local/django
-  # chmod -R g+ws /var/snapshots /var/log/lino  /usr/local/django
+  # mkdir ~/snapshots /var/log/lino /usr/local/django
+  # chgrp -R www-data ~/snapshots /var/log/lino /usr/local/django
+  # chmod -R g+ws ~/snapshots /var/log/lino  /usr/local/django
 
 ``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory 
 it will inherit the group of the directory.
@@ -76,7 +76,7 @@ it will inherit the group of the directory.
 Download Lino
 -------------
 
-Go to the :file:`/var/snapshots` and do::
+Go to the :file:`~/snapshots` directory and do::
 
   hg clone https://lino.googlecode.com/hg/ lino
 
@@ -86,7 +86,10 @@ Just `Set up your Python path`_ manually (see below).
 Install Django
 --------------
 
-python-django
+Lino requires Django version 1.3 or later.
+To see whether Django is already installed (and which version)::
+
+  $ python -c 'import django; print django.get_version()'
 
 The Django version 1.2.3 provided 
 by the Debian Squeeze `python-django` package 
@@ -97,18 +100,18 @@ development version.
 
 To install Django 1.4::
 
-  cd /var/snapshots
+  cd ~/snapshots
   wget https://www.djangoproject.com/m/releases/1.4/Django-1.4.tar.gz
   tar xzvf Django-1.4.tar.gz
   ln -s Django-1.4 django
 
 To install Django's latest development snapshot::
 
-  cd /var/snapshots
+  cd ~/snapshots
   svn co http://code.djangoproject.com/svn/django/trunk/ django
   
 We suggest to *not* run Django's :file:`setup.py` since that's 
-not needed for Lino and removes flexibility to switch from one 
+not needed for Lino and makes it more difficult to switch from one 
 version to the other.
 Just remember where you installed it and 
 specify this path in your your :xfile:`settings.py` 
@@ -120,7 +123,7 @@ Install other software
 You'll also need to install
 :term:`ExtJS` 
 and :term:`appy_pod` 
-into `/var/snapshots/`::
+into `~/snapshots/`::
 
   wget http://extjs.cachefly.net/ext-3.3.1.zip
   unzip ext-3.3.1.zip
@@ -332,9 +335,9 @@ It is the central place where Lino expects static files to be served.
 You must manually add the following symbolic links in order to 
 tell Lino where certain other software is installed on your server::
 
-  ln -s /var/snapshots/lino/media media/lino
-  ln -s /var/snapshots/ext-3.3.1 media/extjs
-  ln -s /var/snapshots/extensible-1.0.1 media/extensible
+  ln -s ~/snapshots/lino/media media/lino
+  ln -s ~/snapshots/ext-3.3.1 media/extjs
+  ln -s ~/snapshots/extensible-1.0.1 media/extensible
   ln -s /usr/share/tinymce/www media/tinymce
   
 Besides these manual entries, 
