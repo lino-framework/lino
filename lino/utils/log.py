@@ -170,7 +170,7 @@ def configure(config):
             #~ assert dblogger != logger
             #~ dblogger.setLevel(logging.INFO)
             #~ dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
-        except IOError:
+        except IOError,e:
             linoLogger.exception("Failed to create log file %s : %s",logfile,e)
             
     
