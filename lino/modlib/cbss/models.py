@@ -61,7 +61,7 @@ try:
     from suds.transport.http import HttpTransport
     from suds.sax.element import Element as E
 
-except ExportError, e:
+except ImportError, e:
     pass
 
 

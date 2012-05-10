@@ -118,7 +118,7 @@ def configure(config):
     #~ sudsLogger = logging.getLogger('suds')
     
     if len(linoLogger.handlers) != 0:
-        if True:
+        if not True:
             raise Exception("Lino logger has already %d handlers: %s",
                 len(linoLogger.handlers),linoLogger.handlers)
         linoLogger.info(
