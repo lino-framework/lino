@@ -154,22 +154,25 @@ def configure(config):
             from os.path import join
             logfile = datetime.date.today().strftime('%Y-%m-%d.log')
             logfile = join(settings.LINO.project_dir,'log',filename)
-      
-        kw = {}
-        for k in ('mode','encoding','maxBytes','backupCount'):
-            if config.has_key(k):
-                kw[k] = config[k]
-        h = file_handler(logfile,rotate,**kw)
-        #~ h.setLevel(level)
-        linoLogger.addHandler(h)
-        djangoLogger.addHandler(h)
-        #~ sudsLogger.addHandler(h)
-        #~ print __file__, level, logfile
-        
-        #~ dblogger = logging.getLogger('db')
-        #~ assert dblogger != logger
-        #~ dblogger.setLevel(logging.INFO)
-        #~ dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
+        try:
+            kw = {}
+            for k in ('mode','encoding','maxBytes','backupCount'):
+                if config.has_key(k):
+                    kw[k] = config[k]
+            h = file_handler(logfile,rotate,**kw)
+            #~ h.setLevel(level)
+            linoLogger.addHandler(h)
+            djangoLogger.addHandler(h)
+            #~ sudsLogger.addHandler(h)
+            #~ print __file__, level, logfile
+            
+            #~ dblogger = logging.getLogger('db')
+            #~ assert dblogger != logger
+            #~ dblogger.setLevel(logging.INFO)
+            #~ dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
+        except IOError:
+            linoLogger.exception("Failed to create log file %s : %s",logfile,e)
+            
     
     try:
         if sys.stdout.isatty():
