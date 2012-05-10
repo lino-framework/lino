@@ -673,9 +673,11 @@ class ExtUI(base.UI):
         #~ source, origin = find_template('welcome.html')
         #~ print source, origin
         
-        fn = find_config_file('welcome.html')
-        logger.info("Using welcome template %s",fn)
-        self.welcome_template = CheetahTemplate(file(fn).read())
+        if False:
+            fn = find_config_file('welcome.html')
+            logger.info("Using welcome template %s",fn)
+            self.welcome_template = CheetahTemplate(file(fn).read())
+        
         self.build_site_cache()
         #~ self.generate_linolib_messages()
         
@@ -1121,7 +1123,8 @@ tinymce.init({
           #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
         )
         
-        if not on_ready:
+        #~ if not on_ready:
+        if False:
             #~ c = RequestContext(request,dict(site=self.site,lino=lino))
             self.welcome_template.ui = self
             self.welcome_template.request = request

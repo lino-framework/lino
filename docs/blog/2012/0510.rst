@@ -2,3 +2,5 @@
 ========
 
 Installing Lino on a dreamhost.com account.
+
+The `welcome.html` template isn't used anymore.
