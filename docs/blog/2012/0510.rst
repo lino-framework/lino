@@ -4,3 +4,29 @@
 Installing Lino on a dreamhost.com account.
 
 The `welcome.html` template isn't used anymore.
+
+In `django.core.management.__init__.py` there's a function `get_commands()`::
+
+    global _commands
+    if _commands is None:
+        _commands = dict([(name, 'django.core') for name in find_commands(__path__[0])])
+
+        # Find the installed apps
+        try:
+            from django.conf import settings
+            apps = settings.INSTALLED_APPS
+        except (AttributeError, EnvironmentError, ImportError):
+            raise Exception("20120426")
+            apps = []
+
+
+Very strange behaviour to silently ignore any 
+`(AttributeError, EnvironmentError, ImportError)`!
+I ignore why they did this.
+It has at least one side effect: 
+if the logger config (the function defined in :setting:`LOGGING`) 
+tries and fails to create a logfile, then it raises an IOError 
+(a subclass of EnvironmentError).
+And you get no error message at all.
+`manage.py validate` reports "0 errors", 
+but nothing works. 
