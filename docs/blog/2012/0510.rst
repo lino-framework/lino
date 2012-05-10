@@ -3,7 +3,7 @@
 
 Installing Lino on a dreamhost.com account.
 
-The `welcome.html` template isn't used anymore.
+The `welcome.html` template isn't used anymore but was still parsed. Fixed.
 
 In `django.core.management.__init__.py` there's a function `get_commands()`::
 
@@ -16,17 +16,18 @@ In `django.core.management.__init__.py` there's a function `get_commands()`::
             from django.conf import settings
             apps = settings.INSTALLED_APPS
         except (AttributeError, EnvironmentError, ImportError):
-            raise Exception("20120426")
+            raise # <<-- add this to correct Django's behaviour
             apps = []
 
 
-Very strange behaviour to silently ignore any 
-`(AttributeError, EnvironmentError, ImportError)`!
-I ignore why they did this.
-It has at least one side effect: 
+Django features a very strange behaviour of silently ignoring 
+any `(AttributeError, EnvironmentError, ImportError)` 
+that occurs during initialization.
+I ignore why they did this, but it has at least one side effect: 
 if the logger config (the function defined in :setting:`LOGGING`) 
-tries and fails to create a logfile, then it raises an IOError 
+tries and fails to create a logfile, then it raises an `IOError` 
 (a subclass of EnvironmentError).
 And you get no error message at all.
 `manage.py validate` reports "0 errors", 
-but nothing works. 
+but nothing works because not all :setting:`INSTALLED_APPS` 
+have been loaded.
