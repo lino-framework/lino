@@ -145,6 +145,25 @@ def configure(config):
     #~ sudsLogger.addHandler(aeh)
     
         
+    try:
+        if sys.stdout.isatty():
+            #~ print 20110728, sys.stdout.encoding
+            #~ if sys.stdout.encoding == 'ascii':
+                #~ raise Exception("Your tty's encoding is ascii, that will lead to problems" % )
+            h = logging.StreamHandler()
+            #~ h.setLevel(level)
+            if logfile is not None:
+                h.setLevel(logging.INFO)
+            fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
+            h.setFormatter(fmt)
+            linoLogger.addHandler(h)
+            #~ sudsLogger.addHandler(h)
+            djangoLogger.addHandler(h)
+    except IOError:
+        # happens under mod_wsgi
+        linoLogger.info("mod_wsgi mode (no sys.stdout)")
+        #~ pass
+        
     if logfile is not None:
       
         if False and logfile.lower() == "auto":
@@ -175,23 +194,4 @@ def configure(config):
             linoLogger.exception(e)
             
     
-    try:
-        if sys.stdout.isatty():
-            #~ print 20110728, sys.stdout.encoding
-            #~ if sys.stdout.encoding == 'ascii':
-                #~ raise Exception("Your tty's encoding is ascii, that will lead to problems" % )
-            h = logging.StreamHandler()
-            #~ h.setLevel(level)
-            if logfile is not None:
-                h.setLevel(logging.INFO)
-            fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
-            h.setFormatter(fmt)
-            linoLogger.addHandler(h)
-            #~ sudsLogger.addHandler(h)
-            djangoLogger.addHandler(h)
-    except IOError:
-        # happens under mod_wsgi
-        linoLogger.info("mod_wsgi mode (no sys.stdout)")
-        #~ pass
-        
     #~ linoLogger.info("20120408 linoLogger.handlers: %s", linoLogger.handlers)
