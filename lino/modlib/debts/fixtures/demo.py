@@ -28,27 +28,27 @@ from lino.tools import resolve_model
 from lino.utils.babel import babel_values
 
 from lino.modlib.debts.models import AccountType
-
+    
 def objects():
-    group = Instantiator('debts.ItemGroup').build
+    group = Instantiator('debts.AccountGroup').build
     g = group(account_type=AccountType.income,**babel_values('name',
           de=u"Monatliche Einkünfte",
           fr=u"Revenus mensuels",
           en=u"Monthly incomes"
           ))
     yield g
-    item = Instantiator('debts.Item',group=g).build
-    yield item(**babel_values('name',
+    account = Instantiator('debts.Account',group=g).build
+    yield account(required_for_person=True,**babel_values('name',
           de=u"Gehälter",
           fr=u"Salaires",
           en=u"Salaries"
           ))
-    yield item(**babel_values('name',
+    yield account(required_for_person=True,**babel_values('name',
           de=u"Renten",
           fr=u"Pension",
           en=u"Pension"
           ))
-    yield item(**babel_values('name',
+    yield account(required_for_person=True,**babel_values('name',
           de=u"Integrationszulage",
           fr=u"Allocation d'intégration",
           en=u"Integration aid"
@@ -60,13 +60,13 @@ def objects():
           en=u"Yearly incomes"
           ))
     yield g
-    item = Instantiator('debts.Item',group=g).build
-    yield item(**babel_values('name',
+    account = Instantiator('debts.Account',group=g).build
+    yield account(required_for_person=True,**babel_values('name',
           de=u"Urlaubsgeld",
           fr=u"Congé payé",
           en=u""
           ))
-    yield item(**babel_values('name',
+    yield account(required_for_person=True,**babel_values('name',
           de=u"Jahresendzulage",
           fr=u"Prime de fin d'année",
           en=u""
@@ -78,13 +78,13 @@ def objects():
           en=u"Monthly expenses"
           ))
     yield g
-    item = Instantiator('debts.Item',group=g).build
-    yield item(**babel_values('name',
+    account = Instantiator('debts.Account',group=g).build
+    yield account(required_for_household=True,**babel_values('name',
           de=u"Miete",
           fr=u"Loyer",
           en=u""
           ))
-    yield item(**babel_values('name',
+    yield account(required_for_household=True,**babel_values('name',
           de=u"Strom",
           fr=u"Electricité",
           en=u"Electricity"
@@ -97,33 +97,101 @@ def objects():
           en=u"Taxes"
           ))
     yield g
-    item = Instantiator('debts.Item',group=g,yearly=True).build
-    yield item(**babel_values('name',
+    account = Instantiator('debts.Account',group=g,yearly=True).build
+    yield account(required_for_household=True,**babel_values('name',
           de=u"Müllsteuer",
           fr=u"Taxe déchets",
           en=u""
           ))
 
-    budget = Instantiator('debts.Budget').build
+    g = group(account_type=AccountType.asset,**babel_values('name',
+          de=u"Aktiva, Vermögen, Kapital",
+          fr=u"Actifs",
+          en=u"Assets"
+          ))
+    yield g
+    account = Instantiator('debts.Account',group=g).build
+    yield account(**babel_values('name',
+          de=u"Vermögen",
+          fr=u"Propriété",
+          en=u"Assets"
+          ))
+    account = Instantiator('debts.Account',group=g).build
+    yield account(**babel_values('name',
+          de=u"Haus",
+          fr=u"Maison",
+          en=u"House"
+          ))
+    yield account(**babel_values('name',
+          de=u"Auto",
+          fr=u"Voiture",
+          en=u"Car"
+          ))
+    
+    
+    g = group(account_type=AccountType.liability,**babel_values('name',
+          de=u"Guthaben, Schulden, Verbindlichkeit",
+          fr=u"Créances et dettes",
+          en=u"Liabilities"
+          ))
+    yield g
+    account = Instantiator('debts.Account',group=g).build
+    yield account(**babel_values('name',
+          de=u"Kredite",
+          fr=u"Crédits",
+          en=u"Loans"
+          ))
+    yield account(**babel_values('name',
+          de=u"Schulden",
+          fr=u"Emprunts",
+          en=u"Debts"
+          ))
+    yield account(**babel_values('name',
+          de=u"Gerichtsvollzieher",
+          fr=u"Juge",
+          en=u"Judge"
+          ))
+    yield account(**babel_values('name',
+          de=u"Zahlungsrückstände",
+          fr=u"Factures à payer",
+          en=u"Invoices to pay"
+          ))
+
+    #~ budget = Instantiator('debts.Budget').build
     from lino.modlib.users.models import User
     root = User.objects.get(username='root')
     
-    Family = resolve_model('families.Family')
-    for fam in Family.objects.all():
-        #~ yield budget(partner_id=118,user=root)
-        yield budget(partner=fam,user=root)
+    Household = resolve_model('households.Household')
+    Budget = resolve_model('debts.Budget')
+    Actor = resolve_model('debts.Actor')
+    for hh in Household.objects.all():
+        #~ sub_budgets = []
+        for p in hh.member_set.all():
+            yield Budget(partner_id=p.person.id,user=root)
+            #~ sub_budgets.append(b)
+            #~ yield b
+        yield Budget(partner_id=hh.id,user=root)
+        #~ yield b
+        #~ for sb in sub_budgets:
+            #~ yield Actor(budget=b,sub_budget=sb)
         
     Budget = resolve_model('debts.Budget')
-    Debt = resolve_model('debts.Debt')
+    #~ Debt = resolve_model('debts.Debt')
+    Entry = resolve_model('debts.Entry')
+    Account = resolve_model('debts.Account')
     Company = resolve_model('contacts.Company')
-    #~ AMOUNTS = Cycler(10,200,0,30,40,0,0,50)
-    AMOUNTS = Cycler([i*5 for i in range(10)])
+    AMOUNTS = Cycler([i*5.24 for i in range(10)])
     PARTNERS = Cycler(Company.objects.all())
+    ACCOUNTS = Cycler(Account.objects.filter(type=AccountType.liability))
     for b in Budget.objects.all():
-        n = min(3,b.actor_set.count())
+        #~ n = min(3,b.actor_set.count())
         for e in b.entry_set.all():
-            for i in range(n):
-                setattr(e,'amount%d'%(i+1),AMOUNTS.pop())
-                e.save()
+            #~ for i in range(n):
+            e.amount = AMOUNTS.pop()
+            e.save()
         for i in range(3):
-            yield Debt(budget=b,partner=PARTNERS.pop(),amount=AMOUNTS.pop()*5)
+            a = int(AMOUNTS.pop()*5)
+            yield Entry(budget=b,
+                account=ACCOUNTS.pop(),
+                partner=PARTNERS.pop(),amount=a,
+                monthly_rate=decimal.Decimal(a)/20)

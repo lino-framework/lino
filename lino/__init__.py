@@ -506,7 +506,14 @@ class Lino(object):
     decimal_separator = ','
     """
     Set this to either ``'.'`` or ``','`` to define wether to use 
-    comma or dot as decimal separator when entering a `DecimalField`.
+    comma or dot as decimal point separator when entering 
+    a `DecimalField`.
+    """
+    
+    #~ decimal_group_separator = ','
+    decimal_group_separator = ' '
+    """
+    Decimal group separator for :func:`lino.utils.moneyfmt`.
     """
 
     

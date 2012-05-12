@@ -144,6 +144,7 @@ class GridColumn(Component):
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
             def fk_renderer(fld,name):
+                # FK fields are clickable if their target has a detail view
                 rpt = fld.rel.to._lino_default_table
                 if rpt.detail_action is not None:
                     return "Lino.fk_renderer('%s','Lino.%s')" % (
@@ -153,21 +154,23 @@ class GridColumn(Component):
             rend = None
             if isinstance(editor.field,models.AutoField):
                 rend = 'Lino.id_renderer'
-                #~ kw.update(renderer=js_code('Lino.id_renderer'))
             elif isinstance(editor.field,dd.DisplayField):
                 rend = 'Lino.raw_renderer'
             elif isinstance(editor.field,models.TextField):
                 rend = 'Lino.text_renderer'
+            #~ elif isinstance(editor.field,models.DecimalField):
+                #~ rend = 'Lino.hide_zero_renderer'
             elif isinstance(editor.field,dd.LinkedForeignKey):
                 rend = "Lino.lfk_renderer(this,'%s')" % \
                   (editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX)
             elif isinstance(editor.field,models.ForeignKey):
-                # FK fields are clickable if their target has a detail view
                 rend = fk_renderer(editor.field,editor.field.name)
-            elif isinstance(editor.field,fields.VirtualField) \
-              and isinstance(editor.field.return_type,models.ForeignKey):
-                # FK fields are clickable if their target has a detail view
-                rend = fk_renderer(editor.field.return_type,editor.field.name)
+            elif isinstance(editor.field,fields.VirtualField):
+                if isinstance(editor.field.return_type,models.ForeignKey):
+                    rend = fk_renderer(editor.field.return_type,editor.field.name)
+                #~ elif isinstance(editor.field.return_type,models.DecimalField):
+                    #~ print "20120510 Lino.hide_zero_renderer", editor.field.name
+                    #~ rend = 'Lino.hide_zero_renderer'
             #~ elif isinstance(editor.field,dd.GenericForeignKeyIdField):
                 #~ rend = "Lino.gfk_renderer()"
             if rend:

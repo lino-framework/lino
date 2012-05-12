@@ -2465,7 +2465,8 @@ tinymce.init({
             
             
         yield "    this.ls_columns = %s;" % py2js([ 
-            ext_elems.GridColumn(i,e) for i,e in enumerate(rh.list_layout.main.columns)])
+            ext_elems.GridColumn(i,e) for i,e 
+                in enumerate(rh.list_layout.main.columns)])
             
         yield "    this.columns = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);"
 

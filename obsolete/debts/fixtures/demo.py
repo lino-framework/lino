@@ -27,8 +27,8 @@ from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
 from lino.utils.babel import babel_values
 
-from lino.sandbox.debts.models import AccountType
-    
+from lino.modlib.debts.models import AccountType
+
 def objects():
     group = Instantiator('debts.ItemGroup').build
     g = group(account_type=AccountType.income,**babel_values('name',
@@ -38,17 +38,17 @@ def objects():
           ))
     yield g
     item = Instantiator('debts.Item',group=g).build
-    yield item(required_for_person=True,**babel_values('name',
+    yield item(**babel_values('name',
           de=u"Gehälter",
           fr=u"Salaires",
           en=u"Salaries"
           ))
-    yield item(required_for_person=True,**babel_values('name',
+    yield item(**babel_values('name',
           de=u"Renten",
           fr=u"Pension",
           en=u"Pension"
           ))
-    yield item(required_for_person=True,**babel_values('name',
+    yield item(**babel_values('name',
           de=u"Integrationszulage",
           fr=u"Allocation d'intégration",
           en=u"Integration aid"
@@ -61,12 +61,12 @@ def objects():
           ))
     yield g
     item = Instantiator('debts.Item',group=g).build
-    yield item(required_for_person=True,**babel_values('name',
+    yield item(**babel_values('name',
           de=u"Urlaubsgeld",
           fr=u"Congé payé",
           en=u""
           ))
-    yield item(required_for_person=True,**babel_values('name',
+    yield item(**babel_values('name',
           de=u"Jahresendzulage",
           fr=u"Prime de fin d'année",
           en=u""
@@ -79,12 +79,12 @@ def objects():
           ))
     yield g
     item = Instantiator('debts.Item',group=g).build
-    yield item(required_for_household=True,**babel_values('name',
+    yield item(**babel_values('name',
           de=u"Miete",
           fr=u"Loyer",
           en=u""
           ))
-    yield item(required_for_household=True,**babel_values('name',
+    yield item(**babel_values('name',
           de=u"Strom",
           fr=u"Electricité",
           en=u"Electricity"
@@ -98,40 +98,32 @@ def objects():
           ))
     yield g
     item = Instantiator('debts.Item',group=g,yearly=True).build
-    yield item(required_for_household=True,**babel_values('name',
+    yield item(**babel_values('name',
           de=u"Müllsteuer",
           fr=u"Taxe déchets",
           en=u""
           ))
 
-    #~ budget = Instantiator('debts.Budget').build
+    budget = Instantiator('debts.Budget').build
     from lino.modlib.users.models import User
     root = User.objects.get(username='root')
     
-    Household = resolve_model('households.Household')
-    Budget = resolve_model('debts.Budget')
-    Actor = resolve_model('debts.Actor')
-    for hh in Household.objects.all():
-        #~ sub_budgets = []
-        for p in hh.member_set.all():
-            yield Budget(partner_id=p.person.id,user=root)
-            #~ sub_budgets.append(b)
-            #~ yield b
-        yield Budget(partner_id=hh.id,user=root)
-        #~ yield b
-        #~ for sb in sub_budgets:
-            #~ yield Actor(budget=b,sub_budget=sb)
+    Family = resolve_model('families.Family')
+    for fam in Family.objects.all():
+        #~ yield budget(partner_id=118,user=root)
+        yield budget(partner=fam,user=root)
         
     Budget = resolve_model('debts.Budget')
     Debt = resolve_model('debts.Debt')
     Company = resolve_model('contacts.Company')
+    #~ AMOUNTS = Cycler(10,200,0,30,40,0,0,50)
     AMOUNTS = Cycler([i*5 for i in range(10)])
     PARTNERS = Cycler(Company.objects.all())
     for b in Budget.objects.all():
-        #~ n = min(3,b.actor_set.count())
+        n = min(3,b.actor_set.count())
         for e in b.entry_set.all():
-            #~ for i in range(n):
-            e.amount = AMOUNTS.pop()
-            e.save()
+            for i in range(n):
+                setattr(e,'amount%d'%(i+1),AMOUNTS.pop())
+                e.save()
         for i in range(3):
             yield Debt(budget=b,partner=PARTNERS.pop(),amount=AMOUNTS.pop()*5)

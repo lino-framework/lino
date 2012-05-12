@@ -254,6 +254,11 @@ Short-term
 Medium-term
 -----------
 
+#.  :meth:`lino.utils.appy_pod.Renderer.insert_table`: 
+    Zero values are currently *always* hidden (printed as 
+    empty cells, not "0" or "0,00") 
+    It is not yet possible to configure this behaviour.
+
 #.  Lino doesn't yet support remote fields to a virtual field.
     That's why we don't have columns `person__age` 
     and `person__address_column` in :class:`Offene Kursanfragen 

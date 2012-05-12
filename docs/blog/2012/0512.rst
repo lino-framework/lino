@@ -1,0 +1,21 @@
+20120512
+========
+
+Schuldnerberatung
+-----------------
+
+Continued with :doc:`/tickets/63`.
+
+Ha! Noch eine doppelte Überraschung: Das Modell `Debt` war gar nicht nötig, 
+sondern auch Schulden werden als `Entry` erfasst. 
+Und gratis dazu gibt es jetzt probeweise auch noch eine Tabelle "Assets" (Vermögen). 
+Darin könnte man eventuell vorhandenes verkaufbares Vermögen eingeben, 
+z.B. ein Haus oder ein Auto, das der Schuldner besitzt. Wird zwar in der Praxis 
+kaum vorkommen, aber theoretisch will ich das im Prototypen mal zeigen.
+Also die erste Überraschung war, dass ich da nicht gleich drauf gekommen bin. 
+Die zweite Überraschung war, wie schmerzlos diese fundamentale Änderung der Datenbankstruktur dank Lino vonstatten ging. Hat keine halbe Stunde gedauert.
+Ein anschauliches Beispiel für für Linos Särke beim rapid prototyping.
+
+
+Und jetzt funktionieren auch monthly_rate und Zusammenfassung
+(letztere hat noch einen Bug bei der Formatierung / Summierung der Beträge)

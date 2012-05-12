@@ -50,6 +50,7 @@ from lino.utils import iif
 from lino.tools import obj2str
 from lino.utils import IncompleteDate
 from lino.utils import tables
+from lino.utils import moneyfmt
 
 from lino.utils.xmlgen import html as xghtml
 
@@ -110,11 +111,26 @@ class StoreField(object):
 
     def value2html(self,ar,v):
         """
-        Return a HTML chunk that renders the given value.
+        Return a HTML representation of the given value. 
+        The possible return values may be:
+        
+        - a basestring (of which any special characters will be escaped)
+        - an xml.etree.ElementTree.Element
+        
+        The default implementation returns a unicode string obtained from :meth:`format_value`.
         """
         #~ return "<span>%s</span>" % force_unicode(v)
-        return force_unicode(v)
+        return self.format_value(ar,v)
       
+    def format_sum(self,ar,sums,i):
+        return ''
+        
+    def format_value(self,ar,v):
+        """
+        Return a plain textual representation of this value as a unicode string.
+        """
+        return force_unicode(v)
+        
     #~ def value2odt(self,ar,v,tc,**params):
         #~ """
         #~ Add the necessary :term:`odfpy` element(s) to the containing element `tc`.
@@ -323,6 +339,8 @@ class VirtStoreField(StoreField):
         self.value2html = delegate.value2html
         self.value2list = delegate.value2list
         self.value2dict = delegate.value2dict
+        self.format_value = delegate.format_value
+        self.format_sum = delegate.format_sum
         #~ self.form2obj = delegate.form2obj
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
@@ -379,6 +397,8 @@ class RequestStoreField(StoreField):
         #~ params.update(text=self.format_value(ar,v))
         #~ tc.addElement(odf.text.P(**params))
         
+    def format_sum(self,ar,sums,i):
+        return self.format_value(ar,sums[i])
 
         
     def format_value(self,ar,v):
@@ -542,7 +562,26 @@ class DecimalStoreField(StoreField):
     def value2int(self,v):
         #~ print "20120426 %s value2int(%s)" % (self,v)
         return v
+        
+    #~ def full_value_from_object(self,request,obj):
+        #~ v = self.field.value_from_object(obj)
+        #~ print "20120511 full_value_from_object", self, v
+        #~ if v == 0:
+            #~ return None
+        #~ return v
+    
+    def format_value(self,ar,v):
+        if not v:
+            return ''
+        return moneyfmt(v,places=self.field.decimal_places,
+          sep=settings.LINO.decimal_group_separator,
+          dp=settings.LINO.decimal_separator)
+        #~ return str(v).replace('.',settings.LINO.decimal_separator)
   
+    def format_sum(self,ar,sums,i):
+        return self.format_value(ar,sums[i])
+        
+
 class BooleanStoreField(StoreField):
     """
     This class wouldn't be necessary if Django's 

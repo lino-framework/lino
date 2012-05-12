@@ -1,0 +1,57 @@
+20120511
+========
+
+
+Schuldnerberatung
+-----------------
+
+Continued with :doc:`/tickets/63`.
+
+- Number formatting. 
+  :meth:`lino.utils.appy_pod.Renderer.insert_table` 
+  (the central method used for printing tables)
+  now formats numbers more or less correctly.
+  Is respects :attr:`lino.Lino.decimal_separator` 
+  and the new setting :attr:`lino.Lino.decimal_group_separator`.
+  Most of the work is done by 
+  :meth:`lino.ui.extjs2.ext_store.StoreField.value2html`
+  and 
+  :meth:`lino.ui.extjs2.ext_store.StoreField.format_value`,
+  and the 
+  new method :meth:`lino.ui.extjs2.ext_store.StoreField.format_sum`.
+
+
+  Note: Zero values are currently *always* hidden (printed as 
+  empty cells, not "0" or "0,00") 
+  It is not yet possible to configure this behaviour.
+  
+ 
+
+Remains to do:
+
+- Print general summary of a budget:
+
+  - Monatliche Einkünfte
+  - Monatliche Ausgaben inkl Raten der laufenden Kredite
+  - Monatliche Reserve Steuern
+  - Monatliche Reserve Versicherungen
+  - Restbetrag für Kredite und Zahlungsrückstände:
+  - Total Kredite / Schulden / Gerichtsvollzieher / Zahlungsrückstände
+  
+- Hide the "Debts Mediation" tab (BudgetsByPartner) for Users without `is_debts`. 
+
+- Eingabe in der Grid ist umständlich:
+
+  - handleKeyDown optimieren
+  - nicht nach jeder Zelle ein refresh machen
+  
+
+To discuss when first prototype is available:
+
+- Jährliche Beträge
+
+- Debt.status : "Kredit", "Schuld", "Gerichtsvollzieher"?
+
+- Debt.rate (Monatsrate)?
+
+- Entries are printed by Group, but displayed on screen by type...

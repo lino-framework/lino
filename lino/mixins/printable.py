@@ -40,7 +40,7 @@ from lino import dd
 
 from lino.core import actions
 from lino.core import fields
-from lino.utils import iif
+from lino.utils import iif, moneyfmt
 from lino.utils import babel 
 #~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
@@ -55,10 +55,10 @@ try:
 except ImportError:
     pisa = None
 
-try:
-    import appy
-except ImportError:
-    appy = None
+#~ try:
+    #~ import appy
+#~ except ImportError:
+    #~ appy = None
     
 try:
     import pyratemp
@@ -284,6 +284,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             babelitem=babel.babelitem,
             tr=babel.babelitem,
             iif=iif,
+            mtos=moneyfmt,
             settings=settings,
             ar=ar,
             #~ restify=restify,

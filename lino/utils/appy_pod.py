@@ -291,12 +291,12 @@ class Renderer(AppyRenderer):
             #~ text = html2odt.html2odt(fld.value2html(ar,val))
             params = dict()
             if isinstance(fld,ext_store.BooleanStoreField):
-                text=fld.value2html(val)
+                text = fld.value2html(val)
             elif isinstance(fld,ext_store.RequestStoreField):
                 #~ params.update(text=force_unicode(val))
-                text=fld.format_value(ar,v)
+                text = fld.format_value(ar,v)
             else:
-                text=force_unicode(val)
+                text = force_unicode(val)
             #~ params.update(style_name=style.style_name)
             #~ params.update(style_name=odf.style.getnsattr(style,'name'))
             #~ e = fld.value2odt(ar,val)
@@ -562,11 +562,11 @@ class Renderer(AppyRenderer):
             params = dict()
             if isinstance(fld,ext_store.BooleanStoreField):
                 params.update(text=fld.value2html(ar,val))
-            elif isinstance(fld,ext_store.RequestStoreField):
-                #~ params.update(text=force_unicode(val))
-                params.update(text=fld.format_value(ar,v))
+            #~ elif isinstance(fld,ext_store.RequestStoreField):
+                #~ params.update(text=fld.format_value(ar,v))
             else:
-                params.update(text=force_unicode(val))
+                params.update(text=fld.format_value(ar,val))
+                #~ params.update(text=force_unicode(val))
             params.update(stylename=style_name)
             #~ e = fld.value2odt(ar,val)
             p = text.P(**params)
@@ -618,13 +618,9 @@ class Renderer(AppyRenderer):
             table_rows.addElement(tr)
             for i,fld in enumerate(fields):
                 tc = TableCell(stylename=cell_style)
-                v = sums[i]
                 stylename = fldstyle(fld)
-                if v == 0:
-                    s = ''
-                else:
-                    s = str(v)
-                tc.addElement(text.P(stylename=stylename,text=s))
+                tc.addElement(text.P(stylename=stylename,
+                    text=fld.format_sum(ar,sums,i)))
                 tr.addElement(tc)
             
 

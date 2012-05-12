@@ -1,7 +1,10 @@
 20120510
 ========
 
-Installing Lino on a dreamhost.com account.
+Lino on a shared host
+---------------------
+
+Got Lino running in the shell of a shared host. 
 
 The `welcome.html` template isn't used anymore but was still parsed. Fixed.
 
@@ -31,3 +34,65 @@ And you get no error message at all.
 `manage.py validate` reports "0 errors", 
 but nothing works because not all :setting:`INSTALLED_APPS` 
 have been loaded.
+Changed :func:`lino.utils.log.configure` 
+so that in case of an IOError when trying to open the log file 
+it just logs an exception to the other handlers.
+
+TODO: 
+
+- https://docs.djangoproject.com/en/dev/howto/deployment/fastcgi/?from=olddocs
+- Documentation needs update :doc:`/admin/install_debian`
+
+
+Schuldnerberatung
+-----------------
+
+Continued with :doc:`/tickets/63`.
+Moved lino.modlib.debts to lino.obsolete.debts.
+Moved lino.sandbox.debts to lino.modlib.debts.
+
+.. currentmodule: lino.modlib.debts.models
+
+New table :class:`DebtsSummaryByBudget`.
+
+Done:
+
+- SummaryTable für Schulden. Diese werden nicht gruppiert, aber wohl in die Kolonne 
+  ihres Akteurs eingetragen und insgesamt nach Datum o.ä. sortiert. 
+  
+
+Remains to do:
+
+- Hide the "Debts Mediation" tab (BudgetsByPartner) for Users without `is_debts`. 
+
+- How to render zero values on screen and paper
+
+- Print general summary of a budget:
+
+  - Monatliche Einkünfte
+  - Monatliche Ausgaben inkl Raten der laufenden Kredite
+  - Monatliche Reserve Steuern
+  - Monatliche Reserve Versicherungen
+  - Restbetrag für Kredite und Zahlungsrückstände:
+  - Total Kredite / Schulden / Gerichtsvollzieher / Zahlungsrückstände
+
+
+
+
+  
+  
+- Eingabe in der Grid ist umständlich:
+
+  - handleKeyDown optimieren
+  - nicht nach jeder Zelle ein refresh machen
+  
+- Jährliche Beträge
+
+
+To discuss when first prototype is available:
+
+- Debt.status : "Kredit", "Schuld", "Gerichtsvollzieher"?
+
+- Debt.rate (Monatsrate)?
+
+- Entries are printed by Group, but displayed on screen by type...

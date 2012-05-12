@@ -132,7 +132,8 @@ class Chooser(FieldChooser):
 
     def get_request_choices(self,request,tbl):
         """
-        Return a list of choices for this chooser, using a HttpRequest to build the context.
+        Return a list of choices for this chooser, 
+        using a HttpRequest to build the context.
         """
         kw = {}
         

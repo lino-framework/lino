@@ -1520,6 +1520,12 @@ Lino.text_renderer = function(value, metaData, record, rowIndex, colIndex, store
   return value;
 }
 
+//~ Lino.hide_zero_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+  //~ console.log("20120510");
+  //~ if (value == 0) return ''
+  //~ return value;
+//~ }
+
 //~ Lino.cell_button_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
   //~ return '<input type="button" onclick="alert(value)" value=" ? ">' ;
 //~ }

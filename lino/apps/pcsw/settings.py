@@ -303,7 +303,7 @@ INSTALLED_APPS = (
   'lino.modlib.cbss',
   'lino.modlib.newcomers',
   'lino.modlib.households',
-  'lino.sandbox.debts',
+  'lino.modlib.debts',
   'lino.apps.pcsw',
   'lino.apps.pcsw.courses',
   #~ 'south', # http://south.aeracode.org

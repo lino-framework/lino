@@ -162,6 +162,10 @@ class ChoiceList(object):
             setattr(cls,alias,i)
         return i
         
+    #~ @classmethod
+    #~ def __getitem__(cls,name):
+        #~ return cls.items_dict[name]
+        
     @classmethod
     def to_python(cls, value):
         #~ if isinstance(value, babel.BabelChoice):
