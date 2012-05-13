@@ -24,7 +24,7 @@ import cPickle as pickle
 from urllib import urlencode
 import codecs
 
-from lxml import etree
+#~ from lxml import etree
 
 
 #~ import Cheetah
