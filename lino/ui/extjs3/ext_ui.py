@@ -914,7 +914,9 @@ class ExtUI(base.UI):
             if attr_name:
                 source = getattr(settings.LINO,attr_name)
                 if not source:
-                    raise Exception("LINO.%s is not set." % attr_name)
+                    raise Exception(
+                      "%s does not exist and LINO.%s is not set." % (
+                      target,attr_name))
             if not exists(source):
                 raise Exception("LINO.%s (%s) does not exist" % (attr_name,p))
             if is_devserver():
