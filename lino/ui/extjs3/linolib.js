@@ -881,10 +881,8 @@ Ext.override(Ext.grid.CellSelectionModel, {
             case e.ESC:
             case e.PAGE_UP:
             case e.PAGE_DOWN:
-                
                 break;
             default:
-                
                 // e.stopEvent(); // removed because Browser keys like Alt-Home, Ctrl-R wouldn't work
                 break;
         }
@@ -997,26 +995,34 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 e.stopEvent();
                 g.onCellDblClick(r,c);
                 break;
+                
         }
+        
 
         if(newCell){
-        
-            e.stopEvent();
-            
-            r = newCell[0];
-            c = newCell[1];
-
-            this.select(r, c); 
-
-            if(g.isEditor && g.editing){ 
-                ae = g.activeEditor;
-                if(ae && ae.field.triggerBlur){
-                    
-                    ae.field.triggerBlur();
-                }
-                g.startEditing(r, c);
+          e.stopEvent();
+          r = newCell[0];
+          c = newCell[1];
+          this.select(r, c); 
+          if(g.isEditor && g.editing){ 
+            ae = g.activeEditor;
+            if(ae && ae.field.triggerBlur){
+                ae.field.triggerBlur();
             }
+            g.startEditing(r, c);
+          }
+        //~ } else if (g.isEditor && !g.editing && e.charCode) {
+        //~ // } else if (!e.isSpecialKey() && g.isEditor && !g.editing) {
+            //~ g.set_start_value(String.fromCharCode(e.charCode));
+            //~ // g.set_start_value(String.fromCharCode(k));
+            //~ // g.set_start_value(e.charCode);
+            //~ g.startEditing(r, c);
+            //~ // e.stopEvent();
+            //~ return;
+        // } else {
+          // console.log('20120513',e,g);
         }
+        
     }
 
 
@@ -3328,7 +3334,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   on_afteredit : function(e) {
     /*
-    e.grid - This grid
+    e.grid - The grid that fired the event
     e.record - The record being edited
     e.field - The field name being edited
     e.value - The value being set
@@ -3454,6 +3460,21 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ console.log('GridPanel.postEdit()',value, originalValue, r, field);
     return value;
   },
+  
+  set_start_value : function(v) {
+      this.start_value = v;
+  },
+  preEditValue : function(r, field){
+      if (this.start_value) {
+        var v = this.start_value;
+        delete this.start_value;
+        this.activeEditor.selectOnFocus = false;
+        return v;
+      }
+      var value = r.data[field];
+      return this.autoEncode && Ext.isString(value) ? Ext.util.Format.htmlDecode(value) : value;
+  },
+  
   on_master_changed : function() {
     //~ if (! this.enabled) return;
     //~ cmp = this;

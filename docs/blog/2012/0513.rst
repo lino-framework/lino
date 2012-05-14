@@ -1,0 +1,23 @@
+20120513
+========
+
+GridPanel navigation
+--------------------
+
+Added `selectOnFocus=True` to all fields. 
+For both Grid editing and in a Detail form.
+This alone makes entering numbers in a grid already easier.
+
+Also started to fiddle with 
+`Ext.grid.CellSelectionModel.handleKeyDown` to have it 
+call `startEditing` when a data key was pressed.
+The tricky part is to then get this data key into the buffer 
+of the editor.
+
+
+Miscellaneous
+-------------
+
+Fixed a bug in :meth:`lino.utils.auth.RemoteUserMiddleware.process_request`:
+"Unknown username %s from request %s",username, request.
+

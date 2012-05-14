@@ -105,13 +105,13 @@ class PriceField(models.DecimalField):
         #~ fld.widget.attrs['style'] = "text-align:right;"
         #~ return fld
         
-class MyDateField(models.DateField):
+#~ class MyDateField(models.DateField):
         
-    def formfield(self, **kwargs):
-        fld = super(MyDateField, self).formfield(**kwargs)
-        # display size is smaller than full size:
-        fld.widget.attrs['size'] = "8"
-        return fld
+    #~ def formfield(self, **kwargs):
+        #~ fld = super(MyDateField, self).formfield(**kwargs)
+        #~ # display size is smaller than full size:
+        #~ fld.widget.attrs['size'] = "8"
+        #~ return fld
         
         
         
@@ -125,11 +125,11 @@ class QuantityField(models.DecimalField):
         defaults.update(kwargs)
         super(QuantityField, self).__init__(*args, **defaults)
         
-    def formfield(self, **kwargs):
-        fld = super(QuantityField, self).formfield(**kwargs)
-        fld.widget.attrs['size'] = "3"
-        fld.widget.attrs['style'] = "text-align:right;"
-        return fld
+    #~ def formfield(self, **kwargs):
+        #~ fld = super(QuantityField, self).formfield(**kwargs)
+        #~ fld.widget.attrs['size'] = "3"
+        #~ fld.widget.attrs['style'] = "text-align:right;"
+        #~ return fld
 
 class FakeField(object):
     choices = None

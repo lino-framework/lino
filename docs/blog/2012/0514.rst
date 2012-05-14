@@ -1,0 +1,23 @@
+20120514
+========
+
+Schuldnerberatung
+-----------------
+
+Continued with :doc:`/tickets/63`.
+Removed field `Entry.name`.
+
+The new field `periods` means: for how many months 
+(or any other period of time this budget is designed for) 
+the entered amount counts.
+Default value is 1. For yearly amounts set it to 12 
+(when the budget is conceived with a monthly periodicity).
+Currently there is no need to have the periodicity o a 
+budget stored somewhere. Currently it is always "monthly".
+I just didn't want to choose "months" as internal field 
+name.
+
+
+TODO:
+- DecimalFieldelement.get_column_options had a bug (and has still).
+

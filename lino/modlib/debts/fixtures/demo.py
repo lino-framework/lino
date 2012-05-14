@@ -97,7 +97,7 @@ def objects():
           en=u"Taxes"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g,yearly=True).build
+    account = Instantiator('debts.Account',group=g,periods=12).build
     yield account(required_for_household=True,**babel_values('name',
           de=u"Müllsteuer",
           fr=u"Taxe déchets",

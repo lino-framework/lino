@@ -16,7 +16,7 @@ u"""
 Debt mediation
 --------------
 
-médiation de dettes / Schuldnerberatung
+Médiation de dettes / Schuldnerberatung
 
 """
 
@@ -121,6 +121,25 @@ add('L', _("Liabilities"),alias="liability") # Guthaben, Schulden, Verbindlichke
 add('C', _("Capital"),alias="capital")  # Kapital owner's Equities
 add('I', _("Incomes"),alias="income") # Gain/Revenue     Einnahmen  Produits
 add('E', _("Expenses"),alias="expense") # Loss/Cost       Ausgaben   Charges
+
+
+
+class PeriodsField(models.DecimalField):
+    """
+    Used for `Entry.periods` and `Account.periods`. 
+    Where the latter is simply the default value for the former.
+    It means: for how many months the entered amount counts.
+    Default value is 1. For yearly amounts set it to 12.
+    """
+    def __init__(self, *args, **kwargs):
+        defaults = dict(
+            default=1,
+            max_length=5,
+            max_digits=5,
+            decimal_places=0,
+            )
+        defaults.update(kwargs)
+        super(PeriodsField, self).__init__(*args, **defaults)
 
 
 
@@ -322,7 +341,8 @@ class Account(mixins.Sequenced,babel.BabelNamed):
     required_for_person = models.BooleanField(
         _("Required for Persons"),default=False)
     #~ optional = models.BooleanField(_("Optional"),default=False)
-    yearly = models.BooleanField(_("Yearly"),default=False)
+    #~ yearly = models.BooleanField(_("Yearly"),default=False)
+    periods = PeriodsField(_("Periods"))
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
     #~ @chooser()
@@ -424,6 +444,7 @@ class SequencedBudgetComponent(mixins.Sequenced):
         return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
         
 
+
 class Entry(SequencedBudgetComponent):
     class Meta:
         verbose_name = _("Budget Entry")
@@ -435,7 +456,7 @@ class Entry(SequencedBudgetComponent):
     account_type = AccountType.field()
     account = models.ForeignKey(Account)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
-    name = models.CharField(_("Remark"),max_length=200,blank=True)
+    #~ name = models.CharField(_("Remark"),max_length=200,blank=True)
     #~ amount1 = dd.PriceField(_("Amount") + " 1",blank=True,null=True)
     #~ amount2 = dd.PriceField(_("Amount") + " 2",blank=True,null=True)
     #~ amount3 = dd.PriceField(_("Amount") + " 3",blank=True,null=True)
@@ -443,7 +464,13 @@ class Entry(SequencedBudgetComponent):
     circa = models.BooleanField(verbose_name=_("Circa"))
     todo = models.BooleanField(verbose_name=_("To Do"))
     remark = models.CharField(_("Remark"),max_length=200,blank=True)
-    monthly_rate = dd.PriceField(_("Monthly rate"),default=0)
+    periods = PeriodsField(_("Periods"))
+    monthly_rate = dd.PriceField(_("Monthly rate"),default=0,
+    help_text="""
+    The monthly_rate will be automatically added to the expenses 
+    (in case of liabilities) or incomes (in case of assets).
+    
+    """)
 
     @chooser()
     def account_choices(cls,account_type):
@@ -482,7 +509,7 @@ class EntriesByType(Entries):
             
 class EntriesByBudget(Entries):
     master_key = 'budget'
-    column_names = "account partner name amount circa todo remark"
+    column_names = "account partner remark amount periods circa todo"
 
 class ExpensesByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.expense
@@ -492,7 +519,7 @@ class IncomesByBudget(EntriesByBudget,EntriesByType):
     
 class LiabilitiesByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.liability
-    column_names = "account partner name amount monthly_rate circa todo remark"
+    column_names = "account partner remark amount monthly_rate circa todo"
     
 class AssetsByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.asset
@@ -544,7 +571,7 @@ class SummaryByBudget(dd.Table):
             #~ return "%s/%s" join_words(unicode(row.account),unicode(row.partner),row.name)
             #~ return '/'.join([unicode(x) for x in words if x])
         #~ return join_words(unicode(row.account),row.name)
-        parts = [row.name,row.partner,row.account]
+        parts = [row.remark,row.partner,row.account]
         return ' / '.join([unicode(x) for x in parts if x])
 
   
@@ -562,7 +589,7 @@ class EntriesSummaryRow(SummaryRow):
     def __init__(self,seqno,account,partner,name):
         self.account = account
         self.partner = partner
-        self.name = name
+        self.remark = remark
         SummaryRow.__init__(self,seqno)
 
 class EntriesSummaryByBudget(EntriesByType,SummaryByBudget):
@@ -571,7 +598,7 @@ class EntriesSummaryByBudget(EntriesByType,SummaryByBudget):
     using three (`MAX_SUB_BUDGETS`) columns with amounts.
     """
     
-    order_by = ('account','name', 'seqno')
+    order_by = ('account','partner', 'remarq', 'seqno')
     
     @classmethod
     def get_filter_kw(self,master,**kw):
@@ -610,12 +637,12 @@ class EntriesSummaryByBudget(EntriesByType,SummaryByBudget):
             if row is not None and (
                 row.account != e.account 
                     or row.partner != e.partner 
-                    or row.name != e.name):
+                    or row.remark != e.remark):
                 yield row
                 row = None
             if row is None:
                 i += 1
-                row = EntriesSummaryRow(i,e.account,e.partner,e.name)
+                row = EntriesSummaryRow(i,e.account,e.partner,e.remark)
             row.amounts[self._cols_dict[e.budget.pk]] += e.amount
         if row is not None:
             yield row

@@ -489,6 +489,7 @@ class FieldElement(LayoutElement):
         if self.editable:
             if not self.field.blank:
                 kw.update(allowBlank=False)
+            kw.update(selectOnFocus=True)
         else:
             kw.update(disabled=True)
             kw.update(readOnly=True)
@@ -825,19 +826,32 @@ class DecimalFieldElement(FieldElement):
             kw.update(allowDecimals=False)
         return kw
         
+    #~ def get_column_options(self,**kw):
+        #~ kw = FieldElement.get_column_options(self,**kw)
+        #~ kw.update(xtype='numbercolumn')
+        #~ kw.update(align='right')
+        #~ if settings.LINO.decimal_separator == ',':
+            #~ fmt = "0.000"
+            #~ if self.field.decimal_places > 0:
+                #~ fmt += ',' + ("0" * self.field.decimal_places)
+                #~ fmt += "/i"
+        #~ elif settings.LINO.decimal_separator == '.':
+            #~ fmt = "0,000"
+            #~ if self.field.decimal_places > 0:
+                #~ fmt += '.' + ("0" * self.field.decimal_places)
+        #~ kw.update(format=fmt)
+        #~ return kw
+        
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='numbercolumn')
         kw.update(align='right')
+        fmt = '0' + settings.LINO.decimal_group_separator + '000'  
+        if self.field.decimal_places > 0:
+            fmt += settings.LINO.decimal_separator
+            fmt += ("0" * self.field.decimal_places)
         if settings.LINO.decimal_separator == ',':
-            fmt = "0.000"
-            if self.field.decimal_places > 0:
-                fmt += ',' + ("0" * self.field.decimal_places)
-                fmt += "/i"
-        elif settings.LINO.decimal_separator == '.':
-            fmt = "0,000"
-            if self.field.decimal_places > 0:
-                fmt += '.' + ("0" * self.field.decimal_places)
+            fmt += "/i"
         kw.update(format=fmt)
         return kw
         
