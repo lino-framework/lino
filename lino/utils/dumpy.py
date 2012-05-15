@@ -309,6 +309,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         except Exception, e:
             if not settings.LINO.loading_from_dump:
                 # hand-written fixtures are designed to not raise any exception
+                dblogger.warning("Failed to save %s." % obj2str(obj))
                 raise
             if obj.pk is None:
                 if True:

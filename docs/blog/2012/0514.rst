@@ -21,3 +21,47 @@ name.
 TODO:
 - DecimalFieldelement.get_column_options had a bug (and has still).
 
+
+Lino on Cloud 7
+---------------
+
+When the REMOTE_USER doesn't exist, Lino failed to give a proper error message.
+
+Otto discovered an general bug: a Lino.GridPanel didn't prevent editing 
+of disabled fields (this was only done for editing a Detail).
+A user can edit their own data, 
+except for the fields `is_active`, `is_superuser`, `is_staff` and `is_expert` 
+(the last 2 only since today).
+`Lino.CheckColumn` manually called an event "validateedit", 
+changed this to "beforeedit".
+
+
+Another problem:
+:mod:`lino.modlib.countries.fixtures.ee` caused the following error 
+when being used on a MySQL database::
+
+  WARNING Failed to save City(name=u'\xd5ru',country=u'EE').
+  Traceback (most recent call last):
+    File "/home/linodev/snapshots/Django-1.4/django/core/management/commands/loaddata.py", line 196, in handle
+      obj.save(using=using)
+    File "/home/linodev/snapshots/lino/lino/utils/dumpy.py", line 287, in save
+      self.try_save(*args,**kw)
+    File "/home/linodev/snapshots/lino/lino/utils/dumpy.py", line 300, in try_save
+      obj.full_clean()
+    File "/home/linodev/snapshots/Django-1.4/django/db/models/base.py", line 824, in full_clean
+      raise ValidationError(errors)
+  ValidationError: {'__all__': [u'City with this Country, Name and Zip code already exists.']}
+
+While working on this I discovered that 
+"3.1.9 Kliendil on keelatud sihtnumbrite andmebaasi 
+publitseerimine ilma POSTI eelneva nõusolekuta."
+Oops. Don't remember that this was there at the time I 
+wrote :mod:`lino.modlib.countries.fixtures.ee`,
+but anyway I decided to remove the file `sihtnumbrid.csv`.
+So the :mod:`lino.modlib.countries.fixtures.ee` 
+fixture is no longer available until we find some other 
+solution.
+In fact we need a GPL-licensed version of something like 
+http://www.addressdoctor.com/. 
+IOW we need the :doc:`/topics/gpdn`.
+

@@ -614,6 +614,16 @@ Lino.CheckColumn = Ext.extend(Ext.grid.Column, {
     toggleValue : function (grid,rowIndex,colIndex) {
         var record = grid.store.getAt(rowIndex);
         var dataIndex = grid.colModel.getDataIndex(colIndex);
+        // 20120514
+        //~ if(record.data.disabled_fields && record.data.disabled_fields[dataIndex]) {
+          //~ Lino.notify("$_("This field is disabled")");
+          //~ return false;
+        //~ }
+      
+        //~ if (dataIndex in record.data['disabled_fields']) {
+            //~ Lino.notify("This field is disabled.");
+            //~ return false;
+        //~ }
         var startValue = record.data[dataIndex];
         var value = !startValue;
         //~ record.set(this.dataIndex, value);
@@ -625,9 +635,10 @@ Lino.CheckColumn = Ext.extend(Ext.grid.Column, {
             value: value,
             row: rowIndex,
             column: colIndex,
-            cancel:false
+            cancel: false
         };
-        if(grid.fireEvent("validateedit", e) !== false && !e.cancel){
+        if(grid.fireEvent("beforeedit", e) !== false && !e.cancel){
+        //~ if(grid.fireEvent("validateedit", e) !== false && !e.cancel){
             record.set(dataIndex, value);
             delete e.cancel;
             grid.fireEvent("afteredit", e);
@@ -2613,6 +2624,8 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 
 //~ FOO = 0;
 
+
+
 Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
   autoLoad: false,
   load: function(options) {
@@ -2927,6 +2940,24 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     };
     delete this.ls_quick_edit;
     
+    this.columns  = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);
+    
+    //~ var grid = this;
+    //~ this.colModel = new Ext.grid.ColumnModel({
+      //~ columns: this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns),
+      //~ isCellEditable: function(col, row) {
+        //~ var record = grid.store.getAt(row);
+        //~ console.log('20120514',col,record); // dataIndex
+        //~ var dataIndex = grid.colModel.getDataIndex(col);
+        //~ if (dataIndex in record.data['disabled_fields']) {
+            //~ Lino.notify("$_("This field is disabled")");
+            //~ return false;
+        //~ }
+        //~ return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, col, row);
+      //~ }
+    //~ });    
+    
+    
     Lino.GridPanel.superclass.initComponent.call(this);
     
     //~ if (this.containing_window) 
@@ -2953,10 +2984,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       },this);
     this.on('afteredit', this.on_afteredit);
     this.on('beforeedit', this.on_beforeedit);
+    this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
     this.on('cellcontextmenu', Lino.cell_context_menu, this);
     //~ this.on('contextmenu', Lino.grid_context_menu, this);
     
-    this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
     
     //~ if (this.id == "ext-comp-1157") captureEvents(this);    
     
@@ -3096,7 +3127,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   
   onCellDblClick : function(grid, row, col){
-      console.log("20120307 onCellDblClick",this,grid, row, col);
+      //~ console.log("20120307 onCellDblClick",this,grid, row, col);
       if (this.ls_detail_handler) {
           //~ Lino.notify('show detail');
           Lino.show_detail(this);
@@ -3317,10 +3348,17 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   
   on_beforeedit : function(e) {
-    //~ console.log('20120202 GridPanel.on_beforeedit()',e,e.record.data.disabled_fields);
+    //~ console.log('20120514 GridPanel.on_beforeedit()',e,e.record.data.disabled_fields);
+    if(e.record.data.disable_editing) {
+      e.cancel = true;
+      Lino.notify("$_("This record is disabled")");
+      return;
+    }
     if(e.record.data.disabled_fields && e.record.data.disabled_fields[e.field]) {
       e.cancel = true;
-      Lino.notify(String.format("$_("Field '{0}' is disabled")",e.field));
+      Lino.notify("$_("This field is disabled")");
+      //~ Lino.notify(String.format("$_("Field '{0}' is disabled")",e.field));
+      return;
     }
     //~ if (e.record.data.disabled_fields) {
       //~ for (i in e.record.data.disabled_fields) {

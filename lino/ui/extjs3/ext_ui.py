@@ -2470,7 +2470,8 @@ tinymce.init({
             ext_elems.GridColumn(i,e) for i,e 
                 in enumerate(rh.list_layout.main.columns)])
             
-        yield "    this.columns = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);"
+        #~ yield "    this.columns = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);"
+        #~ yield "    this.colModel = Lino.ColumnModel({columns:this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns)});"
 
         #~ yield "    this.items = %s;" % rh.list_layout._main.as_ext()
         #~ 20111125 see ext_elems.py too

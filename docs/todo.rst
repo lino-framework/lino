@@ -12,6 +12,10 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  NotesByPerson muss auf der letzten Seite starten, damit die neuesten 
+    Notizen sichtbar sind. Aber Achtung, wenn "die letzte Seite" nur 
+    ein paar Records enthält, ist das verwirrend. 
+
 #.  Uwe hat einen Bug gefunden: man kann in der Liste "Meine Klienten" 
     momentan noch nicht auf die Kolonnen "Vertrag beginnt" und 
     "Vertrag endet" sortieren. 
@@ -253,6 +257,12 @@ Short-term
 
 Medium-term
 -----------
+
+#.  :func:`lino.modlib.cal.models.default_calendar` is called only when 
+    a user has created at least one Event or Task. Problem: when a user 
+    create their first event using CalendarPanel, they don't see their 
+    own Calendar because it doesn't yet exist. 
+    Creating a User should automatically create a corresponding Calendar.
 
 #.  :meth:`lino.utils.appy_pod.Renderer.insert_table`: 
     Zero values are currently *always* hidden (printed as 
@@ -958,6 +968,10 @@ Long-term
     In diesem Fall wird keine Tabelle in der Datenbank erstellt.
     Aber wie kann ich das testen?
     Lino sollte für solche Modelle keinen Report machen.
+    
+#.  all_countries.py : load english countries from 
+    `/usr/share/zoneinfo/iso3166.tab`
+    But how to find the same in French, German, Estonian?
     
 
 

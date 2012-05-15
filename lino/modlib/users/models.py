@@ -118,7 +118,7 @@ class User(contacts.Partner,contacts.PersonMixin):
         #~ if ar.get_user().is_superuser: 
         if request.user.is_superuser: 
             return []
-        return ['is_superuser','is_active']
+        return ['is_superuser','is_active','is_staff','is_expert']
         
 
 

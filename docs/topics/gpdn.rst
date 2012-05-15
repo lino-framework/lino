@@ -1,5 +1,5 @@
-GPDN - General Public Databas Network
-=====================================
+GPDN - General Public Database Network
+======================================
 
 Das GPDN ist eine meiner Ideen, die momentan als utopisch zu 
 bezeichnen ist. Aber Leute wie ich lassen sich ja nicht so 
@@ -7,7 +7,8 @@ leicht vom Träumen abhalten, schon gar nicht durch banale
 Bedenken wie Machbarkeit oder Wirtschaftlichkeit...
 
 Der Ausgangspunkt ist: es gibt gewisse Daten, die eigentlich 
-Allgemeingut sein sollten. Zum Beispiel die Listen aller Länder, Städte und Dörfer 
+Allgemeingut sein sollten. 
+Zum Beispiel die Listen aller Länder, Städte und Dörfer 
 der Erde, die Liste aller Sprachen... um nur einige zu nennen. 
 Solche Daten sollten eigentlich durch eine weltweite unabhängige 
 Organisation gepflegt und für alle verfügbar gemacht werden. 
