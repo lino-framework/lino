@@ -1,12 +1,118 @@
 20120516
 ========
 
+Lino on Cloud 7
+---------------
+
 Installed a :mod:`lino.apps.pcsw` site under `lino.cld7.com`.
 Added some english designations in :mod:`lino.modlib.debts.fixtures.demo`.
-This demo also caused some 
+
+Under Python 2.5 the debts demo caused some 
 "TypeError: Cannot convert float to Decimal.  
 First convert the float to a string"
-errors under Python 2.5
+errors 
+
+Discovered another problem on Cloud 7:
+When trying to save a Detail, the user got a 
+"Connection failure / AJAX communication failed" message and the 
+server said::
+
+  201205-16 07:12:12 ERROR base : Internal Server Error: /api/users/Users/204
+  Traceback (most recent call last):
+    File "/home/linodev/snapshots/Django-1.4/django/core/handlers/base.py", line 89, in get_response
+      response = middleware_method(request)
+    File "/home/linodev/snapshots/lino/lino/utils/auth.py", line 84, in process_request
+      % (settings.LINO.remote_user_header,request.META))
+  Exception: No REMOTE_USER in {
+    'REDIRECT_UNIQUE_ID': ...
+    'PATH_INFO': u'/api/users/Users/204'}
+    
+    
+My current guess is that FastCGI fails to forward the REMOTE_USER in PUT calls.
+
+http://wiki.dreamhost.com/Django_FastCGI
 
 
+User Levels and User Groups
+---------------------------
 
+Lino's default permission system (:mod:`lino.modlib.users`) 
+evolves away from Django's `django.contrib.auth` module.
+Deserves more documentation.
+
+Replaced the general fields `is_active`, `is_staff`, `is_superuser` and `is_expert` 
+by a single field `level` which refers to the new choice list
+:class:`UserLevel <lino.utils.choicelists.UserLevel>`.
+
+============ =========
+Django       Lino
+============ =========
+is_staff     manager
+is_superuser expert
+is_active    user
+============ =========
+
+User Levels are ordered : 
+A `user` is less than a `manager`, who is less than an `expert`.
+In :mod:`lino.modlib.users` you cannot define a user who is expert but *not* manager. 
+An inactive user is one who has an empty `level` field.
+
+Lino also uses module-specific levels.
+
+The boolean field `User.is_debts` was used to indicate whether 
+or not this user uses the `debts` module.
+Replaced this by a `User.debts_level` field which also refers to a 
+:class:`lino.utils.choicelists.UserLevel`.
+Same for is_newcomers (:mod:`lino.modlib.newcomers`)
+and `is_spis` (which is now called `integ_level`).
+`integ` is the common name used by `jobs`, `isip`, `courses` and `pcsw`.
+That's because the conceptual notion of "integration service" reflects 
+down into several modules.
+For example, not all PCSW's will use the `courses` module, but those 
+who use don't want to have a separate UserLevel field for `courses`.
+
+Note: 
+It would be theoretically more "logical" to also use 
+:meth:`lino.core.actors.Actor.get_permission` 
+for deciding whether a menu command should be created or not.
+Lino doesn't currently do this because it feels more "sane" to do 
+these decicions in the `setup_XXX_menu` functions.
+
+
+Der eigentliche Auslöser dieser Übung ist jedoch, dass der Reiter "Budgets" 
+nur für *Schuldnerberater* sichtbar sein soll. Also solche, 
+deren `debts_level` nicht leer ist.
+Umgekehrt werden wohl bald auch Anfragen kommen, dass die Leute von der 
+Schuldnerberatung 
+(die keine Integration machen und deren `integ_level` leer sein wird) 
+diverse Dinge aus der Integration nicht sehen sollen oder wollen. 
+Zum Beispiel "Verträge".
+
+Jetzt stellt sich die Frage, wie ich das machen soll. 
+Ich sehe zwei Möglichkeiten: (1) mit einem ähnlichen System 
+wie `disabled_fields`. Bei jedem Detail eines Records gibt 
+der Server zurück, welche Komponenten versteckt werden sollen.
+Das würde freilich auf die Performance gehen.
+(2) ich generiere die lino*.js *pro* Benutzer. 
+Oder genauer gesagt pro Benutzerprofil (eine Notion, die noch nicht 
+implementiert ist weil es erst vier Benutzer gibt, 
+die aber bei größeren Systemen kommen muss).
+Selbst bei den jetzigen vier Benutzern sind eigentlich nur zwei 
+verschiedene Profile: "Normale Benutzer" und "Dienstleiter" 
+(plus ein Profil "Systemverwalter" für Gerd und mich).
+
+Ein Benutzerprofil ist "das, was ein Benutzer kann",
+also die Zugriffsrechte 
+Profil-Benutzer sind Leute mit einem Profil. 
+Benutzer ohne Profil dagegen "erben" die 
+(Gruppenzugehörigkeiten und Level)
+nur einen anderen Benutzer mit Profil.
+
+Nachteil von Lösung (2) ist, dass der Server-Start mehr Zeit nimmt 
+und das System allgemein komplexer wird. Zum Beispiel muss jetzt 
+der Cache neu generiert werden, wenn ein Profil-Benutzer etwas in seinen levels verändert kriegt.
+
+:checkin:``.
+Äußerlich funktioniert es bereits. Aber ein Detail fehlt noch: 
+die Generierung der lino*.js-Dateien muss ich noch bearbeiten, 
+damit sie unsichtbare Elemente gar nicht erst generieren.

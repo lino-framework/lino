@@ -75,7 +75,8 @@ class Lino(Lino):
         #~ m.add_instance_action(user,label="My user preferences")
 
         
-        if user.is_staff:
+        if user.level >= UserLevel.manager:
+        #~ if user.is_staff:
             cfg = main.add_menu("config",_("Configure"))
             
             self.modules.contacts.setup_config_menu(self,ui,user,cfg)

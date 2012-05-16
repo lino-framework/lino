@@ -131,19 +131,20 @@ def using(ui=None):
             version = NOT_FOUND_MSG
         yield ("pyratemp",version,"http://www.simple-is-better.org/template/pyratemp.html")
     
-    try:
-        import ho.pisa as pisa
-        version = getattr(pisa,'__version__','')
-        yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
-    except ImportError:
-        pass
+    if False:
+        try:
+            import ho.pisa as pisa
+            version = getattr(pisa,'__version__','')
+            yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
+        except ImportError:
+            pass
 
-    try:
-        import reportlab
-        version = reportlab.Version
-    except ImportError:
-        version = NOT_FOUND_MSG
-    yield ("ReportLab Toolkit",version,"http://www.reportlab.org/rl_toolkit.html")
+        try:
+            import reportlab
+            version = reportlab.Version
+        except ImportError:
+            version = NOT_FOUND_MSG
+        yield ("ReportLab",version,"http://www.reportlab.org/rl_toolkit.html")
                
     try:
         #~ import appy
@@ -151,7 +152,7 @@ def using(ui=None):
         version = version.verbose
     except ImportError:
         version = NOT_FOUND_MSG
-    yield ("appy.pod",version ,"http://appyframework.org/pod.html")
+    yield ("Appy",version ,"http://appyframework.org/pod.html")
     
     import sys
     version = "%d.%d.%d" % sys.version_info[:3]
@@ -694,6 +695,8 @@ class Lino(object):
     
     def __init__(self,project_file,settings_dict):
       
+        self.user_profile_fields = ['level']
+        
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         
@@ -876,6 +879,14 @@ class Lino(object):
         #~ from django.conf import settings
         #~ return name in settings.INSTALLED_APPS
         
+    def add_user_field(self,name,fld,profile=True):
+        if self.user_model:
+            from lino import dd
+            User = dd.resolve_model(self.user_model)            
+            dd.inject_field(User,name,fld)
+            if profile:
+                self.user_profile_fields.append(name)
+
     def is_installed(self,app_label):
         """
         Return `True` if :setting:`INSTALLED_APPS` contains an item

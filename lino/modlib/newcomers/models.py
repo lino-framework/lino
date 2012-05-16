@@ -32,6 +32,7 @@ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils.choosers import chooser
+from lino.utils.choicelists import UserLevel
 from lino.utils import babel
 from lino import mixins
 from django.conf import settings
@@ -180,7 +181,8 @@ class UsersByNewcomer(users.Users):
     """
     #~ model = users.User
     editable = False # even root should not edit here
-    filter = models.Q(is_spis=True)
+    #~ filter = models.Q(is_spis=True)
+    filter = models.Q(integ_level__isnull=False)
     label = _("Users by Newcomer")
     column_names = 'name primary_clients active_clients new_clients newcomer_quota newcomer_score'
     parameters = dict(
@@ -247,22 +249,41 @@ class UsersByNewcomer(users.Users):
         else:
             return None
         
-        
-#~ if settings.LINO.user_model:
-dd.inject_field(users.User,
-    'is_newcomers',
-    models.BooleanField(
-        verbose_name=_("is Newcomers user")
-    ),"""Whether this user is responsible for dispatching of Newcomers.
-    """)
+MODULE_NAME = _("Newcomers")
 
-dd.inject_field(users.User,
-    'newcomer_quota',
-    models.IntegerField(
-      _("Newcomers Quota"),
-      default=0
-    ),"""Relative number expressing how many Newcomer requests this User is able to treat.
-    """)
+settings.LINO.add_user_field('newcomers_level',UserLevel.field(MODULE_NAME))
+settings.LINO.add_user_field('newcomer_quota',models.IntegerField(
+          _("Newcomers Quota"),
+          default=0,
+          help_text="""Relative number expressing 
+          how many Newcomer requests this User is able to treat."""
+        ), 
+        profile=False)
+
+  
+if False: # settings.LINO.user_model:
+  
+    USER_MODEL = dd.resolve_model(settings.LINO.user_model)
+        
+    dd.inject_field(USER_MODEL,
+        'newcomers_level',
+        UserLevel.field(blank=True,
+          verbose_name=_("Userlevel for %s module") % MODULE_NAME))
+        
+#~ dd.inject_field(users.User,
+    #~ 'is_newcomers',
+    #~ models.BooleanField(
+        #~ verbose_name=_("is Newcomers user")
+    #~ ),"""Whether this user is responsible for dispatching of Newcomers.
+    #~ """)
+
+    dd.inject_field(USER_MODEL,
+        'newcomer_quota',
+        models.IntegerField(
+          _("Newcomers Quota"),
+          default=0
+        ),"""Relative number expressing how many Newcomer requests this User is able to treat.
+        """)
 
 dd.inject_field(Person,
     'broker',
@@ -277,16 +298,14 @@ dd.inject_field(Person,
     """The Faculty this client has been attributed to.
     """)
 
-class Module(dd.Module):
-    pass
-  
   
 def setup_main_menu(site,ui,user,m):
-    if user.is_newcomers:
-        m  = m.add_menu("newcomers",_("Newcomers"))
-        m.add_action(Newcomers)
-        m.add_action(UsersByNewcomer)
-        m.add_action(NewClients)
+    if user.newcomers_level < UserLevel.user:
+        return
+    m  = m.add_menu("newcomers",MODULE_NAME)
+    m.add_action(Newcomers)
+    m.add_action(UsersByNewcomer)
+    m.add_action(NewClients)
             
   
 def setup_master_menu(site,ui,user,m): pass
@@ -295,12 +314,14 @@ def setup_my_menu(site,ui,user,m):
     pass
     
 def setup_config_menu(site,ui,user,m): 
-    if user.is_newcomers:
-        m  = m.add_menu("newcomers",_("Newcomers"))
-        m.add_action(Brokers)
-        m.add_action(Faculties)
+    if user.newcomers_level < UserLevel.manager:
+        return
+    m  = m.add_menu("newcomers",MODULE_NAME)
+    m.add_action(Brokers)
+    m.add_action(Faculties)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.is_newcomers:
-        m.add_action(Competences)
+    if user.newcomers_level < UserLevel.expert:
+        return
+    m.add_action(Competences)
   

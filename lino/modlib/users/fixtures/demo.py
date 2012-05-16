@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2011 Luc Saffre
+## Copyright 2010-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -18,16 +18,23 @@ from lino.utils.instantiator import Instantiator
 #from lino import reports
 #contacts = reports.get_app('contacts')
 
+from lino.utils.choicelists import UserLevel
 
 def objects():
     now = datetime.datetime.now() 
-    def create_user(*args):
+    def create_user(*args,**kw):
         user = Instantiator('users.User',
-          'username email first_name last_name is_staff is_superuser',
-          is_active=True,last_login=now,date_joined=now).build
-        u = user(*args)
+          #~ 'username email first_name last_name is_staff is_superuser',
+          'username email first_name last_name',
+          last_login=now,date_joined=now).build
+          #~ is_active=True,last_login=now,date_joined=now).build
+        u = user(*args,**kw)
         #~ u.set_password('1234')
         return u
-    yield create_user('user','user@example.com','John','Jones',False,False)
-    yield create_user('staff','staff@example.com','Pete','Peters',True,False)
-    yield create_user('root','root@example.com','Dick','Dickens',True,True)
+    yield create_user('user','user@example.com','John','Jones',level=UserLevel.user)
+    #~ yield create_user('staff','staff@example.com','Pete','Peters',UserLevel.manager)
+    yield create_user('user2','user2@example.com','Pete','Peters',profile="user")
+    yield create_user('root','root@example.com','Dick','Dickens',level=UserLevel.expert) 
+    #~ yield  create_user('user','user@example.com','John','Jones',False,False)
+    #~ yield create_user('staff','staff@example.com','Pete','Peters',True,False)
+    #~ yield create_user('root','root@example.com','Dick','Dickens',True,True)

@@ -73,10 +73,12 @@ class Lino(Lino):
     def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
+        from lino.utils.choicelists import UserLevel
         
         m = main.add_menu("master",_("Master"))
         m = main.add_menu("contacts",_("Contacts"))
-        if user.is_spis:
+        #~ if user.is_spis:
+        if user.integ_level:
             m.add_action(self.modules.contacts.Companies)
             m.add_action(self.modules.contacts.Persons)
             #~ m.add_action('contacts.Persons.detail')
@@ -99,7 +101,8 @@ class Lino(Lino):
         #~ m.add_action('projects.Projects')
         m.add_action(self.modules.notes.MyNotes)
         
-        if user.is_spis:
+        #~ if user.is_spis:
+        if user.integ_level:
             mypersons = m.add_menu("mypersons",self.modules.pcsw.MyPersons.label)
             mypersons.add_action(self.modules.pcsw.MyPersons)
             for pg in self.modules.pcsw.PersonGroup.objects.order_by('ref_name'):
@@ -124,7 +127,8 @@ class Lino(Lino):
 
         #~ m.add_instance_action(user,label="My user preferences")
 
-        if user.is_spis:
+        #~ if user.is_spis:
+        if user.integ_level:
             m = main.add_menu("courses",_("Courses"))
             m.add_action(self.modules.courses.CourseProviders)
             m.add_action(self.modules.courses.CourseOffers)
@@ -139,7 +143,8 @@ class Lino(Lino):
         m = main.add_menu("lst",_("Listings"))
         #~ for listing in LISTINGS:
             #~ m.add_action(listing,'listing')
-        if user.is_spis:
+        if user.integ_level:
+        #~ if user.is_spis:
             m.add_action(self.modules.jobs.JobsOverview)
             #~ m.add_action(self.modules.jobs.ContractsSearch)
             #~ m.add_action(self.modules.pcsw.OverviewClientsByUser)
@@ -149,14 +154,12 @@ class Lino(Lino):
             #~ for lst in pcsw.FooListing.objects.all():
                 #~ listings.add_instance_action(lst)
         
-        if user.is_staff:
+        if user.level >= UserLevel.manager: # is_staff:
             cfg = main.add_menu("config",_("Configure"))
             
-            self.modules.contacts.setup_config_menu(self,ui,user,cfg)
+            #~ self.modules.contacts.setup_config_menu(self,ui,user,cfg)
             
             #~ config_notes    = cfg.add_menu("notes",_("~Notes"))
-            config_pcsw     = cfg.add_menu("pcsw",_("SIS"))
-            
             #~ config_cv       = cfg.add_menu("cv",_("CV"))
             
             
@@ -164,20 +167,23 @@ class Lino(Lino):
             m.add_action(self.modules.courses.CourseContents)
             m.add_action(self.modules.courses.CourseEndings)
             
-            self.modules.notes.setup_config_menu(self,ui,user,cfg)
-            self.modules.isip.setup_config_menu(self,ui,user,cfg)
-            self.modules.jobs.setup_config_menu(self,ui,user,cfg)
-            self.modules.newcomers.setup_config_menu(self,ui,user,cfg)
-            self.modules.debts.setup_config_menu(self,ui,user,cfg)
+            self.on_each_app('setup_config_menu',ui,user,cfg)
             
+            #~ if True: # user.is_expert:
+                #~ self.modules.properties.setup_config_menu(self,ui,user,cfg)
+            
+            #~ self.modules.notes.setup_config_menu(self,ui,user,cfg)
+            #~ self.modules.isip.setup_config_menu(self,ui,user,cfg)
+            #~ self.modules.jobs.setup_config_menu(self,ui,user,cfg)
+            #~ self.modules.newcomers.setup_config_menu(self,ui,user,cfg)
+            #~ self.modules.debts.setup_config_menu(self,ui,user,cfg)
+            
+            config_pcsw     = cfg.add_menu("pcsw",_("SIS"))
             config_pcsw.add_action(self.modules.pcsw.PersonGroups)
-        
-            if True: # user.is_expert:
-                self.modules.properties.setup_config_menu(self,ui,user,cfg)
-        
             config_pcsw.add_action(self.modules.pcsw.Activities)
             config_pcsw.add_action(self.modules.pcsw.ExclusionTypes)
             config_pcsw.add_action(self.modules.pcsw.AidTypes)
+            
             #~ config_jobs.add_action('jobs.Jobs')
             #~ m.add_action('pcsw.JobTypes')
             #~ m.add_action('pcsw.CoachingTypes')
@@ -187,10 +193,12 @@ class Lino(Lino):
             
             config_pcsw.add_action(self.modules.uploads.UploadTypes)
             
-            self.modules.cal.setup_config_menu(self,ui,user,cfg)
-            self.modules.outbox.setup_config_menu(self,ui,user,cfg)
-            self.modules.lino.setup_config_menu(self,ui,user,cfg)
+            #~ self.modules.cal.setup_config_menu(self,ui,user,cfg)
+            #~ self.modules.outbox.setup_config_menu(self,ui,user,cfg)
+            #~ self.modules.lino.setup_config_menu(self,ui,user,cfg)
             
+        if user.level >= UserLevel.expert: # is_staff:
+          
             m = main.add_menu("explorer",_("Explorer"))
             
             m.add_action(self.modules.contacts.AllPersons)

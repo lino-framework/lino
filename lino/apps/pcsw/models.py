@@ -58,6 +58,7 @@ from lino.modlib.cal import models as cal
 from lino.modlib.users import models as users
 from lino.utils.choicelists import HowWell, Gender
 from lino.utils.choicelists import ChoiceList
+from lino.utils.choicelists import UserLevel
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
@@ -1318,10 +1319,14 @@ class UsersWithClients(dd.VirtualTable):
         We store the corresponding request in the user object 
         under the name `my_persons`.
         """
-        if ar.get_user().is_superuser:
-            flt = Q(is_spis=True) 
+        #~ if ar.get_user().is_superuser:
+        if ar.get_user().level >= UserLevel.expert:
+            #~ flt = Q(is_spis=True) 
+            flt = Q(integ_level__isnull=False) 
         else:
-            flt = Q(is_spis=True,is_superuser=False)
+            #~ flt = Q(is_spis=True,is_superuser=False)
+            #~ flt = Q(integ_level__isnull=False,is_superuser=False)
+            flt = Q(integ_level__isnull=False,level__ge=UserLevel.expert)
         for user in User.objects.filter(flt).order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
             if r.get_total_count():
@@ -1380,7 +1385,8 @@ def persons_by_user(ui,requesting_user):
         
     rows = [ headers ]
     for user in User.objects.order_by('username'):
-        if user == requesting_user or user.is_spis:
+        if user == requesting_user or user.integ_level:
+        #~ if user == requesting_user or user.is_spis:
             #~ rr = MyPersons.request(ui,user=user)
             #~ kv = dict(user=user)
             rr = MyPersons.request(ui,subst_user=user)
@@ -1849,15 +1855,23 @@ dd.inject_field(SiteConfig,
 """
 ...
 """
-if settings.LINO.user_model:
+settings.LINO.add_user_field('integ_level',UserLevel.field(_("Integration")))
+          
+if False: # settings.LINO.user_model:
     User.grid_search_field = 'username'
+    
     dd.inject_field(User,
-        'is_spis',
-        models.BooleanField(
-            verbose_name=_("is SPIS user")
-        ),"""Whether this user is an integration assistant (not a general social agent).
-        Deserves more documentation.
-        """)
+        'integ_level',
+        UserLevel.field(blank=True,
+          verbose_name=_("Userlevel for %s module") % _("Integration")))
+    
+    #~ dd.inject_field(User,
+        #~ 'is_spis',
+        #~ models.BooleanField(
+            #~ verbose_name=_("is SPIS user")
+        #~ ),"""Whether this user is an integration assistant (not a general social agent).
+        #~ Deserves more documentation.
+        #~ """)
         
 RoleType = resolve_model('contacts.RoleType')
 #~ RoleType = resolve_model('links.LinkType')
@@ -2010,13 +2024,11 @@ def site_setup(site):
     class UserDetail(users.UserDetail):
       
         box2 = """
-        is_active 
-        is_spis 
-        is_newcomers
-        is_staff 
-        is_expert 
-        is_superuser
+        level
+        integ_level
+        newcomers_level 
         newcomer_quota
+        debts_level
         """
         
         #~ box3 = """

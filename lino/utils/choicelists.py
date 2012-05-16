@@ -35,6 +35,7 @@ so we must set :setting:`DJANGO_SETTINGS_MODULE`)
 DoYouLike : certainly not...very much
 Gender : Gender
 HowWell : not at all...very well
+UserLevel : User Level
 
 >>> for bc,text in Gender.get_choices():
 ...     print "%s : %s" % (bc.value, unicode(text))
@@ -47,6 +48,18 @@ Male
 >>> translation.activate('de')
 >>> print unicode(Gender.male)
 Männlich
+
+Comparing a BabelChoice uses the *value* (not the alias or text):
+
+>>> UserLevel.manager > UserLevel.user
+True
+>>> UserLevel.manager == '40'
+True
+>>> UserLevel.manager == 'manager'
+False
+>>> UserLevel.manager == ''
+False
+
 
 
 Example on how to use a ChoiceList in your model::
@@ -66,6 +79,7 @@ automatically available as a property value in
 """
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.utils.functional import lazy
 
 from lino.utils import curry
@@ -226,6 +240,11 @@ class BabelChoice(object):
     def __len__(self):
         return len(self.value)
         
+    def __cmp__(self,other):
+        if other.__class__ is self.__class__:
+            return cmp(self.value,other.value)
+        return cmp(self.value,other)
+        
     def __getattr__(self,name):
         return curry(getattr(self.choicelist,name),self)
         
@@ -295,6 +314,33 @@ class Gender(ChoiceList):
 add = Gender.add_item
 add('M',_("Male"),alias='male')
 add('F',_("Female"),alias='female')
+
+
+
+class UserLevel(ChoiceList):
+    """
+    The level of a user. Deserves more documentation.
+    """
+    label = _("User Level")
+    
+    @classmethod
+    def field(cls,module_name=None,**kw):
+        """
+        Shortcut to create a :class:`lino.core.fields.ChoiceListField` in a Model.
+        """
+        kw.setdefault('blank',True)
+        if module_name is not None:
+            kw.update(verbose_name=string_concat(cls.label,' (',module_name,')'))
+        return super(UserLevel,cls).field(**kw)
+        
+add = UserLevel.add_item
+add('10', _("Guest"))
+add('20', _("Restricted"))
+add('30', _("User"), alias="user")
+add('40', _("Manager"), alias="manager")
+add('50', _("Expert"), alias="expert")
+
+
     
 
 

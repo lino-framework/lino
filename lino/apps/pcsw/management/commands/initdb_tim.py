@@ -40,6 +40,7 @@ from lino.modlib.contacts.utils import name2kw, street2kw
 from lino.utils import join_words
 #~ from lino.modlib.contacts.models import name2kw, street2kw, join_words
 from lino.utils.instantiator import Instantiator
+from lino.utils.choicelists import UserLevel
 
 from lino.tools import resolve_model, obj2str
 from lino.tools import is_valid_email
@@ -269,7 +270,8 @@ def load_tim_data(dbpath):
             email=row['EMAIL'],
             first_name=d['first_name'],
             last_name=d['last_name'],
-            is_staff=False,is_active=True, is_superuser=False, 
+            level=UserLevel.user,
+            #~ is_staff=False,is_active=True, is_superuser=False, 
             last_login=now,date_joined=now)
         user.set_password('temp')
         return user

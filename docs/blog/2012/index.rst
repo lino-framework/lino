@@ -152,6 +152,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`13 <0513>`
   |br| 
   :doc:`14 <0514>`
+  :doc:`15 <0515>`
+  :doc:`16 <0516>`
 
 .. |Jun| replace::  **June**
   |br| 

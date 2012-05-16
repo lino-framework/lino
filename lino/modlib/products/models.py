@@ -38,7 +38,7 @@ class ProductCat(babel.BabelNamed):
 class ProductCats(dd.Table):
     model = ProductCat
     order_by = ["id"]
-    can_view = perms.is_staff
+    #~ can_view = perms.is_staff
 
 class Product(babel.BabelNamed):
   

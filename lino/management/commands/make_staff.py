@@ -59,6 +59,9 @@ class Command(BaseCommand):
     help = 'Sets is_superuser attribute for specified users'
 
     def handle(self, *args, **options):
+      
+        raise Exception("Not yet adapted after 20120516")
+        
         for name in args:
             u = users.User.objects.get(username__exact=name)
         #~ for u in users.User.objects.all():

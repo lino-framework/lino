@@ -42,6 +42,7 @@ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.utils.choicelists import HowWell
+from lino.utils.choicelists import UserLevel
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
@@ -520,16 +521,19 @@ def setup_main_menu(site,ui,user,m): pass
 def setup_master_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    if user.is_spis:
-        m.add_action(MyContracts)
+    if user.newcomers_level < UserLevel.user:
+        return
+    m.add_action(MyContracts)
   
 def setup_config_menu(site,ui,user,m): 
-    if user.is_spis:
-        m  = m.add_menu("isip",_("ISIPs"))
-        m.add_action(ContractTypes)
-        m.add_action(ContractEndings)
-        m.add_action(ExamPolicies)
+    if user.newcomers_level < UserLevel.manager:
+        return
+    m  = m.add_menu("isip",_("ISIPs"))
+    m.add_action(ContractTypes)
+    m.add_action(ContractEndings)
+    m.add_action(ExamPolicies)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.is_spis:
-        m.add_action(Contracts)
+    if user.integ_level < UserLevel.expert:
+        return
+    m.add_action(Contracts)

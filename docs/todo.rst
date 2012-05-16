@@ -147,7 +147,7 @@ Short-term
     "Contrats par Employeur et par AI":
     how to manage grouping in a report.
 
-#.  User permissions, roles, functions
+#.  User permissions, levels, profiles
 
 #.  Zwei Ideen zur besseren Ermittlung der Konstruktionsmethode einer Notiz: 
 

@@ -43,6 +43,7 @@ from lino.utils import perms
 from lino.tools import obj2str, sorted_models_list
 from lino.tools import resolve_field
 from lino.utils.choosers import chooser
+from lino.utils.choicelists import UserLevel
 from lino.utils.restify import restify
 from lino.core import actions
 
@@ -104,7 +105,8 @@ class SiteConfigs(dd.Table):
     
     @classmethod
     def get_permission(self,action,user,obj):
-        if not user.is_superuser:
+        #~ if not user.is_superuser:
+        if not user.level < UserLevel.expert:
             return action.readonly
         #~ if isinstance(action,actions.DeleteSelected):
             #~ return False
@@ -640,13 +642,6 @@ class Home(dd.EmptyTable):
 
 
 
-
-#~ def add_site_menu(site):
-    #~ m = site.add_menu("site",_("~Site"))
-    #~ m.add_instance_action(site.config,
-        #~ label=_('Global Site Parameters'),
-        #~ can_view=perms.is_staff)
-    #~ return m
 
 
 def setup_main_menu(site,ui,user,m): pass

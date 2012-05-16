@@ -32,6 +32,7 @@ from lino.utils.restify import restify
 from lino.utils import dblogger
 from lino.models import update_site_config
 from lino.utils import mti
+from lino.utils.choicelists import UserLevel
 
 #~ from django.contrib.auth import models as auth
 from lino.modlib.users import models as auth
@@ -348,9 +349,15 @@ def objects():
     
     user = auth.User.objects.get(username='user')
     root = auth.User.objects.get(username='root')
-    root.is_spis = True
+    #~ root.is_spis = True
+    root.integ_level = UserLevel.expert
+    root.newcomers_level=UserLevel.expert
+    root.debts_level=UserLevel.expert
     root.save()
-    user.is_spis = True
+    #~ user.is_spis = True
+    user.integ_level = UserLevel.user
+    root.newcomers_level=UserLevel.user
+    root.debts_level=UserLevel.user
     user.save()
     
     USERS = Cycler(root,user)

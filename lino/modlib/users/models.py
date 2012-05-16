@@ -23,10 +23,14 @@ from django.conf import settings
 
 from lino import dd
 from lino.utils import mti
+from lino.utils.choicelists import UserLevel
+from lino.utils.choosers import chooser
 
 #~ from lino.mixins import PersonMixin
 #~ from lino.modlib.contacts.models import Contact
 from lino.modlib.contacts import models as contacts
+
+
 
 
 class User(contacts.Partner,contacts.PersonMixin):
@@ -51,39 +55,56 @@ class User(contacts.Partner,contacts.PersonMixin):
         verbose_name = _('User')
         verbose_name_plural = _('Users')
 
-    username = models.CharField(_('username'), max_length=30, 
+    username = models.CharField(_('Username'), max_length=30, 
         unique=True, 
         help_text=_("""
         Required. 30 characters or fewer. 
         Letters, numbers and @/./+/-/_ characters
         """))
+    profile = models.CharField(_('Same profile as'), 
+        max_length=30, blank=True,
+        help_text=_("""
+        The user profile.
+        """))
     #~ first_name = models.CharField(_('first name'), max_length=30, blank=True)
     #~ last_name = models.CharField(_('last name'), max_length=30, blank=True)
     #~ email = models.EmailField(_('e-mail address'), blank=True)
-    is_staff = models.BooleanField(_('is staff'), default=False, 
-        help_text=_("""
-        Designates whether the user can log into this admin site.
-        """))
-    is_expert = models.BooleanField(_('is expert'), default=False, 
-        help_text=_("""
-        Designates whether this user has access to functions that require expert rights.
-        """))
-    is_active = models.BooleanField(_('is active'), default=True, 
-        help_text=_("""
-        Designates whether this user should be treated as active. 
-        Unselect this instead of deleting accounts.
-        """))
-    is_superuser = models.BooleanField(_('is superuser'), 
-        default=False, 
-        help_text=_("""
-        Designates that this user has all permissions without 
-        explicitly assigning them.
-        """))
+    
+    level = UserLevel.field()
+    #~ is_active = models.BooleanField(_('is active'), default=True, 
+        #~ help_text=_("""
+        #~ Designates whether this user should be treated as active. 
+        #~ Unselect this instead of deleting accounts.
+        #~ """))
+    #~ is_staff = models.BooleanField(_('is staff'), default=False, 
+        #~ help_text=_("""
+        #~ Designates whether the user can log into this admin site.
+        #~ """))
+    #~ is_expert = models.BooleanField(_('is expert'), default=False, 
+        #~ help_text=_("""
+        #~ Designates whether this user has access to functions that require expert rights.
+        #~ """))
+    #~ is_superuser = models.BooleanField(_('is superuser'), 
+        #~ default=False, 
+        #~ help_text=_("""
+        #~ Designates that this user has all permissions without 
+        #~ explicitly assigning them.
+        #~ """))
     last_login = models.DateTimeField(_('last login'), default=datetime.datetime.now)
     date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
 
     def __unicode__(self):
         return self.username
+        
+    #~ def get_profile(self):
+        #~ return self.profile or self.username
+        
+    @chooser(simple_values=True)
+    def profile_choices(self,username):
+        qs = User.objects.filter(profile='').exclude(username=username)
+        print 20120516, qs
+        return [u.username for u in qs]
+        
 
     def get_full_name(self,salutation=True,**salutation_options):
         "Returns the first_name plus the last_name, with a space in between."
@@ -98,6 +119,21 @@ class User(contacts.Partner,contacts.PersonMixin):
         from django.core.mail import send_mail
         send_mail(subject, message, from_email, [self.email])
 
+    def save(self,*args,**kw):
+        if self.profile == self.username:
+            self.profile = ''
+        if self.profile:
+            u = self.__class__.objects.get(username=self.profile)
+            for k in settings.LINO.user_profile_fields:
+                setattr(self,k,getattr(u,k))
+        super(User,self).save(*args,**kw)
+        if not self.profile:
+            for u in self.__class__.objects.filter(profile=self.username):
+                for k in settings.LINO.user_profile_fields:
+                    setattr(u,k,getattr(self,k))
+                    u.save()
+                
+        
     def full_clean(self,*args,**kw):
         """
         Almost like PersonMixin.full_clean, but 
@@ -116,20 +152,32 @@ class User(contacts.Partner,contacts.PersonMixin):
         
     def disabled_fields(self,request):
         #~ if ar.get_user().is_superuser: 
-        if request.user.is_superuser: 
+        #~ if request.user.is_superuser: 
+        if self.profile:
+            return settings.LINO.user_profile_fields
+        else:
             return []
-        return ['is_superuser','is_active','is_staff','is_expert']
+        #~ if request.user.level >= UserLevel.expert: 
+            #~ if self.profile:
+                #~ return settings.LINO.user_profile_fields
+            #~ else:
+                #~ return []
+        #~ return ['is_superuser','is_active','is_staff','is_expert']
+        #~ return ['level','profile']
         
 
 
 class UserDetail(dd.DetailLayout):
   
     box2 = """
-    is_active 
-    is_staff 
-    is_expert 
-    is_superuser
+    level
     """
+    #~ box2 = """
+    #~ is_active 
+    #~ is_staff 
+    #~ is_expert 
+    #~ is_superuser
+    #~ """
     
     box3 = """
     country region
@@ -146,7 +194,7 @@ class UserDetail(dd.DetailLayout):
     """
 
     general = """
-    first_name last_name username language id
+    first_name last_name username profile language id
     box3:40 box4:30 box2:20
     date_joined last_login 
     remarks 
@@ -161,12 +209,14 @@ class Users(dd.Table):
     model = User
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
-    column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
+    #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
+    column_names = 'username profile first_name last_name level *'
     detail_layout = UserDetail()
 
     @classmethod
     def get_permission(cls,action,user,obj):
-        if user.is_superuser: return True
+        #~ if user.is_superuser: return True
+        if user.level >= UserLevel.manager: return True
         if action.readonly: return True
         if user is not None and user == obj: return True
         return False

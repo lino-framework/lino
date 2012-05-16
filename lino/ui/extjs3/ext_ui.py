@@ -1104,7 +1104,7 @@ tinymce.init({
         #~ yield '<!-- overrides to library -->'
         #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % self.media_url()
         yield '<script type="text/javascript" src="%s"></script>' % (
-            self.media_url(*self.lino_js_parts()))
+            self.media_url(*self.lino_js_parts(request.user)))
 
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -1840,42 +1840,40 @@ tinymce.init({
             kw.update(message=message)
         return action_response(kw)
         
-    def lino_js_parts(self):
+    def lino_js_parts(self,user):
     #~ def js_cache_name(self):
         #~ return ('cache','js','site.js')
         #~ return ('cache','js','lino.js')
-        return ('cache','js','lino_'+translation.get_language()+'.js')
+        #~ return ('cache','js','lino_'+user.get_profile()+'_'+translation.get_language()+'.js')
+        return ('cache','js','lino_'+(user.profile or user.username)+'_'+translation.get_language()+'.js')
         
     def build_site_cache(self,force=False):
         """Generate :xfile:`lino.js` and other.
         """
         if not force and not settings.LINO.auto_build_site_cache:
-            logger.info("NOT generating site cache because `settings.LINO.auto_build_site_cache` is False")
+            logger.info("NOT building site cache because `settings.LINO.auto_build_site_cache` is False")
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
-            logger.warning("Not generating site cache because "+
+            logger.warning("Not building site cache because "+
             "directory '%s' (settings.MEDIA_ROOT) does not exist.", 
             settings.MEDIA_ROOT)
             return
         
         mtime = codetime()
         started = time.time()
-        count = 0
         
         settings.LINO.on_each_app('setup_site_cache',mtime,force)
         
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
         
-        for lang in babel.AVAILABLE_LANGUAGES:
-            babel.set_language(lang)
-            fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
+        def doit(user):
+            fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(user)) 
             if not force and os.path.exists(fn):
                 if os.stat(fn).st_mtime > mtime:
                     logger.info("NOT generating %s because it is newer than the code.",fn)
-                    continue
+                    return False
                     
-            count += 1 
             logger.info("Generating %s ...", fn)
             
             makedirs_if_missing(os.path.dirname(fn))
@@ -1897,6 +1895,8 @@ tinymce.init({
                      + table.generic_slaves.values() \
                      + table.custom_tables \
                      + table.frames ]
+                     
+            actors_list = [a for a in actors_list if a.get_permission(actions.VIEW,user,None)]
                      
             for a in actors_list:
                 f.write("Ext.namespace('Lino.%s')\n" % a)
@@ -1937,10 +1937,20 @@ tinymce.init({
             #~ f.write(jscompress(js))
             f.close()
             #~ logger.info("Wrote %s ...", fn)
+            return True
+            
+        count = 0
+        for lang in babel.AVAILABLE_LANGUAGES:
+            babel.set_language(lang)
+            for user in User.objects.filter(profile=''):
+                if doit(user):
+                    count += 1
+                    
+        babel.set_language(None)
+            
         #~ logger.info("lino*.js files have been generated.")
         logger.info("%d lino*.js files have been generated in %s seconds.",
           count,time.time()-started)
-        babel.set_language(None)
         
     def make_linolib_messages(self):
         """

@@ -81,7 +81,7 @@ class PaymentTerm(babel.BabelNamed):
 class PaymentTerms(dd.Table):
     model = PaymentTerm
     order_by = ["id"]
-    can_view = perms.is_staff
+    #~ can_view = perms.is_staff
     #~ def can_view(self,request):
       #~ return request.user.is_staff
 
@@ -145,7 +145,7 @@ class InvoicingMode(mixins.PrintableType,babel.BabelNamed):
 class InvoicingModes(dd.Table):
     model = 'sales.InvoicingMode'
     order_by = ["id"]
-    can_view = perms.is_staff
+    #~ can_view = perms.is_staff
     
     
     
@@ -166,7 +166,7 @@ class ShippingModes(dd.Table):
         verbose_name_plural = _("Shipping Modes")
     model = ShippingMode
     order_by = ["id"]
-    can_view = perms.is_staff
+    #~ can_view = perms.is_staff
     #~ def can_view(self,request):
       #~ return request.user.is_staff
 
@@ -657,7 +657,7 @@ class PendingOrders(Orders):
 class Invoices(SalesDocuments):
     model = Invoice
     order_by = ["id"]
-    can_view = perms.is_staff
+    #~ can_view = perms.is_staff
     
 class InvoicesByJournal(Invoices):
     order_by = ["number"]

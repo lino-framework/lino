@@ -540,7 +540,7 @@ class UsersSGLoader(LinoMdbLoader):
         kw.update(last_name=row['NomASSSG'])
         kw.update(username=row['CodeASSSG'])
         kw.update(phone=row['TelASSSG'])
-        kw.update(is_spis=False)
+        #~ kw.update(is_spis=False)
         st = row['StatutASSSG']
         if st == "Ouvert":
             kw.update(is_active=True)
@@ -548,6 +548,7 @@ class UsersSGLoader(LinoMdbLoader):
             kw.update(is_active=False)
         yield self.model(**kw)
 
+from lino.utils.choicelists import UserLevel
 
 class UsersISPLoader(LinoMdbLoader):
     table_name = 'TBASISP'
@@ -565,7 +566,7 @@ class UsersISPLoader(LinoMdbLoader):
         kw.update(last_name=row['NomASISP'])
         kw.update(username=row['CodeASISP'])
         kw.update(phone=row['Tel'])
-        kw.update(is_spis=True)
+        kw.update(integ_level=UserLevel.user)
         st = row['StatutASISP']
         if st == "Ouvert":
             kw.update(is_active=True)
@@ -940,7 +941,7 @@ def objects():
     #~ for k,v in CboTypeContrat.items():
         #~ yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
     yield UsersSGLoader()
-    yield User(username="root",is_staff=True,is_expert=True,is_superuser=True,first_name="Root",last_name="Superuser")
+    yield User(username="root",level=UserLevel.expert,first_name="Root",last_name="Superuser")
     # seems that these 5 users are missing in the .mdb file:
     for i in (5,8,9,10,14):
         yield User(id=i,username="user%d"%i,is_active=False)

@@ -2400,6 +2400,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               //~ }
           //~ }
       };
+      
       if (! this.hide_navigator && record.navinfo) {
         this.first.setDisabled(!record.navinfo.first);
         this.prev.setDisabled(!record.navinfo.prev);
