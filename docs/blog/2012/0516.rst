@@ -1,0 +1,4 @@
+20120516
+========
+
+Added some english designations in :mod:`lino.modlib.debts.fixtures.demo`.

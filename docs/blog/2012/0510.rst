@@ -75,10 +75,6 @@ Remains to do:
   - Monatliche Reserve Versicherungen
   - Restbetrag für Kredite und Zahlungsrückstände:
   - Total Kredite / Schulden / Gerichtsvollzieher / Zahlungsrückstände
-
-
-
-
   
   
 - Eingabe in der Grid ist umständlich:

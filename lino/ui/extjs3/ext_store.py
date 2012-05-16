@@ -50,7 +50,8 @@ from lino.utils import iif
 from lino.tools import obj2str
 from lino.utils import IncompleteDate
 from lino.utils import tables
-from lino.utils import moneyfmt
+#~ from lino.utils import moneyfmt
+from lino.mixins.printable import decfmt
 
 from lino.utils.xmlgen import html as xghtml
 
@@ -573,9 +574,10 @@ class DecimalStoreField(StoreField):
     def format_value(self,ar,v):
         if not v:
             return ''
-        return moneyfmt(v,places=self.field.decimal_places,
-          sep=settings.LINO.decimal_group_separator,
-          dp=settings.LINO.decimal_separator)
+        #~ return moneyfmt(v,places=self.field.decimal_places,
+        return decfmt(v,places=self.field.decimal_places)
+          #~ sep=settings.LINO.decimal_group_separator,
+          #~ dp=settings.LINO.decimal_separator)
         #~ return str(v).replace('.',settings.LINO.decimal_separator)
   
     def format_sum(self,ar,sums,i):

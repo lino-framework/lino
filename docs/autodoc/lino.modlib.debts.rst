@@ -1,11 +1,6 @@
 :mod:`lino.modlib.debts`
 ========================
 
-.. automodule:: lino.modlib.debts
-    :members:
-    :show-inheritance:
-    
-
 Models
 ------
 
@@ -13,10 +8,10 @@ Models
     :members:
     :show-inheritance:
 
-Fixtures
---------
+`demo` fixture
+--------------
 
-.. automodule:: lino.modlib.debts.fixtures
+.. automodule:: lino.modlib.debts.fixtures.demo
     :members:
     :show-inheritance:
 

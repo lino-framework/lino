@@ -535,6 +535,7 @@ def test015b(self):
           'navinfo disable_delete data title disabled_actions id')
         self.assertEqual(result['id'],case[1])
 
+
 def test016(self):
     """
     All rows of persons_by_user now clickable.
@@ -549,6 +550,29 @@ def test016(self):
         response = self.client.get(url,REMOTE_USER='root')
         result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
         self.assertEqual(result['count'],case[1])
+        
+        
+def test017(self):
+    from decimal import Decimal as D
+    Budget = resolve_model('debts.Budget')
+    bud = Budget.objects.get(pk=3)
+    cases = [
+      [ bud.msum('amount','I'), D('0') ],  #~ Monatliche Einkünfte
+      [ bud.msum('amount','E'), D('0') ],  #~ Monatliche Ausgaben
+      [ bud.ysum('amount','E')/12, D('0') ],   #~ Monatliche Reserve für jährliche Ausgaben
+      [ bud.sum('monthly_rate','L'), D('0') ], #~ Raten der laufenden Kredite
+      [ bud.sum('amount','L'), D('0.00')],  #Total Kredite / Schulden 
+      [ bud.ysum('amount','E'), D('0.00')],  # Jährliche Ausgaben 
+    ]
+    
+    for i,case in enumerate(cases):
+        found,expected = case
+        if found != expected:
+            self.fail("Case %i : expected %s but found %s" % (i,expected,found))
+
+    
+
+        
         
 def test101(self):
     """

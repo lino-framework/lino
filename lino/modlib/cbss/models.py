@@ -391,7 +391,7 @@ class SSDNRequest(CBSSRequest):
         
     def wrap_ssdn_request(self,srvreq,dt):
         #~ up  = settings.LINO.ssdn_user_params
-        up  = settings.LINO.cbss_user_params
+        user_params = settings.LINO.cbss_user_params
         #~ au = E('common:AuthorizedUser',ns=NSCOMMON)
         #~ au.append(E('common:UserID').setText(up['UserID']))
         #~ au.append(E('common:Email').setText(up['Email']))
@@ -399,11 +399,11 @@ class SSDNRequest(CBSSRequest):
         #~ au.append(E('common:MatrixID').setText(up['MatrixID']))
         #~ au.append(E('common:MatrixSubID').setText(up['MatrixSubID']))
         au = E('ssdn:AuthorizedUser')
-        au.append(E('ssdn:UserID').setText(up['UserID']))
-        au.append(E('ssdn:Email').setText(up['Email']))
-        au.append(E('ssdn:OrgUnit').setText(up['OrgUnit']))
-        au.append(E('ssdn:MatrixID').setText(up['MatrixID']))
-        au.append(E('ssdn:MatrixSubID').setText(up['MatrixSubID']))
+        au.append(E('ssdn:UserID').setText(user_params['UserID']))
+        au.append(E('ssdn:Email').setText(user_params['Email']))
+        au.append(E('ssdn:OrgUnit').setText(user_params['OrgUnit']))
+        au.append(E('ssdn:MatrixID').setText(user_params['MatrixID']))
+        au.append(E('ssdn:MatrixSubID').setText(user_params['MatrixSubID']))
         
         ref = "%s # %s" % (self.__class__.__name__,self.id)
         msg = E('ssdn:Message')

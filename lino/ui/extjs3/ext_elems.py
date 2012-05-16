@@ -846,10 +846,14 @@ class DecimalFieldElement(FieldElement):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='numbercolumn')
         kw.update(align='right')
-        fmt = '0' + settings.LINO.decimal_group_separator + '000'  
+        #~ if settings.LINO.decimal_group_separator:
+            #~ fmt = '0' + settings.LINO.decimal_group_separator + '000'
+        #~ else:
+        # Ext.utils.format.number() is not able to specify ' ' as group separator,
+        # so we don't use grouping at all.
+        fmt = '0'
         if self.field.decimal_places > 0:
-            fmt += settings.LINO.decimal_separator
-            fmt += ("0" * self.field.decimal_places)
+            fmt += settings.LINO.decimal_separator + ("0" * self.field.decimal_places)
         if settings.LINO.decimal_separator == ',':
             fmt += "/i"
         kw.update(format=fmt)

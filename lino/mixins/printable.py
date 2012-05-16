@@ -48,6 +48,19 @@ from lino.utils.appy_pod import Renderer
 from lino.tools import makedirs_if_missing
 
 
+def decfmt(v,places=2,**kw):
+    """
+    Format a Decimal value.
+    Like :func:`lino.utils.moneyfmt`, but using the site settings
+    :attr:`lino.Lno.decimal_group_separator`
+    and
+    :attr:`lino.Lno.decimal_separator`.
+    """
+    kw.setdefault('sep',settings.LINO.decimal_group_separator)
+    kw.setdefault('dp',settings.LINO.decimal_separator)
+    return moneyfmt(v,places=places,**kw)
+
+
 
 try:
     import ho.pisa as pisa
@@ -284,7 +297,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             babelitem=babel.babelitem,
             tr=babel.babelitem,
             iif=iif,
-            mtos=moneyfmt,
+            mtos=decfmt,
             settings=settings,
             ar=ar,
             #~ restify=restify,

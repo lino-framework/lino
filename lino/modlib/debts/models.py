@@ -12,11 +12,16 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-u"""
-Debt mediation
---------------
-
-Médiation de dettes / Schuldnerberatung
+"""
+This package contains the **Debt Mediation** 
+module 
+(Schuldnerberatung, Médiation de dettes) 
+for :mod:`lino.apps.pcsw`.
+It enables social consultants to create :class:`Budgets`.
+A :class:`Budget` collects financial 
+information like monthly income, monthly expenses and debts 
+of a household or a person, then print out a document which serves 
+as base for the consultation and discussion with debtors.
 
 """
 
@@ -26,6 +31,7 @@ logger = logging.getLogger(__name__)
 import os
 import cgi
 import datetime
+import decimal
 
 
 from django.db import models
@@ -219,18 +225,23 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
                 yield g
         
     def msum(self,fldname,types=None,**kw): 
-        kw.update(account__yearly=False)
+        #~ kw.update(account__yearly=False)
+        kw.update(periods=1)
         return self.sum(fldname,types,**kw)
         
     def ysum(self,fldname,types=None,**kw): 
-        kw.update(account__yearly=True)
+        #~ kw.update(account__yearly=True)
+        kw.update(periods=12)
         return self.sum(fldname,types,**kw)
         
     def sum(self,fldname,types=None,**kw): 
         if types is not None:
             kw.update(account_type__in=[AccountType.items_dict[t] for t in types])
         d = Entry.objects.filter(budget_id__in=self.get_budget_pks(),**kw).aggregate(models.Sum(fldname))
-        return d[fldname+'__sum']
+        v = d[fldname+'__sum']
+        if v is None:
+            return decimal.Decimal(0)
+        return v
       
     def save(self,*args,**kw):
         super(Budget,self).save(*args,**kw)
@@ -586,7 +597,7 @@ class SummaryRow(actions.VirtualRow):
         
 class EntriesSummaryRow(SummaryRow):
     "Virtual Row used by :class:`EntriesSummaryByBudget`"
-    def __init__(self,seqno,account,partner,name):
+    def __init__(self,seqno,account,partner,remark):
         self.account = account
         self.partner = partner
         self.remark = remark
@@ -598,7 +609,7 @@ class EntriesSummaryByBudget(EntriesByType,SummaryByBudget):
     using three (`MAX_SUB_BUDGETS`) columns with amounts.
     """
     
-    order_by = ('account','partner', 'remarq', 'seqno')
+    order_by = ('account','partner', 'remark', 'seqno')
     
     @classmethod
     def get_filter_kw(self,master,**kw):

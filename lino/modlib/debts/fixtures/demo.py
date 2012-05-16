@@ -64,12 +64,12 @@ def objects():
     yield account(required_for_person=True,**babel_values('name',
           de=u"Urlaubsgeld",
           fr=u"Congé payé",
-          en=u""
+          en=u"Paid holiday"
           ))
     yield account(required_for_person=True,**babel_values('name',
           de=u"Jahresendzulage",
           fr=u"Prime de fin d'année",
-          en=u""
+          en=u"Year-end prime"
           ))
 
     g = group(account_type=AccountType.expense,**babel_values('name',
@@ -82,7 +82,7 @@ def objects():
     yield account(required_for_household=True,**babel_values('name',
           de=u"Miete",
           fr=u"Loyer",
-          en=u""
+          en=u"Rent"
           ))
     yield account(required_for_household=True,**babel_values('name',
           de=u"Strom",
@@ -101,7 +101,7 @@ def objects():
     yield account(required_for_household=True,**babel_values('name',
           de=u"Müllsteuer",
           fr=u"Taxe déchets",
-          en=u""
+          en=u"Waste tax"
           ))
 
     g = group(account_type=AccountType.asset,**babel_values('name',

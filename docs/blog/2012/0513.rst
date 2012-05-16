@@ -15,9 +15,3 @@ The tricky part is to then get this data key into the buffer
 of the editor.
 
 
-Miscellaneous
--------------
-
-Fixed a bug in :meth:`lino.utils.auth.RemoteUserMiddleware.process_request`:
-"Unknown username %s from request %s",username, request.
-

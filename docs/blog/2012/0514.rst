@@ -18,14 +18,16 @@ I just didn't want to choose "months" as internal field
 name.
 
 
-TODO:
-- DecimalFieldelement.get_column_options had a bug (and has still).
-
 
 Lino on Cloud 7
 ---------------
 
-When the REMOTE_USER doesn't exist, Lino failed to give a proper error message.
+Worked on http://lino.cld7.com/, the first public (but not yet official) 
+Lino demo on a server with normal connection speed.
+
+Fixed a bug in :meth:`lino.utils.auth.RemoteUserMiddleware.process_request`:
+"Unknown username %s from request %s"
+(When the REMOTE_USER doesn't exist, Lino failed to give a proper error message).
 
 Otto discovered an general bug: a Lino.GridPanel didn't prevent editing 
 of disabled fields (this was only done for editing a Detail).
