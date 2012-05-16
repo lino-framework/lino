@@ -1895,8 +1895,9 @@ tinymce.init({
                      + table.generic_slaves.values() \
                      + table.custom_tables \
                      + table.frames ]
-                     
-            actors_list = [a for a in actors_list if a.get_permission(actions.VIEW,user,None)]
+            
+            if False: # todo 20120516
+                actors_list = [a for a in actors_list if a.get_permission(actions.VIEW,user,None)]
                      
             for a in actors_list:
                 f.write("Ext.namespace('Lino.%s')\n" % a)

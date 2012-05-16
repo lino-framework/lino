@@ -112,7 +112,10 @@ Nachteil von Lösung (2) ist, dass der Server-Start mehr Zeit nimmt
 und das System allgemein komplexer wird. Zum Beispiel muss jetzt 
 der Cache neu generiert werden, wenn ein Profil-Benutzer etwas in seinen levels verändert kriegt.
 
-:checkin:``.
-Äußerlich funktioniert es bereits. Aber ein Detail fehlt noch: 
+:checkin:`4882a981422c`.
+Äußerlich funktioniert es bereits. Aber ein "Detail" fehlt noch: 
 die Generierung der lino*.js-Dateien muss ich noch bearbeiten, 
-damit sie unsichtbare Elemente gar nicht erst generieren.
+damit sie unsichtbare Elemente gar nicht erst generieren. 
+Das wird noch lustig. 
+Aber insgesamt bin ich sehr zufrieden über den guten Start einer 
+lang geplanten Änderung.
