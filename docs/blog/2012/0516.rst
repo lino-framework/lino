@@ -2,3 +2,22 @@
 ========
 
 Added some english designations in :mod:`lino.modlib.debts.fixtures.demo`.
+
+
+
+Traceback (most recent call last):
+  File "c:\Python27\lib\logging\__init__.py", line 864, in emit
+    stream.write(fs % msg)
+UnicodeEncodeError: 'ascii' codec can't encode character u'\xdf' in position 171: ordinal not in range(128)
+Logged from file util.py, line 50
+Traceback (most recent call last):
+  File "c:\Python27\lib\logging\__init__.py", line 864, in emit
+    stream.write(fs % msg)
+UnicodeEncodeError: 'ascii' codec can't encode character u'\xdf' in position 109: ordinal not in range(128)
+Logged from file util.py, line 50
+Traceback (most recent call last):
+  File "c:\Python27\lib\logging\__init__.py", line 864, in emit
+    stream.write(fs % msg)
+UnicodeEncodeError: 'ascii' codec can't encode character u'\xdf' in position 118: ordinal not in range(128)
+Logged from file util.py, line 50
+

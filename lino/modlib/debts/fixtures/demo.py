@@ -194,4 +194,4 @@ def objects():
             yield Entry(budget=b,
                 account=ACCOUNTS.pop(),
                 partner=PARTNERS.pop(),amount=a,
-                monthly_rate=decimal.Decimal(a)/20)
+                monthly_rate=decimal.Decimal("%.2d" % (a/20)))
