@@ -28,7 +28,10 @@ from lino.tools import resolve_model
 from lino.utils.babel import babel_values
 
 from lino.modlib.debts.models import AccountType
-    
+
+def n2dec(v):
+    return decimal.Decimal("%.2d" % v)
+   
 def objects():
     group = Instantiator('debts.AccountGroup').build
     g = group(account_type=AccountType.income,**babel_values('name',
@@ -187,11 +190,13 @@ def objects():
         #~ n = min(3,b.actor_set.count())
         for e in b.entry_set.all():
             #~ for i in range(n):
-            e.amount = AMOUNTS.pop()
+            e.amount = n2dec(AMOUNTS.pop())
             e.save()
         for i in range(3):
             a = int(AMOUNTS.pop()*5)
             yield Entry(budget=b,
                 account=ACCOUNTS.pop(),
                 partner=PARTNERS.pop(),amount=a,
-                monthly_rate=decimal.Decimal("%.2d" % (a/20)))
+                monthly_rate=n2dec(a/20))
+    
+    

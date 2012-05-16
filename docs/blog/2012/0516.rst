@@ -1,23 +1,12 @@
 20120516
 ========
 
+Installed a :mod:`lino.apps.pcsw` site under `lino.cld7.com`.
 Added some english designations in :mod:`lino.modlib.debts.fixtures.demo`.
+This demo also caused some 
+"TypeError: Cannot convert float to Decimal.  
+First convert the float to a string"
+errors under Python 2.5
 
 
-
-Traceback (most recent call last):
-  File "c:\Python27\lib\logging\__init__.py", line 864, in emit
-    stream.write(fs % msg)
-UnicodeEncodeError: 'ascii' codec can't encode character u'\xdf' in position 171: ordinal not in range(128)
-Logged from file util.py, line 50
-Traceback (most recent call last):
-  File "c:\Python27\lib\logging\__init__.py", line 864, in emit
-    stream.write(fs % msg)
-UnicodeEncodeError: 'ascii' codec can't encode character u'\xdf' in position 109: ordinal not in range(128)
-Logged from file util.py, line 50
-Traceback (most recent call last):
-  File "c:\Python27\lib\logging\__init__.py", line 864, in emit
-    stream.write(fs % msg)
-UnicodeEncodeError: 'ascii' codec can't encode character u'\xdf' in position 118: ordinal not in range(128)
-Logged from file util.py, line 50
 
