@@ -176,31 +176,35 @@ def objects():
     Budget = resolve_model('debts.Budget')
     Actor = resolve_model('debts.Actor')
     for hh in Household.objects.all():
+        #~ sub_budgets = []
+        for p in hh.member_set.all():
+            yield Budget(partner_id=p.person.id,user=kerstin)
+            #~ sub_budgets.append(b)
+            #~ yield b
         yield Budget(partner_id=hh.id,user=kerstin)
+        #~ yield b
+        #~ for sb in sub_budgets:
+            #~ yield Actor(budget=b,sub_budget=sb)
         
     Budget = resolve_model('debts.Budget')
+    #~ Debt = resolve_model('debts.Debt')
     Entry = resolve_model('debts.Entry')
     Account = resolve_model('debts.Account')
     Company = resolve_model('contacts.Company')
     AMOUNTS = Cycler([i*5.24 for i in range(10)])
     PARTNERS = Cycler(Company.objects.all())
-    LIABILITIES = Cycler(Account.objects.filter(type=AccountType.liability))
+    ACCOUNTS = Cycler(Account.objects.filter(type=AccountType.liability))
     for b in Budget.objects.all():
         #~ n = min(3,b.actor_set.count())
         for e in b.entry_set.all():
             #~ for i in range(n):
-            if e.account.required_for_household:
-                e.amount1 = n2dec(AMOUNTS.pop())
-            if e.account.required_for_person:
-                e.amount2 = n2dec(AMOUNTS.pop())
-                e.amount3 = n2dec(AMOUNTS.pop())
+            e.amount = n2dec(AMOUNTS.pop())
             e.save()
-        for i in range(5):
+        for i in range(3):
             a = int(AMOUNTS.pop()*5)
             yield Entry(budget=b,
-                account=LIABILITIES.pop(),
-                partner=PARTNERS.pop(),
-                amount1=a,
+                account=ACCOUNTS.pop(),
+                partner=PARTNERS.pop(),amount=a,
                 monthly_rate=n2dec(a/20))
     
     

@@ -158,7 +158,7 @@ def configure(config):
             h.setFormatter(fmt)
             linoLogger.addHandler(h)
             #~ sudsLogger.addHandler(h)
-            djangoLogger.addHandler(h)
+            #~ djangoLogger.addHandler(h)
     except IOError:
         # happens under mod_wsgi
         linoLogger.info("mod_wsgi mode (no sys.stdout)")
@@ -181,7 +181,7 @@ def configure(config):
             h = file_handler(logfile,rotate,**kw)
             #~ h.setLevel(level)
             linoLogger.addHandler(h)
-            djangoLogger.addHandler(h)
+            #~ djangoLogger.addHandler(h)
             #~ sudsLogger.addHandler(h)
             #~ print __file__, level, logfile
             

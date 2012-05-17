@@ -88,3 +88,14 @@ können.
 
 Unter :class:`lino.modlib.debts.models.BudgetDetail` 
 habe ich mal ein paar Screenshots platziert.
+
+:checkin:`54bbbb071079`.
+
+
+Abends kam mir dann noch die spontane Erkenntnis, 
+dass unsere geniale, super-flexible Struktur 
+mit den verschachtelbaren Budgets für die Benutzer zumindest 
+momentan noch nicht gut ist. Die Leute sind gewohnt, 
+die Beträge der Aktoren in zwei Kolonnen nebeneinander zu haben.
+Und zwar auch schon bei der Eingabe.
+Ich glaube nicht, dass die sich mit der momentanen Methode anfreunden werden.
