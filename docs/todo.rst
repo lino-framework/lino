@@ -263,6 +263,16 @@ TODO:
 
 #.  lino*.js aufsplitten: der Teil aus linolib.js ist ja 
     konstant für alle Benutzerprofile.
+    
+#.  :meth:`lino.ui.extjs3.ext_elems.Panel.get_view_permission` 
+    macht momentan einen Vorschau-Loop durch seine Elemente. Wenn kein einziges sichtbar 
+    ist, wird auch das Panel selbst unsichtbar.
+    Das ist ein bischen Ressourcenverschwendung, aber immerhin nur beim Generieren 
+    der :xfile:`lino*.js`.
+    Optimaler wäre wahrscheinlich, dass (1) ext_store aus dem UI rauskommt und (2)
+    die LayoutHandles und TableHandles gar nicht mehr aufbewahrt werden, sondern 
+    pro Benutzerprofil instanziert und nach dem Generieren weggeworfen werden: 
+    die sind nämlich gar nicht nötig während des laufenden Betriebs. (Zu überprüfen.)    
   
 #.  Menü einmalig beim Server-Start generieren statt bei jedem Request 
 

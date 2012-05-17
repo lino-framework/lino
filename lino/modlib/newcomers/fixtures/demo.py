@@ -15,7 +15,7 @@
 
 from lino.utils.instantiator import Instantiator, i2d
 from lino.utils import Cycler
-#~ from lino.tools import resolve_model
+from lino.tools import resolve_model
 # from django.utils.translation import ugettext_lazy as _
 
 #~ from django.db import models
@@ -24,7 +24,7 @@ from lino.utils.choicelists import UserLevel
 
 def objects():
   
-    from lino.modlib.users.models import User
+    #~ from lino.modlib.users.models import 
     from lino.modlib.newcomers.models import Broker, Faculty, Competence
     from lino.apps.pcsw.models import Person
     
@@ -43,20 +43,21 @@ def objects():
     yield I(**babel_values('name', de=u"Finanzielle Begleitung", fr=u"Finanzielle Begleitung",en=u"Finanzielle Begleitung"))
     yield I(**babel_values('name', de=u"Laufende Beihilfe", fr=u"Laufende Beihilfe",en=u"Laufende Beihilfe"))
     
-    root = User.objects.get(username="root")
-    #~ root.is_newcomers = True
-    root.newcomers_level = UserLevel.expert
+    
+    #~ root = User.objects.get(username="root")
+    #~ root.newcomers_level = UserLevel.expert
+    #~ root.save()
 
-    root.save()
-
-    I = Instantiator(User).build
+    #~ I = Instantiator(User).build
     #~ yield I(username="caroline",is_newcomers=True,first_name="Caroline",last_name="Carnol")
     #~ yield I(username="caroline",newcomers_level=UserLevel.user,first_name="Caroline",last_name="Carnol")
-    yield I(username="caroline",
+    
+    User = resolve_model('users.User')
+    yield User(username="caroline",
         first_name="Caroline",last_name="Carnol",
         level=UserLevel.user,
         newcomers_level=UserLevel.user)
-    yield I(username="doris",first_name="Doris",last_name="Decker",profile='caroline')
+    #~ yield I(username="doris",first_name="Doris",last_name="Decker",profile='caroline')
     
     FACULTIES = Cycler(Faculty.objects.all())
     #~ USERS = Cycler(User.objects.filter(is_spis=True))

@@ -287,6 +287,26 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
         
       
 class BudgetDetail(dd.DetailLayout):
+    """
+    Defines the Detail of a :class:`Budget`, with four tabs 
+    :guilabel:`General`,
+    :guilabel:`Expenses & Income`,
+    :guilabel:`Liabilities & Assets` and
+    :guilabel:`Result`.
+    
+    .. image:: /screenshots/debts.Budget.Detail.1.jpg
+      :scale: 50
+      
+    .. image:: /screenshots/debts.Budget.Detail.2.jpg
+      :scale: 50
+
+    .. image:: /screenshots/debts.Budget.Detail.3.jpg
+      :scale: 50
+
+    .. image:: /screenshots/debts.Budget.Detail.4.jpg
+      :scale: 50
+
+    """
     main = "general entries1 entries2 result"
     general = """
     date partner id user closed
@@ -315,6 +335,10 @@ class BudgetDetail(dd.DetailLayout):
         h.result.label = _("Result")
     
 class DebtsUserTable(dd.Table):
+    """
+    Abstract base class for tables that are visible only to 
+    Debt Mediation Agents (users with a non-empty `debts_level`).
+    """
     @classmethod
     def get_permission(self,action,user,obj):
         if user.debts_level < UserLevel.user:
@@ -323,6 +347,11 @@ class DebtsUserTable(dd.Table):
         
   
 class Budgets(DebtsUserTable):
+    """
+    Base class for lists of :class:`Budgets <Budget>`.
+    Serves as base for :class:`MyBudgets` and :clas:`BudgetsByPartner`,
+    but is directly used by :menuselection:`Explorer --> Debts -->Budgets`.
+    """
     model = Budget
     detail_layout = BudgetDetail()
     #~ master_key = 'person'
@@ -331,6 +360,8 @@ class Budgets(DebtsUserTable):
     #~ column_names = "language native spoken written cef_level"
 
 class MyBudgets(Budgets,mixins.ByUser):
+    """
+    """
     pass
     
 class BudgetsByPartner(Budgets):
@@ -405,10 +436,10 @@ class Actor(mixins.Sequenced,ActorBase):
         verbose_name = _("Budget Actor")
         verbose_name_plural = _("Budget Actors")
         
-    #~ budget = models.ForeignKey(Budget,related_name="actors")
     budget = models.ForeignKey(Budget,related_name="actors")
+    partner = models.ForeignKey('contacts.Partner',blank=True)
     sub_budget = models.ForeignKey(Budget,
-        verbose_name=_("Sub-Budgets"),
+        verbose_name=_("Linked Budget"),
         related_name="used_by")
     header = models.CharField(_("Header"),max_length=20,blank=True)
     remark = dd.RichTextField(_("Remark"),format="html",blank=True)
@@ -419,13 +450,20 @@ class Actor(mixins.Sequenced,ActorBase):
         "Overrides :meth:`lino.mixins.Sequenced.get_siblings`"
         return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
         
-    @property
-    def partner(self):
-        return self.sub_budget.partner
+    #~ @property
+    #~ def partner(self):
+        #~ return self.partner
+        
+    @chooser()
+    def sub_budget_choices(cls,partner):
+        return partner.budget_set.all()
+        
         
     def save(self,*args,**kw):
         if not self.header:
             self.header = _("Actor") + " " + str(self.seqno)
+        if self.sub_budget_id:
+            self.partner = self.sub_budget.partner
         super(Actor,self).save(*args,**kw)
         
 #~ class ActorDetail(dd.DetailLayout):
@@ -441,9 +479,11 @@ class Actor(mixins.Sequenced,ActorBase):
 class Actors(DebtsUserTable):
     model = Actor
     #~ detail_layout = ActorDetail()
+    column_names = "budget seqno partner sub_budget header remark *"
 
 class ActorsByBudget(Actors):
     master_key = 'budget'
+    column_names = "seqno partner sub_budget header remark *"
     
 class SequencedBudgetComponent(mixins.Sequenced):
 

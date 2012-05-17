@@ -991,7 +991,10 @@ class Candidature(SectorFunction):
         self.date_submitted = datetime.date.today()
     
 
-class Candidatures(dd.Table):
+class Candidatures(pcsw.IntegTable):
+    """
+    List of :class:`Candidatures <Candidature>`.
+    """
     model = Candidature
     order_by = ['date_submitted']
     column_names = 'date_submitted job:25 * id'

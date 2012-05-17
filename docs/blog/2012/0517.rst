@@ -21,5 +21,70 @@ dass der Demo-Benutzer Caroline die Quicklinks "Meine Klienten", "Meine VSE"
 und "Meine Art-60-7-Konventionen" nicht mehr sieht.
 Die `lino_caroline_*.js` sind dadurch schon von 2 auf 1,5 MB geschrumpft.
 
-Bevor ich jetzt noch die Test-Suite aufräume, mach ich ein :checkin:``.
+Bevor ich jetzt noch die Test-Suite aufräume, mach ich ein Checkin:
+:checkin:`7ab4496fb3d9`.
 
+Für die Test-Suite gibt es noch ein Detail zu beachten: 
+Lokale Fixtures dürfen zum Testen eigentlich nicht geladen werden. 
+Wie könnte ich das automatisch abstellen?
+Momentan sehe ich noch keine Lösung. En addendant gilt: falls lokale 
+fixtures existieren sollte man das Verzeichnis kurzfristig umbenennen 
+oder sonstwie deaktivieren, wenn man `manage.py test` startet.
+
+Folgende Demo-Benutzer sollten in `lino.apps.pcsw` existieren:
+
+- Der bisherige Benutzer "user" kommt raus. 
+- root : Experte für alle Module
+- luc : profile='root'
+- melanie : Manager integ
+- hubert : Einfacher Benutzer integ
+- alicia : profile='hubert'
+- caroline : Einfacher Benutzer newcomers
+- kerstin : Einfacher Benutzer debts
+
+Oder anders:
+
+- :mod:`lino.modlib.users.fixtures.demo` macht die Benutzer `root` und `luc`
+- :mod:`lino.modlib.newcomers.fixtures.demo` macht den Benutzer `caroline` 
+- :mod:`lino.modlib.debts.fixtures.demo` macht den Benutzer `kerstin` 
+- :mod:`lino.apps.pcsw.fixtures.demo` macht die Benutzer `melanie` , `hubert` und `alicia`.
+
+Das ist gut. Benutzer `kerstin`, `root` und `luc` sehen 
+einen Reiter "Budgets" im Detail einer Person, die anderen nicht. 
+
+Jetzt haben wir noch ein "kleines" Problem: der Reiter "Verträge" 
+enthält zwei GridPanels, die nur für `integ`-Benutzer sichtbar sind, 
+also nicht z.B. für kerstin. Und somit ist dieser Reiter bei kerstin jetzt leer. 
+Er sollte aber nicht nur leer sein, sondern ganz verschwinden. 
+Und zwar automatisch. 
+Ein Container, der nichts Sichtbares enthält, soll ebenfalls unsichtbar werden.
+Provisorische Lösung: :meth:`lino.ui.extjs3.ext_elems.Panel.get_view_permission` 
+macht einen Vorschau-Loop durch seine Elemente. Wenn kein einziges sichtbar 
+ist, wird auch das Panel selbst unsichtbar.
+Das ist ein bischen Ressourcenverschwendung, aber immerhin nur beim Generieren 
+der :xfile:`lino*.js`.
+Cool. Funktioniert sogar. 
+
+Optimaler wäre wahrscheinlich, dass (1) ext_store aus dem UI rauskommt und (2)
+die LayoutHandles und TableHandles gar nicht mehr aufbewahrt werden, sondern 
+pro Benutzerprofil instanziert und nach dem Generieren weggeworfen werden: 
+die sind nämlich gar nicht nötig während des laufenden Betriebs. Zu überprüfen.
+Nicht so dringend.
+
+Auch der Reiter "Stellenanfragen" 
+(der lediglich :class:`lino.modlib.jobs.models.CandidaturesByPerson` enthält) 
+ist bei Kerstin jetzt verschwunden.
+Einfach nur, indem ich :class:`lino.modlib.jobs.models.Candidatures` 
+jetzt von :class:`lino.apps.pcsw.models.IntegTable` erben lasse.
+
+
+Dann noch etwas, das mir zwischendurch auffiel: 
+:class:`lino.modlib.debts.models.Actor` braucht ein Feld `partner`, 
+damit man bei der manuellen Eingabe der Akteure eines Budgets 
+zunächst eine Person auswählen kann.
+Was noch fehlt, ist eine Möglichkeit, um in der (normalerweise leeren) 
+Auswahlliste für `Actor.sub_budget` dann ein leeres Budget erstellen zu 
+können. 
+
+Unter :class:`lino.modlib.debts.models.BudgetDetail` 
+habe ich mal ein paar Screenshots platziert.

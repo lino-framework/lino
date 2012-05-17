@@ -95,11 +95,27 @@ def objects():
     #~ yield event("user",start_date=settings.LINO.demo_date(),type=1)
     #~ yield event("user",start_date=settings.LINO.demo_date(days=1),type=2)
     #~ yield event("user",start_date=settings.LINO.demo_date(days=2),type=2)
+    
     User = resolve_model('users.User')
+    EventType = resolve_model('cal.EventType')
+    Event = resolve_model('cal.Event')
+    USERS = Cycler(User.objects.all())
+    ETYPES = Cycler(EventType.objects.all())
+    TIMES = Cycler(['08:30','09:40','10:20','11:10','13:30'])
+    SUMMARIES = Cycler("""
+    Meeting with Michael
+    Seminar in Brussels
+    Consultation with Claudine
+    Lunch with Luc
+    """.splitlines())
     #~ Event = resolve_model('cal.Event')
-    user = User.objects.get(username='user')
-    event = Instantiator('cal.Event').build
-    yield event(user=user,start_date=settings.LINO.demo_date(),type=1)
-    yield event(user=user,start_date=settings.LINO.demo_date(days=1),type=2)
-    yield event(user=user,start_date=settings.LINO.demo_date(days=2),type=2)
+    #~ user = User.objects.get(username='user')
+    #~ event = Instantiator('cal.Event').build
+    for i in range(10):
+        yield Event(user=USERS.pop(),
+          start_date=settings.LINO.demo_date(days=i),
+          type=ETYPES.pop(),start_time=TIMES.pop(),
+          summary=SUMMARIES.pop())
+    #~ yield event(user=user,start_date=settings.LINO.demo_date(days=1),type=2)
+    #~ yield event(user=user,start_date=settings.LINO.demo_date(days=2),type=2)
     

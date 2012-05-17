@@ -161,8 +161,16 @@ def objects():
           ))
 
     #~ budget = Instantiator('debts.Budget').build
-    from lino.modlib.users.models import User
-    root = User.objects.get(username='root')
+    #~ from lino.modlib.users.models import User
+    #~ root = User.objects.get(username='root')
+    
+    User = resolve_model('users.User')
+    kerstin = User(username="kerstin",
+        first_name="Kerstin",last_name=u"Küpper",
+        level=UserLevel.user,
+        debts_level=UserLevel.user)
+    yield kerstin
+    
     
     Household = resolve_model('households.Household')
     Budget = resolve_model('debts.Budget')
@@ -170,10 +178,10 @@ def objects():
     for hh in Household.objects.all():
         #~ sub_budgets = []
         for p in hh.member_set.all():
-            yield Budget(partner_id=p.person.id,user=root)
+            yield Budget(partner_id=p.person.id,user=kerstin)
             #~ sub_budgets.append(b)
             #~ yield b
-        yield Budget(partner_id=hh.id,user=root)
+        yield Budget(partner_id=hh.id,user=kerstin)
         #~ yield b
         #~ for sb in sub_budgets:
             #~ yield Actor(budget=b,sub_budget=sb)

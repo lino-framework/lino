@@ -1362,6 +1362,15 @@ class Panel(Container):
         self.elements = [wrap(e) for e in self.elements]
           
         
+    def get_view_permission(self):
+        """
+        A Panel which doesn't contin a single visible element gets also hidden.
+        """
+        for e in self.elements:
+            if e.get_view_permission():
+                return True
+        return False
+        
     def ext_options(self,**d):
         #~ if not self.label and self.value_template == "new Ext.Panel(%s)":
             # if not self.parent or len(self.parent.elements) == 1:

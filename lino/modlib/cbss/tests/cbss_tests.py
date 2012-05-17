@@ -58,11 +58,16 @@ class QuickTest(TestCase):
         #~ settings.LINO.auto_build_site_cache = False
         #~ super(DemoTest,self).setUp()
             
-TIMEOUT_MESSAGE = '<urlopen error [Errno 10060] A connection attempt '\
+TIMEOUT_RESPONSE = '<urlopen error [Errno 10060] A connection attempt '\
   'failed because the connected party did not properly respond '\
   'after a period of time, or established connection failed '\
   'because connected host has failed to respond>'  
           
+TIMEOUT_MESSAGE = """\
+We got a timeout. 
+That's normal when this test is run behind an IP address that is not registered.
+Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
+"""
   
 
 def test01(self):
@@ -115,7 +120,7 @@ Not actually sending because environment is empty. Request would be:
     settings.LINO.cbss_environment = 'test'
     now = datetime.datetime(2012,5,9,18,34,50)
     req.execute_request(None,now=now)
-    print req.response_xml
+    #~ print req.response_xml
     expected = """\
 NOT sending because `cbss_live_tests` is False:
 <wsc:xmlString xmlns:wsc="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">&lt;ssdn:SSDNRequest xmlns:ssdn=&quot;http://www.ksz-bcss.fgov.be/XSD/SSDN/Service&quot;&gt;
@@ -189,13 +194,9 @@ NOT sending because `cbss_live_tests` is False:
     if settings.LINO.cbss_live_tests:
         req.execute_request(None)
     
-        if req.response_xml == TIMEOUT_MESSAGE:
-            self.fail("""\
-We got a timeout. 
-That's normal when this test is run behind an IP address that is not registered.
-Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
-""")
-        print req.response_xml
+        if req.response_xml == TIMEOUT_RESPONSE:
+            self.fail(TIMEOUT_MESSAGE)
+        #~ print req.response_xml
         expected = ''
         self.assertEqual(req.response_xml,expected)
 
@@ -227,17 +228,18 @@ Not actually sending because environment is empty. Request would be:
  }"""
     self.assertEqual(req.response_xml,expected)
     
-    if settings.LINO.cbss_user_params:
+    if settings.LINO.cbss_live_tests:
         # try it in test environment
         settings.LINO.cbss_environment = 'test'
         req.execute_request(None)
         
-        if req.response_xml == TIMEOUT_MESSAGE:
-            self.fail("""\
-We got a timeout. 
-That's normal when this test is run behind an IP address that is not registered.
-Set your `cbss_user_params` settings to None to skip this test.
-""")
+        if req.response_xml == TIMEOUT_RESPONSE:
+            self.fail(TIMEOUT_MESSAGE)
+            #~ """\
+#~ We got a timeout. 
+#~ That's normal when this test is run behind an IP address that is not registered.
+#~ Set your `cbss_user_params` settings to None to skip this test.
+#~ """)
         expected = """\
         """
         self.assertEqual(req.response_xml,expected)

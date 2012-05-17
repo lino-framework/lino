@@ -35,7 +35,7 @@ from lino.utils import mti
 from lino.utils.choicelists import UserLevel
 
 #~ from django.contrib.auth import models as auth
-from lino.modlib.users import models as auth
+#~ from lino.modlib.users import models as auth
 #~ from lino.modlib.contacts.utils import GENDER_FEMALE, GENDER_MALE
 from lino.utils.choicelists import Gender
 from lino.modlib.jobs import models as jobs
@@ -45,13 +45,13 @@ from lino.apps.pcsw import models as pcsw
 #~ dblogger.info('Loading')
 
 
-DEMO_LINKS = [
-  dict(name="Lino website",url="http://lino.saffre-rumma.net"),
-  dict(name="Django website",url="http://www.djangoproject.com"),
-  dict(name="ExtJS website",url="http://www.sencha.com"),
-  dict(name="Python website",url="http://www.python.org"),
-  dict(name="Google",url="http://www.google.com"),
-]
+#~ DEMO_LINKS = [
+  #~ dict(name="Lino website",url="http://lino.saffre-rumma.net"),
+  #~ dict(name="Django website",url="http://www.djangoproject.com"),
+  #~ dict(name="ExtJS website",url="http://www.sencha.com"),
+  #~ dict(name="Python website",url="http://www.python.org"),
+  #~ dict(name="Google",url="http://www.google.com"),
+#~ ]
 ROW_COUNTER = 0
 MAX_LINKS_PER_OWNER = 4
 DATE = settings.LINO.demo_date() # i2d(20061014)
@@ -223,7 +223,6 @@ def objects():
     JobProvider = resolve_model('jobs.JobProvider')
     Function = resolve_model('jobs.Function')
     Sector = resolve_model('jobs.Sector')
-    Note = resolve_model('notes.Note')
     User = resolve_model('users.User')
     Country = resolve_model('countries.Country')
     
@@ -347,20 +346,38 @@ def objects():
       
     DIRECTORS = (annette,hans,andreas,bernard)
     
-    user = auth.User.objects.get(username='user')
-    root = auth.User.objects.get(username='root')
-    #~ root.is_spis = True
-    root.integ_level = UserLevel.expert
-    root.newcomers_level=UserLevel.expert
-    root.debts_level=UserLevel.expert
-    root.save()
-    #~ user.is_spis = True
-    user.integ_level = UserLevel.user
-    root.newcomers_level=UserLevel.user
-    root.debts_level=UserLevel.user
-    user.save()
+    #~ User = resolve_model('users.User')
+    melanie = User(username="melanie",
+        first_name=u"Mélanie",last_name=u"Mélard",
+        level=UserLevel.manager,
+        integ_level=UserLevel.manager)
+    yield melanie 
+    hubert = User(username="hubert",
+        first_name="Hubert",last_name="Huppertz",
+        level=UserLevel.user,
+        integ_level=UserLevel.user)
+    yield hubert
+    alicia = User(username="alicia",
+        first_name="Alicia",last_name="Allmanns",
+        profile='hubert')
+    yield alicia
     
-    USERS = Cycler(root,user)
+    
+    #~ user = auth.User.objects.get(username='user')
+    #~ root = User.objects.get(username='root')
+    #~ root.is_spis = True
+    #~ root.integ_level = UserLevel.expert
+    #~ root.newcomers_level=UserLevel.expert
+    #~ root.debts_level=UserLevel.expert
+    #~ root.save()
+    #~ user.is_spis = True
+    #~ user.integ_level = UserLevel.user
+    #~ root.newcomers_level=UserLevel.user
+    #~ root.debts_level=UserLevel.user
+    #~ user.save()
+    
+    #~ USERS = Cycler(root,melanie,hubert,alicia)
+    AGENTS = Cycler(melanie,hubert,alicia)
     
     #~ CLIENTS = Cycler(andreas,annette,hans,ulrike,erna,tatjana)
     count = 0
@@ -373,9 +390,9 @@ def objects():
                 if count % 6:
                     client.coached_until = settings.LINO.demo_date(-7 * count)
                 if count % 2:
-                    client.coach1 = USERS.pop()
+                    client.coach1 = AGENTS.pop()
                 else:
-                    client.coach2 = USERS.pop()
+                    client.coach2 = AGENTS.pop()
                     
             elif count % 8:
                 client.newcomer = True
@@ -388,7 +405,7 @@ def objects():
     
     
     #~ project = Instantiator('projects.Project').build
-    note = Instantiator('notes.Note').build
+    #~ note = Instantiator('notes.Note').build
     langk = Instantiator('cv.LanguageKnowledge').build
 
     #~ prj = project(name="Testprojekt",company=oshz)
@@ -400,15 +417,31 @@ def objects():
     #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
     
     
-    #~ yield note(user=root,date=settings.LINO.demo_date(),
-    yield note(user=root,date=i2d(20091006),
-        subject="Programmierung",company=cpas,
-        type=1,event_type=1)
-    yield note(user=user,date=i2d(20091007),subject="Testen",company=cpas)
-    yield note(user=root,date=i2d(20100517),subject="Programmierung",company=cpas)
-    yield note(user=user,date=i2d(20100518),subject="Testen",company=cpas)
-    yield note(user=user,date=i2d(20110526),subject="Formatted notes",
-        company=cpas,body=restify(u"""\
+    Note = resolve_model('notes.Note')
+    USERS = Cycler(User.objects.all())
+    SUBJECTS = Cycler("""
+    Erstgespräch
+    Versammlung beim AG
+    Zwischenbericht
+    Krisensitzung 
+    """.splitlines())
+    
+    for i in range(10):
+        yield Note(user=USERS.pop(),
+          date=settings.LINO.demo_date(days=i),
+          subject=SUBJECTS.pop())
+    
+
+    if False:
+        #~ yield note(user=root,date=settings.LINO.demo_date(),
+        yield note(user=root,date=i2d(20091006),
+            subject="Programmierung",company=cpas,
+            type=1,event_type=1)
+        yield note(user=user,date=i2d(20091007),subject="Testen",company=cpas)
+        yield note(user=root,date=i2d(20100517),subject="Programmierung",company=cpas)
+        yield note(user=user,date=i2d(20100518),subject="Testen",company=cpas)
+        yield note(user=user,date=i2d(20110526),subject="Formatted notes",
+            company=cpas,body=restify(u"""\
 Formatted notes
 ===============
 
@@ -510,7 +543,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
             applies_from=af,
             applies_until=af+datetime.timedelta(days=DURATIONS.pop()),
             #~ applies_until=settings.LINO.demo_date(-i*7+DURATIONS.pop()),
-            person=CLIENTS.pop(),user=USERS.pop()))
+            person=CLIENTS.pop(),user=AGENTS.pop()))
         
     
     jobtype = Instantiator('jobs.JobType','name').build
@@ -589,7 +622,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
             type=CTYPES.pop(),
             applies_from=settings.LINO.demo_date(-600+i*40),
             duration=DURATIONS.pop(),
-            job=JOBS.pop(),person=CLIENTS.pop(),user=USERS.pop()))
+            job=JOBS.pop(),person=CLIENTS.pop(),user=AGENTS.pop()))
 
     
     #~ jobrequest = Instantiator('jobs.Candidature','job person date_submitted').build
@@ -602,33 +635,6 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     
 
     
-    if False: # this was lino.modlib.links before December 2011
-      
-        link = Instantiator('links.Link').build
-        
-        users = User.objects.all()
-        
-        
-        def demo_links(**kw):
-            global ROW_COUNTER
-            global DATE
-            for x in range(1 + (ROW_COUNTER % MAX_LINKS_PER_OWNER)):
-                kw.update(date=DATE)
-                kw.update(DEMO_LINKS[ROW_COUNTER % len(DEMO_LINKS)])
-                kw.update(user=users[ROW_COUNTER % users.count()])
-                DATE += ONE_DAY
-                ROW_COUNTER += 1
-                yield link(**kw)
-            
-      
-        for obj in Person.objects.all():
-            for x in demo_links(person=obj):
-                yield x
-                
-        for obj in Company.objects.all():
-            for x in demo_links(company=obj):
-                yield x
-            
     
 
     #~ from lino.sites.pcsw.models import Course, CourseContent, CourseRequest
@@ -759,15 +765,15 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_from = settings.LINO.demo_date(-7*30)
     p.coached_until = None
     p.coach1 = User.objects.get(username='root')
-    p.coach2 = User.objects.get(username='user')
+    p.coach2 = alicia # User.objects.get(username='alicia')
     p.gender = Gender.female 
     p.group = pg1
     p.save()
     
-    task = Instantiator('cal.Task').build
-    yield task(user=root,start_date=i2d(20110717),
-        summary=u"Anrufen Termin",
-        owner=p)
+    #~ task = Instantiator('cal.Task').build
+    #~ yield task(user=root,start_date=i2d(20110717),
+        #~ summary=u"Anrufen Termin",
+        #~ owner=p)
     
     p = Person.objects.get(name=u"Eierschal Emil")
     p.birth_date = i2d(19800501)
@@ -790,7 +796,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     #~ p.unavailable_until = i2d(20110712)
     p.unavailable_until = settings.LINO.demo_date(2*30)
     p.coach1 = User.objects.get(username='root')
-    p.coach2 = User.objects.get(username='user')
+    p.coach2 = alicia # User.objects.get(username='alicia')
     p.group = pg1
     p.gender = Gender.male
     p.national_id = '931229 211-83'
@@ -810,7 +816,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.birth_date = i2d(19600401)
     p.coached_from = settings.LINO.demo_date(-3*30)
     p.coached_until = None
-    p.coach1 = User.objects.get(username='user')
+    p.coach1 = alicia # User.objects.get(username='alicia')
     #~ p.coach2 = User.objects.get(username='user')
     p.gender = Gender.female
     p.group = pg1
@@ -836,7 +842,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     
     event = Instantiator('cal.Event',
       'type start_date project summary',
-      user=root).build
+      user=alicia).build
     #~ yield event(1,i2d(20100727),hans,u"Stand der Dinge")
     #~ yield event(2,i2d(20100727),annette,u"Problem Kühlschrank")
     #~ yield event(3,i2d(20100727),andreas,u"Mein dritter Termin")

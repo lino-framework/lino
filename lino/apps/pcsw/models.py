@@ -1120,7 +1120,10 @@ class PersonsByCoach1(Persons):
         return qs
 
 class IntegTable(dd.Table):
-  
+    """
+    Abstract base class for all tables that are visible only to 
+    Integration Agents (users with a non-empty `integ_level`).
+    """
     @classmethod
     def get_permission(self,action,user,obj):
         if not user.integ_level:

@@ -82,7 +82,8 @@ def test001(self):
     self.assertEquals(Person.objects.count(), 73)
     
     p = Person.objects.get(pk=118)
-    self.assertEquals(unicode(p), "ARENS Annette (118)")
+    #~ self.assertEquals(unicode(p), "ARENS Annette (118)")
+    self.assertEquals(unicode(p), "AUSDEMWALD Alfons (118)")
     
     
         
@@ -543,7 +544,7 @@ def test016(self):
     """
     cases = [
       ['root', 19],
-      ['user', 17],
+      ['alicia', 17],
     ]
     for case in cases:
         url = '/api/pcsw/MyPersons?fmt=json&limit=30&start=0&su=%s' % case[0]

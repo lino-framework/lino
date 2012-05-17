@@ -1,2 +1,7 @@
 T:\hgwork\lino\docs\igen\index.rst:11: (WARNING/2) toctree contains reference to nonexisting document u'igen/appdocs/index'
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\blog\2012\0517.rst:47: WARNING: py:mod reference target not found: lino.modlib.users.fixtures.demo
+T:\hgwork\lino\docs\blog\2012\0517.rst:48: WARNING: py:mod reference target not found: lino.modlib.newcomers.fixtures.demo
+T:\hgwork\lino\docs\blog\2012\0517.rst:50: WARNING: py:mod reference target not found: lino.apps.pcsw.fixtures.demo
+T:\hgwork\lino\docs\blog\2012\0517.rst:55: WARNING: xfile reference target not found: lino*.js
+T:\hgwork\lino\docs\blog\2012\0517.rst:74: WARNING: py:class reference target not found: lino.modlib.jobs.models.CandidaturesByPerson
