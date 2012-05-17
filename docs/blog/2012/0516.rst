@@ -36,6 +36,7 @@ http://wiki.dreamhost.com/Django_FastCGI
 User Levels and User Groups
 ---------------------------
 
+
 Lino's default permission system (:mod:`lino.modlib.users`) 
 evolves away from Django's `django.contrib.auth` module.
 Deserves more documentation.
@@ -79,9 +80,14 @@ Lino doesn't currently do this because it feels more "sane" to do
 these decicions in the `setup_XXX_menu` functions.
 
 
-Der eigentliche Auslöser dieser Übung ist jedoch, dass der Reiter "Budgets" 
+Der eigentliche Auslöser dieser Übung ist jedoch
+ein kleiner unscheinbarer Punkt in der todo-Liste:
+
+- Hide the "Debts Mediation" tab (BudgetsByPartner) for Users without `debts_level`. 
+
+Also dass der Reiter "Budgets" 
 nur für *Schuldnerberater* sichtbar sein soll. Also solche, 
-deren `debts_level` nicht leer ist.
+deren `debts_level` nicht leer ist. 
 Umgekehrt werden wohl bald auch Anfragen kommen, dass die Leute von der 
 Schuldnerberatung 
 (die keine Integration machen und deren `integ_level` leer sein wird) 
@@ -113,7 +119,8 @@ und das System allgemein komplexer wird. Zum Beispiel muss jetzt
 der Cache neu generiert werden, wenn ein Profil-Benutzer etwas in seinen levels verändert kriegt.
 
 :checkin:`4882a981422c`.
-Äußerlich funktioniert es bereits. Aber ein "Detail" fehlt noch: 
+Äußerlich funktioniert es bereits. Aber das eigentliche Ziel ist noch 
+nicht sichtbar, denn ein "Detail" fehlt noch: 
 die Generierung der lino*.js-Dateien muss ich noch bearbeiten, 
 damit sie unsichtbare Elemente gar nicht erst generieren. 
 Das wird noch lustig. 

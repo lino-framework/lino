@@ -65,6 +65,16 @@ from lino.tools import obj2str, models_by_abc
 from lino.modlib.cal import models as cal
 
 
+
+class IntegTable(dd.Table):
+  
+    @classmethod
+    def get_permission(self,action,user,obj):
+        if not user.integ_level:
+            return False
+        return super(IntegTable,self).get_permission(action,user,obj)
+        
+
 #
 # CONTRACT TYPES 
 #
@@ -91,7 +101,7 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         blank=True,null=True)
         
 
-class ContractTypes(dd.Table):
+class ContractTypes(IntegTable):
     model = ContractType
     column_names = 'name ref build_method template *'
     detail_template = """
@@ -115,7 +125,7 @@ class ExamPolicy(babel.BabelNamed,cal.RecurrenceSet):
         verbose_name_plural = _('Examination Policies')
         
 
-class ExamPolicies(dd.Table):
+class ExamPolicies(IntegTable):
     model = ExamPolicy
     column_names = 'name *'
 
@@ -132,7 +142,7 @@ class ContractEnding(models.Model):
     def __unicode__(self):
         return unicode(self.name)
         
-class ContractEndings(dd.Table):
+class ContractEndings(IntegTable):
     model = ContractEnding
     column_names = 'name *'
     order_by = ['name']
@@ -487,7 +497,7 @@ class ContractDetail(dd.DetailLayout):
         dh.isip.label = _("ISIP")
 
 
-class Contracts(dd.Table):
+class Contracts(IntegTable):
     model = Contract
     column_names = 'id applies_from applies_until user type *'
     order_by = ['id']

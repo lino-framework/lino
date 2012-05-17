@@ -314,7 +314,15 @@ class BudgetDetail(dd.DetailLayout):
         h.entries2.label = _("Liabilities & Assets")
         h.result.label = _("Result")
     
-class Budgets(dd.Table):
+class DebtsUserTable(dd.Table):
+    @classmethod
+    def get_permission(self,action,user,obj):
+        if user.debts_level < UserLevel.user:
+            return False
+        return True
+        
+  
+class Budgets(DebtsUserTable):
     model = Budget
     detail_layout = BudgetDetail()
     #~ master_key = 'person'
@@ -328,12 +336,6 @@ class MyBudgets(Budgets,mixins.ByUser):
 class BudgetsByPartner(Budgets):
     master_key = 'partner'
     
-    @classmethod
-    def get_permission(self,action,user,obj):
-        if user.debts_level < UserLevel.user:
-            return False
-        return True
-        
 
 class AccountGroup(mixins.Sequenced,babel.BabelNamed):
     class Meta:
@@ -343,7 +345,7 @@ class AccountGroup(mixins.Sequenced,babel.BabelNamed):
     account_type = AccountType.field()
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
-class AccountGroups(dd.Table):
+class AccountGroups(DebtsUserTable):
     model = AccountGroup
     
 class Account(mixins.Sequenced,babel.BabelNamed):
@@ -372,7 +374,7 @@ class Account(mixins.Sequenced,babel.BabelNamed):
         super(Account,self).save(*args,**kw)
         
     
-class Accounts(dd.Table):
+class Accounts(DebtsUserTable):
     model = Account
     
     
@@ -436,7 +438,7 @@ class Actor(mixins.Sequenced,ActorBase):
         #~ h.general.label = _("General")
     
     
-class Actors(dd.Table):
+class Actors(DebtsUserTable):
     model = Actor
     #~ detail_layout = ActorDetail()
 
@@ -503,7 +505,7 @@ class Entry(SequencedBudgetComponent):
         super(Entry,self).save(*args,**kw)
         
             
-class Entries(dd.Table):
+class Entries(DebtsUserTable):
     model = Entry
 
 #~ class EntriesByType(Entries):
@@ -543,7 +545,7 @@ class AssetsByBudget(EntriesByBudget,EntriesByType):
     
     
 
-class SummaryByBudget(dd.Table):
+class SummaryByBudget(DebtsUserTable):
     """
     Abstract base for 
     """

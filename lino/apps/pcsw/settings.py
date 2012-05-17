@@ -76,56 +76,62 @@ class Lino(Lino):
         from lino.utils.choicelists import UserLevel
         
         m = main.add_menu("master",_("Master"))
+        
         m = main.add_menu("contacts",_("Contacts"))
         #~ if user.is_spis:
-        if user.integ_level:
+        if user.level:
             m.add_action(self.modules.contacts.Companies)
             m.add_action(self.modules.contacts.Persons)
             #~ m.add_action('contacts.Persons.detail')
             #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
-            m.add_action(self.modules.pcsw.MyPersonSearches)
             m.add_action(self.modules.contacts.AllPartners)
             #~ m.add_action(self.modules.pcsw.Newcomers)
+        if user.integ_level:
+            m.add_action(self.modules.pcsw.MyPersonSearches)
+            
         self.modules.isip.setup_master_menu(self,ui,user,m)
         self.modules.households.setup_master_menu(self,ui,user,m)
-        self.modules.newcomers.setup_main_menu(self,ui,user,m)
-        self.modules.debts.setup_main_menu(self,ui,user,m)
+        
+        self.modules.newcomers.setup_main_menu(self,ui,user,main)
+        self.modules.debts.setup_main_menu(self,ui,user,main)
         #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')
 
 
         #~ if user is None:
             #~ return main
+        if user.level:
+          
+            m = main.add_menu("my",_("My menu"))
+            #~ m.add_action('projects.Projects')
+            m.add_action(self.modules.notes.MyNotes)
             
-        m = main.add_menu("my",_("My menu"))
-        #~ m.add_action('projects.Projects')
-        m.add_action(self.modules.notes.MyNotes)
-        
-        #~ if user.is_spis:
-        if user.integ_level:
-            mypersons = m.add_menu("mypersons",self.modules.pcsw.MyPersons.label)
-            mypersons.add_action(self.modules.pcsw.MyPersons)
-            for pg in self.modules.pcsw.PersonGroup.objects.order_by('ref_name'):
-                mypersons.add_action(
-                  self.modules.pcsw.MyPersonsByGroup,
-                  label=pg.name,
-                  params=dict(master_instance=pg))
-                #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
-                #~ params=dict(master_id=pg.pk))
-        
-        self.on_each_app('setup_my_menu',ui,user,m)
-        #~ self.modules.isip.setup_my_menu(self,ui,user,m)
-        #~ self.modules.jobs.setup_my_menu(self,ui,user,m)
-        #~ self.modules.households.setup_my_menu(self,ui,user,m)
-        #~ self.modules.newcomers.setup_my_menu(self,ui,user,m)
-        #~ self.modules.debts.setup_my_menu(self,ui,user,m)
-        
-        #~ self.modules.cal.setup_my_menu(self,ui,user,m)
-        #~ self.modules.outbox.setup_my_menu(self,ui,user,m)
-        m.add_action(self.modules.uploads.MyUploads)
-        m.add_action(self.modules.lino.MyTextFieldTemplates)
+            #~ if user.is_spis:
+            if user.integ_level:
+                mypersons = m.add_menu("mypersons",self.modules.pcsw.MyPersons.label)
+                mypersons.add_action(self.modules.pcsw.MyPersons)
+                for pg in self.modules.pcsw.PersonGroup.objects.order_by('ref_name'):
+                    mypersons.add_action(
+                      self.modules.pcsw.MyPersonsByGroup,
+                      label=pg.name,
+                      params=dict(master_instance=pg))
+                    #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
+                    #~ params=dict(master_id=pg.pk))
+            
+            self.on_each_app('setup_my_menu',ui,user,m)
+            #~ self.modules.isip.setup_my_menu(self,ui,user,m)
+            #~ self.modules.jobs.setup_my_menu(self,ui,user,m)
+            #~ self.modules.households.setup_my_menu(self,ui,user,m)
+            #~ self.modules.newcomers.setup_my_menu(self,ui,user,m)
+            #~ self.modules.debts.setup_my_menu(self,ui,user,m)
+            
+            #~ self.modules.cal.setup_my_menu(self,ui,user,m)
+            #~ self.modules.outbox.setup_my_menu(self,ui,user,m)
+            m.add_action(self.modules.uploads.MyUploads)
+            m.add_action(self.modules.lino.MyTextFieldTemplates)
 
-        #~ m.add_instance_action(user,label="My user preferences")
+            #~ m.add_instance_action(user,label="My user preferences")
+        
 
         #~ if user.is_spis:
         if user.integ_level:
@@ -134,7 +140,7 @@ class Lino(Lino):
             m.add_action(self.modules.courses.CourseOffers)
             m.add_action(self.modules.courses.PendingCourseRequests)
             
-        self.modules.newcomers.setup_main_menu(self,ui,user,m)
+        #~ self.modules.newcomers.setup_main_menu(self,ui,user,m)
         
         self.modules.jobs.setup_main_menu(self,ui,user,main)
         
@@ -143,7 +149,7 @@ class Lino(Lino):
         m = main.add_menu("lst",_("Listings"))
         #~ for listing in LISTINGS:
             #~ m.add_action(listing,'listing')
-        if user.integ_level:
+        if True: # user.integ_level:
         #~ if user.is_spis:
             m.add_action(self.modules.jobs.JobsOverview)
             #~ m.add_action(self.modules.jobs.ContractsSearch)

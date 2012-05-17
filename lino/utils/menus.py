@@ -145,9 +145,10 @@ class MenuItem:
 
 class Menu(MenuItem):
     #~ template_to_response = 'lino/menu.html'
-    def __init__(self,name,label=None,parent=None,**kw):
+    def __init__(self,user,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,None,name,label,**kw)
         self.items = []
+        self.user = user
         #~ self.items_dict = {}
 
     def compress(self):
@@ -214,7 +215,7 @@ class Menu(MenuItem):
         return self._add_item(MenuItem(self,None,None,label,**kw))
         
     def add_menu(self,name,label,**kw):
-        return self._add_item(Menu(name,label,self,**kw))
+        return self._add_item(Menu(self.user,name,label,self,**kw))
 
     #~ def add_url_button(self,url,label):
     def add_url_button(self,url,**kw):
@@ -224,8 +225,10 @@ class Menu(MenuItem):
           #~ xtype='button',text=label,
           #~ handler=js_code("function() {window.location='%s';}" % url)))
 
-    def _add_item(self,m):
-        assert isinstance(m,MenuItem)
+    def _add_item(self,mi):
+        assert isinstance(mi,MenuItem)
+        if mi.action is not None:
+            if not mi.action.get_permission(self.user,mi.instance): return
         #~ old = self.items_dict.get(m.name,None)
         #~ if old:
             #~ i = self.items.index(old)
@@ -237,11 +240,11 @@ class Menu(MenuItem):
             #~ return old 
         #~ else:
             #print "[debug] Adding menu item %s" % m.name
-        self.items.append(m)
+        self.items.append(mi)
         #~ self.items_dict[m.name] = m
         #~ if m.name in [i.name for i in self.items]:
             #~ raise "Duplicate item name %s for menu %s" % (m.name,self.name)
-        return m
+        return mi
         
     #~ def get(self,name):
         #~ return self.items_dict.get(name)

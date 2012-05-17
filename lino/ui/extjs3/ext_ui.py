@@ -1153,7 +1153,7 @@ tinymce.init({
           #~ title=self.site.title,
           tbar=settings.LINO.get_site_menu(self,request.user),
         )
-        
+        jsgen.set_for_user(request.user)
         for ln in jsgen.declare_vars(win):
             yield ln
         yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
@@ -1403,9 +1403,9 @@ tinymce.init({
                 #~ return json_response_kw(msg="20120124")
                 #~ total_count = len(ar.data_iterator)
                 total_count = ar.get_total_count()
-                if ar.create_rows:
-                    #~ row = ar.create_instance()
-                    row = ar.create_phantom_row()
+                #~ if ar.create_rows:
+                row = ar.create_phantom_row()
+                if row is not None:
                     d = rh.store.row2list(ar,row)
                     rows.append(d)
                     total_count += 1
@@ -1868,6 +1868,9 @@ tinymce.init({
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
         
         def doit(user):
+          
+            jsgen.set_for_user(user)
+            
             fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(user)) 
             if not force and os.path.exists(fn):
                 if os.stat(fn).st_mtime > mtime:
@@ -1896,7 +1899,7 @@ tinymce.init({
                      + table.custom_tables \
                      + table.frames ]
             
-            if False: # todo 20120516
+            if True: # todo 20120516
                 actors_list = [a for a in actors_list if a.get_permission(actions.VIEW,user,None)]
                      
             for a in actors_list:
@@ -1913,7 +1916,7 @@ tinymce.init({
                     
             for dtl in details:
                 dh = dtl.get_handle(self)
-                for ln in self.js_render_detail_FormPanel(dh):
+                for ln in self.js_render_detail_FormPanel(dh,user):
                     f.write(ln + '\n')
             
             for rpt in actors_list:
@@ -1923,7 +1926,7 @@ tinymce.init({
                 rh = rpt.get_handle(self) 
                 
                 if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
-                    for ln in self.js_render_GridPanel_class(rh):
+                    for ln in self.js_render_GridPanel_class(rh,user):
                         f.write(ln + '\n')
                     
                 for a in rpt.get_actions():
@@ -1931,7 +1934,7 @@ tinymce.init({
                         if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
                             for ln in self.js_render_detail_action_FormPanel(rh,a):
                                   f.write(ln + '\n')
-                        for ln in self.js_render_window_action(rh,a):
+                        for ln in self.js_render_window_action(rh,a,user):
                             f.write(ln + '\n')
 
 
@@ -2304,7 +2307,7 @@ tinymce.init({
         return on_render
         
       
-    def js_render_detail_FormPanel(self,dh):
+    def js_render_detail_FormPanel(self,dh,user):
         
         tbl = dh.layout._table
         
@@ -2408,7 +2411,7 @@ tinymce.init({
         yield "});"
         yield ""
         
-    def js_render_GridPanel_class(self,rh):
+    def js_render_GridPanel_class(self,rh,user):
         
         yield ""
         #~ yield "// js_render_GridPanel_class"
@@ -2494,7 +2497,7 @@ tinymce.init({
         yield ""
       
             
-    def js_render_window_action(self,rh,action):
+    def js_render_window_action(self,rh,action,user):
       
         rpt = rh.actor
         

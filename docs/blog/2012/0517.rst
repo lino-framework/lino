@@ -1,0 +1,25 @@
+20120517
+========
+
+Ha, das war lustig!
+:meth:`lino.ui.extjs3.ext_ui.ExtUI.build_site_cache`
+generiert die lino*.js-Dateien jetzt korrekt so, 
+dass unnötige Elemente gar nicht erst drin stehen. 
+
+Und gestern schrieb ich ja: 
+
+  It would be theoretically more "logical" to also use 
+  :meth:`lino.core.actors.Actor.get_permission` 
+  for deciding whether a menu command should be created or not.
+  Lino doesn't currently do this because it feels more "sane" to do 
+  these decicions in the `setup_XXX_menu` functions.
+
+Aber jetzt wo auch das Menü schon einmalig beim Server-Start generiert 
+werden kann statt bei jedem request (tut es zwar noch nicht, aber das 
+ist jetzt möglich), revidiere ich meine gestrige Meinung. Habe z.B. begonnen, 
+dass der Demo-Benutzer Caroline die Quicklinks "Meine Klienten", "Meine VSE" 
+und "Meine Art-60-7-Konventionen" nicht mehr sieht.
+Die `lino_caroline_*.js` sind dadurch schon von 2 auf 1,5 MB geschrumpft.
+
+Bevor ich jetzt noch die Test-Suite aufräume, mach ich ein :checkin:``.
+

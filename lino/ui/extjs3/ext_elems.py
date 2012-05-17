@@ -30,6 +30,7 @@ from lino import dd
 from lino.core import table
 from lino.core import layouts
 from lino.core import fields
+from lino.core import actions
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
 from lino.utils import mti
@@ -79,6 +80,7 @@ def before_row_edit(panel):
     l = []
     #~ l.append("console.log('before_row_edit',record);")
     for e in panel.active_children:
+        if not e.get_view_permission(): continue
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
         #~ elif isinstance(e,PictureElement):
@@ -1464,6 +1466,9 @@ class GridElement(Container):
             #~ self.mt = 'undefined'
             
             
+    def get_view_permission(self):
+        return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
+        
     def ext_options(self,**kw):
         "not direct parent (Container), only LayoutElement"
         kw = LayoutElement.ext_options(self,**kw)

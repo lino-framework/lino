@@ -127,7 +127,7 @@ class Schedule(babel.BabelNamed):
         verbose_name = _("Work Schedule")
         verbose_name_plural = _('Work Schedules')
         
-class Schedules(dd.Table):
+class Schedules(pcsw.IntegTable):
     model = Schedule
     order_by = ['name']
     detail_template = """
@@ -141,7 +141,7 @@ class Regime(babel.BabelNamed):
         verbose_name = _("Work Regime")
         verbose_name_plural = _('Work Regimes')
         
-class Regimes(dd.Table):
+class Regimes(pcsw.IntegTable):
     model = Regime
     order_by = ['name']
     detail_template = """
@@ -185,7 +185,7 @@ class JobProviderDetail(pcsw.CompanyDetail):
   
 
 
-class JobProviders(pcsw.Companies):
+class JobProviders(pcsw.Companies,pcsw.IntegTable):
     """
     List of Companies that have `Company.is_jobprovider` activated.
     """
@@ -225,7 +225,7 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         blank=True,null=True)
         
 
-class ContractTypes(dd.Table):
+class ContractTypes(pcsw.IntegTable):
     model = ContractType
     column_names = 'name ref build_method template *'
     detail_template = """
@@ -245,7 +245,7 @@ class Sector(babel.BabelNamed):
         blank=True,
         verbose_name=_("Remark"))
         
-class Sectors(dd.Table):
+class Sectors(pcsw.IntegTable):
     model = Sector
     order_by = ['name']
     detail_template = """
@@ -269,7 +269,7 @@ class Function(babel.BabelNamed):
         #~ verbose_name=_("Job Provider"),
         #~ blank=True,null=True)
         
-class Functions(dd.Table):
+class Functions(pcsw.IntegTable):
     model = Function
     column_names = 'name sector *'
     order_by = ['name']
@@ -538,7 +538,7 @@ class ContractDetail(dd.DetailLayout):
     """
     
   
-class Contracts(dd.Table):
+class Contracts(pcsw.IntegTable):
     model = Contract
     column_names = 'id job applies_from applies_until user type *'
     order_by = ['id']
@@ -670,7 +670,7 @@ class Offer(SectorFunction):
             return self.name
         return u'%s @ %s' % (self.function,self.provider)
   
-class Offers(dd.Table):
+class Offers(pcsw.IntegTable):
     model = Offer
     detail_template = """
     name provider sector function
@@ -1077,7 +1077,7 @@ class ExperiencesByOffer(SectorFunctionByOffer):
     
 
 
-class Jobs(dd.Table):
+class Jobs(pcsw.IntegTable):
     model = Job
     #~ order_by = ['start_date']
     column_names = 'name provider * id'
@@ -1091,7 +1091,7 @@ class Jobs(dd.Table):
 
     
 
-class JobTypes(dd.Table):
+class JobTypes(pcsw.IntegTable):
     model = JobType
     order_by = ['name']
     detail_template = """

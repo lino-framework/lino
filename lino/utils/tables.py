@@ -138,7 +138,7 @@ class AbstractTableRequest(actions.ActionRequest):
     
     limit = None
     offset = None
-    create_rows = None
+    #~ create_rows = None
     
     #~ def __init__(self,ui,report,request,action,*args,**kw):
     def __init__(self,ui,actor,request=None,action=None,**kw):
@@ -370,7 +370,7 @@ class TableRequest(AbstractTableRequest):
             master_id=None,
             #~ layout=None,
             filter=None,
-            create_rows=None,
+            #~ create_rows=None,
             gridfilters=None,
             exclude=None,
             extra=None,
@@ -414,19 +414,18 @@ class TableRequest(AbstractTableRequest):
         
         #~ self.total_count = self._data_iterator.count()
         
-        if create_rows is None:
-            if self.create_kw is None:
-                create_rows = 0
-            #~ elif self.user is not None and self.actor.can_add.passes(self.user):
-            #~ elif self.actor.can_add.passes(self.user):
-            #~ elif self.report.get_permission(actors.CreatePermission,self.user):
-            #~ a = self.report.get_action('SubmitInsert')
-            #~ if a and self.report.get_permission(a,self.user):
-            elif self.actor.editable and self.actor.get_permission(actions.CREATE,self.user,None):
-                create_rows = 1
-            else:
-                create_rows = 0
-        self.create_rows = create_rows
+        #~ if create_rows is None:
+            #~ if self.create_kw is None:
+                #~ create_rows = 0
+            #~ elif self.actor.editable:
+                #~ u = self.get_user()
+                #~ if u is None or self.actor.get_permission(actions.CREATE,u,None):
+                    #~ create_rows = 1
+                #~ else:
+                    #~ create_rows = 0
+            #~ else:
+                #~ create_rows = 0
+        #~ self.create_rows = create_rows
             
         #~ if self.ui is not None:
             #~ if layout is None:

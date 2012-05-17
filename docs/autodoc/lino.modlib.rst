@@ -18,7 +18,7 @@ Subpackages
     lino.modlib.countries
     lino.modlib.cv
     lino.modlib.debts
-    lino.modlib.families
+    lino.modlib.households
     lino.modlib.isip
     lino.modlib.jobs
     lino.modlib.journals

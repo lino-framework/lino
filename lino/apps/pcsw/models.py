@@ -1119,8 +1119,15 @@ class PersonsByCoach1(Persons):
         #~ print 20111118, 'get_request_queryset', rr.user, qs.count()
         return qs
 
-
-class MyPersons(Persons):
+class IntegTable(dd.Table):
+  
+    @classmethod
+    def get_permission(self,action,user,obj):
+        if not user.integ_level:
+            return False
+        return super(IntegTable,self).get_permission(action,user,obj)
+        
+class MyPersons(Persons,IntegTable):
     u"""
     Show only persons attended 
     by the requesting user (or another user, 
@@ -1318,16 +1325,26 @@ class UsersWithClients(dd.VirtualTable):
         We only want the users who actually have at least one client.
         We store the corresponding request in the user object 
         under the name `my_persons`.
+        
+        The list displays only integration agents, 
+        i.e. users with a nonempty `integ_level`.
+        
+        With one subtility: system admins also have a nonempty `integ_level`, 
+        but normal users don't want to see them.
+        
         """
         #~ if ar.get_user().is_superuser:
-        if ar.get_user().level >= UserLevel.expert:
-            #~ flt = Q(is_spis=True) 
-            flt = Q(integ_level__isnull=False) 
-        else:
-            #~ flt = Q(is_spis=True,is_superuser=False)
-            #~ flt = Q(integ_level__isnull=False,is_superuser=False)
-            flt = Q(integ_level__isnull=False,level__ge=UserLevel.expert)
-        for user in User.objects.filter(flt).order_by('username'):
+        #~ if ar.get_user().level >= UserLevel.expert:
+            #~ # flt = Q(is_spis=True) 
+            #~ flt = Q(integ_level__gt='') 
+        #~ else:
+            #~ # flt = Q(is_spis=True,is_superuser=False)
+            #~ # flt = Q(integ_level__isnull=False,is_superuser=False)
+            #~ flt = Q(integ_level__gt='',level__gte=UserLevel.expert)
+        qs = User.objects.exclude(integ_level='')
+        if ar.get_user().level < UserLevel.expert:
+            qs = qs.exclude(level__gte=UserLevel.expert)
+        for user in qs.order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
             if r.get_total_count():
             #~ if len(r.data_iterator):

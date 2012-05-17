@@ -101,12 +101,20 @@ CONVERTERS = []
 def register_converter(func):
     CONVERTERS.append(func)
     
+_for_user = None    
+
+def set_for_user(u):
+    global _for_user
+    _for_user = u    
+    
+    
 def declare_vars(v):
     """
     Yield the Javascript lines that declare the passed :class:`Variable` `v`.
     If `v` is a :class:`Component`, `list`, `tuple` or `dict` which contains
-    other variables yield also the lines to declare these.
+    other variables, yield also the lines to declare these.
     """
+    #~ assert _for_user is not None
     if isinstance(v,(list,tuple)): 
         for sub in v:
             for ln in declare_vars(sub):
@@ -118,18 +126,19 @@ def declare_vars(v):
                 yield ln
         return
     if isinstance(v,Component): 
-        #~ for ln in declare_vars(v.value):
-            #~ yield ln
+        if not v.get_view_permission(): return
         for sub in v.ext_options().values():
             for ln in declare_vars(sub):
                 yield ln
         # DON'T return
     elif isinstance(v,Value): 
+        if not v.get_view_permission(): return
         #~ ok = True
         for ln in declare_vars(v.value):
             yield ln
         # DON'T return
     if isinstance(v,Variable):
+        if not v.get_view_permission(): return
         if v.declare_type == DECLARE_VAR:
             yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
         elif v.declare_type == DECLARE_THIS:
@@ -140,6 +149,7 @@ def py2js(v):
     """
     Note that None values are rendered as ``null`` (not ``undefined``.
     """
+    #~ assert _for_user is not None
     #~ logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
@@ -170,12 +180,17 @@ def py2js(v):
         #~ return 'undefined'
         return 'null'
     if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
-        return "[ %s ]" % ", ".join([py2js(x) for x in v])
+        #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
+        elems = [py2js(x) for x in v 
+            if (not isinstance(x,Value)) or x.get_view_permission()]
+        return "[ %s ]" % ", ".join(elems)
     if isinstance(v,dict): # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
             #~ "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
-            "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()])
+            "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()
+              if (not isinstance(v,Value)) or v.get_view_permission()
+              ])
             #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
@@ -187,7 +202,7 @@ def py2js(v):
         return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
         #~ return '"%s"' % v
     if isinstance(v, datetime.datetime):
-        """20120120"""
+        #~ """20120120"""
         return '"%s"' % v.strftime(settings.LINO.datetime_format_strftime)
         #~ return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
     if isinstance(v, datetime.time):
@@ -285,6 +300,9 @@ class Value(object):
     
     def __init__(self,value):
         self.value = value
+        
+    def get_view_permission(self):
+        return True
         
     def js_declare(self):
         return []

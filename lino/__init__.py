@@ -904,14 +904,14 @@ class Lino(object):
 
     def get_quicklinks(self,ui,user):
         from lino.utils import menus
-        tb = menus.Toolbar('quicklinks')
+        tb = menus.Toolbar(user,'quicklinks')
         self.setup_quicklinks(ui,user,tb)
         return tb
         
     def get_site_menu(self,ui,user):
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import menus
-        main = menus.Toolbar('main')
+        main = menus.Toolbar(user,'main')
         self.setup_menu(ui,user,main)
         main.compress()
         url = self.root_url

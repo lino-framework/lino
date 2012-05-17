@@ -258,6 +258,14 @@ Short-term
 Medium-term
 -----------
 
+
+TODO:
+
+#.  lino*.js aufsplitten: der Teil aus linolib.js ist ja 
+    konstant für alle Benutzerprofile.
+  
+#.  Menü einmalig beim Server-Start generieren statt bei jedem Request 
+
 #.  :func:`lino.modlib.cal.models.default_calendar` is called only when 
     a user has created at least one Event or Task. Problem: when a user 
     create their first event using CalendarPanel, they don't see their 

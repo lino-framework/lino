@@ -172,6 +172,11 @@ class Action(object):
         else:
             return u"%s %s" % (self.label,self.actor.label)
             
+    def get_permission(self,user,obj):
+        if self.actor is None:
+            return True
+        return self.actor.get_permission(self,user,obj)
+            
         
     def run(self,ar,**kw):
         """
@@ -458,6 +463,15 @@ class ActionRequest(object):
         raise ConfirmationRequired(self.step,messages)
 
     def create_phantom_row(self,**kw):
+        if self.create_kw is None or not self.actor.editable:
+            return 
+        if not self.actor.get_permission(CREATE,self.get_user(),None):
+            return
+        #~ if u is None or self.actor.get_permission(actions.CREATE,u,None):
+            #~ create_rows = 1
+        #~ else:
+            #~ create_rows = 0
+      
         obj = PhantomRow(self,**kw)
         return obj
       
