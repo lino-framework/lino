@@ -274,7 +274,9 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
     def value2html(self,ar,v):
         #~ return "<span>%s</span>" % ar.renderer.href_to(v)
         xml = ar.renderer.href_to(v)
-        xml = xml.encode('utf-8',errors='xmlcharrefreplace')
+        # Python 2.6 : encode() takes no keyword arguments
+        #~ xml = xml.encode('utf-8',errors='xmlcharrefreplace')
+        xml = xml.encode('utf-8','xmlcharrefreplace')
         return xghtml.RAW(xml)
         
         
