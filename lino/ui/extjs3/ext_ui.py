@@ -1875,24 +1875,14 @@ tinymce.init({
             if not force and os.path.exists(fn):
                 if os.stat(fn).st_mtime > mtime:
                     logger.info("NOT generating %s because it is newer than the code.",fn)
-                    return False
+                    return 0
                     
             logger.info("Generating %s ...", fn)
-            
             makedirs_if_missing(os.path.dirname(fn))
-            
             f = codecs.open(fn,'w',encoding='utf-8')
-            
             tpl = self.linolib_template()
-            
             f.write(jscompress(unicode(tpl)+'\n'))
             
-            #~ for model in models.get_models():
-                #~ if model._lino_detail:
-                    #~ f.write("Ext.namespace('Lino.%s') // detail\n" % full_model_name(model))
-                    #~ for ln in self.js_render_detail_FormPanel(model._lino_detail.get_handle(self)):
-                        #~ f.write(ln + '\n')
-                        
             actors_list = [rpt for rpt in table.master_reports \
                      + table.slave_reports \
                      + table.generic_slaves.values() \
@@ -1920,8 +1910,6 @@ tinymce.init({
                     f.write(ln + '\n')
             
             for rpt in actors_list:
-                #~ if str(rpt) == "lino.Models":
-                    #~ logger.info("20120307 %s %s",rpt,rpt.get_actions())
                 
                 rh = rpt.get_handle(self) 
                 
@@ -1941,14 +1929,16 @@ tinymce.init({
             #~ f.write(jscompress(js))
             f.close()
             #~ logger.info("Wrote %s ...", fn)
-            return True
+            return 1
             
         count = 0
         for lang in babel.AVAILABLE_LANGUAGES:
             babel.set_language(lang)
-            for user in User.objects.filter(profile=''):
-                if doit(user):
-                    count += 1
+            if is_devserver():
+                count += doit(User.objects.get(username='root'))
+            else:
+                for user in User.objects.filter(profile=''):
+                    count += doit(user)
                     
         babel.set_language(None)
             

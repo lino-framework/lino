@@ -98,4 +98,13 @@ mit den verschachtelbaren Budgets für die Benutzer zumindest
 momentan noch nicht gut ist. Die Leute sind gewohnt, 
 die Beträge der Aktoren in zwei Kolonnen nebeneinander zu haben.
 Und zwar auch schon bei der Eingabe.
-Ich glaube nicht, dass die sich mit der momentanen Methode anfreunden werden.
+Ich glaube nicht, dass die sich mit der momentanen Methode 
+anfreunden werden.
+
+Also die Version von heute nachmittag in die `lino.sandbox` 
+rein und die neue Idee ausprobiert.
+Und nach nur anderthalb Stunden funktioniert es!
+Oder zumindest fast: Am Ausdruck und der Zusammenfassung 
+muss ich noch was spielen. Aber jetzt gehe ich erstmal schlafen.
+
+:checkin:`10c18c5721f3`.

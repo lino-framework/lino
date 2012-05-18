@@ -128,7 +128,6 @@ add('I', _("Incomes"),alias="income") # Gain/Revenue     Einnahmen  Produits
 add('E', _("Expenses"),alias="expense") # Loss/Cost       Ausgaben   Charges
 
 
-
 class PeriodsField(models.DecimalField):
     """
     Used for `Entry.periods` and `Account.periods`
@@ -146,6 +145,64 @@ class PeriodsField(models.DecimalField):
         defaults.update(kwargs)
         super(PeriodsField, self).__init__(*args, **defaults)
 
+
+class DebtsUserTable(dd.Table):
+    """
+    Abstract base class for tables that are visible only to 
+    Debt Mediation Agents (users with a non-empty `debts_level`).
+    """
+    @classmethod
+    def get_permission(self,action,user,obj):
+        if user.debts_level < UserLevel.user:
+            return False
+        return super(DebtsUserTable,self).get_permission(action,user,obj)
+        
+
+
+
+class AccountGroup(mixins.Sequenced,babel.BabelNamed):
+    class Meta:
+        verbose_name = _("Budget Account Group")
+        verbose_name_plural = _("Budget Account Groups")
+        
+    account_type = AccountType.field()
+    help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
+    #~ column_names = models.CharField(_("Template Entries"),max_length=200,blank=True)
+    
+class AccountGroups(DebtsUserTable):
+    model = AccountGroup
+    
+
+
+class Account(mixins.Sequenced,babel.BabelNamed):
+    class Meta:
+        verbose_name = _("Budget Account")
+        verbose_name_plural = _("Budget Accounts")
+    group = models.ForeignKey(AccountGroup)
+    type = AccountType.field()
+    #~ account = models.ForeignKey(Account)
+    required_for_household = models.BooleanField(
+        _("Required for Households"),default=False)
+    required_for_person = models.BooleanField(
+        _("Required for Persons"),default=False)
+    #~ optional = models.BooleanField(_("Optional"),default=False)
+    #~ yearly = models.BooleanField(_("Yearly"),default=False)
+    periods = PeriodsField(_("Periods"))
+    help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
+    
+    #~ @chooser()
+    #~ def account_choices(cls,account_type):
+        #~ Account.objects.filter(type=account_type)
+    
+    def save(self,*args,**kw):
+        if not self.type:
+            self.type = self.group.account_type
+        super(Account,self).save(*args,**kw)
+        
+    
+class Accounts(DebtsUserTable):
+    model = Account
+    
 
 
 class Budget(mixins.AutoUser,mixins.CachedPrintable):
@@ -236,11 +293,13 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
             fldnames = [fldname]
         if types is not None:
             kw.update(account_type__in=[AccountType.items_dict[t] for t in types])
-        d = Entry.objects.filter(budget=self,**kw).aggregate(models.Sum(*fldnames))
-        s = decimal.Decimal(0)
-        for n in fldnames:
-            s += d.get(n+'__sum',0)
-        return s
+        #~ d = Entry.objects.filter(budget=self,**kw).aggregate(models.Sum(*fldnames))
+        sa = [models.Sum(n) for n in fldnames]
+        rv = decimal.Decimal(0)
+        for e in Entry.objects.filter(budget=self,**kw).annotate(*sa):
+            for n in fldnames:
+                rv += getattr(e,n+'__sum',0)
+        return rv
       
     #~ @dd.displayfield(_("Summary"))
     #~ def summary(self,rr):
@@ -332,17 +391,6 @@ class BudgetDetail(dd.DetailLayout):
         h.entries2.label = _("Liabilities & Assets")
         h.summary_tab.label = _("Summary")
     
-class DebtsUserTable(dd.Table):
-    """
-    Abstract base class for tables that are visible only to 
-    Debt Mediation Agents (users with a non-empty `debts_level`).
-    """
-    @classmethod
-    def get_permission(self,action,user,obj):
-        if user.debts_level < UserLevel.user:
-            return False
-        return super(DebtsUserTable,self).get_permission(action,user,obj)
-        
   
 class Budgets(DebtsUserTable):
     """
@@ -362,46 +410,6 @@ class BudgetsByPartner(Budgets):
     master_key = 'partner'
     
 
-class AccountGroup(mixins.Sequenced,babel.BabelNamed):
-    class Meta:
-        verbose_name = _("Budget Account Group")
-        verbose_name_plural = _("Budget Account Groups")
-        
-    account_type = AccountType.field()
-    help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
-    
-class AccountGroups(DebtsUserTable):
-    model = AccountGroup
-    
-class Account(mixins.Sequenced,babel.BabelNamed):
-    class Meta:
-        verbose_name = _("Budget Account")
-        verbose_name_plural = _("Budget Accounts")
-    group = models.ForeignKey(AccountGroup)
-    type = AccountType.field()
-    #~ account = models.ForeignKey(Account)
-    required_for_household = models.BooleanField(
-        _("Required for Households"),default=False)
-    required_for_person = models.BooleanField(
-        _("Required for Persons"),default=False)
-    #~ optional = models.BooleanField(_("Optional"),default=False)
-    #~ yearly = models.BooleanField(_("Yearly"),default=False)
-    periods = PeriodsField(_("Periods"))
-    help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
-    
-    #~ @chooser()
-    #~ def account_choices(cls,account_type):
-        #~ Account.objects.filter(type=account_type)
-    
-    def save(self,*args,**kw):
-        if not self.type:
-            self.type = self.group.account_type
-        super(Account,self).save(*args,**kw)
-        
-    
-class Accounts(DebtsUserTable):
-    model = Account
-    
     
 
 class ActorBase:
@@ -512,7 +520,7 @@ class Entry(SequencedBudgetComponent):
         return row.amount1 + row.amount2 + row.amount3
         
     @dd.displayfield(_("Description"))
-    def summary_description(self,row,ar):
+    def summary_description(row,ar):
         #~ chunks = [row.account]
         #~ if row.name:
         #~ if row.partner:
@@ -570,7 +578,7 @@ class IncomesByBudget(EntriesByBudget,EntriesByType):
     
 class LiabilitiesByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.liability
-    column_names = "account partner remark amount1 amount2 amount3 periods circa todo"
+    column_names = "account partner remark amount1 amount2 amount3 monthly_rate todo"
     
 class AssetsByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.asset
@@ -582,27 +590,32 @@ class EntriesSummaryByBudget(EntriesByBudget,EntriesByType):
     """
     """
     order_by = ('account','partner', 'remark', 'seqno')
-    column_names = "summary_description amount1 amount2 amount3"
+    column_names = "summary_description amount1 amount2 amount3 total"
     
     
     
-SUMMARY_ROWS = [
-  [u"Monatliche Einkünfte", lambda b: b.sum('amount','I',periods=1)],
-  [u"Monatliche Ausgaben", lambda b: b.sum('amount','E',periods=1)],
-  [u"Monatliche Reserve für jährliche Ausgaben", 
-      lambda b: (b.sum('amount','E',periods=12)/12)],
-  [u"Raten der laufenden Kredite", lambda b: b.sum('monthly_rate','L')],
-]
-
 class BudgetSummary(dd.VirtualTable):
+    master = Budget
     column_names = "desc amount"
-    master_key = 'budget'
     
     @classmethod
     def get_data_rows(self,ar):
         budget = ar.master_instance
-        for d,l in SUMMARY_ROWS:
-            yield (d,l(budget))
+        if budget is None: 
+            return
+        yield [u"Monatliche Einkünfte", budget.sum('amount','I',periods=1)]
+        yield [u"Monatliche Ausgaben", -budget.sum('amount','E',periods=1)]
+        ye = budget.sum('amount','E',periods=12)
+        if ye:
+            yield [(u"Monatliche Reserve für jährliche Ausgaben (%s / 12)" % ye), -ye/12]
+            
+        yield [u"Raten der laufenden Kredite", -budget.sum('monthly_rate','L')]
+        
+        #~ yield [u"Total Kredite / Schulden", budget.sum('amount','L')]
+        
+        #~ u"Restbetrag für Kredite und Zahlungsrückstände"
+    
+
         
     @dd.displayfield('')
     def desc(self,row,ar):
@@ -613,8 +626,6 @@ class BudgetSummary(dd.VirtualTable):
         return row[1]
         
 
-    #~ u"Restbetrag für Kredite und Zahlungsrückstände"
-    
     
     
 #~ class ExpensesSummaryByBudget(EntriesSummaryByBudget,EntriesByType):

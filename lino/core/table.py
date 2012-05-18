@@ -452,11 +452,6 @@ class Table(AbstractTable):
     Setting this will turn the report into a slave report.
     """
     
-    master_field = None
-    """
-    For internal use. Automatically set to the field descriptor of the :attr:`master_key`.
-    """
-    
     handle_uploaded_files = None
     """
     Handler for uploaded files.

@@ -294,9 +294,6 @@ class TableRequest(AbstractTableRequest):
     extra = None
     #~ layout = None
     
-    #~ sort_column = None
-    #~ sort_direction = None
-    
     
     def parse_req(self,request,rqdata,**kw):
         #~ logger.info("20120121 %s.parse_req()",self)
@@ -465,14 +462,6 @@ class TableRequest(AbstractTableRequest):
 
 
         
-class VirtualTableRequest(AbstractTableRequest):
-    pass
-        
-    #~ def setup(self,**kw):
-        #~ AbstractTableRequest.setup(self,**kw)
-        #~ self.total_count = len(self._data_iterator)
-
-
 
 
 class TableHandle(base.Handle): 
@@ -690,6 +679,13 @@ class AbstractTable(actors.Actor):
     Used also in lino.models.ModelsBySite
     """
     
+    master_field = None
+    """
+    For internal use. Automatically set to the field descriptor of the :attr:`master_key`.
+    """
+    
+    
+    
     extra = None
     """
     Examples::
@@ -875,6 +871,11 @@ class AbstractTable(actors.Actor):
         return kw
         
 
+
+#~ class VirtualTableRequest(AbstractTableRequest):
+    #~ pass
+
+
 class VirtualTable(AbstractTable):
     """
     An :class:`AbstractTable` that works on an 
@@ -887,7 +888,8 @@ class VirtualTable(AbstractTable):
         self = cls
         if action is None:
             action = self.default_action
-        return VirtualTableRequest(ui,self,request,action,**kw)
+        #~ return VirtualTableRequest(ui,self,request,action,**kw)
+        return TableRequest(ui,self,request,action,**kw)
 
 
 

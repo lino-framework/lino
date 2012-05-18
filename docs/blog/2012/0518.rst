@@ -1,0 +1,7 @@
+20120518
+========
+
+Neue Tabelle :class:`lino.modlib.debts.BudgetSummary`. 
+Cool! Das ist die Lösung für die "Zusammenfassung", 
+die bisher sehr umständlich in der Default.odt berechnet wurde.
+Auch die Répartition au marc-le-franc werde ich so machen.
