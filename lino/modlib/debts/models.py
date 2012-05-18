@@ -128,7 +128,24 @@ add('I', _("Incomes"),alias="income") # Gain/Revenue     Einnahmen  Produits
 add('E', _("Expenses"),alias="expense") # Loss/Cost       Ausgaben   Charges
 
 
-class PeriodsField(models.DecimalField):
+#~ class PeriodsField(models.DecimalField):
+    #~ """
+    #~ Used for `Entry.periods` and `Account.periods`
+    #~ (which holds simply the default value for the former).
+    #~ It means: for how many months the entered amount counts.
+    #~ Default value is 1. For yearly amounts set it to 12.
+    #~ """
+    #~ def __init__(self, *args, **kwargs):
+        #~ defaults = dict(
+            #~ default=1,
+            #~ max_length=5,
+            #~ max_digits=5,
+            #~ decimal_places=0,
+            #~ )
+        #~ defaults.update(kwargs)
+        #~ super(PeriodsField, self).__init__(*args, **defaults)
+
+class PeriodsField(models.IntegerField):
     """
     Used for `Entry.periods` and `Account.periods`
     (which holds simply the default value for the former).
@@ -137,10 +154,10 @@ class PeriodsField(models.DecimalField):
     """
     def __init__(self, *args, **kwargs):
         defaults = dict(
-            default=1,
-            max_length=5,
-            max_digits=5,
-            decimal_places=0,
+            max_length=3,
+            #~ max_digits=3,
+            blank=True,
+            null=True
             )
         defaults.update(kwargs)
         super(PeriodsField, self).__init__(*args, **defaults)
@@ -166,8 +183,8 @@ class AccountGroup(mixins.Sequenced,babel.BabelNamed):
         verbose_name_plural = _("Budget Account Groups")
         
     account_type = AccountType.field()
+    #~ entries_columns = models.CharField(_("Columns in Entries tables"),max_length=200,blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
-    #~ column_names = models.CharField(_("Template Entries"),max_length=200,blank=True)
     
 class AccountGroups(DebtsUserTable):
     model = AccountGroup
@@ -222,6 +239,7 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     closed = models.BooleanField(verbose_name=_("Closed"))
     intro = dd.RichTextField(_("Introduction"),format="html",blank=True)
+    dist_amount = dd.PriceField(_("Disposable amount"),default=100)
     
                 
     def __unicode__(self):
@@ -276,15 +294,15 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
             if Entry.objects.filter(budget=self,account__group=g).count():
                 yield g
         
-    def msum(self,fldname,types=None,**kw): 
-        #~ kw.update(account__yearly=False)
-        kw.update(periods=1)
-        return self.sum(fldname,types,**kw)
+    #~ def msum(self,fldname,types=None,**kw): 
+        #~ # kw.update(account__yearly=False)
+        #~ kw.update(periods=1)
+        #~ return self.sum(fldname,types,**kw)
         
-    def ysum(self,fldname,types=None,**kw): 
-        #~ kw.update(account__yearly=True)
-        kw.update(periods=12)
-        return self.sum(fldname,types,**kw)
+    #~ def ysum(self,fldname,types=None,**kw): 
+        #~ # kw.update(account__yearly=True)
+        #~ kw.update(periods=12)
+        #~ return self.sum(fldname,types,**kw)
         
     def sum(self,fldname,types=None,**kw): 
         if fldname == 'amount':
@@ -297,8 +315,12 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
         sa = [models.Sum(n) for n in fldnames]
         rv = decimal.Decimal(0)
         for e in Entry.objects.filter(budget=self,**kw).annotate(*sa):
+            amount = decimal.Decimal(0)
             for n in fldnames:
-                rv += getattr(e,n+'__sum',0)
+                amount += getattr(e,n+'__sum',0)
+            if e.periods is not None:
+                amount = amount / decimal.Decimal(e.periods)
+            rv += amount
         return rv
       
     #~ @dd.displayfield(_("Summary"))
@@ -337,6 +359,15 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
                 a.full_clean()
                 a.save()
             
+    def entries_by_group(self,ar,group,**kw):
+        """
+        Return a TableRequest showing the Entries of this Budget, 
+        using the table layout depending on AccountType.
+        Shows all Entries of the specified `AccountGroup`.
+        """
+        t = entries_table_for_group(group)
+        return ar.spawn(t,master_instance=self,account__group=group,**kw)
+
         
       
 class BudgetDetail(dd.DetailLayout):
@@ -363,7 +394,7 @@ class BudgetDetail(dd.DetailLayout):
     """
     main = "general entries1 entries2 summary_tab"
     general = """
-    date partner id user closed
+    date partner id user closed dist_amount
     intro 
     ActorsByBudget
     """
@@ -380,6 +411,7 @@ class BudgetDetail(dd.DetailLayout):
     
     summary_tab = """
     BudgetSummary
+    DistEntriesByBudget
     """
     
     #~ ExpensesSummaryByBudget IncomesSummaryByBudget 
@@ -501,8 +533,10 @@ class Entry(SequencedBudgetComponent):
     amount3 = dd.PriceField(_("Amount") + " 3",default=0)
     #~ amount = dd.PriceField(_("Amount"),default=0)
     circa = models.BooleanField(verbose_name=_("Circa"))
-    todo = models.BooleanField(verbose_name=_("To Do"))
+    dist = models.BooleanField(verbose_name=_("Distribute"))
+    todo = models.CharField(verbose_name=_("To Do"),max_length=200,blank=True)
     remark = models.CharField(_("Remark"),max_length=200,blank=True)
+    description = models.CharField(_("Description"),max_length=200,blank=True)
     periods = PeriodsField(_("Periods"))
     monthly_rate = dd.PriceField(_("Monthly rate"),default=0,
     help_text="""
@@ -515,14 +549,16 @@ class Entry(SequencedBudgetComponent):
     def account_choices(cls,account_type):
         return Account.objects.filter(type=account_type)
         
-    @dd.virtualfield(dd.PriceField(_("Total")))
-    def total(self,row,ar):
+    #~ @dd.virtualfield(dd.PriceField(_("Total")))
+    def total(row,ar=None):
         return row.amount1 + row.amount2 + row.amount3
+    total.return_type = dd.PriceField(_("Total"))
         
     @dd.displayfield(_("Description"))
     def summary_description(row,ar):
         #~ chunks = [row.account]
-        #~ if row.name:
+        if row.description:
+            return row.description
         #~ if row.partner:
             #~ chunks.append(row.partner)
             #~ return "%s/%s" join_words(unicode(row.account),unicode(row.partner),row.name)
@@ -539,6 +575,8 @@ class Entry(SequencedBudgetComponent):
             #~ else:
                 #~ self.name = self.account.name
         self.account_type = self.account.type
+        if self.periods is None:
+            self.periods = self.account.periods
         super(Entry,self).save(*args,**kw)
         
             
@@ -559,7 +597,7 @@ class EntriesByType(Entries):
             
 class EntriesByBudget(Entries):
     master_key = 'budget'
-    column_names = "account remark amount1 amount2 amount3 periods circa todo"
+    column_names = "account description amount1 amount2 amount3 periods remark todo"
 
     @classmethod
     def override_column_headers(self,ar):
@@ -578,14 +616,41 @@ class IncomesByBudget(EntriesByBudget,EntriesByType):
     
 class LiabilitiesByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.liability
-    column_names = "account partner remark amount1 amount2 amount3 monthly_rate todo"
+    column_names = "account partner remark amount1 monthly_rate dist todo"
     
 class AssetsByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.asset
+    column_names = "account remark amount1 monthly_rate todo"
+
+
+
+class PrintExpensesByBudget(ExpensesByBudget):
+    column_names = "summary_description amount1 amount2 amount3 total"
+        
+class PrintIncomesByBudget(IncomesByBudget):
+    column_names = "summary_description amount1 amount2 amount3 total"
     
+class PrintLiabilitiesByBudget(LiabilitiesByBudget):
+    column_names = "partner remark amount1 monthly_rate todo"
+    
+class PrintAssetsByBudget(AssetsByBudget):
+    column_names = "summary_description total monthly_rate"
+
+ENTRIES_BY_TYPE_TABLES = (
+  PrintExpensesByBudget,
+  PrintIncomesByBudget,
+  PrintLiabilitiesByBudget,
+  PrintAssetsByBudget)
+
+def entries_table_for_group(group):
+    for t in ENTRIES_BY_TYPE_TABLES:
+        if t._account_type == group.account_type: return t
+  
     
 
 
+    
+    
 class EntriesSummaryByBudget(EntriesByBudget,EntriesByType):
     """
     """
@@ -610,21 +675,56 @@ class BudgetSummary(dd.VirtualTable):
             yield [(u"Monatliche Reserve für jährliche Ausgaben (%s / 12)" % ye), -ye/12]
             
         yield [u"Raten der laufenden Kredite", -budget.sum('monthly_rate','L')]
-        
         #~ yield [u"Total Kredite / Schulden", budget.sum('amount','L')]
-        
         #~ u"Restbetrag für Kredite und Zahlungsrückstände"
     
-
-        
-    @dd.displayfield('')
+    @dd.displayfield()
     def desc(self,row,ar):
         return row[0]
         
-    @dd.virtualfield(dd.PriceField(''))
+    @dd.virtualfield(dd.PriceField())
     def amount(self,row,ar):
         return row[1]
         
+#~ class DistEntriesByBudget(DebtsUserTable):
+class DistEntriesByBudget(LiabilitiesByBudget):
+    #~ master = Budget
+    #~ model = Entry
+    column_names = "summary_description total dist_perc dist_amount"
+    filter = models.Q(dist=True)
+    title = _("Debts distribution")
+    
+    @classmethod
+    def get_data_rows(self,ar):
+        budget = ar.master_instance
+        if budget is None: 
+            return
+        qs = self.get_request_queryset(ar)            
+        fldnames = ['amount1','amount2','amount3']
+        sa = [models.Sum(n) for n in fldnames]
+        total = decimal.Decimal(0)
+        el = []
+        for e in qs.annotate(*sa):
+            assert e.periods is None
+            total += e.total()
+            el.append(e)
+            
+        for e in el:
+            e.dist_perc = 100 * e.total() / total
+            #~ if e.dist_perc == 0:
+                #~ e.dist_amount = decimal.Decimal(0)
+            #~ else:
+            e.dist_amount = budget.dist_amount * e.dist_perc / 100
+            yield e
+            
+
+    @dd.virtualfield(dd.PriceField(_("%")))
+    def dist_perc(self,row,ar):
+        return row.dist_perc
+
+    @dd.virtualfield(dd.PriceField(_("Amount")))
+    def dist_amount(self,row,ar):
+        return row.dist_amount
 
     
     

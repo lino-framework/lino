@@ -5,3 +5,17 @@ Neue Tabelle :class:`lino.modlib.debts.BudgetSummary`.
 Cool! Das ist die Lösung für die "Zusammenfassung", 
 die bisher sehr umständlich in der Default.odt berechnet wurde.
 Auch die Répartition au marc-le-franc werde ich so machen.
+
+
+
+Und noch was Cooles: 
+:meth:`lino.modlib.debts.models.Budget.entries_by_group`
+ist die Lösung für das Problem, dass die Tabellen 
+je nach Kontenart mal so und mal so aussehen müssen.
+Z.B. die Tabelle "Monatliche Einnahmen" hat 
+Kolonnen wie "Beschreibung" und Betrag, 
+die Tabelle "Schulden" dagegen hat Kolonnen wie
+Partner, Bemerkung, Total, Rückzahlungsrate
+
+
+

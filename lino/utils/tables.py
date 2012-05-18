@@ -837,7 +837,13 @@ class AbstractTable(actors.Actor):
         """
         #logger.debug('%s.get_filter_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
-            assert master_instance is None, "Table %s doesn't accept a master" % self.actor_id
+            pass
+            # master_instance may be e.g. a lino.core.actions.EmptyTableRow
+            # UsersWithClients as "slave" of the "table" Home
+            
+            #~ if master_instance is not None:
+                #~ raise Exception("Unexpected master %r for table %s" % (master_instance,self.actor_id))
+            #~ assert master_instance is None, "Table %s doesn't accept a master" % self.actor_id
         elif self.master is models.Model:
             pass
         elif isinstance(self.master_field,generic.GenericForeignKey):

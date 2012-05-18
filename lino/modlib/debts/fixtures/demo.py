@@ -102,6 +102,11 @@ def objects():
     yield g
     account = Instantiator('debts.Account',group=g,periods=12).build
     yield account(required_for_household=True,**babel_values('name',
+          de=u"Gemeindesteuer",
+          fr=u"Taxe communale",
+          en=u"Municipal tax"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
           de=u"Müllsteuer",
           fr=u"Taxe déchets",
           en=u"Waste tax"
@@ -151,8 +156,8 @@ def objects():
           ))
     yield account(**babel_values('name',
           de=u"Gerichtsvollzieher",
-          fr=u"Juge",
-          en=u"Judge"
+          fr=u"Huissier de justice",
+          en=u"Bailiff"
           ))
     yield account(**babel_values('name',
           de=u"Zahlungsrückstände",
