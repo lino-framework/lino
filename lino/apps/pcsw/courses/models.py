@@ -612,7 +612,7 @@ def site_setup(self): pass
     
 def setup_main_menu(site,ui,user,m):
     if user.integ_level:
-        m = main.add_menu("courses",_("Courses"))
+        m = m.add_menu("courses",_("Courses"))
         m.add_action(CourseProviders)
         m.add_action(CourseOffers)
         m.add_action(PendingCourseRequests)
