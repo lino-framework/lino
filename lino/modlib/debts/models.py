@@ -432,7 +432,7 @@ class BudgetDetail(dd.DetailLayout):
 class Budgets(dd.Table):
     """
     Base class for lists of :class:`Budgets <Budget>`.
-    Serves as base for :class:`MyBudgets` and :clas:`BudgetsByPartner`,
+    Serves as base for :class:`MyBudgets` and :class:`BudgetsByPartner`,
     but is directly used by :menuselection:`Explorer --> Debts -->Budgets`.
     """
     model = Budget

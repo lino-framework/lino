@@ -1848,7 +1848,8 @@ tinymce.init({
         return ('cache','js','lino_'+(user.profile or user.username)+'_'+translation.get_language()+'.js')
         
     def build_site_cache(self,force=False):
-        """Generate :xfile:`lino.js` and other.
+        """Build several files under `/media/cache`,
+        mainly :xfile:`lino*.js`.
         """
         if not force and not settings.LINO.auto_build_site_cache:
             logger.info("NOT building site cache because `settings.LINO.auto_build_site_cache` is False")

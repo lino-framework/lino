@@ -1,23 +1,42 @@
 20120519
 ========
 
-New class attributes 
-:attr:`lino.core.Actor.required_user_groups`
+Until now I had noticed a few times but silently ignored 
+the fact that the generated `lino*.js` contains a lot of 
+useless class definitions for normal users. 
+Only the root user needs them all.
+Whether a user needs a table, 
+depends on the user's level and on her group memberships.
+The new permission system started a solution for this.
+It was very flexible but 
+would it make quite complex when becoming more granular. 
+
+So here is the next step into this drection:
+New attributes 
+:attr:`lino.core.actors.Actor.required_user_groups`
 and
-:attr:`lino.core.Actor.required_user_level`.
-Removed the `DebtsUserTable` which was defined as abstract base 
+:attr:`lino.core.actors.Actor.required_user_level`.
+
+Removed the `DebtsUserTable` class which was defined as abstract base 
 class for tables that are visible only to Debt Mediation Agents 
 (users with a non-empty `debts_level`).
 
-Removed actions.VIEW: when generating the site cache, Lino now calls the 
-new method :meth:`lino.core.Actor.get_view_permission`.
-
+Removed :class:`lino.core.actions.ViewAction` which was used only
+by :meth:`lino.ui.extjs3.ext_ui.ExtUI.build_site_cache`.
+When generating the site cache, Lino now calls the 
+new method :meth:`lino.core.actors.Actor.get_view_permission`.
 
 Examples (to be completed and covered by unit tests):
 
-- UsersWithClients exists only for members of 
-  the `integ` and/or `newcomers` group. 
-  A special User level is not required.
+- `lino.apps.pcsw.models.UsersWithClients` has two names in 
+  :attr:`lino.core.actors.Actor.required_user_groups`::
+  
+    required_user_groups = ['integ','newcomers']
+    
+  That means: it exists only for members of 
+  the `integ` **or** `newcomers` group. One membership is enough.
+  A special User level is not required for this table. 
+  Even a guest member of one of these groups would see it.
 
 Cache sizes before and after::
 
@@ -32,3 +51,12 @@ Cache sizes before and after::
   1 853 767 lino_melanie_de.js
   1 741 197 lino_hubert_de.js
   1 402 816 lino_kerstin_de.js
+  
+  
+Migration
+---------
+
+Added a little wrapper function :func:`lino.apps.pcsw.migrate.install` 
+needed when loading dumpy fixtures created before Lino 1.4.4.
+
+  
