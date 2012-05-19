@@ -130,7 +130,7 @@ class Lino(Lino):
 
         #~ self.modules.newcomers.setup_main_menu(self,ui,user,m)
         
-        self.on_each_app('setup_main_menu',ui,user,m)
+        self.on_each_app('setup_main_menu',ui,user,main)
         #~ self.modules.newcomers.setup_main_menu(self,ui,user,main)
         #~ self.modules.debts.setup_main_menu(self,ui,user,main)
         #~ self.modules.courses.setup_main_menu(self,ui,user,main)
