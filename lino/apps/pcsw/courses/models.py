@@ -132,6 +132,8 @@ class CourseProviders(pcsw.Companies):
     """
     List of Companies that have `Company.is_courseprovider` activated.
     """
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
     #~ hide_details = [Contact]
     #~ use_as_default_table = False
     #~ app_label = 'courses'
@@ -170,6 +172,8 @@ class CourseEnding(models.Model):
         return unicode(self.name)
         
 class CourseEndings(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = CourseEnding
     column_names = 'name *'
     order_by = ['name']
@@ -392,6 +396,8 @@ class CourseRequest(models.Model):
     
         
 class Courses(dd.Table):
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
     model = Course
     order_by = ['start_date']
     detail_template = """
@@ -410,6 +416,8 @@ class CourseContents(dd.Table):
     order_by = ['name']
 
 class CourseOffers(dd.Table):
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
     model = CourseOffer
     detail_template = """
     id:8 title content provider
@@ -421,6 +429,8 @@ class CourseOffersByProvider(CourseOffers):
     master_key = 'provider'
 
 class CourseRequests(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = CourseRequest
     
     detail_template = """
@@ -433,10 +443,12 @@ class CourseRequests(dd.Table):
     active_fields = ['offer']
 
 class CourseRequestsByPerson(CourseRequests):
+    required_user_level = None
     master_key = 'person'
     column_names = 'date_submitted:10 content:15 offer:15 course:20 * id'
 
 class RequestsByCourse(CourseRequests):
+    required_user_level = None
     master_key = 'course'
   
     @classmethod
@@ -605,3 +617,33 @@ class PendingCourseRequests(CourseRequests):
         #~ return 1
         
         
+        
+def site_setup(self):
+    self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
+    cbss_identify_person cbss_retrieve_ti_groups
+    cbss.IdentifyRequestsByPerson
+    """,_("CBSS"))
+    
+    
+def setup_main_menu(site,ui,user,m):
+    if user.integ_level:
+        m = main.add_menu("courses",_("Courses"))
+        m.add_action(CourseProviders)
+        m.add_action(CourseOffers)
+        m.add_action(PendingCourseRequests)
+            
+  
+def setup_master_menu(site,ui,user,m): pass
+def setup_my_menu(site,ui,user,m): pass
+def setup_config_menu(site,ui,user,m): pass
+    m = m.add_menu("courses",_("Courses"))
+    m.add_action(CourseContents)
+    m.add_action(CourseEndings)
+            
+  
+def setup_explorer_menu(site,ui,user,m):
+    m = m.add_menu("courses",_("Courses"))
+    m.add_action(Courses)
+    m.add_action(CourseRequests)
+            
+            

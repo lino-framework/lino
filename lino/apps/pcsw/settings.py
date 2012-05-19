@@ -92,11 +92,6 @@ class Lino(Lino):
         self.modules.isip.setup_master_menu(self,ui,user,m)
         self.modules.households.setup_master_menu(self,ui,user,m)
         
-        self.modules.newcomers.setup_main_menu(self,ui,user,main)
-        self.modules.debts.setup_main_menu(self,ui,user,main)
-        #~ jobs.setup_main_menu(self,ui,user,m)
-        #~ m.add_action('jobs.JobProviders')
-
 
         #~ if user is None:
             #~ return main
@@ -133,32 +128,20 @@ class Lino(Lino):
             #~ m.add_instance_action(user,label="My user preferences")
         
 
-        #~ if user.is_spis:
-        if user.integ_level:
-            m = main.add_menu("courses",_("Courses"))
-            m.add_action(self.modules.courses.CourseProviders)
-            m.add_action(self.modules.courses.CourseOffers)
-            m.add_action(self.modules.courses.PendingCourseRequests)
-            
         #~ self.modules.newcomers.setup_main_menu(self,ui,user,m)
         
-        self.modules.jobs.setup_main_menu(self,ui,user,main)
+        self.on_each_app('setup_main_menu',ui,user,m)
+        #~ self.modules.newcomers.setup_main_menu(self,ui,user,main)
+        #~ self.modules.debts.setup_main_menu(self,ui,user,main)
+        #~ self.modules.courses.setup_main_menu(self,ui,user,main)
+        #~ self.modules.jobs.setup_main_menu(self,ui,user,main)
         
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:
         m = main.add_menu("lst",_("Listings"))
-        #~ for listing in LISTINGS:
-            #~ m.add_action(listing,'listing')
-        if True: # user.integ_level:
-        #~ if user.is_spis:
-            m.add_action(self.modules.jobs.JobsOverview)
-            #~ m.add_action(self.modules.jobs.ContractsSearch)
-            #~ m.add_action(self.modules.pcsw.OverviewClientsByUser)
-            m.add_action(self.modules.pcsw.UsersWithClients)
-            m.add_action(self.modules.pcsw.ClientsTest)
-            #~ listings.add_instance_action(lst)
-            #~ for lst in pcsw.FooListing.objects.all():
-                #~ listings.add_instance_action(lst)
+        m.add_action(self.modules.jobs.JobsOverview)
+        m.add_action(self.modules.pcsw.UsersWithClients)
+        m.add_action(self.modules.pcsw.ClientsTest)
         
         if user.level >= UserLevel.manager: # is_staff:
             cfg = main.add_menu("config",_("Configure"))
@@ -169,20 +152,7 @@ class Lino(Lino):
             #~ config_cv       = cfg.add_menu("cv",_("CV"))
             
             
-            m = cfg.add_menu("courses",_("Courses"))
-            m.add_action(self.modules.courses.CourseContents)
-            m.add_action(self.modules.courses.CourseEndings)
-            
             self.on_each_app('setup_config_menu',ui,user,cfg)
-            
-            #~ if True: # user.is_expert:
-                #~ self.modules.properties.setup_config_menu(self,ui,user,cfg)
-            
-            #~ self.modules.notes.setup_config_menu(self,ui,user,cfg)
-            #~ self.modules.isip.setup_config_menu(self,ui,user,cfg)
-            #~ self.modules.jobs.setup_config_menu(self,ui,user,cfg)
-            #~ self.modules.newcomers.setup_config_menu(self,ui,user,cfg)
-            #~ self.modules.debts.setup_config_menu(self,ui,user,cfg)
             
             config_pcsw     = cfg.add_menu("pcsw",_("SIS"))
             config_pcsw.add_action(self.modules.pcsw.PersonGroups)
@@ -203,7 +173,7 @@ class Lino(Lino):
             #~ self.modules.outbox.setup_config_menu(self,ui,user,cfg)
             #~ self.modules.lino.setup_config_menu(self,ui,user,cfg)
             
-        if user.level >= UserLevel.expert: # is_staff:
+        if user.level >= UserLevel.manager: # is_staff:
           
             m = main.add_menu("explorer",_("Explorer"))
             
@@ -211,22 +181,12 @@ class Lino(Lino):
             
             self.on_each_app('setup_explorer_menu',ui,user,m)
             
-            #~ self.modules.contacts.setup_explorer_menu(self,ui,user,m)
-            #~ self.modules.notes.setup_explorer_menu(self,ui,user,m)
-            #~ self.modules.isip.setup_explorer_menu(self,ui,user,m)
-            #~ self.modules.jobs.setup_explorer_menu(self,ui,user,m)
-            #~ self.modules.newcomers.setup_explorer_menu(self,ui,user,m)
-            #~ self.modules.debts.setup_explorer_menu(self,ui,user,m)
             m.add_action(self.modules.uploads.Uploads)
             m.add_action(self.modules.pcsw.Exclusions)
             m.add_action(self.modules.pcsw.PersonSearches)
             #~ m.add_action(self.modules.lino.ContentTypes)
             m.add_action(self.modules.properties.Properties)
             m.add_action(self.modules.thirds.Thirds)
-            
-            courses = m.add_menu("courses",_("Courses"))
-            courses.add_action(self.modules.courses.Courses)
-            courses.add_action(self.modules.courses.CourseRequests)
             
             
             #~ self.modules.cal.setup_explorer_menu(self,ui,user,m)
