@@ -158,9 +158,10 @@ Read-only.""")
     environment = models.CharField(max_length=4,editable=False,verbose_name=_("T/A/B"))
     #~ environment = Environment.field(blank=True,null=True)
     
-    #~ request_xml = models.TextField(verbose_name=_("Request"),
-        #~ editable=False,blank=True,
-        #~ help_text="""The raw XML string that has been (or will be) sent.""")
+    # will probably go away soon
+    request_xml = models.TextField(verbose_name=_("Request"),
+        editable=False,blank=True,
+        help_text="""The raw XML string that has been (or will be) sent.""")
     
     response_xml = models.TextField(
         verbose_name=_("Response"),
@@ -312,11 +313,11 @@ class SSDNRequest(CBSSRequest):
         #~ client = Client(url)
         #~ print 20120507, client
         
-        #~ request_xml = etree.tostring(srvreq)
         try:
             #~ res = client.service.sendXML(request_xml)        
             #~ xmlString = client.factory.create('wsc:xmlString')
             s = unicode(wrapped_srvreq)
+            self.request_xml = s
             xmlString = E('wsc:xmlString',ns=NSWSC)
             xmlString.setText(s)
             if settings.LINO.cbss_live_tests:
