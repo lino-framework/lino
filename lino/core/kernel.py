@@ -58,8 +58,11 @@ from lino.core.coretools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
 
 from lino.tools import resolve_model, resolve_field, get_app, get_field, full_model_name
+from lino.tools import is_devserver
+    
 from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
+from lino.utils import codetime
 from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
@@ -293,12 +296,19 @@ def setup_site(self,make_messages=False):
     by the first request.
     
     """
-    logger.info(lino.welcome_text())
-    #~ raise Exception("20111229")
-
     if self._setup_done:
         #~ logger.warning("LinoSite setup already done ?!")
         return
+        
+    self.mtime = codetime()
+    logger.info(lino.welcome_text())
+    #~ raise Exception("20111229")
+    
+    if self.build_js_cache_on_startup is None:
+        self.build_js_cache_on_startup = not is_devserver()
+      
+
+
     #~ write_lock.acquire()
     try:
     

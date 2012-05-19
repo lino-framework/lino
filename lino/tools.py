@@ -14,6 +14,7 @@
 
 
 import os
+import sys
 
 from django.db import models
 from django.db.models import Q
@@ -37,6 +38,18 @@ def is_valid_email(s):
     except ValidationError:
         return False
         
+def is_devserver():
+    """
+    Returns True if we are running a development server.
+    
+    Thanks to Aryeh Leib Taurog in 
+    `How can I tell whether my Django application is running on development server or not?
+    <http://stackoverflow.com/questions/1291755>`_
+    
+    Added the `len(sys.argv) > 1` test because in a 
+    wsgi application the process is called without arguments.
+    """
+    return len(sys.argv) > 1 and sys.argv[1] == 'runserver'
 
 
 def get_app(app_label):

@@ -73,6 +73,8 @@ from lino.ui import base
 from lino.core import actors
 from lino.tools import makedirs_if_missing
 from lino.tools import full_model_name
+from lino.tools import is_devserver
+    
 from lino.utils import dblogger
 from lino.utils import ucsv
 from lino.utils import choosers
@@ -81,7 +83,6 @@ from lino.utils import choicelists
 from lino.utils import menus
 from lino.utils import jsgen
 from lino.utils import isiterable
-from lino.utils import codetime
 from lino.utils.config import find_config_file
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
@@ -110,19 +111,6 @@ User = resolve_model(settings.LINO.user_model)
 MAX_ROW_COUNT = 300
 
 
-def is_devserver():
-    """
-    Returns True if we are running a development server.
-    
-    Thanks to Aryeh Leib Taurog in 
-    `How can I tell whether my Django application is running on development server or not?
-    <http://stackoverflow.com/questions/1291755>`_
-    
-    Added the `len(sys.argv) > 1` test because in a 
-    wsgi application the process is called without arguments.
-    """
-    return len(sys.argv) > 1 and sys.argv[1] == 'runserver'
-    
     
 
 class HtmlRenderer(object):
@@ -1103,6 +1091,10 @@ tinymce.init({
 
         #~ yield '<!-- overrides to library -->'
         #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % self.media_url()
+        
+        if not settings.LINO.build_js_cache_on_startup:
+            self.build_js_cache_for_user(request.user)
+            
         yield '<script type="text/javascript" src="%s"></script>' % (
             self.media_url(*self.lino_js_parts(request.user)))
 
@@ -1860,111 +1852,108 @@ tinymce.init({
             settings.MEDIA_ROOT)
             return
         
-        mtime = codetime()
         started = time.time()
         
-        settings.LINO.on_each_app('setup_site_cache',mtime,force)
+        settings.LINO.on_each_app('setup_site_cache',force)
         
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
         
-        def doit(user):
+        if settings.LINO.build_js_cache_on_startup:
+            count = 0
+            langs = babel.AVAILABLE_LANGUAGES
+            users = User.objects.filter(profile='').exclude(level='')
+            for lang in langs:
+                babel.set_language(lang)
+                for user in users:
+                    count += self.build_js_cache_for_user(user,force)
+            babel.set_language(None)
+                
+            logger.info("%d lino*.js files have been built in %s seconds.",
+              count,time.time()-started)
           
-            jsgen.set_for_user(user)
-            
-            fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(user)) 
-            if not force and os.path.exists(fn):
-                if os.stat(fn).st_mtime > mtime:
-                    logger.info("NOT generating %s because it is newer than the code.",fn)
-                    return 0
-                    
-            logger.info("Generating %s ...", fn)
-            makedirs_if_missing(os.path.dirname(fn))
-            f = codecs.open(fn,'w',encoding='utf-8')
-            tpl = self.linolib_template()
-            f.write(jscompress(unicode(tpl)+'\n'))
-            
-            actors_list = [rpt for rpt in table.master_reports \
-                     + table.slave_reports \
-                     + table.generic_slaves.values() \
-                     + table.custom_tables \
-                     + table.frames ]
-            
-            if True: # todo 20120516
-                actors_list = [a for a in actors_list if a.get_view_permission(user)]
-                     
-            for a in actors_list:
-                f.write("Ext.namespace('Lino.%s')\n" % a)
-                
-            #~ logger.info('20120120 table.all_details:\n%s',
-                #~ '\n'.join([str(d) for d in table.all_details]))
-            
-            details = set()
-            for a in actors_list:
-                dtl = a.get_detail()
-                if dtl is not None:
-                    details.add(dtl)
-                    
-            for dtl in details:
-                dh = dtl.get_handle(self)
-                for ln in self.js_render_detail_FormPanel(dh,user):
-                    f.write(ln + '\n')
-            
-            for rpt in actors_list:
-                
-                rh = rpt.get_handle(self) 
-                
-                if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
-                    for ln in self.js_render_GridPanel_class(rh,user):
-                        f.write(ln + '\n')
-                    
-                for a in rpt.get_actions():
-                    if a.opens_a_window:
-                        if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
-                            for ln in self.js_render_detail_action_FormPanel(rh,a):
-                                  f.write(ln + '\n')
-                        for ln in self.js_render_window_action(rh,a,user):
-                            f.write(ln + '\n')
-
-
-            #~ f.write(jscompress(js))
-            f.close()
-            #~ logger.info("Wrote %s ...", fn)
-            return 1
-            
-        count = 0
-        for lang in babel.AVAILABLE_LANGUAGES:
-            babel.set_language(lang)
-            if False and is_devserver():
-                count += doit(User.objects.get(username='root'))
-            else:
-                for user in User.objects.filter(profile='').exclude(level=''):
-                    count += doit(user)
-                    
-        babel.set_language(None)
-            
-        #~ logger.info("lino*.js files have been generated.")
-        logger.info("%d lino*.js files have been generated in %s seconds.",
-          count,time.time()-started)
+    def build_js_cache_for_user(self,user,force=False):
+      
+        jsgen.set_for_user(user)
         
-    def make_linolib_messages(self):
-        """
-        Called from :term:`dtl2py`.
-        """
-        from lino.utils.config import make_dummy_messages_file
+        fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(user)) 
+        if not force and os.path.exists(fn):
+            if os.stat(fn).st_mtime > settings.LINO.mtime:
+                logger.debug("%s is up to date.",fn)
+                return 0
+                
+        logger.info("Building %s ...", fn)
+        makedirs_if_missing(os.path.dirname(fn))
+        f = codecs.open(fn,'w',encoding='utf-8')
         tpl = self.linolib_template()
-        messages = set()
-        def mytranslate(s):
-            #~ settings.LINO.add_dummy_message(s)
-            messages.add(s)
-            return _(s)
-        tpl._ = mytranslate
-        unicode(tpl) # just to execute the template. result is not needed
-        return make_dummy_messages_file(self.linolib_template_name(),messages)
+        f.write(jscompress(unicode(tpl)+'\n'))
         
-    def make_dtl_messages(self):
-        from lino.core.kernel import make_dtl_messages
-        return make_dtl_messages(self)
+        actors_list = [
+            rpt for rpt in table.master_reports \
+               + table.slave_reports \
+               + table.generic_slaves.values() \
+               + table.custom_tables \
+               + table.frames ]
+        
+        actors_list = [a for a in actors_list if a.get_view_permission(user)]
+                 
+        for a in actors_list:
+            f.write("Ext.namespace('Lino.%s')\n" % a)
+            
+        #~ logger.info('20120120 table.all_details:\n%s',
+            #~ '\n'.join([str(d) for d in table.all_details]))
+        
+        details = set()
+        for a in actors_list:
+            dtl = a.get_detail()
+            if dtl is not None:
+                details.add(dtl)
+                
+        for dtl in details:
+            dh = dtl.get_handle(self)
+            for ln in self.js_render_detail_FormPanel(dh,user):
+                f.write(ln + '\n')
+        
+        for rpt in actors_list:
+            
+            rh = rpt.get_handle(self) 
+            
+            if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
+                for ln in self.js_render_GridPanel_class(rh,user):
+                    f.write(ln + '\n')
+                
+            for a in rpt.get_actions():
+                if a.opens_a_window:
+                    if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
+                        for ln in self.js_render_detail_action_FormPanel(rh,a):
+                              f.write(ln + '\n')
+                    for ln in self.js_render_window_action(rh,a,user):
+                        f.write(ln + '\n')
+
+
+        #~ f.write(jscompress(js))
+        f.close()
+        #~ logger.info("Wrote %s ...", fn)
+        return 1
+          
+        
+    #~ def make_linolib_messages(self):
+        #~ """
+        #~ Called from :term:`dtl2py`.
+        #~ """
+        #~ from lino.utils.config import make_dummy_messages_file
+        #~ tpl = self.linolib_template()
+        #~ messages = set()
+        #~ def mytranslate(s):
+            #~ messages.add(s)
+            #~ return _(s)
+        #~ tpl._ = mytranslate
+        #~ unicode(tpl) # just to execute the template. result is not needed
+        #~ return make_dummy_messages_file(self.linolib_template_name(),messages)
+        
+    #~ def make_dtl_messages(self):
+        #~ from lino.core.kernel import make_dtl_messages
+        #~ return make_dtl_messages(self)
         
     def linolib_template_name(self):
         return os.path.join(os.path.dirname(__file__),'linolib.js')

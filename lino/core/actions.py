@@ -432,7 +432,6 @@ class ActionRequest(object):
                 if v is None:
                     v = pf.get_default()
                 self.param_values.define(k,v)
-                
         
         if param_values:
             #~ logger.info("20120122 param_values is %s",param_values)
@@ -464,16 +463,11 @@ class ActionRequest(object):
 
     def create_phantom_row(self,**kw):
         if self.create_kw is None or not self.actor.editable:
+            #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)
             return 
         if not self.actor.get_permission(CREATE,self.get_user(),None):
             return
-        #~ if u is None or self.actor.get_permission(actions.CREATE,u,None):
-            #~ create_rows = 1
-        #~ else:
-            #~ create_rows = 0
-      
-        obj = PhantomRow(self,**kw)
-        return obj
+        return PhantomRow(self,**kw)
       
     def create_instance(self,**kw):
         if self.create_kw:

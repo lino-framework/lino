@@ -69,3 +69,15 @@ latest changes.
 
 Especially the conversion of existing users is interesting.
 See the source code for details.
+
+Miscellaneous
+-------------
+
+While playing with the new version on the customer's site I 
+noticed the need for a new configuration parameter:
+:attr:`build_js_cache_on_startup <lino.Lino.build_js_cache_on_startup>`.
+
+outbox.MyOutbox had no phantom record when called from the menu.
+When called by permalink it had. 
+This was because get_create_kw was called before 
+Actor.setup_request() (which for outbox.MyOutbox sets the master_instance).

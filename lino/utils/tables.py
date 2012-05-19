@@ -43,6 +43,9 @@ u"""
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 import yaml
 
 #~ from lxml import etree
@@ -134,13 +137,23 @@ class GridConfig(Configured):
 
 
 
-class AbstractTableRequest(actions.ActionRequest):
+class TableRequest(actions.ActionRequest):
+    """
+    An :class:`action request <lino.core.actions.ActionRequest>` 
+    on a :class:`Table`.
+    """
+    
+    master_instance = None
+    master = None
+    
+    #~ instance = None
+    extra = None
+    #~ layout = None
     
     limit = None
     offset = None
     #~ create_rows = None
     
-    #~ def __init__(self,ui,report,request,action,*args,**kw):
     def __init__(self,ui,actor,request=None,action=None,**kw):
         if not (isinstance(actor,type) and issubclass(actor,AbstractTable)):
             raise Exception("Expected an AbstractTable subclass, got %r" % actor)
@@ -154,147 +167,6 @@ class AbstractTableRequest(actions.ActionRequest):
             self.sliced_data_iterator = self.sliced_data_iterator[:self.limit]
         
         
-    
-    def parse_req(self,request,rqdata,**kw):
-        rh = self.ah
-        kw = actions.ActionRequest.parse_req(self,request,rqdata,**kw)
-        #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
-        
-        #~ kw.update(self.report.known_values)
-        #~ for fieldname, default in self.report.known_values.items():
-            #~ v = request.REQUEST.get(fieldname,None)
-            #~ if v is not None:
-                #~ kw[fieldname] = v
-                
-        quick_search = rqdata.get(ext_requests.URL_PARAM_FILTER,None)
-        if quick_search:
-            kw.update(quick_search=quick_search)
-            
-        sort = rqdata.get(ext_requests.URL_PARAM_SORT,None)
-        if sort:
-            #~ self.sort_column = sort
-            sort_dir = rqdata.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
-            if sort_dir == 'DESC':
-                sort = '-' + sort
-                #~ self.sort_direction = 'DESC'
-            kw.update(order_by=[sort])
-        
-                
-        offset = rqdata.get(ext_requests.URL_PARAM_START,None)
-        if offset:
-            kw.update(offset=int(offset))
-        limit = rqdata.get(ext_requests.URL_PARAM_LIMIT,None)
-        if limit:
-            kw.update(limit=int(limit))
-        
-        
-        #~ kw.update(param_values=request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))
-        
-        #~ def parse_param(fld,request,kv):
-            #~ v = request.REQUEST.get(fld.name,None)
-            #~ if v is not None:
-                #~ kv[fld.name] = v
-            
-        #~ kv = kw.get('known_values',{})
-        #~ for fld in self.report.params:
-            #~ parse_param(fld,request,kv)
-        #~ if kv:
-            #~ kw.update(known_values=kv)
-        
-        return rh.actor.parse_req(request,rqdata,**kw)
-        
-            
-    def setup(self,
-            quick_search=None,
-            order_by=None,
-            offset=None,limit=None,
-            **kw):
-            
-        self.quick_search = quick_search
-        self.order_by = order_by
-        
-    #~ if user is not None and not self.report.can_view.passes(user):
-            #~ msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
-            #~ raise InvalidRequest(msg)
-            
-        #~ if user is None:
-            #~ raise InvalidRequest("%s : user is None" % self)
-            
-        actions.ActionRequest.setup(self,**kw)
-        if offset is not None:
-            self.offset = offset
-            
-        if limit is not None:
-            self.limit = limit
-        
-        self.actor.setup_request(self)
-    
-    def table2xhtml(self):
-        return self.ui.table2xhtml(self)
-        
-    def get_status(self,ui,**kw):
-        kw = actions.ActionRequest.get_status(self,ui,**kw)
-        bp = kw.setdefault('base_params',{})
-        if self.subst_user is not None:
-            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
-            
-        if self.quick_search:
-            bp[ext_requests.URL_PARAM_FILTER] = self.quick_search
-            
-        if self.known_values:
-            #~ kv = dict()
-            for k,v in self.known_values.items():
-                if self.actor.known_values.get(k,None) != v:
-                    bp[k] = v
-            #~ kw.update(known_values = kv)
-                
-            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
-        return kw
-            
-    @classmethod
-    def get_row_by_pk(self,pk):
-        return self.data_iterator[int(pk) - 1]
-        
-    def get_data_iterator(self):
-        if self.actor.get_data_rows:
-            l = []
-            for row in self.actor.get_data_rows(self):
-                #~ l.append(row)
-                group = self.actor.group_from_row(row)
-                group.process_row(l,row)
-            return l
-        return self.actor.get_request_queryset(self)
-        
-    def get_total_count(self):
-        """
-        Calling `len()` on a QuerySet will execute the whole SELECT.
-        See :doc:`/blog/2012/0124`
-        """
-        if isinstance(self.data_iterator,QuerySet):
-            return self.data_iterator.count()
-        return len(self.data_iterator)
-        
-
-
-
-
-
-
-
-class TableRequest(AbstractTableRequest):
-    """
-    An :class:`action request <lino.core.actions.ActionRequest>` 
-    on a :class:`Table`.
-    """
-    
-    master_instance = None
-    master = None
-    
-    #~ instance = None
-    extra = None
-    #~ layout = None
-    
-    
     def parse_req(self,request,rqdata,**kw):
         #~ logger.info("20120121 %s.parse_req()",self)
         rh = self.ah
@@ -356,12 +228,57 @@ class TableRequest(AbstractTableRequest):
                 filter = json.loads(filter)
                 kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
                 
-        kw = AbstractTableRequest.parse_req(self,request,rqdata,**kw)
+        kw = actions.ActionRequest.parse_req(self,request,rqdata,**kw)
         #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
-        return kw
+        
+        #~ kw.update(self.report.known_values)
+        #~ for fieldname, default in self.report.known_values.items():
+            #~ v = request.REQUEST.get(fieldname,None)
+            #~ if v is not None:
+                #~ kw[fieldname] = v
+                
+        quick_search = rqdata.get(ext_requests.URL_PARAM_FILTER,None)
+        if quick_search:
+            kw.update(quick_search=quick_search)
+            
+        sort = rqdata.get(ext_requests.URL_PARAM_SORT,None)
+        if sort:
+            #~ self.sort_column = sort
+            sort_dir = rqdata.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
+            if sort_dir == 'DESC':
+                sort = '-' + sort
+                #~ self.sort_direction = 'DESC'
+            kw.update(order_by=[sort])
+        
+                
+        offset = rqdata.get(ext_requests.URL_PARAM_START,None)
+        if offset:
+            kw.update(offset=int(offset))
+        limit = rqdata.get(ext_requests.URL_PARAM_LIMIT,None)
+        if limit:
+            kw.update(limit=int(limit))
+        
+        
+        #~ kw.update(param_values=request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))
+        
+        #~ def parse_param(fld,request,kv):
+            #~ v = request.REQUEST.get(fld.name,None)
+            #~ if v is not None:
+                #~ kv[fld.name] = v
+            
+        #~ kv = kw.get('known_values',{})
+        #~ for fld in self.report.params:
+            #~ parse_param(fld,request,kv)
+        #~ if kv:
+            #~ kw.update(known_values=kv)
+        
+        return rh.actor.parse_req(request,rqdata,**kw)
         
             
     def setup(self,
+            quick_search=None,
+            order_by=None,
+            offset=None,limit=None,
             master=None,
             master_instance=None,
             master_id=None,
@@ -373,65 +290,29 @@ class TableRequest(AbstractTableRequest):
             extra=None,
             **kw):
             
-        #~ logger.info("20120121 %s.setup()",self)
+        self.quick_search = quick_search
+        self.order_by = order_by
+        
+            
+        #~ logger.info("20120519 %s.setup()",self)
         self.filter = filter
-        #~ if isinstance(self.action,GridEdit):
-            #~ self.expand_memos = expand_memos or self.actor.expand_memos
         self.gridfilters = gridfilters
         self.exclude = exclude or self.actor.exclude
         self.extra = extra
 
-        #~ if selected_rows is not None:
-            #~ self.selected_rows = selected_rows
-        
         if master is None:
             master = self.actor.master
             # master might still be None
         self.master = master
         
-        #~ if self.actor.params:
-            #~ raise Exception("%s.params is %r" % (self.actor,self.actor.params))
-        #~ kw.update(self.actor.params)
-        #~ self.params = kw
-        
         if master_id is not None:
             assert master_instance is None
             master_instance = self.master.objects.get(pk=master_id)
             
-        self.create_kw = self.actor.get_create_kw(master_instance)
         self.master_instance = master_instance
         
-        #~ if self.master and master_instance is None:
-            #~ raise Exception("20120121 %s : no master" % self)
-            
-        AbstractTableRequest.setup(self,**kw)
+        #~ AbstractTableRequest.setup(self,**kw)
         
-        #~ assert isinstance(self._data_iterator,models.query.QuerySet)
-        
-        
-        #~ self.total_count = self._data_iterator.count()
-        
-        #~ if create_rows is None:
-            #~ if self.create_kw is None:
-                #~ create_rows = 0
-            #~ elif self.actor.editable:
-                #~ u = self.get_user()
-                #~ if u is None or self.actor.get_permission(actions.CREATE,u,None):
-                    #~ create_rows = 1
-                #~ else:
-                    #~ create_rows = 0
-            #~ else:
-                #~ create_rows = 0
-        #~ self.create_rows = create_rows
-            
-        #~ if self.ui is not None:
-            #~ if layout is None:
-                #~ layout = self.ah._layouts[self.report.default_layout]
-            #~ else:
-                #~ layout = self.ah._layouts[layout]
-            #~ self.layout = layout
-        
-            
         """
         Table.page_length is not a default value for ReportRequest.limit
         For example CSVReportRequest wants all rows.
@@ -440,11 +321,45 @@ class TableRequest(AbstractTableRequest):
         
         #~ logger.info("20120121 %s.setup() done",self)
         
-    def __str__(self):
-        return self.__class__.__name__ + '(' + self.actor.actor_id + ",%r,...)" % self.master_instance
-
+        actions.ActionRequest.setup(self,**kw)
+        
+        """
+        20120519 : outbox.MyOutbox had no phantom record when called from menu.
+        When called by permalink it had. This was get_create_kw was called before 
+        Actor.setup_request() which sets the master_instance.
+        """
+        self.actor.setup_request(self)
+        
+        self.create_kw = self.actor.get_create_kw(self.master_instance)
+        
+        if offset is not None:
+            self.offset = offset
+            
+        if limit is not None:
+            self.limit = limit
+        
+    
+    def table2xhtml(self):
+        return self.ui.table2xhtml(self)
+        
     def get_status(self,ui,**kw):
-        kw = AbstractTableRequest.get_status(self,ui,**kw)
+        kw = actions.ActionRequest.get_status(self,ui,**kw)
+        bp = kw.setdefault('base_params',{})
+        if self.subst_user is not None:
+            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
+            
+        if self.quick_search:
+            bp[ext_requests.URL_PARAM_FILTER] = self.quick_search
+            
+        if self.known_values:
+            #~ kv = dict()
+            for k,v in self.known_values.items():
+                if self.actor.known_values.get(k,None) != v:
+                    bp[k] = v
+            #~ kw.update(known_values = kv)
+                
+            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
+            
         #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
             #~ print 20111223, self.known_values
         bp = kw.setdefault('base_params',{})
@@ -454,6 +369,34 @@ class TableRequest(AbstractTableRequest):
             bp[ext_requests.URL_PARAM_MASTER_TYPE] = mt
         return kw
         
+        
+
+    @classmethod
+    def get_row_by_pk(self,pk):
+        return self.data_iterator[int(pk) - 1]
+        
+    def get_data_iterator(self):
+        if self.actor.get_data_rows:
+            l = []
+            for row in self.actor.get_data_rows(self):
+                #~ l.append(row)
+                group = self.actor.group_from_row(row)
+                group.process_row(l,row)
+            return l
+        return self.actor.get_request_queryset(self)
+        
+    def get_total_count(self):
+        """
+        Calling `len()` on a QuerySet will execute the whole SELECT.
+        See :doc:`/blog/2012/0124`
+        """
+        if isinstance(self.data_iterator,QuerySet):
+            return self.data_iterator.count()
+        return len(self.data_iterator)
+        
+
+    def __str__(self):
+        return self.__class__.__name__ + '(' + self.actor.actor_id + ",%r,...)" % self.master_instance
 
 
 
@@ -835,7 +778,6 @@ class AbstractTable(actors.Actor):
         Return a dict with the "master keywords" for this table 
         and a given `master_instance`.
         """
-        #logger.debug('%s.get_filter_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
             pass
             # master_instance may be e.g. a lino.core.actions.EmptyTableRow
@@ -866,14 +808,14 @@ class AbstractTable(actors.Actor):
         elif self.master_field is not None:
             if master_instance is None:
                 if not self.master_field.null:
+                    #~ logger.info('20120519 %s.get_filter_kw()--> None',self)
                     return # cannot add rows to this report
             elif not isinstance(master_instance,self.master):
                 raise Exception("%r is not a %s (master_key is %r)" % (
                   master_instance,self.master.__name__,self.master_field))
             kw[self.master_field.name] = master_instance
             
-        #~ else:
-            #~ kw['master'] = master_instance
+        logger.info('20120519 %s.get_filter_kw(%r) --> %r',self,master_instance,kw)
         return kw
         
 

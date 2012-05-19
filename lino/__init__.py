@@ -206,7 +206,21 @@ class Lino(object):
     #~ auto_makeui = True
     auto_build_site_cache = True
     """
-    useful when debugging directly on the generated `lino.js`
+    Useful when debugging directly on the generated `lino.js`
+    """
+    
+    build_js_cache_on_startup = None
+    """
+    Whether the Javascript cache files should be built on startup 
+    for all user profiles and languages.
+    
+    On a production server this should be `True` for best performance,
+    but when developing it is usually recommended to have it set to 
+    `False`, which means that each file is built upon need (when 
+    a first request comes in).
+    
+    The default value `None` means that Lino decides automatically 
+    (using :func:`lino.tools.is_devserver`).
     """
     
     root_url = '' # 

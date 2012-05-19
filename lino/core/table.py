@@ -70,7 +70,6 @@ from lino.ui import requests as ext_requests
 from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, get_data_elem
-#~ from lino.utils.tables import AbstractTable, AbstractTableRequest, VirtualTable
 from lino.utils.tables import AbstractTable, TableRequest, VirtualTable
 #~ from lino.utils.tables import GridEdit #, ComputedColumn
 

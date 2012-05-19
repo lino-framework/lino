@@ -53,6 +53,7 @@ from django.conf import settings
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 from lino.utils.config import find_config_file
+from lino.utils.choicelists import UserLevel
 from Cheetah.Template import Template as CheetahTemplate
 
 
@@ -154,11 +155,13 @@ class Recipient(mails.Recipient):
     mail = models.ForeignKey('outbox.Mail')
 
 class Recipients(dd.Table):
+    required_user_level = UserLevel.manager
     model = Recipient
     #~ column_names = 'mail  type *'
     #~ order_by = ["address"]
 
 class RecipientsByMail(Recipients):
+    required_user_level = None
     master_key = 'mail'
     column_names = 'type:10 partner:20 address:20 name:20 *'
     #~ column_names = 'type owner_type owner_id'
@@ -266,6 +269,7 @@ class Mail(mails.Mail,mixins.ProjectRelated):
 
 
 class Mails(dd.Table):
+    required_user_level = UserLevel.manager
     model = Mail
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
@@ -277,15 +281,17 @@ class Mails(dd.Table):
     """
     
 class MyOutbox(Mails):
+    required_user_level = None
     #~ known_values = dict(outgoing=True)
     label = _("My Outbox")
     filter = models.Q(sent__isnull=True)
     master_key = 'sender'
     
     @classmethod
-    def setup_request(self,rr):
-        if rr.master_instance is None:
-            rr.master_instance = rr.get_user()
+    def setup_request(self,ar):
+        if ar.master_instance is None:
+            ar.master_instance = ar.get_user()
+        #~ print "20120519 MyOutbox.setup_request()", ar.master_instance
 
 class MySent(MyOutbox):
     label = _("Sent Mails")
@@ -301,12 +307,14 @@ class MySent(MyOutbox):
   
 #~ class OutboxByPartner(Outbox,MailsByPartner):
 class OutboxByUser(Mails):
+    required_user_level = None
     label = _("Outbox")
     column_names = 'sent subject recipients'
     order_by = ['sent']
     master_key = 'sender'
     
 class SentByPartner(Mails):
+    required_user_level = None
     master = 'contacts.Partner'
     label = _("Sent Mails")
     column_names = 'sent subject sender'
@@ -323,7 +331,7 @@ class SentByPartner(Mails):
 
   
 
-MODULE_NAME = _("~Mails")
+MODULE_NAME = _("Mails")
   
 def setup_main_menu(site,ui,user,m): pass
 
@@ -334,10 +342,12 @@ def setup_my_menu(site,ui,user,m):
     m.add_action(MySent)
   
 def setup_config_menu(site,ui,user,m):
-    m  = m.add_menu("mails",MODULE_NAME)
-    m.add_action(MailTypes)
+    if user.level >= UserLevel.manager:
+        m  = m.add_menu("mails",MODULE_NAME)
+        m.add_action(MailTypes)
   
 def setup_explorer_menu(site,ui,user,m):
-    m  = m.add_menu("mails",MODULE_NAME)
-    m.add_action(Mails)
+    if user.level >= UserLevel.manager:
+        m  = m.add_menu("mails",MODULE_NAME)
+        m.add_action(Mails)
   

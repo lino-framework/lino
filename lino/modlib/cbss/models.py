@@ -788,7 +788,7 @@ class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     master_key = 'project'
     
     
-def setup_site_cache(self,mtime,force):
+def setup_site_cache(self,force):
     """
     Called from :meth:`build_site_cache`. 
     First argument is the LINO instance."""
@@ -808,7 +808,7 @@ def setup_site_cache(self,mtime,force):
     def make_wsdl(template,parts):
         fn = os.path.join(settings.MEDIA_ROOT,*parts) 
         if not force and os.path.exists(fn):
-            if os.stat(fn).st_mtime > mtime:
+            if os.stat(fn).st_mtime > self.mtime:
                 logger.info("NOT generating %s because it is newer than the code.",fn)
                 return
         s = file(os.path.join(os.path.dirname(__file__),'WSDL',template)).read()
