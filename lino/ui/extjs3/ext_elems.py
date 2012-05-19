@@ -1476,7 +1476,8 @@ class GridElement(Container):
             
             
     def get_view_permission(self):
-        return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
+        return self.actor.get_view_permission(jsgen._for_user)
+        #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
         
     def ext_options(self,**kw):
         "not direct parent (Container), only LayoutElement"

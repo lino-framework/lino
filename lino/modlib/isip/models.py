@@ -66,13 +66,13 @@ from lino.modlib.cal import models as cal
 
 
 
-class IntegTable(dd.Table):
+#~ class IntegTable(dd.Table):
   
-    @classmethod
-    def get_permission(self,action,user,obj):
-        if not user.integ_level:
-            return False
-        return super(IntegTable,self).get_permission(action,user,obj)
+    #~ @classmethod
+    #~ def get_permission(self,action,user,obj):
+        #~ if not user.integ_level:
+            #~ return False
+        #~ return super(IntegTable,self).get_permission(action,user,obj)
         
 
 #
@@ -101,7 +101,9 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         blank=True,null=True)
         
 
-class ContractTypes(IntegTable):
+class ContractTypes(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = ContractType
     column_names = 'name ref build_method template *'
     detail_template = """
@@ -125,7 +127,9 @@ class ExamPolicy(babel.BabelNamed,cal.RecurrenceSet):
         verbose_name_plural = _('Examination Policies')
         
 
-class ExamPolicies(IntegTable):
+class ExamPolicies(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = ExamPolicy
     column_names = 'name *'
 
@@ -142,7 +146,9 @@ class ContractEnding(models.Model):
     def __unicode__(self):
         return unicode(self.name)
         
-class ContractEndings(IntegTable):
+class ContractEndings(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = ContractEnding
     column_names = 'name *'
     order_by = ['name']
@@ -497,7 +503,9 @@ class ContractDetail(dd.DetailLayout):
         dh.isip.label = _("ISIP")
 
 
-class Contracts(IntegTable):
+class Contracts(dd.Table):
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
     model = Contract
     column_names = 'id applies_from applies_until user type *'
     order_by = ['id']

@@ -163,21 +163,22 @@ class PeriodsField(models.IntegerField):
         super(PeriodsField, self).__init__(*args, **defaults)
 
 
-class DebtsUserTable(dd.Table):
-    """
-    Abstract base class for tables that are visible only to 
-    Debt Mediation Agents (users with a non-empty `debts_level`).
-    """
-    @classmethod
-    def get_permission(self,action,user,obj):
-        if user.debts_level < UserLevel.user:
-            return False
-        return super(DebtsUserTable,self).get_permission(action,user,obj)
+#~ class DebtsUserTable(dd.Table):
+    #~ """
+    #~ Abstract base class for tables that are visible only to 
+    #~ Debt Mediation Agents (users with a non-empty `debts_level`).
+    #~ """
+    #~ @classmethod
+    #~ def get_permission(self,action,user,obj):
+        #~ if user.debts_level < UserLevel.user:
+            #~ return False
+        #~ return super(DebtsUserTable,self).get_permission(action,user,obj)
         
 
 
 
 class AccountGroup(mixins.Sequenced,babel.BabelNamed):
+  
     class Meta:
         verbose_name = _("Budget Account Group")
         verbose_name_plural = _("Budget Account Groups")
@@ -186,8 +187,10 @@ class AccountGroup(mixins.Sequenced,babel.BabelNamed):
     #~ entries_columns = models.CharField(_("Columns in Entries tables"),max_length=200,blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
-class AccountGroups(DebtsUserTable):
+class AccountGroups(dd.Table):
     model = AccountGroup
+    required_user_groups = ['debts']
+    required_user_level = UserLevel.manager
     
 
 
@@ -217,8 +220,10 @@ class Account(mixins.Sequenced,babel.BabelNamed):
         super(Account,self).save(*args,**kw)
         
     
-class Accounts(DebtsUserTable):
+class Accounts(dd.Table):
     model = Account
+    required_user_level = UserLevel.manager
+    required_user_groups = ['debts']
     
 
 
@@ -424,13 +429,14 @@ class BudgetDetail(dd.DetailLayout):
         h.summary_tab.label = _("Summary")
     
   
-class Budgets(DebtsUserTable):
+class Budgets(dd.Table):
     """
     Base class for lists of :class:`Budgets <Budget>`.
     Serves as base for :class:`MyBudgets` and :clas:`BudgetsByPartner`,
     but is directly used by :menuselection:`Explorer --> Debts -->Budgets`.
     """
     model = Budget
+    required_user_groups = ['debts']
     detail_layout = BudgetDetail()
 
 class MyBudgets(Budgets,mixins.ByUser):
@@ -506,7 +512,8 @@ class Actor(mixins.Sequenced,ActorBase):
         super(Actor,self).save(*args,**kw)
         
     
-class Actors(DebtsUserTable):
+class Actors(dd.Table):
+    required_user_groups = ['debts']
     model = Actor
     column_names = "budget seqno partner header remark *"
 
@@ -580,12 +587,15 @@ class Entry(SequencedBudgetComponent):
         super(Entry,self).save(*args,**kw)
         
             
-class Entries(DebtsUserTable):
+class Entries(dd.Table):
     model = Entry
+    required_user_groups = ['debts']
+    required_user_level = UserLevel.manager
 
 
 class EntriesByType(Entries):
     _account_type = None
+    required_user_level = None
   
     @classmethod
     def class_init(self):
@@ -598,6 +608,7 @@ class EntriesByType(Entries):
 class EntriesByBudget(Entries):
     master_key = 'budget'
     column_names = "account description amount1 amount2 amount3 periods remark todo"
+    required_user_level = None
 
     @classmethod
     def override_column_headers(self,ar):
@@ -660,6 +671,7 @@ class EntriesSummaryByBudget(EntriesByBudget,EntriesByType):
     
     
 class BudgetSummary(dd.VirtualTable):
+    required_user_groups = ['debts']
     master = Budget
     column_names = "desc amount"
     
@@ -686,7 +698,6 @@ class BudgetSummary(dd.VirtualTable):
     def amount(self,row,ar):
         return row[1]
         
-#~ class DistEntriesByBudget(DebtsUserTable):
 class DistEntriesByBudget(LiabilitiesByBudget):
     #~ master = Budget
     #~ model = Entry

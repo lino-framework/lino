@@ -47,7 +47,7 @@ from lino import dd
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
-from lino.utils.choicelists import Gender
+from lino.utils.choicelists import Gender, UserLevel
 from lino.utils import babel 
 from lino.models import get_site_config
 
@@ -102,6 +102,7 @@ class CompanyType(babel.BabelNamed):
     
         
 class CompanyTypes(dd.Table):
+    required_user_level = UserLevel.manager
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
@@ -556,6 +557,7 @@ class RoleType(babel.BabelNamed):
 
 
 class RoleTypes(dd.Table):
+    required_user_level = UserLevel.manager
     model = 'contacts.RoleType'
 
 
@@ -633,14 +635,17 @@ class Role(models.Model):
     #~ column_names = 'company type *'
     
 class Roles(dd.Table):
+    required_user_level = UserLevel.manager
     model = 'contacts.Role'   
     
 class RolesByCompany(Roles):
+    required_user_level = None
     label = _("Contact persons")
     master_key = 'company'
     column_names = 'person type *'
 
 class RolesByPerson(Roles):
+    required_user_level = None
     label = _("Contact for")
     master_key = 'person'
     column_names = 'company type *'

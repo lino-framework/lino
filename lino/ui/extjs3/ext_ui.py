@@ -1890,7 +1890,7 @@ tinymce.init({
                      + table.frames ]
             
             if True: # todo 20120516
-                actors_list = [a for a in actors_list if a.get_permission(actions.VIEW,user,None)]
+                actors_list = [a for a in actors_list if a.get_view_permission(user)]
                      
             for a in actors_list:
                 f.write("Ext.namespace('Lino.%s')\n" % a)
@@ -1934,7 +1934,7 @@ tinymce.init({
         count = 0
         for lang in babel.AVAILABLE_LANGUAGES:
             babel.set_language(lang)
-            if is_devserver():
+            if False and is_devserver():
                 count += doit(User.objects.get(username='root'))
             else:
                 for user in User.objects.filter(profile=''):

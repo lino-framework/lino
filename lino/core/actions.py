@@ -208,8 +208,8 @@ class RowAction(Action):
     #~ action_type = 'open_window'
     
     
-class ViewAction(Action):
-    pass
+#~ class ViewAction(Action):
+    #~ pass
     
 class RedirectAction(Action):
     #~ mimetype = None
@@ -347,7 +347,7 @@ class SubmitInsert(SubmitDetail):
 "General actions" don't need to know their actor, so we can have 
 the same instance for all actors.
 """
-VIEW = ViewAction(sort_index=1)
+#~ VIEW = ViewAction(sort_index=1)
 CREATE = SubmitInsert(sort_index=1)
 UPDATE = SubmitDetail(sort_index=1)
 DELETE = DeleteSelected(sort_index=5)

@@ -127,7 +127,9 @@ class Schedule(babel.BabelNamed):
         verbose_name = _("Work Schedule")
         verbose_name_plural = _('Work Schedules')
         
-class Schedules(pcsw.IntegTable):
+class Schedules(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = Schedule
     order_by = ['name']
     detail_template = """
@@ -141,7 +143,9 @@ class Regime(babel.BabelNamed):
         verbose_name = _("Work Regime")
         verbose_name_plural = _('Work Regimes')
         
-class Regimes(pcsw.IntegTable):
+class Regimes(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = Regime
     order_by = ['name']
     detail_template = """
@@ -185,10 +189,12 @@ class JobProviderDetail(pcsw.CompanyDetail):
   
 
 
-class JobProviders(pcsw.Companies,pcsw.IntegTable):
+class JobProviders(pcsw.Companies,dd.Table):
     """
     List of Companies that have `Company.is_jobprovider` activated.
     """
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
     #~ use_as_default_table = False
     model = JobProvider
     app_label = 'jobs'
@@ -225,7 +231,9 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         blank=True,null=True)
         
 
-class ContractTypes(pcsw.IntegTable):
+class ContractTypes(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = ContractType
     column_names = 'name ref build_method template *'
     detail_template = """
@@ -245,7 +253,9 @@ class Sector(babel.BabelNamed):
         blank=True,
         verbose_name=_("Remark"))
         
-class Sectors(pcsw.IntegTable):
+class Sectors(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = Sector
     order_by = ['name']
     detail_template = """
@@ -269,7 +279,9 @@ class Function(babel.BabelNamed):
         #~ verbose_name=_("Job Provider"),
         #~ blank=True,null=True)
         
-class Functions(pcsw.IntegTable):
+class Functions(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = Function
     column_names = 'name sector *'
     order_by = ['name']
@@ -538,7 +550,9 @@ class ContractDetail(dd.DetailLayout):
     """
     
   
-class Contracts(pcsw.IntegTable):
+class Contracts(dd.Table):
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
     model = Contract
     column_names = 'id job applies_from applies_until user type *'
     order_by = ['id']
@@ -670,7 +684,9 @@ class Offer(SectorFunction):
             return self.name
         return u'%s @ %s' % (self.function,self.provider)
   
-class Offers(pcsw.IntegTable):
+class Offers(dd.Table):
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
     model = Offer
     detail_template = """
     name provider sector function
@@ -991,15 +1007,18 @@ class Candidature(SectorFunction):
         self.date_submitted = datetime.date.today()
     
 
-class Candidatures(pcsw.IntegTable):
+class Candidatures(dd.Table):
     """
     List of :class:`Candidatures <Candidature>`.
     """
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = Candidature
     order_by = ['date_submitted']
     column_names = 'date_submitted job:25 * id'
 
 class CandidaturesByPerson(Candidatures):
+    required_user_level = None
     master_key = 'person'
 
 class CandidaturesBySector(Candidatures):
@@ -1009,6 +1028,7 @@ class CandidaturesByFunction(Candidatures):
     master_key = 'function'
 
 class CandidaturesByJob(Candidatures):
+    required_user_level = None
     master_key = 'job'
     column_names = 'date_submitted person:25 * id'
   
@@ -1080,7 +1100,9 @@ class ExperiencesByOffer(SectorFunctionByOffer):
     
 
 
-class Jobs(pcsw.IntegTable):
+class Jobs(dd.Table):
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
     model = Job
     #~ order_by = ['start_date']
     column_names = 'name provider * id'
@@ -1094,7 +1116,9 @@ class Jobs(pcsw.IntegTable):
 
     
 
-class JobTypes(pcsw.IntegTable):
+class JobTypes(dd.Table):
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = JobType
     order_by = ['name']
     detail_template = """

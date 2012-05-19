@@ -1,0 +1,34 @@
+20120519
+========
+
+New class attributes 
+:attr:`lino.core.Actor.required_user_groups`
+and
+:attr:`lino.core.Actor.required_user_level`.
+Removed the `DebtsUserTable` which was defined as abstract base 
+class for tables that are visible only to Debt Mediation Agents 
+(users with a non-empty `debts_level`).
+
+Removed actions.VIEW: when generating the site cache, Lino now calls the 
+new method :meth:`lino.core.Actor.get_view_permission`.
+
+
+Examples (to be completed and covered by unit tests):
+
+- UsersWithClients exists only for members of 
+  the `integ` and/or `newcomers` group. 
+  A special User level is not required.
+
+Cache sizes before and after::
+
+  2 055 133 lino_root_de.js
+  1 519 957 lino_caroline_de.js
+  1 952 055 lino_melanie_de.js
+  1 952 055 lino_hubert_de.js
+  1 605 010 lino_kerstin_de.js
+
+  2 055 140 lino_root_de.js
+  1 404 827 lino_caroline_de.js
+  1 853 767 lino_melanie_de.js
+  1 741 197 lino_hubert_de.js
+  1 402 816 lino_kerstin_de.js

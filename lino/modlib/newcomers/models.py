@@ -67,6 +67,8 @@ class Brokers(dd.Table):
     """
     List of Brokers on this site.
     """
+    required_user_groups = ['newcomers']
+    required_user_level = UserLevel.manager
     model = Broker
     column_names = 'name *'
     order_by = ["name"]
@@ -88,6 +90,8 @@ class Faculty(babel.BabelNamed):
     
 
 class Faculties(dd.Table):
+    required_user_groups = ['newcomers']
+    required_user_level = UserLevel.manager
     model = Faculty
     column_names = 'name *'
     order_by = ["name"]
@@ -107,11 +111,14 @@ class Competence(mixins.AutoUser,mixins.Sequenced):
         return u'%s #%s' % (self._meta.verbose_name,self.pk)
         
 class Competences(dd.Table):
+    required_user_groups = ['newcomers']
+    required_user_level = UserLevel.manager
     model = Competence
     column_names = 'id *'
     order_by = ["id"]
 
 class CompetencesByUser(Competences):
+    required_user_level = None
     master_key = 'user'
     column_names = 'seqno faculty *'
     order_by = ["seqno"]
@@ -130,6 +137,7 @@ class Newcomers(AllPersons):
     """
     Persons who have the "Newcomer" checkbox on.
     """
+    required_user_groups = ['newcomers']
     
     #~ filter = dict(newcomer=True)
     known_values = dict(newcomer=True)
@@ -141,6 +149,7 @@ class Newcomers(AllPersons):
         return _("Newcomers")
         
 class NewClients(AllPersons):
+    required_user_groups = ['newcomers']
     label = _("New Clients")
     use_as_default_table = False
     
@@ -179,6 +188,7 @@ class UsersByNewcomer(users.Users):
     """
     A list of the Users that are susceptible to become responsible for a Newcomer.
     """
+    required_user_groups = ['newcomers']
     #~ model = users.User
     editable = False # even root should not edit here
     #~ filter = models.Q(is_spis=True)
@@ -260,30 +270,6 @@ settings.LINO.add_user_field('newcomer_quota',models.IntegerField(
         ), 
         profile=False)
 
-  
-if False: # settings.LINO.user_model:
-  
-    USER_MODEL = dd.resolve_model(settings.LINO.user_model)
-        
-    dd.inject_field(USER_MODEL,
-        'newcomers_level',
-        UserLevel.field(blank=True,
-          verbose_name=_("Userlevel for %s module") % MODULE_NAME))
-        
-#~ dd.inject_field(users.User,
-    #~ 'is_newcomers',
-    #~ models.BooleanField(
-        #~ verbose_name=_("is Newcomers user")
-    #~ ),"""Whether this user is responsible for dispatching of Newcomers.
-    #~ """)
-
-    dd.inject_field(USER_MODEL,
-        'newcomer_quota',
-        models.IntegerField(
-          _("Newcomers Quota"),
-          default=0
-        ),"""Relative number expressing how many Newcomer requests this User is able to treat.
-        """)
 
 dd.inject_field(Person,
     'broker',

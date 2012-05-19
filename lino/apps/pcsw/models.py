@@ -1014,7 +1014,7 @@ class AllPersons(Partners):
     model = settings.LINO.person_model
     detail_layout = PersonDetail()
     order_by = "last_name first_name id".split()
-    can_view = perms.is_authenticated
+    #~ can_view = perms.is_authenticated
     #~ column_names = "name_column national_id gsm street street_no street_box city age email phone id bank_account1 aid_type coach1 language *"
     #~ column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
     column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10"
@@ -1119,18 +1119,18 @@ class PersonsByCoach1(Persons):
         #~ print 20111118, 'get_request_queryset', rr.user, qs.count()
         return qs
 
-class IntegTable(dd.Table):
-    """
-    Abstract base class for all tables that are visible only to 
-    Integration Agents (users with a non-empty `integ_level`).
-    """
-    @classmethod
-    def get_permission(self,action,user,obj):
-        if not user.integ_level:
-            return False
-        return super(IntegTable,self).get_permission(action,user,obj)
+#~ class IntegTable(dd.Table):
+    #~ """
+    #~ Abstract base class for all tables that are visible only to 
+    #~ Integration Agents (users with a non-empty `integ_level`).
+    #~ """
+    #~ @classmethod
+    #~ def get_permission(self,action,user,obj):
+        #~ if not user.integ_level:
+            #~ return False
+        #~ return super(IntegTable,self).get_permission(action,user,obj)
         
-class MyPersons(Persons,IntegTable):
+class MyPersons(Persons):
     u"""
     Show only persons attended 
     by the requesting user (or another user, 
@@ -1141,6 +1141,9 @@ class MyPersons(Persons,IntegTable):
     beiden Daten coached_from und coached_until ausgefüllt sein.
     
     """
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevel.manager
+    
     #~ app_label = 'contacts'
     use_as_default_table = False
     label = _("My clients")
@@ -1208,6 +1211,7 @@ class ClientsTest(Persons):
     """
     Table of persons whose data seems unlogical or inconsistent.
     """
+    required_user_level = UserLevel.manager
     label = _("Data Test Clients")
     parameters = dict(
       user = models.ForeignKey(User,blank=True,verbose_name=_("Coached by")),
@@ -1271,6 +1275,7 @@ class UsersWithClients(dd.VirtualTable):
     New implementation of persons_by_user
     A customized overview report.
     """
+    required_user_groups = ['integ','newcomers']
     #~ label = _("Overview Clients By User")
     label = _("Users with their Clients")
     #~ column_defaults = dict(width=8)
@@ -1464,6 +1469,8 @@ class PersonGroup(models.Model):
 class PersonGroups(dd.Table):
     """List of Integration Phases"""
     model = PersonGroup
+    required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     order_by = ["ref_name"]
 
     
@@ -1485,6 +1492,7 @@ class Activity(models.Model):
 
 class Activities(dd.Table):
     model = Activity
+    required_user_level = UserLevel.manager
     #~ label = _('Activities')
 
 #~ class ActivitiesByPerson(Activities):
@@ -1507,6 +1515,8 @@ class ExclusionType(models.Model):
         return unicode(self.name)
 
 class ExclusionTypes(dd.Table):
+    #~ required_user_groups = ['integ']
+    required_user_level = UserLevel.manager
     model = ExclusionType
     #~ label = _('Exclusion Types')
     
@@ -1532,10 +1542,12 @@ class Exclusion(models.Model):
         return s
 
 class Exclusions(dd.Table):
+    required_user_level = UserLevel.manager
     model = Exclusion
     #~ label = _('Exclusions')
     
 class ExclusionsByPerson(Exclusions):
+    required_user_level = None
     master_key = 'person'
     column_names = 'excluded_from excluded_until type remark'
 
@@ -1595,6 +1607,7 @@ class AidType(babel.BabelNamed):
 class AidTypes(dd.Table):
     model = AidType
     column_names = 'name *'
+    required_user_level = UserLevel.manager
 
 
 
@@ -1645,6 +1658,7 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
         rpt.add_action(DirectPrintAction(rpt,'suchliste',_("Print"),'suchliste'))
         
 class PersonSearches(dd.Table):
+    required_user_groups = ['integ']
     model = PersonSearch
     detail_template = """
     id:8 title 
@@ -1680,16 +1694,19 @@ class UnwantedSkill(properties.PropertyOccurence):
     
     
 class LanguageKnowledgesBySearch(dd.Table):
+    required_user_groups = ['integ']
     label = _("Wanted language knowledges")
     master_key = 'search'
     model = WantedLanguageKnowledge
 
 class WantedPropsBySearch(dd.Table):
+    required_user_groups = ['integ']
     label = _("Wanted properties")
     master_key = 'search'
     model = WantedSkill
 
 class UnwantedPropsBySearch(dd.Table):
+    required_user_groups = ['integ']
     label = _("Unwanted properties")
     master_key = 'search'
     model = UnwantedSkill
@@ -1706,6 +1723,7 @@ class PersonsBySearch(AllPersons):
     :meth:`get_request_queryset`
     """
   
+    required_user_groups = ['integ']
     #~ model = Person
     master = PersonSearch
     #~ 20110822 app_label = 'pcsw'
@@ -1797,6 +1815,7 @@ class PersonsBySearch(AllPersons):
 
 
 class OverlappingContracts(dd.Table):
+    required_user_groups = ['integ']
     model = Person
     use_as_default_table = False
     #~ base_queryset = only_coached_persons(Person.objects.all())
@@ -1877,21 +1896,6 @@ dd.inject_field(SiteConfig,
 """
 settings.LINO.add_user_field('integ_level',UserLevel.field(_("Integration")))
           
-if False: # settings.LINO.user_model:
-    User.grid_search_field = 'username'
-    
-    dd.inject_field(User,
-        'integ_level',
-        UserLevel.field(blank=True,
-          verbose_name=_("Userlevel for %s module") % _("Integration")))
-    
-    #~ dd.inject_field(User,
-        #~ 'is_spis',
-        #~ models.BooleanField(
-            #~ verbose_name=_("is SPIS user")
-        #~ ),"""Whether this user is an integration assistant (not a general social agent).
-        #~ Deserves more documentation.
-        #~ """)
         
 RoleType = resolve_model('contacts.RoleType')
 #~ RoleType = resolve_model('links.LinkType')
