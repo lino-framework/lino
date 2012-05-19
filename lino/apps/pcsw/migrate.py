@@ -1111,12 +1111,20 @@ def migrate_from_1_4_3(globals_dict):
         #~ , 1, 14),ending=2,date_ended=datetime.date(2009, 8, 31),type=9,stages=u'Abitur'))      
         if id == 62: 
             date_ended = applies_from
-            #~ applies_until = None
+            
         #~ - isip.Contract [u'Contracts ends before it started.'] (2 object(s), e.g. Contract(id=204,user=200096,person=22287,langu
         #~ age=u'de',applies_from=datetime.date(2011, 12, 1),applies_until=datetime.date(2011, 8, 1),user_asd=200088,exam_policy=1,
         #~ type=7))            
         if id == 204: 
             applies_from = applies_until
+            #~ applies_until = None
+            
+        #~ - isip.Contract [u'Contracts ends before it started.'] (1 object(s), e.g. Contract(id=325,user=200099,build_time=datetim
+        #~ e.datetime(2012, 4, 12, 9, 51, 19),person=22423,language=u'de',applies_from=datetime.date(2012, 4, 1),applies_until=date
+        #~ time.date(2011, 7, 31),date_decided=datetime.date(2012, 4, 12),date_issued=datetime.date(2012, 4, 12),user_asd=200097,ex
+        #~ '))            
+        if id == 325: 
+            applies_until = None
             #~ applies_until = None
         return isip_Contract(pk=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)
     globals_dict.update(create_isip_contract=create_isip_contract)
@@ -1129,6 +1137,5 @@ def migrate_from_1_4_3(globals_dict):
         return jobs_Contract(id=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,job_id=job_id,duration=duration,regime_id=regime_id,schedule_id=schedule_id,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)
     globals_dict.update(create_jobs_contract=create_jobs_contract)
     
-
     return '1.4.4'
             
