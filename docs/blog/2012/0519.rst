@@ -67,4 +67,5 @@ needed when loading dumpy fixtures created before Lino 1.4.4.
 Adapted :func:`lino.apps.pcsw.migrate.migrate_from_1_4_3` to the 
 latest changes.
 
-  create_users_user
+Especially the conversion of existing users is interesting.
+See the source code for details.

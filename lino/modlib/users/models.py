@@ -101,8 +101,8 @@ class User(contacts.Partner,contacts.PersonMixin):
         
     @chooser(simple_values=True)
     def profile_choices(self,username):
-        qs = User.objects.filter(profile='').exclude(username=username)
-        print 20120516, qs
+        qs = User.objects.filter(profile='').exclude(username=username).order_by('username')
+        #~ print 20120516, qs
         return [u.username for u in qs]
         
 
