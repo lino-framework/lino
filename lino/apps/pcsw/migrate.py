@@ -1106,11 +1106,12 @@ def migrate_from_1_4_3(globals_dict):
           newcomer_quota=newcomer_quota,**kw)
     globals_dict.update(create_users_user=create_users_user)
     
-    
-    #~ isip_Contract = resolve_model("isip.Contract")
-    #~ def create_isip_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person):
-        #~ return isip_Contract(pk=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)
-    #~ globals_dict.update(create_isip_contract=create_isip_contract)
+    isip_Contract = resolve_model("isip.Contract")
+    def create_isip_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person):
+        if id == 62: # VSE#62 : [u'Contracts ends before it started.
+            applies_until = None
+        return isip_Contract(pk=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)
+    globals_dict.update(create_isip_contract=create_isip_contract)
 
     return '1.4.4'
             
