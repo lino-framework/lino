@@ -56,7 +56,7 @@ Cache sizes before and after::
 Migration
 ---------
 
-Added a little wrapper function :func:`lino.apps.pcsw.migrate.install` 
+Added a little wrapper module :mod:`lino.apps.dsbe.migrate` 
 needed when loading dumpy fixtures created before Lino 1.4.4.
 
   

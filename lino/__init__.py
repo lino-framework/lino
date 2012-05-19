@@ -169,7 +169,7 @@ def using(ui=None):
 
 def welcome_text():
     #~ return "Lino version %s using %s" % (
-    return "Using %s" % (', '.join(["%s %s" % (n,v) for n,v,u in using()]))
+    return "Using %s." % (', '.join(["%s %s" % (n,v) for n,v,u in using()]))
 
 def welcome_html(ui=None):
     #~ return "Lino version %s using %s" % (
