@@ -1938,7 +1938,7 @@ tinymce.init({
             if False and is_devserver():
                 count += doit(User.objects.get(username='root'))
             else:
-                for user in User.objects.filter(profile=''):
+                for user in User.objects.filter(profile='').exclude(level=''):
                     count += doit(user)
                     
         babel.set_language(None)

@@ -1085,14 +1085,17 @@ def migrate_from_1_4_3(globals_dict):
     globals_dict.update(create_cal_task=create_cal_task)
     
     def create_users_user(contact_ptr_id, first_name, last_name, title, gender, username, is_staff, is_expert, is_active, is_superuser, last_login, date_joined, is_spis, is_newcomers, newcomer_quota):
+        kw = dict()
         if is_staff or is_expert or is_superuser:
             level = UserLevel.manager
+            kw.update(level=level)
         else:
             level = UserLevel.user
-        kw = dict(level=level)
         if is_spis:
+            kw.update(level=level)
             kw.update(integ_level = level)
         if is_newcomers:
+            kw.update(level=level)
             kw.update(newcomers_level = level)
             
         return create_child(contacts_Contact,contact_ptr_id,users_User,
