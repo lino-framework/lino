@@ -50,22 +50,12 @@ from lino import mixins
 #~ from lino import actions
 #~ from lino import fields
 from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
+#~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
-from lino.modlib.uploads import models as uploads
-from lino.modlib.cal import models as cal
-from lino.modlib.users import models as users
-from lino.utils.choicelists import HowWell, Gender
-from lino.utils.choicelists import ChoiceList
+#~ from lino.modlib.uploads import models as uploads
+from lino.utils.choicelists import UserLevel
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.models import get_site_config
-from lino.tools import get_field
-from lino.tools import resolve_field
-from lino.tools import range_filter
-from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
-from lino.utils.babel import language_choices
-#~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils import mti
@@ -240,7 +230,7 @@ class CourseOffer(models.Model):
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
-        return DEFAULT_LANGUAGE
+        return babel.DEFAULT_LANGUAGE
         
         
     
@@ -291,7 +281,7 @@ class Course(models.Model,mixins.Printable):
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
-        return DEFAULT_LANGUAGE
+        return babel.DEFAULT_LANGUAGE
         
     def participants(self):
         u"""
@@ -618,12 +608,7 @@ class PendingCourseRequests(CourseRequests):
         
         
         
-def site_setup(self):
-    self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
-    cbss_identify_person cbss_retrieve_ti_groups
-    cbss.IdentifyRequestsByPerson
-    """,_("CBSS"))
-    
+def site_setup(self): pass
     
 def setup_main_menu(site,ui,user,m):
     if user.integ_level:
@@ -635,7 +620,7 @@ def setup_main_menu(site,ui,user,m):
   
 def setup_master_menu(site,ui,user,m): pass
 def setup_my_menu(site,ui,user,m): pass
-def setup_config_menu(site,ui,user,m): pass
+def setup_config_menu(site,ui,user,m):
     m = m.add_menu("courses",_("Courses"))
     m.add_action(CourseContents)
     m.add_action(CourseEndings)

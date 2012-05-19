@@ -432,7 +432,8 @@ class Actor(Handled):
         else:
             self.detail_layout.main += " " + name
         if tpl is not None:
-            assert not hasattr(self.detail_layout,name)
+            if hasattr(self.detail_layout,name):
+                raise Exception("Oops: %s.detail_layout has already a name %r" % (self,name))
             setattr(self.detail_layout,name,tpl)
         if label is not None:
             self.detail_layout._labels[name] = label
