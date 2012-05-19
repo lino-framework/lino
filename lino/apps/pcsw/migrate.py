@@ -1034,11 +1034,14 @@ def migrate_from_1_4_3(globals_dict):
     - renamed "bcss" to "cbss"
     - renamed "lino.apps.dsbe" to "lino.apps.pcsw"
     - cal.Event.rset
+    - new user permissions system (fields like `is_staff` replaced by `level`)
     
     When migrating to the new version, we need to expect and manually 
     handle invalid contracts and persons. See :doc:`/blog/2012/0418`.
     """
     from lino.tools import resolve_model
+    from lino.utils.mti import create_child
+    from lino.utils.choicelists import UserLevel
     #~ from lino.utils import mti
     #~ from lino.utils import dblogger
     
@@ -1081,7 +1084,6 @@ def migrate_from_1_4_3(globals_dict):
             due_date=due_date,due_time=due_time,done=done,percent=percent,status_id=status_id)
     globals_dict.update(create_cal_task=create_cal_task)
     
-    from lino.utils.choicelists import UserLevel
     def create_users_user(contact_ptr_id, first_name, last_name, title, gender, username, is_staff, is_expert, is_active, is_superuser, last_login, date_joined, is_spis, is_newcomers, newcomer_quota):
         if is_staff or is_expert or is_superuser:
             level = UserLevel.manager

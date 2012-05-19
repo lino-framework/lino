@@ -62,4 +62,8 @@ Migration
 Added a little wrapper module :mod:`lino.apps.dsbe.migrate` 
 needed when loading dumpy fixtures created before Lino 1.4.4.
 
-  
+
+Adapted :func:`lino.apps.pcsw.migrate.migrate_from_1_4_3` to the 
+latest changes.
+
+  create_users_user
