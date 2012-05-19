@@ -78,10 +78,8 @@ Bugfixes
   Jetzt nur noch eine Warnung in der Log-Datei.
   
 
-Internal changes
-----------------
+After Upgrade
+-------------
 
-Administrators need to ``aptitude install python-lxml`` before upgrading.
-:mod:`lino.utils.xmlgen` turned out to be a reinvention of the wheel 
-and has been replaced by `lxml <http://www.lxml.de>`_.
-
+- Set user profiles manually.
+- 
