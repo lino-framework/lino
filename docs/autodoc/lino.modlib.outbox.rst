@@ -8,7 +8,7 @@
     
 
 :mod:`lino.modlib.outbox.models`
--------------------------------
+--------------------------------
 
 .. automodule:: lino.modlib.outbox.models
     :members:

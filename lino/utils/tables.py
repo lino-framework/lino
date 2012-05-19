@@ -815,7 +815,7 @@ class AbstractTable(actors.Actor):
                   master_instance,self.master.__name__,self.master_field))
             kw[self.master_field.name] = master_instance
             
-        logger.info('20120519 %s.get_filter_kw(%r) --> %r',self,master_instance,kw)
+        #~ logger.info('20120519 %s.get_filter_kw(%r) --> %r',self,master_instance,kw)
         return kw
         
 
