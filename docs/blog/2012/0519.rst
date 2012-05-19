@@ -1,6 +1,9 @@
 20120519
 ========
 
+User permissions
+----------------
+
 Until now I had noticed a few times but silently ignored 
 the fact that the generated `lino*.js` contains a lot of 
 useless class definitions for normal users. 

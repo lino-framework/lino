@@ -1081,6 +1081,28 @@ def migrate_from_1_4_3(globals_dict):
             due_date=due_date,due_time=due_time,done=done,percent=percent,status_id=status_id)
     globals_dict.update(create_cal_task=create_cal_task)
     
+    from lino.utils.choicelists import UserLevel
+    def create_users_user(contact_ptr_id, first_name, last_name, title, gender, username, is_staff, is_expert, is_active, is_superuser, last_login, date_joined, is_spis, is_newcomers, newcomer_quota):
+        if is_staff or is_expert or is_superuser:
+            level = UserLevel.manager
+        else:
+            level = UserLevel.user
+        kw = dict(level=level)
+        if is_spis:
+            kw.update(integ_level = level)
+        if is_newcomers:
+            kw.update(newcomers_level = level)
+            
+        return create_child(contacts_Contact,contact_ptr_id,users_User,
+          first_name=first_name,last_name=last_name,title=title,gender=gender,
+          username=username,
+          #~ is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,
+          last_login=last_login,date_joined=date_joined,
+          #~ is_spis=is_spis,is_newcomers=is_newcomers,
+          newcomer_quota=newcomer_quota,**kw)
+    globals_dict.update(create_users_user=create_users_user)
+    
+    
     #~ isip_Contract = resolve_model("isip.Contract")
     #~ def create_isip_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person):
         #~ return isip_Contract(pk=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)
