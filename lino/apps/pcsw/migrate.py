@@ -1045,9 +1045,10 @@ def migrate_from_1_4_3(globals_dict):
     #~ from lino.utils import mti
     #~ from lino.utils import dblogger
     
-    contacts_Contact=resolve_model("contacts.Partner")
-    globals_dict.update(bcss_IdentifyPersonRequest = resolve_model("cbss.IdentifyPersonRequest"))
+    contacts_Contact = resolve_model("contacts.Partner")
+    users_User = resolve_model("users.User")
     globals_dict.update(contacts_Contact=contacts_Contact)
+    globals_dict.update(bcss_IdentifyPersonRequest = resolve_model("cbss.IdentifyPersonRequest"))
     globals_dict.update(dsbe_Activity = resolve_model("pcsw.Activity"))
     globals_dict.update(dsbe_AidType = resolve_model("pcsw.AidType"))
     globals_dict.update(dsbe_Course = resolve_model("courses.Course"))
