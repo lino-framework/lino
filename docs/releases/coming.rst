@@ -26,10 +26,15 @@ Sichtbare Änderungen
 - Datenkontrollliste für *alle* Klienten (wenn "nur aktive am" leer ist) 
   schien bisher durch einen Timeout von 30 Sekunden leer. Behoben.
   
-- Die Benutzerverwaltung ist kompletter geworden. 
+- Die Benutzerverwaltung ist komplexer geworden. 
   Es gibt jetzt "Benutzerprofile" und "Benutzerlevel".
   
 - Neue Module Schuldnerberatung und Haushalte  
+
+- Neues Modul Postausgang.
+
+- Chronik pro Person ist jetzt rückwärts sortiert, so dass die 
+  neuesten Einträge zuerst kommen. 
 
 
 Bugfixes

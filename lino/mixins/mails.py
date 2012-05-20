@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -28,22 +28,21 @@ from lino.utils.choicelists import ChoiceList
 from lino.mixins.printable import TypedPrintable
 
 class RecipientType(ChoiceList):
-    """A list of possible values for the `type` field of a 
-    :class:`outbox.Recipient` or
-    :class:`inbox.Recipient`.
+    """
+    A list of possible values for the `type` field of a 
+    :class:`Recipient`.
     """
     label = _("Recipient Type")
     
 add = RecipientType.add_item
-#~ add('cc','cc',en=u"cc",de=u"Kopie an",   fr=u"cc")
-#~ add('bcc','bcc',en=u"bcc",de=u"Versteckte Kopie an",   fr=u"bcc")
-#~ add('to','to',en=u"to",de=u"an",   fr=u"à")
+add('to',_("to"),alias='to')
 add('cc',_("cc"),alias='cc')
 add('bcc',_("bcc"),alias='bcc')
-add('to',_("to"),alias='to')
 
 class Recipient(models.Model):
-
+    """
+    Abstract base for :class:`inbox.Recipient` and :class:`outbox.Recipient`.
+    """
     allow_cascaded_delete = True
     
     class Meta:
@@ -53,7 +52,7 @@ class Recipient(models.Model):
     partner = models.ForeignKey('contacts.Partner',
         #~ verbose_name=_("Recipient"),
         blank=True,null=True)
-    type = RecipientType.field()
+    type = RecipientType.field(default=RecipientType.to)
     address = models.EmailField(_("Address"))
     name = models.CharField(_("Name"),max_length=200)
     #~ address_type = models.ForeignKey(ContentType)

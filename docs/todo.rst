@@ -123,10 +123,6 @@ Short-term
     - "Ereignis/Notiz" umbenennen nach "Notiz". Eine Notiz ist 
       ein "ausgehendes Dokument", das ein bestimmter Benutzer 
       (der Autor) erstellt hat.
-    - Statt 
-    
-#.  User profiles and one lino.js per user profile. 
-    Because this would save a lot of JS code to download for most users.
     
 #.  Kontakte als common base class für Personen und Firmen : 
     beibehalten oder wieder trennen?
@@ -199,7 +195,7 @@ Short-term
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
     
-#.  notes.Notes nicht mehr PartnerDocument sondern ProjectBased.
+#.  notes.Notes nicht mehr PartnerDocument sondern ProjectRelated.
     In einer Notiz wie Nr. 1019 würde dann die Zuweisung zur 
     Firma verloren gehen. Kann ggf. als Drittpartner eingegeben 
     werden. Betroffen sind folgende Notizen::

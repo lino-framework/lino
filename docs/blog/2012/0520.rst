@@ -1,0 +1,7 @@
+20120520
+========
+
+lino.apps.dsbe now adds OutboxByProject to the `history` tab.
+
+New field `Outmail.date`. This is where mails are being sorted.
+We also have two timestamps `build_date` and `sent`.

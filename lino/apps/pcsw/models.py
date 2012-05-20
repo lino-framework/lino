@@ -947,6 +947,7 @@ class PersonDetail(dd.DetailLayout):
       
     history = """
     notes.NotesByPerson #:60 #pcsw.LinksByPerson:20
+    outbox.OutboxByProject
     """
     
     contracts = """
@@ -1897,24 +1898,36 @@ dd.inject_field(SiteConfig,
 settings.LINO.add_user_field('integ_level',UserLevel.field(_("Integration")))
           
         
-RoleType = resolve_model('contacts.RoleType')
-#~ RoleType = resolve_model('links.LinkType')
-if not isinstance(RoleType,UnresolvedModel):
-    """
-    autodoc imports this module with :mod:`lino.apps.std.settings` 
-    which has no contacts app.
-    """
-    dd.inject_field(RoleType,
-        'use_in_contracts',
-        models.BooleanField(
-            verbose_name=_("usable in contracts"),
-            default=True
-        ),"""Whether Links of this type can be used as contact person of a job contract.
-        Deserves more documentation.
-        """)
+#~ RoleType = resolve_model('contacts.RoleType')
+#~ if not isinstance(RoleType,UnresolvedModel):
+"""
+autodoc imports this module with :mod:`lino.apps.std.settings` 
+which has no 'contacts' app. but inject_field handles that case.
+"""
+dd.inject_field('contacts.RoleType',
+    'use_in_contracts',
+    models.BooleanField(
+        verbose_name=_("usable in contracts"),
+        default=True
+    ),"""Whether Links of this type can be used as contact person of a job contract.
+    Deserves more documentation.
+    """)
         
 
 
+
+#~ dd.inject_field('outbox.Mail','person',
+    #~ models.ForeignKey(Person,
+        #~ blank=True,null=True,
+        #~ related_name='outbox_mail_set',
+        #~ help_text="""The related Person`."""
+        #~ ))
+
+#~ class OutboxByPerson(dd.Table):
+    #~ master_key = 'person'
+    #~ model = 'oubox.Mail'
+    #~ order_by = ['sent']
+  
 
 
 """
@@ -2111,5 +2124,12 @@ def site_setup(site):
         """
         
     site.modules.notes.Notes.set_detail(NoteDetail())
+    
+    site.modules.outbox.Mails.set_detail("""
+    subject type project date 
+    sender sent build_time id 
+    RecipientsByMail:50x5 uploads.UploadsByOwner:20x5
+    body:90x10
+    """)
         
     #~ site.modules.courses.CourseProviders.set_detail(CourseProviderDetail())

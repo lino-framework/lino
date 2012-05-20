@@ -134,7 +134,10 @@ def inject_field(model,name,field,doc=None):
     Adds the given field to the given model.
     See also :doc:`/tickets/49`.
     """
-    #~ model = resolve_model(model)
+    model = resolve_model(model,strict=True)
+    #~ if isinstance(model,UnresolvedModel): 
+        #~ print "20120520 inject_field(%r) - unresolved" % name
+        #~ return
     if doc:
         field.__doc__ = doc
     model.add_to_class(name,field)

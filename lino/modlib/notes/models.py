@@ -297,7 +297,7 @@ class NotesByCompany(Notes):
     master_key = 'company'
     #~ column_names = "date type event_type subject body_html user person *"
     column_names = "date event_type type subject body user person *"
-    order_by = ["date"]
+    order_by = ["-date"]
     
     
   

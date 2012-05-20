@@ -212,6 +212,12 @@ class Mail(mails.Mail,mixins.ProjectRelated):
         verbose_name = _("Outgoing Mail")
         verbose_name_plural = _("Outgoing Mails")
         
+    date = models.DateField(verbose_name=_("Date"),
+        auto_now_add=True,
+        help_text="""
+        The official date to be printed on the document.
+        """)
+        
     type = models.ForeignKey(MailType,null=True,blank=True)
     
     #~ send = SendMailAction()
@@ -274,7 +280,7 @@ class Mails(dd.Table):
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
     detail_template = """
-    id sender type sent build_time
+    id sender type date sent build_time
     subject
     RecipientsByMail:50x5 uploads.UploadsByOwner:20x5
     body:90x10
@@ -310,8 +316,17 @@ class OutboxByUser(Mails):
     required_user_level = None
     label = _("Outbox")
     column_names = 'sent subject recipients'
-    order_by = ['sent']
+    #~ order_by = ['sent']
+    order_by = ['-date']
     master_key = 'sender'
+
+class OutboxByProject(Mails):
+    required_user_level = None
+    label = _("Outbox")
+    column_names = 'date subject recipients sender *'
+    #~ order_by = ['sent']
+    order_by = ['-date']
+    master_key = 'project'
     
 class SentByPartner(Mails):
     required_user_level = None

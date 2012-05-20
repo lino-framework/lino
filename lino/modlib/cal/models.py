@@ -192,7 +192,7 @@ def default_calendar(user):
         cal = Calendar(user=user,is_default=True,color=color)
         cal.full_clean()
         cal.save()
-        dblogger.debug("Created default_calendar %s for %s.",cal,user)
+        dblogger.debug(u"Created default calendar for %s.",user)
         return cal
 
 
