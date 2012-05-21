@@ -119,6 +119,13 @@ def using(ui=None):
         version = NOT_FOUND_MSG
     yield ("docutils",version ,"http://docutils.sourceforge.net/")
 
+    try:
+        import suds
+        version = suds.__version__
+    except ImportError:
+        version = NOT_FOUND_MSG
+    yield ("suds",version ,"https://fedorahosted.org/suds/")
+
     import yaml
     version = getattr(yaml,'__version__','')
     yield ("PyYaml",version,"http://pyyaml.org/")
