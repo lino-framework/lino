@@ -13,13 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Lino-specific extensions to make the :term:`CBSS` 
-connection visible.
-
-from lino.modlib.cbss.models import IdentifyPersonRequest
-ipr = IdentifyPersonRequest(last_name="SAFFRE",birth_date=IncompleteDate('1968-06-01'))
-ar = ActionRequest(...)
-ipr.execute_request(ar)
+Adds models and tables used to make :term:`CBSS` requests.
 
 """
 
@@ -62,7 +56,6 @@ try:
     from suds.sax.element import Element as E
     from suds.sax.parser import Parser
     PARSER = Parser()
-    
 
 except ImportError, e:
     pass
@@ -90,6 +83,7 @@ add('2',_("Exception"),alias='exception')
 add('3',_("OK"),alias='ok')
 add('4',_("Warnings"),alias='warnings')
 add('5',_("Errors"),alias='errors')
+add('6',_("Invalid reply"),alias='invalid')
 add('9',_("Fictive"),alias='fictive')
   
 #~ class Environment(ChoiceList):
@@ -364,7 +358,10 @@ class SSDNRequest(CBSSRequest):
         elif rc == '10000':
             self.status = RequestStatus.errors
         else:
-            raise Exception("Got invalid response status")
+            self.response_xml = unicode(reply)
+            self.status = RequestStatus.invalid
+            return None
+            #~ raise Exception("Got invalid response status")
             
         ticket = reply.childAtPath('/ReplyContext/Message/Ticket')
         self.ticket = ticket.text
