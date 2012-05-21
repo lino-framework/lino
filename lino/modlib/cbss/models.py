@@ -344,8 +344,8 @@ class SSDNRequest(CBSSRequest):
         self.sent = now
         self.response_xml = unicode(res)
         reply = PARSER.parse(string=res.encode('utf-8'))
-        print dir(reply)
-        rc = reply.ServiceReply.ResultSummary.ReturnCode
+        print reply.__class__, dir(reply)
+        rc = reply.getRoot().ServiceReply.ResultSummary.ReturnCode
         if rc == '0':
             self.status = RequestStatus.ok
         elif rc == '1':
