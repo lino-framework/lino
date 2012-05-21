@@ -181,7 +181,7 @@ NOT sending because `cbss_live_tests` is False:
         if req.response_xml == TIMEOUT_RESPONSE:
             self.fail(TIMEOUT_MESSAGE)
             
-        print resp, dir(resp)
+        print resp.__class__, dir(resp)
         logger.info(req.response_xml)
         self.assertEqual(req.response_xml,expected)
 
