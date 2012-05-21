@@ -176,16 +176,18 @@ NOT sending because `cbss_live_tests` is False:
     settings.LINO.cbss_live_tests = saved_cbss_live_tests
     
     if settings.LINO.cbss_live_tests:
-        req.execute_request(None)
+        resp = req.execute_request(None)
     
         if req.response_xml == TIMEOUT_RESPONSE:
             self.fail(TIMEOUT_MESSAGE)
+            
+        print resp, dir(resp)
         logger.info(req.response_xml)
-        #expected = ''
-        #self.assertEqual(req.response_xml,expected)
+        self.assertEqual(req.response_xml,expected)
 
-        req.last_name="SAFFRE",birth_date=IncompleteDate(1968,6,1)
-        req.execute_request(None)
+        req.last_name = "SAFFRE"
+        req.birth_date = IncompleteDate(1968,6,1)
+        resp = req.execute_request(None)
         logger.info(req.response_xml)
         expected = ''
         self.assertEqual(req.response_xml,expected)
@@ -226,7 +228,7 @@ Not actually sending because environment is empty. Request would be:
             
         expected = """\
         """
-        logger.debug(req.response_xml)
+        logger.info(req.response_xml)
         self.assertEqual(req.response_xml,expected)
     
     settings.LINO.cbss_environment = saved_cbss_environment 
