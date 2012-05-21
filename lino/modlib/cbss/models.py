@@ -340,13 +340,13 @@ class SSDNRequest(CBSSRequest):
             return
         self.sent = now
         self.response_xml = unicode(res)
-        rc = res.ServiceReply.ResultSummary.ReturnCode
-        if rc == '0':
-            self.status = RequestStatus.ok
-        elif rc == '1':
-            self.status = RequestStatus.warnings
-        elif rc == '10000':
-            self.status = RequestStatus.errors
+        #~ rc = res.ServiceReply.ResultSummary.ReturnCode
+        #~ if rc == '0':
+            #~ self.status = RequestStatus.ok
+        #~ elif rc == '1':
+            #~ self.status = RequestStatus.warnings
+        #~ elif rc == '10000':
+            #~ self.status = RequestStatus.errors
         self.save()
         return res
         
