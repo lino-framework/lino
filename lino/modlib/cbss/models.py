@@ -213,20 +213,23 @@ Not actually sending because environment is empty. Request would be:
 
 
 class CBSSRequestDetail(dd.DetailLayout):
+    main = 'request response'
+    
+    request = """
+    info
+    parameters
+    result
+    """
+    
     info = """
     id project user environment sent status ticket
     """
     
-    response = """response_xml"""
-    
-    main = """
-    info
-    parameters
-    response
-    """
+    response = "response_xml"
     
     def setup_handle(self,lh):
         lh.info.label = _("Request information")
+        lh.result.label = _("Result")
         lh.response.label = _("Response")
         lh.parameters.label = _("Parameters")
     
@@ -656,7 +659,7 @@ class IdentifyPersonRequestDetail(CBSSRequestDetail):
     """
     parameters = "p1 p2"
     
-    response = """IdentifyPersonRequestResults"""
+    result = "IdentifyPersonRequestResults"
     
     def setup_handle(self,lh):
         lh.p1.label = _("Using the national ID")
