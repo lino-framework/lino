@@ -368,7 +368,7 @@ class SSDNRequest(CBSSRequest):
         #~ self.on_cbss_ok(reply)
         service_reply = self.get_service_reply(reply)
         if service_reply is None:
-            raise Exception("No service reply in %s." reply)
+            raise Exception("No service reply in:\n%s\n" % reply)
         #~ reply.childAtPath('/ServiceReply/IdentifyPersonReply')
         self.response_xml = unicode(service_reply)
         return service_reply
