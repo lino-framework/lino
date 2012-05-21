@@ -21,7 +21,8 @@ from lino.utils import IncompleteDate
 from lino.modlib.cbss.models import IdentifyPersonRequest, RequestStatus
 
 FICTIVE_IPRS = [
-    [ dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'fictive_ipr_1.xml' ],
+    [ dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'demo_ipr_1.xml' ],
+    [ dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,0)), 'demo_ipr_2.xml' ],
 ]
 
 def objects():

@@ -312,6 +312,8 @@ class SSDNRequest(CBSSRequest):
         #~ client = Client(url)
         #~ print 20120507, client
         
+        self.sent = now
+        
         try:
             #~ res = client.service.sendXML(request_xml)        
             #~ xmlString = client.factory.create('wsc:xmlString')
@@ -327,6 +329,9 @@ class SSDNRequest(CBSSRequest):
             #~ xmlString.append(wrapped_srvreq)
             res = client.service.sendXML(xmlString)
             #~ res = client.service.sendXML(wrapped_srvreq)
+            service_reply = self.fill_from_string(res.encode('utf-8'))
+            self.save()
+            return service_reply
         except (IOError,Warning),e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
@@ -337,17 +342,15 @@ class SSDNRequest(CBSSRequest):
             self.response_xml = traceback.format_exc(e)
             self.save()
             return
-        self.sent = now
-        service_reply = self.fill_from_string(res.encode('utf-8'))
-        self.save()
-        return service_reply
         
     def fill_from_string(self,s):
         """Also used by demo fixture to create fictive requests.
         """
         #~ self.response_xml = unicode(res)
         reply = PARSER.parse(string=s).root()
-        rc = reply.childAtPath('/ServiceReply/ResultSummary/ReturnCode').text
+        self.ticket = reply.childAtPath('/ReplyContext/Message/Ticket').text
+        rs = reply.childAtPath('/ServiceReply/ResultSummary')
+        rc = rs.childAtPath('/ReturnCode').text
         #~ print reply.__class__, dir(reply)
         #~ print reply
         #~ rc = reply.root().SSDNReply.ServiceReply.ResultSummary.ReturnCode
@@ -355,20 +358,20 @@ class SSDNRequest(CBSSRequest):
             self.status = RequestStatus.ok
         elif rc == '1':
             self.status = RequestStatus.warnings
-        elif rc == '10000':
-            self.status = RequestStatus.errors
+        #~ elif rc == '10000':
+            #~ self.status = RequestStatus.errors
         else:
-            self.response_xml = unicode(reply)
-            self.status = RequestStatus.invalid
-            return None
+            #~ self.status = RequestStatus.errors
+            #~ self.response_xml = unicode(reply)
+            raise Warning(_("CBSS error %s: %s") % (rc,rs))
+            #~ return None
             #~ raise Exception("Got invalid response status")
             
-        ticket = reply.childAtPath('/ReplyContext/Message/Ticket')
-        self.ticket = ticket.text
         #~ self.on_cbss_ok(reply)
         service_reply = self.get_service_reply(reply)
         if service_reply is None:
-            raise Exception("No service reply in:\n%s\n" % reply)
+            raise Exception(
+              "Return code is %r but there's no service reply in:\n%s\n" % (rc,reply))
         #~ reply.childAtPath('/ServiceReply/IdentifyPersonReply')
         self.response_xml = unicode(service_reply)
         return service_reply
