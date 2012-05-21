@@ -6,4 +6,20 @@ Fast zwei Wochen lang wartete ich auf Antwort von der Smals
 wegen eines technischen Verbindungsproblems, das sich dann 
 von selbst (d.h. bisher ohne Erklärung) gelöst hat.
 
+Hier eine Zwischenstudie:
+
+.. literalinclude:: 0521/ipr_reply.py
+
+Und ein erstes Erfolgserlebnis ist die neue Tabelle
+:class:`IdentifyPersonRequestResults 
+<lino.modlib.cbss.models.IdentifyPersonRequestResults>`.
+Also erstmals in Lino sieht mal als Antwort auf einen 
+Request nicht mehr den rohen XML-String, sondern dessen 
+Auswertung in Form einer virtuellen Tabelle. 
+Bei einem IPR sind das die legalen Daten der 
+gefunden Personen.
+
+Also added a first fictive request 
+to :class:`lino.modlib.cbss.fixtures.demo` 
+to test and demonstrate the new feature.
 

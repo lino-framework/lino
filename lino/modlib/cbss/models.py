@@ -90,6 +90,7 @@ add('2',_("Exception"),alias='exception')
 add('3',_("OK"),alias='ok')
 add('4',_("Warnings"),alias='warnings')
 add('5',_("Errors"),alias='errors')
+add('9',_("Fictive"),alias='fictive')
   
 #~ class Environment(ChoiceList):
     #~ """
@@ -159,6 +160,7 @@ Read-only.""")
     
     status = RequestStatus.field(default=RequestStatus.new,editable=False)
     environment = models.CharField(max_length=4,editable=False,verbose_name=_("T/A/B"))
+    ticket  = models.CharField(max_length=20,editable=False,verbose_name=_("Ticket"))
     #~ environment = Environment.field(blank=True,null=True)
     
     # will probably go away soon
@@ -218,7 +220,7 @@ Not actually sending because environment is empty. Request would be:
 
 class CBSSRequestDetail(dd.DetailLayout):
     info = """
-    id project user environment sent status
+    id project user environment sent status ticket
     """
     
     response = """response_xml"""
@@ -274,8 +276,8 @@ class SSDNRequest(CBSSRequest):
         This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
         """
-        if self.status == RequestStatus.ok:
-            raise Warning(_("Cannot re-execute successful request."))
+        if self.ticket:
+            raise Warning(_("Cannot re-execute request."))
 
         self.environment = settings.LINO.cbss_environment or ''
         self.status = RequestStatus.pending
@@ -342,68 +344,74 @@ class SSDNRequest(CBSSRequest):
             self.save()
             return
         self.sent = now
-        self.response_xml = unicode(res)
-        reply = PARSER.parse(string=res.encode('utf-8'))
-        print reply.__class__, dir(reply)
-        print reply
-        rc = reply.root().ServiceReply.ResultSummary.ReturnCode
+        service_reply = self.fill_from_string(res.encode('utf-8'))
+        self.save()
+        return service_reply
+        
+    def fill_from_string(self,s):
+        """Also used by demo fixture to create fictive requests.
+        """
+        #~ self.response_xml = unicode(res)
+        reply = PARSER.parse(string=s).root()
+        rc = reply.childAtPath('/ServiceReply/ResultSummary/ReturnCode').text
+        #~ print reply.__class__, dir(reply)
+        #~ print reply
+        #~ rc = reply.root().SSDNReply.ServiceReply.ResultSummary.ReturnCode
         if rc == '0':
             self.status = RequestStatus.ok
         elif rc == '1':
             self.status = RequestStatus.warnings
         elif rc == '10000':
             self.status = RequestStatus.errors
-        self.save()
-        return reply
+        else:
+            raise Exception("Got invalid response status")
+            
+        ticket = reply.childAtPath('/ReplyContext/Message/Ticket')
+        self.ticket = ticket.text
+        #~ self.on_cbss_ok(reply)
+        service_reply = self.get_service_reply(reply)
+        #~ reply.childAtPath('/ServiceReply/IdentifyPersonReply')
+        self.response_xml = unicode(service_reply)
+        return service_reply
         
-        if False:
-            reply = cbss.xml2reply(res.data.xmlString)
-            rc = reply.ServiceReply.ResultSummary.ReturnCode
-            if rc == '0':
-                self.status = RequestStatus.ok
-            elif rc == '1':
-                self.status = RequestStatus.warnings
-            elif rc == '10000':
-                self.status = RequestStatus.errors
-            self.save()
-            
-            if self.status != RequestStatus.ok:
-                msg = '\n'.join(list(cbss.reply2lines(reply)))
-                raise Exception(msg)
-            
-            self.on_cbss_ok(reply)
+    def get_service_reply(self,full_reply=None):
+        if full_reply is not None:
+            return full_reply.childAtPath('/ServiceReply/IdentifyPersonReply')
+        return PARSER.parse(string=self.response_xml.encode('utf-8')).root()
+        #~ return reply
+        
            
-        if False:
+        #~ if False:
           
-            try:
-                res = self.cbss_namespace.execute(srvreq,str(self.id),now)
-            except cbss.Warning,e:
-                self.status = RequestStatus.exception
-                self.response_xml = unicode(e)
-                self.save()
-                return
-            except Exception,e:
-                self.status = RequestStatus.exception
-                self.response_xml = traceback.format_exc(e)
-                self.save()
-                return
-            self.sent = now
-            self.response_xml = res.data.xmlString
-            reply = cbss.xml2reply(res.data.xmlString)
-            rc = reply.ServiceReply.ResultSummary.ReturnCode
-            if rc == '0':
-                self.status = RequestStatus.ok
-            elif rc == '1':
-                self.status = RequestStatus.warnings
-            elif rc == '10000':
-                self.status = RequestStatus.errors
-            self.save()
+            #~ try:
+                #~ res = self.cbss_namespace.execute(srvreq,str(self.id),now)
+            #~ except cbss.Warning,e:
+                #~ self.status = RequestStatus.exception
+                #~ self.response_xml = unicode(e)
+                #~ self.save()
+                #~ return
+            #~ except Exception,e:
+                #~ self.status = RequestStatus.exception
+                #~ self.response_xml = traceback.format_exc(e)
+                #~ self.save()
+                #~ return
+            #~ self.sent = now
+            #~ self.response_xml = res.data.xmlString
+            #~ reply = cbss.xml2reply(res.data.xmlString)
+            #~ rc = reply.ServiceReply.ResultSummary.ReturnCode
+            #~ if rc == '0':
+                #~ self.status = RequestStatus.ok
+            #~ elif rc == '1':
+                #~ self.status = RequestStatus.warnings
+            #~ elif rc == '10000':
+                #~ self.status = RequestStatus.errors
+            #~ self.save()
             
-            if self.status != RequestStatus.ok:
-                msg = '\n'.join(list(cbss.reply2lines(reply)))
-                raise Exception(msg)
+            #~ if self.status != RequestStatus.ok:
+                #~ msg = '\n'.join(list(cbss.reply2lines(reply)))
+                #~ raise Exception(msg)
                 
-            self.on_cbss_ok(reply)
+            #~ self.on_cbss_ok(reply)
         
     def wrap_ssdn_request(self,srvreq,dt):
         #~ up  = settings.LINO.ssdn_user_params
@@ -538,11 +546,11 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.PersonMixin,contacts.Born)
         birth_date=self.birth_date
         tolerance=self.tolerance
         if self.gender == Gender.male:
-            gender=1
+            gender = 1
         elif self.gender == Gender.female:
-            gender=2
+            gender = 2
         else:
-            gender=0
+            gender = 0
             
         #~ https://fedorahosted.org/suds/wiki/TipsAndTricks#IncludingLiteralXML
             
@@ -646,6 +654,8 @@ class IdentifyPersonRequestDetail(CBSSRequestDetail):
     """
     parameters = "p1 p2"
     
+    response = """IdentifyPersonRequestResults"""
+    
     def setup_handle(self,lh):
         lh.p1.label = _("Using the national ID")
         lh.p2.label = _("Using phonetic search")
@@ -672,8 +682,74 @@ class IdentifyPersonRequests(dd.Table):
 class IdentifyRequestsByPerson(IdentifyPersonRequests):
     master_key = 'project'
     
+
+
+def gender(v):
+    if v == '1':
+        return Gender.male
+    elif v == '2':
+        return Gender.female
+    return None
+      
+
+class IdentifyPersonRequestResults(dd.VirtualTable):
+    """
+    Displays the response of an :class:`IdentifyPersonRequest`
+    as a table.
+    """
+    master = IdentifyPersonRequest
+    master_key = None
+    label = _("Results")
+    column_names = 'person national_id:10 last_name:20 first_name:10 birth_date:10 *'
     
-    
+    @classmethod
+    def get_data_rows(self,ar):
+        ipr = ar.master_instance
+        if ipr is None: 
+            return []
+        if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
+            return []
+        service_reply = ipr.get_service_reply()
+        return service_reply.childAtPath('/SearchResults')
+        #~ results = service_reply.childAtPath('/SearchResults')
+        #~ for node in results:
+            #~ yield node
+            
+    @dd.displayfield(_("National ID"))
+    def national_id(self,obj,ar):
+        return obj.childAtPath('/Basic/SocialSecurityUser').text
+            
+    @dd.displayfield(_("Last Name"))
+    def last_name(self,obj,ar):
+        return obj.childAtPath('/Basic/LastName').text
+        
+    @dd.displayfield(_("First Name"))
+    def first_name(self,obj,ar):
+        return obj.childAtPath('/Basic/FirstName').text
+            
+    @dd.virtualfield(Gender.field())
+    def gender(self,obj,ar):
+        return gender(obj.childAtPath('/Basic/Gender').text)
+            
+    #~ @dd.displayfield(dd.IncompleteDateField(_("Birth date")))
+    @dd.displayfield(_("Birth date"))
+    def birth_date(self,obj,ar):
+        return obj.childAtPath('/Basic/BirthDate').text
+            
+    #~ @dd.virtualfield(models.ForeignKey(settings.LINO.person_model))
+    @dd.displayfield(_("Person"))
+    def person(self,obj,ar):
+        from lino.apps.pcsw.models import Person
+        niss = obj.childAtPath('/Basic/SocialSecurityUser').text
+        if niss:
+            try:
+                return unicode(Person.objects.get(national_id=niss))
+            except Person.DoesNotExist:
+                pass
+        return None
+            
+      
+          
         
 class NewStyleRequest(CBSSRequest):
     """

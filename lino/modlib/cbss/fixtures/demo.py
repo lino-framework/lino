@@ -12,10 +12,26 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Fills in a suite of fictive IdentifyPerson requests.
+"""
+
+import os
+from lino.utils import IncompleteDate
+from lino.modlib.cbss.models import IdentifyPersonRequest, RequestStatus
+
+FICTIVE_IPRS = [
+    [ dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'fictive_ipr_1.xml' ],
+]
+
 def objects():
-    from lino.modlib.cbss.models import IdentifyPersonRequest
-    from lino.utils import IncompleteDate
-    ipr = IdentifyPersonRequest(
-        last_name="SAFFRE",
-        birth_date=IncompleteDate(1968,6,1))
-    yield ipr
+    for kw,fn in FICTIVE_IPRS:
+        ipr = IdentifyPersonRequest(
+            status=RequestStatus.fictive,
+            **kw
+            )
+        fn = os.path.join(os.path.dirname(__file__),fn)
+        xml = open(fn).read()
+        ipr.fill_from_string(xml)
+        ipr.status = RequestStatus.fictive
+        yield ipr

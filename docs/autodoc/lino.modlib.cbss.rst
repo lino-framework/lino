@@ -23,3 +23,11 @@
     :show-inheritance:
 
 
+:mod:`lino.modlib.cbss.fixtures.demo`
+----------------------------------------
+
+.. automodule:: lino.modlib.cbss.fixtures.demo
+    :members:
+    :show-inheritance:
+
+
