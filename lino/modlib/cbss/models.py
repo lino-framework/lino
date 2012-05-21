@@ -60,6 +60,9 @@ try:
     from suds.transport.http import HttpAuthenticated
     from suds.transport.http import HttpTransport
     from suds.sax.element import Element as E
+    from suds.sax.parser import Parser
+    PARSER = Parser()
+    
 
 except ImportError, e:
     pass
@@ -340,15 +343,17 @@ class SSDNRequest(CBSSRequest):
             return
         self.sent = now
         self.response_xml = unicode(res)
-        #~ rc = res.ServiceReply.ResultSummary.ReturnCode
-        #~ if rc == '0':
-            #~ self.status = RequestStatus.ok
-        #~ elif rc == '1':
-            #~ self.status = RequestStatus.warnings
-        #~ elif rc == '10000':
-            #~ self.status = RequestStatus.errors
+        reply = PARSER(string=res)
+        print dir(reply)
+        rc = reply.ServiceReply.ResultSummary.ReturnCode
+        if rc == '0':
+            self.status = RequestStatus.ok
+        elif rc == '1':
+            self.status = RequestStatus.warnings
+        elif rc == '10000':
+            self.status = RequestStatus.errors
         self.save()
-        return res
+        return reply
         
         if False:
             reply = cbss.xml2reply(res.data.xmlString)
