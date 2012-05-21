@@ -82,7 +82,9 @@ def test01(self):
     saved_cbss_user_params = settings.LINO.cbss_user_params
     saved_cbss_live_tests = settings.LINO.cbss_live_tests
     
-    # set fictive user params
+    """
+    set fictive user params and run some offline tests
+    """
     
     settings.LINO.cbss_user_params = dict(
           UserID='12345678901', 
@@ -97,7 +99,10 @@ def test01(self):
     IdentifyPersonRequest = resolve_model('cbss.IdentifyPersonRequest')
     req = IdentifyPersonRequest(last_name="MUSTERMANN",birth_date=IncompleteDate(1968,6,1))
     
-    # try it without environment to see the XML
+    """
+    try it without environment and with `validate=True`
+    just to have the XML generated and validated
+    """
     
     settings.LINO.cbss_environment = ''
     req.execute_request(None,validate=True)
@@ -115,43 +120,17 @@ Not actually sending because environment is empty. Request would be:
 </ipr:IdentifyPersonRequest>"""
     self.assertEqual(req.response_xml,expected)
     
+    
+    
+    """
+    Now in test environment but still offline (set `cbss_live_tests` to False)
+    """
+    
     settings.LINO.cbss_live_tests = False
-    # try it in test environment
     settings.LINO.cbss_environment = 'test'
     now = datetime.datetime(2012,5,9,18,34,50)
     req.execute_request(None,now=now)
     #~ print req.response_xml
-    expected = """\
-NOT sending because `cbss_live_tests` is False:
-<wsc:xmlString xmlns:wsc="http://ksz-bcss.fgov.be/connectors/WebServiceConnector">&lt;ssdn:SSDNRequest xmlns:ssdn=&quot;http://www.ksz-bcss.fgov.be/XSD/SSDN/Service&quot;&gt;
-   &lt;ssdn:RequestContext&gt;
-      &lt;ssdn:AuthorizedUser&gt;
-         &lt;ssdn:UserID&gt;12345678901&lt;/ssdn:UserID&gt;
-         &lt;ssdn:Email&gt;123@example.be&lt;/ssdn:Email&gt;
-         &lt;ssdn:OrgUnit&gt;123&lt;/ssdn:OrgUnit&gt;
-         &lt;ssdn:MatrixID&gt;12&lt;/ssdn:MatrixID&gt;
-         &lt;ssdn:MatrixSubID&gt;3&lt;/ssdn:MatrixSubID&gt;
-      &lt;/ssdn:AuthorizedUser&gt;
-      &lt;ssdn:Message&gt;
-         &lt;ssdn:Reference&gt;IdentifyPersonRequest # 1&lt;/ssdn:Reference&gt;
-         &lt;ssdn:TimeRequest&gt;20120509T183450&lt;/ssdn:TimeRequest&gt;
-      &lt;/ssdn:Message&gt;
-   &lt;/ssdn:RequestContext&gt;
-   &lt;ssdn:ServiceRequest&gt;
-      &lt;ssdn:ServiceId&gt;OCMWCPASIdentifyPerson&lt;/ssdn:ServiceId&gt;
-      &lt;ssdn:Version&gt;20050930&lt;/ssdn:Version&gt;
-      &lt;ipr:IdentifyPersonRequest xmlns:ipr=&quot;http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson&quot;&gt;
-         &lt;ipr:SearchCriteria&gt;
-            &lt;ipr:PhoneticCriteria&gt;
-               &lt;ipr:LastName&gt;MUSTERMANN&lt;/ipr:LastName&gt;
-               &lt;ipr:FirstName&gt;&lt;/ipr:FirstName&gt;
-               &lt;ipr:MiddleName&gt;&lt;/ipr:MiddleName&gt;
-               &lt;ipr:BirthDate&gt;1968-06-01&lt;/ipr:BirthDate&gt;
-            &lt;/ipr:PhoneticCriteria&gt;
-         &lt;/ipr:SearchCriteria&gt;
-      &lt;/ipr:IdentifyPersonRequest&gt;
-   &lt;/ssdn:ServiceRequest&gt;
-&lt;/ssdn:SSDNRequest&gt;</wsc:xmlString>"""
 
     expected = """\
 NOT sending because `cbss_live_tests` is False:
@@ -184,8 +163,13 @@ NOT sending because `cbss_live_tests` is False:
       </ipr:IdentifyPersonRequest>
    </ssdn:ServiceRequest>
 </ssdn:SSDNRequest>"""
-
     self.assertEqual(req.response_xml,expected)
+    
+    
+    """
+    Restore real user params and
+    run some real tests if `cbss_live_tests` is True.
+    """
     
     settings.LINO.cbss_user_params = saved_cbss_user_params
     settings.LINO.cbss_environment = saved_cbss_environment 
@@ -196,10 +180,15 @@ NOT sending because `cbss_live_tests` is False:
     
         if req.response_xml == TIMEOUT_RESPONSE:
             self.fail(TIMEOUT_MESSAGE)
-        #~ print req.response_xml
+        logger.info(req.response_xml)
+        #expected = ''
+        #self.assertEqual(req.response_xml,expected)
+
+        req.last_name="SAFFRE",birth_date=IncompleteDate(1968,6,1)
+        req.execute_request(None)
+        logger.info(req.response_xml)
         expected = ''
         self.assertEqual(req.response_xml,expected)
-
 
     
 
@@ -232,16 +221,12 @@ Not actually sending because environment is empty. Request would be:
         # try it in test environment
         settings.LINO.cbss_environment = 'test'
         req.execute_request(None)
-        
         if req.response_xml == TIMEOUT_RESPONSE:
             self.fail(TIMEOUT_MESSAGE)
-            #~ """\
-#~ We got a timeout. 
-#~ That's normal when this test is run behind an IP address that is not registered.
-#~ Set your `cbss_user_params` settings to None to skip this test.
-#~ """)
+            
         expected = """\
         """
+        logger.debug(req.response_xml)
         self.assertEqual(req.response_xml,expected)
     
     settings.LINO.cbss_environment = saved_cbss_environment 

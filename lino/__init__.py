@@ -952,6 +952,16 @@ class Lino(object):
         raise NotImplementedError
         
     def setup_menu(self,ui,user,main):
+        """
+        Set up the application's menu structure.
+        
+        The default implementation use a system of 
+        predefined top-level items that are filled by the 
+        different :setting:`INSTALLED_APPS`.
+        
+        Deserves more documentation.
+        
+        """
         from django.utils.translation import ugettext_lazy as _
         m = main.add_menu("master",_("Master"))
         self.on_each_app('setup_master_menu',ui,user,m)

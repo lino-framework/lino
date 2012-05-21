@@ -290,7 +290,7 @@ class MyOutbox(Mails):
     required_user_level = None
     #~ known_values = dict(outgoing=True)
     label = _("My Outbox")
-    filter = models.Q(sent__isnull=True)
+    #~ filter = models.Q(sent__isnull=True)
     master_key = 'sender'
     
     @classmethod
@@ -299,9 +299,9 @@ class MyOutbox(Mails):
             ar.master_instance = ar.get_user()
         #~ print "20120519 MyOutbox.setup_request()", ar.master_instance
 
-class MySent(MyOutbox):
-    label = _("Sent Mails")
-    filter = models.Q(sent__isnull=False)
+#~ class MySent(MyOutbox):
+    #~ label = _("Sent Mails")
+    #~ filter = models.Q(sent__isnull=False)
     
 
 
@@ -354,15 +354,15 @@ def setup_my_menu(site,ui,user,m):
     m  = m.add_menu("mails",MODULE_NAME)
     #~ m.add_action(MyInbox)
     m.add_action(MyOutbox)
-    m.add_action(MySent)
+    #~ m.add_action(MySent)
   
 def setup_config_menu(site,ui,user,m):
-    if user.level >= UserLevel.manager:
-        m  = m.add_menu("mails",MODULE_NAME)
-        m.add_action(MailTypes)
+    #~ if user.level >= UserLevel.manager:
+    m  = m.add_menu("mails",MODULE_NAME)
+    m.add_action(MailTypes)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.level >= UserLevel.manager:
-        m  = m.add_menu("mails",MODULE_NAME)
-        m.add_action(Mails)
+    #~ if user.level >= UserLevel.manager:
+    m  = m.add_menu("mails",MODULE_NAME)
+    m.add_action(Mails)
   
