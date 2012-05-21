@@ -343,7 +343,7 @@ class SSDNRequest(CBSSRequest):
             return
         self.sent = now
         self.response_xml = unicode(res)
-        reply = PARSER(string=res)
+        reply = PARSER.parse(string=res)
         print dir(reply)
         rc = reply.ServiceReply.ResultSummary.ReturnCode
         if rc == '0':
