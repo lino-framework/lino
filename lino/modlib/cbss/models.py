@@ -83,7 +83,7 @@ add('2',_("Exception"),alias='exception')
 add('3',_("OK"),alias='ok')
 add('4',_("Warnings"),alias='warnings')
 add('5',_("Errors"),alias='errors')
-add('6',_("Invalid reply"),alias='invalid')
+#~ add('6',_("Invalid reply"),alias='invalid')
 add('9',_("Fictive"),alias='fictive')
   
 #~ class Environment(ChoiceList):
@@ -228,6 +228,7 @@ class CBSSRequestDetail(dd.DetailLayout):
     response = "response_xml"
     
     def setup_handle(self,lh):
+        lh.request.label = _("Request")
         lh.info.label = _("Request information")
         lh.result.label = _("Result")
         lh.response.label = _("Response")
@@ -659,7 +660,7 @@ class IdentifyPersonRequestDetail(CBSSRequestDetail):
     """
     parameters = "p1 p2"
     
-    result = "IdentifyPersonRequestResults"
+    result = "IdentifyPersonResult"
     
     def setup_handle(self,lh):
         lh.p1.label = _("Using the national ID")
@@ -697,7 +698,7 @@ def gender(v):
     return None
       
 
-class IdentifyPersonRequestResults(dd.VirtualTable):
+class IdentifyPersonResult(dd.VirtualTable):
     """
     Displays the response of an :class:`IdentifyPersonRequest`
     as a table.
@@ -868,22 +869,38 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         self.check_environment(si)
         return client.service.retrieveTI(infoCustomer,None,si)        
 
-
+  
 class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
   
     parameters = "national_id language history"
+    
+    result = "cbss.RetrieveTIGroupsResult"
     
     #~ def setup_handle(self,lh):
         #~ CBSSRequestDetail.setup_handle(self,lh)
 
 class RetrieveTIGroupsRequests(dd.Table):
     model = RetrieveTIGroupsRequest
-    detail_layout = RetrieveTIGroupsRequestDetail()
+    #~ 20120521 detail_layout = RetrieveTIGroupsRequestDetail()
         
 class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     master_key = 'project'
     
+class RetrieveTIGroupsResult(dd.EmptyTable):
+    master = RetrieveTIGroupsRequest
+    master_key = None
     
+    detail_template = """
+    body
+    """
+    
+    @dd.virtualfield(dd.HtmlBox())
+    def body(cls,self,req):
+        return 'Coming soon'
+    
+    
+
+
 def setup_site_cache(self,force):
     """
     Called from :meth:`build_site_cache`. 
