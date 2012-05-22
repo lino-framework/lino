@@ -381,7 +381,7 @@ class TableRequest(actions.ActionRequest):
             rows = self.actor.get_data_rows(self)
             for row in rows:
                 if len(l) > 300:
-                    raise Exception("More than 300 items in %r" % rows)
+                    raise Exception("More than 300 items in %s" % unicode(rows))
                 #~ l.append(row)
                 group = self.actor.group_from_row(row)
                 group.process_row(l,row)
