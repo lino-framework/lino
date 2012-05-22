@@ -188,12 +188,10 @@ NOT sending because `cbss_live_tests` is False:
             
         expected = """\
 CBSS error 10000:
-<ns2:Detail>
-  <ns2:Severity>ERROR</ns2:Severity>
-  <ns2:ReasonCode>32007004</ns2:ReasonCode>
-  <ns2:Diagnostic>The phonetic search did not return any matches.</ns2:Diagnostic>
-  <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
-</ns2:Detail>"""
+Severity : ERROR 
+ReasonCode : 32007004 
+Diagnostic : The phonetic search did not return any matches. 
+AuthorCodeList : CBSS"""
         #~ print resp.__class__, dir(resp)
         #~ logger.info(req.response_xml)
         self.assertEquivalent(req.response_xml,expected)
