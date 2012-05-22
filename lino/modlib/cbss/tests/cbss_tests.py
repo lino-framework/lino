@@ -199,6 +199,7 @@ CBSS error 10000:
             last_name="SAFFRE",
             birth_date=IncompleteDate(1968,6,1))
             
+        req.execute_request(None)
         result = IdentifyPersonResult.request(master_instance=req)
         self.assertEqual(result.get_total_count(),1)
         row = result.data_iterator[0]
@@ -206,7 +207,6 @@ CBSS error 10000:
           IdentifyPersonResult.first_name(row,result),
           'LUC JOHANNES')
         
-        resp = req.execute_request(None)
         #~ logger.info(req.response_xml)
         expected = ''
         self.assertEquivalent(req.response_xml,expected)
