@@ -97,7 +97,9 @@ def test01(self):
     # create an IPR
     
     IdentifyPersonRequest = resolve_model('cbss.IdentifyPersonRequest')
-    req = IdentifyPersonRequest(last_name="MUSTERMANN",birth_date=IncompleteDate(1968,6,1))
+    req = IdentifyPersonRequest(
+        last_name="MUSTERMANN",
+        birth_date=IncompleteDate(1968,6,1))
     
     """
     try it without environment and with `validate=True`
@@ -192,13 +194,15 @@ CBSS error 10000:
         #~ print resp.__class__, dir(resp)
         #~ logger.info(req.response_xml)
         self.assertEquivalent(req.response_xml,expected)
-
-        req.last_name = "SAFFRE"
-        req.birth_date = IncompleteDate(1968,6,1)
+        
+        req = IdentifyPersonRequest(
+            last_name="SAFFRE",
+            birth_date=IncompleteDate(1968,6,1))
+        
         resp = req.execute_request(None)
         logger.info(req.response_xml)
         expected = ''
-        self.assertEqual(req.response_xml,expected)
+        self.assertEquivalent(req.response_xml,expected)
 
     
 

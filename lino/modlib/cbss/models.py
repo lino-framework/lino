@@ -185,6 +185,12 @@ If the request failed with a local exception, then it contains a traceback.""")
         #~ call_optional_super(CBSSRequest,cls,'setup_report',rpt)
         rpt.add_action(SendAction())
         
+    def get_permission(self,action,user):
+        if isinstance(action,SendAction):
+            if self.ticket:
+                return False
+        return super(CBSSRequest,self).get_permission(action,user)
+      
     def __unicode__(self):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
         
@@ -275,7 +281,7 @@ class SSDNRequest(CBSSRequest):
         executed when a user runs :class:`SendAction`.
         """
         if self.ticket:
-            raise Warning(_("Cannot re-execute request."))
+            raise Warning(unicode(_("Cannot re-execute request.")))
 
         self.environment = settings.LINO.cbss_environment or ''
         self.status = RequestStatus.pending

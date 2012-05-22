@@ -731,9 +731,7 @@ class CachedPrintable(models.Model,Printable):
         if isinstance(action,ClearCacheAction):
             if not self.build_time:
                 return False
-        return True
-      
-        
+        return super(CachedPrintable,self).get_permission(action,user)
 
     def get_print_templates(self,bm,action):
         """Return a list of filenames of templates for the specified build method.
