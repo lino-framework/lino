@@ -819,6 +819,7 @@ class NewStyleRequest(CBSSRequest):
             return
         self.sent = now
         self.response_xml = unicode(res)
+        print self.response_xml
         
         if False:
             reply = cbss.xml2reply(res.data.xmlString)
@@ -835,7 +836,7 @@ class NewStyleRequest(CBSSRequest):
                 msg = '\n'.join(list(cbss.reply2lines(reply)))
                 raise Exception(msg)
             
-        self.on_cbss_ok(reply)
+            self.on_cbss_ok(reply)
         
     def on_cbss_ok(self,reply):
         """
