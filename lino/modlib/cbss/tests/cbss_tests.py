@@ -190,8 +190,8 @@ CBSS error 10000:
   <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
 </ns2:Detail>"""
         #~ print resp.__class__, dir(resp)
-        logger.info(req.response_xml)
-        self.assertEqual(req.response_xml,expected)
+        #~ logger.info(req.response_xml)
+        self.assertEquivalent(req.response_xml,expected)
 
         req.last_name = "SAFFRE"
         req.birth_date = IncompleteDate(1968,6,1)
