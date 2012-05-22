@@ -818,7 +818,7 @@ class NewStyleRequest(CBSSRequest):
             self.save()
             return
         self.sent = now
-        self.response_xml = unicode(res)
+        self.response_xml = str(res)
         print self.response_xml
         
         if False:
