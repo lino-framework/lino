@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:simpleType name="ActionType">
+		<xs:annotation>
+			<xs:documentation>The types of actions that can be performed on the matrix</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="REGISTER"/>
+			<xs:enumeration value="UNREGISTER"/>
+			<xs:enumeration value="LIST"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PurposeType">
+		<xs:annotation>
+			<xs:documentation>The purpose of registration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RegisterType">
+		<xs:annotation>
+			<xs:documentation>Indicates from which register the inscription was retrieved. This can be Primary (KSZBCSS) or Seconday (SmalS-MvM)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="PRIMARY"/>
+			<xs:enumeration value="SECONDARY"/>
+			<xs:enumeration value="ALL"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

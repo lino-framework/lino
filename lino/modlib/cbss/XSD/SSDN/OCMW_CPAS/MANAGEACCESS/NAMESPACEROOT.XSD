@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/NamespaceRoot.xsd"/>
+	<xs:include schemaLocation="CommonDataTypes.xsd"/>
+	<xs:include schemaLocation="ManageAccessReply.xsd"/>
+	<xs:include schemaLocation="ManageAccessRequest.xsd"/>
+	<xs:annotation>
+		<xs:documentation>Empty namespace root schema. This schema includes all other schemas in the namespace. This allows schemas in another namespace to import multiple schemas from this namespace. Xerces parser does not recognize multiple imports from the same namespace.</xs:documentation>
+	</xs:annotation>
+</xs:schema>

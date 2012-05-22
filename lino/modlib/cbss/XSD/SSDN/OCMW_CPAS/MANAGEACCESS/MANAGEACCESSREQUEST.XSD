@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- !KSZBCSS! -->
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/CommonDataTypes.xsd"/>
+	<xs:include schemaLocation="CommonDataTypes.xsd"/>
+	<xs:element name="ManageAccessRequest">
+		<xs:annotation>
+			<xs:documentation>Request to inscribe someone in the  repertoire (sectorial and ksz)</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SSIN" type="common:t_SSIN">
+					<xs:annotation>
+						<xs:documentation>The ssin of the person to register</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Purpose" type="PurposeType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The purpose for which the inscription needs to be registered/unregistered or listed. For listing this field is optional, for register/unregister it is obligated.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Period" type="common:StartingPeriodType">
+					<xs:annotation>
+						<xs:documentation>The period span for which the inscription is in the repertoires</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Action" type="ActionType">
+					<xs:annotation>
+						<xs:documentation>Indicates if this a register, unregister or a list</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Sector" type="xs:integer" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>For register and unregister this element is ignored. It can be used for list, when information about sectors is required</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="QueryRegister" type="RegisterType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Indicates the register which needs to be questioned in case of a action = list</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ProofOfAuthentication" type="ProofOfAuthenticationType">
+					<xs:annotation>
+						<xs:documentation>The authentication data that belongs to the person. When this does not match the register/unregister will not proceed</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ProofOfAuthenticationType">
+		<xs:annotation>
+			<xs:documentation>Proof hat the user has correct identification information of the person for which the register/unregister should be done. At least ONE of these three elements should be given</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SISCardNumber" type="common:t_SISCardNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The SIS card number corresponding to the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IdentityCardNumber" type="common:t_IdentityCardNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The identity card number corresponding to the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PersonData" type="IdentityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The legal data information of the person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IdentityType">
+		<xs:annotation>
+			<xs:documentation>Type of proof of authentication  where the user supplies identification data for the client</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LastName">
+				<xs:annotation>
+					<xs:documentation>The last name of the person who's SSIN is given </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirstName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The first name of the person who's SSIN is given </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BirthDate" type="common:t_IncompleteDate">
+				<xs:annotation>
+					<xs:documentation>The birthdate of the person who's SSIN is given </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

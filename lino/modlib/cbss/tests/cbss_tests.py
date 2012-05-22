@@ -169,15 +169,18 @@ NOT sending because `cbss_live_tests` is False:
     
     
     """
-    Restore real user params and
-    run some real tests if `cbss_live_tests` is True.
+    Restore real user params.
     """
     
     settings.LINO.cbss_user_params = saved_cbss_user_params
     settings.LINO.cbss_environment = saved_cbss_environment 
     settings.LINO.cbss_live_tests = saved_cbss_live_tests
     
+    """
+    If `cbss_live_tests` is True, run some live tests.
+    """
     if settings.LINO.cbss_live_tests:
+      
         resp = req.execute_request(None)
     
         if req.response_xml == TIMEOUT_RESPONSE:
@@ -243,13 +246,7 @@ Not actually sending because environment is empty. Request would be:
             self.fail(TIMEOUT_MESSAGE)
             
         expected = """\
-INFO CBSS error 10000:    
-<ns2:Detail>
-  <ns2:Severity>ERROR</ns2:Severity>
-  <ns2:ReasonCode>32007004</ns2:ReasonCode>
-  <ns2:Diagnostic>The phonetic search did not return any matches.</ns2:Diagnostic>
-  <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
-</ns2:Detail>"""
+"""
         #~ logger.info(req.response_xml)
         self.assertEqual(req.response_xml,expected)
     

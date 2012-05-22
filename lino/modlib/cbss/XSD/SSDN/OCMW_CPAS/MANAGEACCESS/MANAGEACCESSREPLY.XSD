@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/CommonDataTypes.xsd"/>
+	<xs:include schemaLocation="CommonDataTypes.xsd"/>
+	<xs:element name="ManageAccessReply">
+		<xs:annotation>
+			<xs:documentation>Reply of the manage access request. It consists of a copy of the original request and the overlapping inscriptions as reply</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="OriginalRequest" type="OriginalRequestType">
+					<xs:annotation>
+						<xs:documentation>A copy of the original request that was send</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Registrations" type="RegistrationType" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>The inscriptions that overlap with the inscription to register, are returned as result</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="RegistrationType">
+		<xs:annotation>
+			<xs:documentation>An inscription</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Purpose" type="PurposeType">
+				<xs:annotation>
+					<xs:documentation>The purpose for which the person has an inscription</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="common:StartingPeriodType">
+				<xs:annotation>
+					<xs:documentation>The period span for which this inscription is in the repertoires</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrgUnit" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The sector  for which the person has an inscription in the repertoires</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Register" type="RegisterType">
+				<xs:annotation>
+					<xs:documentation>The register where this inscription data was retrieved from</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OriginalRequestType">
+		<xs:annotation>
+			<xs:documentation>A copy of the original request that was received is placed in the reply. This has only an informative purpose (such as easy correlation between request and reply)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SSIN" type="common:t_SSIN">
+				<xs:annotation>
+					<xs:documentation>The ssin of the person to register</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Purpose" type="PurposeType">
+				<xs:annotation>
+					<xs:documentation>The purpose for which the person has an inscription</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="common:StartingPeriodType">
+				<xs:annotation>
+					<xs:documentation>The period span for which the inscription is in the repertoires</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Action" type="ActionType">
+				<xs:annotation>
+					<xs:documentation>Indicates if this a register or unregister</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Register" type="RegisterType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>In case the original request was a LIST, indicates which register was chosen to look in</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

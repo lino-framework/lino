@@ -6,7 +6,51 @@ Continued to work on :mod:`lino.modlib.cbss`.
 Error handling:
 how to handle the different possible error responses and present them to the user.
 
-
-Internal change: changed argument order (ar,obj) to (obj,ar)
+Minor internal change: changed argument order (ar,obj) to (obj,ar)
 for all methods `value_from_object` and `full_value_from_object`.
 And `ar` defaults now to None.
+
+
+Als nächsten Dienst nehmen wir uns 
+:class:`lino.modlib.cbss.models.ManageAccessRequest`
+vor. Denn bevor ich 
+:class:`lino.modlib.cbss.models.RetrieveTIGroups`
+fertigstellen kann, muss ich fiktive Personen integrieren.
+
+Zum Feld `purpose` hier ein Auszug aus einem 
+`Rundbrief des PÖD Soziale Integration 
+<http://www.mi-is.be/sites/default/files/doc/Omzendbrief%20gebruik%20hoedanigheidscodes%20NL.doc>`_
+aus dem Jahr 2008:
+
+
+  Gelet op de nodige bescherming van de persoonlijke levenssfeer moet de toegang tot de in het netwerk van de sociale zekerheid beschikbare gegevens beperkt zijn tot de gemachtigde instellingen en personen. Om informatie over een gebruiker te kunnen uitwisselen met de instellingen, moet het OCMW  aldus eerst het netwerk van de sociale zekerheid mededelen dat het een dossier voor de betrokken persoon opent of beheert. Dit gebeurt door middel van de integratieberichten. Zodra de persoon is geïntegreerd, namelijk is ingeschreven in de databases van de POD MI en van de KSZ door het OCMW, heeft het OCMW het recht gegevens te verzenden of te ontvangen via het netwerk van de sociale zekerheid. De OCMW’s mogen natuurlijk niet gelijk wie op gelijk welk ogenblik en op gelijk welke manier integreren. In feite, indien het OCMW gegevens betreffende een persoon via het netwerk moet inzamelen of mededelen om zijn wettelijke opdrachten te vervullen, dan zal het OCMW deze persoon moeten integreren. Aangezien, door deze integraties, de andere OCMW’s in kennis kunnen gesteld worden van het bestaan van een dossier dat elders is geopend, moet het OCMW zorgen voor de juistheid van de betrokken gegevens.
+
+  Alle gegevensstromen die via de KSZ verlopen worden aan een integratiecontrole onderworpen. Opdat een bericht deze integratiecontrole met succes zou doorlopen en zou worden aanvaard, is het onontbeerlijk dat de betrokkene is of wordt geïntegreerd onder een bepaalde hoedanigheidscode.
+
+  Er bestaan momenteel zes integratie - hoedanigheidscodes :
+  
+  - Code 1 : dossier in onderzoek voor een maximale periode van twee maanden ;
+  - Code 2 : dossier leefloon voor een maximale periode van één jaar ;
+  - Code 3 : dossier equivalent leefloon voor een maximale periode van één jaar ;
+  - Code 4 : andere financiële hulp voor een maximale periode van één jaar ;
+  - Code 5 : inwonend gezinslid, zonder enig recht, voor een 
+    maximale duur van één jaar (volgt normaal de periode 
+    van integratie van de gerechtigde) ;
+  - Code 6 : dossier van een gesubsidieerde tewerkstelling 
+    voor een maximale periode van één jaar.
+
+  De hoedanigheidscode 4 wordt gebruikt voor allerhande toelagen en premies, zowel periodiek als eenmalig. Voorbeelden hiervan zijn de huur, de verwarming, de stookoliepremie, de terugbetaling medische hulp, de kosten crisisopvang (niet gedekt door leefloon of equivalent leefloon) en specifieke aankopen en enzovoort.
+  Deze hoedanigheidscode 4 wordt ook gebruikt wanneer steun als voorschot wordt verleend (en geen leefloon of equivalent wordt toegestaan).
+
+  Er worden drie nieuwe hoedanigheidscodes toegevoegd.
+  
+  - De code 7 is voor dossiers collectieve schuldbemiddeling of 
+    budgetbegeleiding, evenals de begeleidingen in het kader van de LAC’s voor een maximale periode van vijf jaar.
+  
+  - De code 8 is voor dienstendossiers voor een maximale periode van 5 jaar en wordt gebruikt voor gezins-bejaardenhulp, poetshulp, klusjesdiensten, plaatsing kinderen of bejaarden, warme maaltijden aan huis, personenalarmsystemen, boodschappendiensten enzovoort voor een maximale periode van vijf jaar.
+  
+  - De code 9 is voor andere vormen van begeleiding bijvoorbeeld bij uithuiszettingen, sociale verhuringen, administratieve of psychosociale ondersteuning, rechtshulp enzovoort voor een maximale periode van één jaar.
+
+  Vanaf 1 juli 2008 kunnen de OCMW’s de hoedanigheidscodes 7, 8 en 9 op vrijwillige basis gebruiken. 
+
+Meine Schlussfolgerung: zunächst keine hardcodierte Auswahlliste für dieses Feld.

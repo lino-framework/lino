@@ -174,6 +174,7 @@ class ChoiceList(object):
                 raise Exception("Item %r already defined in %s" % (
                     alias,cls.__name__))
             setattr(cls,alias,i)
+            i.name = alias
         return i
         
     #~ @classmethod
@@ -275,7 +276,7 @@ add = DoYouLike.add_item
 #~ add('4', en="very much"    ,de="sehr gerne" , fr=u"très bien")
 add('0',_("certainly not"))
 add('1',_("rather not"))
-add('2',_("normally"),alias="default")
+add('2',_("normally"),"default")
 add('3',_("quite much"))
 add('4',_("very much"))
 
@@ -312,8 +313,8 @@ class Gender(ChoiceList):
     """
     label = _("Gender")
 add = Gender.add_item
-add('M',_("Male"),alias='male')
-add('F',_("Female"),alias='female')
+add('M',_("Male"),'male')
+add('F',_("Female"),'female')
 
 
 

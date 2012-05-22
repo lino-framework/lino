@@ -48,6 +48,8 @@ from lino.utils.choicelists import Gender
 from lino.modlib.contacts import models as contacts
 from lino.tools import makedirs_if_missing
 
+from lino.apps.pcsw import models as pcsw
+
 try:
   
     from suds.client import Client
@@ -68,7 +70,22 @@ def xsdpath(*parts):
     return os.path.join(p1,'XSD',*parts)
 
 
+def gender2cbss(gender):
+    if gender == Gender.male:
+        return '1'
+    elif gender == Gender.female:
+        return '2'
+    else:
+        return '0'
+            
 
+def cbss2gender(v):
+    if v == '1':
+        return Gender.male
+    elif v == '2':
+        return Gender.female
+    return None
+      
 
 class RequestStatus(ChoiceList):
     """
@@ -84,7 +101,7 @@ add('3',_("OK"),alias='ok')
 add('4',_("Warnings"),alias='warnings')
 add('5',_("Errors"),alias='errors')
 #~ add('6',_("Invalid reply"),alias='invalid')
-add('9',_("Fictive"),alias='fictive')
+#~ add('9',_("Fictive"),alias='fictive')
   
 #~ class Environment(ChoiceList):
     #~ """
@@ -125,7 +142,7 @@ class SendAction(dd.RowAction):
         kw.update(refresh=True)
         return rr.ui.success_response(**kw)
 
-NSCOMMON = ('common','http://www.ksz-bcss.fgov.be/XSD/SSDN/Common')
+#~ NSCOMMON = ('common','http://www.ksz-bcss.fgov.be/XSD/SSDN/Common')
 NSSSDN = ('ssdn','http://www.ksz-bcss.fgov.be/XSD/SSDN/Service')
 NSIPR = ('ipr',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
 NSMAR = ('mar',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess")
@@ -216,6 +233,9 @@ Not actually sending because environment is empty. Request would be:
 
         assert self.environment in CBSS_ENVS
 
+    @dd.virtualfield(dd.HtmlBox(_("Result")))
+    def result(self,ar):
+        return self.response_xml
 
 
 class CBSSRequestDetail(dd.DetailLayout):
@@ -275,7 +295,7 @@ class SSDNRequest(CBSSRequest):
         self.validate_against_xsd(srvreq,self.xsd_filename)
         
     
-    def execute_request(self,ar,validate=False,now=None):
+    def execute_request(self,ar=None,validate=False,now=None,simulate_response=None):
         """
         This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
@@ -291,8 +311,6 @@ class SSDNRequest(CBSSRequest):
         if now is None:
             now = datetime.datetime.now()
         try:
-            #~ srvreq = self.cbss_namespace('ns1').build_request(**kw)
-            #~ srvreq = self.cbss_namespace.build_request(**kw)
             srvreq = self.build_request()
             if validate:
                 self.validate_inner(srvreq)
@@ -300,45 +318,39 @@ class SSDNRequest(CBSSRequest):
             if validate:
                 self.validate_wrapped(wrapped_srvreq)
                 #~ logger.info("XSD validation passed.")
-            self.check_environment(srvreq)
         except Warning,e:
             self.status = RequestStatus.exception
             self.response_xml = unicode(e)
             self.save()
             return
         
-        url = self.get_wsdl_uri()
-        
-        #~ url = os.path.join(settings.MEDIA_ROOT,*WSC_PARTS) 
-        
-        #~ logger.info("Instantiate Client at %s", url)
-        t = HttpTransport()
-        client = Client(url, transport=t)
-        #~ client.add_prefix(*NSCOMMON)
-        #~ client.add_prefix(*NSSSDN)
-        #~ client.add_prefix(*NSIPR)
-        #~ client.add_prefix(*NSMAR)
-        #~ client.add_prefix(*NSWSC)
-        #~ client = Client(url)
-        #~ print 20120507, client
-        
         self.sent = now
         
         try:
-            #~ res = client.service.sendXML(request_xml)        
-            #~ xmlString = client.factory.create('wsc:xmlString')
-            s = unicode(wrapped_srvreq)
-            self.request_xml = s
-            xmlString = E('wsc:xmlString',ns=NSWSC)
-            xmlString.setText(s)
-            #~ logger.info("20120521 Gonna sendXML(<xmlString>):\n%s",s)
-            if not settings.LINO.cbss_live_tests:
-                #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
-                raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
-            #~ xmlString.append(wrapped_srvreq)
-            res = client.service.sendXML(xmlString)
-            #~ res = client.service.sendXML(wrapped_srvreq)
-            service_reply = self.fill_from_string(res.encode('utf-8'))
+            if simulate_response is None:
+                self.check_environment(srvreq)
+                url = self.get_wsdl_uri()
+                
+                #~ logger.info("Instantiate Client at %s", url)
+                t = HttpTransport()
+                client = Client(url, transport=t)
+                #~ print 20120507, client
+            
+                s = unicode(wrapped_srvreq)
+                self.request_xml = s
+                xmlString = E('wsc:xmlString',ns=NSWSC)
+                xmlString.setText(s)
+                #~ logger.info("20120521 Gonna sendXML(<xmlString>):\n%s",s)
+                if not settings.LINO.cbss_live_tests:
+                    #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
+                    raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
+                #~ xmlString.append(wrapped_srvreq)
+                res = client.service.sendXML(xmlString)
+                service_reply = self.fill_from_string(res.encode('utf-8'))
+            else:
+                self.environment = 'demo'
+                service_reply = self.fill_from_string(simulate_response)
+                #~ self.status = RequestStatus.fictive
             self.save()
             return service_reply
         except (IOError,Warning),e:
@@ -372,8 +384,12 @@ class SSDNRequest(CBSSRequest):
         else:
             #~ self.status = RequestStatus.errors
             #~ self.response_xml = unicode(reply)
-            raise Warning(_("CBSS error %s:\n%s") % (
-                rc,unicode(rs.childAtPath('/Detail'))))
+            dtl = rs.childAtPath('/Detail')
+            keys = ('Severity', 'ReasonCode', 'Diagnostic', 'AuthorCodeList')
+            msg = '\n'.join([
+                k+' : '+dtl.childAtPath('/'+k).text 
+                    for k in keys])
+            raise Warning(_("CBSS error %s:\n%s") % (rc,msg))
             #~ return None
             #~ raise Exception("Got invalid response status")
             
@@ -466,6 +482,10 @@ class SSDNRequest(CBSSRequest):
         return e
       
 class SSIN(models.Model):
+    """
+    Abstract base for models that have a field `national_id` and a method 
+    :meth:`get_ssin`.
+    """
     class Meta:
         abstract = True
   
@@ -481,9 +501,175 @@ class SSIN(models.Model):
         return national_id
         
         
-class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.PersonMixin,contacts.Born):
+
+class ManageAction(ChoiceList):
     """
-    Represents a request to the IdentifyPerson service.
+    Possible values for the 
+    `action` field of a :class:`ManageAccessRequest`.
+    """
+    label = _("Action")
+
+add = ManageAction.add_item
+add('1',_("Register"),'REGISTER')
+add('2',_("Unregister"),'UNREGISTER')
+add('3',_("List"),'LIST')
+
+
+class QueryRegister(ChoiceList):
+    """
+    Possible values for the 
+    `query_register` field of a :class:`ManageAccessRequest`.
+    """
+    label = _("Query Register")
+
+add = QueryRegister.add_item
+add('1',_("Primary"),'PRIMARY')
+add('2',_("Secondary"),'SECONDARY')
+add('3',_("All"),'ALL')
+
+class ManageAccessRequest(SSDNRequest,SSIN,contacts.Born):
+    """
+    A request to the ManageAccess service.
+    
+    Registering a person means that this PCSW is 
+    going to maintain a dossier about this person.
+    Users commonly say "to integrate" a person.
+    
+    """
+  
+    ssdn_service_id = 'OCMWCPASManageAccess'
+    ssdn_service_version = '20070509'
+    
+    xsd_filename = xsdpath('SSDN','OCMW_CPAS',
+        'MANAGEACCESS','MANAGEACCESSREQUEST.XSD')
+    
+    class Meta:
+        verbose_name = _("ManageAccess Request")
+        verbose_name_plural = _("ManageAccess Requests")
+        
+    purpose = models.IntegerField(verbose_name=_('Purpose'),
+      default=0,help_text="""\
+The purpose for which the inscription needs to be 
+registered/unregistered or listed. 
+For listing this field is optional, 
+for register/unregister it is obligated.""")
+
+    start_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Registered from"))
+    end_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Registered until"))
+        
+    action = ManageAction.field()
+    query_register = QueryRegister.field()
+
+    sector = models.IntegerField(verbose_name=_('Sector'),
+      default=0,help_text="""\
+For register and unregister this element is ignored. 
+It can be used for list, 
+when information about sectors is required.""")
+
+    sis_card_no = models.CharField(verbose_name=_('SIS card number'),
+        max_length=10,
+        blank=True, help_text="""\
+The number of the SIS card used to authenticate the person.""")
+
+    id_card_no = models.CharField(verbose_name=_('ID card number'),
+        max_length=10,
+        blank=True, help_text="""\
+The number of the ID card used to authenticate the person.""")
+
+    first_name = models.CharField(max_length=200,
+      blank=True,
+      verbose_name=_('First name'))
+    "Space-separated list of all first names."
+    
+    last_name = models.CharField(max_length=200,
+      blank=True,
+      verbose_name=_('Last name'))
+    """Last name (family name)."""
+    
+    def build_request(self):
+        """Construct and return the root element of the (inner) service request."""
+        national_id = self.get_ssin()
+        gender = gender2cbss(self.gender)
+        main = E('mar:ManageAccessRequest',ns=NSMAR)
+        main.append(E('mar:SSIN').setText(national_id))
+        main.append(E('mar:Purpose').setText(str(self.purpose)))
+        period = E('mar:Period')
+        main.append(period)
+        period.append(E('mar:StartDate').setText(str(self.start_date)))
+        period.append(E('mar:EndDate').setText(str(self.end_date)))
+        main.append(E('mar:Action').setText(self.action.name))
+        if self.sector:
+            main.append(E('mar:Sector').setText(str(self.sector)))
+        if self.query_register:
+            main.append(E('mar:QueryRegister').setText(self.query_register.name))
+        proof = E('mar:ProofOfAuthentication')
+        main.append(proof)
+        if self.sis_card_no:
+            proof.append(E('mar:SISCardNumber').setText(self.sis_card_no))
+        if self.id_card_no:
+            proof.append(E('mar:IdentityCardNumber').setText(self.id_card_no))
+        if self.last_name or self.first_name or self.birth_date:
+            pd = E('mar:PersonData')
+            proof.append(pd)
+            pd.append(E('mar:LastName').setText(self.last_name))
+            pd.append(E('mar:FirstName').setText(self.first_name))
+            pd.append(E('mar:BirthDate').setText(self.birth_date))
+        return main
+    
+
+dd.update_field(ManageAccessRequest,'national_id',help_text="""\
+The SSIN of the person to register/unregister/list.
+""")
+
+
+
+
+
+class ManageAccessRequestDetail(CBSSRequestDetail):
+    p1 = """
+    national_id 
+    action purpose 
+    start_date end_date 
+    sector query_register
+    """
+    proof = """
+    sis_card_no
+    id_card_no
+    first_name last_name birth_date 
+    """
+    parameters = "p1 proof"
+    
+    #~ result = "result"
+    
+    def setup_handle(self,lh):
+        lh.p1.label = _("Using the national ID")
+        lh.proof.label = _("Proof of authentication")
+        CBSSRequestDetail.setup_handle(self,lh)
+    
+
+class ManageAccessRequests(dd.Table):
+    #~ window_size = (500,400)
+    model = ManageAccessRequest
+    detail_layout = ManageAccessRequestDetail()
+    
+    
+class ManageAccessRequestsByPerson(ManageAccessRequests):
+    master_key = 'project'
+    
+
+
+
+
+
+
+#~ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.PersonMixin,contacts.Born):
+class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.Born):
+    """
+    A request to the IdentifyPerson service.
     
     """
     
@@ -498,10 +684,23 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.PersonMixin,contacts.Born)
         verbose_name = _("IdentifyPerson Request")
         verbose_name_plural = _("IdentifyPerson Requests")
         
+    first_name = models.CharField(max_length=200,
+      blank=True,
+      verbose_name=_('First name'))
+    "Space-separated list of all first names."
+    
+    last_name = models.CharField(max_length=200,
+      blank=True,
+      verbose_name=_('Last name'))
+    """Last name (family name)."""
+
     middle_name = models.CharField(max_length=200,
       blank=True,
       verbose_name=_('Middle name'),
       help_text="Whatever this means...")
+      
+    gender = Gender.field()
+        
     tolerance = models.IntegerField(verbose_name=_('Tolerance'),
       default=0,
       help_text=u"""
@@ -546,112 +745,37 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.PersonMixin,contacts.Born)
         super(IdentifyPersonRequest,self).save(*args,**kw)
         
     def build_request(self):
-        """
-
-        """
+        """Construct and return the root element of the (inner) service request."""
         national_id = self.get_ssin()
-        last_name=self.last_name
-        first_name=self.first_name
-        middle_name=self.middle_name
-        #~ if self.birth_date is not None:
-            #~ birth_date=str(self.birth_date)
-        birth_date=self.birth_date
-        tolerance=self.tolerance
-        if self.gender == Gender.male:
-            gender = 1
-        elif self.gender == Gender.female:
-            gender = 2
-        else:
-            gender = 0
-            
+        gender = gender2cbss(self.gender)
         #~ https://fedorahosted.org/suds/wiki/TipsAndTricks#IncludingLiteralXML
-            
         main = E('ipr:IdentifyPersonRequest',ns=NSIPR)
-        #~ main = E('ipr:IdentifyPersonRequest')
         sc = E('ipr:SearchCriteria') 
         main.append(sc)
         if national_id:
             sc.append(E('ipr:SSIN').setText(national_id))
             pd = E('ipr:PersonData')
-            if last_name: pd.append(E('ipr:LastName').setText(last_name))
-            if first_name: pd.append(E('ipr:FirstName').setText(first_name))
-            if middle_name: pd.append(E('ipr:MiddleName').setText(middle_name))
-            if birth_date: pd.append(E('ipr:BirthDate').setText(birth_date))
+            if self.last_name: pd.append(E('ipr:LastName').setText(self.last_name))
+            if self.first_name: pd.append(E('ipr:FirstName').setText(self.first_name))
+            if self.middle_name: pd.append(E('ipr:MiddleName').setText(self.middle_name))
+            if self.birth_date: pd.append(E('ipr:BirthDate').setText(str(self.birth_date)))
             if gender is not None: pd.append(E('ipr:Gender').setText(gender))
-            if tolerance is not None: pd.append(E('ipr:Tolerance').setText(tolerance))
-            
-            #~ for k in ('LastName','FirstName','MiddleName','BirthDate'):
-                #~ v = kw.get(k,None)
-                #~ if v: # ignore empty values
-                    #~ cl = getattr(ipr,k)
-                    #~ pd.append(cl(v))
+            if self.tolerance is not None: pd.append(E('ipr:Tolerance').setText(self.tolerance))
             main.append(E('ipr:VerificationData').append(pd))
         else:
             if self.birth_date is None:
                 raise Warning(
                     "Either national_id or birth date must be given")
             pc = E('ipr:PhoneticCriteria') 
-            pc.append(E('ipr:LastName').setText(last_name))
-            pc.append(E('ipr:FirstName').setText(first_name))
-            pc.append(E('ipr:MiddleName').setText(middle_name))
-            pc.append(E('ipr:BirthDate').setText(str(birth_date)))
-            #~ if gender is not None: pc.append(ipr.Gender(gender))
-            #~ if tolerance is not None: pc.append(ipr.Tolerance(tolerance))
+            pc.append(E('ipr:LastName').setText(self.last_name))
+            pc.append(E('ipr:FirstName').setText(self.first_name))
+            pc.append(E('ipr:MiddleName').setText(self.middle_name))
+            pc.append(E('ipr:BirthDate').setText(str(self.birth_date)))
             sc.append(pc)
         return main
-            
-        
-    def unused_get_request_params(self,**kw):
-        """
-        """
-        national_id = self.national_id.replace('=','')
-        national_id = national_id.replace(' ','')
-        national_id = national_id.replace('-','')
-        kw.update(national_id=national_id)
-        kw.update(last_name=self.last_name)
-        kw.update(first_name=self.first_name)
-        kw.update(middle_name=self.middle_name)
-        if self.birth_date is not None:
-            kw.update(birth_date=str(self.birth_date))
-        kw.update(tolerance=self.tolerance)
-        if self.gender == Gender.male:
-            kw.update(gender=1)
-        elif self.gender == Gender.female:
-            kw.update(gender=2)
-        else:
-            kw.update(gender=0)
-        return kw
-        
-        #~ VD = cbss.ipr.VerificationData
-        #~ SC = cbss.ipr.SearchCriteria
-        #~ PC = cbss.ipr.PhoneticCriteria
-        #~ if self.national_id:
-            #~ return cbss.ipr.verify_request(
-              #~ self.national_id,
-              #~ LastName=self.last_name,
-              #~ FirstName=self.first_name,
-              #~ BirthDate=self.birth_date,
-              #~ )
-        #~ else:
-          #~ pc = []
-          #~ pc.append(cbss.ipr.LastName(self.last_name))
-          #~ pc.append(cbss.ipr.FirstName(self.first_name))
-          #~ pc.append(cbss.ipr.MiddleName(self.middle_name))
-          #~ # if person.birth_date:
-          #~ pc.append(cbss.ipr.BirthDate(self.birth_date))
-          #~ if self.gender == Gender.male:
-              #~ pc.append(cbss.ipr.Gender(1))
-          #~ elif self.gender == Gender.female:
-              #~ pc.append(cbss.ipr.Gender(2))
-          #~ else:
-              #~ pc.append(cbss.ipr.Gender(0))
-          #~ pc.append(cbss.ipr.Tolerance(self.tolerance))
-          #~ return cbss.ipr.IdentifyPersonRequest(SC(PC(*pc)))
-    
-dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
-dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
-#~ IdentifyPersonRequest._meta.get_field_by_name('first_name')[0].blank = True
-#~ IdentifyPersonRequest._meta.get_field_by_name('last_name')[0].blank = True
+
+#~ dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
+#~ dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
 
     
     
@@ -691,18 +815,14 @@ class IdentifyPersonRequests(dd.Table):
     @dd.constant()
     def spacer(self,ui):  return '<br/>'
     
+class MyIdentifyPersonRequests(IdentifyPersonRequests,mixins.ByUser):
+    pass
+    
 class IdentifyRequestsByPerson(IdentifyPersonRequests):
     master_key = 'project'
     
 
 
-def gender(v):
-    if v == '1':
-        return Gender.male
-    elif v == '2':
-        return Gender.female
-    return None
-      
 
 class IdentifyPersonResult(dd.VirtualTable):
     """
@@ -719,7 +839,8 @@ class IdentifyPersonResult(dd.VirtualTable):
         ipr = ar.master_instance
         if ipr is None: 
             return
-        if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
+        #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
+        if not ipr.status in (RequestStatus.ok,RequestStatus.warnings):
             return
         service_reply = ipr.get_service_reply()
         return service_reply.childAtPath('/SearchResults').children
@@ -743,7 +864,7 @@ class IdentifyPersonResult(dd.VirtualTable):
             
     @dd.virtualfield(Gender.field())
     def gender(self,obj,ar):
-        return gender(obj.childAtPath('/Basic/Gender').text)
+        return cbss2gender(obj.childAtPath('/Basic/Gender').text)
             
     #~ @dd.displayfield(dd.IncompleteDateField(_("Birth date")))
     @dd.displayfield(_("Birth date"))
@@ -762,7 +883,17 @@ class IdentifyPersonResult(dd.VirtualTable):
                 pass
         return None
             
-      
+
+
+
+
+
+
+
+
+
+
+
           
         
 class NewStyleRequest(CBSSRequest):
@@ -818,7 +949,8 @@ class NewStyleRequest(CBSSRequest):
             self.save()
             return
         self.sent = now
-        self.response_xml = str(res)
+        #~ self.response_xml = str(res)
+        self.response_xml = "20120522 %s %s" % (res.__class__,res)
         print self.response_xml
         
         if False:
@@ -892,9 +1024,9 @@ class RetrieveTIGroupsRequests(dd.Table):
     model = RetrieveTIGroupsRequest
     detail_layout = RetrieveTIGroupsRequestDetail()
         
-    @dd.virtualfield(dd.HtmlBox())
-    def result(self,row,ar):
-        return row.response_xml
+    #~ @dd.virtualfield(dd.HtmlBox())
+    #~ def result(self,row,ar):
+        #~ return row.response_xml
         
 class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     master_key = 'project'
@@ -906,7 +1038,27 @@ class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     #~ detail_template = """
     #~ body
     #~ """
+
+def fn(self,rr):
+    return rr.renderer.quick_add_buttons(rr.spawn(
+          IdentifyRequestsByPerson,
+          master_instance=self))
+dd.inject_field(pcsw.Person,'cbss_identify_person',
+    dd.VirtualField(dd.DisplayField(_("Identify Person")),fn))
     
+def fn(self,rr):
+    return rr.renderer.quick_add_buttons(rr.spawn(
+          ManageAccessRequestsByPerson,
+          master_instance=self))
+dd.inject_field(pcsw.Person,'cbss_manage_access',
+    dd.VirtualField(dd.DisplayField(_("Manage Access")),fn))
+    
+def fn(self,rr):
+    return rr.renderer.quick_add_buttons(rr.spawn(
+          RetrieveTIGroupsRequestsByPerson,
+          master_instance=self))
+dd.inject_field(pcsw.Person,'cbss_retrieve_ti_groups',
+    dd.VirtualField(dd.DisplayField(_("Retrieve TI Groups")),fn))
     
     
 
@@ -954,18 +1106,21 @@ def setup_site_cache(self,force):
     
 def site_setup(self):
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
-    cbss_identify_person cbss_retrieve_ti_groups
+    cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
     cbss.IdentifyRequestsByPerson
     """,_("CBSS"))
     
     
 def setup_main_menu(site,ui,user,m): pass
 def setup_master_menu(site,ui,user,m): pass
-def setup_my_menu(site,ui,user,m): pass
+def setup_my_menu(site,ui,user,m): 
+    m.add_action(MyIdentifyPersonRequests)
+    
 def setup_config_menu(site,ui,user,m): pass
   
 def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("cbss",_("CBSS"))
     m.add_action(IdentifyPersonRequests)
+    m.add_action(ManageAccessRequests)
     m.add_action(RetrieveTIGroupsRequests)
     

@@ -669,19 +669,19 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
         return rr.renderer.quick_upload_buttons(r)
     #~ driving_licence.return_type = dd.DisplayField(_("driving licence"))
     
-    @dd.displayfield(_("CBSS Identify Person"))
-    def cbss_identify_person(self,rr):
-        r = rr.spawn(
-              settings.LINO.modules.cbss.IdentifyRequestsByPerson,
-              master_instance=self)
-        return rr.renderer.quick_add_buttons(r)
+    #~ @dd.displayfield(_("CBSS Identify Person"))
+    #~ def cbss_identify_person(self,rr):
+        #~ r = rr.spawn(
+              #~ settings.LINO.modules.cbss.IdentifyRequestsByPerson,
+              #~ master_instance=self)
+        #~ return rr.renderer.quick_add_buttons(r)
 
-    @dd.displayfield(_("CBSS Retrieve TI Groups"))
-    def cbss_retrieve_ti_groups(self,rr):
-        r = rr.spawn(
-              settings.LINO.modules.cbss.RetrieveTIGroupsRequestsByPerson,
-              master_instance=self)
-        return rr.renderer.quick_add_buttons(r)
+    #~ @dd.displayfield(_("CBSS Retrieve TI Groups"))
+    #~ def cbss_retrieve_ti_groups(self,rr):
+        #~ r = rr.spawn(
+              #~ settings.LINO.modules.cbss.RetrieveTIGroupsRequestsByPerson,
+              #~ master_instance=self)
+        #~ return rr.renderer.quick_add_buttons(r)
 
 
 class PartnerDetail(contacts.PartnerDetail):

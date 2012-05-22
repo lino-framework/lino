@@ -1,5 +1,7 @@
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:23: (WARNING/2) autodoc can't import/find module 'lino.apps.pcsw.models', it reported error: "resolve_model('contacts.RoleType',app_label='contacts') found None (settings lino.apps.std.settings)", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:61: (WARNING/2) autodoc can't import/find module 'lino.apps.pcsw.fixtures.pp2lino', it reported error: "ChoiceList name 'ResidenceType' already defined by <class 'lino.apps.pcsw.models.ResidenceType'>", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.cbss.models', it reported error: "name 'SSDNService' is not defined", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:29: (WARNING/2) autodoc can't import/find module 'lino.modlib.cbss.fixtures.demo', it reported error: "ChoiceList name 'RequestStatus' already defined by <class 'lino.modlib.cbss.models.RequestStatus'>", please check your spelling and sys.path
 T:\hgwork\lino\docs\igen\index.rst:11: (WARNING/2) toctree contains reference to nonexisting document u'igen/appdocs/index'
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:10: WARNING: py:class reference target not found: lino.apps.std.settings.Lino
@@ -11,7 +13,7 @@ T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:4: WARNING: xfile reference targe
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:8: WARNING: unknown document: /blog/2010/1210
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:8: WARNING: unknown document: /blog/2010/1211
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:8: WARNING: unknown document: /blog/2010/1214
-T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:32: WARNING: py:class reference target not found: NotImplementedError
-T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:37: WARNING: py:class reference target not found: lino.modlib.cbss.models.SSIN
-T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:101: WARNING: py:class reference target not found: lino.modlib.cbss.models.SSIN
-T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:142: WARNING: py:meth reference target not found: build_site_cache
+T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:10: WARNING: py:mod reference target not found: lino.modlib.cbss.models
+T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:26: WARNING: py:mod reference target not found: lino.modlib.cbss.fixtures.demo
+T:\hgwork\lino\docs\blog\2012\0522.rst:14: WARNING: py:class reference target not found: lino.modlib.cbss.models.ManageAccessRequest
+T:\hgwork\lino\docs\blog\2012\0522.rst:14: WARNING: py:class reference target not found: lino.modlib.cbss.models.RetrieveTIGroups

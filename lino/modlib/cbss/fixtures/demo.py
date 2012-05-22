@@ -13,26 +13,31 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Fills in a suite of fictive IdentifyPerson requests.
+Fills in a suite of fictive CBSS requests.
 """
 
 import os
 from lino.utils import IncompleteDate
-from lino.modlib.cbss.models import IdentifyPersonRequest, RequestStatus
+from lino.modlib.cbss import models as cbss
 
-FICTIVE_IPRS = [
-    [ dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'demo_ipr_1.xml' ],
-    [ dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,0)), 'demo_ipr_2.xml' ],
+DEMO_REQUESTS = [
+    [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'demo_ipr_1.xml' ],
+    [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,0)), 'demo_ipr_2.xml' ],
+    [ cbss.ManageAccessRequest, dict(
+        national_id='01234567890',
+        start_date=settings.LINO.demo_date(),
+        end_date=settings.LINO.demo_date(15),
+        purpose=902,
+        action=cbss.ManageAction.REGISTER,
+        query_register=cbss.QueryRegister.ALL,
+        ), '' ],
 ]
 
 def objects():
-    for kw,fn in FICTIVE_IPRS:
-        ipr = IdentifyPersonRequest(
-            status=RequestStatus.fictive,
-            **kw
-            )
-        fn = os.path.join(os.path.dirname(__file__),fn)
-        xml = open(fn).read()
-        ipr.fill_from_string(xml)
-        ipr.status = RequestStatus.fictive
-        yield ipr
+    for model,kw,fn in DEMO_REQUESTS:
+        obj = model(**kw)
+        if fn:
+            fn = os.path.join(os.path.dirname(__file__),fn)
+            xml = open(fn).read()
+            obj.execute_request(validate=True,simulate_response=xml)
+        yield obj
