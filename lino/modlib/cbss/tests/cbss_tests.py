@@ -181,7 +181,16 @@ NOT sending because `cbss_live_tests` is False:
         if req.response_xml == TIMEOUT_RESPONSE:
             self.fail(TIMEOUT_MESSAGE)
             
-        print resp.__class__, dir(resp)
+        expected = """\
+INFO CBSS error 10000:    
+<ns2:Detail>
+  <ns2:Severity>ERROR</ns2:Severity>
+  <ns2:ReasonCode>32007004</ns2:ReasonCode>
+  <ns2:Diagnostic>The phonetic search did not return any matches.</ns2:Diagnostic>
+  <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
+</ns2:Detail>
+"""
+        #~ print resp.__class__, dir(resp)
         logger.info(req.response_xml)
         self.assertEqual(req.response_xml,expected)
 
