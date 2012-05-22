@@ -463,7 +463,8 @@ class Group(object):
         self.sums = []
         
     def process_row(self,collector,row):
-        assert len(collector) < 500
+        if len(collector) > 300:
+            raise Exception("More than 300 items in %r" % collector)
         collector.append(row)
 
     #~ def add_to_table(self,table):
