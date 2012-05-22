@@ -1,0 +1,45 @@
+<SSDNReply xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
+   <ReplyContext>
+      <ns1:ResultSummary xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" ok="NO">
+         <ns1:ReturnCode>10000</ns1:ReturnCode>
+         <ns1:Detail>
+            <ns1:Severity>ERROR</ns1:Severity>
+            <ns1:ReasonCode>30000001</ns1:ReasonCode>
+            <ns1:Diagnostic>At least one service request has generated an error.</ns1:Diagnostic>
+            <ns1:AuthorCodeList>CBSS</ns1:AuthorCodeList>
+         </ns1:Detail>
+      </ns1:ResultSummary>      
+      <AuthorizedUser>
+        <UserID>12345678901</UserID><Email>123@example.be</Email>
+        <OrgUnit>123</OrgUnit><MatrixID>12</MatrixID><MatrixSubID>3</MatrixSubID>
+      </AuthorizedUser>
+      <Message>
+         <Reference>IdentifyPersonRequest # 17</Reference>
+         <Ticket>THTTML8KPLMLT78</Ticket>
+         <TimeRequest>20120522T001431</TimeRequest>
+         <TimeReceive>20120522T001412</TimeReceive>
+         <TimeResponse>20120522T001412</TimeResponse>
+      </Message>
+   </ReplyContext>
+   <ServiceReply>
+      <ns2:ResultSummary xmlns:ns2="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" ok="NO">
+         <ns2:ReturnCode>10000</ns2:ReturnCode>
+         <ns2:Detail>
+            <ns2:Severity>ERROR</ns2:Severity>
+            <ns2:ReasonCode>31009001</ns2:ReasonCode>
+            <ns2:Diagnostic>When the birth date in the phonetic criteria is not a complete date, a birth date tolerance
+must be specified.</ns2:Diagnostic>
+            <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
+            <ns2:Information>
+               <ns2:FieldName>Phonetic Criteria: Birth Date</ns2:FieldName>
+               <ns2:FieldValue>1938-06-00</ns2:FieldValue>
+            </ns2:Information>
+            <ns2:Information>
+               <ns2:FieldName>Phonetic Criteria: Birth Date Tolerance</ns2:FieldName>
+            </ns2:Information>
+         </ns2:Detail>
+      </ns2:ResultSummary>
+      <ServiceId>OCMWCPASIdentifyPerson</ServiceId>
+      <Version>20050930</Version>
+   </ServiceReply>
+</SSDNReply>

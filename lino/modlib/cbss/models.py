@@ -367,7 +367,8 @@ class SSDNRequest(CBSSRequest):
         else:
             #~ self.status = RequestStatus.errors
             #~ self.response_xml = unicode(reply)
-            raise Warning(_("CBSS error %s: %s") % (rc,rs))
+            raise Warning(_("CBSS error %s:\n%s") % (
+                rc,unicode(rs.childAtPath('/Detail'))))
             #~ return None
             #~ raise Exception("Got invalid response status")
             
@@ -874,29 +875,30 @@ class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
   
     parameters = "national_id language history"
     
-    result = "cbss.RetrieveTIGroupsResult"
+    #~ result = "cbss.RetrieveTIGroupsResult"
     
     #~ def setup_handle(self,lh):
         #~ CBSSRequestDetail.setup_handle(self,lh)
 
 class RetrieveTIGroupsRequests(dd.Table):
     model = RetrieveTIGroupsRequest
-    #~ 20120521 detail_layout = RetrieveTIGroupsRequestDetail()
+    detail_layout = RetrieveTIGroupsRequestDetail()
+        
+    @dd.virtualfield(dd.HtmlBox())
+    def result(self,row,ar):
+        return self.response_xml
         
 class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     master_key = 'project'
     
-class RetrieveTIGroupsResult(dd.EmptyTable):
-    master = RetrieveTIGroupsRequest
-    master_key = None
+#~ class RetrieveTIGroupsResult(dd.EmptyTable):
+    #~ master = RetrieveTIGroupsRequest
+    #~ master_key = None
     
-    detail_template = """
-    body
-    """
+    #~ detail_template = """
+    #~ body
+    #~ """
     
-    @dd.virtualfield(dd.HtmlBox())
-    def body(cls,self,req):
-        return 'Coming soon'
     
     
 

@@ -227,7 +227,13 @@ Not actually sending because environment is empty. Request would be:
             self.fail(TIMEOUT_MESSAGE)
             
         expected = """\
-        """
+INFO CBSS error 10000:    
+<ns2:Detail>
+  <ns2:Severity>ERROR</ns2:Severity>
+  <ns2:ReasonCode>32007004</ns2:ReasonCode>
+  <ns2:Diagnostic>The phonetic search did not return any matches.</ns2:Diagnostic>
+  <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
+</ns2:Detail>"""
         logger.info(req.response_xml)
         self.assertEqual(req.response_xml,expected)
     
