@@ -378,7 +378,10 @@ class TableRequest(actions.ActionRequest):
     def get_data_iterator(self):
         if self.actor.get_data_rows:
             l = []
-            for row in self.actor.get_data_rows(self):
+            rows = self.actor.get_data_rows(self)
+            for row in rows:
+                if len(l) > 300:
+                    raise Exception("More than 300 items in %r" % rows)
                 #~ l.append(row)
                 group = self.actor.group_from_row(row)
                 group.process_row(l,row)
@@ -463,8 +466,6 @@ class Group(object):
         self.sums = []
         
     def process_row(self,collector,row):
-        if len(collector) > 300:
-            raise Exception("More than 300 items in %r" % collector)
         collector.append(row)
 
     #~ def add_to_table(self,table):

@@ -722,12 +722,12 @@ class IdentifyPersonResult(dd.VirtualTable):
         if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
             return
         service_reply = ipr.get_service_reply()
-        #~ return service_reply.childAtPath('/SearchResults')
-        if service_reply is not None:
-            results = service_reply.childAtPath('/SearchResults')
-            if results is not None:
-                for node in results:
-                    yield node
+        return service_reply.childAtPath('/SearchResults')
+        #~ if service_reply is not None:
+            #~ results = service_reply.childAtPath('/SearchResults')
+            #~ if results is not None:
+                #~ for node in results:
+                    #~ yield node
             
     @dd.displayfield(_("National ID"))
     def national_id(self,obj,ar):
