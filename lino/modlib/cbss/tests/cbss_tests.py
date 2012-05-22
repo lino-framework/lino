@@ -198,9 +198,16 @@ CBSS error 10000:
         req = IdentifyPersonRequest(
             last_name="SAFFRE",
             birth_date=IncompleteDate(1968,6,1))
+            
+        result = IdentifyPersonResult.request(master_instance=req)
+        self.assertEquivalent(result.get_total_count(),1)
+        row = result.data_iterator[0]
+        self.assertEquivalent(
+          IdentifyPersonResult.first_name(row,result),
+          'LUC JOHANNES')
         
         resp = req.execute_request(None)
-        logger.info(req.response_xml)
+        #~ logger.info(req.response_xml)
         expected = ''
         self.assertEquivalent(req.response_xml,expected)
 
@@ -246,7 +253,7 @@ INFO CBSS error 10000:
   <ns2:Diagnostic>The phonetic search did not return any matches.</ns2:Diagnostic>
   <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
 </ns2:Detail>"""
-        logger.info(req.response_xml)
+        #~ logger.info(req.response_xml)
         self.assertEqual(req.response_xml,expected)
     
     settings.LINO.cbss_environment = saved_cbss_environment 

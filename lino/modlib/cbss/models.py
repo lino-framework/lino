@@ -264,7 +264,7 @@ class SSDNRequest(CBSSRequest):
         #~ if not schema.validate(doc):
             #~ print xml
         schema.assertValid(doc)
-        logger.info("Validated %s against %s", xml,xsd_filename)
+        logger.debug("Validated %s against %s", xml,xsd_filename)
       
     def validate_wrapped(self,srvreq):
         self.validate_against_xsd(srvreq,xsdpath('SSDN','Service','SSDNRequest.xsd'))
@@ -331,9 +331,8 @@ class SSDNRequest(CBSSRequest):
             self.request_xml = s
             xmlString = E('wsc:xmlString',ns=NSWSC)
             xmlString.setText(s)
-            if settings.LINO.cbss_live_tests:
-                logger.info("Gonna sendXML(<xmlString>):\n%s",s)
-            else:
+            #~ logger.info("20120521 Gonna sendXML(<xmlString>):\n%s",s)
+            if not settings.LINO.cbss_live_tests:
                 #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
                 raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
             #~ xmlString.append(wrapped_srvreq)
