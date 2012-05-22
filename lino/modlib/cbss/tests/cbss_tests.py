@@ -95,8 +95,8 @@ def test01(self):
     
 
     # create an IPR
-    
-    IdentifyPersonRequest = resolve_model('cbss.IdentifyPersonRequest')
+    from lino.modlib.cbss.models import IdentifyPersonRequest, IdentifyPersonResult
+    #~ IdentifyPersonRequest = resolve_model('cbss.IdentifyPersonRequest')
     req = IdentifyPersonRequest(
         last_name="MUSTERMANN",
         birth_date=IncompleteDate(1968,6,1))
