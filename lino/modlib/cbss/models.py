@@ -346,6 +346,7 @@ class SSDNRequest(CBSSRequest):
                     raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
                 #~ xmlString.append(wrapped_srvreq)
                 res = client.service.sendXML(xmlString)
+                print 20120522, res
                 service_reply = self.fill_from_string(res.encode('utf-8'))
             else:
                 self.environment = 'demo'

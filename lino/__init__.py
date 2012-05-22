@@ -645,6 +645,7 @@ class Lino(object):
     See :mod:`lino.modlib.cbss.models`.
     Leaving this to `None` means that the cbss module is "inactive" even if installed.
     """
+    
     cbss_cbe_number = '0123456789'
     """
     Either `None` or a string of style '0123456789'
