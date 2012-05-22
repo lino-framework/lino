@@ -167,7 +167,7 @@ and
 
 
 >>> for instance in Place.objects.all():
-...    value = instance.is_restaurant.value_from_object(None,instance)
+...    value = instance.is_restaurant.value_from_object(instance)
 ...    print value, instance
 False #1 (name=First,owners=Alfred,Bert)
 True #2 (name=Second,owners=Bert)
@@ -181,7 +181,7 @@ Let's promote First (currently a simple Place) to a Restaurant:
 And Second stops being a Restaurant:
 
 >>> second = Place.objects.get(pk=2)
->>> Place.is_restaurant.value_from_object(None,second)
+>>> Place.is_restaurant.value_from_object(second)
 True
 
 >>> Place.is_restaurant.set_value_in_object(None,second,False) 

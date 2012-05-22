@@ -5,3 +5,8 @@
 Continued to work on :mod:`lino.modlib.cbss`.
 Error handling:
 how to handle the different possible error responses and present them to the user.
+
+
+Internal change: changed argument order (ar,obj) to (obj,ar)
+for all methods `value_from_object` and `full_value_from_object`.
+And `ar` defaults now to None.

@@ -98,10 +98,10 @@ class StoreField(object):
     def column_names(self):
         yield self.options['name']
         
-    def value_from_object(self,request,obj):
-        return self.full_value_from_object(request,obj)
+    def value_from_object(self,obj,request):
+        return self.full_value_from_object(obj,request)
         
-    def full_value_from_object(self,request,obj):
+    def full_value_from_object(self,obj,request):
         return self.field.value_from_object(obj)
     
     def value2list(self,ar,v,l,row):
@@ -186,7 +186,7 @@ class StoreField(object):
         return
         
     def set_value_in_object(self,request,instance,v):
-        old_value = self.value_from_object(request,instance)
+        old_value = self.value_from_object(instance,request)
         #~ old_value = getattr(instance,self.field.attname)
         if old_value != v:
             setattr(instance,self.name,v)
@@ -207,7 +207,7 @@ class RelatedMixin(object):
             #~ return None
         return self.field.rel.to
         
-    def full_value_from_object(self,req,obj):
+    def full_value_from_object(self,obj,req):
         # here we don't want the pk (stored in field's attname) 
         # but the full object this field refers to
         relto_model = self.get_rel_to(obj)
@@ -357,8 +357,8 @@ class VirtStoreField(StoreField):
     def __repr__(self):
         return self.vf.__class__.__name__ + ' ' + self.name + '(virtual)' 
         
-    def full_value_from_object(self,req,obj):
-        return self.vf.value_from_object(req,obj)
+    def full_value_from_object(self,obj,req):
+        return self.vf.value_from_object(obj,req)
 
         
 class RequestStoreField(StoreField):
@@ -378,8 +378,8 @@ class RequestStoreField(StoreField):
         #~ self.parse_form_value = delegate.parse_form_value
         #~ self.set_value_in_object = vf.set_value_in_object
         
-    def full_value_from_object(self,req,obj):
-        return self.vf.value_from_object(req,obj)
+    def full_value_from_object(self,obj,req):
+        return self.vf.value_from_object(obj,req)
 
     def value2int(self,v):
         #~ return len(v.data_iterator)
@@ -422,8 +422,8 @@ class RequestStoreField(StoreField):
 
 class PasswordStoreField(StoreField):
   
-    def value_from_object(self,request,obj):
-        v = super(PasswordStoreField,self).value_from_object(request,obj)
+    def value_from_object(self,obj,request):
+        v = super(PasswordStoreField,self).value_from_object(obj,request)
         if v:
             return "*" * len(v)
         return v
@@ -433,7 +433,7 @@ class GenericForeignKeyField(StoreField):
     #~ def value_from_object(self,req,obj):
         #~ return getattr(obj,self.field.name)
         
-    def full_value_from_object(self,request,obj):
+    def full_value_from_object(self,obj,request):
         #~ owner = self.full_value_from_object(request,obj)
         owner = getattr(obj,self.name)
         #~ owner = getattr(obj,self.field.name)
@@ -484,7 +484,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
     """
     name = 'disabled_fields'
     
-    def full_value_from_object(self,request,obj):
+    def full_value_from_object(self,obj,request):
         #~ l = [ f.name for f in self.store.actor.disabled_fields(request,obj)]
         d = dict()
         if self.store.actor.disabled_fields is not None:
@@ -515,7 +515,7 @@ class DisableEditingStoreField(SpecialStoreField):
     """
     name = 'disable_editing'
         
-    def full_value_from_object(self,ar,obj):
+    def full_value_from_object(self,obj,ar):
         #~ return self.store.actor.disable_editing(obj,request)
         #~ a = self.store.actor.submit_action
         #~ m = getattr(obj,'get_permission',None)
@@ -696,19 +696,19 @@ class TimeStoreField(StoreField):
 
 class FileFieldStoreField(StoreField):
   
-    def full_value_from_object(self,request,obj):
+    def full_value_from_object(self,obj,request):
         ff = self.field.value_from_object(obj)
         return ff.name
         
 class MethodStoreField(StoreField):
     "Deprecated. See :doc:`/blog/2012/0327`."
-    def full_value_from_object(self,request,obj):
+    def full_value_from_object(self,obj,request):
         unbound_meth = self.field._return_type_for_method
         assert unbound_meth.func_code.co_argcount >= 2, (self.name, unbound_meth.func_code.co_varnames)
         #~ print self.field.name
         return unbound_meth(obj,request)
         
-    def value_from_object(self,request,obj):
+    def value_from_object(self,obj,request):
         unbound_meth = self.field._return_type_for_method
         assert unbound_meth.func_code.co_argcount >= 2, (self.name, unbound_meth.func_code.co_varnames)
         #~ print self.field.name
@@ -772,8 +772,8 @@ class OneToOneStoreField(RelatedMixin,StoreField):
             #~ v = self.field.rel.to.objects.get(pk=v)
         #~ instance[self.field.name] = v
         
-    def value_from_object(self,request,obj):
-        v = self.full_value_from_object(request,obj)
+    def value_from_object(self,obj,request):
+        v = self.full_value_from_object(obj,request)
         #~ try:
             #~ v = getattr(obj,self.field.name)
         #~ except self.field.rel.to.DoesNotExist,e:
@@ -959,11 +959,11 @@ class Store:
             then modify its behaviour.
             """
             sf = self.create_field(fld.field,fld.name)
-            def value_from_object(sf,ar,obj):
+            def value_from_object(sf,obj,ar):
                 m = fld.func
                 return m(obj)
                 
-            def full_value_from_object(sf,ar,obj):
+            def full_value_from_object(sf,obj,ar):
                 #~ logger.info("20120406 %s.full_value_from_object(%s)",sf.name,sf)
                 m = fld.func
                 return m(obj)
@@ -1082,7 +1082,7 @@ class Store:
                 #~ fld.value2list(request,None,l,row)
         else:
             for fld in self.list_fields:
-                v = fld.full_value_from_object(request,row)
+                v = fld.full_value_from_object(row,request)
                 #~ if fld.name == 'person__age':
                     #~ logger.info("20120406 Store.row2list %s -> %s", fld, v)
                 fld.value2list(request,v,l,row)
@@ -1097,7 +1097,7 @@ class Store:
             fields = self.detail_fields
         for fld in fields:
             #~ logger.info("20111209 Store.row2dict %s %s", row,fld)
-            v = fld.full_value_from_object(ar,row)
+            v = fld.full_value_from_object(row,ar)
             fld.value2dict(ar.ui,v,d,row)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
@@ -1124,7 +1124,7 @@ class Store:
                 #~ if fld.name == 'person__gsm':
                 #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
                 #~ import pdb; pdb.set_trace()
-                v = fld.full_value_from_object(request,row)
+                v = fld.full_value_from_object(row,request)
                 if v is None:
                     yield ''
                 else:

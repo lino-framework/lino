@@ -2870,7 +2870,7 @@ tinymce.init({
             for i,fld in enumerate(fields):
                 tc = TableCell()
                 #~ if fld.field is not None:
-                v = fld.full_value_from_object(ar,row)
+                v = fld.full_value_from_object(row,ar)
                 if v is None:
                     tc.addElement(P(stylename=tablecontents,text=''))
                 else:

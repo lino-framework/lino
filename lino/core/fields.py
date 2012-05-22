@@ -258,7 +258,8 @@ class VirtualField(FakeField): # (Field):
         model._meta.add_virtual_field(self)
         logger.debug('Found VirtualField %s.%s',full_model_name(model),name)
         
-    def value_from_object(self,request,obj):
+    #~ def value_from_object(self,request,obj):
+    def value_from_object(self,obj,ar=None):
         """
         Return the value of this field in the specified model instance `obj`.
         `request` may be `None`, it's forwarded to the getter method who may 
@@ -267,7 +268,7 @@ class VirtualField(FakeField): # (Field):
         m = self.get
         #~ assert m.func_code.co_argcount == 2, (self.name, m.func_code.co_varnames)
         #~ print self.field.name
-        return m(obj,request)
+        return m(obj,ar)
         
 class Constant(object):
     #~ get = None
@@ -340,7 +341,8 @@ class MethodField(VirtualField):
         self.get = getattr(model,get)
         VirtualField.lino_kernel_setup(self,model,name)
       
-    def value_from_object(self,request,obj):
+    #~ def value_from_object(self,request,obj):
+    def value_from_object(self,obj,ar=None):
         """
         Return the value of this field in the specified model instance `obj`.
         `request` is ignored.

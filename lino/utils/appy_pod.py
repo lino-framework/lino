@@ -348,7 +348,7 @@ class Renderer(AppyRenderer):
                 tc = odf.table.add_child(tr,'table_cell',style_name=CELL_STYLE_NAME)
                 #~ tc = TableCell()
                 #~ if fld.field is not None:
-                v = fld.full_value_from_object(ar,row)
+                v = fld.full_value_from_object(row,ar)
                 if v is None:
                     odf.text.add_child(tc,'p',style_name=style_name)
                     #~ odf.text.add_child(tc,'p',style_name=style.style_name,text='')
@@ -601,7 +601,7 @@ class Renderer(AppyRenderer):
                 #~ tc = TableCell(stylename=CELL_STYLE_NAME)
                 tc = TableCell(stylename=cell_style)
                 #~ if fld.field is not None:
-                v = fld.full_value_from_object(ar,row)
+                v = fld.full_value_from_object(row,ar)
                 stylename = fldstyle(fld)
                 if v is None:
                     tc.addElement(text.P(stylename=stylename,text=''))

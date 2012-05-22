@@ -200,11 +200,11 @@ CBSS error 10000:
             birth_date=IncompleteDate(1968,6,1))
             
         req.execute_request(None)
-        result = IdentifyPersonResult.request(master_instance=req)
-        self.assertEqual(result.get_total_count(),1)
-        row = result.data_iterator[0]
+        ar = IdentifyPersonResult.request(master_instance=req)
+        self.assertEqual(ar.get_total_count(),1)
+        row = ar.data_iterator[0]
         self.assertEquivalent(
-          IdentifyPersonResult.first_name(row,result),
+          IdentifyPersonResult.first_name.value_from_object(row),
           'LUC JOHANNES')
         
 

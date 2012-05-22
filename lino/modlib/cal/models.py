@@ -655,7 +655,7 @@ class ExtAllDayField(dd.VirtualField):
                 obj.end_time = datetime.time(10,0,0)
         #~ obj.save()
         
-    def value_from_object(self,request,obj):
+    def value_from_object(self,obj,request):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         return (obj.start_time is None)
         
@@ -1169,7 +1169,7 @@ class ExtDateTimeField(dd.VirtualField):
     def set_value_in_object(self,request,obj,value):
         obj.set_datetime(self.name_prefix,value)
         
-    def value_from_object(self,request,obj):
+    def value_from_object(self,obj,request):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         return obj.get_datetime(self.name_prefix,self.alt_prefix)
 
@@ -1192,7 +1192,7 @@ class ExtSummaryField(dd.VirtualField):
                 value = value[len(s):]
         obj.summary = value
         
-    def value_from_object(self,request,obj):
+    def value_from_object(self,obj,request):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         if settings.LINO.project_model is not None and obj.project is not None:
             return u"%s %s" % (obj.project,obj.summary)
