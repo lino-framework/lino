@@ -463,6 +463,7 @@ class Group(object):
         self.sums = []
         
     def process_row(self,collector,row):
+        assert len(collector) < 500
         collector.append(row)
 
     #~ def add_to_table(self,table):

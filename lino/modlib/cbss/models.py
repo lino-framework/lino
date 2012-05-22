@@ -718,14 +718,16 @@ class IdentifyPersonResult(dd.VirtualTable):
     def get_data_rows(self,ar):
         ipr = ar.master_instance
         if ipr is None: 
-            return []
+            return
         if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
-            return []
+            return
         service_reply = ipr.get_service_reply()
-        return service_reply.childAtPath('/SearchResults')
-        #~ results = service_reply.childAtPath('/SearchResults')
-        #~ for node in results:
-            #~ yield node
+        #~ return service_reply.childAtPath('/SearchResults')
+        if service_reply is not None:
+            results = service_reply.childAtPath('/SearchResults')
+            if results is not None:
+                for node in results:
+                    yield node
             
     @dd.displayfield(_("National ID"))
     def national_id(self,obj,ar):
@@ -891,7 +893,7 @@ class RetrieveTIGroupsRequests(dd.Table):
         
     @dd.virtualfield(dd.HtmlBox())
     def result(self,row,ar):
-        return self.response_xml
+        return row.response_xml
         
 class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     master_key = 'project'

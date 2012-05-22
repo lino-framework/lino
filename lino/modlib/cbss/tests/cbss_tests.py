@@ -207,9 +207,6 @@ CBSS error 10000:
           IdentifyPersonResult.first_name(row,result),
           'LUC JOHANNES')
         
-        #~ logger.info(req.response_xml)
-        expected = ''
-        self.assertEquivalent(req.response_xml,expected)
 
     
 
