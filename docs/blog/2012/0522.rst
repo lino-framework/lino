@@ -62,3 +62,5 @@ von SSINs machen, auf der die `lino.Lino.cbss_live_tests` gefahren werden?
 
 Und dann habe ich gestern irgendwann auch meinen Fehler 
 "31000005 The argument is not valid" wiedergesehen.
+
+``python manage.py test cbss.QuickTest``
