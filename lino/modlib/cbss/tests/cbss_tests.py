@@ -70,7 +70,7 @@ Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
 """
   
 
-def test901(self):
+def test01(self):
     """
     Execute an IdentifyPersonRequest.
     """

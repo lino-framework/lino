@@ -96,7 +96,7 @@ class RequestStatus(ChoiceList):
 add = RequestStatus.add_item
 add('0',_("New"),alias='new')
 add('1',_("Pending"),alias='pending')
-add('2',_("Exception"),alias='exception')
+add('2',_("Failed"),alias='failed')
 add('3',_("OK"),alias='ok')
 add('4',_("Warnings"),alias='warnings')
 add('5',_("Errors"),alias='errors')
@@ -212,7 +212,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         return u"%s#%s" % (self.__class__.__name__,self.pk)
         
 
-    def execute_request(self,ar,validate=True):
+    def execute_request(self,ar=None,validate=False,now=None,simulate_response=None,environment=None):
         raise NotImplementedError()
 
     def get_wsdl_uri(self):
@@ -295,75 +295,79 @@ class SSDNRequest(CBSSRequest):
         self.validate_against_xsd(srvreq,self.xsd_filename)
         
     
-    def execute_request(self,ar=None,validate=False,now=None,simulate_response=None):
+    def execute_request(self,ar=None,validate=False,now=None,simulate_response=None,environment=None):
         """
         This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
         """
         if self.ticket:
-            raise Warning(unicode(_("Cannot re-execute request.")))
-
-        self.environment = settings.LINO.cbss_environment or ''
-        self.status = RequestStatus.pending
-        #~ if not self.id:
-        self.save()
-        #~ kw = self.get_request_params()
+            raise Exception("Tried to re-execute %s with non-empty ticket." % self)
         if now is None:
             now = datetime.datetime.now()
-        try:
-            srvreq = self.build_request()
-            if validate:
-                self.validate_inner(srvreq)
-            wrapped_srvreq = self.wrap_ssdn_request(srvreq,now)
-            if validate:
-                self.validate_wrapped(wrapped_srvreq)
-                #~ logger.info("XSD validation passed.")
-        except Warning,e:
-            self.status = RequestStatus.exception
-            self.response_xml = unicode(e)
-            self.save()
-            return
-        
-        self.sent = now
-        
-        try:
-            if simulate_response is None:
-                self.check_environment(srvreq)
-                url = self.get_wsdl_uri()
-                
-                #~ logger.info("Instantiate Client at %s", url)
-                t = HttpTransport()
-                client = Client(url, transport=t)
-                #~ print 20120507, client
+        if environment is None:
+            environment = settings.LINO.cbss_environment or ''
             
-                s = unicode(wrapped_srvreq)
-                self.request_xml = s
+        self.environment = environment
+        self.status = RequestStatus.pending
+        self.sent = now
+        self.save()
+        
+        retval = None
+        try:
+            retval = self.execute_request_(now,validate,simulate_response)
+            
+        except (IOError,Warning),e:
+            self.status = RequestStatus.failure
+            self.response_xml = unicode(e)
+        except Exception,e:
+            self.status = RequestStatus.failure
+            self.response_xml = traceback.format_exc(e)
+            
+        self.save()
+        return retval
+        
+            
+    def execute_request_(self,now,validate,simulate_response)
+            
+        srvreq = self.build_request()
+        
+        if validate:
+            self.validate_inner(srvreq)
+            
+        wrapped_srvreq = self.wrap_ssdn_request(srvreq,now)
+        
+        if validate:
+            self.validate_wrapped(wrapped_srvreq)
+            #~ logger.info("XSD validation passed.")
+            
+        if simulate_response is None:
+            self.check_environment(srvreq)
+            url = self.get_wsdl_uri()
+            
+            #~ logger.info("Instantiate Client at %s", url)
+            t = HttpTransport()
+            client = Client(url, transport=t)
+            #~ print 20120507, client
+        
+            s = unicode(wrapped_srvreq)
+            self.request_xml = s
+            if True:
+                xmlString = s
+            else:
                 xmlString = E('wsc:xmlString',ns=NSWSC)
                 xmlString.setText(s)
-                #~ logger.info("20120521 Gonna sendXML(<xmlString>):\n%s",s)
-                if not settings.LINO.cbss_live_tests:
-                    #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
-                    raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
-                #~ xmlString.append(wrapped_srvreq)
-                res = client.service.sendXML(xmlString)
-                #~ print 20120522, res
-                service_reply = self.fill_from_string(res.encode('utf-8'))
-            else:
-                self.environment = 'demo'
-                service_reply = self.fill_from_string(simulate_response)
-                #~ self.status = RequestStatus.fictive
-            self.save()
-            return service_reply
-        except (IOError,Warning),e:
-            self.status = RequestStatus.exception
-            self.response_xml = unicode(e)
-            self.save()
-            return
-        except Exception,e:
-            self.status = RequestStatus.exception
-            self.response_xml = traceback.format_exc(e)
-            self.save()
-            return
+            #~ logger.info("20120521 Gonna sendXML(<xmlString>):\n%s",s)
+            if not settings.LINO.cbss_live_tests:
+                #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
+                raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
+            #~ xmlString.append(wrapped_srvreq)
+            res = client.service.sendXML(xmlString)
+            #~ print 20120522, res
+            return self.fill_from_string(res.encode('utf-8'))
+        else:
+            self.environment = 'demo'
+            return self.fill_from_string(simulate_response)
+                
         
     def fill_from_string(self,s):
         #~ self.response_xml = unicode(res)
@@ -482,6 +486,77 @@ class SSDNRequest(CBSSRequest):
         
         return e
       
+
+class NewStyleRequest(CBSSRequest):
+    """
+    Abstract Base Class for Models that represent 
+    "new style" requests to the :term:`CBSS` (and responses).
+    """
+    
+    class Meta:
+        abstract = True
+        
+    def execute_request_(self,now,validate,simulate_response)
+      
+        url = self.get_wsdl_uri()
+        
+        #~ logger.info("Instantiate Client at %s", url)
+        t = HttpAuthenticated(
+            username=settings.LINO.cbss_username, 
+            password=settings.LINO.cbss_password)
+        client = Client(url, transport=t)
+        #print client
+
+        ci = client.factory.create('ns0:CustomerIdentificationType')
+        #~ cbeNumber = client.factory.create('ns0:CbeNumberType')
+        ci.cbeNumber = settings.LINO.cbss_cbe_number
+        info = client.factory.create('ns0:InformationCustomerType')
+        info.ticket = str(self.id)
+        info.timestampSent = now
+        info.customerIdentification = ci
+        
+        res = self.execute_newstyle(client,info,validate)
+        
+        #~ self.response_xml = str(res)
+        self.response_xml = "20120522 %s %s" % (res.__class__,res)
+        print self.response_xml
+        return res
+        
+        
+    def on_cbss_ok(self,reply):
+        """
+        Called when a successful reply has been received.
+        """
+        pass
+        
+    @classmethod
+    def setup_report(cls,rpt):
+        #~ call_optional_super(CBSSRequest,cls,'setup_report',rpt)
+        rpt.add_action(SendAction())
+        
+    def __unicode__(self):
+        return u"%s#%s" % (self.__class__.__name__,self.pk)
+        
+    def execute_newstyle(self,client,infoCustomer,validate):
+        raise NotImplementedError()
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class SSIN(models.Model):
     """
     Abstract base for models that have a field `national_id` and a method 
@@ -896,97 +971,6 @@ class IdentifyPersonResult(dd.VirtualTable):
 
 
           
-        
-class NewStyleRequest(CBSSRequest):
-    """
-    Abstract Base Class for Models that represent 
-    "new style" requests to the :term:`CBSS` (and responses).
-    """
-    
-    class Meta:
-        abstract = True
-        
-    def execute_request(self,ar,validate=False):
-        """
-        This is the general method for all services,
-        executed when a user runs :class:`SendAction`.
-        """
-        
-        now = datetime.datetime.now()
-        
-        self.environment = settings.LINO.cbss_environment or ''
-        self.status = RequestStatus.pending
-        self.save()
-        
-        url = self.get_wsdl_uri()
-        
-        #~ logger.info("Instantiate Client at %s", url)
-        t = HttpAuthenticated(
-            username=settings.LINO.cbss_username, 
-            password=settings.LINO.cbss_password)
-        client = Client(url, transport=t)
-        #print client
-
-        ci = client.factory.create('ns0:CustomerIdentificationType')
-        #~ cbeNumber = client.factory.create('ns0:CbeNumberType')
-        ci.cbeNumber = settings.LINO.cbss_cbe_number
-        info = client.factory.create('ns0:InformationCustomerType')
-        info.ticket = str(self.id)
-        info.timestampSent = now
-        info.customerIdentification = ci
-        
-
-        try:
-            res = self.execute_newstyle(client,info,validate)
-        except (IOError,Warning),e:
-        #~ except Warning,e:
-            self.status = RequestStatus.exception
-            self.response_xml = unicode(e)
-            self.save()
-            return
-        except Exception,e:
-            self.status = RequestStatus.exception
-            self.response_xml = traceback.format_exc(e)
-            self.save()
-            return
-        self.sent = now
-        #~ self.response_xml = str(res)
-        self.response_xml = "20120522 %s %s" % (res.__class__,res)
-        print self.response_xml
-        
-        if False:
-            reply = cbss.xml2reply(res.data.xmlString)
-            rc = reply.ServiceReply.ResultSummary.ReturnCode
-            if rc == '0':
-                self.status = RequestStatus.ok
-            elif rc == '1':
-                self.status = RequestStatus.warnings
-            elif rc == '10000':
-                self.status = RequestStatus.errors
-            self.save()
-            
-            if self.status != RequestStatus.ok:
-                msg = '\n'.join(list(cbss.reply2lines(reply)))
-                raise Exception(msg)
-            
-            self.on_cbss_ok(reply)
-        
-    def on_cbss_ok(self,reply):
-        """
-        Called when a successful reply has been received.
-        """
-        pass
-        
-    @classmethod
-    def setup_report(cls,rpt):
-        #~ call_optional_super(CBSSRequest,cls,'setup_report',rpt)
-        rpt.add_action(SendAction())
-        
-    def __unicode__(self):
-        return u"%s#%s" % (self.__class__.__name__,self.pk)
-        
-    def execute_newstyle(self,client,infoCustomer,validate):
-        raise NotImplementedError()
         
 class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     """
