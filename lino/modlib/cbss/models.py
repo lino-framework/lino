@@ -984,14 +984,44 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     def execute_newstyle(self,client,infoCustomer,validate):
         si = client.factory.create('ns0:SearchInformationType')
         si.ssin = self.get_ssin()
-        si.language = self.language
-        si.history = self.history
+        #~ si.language = self.language
+        #~ si.history = self.history
         #~ if validate:
             #~ self.validate_newstyle(srvreq)
         self.check_environment(si)
         try:
             reply = client.service.retrieveTI(infoCustomer,None,si)        
         except suds.WebFault,e:
+            """
+            Example of a SOAP fault:
+      <soapenv:Fault>
+         <faultcode>soapenv:Server</faultcode>
+         <faultstring>An error occurred while servicing your request.</faultstring>
+         <detail>
+            <v1:retrieveTIGroupsFault>
+               <informationCustomer xmlns:ns0="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/">
+                  <ticket>2</ticket>
+                  <timestampSent>2012-05-23T10:19:27.636628+01:00</timestampSent>
+                  <customerIdentification>
+                     <cbeNumber>0212344876</cbeNumber>
+                  </customerIdentification>
+               </informationCustomer>
+               <informationCBSS>
+                  <ticketCBSS>f4b9cabe-e457-4f6b-bfcc-00fe258a9b7f</ticketCBSS>
+                  <timestampReceive>2012-05-23T08:19:09.029Z</timestampReceive>
+                  <timestampReply>2012-05-23T08:19:09.325Z</timestampReply>
+               </informationCBSS>
+               <error>
+                  <severity>FATAL</severity>
+                  <reasonCode>MSG00003</reasonCode>
+                  <diagnostic>Unexpected internal error occurred</diagnostic>
+                  <authorCode>http://www.bcss.fgov.be/en/international/home/index.html</authorCode>
+               </error>
+            </v1:retrieveTIGroupsFault>
+         </detail>
+      </soapenv:Fault>
+            """
+            
             msg = CBSS_ERROR_MESSAGE % e.fault.faultstring
             msg += unicode(e.document)
             self.status = RequestStatus.failed
