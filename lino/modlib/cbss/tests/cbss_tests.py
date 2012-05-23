@@ -284,7 +284,7 @@ description : A validation error occurred.
     reply = req.execute_request()
     expected = """\
 """
-    print req.response_xml
+    print reply
     self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
     # restore system settings
