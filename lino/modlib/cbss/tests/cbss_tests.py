@@ -177,37 +177,48 @@ NOT sending because `cbss_live_tests` is False:
     settings.LINO.cbss_live_tests = saved_cbss_live_tests
     
     """
-    If `cbss_live_tests` is True, run some live tests.
+    Skip live tests unless we are in test environment.
+    Otherwise we would have to build /media/chache/wsdl files
     """
-    if settings.LINO.cbss_live_tests:
-      
-        resp = req.execute_request()
+    if settings.LINO.cbss_environment != 'test':
+        return
+        
+    """
+    Skip live tests if `cbss_live_tests` is False
+    """
+    if not settings.LINO.cbss_live_tests:
+        return
     
-        if req.response_xml == TIMEOUT_RESPONSE:
-            self.fail(TIMEOUT_MESSAGE)
-            
-        expected = """\
+    resp = req.execute_request()
+
+    if req.response_xml == TIMEOUT_RESPONSE:
+        self.fail(TIMEOUT_MESSAGE)
+        
+    expected = """\
 CBSS error 10000:
 Severity : ERROR
 ReasonCode : 32007004 
 Diagnostic : The phonetic search did not return any matches. 
 AuthorCodeList : CBSS"""
-        #~ print resp.__class__, dir(resp)
-        #~ logger.info(req.response_xml)
-        self.assertEquivalent(expected,req.response_xml,report_plain=True)
-        
-        req = IdentifyPersonRequest(
-            last_name="SAFFRE",
-            birth_date=IncompleteDate(1968,6,1))
-            
-        req.execute_request(None)
-        ar = IdentifyPersonResult.request(master_instance=req)
-        self.assertEqual(1,ar.get_total_count())
-        row = ar.data_iterator[0]
-        self.assertEquivalent(
-          IdentifyPersonResult.first_name.value_from_object(row),
-          'LUC JOHANNES')
-        
+    #~ print resp.__class__, dir(resp)
+    #~ logger.info(req.response_xml)
+    self.assertEquivalent(expected,req.response_xml,report_plain=True)
+    
+    """
+    Second live test. There's exactly one Belgian with 
+    LastName "SAFFRE" and BirthDate 1968-06-01:
+    """
+    req = IdentifyPersonRequest(
+        last_name="SAFFRE",
+        birth_date=IncompleteDate(1968,6,1))
+    req.execute_request()
+    ar = IdentifyPersonResult.request(master_instance=req)
+    self.assertEqual(1,ar.get_total_count())
+    row = ar.data_iterator[0]
+    self.assertEquivalent(
+      IdentifyPersonResult.first_name.value_from_object(row),
+      'LUC JOHANNES')
+    
 
     
 
@@ -224,8 +235,8 @@ def test02(self):
     
     # try it without environment to validate and see the XML
     
-    settings.LINO.cbss_environment = ''
-    req.execute_request(None,validate=True)
+    #~ settings.LINO.cbss_environment = ''
+    req.execute_request(validate=True,environment = '')
     #~ print req.response_xml
     expected = """\
 Not actually sending because environment is empty. Request would be:
@@ -236,21 +247,45 @@ Not actually sending because environment is empty. Request would be:
  }"""
     self.assertEqual(req.response_xml,expected)
     
-    if settings.LINO.cbss_live_tests:
-        # try it in test environment
-        settings.LINO.cbss_environment = 'test'
-        reply = req.execute_request(None)
-        if req.response_xml == TIMEOUT_RESPONSE:
-            self.fail(TIMEOUT_MESSAGE)
-        #~ print 20120523, reply
-        expected = """\
+    """
+    Skip live tests unless we are in test environment.
+    Otherwise we would have to build /media/chache/wsdl files
+    """
+    if settings.LINO.cbss_environment != 'test':
+        return
+        
+    """
+    Skip live tests if `cbss_live_tests` is False
+    """
+    if not settings.LINO.cbss_live_tests:
+        return
+        
+    """
+    run the first request for real
+    """
+    reply = req.execute_request()
+    if req.response_xml == TIMEOUT_RESPONSE:
+        self.fail(TIMEOUT_MESSAGE)
+    #~ print 20120523, reply
+    expected = """\
 CBSS error MSG00008:
 value : NO_RESULT
 code : MSG00008
 description : A validation error occurred.
 - ssin = 12345678901
 """
-        #~ logger.info(req.response_xml)
-        self.assertEquivalent(expected,req.response_xml,report_plain=True)
+    #~ logger.info(req.response_xml)
+    self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
-    settings.LINO.cbss_environment = saved_cbss_environment 
+    """
+    second request with a valid ssin
+    """
+    req = RetrieveTIGroupsRequest(national_id='70100853190')
+    reply = req.execute_request()
+    expected = """\
+"""
+    print req.response_xml
+    self.assertEquivalent(expected,req.response_xml,report_plain=True)
+    
+    # restore system settings
+    #~ settings.LINO.cbss_environment = saved_cbss_environment
