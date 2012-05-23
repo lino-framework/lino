@@ -150,8 +150,7 @@ class TestCase(DjangoTestCase):
         if ta == tb:
             return 
         if report_plain:
-            logger.warning("EXPECTED : %s",a)
-            logger.warning("     GOT : %s",b)
+            logger.warning("----- EXPECTED : -----\n%s\n----- GOT : -----\n%s",a,b)
         else:
             logger.warning("EXPECTED : %s",' '.join(ta))
             logger.warning("     GOT : %s",' '.join(tb))
