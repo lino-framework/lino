@@ -986,8 +986,9 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         si.ssin = self.get_ssin()
         if self.language:
             si.language = self.language
-        if self.history:
-            si.history = 'true'
+        #~ if self.history:
+            #~ si.history = 'true'
+        si.history = self.history
         #~ if validate:
             #~ self.validate_newstyle(srvreq)
         self.check_environment(si)

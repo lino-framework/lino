@@ -70,7 +70,7 @@ Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
 """
   
 
-def test01(self):
+def unused_test01(self):
     """
     Execute an IdentifyPersonRequest.
     """
@@ -243,7 +243,7 @@ Not actually sending because environment is empty. Request would be:
 (SearchInformationType){
    ssin = "12345678901"
    language = "fr"
-   history = None
+   history = False
  }"""
     self.assertEqual(req.response_xml,expected)
     
@@ -280,7 +280,8 @@ description : A validation error occurred.
     """
     second request with a valid ssin
     """
-    req = RetrieveTIGroupsRequest(national_id='70100853190',language='fr',history=False)
+    req = RetrieveTIGroupsRequest(national_id='70100853190',
+        language='fr',history=False)
     reply = req.execute_request()
     expected = """\
 """
