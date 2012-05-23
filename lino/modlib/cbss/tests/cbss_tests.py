@@ -242,10 +242,10 @@ Not actually sending because environment is empty. Request would be:
         reply = req.execute_request(None)
         if req.response_xml == TIMEOUT_RESPONSE:
             self.fail(TIMEOUT_MESSAGE)
-        print 20120523, reply.informationCustomer    
+        #~ print 20120523, reply
         expected = """\
 """
         #~ logger.info(req.response_xml)
-        #~ self.assertEqual(req.response_xml,expected)
+        self.assertEqual(req.response_xml,expected)
     
     settings.LINO.cbss_environment = saved_cbss_environment 

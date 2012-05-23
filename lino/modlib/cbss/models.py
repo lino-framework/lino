@@ -69,6 +69,7 @@ def xsdpath(*parts):
     p1 = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(p1,'XSD',*parts)
 
+CBSS_ERROR_MESSAGE = "CBSS error %s:\n"
 
 def gender2cbss(gender):
     if gender == Gender.male:
@@ -386,11 +387,12 @@ class SSDNRequest(CBSSRequest):
             #~ self.status = RequestStatus.errors
             #~ self.response_xml = unicode(reply)
             dtl = rs.childAtPath('/Detail')
+            msg = CBSS_ERROR_MESSAGE % rc
             keys = ('Severity', 'ReasonCode', 'Diagnostic', 'AuthorCodeList')
-            msg = '\n'.join([
+            msg += '\n'.join([
                 k+' : '+dtl.childAtPath('/'+k).text 
                     for k in keys])
-            raise Warning(_("CBSS error %s:\n%s") % (rc,msg))
+            raise Warning(msg)
             #~ return None
             #~ raise Exception("Got invalid response status")
             
@@ -513,10 +515,6 @@ class NewStyleRequest(CBSSRequest):
         
         res = self.execute_newstyle(client,info,validate)
         
-        #~ self.response_xml = str(res)
-        self.response_xml = "20120522 %s %s" % (res.__class__,res)
-        print 20120523, res.informationCustomer
-        #~ print self.response_xml
         return res
         
         
@@ -990,7 +988,64 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         #~ if validate:
             #~ self.validate_newstyle(srvreq)
         self.check_environment(si)
-        return client.service.retrieveTI(infoCustomer,None,si)        
+        reply = client.service.retrieveTI(infoCustomer,None,si)        
+        
+        """
+        Example of reply:
+        (reply){
+           informationCustomer =
+              (InformationCustomerType){
+                 ticket = "1"
+                 timestampSent = 2012-05-23 09:24:55.316312
+                 customerIdentification =
+                    (CustomerIdentificationType){
+                       cbeNumber = "0123456789"
+                    }
+              }
+           informationCBSS =
+              (InformationCBSSType){
+                 ticketCBSS = "f11736b3-97bc-452a-a75c-16fcc2a2f6ae"
+                 timestampReceive = 2012-05-23 08:24:37.000385
+                 timestampReply = 2012-05-23 08:24:37.000516
+              }
+           status =
+              (StatusType){
+                 value = "NO_RESULT"
+                 code = "MSG00008"
+                 description = "A validation error occurred."
+                 information[] =
+                    (InformationType){
+                       fieldName = "ssin"
+                       fieldValue = "12345678901"
+                    },
+              }
+           searchInformation =
+              (SearchInformationType){
+                 ssin = "12345678901"
+                 language = "de"
+                 history = False
+              }
+         }        
+        """
+        self.ticket = reply.informationCBSS.ticketCBSS
+        if reply.status.value == "NO_RESULT":
+            msg = CBSS_ERROR_MESSAGE % reply.status.code
+            keys = ('value','code','description')
+            msg += '\n'.join([
+                k+' : '+getattr(reply.status,k)
+                    for k in keys])
+            for i in reply.status.information:
+                msg += "\n- %s = %s" % (i.fieldName,i.fieldValue)
+            self.status = RequestStatus.warnings
+            raise Warning(msg)
+            
+        self.status = RequestStatus.ok
+        #~ self.response_xml = str(res)
+        #~ self.response_xml = "20120522 %s %s" % (res.__class__,res)
+        #~ print 20120523, res.informationCustomer
+        #~ print self.response_xml
+        return reply
+        
 
   
 class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
