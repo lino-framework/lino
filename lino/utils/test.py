@@ -137,7 +137,7 @@ class TestCase(DjangoTestCase):
         self.assertEqual(set(result.keys()),set(expected_keys.split()))
         return result
         
-    def assertEquivalent(self,a,b):
+    def assertEquivalent(self,a,b,report_plain=False):
         """
         Compares to strings, ignoring whitespace repetitions and 
         writing a logger message in case they are different. 
@@ -149,10 +149,12 @@ class TestCase(DjangoTestCase):
         tb = b.strip().split()
         if ta == tb:
             return 
-        logger.warning("EXPECTED : %s",' '.join(ta))
-        logger.warning("     GOT : %s",' '.join(tb))
-        #~ logger.warning("EXPECTED : %s",a)
-        #~ logger.warning("     GOT : %s",b)
+        if report_plain:
+            logger.warning("EXPECTED : %s",a)
+            logger.warning("     GOT : %s",b)
+        else:
+            logger.warning("EXPECTED : %s",' '.join(ta))
+            logger.warning("     GOT : %s",' '.join(tb))
         self.fail("EXPECTED and GOT are not equivalent")
         
     def request_PUT(self,url,data,**kw):

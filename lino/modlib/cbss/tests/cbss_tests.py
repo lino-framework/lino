@@ -194,7 +194,7 @@ Diagnostic : The phonetic search did not return any matches.
 AuthorCodeList : CBSS"""
         #~ print resp.__class__, dir(resp)
         #~ logger.info(req.response_xml)
-        self.assertEquivalent(expected,req.response_xml)
+        self.assertEquivalent(expected,req.response_xml,report_plain=True)
         
         req = IdentifyPersonRequest(
             last_name="SAFFRE",
