@@ -280,7 +280,7 @@ description : A validation error occurred.
     """
     second request with a valid ssin
     """
-    req = RetrieveTIGroupsRequest(national_id='70100853190')
+    req = RetrieveTIGroupsRequest(national_id='70100853190',language='fr',history=False)
     reply = req.execute_request()
     expected = """\
 """
