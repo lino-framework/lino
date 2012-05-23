@@ -43,3 +43,6 @@ this action is governed by Rules or not.
 If an action is not `ruled`, Lino will not consult 
 the `Rules` table.
 
+CBSS connection
+---------------
+

@@ -94,14 +94,14 @@ class RequestStatus(ChoiceList):
     label = _("Status")
 
 add = RequestStatus.add_item
-add('0',_("New"),alias='new')
-add('1',_("Pending"),alias='pending')
-add('2',_("Failed"),alias='failed')
-add('3',_("OK"),alias='ok')
-add('4',_("Warnings"),alias='warnings')
-add('5',_("Errors"),alias='errors')
-#~ add('6',_("Invalid reply"),alias='invalid')
-#~ add('9',_("Fictive"),alias='fictive')
+add('0',_("New"),'new')
+add('1',_("Pending"),'pending')
+add('2',_("Failed"),'failure')
+add('3',_("OK"),'ok')
+add('4',_("Warnings"),'warnings')
+add('5',_("Errors"),'errors')
+#~ add('6',_("Invalid reply"),'invalid')
+#~ add('9',_("Fictive"),'fictive')
   
 #~ class Environment(ChoiceList):
     #~ """
@@ -210,10 +210,38 @@ If the request failed with a local exception, then it contains a traceback.""")
       
     def __unicode__(self):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
-        
 
     def execute_request(self,ar=None,validate=False,now=None,simulate_response=None,environment=None):
-        raise NotImplementedError()
+        """
+        This is the general method for all SSDN services,
+        executed when a user runs :class:`SendAction`.
+        """
+        if self.ticket:
+            raise Exception("Tried to re-execute %s with non-empty ticket." % self)
+        if now is None:
+            now = datetime.datetime.now()
+        if environment is None:
+            environment = settings.LINO.cbss_environment or ''
+            
+        self.environment = environment
+        self.status = RequestStatus.pending
+        self.sent = now
+        self.save()
+        
+        retval = None
+        try:
+            retval = self.execute_request_(now,validate,simulate_response)
+        except (IOError,Warning),e:
+            self.status = RequestStatus.failure
+            self.response_xml = unicode(e)
+        except Exception,e:
+            self.status = RequestStatus.failure
+            self.response_xml = traceback.format_exc(e)
+            
+        self.save()
+        return retval
+        
+            
 
     def get_wsdl_uri(self):
         url = os.path.join(settings.MEDIA_ROOT,*self.wsdl_parts) 
@@ -295,39 +323,7 @@ class SSDNRequest(CBSSRequest):
         self.validate_against_xsd(srvreq,self.xsd_filename)
         
     
-    def execute_request(self,ar=None,validate=False,now=None,simulate_response=None,environment=None):
-        """
-        This is the general method for all SSDN services,
-        executed when a user runs :class:`SendAction`.
-        """
-        if self.ticket:
-            raise Exception("Tried to re-execute %s with non-empty ticket." % self)
-        if now is None:
-            now = datetime.datetime.now()
-        if environment is None:
-            environment = settings.LINO.cbss_environment or ''
-            
-        self.environment = environment
-        self.status = RequestStatus.pending
-        self.sent = now
-        self.save()
-        
-        retval = None
-        try:
-            retval = self.execute_request_(now,validate,simulate_response)
-            
-        except (IOError,Warning),e:
-            self.status = RequestStatus.failure
-            self.response_xml = unicode(e)
-        except Exception,e:
-            self.status = RequestStatus.failure
-            self.response_xml = traceback.format_exc(e)
-            
-        self.save()
-        return retval
-        
-            
-    def execute_request_(self,now,validate,simulate_response)
+    def execute_request_(self,now,validate,simulate_response):
             
         srvreq = self.build_request()
         
@@ -496,7 +492,7 @@ class NewStyleRequest(CBSSRequest):
     class Meta:
         abstract = True
         
-    def execute_request_(self,now,validate,simulate_response)
+    def execute_request_(self,now,validate,simulate_response):
       
         url = self.get_wsdl_uri()
         
