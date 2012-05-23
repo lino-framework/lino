@@ -231,7 +231,7 @@ def test02(self):
     # create an RTI
     
     RetrieveTIGroupsRequest = resolve_model('cbss.RetrieveTIGroupsRequest')
-    req = RetrieveTIGroupsRequest(national_id='12345678901',language='fr',history=False)
+    req = RetrieveTIGroupsRequest(national_id='12345678901',language='fr')
     
     # try it without environment to validate and see the XML
     
@@ -243,7 +243,7 @@ Not actually sending because environment is empty. Request would be:
 (SearchInformationType){
    ssin = "12345678901"
    language = "fr"
-   history = False
+   history = None
  }"""
     self.assertEqual(req.response_xml,expected)
     
