@@ -1,0 +1,45 @@
+20120523
+========
+
+Workflows
+---------
+
+After reading the
+`Introduction to Plone workflows
+<http://plone.org/documentation/kb/creating-workflows-in-plone/introduction>`_
+I started to think about how to implement workflows in Lino.
+
+There would be a new :class:`lino.models.Rule` 
+model and corresponding tables (`Rules`, 
+`RulesByActor`,...). 
+A Rule represents a possibility to get permission to 
+execute a given action of a given actor.
+The model would have the following fields:
+  
+- actor (CharField) : the actor
+- action (CharField) : the action
+- state (CharField,blank=True) with state_choices
+- groups (CharField,blank=True) : 
+  a space-separated list of required user groups (same meaning as
+  :attr:`lino.core.actors.Actor.required_user_groups`)
+- user_level : required user level
+  :attr:`lino.core.actors.Actor.required_user_level` .
+
+It is a "system" model (defined in :mod:`lino.models`).
+If ever it turns out that we need a hook to select between 
+different implementations for defining rules, we could 
+move it to a separate module `lino.modlib.workflows`.
+
+:class:`lino.core.actors.Actor` would get a new class variable 
+`state_field` which, if not `None`, would be the name of 
+a field which must be defined on the Actor's model and which must 
+have a list of choices (either a hard-coded choicelist or 
+a by being a ForeignKey).
+Only actors with a `state_field` can have Rules.
+
+:class:`lino.core.actions.Action` would get a new attribute 
+`ruled`, a boolean that says whether or not permission on 
+this action is governed by Rules or not.
+If an action is not `ruled`, Lino will not consult 
+the `Rules` table.
+

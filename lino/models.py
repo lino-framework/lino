@@ -87,6 +87,7 @@ class SiteConfigs(dd.Table):
     Deserves more documentation.
     """
     model = SiteConfig
+    required_user_level = UserLevel.manager
     #~ default_action_class = dd.OpenDetailAction
     #~ has_navigator = False
     hide_top_toolbar = True
@@ -103,14 +104,11 @@ class SiteConfigs(dd.Table):
     #~ detail_template = """
     #~ """
     
-    @classmethod
-    def get_permission(self,action,user,obj):
-        #~ if not user.is_superuser:
-        if not user.level < UserLevel.expert:
-            return action.readonly
-        #~ if isinstance(action,actions.DeleteSelected):
-            #~ return False
-        return True
+    #~ @classmethod
+    #~ def get_permission(self,action,user,obj):
+        #~ if not user.level < UserLevel.expert:
+            #~ return action.readonly
+        #~ return True
         
     @classmethod
     def setup_actions(self):

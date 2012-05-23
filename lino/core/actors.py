@@ -370,24 +370,25 @@ class Actor(Handled):
         
     @classmethod
     def get_permission(self,action,user,obj):
+        """
+        Returns True or False whether the given action 
+        is allowed for the given object instance `obj` 
+        and the user who issued the given ActionRequest `ar`.
+        """
         return True
         
     @classmethod
     def disabled_actions(self,ar,obj):
-        #~ l = []
+        """
+        Returns a dictionary containg the names of the actions 
+        that are disabled  for the given object instance `obj` 
+        and the user who issued the given ActionRequest `ar`.
+        """
         d = dict()
         u = ar.get_user()
-        #~ u = request.user
-        #~ m = getattr(obj,'get_permission',None)
         for a in self.get_actions():
-            #~ if not self.get_permission(a,u) or m is not None and not m(a,u):
             if not self.get_permission(a,u,obj):
                 d[a.name] = True
-            #~ if not self.get_permission(a,u):
-                #~ l.append(a.name)
-            #~ if isinstance(a,actions.RowAction):
-                #~ if a.disabled_for(obj,request):
-                    #~ l.append(a.name)
         return d
         
             

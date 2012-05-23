@@ -10,7 +10,6 @@ Minor internal change: changed argument order (ar,obj) to (obj,ar)
 for all methods `value_from_object` and `full_value_from_object`.
 And `ar` defaults now to None.
 
-
 Als nächsten Dienst nehmen wir uns 
 :class:`lino.modlib.cbss.models.ManageAccessRequest`
 vor. Denn bevor ich 
@@ -54,3 +53,12 @@ aus dem Jahr 2008:
   Vanaf 1 juli 2008 kunnen de OCMW’s de hoedanigheidscodes 7, 8 en 9 op vrijwillige basis gebruiken. 
 
 Meine Schlussfolgerung: zunächst keine hardcodierte Auswahlliste für dieses Feld.
+Insgesamt war die Implementierung dieses neuen Dienstes nicht schwierig, und mein bisheriges Gesamtkonzept scheint gut.
+
+Wo ich noch nicht ganz klar sehe: wie soll ich die Live-Test-Suiten machen?
+Kann ich mit den SSINs arbeiten, die in der BCSS-Dokumentation scheinbar 
+zu Testzwecken zur Verfügung stehen? Oder muss ich eine lokale Liste von 
+von SSINs machen, auf der die `lino.Lino.cbss_live_tests` gefahren werden?
+
+Und dann habe ich gestern irgendwann auch meinen Fehler 
+"31000005 The argument is not valid" wiedergesehen.

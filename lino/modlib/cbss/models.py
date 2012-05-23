@@ -366,12 +366,12 @@ class SSDNRequest(CBSSRequest):
             return
         
     def fill_from_string(self,s):
-        """Also used by demo fixture to create fictive requests.
-        """
         #~ self.response_xml = unicode(res)
         reply = PARSER.parse(string=s).root()
         self.ticket = reply.childAtPath('/ReplyContext/Message/Ticket').text
         rs = reply.childAtPath('/ServiceReply/ResultSummary')
+        if rs is None:
+            raise Warning("Unexpected CBSS reply:\n%s" % reply)
         rc = rs.childAtPath('/ReturnCode').text
         #~ print reply.__class__, dir(reply)
         #~ print reply
