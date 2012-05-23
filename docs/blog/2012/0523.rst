@@ -43,6 +43,14 @@ this action is governed by Rules or not.
 If an action is not `ruled`, Lino will not consult 
 the `Rules` table.
 
+Transition actions would be a shortcut interface for quickly 
+designing simple state change actions. 
+For example to enable some users to "cancel" a CBSS request::
+
+  transitions = [
+    cancel RequestStatus.failure, RequestStatus.new
+  ]
+
 CBSS connection
 ---------------
 

@@ -181,14 +181,14 @@ NOT sending because `cbss_live_tests` is False:
     """
     if settings.LINO.cbss_live_tests:
       
-        resp = req.execute_request(None)
+        resp = req.execute_request()
     
         if req.response_xml == TIMEOUT_RESPONSE:
             self.fail(TIMEOUT_MESSAGE)
             
         expected = """\
 CBSS error 10000:
-Severity : ERROR 
+Severity : ERROR foo
 ReasonCode : 32007004 
 Diagnostic : The phonetic search did not return any matches. 
 AuthorCodeList : CBSS"""

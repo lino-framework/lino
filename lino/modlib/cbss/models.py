@@ -515,7 +515,8 @@ class NewStyleRequest(CBSSRequest):
         
         #~ self.response_xml = str(res)
         self.response_xml = "20120522 %s %s" % (res.__class__,res)
-        print self.response_xml
+        print 20120523, res.informationCustomer
+        #~ print self.response_xml
         return res
         
         
