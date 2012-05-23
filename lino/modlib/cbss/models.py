@@ -52,6 +52,7 @@ from lino.apps.pcsw import models as pcsw
 
 try:
   
+    import suds
     from suds.client import Client
     from suds.transport.http import HttpAuthenticated
     from suds.transport.http import HttpTransport
@@ -97,7 +98,7 @@ class RequestStatus(ChoiceList):
 add = RequestStatus.add_item
 add('0',_("New"),'new')
 add('1',_("Pending"),'pending')
-add('2',_("Failed"),'failure')
+add('2',_("Failed"),'failed')
 add('3',_("OK"),'ok')
 add('4',_("Warnings"),'warnings')
 add('5',_("Errors"),'errors')
@@ -233,10 +234,10 @@ If the request failed with a local exception, then it contains a traceback.""")
         try:
             retval = self.execute_request_(now,validate,simulate_response)
         except (IOError,Warning),e:
-            self.status = RequestStatus.failure
+            self.status = RequestStatus.failed
             self.response_xml = unicode(e)
         except Exception,e:
-            self.status = RequestStatus.failure
+            self.status = RequestStatus.failed
             self.response_xml = traceback.format_exc(e)
             
         self.save()
@@ -988,7 +989,14 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         #~ if validate:
             #~ self.validate_newstyle(srvreq)
         self.check_environment(si)
-        reply = client.service.retrieveTI(infoCustomer,None,si)        
+        try:
+            reply = client.service.retrieveTI(infoCustomer,None,si)        
+        except suds.WebFault,e:
+            msg = CBSS_ERROR_MESSAGE % e.fault.faultstring
+            msg += unicode(e.document)
+            self.status = RequestStatus.failed
+            raise Warning(msg)
+            
         
         """
         Example of reply:
