@@ -244,8 +244,13 @@ Not actually sending because environment is empty. Request would be:
             self.fail(TIMEOUT_MESSAGE)
         #~ print 20120523, reply
         expected = """\
+CBSS error MSG00008:
+value : NO_RESULT
+code : MSG00008
+description : A validation error occurred.
+- ssin = 12345678901
 """
         #~ logger.info(req.response_xml)
-        self.assertEqual(req.response_xml,expected)
+        self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
     settings.LINO.cbss_environment = saved_cbss_environment 
