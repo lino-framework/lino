@@ -231,18 +231,18 @@ def test02(self):
     # create an RTI
     
     RetrieveTIGroupsRequest = resolve_model('cbss.RetrieveTIGroupsRequest')
-    req = RetrieveTIGroupsRequest(national_id='12345678901')
+    req = RetrieveTIGroupsRequest(national_id='12345678901',language='fr',history=False)
     
     # try it without environment to validate and see the XML
     
     #~ settings.LINO.cbss_environment = ''
-    req.execute_request(validate=True,environment = '')
+    req.execute_request(validate=True,environment='')
     #~ print req.response_xml
     expected = """\
 Not actually sending because environment is empty. Request would be:
 (SearchInformationType){
    ssin = "12345678901"
-   language = "de"
+   language = "fr"
    history = False
  }"""
     self.assertEqual(req.response_xml,expected)

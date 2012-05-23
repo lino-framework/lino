@@ -984,8 +984,10 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     def execute_newstyle(self,client,infoCustomer,validate):
         si = client.factory.create('ns0:SearchInformationType')
         si.ssin = self.get_ssin()
-        #~ si.language = self.language
-        #~ si.history = self.history
+        if self.language:
+            si.language = self.language
+        if self.history:
+            si.history = 'true'
         #~ if validate:
             #~ self.validate_newstyle(srvreq)
         self.check_environment(si)
