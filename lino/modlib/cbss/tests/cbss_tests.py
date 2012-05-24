@@ -70,7 +70,7 @@ Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
 """
   
 
-def unused_test01(self):
+def test01(self):
     """
     Execute an IdentifyPersonRequest.
     """
@@ -215,10 +215,24 @@ AuthorCodeList : CBSS"""
     ar = IdentifyPersonResult.request(master_instance=req)
     self.assertEqual(1,ar.get_total_count())
     row = ar.data_iterator[0]
-    self.assertEquivalent(
+    self.assertEqual(
       IdentifyPersonResult.first_name.value_from_object(row),
       'LUC JOHANNES')
+    self.assertEqual(
+      IdentifyPersonResult.national_id.value_from_object(row),
+      '68060105329')
     
+    """
+    Third live test. IPR for NISS 70100853190
+    """
+    req = IdentifyPersonRequest(national_id="70100853190")
+    req.execute_request()
+    ar = IdentifyPersonResult.request(master_instance=req)
+    self.assertEqual(1,ar.get_total_count())
+    row = ar.data_iterator[0]
+    self.assertEqual(
+      IdentifyPersonResult.first_name.value_from_object(row),
+      'TODO')
 
     
 
@@ -290,8 +304,25 @@ code : MSG00012
 description : The given SSIN is not integrated correctly.
 - Register = Secondary matrix    
 """
-    print reply
+    #~ print reply
     self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
-    # restore system settings
-    #~ settings.LINO.cbss_environment = saved_cbss_environment
+
+    ManageAccessRequest = resolve_model('cbss.ManageAccessRequest')
+    today = datetime.date.today()
+    kw = dict()
+    kw.update(purpose=1) # dossier in onderzoek voor een maximale periode van twee maanden
+    kw.update(national_id='68060105329') 
+    kw.update(start_date=today) 
+    kw.update(end_date=today) 
+    kw.update(action=cbss.ManageAction.register) 
+    kw.update(query_register=cbss.QueryRegister.seconday) 
+    #~ kw.update(id_card_no=) 
+    req = ManageAccessRequest(**kw)
+    
+    reply = req.execute_request()
+    expected = """\
+TODO
+"""
+    #~ print reply
+    self.assertEquivalent(expected,req.response_xml,report_plain=True)

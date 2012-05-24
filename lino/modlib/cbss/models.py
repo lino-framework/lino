@@ -955,7 +955,7 @@ class IdentifyPersonResult(dd.VirtualTable):
                 return unicode(Person.objects.get(national_id=niss))
             except Person.DoesNotExist:
                 pass
-        return None
+        return ''
             
 
 
