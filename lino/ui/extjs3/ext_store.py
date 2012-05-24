@@ -306,7 +306,8 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         if ch and ch.can_create_choice:
             o = ch.create_choice(obj,v)
             if o is not None:
-                logger.info("Auto-created %s %s",o._meta.verbose_name,o)
+                logger.info(u"Auto-created %s %s",
+                    unicode(o._meta.verbose_name),unicode(o))
                 return o
             #~ qs = ch.get_instance_choices(obj)
             #~ print 20110425, qs

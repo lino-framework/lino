@@ -107,7 +107,7 @@ def unused_test01(self):
     """
     
     settings.LINO.cbss_environment = ''
-    req.execute_request(None,validate=True)
+    req.execute_request(validate=True)
     expected = """\
 Not actually sending because environment is empty. Request would be:
 <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
@@ -131,7 +131,7 @@ Not actually sending because environment is empty. Request would be:
     settings.LINO.cbss_live_tests = False
     settings.LINO.cbss_environment = 'test'
     now = datetime.datetime(2012,5,9,18,34,50)
-    req.execute_request(None,now=now)
+    req.execute_request(now=now)
     #~ print req.response_xml
 
     expected = """\
@@ -278,12 +278,17 @@ description : A validation error occurred.
     self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
     """
-    second request with a valid ssin
+    second request with a valid SSIN but which is not not integrated.
     """
     req = RetrieveTIGroupsRequest(national_id='70100853190',
         language='fr',history=False)
     reply = req.execute_request()
     expected = """\
+CBSS error MSG00012:
+value : NO_RESULT
+code : MSG00012
+description : The given SSIN is not integrated correctly.
+- Register = Secondary matrix    
 """
     print reply
     self.assertEquivalent(expected,req.response_xml,report_plain=True)
