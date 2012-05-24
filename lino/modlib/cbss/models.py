@@ -917,7 +917,10 @@ class IdentifyPersonResult(dd.VirtualTable):
         if not ipr.status in (RequestStatus.ok,RequestStatus.warnings):
             return
         service_reply = ipr.get_service_reply()
-        return service_reply.childAtPath('/SearchResults').children
+        results = service_reply.childAtPath('/SearchResults').children
+        if results is None:
+            return
+        return results
         #~ if service_reply is not None:
             #~ results = service_reply.childAtPath('/SearchResults')
             #~ if results is not None:

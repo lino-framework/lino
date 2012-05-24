@@ -227,6 +227,11 @@ AuthorCodeList : CBSS"""
     """
     req = IdentifyPersonRequest(national_id="70100853190")
     req.execute_request()
+    
+    print '-------------------- 20120524'
+    print req.response_xml
+    print '-------------------- 20120524'
+    
     ar = IdentifyPersonResult.request(master_instance=req)
     self.assertEqual(1,ar.get_total_count())
     row = ar.data_iterator[0]
