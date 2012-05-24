@@ -393,3 +393,12 @@ AuthorCodeList : CBSS"""
 todo"""
         #~ print reply
         self.assertEquivalent(expected,req.response_xml,report_plain=True)
+
+    req = cbss.RetrieveTIGroupsRequest(national_id='68060105329',
+        language='fr',history=False)
+    reply = req.execute_request()
+    if settings.LINO.cbss_live_tests:
+        expected = """\
+todo"""
+        #~ print reply
+        self.assertEquivalent(expected,req.response_xml,report_plain=True)

@@ -426,44 +426,11 @@ class SSDNRequest(CBSSRequest):
         self.response_xml = unicode(service_reply)
         return service_reply
         
-    def get_service_reply(self,full_reply=None):
-        if full_reply is not None:
-            return full_reply.childAtPath('/ServiceReply/IdentifyPersonReply')
-        return PARSER.parse(string=self.response_xml.encode('utf-8')).root()
-        #~ return reply
         
-           
-        #~ if False:
-          
-            #~ try:
-                #~ res = self.cbss_namespace.execute(srvreq,str(self.id),now)
-            #~ except cbss.Warning,e:
-                #~ self.status = RequestStatus.exception
-                #~ self.response_xml = unicode(e)
-                #~ self.save()
-                #~ return
-            #~ except Exception,e:
-                #~ self.status = RequestStatus.exception
-                #~ self.response_xml = traceback.format_exc(e)
-                #~ self.save()
-                #~ return
-            #~ self.sent = now
-            #~ self.response_xml = res.data.xmlString
-            #~ reply = cbss.xml2reply(res.data.xmlString)
-            #~ rc = reply.ServiceReply.ResultSummary.ReturnCode
-            #~ if rc == '0':
-                #~ self.status = RequestStatus.ok
-            #~ elif rc == '1':
-                #~ self.status = RequestStatus.warnings
-            #~ elif rc == '10000':
-                #~ self.status = RequestStatus.errors
-            #~ self.save()
-            
-            #~ if self.status != RequestStatus.ok:
-                #~ msg = '\n'.join(list(cbss.reply2lines(reply)))
-                #~ raise Exception(msg)
-                
-            #~ self.on_cbss_ok(reply)
+    def get_service_reply(self,full_reply=None):
+        raise NotImplementedError()
+        
+        
         
     def wrap_ssdn_request(self,srvreq,dt):
         #~ up  = settings.LINO.ssdn_user_params
@@ -714,7 +681,42 @@ when information about sectors is required.""")
             pd.append(E('mar:BirthDate').setText(self.birth_date))
         return main
     
-
+    def get_service_reply(self,full_reply=None):
+        """
+   <ServiceReply>
+      <ns2:ResultSummary xmlns:ns2="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" ok="YES">
+         <ns2:ReturnCode>0</ns2:ReturnCode>
+      </ns2:ResultSummary>
+      <ServiceId>OCMWCPASManageAccess</ServiceId>
+      <Version>20050930</Version>
+      <ns3:ManageAccessReply xmlns:ns3="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess">
+         <ns3:OriginalRequest>
+            <ns3:SSIN>68060105329</ns3:SSIN>
+            <ns3:Purpose>1</ns3:Purpose>
+            <ns3:Period>
+               <ns4:StartDate xmlns:ns4="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns4:StartDate>
+               <ns5:EndDate xmlns:ns5="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns5:EndDate>
+            </ns3:Period>
+            <ns3:Action>REGISTER</ns3:Action>
+         </ns3:OriginalRequest>
+         <ns3:Registrations>
+            <ns3:Purpose>1</ns3:Purpose>
+            <ns3:Period>
+               <ns6:StartDate xmlns:ns6="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns6:StartDate>
+               <ns7:EndDate xmlns:ns7="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns7:EndDate>
+            </ns3:Period>
+            <ns3:OrgUnit>63023</ns3:OrgUnit>
+            <ns3:Register>SECONDARY</ns3:Register>
+         </ns3:Registrations>
+      </ns3:ManageAccessReply>
+   </ServiceReply>        
+        """
+        if full_reply is not None:
+            return full_reply.childAtPath('/ServiceReply/ManageAccessReply')
+        return PARSER.parse(string=self.response_xml.encode('utf-8')).root()
+        
+        
+    
 dd.update_field(ManageAccessRequest,'national_id',help_text="""\
 The SSIN of the person to register/unregister/list.
 """)
@@ -874,6 +876,45 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
         pc.append(E('ipr:MiddleName').setText(self.middle_name))
         pc.append(E('ipr:BirthDate').setText(str(self.birth_date)))
         return main
+        
+    def get_service_reply(self,full_reply=None):
+        if full_reply is not None:
+            return full_reply.childAtPath('/ServiceReply/IdentifyPersonReply')
+        return PARSER.parse(string=self.response_xml.encode('utf-8')).root()
+        #~ return reply
+           
+        #~ if False:
+          
+            #~ try:
+                #~ res = self.cbss_namespace.execute(srvreq,str(self.id),now)
+            #~ except cbss.Warning,e:
+                #~ self.status = RequestStatus.exception
+                #~ self.response_xml = unicode(e)
+                #~ self.save()
+                #~ return
+            #~ except Exception,e:
+                #~ self.status = RequestStatus.exception
+                #~ self.response_xml = traceback.format_exc(e)
+                #~ self.save()
+                #~ return
+            #~ self.sent = now
+            #~ self.response_xml = res.data.xmlString
+            #~ reply = cbss.xml2reply(res.data.xmlString)
+            #~ rc = reply.ServiceReply.ResultSummary.ReturnCode
+            #~ if rc == '0':
+                #~ self.status = RequestStatus.ok
+            #~ elif rc == '1':
+                #~ self.status = RequestStatus.warnings
+            #~ elif rc == '10000':
+                #~ self.status = RequestStatus.errors
+            #~ self.save()
+            
+            #~ if self.status != RequestStatus.ok:
+                #~ msg = '\n'.join(list(cbss.reply2lines(reply)))
+                #~ raise Exception(msg)
+                
+            #~ self.on_cbss_ok(reply)
+        
 
 dd.update_field(IdentifyPersonRequest,'birth_date',blank=False,null=False)
 #~ dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
