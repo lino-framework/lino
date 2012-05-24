@@ -366,7 +366,7 @@ description : The given SSIN is not integrated correctly.
     kw = dict()
     kw.update(purpose=1) # dossier in onderzoek voor een maximale periode van twee maanden
     kw.update(national_id='68060105329') 
-    kw.update(start_date=today) 
+    kw.update(start_date=today)
     kw.update(end_date=today) 
     kw.update(action=cbss.ManageAction.REGISTER) 
     kw.update(query_register=cbss.QueryRegister.SECONDARY) 
@@ -375,6 +375,21 @@ description : The given SSIN is not integrated correctly.
     reply = req.execute_request()
     if settings.LINO.cbss_live_tests:
         expected = """\
-TODO"""
+CBSS error 10000:
+Severity : ERROR
+ReasonCode : 31000007
+Diagnostic : The expected mandatory argument is not provided or empty.
+AuthorCodeList : CBSS"""
+        #~ print reply
+        self.assertEquivalent(expected,req.response_xml,report_plain=True)
+
+    kw.update(last_name='SAFFRE') 
+    kw.update(first_name='LUC JOHANNES') 
+    kw.update(birth_date=IncompleteDate(1968,6,1)) 
+    req = cbss.ManageAccessRequest(**kw)
+    reply = req.execute_request()
+    if settings.LINO.cbss_live_tests:
+        expected = """\
+todo"""
         #~ print reply
         self.assertEquivalent(expected,req.response_xml,report_plain=True)
