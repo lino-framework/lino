@@ -148,7 +148,7 @@ class Action(object):
         if url_action_name is not None:
             if not isinstance(url_action_name,basestring):
                 raise Exception("%s name %r is not a string" % (self.__class__,url_action_name))
-            self.url_action_name = name 
+            self.url_action_name = url_action_name
         #~ if name is None:
             #~ if self.name is None:
                 #~ self.name = self.__class__.__name__ 
@@ -176,7 +176,7 @@ class Action(object):
             return repr(self)
         return str(self.actor) + '.' + self.name
         
-    def setup(self,actor,name):
+    def attach_to_actor(self,actor,name):
         if self.name is not None:
             raise Exception("%s tried to setup() named action %s" % (actor,name))
         self.name = name
@@ -233,6 +233,11 @@ class RowAction(Action):
     def run(self,rr,elem,**kw):
         raise NotImplementedError("%s has no run() method" % self.__class__)
 
+    def attach_to_actor(self,actor,name):
+        super(RowAction,self).attach_to_actor(actor,name)
+        if not self.url_action_name:
+            self.url_action_name = name 
+
 
 
 
@@ -254,9 +259,9 @@ class GridEdit(TableAction):
     #~ def __init__(self,*args,**kw):
         #~ TableAction.__init__(self,*args,**kw)
         
-    def setup(self,actor,name):
+    def attach_to_actor(self,actor,name):
         self.label = actor.button_label or actor.label
-        TableAction.setup(self,actor,name)
+        super(GridEdit,self).attach_to_actor(actor,name)
 
 
 class ShowDetailAction(RowAction):
@@ -309,9 +314,9 @@ class ShowEmptyTable(ShowDetailAction):
     #~ hide_top_toolbar = True
     hide_navigator = True
     
-    def setup(self,actor,name):
+    def attach_to_actor(self,actor,name):
         self.label = actor.label
-        ShowDetailAction.setup(self,actor,name)
+        ShowDetailAction.attach_to_actor(self,actor,name)
         #~ print 20120523, actor, name, 'setup', unicode(self.label)
         
     def get_action_title(self,rr):
@@ -562,9 +567,9 @@ class ActionRequest(object):
         return self.ui.request(actor,**kw)
         
 
-def action(**kw):
+def action(*args,**kw):
     def decorator(fn):
-        a = Action(**kw)
+        a = RowAction(*args,**kw)
         a.run = curry(fn,a)
         #~ a.run = fn
         return a

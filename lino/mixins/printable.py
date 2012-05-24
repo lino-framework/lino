@@ -585,9 +585,9 @@ class DirectPrintAction(BasePrintAction):
         self.build_method = build_method
         self.tplname = tplname
         
-    def setup(self,actor,name):
-        self.url_action_name = name
-        super(DirectPrintAction,self).setup(actor,name)
+    #~ def setup(self,actor,name):
+        #~ self.url_action_name = name
+        #~ super(DirectPrintAction,self).setup(actor,name)
         
     def get_print_templates(self,bm,elem):
         #~ assert bm is self.bm

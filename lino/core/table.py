@@ -573,7 +573,6 @@ class Table(AbstractTable):
                     v = copy.deepcopy(v)
                     v.name = None
                     setattr(self,k,v)
-                    #~ self.define_action(k,v)
                     
                     
             if self.label is None:

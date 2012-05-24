@@ -3,12 +3,60 @@
 
 Ich hatte gestern "aus Versehen" begonnen, 
 am neuen Feature "Workflows" zu arbeiten. 
+
 Das (hoffentlich) einzig Schwierige daran ist jetzt geschafft:
 dass man Aktionen einfacher definieren kann in Form 
 von Klassenmethoden mit dem Dekorator `@action`.
+
 Knapp 8 Stunden hat die Operation gedauert. 
 War etwas schwieriger als ich geahnt hatte.
 Lino ist jetzt wieder "auf den Beinen, aber noch etwas geschwächt":
 die meisten Sachen funktionieren wieder, 
 aber wahrscheinlich sind noch ein paar Bugs auszubügeln. 
-:checkin:``.
+
+:checkin:`631cc40f83eb`.
+
+Diese Änderung hatte ich mir schon seit Längerem gewünscht, 
+denn das bisherige System war wirklich nicht schön.
+Ich hatte es zurückgestellt, weil es keinen konkreten Bedarf gab.
+Aber die Workflows wären nicht sehr überzeugend ohne diese Änderung.
+
+Angesichts der Buggefahr und der Tatsache, dass das jetzt eigentlich 
+nicht so dringend war, war das nochmal wieder einer jener 
+"Nebensprünge aufgrund spontaner Eingebungen", 
+die in einem größeren Team unmöglich wären, 
+aber die ich mir als Einzelprogrammierer glücklicherweise 
+erlauben darf.
+
+Jedenfalls bin ich begeistert, wie schön Lino dadurch 
+geworden ist (an dieser Stelle, die bisher noch nicht schön war).
+Bisher musste man einfache Aktionen wie folgt definieren::
+
+    class UnregisterCandidate(dd.RowAction):
+        label = _("Unregister")
+        url_action_name = "unregister"
+        def run(self,ar,elem):
+            course = elem.course
+            elem.course = None
+            elem.save()
+            return ar.ui.success_response(refresh_all=True,
+              message=_("%(person)s has been unregistered from %(course)s") 
+                % dict(person=elem.person,course=course))
+
+    class ParticipantsByCourse(RequestsByCourse):
+        ...
+        @classmethod
+        def setup_actions(self):
+            self.add_action(UnregisterCandidate())
+
+
+Jetzt schreibt man einfach::
+
+    @dd.action(_("Unregister"))
+    def unregister(self,ar,elem):
+        course = elem.course
+        elem.course = None
+        elem.save()
+        return ar.ui.success_response(refresh_all=True,
+          message=_("%(person)s has been unregistered from %(course)s") 
+            % dict(person=elem.person,course=course))

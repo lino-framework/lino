@@ -325,8 +325,8 @@ class Actor(Handled):
     def collect_actions(cls):
         """
         Loops through the class dict and collects all Action instances,
-        calling `define_action` which will set their `actor` attribute.
-        First we create `insert_action` and `detail_action` if necessary.
+        calling `attach_action` which will set their `actor` attribute.
+        Before this we create `insert_action` and `detail_action` if necessary.
         Also fill _actions_list.
         """
         if cls.detail_action is None:
@@ -343,31 +343,20 @@ class Actor(Handled):
         cls._actions_list = []
         for k,v in cls.__dict__.items():
             if isinstance(v,actions.Action):
-                cls.define_action(k,v)
+                cls.attach_action(k,v)
                 
         #~ cls._actions_list = cls._actions_dict.values()
-        #~ if cls.__name__ == 'Home':
-            #~ print 20120524, cls, cls._actions_list
         cls._actions_list += cls.get_shared_actions()
         def f(a,b):
             return cmp(a.sort_index,b.sort_index)
         cls._actions_list.sort(f)
         cls._actions_list = tuple(cls._actions_list)
+        #~ if cls.__name__ == 'ParticipantsByCourse':
+            #~ print 20120524, cls, [str(a) for a in cls._actions_list]
         
     @classmethod
-    def define_action(self,name,a):
-    #~ def add_action(self,a,name=None):
-        #~ if name is None:
-            #~ name = a.name
-        #~ if self._actions_dict.has_key(name):
-            #~ logger.warning("%s action %r : %r overridden by %r",
-              #~ self,name,self._actions_dict[name],a)
-            #~ raise Exception(
-              #~ "%s action %r : %s overridden by %s" %
-              #~ (self,a.name,self._actions_dict[a.name],a))
-        #~ a.execute = curry(a.execute,cls)
-        #~ self._actions_list.append(a)
-        a.setup(self,name)
+    def attach_action(self,name,a):
+        a.attach_to_actor(self,name)
         if a.url_action_name:
             if self._actions_dict.has_key(a.url_action_name):
                 raise Exception(

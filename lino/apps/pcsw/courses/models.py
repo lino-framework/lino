@@ -451,33 +451,33 @@ class RequestsByCourse(CourseRequests):
             obj.content = obj.course.offer.content
         return obj
     
-class RegisterCandidate(dd.RowAction):
-    """
-    Register the given :class:`Candidate` for the given :class:`Course`.
-    This action is available on a row of :class:`CandidatesByCourse`.
-    """
-    label = _("Register")
-    url_action_name = "register"
-    def run(self,rr,elem):
-        elem.course = rr.master_instance
-        elem.save()
-        return rr.ui.success_response(refresh_all=True,
-          message=_("%(person)s has been registered to %(course)s") % dict(
-              person=elem.person,course=elem.course))
+#~ class RegisterCandidate(dd.RowAction):
+    #~ """
+    #~ Register the given :class:`Candidate` for the given :class:`Course`.
+    #~ This action is available on a row of :class:`CandidatesByCourse`.
+    #~ """
+    #~ label = _("Register")
+    #~ url_action_name = "register"
+    #~ def run(self,rr,elem):
+        #~ elem.course = rr.master_instance
+        #~ elem.save()
+        #~ return rr.ui.success_response(refresh_all=True,
+          #~ message=_("%(person)s has been registered to %(course)s") % dict(
+              #~ person=elem.person,course=elem.course))
 
-class UnregisterCandidate(dd.RowAction):
-    """
-    Unregister the given :class:`Candidate` for the given :class:`Course`.
-    This action is available on a row of :class:`ParticipantsByCourse`.
-    """
-    label = _("Unregister")
-    url_action_name = "unregister"
-    def run(self,rr,elem):
-        course = elem.course
-        elem.course = None
-        elem.save()
-        return rr.ui.success_response(refresh_all=True,
-          message=_("%(person)s has been unregistered from %(course)s") % dict(person=elem.person,course=course))
+#~ class UnregisterCandidate(dd.RowAction):
+    #~ """
+    #~ Unregister the given :class:`Candidate` for the given :class:`Course`.
+    #~ This action is available on a row of :class:`ParticipantsByCourse`.
+    #~ """
+    #~ label = _("Unregister")
+    #~ url_action_name = "unregister"
+    #~ def run(self,rr,elem):
+        #~ course = elem.course
+        #~ elem.course = None
+        #~ elem.save()
+        #~ return rr.ui.success_response(refresh_all=True,
+          #~ message=_("%(person)s has been unregistered from %(course)s") % dict(person=elem.person,course=course))
 
 class ParticipantsByCourse(RequestsByCourse):
     """
@@ -485,7 +485,21 @@ class ParticipantsByCourse(RequestsByCourse):
     """
     label = _("Participants")
     column_names = 'person remark date_ended ending'
-    do_unregister = UnregisterCandidate()
+    #~ do_unregister = UnregisterCandidate()
+    
+    @dd.action(_("Unregister"))
+    def unregister(self,ar,elem):
+        """
+        Unregister the given :class:`Candidate` for the given :class:`Course`.
+        This action is available on a row of :class:`ParticipantsByCourse`.
+        """
+        course = elem.course
+        elem.course = None
+        elem.save()
+        return ar.ui.success_response(refresh_all=True,
+          message=_("%(person)s has been unregistered from %(course)s") 
+            % dict(person=elem.person,course=course))
+    
     
     #~ @classmethod
     #~ def setup_actions(self):
@@ -500,11 +514,24 @@ class CandidatesByCourse(RequestsByCourse):
     column_names = 'person remark content date_submitted'
     #~ can_add = perms.never
     
-    do_register = RegisterCandidate()
+    #~ do_register = RegisterCandidate()
     
     #~ @classmethod
     #~ def setup_actions(self):
         #~ self.add_action(RegisterCandidate())
+        
+    @dd.action(_("Register"))
+    def register(self,ar,elem):
+        """
+        Register the given :class:`Candidate` for the given :class:`Course`.
+        This action is available on a row of :class:`CandidatesByCourse`.
+        """
+        elem.course = ar.master_instance
+        elem.save()
+        return ar.ui.success_response(refresh_all=True,
+            message=_("%(person)s has been registered to %(course)s") % dict(
+                person=elem.person,course=elem.course))
+        
     
     @classmethod
     def get_request_queryset(self,rr):
