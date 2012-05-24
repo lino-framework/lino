@@ -653,7 +653,7 @@ class ManageAccessRequest(SSDNRequest,SSIN):
     """
   
     ssdn_service_id = 'OCMWCPASManageAccess'
-    ssdn_service_version = '20070509'
+    ssdn_service_version = '20050930'
     
     xsd_filename = xsdpath('SSDN','OCMW_CPAS',
         'MANAGEACCESS','MANAGEACCESSREQUEST.XSD')

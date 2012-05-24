@@ -70,34 +70,15 @@ Jetzt schreibt man einfach::
 CBSS connection
 ---------------
 
+Worked 3 more hours on the CBSS test suite.
+I almost got a first real ManageAccessRequest done, but then::
 
--------------------- 20120524
-Traceback (most recent call last):
-  File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 237, in execute_request
-    retval = self.execute_request_(now,simulate_response)
-  File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 344, in execute_request_
-    srvreq = self.build_request()
-  File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 849, in build_request
-    if not self.birth_date.is_complete():
-AttributeError: 'str' object has no attribute 'is_complete'
+  CBSS error 10000:
+  Severity : ERROR
+  ReasonCode : 31000003
+  Diagnostic : The version number is unknown for the provided 
+    service ID in this message format. Please check your 
+    version number, service ID and message format.
+  AuthorCodeList : CBSS
 
--------------------- 20120524
-E
-======================================================================
-ERROR: test_them_all (lino.modlib.cbss.tests.cbss_tests.QuickTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/usr/local/django/test_dsbe/using/lino/lino/utils/test.py", line 124, in test_them_all
-    v(self)
-  File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/tests/cbss_tests.py", line 264, in test01
-    ar = cbss.IdentifyPersonResult.request(master_instance=req)
-  File "/usr/local/django/test_dsbe/using/lino/lino/utils/tables.py", line 853, in request
-    return TableRequest(ui,self,request,action,**kw)
-  File "/usr/local/django/test_dsbe/using/lino/lino/utils/tables.py", line 162, in __init__
-    self.data_iterator = self.get_data_iterator()
-  File "/usr/local/django/test_dsbe/using/lino/lino/utils/tables.py", line 382, in get_data_iterator
-    for row in rows:
-TypeError: 'NoneType' object is not iterable
 
-----------------------------------------------------------------------
-Ran 1 test in 12.329s
