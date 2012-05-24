@@ -215,7 +215,7 @@ If the request failed with a local exception, then it contains a traceback.""")
     def __unicode__(self):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
 
-    def execute_request(self,ar=None,validate=False,now=None,simulate_response=None,environment=None):
+    def execute_request(self,ar=None,now=None,simulate_response=None,environment=None):
         """
         This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
@@ -234,7 +234,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         
         retval = None
         try:
-            retval = self.execute_request_(now,validate,simulate_response)
+            retval = self.execute_request_(now,simulate_response)
         except (IOError,Warning),e:
             self.status = RequestStatus.failed
             self.response_xml = unicode(e)
@@ -307,6 +307,7 @@ class SSDNRequest(CBSSRequest):
         abstract = True
         
     def validate_against_xsd(self,srvreq,xsd_filename):
+        #~ logger.info("20120524 Validate against %s", xsd_filename)
         from lxml import etree
         xml = unicode(srvreq)
         #~ print xml
@@ -316,7 +317,7 @@ class SSDNRequest(CBSSRequest):
         #~ if not schema.validate(doc):
             #~ print xml
         schema.assertValid(doc)
-        logger.debug("Validated %s against %s", xml,xsd_filename)
+        #~ logger.info("Validated %s against %s", xml,xsd_filename)
       
     def validate_wrapped(self,srvreq):
         self.validate_against_xsd(srvreq,xsdpath('SSDN','Service','SSDNRequest.xsd'))
@@ -327,17 +328,28 @@ class SSDNRequest(CBSSRequest):
         self.validate_against_xsd(srvreq,self.xsd_filename)
         
     
-    def execute_request_(self,now,validate,simulate_response):
+    def validate_request(self):
+        """
+        Validates the generated XML against the XSD files.
+        Used by test suite.
+        It is not necessary to validate each real request before actually sending it.
+        """
+        srvreq = self.build_request()
+        self.validate_inner(srvreq)
+        wrapped_srvreq = self.wrap_ssdn_request(srvreq,datetime.datetime.now())
+        self.validate_wrapped(wrapped_srvreq)
+      
+    def execute_request_(self,now,simulate_response):
             
         srvreq = self.build_request()
         
-        if validate:
-            self.validate_inner(srvreq)
+        #~ if validate:
+            #~ self.validate_inner(srvreq)
             
         wrapped_srvreq = self.wrap_ssdn_request(srvreq,now)
         
-        if validate:
-            self.validate_wrapped(wrapped_srvreq)
+        #~ if validate:
+            #~ self.validate_wrapped(wrapped_srvreq)
             #~ logger.info("XSD validation passed.")
             
         if simulate_response is None:
@@ -497,7 +509,7 @@ class NewStyleRequest(CBSSRequest):
     class Meta:
         abstract = True
         
-    def execute_request_(self,now,validate,simulate_response):
+    def execute_request_(self,now,simulate_response):
       
         url = self.get_wsdl_uri()
         
@@ -516,7 +528,7 @@ class NewStyleRequest(CBSSRequest):
         info.timestampSent = now
         info.customerIdentification = ci
         
-        res = self.execute_newstyle(client,info,validate)
+        res = self.execute_newstyle(client,info)
         
         return res
         
@@ -535,7 +547,7 @@ class NewStyleRequest(CBSSRequest):
     def __unicode__(self):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
         
-    def execute_newstyle(self,client,infoCustomer,validate):
+    def execute_newstyle(self,client,infoCustomer):
         raise NotImplementedError()
         
 
@@ -740,7 +752,6 @@ class ManageAccessRequestsByPerson(ManageAccessRequests):
 
 
 
-#~ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.PersonMixin,contacts.Born):
 class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.Born):
     """
     A request to the IdentifyPerson service.
@@ -829,17 +840,20 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.Born):
         if national_id:
             sc.append(E('ipr:SSIN').setText(national_id))
             pd = E('ipr:PersonData')
-            if self.last_name: pd.append(E('ipr:LastName').setText(self.last_name))
-            if self.first_name: pd.append(E('ipr:FirstName').setText(self.first_name))
-            if self.middle_name: pd.append(E('ipr:MiddleName').setText(self.middle_name))
-            if self.birth_date: pd.append(E('ipr:BirthDate').setText(str(self.birth_date)))
-            if gender is not None: pd.append(E('ipr:Gender').setText(gender))
-            if self.tolerance is not None: pd.append(E('ipr:Tolerance').setText(self.tolerance))
+            #~ if not self.last_name or not self.first_name:
+                #~ raise Warning("Fields last_name and first_name are mandatory.")
+            pd.append(E('ipr:LastName').setText(self.last_name))
+            pd.append(E('ipr:FirstName').setText(self.first_name))
+            pd.append(E('ipr:MiddleName').setText(self.middle_name))
+            pd.append(E('ipr:BirthDate').setText(str(self.birth_date)))
+            if not self.birth_date.is_complete():
+                pd.append(E('ipr:Tolerance').setText(self.tolerance))
+            #~ if gender is not None: pd.append(E('ipr:Gender').setText(gender))
             main.append(E('ipr:VerificationData').append(pd))
         else:
-            if self.birth_date is None:
-                raise Warning(
-                    "Either national_id or birth date must be given")
+            #~ if self.birth_date is None:
+                #~ raise Warning(
+                    #~ "Either national_id or birth date must be given.")
             pc = E('ipr:PhoneticCriteria') 
             pc.append(E('ipr:LastName').setText(self.last_name))
             pc.append(E('ipr:FirstName').setText(self.first_name))
@@ -848,6 +862,7 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.Born):
             sc.append(pc)
         return main
 
+dd.update_field(IdentifyPersonRequest,'birth_date',blank=False,null=False)
 #~ dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
 #~ dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
 
@@ -986,7 +1001,7 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         help_text = "Whatever this means.")
     
         
-    def execute_newstyle(self,client,infoCustomer,validate):
+    def execute_newstyle(self,client,infoCustomer):
         si = client.factory.create('ns0:SearchInformationType')
         si.ssin = self.get_ssin()
         if self.language:

@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 #~ from django.utils import unittest
 #~ from django.test.client import Client
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
@@ -39,6 +40,8 @@ from lino.utils import babel
 from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
+from lino.utils import Warning
+
 
 #~ Person = resolve_model('contacts.Person')
 #~ Property = resolve_model('properties.Property')
@@ -47,6 +50,8 @@ from lino.utils.test import TestCase
 #~ from lino.apps.pcsw.models import Person
 #~ from lino.modlib.cv.models import PersonProperty
 #~ from lino.modlib.properties.models import Property
+
+from lino.modlib.cbss import models as cbss
 
 from lino.utils import IncompleteDate
 
@@ -78,7 +83,7 @@ def test01(self):
     from lino.ui.extjs3 import urls # create cache/wsdl files
     
     # save site settings
-    saved_cbss_environment = settings.LINO.cbss_environment
+    #~ saved_cbss_environment = settings.LINO.cbss_environment
     saved_cbss_user_params = settings.LINO.cbss_user_params
     saved_cbss_live_tests = settings.LINO.cbss_live_tests
     
@@ -95,19 +100,43 @@ def test01(self):
     
 
     # create an IPR
-    from lino.modlib.cbss.models import IdentifyPersonRequest, IdentifyPersonResult
+    #~ from lino.modlib.cbss.models import IdentifyPersonRequest, IdentifyPersonResult
+    
+    """
+    Create an IPR with NISS just to have the XML validated.
+    """
+    
+    req = cbss.IdentifyPersonRequest(national_id="70100853190",last_name='MUSTERMANN')
+    
+    try:
+        req.full_clean()
+        self.fail('Expected ValidationError "birth_date cannot be blank."')
+    except ValidationError:
+        pass
+        
+    req.birth_date = IncompleteDate(1938,6,1)
+    try:
+        req.validate_request()
+        #~ self.fail('Expected Warning "Fields last_name and first_name are mandatory."')
+    except Warning:
+        pass
+    req.first_name = "MAX"
+    req.validate_request()
+    
+    """
+    Create another one, this time a name search.
+    This time we also inspect the generated XML
+    """
+    
     #~ IdentifyPersonRequest = resolve_model('cbss.IdentifyPersonRequest')
-    req = IdentifyPersonRequest(
+    req = cbss.IdentifyPersonRequest(
         last_name="MUSTERMANN",
-        birth_date=IncompleteDate(1968,6,1))
+        birth_date=IncompleteDate(1938,6,1))
     
-    """
-    try it without environment and with `validate=True`
-    just to have the XML generated and validated
-    """
+    req.validate_request()
     
-    settings.LINO.cbss_environment = ''
-    req.execute_request(validate=True)
+    #~ settings.LINO.cbss_environment = ''
+    req.execute_request(environment='')
     expected = """\
 Not actually sending because environment is empty. Request would be:
 <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
@@ -116,7 +145,7 @@ Not actually sending because environment is empty. Request would be:
          <ipr:LastName>MUSTERMANN</ipr:LastName>
          <ipr:FirstName></ipr:FirstName>
          <ipr:MiddleName></ipr:MiddleName>
-         <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+         <ipr:BirthDate>1938-06-01</ipr:BirthDate>
       </ipr:PhoneticCriteria>
    </ipr:SearchCriteria>
 </ipr:IdentifyPersonRequest>"""
@@ -129,9 +158,9 @@ Not actually sending because environment is empty. Request would be:
     """
     
     settings.LINO.cbss_live_tests = False
-    settings.LINO.cbss_environment = 'test'
+    #~ settings.LINO.cbss_environment = 'test'
     now = datetime.datetime(2012,5,9,18,34,50)
-    req.execute_request(now=now)
+    req.execute_request(now=now,environment='test')
     #~ print req.response_xml
 
     expected = """\
@@ -159,13 +188,13 @@ NOT sending because `cbss_live_tests` is False:
                <ipr:LastName>MUSTERMANN</ipr:LastName>
                <ipr:FirstName></ipr:FirstName>
                <ipr:MiddleName></ipr:MiddleName>
-               <ipr:BirthDate>1968-06-01</ipr:BirthDate>
+               <ipr:BirthDate>1938-06-01</ipr:BirthDate>
             </ipr:PhoneticCriteria>
          </ipr:SearchCriteria>
       </ipr:IdentifyPersonRequest>
    </ssdn:ServiceRequest>
 </ssdn:SSDNRequest>"""
-    self.assertEqual(req.response_xml,expected)
+    self.assertEquivalent(expected,req.response_xml)
     
     
     """
@@ -173,7 +202,7 @@ NOT sending because `cbss_live_tests` is False:
     """
     
     settings.LINO.cbss_user_params = saved_cbss_user_params
-    settings.LINO.cbss_environment = saved_cbss_environment 
+    #~ settings.LINO.cbss_environment = saved_cbss_environment 
     settings.LINO.cbss_live_tests = saved_cbss_live_tests
     
     """
@@ -208,35 +237,35 @@ AuthorCodeList : CBSS"""
     Second live test. There's exactly one Belgian with 
     LastName "SAFFRE" and BirthDate 1968-06-01:
     """
-    req = IdentifyPersonRequest(
+    req = cbss.IdentifyPersonRequest(
         last_name="SAFFRE",
         birth_date=IncompleteDate(1968,6,1))
     req.execute_request()
-    ar = IdentifyPersonResult.request(master_instance=req)
+    ar = cbss.IdentifyPersonResult.request(master_instance=req)
     self.assertEqual(1,ar.get_total_count())
     row = ar.data_iterator[0]
     self.assertEqual(
-      IdentifyPersonResult.first_name.value_from_object(row),
+      cbss.IdentifyPersonResult.first_name.value_from_object(row),
       'LUC JOHANNES')
     self.assertEqual(
-      IdentifyPersonResult.national_id.value_from_object(row),
+      cbss.IdentifyPersonResult.national_id.value_from_object(row),
       '68060105329')
     
     """
     Third live test. IPR for NISS 70100853190
     """
-    req = IdentifyPersonRequest(national_id="70100853190")
+    req = cbss.IdentifyPersonRequest(national_id="70100853190")
     req.execute_request()
     
     print '-------------------- 20120524'
     print req.response_xml
     print '-------------------- 20120524'
     
-    ar = IdentifyPersonResult.request(master_instance=req)
+    ar = cbss.IdentifyPersonResult.request(master_instance=req)
     self.assertEqual(1,ar.get_total_count())
     row = ar.data_iterator[0]
     self.assertEqual(
-      IdentifyPersonResult.first_name.value_from_object(row),
+      cbss.IdentifyPersonResult.first_name.value_from_object(row),
       'TODO')
 
     
@@ -245,17 +274,22 @@ def test02(self):
     """
     Execute a RetrieveTIGroupsRequest.
     """
-    saved_cbss_environment = settings.LINO.cbss_environment
+    #~ saved_cbss_environment = settings.LINO.cbss_environment
 
-    # create an RTI
+    """
+    create an RTI
+    """
     
     RetrieveTIGroupsRequest = resolve_model('cbss.RetrieveTIGroupsRequest')
     req = RetrieveTIGroupsRequest(national_id='12345678901',language='fr')
     
-    # try it without environment to validate and see the XML
+    """
+    Try it without environment see the XML.
+    Note that NewStyleRequests have no validate_request method.
+    """
     
     #~ settings.LINO.cbss_environment = ''
-    req.execute_request(validate=True,environment='')
+    req.execute_request(environment='')
     #~ print req.response_xml
     expected = """\
 Not actually sending because environment is empty. Request would be:
@@ -264,7 +298,7 @@ Not actually sending because environment is empty. Request would be:
    language = "fr"
    history = False
  }"""
-    self.assertEqual(req.response_xml,expected)
+    self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
     """
     Skip live tests unless we are in test environment.
