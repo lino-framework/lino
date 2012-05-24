@@ -106,7 +106,8 @@ def test01(self):
     Create an IPR with NISS just to have the XML validated.
     """
     
-    req = cbss.IdentifyPersonRequest(national_id="70100853190",last_name='MUSTERMANN')
+    #~ req = cbss.IdentifyPersonRequest(national_id="70100853190",last_name='MUSTERMANN')
+    req = cbss.IdentifyPersonRequest(national_id="70100853190")
     
     try:
         req.full_clean()
@@ -120,8 +121,23 @@ def test01(self):
         #~ self.fail('Expected Warning "Fields last_name and first_name are mandatory."')
     except Warning:
         pass
-    req.first_name = "MAX"
+        
+    req.birth_date = IncompleteDate(1938,0,0)
     req.validate_request()
+    
+    #~ try:
+        #~ req.validate_request()
+        #~ self.fail('Expected ')
+    #~ except Warning:
+        #~ pass
+    #~ req.first_name = "MAX"
+    #~ req.validate_request()
+    
+    req = cbss.IdentifyPersonRequest(
+        last_name="MUSTERMANN",
+        birth_date=IncompleteDate(1938,0,0))
+    req.validate_request()
+    
     
     """
     Create another one, this time a name search.
@@ -254,7 +270,8 @@ AuthorCodeList : CBSS"""
     """
     Third live test. IPR for NISS 70100853190
     """
-    req = cbss.IdentifyPersonRequest(national_id="70100853190")
+    req = cbss.IdentifyPersonRequest(national_id="70100853190",birth_date=IncompleteDate(1970,10,8))
+    req.full_clean()
     req.execute_request()
     
     print '-------------------- 20120524'

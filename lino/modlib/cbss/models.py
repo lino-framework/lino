@@ -45,7 +45,7 @@ from lino.utils import babel
 
 from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
-from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.contacts import models as contacts
 from lino.tools import makedirs_if_missing
 
 from lino.apps.pcsw import models as pcsw
@@ -580,6 +580,29 @@ class SSIN(models.Model):
         #~ ,validators=[niss_validator]
         )
         
+    birth_date = dd.IncompleteDateField(
+        blank=True,
+        verbose_name=_("Birth date"))
+    sis_card_no = models.CharField(verbose_name=_('SIS card number'),
+        max_length=10,
+        blank=True, help_text="""\
+The number of the SIS card used to authenticate the person.""")
+
+    id_card_no = models.CharField(verbose_name=_('ID card number'),
+        max_length=10,
+        blank=True, help_text="""\
+The number of the ID card used to authenticate the person.""")
+
+    first_name = models.CharField(max_length=200,
+      blank=True,
+      verbose_name=_('First name'))
+    "Space-separated list of all first names."
+    
+    last_name = models.CharField(max_length=200,
+      blank=True,
+      verbose_name=_('Last name'))
+    """Last name (family name)."""
+    
     def get_ssin(self):
         national_id = self.national_id.replace('=','')
         national_id = national_id.replace(' ','')
@@ -613,7 +636,7 @@ add('1',_("Primary"),'PRIMARY')
 add('2',_("Secondary"),'SECONDARY')
 add('3',_("All"),'ALL')
 
-class ManageAccessRequest(SSDNRequest,SSIN,contacts.Born):
+class ManageAccessRequest(SSDNRequest,SSIN):
     """
     A request to the ManageAccess service.
     
@@ -656,26 +679,6 @@ For register and unregister this element is ignored.
 It can be used for list, 
 when information about sectors is required.""")
 
-    sis_card_no = models.CharField(verbose_name=_('SIS card number'),
-        max_length=10,
-        blank=True, help_text="""\
-The number of the SIS card used to authenticate the person.""")
-
-    id_card_no = models.CharField(verbose_name=_('ID card number'),
-        max_length=10,
-        blank=True, help_text="""\
-The number of the ID card used to authenticate the person.""")
-
-    first_name = models.CharField(max_length=200,
-      blank=True,
-      verbose_name=_('First name'))
-    "Space-separated list of all first names."
-    
-    last_name = models.CharField(max_length=200,
-      blank=True,
-      verbose_name=_('Last name'))
-    """Last name (family name)."""
-    
     def build_request(self):
         """Construct and return the root element of the (inner) service request."""
         national_id = self.get_ssin()
@@ -745,14 +748,11 @@ class ManageAccessRequests(dd.Table):
     
 class ManageAccessRequestsByPerson(ManageAccessRequests):
     master_key = 'project'
-    
 
 
 
 
-
-
-class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.Born):
+class IdentifyPersonRequest(SSDNRequest,SSIN):
     """
     A request to the IdentifyPerson service.
     
@@ -769,15 +769,15 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.Born):
         verbose_name = _("IdentifyPerson Request")
         verbose_name_plural = _("IdentifyPerson Requests")
         
-    first_name = models.CharField(max_length=200,
-      blank=True,
-      verbose_name=_('First name'))
-    "Space-separated list of all first names."
+    #~ first_name = models.CharField(max_length=200,
+      #~ blank=True,
+      #~ verbose_name=_('First name'))
+    #~ "Space-separated list of all first names."
     
-    last_name = models.CharField(max_length=200,
-      blank=True,
-      verbose_name=_('Last name'))
-    """Last name (family name)."""
+    #~ last_name = models.CharField(max_length=200,
+      #~ blank=True,
+      #~ verbose_name=_('Last name'))
+    #~ """Last name (family name)."""
 
     middle_name = models.CharField(max_length=200,
       blank=True,
@@ -831,6 +831,9 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.Born):
         
     def build_request(self):
         """Construct and return the root element of the (inner) service request."""
+        if not self.birth_date:
+            raise Exception("Empty birth date (a full_clean() would have told that, too!)")
+        
         national_id = self.get_ssin()
         gender = gender2cbss(self.gender)
         #~ https://fedorahosted.org/suds/wiki/TipsAndTricks#IncludingLiteralXML
@@ -838,28 +841,33 @@ class IdentifyPersonRequest(SSDNRequest,SSIN,contacts.Born):
         sc = E('ipr:SearchCriteria') 
         main.append(sc)
         if national_id:
+            # VerificatioinData is ignored if there's no SSIN in the SearchCriteria
             sc.append(E('ipr:SSIN').setText(national_id))
+            
+            vd = E('ipr:VerificationData')
+            main.append(vd)
+            if self.sis_card_no:
+                vd.append(E('ipr:SISCardNumber').setText(self.sis_card_no))
+            if self.id_card_no:
+                vd.append(E('ipr:IdentityCardNumber').setText(self.id_card_no))
+            
             pd = E('ipr:PersonData')
+            vd.append(pd)
             #~ if not self.last_name or not self.first_name:
                 #~ raise Warning("Fields last_name and first_name are mandatory.")
             pd.append(E('ipr:LastName').setText(self.last_name))
             pd.append(E('ipr:FirstName').setText(self.first_name))
             pd.append(E('ipr:MiddleName').setText(self.middle_name))
             pd.append(E('ipr:BirthDate').setText(str(self.birth_date)))
-            if not self.birth_date.is_complete():
-                pd.append(E('ipr:Tolerance').setText(self.tolerance))
+            #~ if not self.birth_date.is_complete():
+                #~ pd.append(E('ipr:Tolerance').setText(self.tolerance))
             #~ if gender is not None: pd.append(E('ipr:Gender').setText(gender))
-            main.append(E('ipr:VerificationData').append(pd))
-        else:
-            #~ if self.birth_date is None:
-                #~ raise Warning(
-                    #~ "Either national_id or birth date must be given.")
-            pc = E('ipr:PhoneticCriteria') 
-            pc.append(E('ipr:LastName').setText(self.last_name))
-            pc.append(E('ipr:FirstName').setText(self.first_name))
-            pc.append(E('ipr:MiddleName').setText(self.middle_name))
-            pc.append(E('ipr:BirthDate').setText(str(self.birth_date)))
-            sc.append(pc)
+        pc = E('ipr:PhoneticCriteria') 
+        sc.append(pc)
+        pc.append(E('ipr:LastName').setText(self.last_name))
+        pc.append(E('ipr:FirstName').setText(self.first_name))
+        pc.append(E('ipr:MiddleName').setText(self.middle_name))
+        pc.append(E('ipr:BirthDate').setText(str(self.birth_date)))
         return main
 
 dd.update_field(IdentifyPersonRequest,'birth_date',blank=False,null=False)
