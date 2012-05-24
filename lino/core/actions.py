@@ -23,6 +23,7 @@ from django import http
 
 import lino
 from lino.utils import AttrDict
+from lino.utils import curry
 from lino.utils import babel
 from lino.utils import Warning
 
@@ -120,46 +121,78 @@ class Action(object):
     sort_index = 99
     opens_a_slave = False
     label = None
+    actor = None
     name = None
+    url_action_name = None
+    inheritable = True
     key = None
     callable_from = None
     default_format = 'html'
     readonly = True
     hide_top_toolbar = False
     hide_navigator = False
-    actor = None
     opens_a_window = False
     #~ can_view = perms.always
     
     
-    def __init__(self,actor=None,name=None,label=None,**kw):
+    #~ def __init__(self,actor=None,name=None,label=None,**kw):
+    #~ def __init__(self,name=None,label=None,url_action_name=None,**kw):
+    #~ def __init__(self,label=None,**kw):
+    def __init__(self,label=None,url_action_name=None,**kw):
         #~ self.actor = actor # actor who offers this action
-        if actor is not None:
-            self.actor = actor # actor who offers this action
-            #~ self.can_view = report.can_view
-            if actor.hide_top_toolbar:
-                self.hide_top_toolbar = True
+        #~ if actor is not None:
+            #~ self.actor = actor # actor who offers this action
+            #~ if actor.hide_top_toolbar:
+                #~ self.hide_top_toolbar = True
         
-        if name is None:
-            if self.name is None:
-                self.name = self.__class__.__name__ 
-        else:
-            self.name = name 
-        if not isinstance(self.name,basestring):
-            raise Exception("%s name %r is not a string" % (self.__class__,self.name))
+        if url_action_name is not None:
+            if not isinstance(url_action_name,basestring):
+                raise Exception("%s name %r is not a string" % (self.__class__,url_action_name))
+            self.url_action_name = name 
+        #~ if name is None:
+            #~ if self.name is None:
+                #~ self.name = self.__class__.__name__ 
+        #~ else:
+            #~ self.name = name 
+        #~ if not isinstance(self.name,basestring):
+            #~ raise Exception("%s name %r is not a string" % (self.__class__,self.name))
         if label is None:
-            label = self.label or self.name 
+            label = self.label or self.url_action_name 
         self.label = label
-        assert self.callable_from is None or isinstance(self.callable_from,(tuple,type)), "%s" % self
+        assert self.callable_from is None or isinstance(
+            self.callable_from,(tuple,type)), "%s" % self
         for k,v in kw.items():
             if not hasattr(self,k):
                 raise Exception("Invalid keyword %s" % k)
             setattr(self,k,v)
         
     def __str__(self):
+        #~ raise Exception("Must use action2str(actor,action)")
         if self.actor is None:
-            raise Exception("tried to call str() on general action %s" % self.name)
+            #~ raise Exception("tried to call str() on general action %s" % self.name)
+            return repr(self)
+            #~ raise Exception("Tried to call str() on shared action %r" % self)
+        if self.name is None:
+            return repr(self)
         return str(self.actor) + '.' + self.name
+        
+    def setup(self,actor,name):
+        if self.name is not None:
+            raise Exception("%s tried to setup() named action %s" % (actor,name))
+        self.name = name
+        self.actor = actor
+        if actor.hide_top_toolbar:
+            self.hide_top_toolbar = True
+            
+    def contribute_to_class(self,model,name):
+        ma = model.__dict__.get('_lino_model_actions',None)
+        if ma is None:
+            ma = dict()
+            model._lino_model_actions = ma
+            #~ model.__dict__.set('_lino_model_actions',ma)
+        ma[name] = self
+        self.name = name
+        #~ model.__dict__['_lino_model_actions'] = d
         
     def __unicode__(self):
         return force_unicode(self.label)
@@ -203,14 +236,6 @@ class RowAction(Action):
 
 
 
-#~ class OpenWindowAction(Action):
-    #~ pass
-    #~ action_type = 'open_window'
-    
-    
-#~ class ViewAction(Action):
-    #~ pass
-    
 class RedirectAction(Action):
     #~ mimetype = None
     def get_target_url(self,elem):
@@ -224,11 +249,14 @@ class GridEdit(TableAction):
     opens_a_window = True
 
     callable_from = tuple()
-    name = 'grid'
+    url_action_name = 'grid'
     
-    def __init__(self,rpt):
-        self.label = rpt.button_label or rpt.label
-        TableAction.__init__(self,rpt)
+    #~ def __init__(self,*args,**kw):
+        #~ TableAction.__init__(self,*args,**kw)
+        
+    def setup(self,actor,name):
+        self.label = actor.button_label or actor.label
+        TableAction.setup(self,actor,name)
 
 
 class ShowDetailAction(RowAction):
@@ -238,7 +266,7 @@ class ShowDetailAction(RowAction):
     callable_from = (GridEdit,)
     #~ show_in_detail = False
     #~ needs_selection = True
-    name = 'detail'
+    url_action_name = 'detail'
     label = _("Detail")
     
     #~ def get_elem_title(self,elem):
@@ -254,7 +282,7 @@ class InsertRow(TableAction):
     hide_top_toolbar = True
     readonly = False
     callable_from = (GridEdit,ShowDetailAction)
-    name = 'insert'
+    url_action_name = 'insert'
     #~ label = _("Insert")
     label = _("New")
     key = INSERT # (ctrl=True)
@@ -269,22 +297,22 @@ class DuplicateRow(RowAction):
   
     readonly = False
     callable_from = (GridEdit,ShowDetailAction)
-    name = 'duplicate'
+    url_action_name = 'duplicate'
     label = _("Duplicate")
 
 
 #~ class ShowEmptyTable(InsertRow):
 class ShowEmptyTable(ShowDetailAction):
     callable_from = tuple()
-    name = 'show' 
+    url_action_name = 'show' 
     default_format = 'html'
     #~ hide_top_toolbar = True
     hide_navigator = True
-    def __init__(self,actor,*args,**kw):
-        #~ self.actor = actor # actor who offers this action
+    
+    def setup(self,actor,name):
         self.label = actor.label
-        #~ self.can_view = perms.always # actor.can_view
-        super(ShowEmptyTable,self).__init__(actor,*args,**kw)
+        ShowDetailAction.setup(self,actor,name)
+        #~ print 20120523, actor, name, 'setup', unicode(self.label)
         
     def get_action_title(self,rr):
         return rr.get_title()
@@ -294,16 +322,15 @@ class ShowEmptyTable(ShowDetailAction):
 class Calendar(Action):
     opens_a_window = True
     label = _("Calendar")
-    name = 'grid' # because...
+    url_action_name = 'grid' # because...
     default_format = 'html'
     
-    def __init__(self,actor,*args,**kw):
-        self.actor = actor # actor who offers this action
-        #~ self.can_view = perms.always # actor.can_view
-        super(Calendar,self).__init__(*args,**kw)
+    #~ def __init__(self,*args,**kw):
+        #~ self.actor = actor # actor who offers this action
+        #~ super(Calendar,self).__init__(*args,**kw)
         
-    def __str__(self):
-        return str(self.actor) + '.' + self.name
+    #~ def __str__(self):
+        #~ return str(self.actor) + '.' + self.name
 
 
     
@@ -325,19 +352,19 @@ class DeleteSelected(Action):
     callable_from = (GridEdit,ShowDetailAction)
     #~ needs_selection = True
     label = _("Delete")
-    name = 'delete'
+    url_action_name = 'delete'
     key = DELETE # (ctrl=True)
     #~ client_side = True
     
         
 class SubmitDetail(Action):
     readonly = False
-    #~ name = 'submit'
+    #~ url_action_name = 'SubmitDetail'
     label = _("Save")
     callable_from = (ShowDetailAction,)
     
 class SubmitInsert(SubmitDetail):
-    #~ name = 'submit'
+    #~ url_action_name = 'SubmitInsert'
     label = _("Save")
     #~ label = _("Insert")
     callable_from = (InsertRow,)
@@ -395,7 +422,7 @@ class ActionRequest(object):
             #~ return
         #~ raise ConfirmationRequired(step,messages)
 
-    def parse_req(self,request,rqdata,**kw):
+    def parse_req(self,request,rqdata,**kw): 
         if self.actor.parameters:
             kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
@@ -534,3 +561,14 @@ class ActionRequest(object):
         #~ return self.__class__(self.ui,actor,**kw)
         return self.ui.request(actor,**kw)
         
+
+def action(**kw):
+    def decorator(fn):
+        a = Action(**kw)
+        a.run = curry(fn,a)
+        #~ a.run = fn
+        return a
+    return decorator
+    
+#~ def action2str(actor,action):
+    #~ return str(actor) + '.' + action.name

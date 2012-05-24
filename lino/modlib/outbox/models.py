@@ -77,7 +77,7 @@ if True:
   class CreateMailAction(dd.RowAction):
       "Deserves more documentation."
     
-      name = 'send'
+      url_action_name = 'send'
       label = _('Create email')
       callable_from = None
               
@@ -118,12 +118,14 @@ if True:
       class Meta:
           abstract = True
           
+      create_mail = CreateMailAction()
+          
       #~ time_sent = models.DateTimeField(null=True,editable=False)
       
-      @classmethod
-      def setup_report(cls,rpt):
-          rpt.add_action(CreateMailAction())
-          #~ call_optional_super(Mailable,cls,'setup_report',rpt)
+      #~ @classmethod
+      #~ def setup_report(cls,rpt):
+          #~ rpt.add_action(CreateMailAction())
+          # call_optional_super(Mailable,cls,'setup_report',rpt)
           
       def get_print_language(self,pm):
           return babel.DEFAULT_LANGUAGE
@@ -172,7 +174,7 @@ class RecipientsByMail(Recipients):
 class SendMailAction(dd.RowAction):
     "Deserves more documentation."
   
-    name = 'send'
+    url_action_name = 'send'
     label = _('Send email')
     callable_from = None
             
@@ -212,6 +214,8 @@ class Mail(mails.Mail,mixins.ProjectRelated):
         verbose_name = _("Outgoing Mail")
         verbose_name_plural = _("Outgoing Mails")
         
+    send_mail = SendMailAction()
+    
     date = models.DateField(verbose_name=_("Date"),
         auto_now_add=True,
         help_text="""
@@ -240,12 +244,12 @@ class Mail(mails.Mail,mixins.ProjectRelated):
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         
-    @classmethod
-    def setup_report(cls,rpt):
-        #~ call_optional_super(CachedPrintable,cls,'setup_report',rpt)
-        rpt.add_action(SendMailAction(rpt))
-        mails.Mail.setup_report(rpt)
-        #~ rpt.add_action(ClearCacheAction())
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        # call_optional_super(CachedPrintable,cls,'setup_report',rpt)
+        #~ rpt.add_action(SendMailAction())
+        #~ mails.Mail.setup_report(rpt)
+        # rpt.add_action(ClearCacheAction())
 
 
 #~ class InMail(Mail):

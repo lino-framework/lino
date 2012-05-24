@@ -339,6 +339,7 @@ def setup_site(self,make_messages=False):
         
         table.discover()
         
+        
         choosers.discover()
         
         #~ load_details(make_messages)

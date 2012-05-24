@@ -43,14 +43,22 @@ this action is governed by Rules or not.
 If an action is not `ruled`, Lino will not consult 
 the `Rules` table.
 
-Transition actions would be a shortcut interface for quickly 
-designing simple state change actions. 
-For example to enable some users to "cancel" a CBSS request::
-
-  transitions = [
-    cancel RequestStatus.failure, RequestStatus.new
-  ]
+I could write an `action` decorator to quickly create
+actions without the need for a special Action subclass::
+  
+  @dd.action(_("Cancel"),ruled=True,state=RequestStatus.failed)
+  def cancel(self,obj,ar):
+      ar.confirm(_("Are you sure?"))
+      self.sent = None
+      return RequestStatus.new
+      
+(This would add a "Cancel" button for some users to cancel 
+a failed CBSS request.)
+      
 
 CBSS connection
 ---------------
 
+Continued to write live tests in the test suite :mod:`lino.modlib.cbss.tests`. 
+Startet first retrieveTIGroups requests.
+Continued with error handling. 

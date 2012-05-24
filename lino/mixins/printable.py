@@ -36,7 +36,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.encoding import force_unicode
 
 import lino
-from lino import dd
+#~ from lino import dd
 
 from lino.core import actions
 from lino.core import fields
@@ -492,7 +492,7 @@ def get_build_method(elem):
 #~ class PrintAction(actions.RedirectAction):
 class BasePrintAction(actions.RowAction):
     sort_index = 10
-    name = 'print'
+    url_action_name = 'print'
     label = _('Print')
     
     callable_from = (actions.GridEdit, actions.ShowDetailAction,
@@ -572,16 +572,22 @@ class DirectPrintAction(BasePrintAction):
     """
     A Print Action that uses a hard-coded template.
     """
+    url_action_name = None
+    
     #~ def __init__(self,rpt,name,label,bmname,tplname):
-    def __init__(self,rpt,name=None,label=None,tplname='Default',build_method=None,**kw):
+    def __init__(self,label=None,tplname='Default',build_method=None,**kw):
         #~ if name is None: name = 'print'
         #~ if label is None: label = _("Print")
         #~ if tplname is None: tplname = 'Default'
-        super(DirectPrintAction,self).__init__(rpt,name,label,**kw)
+        super(DirectPrintAction,self).__init__(label,**kw)
         #~ BasePrintAction.__init__(self,rpt,name,label)
         #~ self.bm =  bm_dict.get(build_method or settings.LINO.preferred_build_method)
         self.build_method = build_method
         self.tplname = tplname
+        
+    def setup(self,actor,name):
+        self.url_action_name = name
+        super(DirectPrintAction,self).setup(actor,name)
         
     def get_print_templates(self,bm,elem):
         #~ assert bm is self.bm
@@ -623,7 +629,7 @@ class ClearCacheAction(actions.RowAction):
     Defines the :guilabel:`Clear cache` button on a Printable record.
     """
     sort_index = 11
-    name = 'clear'
+    url_action_name = 'clear'
     label = _('Clear cache')
     
     #~ def disabled_for(self,obj,request):
@@ -718,14 +724,17 @@ class CachedPrintable(models.Model,Printable):
     if no build hasn't been called yet.
     """
     
+    do_print = PrintAction()
+    do_clear_cache = ClearCacheAction()
+    
+    
     class Meta:
         abstract = True
         
-    @classmethod
-    def setup_report(cls,rpt):
-        #~ call_optional_super(CachedPrintable,cls,'setup_report',rpt)
-        rpt.add_action(PrintAction(rpt))
-        rpt.add_action(ClearCacheAction())
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ rpt.add_action(PrintAction())
+        #~ rpt.add_action(ClearCacheAction())
         
     def get_permission(self,action,user):
         if isinstance(action,ClearCacheAction):

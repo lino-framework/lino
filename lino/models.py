@@ -47,6 +47,30 @@ from lino.utils.choicelists import UserLevel
 from lino.utils.restify import restify
 from lino.core import actions
 
+
+class BuildLinoJS(dd.RowAction):
+    """
+    Rebuild the site cache.
+    This action is available on :class:`About`.
+    """
+    label = _("Rebuild site cache")
+    url_action_name = "buildjs"
+    def run(self,rr,elem):
+        rr.confirm(_("Are you sure?"))
+        #~ rr.confirm(_("Are you really sure?"))
+        rr.ui.build_site_cache(True)
+        return rr.ui.success_response(
+            """\
+Seems that it worked. Refresh your browser. 
+<br>
+Note that other users might experience side effects because 
+of the unexpected .js update, but there are no known problems so far.
+Please report any anomalies.""",
+            alert=_("Success"))
+
+    
+
+
 class SiteConfig(models.Model):
     """
     This model should have exactly one instance, 
@@ -110,10 +134,12 @@ class SiteConfigs(dd.Table):
             #~ return action.readonly
         #~ return True
         
-    @classmethod
-    def setup_actions(self):
-        super(SiteConfigs,self).setup_actions()
-        self.add_action(BuildLinoJS())
+    do_build = BuildLinoJS()
+    
+    #~ @classmethod
+    #~ def setup_actions(self):
+        #~ super(SiteConfigs,self).setup_actions()
+        #~ self.add_action(BuildLinoJS())
         #~ self.remove_action(actions.DeleteSelected
    
     #~ @dd.constant(_("Versions"))
@@ -302,27 +328,6 @@ if settings.LINO.user_model:
         
 
 
-class BuildLinoJS(dd.RowAction):
-    """
-    Rebuild the site cache.
-    This action is available on :class:`About`.
-    """
-    label = _("Rebuild site cache")
-    name = "buildjs"
-    def run(self,rr,elem):
-        rr.confirm(_("Are you sure?"))
-        #~ rr.confirm(_("Are you really sure?"))
-        rr.ui.build_site_cache(True)
-        return rr.ui.success_response(
-            """\
-Seems that it worked. Refresh your browser. 
-<br>
-Note that other users might experience side effects because 
-of the unexpected .js update, but there are no known problems so far.
-Please report any anomalies.""",
-            alert=_("Success"))
-
-    
 
 #~ class ModelsBySite(dd.VirtualTable):
     #~ label = _("Models")
@@ -559,10 +564,12 @@ class About(dd.EmptyTable):
     
     #~ versions = dd.Constant(lino.welcome_html())
     
-    @classmethod
-    def setup_actions(self):
-        super(About,self).setup_actions()
-        self.add_action(BuildLinoJS())
+    do_build = BuildLinoJS()
+    
+    #~ @classmethod
+    #~ def setup_actions(self):
+        #~ super(About,self).setup_actions()
+        #~ self.add_action(BuildLinoJS())
    
     #~ @dd.constant(_("Versions"))
     @dd.constant()
@@ -597,10 +604,10 @@ class Home(dd.EmptyTable):
     welcome
     """
     
-    @classmethod
-    def setup_actions(self):
-        "Overrides the default method. Home page needs no print method."
-        pass
+    #~ @classmethod
+    #~ def setup_actions(self):
+        #~ "Overrides the default method. Home page needs no print method."
+        #~ pass
         
     #~ @dd.virtualfield(dd.HtmlBox())
     #~ def tasks_summary(cls,self,req):

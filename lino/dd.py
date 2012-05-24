@@ -20,8 +20,8 @@ Tables:
 
 - :class:`Table <lino.core.table.Table>`
 - :class:`VirtualTable <lino.utils.tables.VirtualTable>`
-- :class:`Frame <lino.core.actors.Frame>`
-- :class:`EmptyTable <lino.core.actors.EmptyTable>`
+- :class:`Frame <lino.core.frames.Frame>`
+- :class:`EmptyTable <lino.core.frames.EmptyTable>`
 
 
 Extended Fields:
@@ -74,9 +74,10 @@ from lino.core.table import Table
 
 from lino.core.table import summary, summary_row
 
-from lino.core.actors import Frame
-from lino.core.actors import EmptyTable
+from lino.core.frames import Frame
+from lino.core.frames import EmptyTable
 
+from lino.core.actions import action
 from lino.core.actions import RowAction
 from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected

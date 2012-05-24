@@ -41,7 +41,7 @@ import lino
 from lino.core import table
 from lino.core import fields
 from lino.core import actions
-from lino.core import actors
+from lino.core import frames
 from lino import dd
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
@@ -603,9 +603,9 @@ class BooleanStoreField(StoreField):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,name,**kw)
         if not field.editable:
-            def fn(self,request,obj):
-                return self.value2html(request,self.field.value_from_object(obj))
-            self.full_value_from_object = curry(fn,self)
+            def full_value_from_object(self,obj,ar):
+                return self.value2html(ar,self.field.value_from_object(obj))
+            self.full_value_from_object = curry(full_value_from_object,self)
         
         
     def parse_form_value(self,v,obj):
@@ -842,7 +842,7 @@ class Store:
             self.list_fields.append(sf)
             self.detail_fields.append(sf)
             
-        if not issubclass(rh.actor,actors.Frame):
+        if not issubclass(rh.actor,frames.Frame):
             self.collect_fields(self.list_fields,rh.get_list_layout())
             
         dtl = rh.actor.get_detail()

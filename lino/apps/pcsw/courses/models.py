@@ -274,10 +274,13 @@ class Course(models.Model,mixins.Printable):
             s += " " + unicode(self.offer)
         return s
   
-    @classmethod
-    def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction(rpt,'candidates',_("List of candidates"),'candidates'))
-        rpt.add_action(DirectPrintAction(rpt,'participants',_("List of participants"),'participants'))
+    print_candidates = DirectPrintAction(label=_("List of candidates"),tplname='candidates')
+    print_participants = DirectPrintAction(label=_("List of participants"),tplname='participants')
+    
+    #~ @classmethod
+    #~ def setup_report(model,rpt):
+        #~ rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates'))
+        #~ rpt.add_action(DirectPrintAction('participants',_("List of participants"),'participants'))
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
@@ -454,7 +457,7 @@ class RegisterCandidate(dd.RowAction):
     This action is available on a row of :class:`CandidatesByCourse`.
     """
     label = _("Register")
-    name = "register"
+    url_action_name = "register"
     def run(self,rr,elem):
         elem.course = rr.master_instance
         elem.save()
@@ -468,7 +471,7 @@ class UnregisterCandidate(dd.RowAction):
     This action is available on a row of :class:`ParticipantsByCourse`.
     """
     label = _("Unregister")
-    name = "unregister"
+    url_action_name = "unregister"
     def run(self,rr,elem):
         course = elem.course
         elem.course = None
@@ -482,10 +485,11 @@ class ParticipantsByCourse(RequestsByCourse):
     """
     label = _("Participants")
     column_names = 'person remark date_ended ending'
+    do_unregister = UnregisterCandidate()
     
-    @classmethod
-    def setup_actions(self):
-        self.add_action(UnregisterCandidate())
+    #~ @classmethod
+    #~ def setup_actions(self):
+        #~ self.add_action(UnregisterCandidate())
 
 class CandidatesByCourse(RequestsByCourse):
     """
@@ -496,9 +500,11 @@ class CandidatesByCourse(RequestsByCourse):
     column_names = 'person remark content date_submitted'
     #~ can_add = perms.never
     
-    @classmethod
-    def setup_actions(self):
-        self.add_action(RegisterCandidate())
+    do_register = RegisterCandidate()
+    
+    #~ @classmethod
+    #~ def setup_actions(self):
+        #~ self.add_action(RegisterCandidate())
     
     @classmethod
     def get_request_queryset(self,rr):

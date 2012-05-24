@@ -127,7 +127,7 @@ class SendAction(dd.RowAction):
     :class:`SSDNRequest` 
     record.
     """
-    name = 'sendcbss'
+    url_action_name = 'send'
     label = _('Execute')
     #~ callable_from = None
     callable_from = (dd.GridEdit,dd.ShowDetailAction)
@@ -187,6 +187,8 @@ Read-only.""")
         help_text="""\
 The response received, raw XML string. 
 If the request failed with a local exception, then it contains a traceback.""")
+
+    send_action = SendAction()
     
     #~ def save(self,*args,**kw):
         #~ if not self.environment:
@@ -199,10 +201,10 @@ If the request failed with a local exception, then it contains a traceback.""")
         """
         pass
         
-    @classmethod
-    def setup_report(cls,rpt):
-        #~ call_optional_super(CBSSRequest,cls,'setup_report',rpt)
-        rpt.add_action(SendAction())
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ # call_optional_super(CBSSRequest,cls,'setup_report',rpt)
+        #~ rpt.add_action(SendAction())
         
     def get_permission(self,action,user):
         if isinstance(action,SendAction):
@@ -525,10 +527,10 @@ class NewStyleRequest(CBSSRequest):
         """
         pass
         
-    @classmethod
-    def setup_report(cls,rpt):
-        #~ call_optional_super(CBSSRequest,cls,'setup_report',rpt)
-        rpt.add_action(SendAction())
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ # call_optional_super(CBSSRequest,cls,'setup_report',rpt)
+        #~ rpt.add_action(SendAction())
         
     def __unicode__(self):
         return u"%s#%s" % (self.__class__.__name__,self.pk)

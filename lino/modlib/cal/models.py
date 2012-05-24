@@ -714,10 +714,10 @@ class Event(Component,Ended,mixins.TypedPrintable,outbox.Mailable):
             yield ('to',g)
         yield ('cc',self.user)
         
-    @classmethod
-    def setup_report(cls,rpt):
-        mixins.TypedPrintable.setup_report(rpt)
-        outbox.Mailable.setup_report(rpt)
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ mixins.TypedPrintable.setup_report(rpt)
+        #~ outbox.Mailable.setup_report(rpt)
         
     @classmethod
     def site_setup(cls,lino):
@@ -932,10 +932,10 @@ class Guest(contacts.ContactDocument,
     def __unicode__(self):
         return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.event)
 
-    @classmethod
-    def setup_report(cls,rpt):
-        mixins.CachedPrintable.setup_report(rpt)
-        outbox.Mailable.setup_report(rpt)
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ mixins.CachedPrintable.setup_report(rpt)
+        #~ outbox.Mailable.setup_report(rpt)
         
 class Guests(dd.Table):
     model = Guest
@@ -1205,7 +1205,8 @@ if settings.LINO.use_extensible:
         return datetime.date(*settings.LINO.parse_date(s))
   
     class Panel(dd.Frame):
-        default_action_class = dd.Calendar
+        default_action = dd.Calendar()
+        #~ default_action_class = dd.Calendar
 
     class PanelCalendars(Calendars):
         column_names = 'id name description color is_hidden'
@@ -1340,7 +1341,7 @@ class UpdateReminders(actions.RowAction):
     """
     Users can invoke this to re-generate their automatic tasks.
     """
-    #~ name = 'print'
+    url_action_name = 'UpdateReminders'
     label = _('Update Reminders')
     
     callable_from = (actions.GridEdit, actions.ShowDetailAction)
@@ -1409,7 +1410,8 @@ class Home(lino.Home):
 
 def site_setup(site):
     #~ from lino.modlib.users.models import Users
-    site.modules.users.Users.add_action(UpdateReminders())
+    #~ site.modules.users.Users.add_action(UpdateReminders())
+    site.modules.users.Users.update_reminders = UpdateReminders()
     #~ site.modules.lino.Home.set_detail("""
     #~ quick_links:80x1
     #~ cal.ComingReminders:40x16 cal.MissedReminders:40x16

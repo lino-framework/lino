@@ -14,6 +14,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import copy
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -64,7 +66,9 @@ def discover():
     
     for a in actors_list:
         a.class_init()
-    
+        a.collect_actions()
+
+        
 
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
@@ -82,41 +86,11 @@ class ActorMetaClass(type):
         
         cls = type.__new__(meta, classname, bases, classDict)
         
-        
         if cls.parameters:
             for k,v in cls.parameters.items():
                 v.set_attributes_from_name(k)
                 v.table = cls
                 
-        cls.virtual_fields = {}
-        cls._constants = {}
-        
-        # inherit virtual fields defined on parent tables
-        for b in bases:
-            bvf = getattr(b,'virtual_fields',None)
-            if bvf:
-                cls.virtual_fields.update(bvf)
-            
-        for k,v in classDict.items():
-            #~ if isinstance(v,models.Field):
-            #~ if isinstance(v,(models.Field,fields.VirtualField)):
-            if isinstance(v,fields.Constant):
-                cls.add_constant(k,v)
-                #~ return v
-            
-            if isinstance(v,fields.VirtualField):
-                cls.add_virtual_field(k,v)
-                #~ add_virtual_field(cls,k,v)
-                
-                
-        #~ cls.params = []
-        #~ for k,v in classDict.items():
-            #~ if isinstance(v,models.Field):
-                #~ v.set_attributes_from_name(k)
-                #~ v.table = cls
-                #~ cls.params.append(v)
-                
-        
         """
         On 20110822 I thought "A Table always gets the app_label of its model,
         you cannot set this yourself in a subclass
@@ -127,24 +101,41 @@ class ActorMetaClass(type):
         
         """
         
-        #~ if not 'app_label' in classDict.keys():
-        #~ if cls.app_label is None:
         if classDict.get('app_label',None) is None:
-            #~ if self.app_label is None:
             # Figure out the app_label by looking one level up.
             # For 'django.contrib.sites.models', this would be 'sites'.
-            #~ m = sys.modules[self.__module__]
-            #~ self.app_label = m.__name__.split('.')[-2]
             cls.app_label = cls.__module__.split('.')[-2]
-            #~ self.app_label = self.model._meta.app_label
-            
-        #~ cls.app_label = cls.__module__.split('.')[-2]
         
         cls.actor_id = cls.app_label + '.' + cls.__name__
-        cls._actions_list = None
-        cls._actions_dict = {}
         cls._setup_done = False
         cls._setup_doing = False
+                
+        cls.virtual_fields = {}
+        cls._constants = {}
+        cls._actions_dict = {}
+        cls._actions_list = None
+        
+        # inherit virtual fields defined on parent tables
+        for b in bases:
+            bd = getattr(b,'virtual_fields',None)
+            if bd:
+                cls.virtual_fields.update(bd)
+            
+        for k,v in classDict.items():
+            if isinstance(v,fields.Constant):
+                cls.add_constant(k,v)
+            if isinstance(v,fields.VirtualField):
+                cls.add_virtual_field(k,v)
+                
+                
+        #~ cls.params = []
+        #~ for k,v in classDict.items():
+            #~ if isinstance(v,models.Field):
+                #~ v.set_attributes_from_name(k)
+                #~ v.table = cls
+                #~ cls.params.append(v)
+                
+        
         
         dt = classDict.get('detail_template',None)
         dl = classDict.get('detail_layout',None)
@@ -157,11 +148,10 @@ class ActorMetaClass(type):
             assert dl._table is None
             dl._table = cls
                 
-                
         if classname not in (
             'Table','AbstractTable','VirtualTable',
             'Action','HandledActor','Actor','Frame',
-            'Listings'):
+            'EmptyTable'):
             if actor_classes is None:
                 #~ logger.debug("%s definition was after discover",cls)
                 pass
@@ -298,13 +288,95 @@ class Actor(Handled):
     detail_layout = None
     detail_template = None
     detail_action = None
+    insert_action = None
     
     
     #~ submit_action = actions.SubmitDetail()
     
     @classmethod
-    def class_init(self):
-        pass
+    def class_init(cls):
+        #~ if cls.__name__ == 'Home':
+            #~ print "20120524",cls, "class_init()", cls.__bases__
+        #~ for b in cls.__bases__:
+        
+        for b in cls.mro():
+            for k,v in b.__dict__.items():
+                if isinstance(v,actions.Action):
+                    #~ if not cls.__dict__.has_key(k):
+                    #~ if cls.__name__ == 'Home':
+                        #~ print "20120524 %s.%s inherits %s from %s" % (cls,k,v.__class__,b)
+                    if cls.__dict__.get(k,None) is None:
+                        v = copy.deepcopy(v)
+                        v.name = None
+                        setattr(cls,k,v)
+                        #~ cls.define_action(k,v)
+                        #~ if b is EmptyTable:
+                            #~ print "20120523", classname, k, v
+            #~ bd = getattr(b,'_actions_dict',None)
+            #~ if bd:
+                #~ for k,v in bd.items():
+                    #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
+        
+    @classmethod
+    def get_shared_actions(self):
+        return []
+        
+    @classmethod
+    def collect_actions(cls):
+        """
+        Loops through the class dict and collects all Action instances,
+        calling `define_action` which will set their `actor` attribute.
+        First we create `insert_action` and `detail_action` if necessary.
+        Also fill _actions_list.
+        """
+        if cls.detail_action is None:
+            if cls.detail_layout or cls.detail_template:
+            #~ if self._lino_detail:
+                cls.detail_action = actions.ShowDetailAction()
+        if cls.insert_action is None:
+            #~ if self.detail_action and self.editable and not self.hide_top_toolbar:
+            if cls.detail_action and cls.editable:
+                cls.insert_action = actions.InsertRow()
+                
+        #~ if cls.__name__.startswith('OutboxBy'):
+            #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
+        cls._actions_list = []
+        for k,v in cls.__dict__.items():
+            if isinstance(v,actions.Action):
+                cls.define_action(k,v)
+                
+        #~ cls._actions_list = cls._actions_dict.values()
+        #~ if cls.__name__ == 'Home':
+            #~ print 20120524, cls, cls._actions_list
+        cls._actions_list += cls.get_shared_actions()
+        def f(a,b):
+            return cmp(a.sort_index,b.sort_index)
+        cls._actions_list.sort(f)
+        cls._actions_list = tuple(cls._actions_list)
+        
+    @classmethod
+    def define_action(self,name,a):
+    #~ def add_action(self,a,name=None):
+        #~ if name is None:
+            #~ name = a.name
+        #~ if self._actions_dict.has_key(name):
+            #~ logger.warning("%s action %r : %r overridden by %r",
+              #~ self,name,self._actions_dict[name],a)
+            #~ raise Exception(
+              #~ "%s action %r : %s overridden by %s" %
+              #~ (self,a.name,self._actions_dict[a.name],a))
+        #~ a.execute = curry(a.execute,cls)
+        #~ self._actions_list.append(a)
+        a.setup(self,name)
+        if a.url_action_name:
+            if self._actions_dict.has_key(a.url_action_name):
+                raise Exception(
+                    "Duplicate url_action_name %s for %s" % (
+                        a.url_action_name,a))
+            self._actions_dict[a.url_action_name] = a
+        self._actions_list.append(a)
+        return a
+            
 
     @classmethod
     def get_label(self):
@@ -488,46 +560,19 @@ class Actor(Handled):
             #~ self.actor_id,self.default_action)
         return True
         
-    @classmethod
-    def setup_actions(self):
-        #~ if str(self) == "lino.Models":
-            #~ logger.info("20120307 Actor.setup_actions() %s %s",self,self.detail_layout)
-        if self.detail_layout:
-        #~ if self._lino_detail:
-            self.detail_action = actions.ShowDetailAction(self)
-            self.add_action(self.detail_action)
-        
     #~ @classmethod
-    #~ def set_actions(self,actions):
-        #~ self._actions_list = []
-        #~ self._actions_dict = {}
-        #~ for a in actions:
-            #~ self.add_action(a)
-            
+    #~ def setup_actions(self):
+        #~ if self.detail_layout:
+            #~ self.detail_action = self.add_action(actions.ShowDetailAction())
+        
     @classmethod
-    def add_action(self,a):
-        if a.actor is not None and a.actor is not self:
-            raise Exception("20120103")
-        if self._actions_dict.has_key(a.name):
-            #~ logger.warning("%s action %r : %s overridden by %s",
-              #~ self,a.name,self._actions_dict[a.name],a)
-            raise Exception(
-              "%s action %r : %s overridden by %s" %
-              (self,a.name,self._actions_dict[a.name],a))
-        self._actions_dict[a.name] = a
-        #~ self._actions_list.append(a)
-            
-    @classmethod
-    def get_action(self,name):
+    def get_url_action(self,name):
         return self._actions_dict.get(name,None)
         
     @classmethod
     def get_actions(self,callable_from=None):
         if self._actions_list is None:
-            self._actions_list = self._actions_dict.values()
-            def f(a,b):
-                return cmp(a.sort_index,b.sort_index)
-            self._actions_list.sort(f)
+            raise Exception("Tried to %s.get_actions() with empty _actions_list" % self)
         if callable_from is None:
             return self._actions_list
         return [a for a in self._actions_list 
@@ -586,100 +631,3 @@ class Actor(Handled):
 
         
 
-class FrameHandle(base.Handle): 
-    def __init__(self,ui,frame):
-        #~ assert issubclass(frame,Frame)
-        self.actor = frame
-        base.Handle.__init__(self,ui)
-
-    def get_actions(self,*args,**kw):
-        return self.actor.get_actions(*args,**kw)
-        
-    def __str__(self):
-        return "%s on %s" %(self.__class__.__name__,self.actor)
-
-
-
-class Frame(Actor): 
-    """
-    """
-    _handle_class = FrameHandle
-    default_action_class = None
-    editable = False
-    
-    @classmethod
-    def do_setup(self):
-        #~ logger.info("%s.__init__()",self.__class__)
-        #~ if not self.__class__ is Frame:
-        if self.default_action_class:
-            self.default_action = self.default_action_class(self)
-        if not self.label:
-            self.label = self.default_action.label
-            #~ self.default_action.actor = self
-        super(Frame,self).do_setup()
-        #~ self.set_actions([])
-        self.setup_actions()
-        if self.default_action:
-            self.add_action(self.default_action)
-
-
-class EmptyTable(Frame):
-    """
-    A "Table" that has exactly one virtual row and thus is visible 
-    only using a Detail view on that row.
-    """
-    #~ has_navigator = False
-    #~ hide_top_toolbar = True
-    hide_navigator = True
-    default_list_action_name = 'show'
-    default_elem_action_name =  'show'
-    
-    @classmethod
-    def do_setup(self):
-        #~ logger.info("%s.__init__()",self.__class__)
-        #~ if not self.__class__ is Frame:
-        if self is not EmptyTable:
-            assert self.default_action_class is None
-            #~ if self.label is None:
-                #~ raise Exception("%r has no label" % self)
-            self.default_action = actions.ShowEmptyTable(self)
-            super(Frame,self).do_setup()
-            self.setup_actions()
-            self.add_action(self.default_action)
-
-    @classmethod
-    def setup_actions(self):
-        super(EmptyTable,self).setup_actions()
-        from lino.mixins.printable import DirectPrintAction
-        self.add_action(DirectPrintAction(self))
-        
-            
-    @classmethod
-    def create_instance(self,req,**kw):
-        #~ if self.known_values:
-            #~ kw.update(self.known_values)
-        if self.parameters:
-            kw.update(req.param_values)
-
-        #~ for k,v in req.param_values.items():
-            #~ kw[k] = v
-        #~ for k,f in self.parameters.items():
-            #~ kw[k] = f.value_from_object(None)
-        obj = actions.EmptyTableRow(self,**kw)
-        kw = req.ah.store.row2dict(req,obj)
-        obj._data = kw
-        obj.update(**kw)
-        return obj
-    
-    #~ @classmethod
-    #~ def elem_filename_root(self,elem):
-        #~ return self.app_label + '.' + self.__name__
-
-    @classmethod
-    def get_data_elem(self,name):
-        de = super(EmptyTable,self).get_data_elem(name)
-        if de is not None:
-            return de
-        a = name.split('.')
-        if len(a) == 2:
-            return getattr(getattr(settings.LINO.modules,a[0]),a[1])

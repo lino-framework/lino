@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import copy
 import cgi
 import os
 import sys
@@ -39,8 +40,8 @@ from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 from django import forms
 from django.conf.urls.defaults import patterns, url, include
-from django.forms.models import modelform_factory
-from django.forms.models import _get_foreign_key
+#~ from django.forms.models import modelform_factory
+#~ from django.forms.models import _get_foreign_key
 #~ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -62,6 +63,7 @@ from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
 #~ from lino.core import boolean_texts
 from lino.core import actors
+from lino.core import frames
 #~ from lino.core import action_requests
 from lino.ui import base
 
@@ -244,7 +246,7 @@ def rc_name(rptclass):
 master_reports = []
 slave_reports = []
 generic_slaves = {}
-frames = []
+frames_list = []
 custom_tables = []
 #~ rptname_choices = []
 
@@ -252,7 +254,7 @@ config_dirs = []
 
   
 def register_frame(frm):
-    frames.append(frm)
+    frames_list.append(frm)
     
 def register_report(rpt):
     #~ logger.debug("20120103 register_report %s", rpt.actor_id)
@@ -330,7 +332,7 @@ def discover():
             register_report(rpt)
         elif issubclass(rpt,VirtualTable) and rpt is not VirtualTable:
             register_report(rpt)
-        if issubclass(rpt,actors.Frame) and rpt is not actors.Frame:
+        if issubclass(rpt,frames.Frame) and rpt is not frames.Frame:
             register_frame(rpt)
             
     logger.debug("Instantiate model tables...")
@@ -342,6 +344,8 @@ def discover():
         if rpt is None:
             rpt = table_factory(model)
             register_report(rpt)
+            rpt.class_init()
+            rpt.collect_actions()
             model._lino_default_table = rpt
             
             
@@ -521,6 +525,26 @@ class Table(AbstractTable):
         return wildcard_data_elems(self.model)
           
     @classmethod
+    def get_shared_actions(self):
+        a = []
+        if self.model is not None:
+            if self.detail_action:
+                if self.editable:
+                    a.append(actions.UPDATE)
+                    if not self.hide_top_toolbar:
+                        #~ self.insert_action = actions.InsertRow()
+                        #~ a.append(actions.InsertRow())
+                        #~ self.add_action(actions.DuplicateRow(self))
+                        #~ self.add_action(actions.SubmitInsert())
+                        a.append(actions.CREATE)
+              
+            if self.editable and not self.hide_top_toolbar:
+                #~ self.add_action(actions.DeleteSelected())
+                a.append(actions.DELETE)
+        return a
+
+                    
+    @classmethod
     def class_init(self):
         super(Table,self).class_init()
         #~ if self.model is None:
@@ -540,7 +564,18 @@ class Table(AbstractTable):
             
         
         if self.model is not None:
-          
+            ma = getattr(self.model,'_lino_model_actions',None)
+            if ma is not None:
+                #~ print 20120524, self, ma
+                for k,v in ma.items():
+                    #~ if hasattr(self,k):
+                        #~ print "20120524 already defined: %s.%s" % (self,k)
+                    v = copy.deepcopy(v)
+                    v.name = None
+                    setattr(self,k,v)
+                    #~ self.define_action(k,v)
+                    
+                    
             if self.label is None:
                 #~ self.label = capfirst(self.model._meta.verbose_name_plural)
                 self.label = self.init_label()
@@ -626,29 +661,6 @@ class Table(AbstractTable):
         """
         return self.model._lino_ddh.disable_delete(obj,request)
         
-    @classmethod
-    def setup_actions(self):
-        super(Table,self).setup_actions()
-        if self.model is not None:
-            #~ if len(self.detail_layouts) > 0:
-            #~ if self.model._lino_detail:
-            #~ if self.detail_layout:
-            if self.detail_action:
-            #~ if self._lino_detail:
-                #~ self.detail_action = actions.ShowDetailAction(self)
-                #~ self.add_action(self.detail_action)
-                if self.editable:
-                    #~ self.add_action(self.submit_action)
-                    self.add_action(actions.UPDATE)
-                    if not self.hide_top_toolbar:
-                        self.add_action(actions.InsertRow(self))
-                        #~ self.add_action(actions.DuplicateRow(self))
-                        #~ self.add_action(actions.SubmitInsert())
-                        self.add_action(actions.CREATE)
-              
-            if self.editable and not self.hide_top_toolbar:
-                #~ self.add_action(actions.DeleteSelected())
-                self.add_action(actions.DELETE)
 
 
     @classmethod
@@ -816,8 +828,9 @@ class Table(AbstractTable):
         :attr:`AbstractTable.slave_grid_format` is 'summary'.
         """
         def meth(master,request):
-            rr = TableRequest(ui,self,None,self.default_action,master_instance=master)
-            s = summary(ui,rr.data_iterator,row_separator)
+            #~ rr = TableRequest(ui,self,None,self.default_action,master_instance=master)
+            ar = self.request(ui,None,master_instance=master)
+            s = summary(ui,ar.data_iterator,row_separator)
             return s
         return meth
         

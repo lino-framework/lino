@@ -1,0 +1,14 @@
+20120524
+========
+
+Ich hatte gestern "aus Versehen" begonnen, 
+am neuen Feature "Workflows" zu arbeiten. 
+Das (hoffentlich) einzig Schwierige daran ist jetzt geschafft:
+dass man Aktionen einfacher definieren kann in Form 
+von Klassenmethoden mit dem Dekorator `@action`.
+Knapp 8 Stunden hat die Operation gedauert. 
+War etwas schwieriger als ich geahnt hatte.
+Lino ist jetzt wieder "auf den Beinen, aber noch etwas geschwächt":
+die meisten Sachen funktionieren wieder, 
+aber wahrscheinlich sind noch ein paar Bugs auszubügeln. 
+:checkin:``.

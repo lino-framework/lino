@@ -445,10 +445,10 @@ class TableHandle(base.Handle):
     def get_slaves(self):
         return [ sl.get_handle(self.ui) for sl in self.actor._slaves ]
             
-    def get_action(self,name):
-        return self.actor.get_action(name)
-    def get_actions(self,*args,**kw):
-        return self.actor.get_actions(*args,**kw)
+    #~ def get_action(self,name):
+        #~ return self.actor.get_action(name)
+    #~ def get_actions(self,*args,**kw):
+        #~ return self.actor.get_actions(*args,**kw)
         
     def update_detail(self,tab,desc):
         #~ raise Exception("Not yet fully converted to Lino 1.3.0")
@@ -646,6 +646,8 @@ class AbstractTable(actors.Actor):
     
     """
     
+    default_action = actions.GridEdit()
+    
     
     
     def __init__(self,*args,**kw):
@@ -661,14 +663,21 @@ class AbstractTable(actors.Actor):
     def parse_req(self,request,rqdata,**kw):
         return kw
     
+        
     @classmethod
-    def do_setup(self):
-      
+    def class_init(self):
         if self.get_data_rows is not None:
             self.show_detail_navigator = False
             
         if self.editable is None:
             self.editable = (self.get_data_rows is None)
+        super(AbstractTable,self).class_init()
+      
+      
+        
+      
+    @classmethod
+    def do_setup(self):
       
         self.setup_columns()
         
@@ -683,11 +692,11 @@ class AbstractTable(actors.Actor):
             
         load_config_files(loader,'%s.*gc' % self)
         
-        self.default_action = actions.GridEdit(self) # 20120220 
+        #~ self.default_action = self.add_action(actions.GridEdit())
         #~ self.setup_detail_layouts()
         #~ self.set_actions([])
-        self.add_action(self.default_action)
-        self.setup_actions()
+        #~ self.add_action(self.default_action)
+        #~ self.setup_actions()
         #~ if self.default_action.actor != self:
             #~ raise Exception("20120103 %r.do_setup() : default.action.actor is %r" % (
               #~ self,self.default_action.actor))

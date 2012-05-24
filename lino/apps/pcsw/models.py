@@ -446,6 +446,8 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
       verbose_name=_("Contact person at local job office"),
       related_name='persons_job_office')
       
+    print_eid_content = DirectPrintAction(_("eID sheet"),'eid-content')
+    
     @chooser()
     def job_office_contact_choices(cls):
         sc = get_site_config()
@@ -456,16 +458,16 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
             #~ return links.Link.objects.filter(a=sc.job_office)
         return []
         
-
-    @classmethod
-    def setup_report(model,table):
-        u"""
-        rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'persons/auskunftsblatt.odt'))
-        Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig wird.
-        """
-        table.add_action(DirectPrintAction(table,'eid',_("eID sheet"),'eid-content'))
-        #~ table.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
-        #~ table.set_detail(PersonDetail(table))
+    #~ @classmethod
+    #~ def setup_report(model,table):
+        #~ u"""
+        #~ rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'persons/auskunftsblatt.odt'))
+        #~ Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig wird.
+        #~ """
+        # table.add_action(DirectPrintAction(table,'eid',_("eID sheet"),'eid-content'))
+        #~ table.add_action(DirectPrintAction('eid',_("eID sheet"),'eid-content'))
+        # table.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
+        # table.set_detail(PersonDetail(table))
         
     def __unicode__(self):
         #~ return u"%s (%s)" % (self.get_full_name(salutation=False),self.pk)
@@ -1653,10 +1655,13 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
         
     #~ def get_print_language(self,pm):
         #~ return DEFAULT_LANGUAGE
-        
-    @classmethod
-    def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction(rpt,'suchliste',_("Print"),'suchliste'))
+
+    print_suchliste = DirectPrintAction(_("Print"),'suchliste')
+    
+    #~ @classmethod
+    #~ def setup_report(model,rpt):
+        # rpt.add_action(DirectPrintAction(rpt,'suchliste',_("Print"),'suchliste'))
+        #~ rpt.add_action(DirectPrintAction('suchliste',_("Print"),'suchliste'))
         
 class PersonSearches(dd.Table):
     required_user_groups = ['integ']
