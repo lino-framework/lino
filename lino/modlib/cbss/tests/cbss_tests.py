@@ -268,24 +268,23 @@ AuthorCodeList : CBSS"""
       '68060105329')
     
     """
-    Third live test. IPR for NISS 70100853190
+    Third IPR live test. NISS and birth_date are not enough.
     """
     req = cbss.IdentifyPersonRequest(national_id="70100853190",birth_date=IncompleteDate(1970,10,8))
-    req.full_clean()
     req.execute_request()
     
-    print '-------------------- 20120524'
-    print req.response_xml
-    print '-------------------- 20120524'
+    expected = """\
+CBSS error 10000:
+Severity : ERROR
+ReasonCode : 31000007
+Diagnostic : The expected mandatory argument is not provided or empty.
+AuthorCodeList : CBSS"""
+    self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
     ar = cbss.IdentifyPersonResult.request(master_instance=req)
-    self.assertEqual(1,ar.get_total_count())
-    row = ar.data_iterator[0]
-    self.assertEqual(
-      cbss.IdentifyPersonResult.first_name.value_from_object(row),
-      'TODO')
-
+    self.assertEqual(0,ar.get_total_count())
     
+
 
 def test02(self):
     """
