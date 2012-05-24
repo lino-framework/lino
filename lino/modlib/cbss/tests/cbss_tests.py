@@ -84,19 +84,19 @@ def test01(self):
     
     # save site settings
     #~ saved_cbss_environment = settings.LINO.cbss_environment
-    saved_cbss_user_params = settings.LINO.cbss_user_params
+    #~ saved_cbss_user_params = settings.LINO.cbss_user_params
     saved_cbss_live_tests = settings.LINO.cbss_live_tests
     
     """
     set fictive user params and run some offline tests
     """
     
-    settings.LINO.cbss_user_params = dict(
-          UserID='12345678901', 
-          Email='123@example.be', 
-          OrgUnit='123', 
-          MatrixID=12, 
-          MatrixSubID=3)
+    #~ settings.LINO.cbss_user_params = dict(
+          #~ UserID='12345678901', 
+          #~ Email='123@example.be', 
+          #~ OrgUnit='123', 
+          #~ MatrixID=12, 
+          #~ MatrixSubID=3)
     
 
     # create an IPR
@@ -151,7 +151,6 @@ def test01(self):
     
     req.validate_request()
     
-    #~ settings.LINO.cbss_environment = ''
     req.execute_request(environment='')
     expected = """\
 Not actually sending because environment is empty. Request would be:
@@ -165,59 +164,57 @@ Not actually sending because environment is empty. Request would be:
       </ipr:PhoneticCriteria>
    </ipr:SearchCriteria>
 </ipr:IdentifyPersonRequest>"""
-    self.assertEqual(req.response_xml,expected)
-    
-    
-    
-    """
-    Now in test environment but still offline (set `cbss_live_tests` to False)
-    """
-    
-    settings.LINO.cbss_live_tests = False
-    #~ settings.LINO.cbss_environment = 'test'
-    now = datetime.datetime(2012,5,9,18,34,50)
-    req.execute_request(now=now,environment='test')
-    #~ print req.response_xml
-
-    expected = """\
-NOT sending because `cbss_live_tests` is False:
-<ssdn:SSDNRequest xmlns:ssdn="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
-   <ssdn:RequestContext>
-      <ssdn:AuthorizedUser>
-         <ssdn:UserID>12345678901</ssdn:UserID>
-         <ssdn:Email>123@example.be</ssdn:Email>
-         <ssdn:OrgUnit>123</ssdn:OrgUnit>
-         <ssdn:MatrixID>12</ssdn:MatrixID>
-         <ssdn:MatrixSubID>3</ssdn:MatrixSubID>
-      </ssdn:AuthorizedUser>
-      <ssdn:Message>
-         <ssdn:Reference>IdentifyPersonRequest # 1</ssdn:Reference>
-         <ssdn:TimeRequest>20120509T183450</ssdn:TimeRequest>
-      </ssdn:Message>
-   </ssdn:RequestContext>
-   <ssdn:ServiceRequest>
-      <ssdn:ServiceId>OCMWCPASIdentifyPerson</ssdn:ServiceId>
-      <ssdn:Version>20050930</ssdn:Version>
-      <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
-         <ipr:SearchCriteria>
-            <ipr:PhoneticCriteria>
-               <ipr:LastName>MUSTERMANN</ipr:LastName>
-               <ipr:FirstName></ipr:FirstName>
-               <ipr:MiddleName></ipr:MiddleName>
-               <ipr:BirthDate>1938-06-01</ipr:BirthDate>
-            </ipr:PhoneticCriteria>
-         </ipr:SearchCriteria>
-      </ipr:IdentifyPersonRequest>
-   </ssdn:ServiceRequest>
-</ssdn:SSDNRequest>"""
     self.assertEquivalent(expected,req.response_xml)
+    
+    
+    
+    #~ """
+    #~ Now in test environment but still offline (set `cbss_live_tests` to False)
+    #~ """
+    
+    #~ settings.LINO.cbss_live_tests = False
+    #~ now = datetime.datetime(2012,5,9,18,34,50)
+    #~ req.execute_request(now=now,environment='test')
+
+    #~ expected = """\
+#~ NOT sending because `cbss_live_tests` is False:
+#~ <ssdn:SSDNRequest xmlns:ssdn="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
+   #~ <ssdn:RequestContext>
+      #~ <ssdn:AuthorizedUser>
+         #~ <ssdn:UserID>12345678901</ssdn:UserID>
+         #~ <ssdn:Email>123@example.be</ssdn:Email>
+         #~ <ssdn:OrgUnit>123</ssdn:OrgUnit>
+         #~ <ssdn:MatrixID>12</ssdn:MatrixID>
+         #~ <ssdn:MatrixSubID>3</ssdn:MatrixSubID>
+      #~ </ssdn:AuthorizedUser>
+      #~ <ssdn:Message>
+         #~ <ssdn:Reference>IdentifyPersonRequest # 1</ssdn:Reference>
+         #~ <ssdn:TimeRequest>20120509T183450</ssdn:TimeRequest>
+      #~ </ssdn:Message>
+   #~ </ssdn:RequestContext>
+   #~ <ssdn:ServiceRequest>
+      #~ <ssdn:ServiceId>OCMWCPASIdentifyPerson</ssdn:ServiceId>
+      #~ <ssdn:Version>20050930</ssdn:Version>
+      #~ <ipr:IdentifyPersonRequest xmlns:ipr="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson">
+         #~ <ipr:SearchCriteria>
+            #~ <ipr:PhoneticCriteria>
+               #~ <ipr:LastName>MUSTERMANN</ipr:LastName>
+               #~ <ipr:FirstName></ipr:FirstName>
+               #~ <ipr:MiddleName></ipr:MiddleName>
+               #~ <ipr:BirthDate>1938-06-01</ipr:BirthDate>
+            #~ </ipr:PhoneticCriteria>
+         #~ </ipr:SearchCriteria>
+      #~ </ipr:IdentifyPersonRequest>
+   #~ </ssdn:ServiceRequest>
+#~ </ssdn:SSDNRequest>"""
+    #~ self.assertEquivalent(expected,req.response_xml)
     
     
     """
     Restore real user params.
     """
     
-    settings.LINO.cbss_user_params = saved_cbss_user_params
+    #~ settings.LINO.cbss_user_params = saved_cbss_user_params
     #~ settings.LINO.cbss_environment = saved_cbss_environment 
     settings.LINO.cbss_live_tests = saved_cbss_live_tests
     
@@ -291,13 +288,14 @@ def test02(self):
     Execute a RetrieveTIGroupsRequest.
     """
     #~ saved_cbss_environment = settings.LINO.cbss_environment
+    
 
     """
     create an RTI
     """
     
-    RetrieveTIGroupsRequest = resolve_model('cbss.RetrieveTIGroupsRequest')
-    req = RetrieveTIGroupsRequest(national_id='12345678901',language='fr')
+    #~ RetrieveTIGroupsRequest = resolve_model('cbss.RetrieveTIGroupsRequest')
+    req = cbss.RetrieveTIGroupsRequest(national_id='12345678901',language='fr')
     
     """
     Try it without environment see the XML.
@@ -323,61 +321,60 @@ Not actually sending because environment is empty. Request would be:
     if settings.LINO.cbss_environment != 'test':
         return
         
-    """
-    Skip live tests if `cbss_live_tests` is False
-    """
-    if not settings.LINO.cbss_live_tests:
-        return
+    #~ """
+    #~ Skip live tests if `cbss_live_tests` is False
+    #~ """
+    #~ if not settings.LINO.cbss_live_tests:
+        #~ return
         
     """
     run the first request for real
     """
     reply = req.execute_request()
-    if req.response_xml == TIMEOUT_RESPONSE:
-        self.fail(TIMEOUT_MESSAGE)
-    #~ print 20120523, reply
-    expected = """\
+    if settings.LINO.cbss_live_tests:
+        if req.response_xml == TIMEOUT_RESPONSE:
+            self.fail(TIMEOUT_MESSAGE)
+        #~ print 20120523, reply
+        expected = """\
 CBSS error MSG00008:
 value : NO_RESULT
 code : MSG00008
 description : A validation error occurred.
-- ssin = 12345678901
-"""
-    #~ logger.info(req.response_xml)
-    self.assertEquivalent(expected,req.response_xml,report_plain=True)
+- ssin = 12345678901"""
+        #~ logger.info(req.response_xml)
+        self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
     """
     second request with a valid SSIN but which is not not integrated.
     """
-    req = RetrieveTIGroupsRequest(national_id='70100853190',
+    req = cbss.RetrieveTIGroupsRequest(national_id='70100853190',
         language='fr',history=False)
     reply = req.execute_request()
-    expected = """\
+    if settings.LINO.cbss_live_tests:
+        expected = """\
 CBSS error MSG00012:
 value : NO_RESULT
 code : MSG00012
 description : The given SSIN is not integrated correctly.
-- Register = Secondary matrix    
-"""
-    #~ print reply
-    self.assertEquivalent(expected,req.response_xml,report_plain=True)
+- Register = Secondary matrix"""
+        #~ print reply
+        self.assertEquivalent(expected,req.response_xml,report_plain=True)
     
-
-    ManageAccessRequest = resolve_model('cbss.ManageAccessRequest')
+    """
+    """
     today = datetime.date.today()
     kw = dict()
     kw.update(purpose=1) # dossier in onderzoek voor een maximale periode van twee maanden
     kw.update(national_id='68060105329') 
     kw.update(start_date=today) 
     kw.update(end_date=today) 
-    kw.update(action=cbss.ManageAction.register) 
-    kw.update(query_register=cbss.QueryRegister.seconday) 
+    kw.update(action=cbss.ManageAction.REGISTER) 
+    kw.update(query_register=cbss.QueryRegister.SECONDARY) 
     #~ kw.update(id_card_no=) 
-    req = ManageAccessRequest(**kw)
-    
+    req = cbss.ManageAccessRequest(**kw)
     reply = req.execute_request()
-    expected = """\
-TODO
-"""
-    #~ print reply
-    self.assertEquivalent(expected,req.response_xml,report_plain=True)
+    if settings.LINO.cbss_live_tests:
+        expected = """\
+TODO"""
+        #~ print reply
+        self.assertEquivalent(expected,req.response_xml,report_plain=True)

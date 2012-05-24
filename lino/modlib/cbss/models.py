@@ -144,7 +144,7 @@ class SendAction(dd.RowAction):
         kw.update(refresh=True)
         return rr.ui.success_response(**kw)
 
-#~ NSCOMMON = ('common','http://www.ksz-bcss.fgov.be/XSD/SSDN/Common')
+NSCOMMON = ('common','http://www.ksz-bcss.fgov.be/XSD/SSDN/Common')
 NSSSDN = ('ssdn','http://www.ksz-bcss.fgov.be/XSD/SSDN/Service')
 NSIPR = ('ipr',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson")
 NSMAR = ('mar',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess")
@@ -232,6 +232,10 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.sent = now
         self.save()
         
+        if environment and not settings.LINO.cbss_live_tests:
+            self.validate_request()
+            return
+        
         retval = None
         try:
             retval = self.execute_request_(now,simulate_response)
@@ -246,6 +250,8 @@ If the request failed with a local exception, then it contains a traceback.""")
         return retval
         
             
+    def validate_request(self):
+        pass
 
     def get_wsdl_uri(self):
         url = os.path.join(settings.MEDIA_ROOT,*self.wsdl_parts) 
@@ -682,14 +688,13 @@ when information about sectors is required.""")
     def build_request(self):
         """Construct and return the root element of the (inner) service request."""
         national_id = self.get_ssin()
-        gender = gender2cbss(self.gender)
         main = E('mar:ManageAccessRequest',ns=NSMAR)
         main.append(E('mar:SSIN').setText(national_id))
         main.append(E('mar:Purpose').setText(str(self.purpose)))
         period = E('mar:Period')
         main.append(period)
-        period.append(E('mar:StartDate').setText(str(self.start_date)))
-        period.append(E('mar:EndDate').setText(str(self.end_date)))
+        period.append(E('common:StartDate',ns=NSCOMMON).setText(str(self.start_date)))
+        period.append(E('common:EndDate',ns=NSCOMMON).setText(str(self.end_date)))
         main.append(E('mar:Action').setText(self.action.name))
         if self.sector:
             main.append(E('mar:Sector').setText(str(self.sector)))
