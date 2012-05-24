@@ -935,14 +935,14 @@ class IdentifyPersonResult(dd.VirtualTable):
     def get_data_rows(self,ar):
         ipr = ar.master_instance
         if ipr is None: 
-            return
+            return []
         #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
         if not ipr.status in (RequestStatus.ok,RequestStatus.warnings):
-            return
+            return []
         service_reply = ipr.get_service_reply()
         results = service_reply.childAtPath('/SearchResults').children
         if results is None:
-            return
+            return []
         return results
         #~ if service_reply is not None:
             #~ results = service_reply.childAtPath('/SearchResults')
