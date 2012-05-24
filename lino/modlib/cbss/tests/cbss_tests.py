@@ -388,9 +388,28 @@ AuthorCodeList : CBSS"""
     kw.update(birth_date=IncompleteDate(1968,6,1)) 
     req = cbss.ManageAccessRequest(**kw)
     reply = req.execute_request()
-    if settings.LINO.cbss_live_tests:
+    if False and settings.LINO.cbss_live_tests:
         expected = """\
-todo"""
+<ns3:ManageAccessReply xmlns:ns3="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess">
+   <ns3:OriginalRequest>
+      <ns3:SSIN>68060105329</ns3:SSIN>
+      <ns3:Purpose>1</ns3:Purpose>
+      <ns3:Period>
+         <ns4:StartDate xmlns:ns4="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">[...]</ns4:StartDate>
+         <ns5:EndDate xmlns:ns5="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">[...]</ns5:EndDate>
+      </ns3:Period>
+      <ns3:Action>REGISTER</ns3:Action>
+   </ns3:OriginalRequest>
+   <ns3:Registrations>
+      <ns3:Purpose>1</ns3:Purpose>
+      <ns3:Period>
+         <ns6:StartDate xmlns:ns6="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">[...]</ns6:StartDate>
+         <ns7:EndDate xmlns:ns7="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">[...]</ns7:EndDate>
+      </ns3:Period>
+      <ns3:OrgUnit>[...]</ns3:OrgUnit>
+      <ns3:Register>SECONDARY</ns3:Register>
+   </ns3:Registrations>
+</ns3:ManageAccessReply>"""
         #~ print reply
         self.assertEquivalent(expected,req.response_xml,report_plain=True)
 
