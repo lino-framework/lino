@@ -45,6 +45,7 @@ from lino.utils import babel
 
 from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
+from lino.utils.choicelists import UserLevel
 #~ from lino.modlib.contacts import models as contacts
 from lino.tools import makedirs_if_missing
 
@@ -173,7 +174,7 @@ Read-only.""")
     
     status = RequestStatus.field(default=RequestStatus.new,editable=False)
     environment = models.CharField(max_length=4,editable=False,verbose_name=_("T/A/B"))
-    ticket  = models.CharField(max_length=20,editable=False,verbose_name=_("Ticket"))
+    ticket  = models.CharField(max_length=36,editable=False,verbose_name=_("Ticket"))
     #~ environment = Environment.field(blank=True,null=True)
     
     # will probably go away soon
@@ -231,10 +232,10 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.status = RequestStatus.pending
         self.sent = now
         self.save()
-        
-        if environment and not settings.LINO.cbss_live_tests:
-            self.validate_request()
-            return
+        if not settings.LINO.cbss_live_tests:
+            if simulate_response is None and environment:
+                self.validate_request()
+                return
         
         retval = None
         try:
@@ -274,7 +275,9 @@ Not actually sending because environment is empty. Request would be:
     @dd.virtualfield(dd.HtmlBox(_("Result")))
     def result(self,ar):
         return self.response_xml
-
+        
+dd.update_field(CBSSRequest,'project',blank=False,null=False)
+dd.update_field(CBSSRequest,'user',blank=False,null=False)
 
 class CBSSRequestDetail(dd.DetailLayout):
     main = 'request response'
@@ -751,12 +754,15 @@ class ManageAccessRequests(dd.Table):
     #~ window_size = (500,400)
     model = ManageAccessRequest
     detail_layout = ManageAccessRequestDetail()
+    required_user_groups = ['cbss']
     
     
 class ManageAccessRequestsByPerson(ManageAccessRequests):
     master_key = 'project'
 
 
+class MyManageAccessRequests(ManageAccessRequests,mixins.ByUser):
+    pass
 
 
 class IdentifyPersonRequest(SSDNRequest,SSIN):
@@ -943,6 +949,7 @@ class IdentifyPersonRequestDetail(CBSSRequestDetail):
 
 class IdentifyPersonRequests(dd.Table):
     #~ window_size = (500,400)
+    required_user_groups = ['cbss']
     model = IdentifyPersonRequest
     detail_layout = IdentifyPersonRequestDetail()
     #~ detail_template = """
@@ -1175,6 +1182,7 @@ class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
 class RetrieveTIGroupsRequests(dd.Table):
     model = RetrieveTIGroupsRequest
     detail_layout = RetrieveTIGroupsRequestDetail()
+    required_user_groups = ['cbss']
         
     #~ @dd.virtualfield(dd.HtmlBox())
     #~ def result(self,row,ar):
@@ -1182,6 +1190,10 @@ class RetrieveTIGroupsRequests(dd.Table):
         
 class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     master_key = 'project'
+    
+class MyRetrieveTIGroupsRequests(RetrieveTIGroupsRequests,mixins.ByUser):
+    pass
+
     
 #~ class RetrieveTIGroupsResult(dd.EmptyTable):
     #~ master = RetrieveTIGroupsRequest
@@ -1213,6 +1225,12 @@ dd.inject_field(pcsw.Person,'cbss_retrieve_ti_groups',
     dd.VirtualField(dd.DisplayField(_("Retrieve TI Groups")),fn))
     
     
+
+
+MODULE_NAME = _("CBSS")
+
+settings.LINO.add_user_field('cbss_level',UserLevel.field(MODULE_NAME))
+
 
 
 def setup_site_cache(self,force):
@@ -1260,18 +1278,26 @@ def site_setup(self):
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
     cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
     cbss.IdentifyRequestsByPerson
-    """,_("CBSS"))
+    """,MODULE_NAME,required_user_groups=['cbss'])
     
     
 def setup_main_menu(site,ui,user,m): pass
 def setup_master_menu(site,ui,user,m): pass
+  
 def setup_my_menu(site,ui,user,m): 
+    if user.cbss_level < UserLevel.user: 
+        return
+    m  = m.add_menu("cbss",MODULE_NAME)
     m.add_action(MyIdentifyPersonRequests)
+    m.add_action(MyManageAccessRequests)
+    m.add_action(MyRetrieveTIGroupsRequests)
     
 def setup_config_menu(site,ui,user,m): pass
   
 def setup_explorer_menu(site,ui,user,m):
-    m  = m.add_menu("cbss",_("CBSS"))
+    if user.cbss_level < UserLevel.manager: 
+        return
+    m  = m.add_menu("cbss",MODULE_NAME)
     m.add_action(IdentifyPersonRequests)
     m.add_action(ManageAccessRequests)
     m.add_action(RetrieveTIGroupsRequests)

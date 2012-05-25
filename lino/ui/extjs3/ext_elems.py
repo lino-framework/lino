@@ -295,10 +295,17 @@ class LayoutElement(VisibleComponent):
         #logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
         #self.parent = parent
         #~ name = layout_handle.layout._actor_name + '_' + name
+        assert isinstance(layout_handle,layouts.LayoutHandle)
         VisibleComponent.__init__(self,name,**kw)
+        opts  = layout_handle.layout._element_options.get(name,{})
+        for k,v in opts.items():
+            if not hasattr(self,k):
+                raise Exception("%s has no attribute %s" % (self,k))
+            setattr(self,k,v)
+        if opts:
+            print "20120525 apply _element_options", opts, 'to', self.__class__, self
         self.layout_handle = layout_handle
         #~ if layout_handle is not None:
-        assert isinstance(layout_handle,layouts.LayoutHandle)
         #~ layout_handle.setup_element(self)
 
     #~ def submit_fields(self):
@@ -1078,7 +1085,10 @@ class Container(LayoutElement):
 
     def ext_options(self,**kw):
         kw = LayoutElement.ext_options(self,**kw)
-        kw.update(items=self.elements)
+        items = [e for e in self.elements if e.get_view_permission()]
+        if items != self.elements:
+            print "20120525", self.layout_handle, self, items
+        kw.update(items=items)
         return kw
 
 class Wrapper(VisibleComponent):
@@ -1102,6 +1112,7 @@ class Wrapper(VisibleComponent):
             
     def walk(self):
         for e in self.wrapped.walk():
+            #~ if e.get_view_permission():
             yield e
         yield self
 
@@ -1366,8 +1377,12 @@ class Panel(Container):
         """
         A Panel which doesn't contin a single visible element gets also hidden.
         """
+        # if the Panel itself is invisble, no need to loop through the children
+        if not super(Panel,self).get_view_permission(): 
+            return False
         for e in self.elements:
             if e.get_view_permission():
+                # one visble child is enough, no need to continue loop 
                 return True
         return False
         
@@ -1476,7 +1491,7 @@ class GridElement(Container):
             
             
     def get_view_permission(self):
-        return self.actor.get_view_permission(jsgen._for_user)
+        return self.actor.get_view_permission()
         #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
         
     def ext_options(self,**kw):

@@ -293,6 +293,54 @@ DECLARE_INLINE = 0
 DECLARE_VAR = 1
 DECLARE_THIS = 2
 
+
+class ViewPermission(object):
+  
+    required_user_level = None
+    """
+    The minimum :class:`lino.utils.choicelists.UserLevel` 
+    required to get permission to view this Actor.
+    The default value `None` means that no special UserLevel is required.
+    See also :attr:`required_user_groups`
+    """
+    
+    required_user_groups = None
+    """
+    List of strings naming the user groups for which membership is required 
+    to get permission to view this Actor.
+    The default value `None` means
+    """
+        
+    @classmethod
+    def get_view_permission(self):
+        """
+        Return `True` if the specified `user` has permission 
+        to see this Actor.
+        """
+        user = _for_user
+        if self.required_user_level is None:
+            if self.required_user_groups is None:
+                return True
+            for g in self.required_user_groups:
+                if getattr(user,g+'_level'):
+                #~ if getattr(user,g+'_level',None) is not None:
+                    return True
+            return False
+        else:
+            if user.level is None or user.level < self.required_user_level:
+                return False
+            if self.required_user_groups is None:
+                return True
+            for g in self.required_user_groups:
+                level = getattr(user,g+'_level')
+                #~ if level is not None and level >= self.required_user_level:
+                if level >= self.required_user_level:
+                    return True
+        return False
+        
+
+
+
 class Value(object):
   
     declare_type = DECLARE_INLINE
@@ -300,9 +348,6 @@ class Value(object):
     
     def __init__(self,value):
         self.value = value
-        
-    def get_view_permission(self):
-        return True
         
     def js_declare(self):
         return []
@@ -389,7 +434,7 @@ class Variable(Value):
     def js_value(self):
         yield self.value_template % py2js(self.value)
         
-class Component(Variable): 
+class Component(Variable,ViewPermission): 
     
     def __init__(self,name=None,**options):
         Variable.__init__(self,name,options)

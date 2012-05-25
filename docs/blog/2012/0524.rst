@@ -4,7 +4,6 @@
 Defining row actions
 --------------------
 
-
 Ich hatte gestern "aus Versehen" begonnen, 
 am neuen Feature "Workflows" zu arbeiten. 
 
@@ -70,15 +69,15 @@ Jetzt schreibt man einfach::
 CBSS connection
 ---------------
 
-Worked 3 more hours on the CBSS test suite.
-I almost got a first real ManageAccessRequest done, but then::
+Worked 4 more hours on the CBSS test suite.
+Got a first real ManageAccessRequest done.
 
-  CBSS error 10000:
-  Severity : ERROR
-  ReasonCode : 31000003
-  Diagnostic : The version number is unknown for the provided 
-    service ID in this message format. Please check your 
-    version number, service ID and message format.
-  AuthorCodeList : CBSS
-
+TODO:
+When a person is already integrated and i issue another request 
+to integrate her for the same period, then he answers as for a 
+listing action instead of saying "The expected mandatory argument 
+is not provided or empty."
+In general it's tricky to write a test suite for a system about 
+which i know so little and which i'm just didscovering. 
+Learning by doing!
 

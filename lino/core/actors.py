@@ -29,6 +29,7 @@ from lino.core import actions
 from lino.core import layouts
 from lino.tools import resolve_model
 from lino.utils import curry, AttrDict
+from lino.utils.jsgen import ViewPermission
 
 actor_classes = []
 actors_list = None
@@ -166,7 +167,8 @@ class ActorMetaClass(type):
         return self.actor_id 
         
   
-class Actor(Handled):
+  
+class Actor(Handled,ViewPermission):
     """
     Base class for Tables and Frames. 
     An alternative name for "Actor" is "Resource".
@@ -388,47 +390,6 @@ class Actor(Handled):
         #~ return "%s (%s)" % (self.__class__,','.join([
             #~ a.name for a in self._actions_list]))
             
-    required_user_level = None
-    """
-    The minimum :class:`lino.utils.choicelists.UserLevel` 
-    required to get permission to view this Actor.
-    The default value `None` means that no special UserLevel is required.
-    See also :attr:`required_user_groups`
-    """
-    
-    required_user_groups = None
-    """
-    List of strings naming the user groups for which membership is required 
-    to get permission to view this Actor.
-    The default value `None` means
-    """
-        
-    @classmethod
-    def get_view_permission(self,user):
-        """
-        Return `True` if the specified `user` has permission 
-        to see this Actor.
-        """
-        if self.required_user_level is None:
-            if self.required_user_groups is None:
-                return True
-            for g in self.required_user_groups:
-                if getattr(user,g+'_level'):
-                #~ if getattr(user,g+'_level',None) is not None:
-                    return True
-            return False
-        else:
-            if user.level is None or user.level < self.required_user_level:
-                return False
-            if self.required_user_groups is None:
-                return True
-            for g in self.required_user_groups:
-                level = getattr(user,g+'_level')
-                #~ if level is not None and level >= self.required_user_level:
-                if level >= self.required_user_level:
-                    return True
-        return False
-        
     @classmethod
     def get_permission(self,action,user,obj):
         """
@@ -478,13 +439,13 @@ class Actor(Handled):
                 setattr(self.detail_layout,k,v)
     @classmethod
     #~ def add_detail_tab(self,tpl,label=None):
-    def add_detail_tab(self,name,tpl=None,label=None):
+    def add_detail_tab(self,name,tpl=None,label=None,**kw):
+        if hasattr(self.detail_layout,'_extjs3_handle'):
+            raise Exception("Cannot set_detail after UI has been set up.")
         if '\n' in name:
            raise Exception("name may not contain any newline") 
         if ' ' in name:
            raise Exception("name may not contain any whitespace") 
-        if hasattr(self.detail_layout,'_extjs3_handle'):
-            raise Exception("Cannot set_detail after UI has been set up.")
         if '\n' in self.detail_layout.main:
             if hasattr(self.detail_layout,'general'):
                 raise NotImplementedError()
@@ -499,6 +460,10 @@ class Actor(Handled):
             setattr(self.detail_layout,name,tpl)
         if label is not None:
             self.detail_layout._labels[name] = label
+        self.detail_layout._element_options[name] = kw
+        if kw:
+            print 20120525, self, self.detail_layout._element_options
+            
 
     @classmethod
     def add_virtual_field(cls,name,vf):

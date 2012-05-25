@@ -64,7 +64,7 @@ from lino.utils.tables import VirtualTable
 #~ from lino.utils.tables import computed
 #~ from lino.utils.tables import ComputedColumn
 
-from lino.tools import resolve_model, get_app, resolve_field, get_field
+from lino.tools import resolve_model, get_app, resolve_app, resolve_field, get_field
 
 #~ from lino.core.table import fields_list, inject_field
 from lino.core.table import has_fk

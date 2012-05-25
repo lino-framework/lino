@@ -329,6 +329,7 @@ class BaseLayout(object):
         self._labels = dict()
         self._table = table
         self.hidden_elements = hidden_elements 
+        self._element_options = dict()
         if main is not None:
             self.main = main
         elif not hasattr(self,'main'):

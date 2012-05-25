@@ -751,11 +751,8 @@ class DistEntriesByBudget(LiabilitiesByBudget):
 #~ class AssetsSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
     #~ _account_type = AccountType.asset
 
-
-
     
 MODULE_NAME = _("Debts")
-
 
 settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
 

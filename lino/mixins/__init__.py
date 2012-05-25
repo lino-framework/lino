@@ -59,7 +59,7 @@ class AutoUser(models.Model):
             #~ )
         
     def on_create(self,req):
-        if self.user is None:
+        if self.user_id is None:
             u = req.get_user()
             if u is not None:
                 self.user = u

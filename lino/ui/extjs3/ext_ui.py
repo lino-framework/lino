@@ -1900,12 +1900,17 @@ tinymce.init({
                + table.generic_slaves.values() \
                + table.custom_tables \
                + table.frames_list ]
+               
+        """
+        Call Ext.namespace for *all* actors because e.g. outbox.Mails.FormPanel 
+        is defined in ns outbox.Mails which is not directly used by non-expert users.
+        """
         
-        actors_list = [a for a in actors_list if a.get_view_permission(user)]
-                 
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
             
+        actors_list = [a for a in actors_list if a.get_view_permission()]
+                 
         #~ logger.info('20120120 table.all_details:\n%s',
             #~ '\n'.join([str(d) for d in table.all_details]))
         

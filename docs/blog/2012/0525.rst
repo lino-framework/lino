@@ -1,0 +1,6 @@
+20120525
+========
+
+Weiter mit der CBSS Connection.
+
+- added user group "cbss".

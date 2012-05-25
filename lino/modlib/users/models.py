@@ -170,6 +170,7 @@ class User(contacts.Partner,contacts.PersonMixin):
 class UserDetail(dd.DetailLayout):
   
     box2 = """
+    username profile 
     level
     """
     #~ box2 = """
@@ -193,10 +194,13 @@ class UserDetail(dd.DetailLayout):
     gsm
     """
 
-    general = """
-    first_name last_name username profile language id
-    box3:40 box4:30 box2:20
+    box1 = """
+    first_name last_name language id
+    box3:40 box4:30 
     date_joined last_login 
+    """
+    general = """
+    box1:50 box2:20
     remarks 
     """
     

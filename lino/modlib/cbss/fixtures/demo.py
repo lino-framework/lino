@@ -17,8 +17,11 @@ Fills in a suite of fictive CBSS requests.
 """
 
 import os
-from lino.utils import IncompleteDate
-from lino.modlib.cbss import models as cbss
+from django.conf import settings
+from lino.utils import IncompleteDate, Cycler
+#~ from lino.modlib.cbss import models as cbss
+from lino import dd
+cbss = dd.resolve_app('cbss')
 
 DEMO_REQUESTS = [
     [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'demo_ipr_1.xml' ],
@@ -34,10 +37,15 @@ DEMO_REQUESTS = [
 ]
 
 def objects():
+    User = dd.resolve_model(settings.LINO.user_model)
+    Person = dd.resolve_model(settings.LINO.person_model)
+    PERSONS = Cycler(Person.objects.filter(coached_from__isnull=False).order_by('id'))
     for model,kw,fn in DEMO_REQUESTS:
+        kw.update(project=PERSONS.pop())
+        kw.update(user=User.objects.get(username='root'))
         obj = model(**kw)
         if fn:
             fn = os.path.join(os.path.dirname(__file__),fn)
             xml = open(fn).read()
-            obj.execute_request(validate=True,simulate_response=xml)
+            obj.execute_request(simulate_response=xml)
         yield obj

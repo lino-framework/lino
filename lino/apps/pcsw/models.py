@@ -981,7 +981,7 @@ class PersonDetail(dd.DetailLayout):
         lh.contracts.label = _("Contracts")
         lh.calendar.label = _("Calendar")
         lh.misc.label = _("Miscellaneous")
-        lh.cbss.label = _("CBSS")
+        #~ lh.cbss.label = _("CBSS")
         
       
         lh.box1.label = _("Address")
@@ -2066,38 +2066,14 @@ def site_setup(site):
     class UserDetail(users.UserDetail):
       
         box2 = """
+        username:20 profile:20
         level
         integ_level
-        newcomers_level 
-        newcomer_quota
+        cbss_level
+        newcomers_level newcomer_quota
         debts_level
         """
         
-        #~ box3 = """
-        #~ country region
-        #~ city zip_code:10
-        #~ street_prefix street:25 street_no street_box
-        #~ addr2:40
-        #~ """
-
-        #~ box4 = """
-        #~ email:40 
-        #~ url
-        #~ phone
-        #~ gsm
-        #~ """
-
-        #~ general = """
-        #~ first_name last_name username language id
-        #~ box3:40 box4:30 box2:20
-        #~ date_joined last_login 
-        #~ remarks 
-        #~ """
-        
-        #~ reminders = "cal.RemindersByUser"
-        #~ newcomers = "newcomers.CompetencesByUser"
-        
-        #~ main = "general reminders newcomers"
         main = "general cal.RemindersByUser newcomers.CompetencesByUser"
       
         def setup_handle(self,lh):
