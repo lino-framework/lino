@@ -1143,6 +1143,8 @@ def migrate_from_1_4_3(globals_dict):
     
     bcss_IdentifyPersonRequest = resolve_model("cbss.IdentifyPersonRequest")
     def create_bcss_identifypersonrequest(id, user_id, project_id, birth_date, first_name, last_name, title, gender, sent, status, request_xml, response_xml, national_id, middle_name, tolerance):
+        if not birth_date:
+            return None
         return bcss_IdentifyPersonRequest(id=id,user_id=user_id,project_id=project_id,
             birth_date=birth_date,first_name=first_name,last_name=last_name,
             gender=gender,sent=sent,status=status,request_xml=request_xml,response_xml=response_xml,national_id=national_id,middle_name=middle_name,tolerance=tolerance)    
