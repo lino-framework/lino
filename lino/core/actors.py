@@ -29,7 +29,11 @@ from lino.core import actions
 from lino.core import layouts
 from lino.tools import resolve_model
 from lino.utils import curry, AttrDict
-from lino.utils.jsgen import ViewPermission
+from lino.utils import ViewPermission,  get_view_permission
+from lino.utils import jsgen
+
+        
+
 
 actor_classes = []
 actors_list = None
@@ -320,6 +324,10 @@ class Actor(Handled,ViewPermission):
                     #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
         
     @classmethod
+    def get_view_permission(cls):
+        return get_view_permission(cls,jsgen._for_user)
+
+    @classmethod
     def get_shared_actions(self):
         return []
         
@@ -440,6 +448,9 @@ class Actor(Handled,ViewPermission):
     @classmethod
     #~ def add_detail_tab(self,tpl,label=None):
     def add_detail_tab(self,name,tpl=None,label=None,**kw):
+        """
+        Adds a tab to the Detail of this actor.
+        """
         if hasattr(self.detail_layout,'_extjs3_handle'):
             raise Exception("Cannot set_detail after UI has been set up.")
         if '\n' in name:

@@ -475,6 +475,54 @@ def moneyfmt(value, places=2, curr='', sep=',', dp='.',
     build(curr)
     build(neg if sign else pos)
     return ''.join(reversed(result))
+    
+    
+def get_view_permission(self,user):
+    """
+    Return `True` if the specified `user` has permission 
+    to see this Actor.
+    """
+    #~ if hasattr(self,'value') and self.value.get("title") == "CBSS":
+        #~ print "20120525 jsgen.get_view_permission()", self
+    #~ user = _for_user
+    if self.required_user_level is None:
+        if self.required_user_groups is None:
+            return True
+        for g in self.required_user_groups:
+            if getattr(user,g+'_level'):
+            #~ if getattr(user,g+'_level',None) is not None:
+                return True
+        return False
+    else:
+        if user.level is None or user.level < self.required_user_level:
+            return False
+        if self.required_user_groups is None:
+            return True
+        for g in self.required_user_groups:
+            level = getattr(user,g+'_level')
+            #~ if level is not None and level >= self.required_user_level:
+            if level >= self.required_user_level:
+                return True
+    return False
+    
+class ViewPermission(object):
+  
+    required_user_level = None
+    """
+    The minimum :class:`lino.utils.choicelists.UserLevel` 
+    required to get permission to view this Actor.
+    The default value `None` means that no special UserLevel is required.
+    See also :attr:`required_user_groups`
+    """
+    
+    required_user_groups = None
+    """
+    List of strings naming the user groups for which membership is required 
+    to get permission to view this Actor.
+    The default value `None` means
+    """
+        
+    
 
 
 def _test():

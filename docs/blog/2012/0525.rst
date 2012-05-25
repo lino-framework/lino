@@ -3,4 +3,28 @@
 
 Weiter mit der CBSS Connection.
 
-- added user group "cbss".
+Added user group "cbss".
+
+Um den Reiter "CBSS" für Unbefugte verschwinden zu lassen, 
+musste ich noch was weiter ausholen als vor kurzem für den Reiter "Debts".
+
+Der Reiter "Debts" war ein Reiter mit einem einzigen 
+:class:`GridPanel <lino.ui.extjs3.ext_elems.GridPanel>`.
+Ein GridPanel kennt seinen actor und kann `get_view_permission` 
+an diesen weiterleiten.
+
+Aber jetzt musste ich :meth:`lino.core.actors.Actor.add_detail_tab` 
+erweitern, so dass :func:`lino.modlib.cbss.models.site_setup` 
+dort `required_user_groups=['cbss']` angegeben kann.
+Funktioniert super.
+
+Hat wohl auch knapp zwei Stunden Fehlersuche gekostet, 
+weil ich dabei in eine subtile Mausefalle geraten war:
+:meth:`lino.core.Actor.get_view_permission` 
+und :meth:`lino.utils.jsgen.Component.get_view_permission` tun beide genau 
+das Gleiche, deshalb hatte ich sie in eine 
+gemeinsame Klasse ViewPermission gesetzt, 
+die außerdem die beiden Klassenvariablen 
+`required_user_level` und `required_user_group` definiert.
+Was ich übersehen hatte, war dass `get_view_permission` 
+für Actor eine @classmethod sein muss, für Component dagegen eine Instanzmethode!

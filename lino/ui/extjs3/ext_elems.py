@@ -302,8 +302,8 @@ class LayoutElement(VisibleComponent):
             if not hasattr(self,k):
                 raise Exception("%s has no attribute %s" % (self,k))
             setattr(self,k,v)
-        if opts:
-            print "20120525 apply _element_options", opts, 'to', self.__class__, self
+        #~ if opts:
+            #~ print "20120525 apply _element_options", opts, 'to', self.__class__, self
         self.layout_handle = layout_handle
         #~ if layout_handle is not None:
         #~ layout_handle.setup_element(self)
@@ -1085,12 +1085,31 @@ class Container(LayoutElement):
 
     def ext_options(self,**kw):
         kw = LayoutElement.ext_options(self,**kw)
-        items = [e for e in self.elements if e.get_view_permission()]
-        if items != self.elements:
-            print "20120525", self.layout_handle, self, items
-        kw.update(items=items)
+        #~ not necessary to filter here, jsgen does that
+        #~ items = [e for e in self.elements if e.get_view_permission()]
+        #~ if items != self.elements:
+            #~ print "20120525", self.layout_handle, self, items
+        #~ kw.update(items=items)
+        kw.update(items=self.elements)
         return kw
 
+    def get_view_permission(self):
+        """
+        A Panel which doesn't contain a single visible element gets also hidden.
+        """
+        #~ if self.value.get("title") == "CBSS":
+            #~ print "20120525 Container.get_view_permission()", self
+        # if the Panel itself is invisble, no need to loop through the children
+        if not super(Container,self).get_view_permission(): 
+            return False
+        #~ if self.value.get("title") == "CBSS":
+            #~ print "20120525 Container.get_view_permission() passed", self
+        for e in self.elements:
+            if e.get_view_permission():
+                # one visble child is enough, no need to continue loop 
+                return True
+        return False
+        
 class Wrapper(VisibleComponent):
     def __init__(self,e,**kw):
         kw.update(layout='form')
@@ -1110,6 +1129,9 @@ class Wrapper(VisibleComponent):
             e.update(anchor="100%")
         #~ e.update(padding=DEFAULT_PADDING)
             
+    def get_view_permission(self):
+        return self.wrapped.get_view_permission()
+        
     def walk(self):
         for e in self.wrapped.walk():
             #~ if e.get_view_permission():
@@ -1373,19 +1395,6 @@ class Panel(Container):
         self.elements = [wrap(e) for e in self.elements]
           
         
-    def get_view_permission(self):
-        """
-        A Panel which doesn't contin a single visible element gets also hidden.
-        """
-        # if the Panel itself is invisble, no need to loop through the children
-        if not super(Panel,self).get_view_permission(): 
-            return False
-        for e in self.elements:
-            if e.get_view_permission():
-                # one visble child is enough, no need to continue loop 
-                return True
-        return False
-        
     def ext_options(self,**d):
         #~ if not self.label and self.value_template == "new Ext.Panel(%s)":
             # if not self.parent or len(self.parent.elements) == 1:
@@ -1491,11 +1500,14 @@ class GridElement(Container):
             
             
     def get_view_permission(self):
+        #~ if not super(GridElement,self).get_view_permission():
+        if not super(Container,self).get_view_permission(): 
+            return False
         return self.actor.get_view_permission()
         #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
         
     def ext_options(self,**kw):
-        "not direct parent (Container), only LayoutElement"
+        #~ not direct parent (Container), only LayoutElement
         kw = LayoutElement.ext_options(self,**kw)
         return kw
         
@@ -1539,13 +1551,6 @@ class DetailMainPanel(Panel):
         Panel.__init__(self,layout_handle,name,vertical,*elements,**kw)
         #layout_handle.needs_store(self.rh)
         
-    def unused_subvars(self):
-        #~ print 'DetailMainPanel.subvars()', self
-        for e in MainPanel.subvars(self):
-            yield e
-        for e in Panel.subvars(self):
-            yield e
-            
     def ext_options(self,**kw):
         #~ self.setup()
         kw = Panel.ext_options(self,**kw)

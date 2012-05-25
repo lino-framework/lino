@@ -1275,6 +1275,11 @@ def setup_site_cache(self,force):
             shutil.copy(src,target)
     
 def site_setup(self):
+    """
+    (Called during site setup.)
+    
+    Adds a new tab "CBSS" to the Detail of `contacts.Persons`.
+    """
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
     cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
     cbss.IdentifyRequestsByPerson

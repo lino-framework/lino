@@ -91,6 +91,7 @@ from django.utils.encoding import force_unicode
 
 import lino
 from lino.utils import IncompleteDate
+from lino.utils import ViewPermission, get_view_permission
 
 
 def dict2js(d):
@@ -137,6 +138,7 @@ def declare_vars(v):
         for ln in declare_vars(v.value):
             yield ln
         # DON'T return
+        
     if isinstance(v,Variable):
         if not v.get_view_permission(): return
         if v.declare_type == DECLARE_VAR:
@@ -294,51 +296,6 @@ DECLARE_VAR = 1
 DECLARE_THIS = 2
 
 
-class ViewPermission(object):
-  
-    required_user_level = None
-    """
-    The minimum :class:`lino.utils.choicelists.UserLevel` 
-    required to get permission to view this Actor.
-    The default value `None` means that no special UserLevel is required.
-    See also :attr:`required_user_groups`
-    """
-    
-    required_user_groups = None
-    """
-    List of strings naming the user groups for which membership is required 
-    to get permission to view this Actor.
-    The default value `None` means
-    """
-        
-    @classmethod
-    def get_view_permission(self):
-        """
-        Return `True` if the specified `user` has permission 
-        to see this Actor.
-        """
-        user = _for_user
-        if self.required_user_level is None:
-            if self.required_user_groups is None:
-                return True
-            for g in self.required_user_groups:
-                if getattr(user,g+'_level'):
-                #~ if getattr(user,g+'_level',None) is not None:
-                    return True
-            return False
-        else:
-            if user.level is None or user.level < self.required_user_level:
-                return False
-            if self.required_user_groups is None:
-                return True
-            for g in self.required_user_groups:
-                level = getattr(user,g+'_level')
-                #~ if level is not None and level >= self.required_user_level:
-                if level >= self.required_user_level:
-                    return True
-        return False
-        
-
 
 
 class Value(object):
@@ -435,10 +392,16 @@ class Variable(Value):
         yield self.value_template % py2js(self.value)
         
 class Component(Variable,ViewPermission): 
-    
+    """
+    Deserves more documentation.
+    """
     def __init__(self,name=None,**options):
         Variable.__init__(self,name,options)
         #~ self.update(**self.ext_options())
+        
+    def get_view_permission(self):
+        "Whether this Component should be rendered into the js of current user (`_for_user`)."
+        return get_view_permission(self,_for_user)
         
     def js_value(self):
         value = self.ext_options()
