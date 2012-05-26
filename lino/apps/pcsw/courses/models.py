@@ -560,7 +560,7 @@ class PendingCourseRequests(CourseRequests):
     @classmethod
     def setup_columns(self):
         """
-        Builds columns dynamically from the :class:`PersonGroup` database table.
+        Builds columns dynamically for the differenc age slices.
         Called when kernel setup is done, 
         before the UI handle is being instantiated.
         """

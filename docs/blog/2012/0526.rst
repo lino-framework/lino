@@ -47,7 +47,8 @@ Miscellaneous
 
 - Habe weiter in der Test-Suite aufgeräumt.
 
-- Kolonne `lino.apps.pcsw.courses.models.PendingCourses.address` fehlte noch.
+- In :class:`lino.apps.pcsw.courses.models.PendingCourseRequests` fehlte 
+  noch die Kolonne `address`.
 
 - Der Kalender funktionierte ja nicht. Da war in der `linolib.js` ein 
   Aktionsname `detail` hard codiert, und die haben sich ja verändert 
