@@ -18,3 +18,10 @@ indem ich dort :func:`lino.dd.inject_field` aufrufe:
           blank=True,null=True))
 
 Oder ich kann in :mod:`lino.modlib.contacts` 
+
+
+Moved `EmptyTable` 
+from :class:`EmptyTable <lino.core.frames.EmptyTable>`
+to
+:class:`EmptyTable <lino.mixins.EmptyTable>`
+

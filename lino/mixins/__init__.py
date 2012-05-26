@@ -29,10 +29,86 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino import dd
-from lino.utils import perms
+#~ from lino.utils import perms
 from lino.tools import full_model_name
+from lino.core import frames
 from lino.utils.choosers import chooser
     
+
+
+class Owned(models.Model):
+    """
+    Mixin for models that are "owned" by other database objects.
+    
+    Defines three fields `owned_type`, `owned_id` and `owned`.
+    And a class attribute :attr:`owner_label`.
+    
+    """
+    # Translators: will also be concatenated with '(type)' '(object)'
+    owner_label = _('Owned by')
+    """
+    The labels (`verbose_name`) of the fields 
+    `owned_type`, `owned_id` and `owned`
+    are derived from this attribute which 
+    may be overridden by subclasses.
+    
+    """
+    
+    class Meta:
+        abstract = True
+        
+    owner_type = models.ForeignKey(ContentType,
+        editable=True,
+        blank=True,null=True,
+        verbose_name=string_concat(owner_label,' ',_('(type)')))
+    owner_id = dd.GenericForeignKeyIdField(
+        owner_type,
+        editable=True,
+        blank=True,null=True,
+        verbose_name=string_concat(owner_label,' ',_('(object)')))
+    owner = dd.GenericForeignKey(
+        'owner_type', 'owner_id',
+        verbose_name=owner_label)
+        
+    #~ owner_panel= dd.FieldSet(_("Owner"),
+        #~ "owner_type owner_id",
+        #~ owner_type=_("Model"),
+        #~ owner_id=_("Instance"))
+    
+    
+    @chooser(instance_values=True)
+    def owner_id_choices(cls,owner_type):
+        if owner_type:
+            return owner_type.model_class().objects.all()
+        return []
+      
+    #~ owner_id_choices.instance_values = True
+    #~ owner_id_choices = classmethod(owner_id_choices)
+        
+    def get_owner_id_display(self,value):
+        if self.owner_type:
+            try:
+                return unicode(self.owner_type.get_object_for_this_type(pk=value))
+            except self.owner_type.model_class().DoesNotExist,e:
+                return "%s with pk %r does not exist" % (
+                    full_model_name(self.owner_type.model_class()),value)
+            
+            
+    def update_owned_instance(self,task):
+        m = getattr(self.owner,'update_owned_instance',None)
+        if m:
+            m(task)
+
+    #~ def data_control(self):
+        #~ "Used by :class:`lino.models.DataControlListing`."
+        #~ msgs = []
+        #~ ct = ContentType.objects.get_for_id()
+        #~ ...
+        #~ msgs.append(unicode(e))
+        #~ return msgs
+
+
+
 
 class AutoUser(models.Model):
     """
@@ -67,6 +143,8 @@ class AutoUser(models.Model):
     def update_owned_instance(self,task):
         task.user = self.user
 
+
+
 if settings.LINO.user_model: 
   
     class ByUser(dd.Table):
@@ -89,6 +167,7 @@ else:
     # dummy Table for userless sites
     class ByUser(dd.Table): pass 
   
+
 
 
 class CreatedModified(models.Model):
@@ -162,77 +241,6 @@ class Sequenced(models.Model):
             self.set_seqno()
         super(Sequenced,self).full_clean(*args,**kw)
   
-class Owned(models.Model):
-    """
-    Mixin for models that are "owned" by other database objects.
-    
-    Defines three fields `owned_type`, `owned_id` and `owned`.
-    And a class attribute :attr:`owner_label`.
-    
-    """
-    # Translators: will also be concatenated with '(type)' '(object)'
-    owner_label = _('Owned by')
-    """
-    The labels (`verbose_name`) of the fields 
-    `owned_type`, `owned_id` and `owned`
-    are derived from this attribute which 
-    may be overridden by subclasses.
-    
-    """
-    
-    class Meta:
-        abstract = True
-        
-    owner_type = models.ForeignKey(ContentType,
-        editable=True,
-        blank=True,null=True,
-        verbose_name=string_concat(owner_label,' ',_('(type)')))
-    owner_id = dd.GenericForeignKeyIdField(
-        owner_type,
-        editable=True,
-        blank=True,null=True,
-        verbose_name=string_concat(owner_label,' ',_('(object)')))
-    owner = dd.GenericForeignKey(
-        'owner_type', 'owner_id',
-        verbose_name=owner_label)
-        
-    #~ owner_panel= dd.FieldSet(_("Owner"),
-        #~ "owner_type owner_id",
-        #~ owner_type=_("Model"),
-        #~ owner_id=_("Instance"))
-    
-    
-    @chooser(instance_values=True)
-    def owner_id_choices(cls,owner_type):
-        if owner_type:
-            return owner_type.model_class().objects.all()
-        return []
-      
-    #~ owner_id_choices.instance_values = True
-    #~ owner_id_choices = classmethod(owner_id_choices)
-        
-    def get_owner_id_display(self,value):
-        if self.owner_type:
-            try:
-                return unicode(self.owner_type.get_object_for_this_type(pk=value))
-            except self.owner_type.model_class().DoesNotExist,e:
-                return "%s with pk %r does not exist" % (
-                    full_model_name(self.owner_type.model_class()),value)
-            
-            
-    def update_owned_instance(self,task):
-        m = getattr(self.owner,'update_owned_instance',None)
-        if m:
-            m(task)
-
-    #~ def data_control(self):
-        #~ "Used by :class:`lino.models.DataControlListing`."
-        #~ msgs = []
-        #~ ct = ContentType.objects.get_for_id()
-        #~ ...
-        #~ msgs.append(unicode(e))
-        #~ return msgs
-
 
 class ProjectRelated(models.Model):
     """Related to a project. 
@@ -261,3 +269,71 @@ from lino.mixins.uploadable import Uploadable
 #~ from lino.mixins.mails import Recipient, Mail
 from lino.utils.dblogger import DiffingMixin
 #~ from lino.mixins.personal import SexField, PersonMixin
+
+from lino.core import actions
+from lino.mixins import printable
+
+
+class EmptyTable(frames.Frame):
+    """
+    A "Table" that has exactly one virtual row and thus is visible 
+    only using a Detail view on that row.
+    """
+    #~ has_navigator = False
+    #~ hide_top_toolbar = True
+    hide_navigator = True
+    default_list_action_name = 'show'
+    default_elem_action_name =  'show'
+    default_action = actions.ShowEmptyTable()
+    do_print = printable.DirectPrintAction()
+    
+    #~ @classmethod
+    #~ def do_setup(self):
+        #~ # logger.info("%s.__init__()",self.__class__)
+        #~ # if not self.__class__ is Frame:
+        #~ if self is not EmptyTable:
+            #~ # assert self.default_action_class is None
+            #~ # if self.label is None:
+                #~ # raise Exception("%r has no label" % self)
+            #~ # self.default_action = actions.ShowEmptyTable()
+            #~ # self.default_action = self.add_action(actions.ShowEmptyTable())
+            #~ super(Frame,self).do_setup()
+            #~ # self.setup_actions()
+            #~ # self.add_action(self.default_action)
+
+    #~ @classmethod
+    #~ def setup_actions(self):
+        #~ super(EmptyTable,self).setup_actions()
+        #~ from lino.mixins.printable import DirectPrintAction
+        #~ self.add_action(DirectPrintAction())
+        
+            
+    @classmethod
+    def create_instance(self,req,**kw):
+        #~ if self.known_values:
+            #~ kw.update(self.known_values)
+        if self.parameters:
+            kw.update(req.param_values)
+
+        #~ for k,v in req.param_values.items():
+            #~ kw[k] = v
+        #~ for k,f in self.parameters.items():
+            #~ kw[k] = f.value_from_object(None)
+        obj = actions.EmptyTableRow(self,**kw)
+        kw = req.ah.store.row2dict(req,obj)
+        obj._data = kw
+        obj.update(**kw)
+        return obj
+    
+    #~ @classmethod
+    #~ def elem_filename_root(self,elem):
+        #~ return self.app_label + '.' + self.__name__
+
+    @classmethod
+    def get_data_elem(self,name):
+        de = super(EmptyTable,self).get_data_elem(name)
+        if de is not None:
+            return de
+        a = name.split('.')
+        if len(a) == 2:
+            return getattr(getattr(settings.LINO.modules,a[0]),a[1])

@@ -1212,7 +1212,7 @@ if True: # settings.LINO.user_model:
 COLS = 8
 
 
-class JobsOverview(dd.EmptyTable):
+class JobsOverview(mixins.EmptyTable):
     label = _("Contracts Situation") 
     #~ detail_layout = JobsOverviewDetail()
     detail_template = "body"

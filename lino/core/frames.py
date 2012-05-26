@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 from lino.ui import base
 from lino.core import actors
 from lino.core import actions
-from lino.mixins.printable import DirectPrintAction
 
 class FrameHandle(base.Handle): 
     def __init__(self,ui,frame):
@@ -55,67 +54,3 @@ class Frame(actors.Actor):
         #~ if self.default_action:
             #~ self.add_action(self.default_action)
 
-
-class EmptyTable(Frame):
-    """
-    A "Table" that has exactly one virtual row and thus is visible 
-    only using a Detail view on that row.
-    """
-    #~ has_navigator = False
-    #~ hide_top_toolbar = True
-    hide_navigator = True
-    default_list_action_name = 'show'
-    default_elem_action_name =  'show'
-    default_action = actions.ShowEmptyTable()
-    do_print = DirectPrintAction()
-    
-    #~ @classmethod
-    #~ def do_setup(self):
-        #~ # logger.info("%s.__init__()",self.__class__)
-        #~ # if not self.__class__ is Frame:
-        #~ if self is not EmptyTable:
-            #~ # assert self.default_action_class is None
-            #~ # if self.label is None:
-                #~ # raise Exception("%r has no label" % self)
-            #~ # self.default_action = actions.ShowEmptyTable()
-            #~ # self.default_action = self.add_action(actions.ShowEmptyTable())
-            #~ super(Frame,self).do_setup()
-            #~ # self.setup_actions()
-            #~ # self.add_action(self.default_action)
-
-    #~ @classmethod
-    #~ def setup_actions(self):
-        #~ super(EmptyTable,self).setup_actions()
-        #~ from lino.mixins.printable import DirectPrintAction
-        #~ self.add_action(DirectPrintAction())
-        
-            
-    @classmethod
-    def create_instance(self,req,**kw):
-        #~ if self.known_values:
-            #~ kw.update(self.known_values)
-        if self.parameters:
-            kw.update(req.param_values)
-
-        #~ for k,v in req.param_values.items():
-            #~ kw[k] = v
-        #~ for k,f in self.parameters.items():
-            #~ kw[k] = f.value_from_object(None)
-        obj = actions.EmptyTableRow(self,**kw)
-        kw = req.ah.store.row2dict(req,obj)
-        obj._data = kw
-        obj.update(**kw)
-        return obj
-    
-    #~ @classmethod
-    #~ def elem_filename_root(self,elem):
-        #~ return self.app_label + '.' + self.__name__
-
-    @classmethod
-    def get_data_elem(self,name):
-        de = super(EmptyTable,self).get_data_elem(name)
-        if de is not None:
-            return de
-        a = name.split('.')
-        if len(a) == 2:
-            return getattr(getattr(settings.LINO.modules,a[0]),a[1])

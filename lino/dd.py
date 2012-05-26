@@ -21,7 +21,6 @@ Tables:
 - :class:`Table <lino.core.table.Table>`
 - :class:`VirtualTable <lino.utils.tables.VirtualTable>`
 - :class:`Frame <lino.core.frames.Frame>`
-- :class:`EmptyTable <lino.core.frames.EmptyTable>`
 
 
 Extended Fields:
@@ -54,7 +53,7 @@ Utilities:
 
 - :func:`resolve_field <lino.tools.resolve_field>`
 - :func:`resolve_model <lino.tools.resolve_model>`
-- :func:`get_app <lino.tools.get_app>`
+- :func:`get_app <lino.tools.get_app>` (and its synonym :func:`resolve_app <lino.tools.get_app>`)
 
 
 """
@@ -75,7 +74,7 @@ from lino.core.table import Table
 from lino.core.table import summary, summary_row
 
 from lino.core.frames import Frame
-from lino.core.frames import EmptyTable
+#~ from lino.core.frames import EmptyTable
 
 from lino.core.actions import action
 from lino.core.actions import RowAction

@@ -290,3 +290,4 @@ class Users(dd.Table):
         #~ """Whether this Partner is also a User."""
         #~ )
 
+

@@ -48,6 +48,9 @@ from lino.utils.restify import restify
 from lino.core import actions
 
 
+
+
+
 class BuildLinoJS(dd.RowAction):
     """
     Rebuild the site cache.
@@ -548,7 +551,7 @@ class Inspector(dd.VirtualTable):
     #~ """
 
 
-class About(dd.EmptyTable):
+class About(mixins.EmptyTable):
     """
     A modal window displaying information about this Lino server.
     """
@@ -590,7 +593,7 @@ class About(dd.EmptyTable):
     
 
 
-class Home(dd.EmptyTable):
+class Home(mixins.EmptyTable):
     """
     This is the "home page" or "welcome screen", the window to be displayed 
     when no other window is opened.
