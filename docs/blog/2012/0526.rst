@@ -1,3 +1,5 @@
 20120526
 ========
 
+
+Adapted :func:`migrate_from_1_4_3 <lino.apps.pcsw.migrate.migrate_from_1_4_3>`

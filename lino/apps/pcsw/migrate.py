@@ -1037,6 +1037,7 @@ def migrate_from_1_4_3(globals_dict):
     - new user permissions system (fields like `is_staff` replaced by `level`)
     - manually handle invalid contracts and persons. See :doc:`/blog/2012/0418`.
     - removed field `title` from bcss.IdentifyPersonRequest
+    - Users are no longer Partners but have a FK partner 
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child
@@ -1099,8 +1100,10 @@ def migrate_from_1_4_3(globals_dict):
             kw.update(level=level)
             kw.update(newcomers_level = level)
             
-        return create_child(contacts_Contact,contact_ptr_id,users_User,
-          first_name=first_name,last_name=last_name,title=title,gender=gender,
+        #~ return create_child(contacts_Contact,contact_ptr_id,users_User,
+        return users_User(partner_id=contacts_Contact,
+          first_name=first_name,last_name=last_name,
+          #~ title=title,gender=gender,
           username=username,
           #~ is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,
           last_login=last_login,date_joined=date_joined,
