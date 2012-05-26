@@ -19,9 +19,19 @@ indem ich dort :func:`lino.dd.inject_field` aufrufe:
 
 Oder ich kann in :mod:`lino.modlib.contacts` 
 
+Internal changes
+----------------
 
 Moved `EmptyTable` 
 from :class:`EmptyTable <lino.core.frames.EmptyTable>`
 to
-:class:`EmptyTable <lino.mixins.EmptyTable>`
+:class:`EmptyTable <lino.mixins.EmptyTable>`.
+
+`EmptyTable` is now in `mixins`. It cannot be in `dd` because it 
+needs :mod:`lino.mixins.printable` which itself needs `lino.dd`.
+This circular import problem was solved until now by importing 
+the printable during setup_report for adding the 
+DirectPrintAction of the EmptyTable.
+This is no longer possible when defining the Action as a class attribute. 
+Which confirms that changing the action definition syntax was a good step.
 
