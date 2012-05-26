@@ -1917,10 +1917,10 @@ dd.inject_field('contacts.RoleType',
     Deserves more documentation.
     """)
         
-dd.inject_field(settings.LINO.user_model,
-    'partner',
-    models.ForeignKey('contacts.Partner',
-        blank=True,null=True))
+#~ dd.inject_field(settings.LINO.user_model,
+    #~ 'partner',
+    #~ models.ForeignKey('contacts.Partner',
+        #~ blank=True,null=True))
 
 
 

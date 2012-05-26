@@ -31,6 +31,7 @@ from lino.utils.choosers import chooser
 #~ from lino.modlib.contacts.models import Contact
 #~ from lino.modlib.contacts import models as contacts
 
+#~ contacts = dd.resolve_app('contacts')
 
 #~ class User(contacts.Partner,contacts.PersonMixin):
 class User(models.Model):
@@ -100,6 +101,10 @@ class User(models.Model):
         #~ """))
     last_login = models.DateTimeField(_('last login'), default=datetime.datetime.now)
     date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
+    
+    if settings.LINO.is_installed('contacts'):
+        partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
+    
 
     def __unicode__(self):
         #~ return self.username
@@ -135,11 +140,15 @@ class User(models.Model):
         #~ from django.core.mail import send_mail
         #~ send_mail(subject, message, from_email, [self.email])
     
-    @property
-    def get_person(self):
-        if self.partner:
-            return self.partner.get_mti_child('person')
+    if settings.LINO.is_installed('contacts'):
+        def get_person(self):
+            if self.partner:
+                return self.partner.get_mti_child('person')
+    else:
+        def get_person(self):
+            return None
     
+    person = property(get_person)
 
     def save(self,*args,**kw):
         if self.profile == self.username:
@@ -246,6 +255,8 @@ class UserDetail(dd.DetailLayout):
     remarks 
     """
     
+if not settings.LINO.is_installed('contacts'):
+    UserDetail.box1.replace('partner','')
  
 
 class Users(dd.Table):

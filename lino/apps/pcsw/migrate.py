@@ -1101,7 +1101,7 @@ def migrate_from_1_4_3(globals_dict):
             kw.update(newcomers_level = level)
             
         #~ return create_child(contacts_Contact,contact_ptr_id,users_User,
-        return users_User(partner_id=contacts_Contact,
+        return users_User(partner_id=contact_ptr_id,
           first_name=first_name,last_name=last_name,
           #~ title=title,gender=gender,
           username=username,

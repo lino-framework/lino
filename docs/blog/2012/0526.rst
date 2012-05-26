@@ -3,3 +3,18 @@
 
 
 Adapted :func:`migrate_from_1_4_3 <lino.apps.pcsw.migrate.migrate_from_1_4_3>`
+
+Ich bin mir noch nicht ganz klar darüber, 
+wo das Feld `partner` in `users.User` definiert werden soll.
+
+Entweder kann ich es "von außerhalb" definieren 
+(in :mod:`lino.modlib.contacts` 
+oder :mod:`lino.apps.pcsw`), 
+indem ich dort :func:`lino.dd.inject_field` aufrufe:
+
+  dd.inject_field(settings.LINO.user_model,
+      'partner',
+      models.ForeignKey('contacts.Partner',
+          blank=True,null=True))
+
+Oder ich kann in :mod:`lino.modlib.contacts` 
