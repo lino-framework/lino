@@ -450,7 +450,10 @@ class Actor(Handled,ViewPermission):
     def add_detail_tab(self,name,tpl=None,label=None,**kw):
         """
         Adds a tab to the Detail of this actor.
+        Note that this might have no effect if an application 
+        then overrides the Detail of this actor.
         """
+        print "20120526 add_detail_tab", self, name
         if hasattr(self.detail_layout,'_extjs3_handle'):
             raise Exception("Cannot set_detail after UI has been set up.")
         if '\n' in name:
@@ -472,8 +475,8 @@ class Actor(Handled,ViewPermission):
         if label is not None:
             self.detail_layout._labels[name] = label
         self.detail_layout._element_options[name] = kw
-        if kw:
-            print 20120525, self, self.detail_layout._element_options
+        #~ if kw:
+            #~ print 20120525, self, self.detail_layout._element_options
             
 
     @classmethod

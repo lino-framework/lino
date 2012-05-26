@@ -28,3 +28,44 @@ die außerdem die beiden Klassenvariablen
 `required_user_level` und `required_user_group` definiert.
 Was ich übersehen hatte, war dass `get_view_permission` 
 für Actor eine @classmethod sein muss, für Component dagegen eine Instanzmethode!
+
+
+User sind keine Partner
+-----------------------
+
+Bisher war :class:`users.User` eine MTI-Unterklasse von :class:`contacts.Partner`. 
+Aber ich habe erkannt, dass das nicht so gut war:
+
+- erstens war :mod:`lino.modlib.users` dadurch von :mod:`lino.modlib.contacts` 
+  abhängig,
+- zweitens muss man bedenken, dass für jeden Request als erstes der 
+  User rausgesucht wird (um Sprache und Benutzerrechte zu ermitteln). 
+  Und das war bisher ein SELECT mit JOIN, also ein Zugriff auf mindestens 
+  zwei Datenbanktabellen.
+  
+
+Einige Konsequenzen:
+
+- Für "technische" Benutzer wie `admin` oder `root` braucht 
+  jetzt kein Partner mehr zu existieren.
+
+- Im Detail eines Benutzers hat man jetzt keine Postadresse usw. mehr.
+  Stattdessen ein Feld "Partner", das eventuell auf den Partner verweist.
+  Damit Benutzer einem Kollegen eine Mail schicken können, muss ein 
+  entsprechender Partner angelegt werden.
+  Also bei neuen Benutzern dran denken.
+  
+- Im Detail von "Alle Partner" ist kein Feld "ist Benutzer" mehr.
+  Dort könnte falls nötig eine Liste UsersByPartner erscheinen, 
+  wahrscheinlich am ehesten als kleines HtmlPanel im Reiter "Sonstiges".
+  
+Noch zwei Bugs
+--------------
+
+Beim Rumspielen und Testen sind mir noch zwei allgemeine Bugs aufgefallen:
+
+- add_detail_tab() für `users.Users` funktionierte nicht in :mod:`lino.apps.pcsw`, weil dessen `detail_layout` in pcsw neudefiniert wird. 
+  Ich habe das zwar gelöst, aber das ist ziemlich tricky.
+  
+- Im Kalenderpanel macht ein Klick auf ein Event eine Fehlermeldung in der Java-Console 
+  statt das Detail zu öffnen. 

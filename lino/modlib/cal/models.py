@@ -132,8 +132,8 @@ class Calendar(mixins.AutoUser):
                 self.name = "Anonymous"
             else:
                 self.name = self.user.get_full_name()
-                if not self.name:
-                    self.name = self.user.username
+                #~ if not self.name:
+                    #~ self.name = self.user.username
         super(Calendar,self).full_clean(*args,**kw)
         
     def save(self,*args,**kw):
@@ -1409,6 +1409,13 @@ class Home(lino.Home):
     
 
 def site_setup(site):
+    """
+    (Called during site setup.)
+    
+    - Adds the :class:`UpdateReminders` action to users.Users list
+    - adds a detail tab to 
+    """
+    #~ print "20120525 cal.site_setup"
     #~ from lino.modlib.users.models import Users
     #~ site.modules.users.Users.add_action(UpdateReminders())
     site.modules.users.Users.update_reminders = UpdateReminders()
@@ -1416,6 +1423,10 @@ def site_setup(site):
     #~ quick_links:80x1
     #~ cal.ComingReminders:40x16 cal.MissedReminders:40x16
     #~ """)
+    
+    site.modules.users.Users.add_detail_tab('cal.RemindersByUser')
+    
+    
 
 
 def setup_main_menu(site,ui,user,m): pass

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -31,14 +31,13 @@ def objects():
   
     Person = resolve_model(settings.LINO.person_model)
     Company = resolve_model(settings.LINO.company_model)
-    User = resolve_model(settings.LINO.user_model)
     
+    User = resolve_model(settings.LINO.user_model)
     root = User.objects.get(username='root')
     
     mail = Instantiator('outbox.Mail').build
     recipient_to = Instantiator('outbox.Recipient',type=mails.RecipientType.to).build
     
-    #~ for p in Person.objects.filter(email__isnull=True):
     for p in Person.objects.filter(email=''):
         try:
             p.first_name.encode('ascii')
@@ -53,7 +52,7 @@ def objects():
         yield m
         yield recipient_to(mail=m,partner=person)
             #~ address=person.email,name=person.get_full_name(salutation=False))
-    m = mail(sender=root,subject='Hello %s!' % root.first_name)
-    yield m
-    yield recipient_to(mail=m,partner=root)
+    #~ m = mail(sender=root,subject='Hello %s!' % root.first_name)
+    #~ yield m
+    #~ yield recipient_to(mail=m,partner=root)
     

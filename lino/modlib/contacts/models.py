@@ -260,8 +260,6 @@ but e.g. :class:`PersonMixin` overrides this.
     def name_column(self,request):
         #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
-        #~ return self.get_full_name(nominative=True)
-    #~ name_column.return_type = dd.DisplayField(_("Name"))
     
 
 class PartnerDetail(dd.DetailLayout):
@@ -747,43 +745,51 @@ class ContactDocument(models.Model):
     
 
 
-if settings.LINO.is_installed('contacts'):
+#~ if settings.LINO.is_installed('contacts'):
   
-    """
-    Don't inject fields if contacts is just being imported from some other module.
-    """
-  
-    from lino.models import SiteConfig
+    #~ """
+    #~ Don't inject fields if contacts is just being imported from some other module.
+    #~ """
+    
+#~ dd.inject_field(settings.LINO.user_model,
+    #~ 'partner',
+    #~ models.ForeignKey(Partner,
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Partner")))
 
-    dd.inject_field(SiteConfig,
-        'next_partner_id',
-        models.IntegerField(default=100, # first 100 for users from demo fixtures.
-            verbose_name=_("The next automatic id for Person or Company")
-        ),"""The next automatic id for Person or Company. 
-        Deserves more documentation.
-        """)
-        
-    dd.inject_field(SiteConfig,
-        'site_company',
-        models.ForeignKey(settings.LINO.company_model,
-            blank=True,null=True,
-            verbose_name=_("The company that runs this site"),
-            related_name='site_company_sites',
-            ),
-        """The Company to be used as sender in documents.""")
-        
 
-    dd.inject_field(Partner,
-        'is_person',
-        #~ mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
-        mti.EnableChild(settings.LINO.person_model,verbose_name=_("is Person")),
-        """Whether this Partner is a Person."""
-        )
-    dd.inject_field(Partner,
-        'is_company',
-        mti.EnableChild(settings.LINO.company_model,verbose_name=_("is Company")),
-        """Whether this Partner is a Company."""
-        )
+
+from lino.models import SiteConfig
+
+dd.inject_field(SiteConfig,
+    'next_partner_id',
+    models.IntegerField(default=100, # first 100 for users from demo fixtures.
+        verbose_name=_("The next automatic id for Person or Company")
+    ),"""The next automatic id for Person or Company. 
+    Deserves more documentation.
+    """)
+    
+dd.inject_field(SiteConfig,
+    'site_company',
+    models.ForeignKey(settings.LINO.company_model,
+        blank=True,null=True,
+        verbose_name=_("The company that runs this site"),
+        related_name='site_company_sites',
+        ),
+    """The Company to be used as sender in documents.""")
+    
+
+dd.inject_field(Partner,
+    'is_person',
+    #~ mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
+    mti.EnableChild(settings.LINO.person_model,verbose_name=_("is Person")),
+    """Whether this Partner is a Person."""
+    )
+dd.inject_field(Partner,
+    'is_company',
+    mti.EnableChild(settings.LINO.company_model,verbose_name=_("is Company")),
+    """Whether this Partner is a Company."""
+    )
 
 
 MODULE_NAME = _("Contacts")

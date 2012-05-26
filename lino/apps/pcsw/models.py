@@ -691,7 +691,7 @@ class PartnerDetail(contacts.PartnerDetail):
     #~ main = "general debts.BudgetsByPartner"
     bottom_box = """
     remarks 
-    is_person is_company is_user is_household
+    is_person is_company #is_user is_household
     """
     #~ def setup_handle(self,h):
         #~ h.general.label = _("General")
@@ -1848,9 +1848,8 @@ class OverlappingContracts(dd.Table):
 
 
 """
-Here we add some specific fields to the 
-standard model SiteConfig.
-http://osdir.com/ml/django-users/2009-11/msg00696.html
+
+
 """
 
 from lino.models import SiteConfig
@@ -1901,7 +1900,7 @@ dd.inject_field(SiteConfig,
 ...
 """
 settings.LINO.add_user_field('integ_level',UserLevel.field(_("Integration")))
-          
+              
         
 #~ RoleType = resolve_model('contacts.RoleType')
 #~ if not isinstance(RoleType,UnresolvedModel):
@@ -1918,6 +1917,10 @@ dd.inject_field('contacts.RoleType',
     Deserves more documentation.
     """)
         
+dd.inject_field(settings.LINO.user_model,
+    'partner',
+    models.ForeignKey('contacts.Partner',
+        blank=True,null=True))
 
 
 
@@ -2061,29 +2064,52 @@ def site_setup(site):
     #~ cal.Events.detail_layout = EventDetail(cal.Events)
     site.modules.cal.Events.set_detail(EventDetail())
     
-    
-    #~ class UserDetail(dd.DetailLayout):
-    class UserDetail(users.UserDetail):
+    if False:
       
-        box2 = """
-        username:20 profile:20
-        level
-        integ_level
-        cbss_level
-        newcomers_level newcomer_quota
-        debts_level
         """
-        
-        main = "general cal.RemindersByUser newcomers.CompetencesByUser"
-      
-        def setup_handle(self,lh):
+        Creating application-specific DetailLayouts disables the effect of 
+        eventual `add_detail_tab` calls by other installed apps.
+        """
+        #~ class UserDetail(dd.DetailLayout):
+        class UserDetail(users.UserDetail):
           
-            lh.general.label = _("General")
-            #~ lh.reminders.label = _("Reminders")
-            #~ lh.newcomers.label = _("Newcomers")
+            #~ box2 = """
+            #~ username:20 profile:20
+            #~ level
+            #~ integ_level
+            #~ cbss_level
+            #~ newcomers_level newcomer_quota
+            #~ debts_level
+            #~ """
+            
+            box2 = """
+            level
+            integ_level
+            cbss_level
+            newcomers_level newcomer_quota
+            debts_level
+            """
+            
+            #~ main = "general cal.RemindersByUser newcomers.CompetencesByUser"
+            #~ main = "general newcomers.CompetencesByUser"
+          
+            def setup_handle(self,lh):
+              
+                lh.general.label = _("General")
+                #~ lh.reminders.label = _("Reminders")
+                #~ lh.newcomers.label = _("Newcomers")
 
+        
+        site.modules.users.Users.set_detail(UserDetail())
     
-    site.modules.users.Users.set_detail(UserDetail())
+    # TODO: find a better solution
+    site.modules.users.Users.detail_layout.box2 = """
+    level
+    integ_level
+    cbss_level
+    newcomers_level newcomer_quota
+    debts_level
+    """
     
     class NoteDetail(dd.DetailLayout):
         left = """

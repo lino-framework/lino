@@ -44,19 +44,19 @@ class AutoUser(models.Model):
     class Meta:
         abstract = True
         
-    user = models.ForeignKey('contacts.Partner',
-        verbose_name=_("user"),
-        related_name="%(app_label)s_%(class)s_set_by_user",
-        blank=True,null=True
-        )
+    #~ user = models.ForeignKey('contacts.Partner',
+        #~ verbose_name=_("user"),
+        #~ related_name="%(app_label)s_%(class)s_set_by_user",
+        #~ blank=True,null=True
+        #~ )
             
-    #~ if settings.LINO.user_model: 
+    if settings.LINO.user_model: 
       
-        #~ user = models.ForeignKey(settings.LINO.user_model,
-            #~ verbose_name=_("user"),
-            #~ related_name="%(app_label)s_%(class)s_set_by_user",
-            #~ blank=True,null=True
-            #~ )
+        user = models.ForeignKey(settings.LINO.user_model,
+            verbose_name=_("user"),
+            related_name="%(app_label)s_%(class)s_set_by_user",
+            blank=True,null=True
+            )
         
     def on_create(self,req):
         if self.user_id is None:

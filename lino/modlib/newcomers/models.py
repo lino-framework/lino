@@ -194,7 +194,7 @@ class UsersByNewcomer(users.Users):
     #~ filter = models.Q(is_spis=True)
     filter = models.Q(integ_level__isnull=False)
     label = _("Users by Newcomer")
-    column_names = 'name primary_clients active_clients new_clients newcomer_quota newcomer_score'
+    column_names = 'name_column primary_clients active_clients new_clients newcomer_quota newcomer_score'
     parameters = dict(
         for_client = models.ForeignKey('contacts.Person',
             verbose_name=_("Show suggested agents for"),
@@ -284,6 +284,8 @@ dd.inject_field(Person,
     """The Faculty this client has been attributed to.
     """)
 
+def site_setup(site):
+    site.modules.users.Users.add_detail_tab('newcomers.CompetencesByUser')
   
 def setup_main_menu(site,ui,user,m):
     if user.newcomers_level < UserLevel.user:

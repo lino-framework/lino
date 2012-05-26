@@ -22,18 +22,18 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 from lino import dd
+from lino.utils import babel
 from lino.utils import mti
 from lino.utils.choicelists import UserLevel
 from lino.utils.choosers import chooser
 
 #~ from lino.mixins import PersonMixin
 #~ from lino.modlib.contacts.models import Contact
-from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.contacts import models as contacts
 
 
-
-
-class User(contacts.Partner,contacts.PersonMixin):
+#~ class User(contacts.Partner,contacts.PersonMixin):
+class User(models.Model):
     """
     Represents a User of this site.
     
@@ -58,19 +58,27 @@ class User(contacts.Partner,contacts.PersonMixin):
     username = models.CharField(_('Username'), max_length=30, 
         unique=True, 
         help_text=_("""
-        Required. 30 characters or fewer. 
-        Letters, numbers and @/./+/-/_ characters
+        Required. Must be unique. 
         """))
+    
     profile = models.CharField(_('Same profile as'), 
         max_length=30, blank=True,
         help_text=_("""
-        The user profile.
+        The user profile. Leave empty for "profile-giving" users, that is: 
+        users who have their own combination of group memberships and 
+        userlevels.
         """))
-    #~ first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    #~ last_name = models.CharField(_('last name'), max_length=30, blank=True)
-    #~ email = models.EmailField(_('e-mail address'), blank=True)
+    first_name = models.CharField(_('First name'), max_length=30, blank=True)
+    last_name = models.CharField(_('Last name'), max_length=30, blank=True)
+    email = models.EmailField(_('e-mail address'), blank=True)
+    
+    remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
+    
     
     level = UserLevel.field()
+    
+    language = babel.LanguageField()
+    
     #~ is_active = models.BooleanField(_('is active'), default=True, 
         #~ help_text=_("""
         #~ Designates whether this user should be treated as active. 
@@ -94,30 +102,44 @@ class User(contacts.Partner,contacts.PersonMixin):
     date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
 
     def __unicode__(self):
-        return self.username
+        #~ return self.username
+        return self.get_full_name()
         
     #~ def get_profile(self):
         #~ return self.profile or self.username
         
     @chooser(simple_values=True)
     def profile_choices(self,username):
-        qs = User.objects.filter(profile='').exclude(username=username).order_by('username')
+        qs = User.objects.filter(profile='').exclude(
+          username=username).order_by('username')
         #~ print 20120516, qs
         return [u.username for u in qs]
         
 
-    def get_full_name(self,salutation=True,**salutation_options):
+    def get_full_name(self):
         "Returns the first_name plus the last_name, with a space in between."
         full_name = u'%s %s' % (self.first_name, self.last_name)
         if not full_name:
             full_name = self.username
         return full_name.strip()
+        
+    @dd.displayfield(_("Name"))
+    def name_column(self,request):
+        #~ return join_words(self.last_name.upper(),self.first_name)
+        return unicode(self)
+        
 
 
-    def email_user(self, subject, message, from_email=None):
-        "Sends an e-mail to this User."
-        from django.core.mail import send_mail
-        send_mail(subject, message, from_email, [self.email])
+    #~ def email_user(self, subject, message, from_email=None):
+        #~ "Sends an e-mail to this User."
+        #~ from django.core.mail import send_mail
+        #~ send_mail(subject, message, from_email, [self.email])
+    
+    @property
+    def get_person(self):
+        if self.partner:
+            return self.partner.get_mti_child('person')
+    
 
     def save(self,*args,**kw):
         if self.profile == self.username:
@@ -134,16 +156,16 @@ class User(contacts.Partner,contacts.PersonMixin):
                     u.save()
                 
         
-    def full_clean(self,*args,**kw):
-        """
-        Almost like PersonMixin.full_clean, but 
-        takes username if first_name and last_name are empty.
-        """
-        l = filter(lambda x:x,[self.last_name,self.first_name])
-        self.name = " ".join(l)
-        if not self.name:
-            self.name = self.username
-        models.Model.full_clean(self,*args,**kw)
+    #~ def full_clean(self,*args,**kw):
+        #~ """
+        #~ Almost like PersonMixin.full_clean, but 
+        #~ takes username if first_name and last_name are empty.
+        #~ """
+        #~ l = filter(lambda x:x,[self.last_name,self.first_name])
+        #~ self.name = " ".join(l)
+        #~ if not self.name:
+            #~ self.name = self.username
+        #~ models.Model.full_clean(self,*args,**kw)
         
     #~ def disable_editing(self,ar):
         #~ if ar.get_user().is_superuser: return False
@@ -167,45 +189,64 @@ class User(contacts.Partner,contacts.PersonMixin):
         
 
 
-class UserDetail(dd.DetailLayout):
+#~ class UserDetail(dd.DetailLayout):
   
-    box2 = """
-    username profile 
-    level
-    """
     #~ box2 = """
-    #~ is_active 
-    #~ is_staff 
-    #~ is_expert 
-    #~ is_superuser
+    #~ username profile 
+    #~ level
     #~ """
     
-    box3 = """
-    country region
-    city zip_code:10
-    street_prefix street:25 street_no street_box
-    addr2:40
-    """
+    #~ box3 = """
+    #~ country region
+    #~ city zip_code:10
+    #~ street_prefix street:25 street_no street_box
+    #~ addr2:40
+    #~ """
 
-    box4 = """
-    email:40 
-    url
-    phone
-    gsm
-    """
+    #~ box4 = """
+    #~ email:40 
+    #~ url
+    #~ phone
+    #~ gsm
+    #~ """
 
+    #~ box1 = """
+    #~ first_name last_name language id
+    #~ box3:40 box4:30 
+    #~ date_joined last_login 
+    #~ """
+    #~ general = """
+    #~ box1:50 box2:20
+    #~ remarks 
+    #~ """
+    
+    #~ main = "general"
+
+class UserDetail(dd.DetailLayout):
+  
     box1 = """
-    first_name last_name language id
-    box3:40 box4:30 
+    username id profile 
+    first_name last_name partner
+    email language 
     date_joined last_login 
     """
-    general = """
+
+    box2 = """
+    level
+    """
+    #~ general = """
+    #~ box1:50 box2:20
+    #~ remarks 
+    #~ """
+    
+    #~ main = "general"
+  
+    main = """
     box1:50 box2:20
     remarks 
     """
     
-    main = "general"
-  
+ 
 
 class Users(dd.Table):
     """Shows the list of users on this site.
@@ -226,15 +267,15 @@ class Users(dd.Table):
         return False
           
   
-if settings.LINO.is_installed('contacts'):
-    """
-    Cannot install modlib.users without installing modlib.contacts.
-    But Sphinx's autodoc
-    """
+#~ if settings.LINO.is_installed('contacts'):
+    #~ """
+    #~ Cannot install modlib.users without installing modlib.contacts.
+    #~ But Sphinx's autodoc
+    #~ """
 
-    dd.inject_field(contacts.Partner,
-        'is_user',
-        mti.EnableChild('users.User',verbose_name=_("is User")),
-        """Whether this Partner is also a User."""
-        )
+    #~ dd.inject_field(contacts.Partner,
+        #~ 'is_user',
+        #~ mti.EnableChild('users.User',verbose_name=_("is User")),
+        #~ """Whether this Partner is also a User."""
+        #~ )
 
