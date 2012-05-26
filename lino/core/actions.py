@@ -178,11 +178,13 @@ class Action(object):
         
     def attach_to_actor(self,actor,name):
         if self.name is not None:
-            raise Exception("%s tried to setup() named action %s" % (actor,name))
+            raise Exception("%s tried to attach to named action %s" % (actor,self))
         self.name = name
         self.actor = actor
         if actor.hide_top_toolbar:
             self.hide_top_toolbar = True
+        #~ if name == 'default_action':
+            #~ print 20120527, self
             
     def contribute_to_class(self,model,name):
         ma = model.__dict__.get('_lino_model_actions',None)

@@ -58,16 +58,20 @@ Utilities:
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 from lino.utils.tables import VirtualTable
 #~ from lino.utils.tables import computed
 #~ from lino.utils.tables import ComputedColumn
 
-from lino.tools import resolve_model, get_app, resolve_app, resolve_field, get_field
+from lino.tools import resolve_model, get_app, resolve_app, resolve_field, get_field, UnresolvedModel
 
 #~ from lino.core.table import fields_list, inject_field
 from lino.core.table import has_fk
 from lino.core.table import Table
+from django.db.models.fields import FieldDoesNotExist
 #~ from lino.core import table
 #~ Table = table.Table
 
@@ -134,10 +138,11 @@ def inject_field(model,name,field,doc=None):
     Adds the given field to the given model.
     See also :doc:`/tickets/49`.
     """
-    model = resolve_model(model,strict=True)
-    #~ if isinstance(model,UnresolvedModel): 
-        #~ print "20120520 inject_field(%r) - unresolved" % name
-        #~ return
+    #~ model = resolve_model(model,strict=True)
+    model = resolve_model(model)
+    if isinstance(model,UnresolvedModel): 
+        logger.warning("Cannot inject_field(%r) to %s", name,model)
+        return
     if doc:
         field.__doc__ = doc
     model.add_to_class(name,field)
@@ -158,7 +163,12 @@ def update_field(model,name,**kw):
       dd.update_field(MyPerson,'first_name',blank=True)
     
     """
-    fld = model._meta.get_field_by_name(name)[0]
+    try:
+        fld = model._meta.get_field_by_name(name)[0]
+    except FieldDoesNotExist:
+        logger.warning("Cannot update unresolved field %s.%s", model,name)
+        return
+        return
     for k,v in kw.items():
         setattr(fld,k,v)
         

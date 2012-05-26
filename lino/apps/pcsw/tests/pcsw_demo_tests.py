@@ -83,7 +83,8 @@ def test001(self):
     
     p = Person.objects.get(pk=118)
     #~ self.assertEquals(unicode(p), "ARENS Annette (118)")
-    self.assertEquals(unicode(p), "AUSDEMWALD Alfons (118)")
+    #~ self.assertEquals(unicode(p), "AUSDEMWALD Alfons (118)")
+    self.assertEquals(unicode(p), "COLLARD Charlotte (118)")
     
     
         
@@ -100,7 +101,7 @@ def test002(self):
     u.language = '' # HTTP_ACCEPT_LANGUAGE works only when User.language empty
     u.save()
     
-    pk = 128
+    pk = 124
     url = '/api/cv/SoftSkillsByPerson?mt=22&mk=%d&fmt=json' % pk
     
     if 'en' in babel.AVAILABLE_LANGUAGES:
@@ -262,8 +263,8 @@ def test003(self):
     """
     cases = [
     #  [ id,         name, recno, first, prev, next, last ]
-       [ 119, "Altenberg",     1,   119,  None,  117, 198  ],
-       [ 117,     "Arens",     2,   119,  119,   118, 198  ],
+       [ 119,  "Charlier",     7,   115,  168,  117, 198  ],
+       [ 117,     "Arens",     2,   115,  119,   118, 198  ],
     ]
     # 
     for case in cases:

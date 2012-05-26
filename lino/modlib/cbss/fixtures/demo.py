@@ -23,29 +23,31 @@ from lino.utils import IncompleteDate, Cycler
 from lino import dd
 cbss = dd.resolve_app('cbss')
 
-DEMO_REQUESTS = [
-    [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'demo_ipr_1.xml' ],
-    [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,0)), 'demo_ipr_2.xml' ],
-    [ cbss.ManageAccessRequest, dict(
-        national_id='01234567890',
-        start_date=settings.LINO.demo_date(),
-        end_date=settings.LINO.demo_date(15),
-        purpose=902,
-        action=cbss.ManageAction.REGISTER,
-        query_register=cbss.QueryRegister.ALL,
-        ), '' ],
-]
+if cbss:
+  
+    DEMO_REQUESTS = [
+        [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'demo_ipr_1.xml' ],
+        [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,0)), 'demo_ipr_2.xml' ],
+        [ cbss.ManageAccessRequest, dict(
+            national_id='01234567890',
+            start_date=settings.LINO.demo_date(),
+            end_date=settings.LINO.demo_date(15),
+            purpose=902,
+            action=cbss.ManageAction.REGISTER,
+            query_register=cbss.QueryRegister.ALL,
+            ), '' ],
+    ]
 
-def objects():
-    User = dd.resolve_model(settings.LINO.user_model)
-    Person = dd.resolve_model(settings.LINO.person_model)
-    PERSONS = Cycler(Person.objects.filter(coached_from__isnull=False).order_by('id'))
-    for model,kw,fn in DEMO_REQUESTS:
-        kw.update(project=PERSONS.pop())
-        kw.update(user=User.objects.get(username='root'))
-        obj = model(**kw)
-        if fn:
-            fn = os.path.join(os.path.dirname(__file__),fn)
-            xml = open(fn).read()
-            obj.execute_request(simulate_response=xml)
-        yield obj
+    def objects():
+        User = dd.resolve_model(settings.LINO.user_model)
+        Person = dd.resolve_model(settings.LINO.person_model)
+        PERSONS = Cycler(Person.objects.filter(coached_from__isnull=False).order_by('id'))
+        for model,kw,fn in DEMO_REQUESTS:
+            kw.update(project=PERSONS.pop())
+            kw.update(user=User.objects.get(username='root'))
+            obj = model(**kw)
+            if fn:
+                fn = os.path.join(os.path.dirname(__file__),fn)
+                xml = open(fn).read()
+                obj.execute_request(simulate_response=xml)
+            yield obj

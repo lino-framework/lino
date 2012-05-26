@@ -686,33 +686,36 @@ when information about sectors is required.""")
     
     def get_service_reply(self,full_reply=None):
         """
-   <ServiceReply>
-      <ns2:ResultSummary xmlns:ns2="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" ok="YES">
-         <ns2:ReturnCode>0</ns2:ReturnCode>
-      </ns2:ResultSummary>
-      <ServiceId>OCMWCPASManageAccess</ServiceId>
-      <Version>20050930</Version>
-      <ns3:ManageAccessReply xmlns:ns3="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess">
-         <ns3:OriginalRequest>
-            <ns3:SSIN>68060105329</ns3:SSIN>
-            <ns3:Purpose>1</ns3:Purpose>
-            <ns3:Period>
-               <ns4:StartDate xmlns:ns4="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns4:StartDate>
-               <ns5:EndDate xmlns:ns5="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns5:EndDate>
-            </ns3:Period>
-            <ns3:Action>REGISTER</ns3:Action>
-         </ns3:OriginalRequest>
-         <ns3:Registrations>
-            <ns3:Purpose>1</ns3:Purpose>
-            <ns3:Period>
-               <ns6:StartDate xmlns:ns6="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns6:StartDate>
-               <ns7:EndDate xmlns:ns7="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns7:EndDate>
-            </ns3:Period>
-            <ns3:OrgUnit>63023</ns3:OrgUnit>
-            <ns3:Register>SECONDARY</ns3:Register>
-         </ns3:Registrations>
-      </ns3:ManageAccessReply>
-   </ServiceReply>        
+        Extract the "service reply" part from a full reply.
+        Example of a full reply::
+        
+         <ServiceReply>
+            <ns2:ResultSummary xmlns:ns2="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" ok="YES">
+               <ns2:ReturnCode>0</ns2:ReturnCode>
+            </ns2:ResultSummary>
+            <ServiceId>OCMWCPASManageAccess</ServiceId>
+            <Version>20050930</Version>
+            <ns3:ManageAccessReply xmlns:ns3="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess">
+               <ns3:OriginalRequest>
+                  <ns3:SSIN>68060105329</ns3:SSIN>
+                  <ns3:Purpose>1</ns3:Purpose>
+                  <ns3:Period>
+                     <ns4:StartDate xmlns:ns4="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns4:StartDate>
+                     <ns5:EndDate xmlns:ns5="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns5:EndDate>
+                  </ns3:Period>
+                  <ns3:Action>REGISTER</ns3:Action>
+               </ns3:OriginalRequest>
+               <ns3:Registrations>
+                  <ns3:Purpose>1</ns3:Purpose>
+                  <ns3:Period>
+                     <ns6:StartDate xmlns:ns6="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns6:StartDate>
+                     <ns7:EndDate xmlns:ns7="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns7:EndDate>
+                  </ns3:Period>
+                  <ns3:OrgUnit>63023</ns3:OrgUnit>
+                  <ns3:Register>SECONDARY</ns3:Register>
+               </ns3:Registrations>
+            </ns3:ManageAccessReply>
+         </ServiceReply>        
         """
         if full_reply is not None:
             return full_reply.childAtPath('/ServiceReply/ManageAccessReply')
@@ -831,7 +834,7 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
       """)
       
     def save(self,*args,**kw):
-        if self.project: 
+        if self.project_id: 
             person = self.project
             if person.national_id and not self.national_id:
                 self.national_id = person.national_id

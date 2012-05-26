@@ -1,10 +1,9 @@
 20120526
 ========
 
-
 Adapted :func:`migrate_from_1_4_3 <lino.apps.pcsw.migrate.migrate_from_1_4_3>`
 
-Ich bin mir noch nicht ganz klar darüber, 
+Interessant war die Entscheidung,
 wo das Feld `partner` in `users.User` definiert werden soll.
 
 Entweder kann ich es "von außerhalb" definieren 
@@ -17,21 +16,47 @@ indem ich dort :func:`lino.dd.inject_field` aufrufe:
       models.ForeignKey('contacts.Partner',
           blank=True,null=True))
 
-Oder ich kann in :mod:`lino.modlib.contacts` 
+Oder ich kann :mod:`lino.modlib.users` erweitern, dass sie es automatisch 
+einfügt, wenn `contacts` ebenfalls installiert ist. Genau. Das ist besser. 
 
-Internal changes
-----------------
+Unter anderem, weil ich dann auch das UserDetail automatisch anpassen kann. 
+Das ist freilich ziemliche Hackerei, aber wenn's ordentlich dokumentiert wäre, 
+müsste das eigentlich ein schönes Feature sein.
 
-Moved `EmptyTable` 
-from :class:`EmptyTable <lino.core.frames.EmptyTable>`
-to
-:class:`EmptyTable <lino.mixins.EmptyTable>`.
+Auf ähnliche Weise würde ich ja gerne auch die diversen UserLevels 
+automatisch ins Detail einfügen. Aber das macht zumindest für pcsw 
+keinen Sinn, weil es dort mindestens ein weiteres Feld 
+gibt (nämlich `quota_nz`), das sich die Zeile mit `newcomers_level` 
+teilen soll. Wie man *das* automatisch hinkriegen will, 
+weiß ich momentan wirklich nicht.
 
-`EmptyTable` is now in `mixins`. It cannot be in `dd` because it 
-needs :mod:`lino.mixins.printable` which itself needs `lino.dd`.
-This circular import problem was solved until now by importing 
-the printable during setup_report for adding the 
-DirectPrintAction of the EmptyTable.
-This is no longer possible when defining the Action as a class attribute. 
-Which confirms that changing the action definition syntax was a good step.
+
+Miscellaneous
+-------------
+
+- (internal) 
+  :class:`EmptyTable <lino.mixins.EmptyTable>`
+  is now in `mixins`. It cannot be in :mod:`lino.dd` because it 
+  needs :class:`lino.mixins.printable.DirectPrintAction` 
+  which itself needs :mod:`lino.dd`.
+  This circular import problem was solved until now using an inner import 
+  (by importing the `DirectPrintAction` during `setup_report`). 
+  This is no longer possible when defining the Action as a class attribute. 
+  Which confirms that changing the action definition syntax was a good step: 
+  if reveals wrong constructs.
+
+- Habe weiter in der Test-Suite aufgeräumt.
+
+- Kolonne `lino.apps.pcsw.courses.models.PendingCourses.address` fehlte noch.
+
+- Der Kalender funktionierte ja nicht. Da war in der `linolib.js` ein 
+  Aktionsname `detail` hard codiert, und die haben sich ja verändert 
+  seit ich Aktionen als Klassenattribute definiere.
+  
+- Cities zeigte kein Detail an. 
+  Das kam, weil collect_actions zu früh (*vor* den `site_setup`) aufgerufen wurde. 
+  Die entscheidet ja, ob eine `detail_action` erstellt wird. Cities hat par défaut 
+  kein Detail, kriegt aber in :func:`lino.apps.pcsw.models.site_setup` eines verpasst.
+
+
 

@@ -278,8 +278,8 @@ INSTALLED_APPS = (
   'lino.modlib.newcomers',
   'lino.modlib.households',
   'lino.modlib.debts',
-  'lino.apps.pcsw',
   'lino.apps.pcsw.courses',
+  'lino.apps.pcsw',
   #~ 'south', # http://south.aeracode.org
 )
 

@@ -649,7 +649,6 @@ class AbstractTable(actors.Actor):
     default_action = actions.GridEdit()
     
     
-    
     def __init__(self,*args,**kw):
         raise NotImplementedError("20120104")
     

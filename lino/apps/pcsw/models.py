@@ -1905,7 +1905,7 @@ settings.LINO.add_user_field('integ_level',UserLevel.field(_("Integration")))
 #~ RoleType = resolve_model('contacts.RoleType')
 #~ if not isinstance(RoleType,UnresolvedModel):
 """
-autodoc imports this module with :mod:`lino.apps.std.settings` 
+`autodoc` imports this module with :mod:`lino.apps.std.settings` 
 which has no 'contacts' app. but inject_field handles that case.
 """
 dd.inject_field('contacts.RoleType',
@@ -2005,12 +2005,12 @@ class Home(cal.Home):
 
 
 def site_setup(site):
-  
-    #~ site.modules.lino.Home.set_detail("""
-    #~ quick_links:80x1
-    #~ pcsw.UsersWithClients:80x8
-    #~ cal.ComingReminders:40x16 cal.MissedReminders:40x16
-    #~ """)
+    """
+    This is the place where we can override or 
+    define application-specific things.
+    This includes especially those detail layouts 
+    which depend on the *combination* of installed modules.
+    """
     
     site.modules.lino.SiteConfigs.set_detail("""
     site_company default_build_method
@@ -2032,6 +2032,11 @@ def site_setup(site):
     contacts.PartnersByCity jobs.StudiesByCity
     """)
     
+    #~ site.modules.countries.Cities.detail_layout.update(main="""
+    #~ name country 
+    #~ contacts.PartnersByCity jobs.StudiesByCity
+    #~ """)
+    
     site.modules.countries.Countries.set_detail("""
     isocode name short_code
     countries.CitiesByCountry jobs.StudiesByCountry
@@ -2051,86 +2056,73 @@ def site_setup(site):
   
     #~ from lino.modlib.cal import models as cal
 
-    class EventDetail(cal.EventDetail):
-        # inherits the start and end panels
-        main = """
-        type summary user project
-        start end #all_day #duration status 
-        place priority access_class transparent #rset 
-        calendar owner created:20 modified:20 user_modified 
-        description GuestsByEvent
-        """
-        
-    #~ cal.Events.detail_layout = EventDetail(cal.Events)
-    site.modules.cal.Events.set_detail(EventDetail())
+    #~ class EventDetail(cal.EventDetail):
+        #~ # inherits the start and end panels
+        #~ main = """
+        #~ type summary user project
+        #~ start end #all_day #duration status 
+        #~ place priority access_class transparent #rset 
+        #~ calendar owner created:20 modified:20 user_modified 
+        #~ description GuestsByEvent
+        #~ """
+    #~ site.modules.cal.Events.set_detail(EventDetail())
     
-    if False:
-      
-        """
-        Creating application-specific DetailLayouts disables the effect of 
-        eventual `add_detail_tab` calls by other installed apps.
-        """
-        #~ class UserDetail(dd.DetailLayout):
-        class UserDetail(users.UserDetail):
-          
-            #~ box2 = """
-            #~ username:20 profile:20
-            #~ level
-            #~ integ_level
-            #~ cbss_level
-            #~ newcomers_level newcomer_quota
-            #~ debts_level
-            #~ """
-            
-            box2 = """
-            level
-            integ_level
-            cbss_level
-            newcomers_level newcomer_quota
-            debts_level
-            """
-            
-            #~ main = "general cal.RemindersByUser newcomers.CompetencesByUser"
-            #~ main = "general newcomers.CompetencesByUser"
-          
-            def setup_handle(self,lh):
-              
-                lh.general.label = _("General")
-                #~ lh.reminders.label = _("Reminders")
-                #~ lh.newcomers.label = _("Newcomers")
-
-        
-        site.modules.users.Users.set_detail(UserDetail())
+    site.modules.cal.Events.set_detail("""
+    type summary user project
+    start end #all_day #duration status 
+    place priority access_class transparent #rset 
+    calendar owner created:20 modified:20 user_modified 
+    description GuestsByEvent
+    """)
     
-    # TODO: find a better solution
-    site.modules.users.Users.detail_layout.box2 = """
+    site.modules.users.Users.set_detail(box2 = """
     level
     integ_level
     cbss_level
     newcomers_level newcomer_quota
     debts_level
-    """
+    """)
     
-    class NoteDetail(dd.DetailLayout):
+    #~ class NoteDetail(dd.DetailLayout):
+        #~ left = """
+        #~ date:10 event_type:25 type:25
+        #~ subject 
+        #~ person company
+        #~ id user:10 language:8 build_time
+        #~ body
+        #~ """
+        
+        #~ right = """
+        #~ uploads.UploadsByOwner
+        #~ thirds.ThirdsByOwner:30
+        #~ cal.TasksByOwner
+        #~ """
+        
+        #~ main = """
+        #~ left:60 right:30
+        #~ """
+        
+    #~ site.modules.notes.Notes.set_detail(NoteDetail())
+    site.modules.notes.Notes.set_detail(
         left = """
         date:10 event_type:25 type:25
         subject 
         person company
         id user:10 language:8 build_time
         body
-        """
+        """,
         
         right = """
         uploads.UploadsByOwner
         thirds.ThirdsByOwner:30
         cal.TasksByOwner
-        """
+        """,
         
         main = """
         left:60 right:30
         """
-        
-    site.modules.notes.Notes.set_detail(NoteDetail())
+    )
+    
     
     site.modules.outbox.Mails.set_detail("""
     subject type project date 

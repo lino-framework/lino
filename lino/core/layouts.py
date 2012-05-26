@@ -341,6 +341,50 @@ class BaseLayout(object):
     def setup_handle(self,lh):
         pass
         
+    def update(self,**kw):
+        """
+        Update the template of one or more panels.
+        """
+        if hasattr(self,'_extjs3_handle'):
+            raise Exception("Cannot set_detail after UI has been set up.")
+        for k,v in kw.items():
+            #~ if not hasattr(self,k):
+                #~ raise Exception("%s has no attribute %r" % (self,k))
+            setattr(self,k,v)
+            
+    def add_tabpanel(self,name,tpl=None,label=None,**kw):
+        """
+        Add a tab panel to an existing layout.
+        """
+        #~ print "20120526 add_detail_tab", self, name
+        if hasattr(self,'_extjs3_handle'):
+            raise Exception("Cannot set_detail after UI has been set up.")
+        if '\n' in name:
+           raise Exception("name may not contain any newline") 
+        if ' ' in name:
+           raise Exception("name may not contain any whitespace") 
+        if '\n' in self.main:
+            if hasattr(self,'general'):
+                raise NotImplementedError(
+                    """Sorry, %s has both a vertical `main` *and* a panel called `general`.
+                    """ % self)
+            self.general = self.main
+            self.main = "general " + name
+            self._labels['general'] = _("General")
+        else:
+            self.main += " " + name
+        if tpl is not None:
+            if hasattr(self,name):
+                raise Exception("Oops: %s has already a name %r" % (self,name))
+            setattr(self,name,tpl)
+        if label is not None:
+            self._labels[name] = label
+        self._element_options[name] = kw
+        #~ if kw:
+            #~ print 20120525, self, self.detail_layout._element_options
+            
+            
+            
     def get_handle(self,ui):
         """
         Same code as lino.ui.base.Handled.get_handle, 
@@ -376,6 +420,8 @@ class DetailLayout(BaseLayout):
         
     #~ def __init__(self,*args,**kw):
         #~ super(DetailLayout,self).__init__(None,*args,**kw)
+        
+        
         
 
 class ListLayout(BaseLayout):

@@ -71,8 +71,8 @@ def discover():
     
     for a in actors_list:
         a.class_init()
-        a.collect_actions()
-
+        #~ a.collect_actions() # too early: e.g. Cities has no detail_layout yet, but pcsw.site_setup() defines one
+        
         
 
 class ActorMetaClass(type):
@@ -332,10 +332,10 @@ class Actor(Handled,ViewPermission):
         return []
         
     @classmethod
-    def collect_actions(cls):
+    def _collect_actions(cls):
         """
         Loops through the class dict and collects all Action instances,
-        calling `attach_action` which will set their `actor` attribute.
+        calling `_attach_action` which will set their `actor` attribute.
         Before this we create `insert_action` and `detail_action` if necessary.
         Also fill _actions_list.
         """
@@ -353,7 +353,7 @@ class Actor(Handled,ViewPermission):
         cls._actions_list = []
         for k,v in cls.__dict__.items():
             if isinstance(v,actions.Action):
-                cls.attach_action(k,v)
+                cls._attach_action(k,v)
                 
         #~ cls._actions_list = cls._actions_dict.values()
         cls._actions_list += cls.get_shared_actions()
@@ -365,7 +365,7 @@ class Actor(Handled,ViewPermission):
             #~ print 20120524, cls, [str(a) for a in cls._actions_list]
         
     @classmethod
-    def attach_action(self,name,a):
+    def _attach_action(self,name,a):
         a.attach_to_actor(self,name)
         if a.url_action_name:
             if self._actions_dict.has_key(a.url_action_name):
@@ -433,51 +433,34 @@ class Actor(Handled,ViewPermission):
         
     @classmethod
     def set_detail(self,dtl=None,**kw):
+        """
+        """
         if dtl is not None:
             if isinstance(dtl,basestring):
-                dtl = layouts.DetailLayout(self,dtl)
+                if self.detail_layout is None:
+                    self.detail_layout = layouts.DetailLayout(self,dtl,**kw)
+                    return
+                assert not kw.has_key('main')
+                kw['main'] = dtl
             else:
                 assert dtl._table is None
                 dtl._table = self
-            self.detail_layout = dtl
+                self.detail_layout = dtl
         if kw:
-            if hasattr(self.detail_layout,'_extjs3_handle'):
-                raise Exception("Cannot set_detail after UI has been set up.")
-            for k,v in kw.items():
-                setattr(self.detail_layout,k,v)
+            self.detail_layout.update(**kw)
+            #~ if hasattr(self.detail_layout,'_extjs3_handle'):
+                #~ raise Exception("Cannot set_detail after UI has been set up.")
+            #~ for k,v in kw.items():
+                #~ setattr(self.detail_layout,k,v)
+                
     @classmethod
-    #~ def add_detail_tab(self,tpl,label=None):
-    def add_detail_tab(self,name,tpl=None,label=None,**kw):
+    def add_detail_tab(self,*args,**kw):
         """
-        Adds a tab to the Detail of this actor.
-        Note that this might have no effect if an application 
-        then overrides the Detail of this actor.
+        Adds a tab panel to the Detail of this actor.
         """
-        print "20120526 add_detail_tab", self, name
-        if hasattr(self.detail_layout,'_extjs3_handle'):
-            raise Exception("Cannot set_detail after UI has been set up.")
-        if '\n' in name:
-           raise Exception("name may not contain any newline") 
-        if ' ' in name:
-           raise Exception("name may not contain any whitespace") 
-        if '\n' in self.detail_layout.main:
-            if hasattr(self.detail_layout,'general'):
-                raise NotImplementedError()
-            self.detail_layout.general = self.detail_layout.main
-            self.detail_layout.main = "general " + name
-            self.detail_layout._labels['general'] = _("General")
-        else:
-            self.detail_layout.main += " " + name
-        if tpl is not None:
-            if hasattr(self.detail_layout,name):
-                raise Exception("Oops: %s.detail_layout has already a name %r" % (self,name))
-            setattr(self.detail_layout,name,tpl)
-        if label is not None:
-            self.detail_layout._labels[name] = label
-        self.detail_layout._element_options[name] = kw
-        #~ if kw:
-            #~ print 20120525, self, self.detail_layout._element_options
-            
+        self.detail_layout.add_tabpanel(*args,**kw)
+    
+        
 
     @classmethod
     def add_virtual_field(cls,name,vf):
@@ -513,6 +496,8 @@ class Actor(Handled,ViewPermission):
             #~ self.label = self.__name__
         #~ if self.title is None:
             #~ self.title = self.label
+            
+        self._collect_actions()
             
         if self.parameters:
             from lino.utils.choosers import check_for_chooser

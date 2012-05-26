@@ -345,7 +345,7 @@ def discover():
             rpt = table_factory(model)
             register_report(rpt)
             rpt.class_init()
-            rpt.collect_actions()
+            #~ rpt.collect_actions()
             model._lino_default_table = rpt
             
             

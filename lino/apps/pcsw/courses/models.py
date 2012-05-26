@@ -565,7 +565,7 @@ class PendingCourseRequests(CourseRequests):
         before the UI handle is being instantiated.
         """
         self.column_names = 'date_submitted person age '
-        self.column_names += 'person__gsm person__phone person__coach1 '
+        self.column_names += 'address person__gsm person__phone person__coach1 '
         #~ self.column_names += 'person__address_column person__age ' 
         self.column_names += 'content urgent remark'
         age_slices = [(16,24), (25,30), (31,40), (41,50),(51,60),(61,None)]
@@ -599,11 +599,18 @@ class PendingCourseRequests(CourseRequests):
             yield obj
     
 
-    #~ @dd.virtualfield(models.IntegerField(_("Age")))
-    @dd.displayfield(_("Age"))
+    @dd.virtualfield(models.IntegerField(_("Age")))
     def age(self,obj,request):
-        if obj._age_in_years is None: return ''
-        return str(obj._age_in_years)
+        return obj._age_in_years
+    
+    @dd.displayfield(_("Address"))
+    def address(self,obj,ar):
+        return obj.person.address_location(', ')
+        
+    #~ @dd.displayfield(_("Age"))
+    #~ def age(self,obj,request):
+        #~ if obj._age_in_years is None: return ''
+        #~ return str(obj._age_in_years)
         
     #~ @dd.virtualfield(models.BooleanField(_("unknown age")))
     @dd.virtualfield(models.IntegerField(_("unknown age")))

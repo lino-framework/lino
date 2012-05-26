@@ -73,7 +73,8 @@ We got a timeout.
 That's normal when this test is run behind an IP address that is not registered.
 Set your :attr:`lino.Lino.cbss_live_tests` setting to False to skip this test.
 """
-  
+
+
 
 def test01(self):
     """
@@ -82,10 +83,21 @@ def test01(self):
     
     from lino.ui.extjs3 import urls # create cache/wsdl files
     
+    User = resolve_model(settings.LINO.user_model)
+    global root
+    root = User(username='root')
+    root.save()
+    
+    Person = resolve_model(settings.LINO.person_model)
+    global luc
+    luc = Person(first_name='Luc',last_name='Saffre')
+    luc.save()
+    
     # save site settings
     #~ saved_cbss_environment = settings.LINO.cbss_environment
     #~ saved_cbss_user_params = settings.LINO.cbss_user_params
     saved_cbss_live_tests = settings.LINO.cbss_live_tests
+    
     
     """
     set fictive user params and run some offline tests
@@ -141,12 +153,16 @@ def test01(self):
     
     """
     Create another one, this time a name search.
-    This time we also inspect the generated XML
+    This time we also inspect the generated XML.
     """
+    
+    #~ root = User.objects.get(username='root')
     
     #~ IdentifyPersonRequest = resolve_model('cbss.IdentifyPersonRequest')
     req = cbss.IdentifyPersonRequest(
+        user=root,project=luc,
         last_name="MUSTERMANN",
+        first_name="Max",
         birth_date=IncompleteDate(1938,6,1))
     
     req.validate_request()
@@ -158,7 +174,7 @@ Not actually sending because environment is empty. Request would be:
    <ipr:SearchCriteria>
       <ipr:PhoneticCriteria>
          <ipr:LastName>MUSTERMANN</ipr:LastName>
-         <ipr:FirstName></ipr:FirstName>
+         <ipr:FirstName>Max</ipr:FirstName>
          <ipr:MiddleName></ipr:MiddleName>
          <ipr:BirthDate>1938-06-01</ipr:BirthDate>
       </ipr:PhoneticCriteria>
@@ -251,6 +267,7 @@ AuthorCodeList : CBSS"""
     LastName "SAFFRE" and BirthDate 1968-06-01:
     """
     req = cbss.IdentifyPersonRequest(
+        user=root,project=luc,
         last_name="SAFFRE",
         birth_date=IncompleteDate(1968,6,1))
     req.execute_request()
@@ -267,7 +284,9 @@ AuthorCodeList : CBSS"""
     """
     Third IPR live test. NISS and birth_date are not enough.
     """
-    req = cbss.IdentifyPersonRequest(national_id="70100853190",birth_date=IncompleteDate(1970,10,8))
+    req = cbss.IdentifyPersonRequest(
+        user=root,project=luc,
+        national_id="70100853190",birth_date=IncompleteDate(1970,10,8))
     req.execute_request()
     
     expected = """\
@@ -295,7 +314,9 @@ def test02(self):
     """
     
     #~ RetrieveTIGroupsRequest = resolve_model('cbss.RetrieveTIGroupsRequest')
-    req = cbss.RetrieveTIGroupsRequest(national_id='12345678901',language='fr')
+    req = cbss.RetrieveTIGroupsRequest(
+        user=root,project=luc,
+        national_id='12345678901',language='fr')
     
     """
     Try it without environment see the XML.
@@ -347,7 +368,9 @@ description : A validation error occurred.
     """
     second request with a valid SSIN but which is not not integrated.
     """
-    req = cbss.RetrieveTIGroupsRequest(national_id='70100853190',
+    req = cbss.RetrieveTIGroupsRequest(
+        user=root,project=luc,
+        national_id='70100853190',
         language='fr',history=False)
     reply = req.execute_request()
     if settings.LINO.cbss_live_tests:
@@ -367,6 +390,8 @@ description : The given SSIN is not integrated correctly.
     kw = dict()
     kw.update(purpose=1) # dossier in onderzoek voor een maximale periode van twee maanden
     kw.update(national_id='68060105329') 
+    kw.update(user=root) 
+    kw.update(project=luc) 
     kw.update(start_date=today)
     kw.update(end_date=today) 
     kw.update(action=cbss.ManageAction.REGISTER) 
@@ -416,7 +441,9 @@ description : The given SSIN is not integrated correctly.
         #~ print reply
         self.assertEquivalent(expected,req.response_xml,report_plain=True)
 
-    req = cbss.RetrieveTIGroupsRequest(national_id='68060105329',
+    req = cbss.RetrieveTIGroupsRequest(
+        user=root,project=luc,
+        national_id='68060105329',
         language='fr',history=False)
     reply = req.execute_request()
     if settings.LINO.cbss_live_tests:

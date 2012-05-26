@@ -1013,3 +1013,13 @@ Documentation
     Maybe one way is to add an `environment` option to the `automodule` directive?
 
 #.  Ausprobieren, was David De Sousa am 12.11.2009 auf sphinx-dev gepostet hat.
+
+#.  Creating application-specific DetailLayouts disables the effect of eventual 
+    `add_detail_tab` calls by other installed apps.
+    Example: :mod:`lino.apps.pcsw` used 
+    to create its own UserDetail, a subclass of 
+    :class:`lino.modlib.users.models.UserDetail`. 
+    But then we started to use :meth:`lino.core.actor.Actor.add_detail_tab` 
+    in :mod:`lino.modlib.cal` and :mod:`lino.modlib.newcomers`.
+    This didn't work since `pcsw` then created her own UserDetail.
+    
