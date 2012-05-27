@@ -34,6 +34,7 @@ from lino.core import actions
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
 from lino.utils import mti
+from lino.utils import choicelists
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
 #~ from . import ext_requests
@@ -869,6 +870,9 @@ class DecimalFieldElement(FieldElement):
         return kw
         
 class DisplayElement(FieldElement):
+    """
+    ExtJS element to be used for :class:`DisplayFields <lino.core.fields.DisplayField>`.
+    """
     preferred_width = 30
     preferred_height = 3
     ext_suffix = "_disp"
@@ -877,6 +881,7 @@ class DisplayElement(FieldElement):
     value_template = "new Ext.form.DisplayField(%s)"
     
     def __init__(self,*args,**kw):
+        kw.setdefault('value','<br/>') # see blog/2012/0527
         FieldElement.__init__(self,*args,**kw)
         if self.field.max_length:
             self.preferred_width = self.field.max_length
@@ -1730,7 +1735,7 @@ def field2elem(layout_handle,field,**kw):
             else:
                 return ComplexRemoteComboFieldElement(layout_handle,field,**kw)
     if field.choices:
-        if isinstance(field,fields.ChoiceListField):
+        if isinstance(field,choicelists.ChoiceListField):
             kw.setdefault('preferred_width',field.choicelist.preferred_width)
         else:
             kw.setdefault('preferred_width',20)

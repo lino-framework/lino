@@ -43,7 +43,7 @@ if cbss:
         Person = dd.resolve_model(settings.LINO.person_model)
         PERSONS = Cycler(Person.objects.filter(coached_from__isnull=False).order_by('id'))
         for model,kw,fn in DEMO_REQUESTS:
-            kw.update(project=PERSONS.pop())
+            kw.update(person=PERSONS.pop())
             kw.update(user=User.objects.get(username='root'))
             obj = model(**kw)
             if fn:

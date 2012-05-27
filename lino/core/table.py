@@ -805,9 +805,9 @@ class Table(AbstractTable):
         return qs
 
     @classmethod
-    def create_instance(self,req,**kw):
+    def create_instance(self,ar,**kw):
         instance = self.model(**kw)
-        #~ self.on_create(instance,req)
+        #~ self.on_create(instance,ar)
         
         """
         Used e.g. by modlib.notes.Note.on_create().
@@ -815,9 +815,9 @@ class Table(AbstractTable):
         Didn't yet find out how to do that using a standard Django signal.
         """
         m = getattr(instance,'on_create',None)
+        #~ print "20120527 Table.create_instance on_create is", m
         if m:
-            m(req)
-        #~ print 20110128, instance
+            m(ar)
         return instance
         
     @classmethod

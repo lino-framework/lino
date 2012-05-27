@@ -127,7 +127,7 @@ class HtmlRenderer(object):
     def href_button(self,url,text):
         return '[<a href="%s">%s</a>]' % (url,text)
         
-    def quick_add_buttons(self,tr):
+    def quick_add_buttons(self,ar):
         """
         Returns a HTML chunk that displays "quick add buttons"
         for the given :class:`request <lino.core.table.TableRequest>`:
@@ -139,26 +139,27 @@ class HtmlRenderer(object):
         
         """
         s = ''
-        #~ params = dict(base_params=tr.request2kw(self))
+        #~ params = dict(base_params=ar.request2kw(self))
         params = None
-        after_show = tr.get_status(self)
+        after_show = ar.get_status(self)
         
-        #~ params = tr.get_status(self)
+        #~ params = ar.get_status(self)
         #~ after_show = dict()
-        #~ a = tr.actor.get_action('insert')
-        a = tr.actor.insert_action
+        #~ a = ar.actor.get_action('insert')
+        a = ar.actor.insert_action
         if a is not None:
-            elem = tr.create_instance()
-            after_show.update(data_record=elem2rec_insert(tr,tr.ah,elem))
+            elem = ar.create_instance()
+            after_show.update(data_record=elem2rec_insert(ar,ar.ah,elem))
             #~ after_show.update(record_id=-99999)
             # see tickets/56
             s += self.action_href_js(a,params,after_show,_("New"))
-        n = tr.get_total_count()
+        n = ar.get_total_count()
         if n > 0:
-            obj = tr.data_iterator[n-1]
+            obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
-            s += ' ' + self.action_href_js(tr.ah.actor.detail_action,params,after_show,_("Show Last"))
-            s += ' ' + self.href_to_request(tr,_("Show All"))
+            s += ' ' + self.action_href_js(ar.ah.actor.detail_action,params,after_show,_("Show Last"))
+            s += ' ' + self.href_to_request(ar,_("Show All"))
+        #~ return '<p>%s</p>' % s
         return s
                 
     def quick_upload_buttons(self,rr):

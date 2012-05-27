@@ -81,6 +81,7 @@ automatically available as a property value in
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.functional import lazy
+from django.db import models
 
 from lino.utils import curry
 
@@ -151,9 +152,10 @@ class ChoiceList(object):
     @classmethod
     def field(cls,*args,**kw):
         """
-        Shortcut to create a :class:`lino.core.fields.ChoiceListField` in a Model.
+        Create a database field (a :class:`ChoiceListField`)
+        that holds one value of this choice list. 
         """
-        from lino.core.fields import ChoiceListField
+        #~ from lino.core.fields import ChoiceListField
         return ChoiceListField(cls,*args,**kw)
         
     @classmethod
@@ -223,7 +225,77 @@ class ChoiceList(object):
         return self.display_text(bc)
     #~ def __unicode__(self):
         #~ return unicode(self.stored_name) # babel_get(self.names)
+
+
+
+class ChoiceListField(models.CharField):
+    """
+    A field that stores values from a 
+    :class:`lino.utils.choicelists.ChoiceList`.
+    """
+    
+    __metaclass__ = models.SubfieldBase
+    
+    #~ choicelist = NotImplementedError
+    
+    def __init__(self,choicelist,*args,**kw):
+        if args:
+            verbose_name = args[0]
+            args = args[1:]
+        else:
+            verbose_name = kw.pop('verbose_name',None)
+        if verbose_name is None:
+            verbose_name = choicelist.label
+        self.choicelist = choicelist
+        defaults = dict(
+            #~ choices=KNOWLEDGE_CHOICES,
+            choices=choicelist.get_choices(),
+            max_length=choicelist.max_length,
+            blank=True,  # null=True,
+            #~ validators=[validate_knowledge],
+            #~ limit_to_choices=True,
+            )
+        defaults.update(kw)
+        #~ models.SmallIntegerField.__init__(self,*args, **defaults)
+        models.CharField.__init__(self,verbose_name,*args, **defaults)
         
+    def get_internal_type(self):
+        return "CharField"
+        
+    def to_python(self, value):
+        #~ if self.attname == 'query_register':
+            #~ print '20120527 to_python', repr(value), '\n'
+        if isinstance(value,BabelChoice):
+            return value
+        value = self.choicelist.to_python(value)
+        if value is None: # see 20110907
+            value = ''
+        return value
+        
+    def get_prep_value(self, value):
+        #~ if self.attname == 'query_register':
+            #~ print '20120527 get_prep_value()', repr(value)
+        if value:
+            return value.value
+        return '' # see 20110907
+        #~ return None
+        
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        #~ if self.attname == 'query_register':
+            #~ print '20120527 value_to_string', repr(value)
+        return self.get_prep_value(value)
+        #~ return self.get_db_prep_value(value,connection)
+        
+    #~ def save_form_data(self, instance, data):
+        #~ setattr(instance, self.name, data)
+        
+    def get_text_for_value(self,value):
+        return self.choicelist.get_text_for_value(value.value)
+    
+      
+
+
 #~ class BabelChoice(babel.BabelText):
 class BabelChoice(object):
     """
@@ -257,6 +329,11 @@ class BabelChoice(object):
         
     def __unicode__(self):
         return unicode(self.text)
+                
+    def __call__(self):
+        # make it callable so it can be used as `default` of a field.
+        # see blog/2012/0527
+        return self
                 
                 
 

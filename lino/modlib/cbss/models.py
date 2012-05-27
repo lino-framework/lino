@@ -12,8 +12,38 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Adds models and tables used to make :term:`CBSS` requests.
+u"""
+Adds models and tables used to make the following :term:`CBSS` requests
+(descriptions taken from `SYNTHESE_SERVICESXML_CPAS_FR.DOC`):
+
+- :class:`IdentifyPersonRequest` :
+  Identifier la personne par son NISS ou ses données phonétiques et vérifier son identité par le numéro de carte SIS, de carte d'identité ou par ses données phonétiques ()
+
+- :class:`ManageAccessRequest`: 
+  Enregistrer, désenregistrer ou consulter (:class:`ManageAction`) un dossier 
+  dans le registre du réseau de la sécurité sociale (registre BCSS) 
+  et dans le répertoire sectoriel des CPAS géré par la SmalS-MvM (:class:`QueryRegister`).
+  
+  - `ManageAction.REGISTER` : 
+    Ce service est sollicité au moment du démarrage de l’enquête sociale.  
+    Le CPAS déclare au réseau de la sécurité sociale qu’il possède un dossier pour lequel il a 
+    l’autorisation (dispositions légales et réglementaires) d’obtenir des informations des autres 
+    institutions en vue de compléter son enquête dans le cadre de l’octroi du revenu d’intégration.  
+    Cette déclaration concerne le répertoire sectoriel des CPAS à la SmalS-MvM et peut 
+    concerner plusieurs catégories de personnes : 
+    le demandeur, les cohabitants et les tiers concernés 
+    et ce, pour des finalités différentes. 
+  - `ManageAction.UNREGISTER` : 
+    L’opération contraire est aussi mise à disposition. 
+  - `ManageAction.LIST` : 
+    Il est en plus possible d’obtenir une liste des enregistrements 
+    dans le répertoire sectoriel des CPAS à la SmalS-MvM 
+    ainsi qu’au sein du réseau BCSS.
+  
+- :class:`RetrieveTIGroupsRequest`: 
+  Obtenir des informations à propos d’une personne dans le cadre de l’enquête sociale.
+
+
 
 """
 
@@ -35,6 +65,7 @@ from appy.shared.xml_parser import XmlUnmarshaller
 from lino import mixins
 from lino import dd
 from lino.utils import Warning
+from lino.tools import obj2str
 
 from lino.utils import babel
 #~ from lino.utils import dblogger
@@ -103,6 +134,7 @@ add('2',_("Failed"),'failed')
 add('3',_("OK"),'ok')
 add('4',_("Warnings"),'warnings')
 add('5',_("Errors"),'errors')
+add('6',_("Validated"),'validated')
 #~ add('6',_("Invalid reply"),'invalid')
 #~ add('9',_("Fictive"),'fictive')
   
@@ -137,13 +169,13 @@ class SendAction(dd.RowAction):
         if obj.sent:
             return True
     
-    def run(self,rr,elem,**kw):
-        elem.execute_request(rr)
+    def run(self,ar,elem,**kw):
+        elem.execute_request(ar)
         if elem.status == RequestStatus.warnings:
             kw.update(message=_("There were warnings but no errors."))
             kw.update(alert=True)
         kw.update(refresh=True)
-        return rr.ui.success_response(**kw)
+        return ar.ui.success_response(**kw)
 
 NSCOMMON = ('common','http://www.ksz-bcss.fgov.be/XSD/SSDN/Common')
 NSSSDN = ('ssdn','http://www.ksz-bcss.fgov.be/XSD/SSDN/Service')
@@ -152,7 +184,8 @@ NSMAR = ('mar',"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess")
 NSWSC = ('wsc',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
 
 
-class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
+#~ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
+class CBSSRequest(mixins.AutoUser):
     """
     Common Abstract Base Class for :class:`SSDNRequest`
     and :class:`NewStyleRequest`
@@ -163,6 +196,8 @@ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
     class Meta:
         abstract = True
         
+    person = models.ForeignKey(settings.LINO.person_model)
+    
     sent = models.DateTimeField(
         verbose_name=_("Sent"),
         blank=True,null=True,
@@ -229,13 +264,17 @@ If the request failed with a local exception, then it contains a traceback.""")
             environment = settings.LINO.cbss_environment or ''
             
         self.environment = environment
-        self.status = RequestStatus.pending
         self.sent = now
-        self.save()
+        
         if not settings.LINO.cbss_live_tests:
             if simulate_response is None and environment:
                 self.validate_request()
+                self.status = RequestStatus.validated
+                self.save()
                 return
+                
+        self.status = RequestStatus.pending
+        self.save()
         
         retval = None
         try:
@@ -246,7 +285,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         except Exception,e:
             self.status = RequestStatus.failed
             self.response_xml = traceback.format_exc(e)
-            
+
         self.save()
         return retval
         
@@ -276,7 +315,7 @@ Not actually sending because environment is empty. Request would be:
     def result(self,ar):
         return self.response_xml
         
-dd.update_field(CBSSRequest,'project',blank=False,null=False)
+#~ dd.update_field(CBSSRequest,'project',blank=False,null=False)
 dd.update_field(CBSSRequest,'user',blank=False,null=False)
 
 class CBSSRequestDetail(dd.DetailLayout):
@@ -289,7 +328,7 @@ class CBSSRequestDetail(dd.DetailLayout):
     """
     
     info = """
-    id project user environment sent status ticket
+    id person user environment sent status ticket
     """
     
     response = "response_xml"
@@ -585,189 +624,29 @@ The number of the ID card used to authenticate the person.""")
         national_id = national_id.replace('-','')
         return national_id
         
+    def save(self,*args,**kw):
+        if self.person_id and not self.last_name: 
+            self.fill_from_person(self.person)
+        super(SSIN,self).save(*args,**kw)
         
-
-class ManageAction(ChoiceList):
-    """
-    Possible values for the 
-    `action` field of a :class:`ManageAccessRequest`.
-    """
-    label = _("Action")
-
-add = ManageAction.add_item
-add('1',_("Register"),'REGISTER')
-add('2',_("Unregister"),'UNREGISTER')
-add('3',_("List"),'LIST')
-
-
-class QueryRegister(ChoiceList):
-    """
-    Possible values for the 
-    `query_register` field of a :class:`ManageAccessRequest`.
-    """
-    label = _("Query Register")
-
-add = QueryRegister.add_item
-add('1',_("Primary"),'PRIMARY')
-add('2',_("Secondary"),'SECONDARY')
-add('3',_("All"),'ALL')
-
-class ManageAccessRequest(SSDNRequest,SSIN):
-    """
-    A request to the ManageAccess service.
-    
-    Registering a person means that this PCSW is 
-    going to maintain a dossier about this person.
-    Users commonly say "to integrate" a person.
-    
-    """
-  
-    ssdn_service_id = 'OCMWCPASManageAccess'
-    ssdn_service_version = '20050930'
-    
-    xsd_filename = xsdpath('SSDN','OCMW_CPAS',
-        'MANAGEACCESS','MANAGEACCESSREQUEST.XSD')
-    
-    class Meta:
-        verbose_name = _("ManageAccess Request")
-        verbose_name_plural = _("ManageAccess Requests")
+    def on_create(self,ar):
+        #~ print '20120527 SSIN.on_create', obj2str(self), ar
+        #~ super(ContractBase,self).on_create(request)
+        self.person_changed(ar)
         
-    purpose = models.IntegerField(verbose_name=_('Purpose'),
-      default=0,help_text="""\
-The purpose for which the inscription needs to be 
-registered/unregistered or listed. 
-For listing this field is optional, 
-for register/unregister it is obligated.""")
-
-    start_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Registered from"))
-    end_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Registered until"))
+    def person_changed(self,ar):
+        #~ print '20120527 person_changed', obj2str(self)
+        if self.person_id: 
+            self.fill_from_person(self.person)
         
-    action = ManageAction.field()
-    query_register = QueryRegister.field()
-
-    sector = models.IntegerField(verbose_name=_('Sector'),
-      default=0,help_text="""\
-For register and unregister this element is ignored. 
-It can be used for list, 
-when information about sectors is required.""")
-
-    def build_request(self):
-        """Construct and return the root element of the (inner) service request."""
-        national_id = self.get_ssin()
-        main = E('mar:ManageAccessRequest',ns=NSMAR)
-        main.append(E('mar:SSIN').setText(national_id))
-        main.append(E('mar:Purpose').setText(str(self.purpose)))
-        period = E('mar:Period')
-        main.append(period)
-        period.append(E('common:StartDate',ns=NSCOMMON).setText(str(self.start_date)))
-        period.append(E('common:EndDate',ns=NSCOMMON).setText(str(self.end_date)))
-        main.append(E('mar:Action').setText(self.action.name))
-        if self.sector:
-            main.append(E('mar:Sector').setText(str(self.sector)))
-        if self.query_register:
-            main.append(E('mar:QueryRegister').setText(self.query_register.name))
-        proof = E('mar:ProofOfAuthentication')
-        main.append(proof)
-        if self.sis_card_no:
-            proof.append(E('mar:SISCardNumber').setText(self.sis_card_no))
-        if self.id_card_no:
-            proof.append(E('mar:IdentityCardNumber').setText(self.id_card_no))
-        if self.last_name or self.first_name or self.birth_date:
-            pd = E('mar:PersonData')
-            proof.append(pd)
-            pd.append(E('mar:LastName').setText(self.last_name))
-            pd.append(E('mar:FirstName').setText(self.first_name))
-            pd.append(E('mar:BirthDate').setText(self.birth_date))
-        return main
-    
-    def get_service_reply(self,full_reply=None):
-        """
-        Extract the "service reply" part from a full reply.
-        Example of a full reply::
+    def fill_from_person(self,person):
+        self.national_id = person.national_id
+        self.id_card_no = person.card_number
+        self.last_name = person.last_name
+        self.first_name = person.first_name
+        self.birth_date = person.birth_date
+                
         
-         <ServiceReply>
-            <ns2:ResultSummary xmlns:ns2="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" ok="YES">
-               <ns2:ReturnCode>0</ns2:ReturnCode>
-            </ns2:ResultSummary>
-            <ServiceId>OCMWCPASManageAccess</ServiceId>
-            <Version>20050930</Version>
-            <ns3:ManageAccessReply xmlns:ns3="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess">
-               <ns3:OriginalRequest>
-                  <ns3:SSIN>68060105329</ns3:SSIN>
-                  <ns3:Purpose>1</ns3:Purpose>
-                  <ns3:Period>
-                     <ns4:StartDate xmlns:ns4="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns4:StartDate>
-                     <ns5:EndDate xmlns:ns5="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns5:EndDate>
-                  </ns3:Period>
-                  <ns3:Action>REGISTER</ns3:Action>
-               </ns3:OriginalRequest>
-               <ns3:Registrations>
-                  <ns3:Purpose>1</ns3:Purpose>
-                  <ns3:Period>
-                     <ns6:StartDate xmlns:ns6="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns6:StartDate>
-                     <ns7:EndDate xmlns:ns7="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns7:EndDate>
-                  </ns3:Period>
-                  <ns3:OrgUnit>63023</ns3:OrgUnit>
-                  <ns3:Register>SECONDARY</ns3:Register>
-               </ns3:Registrations>
-            </ns3:ManageAccessReply>
-         </ServiceReply>        
-        """
-        if full_reply is not None:
-            return full_reply.childAtPath('/ServiceReply/ManageAccessReply')
-        return PARSER.parse(string=self.response_xml.encode('utf-8')).root()
-        
-        
-    
-dd.update_field(ManageAccessRequest,'national_id',help_text="""\
-The SSIN of the person to register/unregister/list.
-""")
-
-
-
-
-
-class ManageAccessRequestDetail(CBSSRequestDetail):
-    p1 = """
-    national_id 
-    action purpose 
-    start_date end_date 
-    sector query_register
-    """
-    proof = """
-    sis_card_no
-    id_card_no
-    first_name last_name birth_date 
-    """
-    parameters = "p1 proof"
-    
-    #~ result = "result"
-    
-    def setup_handle(self,lh):
-        lh.p1.label = _("Using the national ID")
-        lh.proof.label = _("Proof of authentication")
-        CBSSRequestDetail.setup_handle(self,lh)
-    
-
-class ManageAccessRequests(dd.Table):
-    #~ window_size = (500,400)
-    model = ManageAccessRequest
-    detail_layout = ManageAccessRequestDetail()
-    required_user_groups = ['cbss']
-    
-    
-class ManageAccessRequestsByPerson(ManageAccessRequests):
-    master_key = 'project'
-
-
-class MyManageAccessRequests(ManageAccessRequests,mixins.ByUser):
-    pass
-
-
 class IdentifyPersonRequest(SSDNRequest,SSIN):
     """
     A request to the IdentifyPerson service.
@@ -833,17 +712,14 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
       </p>
       """)
       
-    def save(self,*args,**kw):
-        if self.project_id: 
-            person = self.project
-            if person.national_id and not self.national_id:
-                self.national_id = person.national_id
-            if not self.last_name:
-                self.last_name = person.last_name
-            if not self.first_name:
-                self.first_name = person.first_name
-                
-        super(IdentifyPersonRequest,self).save(*args,**kw)
+        
+    def on_create(self,ar):
+        mixins.AutoUser.on_create(self,ar)
+        SSIN.on_create(self,ar)
+
+    def fill_from_person(self,person):
+        super(IdentifyPersonRequest,self).fill_from_person(person)
+        self.gender = person.gender
         
     def build_request(self):
         """Construct and return the root element of the (inner) service request."""
@@ -925,7 +801,7 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
             #~ self.on_cbss_ok(reply)
         
 
-dd.update_field(IdentifyPersonRequest,'birth_date',blank=False,null=False)
+#~ dd.update_field(IdentifyPersonRequest,'birth_date',blank=False,null=False)
 #~ dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
 #~ dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
 
@@ -954,6 +830,7 @@ class IdentifyPersonRequests(dd.Table):
     #~ window_size = (500,400)
     required_user_groups = ['cbss']
     model = IdentifyPersonRequest
+    active_fields = ['person']
     detail_layout = IdentifyPersonRequestDetail()
     #~ detail_template = """
     #~ id project 
@@ -972,7 +849,7 @@ class MyIdentifyPersonRequests(IdentifyPersonRequests,mixins.ByUser):
     pass
     
 class IdentifyRequestsByPerson(IdentifyPersonRequests):
-    master_key = 'project'
+    master_key = 'person'
     
 
 
@@ -1045,12 +922,197 @@ class IdentifyPersonResult(dd.VirtualTable):
 
 
 
+class ManageAction(ChoiceList):
+    """
+    Possible values for the 
+    `action` field of a :class:`ManageAccessRequest`.
+    """
+    label = _("Action")
+
+add = ManageAction.add_item
+add('1',_("Register"),'REGISTER')
+add('2',_("Unregister"),'UNREGISTER')
+add('3',_("List"),'LIST')
+
+
+class QueryRegister(ChoiceList):
+    """
+    Possible values for the 
+    `query_register` field of a :class:`ManageAccessRequest`.
+    
+    """
+    label = _("Query Register")
+
+add = QueryRegister.add_item
+add('1',_("Primary"),'PRIMARY')
+add('2',_("Secondary"),'SECONDARY')
+add('3',_("All"),'ALL')
+
+class ManageAccessRequest(SSDNRequest,SSIN):
+    """
+    A request to the ManageAccess service.
+    
+    Registering a person means that this PCSW is 
+    going to maintain a dossier about this person.
+    Users commonly say "to integrate" a person.
+    
+    """
+  
+    ssdn_service_id = 'OCMWCPASManageAccess'
+    ssdn_service_version = '20050930'
+    
+    xsd_filename = xsdpath('SSDN','OCMW_CPAS',
+        'MANAGEACCESS','MANAGEACCESSREQUEST.XSD')
+    
+    class Meta:
+        verbose_name = _("ManageAccess Request")
+        verbose_name_plural = _("ManageAccess Requests")
+        
+    purpose = models.IntegerField(verbose_name=_('Purpose'),
+      default=0,help_text="""\
+The purpose for which the inscription needs to be 
+registered/unregistered or listed. 
+For listing this field is optional, 
+for register/unregister it is obligated.""")
+
+    start_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Registered from"))
+    end_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Registered until"))
+
+    # 20120527 : Django converts default value to unicode. didnt yet understand why.
+    action = ManageAction.field(blank=False,default=ManageAction.LIST)
+    query_register = QueryRegister.field(blank=False,default=QueryRegister.ALL)
+    #~ action = ManageAction.field(blank=False)
+    #~ query_register = QueryRegister.field(blank=False) # ,default=QueryRegister.ALL)
+
+    sector = models.IntegerField(verbose_name=_('Sector'),
+      blank=False,default=0,help_text="""\
+For register and unregister this element is ignored. 
+It can be used for list, 
+when information about sectors is required.""")
+
+
+
+    def on_create(self,ar):
+        #~ self.query_register = QueryRegister.ALL
+        #~ self.action = ManageAction.LIST
+        mixins.AutoUser.on_create(self,ar)
+        SSIN.on_create(self,ar)
+
+    def build_request(self):
+        """Construct and return the root element of the (inner) service request."""
+        national_id = self.get_ssin()
+        main = E('mar:ManageAccessRequest',ns=NSMAR)
+        main.append(E('mar:SSIN').setText(national_id))
+        main.append(E('mar:Purpose').setText(str(self.purpose)))
+        period = E('mar:Period')
+        main.append(period)
+        period.append(E('common:StartDate',ns=NSCOMMON).setText(str(self.start_date)))
+        period.append(E('common:EndDate',ns=NSCOMMON).setText(str(self.end_date)))
+        main.append(E('mar:Action').setText(self.action.name))
+        if self.sector:
+            main.append(E('mar:Sector').setText(str(self.sector)))
+        if self.query_register:
+            main.append(E('mar:QueryRegister').setText(self.query_register.name))
+        proof = E('mar:ProofOfAuthentication')
+        main.append(proof)
+        if self.sis_card_no:
+            proof.append(E('mar:SISCardNumber').setText(self.sis_card_no))
+        if self.id_card_no:
+            proof.append(E('mar:IdentityCardNumber').setText(self.id_card_no))
+        if self.last_name or self.first_name or self.birth_date:
+            pd = E('mar:PersonData')
+            proof.append(pd)
+            pd.append(E('mar:LastName').setText(self.last_name))
+            pd.append(E('mar:FirstName').setText(self.first_name))
+            pd.append(E('mar:BirthDate').setText(self.birth_date))
+        return main
+    
+    def get_service_reply(self,full_reply=None):
+        """
+        Extract the "service reply" part from a full reply.
+        Example of a full reply::
+        
+         <ServiceReply>
+            <ns2:ResultSummary xmlns:ns2="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" ok="YES">
+               <ns2:ReturnCode>0</ns2:ReturnCode>
+            </ns2:ResultSummary>
+            <ServiceId>OCMWCPASManageAccess</ServiceId>
+            <Version>20050930</Version>
+            <ns3:ManageAccessReply xmlns:ns3="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess">
+               <ns3:OriginalRequest>
+                  <ns3:SSIN>68060105329</ns3:SSIN>
+                  <ns3:Purpose>1</ns3:Purpose>
+                  <ns3:Period>
+                     <ns4:StartDate xmlns:ns4="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns4:StartDate>
+                     <ns5:EndDate xmlns:ns5="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns5:EndDate>
+                  </ns3:Period>
+                  <ns3:Action>REGISTER</ns3:Action>
+               </ns3:OriginalRequest>
+               <ns3:Registrations>
+                  <ns3:Purpose>1</ns3:Purpose>
+                  <ns3:Period>
+                     <ns6:StartDate xmlns:ns6="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns6:StartDate>
+                     <ns7:EndDate xmlns:ns7="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">2012-05-24+02:00</ns7:EndDate>
+                  </ns3:Period>
+                  <ns3:OrgUnit>63023</ns3:OrgUnit>
+                  <ns3:Register>SECONDARY</ns3:Register>
+               </ns3:Registrations>
+            </ns3:ManageAccessReply>
+         </ServiceReply>        
+        """
+        if full_reply is not None:
+            return full_reply.childAtPath('/ServiceReply/ManageAccessReply')
+        return PARSER.parse(string=self.response_xml.encode('utf-8')).root()
+        
+        
+    
+dd.update_field(ManageAccessRequest,'national_id',help_text="""\
+The SSIN of the person to register/unregister/list.
+""")
 
 
 
 
 
-          
+class ManageAccessRequestDetail(CBSSRequestDetail):
+    p1 = """
+    national_id start_date end_date 
+    action purpose sector query_register
+    """
+    proof = """
+    first_name last_name birth_date 
+    sis_card_no id_card_no
+    """
+    parameters = "p1 proof"
+    
+    #~ result = "result"
+    
+    def setup_handle(self,lh):
+        lh.p1.label = _("Requested action")
+        lh.proof.label = _("Proof of authentication")
+        CBSSRequestDetail.setup_handle(self,lh)
+    
+
+class ManageAccessRequests(dd.Table):
+    #~ window_size = (500,400)
+    model = ManageAccessRequest
+    detail_layout = ManageAccessRequestDetail()
+    required_user_groups = ['cbss']
+    active_fields = ['person']
+    
+    
+class ManageAccessRequestsByPerson(ManageAccessRequests):
+    master_key = 'person'
+
+
+class MyManageAccessRequests(ManageAccessRequests,mixins.ByUser):
+    pass
+
+
         
 class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     """
@@ -1192,7 +1254,7 @@ class RetrieveTIGroupsRequests(dd.Table):
         #~ return row.response_xml
         
 class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
-    master_key = 'project'
+    master_key = 'person'
     
 class MyRetrieveTIGroupsRequests(RetrieveTIGroupsRequests,mixins.ByUser):
     pass
@@ -1213,8 +1275,8 @@ def fn(self,rr):
 dd.inject_field(pcsw.Person,'cbss_identify_person',
     dd.VirtualField(dd.DisplayField(_("Identify Person")),fn))
     
-def fn(self,rr):
-    return rr.renderer.quick_add_buttons(rr.spawn(
+def fn(self,ar):
+    return ar.renderer.quick_add_buttons(ar.spawn(
           ManageAccessRequestsByPerson,
           master_instance=self))
 dd.inject_field(pcsw.Person,'cbss_manage_access',

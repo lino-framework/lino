@@ -147,11 +147,11 @@ class ActorMetaClass(type):
         if dt is not None:
             if dl is not None:
                 raise Exception("%r has both detail_template and detail_layout" % cls)
-            dl = layouts.DetailLayout(cls,dt)
-            cls.detail_layout = dl
+            cls.detail_layout = layouts.DetailLayout(cls,dt)
         elif dl is not None:
             assert dl._table is None
             dl._table = cls
+            cls.detail_layout = dl
                 
         if classname not in (
             'Table','AbstractTable','VirtualTable',
@@ -339,11 +339,11 @@ class Actor(Handled,ViewPermission):
         Before this we create `insert_action` and `detail_action` if necessary.
         Also fill _actions_list.
         """
-        if cls.detail_action is None:
+        if True: # 20120527 cls.detail_action is None:
             if cls.detail_layout or cls.detail_template:
             #~ if self._lino_detail:
                 cls.detail_action = actions.ShowDetailAction()
-        if cls.insert_action is None:
+        if True: # 20120527 cls.insert_action is None:
             #~ if self.detail_action and self.editable and not self.hide_top_toolbar:
             if cls.detail_action and cls.editable:
                 cls.insert_action = actions.InsertRow()
@@ -434,6 +434,8 @@ class Actor(Handled,ViewPermission):
     @classmethod
     def set_detail(self,dtl=None,**kw):
         """
+        Update the `detail_layout` of this actor. 
+        Create a new layout if there wasn't one before.
         """
         if dtl is not None:
             if isinstance(dtl,basestring):

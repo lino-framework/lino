@@ -178,7 +178,9 @@ class Action(object):
         
     def attach_to_actor(self,actor,name):
         if self.name is not None:
-            raise Exception("%s tried to attach to named action %s" % (actor,self))
+            raise Exception("%s tried to attach named action %s" % (actor,self))
+        if self.actor is not None:
+            raise Exception("%s tried to attach action %s of %s" % (actor,name,self.actor))
         self.name = name
         self.actor = actor
         if actor.hide_top_toolbar:
@@ -509,6 +511,7 @@ class ActionRequest(object):
         #logger.debug('%s.create_instance(%r)',self,kw)
         if self.known_values:
             kw.update(self.known_values)
+        #~ print "20120527 create_instance", self, kw
         obj = self.actor.create_instance(self,**kw)
         #~ if self.known_values is not None:
             #~ self.ah.store.form2obj(self.known_values,obj,True)

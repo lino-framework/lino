@@ -134,9 +134,9 @@ class AutoUser(models.Model):
             blank=True,null=True
             )
         
-    def on_create(self,req):
+    def on_create(self,ar):
         if self.user_id is None:
-            u = req.get_user()
+            u = ar.get_user()
             if u is not None:
                 self.user = u
         
