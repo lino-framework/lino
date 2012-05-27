@@ -100,4 +100,6 @@ Miscellaneous:
   from :mod:`lino.core.fields`
   to :mod:`lino.utils.choicelists` because that's the only module which uses it directly.
   
-  
+- CBSSRequest is no longer `ProjectRelated`, 
+  this mixin seems not very useful, at least here.
+  Field `project` replaced by `person`.

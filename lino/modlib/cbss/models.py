@@ -1011,7 +1011,8 @@ when information about sectors is required.""")
         period = E('mar:Period')
         main.append(period)
         period.append(E('common:StartDate',ns=NSCOMMON).setText(str(self.start_date)))
-        period.append(E('common:EndDate',ns=NSCOMMON).setText(str(self.end_date)))
+        if self.end_date:
+            period.append(E('common:EndDate',ns=NSCOMMON).setText(str(self.end_date)))
         main.append(E('mar:Action').setText(self.action.name))
         if self.sector:
             main.append(E('mar:Sector').setText(str(self.sector)))
