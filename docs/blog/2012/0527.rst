@@ -7,22 +7,15 @@ Das lag an :meth:`lino.core.actors.Actor._collect_actions`.
 Die `detail_action` und `insert_action` müssen für jeden Actor eigens instanziert werden
 
 Und noch ein subtiler Bug: 
-
-.. image:: 0527/0527a.jpg
-  :scale: 90
-  
-Jetzt ist es richtig:
-
-.. image:: 0527/0527b.jpg
-  :scale: 90
-
-
 `lino.ui.extjs3.ext_elems.DisplayElement` muss das Ext.form.displayField 
 mit einem Defaultwert von ``<br/>``
 generieren, denn in einem Layout wo nur solche Felder in einer Zeile stehen,
 gibt er ansonsten beim Rendern die falsche Höhe an, so dass das GridElement 
 sich zu viel Platz einnimmt. Das Ganze passiert nur dann, wenn wir den Bildschirm 
 über den permalink laden.
+Beispiel: 
+.. image:: 0527/0527b.jpg
+  :scale: 90
 
 
 Zur eigentlichen Sache. Der `[Add]`-Link dort unter :guilabel:`Manage Access` hat folgende URL::
@@ -97,8 +90,9 @@ Workarounds:
         return self
 
 Beide Workarounds funktionieren, und ich entscheide mich bis auf 
-Weiteres für den Zweiten. Bin zwar noch nicht sicher, ob das nicht 
-Nebenwirkungen hat. Aber das scheint mir eleganter.
+Weiteres für den zweiten, weil der mir eleganter scheint. 
+Bin zwar nicht sicher, ob das keine Nebenwirkungen hat. 
+Aber das werden wir dann eben sehen.
 
 Miscellaneous:
 
