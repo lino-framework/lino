@@ -79,6 +79,7 @@ from lino.utils.choicelists import Gender
 from lino.utils.choicelists import UserLevel
 #~ from lino.modlib.contacts import models as contacts
 from lino.tools import makedirs_if_missing
+#~ from lino.mixins.printable import DirectPrintAction
 
 from lino.apps.pcsw import models as pcsw
 
@@ -165,10 +166,12 @@ class SendAction(dd.RowAction):
     #~ callable_from = None
     callable_from = (dd.GridEdit,dd.ShowDetailAction)
     
-    def disabled_for(self,obj,request):
-        if obj.sent:
-            return True
-    
+    def get_permission(self,user,obj):
+        #~ if isinstance(action,SendAction):
+        if obj.ticket:
+            return False
+        return super(SendAction,self).get_permission(user,obj)
+      
     def run(self,ar,elem,**kw):
         elem.execute_request(ar)
         if elem.status == RequestStatus.warnings:
@@ -185,7 +188,7 @@ NSWSC = ('wsc',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
 
 
 #~ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
-class CBSSRequest(mixins.AutoUser):
+class CBSSRequest(mixins.AutoUser,mixins.Printable):
     """
     Common Abstract Base Class for :class:`SSDNRequest`
     and :class:`NewStyleRequest`
@@ -225,6 +228,8 @@ The response received, raw XML string.
 If the request failed with a local exception, then it contains a traceback.""")
 
     send_action = SendAction()
+    print_action = mixins.DirectPrintAction()
+    
     
     #~ def save(self,*args,**kw):
         #~ if not self.environment:
@@ -242,12 +247,6 @@ If the request failed with a local exception, then it contains a traceback.""")
         #~ # call_optional_super(CBSSRequest,cls,'setup_report',rpt)
         #~ rpt.add_action(SendAction())
         
-    def get_permission(self,action,user):
-        if isinstance(action,SendAction):
-            if self.ticket:
-                return False
-        return super(CBSSRequest,self).get_permission(action,user)
-      
     def __unicode__(self):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
 
@@ -423,13 +422,13 @@ class SSDNRequest(CBSSRequest):
             #~ xmlString.append(wrapped_srvreq)
             res = client.service.sendXML(xmlString)
             #~ print 20120522, res
-            return self.fill_from_string(res.encode('utf-8'))
+            return self.fill_from_string(res.encode('utf-8'),xmlString)
         else:
             self.environment = 'demo'
             return self.fill_from_string(simulate_response)
                 
         
-    def fill_from_string(self,s):
+    def fill_from_string(self,s,sent_xmlString=None):
         #~ self.response_xml = unicode(res)
         reply = PARSER.parse(string=s).root()
         self.ticket = reply.childAtPath('/ReplyContext/Message/Ticket').text
@@ -449,6 +448,16 @@ class SSDNRequest(CBSSRequest):
         else:
             #~ self.status = RequestStatus.errors
             #~ self.response_xml = unicode(reply)
+            if sent_xmlString is not None:
+                msg = """\
+%s : CBSS returned error %s 
+======= xmlString sent:
+%s
+======= response:
+%s
+=======
+""" % (self,rc,sent_xmlString,unicode(reply))
+                logger.warning(msg)
             dtl = rs.childAtPath('/Detail')
             msg = CBSS_ERROR_MESSAGE % rc
             keys = ('Severity', 'ReasonCode', 'Diagnostic', 'AuthorCodeList')
@@ -717,6 +726,9 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
         mixins.AutoUser.on_create(self,ar)
         SSIN.on_create(self,ar)
 
+    def get_result_table(self,ar):
+        return ar.spawn(IdentifyPersonResult,master_instance=self)
+        
     def fill_from_person(self,person):
         super(IdentifyPersonRequest,self).fill_from_person(person)
         self.gender = person.gender

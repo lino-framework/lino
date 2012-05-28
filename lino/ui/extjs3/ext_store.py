@@ -502,6 +502,20 @@ class DisabledFieldsStoreField(SpecialStoreField):
                 d[self.store.pk.rel.field_name] = True
         return d
         
+class unused_DisabledActionsStoreField(SpecialStoreField):
+    """
+    """
+    name = 'disabled_actions'
+    
+    def full_value_from_object(self,obj,ar):
+        d = dict()
+        #~ print repr(ar.action)
+        for a in self.store.actor.get_actions(ar.action):
+            #~ if not a.get_permission(ar.get_user(),obj):
+                #~ d[a.name] = True
+            d[a.name] = a.get_permission(ar.get_user(),obj)
+        return d
+        
         
 #~ class RecnoStoreField(SpecialStoreField):
     #~ name = 'recno'
@@ -887,6 +901,7 @@ class Store:
           
         #~ if rh.report.disabled_fields is not None:
         addfield(DisabledFieldsStoreField(self))
+        #~ addfield(DisabledActionsStoreField(self))
             
             #~ sf = DisabledFieldsStoreField(self)
             #~ self.fields.append(sf)

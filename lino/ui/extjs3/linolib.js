@@ -2372,9 +2372,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.set_window_title(record.title);
       this.getBottomToolbar().enable();
       if (record.disabled_actions) {
-          //~ console.log('disabled_actions =',record.disabled_actions,this.getBottomToolbar());
+          //~ console.log('20120528 disabled_actions =',record.disabled_actions,this.getBottomToolbar());
           this.getBottomToolbar().items.each(function(item,index,length){
-              if (record.disabled_actions[item.name]) 
+              //~ console.log('20120528 ',item.itemId,'-->',record.disabled_actions[item.itemId]);
+              if (record.disabled_actions[item.itemId]) 
                 item.disable();
               else item.enable();
           });

@@ -2248,7 +2248,8 @@ tinymce.init({
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(
           text=a.label,
-          name=a.name,
+          #~ name=a.name,
+          itemId=a.name,
           #~ text=unicode(a.label),
         )
         return kw

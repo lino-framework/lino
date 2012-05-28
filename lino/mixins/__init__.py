@@ -264,7 +264,7 @@ class ProjectRelated(models.Model):
             
 
 
-from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable #, Listing
+from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 from lino.mixins.uploadable import Uploadable
 #~ from lino.mixins.mails import Recipient, Mail
 from lino.utils.dblogger import DiffingMixin
@@ -285,7 +285,7 @@ class EmptyTable(frames.Frame):
     default_list_action_name = 'show'
     default_elem_action_name =  'show'
     default_action = actions.ShowEmptyTable()
-    do_print = printable.DirectPrintAction()
+    do_print = DirectPrintAction()
     
     #~ @classmethod
     #~ def do_setup(self):

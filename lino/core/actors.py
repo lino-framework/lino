@@ -416,8 +416,9 @@ class Actor(Handled,ViewPermission):
         """
         d = dict()
         u = ar.get_user()
-        for a in self.get_actions():
-            if not self.get_permission(a,u,obj):
+        for a in self.get_actions(ar.action):
+            if not a.get_permission(u,obj):
+            #~ if not self.get_permission(a,u,obj):
                 d[a.name] = True
         return d
         
