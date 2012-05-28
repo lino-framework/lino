@@ -1,6 +1,9 @@
 20120528
 ========
 
+- When a BCSS request receives certain types of error message, 
+  it now logs a warning with the complete XML request and response.
+
 - Worked on the mechanism for `disabled_actions`.
   
 - CBSS request are now printable.

@@ -415,11 +415,12 @@ class Actor(Handled,ViewPermission):
         and the user who issued the given ActionRequest `ar`.
         """
         d = dict()
-        u = ar.get_user()
-        for a in self.get_actions(ar.action):
-            if not a.get_permission(u,obj):
-            #~ if not self.get_permission(a,u,obj):
-                d[a.name] = True
+        if obj is not None:
+            u = ar.get_user()
+            for a in self.get_actions(ar.action):
+                if not a.get_permission(u,obj):
+                #~ if not self.get_permission(a,u,obj):
+                    d[a.name] = True
         return d
         
             
