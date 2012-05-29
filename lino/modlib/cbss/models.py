@@ -172,7 +172,7 @@ class SendAction(dd.RowAction):
             return False
         return super(SendAction,self).get_permission(user,obj)
       
-    def run(self,ar,elem,**kw):
+    def run(self,elem,ar,**kw):
         elem.execute_request(ar)
         if elem.status == RequestStatus.warnings:
             kw.update(message=_("There were warnings but no errors."))

@@ -215,7 +215,7 @@ class Action(object):
         return self.actor.get_permission(self,user,obj)
             
         
-    def run(self,ar,**kw):
+    def run(self,elem,ar,**kw):
         """
         Execute the action. `ar` is an :class:`ActionRequest` 
         object representing the context where the action is running.
@@ -234,7 +234,7 @@ class RowAction(Action):
     Base class for actions that are executed server-side on an individual row.
     """
     
-    def run(self,rr,elem,**kw):
+    def run(self,elem,rr,**kw):
         raise NotImplementedError("%s has no run() method" % self.__class__)
 
     def attach_to_actor(self,actor,name):
@@ -575,8 +575,8 @@ class ActionRequest(object):
 def action(*args,**kw):
     def decorator(fn):
         a = RowAction(*args,**kw)
-        a.run = curry(fn,a)
-        #~ a.run = fn
+        #~ a.run = curry(fn,a)
+        a.run = fn
         return a
     return decorator
     

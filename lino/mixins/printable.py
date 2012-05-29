@@ -563,10 +563,10 @@ class PrintAction(BasePrintAction):
         return kw
         #~ return rr.ui.success_response(open_url=target,**kw)
         
-    def run(self,rr,elem,**kw):
+    def run(self,elem,ar,**kw):
         #~ kw = self.run_(rr.request,rr.ui,elem,**kw)
-        kw = self.run_(rr,elem,**kw)
-        return rr.ui.success_response(**kw)
+        kw = self.run_(ar,elem,**kw)
+        return ar.ui.success_response(**kw)
       
 class DirectPrintAction(BasePrintAction):
     """
@@ -597,7 +597,7 @@ class DirectPrintAction(BasePrintAction):
         #~ return super(DirectPrintAction,self).get_print_templates(bm,elem)
         
         
-    def run(self,ar,elem,**kw):
+    def run(self,elem,ar,**kw):
         bm =  bm_dict.get(
             self.build_method or 
             settings.LINO.site_config.default_build_method)
@@ -636,12 +636,12 @@ class ClearCacheAction(actions.RowAction):
         #~ if not obj.build_time:
             #~ return True
             
-    def get_permission(self,obj,user):
-        if not self.build_time:
+    def get_permission(self,user,obj):
+        if not obj.build_time:
             return False
-        return super(ClearCacheAction,self).get_permission(obj,user)
+        return super(ClearCacheAction,self).get_permission(user,obj)
     
-    def run(self,rr,elem):
+    def run(self,elem,rr):
         t = elem.get_cache_mtime()
         if t is not None and t != elem.build_time:
             #~ logger.info("%r != %r", elem.get_cache_mtime(),elem.build_time)

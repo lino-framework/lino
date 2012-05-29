@@ -1776,7 +1776,7 @@ tinymce.init({
                     elem = ar.create_instance()
                 
                 try:
-                    return a.run(ar,elem)
+                    return a.run(elem,ar)
                 except actions.ConfirmationRequired,e:
                     r = dict(
                       success=True,

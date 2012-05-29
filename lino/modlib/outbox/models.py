@@ -81,7 +81,7 @@ if True:
       label = _('Create email')
       callable_from = None
               
-      def run(self,rr,elem,**kw):
+      def run(self,elem,rr,**kw):
         
           tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
           
@@ -178,7 +178,7 @@ class SendMailAction(dd.RowAction):
     label = _('Send email')
     callable_from = None
             
-    def run(self,rr,elem,**kw):
+    def run(self,elem,rr,**kw):
         #~ if elem.sent:
             #~ return rr.ui.error_response(message='Mail has already been sent.')
         text_content = html2text(elem.body)

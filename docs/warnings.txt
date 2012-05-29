@@ -1,2 +1,14 @@
 T:\hgwork\lino\docs\igen\index.rst:11: (WARNING/2) toctree contains reference to nonexisting document u'igen/appdocs/index'
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\blog\2012\0525.rst:11: WARNING: py:class reference target not found: lino.ui.extjs3.ext_elems.GridPanel
+T:\hgwork\lino\docs\blog\2012\0525.rst:37: WARNING: py:class reference target not found: users.User
+T:\hgwork\lino\docs\blog\2012\0525.rst:37: WARNING: py:class reference target not found: contacts.Partner
+T:\hgwork\lino\docs\dev\index.rst:24: WARNING: py:class reference target not found: lino.reports.Report
+T:\hgwork\lino\docs\dev\index.rst:34: WARNING: xfile reference target not found: lino_settings.py
+T:\hgwork\lino\docs\ref\model_methods.rst:29: WARNING: py:class reference target not found: lino.apps.pcsw.models.PersonProperty
+T:\hgwork\lino\docs\ref\model_methods.rst:29: WARNING: py:class reference target not found: lino.apps.pcsw.models.LanguageKnowledge
+T:\hgwork\lino\docs\ref\model_methods.rst:71: WARNING: py:func reference target not found: lino.utils.choosers.chooser
+T:\hgwork\lino\docs\ref\model_methods.rst:110: WARNING: py:class reference target not found: lino.models.DataControlListing
+T:\hgwork\lino\docs\ref\model_methods.rst:142: WARNING: py:func reference target not found: lino.core.tables.summary
+T:\hgwork\lino\docs\releases\coming.rst:10: WARNING: py:class reference target not found: jobs.JobsOverview
+T:\hgwork\lino\docs\releases\coming.rst:45: WARNING: py:class reference target not found: jobs.JobsOverview

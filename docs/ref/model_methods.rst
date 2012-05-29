@@ -1,19 +1,19 @@
 Special model attributes and methods
 ------------------------------------
 
-.. modmeth:: _lino_preferred_width
+.. modattr:: _lino_preferred_width
 
     Used to set an explicit default `preferred_width` (in characters) 
     for ForeignKey fields to this model. 
     If not specified, the default default `preferred_width` 
     for ForeignKey fields is *20*.
     
-.. modmeth:: _lino_default_table
+.. modattr:: _lino_default_table
 
     Used internally. Lino chooses during the kernel startup, for each model, 
     one of the discovered Table subclasses as the "default table".
 
-.. modmeth:: allow_cascaded_delete
+.. modattr:: allow_cascaded_delete
 
     Lino, like Django, by default forbids to delete an object that is 
     referenced by other objects.
@@ -23,17 +23,20 @@ Special model attributes and methods
     Example: Lino should not refuse to delete 
     a Mail just because it has some Recipient. 
     When deleting a Mail, Lino should also delete its Recipients.
-    That's why :class:`lino.modlib.mails.models.Recipient` 
+    That's why :class:`lino.modlib.outbox.models.Recipient` 
     has ``allow_cascaded_delete = True``.
     
     Other examples of such models are 
-    :class:`lino.apps.pcsw.models.PersonProperty`
-    and
-    :class:`lino.apps.pcsw.models.LanguageKnowledge`.
+    :class:`lino.modlib.cv.models.PersonProperty`,
+    :class:`lino.modlib.cv.models.LanguageKnowledge`,
+    :class:`lino.modlib.debts.models.Actor`,
+    :class:`lino.modlib.debts.models.Entry`,
+    ...
+    
 
     
     
-.. modmeth:: disabled_fields
+.. modattr:: disabled_fields
 
     return a list of names of fields that should be disabled (not editable) 
     for this record.
@@ -47,7 +50,7 @@ Special model attributes and methods
             df.append('field2')
           return df
         
-.. modmeth:: disable_delete
+.. modattr:: disable_delete
 
     Hook to decide whether a given record may be deleted.
     Return a non-empty string with a message that explains why this record cannot be deleted.
@@ -60,13 +63,13 @@ Special model attributes and methods
             
     
         
-.. modmeth:: disable_editing
+.. modattr:: disable_editing
 
   ``disable_editing(self,request)``
       Return `True` if the whole record should be read-only.
 
 
-.. modmeth:: FOO_choices
+.. modattr:: FOO_choices
 
   Return a queryset or list of allowed choices for field FOO.
   Must be decorated by a :func:`lino.utils.choosers.chooser`.
@@ -86,7 +89,7 @@ Special model attributes and methods
       
   
 
-.. modmeth:: FOO_changed
+.. modattr:: FOO_changed
 
     Called when field FOO of an instance of this model has been modified through the user interface.
     Example::
@@ -95,7 +98,7 @@ Special model attributes and methods
           print "City changed from %s to %s!" % (oldvalue,self.city)
 
     
-.. modmeth:: get_queryset
+.. modattr:: get_queryset
 
     Return a customized default queryset
     
@@ -105,7 +108,7 @@ Special model attributes and methods
           return self.model.objects.select_related('country','city','coach1','coach2','nationality')
 
 
-.. modmeth:: data_control
+.. modattr:: data_control
 
   Used by :class:`lino.models.DataControlListing`.
     
@@ -114,7 +117,7 @@ Special model attributes and methods
       def data_control(self):
 
 
-.. modmeth:: on_user_change
+.. modattr:: on_user_change
 
   Called when a record has been modified through the user interface.
     
@@ -123,21 +126,21 @@ Special model attributes and methods
     def on_user_change(self,request):
 
 
-.. modmeth:: save_auto_tasks
+.. modattr:: save_auto_tasks
 
   Example::
   
     def save_auto_tasks(self):
 
 
-.. modmeth:: setup_report
+.. modattr:: setup_report
 
   Example::
 
       @classmethod
       def setup_report(model,rpt):
 
-.. modmeth:: summary_row
+.. modattr:: summary_row
 
   Return a HTML fragment that describes this record in a 
   :func:`lino.core.tables.summary`.
@@ -153,7 +156,7 @@ Special model attributes and methods
   
 
 
-.. modmeth:: update_owned_task
+.. modattr:: update_owned_task
 
   Example::
   

@@ -3,3 +3,52 @@
 
 The `id_card_no` field in :class:`lino.modlib.cbss.models.SSIN` 
 had a `max_length` of 10. That was not enough. Now it's 20.
+
+
+Fixed internal bug ClearCacheAction.get_permission order of arguments.
+
+:mod:`lino.modlib.debts`: 
+:class:`Actor <lino.modlib.debts.models.Actor>` and 
+:class:`Entry <lino.modlib.debts.models.Entry>`
+have now :modattr:`allow_cascaded_delete`.
+
+
+:class:`Entries <lino.modlib.debts.models.Entry>` 
+(and in fact all subclasses of :class:`lino.mixins.Sequenced` ) 
+now have a new action `insert_before` which duplicates 
+the current row, inserting it before the current one.
+
+Row actions defined on a model using `@dd.action` didn't yet work. 
+Changed argument order for calling RowAction.run().
+There are three methods for defining actions:
+
+- On the Table::
+
+    class ParticipantsByCourse(RequestsByCourse):
+        ...
+        @dd.action(_("Unregister"))
+        def unregister(obj,ar):
+           ...
+           
+- On the Model::
+
+    class Sequenced(models.Model):
+        ...
+        @dd.action(_("Insert before"))
+        def insert_before(self,ar):
+            ...
+
+- As a separate class::
+
+    class ClearCacheAction(actions.RowAction):
+        ...
+        def run(self,obj,ar):
+            ...
+
+    class Foo(models.Model):
+        ...
+        do_clear_cache = ClearCacheAction()
+
+
+
+New action "Duplicate" on `debts.Budget`. Doesn't yet copy actors and entries.

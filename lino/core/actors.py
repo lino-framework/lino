@@ -339,14 +339,11 @@ class Actor(Handled,ViewPermission):
         Before this we create `insert_action` and `detail_action` if necessary.
         Also fill _actions_list.
         """
-        if True: # 20120527 cls.detail_action is None:
-            if cls.detail_layout or cls.detail_template:
-            #~ if self._lino_detail:
-                cls.detail_action = actions.ShowDetailAction()
-        if True: # 20120527 cls.insert_action is None:
-            #~ if self.detail_action and self.editable and not self.hide_top_toolbar:
-            if cls.detail_action and cls.editable:
-                cls.insert_action = actions.InsertRow()
+        if cls.detail_layout or cls.detail_template:
+        #~ if self._lino_detail:
+            cls.detail_action = actions.ShowDetailAction()
+        if cls.detail_action and cls.editable:
+            cls.insert_action = actions.InsertRow()
                 
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable

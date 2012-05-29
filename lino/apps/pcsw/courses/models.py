@@ -488,7 +488,7 @@ class ParticipantsByCourse(RequestsByCourse):
     #~ do_unregister = UnregisterCandidate()
     
     @dd.action(_("Unregister"))
-    def unregister(self,ar,elem):
+    def unregister(elem,ar):
         """
         Unregister the given :class:`Candidate` for the given :class:`Course`.
         This action is available on a row of :class:`ParticipantsByCourse`.
@@ -521,7 +521,7 @@ class CandidatesByCourse(RequestsByCourse):
         #~ self.add_action(RegisterCandidate())
         
     @dd.action(_("Register"))
-    def register(self,ar,elem):
+    def register(elem,ar):
         """
         Register the given :class:`Candidate` for the given :class:`Course`.
         This action is available on a row of :class:`CandidatesByCourse`.

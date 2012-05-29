@@ -128,24 +128,7 @@ add('I', _("Incomes"),alias="income") # Gain/Revenue     Einnahmen  Produits
 add('E', _("Expenses"),alias="expense") # Loss/Cost       Ausgaben   Charges
 
 
-#~ class PeriodsField(models.DecimalField):
-    #~ """
-    #~ Used for `Entry.periods` and `Account.periods`
-    #~ (which holds simply the default value for the former).
-    #~ It means: for how many months the entered amount counts.
-    #~ Default value is 1. For yearly amounts set it to 12.
-    #~ """
-    #~ def __init__(self, *args, **kwargs):
-        #~ defaults = dict(
-            #~ default=1,
-            #~ max_length=5,
-            #~ max_digits=5,
-            #~ decimal_places=0,
-            #~ )
-        #~ defaults.update(kwargs)
-        #~ super(PeriodsField, self).__init__(*args, **defaults)
-
-class PeriodsField(models.IntegerField):
+class PeriodsField(models.DecimalField):
     """
     Used for `Entry.periods` and `Account.periods`
     (which holds simply the default value for the former).
@@ -154,13 +137,30 @@ class PeriodsField(models.IntegerField):
     """
     def __init__(self, *args, **kwargs):
         defaults = dict(
-            max_length=3,
-            #~ max_digits=3,
-            blank=True,
-            null=True
+            default=1,
+            #~ max_length=3,
+            max_digits=3,
+            decimal_places=0,
             )
         defaults.update(kwargs)
         super(PeriodsField, self).__init__(*args, **defaults)
+
+#~ class PeriodsField(models.IntegerField):
+    #~ """
+    #~ Used for `Entry.periods` and `Account.periods`
+    #~ (which holds simply the default value for the former).
+    #~ It means: for how many months the entered amount counts.
+    #~ Default value is 1. For yearly amounts set it to 12.
+    #~ """
+    #~ def __init__(self, *args, **kwargs):
+        #~ defaults = dict(
+            #~ max_length=3,
+            # max_digits=3,
+            #~ blank=True,
+            #~ null=True
+            #~ )
+        #~ defaults.update(kwargs)
+        #~ super(PeriodsField, self).__init__(*args, **defaults)
 
 
 #~ class DebtsUserTable(dd.Table):
@@ -359,8 +359,18 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
                 #~ print e
         household = self.partner.get_mti_child('household')
         if household and self.actors.all().count() == 0:
+            mr = False
+            mrs = False
             for m in household.member_set.all():
-                a = Actor(budget=self,partner=m.person)
+                if m.person.gender == Gender.male and not mr:
+                    header = _("Mr.")
+                    mr = True
+                elif m.person.gender == Gender.female and not mrs:
+                    header = _("Mrs.")
+                    mrs = True
+                else:
+                    header = ''
+                a = Actor(budget=self,partner=m.person,header=header)
                 a.full_clean()
                 a.save()
             
@@ -373,6 +383,14 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
         t = entries_table_for_group(group)
         return ar.spawn(t,master_instance=self,account__group=group,**kw)
 
+
+    @dd.action(_("Duplicate"))
+    def duplicate_row(self,ar):
+        dup = mixins.duplicate_row(self)
+        kw = dict()
+        kw.update(refresh=True)
+        kw.update(message="Duplicated %s to %s." % (self,dup))
+        return ar.ui.success_response(**kw)
         
       
 class BudgetDetail(dd.DetailLayout):
@@ -487,6 +505,8 @@ class Actor(mixins.Sequenced,ActorBase):
         verbose_name = _("Budget Actor")
         verbose_name_plural = _("Budget Actors")
         
+    allow_cascaded_delete = True
+        
     budget = models.ForeignKey(Budget,related_name="actors")
     partner = models.ForeignKey('contacts.Partner',blank=True)
     #~ sub_budget = models.ForeignKey(Budget,
@@ -529,6 +549,8 @@ class Entry(SequencedBudgetComponent):
         verbose_name_plural = _("Budget Entries")
         #~ unique_together = ['budget','account','name']
         #~ unique_together = ['actor','account']
+        
+    allow_cascaded_delete = True
     
     #~ group = models.ForeignKey(AccountGroup)
     account_type = AccountType.field()
@@ -575,6 +597,10 @@ class Entry(SequencedBudgetComponent):
         return ' / '.join([unicode(x) for x in parts if x])
           
           
+    def account_changed(self):
+        if self.account_id:
+            self.periods = self.account.periods
+
     def save(self,*args,**kw):
         #~ if not self.name:
             #~ if self.partner:
@@ -582,8 +608,8 @@ class Entry(SequencedBudgetComponent):
             #~ else:
                 #~ self.name = self.account.name
         self.account_type = self.account.type
-        if self.periods is None:
-            self.periods = self.account.periods
+        #~ if self.periods is None:
+            #~ self.periods = self.account.periods
         super(Entry,self).save(*args,**kw)
         
             
@@ -607,8 +633,9 @@ class EntriesByType(Entries):
             
 class EntriesByBudget(Entries):
     master_key = 'budget'
-    column_names = "account description amount1 amount2 amount3 periods remark todo"
+    column_names = "account description amount1 amount2 amount3 periods remark todo seqno"
     required_user_level = None
+    order_by = ['seqno']
 
     @classmethod
     def override_column_headers(self,ar):
@@ -627,11 +654,11 @@ class IncomesByBudget(EntriesByBudget,EntriesByType):
     
 class LiabilitiesByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.liability
-    column_names = "account partner remark amount1 monthly_rate dist todo"
+    column_names = "account partner remark amount1 monthly_rate dist todo seqno"
     
 class AssetsByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.asset
-    column_names = "account remark amount1 monthly_rate todo"
+    column_names = "account remark amount1 monthly_rate todo seqno"
 
 
 

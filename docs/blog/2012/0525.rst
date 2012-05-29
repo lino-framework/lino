@@ -51,7 +51,7 @@ Einige Konsequenzen:
   jetzt kein Partner mehr zu existieren.
 
 - Im Detail eines Benutzers hat man jetzt keine Postadresse usw. mehr.
-  Stattdessen ein Feld "Partner", das eventuell auf den Partner verweist.
+  Stattdessen ein Feld "Partner", das auf den Partner verweist.
   Damit Benutzer einem Kollegen eine Mail schicken können, muss ein 
   entsprechender Partner angelegt werden.
   Also bei neuen Benutzern dran denken.

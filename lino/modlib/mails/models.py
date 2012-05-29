@@ -16,7 +16,7 @@
 Defines models for :mod:`lino.modlib.mails`.
 """
 
-raise Exception("split into inbox and outbox")
+raise Exception("This has been split into inbox and outbox")
 
 import logging
 logger = logging.getLogger(__name__)

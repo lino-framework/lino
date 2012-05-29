@@ -568,10 +568,11 @@ class Table(AbstractTable):
             if ma is not None:
                 #~ print 20120524, self, ma
                 for k,v in ma.items():
-                    #~ if hasattr(self,k):
-                        #~ print "20120524 already defined: %s.%s" % (self,k)
                     v = copy.deepcopy(v)
                     v.name = None
+                    #~ def meth(action,ar,elem):
+                    #~     return v.run()
+                    #~ v.run = meth
                     setattr(self,k,v)
                     
                     

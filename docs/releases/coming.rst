@@ -29,6 +29,8 @@ Sichtbare Änderungen
 - Die Benutzerverwaltung ist komplexer geworden. 
   Es gibt jetzt "Benutzerprofile" und "Benutzerlevel".
   
+- Benutzer sind keine Partner mehr. Siehe :doc:`/blog/2012/0525`.
+  
 - Neue Module Schuldnerberatung und Haushalte  
 
 - Neues Modul Postausgang.

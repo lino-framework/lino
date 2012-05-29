@@ -671,15 +671,15 @@ class InvoicesByJournal(Invoices):
 
 class SignAction(actions.Action):
     label = "Sign"
-    def run(self,context):
-        context.confirm(
+    def run(self,obj,ar):
+        ar.confirm(
             "Going to sign %d documents as user %s. Are you sure?" % (
-            len(context.selected_rows),
-            context.request.user))
-        for row in context.selected_rows:
-            row.instance.user = context.request.user
+            len(ar.selected_rows),
+            ar.get_user()))
+        for row in ar.selected_rows:
+            row.instance.user = ar.get_user()
             row.instance.save()
-        context.refresh()
+        return ar.ui.success_response(refresh=True)
 
 class DocumentsToSign(Invoices):
     use_as_default_table = False

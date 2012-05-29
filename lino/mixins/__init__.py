@@ -201,6 +201,12 @@ class CreatedModified(models.Model):
         super(CreatedModified, self).save(*args, **kwargs)
 
         
+def duplicate_row(obj,**kw):
+    obj.pk = None
+    for k,v in kw.items():
+        setattr(obj,k,v)
+    obj.save()
+    return obj
 
 
 class Sequenced(models.Model):
@@ -214,6 +220,20 @@ class Sequenced(models.Model):
     seqno = models.IntegerField(
         blank=True,null=False,
         verbose_name=_("Seq.No."))
+        
+    @dd.action(_("Insert before"))
+    def insert_before(self,ar):
+        seqno = self.seqno
+        qs = self.get_siblings().filter(seqno__gte=seqno).reverse()
+        for s in qs:
+            s.seqno += 1
+            s.save()
+        new = duplicate_row(self,seqno=seqno)
+        kw = dict()
+        kw.update(refresh=True)
+        kw.update(message=_("Inserted new row before %d.") % self.seqno)
+        return ar.ui.success_response(**kw)
+        
     
     def get_siblings(self):
         """
