@@ -1,0 +1,5 @@
+20120529
+========
+
+The `id_card_no` field in :class:`lino.modlib.cbss.models.SSIN` 
+had a `max_length` of 10. That was not enough. Now it's 20.

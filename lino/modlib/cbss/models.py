@@ -613,7 +613,7 @@ class SSIN(models.Model):
 The number of the SIS card used to authenticate the person.""")
 
     id_card_no = models.CharField(verbose_name=_('ID card number'),
-        max_length=10,
+        max_length=20,
         blank=True, help_text="""\
 The number of the ID card used to authenticate the person.""")
 
