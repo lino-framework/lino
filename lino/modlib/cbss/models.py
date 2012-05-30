@@ -175,7 +175,7 @@ class SendAction(dd.RowAction):
     def run(self,elem,ar,**kw):
         elem.execute_request(ar)
         if elem.status == RequestStatus.warnings:
-            kw.update(message=_("There were warnings but no errors."))
+            kw.update(message=_("Got valid response, but it contains warnings."))
             kw.update(alert=True)
         kw.update(refresh=True)
         return ar.ui.success_response(**kw)
@@ -218,7 +218,7 @@ Read-only.""")
     # will probably go away soon
     request_xml = models.TextField(verbose_name=_("Request"),
         editable=False,blank=True,
-        help_text="""The raw XML string that has been (or will be) sent.""")
+        help_text="""The raw XML string that has (or would have) been sent.""")
     
     response_xml = models.TextField(
         verbose_name=_("Response"),
@@ -226,6 +226,11 @@ Read-only.""")
         help_text="""\
 The response received, raw XML string. 
 If the request failed with a local exception, then it contains a traceback.""")
+
+    logged_messages = models.TextField(
+        verbose_name=_("Logged messages"),
+        editable=False,blank=True,
+        help_text="""Logged messages about this request.""")
 
     send_action = SendAction()
     print_action = mixins.DirectPrintAction()
@@ -246,6 +251,11 @@ If the request failed with a local exception, then it contains a traceback.""")
     #~ def setup_report(cls,rpt):
         #~ # call_optional_super(CBSSRequest,cls,'setup_report',rpt)
         #~ rpt.add_action(SendAction())
+        
+    def logmsg(self,s,*args):
+        if args:
+            s = s % args
+        self.logged_messages += ("[%s] " % datetime.datetime.now()) + s + '\n'
         
     def __unicode__(self):
         return u"%s#%s" % (self.__class__.__name__,self.pk)
@@ -268,7 +278,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         if not settings.LINO.cbss_live_tests:
             if simulate_response is None and environment:
                 self.validate_request()
-                self.status = RequestStatus.validated
+                #~ self.status = RequestStatus.validated
                 self.save()
                 return
                 
@@ -280,10 +290,11 @@ If the request failed with a local exception, then it contains a traceback.""")
             retval = self.execute_request_(now,simulate_response)
         except (IOError,Warning),e:
             self.status = RequestStatus.failed
-            self.response_xml = unicode(e)
+            self.logmsg(unicode(e))
         except Exception,e:
             self.status = RequestStatus.failed
-            self.response_xml = traceback.format_exc(e)
+            #~ self.response_xml = traceback.format_exc(e)
+            self.logmsg(traceback.format_exc(e))
 
         self.save()
         return retval
@@ -330,7 +341,7 @@ class CBSSRequestDetail(dd.DetailLayout):
     id person user environment sent status ticket
     """
     
-    response = "response_xml"
+    response = "response_xml logged_messages"
     
     def setup_handle(self,lh):
         lh.request.label = _("Request")
@@ -364,7 +375,7 @@ class SSDNRequest(CBSSRequest):
         #~ if not schema.validate(doc):
             #~ print xml
         schema.assertValid(doc)
-        #~ logger.info("Validated %s against %s", xml,xsd_filename)
+        self.logmsg("Validated %s against %s", xml,xsd_filename)
       
     def validate_wrapped(self,srvreq):
         self.validate_against_xsd(srvreq,xsdpath('SSDN','Service','SSDNRequest.xsd'))
@@ -387,7 +398,7 @@ class SSDNRequest(CBSSRequest):
         self.validate_wrapped(wrapped_srvreq)
       
     def execute_request_(self,now,simulate_response):
-            
+        "SSDN specific part of a request."
         srvreq = self.build_request()
         
         #~ if validate:
@@ -408,21 +419,21 @@ class SSDNRequest(CBSSRequest):
             client = Client(url, transport=t)
             #~ print 20120507, client
         
-            s = unicode(wrapped_srvreq)
-            self.request_xml = s
-            if True:
-                xmlString = s
-            else:
-                xmlString = E('wsc:xmlString',ns=NSWSC)
-                xmlString.setText(s)
-            #~ logger.info("20120521 Gonna sendXML(<xmlString>):\n%s",s)
+            xmlString = unicode(wrapped_srvreq)
+            self.request_xml = xmlString
+            #~ logger.info("20120521 Gonna sendXML(<xmlString>):\n%s",xmlString)
             if not settings.LINO.cbss_live_tests:
                 #~ raise Warning("NOT sending because `cbss_live_tests` is False:\n" + unicode(xmlString))
-                raise Warning("NOT sending because `cbss_live_tests` is False:\n" + s)
+                raise Warning(
+                    "NOT sending because `cbss_live_tests` is False:\n" + xmlString)
             #~ xmlString.append(wrapped_srvreq)
+            self.logmsg("client.service.sendXML(\n%s\n)",xmlString)
             res = client.service.sendXML(xmlString)
             #~ print 20120522, res
-            return self.fill_from_string(res.encode('utf-8'),xmlString)
+            self.response_xml = unicode(res)
+            #~ self.save()
+            #~ return self.fill_from_string(res.encode('utf-8'),xmlString)
+            return self.fill_from_string(res.encode('utf-8'))
         else:
             self.environment = 'demo'
             return self.fill_from_string(simulate_response)
@@ -448,7 +459,7 @@ class SSDNRequest(CBSSRequest):
         else:
             #~ self.status = RequestStatus.errors
             #~ self.response_xml = unicode(reply)
-            if sent_xmlString is not None:
+            if False and sent_xmlString is not None:
                 msg = """\
 %s : CBSS returned error %s 
 ======= xmlString sent:
@@ -472,7 +483,8 @@ class SSDNRequest(CBSSRequest):
         service_reply = self.get_service_reply(reply)
         if service_reply is None:
             raise Exception(
-              "Return code is %r but there's no service reply in:\n%s\n" % (rc,reply))
+              "Return code is %r, but there's no service reply." % rc)
+              #~ "Return code is %r but there's no service reply in:\n%s\n" % (rc,reply))
         #~ reply.childAtPath('/ServiceReply/IdentifyPersonReply')
         self.response_xml = unicode(service_reply)
         return service_reply
@@ -1189,6 +1201,7 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
             self.status = RequestStatus.failed
             raise Warning(msg)
             
+        self.response_xml = unicode(reply)
         
         """
         Example of reply:

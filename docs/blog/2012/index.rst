@@ -169,6 +169,7 @@ As long as nobody protests, I'll save some time by writing in German.
   |br| 
   :doc:`28 <0528>`
   :doc:`29 <0529>`
+  :doc:`30 <0530>`
 
 .. |Jun| replace::  **June**
   |br| 

@@ -1,0 +1,10 @@
+20120530
+========
+
+Weiter mit CBSS connection.
+
+- new field logged_messages
+- xml_response now contains
+  - the full raw response if there was a response but some problem
+  - for SSDN requests that have been recognized, the service reply part of the response 
+  - for newstyle services currently a string representation of the full reply
