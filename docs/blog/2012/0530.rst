@@ -8,3 +8,15 @@ Weiter mit CBSS connection.
   - the full raw response if there was a response but some problem
   - for SSDN requests that have been recognized, the service reply part of the response 
   - for newstyle services currently a string representation of the full reply
+  
+  
+Tabellen wurden nicht ausgedruckt. Die Erklärung war so einfach wie die Ursache::
+
+  Error while evaluating the expression "table(self.get_result_table(ar))" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "/usr/local/django/test_dsbe/using/lino/lino/utils/appy_pod.py", line 410, in insert_table
+  from odf.opendocument import OpenDocumentText
+  <type 'exceptions.ImportError'>: No module named odf.opendocument  
+
+
+Added NIS codes and new models Purpose and Sector.

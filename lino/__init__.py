@@ -113,6 +113,13 @@ def using(ui=None):
     yield ("Cheetah",version ,"http://cheetahtemplate.org/")
 
     try:
+        from odf import opendocument
+        version = opendocument.__version__
+    except ImportError:
+        version = NOT_FOUND_MSG
+    yield ("OdfPy",version ,"http://pypi.python.org/pypi/odfpy")
+
+    try:
         import docutils
         version = docutils.__version__
     except ImportError:

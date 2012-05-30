@@ -1156,5 +1156,14 @@ def migrate_from_1_4_3(globals_dict):
             gender=gender,sent=sent,status=status,request_xml=request_xml,response_xml=response_xml,national_id=national_id,middle_name=middle_name,tolerance=tolerance)    
     globals_dict.update(create_bcss_identifypersonrequest=create_bcss_identifypersonrequest)
     
+    objects = globals_dict['objects']
+    def new_objects():
+        from lino.modlib.cbss.fixtures import purposes
+        yield purposes.objects()
+        yield objects()
+        from lino.modlib.cbss.fixtures import inscodes
+        yield inscodes.objects()
+    globals_dict.update(objects=new_objects)
+    
     return '1.4.4'
             

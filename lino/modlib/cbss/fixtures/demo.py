@@ -24,15 +24,23 @@ from lino import dd
 cbss = dd.resolve_app('cbss')
 
 if cbss:
-  
+    
     DEMO_REQUESTS = [
-        [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 'demo_ipr_1.xml' ],
-        [ cbss.IdentifyPersonRequest, dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,0)), 'demo_ipr_2.xml' ],
+        [ cbss.IdentifyPersonRequest, 
+          dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 
+          'demo_ipr_1.xml' ],
+        [ cbss.IdentifyPersonRequest, 
+          dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,0)), 
+          'demo_ipr_2.xml' ],
+        [ cbss.IdentifyPersonRequest, 
+          dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 
+          'demo_ipr_3.xml' ],
         [ cbss.ManageAccessRequest, dict(
             national_id='01234567890',
             start_date=settings.LINO.demo_date(),
             end_date=settings.LINO.demo_date(15),
-            purpose=902,
+            sector=cbss.Sector.objects.get(pk='17'),
+            purpose=cbss.Purpose.objects.get(code='902'),
             action=cbss.ManageAction.REGISTER,
             query_register=cbss.QueryRegister.ALL,
             ), '' ],

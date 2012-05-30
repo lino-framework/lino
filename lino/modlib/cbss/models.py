@@ -68,6 +68,8 @@ from lino.utils import Warning
 from lino.tools import obj2str
 
 from lino.utils import babel
+from lino.utils.choosers import chooser
+
 #~ from lino.utils import dblogger
 #~ from lino.tools import resolve_model
 #~ from lino.utils.xmlgen import etree
@@ -122,6 +124,16 @@ def cbss2gender(v):
     return None
       
 
+#~ class Sector(ChoiceList):
+    #~ """
+    #~ The status of a :class:`CBSSRequest`.
+    #~ """
+    #~ label = _("Sector")
+
+#~ add = Sector.add_item
+#~ add('0',_("All sectors"),'all')
+#~ add('1',_("All sectors"),'all')
+
 class RequestStatus(ChoiceList):
     """
     The status of a :class:`CBSSRequest`.
@@ -172,13 +184,57 @@ class SendAction(dd.RowAction):
             return False
         return super(SendAction,self).get_permission(user,obj)
       
-    def run(self,elem,ar,**kw):
-        elem.execute_request(ar)
-        if elem.status == RequestStatus.warnings:
+    def run(self,obj,ar,**kw):
+        obj.execute_request(ar)
+        if obj.status == RequestStatus.failed:
+            kw.update(message=obj.logged_messages)
+            kw.update(alert=True)
+        elif obj.status == RequestStatus.warnings:
             kw.update(message=_("Got valid response, but it contains warnings."))
             kw.update(alert=True)
         kw.update(refresh=True)
         return ar.ui.success_response(**kw)
+
+
+
+class Sector(babel.BabelNamed):
+    class Meta:
+        verbose_name = _("Sector")
+        verbose_name_plural = _('Sectors')
+        
+    #~ code = models.CharField(max_length=2,verbose_name=_("Code"),primary_key=True)
+    code = models.IntegerField(max_length=2,verbose_name=_("Code"),primary_key=True)
+    
+    def __unicode__(self):
+        #~ return '(' + str(self.code) + ') ' + babel.BabelNamed.__unicode__(self)
+        return str(self.code) + ' - ' + babel.BabelNamed.__unicode__(self)
+        
+
+class Sectors(dd.Table):
+    model = Sector
+    required_user_groups = ['cbss']
+
+
+class Purpose(babel.BabelNamed):
+    class Meta:
+        verbose_name = _("Purpose")
+        verbose_name_plural = _('Purposes')
+        unique_together = ['sector','code']
+    sector = models.ForeignKey(Sector,blank=True,null=True)
+    #~ code = models.CharField(max_length=3,verbose_name=_("Code"))
+    code = models.IntegerField(max_length=3,verbose_name=_("Code"))
+    
+    def __unicode__(self):
+        #~ return '(' + str(self.code) + ') ' + babel.BabelNamed.__unicode__(self)
+        return str(self.code) + ' - ' + babel.BabelNamed.__unicode__(self)
+        
+
+class Purposes(dd.Table):
+    model = Purpose
+    required_user_groups = ['cbss']
+
+
+
 
 NSCOMMON = ('common','http://www.ksz-bcss.fgov.be/XSD/SSDN/Common')
 NSSSDN = ('ssdn','http://www.ksz-bcss.fgov.be/XSD/SSDN/Service')
@@ -241,6 +297,9 @@ If the request failed with a local exception, then it contains a traceback.""")
             #~ self.environment = settings.LINO.cbss_environment or ''
         #~ super(CBSSRequest,self).save(*args,**kw)
 
+    def disable_editing(self,ar):
+        if self.ticket: return True
+
     def on_cbss_ok(self,reply):
         """
         Called when a successful reply has been received.
@@ -265,6 +324,8 @@ If the request failed with a local exception, then it contains a traceback.""")
         This is the general method for all SSDN services,
         executed when a user runs :class:`SendAction`.
         """
+        if ar is not None:
+            logger.info("%s executes CBSS request %s",ar.get_user(),self)
         if self.ticket:
             raise Exception("Tried to re-execute %s with non-empty ticket." % self)
         if now is None:
@@ -278,7 +339,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         if not settings.LINO.cbss_live_tests:
             if simulate_response is None and environment:
                 self.validate_request()
-                #~ self.status = RequestStatus.validated
+                self.status = RequestStatus.validated
                 self.save()
                 return
                 
@@ -287,6 +348,8 @@ If the request failed with a local exception, then it contains a traceback.""")
         
         retval = None
         try:
+            #~ if not settings.LINO.cbss_live_tests:
+                #~ self.validate_request()
             retval = self.execute_request_(now,simulate_response)
         except (IOError,Warning),e:
             self.status = RequestStatus.failed
@@ -329,7 +392,8 @@ Not actually sending because environment is empty. Request would be:
 dd.update_field(CBSSRequest,'user',blank=False,null=False)
 
 class CBSSRequestDetail(dd.DetailLayout):
-    main = 'request response'
+    #~ main = 'request response'
+    main = 'request response_xml logged_messages'
     
     request = """
     info
@@ -341,13 +405,14 @@ class CBSSRequestDetail(dd.DetailLayout):
     id person user environment sent status ticket
     """
     
-    response = "response_xml logged_messages"
+    #~ response = "response_xml\nlogged_messages"
     
     def setup_handle(self,lh):
         lh.request.label = _("Request")
         lh.info.label = _("Request information")
         lh.result.label = _("Result")
-        lh.response.label = _("Response")
+        #~ lh.response.label = _("Response")
+        #~ lh.log.label = _("Log")
         lh.parameters.label = _("Parameters")
     
 
@@ -886,7 +951,7 @@ class IdentifyPersonResult(dd.VirtualTable):
     master = IdentifyPersonRequest
     master_key = None
     label = _("Results")
-    column_names = 'person national_id:10 last_name:20 first_name:10 birth_date:10 *'
+    column_names = 'national_id:10 last_name:20 first_name:10 address birth_date:10 civil_state *'
     
     @classmethod
     def get_data_rows(self,ar):
@@ -927,18 +992,37 @@ class IdentifyPersonResult(dd.VirtualTable):
     @dd.displayfield(_("Birth date"))
     def birth_date(self,obj,ar):
         return obj.childAtPath('/Basic/BirthDate').text
+        
+    @dd.displayfield(_("Civil state"))
+    def civil_state(self,obj,ar):
+        return obj.childAtPath('/Extended/CivilState').text
+        
+    @dd.displayfield(_("Address"))
+    def address(self,obj,ar):
+        n = obj.childAtPath('/Basic/DiplomaticPost')
+        if n is not None:
+            n.childAtPath('/CountryCode') 
+            n.childAtPath('/Post')
+            n.childAtPath('/AddressPlainText')
+            return n.childAtPath('/AddressPlainText').text
+        n = obj.childAtPath('/Basic/Address')
+        if n is not None:
+            n.childAtPath('/CountryCode').text
+            n.childAtPath('/MunicipalityCode').text
+            n.childAtPath('/Municipality').text
+        
             
     #~ @dd.virtualfield(models.ForeignKey(settings.LINO.person_model))
-    @dd.displayfield(_("Person"))
-    def person(self,obj,ar):
-        from lino.apps.pcsw.models import Person
-        niss = obj.childAtPath('/Basic/SocialSecurityUser').text
-        if niss:
-            try:
-                return unicode(Person.objects.get(national_id=niss))
-            except Person.DoesNotExist:
-                pass
-        return ''
+    #~ @dd.displayfield(_("Person"))
+    #~ def person(self,obj,ar):
+        #~ from lino.apps.pcsw.models import Person
+        #~ niss = obj.childAtPath('/Basic/SocialSecurityUser').text
+        #~ if niss:
+            #~ try:
+                #~ return unicode(Person.objects.get(national_id=niss))
+            #~ except Person.DoesNotExist:
+                #~ pass
+        #~ return ''
             
 
 
@@ -992,19 +1076,39 @@ class ManageAccessRequest(SSDNRequest,SSIN):
         verbose_name = _("ManageAccess Request")
         verbose_name_plural = _("ManageAccess Requests")
         
-    purpose = models.IntegerField(verbose_name=_('Purpose'),
-      default=0,help_text="""\
+    #~ purpose = models.IntegerField(verbose_name=_('Purpose'),
+      #~ default=0,help_text="""\
+#~ The purpose for which the inscription needs to be 
+#~ registered/unregistered or listed. 
+#~ For listing this field is optional, 
+#~ for register/unregister it is obligated.""")
+
+    #~ sector = models.IntegerField(verbose_name=_('Sector'),
+      #~ blank=False,default=0,help_text="""\
+#~ For register and unregister this element is ignored. 
+#~ It can be used for list, 
+#~ when information about sectors is required.""")
+
+    sector = models.ForeignKey(Sector,
+      help_text="""\
+For register and unregister this element is ignored. 
+It can be used for list, 
+when information about sectors is required.""")
+
+    purpose = models.ForeignKey(Purpose,
+      blank=True,null=True,
+      help_text="""\
 The purpose for which the inscription needs to be 
 registered/unregistered or listed. 
 For listing this field is optional, 
-for register/unregister it is obligated.""")
+for register/unregister it is mandatory.""")
 
     start_date = models.DateField(
         blank=True,null=True,
-        verbose_name=_("Registered from"))
+        verbose_name=_("Period from"))
     end_date = models.DateField(
         blank=True,null=True,
-        verbose_name=_("Registered until"))
+        verbose_name=_("Period until"))
 
     # 20120527 : Django converts default value to unicode. didnt yet understand why.
     action = ManageAction.field(blank=False,default=ManageAction.LIST)
@@ -1012,12 +1116,11 @@ for register/unregister it is obligated.""")
     #~ action = ManageAction.field(blank=False)
     #~ query_register = QueryRegister.field(blank=False) # ,default=QueryRegister.ALL)
 
-    sector = models.IntegerField(verbose_name=_('Sector'),
-      blank=False,default=0,help_text="""\
-For register and unregister this element is ignored. 
-It can be used for list, 
-when information about sectors is required.""")
 
+    @chooser()
+    def purpose_choices(cls,sector):
+        return Purpose.objects.filter(
+            models.Q(sector=sector)|models.Q(sector__isnull=True)).order_by('code')
 
 
     def on_create(self,ar):
@@ -1031,7 +1134,9 @@ when information about sectors is required.""")
         national_id = self.get_ssin()
         main = E('mar:ManageAccessRequest',ns=NSMAR)
         main.append(E('mar:SSIN').setText(national_id))
-        main.append(E('mar:Purpose').setText(str(self.purpose)))
+        #~ main.append(E('mar:Purpose').setText(str(self.purpose)))
+        if self.purpose_id:
+            main.append(E('mar:Purpose').setText(str(self.purpose.code)))
         period = E('mar:Period')
         main.append(period)
         period.append(E('common:StartDate',ns=NSCOMMON).setText(str(self.start_date)))
@@ -1039,7 +1144,7 @@ when information about sectors is required.""")
             period.append(E('common:EndDate',ns=NSCOMMON).setText(str(self.end_date)))
         main.append(E('mar:Action').setText(self.action.name))
         if self.sector:
-            main.append(E('mar:Sector').setText(str(self.sector)))
+            main.append(E('mar:Sector').setText(str(self.sector.code)))
         if self.query_register:
             main.append(E('mar:QueryRegister').setText(self.query_register.name))
         proof = E('mar:ProofOfAuthentication')
@@ -1105,12 +1210,12 @@ The SSIN of the person to register/unregister/list.
 
 class ManageAccessRequestDetail(CBSSRequestDetail):
     p1 = """
-    national_id start_date end_date 
-    action purpose sector query_register
+    action start_date end_date 
+    sector purpose query_register
     """
     proof = """
+    national_id sis_card_no id_card_no
     first_name last_name birth_date 
-    sis_card_no id_card_no
     """
     parameters = "p1 proof"
     
@@ -1322,6 +1427,22 @@ MODULE_NAME = _("CBSS")
 
 settings.LINO.add_user_field('cbss_level',UserLevel.field(MODULE_NAME))
 
+dd.inject_field('countries.City',
+    'ins_code',
+    models.CharField(
+        max_length=5,
+        verbose_name=_("INS code"),
+        blank=True,
+    ))
+        
+dd.inject_field('countries.Country',
+    'ins_code',
+    models.CharField(
+        max_length=3,
+        verbose_name=_("INS code"),
+        blank=True,
+    ))
+        
 
 
 def setup_site_cache(self,force):
@@ -1388,7 +1509,10 @@ def setup_my_menu(site,ui,user,m):
     m.add_action(MyManageAccessRequests)
     m.add_action(MyRetrieveTIGroupsRequests)
     
-def setup_config_menu(site,ui,user,m): pass
+def setup_config_menu(site,ui,user,m):
+    m  = m.add_menu("cbss",MODULE_NAME)
+    m.add_action(Sectors)
+    m.add_action(Purposes)
   
 def setup_explorer_menu(site,ui,user,m):
     if user.cbss_level < UserLevel.manager: 

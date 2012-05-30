@@ -136,6 +136,9 @@ into `~/snapshots/`::
   wget http://launchpad.net/appy/0.8/0.8.0/+download/appy0.8.0.zip
   unzip appy0.8.0.zip -d appy
   
+  wget http://pypi.python.org/packages/source/o/odfpy/odfpy-0.9.4.tar.gz
+  tar -xvzf odfpy-0.9.4.tar.gz
+  
 Note: Lino didn't yet migrate to ExtJS 4.0. See :doc:`/tickets/40`
 
 Install TinyMCE language packs

@@ -2028,7 +2028,7 @@ def site_setup(site):
     """)
     
     site.modules.countries.Cities.set_detail("""
-    name country 
+    name country ins_code
     contacts.PartnersByCity jobs.StudiesByCity
     """)
     
@@ -2038,7 +2038,7 @@ def site_setup(site):
     #~ """)
     
     site.modules.countries.Countries.set_detail("""
-    isocode name short_code
+    isocode name short_code ins_code
     countries.CitiesByCountry jobs.StudiesByCountry
     """)
     

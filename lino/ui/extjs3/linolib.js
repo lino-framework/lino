@@ -673,7 +673,8 @@ in contacts.Person.2.dtl
 */
 Lino.on_tab_activate = function(item) {
   //~ console.log('activate',item); 
-  if (item.rendered) item.doLayout();
+  if (item.rendered && item.doLayout) item.doLayout();
+  //~ if (item.rendered) item.doLayout();
 }
 
 Lino.TimeField = Ext.extend(Ext.form.TimeField,{
