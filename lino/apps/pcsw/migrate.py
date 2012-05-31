@@ -25,6 +25,7 @@ set to ``"lino.apps.pcsw.migrate"``
 
 """
 
+import datetime
 from django.conf import settings
 from lino.tools import resolve_model
 from lino.utils import mti
@@ -1104,6 +1105,9 @@ def migrate_from_1_4_3(globals_dict):
             kw.update(newcomers_level = level)
             
         #~ return create_child(contacts_Contact,contact_ptr_id,users_User,
+        if not date_joined:
+            date_joined = datetime.datetime.now()
+
         return users_User(partner_id=contact_ptr_id,
           id=contact_ptr_id,
           first_name=first_name,last_name=last_name,
@@ -1112,6 +1116,7 @@ def migrate_from_1_4_3(globals_dict):
           #~ is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,
           #~ last_login=last_login,date_joined=date_joined,
           created=date_joined,
+          modified=date_joined,
           #~ is_spis=is_spis,is_newcomers=is_newcomers,
           newcomer_quota=newcomer_quota,**kw)
     globals_dict.update(create_users_user=create_users_user)
