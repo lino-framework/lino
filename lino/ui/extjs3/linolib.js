@@ -3401,6 +3401,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             p[k] = Ext.util.Format.date(v, f.dateFormat);
         }else{
             p[k] = v;
+            var v = e.record.get(k+'$ext_requests.CHOICES_HIDDEN_SUFFIX');
+            if (v !== undefined) {
+              p[k+'$ext_requests.CHOICES_HIDDEN_SUFFIX'] = v;
+            }
         }
         //~ var i = cm.findColumnIndex(k);
         //~ var r = cm.getRenderer(i);

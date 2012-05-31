@@ -1041,6 +1041,8 @@ def migrate_from_1_4_3(globals_dict):
     - Users are no longer MTI subclass of Partner but have a FK `partner`. 
     - `cbss.IdentifyPersonRequest`: field `project` replaced by `person`.
     - convert Person.civil_state to choicelist CivilState
+    - new tables cbss.Purpose and cbss.Sector
+    - add default data from library fixtures (debts, households, purposes)
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child
