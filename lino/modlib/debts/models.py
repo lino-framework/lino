@@ -597,7 +597,7 @@ class Entry(SequencedBudgetComponent):
         return ' / '.join([unicode(x) for x in parts if x])
           
           
-    def account_changed(self):
+    def account_changed(self,ar):
         if self.account_id:
             self.periods = self.account.periods
 
