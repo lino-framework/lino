@@ -153,7 +153,6 @@ class User(mixins.CreatedModified):
     person = property(get_person)
 
     def save(self,*args,**kw):
-        self.mtime = datetime.datetime.now()
         if self.profile == self.username:
             self.profile = ''
         if self.profile:

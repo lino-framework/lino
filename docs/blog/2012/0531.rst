@@ -93,18 +93,20 @@ Feldes aktiviert oder deaktiviert.
 Converted field `civil_state` of :class:`lino.apps.pcsw.models.Person` 
 to choicelist :class:`lino.apps.pcsw.models.CivilState`.
 
-The "Rebuild Site cache" button didn't work.
+The "Rebuild Site cache" button didn't work. Fixed.
+But this button is becoming almost useless because 
+Lino now automatically rebuilds the user's :xfile:`lino*.js` 
+file when the user's profile has changed.
+
 Removed the timestamp fields `date_joined` and `last_login` 
 from :class:`lino.modlib.users.models.User`, 
 anyway they weren't used.
 Added two fields `created` and `modified` 
 (from :class:`lino.mixins.CreatedModified`).
-The User.modified is now 
-
-
 
 Fixed several small bugs. 
 
-
-Renamed `auto_build_site_cache` to `lino.Lino.never_build_site_cache` 
+Renamed `auto_build_site_cache` to 
+:attr:`lino.Lino.never_build_site_cache` 
 (and inverted it's meaning).
+
