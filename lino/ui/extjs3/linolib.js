@@ -2372,13 +2372,12 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.form.my_loadRecord(record.data);
       this.set_window_title(record.title);
       this.getBottomToolbar().enable();
-      if (record.disabled_actions) {
-          //~ console.log('20120528 disabled_actions =',record.disabled_actions,this.getBottomToolbar());
+      var da = record.data.disabled_actions;
+      if (da) {
+          console.log('20120528 disabled_actions =',da,this.getBottomToolbar());
           this.getBottomToolbar().items.each(function(item,index,length){
-              //~ console.log('20120528 ',item.itemId,'-->',record.disabled_actions[item.itemId]);
-              if (record.disabled_actions[item.itemId]) 
-                item.disable();
-              else item.enable();
+              //~ console.log('20120528 ',item.itemId,'-->',da[item.itemId]);
+              if (da[item.itemId]) item.disable(); else item.enable();
           });
       };
       if (record.data.disable_editing) {
@@ -2783,14 +2782,14 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     var this_ = this;
     //~ var grid = this;
     this.store.on('load', function() {
-        //~ console.log('GridMasterWrapper setup',this_.store.reader.arrayData.title);
-        var da = this_.store.reader.arrayData.disabled_actions
-        if (da) {
-            this.cmenu.cascade(function(item){ 
-              if(da[item.name]) item.disable();
-              else item.enable();
-            });
-        };
+        //~ console.log('20120531 GridStore.on(load)',this_.store.reader.arrayData);
+        //~ var da = this_.store.reader.arrayData.disabled_actions;
+        //~ if (da) {
+            //~ this.cmenu.cascade(function(item){ 
+              //~ console.log(20120531, item.itemId, da[item.itemId]);
+              //~ if (da[item.itemId]) item.disable(); else item.enable();
+            //~ });
+        //~ };
         if (this_.containing_window)
             this_.set_window_title(this_.store.reader.arrayData.title);
             //~ this_.containing_window.setTitle(this_.store.reader.arrayData.title);
@@ -3553,7 +3552,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
 //~ }
 
 Lino.cell_context_menu = function(grid,row,col,e) {
-  //~ console.log('cellcontextmenu',grid,row,col,e);
+  //~ console.log('20120531 cellcontextmenu',grid,row,col,e,grid.store.reader.arrayData.rows[row]);
   e.stopEvent();
   //~ grid.getView().focusCell(row,col);
   grid.getSelectionModel().select(row,col);
@@ -3561,6 +3560,16 @@ Lino.cell_context_menu = function(grid,row,col,e) {
   //~ grid.getView().focusRow(row);
   //~ return;
   if(!grid.cmenu.el){grid.cmenu.render(); }
+  //~ if(e.record.data.disabled_fields) {
+  
+  var da = grid.store.reader.arrayData.rows[row][grid.disabled_actions_index];
+  if (da) {
+      this.cmenu.cascade(function(item){ 
+        //~ console.log(20120531, item.itemId, da[item.itemId]);
+        if (da[item.itemId]) item.disable(); else item.enable();
+      });
+  };
+  
   var xy = e.getXY();
   xy[1] -= grid.cmenu.el.getHeight();
   grid.cmenu.showAt(xy);

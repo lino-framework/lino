@@ -563,7 +563,7 @@ def elem2rec_detailed(ar,elem,**rec):
     #~ rec.update(title=unicode(elem))
     rec.update(id=elem.pk)
     #~ if rh.actor.disable_delete:
-    rec.update(disabled_actions=rh.actor.disabled_actions(ar,elem))
+    #~ rec.update(disabled_actions=rh.actor.disabled_actions(ar,elem))
     rec.update(disable_delete=rh.actor.disable_delete(elem,ar))
     if rh.actor.show_detail_navigator:
         first = None
@@ -1411,7 +1411,7 @@ tinymce.init({
                 return json_response_kw(count=total_count,
                   rows=rows,
                   title=unicode(ar.get_title()),
-                  disabled_actions=rpt.disabled_actions(ar,None),
+                  #~ disabled_actions=rpt.disabled_actions(ar,None),
                   gc_choices=[gc.data for gc in rpt.grid_configs])
                     
             if fmt == ext_requests.URL_FORMAT_HTML:
@@ -2447,6 +2447,7 @@ tinymce.init({
 
         #~ if rh.actor.master:
         kw.update(title=rh.actor.label)
+        kw.update(disabled_actions_index=rh.store.column_index('disabled_actions'))
         
         for k,v in kw.items():
             yield "  %s : %s," % (k,py2js(v))

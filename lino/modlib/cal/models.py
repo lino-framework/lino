@@ -40,6 +40,7 @@ from lino.core import actions
 from lino.utils import perms
 from lino.utils import babel
 from lino.utils import dblogger
+from lino.utils.choicelists import UserLevel
 from lino.tools import resolve_model, obj2str
 
 from lino.modlib.contacts import models as contacts

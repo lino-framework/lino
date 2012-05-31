@@ -502,6 +502,14 @@ class DisabledFieldsStoreField(SpecialStoreField):
                 d[self.store.pk.rel.field_name] = True
         return d
         
+class DisabledActionsStoreField(SpecialStoreField):
+    """
+    """
+    name = 'disabled_actions'
+    
+    def full_value_from_object(self,obj,ar):
+        return self.store.actor.disabled_actions(ar,obj)
+        
         
 #~ class RecnoStoreField(SpecialStoreField):
     #~ name = 'recno'
@@ -891,7 +899,7 @@ class Store:
           
         #~ if rh.report.disabled_fields is not None:
         addfield(DisabledFieldsStoreField(self))
-        #~ addfield(DisabledActionsStoreField(self))
+        addfield(DisabledActionsStoreField(self))
             
             #~ sf = DisabledFieldsStoreField(self)
             #~ self.fields.append(sf)
@@ -1067,6 +1075,7 @@ class Store:
         
     def column_index(self,name):
         """
+        Used to set `disabled_actions_index`.
         Was used to write definition of Ext.ensible.cal.CalendarMappings
         and Ext.ensible.cal.EventMappings 
         """

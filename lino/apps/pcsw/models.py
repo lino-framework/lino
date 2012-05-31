@@ -128,18 +128,64 @@ def niss_validator(national_id):
 
 
 
-CIVIL_STATE_CHOICES = [
-  ('1', _("single")   ),
-  ('2', _("married")  ),
-  ('3', _("divorced") ),
-  ('4', _("widowed")  ),
-  ('5', _("separated")  ), # Getrennt von Tisch und Bett / 
-]
+#~ CIVIL_STATE_CHOICES = [
+  #~ ('1', _("single")   ),
+  #~ ('2', _("married")  ),
+  #~ ('3', _("divorced") ),
+  #~ ('4', _("widowed")  ),
+  #~ ('5', _("separated")  ), # Getrennt von Tisch und Bett / 
+#~ ]
+
+class CivilState(ChoiceList):
+    """
+    Civil states, using Belgian codes.
+    
+    """
+    label = _("Civil state")
+    
+    @classmethod
+    def old2new(cls,old):
+        if old == '1': return cls.single
+        if old == '2': return cls.married
+        if old == '3': return cls.divorced
+        if old == '4': return cls.widowed
+        if old == '5': return cls.separated
+        return None
+
+    
+    
+add = CivilState.add_item
+add('10', _("Single"),'single')
+add('13', _("Single cohabitating"))
+add('18', _("Single with child"))
+add('20', _("Married"),'married')
+add('21', _("Married (living alone)"))
+add('22', _("Married (living with another partner)"))
+add('30', _("Widowed"),'widowed')
+add('33', _("Widow cohabitating"))
+add('40', _("Divorced"),'divorced')
+add('50', _("Separated"),'separated')
+
+
+#~ '10', 'Célibataire', 'Ongehuwd', 'ledig'
+#~ '13', 'Célibataire cohab.', NULL, 'ledig mit zus.', 
+#~ '18', 'Célibataire avec enf', NULL, 'ledig mit kind', 'c2e5ce64-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+#~ '20', 'Marié', 'Gehuwd', 'verheiratet', 'c2e5cf86-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+#~ '21', 'Séparé de fait', NULL, 'verheiratet alleine', 'c2e5d09e-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+#~ '22', 'Séparé de fait cohab', NULL, 'verheiratet zus.', 'c2e5d1c0-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+#~ '30', 'Veuf(ve)', NULL, 'Witwe(r)', 'c2e5d2ce-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+#~ '33', 'Veuf(ve) cohab.', NULL, 'Witwe(r) zus.', 'c2e5d3dc-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+#~ '40', 'Divorcé', NULL, 'geschieden', 'c2e5d4f4-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+#~ '50', 'séparé(e) de corps', NULL, 'von Tisch & Bet get.', 'c2e5d60c-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+
+
+
+
+
+
 
 
 # http://en.wikipedia.org/wiki/European_driving_licence
-
-
 
 class ResidenceType(ChoiceList):
     """
@@ -346,10 +392,11 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     birth_country = models.ForeignKey("countries.Country",
         blank=True,null=True,
         verbose_name=_("Birth country"),related_name='by_birth_place')
-    civil_state = models.CharField(max_length=1,
-        blank=True,# null=True,
-        verbose_name=_("Civil state"),
-        choices=CIVIL_STATE_CHOICES) 
+    #~ civil_state = models.CharField(max_length=1,
+        #~ blank=True,# null=True,
+        #~ verbose_name=_("Civil state"),
+        #~ choices=CIVIL_STATE_CHOICES) 
+    civil_state = CivilState.field(blank=True) 
     national_id = models.CharField(max_length=200,
         blank=True,verbose_name=_("National ID")
         #~ ,validators=[niss_validator]

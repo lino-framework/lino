@@ -3569,7 +3569,7 @@ def objects():
             logger.debug("ins_code %s --> city %s",ins_code,city)
             yield city
         except City.DoesNotExist:
-            logger.warning("Failed to set ins_code %s because there's no city %s %s",ins_code,zip_code,name)
+            logger.debug("Failed to set ins_code %s because there's no city %s %s",ins_code,zip_code,name)
             
         #~ for city in City.objects.filter(country=BE,zip_code=zip_code):
             #~ if city.ins_code and city.ins_code != ins_code:

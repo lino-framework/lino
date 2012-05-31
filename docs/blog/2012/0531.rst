@@ -10,23 +10,28 @@ code of the Belgian "Institut National de Statistique".
 other fields that were still missing.
 And the `Default.odt` now produces a printed result that seems usable.
 
-Ich habe noch am "permission system" gearbeitet. 
 
-- get_view_permission(elem,user) besagt, ob ein Element überhaupt gesehen werden kann. 
+CBSS-Requests dürfen weder verändert noch gelöscht werden, wenn sie einmal 
+abgeschickt wurden. Nicht einmal Systemverwalter dürfen das.
+Bei der Gelegenheit habe ich noch weiter am "permission system" gearbeitet. 
+Wird Zeit, dass ich mal gewisse Ideen dokumentiere:
+
+- get_view_permission(elem,user) besagt, ob ein UI-Element überhaupt 
+  *gesehen* werden kann. 
   Wenn nicht, dann wird der zum Anzeigen benötigte JS-Code gar nicht erst generiert. 
   `elem` kann ein :class:`lino.core.actors.Actor` sein, 
   aber auch z.B. ein :class:`lino.utils.jsgen.Component`.
   Bisher können alle Fälle ausschließlich durch Setzen von 
-  required_user_groups und required_user_level geregelt werden, also die 
-  Methode braucht von Anwednungscode nicht überschrieben zu werden.
+  `required_user_groups` und `required_user_level` geregelt werden, also die 
+  Methode braucht von Anwendungscode nicht überschrieben zu werden.
   
   
 - get_permission(actor,user,action) besagt, ob dieser User diese Aktion 
-  bei diesem Aktor ausführen darf. Wird für CREATE benutzt.
+  bei diesem Aktor ausführen darf. Wird z.B. für den Insert-Button benutzt.
 
 - get_row_permission(actor,action,user,row) besagt, ob dieser User diese Aktion 
   *auf diesem Objekt* (eine Zeile dieses Aktors) ausführen darf.
-  Diese Methode wird von Anwednungscode überschrieben, z.B. der 
+  Diese Methode wird von Anwendungscode überschrieben, z.B. der 
   Button :guilabel:"Cache löschen" ist immer (ohne Wenn und Aber) disabled, 
   wenn das Dokument noch nie gedruckt wurde::
   
@@ -41,10 +46,21 @@ Ich habe noch am "permission system" gearbeitet.
 - `disable_delete` ist noch was Spezielles. Ist einerseits historisch bedingt, 
   hat aber auch damit zu tun, dass beim Verweigern des Löschens der User eine 
   Meldung mit der Begründung kriegen soll.
+  Also wenn man z.B. importierte Partner nicht löschen darf, 
+  oder ein Objekt nicht löschen darf weil andere Objekte darauf verweisen, 
+  dann hat das nichts mit Benutzerrechten zu tun. Der Löschen-Button ist 
+  trotzdem aktiviert, und wenn man drauf klickt, kriegt man gesagt warum 
+  man es trotzdem nicht darf.
+  
+  Aber z.B. der Löschen-Button eines abgesendeten CBSSRequests ist jetzt richtig 
+  disabled.
   
   
-Neue Regel, um die Änderungen auszuprobieren: Verträge 
-(sowohl jobs.Contracts als auch isip.Contracts) haben jetzt folgende Methode::
+Um die Änderungen auszuprobieren und zu veranschaulichen, habe ich 
+mal zwei Regeln implementiert, die eigentlich schon lange fällig waren: 
+
+- Verträge (sowohl jobs.Contracts als auch isip.Contracts) 
+  haben jetzt folgende Methode::
 
     @classmethod
     def get_row_permission(self,action,user,row):
@@ -53,15 +69,29 @@ Neue Regel, um die Änderungen auszuprobieren: Verträge
                 return False
         return super(Contracts,self).get_row_permission(action,user,row)
 
-Also normale integ-Benutzer (die kein Manager sind) dürfen jetzt nur noch ihre 
-eigenen Verträge *bearbeiten*.
+  Also normale Integrationsassistenten (Benutzer mit `integ_level` <= `UserLevel.manager`) 
+  dürfen jetzt nur noch ihre eigenen Verträge bearbeiten oder löschen.
 
-Ähnlich für Termine und Augaben: hier muss man schon allgemeiner Manager sein, 
-um das zu dürfen.
-Zum Beispiel darf Melanie (Manager von integ) die Verträge anderer Bentuzer löschen, 
+- Idem für Termine und Aufgaben: hier muss man schon allgemeiner 
+  Manager sein (`level` <= `UserLevel.manager`), 
+  um anderer Leute Termine bearbeiten oder löschen zu dürfen.
+
+Zum Beispiel darf Melanie (Manager von `integ`) die Verträge anderer Bentuzer löschen, 
 aber nicht deren Termine.
 
+:checkin:`a7c4efbe84c6` wegen Feierabend.
 
-Ein Detail ist noch zu tun: Die Löschen-Aktion 
+Ein Detail war noch zu tun: Die Löschen-Aktion 
 (sowie alle anderen disabled_actions)
 wird im Kontextmenü einer Grid-Ansicht noch nicht deaktiviert.
+Deshalb ein neues SpecialStoreField 
+:class:`lino.ui.extjs2.ext_store.DisabledActionsField`
+und im generierten GridPanel eine Variable `disabled_actions_index`.
+Und vor jedem Aktivieren des Kontextmenüs werden die Aktionen entsprechend dieses 
+Feldes aktiviert oder deaktiviert.
+
+
+Converted field `civil_state` of :class:`lino.apps.pcsw.models.Person` 
+to choicelist :class:`lino.apps.pcsw.models.CivilState`.
+
+:checkin:`` 
