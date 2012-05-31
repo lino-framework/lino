@@ -1175,6 +1175,8 @@ def migrate_from_1_4_3(globals_dict):
     def new_objects():
         from lino.modlib.cbss.fixtures import purposes
         yield purposes.objects()
+        from lino.modlib.households.fixtures import std
+        yield std.objects()
         yield objects()
         from lino.modlib.cbss.fixtures import inscodes
         yield inscodes.objects()
