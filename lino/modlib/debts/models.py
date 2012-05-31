@@ -743,7 +743,7 @@ class DistEntriesByBudget(LiabilitiesByBudget):
         total = decimal.Decimal(0)
         el = []
         for e in qs.annotate(*sa):
-            assert e.periods is None
+            #~ assert e.periods is None
             total += e.total()
             el.append(e)
             
