@@ -271,7 +271,7 @@ class Users(dd.Table):
 
     @classmethod
     def get_row_permission(cls,action,user,obj):
-        if not super(User,cls).get_row_permission(action,user,obj):
+        if not super(Users,cls).get_row_permission(action,user,obj):
             return False
         #~ if user.is_superuser: return True
         if user.level >= UserLevel.manager: return True
