@@ -399,6 +399,9 @@ class TableRequest(actions.ActionRequest):
         return len(self.data_iterator)
         
 
+    def __iter__(self):
+        return self.data_iterator.__iter__()
+        
     def __str__(self):
         return self.__class__.__name__ + '(' + self.actor.actor_id + ",%r,...)" % self.master_instance
 

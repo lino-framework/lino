@@ -35,6 +35,17 @@
 >>> str2hex('')
 ''
 
+:func:`join_words`
+------------------
+
+>>> print join_words('This','is','a','test')
+This is a test
+
+>>> print join_words('This','is','','another','test')
+This is another test
+
+
+
 
 """
 
@@ -95,9 +106,10 @@ def assert_pure(s):
      
 
 def join_words(*words):
-    """Removes any None. Calls unicode on each.
     """
-    #~ words = filter(lambda x:x,words)
+    Remove any empty item (None or ''), call unicode on each and 
+    join the remaining word using a single space.
+    """
     return ' '.join([unicode(x) for x in words if x])
       
 

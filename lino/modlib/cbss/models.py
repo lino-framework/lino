@@ -65,6 +65,8 @@ from appy.shared.xml_parser import XmlUnmarshaller
 from lino import mixins
 from lino import dd
 from lino.utils import Warning
+from lino.utils import join_words
+from lino.utils import AttrDict, IncompleteDate
 from lino.tools import obj2str
 
 from lino.utils import babel
@@ -124,7 +126,55 @@ def cbss2gender(v):
         return Gender.female
     return None
       
-
+def cbss2date(s):
+    a = s.split('-')
+    assert len(a) == 3
+    a = [int(i) for i in a]
+    return IncompleteDate(*a)
+    
+def cbss2civilstate(node):
+    return nodetext(node)
+    
+def nodetext(node):
+    if node is None:
+        return ''
+    return node.text
+    
+def cbss2country(code):
+    try:
+        return countries.Country.objects.get(ins_code=code)
+    except Country.DoesNotExist:
+        logger.warning("Unknown country code %s",code)
+    
+    
+def cbss2address(obj,**data):
+    n = obj.childAtPath('/Basic/DiplomaticPost')
+    if n is not None:
+        data.update(country=cbss2country(n.childAtPath('/CountryCode').text))
+        #~ n.childAtPath('/Post')
+        data.update(address=n.childAtPath('/AddressPlainText').text)
+        return data
+    n = obj.childAtPath('/Basic/Address')
+    if n is not None:
+        data.update(country=cbss2country(n.childAtPath('/CountryCode').text))
+        #~ country = countries.Country.objects.get(
+            #~ ins_code=n.childAtPath('/CountryCode').text)
+        addr = ''
+        #~ addr += n.childAtPath('/MunicipalityCode').text
+        addr += join_words(
+            n.childAtPath('/Street').text,
+            n.childAtPath('/HouseNumber').text,
+            n.childAtPath('/Box').text
+            )
+        addr += ', ' + join_words(
+            n.childAtPath('/PostalCode').text,
+            n.childAtPath('/Municipality').text
+            )
+        data.update(address=addr)
+    return data
+    
+    
+    
 #~ class Sector(ChoiceList):
     #~ """
     #~ The status of a :class:`CBSSRequest`.
@@ -952,66 +1002,76 @@ class IdentifyPersonResult(dd.VirtualTable):
     master = IdentifyPersonRequest
     master_key = None
     label = _("Results")
-    column_names = 'national_id:10 last_name:20 first_name:10 address birth_date:10 civil_state *'
+    column_names = 'national_id:10 last_name:20 first_name:10 address birth_date:10 birth_location civil_state *'
     
     @classmethod
     def get_data_rows(self,ar):
         ipr = ar.master_instance
         if ipr is None: 
-            return []
+            return
         #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
         if not ipr.status in (RequestStatus.ok,RequestStatus.warnings):
-            return []
+            return
         service_reply = ipr.get_service_reply()
         results = service_reply.childAtPath('/SearchResults').children
         if results is None:
-            return []
-        return results
+            #~ return []
+            return
+        for obj in results:
+            data = dict()
+            data.update(national_id = obj.childAtPath('/Basic/SocialSecurityUser').text)
+            data.update(last_name = obj.childAtPath('/Basic/LastName').text)
+            data.update(first_name = obj.childAtPath('/Basic/FirstName').text)
+            data.update(gender = cbss2gender(obj.childAtPath('/Basic/Gender').text))
+            data.update(birth_date = cbss2date(obj.childAtPath('/Basic/BirthDate').text))
+            data.update(civil_state = cbss2civilstate(obj.childAtPath('/Extended/CivilState')))
+            data.update(birth_location=nodetext(obj.childAtPath('/Extended/BirthLocation')))
+            data.update(cbss2address(obj))
+            yield AttrDict(**data)
+        #~ return results
         #~ if service_reply is not None:
             #~ results = service_reply.childAtPath('/SearchResults')
             #~ if results is not None:
-                #~ for node in results:
-                    #~ yield node
             
     @dd.displayfield(_("National ID"))
     def national_id(self,obj,ar):
-        return obj.childAtPath('/Basic/SocialSecurityUser').text
+        #~ return obj.childAtPath('/Basic/SocialSecurityUser').text
+        return obj.national_id
             
     @dd.displayfield(_("Last Name"))
     def last_name(self,obj,ar):
-        return obj.childAtPath('/Basic/LastName').text
+        return obj.last_name
+        #~ return obj.childAtPath('/Basic/LastName').text
         
     @dd.displayfield(_("First Name"))
     def first_name(self,obj,ar):
-        return obj.childAtPath('/Basic/FirstName').text
+        return obj.first_name
+        #~ return obj.childAtPath('/Basic/FirstName').text
             
     @dd.virtualfield(Gender.field())
     def gender(self,obj,ar):
-        return cbss2gender(obj.childAtPath('/Basic/Gender').text)
+        return obj.gender
+        #~ return cbss2gender(obj.childAtPath('/Basic/Gender').text)
             
     #~ @dd.displayfield(dd.IncompleteDateField(_("Birth date")))
     @dd.displayfield(_("Birth date"))
     def birth_date(self,obj,ar):
-        return obj.childAtPath('/Basic/BirthDate').text
+        return obj.birth_date
+        #~ return obj.childAtPath('/Basic/BirthDate').text
+        
+    @dd.displayfield(_("Birth location"))
+    def birth_location(self,obj,ar):
+        return obj.birth_location
         
     @dd.displayfield(_("Civil state"))
     def civil_state(self,obj,ar):
-        return obj.childAtPath('/Extended/CivilState').text
+        return obj.civil_state
+        #~ return obj.childAtPath('/Extended/CivilState').text
         
     @dd.displayfield(_("Address"))
     def address(self,obj,ar):
-        n = obj.childAtPath('/Basic/DiplomaticPost')
-        if n is not None:
-            n.childAtPath('/CountryCode') 
-            n.childAtPath('/Post')
-            n.childAtPath('/AddressPlainText')
-            return n.childAtPath('/AddressPlainText').text
-        n = obj.childAtPath('/Basic/Address')
-        if n is not None:
-            country = countries.Country.objects.get(
-                ins_code=n.childAtPath('/CountryCode').text)
-            n.childAtPath('/MunicipalityCode').text
-            n.childAtPath('/Municipality').text
+        return obj.address
+        
         
             
     #~ @dd.virtualfield(models.ForeignKey(settings.LINO.person_model))

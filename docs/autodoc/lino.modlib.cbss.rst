@@ -31,3 +31,19 @@
     :show-inheritance:
 
 
+:mod:`lino.modlib.cbss.fixtures.purposes`
+-----------------------------------------
+
+.. automodule:: lino.modlib.cbss.fixtures.purposes
+    :members:
+    :show-inheritance:
+
+
+:mod:`lino.modlib.cbss.fixtures.inscodes`
+-----------------------------------------
+
+.. automodule:: lino.modlib.cbss.fixtures.inscodes
+    :members:
+    :show-inheritance:
+
+

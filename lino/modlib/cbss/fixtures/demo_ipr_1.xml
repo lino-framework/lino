@@ -31,7 +31,7 @@
             <ns3:BirthDate>1938-06-01</ns3:BirthDate>
             <ns3:Gender>1</ns3:Gender>
             <ns3:DiplomaticPost>
-              <ns3:CountryCode>136</ns3:CountryCode>
+              <ns3:CountryCode>173</ns3:CountryCode>
               <ns3:Post>1418</ns3:Post>
               <ns3:AddressPlainText>WILHELM-BUSCH-STR. 15 BERLIN DEUTSCHLAND</ns3:AddressPlainText>
             </ns3:DiplomaticPost>

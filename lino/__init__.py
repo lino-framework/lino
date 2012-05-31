@@ -621,8 +621,8 @@ class Lino(object):
                 UserID='123', 
                 Email='123@example.com', 
                 OrgUnit='123', 
-                MatrixID=12, 
-                MatrixSubID=3)
+                MatrixID=17, 
+                MatrixSubID=1)
 
     L’ « authorized user » est l’utilisateur de l’application. 
     Dans certains cas il s’agit de la personne physique derrière 

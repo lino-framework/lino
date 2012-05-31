@@ -5,3 +5,7 @@
 that had no French country names. 
 Now it is based on a dictionary ISO code to the corresponding 
 code of the Belgian "Institut National de Statistique".
+
+:class:`lino.modlib.cbss.models.IdentifyPersonResult` now includes address and 
+other fields that were still missing.
+And the `Default.odt` now produces a printed result that seems usable.
