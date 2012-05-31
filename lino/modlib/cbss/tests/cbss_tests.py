@@ -57,10 +57,10 @@ from lino.utils import IncompleteDate
 
 
 class QuickTest(TestCase):
-    auto_build_site_cache = True
+    never_build_site_cache = False
     #~ pass
     #~ def setUp(self):
-        #~ settings.LINO.auto_build_site_cache = False
+        #~ settings.LINO.never_build_site_cache = False
         #~ super(DemoTest,self).setUp()
             
 TIMEOUT_RESPONSE = '<urlopen error [Errno 10060] A connection attempt '\

@@ -19,6 +19,7 @@ import os
 import sys
 import cgi
 import time
+import datetime
 #import traceback
 import cPickle as pickle
 from urllib import urlencode
@@ -1847,11 +1848,12 @@ tinymce.init({
         return ('cache','js','lino_'+(user.profile or user.username)+'_'+translation.get_language()+'.js')
         
     def build_site_cache(self,force=False):
-        """Build several files under `/media/cache`,
-        mainly :xfile:`lino*.js`.
         """
-        if not force and not settings.LINO.auto_build_site_cache:
-            logger.info("NOT building site cache because `settings.LINO.auto_build_site_cache` is False")
+        Build the site cache files under `/media/cache`,
+        especially the :xfile:`lino*.js` files, one per user profile and language.
+        """
+        if settings.LINO.never_build_site_cache:
+            logger.info("Not building site cache because `settings.LINO.never_build_site_cache` is True")
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
             logger.warning("Not building site cache because "+
@@ -1880,14 +1882,24 @@ tinymce.init({
               count,time.time()-started)
           
     def build_js_cache_for_user(self,user,force=False):
-      
+        """
+        Build the lino*.js file for the specified user and the current language.
+        If the file exists and is up to date, don't generate it unless 
+        `force=False` is specified.
+        
+        This is called 
+        - on each request if :attr:`lino.Lino.build_js_cache_on_startup` is `False`.
+        - with `force=True` by :class:`lino.modles.BuildSiteCache`
+        """
         jsgen.set_for_user(user)
         
         fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(user)) 
         if not force and os.path.exists(fn):
-            if os.stat(fn).st_mtime > settings.LINO.mtime:
-                logger.debug("%s is up to date.",fn)
-                return 0
+            mtime = os.stat(fn).st_mtime
+            if mtime > settings.LINO.mtime:
+                if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
+                    logger.debug("%s is up to date.",fn)
+                    return 0
                 
         logger.info("Building %s ...", fn)
         makedirs_if_missing(os.path.dirname(fn))

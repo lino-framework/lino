@@ -26,6 +26,7 @@ from lino.utils import babel
 from lino.utils import mti
 from lino.utils.choicelists import UserLevel
 from lino.utils.choosers import chooser
+from lino import mixins
 
 #~ from lino.mixins import PersonMixin
 #~ from lino.modlib.contacts.models import Contact
@@ -34,7 +35,8 @@ from lino.utils.choosers import chooser
 #~ contacts = dd.resolve_app('contacts')
 
 #~ class User(contacts.Partner,contacts.PersonMixin):
-class User(models.Model):
+#~ class User(models.Model):
+class User(mixins.CreatedModified):
     """
     Represents a User of this site.
     
@@ -99,8 +101,8 @@ class User(models.Model):
         #~ Designates that this user has all permissions without 
         #~ explicitly assigning them.
         #~ """))
-    last_login = models.DateTimeField(_('last login'), default=datetime.datetime.now)
-    date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
+    #~ last_login = models.DateTimeField(_('last login'), default=datetime.datetime.now)
+    #~ date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
     
     if settings.LINO.is_installed('contacts'):
         partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
@@ -151,6 +153,7 @@ class User(models.Model):
     person = property(get_person)
 
     def save(self,*args,**kw):
+        self.mtime = datetime.datetime.now()
         if self.profile == self.username:
             self.profile = ''
         if self.profile:
@@ -237,7 +240,7 @@ class UserDetail(dd.DetailLayout):
     username id profile 
     first_name last_name partner
     email language 
-    date_joined last_login 
+    created modified
     """
 
     box2 = """

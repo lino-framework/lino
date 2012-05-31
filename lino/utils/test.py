@@ -76,7 +76,7 @@ class TestCase(DjangoTestCase):
     
     """
     
-    auto_build_site_cache = False
+    never_build_site_cache = True
     """
     Test cases usually don't need the site cache, so this is switched off.
     But e.g. :mod:`lino.modlib.cbss.tests.cbss_tests` switches it on because there it is needed.
@@ -107,7 +107,7 @@ class TestCase(DjangoTestCase):
                     #~ v(self)
                   
     def setUp(self):
-        settings.LINO.auto_build_site_cache = self.auto_build_site_cache
+        settings.LINO.never_build_site_cache = self.never_build_site_cache
         super(TestCase,self).setUp()
         
     def test_them_all(self):

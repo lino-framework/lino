@@ -1110,7 +1110,8 @@ def migrate_from_1_4_3(globals_dict):
           #~ title=title,gender=gender,
           username=username,
           #~ is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,
-          last_login=last_login,date_joined=date_joined,
+          #~ last_login=last_login,date_joined=date_joined,
+          created=date_joined,
           #~ is_spis=is_spis,is_newcomers=is_newcomers,
           newcomer_quota=newcomer_quota,**kw)
     globals_dict.update(create_users_user=create_users_user)

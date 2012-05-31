@@ -22,12 +22,12 @@ from lino.utils.instantiator import Instantiator
 from lino.utils.choicelists import UserLevel
 
 def objects():
-    now = datetime.datetime.now() 
+    #~ now = datetime.datetime.now() 
     def create_user(*args,**kw):
         user = Instantiator('users.User',
           #~ 'username email first_name last_name is_staff is_superuser',
-          'username email first_name last_name',
-          last_login=now,date_joined=now).build
+          'username email first_name last_name'
+          ).build
           #~ is_active=True,last_login=now,date_joined=now).build
         u = user(*args,**kw)
         #~ u.set_password('1234')

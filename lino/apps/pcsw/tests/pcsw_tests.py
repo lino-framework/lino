@@ -52,7 +52,7 @@ PersonProperty = resolve_model('properties.PersonProperty')
 class QuickTest(TestCase):
     pass
     #~ def setUp(self):
-        #~ settings.LINO.auto_build_site_cache = False
+        #~ settings.LINO.never_build_site_cache = True
         #~ super(DemoTest,self).setUp()
             
   

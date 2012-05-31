@@ -62,10 +62,10 @@ class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]
     fixtures = 'std few_countries few_cities few_languages props demo'.split()
     #~ fixtures = 'std all_countries few_cities all_languages props demo'.split()
-    auto_build_site_cache = False
+    never_build_site_cache = True
     
     #~ def setUp(self):
-        #~ settings.LINO.auto_build_site_cache = False
+        #~ settings.LINO.never_build_site_cache = True
         #~ super(DemoTest,self).setUp()
 
 

@@ -51,7 +51,8 @@ from lino.core import actions
 
 
 
-class BuildLinoJS(dd.RowAction):
+#~ class BuildLinoJS(dd.RowAction):
+class BuildSiteCache(dd.RowAction):
     """
     Rebuild the site cache.
     This action is available on :class:`About`.
@@ -137,12 +138,12 @@ class SiteConfigs(dd.Table):
             #~ return action.readonly
         #~ return True
         
-    do_build = BuildLinoJS()
+    do_build = BuildSiteCache()
     
     #~ @classmethod
     #~ def setup_actions(self):
         #~ super(SiteConfigs,self).setup_actions()
-        #~ self.add_action(BuildLinoJS())
+        #~ self.add_action(BuildSiteCache())
         #~ self.remove_action(actions.DeleteSelected
    
     #~ @dd.constant(_("Versions"))
@@ -567,12 +568,12 @@ class About(mixins.EmptyTable):
     
     #~ versions = dd.Constant(lino.welcome_html())
     
-    do_build = BuildLinoJS()
+    do_build = BuildSiteCache()
     
     #~ @classmethod
     #~ def setup_actions(self):
         #~ super(About,self).setup_actions()
-        #~ self.add_action(BuildLinoJS())
+        #~ self.add_action(BuildSiteCache())
    
     #~ @dd.constant(_("Versions"))
     @dd.constant()

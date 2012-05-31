@@ -90,8 +90,21 @@ und im generierten GridPanel eine Variable `disabled_actions_index`.
 Und vor jedem Aktivieren des Kontextmenüs werden die Aktionen entsprechend dieses 
 Feldes aktiviert oder deaktiviert.
 
-
 Converted field `civil_state` of :class:`lino.apps.pcsw.models.Person` 
 to choicelist :class:`lino.apps.pcsw.models.CivilState`.
 
-:checkin:`` 
+The "Rebuild Site cache" button didn't work.
+Removed the timestamp fields `date_joined` and `last_login` 
+from :class:`lino.modlib.users.models.User`, 
+anyway they weren't used.
+Added two fields `created` and `modified` 
+(from :class:`lino.mixins.CreatedModified`).
+The User.modified is now 
+
+
+
+Fixed several small bugs. 
+
+
+Renamed `auto_build_site_cache` to `lino.Lino.never_build_site_cache` 
+(and inverted it's meaning).
