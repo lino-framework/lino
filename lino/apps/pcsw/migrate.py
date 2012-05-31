@@ -1103,7 +1103,15 @@ def migrate_from_1_4_3(globals_dict):
         if is_newcomers:
             kw.update(level=level)
             kw.update(newcomers_level = level)
-            
+        if username == 'lsaffre':
+            kw.update(profile='gerd')
+        elif username in ('alicia','uwe'):
+            kw.update(profile='hubert')
+        elif username == 'gerd':
+            kw.update(debts_level=UserLevel.manager)
+        elif username == 'kerstin':
+            kw.update(debts_level=UserLevel.user)
+            kw.update(level=UserLevel.user)
         #~ return create_child(contacts_Contact,contact_ptr_id,users_User,
         if not date_joined:
             date_joined = datetime.datetime.now()
