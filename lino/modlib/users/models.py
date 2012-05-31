@@ -270,7 +270,9 @@ class Users(dd.Table):
     detail_layout = UserDetail()
 
     @classmethod
-    def get_permission(cls,action,user,obj):
+    def get_row_permission(cls,action,user,obj):
+        if not super(User,cls).get_row_permission(action,user,obj):
+            return False
         #~ if user.is_superuser: return True
         if user.level >= UserLevel.manager: return True
         if action.readonly: return True

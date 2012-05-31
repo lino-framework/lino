@@ -261,11 +261,11 @@ class DisableDeleteHandler():
     def __str__(self):
         return ','.join([m.__name__+'.'+fk.name for m,fk in self.fklist])
         
-    def disable_delete(self,obj,request):
+    def disable_delete(self,obj,ar):
         #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
         h = getattr(self.model,'disable_delete',None)
         if h is not None:
-            msg = h(obj,request)
+            msg = h(obj,ar)
             if msg is not None:
                 return msg
         for m,fk in self.fklist:

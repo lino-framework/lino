@@ -164,7 +164,7 @@ class JobProvider(pcsw.Company):
         verbose_name = _("Job Provider")
         verbose_name_plural = _('Job Providers')
     
-    def disable_delete(self,request):
+    def disable_delete(self,ar):
         pass
 
 class JobProviderDetail(pcsw.CompanyDetail):
@@ -568,6 +568,14 @@ class Contracts(dd.Table):
     #~ responsibilities cal.TasksByOwner cal.EventsByOwner 
     #~ """
     detail_layout = ContractDetail()
+    
+    @classmethod
+    def get_row_permission(self,action,user,row):
+        if not action.readonly:
+            if row.user != user and user.integ_level < UserLevel.manager: 
+                return False
+        return super(Contracts,self).get_row_permission(action,user,row)
+    
     
     
 class ContractsByPerson(Contracts):

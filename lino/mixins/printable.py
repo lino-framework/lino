@@ -636,10 +636,10 @@ class ClearCacheAction(actions.RowAction):
         #~ if not obj.build_time:
             #~ return True
             
-    def get_permission(self,user,obj):
+    def get_row_permission(self,user,obj):
         if not obj.build_time:
             return False
-        return super(ClearCacheAction,self).get_permission(user,obj)
+        return super(ClearCacheAction,self).get_row_permission(user,obj)
     
     def run(self,elem,rr):
         t = elem.get_cache_mtime()

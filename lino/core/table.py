@@ -525,7 +525,7 @@ class Table(AbstractTable):
         return wildcard_data_elems(self.model)
           
     @classmethod
-    def get_shared_actions(self):
+    def unused_get_shared_actions(self):
         a = []
         if self.model is not None:
             if self.detail_action:
@@ -582,8 +582,9 @@ class Table(AbstractTable):
           
             for name in ('disabled_fields',
                          'handle_uploaded_files', 
-                         #~ 'get_permission', 
-                         'disable_editing'):
+                         #~ 'get_row_permission', 
+                         #~ 'disable_editing',
+                         ):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)
                     if m is not None:
@@ -653,13 +654,15 @@ class Table(AbstractTable):
             m(self)
         
     @classmethod
-    def disable_delete(self,obj,request):
+    def disable_delete(self,obj,ar):
         """
         Return either `None` if the given `obj` *is allowed* 
         to be deleted by `request`,
         or a string with a message explaining why, if not.
         """
-        return self.model._lino_ddh.disable_delete(obj,request)
+        if not self.get_row_permission(self.delete_action,ar.get_user(),obj):
+            return _("You have no permission to delete this row.")
+        return self.model._lino_ddh.disable_delete(obj,ar)
         
 
 

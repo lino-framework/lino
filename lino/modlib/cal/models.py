@@ -558,9 +558,6 @@ class Component(ComponentBase,
             return self.DISABLED_AUTO_FIELDS
         return []
         
-    def disable_editing(self,request):
-        if self.rset: return True
-
     def get_uid(self):
         """
         This is going to be used when sending 
@@ -659,6 +656,22 @@ class ExtAllDayField(dd.VirtualField):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         return (obj.start_time is None)
         
+
+class Components(dd.Table):
+  
+    #~ def disable_editing(self,request):
+    #~ def get_row_permission(cls,row,user,action):
+        #~ if row.rset: return False
+        
+    @classmethod
+    def get_row_permission(cls,action,user,row):
+        if not action.readonly:
+            if row.user != user and user.level < UserLevel.manager: 
+                return False
+        if not super(Components,cls).get_row_permission(action,user,row):
+            return False
+        return True
+
 
 
 #~ class Event(Component,Ended,mixins.TypedPrintable,mails.Mailable):
@@ -791,7 +804,7 @@ class EventDetail(dd.DetailLayout):
     GuestsByEvent
     """
     
-class Events(dd.Table):
+class Events(Components):
     model = 'cal.Event'
     column_names = 'start_date start_time summary status *'
     #~ active_fields = ['all_day']
@@ -826,7 +839,7 @@ class EventsByPlace(Events):
     """
     master_key = 'place'
     
-class Tasks(dd.Table):
+class Tasks(Components):
     model = 'cal.Task'
     column_names = 'start_date summary done status *'
     #~ hidden_columns = set('owner_id owner_type'.split())
@@ -888,7 +901,6 @@ if settings.LINO.user_model:
 class GuestRole(babel.BabelNamed):
     """
     A possible value for the `role` field of an :class:`Guest`.
-    
     """
     class Meta:
         verbose_name = _("Guest Role")

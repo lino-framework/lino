@@ -334,19 +334,21 @@ class BudgetDetail(dd.DetailLayout):
         h.entries2.label = _("Liabilities & Assets")
         h.result.label = _("Result")
     
-class DebtsUserTable(dd.Table):
-    """
-    Abstract base class for tables that are visible only to 
-    Debt Mediation Agents (users with a non-empty `debts_level`).
-    """
-    @classmethod
-    def get_permission(self,action,user,obj):
-        if user.debts_level < UserLevel.user:
-            return False
-        return True
+#~ class DebtsUserTable(dd.Table):
+    #~ """
+    #~ Abstract base class for tables that are visible only to 
+    #~ Debt Mediation Agents (users with a non-empty `debts_level`).
+    #~ """
+    #~ @classmethod
+    #~ def get_row_permission(self,action,user,obj):
+        #~ if not super(DebtsUserTable,cls).get_row_permission(action,user,obj):
+            #~ return False
+        #~ if user.debts_level < UserLevel.user:
+            #~ return False
+        #~ return True
         
   
-class Budgets(DebtsUserTable):
+class Budgets(dd.Table):
     """
     Base class for lists of :class:`Budgets <Budget>`.
     Serves as base for :class:`MyBudgets` and :clas:`BudgetsByPartner`,
@@ -354,6 +356,7 @@ class Budgets(DebtsUserTable):
     """
     model = Budget
     detail_layout = BudgetDetail()
+    required_user_groups = ['debts']
     #~ master_key = 'person'
     #~ label = _("Language knowledge")
     #~ button_label = _("Languages")
@@ -376,8 +379,9 @@ class AccountGroup(mixins.Sequenced,babel.BabelNamed):
     account_type = AccountType.field()
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
-class AccountGroups(DebtsUserTable):
+class AccountGroups(dd.Table):
     model = AccountGroup
+    required_user_groups = ['debts']
     
 class Account(mixins.Sequenced,babel.BabelNamed):
     class Meta:
@@ -405,8 +409,9 @@ class Account(mixins.Sequenced,babel.BabelNamed):
         super(Account,self).save(*args,**kw)
         
     
-class Accounts(DebtsUserTable):
+class Accounts(dd.Table):
     model = Account
+    required_user_groups = ['debts']
     
     
 
@@ -476,10 +481,11 @@ class Actor(mixins.Sequenced,ActorBase):
         #~ h.general.label = _("General")
     
     
-class Actors(DebtsUserTable):
+class Actors(dd.Table):
     model = Actor
     #~ detail_layout = ActorDetail()
     column_names = "budget seqno partner sub_budget header remark *"
+    required_user_groups = ['debts']
 
 class ActorsByBudget(Actors):
     master_key = 'budget'
@@ -545,8 +551,9 @@ class Entry(SequencedBudgetComponent):
         super(Entry,self).save(*args,**kw)
         
             
-class Entries(DebtsUserTable):
+class Entries(dd.Table):
     model = Entry
+    required_user_groups = ['debts']
 
 #~ class EntriesByType(Entries):
     #~ master_key = 'account_type'
@@ -585,12 +592,13 @@ class AssetsByBudget(EntriesByBudget,EntriesByType):
     
     
 
-class SummaryByBudget(DebtsUserTable):
+class SummaryByBudget(dd.Table):
     """
     Abstract base for 
     """
     master_key = 'budget'
     column_names = "summary_description:20 amount1 amount2 amount3 total"
+    required_user_groups = ['debts']
   
     @classmethod
     def override_column_headers(self,ar):

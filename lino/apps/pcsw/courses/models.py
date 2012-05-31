@@ -97,6 +97,10 @@ class CourseProvider(pcsw.Company):
           #~ verbose_name=_("Name"))
     #~ company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
     
+    def disable_delete(self,ar):
+        pass
+    
+    
 dd.inject_field(pcsw.Company,
     'is_courseprovider',
     mti.EnableChild(CourseProvider,verbose_name=_("is Course Provider")),

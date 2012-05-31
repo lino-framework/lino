@@ -227,8 +227,8 @@ class Menu(MenuItem):
 
     def _add_item(self,mi):
         assert isinstance(mi,MenuItem)
-        if mi.action is not None:
-            if not mi.action.get_permission(self.user,mi.instance): return
+        if mi.action is not None and mi.instance is not None:
+            if not mi.action.get_row_permission(self.user,mi.instance): return
         #~ old = self.items_dict.get(m.name,None)
         #~ if old:
             #~ i = self.items.index(old)

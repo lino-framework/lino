@@ -115,7 +115,7 @@ def get_child(obj,child_model):
 def delete_child(obj,child_model,using=None,request=None):
     """
     Delete the `child_model` instance related to `obj` without 
-    deleting `obj`.
+    deleting the parent `obj` itself.
     """
     #~ logger.info(u"delete_child %s from %s",child_model.__name__,obj)
     using = using or router.db_for_write(obj.__class__, instance=obj)
@@ -131,6 +131,18 @@ def delete_child(obj,child_model,using=None,request=None):
     collector.collect([child],source=obj.__class__,nullable=True,collect_parents=False)
     collector.delete()
     
+    #~ setattr(obj,child_model.__name__.lower(),None) 
+    #~ delattr(obj,child_model.__name__.lower()) 
+    """
+    20120531 : TODO:
+    unchecking e.g. Company.is_courseprovider deletes the child 
+    when saving the form, but the response to the PUT returns still a True value
+    because it works on the same memory instance (`obj`).
+    User sees the effect only after clicking the refresh button.
+    Fortunately there's no problem if the user unchecks 
+    the field and saves the form a second time.
+    """
+
 
 def insert_child(obj,child_model,**attrs):
     """
@@ -202,6 +214,9 @@ class EnableChild(VirtualField):
         """
         try:
             getattr(obj,self.child_model.__name__.lower())
+            #~ child = getattr(obj,self.child_model.__name__.lower())
+            #~ if child is None: return False
+            #~ print 20120531, repr(child)
             #~ self.child_model.objects.get(pk=obj.pk)
         except self.child_model.DoesNotExist:
             return False

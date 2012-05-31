@@ -502,20 +502,6 @@ class DisabledFieldsStoreField(SpecialStoreField):
                 d[self.store.pk.rel.field_name] = True
         return d
         
-class unused_DisabledActionsStoreField(SpecialStoreField):
-    """
-    """
-    name = 'disabled_actions'
-    
-    def full_value_from_object(self,obj,ar):
-        d = dict()
-        #~ print repr(ar.action)
-        for a in self.store.actor.get_actions(ar.action):
-            #~ if not a.get_permission(ar.get_user(),obj):
-                #~ d[a.name] = True
-            d[a.name] = a.get_permission(ar.get_user(),obj)
-        return d
-        
         
 #~ class RecnoStoreField(SpecialStoreField):
     #~ name = 'recno'
@@ -524,7 +510,7 @@ class unused_DisabledActionsStoreField(SpecialStoreField):
         
 class DisableEditingStoreField(SpecialStoreField):
     """
-    A field whose value is the result of the `disable_editing` 
+    A field whose value is the result of the `get_row_permission` 
     method on that record.
     New feature since :doc:`/blog/2011/0830`
     """
@@ -537,7 +523,11 @@ class DisableEditingStoreField(SpecialStoreField):
         #~ u = ar.get_user()
         #~ if not self.store.actor.get_permission(a,u) or (m is not None and not m(a,u)):
         #~ if not self.store.actor.get_permission(a,u,obj):
-        return not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj)
+        #~ return not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj)
+        #~ if self.store.actor.get_row_permission is None:
+            #~ return self.store.actor.editable
+        #~ return not self.store.actor.get_row_permission(actions.UPDATE,ar.get_user(),obj)
+        return not self.store.actor.get_row_permission(self.store.actor.update_action,ar.get_user(),obj)
         #~ if not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj):
             #~ return True
         #~ return False

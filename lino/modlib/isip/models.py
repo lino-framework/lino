@@ -513,6 +513,13 @@ class Contracts(dd.Table):
     active_fields = ['company']
     detail_layout = ContractDetail()
     
+    @classmethod
+    def get_row_permission(self,action,user,row):
+        if not action.readonly:
+            if row.user != user and user.integ_level < UserLevel.manager: 
+                return False
+        return super(Contracts,self).get_row_permission(action,user,row)
+    
 class ContractsByPerson(Contracts):
     master_key = 'person'
     column_names = 'applies_from applies_until user type *'

@@ -224,16 +224,16 @@ class SendAction(dd.RowAction):
     :class:`SSDNRequest` 
     record.
     """
+    readonly = False
     url_action_name = 'send'
     label = _('Execute')
     #~ callable_from = None
     callable_from = (dd.GridEdit,dd.ShowDetailAction)
     
-    def get_permission(self,user,obj):
-        #~ if isinstance(action,SendAction):
-        if obj.ticket:
-            return False
-        return super(SendAction,self).get_permission(user,obj)
+    #~ def get_row_permission(self,user,obj):
+        #~ if obj.ticket:
+            #~ return False
+        #~ return super(SendAction,self).get_row_permission(user,obj)
       
     def run(self,obj,ar,**kw):
         obj.execute_request(ar)
@@ -348,8 +348,8 @@ If the request failed with a local exception, then it contains a traceback.""")
             #~ self.environment = settings.LINO.cbss_environment or ''
         #~ super(CBSSRequest,self).save(*args,**kw)
 
-    def disable_editing(self,ar):
-        if self.ticket: return True
+    #~ def disable_editing(self,ar):
+        #~ if self.ticket: return True
 
     def on_cbss_ok(self,reply):
         """
@@ -444,12 +444,17 @@ dd.update_field(CBSSRequest,'user',blank=False,null=False)
 
 class CBSSRequestDetail(dd.DetailLayout):
     #~ main = 'request response'
-    main = 'request response_xml logged_messages'
+    main = 'request technical'
     
     request = """
     info
     parameters
     result
+    """
+    
+    technical = """
+    response_xml 
+    logged_messages
     """
     
     info = """
@@ -462,6 +467,8 @@ class CBSSRequestDetail(dd.DetailLayout):
         lh.request.label = _("Request")
         lh.info.label = _("Request information")
         lh.result.label = _("Result")
+        lh.technical.label = _("Technical")
+        lh.technical.required_user_level = UserLevel.manager
         #~ lh.response.label = _("Response")
         #~ lh.log.label = _("Log")
         lh.parameters.label = _("Parameters")
@@ -966,7 +973,18 @@ class IdentifyPersonRequestDetail(CBSSRequestDetail):
         CBSSRequestDetail.setup_handle(self,lh)
     
 
-class IdentifyPersonRequests(dd.Table):
+class CBSSRequests(dd.Table):
+  
+    @classmethod
+    def get_row_permission(cls,action,user,row):
+        if row.ticket and not action.readonly: 
+            return False
+        if not super(CBSSRequests,cls).get_row_permission(action,user,row):
+            return False
+        return True
+        
+    
+class IdentifyPersonRequests(CBSSRequests):
     #~ window_size = (500,400)
     required_user_groups = ['cbss']
     model = IdentifyPersonRequest
@@ -1289,7 +1307,7 @@ class ManageAccessRequestDetail(CBSSRequestDetail):
         CBSSRequestDetail.setup_handle(self,lh)
     
 
-class ManageAccessRequests(dd.Table):
+class ManageAccessRequests(CBSSRequests):
     #~ window_size = (500,400)
     model = ManageAccessRequest
     detail_layout = ManageAccessRequestDetail()
@@ -1437,7 +1455,7 @@ class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
     #~ def setup_handle(self,lh):
         #~ CBSSRequestDetail.setup_handle(self,lh)
 
-class RetrieveTIGroupsRequests(dd.Table):
+class RetrieveTIGroupsRequests(CBSSRequests):
     model = RetrieveTIGroupsRequest
     detail_layout = RetrieveTIGroupsRequestDetail()
     required_user_groups = ['cbss']

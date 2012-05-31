@@ -209,24 +209,38 @@ class Actor(Handled,ViewPermission):
     Return a list of field names that should not be editable 
     for the specified `obj` and `request`.
     
-    If defined in the Table, this must be a method that accepts 
-    two arguments `request` and `obj`::
+    If defined in the Table, this must be a class method that accepts 
+    two arguments `obj` and `ar` (an `ActionRequest`)::
     
-      def disabled_fields(self,obj,request):
+      @classmethod
+      def disabled_fields(cls,obj,ar):
+          ...
+          return []
+          
+    
+    If not defined in the Table, Lino will look whether 
+    the Table's model has a `disabled_fields` method 
+    and install a wrapper to this model method. 
+    When defined on the model, is must be an *instance* 
+    method
+    
+      def disabled_fields(self,ar):
           ...
           return []
     
-    If not defined in a subclass, the report will look whether 
-    it's model has a `disabled_fields` method expecting a single 
-    argument `request` and install a wrapper to this model method.
     See also :doc:`/tickets/2`.
     """
     
-    disable_editing = None
-    """
-    Return `True` if the record as a whole should be read-only.
-    Same remarks as for :attr:`disabled_fields`.
-    """
+    #~ get_row_permission = None
+    #~ """
+    #~ Same remarks as for :attr:`disabled_fields`.
+    #~ """
+    
+    #~ disable_editing = None
+    #~ """
+    #~ Return `True` if the record as a whole should be read-only.
+    #~ Same remarks as for :attr:`disabled_fields`.
+    #~ """
     
     active_fields = []
     """A list of field names that are "active" (cause a save and 
@@ -295,6 +309,9 @@ class Actor(Handled,ViewPermission):
     detail_template = None
     detail_action = None
     insert_action = None
+    update_action = None
+    create_action = None
+    delete_action = None
     
     
     #~ submit_action = actions.SubmitDetail()
@@ -328,8 +345,23 @@ class Actor(Handled,ViewPermission):
         return get_view_permission(cls,jsgen._for_user)
 
     @classmethod
-    def get_shared_actions(self):
-        return []
+    def get_row_permission(cls,action,user,row):
+        """
+        Returns True or False whether the given action 
+        is allowed for the given row instance `row` 
+        and the user who issued the given ActionRequest `ar`.
+        """
+        if action.readonly:
+            return True
+        return cls.editable
+
+    @classmethod
+    def get_permission(self,user,action):
+        return True
+        
+    #~ @classmethod
+    #~ def get_shared_actions(self):
+        #~ return []
         
     @classmethod
     def _collect_actions(cls):
@@ -344,6 +376,21 @@ class Actor(Handled,ViewPermission):
             cls.detail_action = actions.ShowDetailAction()
         if cls.detail_action and cls.editable:
             cls.insert_action = actions.InsertRow()
+        if cls.detail_action:
+            if cls.editable:
+                cls.update_action = actions.SubmitDetail(sort_index=1)
+                if not cls.hide_top_toolbar:
+                    cls.create_action = actions.SubmitInsert(sort_index=1)
+                    #~ a.append(actions.InsertRow())
+                    #~ self.add_action(actions.DuplicateRow(self))
+                    #~ self.add_action(actions.SubmitInsert())
+                    #~ a.append(actions.CREATE)
+          
+        if cls.editable and not cls.hide_top_toolbar:
+            #~ self.add_action(actions.DeleteSelected())
+            #~ a.append(actions.DELETE)
+            cls.delete_action = actions.DeleteSelected(sort_index=5)
+            
                 
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
@@ -353,7 +400,7 @@ class Actor(Handled,ViewPermission):
                 cls._attach_action(k,v)
                 
         #~ cls._actions_list = cls._actions_dict.values()
-        cls._actions_list += cls.get_shared_actions()
+        #~ cls._actions_list += cls.get_shared_actions()
         def f(a,b):
             return cmp(a.sort_index,b.sort_index)
         cls._actions_list.sort(f)
@@ -396,15 +443,6 @@ class Actor(Handled,ViewPermission):
             #~ a.name for a in self._actions_list]))
             
     @classmethod
-    def get_permission(self,action,user,obj):
-        """
-        Returns True or False whether the given action 
-        is allowed for the given object instance `obj` 
-        and the user who issued the given ActionRequest `ar`.
-        """
-        return True
-        
-    @classmethod
     def disabled_actions(self,ar,obj):
         """
         Returns a dictionary containg the names of the actions 
@@ -415,7 +453,7 @@ class Actor(Handled,ViewPermission):
         if obj is not None:
             u = ar.get_user()
             for a in self.get_actions(ar.action):
-                if not a.get_permission(u,obj):
+                if not a.get_row_permission(u,obj):
                 #~ if not self.get_permission(a,u,obj):
                     d[a.name] = True
         return d

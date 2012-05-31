@@ -9,3 +9,59 @@ code of the Belgian "Institut National de Statistique".
 :class:`lino.modlib.cbss.models.IdentifyPersonResult` now includes address and 
 other fields that were still missing.
 And the `Default.odt` now produces a printed result that seems usable.
+
+Ich habe noch am "permission system" gearbeitet. 
+
+- get_view_permission(elem,user) besagt, ob ein Element überhaupt gesehen werden kann. 
+  Wenn nicht, dann wird der zum Anzeigen benötigte JS-Code gar nicht erst generiert. 
+  `elem` kann ein :class:`lino.core.actors.Actor` sein, 
+  aber auch z.B. ein :class:`lino.utils.jsgen.Component`.
+  Bisher können alle Fälle ausschließlich durch Setzen von 
+  required_user_groups und required_user_level geregelt werden, also die 
+  Methode braucht von Anwednungscode nicht überschrieben zu werden.
+  
+  
+- get_permission(actor,user,action) besagt, ob dieser User diese Aktion 
+  bei diesem Aktor ausführen darf. Wird für CREATE benutzt.
+
+- get_row_permission(actor,action,user,row) besagt, ob dieser User diese Aktion 
+  *auf diesem Objekt* (eine Zeile dieses Aktors) ausführen darf.
+  Diese Methode wird von Anwednungscode überschrieben, z.B. der 
+  Button :guilabel:"Cache löschen" ist immer (ohne Wenn und Aber) disabled, 
+  wenn das Dokument noch nie gedruckt wurde::
+  
+    class ClearCacheAction(actions.RowAction):
+        ...
+        def get_row_permission(self,user,obj):
+            if not obj.build_time:
+                return False
+            return super(ClearCacheAction,self).get_row_permission(user,obj)
+  
+
+- `disable_delete` ist noch was Spezielles. Ist einerseits historisch bedingt, 
+  hat aber auch damit zu tun, dass beim Verweigern des Löschens der User eine 
+  Meldung mit der Begründung kriegen soll.
+  
+  
+Neue Regel, um die Änderungen auszuprobieren: Verträge 
+(sowohl jobs.Contracts als auch isip.Contracts) haben jetzt folgende Methode::
+
+    @classmethod
+    def get_row_permission(self,action,user,row):
+        if not action.readonly:
+            if row.user != user and user.integ_level < UserLevel.manager: 
+                return False
+        return super(Contracts,self).get_row_permission(action,user,row)
+
+Also normale integ-Benutzer (die kein Manager sind) dürfen jetzt nur noch ihre 
+eigenen Verträge *bearbeiten*.
+
+Ähnlich für Termine und Augaben: hier muss man schon allgemeiner Manager sein, 
+um das zu dürfen.
+Zum Beispiel darf Melanie (Manager von integ) die Verträge anderer Bentuzer löschen, 
+aber nicht deren Termine.
+
+
+Ein Detail ist noch zu tun: Die Löschen-Aktion 
+(sowie alle anderen disabled_actions)
+wird im Kontextmenü einer Grid-Ansicht noch nicht deaktiviert.

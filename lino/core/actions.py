@@ -209,18 +209,9 @@ class Action(object):
         else:
             return u"%s %s" % (self.label,self.actor.label)
             
-    def get_permission(self,user,obj):
-        if self.actor is None:
-            return True
-        return self.actor.get_permission(self,user,obj)
-            
         
-    def run(self,elem,ar,**kw):
-        """
-        Execute the action. `ar` is an :class:`ActionRequest` 
-        object representing the context where the action is running.
-        """
-        raise NotImplementedError("%s has no run() method" % self.__class__)
+    #~ def run(self,elem,ar,**kw):
+        #~ raise NotImplementedError("%s has no run() method" % self.__class__)
 
 
 class TableAction(Action):
@@ -228,15 +219,34 @@ class TableAction(Action):
     def get_action_title(self,rr):
         return rr.get_title()
         
+    def get_row_permission(self,user,obj):
+        """
+        TODO: Needed here because disabled_actions also asks InsertRow whether 
+        it's permitted on that row. It's in fact not correct to ask this for 
+        the Insert button. Has to do with the fact that the Insert button should 
+        be in the top toolbar...
+        """
+        return self.actor.get_permission(user,self)
 
 class RowAction(Action):
     """
     Base class for actions that are executed server-side on an individual row.
     """
     
-    def run(self,elem,rr,**kw):
+    def run(self,row,ar,**kw):
+        """
+        Execute the action on the given `row`. `ar` is an :class:`ActionRequest` 
+        object representing the context where the action is running.
+        """
         raise NotImplementedError("%s has no run() method" % self.__class__)
 
+    def get_row_permission(self,user,obj):
+        #~ if self.actor is None:
+            #~ raise Exception("20120531 %r" % self)
+            #~ return True
+        #~ return self.actor.get_permission(self,user,obj)
+        return self.actor.get_row_permission(self,user,obj)
+            
     def attach_to_actor(self,actor,name):
         super(RowAction,self).attach_to_actor(actor,name)
         if not self.url_action_name:
@@ -268,6 +278,7 @@ class GridEdit(TableAction):
         super(GridEdit,self).attach_to_actor(actor,name)
 
 
+
 class ShowDetailAction(RowAction):
     opens_a_window = True
   
@@ -284,7 +295,6 @@ class ShowDetailAction(RowAction):
 
 RowAction.callable_from = (GridEdit,ShowDetailAction)
 
-
 class InsertRow(TableAction):
     opens_a_window = True
     sort_index = 2
@@ -300,6 +310,10 @@ class InsertRow(TableAction):
     
     def get_action_title(self,rr):
         return _("Insert into %s") % force_unicode(rr.get_title())
+
+
+
+
 
 class DuplicateRow(RowAction):
     opens_a_window = True
@@ -355,7 +369,7 @@ class ListAction(Action):
     callable_from = (GridEdit,)
     
 
-class DeleteSelected(Action):
+class DeleteSelected(RowAction):
     sort_index = 3
     readonly = False
     callable_from = (GridEdit,ShowDetailAction)
@@ -366,7 +380,7 @@ class DeleteSelected(Action):
     #~ client_side = True
     
         
-class SubmitDetail(Action):
+class SubmitDetail(RowAction):
     readonly = False
     #~ url_action_name = 'SubmitDetail'
     label = _("Save")
@@ -384,9 +398,9 @@ class SubmitInsert(SubmitDetail):
 the same instance for all actors.
 """
 #~ VIEW = ViewAction(sort_index=1)
-CREATE = SubmitInsert(sort_index=1)
-UPDATE = SubmitDetail(sort_index=1)
-DELETE = DeleteSelected(sort_index=5)
+#~ CREATE = SubmitInsert(sort_index=1)
+#~ UPDATE = SubmitDetail(sort_index=1)
+#~ DELETE = DeleteSelected(sort_index=5)
 
 
 
@@ -501,7 +515,7 @@ class ActionRequest(object):
         if self.create_kw is None or not self.actor.editable:
             #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)
             return 
-        if not self.actor.get_permission(CREATE,self.get_user(),None):
+        if not self.actor.get_permission(self.get_user(),self.actor.create_action):
             return
         return PhantomRow(self,**kw)
       

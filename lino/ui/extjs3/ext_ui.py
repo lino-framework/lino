@@ -564,7 +564,7 @@ def elem2rec_detailed(ar,elem,**rec):
     rec.update(id=elem.pk)
     #~ if rh.actor.disable_delete:
     rec.update(disabled_actions=rh.actor.disabled_actions(ar,elem))
-    rec.update(disable_delete=rh.actor.disable_delete(elem,ar.request))
+    rec.update(disable_delete=rh.actor.disable_delete(elem,ar))
     if rh.actor.show_detail_navigator:
         first = None
         prev = None
