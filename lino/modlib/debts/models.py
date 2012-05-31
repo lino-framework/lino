@@ -363,10 +363,10 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
             mrs = False
             for m in household.member_set.all():
                 if m.person.gender == Gender.male and not mr:
-                    header = _("Mr.")
+                    header = unicode(_("Mr."))
                     mr = True
                 elif m.person.gender == Gender.female and not mrs:
-                    header = _("Mrs.")
+                    header = unicode(_("Mrs."))
                     mrs = True
                 else:
                     header = ''
