@@ -299,7 +299,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         try:
             obj.full_clean()
             obj.save(*args,**kw)
-            dblogger.debug("%s has been saved" % obj2str(obj))
+            #~ dblogger.debug("%s has been saved" % obj2str(obj))
             self.deserializer.register_success()
             return True
         #~ except ValidationError,e:

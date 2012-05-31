@@ -19,4 +19,16 @@ Tabellen wurden nicht ausgedruckt. Die Erklärung war so einfach wie die Ursache
   <type 'exceptions.ImportError'>: No module named odf.opendocument  
 
 
-Added NIS codes and new models Purpose and Sector.
+:mod:`lino.modlib.cbss` has two new models 
+`Purpose` and `Sector`, both used by `ManageAccessRequest`.
+It also injects a field `ins_code` into `countries.Country` and  
+`countries.City`. These will be used (among others) by `IdentifyPersonResult`.
+The biggest work was to write fixtures 
+:mod:`lino.modlib.cbss.fixtures.purposes`
+and
+:mod:`lino.modlib.cbss.fixtures.inscodes`.
+
+The Belgian national institute for statistics 
+(INS, `Institut National Statistique <http://statbel.fgov.be/>`_)
+has its own codification for countries and belgian cities.
+Got some 

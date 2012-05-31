@@ -98,6 +98,7 @@ try:
 except ImportError, e:
     pass
 
+countries = dd.resolve_app('countries')
 
 CBSS_ENVS = ('test', 'acpt', 'prod')
 
@@ -1007,7 +1008,8 @@ class IdentifyPersonResult(dd.VirtualTable):
             return n.childAtPath('/AddressPlainText').text
         n = obj.childAtPath('/Basic/Address')
         if n is not None:
-            n.childAtPath('/CountryCode').text
+            country = countries.Country.objects.get(
+                ins_code=n.childAtPath('/CountryCode').text)
             n.childAtPath('/MunicipalityCode').text
             n.childAtPath('/Municipality').text
         

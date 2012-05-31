@@ -1,11 +1,34 @@
 #coding: utf-8
+## Copyright 2009-2012 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+This fixture adds all known countries of the world to your database.
+Unlike the official `ISO 3133
+<http://www.iso.org/iso/country_codes>`_
+it features more languages, and it creates also codes for 
+countries that no longer exist.
+It is not official at all. See also :doc:`/topics/gpdn`.
 
-This is originally based on 
-http://www.davros.org/misc/iso3166.html
+The `countries.xml` is an unmodified 
+copy of http://users.pandora.be/bosteels/countries.xml
 
-See also http://www.iso.org/iso/country_codes.htm
+TABLE2 contains 4-letter codes for countries that no longer exist.
+This is mostly based on <http://www.davros.org/misc/iso3166.html>,
+but one country (DEDE) was added.
+
+Another Lino fixture, :mod:`lino.modlib.cbss.fixtures.ins_codes`,
+extends this data by attachin Belgian INS codes to these countries.
 
 """
 
@@ -30,6 +53,7 @@ NQAQ 	ATN 	216 Dronning Maud Land
 TPTL 	TMP 	626 East Timor (was Portuguese Timor)
 AIDJ 	AFI 	262 French Afars and Issas
 FQHH 	ATF 	000 French Southern and Antarctic Territories (now split between AQ and TF)
+DEDE 	??? 	??? German Federal Republic
 DDDE 	DDR 	278 German Democratic Republic
 GEHH 	GEL 	296 Gilbert & Ellice Islands (now split into Kiribati and Tuvalu)
 JTUM 	JTN 	396 Johnston Island
@@ -63,7 +87,7 @@ def objects():
             
     n = 0
     """
-    http://users.pandora.be/bosteels/countries.xml
+    
     """
     fn = os.path.join(os.path.dirname(__file__),'countries.xml')
     dom = minidom.parse(fn)
