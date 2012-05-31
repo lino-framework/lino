@@ -1866,7 +1866,7 @@ tinymce.init({
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
         makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
         
-        if settings.LINO.build_js_cache_on_startup:
+        if force or settings.LINO.build_js_cache_on_startup:
             count = 0
             langs = babel.AVAILABLE_LANGUAGES
             users = User.objects.filter(profile='').exclude(level='')
