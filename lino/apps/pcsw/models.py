@@ -150,10 +150,8 @@ class CivilState(ChoiceList):
         if old == '3': return cls.divorced
         if old == '4': return cls.widowed
         if old == '5': return cls.separated
-        return None
+        return ''
 
-    
-    
 add = CivilState.add_item
 add('10', _("Single"),'single')
 add('13', _("Single cohabitating"))
