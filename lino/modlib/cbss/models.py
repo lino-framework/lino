@@ -131,9 +131,16 @@ def cbss2date(s):
     assert len(a) == 3
     a = [int(i) for i in a]
     return IncompleteDate(*a)
-    
+
+
 def cbss2civilstate(node):
-    return nodetext(node)
+    value = nodetext(node)
+    if not value:
+        return value
+    v = pcsw.CivilState.get_by_value(value)
+    if v is None:
+        print "20120601 cbss2civilstate None for ", repr(value)
+    return unicode(v)
     
 def nodetext(node):
     if node is None:
@@ -1042,7 +1049,8 @@ class IdentifyPersonResult(dd.VirtualTable):
             data.update(first_name = obj.childAtPath('/Basic/FirstName').text)
             data.update(gender = cbss2gender(obj.childAtPath('/Basic/Gender').text))
             data.update(birth_date = cbss2date(obj.childAtPath('/Basic/BirthDate').text))
-            data.update(civil_state = cbss2civilstate(obj.childAtPath('/Extended/CivilState')))
+            data.update(civil_state = cbss2civilstate(
+                obj.childAtPath('/Extended/CivilState')))
             data.update(birth_location=nodetext(obj.childAtPath('/Extended/BirthLocation')))
             data.update(cbss2address(obj))
             yield AttrDict(**data)
@@ -1056,12 +1064,12 @@ class IdentifyPersonResult(dd.VirtualTable):
         #~ return obj.childAtPath('/Basic/SocialSecurityUser').text
         return obj.national_id
             
-    @dd.displayfield(_("Last Name"))
+    @dd.displayfield(_("Last name"))
     def last_name(self,obj,ar):
         return obj.last_name
         #~ return obj.childAtPath('/Basic/LastName').text
         
-    @dd.displayfield(_("First Name"))
+    @dd.displayfield(_("First name"))
     def first_name(self,obj,ar):
         return obj.first_name
         #~ return obj.childAtPath('/Basic/FirstName').text
@@ -1484,21 +1492,21 @@ def fn(self,rr):
           IdentifyRequestsByPerson,
           master_instance=self))
 dd.inject_field(pcsw.Person,'cbss_identify_person',
-    dd.VirtualField(dd.DisplayField(_("Identify Person")),fn))
+    dd.VirtualField(dd.DisplayField(_("IdentifyPerson")),fn))
     
 def fn(self,ar):
     return ar.renderer.quick_add_buttons(ar.spawn(
           ManageAccessRequestsByPerson,
           master_instance=self))
 dd.inject_field(pcsw.Person,'cbss_manage_access',
-    dd.VirtualField(dd.DisplayField(_("Manage Access")),fn))
+    dd.VirtualField(dd.DisplayField(_("ManageAccess")),fn))
     
 def fn(self,rr):
     return rr.renderer.quick_add_buttons(rr.spawn(
           RetrieveTIGroupsRequestsByPerson,
           master_instance=self))
 dd.inject_field(pcsw.Person,'cbss_retrieve_ti_groups',
-    dd.VirtualField(dd.DisplayField(_("Retrieve TI Groups")),fn))
+    dd.VirtualField(dd.DisplayField(_("RetrieveTIGroups")),fn))
     
     
 

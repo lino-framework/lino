@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-13 07:31+0100\n"
+"POT-Creation-Date: 2012-06-01 13:12+0100\n"
 "PO-Revision-Date: 2012-02-21 20:01+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -16,81 +16,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:51
+#: .\models.py:58
 msgid "User"
 msgstr "Benutzer"
 
-#: .\models.py:52
+#: .\models.py:59
 msgid "Users"
 msgstr "Benutzer"
 
-#: .\models.py:54
-msgid "username"
+#: .\models.py:61
+#, fuzzy
+msgid "Username"
 msgstr "Benutzername"
 
-#: .\models.py:56
-msgid ""
-"\n"
-"        Required. 30 characters or fewer. \n"
-"        Letters, numbers and @/./+/-/_ characters\n"
-"        "
-msgstr ""
-
 #: .\models.py:63
-msgid "is staff"
-msgstr "Dienstleiter"
-
-#: .\models.py:64
 msgid ""
 "\n"
-"        Designates whether the user can log into this admin site.\n"
+"        Required. Must be unique. \n"
 "        "
 msgstr ""
 
 #: .\models.py:67
-msgid "is expert"
-msgstr "Experte"
+msgid "Same profile as"
+msgstr ""
 
-#: .\models.py:68
+#: .\models.py:69
 msgid ""
 "\n"
-"        Designates whether this user has access to functions that require "
-"expert rights.\n"
+"        The user profile. Leave empty for \"profile-giving\" users, that "
+"is: \n"
+"        users who have their own combination of group memberships and \n"
+"        userlevels.\n"
 "        "
 msgstr ""
 
-#: .\models.py:71
-msgid "is active"
-msgstr "aktiv"
+#: .\models.py:74
+msgid "First name"
+msgstr ""
 
-#: .\models.py:72
-msgid ""
-"\n"
-"        Designates whether this user should be treated as active. \n"
-"        Unselect this instead of deleting accounts.\n"
-"        "
+#: .\models.py:75
+msgid "Last name"
 msgstr ""
 
 #: .\models.py:76
-msgid "is superuser"
-msgstr "Superuser"
-
-#: .\models.py:78
-msgid ""
-"\n"
-"        Designates that this user has all permissions without \n"
-"        explicitly assigning them.\n"
-"        "
+msgid "e-mail address"
 msgstr ""
 
-#: .\models.py:82
-msgid "last login"
-msgstr "Zuletzt eingeloggt um"
+#: .\models.py:78
+msgid "Remarks"
+msgstr ""
 
-#: .\models.py:83
-msgid "date joined"
-msgstr "Konto erstellt am"
+#: .\models.py:133
+msgid "Name"
+msgstr ""
 
-#: .\models.py:183
-msgid "is User"
-msgstr "ist Benutzer"
+#~ msgid "is staff"
+#~ msgstr "Dienstleiter"
+
+#~ msgid "is expert"
+#~ msgstr "Experte"
+
+#~ msgid "is active"
+#~ msgstr "aktiv"
+
+#~ msgid "is superuser"
+#~ msgstr "Superuser"
+
+#~ msgid "last login"
+#~ msgstr "Zuletzt eingeloggt um"
+
+#~ msgid "date joined"
+#~ msgstr "Konto erstellt am"
+
+#~ msgid "is User"
+#~ msgstr "ist Benutzer"

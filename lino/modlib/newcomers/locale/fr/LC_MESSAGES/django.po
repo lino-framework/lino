@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-13 07:31+0100\n"
+"POT-Creation-Date: 2012-06-01 13:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,74 +17,70 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\models.py:57
+#: .\models.py:58
 msgid "Broker"
 msgstr ""
 
-#: .\models.py:58
+#: .\models.py:59
 msgid "Brokers"
 msgstr ""
 
-#: .\models.py:84
+#: .\models.py:87
 msgid "Faculty"
 msgstr ""
 
-#: .\models.py:85
+#: .\models.py:88
 msgid "Faculties"
 msgstr ""
 
-#: .\models.py:100
+#: .\models.py:105
 msgid "Competence"
 msgstr ""
 
-#: .\models.py:101
+#: .\models.py:106
 msgid "Competences"
 msgstr ""
 
-#: .\models.py:140 .\models.py:286 .\models.py:299
+#: .\models.py:149 .\models.py:262
 msgid "Newcomers"
 msgstr ""
 
-#: .\models.py:143 .\models.py:239
+#: .\models.py:153 .\models.py:251
 msgid "New Clients"
 msgstr ""
 
-#: .\models.py:147
+#: .\models.py:157
 msgid "Coached by"
 msgstr ""
 
-#: .\models.py:148
+#: .\models.py:158
 msgid "Since"
 msgstr ""
 
-#: .\models.py:184
+#: .\models.py:196
 msgid "Users by Newcomer"
 msgstr ""
 
-#: .\models.py:188
+#: .\models.py:200
 msgid "Show suggested agents for"
 msgstr ""
 
-#: .\models.py:190
+#: .\models.py:202
 msgid "Count Newcomers since"
 msgstr ""
 
-#: .\models.py:231
+#: .\models.py:243
 msgid "Primary clients"
 msgstr ""
 
-#: .\models.py:235
+#: .\models.py:247
 msgid "Active clients"
 msgstr ""
 
-#: .\models.py:243
+#: .\models.py:255
 msgid "Score"
 msgstr ""
 
-#: .\models.py:255
-msgid "is Newcomers user"
-msgstr ""
-
-#: .\models.py:262
+#: .\models.py:266
 msgid "Newcomers Quota"
 msgstr ""

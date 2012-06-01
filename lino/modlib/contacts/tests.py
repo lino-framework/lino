@@ -88,7 +88,7 @@ def test02(self):
     url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
     if 'en' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
-        result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
+        result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estonia")
         self.assertEqual(result['data']['gender'],"Male")
     
@@ -96,7 +96,7 @@ def test02(self):
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
         result = self.check_json_result(
           response,
-          'navinfo disable_delete data id title disabled_actions')
+          'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estland")
         self.assertEqual(result['data']['gender'],u"Männlich")
         #~ self.assertEqual(result['data']['disabled_fields'],['contact_ptr_id','id'])
@@ -109,7 +109,7 @@ def test02(self):
         
     if 'fr' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='fr')
-        result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
+        result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estonie")
         self.assertEqual(result['data']['gender'],u"Masculin")
         

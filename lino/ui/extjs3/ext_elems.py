@@ -169,6 +169,7 @@ class GridColumn(Component):
             elif isinstance(editor.field,models.ForeignKey):
                 rend = fk_renderer(editor.field,editor.field.name)
             elif isinstance(editor.field,fields.VirtualField):
+                kw.update(sortable=False)
                 if isinstance(editor.field.return_type,models.ForeignKey):
                     rend = fk_renderer(editor.field.return_type,editor.field.name)
                 #~ elif isinstance(editor.field.return_type,models.DecimalField):

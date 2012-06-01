@@ -211,14 +211,22 @@ class ChoiceList(object):
         #~ return _(bc)
         
     @classmethod
-    def get_text_for_value(self,value):
+    def get_by_value(self,value):
         """
-        Return the text corresponding to the specified value.
+        Return the item (a :class:`BabelChoice` instance) 
+        corresponding to the specified `value`.
         """
         if not isinstance(value,basestring):
             raise Exception("%r is not a string" % value)
         #~ print "get_text_for_value"
-        bc = self.items_dict.get(value,None)
+        return self.items_dict.get(value,None)
+      
+    @classmethod
+    def get_text_for_value(self,value):
+        """
+        Return the text corresponding to the specified value.
+        """
+        bc = self.get_by_value(value)
         if bc is None:
             return _("%(value)r (invalid choice for %(list)s)") % dict(
                 list=self.__name__,value=value)

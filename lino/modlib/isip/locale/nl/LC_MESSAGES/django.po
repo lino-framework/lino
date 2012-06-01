@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-13 07:31+0100\n"
+"POT-Creation-Date: 2012-06-01 13:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,141 +17,141 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:84
+#: .\models.py:95
 msgid "ISIP Type"
 msgstr ""
 
-#: .\models.py:85
+#: .\models.py:96
 msgid "ISIP Types"
 msgstr ""
 
-#: .\models.py:87
+#: .\models.py:98
 msgid "Reference"
 msgstr ""
 
-#: .\models.py:113
+#: .\models.py:126
 msgid "Examination Policy"
 msgstr ""
 
-#: .\models.py:114
+#: .\models.py:127
 msgid "Examination Policies"
 msgstr ""
 
-#: .\models.py:126
+#: .\models.py:141
 msgid "Contract Ending"
 msgstr ""
 
-#: .\models.py:127
+#: .\models.py:142
 msgid "Contract Endings"
 msgstr ""
 
-#: .\models.py:129
+#: .\models.py:144
 msgid "designation"
 msgstr ""
 
-#: .\models.py:172
+#: .\models.py:189
 msgid "Person"
 msgstr ""
 
-#: .\models.py:176
+#: .\models.py:193
 msgid "Company"
 msgstr ""
 
-#: .\models.py:186
+#: .\models.py:203
 msgid "represented by"
 msgstr ""
 
-#: .\models.py:192
+#: .\models.py:209
 msgid "applies from"
 msgstr ""
 
-#: .\models.py:193
+#: .\models.py:210
 msgid "applies until"
 msgstr ""
 
-#: .\models.py:194
+#: .\models.py:211
 msgid "date decided"
 msgstr ""
 
-#: .\models.py:195
+#: .\models.py:212
 msgid "date issued"
 msgstr ""
 
-#: .\models.py:198
+#: .\models.py:215
 msgid "responsible (ASD)"
 msgstr ""
 
-#: .\models.py:210
+#: .\models.py:227
 msgid "Ending"
 msgstr ""
 
-#: .\models.py:211
+#: .\models.py:228
 msgid "date ended"
 msgstr ""
 
-#: .\models.py:322
+#: .\models.py:343
 #, python-format
 msgid "Evaluation %d"
 msgstr ""
 
-#: .\models.py:334
+#: .\models.py:355
 msgid "Contract ends in a month"
 msgstr ""
 
-#: .\models.py:383
+#: .\models.py:407
 msgid "Date range lies outside of coached period"
 msgstr ""
 
-#: .\models.py:386
+#: .\models.py:410
 #, python-format
 msgid "Date range overlaps with %(ctype)s #%(id)s"
 msgstr ""
 
-#: .\models.py:398
+#: .\models.py:422
 #, python-format
 msgid "%(ctype)s #%(id)s : %(msg)s"
 msgstr ""
 
-#: .\models.py:412 .\models.py:479
+#: .\models.py:436 .\models.py:503
 msgid "ISIP"
 msgstr ""
 
-#: .\models.py:413 .\models.py:521
+#: .\models.py:437 .\models.py:556
 msgid "ISIPs"
 msgstr ""
 
-#: .\models.py:417
+#: .\models.py:441
 msgid "Contract Type"
 msgstr ""
 
-#: .\models.py:419
+#: .\models.py:443
 msgid "stages"
 msgstr ""
 
-#: .\models.py:421
+#: .\models.py:445
 msgid "goals"
 msgstr ""
 
-#: .\models.py:423
+#: .\models.py:447
 msgid "duties ASD"
 msgstr ""
 
-#: .\models.py:425
+#: .\models.py:449
 msgid "duties DSBE"
 msgstr ""
 
-#: .\models.py:427
+#: .\models.py:451
 msgid "duties company"
 msgstr ""
 
-#: .\models.py:429
+#: .\models.py:453
 msgid "duties person"
 msgstr ""
 
-#: .\models.py:438
+#: .\models.py:462
 msgid "responsible (DSBE)"
 msgstr ""
 
-#: .\models.py:478
+#: .\models.py:502
 msgid "General"
 msgstr ""

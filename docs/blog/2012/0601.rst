@@ -2,3 +2,24 @@
 ========
 
 Ein neues Projekt zwischendurch: Vorbereitungen für eine Demo in Namür.
+
+Fehlerjagd
+
+- Löschen funktionierte an vielen Stellen nicht, 
+  z.B. DELETE `http://testlino/api/debts/IncomesByBudget/21`.
+  Der Server machte dann einen Traceback
+  "'WSGIRequest' object has no attribute 'get_user'",  
+  /lino/lino/core/table.py in disable_delete, line 663
+  
+- Beim Arbeiten mit Personensuchen kamen einige Tracebacks. 
+  (Names `PersonProperty` und `LanguageKnowledge`)
+
+- Grids, die kein Detail hatten, konnten nicht bearbeitet werden.
+
+- Kolonnen auf Virtuellen Feldern sind nicht sortierbar. 
+  Aber `Column.sortable` war trotzdem `True`, und wenn man trotzdem drauf klickte, 
+  machte der Server einen Traceback "FieldError Cannot resolve keyword u'applies_from' into field..."
+  
+- Übersetzungen
+
+- Zivilstand in der Anrtwort eines IPR wurde nicht korrekt interpretiert.

@@ -81,6 +81,7 @@ from lino.modlib.countries.models import CountryCity
 #~ from lino.modlib.cal.models import DurationUnit, update_auto_task
 from lino.modlib.cal.models import DurationUnit, update_reminder
 from lino.modlib.properties import models as properties
+from lino.modlib.cv import models as cv
 #~ from lino.modlib.contacts.models import Contact
 from lino.tools import resolve_model, UnresolvedModel
 
@@ -167,14 +168,14 @@ add('50', _("Separated"),'separated')
 
 #~ '10', 'Célibataire', 'Ongehuwd', 'ledig'
 #~ '13', 'Célibataire cohab.', NULL, 'ledig mit zus.', 
-#~ '18', 'Célibataire avec enf', NULL, 'ledig mit kind', 'c2e5ce64-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
-#~ '20', 'Marié', 'Gehuwd', 'verheiratet', 'c2e5cf86-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
-#~ '21', 'Séparé de fait', NULL, 'verheiratet alleine', 'c2e5d09e-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
-#~ '22', 'Séparé de fait cohab', NULL, 'verheiratet zus.', 'c2e5d1c0-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
-#~ '30', 'Veuf(ve)', NULL, 'Witwe(r)', 'c2e5d2ce-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
-#~ '33', 'Veuf(ve) cohab.', NULL, 'Witwe(r) zus.', 'c2e5d3dc-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
-#~ '40', 'Divorcé', NULL, 'geschieden', 'c2e5d4f4-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
-#~ '50', 'séparé(e) de corps', NULL, 'von Tisch & Bet get.', 'c2e5d60c-30bb-11e1-a8a7-00163e3b81bb', 'UNKNOWN USER', '2011-12-27 19:51:18', '0', '1900-01-01 00:00:00');
+#~ '18', 'Célibataire avec enf', NULL, 'ledig mit kind', 
+#~ '20', 'Marié', 'Gehuwd', 'verheiratet', 
+#~ '21', 'Séparé de fait', NULL, 'verheiratet alleine', 
+#~ '22', 'Séparé de fait cohab', NULL, 'verheiratet zus.', 
+#~ '30', 'Veuf(ve)', NULL, 'Witwe(r)', 
+#~ '33', 'Veuf(ve) cohab.', NULL, 'Witwe(r) zus.', 
+#~ '40', 'Divorcé', NULL, 'geschieden', 
+#~ '50', 'séparé(e) de corps', NULL, 'von Tisch & Bet get.', 
 
 
 
@@ -650,7 +651,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     
     def properties_list(self,*prop_ids):
         """
-        Yields a list of the :class:`PersonProperty` 
+        Yields a list of the :class:`PersonProperty <lino.modlib.cv.models.PersonProperty>` 
         properties of this person in the specified order.
         If this person has no entry for a 
         requested :class:`Property`, it is simply skipped.
@@ -658,7 +659,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
         for pk in prop_ids:
             try:
                 yield self.personproperty_set.get(property__id=pk)
-            except PersonProperty.DoesNotExist,e:
+            except cv.PersonProperty.DoesNotExist,e:
                 pass
         
     def unused_get_property(self,prop_id):
@@ -1838,7 +1839,7 @@ class PersonsBySearch(AllPersons):
                     fkw.update(spoken__gte=rlk.spoken)
                 if rlk.written is not None:
                     fkw.update(written__gte=rlk.written)
-                q = LanguageKnowledge.objects.filter(**fkw)
+                q = cv.LanguageKnowledge.objects.filter(**fkw)
                 ids.update(q.values_list('person__id',flat=True))
             required_id_sets.append(ids)
             
@@ -1849,7 +1850,7 @@ class PersonsBySearch(AllPersons):
                 fkw = dict(property__exact=rp.property) # filter keywords
                 if rp.value:
                     fkw.update(value__gte=rp.value)
-                q = PersonProperty.objects.filter(**fkw)
+                q = cv.PersonProperty.objects.filter(**fkw)
                 ids.update(q.values_list('person__id',flat=True))
             required_id_sets.append(ids)
           

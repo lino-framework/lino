@@ -206,8 +206,7 @@ class CourseOffer(models.Model):
     Der Titel des Kurses. Maximal 200 Zeichen.
     """
     
-    content = models.ForeignKey("courses.CourseContent",
-        verbose_name=_("Course content"))
+    content = models.ForeignKey("courses.CourseContent")
     """
     Der Inhalt des Kurses (ein :class:`CourseContent`)
     """

@@ -536,6 +536,7 @@ class DisableEditingStoreField(SpecialStoreField):
             #~ return self.store.actor.editable
         #~ return not self.store.actor.get_row_permission(actions.UPDATE,ar.get_user(),obj)
         if self.store.actor.update_action is None:
+            print 20120601, self.store.actor, "update_action is None"
             return True
         return not self.store.actor.get_row_permission(self.store.actor.update_action,ar.get_user(),obj)
         #~ if not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj):

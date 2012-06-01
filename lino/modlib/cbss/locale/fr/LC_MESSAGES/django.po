@@ -1,0 +1,262 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-01 13:12+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: .\models.py:199
+msgid "Status"
+msgstr ""
+
+#: .\models.py:202
+msgid "New"
+msgstr ""
+
+#: .\models.py:203
+msgid "Pending"
+msgstr ""
+
+#: .\models.py:204
+msgid "Failed"
+msgstr ""
+
+#: .\models.py:205
+msgid "OK"
+msgstr ""
+
+#: .\models.py:206
+msgid "Warnings"
+msgstr ""
+
+#: .\models.py:207
+msgid "Errors"
+msgstr ""
+
+#: .\models.py:208
+msgid "Validated"
+msgstr ""
+
+#: .\models.py:236
+msgid "Execute"
+msgstr ""
+
+#: .\models.py:251
+msgid "Got valid response, but it contains warnings."
+msgstr ""
+
+#: .\models.py:260
+msgid "Sector"
+msgstr ""
+
+#: .\models.py:261
+msgid "Sectors"
+msgstr ""
+
+#: .\models.py:264 .\models.py:283
+msgid "Code"
+msgstr ""
+
+#: .\models.py:278
+msgid "Purpose"
+msgstr ""
+
+#: .\models.py:279
+msgid "Purposes"
+msgstr ""
+
+#: .\models.py:319
+msgid "Sent"
+msgstr ""
+
+#: .\models.py:328
+msgid "T/A/B"
+msgstr ""
+
+#: .\models.py:329
+msgid "Ticket"
+msgstr ""
+
+#: .\models.py:333 .\models.py:474
+msgid "Request"
+msgstr ""
+
+#: .\models.py:338
+msgid "Response"
+msgstr ""
+
+#: .\models.py:345
+msgid "Logged messages"
+msgstr ""
+
+#: .\models.py:445 .\models.py:476
+msgid "Result"
+msgstr ""
+
+#: .\models.py:475
+msgid "Request information"
+msgstr ""
+
+#: .\models.py:477
+msgid "Technical"
+msgstr ""
+
+#: .\models.py:481
+msgid "Parameters"
+msgstr ""
+
+#: .\models.py:745 .\models.py:1062
+msgid "National ID"
+msgstr ""
+
+#: .\models.py:751 .\models.py:1083
+msgid "Birth date"
+msgstr ""
+
+#: .\models.py:752
+msgid "SIS card number"
+msgstr ""
+
+#: .\models.py:757
+msgid "ID card number"
+msgstr ""
+
+#: .\models.py:764 .\models.py:1072
+msgid "First name"
+msgstr ""
+
+#: .\models.py:769 .\models.py:1067
+msgid "Last name"
+msgstr ""
+
+#: .\models.py:815
+msgid "IdentifyPerson Request"
+msgstr ""
+
+#: .\models.py:816
+msgid "IdentifyPerson Requests"
+msgstr ""
+
+#: .\models.py:830
+msgid "Middle name"
+msgstr ""
+
+#: .\models.py:835
+msgid "Tolerance"
+msgstr ""
+
+#: .\models.py:978
+msgid "Using the national ID"
+msgstr ""
+
+#: .\models.py:979
+msgid "Using phonetic search"
+msgstr ""
+
+#: .\models.py:1029
+msgid "Results"
+msgstr ""
+
+#: .\models.py:1088
+msgid "Birth location"
+msgstr ""
+
+#: .\models.py:1092
+msgid "Civil state"
+msgstr ""
+
+#: .\models.py:1097
+msgid "Address"
+msgstr ""
+
+#: .\models.py:1126
+msgid "Action"
+msgstr ""
+
+#: .\models.py:1129
+msgid "Register"
+msgstr ""
+
+#: .\models.py:1130
+msgid "Unregister"
+msgstr ""
+
+#: .\models.py:1131
+msgid "List"
+msgstr ""
+
+#: .\models.py:1140
+msgid "Query Register"
+msgstr ""
+
+#: .\models.py:1143
+msgid "Primary"
+msgstr ""
+
+#: .\models.py:1144
+msgid "Secondary"
+msgstr ""
+
+#: .\models.py:1145
+msgid "All"
+msgstr ""
+
+#: .\models.py:1164
+msgid "ManageAccess Request"
+msgstr ""
+
+#: .\models.py:1165
+msgid "ManageAccess Requests"
+msgstr ""
+
+#: .\models.py:1196
+msgid "Period from"
+msgstr ""
+
+#: .\models.py:1199
+msgid "Period until"
+msgstr ""
+
+#: .\models.py:1313
+msgid "Requested action"
+msgstr ""
+
+#: .\models.py:1314
+msgid "Proof of authentication"
+msgstr ""
+
+#: .\models.py:1344
+msgid "History"
+msgstr ""
+
+#: .\models.py:1495
+msgid "IdentifyPerson"
+msgstr ""
+
+#: .\models.py:1502
+msgid "ManageAccess"
+msgstr ""
+
+#: .\models.py:1509
+msgid "RetrieveTIGroups"
+msgstr ""
+
+#: .\models.py:1514
+msgid "CBSS"
+msgstr ""
+
+#: .\models.py:1522 .\models.py:1530
+msgid "INS code"
+msgstr ""

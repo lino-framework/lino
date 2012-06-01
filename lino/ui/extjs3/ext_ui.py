@@ -1576,14 +1576,14 @@ tinymce.init({
         #~ for i,f in enumerate(rh.store.list_fields):
         #~ return d
         
-    def delete_element(self,request,rpt,elem):
+    def delete_element(self,ar,elem):
         assert elem is not None
         #~ if rpt.disable_delete is not None:
-        msg = rpt.disable_delete(elem,request)
+        msg = ar.actor.disable_delete(elem,ar)
         if msg is not None:
             return self.error_response(None,msg)
                 
-        dblogger.log_deleted(request,elem)
+        dblogger.log_deleted(ar.request,elem)
         
         try:
             elem.delete()
@@ -1622,21 +1622,17 @@ tinymce.init({
         ar = rpt.request(self,request,a)
         rh = ar.ah
             
-        #~ if isinstance(a,actions.ReportAction):
-            #~ ar = rpt.request(self,request,a)
-            #~ rh = ar.ah
-        #~ else:
-            #~ ar = actions.ActionRequest(self,a)
-        
         if request.method == 'GET':
             if pk:
                 pass
             else:
-                rows = [ rh.store.row2dict(ar,row,rh.store.list_fields) for row in ar.sliced_data_iterator ]
+                rows = [ 
+                  rh.store.row2dict(ar,row,rh.store.list_fields) 
+                    for row in ar.sliced_data_iterator ]
                 return json_response_kw(count=ar.get_total_count(),rows=rows)
         
         if request.method == 'DELETE':
-            return self.delete_element(request,rpt,elem)
+            return self.delete_element(ar,elem)
               
         if request.method == 'POST':
             #~ data = rh.store.get_from_form(request.POST)
@@ -1646,8 +1642,8 @@ tinymce.init({
             instance = ar.create_instance()
             # store uploaded files. 
             # html forms cannot send files with PUT or GET, only with POST
-            if rh.actor.handle_uploaded_files is not None:
-                rh.actor.handle_uploaded_files(instance,request)
+            if ar.actor.handle_uploaded_files is not None:
+                ar.actor.handle_uploaded_files(instance,request)
                 
             data = request.POST.get('rows')
             #~ logger.info("20111217 Got POST %r",data)
@@ -1694,7 +1690,8 @@ tinymce.init({
             elem = None
         
         if request.method == 'DELETE':
-            return self.delete_element(request,rpt,elem)
+            ar = rpt.request(self,request)
+            return self.delete_element(ar,elem)
             
         if request.method == 'PUT':
             #~ ah = rpt.get_handle(self)

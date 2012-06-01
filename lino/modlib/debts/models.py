@@ -40,6 +40,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy 
 from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode 
 from django.utils.functional import lazy
@@ -443,7 +444,8 @@ class BudgetDetail(dd.DetailLayout):
         h.general.label = _("General")
         h.entries1.label = _("Expenses & Income")
         h.entries2.label = _("Liabilities & Assets")
-        h.summary_tab.label = _("Summary")
+        h.summary_tab.label = pgettext_lazy("debts","Summary")
+        
     
   
 class Budgets(dd.Table):
@@ -778,7 +780,7 @@ class DistEntriesByBudget(LiabilitiesByBudget):
     #~ _account_type = AccountType.asset
 
     
-MODULE_NAME = _("Debts")
+MODULE_NAME = _("Debts mediation")
 
 settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
 

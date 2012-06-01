@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-01 13:12+0100\n"
+"PO-Revision-Date: 2012-06-01 14:55+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:94
+msgid "Course provider"
+msgstr "Kursanbieter"
+
+#: .\models.py:95
+msgid "Course providers"
+msgstr "Kursanbieter"
+
+#: .\models.py:106
+msgid "is Course Provider"
+msgstr "is Kursanbieter"
+
+#: .\models.py:160
+msgid "Course Ending"
+msgstr "Abschluss"
+
+#: .\models.py:161
+msgid "Course Endings"
+msgstr "Abschlüsse"
+
+#: .\models.py:163
+msgid "designation"
+msgstr "Bezeichnung"
+
+#: .\models.py:182
+msgid "Course Content"
+msgstr "Kursinhalt"
+
+#: .\models.py:183
+msgid "Course Contents"
+msgstr "Kursinhalte"
+
+#: .\models.py:187 .\models.py:204 .\models.py:258
+msgid "Name"
+msgstr ""
+
+#: .\models.py:200
+msgid "Course Offer"
+msgstr "Kursangebot"
+
+#: .\models.py:201
+msgid "Course Offers"
+msgstr "Kursangebote"
+
+#: .\models.py:221
+msgid "Description"
+msgstr "Beschreibung"
+
+#: .\models.py:250
+msgid "Course"
+msgstr "Kurs"
+
+#: .\models.py:251 .\models.py:658 .\models.py:667 .\models.py:673
+msgid "Courses"
+msgstr "Kurse"
+
+#: .\models.py:260
+msgid "start date"
+msgstr "Beginndatum"
+
+#: .\models.py:266 .\models.py:360
+msgid "Remark"
+msgstr "Bemerkung"
+
+#: .\models.py:280
+msgid "List of candidates"
+msgstr "Kandidatenliste"
+
+#: .\models.py:281
+msgid "List of participants"
+msgstr "Teilnehmerliste"
+
+#: .\models.py:314 .\models.py:315
+msgid "Course Requests"
+msgstr "Kursanfragen"
+
+#: .\models.py:319
+msgid "Person"
+msgstr ""
+
+#: .\models.py:325
+msgid "Course content"
+msgstr ""
+
+#: .\models.py:329
+msgid "date submitted"
+msgstr "Anfragedatum"
+
+#: .\models.py:332
+msgid "Needed for job search"
+msgstr "professionelle Eingliederung"
+
+#: .\models.py:346
+msgid "Course found"
+msgstr "Kurs gefunden"
+
+#: .\models.py:365
+msgid "date ended"
+msgstr "Enddatum"
+
+#: .\models.py:371
+msgid "Ending"
+msgstr "Abschluss"
+
+#: .\models.py:489
+msgid "Participants"
+msgstr "Teilnehmer"
+
+#: .\models.py:493
+msgid "Unregister"
+msgstr "Austragen"
+
+#: .\models.py:503
+#, python-format
+msgid "%(person)s has been unregistered from %(course)s"
+msgstr "%(person)s wurde ausgetragen aus %(course)s"
+
+#: .\models.py:516
+msgid "Candidates"
+msgstr "Kandidaten"
+
+#: .\models.py:526
+msgid "Register"
+msgstr "Eintragen"
+
+#: .\models.py:535
+#, python-format
+msgid "%(person)s has been registered to %(course)s"
+msgstr "%(person)s wurde eingetragen in %(course)s"
+
+#: .\models.py:558
+msgid "Pending Course Requests"
+msgstr "Offene Kursanfragen"
+
+#: .\models.py:605
+msgid "Age"
+msgstr "Alter"
+
+#: .\models.py:609
+msgid "Address"
+msgstr "Adresse"
+
+#: .\models.py:619
+msgid "unknown age"
+msgstr "unbek. Alter"

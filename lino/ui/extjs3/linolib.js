@@ -2374,7 +2374,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.getBottomToolbar().enable();
       var da = record.data.disabled_actions;
       if (da) {
-          console.log('20120528 disabled_actions =',da,this.getBottomToolbar());
+          //~ console.log('20120528 disabled_actions =',da,this.getBottomToolbar());
           this.getBottomToolbar().items.each(function(item,index,length){
               //~ console.log('20120528 ',item.itemId,'-->',da[item.itemId]);
               if (da[item.itemId]) item.disable(); else item.enable();
