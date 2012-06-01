@@ -115,7 +115,6 @@ class AccountType(ChoiceList):
     - A liability is capital acquired from others 
     - Passiva is synonym for "Liabilities + Capital" in this context
 
-
     """
 
     label = _("Account Type")
@@ -281,10 +280,10 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
         #~ if qs.count() > 1:
             #~ return qs[1]
             
-    def get_budget_pks(self):
-        if not hasattr(self,'_budget_pks'):
-            self._budget_pks = tuple([self.pk] + [a.sub_budget.pk for a in self.actors.filter(sub_budget__isnull=False)])
-        return self._budget_pks
+    #~ def get_budget_pks(self):
+        #~ if not hasattr(self,'_budget_pks'):
+            #~ self._budget_pks = tuple([self.pk] + [a.sub_budget.pk for a in self.actors.filter(sub_budget__isnull=False)])
+        #~ return self._budget_pks
           
     def account_groups(self,types=None,**kw):
         """

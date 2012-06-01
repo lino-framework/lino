@@ -108,3 +108,12 @@ Renamed `auto_build_site_cache` to
 :attr:`lino.Lino.never_build_site_cache` 
 (and inverted it's meaning).
 
+Wenn in einer Grid *zwei* obligatorische Combobox-Felder waren 
+(z.B. MemebersByHousehold), 
+dann konnte man dort nichts eingeben. 
+Weil immer nur das Hidden-Field der aktuellen Zelle gepostet wurde. 
+Behoben.
+
+Eingabe eines Haushaltsbudgets funktioniert jetzt im Großen und Ganzen. 
+Nur der Drucken-Button ist nicht mehr da. 
+Danach muss ich morgen suchen, jetzt bin ich erstmal reif fürs Bett.
