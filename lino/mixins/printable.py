@@ -557,7 +557,7 @@ class PrintAction(BasePrintAction):
             kw.update(message=_("Reused %s printable from cache.") % elem)
         url = bm.get_target_url(self,elem,ar.ui)
         if bm.use_webdav and settings.LINO.use_davlink:
-            kw.update(open_davlink_url=ar.build_absolute_uri(url))
+            kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
         else:
             kw.update(open_url=url)
         return kw
