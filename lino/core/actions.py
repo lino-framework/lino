@@ -188,15 +188,15 @@ class Action(object):
         #~ if name == 'default_action':
             #~ print 20120527, self
             
-    def contribute_to_class(self,model,name):
-        ma = model.__dict__.get('_lino_model_actions',None)
-        if ma is None:
-            ma = dict()
-            model._lino_model_actions = ma
-            #~ model.__dict__.set('_lino_model_actions',ma)
-        ma[name] = self
-        self.name = name
-        #~ model.__dict__['_lino_model_actions'] = d
+    #~ def contribute_to_class(self,model,name):
+        #~ ma = model.__dict__.get('_lino_model_actions',None)
+        #~ if ma is None:
+            #~ ma = dict()
+            #~ model._lino_model_actions = ma
+            #~ # model.__dict__.set('_lino_model_actions',ma)
+        #~ ma[name] = self
+        #~ self.name = name
+        #~ # model.__dict__['_lino_model_actions'] = d
         
     def __unicode__(self):
         return force_unicode(self.label)

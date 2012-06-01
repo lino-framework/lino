@@ -564,16 +564,27 @@ class Table(AbstractTable):
             
         
         if self.model is not None:
-            ma = getattr(self.model,'_lino_model_actions',None)
-            if ma is not None:
-                #~ print 20120524, self, ma
-                for k,v in ma.items():
-                    v = copy.deepcopy(v)
-                    v.name = None
-                    #~ def meth(action,ar,elem):
-                    #~     return v.run()
-                    #~ v.run = meth
-                    setattr(self,k,v)
+          
+            for b in self.model.mro():
+                for k,v in b.__dict__.items():
+                    if isinstance(v,actions.Action):
+                        if self.__dict__.has_key(k):
+                            logger.warning("NOT overriding %s.%s from %s",self,k,b)
+                        else:
+                            v = copy.deepcopy(v)
+                            v.name = None
+                            #~ def meth(action,ar,elem):
+                            #~     return v.run()
+                            #~ v.run = meth
+                            setattr(self,k,v)
+                      
+          
+            #~ ma = getattr(self.model,'_lino_model_actions',None)
+            #~ if ma is not None:
+                #~ for k,v in ma.items():
+                    #~ v = copy.deepcopy(v)
+                    #~ v.name = None
+                    #~ setattr(self,k,v)
                     
                     
             if self.label is None:

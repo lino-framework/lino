@@ -394,6 +394,9 @@ class Actor(Handled,ViewPermission):
                 
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
+        """
+        Note that Action instances on base classes have been copied to this Actor's __dict__
+        """
         cls._actions_list = []
         for k,v in cls.__dict__.items():
             if isinstance(v,actions.Action):

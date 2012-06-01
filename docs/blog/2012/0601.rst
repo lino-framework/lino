@@ -14,12 +14,15 @@ Fehlerjagd
 - Beim Arbeiten mit Personensuchen kamen einige Tracebacks. 
   (Names `PersonProperty` und `LanguageKnowledge`)
 
-- Grids, die kein Detail hatten, konnten nicht bearbeitet werden.
+- Einige Grids (die, die kein Detail hatten), konnten 
+  nicht bearbeitet werden. Man konnte Records erstellen, 
+  aber sie dann nicht bearbeiten.
 
-- Kolonnen auf Virtuellen Feldern sind nicht sortierbar. 
-  Aber `Column.sortable` war trotzdem `True`, und wenn man trotzdem drauf klickte, 
-  machte der Server einen Traceback "FieldError Cannot resolve keyword u'applies_from' into field..."
-  
-- Übersetzungen
+- Kolonnen auf Virtuellen Feldern sind ja nicht sortierbar. 
+  Aber `Column.sortable` war trotzdem `True`, und wenn man 
+  drauf klickte, machte der Server einen Traceback 
+  "FieldError Cannot resolve keyword u'applies_from' into field..."
 
-- Zivilstand in der Anrtwort eines IPR wurde nicht korrekt interpretiert.
+- Die meisten Übersetzungen DE sind jetzt gemacht.
+
+- Zivilstand in der Antwort eines IPR wurde nicht korrekt interpretiert.
