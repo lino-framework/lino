@@ -63,7 +63,6 @@ from lino.utils.choicelists import HowWell, Gender, UserLevel
 from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
 from lino.tools import range_filter

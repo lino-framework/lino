@@ -885,13 +885,28 @@ class Lino(object):
         #~ self.config = sc
         
     def get_site_config(self):
-        from lino.models import get_site_config
-        return get_site_config()
-        #~ if self._site_config is None:
-            #~ from lino.models import get_site_config
-            #~ self._site_config = get_site_config()
-        #~ return self._site_config
+        if self._site_config is None:
+            from lino.models import SiteConfig
+            try:
+                self._site_config = SiteConfig.objects.get(pk=1)
+            except SiteConfig.DoesNotExist:
+            #~ except Exception,e:
+                kw = dict(pk=1)
+                #~ kw.update(settings.LINO.site_config_defaults)
+                kw.update(self.site_config_defaults)
+                #~ logger.debug("Creating SiteConfig record (%s)",e)
+                self._site_config = SiteConfig(**kw)
+                # do NOT save the instance here
+                # sc.save()
+        return self._site_config
     site_config = property(get_site_config)
+    
+    def update_site_config(self,**kw):
+        sc = self.site_config
+        for k,v in kw.items():
+            setattr(sc,k,v)
+        sc.save()
+    
         
         
     def setup(self,**options):

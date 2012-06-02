@@ -36,11 +36,11 @@ if cbss:
           dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 
           'demo_ipr_3.xml' ],
         [ cbss.ManageAccessRequest, dict(
-            national_id='01234567890',
+            national_id='680601 053-29',
             start_date=settings.LINO.demo_date(),
             end_date=settings.LINO.demo_date(15),
-            sector=cbss.Sector.objects.get(pk='17'),
-            purpose=cbss.Purpose.objects.get(code='902'),
+            sector=cbss.Sector.objects.get(code=17,subcode=1),
+            purpose=cbss.Purpose.objects.get(code=902),
             action=cbss.ManageAction.REGISTER,
             query_register=cbss.QueryRegister.ALL,
             ), '' ],
@@ -59,3 +59,9 @@ if cbss:
                 xml = open(fn).read()
                 obj.execute_request(simulate_response=xml)
             yield obj
+            
+            
+        Company = resolve_model('contacts.Company')
+        settings.LINO.site_config.site_company = Company.objects.get(pk=1)
+        settings.LINO.site_config.save()
+            

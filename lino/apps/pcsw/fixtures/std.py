@@ -165,20 +165,20 @@ def objects():
     #~ yield linkType(babelitem(de=u"Facebook-Profil",fr=u"Profil Facebook"))
     #~ yield linkType(babelitem(de=u"Sonstige",fr=u"Autres"))
     
-    from lino.models import update_site_config
+    #~ from lino.models import update_site_config
     
     uploadType = Instantiator('uploads.UploadType',"name").build
     yield uploadType(babelitem(de=u"Personalausweis",fr=u"Carte d'identité",en="ID card"))
     p = uploadType(babelitem(de=u"Aufenthaltserlaubnis",fr=u"Permis de séjour",en="Residence permit"))
     yield p
-    update_site_config(residence_permit_upload_type=p)
+    settings.LINO.update_site_config(residence_permit_upload_type=p)
     p = uploadType(babelitem(de=u"Arbeitserlaubnis",fr=u"Permis de travail",en="Work permit"))
     yield p
-    update_site_config(work_permit_upload_type = p)
+    settings.LINO.update_site_config(work_permit_upload_type = p)
     yield uploadType(babelitem(de=u"Vertrag",fr=u"Contrat",en="Contract"))
     p = uploadType(babelitem(de=u"Führerschein",fr=u"Permis de conduire",en="Diving licence"))
     yield p
-    update_site_config(driving_licence_upload_type = p)
+    settings.LINO.update_site_config(driving_licence_upload_type = p)
     
     
     from lino.modlib.cal.models import DurationUnit

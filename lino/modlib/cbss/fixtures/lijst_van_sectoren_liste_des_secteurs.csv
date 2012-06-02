@@ -1,0 +1,558 @@
+Sector;;verkorte naam;Omschrijving;Abréviation;Nom
+code;type;naam;;naam;
+0;0;RR;Rijksregister;RN;Registre national
+1;0;FAO;Fonds voor Arbeidsongevallen;FAT;Fonds des accidents du travail
+ ;1;FAO;Fondsen voor arbeidsongevallen;FAT;Fonds des accidents du travail
+2;0;NPM;Nationaal Pensioenfonds voor Mijnwerkers;FNROM;Fonds national de retraite pour ouvriers mineurs
+3;1;RIZIV_SAM;RIZIV_SAM;INAMI_SAM;INAMI_SAM 
+5;0;RVP;Rijksdienst voor Pensioenen;ONP;Office national des pensions
+6;0;FBZ;Fonds voor Beroepsziekten;FMP;Fonds des maladies professionnelles 
+7;0;RKW;Rijksdienst voor Kinderbijslag voor Werknemers;ONAFTS;Office national d'allocations familiales pour travailleurs salariés
+ ;1;RKW;Kinderbijslagfondsen;ONAFTS;Caisses d'allocations familiales
+8;0;RIZIV-W;Rijksinstituut voor Ziekte- en Invaliditeitsverzekering - WIGW's;INAMI-W;Institut national d'assurance maladie-invalidité - VIPO
+9;0;HVK;Hulpkas voor Zeevarenden;CSPM;Caisse de secours et de prévoyance en faveur des marins
+10;0;RJV;Rijksdienst voor Jaarlijkse Vakantie;ONVA;Office national de vacances annuelles
+ ;1;RJV;Vakantiefondsen;ONVA;Caisses de vacances
+11;0;NIC;Nationaal Intermutualistisch College;CIN;Collège intermutualiste national
+ ;1;NIC;Nationaal Intermutualistisch College;CIN;Collège intermutualiste national
+ ;2;NIC;Hulpkas voor Ziekte en Invaliditeit (HZIV);CIN;Caisse auxiliaire d'assurance maladie et invalidité (CAAMI)
+ ;3;NIC;RIZIV ;CIN;INAMI 
+;4;NIC;RIZIV ;CIN;INAMI
+;5;NIC;Inlichtingenblad;CIN;Feuille de renseignement
+12;0;RSZ;Rijksdienst voor Sociale Zekerheid;ONSS;Office national de sécurité sociale
+ ;1;RSZ;Rijksdienst voor Sociale Zekerheid;ONSS;Office national de sécurité sociale  
+;2;RSZ;Rijksdienst voor Sociale Zekerheid - Human Resources;ONSS;Office national de sécurité sociale - Human Resources
+;10;RSZ;Rijksdienst voor Sociale Zekerheid;ONSS;Office national de sécurité sociale  
+;11;RSZ;Rijksdienst voor Sociale Zekerheid - statistieken;ONSS;Office national de sécurité sociale  - statistiques
+13;0;RSZPPO;Rijksdienst voor Sociale Zekerheid van de Provinciale en Plaatselijke Overheidsdiensten;ONSSAPL;Office national de sécurité sociale des administrations provinciales et locales
+ ;2;RSZPPO;Rijksdienst voor Sociale Zekerheid van de Provinciale en Plaatselijke Overheidsdiensten;ONSSAPL;Office national de sécurité sociale des administrations provinciales et locales
+;3;RSZPPO;Solidariteitsinhouding;ONSSAPL;retenue de solidarité
+;10;RSZPPO;Rijksdienst voor Sociale Zekerheid van de Provinciale en Plaatselijke Overheidsdiensten;ONSSAPL;Office national de sécurité sociale des administrations provinciales et locales
+;11;RSZPPO;rszppo statistieken;ONSSAPL;ONSSAPL-statistiques
+14;0;SIGeDIS;SIGeDIS;SIGeDIS;SIGeDIS
+;3;SIGeDIS;Argo;SIGeDIS;Argo
+;4;SIGeDIS;Capelo;SIGeDIS;Capelo
+15;0;RSVZ;Rijksdienst voor Sociale Verzekeringen van de Zelfstandigen;INASTI;Institut national d'assurances sociales pour travailleurs indépendants
+ ;1;RSVZ;Socialeverzekeringsfondsen;INASTI;Caisses d'assurances sociales
+;2;FOD SZ;FOD Sociale Zekerheid - DG Zelfstandigen;SPF SS;SPF Sécurité sociale - DG Indépendants
+;4;RSVZ;Pensioendienst  ;INASTI;Service de pensions
+16;0;FOD SZ;Directie-generaal Personen met een Handicap;SPF SS;Direction générale personnes handicapées
+ ;1;FOD SZ;FOD Sociale Zekerheid - Sociale Inspectie;SPF SS;SPF Sécurité sociale - Inspection Sociale
+;2;FOD SZ;FOD Sociale Zekerheid - POD Maatschappelijke Integratie;SPF SS;SPF Sécurité sociale - SPP Intégration Sociale
+;3;FOD SZ;e-community;SPF SS;e-community
+;4;FOD SZ;Commissie vrijstelling zelfstandigen;SPF SS;commission dispensions indépendants
+;5;FOD SZ;Directie-Generaal Sociaal Beleid;SPF SS;Direction Générale Politique Sociale
+;6;FOD SZ;Directie-Generaal Oorlogsslachtoffers;SPF SS;Direction Générale Victimes de la guerre
+17;0;OCMW;beheersinstelling OCMW;CPAS; CPAS
+ ;1;OCMW;Openbare centra voor maatschappelijk welzijn;CPAS;Centres publics d'action sociale
+;3;OCMW;ESF Hoofdstuk 12 uitsluitend met OCMW's;CPAS;FSE chapitre 12 uniquement composés de CPAS
+18;0;RVA;Rijksdienst voor Arbeidsvoorziening;ONEM;Office national de l'emploi
+ ;1;RVA;Rijksdienst voor Arbeidsvoorziening - uitbetalingsinstellingen;ONEM;Office national de l'emploi - organismes de paiement
+ ;2;RVA;Rijksdienst voor Arbeidsvoorziening - sociale inspectie;ONEM;Office national de l'emploi - inspection sociale
+ ;3;FSO;Fonds voor Sluiting van Ondernemingen;FFE;Fonds de fermeture des entreprises
+;5;RVA;Rijksdienst voor Arbeidsvoorziening - HRM;ONEM;Office national de l'emploi - HRM
+;6;INTERUI;INTER-UI;INTEROP;INTER-OP
+19;0;FOD Volksgezondheid;FOD Volksgezondheid;SPF Santé publique;SPF Santé publique
+;1;FOD Volksgezondheid;Zorgverstrekkers;SPF Santé publique;Dispensataires de soins
+;2;FOD Volksgezondheid;Medex;SPF Santé publique;Medex
+;3;FOD Volksgezondheid;Euthanasie;SPF Santé publique;Euthanasie
+20;0;DOSZ;Dienst voor Overzeese Sociale Zekerheid;OSSOM;Office national de sécurité sociale d'outre-mer
+21;0;RIZIV;Rijksinstituut voor Ziekte- en Invaliditeitsverzekering;INAMI;Institut national d'assurance maladie-invalidité  
+;1;RIZIV;Inspectiediensten;INAMI;Services Inspection
+22;0;RIZIV-P;Pensioenkadaster;INAMI-P;Cadastre des pensions
+;10;Ethias;Ethias in het kader van de pensioenen met het FAO;Ethias;Ethias dans le cadre du flux sur les pensions avec le FAT
+23;0;PDOS;Pensioendienst voor de overheidssector;SdPSP;Service des Pensions du Secteur Public
+;1;PDOS;Pensioendienst voor de overheidssector;SdPSP;Service des Pensions du Secteur Public
+ ;2;PDOS;Pensioendienst voor de overheidssector;SdPSP;Service des Pensions du Secteur Public
+24;0;OASIS;OASIS;OASIS;OASIS
+25;0;KSZ;Kruispuntbank van de Sociale Zekerheid;BCSS;Banque Carrefour de la sécurité sociale
+26;0;FOD WASO;Federale overheidsdienst Werkgelegenheid, Arbeid en Sociaal Overleg;SPF ETCS;Service public fédéral Emploi, Travail et Concertation sociale
+ ;1;FOD WASO;FOD WASO - sociale inspectie;SPF ETCS;SPF ETCS - inspection sociale
+ ;2;FOD WASO;FOD WASO - technische inspectie;SPF ETCS;SPF ETCS - inspection technique
+ ;3;FOD WASO;FOD WASO - medische inspectie;SPF ETCS;SPF ETCS - inspection médicale
+;4;FOD WASO;FOD WASO - Europees Sociaal Fonds;SPF ETCS;SPF ETCS - Fonds Social Européen
+;5;FOD-WASO;FOD WASO - e-pv;SPF ETCS;SPF ETCS - e-pv
+27;0;RIZIV-B;Rijksinstituut voor Ziekte- en Invaliditeitsverzekering (Bijdragebon);INAMI-B;Institut national d'assurance maladie-invalidité (bon de cotisation)
+28;0;RIZIV-W;Rijksinstituut voor Ziekte- en Invaliditeitsverzekering (WIGW);INAMI-W;Institut national d'assurance maladie-invalidité (VIPO)
+;2;RIZIV-W;Dienst voor  administratieve contrôle (DAC);INAMI-W;Service du contrôle administratif
+;3;RIZIV-W;Beheer omnio;INAMI-W;Gestion omnio
+29;0;WIGW-G;WIGW - gemeenten;VIPO-C;VIPO - communes
+30;0;WIGW-P;WIGW - provincies;VIPO-P;VIPO - provinces
+31;0;VSI;Vereniging van Sectorale Instellingen;AIS;Association d'institutions sectorielles
+ ;1;FBZE;Fondsen voor bestaanszekerheid;FSE;Fonds de sécurité d'existence
+;2;Fonds Bouw;Fonds Bouw;Fonds construction;Fonds de la construction
+;3;Fonds Horeca;Fonds Horeca;Fonds horeca;Fonds horeca
+34;0;FOD Mob.Vervoer;FOD Mobiliteit en Vervoer;SPF Mobilité Transports;SPF Mobilité et Transports
+35;0;VEDPB;Vereniging van Externe Diensten voor Preventie en Bescherming op het Werk;ASEPP;Association des services externes de prévention et de protection au travail 
+36;0;FOD BZ;FOD Binnenlandse Zaken;SPF Intérieur;SPF Intérieur
+;1;FOD BZ;FOD Binnenlandse Zaken - Dienst Vreemdelingenzaken;SPF Intérieur;SPF Intérieur - Office des étrangers
+37;0;e-BHG;ePlatform Brussels Hoofdstedelijk Gewest;e-RBC;ePlatform Région Bruxelles Capitale
+;1;e-BHG;Werkgelegenheid;e-RBC;Emploi
+;2;e-BHG;Inspectie Werkgelegenheid;e-RBC;Inspection de l'Emploi
+;3;e-BHG;Directie Taxi's en bijzondere vormen van geregeld vervoer;e-RBC;Direction des Taxis et des Transports réguliers spécialisés
+38;0;SFBEZ;Sociale fondsen voor bestaanszekerheid;FSSE;Fonds sociaux de sécurité d'existence
+;5;SFBEZ;Fonds Bouw;FSSE;Fonds de la construction
+39;0;Eandis;Eandis;Eandis;Eandis
+40;0;VO;Vlaams Integratieplatform (VIP);VO;Vlaamse Overheid - Vlaams Integratie Platform
+;1;VO;Welzijn, Volksgezondheid en Gezin (WVG);VO;Vlaamse Overheid - Welzijn Volksgezondheid en Gezin
+;2;VO;Studietoelagen;VO;Vlaamse Overheid - Studietoelagen
+;3;VO;Onderwijs;VO;Vlaamse Overheid - Onderwijs
+;4;VO;De Lijn;VO;Vlaamse Overheid - De Lijn
+;5;VO;Cultuur, Jeugd, Sport en Media;VO;Vlaamse Overheid - Cultuur, Jeugd, Sport en Media
+;6;VO;Werk en Sociale Economie;VO;Vlaamse Overheid - Werk en Sociale Economie
+;7;VO;Syntra Vlaanderen;VO;Syntra Vlaanderen
+;8;VO;Vlaams Agentschap voor Landbouw en Visserij;VO;Vlaams Agentschap voor Landbouw en Visserij
+;9;VO;IVA Wonen Vlaanderen;VO;IVA Wonen Vlaanderen
+;10;VO;KBI Wooncode;VO;KBI Wooncode
+;11;VO;Agentschap voor Onderwijsdiensten - onderwijzend personeel;VO;Agentschap voor Onderwijsdiensten - onderwijzend personeel
+;12;VO;Orafin (Centrale Accounting);VO;Orafin (Centrale Accounting)
+;13;VO;VEA - Departement Leefmilieu, Natuur en Energie;VO;VEA - Departement Leefmilieu, Natuur en Energie
+;14;VO;WSE Inspectiediensten;VO;WSE Inspectiediensten
+;15;VO;Agentschap Ondernemen;VO;Agentschap Ondernemen
+;16;VO;AKOV : Agentschap Kwaliteitszorg in Onderwijs en Vorming;VO;AKOV : Agentschap Kwaliteitszorg in Onderwijs en Vorming
+;17;VO;Bestuurszaken eGov en ICT Beheer;VO;Bestuurszaken eGov en ICT Beheer
+41;0;GOTOT;GOTOT;GOTOT;GOTOT
+42;0;Limosa;Limosa;Limosa;Limosa
+43;0;SVW;Samenwerking Vlaams Water;SVW;Samenwerking Vlaams Water
+44;0;IBPT/BIPT;"Institut belge des services postaux et des télécommunications
+Belgisch Instituut voor postdiensten en telecommunicatie
+Belgian Institute for Postal services and Telecommunications";IBPT/BIPT;"Institut belge des services postaux et des télécommunications
+Belgisch Instituut voor postdiensten en telecommunicatie
+Belgian Institute for Postal services and Telecommunications"
+45;0;Duitst. Gem.;Duitstalige gemeenschap;Comm. german.;Communauté germanophone
+;1;Duitst. Gem.;Duitstalige gemeenschap opsporing kanker;Comm. german.;Communauté germanophone dépistage cancer
+46;0;4de weg;4de weg;4e voie;4e voie
+47;0;SWL;la Société Wallonne du Logement;SWL ;la Société Wallonne du Logement
+48;0;BGHM;Brusselse Gewestelijke Huisvestingsmaatschappij;SLRB;Société du Logement de la Région de Bruxelles-Capitale
+49;0;VMSW;Vlaamse Maatschappij voor Sociaal Wonen;VMSW;Vlaamse Maatschappij voor Sociaal Wonen
+50;0;Fod Fin.;FOD Financiën;SPF Finances;SPF Finances
+;1;Fod Fin.;Administratie Directe Belastingen;SPF Finances;Administration des Contributions Directes
+;2;Fod Fin.;Patrimoniumdocumentatie;SPF Finances;Documentation patrimoine
+;3;Fod Fin.;Voorafbetalingen;SPF Finances;Paiements anticipés
+;4;Fod Fin.;Onroerende voorheffing;SPF Finances;Précompte immobilier
+;5;Fod Fin.;Belasting op de toegevoegde waarde;SPF Finances;Taxe sur la valeur ajoutée
+;6;Fod Fin.;Dienst voor alimentatievorderingen;SPF Finances;Service des créances alimentaires
+;7;Fod Fin.;Datawarehouse;SPF Finances;Datawarehouse
+;8;Fod Fin.;Verkeersbelastingen;SPF Finances;Taxes de circulation
+;9;Fod Fin.;Administratie Directe Belastingen (MAF inkomens);SPF Finances;Administration des Contributions Directes (MAF revenus)
+;10;Fod Fin.;Administratie Directe Belastingen (Bijwerking schuldvorderingen voor RJV);SPF Finances;Administration des Contributions Directes (mise à jour des créances pour l'ONVA)
+;11;Fod Fin.;Thesaurie Oorlogsslachtoffers;SPF Finances;Trésorerie Victimes de guerre
+51;0;;"Instellingen buiten het netwerk die legale pensioenen uitbetalen en gemachtigd zijn om inhoudingen te doen
+op de te betalen pensioenen in het kader van de 'solidariteitsbijdrage'";;Institutions hors réseau qui payent des pensions légales et qui sont habilitées à opérer des retenues sur les pensions à payer dans le cadre de la 'cotisation de solidarité'
+;1;NMBS;Nationale Maatschappij der Belgische Spoorwegen;SNCB;Société nationale des chemins de fer belges
+ ;2;RTBF;Radio Télévision Belge Francophone;RTBF;Radio Télévision Belge Francophone
+ ;3;OFN;Office de navigation;OFN;Office de navigation
+ ;4;DSV;Dienst voor Scheepvaart;DSV;Dienst voor Scheepvaart
+ ;5;VRT;Vlaamse Radio en Televisie;VRT;Vlaamse Radio en Televisie
+ ;6;RLW;Regie der Luchtwegen;RLW;Regie der Luchtwegen
+ ;7;SWDE;Societé wallonne des eaux;SWDE;Societé wallonne des  eaux
+ ;8;BELGACOM;Belgacom;BELGACOM;Belgacom
+ ;9;CRS;Caisse de retraite des sénateurs;CRS;Caisse de retraite des sénateurs
+;10;KVV;Kamer van Volksvertegenwoordigers;KVV;Kamer van Volksvertegenwoordigers
+;11;PVV;Pensioenkas voor Volksvertegenwoordigers;PVV;Pensioenkas voor Volksvertegenwoordigers
+;12;VMWV;Vlaamse Maatschappij voor Watervoorziening;VMWV;Vlaamse Maatschappij voor Watervoorziening
+;13;BRF;Belgischer Rundfunk und Fernsehzentrum;BRF;Belgischer Rundfunk und Fernsehzentrum
+;14;PBHR;Pensioenkas van de Brusselse Hoofdstedelijke Raad;PBHR;Pensioenkas van de Brusselse Hoofdstedelijke Raad
+;15;CPDW;Caisse de pension des deputés wallons;CPDW;Caisse de pension des deputés wallons
+;16;PVLPAR;Pensioenfonds van het Vlaams Parlement;PVLPAR;Pensioenfonds van het Vlaams Parlement
+;17;BELGACOM;Belgacom;BELGACOM;Belgacom
+53;0;VDAB;Vlaamse Dienst voor Arbeidsbemiddeling en Beroepsopleiding;VDAB;Vlaamse Dienst voor Arbeidsbemiddeling en Beroepsopleiding
+54;0;Actiris;Actiris;Actiris;Actiris
+55;0;FOREM;Office communautaire et régional de la formation professionnelle et de l'emploi;FOREM;Office communautaire et régional de la Formation professionnelle et de l'Emploi
+56;0;ADG;Arbeitsamt der deutschsprachigen Gemeinschaft;ADG;Arbeitsamt der deutschsprachigen Gemeinschaft
+57;0;AGORA;AGORA;AGORA;AGORA
+;2;AGORA-KSZ;AGORA;AGORA-BCSS;AGORA
+58;0;NIS;Nationaal Instituut voor de Statistiek;INS;Institut national de statistique
+59;28;Europa;Europa (Italië);Europe;L'Italie
+60;0;BJB;Bijzondere Jeugdbijstand (kinderbijslag);BJB;Bijzondere Jeugdbijstand (allocations familiales)
+61;0;VLABEL;Vlaamse Belastingsdienst;VLABEL;Vlaamse Belastingsdienst
+62;0;VAPH;Vlaams Agentschap voor Personen met een Handicap;VAPH;Vlaams Agentschap voor Personen met een Handicap
+63;0;VMM;Vlaamse Milieumaatschappij;VMM;Vlaamse Milieumaatschappij
+64;0;De Lijn;Openbare vervoersmaatschappij De Lijn ;De Lijn;Openbare vervoersmaatschappij De Lijn 
+65;0;BHG;Brussels Hoofdstedelijk Gewest;RBC;Région de Bruxelles-Capitale
+;3;BHG;screening van de darmkanker;RBC;dépistage du cancer colorectal
+66;0;FISC-W;Service de perception de la redevance radio et télévision de la Communauté française;FISC-W;Service de perception de la redevance radio et télévision de la Communauté française
+69;0;Région Wallonne;Easi-Wal;Région Wallonne;Easi-Wal
+69;1;Région Wallonne;AWIPH;Région Wallonne;AWIPH
+69;2;Région Wallonne;Franstalige Gemeenschap - opsporing kanker;Région Wallonne;Franstalige Gemeenschap - dépistage cancer
+69;3;Région Wallonne;Direction Générale Action Sociale et Santé;Région Wallonne;Direction Générale Action Sociale et Santé
+69;4;Région Wallonne;Direction Générale Agriculture;Région Wallonne;Direction Générale Agriculture
+69;5;Région Wallonne;Direction Générale de l'Economie et de l'Emploi;Région Wallonne;Direction Générale de l'Economie et de l'Emploi
+69;6;Région Wallonne;Ministère de l'Equipement et de Transport ;Région Wallonne;Ministère de l'Equipement et de Transport 
+69;7;Région Wallonne;Société Wallonne du Logement;Région Wallonne;Société Wallonne du Logement
+70;0;FOD Economie;FOD Economie, KMO, Middenstand en Energie;SPF Economie;SPF Economie, Classes moyennes et Energie
+;1;FOD Economie;KBO ;SPF Economie;BCE
+;2;FOD Economie;Algmene Directoe Kleine en Middelgrote Ondernemingen beleid;SPF Economie;Direction générale Politique des Petites et Moyennes Entreprises
+;3;FOD Economie;Forfaitair voordeel gas en electriciteit;SPF Economie;Avantage forfaitaire gaz et électricité
+74;0;E-notariaat;E-notariaat;E-notariat;E-notariat
+75;0;FOD Justitie;FOD Justitie;SPF Justice;SPF Justice
+76;0;eDepot;eDepot (NFBN);eDepot;eDepot (FRNB)
+;1;eDepot;FPHP versie 3;eDepot;FPHP Version 3
+77;0;WAP;Aanvullende Sectorpensioenen 2e pijler;WAP;secteur des pensions - deuxième pilier
+;1;WAP;Aanvullende Sectorpensioenen 2e pijler - secundair netwerk;WAP;secteur des pensions - deuxième pilier - réseau secondaire
+78;0;e-Politie;Fedict - eLoket Politie;e-Police;Fedict - Guichet de Police virtuel
+79;0;FO Tewerkstelling;Front Office Tewerkstelling;FO Emploi;Front Office Emploi
+80;0;e-DG;ePlatform Deutschsprachigen Gemeinschaft - primair netwerk;e-DG;ePlatform - Deutschsprachigen Gemeinschaft - réseau primaire
+ ;1;e-DG;ePlatform Deutschsprachigen Gemeinschaft -Werkgelegenheid;e-DG;ePlatform - Deutschsprachigen Gemeinschaft - Emploi
+81;1;FOD Binnenlandse Zaken;Dienst Vreemdelingenzaken;SPF Intérieur;Office des Etrangers
+ ;2;FOD Binnenlandse Zaken;Directie Privé Veiligheid;SPF Intérieur;Direction Sécurité Privée
+;3;FOD Binnenlandse Zaken;DPV contrôle;SPF Intérieur;DSP Contrôle
+82;0;NKGW;Nationale Kamer van de gerechtsdeurwaarders;CNHJ;Chambre National des Huissiers de Justice
+83;0;Franstalige gemeenschap;Algemene directie;Communauté Française;Direction générale
+ ;1;Franstalige gemeenschap;Studiedienst;Communauté Française;Service de la recherche
+84;0;VZWESF;VZW's in het kader van het ESF-project;ASBLFSE;ASBL dans le cadre du project FSE
+85;0;NMBS;NMBS;SNCB;SNCB
+86;0;Woningfonds BHG;Woningfonds van het Brussels Hoofdstedelijk Gewest;F. du logement de la Région de Bxl-Cap.;Fonds du logement de la Région de Bruxelles-Capitale
+87;0;Vlaams woningfonds;Vlaams woningfonds;Vlaams Woningfonds;Vlaams Woningfonds
+89;0;VESTA;Vlaams Agentschap Zorg en Gezondheid;VESTA;Vlaams Agentschap Zorg en Gezondheid
+ ;1;VESTA;Vlaams Agentschap Zorg en Gezondheid - privé diensten;VESTA;Vlaams Agentschap Zorg en Gezondheid - services privés
+90;0;Belgian Cancer Registry;Belgian Cancer Registry;Belgian Cancer Registry;Belgian Cancer Registry
+91;0;eHealth;eHealth;eHealth;eHealth
+92;0;Identifin;Identifin;Identifin;Identifin
+93;0;Fedict;Fedict - FSB Testing;Fedict;Fedict - FSB Testing
+93;1;Fedict;Fedict - eBirth;Fedict;Fedict - eBirth
+93;2;Fedict;Fedict - KFBN(Koninklijke Federatie van het Belgisch Notariaat);Fedict;Fedict - FRNB (Fédération Royale du Notariat Belge)
+93;3;Fedict;FEDIAM FOD Financien;Fedict;FEDIAM SPF Finances
+94;0;MIVB;MIVB;STIB;STIB
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;
+;;;;;

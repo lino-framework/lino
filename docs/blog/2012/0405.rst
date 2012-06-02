@@ -3,8 +3,8 @@
 
 lino.apps.pcsw.models was too big, so I split two new modules out of it:
 
-- lino.modlib.cv.models : LanguageKnowlege and PersonProperty 
-- lino.apps.pcsw.courses.models : CourseEnding, Course, CourseOffer, CourseProvider
+- :mod:`lino.modlib.cv.models` : LanguageKnowlege and PersonProperty 
+- :mod:`lino.modlib.courses.models` : CourseEnding, Course, CourseOffer, CourseProvider
 
 
 Bemerkung:

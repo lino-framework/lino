@@ -1,9 +1,10 @@
 20120601
 ========
 
-Ein neues Projekt zwischendurch: Vorbereitungen für eine Demo in Namür.
-
-Fehlerjagd
+Ein neues Projekt zwischendurch: 
+Vorbereitungen für eine Demo in Namür.
+Also jetzt kommen ein paar Tage Fehlerjagd und intensiveres 
+Testen im Pre-Release-Modus.
 
 - Löschen funktionierte an vielen Stellen nicht, 
   z.B. DELETE `http://testlino/api/debts/IncomesByBudget/21`.
@@ -26,3 +27,10 @@ Fehlerjagd
 - Die meisten Übersetzungen DE sind jetzt gemacht.
 
 - Zivilstand in der Antwort eines IPR wurde nicht korrekt interpretiert.
+
+- Und auch der Print-Button eines Budgets ist wieder da. 
+  Da war noch ein Algoritmusfehler beim Einsammeln der Aktionen,
+  z.B. war `_lino_model_actions` gar nicht nötig.
+  
+  Todo: Testen, ob bei doppelter Namensvergebung die 
+  richtige Aktion versteckt wird.

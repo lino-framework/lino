@@ -31,6 +31,13 @@
     :show-inheritance:
 
 
+:mod:`lino.modlib.cbss.fixtures.sectors`
+-----------------------------------------
+
+.. automodule:: lino.modlib.cbss.fixtures.sectors
+    :members:
+    :show-inheritance:
+
 :mod:`lino.modlib.cbss.fixtures.purposes`
 -----------------------------------------
 
@@ -43,6 +50,14 @@
 -----------------------------------------
 
 .. automodule:: lino.modlib.cbss.fixtures.inscodes
+    :members:
+    :show-inheritance:
+
+
+:mod:`lino.modlib.cbss.fixtures.cbss`
+-----------------------------------------
+
+.. automodule:: lino.modlib.cbss.fixtures.cbss
     :members:
     :show-inheritance:
 

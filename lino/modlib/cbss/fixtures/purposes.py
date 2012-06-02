@@ -12,26 +12,32 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Fills the cbss.Purposes table from 
+http://www.bcss.fgov.be/binaries/documentation/fr/documentation/general/lijst_hoedanigheidscodes.pdf
+
+"""
+
 from lino.utils.babel import babel_values
 from lino.tools import resolve_model
 
-SECTORS = u"""
-1 Fonds des accidents du travail | Fonds voor arbeidsongevallen | 
-5 Office national des pensions | Rijksdienst voor pensioenen | 
-6 Fonds des maladies professionnelles | Fonds voor beroepsziekten | 
-7 Office national d’allocations familiales pour travailleurs salariés | Rijksdienst voor kinderbijslag voor werknemers | 
-9 Caisse de secours et de prévoyance en faveur des marins | Hulp- en voorzorgskas voor zeevarenden | 
-10 Office National des vacances annuelles | Rijksdienst voor jaarlijkse vakantie | 
-11 Soins de santé | Gezondheidszorg | 
-12 Office National de Sécurité Sociale | Rijksdienst voor Sociale Zekerheid | 
-13 ONSS des administrations provinciales et locales | rsz van de provinciale en plaatselijke overheidsdiensten | 
-14 SIGEDIS | SIGEDIS | 
-15 Institut National d’Assurances sociales pour travailleurs indépendants | Rijksinstituut voor de sociale verzekeringen der zelfstandigen | 
-16 SPF Sécurité sociale  | FOD Sociale zekerheid | 
-17 Centre Public d’Action Sociale | Openbaar Centrum voor Maatschappelijk Welzijn | Öffentliches Sozialhilfezentrum
-18 Office National de l’Emploi | Rijksdienst voor arbeidsvoorzienning | 
-19 SPF Santé publique et environnement | FOD Volksgezondheid en leefmilieu | 
-"""
+#~ SECTORS = u"""
+#~ 1 Fonds des accidents du travail | Fonds voor arbeidsongevallen | 
+#~ 5 Office national des pensions | Rijksdienst voor pensioenen | 
+#~ 6 Fonds des maladies professionnelles | Fonds voor beroepsziekten | 
+#~ 7 Office national d’allocations familiales pour travailleurs salariés | Rijksdienst voor kinderbijslag voor werknemers | 
+#~ 9 Caisse de secours et de prévoyance en faveur des marins | Hulp- en voorzorgskas voor zeevarenden | 
+#~ 10 Office National des vacances annuelles | Rijksdienst voor jaarlijkse vakantie | 
+#~ 11 Soins de santé | Gezondheidszorg | 
+#~ 12 Office National de Sécurité Sociale | Rijksdienst voor Sociale Zekerheid | 
+#~ 13 ONSS des administrations provinciales et locales | rsz van de provinciale en plaatselijke overheidsdiensten | 
+#~ 14 SIGEDIS | SIGEDIS | 
+#~ 15 Institut National d’Assurances sociales pour travailleurs indépendants | Rijksinstituut voor de sociale verzekeringen der zelfstandigen | 
+#~ 16 SPF Sécurité sociale  | FOD Sociale zekerheid | 
+#~ 17 Centre Public d’Action Sociale | Openbaar Centrum voor Maatschappelijk Welzijn | Öffentliches Sozialhilfezentrum
+#~ 18 Office National de l’Emploi | Rijksdienst voor arbeidsvoorzienning | 
+#~ 19 SPF Santé publique et environnement | FOD Volksgezondheid en leefmilieu | 
+#~ """
 
 PURPOSES = u"""
 1 10 INDEMNISATION AUX VICTIMES | VERGOEDING AAN SLACHTOFFERS
@@ -145,30 +151,31 @@ PURPOSES = u"""
 
 def objects():
     Sector = resolve_model('cbss.Sector')
-    Purpose = resolve_model('cbss.Purpose')
-    for ln in SECTORS.splitlines():
-        if ln:
-            a = ln.split(None,1)
-            labels = [s.strip() for s in a[1].split('|')]
-            if len(labels) != 3:
-                raise Exception("Line %r : labels is %r" %(ln,labels))
-            if not labels[2]:
-                labels[2] = labels[0]
-            yield Sector(code=int(a[0]),**babel_values('name',fr=labels[0],nl=labels[1],de=labels[2]))
+    #~ for ln in SECTORS.splitlines():
+        #~ if ln:
+            #~ a = ln.split(None,1)
+            #~ labels = [s.strip() for s in a[1].split('|')]
+            #~ if len(labels) != 3:
+                #~ raise Exception("Line %r : labels is %r" %(ln,labels))
+            #~ if not labels[2]:
+                #~ labels[2] = labels[0]
+            #~ yield Sector(code=int(a[0]),**babel_values('name',fr=labels[0],nl=labels[1],de=labels[2]))
             
+    Purpose = resolve_model('cbss.Purpose')
     for ln in PURPOSES.splitlines():
         if ln:
             a = ln.split(None,2)
             #~ assert a[0] in ('*', '17')
             sc = a[0]
             if sc == '*': 
-                sector = None
+                sc = None
             else:
-                sector = Sector.objects.get(code=int(sc))
+                #~ sector = Sector.objects.get(code=int(sc))
+                sc = int(sc)
             labels = [s.strip() for s in a[2].split('|')]
             if len(labels) == 2:
                 labels.append(labels[0])
             elif len(labels) != 3:
                 raise Exception("Line %r : labels is %r" %(ln,labels))
-            yield Purpose(sector=sector,code=int(a[1]),**babel_values('name',fr=labels[0],nl=labels[1],de=labels[2]))
+            yield Purpose(sector_code=sc,code=int(a[1]),**babel_values('name',fr=labels[0],nl=labels[1],de=labels[2]))
             

@@ -1516,7 +1516,7 @@ Lino.help_text_editor = function() {
     //~ };
     //~ console.log(20120202,bp);
   //~ Lino.lino.ContentTypes.detail({},{base_params:bp});
-  Lino.lino.ContentTypes.detail({},{record_id:this.content_type});
+  Lino.lino.ContentTypes.detail_action({},{record_id:this.content_type});
 }
 
 // Path to the blank image should point to a valid location on your server

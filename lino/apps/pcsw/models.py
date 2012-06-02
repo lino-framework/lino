@@ -61,7 +61,7 @@ from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import UserLevel
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.models import get_site_config
+#~ from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
 from lino.tools import range_filter
@@ -108,23 +108,31 @@ def niss_validator(national_id):
     """
     Checks whether the specified `national_id` is a valid 
     Belgian NISS (No. d'identification de sécurité sociale).
+    
+    Official format is ``YYMMDDx123-97``, where ``YYMMDD`` is the birth date, 
+    ``x`` indicates the century (``*`` for the 19th, `` `` (space) for the 20th
+    and ``=`` for the 21st century), ``123`` is a sequential number for persons 
+    born the same day (odd numbers for men and even numbers for women), 
+    and ``97`` is a check digit (remainder of previous digits divided by 97).
+    
     """
+    national_id = national_id.strip()
     if not national_id:
         return
     if len(national_id) != 13:
-        raise ValidationError(u'Invalid Belgian NISS %r (length)' % national_id)
+        raise ValidationError(_('Invalid Belgian NISS %r (length)') % national_id)
     xtest = national_id[:6] + national_id[7:10]
     if national_id[6] == "=":
         xtest = "2" + xtest
     try:
         xtest = int(xtest)
     except ValueError:
-        raise ValidationError(u'Invalid Belgian NISS %r (value)' % national_id)
+        raise ValidationError(_('Invalid Belgian NISS %r (value)') % national_id)
     xtest = abs((xtest-97*(int(xtest/97)))-97)
     if xtest == 0:
         xtest = 97
     if xtest != int(national_id[11:13]):
-        raise ValidationError("Invalid Belgian NISS %r (checkdigit)" 
+        raise ValidationError(_("Invalid Belgian NISS %r (checkdigit)") 
             % national_id)
 
 
@@ -496,7 +504,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     
     @chooser()
     def job_office_contact_choices(cls):
-        sc = get_site_config()
+        sc = settings.LINO.site_config # get_site_config()
         if sc.job_office is not None:
             #~ return sc.job_office.contact_set.all()
             #~ return sc.job_office.rolesbyparent.all()
@@ -1933,13 +1941,10 @@ dd.inject_field(SiteConfig,
 
 dd.inject_field(SiteConfig,
     'driving_licence_upload_type',
-    #~ UploadType.objects.get(pk=2)
     models.ForeignKey("uploads.UploadType",
         blank=True,null=True,
         verbose_name=_("Upload Type for driving licence"),
-        related_name='driving_licence_sites'),
-    """The UploadType for `Person.driving_licence`.
-    """)
+        related_name='driving_licence_sites'))
     
 
 
@@ -2061,8 +2066,7 @@ def site_setup(site):
     
     site.modules.lino.SiteConfigs.set_detail("""
     site_company default_build_method
-    next_partner_id
-    job_office
+    next_partner_id sector job_office 
     propgroup_skills propgroup_softskills propgroup_obstacles
     residence_permit_upload_type work_permit_upload_type driving_licence_upload_type
     # lino.ModelsBySite

@@ -35,7 +35,6 @@ from lino.utils import join_words
 from lino.utils.choosers import chooser
 from lino.utils.choicelists import Gender
 from lino.utils import babel
-from lino.models import get_site_config
 
 from lino.utils import mti
 from lino.modlib.contacts import models as contacts

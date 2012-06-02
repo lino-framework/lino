@@ -562,8 +562,6 @@ class AbstractTable(actors.Actor):
     
     default_group = Group()
     
-    master = None
-    
     
     #~ default_action = GridEdit
     default_layout = 0
@@ -622,18 +620,6 @@ class AbstractTable(actors.Actor):
     then you'll prefer to use :attr:`known_values` instead of :attr:`filter.`
     """
     exclude = None
-    
-    master = None
-    """
-    Automatically set to the model pointed to by the :attr:`master_key`.
-    Used also in lino.models.ModelsBySite
-    """
-    
-    master_field = None
-    """
-    For internal use. Automatically set to the field descriptor of the :attr:`master_key`.
-    """
-    
     
     
     extra = None

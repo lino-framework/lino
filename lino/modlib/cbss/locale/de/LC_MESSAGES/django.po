@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-01 13:12+0100\n"
-"PO-Revision-Date: 2012-06-01 11:02+0200\n"
+"PO-Revision-Date: 2012-06-02 15:25+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -64,17 +64,18 @@ msgstr "Sektor"
 msgid "Sectors"
 msgstr "Sektoren"
 
-#: .\models.py:264 .\models.py:283
+#: .\models.py:264
+#: .\models.py:283
 msgid "Code"
 msgstr ""
 
 #: .\models.py:278
 msgid "Purpose"
-msgstr "Begründung"
+msgstr "Eigenschafts-Code"
 
 #: .\models.py:279
 msgid "Purposes"
-msgstr "Begründungen"
+msgstr "Eigenschafts-Codes"
 
 #: .\models.py:319
 msgid "Sent"
@@ -88,7 +89,8 @@ msgstr ""
 msgid "Ticket"
 msgstr ""
 
-#: .\models.py:333 .\models.py:474
+#: .\models.py:333
+#: .\models.py:474
 msgid "Request"
 msgstr "Abfrage"
 
@@ -100,7 +102,8 @@ msgstr "Antwort"
 msgid "Logged messages"
 msgstr "Meldungen"
 
-#: .\models.py:445 .\models.py:476
+#: .\models.py:445
+#: .\models.py:476
 msgid "Result"
 msgstr "Resultat"
 
@@ -116,11 +119,13 @@ msgstr "Technisch"
 msgid "Parameters"
 msgstr "Parameter"
 
-#: .\models.py:745 .\models.py:1062
+#: .\models.py:745
+#: .\models.py:1062
 msgid "National ID"
 msgstr "NR-Nummer"
 
-#: .\models.py:751 .\models.py:1083
+#: .\models.py:751
+#: .\models.py:1083
 msgid "Birth date"
 msgstr "Geburtsdatum"
 
@@ -132,11 +137,13 @@ msgstr "SIS-Karten-Nr"
 msgid "ID card number"
 msgstr "ID-Karten-Nr"
 
-#: .\models.py:764 .\models.py:1072
+#: .\models.py:764
+#: .\models.py:1072
 msgid "First name"
 msgstr "Vorname"
 
-#: .\models.py:769 .\models.py:1067
+#: .\models.py:769
+#: .\models.py:1067
 msgid "Last name"
 msgstr "Nachname"
 
@@ -214,11 +221,11 @@ msgstr "Alle"
 
 #: .\models.py:1164
 msgid "ManageAccess Request"
-msgstr "Integrationsanfrage"
+msgstr "ManageAccess-Anfrage"
 
 #: .\models.py:1165
 msgid "ManageAccess Requests"
-msgstr "Integrationsanfragen"
+msgstr "ManageAccess-Anfragen"
 
 #: .\models.py:1196
 msgid "Period from"
@@ -241,14 +248,12 @@ msgid "History"
 msgstr "Historie"
 
 #: .\models.py:1495
-#, fuzzy
 msgid "IdentifyPerson"
-msgstr "IdentifyPerson-Anfrage"
+msgstr "IdentifyPerson"
 
 #: .\models.py:1502
-#, fuzzy
 msgid "ManageAccess"
-msgstr "Integrationsanfrage"
+msgstr "ManageAccess"
 
 #: .\models.py:1509
 msgid "RetrieveTIGroups"
@@ -258,6 +263,8 @@ msgstr ""
 msgid "CBSS"
 msgstr "KBSS"
 
-#: .\models.py:1522 .\models.py:1530
+#: .\models.py:1522
+#: .\models.py:1530
 msgid "INS code"
 msgstr "INS-Code"
+

@@ -20,11 +20,11 @@ Installs a set of property types and property groups specific to
 
 
 from django.utils.translation import ugettext as _
-#~ from django.conf import settings
+from django.conf import settings
 
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import babel_values
-from lino.models import update_site_config
+#~ from lino.models import update_site_config
 from lino.modlib.properties.models import PropType
 
 
@@ -51,7 +51,7 @@ def objects():
     obstacles.save()
     yield obstacles
     
-    update_site_config(
+    settings.LINO.update_site_config(
       propgroup_skills = skills,
       propgroup_softskills = softskills,
       propgroup_obstacles = obstacles,

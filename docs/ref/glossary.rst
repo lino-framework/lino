@@ -37,6 +37,17 @@ Glossary
     Context-sensitive ComboBox. 
     See :mod:`lino.utils.choices`.
     
+  remote field
+    We sometimes use this term for 
+    `field lookups that refer to a joined model    <https://docs.djangoproject.com/en/dev/topics/db/queries/#lookups-that-span-relationships>`__.
+    For example in a `Table` on a model `Invoice` that has a 
+    ForeignKey `customer` to `Partner`, 
+    then you can add a column `customer__city`. 
+    
+    
+  field lookups
+    See https://docs.djangoproject.com/en/dev/topics/db/queries/#field-lookups  
+    
   GC
     Grid Configuration. 
     See :doc:`/blog/2010/0809`,...

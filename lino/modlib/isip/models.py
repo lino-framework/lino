@@ -45,7 +45,6 @@ from lino.utils.choicelists import HowWell
 from lino.utils.choicelists import UserLevel
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
 from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem, language_choices

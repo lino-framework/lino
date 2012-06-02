@@ -49,7 +49,7 @@ from lino.utils import join_words
 from lino.utils.choosers import chooser
 from lino.utils.choicelists import Gender, UserLevel
 from lino.utils import babel 
-from lino.models import get_site_config
+#~ from lino.models import get_site_config
 
 from lino.modlib.countries.models import CountryCity
 
@@ -166,7 +166,7 @@ class Partner(mti.MultiTableBase,CountryCity):
     
     def save(self,*args,**kw):
         if self.id is None:
-            sc = get_site_config()
+            sc = settings.LINO.site_config # get_site_config()
             if sc.next_partner_id is not None:
                 self.id = sc.next_partner_id
                 sc.next_partner_id += 1
@@ -223,7 +223,7 @@ but e.g. :class:`PersonMixin` overrides this.
         #~ else:
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
         if self.country is not None:
-            sc = get_site_config()
+            sc = settings.LINO.site_config # get_site_config()
             if not sc.site_company or self.country != sc.site_company.country: 
                 # (if self.country != sender's country)
                 yield unicode(self.country)

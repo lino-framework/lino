@@ -5,8 +5,11 @@ Sichtbare Änderungen
 --------------------
 
 - Neue Tabelle :class:`Offene Kursanfragen 
-  <lino.apps.pcsw.courses.models.PendingCourseRequests>`.
+  <lino.modlib.courses.models.PendingCourseRequests>`.
   
+- Chronik pro Person ist jetzt rückwärts sortiert, so dass die 
+  neuesten Einträge zuerst kommen. 
+
 - Änderungen in :class:`Übersicht Art-60-7-Konventionen <jobs.JobsOverview>`:
 
   - die aktiven Stellenbesetzer sind jetzt nach `Contract.applies_from` 
@@ -31,12 +34,10 @@ Sichtbare Änderungen
   
 - Benutzer sind keine Partner mehr. Siehe :doc:`/blog/2012/0525`.
   
-- Neue Module Schuldnerberatung und Haushalte  
+- Neue Module :mod:`Schuldnerberatung <lino.modlib.debts.models>`
+  und :mod:`Haushalte <lino.modlib.households.models>` 
 
-- Neues Modul Postausgang.
-
-- Chronik pro Person ist jetzt rückwärts sortiert, so dass die 
-  neuesten Einträge zuerst kommen. 
+- Neues Modul :mod:`Postausgang <lino.modlib.households.outbox>`.
 
 
 Bugfixes

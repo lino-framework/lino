@@ -449,11 +449,8 @@ class Table(AbstractTable):
     #~ A permission descriptor that defines who can add (create) rows in this table.
     #~ """
     
-    master_key = None
-    """
-    The name of the ForeignKey field of this Table's model that points to it's master.
-    Setting this will turn the report into a slave report.
-    """
+    
+    
     
     handle_uploaded_files = None
     """
@@ -568,8 +565,20 @@ class Table(AbstractTable):
             for b in self.model.mro():
                 for k,v in b.__dict__.items():
                     if isinstance(v,actions.Action):
-                        if self.__dict__.has_key(k):
-                            logger.warning("NOT overriding %s.%s from %s",self,k,b)
+                        existing_value = self.__dict__.get(k,None)
+                        if existing_value is not None:
+                            if not isinstance(existing_value,actions.Action):
+                                raise Exception(
+                                    "%s cannot get model action %s because name is already used for %r" %
+                                    self,k,existing_value)
+                            #~ if self.__dict__.has_key(k):
+                            #~ """
+                            #~ Actions defined in 
+                            #~ If a Table has an attribute
+                            #~ When there is an Action called `foo` 
+                            #~ """
+                            #~ logger.debug("Not overriding %s.%s from %s",self,k,b)
+                            #~ pass
                         else:
                             v = copy.deepcopy(v)
                             v.name = None

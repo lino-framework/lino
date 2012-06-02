@@ -1,0 +1,122 @@
+20120602
+========
+
+Über Art.60§7-Konventionen
+--------------------------
+
+Beim Aufräumen auf der Webseite stieß ich auf 
+:doc:`/tickets/59`.
+Gedanken zu den Namen der Module :mod:`lino.modlib.jobs`
+und :mod:`lino.modlib.isip`.
+Diese internen Bezeichnungen sind nicht optimal:
+``jobs`` steht für **Art.60§7-Konventionen**,
+``isip`` für **VSE**
+
+ISIP kommt von "Individual Social Integration Project", 
+der direkten Übersetzung des französischen "PIIS", 
+das in Deutsch "VSE" genannt wird. 
+
+Vorschlag für eine klarere interne Namensgebung:
+
+- "jobs" --> "pips" ("Professional Integration Projects")
+- "isip" --> "sips" ("Social Integration Projects")
+
+Die deutschen Bezeichnungen dieser Konzepte sind freilich 
+nicht gerade verständnisfördernd. 
+Sind wahrscheinlich historisch entstanden. 
+
+Idee: 
+
+- "Art.60§7-Konvention" ersetzen durch 
+  "Berufliches Eingliederungsprojekt (BEP)",
+  und "VSE" ersetzen durch "Soziales Eingliederungsprojekt (SEP)".
+  Also BEPs und SEPs statt "Art.60§7-Konventionen" und "VSEs".
+  
+- Oder (weniger radikal) lediglich "Art.60§7-Konvention" 
+  durch "Vereinbarung zur beruflichen Eingliederung (VBE)" 
+  ersetzen. Dann hätten wir VBEs und VSEs statt 
+  "Art.60§7-Konventionen" und "VSEs".
+
+Ich meine offiziell und im Alltag, nicht nur in Lino. 
+Ich habe freilich keine Ahnung, wer so was entscheidet.
+
+Sektoren des Nationalregisters
+------------------------------
+
+Eigentlich wollte ich mal schnell den ManagePersonRequest 
+machen, aber beim Lesen der Doku stieß ich auf die 
+offizielle Liste der 
+:class:`Sektoren <lino.modlib.cbss.models.Sector>`
+der KBSS.
+
+Oh je! Das ist wieder mal so eine historisch gewachsene Datenstruktur.
+Die ÖSHZ sind nicht einfach nur "Sektor 17", sondern "Sektor 17.1".
+Es gibt auch einen Sektor 17.3, der 
+"FSE chapitre 12 uniquement composés de CPAS"
+heißt.
+Oder der Top-Level-Sektor 51 heißt 
+"Institutions hors réseau qui payent des pensions légales et qui 
+sont habilitées à opérer des retenues sur les pensions à payer 
+dans le cadre de la 'cotisation de solidarité'" und hat 17 
+Untersektoren.
+Die Eigenschafts-Codes (:class:`Purpose <lino.modlib.cbss.models.Purpose>`) 
+jedoch (deren offizielle Liste 
+`hier <http://www.bcss.fgov.be/binaries/documentation/fr/documentation/general/lijst_hoedanigheidscodes.pdf>`__
+steht) 
+hängen nur vom Top-Level-Sektor (also der 17) ab.
+Für Sektor 17.3 muss Lino die gleiche Liste von Eigenschaftscodes 
+anbieten wie für Sektor 17.1
+
+Außerdem hatten wir ja gesagt, dass der Sektor nicht im Detail 
+eines ManageAccess-Requests stehen soll und schon gar nicht vom 
+Benutzer selbst geändert werden soll.
+Das ist ein neues Feld in der Site-Konfiguration.
+
+- lino.modlib.cbss now injects a new SiteConfig field `sector´.
+
+- ManageAccess detail no longer has a (visible) field for `sector`.
+  But each request stores
+  
+- :meth:`lino.modlib.cbss.models.SSDNRequest.wrap_ssdn_request` 
+  takes the 
+  `MatrixID` and `SubMatrixID` elements 
+  of `AuthorizedUser` now from the SiteConfig.
+  
+- Removed function get_site_config().
+  Use `settings.LINO.site_config` instead.
+
+
+Ein Bug weniger
+---------------
+
+Im Hilfetext-Editor konnte man die Feldnamen ja nicht auswählen.
+Ein altbekannter Bug, den ich mir jetzt  mal vorgenommen habe.
+Das Problem ist, dass choices_view den mk und mt nicht geschickt 
+bekommt und auch gar nicht danach fragt. 
+
+War nicht ganz leicht zu lösen. 
+Subtile Änderungen in 
+:func:`before_row_edit <lino.ui.extjs3.ext_elems.before_row_edit>`,
+:meth:`Chooser.get_request_choices <lino.utils.choosers.Chooser.get_request_choices>`
+und :meth:`choices_view <lino.ui.extjs3.ext_ui.ExtUI.choices_view>`.
+Aber jetzt klappt es. Betroffen waren folgende Tabellen:
+
+=========================== ======== =============
+Table                       Field    Context param
+=========================== ======== =============
+contacts.PartnersByCountry  city     country
+cv.PersonPropsByProp        value    property
+jobs.ContractsByProvider    contact  company
+jobs.StudiesByCountry       city     country
+jobs.CandidaturesBySector   function sector
+lino.HelpTextsByModel       field    content_type
+=========================== ======== =============
+
+Also in `contacts.PartnersByCountry` konnte man 
+im Feld `city` (des Phantom-Records) nichts auswählen, 
+weil Lino den Kontextparameter `country` nicht an den 
+chooser übergab, obwohl er die Info aus dem master 
+der Tabelle entnehmen konnte. 
+Und das tut er jetzt. Schön. 
+
+

@@ -159,6 +159,7 @@ class HtmlRenderer(object):
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
             s += ' ' + self.action_href_js(ar.ah.actor.detail_action,params,after_show,_("Show Last"))
+            #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
             s += ' ' + self.href_to_request(ar,_("Show All"))
         #~ return '<p>%s</p>' % s
         return s
@@ -243,6 +244,7 @@ class ExtRenderer(HtmlRenderer):
     def href_to_request(self,rr,text=None):
         url = self.js2url(self.request_handler(rr))
         return self.href(url,text or cgi.escape(force_unicode(rr.label)))
+        #~ return self.href_button(url,text or cgi.escape(force_unicode(rr.label)))
             
     def href_to(self,obj,text=None):
         h = self.instance_handler(obj)
@@ -2059,11 +2061,11 @@ tinymce.init({
         """
         rpt = self.requested_report(request,app_label,rptname)
         #~ rpt = actors.get_actor2(app_label,rptname)
+        ar = rpt.request(self,request,rpt.default_action)
         if fldname is None:
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
             #~ ar = table.TableRequest(self,rpt,request,rpt.default_action)
-            ar = rpt.request(self,request,rpt.default_action)
             #~ rh = ar.ah
             #~ qs = ar.get_data_iterator()
             qs = ar.data_iterator
@@ -2074,8 +2076,8 @@ tinymce.init({
                 return d
         else:
             """
-            NOTE: if you define a parameter with the same name 
-            as some existing data element name, then the parameter 
+            NOTE: if you define a *parameter* with the same name 
+            as some existing *data* element name, then the parameter 
             will override the data element. At least here in choices view.
             """
             #~ field = find_field(rpt.model,fldname)
@@ -2085,7 +2087,7 @@ tinymce.init({
             #~ logger.info("20120202 %r",field)
             chooser = choosers.get_for_field(field)
             if chooser:
-                qs = chooser.get_request_choices(request,rpt)
+                qs = chooser.get_request_choices(ar,rpt)
                 #~ logger.info("20120213 %s",qs)
                 #~ if qs is None:
                     #~ qs = []

@@ -182,16 +182,6 @@ def cbss2address(obj,**data):
     
     
     
-#~ class Sector(ChoiceList):
-    #~ """
-    #~ The status of a :class:`CBSSRequest`.
-    #~ """
-    #~ label = _("Sector")
-
-#~ add = Sector.add_item
-#~ add('0',_("All sectors"),'all')
-#~ add('1',_("All sectors"),'all')
-
 class RequestStatus(ChoiceList):
     """
     The status of a :class:`CBSSRequest`.
@@ -256,29 +246,46 @@ class SendAction(dd.RowAction):
 
 
 class Sector(babel.BabelNamed):
+    """
+    Default values filled from :mod:`lino.modlib.cbss.fixtures.sectors`.
+    """
     class Meta:
         verbose_name = _("Sector")
         verbose_name_plural = _('Sectors')
+        unique_together = ['code','subcode']
         
     #~ code = models.CharField(max_length=2,verbose_name=_("Code"),primary_key=True)
-    code = models.IntegerField(max_length=2,verbose_name=_("Code"),primary_key=True)
+    code = models.IntegerField(max_length=2,verbose_name=_("Code"))
+    subcode = models.IntegerField(max_length=2,verbose_name=_("Subcode"),default=0)
+    abbr = babel.BabelCharField(_("Abbreviation"),max_length=50,blank=True)
+    
     
     def __unicode__(self):
         #~ return '(' + str(self.code) + ') ' + babel.BabelNamed.__unicode__(self)
+        if self.subcode != 0:
+            return str(self.code) + '.' + str(self.subcode) + ' - ' + babel.BabelNamed.__unicode__(self)
         return str(self.code) + ' - ' + babel.BabelNamed.__unicode__(self)
         
 
 class Sectors(dd.Table):
     model = Sector
     required_user_groups = ['cbss']
+    column_names = 'code subcode abbr name *'
+    order_by = ['code','subcode']
 
 
 class Purpose(babel.BabelNamed):
+    u"""
+    Codes qualité (Hoedanigheidscodes),
+    http://www.bcss.fgov.be/binaries/documentation/fr/documentation/general/lijst_hoedanigheidscodes.pdf
+    """
     class Meta:
         verbose_name = _("Purpose")
         verbose_name_plural = _('Purposes')
-        unique_together = ['sector','code']
-    sector = models.ForeignKey(Sector,blank=True,null=True)
+        unique_together = ['sector_code','code']
+    sector_code = models.IntegerField(max_length=2,verbose_name=_("Sector"),blank=True,null=True)
+    #~ sector_subcode = models.IntegerField(max_length=2,verbose_name=_("Subsector"),blank=True,null=True)
+    #~ sector = models.ForeignKey(Sector,blank=True,null=True)
     #~ code = models.CharField(max_length=3,verbose_name=_("Code"))
     code = models.IntegerField(max_length=3,verbose_name=_("Code"))
     
@@ -290,6 +297,8 @@ class Purpose(babel.BabelNamed):
 class Purposes(dd.Table):
     model = Purpose
     required_user_groups = ['cbss']
+    column_names = 'sector_code code name *'
+    order_by = ['sector_code','code']
 
 
 
@@ -375,7 +384,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.logged_messages += ("[%s] " % datetime.datetime.now()) + s + '\n'
         
     def __unicode__(self):
-        return u"%s#%s" % (self.__class__.__name__,self.pk)
+        return u"%s #%s" % (self._meta.verbose_name,self.pk)
 
     def execute_request(self,ar=None,now=None,simulate_response=None,environment=None):
         """
@@ -626,6 +635,11 @@ class SSDNRequest(CBSSRequest):
         
         
     def wrap_ssdn_request(self,srvreq,dt):
+        """
+        Wrap the given service request into the SSDN envelope 
+        by adding AuthorizedUser and other information common 
+        the all SSDN requests).
+        """
         #~ up  = settings.LINO.ssdn_user_params
         user_params = settings.LINO.cbss_user_params
         #~ au = E('common:AuthorizedUser',ns=NSCOMMON)
@@ -636,10 +650,15 @@ class SSDNRequest(CBSSRequest):
         #~ au.append(E('common:MatrixSubID').setText(up['MatrixSubID']))
         au = E('ssdn:AuthorizedUser')
         au.append(E('ssdn:UserID').setText(user_params['UserID']))
-        au.append(E('ssdn:Email').setText(user_params['Email']))
-        au.append(E('ssdn:OrgUnit').setText(user_params['OrgUnit']))
-        au.append(E('ssdn:MatrixID').setText(user_params['MatrixID']))
-        au.append(E('ssdn:MatrixSubID').setText(user_params['MatrixSubID']))
+        sc = settings.LINO.site_config
+        #~ au.append(E('ssdn:Email').setText(user_params['Email']))
+        au.append(E('ssdn:Email').setText(sc.site_company.email))
+        #~ au.append(E('ssdn:OrgUnit').setText(user_params['OrgUnit']))
+        au.append(E('ssdn:OrgUnit').setText(sc.site_company.vat_id))
+        #~ au.append(E('ssdn:MatrixID').setText(user_params['MatrixID']))
+        au.append(E('ssdn:MatrixID').setText(sc.sector.code))
+        #~ au.append(E('ssdn:MatrixSubID').setText(user_params['MatrixSubID']))
+        au.append(E('ssdn:MatrixSubID').setText(sc.sector.subcode))
         
         ref = "%s # %s" % (self.__class__.__name__,self.id)
         msg = E('ssdn:Message')
@@ -688,7 +707,8 @@ class NewStyleRequest(CBSSRequest):
 
         ci = client.factory.create('ns0:CustomerIdentificationType')
         #~ cbeNumber = client.factory.create('ns0:CbeNumberType')
-        ci.cbeNumber = settings.LINO.cbss_cbe_number
+        #~ ci.cbeNumber = settings.LINO.cbss_cbe_number
+        ci.cbeNumber = settings.LINO.site_config.site_company.vat_id
         info = client.factory.create('ns0:InformationCustomerType')
         info.ticket = str(self.id)
         info.timestampSent = now
@@ -715,13 +735,6 @@ class NewStyleRequest(CBSSRequest):
         
     def execute_newstyle(self,client,infoCustomer):
         raise NotImplementedError()
-        
-
-
-
-
-
-
 
 
 
@@ -743,7 +756,7 @@ class SSIN(models.Model):
   
     national_id = models.CharField(max_length=200,
         blank=True,verbose_name=_("National ID")
-        #~ ,validators=[niss_validator]
+        ,validators=[pcsw.niss_validator]
         )
         
     birth_date = dd.IncompleteDateField(
@@ -1178,6 +1191,7 @@ class ManageAccessRequest(SSDNRequest,SSIN):
 #~ when information about sectors is required.""")
 
     sector = models.ForeignKey(Sector,
+      blank=True, editable=False,
       help_text="""\
 For register and unregister this element is ignored. 
 It can be used for list, 
@@ -1204,11 +1218,20 @@ for register/unregister it is mandatory.""")
     #~ action = ManageAction.field(blank=False)
     #~ query_register = QueryRegister.field(blank=False) # ,default=QueryRegister.ALL)
 
+    def save(self,*args,**kw):
+        if not self.sector_id:
+            self.sector = settings.LINO.site_config.sector
+        super(ManageAccessRequest,self).save(*args,**kw)
 
     @chooser()
     def purpose_choices(cls,sector):
+        if not sector:
+            sector = settings.LINO.site_config.sector
+        if not sector:
+            raise Exception("SiteConfig.sector is not set!")
+        Q = models.Q
         return Purpose.objects.filter(
-            models.Q(sector=sector)|models.Q(sector__isnull=True)).order_by('code')
+            Q(sector_code=sector.code)|Q(sector_code__isnull=True)).order_by('code')
 
 
     def on_create(self,ar):
@@ -1231,8 +1254,7 @@ for register/unregister it is mandatory.""")
         if self.end_date:
             period.append(E('common:EndDate',ns=NSCOMMON).setText(str(self.end_date)))
         main.append(E('mar:Action').setText(self.action.name))
-        if self.sector:
-            main.append(E('mar:Sector').setText(str(self.sector.code)))
+        main.append(E('mar:Sector').setText(str(self.sector.code)))
         if self.query_register:
             main.append(E('mar:QueryRegister').setText(self.query_register.name))
         proof = E('mar:ProofOfAuthentication')
@@ -1299,7 +1321,7 @@ The SSIN of the person to register/unregister/list.
 class ManageAccessRequestDetail(CBSSRequestDetail):
     p1 = """
     action start_date end_date 
-    sector purpose query_register
+    purpose query_register
     """
     proof = """
     national_id sis_card_no id_card_no
@@ -1337,6 +1359,10 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     A request to the RetrieveTIGroups service
     """
     
+    class Meta:
+        verbose_name = _("Tx25 Request")
+        verbose_name_plural = _('Tx25 Requests')
+        
     wsdl_parts = ('cache','wsdl','RetrieveTIGroupsV3.wsdl')
     
     language = babel.LanguageField()
@@ -1487,28 +1513,45 @@ class MyRetrieveTIGroupsRequests(RetrieveTIGroupsRequests,mixins.ByUser):
     #~ body
     #~ """
 
-def fn(self,rr):
-    return rr.renderer.quick_add_buttons(rr.spawn(
-          IdentifyRequestsByPerson,
-          master_instance=self))
-dd.inject_field(pcsw.Person,'cbss_identify_person',
-    dd.VirtualField(dd.DisplayField(_("IdentifyPerson")),fn))
+from lino.models import SiteConfig
+dd.inject_field(SiteConfig,
+    'sector',
+    models.ForeignKey(Sector,
+        blank=True,null=True))
     
-def fn(self,ar):
-    return ar.renderer.quick_add_buttons(ar.spawn(
-          ManageAccessRequestsByPerson,
-          master_instance=self))
-dd.inject_field(pcsw.Person,'cbss_manage_access',
-    dd.VirtualField(dd.DisplayField(_("ManageAccess")),fn))
+
+#~ def fn(self,rr):
+    #~ return rr.renderer.quick_add_buttons(rr.spawn(
+          #~ IdentifyRequestsByPerson,
+          #~ master_instance=self))
+#~ dd.inject_field(pcsw.Person,'cbss_identify_person',
+    #~ dd.VirtualField(dd.DisplayField(IdentifyPersonRequest._meta.verbose_name_plural),fn))
     
-def fn(self,rr):
-    return rr.renderer.quick_add_buttons(rr.spawn(
-          RetrieveTIGroupsRequestsByPerson,
-          master_instance=self))
-dd.inject_field(pcsw.Person,'cbss_retrieve_ti_groups',
-    dd.VirtualField(dd.DisplayField(_("RetrieveTIGroups")),fn))
+#~ def fn(self,ar):
+    #~ return ar.renderer.quick_add_buttons(ar.spawn(
+          #~ ManageAccessRequestsByPerson,
+          #~ master_instance=self))
+#~ dd.inject_field(pcsw.Person,'cbss_manage_access',
+    #~ dd.VirtualField(dd.DisplayField(ManageAccessRequest._meta.verbose_name_plural),fn))
+    
+#~ def fn(self,rr):
+    #~ return rr.renderer.quick_add_buttons(rr.spawn(
+          #~ RetrieveTIGroupsRequestsByPerson,
+          #~ master_instance=self))
+#~ dd.inject_field(pcsw.Person,'cbss_retrieve_ti_groups',
+    #~ dd.VirtualField(dd.DisplayField(RetrieveTIGroupsRequest._meta.verbose_name_plural),fn))
+    
+def inject_quick_add_buttons(model,name,actor):
+    def fn(self,rr):
+        return rr.renderer.quick_add_buttons(
+          rr.spawn(actor,master_instance=self))
+    dd.inject_field(model,name,
+        dd.VirtualField(dd.DisplayField(actor.model._meta.verbose_name_plural),fn))
     
     
+inject_quick_add_buttons(pcsw.Person,'cbss_identify_person',IdentifyRequestsByPerson)
+inject_quick_add_buttons(pcsw.Person,'cbss_manage_access',ManageAccessRequestsByPerson)
+inject_quick_add_buttons(pcsw.Person,'cbss_retrieve_ti_groups',RetrieveTIGroupsRequestsByPerson)
 
 
 MODULE_NAME = _("CBSS")

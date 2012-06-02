@@ -204,6 +204,24 @@ class Actor(Handled,ViewPermission):
     #~ hide_top_toolbar = False
     
     
+    master_key = None
+    """
+    The name of the ForeignKey field of this Table's model that points to it's master.
+    Setting this will turn the report into a slave report.
+    """
+    
+    master = None
+    """
+    Automatically set to the model pointed to by the :attr:`master_key`.
+    Used also in lino.models.ModelsBySite
+    """
+    
+    master_field = None
+    """
+    For internal use. Automatically set to the field descriptor of the :attr:`master_key`.
+    """
+    
+    
     disabled_fields = None
     """
     Return a list of field names that should not be editable 
@@ -591,6 +609,10 @@ class Actor(Handled,ViewPermission):
         if vf is not None:
             #~ logger.info("20120202 Actor.get_data_elem found vf %r",vf)
             return vf
+            
+        a = getattr(self,name,None)
+        if isinstance(a,actions.Action):
+            return a
         
         #~ logger.info("20120307 lino.core.coretools.get_data_elem %r,%r",self,name)
         s = name.split('.')

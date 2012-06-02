@@ -1,19 +1,19 @@
-#59 : module structure changes
-==============================
+#59 : split :mod:`lino.apps.pcsw` to a independant project 
+==========================================================
 
-Some day I'll do the following renames::
+Some day I'll move the pcsw-specific modules out of modlib::
 
-  lino.apps.dsbe --> lino.apps.pcsw
-  lino.apps.pcsw.courses : split out of lino.apps.pcsw
-  lino.apps.pcsw.contacts : split out of lino.apps.pcsw
-  lino.modlib.links --> lino.apps.pcsw.links
+  lino.modlib.courses : lino.apps.pcsw.courses
   lino.modlib.newcomers --> lino.apps.pcsw.newcomers
   lino.modlib.jobs --> lino.apps.pcsw.jobs 
+  lino.modlib.isip --> lino.apps.pcsw.isip 
   lino.modlib.cbss --> lino.apps.pcsw.cbss
-
-Maybe also:
-
--> "jobs" --> "pips" ("(Socio-)Professional Integration Projects")
--> "isip" --> "sips" ("Social Integration Projects")
-
-Later I'll split `lino.apps.pcsw` out to a spearate googlecode project "lino-pcsw".
+  lino.modlib.debts --> lino.apps.pcsw.debts
+  lino.modlib.households --> lino.apps.pcsw.households
+  
+  
+There might also be a new module `lino.apps.pcsw.contacts`,
+split out of `lino.apps.pcsw`.
+ 
+Later I'll split `lino.apps.pcsw` out to a separate googlecode 
+project "lino-pcsw".

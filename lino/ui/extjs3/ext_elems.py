@@ -80,6 +80,7 @@ def py2html(obj,name):
 def before_row_edit(panel):
     l = []
     #~ l.append("console.log('before_row_edit',record);")
+    master_field = panel.layout_handle.layout._table.master_field
     for e in panel.active_children:
         if not e.get_view_permission(): continue
         if isinstance(e,GridElement):
@@ -99,10 +100,21 @@ def before_row_edit(panel):
             if chooser:
                 #~ logger.debug("20100615 %s.%s has chooser", self.layout_handle.layout, e.field.name)
                 for f in chooser.context_fields:
-                    #~ l.append("console.log('20110128 before_row_edit',record.data);")
-                    l.append(
-                        "%s.setContextValue(%r,record ? record.data[%r] : undefined);" % (
-                        e.as_ext(),f.name,form_field_name(f)))
+                    if master_field and master_field.name == f.name:
+                        #~ print 20120603, panel.layout_handle.layout._table, e.field.name, f.name
+                        #~ l.append("console.log('20120602 before_row_edit',this.get_base_params());")
+                        l.append("var bp = this.get_base_params();")
+                        #~ ext_requests.URL_PARAM_MASTER_TYPE
+                        #~ ext_requests.URL_PARAM_MASTER_KEY
+                        l.append("%s.setContextValue('%s',bp['%s']);" % (
+                          e.as_ext(),ext_requests.URL_PARAM_MASTER_PK,ext_requests.URL_PARAM_MASTER_PK))
+                        l.append("%s.setContextValue('%s',bp['%s']);" % (
+                          e.as_ext(),ext_requests.URL_PARAM_MASTER_TYPE,ext_requests.URL_PARAM_MASTER_TYPE))
+                    else:
+                        #~ l.append("console.log('20110128 before_row_edit',record.data);")
+                        l.append(
+                            "%s.setContextValue(%r,record ? record.data[%r] : undefined);" % (
+                            e.as_ext(),f.name,form_field_name(f)))
     #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
     #~ return js_code('function(record){ %s }' % (' '.join(l)))
     return l

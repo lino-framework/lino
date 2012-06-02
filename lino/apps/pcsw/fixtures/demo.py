@@ -30,7 +30,7 @@ from lino.tools import resolve_model
 from lino.utils.babel import babel_values, default_language
 from lino.utils.restify import restify
 from lino.utils import dblogger
-from lino.models import update_site_config
+#~ from lino.models import update_site_config
 from lino.utils import mti
 from lino.utils.choicelists import UserLevel
 
@@ -330,7 +330,7 @@ def objects():
     # a circular reference: bernard is contact for company adg and also has himself as `job_office_contact`
     bernard = Person.objects.get(name__exact="Bodard Bernard")
     adg = company(name=u"Arbeitsamt der D.G.",city=eupen,country='BE')
-    update_site_config(job_office=adg)
+    settings.LINO.update_site_config(job_office=adg)
     yield adg
     adg_dir = role(company=adg,person=bernard,type=1)
     #~ adg_dir = link(a=adg,b=bernard,type=1)

@@ -32,5 +32,5 @@ Subpackages
     lino.modlib.tickets
     lino.modlib.users
     lino.modlib.vocbook
-    lino.apps.pcsw.courses
+    lino.modlib.courses
 

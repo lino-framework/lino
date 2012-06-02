@@ -112,6 +112,7 @@ class SiteConfig(models.Model):
 class SiteConfigs(dd.Table):
     """
     The table used to present the :class:`SiteConfig` row in a Detail form.
+    See also :meth:`lino.Lino.get_site_config`.
     Deserves more documentation.
     """
     model = SiteConfig
@@ -165,24 +166,24 @@ class SiteConfigs(dd.Table):
 
     
     
-def get_site_config():
-    try:
-        return SiteConfig.objects.get(pk=1)
-    #~ except SiteConfig.DoesNotExist:
-    except Exception,e:
-        kw = dict(pk=1)
-        kw.update(settings.LINO.site_config_defaults)
-        logger.debug("Creating SiteConfig record (%s)",e)
-        sc = SiteConfig(**kw)
-        #~ do NOT save the instance here
-        #~ sc.save()
-        return sc
+#~ def get_site_config():
+    #~ try:
+        #~ return SiteConfig.objects.get(pk=1)
+    #~ # except SiteConfig.DoesNotExist:
+    #~ except Exception,e:
+        #~ kw = dict(pk=1)
+        #~ kw.update(settings.LINO.site_config_defaults)
+        #~ logger.debug("Creating SiteConfig record (%s)",e)
+        #~ sc = SiteConfig(**kw)
+        #~ # do NOT save the instance here
+        #~ # sc.save()
+        #~ return sc
 
-def update_site_config(**kw):
-    sc = get_site_config()
-    for k,v in kw.items():
-        setattr(sc,k,v)
-    sc.save()
+#~ def update_site_config(**kw):
+    #~ sc = get_site_config()
+    #~ for k,v in kw.items():
+        #~ setattr(sc,k,v)
+    #~ sc.save()
 
 if settings.LINO.is_installed('contenttypes'):
 
@@ -224,8 +225,7 @@ if settings.LINO.is_installed('contenttypes'):
           
       content_type = models.ForeignKey(contenttypes.ContentType,
           verbose_name=_("Model"))
-      field = models.CharField(_("Field"),
-          max_length=200)
+      field = models.CharField(_("Field"),max_length=200)
 
       help_text = dd.RichTextField(_("HelpText"),
           blank=True,null=True,format='plain')
@@ -237,7 +237,8 @@ if settings.LINO.is_installed('contenttypes'):
       def field_choices(cls,content_type):
           l = []
           if content_type is not None:
-              meta = content_type.model_class()._meta
+              model = content_type.model_class()
+              meta = model._meta
               #~ for f in meta.fields: yield f.name
               #~ for f in meta.many_to_many: yield f.name
               #~ for f in meta.virtual_fields: yield f.name
@@ -246,6 +247,9 @@ if settings.LINO.is_installed('contenttypes'):
                       l.append(f.name)
               for f in meta.many_to_many: l.append(f.name)
               for f in meta.virtual_fields: l.append(f.name)
+              for a in model._lino_default_table.get_actions():
+                  l.append(a.name)
+              l.sort()
           return l
           
       #~ def get_field_display(cls,fld):
@@ -253,7 +257,18 @@ if settings.LINO.is_installed('contenttypes'):
 
       @dd.virtualfield(models.CharField(_("Verbose name"),max_length=200))
       def verbose_name(self,request):
-          return resolve_field(unicode(self)).verbose_name
+          #~ return unicode(self)
+          m = dd.resolve_model(self.content_type.app_label + '.' + self.content_type.name)
+          de = m._lino_default_table.get_data_elem(self.field)
+          if isinstance(de,models.Field):
+              #~ return unicode(de.verbose_name)
+              return "%s (%s)" % (unicode(de.verbose_name), unicode(_("database field")))
+          if isinstance(de,dd.VirtualField):
+              return unicode(de.return_type.verbose_name)
+          if isinstance(de,actions.Action):
+              return unicode(de.label)
+          return str(de)
+          #~ return unicode(resolve_field(unicode(self)).verbose_name)
               
               
               
