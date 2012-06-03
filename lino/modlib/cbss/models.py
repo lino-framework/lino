@@ -436,7 +436,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         try:
             self.validate_request()
             #~ self.status = RequestStatus.validated
-            #~ self.save()
+            self.save()
             return ar.ui.success_response(
                 message="%s validation passed." % self)
         except Exception,e:
