@@ -1200,7 +1200,7 @@ class ManageAccessRequest(SSDNRequest,SSIN):
     ssdn_service_version = '20050930'
     
     xsd_filename = xsdpath('SSDN','OCMW_CPAS',
-        'MANAGEACCESS','MANAGEACCESSREQUEST.XSD')
+        'ManageAccess','ManageAccessRequest.xsd')
     
     class Meta:
         verbose_name = _("ManageAccess Request")
