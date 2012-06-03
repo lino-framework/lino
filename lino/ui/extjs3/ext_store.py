@@ -1054,13 +1054,15 @@ class Store:
         #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
             #~ self.report,form_values,disabled_fields,self.all_fields)
         #~ print 20110406, disabled_fields
-        changed_fields = []
+        changed_triggers = []
         for f in self.all_fields:
             #~ if f.field is None or not f.field.name in disabled_fields:
             if not f.name in disabled_fields:
                 try:
                     if f.form2obj(request,instance,form_values,is_new):
-                        changed_fields.append(f)
+                        m = getattr(instance,f.name + "_changed",None)
+                        if m is not None:
+                            changed_triggers.append(m)
                 except exceptions.ValidationError,e:
                     raise exceptions.ValidationError({f.name:e})
                 except Exception,e:
@@ -1068,11 +1070,9 @@ class Store:
                     logger.exception(e)
                     raise 
                 #~ logger.info("20120228 Store.form2obj %s -> %s", f, obj2str(instance))
-        for f in changed_fields:
-            m = getattr(instance,f.name + "_changed",None)
-            if m is not None:
-                m(request)
-                #~ m()
+        for m in changed_triggers:
+            m(request)
+            #~ m()
             
         #~ return instance
         #~ logger.info("20120603 Store.form2obj %s", instance.national_id)

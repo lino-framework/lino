@@ -818,7 +818,7 @@ The number of the ID card used to authenticate the person.""")
         self.last_name = person.last_name
         self.first_name = person.first_name
         self.birth_date = person.birth_date
-        print '20120603 fill_from_person', self.national_id
+        #~ print '20120603 fill_from_person', self.national_id
                 
         
 class IdentifyPersonRequest(SSDNRequest,SSIN):
