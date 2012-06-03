@@ -441,7 +441,7 @@ See <https://code.djangoproject.com/ticket/18213>.
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
                 count,fp.name,s)
             dblogger.warning(msg)
-            raise Exception(msg)
+            #~ raise Exception(msg)
             
         if hasattr(module,'after_load'):
             module.after_load()
