@@ -651,8 +651,14 @@ class EntriesByBudget(Entries):
     def override_column_headers(self,ar):
         d = dict()
         d.update(amount1=ar.master_instance.actor1.header)
-        d.update(amount2=ar.master_instance.actor2.header)
-        d.update(amount3=ar.master_instance.actor3.header)
+        if ar.master_instance.actor2 is None:
+            d.update(amount2='')
+        else:
+            d.update(amount2=ar.master_instance.actor2.header)
+        if ar.master_instance.actor3 is None:
+            d.update(amount3='')
+        else:
+            d.update(amount3=ar.master_instance.actor3.header)
         return d
         
         

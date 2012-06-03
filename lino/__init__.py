@@ -881,6 +881,12 @@ class Lino(object):
         self._site_config = sc
         
     def get_site_config(self):
+        """
+        Returns the one and only :class:`lino.models.SiteConfig` instance.
+        
+        If no instance exists (which happens in a virgin database),
+        we create it and set some default values from :attr:`site_config_defaults`.
+        """
         if self._site_config is None:
             from lino.models import SiteConfig
             try:
@@ -898,6 +904,9 @@ class Lino(object):
     site_config = property(get_site_config)
     
     def update_site_config(self,**kw):
+        """
+        Update and save the one and only :class:`lino.models.SiteConfig` instance.
+        """
         sc = self.site_config
         for k,v in kw.items():
             setattr(sc,k,v)
