@@ -61,7 +61,7 @@ if cbss:
             yield obj
             
             
-        Company = resolve_model('contacts.Company')
-        settings.LINO.site_config.site_company = Company.objects.get(pk=1)
-        settings.LINO.site_config.save()
+        #~ Company = resolve_model('contacts.Company')
+        #~ settings.LINO.site_config.site_company = Company.objects.get(pk=1)
+        #~ settings.LINO.site_config.save()
             

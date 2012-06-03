@@ -322,7 +322,9 @@ class CBSSRequest(mixins.AutoUser,mixins.Printable):
     class Meta:
         abstract = True
         
-    person = models.ForeignKey(settings.LINO.person_model)
+    person = models.ForeignKey(
+        settings.LINO.person_model,
+        verbose_name=_("Client"))
     
     sent = models.DateTimeField(
         verbose_name=_("Sent"),
@@ -649,12 +651,14 @@ class SSDNRequest(CBSSRequest):
         #~ au.append(E('common:MatrixID').setText(up['MatrixID']))
         #~ au.append(E('common:MatrixSubID').setText(up['MatrixSubID']))
         au = E('ssdn:AuthorizedUser')
-        au.append(E('ssdn:UserID').setText(user_params['UserID']))
+        #~ au.append(E('ssdn:UserID').setText(user_params['UserID']))
+        au.append(E('ssdn:UserID').setText(sc.ssdn_user_id))
         sc = settings.LINO.site_config
         #~ au.append(E('ssdn:Email').setText(user_params['Email']))
         au.append(E('ssdn:Email').setText(sc.site_company.email))
         #~ au.append(E('ssdn:OrgUnit').setText(user_params['OrgUnit']))
-        au.append(E('ssdn:OrgUnit').setText(sc.site_company.vat_id))
+        #~ au.append(E('ssdn:OrgUnit').setText(sc.site_company.vat_id))
+        au.append(E('ssdn:OrgUnit').setText(sc.cbss_org_unit))
         #~ au.append(E('ssdn:MatrixID').setText(user_params['MatrixID']))
         au.append(E('ssdn:MatrixID').setText(sc.sector.code))
         #~ au.append(E('ssdn:MatrixSubID').setText(user_params['MatrixSubID']))
@@ -699,16 +703,21 @@ class NewStyleRequest(CBSSRequest):
         url = self.get_wsdl_uri()
         
         #~ logger.info("Instantiate Client at %s", url)
+        sc = settings.LINO.site_config
+        #~ t = HttpAuthenticated(
+            #~ username=settings.LINO.cbss_username, 
+            #~ password=settings.LINO.cbss_password)
         t = HttpAuthenticated(
-            username=settings.LINO.cbss_username, 
-            password=settings.LINO.cbss_password)
+            username=sc.cbss_http_username, 
+            password=sc.cbss_http_password)
         client = Client(url, transport=t)
         #print client
 
         ci = client.factory.create('ns0:CustomerIdentificationType')
         #~ cbeNumber = client.factory.create('ns0:CbeNumberType')
         #~ ci.cbeNumber = settings.LINO.cbss_cbe_number
-        ci.cbeNumber = settings.LINO.site_config.site_company.vat_id
+        #~ ci.cbeNumber = settings.LINO.site_config.site_company.vat_id
+        ci.cbeNumber = sc.cbss_org_unit
         info = client.factory.create('ns0:InformationCustomerType')
         info.ticket = str(self.id)
         info.timestampSent = now
@@ -730,8 +739,8 @@ class NewStyleRequest(CBSSRequest):
         #~ # call_optional_super(CBSSRequest,cls,'setup_report',rpt)
         #~ rpt.add_action(SendAction())
         
-    def __unicode__(self):
-        return u"%s#%s" % (self.__class__.__name__,self.pk)
+    #~ def __unicode__(self):
+        #~ return u"%s#%s" % (self.__class__.__name__,self.pk)
         
     def execute_newstyle(self,client,infoCustomer):
         raise NotImplementedError()
@@ -799,7 +808,7 @@ The number of the ID card used to authenticate the person.""")
         self.person_changed(ar)
         
     def person_changed(self,ar):
-        #~ print '20120527 person_changed', obj2str(self)
+        #~ print '20120603 person_changed', obj2str(self)
         if self.person_id: 
             self.fill_from_person(self.person)
         
@@ -809,6 +818,7 @@ The number of the ID card used to authenticate the person.""")
         self.last_name = person.last_name
         self.first_name = person.first_name
         self.birth_date = person.birth_date
+        print '20120603 fill_from_person', self.national_id
                 
         
 class IdentifyPersonRequest(SSDNRequest,SSIN):
@@ -1517,41 +1527,64 @@ from lino.models import SiteConfig
 dd.inject_field(SiteConfig,
     'sector',
     models.ForeignKey(Sector,
-        blank=True,null=True))
+        blank=True,null=True,
+        help_text="""\
+The CBSS sector/subsector of the requesting organization.        
+For PCSWs this is always 17.1.
+Used in SSDN requests as text of the `MatrixID` and `MatrixSubID` 
+elements of `AuthorizedUser`. 
+Used in ManageAccess requests as default value 
+for the non-editable field `sector` 
+(which defines the choices of the `purpose` field).
+"""))
+    
+dd.inject_field(SiteConfig,
+    'cbss_org_unit',
+    models.CharField(_("Requesting organisation"),
+      max_length=50,
+      blank=True,
+      help_text="""\
+In CBSS requests, identifies the requesting organization.
+For PCSWs this is the enterprise number 
+(CBE, KBO) and should have 10 digits and no formatting characters.
+
+Used in SSDN requests as text of the `AuthorizedUser\OrgUnit` element . 
+Used in new style requests as text of the `CustomerIdentification\cbeNumber` element . 
+"""))
+dd.inject_field(SiteConfig,
+    'ssdn_user_id',
+    models.CharField(_("SSDN User Id"),
+      max_length=50,
+      blank=True,
+      help_text="""\
+Used in SSDN requests as text of the `AuthorizedUser\UserID` element.
+"""))
+dd.inject_field(SiteConfig,
+    'cbss_http_username',
+    models.CharField(_("HTTP username"),
+      max_length=50,
+      blank=True,
+      help_text="""\
+Used in the http header of new-style requests.
+"""))
+dd.inject_field(SiteConfig,
+    'cbss_http_password',
+    models.CharField(_("HTTP password"),
+      max_length=50,
+      blank=True,
+      help_text="""\
+Used in the http header of new-style requests.
+"""))
     
 
-#~ def fn(self,rr):
-    #~ return rr.renderer.quick_add_buttons(rr.spawn(
-          #~ IdentifyRequestsByPerson,
-          #~ master_instance=self))
-#~ dd.inject_field(pcsw.Person,'cbss_identify_person',
-    #~ dd.VirtualField(dd.DisplayField(IdentifyPersonRequest._meta.verbose_name_plural),fn))
-    
-#~ def fn(self,ar):
-    #~ return ar.renderer.quick_add_buttons(ar.spawn(
-          #~ ManageAccessRequestsByPerson,
-          #~ master_instance=self))
-#~ dd.inject_field(pcsw.Person,'cbss_manage_access',
-    #~ dd.VirtualField(dd.DisplayField(ManageAccessRequest._meta.verbose_name_plural),fn))
-    
-#~ def fn(self,rr):
-    #~ return rr.renderer.quick_add_buttons(rr.spawn(
-          #~ RetrieveTIGroupsRequestsByPerson,
-          #~ master_instance=self))
-#~ dd.inject_field(pcsw.Person,'cbss_retrieve_ti_groups',
-    #~ dd.VirtualField(dd.DisplayField(RetrieveTIGroupsRequest._meta.verbose_name_plural),fn))
-    
-def inject_quick_add_buttons(model,name,actor):
-    def fn(self,rr):
-        return rr.renderer.quick_add_buttons(
-          rr.spawn(actor,master_instance=self))
-    dd.inject_field(model,name,
-        dd.VirtualField(dd.DisplayField(actor.model._meta.verbose_name_plural),fn))
     
     
-inject_quick_add_buttons(pcsw.Person,'cbss_identify_person',IdentifyRequestsByPerson)
-inject_quick_add_buttons(pcsw.Person,'cbss_manage_access',ManageAccessRequestsByPerson)
-inject_quick_add_buttons(pcsw.Person,'cbss_retrieve_ti_groups',RetrieveTIGroupsRequestsByPerson)
+dd.inject_quick_add_buttons(
+    pcsw.Person,'cbss_identify_person',IdentifyRequestsByPerson)
+dd.inject_quick_add_buttons(
+    pcsw.Person,'cbss_manage_access',ManageAccessRequestsByPerson)
+dd.inject_quick_add_buttons(
+    pcsw.Person,'cbss_retrieve_ti_groups',RetrieveTIGroupsRequestsByPerson)
 
 
 MODULE_NAME = _("CBSS")
@@ -1627,6 +1660,12 @@ def site_setup(self):
     cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
     cbss.IdentifyRequestsByPerson
     """,MODULE_NAME,required_user_groups=['cbss'])
+    
+    self.modules.lino.SiteConfigs.add_detail_tab('cbss',"""
+    cbss_org_unit sector ssdn_user_id
+    cbss_http_username cbss_http_password
+    """,MODULE_NAME,required_user_groups=['cbss'])
+    
     
     
 def setup_main_menu(site,ui,user,m): pass

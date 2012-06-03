@@ -74,7 +74,7 @@ def objects():
             sect.save()
 
     # default value for SiteConfig.sector is "CPAS"
-    settings.LINO.site_config.sector = Sector.objects.get(code=17,subcode=1)
-    settings.LINO.site_config.save()
+    #~ settings.LINO.site_config.sector = Sector.objects.get(code=17,subcode=1)
+    #~ settings.LINO.site_config.save()
 
 

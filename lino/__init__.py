@@ -597,22 +597,17 @@ class Lino(object):
     If you change this setting, you also need to override :meth:`parse_datetime`.
     """
     
-    #~ bcss_soap_url = None
-    #~ """
-    #~ URL of BCSS SOAP server
-    #~ """
-    
     cbss_live_tests = False
     """
     Whether unit tests should try to really connect to the cbss.
     Some test cases of the test suite would fail with a timeout if run 
     from behind an IP address that is not registered at the :term:`CBSS`.
-    These tests are skiped by default. To activate them, 
+    These tests are skipped by default. To activate them, 
     set `cbss_live_tests` to `True` in your :xfile:`settings.py`.
     
     """
     
-    cbss_user_params = None
+    unused_cbss_user_params = None
     u"""
     User parameters for CBSS SSDN (classic) services.
     
@@ -644,11 +639,6 @@ class Lino(object):
 
     """
     
-    #~ cbss2_user_params = None
-    #~ u"""
-    #~ User parameters for CBSS new style services.
-    #~ """
-    
     cbss_environment = None
     """
     Either `None` or one of 'test', 'acpt' or 'prod'.
@@ -656,17 +646,17 @@ class Lino(object):
     Leaving this to `None` means that the cbss module is "inactive" even if installed.
     """
     
-    cbss_cbe_number = '0123456789'
+    unused_cbss_cbe_number = '0123456789'
     """
     Either `None` or a string of style '0123456789'
     Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.
     """
-    cbss_username = None
+    unused_cbss_username = None
     """
     Either `None` or a string of style 'E0123456789'
     Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.
     """
-    cbss_password = None
+    unused_cbss_password = None
     """
     Either `None` or a string of style 'p1234567890abcd1234567890abcd'
     Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.

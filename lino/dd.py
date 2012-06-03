@@ -173,3 +173,18 @@ def update_field(model,name,**kw):
         setattr(fld,k,v)
         
 
+def inject_quick_add_buttons(model,name,target):
+    """
+    Injects a virtual display field `name` into the specified `model`.
+    This field will show up to three buttons
+    `[New]` `[Show last]` `[Show all]`. 
+    `target` is the table that will run these actions.
+    It must be a slave of `model`.
+    """
+    def fn(self,rr):
+        return rr.renderer.quick_add_buttons(
+          rr.spawn(target,master_instance=self))
+    inject_field(model,name,
+        VirtualField(DisplayField(
+            target.model._meta.verbose_name_plural),fn))
+    

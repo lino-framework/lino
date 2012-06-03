@@ -1,0 +1,36 @@
+20120603
+========
+
+
+- Moved most CBSS site-wide parameters 
+  (UserID,OrgUnit,Sector, password,...) 
+  from `settings.py` to SiteConfig.
+  The SiteConfig detail has a new Tab panel "CBSS".
+
+- Beim Speichern einer Tx25 wurde die NR-Nummer des Klienten nicht 
+  automatisch ins Parameterfeld eingetragen.
+  Das war ein Bug im Framework. 
+  Lag daran, dass die `person_changed` zu früh ausgeführt wurde::
+  
+    INFO 20120603 StoreField.form2obj() person = u'193'
+    20120603 fill_from_person 680601 053-29
+    INFO 20120603 StoreField.form2obj() sent = None
+    INFO 20120603 StoreField.form2obj() status = u'0'
+    INFO 20120603 StoreField.form2obj() environment = u''
+    INFO 20120603 StoreField.form2obj() ticket = u''
+    INFO 20120603 StoreField.form2obj() request_xml = None
+    INFO 20120603 StoreField.form2obj() response_xml = None
+    INFO 20120603 StoreField.form2obj() logged_messages = None
+    INFO 20120603 StoreField.form2obj() national_id = u''
+    INFO 20120603 StoreField.form2obj() birth_date = None
+    INFO 20120603 StoreField.form2obj() sis_card_no = None
+    INFO 20120603 StoreField.form2obj() id_card_no = None
+    INFO 20120603 StoreField.form2obj() first_name = None
+    INFO 20120603 StoreField.form2obj() last_name = None
+    INFO 20120603 StoreField.form2obj() language = u'de'
+    INFO 20120603 StoreField.form2obj() history = u'off'
+    INFO 20120603 StoreField.form2obj() user = u'1'
+    INFO 20120603 StoreField.form2obj() result = None  
+
+  Also `Store.form2obj` ruft jetzt die eventuellen xxx_changed-Methoden erst auf, 
+  nachdem alle Felder des Formulars eingelesen wurden.

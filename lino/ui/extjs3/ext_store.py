@@ -163,6 +163,7 @@ class StoreField(object):
         - sales.Invoice.number may be blank        
         """
         v = self.extract_form_data(post_data)
+        #~ logger.info("20120603 StoreField.form2obj() %s = %r",self.name,v)
         if v is None:
             # means that the field wasn't part of the submitted form. don't touch it.
             return
@@ -182,17 +183,14 @@ class StoreField(object):
             raise exceptions.ValidationError({
               self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
               
-        self.set_value_in_object(request,instance,v)
-        return
+        return self.set_value_in_object(request,instance,v)
         
     def set_value_in_object(self,request,instance,v):
         old_value = self.value_from_object(instance,request)
         #~ old_value = getattr(instance,self.field.attname)
         if old_value != v:
             setattr(instance,self.name,v)
-            m = getattr(instance,self.name + "_changed",None)
-            if m is not None:
-                m(old_value)
+            return True
 
 #~ class RemoteStoreField(StoreField):
     #~ def __init__(self,store,rf):
@@ -1056,11 +1054,13 @@ class Store:
         #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
             #~ self.report,form_values,disabled_fields,self.all_fields)
         #~ print 20110406, disabled_fields
+        changed_fields = []
         for f in self.all_fields:
             #~ if f.field is None or not f.field.name in disabled_fields:
             if not f.name in disabled_fields:
                 try:
-                    f.form2obj(request,instance,form_values,is_new)
+                    if f.form2obj(request,instance,form_values,is_new):
+                        changed_fields.append(f)
                 except exceptions.ValidationError,e:
                     raise exceptions.ValidationError({f.name:e})
                 except Exception,e:
@@ -1068,7 +1068,14 @@ class Store:
                     logger.exception(e)
                     raise 
                 #~ logger.info("20120228 Store.form2obj %s -> %s", f, obj2str(instance))
+        for f in changed_fields:
+            m = getattr(instance,f.name + "_changed",None)
+            if m is not None:
+                m(request)
+                #~ m()
+            
         #~ return instance
+        #~ logger.info("20120603 Store.form2obj %s", instance.national_id)
             
     def column_names(self):
         l = []

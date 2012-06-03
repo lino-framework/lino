@@ -2065,8 +2065,7 @@ def site_setup(site):
     """
     
     site.modules.lino.SiteConfigs.set_detail("""
-    site_company default_build_method
-    next_partner_id sector job_office 
+    site_company:20 default_build_method:20 next_partner_id:20 job_office:20
     propgroup_skills propgroup_softskills propgroup_obstacles
     residence_permit_upload_type work_permit_upload_type driving_licence_upload_type
     # lino.ModelsBySite
