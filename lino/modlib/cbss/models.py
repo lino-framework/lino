@@ -643,7 +643,8 @@ class SSDNRequest(CBSSRequest):
         the all SSDN requests).
         """
         #~ up  = settings.LINO.ssdn_user_params
-        user_params = settings.LINO.cbss_user_params
+        #~ user_params = settings.LINO.cbss_user_params
+        sc = settings.LINO.site_config
         #~ au = E('common:AuthorizedUser',ns=NSCOMMON)
         #~ au.append(E('common:UserID').setText(up['UserID']))
         #~ au.append(E('common:Email').setText(up['Email']))
@@ -653,7 +654,6 @@ class SSDNRequest(CBSSRequest):
         au = E('ssdn:AuthorizedUser')
         #~ au.append(E('ssdn:UserID').setText(user_params['UserID']))
         au.append(E('ssdn:UserID').setText(sc.ssdn_user_id))
-        sc = settings.LINO.site_config
         #~ au.append(E('ssdn:Email').setText(user_params['Email']))
         au.append(E('ssdn:Email').setText(sc.site_company.email))
         #~ au.append(E('ssdn:OrgUnit').setText(user_params['OrgUnit']))
