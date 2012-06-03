@@ -61,4 +61,10 @@ Problem is that there are a few contracts (isip and jobs)
 that don't pass the new validation rules and cause 
 a ValidatonError "Contracts ends before it started."
 These need to be adapted by the end users.
+Best solution seems to 
 Solution is to not import them but to log a warning message.
+
+
+on_site_config_saved
+--------------------
+

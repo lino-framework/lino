@@ -441,6 +441,11 @@ See <https://code.djangoproject.com/ticket/18213>.
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
                 count,fp.name,s)
             dblogger.warning(msg)
+            """
+            Don't raise an exception. The unsaved instances got lost and 
+            the loaddata should be done again, but meanwhile the database
+            is not necessarily invalid and may be used for further testing.
+            """
             #~ raise Exception(msg)
             
         if hasattr(module,'after_load'):

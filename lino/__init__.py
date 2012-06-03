@@ -874,6 +874,12 @@ class Lino(object):
     #~ def configure(self,sc):
         #~ self.config = sc
         
+    def on_site_config_saved(self,sc):
+        """
+        Called by SiteConfig.save()
+        """
+        self._site_config = sc
+        
     def get_site_config(self):
         if self._site_config is None:
             from lino.models import SiteConfig

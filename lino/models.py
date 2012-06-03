@@ -87,10 +87,9 @@ class SiteConfig(models.Model):
       default='appyodt',
       choices=printable.build_method_choices(),blank=True)
         
-    #~ def save(self,*args,**kw):
-        #~ settings.LINO.configure(self)
-        #~ r = super(SiteConfig,self).save(*args,**kw)
-        #~ return r
+    def save(self,*args,**kw):
+        super(SiteConfig,self).save(*args,**kw)
+        settings.LINO.on_site_config_saved(self)
    
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))
