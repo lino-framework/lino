@@ -11,7 +11,21 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
-"""
+
+u"""
+
+Die fiesteste war eine Fehlermeldung "A validation error occurred while 
+parsing the request header. Please check your message format and content."
+Die kam durch ein leeres Feld `lino.SiteConfig.site_company.email`.
+Aber bevor ich das rausbekommen hatte, habe 
+ich mal schnell eine Aktion `validate` geschrieben.
+Aber die hing mir dann den Server auf, 
+weil sich :term:`lxml` dann mit :term:`mod_wsgi` in die Haare kriegt.
+Also sorry: lokales Validieren wird wohl vom Web-Client aus nicht so 
+schnell möglich sein. 
+Ich könnte einen management command schreiben, 
+den man in so einem Fall von einer Shell aus aufrufen könnte. 
+Gedacht, getan
 
 """
 
@@ -22,7 +36,7 @@ from lino import dd
 
 class Command(BaseCommand):
     args = '<model> <id>'
-    help = 'Locally validates an existing CBSS request.'
+    help = 'Validate an existing SSDN request against the xsd files.'
 
     def handle(self, *args, **options):
         model = dd.resolve_model('cbss.'+args[0])

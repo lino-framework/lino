@@ -1583,7 +1583,7 @@ Used in SSDN requests as text of the `AuthorizedUser\UserID` element.
 """))
 dd.inject_field(SiteConfig,
     'ssdn_email',
-    models.EmailField(_("Email address"),
+    models.EmailField(_("SSDN email address"),
       blank=True,
       help_text="""\
 Used in SSDN requests as text of the `AuthorizedUser\Email` element.
@@ -1691,7 +1691,7 @@ def site_setup(self):
     """,MODULE_NAME,required_user_groups=['cbss'])
     
     self.modules.lino.SiteConfigs.add_detail_tab('cbss',"""
-    cbss_org_unit sector ssdn_user_id
+    cbss_org_unit sector ssdn_user_id ssdn_email
     cbss_http_username cbss_http_password
     """,MODULE_NAME,required_user_groups=['cbss'])
     

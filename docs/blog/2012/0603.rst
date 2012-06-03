@@ -106,13 +106,15 @@ Kleinigkeiten zum Vorschein. Die erste war leicht::
 Die fiesteste war eine Fehlermeldung "A validation error occurred while 
 parsing the request header. Please check your message format and content."
 Die kam durch ein leeres Feld `lino.SiteConfig.site_company.email`.
-Da habe ich dann mal schnell eine Aktion `validate` geschrieben.
-Aber die hing mir dann den Server auf, weil sich :term:`lxml` dann mit 
-:term:`mod_wsgi` in die Haare kriegt.
+Aber bevor ich das rausbekommen hatte, habe 
+ich mal schnell eine Aktion `validate` geschrieben.
+Aber die hing mir dann den Server auf, 
+weil sich :term:`lxml` dann mit :term:`mod_wsgi` in die Haare kriegt.
 Also sorry: lokales Validieren wird wohl vom Web-Client aus nicht so 
 schnell möglich sein. 
 Ich könnte einen management command schreiben, 
-den man in so einem Fall von einer Shell aus aufrufen könnte. Gedacht, getan::
+den man in so einem Fall von einer Shell aus aufrufen könnte. 
+Gedacht, getan::
 
   T:\data\luc\lino_local\dsbe>python manage.py cbss_validate_request IdentifyPersonRequest 1
   Traceback (most recent call last):
@@ -134,8 +136,9 @@ den man in so einem Fall von einer Shell aus aufrufen könnte. Gedacht, getan::
       au.append(E('ssdn:Email').setText(sc.site_company.email))
   AttributeError: 'NoneType' object has no attribute 'email'  
 
-Schön. Stimmt, in meinem lokalen Test mit Demo-Daten 
+Schön. Stimmt: in meinem lokalen Test mit Demo-Daten 
 ist ja sogar `lino.SiteConfig.site_company` momentan leer.
+
 Daraufhin habe ich beschlossen, dass ich doch einen weiteren 
 Konfigurationsparameter `cbss_email` in der SiteConfig mache.
 
