@@ -1,6 +1,11 @@
 :mod:`lino.modlib.debts`
 ========================
 
+.. automodule:: lino.modlib.debts
+    :members:
+    :show-inheritance:
+
+
 Models
 ------
 

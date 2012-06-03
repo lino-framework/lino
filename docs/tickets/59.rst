@@ -1,19 +1,29 @@
 #59 : split :mod:`lino.apps.pcsw` to a independant project 
 ==========================================================
 
-Some day I'll move the pcsw-specific modules out of modlib::
+The following modules are the ones that make up "Lino for PCSWs" 
+and should one day be 
+maintained by some organization other than me:
 
-  lino.modlib.courses : lino.apps.pcsw.courses
-  lino.modlib.newcomers --> lino.apps.pcsw.newcomers
-  lino.modlib.jobs --> lino.apps.pcsw.jobs 
-  lino.modlib.isip --> lino.apps.pcsw.isip 
-  lino.modlib.cbss --> lino.apps.pcsw.cbss
-  lino.modlib.debts --> lino.apps.pcsw.debts
-  lino.modlib.households --> lino.apps.pcsw.households
-  
-  
-There might also be a new module `lino.apps.pcsw.contacts`,
-split out of `lino.apps.pcsw`.
- 
-Later I'll split `lino.apps.pcsw` out to a separate googlecode 
-project "lino-pcsw".
+
+- :mod:`lino.modlib.courses`
+- :mod:`lino.modlib.newcomers`
+- :mod:`lino.modlib.jobs`
+- :mod:`lino.modlib.isip`
+- :mod:`lino.modlib.cbss`
+- :mod:`lino.modlib.debts`
+- :mod:`lino.modlib.households`
+- :mod:`lino.apps.pcsw`
+
+
+Some day I'll split them out of the 
+main Lino repository to a separate googlecode 
+project.
+Biggest problem is the name of that new Google project.
+
+- "lino-pcsw" is conceptually correct, but difficult to 
+  pronounce and not very beautiful.
+- "lino-cpas" is more beautiful, but discriminating against flemish PCSWs.
+- a completely new name ("Sara" has been a candidate) 
+  seems not possible since users are already used to "Lino".
+

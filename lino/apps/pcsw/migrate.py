@@ -1131,6 +1131,8 @@ def migrate_from_1_4_3(globals_dict):
           newcomer_quota=newcomer_quota,**kw)
     globals_dict.update(create_users_user=create_users_user)
     
+    from django.core.exceptions import ValidationError
+    
     isip_Contract = resolve_model("isip.Contract")
     def create_isip_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person):
         #~ - isip.Contract [u'Contracts ends before it started.'] (3 object(s), e.g. Contract(id=62,user=200085,person=21936,langua
@@ -1153,15 +1155,25 @@ def migrate_from_1_4_3(globals_dict):
         if id == 325: 
             applies_until = None
             #~ applies_until = None
-        return isip_Contract(pk=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)
+        obj = isip_Contract(pk=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)
     globals_dict.update(create_isip_contract=create_isip_contract)
+        try:
+            obj.full_clean()
+            return obj
+        except ValidationError,e:
+            dblogger.warning("Ignored %s : %s",obj,e)
     
     jobs_Contract = resolve_model("jobs.Contract")
     def create_jobs_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, job_id, duration, regime_id, schedule_id, hourly_rate, refund_rate, reference_person, responsibilities, remark):
         if id == 153: # VSE#62 : [u'Contracts ends before it started.
             applies_until = applies_from # was 31.08.-01.09.2011, now 01.09.-01.09.2011
             #~ applies_until = None
-        return jobs_Contract(id=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,job_id=job_id,duration=duration,regime_id=regime_id,schedule_id=schedule_id,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)
+        obj = jobs_Contract(id=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,job_id=job_id,duration=duration,regime_id=regime_id,schedule_id=schedule_id,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)
+        try:
+            obj.full_clean()
+            return obj
+        except ValidationError,e:
+            dblogger.warning("Ignored %s : %s",obj,e)
     globals_dict.update(create_jobs_contract=create_jobs_contract)
     
     bcss_IdentifyPersonRequest = resolve_model("cbss.IdentifyPersonRequest")

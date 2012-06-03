@@ -29,7 +29,7 @@ ENCODING = 'latin1' # the encoding used by the mdb file
 #~ ENCODING = 'utf8' 
 
 GERMAN = []
-GERMAN.append((17,1,u'ÖSHZ',u'Öffentliches Sozialhilfezentrum'))
+GERMAN.append((17,1,u'ÖSHZ',u'Öffentliche Sozialhilfezentren'))
 
 
 def objects():
