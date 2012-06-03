@@ -430,21 +430,20 @@ If the request failed with a local exception, then it contains a traceback.""")
 
         self.save()
         return retval
-        
-    @dd.action(_("Validate"))
-    def validate(self,ar):
-        try:
-            self.validate_request()
-            #~ self.status = RequestStatus.validated
-            self.save()
-            return ar.ui.success_response(
-                message="%s validation passed." % self)
-        except Exception,e:
-            #~ self.status = RequestStatus.failed
-            #~ self.response_xml = traceback.format_exc(e)
-            self.logmsg(traceback.format_exc(e))
-            self.save()
-            return ar.ui.error_response(e)
+
+
+    
+    #~ @dd.action(_("Validate"))
+    #~ def validate(self,ar):
+        #~ try:
+            #~ self.validate_request()
+            #~ self.save()
+            #~ return ar.ui.success_response(
+                #~ message="%s validation passed." % self)
+        #~ except Exception,e:
+            #~ self.logmsg(traceback.format_exc(e))
+            #~ self.save()
+            #~ return ar.ui.error_response(e)
           
         
           
@@ -535,7 +534,8 @@ class SSDNRequest(CBSSRequest):
         #~ if not schema.validate(doc):
             #~ print xml
         schema.assertValid(doc)
-        self.logmsg("Validated %s against %s", xml,xsd_filename)
+        #~ self.logmsg("Validated %s against %s", xml,xsd_filename)
+        self.logmsg("Validated %s against %s", self,xsd_filename)
       
     def validate_wrapped(self,srvreq):
         self.validate_against_xsd(srvreq,xsdpath('SSDN','Service','SSDNRequest.xsd'))
@@ -674,7 +674,10 @@ class SSDNRequest(CBSSRequest):
         #~ au.append(E('ssdn:UserID').setText(user_params['UserID']))
         au.append(E('ssdn:UserID').setText(sc.ssdn_user_id))
         #~ au.append(E('ssdn:Email').setText(user_params['Email']))
-        au.append(E('ssdn:Email').setText(sc.site_company.email))
+        #~ if not sc.site_company:
+            #~ raise Exception("")
+        #~ au.append(E('ssdn:Email').setText(sc.site_company.email))
+        au.append(E('ssdn:Email').setText(sc.ssdn_email))
         #~ au.append(E('ssdn:OrgUnit').setText(user_params['OrgUnit']))
         #~ au.append(E('ssdn:OrgUnit').setText(sc.site_company.vat_id))
         au.append(E('ssdn:OrgUnit').setText(sc.cbss_org_unit))
@@ -1577,6 +1580,13 @@ dd.inject_field(SiteConfig,
       blank=True,
       help_text="""\
 Used in SSDN requests as text of the `AuthorizedUser\UserID` element.
+"""))
+dd.inject_field(SiteConfig,
+    'ssdn_email',
+    models.EmailField(_("Email address"),
+      blank=True,
+      help_text="""\
+Used in SSDN requests as text of the `AuthorizedUser\Email` element.
 """))
 dd.inject_field(SiteConfig,
     'cbss_http_username',

@@ -83,17 +83,16 @@ Oops, :mod:`lino.modlib.debts`
 didn't yet handle the case of a budget without actors 
 or with only one actor.
 But both cases make sense and are now be possible.
-TODO: Default.odt needs still some work.
+
+TODO: Should Default.odt print more information 
+about the partner (or the single actor)?
 
 
+Live tests CBSS
+---------------
 
-        sc = settings.LINO.site_config
-
-
-local variable 'sc' referenced before assignment
-------------------------------------------------
-
-::
+Bei einer Runde von live-Tests kamen noch eine ganze Serie von 
+Kleinigkeiten zum Vorschein. Die erste war leicht::
 
   [2012-06-03 16:18:52.532798] Traceback (most recent call last):
     File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 422, in execute_request
@@ -104,5 +103,39 @@ local variable 'sc' referenced before assignment
       au.append(E('ssdn:UserID').setText(sc.ssdn_user_id))
   UnboundLocalError: local variable 'sc' referenced before assignment
 
+Die fiesteste war eine Fehlermeldung "A validation error occurred while 
+parsing the request header. Please check your message format and content."
+Die kam durch ein leeres Feld `lino.SiteConfig.site_company.email`.
+Da habe ich dann mal schnell eine Aktion `validate` geschrieben.
+Aber die hing mir dann den Server auf, weil sich :term:`lxml` dann mit 
+:term:`mod_wsgi` in die Haare kriegt.
+Also sorry: lokales Validieren wird wohl vom Web-Client aus nicht so 
+schnell möglich sein. 
+Ich könnte einen management command schreiben, 
+den man in so einem Fall von einer Shell aus aufrufen könnte. Gedacht, getan::
 
+  T:\data\luc\lino_local\dsbe>python manage.py cbss_validate_request IdentifyPersonRequest 1
+  Traceback (most recent call last):
+    File "manage.py", line 12, in <module>
+      execute_manager(settings)
+    File "l:\snapshots\django\django\core\management\__init__.py", line 462, in execute_manager
+      utility.execute()
+    File "l:\snapshots\django\django\core\management\__init__.py", line 385, in execute
+      self.fetch_command(subcommand).run_from_argv(self.argv)
+    File "l:\snapshots\django\django\core\management\base.py", line 195, in run_from_argv
+      self.execute(*args, **options.__dict__)
+    File "l:\snapshots\django\django\core\management\base.py", line 231, in execute
+      output = self.handle(*args, **options)
+    File "t:\hgwork\lino\lino\modlib\cbss\management\commands\cbss_validate_request.py", line 31, in handle
+      req.validate_request()
+    File "t:\hgwork\lino\lino\modlib\cbss\models.py", line 556, in validate_request
+      wrapped_srvreq = self.wrap_ssdn_request(srvreq,datetime.datetime.now())
+    File "t:\hgwork\lino\lino\modlib\cbss\models.py", line 676, in wrap_ssdn_request
+      au.append(E('ssdn:Email').setText(sc.site_company.email))
+  AttributeError: 'NoneType' object has no attribute 'email'  
+
+Schön. Stimmt, in meinem lokalen Test mit Demo-Daten 
+ist ja sogar `lino.SiteConfig.site_company` momentan leer.
+Daraufhin habe ich beschlossen, dass ich doch einen weiteren 
+Konfigurationsparameter `cbss_email` in der SiteConfig mache.
 
