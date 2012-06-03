@@ -1,6 +1,9 @@
 20120603
 ========
 
+CBSS connection
+---------------
+
 
 - Moved most CBSS site-wide parameters 
   (UserID,OrgUnit,Sector, password,...) 
@@ -34,3 +37,18 @@
 
   Also `Store.form2obj` ruft jetzt die eventuellen xxx_changed-Methoden erst auf, 
   nachdem alle Felder des Formulars eingelesen wurden.
+  
+Schuldnerberatung
+-----------------
+
+Die Verteilung au marc-le-franc
+(:class:`DistByBudget <lino.modlib.debts.models.DistByBudget>`)
+fehlte noch im Ausdruck (d.h. in der Default.odt).
+
+Auch hatte diese Tabelle am Bildschirm den falschen Titel.
+
+Kolonnentitel von
+:class:`BudgetSummary <lino.modlib.debts.models.BudgetSummary>`
+fehlten (eigentlich dachte ich hier, gar keine Titel zu drucken, 
+aber das ist noch nicht möglich.
+

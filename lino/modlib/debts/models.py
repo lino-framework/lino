@@ -381,7 +381,13 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
         """
         t = entries_table_for_group(group)
         return ar.spawn(t,master_instance=self,account__group=group,**kw)
-
+        
+    def BudgetSummary(self,ar):
+        return ar.spawn(BudgetSummary,master_instance=self)
+        
+    def DistByBudget(self,ar):
+        return ar.spawn(DistByBudget,master_instance=self)
+        
 
     @dd.action(_("Duplicate"))
     def duplicate_row(self,ar):
@@ -433,7 +439,7 @@ class BudgetDetail(dd.DetailLayout):
     
     summary_tab = """
     BudgetSummary
-    DistEntriesByBudget
+    DistByBudget
     """
     
     #~ ExpensesSummaryByBudget IncomesSummaryByBudget 
@@ -587,14 +593,18 @@ class Entry(SequencedBudgetComponent):
     def summary_description(row,ar):
         #~ chunks = [row.account]
         if row.description:
-            return row.description
+            desc = row.description
         #~ if row.partner:
             #~ chunks.append(row.partner)
             #~ return "%s/%s" join_words(unicode(row.account),unicode(row.partner),row.name)
             #~ return '/'.join([unicode(x) for x in words if x])
         #~ return join_words(unicode(row.account),row.name)
-        parts = [row.remark,row.partner,row.account]
-        return ' / '.join([unicode(x) for x in parts if x])
+        else:
+            parts = [row.remark,row.partner,row.account]
+            desc = ' / '.join([unicode(x) for x in parts if x])
+        if row.todo:
+            desc += " [%s]" % row.todo
+        return desc
           
           
     def account_changed(self,ar):
@@ -698,6 +708,9 @@ class EntriesSummaryByBudget(EntriesByBudget,EntriesByType):
     
     
 class BudgetSummary(dd.VirtualTable):
+    """
+    A virtual table showing a list of summary numbers for this budget.
+    """
     required_user_groups = ['debts']
     master = Budget
     column_names = "desc amount"
@@ -717,20 +730,30 @@ class BudgetSummary(dd.VirtualTable):
         #~ yield [u"Total Kredite / Schulden", budget.sum('amount','L')]
         #~ u"Restbetrag für Kredite und Zahlungsrückstände"
     
-    @dd.displayfield()
+    @dd.displayfield(_("Description"))
     def desc(self,row,ar):
         return row[0]
         
-    @dd.virtualfield(dd.PriceField())
+    @dd.virtualfield(dd.PriceField(_("Amount")))
     def amount(self,row,ar):
         return row[1]
         
-class DistEntriesByBudget(LiabilitiesByBudget):
+
+    
+#~ class DistByBudget(LiabilitiesByBudget):
+class DistByBudget(EntriesByBudget):
+    u"""
+    Répartition au marc-le-franc.
+    A table that distributes the monthly available amount
+    proportionally among the debtors.
+    
+    """
     #~ master = Budget
     #~ model = Entry
     column_names = "summary_description total dist_perc dist_amount"
     filter = models.Q(dist=True)
-    title = _("Debts distribution")
+    label = _("Debts distribution")
+    known_values = dict(account_type=AccountType.liability)
     
     @classmethod
     def get_data_rows(self,ar):
