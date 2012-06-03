@@ -431,6 +431,25 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.save()
         return retval
         
+    @dd.action(_("Validate"))
+    def validate(self,ar):
+        try:
+            self.validate_request()
+            #~ self.status = RequestStatus.validated
+            #~ self.save()
+            return ar.ui.success_response(
+                message="%s validation passed." % self)
+        except Exception,e:
+            #~ self.status = RequestStatus.failed
+            #~ self.response_xml = traceback.format_exc(e)
+            self.logmsg(traceback.format_exc(e))
+            self.save()
+            return ar.ui.error_response(e)
+          
+        
+          
+        
+        
             
     def validate_request(self):
         pass

@@ -80,6 +80,29 @@ Budgets without actors
 ----------------------
 
 Oops, :mod:`lino.modlib.debts` 
-doesn't yet handle the case of a budget without actors 
+didn't yet handle the case of a budget without actors 
 or with only one actor.
-But both cases make sense and should be possible.
+But both cases make sense and are now be possible.
+TODO: Default.odt needs still some work.
+
+
+
+        sc = settings.LINO.site_config
+
+
+local variable 'sc' referenced before assignment
+------------------------------------------------
+
+::
+
+  [2012-06-03 16:18:52.532798] Traceback (most recent call last):
+    File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 422, in execute_request
+      retval = self.execute_request_(now,simulate_response)
+    File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 548, in execute_request_
+      wrapped_srvreq = self.wrap_ssdn_request(srvreq,now)
+    File "/usr/local/django/test_dsbe/using/lino/lino/modlib/cbss/models.py", line 655, in wrap_ssdn_request
+      au.append(E('ssdn:UserID').setText(sc.ssdn_user_id))
+  UnboundLocalError: local variable 'sc' referenced before assignment
+
+
+
