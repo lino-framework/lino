@@ -115,16 +115,6 @@ def objects():
     yield Role(**kw)
     
     yield Type(**babel_values('name',
-          de=u"Faktischer Haushalt",
-          fr=u"Ménage de fait",
-          en=u"Factual household",
-          ))
-    yield Type(**babel_values('name',
-          de=u"Legale Wohngemeinschaft",
-          fr=u"Cohabitation légale",
-          en=u"Legal cohabitation",
-          ))
-    yield Type(**babel_values('name',
           de=u"Ehepaar",
           fr=u"Couple marié",
           en=u"Married couple",
@@ -133,4 +123,14 @@ def objects():
           de=u"Familie",
           fr=u"Famille",
           en=u"Family",
+          ))
+    yield Type(**babel_values('name',
+          de=u"Faktischer Haushalt",
+          fr=u"Ménage de fait",
+          en=u"Factual household",
+          ))
+    yield Type(**babel_values('name',
+          de=u"Legale Wohngemeinschaft",
+          fr=u"Cohabitation légale",
+          en=u"Legal cohabitation",
           ))

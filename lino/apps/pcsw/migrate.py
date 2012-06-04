@@ -1043,6 +1043,7 @@ def migrate_from_1_4_3(globals_dict):
     - convert Person.civil_state to choicelist CivilState
     - new tables cbss.Purpose and cbss.Sector
     - add default data from library fixtures (debts, households, purposes)
+    - convert Companies with prefix == 'Eheleute' to a Household
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child
@@ -1182,6 +1183,16 @@ def migrate_from_1_4_3(globals_dict):
         civil_state = CivilState.old2new(civil_state)
         return create_child(contacts_Contact,contact_ptr_id,contacts_Person,birth_date=birth_date,first_name=first_name,last_name=last_name,title=title,gender=gender,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,remarks2=remarks2,gesdos_id=gesdos_id,is_cpas=is_cpas,is_senior=is_senior,group_id=group_id,coached_from=coached_from,coached_until=coached_until,coach1_id=coach1_id,coach2_id=coach2_id,birth_place=birth_place,birth_country_id=birth_country_id,civil_state=civil_state,national_id=national_id,health_insurance_id=health_insurance_id,pharmacy_id=pharmacy_id,nationality_id=nationality_id,card_number=card_number,card_valid_from=card_valid_from,card_valid_until=card_valid_until,card_type=card_type,card_issuer=card_issuer,noble_condition=noble_condition,residence_type=residence_type,in_belgium_since=in_belgium_since,unemployed_since=unemployed_since,needs_residence_permit=needs_residence_permit,needs_work_permit=needs_work_permit,work_permit_suspended_until=work_permit_suspended_until,aid_type_id=aid_type_id,income_ag=income_ag,income_wg=income_wg,income_kg=income_kg,income_rente=income_rente,income_misc=income_misc,is_seeking=is_seeking,unavailable_until=unavailable_until,unavailable_why=unavailable_why,obstacles=obstacles,skills=skills,job_agents=job_agents,job_office_contact_id=job_office_contact_id,broker_id=broker_id,faculty_id=faculty_id)    
     globals_dict.update(create_contacts_person=create_contacts_person)
+    
+    contacts_Company = resolve_model("contacts.Company")
+    households_Household = resolve_model("households.Household")
+    households_Type = resolve_model("households.Type")
+    def create_contacts_company(contact_ptr_id, prefix, vat_id, type_id, is_active, newcomer, is_deprecated, activity_id, bank_account1, bank_account2, hourly_rate):
+        if prefix == 'Eheleute' and vat_id.strip() == '':
+            type = households_Type.objects.get(pk=1)
+            return create_child(contacts_Contact,contact_ptr_id,households_Household,type=type,type_id=type_id,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,hourly_rate=hourly_rate)    
+        return create_child(contacts_Contact,contact_ptr_id,contacts_Company,prefix=prefix,vat_id=vat_id,type_id=type_id,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,hourly_rate=hourly_rate)
+    globals_dict.update(create_contacts_company=create_contacts_company)
     
     objects = globals_dict['objects']
     def new_objects():
