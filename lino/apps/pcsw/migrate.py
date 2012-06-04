@@ -1188,7 +1188,7 @@ def migrate_from_1_4_3(globals_dict):
     households_Household = resolve_model("households.Household")
     households_Type = resolve_model("households.Type")
     def create_contacts_company(contact_ptr_id, prefix, vat_id, type_id, is_active, newcomer, is_deprecated, activity_id, bank_account1, bank_account2, hourly_rate):
-        if prefix == 'Eheleute' and vat_id == 'BE-0999.999.999':
+        if prefix == 'Eheleute' and vat_id.ends_with('.999'):
             type = households_Type.objects.get(pk=1)
             return create_child(contacts_Contact,contact_ptr_id,households_Household,type=type,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2)    
         return create_child(contacts_Contact,contact_ptr_id,contacts_Company,prefix=prefix,vat_id=vat_id,type_id=type_id,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,hourly_rate=hourly_rate)

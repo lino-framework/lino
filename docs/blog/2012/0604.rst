@@ -19,3 +19,9 @@ Changes in :func:`lino.apps.pcsw.migrate.migrate_from_1_4_3`:
   to a Household.
 - no longer repair isip.Contracts and jobs.Contracts because users have 
   been told to  do this themselves in the original data.
+  
+I noted that a households.Household extended contacts.Partner. 
+But we'll probably need also the fields 
+bank_account1, bank_account2, activity, is_deprecated... which are in 
+`pcsw.CpasPartner`.So we now inherit from this class. 
+Which means that the module now explicitly depends on lino.apps.pscw.
