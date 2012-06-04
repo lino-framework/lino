@@ -157,7 +157,7 @@ class HouseholdDetail(dd.DetailLayout):
 
 
               
-class Households(contacts.Partners):
+class Households(pcsw.Partners):
     model = Household
     order_by = ["name"]
     detail_layout = HouseholdDetail()

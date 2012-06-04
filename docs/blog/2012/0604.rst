@@ -24,4 +24,7 @@ I noted that a households.Household extended contacts.Partner.
 But we'll probably need also the fields 
 bank_account1, bank_account2, activity, is_deprecated... which are in 
 `pcsw.CpasPartner`.So we now inherit from this class. 
+Also the table (households.Households) must inherit pcsw.Partners in 
+order to disable imported data.
 Which means that the module now explicitly depends on lino.apps.pscw.
+
