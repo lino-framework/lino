@@ -56,10 +56,10 @@ class Types(dd.Table):
     """
 
 
-from lino.apps.pcsw.models import CpasPartner
+from lino.apps.pcsw import models as pcsw
 #~ pcsw = dd.resolve_app('pcsw')
 #~ Partner = dd.resolve_model('contacts.Partner')
-class Household(contacts.Partner,CpasPartner):
+class Household(contacts.Partner,pcsw.CpasPartner):
     """
     A Household is a Partner that represents several Persons living together.
     list of :class:`members <Member>`.
@@ -145,7 +145,7 @@ class HouseholdDetail(dd.DetailLayout):
     bottom_box = "remarks MembersByHousehold"
 
     intro_box = """
-    type prefix name language:10 id 
+    type name language:10 id 
     """
 
     main = """
