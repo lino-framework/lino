@@ -753,7 +753,8 @@ class PartnerDetail(contacts.PartnerDetail):
 
 class Partners(contacts.Partners):
     """
-    Base class for Companies and Persons tables. 
+    Base class for Companies and Persons tables,
+    *and* for households.Households.
     Manages disabled_fields using a list of `imported_fields` 
     defined by subclasses.
     """
@@ -778,7 +779,7 @@ class Partners(contacts.Partners):
         
     @classmethod
     def do_setup(self):
-        super(contacts.Partners,self).do_setup()
+        super(Partners,self).do_setup()
         #~ self.imported_fields = dd.fields_list(contacts.Partner,
         self.imported_fields = dd.fields_list(self.model,
           '''name remarks region zip_code city country 
@@ -787,8 +788,6 @@ class Partners(contacts.Partners):
           language 
           phone fax email url
           is_person is_company
-          bank_account1 bank_account2 activity 
-          is_active newcomer is_deprecated 
           ''')
         
 

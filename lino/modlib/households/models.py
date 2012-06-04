@@ -20,6 +20,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 #~ from django.utils.translation import ugettext
 
 from django import forms
@@ -38,6 +39,7 @@ from lino.utils import babel
 
 from lino.utils import mti
 from lino.modlib.contacts import models as contacts
+from lino.apps.pcsw import models as pcsw
 
 class Type(babel.BabelNamed):
     """
@@ -56,10 +58,9 @@ class Types(dd.Table):
     """
 
 
-from lino.apps.pcsw import models as pcsw
 #~ pcsw = dd.resolve_app('pcsw')
 #~ Partner = dd.resolve_model('contacts.Partner')
-class Household(contacts.Partner,pcsw.CpasPartner):
+class Household(pcsw.CpasPartner,contacts.Partner):
     """
     A Household is a Partner that represents several Persons living together.
     list of :class:`members <Member>`.
@@ -162,6 +163,21 @@ class Households(pcsw.Partners):
     order_by = ["name"]
     detail_layout = HouseholdDetail()
     
+    @classmethod
+    def do_setup(self):
+        super(Households,self).do_setup()
+        self.imported_fields = dd.fields_list(self.model,
+          '''name remarks region zip_code city country 
+          street_prefix street street_no street_box 
+          addr2
+          language 
+          phone fax email url
+          is_person is_company
+          bank_account1 bank_account2 activity 
+          is_active newcomer is_deprecated 
+          ''')
+    
+    
 class HouseholdsByType(Households):
     #~ label = _("Households")
     master_key = 'type'
@@ -170,7 +186,6 @@ class HouseholdsByType(Households):
     
     
 
-from django.utils.translation import string_concat
 
 
 # class ContactType(babel.BabelNamed):
