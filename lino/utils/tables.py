@@ -364,9 +364,13 @@ class TableRequest(actions.ActionRequest):
             #~ print 20111223, self.known_values
         bp = kw.setdefault('base_params',{})
         if self.master_instance is not None:
-            bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
-            mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
-            bp[ext_requests.URL_PARAM_MASTER_TYPE] = mt
+            if self.master is not None:
+                bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
+                mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
+                bp[ext_requests.URL_PARAM_MASTER_TYPE] = mt
+            else:
+                bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance
+                
         return kw
         
         
@@ -577,7 +581,7 @@ class AbstractTable(actors.Actor):
     
     #~ use_layouts = True
     
-    button_label = None
+    #~ button_label = None
     
     slave_grid_format = 'grid'
     """
@@ -689,8 +693,8 @@ class AbstractTable(actors.Actor):
             #~ raise Exception("20120103 %r.do_setup() : default.action.actor is %r" % (
               #~ self,self.default_action.actor))
                 
-        if self.button_label is None:
-            self.button_label = self.label
+        #~ if self.button_label is None:
+            #~ self.button_label = self.label
             
         
     @classmethod

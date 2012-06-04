@@ -28,8 +28,8 @@ def objects():
     Company = dd.resolve_model(settings.LINO.company_model)
     Customer = dd.resolve_model('sales.Customer')
 
-    products = dd.get_app('products')
-    sales = dd.get_app('sales')
+    products = dd.resolve_app('products')
+    sales = dd.resolve_app('sales')
 
     salesrule = Instantiator(sales.SalesRule).build
     #customer = Instantiator(Customer).build

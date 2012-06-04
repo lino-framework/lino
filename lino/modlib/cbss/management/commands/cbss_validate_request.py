@@ -14,6 +14,22 @@
 
 u"""
 
+This command may be useful if you get an error message 
+"A validation error occurred while parsing the request header. 
+Please check your message format and content."
+It runs a local validation agains the XSD of the request.
+
+In that case, write down the internal ID of your request and 
+execute something like the following command in your project 
+directory::
+
+  python manage.py cbss_validate_request IdentifyPersonRequest 17
+  
+Works only for
+:class:`SSDN requests <lino.modlib.cbss.models.SSDNRequest>`.
+
+Background (excerpt from :doc:`/blog/2012/0603`:
+
 Die fiesteste war eine Fehlermeldung "A validation error occurred while 
 parsing the request header. Please check your message format and content."
 Die kam durch ein leeres Feld `lino.SiteConfig.site_company.email`.
@@ -25,7 +41,6 @@ Also sorry: lokales Validieren wird wohl vom Web-Client aus nicht so
 schnell möglich sein. 
 Ich könnte einen management command schreiben, 
 den man in so einem Fall von einer Shell aus aufrufen könnte. 
-Gedacht, getan
 
 """
 

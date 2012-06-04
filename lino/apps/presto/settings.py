@@ -17,7 +17,7 @@ from lino.apps.std.settings import *
 
 class Lino(Lino):
   
-    title = "lino.apps.luc"
+    title = "lino.apps.presto"
     languages = ['en']
     #~ languages = 'de fr et en'.split()
     
@@ -47,21 +47,14 @@ INSTALLED_APPS = (
   'lino.modlib.properties',
   'lino.modlib.contacts',
   #~ 'lino.modlib.projects',
-  'lino.modlib.notes',
+  'lino.modlib.blogs',
   'lino.modlib.tickets',
   #~ 'lino.modlib.links',
   'lino.modlib.uploads',
   #~ 'lino.modlib.thirds',
   'lino.modlib.cal',
   'lino.modlib.outbox',
-  'lino.apps.luc',
-  #~ 'lino.modlib.jobs',
-  #~ 'lino.modlib.isip',
-  #~ 'lino.modlib.bcss',
-  #~ 'lino.apps.dsbe',
-  #'dsbe.modlib.contacts',
-  #'dsbe.modlib.projects',
-  #~ 'south', # http://south.aeracode.org
+  'lino.apps.presto',
 )
 
 

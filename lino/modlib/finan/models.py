@@ -29,10 +29,10 @@ from django.db import models
 #~ from lino import fields
 from lino.tools import resolve_model
 
-contacts = dd.get_app('contacts')
-#~ ledger = dd.get_app('ledger')
+contacts = dd.resolve_app('contacts')
+#~ ledger = dd.resolve_app('ledger')
 from lino.modlib.ledger import models as ledger
-journals = dd.get_app('journals')
+journals = dd.resolve_app('journals')
 
 Contact = resolve_model('contacts.Contact')
 #~ Person = resolve_model('contacts.Person')

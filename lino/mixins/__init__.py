@@ -152,7 +152,7 @@ if settings.LINO.user_model:
         #~ can_view = perms.is_authenticated
         
         @classmethod
-        def init_label(self):
+        def get_actor_label(self):
             return _("My %s") % self.model._meta.verbose_name_plural
             
         @classmethod

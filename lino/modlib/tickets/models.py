@@ -13,9 +13,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module adds models for Projects, Tickets and Comments.
+This module adds models for Projects, Tickets and Sessions.
 
-Experimental.
+Projects are handled by their *name* while Tickets are handled by their *number*.
+Projects are long-term while Tickets are short-term.
 
 """
 import cgi
@@ -32,6 +33,8 @@ from lino import dd
 from lino.utils import babel
 #~ from lino.modlib.cal import models as cal
 
+blogs = dd.resolve_app('blogs')
+
 
 class ProjectType(mixins.PrintableType,babel.BabelNamed):
     "Deserves more documentation."
@@ -47,7 +50,18 @@ class ProjectTypes(dd.Table):
     column_names = 'name build_method template *'
 
 
-    
+class SessionType(babel.BabelNamed):
+    "Deserves more documentation."
+  
+    class Meta:
+        verbose_name = _("SessionType")
+        verbose_name_plural = _('Session Types')
+
+class SessionTypes(dd.Table):
+    model = SessionType
+    column_names = 'name *'
+
+
 class Project(mixins.AutoUser,mixins.Printable):
     """
     """
@@ -55,6 +69,7 @@ class Project(mixins.AutoUser,mixins.Printable):
         verbose_name = _("Project")
         verbose_name_plural = _('Projects')
         
+    parent = models.ForeignKey('self',blank=True,null=True)
     type = models.ForeignKey('tickets.ProjectType',blank=True,null=True)
     name = models.CharField(_("Name"),max_length=20)
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
@@ -69,10 +84,13 @@ class Projects(dd.Table):
     detail_template = """
     name summary type user 
     description
-    TicketsByProject
+    TicketsByProject ProjectsByProject
     # cal.EventsByProject
     """
 
+class ProjectsByProject(Projects):
+    master_key = 'parent'
+    label = _("Sub-projects")
 
 
 class TicketState(babel.BabelNamed):
@@ -90,7 +108,7 @@ class TicketStates(dd.Table):
 
 
 
-class Ticket(mixins.AutoUser,mixins.ProjectRelated,mixins.CreatedModified):
+class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
     """
     """
     
@@ -115,9 +133,9 @@ class Tickets(dd.Table):
     detail_template = """
     project summary user created modified
     description
-    CommentsByTicket
+    SessionsByTicket EntriesByTicket
     """
-
+    
 class TicketsByProject(Tickets):
     master_key = 'project'
 
@@ -125,25 +143,76 @@ class TicketsByProject(Tickets):
     #~ master_key = 'ticket'
     
     
-class Comment(mixins.AutoUser,mixins.CreatedModified):
-  
+class Session(mixins.AutoUser,mixins.ProjectRelated):
+    """
+    A Session is when a user works on a project or ticket. This just keeps track 
+    """
     class Meta:
-        verbose_name = _("Comment")
-        verbose_name_plural = _('Comments')
+        verbose_name = _("Session")
+        verbose_name_plural = _('Sessions')
 
-    ticket = models.ForeignKey('tickets.Ticket')
+    #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
+    ticket = models.ForeignKey('tickets.Ticket',blank=True,null=True)
     description = dd.RichTextField(_("Description"),blank=True,format='plain')
+    date = models.DateField(verbose_name=_("Date"))
+    start_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Start time"))
+    end_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("End Time"))
+    break_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Break Time"))
     
-class Comments(dd.Table):
-    model = Comment
-    column_names = 'created description user *'
+    
+class Sessions(dd.Table):
+    model = Session
+    column_names = 'date start_time end_time break_time description user *'
+    order_by = ['date','start_time']
     detail_template = """
-    ticket user id created modified
+    date start_time end_time break_time project ticket
+    user id 
     description
+    EntriesBySession
     """
     
-class CommentsByTicket(Comments):
+class SessionsByTicket(Sessions):
     master_key = 'ticket'
+
+if blogs:
+  
+    dd.inject_field('blogs.Entry',
+        'ticket',
+        models.ForeignKey("tickets.Ticket",
+            blank=True,null=True,
+            # verbose_name=_("Local job office"),
+            # related_name='job_office_sites'
+            help_text="""The Ticket attributed to this Entry."""))
+
+    class EntriesByTicket(blogs.Entries):
+        master_key = 'ticket'
+    
+    class EntriesBySession(EntriesByTicket):
+        """
+        The Blog Entries linked to *the Ticket of* a Session.
+        
+        Blog Entries are not directly linked to a Session, but in the 
+        Detail of a Session we want to display a table of related blog 
+        entries.
+        """
+        @classmethod
+        def get_filter_kw(self,master_instance,**kw):
+            if master_instance is not None:
+                master_instance = master_instance.ticket
+            return super(EntriesBySession,self).get_filter_kw(master_instance,**kw)
+        
+    
+else:
+  
+    Tickets.detail_template = Tickets.detail_template.replace(' EntriesByTicket','')
+
+
 
 if settings.LINO.user_model:    
   
@@ -155,10 +224,32 @@ if settings.LINO.user_model:
         order_by = ["created","id"]
         column_names = 'created id project summary state *'
         
-    class MyComments(Comments,mixins.ByUser):
-        order_by = ["-modified"]
-        column_names = 'modified description *'
+    class MySessions(Sessions,mixins.ByUser):
+        order_by = ['date','start_time']
+        column_names = 'date start_time end_time break_time project ticket description *'
     
+    class MySessionsByDate(MySessions):
+        master_key = 'date'
+        order_by = ['start_time']
+        label = _("My sessions by date")
+        column_names = 'start_time end_time break_time project ticket description *'
+    
+        parameters = dict(
+          date = models.DateField(_("Date"),
+          blank=True,default=datetime.date.today),
+        )
+        @classmethod
+        def get_request_queryset(self,ar):
+            qs = super(MySessions,self).get_request_queryset(ar)
+            #~ if ar.param_values.date:
+            return qs.filter(date=ar.param_values.date)
+            #~ return qs
+            
+        @classmethod
+        def create_instance(self,ar,**kw):
+            kw.update(date=ar.param_values.date)
+            return super(MySessions,self).create_instance(ar,**kw)
+
 
 #~ if dd.is_installed('cal'):
 
@@ -181,16 +272,19 @@ def setup_my_menu(site,ui,user,m):
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(MyProjects)
     m.add_action(MyTickets)
-    m.add_action(MyComments)
+    m.add_action(MySessions)
+    m.add_action(MySessionsByDate)
+    #~ m.add_action(MySessionsByDate,params=dict(master_instance=datetime.date.today()))
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(ProjectTypes)
     m.add_action(TicketStates)
+    m.add_action(SessionTypes)
   
 def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(Projects)
     m.add_action(Tickets)
-    m.add_action(Comments)
+    m.add_action(Sessions)
   

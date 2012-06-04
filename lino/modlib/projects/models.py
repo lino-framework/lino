@@ -67,7 +67,7 @@ class Project(mixins.AutoUser,mixins.CachedPrintable):
 class Projects(dd.Table):
     model = 'projects.Project'
     order_by = ["name"]
-    button_label = _("Projects")
+    #~ button_label = _("Projects")
     detail_template = """
     name type user
     started stopped

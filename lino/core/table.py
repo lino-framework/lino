@@ -69,7 +69,7 @@ from lino.ui import base
 
 from lino.ui import requests as ext_requests
 
-from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field, UnresolvedModel
+from lino.tools import resolve_model, resolve_field, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, get_data_elem
 from lino.utils.tables import AbstractTable, TableRequest, VirtualTable
@@ -466,10 +466,6 @@ class Table(AbstractTable):
         return TableRequest(ui,self,request,action,**kw)
         
     @classmethod
-    def init_label(self):
-        return self.model._meta.verbose_name_plural
-        
-    @classmethod
     def column_choices(self):
         return [ de.name for de in self.wildcard_data_elems() ]
           
@@ -542,6 +538,11 @@ class Table(AbstractTable):
 
                     
     @classmethod
+    def get_actor_label(self):
+        "Compute the label of this actor. Called only if `label` is not set."
+        return self.model._meta.verbose_name_plural
+        
+    @classmethod
     def class_init(self):
         super(Table,self).class_init()
         #~ if self.model is None:
@@ -598,7 +599,7 @@ class Table(AbstractTable):
                     
             if self.label is None:
                 #~ self.label = capfirst(self.model._meta.verbose_name_plural)
-                self.label = self.init_label()
+                self.label = self.get_actor_label()
           
             for name in ('disabled_fields',
                          'handle_uploaded_files', 
@@ -616,24 +617,25 @@ class Table(AbstractTable):
             if self.master_key:
                 #~ assert self.model is not None, "%s has .master_key but .model is None" % self
                 #~ self.master = resolve_model(self.master,self.app_label)
+                master_model = None
                 try:
                     fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.master_key)
                     assert direct
                     assert not m2m
-                    if fk.rel is None:
-                        raise Exception("%s.master_key %r is not a RelatedField" % (self,self.master_key))
-                    master = fk.rel.to
+                    #~ if fk.rel is None:
+                        #~ raise Exception("%s.master_key %r is not a RelatedField" % (self,self.master_key))
+                    if fk.rel is not None:
+                        master_model = fk.rel.to
                 except models.FieldDoesNotExist,e:
                     #~ logger.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.master_key)
-                    master = None
                     for vf in self.model._meta.virtual_fields:
                         if vf.name == self.master_key:
                             fk = vf
-                            master = ContentType
-                if master is None:
-                    raise Exception("%s : no master for master_key %r in %s" % (
-                        self,self.master_key,self.model.__name__))
-                self.master = master
+                            master_model = ContentType
+                #~ if master_model is None:
+                    #~ raise Exception("%s : no master for master_key %r in %s" % (
+                        #~ self,self.master_key,self.model.__name__))
+                self.master = master_model
                 #~ self.fk = fk
                 self.master_field = fk
         #~ else:
@@ -749,7 +751,8 @@ class Table(AbstractTable):
             return _("%(details)s of %(master)s") % dict(
               #~ model=self.master._meta.verbose_name,
               #~ model=rr.master_instance._meta.verbose_name,
-              details=self.model._meta.verbose_name_plural,
+              #~ details=self.model._meta.verbose_name_plural,
+              details=self.label,
               master=rr.master_instance)
         #~ return AbstractTable.get_title(self,rr)
         return super(Table,self).get_title(rr)

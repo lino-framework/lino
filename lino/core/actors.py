@@ -86,7 +86,7 @@ class ActorMetaClass(type):
         """
         # classDict.setdefault('name',classname)
         classDict.setdefault('label',None)
-        classDict.setdefault('button_label',None)
+        #~ classDict.setdefault('button_label',None)
         classDict.setdefault('title',None)
         
         cls = type.__new__(meta, classname, bases, classDict)
@@ -538,7 +538,7 @@ class Actor(Handled,ViewPermission):
         #~ return ui.action_url_http(self,self.default_action,**kw)
 
     @classmethod
-    def setup(self):
+    def after_site_setup(self):
         #~ raise "20100616"
         #~ assert not self._setup_done, "%s.setup() called again" % self
         if self._setup_done:

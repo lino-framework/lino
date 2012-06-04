@@ -52,14 +52,15 @@ def is_devserver():
     return len(sys.argv) > 1 and sys.argv[1] == 'runserver'
 
 
-def get_app(app_label):
+def resolve_app(app_label):
     """
     Return the `modules` module of the given `app_label` if it is installed, 
     otherwise `None`.
     
     This is called in models modules instead of "from x.y import models as y"
-    It is probably quicker than `django.db.loading.get_app()`.
     May not be called during loading.appcache._populate().
+    
+    It is probably quicker than `django.db.loading.get_app()`.
     Didn't test how they compare in multi-threading cases.
     
     """
@@ -68,10 +69,10 @@ def get_app(app_label):
             return import_module('.models', app_name)
     #~ if not emptyOK:
     #~ raise ImportError("No application labeled %r." % app_label)
-resolve_app = get_app
+#~ resolve_app = get_app
 
-def get_models_for(app_label):
-    a = models.get_app(app_label)
+#~ def get_models_for(app_label):
+    #~ a = models.get_app(app_label)
     
 class UnresolvedModel:
     """
@@ -198,9 +199,9 @@ def resolve_field(name,app_label=None):
     return UnresolvedField(name)
 
 
-def requires_apps(self,*app_labels):
-    for app_label in app_labels:
-        get_app(app_label)
+#~ def requires_apps(self,*app_labels):
+    #~ for app_label in app_labels:
+        #~ get_app(app_label)
     
     
     

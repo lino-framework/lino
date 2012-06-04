@@ -43,9 +43,24 @@ class Company(contacts.Partner,contacts.CompanyMixin):
     #~ app_label = 'contacts'
     #~ order_by = ["name"]
 
-class Note(notes.Note,contacts.PartnerDocument):
-    class Meta:
-        app_label = 'notes'
+#~ class Note(notes.Note,contacts.PartnerDocument):
+    #~ class Meta:
+        #~ app_label = 'notes'
         #~ verbose_name = _("Event/Note") # application-specific override
         #~ verbose_name_plural = _("Events/Notes")
 
+
+#~ def site_setup(site):
+    #~ """
+    #~ This is the place where we can override or 
+    #~ define application-specific things.
+    #~ This includes especially those detail layouts 
+    #~ which depend on the *combination* of installed modules.
+    #~ """
+    
+    #~ site.modules.tickets.Ticket.set_detail("""
+    #~ project summary user created modified
+    #~ description
+    #~ SessionsByTicket blog.EntriesByOwner
+    #~ """
+    

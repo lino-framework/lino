@@ -57,7 +57,7 @@ from lino.core import actors
 from lino.core.coretools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
 
-from lino.tools import resolve_model, resolve_field, get_app, get_field, full_model_name
+from lino.tools import resolve_model, resolve_field, get_field, full_model_name
 from lino.tools import is_devserver
     
 from lino.utils.config import load_config_files, find_config_file
@@ -332,7 +332,6 @@ def setup_site(self,make_messages=False):
         
         actors.discover()
         
-        
         #~ logger.debug("analyze_models() done")
         
         # set _lino_default_table for all models:
@@ -387,15 +386,17 @@ def setup_site(self,make_messages=False):
                 fn(self)
                 
         """
-        Actor.setup() must be called after site_setup(). 
+        Actor.after_site_setup() is called after site_setup() on each actor.
         Example: pcsw.site_setup() adds a detail to properties.Properties, 
-        the base class for properties.PropsByGroup. The latter would not 
-        install a detail action during her setup() and also would never 
-        get it later.
+        the base class for properties.PropsByGroup. 
+        The latter would not 
+        install a detail_action during her after_site_setup() 
+        and also would never get it later.
         """
         
         for a in actors.actors_list:
-            a.setup()
+            #~ a.setup()
+            a.after_site_setup()
                 
         """
         this comes after site_setup() because site_setup() might 

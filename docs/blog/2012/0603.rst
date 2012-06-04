@@ -142,3 +142,35 @@ ist ja sogar `lino.SiteConfig.site_company` momentan leer.
 Daraufhin habe ich beschlossen, dass ich doch einen weiteren 
 Konfigurationsparameter `cbss_email` in der SiteConfig mache.
 
+Aber den Befehl :mod:`cbss_validate_request 
+<lino.modlib.cbss.management.commands.cbss_validate_request>`
+sollten wir uns also merken für den Fall, dass mal jemand die 
+Meldung "A validation error occurred while parsing the request 
+header. Please check your message format and content." kriegt.
+
+
+Presto
+------
+
+Renamed `lino.apps.luc` to :mod:`lino.apps.presto`. 
+This project has been sleeping a while, but now I had some 
+inspirations...
+Did some database changes.
+New module :mod:`lino.modlib.blog` replaces :mod:`lino.modlib.notes`.
+
+TODO: I want a view of MySessions *per day*, 
+with an easy way (1 click or keystrocke) 
+to switch back and forth between days.
+Currently it needs 2 clicks.
+Seems that a DateField with a Spinner would now be good.
+Like `this one
+<http://members.upc.nl/j.chim/ext/spinner2/ext-spinner.html>`_ which was for ExtJS 2.
+For 3.4 there is some code on 
+`extjs-public <http://extjs-public.googlecode.com/svn/extjs-3.x/release/examples/spinner/spinner.html>`_
+ExtJS 4 has a Spinner field integrated.
+One reason to upgrade some day.
+
+Another approach might be an `EndlessTable`. 
+Endless tables have an endless series of rows (days in our case).
+The Detail view of my "Days" table would then have a `MySessionsByDate` 
+slave grid.

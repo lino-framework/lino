@@ -315,7 +315,7 @@ class Partners(dd.Table):
 class AllPartners(Partners):
   
     @classmethod
-    def init_label(self):
+    def get_actor_label(self):
         return _("All %s") % self.model._meta.verbose_name_plural
         
 class PartnersByCity(Partners):
@@ -775,8 +775,10 @@ dd.inject_field(SiteConfig,
         blank=True,null=True,
         verbose_name=_("The company that runs this site"),
         related_name='site_company_sites',
-        ),
-    """The Company to be used as sender in documents.""")
+        help_text="""\
+The Company to be used as sender in documents."""
+        )
+    )
     
 
 dd.inject_field(Partner,

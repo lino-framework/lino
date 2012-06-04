@@ -274,7 +274,8 @@ class GridEdit(TableAction):
         #~ TableAction.__init__(self,*args,**kw)
         
     def attach_to_actor(self,actor,name):
-        self.label = actor.button_label or actor.label
+        #~ self.label = actor.button_label or actor.label
+        self.label = actor.label
         super(GridEdit,self).attach_to_actor(actor,name)
 
 

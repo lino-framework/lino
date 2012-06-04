@@ -7,13 +7,23 @@
     :show-inheritance:
     
 
-:mod:`lino.modlib.cbss.models`
-------------------------------
+Models
+======
 
 .. automodule:: lino.modlib.cbss.models
     :members:
     :show-inheritance:
 
+The `cbss_validate_request` management command
+==============================================
+
+.. automodule:: lino.modlib.cbss.management.commands.cbss_validate_request
+    :members:
+    :show-inheritance:
+
+
+Test suites
+===========
 
 :mod:`lino.modlib.cbss.tests.cbss_tests`
 ----------------------------------------
@@ -22,6 +32,9 @@
     :members:
     :show-inheritance:
 
+
+Fixtures
+========
 
 :mod:`lino.modlib.cbss.fixtures.demo`
 ----------------------------------------

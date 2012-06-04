@@ -16,12 +16,13 @@ from django.db import models
 
 from django.utils.safestring import mark_safe
 
-from lino import reports
-from lino import layouts 
-from lino.utils import perms
+from lino import dd
+#~ from lino import reports
+#~ from lino import layouts 
+#~ from lino.utils import perms
 
 #from lino.modlib.countries import models as countries 
-countries = reports.get_app('countries')
+countries = dd.resolve_app('countries')
 
 class Place(models.Model):
     name = models.CharField(max_length=200)
@@ -261,7 +262,7 @@ class Collection(models.Model):
 # reports
 
 
-class SongDetail(layouts.DetailLayout):
+class SongDetail(dd.DetailLayout):
     datalink = 'songs.Song'
     main = """
     id title language voices
@@ -274,7 +275,7 @@ class SongDetail(layouts.DetailLayout):
     def inlines(self):
         return dict(events=EventsBySong())
 
-class PerformanceDetail(layouts.DetailLayout):
+class PerformanceDetail(dd.DetailLayout):
     datalink = 'songs.Performance'
   
     main = """
@@ -286,35 +287,35 @@ class PerformanceDetail(layouts.DetailLayout):
     def inlines(self):
         return dict(songs=SongsByEvent())
     
-class Rehearsals(reports.Report):
+class Rehearsals(dd.Table):
     model = Rehearsal
     #page_layout_class = RehearsalDetail
     column_names = "date remark songs:20 singers:10"
     order_by = "date"
 
-class Performances(reports.Report):
+class Performances(dd.Table):
     model = Performance
     column_names = "date place remark songs:20 singers:10"
     order_by = "date"
     #~ page_layouts = (PerformanceDetail,)
     
 
-class Collections(reports.Report):
+class Collections(dd.Table):
     model = Collection
     column_names = "title place year author id"
 
-class Places(reports.Report):
+class Places(dd.Table):
     model = Place
     column_names = "name country id"
 
 
-class Singers(reports.Report):
+class Singers(dd.Table):
     model = Singer
     #page_layout_class = RehearsalDetail
     column_names = "id first_name last_name voice"
     order_by = "last_name"
 
-class Authors(reports.Report):
+class Authors(dd.Table):
     model = Author
     #queryset = Author.objects.filter(singer__exact=None)
     #page_layout_class = RehearsalDetail
@@ -322,37 +323,37 @@ class Authors(reports.Report):
     order_by = "last_name"
 
     
-class EventsBySong(reports.Report):
+class EventsBySong(dd.Table):
     model = SongEvent
     #master = Song
     master_key = 'song'
     column_names = "event remark link_set"
     
-class SongsByEvent(reports.Report):
+class SongsByEvent(dd.Table):
     model = SongEvent
     #master = Event
     master_key = 'event'
     column_names = "seq song link_set remark"
 
-class Songs(reports.Report):
+class Songs(dd.Table):
     model = Song
     #~ page_layouts = (SongDetail,)
     column_names = "id title language voices composed_by text_by written_by"
 
-class SongEvents(reports.Report):
+class SongEvents(dd.Table):
     model = SongEvent
 
-class SongsByEvent(reports.Report):
+class SongsByEvent(dd.Table):
     model = SongEvent
     #master = Event
     master_key = 'event'
     column_names = "seq song remark link_set"
 
 
-class Links(reports.Report):
+class Links(dd.Table):
     model = Link
 
-class Choirs(reports.Report):
+class Choirs(dd.Table):
     model = Choir
 
 

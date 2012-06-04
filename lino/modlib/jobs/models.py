@@ -790,10 +790,10 @@ class StudiesByCity(Studies):
     
     
 class StudiesByPerson(HistoryByPerson):
-    "List of studies for a known person."
+    "List of studies for a given person."
     model = Study
     #~ label = _("Studies & experiences")
-    button_label = _("Studies")
+    #~ button_label = _("Studies")
     column_names = 'type content started stopped country city success language school remarks *'
     
 class Experience(SectorFunction):

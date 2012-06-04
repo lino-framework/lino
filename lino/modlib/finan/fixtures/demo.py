@@ -34,8 +34,8 @@ from lino.tools import resolve_model
 #~ finan = reports.get_app('finan')
 
 def objects():
-    ledger = dd.get_app('ledger')
-    finan = dd.get_app('finan')
+    ledger = dd.resolve_app('ledger')
+    finan = dd.resolve_app('finan')
     Contact = dd.resolve_model('contacts.Contact')
     #~ ledger = settings.LINO.modules.ledger
     #~ finan = settings.LINO.modules.finan

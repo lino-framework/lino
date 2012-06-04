@@ -27,7 +27,7 @@ TABLE2 contains 4-letter codes for countries that no longer exist.
 This is mostly based on <http://www.davros.org/misc/iso3166.html>,
 but one country (DEDE) was added.
 
-Another Lino fixture, :mod:`lino.modlib.cbss.fixtures.ins_codes`,
+Another Lino fixture, :mod:`lino.modlib.cbss.fixtures.inscodes`,
 extends this data by attachin Belgian INS codes to these countries.
 
 """

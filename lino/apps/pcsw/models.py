@@ -1087,7 +1087,7 @@ class AllPersons(Partners):
     
     
     @classmethod
-    def init_label(self):
+    def get_actor_label(self):
         return string_concat(
           self.model._meta.verbose_name_plural,' ',_("(all)"))
     
@@ -1125,7 +1125,7 @@ class Persons(AllPersons):
     #~ label = Person.Meta.verbose_name_plural + ' ' + _("(unfiltered)")
     
     @classmethod
-    def init_label(self):
+    def get_actor_label(self):
         return self.model._meta.verbose_name_plural
 
 Person._lino_choices_table = Persons

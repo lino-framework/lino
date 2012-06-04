@@ -145,7 +145,7 @@ class Newcomers(AllPersons):
     column_names = "name_column broker faculty address_column *"
     
     @classmethod
-    def init_label(self):
+    def get_actor_label(self):
         return _("Newcomers")
         
 class NewClients(AllPersons):

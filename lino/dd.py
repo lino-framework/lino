@@ -53,7 +53,7 @@ Utilities:
 
 - :func:`resolve_field <lino.tools.resolve_field>`
 - :func:`resolve_model <lino.tools.resolve_model>`
-- :func:`get_app <lino.tools.get_app>` (and its synonym :func:`resolve_app <lino.tools.get_app>`)
+- :func:`resolve_app <lino.tools.resolve_app>` 
 
 
 """
@@ -66,7 +66,7 @@ from lino.utils.tables import VirtualTable
 #~ from lino.utils.tables import computed
 #~ from lino.utils.tables import ComputedColumn
 
-from lino.tools import resolve_model, get_app, resolve_app, resolve_field, get_field, UnresolvedModel
+from lino.tools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
 
 #~ from lino.core.table import fields_list, inject_field
 from lino.core.table import has_fk
