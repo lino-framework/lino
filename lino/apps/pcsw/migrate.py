@@ -1132,7 +1132,7 @@ def migrate_from_1_4_3(globals_dict):
           newcomer_quota=newcomer_quota,**kw)
     globals_dict.update(create_users_user=create_users_user)
     
-    from django.core.exceptions import ValidationError
+    #~ from django.core.exceptions import ValidationError
     
     isip_Contract = resolve_model("isip.Contract")
     def create_isip_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person):
@@ -1157,7 +1157,7 @@ def migrate_from_1_4_3(globals_dict):
             applies_until = None
             #~ applies_until = None
         return isip_Contract(pk=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)
-    globals_dict.update(create_isip_contract=create_isip_contract)
+    #~ 20120604 globals_dict.update(create_isip_contract=create_isip_contract)
     
     jobs_Contract = resolve_model("jobs.Contract")
     def create_jobs_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, job_id, duration, regime_id, schedule_id, hourly_rate, refund_rate, reference_person, responsibilities, remark):
@@ -1165,7 +1165,7 @@ def migrate_from_1_4_3(globals_dict):
             applies_until = applies_from # was 31.08.-01.09.2011, now 01.09.-01.09.2011
             #~ applies_until = None
         return jobs_Contract(id=id,user_id=user_id,build_time=build_time,person_id=person_id,company_id=company_id,contact_id=contact_id,language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,job_id=job_id,duration=duration,regime_id=regime_id,schedule_id=schedule_id,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,remark=remark)
-    globals_dict.update(create_jobs_contract=create_jobs_contract)
+    #~ 20120604 globals_dict.update(create_jobs_contract=create_jobs_contract)
     
     bcss_IdentifyPersonRequest = resolve_model("cbss.IdentifyPersonRequest")
     def create_bcss_identifypersonrequest(id, user_id, project_id, birth_date, first_name, last_name, title, gender, sent, status, request_xml, response_xml, national_id, middle_name, tolerance):
@@ -1188,9 +1188,9 @@ def migrate_from_1_4_3(globals_dict):
     households_Household = resolve_model("households.Household")
     households_Type = resolve_model("households.Type")
     def create_contacts_company(contact_ptr_id, prefix, vat_id, type_id, is_active, newcomer, is_deprecated, activity_id, bank_account1, bank_account2, hourly_rate):
-        if prefix == 'Eheleute' and vat_id.strip() == '':
+        if prefix == 'Eheleute' and vat_id == 'BE-0999.999.999':
             type = households_Type.objects.get(pk=1)
-            return create_child(contacts_Contact,contact_ptr_id,households_Household,type=type,type_id=type_id,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,hourly_rate=hourly_rate)    
+            return create_child(contacts_Contact,contact_ptr_id,households_Household,type=type,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2)    
         return create_child(contacts_Contact,contact_ptr_id,contacts_Company,prefix=prefix,vat_id=vat_id,type_id=type_id,is_active=is_active,newcomer=newcomer,is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,hourly_rate=hourly_rate)
     globals_dict.update(create_contacts_company=create_contacts_company)
     

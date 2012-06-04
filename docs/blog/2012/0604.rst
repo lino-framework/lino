@@ -9,3 +9,13 @@ Renamed `Actor.setup()` to `Actor.after_site_setup()`.
 Renamed Actor.init_label to 
 :mod:`lino.core.actors.Actor.get_actor_label`
 (overridden by :mod:`lino.core.table.Table.get_actor_label`).
+
+Schuldnerberatung
+-----------------
+
+Changes in :func:`lino.apps.pcsw.migrate.migrate_from_1_4_3`:
+
+- now converts Companies with `prefix` 'Eheleute' (and an empty vat_id)
+  to a Household.
+- no longer repair isip.Contracts and jobs.Contracts because users have 
+  been told to  do this themselves in the original data.
