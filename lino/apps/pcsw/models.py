@@ -787,6 +787,8 @@ class Partners(contacts.Partners):
           language 
           phone fax email url
           is_person is_company
+          bank_account1 bank_account2 activity 
+          is_active newcomer is_deprecated 
           ''')
         
 
@@ -1103,8 +1105,8 @@ class AllPersons(Partners):
           card_type card_number card_valid_from card_valid_until
           noble_condition card_issuer
           national_id health_insurance pharmacy 
-          bank_account1 bank_account2 
-          gesdos_id activity 
+          bank_account1 bank_account2 activity 
+          gesdos_id 
           is_cpas is_senior is_active newcomer is_deprecated nationality''')
 
     #~ @classmethod
