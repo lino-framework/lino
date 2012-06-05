@@ -54,16 +54,18 @@ Arshan
 
 Sources:
 
-The raw data (in UPPERCASE variables) was originally copied from 
+The raw data was originally copied from:
 
-- LAST_NAMES_BELGIUM : http://www.lavoute.org/debuter/Belgique.htm
-- LAST_NAMES_FRANCE : http://www.nom-famille.com/noms-les-plus-portes-en-france.html
-- LAST_NAMES_RUSSIA : http://www.meetmylastname.com/prd/articles/24
-- MALE_FIRST_NAMES_FRANCE and FEMALE_FIRST_NAMES_FRANCE :
+- Belgian last names from http://www.lavoute.org/debuter/Belgique.htm
+- French last names from http://www.nom-famille.com/noms-les-plus-portes-en-france.html
+- Russion last names from http://www.meetmylastname.com/prd/articles/24
+- French first names from 
   http://meilleursprenoms.com/site/LesClassiques/LesClassiques.htm
-- MALE_FIRST_NAMES_RUSSIA and FEMALE_FIRST_NAMES_RUSSIA : http://www.babynames.org.uk
-- MALE_FIRST_NAMES_MUSLIM and FEMALE_FIRST_NAMES_MUSLIM : http://www.babynames.org.uk
-- STREETS_OF_LIEGE: http://fr.wikipedia.org/wiki/Liste_des_rues_de_Li%C3%A8ge
+- African, Muslim and Russian names from  
+  http://www.babynames.org.uk
+  and http://genealogy.familyeducation.com
+- Streets of Liège from 
+  http://fr.wikipedia.org/wiki/Liste_des_rues_de_Li%C3%A8ge
   
 
 
@@ -6304,6 +6306,46 @@ Zulfa
 Zumruda
 """
 
+LAST_NAMES_AFRICAN = u"""
+Ba
+Bah
+Ballo
+Chahine
+Cisse
+Congo
+Contee
+Conteh
+Dia
+Diallo
+Diop
+Fall
+Fofana
+Gueye
+Jalloh
+Keita
+Kone
+Maalouf
+Mensah
+Ndiaye
+Nwosu
+Okafor
+Okeke
+Okoro
+Osei
+Owusu
+Sall
+Sane
+Sarr
+Sesay
+Sow
+Sy
+Sylla
+Toure
+Traore
+Turay
+Yeboah
+"""
+
 LAST_NAMES_MUSLIM = u"""
 Abad
 Abbas
@@ -6834,6 +6876,371 @@ Zia
 
 """
 
+FEMALE_FIRST_NAMES_AFRICAN = u"""
+Aba
+Abeni
+Abiba
+Abmaba
+Aissa
+Ajua
+Akosua
+Armani
+Arziki
+Asha
+Ashanti
+Ayana
+Baako
+Beyonce
+Bisa
+Cacey
+Cassietta
+Catava
+Chipo
+Cleotha
+Deiondre
+Deka
+Delu
+Dericia
+Diara
+Doli
+Dumi
+Ebere
+Ekua
+Faizah
+Fola
+Gaynelle
+Habika
+Hawa
+Isoke
+Jendayi
+Jira
+Kabibe
+Kabira
+Kacela
+Kacondra
+Kadija
+Kainda
+Kambo
+Kande
+Kanene
+Kanesha
+Kanoni
+Kapera
+Kapuki
+Karasi
+Karimah
+Karna
+Kasinda
+Keeya
+Keilantra
+Keisha
+Keishla
+Kendis
+Kenyatta
+Keshia
+Keshon
+Kesia
+Keyah
+Kia
+Kianga
+Kiden
+Kiho
+Kijana
+Kinfe
+Kione
+Kirabo
+Kiros
+Kumani
+Kuron
+Kwashi
+Kya
+Lachelle
+Lakin
+Lanelle
+Laquanna
+Laqueta
+Laquinta
+Laquita
+Lashawn
+Latanya
+Lateefah
+Latifah
+Latonya
+Latoya
+Layla
+Lehana
+Lewa
+Lilovarti
+Limber
+Lisimba
+Loba
+Lolovivi
+Lulu
+Maha
+Mahari
+Mahdi
+Maisha
+Maizah
+Malaika
+Malkia
+Mandisa
+Manyara
+Marjani
+Mekell
+Messina
+Moesha
+Muncel
+Nafuna
+Nailah
+Naja
+Najwa
+Nakeisha
+Nala
+Narkaesha
+Nasha
+Nashaly
+Nichelle
+Niesha
+Nimeesha
+Nyeki
+Okal
+Okapi
+Onaedo
+Ontibile
+Paka
+Panya
+Pasua
+Pedzi
+Pemba
+Penda
+Pita
+Quanella
+Quanesha
+Quisha
+Raimy
+Ranielle
+Rashida
+Raziya
+Ronnell
+Safara
+Safiya
+Saidah
+Salihah
+Sekai
+Semira
+Serwa
+Sesen
+Shakila
+Shakina
+Shandra
+Shaquana
+Shasa
+Shasmecka
+Shateque
+Sibongile
+Sidone
+Sika
+Sima
+Sitembile
+Siyanda
+Sukutai
+Taifa
+Taja
+Takala
+Takiyah
+Talaitha
+Tale
+Talisa
+Talisha
+Tamasha
+Tamika
+Tamira
+Tamyra
+Tanasha
+Tandice
+Tanesha
+Tanginika
+Taniel
+Tanisha
+Tapanga
+Tarana
+Tariana
+Tarisai
+Tazara
+Temima
+Tendai
+Terehasa
+Thandiwe
+Thema
+Tiaret
+Timberly
+Tineka-Jawana
+Tiombe
+Tyesha
+Tyrell
+Tyrina
+Tyronica
+Uchenna
+Ulu
+Urbi
+Uwimana
+Velinda
+Wangari
+Waseme
+Wyetta
+Yaa
+Yetty
+Zabia
+Zaci
+Zahwa
+Zaila
+Zaire
+Zakiya
+Zalika
+Zanta
+Zarina
+Zasu
+Zawadi
+Zilli
+Zina
+Zoila
+"""
+
+MALE_FIRST_NAMES_AFRICAN = u"""
+Afram
+Arali
+Armani
+Banji
+Chata
+Chiamaka
+Chike
+Dakarai
+Deion
+Deiondre
+Dele
+Dembe
+Denzel
+Dewayne
+Diallo
+Dikembe
+Duante
+Dume
+Ebi
+Essien
+Faraji
+Ibeamaka
+Jamar
+Jayvyn
+Jevonte
+Kabonero
+Kabonesa
+Kadeem
+Kaleb
+Kasi
+Kendis
+Kentay
+Keshawn
+Khalon
+Kofi
+Kwamin
+Kwau
+Kyan
+Kyrone
+Lado
+Laken
+Lakista
+Lamech
+Lavaughn
+La Vonn
+LeBron
+Lisimba
+Ludacris
+Lugono
+Luister
+Lukman
+Mablevi
+Mahdi
+Makalo
+Manu
+Marques
+Mashawn
+Montraie
+Mykelti
+Nabulung
+Naeem
+Naftali
+Napoleon
+Nuru
+Nwa
+Obiajulu
+Oja
+Okal
+Okapi
+Okoth
+Onaedo
+Ontibile
+Oringo
+Orma
+Otieno
+Paulo
+Peabo
+Penda
+Phornello
+Polo
+Quaashie
+Quaddus
+Quadrees
+Quannell
+Quarren
+Quashawn
+Quintavius
+Quoitrel
+Raimy
+Rashon
+Razi
+Roshaun
+Runako
+Salim
+Shaquille
+Shevon
+Shontae
+Simba
+Sulaiman
+Tabansi
+Tabari
+Tamarius
+Tavarius
+Tavon
+Tevaughn
+Tevin
+Trory
+Tyrell
+Uba
+Ubanwa
+Udenwa
+Ulan
+Uland
+Umi
+Useni
+Usi
+Uzoma
+Uzondu
+Vandwon
+Vashon
+Veltry
+Verlyn
+Voshon
+Vul
+Wasaki
+Xayvion
+Xhosas
+Xyshaun
+Yobachi
+Zaid
+Zareb
+Zashawn
+"""
+
 
 
 def streets_of_liege():
@@ -6862,6 +7269,10 @@ FEMALE_FIRST_NAMES_RUSSIA = Cycler(splitter1(FEMALE_FIRST_NAMES_RUSSIA))
 #~ def female_first_names_russia():
     #~ return Cycler(splitter1(FEMALE_FIRST_NAMES_RUSSIA))
             
+LAST_NAMES_AFRICAN = Cycler(splitter1(LAST_NAMES_AFRICAN))
+MALE_FIRST_NAMES_AFRICAN = Cycler(splitter1(MALE_FIRST_NAMES_AFRICAN))
+FEMALE_FIRST_NAMES_AFRICAN = Cycler(splitter1(FEMALE_FIRST_NAMES_AFRICAN))
+
 LAST_NAMES_MUSLIM = Cycler(splitter1(LAST_NAMES_MUSLIM))
 MALE_FIRST_NAMES_MUSLIM = Cycler(splitter1(MALE_FIRST_NAMES_MUSLIM))
 FEMALE_FIRST_NAMES_MUSLIM = Cycler(splitter1(FEMALE_FIRST_NAMES_MUSLIM))

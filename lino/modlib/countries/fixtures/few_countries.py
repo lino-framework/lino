@@ -56,6 +56,30 @@ def objects():
           nl=u'Nederlande',
           et=u'Holand',
           ))
+          
+    yield country('MA',**babel_values('name',
+          de=u"Marokko",
+          fr=u'Maroc',
+          en=u"Maroc",
+          nl=u'Marocco',
+          et=u'Marokko',
+          ))
+          
+    yield country('RU',**babel_values('name',
+          de=u"Russland",
+          fr=u'Russie',
+          en=u"Russia",
+          nl=u'Rusland',
+          et=u'Venemaa',
+          ))
+          
+    yield country('CD',**babel_values('name',
+          de=u"Kongo (Demokratische Republik)",
+          fr=u'Congo (République Démocratique)',
+          en=u"Congo (Democratic Republic)",
+          nl=u'Congo (Democratische Republiek)',
+          et=u'Kongo (Demokraatlik Vabariik)',
+          ))
     #~ yield country('EE',"Estonia")
     #~ yield country('BE',"Belgium")
     #~ yield country('DE',"Germany")

@@ -55,6 +55,8 @@ def last_names():
     yield demo.LAST_NAMES_MUSLIM
     yield demo.LAST_NAMES_BELGIUM
     yield demo.LAST_NAMES_RUSSIA
+    yield demo.LAST_NAMES_BELGIUM
+    yield demo.LAST_NAMES_AFRICAN
 LAST_NAMES = Cycler(last_names())
     
 def male_first_names():
@@ -62,6 +64,8 @@ def male_first_names():
     yield demo.MALE_FIRST_NAMES_MUSLIM
     yield demo.MALE_FIRST_NAMES_FRANCE
     yield demo.MALE_FIRST_NAMES_RUSSIA
+    yield demo.MALE_FIRST_NAMES_FRANCE
+    yield demo.MALE_FIRST_NAMES_AFRICAN
 MALES = Cycler(male_first_names())
     
 def female_first_names():
@@ -69,7 +73,11 @@ def female_first_names():
     yield demo.FEMALE_FIRST_NAMES_MUSLIM
     yield demo.FEMALE_FIRST_NAMES_FRANCE
     yield demo.FEMALE_FIRST_NAMES_RUSSIA
+    yield demo.FEMALE_FIRST_NAMES_FRANCE
+    yield demo.FEMALE_FIRST_NAMES_AFRICAN
 FEMALES = Cycler(female_first_names())
+
+NATIONALITIES = Cycler('BE','MA','BE','RU','BE','CD')
 
 #~ print 'Done'
 
@@ -88,12 +96,14 @@ class Command(BaseCommand):
             
         User = dd.resolve_model(settings.LINO.user_model)
         Person = dd.resolve_model(settings.LINO.person_model)
+        Country = dd.resolve_model('countries.Country')
         
         for p in Person.objects.all():
             if User.objects.filter(partner=p).count() > 0:
                 # users keep their original name
                 pass
             else:
+                p.nationality = Country.objects.get(isocode=NATIONALITIES.pop())
                 p.last_name = LAST_NAMES.pop()
                 if p.gender == Gender.male:
                     p.first_name = MALES.pop()
@@ -104,6 +114,6 @@ class Command(BaseCommand):
                 #~ dblogger.log_changes(REQUEST,p)
                 #~ p.full_clean()
                 p.save()
-                dblogger.info(unicode(p))
+                dblogger.info("%s from %s",unicode(p),unicode(p.nationality))
             
         dblogger.info("GARBLE done on database %s." % dbname)
