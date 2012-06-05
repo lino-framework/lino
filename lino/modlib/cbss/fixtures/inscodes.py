@@ -20,7 +20,7 @@ which may come from
 :mod:`lino.modlib.countries.fixtures.be`
 and :mod:`lino.modlib.countries.fixtures.all_countries`.
 
-It writes the codes into a field `ins_code` which has been injected 
+It writes the codes into a field `inscode` which has been injected 
 into the models 
 :class:`City <lino.modlib.countries.models.City>`
 and
@@ -3522,7 +3522,7 @@ def objects():
     for iso,ins in ISO2INS.items():
         try:
             country = Country.objects.get(isocode=iso)
-            country.ins_code = ins
+            country.inscode = ins
             yield country
         except Country.DoesNotExist:
             pass
@@ -3552,7 +3552,7 @@ def objects():
                 logger.info("20120531 country '??' : %r, # %s",str(code),names)
                 pass
             else:
-                country.ins_code = code
+                country.inscode = code
                 logger.info("20120531 country %r : %r, # %s",str(country.isocode),str(code),names)
                 yield country
         
@@ -3561,21 +3561,21 @@ def objects():
     for ln in CITIES.splitlines():
         if not ln.strip(): continue
         a = [s.strip() for s in ln.split(';')]
-        zip_code, name, ins_code, x, y, z = a
+        zip_code, name, inscode, x, y, z = a
         if not zip_code: continue
         try:
             city = City.objects.get(country=BE,zip_code=zip_code,name=name)
-            city.ins_code = ins_code
-            logger.debug("ins_code %s --> city %s",ins_code,city)
+            city.inscode = inscode
+            logger.debug("inscode %s --> city %s",inscode,city)
             yield city
         except City.DoesNotExist:
-            logger.debug("Failed to set ins_code %s because there's no city %s %s",ins_code,zip_code,name)
+            logger.debug("Failed to set inscode %s because there's no city %s %s",inscode,zip_code,name)
             
         #~ for city in City.objects.filter(country=BE,zip_code=zip_code):
-            #~ if city.ins_code and city.ins_code != ins_code:
-                #~ logger.warning("Duplicate ins_code %s for %s %s",ins_code,zip_code, name)
-            #~ city.ins_code = ins_code
-            #~ logger.debug("ins_code %s --> city %s",ins_code,city)
+            #~ if city.inscode and city.inscode != inscode:
+                #~ logger.warning("Duplicate inscode %s for %s %s",inscode,zip_code, name)
+            #~ city.inscode = inscode
+            #~ logger.debug("inscode %s --> city %s",inscode,city)
             #~ city.save()
             #~ yield city
         

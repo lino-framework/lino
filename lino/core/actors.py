@@ -23,7 +23,7 @@ from django.utils.translation import ugettext as _
 import lino
 from lino.ui import base
 
-from lino.ui.base import Handled
+#~ from lino.ui.base import Handled
 from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
@@ -155,7 +155,7 @@ class ActorMetaClass(type):
                 
         if classname not in (
             'Table','AbstractTable','VirtualTable',
-            'Action','HandledActor','Actor','Frame',
+            'Action','Actor','Frame',
             'EmptyTable'):
             if actor_classes is None:
                 #~ logger.debug("%s definition was after discover",cls)
@@ -172,7 +172,8 @@ class ActorMetaClass(type):
         
   
   
-class Actor(Handled,ViewPermission):
+#~ class Actor(Handled,ViewPermission):
+class Actor(ViewPermission):
     """
     Base class for Tables and Frames. 
     An alternative name for "Actor" is "Resource".
@@ -330,6 +331,56 @@ class Actor(Handled,ViewPermission):
     update_action = None
     create_action = None
     delete_action = None
+    
+    
+    _handle_class = None
+    "For internal use"
+    
+        
+    get_handle_name = None
+    """
+    Most actors use the same UI handle for each request. 
+    But debts.PrintEntriesByBudget overrides this to 
+    implement dynamic columns depending on it's master_instance.
+    """
+        
+    @classmethod
+    def get_request_handle(self,ar):
+        # don't override
+        if self.get_handle_name is None:
+            return self._get_handle(ar,ar.ui,ar.ui._handle_attr_name)
+        return self._get_handle(ar,ar.ui,self.get_handle_name(ar))
+      
+        
+    @classmethod
+    def get_handle(self,ui):
+        #~ assert ar is None or isinstance(ui,UI), \
+            #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
+        if self.get_handle_name is not None:
+            raise Exception(
+                "Tried to get static handle for %s (get_handle_name is %r)" 
+                % (self,self.get_handle_name))
+        if ui is None:
+            hname = '_lino_console_handler'
+        else:
+            hname = ui._handle_attr_name
+        return self._get_handle(None,ui,hname)
+        
+    @classmethod
+    def _get_handle(self,ar,ui,hname):
+        # attention, don't inherit from parent!
+        h = self.__dict__.get(hname,None)
+        if h is None:
+            h = self._handle_class(ui,self)
+            setattr(self,hname,h)
+            h.setup(ar)
+        return h
+        
+        
+    @classmethod
+    def do_setup(self):
+        pass
+    
     
     
     #~ submit_action = actions.SubmitDetail()

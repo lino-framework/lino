@@ -431,7 +431,6 @@ class ActionRequest(object):
         self.step = 0 # confirmation counter
         #~ self.report = actor
         self.actor = actor
-        self.ah = actor.get_handle(ui)
         self.request = request
         if request is not None:
             if request.method == 'PUT':
@@ -439,7 +438,10 @@ class ActionRequest(object):
             else:
                 rqdata = request.REQUEST
             kw = self.parse_req(request,rqdata,**kw)
+        #~ 20120605 self.ah = actor.get_handle(ui)
         self.setup(**kw)
+        # 20120605 : Actor.get_request_handle() ar instead of ui
+        self.ah = actor.get_request_handle(self)
         
     #~ def confirm(self,step,*messages):
         #~ if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
@@ -575,7 +577,6 @@ class ActionRequest(object):
         """
         Create a new ActionRequest, taking default values from this one.
         """
-        #~ rh = rpt.get_handle(self.ui)
         kw.setdefault('user',self.user)
         kw.setdefault('renderer',self.renderer)
         kw.setdefault('request',self.request)

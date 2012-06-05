@@ -205,7 +205,7 @@ def duplicate_row(obj,**kw):
     obj.pk = None
     for k,v in kw.items():
         setattr(obj,k,v)
-    obj.save()
+    obj.save(force_insert=True)
     return obj
 
 
@@ -221,14 +221,20 @@ class Sequenced(models.Model):
         blank=True,null=False,
         verbose_name=_("Seq.No."))
         
-    @dd.action(_("Insert before"))
-    def insert_before(self,ar):
+        
+    #~ @dd.action(_("Insert before"))
+    #~ def insert_before(self,ar):
+    @dd.action(_("Duplicate"))
+    def duplicate_row(self,ar):
+        #~ print '20120605 duplicate_row', self.seqno, self.account
         seqno = self.seqno
         qs = self.get_siblings().filter(seqno__gte=seqno).reverse()
         for s in qs:
+            #~ print '20120605 duplicate_row inc', s.seqno, s.account
             s.seqno += 1
             s.save()
         new = duplicate_row(self,seqno=seqno)
+        #~ print '20120605 duplicate_row done', new.seqno
         kw = dict()
         kw.update(refresh=True)
         kw.update(message=_("Inserted new row before %d.") % self.seqno)

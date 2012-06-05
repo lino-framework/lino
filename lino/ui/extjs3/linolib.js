@@ -2557,9 +2557,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         })
       }
     } else Lino.notify("Sorry, no current record.");
-  },
+  }
   
-  edit_detail_config : function () {
+  /* not used (no longer possible without .dtl files)
+  , edit_detail_config : function () {
     var active_tab = {};
     var main = this.items.get(0);
     if (main.getActiveTab !== undefined) {
@@ -2610,8 +2611,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     Ext.Ajax.request(a);
     win.show();
   }
+  */
 });
-
 
 
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {

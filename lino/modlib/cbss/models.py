@@ -149,7 +149,7 @@ def nodetext(node):
     
 def cbss2country(code):
     try:
-        return countries.Country.objects.get(ins_code=code)
+        return countries.Country.objects.get(inscode=code)
     except Country.DoesNotExist:
         logger.warning("Unknown country code %s",code)
     
@@ -165,7 +165,7 @@ def cbss2address(obj,**data):
     if n is not None:
         data.update(country=cbss2country(n.childAtPath('/CountryCode').text))
         #~ country = countries.Country.objects.get(
-            #~ ins_code=n.childAtPath('/CountryCode').text)
+            #~ inscode=n.childAtPath('/CountryCode').text)
         addr = ''
         #~ addr += n.childAtPath('/MunicipalityCode').text
         addr += join_words(
@@ -1621,7 +1621,7 @@ MODULE_NAME = _("CBSS")
 settings.LINO.add_user_field('cbss_level',UserLevel.field(MODULE_NAME))
 
 dd.inject_field('countries.City',
-    'ins_code',
+    'inscode',
     models.CharField(
         max_length=5,
         verbose_name=_("INS code"),
@@ -1629,7 +1629,7 @@ dd.inject_field('countries.City',
     ))
         
 dd.inject_field('countries.Country',
-    'ins_code',
+    'inscode',
     models.CharField(
         max_length=3,
         verbose_name=_("INS code"),

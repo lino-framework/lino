@@ -882,7 +882,7 @@ class ExtUI(base.UI):
             (rx+'$', self.index_view),
             #~ (rx+r'grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.grid_config_view),
-            (rx+r'detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
+            #~ (rx+r'detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$', self.restful_view),
@@ -1284,7 +1284,7 @@ tinymce.init({
 
 
         
-    def detail_config_view(self,request,app_label=None,actor=None):
+    def unused_detail_config_view(self,request,app_label=None,actor=None):
         #~ rpt = actors.get_actor2(app_label,actor)
         rpt = self.requested_report(request,app_label,actor)
         #~ if not rpt.can_config.passes(request.user):
@@ -1921,7 +1921,12 @@ tinymce.init({
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
             
+        # actors with an own `get_handle_name` don't have a js implementation
+        #~ print '20120605 dynamic actors',[a for a in actors_list if a.get_handle_name is not None]
+        actors_list = [a for a in actors_list if a.get_handle_name is None]
+
         actors_list = [a for a in actors_list if a.get_view_permission()]
+          
                  
         #~ logger.info('20120120 table.all_details:\n%s',
             #~ '\n'.join([str(d) for d in table.all_details]))
@@ -1933,12 +1938,11 @@ tinymce.init({
                 details.add(dtl)
                 
         for dtl in details:
-            dh = dtl.get_handle(self)
+            dh = dtl.get_layout_handle(self)
             for ln in self.js_render_detail_FormPanel(dh,user):
                 f.write(ln + '\n')
         
         for rpt in actors_list:
-            
             rh = rpt.get_handle(self) 
             
             if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
@@ -2169,7 +2173,10 @@ tinymce.init({
         #~ rpt = self.requested_report(request,app_label,actor)
         #~ return self.action_href(rpt.default_action,**kw)
 
-    def setup_handle(self,h):
+    def setup_handle(self,h,ar):
+        """
+        ar is usually None, except for actors with dynamic handle
+        """
         #~ logger.debug('20120103 ExtUI.setup_handle() %s',h)
         if isinstance(h,tables.TableHandle):
             if issubclass(h.actor,table.Table):
@@ -2177,9 +2184,9 @@ tinymce.init({
                     or h.actor.model is models.Model \
                     or h.actor.model._meta.abstract:
                     return
-            ll = layouts.ListLayout(h.actor,h.actor.column_names,hidden_elements=h.actor.hidden_columns)
+            ll = layouts.ListLayout(h.actor,h.actor.get_column_names(ar),hidden_elements=h.actor.hidden_columns)
             #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.actor.hidden_columns)
-            h.list_layout = ll.get_handle(self)
+            h.list_layout = ll.get_layout_handle(self)
         else:
             h.list_layout = None
                 
@@ -2190,7 +2197,7 @@ tinymce.init({
                 #~ params_template= ' '.join([pf.name for pf in h.actor.params])
                 params_template= ' '.join(h.actor.parameters.keys())
             pl = layouts.ParamsLayout(h.actor,params_template)
-            h.params_layout = pl.get_handle(self)
+            h.params_layout = pl.get_layout_handle(self)
             #~ h.params_layout.main.update(hidden = h.actor.params_panel_hidden)
             #~ h.params_layout = layouts.LayoutHandle(self,pl)
             #~ logger.info("20120121 %s params_layout is %s",h,h.params_layout)

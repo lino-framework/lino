@@ -166,7 +166,6 @@ if False:
           for dl in ds.layouts.values():
               # make sure that messages have been filled in
               table.LayoutHandle(ui,dl)
-              #~ dh = dl.get_handle(ui) 
               # write the file if necessary
               dl.make_dummy_messages_file()
 

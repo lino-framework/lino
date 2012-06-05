@@ -60,17 +60,20 @@ def objects():
         for e in b.entry_set.all():
             #~ for i in range(n):
             if e.account.required_for_household:
-                e.amount1 = n2dec(AMOUNTS.pop())
+                e.amount = n2dec(AMOUNTS.pop())
             if e.account.required_for_person:
-                e.amount2 = n2dec(AMOUNTS.pop())
-                e.amount3 = n2dec(AMOUNTS.pop())
+                for a in b.actor_set.all():
+                    e.amount = n2dec(AMOUNTS.pop())
+                    e.actor = a
             e.save()
+        ACTORS = Cycler(None,*[a for a in b.actor_set.all()])
         for i in range(5):
-            a = int(AMOUNTS.pop()*5)
+            amount = int(AMOUNTS.pop()*5)
             yield Entry(budget=b,
                 account=LIABILITIES.pop(),
                 partner=PARTNERS.pop(),
-                amount1=a,
-                monthly_rate=n2dec(a/20))
+                amount=amount,
+                actor=ACTORS.pop(),
+                monthly_rate=n2dec(amount/20))
     
     

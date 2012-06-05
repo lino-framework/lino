@@ -444,7 +444,7 @@ class Renderer(AppyRenderer):
             if column_names:
                 from lino.core import layouts
                 ll = layouts.ListLayout(ar.actor,column_names)
-                lh = ll.get_handle(self.ui)
+                lh = ll.get_layout_handle(self.ui)
                 columns = lh.main.columns
             else:
                 columns = ar.ah.list_layout.main.columns

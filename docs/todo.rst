@@ -12,30 +12,7 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  NotesByPerson muss auf der letzten Seite starten, damit die neuesten 
-    Notizen sichtbar sind. Aber Achtung, wenn "die letzte Seite" nur 
-    ein paar Records enthält, ist das verwirrend. 
-
-#.  Uwe hat einen Bug gefunden: man kann in der Liste "Meine Klienten" 
-    momentan noch nicht auf die Kolonnen "Vertrag beginnt" und 
-    "Vertrag endet" sortieren. 
-    Liegt daran, dass das virtual fields sind.
-    Es ist zumindest nicht einfach, das zu ermöglichen. 
-    Wahrscheinlich müssten wir dazu custom functions definieren, 
-    was nicht alle db-Backends können.
-    Eher stelle ich mir die Frage, ob da nicht ein Analysefehler 
-    vorliegt. 
-    Der Vorfall bestätigt Gerds Bedenken, als die Benutzerfrage kam.
-    Eigentlich müsstet ihr die gleichen Infos auch 
-    über die Befehle `Meine VSEs` und `Meine Art-60-7-Konventionen` 
-    kriegen können.
-    Zu analysieren mit den Benutzern.
-
-
-#.  Vertragsüberschneidungen bei save() statt Datenkontrollliste.
-
-#.  BCSS-Requests: Button "Execute" deaktivieren, wenn Request 
-    abgeschickt ist.
+#.  Vertragsüberschneidungen bei save() statt erst in der Datenkontrollliste.
 
 #.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 
     Basisklassen anzeigen. 
@@ -524,6 +501,12 @@ http://lino/api/pcsw/LanguageKnowledgesByPerson?_dc=1315554805581&sort=written&d
 Later
 -----
 
+#.  Logging to a database. 
+    Rotating logs haben den Nachteil, dass sie nicht ewig bestehen bleiben und nicht archiviert werden können. Die momentane Lösung hat den Nachteil, dass watch_tim und apache u.U. in verschiedene Dateien loggen, weil der Dateiname beim Start des Prozesses ermittelt wird. Ich denke momentan als nächstes adaran, in eine Datenbank zu loggen. Hier zwei Stackoverflow als Einstieg zum Thema:
+
+      http://stackoverflow.com/questions/2314307/python-logging-to-database
+      http://stackoverflow.com/questions/1055917/server-logging-in-database-or-logfile
+
 #.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
     Das ist noch lange nicht fertig.
     
@@ -540,7 +523,7 @@ Later
 #.  MTI auch für Personen anwenden: 
     in lino.pcsw für "normale" Personen nur die 
     Standard-Kontaktangaben speichern, und die DSBE-spezifischen Felder 
-    in einer eigenen Tabelle. 
+    in einer eigenen Tabelle.  Neues Model "Client(Person)"
 
 #.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
     die **nicht** gespeichert wird.
@@ -909,7 +892,8 @@ Long-term
    um bei Diskussionen um Django-Tickets mitreden zu können.
    (sh. :doc:`/blog/2010/1103`)
   
-#. Use event managers as suggested by Jonathan Julian (Tip #2 in  http://www.slideshare.net/jonathanjulian/five-tips-to-improve-your-ext-js-application). 
+#. Use event managers as suggested by Jonathan Julian (Tip #2 in
+  http://www.slideshare.net/jonathanjulian/five-tips-to-improve-your-ext-js-application). 
    Maybe for each report::
   
      Lino.contacts.Persons.eventManager = new Ext.util.EventManager();
@@ -917,31 +901,25 @@ Long-term
     
    Lino could use this to have an automatic refresh of each window that displays data. Maybe rather only one central event manager because if any data gets changed, basically all open windows may need a refresh.
 
-#. :doc:`/tickets/16`
+#.  :doc:`/tickets/16`
 
-#. Mehr über Nuxeo lesen: http://doc.nuxeo.org/5.3/books/nuxeo-book/html/index.html
+#.  Mehr über Nuxeo lesen: http://doc.nuxeo.org/5.3/books/nuxeo-book/html/index.html
 
-#. Use :meth:`Action.run` in general, not only for RowAction. 
-   See :doc:`/blog/2010/1124`
+#.  Use :meth:`Action.run` in general, not only for RowAction. 
+    See :doc:`/blog/2010/1124`
   
-#. Check whether the approach at http://djangosnippets.org/snippets/14/ 
-   is easier than south
+#.  Check whether the approach at http://djangosnippets.org/snippets/14/ 
+    is easier than south
   
-#. Warnung, wenn das gleiche Feld mehrmals in einem Detail vorkommt.
-   Oder besser: diesen Fall zulassen.
+#.  Warnung, wenn das gleiche Feld mehrmals in einem Detail 
+    vorkommt (z.B. in verschiedenen Reitern).
+    Oder besser: diesen Fall zulassen.
    
 #.  http://code.google.com/p/extjs-public/   
-
-#.  Soll :mod:`<make_staff> lino.management.commands.make_staff` 
-    (auch) über das Web-Interface zur Verfügung stehen?
-    Aber ich denke der Befehl muss bleiben, denn jemand der nicht staff ist, 
-    darf sich par définition nicht selber in diesen Status versetzen können.
 
 #.  Wenn man z.B. watch_tim oder initdb_tim manuell startet und der 
     ein log-rotate durchführt, dann haben die neu erstellten Dateien 
     anschließend nicht www-data als owner. Resultat: internal server error!
-
-#.  `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
 
 #.  http://de.wikipedia.org/wiki/Xming
 
@@ -962,7 +940,7 @@ Long-term
 #.  Man kann es momentan nicht verhindern, dass ein Babel-Feld expandiert wird.
     
 #.  Think about differences and common things between 
-    Lino's Report and Django's new 
+    Lino's Table and Django's new 
     `Class-based views
     <http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_ 
     (Discovered :doc:`/blog/2011/0311`)
@@ -972,18 +950,11 @@ Long-term
     instead of reinventing the wheel.
     (Discovered :doc:`/blog/2011/0311`)
     
-#.  Demo fixtures should detect whether the database backend supports 
-    utf8 encoding or not. If it doesn't, they could skip data 
-    like Татьяна Казеннова that would cause trouble. 
-    See :doc:`/blog/2011/0527`.
-    Alternative: make such data optional in a separate fixture.
-    
-#.  Wenn ich ein Model importiere, das gar nicht installiert ist
-    (also dessen "application" nicht in INSTALLED_APPS drin ist). 
-    In diesem Fall wird keine Tabelle in der Datenbank erstellt.
-    Aber wie kann ich das testen?
-    Lino sollte für solche Modelle keinen Report machen.
-    
+Together with a Linux freak
+---------------------------
+
+#.  `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
+
 #.  all_countries.py : load english countries from 
     `/usr/share/zoneinfo/iso3166.tab`
     But how to find the same in French, German, Estonian?
@@ -1024,3 +995,24 @@ Documentation
     in :mod:`lino.modlib.cal` and :mod:`lino.modlib.newcomers`.
     This didn't work since `pcsw` then created her own UserDetail.
     
+Lino workshop
+-------------
+
+Die folgenden Punkte möchte ich bei Gelegenheit mal live mit den 
+Benutzern überlegen. 
+
+#.  Uwe hat einen Bug gefunden: man kann in der Liste "Meine Klienten" 
+    momentan noch nicht auf die Kolonnen "Vertrag beginnt" und 
+    "Vertrag endet" sortieren. 
+    Liegt daran, dass das virtual fields sind.
+    Es ist zumindest nicht einfach, das zu ermöglichen. 
+    Wahrscheinlich müssten wir dazu custom functions definieren, 
+    was nicht alle db-Backends können.
+    Eher stelle ich mir die Frage, ob da nicht ein Analysefehler 
+    vorliegt. 
+    Der Vorfall bestätigt Gerds Bedenken, als die Benutzerfrage kam.
+    Eigentlich müsstet ihr die gleichen Infos auch 
+    über die Befehle `Meine VSEs` und `Meine Art-60-7-Konventionen` 
+    kriegen können.
+    Zu analysieren mit den Benutzern.
+

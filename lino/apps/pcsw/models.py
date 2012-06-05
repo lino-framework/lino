@@ -1021,7 +1021,7 @@ class PersonDetail(dd.DetailLayout):
     misc = """
     activity pharmacy 
     is_active is_cpas is_senior is_deprecated newcomer
-    remarks:30 remarks2:30 contacts.RolesByPerson:30
+    remarks:30 remarks2:30 contacts.RolesByPerson:30 households.MembersByPerson:30
     # links.LinksToThis:30 links.LinksFromThis:30 
     """
     
@@ -2079,7 +2079,7 @@ def site_setup(site):
     """)
     
     site.modules.countries.Cities.set_detail("""
-    name country ins_code
+    name country inscode
     contacts.PartnersByCity jobs.StudiesByCity
     """)
     
@@ -2089,7 +2089,7 @@ def site_setup(site):
     #~ """)
     
     site.modules.countries.Countries.set_detail("""
-    isocode name short_code ins_code
+    isocode name short_code inscode
     countries.CitiesByCountry jobs.StudiesByCountry
     """)
     

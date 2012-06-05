@@ -21,54 +21,15 @@ class Handle:
     def __init__(self,ui):
         self.ui = ui
         
-    def setup(self):
+    def setup(self,ar):
         if self.ui is not None:
-            self.ui.setup_handle(self)
+            self.ui.setup_handle(self,ar)
         
         
-class Handled(object):
+#~ class Handled(object):
   
-    "Inherited by Table, Layout, and maybe others"
+    #~ "Inherited by Actor"
     
-    _handle_class = None
-    
-    @classmethod
-    def do_setup(self):
-        pass
-        
-    #~ @classmethod
-    #~ def class_init(self):
-        #~ pass
-        #~ self._handles = {}
-      
-    #~ @classmethod
-    #~ def before_ui_handle(self,ui):
-        #~ pass
-        
-    @classmethod
-    def get_handle(self,ui):
-        assert ui is None or isinstance(ui,UI), \
-            "%s.get_handle() : %r is not a BaseUI" % (self,ui)
-        if ui is None:
-            hname = '_lino_console_handler'
-        else:
-            hname = ui._handle_attr_name
-        h = self.__dict__.get(hname,None)
-        if h is None:
-            h = self._handle_class(ui,self)
-            setattr(self,hname,h)
-            h.setup()
-        return h
-        
-        #~ h = self._handles.get(ui,None)
-        #~ if h is None:
-            #~ # self.before_ui_handle(ui)
-            #~ h = self._handle_class(ui,self)
-            #~ # be careful to not store it in the base class's `_handles`:
-            #~ self._handles = dict(self._handles)
-            #~ self._handles[ui] = h
-            #~ h.setup()
-        #~ return h
         
         
 class UI:

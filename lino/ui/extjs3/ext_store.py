@@ -861,7 +861,7 @@ class Store:
             
         dtl = rh.actor.get_detail()
         if dtl:
-            dh = dtl.get_handle(rh.ui)
+            dh = dtl.get_layout_handle(rh.ui)
             #~ self.collect_fields(self.detail_fields,*dh.lh_list)
             self.collect_fields(self.detail_fields,dh)
         

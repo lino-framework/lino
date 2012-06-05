@@ -385,7 +385,7 @@ class BaseLayout(object):
             
             
             
-    def get_handle(self,ui):
+    def get_layout_handle(self,ui):
         """
         Same code as lino.ui.base.Handled.get_handle, 
         except that here it's an instance method.

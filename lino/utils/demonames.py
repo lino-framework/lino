@@ -2613,7 +2613,7 @@ Remy	22 824
 
 FEMALE_FIRST_NAMES_FRANCE = u"""
 Adélaïde, Adèle, Agnès, Alix, Béatrice, Beatrix, Elizabeth, Hélène, Héloïse, Isabeau, Iseult, Irène, Mahaut, Margot, Mathilde, Mélissende, Pétronille, Yolande,
-Adèle, Aimée, Alice, Appoline, Augustine, Céleste, Célie, Emma, Élise, Églantine, Eugénie, Irène, Jeanne, Joséphine, Léopoldine, Léontine, Lucie, Louise, Madeleine, Mathilde, Ophélie, Pauline, Rose, Zoé
+Adèle, Aimée, Alice, Appoline, Augustine, Céleste, Célie, Emma, Élise, Églantine, Eugénie, Irène, Jeanne, Joséphine, Léopoldine, Léontine, Lucie, Louise, Madeleine, Mathilde, Ophélie, Pauline, Rose, Zoé,
 Albanie, Alexine, Aglaé, Alina, Alma, Angèle, Appoline, Armance, Arthémise, Augustine, Blanche, Célestine, Colombe, Dina, Elia, Émerence, Eulalie, Eugénie, Félicie, Fleurine, Gracianne, Honorine, Jeanne, Léona, Léonie, Léontine, Lilly, Louise, Matilde, Noémi, Pétronille, Philomène, Rose, Salomée, Sidonie, Victoire, Victorine Zélie
 """
 

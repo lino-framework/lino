@@ -169,7 +169,7 @@ class TableRequest(actions.ActionRequest):
         
     def parse_req(self,request,rqdata,**kw):
         #~ logger.info("20120121 %s.parse_req()",self)
-        rh = self.ah
+        #~ rh = self.ah
         master = kw.get('master',self.actor.master)
         if master is ContentType or master is models.Model:
             mt = rqdata.get(ext_requests.URL_PARAM_MASTER_TYPE)
@@ -202,7 +202,7 @@ class TableRequest(actions.ActionRequest):
         
         if settings.LINO.use_filterRow:
             exclude = dict()
-            for f in rh.store.fields:
+            for f in self.ah.store.fields:
                 if f.field:
                     filterOption = rqdata.get('filter[%s_filterOption]' % f.field.name)
                     if filterOption == 'empty':
@@ -272,7 +272,7 @@ class TableRequest(actions.ActionRequest):
         #~ if kv:
             #~ kw.update(known_values=kv)
         
-        return rh.actor.parse_req(request,rqdata,**kw)
+        return self.actor.parse_req(request,rqdata,**kw)
         
             
     def setup(self,
@@ -700,6 +700,13 @@ class AbstractTable(actors.Actor):
     @classmethod
     def setup_columns(self):
         pass
+        
+    @classmethod
+    def get_column_names(self,ar):
+        """
+        Dynamic tables must subclass this method
+        """
+        return self.column_names
         
     #~ @classmethod
     #~ def add_column(self,*args,**kw):
