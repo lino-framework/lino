@@ -399,7 +399,6 @@ class Cycler:
     
     """
     def __init__(self,*args):
-    #~ def __init__(self,items):
         if len(args) == 0:
             raise ValueError()
         elif len(args) == 1:
@@ -413,10 +412,15 @@ class Cycler:
         self.current += 1
         if self.current >= len(self.items):
             self.current = 0
+        if isinstance(item,Cycler):
+            return item.pop()
         return item
         
     def __len__(self):
         return len(self.items)
+        
+    def reset(self):
+        self.current = 0
         
 
 

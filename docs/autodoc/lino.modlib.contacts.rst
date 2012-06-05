@@ -8,17 +8,34 @@
     
 
 Models
-------
+======
 
 .. automodule:: lino.modlib.contacts.models
     :members:
     :show-inheritance:
 
 
-:mod:`lino.modlib.contacts.utils`
----------------------------------
+Utilities
+=========
 
 .. automodule:: lino.modlib.contacts.utils
+    :members:
+    :show-inheritance:
+
+Fixtures
+========
+
+demo_ee
+-------
+
+.. automodule:: lino.modlib.contacts.fixtures.demo_ee
+    :members:
+    :show-inheritance:
+
+demo_fr
+-------
+
+.. automodule:: lino.modlib.contacts.fixtures.demo_fr
     :members:
     :show-inheritance:
 

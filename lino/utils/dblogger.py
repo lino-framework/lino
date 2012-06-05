@@ -108,4 +108,4 @@ def log_changes(request,elem):
 
 class PseudoRequest:
     def __init__(self,user):
-        self.user = "user"
+        self.user = user

@@ -182,7 +182,6 @@ def add_quick_search_filter(qs,search_text):
             if isinstance(field,(models.IntegerField,models.AutoField)):
                 kw = {field.name: int(search_text)}
                 q = q | models.Q(**kw)
-        
     return qs.filter(q)
     
     

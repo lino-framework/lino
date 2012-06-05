@@ -50,6 +50,13 @@ watch_tim
     :members:
     :show-inheritance:
 
+garble
+~~~~~~
+
+.. automodule:: lino.apps.pcsw.management.commands.garble
+    :members:
+    :show-inheritance:
+
 
 
 Fixtures

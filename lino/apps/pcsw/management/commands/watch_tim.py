@@ -92,10 +92,11 @@ def json2py(dct):
 CONTACT_FIELDS = '''id name street street_no street_box addr2 
 country city zip_code region language email url phone gsm remarks'''.split()
 
-class PseudoRequest:
-    user = "watch_tim"
+#~ class PseudoRequest:
+    #~ user = "watch_tim"
+#~ REQUEST = PseudoRequest()
 
-REQUEST = PseudoRequest()
+REQUEST = dblogger.PseudoRequest("watch_tim")
 
 class Controller:
     "Deserves more documentation."
