@@ -98,7 +98,7 @@ if settings.LINO.user_model:
             except USER_MODEL.DoesNotExist,e:
                 # [C1]
                 request.user = None  
-                logger.error("Unknown username %s from request %s",username, request)
+                logger.exception("Unknown username %s from request %s",username, request)
                 raise Exception(
                   "Unknown username %r. Please contact your system administrator." 
                   % username)

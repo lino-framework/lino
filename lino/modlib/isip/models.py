@@ -292,7 +292,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
     def full_clean(self,*args,**kw):
         r = self.active_period()
         if not isrange(*r):
-            raise ValidationError(u'Contracts ends before it started.')
+            raise ValidationError(u'Contract ends before it started.')
         
         if self.type_id and self.type.exam_policy_id:
             if not self.exam_policy_id:
