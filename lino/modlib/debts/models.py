@@ -259,7 +259,7 @@ Vielleicht mit Fußnoten?
                 
     def __unicode__(self):
         if self.pk is None:
-            return super(Budget,self).__unicode__()
+            return unicode(_("New"))+' '+unicode(self._meta.verbose_name)
         return force_unicode(
             _("Budget %(pk)d for %(partner)s") 
                 % dict(pk=self.pk,partner=self.partner))
