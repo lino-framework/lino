@@ -35,6 +35,9 @@ if cbss:
         [ cbss.IdentifyPersonRequest, 
           dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1938,6,1)), 
           'demo_ipr_3.xml' ],
+        [ cbss.IdentifyPersonRequest, 
+          dict(last_name="MUSTERMANN",birth_date=IncompleteDate(1968,3,7)), 
+          'demo_ipr_4.xml' ],
         [ cbss.ManageAccessRequest, dict(
             national_id='680601 053-29',
             start_date=settings.LINO.demo_date(),

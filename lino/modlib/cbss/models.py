@@ -614,6 +614,7 @@ class SSDNRequest(CBSSRequest):
             self.status = RequestStatus.ok
         elif rc == '1':
             self.status = RequestStatus.warnings
+            self.logmsg("Warnings:==============\n%s\n===============" % s)
         #~ elif rc == '10000':
             #~ self.status = RequestStatus.errors
         else:
