@@ -884,32 +884,31 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
       um wieviel Monate bzw. Tage die Suche nach unten/oben ausgeweitet wird.
       Gültige Werte: 0 bis 10.
       """)
-      # 20120606 gridcolumn doesn't like tooltips with HTML
-      #~ """
+      # 20120606 gridcolumn doesn't like tooltips containing HTML
       #~ <p>Zum Beispiel 
       #~ <table border=1 class="htmlText">
       #~ <tr>
-        #~ <td>Geburtsdatum<td/>
-        #~ <td colspan="3">Toleranz<td/>
+        #~ <td>Geburtsdatum</td>
+        #~ <td colspan="3">Toleranz</td>
       #~ </tr><tr>
-        #~ <td><td/>
-        #~ <td>0<td/>
+        #~ <td></td>
+        #~ <td>0</td>
         #~ <td>1</td>
         #~ <td>10</td>
       #~ </tr><tr>
-        #~ <td> 1968-00-00  <td/>
-        #~ <td> im Jahr 1968 <td/>
+        #~ <td> 1968-00-00  </td>
+        #~ <td> im Jahr 1968 </td>
         #~ <td> von 1967 bis 1969 </td>
-        #~ <td> 1958 bis 1978 <td/>
+        #~ <td> 1958 bis 1978 </td>
       #~ </tr><tr>
-        #~ <td> 1968-06-00  <td/>
-        #~ <td> im Juni 1968 <td/>
+        #~ <td> 1968-06-00  </td>
+        #~ <td> im Juni 1968 </td>
         #~ <td> von Mai  bis Juli 1968 </td>
         #~ <td>von Oktober 1967 bis April 1969</td>
       #~ </tr>
       #~ </table>
       #~ </p>
-      #~ """
+      
       
         
     def on_create(self,ar):
