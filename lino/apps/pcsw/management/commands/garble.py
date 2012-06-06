@@ -33,7 +33,7 @@ from django.core.management.base import BaseCommand, CommandError
 #~ from lino import lino_site
 #~ from lino.utils import dbfreader
 from lino.utils import dblogger
-from lino.utils import Cycler
+from lino.utils import Cycler, join_words
 #~ from lino import diag
 
 #~ from lino.modlib.contacts.utils import name2kw, street2kw
