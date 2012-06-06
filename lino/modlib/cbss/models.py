@@ -1687,8 +1687,8 @@ def site_setup(self):
     """
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
     cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
-    cbss.IdentifyRequestsByPerson
     """,MODULE_NAME,required_user_groups=['cbss'])
+    #~ cbss.IdentifyRequestsByPerson
     
     self.modules.lino.SiteConfigs.add_detail_tab('cbss',"""
     cbss_org_unit sector ssdn_user_id ssdn_email

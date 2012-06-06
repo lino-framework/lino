@@ -36,6 +36,7 @@ extension.
     lino.utils.sqllog
     lino.utils.log
     lino.utils.dblogger
+    lino.utils.demonames
     lino.utils.dumpy
     lino.utils.jsgen
     lino.utils.mti

@@ -1,4 +1,4 @@
-﻿## Copyright 2009-2011 Luc Saffre
+﻿## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -10,6 +10,9 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Adds an arbitrary selection of a few demo languages.
+"""
 
 from django.db import models
 #countries = models.get_app('countries')
@@ -18,9 +21,11 @@ from lino.utils.instantiator import Instantiator
 from lino.utils.babel import babel_values
 
 
-Language = Instantiator('countries.Language',"id").build
 
 def objects():
+  
+    Language = Instantiator('countries.Language',"id").build
+    
     yield Language('ger',**babel_values('name',
           de=u"Deutsch",
           fr=u'Allemand',

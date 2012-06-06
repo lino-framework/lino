@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -11,6 +11,21 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Adds all languages of the world to your database.
+Labels (designations) are available in English, German and French.
+
+This is an integration of different sources:
+
+- http://www.sil.org/iso639-3/iso-639-3_20100707.tab
+- http://www.sil.org/iso639-3/download.asp
+- German designations (ISO 639-2/B) from 
+  http://www.d-nb.de/standardisierung/pdf/sprachencodes_dt.pdf
+- French designations from 
+  http://fr.wikipedia.org/wiki/Liste_des_codes_ISO_639-1
+
+
+"""
 
 import os
 import codecs
@@ -25,8 +40,6 @@ from lino.modlib.countries.models import Language
 LANGUAGES = {}
 
 """
-http://www.sil.org/iso639-3/iso-639-3_20100707.tab
-http://www.sil.org/iso639-3/download.asp
 """
 fn = os.path.join(os.path.dirname(__file__),'iso-639-3_20100707.tab')
 n = 0
@@ -53,9 +66,6 @@ for ln in codecs.open(fn,encoding="UTF-8").readlines():
 
 
 """
-German language names
-ISO 639-2/B
-http://www.d-nb.de/standardisierung/pdf/sprachencodes_dt.pdf
 """
 
 german = u'''

@@ -16,12 +16,6 @@ Textfeld, das zum Schluss ausgedruckt wird.
 
 Es gibt einen neuen Reiter "Vorschau"
 
-The :mod:`garble <lino.apps.pcsw.management.commands.garble>` 
-command didn't call :meth:`full_clean
-<lino.modlib.contacts.models.PersonMixin.full_clean>` 
-so that real names remained in the (hidden)
-:attr:`name <lino.modlib.contacts.models.Partner.name>` field.
-
 Still experimenting with the cooperation of the 
 `remark`, `description`, `todo`, `account` and `partner` 
 fields of 
@@ -45,3 +39,28 @@ Momentan gelten folgende Regeln :
   weil wir noch überlegen müssen, *wie* sie ausgedruckt werden sollen. 
   Vielleicht mit Fußnoten?
 
+The :mod:`garble <lino.apps.pcsw.management.commands.garble>` 
+command didn't call :meth:`full_clean
+<lino.modlib.contacts.models.PersonMixin.full_clean>` 
+so that real names remained in the (hidden)
+:attr:`name <lino.modlib.contacts.models.Partner.name>` field.
+
+Aber dadurch kam etwas Rätselhaftes: 
+garble meldete "Coaching period ends before it started."
+für eine Person. Und ich verstehe nicht, wieso 
+er das nicht schon kurz zuvor beim Einlesen des Dumps gemeldet 
+hatte. Hier console log::
+
+  python manage.py initdb d20120603 upgrade-144
+  python manage.py garble
+  
+Um mich jetzt nicht darin verstricken zu müssen, umgehe es indem ich
+manuell `p.name = join_words(p.last_name,p.first_name)` mache.
+
+Und dann habe ich bemerkt, dass ein Budget ohne Aktoren als Überschrift 
+der einzigen Kolonne "Gemeinsam" da stehen hatte. Nicht sehr intelligent. 
+Behoben.
+
+Und dann habe ich eher versehentlich mal in Google "eesti perekonnanimed" 
+eingetippt und dann mein Modul :mod:`lino.utils.demonames` 
+um fiktive Esten bereichert.

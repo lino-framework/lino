@@ -268,9 +268,12 @@ Vielleicht mit Fußnoten?
         attname = "_cached_actors"
         if hasattr(self,attname):
             return getattr(self,attname)
-        l = []
-        l.append(MainActor(self))
-        l += [a for a in self.actor_set.all()]
+        l = list(self.actor_set.all())
+        if len(l) > 0:
+            main_header = _("Common")
+        else:
+            main_header = _("Betrag")
+        l.insert(0,MainActor(self,main_header))
         setattr(self,attname,l)
         return l
         
@@ -291,7 +294,6 @@ Vielleicht mit Fußnoten?
     @property
     def actor1(self):
         return self.get_actor(0)
-        #~ return MainActor(self)
     @property
     def actor2(self):
         return self.get_actor(1)
@@ -334,7 +336,7 @@ Vielleicht mit Fußnoten?
         sar = ar.spawn(t,master_instance=self,
             title=unicode(group),
             filter=models.Q(account__group=group),**kw)
-        print 20120606, sar
+        #~ print 20120606, sar
         return sar
         
     #~ def msum(self,fldname,types=None,**kw): 
@@ -548,10 +550,10 @@ class ActorBase:
         
 class MainActor(ActorBase):
     "A volatile object that represents the budget partner as actor"
-    def __init__(self,budget):
+    def __init__(self,budget,header):
         self.budget = budget
         self.partner = budget.partner
-        self.header = _("Common")
+        self.header = header
         self.remark = ''
         
     
@@ -789,13 +791,18 @@ class PrintEntriesByBudget(dd.VirtualTable):
         """
         Builds columns dynamically by request. Called once per UI handle.
         """
-        if 'amounts ' in self.column_names:
+        if 'dynamic_amounts' in self.column_names:
             #~ todo
             amounts = ''
             if ar.master_instance is not None:
-                for i,a in enumerate(ar.master_instance.get_actors()):
-                    amounts += 'amount'+str(i) + ' '
-            return self.column_names.replace('amounts ',amounts)
+                actors = ar.master_instance.get_actors()
+                if len(actors) == 1:
+                    amounts = 'amount0'
+                else:
+                    for i,a in enumerate(actors):
+                        amounts += 'amount'+str(i) + ' '
+                    amounts += 'total '
+            return self.column_names.replace('dynamic_amounts',amounts)
         return self.column_names
         
     @classmethod
@@ -803,6 +810,7 @@ class PrintEntriesByBudget(dd.VirtualTable):
         d = dict()
         #~ d.update(amount0='')
         if ar.master_instance is not None:
+            #~ if len(ar.master_instance.get_actors()) > 1:
             for i,a in enumerate(ar.master_instance.get_actors()):
                 d['amount'+str(i)] = a.header
         return d
@@ -903,25 +911,33 @@ class PrintEntriesByBudget(dd.VirtualTable):
   
   
 class PrintExpensesByBudget(PrintEntriesByBudget):
-    "Print version of :class:`ExpensesByBudget` table"
+    """
+    Print version of :class:`ExpensesByBudget` table.
+    """
     _account_type = AccountType.expense
-    column_names = "description amounts total"
+    column_names = "description dynamic_amounts"
         
 class PrintIncomesByBudget(PrintEntriesByBudget):
-    "Print version of :class:`IncomesByBudget` table"
+    """
+    Print version of :class:`IncomesByBudget` table.
+    """
     _account_type = AccountType.income
-    column_names = "description amounts total"
+    column_names = "description dynamic_amounts"
     
 class PrintLiabilitiesByBudget(PrintEntriesByBudget):
-    "Print version of :class:`LiabilitiesByBudget` table"
+    """
+    Print version of :class:`LiabilitiesByBudget` table.
+    """
     _account_type = AccountType.liability
     #~ column_names = "partner description total monthly_rate todo"
-    column_names = "partner description total"
+    column_names = "partner description dynamic_amounts"
     
 class PrintAssetsByBudget(PrintEntriesByBudget):
-    "Print version of :class:`AssetsByBudget` table"
+    """
+    Print version of :class:`AssetsByBudget` table.
+    """
     _account_type = AccountType.asset
-    column_names = "description total"
+    column_names = "description dynamic_amounts"
 
 ENTRIES_BY_TYPE_TABLES = (
   PrintExpensesByBudget,

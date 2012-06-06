@@ -11,13 +11,13 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Adds an arbitrary selection of a few demo cities.
+"""
 
 from lino.utils import dblogger
 from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
-#~ from lino.utils.babel import default_language
-#from lino import reports
-#contacts = reports.get_app('contacts')
 
 
 def objects():
@@ -41,8 +41,8 @@ def objects():
     #~ yield city(u'Brüssel','BE',zip_code='1000')
     yield make_city(u'Oostende','BE',zip_code='8400')
     
-    yield make_city('Vigala','EE')
-    yield make_city('Tallinn','EE')
+    yield make_city(u'Vigala','EE')
+    yield make_city(u'Tallinn','EE')
     yield make_city(u'Pärnu','EE')
     yield make_city(u'Tartu','EE')
     yield make_city(u'Narva','EE')

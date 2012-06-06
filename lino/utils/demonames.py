@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
+u"""
 Example usage:
 
 The first five a Belgians:
@@ -52,6 +52,21 @@ Abbas
 Aertsens
 Arshan
 
+Some fictive Estonians:
+
+>>> for i in range(5):
+...    print MALE_FIRST_NAMES_ESTONIA.pop(), LAST_NAMES_ESTONIA.pop(), '&', 
+...    print FEMALE_FIRST_NAMES_ESTONIA.pop(), LAST_NAMES_ESTONIA.pop()
+Aadu Ivanov & Adeele Tamm
+Aare Saar & Age Sepp
+Aarne Mägi & Age-Kaie Smirnov
+Aaro Vasiliev & Aili Petrov
+Aaron Kask & Aili Kukk
+
+This module is used by 
+the :mod:`garble <lino.apps.pcsw.management.commands.garble>` 
+command that comes with :mod:`lino.apps.pcsw`.
+
 Sources:
 
 The raw data was originally copied from:
@@ -66,7 +81,9 @@ The raw data was originally copied from:
   and http://genealogy.familyeducation.com
 - Streets of Liège from 
   http://fr.wikipedia.org/wiki/Liste_des_rues_de_Li%C3%A8ge
-  
+- Estonian last names:
+  http://www.ekspress.ee/news/paevauudised/eestiuudised/top-500-eesti-koige-levinumad-perekonnanimed.d?id=27677149
+- Estonian first last names are extracted from my personal database.
 
 
 
@@ -84,6 +101,14 @@ def splitter1(s):
 
 def splitter2(s):
     return [name.strip() for name in s.split(',')]
+
+def splitter3(s):
+    for ln in s.splitlines():
+        ln = ln.strip()
+        if len(ln) > 1 and ln[0] != '#':
+            a = ln.split()
+            name = a[0]
+            yield name
 
 
 
@@ -7241,6 +7266,1145 @@ Zareb
 Zashawn
 """
 
+LAST_NAMES_ESTONIA = u"""
+Ivanov	6 789
+Tamm	5 241
+Saar	4 352
+Sepp	3 624
+Mägi	3 613
+Smirnov	3 402
+Vasiliev	3 153
+Petrov	2 937
+Kask	2 847
+Kukk	2 728
+Kuznetsov	2 339
+Rebane	2 265
+Ilves	2 165
+Mihhailov	1 968
+Pärn	1 933
+Pavlov	1 927
+Semenov	1 909
+Koppel	1 882
+Andreev	1 862
+Alekseev	1 845
+Luik	1 826
+Kaasik	1 817
+Lepik	1 814
+Oja	1 809
+Raudsepp	1 775
+Kuusk	1 747
+Karu	1 704
+Fjodorov	1 685
+Nikolaev	1 675
+Kütt	1 646
+Põder	1 628
+Vaher	1 614
+Popov	1 611
+Stepanov	1 592
+Volkov	1 590
+Moroz	1 573
+Lepp	1 564
+Koval	1 559
+Kivi	1 531
+Kallas	1 525
+Kozlov	1 463
+Mets	1 455
+Sokolov	1 446
+Liiv	1 426
+Grigorieva	1 424
+Jakovlev	1 422
+Kuusik	1 384
+Teder	1 381
+Lõhmus	1 368
+Laur	1 360
+Jõgi	1 359
+Kangur	1 337
+Peterson	1 285
+Lebedev	1 275
+Kõiv	1 271
+Kull	1 269
+Ots	1 242
+Leppik	1 226
+Dmitriev	1 225
+Nikitin	1 222
+Mölder	1 214
+Jegorov	1 210
+Toom	1 201
+Puusepp	1 181
+Orlov	1 149
+Raud	1 130
+Kuzmin	1 122
+Aleksandrov	1 089
+Orav	1 086
+Sild	1 084
+Novikov	1 070
+Bogdanov	1 062
+Rand	1 053
+Jakobson	1 039
+Makarov	1 015
+Nõmm	1 010
+Põld	1 010
+Sarapuu	1 004
+Uibo	1 000
+Paju	998
+Mitt	997
+Männik	961
+Zaitsev	960
+Antonov	956
+Laas	951
+Jürgenson	944
+Saks	944
+Järv	942
+Vinogradov	940
+Filippov	930
+Johanson	929
+Pukk	920
+Tomson	919
+Kalda	917
+Belov	915
+Romanov	911
+Melnik	907
+Allik	905
+Solovjov	905
+Sergejev	891
+Tamme	877
+Kruus	873
+Mark	870
+Aas	867
+Rätsep	867
+Gusev	866
+Maksimov	866
+Paas	860
+Mänd	853
+Hein	852
+Roos	849
+Parts	847
+Kase	826
+Väli	826
+Järve	825
+Lind	823
+Mõttus	821
+Palm	819
+Rohtla	812
+Timofejev	804
+Valk	797
+Hunt	794
+Unt	781
+Adamson	775
+Pihlak	766
+Iljin	759
+Nurk	755
+Baranov	742
+Lember	736
+Frolov	734
+Gavrilov	732
+Sikk	731
+Kuus	730
+Kala	722
+Õunapuu	720
+Pärna	716
+Soosaar	712
+Zahharov	706
+Vares	703
+Tsvetkov	696
+Arro	695
+Vorobjov	695
+Aavik	690
+Kurg	690
+Sorokin	688
+Tali	688
+Vahtra	686
+Jefimov	684
+Vahter	682
+Varik	678
+Kalinin	673
+Kolesnik	672
+Mikk	668
+Aru	663
+Matvejev	661
+Trofimov	657
+Kikas	652
+Õun	652
+Luts	650
+Roots	644
+Tõnisson	641
+Kolk	634
+Lill	634
+Must	631
+Piir	631
+Kallaste	626
+Kurvits	625
+Maripuu	622
+Poljakov	622
+Jänes	621
+Golubev	618
+Sidorov	618
+Mäe	615
+Nikiforov	614
+Kirs	609
+Kangro	605
+Korol	605
+Maasik	601
+Kokk	597
+Borissov	593
+Kaur	590
+Tomingas	590
+Koort	581
+Tammik	580
+Fedorov	573
+Müür	573
+Danilov	566
+Toomsalu	566
+Martin	564
+Susi	563
+Ploom	560
+Liiva	555
+Hallik	554
+Tarassov	553
+Fomin	550
+Tilk	550
+Uustalu	550
+Michelson	549
+Valge	548
+Tihhomirov	545
+Miller	543
+Kulikov	541
+Toots	541
+Vaino	541
+Nõmmik	540
+Talts	540
+Jürgens	538
+Kikkas	538
+Kesküla	537
+Anton	536
+Post	535
+Beljajev	532
+Kärner	530
+Martinson	530
+Hansen	529
+Rüütel	527
+Veski	527
+Rumjantsev	526
+Mironov	525
+Müürsepp	525
+Meier	524
+Ossipov	524
+Sarv	518
+Palu	517
+Žukov	516
+Aasa	513
+Laanemets	512
+Nazarov	511
+Krõlov	509
+Žuravljov	507
+Titov	507
+Juhkam	506
+Luht	506
+Jalakas	505
+Kivistik	505
+Karro	503
+Annus	502
+Rosenberg	501
+Fedotov	499
+Lääne	499
+Viira	499
+Jõesaar	497
+Tooming	497
+Komarov	492
+Soo	491
+Ott	488
+Simson	485
+Kotkas	483
+Malõšev	482
+Kink	478
+Anderson	477
+Toome	477
+Kirillov	476
+Aus	475
+Ruus	474
+Saare	473
+Erm	471
+Lang	471
+Olesk	471
+Afanasjev	468
+Pettai	468
+Reimann	467
+Tuisk	467
+Kriisa	465
+Ojala	465
+Kroon	463
+Raag	462
+Raid	462
+Bõstrov	461
+Org	461
+Lauri	460
+Laan	456
+Pärtel	456
+Taal	456
+Kadak	455
+Sander	455
+Kattai	454
+Truu	454
+Konovalov	453
+Sirel	453
+Liivak	451
+Raja	449
+Abel	448
+Siim	448
+Männiste	445
+Lipp	443
+Kisseljov	440
+Medvedev	440
+Meister	440
+Abramov	439
+Kazakov	439
+Sutt	439
+Saveljev	438
+Filatov	437
+Soots	436
+Schmidt	434
+Gerassimov	432
+Kotov	432
+Allas	431
+Ivask	429
+Täht	429
+Loginov	428
+Juhanson	426
+Kiik	425
+Leht	425
+Saul	425
+Kasemets	421
+Ševtšenko	421
+Sobolev	420
+Lass	419
+Härm	418
+Kont	415
+Jeršov	414
+Vlassov	414
+Maslov	413
+Konstantinov	411
+Pruul	411
+Teras	411
+Visnapuu	411
+Aun	409
+Pajula	407
+Gromov	406
+Kool	406
+Silm	406
+Tamberg	406
+Lumiste	402
+Kirsipuu	401
+Kirss	401
+Kudrjavtsev	401
+Sööt	401
+Kalmus	400
+Sokk	399
+Kalm	398
+Koit	398
+Oras	398
+Suits	398
+Laine	396
+Sulg	396
+Põldma	395
+Vaht	394
+Klimov	391
+Lukk	391
+Randmaa	391
+Gontšarov	389
+Kiis	388
+Paal	388
+Võsu	388
+Uus	387
+Jaakson	386
+Lillemets	385
+Mürk	383
+Tiits	382
+Jaanus	381
+Link	381
+Erik	379
+Lokk	379
+Randoja	379
+Bondarenko	378
+Drozdov	377
+Lehtmets	377
+Voronin	377
+Kuningas	376
+Laane	376
+Lumi	375
+Salu	375
+Lomp	372
+Pent	372
+Laks	370
+Jermakov	369
+Salumäe	369
+Kutsar	368
+Madisson	366
+Koger	365
+Muru	365
+Niit	365
+Põllu	365
+Vähi	365
+Kaljula	364
+Viks	364
+Nõmme	363
+Urb	362
+Nuut	361
+Kaljuvee	360
+Piho	359
+Piirsalu	359
+Sillaste	359
+Arula	358
+Kondratjev	357
+Tuulik	357
+Alas	356
+Eller	356
+Kostin	356
+Käsper	356
+Pikk	356
+Salumets	356
+Jürisson	355
+Kruglov	355
+Liivamägi	355
+Hanson	354
+Õispuu	354
+Ignatjev	353
+Kaljuste	352
+Kiisk	351
+Lehtla	351
+Suvi	351
+Gross	350
+Poom	349
+Egorov	348
+Mäesalu	348
+Davõdov	347
+Lääts	347
+Panov	347
+Suvorov	347
+Maidla	346
+Mäeots	345
+Põdra	345
+Raidma	345
+Teesalu	345
+Holm	344
+Loorits	344
+Raamat	344
+Liblik	343
+Mändla	343
+Štšerbakov	343
+Lukin	342
+Säde	342
+Trei	342
+Kaljurand	341
+Kuuse	341
+Kelder	339
+Markus	339
+Ader	338
+Pärnpuu	338
+Oks	337
+Tuul	337
+Gorbunov	336
+Laht	336
+Leis	336
+Štšerbakov	335
+Jaanson	334
+Kasak	332
+Zujev	332
+Rosin	331
+Heinsalu	330
+Kivimäe	330
+Naumov	330
+Kapp	329
+Kohv	329
+Moor	327
+Remmel	327
+Treial	327
+Klein	326
+Pulk	326
+Põldmaa	325
+Kilk	324
+Ojaste	323
+Soosalu	323
+Käärik	321
+Paap	321
+Sibul	321
+Klaas	320
+Kurm	320
+Raadik	320
+Safronov	320
+Sarap	320
+Treier	320
+Reinsalu	319
+Sillaots	318
+Sisask	317
+Soon	317
+Tiik	317
+Denissov	316
+Kalamees	316
+Jõe	315
+Lätt	315
+Karpova	313
+Mandel	313
+Kiil	312
+Ernits	311
+Kasemaa	311
+Vain	311
+Villemson	311
+Suur	310
+Heinsoo	309
+Pihelgas	309
+Roosileht	308
+Aasmäe	306
+Koitla	306
+Lehiste	306
+Merila	306
+Vill	306
+Nurm	304
+Viik	304
+Kass	303
+Käär	303
+Teearu	302
+Anissimov	301
+Karpov	300
+Kivilo	300
+Püvi	300
+"""
+
+FEMALE_FIRST_NAMES_ESTONIA = u"""
+Adeele                             
+Age                                
+Age-Kaie                           
+Aili                               
+Aili                               
+Aino                               
+Aino                               
+Aive                               
+Aleksandra                         
+Alla                               
+Allar                              
+Angeelika                          
+Angela                             
+Ann                                
+Anna-Merike                        
+Anne                               
+Anne                               
+Anne                               
+Anne                               
+Anne                               
+Anne(+)                            
+Anneli                             
+Anneli                             
+Anneli                             
+Anneli                             
+Annely                             
+Anni                               
+Annika                             
+Annika                             
+Annika                             
+Anu                                
+Anu                                
+Asta                               
+Astra                              
+Astrid                             
+Astrid                             
+Ave                                
+Brigitte                           
+Cathy                              
+Clara                              
+Claudine                           
+Cris                               
+Ebe                                
+Eda                                
+Edda                               
+Eevi                               
+Egle                               
+Eha                                
+Eha                                
+Eike                               
+Elis                               
+Elisa                              
+Eloliis                            
+Emily Melissa                      
+Ene                                
+Ene                                
+Eneli                              
+Epp                                
+Eva-Liisa                          
+Eve                                
+Eve                                
+Eve                                
+Eveli                              
+Evely                              
+Evi                                
+Fatima                             
+Florinda                           
+Gabrielle                          
+Grete                              
+Halliki                            
+Hedi                               
+Hedi                               
+Heidi                              
+Helbe                              
+Helen                              
+Helena                             
+Helena                             
+Helgi                              
+Heli                               
+Heli                               
+Heli                               
+Helja                              
+Heljo                              
+Helju (Heljo)                      
+Helve                              
+Helyn                              
+Iiris                              
+Ija                                
+Ilme                               
+Ilona                              
+Ilona                              
+Imbi                               
+Inge                               
+Jaanika                            
+Jacqueline                         
+Jana                               
+Jana                               
+Jana                               
+Janika                             
+Jenifer                            
+Judith                             
+Julia                              
+Julia                              
+Juta                               
+Kaari                              
+Kadi                               
+Kadri                              
+Kadri                              
+Kadri                              
+Kai                                
+Kaia                               
+Kaidi                              
+Kaija                              
+Kaili                              
+Kaily                              
+Kaja                               
+Karin                              
+Karolina                           
+Katarina                           
+Katerina                           
+Kati                               
+Kati                               
+Katri                              
+Katri                              
+Katrin                             
+Katrin                             
+Katrin                             
+Katrin                             
+Kelli                              
+Kerle                              
+Kersti                             
+Kersti                             
+Kersti                             
+Kersti                             
+Kersti                             
+Kerstin                            
+Kertu                              
+Kirsti                             
+Kitti                              
+Kjersti                            
+Krista                             
+Krista                             
+Krista                             
+Krista (+10.09.10)                 
+Kristel                            
+Kristel                            
+Kristel                            
+Kristel                            
+Kristel                            
+Kristel                            
+Kristi                             
+Kristiina                          
+Kristiina                          
+Kristiina                          
+Kristin                            
+Kristina                           
+Kuma                               
+Kärolin                            
+Kärt                               
+Kätlin                             
+Kätlin                             
+Kätlin                             
+Kätlin                             
+Küllike                            
+Külliki                            
+Külliki                            
+Kyllikki                           
+Laine                              
+Laura                              
+Lea                                
+Lehte                              
+Leili                              
+Lia                                
+Liesel                             
+Liia                               
+Liina                              
+Liina                              
+Liina                              
+Liis                               
+Liisa                              
+Liisa                              
+Liisi (Eke)                        
+Liivi                              
+Lili                               
+Linda                              
+Linda                              
+Loone                              
+Lorraine                           
+Luule (+)                          
+Ly                                 
+Lya                                
+Maarika                            
+Maarja                             
+Maarja                             
+Madli                              
+Madli                              
+Mai                                
+Maie                               
+Maire                              
+Malle                              
+Mare                               
+Mare                               
+Maret                              
+Margareta                          
+Margi                              
+Margit                             
+Margus                             
+Mari                               
+Mari                               
+Mari                               
+Mari-Ann                           
+Mari-Liis                          
+Mari-Liis                          
+Mari-Liis                          
+Mari-Ly                            
+Maria Joanna                       
+Mariann                            
+Marianne                           
+Mariel                             
+Marik                              
+Mariliis                           
+Marina                             
+Marita                             
+Marite                             
+Marliese                           
+Martti                             
+Meeli                              
+Meeli                              
+Merike                             
+Merike                             
+Merilin                            
+Merilin                            
+Merlin                             
+Mery                               
+Michelle                           
+Milvi                              
+Milvi                              
+Mirjam                             
+Mirjam                             
+Nadia                              
+Natalja                            
+Nele                               
+Nele                               
+Paula                              
+Petra                              
+Pia                                
+Pia                                
+Piia                               
+Pille-Riin                         
+Piret                              
+Piret                              
+Piret                              
+Piret                              
+Ragne                              
+Ragne                              
+Raili                              
+Reet                               
+Riia                               
+Riina                              
+Riina                              
+Rita                               
+Rita                               
+Rita                               
+Ruth                               
+Rutt                               
+Rutt                               
+Sadu                               
+Saija                              
+Sanna                              
+Sass                               
+Saule                              
+Signe                              
+Sigrid                             
+Siina                              
+Siiri                              
+Siiri                              
+Silja                              
+Silja                              
+Silja                              
+Silvi                              
+Sirle                              
+Sophie                             
+Stella                             
+Teele                              
+Teresa                             
+Tiia                               
+Tiina                              
+Tiina                              
+Tiina                              
+Tiina                              
+Tiina                              
+Tiina                              
+Tiiu                               
+Tiiu                               
+Titta                              
+Triin                              
+Triin                              
+Triin                              
+Triin                              
+Triin                              
+Triin                              
+Triinu                             
+Triinu                             
+Triinu                             
+Triinuly                           
+Ulvi                               
+Ursula                             
+Urve                               
+Valia                              
+Veera                              
+Veera                              
+Veronika                           
+Veronika                           
+Viire                              
+Viivi                              
+Vilma                              
+Virge                              
+Virge                              
+Virve                              
+Õie                                
+Ülle                               
+Ülle                               
+Ülle                               
+"""
+
+MALE_FIRST_NAMES_ESTONIA = u"""
+Aadu                               
+Aare                               
+Aarne                              
+Aaro                               
+Aaron                              
+Aaron                              
+Ado                                
+Ago                                
+Ago                                
+Ago                                
+Ahti                               
+Ain                                
+Ainars                             
+Aivar                              
+Aivar                              
+Aivar                              
+Aivar                              
+Alar                               
+Alari                              
+Albert                             
+Allan                              
+Ando                               
+Andreas                            
+Andreas                            
+Andreas Junior                     
+Andres                             
+Andres                             
+Andres                             
+Andres                             
+Andres                             
+Andres                             
+Andres                             
+Andres                             
+Andres (Bit)                       
+Andri                              
+Andrus                             
+Andrus                             
+Annar                              
+Anti                               
+Anti                               
+Ants                               
+Ants                               
+Ants                               
+Ants                               
+Ants                               
+Ants                               
+Ardi                               
+Argo                               
+Argo                               
+Arko                               
+Armo                               
+Arne                               
+Arno                               
+Artur                              
+Arvo                               
+Arvo                               
+Arvo                               
+Brd                               
+Carsten                            
+Christian                          
+Clemens                            
+Daniel                             
+Didier                             
+Diego                              
+Dmitri                             
+Eerik                              
+Einar                              
+Elmar                              
+Emmanuel "Manu"                    
+Enn                                
+Enn                                
+Enn                                
+Enno                               
+Enno                               
+Erich                              
+Erik                               
+Fabio                              
+Falko                              
+Filip                              
+Fred                               
+Frédéric                           
+Frederik                           
+Gabriel                            
+Gordon                             
+Gunnar                             
+Guy                                
+Hannes                             
+Hannes                             
+Hannes                             
+Hannes                             
+Hannes & Andres                    
+Harmo                              
+Harri                              
+Harri                              
+Harri                              
+Heino                              
+Heinz                              
+Helger                             
+Henn                               
+Henry                              
+Hillar                             
+Ilmar                              
+Imre                               
+Imre                               
+Imre                               
+Indrek                             
+Indrek                             
+Indrek                             
+Indrek                             
+Ivar                               
+Ivo                                
+Ivo "Aadam"                        
+Jaak                               
+Jaak                               
+Jaak                               
+Jaan                               
+Jaan                               
+Jaan                               
+Jaan                               
+Jaan                               
+Jaan                               
+Jaan                               
+Jaan                               
+Jaanus                             
+Jaanus                             
+Janari                             
+Janek                              
+Jasper                             
+Jens                               
+Johannes                           
+Joonas                             
+Joosep                             
+Juhan                              
+Jüri                               
+Jüri                               
+Jürmo                              
+Kahro                              
+Kaido                              
+Kaimo                              
+Kalev                              
+Kalev                              
+Kalmer                             
+Kardo                              
+Karl Villem                        
+Karla                              
+Karlis                             
+Kaur                               
+Klaus                              
+Klaus-Dieter                       
+Kristjan                           
+Kristjan                           
+Kristo                             
+Kristo                             
+Kristofer                          
+Kristofer                          
+Laurenz                            
+Lehari                             
+Lembit                             
+Leo                                
+Leo                                
+Luc                                
+Maarjo                             
+Madis                              
+Madis                              
+Mads                               
+Mads Michael Hastrup               
+Mairold                            
+Manfred                            
+Marek                              
+Marek                              
+Margo                              
+Margus                             
+Margus                             
+Marko                              
+Mart                               
+Mart                               
+Mart                               
+Martel                             
+Martin                             
+Martti                             
+Martti                             
+Mati                               
+Mati                               
+Mati                               
+Mati                               
+Mati                               
+Matthias                           
+Meeli                              
+Meelis                             
+Meelis                             
+Meelis                             
+Michael                            
+Michael                            
+Michael JJ                         
+Mihkel                             
+Mihkel                             
+Mihkel                             
+Mikk                               
+Mikk                               
+Ole Michael                        
+Olev                               
+Oliver                             
+Oliver                             
+Oliver                             
+Ott                                
+Otto                               
+Ove                                
+Patrick                            
+Patrik                             
+Pawan                              
+Peer                               
+Peeter                             
+Peeter                             
+Peter                              
+Philippe                           
+Philippe                           
+Pierre Clément                     
+Piet                               
+Priit                              
+Priit                              
+Priit                              
+Priit                              
+Ragnar                             
+Raigo                              
+Raivu                              
+Raivu                              
+Rannes                             
+Ranno                              
+Raphael                            
+Rasmus                             
+Raul                               
+Raul                               
+Rauno                              
+Rauno                              
+Reemet                             
+Reet                               
+Rein                               
+Rein                               
+Rein                               
+Ricardo                            
+Riho                               
+Risto                              
+Roland                             
+Ruudi                              
+Sander                             
+Sander                             
+Sander                             
+Sandor                             
+Siim                               
+Silver                             
+Simon                              
+Sonnich Jessen                     
+Sten Erik                          
+Stéphane                           
+Suigu                              
+Sulev                              
+Sulev                              
+Sulo                               
+Sune                               
+Taavi                              
+Taavi                              
+Taivu                              
+Tanel                              
+Tarmo                              
+Tarmo                              
+Tarvo                              
+Tarvo                              
+Tauno                              
+Tero                               
+Thierry                            
+Tiit                               
+Tiit                               
+Tiit                               
+Timo                               
+Toivo                              
+Toivo                              
+Toivo                              
+Toivo                              
+Toomas                             
+Toomas                             
+Tõnis                              
+Tõnis                              
+Tõnis                              
+Tõnu                               
+Udo                                
+Urmas                              
+Urmas                              
+Urmas                              
+Urmas                              
+Urmo                               
+Urmo                               
+Vahur-Paul                         
+Vaiko                              
+Valdo                              
+Veiko                              
+Veiko                              
+Velio                              
+Vello                              
+Vesal                              
+Vika                               
+Villu                              
+Virgo                              
+Vladimir                           
+Volker                             
+William                            
+William                            
+Ülo                                
+"""
+
 
 
 def streets_of_liege():
@@ -7258,6 +8422,10 @@ def streets_of_liege():
     return Cycler(fn())
 
             
+LAST_NAMES_ESTONIA = Cycler(splitter3(LAST_NAMES_ESTONIA))
+MALE_FIRST_NAMES_ESTONIA = Cycler(splitter1(MALE_FIRST_NAMES_ESTONIA))
+FEMALE_FIRST_NAMES_ESTONIA = Cycler(splitter1(FEMALE_FIRST_NAMES_ESTONIA))
+
 LAST_NAMES_RUSSIA = Cycler(splitter1(LAST_NAMES_RUSSIA))
 MALE_FIRST_NAMES_RUSSIA = Cycler(splitter1(MALE_FIRST_NAMES_RUSSIA))
 FEMALE_FIRST_NAMES_RUSSIA = Cycler(splitter1(FEMALE_FIRST_NAMES_RUSSIA))
