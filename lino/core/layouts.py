@@ -352,6 +352,21 @@ class BaseLayout(object):
                 #~ raise Exception("%s has no attribute %r" % (self,k))
             setattr(self,k,v)
             
+    def add_panel(self,name,tpl,label=None,**kw):
+        if hasattr(self,'_extjs3_handle'):
+            raise Exception("Cannot set_detail after UI has been set up.")
+        if '\n' in name:
+           raise Exception("name may not contain any newline") 
+        if ' ' in name:
+           raise Exception("name may not contain any whitespace") 
+        if getattr(self,name,None) is not None:
+           raise Exception("name %r already defined in %s" % (name,self)) 
+        setattr(self,name,tpl)
+        if label is not None:
+            self._labels[name] = label
+        if kw:
+            self._element_options[name] = kw
+        
     def add_tabpanel(self,name,tpl=None,label=None,**kw):
         """
         Add a tab panel to an existing layout.

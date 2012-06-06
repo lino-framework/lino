@@ -881,32 +881,35 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
       default=0,
       help_text=u"""
       Falls Monat oder Tag des Geburtsdatums unbekannt sind, 
-      um wieviel Einheiten die Suche nach unten/oben ausgeweitet wird.
+      um wieviel Monate bzw. Tage die Suche nach unten/oben ausgeweitet wird.
       Gültige Werte: 0 bis 10.
-      <p>Zum Beispiel 
-      <table border=1 class="htmlText">
-      <tr>
-        <td>Geburtsdatum<td/>
-        <td colspan="3">Toleranz<td/>
-      </tr><tr>
-        <td><td/>
-        <td>0<td/>
-        <td>1</td>
-        <td>10</td>
-      </tr><tr>
-        <td> 1968-00-00  <td/>
-        <td> im Jahr 1968 <td/>
-        <td> von 1967 bis 1969 </td>
-        <td> 1958 bis 1978 <td/>
-      </tr><tr>
-        <td> 1968-06-00  <td/>
-        <td> im Juni 1968 <td/>
-        <td> von Mai  bis Juli 1968 </td>
-        <td>von Oktober 1967 bis April 1969</td>
-      </tr>
-      </table>
-      </p>
       """)
+      # 20120606 gridcolumn doesn't like tooltips with HTML
+      #~ """
+      #~ <p>Zum Beispiel 
+      #~ <table border=1 class="htmlText">
+      #~ <tr>
+        #~ <td>Geburtsdatum<td/>
+        #~ <td colspan="3">Toleranz<td/>
+      #~ </tr><tr>
+        #~ <td><td/>
+        #~ <td>0<td/>
+        #~ <td>1</td>
+        #~ <td>10</td>
+      #~ </tr><tr>
+        #~ <td> 1968-00-00  <td/>
+        #~ <td> im Jahr 1968 <td/>
+        #~ <td> von 1967 bis 1969 </td>
+        #~ <td> 1958 bis 1978 <td/>
+      #~ </tr><tr>
+        #~ <td> 1968-06-00  <td/>
+        #~ <td> im Juni 1968 <td/>
+        #~ <td> von Mai  bis Juli 1968 </td>
+        #~ <td>von Oktober 1967 bis April 1969</td>
+      #~ </tr>
+      #~ </table>
+      #~ </p>
+      #~ """
       
         
     def on_create(self,ar):
@@ -1060,6 +1063,7 @@ class MyIdentifyPersonRequests(IdentifyPersonRequests,mixins.ByUser):
     
 class IdentifyRequestsByPerson(IdentifyPersonRequests):
     master_key = 'person'
+    column_names = 'user sent status'
     
 
 
@@ -1604,7 +1608,7 @@ dd.inject_field(SiteConfig,
       help_text="""\
 Used in the http header of new-style requests.
 """))
-    
+
 
     
     
@@ -1615,6 +1619,23 @@ dd.inject_quick_add_buttons(
 dd.inject_quick_add_buttons(
     pcsw.Person,'cbss_retrieve_ti_groups',RetrieveTIGroupsRequestsByPerson)
 
+def cbss_summary(self,ar):
+    """
+    returns a summary overview of the CBSS requests for this person.
+    """
+    #~ qs = IdentifyPersonRequest.objects.filter(person=self,status=RequestStatus.ok)
+    html = '<p><ul>'
+    for m in (IdentifyPersonRequest,ManageAccessRequest,RetrieveTIGroupsRequest):
+        n = m.objects.filter(person=self).count()
+        if n > 0:
+            html += "<li>%d %s</li>" % (n,unicode(m._meta.verbose_name_plural))
+    html += '</ul></p>'
+    return html
+    
+dd.inject_field(pcsw.Person,
+    'cbss_summary',
+    dd.VirtualField(dd.HtmlBox(_("CBSS summary")),cbss_summary))
+    
 
 MODULE_NAME = _("CBSS")
 
@@ -1678,6 +1699,7 @@ def setup_site_cache(self,force):
         target = os.path.join(settings.MEDIA_ROOT,'cache','wsdl',fn) 
         if not os.path.exists(target):
             shutil.copy(src,target)
+            
     
 def site_setup(self):
     """
@@ -1686,9 +1708,17 @@ def site_setup(self):
     Adds a new tab "CBSS" to the Detail of `contacts.Persons`.
     """
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
-    cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
+    cbss_identify_person cbss_manage_access  cbss_retrieve_ti_groups
+    cbss_summary
     """,MODULE_NAME,required_user_groups=['cbss'])
     #~ cbss.IdentifyRequestsByPerson
+    #~ self.modules.contacts.AllPersons.add_detail_panel('cbssrequests',"""
+    #~ cbss_identify_person 
+    #~ cbss_manage_access 
+    #~ cbss_retrieve_ti_groups
+    #~ """,_("CBSS Requests"))
+    #~ self.modules.contacts.AllPersons.add_detail_tab('cbss',"cbssrequests",MODULE_NAME,required_user_groups=['cbss'])
+    #~ 
     
     self.modules.lino.SiteConfigs.add_detail_tab('cbss',"""
     cbss_org_unit sector ssdn_user_id ssdn_email

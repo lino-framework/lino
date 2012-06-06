@@ -120,6 +120,9 @@ def before_row_edit(panel):
     return l
 
 class GridColumn(Component):
+    """
+    The component that generates the JS of a grid column.
+    """
     declare_type = jsgen.DECLARE_INLINE
     
     def __init__(self,index,editor,**kw):
@@ -159,7 +162,8 @@ class GridColumn(Component):
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
             if settings.LINO.use_quicktips and self.editor.field.help_text:
-                kw.update(tooltip=self.editor.field.help_text)
+                if not "<" in self.editor.field.help_text:
+                    kw.update(tooltip=self.editor.field.help_text)
                 
             def fk_renderer(fld,name):
                 # FK fields are clickable if their target has a detail view
@@ -418,14 +422,15 @@ class FieldElement(LayoutElement):
         self.field = field
         self.editable = field.editable # and not field.primary_key
         
-        #~ help_text = getattr(self.field,'help_text',None):
-        if settings.LINO.use_quicktips and self.field.help_text:
-            #~ kw.update(qtip=self.field.help_text)
-            #~ kw.update(toolTipText=self.field.help_text)
-            #~ kw.update(tooltip=self.field.help_text)
-            kw.update(listeners=dict(render=js_code(
-              "Lino.quicktip_renderer(%s,%s)" % (py2js(self.field.verbose_name),py2js(self.field.help_text)))
-            ))
+        if not isinstance(layout_handle.layout,layouts.ListLayout):
+            #~ help_text = getattr(self.field,'help_text',None):
+            if settings.LINO.use_quicktips and self.field.help_text:
+                #~ kw.update(qtip=self.field.help_text)
+                #~ kw.update(toolTipText=self.field.help_text)
+                #~ kw.update(tooltip=self.field.help_text)
+                kw.update(listeners=dict(render=js_code(
+                  "Lino.quicktip_renderer(%s,%s)" % (py2js(self.field.verbose_name),py2js(self.field.help_text)))
+                ))
             
 
         #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields

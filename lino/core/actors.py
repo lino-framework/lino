@@ -565,6 +565,13 @@ class Actor(ViewPermission):
                 #~ setattr(self.detail_layout,k,v)
                 
     @classmethod
+    def add_detail_panel(self,*args,**kw):
+        """
+        Adds a panel to the Detail of this actor.
+        """
+        self.detail_layout.add_panel(*args,**kw)
+    
+    @classmethod
     def add_detail_tab(self,*args,**kw):
         """
         Adds a tab panel to the Detail of this actor.

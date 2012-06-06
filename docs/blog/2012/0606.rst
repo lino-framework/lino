@@ -64,3 +64,47 @@ Behoben.
 Und dann habe ich eher versehentlich mal in Google "eesti perekonnanimed" 
 eingetippt und dann mein Modul :mod:`lino.utils.demonames` 
 um fiktive Esten bereichert.
+
+Upps, und dann war ein Bug im KBSS-Reiter. Der war total durcheinander. 
+
+Zunächst hatte ich die result_xml-Kolonnen der IdentifyPersonRequestsByPerson 
+in Verdacht, und weil die Grid dort sowieso nichts zu suchen hat, habe ich 
+den :func:`lino.modlib.cbss.models.cbss_summary` begonnen. 
+Der sollte die diversen CBSS-Requests analysieren und die 
+nützlichen Infos anzeigen.
+Auch :meth:`lino.core.actors.Actor.add_detail_panel` ist dabei entstanden, 
+wird aber momentan nicht benutzt.
+
+Erst nach zwei Stunden Suche habe ich die eigentlich Erklärung gefunden: 
+der tooltip einer Grid Column darf keinen HTML enthalten.
+Jedenfalls nicht den folgenden, der im Hilfetext von `tolerance` stand:
+
+.. raw::  html
+
+      <p>Zum Beispiel 
+      <table border=1 class="htmlText">
+      <tr>
+        <td>Geburtsdatum<td/>
+        <td colspan="3">Toleranz<td/>
+      </tr><tr>
+        <td><td/>
+        <td>0<td/>
+        <td>1</td>
+        <td>10</td>
+      </tr><tr>
+        <td> 1968-00-00  <td/>
+        <td> im Jahr 1968 <td/>
+        <td> von 1967 bis 1969 </td>
+        <td> 1958 bis 1978 <td/>
+      </tr><tr>
+        <td> 1968-06-00  <td/>
+        <td> im Juni 1968 <td/>
+        <td> von Mai  bis Juli 1968 </td>
+        <td>von Oktober 1967 bis April 1969</td>
+      </tr>
+      </table>
+      </p>
+
+
+Deshalb jetzt das `if not "<" in self.editor.field.help_text:` 
+in :class:`lino.ui.extjs3.ext_elems.GridColumn`.
