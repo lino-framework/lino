@@ -157,25 +157,25 @@ def cbss2country(code):
 def cbss2address(obj,**data):
     n = obj.childAtPath('/Basic/DiplomaticPost')
     if n is not None:
-        data.update(country=cbss2country(n.childAtPath('/CountryCode').text))
+        data.update(country=cbss2country(nodetext(n.childAtPath('/CountryCode'))))
         #~ n.childAtPath('/Post')
-        data.update(address=n.childAtPath('/AddressPlainText').text)
+        data.update(address=nodetext(n.childAtPath('/AddressPlainText')))
         return data
     n = obj.childAtPath('/Basic/Address')
     if n is not None:
-        data.update(country=cbss2country(n.childAtPath('/CountryCode').text))
+        data.update(country=cbss2country(nodetext(n.childAtPath('/CountryCode'))))
         #~ country = countries.Country.objects.get(
             #~ inscode=n.childAtPath('/CountryCode').text)
         addr = ''
         #~ addr += n.childAtPath('/MunicipalityCode').text
         addr += join_words(
-            n.childAtPath('/Street').text,
-            n.childAtPath('/HouseNumber').text,
-            n.childAtPath('/Box').text
+            nodetext(n.childAtPath('/Street')),
+            nodetext(n.childAtPath('/HouseNumber')),
+            nodetext(n.childAtPath('/Box'))
             )
         addr += ', ' + join_words(
-            n.childAtPath('/PostalCode').text,
-            n.childAtPath('/Municipality').text
+            nodetext(n.childAtPath('/PostalCode')),
+            nodetext(n.childAtPath('/Municipality'))
             )
         data.update(address=addr)
     return data
@@ -602,11 +602,11 @@ class SSDNRequest(CBSSRequest):
     def fill_from_string(self,s,sent_xmlString=None):
         #~ self.response_xml = unicode(res)
         reply = PARSER.parse(string=s).root()
-        self.ticket = reply.childAtPath('/ReplyContext/Message/Ticket').text
+        self.ticket = nodetext(reply.childAtPath('/ReplyContext/Message/Ticket'))
         rs = reply.childAtPath('/ServiceReply/ResultSummary')
         if rs is None:
             raise Warning("Unexpected CBSS reply:\n%s" % reply)
-        rc = rs.childAtPath('/ReturnCode').text
+        rc = nodetext(rs.childAtPath('/ReturnCode'))
         #~ print reply.__class__, dir(reply)
         #~ print reply
         #~ rc = reply.root().SSDNReply.ServiceReply.ResultSummary.ReturnCode
@@ -634,7 +634,7 @@ class SSDNRequest(CBSSRequest):
             msg = CBSS_ERROR_MESSAGE % rc
             keys = ('Severity', 'ReasonCode', 'Diagnostic', 'AuthorCodeList')
             msg += '\n'.join([
-                k+' : '+dtl.childAtPath('/'+k).text 
+                k+' : '+nodetext(dtl.childAtPath('/'+k))
                     for k in keys])
             raise Warning(msg)
             #~ return None
@@ -1082,22 +1082,26 @@ class IdentifyPersonResult(dd.VirtualTable):
     def get_data_rows(self,ar):
         ipr = ar.master_instance
         if ipr is None: 
+            print "20120606 ipr is None"
             return
         #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
         if not ipr.status in (RequestStatus.ok,RequestStatus.warnings):
+            print "20120606 wrong status", ipr.status 
             return
         service_reply = ipr.get_service_reply()
         results = service_reply.childAtPath('/SearchResults').children
+        print "20120606 got", service_reply
         if results is None:
+            print "20120606 no /SearchResults"
             #~ return []
             return
         for obj in results:
             data = dict()
-            data.update(national_id = obj.childAtPath('/Basic/SocialSecurityUser').text)
-            data.update(last_name = obj.childAtPath('/Basic/LastName').text)
-            data.update(first_name = obj.childAtPath('/Basic/FirstName').text)
-            data.update(gender = cbss2gender(obj.childAtPath('/Basic/Gender').text))
-            data.update(birth_date = cbss2date(obj.childAtPath('/Basic/BirthDate').text))
+            data.update(national_id = nodetext(obj.childAtPath('/Basic/SocialSecurityUser')))
+            data.update(last_name = nodetext(obj.childAtPath('/Basic/LastName')))
+            data.update(first_name = nodetext(obj.childAtPath('/Basic/FirstName')))
+            data.update(gender = cbss2gender(nodetext(obj.childAtPath('/Basic/Gender'))))
+            data.update(birth_date = cbss2date(nodetext(obj.childAtPath('/Basic/BirthDate'))))
             data.update(civil_state = cbss2civilstate(
                 obj.childAtPath('/Extended/CivilState')))
             data.update(birth_location=nodetext(obj.childAtPath('/Extended/BirthLocation')))
