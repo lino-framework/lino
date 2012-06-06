@@ -258,6 +258,8 @@ Vielleicht mit Fußnoten?
     
                 
     def __unicode__(self):
+        if self.pk is None:
+            return super(Budget,self).__unicode__()
         return force_unicode(
             _("Budget %(pk)d for %(partner)s") 
                 % dict(pk=self.pk,partner=self.partner))
