@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 #~ import odf
 
 import datetime
+import decimal
 #~ from dateutil import parser as dateparser
 
 from django.conf import settings
@@ -64,6 +65,9 @@ class StoreField(object):
     other returns the full instance.
     
     """
+    
+    zero = 0
+    
     form2obj_default = None
     "because checkboxes are not submitted when they are off"
     
@@ -83,14 +87,18 @@ class StoreField(object):
     def as_js(self):
         return py2js(self.options)
         
-    def value2int(self,v):
-        #~ print "20120426 %s value2int(%s)" % (self,v)
+    def value2num(self,v):
+        #~ print "20120426 %s value2num(%s)" % (self,v)
         return 0
         
     def sum2html(self,ui,v):
         if not v:
             return ''
         return str(v)
+        #~ return self.format_sum(v)
+        
+    def format_sum(self,ar,sums,i):
+        return ''
         
     def __repr__(self):
         return "%s '%s'" % (self.__class__.__name__, self.name)
@@ -123,9 +131,6 @@ class StoreField(object):
         #~ return "<span>%s</span>" % force_unicode(v)
         return self.format_value(ar,v)
       
-    def format_sum(self,ar,sums,i):
-        return ''
-        
     def format_value(self,ar,v):
         """
         Return a plain textual representation of this value as a unicode string.
@@ -339,7 +344,7 @@ class VirtStoreField(StoreField):
         self.column_names = delegate.column_names
         self.list_values_count = delegate.list_values_count
         self.form2obj_default = delegate.form2obj_default
-        self.value2int = delegate.value2int
+        self.value2num = delegate.value2num
         self.value2html = delegate.value2html
         self.value2list = delegate.value2list
         self.value2dict = delegate.value2dict
@@ -369,7 +374,7 @@ class RequestStoreField(StoreField):
         self.column_names = delegate.column_names
         self.list_values_count = delegate.list_values_count
         #~ self.form2obj_default = delegate.form2obj_default
-        #~ self.value2int = delegate.value2int
+        #~ self.value2num = delegate.value2num
         #~ self.value2html = delegate.value2html
         #~ self.value2list = delegate.value2list
         #~ self.value2dict = delegate.value2dict
@@ -380,7 +385,7 @@ class RequestStoreField(StoreField):
     def full_value_from_object(self,obj,req):
         return self.vf.value_from_object(obj,req)
 
-    def value2int(self,v):
+    def value2num(self,v):
         #~ return len(v.data_iterator)
         return v.get_total_count()
         
@@ -402,7 +407,8 @@ class RequestStoreField(StoreField):
         #~ tc.addElement(odf.text.P(**params))
         
     def format_sum(self,ar,sums,i):
-        return self.format_value(ar,sums[i])
+        #~ return self.format_value(ar,sums[i])
+        return str(sums[i])
 
         
     def format_value(self,ar,v):
@@ -569,6 +575,7 @@ class DisableEditingStoreField(SpecialStoreField):
         #~ return extract_summary(v)
   
 class DecimalStoreField(StoreField):
+    zero = decimal.Decimal(0)
     def __init__(self,field,name,**kw):
         kw['type'] = 'float'
         StoreField.__init__(self,field,name,**kw)
@@ -578,8 +585,8 @@ class DecimalStoreField(StoreField):
             raise Exception("Invalid decimal value %r" % v)
         return v.replace(',','.')
 
-    def value2int(self,v):
-        #~ print "20120426 %s value2int(%s)" % (self,v)
+    def value2num(self,v):
+        #~ print "20120426 %s value2num(%s)" % (self,v)
         return v
         
     #~ def full_value_from_object(self,request,obj):
@@ -644,7 +651,7 @@ class BooleanStoreField(StoreField):
         #~ params.update(text=self.value2html(ar,v))
         #~ tc.addElement(odf.text.P(**params))
         
-    def value2int(self,v):
+    def value2num(self,v):
         if v: return 1
         return 0
       
@@ -654,7 +661,7 @@ class IntegerStoreField(StoreField):
         kw['type'] = 'int'
         StoreField.__init__(self,field,name,**kw)
         
-    def value2int(self,v):
+    def value2num(self,v):
         return v
         
         
@@ -1153,14 +1160,16 @@ class Store:
                 if v is None:
                     yield ''
                 else:
-                    sums[i] += fld.value2int(v)
+                    sums[i] += fld.value2num(v)
                     yield fld.value2html(request,v)
                 #~ yield fld.cell_html(request,row)
                 
-    def sums2html(self,request,fields,sums):
-        return [fld.sum2html(request.ui,sums[i])
-          #~ for i,fld in enumerate(self.list_fields)]
+    def sums2html(self,ar,fields,sums):
+        return [fld.format_sum(ar,sums,i)
           for i,fld in enumerate(fields)]
+      
+        #~ return [fld.sum2html(ar.ui,sums[i])
+          #~ for i,fld in enumerate(fields)]
             
     #~ def row2odt(self,request,fields,row,sums):
         #~ for i,fld in enumerate(fields):
@@ -1169,7 +1178,7 @@ class Store:
                 #~ if v is None:
                     #~ yield ''
                 #~ else:
-                    #~ sums[i] += fld.value2int(v)
+                    #~ sums[i] += fld.value2num(v)
                     #~ yield fld.value2odt(request,v)
             
             

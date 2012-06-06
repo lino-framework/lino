@@ -450,8 +450,16 @@ Optional `salutation_options` see :func:`get_salutation`.
         #~ yield  " ".join(l)
         
     def full_clean(self,*args,**kw):
-        l = filter(lambda x:x,[self.last_name,self.first_name])
-        self.name = " ".join(l)
+        """
+        Set the :attr:`Partner.name` field of this person. 
+        This field is visible in the Partner's detail but not 
+        in the Person's detail and serves for sorting 
+        when selecting a Partner. 
+        It also serves for quick search on Persons.
+        """
+        #~ l = filter(lambda x:x,[self.last_name,self.first_name])
+        #~ self.name = " ".join(l)
+        self.name = join_words(self.last_name,self.first_name)
         super(PersonMixin,self).full_clean(*args,**kw)
 
 

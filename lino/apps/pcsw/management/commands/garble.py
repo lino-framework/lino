@@ -112,7 +112,7 @@ class Command(BaseCommand):
                     p.first_name = FEMALES.pop()
                     MALES.pop()
                 #~ dblogger.log_changes(REQUEST,p)
-                #~ p.full_clean()
+                p.full_clean() # e.g. for PersonMixin.full_clean
                 p.save()
                 dblogger.info("%s from %s",unicode(p),unicode(p.nationality))
             

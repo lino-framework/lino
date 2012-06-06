@@ -58,10 +58,10 @@ ich nenne nur einen Tipp:
 :attr:`lino.core.actors.Actor.get_handle_name`.
 
 Aber bis auf weiteres bleibt die einzige Spur 
-meiner heutigen Arbeit der changelog.
+meiner heutigen Arbeit der changelog:
+:checkin:`1bc7b85a4c96`.
 
 Es ist auch noch mindestens ein dicker Bug drin. 
-
 
 Sonstige Änderungen:
 

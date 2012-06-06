@@ -242,13 +242,25 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
     date = models.DateField(_("Date"),blank=True,default=datetime.date.today)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     #~ closed = models.BooleanField(verbose_name=_("Closed"))
+    print_todos = models.BooleanField(
+        verbose_name=_("Print to-do list"),
+        help_text=u"""\
+Einträge im Feld "To-do" werden nur ausgedruckt, 
+wenn die Option "To-dos drucken" des Budgets angekreuzt ist. 
+Diese Option wird aber momentan noch ignoriert 
+(d.h. To-do-Liste wird gar nicht ausgedruckt), 
+weil wir noch überlegen müssen, *wie* sie ausgedruckt werden sollen. 
+Vielleicht mit Fußnoten?
+""")
     intro = dd.RichTextField(_("Introduction"),format="html",blank=True)
     conclusion = dd.RichTextField(_("Conclusion"),format="html",blank=True)
-    dist_amount = dd.PriceField(_("Disposable amount"),default=100)
+    dist_amount = dd.PriceField(_("Disposable amount"),default=120)
     
                 
     def __unicode__(self):
-        return force_unicode(_("Budget for %s") % self.partner)
+        return force_unicode(
+            _("Budget %(pk)d for %(partner)s") 
+                % dict(pk=self.pk,partner=self.partner))
         
     def get_actors(self):
         attname = "_cached_actors"
@@ -310,6 +322,19 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
             if Entry.objects.filter(budget=self,account__group=g).count():
                 yield g
         
+    def entries_by_group(self,ar,group,**kw):
+        """
+        Return a TableRequest showing the Entries for the given `group`, 
+        using the table layout depending on AccountType.
+        Shows all Entries of the specified `AccountGroup`.
+        """
+        t = entries_table_for_group(group)
+        sar = ar.spawn(t,master_instance=self,
+            title=unicode(group),
+            filter=models.Q(account__group=group),**kw)
+        print 20120606, sar
+        return sar
+        
     #~ def msum(self,fldname,types=None,**kw): 
         #~ # kw.update(account__yearly=False)
         #~ kw.update(periods=1)
@@ -366,6 +391,7 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
             if pk in missing:
                 seqno += 1
                 e = Entry(account_id=pk,budget=self,seqno=seqno)
+                e.periods = e.account.periods
                 e.full_clean()
                 e.save()
                 #~ print e
@@ -386,15 +412,6 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
                 a.full_clean()
                 a.save()
             
-    def entries_by_group(self,ar,group,**kw):
-        """
-        Return a TableRequest showing the Entries of this Budget, 
-        using the table layout depending on AccountType.
-        Shows all Entries of the specified `AccountGroup`.
-        """
-        t = entries_table_for_group(group)
-        return ar.spawn(t,master_instance=self,account__group=group,**kw)
-        
     def BudgetSummary(self,ar):
         return ar.spawn(BudgetSummary,master_instance=self)
         
@@ -408,6 +425,19 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
         kw.update(refresh=True)
         kw.update(message="Duplicated %s to %s." % (self,dup))
         return ar.ui.success_response(**kw)
+        
+    @dd.virtualfield(dd.HtmlBox(_("Preview")))
+    def preview(self,ar):
+        html = ''
+        def render(sar):
+            html = '<h2>%s</h2>' % cgi.escape(unicode(sar.get_title()))
+            html += ar.ui.table2xhtml(sar)
+            return html
+        for grp in self.account_groups():
+            html += render(self.entries_by_group(ar,grp))
+        html += render(self.BudgetSummary(ar))
+        html += render(self.DistByBudget(ar))
+        return html
         
       
 class BudgetDetail(dd.DetailLayout):
@@ -432,7 +462,7 @@ class BudgetDetail(dd.DetailLayout):
     
     
     """
-    main = "general entries1 entries2 summary_tab tmp_tab"
+    main = "general entries1 entries2 summary_tab preview"
     general = """
     date partner id user 
     intro
@@ -457,7 +487,7 @@ class BudgetDetail(dd.DetailLayout):
     
     conclusion_panel = """
     conclusion
-    dist_amount spacer
+    dist_amount print_todos 
     """
     summary_tab = """
     BudgetSummary:30 conclusion_panel:30
@@ -472,7 +502,7 @@ class BudgetDetail(dd.DetailLayout):
         h.entries1.label = _("Expenses & Income")
         h.entries2.label = _("Liabilities & Assets")
         h.summary_tab.label = pgettext_lazy("debts","Summary")
-        h.tmp_tab.label = _("Preview")
+        #~ h.tmp_tab.label = _("Preview")
         
     
   
@@ -520,6 +550,7 @@ class MainActor(ActorBase):
         self.budget = budget
         self.partner = budget.partner
         self.header = _("Common")
+        self.remark = ''
         
     
 class SequencedBudgetComponent(mixins.Sequenced):
@@ -595,18 +626,42 @@ class Entry(SequencedBudgetComponent):
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     #~ name = models.CharField(_("Remark"),max_length=200,blank=True)
     amount = dd.PriceField(_("Amount"),default=0)
-    actor = models.ForeignKey(Actor,blank=True,null=True)
+    actor = models.ForeignKey(Actor,
+        blank=True,null=True,
+        help_text="""\
+Hier optional einen Akteur angeben, wenn der Eintrag 
+sich nicht auf den Gesamthaushalt bezieht.""")
     #~ amount = dd.PriceField(_("Amount"),default=0)
     circa = models.BooleanField(verbose_name=_("Circa"))
-    dist = models.BooleanField(verbose_name=_("Distribute"))
+    distribute = models.BooleanField(
+        verbose_name=_("Distribute"),
+        help_text=u"""\
+Ob diese Schuld in die Schuldenverteilung aufgeommen wird oder nicht."""
+    )
     todo = models.CharField(verbose_name=_("To Do"),max_length=200,blank=True)
-    remark = models.CharField(_("Remark"),max_length=200,blank=True)
-    description = models.CharField(_("Description"),max_length=200,blank=True)
-    periods = PeriodsField(_("Periods"))
+    remark = models.CharField(_("Remark"),
+        max_length=200,blank=True,
+        help_text=u"""\
+Bemerkungen sind intern und werden nie ausgedruckt.""")
+    description = models.CharField(_("Description"),
+        max_length=200,blank=True,
+        help_text=u"""\
+Beschreibung wird automatisch mit der Kontobezeichung 
+ausgefüllt. Kann man aber manuell ändern. 
+Wenn man das Konto ändert, gehen manuelle Änderungen in diesem Feld verloren.
+Beim Ausdruck steht in Kolonne "Beschreibung"
+lediglich der Inhalt dieses Feld sowie 
+(falls angegeben bei Schulden) der Partner.""")
+    periods = PeriodsField(_("Periods"),
+        help_text=u"""\
+Gibt an, für wieviele Monate dieser Betrag sich versteht. 
+Also bei monatlichen Ausgaben steht hier 1, 
+bei jährlichen Ausgaben 12.""")
     monthly_rate = dd.PriceField(_("Monthly rate"),default=0,
-    help_text="""
-    The monthly_rate will be automatically added to the expenses 
-    (in case of liabilities) or incomes (in case of assets).
+    help_text=u"""
+Eventueller Betrag monatlicher Rückzahlungen, 
+über deren Zahlung nicht verhandelt wird. 
+Wenn hier ein Betrag steht, darf "verteilen" nicht angekreuzt sein.
     
     """)
 
@@ -653,6 +708,9 @@ class Entry(SequencedBudgetComponent):
             self.description = unicode(self.account)
         #~ if self.periods is None:
             #~ self.periods = self.account.periods
+        if self.monthly_rate and self.distribute:
+            raise ValidationError(
+              _("Cannot set both 'Distribute' and 'Monthly rate'"))
         super(Entry,self).save(*args,**kw)
         
             
@@ -676,7 +734,7 @@ class EntriesByType(Entries):
             
 class EntriesByBudget(Entries):
     master_key = 'budget'
-    column_names = "account description amount actor periods remark todo seqno"
+    column_names = "account description amount actor:10 periods:10 remark todo seqno"
     required_user_level = None
     order_by = ['seqno']
 
@@ -689,18 +747,34 @@ class IncomesByBudget(EntriesByBudget,EntriesByType):
     
 class LiabilitiesByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.liability
-    column_names = "account partner remark amount actor monthly_rate dist todo seqno"
+    column_names = "account partner remark amount actor:10 distribute monthly_rate todo seqno"
     
 class AssetsByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.asset
     column_names = "account remark amount actor monthly_rate todo seqno"
 
 
-
-class PrintEntriesByBudget(EntriesByBudget,EntriesByType):
-  
-    slave_grid_format = 'html'
+#~ class PrintEntriesByBudget(EntriesByBudget,EntriesByType):
+class PrintEntriesByBudget(dd.VirtualTable):
+    """
+    Base class for the printable tables of entries by budget
+    (:class:`PrintExpensesByBudget`,
+    :class:`PrintIncomesByBudget`,
+    :class:`PrintLiabilitiesByBudget` and
+    :class:`PrintAssetsByBudget`).
     
+    This is historically the first table that uses Lino's 
+    per-request dynamic columns feature.
+    """
+    slave_grid_format = 'html'
+    _account_type = None
+    
+    @classmethod
+    def class_init(self):
+        super(PrintEntriesByBudget,self).class_init()
+        if self._account_type is not None:
+            self.label = self._account_type.text
+            
     @classmethod
     def get_handle_name(self,ar):
         hname = ar.ui._handle_attr_name
@@ -732,17 +806,39 @@ class PrintEntriesByBudget(EntriesByBudget,EntriesByType):
         return d
         
     
-    @classmethod
-    def come_together(self,budget,row,prev):
-        if prev is not None:
-            if row.description == prev.description:
-                if row.account == prev.account:
-                    return prev
-        for i,a in enumerate(budget.get_actors()):
-            setattr(row,'amount'+str(i),decimal.Decimal(0))
-        row.total = decimal.Decimal(0)
-        return row
-        
+    class Row:
+        has_data = False
+        def __init__(self,e):
+            self.description = e.description
+            self.partner = e.partner
+            self.account = e.account
+            #~ self.todos = [''] * len(e.budget.get_actors())
+            self.todo = ''
+            self.amounts = [decimal.Decimal(0)] * len(e.budget.get_actors())
+            self.total = decimal.Decimal(0)
+            self.collect(e)
+            
+        def matches(self,e):
+            if e.partner != self.partner: return False
+            if e.account != self.account: return False
+            if e.description != self.description: return False
+            return True
+              
+        def collect(self,e):
+            if e.actor is None:
+                i = 0
+            else:
+                i = e.budget.get_actor_index(e.actor)
+            amount = e.amount / e.periods
+            if amount != 0:
+                self.has_data = True
+            self.amounts[i] += amount
+            self.total += amount
+            if self.todo:
+                self.todo += ', '
+            self.todo += e.todo
+            return True
+            
     @classmethod
     def get_data_rows(self,ar):
         """
@@ -750,66 +846,80 @@ class PrintEntriesByBudget(EntriesByBudget,EntriesByType):
         budget = ar.master_instance
         if budget is None: 
             return
-        qs = self.get_request_queryset(ar)
-        current = None
-        for row in qs:
-            current = self.come_together(budget,row,current)
-            if row.actor is None:
-                name = 'amount0'
+        #~ qs = self.get_request_queryset(ar)
+        qs = budget.entry_set.filter(account__type=self._account_type).order_by('seqno')
+        if ar.filter:
+            qs = qs.filter(ar.filter)
+        row = None
+        for e in qs:
+            if row is None:
+                row = self.Row(e)
+            elif row.matches(e):
+                row.collect(e)
             else:
-                name = 'amount' + str(budget.get_actor_index(row.actor))
-            am = getattr(current,name)
-            setattr(current,name,am+row.amount)
-            current.total += row.amount
-            if current is not row:
-                yield current
+                if row.has_data: yield row
+                row = self.Row(e)
+        if row is not None:
+            if row.has_data: yield row
+                
             
         
-    @dd.virtualfield(dd.PriceField(_("Amount")))
+    @dd.virtualfield(dd.PriceField(_("Total")))
     def total(self,obj,ar):
         return obj.total
+        
+    @dd.displayfield(_("Description"))
+    def description(self,obj,ar):
+        return obj.description
+        
+    @dd.displayfield(_("Partner"))
+    def partner(self,obj,ar):
+        return obj.partner
         
     # TODO: generate them dynamically:
     
     @dd.virtualfield(dd.PriceField(_("Amount")))
     def amount0(self,obj,ar):
-        return obj.amount0
+        return obj.amounts[0]
         
     @dd.virtualfield(dd.PriceField(_("Amount")))
     def amount1(self,obj,ar):
-        return obj.amount1
+        return obj.amounts[1]
         
     @dd.virtualfield(dd.PriceField(_("Amount")))
     def amount2(self,obj,ar):
-        return obj.amount2
+        return obj.amounts[2]
         
     @dd.virtualfield(dd.PriceField(_("Amount")))
     def amount3(self,obj,ar):
-        return obj.amount3
+        return obj.amounts[3]
         
     @dd.virtualfield(dd.PriceField(_("Amount")))
     def amount4(self,obj,ar):
-        return obj.amount4
-        
-        
+        return obj.amounts[4]
   
   
   
 class PrintExpensesByBudget(PrintEntriesByBudget):
+    "Print version of :class:`ExpensesByBudget` table"
     _account_type = AccountType.expense
-    column_names = "summary_description amounts total"
+    column_names = "description amounts total"
         
 class PrintIncomesByBudget(PrintEntriesByBudget):
+    "Print version of :class:`IncomesByBudget` table"
     _account_type = AccountType.income
-    column_names = "summary_description amounts total"
+    column_names = "description amounts total"
     
 class PrintLiabilitiesByBudget(PrintEntriesByBudget):
+    "Print version of :class:`LiabilitiesByBudget` table"
     _account_type = AccountType.liability
-    column_names = "partner remark total monthly_rate todo"
+    #~ column_names = "partner description total monthly_rate todo"
+    column_names = "partner description total"
     
 class PrintAssetsByBudget(PrintEntriesByBudget):
+    "Print version of :class:`AssetsByBudget` table"
     _account_type = AccountType.asset
-    column_names = "summary_description total monthly_rate"
+    column_names = "description total"
 
 ENTRIES_BY_TYPE_TABLES = (
   PrintExpensesByBudget,
@@ -878,8 +988,8 @@ class DistByBudget(EntriesByBudget):
     """
     #~ master = Budget
     #~ model = Entry
-    column_names = "summary_description amount dist_perc dist_amount"
-    filter = models.Q(dist=True)
+    column_names = "partner description amount dist_perc dist_amount"
+    filter = models.Q(distribute=True)
     label = _("Debts distribution")
     known_values = dict(account_type=AccountType.liability)
     
@@ -912,24 +1022,18 @@ class DistByBudget(EntriesByBudget):
     def dist_perc(self,row,ar):
         return row.dist_perc
 
-    @dd.virtualfield(dd.PriceField(_("Amount")))
+    @dd.virtualfield(dd.PriceField(_("Monthly payback suggested")))
     def dist_amount(self,row,ar):
         return row.dist_amount
 
+    @classmethod
+    def override_column_headers(self,ar):
+        d = dict()
+        d.update(partner=_("Creditor"))
+        d.update(amount=_("Debt"))
+        return d
     
     
-#~ class ExpensesSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
-    #~ _account_type = AccountType.expense
-        
-#~ class IncomesSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
-    #~ _account_type = AccountType.income
-
-#~ class LiabilitiesSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
-    #~ _account_type = AccountType.liability
-
-#~ class AssetsSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
-    #~ _account_type = AccountType.asset
-
     
 MODULE_NAME = _("Debts mediation")
 

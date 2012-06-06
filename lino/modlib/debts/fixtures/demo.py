@@ -52,28 +52,38 @@ def objects():
     Entry = resolve_model('debts.Entry')
     Account = resolve_model('debts.Account')
     Company = resolve_model('contacts.Company')
-    AMOUNTS = Cycler([i*5.24 for i in range(10)])
+    INCOME_AMOUNTS = Cycler([i*200 for i in range(8)])
+    EXPENSE_AMOUNTS = Cycler([i*5.24 for i in range(10)])
+    DEBT_AMOUNTS = Cycler([(i+1)*300 for i in range(5)])
     PARTNERS = Cycler(Company.objects.all())
     LIABILITIES = Cycler(Account.objects.filter(type=AccountType.liability))
     for b in Budget.objects.all():
         #~ n = min(3,b.actor_set.count())
         for e in b.entry_set.all():
             #~ for i in range(n):
+            if e.account.type == AccountType.income:
+                amount = INCOME_AMOUNTS.pop()
+            elif e.account.type == AccountType.expense:
+                amount = EXPENSE_AMOUNTS.pop()
             if e.account.required_for_household:
-                e.amount = n2dec(AMOUNTS.pop())
+                e.amount = n2dec(amount)
             if e.account.required_for_person:
                 for a in b.actor_set.all():
-                    e.amount = n2dec(AMOUNTS.pop())
+                    e.amount = n2dec(amount)
                     e.actor = a
             e.save()
         ACTORS = Cycler(None,*[a for a in b.actor_set.all()])
-        for i in range(5):
-            amount = int(AMOUNTS.pop()*5)
-            yield Entry(budget=b,
+        for i in range(4):
+            amount = int(DEBT_AMOUNTS.pop())
+            kw = dict(budget=b,
                 account=LIABILITIES.pop(),
                 partner=PARTNERS.pop(),
                 amount=amount,
-                actor=ACTORS.pop(),
-                monthly_rate=n2dec(amount/20))
+                actor=ACTORS.pop())
+            if amount > 600:
+                kw.update(distribute=True)
+            else:
+                kw.update(monthly_rate=n2dec(amount/20))
+            yield Entry(**kw)
     
     

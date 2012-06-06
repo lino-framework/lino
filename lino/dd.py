@@ -47,6 +47,7 @@ Virtual Fields:
   :class:`@displayfield <lino.core.fields.displayfield>`
 - :class:`VirtualField <lino.core.fields.VirtualField>` and
   :class:`@virtualfield <lino.core.fields.virtualfield>`
+- :class:`HtmlBox <lino.core.fields.HtmlBox>`
   
 
 Utilities:

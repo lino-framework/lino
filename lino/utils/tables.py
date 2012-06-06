@@ -148,6 +148,7 @@ class TableRequest(actions.ActionRequest):
     
     #~ instance = None
     extra = None
+    title = None
     #~ layout = None
     
     limit = None
@@ -280,6 +281,7 @@ class TableRequest(actions.ActionRequest):
             order_by=None,
             offset=None,limit=None,
             master=None,
+            title=None,
             master_instance=None,
             master_id=None,
             #~ layout=None,
@@ -305,6 +307,9 @@ class TableRequest(actions.ActionRequest):
             # master might still be None
         self.master = master
         
+        if title is not None:
+            self.title = title
+            
         if master_id is not None:
             assert master_instance is None
             master_instance = self.master.objects.get(pk=master_id)
@@ -341,6 +346,13 @@ class TableRequest(actions.ActionRequest):
     
     def table2xhtml(self):
         return self.ui.table2xhtml(self)
+        
+    def get_title(self):
+        if self.title is not None:  
+            return self.title
+        return self.actor.get_title(self)
+        
+        
         
     def get_status(self,ui,**kw):
         kw = actions.ActionRequest.get_status(self,ui,**kw)
@@ -407,7 +419,14 @@ class TableRequest(actions.ActionRequest):
         return self.data_iterator.__iter__()
         
     def __str__(self):
-        return self.__class__.__name__ + '(' + self.actor.actor_id + ",%r,...)" % self.master_instance
+        kw = dict(actor=str(self.actor))
+        if self.master_instance is not None:
+            kw.update(master_instance=self.master_instance.pk)
+        if self.filter is not None:
+            kw.update(filter=str(self.filter))
+        if self.known_values:
+            kw.update(known_values=self.known_values)
+        return self.__class__.__name__ + '(%s)' % kw
 
 
 

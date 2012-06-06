@@ -1,0 +1,47 @@
+20120606
+========
+
+Schuldnerberatung
+-----------------
+
+Der dicke Bug, der gestern noch drin war 
+(sh. :meth:`PrintEntriesByBudget
+<lino.modlib.debts.models.PrintEntriesByBudget.get_data_rows>`), 
+ist behoben. 
+
+Das Feld "Zur Schuldenverteilung verfügbarer Betrag" steht 
+jetzt im Reiter Resultate, neben der betreffenden Liste.
+Dort gibt es auch ein neues Feld "Schlussfolgerung", ein freies 
+Textfeld, das zum Schluss ausgedruckt wird.
+
+Es gibt einen neuen Reiter "Vorschau"
+
+The :mod:`garble <lino.apps.pcsw.management.commands.garble>` 
+command didn't call :meth:`full_clean
+<lino.modlib.contacts.models.PersonMixin.full_clean>` 
+so that real names remained in the (hidden)
+:attr:`name <lino.modlib.contacts.models.Partner.name>` field.
+
+Still experimenting with the cooperation of the 
+`remark`, `description`, `todo`, `account` and `partner` 
+fields of 
+:class:`Budget Entries <lino.modlib.debts.models.Entry>`.
+
+Momentan gelten folgende Regeln :
+
+- "Beschreibung" wird automatisch mit der Kontobezeichung 
+  ausgefüllt. Kann man aber manuell ändern. 
+  Wenn man das Konto ändert, gehen manuelle Änderungen in diesem Feld verloren.
+  Beim Ausdruck steht in Kolonne "Beschreibung"
+  lediglich der Inhalt dieses Feld sowie 
+  (falls angegeben bei Schulden) der Partner.  
+  
+- Bemerkungen sind intern und werden nie ausgedruckt
+
+- Einträge in den Feldern `todo` ("To-do") werden nur ausgedruckt, 
+  wenn die Option "To-dos drucken" angekreuzt ist. 
+  Diese Option wird momentan noch ignoriert 
+  (d.h. To-do-Liste wird gar nicht ausgedruckt), 
+  weil wir noch überlegen müssen, *wie* sie ausgedruckt werden sollen. 
+  Vielleicht mit Fußnoten?
+

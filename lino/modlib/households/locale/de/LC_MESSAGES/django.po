@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-01 13:12+0100\n"
+"POT-Creation-Date: 2012-06-06 10:13+0100\n"
 "PO-Revision-Date: 2012-06-01 14:36+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -16,42 +16,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:49
+#: .\models.py:50
 msgid "Household Type"
 msgstr "Haushaltsart"
 
-#: .\models.py:50
+#: .\models.py:51
 msgid "Household Types"
 msgstr "Haushaltsarten"
 
-#: .\models.py:67
+#: .\models.py:69
 msgid "Household"
 msgstr "Haushalt"
 
-#: .\models.py:68 .\models.py:283 .\models.py:288
+#: .\models.py:70 .\models.py:300 .\models.py:305
 msgid "Households"
 msgstr "Haushalte"
 
-#: .\models.py:180
+#: .\models.py:197
 msgid "Household Role"
 msgstr "Rolle in Haushalt"
 
-#: .\models.py:181
+#: .\models.py:198
 msgid "Household Roles"
 msgstr "Rollen in Haushalt"
 
-#: .\models.py:206
+#: .\models.py:223
 msgid "Household Member"
 msgstr "Mitglied"
 
-#: .\models.py:207 .\models.py:243
+#: .\models.py:224 .\models.py:260
 msgid "Household Members"
 msgstr "Mitglieder"
 
-#: .\models.py:248
+#: .\models.py:265
 msgid "Member of"
 msgstr "Mitglied von"
 
-#: .\models.py:267
+#: .\models.py:284
 msgid "is Household"
 msgstr "is ein Haushalt"

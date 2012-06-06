@@ -158,6 +158,9 @@ class GridColumn(Component):
                 kw.update(filter=editor.gridfilters_settings)
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
+            if settings.LINO.use_quicktips and self.editor.field.help_text:
+                kw.update(tooltip=self.editor.field.help_text)
+                
             def fk_renderer(fld,name):
                 # FK fields are clickable if their target has a detail view
                 rpt = fld.rel.to._lino_default_table

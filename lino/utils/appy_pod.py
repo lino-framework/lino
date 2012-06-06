@@ -358,7 +358,7 @@ class Renderer(AppyRenderer):
                     #~ fld.value2odt(ar,v,tc,stylename=tablecontents)
                     #~ for e in value2odt(fld,ar,v):
                         #~ tc.addElement(e)
-                    ar.collect_value(row,i,fld.value2int(v))
+                    ar.collect_value(row,i,fld.value2num(v))
                 #~ tr.addElement(tc)
         #~ odf.validate_chunks(table)
         #~ doc.text.addElement(table)
@@ -589,7 +589,7 @@ class Renderer(AppyRenderer):
                 text=force_unicode(h)))
             hr.addElement(tc)
             
-        sums  = [0 for col in fields]
+        sums  = [fld.zero for fld in fields]
           
         for row in ar.data_iterator:
             #~ for grp in ar.group_headers(row):
@@ -610,10 +610,10 @@ class Renderer(AppyRenderer):
                     #~ fld.value2odt(ar,v,tc,stylename=tablecontents)
                     #~ for e in value2odt(fld,ar,v):
                         #~ tc.addElement(e)
-                    sums[i] += fld.value2int(v)
+                    sums[i] += fld.value2num(v)
                 tr.addElement(tc)
                 
-        if sums != [0 for col in fields]:
+        if sums != [fld.zero for fld in fields]:
             tr = TableRow(stylename=total_row_style)
             table_rows.addElement(tr)
             for i,fld in enumerate(fields):

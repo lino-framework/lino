@@ -56,6 +56,26 @@ def objects():
           fr=u"Allocation d'intégration",
           en=u"Integration aid"
           ))
+    yield account(required_for_person=True,**babel_values('name',
+          de=u"Ersatzeinkünfte",
+          fr=u"Ersatzeinkünfte",
+          en=u"Ersatzeinkünfte"
+          ))
+    yield account(required_for_person=True,**babel_values('name',
+          de=u"Alimente",
+          fr=u"Aliments",
+          en=u"Aliments"
+          ))
+    yield account(required_for_person=True,**babel_values('name',
+          de=u"Essen-Schecks",
+          fr=u"Chèques-repas",
+          en=u"Chèques-repas"
+          ))
+    yield account(required_for_person=True,**babel_values('name',
+          de=u"Andere",
+          fr=u"Andere",
+          en=u"Andere"
+          ))
 
     g = group(account_type=AccountType.income,**babel_values('name',
           de=u"Jährliche Einkünfte",
@@ -63,7 +83,7 @@ def objects():
           en=u"Yearly incomes"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g).build
+    account = Instantiator('debts.Account',group=g,periods=12).build
     yield account(required_for_person=True,**babel_values('name',
           de=u"Urlaubsgeld",
           fr=u"Congé payé",
@@ -73,6 +93,11 @@ def objects():
           de=u"Jahresendzulage",
           fr=u"Prime de fin d'année",
           en=u"Year-end prime"
+          ))
+    yield account(required_for_person=True,**babel_values('name',
+          de=u"Gewerkschaftsprämie",
+          fr=u"Gewerkschaftsprämie",
+          en=u"Gewerkschaftsprämie"
           ))
 
     g = group(account_type=AccountType.expense,**babel_values('name',
@@ -88,9 +113,114 @@ def objects():
           en=u"Rent"
           ))
     yield account(required_for_household=True,**babel_values('name',
+          de=u"Wasser",
+          fr=u"Eau",
+          en=u"Water"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
           de=u"Strom",
           fr=u"Electricité",
           en=u"Electricity"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Festnetz-Telefon und Internet",
+          fr=u"Téléphone fixe et Internet",
+          en=u"Telephone & Internet"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Handy",
+          fr=u"GSM",
+          en=u"Cell phone"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"TEC Busabonnement",
+          fr=u"Abonnement bus",
+          en=u"Public transport"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Fahrtkosten",
+          fr=u"Frais de transport",
+          en=u"Transport costs"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Benzin",
+          fr=u"Essence",
+          en=u"Fuel"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Unterhalt Auto",
+          fr=u"Maintenance voiture",
+          en=u"Car maintenance"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Schulkosten",
+          fr=u"École",
+          en=u"School"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Tagesmutter & Kleinkindbetreuung",
+          fr=u"Garde enfant",
+          en=u"Babysitting"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Gesundheit",
+          fr=u"Santé",
+          en=u"Health"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Kleidung",
+          fr=u"Vêtements",
+          en=u"Clothes"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Ernährung",
+          fr=u"Alimentation",
+          en=u"Food"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Hygiene",
+          fr=u"Hygiène",
+          en=u"Hygiene"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Krankenkassenbeiträge",
+          fr=u"Mutuelle",
+          en=u"Health insurance"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Gewerkschaftsbeiträge",
+          fr=u"Cotisations syndicat",
+          en=u"Labour fees"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Unterhaltszahlungen",
+          fr=u"Unterhaltszahlungen",
+          en=u"Unterhaltszahlungen"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Tabak",
+          fr=u"Tabac",
+          en=u"Tobacco"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Freizeit & Unterhaltung",
+          fr=u"Loisirs",
+          en=u"Spare time"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Haustiere",
+          fr=u"Animaux domestiques",
+          en=u"Pets"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Pensionssparen",
+          fr=u"Épargne pension",
+          en=u"Retirement savings"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Sonstige",
+          fr=u"Autres",
+          en=u"Other"
           ))
 
 
@@ -107,23 +237,71 @@ def objects():
           en=u"Municipal tax"
           ))
     yield account(required_for_household=True,**babel_values('name',
+          de=u"Kanalisationssteuer",
+          fr=u"Kanalisationssteuer",
+          en=u"Kanalisationssteuer"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
           de=u"Müllsteuer",
           fr=u"Taxe déchets",
           en=u"Waste tax"
           ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Autosteuer",
+          fr=u"Taxe circulation",
+          en=u"Autosteuer"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Immobiliensteuer",
+          fr=u"Taxe immobilière",
+          en=u"Immobiliensteuer"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Andere",
+          fr=u"Autres",
+          en=u"Other"
+          ))
 
+    g = group(account_type=AccountType.expense,**babel_values('name',
+          de=u"Versicherungen",
+          fr=u"Assurances",
+          en=u"Insurances"
+          ))
+    yield g
+    account = Instantiator('debts.Account',group=g,periods=12).build
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Feuer",
+          fr=u"Incendie",
+          en=u"Fire"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Familienhaftpflicht",
+          fr=u"Responsabilité famille",
+          en=u"Familienhaftpflicht"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Auto",
+          fr=u"Voiture",
+          en=u"Car insurance"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Lebensversicherung",
+          fr=u"Assurance vie",
+          en=u"Life insurance"
+          ))
+    yield account(required_for_household=True,**babel_values('name',
+          de=u"Andere Versicherungen",
+          fr=u"Autres assurances",
+          en=u"Other insurances"
+          ))
+          
+          
     g = group(account_type=AccountType.asset,**babel_values('name',
           de=u"Aktiva, Vermögen, Kapital",
           fr=u"Actifs",
           en=u"Assets"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g).build
-    yield account(**babel_values('name',
-          de=u"Vermögen",
-          fr=u"Propriété",
-          en=u"Assets"
-          ))
     account = Instantiator('debts.Account',group=g).build
     yield account(**babel_values('name',
           de=u"Haus",

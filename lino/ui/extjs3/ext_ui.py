@@ -2574,146 +2574,6 @@ tinymce.init({
         yield "};"
             
 
-    def lxml_table2xhtml(self,ar,max_row_count=300):
-        """
-        Using lxml.html (not available on older lxml.
-        """
-        from lxml.html import builder as html
-        
-        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
-        
-        columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
-        
-        if columns:
-            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-            widths = ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)
-            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
-            fields = []
-            headers = []
-            for i,cn in enumerate(columns):
-                col = None
-                for e in ar.ah.list_layout.main.columns:
-                    if e.name == cn:
-                        col = e
-                        break
-                if col is None:
-                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
-                if not hiddens[i]:
-                    fields.append(col.field._lino_atomizer)
-                    headers.append(html.TH(unicode(col.label or col.name),width=widths[i],**cellattrs))
-        else:
-            fields = ar.ah.store.list_fields
-            headers = [html.TH(unicode(col.label or col.name),**cellattrs) 
-                for col in ar.ah.list_layout.main.columns]
-        
-        def table_header_row(*headers,**kw):
-            return html.TR(*[html.TH(h,**kw) for h in headers])
-        def table_body_row(*cells,**kw):
-            return html.TR(*[html.TD(h,**kw) for h in cells])
-              
-        
-        def TD(x):
-            #~ e = html.TD(**cellattrs)
-            #~ e.text = x
-            #~ return e
-            
-            if not x: return html.TD(**cellattrs)
-            if x[0] == '<':
-                try:
-                    #~ return html.TD(etree.XML(x),**cellattrs)
-                    x = etree.XML(x)
-                except Exception,e:
-                    if True:
-                        raise Exception("Invalid XML value %r" % x)
-                    logger.warning("Invalid XML value %r",x)
-                    raise
-            return html.TD(x,**cellattrs)
-            
-        def f():
-            sums  = [0 for col in fields]
-            yield html.TR(*headers)
-            
-            recno = 0
-            for row in ar.data_iterator:
-                recno += 1
-                cells = [TD(x) for x in ar.ah.store.row2html(ar,fields,row,sums)]
-                #~ yield html.TR(*cells,**cellattrs)
-                yield html.TR(*cells)
-                    
-            has_sum = False
-            for i in sums:
-                if i:
-                    has_sum = True
-                    break
-            if has_sum:
-                yield html.TR(
-                  *[html.TD(x,**cellattrs) for x in ar.ah.store.sums2html(ar,fields,sums)])
-        to = dict(cellspacing="3px",bgcolor="#ffffff", width="100%")
-        return html.TABLE(*list(f()),**to)
-    
-    def old_table2xhtml(self,ar,max_row_count=300):
-        """
-        Using lino.utils.xmlgen.html
-        """
-        widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-        columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
-        hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
-        
-        fields = ar.ah.store.list_fields
-        headers = [col.label or col.name for col in ar.ah.list_layout.main.columns]
-        cellwidths = None
-        
-        if columns:
-            fields = []
-            headers = []
-            cellwidths = []
-            for i,cn in enumerate(columns):
-                col = None
-                for e in ar.ah.list_layout.main.columns:
-                    if e.name == cn:
-                        col = e
-                        break
-                #~ col = ar.ah.list_layout._main.find_by_name(cn)
-                #~ col = ar.ah.list_layout._main.columns[ci]
-                if col is None:
-                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
-                if not hiddens[i]:
-                    fields.append(col.field._lino_atomizer)
-                    headers.append(col.label or col.name)
-                    cellwidths.append(widths[i])
-        
-        def f():
-            sums  = [0 for col in fields]
-            #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
-            cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
-            hr = xhg.table_header_row(*headers,**cellattrs)
-            if cellwidths:
-                for i,td in enumerate(hr.value): # hr.value is the list of items
-                    td.update(width=cellwidths[i])
-            yield hr
-            
-            recno = 0
-            for row in ar.data_iterator:
-                recno += 1
-                cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums)]
-                yield xhg.table_body_row(*cells,**cellattrs)
-                #~ yield tr
-                #~ if recno > max_row_count:
-                    #~ yield xhg.table_body_row(
-                      #~ _("List truncated after %d rows") % max_row_count,
-                      #~ colspan=len(headers),**cellattrs)
-                    #~ break
-                    
-            has_sum = False
-            for i in sums:
-                if i:
-                    has_sum = True
-                    break
-            if has_sum:
-                yield xhg.table_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
-        return xhg.HFBTABLE(f(),cellspacing="3px",bgcolor="#ffffff", width="100%")
     
     def table2xhtml(self,ar,max_row_count=300):
         doc = xghtml.Document(force_unicode(ar.get_title()))
@@ -2728,18 +2588,20 @@ tinymce.init({
         tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
         
         widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-        columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+        col_names = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
         hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
         
         fields = ar.ah.store.list_fields
         headers = [force_unicode(col.label or col.name) for col in ar.ah.list_layout.main.columns]
         cellwidths = None
         
-        if columns:
+        columns = ar.ah.list_layout.main.columns
+        if col_names:
             fields = []
             headers = []
             cellwidths = []
-            for i,cn in enumerate(columns):
+            columns = []
+            for i,cn in enumerate(col_names):
                 col = None
                 for e in ar.ah.list_layout.main.columns:
                     if e.name == cn:
@@ -2751,11 +2613,24 @@ tinymce.init({
                     #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
                     raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
                 if not hiddens[i]:
+                    columns.append(col)
                     fields.append(col.field._lino_atomizer)
                     headers.append(force_unicode(col.label or col.name))
                     cellwidths.append(widths[i])
+          
         
-        sums  = [0 for col in fields]
+        #~ for k,v in ar.actor.override_column_headers(ar):
+            
+        oh = ar.actor.override_column_headers(ar)
+        if oh:
+            for i,e in enumerate(columns):
+                header = oh.get(e.name,None)
+                if header is not None:
+                    headers[i] = unicode(header)
+            #~ print 20120507, oh, headers
+          
+        
+        sums  = [fld.zero for fld in fields]
         #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
         cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
         hr = tble.add_header_row(*headers,**cellattrs)
@@ -2776,6 +2651,9 @@ tinymce.init({
                 break
         if has_sum:
             tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
+            
+            
+            
     
     def create_layout_panel(self,lh,name,vertical,elems,**kw):
         pkw = dict()
@@ -2804,124 +2682,5 @@ tinymce.init({
                     return ext_elems.TabPanel(lh,name,*elems,**pkw)
             raise Exception("No element class for layout %r" % lh.layout)
         return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
-
-
-    def old_table2odt(self,ar,output_file=None):
-        """
-        """
-        #~ from lino.utils.xmlgen import odf
-        if ar.request is None:
-            columns = None
-        else:
-            columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
-        
-        if columns:
-            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-            all_widths = ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)
-            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
-            fields = []
-            widths = []
-            headers = []
-            for i,cn in enumerate(columns):
-                col = None
-                for e in ar.ah.list_layout.main.columns:
-                    if e.name == cn:
-                        col = e
-                        break
-                if col is None:
-                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
-                if not hiddens[i]:
-                    fields.append(col.field._lino_atomizer)
-                    headers.append(unicode(col.label or col.name))
-                    widths.append(int(all_widths[i]))
-        else:
-            #~ fields = ar.ah.store.list_fields
-            headers = [unicode(col.label or col.name) 
-                for col in ar.ah.list_layout.main.columns]
-            widths = [(col.width or col.preferred_width)
-                for col in ar.ah.list_layout.main.columns]
-            fields = [col.field._lino_atomizer for col in ar.ah.list_layout.main.columns]
-                  
-        tw = sum(widths)
-        #~ width_specs = ["%d%%" % (w*100/tw) for w in widths]
-        
-        aw = 180 # available width 18cm = 180mm
-        width_specs = ["%dmm" % (aw*w/tw) for w in widths]
-        #~ print 20120415, width_specs , len(width_specs), len(fields)
-        
-        #~ odf.table2odt(headers,fields,widths,,row2cells)
-        
-        from odf.opendocument import OpenDocumentText
-        from odf.style import Style, TextProperties, ParagraphProperties
-        from odf.style import TableColumnProperties
-        from odf.text import P
-        from odf.table import Table, TableColumn, TableRow, TableCell
-        #~ from lino.utils import html2odt
-
-        doc = OpenDocumentText()
-        # Create a style for the table content. One we can modify
-        # later in the word processor.
-        tablecontents = Style(name="Table Contents", family="paragraph")
-        tablecontents.addElement(ParagraphProperties(numberlines="false", 
-            linenumber="0"))
-        doc.styles.addElement(tablecontents)
-        
-        tableheader = Style(name="Table Column Header", family="paragraph")
-        tableheader.addElement(ParagraphProperties(numberlines="false", 
-            linenumber="0"))
-        doc.styles.addElement(tableheader)
-        
-        table = Table()
-        
-        for i,fld in enumerate(fields):
-            #~ print 20120415, repr(fld.name)
-            cs = Style(name=fld.name, family="table-column")
-            cs.addElement(TableColumnProperties(columnwidth=width_specs[i]))
-            doc.automaticstyles.addElement(cs)
-            table.addElement(TableColumn(stylename=cs))
-            
-        def value2odt(fld,ar,val):
-            #~ text = html2odt.html2odt(fld.value2html(ar,val))
-            #~ e = html2odt.RawXML(html2odt.html2odt(fld.value2html(ar,val)))
-            e = fld.value2odt(ar,val)
-            p = P(stylename=tablecontents)
-            p.addElement(e)
-            yield p
-            #~ yield P(stylename=tablecontents,text=text)
-            
-        # header
-        hr = TableRow()
-        for fld in fields:
-            tc = TableCell()
-            tc.addElement(P(
-                stylename=tableheader,
-                text=force_unicode(fld.field.verbose_name or fld.name)))
-            hr.addElement(tc)
-        table.addElement(hr)
-            
-        sums  = [0 for col in fields]
-          
-        for row in ar.data_iterator:
-            tr = TableRow()
-            table.addElement(tr)
-            
-            for i,fld in enumerate(fields):
-                tc = TableCell()
-                #~ if fld.field is not None:
-                v = fld.full_value_from_object(row,ar)
-                if v is None:
-                    tc.addElement(P(stylename=tablecontents,text=''))
-                else:
-                    fld.value2odt(ar,v,tc,stylename=tablecontents)
-                    #~ for e in value2odt(fld,ar,v):
-                        #~ tc.addElement(e)
-                    sums[i] += fld.value2int(v)
-                tr.addElement(tc)
-
-        doc.text.addElement(table)
-        if output_file:
-            doc.save(output_file) # , True)
-        return doc
 
 
