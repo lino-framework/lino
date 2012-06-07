@@ -119,8 +119,8 @@ class Command(BaseCommand):
                 p.name = join_words(p.last_name,p.first_name)
                 p.save()
                 dblogger.info("%s from %s",unicode(p),unicode(p.nationality))
-        MEN = Person.objects.filter(gender=Gender.male).order_by('id')
-        WOMEN = Person.objects.filter(gender=Gender.female).order_by('id')
+        MEN = Cycler(Person.objects.filter(gender=Gender.male).order_by('id'))
+        WOMEN = Cycler(Person.objects.filter(gender=Gender.female).order_by('id'))
         for h in Household.objects.all():
             if h.member_set.all().count() == 0:
                 he = MEN.pop()
