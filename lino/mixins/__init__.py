@@ -134,6 +134,11 @@ class AutoUser(models.Model):
             blank=True,null=True
             )
         
+    def on_duplicate(self,ar):
+        self.user = ar.get_user()
+        super(AutoUser,self).on_duplicate(ar)
+        
+        
     def on_create(self,ar):
         if self.user_id is None:
             u = ar.get_user()
@@ -205,10 +210,29 @@ def duplicate_row(obj,**kw):
     obj.pk = None
     for k,v in kw.items():
         setattr(obj,k,v)
-    obj.save(force_insert=True)
     return obj
 
 
+class Duplicatable(models.Model):
+    """
+    Adds an action "Duplicate"
+    """
+    class Meta:
+        abstract = True
+        
+    @dd.action(_("Duplicate"))
+    def duplicate_row(self,ar):
+        new = duplicate_row(self)
+        new.on_duplicate(ar)
+        new.save(force_insert=True)
+        kw = dict()
+        #~ kw.update(refresh=True)
+        kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
+        return ar.ui.success_response(**kw)
+        
+    def on_duplicate(self,ar):
+        pass
+  
 class Sequenced(models.Model):
     """Abstract base class for models that have a sequence number `seqno`
     """
@@ -234,6 +258,7 @@ class Sequenced(models.Model):
             s.seqno += 1
             s.save()
         new = duplicate_row(self,seqno=seqno)
+        new.save(force_insert=True)
         #~ print '20120605 duplicate_row done', new.seqno
         kw = dict()
         kw.update(refresh=True)

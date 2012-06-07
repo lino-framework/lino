@@ -1,0 +1,12 @@
+20120607
+========
+
+CBSS connection
+---------------
+
+Rückmeldungen des Systems (Warnungen und Infos) wurden bisher 
+einfach weggeschmissen. 
+Statt eines einzigen Feldes `logged_messages` haben wir jetzt 
+`debug_messages` und `info_messages`.
+Beide Logger-Felder werden jetzt zu Beginn des Requests gelöscht.
+Alle CBSS-Requests haben jetzt einen Button "Duplizieren".

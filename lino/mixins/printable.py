@@ -747,6 +747,10 @@ class CachedPrintable(models.Model,Printable):
                 #~ return False
         #~ return super(CachedPrintable,self).get_permission(action,user)
 
+    def on_duplicate(self,ar):
+        super(CachedPrintable,self).on_duplicate(ar)
+        self.build_time = None
+        
     def get_print_templates(self,bm,action):
         """Return a list of filenames of templates for the specified build method.
         Returning an empty list means that this item is not printable. 

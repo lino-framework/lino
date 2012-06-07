@@ -109,3 +109,16 @@ Jedenfalls nicht den folgenden, der im Hilfetext von `tolerance` stand::
 
 Deshalb jetzt das `if not "<" in self.editor.field.help_text:` 
 in :class:`lino.ui.extjs3.ext_elems.GridColumn`.
+
+Und zuletzt  noch ein Bug in 
+:class:`lino.modlib.cbss.models.IdentifyPersonResult`: 
+der schlug zu für alle Belgier mit leerer Briefkastennummer,
+also unter anderem die, die in einem Einfamilienhaus wohnen.
+Neues demo-Beispiel `demo_ipr_4.xml` veranschaulicht einen Fall, 
+der bisher nicht funktionierte. Resultat angeblich OK, 
+aber Tabelle und Ausdruck blieben leer.
+
+:checkin:`54c3c494e3aa` und Feierabend.
+
+TODO: Rückmeldungen des Systems (Warnungen und Infos) werden bisher 
+einfach weggeschmissen. Muss ich natürlich loggen.

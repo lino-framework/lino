@@ -61,6 +61,7 @@ if cbss:
                 fn = os.path.join(os.path.dirname(__file__),fn)
                 xml = open(fn).read()
                 obj.execute_request(simulate_response=xml)
+                #~ print obj.debug_messages
             yield obj
             
             

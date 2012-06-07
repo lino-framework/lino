@@ -58,5 +58,6 @@ class Command(BaseCommand):
         pk = int(args[1])
         req = model.objects.get(pk=pk)
         req.validate_request()
-        print req.logged_messages
+        #~ print req.logged_messages
+        print req.debug_messages
       

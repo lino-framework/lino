@@ -235,10 +235,11 @@ class SendAction(dd.RowAction):
     def run(self,obj,ar,**kw):
         obj.execute_request(ar)
         if obj.status == RequestStatus.failed:
-            kw.update(message=obj.logged_messages)
+            kw.update(message=obj.debug_messages)
             kw.update(alert=True)
         elif obj.status == RequestStatus.warnings:
-            kw.update(message=_("Got valid response, but it contains warnings."))
+            kw.update(message=obj.info_messages)
+            #~ kw.update(message=_("Got valid response, but it contains warnings."))
             kw.update(alert=True)
         kw.update(refresh=True)
         return ar.ui.success_response(**kw)
@@ -311,7 +312,7 @@ NSWSC = ('wsc',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
 
 
 #~ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
-class CBSSRequest(mixins.AutoUser,mixins.Printable):
+class CBSSRequest(mixins.AutoUser,mixins.Printable,mixins.Duplicatable):
     """
     Common Abstract Base Class for :class:`SSDNRequest`
     and :class:`NewStyleRequest`
@@ -352,10 +353,17 @@ Read-only.""")
 The response received, raw XML string. 
 If the request failed with a local exception, then it contains a traceback.""")
 
-    logged_messages = models.TextField(
-        verbose_name=_("Logged messages"),
-        editable=False,blank=True,
-        help_text="""Logged messages about this request.""")
+    #~ logged_messages = models.TextField(
+        #~ verbose_name=_("Logged messages"),
+        #~ editable=False,blank=True,
+        #~ help_text="""Logged messages about this request.""")
+
+    debug_messages = models.TextField(
+        verbose_name=_("Debug messages"),
+        editable=False,blank=True)
+    info_messages = models.TextField(
+        verbose_name=_("Info messages"),
+        editable=False,blank=True)
 
     send_action = SendAction()
     print_action = mixins.DirectPrintAction()
@@ -369,6 +377,17 @@ If the request failed with a local exception, then it contains a traceback.""")
     #~ def disable_editing(self,ar):
         #~ if self.ticket: return True
 
+    def on_duplicate(self,ar):
+        self.debug_messages = ''
+        self.info_messages = ''
+        self.ticket = ''
+        self.response_xml = ''
+        self.request_xml = ''
+        self.sent = None
+        self.status = RequestStatus.new
+        self.environment = ''
+        super(CBSSRequest,self).on_duplicate(ar)
+        
     def on_cbss_ok(self,reply):
         """
         Called when a successful reply has been received.
@@ -380,10 +399,25 @@ If the request failed with a local exception, then it contains a traceback.""")
         #~ # call_optional_super(CBSSRequest,cls,'setup_report',rpt)
         #~ rpt.add_action(SendAction())
         
-    def logmsg(self,s,*args):
+    #~ def logmsg(self,s,*args):
+        #~ if args:
+            #~ s = s % args
+        #~ self.logged_messages += ("[%s] " % datetime.datetime.now()) + s + '\n'
+        
+    def logmsg_debug(self,s,*args):
         if args:
             s = s % args
-        self.logged_messages += ("[%s] " % datetime.datetime.now()) + s + '\n'
+        self.debug_messages += ("[%s] " % datetime.datetime.now()) + s + '\n'
+        
+    def logmsg_info(self,s,*args):
+        if args:
+            s = s % args
+        self.info_messages += s + '\n'
+        
+    def logmsg_warning(self,s,*args):
+        if args:
+            s = s % args
+        self.info_messages += s + '\n'
         
     def __unicode__(self):
         return u"%s #%s" % (self._meta.verbose_name,self.pk)
@@ -404,6 +438,9 @@ If the request failed with a local exception, then it contains a traceback.""")
             
         self.environment = environment
         self.sent = now
+        #~ self.logged_messages = ''
+        self.debug_messages = ''
+        self.info_messages = ''
         
         if not settings.LINO.cbss_live_tests:
             if simulate_response is None and environment:
@@ -422,11 +459,11 @@ If the request failed with a local exception, then it contains a traceback.""")
             retval = self.execute_request_(now,simulate_response)
         except (IOError,Warning),e:
             self.status = RequestStatus.failed
-            self.logmsg(unicode(e))
+            self.logmsg_debug(unicode(e))
         except Exception,e:
             self.status = RequestStatus.failed
             #~ self.response_xml = traceback.format_exc(e)
-            self.logmsg(traceback.format_exc(e))
+            self.logmsg_debug(traceback.format_exc(e))
 
         self.save()
         return retval
@@ -490,7 +527,8 @@ class CBSSRequestDetail(dd.DetailLayout):
     
     technical = """
     response_xml 
-    logged_messages
+    info_messages
+    debug_messages
     """
     
     info = """
@@ -535,7 +573,7 @@ class SSDNRequest(CBSSRequest):
             #~ print xml
         schema.assertValid(doc)
         #~ self.logmsg("Validated %s against %s", xml,xsd_filename)
-        self.logmsg("Validated %s against %s", self,xsd_filename)
+        self.logmsg_debug("Validated %s against %s", self,xsd_filename)
       
     def validate_wrapped(self,srvreq):
         self.validate_against_xsd(srvreq,xsdpath('SSDN','Service','SSDNRequest.xsd'))
@@ -556,9 +594,12 @@ class SSDNRequest(CBSSRequest):
         self.validate_inner(srvreq)
         wrapped_srvreq = self.wrap_ssdn_request(srvreq,datetime.datetime.now())
         self.validate_wrapped(wrapped_srvreq)
+        self.logmsg_info(_("Request has been validated against XSD files"))
       
     def execute_request_(self,now,simulate_response):
-        "SSDN specific part of a request."
+        """
+        SSDN specific part of a request.
+        """
         srvreq = self.build_request()
         
         #~ if validate:
@@ -571,6 +612,7 @@ class SSDNRequest(CBSSRequest):
             #~ logger.info("XSD validation passed.")
             
         if simulate_response is None:
+            # this is the normal case
             self.check_environment(srvreq)
             url = self.get_wsdl_uri()
             
@@ -587,7 +629,7 @@ class SSDNRequest(CBSSRequest):
                 raise Warning(
                     "NOT sending because `cbss_live_tests` is False:\n" + xmlString)
             #~ xmlString.append(wrapped_srvreq)
-            self.logmsg("client.service.sendXML(\n%s\n)",xmlString)
+            self.logmsg_debug("client.service.sendXML(\n%s\n)",xmlString)
             res = client.service.sendXML(xmlString)
             #~ print 20120522, res
             self.response_xml = unicode(res)
@@ -596,6 +638,7 @@ class SSDNRequest(CBSSRequest):
             return self.fill_from_string(res.encode('utf-8'))
         else:
             self.environment = 'demo'
+            self.response_xml = unicode(simulate_response)
             return self.fill_from_string(simulate_response)
                 
         
@@ -605,46 +648,50 @@ class SSDNRequest(CBSSRequest):
         self.ticket = nodetext(reply.childAtPath('/ReplyContext/Message/Ticket'))
         rs = reply.childAtPath('/ServiceReply/ResultSummary')
         if rs is None:
-            raise Warning("Unexpected CBSS reply:\n%s" % reply)
+            raise Warning("Missing ResultSummary in :\n%s" % reply)
+            
+        for dtl in rs.getChildren('Detail'):
+        #~ for detail in rs.getChildren():
+            msg = nodetext(dtl.childAtPath('/Severity')) # WARNING, INFO, ERROR...
+            msg += " " + nodetext(dtl.childAtPath('/ReasonCode'))
+            msg += " (%s) : " % nodetext(dtl.childAtPath('/AuthorCodeList'))
+            msg += nodetext(dtl.childAtPath('/Diagnostic'))
+            #~ print '========'
+            #~ print msg
+            #~ raise Warning(msg)
+            self.logmsg_info(msg)
+            
         rc = nodetext(rs.childAtPath('/ReturnCode'))
         #~ print reply.__class__, dir(reply)
         #~ print reply
         #~ rc = reply.root().SSDNReply.ServiceReply.ResultSummary.ReturnCode
+        
         if rc == '0':
             self.status = RequestStatus.ok
         elif rc == '1':
             self.status = RequestStatus.warnings
-            self.logmsg("Warnings:==============\n%s\n===============" % s)
+            #~ self.logmsg_debug("Warnings:==============\n%s\n===============" % s)
         #~ elif rc == '10000':
             #~ self.status = RequestStatus.errors
         else:
-            #~ self.status = RequestStatus.errors
+            self.status = RequestStatus.errors
             #~ self.response_xml = unicode(reply)
-            if False and sent_xmlString is not None:
-                msg = """\
-%s : CBSS returned error %s 
-======= xmlString sent:
-%s
-======= response:
-%s
-=======
-""" % (self,rc,sent_xmlString,unicode(reply))
-                logger.warning(msg)
-            dtl = rs.childAtPath('/Detail')
-            msg = CBSS_ERROR_MESSAGE % rc
-            keys = ('Severity', 'ReasonCode', 'Diagnostic', 'AuthorCodeList')
-            msg += '\n'.join([
-                k+' : '+nodetext(dtl.childAtPath('/'+k))
-                    for k in keys])
-            raise Warning(msg)
+            #~ dtl = rs.childAtPath('/Detail')
+            #~ msg = CBSS_ERROR_MESSAGE % rc
+            #~ keys = ('Severity', 'ReasonCode', 'Diagnostic', 'AuthorCodeList')
+            #~ msg += '\n'.join([
+                #~ k+' : '+nodetext(dtl.childAtPath('/'+k))
+                    #~ for k in keys])
+            #~ raise Warning(msg)
             #~ return None
             #~ raise Exception("Got invalid response status")
             
         #~ self.on_cbss_ok(reply)
         service_reply = self.get_service_reply(reply)
         if service_reply is None:
-            raise Exception(
-              "Return code is %r, but there's no service reply." % rc)
+            raise Warning("Got response without service reply.")
+            #~ raise Exception(
+              #~ "Return code is %r, but there's no service reply." % rc)
               #~ "Return code is %r but there's no service reply in:\n%s\n" % (rc,reply))
         #~ reply.childAtPath('/ServiceReply/IdentifyPersonReply')
         self.response_xml = unicode(service_reply)

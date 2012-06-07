@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SSDNReply xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
   <ReplyContext>
-    <ns1:ResultSummary ok="YES" xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
-      <ns1:ReturnCode>0</ns1:ReturnCode>
+    <ns1:ResultSummary ok="WARNING" xmlns:ns1="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
+    <ns1:ReturnCode>1</ns1:ReturnCode>
+    <ns1:Detail><ns1:Severity>WARNING</ns1:Severity><ns1:ReasonCode>20000001</ns1:ReasonCode>
+    <ns1:Diagnostic>At least one service request has generated a warning.</ns1:Diagnostic>
+    <ns1:AuthorCodeList>CBSS</ns1:AuthorCodeList>
+    </ns1:Detail>
     </ns1:ResultSummary>
     <AuthorizedUser>
       <UserID>12345678901</UserID><Email>123@example.be</Email>
@@ -16,8 +20,31 @@
     </Message>
   </ReplyContext>
   <ServiceReply>
-    <ns2:ResultSummary ok="YES" xmlns:ns2="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common">
-      <ns2:ReturnCode>0</ns2:ReturnCode>
+    <ns2:ResultSummary ok="WARNING" xmlns:ns2="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common"><ns2:ReturnCode>1</ns2:ReturnCode>
+    <ns2:Detail><ns2:Severity>WARNING</ns2:Severity><ns2:ReasonCode>21007001</ns2:ReasonCode>
+    <ns2:Diagnostic>Both a SSIN and Phonetic Criteria were specified. The Phonetic Criteria will be ignored. </ns2:Diagnostic>
+    <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
+    </ns2:Detail><ns2:Detail>
+    <ns2:Severity>WARNING</ns2:Severity>
+    <ns2:ReasonCode>22007007</ns2:ReasonCode>
+    <ns2:Diagnostic>The specified PersonData does not match with the data found for this person.</ns2:Diagnostic>
+    <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
+    <ns2:Information>
+    <ns2:FieldName>Phonetic Information: Birth Date</ns2:FieldName>
+    <ns2:FieldValue>1938-03-07</ns2:FieldValue>
+    </ns2:Information>
+    <ns2:Information><ns2:FieldName>Phonetic Information: First Name</ns2:FieldName>
+    <ns2:FieldValue>Max</ns2:FieldValue></ns2:Information>
+    <ns2:Information><ns2:FieldName>SSIN</ns2:FieldName><ns2:FieldValue>38030702191</ns2:FieldValue></ns2:Information>
+    <ns2:Information><ns2:FieldName>Phonetic Information: Last Name</ns2:FieldName>
+    <ns2:FieldValue>Mustermann</ns2:FieldValue></ns2:Information>
+    <ns2:Information><ns2:FieldName>Phonetic Information: Middle Name</ns2:FieldName></ns2:Information>
+    </ns2:Detail>
+    <ns2:Detail><ns2:Severity>INFORMATION</ns2:Severity><ns2:ReasonCode>12007001</ns2:ReasonCode>
+    <ns2:Diagnostic>The identity of the person was successfully validated by the system.</ns2:Diagnostic>
+    <ns2:AuthorCodeList>CBSS</ns2:AuthorCodeList>
+    <ns2:Information><ns2:FieldName>SSIN</ns2:FieldName><ns2:FieldValue>38030702191</ns2:FieldValue></ns2:Information>
+    </ns2:Detail>
     </ns2:ResultSummary>
     <ServiceId>OCMWCPASIdentifyPerson</ServiceId>
     <Version>20050930</Version>

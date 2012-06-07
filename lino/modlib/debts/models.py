@@ -226,7 +226,7 @@ class Accounts(dd.Table):
     
 
 
-class Budget(mixins.AutoUser,mixins.CachedPrintable):
+class Budget(mixins.AutoUser,mixins.CachedPrintable,mixins.Duplicatable):
     """
     Deserves more documentation.
     """
@@ -422,13 +422,13 @@ Vielleicht mit Fußnoten?
     def DistByBudget(self,ar):
         return ar.spawn(DistByBudget,master_instance=self)
         
-    @dd.action(_("Duplicate"))
-    def duplicate_row(self,ar):
-        dup = mixins.duplicate_row(self)
-        kw = dict()
-        kw.update(refresh=True)
-        kw.update(message="Duplicated %s to %s." % (self,dup))
-        return ar.ui.success_response(**kw)
+    #~ @dd.action(_("Duplicate"))
+    #~ def duplicate_row(self,ar):
+        #~ dup = mixins.duplicate_row(self)
+        #~ kw = dict()
+        #~ kw.update(refresh=True)
+        #~ kw.update(message="Duplicated %s to %s." % (self,dup))
+        #~ return ar.ui.success_response(**kw)
         
     @dd.virtualfield(dd.HtmlBox(_("Preview")))
     def preview(self,ar):
