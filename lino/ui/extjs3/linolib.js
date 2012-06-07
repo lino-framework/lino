@@ -1203,6 +1203,14 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
               Lino.notify(result.message);
           }
       }
+      if (result.data_record && ! gridmode) {
+          //~ not used
+          panel.set_status({data_record:result.data_record});
+      }
+      if (result.new_status && ! gridmode) {
+          console.log('20120607 new_status');
+          panel.set_status(result.new_status);
+      }
       if (result.refresh_all) {
           var cw = panel.get_containing_window();
           //~ console.log("20120123 refresh_all");

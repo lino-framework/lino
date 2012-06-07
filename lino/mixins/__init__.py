@@ -228,6 +228,7 @@ class Duplicatable(models.Model):
         kw = dict()
         #~ kw.update(refresh=True)
         kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
+        kw.update(new_status=dict(record_id=new.pk))
         return ar.ui.success_response(**kw)
         
     def on_duplicate(self,ar):
@@ -263,6 +264,7 @@ class Sequenced(models.Model):
         kw = dict()
         kw.update(refresh=True)
         kw.update(message=_("Inserted new row before %d.") % self.seqno)
+        kw.update(new_status=dict(record_id=new.pk))
         return ar.ui.success_response(**kw)
         
     

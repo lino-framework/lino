@@ -485,6 +485,7 @@ def json_response(x,content_type='application/json'):
 ACTION_RESPONSES = frozenset((
   'message','success','alert', 
   'errors',
+  'new_status',
   'refresh','refresh_all',
   'confirm_message', 'step',
   'open_url','open_davlink_url'))
@@ -1838,6 +1839,7 @@ tinymce.init({
         if message:
             kw.update(message=message)
         return action_response(kw)
+
         
     def lino_js_parts(self,user):
     #~ def js_cache_name(self):

@@ -1129,17 +1129,17 @@ class IdentifyPersonResult(dd.VirtualTable):
     def get_data_rows(self,ar):
         ipr = ar.master_instance
         if ipr is None: 
-            print "20120606 ipr is None"
+            #~ print "20120606 ipr is None"
             return
         #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
         if not ipr.status in (RequestStatus.ok,RequestStatus.warnings):
-            print "20120606 wrong status", ipr.status 
+            #~ print "20120606 wrong status", ipr.status 
             return
         service_reply = ipr.get_service_reply()
         results = service_reply.childAtPath('/SearchResults').children
-        print "20120606 got", service_reply
+        #~ print "20120606 got", service_reply
         if results is None:
-            print "20120606 no /SearchResults"
+            #~ print "20120606 no /SearchResults"
             #~ return []
             return
         for obj in results:
