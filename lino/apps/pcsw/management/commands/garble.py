@@ -97,8 +97,8 @@ class Command(BaseCommand):
         User = dd.resolve_model(settings.LINO.user_model)
         Person = dd.resolve_model(settings.LINO.person_model)
         Household = dd.resolve_model('households.Household')
-        Member = resolve_model('households.Member')
-        Role = resolve_model('households.Role')
+        Member = dd.resolve_model('households.Member')
+        Role = dd.resolve_model('households.Role')
         Country = dd.resolve_model('countries.Country')
         
         for p in Person.objects.all():
