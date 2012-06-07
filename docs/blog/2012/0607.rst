@@ -10,3 +10,5 @@ Statt eines einzigen Feldes `logged_messages` haben wir jetzt
 `debug_messages` und `info_messages`.
 Beide Logger-Felder werden jetzt zu Beginn des Requests gelöscht.
 Alle CBSS-Requests haben jetzt einen Button "Duplizieren".
+
+Haushalte wurden noch nicht gegarbelt. Jetzt wohl.

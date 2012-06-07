@@ -97,6 +97,8 @@ class Command(BaseCommand):
         User = dd.resolve_model(settings.LINO.user_model)
         Person = dd.resolve_model(settings.LINO.person_model)
         Household = dd.resolve_model('households.Household')
+        Member = resolve_model('households.Member')
+        Role = resolve_model('households.Role')
         Country = dd.resolve_model('countries.Country')
         
         for p in Person.objects.all():
@@ -117,10 +119,18 @@ class Command(BaseCommand):
                 p.name = join_words(p.last_name,p.first_name)
                 p.save()
                 dblogger.info("%s from %s",unicode(p),unicode(p.nationality))
-                
+        MEN = Person.objects.filter(gender=Gender.male).order_by('id')
+        WOMEN = Person.objects.filter(gender=Gender.female).order_by('id')
         for h in Household.objects.all():
-            h.name = ''
-            h.full_clean()
+            if h.member_set.all().count() == 0:
+                he = MEN.pop()
+                she = WOMEN.pop()
+                h.name = he.last_name+"-"+she.last_name
+                Member(household=h,person=he,role=Role.objects.get(pk=1))
+                Member(household=h,person=she,role=Role.objects.get(pk=2))
+            else:
+                h.name = ''
+                h.full_clean()
             h.save()
             
         dblogger.info("GARBLE done on database %s." % dbname)
