@@ -1,0 +1,10 @@
+20120608
+========
+
+
+Error while evaluating the expression "html(self.goals)" defined in the "from" part of a statement.
+File "<string>", line 1, in <module>
+File "t:\hgwork\lino\lino\utils\appy_pod.py", line 125, in html_func
+return renderer.renderXhtml(html,**kw)
+<type 'exceptions.NameError'>: global name 'renderer' is not defined
+

@@ -1183,14 +1183,14 @@ if True: # settings.LINO.user_model:
         
         @classmethod
         def get_request_queryset(cls,rr):
-            #~ logger.info("20120114 param_values = %r",rr.param_values)
+            #~ logger.info("20120608.get_request_queryset param_values = %r",rr.param_values)
             qs = super(ContractsSearch,cls).get_request_queryset(rr)
             #~ user = rr.param_values.get('user',None)
             if rr.param_values.user:
                 qs = qs.filter(user=rr.param_values.user)
             if rr.param_values.type:
                 qs = qs.filter(type=rr.param_values.type)
-            today = rr.param_values.today
+            today = rr.param_values.today or datetime.date.today()
             #~ today = rr.param_values.get('today',None) or datetime.date.today()
             #~ show_active = rr.param_values.get('show_active',True)
             if today:
@@ -1226,7 +1226,7 @@ class JobsOverview(mixins.EmptyTable):
     detail_template = "body"
     
     parameters = dict(
-      date = models.DateField(default=datetime.date.today),
+      date = models.DateField(default=datetime.date.today,blank=True,null=True),
       contract_type = models.ForeignKey(ContractType,blank=True,null=True),
       job_type = models.ForeignKey(JobType,blank=True,null=True),
       )

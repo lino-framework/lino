@@ -188,16 +188,28 @@ class HouseholdsByType(Households):
 
 
 
-# class ContactType(babel.BabelNamed):
 class Role(babel.BabelNamed):
     """
-    Deserves more documentation.
+    The role of a :class:`Member` in a :class:`Household`.
     """
     class Meta:
         verbose_name = _("Household Role")
         verbose_name_plural = _("Household Roles")
 
-    name_giving = models.BooleanField(verbose_name="name-giving",default=False)
+    name_giving = models.BooleanField(_("name-giving"),
+      default=False,
+      help_text="""\
+When the `name` field of a Household is empty, 
+its value is computed by joining the `Last Name` 
+of all name-giving members with a dash ("-").
+      """)
+      
+    #~ header = babel.BabelCharField(_("Header"),
+        #~ max_length=50,blank=True,
+        #~ help_text="""\
+#~ Default header when a member with this Role is being automatically 
+#~ inserted as Actor of a Budget.
+    #~ """)
     #~ male = dd.BabelCharField(max_length=200,
         #~ verbose_name=string_concat(_("Designation"),' ',Gender.male.text))
     #~ female = dd.BabelCharField(max_length=200,
@@ -223,8 +235,11 @@ class Member(models.Model):
         verbose_name = _("Household Member")
         verbose_name_plural = _("Household Members")
         
-    role = models.ForeignKey(Role)
-      #~ blank=True,null=True,
+    role = models.ForeignKey(Role,blank=True,null=True,help_text="""\
+The Role of this Person in this Household.
+List of choices is configured in `Configure --> Households --> Roles`.
+""")
+      #~ 
       #~ )
     #~ partner = models.ForeignKey(contacts.Partner,
         #~ related_name='membersbypartner')

@@ -1675,6 +1675,9 @@ class AidTypes(dd.Table):
 # SEARCH
 #
 class PersonSearch(mixins.AutoUser,mixins.Printable):
+    """
+    Lino creates a new record in this table for each search request.
+    """
     class Meta:
         verbose_name = _("Person Search")
         verbose_name_plural = _('Person Searches')

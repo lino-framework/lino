@@ -103,7 +103,7 @@ class Renderer(AppyRenderer):
             #~ traceback.print_exc(e)
         #~ print repr(html)
         #~ print html
-        return renderer.renderXhtml(html,**kw)
+        return self.renderXhtml(html,**kw)
         #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
         
     def html_func(self,html,**kw):
@@ -122,7 +122,7 @@ class Renderer(AppyRenderer):
             # appy.pod always expects utf-8 encoding.
             # See /blog/2011/0622.
             html = html.encode('utf-8')
-        return renderer.renderXhtml(html,**kw)
+        return self.renderXhtml(html,**kw)
         
     def finalize_func(self,fn):
         #~ print "finalize_func()", self.automaticstyles.values()

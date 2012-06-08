@@ -443,14 +443,29 @@ class ActionRequest(object):
         # 20120605 : Actor.get_request_handle() ar instead of ui
         self.ah = actor.get_request_handle(self)
         
+        if self.actor.parameters and request is not None:
+            param_values = self.ui.parse_params(self.ah,request)
+                
+            self.param_values = AttrDict()
+            for k,pf in self.actor.parameters.items():
+                v = param_values.get(k,None)
+                if v is None:
+                    v = pf.get_default()
+                self.param_values.define(k,v)
+            if param_values:
+                #~ logger.info("20120608 param_values is %s",param_values)
+                for k,v in param_values.items():
+                    self.param_values.define(k,v)
+                
+        
     #~ def confirm(self,step,*messages):
         #~ if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
             #~ return
         #~ raise ConfirmationRequired(step,messages)
 
     def parse_req(self,request,rqdata,**kw): 
-        if self.actor.parameters:
-            kw.update(param_values=self.ui.parse_params(self.ah,request))
+        #~ if self.actor.parameters:
+            #~ kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
         
         #~ 20120111 kw.update(user=request.user)
@@ -470,7 +485,7 @@ class ActionRequest(object):
     def setup(self,
             user=None,
             subst_user=None,
-            param_values={},
+            #~ param_values={},
             known_values=None,
             renderer=None,
             **kw):
@@ -478,18 +493,6 @@ class ActionRequest(object):
         if renderer is not None:
             self.renderer = renderer
         #~ self.param_values = param_values
-        if self.actor.parameters:
-            self.param_values = AttrDict()
-            for k,pf in self.actor.parameters.items():
-                v = param_values.get(k,None)
-                if v is None:
-                    v = pf.get_default()
-                self.param_values.define(k,v)
-        
-        if param_values:
-            #~ logger.info("20120122 param_values is %s",param_values)
-            for k,v in param_values.items():
-                self.param_values.define(k,v)
         self.subst_user = subst_user
         #~ 20120111 
         #~ self.known_values = known_values or self.report.known_values

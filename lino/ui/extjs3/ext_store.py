@@ -933,6 +933,7 @@ class Store:
         self.all_fields = tuple(self.all_fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
+        self.param_fields = tuple(self.param_fields)
 
 
     def add_field_for(self,fields,df):
@@ -968,7 +969,7 @@ class Store:
                         self.pk = df
                 #~ fields.add(fld)
         #~ if not self.pk in fields:
-        if issubclass(self.rh.actor,table.Table):
+        if issubclass(self.actor,table.Table):
             if self.pk is None:
                 self.pk = self.actor.model._meta.pk
             if not pk_found:

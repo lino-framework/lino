@@ -32,6 +32,7 @@ from lino import dd
 #~ from lino.utils import perms
 from lino.tools import full_model_name
 from lino.core import frames
+from lino.core import actions
 from lino.utils.choosers import chooser
     
 
@@ -134,9 +135,9 @@ class AutoUser(models.Model):
             blank=True,null=True
             )
         
-    def on_duplicate(self,ar):
-        self.user = ar.get_user()
-        super(AutoUser,self).on_duplicate(ar)
+    #~ def on_duplicate(self,ar):
+        #~ self.user = ar.get_user()
+        #~ super(AutoUser,self).on_duplicate(ar)
         
         
     def on_create(self,ar):
@@ -206,35 +207,44 @@ class CreatedModified(models.Model):
         super(CreatedModified, self).save(*args, **kwargs)
 
         
-def duplicate_row(obj,**kw):
-    obj.pk = None
-    for k,v in kw.items():
-        setattr(obj,k,v)
-    return obj
+#~ def duplicate_row(obj,**kw):
+    #~ obj.pk = None
+    #~ for k,v in kw.items():
+        #~ setattr(obj,k,v)
+    #~ return obj
 
 
 class Duplicatable(models.Model):
     """
-    Adds an action "Duplicate"
+    Adds an action "Duplicate". 
+    Subclasses usually also need to override :meth:`duplicated_fields`.
     """
     class Meta:
         abstract = True
         
+    duplicated_fields = []
+        
     @dd.action(_("Duplicate"))
-    def duplicate_row(self,ar):
-        new = duplicate_row(self)
-        new.on_duplicate(ar)
+    def duplicate_row(self,ar,**kw):
+        #~ if not isinstance(ar,actions.ActionRequest):
+            #~ raise Exception("Expected and ActionRequest but got %r" % ar)
+        for n in self.duplicated_fields:
+            kw[n] = getattr(self,n)
+        #~ print 20120608, kw
+        new = ar.create_instance(**kw)
+        #~ new = duplicate_row(self)
+        #~ new.on_duplicate(ar)
         new.save(force_insert=True)
         kw = dict()
-        #~ kw.update(refresh=True)
+        kw.update(refresh=True)
         kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
         kw.update(new_status=dict(record_id=new.pk))
         return ar.ui.success_response(**kw)
         
-    def on_duplicate(self,ar):
-        pass
+    #~ def on_duplicate(self,ar):
+        #~ pass
   
-class Sequenced(models.Model):
+class Sequenced(Duplicatable):
     """Abstract base class for models that have a sequence number `seqno`
     """
   
@@ -258,14 +268,17 @@ class Sequenced(models.Model):
             #~ print '20120605 duplicate_row inc', s.seqno, s.account
             s.seqno += 1
             s.save()
-        new = duplicate_row(self,seqno=seqno)
-        new.save(force_insert=True)
-        #~ print '20120605 duplicate_row done', new.seqno
-        kw = dict()
-        kw.update(refresh=True)
-        kw.update(message=_("Inserted new row before %d.") % self.seqno)
-        kw.update(new_status=dict(record_id=new.pk))
-        return ar.ui.success_response(**kw)
+        return super(Sequenced,self).duplicate_row.run(self,ar,seqno=seqno)
+        #~ new = duplicate_row(self,seqno=seqno)
+        #~ new.save(force_insert=True)
+        #~ kw = dict()
+        #~ kw.update(refresh=True)
+        #~ kw.update(message=_("Inserted new row before %d.") % self.seqno)
+        #~ kw.update(new_status=dict(record_id=new.pk))
+        #~ return ar.ui.success_response(**kw)
+        
+    def __unicode__(self):
+        return unicode(_("Row # %s") % self.seqno)
         
     
     def get_siblings(self):

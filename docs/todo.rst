@@ -12,6 +12,18 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Optisch kennzeichnen, wenn ein Kolonnentitel einen Hilfetext hat.
+
+#.  Versteckte Reiter werden nicht aktualisiert. 
+    Das ist irritierend beim Arbeiten mit Budgets. 
+    Z.B. im Reiter Vorschau muss man generell immer noch Refresh klicken, 
+    wenn man in den anderen Reitern Eingaben geändert hat. Oder
+    
+    > Wenn ich die Kolonnenüberschriften bei den Akteuren ändere, stehen in
+    > der Dropdown der Ausgaben immer noch die alten. Nur im "eigenen Fenster"
+    > sind sie aktualisiert.
+    
+
 #.  Vertragsüberschneidungen bei save() statt erst in der Datenkontrollliste.
 
 #.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 

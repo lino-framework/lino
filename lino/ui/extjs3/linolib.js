@@ -1177,6 +1177,14 @@ Lino.delete_selected = function(panel) {
 
 Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
   return function (response) {
+    //~ console.log(20120608,panel);
+    if (panel instanceof Lino.GridPanel) {
+        gridmode = true;
+        //~ console.log('20120608 yes');
+    } else {
+        gridmode = false;
+        //~ console.log('20120608 no');
+    }
     panel.loadMask.hide(); // 20120211
     if (response.responseText) {
       var result = Ext.decode(response.responseText);

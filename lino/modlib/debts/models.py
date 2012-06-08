@@ -176,7 +176,7 @@ class PeriodsField(models.DecimalField):
 
 
 
-class AccountGroup(mixins.Sequenced,babel.BabelNamed):
+class AccountGroup(babel.BabelNamed,mixins.Sequenced):
   
     class Meta:
         verbose_name = _("Budget Account Group")
@@ -193,7 +193,10 @@ class AccountGroups(dd.Table):
     
 
 
-class Account(mixins.Sequenced,babel.BabelNamed):
+class Account(babel.BabelNamed,mixins.Sequenced):
+    """
+    An Account of the accounts chart used in budgets.
+    """
     class Meta:
         verbose_name = _("Budget Account")
         verbose_name_plural = _("Budget Accounts")
@@ -256,6 +259,10 @@ Vielleicht mit Fußnoten?
     conclusion = dd.RichTextField(_("Conclusion"),format="html",blank=True)
     dist_amount = dd.PriceField(_("Disposable amount"),default=120)
     
+    def duplicated_fields(self):
+        return dd.fields_list('partner print_todo intro conclusion dist_amount')
+        
+    duplicated_fields = 'partner print_todo intro conclusion dist_amount'.split()
                 
     def __unicode__(self):
         if self.pk is None:
@@ -404,6 +411,8 @@ Vielleicht mit Fußnoten?
             mr = False
             mrs = False
             for m in household.member_set.all():
+                #~ if m.role and m.role.header:
+                    #~ header = m.role.header
                 if m.person.gender == Gender.male and not mr:
                     header = unicode(_("Mr."))
                     mr = True
@@ -616,6 +625,8 @@ class ActorsByBudget(Actors):
 
 
 class Entry(SequencedBudgetComponent):
+    """
+    """
     class Meta:
         verbose_name = _("Budget Entry")
         verbose_name_plural = _("Budget Entries")
@@ -662,12 +673,15 @@ Gibt an, für wieviele Monate dieser Betrag sich versteht.
 Also bei monatlichen Ausgaben steht hier 1, 
 bei jährlichen Ausgaben 12.""")
     monthly_rate = dd.PriceField(_("Monthly rate"),default=0,
-    help_text=u"""
-Eventueller Betrag monatlicher Rückzahlungen, 
-über deren Zahlung nicht verhandelt wird. 
-Wenn hier ein Betrag steht, darf "verteilen" nicht angekreuzt sein.
-    
+        help_text=u"""
+Eventueller Betrag monatlicher Rückzahlungen, über deren Zahlung nicht verhandelt wird. 
+Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
     """)
+    
+    duplicated_fields = """
+    account_type account partner actor distribute 
+    circa todo remark description periods monthly_rate
+    """.split()
 
     @chooser()
     def account_choices(cls,account_type):
@@ -701,6 +715,12 @@ Wenn hier ein Betrag steht, darf "verteilen" nicht angekreuzt sein.
             self.periods = self.account.periods
             self.description = unicode(self.account)
 
+    def full_clean(self,*args,**kw):
+        if self.monthly_rate and self.distribute:
+            raise ValidationError(
+              _("Cannot set both 'Distribute' and 'Monthly rate'"))
+        super(Entry,self).full_clean(*args,**kw)
+      
     def save(self,*args,**kw):
         #~ if not self.name:
             #~ if self.partner:
@@ -712,9 +732,6 @@ Wenn hier ein Betrag steht, darf "verteilen" nicht angekreuzt sein.
             self.description = unicode(self.account)
         #~ if self.periods is None:
             #~ self.periods = self.account.periods
-        if self.monthly_rate and self.distribute:
-            raise ValidationError(
-              _("Cannot set both 'Distribute' and 'Monthly rate'"))
         super(Entry,self).save(*args,**kw)
         
             
