@@ -1105,7 +1105,7 @@ class IdentifyPersonRequests(CBSSRequests):
     @dd.constant()
     def spacer(self,ui):  return '<br/>'
     
-class MyIdentifyPersonRequests(IdentifyPersonRequests,mixins.ByUser):
+class MyIdentifyPersonRequests(mixins.ByUser,IdentifyPersonRequests):
     pass
     
 class IdentifyRequestsByPerson(IdentifyPersonRequests):

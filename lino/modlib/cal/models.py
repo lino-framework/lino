@@ -887,7 +887,7 @@ if settings.LINO.user_model:
         
     class MyEventsToday(MyEvents):
         column_names = 'start_time summary status *'
-        label = u"Meine Termine heute"
+        label = _("My events today")
         
         @classmethod
         def setup_request(self,rr):

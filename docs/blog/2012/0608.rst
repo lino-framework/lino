@@ -1,6 +1,8 @@
 20120608
 ========
 
+Endspurt vor der Demo
+---------------------
 
 Error while evaluating the expression "html(self.goals)" defined in the "from" part of a statement.
 File "<string>", line 1, in <module>

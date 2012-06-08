@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-06 10:13+0100\n"
-"PO-Revision-Date: 2011-12-08 16:29+0200\n"
+"POT-Creation-Date: 2012-06-08 09:12+0100\n"
+"PO-Revision-Date: 2012-06-08 11:19+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -44,13 +44,14 @@ msgstr "Abkürzung"
 
 #: .\models.py:129
 msgid "Partner"
-msgstr ""
+msgstr "Partner"
 
 #: .\models.py:130
 msgid "Partners"
-msgstr ""
+msgstr "Partner"
 
-#: .\models.py:132 .\models.py:259
+#: .\models.py:132
+#: .\models.py:259
 msgid "Name"
 msgstr "Name"
 
@@ -110,7 +111,9 @@ msgstr "Fax"
 msgid "Remarks"
 msgstr "Bemerkungen"
 
-#: .\models.py:245 .\models.py:254 .\models.py:298
+#: .\models.py:245
+#: .\models.py:254
+#: .\models.py:298
 msgid "Address"
 msgstr "Adresse"
 
