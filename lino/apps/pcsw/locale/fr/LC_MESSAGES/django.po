@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-08 09:12+0100\n"
-"PO-Revision-Date: 2011-11-12 13:14+0200\n"
+"PO-Revision-Date: 2012-06-08 11:59+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,6 @@ msgid "Civil state"
 msgstr "Etat civil"
 
 #: .\models.py:165
-#, fuzzy
 msgid "Single"
 msgstr "célibataire"
 
@@ -49,7 +48,6 @@ msgid "Single with child"
 msgstr ""
 
 #: .\models.py:168
-#, fuzzy
 msgid "Married"
 msgstr "marié"
 
@@ -62,7 +60,6 @@ msgid "Married (living with another partner)"
 msgstr ""
 
 #: .\models.py:171
-#, fuzzy
 msgid "Widowed"
 msgstr "veuf/veuve"
 
@@ -71,12 +68,10 @@ msgid "Widow cohabitating"
 msgstr ""
 
 #: .\models.py:173
-#, fuzzy
 msgid "Divorced"
 msgstr "divorcé"
 
 #: .\models.py:174
-#, fuzzy
 msgid "Separated"
 msgstr "séparé"
 
@@ -96,12 +91,12 @@ msgstr "Registre des étrangers"
 msgid "Waiting for registry"
 msgstr "Registre d'attente "
 
-#: .\models.py:220 .\models.py:1063
+#: .\models.py:220
+#: .\models.py:1063
 msgid "eID card type"
 msgstr "Type de carte eID"
 
 #: .\models.py:223
-#, fuzzy
 msgid "Belgian citizen"
 msgstr "Registre national"
 
@@ -154,9 +149,8 @@ msgid "newcomer"
 msgstr ""
 
 #: .\models.py:328
-#, fuzzy
 msgid "deprecated"
-msgstr "séparé"
+msgstr "obsolète"
 
 #: .\models.py:339
 msgid "Bank account 1"
@@ -170,7 +164,8 @@ msgstr "Compte en banque 2"
 msgid "Cannot delete companies and persons imported from TIM"
 msgstr "On ne peut effacer les sociétés et les personnes importées de TIM"
 
-#: .\models.py:360 .\models.py:1030
+#: .\models.py:360
+#: .\models.py:1030
 msgid "Person"
 msgstr "Personne"
 
@@ -202,7 +197,10 @@ msgstr "Phase d'intégration"
 msgid "Coached from"
 msgstr "Début de l'accompagnement"
 
-#: .\models.py:385 .\models.py:431 .\models.py:1594 .\models.py:1706
+#: .\models.py:385
+#: .\models.py:431
+#: .\models.py:1594
+#: .\models.py:1706
 msgid "until"
 msgstr "jusque"
 
@@ -244,11 +242,11 @@ msgstr "Numéro de carte eID"
 
 #: .\models.py:428
 msgid "ID card valid from"
-msgstr "Carte d'identité valable depuis"
+msgstr "Carte eID valable depuis"
 
 #: .\models.py:442
 msgid "eID card issuer"
-msgstr "carte eID provenant de"
+msgstr "carte eID émise par"
 
 #: .\models.py:456
 msgid "noble condition"
@@ -331,28 +329,24 @@ msgid "Circular reference"
 msgstr "référence circulaire ?"
 
 #: .\models.py:584
-#, fuzzy
 msgid "eID card expires in 2 months"
-msgstr "la carte eID expire dans %d jours"
+msgstr "carte eID expire dans 2 mois"
 
 #: .\models.py:587
-#, fuzzy
 msgid "becomes available again in 1 month"
-msgstr "est à nouveau disponible"
+msgstr "redevient disponible dans 1 mois"
 
 #: .\models.py:590
-#, fuzzy
 msgid "work permit suspension ends in 1 month"
-msgstr "fin de suspension du permis de travail"
+msgstr "fin de suspension du permis de travail dans 1 mois"
 
 #: .\models.py:593
-#, fuzzy
 msgid "coaching ends in 1 month"
-msgstr "Fin de l'accompagnement"
+msgstr "Fin de l'accompagnement dans un mois"
 
 #: .\models.py:621
 msgid "eID card expires"
-msgstr "Date d'expiration de la carte eID"
+msgstr "Carte eID valable jusque"
 
 #: .\models.py:624
 msgid "becomes available again"
@@ -439,33 +433,28 @@ msgid "Miscellaneous"
 msgstr "Divers"
 
 #: .\models.py:1043
-#, fuzzy
 msgid "Address"
-msgstr "Anutre"
+msgstr "Adresse"
 
 #: .\models.py:1044
-#, fuzzy
 msgid "Contact"
-msgstr "Contacts"
+msgstr "Contact"
 
 #: .\models.py:1045
-#, fuzzy
 msgid "Birth"
-msgstr "Date de naissance"
+msgstr "Naissance"
 
 #: .\models.py:1046
 msgid "eID card"
 msgstr "Carte eID"
 
 #: .\models.py:1048
-#, fuzzy
 msgid "Papers"
-msgstr "Personne"
+msgstr "Papiers"
 
 #: .\models.py:1050
-#, fuzzy
 msgid "Job search"
-msgstr "Recherche de personnes"
+msgstr "Recherche de travail"
 
 #: .\models.py:1059
 msgid "number"
@@ -476,9 +465,8 @@ msgid "valid from"
 msgstr "valide de"
 
 #: .\models.py:1061
-#, fuzzy
 msgid "valid until"
-msgstr "est d'application jusque"
+msgstr "valide jusqué"
 
 #: .\models.py:1062
 msgid "issued by"
@@ -490,54 +478,52 @@ msgstr "(tous)"
 
 #: .\models.py:1165
 msgid "Primary clients by coach"
-msgstr ""
+msgstr "Doeesiers complets par AI"
 
 #: .\models.py:1169
 #, python-format
 msgid "Primary clients of %s"
-msgstr ""
+msgstr "Dossiers complets de %s"
 
 #: .\models.py:1208
 msgid "My clients"
-msgstr ""
+msgstr "Mes clients"
 
 #: .\models.py:1215
 #, python-format
 msgid "Clients of %s"
-msgstr ""
+msgstr "Clients de %s"
 
 #: .\models.py:1229
-#, fuzzy
 msgid "Contract starts"
-msgstr "Contrats"
+msgstr "Contrat débute"
 
 #: .\models.py:1235
-#, fuzzy
 msgid "Contract ends"
-msgstr "Ruptures/fins de contrat"
+msgstr "Contrat se termine"
 
 #: .\models.py:1246
 #, python-format
 msgid "%(phase)s clients of %(user)s"
-msgstr ""
+msgstr "Clients %(phase)s de %(user)s"
 
 #: .\models.py:1253
 #, python-format
 msgid "Active clients of %s"
-msgstr ""
+msgstr "Clients actifs de %s"
 
 #: .\models.py:1274
 msgid "Data Test Clients"
 msgstr ""
 
-#: .\models.py:1276 .\models.py:1698
+#: .\models.py:1276
+#: .\models.py:1698
 msgid "Coached by"
 msgstr "Accompagné par"
 
 #: .\models.py:1277
-#, fuzzy
 msgid "only active on"
-msgstr "est actif"
+msgstr "seulement clients actifs au"
 
 #: .\models.py:1278
 msgid "Check NISS validity"
@@ -555,18 +541,21 @@ msgstr ""
 msgid "Users with their Clients"
 msgstr ""
 
-#: .\models.py:1425 .\models.py:1453 .\models.py:1465
+#: .\models.py:1425
+#: .\models.py:1453
+#: .\models.py:1465
 msgid "Total"
 msgstr "Total"
 
-#: .\models.py:1429 .\models.py:1463
+#: .\models.py:1429
+#: .\models.py:1463
 msgid "Primary clients"
-msgstr ""
+msgstr "Dossiers complets"
 
-#: .\models.py:1433 .\models.py:1464
-#, fuzzy
+#: .\models.py:1433
+#: .\models.py:1464
 msgid "Active clients"
-msgstr "Activité"
+msgstr "Clients actifs"
 
 #: .\models.py:1452
 msgid "User"
@@ -581,9 +570,8 @@ msgid "Reference name"
 msgstr "Nom de référence"
 
 #: .\models.py:1520
-#, fuzzy
 msgid "Considered active"
-msgstr "est actif"
+msgstr "Considéré actif"
 
 #: .\models.py:1523
 msgid "Integration Phase"
@@ -693,7 +681,8 @@ msgstr "écrit"
 msgid "Wanted property"
 msgstr "Propriété désirée"
 
-#: .\models.py:1749 .\models.py:1769
+#: .\models.py:1749
+#: .\models.py:1769
 msgid "Wanted properties"
 msgstr "Propriétés désirées"
 
@@ -701,7 +690,8 @@ msgstr "Propriétés désirées"
 msgid "Unwanted property"
 msgstr "Propriété non désirée"
 
-#: .\models.py:1757 .\models.py:1775
+#: .\models.py:1757
+#: .\models.py:1775
 msgid "Unwanted properties"
 msgstr "Propriétés non-désirées"
 
@@ -714,9 +704,8 @@ msgid "Found persons"
 msgstr "Personnes trouvées"
 
 #: .\models.py:1887
-#, fuzzy
 msgid "Overlapping Contracts"
-msgstr "utilisable dans contrats"
+msgstr "contrats chevauchants"
 
 #: .\models.py:1920
 msgid "Local job office"
@@ -735,18 +724,16 @@ msgid "Upload Type for driving licence"
 msgstr "Type d'upload \"permis de conduire\""
 
 #: .\models.py:1958
-#, fuzzy
 msgid "Integration"
-msgstr "Phase d'intégration"
+msgstr "Intégration"
 
 #: .\models.py:1970
 msgid "usable in contracts"
 msgstr "utilisable dans contrats"
 
 #: .\settings.py:78
-#, fuzzy
 msgid "Master"
-msgstr "Utilisateur"
+msgstr "Signalétique"
 
 #: .\settings.py:80
 msgid "Contacts"
@@ -773,9 +760,8 @@ msgid "Explorer"
 msgstr "Explorateur"
 
 #: .\settings.py:200
-#, fuzzy
 msgid "Site"
-msgstr "Système"
+msgstr "Site"
 
 #~ msgid "is SPIS user"
 #~ msgstr "SAIS"
