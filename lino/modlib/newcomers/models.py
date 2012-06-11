@@ -309,7 +309,7 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(Faculties)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.newcomers_level < UserLevel.expert:
+    if user.newcomers_level < UserLevel.manager:
         return
     m.add_action(Competences)
   

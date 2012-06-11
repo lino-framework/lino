@@ -40,6 +40,8 @@ class Language(babel.BabelNamed):
     class Meta:
         verbose_name = _("Language")
         verbose_name_plural = _("Languages")
+        ordering = ['name']
+        
     id = models.CharField(max_length=3,primary_key=True)
     #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     #~ name = models.CharField(max_length=200,verbose_name=_("Designation"))

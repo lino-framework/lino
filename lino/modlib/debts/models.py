@@ -81,6 +81,7 @@ from lino.modlib.households import models as households
 #~ from lino.modlib.contacts.models import Contact
 #~ from lino.tools import resolve_model, UnresolvedModel
 
+from lino.mixins.printable import decfmt
 
 MAX_SUB_BUDGETS = 3
 
@@ -356,7 +357,7 @@ Vielleicht mit Fußnoten?
         #~ kw.update(periods=12)
         #~ return self.sum(fldname,types,**kw)
         
-    def sum(self,fldname,types=None,**kw): 
+    def sum(self,fldname,types=None,*args,**kw): 
         """
         Compute and return the sum of `fldname` (either ``amount`` or `monthly_rate`
         """
@@ -367,11 +368,13 @@ Vielleicht mit Fußnoten?
         sa = [models.Sum(n) for n in fldnames]
         rv = decimal.Decimal(0)
         #~ for e in Entry.objects.filter(budget=self,**kw).annotate(*sa):
-        for e in Entry.objects.filter(budget=self,**kw).annotate(models.Sum(fldname)):
+        kw.update(budget=self)
+        for e in Entry.objects.filter(*args,**kw).annotate(models.Sum(fldname)):
             amount = decimal.Decimal(0)
             for n in fldnames:
                 amount += getattr(e,n+'__sum',0)
-            if e.periods is not None:
+            #~ if e.periods is not None:
+            if e.periods != 1:
                 amount = amount / decimal.Decimal(e.periods)
             rv += amount
         return rv
@@ -716,6 +719,8 @@ Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
             self.description = unicode(self.account)
 
     def full_clean(self,*args,**kw):
+        if self.periods <= 0:
+            raise ValidationError(_("Periods must be > 0"))
         if self.monthly_rate and self.distribute:
             raise ValidationError(
               _("Cannot set both 'Distribute' and 'Monthly rate'"))
@@ -772,7 +777,7 @@ class LiabilitiesByBudget(EntriesByBudget,EntriesByType):
     
 class AssetsByBudget(EntriesByBudget,EntriesByType):
     _account_type = AccountType.asset
-    column_names = "account remark amount actor monthly_rate todo seqno"
+    column_names = "account remark amount actor todo seqno"
 
 
 #~ class PrintEntriesByBudget(EntriesByBudget,EntriesByType):
@@ -947,7 +952,7 @@ class PrintLiabilitiesByBudget(PrintEntriesByBudget):
     """
     _account_type = AccountType.liability
     #~ column_names = "partner description total monthly_rate todo"
-    column_names = "partner description dynamic_amounts"
+    column_names = "partner:20 description:20 dynamic_amounts"
     
 class PrintAssetsByBudget(PrintEntriesByBudget):
     """
@@ -997,7 +1002,16 @@ class BudgetSummary(dd.VirtualTable):
         yield [u"Monatliche Ausgaben", -budget.sum('amount','E',periods=1)]
         ye = budget.sum('amount','E',periods=12)
         if ye:
-            yield [(u"Monatliche Reserve für jährliche Ausgaben (%s / 12)" % ye), -ye/12]
+            yield [
+              (u"Monatliche Reserve für jährliche Ausgaben (%s / 12)" 
+                % decfmt(ye*12,places=2)), 
+              -ye]
+            
+        #~ ye = budget.sum('amount','E',models.Q(periods__ne=1) & models.Q(periods__ne=12))
+        #~ if ye:
+            #~ yield [
+              #~ u"Monatliche Reserve für sonstige periodische Ausgaben", 
+              #~ -ye]
             
         yield [u"Raten der laufenden Kredite", -budget.sum('monthly_rate','L')]
         #~ yield [u"Total Kredite / Schulden", budget.sum('amount','L')]
@@ -1099,7 +1113,7 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(Accounts)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.debts_level < UserLevel.expert:
+    if user.debts_level < UserLevel.manager:
         return
     m  = m.add_menu("debts",MODULE_NAME)
     m.add_action(Budgets)

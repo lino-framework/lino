@@ -184,12 +184,19 @@ class User(mixins.CreatedModified):
         #~ return True
         
     def disabled_fields(self,request):
+        """
+        Only System admins may change the profile of users.
+        See also :meth:`Users.get_row_permission`.
+        """
         #~ if ar.get_user().is_superuser: 
         #~ if request.user.is_superuser: 
-        if self.profile:
-            return settings.LINO.user_profile_fields
+        if self.level <= UserLevel.manager:
+            l = ['profile']
         else:
-            return []
+            l = []
+        if self.profile:
+            l += settings.LINO.user_profile_fields
+        return l
         #~ if request.user.level >= UserLevel.expert: 
             #~ if self.profile:
                 #~ return settings.LINO.user_profile_fields
@@ -273,6 +280,10 @@ class Users(dd.Table):
 
     @classmethod
     def get_row_permission(cls,action,user,obj):
+        """
+        Only system managers may edit other users.
+        See also :meth:`User.disabled_fields`.
+        """
         if not super(Users,cls).get_row_permission(action,user,obj):
             return False
         #~ if user.is_superuser: return True

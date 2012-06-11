@@ -495,10 +495,13 @@ class Renderer(AppyRenderer):
             textalign="end", justifysingleword="true",
             linenumber="0"))
         
-        st = add_style(name="Table Column Header", family="paragraph",parentstylename="Table Contents")
-        st.addElement(ParagraphProperties(numberlines="false", 
-            linenumber="0"))
-        st.addElement(TextProperties(fontweight="bold"))
+        dn = "Table Column Header"
+        st = self.stylesManager.styles.getStyle(dn)
+        if st is None:
+            st = add_style(name=dn, family="paragraph",parentstylename="Table Contents")
+            st.addElement(ParagraphProperties(numberlines="false", 
+                linenumber="0"))
+            st.addElement(TextProperties(fontweight="bold"))
         
         # create some automatic styles
         

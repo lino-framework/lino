@@ -1397,7 +1397,8 @@ class UsersWithClients(dd.VirtualTable):
         i.e. users with a nonempty `integ_level`.
         
         With one subtility: system admins also have a nonempty `integ_level`, 
-        but normal users don't want to see them.
+        but normal users don't want to see them. 
+        So we add the rule that only system admins see other system admins.
         
         """
         #~ if ar.get_user().is_superuser:
@@ -1409,8 +1410,8 @@ class UsersWithClients(dd.VirtualTable):
             #~ # flt = Q(integ_level__isnull=False,is_superuser=False)
             #~ flt = Q(integ_level__gt='',level__gte=UserLevel.expert)
         qs = User.objects.exclude(integ_level='')
-        if ar.get_user().level < UserLevel.expert:
-            qs = qs.exclude(level__gte=UserLevel.expert)
+        if ar.get_user().level < UserLevel.manager:
+            qs = qs.exclude(level__gte=UserLevel.manager)
         for user in qs.order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
             if r.get_total_count():

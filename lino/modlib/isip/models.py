@@ -558,6 +558,6 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(ExamPolicies)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.integ_level < UserLevel.expert:
+    if user.integ_level < UserLevel.manager:
         return
     m.add_action(Contracts)

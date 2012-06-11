@@ -1343,7 +1343,7 @@ def setup_config_menu(site,ui,user,m):
     
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.integ_level < UserLevel.expert:
+    if user.integ_level < UserLevel.manager:
         return
     m  = m.add_menu("jobs",_("~Jobs"))
     m.add_action(Contracts)
