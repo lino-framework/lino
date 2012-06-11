@@ -1,0 +1,80 @@
+20120609
+========
+
+Linos erste Tx25
+----------------
+
+Ich habe heute morgen ein paar Anfragen auf testlino mit 
+meiner Person gemacht: habe mich selbst integriert vom 01.06. bis
+30.06.2012, mit Eigenschafts-Code 6[*] und dann erstmals in der
+Geschichte von Lino eine erste erfolgreiche Tx25 abgeschickt!
+
+Die visuelle Darstellung und der Ausdruck einer Tx25 sind allerdings
+jetzt noch nicht sehr brauchbar.
+
+Wie es weiter geht mit der Tx25
+-------------------------------
+
+Momentan speichert Lino die Antwort auf eine 
+:class:`Tx25 <lino.modlib.cbss.models.RetrieveTIGroupsRequest>`
+ja einfach nur::
+
+  reply = client.service.retrieveTI(infoCustomer,None,si)
+  self.response_xml = unicode(reply)
+
+Nun ist ja `reply` hier ein `suds.sudsobject.Object`. 
+Und der Autor von Suds hat sich ja einige Mühe gegeben, 
+dass ein `str()` von so einem Ding in einigermaßen 
+leserlicher Form das darstellt, was drin ist.
+
+Und in unserem `reply` ist viel drin. 
+Der Suds-Client hat ja mit der 
+:srcref:`RetrieveTIGroupsV3.wsdl </lino/modlib/cbss/WSDL/RetrieveTIGroupsV3.wsdl>` 
+auch die xsd-Dateien 
+:srcref:`RetrieveTIGroupsV3.xsd </lino/modlib/cbss/XSD/RetrieveTIGroupsV3.xsd>` 
+und 
+:srcref:`rn25_Release201104.xsd </lino/modlib/cbss/XSD/rn25_Release201104.xsd>` 
+eingelesen.
+
+Die rohe Standard-Darstellung von Suds ist allerdings 
+für Endbenutzer nicht brauchbar. 
+Sie enthält manche rein technische Info, die der EB nicht sehen will.
+Und manche andere Info steht nur als ein Code da, den ich für EB erklären muss.
+
+Ich könnte meinen eigenen `suds.sudsobject.Printer` schreiben.
+
+Aber vorher habe ich noch ein anderes Problem: ich will fiktive 
+Test-Antworten sammeln und Tests auch auf einem Rechner machen 
+können, der keine live connection zur KBSS hat.
+
+Außerdem ist ja so, dass eine KBSS-Anfrage und deren Antwort 
+in unserer Datenbank gespeichert wird. Wir wollen ja nicht jedesmal 
+eine neue KBSS-Anfrage machen müssen, wenn jemand das Resultat sehen 
+will. Also: kann man ein sudsobject einpickeln? Oder als XML speichern? 
+Und macht das überhaupt Sinn? Wieso dann überhaupt ein Sudsobject 
+instanzieren? Da kann ich ihn doch auch gleich die rohe XML speichern lassen.
+
+Oder? Ist es eigentlich richtig, dass ich die Daten in der Lino-DB 
+zwischenspeichere, wo sie dann auch noch Jahre später von jedermann 
+(der in Lino die entsprechenden Benutzerrechte hat) 
+gesehen werden könnnen?
+Bei IdentifyPerson fand ich das noch okay und sogar notwendig.
+Aber selbst da gilt doch: wenn jeder Zugriff auf die KBSS geloggt 
+werden soll, dann darf ich das Resultat nicht zwischenspeichern 
+und später ein zweites Mal ausdrucken lassen. 
+Wer nochmal ausdrucken will, der muss eine neue Anfrage machen.
+
+ManageAccess oder 
+Ist das nicht ein konzeptueller Fehler?
+
+Wenn es 
+
+
+
+
+
+
+
+
+- 
+- :mod:`lino.modlib.cbss.fixtures.purposes`

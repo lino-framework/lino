@@ -578,7 +578,7 @@ class SequencedBudgetComponent(mixins.Sequenced):
         return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
         
   
-class Actor(mixins.Sequenced,ActorBase):
+class Actor(ActorBase,mixins.Sequenced):
     """
     """
     class Meta:

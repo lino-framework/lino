@@ -1443,7 +1443,7 @@ class MyManageAccessRequests(ManageAccessRequests,mixins.ByUser):
         
 class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     """
-    A request to the RetrieveTIGroups service
+    A request to the RetrieveTIGroups service (aka Tx25)
     """
     
     class Meta:
@@ -1470,7 +1470,7 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
             #~ self.validate_newstyle(srvreq)
         self.check_environment(si)
         try:
-            reply = client.service.retrieveTI(infoCustomer,None,si)        
+            reply = client.service.retrieveTI(infoCustomer,None,si)
         except suds.WebFault,e:
             """
             Example of a SOAP fault:
@@ -1565,6 +1565,11 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         #~ print self.response_xml
         return reply
         
+    @dd.virtualfield(dd.HtmlBox(_("Result")))
+    def result(self,ar):
+        """
+        """
+        return self.response_xml
 
   
 class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
