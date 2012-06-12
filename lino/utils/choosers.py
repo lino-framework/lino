@@ -172,7 +172,7 @@ class Chooser(FieldChooser):
             kw[tbl.master_key] = ar.master_instance
         #~ if tbl.known_values:
             #~ kw.update(tbl.known_values)
-        logger.info("20120602 get_request_choices(%r) -> %r",self.converters,kw)
+        #~ logger.info("20120602 get_request_choices(%r) -> %r",self.converters,kw)
         return self.get_choices(**kw)
         
     def get_text_for_value(self,value,obj):

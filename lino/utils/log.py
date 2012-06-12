@@ -78,6 +78,8 @@ def configure(config):
                      
     :param maxBytes: rotate if logfile's size gets bigger than this.
     :param backupCount: number of rotated logfiles to keep.
+    :param loggers: A list or tuple of names of loggers to configure.
+                    Default is ['lino']
     
     Example::
     
@@ -97,7 +99,6 @@ def configure(config):
       filename = datetime.date.today().strftime('/var/log/lino/%Y-%m-%d.log')
       LOGGING = dict(filename=filename,level='DEBUG',rotate=False)  
 
-      
     If there is a logfile, then console messages will never be more verbose than INFO
     because too many messages on the screen are disturbing, 
     and if the level is DEBUG you will better analyze them in the logfile.
@@ -112,36 +113,36 @@ def configure(config):
     determine whether that is the case or not.".
     
     """
-    
-    djangoLogger = logging.getLogger('django')
+    root = logging.getLogger()
+    if len(root.handlers) != 0:
+        root.info(
+            "Not configuring logging because basicConfig has been done.")
+        return 
+        
+    #~ djangoLogger = logging.getLogger('django')
     linoLogger = logging.getLogger('lino')
     #~ sudsLogger = logging.getLogger('suds')
-    
-    if len(linoLogger.handlers) != 0:
-        if not True:
-            raise Exception("Lino logger has already %d handlers: %s",
-                len(linoLogger.handlers),linoLogger.handlers)
-        linoLogger.info(
-            "Not configuring logger because it has already %d handlers: %s",
-            len(linoLogger.handlers),linoLogger.handlers)
-        return 
-    
     
     #~ print 20101225, config
     encoding = config.get('encoding','UTF-8')
     logfile = config.get('filename',None)
     rotate = config.get('rotate',True)
+    logger_names = config.get('loggers','lino')
     level = getattr(logging,config.get('level','notset').upper())
     
-    linoLogger.setLevel(level)
+    loggers = [logging.getLogger(n) for n in logger_names.split()]
+    
+    for l in loggers: l.setLevel(level)
+    #~ linoLogger.setLevel(level)
     #~ sudsLogger.setLevel(level)
     #~ djangoLogger.setLevel(level)
     
     aeh = AdminEmailHandler(include_html=True)
     #~ aeh = AdminEmailHandler()
     aeh.setLevel(logging.ERROR)
-    djangoLogger.addHandler(aeh)
-    linoLogger.addHandler(aeh)
+    for l in loggers: l.addHandler(aeh)
+    #~ djangoLogger.addHandler(aeh)
+    #~ linoLogger.addHandler(aeh)
     #~ sudsLogger.addHandler(aeh)
     
         
@@ -156,7 +157,8 @@ def configure(config):
                 h.setLevel(logging.INFO)
             fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
             h.setFormatter(fmt)
-            linoLogger.addHandler(h)
+            for l in loggers: l.addHandler(h)
+            #~ linoLogger.addHandler(h)
             #~ sudsLogger.addHandler(h)
             #~ djangoLogger.addHandler(h)
     except IOError:
@@ -180,7 +182,8 @@ def configure(config):
                     kw[k] = config[k]
             h = file_handler(logfile,rotate,**kw)
             #~ h.setLevel(level)
-            linoLogger.addHandler(h)
+            for l in loggers: l.addHandler(h)
+            #~ linoLogger.addHandler(h)
             #~ djangoLogger.addHandler(h)
             #~ sudsLogger.addHandler(h)
             #~ print __file__, level, logfile

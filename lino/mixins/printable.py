@@ -46,6 +46,7 @@ from lino.utils import babel
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
 from lino.tools import makedirs_if_missing
+from lino.mixins.duplicable import Duplicable
 
 
 def decfmt(v,places=2,**kw):
@@ -720,7 +721,7 @@ class Printable(object):
         return self._meta.app_label + '.' + self.__class__.__name__ + '-' + str(self.pk)
         
   
-class CachedPrintable(models.Model,Printable):
+class CachedPrintable(Duplicable,Printable):
     
     #~ must_build = models.BooleanField(_("must build"),default=True,editable=False)
     build_time = models.DateTimeField(_("build time"),null=True,editable=False)
@@ -747,8 +748,8 @@ class CachedPrintable(models.Model,Printable):
                 #~ return False
         #~ return super(CachedPrintable,self).get_permission(action,user)
 
-    def on_duplicate(self,ar):
-        super(CachedPrintable,self).on_duplicate(ar)
+    def on_duplicate(self,ar,master):
+        super(CachedPrintable,self).on_duplicate(ar,master)
         self.build_time = None
         
     def get_print_templates(self,bm,action):

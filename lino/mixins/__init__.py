@@ -34,6 +34,7 @@ from lino.tools import full_model_name
 from lino.core import frames
 from lino.core import actions
 from lino.utils.choosers import chooser
+from lino.mixins.duplicable import Duplicable
     
 
 
@@ -206,46 +207,10 @@ class CreatedModified(models.Model):
             self.modified = datetime.datetime.now()
         super(CreatedModified, self).save(*args, **kwargs)
 
-        
-#~ def duplicate_row(obj,**kw):
-    #~ obj.pk = None
-    #~ for k,v in kw.items():
-        #~ setattr(obj,k,v)
-    #~ return obj
 
-
-class Duplicatable(models.Model):
+class Sequenced(Duplicable):
     """
-    Adds an action "Duplicate". 
-    Subclasses usually also need to override :meth:`duplicated_fields`.
-    """
-    class Meta:
-        abstract = True
-        
-    duplicated_fields = []
-        
-    @dd.action(_("Duplicate"))
-    def duplicate_row(self,ar,**kw):
-        #~ if not isinstance(ar,actions.ActionRequest):
-            #~ raise Exception("Expected and ActionRequest but got %r" % ar)
-        for n in self.duplicated_fields:
-            kw[n] = getattr(self,n)
-        #~ print 20120608, kw
-        new = ar.create_instance(**kw)
-        #~ new = duplicate_row(self)
-        #~ new.on_duplicate(ar)
-        new.save(force_insert=True)
-        kw = dict()
-        kw.update(refresh=True)
-        kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
-        kw.update(new_status=dict(record_id=new.pk))
-        return ar.ui.success_response(**kw)
-        
-    #~ def on_duplicate(self,ar):
-        #~ pass
-  
-class Sequenced(Duplicatable):
-    """Abstract base class for models that have a sequence number `seqno`
+    Abstract base class for models that have a sequence number `seqno`.
     """
   
     class Meta:
@@ -257,8 +222,6 @@ class Sequenced(Duplicatable):
         verbose_name=_("Seq.No."))
         
         
-    #~ @dd.action(_("Insert before"))
-    #~ def insert_before(self,ar):
     @dd.action(_("Duplicate"))
     def duplicate_row(self,ar):
         #~ print '20120605 duplicate_row', self.seqno, self.account
@@ -269,13 +232,6 @@ class Sequenced(Duplicatable):
             s.seqno += 1
             s.save()
         return super(Sequenced,self).duplicate_row.run(self,ar,seqno=seqno)
-        #~ new = duplicate_row(self,seqno=seqno)
-        #~ new.save(force_insert=True)
-        #~ kw = dict()
-        #~ kw.update(refresh=True)
-        #~ kw.update(message=_("Inserted new row before %d.") % self.seqno)
-        #~ kw.update(new_status=dict(record_id=new.pk))
-        #~ return ar.ui.success_response(**kw)
         
     def __unicode__(self):
         return unicode(_("Row # %s") % self.seqno)

@@ -46,7 +46,9 @@ def objects():
     Budget = resolve_model('debts.Budget')
     Actor = resolve_model('debts.Actor')
     for hh in Household.objects.all():
-        yield Budget(partner_id=hh.id,user=kerstin)
+        b = Budget(partner_id=hh.id,user=kerstin)
+        b.fill_defaults(None)
+        yield b
         
     Budget = resolve_model('debts.Budget')
     Entry = resolve_model('debts.Entry')

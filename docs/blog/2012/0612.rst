@@ -1,0 +1,26 @@
+20120612
+========
+
+Akteure und Einträge eines Budgets duplizieren
+----------------------------------------------
+
+Wenn man ein Budget kopiert (dupliziert), dann müssen natürlich auch dessen 
+Akteure und Einträge dupliziert werden. 
+Ich wollte das gern generisch lösen (einmal für alle),
+und das war nicht ganz leicht.
+
+Neues Modul :mod:`lino.mixins.duplicable`.
+Zur Aussparache: "duplicable" [du'plikəblə] means "able to produce a duplicate ['duplikət],['du:plikeit]".
+
+Es gibt jetzt eine neue magische Methode `_changed`, die ähnlich 
+wie die FIELD_changed-Methoden funktionieren, aber eben bei jedem "Save" 
+(das übers UI gemacht wurde) einmal aufgerufen wird. 
+Und zwar nachdem alle FIELD_changed aufgerufen wurden 
+und vor `obj.save()`.
+Das ist nötig, weil `Budget.fill_defaults` beim Duplizieren 
+natürlich nicht aufgerufen werden darf.
+Die demo-Fixture ruft  `Budget.fill_defaults` explizit auf.
+
+Duplizieren ist kein ganz triviales Thema, 
+Kann sein, dass da noch Überraschungen kommen. 
+En attendant funktioniert es immerhin.

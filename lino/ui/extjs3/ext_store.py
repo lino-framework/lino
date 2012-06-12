@@ -1082,6 +1082,9 @@ class Store:
             m(request)
             #~ m()
             
+        m = getattr(instance,"_changed",None)
+        if m is not None:
+            m(request)
         #~ return instance
         #~ logger.info("20120603 Store.form2obj %s", instance.national_id)
             

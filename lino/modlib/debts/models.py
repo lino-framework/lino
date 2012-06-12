@@ -230,7 +230,7 @@ class Accounts(dd.Table):
     
 
 
-class Budget(mixins.AutoUser,mixins.CachedPrintable,mixins.Duplicatable):
+class Budget(mixins.AutoUser,mixins.CachedPrintable,mixins.Duplicable):
     """
     Deserves more documentation.
     """
@@ -260,10 +260,11 @@ Vielleicht mit Fußnoten?
     conclusion = dd.RichTextField(_("Conclusion"),format="html",blank=True)
     dist_amount = dd.PriceField(_("Disposable amount"),default=120)
     
-    def duplicated_fields(self):
-        return dd.fields_list('partner print_todo intro conclusion dist_amount')
+    #~ def duplicated_fields(self):
+        #~ return dd.fields_list('partner print_todo intro conclusion dist_amount')
         
-    duplicated_fields = 'partner print_todo intro conclusion dist_amount'.split()
+    #~ duplicated_fields = """partner print_todos intro 
+    #~ conclusion dist_amount actor_set entry_set"""
                 
     def __unicode__(self):
         if self.pk is None:
@@ -289,7 +290,7 @@ Vielleicht mit Fußnoten?
         for i,a in enumerate(self.get_actors()):
             if actor == a:
                 return i 
-        raise Exception("No actor %r in %s" % (actor,self))
+        raise Exception("No actor '%s' in %s" % (actor,self))
         
     def get_actor(self,n):
         l = self.get_actors()
@@ -383,13 +384,22 @@ Vielleicht mit Fußnoten?
     #~ def summary(self,rr):
         #~ return 'Not <b>yet</b> written.'
       
-    def save(self,*args,**kw):
-        super(Budget,self).save(*args,**kw)
+    #~ def full_clean(self,*args,**kw):
+        #~ super(Budget,self).full_clean(*args,**kw)
+        
+    #~ def save(self,*args,**kw):
+        #~ super(Budget,self).save(*args,**kw)
+        
+    def _changed(self,ar):
+        self.fill_defaults(ar)
+        
+    def fill_defaults(self,ar):
         #~ if self.closed:
-        if self.build_time:
+        if not self.partner or self.build_time:
             return
-        if not self.partner:
+        if self.entry_set.all().count() > 0:
             return
+        self.save()
         flt = models.Q(required_for_household=True)
         flt = flt | models.Q(required_for_person=True)
         required = Account.objects.filter(flt)\
@@ -409,24 +419,25 @@ Vielleicht mit Fußnoten?
                 e.full_clean()
                 e.save()
                 #~ print e
-        household = self.partner.get_mti_child('household')
-        if household and self.actor_set.all().count() == 0:
-            mr = False
-            mrs = False
-            for m in household.member_set.all():
-                #~ if m.role and m.role.header:
-                    #~ header = m.role.header
-                if m.person.gender == Gender.male and not mr:
-                    header = unicode(_("Mr."))
-                    mr = True
-                elif m.person.gender == Gender.female and not mrs:
-                    header = unicode(_("Mrs."))
-                    mrs = True
-                else:
-                    header = ''
-                a = Actor(budget=self,partner=m.person,header=header)
-                a.full_clean()
-                a.save()
+        if self.actor_set.all().count() == 0:
+            household = self.partner.get_mti_child('household')
+            if household:
+                mr = False
+                mrs = False
+                for m in household.member_set.all():
+                    #~ if m.role and m.role.header:
+                        #~ header = m.role.header
+                    if m.person.gender == Gender.male and not mr:
+                        header = unicode(_("Mr."))
+                        mr = True
+                    elif m.person.gender == Gender.female and not mrs:
+                        header = unicode(_("Mrs."))
+                        mrs = True
+                    else:
+                        header = ''
+                    a = Actor(budget=self,partner=m.person,header=header)
+                    a.full_clean()
+                    a.save()
             
     def BudgetSummary(self,ar):
         return ar.spawn(BudgetSummary,master_instance=self)
@@ -681,10 +692,10 @@ Eventueller Betrag monatlicher Rückzahlungen, über deren Zahlung nicht verhand
 Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
     """)
     
-    duplicated_fields = """
-    account_type account partner actor distribute 
-    circa todo remark description periods monthly_rate
-    """.split()
+    #~ duplicated_fields = """
+    #~ account_type account partner actor distribute 
+    #~ circa todo remark description periods monthly_rate
+    #~ """.split()
 
     @chooser()
     def account_choices(cls,account_type):
@@ -739,6 +750,22 @@ Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
             #~ self.periods = self.account.periods
         super(Entry,self).save(*args,**kw)
         
+    def on_duplicate(self,ar,master):
+        """
+        This is called when an entry has been duplicated.
+        It is needed when we are doing a "related" duplication 
+        (initiated by the duplication of a Budget).
+        In that case, `master` is not None but the new Budget that has been created.
+        We now need to adapt the `actor` of this Entry by making it 
+        an actor of the new Budget.
+        
+        TODO: this method relies on the fact that related Actors 
+        get duplicated *before* related Entries. 
+        The order of `fklist` in `_lino_ddh` 
+        """
+        if master is not None and self.actor and self.actor.budget != master: 
+            self.actor = master.actor_set.get(seqno=self.actor.seqno)
+        super(Entry,self).on_duplicate(ar,master)
             
 class Entries(dd.Table):
     model = Entry

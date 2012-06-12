@@ -312,7 +312,7 @@ NSWSC = ('wsc',"http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
 
 
 #~ class CBSSRequest(mixins.ProjectRelated,mixins.AutoUser):
-class CBSSRequest(mixins.AutoUser,mixins.Printable,mixins.Duplicatable):
+class CBSSRequest(mixins.AutoUser,mixins.Printable,mixins.Duplicable):
     """
     Common Abstract Base Class for :class:`SSDNRequest`
     and :class:`NewStyleRequest`
@@ -377,7 +377,7 @@ If the request failed with a local exception, then it contains a traceback.""")
     #~ def disable_editing(self,ar):
         #~ if self.ticket: return True
 
-    def on_duplicate(self,ar):
+    def on_duplicate(self,ar,master):
         self.debug_messages = ''
         self.info_messages = ''
         self.ticket = ''
@@ -386,7 +386,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.sent = None
         self.status = RequestStatus.new
         self.environment = ''
-        super(CBSSRequest,self).on_duplicate(ar)
+        super(CBSSRequest,self).on_duplicate(ar,master)
         
     def on_cbss_ok(self,reply):
         """
@@ -780,7 +780,7 @@ class NewStyleRequest(CBSSRequest):
         t = HttpAuthenticated(
             username=sc.cbss_http_username, 
             password=sc.cbss_http_password)
-        client = Client(url, transport=t)
+        client = Client(url, transport=t,retxml=True)
         #print client
 
         ci = client.factory.create('ns0:CustomerIdentificationType')

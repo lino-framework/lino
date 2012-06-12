@@ -29,7 +29,7 @@ def app_labels():
     return [a.__name__.split('.')[-2] for a in loading.get_apps()]
         
 def get_slave(model,name):
-    """Return the named report, knowing that it is a 
+    """Return the named table, knowing that it is a 
     slave of the specified `model`. 
     If name has no app_label specified, use the model's app_label.
     """
@@ -39,15 +39,6 @@ def get_slave(model,name):
     if rpt is None: 
         return None
     return rpt
-    #~ rpt = generic_slaves.get(name,None)
-    #~ if rpt is not None:
-        #~ return rpt
-    #~ for b in (model,) + model.__bases__:
-        #~ d = getattr(b,"_lino_slaves",None)
-        #~ if d:
-            #~ rpt = d.get(name,None)
-            #~ if rpt is not None:
-                #~ return rpt
 
 def get_model_report(model):
     if not hasattr(model,'_lino_default_table'):
