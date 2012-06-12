@@ -24,3 +24,11 @@ Die demo-Fixture ruft  `Budget.fill_defaults` explizit auf.
 Duplizieren ist kein ganz triviales Thema, 
 Kann sein, dass da noch Überraschungen kommen. 
 En attendant funktioniert es immerhin.
+
+
+Exploring Tx25
+--------------
+
+:mod:`lino.utils.log` now supports a new keyword argument `loggers`.
+If specified this must be a string containing a space-separated list of 
+loggers to be redirected to the same file.
