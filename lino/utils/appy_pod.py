@@ -35,6 +35,7 @@ from appy.pod.renderer import Renderer as AppyRenderer
 from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
 from lino.ui import requests as ext_requests
+from lino.utils.xmlgen import etree
 
 
 from django.utils.encoding import force_unicode
@@ -55,6 +56,38 @@ def elem2str(e):
     e.toXml(0, xml)
     return xml.getvalue()
         
+
+from odf.opendocument import OpenDocumentText
+from odf.style import Style, TextProperties, ParagraphProperties
+from odf.style import TableColumnProperties, TableRowProperties, TableCellProperties
+#~ from odf.text import P
+from odf import text
+from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
+
+
+def html2odftext(e):
+    """
+    Convert a lino.utils.xmlgen.html element 
+    (returned by DisplayField) to an ODF text element.
+    Currently it just converts the raw text, 
+    ignoring all formatting (even bold doesn't work).
+    There's probably a better way to do this...
+    """
+    #~ print "20120613 html2odftext()", e.tag, e.text
+    if e.tag == 'p': 
+        oe = text.P()
+    elif e.tag == 'b': 
+        oe = text.Span(stylename='Bold Text')
+    else:
+        #~ raise NotImplementedError("%s (tag %r)" % (e,e.tag))
+        oe = text.Span()
+    if e.text:
+        oe.addText(e.text)
+    for child in e:
+        oc = html2odftext(child)
+        oe.addElement(oc)
+        #~ oe.appendChild(oc)
+    return oe
 
 
 
@@ -154,241 +187,6 @@ class Renderer(AppyRenderer):
         #~ raise Exception(fn)
         
 
-    def unused_add_style(self,name,**kw):
-        kw.update(name=name)
-        e = odf.style.add_child(self.my_styles,'style')
-        odf.style.update(e,**kw)
-        return e
-        
-    def unused_insert_table(self,ar,column_names=None):
-        """
-        Render an :class:`lino.core.actions.ActionRequest` as an OpenDocument table.
-        This is the function that gets called when a template contains a 
-        ``do text from table(...)`` statement.
-        """
-        if ar.request is None:
-            columns = None
-        else:
-            columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
-        
-        if columns:
-            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-            all_widths = ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)
-            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
-            fields = []
-            widths = []
-            headers = []
-            for i,cn in enumerate(columns):
-                col = None
-                for e in ar.ah.list_layout.main.columns:
-                    if e.name == cn:
-                        col = e
-                        break
-                if col is None:
-                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
-                if not hiddens[i]:
-                    fields.append(col.field._lino_atomizer)
-                    headers.append(unicode(col.label or col.name))
-                    widths.append(int(all_widths[i]))
-        else:
-            if column_names:
-                from lino.core import layouts
-                ll = layouts.ListLayout(ar.actor,column_names)
-                list_layout = ll.get_handle(self.ui)
-                columns = list_layout.main.columns
-            else:
-                columns = ar.ah.list_layout.main.columns
-            #~ fields = ar.ah.store.list_fields
-            headers = [unicode(col.label or col.name) for col in columns]
-            widths = [(col.width or col.preferred_width) for col in columns]
-            fields = [col.field._lino_atomizer for col in columns]
-                  
-        tw = sum(widths)
-        """
-        specifying relative widths doesn't seem to work
-        (and that's a pity because absolute widths requires a 
-        hard-coded table width)
-        """
-        use_relative_widths = False
-        if use_relative_widths:
-            width_specs = ["%d*" % (w*100/tw) for w in widths]
-            #~ width_specs = [(w*100/tw) for w in widths]
-        else:
-            aw = 180 # suppose table width = 18cm = 180mm
-            width_specs = ["%dmm" % (aw*w/tw) for w in widths]
-        #~ print 20120419, width_specs 
-        
-        CELL_STYLE_NAME = "Lino Cell Style"
-        HEADER_ROW_STYLE_NAME = "Lino Header Row"
-
-        tablecontents = self.add_style("Table Contents", family="paragraph",parent_style_name="Default")
-        #~ pp = odf.style.add_child(tablecontents,'paragraph_properties')
-        #~ odf.fo.update(pp,margin_right="3pt",margin_left="3pt")
-        
-        #~ print etree.tostring(tablecontents,pretty_print=True)
-            
-        numbercell = self.add_style("Number Cell", family="paragraph",parent_style_name="Table Contents")
-        pp = odf.style.add_child(numbercell,'paragraph_properties')
-        #~ odf.text.update(pp,number_lines="false", line_number="0")
-        odf.fo.update(pp,text_align="end", justify_single_word="true")
-        
-        tableheader = self.add_style("Table Column Header", family="paragraph",parent_style_name="Table Contents")
-        p = odf.style.add_child(tableheader,'text_properties')
-        odf.fo.update(p,font_weight="bold")
-            #~ number_lines="false", 
-            #~ line_number="0")
-        
-        table = odf.table.table()
-        table_columns = odf.table.add_child(table,'table_columns')
-        table_header_rows = odf.table.add_child(table,'table_header_rows')
-        table_rows = odf.table.add_child(table,'table_rows')
-        
-        st = odf.style.add_child(self.my_automaticstyles,'style',name=CELL_STYLE_NAME,family="table-cell")
-        cp = odf.style.add_child(st,'table_cell_properties')
-        odf.fo.update(cp,
-            padding_left="1mm",padding_right="1mm",
-            padding_top="1mm",padding_bottom="0.5mm",
-            border="0.002cm solid #000000")
-                    
-        st = odf.style.add_child(self.my_automaticstyles,'style',name=HEADER_ROW_STYLE_NAME,family="table-row")
-        cp = odf.style.add_child(st,'table_row_properties')
-        odf.fo.update(cp,background_color="#eeeeee")
-        
-        # create table columns and automatic table-column styles 
-        for i,fld in enumerate(fields):
-            #~ print 20120415, repr(fld.name)
-            k = str(ar.actor)+"."+fld.name
-            st = odf.style.add_child(self.my_automaticstyles,'style',name=k,family="table-column")
-            if use_relative_widths:
-                odf.style.add_child(st,'table_column_properties',
-                    rel_column_width=width_specs[i])
-            else:
-                odf.style.add_child(st,'table_column_properties',
-                    column_width=width_specs[i])
-                    
-            #~ cs.addElement(TableColumnProperties(useoptimalcolumnwidth='true'))
-            #~ doc.automaticstyles.addElement(cs)
-            #~ k = cs.getAttribute('name')
-            #~ renderer.stylesManager.styles[k] = elem2str(e)
-            #~ self.my_automaticstyles[k] = cs
-            odf.table.add_child(table_columns,'table_column',style_name=k)
-            
-        from lino.ui.extjs3 import ext_store
-        def fldstyle(fld):
-            if isinstance(fld,(
-                ext_store.DecimalStoreField,
-                ext_store.IntegerStoreField,
-                ext_store.AutoStoreField
-                )):
-                return "Number Cell"
-            #~ return tablecontents
-            return "Table Contents"
-            
-        
-        def value2cell(ar,i,fld,val,style_name,tc):
-            #~ print "20120420 value2cell", val
-            #~ text = html2odt.html2odt(fld.value2html(ar,val))
-            params = dict()
-            if isinstance(fld,ext_store.BooleanStoreField):
-                text = fld.value2html(val)
-            elif isinstance(fld,ext_store.RequestStoreField):
-                #~ params.update(text=force_unicode(val))
-                text = fld.format_value(ar,v)
-            else:
-                text = force_unicode(val)
-            #~ params.update(style_name=style.style_name)
-            #~ params.update(style_name=odf.style.getnsattr(style,'name'))
-            #~ e = fld.value2odt(ar,val)
-            e = odf.text.add_child(tc,'p',**params)
-            odf.text.update(e,style_name=style_name)
-            e.text = text
-            #~ print "20120420", etree.tostring(e)
-            #~ p = odf.text.P(**odf.text.makeattribs(**params))
-            #~ p.addElement(e)
-            #~ tc.addElement(p)
-            
-        # create header row
-        hr = odf.table.add_child(table_header_rows,'table_row',style_name=HEADER_ROW_STYLE_NAME)
-        for fld in fields:
-            #~ k = str(ar.actor)+"."+fld.name
-            tc = odf.table.add_child(hr,'table_cell',style_name=CELL_STYLE_NAME)
-            e = odf.text.add_child(tc,'p')
-            odf.text.update(e,style_name="Table Column Header")
-                #~ style_name=odf.style.getnsattr(tableheader,'name'))
-                #~ style_name=odf.style.getnsattr(tableheader,'name'))
-                #~ style_name=tableheader.style_name
-            e.text = force_unicode(fld.field.verbose_name or fld.name)
-            
-        sums  = [0 for col in fields]
-          
-        ar.init_totals(len(fields))
-          
-        def init_totals(self,count):
-            self.sums = [0] * count
-            
-        def collect_value(self,row,i,value):
-            self.sums[i] += value
-            
-        def group_headers(self,row):
-            if False:
-                yield None
-            
-        # data
-        for row in ar.data_iterator:
-            for grp in ar.group_headers(row):
-                raise NotImplementedError()
-            tr = odf.table.add_child(table_rows,'table_row')
-            #~ tr = TableRow()
-            #~ table.addElement(tr)
-            
-            for i,fld in enumerate(fields):
-                #~ k = str(ar.actor)+"."+fld.name
-                style_name = fldstyle(fld)
-                tc = odf.table.add_child(tr,'table_cell',style_name=CELL_STYLE_NAME)
-                #~ tc = TableCell()
-                #~ if fld.field is not None:
-                v = fld.full_value_from_object(row,ar)
-                if v is None:
-                    odf.text.add_child(tc,'p',style_name=style_name)
-                    #~ odf.text.add_child(tc,'p',style_name=style.style_name,text='')
-                    #~ tc.addElement(text.P(stylename=style,text=''))
-                else:
-                    value2cell(ar,i,fld,v,style_name,tc)
-                    #~ fld.value2odt(ar,v,tc,stylename=tablecontents)
-                    #~ for e in value2odt(fld,ar,v):
-                        #~ tc.addElement(e)
-                    ar.collect_value(row,i,fld.value2num(v))
-                #~ tr.addElement(tc)
-        #~ odf.validate_chunks(table)
-        #~ doc.text.addElement(table)
-        return elem2str(table)
-        #~ if output_file:
-            #~ doc.save(output_file) # , True)
-        #~ return doc
-        
-        
-        #~ print doc.automaticstyles.tagName
-        #~ inserts = renderer.contentParser.env.inserts
-        #~ for e in doc.automaticstyles.childNodes:
-            #~ k = e.getAttribute('name')
-            #~ renderer.stylesManager.styles[k] = elem2str(e)
-            #~ self.automaticstyles[k] = elem2str(e)
-            #~ inserts[k] = OdInsert(elem2str(e),doc.automaticstyles.tagName)
-            #~ print "20120419 added style %r = %r" % (k,e)
-        #~ return '<text:p>yo</text:p>'
-            
-        #~ print "20120419 inserts", renderer.contentParser.env.inserts
-        #~ return ''.join([elem2str(n) for n in doc.text.childNodes])
-        #~ doc.text.childNodes[0]
-        #~ print 20120419, elem2str(doc.text)
-        #~ return elem2str(doc.text)
-        #~ return elem2str(doc.text)
-        
-        
-
-
-
     def add_style(self,name,**kw):
         kw.update(name=name)
         #~ e = odf.style.style(odf.style.makeattribs(**kw))
@@ -407,13 +205,6 @@ class Renderer(AppyRenderer):
         
         """
         
-        from odf.opendocument import OpenDocumentText
-        from odf.style import Style, TextProperties, ParagraphProperties
-        from odf.style import TableColumnProperties, TableRowProperties, TableCellProperties
-        #~ from odf.text import P
-        from odf import text
-        from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
-
         
         if ar.request is None:
             columns = None
@@ -503,6 +294,12 @@ class Renderer(AppyRenderer):
                 linenumber="0"))
             st.addElement(TextProperties(fontweight="bold"))
         
+        dn = "Bold Text"
+        st = self.stylesManager.styles.getStyle(dn)
+        if st is None:
+            st = add_style(name=dn, family="text",parentstylename="Default")
+            st.addElement(TextProperties(fontweight="bold"))
+        
         # create some automatic styles
         
         def add_style(**kw):
@@ -563,13 +360,21 @@ class Renderer(AppyRenderer):
         def value2cell(ar,i,fld,val,style_name,tc):
             #~ text = html2odt.html2odt(fld.value2html(ar,val))
             params = dict()
-            if isinstance(fld,ext_store.BooleanStoreField):
-                params.update(text=fld.value2html(ar,val))
-            #~ elif isinstance(fld,ext_store.RequestStoreField):
-                #~ params.update(text=fld.format_value(ar,v))
+            #~ if isinstance(fld,ext_store.BooleanStoreField):
+                #~ params.update(text=fld.value2html(ar,val))
+            #~ else:
+                #~ params.update(text=fld.format_value(ar,val))
+            #~ params.update(text=fld.format_value(ar,val))
+            txt = fld.value2html(ar,val)
+            if isinstance(txt,etree.Element): 
+                txt = html2odftext(txt)
+                #~ txt = etree.tostring(txt)
+                pass
             else:
-                params.update(text=fld.format_value(ar,val))
-                #~ params.update(text=force_unicode(val))
+                txt = unicode(txt)
+            #~ if not isinstance(txt,basestring): 
+                #~ raise Exception("Expected Element or basestring, got %r" % txt.__class__)
+            params.update(text=txt)
             params.update(stylename=style_name)
             #~ e = fld.value2odt(ar,val)
             p = text.P(**params)
@@ -610,9 +415,6 @@ class Renderer(AppyRenderer):
                     tc.addElement(text.P(stylename=stylename,text=''))
                 else:
                     value2cell(ar,i,fld,v,stylename,tc)
-                    #~ fld.value2odt(ar,v,tc,stylename=tablecontents)
-                    #~ for e in value2odt(fld,ar,v):
-                        #~ tc.addElement(e)
                     sums[i] += fld.value2num(v)
                 tr.addElement(tc)
                 

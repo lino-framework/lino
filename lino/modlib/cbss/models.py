@@ -72,6 +72,8 @@ from lino.tools import obj2str
 from lino.utils import babel
 from lino.utils.choosers import chooser
 
+from lino.utils.xmlgen import html as xghtml
+
 #~ from lino.utils import dblogger
 #~ from lino.tools import resolve_model
 #~ from lino.utils.xmlgen import etree
@@ -101,6 +103,17 @@ except ImportError, e:
     pass
 
 countries = dd.resolve_app('countries')
+
+_clients_dict = dict()
+
+def get_client(obj):
+    c = _clients_dict.get(obj.__class__,None)
+    if c is not None: return c
+    c = obj.create_client()
+    _clients_dict[obj.__class__] = c
+    return c
+    
+
 
 CBSS_ENVS = ('test', 'acpt', 'prod')
 
@@ -596,6 +609,14 @@ class SSDNRequest(CBSSRequest):
         self.validate_wrapped(wrapped_srvreq)
         self.logmsg_info(_("Request has been validated against XSD files"))
       
+    def create_client(self):
+        url = self.get_wsdl_uri()
+        #~ logger.info("Instantiate Client at %s", url)
+        t = HttpTransport()
+        client = Client(url, transport=t)
+        #~ print 20120507, client
+        return client
+        
     def execute_request_(self,now,simulate_response):
         """
         SSDN specific part of a request.
@@ -614,12 +635,8 @@ class SSDNRequest(CBSSRequest):
         if simulate_response is None:
             # this is the normal case
             self.check_environment(srvreq)
-            url = self.get_wsdl_uri()
             
-            #~ logger.info("Instantiate Client at %s", url)
-            t = HttpTransport()
-            client = Client(url, transport=t)
-            #~ print 20120507, client
+            client = get_client(self)
         
             xmlString = unicode(wrapped_srvreq)
             self.request_xml = xmlString
@@ -759,6 +776,7 @@ class SSDNRequest(CBSSRequest):
         return e
       
 
+
 class NewStyleRequest(CBSSRequest):
     """
     Abstract Base Class for Models that represent 
@@ -768,8 +786,7 @@ class NewStyleRequest(CBSSRequest):
     class Meta:
         abstract = True
         
-    def execute_request_(self,now,simulate_response):
-      
+    def create_client(self):
         url = self.get_wsdl_uri()
         
         #~ logger.info("Instantiate Client at %s", url)
@@ -781,21 +798,26 @@ class NewStyleRequest(CBSSRequest):
             username=sc.cbss_http_username, 
             password=sc.cbss_http_password)
         client = Client(url, transport=t,retxml=True)
-        #print client
+        #~ print 20120613, client
+        return client
+        
+    def execute_request_(self,now,simulate_response):
+      
+        client = get_client(self)
 
+        #~ sc = settings.LINO.site_config
         ci = client.factory.create('ns0:CustomerIdentificationType')
         #~ cbeNumber = client.factory.create('ns0:CbeNumberType')
         #~ ci.cbeNumber = settings.LINO.cbss_cbe_number
         #~ ci.cbeNumber = settings.LINO.site_config.site_company.vat_id
-        ci.cbeNumber = sc.cbss_org_unit
+        ci.cbeNumber = settings.LINO.site_config.cbss_org_unit
         info = client.factory.create('ns0:InformationCustomerType')
         info.ticket = str(self.id)
         info.timestampSent = now
         info.customerIdentification = ci
         
-        res = self.execute_newstyle(client,info)
+        return self.execute_newstyle(client,info,simulate_response)
         
-        return res
         
         
     def on_cbss_ok(self,reply):
@@ -812,7 +834,52 @@ class NewStyleRequest(CBSSRequest):
     #~ def __unicode__(self):
         #~ return u"%s#%s" % (self.__class__.__name__,self.pk)
         
-    def execute_newstyle(self,client,infoCustomer):
+    def get_service_reply(self):
+        """
+        Example of a reply::
+        
+          (reply){
+             informationCustomer =
+                (InformationCustomerType){
+                   ticket = "1"
+                   timestampSent = 2012-05-23 09:24:55.316312
+                   customerIdentification =
+                      (CustomerIdentificationType){
+                         cbeNumber = "0123456789"
+                      }
+                }
+             informationCBSS =
+                (InformationCBSSType){
+                   ticketCBSS = "f11736b3-97bc-452a-a75c-16fcc2a2f6ae"
+                   timestampReceive = 2012-05-23 08:24:37.000385
+                   timestampReply = 2012-05-23 08:24:37.000516
+                }
+             status =
+                (StatusType){
+                   value = "NO_RESULT"
+                   code = "MSG00008"
+                   description = "A validation error occurred."
+                   information[] =
+                      (InformationType){
+                         fieldName = "ssin"
+                         fieldValue = "12345678901"
+                      },
+                }
+             searchInformation =
+                (SearchInformationType){
+                   ssin = "12345678901"
+                   language = "de"
+                   history = False
+                }
+           }        
+        """
+        if not self.response_xml: return None
+        client = get_client(self).service
+        #~ print '20120613b', dir(client)
+        return client.succeeded(client.method.binding.input, self.response_xml)
+        
+        
+    def execute_newstyle(self,client,infoCustomer,simulate_response):
         raise NotImplementedError()
 
 
@@ -1456,9 +1523,18 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     history = models.BooleanField(
         verbose_name=_("History"),default=False,
         help_text = "Whatever this means.")
-    
         
-    def execute_newstyle(self,client,infoCustomer):
+    def get_service_reply(self,**kwargs):
+        client = get_client(self)
+        meth = client.service.retrieveTI
+        clientclass = meth.clientclass(kwargs)
+        client = clientclass(meth.client, meth.method)
+        #~ print 20120613, portSelector[0]
+        #~ print '20120613b', dir(client)
+        return client.succeeded(client.method.binding.input, self.response_xml)
+        
+    
+    def execute_newstyle(self,client,infoCustomer,simulate_response):
         si = client.factory.create('ns0:SearchInformationType')
         si.ssin = self.get_ssin()
         if self.language:
@@ -1468,84 +1544,51 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         si.history = self.history
         #~ if validate:
             #~ self.validate_newstyle(srvreq)
-        self.check_environment(si)
-        try:
-            reply = client.service.retrieveTI(infoCustomer,None,si)
-        except suds.WebFault,e:
-            """
-            Example of a SOAP fault:
-      <soapenv:Fault>
-         <faultcode>soapenv:Server</faultcode>
-         <faultstring>An error occurred while servicing your request.</faultstring>
-         <detail>
-            <v1:retrieveTIGroupsFault>
-               <informationCustomer xmlns:ns0="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/">
-                  <ticket>2</ticket>
-                  <timestampSent>2012-05-23T10:19:27.636628+01:00</timestampSent>
-                  <customerIdentification>
-                     <cbeNumber>0212344876</cbeNumber>
-                  </customerIdentification>
-               </informationCustomer>
-               <informationCBSS>
-                  <ticketCBSS>f4b9cabe-e457-4f6b-bfcc-00fe258a9b7f</ticketCBSS>
-                  <timestampReceive>2012-05-23T08:19:09.029Z</timestampReceive>
-                  <timestampReply>2012-05-23T08:19:09.325Z</timestampReply>
-               </informationCBSS>
-               <error>
-                  <severity>FATAL</severity>
-                  <reasonCode>MSG00003</reasonCode>
-                  <diagnostic>Unexpected internal error occurred</diagnostic>
-                  <authorCode>http://www.bcss.fgov.be/en/international/home/index.html</authorCode>
-               </error>
-            </v1:retrieveTIGroupsFault>
-         </detail>
-      </soapenv:Fault>
-            """
+        if simulate_response is None:
+            self.check_environment(si)
+            try:
+                reply = client.service.retrieveTI(infoCustomer,None,si)
+            except suds.WebFault,e:
+                """
+                Example of a SOAP fault:
+          <soapenv:Fault>
+             <faultcode>soapenv:Server</faultcode>
+             <faultstring>An error occurred while servicing your request.</faultstring>
+             <detail>
+                <v1:retrieveTIGroupsFault>
+                   <informationCustomer xmlns:ns0="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/">
+                      <ticket>2</ticket>
+                      <timestampSent>2012-05-23T10:19:27.636628+01:00</timestampSent>
+                      <customerIdentification>
+                         <cbeNumber>0212344876</cbeNumber>
+                      </customerIdentification>
+                   </informationCustomer>
+                   <informationCBSS>
+                      <ticketCBSS>f4b9cabe-e457-4f6b-bfcc-00fe258a9b7f</ticketCBSS>
+                      <timestampReceive>2012-05-23T08:19:09.029Z</timestampReceive>
+                      <timestampReply>2012-05-23T08:19:09.325Z</timestampReply>
+                   </informationCBSS>
+                   <error>
+                      <severity>FATAL</severity>
+                      <reasonCode>MSG00003</reasonCode>
+                      <diagnostic>Unexpected internal error occurred</diagnostic>
+                      <authorCode>http://www.bcss.fgov.be/en/international/home/index.html</authorCode>
+                   </error>
+                </v1:retrieveTIGroupsFault>
+             </detail>
+          </soapenv:Fault>
+                """
+                
+                msg = CBSS_ERROR_MESSAGE % e.fault.faultstring
+                msg += unicode(e.document)
+                self.status = RequestStatus.failed
+                raise Warning(msg)
+            self.response_xml = reply
+        else:
+            self.response_xml = simulate_response
             
-            msg = CBSS_ERROR_MESSAGE % e.fault.faultstring
-            msg += unicode(e.document)
-            self.status = RequestStatus.failed
-            raise Warning(msg)
-            
-        self.response_xml = unicode(reply)
-        
-        """
-        Example of reply:
-        (reply){
-           informationCustomer =
-              (InformationCustomerType){
-                 ticket = "1"
-                 timestampSent = 2012-05-23 09:24:55.316312
-                 customerIdentification =
-                    (CustomerIdentificationType){
-                       cbeNumber = "0123456789"
-                    }
-              }
-           informationCBSS =
-              (InformationCBSSType){
-                 ticketCBSS = "f11736b3-97bc-452a-a75c-16fcc2a2f6ae"
-                 timestampReceive = 2012-05-23 08:24:37.000385
-                 timestampReply = 2012-05-23 08:24:37.000516
-              }
-           status =
-              (StatusType){
-                 value = "NO_RESULT"
-                 code = "MSG00008"
-                 description = "A validation error occurred."
-                 information[] =
-                    (InformationType){
-                       fieldName = "ssin"
-                       fieldValue = "12345678901"
-                    },
-              }
-           searchInformation =
-              (SearchInformationType){
-                 ssin = "12345678901"
-                 language = "de"
-                 history = False
-              }
-         }        
-        """
+        #~ self.response_xml = unicode(reply)
+        reply = self.get_service_reply()
         self.ticket = reply.informationCBSS.ticketCBSS
         if reply.status.value == "NO_RESULT":
             msg = CBSS_ERROR_MESSAGE % reply.status.code
@@ -1565,18 +1608,106 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         #~ print self.response_xml
         return reply
         
-    @dd.virtualfield(dd.HtmlBox(_("Result")))
-    def result(self,ar):
-        """
-        """
-        return self.response_xml
+    def Result(self,ar):
+        return ar.spawn(RetrieveTIGroupsResult,master_instance=self)
+        
+        
+        
+    #~ @dd.virtualfield(dd.HtmlBox(_("Result")))
+    #~ def result(self,ar):
+        #~ """
+        #~ """
+        #~ return self.result2html(ar)
+        
+    def unused_result2html(self,ar):
+      
+      
+        E = xghtml.E
+        from lino.utils.babel import dtos
+        def rn2date(rd):
+            return IncompleteDate(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
+            #~ return datetime.date.date(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
+            
+        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+            
+        doc = xghtml.Document('not used')
+        t = doc.add_table()
+        t.add_header_row("Type","Since","Info",**cellattrs)
+            
+        reply = self.get_service_reply()
+        res = reply.rrn_it_implicit
+        
+        oridate = rn2date(res.NationalNumber.NationalNumber.Date)
+        
+        def add_row(type,date,*info):
+            date = rn2date(date)
+            if date != oridate:
+                date = E.b(dtos(date))
+            else:
+                date = dtos(date)
+            t.add_body_row(type,date,info,**cellattrs)
+            
+        add_row(
+            'NationalNumber ',
+            res.NationalNumber.NationalNumber.Date,
+            E.b(res.NationalNumber.NationalNumber.NationalNumber),
+            ' (gender ',E.b(res.NationalNumber.NationalNumber.Sex),')'
+            )
+        
+        
+        if False:
+            items = []
+            #~ items.append(E.li('Das ist ',E.b('ein'),' Versuch'))
+            #~ items.append(E.li('Noch ein Versuch'))
+            
+            #~ logger.info(unicode(res))
+            oridate = rn2date(res.NationalNumber.NationalNumber.Date)
+            items.append(E.li(
+                'NationalNumber ',
+                E.b(res.NationalNumber.NationalNumber.NationalNumber),
+                ' (issued ',E.b(dtos(oridate)),
+                ', gender ',E.b(res.NationalNumber.NationalNumber.Sex),')'
+                ))
+            
+            sitems = []
+            for r in res.FileOwner.Residences:
+                sitems.append(E.li(
+                  "Lives in ", E.b(r.Residence.Label),' since ',E.b(dtos(rn2date(r.Date)))
+                ))
+            items.append(E.li('Residences:',E.ul(*sitems)))
+            
+            subitems = []
+            for n in res.Names.Name:
+                content = []
+                
+                for ln in n.Name.LastName:
+                    content.append(E.b(ln.Label))
+                    content.append(' ')
+                for fn in n.Name.FirstName:
+                    content.append(fn.Label)
+                    content.append(' ')
+                since = rn2date(n.Date)
+                if True: # since != oridate:
+                    content += [' (since ',E.b(dtos(since)),')']
+                
+                subitems.append(E.li(*content))
+            items.append(E.li('Names:',E.ul(*subitems)))
+            
+            body = []
+            body.append(E.ol(*items))
+            all = E.div(*body,class_="htmlText")
+            return E.tostring(all)
+        
+        return E.tostring(t.as_element())
+        
+        #~ return '<pre>%s</pre>' % unicode(res) 
 
   
 class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
   
     parameters = "national_id language history"
     
-    #~ result = "cbss.RetrieveTIGroupsResult"
+    result = "cbss.RetrieveTIGroupsResult"
     
     #~ def setup_handle(self,lh):
         #~ CBSSRequestDetail.setup_handle(self,lh)
@@ -1595,15 +1726,108 @@ class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
     
 class MyRetrieveTIGroupsRequests(RetrieveTIGroupsRequests,mixins.ByUser):
     pass
-
     
-#~ class RetrieveTIGroupsResult(dd.EmptyTable):
-    #~ master = RetrieveTIGroupsRequest
-    #~ master_key = None
     
-    #~ detail_template = """
-    #~ body
-    #~ """
+    
+class RetrieveTIGroupsResult(dd.VirtualTable):
+    """
+    Displays the response of an :class:`RetrieveTIGroupsRequest`
+    as a table.
+    """
+    master = RetrieveTIGroupsRequest
+    master_key = None
+    label = _("Results")
+    column_names = 'type:10 since info'
+    
+    @classmethod
+    def get_data_rows(self,ar):
+        rti = ar.master_instance
+        if rti is None: 
+            #~ print "20120606 ipr is None"
+            return
+        #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
+        #~ if not rti.status in (RequestStatus.ok,RequestStatus.warnings):
+            #~ return
+        reply = rti.get_service_reply()
+        if reply is None:
+            return
+            
+        E = xghtml.E
+        def rn2date(rd):
+            return IncompleteDate(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
+            
+            
+        res = reply.rrn_it_implicit
+        
+        data = dict()
+        data.update(type="NationalNumber")
+        data.update(since=rn2date(res.NationalNumber.NationalNumber.Date))
+        info = E.p(
+            E.b(res.NationalNumber.NationalNumber.NationalNumber),
+            ' (gender ',E.b(res.NationalNumber.NationalNumber.Sex),')'
+            )
+        #~ data.update(info=E.tostring(info))
+        data.update(info=info)
+        yield AttrDict(**data)
+        
+        
+        tp = _("Residences")
+        for r in res.FileOwner.Residences:
+            yield AttrDict(type=tp,since=rn2date(r.Date),info=r.Residence.Label)
+            tp = ''
+        
+        tp = _("Names")
+        for n in res.Names.Name:
+            content = []
+            for ln in n.Name.LastName:
+                content.append(E.b(ln.Label))
+                content.append(' ')
+            for fn in n.Name.FirstName:
+                content.append(fn.Label)
+                content.append(' ')
+            #~ info = E.tostring(E.p(*content))
+            info = E.p(*content)
+            yield AttrDict(type=tp,since=rn2date(n.Date),info=info)
+            tp = ''
+        
+        group = res.LegalMainAddresses.LegalMainAddress
+        tp = "LegalMainAddresses (%s)" % group.__class__.__name__
+        for n in group:
+            content = []
+            content.append(E.b(n.Address.ZipCode))
+            content.append(', ')
+            content.append(n.Address.Street.Label)
+            content.append(' ')
+            content.append(n.Address.HouseNumber)
+            info = E.p(*content)
+            yield AttrDict(type=tp,since=rn2date(n.Date),info=info)
+            tp = ''
+            
+        tp = _("Nationalities")
+        for n in res.Nationalities.Nationality:
+            content = []
+            content.append(E.b(n.Nationality.Code))
+            content.append(' ')
+            content.append(n.Nationality.Label)
+            info = E.p(*content)
+            yield AttrDict(type=tp,since=rn2date(n.Date),info=info)
+            tp = ''
+        
+        yield AttrDict(type="TODO",since=datetime.date.today(),info="There are more TI, but Lino doesn't show them")
+            
+    @dd.displayfield(_("Type"))
+    def type(self,obj,ar):
+        return obj.type
+            
+    @dd.virtualfield(dd.IncompleteDateField(_("Since")))
+    def since(self,obj,ar):
+        return obj.since
+            
+    @dd.displayfield(_("Info"))
+    def info(self,obj,ar):
+        return obj.info
+            
+    
 
 from lino.models import SiteConfig
 dd.inject_field(SiteConfig,

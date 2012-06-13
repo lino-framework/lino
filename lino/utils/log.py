@@ -113,15 +113,16 @@ def configure(config):
     determine whether that is the case or not.".
     
     """
-    root = logging.getLogger()
-    if len(root.handlers) != 0:
-        root.info(
-            "Not configuring logging because basicConfig has been done.")
-        return 
         
     #~ djangoLogger = logging.getLogger('django')
     linoLogger = logging.getLogger('lino')
     #~ sudsLogger = logging.getLogger('suds')
+    
+    if len(linoLogger.handlers) != 0:
+        msg = "Not configuring logging because lino logger already configured."
+        #~ print 20120613, msg
+        linoLogger.info(msg)
+        return 
     
     #~ print 20101225, config
     encoding = config.get('encoding','UTF-8')
@@ -129,7 +130,7 @@ def configure(config):
     rotate = config.get('rotate',True)
     logger_names = config.get('loggers','lino')
     level = getattr(logging,config.get('level','notset').upper())
-    
+    #~ print 20120613, logger_names
     loggers = [logging.getLogger(n) for n in logger_names.split()]
     
     for l in loggers: l.setLevel(level)
@@ -168,13 +169,6 @@ def configure(config):
         
     if logfile is not None:
       
-        if False and logfile.lower() == "auto":
-            # that's not possible: cannot import settings here!
-            import datetime
-            from django.conf import settings
-            from os.path import join
-            logfile = datetime.date.today().strftime('%Y-%m-%d.log')
-            logfile = join(settings.LINO.project_dir,'log',filename)
         try:
             kw = {}
             for k in ('mode','encoding','maxBytes','backupCount'):

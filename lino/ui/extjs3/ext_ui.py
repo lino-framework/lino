@@ -212,7 +212,8 @@ class PdfRenderer(HtmlRenderer):
     def href_to_request(self,rr,text=None):
         return text or ("<b>%s</b>" % cgi.escape(force_unicode(rr.label)))
     def href_to(self,obj,text=None):
-        text = text or ("<b>%s</b>" % cgi.escape(force_unicode(obj)))
+        #~ text = text or ("<b>%s</b>" % cgi.escape(force_unicode(obj)))
+        text = text or cgi.escape(force_unicode(obj))
         return "<b>%s</b>" % text
         
 
@@ -251,14 +252,6 @@ class ExtRenderer(HtmlRenderer):
         if h is None:
             return cgi.escape(force_unicode(obj))
         url = self.js2url(h)
-        #~ a = obj.__class__._lino_default_table.get_action('detail')
-        #~ url = self.action_url_js(a,None,dict(record_id=obj.pk))
-        #~ onclick = self.instance_handler(obj)
-        #~ a = obj.__class__._lino_default_table.get_action('detail')
-        #~ onclick = 'Lino.%s(undefined,{},{record_id:%s})' % (a,py2js(obj.pk))
-        #~ onclick = cgi.escape(onclick)
-        #~ onclick = onclick.replace('"','&quot;')
-        #~ url = "javascript:" + onclick
         return self.href(url,text or cgi.escape(force_unicode(obj)))
 
     def js2url(self,js):

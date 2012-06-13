@@ -1,0 +1,23 @@
+20120613
+========
+
+Hurra, ich habe einen Trick gefunden, wie ich Suds mitteilen kann, 
+dass ich die rohe XML-Antwort haben will, also dass er sie noch nicht 
+parsen soll um ein sudsobject daraus zu machen. Die Antwort setze ich 
+dann in xml_response und kann nun jederzeit ein sudsobject daraus machen.
+
+Und dann die Anzeige des Resultats bzw. der Ausdruck. 
+Ich dachte anfangs, die Antwort müsste als Liste angezeigt 
+werden, mit -je nach "information type"- 
+individuell formatierten  Absätzen.
+Aber auch das hier ist zunächst mal eine Tabelle:
+:class:`lino.modlib.cbss.models.RetrieveTIGroupsResult`
+Die ersten Angaben kommen schon.
+Jetzt will ich noch überlegen, 
+ob ich das alles nicht noch generischer machen kann.
+
+DisplayField is now expected to return either an escaped
+HTML string or a :mod:`lino.utils.xmlgen.html` element.
+
+Das Seltsamste, das ich heute gemacht habe, ist 
+die :func:`lino.utils.appy_pod.html2odftext`.

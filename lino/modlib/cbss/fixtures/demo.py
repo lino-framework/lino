@@ -47,6 +47,9 @@ if cbss:
             action=cbss.ManageAction.REGISTER,
             query_register=cbss.QueryRegister.ALL,
             ), '' ],
+        [ cbss.RetrieveTIGroupsRequest, 
+          dict(national_id='680601 053-29',history=True), 
+          'demo_tx25_1.xml' ],
     ]
 
     def objects():

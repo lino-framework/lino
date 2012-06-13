@@ -92,6 +92,7 @@ from django.utils.encoding import force_unicode
 import lino
 from lino.utils import IncompleteDate
 from lino.utils import ViewPermission, get_view_permission
+from lino.utils.xmlgen import etree
 
 
 def dict2js(d):
@@ -168,6 +169,8 @@ def py2js(v):
         
     if isinstance(v,types.GeneratorType): 
         return "".join([py2js(x) for x in v])
+    if isinstance(v,etree.Element): 
+        return simplejson.dumps(etree.tostring(v))
         
     #~ if type(v) is types.GeneratorType:
         #~ raise Exception("Please don't call the generator function yourself")

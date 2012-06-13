@@ -1,0 +1,347 @@
+<soapenv:Envelope xmlns:v1="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<soapenv:Body>
+<v1:retrieveTIGroupsResponse><informationCustomer xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1">
+            <ticket>4</ticket>
+            <timestampSent>2012-06-12T21:25:46.189352+01:00</timestampSent>
+            <customerIdentification>
+               <cbeNumber>0212344876</cbeNumber>
+            </customerIdentification>
+         </informationCustomer><informationCBSS><ticketCBSS>db1521da-3a61-43c0-b500-e96e9dd5c0ee</ticketCBSS><timestampReceive>2012-06-12T19:25:27.013Z</timestampReceive><timestampReply>2012-06-12T19:25:27.5Z</timestampReply></informationCBSS>
+
+
+<status>
+<value>DATA_FOUND</value>
+<code>MSG00000</code>
+<description>Treatment completed successfully.</description></status>
+<searchInformation xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1">
+            
+<ssin>68070201351</ssin>
+            
+<language>de</language>
+            
+<history>false</history>
+         </searchInformation>
+<rrn_it_implicit>
+<r:NationalNumber Type="000" Structure="A1" xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:NationalNumber>
+<r:NationalNumber>68070201351</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>07</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:Sex>1</r:Sex></r:NationalNumber></r:NationalNumber>
+<r:FileOwner xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Residences Type="001" Structure="A1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>01</r:Year>
+<r:Month>10</r:Month>
+<r:Day>18</r:Day></r:Date>
+<r:Residence>
+<r:Code>136</r:Code>
+<r:Label>Estland</r:Label></r:Residence>
+<r:Fusion>0</r:Fusion>
+<r:Language>2</r:Language></r:Residences>
+<r:Residences Type="001" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>07</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:Residence>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Residence>
+<r:Fusion>0</r:Fusion>
+<r:Language>2</r:Language></r:Residences></r:FileOwner>
+<r:Names xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Name Type="010" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>07</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:Name>
+<r:LastName>
+<r:Code>10553194</r:Code>
+<r:Label>Mustermann</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00021446</r:Code>
+<r:Label>Max</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00019838</r:Code>
+<r:Label>Moritz</r:Label></r:FirstName></r:Name></r:Name></r:Names>
+<r:LegalMainAddresses xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>97</r:Year>
+<r:Month>07</r:Month>
+<r:Day>30</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4700</r:ZipCode>
+<r:Street>
+<r:Code>47001761</r:Code>
+<r:Label>G&#252;lcherstrasse</r:Label></r:Street>
+<r:HouseNumber>21</r:HouseNumber></r:Address></r:LegalMainAddress></r:LegalMainAddresses>
+<r:ResidenceAbroad xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:ResidenceAbroad Type="022" Structure="B1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>06</r:Year>
+<r:Month>12</r:Month>
+<r:Day>30</r:Day></r:Date>
+<r:Address>
+<r:PosteDiplomatique>
+<r:Code>1418</r:Code>
+<r:Label>Tallinn</r:Label></r:PosteDiplomatique>
+<r:Territory>
+<r:Code>136</r:Code>
+<r:Label>Estland</r:Label></r:Territory>
+<r:Address>
+<r:Country>
+<r:Code>136</r:Code>
+<r:Label>Estland</r:Label></r:Country>
+<r:Graphic1>Bussijaama 2</r:Graphic1>
+<r:Graphic2>10115 Tallinn</r:Graphic2>
+<r:Graphic3>ESTONIA</r:Graphic3></r:Address></r:Address></r:ResidenceAbroad></r:ResidenceAbroad>
+<r:Nationalities xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Nationality Type="031" Structure="B1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>07</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:Nationality>
+<r:Code>150</r:Code>
+<r:Label>Belgien</r:Label></r:Nationality></r:Nationality></r:Nationalities>
+<r:Occupations xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Occupation Type="070" Structure="A1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>00</r:Year>
+<r:Month>10</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:Occupation>
+<r:Code>09617</r:Code>
+<r:Label>Programmierer(in)</r:Label></r:Occupation>
+<r:SocialCategory>
+<r:Code>9</r:Code>
+<r:Label/></r:SocialCategory></r:Occupation></r:Occupations>
+<r:BirthPlace Type="100" Structure="A1" xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>07</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:ActNumber>00000</r:ActNumber>
+<r:Place1>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place1></r:BirthPlace>
+<r:Filiations xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Filiation Type="110" Structure="C1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>07</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:FiliationType>
+<r:Code>00</r:Code>
+<r:Label>Eheliches Kind</r:Label></r:FiliationType>
+<r:Parent1>
+<r:NationalNumber>
+<r:NationalNumber>33072102106</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>33</r:Year>
+<r:Month>07</r:Month>
+<r:Day>21</r:Day></r:Date>
+<r:Sex>1</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10553194</r:Code>
+<r:Label>Saffre</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00018639</r:Code>
+<r:Label>Herman</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00027795</r:Code>
+<r:Label>Victor</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00015117</r:Code>
+<r:Label>Edouard</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00018595</r:Code>
+<r:Label>Henri</r:Label></r:FirstName></r:Name></r:Parent1>
+<r:Parent2>
+<r:NationalNumber>
+<r:NationalNumber>34080402453</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>34</r:Year>
+<r:Month>08</r:Month>
+<r:Day>04</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10157526</r:Code>
+<r:Label>Ausdemwald</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00022010</r:Code>
+<r:Label>Anneliese</r:Label></r:FirstName></r:Name></r:Parent2></r:Filiation></r:Filiations>
+<r:CivilStates xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:CivilState Type="120" Structure="B1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>00</r:Year>
+<r:Month>10</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:CivilState>
+<r:Code>20</r:Code>
+<r:Label>Verheiratet</r:Label></r:CivilState>
+<r:Spouse>
+<r:NationalNumber>
+<r:NationalNumber>68042700000</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>04</r:Month>
+<r:Day>27</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10964572</r:Code>
+<r:Label>Kasemets</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00035644</r:Code>
+<r:Label>Kati</r:Label></r:FirstName></r:Name></r:Spouse>
+<r:Lieu>
+<r:Place1>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place1></r:Lieu>
+<r:ActNumber>0098</r:ActNumber></r:CivilState></r:CivilStates>
+<r:FamilyMembers xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:FamilyMember Type="140" Structure="A1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>01</r:Year>
+<r:Month>10</r:Month>
+<r:Day>19</r:Day></r:Date>
+<r:FamilyRole>
+<r:Code>01</r:Code>
+<r:Label>Alleinstehend</r:Label></r:FamilyRole></r:FamilyMember></r:FamilyMembers>
+<r:HeadOfFamily xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:HeadOfFamily Type="141" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>06</r:Month>
+<r:Day>01</r:Day></r:Date>
+<r:DelDate>
+<r:Century>19</r:Century>
+<r:Year>96</r:Year>
+<r:Month>10</r:Month>
+<r:Day>30</r:Day></r:DelDate>
+<r:FamilyRole>
+<r:Code>03</r:Code>
+<r:Label>Sohn</r:Label></r:FamilyRole>
+<r:NationalNumber>
+<r:NationalNumber>33072102106</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>33</r:Year>
+<r:Month>07</r:Month>
+<r:Day>21</r:Day></r:Date>
+<r:Sex>1</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10553194</r:Code>
+<r:Label>Mustermann</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00018639</r:Code>
+<r:Label>Michel</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00027795</r:Code>
+<r:Label>Victor</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00015117</r:Code>
+<r:Label>Edouard</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00018595</r:Code>
+<r:Label>Henri</r:Label></r:FirstName></r:Name></r:HeadOfFamily></r:HeadOfFamily>
+<r:DrivingLicensesOldModel xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:DrivingLicense Type="194" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>87</r:Year>
+<r:Month>02</r:Month>
+<r:Day>06</r:Day></r:Date>
+<r:TypeOfLicense>
+<r:Code>00</r:Code>
+<r:Label>Zuteil.</r:Label></r:TypeOfLicense>
+<r:Categories>
+<r:Category>
+<r:Code>02</r:Code>
+<r:Label>B</r:Label></r:Category></r:Categories>
+<r:LicenseNumber>A043127</r:LicenseNumber>
+<r:Delivery>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Delivery></r:DrivingLicense></r:DrivingLicensesOldModel>
+<r:IdentityCards xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:IdentityCard Type="195" Structure="F1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>11</r:Year>
+<r:Month>10</r:Month>
+<r:Day>26</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0000</r:Code>
+<r:Label>P.A.</r:Label></r:TypeOfCard>
+<r:CardNumber>591413288107</r:CardNumber>
+<r:Delivery>
+<r:Place>
+<r:Code>1418</r:Code>
+<r:Label>Tallinn</r:Label></r:Place></r:Delivery>
+<r:ExpiryDate>
+<r:Century>20</r:Century>
+<r:Year>16</r:Year>
+<r:Month>08</r:Month>
+<r:Day>19</r:Day></r:ExpiryDate></r:IdentityCard></r:IdentityCards>
+<r:Passports xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Passport Type="199" Structure="B1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>02</r:Year>
+<r:Month>09</r:Month>
+<r:Day>23</r:Day></r:Date>
+<r:Status>
+<r:Code>0</r:Code>
+<r:Label>Austel.</r:Label></r:Status>
+<r:PassportIdent>
+<r:PassportType>
+<r:Code>0</r:Code>
+<r:Label>Reisepass</r:Label></r:PassportType>
+<r:PassportNumber>EC51643900</r:PassportNumber></r:PassportIdent>
+<r:Issuer>
+<r:PosteDiplomatique>
+<r:Code>1262</r:Code>
+<r:Label>Helsinki</r:Label></r:PosteDiplomatique></r:Issuer>
+<r:RenewalNumber>00</r:RenewalNumber>
+<r:ExpiryDate>
+<r:Century>20</r:Century>
+<r:Year>07</r:Year>
+<r:Month>09</r:Month>
+<r:Day>22</r:Day></r:ExpiryDate></r:Passport></r:Passports>
+<r:CreationDate Type="253" Structure="A1" xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>15</r:Year>
+<r:Month>09</r:Month>
+<r:Day>05</r:Day></r:Date></r:CreationDate>
+<r:LastUpdateDate Type="254" Structure="A1" xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>11</r:Year>
+<r:Month>10</r:Month>
+<r:Day>26</r:Day></r:Date></r:LastUpdateDate></rrn_it_implicit></v1:retrieveTIGroupsResponse></soapenv:Body></soapenv:Envelope>

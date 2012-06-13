@@ -589,21 +589,10 @@ class DecimalStoreField(StoreField):
         #~ print "20120426 %s value2num(%s)" % (self,v)
         return v
         
-    #~ def full_value_from_object(self,request,obj):
-        #~ v = self.field.value_from_object(obj)
-        #~ print "20120511 full_value_from_object", self, v
-        #~ if v == 0:
-            #~ return None
-        #~ return v
-    
     def format_value(self,ar,v):
         if not v:
             return ''
-        #~ return moneyfmt(v,places=self.field.decimal_places,
         return decfmt(v,places=self.field.decimal_places)
-          #~ sep=settings.LINO.decimal_group_separator,
-          #~ dp=settings.LINO.decimal_separator)
-        #~ return str(v).replace('.',settings.LINO.decimal_separator)
   
     def format_sum(self,ar,sums,i):
         return self.format_value(ar,sums[i])
@@ -644,18 +633,20 @@ class BooleanStoreField(StoreField):
         return ext_requests.parse_boolean(v)
 
         
-    def value2html(self,ar,v):
+    #~ def value2html(self,ar,v):
+    def format_value(self,ar,v):
         return force_unicode(iif(v,_("Yes"),_("No")))
-        
-    #~ def value2odt(self,ar,v,tc,**params):
-        #~ params.update(text=self.value2html(ar,v))
-        #~ tc.addElement(odf.text.P(**params))
         
     def value2num(self,v):
         if v: return 1
         return 0
       
 
+class DisplayStoreField(StoreField):
+  
+    def value2html(self,ar,v):
+        return v
+  
 class IntegerStoreField(StoreField):
     def __init__(self,field,name,**kw):
         kw['type'] = 'int'
@@ -1045,6 +1036,8 @@ class Store:
             #~ kw.update(type='int')
         if isinstance(fld,models.SmallIntegerField):
             return IntegerStoreField(fld,name)
+        if isinstance(fld,dd.DisplayField):
+            return DisplayStoreField(fld,name)
         if isinstance(fld,models.IntegerField):
             return IntegerStoreField(fld,name)
         kw = {}
