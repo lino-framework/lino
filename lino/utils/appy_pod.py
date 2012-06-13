@@ -21,7 +21,6 @@ An extended `appy.pod` renderer that installs additional functions:
 - :meth:`table <Renderer.insert_table>`
   Render a Lino Action Request as a table.
 
-
 """
 
 
@@ -61,22 +60,55 @@ from odf.opendocument import OpenDocumentText
 from odf.style import Style, TextProperties, ParagraphProperties
 from odf.style import TableColumnProperties, TableRowProperties, TableCellProperties
 #~ from odf.text import P
+from odf.element import Text
 from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
+from cStringIO import StringIO
+def toxml(node):
+    buf = StringIO()
+    node.toXml(0, buf)
+    return buf.getvalue()
 
-def html2odftext(e):
+
+def html2odftext(e,**kw):
     """
-    Convert a lino.utils.xmlgen.html element 
-    (returned by DisplayField) to an ODF text element.
-    Currently it just converts the raw text, 
-    ignoring all formatting (even bold doesn't work).
+    Convert a :mod:`lino.utils.xmlgen.html` element 
+    (e.g. a value of a DisplayField) to an ODF text element.
+    Currently it knows only P and B tags, 
+    ignoring all other formatting.
     There's probably a better way to do this...
+    
+    Usage example:
+    
+    >>> from lino.utils.xmlgen.html import E
+    >>> e = E.p("This is a ",E.b("first")," test.")
+    >>> print E.tostring(e)
+    <p>This is a <b>first</b> test.</p>
+    >>> oe = tuple(html2odftext(e))[0]
+    >>> print toxml(oe) #doctest: +NORMALIZE_WHITESPACE
+    <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This 
+    is a <text:span text:style-name="Bold Text">first</text:span> test.</text:p>
+    
+    >>> e = E.p(E.b("This")," is another test.")
+    >>> print E.tostring(e)
+    <p><b>This</b> is another test.</p>
+    
+    >>> oe = tuple(html2odftext(e))[0]
+    >>> print toxml(oe) #doctest: +NORMALIZE_WHITESPACE
+    <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
+    text:style-name="Bold Text">This</text:span> is another test.</text:p>
+    
+    :func:`html2odftext` converts bold text to a span with a 
+    style named "Bold Text". That's currently a hard-coded name, and the 
+    caller must make sure that a style of that name is defined in the 
+    document.
+    
     """
     #~ print "20120613 html2odftext()", e.tag, e.text
     if e.tag == 'p': 
-        oe = text.P()
-    elif e.tag == 'b': 
+        oe = text.P(**kw)
+    elif e.tag == 'b':
         oe = text.Span(stylename='Bold Text')
     else:
         #~ raise NotImplementedError("%s (tag %r)" % (e,e.tag))
@@ -84,10 +116,14 @@ def html2odftext(e):
     if e.text:
         oe.addText(e.text)
     for child in e:
-        oc = html2odftext(child)
-        oe.addElement(oc)
-        #~ oe.appendChild(oc)
-    return oe
+        for oc in html2odftext(child):
+            #~ oe.addElement(oc)
+            oe.appendChild(oc)
+    yield oe
+    if e.tail:
+        #~ yield e.tail
+        #~ yield text.Span(text=e.tail)
+        yield Text(e.tail)
 
 
 
@@ -297,7 +333,8 @@ class Renderer(AppyRenderer):
         dn = "Bold Text"
         st = self.stylesManager.styles.getStyle(dn)
         if st is None:
-            st = add_style(name=dn, family="text",parentstylename="Default")
+            #~ st = add_style(name=dn, family="text",parentstylename="Default")
+            st = add_style(name=dn, family="text")
             st.addElement(TextProperties(fontweight="bold"))
         
         # create some automatic styles
@@ -368,17 +405,19 @@ class Renderer(AppyRenderer):
             txt = fld.value2html(ar,val)
             #~ if isinstance(txt,etree.Element): 
             if etree.iselement(txt): 
-                txt = html2odftext(txt)
+                chunks = tuple(html2odftext(txt,stylename=style_name))
+                assert len(chunks) == 1
+                p = chunks[0]
                 #~ txt = etree.tostring(txt)
-                pass
+                #~ pass
             else:
                 txt = unicode(txt)
             #~ if not isinstance(txt,basestring): 
                 #~ raise Exception("Expected Element or basestring, got %r" % txt.__class__)
-            params.update(text=txt)
-            params.update(stylename=style_name)
-            #~ e = fld.value2odt(ar,val)
-            p = text.P(**params)
+                params.update(text=txt)
+                params.update(stylename=style_name)
+                #~ e = fld.value2odt(ar,val)
+                p = text.P(**params)
             #~ p.addElement(e)
             #~ yield p
             tc.addElement(p)
@@ -437,3 +476,11 @@ class Renderer(AppyRenderer):
         #~ return doc
         
         
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+
