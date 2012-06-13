@@ -1737,7 +1737,7 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
     master = RetrieveTIGroupsRequest
     master_key = None
     label = _("Results")
-    column_names = 'type:10 since info'
+    column_names = 'group:15 type:5 since:8 info:60'
     
     @classmethod
     def get_data_rows(self,ar):
@@ -1756,64 +1756,93 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
         def rn2date(rd):
             return IncompleteDate(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
             
+        def datarow(group,node,since,info):
+            return AttrDict(group=group,
+                type=node.__class__.__name__,
+                since=rn2date(since),info=E.p(*info))
+        def code_label(n):
+            if n.Label:
+                return [n.Code,' ',E.b(n.Label)]
+            return [n.Code]
+            
+            
             
         res = reply.rrn_it_implicit
         
-        data = dict()
-        data.update(type="NationalNumber")
-        data.update(since=rn2date(res.NationalNumber.NationalNumber.Date))
-        info = E.p(
-            E.b(res.NationalNumber.NationalNumber.NationalNumber),
-            ' (gender ',E.b(res.NationalNumber.NationalNumber.Sex),')'
-            )
-        #~ data.update(info=E.tostring(info))
-        data.update(info=info)
-        yield AttrDict(**data)
+        group = _("NationalNumber")
+        n = res.NationalNumber.NationalNumber
+        info = [
+          E.b(n.NationalNumber),
+          ' ('+unicode(cbss2gender(n.Sex))+')']
+        yield datarow(group,n,n.Date,info)
         
+        group = _("Residences")
+        for n in res.FileOwner.Residences:
+            info = [n.Residence.Label]
+            yield datarow(group,n,n.Date,info)
+            group = ''
         
-        tp = _("Residences")
-        for r in res.FileOwner.Residences:
-            yield AttrDict(type=tp,since=rn2date(r.Date),info=r.Residence.Label)
-            tp = ''
-        
-        tp = _("Names")
+        group = _("Names")
         for n in res.Names.Name:
-            content = []
-            for ln in n.Name.LastName:
-                content.append(E.b(ln.Label))
-                content.append(' ')
-            for fn in n.Name.FirstName:
-                content.append(fn.Label)
-                content.append(' ')
-            #~ info = E.tostring(E.p(*content))
-            info = E.p(*content)
-            yield AttrDict(type=tp,since=rn2date(n.Date),info=info)
-            tp = ''
+            info = []
+            s = ' '.join([ln.Label for ln in n.Name.LastName])
+            info.append(E.b(s))
+            info.append(', ')
+            s = ' '.join([fn.Label for fn in n.Name.FirstName])
+            info.append(s)
+            yield datarow(group,n,n.Date,info)
+            group = ''
         
-        group = res.LegalMainAddresses.LegalMainAddress
-        tp = "LegalMainAddresses (%s)" % group.__class__.__name__
-        for n in group:
-            content = []
-            content.append(E.b(n.Address.ZipCode))
-            content.append(', ')
-            content.append(n.Address.Street.Label)
-            content.append(' ')
-            content.append(n.Address.HouseNumber)
-            info = E.p(*content)
-            yield AttrDict(type=tp,since=rn2date(n.Date),info=info)
-            tp = ''
+        group = "LegalMainAddresses"
+        for n in res.LegalMainAddresses.LegalMainAddress:
+            info = []
+            info.append(E.b(n.Address.ZipCode))
+            info.append(', ')
+            info.append(n.Address.Street.Label)
+            info.append(' ')
+            info.append(n.Address.HouseNumber)
+            yield datarow(group,n,n.Date,info)
+            group = ''
             
-        tp = _("Nationalities")
-        for n in res.Nationalities.Nationality:
-            content = []
-            content.append(E.b(n.Nationality.Code))
-            content.append(' ')
-            content.append(n.Nationality.Label)
-            info = E.p(*content)
-            yield AttrDict(type=tp,since=rn2date(n.Date),info=info)
-            tp = ''
+        group = _("ResidenceAbroad")
+        if hasattr(res,'ResidenceAbroad'):
+            for n in res.ResidenceAbroad.ResidenceAbroad:
+                info = []
+                info += code_label(n.Address.PosteDiplomatique)
+                info.append(', ')
+                info += code_label(n.Address.Territory)
+                info.append(', ')
+                pd = n.Address.Address
+                info += code_label(pd.Country)
+                info.append(', ')
+                info.append(E.b(pd.Graphic1))
+                info.append(', ')
+                info.append(E.b(pd.Graphic2))
+                info.append(', ')
+                info.append(E.b(pd.Graphic3))
+                yield datarow(group,n,n.Date,info)
+                group = ''
         
-        yield AttrDict(type="TODO",since=datetime.date.today(),info="There are more TI, but Lino doesn't show them")
+        group = _("Nationalities")
+        for n in res.Nationalities.Nationality:
+            info = code_label(n.Nationality)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+            
+        group = _("Occupations")
+        for n in res.Occupations.Occupation:
+            info = []
+            info += code_label(n.Occupation)
+            info.append(' (SC ')
+            info += code_label(n.SocialCategory)
+            info.append(')')
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+            
+    @dd.displayfield(_("Group"))
+    def group(self,obj,ar):
+        return obj.group
             
     @dd.displayfield(_("Type"))
     def type(self,obj,ar):
