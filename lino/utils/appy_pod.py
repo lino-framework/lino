@@ -333,8 +333,8 @@ class Renderer(AppyRenderer):
         dn = "Bold Text"
         st = self.stylesManager.styles.getStyle(dn)
         if st is None:
-            #~ st = add_style(name=dn, family="text",parentstylename="Default")
-            st = add_style(name=dn, family="text")
+            st = add_style(name=dn, family="text",parentstylename="Default")
+            #~ st = add_style(name=dn, family="text")
             st.addElement(TextProperties(fontweight="bold"))
         
         # create some automatic styles

@@ -16,8 +16,15 @@ Die ersten Angaben kommen schon.
 Jetzt will ich noch überlegen, 
 ob ich das alles nicht noch generischer machen kann.
 
-DisplayField is now expected to return either an escaped
-HTML string or a :mod:`lino.utils.xmlgen.html` element.
+DisplayField is now expected to return either a unicode
+string that will be escaped (cannot contain html tags) 
+or a :mod:`lino.utils.xmlgen.html` element.
 
 Das Seltsamste, das ich heute gemacht habe, ist 
 die :func:`lino.utils.appy_pod.html2odftext`.
+Die ist momentan sehr beschränkt (kennt lediglich zwei tags 
+<P> und <B>) und produziert auch garantiert in vielen 
+Fällen kein ordentliches Resultat, aber scheint mir prinizipell 
+aussichtsreicher als den HTML in einen string zu verwandeln 
+und durch html2xhtml und dann durch renderXhtml zu jagen.
+Zu beobachten.
