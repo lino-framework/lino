@@ -1531,7 +1531,7 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         client = clientclass(meth.client, meth.method)
         #~ print 20120613, portSelector[0]
         #~ print '20120613b', dir(client)
-        return client.succeeded(client.method.binding.input, self.response_xml)
+        return client.succeeded(client.method.binding.input, self.response_xml.encode('utf-8'))
         
     
     def execute_newstyle(self,client,infoCustomer,simulate_response):
