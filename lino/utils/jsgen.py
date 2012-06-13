@@ -169,7 +169,8 @@ def py2js(v):
         
     if isinstance(v,types.GeneratorType): 
         return "".join([py2js(x) for x in v])
-    if isinstance(v,etree.Element): 
+    if etree.iselement(v): 
+    #~ if isinstance(v,etree.Element): 
         return simplejson.dumps(etree.tostring(v))
         
     #~ if type(v) is types.GeneratorType:

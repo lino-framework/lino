@@ -366,7 +366,8 @@ class Renderer(AppyRenderer):
                 #~ params.update(text=fld.format_value(ar,val))
             #~ params.update(text=fld.format_value(ar,val))
             txt = fld.value2html(ar,val)
-            if isinstance(txt,etree.Element): 
+            #~ if isinstance(txt,etree.Element): 
+            if etree.iselement(txt): 
                 txt = html2odftext(txt)
                 #~ txt = etree.tostring(txt)
                 pass
