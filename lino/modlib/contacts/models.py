@@ -362,7 +362,7 @@ class Born(models.Model):
     def age(self,request,today=None):
         a = self.get_age_years(today)
         if a is None:
-            return _('unknown')
+            return unicode(_('unknown'))
         s = _("%d years") % (a.days / 365)
         if self.birth_date and self.birth_date.is_complete():
             return s

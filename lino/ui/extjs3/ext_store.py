@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 #~ import odf
 
+import cgi
 import datetime
 import decimal
 #~ from dateutil import parser as dateparser
@@ -275,12 +276,19 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         #~ return req.ui.href_to(obj)
         
     def value2html(self,ar,v):
-        #~ return "<span>%s</span>" % ar.renderer.href_to(v)
-        xml = ar.renderer.href_to(v)
-        # Python 2.6 : encode() takes no keyword arguments
-        #~ xml = xml.encode('utf-8',errors='xmlcharrefreplace')
-        xml = xml.encode('utf-8','xmlcharrefreplace')
-        return xghtml.RAW(xml)
+        h = ar.renderer.instance_handler(v)
+        if h is None:
+            #~ return cgi.escape(force_unicode(obj))
+            return xghtml.E.p(xghtml.E.b(cgi.escape(force_unicode(v))))
+        url = ar.renderer.js2url(h)
+        #~ return self.href(url,text or cgi.escape(force_unicode(obj)))
+        return xghtml.E.p(xghtml.E.a(cgi.escape(force_unicode(v)),href=url))
+        
+        #~ xml = ar.renderer.href_to(v)
+        #~ # Python 2.6 : encode() takes no keyword arguments
+        #~ # xml = xml.encode('utf-8',errors='xmlcharrefreplace')
+        #~ xml = xml.encode('utf-8','xmlcharrefreplace')
+        #~ return xghtml.RAW(xml)
         
         
     def get_value_text(self,v,obj):
@@ -398,9 +406,16 @@ class RequestStoreField(StoreField):
         #~ d[self.field.name] = v
 
     def value2html(self,ar,v):
-        s = self.format_value(ar,v)
-        if not s: return s
-        return xghtml.RAW(s)
+        n = v.get_total_count()
+        if n == 0:
+            return ''
+        #~ return ar.renderer.href_to_request(v,str(n))
+        url = ar.renderer.js2url(ar.renderer.request_handler(v))
+        return xghtml.E.a(cgi.escape(force_unicode(rr.label)),href=url)
+      
+        #~ s = self.format_value(ar,v)
+        #~ if not s: return s
+        #~ return xghtml.RAW(s)
 
     #~ def value2odt(self,ar,v,tc,**params):
         #~ params.update(text=self.format_value(ar,v))
@@ -1158,7 +1173,13 @@ class Store:
                     yield ''
                 else:
                     sums[i] += fld.value2num(v)
-                    yield fld.value2html(request,v)
+                    #~ yield fld.value2html(request,v)
+                    x = fld.value2html(request,v)
+                    #~ from django.utils.functional import Promise
+                    #~ if isinstance(x,Promise):
+                        #~ print 20120614, fld.field
+                        #~ raise Exception("20120614")
+                    yield x
                 #~ yield fld.cell_html(request,row)
                 
     def sums2html(self,ar,fields,sums):

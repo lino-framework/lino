@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,15 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The default URLconf module, pointed to by 
-:setting:`ROOT_URLCONF` 
-defined in :mod:`lino.apps.std.settings`.
-Defines the variable `urlpatterns` required by Django.
-
-Application code doesn't need to worry about this.
-
 """
 
-from lino.extjs import ui
-ui.build_site_cache()
-urlpatterns = ui.get_patterns()
+from lino.ui.extjs3 import UI
+ui = UI()

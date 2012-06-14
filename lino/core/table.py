@@ -324,7 +324,7 @@ def discover():
 
     """
               
-    logger.info("Analyzing Tables...")
+    logger.debug("Analyzing Tables...")
     #~ logger.debug("20111113 Register Table actors...")
     for rpt in actors.actors_list:
         if issubclass(rpt,Table) and rpt is not Table:
@@ -361,19 +361,6 @@ def discover():
         
     #~ logger.debug("reports.setup() done")
 
-
-
-#~ class StaticText:
-    #~ def __init__(self,text):
-        #~ self.text = text
-        
-#~ class Picture:
-    #~ pass
-    
-#~ class DataView:
-    #~ def __init__(self,tpl):
-        #~ self.xtemplate = tpl
-        
 
 
       

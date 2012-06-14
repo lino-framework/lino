@@ -1,0 +1,61 @@
+20120614
+========
+
+Eigentlich wollte ich heute weiter arbeiten am Ausdruck einer 
+Tx25 (:class:`lino.modlib.cbss.models.RetrieveTIGroupsResult`).
+
+Aber weil es zum Testen relativ lästig war, habe ich mir folgendes Script geschrieben::
+
+  from lino.modlib.cbss.models import RetrieveTIGroupsRequests as Tx25
+  from lino.ui.console import Console
+  ui = Console()
+  ui.run(Tx25.print_action,1)
+
+Also ich klicke sozusagen programmatisch auf den `Drucken`-Knopf auf der Tx25 # 1.
+Aufruf ist wie folgt::
+
+  T:\data\luc\lino_local\dsbe>python manage.py shell < tx25.py
+
+Der Output ist nicht besonders schön, weil die ">>>" vom `shell` stören::
+
+  Python 2.7.1 (r271:86832, Nov 27 2010, 18:30:46) [MSC v.1500 32 bit (Intel)] on win32
+  Type "help", "copyright", "credits" or "license" for more information.
+  (InteractiveConsole)
+  >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> >>> INFO Starting Lino...
+  INFO Lino Site 'DSBE@armand' started. Languages: de, fr. 232 actors.
+  INFO Using Lino 1.4.4, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.
+  4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.
+  >>> INFO AppyOdtBuildMethod Tx25 Request #1 -> overwrite existing t:\data\luc\lino_local\dsbe\media\userdocs\appyodt\cbs
+  s.RetrieveTIGroupsRequest-1.odt.
+  INFO appy.pod render t:\hgwork\lino\lino\modlib\cbss\config\cbss\RetrieveTIGroupsRequest\Default.odt -> t:\data\luc\lino
+  _local\dsbe\media\userdocs\appyodt\cbss.RetrieveTIGroupsRequest-1.odt (language='de',params={'ooPort': 8100, 'pythonWith
+  UnoPath': 'C:\\PROGRA~1\\LIBREO~1.4\\program\\python.exe'}
+  {'open_url': '/media/userdocs/appyodt/cbss.RetrieveTIGroupsRequest-1.odt', 'success': True}
+  >>> >>> >>> >>>
+
+Aber es funktioniert. Da wir uns nicht im Web sondern in einer Console befinden, wird die 
+action response 'open_url' mittels ``os.startfile()`` gestartet. Cool!
+
+Damit das funktionierte, musste ich dann doch einige subtile interne Änderungen machen. 
+Dabei kamen aber auch noch ein paar Bugs (seit den gestrigen Änderungen) 
+beim Rendern gewisser Feldarten zum Vorschein.
+Hier als Souvenir zwei der Fehlermeldungen, die heute waren::
+
+  Error while evaluating the expression "table(self.Result(ar))" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "t:\hgwork\lino\lino\utils\appy_pod.py", line 279, in insert_table
+  columns = ar.ah.list_layout.main.columns
+  <type 'exceptions.AttributeError'>: TableHandle instance has no attribute 'list_layout'
+
+  Error while evaluating the expression "table(ar)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "t:\hgwork\lino\lino\utils\appy_pod.py", line 452, in insert_table
+  value2cell(ar,i,fld,v,stylename,tc)
+  File "t:\hgwork\lino\lino\utils\appy_pod.py", line 418, in value2cell
+  tc.addElement(p)
+  File "l:\snapshots\odfpy-0.9.4\odf\element.py", line 363, in addElement
+  raise IllegalChild, "<%s> is not allowed in <%s>" % ( element.tagName, self.tagName)
+  <class 'odf.element.IllegalChild'>: <text:span> is not allowed in <table:table-cell>
+  
+Und die eigentliche Arbeit (Ausdruck einer 
+Tx25) ist darüber für heute liegengeblieben. C'est la vie...

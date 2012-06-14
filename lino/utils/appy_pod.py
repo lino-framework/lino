@@ -43,18 +43,15 @@ from django.utils.encoding import force_unicode
 #~ from lino.utils.xmlgen import odf
 #~ from lxml import etree
 
-#~ def elem2str(e):
-    #~ return etree.tostring(e)
-
 OAS = '<office:automatic-styles>'
 OFFICE_STYLES = '<office:styles>'
 
 from cStringIO import StringIO
-def elem2str(e):
-    xml = StringIO()
-    e.toXml(0, xml)
-    return xml.getvalue()
-        
+def toxml(node):
+    buf = StringIO()
+    node.toXml(0, buf)
+    return buf.getvalue()
+
 
 from odf.opendocument import OpenDocumentText
 from odf.style import Style, TextProperties, ParagraphProperties
@@ -63,12 +60,6 @@ from odf.style import TableColumnProperties, TableRowProperties, TableCellProper
 from odf.element import Text
 from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
-
-from cStringIO import StringIO
-def toxml(node):
-    buf = StringIO()
-    node.toXml(0, buf)
-    return buf.getvalue()
 
 
 def html2odftext(e,**kw):
@@ -134,9 +125,11 @@ class Renderer(AppyRenderer):
         context.update(restify=self.restify_func)
         context.update(html=self.html_func)
         context.update(table=self.insert_table)
-        from lino.ui.extjs3 import urls
-        self.ui = urls.ui
-        context.update(ui=self.ui)
+        from lino.extjs import ui
+        #~ from lino.ui.extjs3 import urls
+        #~ self.ui = urls.ui
+        self.extjs_ui = ui
+        context.update(ui=ui)
         kw.update(finalizeFunction=self.finalize_func)
         AppyRenderer.__init__(self,template,context,result, **kw)
         #~ self.my_automaticstyles = odf.style.automaticstyles()
@@ -198,9 +191,9 @@ class Renderer(AppyRenderer):
         #~ fn = os.path.join(fn,'..','content.xml')
         #~ fn = os.path.join(fn,'content.xml')
         self.insert_chunk(fn,'content.xml',OAS,''.join(
-          [elem2str(e) for e in self.my_automaticstyles]))
+          [toxml(e) for e in self.my_automaticstyles]))
         self.insert_chunk(fn,'styles.xml',OFFICE_STYLES,''.join(
-          [elem2str(e) for e in self.my_styles]))
+          [toxml(e) for e in self.my_styles]))
         
     def insert_chunk(self,root,leaf,insert_marker,chunk):
         """
@@ -238,9 +231,7 @@ class Renderer(AppyRenderer):
         Render an :class:`lino.core.actions.ActionRequest` as an OpenDocument table.
         This is the function that gets called when a template contains a 
         ``do text from table(...)`` statement.
-        
         """
-        
         
         if ar.request is None:
             columns = None
@@ -254,14 +245,16 @@ class Renderer(AppyRenderer):
             fields = []
             widths = []
             headers = []
+            ah = ar.actor.get_handle(self.extjs_ui)
             for i,cn in enumerate(columns):
                 col = None
-                for e in ar.ah.list_layout.main.columns:
+                for e in ah.list_layout.main.columns:
                     if e.name == cn:
                         col = e
                         break
                 if col is None:
                     #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
+                    #~ raise Exception("No column named %r in %s" % (cn,ah.list_layout.main.columns))
                     raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
                 if not hiddens[i]:
                     fields.append(col.field._lino_atomizer)
@@ -271,15 +264,17 @@ class Renderer(AppyRenderer):
             if column_names:
                 from lino.core import layouts
                 ll = layouts.ListLayout(ar.actor,column_names)
-                lh = ll.get_layout_handle(self.ui)
+                lh = ll.get_layout_handle(self.extjs_ui)
                 columns = lh.main.columns
             else:
-                columns = ar.ah.list_layout.main.columns
+                ah = ar.actor.get_handle(self.extjs_ui)
+                columns = ah.list_layout.main.columns
+                #~ columns = ar.ah.list_layout.main.columns
             #~ fields = ar.ah.store.list_fields
             headers = [unicode(col.label or col.name) for col in columns]
             widths = [(col.width or col.preferred_width) for col in columns]
             fields = [col.field._lino_atomizer for col in columns]
-              
+
         oh = ar.actor.override_column_headers(ar)
         if oh:
             for i,e in enumerate(columns):
@@ -376,7 +371,7 @@ class Renderer(AppyRenderer):
                 cs.addElement(TableColumnProperties(columnwidth=width_specs[i]))
             #~ cs.addElement(TableColumnProperties(useoptimalcolumnwidth='true'))
             #~ k = cs.getAttribute('name')
-            #~ renderer.stylesManager.styles[k] = elem2str(e)
+            #~ renderer.stylesManager.styles[k] = toxml(e)
             #~ doc.automaticstyles.addElement(cs)
             #~ self.my_automaticstyles.append(cs)
             table_columns.addElement(TableColumn(stylename=name))
@@ -420,7 +415,11 @@ class Renderer(AppyRenderer):
                 p = text.P(**params)
             #~ p.addElement(e)
             #~ yield p
-            tc.addElement(p)
+            try:
+                tc.addElement(p)
+            except Exception,e:
+                print 20120614, i, fld, val, e
+                
             #~ yield P(stylename=tablecontents,text=text)
             
         # create header row
@@ -470,7 +469,7 @@ class Renderer(AppyRenderer):
             
 
         doc.text.addElement(table)
-        return elem2str(table)
+        return toxml(table)
         #~ if output_file:
             #~ doc.save(output_file) # , True)
         #~ return doc

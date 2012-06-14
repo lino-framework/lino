@@ -50,8 +50,8 @@ import lino
 from lino.core import table
 from lino.core import actions
 #~ from lino.core import layouts
-from lino.utils import perms
-from lino.utils import dblogger
+#~ from lino.utils import perms
+#~ from lino.utils import dblogger
 #~ from lino.utils import babel
 from lino.core import actors
 from lino.core.coretools import app_labels # , data_elems # , get_unbound_meth
@@ -132,75 +132,6 @@ def analyze_models(self):
             pass
                     
 
-if False:
-  
-  class DetailSet(object):
-    
-      def __init__(self,responsible_actor):
-      #~ def __init__(self,app_label,name):
-          #~ self.app_label = app_label
-          #~ self.name = name
-          #~ self.actors = []
-          self.actor = responsible_actor
-          self.layouts = {}
-          
-      #~ def add_actor(self,actor):
-          #~ self.actors.append(actor)
-          
-  detail_sets = dict()
-
-  def unused_make_dtl_messages(ui):
-      for ds in detail_sets.values():
-          for dl in ds.layouts.values():
-              # make sure that messages have been filled in
-              table.LayoutHandle(ui,dl)
-              # write the file if necessary
-              dl.make_dummy_messages_file()
-
-      
-  def unused_load_details(make_messages):
-    
-      
-      for a in actors.actors_list:
-          for name in a.get_detail_sets():
-              detail_sets.setdefault(name,DetailSet(a))
-              
-          #~ for (app_label,name) in a.get_detail_sets():
-              #~ m = detail_sets.setdefault(app_label,{})
-              #~ ds = m.setdefault(name,DetailSet(app_label,name))
-              #~ ds.add_actor(a)
-          
-      for name,ds in detail_sets.items():
-        
-          def loader(content,cd,filename):
-              dtl = table.DetailLayout(ds.actor,content,filename,cd)
-              head,tail = os.path.split(filename)
-              ds.layouts[tail] = dtl
-              #~ if make_messages:
-              if False: 
-                  dtl.make_dummy_messages_file()
-              
-          load_config_files(loader,'*.dtl',name)
-          
-      for a in actors.actors_list:
-          collector = {}
-          for name in a.get_detail_sets():
-              for k,v in detail_sets[name].layouts.items():
-                  collector[k] = v
-                  
-          if collector:
-              def by0(a,b):
-                  return cmp(a[0],b[0])
-              collector = collector.items()
-              collector.sort(by0)
-              detail_layouts = [i[1] for i in collector]
-              #~ a._lino_detail = table.Detail(a,detail_layouts)
-              a._lino_detail = table.register_detail(a,detail_layouts)
-              #~ if a._lino_detail.actor != a:
-                  #~ logger.info("20120120 %s got detail with actor %s",a, a._lino_detail.actor)
-          else:
-              a._lino_detail = None
-          
         
 def install_summary_rows():
   
@@ -271,24 +202,33 @@ class DisableDeleteHandler():
 #~ import threading
 #~ write_lock = threading.RLock()
 
-def setup_site(self,make_messages=False):
+#~ def setup_site(self,make_messages=False):
+#~ def setup_site(self,no_site_cache=False):
+def setup_site(self):
     """
     `self` is the Lino instance stored as :setting:`LINO` in your :xfile:`settings.py`.
     
     This is run once after Django has populated it's model cache, 
-    and before any Lino Report can be used.
+    and before any Lino actor can be used.
     Since Django has not "after startup" event, this is triggered 
     "automagically" when it is needed the first time. 
     For example on a mod_wsgi Web Server process it will be triggered 
-    by the first request.
+    by the first incoming request.
     
     """
     if self._setup_done:
         #~ logger.warning("LinoSite setup already done ?!")
         return
         
+    logger.info("Starting Lino...")
+    
+    """
+    Set the site's default language
+    """
+    babel.set_language(None)
+            
     self.mtime = codetime()
-    logger.info(lino.welcome_text())
+    #~ logger.info(lino.welcome_text())
     #~ raise Exception("20111229")
     
     if self.build_js_cache_on_startup is None:
@@ -423,11 +363,9 @@ def setup_site(self,make_messages=False):
                 #~ a = spec.default_action
             #~ self.index_view_action = a
         
-          
-            
-        dblogger.info("Lino Site %r started. Languages: %s", 
-            self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
-        dblogger.info(lino.welcome_text())
+        logger.info("Lino Site %r started. Languages: %s. %s actors.", 
+            self.title, ', '.join(babel.AVAILABLE_LANGUAGES),len(actors.actors_list))
+        logger.info(lino.welcome_text())
     finally:
         #~ write_lock.release()
         self._setup_done = True

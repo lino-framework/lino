@@ -173,7 +173,7 @@ class Namespace(object):
             elif etree.iselement(item):
                 elem.append(item)
             else:
-                raise TypeError("bad argument: %r" % item)
+                raise TypeError("bad argument: %r" % unicode(item))
         return elem
         
     

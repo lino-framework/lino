@@ -198,7 +198,7 @@ def check_for_chooser(model,field):
 
 
 def discover():
-    logger.info("Discovering choosers...")
+    logger.debug("Discovering choosers...")
     #~ logger.debug("Instantiate model reports...")
     for model in models.get_models():
         #~ n = 0

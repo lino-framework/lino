@@ -477,8 +477,8 @@ class Actor(ViewPermission):
             return cmp(a.sort_index,b.sort_index)
         cls._actions_list.sort(f)
         cls._actions_list = tuple(cls._actions_list)
-        #~ if cls.__name__ == 'ParticipantsByCourse':
-            #~ print 20120524, cls, [str(a) for a in cls._actions_list]
+        #~ if cls.__name__ == 'RetrieveTIGroupsRequest':
+        #~ logger.info('20120614 %s : %s',cls, [str(a) for a in cls._actions_list])
         
     @classmethod
     def _attach_action(self,name,a):

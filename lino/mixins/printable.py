@@ -571,7 +571,7 @@ class PrintAction(BasePrintAction):
       
 class DirectPrintAction(BasePrintAction):
     """
-    A Print Action that uses a hard-coded template.
+    A Print Action that uses a hard-coded template and no cache.
     """
     url_action_name = None
     

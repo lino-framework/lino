@@ -215,6 +215,8 @@ class PdfRenderer(HtmlRenderer):
         #~ text = text or ("<b>%s</b>" % cgi.escape(force_unicode(obj)))
         text = text or cgi.escape(force_unicode(obj))
         return "<b>%s</b>" % text
+    def instance_handler(self,obj):
+        return None
         
 
 class ExtRendererPermalink(HtmlRenderer):
@@ -475,28 +477,6 @@ def json_response(x,content_type='application/json'):
     #~ return HttpResponse(s, content_type='text/json')
     
 
-ACTION_RESPONSES = frozenset((
-  'message','success','alert', 
-  'errors',
-  'new_status',
-  'refresh','refresh_all',
-  'confirm_message', 'step',
-  'open_url','open_davlink_url'))
-"""
-Action responses supported by `Lino.action_handler` (defined in :xfile:`linolib.js`).
-"""
-
-def action_response(kw):
-    """
-    Builds a JSON response from given dict, 
-    checking first whether there are only allowed keys 
-    (defined in :attr:`ACTION_RESPONSES`)
-    """
-    for k in kw.keys():
-        if not k in ACTION_RESPONSES:
-            raise Exception("Unknown action response %r" % k)
-    return json_response(kw)
-        
 
 
 def elem2rec1(ar,rh,elem,**rec):
@@ -640,7 +620,9 @@ class ExtUI(base.UI):
     
     #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
 
-    def __init__(self,*args,**kw):
+    #~ def __init__(self,*args,**kw):
+    def __init__(self):
+        #~ raise Exception("20120614")
         self.pdf_renderer = PdfRenderer(self)
         self.ext_renderer = ExtRenderer(self)
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
@@ -655,7 +637,8 @@ class ExtUI(base.UI):
         #~ else:
             #~ logger.warning("window_configs_file %s not found",self.window_configs_file)
             
-        base.UI.__init__(self,*args,**kw) # will create a.window_wrapper for all actions
+        #~ base.UI.__init__(self,*args,**kw) # will create a.window_wrapper for all actions
+        base.UI.__init__(self) 
         
         #~ self.welcome_template = get_template('welcome.html')
         
@@ -668,7 +651,8 @@ class ExtUI(base.UI):
             logger.info("Using welcome template %s",fn)
             self.welcome_template = CheetahTemplate(file(fn).read())
         
-        self.build_site_cache()
+        #~ self.build_site_cache()
+            
         #~ self.generate_linolib_messages()
         
     def create_layout_element(self,lh,name,**kw):
@@ -1776,13 +1760,13 @@ tinymce.init({
                       success=True,
                       confirm_message='\n'.join([unicode(m) for m in e.messages]),
                       step=e.step)
-                    return action_response(r)
+                    return self.action_response(r)
                 except actions.Warning,e:
                     r = dict(
                       success=False,
                       message=unicode(e),
                       alert=True)
-                    return action_response(r)
+                    return self.action_response(r)
                 except Exception,e:
                     if elem is None:
                         msg = unicode(e)
@@ -1807,10 +1791,6 @@ tinymce.init({
         #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.actor))
         
         
-    def error_response(self,*args,**kw):
-        kw.update(success=False)
-        return error_response(*args,**kw)
-        
     def error_response(self,e=None,message=None,**kw):
         kw.update(success=False)
         if e is not None:
@@ -1824,16 +1804,18 @@ tinymce.init({
         kw.update(message=cgi.escape(message))
         #~ kw.update(message=message_prefix+unicode(e))
         dblogger.debug('error_response %s',kw)
-        return action_response(kw)
+        return self.action_response(kw)
     
 
-    def success_response(self,message=None,**kw):
-        kw.update(success=True)
-        if message:
-            kw.update(message=message)
-        return action_response(kw)
-
-        
+    def action_response(self,kw):
+        """
+        Builds a JSON response from given dict, 
+        checking first whether there are only allowed keys 
+        (defined in :attr:`ACTION_RESPONSES`)
+        """
+        self.check_action_response(kw)
+        return json_response(kw)
+            
     def lino_js_parts(self,user):
     #~ def js_cache_name(self):
         #~ return ('cache','js','site.js')
@@ -2202,8 +2184,8 @@ tinymce.init({
         #~ if h.store.param_fields:
             #~ logger.info("20120121 %s param_fields is %s",h,h.store.param_fields)
         
-        if h.list_layout:
-            h.on_render = self.build_on_render(h.list_layout.main)
+        #~ 20120614 if h.list_layout:
+            #~ h.on_render = self.build_on_render(h.list_layout.main)
             
         #~ elif isinstance(h,table.FrameHandle):
             #~ if issubclass(h.report,table.EmptyTable):
@@ -2486,9 +2468,12 @@ tinymce.init({
         for ln in ext_elems.before_row_edit(rh.list_layout.main):
             yield "      " + ln
         yield "    };"
-        if rh.on_render:
+        
+        #~ if rh.on_render:
+        on_render = self.build_on_render(rh.list_layout.main)        
+        if on_render:
             yield "    this.onRender = function(ct, position) {"
-            for ln in rh.on_render:
+            for ln in on_render:
                 yield "      " + ln
             yield "      Lino.%s.GridPanel.superclass.onRender.call(this, ct, position);" % rh.actor
             yield "    }"

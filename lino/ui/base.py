@@ -30,7 +30,20 @@ class Handle:
   
     #~ "Inherited by Actor"
     
-        
+
+
+ACTION_RESPONSES = frozenset((
+  'message','success','alert', 
+  'errors',
+  'new_status',
+  'refresh','refresh_all',
+  'confirm_message', 'step',
+  'open_url','open_davlink_url'))
+"""
+Action responses supported by `Lino.action_handler` (defined in :xfile:`linolib.js`).
+"""
+
+
         
 class UI:
     """
@@ -40,7 +53,7 @@ class UI:
     verbose_name = None
     
     def __init__(self,prefix='',**options):
-        settings.LINO.setup(**options)
+        #~ 20120614 settings.LINO.setup(**options)
         assert isinstance(prefix,basestring)
         self.prefix = prefix
         self.root_url = settings.LINO.root_url
@@ -48,9 +61,18 @@ class UI:
             assert not prefix.startswith('/')
             assert not prefix.endswith('/')
             self.root_url += '/' + prefix
+        settings.LINO.setup(**options)
         #~ print 'settings.LINO.root_url:', settings.LINO.root_url
         #~ print 'ui.root_url:', self.root_url
         
+    def check_action_response(self,kw):
+        """
+        Raise an exception if the action responded using an unknown keyword.
+        """
+        for k in kw.keys():
+            if not k in ACTION_RESPONSES:
+                raise Exception("Unknown action response %r" % k)
+                
     def build_url(self,*args,**kw):
         #~ url = self.site.root_url
         url = self.root_url
@@ -88,7 +110,7 @@ class UI:
     def field2elem(self,lui,field,**kw):
         pass
         
-    def setup_handle(self,h):
+    def setup_handle(self,h,ar):
         pass
         
     def request(self,actor,**kw):
@@ -96,4 +118,13 @@ class UI:
             actor = settings.LINO.modules.resolve(actor)
         #~ kw.update(ui=self)
         return actor.request(self,**kw)
+        
+    def success_response(self,message=None,**kw):
+        kw.update(success=True)
+        if message:
+            kw.update(message=message)
+        return self.action_response(kw)
+
+    def action_response(self,kw):
+        raise NotImplementedError
         
