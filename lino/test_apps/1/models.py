@@ -84,7 +84,7 @@ The Place now no longer exists as a Restaurant:
 >>> Restaurant.objects.get(pk=1)
 Traceback (most recent call last):
 ...
-DoesNotExist: Restaurant matching query does not exist.
+DoesNotExist: Restaurant matching query does not exist. ...
 
 The opposite operation, "promoting a simple Place to a Restaurant", 
 is done using :func:`insert_child`:
@@ -191,7 +191,7 @@ This operation has removed the related Restaurant instance:
 >>> Restaurant.objects.get(pk=2) 
 Traceback (most recent call last):
 ...
-DoesNotExist: Restaurant matching query does not exist.
+DoesNotExist: Restaurant matching query does not exist. ...
 
 
 And finally, rather to explain why Restaurants sometimes 

@@ -79,6 +79,7 @@ from lino.utils.xmlgen import html as xghtml
 #~ from lino.utils.xmlgen import etree
 #~ from lino.utils.xmlgen import cbss
 
+from lino.utils.babel import dtos
 
 from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
@@ -1623,7 +1624,6 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
       
       
         E = xghtml.E
-        from lino.utils.babel import dtos
         def rn2date(rd):
             return IncompleteDate(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
             #~ return datetime.date.date(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
@@ -1737,8 +1737,24 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
     master = RetrieveTIGroupsRequest
     master_key = None
     label = _("Results")
-    column_names = 'group:15 type:5 since:8 info:60'
+    column_names = 'group:18 type:10 since:14 info:50'
     
+    @dd.displayfield(_("Group"))
+    def group(self,obj,ar):
+        return obj.group
+            
+    @dd.displayfield(_("Type"))
+    def type(self,obj,ar):
+        return obj.type
+            
+    @dd.virtualfield(models.DateField(_("Since")))
+    def since(self,obj,ar):
+        return obj.since
+            
+    @dd.displayfield(_("Info"))
+    def info(self,obj,ar):
+        return obj.info
+            
     @classmethod
     def get_data_rows(self,ar):
         rti = ar.master_instance
@@ -1765,15 +1781,29 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
                 return [n.Code,' ',E.b(n.Label)]
             return [n.Code]
             
+        def name2info(n):
+            info = []
+            s = ' '.join([ln.Label for ln in n.LastName])
+            info.append(E.b(s))
+            info.append(', ')
+            s = ' '.join([fn.Label for fn in n.FirstName])
+            info.append(s)
+            return info
             
             
         res = reply.rrn_it_implicit
         
-        group = _("NationalNumber")
+        group = _("National Number")
         n = res.NationalNumber.NationalNumber
         info = [
           E.b(n.NationalNumber),
           ' ('+unicode(cbss2gender(n.Sex))+')']
+        yield datarow(group,n,n.Date,info)
+        
+        group = _("Birth Place")
+        n = res.BirthPlace
+        info = code_label(n.Place1)
+        info.append(' (' + n.ActNumber + ')')
         yield datarow(group,n,n.Date,info)
         
         group = _("Residences")
@@ -1784,16 +1814,17 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
         
         group = _("Names")
         for n in res.Names.Name:
-            info = []
-            s = ' '.join([ln.Label for ln in n.Name.LastName])
-            info.append(E.b(s))
-            info.append(', ')
-            s = ' '.join([fn.Label for fn in n.Name.FirstName])
-            info.append(s)
+            info = name2info(n.Name)
+            #~ info = []
+            #~ s = ' '.join([ln.Label for ln in n.Name.LastName])
+            #~ info.append(E.b(s))
+            #~ info.append(', ')
+            #~ s = ' '.join([fn.Label for fn in n.Name.FirstName])
+            #~ info.append(s)
             yield datarow(group,n,n.Date,info)
             group = ''
         
-        group = "LegalMainAddresses"
+        group = "Legal Main Addresses"
         for n in res.LegalMainAddresses.LegalMainAddress:
             info = []
             info.append(E.b(n.Address.ZipCode))
@@ -1804,7 +1835,7 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
             yield datarow(group,n,n.Date,info)
             group = ''
             
-        group = _("ResidenceAbroad")
+        group = _("Residence Abroad")
         if hasattr(res,'ResidenceAbroad'):
             for n in res.ResidenceAbroad.ResidenceAbroad:
                 info = []
@@ -1831,30 +1862,72 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
             
         group = _("Occupations")
         for n in res.Occupations.Occupation:
-            info = []
-            info += code_label(n.Occupation)
+            info = code_label(n.Occupation)
             info.append(' (SC ')
             info += code_label(n.SocialCategory)
             info.append(')')
             yield datarow(group,n,n.Date,info)
             group = ''
         
-            
-    @dd.displayfield(_("Group"))
-    def group(self,obj,ar):
-        return obj.group
-            
-    @dd.displayfield(_("Type"))
-    def type(self,obj,ar):
-        return obj.type
-            
-    @dd.virtualfield(dd.IncompleteDateField(_("Since")))
-    def since(self,obj,ar):
-        return obj.since
-            
-    @dd.displayfield(_("Info"))
-    def info(self,obj,ar):
-        return obj.info
+        group = _("Filiations")
+        for n in res.Filiations.Filiation:
+            info = code_label(n.FiliationType)
+            info.append(' of ')
+            info.append(n.Parent1.NationalNumber.NationalNumber)
+            info.append(' ')
+            info += name2info(n.Parent1.Name)
+            info.append(' and ')
+            info.append(n.Parent2.NationalNumber.NationalNumber)
+            info.append(' ')
+            info += name2info(n.Parent2.Name)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+        group = _("Civil States")
+        for n in res.CivilStates.CivilState:
+            info = code_label(n.CivilState)
+            info.append(' with ')
+            info += name2info(n.Spouse.Name)
+            info.append(' (')
+            info.append(n.Spouse.NationalNumber.NationalNumber)
+            info.append(') in ')
+            info += code_label(n.Lieu.Place1)
+            info.append(', ActNumber ')
+            info.append(n.ActNumber)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+        group = _("Family Members")
+        for n in res.FamilyMembers.FamilyMember:
+            info = code_label(n.FamilyRole)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+        group = _("Head Of Family")
+        for n in res.HeadOfFamily.HeadOfFamily:
+            info = []
+            info.append('Until %s :' % dtos(rn2date(n.DelDate)))
+            info += code_label(n.FamilyRole)
+            info.append(' in family headed by ')
+            info += name2info(n.Name)
+            info.append(' (')
+            info.append(n.NationalNumber.NationalNumber)
+            info.append(')')
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+        group = _("Driving Licenses Old Model")
+        for n in res.DrivingLicensesOldModel.DrivingLicense:
+            info = code_label(n.TypeOfLicense)
+            info.append(' number ')
+            info.append(E.b(n.LicenseNumber))
+            info.append(', categories ' 
+              + ' '.join([cat.Label for cat in n.Categories.Category]))
+            info.append(', delivered in ')
+            info += code_label(n.Delivery.Place)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
             
     
 
