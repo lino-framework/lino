@@ -1,7 +1,8 @@
 The :mod:`lino.management` package
 ==================================
 
-This contains Lino's management commands.
+This contains Lino's "standard management commands", 
+automatically included with every Lino application.
 
 initdb
 ------
@@ -14,6 +15,13 @@ diag
 ----
 
 .. automodule:: lino.management.commands.diag
+    :members:
+    :show-inheritance:
+
+run
+---
+
+.. automodule:: lino.management.commands.run
     :members:
     :show-inheritance:
 

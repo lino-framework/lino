@@ -1,10 +1,13 @@
 20120614
 ========
 
-Eigentlich wollte ich heute weiter arbeiten am Ausdruck einer 
-Tx25 (:class:`lino.modlib.cbss.models.RetrieveTIGroupsResult`).
+Eigentlich wollte ich heute weiter arbeiten am Ausdruck bzw. der Verwertung 
+des Resultats einer :class:`Tx25 <lino.modlib.cbss.models.RetrieveTIGroupsResult>`.
 
-Aber weil es zum Testen relativ lästig war, habe ich mir folgendes Script geschrieben::
+Aber weil es beim Testen relativ lästig war, 
+dass man nach jeder Änderung mehrmals klicken 
+muss um das Resultat zu sehen,
+habe ich mir folgendes Script geschrieben::
 
   from lino.modlib.cbss.models import RetrieveTIGroupsRequests as Tx25
   from lino.ui.console import Console
@@ -36,8 +39,10 @@ Der Output ist nicht besonders schön, weil die ">>>" vom `shell` stören::
 Aber es funktioniert. Da wir uns nicht im Web sondern in einer Console befinden, wird die 
 action response 'open_url' mittels ``os.startfile()`` gestartet. Cool!
 
-Damit das funktionierte, musste ich dann doch einige subtile interne Änderungen machen. 
-Dabei kamen aber auch noch ein paar Bugs (seit den gestrigen Änderungen) 
+Damit das funktionierte, musste ich dann doch einige subtile interne Änderungen machen:
+Neues Modul :mod:`lino.extjs`, und :mod:`lino.ui.console` 
+ist komplett neu geschrieben (funktionierte sowieso schon lange nicht mehr).
+Außerdem kamen ein paar Bugs (seit den gestrigen Änderungen) 
 beim Rendern gewisser Feldarten zum Vorschein.
 Hier als Souvenir zwei der Fehlermeldungen, die heute waren::
 
@@ -59,3 +64,19 @@ Hier als Souvenir zwei der Fehlermeldungen, die heute waren::
   
 Und die eigentliche Arbeit (Ausdruck einer 
 Tx25) ist darüber für heute liegengeblieben. C'est la vie...
+
+Noch schnell vor Feierabend ein neuer management command :mod:`run <lino.management.commands.run>`, 
+der ein lokales Skript wie unser `tx25.py` ausführt ohne die unschönen 
+Zwischenbemerkungen der interaktiven `shell`::
+
+  T:\data\luc\lino_local\dsbe>python manage.py run tx25.py
+  INFO Starting Lino...
+  INFO Lino Site 'DSBE@armand' started. Languages: de, fr. 232 actors.
+  INFO Using Lino 1.4.4, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.
+  4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.
+  INFO AppyOdtBuildMethod Tx25 Request #1 -> overwrite existing t:\data\luc\lino_local\dsbe\media\userdocs\appyodt\cbss.Re
+  trieveTIGroupsRequest-1.odt.
+  INFO appy.pod render t:\hgwork\lino\lino\modlib\cbss\config\cbss\RetrieveTIGroupsRequest\Default.odt -> t:\data\luc\lino
+  _local\dsbe\media\userdocs\appyodt\cbss.RetrieveTIGroupsRequest-1.odt (language='de',params={'ooPort': 8100, 'pythonWith
+  UnoPath': 'C:\\PROGRA~1\\LIBREO~1.4\\program\\python.exe'}
+
