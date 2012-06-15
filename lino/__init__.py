@@ -575,7 +575,7 @@ class Lino(object):
     
     alt_date_formats_extjs = 'd/m/Y|Y-m-d'
     """
-    Alternative date entry formats accepted by Date widgets.
+    Alternative date entry formats accepted by ExtJS Date widgets.
     """
     
     #~ date_format_regex = "/^[0123]\d\.[01]\d\.-?\d+$/"

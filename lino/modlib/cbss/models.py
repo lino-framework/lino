@@ -836,44 +836,44 @@ class NewStyleRequest(CBSSRequest):
         #~ return u"%s#%s" % (self.__class__.__name__,self.pk)
         
     def get_service_reply(self):
-        """
-        Example of a reply::
-        
-          (reply){
-             informationCustomer =
-                (InformationCustomerType){
-                   ticket = "1"
-                   timestampSent = 2012-05-23 09:24:55.316312
-                   customerIdentification =
-                      (CustomerIdentificationType){
-                         cbeNumber = "0123456789"
-                      }
-                }
-             informationCBSS =
-                (InformationCBSSType){
-                   ticketCBSS = "f11736b3-97bc-452a-a75c-16fcc2a2f6ae"
-                   timestampReceive = 2012-05-23 08:24:37.000385
-                   timestampReply = 2012-05-23 08:24:37.000516
-                }
-             status =
-                (StatusType){
-                   value = "NO_RESULT"
-                   code = "MSG00008"
-                   description = "A validation error occurred."
-                   information[] =
-                      (InformationType){
-                         fieldName = "ssin"
-                         fieldValue = "12345678901"
-                      },
-                }
-             searchInformation =
-                (SearchInformationType){
-                   ssin = "12345678901"
-                   language = "de"
-                   history = False
-                }
-           }        
-        """
+        #~ """
+    #~ Example of a reply::
+
+    #~ (reply){
+       #~ informationCustomer =
+          #~ (InformationCustomerType){
+             #~ ticket = "1"
+             #~ timestampSent = 2012-05-23 09:24:55.316312
+             #~ customerIdentification =
+                #~ (CustomerIdentificationType){
+                   #~ cbeNumber = "0123456789"
+                #~ }
+          #~ }
+       #~ informationCBSS =
+          #~ (InformationCBSSType){
+             #~ ticketCBSS = "f11736b3-97bc-452a-a75c-16fcc2a2f6ae"
+             #~ timestampReceive = 2012-05-23 08:24:37.000385
+             #~ timestampReply = 2012-05-23 08:24:37.000516
+          #~ }
+       #~ status =
+          #~ (StatusType){
+             #~ value = "NO_RESULT"
+             #~ code = "MSG00008"
+             #~ description = "A validation error occurred."
+             #~ information[] =
+                #~ (InformationType){
+                   #~ fieldName = "ssin"
+                   #~ fieldValue = "12345678901"
+                #~ },
+          #~ }
+       #~ searchInformation =
+          #~ (SearchInformationType){
+             #~ ssin = "12345678901"
+             #~ language = "de"
+             #~ history = False
+          #~ }
+     #~ }        
+        #~ """
         if not self.response_xml: return None
         client = get_client(self).service
         #~ print '20120613b', dir(client)
@@ -1508,427 +1508,7 @@ class MyManageAccessRequests(ManageAccessRequests,mixins.ByUser):
     pass
 
 
-        
-class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
-    """
-    A request to the RetrieveTIGroups service (aka Tx25)
-    """
-    
-    class Meta:
-        verbose_name = _("Tx25 Request")
-        verbose_name_plural = _('Tx25 Requests')
-        
-    wsdl_parts = ('cache','wsdl','RetrieveTIGroupsV3.wsdl')
-    
-    language = babel.LanguageField()
-    history = models.BooleanField(
-        verbose_name=_("History"),default=False,
-        help_text = "Whatever this means.")
-        
-    def get_service_reply(self,**kwargs):
-        client = get_client(self)
-        meth = client.service.retrieveTI
-        clientclass = meth.clientclass(kwargs)
-        client = clientclass(meth.client, meth.method)
-        #~ print 20120613, portSelector[0]
-        #~ print '20120613b', dir(client)
-        return client.succeeded(client.method.binding.input, self.response_xml.encode('utf-8'))
-        
-    
-    def execute_newstyle(self,client,infoCustomer,simulate_response):
-        si = client.factory.create('ns0:SearchInformationType')
-        si.ssin = self.get_ssin()
-        if self.language:
-            si.language = self.language
-        #~ if self.history:
-            #~ si.history = 'true'
-        si.history = self.history
-        #~ if validate:
-            #~ self.validate_newstyle(srvreq)
-        if simulate_response is None:
-            self.check_environment(si)
-            try:
-                reply = client.service.retrieveTI(infoCustomer,None,si)
-            except suds.WebFault,e:
-                """
-                Example of a SOAP fault:
-          <soapenv:Fault>
-             <faultcode>soapenv:Server</faultcode>
-             <faultstring>An error occurred while servicing your request.</faultstring>
-             <detail>
-                <v1:retrieveTIGroupsFault>
-                   <informationCustomer xmlns:ns0="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/">
-                      <ticket>2</ticket>
-                      <timestampSent>2012-05-23T10:19:27.636628+01:00</timestampSent>
-                      <customerIdentification>
-                         <cbeNumber>0212344876</cbeNumber>
-                      </customerIdentification>
-                   </informationCustomer>
-                   <informationCBSS>
-                      <ticketCBSS>f4b9cabe-e457-4f6b-bfcc-00fe258a9b7f</ticketCBSS>
-                      <timestampReceive>2012-05-23T08:19:09.029Z</timestampReceive>
-                      <timestampReply>2012-05-23T08:19:09.325Z</timestampReply>
-                   </informationCBSS>
-                   <error>
-                      <severity>FATAL</severity>
-                      <reasonCode>MSG00003</reasonCode>
-                      <diagnostic>Unexpected internal error occurred</diagnostic>
-                      <authorCode>http://www.bcss.fgov.be/en/international/home/index.html</authorCode>
-                   </error>
-                </v1:retrieveTIGroupsFault>
-             </detail>
-          </soapenv:Fault>
-                """
-                
-                msg = CBSS_ERROR_MESSAGE % e.fault.faultstring
-                msg += unicode(e.document)
-                self.status = RequestStatus.failed
-                raise Warning(msg)
-            self.response_xml = reply
-        else:
-            self.response_xml = simulate_response
-            
-        #~ self.response_xml = unicode(reply)
-        reply = self.get_service_reply()
-        self.ticket = reply.informationCBSS.ticketCBSS
-        if reply.status.value == "NO_RESULT":
-            msg = CBSS_ERROR_MESSAGE % reply.status.code
-            keys = ('value','code','description')
-            msg += '\n'.join([
-                k+' : '+getattr(reply.status,k)
-                    for k in keys])
-            for i in reply.status.information:
-                msg += "\n- %s = %s" % (i.fieldName,i.fieldValue)
-            self.status = RequestStatus.warnings
-            raise Warning(msg)
-            
-        self.status = RequestStatus.ok
-        #~ self.response_xml = str(res)
-        #~ self.response_xml = "20120522 %s %s" % (res.__class__,res)
-        #~ print 20120523, res.informationCustomer
-        #~ print self.response_xml
-        return reply
-        
-    def Result(self,ar):
-        return ar.spawn(RetrieveTIGroupsResult,master_instance=self)
-        
-        
-        
-    #~ @dd.virtualfield(dd.HtmlBox(_("Result")))
-    #~ def result(self,ar):
-        #~ """
-        #~ """
-        #~ return self.result2html(ar)
-        
-    def unused_result2html(self,ar):
-      
-      
-        E = xghtml.E
-        def rn2date(rd):
-            return IncompleteDate(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
-            #~ return datetime.date.date(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
-            
-        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
-            
-        doc = xghtml.Document('not used')
-        t = doc.add_table()
-        t.add_header_row("Type","Since","Info",**cellattrs)
-            
-        reply = self.get_service_reply()
-        res = reply.rrn_it_implicit
-        
-        oridate = rn2date(res.NationalNumber.NationalNumber.Date)
-        
-        def add_row(type,date,*info):
-            date = rn2date(date)
-            if date != oridate:
-                date = E.b(dtos(date))
-            else:
-                date = dtos(date)
-            t.add_body_row(type,date,info,**cellattrs)
-            
-        add_row(
-            'NationalNumber ',
-            res.NationalNumber.NationalNumber.Date,
-            E.b(res.NationalNumber.NationalNumber.NationalNumber),
-            ' (gender ',E.b(res.NationalNumber.NationalNumber.Sex),')'
-            )
-        
-        
-        if False:
-            items = []
-            #~ items.append(E.li('Das ist ',E.b('ein'),' Versuch'))
-            #~ items.append(E.li('Noch ein Versuch'))
-            
-            #~ logger.info(unicode(res))
-            oridate = rn2date(res.NationalNumber.NationalNumber.Date)
-            items.append(E.li(
-                'NationalNumber ',
-                E.b(res.NationalNumber.NationalNumber.NationalNumber),
-                ' (issued ',E.b(dtos(oridate)),
-                ', gender ',E.b(res.NationalNumber.NationalNumber.Sex),')'
-                ))
-            
-            sitems = []
-            for r in res.FileOwner.Residences:
-                sitems.append(E.li(
-                  "Lives in ", E.b(r.Residence.Label),' since ',E.b(dtos(rn2date(r.Date)))
-                ))
-            items.append(E.li('Residences:',E.ul(*sitems)))
-            
-            subitems = []
-            for n in res.Names.Name:
-                content = []
-                
-                for ln in n.Name.LastName:
-                    content.append(E.b(ln.Label))
-                    content.append(' ')
-                for fn in n.Name.FirstName:
-                    content.append(fn.Label)
-                    content.append(' ')
-                since = rn2date(n.Date)
-                if True: # since != oridate:
-                    content += [' (since ',E.b(dtos(since)),')']
-                
-                subitems.append(E.li(*content))
-            items.append(E.li('Names:',E.ul(*subitems)))
-            
-            body = []
-            body.append(E.ol(*items))
-            all = E.div(*body,class_="htmlText")
-            return E.tostring(all)
-        
-        return E.tostring(t.as_element())
-        
-        #~ return '<pre>%s</pre>' % unicode(res) 
-
-  
-class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
-  
-    parameters = "national_id language history"
-    
-    result = "cbss.RetrieveTIGroupsResult"
-    
-    #~ def setup_handle(self,lh):
-        #~ CBSSRequestDetail.setup_handle(self,lh)
-
-class RetrieveTIGroupsRequests(CBSSRequests):
-    model = RetrieveTIGroupsRequest
-    detail_layout = RetrieveTIGroupsRequestDetail()
-    required_user_groups = ['cbss']
-        
-    #~ @dd.virtualfield(dd.HtmlBox())
-    #~ def result(self,row,ar):
-        #~ return row.response_xml
-        
-class RetrieveTIGroupsRequestsByPerson(RetrieveTIGroupsRequests):
-    master_key = 'person'
-    
-class MyRetrieveTIGroupsRequests(RetrieveTIGroupsRequests,mixins.ByUser):
-    pass
-    
-    
-    
-class RetrieveTIGroupsResult(dd.VirtualTable):
-    """
-    Displays the response of an :class:`RetrieveTIGroupsRequest`
-    as a table.
-    """
-    master = RetrieveTIGroupsRequest
-    master_key = None
-    label = _("Results")
-    column_names = 'group:18 type:10 since:14 info:50'
-    
-    @dd.displayfield(_("Group"))
-    def group(self,obj,ar):
-        return obj.group
-            
-    @dd.displayfield(_("Type"))
-    def type(self,obj,ar):
-        return obj.type
-            
-    @dd.virtualfield(models.DateField(_("Since")))
-    def since(self,obj,ar):
-        return obj.since
-            
-    @dd.displayfield(_("Info"))
-    def info(self,obj,ar):
-        return obj.info
-            
-    @classmethod
-    def get_data_rows(self,ar):
-        rti = ar.master_instance
-        if rti is None: 
-            #~ print "20120606 ipr is None"
-            return
-        #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
-        #~ if not rti.status in (RequestStatus.ok,RequestStatus.warnings):
-            #~ return
-        reply = rti.get_service_reply()
-        if reply is None:
-            return
-            
-        E = xghtml.E
-        def rn2date(rd):
-            return IncompleteDate(int(rd.Century+rd.Year),int(rd.Month),int(rd.Day))
-            
-        def datarow(group,node,since,info):
-            return AttrDict(group=group,
-                type=node.__class__.__name__,
-                since=rn2date(since),info=E.p(*info))
-        def code_label(n):
-            if n.Label:
-                return [n.Code,' ',E.b(n.Label)]
-            return [n.Code]
-            
-        def name2info(n):
-            info = []
-            s = ' '.join([ln.Label for ln in n.LastName])
-            info.append(E.b(s))
-            info.append(', ')
-            s = ' '.join([fn.Label for fn in n.FirstName])
-            info.append(s)
-            return info
-            
-            
-        res = reply.rrn_it_implicit
-        
-        group = _("National Number")
-        n = res.NationalNumber.NationalNumber
-        info = [
-          E.b(n.NationalNumber),
-          ' ('+unicode(cbss2gender(n.Sex))+')']
-        yield datarow(group,n,n.Date,info)
-        
-        group = _("Birth Place")
-        n = res.BirthPlace
-        info = code_label(n.Place1)
-        info.append(' (' + n.ActNumber + ')')
-        yield datarow(group,n,n.Date,info)
-        
-        group = _("Residences")
-        for n in res.FileOwner.Residences:
-            info = [n.Residence.Label]
-            yield datarow(group,n,n.Date,info)
-            group = ''
-        
-        group = _("Names")
-        for n in res.Names.Name:
-            info = name2info(n.Name)
-            #~ info = []
-            #~ s = ' '.join([ln.Label for ln in n.Name.LastName])
-            #~ info.append(E.b(s))
-            #~ info.append(', ')
-            #~ s = ' '.join([fn.Label for fn in n.Name.FirstName])
-            #~ info.append(s)
-            yield datarow(group,n,n.Date,info)
-            group = ''
-        
-        group = "Legal Main Addresses"
-        for n in res.LegalMainAddresses.LegalMainAddress:
-            info = []
-            info.append(E.b(n.Address.ZipCode))
-            info.append(', ')
-            info.append(n.Address.Street.Label)
-            info.append(' ')
-            info.append(n.Address.HouseNumber)
-            yield datarow(group,n,n.Date,info)
-            group = ''
-            
-        group = _("Residence Abroad")
-        if hasattr(res,'ResidenceAbroad'):
-            for n in res.ResidenceAbroad.ResidenceAbroad:
-                info = []
-                info += code_label(n.Address.PosteDiplomatique)
-                info.append(', ')
-                info += code_label(n.Address.Territory)
-                info.append(', ')
-                pd = n.Address.Address
-                info += code_label(pd.Country)
-                info.append(', ')
-                info.append(E.b(pd.Graphic1))
-                info.append(', ')
-                info.append(E.b(pd.Graphic2))
-                info.append(', ')
-                info.append(E.b(pd.Graphic3))
-                yield datarow(group,n,n.Date,info)
-                group = ''
-        
-        group = _("Nationalities")
-        for n in res.Nationalities.Nationality:
-            info = code_label(n.Nationality)
-            yield datarow(group,n,n.Date,info)
-            group = ''
-            
-        group = _("Occupations")
-        for n in res.Occupations.Occupation:
-            info = code_label(n.Occupation)
-            info.append(' (SC ')
-            info += code_label(n.SocialCategory)
-            info.append(')')
-            yield datarow(group,n,n.Date,info)
-            group = ''
-        
-        group = _("Filiations")
-        for n in res.Filiations.Filiation:
-            info = code_label(n.FiliationType)
-            info.append(' of ')
-            info.append(n.Parent1.NationalNumber.NationalNumber)
-            info.append(' ')
-            info += name2info(n.Parent1.Name)
-            info.append(' and ')
-            info.append(n.Parent2.NationalNumber.NationalNumber)
-            info.append(' ')
-            info += name2info(n.Parent2.Name)
-            yield datarow(group,n,n.Date,info)
-            group = ''
-        
-        group = _("Civil States")
-        for n in res.CivilStates.CivilState:
-            info = code_label(n.CivilState)
-            info.append(' with ')
-            info += name2info(n.Spouse.Name)
-            info.append(' (')
-            info.append(n.Spouse.NationalNumber.NationalNumber)
-            info.append(') in ')
-            info += code_label(n.Lieu.Place1)
-            info.append(', ActNumber ')
-            info.append(n.ActNumber)
-            yield datarow(group,n,n.Date,info)
-            group = ''
-        
-        group = _("Family Members")
-        for n in res.FamilyMembers.FamilyMember:
-            info = code_label(n.FamilyRole)
-            yield datarow(group,n,n.Date,info)
-            group = ''
-        
-        group = _("Head Of Family")
-        for n in res.HeadOfFamily.HeadOfFamily:
-            info = []
-            info.append('Until %s :' % dtos(rn2date(n.DelDate)))
-            info += code_label(n.FamilyRole)
-            info.append(' in family headed by ')
-            info += name2info(n.Name)
-            info.append(' (')
-            info.append(n.NationalNumber.NationalNumber)
-            info.append(')')
-            yield datarow(group,n,n.Date,info)
-            group = ''
-        
-        group = _("Driving Licenses Old Model")
-        for n in res.DrivingLicensesOldModel.DrivingLicense:
-            info = code_label(n.TypeOfLicense)
-            info.append(' number ')
-            info.append(E.b(n.LicenseNumber))
-            info.append(', categories ' 
-              + ' '.join([cat.Label for cat in n.Categories.Category]))
-            info.append(', delivered in ')
-            info += code_label(n.Delivery.Place)
-            yield datarow(group,n,n.Date,info)
-            group = ''
-        
-            
+from lino.modlib.cbss.tx25 import *
     
 
 from lino.models import SiteConfig

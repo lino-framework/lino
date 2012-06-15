@@ -1,0 +1,795 @@
+<soapenv:Envelope xmlns:v1="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<soapenv:Body>
+<v1:retrieveTIGroupsResponse><informationCustomer xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1">
+            <ticket>4</ticket>
+            <timestampSent>2012-06-14T08:44:18.832319+01:00</timestampSent>
+            <customerIdentification>
+               <cbeNumber>0212344876</cbeNumber>
+            </customerIdentification>
+         </informationCustomer><informationCBSS><ticketCBSS>770c5e7d-8555-4ddd-9787-4e4f416c3d21</ticketCBSS><timestampReceive>2012-06-14T06:43:58.109Z</timestampReceive><timestampReply>2012-06-14T06:43:58.763Z</timestampReply></informationCBSS>
+
+
+<status>
+<value>DATA_FOUND</value>
+<code>MSG00000</code>
+<description>Treatment completed successfully.</description></status>
+<searchInformation xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://kszbcss.fgov.be/intf/RetrieveTIGroupsService/v1">
+            
+<ssin>68030700123</ssin>
+            
+<language>de</language>
+            
+<history>true</history>
+         </searchInformation>
+<rrn_it_implicit>
+<r:NationalNumber Type="000" Structure="A1" xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:NationalNumber>
+<r:NationalNumber>68030700123</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:Sex>1</r:Sex></r:NationalNumber></r:NationalNumber>
+<r:FileOwner xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Residences Type="001" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:Residence>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Residence>
+<r:Fusion>0</r:Fusion>
+<r:Language>2</r:Language></r:Residences></r:FileOwner>
+<r:Names xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Name Type="010" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:Name>
+<r:LastName>
+<r:Code>10706798</r:Code>
+<r:Label>Mustermann</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00017163</r:Code>
+<r:Label>Fr&#233;d&#233;ric</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00017308</r:Code>
+<r:Label>Franz</r:Label></r:FirstName></r:Name></r:Name></r:Names>
+<r:LegalMainAddresses xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>04</r:Year>
+<r:Month>11</r:Month>
+<r:Day>17</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4701</r:ZipCode>
+<r:Street>
+<r:Code>47016001</r:Code>
+<r:Label>Aachener Strasse</r:Label></r:Street>
+<r:HouseNumber>123</r:HouseNumber></r:Address></r:LegalMainAddress>
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>98</r:Year>
+<r:Month>12</r:Month>
+<r:Day>17</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4700</r:ZipCode>
+<r:Street>
+<r:Code>47001341</r:Code>
+<r:Label>Binsterweg</r:Label></r:Street>
+<r:HouseNumber>12</r:HouseNumber></r:Address></r:LegalMainAddress>
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>97</r:Year>
+<r:Month>12</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4700</r:ZipCode>
+<r:Street>
+<r:Code>47002741</r:Code>
+<r:Label>Maria-Theresia-Strasse</r:Label></r:Street>
+<r:HouseNumber>12</r:HouseNumber></r:Address></r:LegalMainAddress>
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>97</r:Year>
+<r:Month>01</r:Month>
+<r:Day>12</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4701</r:ZipCode>
+<r:Street>
+<r:Code>47016141</r:Code>
+<r:Label>Feldstrasse</r:Label></r:Street>
+<r:HouseNumber>12</r:HouseNumber></r:Address></r:LegalMainAddress>
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>95</r:Year>
+<r:Month>05</r:Month>
+<r:Day>10</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4700</r:ZipCode>
+<r:Street>
+<r:Code>47001241</r:Code>
+<r:Label>Bahnhofstrasse</r:Label></r:Street>
+<r:HouseNumber>1</r:HouseNumber></r:Address></r:LegalMainAddress>
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>73</r:Year>
+<r:Month>06</r:Month>
+<r:Day>25</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4700</r:ZipCode>
+<r:Street>
+<r:Code>47002741</r:Code>
+<r:Label>Maria-Theresia-Strasse</r:Label></r:Street>
+<r:HouseNumber>12</r:HouseNumber></r:Address></r:LegalMainAddress>
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>70</r:Year>
+<r:Month>10</r:Month>
+<r:Day>06</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4700</r:ZipCode>
+<r:Street>
+<r:Code>47002921</r:Code>
+<r:Label>Obere Ibern</r:Label></r:Street>
+<r:HouseNumber>12</r:HouseNumber></r:Address></r:LegalMainAddress>
+<r:LegalMainAddress Type="020" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>00</r:Year>
+<r:Month>00</r:Month>
+<r:Day>00</r:Day></r:Date>
+<r:Address>
+<r:ZipCode>4700</r:ZipCode>
+<r:Street>
+<r:Code>47002821</r:Code>
+<r:Label>Monschauer Strasse</r:Label></r:Street>
+<r:HouseNumber>12</r:HouseNumber></r:Address></r:LegalMainAddress></r:LegalMainAddresses>
+<r:Nationalities xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Nationality Type="031" Structure="B1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:Nationality>
+<r:Code>150</r:Code>
+<r:Label>Belgien</r:Label></r:Nationality></r:Nationality></r:Nationalities>
+<r:Occupations xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Occupation Type="070" Structure="A1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>06</r:Year>
+<r:Month>06</r:Month>
+<r:Day>06</r:Day></r:Date>
+<r:Occupation>
+<r:Code>09620</r:Code>
+<r:Label>Informatiker(in)</r:Label></r:Occupation>
+<r:SocialCategory>
+<r:Code>4</r:Code>
+<r:Label>(Gehalt.)</r:Label></r:SocialCategory></r:Occupation>
+<r:Occupation Type="070" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>93</r:Year>
+<r:Month>12</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:Occupation>
+<r:Code>20928</r:Code>
+<r:Label>Angestellte(r)</r:Label></r:Occupation>
+<r:SocialCategory>
+<r:Code>4</r:Code>
+<r:Label>(Gehalt.)</r:Label></r:SocialCategory></r:Occupation>
+<r:Occupation Type="070" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>84</r:Year>
+<r:Month>03</r:Month>
+<r:Day>22</r:Day></r:Date>
+<r:Occupation>
+<r:Code>04001</r:Code>
+<r:Label>Sch&#252;ler(in)</r:Label></r:Occupation>
+<r:SocialCategory>
+<r:Code>9</r:Code>
+<r:Label/></r:SocialCategory></r:Occupation>
+<r:Occupation Type="070" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>80</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:Occupation>
+<r:Code>00002</r:Code>
+<r:Label>Ohne Beruf</r:Label></r:Occupation>
+<r:SocialCategory>
+<r:Code>9</r:Code>
+<r:Label/></r:SocialCategory></r:Occupation></r:Occupations>
+<r:BirthPlace Type="100" Structure="A1" xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:ActNumber>00000</r:ActNumber>
+<r:Place1>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place1></r:BirthPlace>
+<r:Filiations xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Filiation Type="110" Structure="C1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:FiliationType>
+<r:Code>00</r:Code>
+<r:Label>Eheliches Kind</r:Label></r:FiliationType>
+<r:Parent1>
+<r:NationalNumber>
+<r:NationalNumber>40032303737</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>40</r:Year>
+<r:Month>03</r:Month>
+<r:Day>23</r:Day></r:Date>
+<r:Sex>1</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10706798</r:Code>
+<r:Label>Mustermann</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00019629</r:Code>
+<r:Label>Olivier</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00017308</r:Code>
+<r:Label>Franz</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00017163</r:Code>
+<r:Label>Fr&#233;d&#233;ric</r:Label></r:FirstName></r:Name></r:Parent1>
+<r:Parent2>
+<r:NationalNumber>
+<r:NationalNumber>40010400251</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>40</r:Year>
+<r:Month>01</r:Month>
+<r:Day>04</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10541839</r:Code>
+<r:Label>Ausdemwald</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00022049</r:Code>
+<r:Label>Maria</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00017251</r:Code>
+<r:Label>Magdalena</r:Label></r:FirstName></r:Name></r:Parent2></r:Filiation></r:Filiations>
+<r:CivilStates xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:CivilState Type="120" Structure="B1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>06</r:Year>
+<r:Month>06</r:Month>
+<r:Day>06</r:Day></r:Date>
+<r:CivilState>
+<r:Code>20</r:Code>
+<r:Label>Verheiratet</r:Label></r:CivilState>
+<r:Spouse>
+<r:NationalNumber>
+<r:NationalNumber>75081900208</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>75</r:Year>
+<r:Month>08</r:Month>
+<r:Day>19</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10578966</r:Code>
+<r:Label>Mergelsberg</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00027767</r:Code>
+<r:Label>M&#233;lanie</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00023557</r:Code>
+<r:Label>Anna</r:Label></r:FirstName></r:Name></r:Spouse>
+<r:Lieu>
+<r:Place1>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place1></r:Lieu>
+<r:ActNumber>0055</r:ActNumber></r:CivilState>
+<r:CivilState Type="120" Structure="G1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>98</r:Year>
+<r:Month>06</r:Month>
+<r:Day>08</r:Day></r:Date>
+<r:CivilState>
+<r:Code>41</r:Code>
+<r:Label>Geschieden</r:Label></r:CivilState>
+<r:Lieu>
+<r:Place3>
+<r:BelgianJudgement>
+<r:Tribunal>
+<r:Code>01</r:Code>
+<r:Label>Entscheid des erstinstanzlichen Gerichtes</r:Label></r:Tribunal>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>98</r:Year>
+<r:Month>05</r:Month>
+<r:Day>08</r:Day></r:Date>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:BelgianJudgement>
+<r:Transcription>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>98</r:Year>
+<r:Month>06</r:Month>
+<r:Day>29</r:Day></r:Date>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Transcription></r:Place3></r:Lieu>
+<r:ActNumber>0063</r:ActNumber></r:CivilState>
+<r:CivilState Type="120" Structure="B1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>95</r:Year>
+<r:Month>12</r:Month>
+<r:Day>30</r:Day></r:Date>
+<r:CivilState>
+<r:Code>20</r:Code>
+<r:Label>Verheiratet</r:Label></r:CivilState>
+<r:Spouse>
+<r:NationalNumber>
+<r:NationalNumber>70042500230</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>70</r:Year>
+<r:Month>04</r:Month>
+<r:Day>25</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10426913</r:Code>
+<r:Label>Keutgens</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00011257</r:Code>
+<r:Label>Claudia</r:Label></r:FirstName></r:Name></r:Spouse>
+<r:Lieu>
+<r:Place1>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place1></r:Lieu>
+<r:ActNumber>0159</r:ActNumber></r:CivilState>
+<r:CivilState Type="120" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:CivilState>
+<r:Code>10</r:Code>
+<r:Label>Unverheiratet</r:Label></r:CivilState></r:CivilState></r:CivilStates>
+<r:LegalCohabitations xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:LegalCohabitation Type="123" Structure="B1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>06</r:Year>
+<r:Month>06</r:Month>
+<r:Day>06</r:Day></r:Date>
+<r:Cessation>
+<r:Reason>
+<r:Code>01</r:Code>
+<r:Label>Eheschliessung</r:Label></r:Reason>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Cessation></r:LegalCohabitation>
+<r:LegalCohabitation Type="123" Structure="A1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>03</r:Year>
+<r:Month>11</r:Month>
+<r:Day>20</r:Day></r:Date>
+<r:Declaration>
+<r:RegistrationDate>
+<r:Century>20</r:Century>
+<r:Year>03</r:Year>
+<r:Month>11</r:Month>
+<r:Day>21</r:Day></r:RegistrationDate>
+<r:Partner>
+<r:NationalNumber>
+<r:NationalNumber>75081900208</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>75</r:Year>
+<r:Month>08</r:Month>
+<r:Day>19</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10578966</r:Code>
+<r:Label>Mergelsberg</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00027767</r:Code>
+<r:Label>M&#233;lanie</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00023557</r:Code>
+<r:Label>Anna</r:Label></r:FirstName></r:Name></r:Partner>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Declaration></r:LegalCohabitation></r:LegalCohabitations>
+<r:FamilyMembers xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:FamilyMember Type="140" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>97</r:Year>
+<r:Month>12</r:Month>
+<r:Day>02</r:Day></r:Date>
+<r:DelDate>
+<r:Century>20</r:Century>
+<r:Year>03</r:Year>
+<r:Month>11</r:Month>
+<r:Day>18</r:Day></r:DelDate>
+<r:FamilyRole>
+<r:Code>01</r:Code>
+<r:Label>Alleinstehend</r:Label></r:FamilyRole></r:FamilyMember>
+<r:FamilyMember Type="140" Structure="B1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>95</r:Year>
+<r:Month>12</r:Month>
+<r:Day>30</r:Day></r:Date>
+<r:DelDate>
+<r:Century>19</r:Century>
+<r:Year>97</r:Year>
+<r:Month>12</r:Month>
+<r:Day>02</r:Day></r:DelDate>
+<r:FamilyRole>
+<r:Code>02</r:Code>
+<r:Label>Gemahlin</r:Label></r:FamilyRole>
+<r:NationalNumber>
+<r:NationalNumber>70042500230</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>70</r:Year>
+<r:Month>04</r:Month>
+<r:Day>25</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10426913</r:Code>
+<r:Label>Keutgens</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00011257</r:Code>
+<r:Label>Claudia</r:Label></r:FirstName></r:Name></r:FamilyMember>
+<r:FamilyMember Type="140" Structure="B1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>06</r:Year>
+<r:Month>06</r:Month>
+<r:Day>06</r:Day></r:Date>
+<r:FamilyRole>
+<r:Code>02</r:Code>
+<r:Label>Gemahlin</r:Label></r:FamilyRole>
+<r:NationalNumber>
+<r:NationalNumber>75081900208</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>75</r:Year>
+<r:Month>08</r:Month>
+<r:Day>19</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10578966</r:Code>
+<r:Label>Mergelsberg</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00027767</r:Code>
+<r:Label>M&#233;lanie</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00023557</r:Code>
+<r:Label>Anna</r:Label></r:FirstName></r:Name></r:FamilyMember>
+<r:FamilyMember Type="140" Structure="B1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>95</r:Year>
+<r:Month>05</r:Month>
+<r:Day>10</r:Day></r:Date>
+<r:DelDate>
+<r:Century>19</r:Century>
+<r:Year>95</r:Year>
+<r:Month>12</r:Month>
+<r:Day>30</r:Day></r:DelDate>
+<r:FamilyRole>
+<r:Code>12</r:Code>
+<r:Label>nicht verwandt</r:Label></r:FamilyRole>
+<r:NationalNumber>
+<r:NationalNumber>70042500230</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>70</r:Year>
+<r:Month>04</r:Month>
+<r:Day>25</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10426913</r:Code>
+<r:Label>Keutgens</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00011257</r:Code>
+<r:Label>Claudia</r:Label></r:FirstName></r:Name></r:FamilyMember>
+<r:FamilyMember Type="140" Structure="B1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>03</r:Year>
+<r:Month>11</r:Month>
+<r:Day>18</r:Day></r:Date>
+<r:DelDate>
+<r:Century>20</r:Century>
+<r:Year>06</r:Year>
+<r:Month>06</r:Month>
+<r:Day>06</r:Day></r:DelDate>
+<r:FamilyRole>
+<r:Code>12</r:Code>
+<r:Label>nicht verwandt</r:Label></r:FamilyRole>
+<r:NationalNumber>
+<r:NationalNumber>75081900208</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>75</r:Year>
+<r:Month>08</r:Month>
+<r:Day>19</r:Day></r:Date>
+<r:Sex>2</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10578966</r:Code>
+<r:Label>Mergelsberg</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00027767</r:Code>
+<r:Label>M&#233;lanie</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00023557</r:Code>
+<r:Label>Anna</r:Label></r:FirstName></r:Name></r:FamilyMember></r:FamilyMembers>
+<r:HeadOfFamily xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:HeadOfFamily Type="141" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>07</r:Day></r:Date>
+<r:DelDate>
+<r:Century>19</r:Century>
+<r:Year>95</r:Year>
+<r:Month>05</r:Month>
+<r:Day>10</r:Day></r:DelDate>
+<r:FamilyRole>
+<r:Code>03</r:Code>
+<r:Label>Sohn</r:Label></r:FamilyRole>
+<r:NationalNumber>
+<r:NationalNumber>40032303737</r:NationalNumber>
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>40</r:Year>
+<r:Month>03</r:Month>
+<r:Day>23</r:Day></r:Date>
+<r:Sex>1</r:Sex></r:NationalNumber>
+<r:Name>
+<r:LastName>
+<r:Code>10706798</r:Code>
+<r:Label>Mustermann</r:Label></r:LastName>
+<r:FirstName>
+<r:Code>00019629</r:Code>
+<r:Label>Olivier</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00017308</r:Code>
+<r:Label>Franz</r:Label></r:FirstName>
+<r:FirstName>
+<r:Code>00017163</r:Code>
+<r:Label>Fr&#233;d&#233;ric</r:Label></r:FirstName></r:Name></r:HeadOfFamily></r:HeadOfFamily>
+<r:OrganDonations xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:OrganDonation Type="192" Structure="A1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>12</r:Year>
+<r:Month>04</r:Month>
+<r:Day>27</r:Day></r:Date>
+<r:Declaration>
+<r:Code>20</r:Code>
+<r:Label>Ausdr&#252;ckliches Einverst&#228;ndnis</r:Label></r:Declaration>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:OrganDonation></r:OrganDonations>
+<r:DrivingLicensesOldModel xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:DrivingLicense Type="194" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>86</r:Year>
+<r:Month>10</r:Month>
+<r:Day>01</r:Day></r:Date>
+<r:TypeOfLicense>
+<r:Code>00</r:Code>
+<r:Label>Zuteil.</r:Label></r:TypeOfLicense>
+<r:Categories>
+<r:Category>
+<r:Code>02</r:Code>
+<r:Label>B</r:Label></r:Category></r:Categories>
+<r:LicenseNumber>A043009</r:LicenseNumber>
+<r:Delivery>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Delivery></r:DrivingLicense>
+<r:DrivingLicense Type="194" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>86</r:Year>
+<r:Month>06</r:Month>
+<r:Day>06</r:Day></r:Date>
+<r:TypeOfLicense>
+<r:Code>00</r:Code>
+<r:Label>Zuteil.</r:Label></r:TypeOfLicense>
+<r:Categories>
+<r:Category>
+<r:Code>11</r:Code>
+<r:Label>AGFS kl. B</r:Label></r:Category></r:Categories>
+<r:LicenseNumber>J000730</r:LicenseNumber>
+<r:Delivery>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Delivery></r:DrivingLicense></r:DrivingLicensesOldModel>
+<r:IdentityCards xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:IdentityCard Type="195" Structure="F1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>10</r:Year>
+<r:Month>02</r:Month>
+<r:Day>09</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0000</r:Code>
+<r:Label>P.A.</r:Label></r:TypeOfCard>
+<r:CardNumber>591020075668</r:CardNumber>
+<r:Delivery>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Delivery>
+<r:ExpiryDate>
+<r:Century>20</r:Century>
+<r:Year>15</r:Year>
+<r:Month>01</r:Month>
+<r:Day>16</r:Day></r:ExpiryDate></r:IdentityCard>
+<r:IdentityCard Type="195" Structure="A2">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>05</r:Year>
+<r:Month>04</r:Month>
+<r:Day>19</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0000</r:Code>
+<r:Label>P.A.</r:Label></r:TypeOfCard>
+<r:CardNumber>590057563866</r:CardNumber></r:IdentityCard>
+<r:IdentityCard Type="195" Structure="A2">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>01</r:Year>
+<r:Month>02</r:Month>
+<r:Day>05</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0000</r:Code>
+<r:Label>P.A.</r:Label></r:TypeOfCard>
+<r:CardNumber>427003700404</r:CardNumber></r:IdentityCard>
+<r:IdentityCard Type="195" Structure="A2">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>91</r:Year>
+<r:Month>05</r:Month>
+<r:Day>10</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0000</r:Code>
+<r:Label>P.A.</r:Label></r:TypeOfCard>
+<r:CardNumber>427001773336</r:CardNumber></r:IdentityCard>
+<r:IdentityCard Type="195" Structure="A2">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>86</r:Year>
+<r:Month>08</r:Month>
+<r:Day>18</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0000</r:Code>
+<r:Label>P.A.</r:Label></r:TypeOfCard>
+<r:CardNumber>427000131309</r:CardNumber></r:IdentityCard>
+<r:IdentityCard Type="195" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>84</r:Year>
+<r:Month>03</r:Month>
+<r:Day>22</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0000</r:Code>
+<r:Label>P.A.</r:Label></r:TypeOfCard>
+<r:CardNumber>AL 093189</r:CardNumber>
+<r:Delivery>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Delivery></r:IdentityCard>
+<r:IdentityCard Type="195" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>80</r:Year>
+<r:Month>03</r:Month>
+<r:Day>11</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0000</r:Code>
+<r:Label>P.A.</r:Label></r:TypeOfCard>
+<r:CardNumber>AL 011283</r:CardNumber>
+<r:Delivery>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Delivery></r:IdentityCard>
+<r:IdentityCard Type="195" Structure="A1">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>68</r:Year>
+<r:Month>03</r:Month>
+<r:Day>08</r:Day></r:Date>
+<r:TypeOfCard>
+<r:Code>0060</r:Code>
+<r:Label>P.A. Kd. </r:Label></r:TypeOfCard>
+<r:CardNumber>   005749</r:CardNumber>
+<r:Delivery>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Delivery></r:IdentityCard></r:IdentityCards>
+<r:Passports xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Passport Type="199" Structure="C1">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>11</r:Year>
+<r:Month>01</r:Month>
+<r:Day>31</r:Day></r:Date>
+<r:Status>
+<r:Code>0</r:Code>
+<r:Label>Ausstellung</r:Label></r:Status>
+<r:PassportIdent>
+<r:PassportType>
+<r:Code>0</r:Code>
+<r:Label>Reisepass</r:Label></r:PassportType>
+<r:PassportNumber>EH960150  </r:PassportNumber></r:PassportIdent>
+<r:Issuer>
+<r:Place>
+<r:Code>63023</r:Code>
+<r:Label>Eupen</r:Label></r:Place></r:Issuer>
+<r:RenewalNumber>00</r:RenewalNumber>
+<r:ProductionDate>
+<r:Century>20</r:Century>
+<r:Year>11</r:Year>
+<r:Month>01</r:Month>
+<r:Day>21</r:Day></r:ProductionDate>
+<r:ExpiryDate>
+<r:Century>20</r:Century>
+<r:Year>16</r:Year>
+<r:Month>01</r:Month>
+<r:Day>20</r:Day></r:ExpiryDate></r:Passport></r:Passports>
+<r:CreationDate Type="253" Structure="A1" xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Date>
+<r:Century>19</r:Century>
+<r:Year>15</r:Year>
+<r:Month>09</r:Month>
+<r:Day>05</r:Day></r:Date></r:CreationDate>
+<r:LastUpdateDate Type="254" Structure="A1" xmlns:r="http://www.ibz.rrn.fgov.be/XSD/xm25/rn25Schema">
+<r:Date>
+<r:Century>20</r:Century>
+<r:Year>12</r:Year>
+<r:Month>04</r:Month>
+<r:Day>27</r:Day></r:Date></r:LastUpdateDate></rrn_it_implicit></v1:retrieveTIGroupsResponse></soapenv:Body></soapenv:Envelope>

@@ -48,6 +48,7 @@ from lino import dd
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
 from lino.utils import curry
+from lino.utils import babel
 from lino.utils import iif
 from lino.tools import obj2str
 from lino.utils import IncompleteDate
@@ -411,7 +412,8 @@ class RequestStoreField(StoreField):
             return ''
         #~ return ar.renderer.href_to_request(v,str(n))
         url = ar.renderer.js2url(ar.renderer.request_handler(v))
-        return xghtml.E.a(cgi.escape(force_unicode(rr.label)),href=url)
+        #~ return xghtml.E.a(cgi.escape(force_unicode(v.label)),href=url)
+        return xghtml.E.a(str(n),href=url)
       
         #~ s = self.format_value(ar,v)
         #~ if not s: return s
@@ -696,6 +698,14 @@ class DateStoreField(StoreField):
         else:
             v = None
         return v
+        
+    def format_value(self,ar,v):
+        """
+        Return a plain textual representation of this value as a unicode string.
+        """
+        return babel.dtos(v)
+        #~ return settings.LINO.format_date(v)
+        #~ return force_unicode(v)
         
 
 class IncompleteDateStoreField(StoreField):

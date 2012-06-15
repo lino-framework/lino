@@ -12,5 +12,4 @@ It is the second demo application that comes with Lino.
    :maxdepth: 1
   
    userman
-   appdocs/index
 

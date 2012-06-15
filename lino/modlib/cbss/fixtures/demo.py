@@ -50,15 +50,20 @@ if cbss:
         [ cbss.RetrieveTIGroupsRequest, 
           dict(national_id='680601 053-29',history=True), 
           'demo_tx25_1.xml' ],
+        [ cbss.RetrieveTIGroupsRequest, 
+          dict(national_id='680307 001-23',history=True), 
+          'demo_tx25_2.xml' ],
     ]
 
     def objects():
         User = dd.resolve_model(settings.LINO.user_model)
+        root = User.objects.get(username='root')
         Person = dd.resolve_model(settings.LINO.person_model)
         PERSONS = Cycler(Person.objects.filter(coached_from__isnull=False).order_by('id'))
+        mustermann = PERSONS.pop()
         for model,kw,fn in DEMO_REQUESTS:
-            kw.update(person=PERSONS.pop())
-            kw.update(user=User.objects.get(username='root'))
+            kw.update(person=mustermann)
+            kw.update(user=root)
             obj = model(**kw)
             if fn:
                 fn = os.path.join(os.path.dirname(__file__),fn)

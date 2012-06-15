@@ -134,6 +134,7 @@ cellspacing
 width
 align
 valign
+href
 """)
 
 def table_header_row(*headers,**kw):

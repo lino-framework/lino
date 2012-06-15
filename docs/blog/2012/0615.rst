@@ -1,6 +1,15 @@
 20120615
 ========
 
+Die erste Antwort aus der Demo-Fixture (`demo_tx25_1.xml`) 
+wird jetzt korrekt ausgewertet.
+
 Der Management-Befehl :mod:`run <lino.management.commands.run>` 
 gibt jetzt eventuelle Kommandozeilenparameter an das aufzurufende 
 Skript weiter.
+
+22.45 Uhr : So, die beiden ersten Beispiele
+aus der Demo-Fixture (`demo_tx25_1.xml` und `demo_tx25_2.xml`) 
+werden jetzt nicht nur korrekt ausgewertet, sondern es kommt 
+auch eine Fehlermeldung, wenn eine nächste Antwort 
+Informationen enthält, die er noch nicht kennt.
