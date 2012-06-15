@@ -14,12 +14,14 @@ habe ich mir folgendes Script geschrieben::
   ui = Console()
   ui.run(Tx25.print_action,1)
 
-Also ich klicke sozusagen programmatisch auf den `Drucken`-Knopf auf der Tx25 # 1.
+Also ich klicke sozusagen programmatisch auf den `Drucken`-Knopf 
+auf der Tx25 # 1.
 Aufruf ist wie folgt::
 
   T:\data\luc\lino_local\dsbe>python manage.py shell < tx25.py
 
-Der Output ist nicht besonders schön, weil die ">>>" vom `shell` stören::
+Der Output ist nicht besonders schön, weil die ">>>" der interaktiven 
+`shell` stören::
 
   Python 2.7.1 (r271:86832, Nov 27 2010, 18:30:46) [MSC v.1500 32 bit (Intel)] on win32
   Type "help", "copyright", "credits" or "license" for more information.
@@ -36,8 +38,10 @@ Der Output ist nicht besonders schön, weil die ">>>" vom `shell` stören::
   {'open_url': '/media/userdocs/appyodt/cbss.RetrieveTIGroupsRequest-1.odt', 'success': True}
   >>> >>> >>> >>>
 
-Aber es funktioniert. Da wir uns nicht im Web sondern in einer Console befinden, wird die 
-action response 'open_url' mittels ``os.startfile()`` gestartet. Cool!
+Aber es funktioniert. 
+Da wir uns nicht im Web sondern in einer Console befinden, wird die 
+action response 'open_url' mittels ``os.startfile()`` gestartet. 
+Cool!
 
 Damit das funktionierte, musste ich dann doch einige subtile interne Änderungen machen:
 Neues Modul :mod:`lino.extjs`, und :mod:`lino.ui.console` 
@@ -65,7 +69,8 @@ Hier als Souvenir zwei der Fehlermeldungen, die heute waren::
 Und die eigentliche Arbeit (Ausdruck einer 
 Tx25) ist darüber für heute liegengeblieben. C'est la vie...
 
-Noch schnell vor Feierabend ein neuer management command :mod:`run <lino.management.commands.run>`, 
+Noch schnell vor Feierabend ein neuer Management-Befehl
+:mod:`run <lino.management.commands.run>`, 
 der ein lokales Skript wie unser `tx25.py` ausführt ohne die unschönen 
 Zwischenbemerkungen der interaktiven `shell`::
 
@@ -80,3 +85,6 @@ Zwischenbemerkungen der interaktiven `shell`::
   _local\dsbe\media\userdocs\appyodt\cbss.RetrieveTIGroupsRequest-1.odt (language='de',params={'ooPort': 8100, 'pythonWith
   UnoPath': 'C:\\PROGRA~1\\LIBREO~1.4\\program\\python.exe'}
 
+Und dann doch noch schnell vorm Schlafengehen ausprobieren, 
+ob die eigentliche Arbeit nun besser geht. 
+Resultat: super! 

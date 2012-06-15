@@ -1,0 +1,6 @@
+20120615
+========
+
+Der Management-Befehl :mod:`run <lino.management.commands.run>` 
+gibt jetzt eventuelle Kommandozeilenparameter an das aufzurufende 
+Skript weiter.

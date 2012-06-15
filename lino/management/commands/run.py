@@ -13,10 +13,19 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 u"""
-Execute the Python script(s) specified as command-line arguments
-after having set up the Django environment.
+Execute a standalone Python script after having set up the Django 
+environment. Also modify `sys.args` and `__name__` so that 
+the invoked script sees them as if it had been called directly.
 
-For example if you have a file `tmp.py` with the following content...
+This is yet another answer to the frequently asked Django question
+about how to run standalone Django scripts
+(`[1] <http://stackoverflow.com/questions/4847469/use-django-from-python-manage-py-shell-to-python-script>`__,
+`[2] <http://www.b-list.org/weblog/2007/sep/22/standalone-django-scripts/>`__).
+It is almost the same as redirecting stdin of Django's ``shell`` command 
+(i.e. doing ``python manage.py shell < myscript.py``), but without the disturbing 
+messages from the interactive console.
+
+For example if you have a file `myscript.py` with the following content...
 
 ::
 
@@ -25,39 +34,28 @@ For example if you have a file `tmp.py` with the following content...
 
 ... then you can run this script using::
 
-  $ python manage.py run tmp.py
+  $ python manage.py run myscript.py
   [<Partner: Rumma & Ko OÜ>, ...  <Partner: Charlier Ulrike>, 
   '...(remaining elements truncated)...']
   
-
-This is almost the same as redirecting stdin of Django's ``shell`` command 
-(i.e. doing ``python manage.py shell < tmp.py``), but without the disturbing 
-messages from the interactive console::
-
-  Python 2.7.1 (r271:86832, Nov 27 2010, 18:30:46) [MSC v.1500 32 bit (Intel)] on win32
-  Type "help", "copyright", "credits" or "license" for more information.
-  (InteractiveConsole)
-  >>> >>> [<Partner: Rumma & Ko OÜ>, ...  <Partner: Charlier Ulrike>, 
-  '...(remaining elements truncated)...']
-  >>>
   
 
-This is another possible answer to a frequently asked Django question 
-(`[1] <http://stackoverflow.com/questions/4847469/use-django-from-python-manage-py-shell-to-python-script>`__,
-`[2] <http://www.b-list.org/weblog/2007/sep/22/standalone-django-scripts/>`__).
-
-And it is a very simple solution. 
 See the source code at :srcref:`/lino/management/commands/run.py`.
 
 """
 
-from django.core.management.base import BaseCommand
+import sys
+from django.core.management.base import BaseCommand, CommandError
 
 class Command(BaseCommand):
     help = __doc__
-    args = "file1 [file2 ...]"
+    args = "scriptname [args ...]"
     
     def handle(self, *args, **options):
-        for arg in args:
-            execfile(arg)
+        if len(args) == 0:
+            raise CommandError("I need at least one argument.")
+        fn = args[0]
+        sys.argv = sys.argv[2:]
+        globals()['__name__'] = '__main__'
+        execfile(fn)
           
