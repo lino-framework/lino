@@ -493,10 +493,49 @@ def moneyfmt(value, places=2, curr='', sep=',', dp='.',
     return ''.join(reversed(result))
     
     
-def get_view_permission(self,user):
+class ViewPermissionBase(object):
+    """
+    Inherited by 
+    :class:`lino.core.actors.Actor`,
+    :class:`lino.utils.jsgen.Component`,
+    but also instantiated 
+    :meth:`lino.models.Workflow.get_permission`.
+    """
+    
+    required_user_level = None
+    """
+    The minimum :class:`lino.utils.choicelists.UserLevel` 
+    required to get permission to view this Actor.
+    The default value `None` means that no special UserLevel is required.
+    See also :attr:`required_user_groups`
+    """
+    
+    required_user_groups = None
+    """
+    List of strings naming the user groups for which membership is required 
+    to get permission to view this Actor.
+    The default value `None` means
+    """
+    
+class ViewPermissionClass(ViewPermissionBase):
+    @classmethod    
+    def get_view_permission(cls,user):
+        return _get_view_permission(cls,user)
+        
+class ViewPermissionInstance(ViewPermissionBase):
+    def __init__(self,**kw):
+        for k,v in kw.items(): 
+            setattr(self,k,v)
+            
+    def get_view_permission(self,user):
+        #~ if self.required_user_groups is not None or self.required_user_level is not None:
+            #~ print 20120616, user, self.required_user_groups, self.required_user_level
+        return _get_view_permission(self,user)
+        
+def _get_view_permission(self,user):
     """
     Return `True` if the specified `user` has permission 
-    to see this Actor.
+    to see this.
     """
     #~ if hasattr(self,'value') and self.value.get("title") == "CBSS":
         #~ print "20120525 jsgen.get_view_permission()", self
@@ -521,23 +560,6 @@ def get_view_permission(self,user):
                 return True
     return False
     
-class ViewPermission(object):
-  
-    required_user_level = None
-    """
-    The minimum :class:`lino.utils.choicelists.UserLevel` 
-    required to get permission to view this Actor.
-    The default value `None` means that no special UserLevel is required.
-    See also :attr:`required_user_groups`
-    """
-    
-    required_user_groups = None
-    """
-    List of strings naming the user groups for which membership is required 
-    to get permission to view this Actor.
-    The default value `None` means
-    """
-        
     
 
 

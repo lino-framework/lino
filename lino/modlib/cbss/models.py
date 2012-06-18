@@ -1601,7 +1601,9 @@ dd.inject_field(pcsw.Person,
 
 MODULE_NAME = _("CBSS")
 
-settings.LINO.add_user_field('cbss_level',UserLevel.field(MODULE_NAME))
+#~ settings.LINO.add_user_field('cbss_level',UserLevel.field(MODULE_NAME))
+settings.LINO.add_user_group('cbss',MODULE_NAME)
+#~ settings.LINO.add_user_field('cbss_level',UserLevel.field(MODULE_NAME))
 
 dd.inject_field('countries.City',
     'inscode',

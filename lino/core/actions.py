@@ -121,6 +121,11 @@ class Action(object):
     sort_index = 99
     opens_a_slave = False
     label = None
+    
+    #~ ruled = False 
+    #~ """
+    #~ Whether this action is ruled by workflows.
+    #~ """
     actor = None
     name = None
     url_action_name = None
@@ -215,23 +220,43 @@ class Action(object):
 
 
 class TableAction(Action):
+    """
+    TODO: get_row_permission and required_states 
+    are needed here because `disabled_actions` also asks InsertRow whether 
+    it's permitted on that row. It's in fact not correct to ask this for 
+    the Insert button. Has to do with the fact that the Insert button is 
+    in the bottom toolbar though it should be in the top toolbar...
+    """
   
+    required_states = None
+    
     def get_action_title(self,rr):
         return rr.get_title()
         
     def get_row_permission(self,user,obj):
-        """
-        TODO: Needed here because disabled_actions also asks InsertRow whether 
-        it's permitted on that row. It's in fact not correct to ask this for 
-        the Insert button. Has to do with the fact that the Insert button should 
-        be in the top toolbar...
-        """
         return self.actor.get_permission(user,self)
 
 class RowAction(Action):
     """
-    Base class for actions that are executed server-side on an individual row.
+    Base class for actions that are executed on an individual row.
     """
+    
+    required_states = None
+    """
+    If this is set, the action is available only on rows whose 
+    workflow state is one of the specified states.
+    It must be either None or a `list` or `set` of states.
+    
+    """
+    
+    owned_only = False
+    """
+    If this is `True` 
+    (and if :attr:`lino.core.actors.Actor.workflow_owner_field` is set),
+    the action will be available only on rows owned by the requesting user.
+    """
+    
+    #~ ruled = True
     
     def run(self,row,ar,**kw):
         """
@@ -241,10 +266,6 @@ class RowAction(Action):
         raise NotImplementedError("%s has no run() method" % self.__class__)
 
     def get_row_permission(self,user,obj):
-        #~ if self.actor is None:
-            #~ raise Exception("20120531 %r" % self)
-            #~ return True
-        #~ return self.actor.get_permission(self,user,obj)
         return self.actor.get_row_permission(self,user,obj)
             
     def attach_to_actor(self,actor,name):
@@ -256,7 +277,7 @@ class RowAction(Action):
 
 
 class RedirectAction(Action):
-    #~ mimetype = None
+    
     def get_target_url(self,elem):
         raise NotImplementedError
         

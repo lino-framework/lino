@@ -1956,7 +1956,8 @@ dd.inject_field(SiteConfig,
 """
 ...
 """
-settings.LINO.add_user_field('integ_level',UserLevel.field(_("Integration")))
+#~ settings.LINO.add_user_field('integ_level',UserLevel.field(_("Integration")))
+settings.LINO.add_user_group('integ',_("Integration"))
               
         
 #~ RoleType = resolve_model('contacts.RoleType')
@@ -2124,7 +2125,7 @@ def site_setup(site):
     
     site.modules.cal.Events.set_detail("""
     type summary user project
-    start end #all_day #duration status 
+    start end #all_day #duration state workflow_buttons 
     place priority access_class transparent #rset 
     calendar owner created:20 modified:20 user_modified 
     description GuestsByEvent

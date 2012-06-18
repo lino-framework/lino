@@ -634,7 +634,12 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
             #~ print name, node.__class__
             m = getattr(RowHandlers,node.__class__.__name__,None)
             if m is None:
-                raise Exception("No handler for %s/%s in %s" % (name, node.__class__,rti)
+                yield AttrDict(
+                  info="No handler for %s/%s in %s" % (name, node.__class__,rti),
+                  group='Error',
+                  type='',
+                  date=datetime.date.today(),
+                  )
             else:
                 for row in m(node,name): yield row
         

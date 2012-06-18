@@ -49,7 +49,7 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.outbox import models as outbox # import Mailable
 
 from lino.modlib.cal.utils import \
-    Weekday, DurationUnit, setkw, dt2kw
+    Weekday, DurationUnit, setkw, dt2kw, EventState, GuestState, TaskState
 #~ from lino.modlib.cal.utils import EventStatus, \
     #~ TaskStatus, DurationUnit, Priority, AccessClass, \
     #~ GuestStatus, setkw, dt2kw
@@ -282,39 +282,38 @@ class EventGenerator(mixins.AutoUser):
                 if e: # [NOTE1]
                     date = e.start_date
     
+
+#~ class EventStatus(babel.BabelNamed):
+    #~ "The status of an Event."
+    #~ class Meta:
+        #~ verbose_name = _("Event Status")
+        #~ verbose_name_plural = _('Event Statuses')
+    #~ ref = models.CharField(max_length='1')
+    #~ reminder = models.BooleanField(_("Reminder"),default=True)
     
+#~ class EventStatuses(dd.Table):
+    #~ model = EventStatus
+    #~ column_names = 'name *'
 
-class EventStatus(babel.BabelNamed):
-    "The status of an Event."
-    class Meta:
-        verbose_name = _("Event Status")
-        verbose_name_plural = _('Event Statuses')
-    ref = models.CharField(max_length='1')
-    reminder = models.BooleanField(_("Reminder"),default=True)
-    
-class EventStatuses(dd.Table):
-    model = EventStatus
-    column_names = 'name *'
+#~ class TaskStatus(babel.BabelNamed):
+    #~ "The status of a Task."
+    #~ class Meta:
+        #~ verbose_name = _("Task Status")
+        #~ verbose_name_plural = _('Task Statuses')
+    #~ ref = models.CharField(max_length='1')
+#~ class TaskStatuses(dd.Table):
+    #~ model = TaskStatus
+    #~ column_names = 'name *'
 
-class TaskStatus(babel.BabelNamed):
-    "The status of a Task."
-    class Meta:
-        verbose_name = _("Task Status")
-        verbose_name_plural = _('Task Statuses')
-    ref = models.CharField(max_length='1')
-class TaskStatuses(dd.Table):
-    model = TaskStatus
-    column_names = 'name *'
-
-class GuestStatus(babel.BabelNamed):
-    "The status of a Guest."
-    class Meta:
-        verbose_name = _("Guest Status")
-        verbose_name_plural = _('Guest Statuses')
-    ref = models.CharField(max_length='1')
-class GuestStatuses(dd.Table):
-    model = GuestStatus
-    column_names = 'name *'
+#~ class GuestStatus(babel.BabelNamed):
+    #~ "The status of a Guest."
+    #~ class Meta:
+        #~ verbose_name = _("Guest Status")
+        #~ verbose_name_plural = _('Guest Statuses')
+    #~ ref = models.CharField(max_length='1')
+#~ class GuestStatuses(dd.Table):
+    #~ model = GuestStatus
+    #~ column_names = 'name *'
 
 class Priority(babel.BabelNamed):
     "The priority of a Task or Event."
@@ -612,8 +611,8 @@ class Component(ComponentBase,
         html = ui.ext_renderer.href_to(self)
         if self.start_time:
             html += _(" at ") + babel.dtos(self.start_time)
-        if self.status_id:
-            html += ' [%s]' % cgi.escape(force_unicode(self.status))
+        if self.state:
+            html += ' [%s]' % cgi.escape(force_unicode(self.state))
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
@@ -657,9 +656,14 @@ class ExtAllDayField(dd.VirtualField):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         return (obj.start_time is None)
         
+#~ from lino.modlib.workflows import models as workflows # Workflowable
 
 class Components(dd.Table):
+#~ class Components(dd.Table,workflows.Workflowable):
   
+    workflow_owner_field = 'user'    
+    workflow_state_field = 'state'
+    
     #~ def disable_editing(self,request):
     #~ def get_row_permission(cls,row,user,action):
         #~ if row.rset: return False
@@ -675,13 +679,18 @@ class Components(dd.Table):
 
 
 
+
 #~ class Event(Component,Ended,mixins.TypedPrintable,mails.Mailable):
-class Event(Component,Ended,mixins.TypedPrintable,outbox.Mailable):
+class Event(Component,Ended,
+    mixins.TypedPrintable,
+    outbox.Mailable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
     is a scheduled lapse of time where something happens.
     """
-  
+    
+    #~ workflow_state_field = 'state'
+    
     class Meta:
         #~ abstract = True
         verbose_name = _("Event")
@@ -692,8 +701,8 @@ class Event(Component,Ended,mixins.TypedPrintable,outbox.Mailable):
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
-    #~ status = EventStatus.field(_("Status"),blank=True) # iCal:STATUS
-    status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
+    state = EventState.field(blank=True) # iCal:STATUS
+    #~ status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     #~ duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
     #~ duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
     #~ duration_unit = DurationUnit.field(_("Duration unit"),blank=True) # iCal:DURATION
@@ -755,6 +764,22 @@ class Event(Component,Ended,mixins.TypedPrintable,outbox.Mailable):
             return self.project.get_print_language(bm)
         return self.user.language
         
+    @dd.action(_("Suggest"),
+        required_states=set(('',EventState.draft)),
+        owned_only=True)
+    def suggest_action(self,ar):
+        #~ if self.state != GuestState.invited:
+        print 'TODO: would suggest', self
+        self.state = EventState.suggested
+    
+    @dd.action(_("Publish"),
+        owned_only=True,
+        required_states=set(('',EventState.draft,EventState.suggested)))
+    def publish(self,ar):
+        #~ if self.state != GuestState.invited:
+        print 'TODO: would publish', self
+        self.state = EventState.published
+        
 
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(Component):
@@ -763,7 +788,7 @@ class Task(Component):
     get reminded about it.
     
     """
-  
+    
     class Meta:
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
@@ -777,8 +802,8 @@ class Task(Component):
         verbose_name=_("Due time"))
     done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
-    #~ status = TaskStatus.field(blank=True) # iCal:STATUS
-    status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
+    state = TaskState.field(blank=True) # iCal:STATUS
+    #~ status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     
 
     @classmethod
@@ -798,7 +823,7 @@ class EventDetail(dd.DetailLayout):
     
     main = """
     type summary user 
-    start end #all_day #duration status 
+    start end #all_day #duration state
     place priority access_class transparent #rset 
     calendar owner created:20 modified:20 user_modified 
     description
@@ -807,7 +832,7 @@ class EventDetail(dd.DetailLayout):
     
 class Events(Components):
     model = 'cal.Event'
-    column_names = 'start_date start_time summary status *'
+    column_names = 'start_date start_time summary state workflow_buttons *'
     #~ active_fields = ['all_day']
     
     detail_layout = EventDetail()
@@ -842,7 +867,7 @@ class EventsByPlace(Events):
     
 class Tasks(Components):
     model = 'cal.Task'
-    column_names = 'start_date summary done status *'
+    column_names = 'start_date summary done state *'
     #~ hidden_columns = set('owner_id owner_type'.split())
     
     #~ detail_template = """
@@ -852,7 +877,7 @@ class Tasks(Components):
     #~ description #notes.NotesByTask    
     #~ """
     detail_template = """
-    start_date status due_date done id
+    start_date state workflow_buttons due_date done id
     summary 
     user project 
     calendar owner created:20 modified:20 user_modified  
@@ -883,10 +908,10 @@ if settings.LINO.user_model:
         #~ model = 'cal.Event'
         #~ label = _("My Events")
         order_by = ["start_date","start_time"]
-        #~ column_names = 'start_date start_time summary status *'
+        #~ column_names = 'start_date start_time summary state *'
         
     class MyEventsToday(MyEvents):
-        column_names = 'start_time summary status *'
+        column_names = 'start_time summary state workflow_buttons *'
         label = _("My events today")
         
         @classmethod
@@ -896,7 +921,7 @@ if settings.LINO.user_model:
         
     class MyTasks(Tasks,mixins.ByUser):
         order_by = ["start_date","start_time"]
-        column_names = 'start_date summary done status *'
+        column_names = 'start_date summary done state workflow_buttons  *'
     
 
 class GuestRole(babel.BabelNamed):
@@ -929,8 +954,8 @@ class Guest(contacts.ContactDocument,
         verbose_name=_("Role"),
         blank=True,null=True) 
         
-    #~ status = GuestStatus.field(verbose_name=_("Status"),blank=True)
-    status = models.ForeignKey(GuestStatus,verbose_name=_("Status"),blank=True,null=True)
+    state = GuestState.field(blank=True)
+    #~ status = models.ForeignKey(GuestStatus,verbose_name=_("Status"),blank=True,null=True)
     
     #~ confirmed = models.DateField(
         #~ blank=True,null=True,
@@ -950,20 +975,36 @@ class Guest(contacts.ContactDocument,
         #~ mixins.CachedPrintable.setup_report(rpt)
         #~ outbox.Mailable.setup_report(rpt)
         
+    @dd.action(_("Invite"),required_states=set(['']))
+    def invite(self,ar):
+        #~ if self.state != GuestState.invited:
+        print 'TODO: would send invitation to', self
+        self.state = GuestState.invited
+        
+    @dd.action(_("Confirm"),required_states=set([GuestState.invited]))
+    def confirm(self,ar):
+        print 'TODO: would send confirmation to', self
+        self.state = GuestState.confirmed
+    
+#~ class Guests(dd.Table,workflows.Workflowable):
 class Guests(dd.Table):
     model = Guest
-    column_names = 'contact role status remark event *'
+    column_names = 'contact role state workflow_buttons remark event *'
+    workflow_state_field = 'state'
+    #~ column_names = 'contact role state remark event *'
+    #~ workflow_actions = ['invite','notify']
+    #~ workflow_owner_field = 'event__user'
     
     #~ def setup_actions(self):
         #~ super(dd.Table,self).setup_actions()
         #~ self.add_action(mails.CreateMailAction())
-    
+        
 class GuestsByEvent(Guests):
     master_key = 'event'
 
 class GuestsByContact(Guests):
     master_key = 'contact'
-    column_names = 'event role status remark * contact'
+    column_names = 'event role state workflow_buttons remark * contact'
 
 
 
@@ -1008,7 +1049,8 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     filterkw.update(user=user)
     
     for o in Event.objects.filter(
-        models.Q(status=None) | models.Q(status__reminder=True),
+        #~ models.Q(status=None) | models.Q(status__reminder=True),
+        models.Q(state=None) | models.Q(state__lte=EventState.published),
         **filterkw).order_by('start_date'):
         add(o)
         
@@ -1313,7 +1355,8 @@ def reminders(ui,user,days_back=None,days_forward=None,**kw):
     filterkw.update(user=user)
     
     for o in Event.objects.filter(
-        models.Q(status=None) | models.Q(status__reminder=True),
+        #~ models.Q(status=None) | models.Q(status__reminder=True),
+        models.Q(state=None) | models.Q(state__lte=EventState.published),
         **filterkw).order_by('start_date'):
         add(o)
         
@@ -1458,11 +1501,11 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(Places)
     m.add_action(Priorities)
     m.add_action(AccessClasses)
-    m.add_action(EventStatuses)
-    m.add_action(TaskStatuses)
+    #~ m.add_action(EventStatuses)
+    #~ m.add_action(TaskStatuses)
     m.add_action(EventTypes)
     m.add_action(GuestRoles)
-    m.add_action(GuestStatuses)
+    #~ m.add_action(GuestStatuses)
     m.add_action(Calendars)
   
 def setup_explorer_menu(site,ui,user,m):

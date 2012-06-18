@@ -29,8 +29,8 @@ from lino.core import actions
 from lino.core import layouts
 from lino.tools import resolve_model
 from lino.utils import curry, AttrDict
-from lino.utils import ViewPermission,  get_view_permission
-from lino.utils import jsgen
+from lino.utils import ViewPermissionClass
+#~ from lino.utils import jsgen
 
         
 
@@ -173,7 +173,7 @@ class ActorMetaClass(type):
   
   
 #~ class Actor(Handled,ViewPermission):
-class Actor(ViewPermission):
+class Actor(ViewPermissionClass):
     """
     Base class for Tables and Frames. 
     An alternative name for "Actor" is "Resource".
@@ -221,6 +221,34 @@ class Actor(ViewPermission):
     """
     For internal use. Automatically set to the field descriptor of the :attr:`master_key`.
     """
+    
+    editable = None
+    """
+    Set this explicitly to True or False to make the 
+    Actor per se editable or not.
+    Otherwise it will be set to `False` if the Actor is a Table has a `get_data_rows` method.
+    """
+    
+    
+    workflow_state_field = None 
+    #~ workflow_state_field = 'state' 
+    """
+    The name of the field that contains the workflow state of an object.
+    Subclasses may override this.
+    """
+    
+    workflow_owner_field = None
+    """
+    The name of the field that contains the user who is 
+    considered to own an object when `Rule.owned_only` is checked.
+    """
+    
+    workflow_actions = None
+    """
+    A list of action names to be governed by workflows.
+    """
+      
+    
     
     
     disabled_fields = None
@@ -409,9 +437,9 @@ class Actor(ViewPermission):
                 #~ for k,v in bd.items():
                     #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
         
-    @classmethod
-    def get_view_permission(cls):
-        return get_view_permission(cls,jsgen._for_user)
+    #~ @classmethod
+    #~ def get_view_permission(cls):
+        #~ return super(Actor,cls).get_view_permission(jsgen._for_user)
 
     @classmethod
     def get_row_permission(cls,action,user,row):
@@ -508,6 +536,36 @@ class Actor(ViewPermission):
     @classmethod
     def setup_request(self,req):
         pass
+        
+        
+    @fields.displayfield(_("Workflows"))
+    def workflow_buttons(self,obj,ar):
+        """
+        Displays the workflow buttons for this row and this user.
+        """
+        actor = ar.actor
+        if actor.workflow_actions is None:
+            return 'no actions in %s' % actor
+        l = []
+        state = getattr(obj,actor.workflow_state_field.name)
+        for a in actor.workflow_actions:
+            if a.required_states is None or state in a.required_states:
+                rh = a._rule_handlers[state]
+                if rh.allow(obj,ar.get_user()):
+                    #~ a = getattr(self.__class__,an)
+                    #~ a = self.actor.get_action(an)
+                    l.append(ar.renderer.row_action_button(obj,ar,a))
+                else:
+                    print '20120619 not allowed', a
+            else:
+                print '20120619 %s : state %r not in required states %s' % (a,state,a.required_states)
+        #~ for a in ar.actor.get_actions():
+            #~ if a.ruled and a.get_row_permission(ar.get_user(),self):
+                #~ rh = self.__class__._rule_handles.get(state,None)
+                #~ if rh is not None and rh.allow(self,ar.get_user()):
+                    #~ l.append(a.label)
+        return ', '.join(l)
+        
         
     #~ @classmethod
     #~ def debug_summary(self):

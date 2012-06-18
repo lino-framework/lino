@@ -256,11 +256,6 @@ class ExtRenderer(HtmlRenderer):
         url = self.js2url(h)
         return self.href(url,text or cgi.escape(force_unicode(obj)))
 
-    def js2url(self,js):
-        js = cgi.escape(js)
-        js = js.replace('"','&quot;')
-        return 'javascript:' + js
-        
     def py2js_converter(self,v):
         """
         Additional converting logic for serializing Python values to json.
@@ -342,15 +337,49 @@ class ExtRenderer(HtmlRenderer):
         return v
         
     def action_call(self,a,params=None,after_show={}):
-        if isinstance(a,actions.ShowEmptyTable):
-            after_show.update(record_id=-99998)
-        if after_show:
-            return "Lino.%s(%s,%s)" % (
-              a,py2js(params),py2js(after_show))
-        if params:
-            return "Lino.%s(%s)" % (a,py2js(params))
-        return "Lino.%s()" % a
+        if a.opens_a_window:
+            if isinstance(a,actions.ShowEmptyTable):
+                after_show.update(record_id=-99998)
+            if after_show:
+                return "Lino.%s(%s,%s)" % (
+                  a,py2js(params),py2js(after_show))
+            if params:
+                return "Lino.%s(%s)" % (a,py2js(params))
+            return "Lino.%s()" % a
+        return "?"
 
+    def js2url(self,js):
+        js = cgi.escape(js)
+        js = js.replace('"','&quot;')
+        return 'javascript:' + js
+        
+    def action_url_js(self,a,params,after_show):
+        return self.js2url(self.action_call(a,params,after_show))
+
+    def action_href_js(self,a,params,after_show={},label=None):
+        """
+        Return a HTML chunk for a button that will execute this 
+        action using a *Javascript* link to this action.
+        """
+        label = cgi.escape(force_unicode(label or a.get_button_label()))
+        url = self.action_url_js(a,params,after_show)
+        return self.href_button(url,label)
+        
+    def row_action_button(self,obj,ar,a):
+        """
+        Return a HTML fragment that displays a button-like link 
+        which runs the action when clicked.
+        """
+        if a.opens_a_window:
+            params = None
+            after_show = ar.get_status(self)
+            after_show.update(record_id=obj.pk)
+            return self.action_href_js(a,params,after_show,a.label)
+        else:
+            label = cgi.escape(unicode(a.label))
+            url = self.js2url('Lino.row_action(%s,%s)' % (py2js(obj.pk),py2js(a.name)))
+            return self.href_button(url,label)
+        
     def instance_handler(self,obj):
         #~ a = obj.__class__._lino_default_table.get_action('detail')
         a = obj.__class__._lino_default_table.detail_action
@@ -364,19 +393,6 @@ class ExtRenderer(HtmlRenderer):
         #~ return self.action_call(rr.action,after_show=dict(base_params=bp))
         return self.action_call(rr.action,after_show=st)
         
-    def action_href_js(self,a,params,after_show={},label=None):
-        """
-        Return a HTML chunk for a button that will execute this 
-        action using a *Javascript* link to this action.
-        """
-        label = cgi.escape(force_unicode(label or a.get_button_label()))
-        url = self.action_url_js(a,params,after_show)
-        return self.href_button(url,label)
-        
-    def action_url_js(self,a,params,after_show):
-        return self.js2url(self.action_call(a,params,after_show))
-
-      
     def action_href_http(self,a,label=None,**params):
         """
         Return a HTML chunk for a button that will execute 
@@ -1754,7 +1770,10 @@ tinymce.init({
                     elem = ar.create_instance()
                 
                 try:
-                    return a.run(elem,ar)
+                    rv = a.run(elem,ar)
+                    if rv is None:
+                        return self.success_response()
+                    return rv
                 except actions.ConfirmationRequired,e:
                     r = dict(
                       success=True,
@@ -1902,7 +1921,7 @@ tinymce.init({
         #~ print '20120605 dynamic actors',[a for a in actors_list if a.get_handle_name is not None]
         actors_list = [a for a in actors_list if a.get_handle_name is None]
 
-        actors_list = [a for a in actors_list if a.get_view_permission()]
+        actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           
                  
         #~ logger.info('20120120 table.all_details:\n%s',

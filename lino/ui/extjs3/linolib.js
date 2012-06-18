@@ -1708,6 +1708,11 @@ Lino.row_action_handler = function(actionName,gridmode) {
   return fn;
 };
 
+Lino.row_action = function(pk,actionName) {
+  Lino.row_action_handler(actionName,true)(panel,btn,step);
+}
+
+
 Lino.list_action_handler = function(actionName,gridmode) {
   var fn = function(panel,btn,step) {
     //~ console.log(panel);

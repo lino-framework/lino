@@ -40,19 +40,19 @@ from lino.utils.babel import babel_values
 
 def objects():
 
-    add = Instantiator('cal.EventStatus','ref').build
-    yield add('0',**babel_values('name',en=u"tentative",de=u"Vorschlag",   fr=u"proposition"))
-    yield add('1',**babel_values('name',en=u"confirmed",de=u"bestätigt",   fr=u"confirmé"))
-    yield add('2',**babel_values('name',en=u"cancelled",de=u"storniert",   fr=u"annulé"))
-    yield add('3',**babel_values('name',en=u"rescheduled",de=u"verschoben",   fr=u"reporté"))
-    yield add('4',**babel_values('name',en=u"absent",de=u"abwesend",   fr=u"absent"))
+    #~ add = Instantiator('cal.EventStatus','ref').build
+    #~ yield add('0',**babel_values('name',en=u"tentative",de=u"Vorschlag",   fr=u"proposition"))
+    #~ yield add('1',**babel_values('name',en=u"confirmed",de=u"bestätigt",   fr=u"confirmé"))
+    #~ yield add('2',**babel_values('name',en=u"cancelled",de=u"storniert",   fr=u"annulé"))
+    #~ yield add('3',**babel_values('name',en=u"rescheduled",de=u"verschoben",   fr=u"reporté"))
+    #~ yield add('4',**babel_values('name',en=u"absent",de=u"abwesend",   fr=u"absent"))
 
 
-    add = Instantiator('cal.TaskStatus','ref').build
-    yield add('0',**babel_values('name',en=u"needs action",de=u"zu erledigen",   fr=u"à traîter"))
-    yield add('1',**babel_values('name',en=u"in process",de=u"begonnen",   fr=u"commencée"))
-    yield add('2',**babel_values('name',en=u"completed",de=u"erledigt",   fr=u"complétée"))
-    yield add('3',**babel_values('name',en=u"cancelled",de=u"storniert",   fr=u"annulée"))
+    #~ add = Instantiator('cal.TaskStatus','ref').build
+    #~ yield add('0',**babel_values('name',en=u"needs action",de=u"zu erledigen",   fr=u"à traîter"))
+    #~ yield add('1',**babel_values('name',en=u"in process",de=u"begonnen",   fr=u"commencée"))
+    #~ yield add('2',**babel_values('name',en=u"completed",de=u"erledigt",   fr=u"complétée"))
+    #~ yield add('3',**babel_values('name',en=u"cancelled",de=u"storniert",   fr=u"annulée"))
 
     add = Instantiator('cal.AccessClass','ref').build
     yield add('0',**babel_values('name',en=u"Public",de=u"Öffentlich",   fr=u"Public"))

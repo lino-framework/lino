@@ -681,10 +681,13 @@ class Table(AbstractTable):
         :class:`remote fields <lino.core.fields.RemoteField>`
         in a layout template.
         """
-        cc = super(Table,self).get_data_elem(name)
+        de = super(Table,self).get_data_elem(name)
         #~ cc = AbstractTable.get_data_elem(self,name)
-        if cc:
-            return cc
+        if de:
+            return de
+            
+        if self.model is None:
+            return None
         
         parts = name.split('__')
         if len(parts) > 1:

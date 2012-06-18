@@ -33,4 +33,5 @@ Subpackages
     lino.modlib.users
     lino.modlib.vocbook
     lino.modlib.courses
+    lino.modlib.workflows
 

@@ -56,6 +56,7 @@ from lino.core import actions
 from lino.core import actors
 from lino.core.coretools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
+from lino.utils import ViewPermissionInstance
 
 from lino.tools import resolve_model, resolve_field, get_field, full_model_name
 from lino.tools import is_devserver
@@ -199,6 +200,133 @@ class DisableDeleteHandler():
                     return msg
         return None
         
+
+
+
+class Always(object):
+  
+    def allow(obj,user):
+        return True
+        
+class Never(object):
+  
+    def allow(obj,user):
+        return False
+        
+class RuleHandler(ViewPermissionInstance):
+    """
+    Lino creates one RuleHandler per model and state
+    """
+    
+    def allow(self,obj,user):
+        return self.get_view_permission(user)
+        
+        
+class OwnedOnlyRuleHandler(RuleHandler):
+    def allow(self,obj,user):
+        if obj.user != user:
+            return False
+        return RuleHandler.allow(self,obj,user)
+        
+
+BLANK_STATE = ''
+
+
+def load_workflows(self):
+    """
+    Each Actor receives the meta information about workflows.
+    
+    If JobProvider is an MTI child of Company, then the 
+    Rules for Companies apply also for JobProviders 
+    but may be overridden by adding an explicit 
+    JobProviders Rule.
+    """
+    self.workflow_actors = {}
+    for actor in actors.actors_list:
+        #~ if a.model is not None and a.workflow_actions is not None:
+        if actor.workflow_state_field is not None:
+            if isinstance(actor.workflow_state_field,basestring):
+                fld = actor.get_data_elem(actor.workflow_state_field)
+                if fld is None:
+                    continue # e.g. cal.Components
+                actor.workflow_state_field = fld
+                #~ a.workflow_state_field = a.model._meta.get_field(a.workflow_state_field)
+            if isinstance(actor.workflow_owner_field,basestring):
+                actor.workflow_owner_field = actor.get_data_elem(actor.workflow_owner_field)
+                #~ a.workflow_owner_field = a.model._meta.get_field(a.workflow_owner_field)
+            #~ for an in a.workflow_actions:
+                #~ if not isinstance(an,basestring):
+                    #~ raise Exception("Invalid action name %r in %s" % (an,a))
+            l = []
+            possible_states = actor.workflow_state_field.choicelist.items_dict.keys() + [BLANK_STATE]
+            for action in actor._actions_list:
+                if action.required_states is not None:
+                    for st in action.required_states:
+                        if not st in possible_states:
+                            raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
+                    l.append(action)
+                #~ if isinstance(an,basestring):
+                    #~ l.append(an)
+                #~ else:
+                    #~ l.append(an.name)
+            #~ a.workflow_actions = [getattr(a,an) for an in l]
+            if len(l) == 0:
+                continue
+                
+            actor.workflow_actions = l
+            self.workflow_actors[str(actor)] = actor
+                
+            for a in actor.workflow_actions:
+                a._rule_handlers = dict()
+                if actor.workflow_owner_field is not None and a.owned_only:
+                    rh = OwnedOnlyRuleHandler()
+                else:
+                    rh = RuleHandler()
+                for k in possible_states:
+                    a._rule_handlers[k] = rh # Never() # Always()
+                
+    if self.is_installed('workflows'):
+        Rule = resolve_model('workflows.Rule')
+        for rule in Rule.objects.all().order_by('seqno'):
+            ruleactor = self.workflow_actors.get(rule.actor_name)
+            if ruleactor is not None:
+                if ruleactor.workflow_owner_field is not None and rule.owned_only:
+                    rh = OwnedOnlyRuleHandler()
+                else:
+                    rh = RuleHandler()
+                if rule.user_level:
+                    rh.required_user_level = rule.user_level
+                if rule.user_group:
+                    rh.required_user_groups = [rule.user_group.value]
+                    
+                def apply_rule(action_names,states,actor):
+                    for state in states:
+                        for an in action_names:
+                            a = getattr(actor,an)
+                            a._rule_handlers[state] = rh
+                
+                if rule.action_name:
+                    action_names = [ rule.action_name ]
+                else:
+                    action_names = [a.name for a in ruleactor.workflow_actions]
+                if rule.state:
+                    states = []
+                else:
+                    states = ruleactor.workflow_state_field.choicelist.items_dict.keys()
+                    
+                for actor in self.workflow_actors.values():
+                    if actor is ruleactor or issubclass(actor,ruleactor):
+                        apply_rule(action_names,states,actor)
+
+                
+    self.workflow_actor_choices = self.workflow_actors.items()
+    def cmpfn(a,b):
+        return cmp(a[0],b[0])
+    self.workflow_actor_choices = self.workflow_actors.items()
+    self.workflow_actor_choices.sort(cmpfn)
+        
+        
+        
 #~ import threading
 #~ write_lock = threading.RLock()
 
@@ -326,9 +454,11 @@ def setup_site(self):
             a.after_site_setup()
                 
         """
-        this comes after site_setup() because site_setup() might 
-        install detail_layouts on model tables.
+        `after_site_setup()` definitively collects actions of each actor.
+        Now we can apply workflow rules.
         """
+        load_workflows(self)
+            
         #~ install_summary_rows()
         
         #~ if settings.MODEL_DEBUG:
@@ -339,29 +469,10 @@ def setup_site(self):
                 #~ logger.debug("%s -> %r",k,a.__class__)
                 logger.debug("%s -> %r",k,a.debug_summary())
                 
-        #~ d = dict()
-        #~ for a in loading.get_apps():
-            #~ d[a.__name__.split('.')[-2]] = a
-        #~ self.modules = IterableUserDict(d)
-        
         #~ cls = type("Modules",tuple(),d)
         #~ self.modules = cls()
         #~ logger.info("20120102 modules: %s",self.modules)
         
-        
-        #~ spec = self.index_view_action
-        #~ if spec:
-            #~ if isinstance(spec,basestring):
-                #~ spec = self.modules.resolve(spec)
-                #~ if spec is None:
-                    #~ raise Exception("Could not resolve action specifier %r" % spec)
-            #~ if isinstance(spec,actions.Action):
-                #~ a = spec
-            #~ elif isinstance(spec,type) and issubclass(spec,models.Model):
-                #~ a = spec._lino_default_table.default_action
-            #~ elif isinstance(spec,type) and issubclass(spec,actors.Actor):
-                #~ a = spec.default_action
-            #~ self.index_view_action = a
         
         logger.info("Lino Site %r started. Languages: %s. %s actors.", 
             self.title, ', '.join(babel.AVAILABLE_LANGUAGES),len(actors.actors_list))

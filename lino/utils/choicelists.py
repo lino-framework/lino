@@ -123,15 +123,23 @@ class ChoiceList(object):
     Used-defined choice lists must inherit from this base class.
     """
     __metaclass__ = ChoiceListMeta
+    
     items = []
+    
     stored_name = None
     """
     Every subclass of ChoiceList will be automatically registered.
-    Define this if your class's name clashes with the name of an exiting ChoiceList.
+    Define this if your class's name clashes with the name of an 
+    existing ChoiceList.
     """
     
     label = None
     "The label or title for this list"
+    
+    show_values = False
+    """
+    """
+    
     
     preferred_width = 5
     """
@@ -153,10 +161,17 @@ class ChoiceList(object):
     def field(cls,*args,**kw):
         """
         Create a database field (a :class:`ChoiceListField`)
-        that holds one value of this choice list. 
+        that holds one value of this choicelist. 
         """
-        #~ from lino.core.fields import ChoiceListField
         return ChoiceListField(cls,*args,**kw)
+        
+    @classmethod
+    def multifield(cls,*args,**kw):
+        """
+        Create a database field (a :class:`ChoiceListField`)
+        that holds a set of multiple values of this choicelist. 
+        """
+        return MultiChoiceListField(cls,*args,**kw)
         
     @classmethod
     def add_item(cls,value,text,alias=None):
@@ -167,7 +182,8 @@ class ChoiceList(object):
         dt = cls.display_text(i)
         cls.choices.append((i,dt))
         cls.preferred_width = max(cls.preferred_width,len(unicode(dt)))
-        assert not cls.items_dict.has_key(value)
+        if cls.items_dict.has_key(value):
+            raise Exception("Duplicate value %r in choicelist %s.",(value,cls.label))
         cls.items_dict[value] = i
         #~ cls.items_dict[i] = i
         cls.max_length = max(len(value),cls.max_length)
@@ -202,9 +218,16 @@ class ChoiceList(object):
       
     @classmethod
     def display_text(cls,bc):
-        """Override this to customize the display text of choices.
-        Example: :class:`lino.apps.pcsw.models.CefLevel`
         """
+        Override this to customize the display text of choices.
+        :class:`UserGroup` and :class:`lino.modlib.cv.models.CefLevel`
+        used to do this before we had the 
+        :attr:`ChoiceList.show_values` option.
+        """
+        if cls.show_values:
+            def fn(bc):
+                return u"%s (%s)" % (bc.value,unicode(bc))
+            return lazy(fn,unicode)(bc)
         return lazy(unicode,unicode)(bc)
         #~ return bc
         #~ return unicode(bc)
@@ -236,36 +259,37 @@ class ChoiceList(object):
 
 
 
+        
+    
 class ChoiceListField(models.CharField):
     """
-    A field that stores values from a 
+    A field that stores a value to be selected from a 
     :class:`lino.utils.choicelists.ChoiceList`.
     """
     
     __metaclass__ = models.SubfieldBase
     
+    max_values = 1
+    #~ force_selection = True
+    
     #~ choicelist = NotImplementedError
     
-    def __init__(self,choicelist,*args,**kw):
-        if args:
-            verbose_name = args[0]
-            args = args[1:]
-        else:
-            verbose_name = kw.pop('verbose_name',None)
+    def __init__(self,choicelist,verbose_name=None,force_selection=True,**kw):
         if verbose_name is None:
             verbose_name = choicelist.label
         self.choicelist = choicelist
+        self.force_selection = force_selection
         defaults = dict(
             #~ choices=KNOWLEDGE_CHOICES,
             choices=choicelist.get_choices(),
-            max_length=choicelist.max_length,
+            max_length=choicelist.max_length * self.max_values,
             blank=True,  # null=True,
             #~ validators=[validate_knowledge],
             #~ limit_to_choices=True,
             )
         defaults.update(kw)
         #~ models.SmallIntegerField.__init__(self,*args, **defaults)
-        models.CharField.__init__(self,verbose_name,*args, **defaults)
+        models.CharField.__init__(self,verbose_name, **defaults)
         
     def get_internal_type(self):
         return "CharField"
@@ -302,6 +326,46 @@ class ChoiceListField(models.CharField):
         return self.choicelist.get_text_for_value(value.value)
     
       
+class MultiChoiceListField(ChoiceListField):
+    """
+    A field whose value is a `list` of `BabelChoice` instances.
+    Stored in the database as a CharField using a delimiter character.
+    """
+    __metaclass__ = models.SubfieldBase
+    delimiter_char = ','
+    
+    def __init__(self,choicelist,verbose_name=None,max_values=10,**kw):
+        if verbose_name is None:
+            verbose_name = choicelist.label_plural
+        self.max_values = max_values
+        defaults = dict(
+            max_length=choicelist.max_length * max_values
+            )
+        defaults.update(kw)
+        ChoiceListField.__init__(self,verbose_name, **defaults)
+    
+    def to_python(self, value):
+        if value is None: 
+            return []
+        if isinstance(value,list):
+            return value
+        
+        value = self.choicelist.to_python(value)
+        return value
+        
+    def get_prep_value(self, value):
+        """
+        This must convert the given Python value (always a list)
+        into the value to be stored to database.
+        """
+        return self.delimiter_char.join([bc.value for bc in value])
+        
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_prep_value(value)
+        
+    def get_text_for_value(self,value):
+        return ', '.join([self.choicelist.get_text_for_value(bc.value) for bc in value])
 
 
 #~ class BabelChoice(babel.BabelText):
@@ -405,7 +469,23 @@ add('F',_("Female"),'female')
 
 class UserLevel(ChoiceList):
     """
-    The level of a user. Deserves more documentation.
+    The level of a user is one way of differenciating users in order 
+    to manage access permissions. User levels are a graduation: 
+    a "Manager" is higher than a simple "User" and thus 
+    can do everything for which a simple "User" level has permission.
+    
+    About the difference between "Administrator" and "Manager":
+    
+    - "Management is closer to the employees. 
+      Admin is over the management and more over the money 
+      of the organization and lilscencing of an organization. 
+      Mananagement manages employees. 
+      Admin manages the outside contacts and the 
+      facitlity as a whole." (`answerbag.com <http://www.answerbag.com/q_view/295182>`__)
+    
+    - See also a more detailed overview at
+      http://www.differencebetween.com/difference-between-manager-and-vs-administrator/
+    
     """
     label = _("User Level")
     
@@ -420,12 +500,24 @@ class UserLevel(ChoiceList):
         return super(UserLevel,cls).field(**kw)
         
 add = UserLevel.add_item
-add('10', _("Guest"))
-add('20', _("Restricted"))
-add('30', _("User"), alias="user")
-add('40', _("Manager"), alias="manager")
-add('50', _("Expert"), alias="expert")
+add('10', _("Guest"),'guest')
+add('20', _("Restricted"),'restricted')
+add('30', _("User"), "user")
+add('40', _("Manager"), "manager")
+add('50', _("Administrator"), "admin")
+add('90', _("Expert"), "expert")
 
+class UserGroup(ChoiceList):
+    """
+    This list is completed by modulus that call :meth:`lino.Lino.add_user_group`.
+    """
+    label = _("User Group")
+    show_values = False
+    
+        
+add = UserGroup.add_item
+add('system', _("System"))
+  
 
 
 

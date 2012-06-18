@@ -616,13 +616,6 @@ class AbstractTable(actors.Actor):
     Will be filled during :meth:`lino.core.table.Table.do_setup`. 
     """
     
-    editable = None
-    """
-    Set this explicitly to True or False to make the 
-    table per se editable or not.
-    Otherwise it will be set to `False` if the table has a `get_data_rows` method
-    """
-    
     order_by = None
     
     filter = None

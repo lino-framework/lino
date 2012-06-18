@@ -52,6 +52,9 @@ class ChoicesChooser(FieldChooser):
   
 
 class Chooser(FieldChooser):
+    """
+    A Chooser holds information about the possible choices of a field.
+    """
     #~ stored_name = None
     simple_values = False
     instance_values = True
@@ -71,6 +74,7 @@ class Chooser(FieldChooser):
             self.force_selection = getattr(meth,'force_selection',self.force_selection)
         #~ self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
         self.context_params = meth.context_params
+        #~ self.multiple = meth.multiple
         #~ self.context_params = meth.func_code.co_varnames[:meth.func_code.co_argcount]
         #~ print '20100724', meth, self.context_params
         #~ logger.warning("20100527 %s %s",self.context_params,meth)
@@ -182,6 +186,8 @@ class Chooser(FieldChooser):
         #~ raise NotImplementedError
         #~ assert not self.simple_values
         m = getattr(obj,"get_" + self.field.name + "_display")
+        #~ if m is None:
+            #~ raise Exception("")
         return m(value)
         #~ raise NotImplementedError("%s : Cannot get text for value %r" % (self.meth,value))
         

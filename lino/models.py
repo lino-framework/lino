@@ -42,10 +42,12 @@ from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
 from lino.tools import obj2str, sorted_models_list
 from lino.tools import resolve_field
-from lino.utils.choosers import chooser
+from lino.utils.choosers import chooser, get_for_field
 from lino.utils.choicelists import UserLevel
 from lino.utils.restify import restify
 from lino.core import actions
+from lino.utils import ViewPermissionInstance
+
 
 
 
@@ -205,7 +207,7 @@ if settings.LINO.is_installed('contenttypes'):
                   add(b)
               if issubclass(cl,models.Model) and cl is not models.Model and cl._meta.managed: # :
                   if getattr(cl,'_meta',False) and not cl._meta.abstract:
-                      logger.info("20120205 adding(%r)",cl)
+                      #~ logger.info("20120205 adding(%r)",cl)
                       ct = contenttypes.ContentType.objects.get_for_model(cl)
                       chunks.append(ar.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
           if obj is not None:
@@ -277,40 +279,8 @@ if settings.LINO.is_installed('contenttypes'):
       
   class HelpTextsByModel(HelpTexts):
       master_key = 'content_type'
+      
 
-
-if False:
-  
-    class DataControlListing(mixins.Listing):
-        """Performs a "soft integrity test" on the database. 
-        Prints 
-        """
-        class Meta:
-            verbose_name = _("Data Control Listing") 
-        
-        def body(self):
-            items = []
-            for model in sorted_models_list():
-                m = getattr(model,'data_control',None)
-                if m is not None:
-                    for i in model.objects.all():
-                        msgs = i.data_control()
-                        if msgs:
-                            if len(msgs) == 1:
-                                items.append("<b>%s</b> : %s" % (unicode(i),msgs[0]))
-                            else:
-                                items.append("<b>%s</b> : %s" % (
-                                  unicode(i),
-                                  "\n".join(
-                                    ["<br>(%d) %s" % (x[0]+1,x[1])
-                                      for x in enumerate(msgs)])))
-            #~ html = "<ol>"
-            #~ html += "\n".join(["<li>%s</li>" % ln for ln in items])
-            #~ html += "</ol>"
-            html = "\n".join(["<p>%s</p>" % ln for ln in items])
-            html = '<div class="htmlText">%s</div>' % html
-            return html
-        
 
 #~ if settings.LINO.is_installed('users'):
 if settings.LINO.user_model:
@@ -672,18 +642,18 @@ def setup_main_menu(site,ui,user,m): pass
 def setup_my_menu(site,ui,user,m): pass
   
 def setup_config_menu(site,ui,user,m):
-    config_etc      = m.add_menu("etc",_("System"))
-    #~ config_etc.add_action('links.LinkTypes')
+    m = m.add_menu("etc",_("System"))
+    #~ m.add_action('links.LinkTypes')
     if site.user_model:
-        config_etc.add_action(site.user_model)
-        config_etc.add_action(site.modules.lino.TextFieldTemplates)
-    #~ config_etc.add_action(site.modules.users.Users)
+        m.add_action(site.user_model)
+        m.add_action(site.modules.lino.TextFieldTemplates)
+    #~ m.add_action(site.modules.users.Users)
     if site.is_installed('contenttypes'):
-    #~ if site.use_contenttypes:
-        config_etc.add_action(site.modules.lino.ContentTypes)
-        config_etc.add_action(site.modules.lino.HelpTexts)
+        m.add_action(site.modules.lino.ContentTypes)
+        m.add_action(site.modules.lino.HelpTexts)
+        #~ m.add_action(site.modules.lino.Workflows)
     #~ if site.use_tinymce:
-    config_etc.add_instance_action(site.site_config)
+    m.add_instance_action(site.site_config)
         
   
 def setup_explorer_menu(site,ui,user,m): pass

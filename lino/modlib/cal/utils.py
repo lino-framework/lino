@@ -135,3 +135,34 @@ add('Y', _('years')  ,alias='years'  )
 
 
 
+class TaskState(ChoiceList):
+    """
+    State of a Calendar Task. Used as Workflow selector.
+    """
+    label = _("Event State")
+add = TaskState.add_item
+add('10', _("To do"),'todo')
+add('20', _("Done"),'done')
+
+class EventState(ChoiceList):
+    """
+    State of a Calendar Event. Used as Workflow selector.
+    """
+    label = _("Event State")
+add = EventState.add_item
+add('10', _("Draft"),'draft')
+add('20', _("Suggested"),'suggested')
+add('30', _("Published"),'published')
+add('40', _("Done"),'done')
+add('50', _("Cancelled"),'cancelled')
+    
+class GuestState(ChoiceList):
+    """
+    State of a Calendar Event Guest. Used as Workflow selector.
+    """
+    label = _("Guest State")
+add = GuestState.add_item
+add('10', _("Invited"),'invited')
+add('20', _("Confirmed"),'confirmed')
+add('30', _("Present"),'present')
+add('40', _("Absent"),'absent')

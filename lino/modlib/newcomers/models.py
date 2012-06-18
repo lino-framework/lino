@@ -261,7 +261,8 @@ class UsersByNewcomer(users.Users):
         
 MODULE_NAME = _("Newcomers")
 
-settings.LINO.add_user_field('newcomers_level',UserLevel.field(MODULE_NAME))
+#~ settings.LINO.add_user_field('newcomers_level',UserLevel.field(MODULE_NAME))
+settings.LINO.add_user_group('newcomers',MODULE_NAME)
 settings.LINO.add_user_field('newcomer_quota',models.IntegerField(
           _("Newcomers Quota"),
           default=0,

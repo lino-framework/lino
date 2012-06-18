@@ -13,3 +13,4 @@ aus der Demo-Fixture (`demo_tx25_1.xml` und `demo_tx25_2.xml`)
 werden jetzt nicht nur korrekt ausgewertet, sondern es kommt 
 auch eine Fehlermeldung, wenn eine nächste Antwort 
 Informationen enthält, die er noch nicht kennt.
+:checkin:`6feb0b9a87dc`.

@@ -29,6 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode 
 from django.utils.functional import lazy
+    
 
 #~ import lino
 #~ logger.debug(__file__+' : started')
@@ -96,13 +97,13 @@ class CefLevel(ChoiceList):
     
     """
     label = _("CEF level")
+    show_values = True
     
-    @classmethod
-    def display_text(cls,bc):
-        def fn(bc):
-            return u"%s (%s)" % (bc.value,unicode(bc))
-        return lazy(fn,unicode)(bc)
-        #~ return u"%s (%s)" % (bc.value,unicode(bc))
+    #~ @classmethod
+    #~ def display_text(cls,bc):
+        #~ def fn(bc):
+            #~ return u"%s (%s)" % (bc.value,unicode(bc))
+        #~ return lazy(fn,unicode)(bc)
     
 add = CefLevel.add_item
 add('A1', _("basic language skills"))
@@ -207,8 +208,6 @@ class PersonPropsByProp(PersonProperties):
     #~ master_key = 'type'
     #~ column_names = "person property value remark *"
     #~ hidden_columns = frozenset(['group'])
-    
-from django.utils.functional import lazy
     
 class ConfiguredPropsByPerson(PropsByPerson):
     """

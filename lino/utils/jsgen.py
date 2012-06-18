@@ -91,7 +91,7 @@ from django.utils.encoding import force_unicode
 
 import lino
 from lino.utils import IncompleteDate
-from lino.utils import ViewPermission, get_view_permission
+from lino.utils import ViewPermissionInstance
 from lino.utils.xmlgen import etree
 
 
@@ -128,20 +128,20 @@ def declare_vars(v):
                 yield ln
         return
     if isinstance(v,Component): 
-        if not v.get_view_permission(): return
+        if not v.get_view_permission(_for_user): return
         for sub in v.ext_options().values():
             for ln in declare_vars(sub):
                 yield ln
         # DON'T return
     elif isinstance(v,Value): 
-        if not v.get_view_permission(): return
+        #~ 20120616 if not v.get_view_permission(_for_user): return
         #~ ok = True
         for ln in declare_vars(v.value):
             yield ln
         # DON'T return
         
     if isinstance(v,Variable):
-        if not v.get_view_permission(): return
+        #~ 20120616 if not v.get_view_permission(_for_user): return
         if v.declare_type == DECLARE_VAR:
             yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
         elif v.declare_type == DECLARE_THIS:
@@ -188,14 +188,14 @@ def py2js(v):
     if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
         #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
         elems = [py2js(x) for x in v 
-            if (not isinstance(x,Value)) or x.get_view_permission()]
+            if (not isinstance(x,Value)) or x.get_view_permission(_for_user)]
         return "[ %s ]" % ", ".join(elems)
     if isinstance(v,dict): # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
             #~ "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
             "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()
-              if (not isinstance(v,Value)) or v.get_view_permission()
+              if (not isinstance(v,Value)) or v.get_view_permission(_for_user)
               ])
             #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
@@ -395,7 +395,7 @@ class Variable(Value):
     def js_value(self):
         yield self.value_template % py2js(self.value)
         
-class Component(Variable,ViewPermission): 
+class Component(Variable,ViewPermissionInstance): 
     """
     Deserves more documentation.
     """
@@ -403,9 +403,12 @@ class Component(Variable,ViewPermission):
         Variable.__init__(self,name,options)
         #~ self.update(**self.ext_options())
         
-    def get_view_permission(self):
-        "Whether this Component should be rendered into the js of current user (`_for_user`)."
-        return get_view_permission(self,_for_user)
+    #~ def get_view_permission(self):
+        #~ """
+        #~ Whether this Component should be rendered into the js 
+        #~ of current user (`_for_user`).
+        #~ """
+        #~ return super(Component,self).get_view_permission(_for_user)
         
     def js_value(self):
         value = self.ext_options()

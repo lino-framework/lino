@@ -29,6 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino import dd
+#~ from lino.models import Workflow
 #~ from lino.utils import perms
 from lino.tools import full_model_name
 from lino.core import frames
@@ -130,6 +131,8 @@ class AutoUser(models.Model):
             
     if settings.LINO.user_model: 
       
+        #~ workflow_owner_field = 'user' # used by :mod:`lino.modlib.workflows.models`
+        
         user = models.ForeignKey(settings.LINO.user_model,
             verbose_name=_("user"),
             related_name="%(app_label)s_%(class)s_set_by_user",
@@ -359,3 +362,6 @@ class EmptyTable(frames.Frame):
         a = name.split('.')
         if len(a) == 2:
             return getattr(getattr(settings.LINO.modules,a[0]),a[1])
+
+
+#~ from lino.models import Workflowable

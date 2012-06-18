@@ -1,0 +1,124 @@
+20120616
+========
+
+Zum Thema "Workflows". 
+Darunter verstehen wir die Möglichkeit, 
+dass der Systemverwalter per UI eine 
+Liste von lokal konfigurierbaren "Statuswechsel-Aktionen" 
+verwaltet. 
+Eine Tabelle, die besagt: "Wer was wann klicken darf".
+
+Eine Workflow-Aktion (kurz Workflow) tut zunächst mal nichts anderes, 
+als den Status eines Objekts zu wechseln.
+Wie das Objekt auf einen Statuswechsel reagiert 
+(also was daraufhin eventuell noch alles tut), 
+das ist anwendungsspezifisch und Programmierersache
+(d.h. dazu muss man Python-Code schreiben). 
+
+Der Benutzer sieht die Workflows eines Objekts 
+als eine (virtuelle) Kolonne, deren Inhalt eine Serie 
+von anklickbaren Buttons ist.
+In dieser Liste stehen natürlich nur die Workflows, die der ausführen darf. 
+Sie ist dynamisch und hängt vom aktuellen Status des Objekts ab.
+
+Workflows-Aktionen
+--------------------
+
+========= ===================== ============ =============  ==============
+Modell    Bezeichnung           Wer darf     Status vorher  Status nachher
+========= ===================== ============ =============  ==============
+cal.Task  Erledigt              Eigentümer   todo           done
+cal.Task  Zurück                Dienstleiter done           todo
+
+cal.Event Einladungen schicken  Eigentümer   geplant        scheduled
+cal.Event Absagen               Eigentümer   geplant        cancelled
+cal.Event Stattgefunden         Eigentümer   geplant        stattgefunden
+cal.Event Abgesagt              Eigentümer   geplant        cancelled
+cal.Event Bericht verfassen     Alle         stattgefunden  bericht
+cal.Event Bericht verfassen     Eigentümer   stattgefunden  done
+========= ===================== ============ =============  ==============
+
+"Wer darf" ist eigentlich eine Kombination von drei Feldern:
+
+- user_level : man muss mindestens diesen Benutzerlevel haben
+- user_groups : man muss mindestens einer dieser Gruppen angehören
+- owned_only : falls angekreuzt, gilt diese Aktion nur für 
+  "meine" Objekte (Datensätze)
+
+Die Auswahlliste der möglichen Zustände (Statusse) 
+ist ebenfalls anwendungsspezifisch, aber Programmierersache
+(d.h. dazu muss man Python-Code schreiben). 
+
+Entwurf Modell::
+
+  from lino.utils import ViewPermission
+
+  class Workflow(babel.BabelNamed,mixins.Sequenced):
+      class Meta:
+          sort_order = ['content_type','seqno']
+          
+      content_type = ForeignKey(ContentType)
+      user_level = UserLevel.field()
+      user_groups = CharField
+      owned_only = BooleanField
+      from_state = CharField
+      to_state = CharField
+      
+      def get_permission(self,user):
+          vp = ViewPermission(required_user_level=self.user_level,
+            required_user_groups=self.user_groups.split())
+          return vp.get_view_permission(user)
+
+
+    
+  class Workflowable(models.Model):
+      class Meta:
+          abstract = True
+          
+      workflow_state_field = 'state' # subclasses usually override this
+      
+      @dd.displayfield
+      def workflows(self,ar):
+          ct = ContentType.objects.get_for_model(self.__class__)
+          for wf in Workflow.objects.filter(content_type=ct):
+              if wf.get_permission(ar.get_user())
+              
+              
+"Status" or "State"? 
+--------------------
+
+The `Introduction to Plone workflows
+<http://plone.org/documentation/kb/creating-workflows-in-plone/introduction>`_
+speaks about "states" and never uses the word "status". 
+I am rather used to call it a "status". 
+Who's right?
+  
+- "a state is any condition which is durable or lasting (Zustand, Istzustand) 
+  whereas a status is a classification of state among several 
+  well-defined possibilities. 
+  An immigrant's status is either legal or illegal, 
+  and if he is the latter, he may be in an anxious emotional state."
+  (konungursvia on `wordreference.com <http://forum.wordreference.com/showthread.php?t=287984&langid=3>`__
+
+- "State generally refers to the entire state of an entity - all its values 
+  and relationships at a particular point in time (usually, current). 
+  Status is more of a time-point, say, where something is at in a process 
+  or workflow - is it dirty (therefore requiring saving), is it complete, 
+  is it pending input, etc"  
+  (Luke Schafer on `stackoverflow 
+  <http://stackoverflow.com/questions/1162816/naming-conventions-state-versus-status>`__)
+  
+Conclusion for Lino. 
+I suggest to adapt the following convention: 
+use "state" at least when this field is being used as workflow selector.
+The default value for :attr:`lino.models.Workflowable.workflow_state_field`).
+  
+  
+
+Changes in :mod:`lino.modlib.cal`
+---------------------------------
+
+Replaced the models 
+GuestStatus, TaskStatus and EventStatus
+by the choicelists GuestState, TaskState and EventState.
+

@@ -260,6 +260,7 @@ INSTALLED_APPS = (
   #~ 'lino.modlib.system',
   'lino',
   'lino.modlib.users',
+  'lino.modlib.workflows',
   'lino.modlib.countries',
   #~ 'lino.modlib.documents',
   'lino.modlib.properties',

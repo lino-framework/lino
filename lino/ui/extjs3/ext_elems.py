@@ -82,7 +82,7 @@ def before_row_edit(panel):
     #~ l.append("console.log('before_row_edit',record);")
     master_field = panel.layout_handle.layout._table.master_field
     for e in panel.active_children:
-        if not e.get_view_permission(): continue
+        if not e.get_view_permission(jsgen._for_user): continue
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
         #~ elif isinstance(e,PictureElement):
@@ -1119,19 +1119,19 @@ class Container(LayoutElement):
         kw.update(items=self.elements)
         return kw
 
-    def get_view_permission(self):
+    def get_view_permission(self,user):
         """
         A Panel which doesn't contain a single visible element gets also hidden.
         """
         #~ if self.value.get("title") == "CBSS":
             #~ print "20120525 Container.get_view_permission()", self
         # if the Panel itself is invisble, no need to loop through the children
-        if not super(Container,self).get_view_permission(): 
+        if not super(Container,self).get_view_permission(user): 
             return False
         #~ if self.value.get("title") == "CBSS":
             #~ print "20120525 Container.get_view_permission() passed", self
         for e in self.elements:
-            if e.get_view_permission():
+            if e.get_view_permission(user):
                 # one visble child is enough, no need to continue loop 
                 return True
         return False
@@ -1155,8 +1155,8 @@ class Wrapper(VisibleComponent):
             e.update(anchor="100%")
         #~ e.update(padding=DEFAULT_PADDING)
             
-    def get_view_permission(self):
-        return self.wrapped.get_view_permission()
+    def get_view_permission(self,user):
+        return self.wrapped.get_view_permission(user)
         
     def walk(self):
         for e in self.wrapped.walk():
@@ -1525,11 +1525,11 @@ class GridElement(Container):
             #~ self.mt = 'undefined'
             
             
-    def get_view_permission(self):
+    def get_view_permission(self,user):
         #~ if not super(GridElement,self).get_view_permission():
-        if not super(Container,self).get_view_permission(): 
+        if not super(Container,self).get_view_permission(user): 
             return False
-        return self.actor.get_view_permission()
+        return self.actor.get_view_permission(user)
         #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
         
     def ext_options(self,**kw):
@@ -1742,6 +1742,8 @@ def field2elem(layout_handle,field,**kw):
     if ch:
         #~ if ch.on_quick_insert is not None:
         #~ if ch.meth.quick_insert_field is not None:
+        #~ if ch.multiple:
+            #~ raise Exception("20120616")
         if ch.can_create_choice or not ch.force_selection:
             kw.update(forceSelection=False)
             #~ print 20110425, field.name, layout_handle
@@ -1758,6 +1760,7 @@ def field2elem(layout_handle,field,**kw):
     if field.choices:
         if isinstance(field,choicelists.ChoiceListField):
             kw.setdefault('preferred_width',field.choicelist.preferred_width)
+            kw.update(forceSelection=field.force_selection)
         else:
             kw.setdefault('preferred_width',20)
         return ChoicesFieldElement(layout_handle,field,**kw)

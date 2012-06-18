@@ -1113,7 +1113,8 @@ class DistByBudget(EntriesByBudget):
     
 MODULE_NAME = _("Debts mediation")
 
-settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
+#~ settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
+settings.LINO.add_user_group('debts',MODULE_NAME)
 
 def site_setup(site):
     site.modules.contacts.Partners.add_detail_tab('debts.BudgetsByPartner')
