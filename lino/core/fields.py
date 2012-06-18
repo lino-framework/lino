@@ -546,7 +546,7 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
     for fields that part of a :term:`GFK` and you want 
     Lino to render them using a Combobox.
     
-    Used by :class:`lino.mixins.Owned`.
+    Used by :class:`lino.mixins.Controllable`.
     """
     def __init__(self, type_field, *args, **kw):
         self.type_field = type_field
@@ -555,7 +555,7 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
 class GenericForeignKey(generic.GenericForeignKey):
     """
     Lino's little extension to Django's GFK.
-    Used by :class:`lino.mixins.Owned`.
+    Used by :class:`lino.mixins.Controllable`.
     """
     def __init__(self, ct_field="content_type", fk_field="object_id", 
           verbose_name=None,help_text=None):

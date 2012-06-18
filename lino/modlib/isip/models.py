@@ -486,7 +486,7 @@ class ContractDetail(dd.DetailLayout):
     
     date_decided date_issued 
     date_ended ending
-    cal.TasksByOwner cal.EventsByOwner
+    cal.TasksByController cal.EventsByController
     """
     
     isip = """

@@ -699,7 +699,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     @dd.displayfield(_("Residence permit"))
     def residence_permit(self,rr):
         kv = dict(type=settings.LINO.site_config.residence_permit_upload_type)
-        r = rr.spawn(uploads.UploadsByOwner,
+        r = rr.spawn(uploads.UploadsByController,
               master_instance=self,
               known_values=kv)
         return rr.renderer.quick_upload_buttons(r)
@@ -710,7 +710,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     @dd.displayfield(_("Work permit"))
     def work_permit(self,rr):
         kv = dict(type=settings.LINO.site_config.work_permit_upload_type)
-        r = rr.spawn(uploads.UploadsByOwner,
+        r = rr.spawn(uploads.UploadsByController,
               master_instance=self,
               known_values=kv)
         return rr.renderer.quick_upload_buttons(r)
@@ -720,7 +720,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     #~ @dd.virtualfield(dd.DisplayField(_("driving licence")))
     def driving_licence(self,rr):
         kv = dict(type=settings.LINO.site_config.driving_licence_upload_type)
-        r = rr.spawn(uploads.UploadsByOwner,
+        r = rr.spawn(uploads.UploadsByController,
               master_instance=self,known_values=kv)
         return rr.renderer.quick_upload_buttons(r)
     #~ driving_licence.return_type = dd.DisplayField(_("driving licence"))
@@ -961,7 +961,7 @@ class PersonDetail(dd.DetailLayout):
     papers = """
     needs_residence_permit needs_work_permit 
     residence_permit work_permit driving_licence
-    uploads.UploadsByOwner
+    uploads.UploadsByController
     """
     
       
@@ -2030,7 +2030,7 @@ def site_setup(site):
     # person company
     # reminder_date reminder_text delay_value delay_type reminder_done
     modified created owner
-    cal.TasksByOwner
+    cal.TasksByController
     # show_date show_time 
     # show_date time timestamp
     """)
@@ -2075,9 +2075,9 @@ def site_setup(site):
         #~ """
         
         #~ right = """
-        #~ uploads.UploadsByOwner
-        #~ thirds.ThirdsByOwner:30
-        #~ cal.TasksByOwner
+        #~ uploads.UploadsByController
+        #~ thirds.ThirdsByController:30
+        #~ cal.TasksByController
         #~ """
         
         #~ main = """
@@ -2095,9 +2095,9 @@ def site_setup(site):
         """,
         
         right = """
-        uploads.UploadsByOwner
-        thirds.ThirdsByOwner:30
-        cal.TasksByOwner
+        uploads.UploadsByController
+        thirds.ThirdsByController:30
+        cal.TasksByController
         """,
         
         main = """
@@ -2107,9 +2107,9 @@ def site_setup(site):
     
     
     site.modules.outbox.Mails.set_detail("""
-    subject type project date 
-    sender sent build_time id 
-    RecipientsByMail:50x5 uploads.UploadsByOwner:20x5
+    subject project date 
+    sender sent #build_time id owner
+    RecipientsByMail:50x5 AttachmentsByMail:20x5
     body:90x10
     """)
         

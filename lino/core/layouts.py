@@ -35,8 +35,8 @@ a newline somewhere in your main's template. Example::
       """
       
       right = """
-      uploads.UploadsByOwner
-      cal.TasksByOwner
+      uploads.UploadsByController
+      cal.TasksByController
       """
       
       # the following will create a tabbed main panel:

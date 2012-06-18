@@ -432,7 +432,7 @@ class CourseRequests(dd.Table):
     detail_template = """
     date_submitted person content offer urgent 
     course date_ended ending id:8 
-    remark  uploads.UploadsByOwner
+    remark  uploads.UploadsByController 
     """
     
     order_by = ['date_submitted']

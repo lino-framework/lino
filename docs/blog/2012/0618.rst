@@ -57,3 +57,71 @@ Aber ich mach hier mal ein Checkin und eine Atempause.
 
 Beim Spielen mit dem neuen Feature kommen noch einige 
 Verbesserungen im Modul :mod:`lino.modlib.outbox`.
+
+Man kann jetzt auf einem Termin auf "Dispatch" ("Verschicken") 
+klicken, um ein Ausgangsdokument zu erstellen.
+
+outbox.Mail ist jetzt auch ein mixins.Controllable werden, 
+damit die Mail auf den Termin verweist, der sie erstellt hat.
+
+outbox.MailType habe ich rausgeholt.
+
+TODO:
+
+- Attachments funktionieren noch nicht. 
+  Virtuelles Feld `Mail.attach_upload`, 
+  in dem man einen Upload auswählen kann, 
+  der dann in die AttachmentsByMail kommt. 
+  Das `get()` von diesem Feld ist immer leer.
+- Wenn ein Termin Gäste hat, funktioniert Dispatch nicht.
+
+Aus mixins.Owned wird mixins.Controllable
+-----------------------------------------
+
+Allerdings sollte ich vorher mal endlich einen Namen 
+für unser Rumpelstilzchen finden. 
+Bisher nennen wir es ja `mixins.Owned`, aber 
+jetzt wo die Notion von "Owner" in Workflows eine total 
+andere Bedeutung hat, ist dieser Name einfach nicht mehr vertretbar.
+
+Aber was nehmen wir als neuen Namen? 
+Sollen wir es etwa "Controllable" (controller) nennen?
+Oder "Automatable" (automator)? 
+Oder "Generatable" (generator)? 
+
+Wer ist dieses Rumpelstilzchen überhaupt?
+Es geht um den Mechanismus, der benutzt wird wenn 
+z.B. eine VSE automatisch eine Serie von Terminen und 
+Tasks generiert, die (1) mit ihr "verknüpft" sind 
+(man kann vom Termin aus per Klick auf den Vertrag springen, um den es geht) 
+und (2) von ihr "kontrolliert" werden 
+(wenn man in der VSE was ändert, werden die automatisch erstellten Termine 
+und Tasks falls nötig aktualisiert).
+Für die Benutzer heißt das Feld `owner` auf dem Termin 
+momentan "verknüpft mit".
+
+Der gleiche Mechanismus wird benutzt für Uploads, die ja 
+mit allen möglichen Objekten (aber immer nur mit einem auf einmal) 
+verknüpft sein können: UploadsByOwner wird momentan 
+im Detail von Person, Note ud Course benutzt.
+
+The `owner` of a Task or Event 
+is some other database object that caused the task's or event's 
+creation.
+
+- uploads.UploadsByOwner
+- blog.EntriesByOwner
+- cal.TasksByOwner
+- mixins.Owned
+- mixins.Owned.owner_type
+- mixins.Owned.owner_id
+- mixins.Owned.owner
+- update_owned_instance
+- after_update_owned_instance
+
+Fazit: 
+wir nennen es "Controllable" und "ByController". 
+Aber die Datenbankfelder `owner` behalten vorläufig noch 
+ihren alten Namen, um die Datenbank-Migration nicht unnötig 
+zu verkomplizieren.
+Dringend fand ich vor allem die Namen, die in Anwendungscode benutzt werden.

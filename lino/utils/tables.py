@@ -609,8 +609,8 @@ class AbstractTable(actors.Actor):
     How to display this table when it is a slave in a detail window. 
     `grid` (default) to render as a grid. 
     `summary` to render a summary in a HtmlBoxPanel.
-    `html` to render plain html  a HtmlBoxPanel.
-    Example: :class:`links.LinksByOwner`
+    `html` to render plain html a HtmlBoxPanel.
+    Example: :class:`links.LinksByController`
     """
     
     grid_configs = []
@@ -821,7 +821,7 @@ class AbstractTable(actors.Actor):
                 """
                 20120222 : here was only `pass`, and the two other lines
                 were uncommented. don't remember why I commented them out.
-                But it caused all tasks to appear in UploadsByOwner of 
+                But it caused all tasks to appear in UploadsByController of 
                 an insert window for uploads.
                 """
                 #~ pass

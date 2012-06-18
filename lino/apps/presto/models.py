@@ -61,6 +61,6 @@ class Company(contacts.Partner,contacts.CompanyMixin):
     #~ site.modules.tickets.Ticket.set_detail("""
     #~ project summary user created modified
     #~ description
-    #~ SessionsByTicket blog.EntriesByOwner
+    #~ SessionsByTicket blog.EntriesByController
     #~ """
     

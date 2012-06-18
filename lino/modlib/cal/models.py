@@ -500,28 +500,11 @@ class RecurrenceSets(dd.Table):
     
 class Component(ComponentBase,
                 CalendarRelated,
-                mixins.Owned,
+                mixins.Controllable,
                 mixins.AutoUser,
                 mixins.CreatedModified):
     """
     Abstract base class for :class:`Event` and :class:`Task`.
-    
-    The `owner` of a Task or Event 
-    is some other database object that caused the task's or event's 
-    creation.
-    
-    For example, an invoice may cause one or several Tasks 
-    to be automatically generated when a certain payment mode 
-    is specified.
-    
-    Automatic Calendar components are "governed" or "controlled"
-    by their owner:
-    If the owner gets modified, it may decide to delete or 
-    modify all its automatic tasks or events.
-    
-    Non-automatic tasks always have an empty `owner` field.
-    Some fields are read-only on an automatic Task because 
-    it makes no sense to modify them.
     
     """
     class Meta:
@@ -734,7 +717,7 @@ class Event(Component,Ended,
         
     def get_mailable_contacts(self):
         for g in self.guest_set.all():
-            yield ('to',g)
+            yield ('to',g.partner)
         if self.user.partner:
             yield ('cc',self.user.partner)
         
@@ -889,14 +872,12 @@ class Tasks(Components):
     description #notes.NotesByTask    
     """
     
-#~ class EventsByOwner(Events):
-    #~ master_key = 'owner'
     
-class TasksByOwner(Tasks):
+class TasksByController(Tasks):
     master_key = 'owner'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
-class EventsByOwner(Events):
+class EventsByController(Events):
     master_key = 'owner'
 
 if settings.LINO.project_model:    

@@ -152,7 +152,7 @@ if True:
 
 
 class Recipient(models.Model):
-#~ class Recipient(mixins.Owned):
+#~ class Recipient(mixins.Controllable):
 
     allow_cascaded_delete = True
     
@@ -297,7 +297,7 @@ class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
         #~ """Doesn't work. 
         #~ """
         #~ kv = dict(type=settings.LINO.config.residence_permit_upload_type)
-        #~ r = uploads.UploadsByOwner.request(master_instance=self)
+        #~ r = uploads.UploadsByController.request(master_instance=self)
         #~ r.create_instance(**kv)
       
     #~ @classmethod
@@ -331,7 +331,7 @@ class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
         #~ rpt.add_action(SendMailAction())
 
 
-class Attachment(mixins.Owned):
+class Attachment(mixins.Controllable):
   
     allow_cascaded_delete = True
     
@@ -349,7 +349,7 @@ class Attachment(mixins.Owned):
 class Attachments(dd.Table):
     model = 'mails.Attachment'
     
-class AttachmentsByOwner(Attachments):
+class AttachmentsByController(Attachments):
     master_key = 'owner'
 
 class AttachmentsByMail(Attachments):
@@ -361,7 +361,7 @@ class Mails(dd.Table):
     detail_template = """
     id sender type sent received build_time
     subject
-    RecipientsByMail:50x5 uploads.UploadsByOwner:20x5 AttachmentsByMail:20x5
+    RecipientsByMail:50x5 uploads.UploadsByController:20x5 AttachmentsByMail:20x5
     body:90x10
     """
   

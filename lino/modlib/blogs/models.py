@@ -64,7 +64,7 @@ class EntryType(babel.BabelNamed,mixins.PrintableType):
 class Entry(mixins.TypedPrintable,
       mixins.CreatedModified,
       mixins.AutoUser,
-      mixins.Owned):
+      mixins.Controllable):
       
     """
     Deserves more documentation.
@@ -153,7 +153,7 @@ class MyEntries(mixins.ByUser,Entries):
     #~ column_names = "date subject user *"
     #~ order_by = "date"
   
-#~ class NotesByOwner(Notes):
+#~ class NotesByController(Notes):
     #~ master_key = 'owner'
     #~ column_names = "date subject user *"
     #~ order_by = "date"
@@ -165,7 +165,7 @@ class EntriesByType(Entries):
     #~ label = _("Notes by person")
   
   
-class EntriesByOwner(Entries):
+class EntriesByController(Entries):
     master_key = 'owner'
     column_names = "modified subject user *"
     order_by = ["modified-"]

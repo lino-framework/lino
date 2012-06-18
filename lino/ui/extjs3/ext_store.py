@@ -454,20 +454,10 @@ class PasswordStoreField(StoreField):
         
 class GenericForeignKeyField(StoreField):
         
-    #~ def value_from_object(self,req,obj):
-        #~ return getattr(obj,self.field.name)
-        
-    def full_value_from_object(self,obj,request):
-        #~ owner = self.full_value_from_object(request,obj)
+    def full_value_from_object(self,obj,ar):
         owner = getattr(obj,self.name)
-        #~ owner = getattr(obj,self.field.name)
         if owner is None: return ''
-        return request.renderer.href_to(owner)
-        #~ return "foo"
-        #~ if not hasattr(self.field,'value_from_object'):
-            #~ raise Exception('%s %s has no method value_from_object?!'%(
-              #~ self.field,self.field.name))
-        #~ return self.field.value_from_object(obj)
+        return ar.renderer.href_to(owner)
   
 class SpecialStoreField(StoreField):
     field = None 

@@ -541,8 +541,8 @@ class ContractDetail(dd.DetailLayout):
     """
     
     right = """
-    cal.EventsByOwner 
-    cal.TasksByOwner 
+    cal.EventsByController 
+    cal.TasksByController 
     """
     
     main = """
@@ -565,7 +565,7 @@ class Contracts(dd.Table):
     #~ regime:20 schedule:30 hourly_rate:10 refund_rate:10
     #~ date_decided date_issued date_ended ending
     #~ reference_person build_time
-    #~ responsibilities cal.TasksByOwner cal.EventsByOwner 
+    #~ responsibilities cal.TasksByController cal.EventsByController 
     #~ """
     detail_layout = ContractDetail()
     

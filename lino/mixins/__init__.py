@@ -39,16 +39,37 @@ from lino.mixins.duplicable import Duplicable
     
 
 
-class Owned(models.Model):
+#~ class Owned(models.Model):
+class Controllable(models.Model):
     """
-    Mixin for models that are "owned" by other database objects.
+    Mixin for models that are "controllable" by another database object.
     
     Defines three fields `owned_type`, `owned_id` and `owned`.
     And a class attribute :attr:`owner_label`.
     
+    For example in :mod:`lino.modlibs.cal`, the owner of a Task or Event 
+    is some other database object that caused the task's or event's 
+    creation.
+    
+    Or in :mod:`lino.modlib.sales` and :mod:`lino.modlib.purchases`,
+    an invoice may cause one or several Tasks 
+    to be automatically generated when a certain payment mode 
+    is specified.
+    
+    Controllable objects are "governed" or "controlled"
+    by their controller:
+    If the controller gets modified, it may decide to delete or 
+    modify some or all of her controlled objects.
+    
+    Non-automatic tasks always have an empty `controller` field.
+    Some fields are read-only on an automatic Task because 
+    it makes no sense to modify them.
+    
+    
+    
     """
     # Translators: will also be concatenated with '(type)' '(object)'
-    owner_label = _('Owned by')
+    owner_label = _('Controlled by')
     """
     The labels (`verbose_name`) of the fields 
     `owned_type`, `owned_id` and `owned`

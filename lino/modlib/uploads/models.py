@@ -59,7 +59,7 @@ class Upload(
     #~ mixins.Reminder, 
     mixins.AutoUser,
     mixins.CreatedModified,
-    mixins.Owned):
+    mixins.Controllable):
     
     allow_cascaded_delete = True
     
@@ -110,7 +110,7 @@ class Upload(
     def update_owned_instance(self,task):
         #~ logger.info("Upload.update_owned_instance() %s : owner is %s", self.pk, self.owner)
         mixins.AutoUser.update_owned_instance(self,task)
-        mixins.Owned.update_owned_instance(self,task)
+        mixins.Controllable.update_owned_instance(self,task)
           
         
 class Uploads(dd.Table):
@@ -140,7 +140,7 @@ class Uploads(dd.Table):
     #~ column_names = "file user person created modified"
     #~ show_slave_grid = False
     
-class UploadsByOwner(Uploads):
+class UploadsByController(Uploads):
     master_key = 'owner'
     column_names = "file type description user * "
     slave_grid_format = 'summary'

@@ -267,7 +267,7 @@ class MyNotes(mixins.ByUser,Notes):
     #~ column_names = "date subject user *"
     #~ order_by = "date"
   
-#~ class NotesByOwner(Notes):
+#~ class NotesByController(Notes):
     #~ master_key = 'owner'
     #~ column_names = "date subject user *"
     #~ order_by = "date"

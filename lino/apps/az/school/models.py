@@ -288,7 +288,7 @@ class CourseDetail(dd.DetailLayout):
     description
     #remark
     #rrule
-    cal.EventsByOwner
+    cal.EventsByController
     """
     
     #~ def setup_handle(self,dh):

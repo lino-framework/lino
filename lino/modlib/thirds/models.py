@@ -34,7 +34,7 @@ from lino.modlib.contacts import models as contacts
 class Third(
     mixins.Sequenced,
     contacts.PartnerDocument,
-    mixins.Owned):
+    mixins.Controllable):
     
     class Meta:
         verbose_name = _("Third Party")
@@ -58,7 +58,7 @@ class Thirds(dd.Table):
     column_names = "owner_type owner_id seqno person company *"
     
 
-class ThirdsByOwner(Thirds):
+class ThirdsByController(Thirds):
     master_key = 'owner'
     column_names = "seqno person company id *"
     slave_grid_format = 'summary'

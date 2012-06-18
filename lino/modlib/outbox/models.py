@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines models for :mod:`lino.modlib.mails`.
+Defines models for :mod:`lino.modlib.outbox`.
 """
 
 import logging
@@ -58,18 +58,18 @@ from Cheetah.Template import Template as CheetahTemplate
 
 
 
-class MailType(mixins.PrintableType,babel.BabelNamed):
-    "Deserves more documentation."
+#~ class MailType(mixins.PrintableType,babel.BabelNamed):
+    #~ "Deserves more documentation."
   
-    templates_group = 'mails/Mail'
+    #~ templates_group = 'mails/Mail'
     
-    class Meta:
-        verbose_name = _("Mail Type")
-        verbose_name_plural = _('Mail Types')
+    #~ class Meta:
+        #~ verbose_name = _("Mail Type")
+        #~ verbose_name_plural = _('Mail Types')
 
-class MailTypes(dd.Table):
-    model = MailType
-    column_names = 'name build_method template *'
+#~ class MailTypes(dd.Table):
+    #~ model = MailType
+    #~ column_names = 'name build_method template *'
 
 
 class DispatchAction(dd.RowAction):
@@ -83,7 +83,7 @@ class DispatchAction(dd.RowAction):
     callable_from = None
             
     def get_view_permission(self,user):
-        if not user.partner:
+        if not user.email:
             return False
         return True
         
@@ -99,7 +99,7 @@ class DispatchAction(dd.RowAction):
         html_content = unicode(tpl)
         
         #~ from lino.modlib.mails.models import Mail
-        m = Mail(sender=rr.get_user(),subject=elem.get_subject(),body=html_content)
+        m = Mail(sender=rr.get_user(),subject=elem.get_subject(),body=html_content,owner=elem)
         m.full_clean()
         m.save()
         #~ for t,n,a in elem.get_recipients():
@@ -121,8 +121,7 @@ class DispatchAction(dd.RowAction):
     
 class Mailable(models.Model):
     """
-    Mixin for models that provide a "Create Email" button.
-    Deserves more documentation.
+    Mixin for models that provide a "Dispatch" button.
     """
 
     class Meta:
@@ -211,7 +210,7 @@ class SendMailAction(dd.RowAction):
                 recipients = cc
             elif r.type == mails.RecipientType.bcc:
                 recipients = bcc
-            if recipients:
+            if recipients is not None:
                 recipients.append(r.name_address())
                 found = True
             else:
@@ -239,7 +238,8 @@ class SendMailAction(dd.RowAction):
 
 
 
-class Mail(mails.Mail,mixins.ProjectRelated):
+#~ class Mail(mails.Mail,mixins.ProjectRelated,mixins.Controllable):
+class Mail(mixins.Printable,mixins.ProjectRelated,mixins.Controllable):
   
     class Meta:
         verbose_name = _("Outgoing Mail")
@@ -253,7 +253,13 @@ class Mail(mails.Mail,mixins.ProjectRelated):
         The official date to be printed on the document.
         """)
         
-    type = models.ForeignKey(MailType,null=True,blank=True)
+    subject = models.CharField(_("Subject"),
+        max_length=200,blank=True,
+        #null=True
+        )
+    body = dd.RichTextField(_("Body"),blank=True,format='html')
+    
+    #~ type = models.ForeignKey(MailType,null=True,blank=True)
     
     #~ send = SendMailAction()
         
@@ -263,6 +269,15 @@ class Mail(mails.Mail,mixins.ProjectRelated):
         #~ blank=True,null=True)
     sent = models.DateTimeField(null=True,editable=False)
 
+    def get_print_language(self,bm):
+        if self.sender is not None:
+            return self.sender.language
+        return super(Mail,self).get_print_language(bm)
+        
+    
+    def __unicode__(self):
+        return u'%s #%s' % (self._meta.verbose_name,self.pk)
+        
     def get_recipients(self,rr):
         #~ recs = []
         recs = [ unicode(r) for r in 
@@ -275,38 +290,6 @@ class Mail(mails.Mail,mixins.ProjectRelated):
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        # call_optional_super(CachedPrintable,cls,'setup_report',rpt)
-        #~ rpt.add_action(SendMailAction())
-        #~ mails.Mail.setup_report(rpt)
-        # rpt.add_action(ClearCacheAction())
-
-
-#~ class InMail(Mail):
-    #~ "Incoming Mail"
-    
-    #~ class Meta:
-        #~ verbose_name = _("Incoming Mail")
-        #~ verbose_name_plural = _("Incoming Mails")
-        
-    #~ sender_type = models.ForeignKey(ContentType,blank=True,null=True)
-    #~ sender_id = models.PositiveIntegerField(blank=True,null=True)
-    #~ sender = generic.GenericForeignKey('sender_type', 'sender_id')
-    #~ received = models.DateTimeField(auto_now_add=True,editable=False)
-    
-#~ class OutMail(Mail,mixins.AutoUser):
-    #~ "Outgoing Mail"
-    
-    #~ class Meta:
-        #~ verbose_name = _("Outgoing Mail")
-        #~ verbose_name_plural = _("Outgoing Mails")
-        
-    #~ sent = models.DateTimeField(null=True,editable=False)
-    
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ rpt.add_action(SendMailAction())
 
 
 class Mails(dd.Table):
@@ -315,7 +298,7 @@ class Mails(dd.Table):
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
     detail_template = """
-    id sender type date sent build_time
+    id sender type date sent #build_time
     subject
     RecipientsByMail:50x5 AttachmentsByMail:20x5
     body:90x10
@@ -345,7 +328,7 @@ class MyOutbox(Mails):
     #~ can_add = perms.never
     
 
-class Attachment(mixins.Owned):
+class Attachment(mixins.Controllable):
   
     allow_cascaded_delete = True
     
@@ -363,12 +346,12 @@ class Attachment(mixins.Owned):
 class Attachments(dd.Table):
     model = Attachment
     
-class AttachmentsByOwner(Attachments):
-    master_key = 'owner'
-
 class AttachmentsByMail(Attachments):
     master_key = 'mail'
     slave_grid_format = 'summary'
+
+class AttachmentsByController(Attachments):
+    master_key = 'owner'
 
 
 
@@ -412,23 +395,23 @@ class SentByPartner(Mails):
 
   
 
-MODULE_NAME = _("Mails")
+MODULE_LABEL = _("Mails")
   
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    m  = m.add_menu("mails",MODULE_NAME)
+    m  = m.add_menu("mails",MODULE_LABEL)
     #~ m.add_action(MyInbox)
     m.add_action(MyOutbox)
     #~ m.add_action(MySent)
   
 def setup_config_menu(site,ui,user,m):
     #~ if user.level >= UserLevel.manager:
-    m  = m.add_menu("mails",MODULE_NAME)
-    m.add_action(MailTypes)
+    m  = m.add_menu("mails",MODULE_LABEL)
+    #~ m.add_action(MailTypes)
   
 def setup_explorer_menu(site,ui,user,m):
     #~ if user.level >= UserLevel.manager:
-    m  = m.add_menu("mails",MODULE_NAME)
+    m  = m.add_menu("mails",MODULE_LABEL)
     m.add_action(Mails)
   

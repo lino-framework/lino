@@ -97,9 +97,6 @@ if True: # dd.is_installed('igen'):
             #~ verbose_name = _("Note")
             #~ verbose_name_plural = _("Notes")
             
-    #~ class NotesByOwner(dd.Table):
-        #~ model = Note
-        #~ master_key = 'owner'
      
     class Event(cal.Event):
         class Meta(cal.Event.Meta):
