@@ -57,100 +57,110 @@ from lino.utils.choicelists import UserLevel
 from Cheetah.Template import Template as CheetahTemplate
 
 
-if True:
 
-
-  class MailType(mixins.PrintableType,babel.BabelNamed):
-      "Deserves more documentation."
+class MailType(mixins.PrintableType,babel.BabelNamed):
+    "Deserves more documentation."
+  
+    templates_group = 'mails/Mail'
     
-      templates_group = 'mails/Mail'
-      
-      class Meta:
-          verbose_name = _("Mail Type")
-          verbose_name_plural = _('Mail Types')
+    class Meta:
+        verbose_name = _("Mail Type")
+        verbose_name_plural = _('Mail Types')
 
-  class MailTypes(dd.Table):
-      model = MailType
-      column_names = 'name build_method template *'
+class MailTypes(dd.Table):
+    model = MailType
+    column_names = 'name build_method template *'
 
 
-  class CreateMailAction(dd.RowAction):
-      "Deserves more documentation."
-    
-      url_action_name = 'send'
-      label = _('Create email')
-      callable_from = None
-              
-      def run(self,elem,rr,**kw):
+class DispatchAction(dd.RowAction):
+    """
+    Creates an outbox mail and displays it
+    """
+  
+    url_action_name = 'dispatch'
+    #~ label = _('Create email')
+    label = _('Dispatch')
+    callable_from = None
+            
+    def get_view_permission(self,user):
+        if not user.partner:
+            return False
+        return True
         
-          tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
-          
-          fn = find_config_file(tplname)
-          logger.info("Using email template %s",fn)
-          tpl = CheetahTemplate(file(fn).read())
-          #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
-          tpl.instance = elem
-          html_content = unicode(tpl)
-          
-          #~ from lino.modlib.mails.models import Mail
-          m = Mail(sender=rr.get_user(),subject=elem.get_subject(),body=html_content)
-          m.full_clean()
-          m.save()
-          #~ for t,n,a in elem.get_recipients():
-              #~ m.recipient_set.create(type=t,address=a,name=n)
-          for t,c in elem.get_mailable_contacts():
-              r = Recipient(mail=m,type=t,partner=c)
-              r.full_clean()
-              r.save()
-              #~ m.recipient_set.create(type=t,partner=c)
-          a = Attachment(mail=m,owner=elem)
-          a.save()
-          kw.update(open_url=rr.ui.get_detail_url(m))
-          return rr.ui.success_response(**kw)
-          
+    def run(self,elem,rr,**kw):
       
-  class Mailable(models.Model):
-      """
-      Mixin for models that provide a "Create Email" button.
-      Deserves more documentation.
-      """
+        tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
+        
+        fn = find_config_file(tplname)
+        logger.info("Using email template %s",fn)
+        tpl = CheetahTemplate(file(fn).read())
+        #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
+        tpl.instance = elem
+        html_content = unicode(tpl)
+        
+        #~ from lino.modlib.mails.models import Mail
+        m = Mail(sender=rr.get_user(),subject=elem.get_subject(),body=html_content)
+        m.full_clean()
+        m.save()
+        #~ for t,n,a in elem.get_recipients():
+            #~ m.recipient_set.create(type=t,address=a,name=n)
+        for t,c in elem.get_mailable_contacts():
+            r = Recipient(mail=m,type=t,partner=c)
+            r.full_clean()
+            r.save()
+            #~ m.recipient_set.create(type=t,partner=c)
+        a = Attachment(mail=m,owner=elem)
+        a.save()
+        js = rr.renderer.instance_handler(m)
+        #~ url = rr.renderer.js2url(js)
+        #~ kw.update(open_url=rr.renderer.get_detail_url(m))
+        #~ kw.update(open_url=url)
+        kw.update(eval_js=js)
+        return rr.ui.success_response(**kw)
+        
+    
+class Mailable(models.Model):
+    """
+    Mixin for models that provide a "Create Email" button.
+    Deserves more documentation.
+    """
 
-      class Meta:
-          abstract = True
-          
-      create_mail = CreateMailAction()
-          
-      #~ time_sent = models.DateTimeField(null=True,editable=False)
-      
-      #~ @classmethod
-      #~ def setup_report(cls,rpt):
-          #~ rpt.add_action(CreateMailAction())
-          # call_optional_super(Mailable,cls,'setup_report',rpt)
-          
-      def get_print_language(self,pm):
-          return babel.DEFAULT_LANGUAGE
-          
-      #~ def get_templates_group(self):
-          #~ return model_group(self)
-          
-      def get_subject(self):
-          """
-          Return the content of the `subject` 
-          field for the email to be created.
-          """
-          return unicode(self)
-          
-      #~ def get_recipients(self):
-          #~ "return or yield a list of (type,name,address) tuples"
-          #~ raise NotImplementedError()
-          
-      def get_mailable_contacts(self):
-          "return or yield a list of (type,partner) tuples"
-          return []
-          
-      #~ @classmethod
-      #~ def setup_report(cls,rpt):
-          #~ rpt.add_action(CreateMailAction())
+    class Meta:
+        abstract = True
+        
+    create_mail = DispatchAction()
+        
+    #~ time_sent = models.DateTimeField(null=True,editable=False)
+    
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ rpt.add_action(CreateMailAction())
+        # call_optional_super(Mailable,cls,'setup_report',rpt)
+        
+    def get_print_language(self,pm):
+        return babel.DEFAULT_LANGUAGE
+        
+    #~ def get_templates_group(self):
+        #~ return model_group(self)
+        
+    def get_subject(self):
+        """
+        Return the content of the `subject` 
+        field for the email to be created.
+        """
+        return unicode(self)
+        
+    #~ def get_recipients(self):
+        #~ "return or yield a list of (type,name,address) tuples"
+        #~ raise NotImplementedError()
+        
+    def get_mailable_contacts(self):
+        "return or yield a list of (type,partner) tuples"
+        return []
+        
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ rpt.add_action(CreateMailAction())
 
 
 class Recipient(mails.Recipient):
@@ -172,7 +182,9 @@ class RecipientsByMail(Recipients):
 
 
 class SendMailAction(dd.RowAction):
-    "Deserves more documentation."
+    """
+    Sends this as an email.
+    """
   
     url_action_name = 'send'
     label = _('Send email')
@@ -186,11 +198,30 @@ class SendMailAction(dd.RowAction):
         #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
         sender = "%s <%s>" % (elem.sender.get_full_name(),elem.sender.email)
         #~ recipients = list(elem.get_recipients_to())
+        to = []
+        cc = []
+        bcc = []
+        #~ [r.name_address() for r in elem.recipient_set.filter(type=mails.RecipientType.cc)]
+        found = False
+        for r in elem.recipient_set.all():
+            recipients = None
+            if r.type == mails.RecipientType.to:
+                recipients = to
+            elif r.type == mails.RecipientType.cc:
+                recipients = cc
+            elif r.type == mails.RecipientType.bcc:
+                recipients = bcc
+            if recipients:
+                recipients.append(r.name_address())
+                found = True
+            else:
+                logger.info("Ignoring recipient %s (type %s)",r,r.type)
+        if not found:
+            raise Exception("No recipients found.")
         msg = EmailMultiAlternatives(subject=elem.subject, 
             from_email=sender,
             body=text_content, 
-            to=[r.name_address() for r in elem.recipient_set.filter(
-                  type=mails.RecipientType.to)])
+            to=to,bcc=bcc,cc=cc)
         msg.attach_alternative(elem.body, "text/html")
         msg.send()
       
@@ -286,7 +317,7 @@ class Mails(dd.Table):
     detail_template = """
     id sender type date sent build_time
     subject
-    RecipientsByMail:50x5 uploads.UploadsByOwner:20x5
+    RecipientsByMail:50x5 AttachmentsByMail:20x5
     body:90x10
     """
     
@@ -313,6 +344,37 @@ class MyOutbox(Mails):
     #~ master = 'contacts.Partner'
     #~ can_add = perms.never
     
+
+class Attachment(mixins.Owned):
+  
+    allow_cascaded_delete = True
+    
+    class Meta:
+        verbose_name = _("Attachment")
+        verbose_name_plural = _("Attachments")
+        
+    mail = models.ForeignKey('outbox.Mail')
+    
+    def __unicode__(self):
+        if self.owner_id:
+            return unicode(self.owner)
+        return unicode(self.id)
+        
+class Attachments(dd.Table):
+    model = Attachment
+    
+class AttachmentsByOwner(Attachments):
+    master_key = 'owner'
+
+class AttachmentsByMail(Attachments):
+    master_key = 'mail'
+    slave_grid_format = 'summary'
+
+
+
+
+
+
 
   
 #~ class OutboxByPartner(Outbox,MailsByPartner):

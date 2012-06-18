@@ -102,12 +102,11 @@ def objects():
     USERS = Cycler(User.objects.all())
     ETYPES = Cycler(EventType.objects.all())
     TIMES = Cycler(['08:30','09:40','10:20','11:10','13:30'])
-    SUMMARIES = Cycler("""
-    Meeting with Michael
-    Seminar in Brussels
-    Consultation with Claudine
-    Lunch with Luc
-    """.splitlines())
+    SUMMARIES = Cycler("""\
+Meeting with Michael
+Seminar in Brussels
+Consultation with Claudine
+Lunch with Luc""".splitlines())
     #~ Event = resolve_model('cal.Event')
     #~ user = User.objects.get(username='user')
     #~ event = Instantiator('cal.Event').build

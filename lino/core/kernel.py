@@ -63,6 +63,7 @@ from lino.tools import is_devserver
     
 from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
+from lino.utils import choicelists
 from lino.utils import codetime
 from lino import dd
 #~ from lino.models import get_site_config
@@ -261,10 +262,15 @@ def load_workflows(self):
             possible_states = actor.workflow_state_field.choicelist.items_dict.keys() + [BLANK_STATE]
             for action in actor._actions_list:
                 if action.required_states is not None:
+                    rs = []
                     for st in action.required_states:
                         if not st in possible_states:
                             raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
+                        if isinstance(st,choicelists.BabelChoice):
+                            st = st.value
+                        rs.append(st)
                     l.append(action)
+                    action.required_states = frozenset(rs)
                 #~ if isinstance(an,basestring):
                     #~ l.append(an)
                 #~ else:

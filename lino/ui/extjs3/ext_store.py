@@ -281,7 +281,8 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         if h is None:
             #~ return cgi.escape(force_unicode(obj))
             return xghtml.E.p(xghtml.E.b(cgi.escape(force_unicode(v))))
-        url = ar.renderer.js2url(h)
+        url = 'javascript:' + h
+        #~ url = ar.renderer.js2url(h)
         #~ return self.href(url,text or cgi.escape(force_unicode(obj)))
         return xghtml.E.p(xghtml.E.a(cgi.escape(force_unicode(v)),href=url))
         
@@ -411,7 +412,8 @@ class RequestStoreField(StoreField):
         if n == 0:
             return ''
         #~ return ar.renderer.href_to_request(v,str(n))
-        url = ar.renderer.js2url(ar.renderer.request_handler(v))
+        url = 'javascript:' + ar.renderer.request_handler(v)
+        #~ url = ar.renderer.js2url(h)
         #~ return xghtml.E.a(cgi.escape(force_unicode(v.label)),href=url)
         return xghtml.E.a(str(n),href=url)
       

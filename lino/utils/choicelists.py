@@ -393,10 +393,13 @@ class BabelChoice(object):
     def __getattr__(self,name):
         return curry(getattr(self.choicelist,name),self)
         
+    def __repr__(self):
+        return str(self)
+        
     def __str__(self):
         #~ return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
           #~ self.__class__.__name__,self.value)
-        return "%s (%s:%s)" % (self.text,
+        return "%s (%s:%s)" % (unicode(self.text),
             self.choicelist.__name__,self.value)
         
     def __unicode__(self):

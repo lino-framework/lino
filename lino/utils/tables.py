@@ -419,14 +419,16 @@ class TableRequest(actions.ActionRequest):
         return self.data_iterator.__iter__()
         
     def __str__(self):
-        kw = dict(actor=str(self.actor))
+        #~ kw = dict(actor=str(self.actor))
+        kw = dict()
         if self.master_instance is not None:
             kw.update(master_instance=self.master_instance.pk)
         if self.filter is not None:
             kw.update(filter=str(self.filter))
         if self.known_values:
             kw.update(known_values=self.known_values)
-        return self.__class__.__name__ + '(%s)' % kw
+        #~ return self.__class__.__name__ + '(%s)' % kw
+        return self.__class__.__name__ + ' '+str(self.action)+'(%s)' % kw
 
 
 

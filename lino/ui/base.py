@@ -38,7 +38,7 @@ ACTION_RESPONSES = frozenset((
   'new_status',
   'refresh','refresh_all',
   'confirm_message', 'step',
-  'open_url','open_davlink_url'))
+  'open_url','open_davlink_url','eval_js'))
 """
 Action responses supported by `Lino.action_handler` (defined in :xfile:`linolib.js`).
 """

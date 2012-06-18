@@ -153,7 +153,8 @@ add = EventState.add_item
 add('10', _("Draft"),'draft')
 add('20', _("Suggested"),'suggested')
 add('30', _("Published"),'published')
-add('40', _("Done"),'done')
+#~ add('40', _("Done"),'done')
+add('40', _("Happened"),'happened')
 add('50', _("Cancelled"),'cancelled')
     
 class GuestState(ChoiceList):

@@ -30,6 +30,7 @@ from lino.core import layouts
 from lino.tools import resolve_model
 from lino.utils import curry, AttrDict
 from lino.utils import ViewPermissionClass
+from lino.utils import choicelists
 #~ from lino.utils import jsgen
 
         
@@ -544,21 +545,22 @@ class Actor(ViewPermissionClass):
         Displays the workflow buttons for this row and this user.
         """
         actor = ar.actor
+        #~ print 20120618, ar
         if actor.workflow_actions is None:
             return 'no actions in %s' % actor
         l = []
         state = getattr(obj,actor.workflow_state_field.name)
+        if isinstance(state,choicelists.BabelChoice):
+            state = state.value
         for a in actor.workflow_actions:
-            if a.required_states is None or state in a.required_states:
+            if (a.required_states is None) or (state in a.required_states):
                 rh = a._rule_handlers[state]
                 if rh.allow(obj,ar.get_user()):
-                    #~ a = getattr(self.__class__,an)
-                    #~ a = self.actor.get_action(an)
                     l.append(ar.renderer.row_action_button(obj,ar,a))
-                else:
-                    print '20120619 not allowed', a
-            else:
-                print '20120619 %s : state %r not in required states %s' % (a,state,a.required_states)
+                #~ else:
+                    #~ print '20120619 not allowed', a
+            #~ else:
+                #~ print '20120619 %s : state %r not in required states %s' % (a,state,a.required_states)
         #~ for a in ar.actor.get_actions():
             #~ if a.ruled and a.get_row_permission(ar.get_user(),self):
                 #~ rh = self.__class__._rule_handles.get(state,None)

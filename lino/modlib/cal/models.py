@@ -735,7 +735,8 @@ class Event(Component,Ended,
     def get_mailable_contacts(self):
         for g in self.guest_set.all():
             yield ('to',g)
-        yield ('cc',self.user)
+        if self.user.partner:
+            yield ('cc',self.user.partner)
         
     #~ @classmethod
     #~ def setup_report(cls,rpt):
@@ -771,6 +772,8 @@ class Event(Component,Ended,
         #~ if self.state != GuestState.invited:
         print 'TODO: would suggest', self
         self.state = EventState.suggested
+        self.save()
+        return ar.ui.success_response(refresh=True)
     
     @dd.action(_("Publish"),
         owned_only=True,
@@ -779,6 +782,8 @@ class Event(Component,Ended,
         #~ if self.state != GuestState.invited:
         print 'TODO: would publish', self
         self.state = EventState.published
+        self.save()
+        return ar.ui.success_response(refresh=True)
         
 
 #~ class Task(Component,contacts.PartnerDocument):

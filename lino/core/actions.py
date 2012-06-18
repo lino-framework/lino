@@ -114,7 +114,7 @@ class ConfirmationRequired(Exception):
         Exception.__init__(self)
 
 
-class Action(object): 
+class Action(object):
     """
     Abstract base class for all Actions
     """
@@ -129,7 +129,7 @@ class Action(object):
     actor = None
     name = None
     url_action_name = None
-    inheritable = True
+    #~ inheritable = True
     key = None
     callable_from = None
     default_format = 'html'
@@ -205,6 +205,12 @@ class Action(object):
         
     def __unicode__(self):
         return force_unicode(self.label)
+        
+    def get_view_permission(self,user):
+        """
+        E.g. DispatchAction is not available for a User with empty partner
+        """
+        return True
         
     def get_button_label(self):
         if self.actor is None:

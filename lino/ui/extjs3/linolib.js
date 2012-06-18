@@ -1241,6 +1241,10 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
           window.open(result.open_url,'foo',"");
           //~ document.location = result.open_url;
       }
+      if (result.eval_js) {
+          //~ console.log(20120618,result.eval_js);
+          eval(result.eval_js);
+      }
     }
   }
 };
@@ -1708,8 +1712,9 @@ Lino.row_action_handler = function(actionName,gridmode) {
   return fn;
 };
 
-Lino.row_action = function(pk,actionName) {
-  Lino.row_action_handler(actionName,true)(panel,btn,step);
+Lino.run_row_action = function(panel,url,pk,actionName) {
+  console.log(20120618,actionName,url,pk,panel);
+  Lino.row_action_handler(actionName,true)(panel);
 }
 
 

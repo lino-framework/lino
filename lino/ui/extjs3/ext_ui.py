@@ -219,36 +219,31 @@ class PdfRenderer(HtmlRenderer):
         return None
         
 
-class ExtRendererPermalink(HtmlRenderer):
-    """
-    Deserves more documentation.
-    """
-    def href_to_request(self,rr,text=None):
-        """
-        Returns a HTML chunk with a clickable link to 
-        the given :class:`TableTequest <lino.core.table.TableRequest>`.
-        """
-        return self.href(
-            self.get_request_url(rr),
-            text or cgi.escape(force_unicode(rr.label)))
-    def href_to(self,obj,text=None):
-        """
-        Returns a HTML chunk with a clickable link to 
-        the given model instance.
-        """
-        return self.href(
-            self.get_detail_url(obj),
-            text or cgi.escape(force_unicode(obj)))
+#~ class ExtRendererPermalink(HtmlRenderer):
+    #~ """
+    #~ Deserves more documentation.
+    #~ """
+    #~ def href_to_request(self,rr,text=None):
+        #~ """
+        #~ Returns a HTML chunk with a clickable link to 
+        #~ the given :class:`TableTequest <lino.core.table.TableRequest>`.
+        #~ """
+        #~ return self.href(
+            #~ self.get_request_url(rr),
+            #~ text or cgi.escape(force_unicode(rr.label)))
+    #~ def href_to(self,obj,text=None):
+        #~ """
+        #~ Returns a HTML chunk with a clickable link to 
+        #~ the given model instance.
+        #~ """
+        #~ return self.href(
+            #~ self.get_detail_url(obj),
+            #~ text or cgi.escape(force_unicode(obj)))
             
 class ExtRenderer(HtmlRenderer):
     """
     Deserves more documentation.
     """
-    def href_to_request(self,rr,text=None):
-        url = self.js2url(self.request_handler(rr))
-        return self.href(url,text or cgi.escape(force_unicode(rr.label)))
-        #~ return self.href_button(url,text or cgi.escape(force_unicode(rr.label)))
-            
     def href_to(self,obj,text=None):
         h = self.instance_handler(obj)
         if h is None:
@@ -377,7 +372,8 @@ class ExtRenderer(HtmlRenderer):
             return self.action_href_js(a,params,after_show,a.label)
         else:
             label = cgi.escape(unicode(a.label))
-            url = self.js2url('Lino.row_action(%s,%s)' % (py2js(obj.pk),py2js(a.name)))
+            url = self.js2url('Lino.%s(%s,Lino.%s_window.main_item)' % (a,py2js(obj.pk),ar.action))
+            #~ url = self.js2url('Lino.row_action(%s,%s)' % (py2js(obj.pk),py2js(a.name)))
             return self.href_button(url,label)
         
     def instance_handler(self,obj):
@@ -393,6 +389,13 @@ class ExtRenderer(HtmlRenderer):
         #~ return self.action_call(rr.action,after_show=dict(base_params=bp))
         return self.action_call(rr.action,after_show=st)
         
+    def href_to_request(self,rr,text=None):
+        url = self.js2url(self.request_handler(rr))
+        #~ if 'Lino.pcsw.MyPersonsByGroup' in url:
+        #~ print 20120618, url
+        return self.href(url,text or cgi.escape(force_unicode(rr.label)))
+        #~ return self.href_button(url,text or cgi.escape(force_unicode(rr.label)))
+            
     def action_href_http(self,a,label=None,**params):
         """
         Return a HTML chunk for a button that will execute 
@@ -1952,6 +1955,9 @@ tinymce.init({
                               f.write(ln + '\n')
                     for ln in self.js_render_window_action(rh,a,user):
                         f.write(ln + '\n')
+                elif a.required_states:
+                    for ln in self.js_render_workflow_action(rh,a,user):
+                        f.write(ln + '\n')
 
 
         #~ f.write(jscompress(js))
@@ -2404,7 +2410,9 @@ tinymce.init({
             
 
         yield "  ls_bbar_actions: %s," % py2js([
-            rh.ui.a2btn(a) for a in rpt.get_actions(action)])
+            rh.ui.a2btn(a) for a in rpt.get_actions(action) 
+                if not a.required_states 
+                    and a.get_view_permission(jsgen._for_user)])
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action != rpt.default_action:
             yield "  action_name: %s," % py2js(action.url_action_name)
@@ -2442,7 +2450,9 @@ tinymce.init({
                 kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
         kw.update(ls_quick_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=[
-            rh.ui.a2btn(a) for a in rh.actor.get_actions(rh.actor.default_action)])
+            rh.ui.a2btn(a) 
+              for a in rh.actor.get_actions(rh.actor.default_action) 
+                  if not a.required_states and a.get_view_permission(jsgen._for_user)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:
@@ -2515,6 +2525,14 @@ tinymce.init({
         yield ""
       
             
+    def js_render_workflow_action(self,rh,action,user):
+        yield "Lino.%s = function(pk,panel) { " % action
+        #~ panel = "Lino.%s.GridPanel.ls_url" % action 
+        url = ext_elems.rpt2url(rh.actor)
+        yield "  Lino.run_row_action(panel,%s,pk,%s);" % (py2js(url),py2js(action.name))
+        yield "};"
+        
+        
     def js_render_window_action(self,rh,action,user):
       
         rpt = rh.actor

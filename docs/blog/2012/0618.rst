@@ -51,3 +51,9 @@ Workflow-Buttons "Publish" klickt, kommt eine Fehlermeldung
 "Uncaught TypeError: Object #<Object> has no method 'publish'".
 Das ist logisch weil `Publish` ja keine window action ist.
 Aber ich mach hier mal ein Checkin und eine Atempause.
+:checkin:`7b887149fc92`.
+
+22.30 Uhr : Voilà, jetzt funktioniert auch "der Klick".
+
+Beim Spielen mit dem neuen Feature kommen noch einige 
+Verbesserungen im Modul :mod:`lino.modlib.outbox`.
