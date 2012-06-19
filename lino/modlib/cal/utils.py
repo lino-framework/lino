@@ -140,22 +140,56 @@ class TaskState(ChoiceList):
     State of a Calendar Task. Used as Workflow selector.
     """
     label = _("Event State")
+    @classmethod
+    def migrate(cls,status_id):
+        """
+        Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
+        """
+        cv = dict(
+          None='',
+          1=TaskState.todo,
+          2=TaskState.started,
+          3=TaskState.done,
+          4=TaskState.cancelled,
+          )
+        return cv[status_id]
+    
 add = TaskState.add_item
 add('10', _("To do"),'todo')
-add('20', _("Done"),'done')
+add('20', _("Started"),'started')
+add('30', _("Done"),'done')
+add('40', _("Cancelled"),'cancelled')
 
 class EventState(ChoiceList):
     """
     State of a Calendar Event. Used as Workflow selector.
     """
     label = _("Event State")
+    
+    @classmethod
+    def migrate(cls,status_id):
+        """
+        Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
+        """
+        cv = dict(
+          None='',
+          1=EventState.draft,
+          2=EventState.confirmed,
+          3=EventState.cancelled,
+          4=EventState.rescheduled,
+          5=EventState.absent,)
+        return cv[status_id]
+        
 add = EventState.add_item
 add('10', _("Draft"),'draft')
 add('20', _("Suggested"),'suggested')
 add('30', _("Published"),'published')
+add('40', _("Confirmed"),'confirmed')
 #~ add('40', _("Done"),'done')
-add('40', _("Happened"),'happened')
-add('50', _("Cancelled"),'cancelled')
+add('50', _("Took place"),'took_place')
+add('60', _("Rescheduled"),'rescheduled')
+add('70', _("Cancelled"),'cancelled')
+add('80', _("Absent"),'absent')
     
 class GuestState(ChoiceList):
     """

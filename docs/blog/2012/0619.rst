@@ -1,0 +1,5 @@
+20120619
+========
+
+Datenmigration :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`:
+- Task, Event und Guest
