@@ -145,13 +145,14 @@ class TaskState(ChoiceList):
         """
         Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
         """
-        if status_id is None: return None
-        cv = dict(
-          1=TaskState.todo,
-          2=TaskState.started,
-          3=TaskState.done,
-          4=TaskState.cancelled,
-          )
+        #~ if status_id is None: return None
+        cv = {
+          None: '',
+          1:TaskState.todo,
+          2:TaskState.started,
+          3:TaskState.done,
+          4:TaskState.cancelled,
+          }
         return cv[status_id]
     
 add = TaskState.add_item
@@ -172,12 +173,13 @@ class EventState(ChoiceList):
         Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
         """
         if status_id is None: return None
-        cv = dict(
-          1=EventState.draft,
-          2=EventState.confirmed,
-          3=EventState.cancelled,
-          4=EventState.rescheduled,
-          5=EventState.absent,)
+        cv = {
+          1:EventState.draft,
+          2:EventState.confirmed,
+          3:EventState.cancelled,
+          4:EventState.rescheduled,
+          5:EventState.absent,
+        }
         return cv[status_id]
         
 add = EventState.add_item
