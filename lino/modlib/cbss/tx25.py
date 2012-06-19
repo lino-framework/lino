@@ -40,7 +40,8 @@ except ImportError, e:
     pass
 
 
-from lino.modlib.cbss.models import NewStyleRequest,SSIN, get_client, CBSSRequestDetail, CBSSRequests, cbss2gender
+from lino.modlib.cbss.models import NewStyleRequest,SSIN, get_client, \
+  CBSSRequestDetail, CBSSRequests, cbss2gender, RequestStatus
 
 class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     """

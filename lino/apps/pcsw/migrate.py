@@ -1017,7 +1017,7 @@ def migrate_from_1_4_3(globals_dict):
     - new tables cbss.Purpose and cbss.Sector
     - add default data from library fixtures (debts, households, purposes)
     - convert Companies with prefix == 'Eheleute' to a Household
-    - remove tables cal.EventStatus, cal.TaskStatus and cal.GuestStatus
+    - convert tables cal.EventStatus, cal.TaskStatus and cal.GuestStatus to choicelists.
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child
