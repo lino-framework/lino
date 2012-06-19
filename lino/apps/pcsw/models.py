@@ -2049,13 +2049,26 @@ def site_setup(site):
         #~ """
     #~ site.modules.cal.Events.set_detail(EventDetail())
     
-    site.modules.cal.Events.set_detail("""
-    type summary user project
-    start end #all_day #duration state workflow_buttons 
+    #~ site.modules.cal.Events.set_detail("""
+    #~ type summary user project
+    #~ start end #all_day #duration state workflow_buttons 
+    #~ place priority access_class transparent #rset 
+    #~ calendar owner created:20 modified:20 user_modified 
+    #~ description GuestsByEvent
+    #~ """)
+    
+    site.modules.cal.Events.set_detail("general more")
+    site.modules.cal.Events.add_detail_panel("general","""
+    type summary user project 
+    start end 
     place priority access_class transparent #rset 
-    calendar owner created:20 modified:20 user_modified 
-    description GuestsByEvent
-    """)
+    owner state workflow_buttons
+    description GuestsByEvent 
+    """,_("General"))
+    site.modules.cal.Events.add_detail_panel("more","""
+    id calendar created:20 modified:20 user_modified 
+    outbox.MailsByController outbox.PostingsByController
+    """,_("More"))
     
     site.modules.users.Users.set_detail(box2 = """
     level
@@ -2096,7 +2109,8 @@ def site_setup(site):
         
         right = """
         uploads.UploadsByController
-        thirds.ThirdsByController:30
+        # thirds.ThirdsByController:30
+        outbox.MailsByController
         cal.TasksByController
         """,
         

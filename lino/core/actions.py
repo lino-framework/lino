@@ -453,6 +453,8 @@ class ActionRequest(object):
     def __init__(self,ui,actor,request=None,action=None,renderer=None,**kw):
         #~ ActionRequest.__init__(self,ui,action)
         self.ui = ui
+        self.error_response = ui.error_response
+        self.success_response = ui.success_response
         self.renderer = renderer
         self.action = action or actor.default_action
         self.step = 0 # confirmation counter
@@ -543,7 +545,7 @@ class ActionRequest(object):
         if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
             return
         raise ConfirmationRequired(self.step,messages)
-
+        
     def create_phantom_row(self,**kw):
         if self.create_kw is None or not self.actor.editable:
             #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)

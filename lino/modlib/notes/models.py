@@ -38,6 +38,7 @@ from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 from lino.modlib.contacts import models as contacts
+from lino.modlib.outbox import models as outbox
 
 #~ TEMPLATE_GROUP = 'notes'
 
@@ -91,6 +92,8 @@ class EventTypes(dd.Table):
 class Note(mixins.TypedPrintable,
       mixins.AutoUser,
       contacts.PartnerDocument,
+      outbox.Mailable,
+      outbox.Postable,
       mixins.DiffingMixin):
       
     """
@@ -133,6 +136,9 @@ class Note(mixins.TypedPrintable,
     
     def __unicode__(self):
         return u'%s #%s' % (self._meta.verbose_name,self.pk)
+        
+    def get_mailable_body(self,ar):
+        return self.body
         
     def unused__unicode__(self):
         s = u''
@@ -231,7 +237,7 @@ class NoteDetail(dd.DetailLayout):
     subject 
     person company
     id user:10 language:8 build_time
-    body
+    body outbox.MailsByController
     """
     
 

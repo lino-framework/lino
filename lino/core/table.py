@@ -618,9 +618,10 @@ class Table(AbstractTable):
                         if vf.name == self.master_key:
                             fk = vf
                             master_model = ContentType
-                #~ if master_model is None:
-                    #~ raise Exception("%s : no master for master_key %r in %s" % (
-                        #~ self,self.master_key,self.model.__name__))
+                            break
+                if master_model is None:
+                    raise Exception("%s : no master for master_key %r in %s" % (
+                        self,self.master_key,self.model.__name__))
                 self.master = master_model
                 #~ self.fk = fk
                 self.master_field = fk

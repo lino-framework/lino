@@ -685,12 +685,17 @@ class PartnerDocument(models.Model):
             return self.company
         return self.person
         
-    def get_mailable_contacts(self):
+    def get_mailable_recipients(self):
         for p in self.company, self.person:
             if p is not None and p.email:
                 #~ yield "%s <%s>" % (p, p.email)
                 yield ('to', p)
                 #~ yield ('to', unicode(p), p.email)
+        
+    def get_postable_recipients(self):
+        for p in self.company, self.person:
+            if p is not None:
+                yield p
         
         
     #~ def summary_row(self,ui,rr,**kw):
@@ -725,28 +730,28 @@ class PartnerDocument(models.Model):
         task.person = self.person
         task.company = self.company
         
-class ContactDocument(models.Model):
-    """
-    A document whose recipient is a :class:`Partner`.
-    """
+#~ class ContactDocument(models.Model):
+    #~ """
+    #~ A document whose recipient is a :class:`Partner`.
+    #~ """
   
-    class Meta:
-        abstract = True
+    #~ class Meta:
+        #~ abstract = True
         
-    contact = models.ForeignKey(Partner,
-        #~ blank=True,null=True,
-        related_name="%(app_label)s_%(class)s_by_contact",
-        #~ related_name="%(app_label)s_%(class)s_related",
-        #~ verbose_name=_("Partner")
-        )
-    language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
+    #~ contact = models.ForeignKey(Partner,
+        #~ # blank=True,null=True,
+        #~ related_name="%(app_label)s_%(class)s_by_contact",
+        #~ # related_name="%(app_label)s_%(class)s_related",
+        #~ # verbose_name=_("Partner")
+        #~ )
+    #~ language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
-    def get_mailable_contacts(self):
-        yield ('to',self.contact)
+    #~ def get_mailable_contacts(self):
+        #~ yield ('to',self.contact)
 
-    def get_recipient(self):
-        return self.contact
-    recipient = property(get_recipient)
+    #~ def get_recipient(self):
+        #~ return self.contact
+    #~ recipient = property(get_recipient)
 
 
 

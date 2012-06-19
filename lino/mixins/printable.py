@@ -649,7 +649,7 @@ class ClearCacheAction(actions.RowAction):
             rr.confirm(
                 _("This will discard all changes in the generated file."),
                 _("Are you sure?"))
-            logger.info("Got confirmation to discard changes in %s", elem.get_cache_filename())
+            logger.info("Got confirmation to discard changes in %s", elem.get_target_name())
         #~ else:
             #~ logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
           
@@ -748,6 +748,9 @@ class CachedPrintable(Duplicable,Printable):
                 #~ return False
         #~ return super(CachedPrintable,self).get_permission(action,user)
 
+    def print_from_posting(self,posting,ar):
+        return self.do_print.run(self,ar)
+        
     def on_duplicate(self,ar,master):
         super(CachedPrintable,self).on_duplicate(ar,master)
         self.build_time = None
@@ -772,14 +775,14 @@ class CachedPrintable(Duplicable,Printable):
         #~ return settings.LINO.preferred_build_method 
         #~ return 'pisa'
         
-    def get_cache_filename(self):
-        # TODO: too stupid that we must instantate an Action here...
-        a = PrintAction(self.__class__._lino_default_table)
-        bm = get_build_method(self)
-        return bm.get_target_name(a,self)
+    def get_target_name(self):
+        return get_build_method(self).get_target_name(self.do_print,self)
+        
+    def get_target_url(self,ui):
+        return get_build_method(self).get_target_url(self.do_print,self,ui)
         
     def get_cache_mtime(self):
-        filename = self.get_cache_filename()
+        filename = self.get_target_name()
         if not filename: return None
         try:
             t = os.path.getmtime(filename)

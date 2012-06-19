@@ -430,7 +430,6 @@ class ComponentBase(mixins.ProjectRelated,Started):
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
 
-    #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ui,**kw):
         html = mixins.ProjectRelated.summary_row(self,ui,**kw)
         if self.summary:
@@ -461,7 +460,8 @@ class ComponentBase(mixins.ProjectRelated,Started):
 
 class RecurrenceSet(ComponentBase,Ended):
     """
-    Groups together all instances of a set of recurring calendar components.
+    Abstract base for models that group together all instances 
+    of a set of recurring calendar components.
     
     Thanks to http://www.kanzaki.com/docs/ical/rdate.html
     
@@ -533,6 +533,10 @@ class Component(ComponentBase,
     #~ exdate = models.TextField(_("Excluded date(s)"),blank=True)
     #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
     #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
+    
+    #~ def get_mailable_contacts(self):
+        #~ yield ('to',self.project)
+    
         
         
     def disabled_fields(self,request):
@@ -666,7 +670,8 @@ class Components(dd.Table):
 #~ class Event(Component,Ended,mixins.TypedPrintable,mails.Mailable):
 class Event(Component,Ended,
     mixins.TypedPrintable,
-    outbox.Mailable):
+    outbox.Mailable, 
+    outbox.Postable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
     is a scheduled lapse of time where something happens.
@@ -715,11 +720,29 @@ class Event(Component,Ended,
     #~ def end_date_changed(self,oldvalue): self.compute_times()
     #~ def end_time_changed(self,oldvalue): self.compute_times()
         
-    def get_mailable_contacts(self):
+    def get_postable_recipients(self):
+        """return or yield a list of Partners"""
+        if issubclass(settings.LINO.project_model,contacts.Partner):
+            if self.project:
+                yield self.project
+        for g in self.guest_set.all():
+            yield g.partner
+        #~ if self.user.partner:
+            #~ yield self.user.partner
+        
+    def get_mailable_recipients(self):
+        if issubclass(settings.LINO.project_model,contacts.Partner):
+            if self.project:
+                yield ('to',self.project)
         for g in self.guest_set.all():
             yield ('to',g.partner)
         if self.user.partner:
             yield ('cc',self.user.partner)
+            
+    def get_mailable_body(self,ar):
+        return self.description
+        
+            
         
     #~ @classmethod
     #~ def setup_report(cls,rpt):
@@ -815,7 +838,7 @@ class EventDetail(dd.DetailLayout):
     place priority access_class transparent #rset 
     calendar owner created:20 modified:20 user_modified 
     description
-    GuestsByEvent
+    GuestsByEvent outbox.MailsByController
     """
     
 class Events(Components):
@@ -923,11 +946,10 @@ class GuestRoles(dd.Table):
     model = GuestRole
     
 
-class Guest(contacts.ContactDocument,
-            mixins.CachedPrintable,
-            outbox.Mailable):
+class Guest(#contacts.ContactDocument,
+            mixins.CachedPrintable,outbox.Mailable):
     """
-    A Guest is a Contact who is invited to an :class:`Event`.
+    A Guest is a Partner who is invited to an :class:`Event`.
     """
     class Meta:
         verbose_name = _("Guest")
@@ -935,6 +957,20 @@ class Guest(contacts.ContactDocument,
         
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
+        
+    partner = models.ForeignKey(contacts.Partner)
+        #~ related_name="%(app_label)s_%(class)s_by_contact",
+        # related_name="%(app_label)s_%(class)s_related",
+        # verbose_name=_("Partner")
+        #~ )
+    #~ language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
+
+    def get_mailable_recipients(self):
+        yield ('to',self.partner)
+
+    #~ def get_recipient(self):
+        #~ return self.partner
+    #~ recipient = property(get_recipient)
         
     role = models.ForeignKey('cal.GuestRole',
         verbose_name=_("Role"),
@@ -975,7 +1011,7 @@ class Guest(contacts.ContactDocument,
 #~ class Guests(dd.Table,workflows.Workflowable):
 class Guests(dd.Table):
     model = Guest
-    column_names = 'contact role state workflow_buttons remark event *'
+    column_names = 'partner role state workflow_buttons remark event *'
     workflow_state_field = 'state'
     #~ column_names = 'contact role state remark event *'
     #~ workflow_actions = ['invite','notify']
@@ -988,9 +1024,9 @@ class Guests(dd.Table):
 class GuestsByEvent(Guests):
     master_key = 'event'
 
-class GuestsByContact(Guests):
-    master_key = 'contact'
-    column_names = 'event role state workflow_buttons remark * contact'
+class GuestsByPartner(Guests):
+    master_key = 'partner'
+    column_names = 'event role state workflow_buttons remark *'
 
 
 

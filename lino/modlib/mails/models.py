@@ -98,7 +98,7 @@ if True:
           m.save()
           #~ for t,n,a in elem.get_recipients():
               #~ m.recipient_set.create(type=t,address=a,name=n)
-          for t,c in elem.get_mailable_contacts():
+          for t,c in elem.get_mailable_recipients():
               r = Recipient(mail=m,type=t,partner=c)
               r.full_clean()
               r.save()
@@ -142,7 +142,7 @@ if True:
           #~ "return or yield a list of (type,name,address) tuples"
           #~ raise NotImplementedError()
           
-      def get_mailable_contacts(self):
+      def get_mailable_recipients(self):
           "return or yield a list of (type,partner) tuples"
           return []
           

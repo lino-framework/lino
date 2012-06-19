@@ -743,6 +743,8 @@ class ExtUI(base.UI):
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" % a))
                         kw.update(ls_bbar_actions=[self.a2btn(a)])
+                    #~ else:
+                        #~ print 20120619, de, 'has no insert_action'
                     field = fields.HtmlBox(verbose_name=de.label,**o)
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')

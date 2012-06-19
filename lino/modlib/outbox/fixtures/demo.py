@@ -22,13 +22,14 @@ from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
 from lino.utils.babel import babel_values, babelitem
 #~ from lino.modlib.mails.utils import RecipientType
-from lino.mixins import mails
+#~ from lino.mixins import mails
 
 
 #~ from lino.modlib.properties import models as properties 
 
 def objects():
   
+    from lino.modlib.outbox.models import RecipientType
     Person = resolve_model(settings.LINO.person_model)
     Company = resolve_model(settings.LINO.company_model)
     
@@ -36,7 +37,7 @@ def objects():
     root = User.objects.get(username='root')
     
     mail = Instantiator('outbox.Mail').build
-    recipient_to = Instantiator('outbox.Recipient',type=mails.RecipientType.to).build
+    recipient_to = Instantiator('outbox.Recipient',type=RecipientType.to).build
     
     for p in Person.objects.filter(email=''):
         try:

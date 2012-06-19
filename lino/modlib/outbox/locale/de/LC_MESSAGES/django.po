@@ -38,7 +38,7 @@ msgstr "Postausgang"
 
 #: .\models.py:215
 msgid "Outgoing Mails"
-msgstr "Posteingänge"
+msgstr "Postausgänge"
 
 #: .\models.py:219
 msgid "Date"

@@ -2,4 +2,37 @@
 ========
 
 Datenmigration :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`:
+
 - Task, Event und Guest
+
+Und noch eine Serie von Änderungen:
+
+- Module :mod:`lino.modlib.thirds` has been deprecated.
+  Removed it from :setting:`INSTALLLED_APPS` of  :mod:`lino.apps.pcsw`.
+  
+- Im Modul :mod:`lino.modlib.outbox` hat sich vieles getan.
+
+Termine und Notizen sind jetzt "versendbar".
+Vor allem habe ich erkannt, dass es keine gute Idee war, 
+E-Mail-Versand und Postversand in einen Topf zu werfen.
+
+Es gibt diverse Arten von "Versenden"-Aktionen:
+
+- auf einem Termin (je nach Terminart): 
+  - Allgemeine Vorladung an einen Klienten verschicken
+  - Allgemeine Einladung an alle Gäste verschicken
+- auf einem Gast eines Termins: 
+  - Persönliche Vorladung/Einladung/Bestätigung per Post oder per E-Mail
+- auf einer Notiz:
+  - Bericht an diverse Empfänger
+  - Lebenslauf an Arbeitgeber verschicken
+  - Lebenslauf an den Klienten schicken
+
+Es gibt auch zwei relativ verschiedene Arten von E-Mails: 
+als Attachment oder nicht.
+
+  
+  
+  
+  
+  

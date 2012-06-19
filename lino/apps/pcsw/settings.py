@@ -186,7 +186,7 @@ class Lino(Lino):
             m.add_action(self.modules.pcsw.PersonSearches)
             #~ m.add_action(self.modules.lino.ContentTypes)
             m.add_action(self.modules.properties.Properties)
-            m.add_action(self.modules.thirds.Thirds)
+            #~ m.add_action(self.modules.thirds.Thirds)
             
             
             #~ self.modules.cal.setup_explorer_menu(self,ui,user,m)
@@ -269,7 +269,7 @@ INSTALLED_APPS = (
   'lino.modlib.notes',
   #~ 'lino.modlib.links',
   'lino.modlib.uploads',
-  'lino.modlib.thirds',
+  #~ 'lino.modlib.thirds',
   'lino.modlib.cal',
   'lino.modlib.outbox',
   'lino.modlib.cv',

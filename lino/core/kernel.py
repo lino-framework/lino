@@ -391,6 +391,9 @@ def setup_site(self):
         if self.person_model:
             self.person_model = resolve_model(self.person_model)
         
+        if self.project_model:
+            self.project_model = resolve_model(self.project_model)
+        
         actors.discover()
         
         #~ logger.debug("analyze_models() done")

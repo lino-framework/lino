@@ -12,10 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This module deserves more documentation.
+raise Exception("No longer used")
 
-"""
 import datetime
 
 from django.db import models
@@ -25,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino import dd
 from lino.utils.choicelists import ChoiceList
 #~ from lino import mixins
-from lino.mixins.printable import TypedPrintable
+#~ from lino.mixins.printable import TypedPrintable
 
 class RecipientType(ChoiceList):
     """
@@ -35,9 +33,10 @@ class RecipientType(ChoiceList):
     label = _("Recipient Type")
     
 add = RecipientType.add_item
-add('to',_("to"),alias='to')
-add('cc',_("cc"),alias='cc')
-add('bcc',_("bcc"),alias='bcc')
+add('to',_("to"),'to')
+add('cc',_("cc"),'cc')
+add('bcc',_("bcc"),'bcc')
+#~ add('snail',_("Snail mail"),'snail')
 
 class Recipient(models.Model):
     """
