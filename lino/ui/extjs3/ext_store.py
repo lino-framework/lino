@@ -554,7 +554,10 @@ class DisableEditingStoreField(SpecialStoreField):
         state = ar.actor.get_row_state(obj)
         #~ print 20120621, obj.__class__
         #~ return not obj.get_row_permission(ar.get_user(),state,self.store.actor.update_action)
-        return not self.store.actor.update_action.get_action_permission(ar.get_user(),obj,state)
+        #~ logger.info("20120621 ext_store gonna call get_action_permission")
+        v = self.store.actor.update_action.get_action_permission(ar.get_user(),obj,state)
+        #~ logger.info("ext_store 20120621 got %r", v)
+        return not v
         #~ return not self.store.actor.get_row_permission(self.store.actor.update_action,ar.get_user(),obj)
         #~ if not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj):
             #~ return True

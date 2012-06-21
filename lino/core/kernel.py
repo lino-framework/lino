@@ -276,7 +276,7 @@ def load_workflows(self):
         
         for a in actor.get_actions():
             def wrap(a,fn):
-                if not a.readonly:
+                if False: # not a.readonly:
                     def fn2(*args):
                         logger.info(u"20120621 %s %s",a.actor,[obj2str(x) for x in args])
                         return fn(*args)
