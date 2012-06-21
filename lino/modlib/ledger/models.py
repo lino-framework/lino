@@ -32,7 +32,7 @@ from lino.modlib.journals import models as journals
 #~ Company = resolve_model('contacts.Company')
 
 
-class Account(models.Model):
+class Account(dd.Model):
     #~ id = models.CharField(max_length=8,primary_key=True)
     match = models.CharField(max_length=50,blank=True)
     name = models.CharField(max_length=200)
@@ -57,7 +57,7 @@ class Account(models.Model):
     #~ account = models.ForeignKey(Account)
     
     
-class Booked(models.Model):
+class Booked(dd.Model):
     """
     A model that subclasses Booked must also 
     subclass :class:`lino.modlib.journals.models.Journaled`::
@@ -130,7 +130,7 @@ class Booked(models.Model):
     #~ return a
     
         
-class Booking(models.Model):
+class Booking(dd.Model):
     journal = journals.JournalRef()
     number = journals.DocumentRef()
     #~ document = models.ForeignKey(LedgerDocument)

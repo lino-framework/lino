@@ -67,7 +67,7 @@ def get_doctype(cl):
     return None
     
 
-class Journal(models.Model):
+class Journal(dd.Model):
   
     id = models.CharField(max_length=4,primary_key=True)
     name = models.CharField(max_length=100)
@@ -221,7 +221,7 @@ class Journaled(mti.MultiTableBase):
         return DOCTYPES[self.journal.doctype][0]
         
         
-class ModifiedMixin(models.Model):
+class ModifiedMixin(dd.Model):
   
     class Meta:
         abstract = True
@@ -231,7 +231,7 @@ class ModifiedMixin(models.Model):
     def get_last_modified_time(self):
         return self.last_modified 
 
-class Sendable(models.Model):
+class Sendable(dd.Model):
   
     """
     A model that subclasses Sendable must provide 1 field::

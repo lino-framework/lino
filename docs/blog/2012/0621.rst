@@ -1,0 +1,19 @@
+20120621
+========
+
+14,5 Stunden intensiver Programmierung während zwei Tagen: 
+Interne Änderungen im System zum Verwalten von Benutzerrechten.
+Sichtbar ist z.B.:
+
+- dass es jetzt eine Auswahlliste von Benutzerprofilen gibt.
+  Diese Auswahlliste ist anwendungsspezifisch hartkodiert, erzeugt 
+  also keinen zusätzlichen Datenbankverkehr.
+  Ich halte es für unwahrscheinlich, dass man an dieser Liste 
+  etwas ändern will ohne entsprechende Anpassungen in der Anwendung.
+  
+- Normale Benutzer können jetzt allgemein nicht mehr die Daten 
+  anderer Benutzer bearbeiten.
+
+- Einträge und Akteure eines Budgets kann man nur ändern, wenn das 
+  Budget noch nicht ausgedruckt ist (bzw. der Cache wieder gelöscht 
+  wurde).

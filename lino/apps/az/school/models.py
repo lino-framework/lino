@@ -69,7 +69,6 @@ from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.cal import models as cal
-#~ from lino.modlib.cal.utils import DurationUnit
 from lino.modlib.contacts.models import Partner
 from lino.tools import resolve_app, resolve_model
 
@@ -310,7 +309,7 @@ class CoursesByContent(Courses):
 #~ class CoursesBySlot(Courses):
     #~ master_key = "slot"
 
-class Enrolment(models.Model):
+class Enrolment(dd.Model):
   
     class Meta:
         verbose_name = _("Enrolment")
@@ -377,7 +376,7 @@ class EventDetail(cal.EventDetail):
     #~ master_key = "course"
 
 
-class Presence(models.Model):
+class Presence(dd.Model):
   
     class Meta:
         verbose_name = _("Presence")

@@ -23,12 +23,12 @@ Let's go
 
 For this example we use the following models::
 
-  class Person(models.Model):
+  class Person(dd.Model):
       name = models.CharField(max_length=50)
       def __unicode__(self):
           return self.name
 
-  class Place(models.Model):  
+  class Place(dd.Model):  
       name = models.CharField(max_length=50)
       owners = models.ManyToManyField(Person)
       is_restaurant = EnableChild('Restaurant',verbose_name="is a restaurant")
@@ -216,7 +216,7 @@ Related ForeignKeys
 In order to demonstrate what happens when there are ForeignKeys, 
 we add two more models::
 
-  class Visit(models.Model):
+  class Visit(dd.Model):
       person = models.ForeignKey(Person)
       place = models.ForeignKey(Place)
       purpose = models.CharField(max_length=50)
@@ -224,7 +224,7 @@ we add two more models::
           return "%s visit by %s at %s" % (
             self.purpose, self.person, self.place.name)
 
-  class Meal(models.Model):
+  class Meal(dd.Model):
       person = models.ForeignKey(Person)
       restaurant = models.ForeignKey(Restaurant)
       what = models.CharField(max_length=50)
@@ -363,13 +363,14 @@ Related documents
 
 from django.db import models
 from lino.utils.mti import EnableChild
+from lino import dd
 
-class Person(models.Model):
+class Person(dd.Model):
     name = models.CharField(max_length=50)
     def __unicode__(self):
         return self.name
 
-class Place(models.Model):  
+class Place(dd.Model):  
     name = models.CharField(max_length=50)
     owners = models.ManyToManyField(Person)
     is_restaurant = EnableChild('Restaurant',verbose_name="is a restaurant")
@@ -387,7 +388,7 @@ class Restaurant(Place):
             ','.join([unicode(o) for o in self.owners.all()]),
             ','.join([unicode(o) for o in self.cooks.all()]))
 
-class Visit(models.Model):
+class Visit(dd.Model):
     person = models.ForeignKey(Person)
     place = models.ForeignKey(Place)
     purpose = models.CharField(max_length=50)
@@ -395,7 +396,7 @@ class Visit(models.Model):
         return "%s visit by %s at %s" % (
           self.purpose, self.person, self.place.name)
 
-class Meal(models.Model):
+class Meal(dd.Model):
     person = models.ForeignKey(Person)
     restaurant = models.ForeignKey(Restaurant)
     what = models.CharField(max_length=50)

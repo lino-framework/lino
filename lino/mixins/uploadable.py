@@ -22,6 +22,8 @@ from django.db import models
 from django.conf import settings
 
 from lino.tools import obj2str
+#~ from lino.tools import Model
+
 #~ from lino import layouts
 
 #~ # LS 20110809

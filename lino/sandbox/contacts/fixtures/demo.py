@@ -23,7 +23,9 @@ from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
 from lino.utils.babel import babel_values
-from lino.utils.choicelists import Gender, UserLevel
+from lino.utils.choicelists import Gender
+#~ from lino.utils.perms import UserLevels
+from lino.utils.perms import UserProfiles
 from lino.utils import dblogger
 from lino.utils import Cycler
 
@@ -334,7 +336,7 @@ Weserstraße
         return User(person=p,company=rumma,**kw)
     
     #~ yield user("Alice","Imedemaal",is_superuser=True)
-    yield user("Alice","Imedemaal",level=UserLevel.expert)
+    yield user("Alice","Imedemaal",profile=UserProfiles.admin)
     yield user("Bert","Sesamestreet")
     yield user("Charles","Braun")
     dblogger.info("Done contacts demo fixture")

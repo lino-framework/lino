@@ -1,4 +1,4 @@
-#coding: utf-8
+# -*- coding: UTF-8 -*-
 ## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 

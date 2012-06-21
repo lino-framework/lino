@@ -59,12 +59,13 @@ from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson as json
 
+#~ from lino.tools import Model
 from lino.core import actors
 from lino.core import actions
 from lino.core.fields import FakeField
 from lino.ui import base
 from lino.ui import requests as ext_requests
-from lino.utils import perms
+#~ from lino.utils import perms
 from lino.utils.config import Configured, load_config_files
 
 
@@ -753,7 +754,7 @@ class AbstractTable(actors.Actor):
         #~ return None
         
     @classmethod
-    def get_row_permission(self,action,user,obj):
+    def get_row_permission(self,obj,user,state,action):
         if self.get_data_rows:
             return action.readonly
         return True

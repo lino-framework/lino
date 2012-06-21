@@ -548,7 +548,7 @@ class UsersSGLoader(LinoMdbLoader):
             kw.update(is_active=False)
         yield self.model(**kw)
 
-from lino.utils.choicelists import UserLevel
+from lino.modlib.users.models import UserLevels
 
 class UsersISPLoader(LinoMdbLoader):
     table_name = 'TBASISP'

@@ -55,7 +55,8 @@ from lino.utils import babel
 from lino.tools import resolve_model
 
 from lino.utils.instantiator import Instantiator
-from lino.utils.choicelists import UserLevel
+#~ from lino.utils.choicelists import UserLevel
+from lino.modlib.users.models import UserProfiles
 
 
 def create_user(*args):
@@ -111,7 +112,7 @@ def test01(self):
     #~ user = create_user('user','user@example.com','John','Jones',False,False)
     #~ user.save()
     #~ root = create_user('root','root@example.com','Dick','Dickens',True,True)    
-    root = create_user('root','root@example.com','Dick','Dickens',UserLevel.expert)    
+    root = create_user('root','root@example.com','Dick','Dickens',UserProfiles.root)    
     root.save()
     
     self.check_sql_queries(

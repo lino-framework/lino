@@ -267,7 +267,8 @@ class Renderer(AppyRenderer):
                 lh = ll.get_layout_handle(self.extjs_ui)
                 columns = lh.main.columns
             else:
-                ah = ar.actor.get_handle(self.extjs_ui)
+                #~ ah = ar.actor.get_handle(self.extjs_ui)
+                ah = ar.actor.get_request_handle(ar)
                 columns = ah.list_layout.main.columns
                 #~ columns = ar.ah.list_layout.main.columns
             #~ fields = ar.ah.store.list_fields

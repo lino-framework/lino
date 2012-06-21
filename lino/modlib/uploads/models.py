@@ -33,10 +33,9 @@ from lino import dd
 from lino.utils import perms
 from lino import mixins
 from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.cal.models import DurationUnit, update_auto_task
-from lino.modlib.cal.models import DurationUnit, update_reminder
+from lino.modlib.cal.models import DurationUnits, update_reminder
 
-class UploadType(models.Model):
+class UploadType(dd.Model):
     
     class Meta:
         verbose_name = _("upload type")
@@ -105,7 +104,7 @@ class Upload(
         update_reminder(1,self,self.user,
           self.valid_until,
           _("%s expires") % self.type,
-          2,DurationUnit.months)
+          2,DurationUnits.months)
       
     def update_owned_instance(self,task):
         #~ logger.info("Upload.update_owned_instance() %s : owner is %s", self.pk, self.owner)

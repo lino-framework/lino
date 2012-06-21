@@ -59,7 +59,8 @@ from lino.modlib.notes import models as notes
 from lino.modlib.uploads import models as uploads
 from lino.modlib.cal import models as cal
 #~ from lino.modlib.users import models as users
-from lino.utils.choicelists import HowWell, Gender, UserLevel
+from lino.utils.choicelists import HowWell, Gender
+from lino.utils.perms import UserProfiles
 from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
@@ -75,9 +76,11 @@ from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str
 
+from lino.utils.perms import UserLevels
+
+
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.properties import models as properties
-#~ from lino.modlib.cal.models import DurationUnit, update_reminder
 from lino.modlib.households import models as households
 #~ from lino.modlib.contacts.models import Contact
 #~ from lino.tools import resolve_model, UnresolvedModel
@@ -816,23 +819,8 @@ class AssetsSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
 MODULE_NAME = _("Debts")
 
 
-settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
+#~ settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
     #~ UserLevel.field(verbose_name=_("Userlevel %s") % MODULE_NAME,blank=True))
-
-if False: # settings.LINO.user_model:
-  
-    USER_MODEL = dd.resolve_model(settings.LINO.user_model)
-
-    #~ dd.inject_field(USER_MODEL,
-        #~ 'is_debts',
-        #~ models.BooleanField(
-            #~ verbose_name=_("is Debts user")
-        #~ ),"""Whether this user is responsible for Debts Mediation.
-        #~ """)
-        
-    dd.inject_field(USER_MODEL,
-        'debts_level',
-        UserLevel.field(verbose_name=_("Userlevel for %s module") % MODULE_NAME,blank=True))
 
 
 def site_setup(site):
@@ -845,13 +833,13 @@ def setup_main_menu(site,ui,user,m):  pass
 def setup_master_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    if user.debts_level < UserLevel.user: 
+    if user.profile.debts_level < UserLevels.user: 
         return
     m  = m.add_menu("debts",MODULE_NAME)
     m.add_action(MyBudgets)
   
 def setup_config_menu(site,ui,user,m): 
-    if user.debts_level < UserLevel.manager: 
+    if user.profile.debts_level < UserLevels.manager: 
         return
     m  = m.add_menu("debts",MODULE_NAME)
     #~ m.add_action(Accounts)
@@ -860,7 +848,7 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(Accounts)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.debts_level < UserLevel.expert:
+    if user.profile.debts_level < UserLevels.admin:
         return
     m  = m.add_menu("debts",MODULE_NAME)
     m.add_action(Budgets)

@@ -49,11 +49,11 @@ def objects():
             
     for person in Person.objects.exclude(email=''):
     #~ for person in Person.objects.filter(email__isnull=False):
-        m = mail(sender=root,subject='Welcome %s!' % person.first_name)
+        m = mail(user=root,subject='Welcome %s!' % person.first_name)
         yield m
         yield recipient_to(mail=m,partner=person)
             #~ address=person.email,name=person.get_full_name(salutation=False))
-    #~ m = mail(sender=root,subject='Hello %s!' % root.first_name)
+    #~ m = mail(user=root,subject='Hello %s!' % root.first_name)
     #~ yield m
     #~ yield recipient_to(mail=m,partner=root)
     

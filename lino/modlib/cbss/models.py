@@ -83,7 +83,7 @@ from lino.utils.babel import dtos
 
 from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
-from lino.utils.choicelists import UserLevel
+from lino.modlib.users.models import UserLevels
 #~ from lino.modlib.contacts import models as contacts
 from lino.tools import makedirs_if_missing
 #~ from lino.mixins.printable import DirectPrintAction
@@ -219,9 +219,9 @@ add('6',_("Validated"),'validated')
     #~ """
     #~ label = _("Environment")
 #~ add = Environment.add_item
-#~ add('t',_("Test"),alias='test')
-#~ add('a',_("Acceptance"),alias='acpt')
-#~ add('p',_("Production"),alias='prod')
+#~ add('t',_("Test"),'test')
+#~ add('a',_("Acceptance"),'acpt')
+#~ add('p',_("Production"),'prod')
   
 
     
@@ -284,10 +284,12 @@ class Sector(babel.BabelNamed):
 
 class Sectors(dd.Table):
     model = Sector
-    required_user_groups = ['cbss']
+    #~ read_permission = perms.Required(user_groups = ['cbss'])
+    #~ required_user_groups = ['cbss']
+    read_required = dict(user_groups = ['cbss'])
     column_names = 'code subcode abbr name *'
     order_by = ['code','subcode']
-
+    
 
 class Purpose(babel.BabelNamed):
     u"""
@@ -311,7 +313,8 @@ class Purpose(babel.BabelNamed):
 
 class Purposes(dd.Table):
     model = Purpose
-    required_user_groups = ['cbss']
+    read_required = dict(user_groups = ['cbss'])
+    #~ required_user_groups = ['cbss']
     column_names = 'sector_code code name *'
     order_by = ['sector_code','code']
 
@@ -401,6 +404,14 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.status = RequestStatus.new
         self.environment = ''
         super(CBSSRequest,self).on_duplicate(ar,master)
+        
+    def get_row_permission(self,user,state,action):
+        """
+        CBSS requests that have a `ticket` may never be modified.
+        """
+        if self.ticket and not action.readonly: 
+            return False
+        return super(CBSSRequest,self).get_row_permission(user,state,action)
         
     def on_cbss_ok(self,reply):
         """
@@ -556,7 +567,10 @@ class CBSSRequestDetail(dd.DetailLayout):
         lh.info.label = _("Request information")
         lh.result.label = _("Result")
         lh.technical.label = _("Technical")
-        lh.technical.required_user_level = UserLevel.manager
+        #~ lh.technical.required_user_level = UserLevels.manager
+        #~ lh.technical.read_permission = perms.Required(user_groups = ['cbss'])
+        lh.technical.read_required = dict(user_level='manager')
+
         #~ lh.response.label = _("Response")
         #~ lh.log.label = _("Log")
         lh.parameters.label = _("Parameters")
@@ -893,7 +907,7 @@ class NewStyleRequest(CBSSRequest):
 
 
 
-class SSIN(models.Model):
+class SSIN(dd.Model):
     """
     Abstract base for models that have a field `national_id` and a method 
     :meth:`get_ssin`.
@@ -1144,19 +1158,20 @@ class IdentifyPersonRequestDetail(CBSSRequestDetail):
     
 
 class CBSSRequests(dd.Table):
-  
-    @classmethod
-    def get_row_permission(cls,action,user,row):
-        if row.ticket and not action.readonly: 
-            return False
-        if not super(CBSSRequests,cls).get_row_permission(action,user,row):
-            return False
-        return True
+    pass
+    #~ @classmethod
+    #~ def get_row_permission(cls,action,user,row):
+        #~ if row.ticket and not action.readonly: 
+            #~ return False
+        #~ if not super(CBSSRequests,cls).get_row_permission(action,user,row):
+            #~ return False
+        #~ return True
         
     
 class IdentifyPersonRequests(CBSSRequests):
     #~ window_size = (500,400)
-    required_user_groups = ['cbss']
+    read_required = dict(user_groups = ['cbss'])
+    #~ required_user_groups = ['cbss']
     model = IdentifyPersonRequest
     active_fields = ['person']
     detail_layout = IdentifyPersonRequestDetail()
@@ -1496,7 +1511,8 @@ class ManageAccessRequests(CBSSRequests):
     #~ window_size = (500,400)
     model = ManageAccessRequest
     detail_layout = ManageAccessRequestDetail()
-    required_user_groups = ['cbss']
+    read_required = dict(user_groups = ['cbss'])
+    #~ required_user_groups = ['cbss']
     active_fields = ['person']
     
     
@@ -1601,9 +1617,9 @@ dd.inject_field(pcsw.Person,
 
 MODULE_NAME = _("CBSS")
 
-#~ settings.LINO.add_user_field('cbss_level',UserLevel.field(MODULE_NAME))
-settings.LINO.add_user_group('cbss',MODULE_NAME)
-#~ settings.LINO.add_user_field('cbss_level',UserLevel.field(MODULE_NAME))
+#~ settings.LINO.add_user_field('cbss_level',UserLevels.field(MODULE_NAME))
+#~ settings.LINO.add_user_group('cbss',MODULE_NAME)
+#~ settings.LINO.add_user_field('cbss_level',UserLevels.field(MODULE_NAME))
 
 dd.inject_field('countries.City',
     'inscode',
@@ -1674,7 +1690,9 @@ def site_setup(self):
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
     cbss_identify_person cbss_manage_access  cbss_retrieve_ti_groups
     cbss_summary
-    """,MODULE_NAME,required_user_groups=['cbss'])
+    """,MODULE_NAME,required=dict(user_groups=['cbss'])
+    )
+    #~ required_user_groups=['cbss']
     #~ cbss.IdentifyRequestsByPerson
     #~ self.modules.contacts.AllPersons.add_detail_panel('cbssrequests',"""
     #~ cbss_identify_person 
@@ -1687,7 +1705,7 @@ def site_setup(self):
     self.modules.lino.SiteConfigs.add_detail_tab('cbss',"""
     cbss_org_unit sector ssdn_user_id ssdn_email
     cbss_http_username cbss_http_password
-    """,MODULE_NAME,required_user_groups=['cbss'])
+    """,MODULE_NAME,required=dict(user_groups=['cbss']))
     
     
     
@@ -1695,7 +1713,7 @@ def setup_main_menu(site,ui,user,m): pass
 def setup_master_menu(site,ui,user,m): pass
   
 def setup_my_menu(site,ui,user,m): 
-    if user.cbss_level < UserLevel.user: 
+    if user.profile.cbss_level < UserLevels.user: 
         return
     m  = m.add_menu("cbss",MODULE_NAME)
     m.add_action(MyIdentifyPersonRequests)
@@ -1708,7 +1726,7 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(Purposes)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.cbss_level < UserLevel.manager: 
+    if user.profile.cbss_level < UserLevels.manager: 
         return
     m  = m.add_menu("cbss",MODULE_NAME)
     m.add_action(IdentifyPersonRequests)

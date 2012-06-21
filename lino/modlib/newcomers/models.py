@@ -32,24 +32,24 @@ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils.choosers import chooser
-from lino.utils.choicelists import UserLevel
+from lino.utils.perms import UserLevels
 from lino.utils import babel
 from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 #~ from lino.modlib.contacts import models as contacts
 from lino.modlib.users import models as users
-from lino.modlib.cal.utils import DurationUnit
+from lino.modlib.cal.utils import DurationUnits
 
 
 from lino.apps.pcsw.models import Person, AllPersons, only_my_persons, PersonsByCoach1, MyActivePersons
 
 def amonthago():
-  return DurationUnit.months.add_duration(datetime.date.today(),-1)
+  return DurationUnits.months.add_duration(datetime.date.today(),-1)
         
 
 
-class Broker(models.Model):
+class Broker(dd.Model):
     """
     A Broker (Vermittler) is an external institution 
     who suggests newcomers.
@@ -68,7 +68,7 @@ class Brokers(dd.Table):
     List of Brokers on this site.
     """
     required_user_groups = ['newcomers']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Broker
     column_names = 'name *'
     order_by = ["name"]
@@ -91,7 +91,7 @@ class Faculty(babel.BabelNamed):
 
 class Faculties(dd.Table):
     required_user_groups = ['newcomers']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Faculty
     column_names = 'name *'
     order_by = ["name"]
@@ -112,7 +112,7 @@ class Competence(mixins.AutoUser,mixins.Sequenced):
         
 class Competences(dd.Table):
     required_user_groups = ['newcomers']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Competence
     column_names = 'id *'
     order_by = ["id"]
@@ -259,17 +259,16 @@ class UsersByNewcomer(users.Users):
         else:
             return None
         
-MODULE_NAME = _("Newcomers")
+MODULE_LABEL = _("Newcomers")
 
-#~ settings.LINO.add_user_field('newcomers_level',UserLevel.field(MODULE_NAME))
-settings.LINO.add_user_group('newcomers',MODULE_NAME)
+#~ settings.LINO.add_user_field('newcomers_level',UserLevels.field(MODULE_LABEL))
+#~ settings.LINO.add_user_group('newcomers',MODULE_LABEL)
 settings.LINO.add_user_field('newcomer_quota',models.IntegerField(
           _("Newcomers Quota"),
           default=0,
           help_text="""Relative number expressing 
           how many Newcomer requests this User is able to treat."""
-        ), 
-        profile=False)
+        ))
 
 
 dd.inject_field(Person,
@@ -289,9 +288,9 @@ def site_setup(site):
     site.modules.users.Users.add_detail_tab('newcomers.CompetencesByUser')
   
 def setup_main_menu(site,ui,user,m):
-    if user.newcomers_level < UserLevel.user:
+    if user.profile.newcomers_level < UserLevels.user:
         return
-    m  = m.add_menu("newcomers",MODULE_NAME)
+    m  = m.add_menu("newcomers",MODULE_LABEL)
     m.add_action(Newcomers)
     m.add_action(UsersByNewcomer)
     m.add_action(NewClients)
@@ -303,14 +302,14 @@ def setup_my_menu(site,ui,user,m):
     pass
     
 def setup_config_menu(site,ui,user,m): 
-    if user.newcomers_level < UserLevel.manager:
+    if user.profile.newcomers_level < UserLevels.manager:
         return
-    m  = m.add_menu("newcomers",MODULE_NAME)
+    m  = m.add_menu("newcomers",MODULE_LABEL)
     m.add_action(Brokers)
     m.add_action(Faculties)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.newcomers_level < UserLevel.manager:
+    if user.profile.newcomers_level < UserLevels.manager:
         return
     m.add_action(Competences)
   

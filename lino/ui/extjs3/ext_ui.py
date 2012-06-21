@@ -261,7 +261,7 @@ class ExtRenderer(HtmlRenderer):
             return js_code('STRENGTH_CHOICES')
         if v is KNOWLEDGE_CHOICES:
             return js_code('KNOWLEDGE_CHOICES')
-        if isinstance(v,choicelists.BabelChoice):
+        if isinstance(v,choicelists.Choice):
             """
             This is special. We don't render the text but the value. 
             """
@@ -270,7 +270,7 @@ class ExtRenderer(HtmlRenderer):
             #~ return unicode(v)
         #~ if isinstance(v,Promise):
             #~ return unicode(v)
-        if isinstance(v,models.Model):
+        if isinstance(v,dd.Model):
             return v.pk
         if isinstance(v,Exception):
             return unicode(v)
@@ -1564,7 +1564,7 @@ tinymce.init({
     def requested_report(self,request,app_label,actor):
         x = getattr(settings.LINO.modules,app_label)
         cl = getattr(x,actor)
-        if issubclass(cl,models.Model):
+        if issubclass(cl,dd.Model):
             return cl._lino_default_table
         return cl
         
@@ -1845,7 +1845,7 @@ tinymce.init({
         #~ return ('cache','js','site.js')
         #~ return ('cache','js','lino.js')
         #~ return ('cache','js','lino_'+user.get_profile()+'_'+translation.get_language()+'.js')
-        return ('cache','js','lino_'+(user.profile or user.username)+'_'+translation.get_language()+'.js')
+        return ('cache','js','lino_'+(user.profile.name or user.username)+'_'+translation.get_language()+'.js')
         
     def build_site_cache(self,force=False):
         """
@@ -1945,8 +1945,11 @@ tinymce.init({
         
         for rpt in actors_list:
             rh = rpt.get_handle(self) 
-            
             if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
+                #~ if rpt.model is None:
+                #~ f.write('// 20120621 %s\n' % rpt)
+                    #~ continue
+                
                 for ln in self.js_render_GridPanel_class(rh,user):
                     f.write(ln + '\n')
                 
@@ -1957,7 +1960,7 @@ tinymce.init({
                               f.write(ln + '\n')
                     for ln in self.js_render_window_action(rh,a,user):
                         f.write(ln + '\n')
-                elif a.required_states:
+                elif a.show_in_workflow:
                     for ln in self.js_render_workflow_action(rh,a,user):
                         f.write(ln + '\n')
 
@@ -2181,12 +2184,13 @@ tinymce.init({
         """
         ar is usually None, except for actors with dynamic handle
         """
-        #~ logger.debug('20120103 ExtUI.setup_handle() %s',h)
+        #~ logger.info('20120621 ExtUI.setup_handle() %s',h)
         if isinstance(h,tables.TableHandle):
             if issubclass(h.actor,table.Table):
                 if h.actor.model is None \
-                    or h.actor.model is models.Model \
+                    or h.actor.model is dd.Model \
                     or h.actor.model._meta.abstract:
+                    #~ logger.info('20120621 %s : no real table',h)
                     return
             ll = layouts.ListLayout(h.actor,h.actor.get_column_names(ar),hidden_elements=h.actor.hidden_columns)
             #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.actor.hidden_columns)
@@ -2413,8 +2417,7 @@ tinymce.init({
 
         yield "  ls_bbar_actions: %s," % py2js([
             rh.ui.a2btn(a) for a in rpt.get_actions(action) 
-                if not a.required_states 
-                    and a.get_view_permission(jsgen._for_user)])
+                if a.show_in_bbar and a.get_view_permission(jsgen._for_user)])
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action != rpt.default_action:
             yield "  action_name: %s," % py2js(action.url_action_name)
@@ -2454,7 +2457,7 @@ tinymce.init({
         kw.update(ls_bbar_actions=[
             rh.ui.a2btn(a) 
               for a in rh.actor.get_actions(rh.actor.default_action) 
-                  if not a.required_states and a.get_view_permission(jsgen._for_user)])
+                  if a.show_in_bbar and a.get_view_permission(jsgen._for_user)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:
@@ -2531,7 +2534,8 @@ tinymce.init({
         yield "Lino.%s = function(pk,panel) { " % action
         #~ panel = "Lino.%s.GridPanel.ls_url" % action 
         url = ext_elems.rpt2url(rh.actor)
-        yield "  Lino.run_row_action(panel,%s,pk,%s);" % (py2js(url),py2js(action.name))
+        yield "  Lino.run_row_action(panel,%s,pk,%s);" % (
+            py2js(url),py2js(action.url_action_name))
         yield "};"
         
         

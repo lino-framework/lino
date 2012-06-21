@@ -1,14 +1,14 @@
 from django.db import models
 from lino import dd
 
-class Poll(models.Model):
+class Poll(dd.Model):
     question = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published',auto_now_add=True)
     
     def __unicode__(self):
         return self.question
 
-class Choice(models.Model):
+class Choice(dd.Model):
     poll = models.ForeignKey(Poll)
     choice = models.CharField(max_length=200)
     votes = models.IntegerField()

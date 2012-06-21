@@ -172,7 +172,7 @@ class ShippingModes(dd.Table):
 
 
 
-class SalesRule(models.Model):
+class SalesRule(dd.Model):
     """Represents a group of default values for certain parameters of a SalesDocument.
     """
     class Meta:
@@ -544,7 +544,7 @@ class Invoice(ledger.Booked,SalesDocument):
           credit=self.total_excl+self.total_vat)
 
 
-class DocItem(models.Model):
+class DocItem(dd.Model):
     "Base class for InvoiceItem and OrderItem"
     class Meta:
         abstract = True
@@ -596,7 +596,7 @@ class DocItem(models.Model):
     def __unicode__(self):
         return "%s object" % self.__class__.__name__
         #~ if self.document is None:
-            #~ return models.Model.__unicode__(self)
+            #~ return dd.Model.__unicode__(self)
         #~ return u"DocItem %s.%d" % (self.document,self.pos)
 
 

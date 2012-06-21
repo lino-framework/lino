@@ -150,7 +150,7 @@ if settings.LINO.abstract_address:
     
 else:  
   
-    class AddressableMixin(models.Model):
+    class AddressableMixin(dd.Model):
         class Meta:
             abstract = True
         address = models.ForeignKey(Address,null=True,blank=True)
@@ -218,7 +218,7 @@ class Companies(dd.Table):
 
 
 
-class Contact(models.Model):  
+class Contact(dd.Model):  
     class Meta:
         #~ abstract = True
         verbose_name = _("Contact")

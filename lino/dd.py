@@ -68,11 +68,14 @@ from lino.utils.tables import VirtualTable
 #~ from lino.utils.tables import ComputedColumn
 
 from lino.tools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
+from lino.tools import Model
 
 #~ from lino.core.table import fields_list, inject_field
 from lino.core.table import has_fk
 from lino.core.table import Table
 from django.db.models.fields import FieldDoesNotExist
+from django.db import models
+#~ Model = models.Model
 #~ from lino.core import table
 #~ Table = table.Table
 

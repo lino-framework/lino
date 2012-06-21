@@ -20,7 +20,7 @@ from lino.tools import resolve_model
 
 #~ from django.db import models
 from lino.utils.babel import babel_values, babelitem
-from lino.utils.choicelists import UserLevel
+from lino.utils.perms import UserProfiles
 
 def objects():
   
@@ -55,13 +55,14 @@ def objects():
     User = resolve_model('users.User')
     yield User(username="caroline",
         first_name="Caroline",last_name="Carnol",
-        level=UserLevel.user,
-        newcomers_level=UserLevel.user)
+        profile=UserProfiles.caroline)
+        #~ newcomers_level=UserLevel.user)
     #~ yield I(username="doris",first_name="Doris",last_name="Decker",profile='caroline')
     
     FACULTIES = Cycler(Faculty.objects.all())
     #~ USERS = Cycler(User.objects.filter(is_spis=True))
-    USERS = Cycler(User.objects.filter(integ_level__isnull=False))
+    #~ USERS = Cycler(User.objects.filter(integ_level__isnull=False))
+    USERS = Cycler(User.objects.filter(profile__in=(UserProfiles.melanie,UserProfiles.hubert)))
     for i in range(7):
         yield Competence(user=USERS.pop(),faculty=FACULTIES.pop())
     for p in Person.objects.filter(newcomer=True):

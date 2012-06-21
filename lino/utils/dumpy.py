@@ -35,6 +35,7 @@ import lino
 from lino.tools import obj2str, sorted_models_list, full_model_name
 from lino.utils import dblogger
 from lino.utils import babel
+from lino import dd
 #~ from lino.utils.mti import MtiChildWrapper
 
 SUFFIX = '.py'
@@ -378,7 +379,7 @@ class DpyDeserializer:
         def expand(obj):
             if obj is None:
                 pass # ignore None values
-            elif isinstance(obj,models.Model):
+            elif isinstance(obj,dd.Model):
                 yield FakeDeserializedObject(self,obj)
             elif hasattr(obj,'__iter__'):
             #~ if type(obj) is GeneratorType:

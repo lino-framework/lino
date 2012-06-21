@@ -29,8 +29,9 @@ from lino.core import actions
 from lino.core import layouts
 from lino.tools import resolve_model
 from lino.utils import curry, AttrDict
-from lino.utils import ViewPermissionClass
+#~ from lino.utils.perms import ViewPermissionClass
 from lino.utils import choicelists
+from lino.utils import perms
 #~ from lino.utils import jsgen
 
         
@@ -172,9 +173,12 @@ class ActorMetaClass(type):
         return self.actor_id 
         
   
-  
+#~ from lino.utils.perms import Permittable
+
 #~ class Actor(Handled,ViewPermission):
-class Actor(ViewPermissionClass):
+#~ class Actor(ViewPermissionClass):
+#~ class Actor(Permittable):
+class Actor(object):
     """
     Base class for Tables and Frames. 
     An alternative name for "Actor" is "Resource".
@@ -205,6 +209,12 @@ class Actor(ViewPermissionClass):
     
     #~ hide_top_toolbar = False
     
+    create_required = dict()
+    read_required = dict()
+    update_required = dict()
+    delete_required = dict()
+    
+    
     
     master_key = None
     """
@@ -232,7 +242,6 @@ class Actor(ViewPermissionClass):
     
     
     workflow_state_field = None 
-    #~ workflow_state_field = 'state' 
     """
     The name of the field that contains the workflow state of an object.
     Subclasses may override this.
@@ -244,10 +253,12 @@ class Actor(ViewPermissionClass):
     considered to own an object when `Rule.owned_only` is checked.
     """
     
-    workflow_actions = None
-    """
-    A list of action names to be governed by workflows.
-    """
+    
+    
+    #~ workflow_actions = None
+    #~ """
+    #~ A list of action names to be governed by workflows.
+    #~ """
       
     
     
@@ -361,6 +372,21 @@ class Actor(ViewPermissionClass):
     create_action = None
     delete_action = None
     
+    #~ required_user_level = None
+    #~ """
+    #~ The minimum :class:`lino.utils.choicelists.UserLevels` 
+    #~ required to get permission to view this Actor.
+    #~ The default value `None` means that no special UserLevel is required.
+    #~ See also :attr:`required_user_groups`
+    #~ """
+    
+    #~ required_user_groups = None
+    #~ """
+    #~ List of strings naming the user groups for which membership is required 
+    #~ to get permission to view this Actor.
+    #~ The default value `None` means
+    #~ """
+    
     
     _handle_class = None
     "For internal use"
@@ -438,12 +464,13 @@ class Actor(ViewPermissionClass):
                 #~ for k,v in bd.items():
                     #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
         
-    #~ @classmethod
-    #~ def get_view_permission(cls):
-        #~ return super(Actor,cls).get_view_permission(jsgen._for_user)
+    @classmethod
+    def get_view_permission(self,user):
+        return self.allow_read(user,None,None)
+        #~ return self.show_action.permission.allow(None,jsgen._for_user)
 
     @classmethod
-    def get_row_permission(cls,action,user,row):
+    def get_row_permission(cls,obj,user,state,action):
         """
         Returns True or False whether the given action 
         is allowed for the given row instance `row` 
@@ -453,13 +480,11 @@ class Actor(ViewPermissionClass):
             return True
         return cls.editable
 
-    @classmethod
-    def get_permission(self,user,action):
-        return True
+    #~ 20120621 @classmethod
+    #~ def get_permission(self,user,action):
+        #~ return True
         
-    #~ @classmethod
-    #~ def get_shared_actions(self):
-        #~ return []
+        
         
     @classmethod
     def _collect_actions(cls):
@@ -509,6 +534,7 @@ class Actor(ViewPermissionClass):
         #~ if cls.__name__ == 'RetrieveTIGroupsRequest':
         #~ logger.info('20120614 %s : %s',cls, [str(a) for a in cls._actions_list])
         
+        
     @classmethod
     def _attach_action(self,name,a):
         a.attach_to_actor(self,name)
@@ -518,6 +544,8 @@ class Actor(ViewPermissionClass):
                     "Duplicate url_action_name %s for %s" % (
                         a.url_action_name,a))
             self._actions_dict[a.url_action_name] = a
+        elif a.show_in_workflow:
+            raise Exception("Cannot show %s in workflow without url_action_name" % self)
         self._actions_list.append(a)
         return a
             
@@ -539,40 +567,34 @@ class Actor(ViewPermissionClass):
         pass
         
         
+        
+    #~ @classmethod
+    #~ def debug_summary(self):
+        #~ return "%s (%s)" % (self.__class__,','.join([
+            #~ a.name for a in self._actions_list]))
+            
     @fields.displayfield(_("Workflows"))
     def workflow_buttons(self,obj,ar):
         """
         Displays the workflow buttons for this row and this user.
         """
         actor = ar.actor
+        #~ print 20120621 , actor,  self
         #~ print 20120618, ar
-        if actor.workflow_actions is None:
-            return 'no actions in %s' % actor
         l = []
-        state = getattr(obj,actor.workflow_state_field.name)
-        if isinstance(state,choicelists.BabelChoice):
-            state = state.value
-        for a in actor.workflow_actions:
-            if (a.required_states is None) or (state in a.required_states):
-                rh = a._rule_handlers[state]
-                if rh.allow(obj,ar.get_user()):
-                    l.append(ar.renderer.row_action_button(obj,ar,a))
-                #~ else:
-                    #~ print '20120619 not allowed', a
-            #~ else:
-                #~ print '20120619 %s : state %r not in required states %s' % (a,state,a.required_states)
-        #~ for a in ar.actor.get_actions():
-            #~ if a.ruled and a.get_row_permission(ar.get_user(),self):
-                #~ rh = self.__class__._rule_handles.get(state,None)
-                #~ if rh is not None and rh.allow(self,ar.get_user()):
-                    #~ l.append(a.label)
+        state = actor.get_row_state(obj)
+        for a in actor.get_actions(ar.action):
+            if a.show_in_workflow and a.get_action_permission(ar.get_user(),obj,state):
+                l.append(ar.renderer.row_action_button(obj,ar,a))
         return ', '.join(l)
         
-        
-    #~ @classmethod
-    #~ def debug_summary(self):
-        #~ return "%s (%s)" % (self.__class__,','.join([
-            #~ a.name for a in self._actions_list]))
+    @classmethod
+    def get_row_state(self,obj):
+        if self.workflow_state_field is not None:
+            return getattr(obj,self.workflow_state_field.name)
+            #~ if isinstance(state,choicelists.Choice):
+                #~ state = state.value
+            
             
     @classmethod
     def disabled_actions(self,ar,obj):
@@ -583,9 +605,12 @@ class Actor(ViewPermissionClass):
         """
         d = dict()
         if obj is not None:
+            state = self.get_row_state(obj)
             u = ar.get_user()
             for a in self.get_actions(ar.action):
-                if not a.get_row_permission(u,obj):
+                if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
+                #~ if not obj.get_row_permission(a,u):
+                #~ if not a.get_row_permission(u,obj):
                 #~ if not self.get_permission(a,u,obj):
                     d[a.name] = True
         return d

@@ -109,7 +109,7 @@ if True:
           return rr.ui.success_response(**kw)
           
       
-  class Mailable(models.Model):
+  class Mailable(dd.Model):
       """
       Mixin for models that provide a "Create Email" button.
       Deserves more documentation.
@@ -151,7 +151,7 @@ if True:
           #~ rpt.add_action(CreateMailAction())
 
 
-class Recipient(models.Model):
+class Recipient(dd.Model):
 #~ class Recipient(mixins.Controllable):
 
     allow_cascaded_delete = True
@@ -237,7 +237,7 @@ class SendMailAction(dd.RowAction):
 
 #~ class Mail(mixins.AutoUser):
 class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
-#~ class Mail(models.Model):
+#~ class Mail(dd.Model):
     """
     Deserves more documentation.
     """

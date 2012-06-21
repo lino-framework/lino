@@ -222,7 +222,15 @@ def uses_simple_values(fld):
     ch = get_for_field(fld)
     if ch is not None:
         return ch.simple_values
-    if fld.choices and type(fld.choices[0]) in (list,tuple):
+    choices = list(fld.choices)
+    #~ if choices is None:
+        #~ return True
+    #~ if callable(choices): 
+        #~ choices = choices()
+    if len(choices) == 0:
+        return True
+        #~ raise Exception("%s has no chooser but an empty `choices` attribute" % fld)
+    if type(choices[0]) in (list,tuple):
         return False
     return True
 

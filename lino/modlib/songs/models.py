@@ -24,7 +24,7 @@ from lino import dd
 #from lino.modlib.countries import models as countries 
 countries = dd.resolve_app('countries')
 
-class Place(models.Model):
+class Place(dd.Model):
     name = models.CharField(max_length=200)
     country = models.ForeignKey(countries.Country)
     
@@ -60,7 +60,7 @@ class PersonManager(models.Manager):
         
         
     
-class Person(models.Model):
+class Person(dd.Model):
     objects = PersonManager()
     first_name = models.CharField(max_length=100,blank=True)
     last_name = models.CharField(max_length=100,blank=True)
@@ -106,7 +106,7 @@ class Singer(Person):
             s += " (%s)" % self.voice
         return s
     
-class Choir(models.Model):
+class Choir(dd.Model):
     name = models.CharField(max_length=200)
     place = models.ForeignKey(Place)
     singers = models.ManyToManyField(Singer)
@@ -115,7 +115,7 @@ class Choir(models.Model):
         return self.name
         
 
-class Song(models.Model):
+class Song(dd.Model):
     title = models.CharField(max_length=200)
     #year_published = models.IntegerField(blank=True,null=True)
     text = models.TextField(blank=True)
@@ -148,7 +148,7 @@ class Song(models.Model):
     def __unicode__(self):
         return self.title + " (%d)" % self.id
         
-class Event(models.Model):
+class Event(dd.Model):
     date = models.DateField('date',blank=True,null=True)
     choir = models.ForeignKey(Choir)
     singers = models.ManyToManyField(Singer)
@@ -180,7 +180,7 @@ class Rehearsal(Event):
 class Performance(Event):
     place = models.ForeignKey(Place)
     
-class SongEvent(models.Model):
+class SongEvent(dd.Model):
     event = models.ForeignKey(Event) #,related_name="songs")
     seq = models.IntegerField(default=0)
     song = models.ForeignKey(Song,related_name="events")
@@ -192,7 +192,7 @@ class SongEvent(models.Model):
         n.save()
         return n
         
-class Link(models.Model):
+class Link(dd.Model):
     url = models.URLField()
     text = models.CharField(max_length=200)
     #date = models.DateField('date',blank=True,null=True)
@@ -203,7 +203,7 @@ class Link(models.Model):
     def __unicode__(self):
         if self.text:
             return self.text
-        return models.Model.__unicode__(self)
+        return dd.Model.__unicode__(self)
         #if self.text:
         #    return HREF(self.url,self.text)
         #return HREF(self.url,self.url)
@@ -214,7 +214,7 @@ class Link(models.Model):
             return self.url
         
 
-#~ class Work(models.Model):
+#~ class Work(dd.Model):
     #~ class Admin:
         #~ pass
     #~ composer = models.ForeignKey(
@@ -229,7 +229,7 @@ class Link(models.Model):
     #~ remark = models.TextField(blank=True,null=True)
     
     
-class Translation(models.Model):
+class Translation(dd.Model):
     class Admin:
         pass
     translator = models.ForeignKey(
@@ -246,7 +246,7 @@ class Translation(models.Model):
         null=True)
     
 
-class Collection(models.Model):
+class Collection(dd.Model):
     title = models.CharField(max_length=200)
     intro = models.TextField(blank=True,null=True)
     #publisher = models.TextField(blank=True,null=True)

@@ -20,7 +20,7 @@ import datetime
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils.choicelists import ChoiceList
+from lino.utils.choicelists import ChoiceList, Choice
 
 from dateutil.tz import tzlocal
 
@@ -57,22 +57,17 @@ def setkw(obj,**kw):
 class Weekday(ChoiceList):
     label = _("Weekday")
 add = Weekday.add_item
-add('1', _('Monday'),alias='monday')
-add('2', _('Tuesday'),alias='tuesday')
-add('3', _('Wednesday'),alias='wednesday')
-add('4', _('Thursday'),alias='thursday')
-add('5', _('Friday'),alias='friday')
-add('6', _('Saturday'),alias='saturday')
-add('7', _('Sunday'),alias='sunday')
+add('1', _('Monday'),'monday')
+add('2', _('Tuesday'),'tuesday')
+add('3', _('Wednesday'),'wednesday')
+add('4', _('Thursday'),'thursday')
+add('5', _('Friday'),'friday')
+add('6', _('Saturday'),'saturday')
+add('7', _('Sunday'),'sunday')
 
-class DurationUnit(ChoiceList):
-    """A list of possible values for the `duration_unit` field of an :class:`Event`.
-    """
-    label = _("Duration Unit")
-    
-    
-    @classmethod
-    def add_duration(cls,unit,orig,value):
+class DurationUnit(Choice):
+  
+    def add_duration(unit,orig,value):
         """
         Return a date or datetime obtained by adding `value` 
         times the specified `unit` to the specified 
@@ -83,7 +78,7 @@ class DurationUnit(ChoiceList):
         `curried magic method` of a specified list item:
         
         >>> start_date = datetime.date(2011,10,26)
-        >>> DurationUnit.months.add_duration(start_date,2)
+        >>> DurationUnits.months.add_duration(start_date,2)
         datetime.date(2011,12,26)
         
         See more usage examples in :func:`lino.modlib.cal.tests.cal_test.test01`.
@@ -122,16 +117,25 @@ class DurationUnit(ChoiceList):
                 else:
                     raise
     
+  
+    
+class DurationUnits(ChoiceList):
+    """A list of possible values for the `duration_unit` field of an :class:`Event`.
+    """
+    label = _("Duration Unit")
+    item_class = DurationUnit
     
     
-add = DurationUnit.add_item
-add('s', _('seconds'),alias='seconds')
-add('m', _('minutes'),alias='minutes')
-add('h', _('hours')  ,alias='hours'  )
-add('D', _('days')   ,alias='days'   )
-add('W', _('weeks')  ,alias='weeks'  )
-add('M', _('months') ,alias='months' )
-add('Y', _('years')  ,alias='years'  )
+    
+    
+add = DurationUnits.add_item
+add('s', _('seconds'),'seconds')
+add('m', _('minutes'),'minutes')
+add('h', _('hours')  ,'hours'  )
+add('D', _('days')   ,'days'   )
+add('W', _('weeks')  ,'weeks'  )
+add('M', _('months') ,'months' )
+add('Y', _('years')  ,'years'  )
 
 
 

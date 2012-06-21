@@ -43,8 +43,11 @@ from lino.tools import resolve_field
 from lino.utils.choosers import chooser, get_for_field
 from lino.utils.restify import restify
 from lino.core import actions
-from lino.utils.choicelists import UserLevel, UserGroup
+#~ from lino.utils.choicelists import UserLevel, UserGroup
+#~ from lino.modlib.users.models import UserLevel, UserGroup
+from lino.utils.perms import UserLevels, UserGroups
 
+#~ from lino.modlib.users.models
 
 MODULE_LABEL = _("Workflows")
 
@@ -80,12 +83,12 @@ if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
           If this is empty, the permission applies for all states.
           """)
       #~ state_after = models.CharField(_("State after"),max_length=20)
-      user_level = UserLevel.field(blank=True,
+      user_level = UserLevels.field(blank=True,
           help_text="""
           If not empty, this permission applies only for users having at least the given level.
           """)
       #~ user_groups = UserGroup.field(max_length=200,blank=True,force_selection=False) # TODO: multiple=True 
-      user_group = UserGroup.field(
+      user_group = UserGroups.field(
           help_text="""
           If not empty, this permission applies only for members of the given group.
           """) # TODO: multiple=True 
@@ -200,50 +203,6 @@ else:
 def site_setup(site):
     site.workflow_actors = dict()
     
-def unused_site_setup(site):
-    
-    #~ for model in models_list() if issubclass(model,Workflowable):
-    #~ for ct in WORKFLOWABLE_CONTENTTYPES:
-    for actor in WORKFLOWABLE_ACTORS:
-        model = ct.model_class()
-        
-        mtree = set()
-        def collect(m):
-            #~ print m
-            if not m._meta.abstract:
-                mtree.add(m)
-            for b in m.__bases__:
-                if issubclass(b,models.Model) and b is not models.Model:
-                    collect(b)
-        collect(model)
-        ctlist = set([contenttypes.ContentType.objects.get_for_model(m) for m in mtree])
-          
-        for rule in Rule.objects.filter(content_type__in=ctlist):
-            if model.workflow_owner_field and rule.owned_only:
-                rh = OwnedOnlyRuleHandle()
-            else:
-                rh = RuleHandle()
-            if rule.user_level:
-                rh.required_user_level=rule.user_level
-            if rule.user_group:
-                rh.required_user_groups = [rule.user_group.value]
-                
-            if rule.action_name:
-                ans = [ rule.action_name ]
-            else:
-                ans = model.workflow_actions
-            if rule.state:
-                states = []
-            else:
-                states = model.workflow_state_field.choicelist.items_dict.keys()
-            for state in states:
-                for an in ans:
-                    model._rule_handles[(an,state)] = rh
-
-            
-      
-          
-            
         
 def setup_main_menu(site,ui,user,m): 
     pass

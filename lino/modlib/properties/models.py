@@ -131,7 +131,7 @@ class PropType(babel.BabelNamed):
         return [(pc.value, pc.text) for pc in 
             PropChoice.objects.filter(type=self).order_by('value')]
             
-class PropChoice(models.Model):
+class PropChoice(dd.Model):
     """
     A Choice for this PropType.
     `text` is the text to be displayed in combo boxes.
@@ -193,7 +193,7 @@ class Property(babel.BabelNamed):
 #~ add_babel_field(Property,'name')
 
 
-class PropertyOccurence(models.Model):
+class PropertyOccurence(dd.Model):
     """
     A Property Occurence is when a Property occurs, possibly having a certain value.
     

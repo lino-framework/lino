@@ -24,7 +24,7 @@ from django.conf import settings
 from lino import dd
 from lino.utils import babel
 from lino.utils import mti
-from lino.utils.choicelists import UserLevel
+from lino.utils import choicelists
 from lino.utils.choosers import chooser
 from lino import mixins
 
@@ -34,8 +34,12 @@ from lino import mixins
 
 #~ contacts = dd.resolve_app('contacts')
 
+from lino.utils.perms import UserLevels, UserProfiles
+#~ from lino.utils import perms 
+
+
 #~ class User(contacts.Partner,contacts.PersonMixin):
-#~ class User(models.Model):
+#~ class User(dd.Model):
 class User(mixins.CreatedModified):
     """
     Represents a User of this site.
@@ -63,14 +67,16 @@ class User(mixins.CreatedModified):
         help_text=_("""
         Required. Must be unique. 
         """))
+        
+    profile = UserProfiles.field()
     
-    profile = models.CharField(_('Same profile as'), 
-        max_length=30, blank=True,
-        help_text=_("""
-        The user profile. Leave empty for "profile-giving" users, that is: 
-        users who have their own combination of group memberships and 
-        userlevels.
-        """))
+    #~ profile = models.CharField(_('Same profile as'), 
+        #~ max_length=30, blank=True,
+        #~ help_text=_("""
+        #~ The user profile. Leave empty for "profile-giving" users, that is: 
+        #~ users who have their own combination of group memberships and 
+        #~ userlevels.
+        #~ """))
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True)
@@ -78,7 +84,7 @@ class User(mixins.CreatedModified):
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
     
-    level = UserLevel.field()
+    #~ level = UserLevel.field()
     
     language = babel.LanguageField()
     
@@ -115,12 +121,11 @@ class User(mixins.CreatedModified):
     #~ def get_profile(self):
         #~ return self.profile or self.username
         
-    @chooser(simple_values=True)
-    def profile_choices(self,username):
-        qs = User.objects.filter(profile='').exclude(
-          username=username).order_by('username')
-        #~ print 20120516, qs
-        return [u.username for u in qs]
+    #~ @chooser(simple_values=True)
+    #~ def profile_choices(self,username):
+        #~ qs = User.objects.filter(profile='').exclude(
+          #~ username=username).order_by('username')
+        #~ return [u.username for u in qs]
         
 
     def get_full_name(self):
@@ -152,19 +157,19 @@ class User(mixins.CreatedModified):
     
     person = property(get_person)
 
-    def save(self,*args,**kw):
-        if self.profile == self.username:
-            self.profile = ''
-        if self.profile:
-            u = self.__class__.objects.get(username=self.profile)
-            for k in settings.LINO.user_profile_fields:
-                setattr(self,k,getattr(u,k))
-        super(User,self).save(*args,**kw)
-        if not self.profile:
-            for u in self.__class__.objects.filter(profile=self.username):
-                for k in settings.LINO.user_profile_fields:
-                    setattr(u,k,getattr(self,k))
-                    u.save()
+    #~ def save(self,*args,**kw):
+        #~ if self.profile == self.username:
+            #~ self.profile = ''
+        #~ if self.profile:
+            #~ u = self.__class__.objects.get(username=self.profile)
+            #~ for k in settings.LINO.user_profile_fields:
+                #~ setattr(self,k,getattr(u,k))
+        #~ super(User,self).save(*args,**kw)
+        #~ if not self.profile:
+            #~ for u in self.__class__.objects.filter(profile=self.username):
+                #~ for k in settings.LINO.user_profile_fields:
+                    #~ setattr(u,k,getattr(self,k))
+                    #~ u.save()
                 
         
     #~ def full_clean(self,*args,**kw):
@@ -176,34 +181,42 @@ class User(mixins.CreatedModified):
         #~ self.name = " ".join(l)
         #~ if not self.name:
             #~ self.name = self.username
-        #~ models.Model.full_clean(self,*args,**kw)
+        #~ dd.Model.full_clean(self,*args,**kw)
         
     #~ def disable_editing(self,ar):
         #~ if ar.get_user().is_superuser: return False
         #~ if ar.get_user() == self: return False
         #~ return True
         
-    def disabled_fields(self,request):
+    def get_row_permission(self,user,state,action):
+        """
+        Only system managers may edit other users.
+        See also :meth:`User.disabled_fields`.
+        """
+        #~ print 20120621, self, user, state, action
+        #~ if not super(User,obj).get_row_permission(action,user):
+            #~ return False
+        if action.readonly: return True
+        if user.profile.level >= UserLevels.admin: return True
+        #~ print 20120621, user.profile.level, 'is not', UserLevels.admin
+        if user.profile.level >= UserLevels.user: 
+            if user is not None and user == self: return True
+        return False
+        
+    def disabled_fields(self,ar):
         """
         Only System admins may change the profile of users.
         See also :meth:`Users.get_row_permission`.
         """
         #~ if ar.get_user().is_superuser: 
         #~ if request.user.is_superuser: 
-        if self.level <= UserLevel.manager:
+        if ar.get_user().profile.level < UserLevels.admin:
             l = ['profile']
         else:
             l = []
-        if self.profile:
-            l += settings.LINO.user_profile_fields
+        #~ if self.profile:
+            #~ l += settings.LINO.user_profile_fields
         return l
-        #~ if request.user.level >= UserLevel.expert: 
-            #~ if self.profile:
-                #~ return settings.LINO.user_profile_fields
-            #~ else:
-                #~ return []
-        #~ return ['is_superuser','is_active','is_staff','is_expert']
-        #~ return ['level','profile']
         
 
 
@@ -250,7 +263,7 @@ class UserDetail(dd.DetailLayout):
     """
 
     box2 = """
-    level
+    #level
     """
     #~ general = """
     #~ box1:50 box2:20
@@ -275,22 +288,21 @@ class Users(dd.Table):
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
-    column_names = 'username profile first_name last_name level *'
+    column_names = 'username profile first_name last_name *'
     detail_layout = UserDetail()
 
-    @classmethod
-    def get_row_permission(cls,action,user,obj):
-        """
-        Only system managers may edit other users.
-        See also :meth:`User.disabled_fields`.
-        """
-        if not super(Users,cls).get_row_permission(action,user,obj):
-            return False
-        #~ if user.is_superuser: return True
-        if user.level >= UserLevel.manager: return True
-        if action.readonly: return True
-        if user is not None and user == obj: return True
-        return False
+    #~ @classmethod
+    #~ def get_row_permission(cls,action,user,obj):
+        #~ """
+        #~ Only system managers may edit other users.
+        #~ See also :meth:`User.disabled_fields`.
+        #~ """
+        #~ if not super(Users,cls).get_row_permission(action,user,obj):
+            #~ return False
+        #~ if user.level >= UserLevel.manager: return True
+        #~ if action.readonly: return True
+        #~ if user is not None and user == obj: return True
+        #~ return False
           
   
 #~ if settings.LINO.is_installed('contacts'):

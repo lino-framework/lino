@@ -663,13 +663,23 @@ class Table(AbstractTable):
             m(self)
         
     @classmethod
+    def get_row_permission(cls,obj,user,state,action):
+        """
+        Returns True or False whether the given action 
+        is allowed for the given row instance `row` 
+        and the user who issued the given ActionRequest `ar`.
+        """
+        return obj.get_row_permission(user,state,action)
+        
+    @classmethod
     def disable_delete(self,obj,ar):
         """
         Return either `None` if the given `obj` *is allowed* 
         to be deleted by `request`,
         or a string with a message explaining why, if not.
         """
-        if not self.get_row_permission(self.delete_action,ar.get_user(),obj):
+        if not self.get_row_permission(obj,ar.get_user(),self.get_row_state(obj),self.delete_action):
+        #~ if not obj.get_row_permission(self.delete_action,ar.get_user()):
             return _("You have no permission to delete this row.")
         return self.model._lino_ddh.disable_delete(obj,ar)
         

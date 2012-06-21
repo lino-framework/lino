@@ -58,7 +58,7 @@ from lino.modlib.cal import models as cal
 from lino.modlib.users import models as users
 from lino.utils.choicelists import HowWell, Gender
 from lino.utils.choicelists import ChoiceList
-from lino.utils.choicelists import UserLevel
+from lino.modlib.users.models import UserLevels
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 #~ from lino.models import get_site_config
@@ -78,12 +78,12 @@ from lino.mixins.printable import DirectPrintAction, Printable
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-#~ from lino.modlib.cal.models import DurationUnit, update_auto_task
-from lino.modlib.cal.models import DurationUnit, update_reminder
+from lino.modlib.cal.models import DurationUnits, update_reminder
 from lino.modlib.properties import models as properties
 from lino.modlib.cv import models as cv
 #~ from lino.modlib.contacts.models import Contact
 from lino.tools import resolve_model, UnresolvedModel
+from lino.utils.perms import UserProfiles
 
 #~ # not used here, but these modules are required in INSTALLED_APPS, 
 #~ # and other code may import them using 
@@ -303,7 +303,7 @@ add('18', _("Foreigner card F+"))
 
 
 
-class CpasPartner(mixins.DiffingMixin,models.Model):
+class CpasPartner(dd.Model,mixins.DiffingMixin):
 #~ class Partner(mixins.DiffingMixin,contacts.Contact):
     """
     """
@@ -578,7 +578,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
     def update_reminders(self):
         user = self.coach2 or self.coach1
         if user:
-            M = DurationUnit.months
+            M = DurationUnits.months
             update_reminder(1,self,user,
               self.card_valid_until,
               _("eID card expires in 2 months"),2,M)
@@ -1201,7 +1201,7 @@ class MyPersons(Persons):
     
     """
     required_user_groups = ['integ']
-    #~ required_user_level = UserLevel.manager
+    #~ required_user_level = UserLevels.manager
     
     #~ app_label = 'contacts'
     use_as_default_table = False
@@ -1270,7 +1270,7 @@ class ClientsTest(Persons):
     """
     Table of persons whose data seems unlogical or inconsistent.
     """
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     label = _("Data Test Clients")
     parameters = dict(
       user = models.ForeignKey(User,blank=True,verbose_name=_("Coached by")),
@@ -1386,6 +1386,7 @@ class UsersWithClients(dd.VirtualTable):
             
         self.column_names += ' primary_clients active_clients row_total'
     
+
     @classmethod
     def get_data_rows(self,ar):
         """
@@ -1402,16 +1403,19 @@ class UsersWithClients(dd.VirtualTable):
         
         """
         #~ if ar.get_user().is_superuser:
-        #~ if ar.get_user().level >= UserLevel.expert:
+        #~ if ar.get_user().level >= UserLevels.expert:
             #~ # flt = Q(is_spis=True) 
             #~ flt = Q(integ_level__gt='') 
         #~ else:
             #~ # flt = Q(is_spis=True,is_superuser=False)
             #~ # flt = Q(integ_level__isnull=False,is_superuser=False)
-            #~ flt = Q(integ_level__gt='',level__gte=UserLevel.expert)
-        qs = User.objects.exclude(integ_level='')
-        if ar.get_user().level < UserLevel.manager:
-            qs = qs.exclude(level__gte=UserLevel.manager)
+            #~ flt = Q(integ_level__gt='',level__gte=UserLevels.expert)
+        #~ qs = User.objects.exclude(integ_level='')
+        qs = User.objects.filter(profile__in=(
+          UserProfiles.melanie,UserProfiles.hubert,UserProfiles.admin))
+        if ar.get_user().profile.level < UserLevels.admin:
+            #~ qs = qs.exclude(level__gte=UserLevels.manager)
+            qs = qs.exclude(profile__gte=UserLevels.admin)
         for user in qs.order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
             if r.get_total_count():
@@ -1439,7 +1443,7 @@ class UsersWithClients(dd.VirtualTable):
 #
 # PERSON GROUP
 #
-class PersonGroup(models.Model):
+class PersonGroup(dd.Model):
     """Integration Phase (previously "Person Group")
     """
     name = models.CharField(_("Designation"),max_length=200)
@@ -1456,7 +1460,7 @@ class PersonGroups(dd.Table):
     """List of Integration Phases"""
     model = PersonGroup
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     order_by = ["ref_name"]
 
     
@@ -1466,7 +1470,7 @@ class PersonGroups(dd.Table):
 #
 # ACTIVITIY (Berufscode)
 #
-class Activity(models.Model):
+class Activity(dd.Model):
     class Meta:
         verbose_name = _("activity")
         verbose_name_plural = _("activities")
@@ -1478,7 +1482,7 @@ class Activity(models.Model):
 
 class Activities(dd.Table):
     model = Activity
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     #~ label = _('Activities')
 
 #~ class ActivitiesByPerson(Activities):
@@ -1490,7 +1494,7 @@ class Activities(dd.Table):
 #
 # EXCLUSION TYPES (Sperrgründe)
 #
-class ExclusionType(models.Model):
+class ExclusionType(dd.Model):
     class Meta:
         verbose_name = _("exclusion type")
         verbose_name_plural = _('exclusion types')
@@ -1502,14 +1506,14 @@ class ExclusionType(models.Model):
 
 class ExclusionTypes(dd.Table):
     #~ required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = ExclusionType
     #~ label = _('Exclusion Types')
     
 #
 # EXCLUSIONS (Arbeitslosengeld-Sperrungen)
 #
-class Exclusion(models.Model):
+class Exclusion(dd.Model):
     class Meta:
         verbose_name = _("exclusion")
         verbose_name_plural = _('exclusions')
@@ -1528,7 +1532,7 @@ class Exclusion(models.Model):
         return s
 
 class Exclusions(dd.Table):
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Exclusion
     #~ label = _('Exclusions')
     
@@ -1541,7 +1545,7 @@ class ExclusionsByPerson(Exclusions):
 #
 # COACHING TYPES 
 #
-#~ class CoachingType(models.Model):
+#~ class CoachingType(dd.Model):
     #~ class Meta:
         #~ verbose_name = _("coaching type")
         #~ verbose_name_plural = _('coaching types')
@@ -1557,7 +1561,7 @@ class ExclusionsByPerson(Exclusions):
 #
 # COACHINGS
 #
-#~ class Coaching(models.Model):
+#~ class Coaching(dd.Model):
     #~ class Meta:
         #~ verbose_name = _("coaching")
         #~ verbose_name_plural = _('coachings')
@@ -1593,7 +1597,7 @@ class AidType(babel.BabelNamed):
 class AidTypes(dd.Table):
     model = AidType
     column_names = 'name *'
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
 
 
 
@@ -1663,7 +1667,7 @@ class MyPersonSearches(PersonSearches,mixins.ByUser):
     #~ model = PersonSearch
     pass
     
-class WantedLanguageKnowledge(models.Model):
+class WantedLanguageKnowledge(dd.Model):
     search = models.ForeignKey(PersonSearch)
     language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
     spoken = HowWell.field(verbose_name=_("spoken"))
@@ -1721,8 +1725,8 @@ class PersonsBySearch(AllPersons):
     #~ 20110822 app_label = 'pcsw'
     label = _("Found persons")
     
-    can_add = perms.never
-    can_change = perms.never
+    #~ can_add = perms.never
+    #~ can_change = perms.never
     
     @classmethod
     def get_request_queryset(self,rr):
@@ -1882,8 +1886,8 @@ dd.inject_field(SiteConfig,
 """
 ...
 """
-#~ settings.LINO.add_user_field('integ_level',UserLevel.field(_("Integration")))
-settings.LINO.add_user_group('integ',_("Integration"))
+#~ settings.LINO.add_user_field('integ_level',UserLevels.field(_("Integration")))
+#~ settings.LINO.add_user_group('integ',_("Integration"))
               
         
 #~ RoleType = resolve_model('contacts.RoleType')
@@ -2070,12 +2074,15 @@ def site_setup(site):
     outbox.MailsByController outbox.PostingsByController
     """,_("More"))
     
+    #~ site.modules.users.Users.set_detail(box2 = """
+    #~ level
+    #~ integ_level
+    #~ cbss_level
+    #~ newcomers_level newcomer_quota
+    #~ debts_level
+    #~ """)
     site.modules.users.Users.set_detail(box2 = """
-    level
-    integ_level
-    cbss_level
-    newcomers_level newcomer_quota
-    debts_level
+    newcomer_quota
     """)
     
     #~ class NoteDetail(dd.DetailLayout):
@@ -2122,9 +2129,52 @@ def site_setup(site):
     
     site.modules.outbox.Mails.set_detail("""
     subject project date 
-    sender sent #build_time id owner
+    user sent #build_time id owner
     RecipientsByMail:50x5 AttachmentsByMail:20x5
     body:90x10
     """)
         
     #~ site.modules.courses.CourseProviders.set_detail(CourseProviderDetail())
+
+from lino.utils.perms import UserLevels, UserGroups, UserProfiles
+#~ from lino.utils import perms 
+add = UserGroups.add_item
+add('integ',_("Integration"),'integ')
+add('cbss',_("CBSS"),'cbss')
+add('newcomers',_("Newcomers"),'newcomers')
+add('debts',_("Debts"),'debts')
+
+#~ class UserProfile(users.UserProfile):
+    #~ def __init__(self,integ_level='',**kw):
+        #~ self.integ_level = integ_level
+        #~ self.newcomers_level = integ_level
+        #~ super(UserProfile,self).__init__(**kw)
+        
+UserProfiles.clear()
+add = UserProfiles.add_item
+add('10', _("Integration Agent (Senior)"), 'melanie',
+          level=UserLevels.user,
+          integ_level=UserLevels.manager,
+          cbss_level=UserLevels.user,
+          )
+add('11', _("Integration Agent"), 'hubert',
+          level=UserLevels.user,
+          integ_level=UserLevels.user,
+          cbss_level=UserLevels.user,
+          )
+add('20', _("Newcomers consultant"), 'caroline',
+          level=UserLevels.user,
+          newcomers_level=UserLevels.user,
+          cbss_level=UserLevels.user,
+          )
+add('30', _("Debts consultant"), 'kerstin',
+          level=UserLevels.user,
+          debts_level=UserLevels.user,
+          )
+add('90', _("Administrator"), 'admin',
+          level=UserLevels.admin,
+          integ_level=UserLevels.admin,
+          newcomers_level=UserLevels.admin,
+          debts_level=UserLevels.admin,
+          cbss_level=UserLevels.admin,
+          )

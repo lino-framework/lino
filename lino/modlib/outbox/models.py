@@ -54,7 +54,9 @@ from django.conf import settings
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 from lino.utils.config import find_config_file
-from lino.utils.choicelists import ChoiceList, UserLevel
+from lino.utils.choicelists import ChoiceList
+from lino.utils.perms import UserLevels
+
 
 from Cheetah.Template import Template as CheetahTemplate
 #~ from lino.utils import dtosl, dtos
@@ -111,7 +113,7 @@ class CreateMailAction(dd.RowAction):
         else:
             html_content = ''
         
-        m = Mail(sender=ar.get_user(),
+        m = Mail(user=ar.get_user(),
             subject=elem.get_mailable_subject(),
             body=html_content,
             owner=elem)
@@ -132,7 +134,7 @@ class CreateMailAction(dd.RowAction):
         return ar.success_response(**kw)
         
     
-class Mailable(models.Model):
+class Mailable(dd.Model):
     """
     Mixin for models that provide a "Post" button.
     A Mailable model must also inherit mixins.CachedPrintable (or mixins.TypedPrintable)
@@ -182,7 +184,7 @@ class Mailable(models.Model):
         
 
   
-class Recipient(models.Model):
+class Recipient(dd.Model):
     """
     Abstract base for :class:`inbox.Recipient` and :class:`outbox.Recipient`.
     """
@@ -220,7 +222,7 @@ class Recipient(models.Model):
 
 
 class Recipients(dd.Table):
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Recipient
     #~ column_names = 'mail  type *'
     #~ order_by = ["address"]
@@ -248,7 +250,7 @@ class SendMailAction(dd.RowAction):
             #~ return rr.ui.error_response(message='Mail has already been sent.')
         #~ subject = elem.subject
         #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
-        sender = "%s <%s>" % (elem.sender.get_full_name(),elem.sender.email)
+        sender = "%s <%s>" % (elem.user.get_full_name(),elem.user.email)
         #~ recipients = list(elem.get_recipients_to())
         to = []
         cc = []
@@ -270,7 +272,7 @@ class SendMailAction(dd.RowAction):
                 #~ logger.info("Ignoring recipient %s (type %s)",r,r.type)
         if not found:
             return rr.error_response("No recipients found.")
-        as_attachment = elem.mail_as_attachment()
+        as_attachment = elem.owner.mail_as_attachment(rr)
         if as_attachment:
             body = elem.body
         else:
@@ -295,7 +297,7 @@ class SendMailAction(dd.RowAction):
             #~ elem.id,elem.sender,', '.join([
                 #~ r.address for r in elem.recipient_set.all()]))
         msg = "Email %s from %s has been sent to %d recipients." % (
-            elem.id,elem.sender,num_sent)
+            elem.id,sender,num_sent)
         kw.update(message=msg)
         #~ for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
             #~ msg += "\n" + n + " = " + unicode(getattr(settings,n))
@@ -305,7 +307,7 @@ class SendMailAction(dd.RowAction):
 
 
 #~ class Mail(mails.Mail,mixins.ProjectRelated,mixins.Controllable):
-class Mail(mixins.Printable,mixins.ProjectRelated,mixins.Controllable):
+class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Controllable):
   
     class Meta:
         verbose_name = _("Outgoing Mail")
@@ -329,8 +331,8 @@ class Mail(mixins.Printable,mixins.ProjectRelated,mixins.Controllable):
     
     #~ send = SendMailAction()
         
-    sender = models.ForeignKey(settings.LINO.user_model,
-        verbose_name=_("Sender"))
+    #~ sender = models.ForeignKey(settings.LINO.user_model,
+        #~ verbose_name=_("Sender"))
         #~ related_name='outmails_by_sender',
         #~ blank=True,null=True)
     sent = models.DateTimeField(null=True,editable=False)
@@ -341,8 +343,8 @@ class Mail(mixins.Printable,mixins.ProjectRelated,mixins.Controllable):
         #~ return []
         
     def get_print_language(self,bm):
-        if self.sender is not None:
-            return self.sender.language
+        if self.user is not None:
+            return self.user.language
         return super(Mail,self).get_print_language(bm)
         
     
@@ -367,12 +369,12 @@ class Mail(mixins.Printable,mixins.ProjectRelated,mixins.Controllable):
     #~ """
 
 class Mails(dd.Table):
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Mail
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
     detail_template = """
-    id sender date sent 
+    id user date sent 
     subject
     RecipientsByMail:50x5 AttachmentsByMail:20x5
     body:90x10
@@ -383,7 +385,7 @@ class MyOutbox(Mails):
     #~ known_values = dict(outgoing=True)
     label = _("My Outbox")
     #~ filter = models.Q(sent__isnull=True)
-    master_key = 'sender'
+    master_key = 'user'
     
     @classmethod
     def setup_request(self,ar):
@@ -457,12 +459,12 @@ class OutboxByUser(Mails):
     column_names = 'sent subject recipients'
     #~ order_by = ['sent']
     order_by = ['-date']
-    master_key = 'sender'
+    master_key = 'user'
 
 class OutboxByProject(Mails):
     required_user_level = None
     label = _("Outbox")
-    column_names = 'date subject recipients sender *'
+    column_names = 'date subject recipients user *'
     #~ order_by = ['sent']
     order_by = ['-date']
     master_key = 'project'
@@ -471,7 +473,7 @@ class SentByPartner(Mails):
     required_user_level = None
     master = 'contacts.Partner'
     label = _("Sent Mails")
-    column_names = 'sent subject sender'
+    column_names = 'sent subject user'
     order_by = ['sent']
     
     @classmethod
@@ -523,7 +525,7 @@ class Posting(mixins.Controllable):
 
 class Postings(dd.Table):
     workflow_state_field = 'state'
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Posting
     column_names = 'date owner partner *'
     #~ @dd.action()
@@ -567,7 +569,7 @@ class CreatePostings(dd.RowAction):
         
     
     
-class Postable(models.Model):
+class Postable(dd.Model):
     """
     Mixin for models that provide a "Post" button.
     """
@@ -600,12 +602,12 @@ def setup_my_menu(site,ui,user,m):
     #~ m.add_action(MySent)
   
 def setup_config_menu(site,ui,user,m):
-    #~ if user.level >= UserLevel.manager:
+    #~ if user.level >= UserLevels.manager:
     m  = m.add_menu("outbox",MODULE_LABEL)
     #~ m.add_action(MailTypes)
   
 def setup_explorer_menu(site,ui,user,m):
-    #~ if user.level >= UserLevel.manager:
+    #~ if user.level >= UserLevels.manager:
     m  = m.add_menu("outbox",MODULE_LABEL)
     m.add_action(Mails)
   

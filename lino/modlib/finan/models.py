@@ -141,7 +141,7 @@ class BankStatement(journals.Journaled,ledger.Booked):
         #~ return self.docitem_set.create(**kw)
     
   
-class DocItem(models.Model):
+class DocItem(dd.Model):
     document = models.ForeignKey(BankStatement) 
     pos = models.IntegerField("Position")
     date = models.DateField(blank=True,null=True)
@@ -161,7 +161,7 @@ class DocItem(models.Model):
     def __unicode__(self):
         return u"DocItem %s.%d" % (self.document,self.pos)
         
-#~ class Booking(models.Model):
+#~ class Booking(dd.Model):
     #~ #journal = models.ForeignKey(journals.Journal)
     #~ #number = models.IntegerField()
     #~ document = models.ForeignKey(LedgerDocument) 

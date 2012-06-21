@@ -42,7 +42,7 @@ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.utils.choicelists import HowWell
-from lino.utils.choicelists import UserLevel
+from lino.utils.perms import UserLevels
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.tools import get_field
@@ -102,7 +102,7 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
 
 class ContractTypes(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = ContractType
     column_names = 'name ref build_method template *'
     detail_template = """
@@ -128,14 +128,14 @@ class ExamPolicy(babel.BabelNamed,cal.RecurrenceSet):
 
 class ExamPolicies(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = ExamPolicy
     column_names = 'name *'
 
 #
 # CONTRACT ENDINGS
 #
-class ContractEnding(models.Model):
+class ContractEnding(dd.Model):
     class Meta:
         verbose_name = _("Contract Ending")
         verbose_name_plural = _('Contract Endings')
@@ -147,7 +147,7 @@ class ContractEnding(models.Model):
         
 class ContractEndings(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = ContractEnding
     column_names = 'name *'
     order_by = ['name']
@@ -344,7 +344,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
     def update_reminders(self):
         super(ContractBase,self).update_reminders()
         if self.applies_until:
-            date = cal.DurationUnit.months.add_duration(self.applies_until,-1)
+            date = cal.DurationUnits.months.add_duration(self.applies_until,-1)
         else:
             date = None
         cal.update_auto_task(
@@ -504,7 +504,7 @@ class ContractDetail(dd.DetailLayout):
 
 class Contracts(dd.Table):
     required_user_groups = ['integ']
-    #~ required_user_level = UserLevel.manager
+    #~ required_user_level = UserLevels.manager
     model = Contract
     column_names = 'id applies_from applies_until user type *'
     order_by = ['id']
@@ -512,12 +512,12 @@ class Contracts(dd.Table):
     active_fields = ['company']
     detail_layout = ContractDetail()
     
-    @classmethod
-    def get_row_permission(self,action,user,row):
-        if not action.readonly:
-            if row.user != user and user.integ_level < UserLevel.manager: 
-                return False
-        return super(Contracts,self).get_row_permission(action,user,row)
+    #~ @classmethod
+    #~ def get_row_permission(self,action,user,row):
+        #~ if not action.readonly:
+            #~ if row.user != user and user.integ_level < UserLevels.manager: 
+                #~ return False
+        #~ return super(Contracts,self).get_row_permission(action,user,row)
     
 class ContractsByPerson(Contracts):
     master_key = 'person'
@@ -545,12 +545,12 @@ def setup_main_menu(site,ui,user,m): pass
 def setup_master_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    if user.newcomers_level < UserLevel.user:
+    if user.profile.newcomers_level < UserLevels.user:
         return
     m.add_action(MyContracts)
   
 def setup_config_menu(site,ui,user,m): 
-    if user.newcomers_level < UserLevel.manager:
+    if user.profile.newcomers_level < UserLevels.manager:
         return
     m  = m.add_menu("isip",_("ISIPs"))
     m.add_action(ContractTypes)
@@ -558,6 +558,6 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(ExamPolicies)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.integ_level < UserLevel.manager:
+    if user.profile.integ_level < UserLevels.manager:
         return
     m.add_action(Contracts)

@@ -35,7 +35,7 @@ from lino.utils import babel
 from lino.utils import dblogger
 
 
-#~ class Language(models.Model):
+#~ class Language(dd.Model):
 class Language(babel.BabelNamed):
     class Meta:
         verbose_name = _("Language")
@@ -95,7 +95,7 @@ class Countries(dd.Table):
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 
 
-class City(models.Model):
+class City(dd.Model):
     """
     Implements the :class:`countries.City` convention.
     """
@@ -124,7 +124,7 @@ class CitiesByCountry(Cities):
 
 
 
-class CountryCity(models.Model):
+class CountryCity(dd.Model):
     """
     Adds two fields `country` and `city` and defines 
     a context-sensitive chooser for city as well as a 

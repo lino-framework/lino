@@ -105,7 +105,7 @@ def objects():
     PLACES = Cycler(cal.Place.objects.all())
     #~ Event = settings.LINO.modules.cal.Event
     
-    from lino.modlib.cal.models import DurationUnit
+    from lino.modlib.cal.utils import DurationUnit
     
     year = settings.LINO.demo_date().year
     if settings.LINO.demo_date().month < 7:
@@ -116,7 +116,7 @@ def objects():
           start_date=datetime.date(year,9,1+i),
           end_date=datetime.date(year+1,6,30),
           every=1,
-          every_unit=DurationUnit.weeks,
+          every_unit=DurationUnits.weeks,
           slot=SLOTS.pop(),
           )
         yield c

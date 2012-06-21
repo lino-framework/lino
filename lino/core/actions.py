@@ -31,7 +31,8 @@ from lino.ui import requests as ext_requests
 
 from lino.tools import resolve_model
 
-
+from lino.utils.perms import UserLevels
+from lino.utils import perms 
 
 
 class VirtualRow(object):
@@ -41,7 +42,13 @@ class VirtualRow(object):
     def update(self,**kw):
         for k,v in kw.items():
             setattr(self,k,v)
+
+    def get_row_permission(self,user,state,action):
+        if action.readonly:
+            return True
+        return False 
             
+
 class PhantomRow(VirtualRow):
     def __init__(self,request,**kw):
         self._ar = request
@@ -137,7 +144,29 @@ class Action(object):
     hide_top_toolbar = False
     hide_navigator = False
     opens_a_window = False
+    show_in_bbar = True
+    show_in_workflow = True
     #~ can_view = perms.always
+    
+    #~ required_user_groups = None
+    #~ required_user_level = None
+    #~ required_states = None
+    required = {}
+    """
+    A dict with conditions to specify permissions.
+    #~ If this is set, the action is available only on rows 
+    #~ that meet the specified conditions.
+    
+    """
+    
+    #~ owned_only = False
+    #~ """
+    #~ If this is `True` 
+    #~ (and if :attr:`lino.core.actors.Actor.workflow_owner_field` is set),
+    #~ the action will be available only on rows owned by the requesting user.
+    #~ """
+    
+    
     
     
     #~ def __init__(self,actor=None,name=None,label=None,**kw):
@@ -181,6 +210,9 @@ class Action(object):
             return repr(self)
         return str(self.actor) + '.' + self.name
         
+    #~ def set_permissions(self,*args,**kw)
+        #~ self.permission = perms.factory(*args,**kw)
+        
     def attach_to_actor(self,actor,name):
         if self.name is not None:
             raise Exception("%s tried to attach named action %s" % (actor,self))
@@ -220,6 +252,22 @@ class Action(object):
         else:
             return u"%s %s" % (self.label,self.actor.label)
             
+    def get_action_permission(self,user,obj,state):
+        """
+        The default implementation is that `readonly` 
+        actions always agree, while edit actions require 
+        a system UserLevel greater than `guest`
+        and an editable actor.
+        """
+        return self.allow(user,obj,state)
+        #~ if not self.allow_read(user,obj,state)
+        #~ if self.readonly:
+            #~ return 
+        #~ if self.readonly:
+            #~ return True
+        #~ if user.profile.level <= UserLevels.guest:
+            #~ return False
+        #~ return self.actor.editable
         
     #~ def run(self,elem,ar,**kw):
         #~ raise NotImplementedError("%s has no run() method" % self.__class__)
@@ -227,42 +275,23 @@ class Action(object):
 
 class TableAction(Action):
     """
-    TODO: get_row_permission and required_states 
+    TODO: get_action_permission and required_states 
     are needed here because `disabled_actions` also asks InsertRow whether 
     it's permitted on that row. It's in fact not correct to ask this for 
     the Insert button. Has to do with the fact that the Insert button is 
     in the bottom toolbar though it should be in the top toolbar...
     """
   
-    required_states = None
+    #~ required_states = None
     
     def get_action_title(self,rr):
         return rr.get_title()
         
-    def get_row_permission(self,user,obj):
-        return self.actor.get_permission(user,self)
 
 class RowAction(Action):
     """
     Base class for actions that are executed on an individual row.
     """
-    
-    required_states = None
-    """
-    If this is set, the action is available only on rows whose 
-    workflow state is one of the specified states.
-    It must be either None or a `list` or `set` of states.
-    
-    """
-    
-    owned_only = False
-    """
-    If this is `True` 
-    (and if :attr:`lino.core.actors.Actor.workflow_owner_field` is set),
-    the action will be available only on rows owned by the requesting user.
-    """
-    
-    #~ ruled = True
     
     def run(self,row,ar,**kw):
         """
@@ -271,8 +300,8 @@ class RowAction(Action):
         """
         raise NotImplementedError("%s has no run() method" % self.__class__)
 
-    def get_row_permission(self,user,obj):
-        return self.actor.get_row_permission(self,user,obj)
+    #~ def get_action_permission(self,user,obj):
+        #~ return self.actor.get_row_permission(self,user,obj)
             
     def attach_to_actor(self,actor,name):
         super(RowAction,self).attach_to_actor(actor,name)
@@ -292,6 +321,7 @@ class RedirectAction(Action):
 
 class GridEdit(TableAction):
   
+    show_in_workflow = False
     opens_a_window = True
 
     callable_from = tuple()
@@ -324,10 +354,12 @@ class ShowDetailAction(RowAction):
 RowAction.callable_from = (GridEdit,ShowDetailAction)
 
 class InsertRow(TableAction):
+    show_in_workflow = False
     opens_a_window = True
     sort_index = 2
     hide_top_toolbar = True
     readonly = False
+    required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
     url_action_name = 'insert'
     #~ label = _("Insert")
@@ -347,6 +379,7 @@ class DuplicateRow(RowAction):
     opens_a_window = True
   
     readonly = False
+    required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
     url_action_name = 'duplicate'
     label = _("Duplicate")
@@ -387,7 +420,9 @@ class Calendar(Action):
     
 
 class UpdateRowAction(RowAction):
+    show_in_workflow = False
     readonly = False
+    required = dict(user_level='user')
     
 
 class ListAction(Action):
@@ -400,6 +435,8 @@ class ListAction(Action):
 class DeleteSelected(RowAction):
     sort_index = 3
     readonly = False
+    show_in_workflow = False
+    required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
     #~ needs_selection = True
     label = _("Delete")
@@ -409,7 +446,9 @@ class DeleteSelected(RowAction):
     
         
 class SubmitDetail(RowAction):
+    show_in_workflow = False
     readonly = False
+    required = dict(user_level='user')
     #~ url_action_name = 'SubmitDetail'
     label = _("Save")
     callable_from = (ShowDetailAction,)
@@ -550,7 +589,8 @@ class ActionRequest(object):
         if self.create_kw is None or not self.actor.editable:
             #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)
             return 
-        if not self.actor.get_permission(self.get_user(),self.actor.create_action):
+        #~ if not self.actor.get_permission(self.get_user(),self.actor.create_action):
+        if not self.actor.allow_create(self.get_user(),None,None):
             return
         return PhantomRow(self,**kw)
       

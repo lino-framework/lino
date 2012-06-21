@@ -47,7 +47,8 @@ from lino import dd
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
-from lino.utils.choicelists import Gender, UserLevel
+from lino.utils.choicelists import Gender
+from lino.utils.perms import UserLevels
 from lino.utils import babel 
 #~ from lino.models import get_site_config
 
@@ -102,7 +103,7 @@ class CompanyType(babel.BabelNamed):
     
         
 class CompanyTypes(dd.Table):
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
@@ -330,7 +331,7 @@ class PartnersByCountry(Partners):
 
 
 
-class Born(models.Model):
+class Born(dd.Model):
     """
     Abstract base class that adds a `birth_date` 
     field and a virtual field "Age".
@@ -389,7 +390,7 @@ class Born(models.Model):
 #~ Note `PersonMixin` must not be named `Person` because users.User also inherits 
 #~ from it and would then also find all contacs/Person/*.dtl !
 
-class PersonMixin(models.Model):
+class PersonMixin(dd.Model):
     """
     Mixin for models that represent a physical person. 
     """
@@ -497,7 +498,7 @@ class Persons(dd.Table):
     
 
 
-class CompanyMixin(models.Model):
+class CompanyMixin(dd.Model):
 #~ class Company(Contact):
     """
     Abstract base class for a company.
@@ -563,13 +564,13 @@ class RoleType(babel.BabelNamed):
 
 
 class RoleTypes(dd.Table):
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = 'contacts.RoleType'
 
 
-#~ class Contact(models.Model):
-#~ class RoleOccurence(models.Model):
-class Role(models.Model):
+#~ class Contact(dd.Model):
+#~ class RoleOccurence(dd.Model):
+class Role(dd.Model):
 #~ class unused_Role(object):
     """
     The role of a given :class:`Person` in a given :class:`Company`.
@@ -641,7 +642,7 @@ class Role(models.Model):
     #~ column_names = 'company type *'
     
 class Roles(dd.Table):
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = 'contacts.Role'   
     
 class RolesByCompany(Roles):
@@ -658,7 +659,7 @@ class RolesByPerson(Roles):
     
     
     
-class PartnerDocument(models.Model):
+class PartnerDocument(dd.Model):
     """
     Adds two fields 'partner' and 'person' to this model, 
     making it something that refers to a "partner". 
@@ -730,7 +731,7 @@ class PartnerDocument(models.Model):
         task.person = self.person
         task.company = self.company
         
-#~ class ContactDocument(models.Model):
+#~ class ContactDocument(dd.Model):
     #~ """
     #~ A document whose recipient is a :class:`Partner`.
     #~ """

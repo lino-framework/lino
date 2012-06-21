@@ -532,7 +532,7 @@ class DisabledActionsStoreField(SpecialStoreField):
 class DisableEditingStoreField(SpecialStoreField):
     """
     A field whose value is the result of the `get_row_permission` 
-    method on that record.
+    method on that row.
     New feature since :doc:`/blog/2011/0830`
     """
     name = 'disable_editing'
@@ -549,9 +549,12 @@ class DisableEditingStoreField(SpecialStoreField):
             #~ return self.store.actor.editable
         #~ return not self.store.actor.get_row_permission(actions.UPDATE,ar.get_user(),obj)
         if self.store.actor.update_action is None:
-            print 20120601, self.store.actor, "update_action is None"
+            #~ print 20120601, self.store.actor, "update_action is None"
             return True
-        return not self.store.actor.get_row_permission(self.store.actor.update_action,ar.get_user(),obj)
+        state = ar.actor.get_row_state(obj)
+        #~ print 20120621, obj.__class__
+        return not obj.get_row_permission(ar.get_user(),state,self.store.actor.update_action)
+        #~ return not self.store.actor.get_row_permission(self.store.actor.update_action,ar.get_user(),obj)
         #~ if not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj):
             #~ return True
         #~ return False

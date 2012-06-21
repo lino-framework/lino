@@ -59,7 +59,8 @@ from lino.modlib.notes import models as notes
 from lino.modlib.uploads import models as uploads
 from lino.modlib.cal import models as cal
 #~ from lino.modlib.users import models as users
-from lino.utils.choicelists import HowWell, Gender, UserLevel
+from lino.utils.choicelists import HowWell, Gender
+from lino.utils.perms import UserLevels
 from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
@@ -76,7 +77,6 @@ from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.properties import models as properties
-#~ from lino.modlib.cal.models import DurationUnit, update_reminder
 from lino.modlib.households import models as households
 #~ from lino.modlib.contacts.models import Contact
 #~ from lino.tools import resolve_model, UnresolvedModel
@@ -121,11 +121,11 @@ class AccountType(ChoiceList):
     label = _("Account Type")
     
 add = AccountType.add_item
-add('A', _("Assets"),alias="asset")   # Aktiva, Anleihe, Vermögen, Anlage
-add('L', _("Liabilities"),alias="liability") # Guthaben, Schulden, Verbindlichkeit
-add('C', _("Capital"),alias="capital")  # Kapital owner's Equities
-add('I', _("Incomes"),alias="income") # Gain/Revenue     Einnahmen  Produits
-add('E', _("Expenses"),alias="expense") # Loss/Cost       Ausgaben   Charges
+add('A', _("Assets"),"asset")   # Aktiva, Anleihe, Vermögen, Anlage
+add('L', _("Liabilities"),"liability") # Guthaben, Schulden, Verbindlichkeit
+add('C', _("Capital"),"capital")  # Kapital owner's Equities
+add('I', _("Incomes"),"income") # Gain/Revenue     Einnahmen  Produits
+add('E', _("Expenses"),"expense") # Loss/Cost       Ausgaben   Charges
 
 
 class PeriodsField(models.DecimalField):
@@ -170,7 +170,7 @@ class PeriodsField(models.DecimalField):
     #~ """
     #~ @classmethod
     #~ def get_permission(self,action,user,obj):
-        #~ if user.debts_level < UserLevel.user:
+        #~ if user.debts_level < UserLevels.user:
             #~ return False
         #~ return super(DebtsUserTable,self).get_permission(action,user,obj)
         
@@ -190,7 +190,7 @@ class AccountGroup(babel.BabelNamed,mixins.Sequenced):
 class AccountGroups(dd.Table):
     model = AccountGroup
     required_user_groups = ['debts']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     
 
 
@@ -225,7 +225,7 @@ class Account(babel.BabelNamed,mixins.Sequenced):
     
 class Accounts(dd.Table):
     model = Account
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     required_user_groups = ['debts']
     
 
@@ -591,8 +591,13 @@ class SequencedBudgetComponent(mixins.Sequenced):
         "Overrides :meth:`lino.mixins.Sequenced.get_siblings`"
         return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
         
+    def get_row_permission(self,user,state,action):
+        if not self.budget.get_row_permission(user,state,action):
+            return False
+        return super(SequencedBudgetComponent,self).get_row_permission(user,state,action)
   
-class Actor(ActorBase,mixins.Sequenced):
+#~ class Actor(ActorBase,mixins.Sequenced):
+class Actor(ActorBase,SequencedBudgetComponent):
     """
     """
     class Meta:
@@ -602,7 +607,7 @@ class Actor(ActorBase,mixins.Sequenced):
     allow_cascaded_delete = True
         
     #~ budget = models.ForeignKey(Budget,related_name="actors")
-    budget = models.ForeignKey(Budget)
+    #~ budget = models.ForeignKey(Budget)
     partner = models.ForeignKey('contacts.Partner',blank=True)
     #~ sub_budget = models.ForeignKey(Budget,
         #~ verbose_name=_("Linked Budget"),
@@ -612,9 +617,10 @@ class Actor(ActorBase,mixins.Sequenced):
     #~ remark = models.CharField(_("Remark"),max_length=200,blank=True)
     #~ closed = models.BooleanField(verbose_name=_("Closed"))
     
-    def get_siblings(self):
-        "Overrides :meth:`lino.mixins.Sequenced.get_siblings`"
-        return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
+      
+    #~ def get_siblings(self):
+        #~ "Overrides :meth:`lino.mixins.Sequenced.get_siblings`"
+        #~ return self.__class__.objects.filter(budget=self.budget).order_by('seqno')
         
     #~ @property
     #~ def partner(self):
@@ -770,7 +776,7 @@ Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
 class Entries(dd.Table):
     model = Entry
     required_user_groups = ['debts']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
 
 
 class EntriesByType(Entries):
@@ -1111,10 +1117,10 @@ class DistByBudget(EntriesByBudget):
     
     
     
-MODULE_NAME = _("Debts mediation")
+MODULE_LABEL = _("Debts mediation")
 
-#~ settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
-settings.LINO.add_user_group('debts',MODULE_NAME)
+#~ settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_LABEL))
+#~ settings.LINO.add_user_group('debts',MODULE_LABEL)
 
 def site_setup(site):
     site.modules.contacts.Partners.add_detail_tab('debts.BudgetsByPartner')
@@ -1126,24 +1132,24 @@ def setup_main_menu(site,ui,user,m):  pass
 def setup_master_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    if user.debts_level < UserLevel.user: 
+    if user.profile.debts_level < UserLevels.user: 
         return
-    m  = m.add_menu("debts",MODULE_NAME)
+    m  = m.add_menu("debts",MODULE_LABEL)
     m.add_action(MyBudgets)
   
 def setup_config_menu(site,ui,user,m): 
-    if user.debts_level < UserLevel.manager: 
+    if user.profile.debts_level < UserLevels.manager: 
         return
-    m  = m.add_menu("debts",MODULE_NAME)
+    m  = m.add_menu("debts",MODULE_LABEL)
     #~ m.add_action(Accounts)
     m.add_action(AccountGroups)
     #~ m.add_action(DebtTypes)
     m.add_action(Accounts)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.debts_level < UserLevel.manager:
+    if user.profile.debts_level < UserLevels.manager:
         return
-    m  = m.add_menu("debts",MODULE_NAME)
+    m  = m.add_menu("debts",MODULE_LABEL)
     m.add_action(Budgets)
     m.add_action(Entries)
     #~ m.add_action(Debts)

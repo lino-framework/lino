@@ -90,7 +90,7 @@ Note that `Chooser.get_choices()` ignores any unused keyword arguments:
 """
 
 from django.db import models
-from lino import reports
+from lino import dd
 from lino.utils import choosers
 from lino.modlib.tools import obj2str, get_field
 
@@ -111,18 +111,18 @@ MENU = [
 ]
 
    
-class Country(models.Model):
+class Country(dd.Model):
     name = models.CharField(max_length=20)
     def __unicode__(self):
         return self.name
 
-class City(models.Model):
+class City(dd.Model):
     name = models.CharField(max_length=20)
     country = models.ForeignKey(Country)
     def __unicode__(self):
         return self.name
 
-class Contact(models.Model):
+class Contact(dd.Model):
     name = models.CharField(max_length=20)
     country = models.ForeignKey(Country)
     city = models.ForeignKey(City)
@@ -145,7 +145,7 @@ class Contact(models.Model):
                 food.append(name)
         return food
 
-class Contacts(reports.Report):
+class Contacts(dd.Table):
     model = Contact
     
     

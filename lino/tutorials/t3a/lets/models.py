@@ -2,12 +2,12 @@
 from django.db import models
 from lino import dd
 
-class Place(models.Model):
+class Place(dd.Model):
     name = models.CharField(max_length=200)
     def __unicode__(self):
         return self.name
         
-class Provider(models.Model):
+class Provider(dd.Model):
     name = models.CharField(max_length=200)
     place = models.ForeignKey(Place,blank=True,null=True)
     email = models.EmailField(max_length=200,blank=True)
@@ -15,7 +15,7 @@ class Provider(models.Model):
     def __unicode__(self):
         return self.name
 
-class Customer(models.Model):
+class Customer(dd.Model):
     name = models.CharField(max_length=200)
     place = models.ForeignKey(Place,blank=True,null=True)
     email = models.EmailField(max_length=200,blank=True)
@@ -23,13 +23,13 @@ class Customer(models.Model):
     def __unicode__(self):
         return self.name
 
-class Product(models.Model):
+class Product(dd.Model):
     name = models.CharField(max_length=200)
     
     def __unicode__(self):
         return self.name
 
-class Offer(models.Model):
+class Offer(dd.Model):
     provider = models.ForeignKey(Provider)
     product = models.ForeignKey(Product)
     valid_until = models.DateField(blank=True,null=True)
@@ -37,7 +37,7 @@ class Offer(models.Model):
     def __unicode__(self):
         return "%s offered by %s" % (self.product,self.provider)
 
-class Demand(models.Model):
+class Demand(dd.Model):
     customer = models.ForeignKey(Customer)
     product = models.ForeignKey(Product)
     

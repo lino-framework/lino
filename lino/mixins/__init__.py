@@ -37,10 +37,10 @@ from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable
     
+from lino.utils.perms import UserLevels
 
-
-#~ class Owned(models.Model):
-class Controllable(models.Model):
+#~ class Owned(dd.Model):
+class Controllable(dd.Model):
     """
     Mixin for models that are "controllable" by another database object.
     
@@ -134,7 +134,7 @@ class Controllable(models.Model):
 
 
 
-class AutoUser(models.Model):
+class AutoUser(dd.Model):
     """
     Mixin for models that have a `user` field which is automatically 
     set to the requesting user.
@@ -174,6 +174,16 @@ class AutoUser(models.Model):
     def update_owned_instance(self,task):
         task.user = self.user
 
+    def get_row_permission(self,user,state,action):
+        """
+        Managers can edit other users' work.
+        """
+        #~ if not super(AutoUser,self).get_row_permission(user,state,action):
+            #~ return False
+        if self.user != user and user.profile.level < UserLevels.manager:
+            return False
+        return True
+
 
 
 if settings.LINO.user_model: 
@@ -201,7 +211,7 @@ else:
 
 
 
-class CreatedModified(models.Model):
+class CreatedModified(dd.Model):
     """
     Adds two timestamp fields `created` and `modified`.    
     
@@ -288,7 +298,7 @@ class Sequenced(Duplicable):
         super(Sequenced,self).full_clean(*args,**kw)
   
 
-class ProjectRelated(models.Model):
+class ProjectRelated(dd.Model):
     """Related to a project. 
     Deserves more documentation.
     """
@@ -383,6 +393,7 @@ class EmptyTable(frames.Frame):
         a = name.split('.')
         if len(a) == 2:
             return getattr(getattr(settings.LINO.modules,a[0]),a[1])
+            
 
 
 #~ from lino.models import Workflowable

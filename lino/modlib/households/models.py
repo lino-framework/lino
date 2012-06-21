@@ -226,7 +226,7 @@ class Roles(dd.Table):
     """
 
 
-class Member(models.Model):
+class Member(dd.Model):
     """
     The role of a given :class:`Person` in a given :class:`Household`.
     """

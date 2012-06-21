@@ -38,6 +38,21 @@ def is_valid_email(s):
     except ValidationError:
         return False
         
+        
+class Model(models.Model):
+  
+    class Meta:
+        abstract = True
+        
+    def get_row_permission(self,user,state,action):
+        """
+        Returns True or False whether this row instance 
+        gives permission the specified user to run the specified action.
+        """
+        return action.get_action_permission(user,self,state)
+
+                
+        
 def is_devserver():
     """
     Returns True if we are running a development server.
@@ -299,3 +314,4 @@ def range_filter(v,f1,f2):
     q2 = Q(**{f2+'__isnull':True}) | Q(**{f2+'__gte':v})
     return Q(q1,q2)
   
+

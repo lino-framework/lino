@@ -722,7 +722,7 @@ class Lino(object):
     
     def __init__(self,project_file,settings_dict):
       
-        self.user_profile_fields = ['level']
+        #~ self.user_profile_fields = ['level']
         
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
@@ -936,18 +936,19 @@ class Lino(object):
         #~ from django.conf import settings
         #~ return name in settings.INSTALLED_APPS
         
-    def add_user_group(self,name,label):
-        from lino.utils.choicelists import UserLevel, UserGroup
-        UserGroup.add_item(name,label,name)
-        self.add_user_field(name+'_level',UserLevel.field(label),profile=True)
+    #~ def add_user_group(self,name,label):
+        #~ from lino.utils.choicelists import UserLevel, UserGroup
+        #~ UserGroup.add_item(name,label,name)
+        #~ self.add_user_field(name+'_level',UserLevel.field(label),profile=True)
         
-    def add_user_field(self,name,fld,profile=True):
+    #~ def add_user_field(self,name,fld,profile=True):
+    def add_user_field(self,name,fld):
         if self.user_model:
             from lino import dd
             User = dd.resolve_model(self.user_model)            
             dd.inject_field(User,name,fld)
-            if profile:
-                self.user_profile_fields.append(name)
+            #~ if profile:
+                #~ self.user_profile_fields.append(name)
 
     def is_installed(self,app_label):
         """

@@ -38,7 +38,7 @@ add('cc',_("cc"),'cc')
 add('bcc',_("bcc"),'bcc')
 #~ add('snail',_("Snail mail"),'snail')
 
-class Recipient(models.Model):
+class Recipient(dd.Model):
     """
     Abstract base for :class:`inbox.Recipient` and :class:`outbox.Recipient`.
     """

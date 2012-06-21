@@ -40,7 +40,7 @@ from lino.core import actions
 from lino.utils import perms
 from lino.utils import babel
 from lino.utils import dblogger
-from lino.utils.choicelists import UserLevel
+from lino.utils.perms import UserLevels
 from lino.tools import resolve_model, obj2str
 
 from lino.modlib.contacts import models as contacts
@@ -49,7 +49,7 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.outbox import models as outbox # import Mailable
 
 from lino.modlib.cal.utils import \
-    Weekday, DurationUnit, setkw, dt2kw, EventState, GuestState, TaskState
+    Weekday, DurationUnits, setkw, dt2kw, EventState, GuestState, TaskState
 #~ from lino.modlib.cal.utils import EventStatus, \
     #~ TaskStatus, DurationUnit, Priority, AccessClass, \
     #~ GuestStatus, setkw, dt2kw
@@ -354,7 +354,7 @@ class EventTypes(dd.Table):
 
 
 
-class CalendarRelated(models.Model):
+class CalendarRelated(dd.Model):
     "Deserves more documentation."
     class Meta:
         abstract = True
@@ -382,7 +382,7 @@ class CalendarRelated(models.Model):
             #~ print "20111217 calendar_id was empty. set to", self.calendar, "because", self.user
             
 
-class Started(models.Model):
+class Started(dd.Model):
     class Meta:
         abstract = True
         
@@ -394,7 +394,7 @@ class Started(models.Model):
         verbose_name=_("Start time"))# iCal:DTSTART
     #~ start = dd.FieldSet(_("Start"),'start_date start_time')
 
-class Ended(models.Model):
+class Ended(dd.Model):
     class Meta:
         abstract = True
     end_date = models.DateField(
@@ -473,8 +473,8 @@ class RecurrenceSet(ComponentBase,Ended):
     
     every = models.IntegerField(_("Evaluation every X months"),
         default=0)
-    every_unit = DurationUnit.field(_("Duration unit"),
-        default=DurationUnit.months,
+    every_unit = DurationUnits.field(_("Duration unit"),
+        default=DurationUnits.months,
         blank=True) # iCal:DURATION
         
     #~ rdates = models.TextField(_("Recurrence dates"),blank=True)
@@ -655,14 +655,14 @@ class Components(dd.Table):
     #~ def get_row_permission(cls,row,user,action):
         #~ if row.rset: return False
         
-    @classmethod
-    def get_row_permission(cls,action,user,row):
-        if not action.readonly:
-            if row.user != user and user.level < UserLevel.manager: 
-                return False
-        if not super(Components,cls).get_row_permission(action,user,row):
-            return False
-        return True
+    #~ @classmethod
+    #~ def get_row_permission(cls,action,user,row):
+        #~ if not action.readonly:
+            #~ if row.user != user and user.level < UserLevel.manager: 
+                #~ return False
+        #~ if not super(Components,cls).get_row_permission(action,user,row):
+            #~ return False
+        #~ return True
 
 
 
@@ -771,25 +771,23 @@ class Event(Component,Ended,
             return self.project.get_print_language(bm)
         return self.user.language
         
-    @dd.action(_("Suggest"),
-        required_states=set(('',EventState.draft)),
-        owned_only=True)
+    @dd.action(_("Suggest"),required=dict(states=['','draft']))
     def suggest_action(self,ar):
         #~ if self.state != GuestState.invited:
         print 'TODO: would suggest', self
         self.state = EventState.suggested
         self.save()
         return ar.ui.success_response(refresh=True)
+    #~ suggest_action.set_permissions(required_states=['','draft'])
     
-    @dd.action(_("Publish"),
-        owned_only=True,
-        required_states=set(('',EventState.draft,EventState.suggested)))
+    @dd.action(_("Publish"),required=dict(states=['','draft','suggested']))
     def publish(self,ar):
         #~ if self.state != GuestState.invited:
         print 'TODO: would publish', self
         self.state = EventState.published
         self.save()
         return ar.ui.success_response(refresh=True)
+    #~ publish.set_permissions()
         
 
 #~ class Task(Component,contacts.PartnerDocument):
@@ -997,13 +995,15 @@ class Guest(#contacts.ContactDocument,
         #~ mixins.CachedPrintable.setup_report(rpt)
         #~ outbox.Mailable.setup_report(rpt)
         
-    @dd.action(_("Invite"),required_states=set(['']))
+    #~ @dd.action(_("Invite"),required_states=set(['']))
+    @dd.action(_("Invite"),required=dict(states=['']))
     def invite(self,ar):
         #~ if self.state != GuestState.invited:
         print 'TODO: would send invitation to', self
         self.state = GuestState.invited
         
-    @dd.action(_("Confirm"),required_states=set([GuestState.invited]))
+    #~ @dd.action(_("Confirm"),required_states=set([GuestState.invited]))
+    @dd.action(_("Confirm"),required=dict(states=['invited']))
     def confirm(self,ar):
         print 'TODO: would send confirmation to', self
         self.state = GuestState.confirmed
@@ -1287,7 +1287,7 @@ if settings.LINO.use_extensible:
 
     class PanelCalendars(Calendars):
         column_names = 'id name description color is_hidden'
-        can_add = perms.never
+        #~ can_add = perms.never
       
     class PanelEvents(Events):
         """
@@ -1298,7 +1298,7 @@ if settings.LINO.use_extensible:
         #~ filter = models.Q(start_date__isnull=False)
         
         column_names = 'id start_dt end_dt summary description user place calendar #rset url all_day reminder'
-        can_add = perms.never
+        #~ can_add = perms.never
         
         start_dt = ExtDateTimeField('start',None,_("Start"))
         end_dt = ExtDateTimeField('end','start',_("End"))

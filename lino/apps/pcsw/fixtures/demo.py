@@ -32,7 +32,8 @@ from lino.utils.restify import restify
 from lino.utils import dblogger
 #~ from lino.models import update_site_config
 from lino.utils import mti
-from lino.utils.choicelists import UserLevel
+#~ from lino.utils.choicelists import UserLevels
+from lino.modlib.users.models import UserLevels, UserProfiles
 
 #~ from django.contrib.auth import models as auth
 #~ from lino.modlib.users import models as auth
@@ -351,17 +352,19 @@ def objects():
     #~ User = resolve_model('users.User')
     melanie = User(username="melanie",
         first_name=u"Mélanie",last_name=u"Mélard",
-        level=UserLevel.manager,
-        integ_level=UserLevel.manager)
+        profile=UserProfiles.melanie)
+        #~ level=UserLevels.manager,
+        #~ integ_level=UserLevel.manager)
     yield melanie 
     hubert = User(username="hubert",
         first_name="Hubert",last_name="Huppertz",
-        level=UserLevel.user,
-        integ_level=UserLevel.user)
+        profile=UserProfiles.hubert)
+        #~ level=UserLevel.user,
+        #~ integ_level=UserLevel.user)
     yield hubert
     alicia = User(username="alicia",
         first_name="Alicia",last_name="Allmanns",
-        profile='hubert')
+        profile=UserProfiles.hubert)
     yield alicia
     
     

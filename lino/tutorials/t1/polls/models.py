@@ -5,7 +5,7 @@ from django.conf import settings
 from lino import dd
 from lino.utils import babel
 
-class Poll(models.Model):
+class Poll(dd.Model):
     question = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published',auto_now_add=True)
     
@@ -32,7 +32,7 @@ class Poll(models.Model):
         return html
       
       
-class Choice(models.Model):
+class Choice(dd.Model):
     poll = models.ForeignKey(Poll)
     choice = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)

@@ -69,8 +69,7 @@ from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.properties import models as properties
-#~ from lino.modlib.cal.models import DurationUnit, update_auto_task
-from lino.modlib.cal.models import DurationUnit, update_reminder
+from lino.modlib.cal.models import update_reminder
 #~ from lino.modlib.contacts.models import Contact
 from lino.tools import resolve_model, UnresolvedModel
 
@@ -124,7 +123,7 @@ add('C2+', _("proficient use of language"))
 # LanguageKnowledge
 #
 
-class LanguageKnowledge(models.Model):
+class LanguageKnowledge(dd.Model):
     """Specifies how well a certain Person knows a certain Language.
     Deserves more documentation."""
     class Meta:

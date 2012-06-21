@@ -53,7 +53,7 @@ from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 #~ from lino.modlib.uploads import models as uploads
-from lino.utils.choicelists import UserLevel
+from lino.utils.perms import UserLevels
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.utils import babel 
@@ -64,8 +64,7 @@ from lino.mixins.printable import DirectPrintAction, Printable
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-#~ from lino.modlib.cal.models import DurationUnit, update_auto_task
-from lino.modlib.cal.models import DurationUnit, update_reminder
+from lino.modlib.cal.models import update_reminder
 #~ from lino.modlib.contacts.models import Contact
 from lino.tools import resolve_model, UnresolvedModel
 
@@ -150,7 +149,7 @@ class CourseProviders(pcsw.Companies):
 #
 # COURSE ENDINGS
 #
-class CourseEnding(models.Model):
+class CourseEnding(dd.Model):
     u"""
     Eine Kursbeendigung ist eine *Art und Weise, wie eine Kursanfrage beendet wurde*.
     Später können wir dann Statistiken machen, wieviele Anfragen auf welche Art und 
@@ -167,13 +166,13 @@ class CourseEnding(models.Model):
         
 class CourseEndings(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = CourseEnding
     column_names = 'name *'
     order_by = ['name']
 
   
-class CourseContent(models.Model):
+class CourseContent(dd.Model):
     u"""
     Ein Kursinhalt (z.B. "Französisch", "Deutsch", "Alphabétisation",...)
     """
@@ -193,7 +192,7 @@ class CourseContent(models.Model):
         return unicode(self.name)
         
   
-class CourseOffer(models.Model):
+class CourseOffer(dd.Model):
     """
     """
     class Meta:
@@ -237,7 +236,7 @@ class CourseOffer(models.Model):
         
         
     
-class Course(models.Model,mixins.Printable):
+class Course(dd.Model,mixins.Printable):
     u"""
     Ein konkreter Kurs, der an einem bestimmten Datum beginnt.
     Für jeden Kurs muss ein entsprechendes Angebot existieren, 
@@ -305,7 +304,7 @@ class Course(models.Model,mixins.Printable):
         return CandidatesByCourse.request(master_instance=self).data_iterator
         
         
-class CourseRequest(models.Model):
+class CourseRequest(dd.Model):
     """
     A Course Request is created when a certain Person expresses her 
     wish to participate in a Course with a certain CourseContent.
@@ -393,7 +392,7 @@ class CourseRequest(models.Model):
         
 class Courses(dd.Table):
     required_user_groups = ['integ']
-    #~ required_user_level = UserLevel.manager
+    #~ required_user_level = UserLevels.manager
     model = Course
     order_by = ['start_date']
     detail_template = """
@@ -413,7 +412,7 @@ class CourseContents(dd.Table):
 
 class CourseOffers(dd.Table):
     required_user_groups = ['integ']
-    #~ required_user_level = UserLevel.manager
+    #~ required_user_level = UserLevels.manager
     model = CourseOffer
     detail_template = """
     id:8 title content provider
@@ -426,7 +425,7 @@ class CourseOffersByProvider(CourseOffers):
 
 class CourseRequests(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = CourseRequest
     
     detail_template = """
@@ -650,12 +649,13 @@ class PendingCourseRequests(CourseRequests):
         #~ return 1
         
         
+MODULE_LABEL = _("Courses")
         
 def site_setup(self): pass
     
 def setup_main_menu(site,ui,user,m):
-    if user.integ_level:
-        m = m.add_menu("courses",_("Courses"))
+    if user.profile.integ_level:
+        m = m.add_menu("courses",MODULE_LABEL)
         m.add_action(CourseProviders)
         m.add_action(CourseOffers)
         m.add_action(PendingCourseRequests)
@@ -664,13 +664,13 @@ def setup_main_menu(site,ui,user,m):
 def setup_master_menu(site,ui,user,m): pass
 def setup_my_menu(site,ui,user,m): pass
 def setup_config_menu(site,ui,user,m):
-    m = m.add_menu("courses",_("Courses"))
+    m = m.add_menu("courses",MODULE_LABEL)
     m.add_action(CourseContents)
     m.add_action(CourseEndings)
             
   
 def setup_explorer_menu(site,ui,user,m):
-    m = m.add_menu("courses",_("Courses"))
+    m = m.add_menu("courses",MODULE_LABEL)
     m.add_action(Courses)
     m.add_action(CourseRequests)
             

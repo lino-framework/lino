@@ -91,7 +91,8 @@ from django.utils.encoding import force_unicode
 
 import lino
 from lino.utils import IncompleteDate
-from lino.utils import ViewPermissionInstance
+#~ from lino.utils.perms import ViewPermissionInstance
+#~ from lino.utils.perms import Permittable
 from lino.utils.xmlgen import etree
 
 
@@ -128,7 +129,8 @@ def declare_vars(v):
                 yield ln
         return
     if isinstance(v,Component): 
-        if not v.get_view_permission(_for_user): return
+        #~ if not v.get_view_permission(_for_user): return
+        if not v.allow_read(_for_user,None,None): return
         for sub in v.ext_options().values():
             for ln in declare_vars(sub):
                 yield ln
@@ -188,14 +190,16 @@ def py2js(v):
     if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
         #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
         elems = [py2js(x) for x in v 
-            if (not isinstance(x,Value)) or x.get_view_permission(_for_user)]
+            if (not isinstance(x,Value)) or x.allow_read(_for_user,None,None)]
+                      
+
         return "[ %s ]" % ", ".join(elems)
     if isinstance(v,dict): # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
             #~ "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
             "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()
-              if (not isinstance(v,Value)) or v.get_view_permission(_for_user)
+              if (not isinstance(v,Value)) or v.allow_read(_for_user,None,None)
               ])
             #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
@@ -395,13 +399,27 @@ class Variable(Value):
     def js_value(self):
         yield self.value_template % py2js(self.value)
         
-class Component(Variable,ViewPermissionInstance): 
+class Component(Variable): 
     """
     Deserves more documentation.
     """
+    required = {}
+    """
+    Conditions required to READ (view) this component.
+    """
+    
+    def allow_read(self,user,obj,state):
+        return True
+    
     def __init__(self,name=None,**options):
         Variable.__init__(self,name,options)
+
+        #~ Permittable.__init__()
+        #~ Permittable.setup_permissions()
         #~ self.update(**self.ext_options())
+        
+    def get_view_permission(self,user):
+        return self.allow_read(user,None,None)
         
     #~ def get_view_permission(self):
         #~ """

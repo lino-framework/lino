@@ -660,7 +660,7 @@ class ChoicesFieldElement(ComboFieldElement):
         
     def get_field_options(self,**kw):
         kw = ComboFieldElement.get_field_options(self,**kw)
-        kw.update(store=self.field.choices)
+        kw.update(store=tuple(self.field.choices))
         #~ kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
         
@@ -716,12 +716,14 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
     def __init__(self,layout_handle,field,**kw):
     #~ def __init__(self,*args,**kw):
         #~ print 20100903,repr(self.field.rel.to)
-        #~ assert issubclass(self.field.rel.to,models.Model), "%r is not a model" % self.field.rel.to
+        #~ assert issubclass(self.field.rel.to,dd.Model), "%r is not a model" % self.field.rel.to
         pw = getattr(field.rel.to,'_lino_preferred_width',None)
         if pw is not None:
             kw.setdefault('preferred_width',pw)
             #~ kw.update(preferred_width=pw)
         self.actor = table.get_model_report(field.rel.to)
+        #~ if self.actor.model is None:
+            #~ raise Exception("20120621 ForeignKeyElement for %s.%s" % (self.actor,field))
         a = self.actor.detail_action
         if a is not None:
             if not isinstance(layout_handle.layout,layouts.ListLayout):
@@ -738,7 +740,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
     def get_field_options(self,**kw):
         kw = super(ForeignKeyElement,self).get_field_options(**kw)
         kw.update(pageSize=self.actor.page_length)
-        kw.update(emptyText=_('Select a %s...') % self.actor.model._meta.verbose_name)
+        if self.actor.model is not None:
+            kw.update(emptyText=_('Select a %s...') % self.actor.model._meta.verbose_name)
         return kw
 
     def cell_html(self,ui,row):
@@ -1154,9 +1157,14 @@ class Wrapper(VisibleComponent):
         else:
             e.update(anchor="100%")
         #~ e.update(padding=DEFAULT_PADDING)
+        self.allow_read = e.allow_read
+        self.get_view_permission = e.get_view_permission
             
-    def get_view_permission(self,user):
-        return self.wrapped.get_view_permission(user)
+    #~ def get_view_permission(self,user):
+        #~ return self.wrapped.get_view_permission(user)
+        
+    #~ def allow_read(self,*args):
+        #~ return self.wrapped.allow(user)
         
     def walk(self):
         for e in self.wrapped.walk():
@@ -1519,7 +1527,7 @@ class GridElement(Container):
         #~ assert not kw.has_key('before_row_edit')
         #~ self.update(before_row_edit=before_row_edit(self))
         
-        #~ if self.report.master is not None and self.report.master is not models.Model:
+        #~ if self.report.master is not None and self.report.master is not dd.Model:
             #~ self.mt = ContentType.objects.get_for_model(self.report.master).pk
         #~ else:
             #~ self.mt = 'undefined'

@@ -56,7 +56,7 @@ from lino.core import actions
 from lino.core import actors
 from lino.core.coretools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
-from lino.utils import ViewPermissionInstance
+#~ from lino.utils.perms import ViewPermissionInstance
 
 from lino.tools import resolve_model, resolve_field, get_field, full_model_name
 from lino.tools import is_devserver
@@ -65,10 +65,14 @@ from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
 from lino.utils import choicelists
 from lino.utils import codetime
+from lino.utils import curry
 from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
 from lino.utils import AttrDict
+from lino.utils import perms
+
+#~ BLANK_STATE = ''
 
 
 def analyze_models(self):
@@ -135,31 +139,32 @@ def analyze_models(self):
                     
 
         
-def install_summary_rows():
+#~ def install_summary_rows():
   
-    """ 
-    Install a :modmeth:`summary_row` method to models that 
-    don't have their own.
-    """
+    #~ """ 
+    #~ Install a :modmeth:`summary_row` method to models that 
+    #~ don't have their own.
+    #~ """
           
-    for model in models.get_models():
-        m = get_class_attr(model,'summary_row') 
-        if m is None:
-            #~ if model._lino_default_table._lino_detail:
-            if model._lino_default_table.detail_layout:
-                def f(obj,ui,**kw):
-                    return ui.ext_renderer.href_to(obj)
-                    #~ return u'<a href="%s" target="_blank">%s</a>' % (
-                      #~ ui.get_detail_url(obj,fmt='detail'),
-                      #~ unicode(obj))
-                logger.info('20120217 %s : installed clickable summary_row', model)
-            else:
-                def f(obj,ui,**kw):
-                    return unicode(obj)
+    #~ for model in models.get_models():
+        #~ m = get_class_attr(model,'get_row_permission') 
+        #~ if m is None:
+            #~ def get_row_permission(obj,user,state,action):
+                #~ return action.get_action_permission(user,obj,state)
+            #~ model.get_row_permission = get_row_permission
+            #~ logger.info('20120621 %s : installed get_row_permission method', model)
+        
+        #~ m = get_class_attr(model,'summary_row') 
+        #~ if m is None:
+            #~ if model._lino_default_table.detail_layout:
+                #~ def f(obj,ui,**kw):
+                    #~ return ui.ext_renderer.href_to(obj)
+                #~ logger.info('20120217 %s : installed clickable summary_row', model)
+            #~ else:
+                #~ def f(obj,ui,**kw):
+                    #~ return unicode(obj)
                 #~ logger.info('20120217 %s : installed plain summary_row', model)
-            model.summary_row = f
-        else:
-            logger.info('20120217 %s : use model summary_row defined in %s', model,m.__module__)
+            #~ model.summary_row = f
         
 
 
@@ -204,33 +209,32 @@ class DisableDeleteHandler():
 
 
 
-class Always(object):
+#~ class Always(object):
   
-    def allow(obj,user):
-        return True
+    #~ def allow(obj,user):
+        #~ return True
         
-class Never(object):
+#~ class Never(object):
   
-    def allow(obj,user):
-        return False
+    #~ def allow(obj,user):
+        #~ return False
         
-class RuleHandler(ViewPermissionInstance):
-    """
-    Lino creates one RuleHandler per model and state
-    """
+#~ class RuleHandler(ViewPermissionInstance):
+    #~ """
+    #~ Lino creates one RuleHandler per model and state
+    #~ """
     
-    def allow(self,obj,user):
-        return self.get_view_permission(user)
+    #~ def allow(self,obj,user):
+        #~ return self.get_view_permission(user)
         
         
-class OwnedOnlyRuleHandler(RuleHandler):
-    def allow(self,obj,user):
-        if obj.user != user:
-            return False
-        return RuleHandler.allow(self,obj,user)
+#~ class OwnedOnlyRuleHandler(RuleHandler):
+    #~ def allow(self,obj,user):
+        #~ if obj.user != user:
+            #~ return False
+        #~ return RuleHandler.allow(self,obj,user)
         
 
-BLANK_STATE = ''
 
 
 def load_workflows(self):
@@ -242,94 +246,111 @@ def load_workflows(self):
     but may be overridden by adding an explicit 
     JobProviders Rule.
     """
-    self.workflow_actors = {}
+    #~ self.workflow_actors = {}
     for actor in actors.actors_list:
         #~ if a.model is not None and a.workflow_actions is not None:
-        if actor.workflow_state_field is not None:
-            if isinstance(actor.workflow_state_field,basestring):
-                fld = actor.get_data_elem(actor.workflow_state_field)
-                if fld is None:
-                    continue # e.g. cal.Components
-                actor.workflow_state_field = fld
-                #~ a.workflow_state_field = a.model._meta.get_field(a.workflow_state_field)
-            if isinstance(actor.workflow_owner_field,basestring):
-                actor.workflow_owner_field = actor.get_data_elem(actor.workflow_owner_field)
-                #~ a.workflow_owner_field = a.model._meta.get_field(a.workflow_owner_field)
+        #~ if actor.workflow_state_field is not None:
+        if isinstance(actor.workflow_state_field,basestring):
+            fld = actor.get_data_elem(actor.workflow_state_field)
+            if fld is None:
+                continue # e.g. cal.Components
+            actor.workflow_state_field = fld
+            #~ a.workflow_state_field = a.model._meta.get_field(a.workflow_state_field)
+        if isinstance(actor.workflow_owner_field,basestring):
+            actor.workflow_owner_field = actor.get_data_elem(actor.workflow_owner_field)
+            #~ a.workflow_owner_field = a.model._meta.get_field(a.workflow_owner_field)
+            
+        cls = actor
+        def wrap(fn):
+            #~ def fn2(*args):
+                #~ logger.info("20120621 %s",args)
+                #~ return fn(*args)
+            #~ return classmethod(fn2)
+            return classmethod(fn)
+        cls.allow_create = wrap(perms.make_permission(cls,**cls.create_required))
+        cls.allow_read = wrap(perms.make_permission(cls,**cls.read_required))
+        cls.allow_update = wrap(perms.make_permission(cls,**cls.update_required))
+        cls.allow_delete = wrap(perms.make_permission(cls,**cls.delete_required))
+        
+        for a in actor.get_actions():
+            a.allow = curry(perms.make_permission(actor,**a.required),a)
+            
+
+        
+                
             #~ for an in a.workflow_actions:
                 #~ if not isinstance(an,basestring):
                     #~ raise Exception("Invalid action name %r in %s" % (an,a))
-            l = []
-            possible_states = actor.workflow_state_field.choicelist.items_dict.keys() + [BLANK_STATE]
-            for action in actor._actions_list:
-                if action.required_states is not None:
-                    rs = []
-                    for st in action.required_states:
-                        if not st in possible_states:
-                            raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
-                        if isinstance(st,choicelists.BabelChoice):
-                            st = st.value
-                        rs.append(st)
-                    l.append(action)
-                    action.required_states = frozenset(rs)
-                #~ if isinstance(an,basestring):
-                    #~ l.append(an)
+                    
+            #~ ab hier alles raus
+            #~ l = []
+            #~ possible_states = [st.value for st in actor.workflow_state_field.choicelist.items()] + [BLANK_STATE]
+            #~ for action in actor._actions_list:
+                #~ if action.required_states is not None:
+                    #~ rs = []
+                    #~ for st in action.required_states:
+                        #~ if not st in possible_states:
+                            #~ raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
+                        #~ if isinstance(st,choicelists.Choice):
+                            #~ st = st.value
+                        #~ rs.append(st)
+                    #~ l.append(action)
+                    #~ action.required_states = frozenset(rs)
+            #~ if len(l) == 0:
+                #~ continue
+                
+            #~ actor.workflow_actions = l
+            #~ self.workflow_actors[str(actor)] = actor
+                
+            #~ for a in actor.workflow_actions:
+                #~ a._rule_handlers = dict()
+                #~ if actor.workflow_owner_field is not None and a.owned_only:
+                    #~ rh = OwnedOnlyRuleHandler()
                 #~ else:
-                    #~ l.append(an.name)
-            #~ a.workflow_actions = [getattr(a,an) for an in l]
-            if len(l) == 0:
-                continue
+                    #~ rh = RuleHandler()
+                #~ for k in possible_states:
+                    #~ a._rule_handlers[k] = rh # Never() # Always()
                 
-            actor.workflow_actions = l
-            self.workflow_actors[str(actor)] = actor
-                
-            for a in actor.workflow_actions:
-                a._rule_handlers = dict()
-                if actor.workflow_owner_field is not None and a.owned_only:
-                    rh = OwnedOnlyRuleHandler()
-                else:
-                    rh = RuleHandler()
-                for k in possible_states:
-                    a._rule_handlers[k] = rh # Never() # Always()
-                
-    if self.is_installed('workflows'):
-        Rule = resolve_model('workflows.Rule')
-        for rule in Rule.objects.all().order_by('seqno'):
-            ruleactor = self.workflow_actors.get(rule.actor_name)
-            if ruleactor is not None:
-                if ruleactor.workflow_owner_field is not None and rule.owned_only:
-                    rh = OwnedOnlyRuleHandler()
-                else:
-                    rh = RuleHandler()
-                if rule.user_level:
-                    rh.required_user_level = rule.user_level
-                if rule.user_group:
-                    rh.required_user_groups = [rule.user_group.value]
-                    
-                def apply_rule(action_names,states,actor):
-                    for state in states:
-                        for an in action_names:
-                            a = getattr(actor,an)
-                            a._rule_handlers[state] = rh
-                
-                if rule.action_name:
-                    action_names = [ rule.action_name ]
-                else:
-                    action_names = [a.name for a in ruleactor.workflow_actions]
-                if rule.state:
-                    states = []
-                else:
-                    states = ruleactor.workflow_state_field.choicelist.items_dict.keys()
-                    
-                for actor in self.workflow_actors.values():
-                    if actor is ruleactor or issubclass(actor,ruleactor):
-                        apply_rule(action_names,states,actor)
+    if False:
+      if self.is_installed('workflows'):
+          Rule = resolve_model('workflows.Rule')
+          for rule in Rule.objects.all().order_by('seqno'):
+              ruleactor = self.workflow_actors.get(rule.actor_name)
+              if ruleactor is not None:
+                  if ruleactor.workflow_owner_field is not None and rule.owned_only:
+                      rh = OwnedOnlyRuleHandler()
+                  else:
+                      rh = RuleHandler()
+                  if rule.user_level:
+                      rh.required_user_level = rule.user_level
+                  if rule.user_group:
+                      rh.required_user_groups = [rule.user_group.value]
+                      
+                  def apply_rule(action_names,states,actor):
+                      for state in states:
+                          for an in action_names:
+                              a = getattr(actor,an)
+                              a._rule_handlers[state] = rh
+                  
+                  if rule.action_name:
+                      action_names = [ rule.action_name ]
+                  else:
+                      action_names = [a.name for a in ruleactor.workflow_actions]
+                  if rule.state:
+                      states = []
+                  else:
+                      states = ruleactor.workflow_state_field.choicelist.items_dict.keys()
+                      
+                  for actor in self.workflow_actors.values():
+                      if actor is ruleactor or issubclass(actor,ruleactor):
+                          apply_rule(action_names,states,actor)
 
-                
-    self.workflow_actor_choices = self.workflow_actors.items()
-    def cmpfn(a,b):
-        return cmp(a[0],b[0])
-    self.workflow_actor_choices = self.workflow_actors.items()
-    self.workflow_actor_choices.sort(cmpfn)
+                  
+      self.workflow_actor_choices = self.workflow_actors.items()
+      def cmpfn(a,b):
+          return cmp(a[0],b[0])
+      self.workflow_actor_choices = self.workflow_actors.items()
+      self.workflow_actor_choices.sort(cmpfn)
         
         
         

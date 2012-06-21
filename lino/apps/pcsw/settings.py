@@ -73,20 +73,20 @@ class Lino(Lino):
     def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
-        from lino.utils.choicelists import UserLevel
+        from lino.modlib.users.models import UserLevels
         
         m = main.add_menu("master",_("Master"))
         
         m = main.add_menu("contacts",_("Contacts"))
         #~ if user.is_spis:
-        if user.level:
+        if user.profile.level:
             m.add_action(self.modules.contacts.Companies)
             m.add_action(self.modules.contacts.Persons)
             #~ m.add_action('contacts.Persons.detail')
             #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
             m.add_action(self.modules.contacts.AllPartners)
             #~ m.add_action(self.modules.pcsw.Newcomers)
-        if user.integ_level:
+        if user.profile.integ_level:
             m.add_action(self.modules.pcsw.MyPersonSearches)
             
         self.modules.isip.setup_master_menu(self,ui,user,m)
@@ -95,14 +95,14 @@ class Lino(Lino):
 
         #~ if user is None:
             #~ return main
-        if user.level:
+        if user.profile.level:
           
             m = main.add_menu("my",_("My menu"))
             #~ m.add_action('projects.Projects')
             m.add_action(self.modules.notes.MyNotes)
             
             #~ if user.is_spis:
-            if user.integ_level:
+            if user.profile.integ_level:
                 mypersons = m.add_menu("mypersons",self.modules.pcsw.MyPersons.label)
                 mypersons.add_action(self.modules.pcsw.MyPersons)
                 for pg in self.modules.pcsw.PersonGroup.objects.order_by('ref_name'):
@@ -143,7 +143,7 @@ class Lino(Lino):
         m.add_action(self.modules.pcsw.UsersWithClients)
         m.add_action(self.modules.pcsw.ClientsTest)
         
-        if user.level >= UserLevel.manager: # is_staff:
+        if user.profile.level >= UserLevels.manager: # is_staff:
             cfg = main.add_menu("config",_("Configure"))
             
             #~ self.modules.contacts.setup_config_menu(self,ui,user,cfg)
@@ -173,7 +173,7 @@ class Lino(Lino):
             #~ self.modules.outbox.setup_config_menu(self,ui,user,cfg)
             #~ self.modules.lino.setup_config_menu(self,ui,user,cfg)
             
-        if user.level >= UserLevel.manager: # is_staff:
+        if user.profile.level >= UserLevels.manager: # is_staff:
           
             m = main.add_menu("explorer",_("Explorer"))
             

@@ -37,7 +37,7 @@ from lino.tools import obj2str
 
 #~ from lino.core.coretools import get_data_elem
 
-class Duplicable(models.Model):
+class Duplicable(dd.Model):
     """
     Adds a row action "Duplicate" which duplicates (creates a clone of) 
     the object it was called on.

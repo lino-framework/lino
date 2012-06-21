@@ -57,6 +57,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino.core import fields
+#~ from lino.tools import Model
+#~ from lino import dd # 20120620
 
 #~ from lino.tools import default_language
 

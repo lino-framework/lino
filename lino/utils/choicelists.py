@@ -35,7 +35,6 @@ so we must set :setting:`DJANGO_SETTINGS_MODULE`)
 DoYouLike : certainly not...very much
 Gender : Gender
 HowWell : not at all...very well
-UserLevel : User Level
 
 >>> for bc,text in Gender.get_choices():
 ...     print "%s : %s" % (bc.value, unicode(text))
@@ -49,15 +48,17 @@ Male
 >>> print unicode(Gender.male)
 Männlich
 
-Comparing a BabelChoice uses the *value* (not the alias or text):
+Comparing Choices uses their *value* (not the alias or text):
 
->>> UserLevel.manager > UserLevel.user
+>>> from lino.utils.perms import UserLevels
+
+>>> UserLevels.manager > UserLevels.user
 True
->>> UserLevel.manager == '40'
+>>> UserLevels.manager == '40'
 True
->>> UserLevel.manager == 'manager'
+>>> UserLevels.manager == 'manager'
 False
->>> UserLevel.manager == ''
+>>> UserLevels.manager == ''
 False
 
 
@@ -85,6 +86,59 @@ from django.db import models
 
 from lino.utils import curry
 
+
+
+
+class Choice(object):
+    """
+    A constant (hard-coded) value whose unicode representation 
+    depends on the current babel language at runtime.
+    Used by :class:`lino.utils.choicelists`.
+
+    """
+    #~ def __init__(self,choicelist,value,text):
+        #~ self.choicelist = choicelist
+        #~ self.value = value
+        #~ self.text = text
+        
+    def __len__(self):
+        return len(self.value)
+        
+    def __cmp__(self,other):
+        if other.__class__ is self.__class__:
+            return cmp(self.value,other.value)
+        return cmp(self.value,other)
+        
+    #~ 20120620: removed to see where it was used
+    #~ def __getattr__(self,name):
+        #~ return curry(getattr(self.choicelist,name),self)
+        
+    def __repr__(self):
+        return str(self)
+        
+    def __str__(self):
+        #~ return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
+          #~ self.__class__.__name__,self.value)
+        return "%s (%s:%s)" % (unicode(self.text),
+            self.choicelist.__name__,self.value)
+        
+    def __unicode__(self):
+        return unicode(self.text)
+                
+    def __call__(self):
+        # make it callable so it can be used as `default` of a field.
+        # see blog/2012/0527
+        return self
+
+#~ class UnresolvedValue(Choice):
+    #~ def __init__(self,choicelist,value):
+        #~ self.choicelist = choicelist
+        #~ self.value = value
+        #~ self.text = "Unresolved value %r for %s" % (value,choicelist.__name__)
+        #~ self.name = ''
+        
+
+
 CHOICELISTS = {}
 
 def register_choicelist(cl):
@@ -107,12 +161,20 @@ class ChoiceListMeta(type):
     def __new__(meta, classname, bases, classDict):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
+        """
+        UserGroups manually sets max_length because the 
+        default list has only one group with value "system", 
+        but applications may want to add longer group names
+        """
+        classDict.setdefault('max_length',1)
         cls = type.__new__(meta, classname, bases, classDict)
-        cls.choices = []
-        cls.max_length = 1
-        cls.items_dict = {}
-        for i in cls.items:
-            cls.add_item(i)
+        
+        cls.clear()
+        cls._fields = []
+        #~ cls.max_length = 1
+        #~ assert not hasattr(cls,'items') 20120620
+        #~ for i in cls.items:
+            #~ cls.add_item(i)
         if classname not in ('ChoiceList',):
             register_choicelist(cls)
         return cls
@@ -124,7 +186,15 @@ class ChoiceList(object):
     """
     __metaclass__ = ChoiceListMeta
     
-    items = []
+    item_class = Choice
+    """
+    The class of items of this list.
+    """
+    
+    #~ items = []
+    #~ """
+    #~ The list of items all items.
+    #~ """
     
     stored_name = None
     """
@@ -139,6 +209,8 @@ class ChoiceList(object):
     show_values = False
     """
     """
+    
+    #~ _fields = []
     
     
     preferred_width = 5
@@ -158,41 +230,77 @@ class ChoiceList(object):
         raise Exception("ChoiceList may not be instantiated")
         
     @classmethod
+    def clear(cls):
+        """
+        """
+        cls.choices = []
+        
+        blank = cls.item_class()
+        blank.choicelist = cls
+        blank.value = ''
+        blank.text = ''
+        cls.blank_item = blank
+        
+        #~ cls.max_length = 1
+        cls.items_dict = {'' : cls.blank_item }
+        #~ cls.items = []
+        
+    @classmethod
     def field(cls,*args,**kw):
         """
         Create a database field (a :class:`ChoiceListField`)
         that holds one value of this choicelist. 
         """
-        return ChoiceListField(cls,*args,**kw)
+        fld = ChoiceListField(cls,*args,**kw)
+        cls._fields.append(fld)
+        return fld
         
     @classmethod
     def multifield(cls,*args,**kw):
         """
+        Not yet imlpemented.
         Create a database field (a :class:`ChoiceListField`)
         that holds a set of multiple values of this choicelist. 
         """
-        return MultiChoiceListField(cls,*args,**kw)
+        fld = MultiChoiceListField(cls,*args,**kw)
+        cls._fields.append(fld)
+        return fld
         
     @classmethod
-    def add_item(cls,value,text,alias=None):
-    #~ def add_item(cls,value,ref=None,**kw):
+    #~ def add_item(cls,value,text,alias=None):
+    def add_item(cls,value,text,name=None,**kw):
         if cls is ChoiceList:
             raise Exception("Cannot define items on the base class")
-        i = BabelChoice(cls,value,text)
+        if cls.items_dict.has_key(value):
+            raise Exception("Duplicate value %r in choicelist %s.",(value,cls.label))
+        i = cls.item_class(**kw)
+        # these attributes are always set:
+        i.choicelist = cls
+        i.value = value
+        i.text = text
+        
         dt = cls.display_text(i)
         cls.choices.append((i,dt))
         cls.preferred_width = max(cls.preferred_width,len(unicode(dt)))
-        if cls.items_dict.has_key(value):
-            raise Exception("Duplicate value %r in choicelist %s.",(value,cls.label))
         cls.items_dict[value] = i
         #~ cls.items_dict[i] = i
-        cls.max_length = max(len(value),cls.max_length)
-        if alias:
-            if hasattr(cls,alias):
+        if len(value) > cls.max_length:
+            if len(cls._fields) > 0:
+                raise Exception(
+                    "%s cannot add value %r because fields exist and max_length is %d."
+                    % (cls,value,cls.max_length)+"""\
+When fields have been created, we cannot simply change their max_length because 
+Django creates copies of them when inheriting models.
+""")
+            cls.max_length = len(value)
+            #~ for fld in cls._fields:
+                #~ fld.set_max_length(cls.max_length)
+        if name:
+            if hasattr(cls,name):
                 raise Exception("Item %r already defined in %s" % (
-                    alias,cls.__name__))
-            setattr(cls,alias,i)
-            i.name = alias
+                    name,cls.__name__))
+            setattr(cls,name,i)
+            i.name = name
         return i
         
     #~ @classmethod
@@ -203,7 +311,13 @@ class ChoiceList(object):
     def to_python(cls, value):
         #~ if isinstance(value, babel.BabelChoice):
             #~ return value        
-        return cls.items_dict.get(value)
+        v = cls.items_dict.get(value) 
+        if v is None:
+            raise Exception("Unresolved value %r for %s" % (value,cls))
+            #~ return UnresolvedValue(cls,value)
+        return v
+        #~ return cls.items_dict.get(value) or UnresolvedValue(cls,value)
+        #~ return cls.items_dict[value]
         
         
     #~ @classmethod
@@ -214,13 +328,26 @@ class ChoiceList(object):
         
     @classmethod
     def get_choices(cls):
-        return cls.choices
+        """
+        make it dynamic
+        
+        https://docs.djangoproject.com/en/dev/ref/models/fields/
+        note that choices can be any iterable object -- not necessarily 
+        a list or tuple. This lets you construct choices dynamically. 
+        But if you find yourself hacking choices to be dynamic, you're 
+        probably better off using a proper database table with a 
+        ForeignKey. choices is meant for static data that doesn't 
+        change much, if ever.        
+        """
+        for c in cls.choices:
+            yield c
+        #~ return cls.choices
       
     @classmethod
     def display_text(cls,bc):
         """
         Override this to customize the display text of choices.
-        :class:`UserGroup` and :class:`lino.modlib.cv.models.CefLevel`
+        :class:`lino.utils.perms.UserGroups` and :class:`lino.modlib.cv.models.CefLevel`
         used to do this before we had the 
         :attr:`ChoiceList.show_values` option.
         """
@@ -236,7 +363,7 @@ class ChoiceList(object):
     @classmethod
     def get_by_value(self,value):
         """
-        Return the item (a :class:`BabelChoice` instance) 
+        Return the item (a :class:`Choice` instance) 
         corresponding to the specified `value`.
         """
         if not isinstance(value,basestring):
@@ -244,6 +371,10 @@ class ChoiceList(object):
         #~ print "get_text_for_value"
         return self.items_dict.get(value,None)
       
+    @classmethod
+    def items(self):
+        return self.items_dict.values()
+        
     @classmethod
     def get_text_for_value(self,value):
         """
@@ -269,7 +400,6 @@ class ChoiceListField(models.CharField):
     
     __metaclass__ = models.SubfieldBase
     
-    max_values = 1
     #~ force_selection = True
     
     #~ choicelist = NotImplementedError
@@ -282,34 +412,40 @@ class ChoiceListField(models.CharField):
         defaults = dict(
             #~ choices=KNOWLEDGE_CHOICES,
             choices=choicelist.get_choices(),
-            max_length=choicelist.max_length * self.max_values,
+            max_length=choicelist.max_length,
             blank=True,  # null=True,
             #~ validators=[validate_knowledge],
             #~ limit_to_choices=True,
             )
         defaults.update(kw)
+        kw.update(kw)
         #~ models.SmallIntegerField.__init__(self,*args, **defaults)
         models.CharField.__init__(self,verbose_name, **defaults)
         
     def get_internal_type(self):
         return "CharField"
         
+    #~ def set_max_length(self,ml):
+        #~ self.max_length = ml
+        
     def to_python(self, value):
         #~ if self.attname == 'query_register':
             #~ print '20120527 to_python', repr(value), '\n'
-        if isinstance(value,BabelChoice):
+        if isinstance(value,Choice):
             return value
-        value = self.choicelist.to_python(value)
-        if value is None: # see 20110907
-            value = ''
-        return value
+        return self.choicelist.to_python(value)
+        #~ value = self.choicelist.to_python(value)
+        #~ if value is None: # see 20110907
+            #~ value = ''
+        #~ return value
         
     def get_prep_value(self, value):
         #~ if self.attname == 'query_register':
             #~ print '20120527 get_prep_value()', repr(value)
-        if value:
-            return value.value
-        return '' # see 20110907
+        return value.value
+        #~ if value:
+            #~ return value.value
+        #~ return '' # see 20110907
         #~ return None
         
     def value_to_string(self, obj):
@@ -328,22 +464,26 @@ class ChoiceListField(models.CharField):
       
 class MultiChoiceListField(ChoiceListField):
     """
-    A field whose value is a `list` of `BabelChoice` instances.
+    A field whose value is a `list` of `Choice` instances.
     Stored in the database as a CharField using a delimiter character.
     """
     __metaclass__ = models.SubfieldBase
     delimiter_char = ','
+    max_values = 1
     
     def __init__(self,choicelist,verbose_name=None,max_values=10,**kw):
         if verbose_name is None:
             verbose_name = choicelist.label_plural
         self.max_values = max_values
         defaults = dict(
-            max_length=choicelist.max_length * max_values
+            max_length=(choicelist.max_length+1) * max_values
             )
         defaults.update(kw)
         ChoiceListField.__init__(self,verbose_name, **defaults)
     
+    #~ def set_max_length(self,ml):
+        #~ self.max_length = (ml+1) * self.max_values
+        
     def to_python(self, value):
         if value is None: 
             return []
@@ -368,49 +508,7 @@ class MultiChoiceListField(ChoiceListField):
         return ', '.join([self.choicelist.get_text_for_value(bc.value) for bc in value])
 
 
-#~ class BabelChoice(babel.BabelText):
-class BabelChoice(object):
-    """
-    A constant (hard-coded) value whose unicode representation 
-    depends on the current babel language at runtime.
-    Used by :class:`lino.utils.choicelists`.
 
-    """
-    def __init__(self,choicelist,value,text):
-        self.choicelist = choicelist
-        self.value = value
-        self.text = text
-        #~ babel.BabelText.__init__(self,**kw)
-        
-    def __len__(self):
-        return len(self.value)
-        
-    def __cmp__(self,other):
-        if other.__class__ is self.__class__:
-            return cmp(self.value,other.value)
-        return cmp(self.value,other)
-        
-    def __getattr__(self,name):
-        return curry(getattr(self.choicelist,name),self)
-        
-    def __repr__(self):
-        return str(self)
-        
-    def __str__(self):
-        #~ return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
-          #~ self.__class__.__name__,self.value)
-        return "%s (%s:%s)" % (unicode(self.text),
-            self.choicelist.__name__,self.value)
-        
-    def __unicode__(self):
-        return unicode(self.text)
-                
-    def __call__(self):
-        # make it callable so it can be used as `default` of a field.
-        # see blog/2012/0527
-        return self
-                
-                
 
 
 
@@ -421,11 +519,6 @@ class DoYouLike(ChoiceList):
     label = _("certainly not...very much")
     
 add = DoYouLike.add_item
-#~ add('0', en="certainly not",de=u"bloß nicht", fr=u"certainement pas")
-#~ add('1', en="rather not"   ,de="eher nicht" , fr=u"plutôt pas")       
-#~ add('2', en="normally"     ,de="normal"     , fr=u"moyennement", ref="default")    
-#~ add('3', en="quite much"   ,de="gerne"      , fr=u"assez bien")
-#~ add('4', en="very much"    ,de="sehr gerne" , fr=u"très bien")
 add('0',_("certainly not"))
 add('1',_("rather not"))
 add('2',_("normally"),"default")
@@ -446,14 +539,9 @@ class HowWell(ChoiceList):
     label = _("not at all...very well")
     
 add = HowWell.add_item
-#~ add('0',en=u"not at all",de=u"gar nicht",   fr=u"pas du tout")
-#~ add('1',en=u"a bit",     de=u"ein bisschen",fr=u"un peu")
-#~ add('2',en=u"moderate",  de=u"mittelmäßig", fr=u"moyennement", ref="default")
-#~ add('3',en=u"quite well",de=u"gut",         fr=u"bien")
-#~ add('4',en=u"very well", de=u"sehr gut",    fr=u"très bien")
 add('0',_("not at all"))
 add('1',_("a bit"))
-add('2',_("moderate"),alias="default")
+add('2',_("moderate"),"default")
 add('3',_("quite well"))
 add('4',_("very well"))
 
@@ -467,61 +555,6 @@ class Gender(ChoiceList):
 add = Gender.add_item
 add('M',_("Male"),'male')
 add('F',_("Female"),'female')
-
-
-
-class UserLevel(ChoiceList):
-    """
-    The level of a user is one way of differenciating users in order 
-    to manage access permissions. User levels are a graduation: 
-    a "Manager" is higher than a simple "User" and thus 
-    can do everything for which a simple "User" level has permission.
-    
-    About the difference between "Administrator" and "Manager":
-    
-    - "Management is closer to the employees. 
-      Admin is over the management and more over the money 
-      of the organization and lilscencing of an organization. 
-      Mananagement manages employees. 
-      Admin manages the outside contacts and the 
-      facitlity as a whole." (`answerbag.com <http://www.answerbag.com/q_view/295182>`__)
-    
-    - See also a more detailed overview at
-      http://www.differencebetween.com/difference-between-manager-and-vs-administrator/
-    
-    """
-    label = _("User Level")
-    
-    @classmethod
-    def field(cls,module_name=None,**kw):
-        """
-        Shortcut to create a :class:`lino.core.fields.ChoiceListField` in a Model.
-        """
-        kw.setdefault('blank',True)
-        if module_name is not None:
-            kw.update(verbose_name=string_concat(cls.label,' (',module_name,')'))
-        return super(UserLevel,cls).field(**kw)
-        
-add = UserLevel.add_item
-add('10', _("Guest"),'guest')
-add('20', _("Restricted"),'restricted')
-add('30', _("User"), "user")
-add('40', _("Manager"), "manager")
-add('50', _("Administrator"), "admin")
-add('90', _("Expert"), "expert")
-
-class UserGroup(ChoiceList):
-    """
-    This list is completed by modulus that call :meth:`lino.Lino.add_user_group`.
-    """
-    label = _("User Group")
-    show_values = False
-    
-        
-add = UserGroup.add_item
-add('system', _("System"))
-  
-
 
 
 

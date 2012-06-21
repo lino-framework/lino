@@ -50,7 +50,7 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
-from lino.utils.choicelists import UserLevel
+from lino.utils.perms import UserLevels
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.tools import get_field
@@ -62,14 +62,14 @@ from lino.utils.htmlgen import UL
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils.choicelists import ChoiceList
-from lino.utils.choicelists import UserLevel
+#~ from lino.utils.choicelists import UserLevel
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-from lino.modlib.cal.models import DurationUnit
+from lino.modlib.cal.utils import DurationUnits
 
 # not used here, but these modules are required in INSTALLED_APPS, 
 # and other code may import them using 
@@ -129,7 +129,7 @@ class Schedule(babel.BabelNamed):
         
 class Schedules(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Schedule
     order_by = ['name']
     detail_template = """
@@ -145,7 +145,7 @@ class Regime(babel.BabelNamed):
         
 class Regimes(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Regime
     order_by = ['name']
     detail_template = """
@@ -194,7 +194,7 @@ class JobProviders(pcsw.Companies,dd.Table):
     List of Companies that have `Company.is_jobprovider` activated.
     """
     required_user_groups = ['integ']
-    #~ required_user_level = UserLevel.manager
+    #~ required_user_level = UserLevels.manager
     #~ use_as_default_table = False
     model = JobProvider
     app_label = 'jobs'
@@ -233,7 +233,7 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
 
 class ContractTypes(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = ContractType
     column_names = 'name ref build_method template *'
     detail_template = """
@@ -255,7 +255,7 @@ class Sector(babel.BabelNamed):
         
 class Sectors(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Sector
     order_by = ['name']
     detail_template = """
@@ -281,7 +281,7 @@ class Function(babel.BabelNamed):
         
 class Functions(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Function
     column_names = 'name sector *'
     order_by = ['name']
@@ -493,7 +493,7 @@ class Contract(ContractBase):
                 if self.duration and not self.applies_until:
                     # [NOTE1]
                     #~ self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
-                    self.applies_until = DurationUnit.months.add_duration(
+                    self.applies_until = DurationUnits.months.add_duration(
                       self.applies_from,self.duration/26) - ONE_DAY
               
         #~ if self.job_id is not None:
@@ -552,7 +552,7 @@ class ContractDetail(dd.DetailLayout):
   
 class Contracts(dd.Table):
     required_user_groups = ['integ']
-    #~ required_user_level = UserLevel.manager
+    #~ required_user_level = UserLevels.manager
     model = Contract
     column_names = 'id job applies_from applies_until user type *'
     order_by = ['id']
@@ -569,12 +569,12 @@ class Contracts(dd.Table):
     #~ """
     detail_layout = ContractDetail()
     
-    @classmethod
-    def get_row_permission(self,action,user,row):
-        if not action.readonly:
-            if row.user != user and user.integ_level < UserLevel.manager: 
-                return False
-        return super(Contracts,self).get_row_permission(action,user,row)
+    #~ @classmethod
+    #~ def get_row_permission(self,action,user,row):
+        #~ if not action.readonly:
+            #~ if row.user != user and user.integ_level < UserLevels.manager: 
+                #~ return False
+        #~ return super(Contracts,self).get_row_permission(action,user,row)
     
     
     
@@ -642,7 +642,7 @@ class JobType(mixins.Sequenced):
         return unicode(self.name)
         
   
-class SectorFunction(models.Model):
+class SectorFunction(dd.Model):
     """
     Abstract base for models that refer to a 
     :class:`Sector` and a :class:`Function`.
@@ -694,7 +694,7 @@ class Offer(SectorFunction):
   
 class Offers(dd.Table):
     required_user_groups = ['integ']
-    #~ required_user_level = UserLevel.manager
+    #~ required_user_level = UserLevels.manager
     model = Offer
     detail_template = """
     name provider sector function
@@ -1020,7 +1020,7 @@ class Candidatures(dd.Table):
     List of :class:`Candidatures <Candidature>`.
     """
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = Candidature
     order_by = ['date_submitted']
     column_names = 'date_submitted job:25 * id'
@@ -1059,8 +1059,8 @@ class SectorFunctionByOffer(dd.Table):
     which is allowed only because it overrides
     :meth:`get_request_queryset`.
     """
-    can_add = perms.never
-    can_change = perms.never
+    #~ can_add = perms.never
+    #~ can_change = perms.never
     master = Offer
     
     @classmethod
@@ -1110,7 +1110,7 @@ class ExperiencesByOffer(SectorFunctionByOffer):
 
 class Jobs(dd.Table):
     required_user_groups = ['integ']
-    #~ required_user_level = UserLevel.manager
+    #~ required_user_level = UserLevels.manager
     model = Job
     #~ order_by = ['start_date']
     column_names = 'name provider * id'
@@ -1126,7 +1126,7 @@ class Jobs(dd.Table):
 
 class JobTypes(dd.Table):
     required_user_groups = ['integ']
-    required_user_level = UserLevel.manager
+    required_user_level = UserLevels.manager
     model = JobType
     order_by = ['name']
     detail_template = """
@@ -1314,7 +1314,7 @@ if True: # dd.is_installed('contacts') and dd.is_installed('jobs'):
 
 
 def setup_main_menu(site,ui,user,m): 
-    if user.integ_level < UserLevel.user:
+    if user.profile.integ_level < UserLevels.user:
         return
     m = m.add_menu("jobs",_("Jobs"))
     m.add_action(JobProviders)
@@ -1323,12 +1323,12 @@ def setup_main_menu(site,ui,user,m):
     m.add_action(ContractsSearch)
 
 def setup_my_menu(site,ui,user,m): 
-    if user.integ_level < UserLevel.user:
+    if user.profile.integ_level < UserLevels.user:
         return
     m.add_action(MyContracts)
   
 def setup_config_menu(site,ui,user,m): 
-    if user.integ_level < UserLevel.manager:
+    if user.profile.integ_level < UserLevels.manager:
         return
     m  = m.add_menu("jobs",_("~Jobs"))
     m.add_action(ContractTypes)
@@ -1343,7 +1343,7 @@ def setup_config_menu(site,ui,user,m):
     
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.integ_level < UserLevel.manager:
+    if user.profile.integ_level < UserLevels.manager:
         return
     m  = m.add_menu("jobs",_("~Jobs"))
     m.add_action(Contracts)

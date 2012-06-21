@@ -19,7 +19,7 @@ import os
 import sys
 from os.path import join,dirname, normpath, abspath
 from lino.apps.std.settings import *
-from lino.utils.choicelists import UserLevel
+from lino.utils.choicelists import UserLevels
 
 class Lino(Lino):
   
@@ -88,7 +88,7 @@ class Lino(Lino):
         
         
         
-        if user and user.level >= UserLevel.manager:
+        if user and user.profile.level >= UserLevels.manager:
             m = main.add_menu("journals","~Journals")
             
             #~ for jnl in journals.Journal.objects.all().order_by('pos'):
@@ -112,7 +112,7 @@ class Lino(Lino):
           #~ can_view=perms.is_staff)
         #~ m.add_action(MakeInvoicesDialog())
 
-        if user and user.level >= UserLevel.manager:
+        if user and user.profile.level >= UserLevels.manager:
         #~ if user and user.is_staff:
             m = main.add_menu("config","~Configuration")
             self.modules.sales.setup_config_menu(self,ui,user,m)

@@ -43,10 +43,10 @@ from lino.utils import perms
 from lino.tools import obj2str, sorted_models_list
 from lino.tools import resolve_field
 from lino.utils.choosers import chooser, get_for_field
-from lino.utils.choicelists import UserLevel
+from lino.modlib.users.models import UserLevels
 from lino.utils.restify import restify
 from lino.core import actions
-from lino.utils import ViewPermissionInstance
+#~ from lino.utils.perms import ViewPermissionInstance
 
 
 
@@ -77,7 +77,7 @@ Please report any anomalies.""",
     
 
 
-class SiteConfig(models.Model):
+class SiteConfig(dd.Model):
     """
     This model should have exactly one instance, 
     used to store persistent global site parameters.
@@ -117,7 +117,7 @@ class SiteConfigs(dd.Table):
     Deserves more documentation.
     """
     model = SiteConfig
-    required_user_level = UserLevel.manager
+    read_required = dict(user_level = 'manager')
     #~ default_action_class = dd.OpenDetailAction
     #~ has_navigator = False
     hide_top_toolbar = True
@@ -136,7 +136,7 @@ class SiteConfigs(dd.Table):
     
     #~ @classmethod
     #~ def get_permission(self,action,user,obj):
-        #~ if not user.level < UserLevel.expert:
+        #~ if not user.level < UserLevels.expert:
             #~ return action.readonly
         #~ return True
         
@@ -205,7 +205,7 @@ if settings.LINO.is_installed('contenttypes'):
           def add(cl):
               for b in cl.__bases__:
                   add(b)
-              if issubclass(cl,models.Model) and cl is not models.Model and cl._meta.managed: # :
+              if issubclass(cl,dd.Model) and cl is not dd.Model and cl._meta.managed: # :
                   if getattr(cl,'_meta',False) and not cl._meta.abstract:
                       #~ logger.info("20120205 adding(%r)",cl)
                       ct = contenttypes.ContentType.objects.get_for_model(cl)
@@ -218,7 +218,7 @@ if settings.LINO.is_installed('contenttypes'):
       
       
       
-  class HelpText(models.Model):
+  class HelpText(dd.Model):
       
       class Meta:
           verbose_name = _("Help Text")

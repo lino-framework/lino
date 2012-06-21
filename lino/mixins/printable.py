@@ -46,6 +46,7 @@ from lino.utils import babel
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
 from lino.tools import makedirs_if_missing
+#~ from lino.tools import Model
 from lino.mixins.duplicable import Duplicable
 
 
@@ -637,10 +638,10 @@ class ClearCacheAction(actions.RowAction):
         #~ if not obj.build_time:
             #~ return True
             
-    def get_row_permission(self,user,obj):
+    def get_action_permission(self,user,obj,state):
         if not obj.build_time:
             return False
-        return super(ClearCacheAction,self).get_row_permission(user,obj)
+        return super(ClearCacheAction,self).get_action_permission(user,obj,state)
     
     def run(self,elem,rr):
         t = elem.get_cache_mtime()
@@ -742,6 +743,14 @@ class CachedPrintable(Duplicable,Printable):
         #~ rpt.add_action(PrintAction())
         #~ rpt.add_action(ClearCacheAction())
         
+    def get_row_permission(self,user,state,action):
+        """
+        Cached printables may not be edited after they have been printed.
+        """
+        if self.build_time and not action.readonly:
+            return False
+        return super(CachedPrintable,self).get_row_permission(user,state,action)
+      
     #~ def get_permission(self,action,user):
         #~ if isinstance(action,ClearCacheAction):
             #~ if not self.build_time:

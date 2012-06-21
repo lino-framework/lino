@@ -57,7 +57,7 @@ class LinkType(babel.BabelNamed):
 
 #~ class Link(mixins.Reminder):
 #~ class Link(mixins.AutoUser):
-class Link(models.Model):
+class Link(dd.Model):
     "Implements :class:`links.Link`."
     
     #~ allow_cascaded_delete = True
@@ -175,7 +175,7 @@ class LinksFromThis(Links):
     List of Links who relate *from* this (whose a points to this).
     """
     label = _("Links from this")
-    master = models.Model
+    master = dd.Model
     link_name = 'a'
     #~ master = ContentType # HACK
     column_names = 'type b a'
@@ -202,7 +202,7 @@ class LinksToThis(LinksFromThis):
     """
     List of Links who relate *to* this (whose b points to this).
     """
-    master = models.Model
+    master = dd.Model
     link_name = 'b'
     column_names = 'type a b'
     label = _("Links to this")
