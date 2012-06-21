@@ -176,8 +176,9 @@ class EventState(ChoiceList):
         """
         Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
         """
-        if status_id is None: return None
+        #~ if status_id is None: return cls.blank_item
         cv = {
+          None: '',
           1:EventState.draft,
           2:EventState.confirmed,
           3:EventState.cancelled,

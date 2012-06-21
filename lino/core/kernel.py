@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -58,7 +59,7 @@ from lino.core.coretools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
 #~ from lino.utils.perms import ViewPermissionInstance
 
-from lino.tools import resolve_model, resolve_field, get_field, full_model_name
+from lino.tools import resolve_model, resolve_field, get_field, full_model_name, obj2str
 from lino.tools import is_devserver
     
 from lino.utils.config import load_config_files, find_config_file
@@ -264,7 +265,7 @@ def load_workflows(self):
         def wrap(fn):
             if False:
                 def fn2(*args):
-                    logger.info("20120621 %s",args)
+                    logger.info("20120621 %s",[obj2str(x) for x in args])
                     return fn(*args)
                 return classmethod(fn2)
             return classmethod(fn)
@@ -274,14 +275,14 @@ def load_workflows(self):
         cls.allow_delete = wrap(perms.make_permission(cls,**cls.delete_required))
         
         for a in actor.get_actions():
-            def wrap(fn):
+            def wrap(a,fn):
                 if not a.readonly:
                     def fn2(*args):
-                        logger.info("20120621 %s",args)
+                        logger.info(u"20120621 %s %s",a.actor,[obj2str(x) for x in args])
                         return fn(*args)
                     return fn2
                 return fn
-            a.allow = curry(wrap(perms.make_permission(actor,**a.required)),a)
+            a.allow = curry(wrap(a,perms.make_permission(actor,**a.required)),a)
             
 
         
