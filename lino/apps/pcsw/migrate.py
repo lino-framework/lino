@@ -1018,6 +1018,7 @@ def migrate_from_1_4_3(globals_dict):
     - add default data from library fixtures (debts, households, purposes)
     - convert Companies with prefix == 'Eheleute' to a Household
     - convert tables cal.EventStatus, cal.TaskStatus and cal.GuestStatus to choicelists.
+    - table thirds.Third no longer exists
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child
@@ -1193,7 +1194,6 @@ def migrate_from_1_4_3(globals_dict):
     globals_dict.update(create_cal_gueststatus=create_cal_gueststatus)
     
     def create_thirds_third(id, seqno, owner_type_id, owner_id, person_id, company_id, remark):
-        owner_type_id = ContentType.objects.get_for_model(owner_type_id).pk
         return None
     globals_dict.update(create_thirds_third=create_thirds_third)
     

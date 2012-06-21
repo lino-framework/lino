@@ -262,10 +262,11 @@ def load_workflows(self):
             
         cls = actor
         def wrap(fn):
-            #~ def fn2(*args):
-                #~ logger.info("20120621 %s",args)
-                #~ return fn(*args)
-            #~ return classmethod(fn2)
+            if False:
+                def fn2(*args):
+                    logger.info("20120621 %s",args)
+                    return fn(*args)
+                return classmethod(fn2)
             return classmethod(fn)
         cls.allow_create = wrap(perms.make_permission(cls,**cls.create_required))
         cls.allow_read = wrap(perms.make_permission(cls,**cls.read_required))
@@ -273,7 +274,14 @@ def load_workflows(self):
         cls.allow_delete = wrap(perms.make_permission(cls,**cls.delete_required))
         
         for a in actor.get_actions():
-            a.allow = curry(perms.make_permission(actor,**a.required),a)
+            def wrap(fn):
+                if not a.readonly:
+                    def fn2(*args):
+                        logger.info("20120621 %s",args)
+                        return fn(*args)
+                    return fn2
+                return fn
+            a.allow = curry(wrap(perms.make_permission(actor,**a.required)),a)
             
 
         
