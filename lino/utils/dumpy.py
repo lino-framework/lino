@@ -379,7 +379,7 @@ class DpyDeserializer:
         def expand(obj):
             if obj is None:
                 pass # ignore None values
-            elif isinstance(obj,dd.Model):
+            elif isinstance(obj,models.Model):
                 yield FakeDeserializedObject(self,obj)
             elif hasattr(obj,'__iter__'):
             #~ if type(obj) is GeneratorType:
