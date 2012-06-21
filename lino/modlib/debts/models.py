@@ -512,13 +512,14 @@ class BudgetDetail(dd.DetailLayout):
     """
     
     
-    conclusion_panel = """
-    conclusion
-    dist_amount print_todos 
-    """
     summary_tab = """
-    BudgetSummary:30 conclusion_panel:30
-    DistByBudget
+    BudgetSummary:30 conclusion:30
+    DistByBudget summary1
+    """
+    summary1 = """
+    dist_amount 
+    print_todos 
+    build_time
     """
     
     #~ ExpensesSummaryByBudget IncomesSummaryByBudget 
