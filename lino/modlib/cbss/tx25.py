@@ -425,8 +425,8 @@ class RowHandlers:
         #~ info = code_label(n.Place1)
         #~ info.append(' (' + n.ActNumber + ')')
         info = []
-        info += addinfo(n,'Place1',' in ',PlaceType)
-        info += addinfo(n,'Place2',' in ',GraphicPlaceType)
+        info += addinfo(n,'Place1',_(' in '),PlaceType)
+        info += addinfo(n,'Place2',_(' in '),GraphicPlaceType)
         info += addinfo(n,'ActNumber')
         info += addinfo(n,'SuppletoryRegister')
         yield datarow(group,n,n.Date,info)
@@ -459,11 +459,11 @@ class RowHandlers:
             if hasattr(n,'Spouse'):
                 #~ info.append(' with ')
                 #~ info += name2info(n.Spouse.Name)
-                info += addinfo(n.Spouse,'Name',' with ',NameType)
+                info += addinfo(n.Spouse,'Name',_(' with '),NameType)
                 info.append(' (')
                 info.append(n.Spouse.NationalNumber.NationalNumber)
                 info.append(')')
-            info += addinfo(n,'Lieu',' in ',LieuType)
+            info += addinfo(n,'Lieu',_(' in '),LieuType)
             #~ info += LieuType(n.Lieu)
             info += addinfo(n,'ActNumber')
             info += addinfo(n,'SuppletoryRegister')
@@ -485,7 +485,7 @@ class RowHandlers:
         for n in node.HeadOfFamily:
             info = []
             info += code_label(n.FamilyRole)
-            info += addinfo(n,'Name',' in family headed by ',NameType)
+            info += addinfo(n,'Name',_(' in family headed by '),NameType)
             #~ info += name2info(n.Name)
             info.append(' (')
             info.append(n.NationalNumber.NationalNumber)
@@ -499,11 +499,11 @@ class RowHandlers:
         group = _("Driving Licenses Old Model")
         for n in node.DrivingLicense:
             info = code_label(n.TypeOfLicense)
-            info.append(' number ')
+            info.append(_(' number '))
             info.append(E.b(n.LicenseNumber))
             info.append(', categories ' 
               + ' '.join([cat.Label for cat in n.Categories.Category]))
-            info.append(', delivered in ')
+            info.append(_(' delivered in '))
             info += code_label(n.Delivery.Place)
             yield datarow(group,n,n.Date,info)
             group = ''
@@ -513,11 +513,11 @@ class RowHandlers:
         group = _("Identity Cards")
         for n in node.IdentityCard:
             info = code_label(n.TypeOfCard)
-            info.append(' number ')
+            info.append(_(' number '))
             info.append(E.b(n.CardNumber))
-            info += addinfo(n,'ExpiryDate',', expires ',DateType)
+            info += addinfo(n,'ExpiryDate',_(' expires '),DateType)
             #~ info.append(E.b(dtos(rn2date(n.ExpiryDate))))
-            info += addinfo(n,'Delivery',', delivered in ',DeliveryType)
+            info += addinfo(n,'Delivery',_(' delivered in '),DeliveryType)
             #~ info.append(', delivered in ')
             #~ info += code_label(n.Delivery.Place)
             yield datarow(group,n,n.Date,info)
@@ -528,16 +528,16 @@ class RowHandlers:
         def CessationType(n):
             info = ['Cessation']
             info += addinfo(n,'Reason',None,ReasonType)
-            info += addinfo(n,'Place',' in ',PlaceType)
-            info += addinfo(n,'Notification',' in ',NotificationType)
+            info += addinfo(n,'Place',_(' in '),PlaceType)
+            info += addinfo(n,'Notification',_(' in '),NotificationType)
             return info
       
         def DeclarationType(n):
             info = ['Declaration']
             info += addinfo(n,'RegistrationDate',' ',DateType)
-            info += addinfo(n,'Partner',' with ',PartnerType)
-            info += addinfo(n,'Place',' in ',PlaceType)
-            info += addinfo(n,'Notary',' in ',NotaryType)
+            info += addinfo(n,'Partner',_(' with '),PartnerType)
+            info += addinfo(n,'Place',_(' in '),PlaceType)
+            info += addinfo(n,'Notary',_(' in '),NotaryType)
             return info
     
         group = _("Legal Cohabitations")
@@ -562,10 +562,10 @@ class RowHandlers:
             info += code_label(n.PassportIdent.PassportType)
             info.append(', expires ')
             info.append(E.b(dtos(rn2date(n.ExpiryDate))))
-            info += addinfo(n,'Issuer',', issued ',IssuerType)
+            info += addinfo(n,'Issuer',_(' issued by '),IssuerType)
             #~ info.append(', delivered by ')
             #~ info += code_label(n.Issuer.PosteDiplomatique)
-            info.append(', renewal number ')
+            info.append(_(' renewal number '))
             info.append(E.b(n.RenewalNumber))
             yield datarow(group,n,n.Date,info)
             group = ''
@@ -575,7 +575,7 @@ class RowHandlers:
         group = _("Organ Donations")
         for n in node.OrganDonation:
             info = addinfo(n,'Declaration','',DeclarationType)
-            info += addinfo(n,'Place',' in ',PlaceType)
+            info += addinfo(n,'Place',_(' in '),PlaceType)
             info += deldate(n)
             yield datarow(group,n,n.Date,info)
             group = ''

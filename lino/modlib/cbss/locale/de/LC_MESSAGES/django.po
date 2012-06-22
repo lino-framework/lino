@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 06:35+0100\n"
-"PO-Revision-Date: 2012-06-22 08:39+0200\n"
+"POT-Creation-Date: 2012-06-22 08:02+0100\n"
+"PO-Revision-Date: 2012-06-22 10:04+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -67,9 +67,8 @@ msgid "Code"
 msgstr ""
 
 #: .\models.py:274
-#, fuzzy
 msgid "Subcode"
-msgstr "INS-Code"
+msgstr "Unter-Code"
 
 #: .\models.py:275
 msgid "Abbreviation"
@@ -84,9 +83,8 @@ msgid "Purposes"
 msgstr "Eigenschafts-Codes"
 
 #: .\models.py:345
-#, fuzzy
 msgid "Client"
-msgstr "Abgeschickt"
+msgstr "Klient"
 
 #: .\models.py:348
 msgid "Sent"
@@ -110,14 +108,12 @@ msgid "Response"
 msgstr "Antwort"
 
 #: .\models.py:379
-#, fuzzy
 msgid "Debug messages"
-msgstr "Meldungen"
+msgstr "Debug-Meldungen"
 
 #: .\models.py:382
-#, fuzzy
 msgid "Info messages"
-msgstr "Meldungen"
+msgstr "Info-Meldungen"
 
 #: .\models.py:536
 #: .\models.py:568
@@ -266,9 +262,8 @@ msgid "Proof of authentication"
 msgstr "Authentifizierungsbeleg"
 
 #: .\models.py:1553
-#, fuzzy
 msgid "Requesting organisation"
-msgstr "Info zur Anfrage"
+msgstr "Anfragende Organisation"
 
 #: .\models.py:1566
 msgid "SSDN User Id"
@@ -339,6 +334,17 @@ msgstr "Beschäftigungen"
 msgid "Birth Place"
 msgstr "Geburtsort"
 
+#: .\tx25.py:428
+#: .\tx25.py:429
+#: .\tx25.py:466
+#: .\tx25.py:531
+#: .\tx25.py:532
+#: .\tx25.py:539
+#: .\tx25.py:540
+#: .\tx25.py:578
+msgid " in "
+msgstr " in "
+
 #: .\tx25.py:436
 msgid "Filiations"
 msgstr ""
@@ -346,6 +352,11 @@ msgstr ""
 #: .\tx25.py:456
 msgid "Civil States"
 msgstr "Zivilstände"
+
+#: .\tx25.py:462
+#: .\tx25.py:538
+msgid " with "
+msgstr " mit "
 
 #: .\tx25.py:476
 msgid "Family Members"
@@ -355,13 +366,31 @@ msgstr "Familienmitglieder"
 msgid "Head Of Family"
 msgstr "Familienoberhaupt"
 
+#: .\tx25.py:488
+msgid " in family headed by "
+msgstr " in Familie mit Vorstand "
+
 #: .\tx25.py:499
 msgid "Driving Licenses Old Model"
 msgstr "Führerscheine (altes Modell)"
 
+#: .\tx25.py:502
+#: .\tx25.py:516
+msgid " number "
+msgstr " Nr. "
+
+#: .\tx25.py:506
+#: .\tx25.py:520
+msgid " delivered in "
+msgstr " ausgestellt in "
+
 #: .\tx25.py:513
 msgid "Identity Cards"
 msgstr "Personalausweise"
+
+#: .\tx25.py:518
+msgid " expires "
+msgstr " gültig bis "
 
 #: .\tx25.py:543
 msgid "Legal Cohabitations"
@@ -370,6 +399,14 @@ msgstr "Legale Kohabitationen"
 #: .\tx25.py:554
 msgid "Passports"
 msgstr "Reisepässe"
+
+#: .\tx25.py:565
+msgid " issued by "
+msgstr " ausgestellt durch "
+
+#: .\tx25.py:568
+msgid " renewal number "
+msgstr " Erneuerungsnummer "
 
 #: .\tx25.py:575
 msgid "Organ Donations"

@@ -509,6 +509,9 @@ If the request failed with a local exception, then it contains a traceback.""")
           
         
           
+    def get_print_language(self,pm):
+        return self.language
+        
         
         
             
