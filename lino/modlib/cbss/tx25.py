@@ -223,9 +223,9 @@ def addinfo(node,name,prefix=None,fmt=simpletype,suffix=''):
     if not v: return []
     if prefix is None:
         prefix = ', %s ' % name
-    info = [prefix] + fmt(v)
+    info = [unicode(prefix)] + fmt(v)
     if suffix:
-        info.append(suffix)
+        info.append(unicode(suffix))
     return info
     
 def DateType(n):
