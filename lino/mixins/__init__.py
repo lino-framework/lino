@@ -171,16 +171,16 @@ class AutoUser(dd.Model):
             if u is not None:
                 self.user = u
         
-    def update_owned_instance(self,task):
-        task.user = self.user
+    def update_owned_instance(self,other):
+        other.user = self.user
 
     def get_row_permission(self,user,state,action):
         """
         Managers can edit other users' work.
         """
-        #~ if not super(AutoUser,self).get_row_permission(user,state,action):
-            #~ return False
         if self.user != user and user.profile.level < UserLevels.manager:
+            return False
+        if not super(AutoUser,self).get_row_permission(user,state,action):
             return False
         return True
 
@@ -307,7 +307,11 @@ class ProjectRelated(dd.Model):
         abstract = True
         
     if settings.LINO.project_model:
-        project = models.ForeignKey(settings.LINO.project_model,blank=True,null=True)
+        project = models.ForeignKey(
+            settings.LINO.project_model,
+            blank=True,null=True,
+            related_name="%(app_label)s_%(class)s_set_by_project",
+            )
 
     #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ui,**kw):

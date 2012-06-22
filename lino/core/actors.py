@@ -504,14 +504,8 @@ class Actor(object):
             if cls.detail_action:
                 if not cls.hide_top_toolbar:
                     cls.create_action = actions.SubmitInsert(sort_index=1)
-                    #~ a.append(actions.InsertRow())
-                    #~ self.add_action(actions.DuplicateRow(self))
-                    #~ self.add_action(actions.SubmitInsert())
-                    #~ a.append(actions.CREATE)
           
         if cls.editable and not cls.hide_top_toolbar:
-            #~ self.add_action(actions.DeleteSelected())
-            #~ a.append(actions.DELETE)
             cls.delete_action = actions.DeleteSelected(sort_index=5)
             
                 

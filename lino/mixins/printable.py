@@ -639,7 +639,9 @@ class ClearCacheAction(actions.RowAction):
             #~ return True
             
     def get_action_permission(self,user,obj,state):
-        if not obj.build_time:
+        # obj may be None when Lino asks whether this action 
+        # should be visible in the UI
+        if obj is not None and not obj.build_time:
             return False
         return super(ClearCacheAction,self).get_action_permission(user,obj,state)
     

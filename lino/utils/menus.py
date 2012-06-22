@@ -33,6 +33,8 @@ class MenuItem:
   
     HOTKEY_MARKER = '~'
     
+    name = None
+    
     def __init__(self,parent,action,
                  name=None,label=None,doc=None,enabled=True,
                  #~ can_view=None,
@@ -70,14 +72,15 @@ class MenuItem:
                 label = unicode(instance)
                 
         if action is not None:
-            if name is None:
-                name = action.name
+            #~ if name is None:
+                #~ name = action.name
             if label is None:
                 label = action.get_button_label()
             #~ if can_view is None:
                 #~ can_view = action.can_view
         
-        self.name = name
+        if name is not None:
+            self.name = name
         self.doc = doc
         self.enabled = enabled
         self.hotkey = hotkey
@@ -149,7 +152,7 @@ class Menu(MenuItem):
         MenuItem.__init__(self,parent,None,name,label,**kw)
         self.items = []
         self.user = user
-        #~ self.items_dict = {}
+        self.items_dict = {}
 
     def compress(self):
         for mi in self.items:
@@ -227,24 +230,19 @@ class Menu(MenuItem):
 
     def _add_item(self,mi):
         assert isinstance(mi,MenuItem)
-        #~ if mi.action is not None and mi.instance is not None:
-            #~ if not mi.instance.get_row_permission(self.user,state,mi.action): return
+        if mi.action is not None:
+            if not mi.action.actor.get_view_permission(self.user):
+                return 
+            #~ if mi.instance is not None:
+                #~ if not mi.instance.get_row_permission(self.user,state,mi.action): 
+                    #~ return
             #~ if not mi.action.get_row_permission(self.user,mi.instance): return
-        #~ old = self.items_dict.get(m.name,None)
-        #~ if old:
-            #~ i = self.items.index(old)
-            # print [ mi.name for mi in self.items ]
-            # print "[debug] Replacing menu item %s at position %d" % (m.name,i)
-            #~ self.items[i] = m
-            #~ self.items_dict[m.name] = m
-            #~ # assert len(m) == 0
-            #~ return old 
-        #~ else:
-            #print "[debug] Adding menu item %s" % m.name
+        if mi.name is not None:
+            old = self.items_dict.get(mi.name)
+            if old is not None:
+                return old
+            self.items_dict[mi.name] = mi
         self.items.append(mi)
-        #~ self.items_dict[m.name] = m
-        #~ if m.name in [i.name for i in self.items]:
-            #~ raise "Duplicate item name %s for menu %s" % (m.name,self.name)
         return mi
         
     #~ def get(self,name):

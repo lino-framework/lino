@@ -285,7 +285,7 @@ class SalesDocument(
     def get_printable_type(self):
         return self.imode
         
-    def disabled_fields(self,request):
+    def disabled_fields(self,ar):
         #~ if self.must_build:
         if not self.build_time:
             return []

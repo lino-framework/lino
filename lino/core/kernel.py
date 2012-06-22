@@ -269,10 +269,11 @@ def load_workflows(self):
                     return fn(*args)
                 return classmethod(fn2)
             return classmethod(fn)
-        cls.allow_create = wrap(perms.make_permission(cls,**cls.create_required))
         cls.allow_read = wrap(perms.make_permission(cls,**cls.required))
-        cls.allow_update = wrap(perms.make_permission(cls,**cls.update_required))
-        cls.allow_delete = wrap(perms.make_permission(cls,**cls.delete_required))
+        if cls.editable:
+            cls.allow_create = wrap(perms.make_permission(cls,**cls.create_required))
+            cls.allow_update = wrap(perms.make_permission(cls,**cls.update_required))
+            cls.allow_delete = wrap(perms.make_permission(cls,**cls.delete_required))
         
         for a in actor.get_actions():
             def wrap(a,fn):

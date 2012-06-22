@@ -75,7 +75,7 @@ class Duplicable(dd.Model):
       
         
     
-    @dd.action(_("Duplicate"))
+    @dd.action(_("Duplicate"),sort_index=2)
     def duplicate_row(self,ar,**kw):
         #~ if not isinstance(ar,actions.ActionRequest):
             #~ raise Exception("Expected and ActionRequest but got %r" % ar)

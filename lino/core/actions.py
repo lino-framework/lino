@@ -238,11 +238,11 @@ class Action(object):
     def __unicode__(self):
         return force_unicode(self.label)
         
-    def get_view_permission(self,user):
-        """
-        E.g. DispatchAction is not available for a User with empty partner
-        """
-        return True
+    #~ def get_view_permission(self,user):
+        #~ """
+        #~ E.g. DispatchAction is not available for a User with empty partner
+        #~ """
+        #~ return True
         
     def get_button_label(self):
         if self.actor is None:
@@ -256,9 +256,10 @@ class Action(object):
         """
         The default implementation simply calls this action's 
         opermission handler.
-        Derived Action classes may oferride this to add vetos.
+        Derived Action classes may override this to add vetos.
+        E.g. DispatchAction is not available for a User with empty partner.
         """
-        logger.info("20120622 Action.get_action_permission")
+        #~ logger.info("20120622 Action.get_action_permission")
         return self.allow(user,obj,state)
         #~ if not self.allow_read(user,obj,state)
         #~ if self.readonly:

@@ -188,9 +188,10 @@ class EventState(ChoiceList):
         return cv[status_id]
         
 add = EventState.add_item
-add('10', _("Draft"),'draft')
-add('20', _("Suggested"),'suggested')
-add('30', _("Published"),'published')
+add('10', _("Draft"), 'draft')
+add('20', _("Notified"),'notified')
+#~ add('20', _("Suggested"),'suggested')
+#~ add('30', _("Published"),'published')
 add('40', _("Confirmed"),'confirmed')
 #~ add('40', _("Done"),'done')
 add('50', _("Took place"),'took_place')

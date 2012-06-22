@@ -997,9 +997,6 @@ class Lino(object):
         """
         pass
         
-    def old_setup_menu(self,ui,user,menu):
-        raise NotImplementedError
-        
     def setup_menu(self,ui,user,main):
         """
         Set up the application's menu structure.

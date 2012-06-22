@@ -66,10 +66,15 @@ add('40',_("Sent"),'sent')
 add('50',_("Returned"),'returned')
     
 
-class Posting(mixins.AutoUser,mixins.Controllable):
+class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
+    """
+    A Posting is the fact that a letter or other item 
+    has been sent using snail mail.
+    """
     class Meta:
         verbose_name = _("Posting")
         verbose_name_plural = _("Postings")
+        
     partner = models.ForeignKey('contacts.Partner',
         verbose_name=_("Recipient"),
         blank=True,null=True)
@@ -79,7 +84,7 @@ class Posting(mixins.AutoUser,mixins.Controllable):
     
     def save(self,*args,**kw):
         if not isinstance(self.owner,Postable):
-            raise Exception("Controller of popsting must be a Postable.")
+            raise Exception("Controller of a Posting must be a Postable.")
         super(Posting,self).save(*args,**kw)
 
     @dd.action(_("Print"))
@@ -92,32 +97,33 @@ class Postings(dd.Table):
     required=dict(user_level='manager')
     model = Posting
     column_names = 'date user owner partner *'
-    #~ @dd.action()
     
 class MyPostings(Postings,mixins.ByUser):
-    required_user_level = None
+    required=dict()
     master_key = 'owner'
     column_names = 'date partner state workflow_buttons *'
   
 class PostingsByController(Postings):
-    required_user_level = None
+    required=dict()
     master_key = 'owner'
     column_names = 'date partner state workflow_buttons *'
   
 class PostingsByPartner(Postings):
-    required_user_level = None
+    required=dict()
     master_key = 'partner'
     column_names = 'date owner *'
     
     
 class CreatePostings(dd.RowAction):
     """
-    Creates a new Posting for each recipient.
+    Creates a new Posting from this Postable. 
+    The Postable gives the list of recipients, and there will 
+    be one Posting for each recipient.
     """
   
     url_action_name = 'post'
     #~ label = _('Create email')
-    label = _('Post')
+    label = _('Create posting')
     callable_from = None
     
     def run(self,elem,ar,**kw):

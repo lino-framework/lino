@@ -34,7 +34,7 @@
 
 - Neues Modul :mod:`lino.modlib.postings`
 
-- Schade, dass man das folgende nicht machen kann::
+- Randbemerkung. Schade, dass man in Python folgendes nicht machen kann::
 
     bases = [Component,Ended,mixins.TypedPrintable,outbox.Mailable]
     if postings:
@@ -42,12 +42,16 @@
     class Event(*bases):
         ...
 
-
-
-TODO:
-
-- Momentan kriegen *alle* :class:`Components <lino.utils.jsgen.Component>`
-  einen permission handler verpasst. Das ist eigentlich nicht nötig, 
-  nur GridPanel und Panel brauchen den.
+- Bisher bekamen *alle* :class:`Components <lino.utils.jsgen.Component>`
+  einen permission handler verpasst. Das war nicht nötig, nur GridPanel 
+  und Panel brauchten den.
+  
+- Das Hauptmenü sitzt jetzt in einer Variablen Lino.main_menu in der 
+  :xfile:`lino*.js`, wird also nicht mehr bei jedem Request neu 
+  generiert, sondern ist ein Teil des Site-Cache.
+  
+- Wenn zwei Module für :meth:`lino.utils.menus.Menu.add_menu` 
+  den gleichen (internen) Namen nehmen, dann werden die beiden Menüs jetzt 
+  zusammengefasst. outbox und postings nutzen das aus.
   
   

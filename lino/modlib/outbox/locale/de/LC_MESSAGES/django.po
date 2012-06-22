@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 05:00+0100\n"
-"PO-Revision-Date: 2011-12-18 18:57+0200\n"
+"POT-Creation-Date: 2012-06-22 17:20+0100\n"
+"PO-Revision-Date: 2012-06-22 19:21+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
 "MIME-Version: 1.0\n"
@@ -33,126 +33,85 @@ msgid "bcc"
 msgstr "Blindkopie an"
 
 #: .\models.py:100
-#, fuzzy
-msgid "Mail"
-msgstr "Korrespondenz"
+msgid "Create email"
+msgstr "als E-Mail"
 
-#: .\models.py:194 .\models.py:510
+#: .\models.py:199
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:195 .\models.py:364
+#: .\models.py:200
+#: .\models.py:369
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: .\models.py:201
+#: .\models.py:206
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:202
+#: .\models.py:207
 msgid "Name"
 msgstr ""
 
-#: .\models.py:245
+#: .\models.py:250
 msgid "Send email"
 msgstr "E-Mail senden"
 
-#: .\models.py:313
+#: .\models.py:318
 msgid "Outgoing Mail"
 msgstr "Postausgang"
 
-#: .\models.py:314
+#: .\models.py:319
 msgid "Outgoing Mails"
 msgstr "Postausgänge"
 
-#: .\models.py:318
+#: .\models.py:323
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
-#: .\models.py:324
+#: .\models.py:329
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:328
+#: .\models.py:333
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:386
-#, fuzzy
+#: .\models.py:391
 msgid "My Outbox"
-msgstr "Postausgang"
+msgstr "Mein E-Mail-Ausgang"
 
-#: .\models.py:416
+#: .\models.py:421
 msgid "Attachment"
 msgstr "Anhang"
 
-#: .\models.py:417
+#: .\models.py:422
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: .\models.py:458 .\models.py:466 .\models.py:594
-#, fuzzy
+#: .\models.py:463
+#: .\models.py:471
+#: .\models.py:493
 msgid "Outbox"
 msgstr "Postausgang"
 
-#: .\models.py:475
+#: .\models.py:480
 msgid "Sent Mails"
 msgstr "Gesendete Mails"
 
-#: .\models.py:496
-msgid "Posting State"
-msgstr ""
-
-#: .\models.py:498
-msgid "New"
-msgstr ""
-
-#: .\models.py:499
-msgid "Ready to print"
-msgstr ""
-
-#: .\models.py:500
-msgid "Printed"
-msgstr ""
-
-#: .\models.py:501
 #, fuzzy
-msgid "Sent"
-msgstr "Absender"
+#~ msgid "Mail"
+#~ msgstr "Korrespondenz"
 
-#: .\models.py:502
-msgid "Returned"
-msgstr ""
-
-#: .\models.py:507
-msgid "Posting"
-msgstr ""
-
-#: .\models.py:508
-msgid "Postings"
-msgstr ""
-
-#: .\models.py:521
-msgid "Print"
-msgstr ""
-
-#: .\models.py:551
-msgid "Post"
-msgstr ""
-
-#: .\models.py:557
-#, python-format
-msgid "Going to create %(num)d postings for %(elem)s"
-msgstr ""
+#, fuzzy
+#~ msgid "Sent"
+#~ msgstr "Absender"
 
 #~ msgid "Mail Type"
 #~ msgstr "Korrespondenzart"
 
 #~ msgid "Mail Types"
 #~ msgstr "Korrespondenzarten"
-
-#~ msgid "Create email"
-#~ msgstr "E-Mail oder Brief erstellen"
 
 #, fuzzy
 #~ msgid "Mail Message"

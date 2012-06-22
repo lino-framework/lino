@@ -765,7 +765,7 @@ class Partners(contacts.Partners):
     detail_layout = PartnerDetail()
     
     @classmethod
-    def disabled_fields(self,obj,request):
+    def disabled_fields(self,obj,ar):
         if settings.LINO.is_imported_partner(obj):
             return self.imported_fields
         return []

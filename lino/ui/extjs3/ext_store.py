@@ -108,10 +108,10 @@ class StoreField(object):
     def column_names(self):
         yield self.options['name']
         
-    def value_from_object(self,obj,request):
-        return self.full_value_from_object(obj,request)
+    def value_from_object(self,obj,ar):
+        return self.full_value_from_object(obj,ar)
         
-    def full_value_from_object(self,obj,request):
+    def full_value_from_object(self,obj,ar):
         return self.field.value_from_object(obj)
     
     def value2list(self,ar,v,l,row):
@@ -212,7 +212,7 @@ class RelatedMixin(object):
             #~ return None
         return self.field.rel.to
         
-    def full_value_from_object(self,obj,req):
+    def full_value_from_object(self,obj,ar):
         # here we don't want the pk (stored in field's attname) 
         # but the full object this field refers to
         relto_model = self.get_rel_to(obj)
@@ -371,8 +371,8 @@ class VirtStoreField(StoreField):
     def __repr__(self):
         return self.vf.__class__.__name__ + ' ' + self.name + '(virtual)' 
         
-    def full_value_from_object(self,obj,req):
-        return self.vf.value_from_object(obj,req)
+    def full_value_from_object(self,obj,ar):
+        return self.vf.value_from_object(obj,ar)
 
         
 class RequestStoreField(StoreField):
@@ -392,8 +392,8 @@ class RequestStoreField(StoreField):
         #~ self.parse_form_value = delegate.parse_form_value
         #~ self.set_value_in_object = vf.set_value_in_object
         
-    def full_value_from_object(self,obj,req):
-        return self.vf.value_from_object(obj,req)
+    def full_value_from_object(self,obj,ar):
+        return self.vf.value_from_object(obj,ar)
 
     def value2num(self,v):
         #~ return len(v.data_iterator)
@@ -498,11 +498,11 @@ class DisabledFieldsStoreField(SpecialStoreField):
     """
     name = 'disabled_fields'
     
-    def full_value_from_object(self,obj,request):
+    def full_value_from_object(self,obj,ar):
         #~ l = [ f.name for f in self.store.actor.disabled_fields(request,obj)]
         d = dict()
         if self.store.actor.disabled_fields is not None:
-            for name in self.store.actor.disabled_fields(obj,request):
+            for name in self.store.actor.disabled_fields(obj,ar):
                 d[name] = True
         #~ l = list(self.store.actor.disabled_fields(obj,request))
         # disable also the primary key field
@@ -1072,10 +1072,10 @@ class Store:
         else:
             return ComboStoreField(fld,name,**kw)
 
-    def form2obj(self,request,form_values,instance,is_new):
+    def form2obj(self,ar,form_values,instance,is_new):
         #~ raise Exception('20120211')
         if self.actor.disabled_fields:
-            disabled_fields = set(self.actor.disabled_fields(instance,request))
+            disabled_fields = set(self.actor.disabled_fields(instance,ar))
         else:
             disabled_fields = set()
         #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
@@ -1086,7 +1086,7 @@ class Store:
             #~ if f.field is None or not f.field.name in disabled_fields:
             if not f.name in disabled_fields:
                 try:
-                    if f.form2obj(request,instance,form_values,is_new):
+                    if f.form2obj(ar.request,instance,form_values,is_new):
                         m = getattr(instance,f.name + "_changed",None)
                         if m is not None:
                             changed_triggers.append(m)
@@ -1098,7 +1098,7 @@ class Store:
                     raise 
                 #~ logger.info("20120228 Store.form2obj %s -> %s", f, obj2str(instance))
         for m in changed_triggers:
-            m(request)
+            m(ar)
             #~ m()
             
         #~ m = getattr(instance,"_changed",None)
@@ -1170,7 +1170,7 @@ class Store:
         return d
         
         
-    def row2html(self,request,fields,row,sums):
+    def row2html(self,ar,fields,row,sums):
         #~ for i,fld in enumerate(self.list_fields):
         for i,fld in enumerate(fields):
             #~ print 20120115, fld.field.name
@@ -1179,19 +1179,19 @@ class Store:
                 #~ if fld.name == 'person__gsm':
                 #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
                 #~ import pdb; pdb.set_trace()
-                v = fld.full_value_from_object(row,request)
+                v = fld.full_value_from_object(row,ar)
                 if v is None:
                     yield ''
                 else:
                     sums[i] += fld.value2num(v)
-                    #~ yield fld.value2html(request,v)
-                    x = fld.value2html(request,v)
+                    #~ yield fld.value2html(ar,v)
+                    x = fld.value2html(ar,v)
                     #~ from django.utils.functional import Promise
                     #~ if isinstance(x,Promise):
                         #~ print 20120614, fld.field
                         #~ raise Exception("20120614")
                     yield x
-                #~ yield fld.cell_html(request,row)
+                #~ yield fld.cell_html(ar,row)
                 
     def sums2html(self,ar,fields,sums):
         return [fld.format_sum(ar,sums,i)

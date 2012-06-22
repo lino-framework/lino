@@ -189,7 +189,7 @@ class Note(mixins.TypedPrintable,
         #~ return ''
     #~ body_html.return_type = fields.DisplayField(_("Body"))
     
-    def disabled_fields(self,request):
+    def disabled_fields(self,ar):
         #~ if self.must_build:
         if not self.build_time:
             return []

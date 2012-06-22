@@ -338,6 +338,7 @@ class AccessClasses(dd.Table):
     column_names = 'name *'
 
 
+from django.utils.translation import pgettext_lazy
 
 class EventType(mixins.PrintableType,babel.BabelNamed):
     """The type of an Event.
@@ -347,8 +348,8 @@ class EventType(mixins.PrintableType,babel.BabelNamed):
     templates_group = 'cal/Event'
     
     class Meta:
-        verbose_name = _("Event Type")
-        verbose_name_plural = _('Event Types')
+        verbose_name = pgettext_lazy("cal","Event Type")
+        verbose_name_plural = pgettext_lazy("cal",'Event Types')
 
 class EventTypes(dd.Table):
     model = EventType
@@ -541,7 +542,7 @@ class Component(ComponentBase,
     
         
         
-    def disabled_fields(self,request):
+    def disabled_fields(self,ar):
         if self.auto_type:
             #~ return settings.LINO.TASK_AUTO_FIELDS
             return self.DISABLED_AUTO_FIELDS
@@ -684,12 +685,12 @@ class Event(Component,Ended,
     
     class Meta:
         #~ abstract = True
-        verbose_name = _("Event")
-        verbose_name_plural = _("Events")
+        verbose_name = pgettext_lazy("cal","Event")
+        verbose_name_plural = pgettext_lazy("cal","Events")
         
     transparent = models.BooleanField(_("Transparent"),default=False)
-    type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
-    place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
+    type = models.ForeignKey(EventType,null=True,blank=True)
+    place = models.ForeignKey(Place,null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
     state = EventState.field(blank=True) # iCal:STATUS
@@ -774,19 +775,19 @@ class Event(Component,Ended,
             return self.project.get_print_language(bm)
         return self.user.language
         
-    #~ @dd.action(_("Suggest"),required=dict(states=['','draft']))
-    #~ def suggest_action(self,ar):
+    @dd.action(_("Notified"),required=dict(states=['','draft']))
+    def mark_notified(self,ar):
         #~ print 'TODO: would suggest', self
-        #~ self.state = EventState.suggested
-        #~ self.save()
-        #~ return ar.ui.success_response(refresh=True)
+        self.state = EventState.notified
+        self.save()
+        return ar.ui.success_response(refresh=True)
     
-    #~ @dd.action(_("Publish"),required=dict(states=['','draft','suggested']))
-    #~ def publish(self,ar):
+    @dd.action(_("Confirmed"),required=dict(states=['','draft','notified']))
+    def mark_confirmed(self,ar):
         #~ print 'TODO: would publish', self
-        #~ self.state = EventState.published
-        #~ self.save()
-        #~ return ar.ui.success_response(refresh=True)
+        self.state = EventState.confirmed
+        self.save()
+        return ar.ui.success_response(refresh=True)
         
 
 #~ class Task(Component,contacts.PartnerDocument):
@@ -998,13 +999,13 @@ class Guest(#contacts.ContactDocument,
     @dd.action(_("Invite"),required=dict(states=['']))
     def invite(self,ar):
         #~ if self.state != GuestState.invited:
-        print 'TODO: would send invitation to', self
+        #~ print 'TODO: would send invitation to', self
         self.state = GuestState.invited
         
     #~ @dd.action(_("Confirm"),required_states=set([GuestState.invited]))
     @dd.action(_("Confirm"),required=dict(states=['invited']))
     def confirm(self,ar):
-        print 'TODO: would send confirmation to', self
+        #~ print 'TODO: would send confirmation to', self
         self.state = GuestState.confirmed
     
 #~ class Guests(dd.Table,workflows.Workflowable):
@@ -1071,7 +1072,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     
     for o in Event.objects.filter(
         #~ models.Q(status=None) | models.Q(status__reminder=True),
-        models.Q(state=None) | models.Q(state__lte=EventState.published),
+        models.Q(state=None) | models.Q(state__lte=EventState.confirmed),
         **filterkw).order_by('start_date'):
         add(o)
         
@@ -1377,7 +1378,7 @@ def reminders(ui,user,days_back=None,days_forward=None,**kw):
     
     for o in Event.objects.filter(
         #~ models.Q(status=None) | models.Q(status__reminder=True),
-        models.Q(state=None) | models.Q(state__lte=EventState.published),
+        models.Q(state=None) | models.Q(state__lte=EventState.confirmed),
         **filterkw).order_by('start_date'):
         add(o)
         

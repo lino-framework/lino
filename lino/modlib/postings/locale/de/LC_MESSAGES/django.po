@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lino.modlib.mails\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-22 17:17+0100\n"
+"PO-Revision-Date: 2012-06-22 19:19+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:60
+msgid "Posting State"
+msgstr "Postsendungs-Status"
+
+#: .\models.py:62
+msgid "Open"
+msgstr "In Bearbeitung"
+
+#: .\models.py:63
+msgid "Ready to print"
+msgstr "Bereit für Ausdruck"
+
+#: .\models.py:64
+msgid "Printed"
+msgstr "Ausgedruckt"
+
+#: .\models.py:65
+msgid "Sent"
+msgstr "Versendet"
+
+#: .\models.py:66
+msgid "Returned"
+msgstr "Retour"
+
+#: .\models.py:75
+msgid "Posting"
+msgstr "Postsendung"
+
+#: .\models.py:76
+msgid "Postings"
+msgstr "Postsendungen"
+
+#: .\models.py:79
+msgid "Recipient"
+msgstr "Empfänger"
+
+#: .\models.py:90
+msgid "Print"
+msgstr "Drucken"
+
+#: .\models.py:126
+msgid "Create posting"
+msgstr "per Post"
+
+#: .\models.py:132
+#, python-format
+msgid "Going to create %(num)d postings for %(elem)s"
+msgstr "Hierdurch werden %(num)d Postsendung(en) %(elem)s erstellt"
+
+#: .\models.py:167
+msgid "Outbox"
+msgstr "Postausgang"
+
+#~ msgid "Post"
+#~ msgstr "Versenden"
+
+#~ msgid "Recipient Type"
+#~ msgstr "Empfängerart"
+
+#~ msgid "to"
+#~ msgstr "Empfänger"
+
+#~ msgid "cc"
+#~ msgstr "Kopie an"
+
+#~ msgid "bcc"
+#~ msgstr "Blindkopie an"
+
+#, fuzzy
+#~ msgid "Mail"
+#~ msgstr "Korrespondenz"
+
+#~ msgid "Recipients"
+#~ msgstr "Empfänger"
+
+#~ msgid "Address"
+#~ msgstr "Adresse"
+
+#~ msgid "Send email"
+#~ msgstr "E-Mail senden"
+
+#~ msgid "Outgoing Mail"
+#~ msgstr "Postausgang"
+
+#~ msgid "Outgoing Mails"
+#~ msgstr "Postausgänge"
+
+#~ msgid "Subject"
+#~ msgstr "Betreff"
+
+#~ msgid "Body"
+#~ msgstr "Inhalt"
+
+#, fuzzy
+#~ msgid "My Outbox"
+#~ msgstr "Postausgang"
+
+#~ msgid "Attachment"
+#~ msgstr "Anhang"
+
+#~ msgid "Attachments"
+#~ msgstr "Anhänge"
+
+#~ msgid "Sent Mails"
+#~ msgstr "Gesendete Mails"
+
+#~ msgid "Mail Type"
+#~ msgstr "Korrespondenzart"
+
+#~ msgid "Mail Types"
+#~ msgstr "Korrespondenzarten"
+
+#, fuzzy
+#~ msgid "Mail Message"
+#~ msgstr "Korrespondenzarten"
+
+#, fuzzy
+#~ msgid "Mail Messages"
+#~ msgstr "Korrespondenzarten"
+
+#~ msgid "Mail Outbox"
+#~ msgstr "Postausgang"
+
+#, fuzzy
+#~ msgid "My Inbox"
+#~ msgstr "Posteingang"
+
+#~ msgid "~Mails"
+#~ msgstr "~Korrespondenz"
+
+#~ msgid "Mail Document"
+#~ msgstr "Korrespondenzdokument"
+
+#~ msgid "Mail Documents"
+#~ msgstr "Korrespondenzdokumente"
+
+#~ msgid "Contact"
+#~ msgstr "Kontakt"
+
+#~ msgid "Incoming Mail"
+#~ msgstr "Posteingang"
+
+#~ msgid "Incoming Mails"
+#~ msgstr "Posteingänge"
+
+#~ msgid "My Incoming Mails"
+#~ msgstr "Mein Posteingang"

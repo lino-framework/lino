@@ -1,0 +1,174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lino.modlib.mails\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-22 05:00+0100\n"
+"PO-Revision-Date: 2011-09-14 21:28+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: .\models.py:69
+msgid "Recipient Type"
+msgstr "Type de destinataire"
+
+#: .\models.py:72
+msgid "to"
+msgstr ""
+
+#: .\models.py:73
+msgid "cc"
+msgstr ""
+
+#: .\models.py:74
+msgid "bcc"
+msgstr ""
+
+#: .\models.py:100
+#, fuzzy
+msgid "Mail"
+msgstr "Courriers"
+
+#: .\models.py:194 .\models.py:510
+msgid "Recipient"
+msgstr "Destinataire"
+
+#: .\models.py:195 .\models.py:364
+msgid "Recipients"
+msgstr "DestinataireDestinataires"
+
+#: .\models.py:201
+msgid "Address"
+msgstr "Adresse"
+
+#: .\models.py:202
+msgid "Name"
+msgstr "Nom"
+
+#: .\models.py:245
+msgid "Send email"
+msgstr "Envoyer"
+
+#: .\models.py:313
+msgid "Outgoing Mail"
+msgstr ""
+
+#: .\models.py:314
+msgid "Outgoing Mails"
+msgstr ""
+
+#: .\models.py:318
+msgid "Date"
+msgstr ""
+
+#: .\models.py:324
+msgid "Subject"
+msgstr "Objet"
+
+#: .\models.py:328
+msgid "Body"
+msgstr "Contenu"
+
+#: .\models.py:386
+#, fuzzy
+msgid "My Outbox"
+msgstr "Courrier sortant"
+
+#: .\models.py:416
+msgid "Attachment"
+msgstr "Pièce jointe"
+
+#: .\models.py:417
+msgid "Attachments"
+msgstr "Pièces jointes"
+
+#: .\models.py:458 .\models.py:466 .\models.py:594
+#, fuzzy
+msgid "Outbox"
+msgstr "Courrier sortant"
+
+#: .\models.py:475
+msgid "Sent Mails"
+msgstr "Courriers envoyés"
+
+#: .\models.py:496
+msgid "Posting State"
+msgstr ""
+
+#: .\models.py:498
+msgid "New"
+msgstr ""
+
+#: .\models.py:499
+msgid "Ready to print"
+msgstr ""
+
+#: .\models.py:500
+msgid "Printed"
+msgstr ""
+
+#: .\models.py:501
+#, fuzzy
+msgid "Sent"
+msgstr "Expéditeur"
+
+#: .\models.py:502
+msgid "Returned"
+msgstr ""
+
+#: .\models.py:507
+msgid "Posting"
+msgstr ""
+
+#: .\models.py:508
+msgid "Postings"
+msgstr ""
+
+#: .\models.py:521
+msgid "Print"
+msgstr ""
+
+#: .\models.py:551
+msgid "Post"
+msgstr ""
+
+#: .\models.py:557
+#, python-format
+msgid "Going to create %(num)d postings for %(elem)s"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Mail Types"
+#~ msgstr "Courriers"
+
+#~ msgid "Create email"
+#~ msgstr "Céer courrier"
+
+#, fuzzy
+#~ msgid "Mail Message"
+#~ msgstr "Courriers"
+
+#, fuzzy
+#~ msgid "Mail Messages"
+#~ msgstr "Courriers"
+
+#~ msgid "Mail Outbox"
+#~ msgstr "Courrier sortant"
+
+#, fuzzy
+#~ msgid "My Inbox"
+#~ msgstr "Courrier entrant"
+
+#~ msgid "~Mails"
+#~ msgstr "~Courrier"
+
+#~ msgid "Contact"
+#~ msgstr "Contact"

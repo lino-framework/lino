@@ -953,9 +953,9 @@ class ExtUI(base.UI):
         return urlpatterns
 
     def html_page(self,*args,**kw):
-        return '\n'.join([ln for ln in self.html_lines(*args,**kw)])
+        return '\n'.join([ln for ln in self.html_page_lines(*args,**kw)])
         
-    def html_lines(self,request,title=None,on_ready='',**kw):
+    def html_page_lines(self,request,title=None,on_ready='',**kw):
         """Generates the lines of Lino's HTML reponse.
         """
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
@@ -1128,25 +1128,6 @@ tinymce.init({
           #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
         )
         
-        #~ if not on_ready:
-        if False:
-            #~ c = RequestContext(request,dict(site=self.site,lino=lino))
-            self.welcome_template.ui = self
-            self.welcome_template.request = request
-            self.welcome_template.user = request.user
-            self.welcome_template.site = settings.LINO # self.site
-            self.welcome_template.lino = lino
-            #~ main=ext_elems.ExtPanel(
-            #~ quicklinks = [dict(text="A")]
-            html = unicode(self.welcome_template)
-            
-            quicklinks = settings.LINO.get_quicklinks(self,request.user)
-            if quicklinks.items:
-                html = 'Quick Links: ' + ' '.join(
-                  [self.ext_renderer.action_href_js(mi.action,mi.params) for mi in quicklinks.items]
-                  ) + '<br/>' + html
-            main.update(html=html)
-        
         win = dict(
           layout='fit',
           #~ maximized=True,
@@ -1154,7 +1135,8 @@ tinymce.init({
           #~ closable=False,
           bbar=dict(xtype='toolbar',items=js_code('Lino.status_bar')),
           #~ title=self.site.title,
-          tbar=settings.LINO.get_site_menu(self,request.user),
+          tbar=js_code('Lino.main_menu'),
+          #~ tbar=settings.LINO.get_site_menu(self,request.user),
         )
         jsgen.set_for_user(request.user)
         for ln in jsgen.declare_vars(win):
@@ -1183,6 +1165,9 @@ tinymce.init({
         yield "</body></html>"
         
     def linolib_intro(self):
+        """
+        Called from :xfile:`linolib.js`.
+        """
         def fn():
             yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
             #~ // $site.title ($lino.welcome_text())
@@ -1193,6 +1178,7 @@ tinymce.init({
             yield "MEDIA_URL = %r;" % (self.media_url())
             #~ yield "ROOT_URL = %r;" % settings.LINO.root_url
             yield "ROOT_URL = %r;" % self.root_url
+            
             #~ yield "API_URL = %r;" % self.build_url('api')
             #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')
             #~ yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
@@ -1231,7 +1217,7 @@ tinymce.init({
         #~ logger.info('20120228 before store.form2obj , elem is %s' % obj2str(elem))
         # store normal form data (POST or PUT)
         try:
-            rh.store.form2obj(request,data,elem,is_new)
+            rh.store.form2obj(ar,data,elem,is_new)
         except exceptions.ValidationError,e:
             #~ raise
             return self.error_response(e)
@@ -1928,6 +1914,9 @@ tinymce.init({
         is defined in ns outbox.Mails which is not directly used by non-expert users.
         """
         
+        f.write("Lino.main_menu = %s;\n" % py2js(settings.LINO.get_site_menu(self,user)))
+            
+
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
             
@@ -2427,7 +2416,7 @@ tinymce.init({
 
         yield "  ls_bbar_actions: %s," % py2js([
             rh.ui.a2btn(a) for a in rpt.get_actions(action) 
-                if a.show_in_bbar and a.get_view_permission(jsgen._for_user)])
+                if a.show_in_bbar and a.get_action_permission(jsgen._for_user,None,None)]) 
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action != rpt.default_action:
             yield "  action_name: %s," % py2js(action.url_action_name)
@@ -2467,7 +2456,7 @@ tinymce.init({
         kw.update(ls_bbar_actions=[
             rh.ui.a2btn(a) 
               for a in rh.actor.get_actions(rh.actor.default_action) 
-                  if a.show_in_bbar and a.get_view_permission(jsgen._for_user)])
+                  if a.show_in_bbar and a.get_action_permission(jsgen._for_user,None,None)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:

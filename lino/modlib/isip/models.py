@@ -101,8 +101,7 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         
 
 class ContractTypes(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required=dict(user_groups = ['integ'],user_level='manager')
     model = ContractType
     column_names = 'name ref build_method template *'
     detail_template = """
@@ -127,8 +126,7 @@ class ExamPolicy(babel.BabelNamed,cal.RecurrenceSet):
         
 
 class ExamPolicies(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required=dict(user_groups = ['integ'],user_level='manager')
     model = ExamPolicy
     column_names = 'name *'
 
@@ -146,8 +144,7 @@ class ContractEnding(dd.Model):
         return unicode(self.name)
         
 class ContractEndings(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required=dict(user_groups = ['integ'],user_level='manager')
     model = ContractEnding
     column_names = 'name *'
     order_by = ['name']
@@ -470,7 +467,7 @@ class Contract(ContractBase):
             'date_decided date_issued ')
         #~ super(Contract,cls).site_setup(lino)
         
-    def disabled_fields(self,request):
+    def disabled_fields(self,ar):
         #~ if self.must_build:
         if not self.build_time:
             return []
@@ -503,8 +500,7 @@ class ContractDetail(dd.DetailLayout):
 
 
 class Contracts(dd.Table):
-    required_user_groups = ['integ']
-    #~ required_user_level = UserLevels.manager
+    required = dict(user_groups = ['integ'])
     model = Contract
     column_names = 'id applies_from applies_until user type *'
     order_by = ['id']
@@ -545,19 +541,13 @@ def setup_main_menu(site,ui,user,m): pass
 def setup_master_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    if user.profile.newcomers_level < UserLevels.user:
-        return
     m.add_action(MyContracts)
   
 def setup_config_menu(site,ui,user,m): 
-    if user.profile.newcomers_level < UserLevels.manager:
-        return
     m  = m.add_menu("isip",_("ISIPs"))
     m.add_action(ContractTypes)
     m.add_action(ContractEndings)
     m.add_action(ExamPolicies)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.profile.integ_level < UserLevels.manager:
-        return
     m.add_action(Contracts)

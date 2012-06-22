@@ -97,13 +97,18 @@ class CreateMailAction(dd.RowAction):
     url_action_name = 'mail'
     #~ label = _('Create email')
     #~ label = pgettext_lazy('verb','Mail')
-    label = _('Mail')
+    label = _('Create email')
     callable_from = None
     
-    def get_view_permission(self,user):
+    #~ def get_view_permission(self,user):
+        #~ if not user.email:
+            #~ return False
+        #~ return super(CreateMailAction,self).get_view_permission(user)
+        
+    def get_action_permission(self,user,obj,state):
         if not user.email:
             return False
-        return super(CreateMailAction,self).get_view_permission(user)
+        return super(CreateMailAction,self).get_action_permission(user,obj,state)
         
     def run(self,elem,ar,**kw):
       

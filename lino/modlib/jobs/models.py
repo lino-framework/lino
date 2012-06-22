@@ -405,7 +405,7 @@ class Contract(ContractBase):
         ]
     
     
-    def disabled_fields(self,request):
+    def disabled_fields(self,ar):
         df = []
         if self.job_id is not None:
             if self.job.provider:
@@ -873,7 +873,7 @@ class Job(SectorFunction):
             return u'%s bei %s' % (self.name,self.provider.name)
         return self.name
   
-    def disabled_fields(self,request):
+    def disabled_fields(self,ar):
         #~ if self.contract_set.count():
         #~ if self.contract_set.filter(must_build=False).count():
         if self.contract_set.filter(build_time__isnull=False).count():
