@@ -390,7 +390,12 @@ Vielleicht mit Fußnoten?
     #~ def save(self,*args,**kw):
         #~ super(Budget,self).save(*args,**kw)
         
-    def _changed(self,ar):
+    #~ def _changed(self,ar):
+    def after_ui_save(self,ar):
+        """
+        Called from `extjs3.ext_ui.ExtUI.form2obj_and_save`
+        after successful save()
+        """
         self.fill_defaults(ar)
         
     def fill_defaults(self,ar):

@@ -1252,6 +1252,11 @@ tinymce.init({
             
         try:
             elem.save(**kw2save)
+            m = getattr(elem,"after_ui_save",None)
+            #~ m = getattr(instance,"_changed",None)
+            if m is not None:
+                m(ar)
+            
         #~ except Exception,e:
         except IntegrityError,e:
             return self.error_response(e) # ,_("There was a problem while saving your data : "))
