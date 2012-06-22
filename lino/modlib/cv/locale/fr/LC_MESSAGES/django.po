@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-08 10:04+0100\n"
+"POT-Creation-Date: 2012-06-22 05:00+0100\n"
 "PO-Revision-Date: 2012-06-08 11:59+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -84,20 +84,20 @@ msgstr "Propriétés"
 msgid "Remark"
 msgstr "Remarque"
 
-#: .\models.py:230
+#: .\models.py:228
 #, python-format
 msgid "(Site setting %s is empty)"
 msgstr "(les paramètres de site %s sont vides)"
 
-#: .\models.py:265
+#: .\models.py:263
 msgid "Skills Property Group"
 msgstr "Groupe de propriétés 'Skills'"
 
-#: .\models.py:273
+#: .\models.py:271
 msgid "Soft Skills Property Group"
 msgstr "Groupe de propriétés 'Soft Skills'"
 
-#: .\models.py:283
+#: .\models.py:281
 msgid "Obstacles Property Group"
 msgstr "Groupe de propriétés 'Obstacles'"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-08 09:12+0100\n"
+"POT-Creation-Date: 2012-06-22 05:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,11 +33,11 @@ msgstr ""
 msgid "Companies"
 msgstr ""
 
-#: .\models.py:118
+#: .\models.py:115
 msgid "Sales base account"
 msgstr ""
 
-#: .\models.py:128
+#: .\models.py:125
 msgid "Sales VAT account"
 msgstr ""
 

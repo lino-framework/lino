@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-08 09:12+0100\n"
+"POT-Creation-Date: 2012-06-22 05:01+0100\n"
 "PO-Revision-Date: 2012-06-01 15:05+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -197,7 +197,7 @@ msgstr "Integrationsphase"
 msgid "Coached from"
 msgstr "Begleitet seit"
 
-#: .\models.py:385 .\models.py:431 .\models.py:1594 .\models.py:1706
+#: .\models.py:385 .\models.py:431 .\models.py:1525 .\models.py:1637
 msgid "until"
 msgstr "bis"
 
@@ -385,7 +385,7 @@ msgstr "Aus TIM importierte Partner dürfen nicht gelöscht werden."
 msgid "hourly rate"
 msgstr "Stundensatz"
 
-#: .\models.py:868
+#: .\models.py:868 .\models.py:2071
 msgid "General"
 msgstr "Allgemein"
 
@@ -513,7 +513,7 @@ msgstr "Aktive Klienten von %s"
 msgid "Data Test Clients"
 msgstr "Datenkontrolle Klienten"
 
-#: .\models.py:1276 .\models.py:1698
+#: .\models.py:1276 .\models.py:1629
 msgid "Coached by"
 msgstr "Begleitet durch"
 
@@ -537,189 +537,226 @@ msgstr "Fehlermeldung"
 msgid "Users with their Clients"
 msgstr "Benutzer und ihre Klienten"
 
-#: .\models.py:1425 .\models.py:1453 .\models.py:1465
+#: .\models.py:1430
 msgid "Total"
 msgstr "Total"
 
-#: .\models.py:1429 .\models.py:1463
+#: .\models.py:1434
 msgid "Primary clients"
 msgstr "Komplette Akten"
 
-#: .\models.py:1433 .\models.py:1464
+#: .\models.py:1438
 msgid "Active clients"
 msgstr "Aktive Klienten"
 
-#: .\models.py:1452
-msgid "User"
-msgstr "Benutzer"
-
-#: .\models.py:1518
+#: .\models.py:1449
 msgid "Designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:1519
+#: .\models.py:1450
 msgid "Reference name"
 msgstr "Referenzname"
 
-#: .\models.py:1520
+#: .\models.py:1451
 msgid "Considered active"
 msgstr "aktive Phase"
 
-#: .\models.py:1523
+#: .\models.py:1454
 msgid "Integration Phase"
 msgstr "Integrationsphase"
 
-#: .\models.py:1524
+#: .\models.py:1455
 msgid "Integration Phases"
 msgstr "Integrationsphasen"
 
-#: .\models.py:1544
+#: .\models.py:1475
 msgid "activity"
 msgstr "Beruf"
 
-#: .\models.py:1545
+#: .\models.py:1476
 msgid "activities"
 msgstr "Berufe"
 
-#: .\models.py:1547
+#: .\models.py:1478
 msgid "Appears in Listing 104"
 msgstr "Listing 104"
 
-#: .\models.py:1568
+#: .\models.py:1499
 msgid "exclusion type"
 msgstr "AG-Sperrgrund"
 
-#: .\models.py:1569
+#: .\models.py:1500
 msgid "exclusion types"
 msgstr "AG-Sperrgründe"
 
-#: .\models.py:1587
+#: .\models.py:1518
 msgid "exclusion"
 msgstr "AG-Sperre"
 
-#: .\models.py:1588
+#: .\models.py:1519
 msgid "exclusions"
 msgstr "AG-Sperren"
 
-#: .\models.py:1592
+#: .\models.py:1523
 msgid "Reason"
 msgstr "Grund"
 
-#: .\models.py:1593
+#: .\models.py:1524
 msgid "from"
 msgstr "von"
 
-#: .\models.py:1595
+#: .\models.py:1526
 msgid "Remark"
 msgstr "Bemerkung"
 
-#: .\models.py:1657
+#: .\models.py:1588
 msgid "aid type"
 msgstr "Sozialhilfeart"
 
-#: .\models.py:1658
+#: .\models.py:1589
 msgid "aid types"
 msgstr "Sozialhilfearten"
 
-#: .\models.py:1682
+#: .\models.py:1613
 msgid "Person Search"
 msgstr "Personensuche"
 
-#: .\models.py:1683
+#: .\models.py:1614
 msgid "Person Searches"
 msgstr "Personensuchen"
 
-#: .\models.py:1686
+#: .\models.py:1617
 msgid "Search Title"
 msgstr "Titel Suchliste"
 
-#: .\models.py:1687
+#: .\models.py:1618
 msgid "Aged from"
 msgstr "Alter von"
 
-#: .\models.py:1689
+#: .\models.py:1620
 msgid "Aged to"
 msgstr "Alter bis"
 
-#: .\models.py:1695
+#: .\models.py:1626
 msgid "Only my persons"
 msgstr "nur meine Leute"
 
-#: .\models.py:1703
+#: .\models.py:1634
 msgid "Period from"
 msgstr "Periode vom"
 
-#: .\models.py:1713
+#: .\models.py:1644
 msgid "Unnamed"
 msgstr "Unbenannt"
 
-#: .\models.py:1718
+#: .\models.py:1649
 msgid "Print"
 msgstr "Drucken"
 
-#: .\models.py:1741
+#: .\models.py:1672
 msgid "Language"
 msgstr "Sprache"
 
-#: .\models.py:1742
+#: .\models.py:1673
 msgid "spoken"
 msgstr "Wort"
 
-#: .\models.py:1743
+#: .\models.py:1674
 msgid "written"
 msgstr "Schrift"
 
-#: .\models.py:1748
+#: .\models.py:1679
 msgid "Wanted property"
 msgstr "Gesuchte Eigenschaft"
 
-#: .\models.py:1749 .\models.py:1769
+#: .\models.py:1680 .\models.py:1700
 msgid "Wanted properties"
 msgstr "Gesuchte Eigenschaften"
 
-#: .\models.py:1756
+#: .\models.py:1687
 msgid "Unwanted property"
 msgstr "Unerwünschte Eigenschaft"
 
-#: .\models.py:1757 .\models.py:1775
+#: .\models.py:1688 .\models.py:1706
 msgid "Unwanted properties"
 msgstr "Unerwünschte Eigenschaften"
 
-#: .\models.py:1763
+#: .\models.py:1694
 msgid "Wanted language knowledges"
 msgstr "Erwünschte Sprachkenntnisse"
 
-#: .\models.py:1795
+#: .\models.py:1726
 msgid "Found persons"
 msgstr "Gefundene Personen"
 
-#: .\models.py:1887
+#: .\models.py:1818
 msgid "Overlapping Contracts"
 msgstr "Vertragsüberschneidungen "
 
-#: .\models.py:1920
+#: .\models.py:1851
 msgid "Local job office"
 msgstr "Lokales Arbeitsamt"
 
-#: .\models.py:1931
+#: .\models.py:1862
 msgid "Upload Type for residence permit"
 msgstr "Upload-Art Aufenthaltserlaubnis"
 
-#: .\models.py:1941
+#: .\models.py:1872
 msgid "Upload Type for work permit"
 msgstr "Upload-Art Arbeitserlaubnis"
 
-#: .\models.py:1950
+#: .\models.py:1881
 msgid "Upload Type for driving licence"
 msgstr "Upload-Art Führerschein"
 
-#: .\models.py:1958
+#: .\models.py:1902
+msgid "usable in contracts"
+msgstr "erlaubt in Verträgen"
+
+#: .\models.py:2075
+#, fuzzy
+msgid "More"
+msgstr "Kurs"
+
+#: .\models.py:2142
 msgid "Integration"
 msgstr "Integration"
 
-#: .\models.py:1970
-msgid "usable in contracts"
-msgstr "erlaubt in Verträgen"
+#: .\models.py:2143
+msgid "CBSS"
+msgstr ""
+
+#: .\models.py:2144
+msgid "Newcomers"
+msgstr "Neuzugänge"
+
+#: .\models.py:2145
+msgid "Debts"
+msgstr ""
+
+#: .\models.py:2155
+#, fuzzy
+msgid "Integration Agent (Senior)"
+msgstr "Integrationsphase"
+
+#: .\models.py:2160
+#, fuzzy
+msgid "Integration Agent"
+msgstr "Integration"
+
+#: .\models.py:2165
+#, fuzzy
+msgid "Newcomers consultant"
+msgstr "Neuzugänge"
+
+#: .\models.py:2170
+msgid "Debts consultant"
+msgstr ""
+
+#: .\models.py:2174
+#, fuzzy
+msgid "Administrator"
+msgstr "Django-Verwaltung"
 
 #: .\settings.py:78
 msgid "Master"
@@ -752,6 +789,9 @@ msgstr "Explorer"
 #: .\settings.py:200
 msgid "Site"
 msgstr "Site"
+
+#~ msgid "User"
+#~ msgstr "Benutzer"
 
 #~ msgid "is SPIS user"
 #~ msgstr "DSBE-Benutzer"
@@ -794,9 +834,6 @@ msgstr "Site"
 
 #~ msgid "Description"
 #~ msgstr "Beschreibung"
-
-#~ msgid "Course"
-#~ msgstr "Kurs"
 
 #~ msgid "start date"
 #~ msgstr "beginnt am"
@@ -898,9 +935,6 @@ msgstr "Site"
 
 #~ msgid "Obstacles Property Group"
 #~ msgstr "Eigenschaftsgruppe Hindernisse"
-
-#~ msgid "Newcomers"
-#~ msgstr "Neuzugänge"
 
 #~ msgid "Home"
 #~ msgstr "Anfang"
@@ -1172,9 +1206,6 @@ msgstr "Site"
 
 #~ msgid "Server error (500)"
 #~ msgstr "Server error (500)"
-
-#~ msgid "Django administration"
-#~ msgstr "Django-Verwaltung"
 
 #~ msgid "~Manager"
 #~ msgstr "~Verwalter"

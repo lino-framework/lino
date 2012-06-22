@@ -1817,17 +1817,19 @@ tinymce.init({
         
     def error_response(self,e=None,message=None,**kw):
         kw.update(success=False)
-        if e is not None:
+        #~ if e is not None:
+        if isinstance(e,Exception):
+            logger.exception(e)
             if hasattr(e,'message_dict'):
                 kw.update(errors=e.message_dict)
         #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
         kw.update(alert=True)
-        kw.update(message=message)
+        #~ kw.update(message=message)
         if message is None:
             message = unicode(e)
         kw.update(message=cgi.escape(message))
         #~ kw.update(message=message_prefix+unicode(e))
-        dblogger.debug('error_response %s',kw)
+        #~ logger.debug('error_response %s',kw)
         return self.action_response(kw)
     
 

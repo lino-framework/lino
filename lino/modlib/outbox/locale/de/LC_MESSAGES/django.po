@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-08 09:12+0100\n"
+"POT-Creation-Date: 2012-06-22 05:00+0100\n"
 "PO-Revision-Date: 2011-12-18 18:57+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -17,64 +17,142 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: .\models.py:69
-msgid "Mail Type"
-msgstr "Korrespondenzart"
+msgid "Recipient Type"
+msgstr "Empfängerart"
 
-#: .\models.py:70
-msgid "Mail Types"
-msgstr "Korrespondenzarten"
+#: .\models.py:72
+msgid "to"
+msgstr "Empfänger"
 
-#: .\models.py:81
-msgid "Create email"
-msgstr "E-Mail oder Brief erstellen"
+#: .\models.py:73
+msgid "cc"
+msgstr "Kopie an"
 
-#: .\models.py:178
-msgid "Send email"
-msgstr "E-Mail senden"
+#: .\models.py:74
+msgid "bcc"
+msgstr "Blindkopie an"
 
-#: .\models.py:214
-msgid "Outgoing Mail"
-msgstr "Postausgang"
+#: .\models.py:100
+#, fuzzy
+msgid "Mail"
+msgstr "Korrespondenz"
 
-#: .\models.py:215
-msgid "Outgoing Mails"
-msgstr "Postausgänge"
+#: .\models.py:194 .\models.py:510
+msgid "Recipient"
+msgstr "Empfänger"
 
-#: .\models.py:219
-msgid "Date"
-msgstr ""
-
-#: .\models.py:230
-msgid "Sender"
-msgstr "Absender"
-
-#: .\models.py:245
+#: .\models.py:195 .\models.py:364
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: .\models.py:296
+#: .\models.py:201
+msgid "Address"
+msgstr "Adresse"
+
+#: .\models.py:202
+msgid "Name"
+msgstr ""
+
+#: .\models.py:245
+msgid "Send email"
+msgstr "E-Mail senden"
+
+#: .\models.py:313
+msgid "Outgoing Mail"
+msgstr "Postausgang"
+
+#: .\models.py:314
+msgid "Outgoing Mails"
+msgstr "Postausgänge"
+
+#: .\models.py:318
+msgid "Date"
+msgstr ""
+
+#: .\models.py:324
+msgid "Subject"
+msgstr "Betreff"
+
+#: .\models.py:328
+msgid "Body"
+msgstr "Inhalt"
+
+#: .\models.py:386
 #, fuzzy
 msgid "My Outbox"
 msgstr "Postausgang"
 
-#: .\models.py:321 .\models.py:329
+#: .\models.py:416
+msgid "Attachment"
+msgstr "Anhang"
+
+#: .\models.py:417
+msgid "Attachments"
+msgstr "Anhänge"
+
+#: .\models.py:458 .\models.py:466 .\models.py:594
 #, fuzzy
 msgid "Outbox"
 msgstr "Postausgang"
 
-#: .\models.py:338
+#: .\models.py:475
 msgid "Sent Mails"
 msgstr "Gesendete Mails"
 
-#: .\models.py:353
-msgid "Mails"
-msgstr "Korrespondenz"
+#: .\models.py:496
+msgid "Posting State"
+msgstr ""
 
-#~ msgid "Recipient"
-#~ msgstr "Empfänger"
+#: .\models.py:498
+msgid "New"
+msgstr ""
 
-#~ msgid "Address"
-#~ msgstr "Adresse"
+#: .\models.py:499
+msgid "Ready to print"
+msgstr ""
+
+#: .\models.py:500
+msgid "Printed"
+msgstr ""
+
+#: .\models.py:501
+#, fuzzy
+msgid "Sent"
+msgstr "Absender"
+
+#: .\models.py:502
+msgid "Returned"
+msgstr ""
+
+#: .\models.py:507
+msgid "Posting"
+msgstr ""
+
+#: .\models.py:508
+msgid "Postings"
+msgstr ""
+
+#: .\models.py:521
+msgid "Print"
+msgstr ""
+
+#: .\models.py:551
+msgid "Post"
+msgstr ""
+
+#: .\models.py:557
+#, python-format
+msgid "Going to create %(num)d postings for %(elem)s"
+msgstr ""
+
+#~ msgid "Mail Type"
+#~ msgstr "Korrespondenzart"
+
+#~ msgid "Mail Types"
+#~ msgstr "Korrespondenzarten"
+
+#~ msgid "Create email"
+#~ msgstr "E-Mail oder Brief erstellen"
 
 #, fuzzy
 #~ msgid "Mail Message"
@@ -83,18 +161,6 @@ msgstr "Korrespondenz"
 #, fuzzy
 #~ msgid "Mail Messages"
 #~ msgstr "Korrespondenzarten"
-
-#~ msgid "Subject"
-#~ msgstr "Betreff"
-
-#~ msgid "Body"
-#~ msgstr "Inhalt"
-
-#~ msgid "Attachment"
-#~ msgstr "Anhang"
-
-#~ msgid "Attachments"
-#~ msgstr "Anhänge"
 
 #~ msgid "Mail Outbox"
 #~ msgstr "Postausgang"
@@ -105,18 +171,6 @@ msgstr "Korrespondenz"
 
 #~ msgid "~Mails"
 #~ msgstr "~Korrespondenz"
-
-#~ msgid "Recipient Type"
-#~ msgstr "Empfängerart"
-
-#~ msgid "cc"
-#~ msgstr "Kopie an"
-
-#~ msgid "bcc"
-#~ msgstr "Blindkopie an"
-
-#~ msgid "to"
-#~ msgstr "Empfänger"
 
 #~ msgid "Mail Document"
 #~ msgstr "Korrespondenzdokument"

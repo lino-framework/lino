@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-08 09:12+0100\n"
+"POT-Creation-Date: 2012-06-22 05:00+0100\n"
 "PO-Revision-Date: 2012-06-08 11:25+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -16,292 +16,314 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\models.py:189
+#: .\models.py:203
 msgid "Status"
 msgstr "Etat"
 
-#: .\models.py:192
+#: .\models.py:206
 msgid "New"
 msgstr "Nouveau"
 
-#: .\models.py:193
+#: .\models.py:207
 msgid "Pending"
 msgstr "en cours"
 
-#: .\models.py:194
+#: .\models.py:208
 msgid "Failed"
 msgstr "echec"
 
-#: .\models.py:195
+#: .\models.py:209
 msgid "OK"
 msgstr ""
 
-#: .\models.py:196
+#: .\models.py:210
 msgid "Warnings"
 msgstr "Avertissements"
 
-#: .\models.py:197
+#: .\models.py:211
 msgid "Errors"
 msgstr "Erreurs"
 
-#: .\models.py:198
+#: .\models.py:212
 msgid "Validated"
 msgstr "Validé"
 
-#: .\models.py:226
+#: .\models.py:240
 msgid "Execute"
 msgstr "exécuter"
 
-#: .\models.py:254
-#: .\models.py:287
+#: .\models.py:268 .\models.py:303
 msgid "Sector"
 msgstr "Secteur"
 
-#: .\models.py:255
+#: .\models.py:269
 msgid "Sectors"
 msgstr "Secteurs"
 
-#: .\models.py:259
-#: .\models.py:291
+#: .\models.py:273 .\models.py:307
 msgid "Code"
 msgstr ""
 
-#: .\models.py:260
+#: .\models.py:274
 msgid "Subcode"
 msgstr ""
 
-#: .\models.py:261
+#: .\models.py:275
 msgid "Abbreviation"
 msgstr ""
 
-#: .\models.py:284
+#: .\models.py:300
 msgid "Purpose"
 msgstr "Code fonction"
 
-#: .\models.py:285
+#: .\models.py:301
 msgid "Purposes"
 msgstr "Codes fonction"
 
-#: .\models.py:328
+#: .\models.py:345
 msgid "Client"
 msgstr ""
 
-#: .\models.py:331
+#: .\models.py:348
 msgid "Sent"
 msgstr "Exécuté"
 
-#: .\models.py:340
+#: .\models.py:357
 msgid "T/A/B"
 msgstr ""
 
-#: .\models.py:341
+#: .\models.py:358
 msgid "Ticket"
 msgstr ""
 
-#: .\models.py:345
-#: .\models.py:541
+#: .\models.py:362 .\models.py:566
 msgid "Request"
 msgstr "Requête"
 
-#: .\models.py:350
+#: .\models.py:367
 msgid "Response"
 msgstr "Réponse"
 
-#: .\models.py:362
+#: .\models.py:379
 msgid "Debug messages"
 msgstr ""
 
-#: .\models.py:365
+#: .\models.py:382
 msgid "Info messages"
 msgstr ""
 
-#: .\models.py:511
-#: .\models.py:543
+#: .\models.py:536 .\models.py:568
 msgid "Result"
 msgstr ""
 
-#: .\models.py:542
+#: .\models.py:567
 msgid "Request information"
 msgstr ""
 
-#: .\models.py:544
+#: .\models.py:569
 msgid "Technical"
 msgstr ""
 
-#: .\models.py:548
+#: .\models.py:576
 msgid "Parameters"
 msgstr "Paramètres"
 
-#: .\models.py:597
+#: .\models.py:625
 msgid "Request has been validated against XSD files"
 msgstr ""
 
-#: .\models.py:837
-#: .\models.py:1162
+#: .\models.py:919 .\models.py:1245
 msgid "National ID"
 msgstr "NISS"
 
-#: .\models.py:843
-#: .\models.py:1183
+#: .\models.py:925 .\models.py:1266
 msgid "Birth date"
 msgstr "date de naissance"
 
-#: .\models.py:844
+#: .\models.py:926
 msgid "SIS card number"
 msgstr "No carte SIS"
 
-#: .\models.py:849
+#: .\models.py:931
 msgid "ID card number"
 msgstr "No carte eID"
 
-#: .\models.py:856
-#: .\models.py:1172
+#: .\models.py:938 .\models.py:1255
 msgid "First name"
 msgstr "Prénom"
 
-#: .\models.py:861
-#: .\models.py:1167
+#: .\models.py:943 .\models.py:1250
 msgid "Last name"
 msgstr "Nom de famille"
 
-#: .\models.py:908
+#: .\models.py:990
 msgid "IdentifyPerson Request"
 msgstr "Requête IdentifyPerson"
 
-#: .\models.py:909
+#: .\models.py:991
 msgid "IdentifyPerson Requests"
 msgstr "Requêtes IdentifyPerson"
 
-#: .\models.py:923
+#: .\models.py:1005
 msgid "Middle name"
 msgstr ""
 
-#: .\models.py:928
+#: .\models.py:1010
 msgid "Tolerance"
 msgstr "Tolérance"
 
-#: .\models.py:1073
+#: .\models.py:1155
 msgid "Using the national ID"
 msgstr "avec NISS"
 
-#: .\models.py:1074
+#: .\models.py:1156
 msgid "Using phonetic search"
 msgstr "Recherche phonétique"
 
-#: .\models.py:1125
+#: .\models.py:1208 .\tx25.py:599
 msgid "Results"
 msgstr "Résultats"
 
-#: .\models.py:1188
+#: .\models.py:1271
 msgid "Birth location"
 msgstr "Lieu de naissance"
 
-#: .\models.py:1192
+#: .\models.py:1275
 msgid "Civil state"
 msgstr "Etat civil"
 
-#: .\models.py:1197
+#: .\models.py:1280
 msgid "Address"
 msgstr "Addresse"
 
-#: .\models.py:1226
+#: .\models.py:1309
 msgid "Action"
 msgstr ""
 
-#: .\models.py:1229
+#: .\models.py:1312
 msgid "Register"
 msgstr "Intégrer"
 
-#: .\models.py:1230
+#: .\models.py:1313
 msgid "Unregister"
 msgstr "Annuler intégration"
 
-#: .\models.py:1231
+#: .\models.py:1314
 msgid "List"
 msgstr "Listing"
 
-#: .\models.py:1240
+#: .\models.py:1323
 msgid "Query Register"
 msgstr ""
 
-#: .\models.py:1243
+#: .\models.py:1326
 msgid "Primary"
 msgstr "Primaire"
 
-#: .\models.py:1244
+#: .\models.py:1327
 msgid "Secondary"
 msgstr "Secondaire"
 
-#: .\models.py:1245
+#: .\models.py:1328
 msgid "All"
 msgstr "Tous"
 
-#: .\models.py:1264
+#: .\models.py:1347
 msgid "ManageAccess Request"
 msgstr "Requête ManageAccess"
 
-#: .\models.py:1265
+#: .\models.py:1348
 msgid "ManageAccess Requests"
 msgstr "Requêtes ManageAccess"
 
-#: .\models.py:1297
+#: .\models.py:1380
 msgid "Period from"
 msgstr "Période du"
 
-#: .\models.py:1300
+#: .\models.py:1383
 msgid "Period until"
 msgstr "Période au"
 
-#: .\models.py:1422
+#: .\models.py:1505
 msgid "Requested action"
 msgstr "Action demandée"
 
-#: .\models.py:1423
+#: .\models.py:1506
 msgid "Proof of authentication"
 msgstr ""
 
-#: .\models.py:1450
-msgid "Tx25 Request"
-msgstr ""
-
-#: .\models.py:1451
-msgid "Tx25 Requests"
-msgstr ""
-
-#: .\models.py:1457
-msgid "History"
-msgstr ""
-
-#: .\models.py:1620
+#: .\models.py:1547
 msgid "Requesting organisation"
 msgstr ""
 
-#: .\models.py:1633
+#: .\models.py:1560
 msgid "SSDN User Id"
 msgstr ""
 
-#: .\models.py:1641
+#: .\models.py:1568
 msgid "SSDN email address"
 msgstr ""
 
-#: .\models.py:1648
+#: .\models.py:1575
 msgid "HTTP username"
 msgstr ""
 
-#: .\models.py:1656
+#: .\models.py:1583
 msgid "HTTP password"
 msgstr ""
 
-#: .\models.py:1688
+#: .\models.py:1615
 msgid "CBSS summary"
 msgstr ""
 
-#: .\models.py:1691
+#: .\models.py:1618
 msgid "CBSS"
 msgstr ""
 
-#: .\models.py:1699
-#: .\models.py:1707
+#: .\models.py:1628 .\models.py:1636
 msgid "INS code"
 msgstr ""
 
+#: .\tx25.py:52
+msgid "Tx25 Request"
+msgstr ""
+
+#: .\tx25.py:53
+msgid "Tx25 Requests"
+msgstr ""
+
+#: .\tx25.py:59
+msgid "History"
+msgstr ""
+
+#: .\tx25.py:347
+msgid "Residences"
+msgstr ""
+
+#: .\tx25.py:478
+msgid "Head Of Family"
+msgstr ""
+
+#: .\tx25.py:493
+msgid "Driving Licenses Old Model"
+msgstr ""
+
+#: .\tx25.py:507
+msgid "Identity Cards"
+msgstr ""
+
+#: .\tx25.py:602
+msgid "Group"
+msgstr ""
+
+#: .\tx25.py:606
+msgid "TI"
+msgstr ""
+
+#: .\tx25.py:610
+msgid "Since"
+msgstr ""
+
+#: .\tx25.py:614
+msgid "Info"
+msgstr ""

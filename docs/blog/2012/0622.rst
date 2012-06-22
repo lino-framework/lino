@@ -1,0 +1,7 @@
+20120622
+========
+
+- IntegrityError beim Erstellen eines Budgets
+
+- Übersetzungen
+

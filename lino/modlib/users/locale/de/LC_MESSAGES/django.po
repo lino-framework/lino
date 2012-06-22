@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-08 09:12+0100\n"
+"POT-Creation-Date: 2012-06-22 05:01+0100\n"
 "PO-Revision-Date: 2012-02-21 20:01+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -16,57 +16,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:58
+#: .\models.py:62
 msgid "User"
 msgstr "Benutzer"
 
-#: .\models.py:59
+#: .\models.py:63
 msgid "Users"
 msgstr "Benutzer"
 
-#: .\models.py:61
+#: .\models.py:65
 #, fuzzy
 msgid "Username"
 msgstr "Benutzername"
 
-#: .\models.py:63
+#: .\models.py:67
 msgid ""
 "\n"
 "        Required. Must be unique. \n"
 "        "
 msgstr ""
 
-#: .\models.py:67
-msgid "Same profile as"
-msgstr ""
-
-#: .\models.py:69
-msgid ""
-"\n"
-"        The user profile. Leave empty for \"profile-giving\" users, that "
-"is: \n"
-"        users who have their own combination of group memberships and \n"
-"        userlevels.\n"
-"        "
-msgstr ""
-
-#: .\models.py:74
+#: .\models.py:80
 msgid "First name"
 msgstr ""
 
-#: .\models.py:75
+#: .\models.py:81
 msgid "Last name"
 msgstr ""
 
-#: .\models.py:76
+#: .\models.py:82
 msgid "e-mail address"
 msgstr ""
 
-#: .\models.py:78
+#: .\models.py:84
 msgid "Remarks"
 msgstr ""
 
-#: .\models.py:133
+#: .\models.py:138
 msgid "Name"
 msgstr ""
 

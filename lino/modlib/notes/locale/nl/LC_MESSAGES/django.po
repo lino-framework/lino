@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-08 09:12+0100\n"
+"POT-Creation-Date: 2012-06-22 05:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,62 +17,62 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\models.py:49
+#: .\models.py:50
 msgid "Note Type"
 msgstr ""
 
-#: .\models.py:50
+#: .\models.py:51
 msgid "Note Types"
 msgstr ""
 
-#: .\models.py:54
+#: .\models.py:55
 msgid "important"
 msgstr ""
 
-#: .\models.py:56 .\models.py:69
+#: .\models.py:57 .\models.py:70
 msgid "Remark"
 msgstr ""
 
-#: .\models.py:66
+#: .\models.py:67
 msgid "Event Type"
 msgstr ""
 
-#: .\models.py:67
+#: .\models.py:68
 msgid "Event Types"
 msgstr ""
 
-#: .\models.py:70 .\models.py:120
+#: .\models.py:71 .\models.py:123
 msgid "Body"
 msgstr ""
 
-#: .\models.py:101
+#: .\models.py:104
 msgid "Event/Note"
 msgstr ""
 
-#: .\models.py:102
+#: .\models.py:105
 msgid "Events/Notes"
 msgstr ""
 
-#: .\models.py:107
+#: .\models.py:110
 msgid "Date"
 msgstr ""
 
-#: .\models.py:113
+#: .\models.py:116
 msgid "Note Type (Content)"
 msgstr ""
 
-#: .\models.py:116
+#: .\models.py:119
 msgid "Event Type (Form)"
 msgstr ""
 
-#: .\models.py:118
+#: .\models.py:121
 msgid "Subject"
 msgstr ""
 
-#: .\models.py:258
+#: .\models.py:264
 msgid "My notes"
 msgstr ""
 
-#: .\models.py:311
+#: .\models.py:317
 msgid "~Notes"
 msgstr ""
