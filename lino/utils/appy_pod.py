@@ -407,7 +407,11 @@ class Renderer(AppyRenderer):
                 #~ txt = etree.tostring(txt)
                 #~ pass
             else:
-                txt = unicode(txt)
+                try:
+                    txt = unicode(txt)
+                except UnicodeDecodeError,e:
+                    print 20120622, repr(txt)
+                    txt = repr(txt)
             #~ if not isinstance(txt,basestring): 
                 #~ raise Exception("Expected Element or basestring, got %r" % txt.__class__)
                 params.update(text=txt)

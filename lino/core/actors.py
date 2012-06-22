@@ -209,8 +209,8 @@ class Actor(object):
     
     #~ hide_top_toolbar = False
     
+    required = dict()
     create_required = dict()
-    read_required = dict()
     update_required = dict()
     delete_required = dict()
     

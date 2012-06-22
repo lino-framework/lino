@@ -120,57 +120,73 @@ def make_permission(actor,user_level=None,user_groups=None,states=None):
     The function will always expect three arguments user, obj and state.
     The latter two may be None depending on the context. 
     For example a read_required is expected to not test on obj or state.
+    
+    `user_level`
+        A string (e.g. ``'manager'``, ``'user'``,...) 
+        The minimum :class:`user level <lino.utils.choicelists.UserLevels>` 
+        required to get the permission.
+        The default value `None` means that no special user level is required.
+        
+    `user_groups`
+        List of strings naming the user groups for which membership is required 
+        to get permission to view this Actor.
+        The default value `None` means
+        
+    `states`
+        List of strings naming the user groups for which membership is required 
+    
+    
     """
-    #~ user = _for_user
-    if user_level is None:
-        def allow(self,user,obj,state):
-            return True
-    else:
-        user_level = getattr(UserLevels,user_level)
-        def allow(self,user,obj,state):
-            if user.profile.level is None or user.profile.level < user_level:
-                return False
-            return True
-    if user_groups is not None:
+    try:
         if user_level is None:
-            user_level = UserLevels.user
-            #~ raise Exception("20120621")
+            def allow(self,user,obj,state):
+                return True
         else:
             user_level = getattr(UserLevels,user_level)
-        allow1 = allow
-        def allow(self,user,obj,state):
-            if not allow1(self,user,obj,state): return False
-            for g in user_groups:
-                level = getattr(user.profile,g+'_level')
-                if level >= user_level:
-                    return True
-            return False
-            
-    if states is not None:
-        if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):
-            raise Exception("%r.workflow_state_field is not a ChoiceListField" % actor)
-        #~ else:
-            #~ print 20120621, "ok", actor
-        lst = actor.workflow_state_field.choicelist
-        #~ states = frozenset([getattr(lst,n) for n in states])
-        #~ possible_states = [st.name for st in lst.items()] + [BLANK_STATE]
-        ns = []
-        for n in states:
-            if n:
-                ns.append(getattr(lst,n))
-            else:
-                ns.append(lst.blank_item)
+            def allow(self,user,obj,state):
+                if user.profile.level is None or user.profile.level < user_level:
+                    return False
+                return True
+        if user_groups is not None:
+            if user_level is None:
+                user_level = UserLevels.user
+                #~ raise Exception("20120621")
+            allow1 = allow
+            def allow(self,user,obj,state):
+                if not allow1(self,user,obj,state): return False
+                for g in user_groups:
+                    level = getattr(user.profile,g+'_level')
+                    if level >= user_level:
+                        return True
+                return False
                 
-            #~ if not st in possible_states:
-                #~ raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
-        states = frozenset(ns)
-        allow1 = allow
-        def allow(self,user,obj,state):
-            if not allow1(self,user,obj,state): return False
-            if obj is None: return True
-            return state in states
-    #~ return perms.Permission(allow)
-    return allow
+        if states is not None:
+            if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):
+                raise Exception("Cannot specify `states` here (workflow_state_field is %r)." % actor)
+            #~ else:
+                #~ print 20120621, "ok", actor
+            lst = actor.workflow_state_field.choicelist
+            #~ states = frozenset([getattr(lst,n) for n in states])
+            #~ possible_states = [st.name for st in lst.items()] + [BLANK_STATE]
+            ns = []
+            for n in states:
+                if n:
+                    ns.append(getattr(lst,n))
+                else:
+                    ns.append(lst.blank_item)
+                    
+                #~ if not st in possible_states:
+                    #~ raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
+            states = frozenset(ns)
+            allow1 = allow
+            def allow(self,user,obj,state):
+                if not allow1(self,user,obj,state): return False
+                if obj is None: return True
+                return state in states
+        #~ return perms.Permission(allow)
+        return allow
+    except Exception,e:
+        raise Exception("Exception while making permissions for %s: %s" % (actor,e))
 
         
 
@@ -272,76 +288,6 @@ def make_permission(actor,user_level=None,user_groups=None,states=None):
 
 
 
-
-if False:
-    class ViewPermissionBase(object):
-        """
-        Inherited by 
-        :class:`lino.core.actors.Actor`,
-        :class:`lino.utils.jsgen.Component`,
-        but also instantiated 
-        :meth:`lino.models.Workflow.get_permission`.
-        """
-        
-        required_user_level = None
-        """
-        The minimum :class:`lino.utils.choicelists.UserLevels` 
-        required to get permission to view this Actor.
-        The default value `None` means that no special UserLevel is required.
-        See also :attr:`required_user_groups`
-        """
-        
-        required_user_groups = None
-        """
-        List of strings naming the user groups for which membership is required 
-        to get permission to view this Actor.
-        The default value `None` means
-        """
-        
-    class ViewPermissionClass(ViewPermissionBase):
-        @classmethod    
-        def get_view_permission(cls,user):
-            return _get_view_permission(cls,user)
-            
-    class ViewPermissionInstance(ViewPermissionBase):
-        def __init__(self,**kw):
-            for k,v in kw.items(): 
-                setattr(self,k,v)
-                
-        def get_view_permission(self,user):
-            #~ if self.required_user_groups is not None or self.required_user_level is not None:
-                #~ print 20120616, user, self.required_user_groups, self.required_user_level
-            return _get_view_permission(self,user)
-            
-    def _get_view_permission(self,user):
-        """
-        Return `True` if the specified `user` has permission 
-        to see this.
-        """
-        #~ if hasattr(self,'value') and self.value.get("title") == "CBSS":
-            #~ print "20120525 jsgen.get_view_permission()", self
-        #~ user = _for_user
-        if self.required_user_level is None:
-            if self.required_user_groups is None:
-                return True
-            for g in self.required_user_groups:
-                if getattr(user.profile,g+'_level'):
-                #~ if getattr(user,g+'_level',None) is not None:
-                    return True
-            return False
-        else:
-            if user.profile.level is None or user.profile.level < self.required_user_level:
-                return False
-            if self.required_user_groups is None:
-                return True
-            for g in self.required_user_groups:
-                level = getattr(user.profile,g+'_level')
-                #~ if level is not None and level >= self.required_user_level:
-                if level >= self.required_user_level:
-                    return True
-        return False
-    
-    
 
 
 

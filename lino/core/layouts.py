@@ -158,7 +158,7 @@ class LayoutHandle:
                 'Failed to define element %s = %s\n(in %s)' 
                 % (name,desc,self.layout))
                 #~ return
-        e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
+        #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
         setattr(self,name,e)
         return e
         
@@ -206,7 +206,7 @@ class LayoutHandle:
                         i += 1
                         e = self.desc2elem(elemname+'_'+str(i),x)
                         if e is not None:
-                            e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
+                            #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
                             elems.append(e)
             #~ if len(elems) == 1:
                 #~ vertical = False
@@ -226,7 +226,7 @@ class LayoutHandle:
                     elif isinstance(e,list):
                         elems += e
                     else:
-                        e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
+                        #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
                         elems.append(e)
         if len(elems) == 0:
             return None
@@ -238,7 +238,7 @@ class LayoutHandle:
                 #~ elems[0].label = label
             return elems[0]
         e = self.ui.create_layout_panel(self,elemname,vertical,elems,**kw)
-        e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
+        #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
         return e
             
     def create_element(self,desc_name,**kw):

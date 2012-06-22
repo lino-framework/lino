@@ -254,11 +254,11 @@ class Action(object):
             
     def get_action_permission(self,user,obj,state):
         """
-        The default implementation is that `readonly` 
-        actions always agree, while edit actions require 
-        a system UserLevel greater than `guest`
-        and an editable actor.
+        The default implementation simply calls this action's 
+        opermission handler.
+        Derived Action classes may oferride this to add vetos.
         """
+        logger.info("20120622 Action.get_action_permission")
         return self.allow(user,obj,state)
         #~ if not self.allow_read(user,obj,state)
         #~ if self.readonly:

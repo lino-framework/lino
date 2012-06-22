@@ -189,8 +189,9 @@ class AccountGroup(babel.BabelNamed,mixins.Sequenced):
     
 class AccountGroups(dd.Table):
     model = AccountGroup
-    required_user_groups = ['debts']
-    required_user_level = UserLevels.manager
+    required = dict(user_groups=['debts'],user_level='manager')
+    #~ required_user_groups = ['debts']
+    #~ required_user_level = UserLevels.manager
     
 
 
@@ -225,8 +226,10 @@ class Account(babel.BabelNamed,mixins.Sequenced):
     
 class Accounts(dd.Table):
     model = Account
-    required_user_level = UserLevels.manager
-    required_user_groups = ['debts']
+    #~ required_user_level = UserLevels.manager
+    #~ required_user_groups = ['debts']
+    required=dict(user_groups = ['debts'],user_level='manager')
+    
     
 
 
@@ -546,7 +549,8 @@ class Budgets(dd.Table):
     but is directly used by :menuselection:`Explorer --> Debts -->Budgets`.
     """
     model = Budget
-    required_user_groups = ['debts']
+    required=dict(user_groups = ['debts'])
+    #~ required_user_groups = ['debts']
     detail_layout = BudgetDetail()
     
     @dd.constant()
@@ -640,7 +644,8 @@ class Actor(ActorBase,SequencedBudgetComponent):
         
     
 class Actors(dd.Table):
-    required_user_groups = ['debts']
+    required=dict(user_groups = ['debts'])
+    #~ required_user_groups = ['debts']
     model = Actor
     column_names = "budget seqno partner header remark *"
 
@@ -781,13 +786,15 @@ Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
             
 class Entries(dd.Table):
     model = Entry
-    required_user_groups = ['debts']
-    required_user_level = UserLevels.manager
+    required=dict(user_groups = ['debts'],user_level='manager')
+    #~ required_user_groups = ['debts']
+    #~ required_user_level = UserLevels.manager
 
 
 class EntriesByType(Entries):
     _account_type = None
-    required_user_level = None
+    #~ required_user_level = None
+    required=dict(user_groups = ['debts'])
   
     @classmethod
     def class_init(self):
@@ -800,7 +807,8 @@ class EntriesByType(Entries):
 class EntriesByBudget(Entries):
     master_key = 'budget'
     column_names = "account description amount actor:10 periods:10 remark todo seqno"
-    required_user_level = None
+    required=dict(user_groups = ['debts'])
+    #~ required_user_level = None
     order_by = ['seqno']
 
         
@@ -1027,7 +1035,8 @@ class BudgetSummary(dd.VirtualTable):
     """
     A virtual table showing a list of summary numbers for this budget.
     """
-    required_user_groups = ['debts']
+    required=dict(user_groups = ['debts'])
+    #~ required_user_groups = ['debts']
     master = Budget
     column_names = "desc amount"
     label = _("Overview")

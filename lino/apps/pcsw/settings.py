@@ -272,6 +272,7 @@ INSTALLED_APPS = (
   #~ 'lino.modlib.thirds',
   'lino.modlib.cal',
   'lino.modlib.outbox',
+  'lino.modlib.postings',
   'lino.modlib.cv',
   'lino.modlib.jobs',
   'lino.modlib.isip',

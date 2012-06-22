@@ -117,7 +117,7 @@ class SiteConfigs(dd.Table):
     Deserves more documentation.
     """
     model = SiteConfig
-    read_required = dict(user_level = 'manager')
+    required = dict(user_level='manager')
     #~ default_action_class = dd.OpenDetailAction
     #~ has_navigator = False
     hide_top_toolbar = True

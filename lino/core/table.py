@@ -548,7 +548,6 @@ class Table(AbstractTable):
             
         
         if self.model is not None:
-          
             for b in self.model.mro():
                 for k,v in b.__dict__.items():
                     if isinstance(v,actions.Action):
@@ -587,6 +586,13 @@ class Table(AbstractTable):
                 #~ self.label = capfirst(self.model._meta.verbose_name_plural)
                 self.label = self.get_actor_label()
           
+              
+            for name in ('workflow_state_field',):
+                if getattr(self,name) is None:
+                    v = getattr(self.model,name,None)
+                    if v is not None:
+                        setattr(self,name,v)
+                        
             for name in ('disabled_fields',
                          'handle_uploaded_files', 
                          #~ 'get_row_permission', 

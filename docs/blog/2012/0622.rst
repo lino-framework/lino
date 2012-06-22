@@ -8,3 +8,46 @@
 - IPR.fill_from_person()
 
 - Tx25 nächstes Fallbeispiel.
+
+- disable_edit ignorierte es, wenn eine custom get_row_permission Veto anmeldete
+
+- Nach Duplizieren im Detail sprang er nicht korrekt auf den neuen Datensatz.
+
+- Workflow on Tx25. Status "new" kommt raus (ersetzt durch "leer"). 
+  Die Aktionen Drucken und Ausführen sind jetzt abhängig vom Status.
+
+- Button `[Letzten zeigen]` funktionierte nicht. Behoben. 
+  Gab den phantom record vom zuvor erstellen `[Neu]` als `data_record` mit.
+  :meth:`lino.ui.extjs3.ext_ui.HtmlRenderer.quick_add_buttons` .
+  
+- N.B.: was ist besser: 
+  
+  (a) ``required = dict(user_level=UserLevels.manager)``
+  (b) ``required = dict(user_level='manager')``
+  
+  Ich wähle (b), weil es kürzer ist, weil man dann UserLevel 
+  nicht zu importieren braucht, weil ein eventueller Tippfehler 
+  spätestens beim Serverstart gemeldet wird, weil es klar ist, 
+  dass es sich hier um UserLevels handelt.
+  
+- Reiter "Budgets" war noch sichtbar für alle.
+
+- Neues Modul :mod:`lino.modlib.postings`
+
+- Schade, dass man das folgende nicht machen kann::
+
+    bases = [Component,Ended,mixins.TypedPrintable,outbox.Mailable]
+    if postings:
+        bases.append(postings.Postable)
+    class Event(*bases):
+        ...
+
+
+
+TODO:
+
+- Momentan kriegen *alle* :class:`Components <lino.utils.jsgen.Component>`
+  einen permission handler verpasst. Das ist eigentlich nicht nötig, 
+  nur GridPanel und Panel brauchen den.
+  
+  

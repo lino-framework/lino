@@ -154,11 +154,13 @@ class HtmlRenderer(object):
             #~ after_show.update(record_id=-99999)
             # see tickets/56
             s += self.action_href_js(a,params,after_show,_("New"))
+            after_show = ar.get_status(self)
         n = ar.get_total_count()
         if n > 0:
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
-            s += ' ' + self.action_href_js(ar.ah.actor.detail_action,params,after_show,_("Show Last"))
+            s += ' ' + self.action_href_js(
+                ar.ah.actor.detail_action,params,after_show,_("Show Last"))
             #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
             s += ' ' + self.href_to_request(ar,_("Show All"))
         #~ return '<p>%s</p>' % s
@@ -2347,6 +2349,7 @@ tinymce.init({
         yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % tbl
         
         yield "  layout: 'fit',"
+        yield "  auto_save: true,"
         #~ yield "  content_type: %s," % py2js(dh.content_type)
         
         if settings.LINO.is_installed('contenttypes') and issubclass(tbl,table.Table):

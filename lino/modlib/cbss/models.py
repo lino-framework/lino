@@ -196,20 +196,20 @@ def cbss2address(obj,**data):
     
     
     
-class RequestStatus(ChoiceList):
+class RequestStates(ChoiceList):
     """
     The status of a :class:`CBSSRequest`.
     """
-    label = _("Status")
+    label = _("Request State")
 
-add = RequestStatus.add_item
-add('0',_("New"),'new')
-add('1',_("Pending"),'pending')
-add('2',_("Failed"),'failed')
-add('3',_("OK"),'ok')
-add('4',_("Warnings"),'warnings')
-add('5',_("Errors"),'errors')
-add('6',_("Validated"),'validated')
+add = RequestStates.add_item
+#~ add('0',_("New"),'new')
+add('10',_("Sent"),'sent')
+add('20',_("Failed"),'failed') # sending failed. no ticket yet. can execute again.
+add('25',_("Validated"),'validated') # only when cbss_live_tests
+add('30',_("OK"),'ok')
+add('40',_("Warnings"),'warnings') # OK and useable
+add('50',_("Errors"),'errors') # there's a ticket, but no usable result. cannot print.
 #~ add('6',_("Invalid reply"),'invalid')
 #~ add('9',_("Fictive"),'fictive')
   
@@ -228,7 +228,7 @@ add('6',_("Validated"),'validated')
     
 
 
-class SendAction(dd.RowAction):
+class ExecuteRequest(dd.RowAction):
     """
     This defines the "Execute" button on a 
     :class:`CBSSRequest` or
@@ -236,22 +236,23 @@ class SendAction(dd.RowAction):
     record.
     """
     readonly = False
-    url_action_name = 'send'
+    url_action_name = 'exec'
     label = _('Execute')
     #~ callable_from = None
     callable_from = (dd.GridEdit,dd.ShowDetailAction)
+    required = dict(states=['','validated','failed'])
     
     #~ def get_row_permission(self,user,obj):
         #~ if obj.ticket:
             #~ return False
-        #~ return super(SendAction,self).get_row_permission(user,obj)
+        #~ return super(ExecuteRequest,self).get_row_permission(user,obj)
       
     def run(self,obj,ar,**kw):
         obj.execute_request(ar)
-        if obj.status == RequestStatus.failed:
+        if obj.status == RequestStates.failed:
             kw.update(message=obj.debug_messages)
             kw.update(alert=True)
-        elif obj.status == RequestStatus.warnings:
+        elif obj.status == RequestStates.warnings:
             kw.update(message=obj.info_messages)
             #~ kw.update(message=_("Got valid response, but it contains warnings."))
             kw.update(alert=True)
@@ -286,7 +287,7 @@ class Sectors(dd.Table):
     model = Sector
     #~ read_permission = perms.Required(user_groups = ['cbss'])
     #~ required_user_groups = ['cbss']
-    read_required = dict(user_groups = ['cbss'])
+    required = dict(user_groups = ['cbss'])
     column_names = 'code subcode abbr name *'
     order_by = ['code','subcode']
     
@@ -313,7 +314,7 @@ class Purpose(babel.BabelNamed):
 
 class Purposes(dd.Table):
     model = Purpose
-    read_required = dict(user_groups = ['cbss'])
+    required = dict(user_groups = ['cbss'])
     #~ required_user_groups = ['cbss']
     column_names = 'sector_code code name *'
     order_by = ['sector_code','code']
@@ -335,6 +336,8 @@ class CBSSRequest(mixins.AutoUser,mixins.Printable,mixins.Duplicable):
     and :class:`NewStyleRequest`
     """
     
+    workflow_state_field = 'status'
+    
     wsdl_parts = NotImplementedError
     
     class Meta:
@@ -353,7 +356,8 @@ The date and time when this request has been executed.
 This is empty for requests than haven't been sent.
 Read-only.""")
     
-    status = RequestStatus.field(default=RequestStatus.new,editable=False)
+    #~ status = RequestStates.field(default=RequestStates.new,editable=False)
+    status = RequestStates.field(editable=False)
     environment = models.CharField(max_length=4,editable=False,verbose_name=_("T/A/B"))
     ticket  = models.CharField(max_length=36,editable=False,verbose_name=_("Ticket"))
     #~ environment = Environment.field(blank=True,null=True)
@@ -367,8 +371,8 @@ Read-only.""")
         verbose_name=_("Response"),
         editable=False,blank=True,
         help_text="""\
-The response received, raw XML string. 
-If the request failed with a local exception, then it contains a traceback.""")
+The raw XML response received. 
+""")
 
     #~ logged_messages = models.TextField(
         #~ verbose_name=_("Logged messages"),
@@ -382,8 +386,8 @@ If the request failed with a local exception, then it contains a traceback.""")
         verbose_name=_("Info messages"),
         editable=False,blank=True)
 
-    send_action = SendAction()
-    print_action = mixins.DirectPrintAction()
+    send_action = ExecuteRequest()
+    print_action = mixins.DirectPrintAction(required=dict(states=['ok','warnings']))
     
     
     #~ def save(self,*args,**kw):
@@ -401,7 +405,8 @@ If the request failed with a local exception, then it contains a traceback.""")
         self.response_xml = ''
         self.request_xml = ''
         self.sent = None
-        self.status = RequestStatus.new
+        #~ self.status = RequestStates.new
+        self.status = RequestStates.blank_item
         self.environment = ''
         super(CBSSRequest,self).on_duplicate(ar,master)
         
@@ -409,6 +414,7 @@ If the request failed with a local exception, then it contains a traceback.""")
         """
         CBSS requests that have a `ticket` may never be modified.
         """
+        #~ logger.info("20120622 CBSSRequest.get_row_permission %s %s", self.ticket, action.readonly)
         if self.ticket and not action.readonly: 
             return False
         return super(CBSSRequest,self).get_row_permission(user,state,action)
@@ -422,7 +428,7 @@ If the request failed with a local exception, then it contains a traceback.""")
     #~ @classmethod
     #~ def setup_report(cls,rpt):
         #~ # call_optional_super(CBSSRequest,cls,'setup_report',rpt)
-        #~ rpt.add_action(SendAction())
+        #~ rpt.add_action(ExecuteRequest())
         
     #~ def logmsg(self,s,*args):
         #~ if args:
@@ -450,12 +456,12 @@ If the request failed with a local exception, then it contains a traceback.""")
     def execute_request(self,ar=None,now=None,simulate_response=None,environment=None):
         """
         This is the general method for all SSDN services,
-        executed when a user runs :class:`SendAction`.
+        executed when a user runs :class:`ExecuteRequest`.
         """
         if ar is not None:
             logger.info("%s executes CBSS request %s",ar.get_user(),self)
         if self.ticket:
-            raise Exception("Tried to re-execute %s with non-empty ticket." % self)
+            raise Exception("Cannot re-execute %s with non-empty ticket." % self)
         if now is None:
             now = datetime.datetime.now()
         if environment is None:
@@ -470,11 +476,11 @@ If the request failed with a local exception, then it contains a traceback.""")
         if not settings.LINO.cbss_live_tests:
             if simulate_response is None and environment:
                 self.validate_request()
-                self.status = RequestStatus.validated
+                self.status = RequestStates.validated
                 self.save()
                 return
                 
-        self.status = RequestStatus.pending
+        self.status = RequestStates.sent
         self.save()
         
         retval = None
@@ -483,10 +489,16 @@ If the request failed with a local exception, then it contains a traceback.""")
                 #~ self.validate_request()
             retval = self.execute_request_(now,simulate_response)
         except (IOError,Warning),e:
-            self.status = RequestStatus.failed
+            if self.ticket:
+                self.status = RequestStates.errors
+            else:
+                self.status = RequestStates.failed
             self.logmsg_debug(unicode(e))
         except Exception,e:
-            self.status = RequestStatus.failed
+            if self.ticket:
+                self.status = RequestStates.errors
+            else:
+                self.status = RequestStates.failed
             #~ self.response_xml = traceback.format_exc(e)
             self.logmsg_debug(traceback.format_exc(e))
 
@@ -572,7 +584,7 @@ class CBSSRequestDetail(dd.DetailLayout):
         lh.technical.label = _("Technical")
         #~ lh.technical.required_user_level = UserLevels.manager
         #~ lh.technical.read_permission = perms.Required(user_groups = ['cbss'])
-        lh.technical.read_required = dict(user_level='manager')
+        lh.technical.required = dict(user_level='manager')
 
         #~ lh.response.label = _("Response")
         #~ lh.log.label = _("Log")
@@ -702,14 +714,14 @@ class SSDNRequest(CBSSRequest):
         #~ rc = reply.root().SSDNReply.ServiceReply.ResultSummary.ReturnCode
         
         if rc == '0':
-            self.status = RequestStatus.ok
+            self.status = RequestStates.ok
         elif rc == '1':
-            self.status = RequestStatus.warnings
+            self.status = RequestStates.warnings
             #~ self.logmsg_debug("Warnings:==============\n%s\n===============" % s)
         #~ elif rc == '10000':
-            #~ self.status = RequestStatus.errors
+            #~ self.status = RequestStates.errors
         else:
-            self.status = RequestStatus.errors
+            self.status = RequestStates.errors
             #~ self.response_xml = unicode(reply)
             #~ dtl = rs.childAtPath('/Detail')
             #~ msg = CBSS_ERROR_MESSAGE % rc
@@ -843,11 +855,6 @@ class NewStyleRequest(CBSSRequest):
         Called when a successful reply has been received.
         """
         pass
-        
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ # call_optional_super(CBSSRequest,cls,'setup_report',rpt)
-        #~ rpt.add_action(SendAction())
         
     #~ def __unicode__(self):
         #~ return u"%s#%s" % (self.__class__.__name__,self.pk)
@@ -1113,12 +1120,12 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
             #~ try:
                 #~ res = self.cbss_namespace.execute(srvreq,str(self.id),now)
             #~ except cbss.Warning,e:
-                #~ self.status = RequestStatus.exception
+                #~ self.status = RequestStates.exception
                 #~ self.response_xml = unicode(e)
                 #~ self.save()
                 #~ return
             #~ except Exception,e:
-                #~ self.status = RequestStatus.exception
+                #~ self.status = RequestStates.exception
                 #~ self.response_xml = traceback.format_exc(e)
                 #~ self.save()
                 #~ return
@@ -1127,14 +1134,14 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
             #~ reply = cbss.xml2reply(res.data.xmlString)
             #~ rc = reply.ServiceReply.ResultSummary.ReturnCode
             #~ if rc == '0':
-                #~ self.status = RequestStatus.ok
+                #~ self.status = RequestStates.ok
             #~ elif rc == '1':
-                #~ self.status = RequestStatus.warnings
+                #~ self.status = RequestStates.warnings
             #~ elif rc == '10000':
-                #~ self.status = RequestStatus.errors
+                #~ self.status = RequestStates.errors
             #~ self.save()
             
-            #~ if self.status != RequestStatus.ok:
+            #~ if self.status != RequestStates.ok:
                 #~ msg = '\n'.join(list(cbss.reply2lines(reply)))
                 #~ raise Exception(msg)
                 
@@ -1179,7 +1186,7 @@ class CBSSRequests(dd.Table):
     
 class IdentifyPersonRequests(CBSSRequests):
     #~ window_size = (500,400)
-    read_required = dict(user_groups = ['cbss'])
+    required = dict(user_groups = ['cbss'])
     #~ required_user_groups = ['cbss']
     model = IdentifyPersonRequest
     active_fields = ['person']
@@ -1223,8 +1230,8 @@ class IdentifyPersonResult(dd.VirtualTable):
         if ipr is None: 
             #~ print "20120606 ipr is None"
             return
-        #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
-        if not ipr.status in (RequestStatus.ok,RequestStatus.warnings):
+        #~ if not ipr.status in (RequestStates.ok,RequestStates.fictive):
+        if not ipr.status in (RequestStates.ok,RequestStates.warnings):
             #~ print "20120606 wrong status", ipr.status 
             return
         service_reply = ipr.get_service_reply()
@@ -1520,7 +1527,7 @@ class ManageAccessRequests(CBSSRequests):
     #~ window_size = (500,400)
     model = ManageAccessRequest
     detail_layout = ManageAccessRequestDetail()
-    read_required = dict(user_groups = ['cbss'])
+    required = dict(user_groups = ['cbss'])
     #~ required_user_groups = ['cbss']
     active_fields = ['person']
     
@@ -1610,7 +1617,7 @@ def cbss_summary(self,ar):
     """
     returns a summary overview of the CBSS requests for this person.
     """
-    #~ qs = IdentifyPersonRequest.objects.filter(person=self,status=RequestStatus.ok)
+    #~ qs = IdentifyPersonRequest.objects.filter(person=self,status=RequestStates.ok)
     html = '<p><ul>'
     for m in (IdentifyPersonRequest,ManageAccessRequest,RetrieveTIGroupsRequest):
         n = m.objects.filter(person=self).count()

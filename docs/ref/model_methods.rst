@@ -1,6 +1,12 @@
 Special model attributes and methods
 ------------------------------------
 
+.. modattr:: workflow_state_field
+
+  If this is set on a Model, then it will be used as default 
+  value for :attr:`lino.core.table.Table.workflow_state_field` 
+  on all tables based on this Model.
+  
 .. modattr:: _lino_preferred_width
 
     Used to set an explicit default `preferred_width` (in characters) 

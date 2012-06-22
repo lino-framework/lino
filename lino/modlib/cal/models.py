@@ -47,6 +47,8 @@ from lino.modlib.contacts import models as contacts
 
 #~ from lino.modlib.mails import models as mails # import Mailable
 from lino.modlib.outbox import models as outbox # import Mailable
+postings = dd.resolve_app('postings')
+
 
 from lino.modlib.cal.utils import \
     Weekday, DurationUnits, setkw, dt2kw, EventState, GuestState, TaskState
@@ -667,11 +669,12 @@ class Components(dd.Table):
 
 
 
-#~ class Event(Component,Ended,mixins.TypedPrintable,mails.Mailable):
+#~ bases = (Component,Ended,mixins.TypedPrintable,outbox.Mailable, postings.Postable)
+#~ class Event(*bases):
 class Event(Component,Ended,
     mixins.TypedPrintable,
     outbox.Mailable, 
-    outbox.Postable):
+    postings.Postable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
     is a scheduled lapse of time where something happens.
@@ -771,23 +774,19 @@ class Event(Component,Ended,
             return self.project.get_print_language(bm)
         return self.user.language
         
-    @dd.action(_("Suggest"),required=dict(states=['','draft']))
-    def suggest_action(self,ar):
-        #~ if self.state != GuestState.invited:
-        print 'TODO: would suggest', self
-        self.state = EventState.suggested
-        self.save()
-        return ar.ui.success_response(refresh=True)
-    #~ suggest_action.set_permissions(required_states=['','draft'])
+    #~ @dd.action(_("Suggest"),required=dict(states=['','draft']))
+    #~ def suggest_action(self,ar):
+        #~ print 'TODO: would suggest', self
+        #~ self.state = EventState.suggested
+        #~ self.save()
+        #~ return ar.ui.success_response(refresh=True)
     
-    @dd.action(_("Publish"),required=dict(states=['','draft','suggested']))
-    def publish(self,ar):
-        #~ if self.state != GuestState.invited:
-        print 'TODO: would publish', self
-        self.state = EventState.published
-        self.save()
-        return ar.ui.success_response(refresh=True)
-    #~ publish.set_permissions()
+    #~ @dd.action(_("Publish"),required=dict(states=['','draft','suggested']))
+    #~ def publish(self,ar):
+        #~ print 'TODO: would publish', self
+        #~ self.state = EventState.published
+        #~ self.save()
+        #~ return ar.ui.success_response(refresh=True)
         
 
 #~ class Task(Component,contacts.PartnerDocument):

@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -90,7 +91,8 @@ from django.utils.encoding import force_unicode
 
 
 import lino
-from lino.utils import IncompleteDate
+from lino.utils import IncompleteDate, curry
+from lino.utils import perms
 #~ from lino.utils.perms import ViewPermissionInstance
 #~ from lino.utils.perms import Permittable
 from lino.utils.xmlgen import etree
@@ -128,9 +130,9 @@ def declare_vars(v):
             for ln in declare_vars(sub):
                 yield ln
         return
+    if isinstance(v,Permittable) and not v.get_view_permission(_for_user): 
+        return
     if isinstance(v,Component): 
-        #~ if not v.get_view_permission(_for_user): return
-        if not v.allow_read(_for_user,None,None): return
         for sub in v.ext_options().values():
             for ln in declare_vars(sub):
                 yield ln
@@ -190,16 +192,13 @@ def py2js(v):
     if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
         #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
         elems = [py2js(x) for x in v 
-            if (not isinstance(x,Value)) or x.allow_read(_for_user,None,None)]
-                      
-
+            if (not isinstance(x,Permittable)) or x.get_view_permission(_for_user)]
         return "[ %s ]" % ", ".join(elems)
     if isinstance(v,dict): # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
-            #~ "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
             "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()
-              if (not isinstance(v,Value)) or v.allow_read(_for_user,None,None)
+              if (not isinstance(v,Permittable)) or v.get_view_permission(_for_user)
               ])
             #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
@@ -403,31 +402,11 @@ class Component(Variable):
     """
     Deserves more documentation.
     """
-    required = {}
-    """
-    Conditions required to READ (view) this component.
-    """
-    
-    def allow_read(self,user,obj,state):
-        return True
     
     def __init__(self,name=None,**options):
+        # note that we remove the "**" from options ;-)
         Variable.__init__(self,name,options)
-
-        #~ Permittable.__init__()
-        #~ Permittable.setup_permissions()
-        #~ self.update(**self.ext_options())
-        
-    def get_view_permission(self,user):
-        return self.allow_read(user,None,None)
-        
-    #~ def get_view_permission(self):
-        #~ """
-        #~ Whether this Component should be rendered into the js 
-        #~ of current user (`_for_user`).
-        #~ """
-        #~ return super(Component,self).get_view_permission(_for_user)
-        
+    
     def js_value(self):
         value = self.ext_options()
         #~ value = self.ext_options(**self.value)
@@ -453,6 +432,42 @@ class Component(Variable):
             for e in i.walk():
                 yield e
       
+
+#~ class PermissionComponent(Component): 
+class Permittable(object): 
+    """
+    """
+    required = {}
+    """
+    Conditions required to READ (view) this component.
+    """
+    workflow_state_field = None # internally needed for make_permission
+    
+    
+    #~ def allow_read(self,user,obj,state):
+        #~ return True
+    
+    def __init__(self):
+        #~ super(PermissionComponent,self).__init__(self,*args,**kw)
+        self.allow_read = curry(perms.make_permission(self,**self.required),self)
+
+        #~ Permittable.__init__()
+        #~ Permittable.setup_permissions()
+        #~ self.update(**self.ext_options())
+        
+    def get_view_permission(self,user):
+        #~ logger.info("20120622 %s.get_view_permission",self)
+        return self.allow_read(user,None,None)
+        
+    #~ def get_view_permission(self):
+        #~ """
+        #~ Whether this Component should be rendered into the js 
+        #~ of current user (`_for_user`).
+        #~ """
+        #~ return super(Component,self).get_view_permission(_for_user)
+        
+
+
 #~ class Function(Variable):
   
     #~ def __init__(self,name=None):

@@ -42,7 +42,7 @@ except ImportError, e:
 
 
 from lino.modlib.cbss.models import NewStyleRequest,SSIN, get_client, \
-  CBSSRequestDetail, CBSSRequests, cbss2gender, RequestStatus
+  CBSSRequestDetail, CBSSRequests, cbss2gender, RequestStates
 
 class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
     """
@@ -117,7 +117,7 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
                 
                 msg = CBSS_ERROR_MESSAGE % e.fault.faultstring
                 msg += unicode(e.document)
-                self.status = RequestStatus.failed
+                self.status = RequestStates.failed
                 raise Warning(msg)
             self.response_xml = reply
         else:
@@ -134,10 +134,10 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
                     for k in keys])
             for i in reply.status.information:
                 msg += "\n- %s = %s" % (i.fieldName,i.fieldValue)
-            self.status = RequestStatus.warnings
+            self.status = RequestStates.warnings
             raise Warning(msg)
             
-        self.status = RequestStatus.ok
+        self.status = RequestStates.ok
         #~ self.response_xml = str(res)
         #~ self.response_xml = "20120522 %s %s" % (res.__class__,res)
         #~ print 20120523, res.informationCustomer
@@ -338,8 +338,8 @@ class RowHandlers:
   
     @staticmethod
     def IT000(n,name):
-        #~ group = _("National Number")
-        group = name
+        group = _("National Number")
+        #~ group = name
         n = n.NationalNumber
         info = [
           E.b(n.NationalNumber),
@@ -628,8 +628,8 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
         if rti is None: 
             #~ print "20120606 ipr is None"
             return
-        #~ if not ipr.status in (RequestStatus.ok,RequestStatus.fictive):
-        #~ if not rti.status in (RequestStatus.ok,RequestStatus.warnings):
+        #~ if not ipr.status in (RequestStates.ok,RequestStates.fictive):
+        #~ if not rti.status in (RequestStates.ok,RequestStates.warnings):
             #~ return
         reply = rti.get_service_reply()
         if reply is None:

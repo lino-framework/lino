@@ -1200,7 +1200,8 @@ class MyPersons(Persons):
     beiden Daten coached_from und coached_until ausgefüllt sein.
     
     """
-    required_user_groups = ['integ']
+    required=dict(user_groups = ['integ'])
+    #~ required_user_groups = ['integ']
     #~ required_user_level = UserLevels.manager
     
     #~ app_label = 'contacts'
@@ -1270,7 +1271,8 @@ class ClientsTest(Persons):
     """
     Table of persons whose data seems unlogical or inconsistent.
     """
-    required_user_level = UserLevels.manager
+    required=dict(user_level = 'manager')
+    #~ required_user_level = UserLevels.manager
     label = _("Data Test Clients")
     parameters = dict(
       user = models.ForeignKey(User,blank=True,verbose_name=_("Coached by")),
@@ -1459,8 +1461,10 @@ class PersonGroup(dd.Model):
 class PersonGroups(dd.Table):
     """List of Integration Phases"""
     model = PersonGroup
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    #~ required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
+    required = dict(user_level='manager',user_groups=['integ'])
+
     order_by = ["ref_name"]
 
     
@@ -1482,7 +1486,8 @@ class Activity(dd.Model):
 
 class Activities(dd.Table):
     model = Activity
-    required_user_level = UserLevels.manager
+    #~ required_user_level = UserLevels.manager
+    required=dict(user_level='manager')
     #~ label = _('Activities')
 
 #~ class ActivitiesByPerson(Activities):
@@ -1506,7 +1511,8 @@ class ExclusionType(dd.Model):
 
 class ExclusionTypes(dd.Table):
     #~ required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required = dict(user_level='manager')
+    #~ required_user_level = UserLevels.manager
     model = ExclusionType
     #~ label = _('Exclusion Types')
     
@@ -1532,12 +1538,14 @@ class Exclusion(dd.Model):
         return s
 
 class Exclusions(dd.Table):
-    required_user_level = UserLevels.manager
+    required=dict(user_level='manager')
+    #~ required_user_level = UserLevels.manager
     model = Exclusion
     #~ label = _('Exclusions')
     
 class ExclusionsByPerson(Exclusions):
-    required_user_level = None
+    required=dict(user_groups=['integ'])
+    #~ required_user_level = None
     master_key = 'person'
     column_names = 'excluded_from excluded_until type remark'
 
@@ -1597,7 +1605,9 @@ class AidType(babel.BabelNamed):
 class AidTypes(dd.Table):
     model = AidType
     column_names = 'name *'
-    required_user_level = UserLevels.manager
+    #~ required_user_level = UserLevels.manager
+    required=dict(user_level='manager')
+
 
 
 
@@ -2071,7 +2081,7 @@ def site_setup(site):
     """,_("General"))
     site.modules.cal.Events.add_detail_panel("more","""
     id calendar created:20 modified:20 user_modified 
-    outbox.MailsByController outbox.PostingsByController
+    outbox.MailsByController postings.PostingsByController
     """,_("More"))
     
     #~ site.modules.users.Users.set_detail(box2 = """

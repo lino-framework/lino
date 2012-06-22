@@ -82,7 +82,9 @@ def before_row_edit(panel):
     #~ l.append("console.log('before_row_edit',record);")
     master_field = panel.layout_handle.layout._table.master_field
     for e in panel.active_children:
-        if not e.get_view_permission(jsgen._for_user): continue
+        if isinstance(e,jsgen.Permittable) and not e.get_view_permission(jsgen._for_user):
+            continue
+        #~ if not e.get_view_permission(jsgen._for_user): 
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
         #~ elif isinstance(e,PictureElement):
@@ -1045,7 +1047,7 @@ class HtmlBoxElement(DisplayElement):
         
 
 
-class Container(LayoutElement):
+class Container(LayoutElement,jsgen.Permittable):
     vertical = False
     hpad = 1
     is_fieldset = False
@@ -1086,6 +1088,7 @@ class Container(LayoutElement):
             #~ kw.update(items=elements)
                 
         LayoutElement.__init__(self,layout_handle,name,**kw)
+        jsgen.Permittable.__init__(self)
         
         
     def subvars(self):
@@ -1134,7 +1137,7 @@ class Container(LayoutElement):
         #~ if self.value.get("title") == "CBSS":
             #~ print "20120525 Container.get_view_permission() passed", self
         for e in self.elements:
-            if e.get_view_permission(user):
+            if (not isinstance(e,jsgen.Permittable)) or e.get_view_permission(user):
                 # one visble child is enough, no need to continue loop 
                 return True
         return False
@@ -1157,11 +1160,11 @@ class Wrapper(VisibleComponent):
         else:
             e.update(anchor="100%")
         #~ e.update(padding=DEFAULT_PADDING)
-        self.allow_read = e.allow_read
-        self.get_view_permission = e.get_view_permission
+        #~ self.allow_read = e.allow_read
+        #~ self.get_view_permission = e.get_view_permission
             
-    #~ def get_view_permission(self,user):
-        #~ return self.wrapped.get_view_permission(user)
+    def get_view_permission(self,user):
+        return self.wrapped.get_view_permission(user)
         
     #~ def allow_read(self,*args):
         #~ return self.wrapped.allow(user)
@@ -1522,6 +1525,7 @@ class GridElement(Container):
         if rpt.params_panel_hidden:
             kw.update(params_panel_hidden=True)
         Container.__init__(self,layout_handle,name,**kw)
+        #~ jsgen.Permittable.__init__(self)
         self.active_children = columns
         #~ 20111125
         #~ assert not kw.has_key('before_row_edit')
@@ -1670,6 +1674,7 @@ class TabPanel(Panel):
           #~ listeners=dict(activate=js_code("function(p) {p.doLayout();}"),single=True),
         )
         Container.__init__(self,layout_handle,name,*elems,**kw)
+        #~ jsgen.Permittable.__init__(self)
         
     #~ def __init__(self,tabs,**kw):
         #~ self.active_children = []
@@ -1709,6 +1714,7 @@ class FormPanel(jsgen.Component):
         #~ kw.update(ls_url=rpt2url(rpt))
         #~ ... hmm
         jsgen.Component.__init__(self,'form_panel',**kw)
+        jsgen.Permittable.__init__(self)
         
     def unused_has_field(self,f):
         return self.main.has_field(f)

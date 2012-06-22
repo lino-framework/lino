@@ -1211,15 +1211,16 @@ Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
               Lino.notify(result.message);
           }
       }
+      // 
       if (result.data_record && ! gridmode) {
           //~ not used
           panel.set_status({data_record:result.data_record});
       }
-      if (result.new_status && ! gridmode) {
-          console.log('20120607 new_status');
+      else if (result.new_status && ! gridmode) {
+          //~ console.log('20120607 new_status');
           panel.set_status(result.new_status);
       }
-      if (result.refresh_all) {
+      else if (result.refresh_all) {
           var cw = panel.get_containing_window();
           //~ console.log("20120123 refresh_all");
           if (cw) {
@@ -2211,7 +2212,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       return st;
   },
   set_status : function(status){
-    //~ console.log('20120208 FormPanel.set_status()',this,status);
+    //~ console.log('20120622 FormPanel.set_status()',this,status);
     this.clear_base_params();
     if (status == undefined) status = {};
     if (status.param_values) this.set_param_values(status.param_values);
@@ -2294,18 +2295,22 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   do_when_clean : function(todo) {
     var this_ = this;
     if (this.form.isDirty()) {
-        //~ console.log('20111217 do_when_clean() form is dirty',this.form);
-        var config = {title:"$_('Confirmation')"};
-        config.buttons = Ext.MessageBox.YESNOCANCEL;
-        config.msg = "$_('Save changes to current record ?')";
-        config.fn = function(buttonId,text,opt) {
-          //~ console.log('do_when_clean',buttonId)
-          if (buttonId == "yes") {
-              //~ Lino.submit_detail(this_,undefined,todo);
-              //~ this_.containing_window.save(todo);
-              this_.save(todo);
-          } else if (buttonId == "no") { 
-            todo();
+        if (this.auto_save) {
+            this_.save(todo);
+        } else {
+          //~ console.log('20111217 do_when_clean() form is dirty',this.form);
+          var config = {title:"$_('Confirmation')"};
+          config.buttons = Ext.MessageBox.YESNOCANCEL;
+          config.msg = "$_('Save changes to current record ?')";
+          config.fn = function(buttonId,text,opt) {
+            //~ console.log('do_when_clean',buttonId)
+            if (buttonId == "yes") {
+                //~ Lino.submit_detail(this_,undefined,todo);
+                //~ this_.containing_window.save(todo);
+                this_.save(todo);
+            } else if (buttonId == "no") { 
+              todo();
+            }
           }
         }
         Ext.MessageBox.show(config);
@@ -2327,7 +2332,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ var p = { fmt: this.containing_window.config.action_name};
     //~ var p = Ext.apply({},this.containing_window.config.base_params);
     var p = Ext.apply({},this.get_base_params());
-    //~ console.log('20110713 load_record_id',record_id,p);
     //~ console.log('20110713 action_name=',this.containing_window.config.action_name,
       //~ 'base_params=',this.containing_window.config.base_params);
     if (this.action_name)
@@ -2340,6 +2344,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     this.add_param_values(p);
+    //~ console.log('20120622 load_record_id',record_id,p);
     if (this.loadMask) this.loadMask.show();
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
