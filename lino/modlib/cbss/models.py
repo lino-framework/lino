@@ -1059,8 +1059,8 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
         
     def build_request(self):
         """Construct and return the root element of the (inner) service request."""
-        if not self.birth_date:
-            raise Exception("Empty birth date (a full_clean() would have told that, too!)")
+        #~ if not self.birth_date:
+            #~ raise Exception("Empty birth date (a full_clean() would have told that, too!)")
         
         national_id = self.get_ssin()
         gender = gender2cbss(self.gender)
