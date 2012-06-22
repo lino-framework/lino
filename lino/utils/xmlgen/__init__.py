@@ -39,6 +39,8 @@ from functools import partial
 #~ from xml.etree import ElementTree as ET
 from lino.utils.xmlgen import etree
 from lino.utils import Warning
+from django.utils.functional import Promise
+from django.utils.encoding import force_unicode
 
 
 def pretty_print(elem):
@@ -163,6 +165,8 @@ class Namespace(object):
         tag = self.addns(tag)
         elem = etree.Element(tag, nsattrib)
         for item in children:
+            if isinstance(item, Promise):
+                item = force_unicode(item)
             if isinstance(item, dict):
                 elem.attrib.update(self.makeattribs(**item))
             elif isinstance(item, basestring):
