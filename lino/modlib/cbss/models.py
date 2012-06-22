@@ -1049,8 +1049,13 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
         return ar.spawn(IdentifyPersonResult,master_instance=self)
         
     def fill_from_person(self,person):
-        super(IdentifyPersonRequest,self).fill_from_person(person)
-        self.gender = person.gender
+        self.national_id = person.national_id
+        if not self.national_id:
+            self.id_card_no = person.card_number
+            self.last_name = person.last_name
+            self.first_name = person.first_name
+            self.birth_date = person.birth_date
+            self.gender = person.gender
         
     def build_request(self):
         """Construct and return the root element of the (inner) service request."""

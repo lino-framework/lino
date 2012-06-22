@@ -5,3 +5,6 @@
 
 - Übersetzungen
 
+- IPR.fill_from_person()
+
+- Tx25 
