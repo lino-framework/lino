@@ -914,17 +914,36 @@ if settings.LINO.user_model:
     class MyEvents(Events,mixins.ByUser):
         #~ model = 'cal.Event'
         #~ label = _("My Events")
-        order_by = ["start_date","start_time"]
+        order_by = ["-start_date","-start_time"]
         #~ column_names = 'start_date start_time summary state *'
         
     class MyEventsToday(MyEvents):
         column_names = 'start_time summary state workflow_buttons *'
         label = _("My events today")
+        order_by = ['start_time']
         
+        parameters = dict(
+          date = models.DateField(_("Date"),
+          blank=True,default=datetime.date.today),
+        )
         @classmethod
-        def setup_request(self,rr):
-            rr.known_values = dict(start_date=datetime.date.today())
-            super(MyEventsToday,self).setup_request(rr)
+        def get_request_queryset(self,ar):
+            qs = super(MyEventsToday,self).get_request_queryset(ar)
+            #~ if ar.param_values.date:
+            return qs.filter(start_date=ar.param_values.date)
+            #~ return qs
+            
+        @classmethod
+        def create_instance(self,ar,**kw):
+            kw.update(start_date=ar.param_values.date)
+            return super(MyEventsToday,self).create_instance(ar,**kw)
+
+        #~ @classmethod
+        #~ def setup_request(self,rr):
+            #~ rr.known_values = dict(start_date=datetime.date.today())
+            #~ super(MyEventsToday,self).setup_request(rr)
+            
+            
         
     class MyTasks(Tasks,mixins.ByUser):
         order_by = ["start_date","start_time"]
@@ -1514,6 +1533,7 @@ def setup_my_menu(site,ui,user,m):
     m  = m.add_menu("cal",_("Calendar"))
     m.add_action(MyTasks)
     m.add_action(MyEvents)
+    m.add_action(MyEventsToday)
     if site.use_extensible:
         m.add_action(Panel)
     #~ m.add_action_(actions.Calendar())
