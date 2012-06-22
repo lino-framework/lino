@@ -1050,17 +1050,17 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
         
     def fill_from_person(self,person):
         self.national_id = person.national_id
-        if not self.national_id:
-            self.id_card_no = person.card_number
-            self.last_name = person.last_name
-            self.first_name = person.first_name
-            self.birth_date = person.birth_date
-            self.gender = person.gender
+        self.id_card_no = person.card_number
+        self.last_name = person.last_name
+        self.first_name = person.first_name
+        self.birth_date = person.birth_date
+        self.gender = person.gender
         
     def build_request(self):
         """Construct and return the root element of the (inner) service request."""
         #~ if not self.birth_date:
-            #~ raise Exception("Empty birth date (a full_clean() would have told that, too!)")
+            #~ raise Warning("Empty birth date (a full_clean() would have told that, too!)")
+            #~ raise Warning(_("Birth date may not be empty."))
         
         national_id = self.get_ssin()
         gender = gender2cbss(self.gender)
@@ -1137,7 +1137,7 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
             #~ self.on_cbss_ok(reply)
         
 
-#~ dd.update_field(IdentifyPersonRequest,'birth_date',blank=False,null=False)
+dd.update_field(IdentifyPersonRequest,'birth_date',blank=False)
 #~ dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
 #~ dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
 
