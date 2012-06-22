@@ -16,6 +16,7 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
 
 
 from lino import mixins
@@ -223,9 +224,9 @@ def addinfo(node,name,prefix=None,fmt=simpletype,suffix=''):
     if not v: return []
     if prefix is None:
         prefix = ', %s ' % name
-    info = [unicode(prefix)] + fmt(v)
+    info = [force_unicode(prefix)] + fmt(v)
     if suffix:
-        info.append(unicode(suffix))
+        info.append(force_unicode(suffix))
     return info
     
 def DateType(n):
