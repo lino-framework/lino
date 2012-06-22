@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
+import datetime
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -218,12 +218,15 @@ def deldate(n):
     
 def simpletype(v):
     return [ unicode(v) ]
-def addinfo(node,name,prefix=None,fmt=simpletype):
+def addinfo(node,name,prefix=None,fmt=simpletype,suffix=''):
     v = getattr(node,name,None)
     if not v: return []
     if prefix is None:
         prefix = ', %s ' % name
-    return [prefix] + fmt(v)
+    info = [prefix] + fmt(v)
+    if suffix:
+        info.append(suffix)
+    return info
     
 def DateType(n):
     return [babel.dtos(rn2date(n))]
@@ -233,9 +236,9 @@ def PlaceType(n):
     return code_label(n)
 def GraphicPlaceType(n):
     info = CountryType(n.Country)
-    if hasattr(n.Graphic):
+    if hasattr(n,'Graphic'):
         info.append(', graphic:'+n.Graphic)
-    return 
+    return info
 def ForeignJudgementType(n):
     return GraphicPlaceType(n.Place)
 def BelgianJudgementType(n):
@@ -251,7 +254,7 @@ def LieuType(n):
     if hasattr(n,'Place1'):
         info += code_label(n.Place1)
     elif hasattr(n,'Place2'):
-        info += code_label(n.Place2)
+        info += addinfo(n,'Place2',None,GraphicPlaceType)
     else:
         place = n.Place3
         #~ info += GraphicPlaceType(place)
@@ -279,7 +282,8 @@ def ResidenceType(n):
     return code_label(n)
     
 def NationalNumberType(n):
-    return [n.NationalNumber]
+    info = addinfo(n,'NationalNumber')
+    return info # [n.NationalNumber]
     
 def PartnerType(n):
     info = addinfo(n,'NationalNumber','',NationalNumberType)
@@ -353,8 +357,8 @@ class RowHandlers:
       
     @staticmethod
     def Names(node,name):
-        #~ group = _("Names")
-        group = name
+        group = _("Names")
+        #~ group = name
         for n in node.Name:
             info = addinfo(n,'Name','',NameType)
             yield datarow(group,n,n.Date,info)
@@ -363,7 +367,7 @@ class RowHandlers:
 
     @staticmethod
     def LegalMainAddresses(node,name):
-        group = name # "Legal Main Addresses"
+        group = _("Legal Main Addresses")
         for n in node.LegalMainAddress:
             info = []
             info.append(E.b(n.Address.ZipCode))
@@ -377,7 +381,7 @@ class RowHandlers:
 
     @staticmethod
     def ResidenceAbroad(node,name):
-        group = name # _("Residence Abroad")
+        group = _("Residence Abroad")
         for n in node.ResidenceAbroad:
             info = []
             info += code_label(n.Address.PosteDiplomatique)
@@ -397,7 +401,7 @@ class RowHandlers:
         
     @staticmethod
     def Nationalities(node,name):
-        group = name # _("Nationalities")
+        group = _("Nationalities")
         for n in node.Nationality:
             info = code_label(n.Nationality)
             yield datarow(group,n,n.Date,info)
@@ -405,7 +409,7 @@ class RowHandlers:
             
     @staticmethod
     def Occupations(node,name):
-        group = name # _("Occupations")
+        group = _("Occupations")
         for n in node.Occupation:
             info = code_label(n.Occupation)
             info.append(' (SC ')
@@ -416,7 +420,7 @@ class RowHandlers:
         
     @staticmethod
     def IT100(n,name):
-        group = name # _("Birth Place")
+        group = _("Birth Place")
         #~ n = res.BirthPlace
         #~ info = code_label(n.Place1)
         #~ info.append(' (' + n.ActNumber + ')')
@@ -429,16 +433,18 @@ class RowHandlers:
         
     @staticmethod
     def Filiations(node,name):
-        group = name # _("Filiations")
+        group = _("Filiations")
         for n in node.Filiation:
             info = code_label(n.FiliationType)
             info.append(' of ')
-            info.append(n.Parent1.NationalNumber.NationalNumber)
+            info += addinfo(n.Parent1,'NationalNumber','(',NationalNumberType,')')
+            #~ info.append(n.Parent1.NationalNumber.NationalNumber)
             info.append(' ')
             #~ info += name2info(n.Parent1.Name)
             info += addinfo(n.Parent1,'Name','',NameType)
             info.append(' and ')
-            info.append(n.Parent2.NationalNumber.NationalNumber)
+            info += addinfo(n.Parent2,'NationalNumber','(',NationalNumberType,')')
+            #~ info.append(n.Parent2.NationalNumber.NationalNumber)
             info.append(' ')
             info += addinfo(n.Parent2,'Name','',NameType)
             #~ info += name2info(n.Parent2.Name)
@@ -447,7 +453,7 @@ class RowHandlers:
         
     @staticmethod
     def CivilStates(node,name):
-        group = name # _("Civil States") # IT120
+        group = _("Civil States") # IT120
         for n in node.CivilState:
             info = code_label(n.CivilState)
             if hasattr(n,'Spouse'):
@@ -467,7 +473,7 @@ class RowHandlers:
         
     @staticmethod
     def FamilyMembers(node,name):
-        group = name # _("Family Members")
+        group = _("Family Members")
         for n in node.FamilyMember:
             info = IT140(n)
             yield datarow(group,n,n.Date,info)
@@ -534,7 +540,7 @@ class RowHandlers:
             info += addinfo(n,'Notary',' in ',NotaryType)
             return info
     
-        group = name
+        group = _("Legal Cohabitations")
         for n in node.LegalCohabitation:
             info = addinfo(n,'Declaration','',DeclarationType)
             info += addinfo(n,'Cessation','',CessationType)
@@ -545,7 +551,7 @@ class RowHandlers:
       
     @staticmethod
     def Passports(node,name):
-        group = name # _("Passports")
+        group = _("Passports")
         for n in node.Passport:
             info = []
             info.append('Number ')
@@ -566,7 +572,7 @@ class RowHandlers:
         
     @staticmethod
     def OrganDonations(node,name):
-        group = name 
+        group = _("Organ Donations")
         for n in node.OrganDonation:
             info = addinfo(n,'Declaration','',DeclarationType)
             info += addinfo(n,'Place',' in ',PlaceType)
@@ -576,14 +582,14 @@ class RowHandlers:
         
     @staticmethod
     def IT253(node,name):
-        group = name # _("Creation Date")
+        group = _("Creation Date")
         n = node # res.CreationDate
         info = []
         yield datarow(group,n,n.Date,info)
         
     @staticmethod
     def IT254(node,name):
-        group = name # _("Last Update")
+        group = _("Last Update")
         n = node # res.LastUpdateDate
         info = []
         yield datarow(group,n,n.Date,info)
@@ -639,7 +645,7 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
                   info="No handler for %s/%s in %s" % (name, node.__class__,rti),
                   group='Error',
                   type='',
-                  date=datetime.date.today(),
+                  since=datetime.date.today(),
                   )
             else:
                 for row in m(node,name): yield row

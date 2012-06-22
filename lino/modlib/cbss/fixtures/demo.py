@@ -53,6 +53,9 @@ if cbss:
         [ cbss.RetrieveTIGroupsRequest, 
           dict(national_id='680307 001-23',history=True), 
           'demo_tx25_2.xml' ],
+        [ cbss.RetrieveTIGroupsRequest, 
+          dict(national_id='620430 001-56',history=True), 
+          'demo_tx25_3.xml' ],
     ]
 
     def objects():
