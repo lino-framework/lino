@@ -22,7 +22,7 @@ from django.db import models
 from django.conf import settings
 
 from lino.tools import obj2str
-#~ from lino.tools import Model
+from lino.tools import Model
 
 #~ from lino import layouts
 
@@ -32,7 +32,7 @@ from lino.tools import obj2str
     #~ raise Exception('name is a %s!' % type(name))
 
     
-class Uploadable(models.Model):
+class Uploadable(Model):
     """
     Represents an uploadable file.
     """

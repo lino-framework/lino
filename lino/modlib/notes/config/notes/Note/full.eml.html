@@ -3,6 +3,10 @@
 $instance.event_type / $instance.type
 </p>
 <div>
+#if $instance.get_mailable_type().attach_to_email
+Please see the attached file.
+#else
 $instance.body
+#end if
 </div>
 <p>User: $instance.user</p>

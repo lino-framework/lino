@@ -56,6 +56,7 @@ from django.core.mail import EmailMultiAlternatives
 from lino.utils.config import find_config_file
 from lino.utils.choicelists import ChoiceList
 from lino.utils.perms import UserLevels
+#~ from lino.utils.choosers import chooser
 
 
 from Cheetah.Template import Template as CheetahTemplate
@@ -87,6 +88,32 @@ add('bcc',_("bcc"),'bcc')
 #~ class MailTypes(dd.Table):
     #~ model = MailType
     #~ column_names = 'name build_method template *'
+    
+    
+from lino.utils.config import find_template_config_files
+
+class MailableType(dd.Model):
+  
+    templates_group = None
+
+    class Meta:
+        abstract = True
+        
+    attach_to_email = models.BooleanField(_("Attach to email"))
+    #~ email_as_attachment = models.BooleanField(_("Email as attachment"))
+    email_template = models.CharField(max_length=200,
+      verbose_name=_("Email template"),
+      blank=True,help_text="""\
+The name of the file to be used as template when creating an email 
+from a mailable of this type.
+""")
+    
+    @dd.chooser(simple_values=True)
+    def email_template_choices(cls):
+        return find_template_config_files('.eml.html',cls.templates_group)
+      
+        
+    
 
 
 class CreateMailAction(dd.RowAction):
@@ -112,16 +139,13 @@ class CreateMailAction(dd.RowAction):
         
     def run(self,elem,ar,**kw):
       
-        as_attachment = elem.mail_as_attachment(ar)
-        if as_attachment:
-            html_content = elem.get_mailable_intro(ar)
-        else:
-            html_content = ''
+        as_attachment = elem.attach_to_email(ar)
         
         m = Mail(user=ar.get_user(),
             subject=elem.get_mailable_subject(),
-            body=html_content,
             owner=elem)
+        #~ if as_attachment:
+        m.body = elem.get_mailable_intro(ar)
         m.full_clean()
         m.save()
         for t,p in elem.get_mailable_recipients():
@@ -154,27 +178,34 @@ class Mailable(dd.Model):
     #~ post_as_attachment = models.BooleanField(_("Post as attachment"),default=False)
         
         
-    def get_print_language(self,pm):
-        return babel.DEFAULT_LANGUAGE
+    #~ def get_print_language(self,pm):
+        #~ return babel.DEFAULT_LANGUAGE
+        
+    def get_mailable_type(self):  
+        raise NotImplementedError()
+        #~ return self.type
+        
+    def attach_to_email(self,ar):
+        return self.get_mailable_type().attach_to_email
+        #~ return isinstance(self,mixins.CachedPrintable)
         
     def get_mailable_intro(self,ar):
-        tplname = self._meta.app_label + '/' + self.__class__.__name__ + '/email.html'
-        fn = find_config_file(tplname)
+        mt = self.get_mailable_type()
+        #~ tplname = self._meta.app_label + '/' + self.__class__.__name__ + '/email.html'
+        fn = find_config_file(mt.email_template,mt.templates_group)
         if fn is None:
-            return ''
+            raise Exception("No config file %s / %s" % (mt.templates_group,mt.email_template))
+            #~ return ''
         #~ logger.info("Using email template %s",fn)
         tpl = CheetahTemplate(file(fn).read())
         #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
+        tpl.instance = self
         tpl.dtosl = babel.dtosl
         tpl.dtos = babel.dtos
-        tpl.instance = self
         return unicode(tpl)
         
-    def mail_as_attachment(self,ar):
-        return isinstance(self,mixins.CachedPrintable)
-        
-    def get_mailable_body(self,ar):
-        raise NoteImplementdError()
+    #~ def get_mailable_body(self,ar):
+        #~ raise NoteImplementdError()
         
     def get_mailable_subject(self):
         """
@@ -277,17 +308,18 @@ class SendMailAction(dd.RowAction):
                 #~ logger.info("Ignoring recipient %s (type %s)",r,r.type)
         if not found:
             return rr.error_response("No recipients found.")
-        as_attachment = elem.owner.mail_as_attachment(rr)
-        if as_attachment:
-            body = elem.body
-        else:
-            body = elem.owner.get_mailable_body(rr)
-        text_content = html2text(body)
+        as_attachment = elem.owner.attach_to_email(rr)
+        #~ body = elem.body
+        #~ if as_attachment:
+            #~ body = elem.body
+        #~ else:
+            #~ body = elem.owner.get_mailable_body(rr)
+        text_content = html2text(elem.body)
         msg = EmailMultiAlternatives(subject=elem.subject, 
             from_email=sender,
             body=text_content, 
             to=to,bcc=bcc,cc=cc)
-        msg.attach_alternative(body, "text/html")
+        msg.attach_alternative(elem.body, "text/html")
         for att in elem.attachment_set.all():
             #~ if as_attachment or att.owner != elem.owner:
             fn = att.owner.get_target_name()

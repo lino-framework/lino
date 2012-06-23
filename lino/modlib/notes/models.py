@@ -45,7 +45,7 @@ postings = dd.resolve_app('postings')
 
 #~ TEMPLATE_GROUP = 'notes'
 
-class NoteType(babel.BabelNamed,mixins.PrintableType):
+class NoteType(babel.BabelNamed,mixins.PrintableType,outbox.MailableType):
   
     templates_group = 'notes/Note'
     
@@ -140,8 +140,8 @@ class Note(mixins.TypedPrintable,
     def __unicode__(self):
         return u'%s #%s' % (self._meta.verbose_name,self.pk)
         
-    def get_mailable_body(self,ar):
-        return self.body
+    #~ def get_mailable_body(self,ar):
+        #~ return self.body
         
     def unused__unicode__(self):
         s = u''
@@ -217,6 +217,10 @@ class Note(mixins.TypedPrintable,
     def update_owned_instance(self,task):
         mixins.AutoUser.update_owned_instance(self,task)
         contacts.PartnerDocument.update_owned_instance(self,task)
+        
+    def get_mailable_type(self):
+        return self.type
+        
     
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'

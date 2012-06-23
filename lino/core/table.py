@@ -681,9 +681,11 @@ class Table(AbstractTable):
     def disable_delete(self,obj,ar):
         """
         Return either `None` if the given `obj` *is allowed* 
-        to be deleted by `request`,
+        to be deleted by action request `ar`,
         or a string with a message explaining why, if not.
         """
+        if self.delete_action is None:
+            return "No delete_action"
         if not self.get_row_permission(obj,ar.get_user(),self.get_row_state(obj),self.delete_action):
         #~ if not obj.get_row_permission(self.delete_action,ar.get_user()):
             return _("You have no permission to delete this row.")

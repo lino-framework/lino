@@ -133,6 +133,31 @@ def find_config_files(pattern,group=''):
         #~ else:
             #~ print 'find_config_files() not a directory:', dirname
     return files
+    
+def find_template_config_files(template_ext,templates_group):
+    """
+    find_config_files and ignore babel variants:
+    e.g. ignore "foo_fr.html" if "foo.html" exists 
+    but don't ignore "my_template.html"
+    """
+    files = find_config_files('*' + template_ext,templates_group)
+    l = []
+    template_ext
+    for name in files.keys():
+        basename = name[:-len(template_ext)]
+        chunks = basename.split('_')
+        if len(chunks) > 1:
+            basename = '_'.join(chunks[:-1])
+            if files.has_key(basename + template_ext):
+                continue
+        l.append(name)
+    l.sort()
+    if not l:
+        logger.warning("email_template_choices() : no matches for (%r,%r)",
+          '*' + template_ext,templates_group)
+    return l
+        
+    
 
 def load_config_files(loader,pattern,group=''):
     """

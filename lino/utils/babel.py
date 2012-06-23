@@ -57,6 +57,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino.core import fields
+from lino.tools import Model
+
 #~ from lino.tools import Model
 #~ from lino import dd # 20120620
 
@@ -339,7 +341,7 @@ class BabelText(object):
         return unicode(babelitem(**self.texts))
         
 
-class BabelNamed(models.Model):
+class BabelNamed(Model):
     """
     Mixin for models that have a non-nullable field `name` 
     (labelled "Description") for each language.

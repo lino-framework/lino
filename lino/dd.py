@@ -55,6 +55,7 @@ Utilities:
 - :func:`resolve_field <lino.tools.resolve_field>`
 - :func:`resolve_model <lino.tools.resolve_model>`
 - :func:`resolve_app <lino.tools.resolve_app>` 
+- :func:`chooser <lino.utils.choosers.chooser>` 
 
 
 """
@@ -107,6 +108,9 @@ from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
 from lino.utils.babel import BabelCharField, BabelTextField
 #~ from lino.core.fields import MethodField
+
+from lino.utils.choosers import chooser
+
 
 #~ from lino.utils import perms
 

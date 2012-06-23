@@ -45,8 +45,9 @@ from lino.utils import babel
 #~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
+from lino.utils.config import find_template_config_files
 from lino.tools import makedirs_if_missing
-#~ from lino.tools import Model
+from lino.tools import Model
 from lino.mixins.duplicable import Duplicable
 
 
@@ -304,7 +305,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             ar=ar,
             #~ restify=restify,
             #~ site_config = get_site_config(),
-            site_config = settings.LINO.site_config,
+            site_config=settings.LINO.site_config,
             _ = _,
             #~ knowledge_text=fields.knowledge_text,
             )
@@ -431,45 +432,26 @@ def get_template_choices(elem,bmname):
     bm = bm_dict.get(bmname,None)
     if bm is None:
         raise Exception("%r : invalid print method name." % bmname)
-    from lino.utils.config import find_config_files
-    files = find_config_files('*' + bm.template_ext,bm.get_group(elem))
-    l = []
-    for name in files.keys():
-        # ignore babel variants: 
-        # e.g. ignore "foo_fr.odt" if "foo.odt" exists 
-        # but don't ignore "my_template.odt"
-        basename = name[:-len(bm.template_ext)]
-        chunks = basename.split('_')
-        if len(chunks) > 1:
-            basename = '_'.join(chunks[:-1])
-            if files.has_key(basename + bm.template_ext):
-                continue
-        l.append(name)
-    l.sort()
-    if not l:
-        logger.warning("get_template_choices() : no matches for (%r,%r)",'*' + bm.template_ext,bm.get_group(elem))
-    return l
+    return find_template_config_files(bm.template_ext,bm.get_group(elem))
+    
+    #~ files = find_config_files('*' + bm.template_ext,bm.get_group(elem))
+    #~ l = []
+    #~ for name in files.keys():
+        #~ # ignore babel variants: 
+        #~ # e.g. ignore "foo_fr.odt" if "foo.odt" exists 
+        #~ # but don't ignore "my_template.odt"
+        #~ basename = name[:-len(bm.template_ext)]
+        #~ chunks = basename.split('_')
+        #~ if len(chunks) > 1:
+            #~ basename = '_'.join(chunks[:-1])
+            #~ if files.has_key(basename + bm.template_ext):
+                #~ continue
+        #~ l.append(name)
+    #~ l.sort()
+    #~ if not l:
+        #~ logger.warning("get_template_choices() : no matches for (%r,%r)",'*' + bm.template_ext,bm.get_group(elem))
+    #~ return l
 
-def old_get_template_choices(group,bmname):
-    """
-    :param:bmname: the name of a build method.
-    """
-    pm = bm_dict.get(bmname,None)
-    if pm is None:
-        raise Exception("%r : invalid print method name." % bmname)
-    #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
-    top = os.path.join(pm.templates_dir,babel.DEFAULT_LANGUAGE,group)
-    l = []
-    for dirpath, dirs, files in os.walk(top):
-        for fn in files:
-            if fnmatch(fn,'*'+pm.template_ext):
-                if len(dirpath) > len(top):
-                    fn = os.path.join(dirpath[len(top)+1:],fn)
-                l.append(fn.decode(sys.getfilesystemencoding()))
-    if not l:
-        logger.warning("get_template_choices() : no matches for (%r,%r) in %s",group,bmname,top)
-    return l
-            
     
 def get_build_method(elem):
     bmname = elem.get_build_method()
@@ -660,8 +642,10 @@ class ClearCacheAction(actions.RowAction):
         elem.build_time = None
         elem.save()
         return rr.ui.success_response("%s printable cache has been cleared." % elem,refresh=True)
-
-class PrintableType(models.Model):
+        
+        
+    
+class PrintableType(Model):
     """
     Base class for models that specify the :attr:`TypedPrintable.type`.
     """

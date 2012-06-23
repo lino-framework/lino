@@ -29,6 +29,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy
 #~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
@@ -338,9 +339,8 @@ class AccessClasses(dd.Table):
     column_names = 'name *'
 
 
-from django.utils.translation import pgettext_lazy
 
-class EventType(mixins.PrintableType,babel.BabelNamed):
+class EventType(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
     """The type of an Event.
     Determines which build method and template to be used for printing the event.
     """
@@ -734,6 +734,9 @@ class Event(Component,Ended,
         #~ if self.user.partner:
             #~ yield self.user.partner
         
+    def get_mailable_type(self):  
+        return self.type
+        
     def get_mailable_recipients(self):
         if issubclass(settings.LINO.project_model,contacts.Partner):
             if self.project:
@@ -743,8 +746,8 @@ class Event(Component,Ended,
         if self.user.partner:
             yield ('cc',self.user.partner)
             
-    def get_mailable_body(self,ar):
-        return self.description
+    #~ def get_mailable_body(self,ar):
+        #~ return self.description
         
             
         
@@ -950,10 +953,13 @@ if settings.LINO.user_model:
         column_names = 'start_date summary done state workflow_buttons  *'
     
 
-class GuestRole(babel.BabelNamed):
+class GuestRole(outbox.MailableType,babel.BabelNamed):
     """
     A possible value for the `role` field of an :class:`Guest`.
     """
+    
+    templates_group = 'cal/Guest'
+    
     class Meta:
         verbose_name = _("Guest Role")
         verbose_name_plural = _("Guest Roles")
@@ -981,6 +987,10 @@ class Guest(#contacts.ContactDocument,
         # verbose_name=_("Partner")
         #~ )
     #~ language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
+
+    def get_mailable_type(self):  
+        return self.role
+        
 
     def get_mailable_recipients(self):
         yield ('to',self.partner)
