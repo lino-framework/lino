@@ -441,7 +441,7 @@ See <https://code.djangoproject.com/ticket/18213>.
                     else: # pk of all objects
                         s += "\n- %s %s (%d object(s) with primary key %s)" % (
                           full_model_name(model),msg,len(objects),
-                          ', '.join([o.pk for o in objects]))
+                          ', '.join([o.object.pk for o in objects]))
                     count += len(objects)
             
             msg = "Abandoning with %d unsaved instances from %s:%s" % (

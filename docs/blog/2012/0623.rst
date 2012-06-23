@@ -5,3 +5,14 @@ MailableType: Pro Terminart und Notizart kann man jetzt angeben:
 
 - welche Vorlage zum Generieren des Body der Mail genommen wird.
 - ob der Ausdruck der Notiz als Attachment hinzugefügt wird oder nicht.
+
+
+Activated severe test on isip.Contract. 
+This causes some contracts to not get into the new version.
+Changed  :mod:`lino.utils.dumpy` so that when 
+"Abandoning with %d unsaved instances"
+it prints the pk of all objects 
+until now it printed the detailed content 
+of the first object for each type of error message.
+
+
