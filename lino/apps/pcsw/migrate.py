@@ -1019,6 +1019,8 @@ def migrate_from_1_4_3(globals_dict):
     - convert Companies with prefix == 'Eheleute' to a Household
     - convert tables cal.EventStatus, cal.TaskStatus and cal.GuestStatus to choicelists.
     - table thirds.Third no longer exists
+    - new fields MailableType to cal.EventType and notes.NoteType
+    - severe test in isip.Contraqct
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child

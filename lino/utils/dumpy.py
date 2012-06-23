@@ -434,9 +434,14 @@ See <https://code.djangoproject.com/ticket/18213>.
             s = ''
             for model,msg_objects in self.save_later.items():
                 for msg,objects in msg_objects.items():
-                    s += "\n- %s %s (%d object(s), e.g. %s)" % (
-                      full_model_name(model),msg,len(objects),
-                      obj2str(objects[0].object,force_detailed=True))
+                    if False: # detailed content of the first object
+                        s += "\n- %s %s (%d object(s), e.g. %s)" % (
+                          full_model_name(model),msg,len(objects),
+                          obj2str(objects[0].object,force_detailed=True))
+                    else: # pk of all objects
+                        s += "\n- %s %s (%d object(s) with primary key %s)" % (
+                          full_model_name(model),msg,len(objects),
+                          ', '.join([o.pk for o in objects]))
                     count += len(objects)
             
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
