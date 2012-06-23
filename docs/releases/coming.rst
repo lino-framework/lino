@@ -37,7 +37,13 @@ Sichtbare Änderungen
 - Neue Module :mod:`Schuldnerberatung <lino.modlib.debts.models>`
   und :mod:`Haushalte <lino.modlib.households.models>` 
 
-- Neues Modul :mod:`Postausgang <lino.modlib.households.outbox>`.
+- Neue Module 
+  :mod:`E-Mail-Ausgang <lino.modlib.outbox>`
+  und
+  :mod:`Postausgang <lino.modlib.postings>`.
+
+- Drittpartner habe ich rausgeworfen. 
+  Bestehende Daten habe ich nicht übernommen
 
 
 Bugfixes
