@@ -1,4 +1,7 @@
 20120623
 ========
 
+MailableType: Pro Terminart und Notizart kann man jetzt angeben:
 
+- welche Vorlage zum Generieren des Body der Mail genommen wird.
+- ob der Ausdruck der Notiz als Attachment hinzugefügt wird oder nicht.
