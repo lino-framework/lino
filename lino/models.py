@@ -605,8 +605,9 @@ class Home(mixins.EmptyTable):
     def quick_links(cls,self,req):
         quicklinks = settings.LINO.get_quicklinks(self,req.get_user())
         if quicklinks.items:
+            #~ assert mi.params is None
             return 'Quick Links: ' + ' '.join(
-              [req.ui.ext_renderer.action_href_js(mi.action,mi.params) 
+              [req.ui.ext_renderer.action_href_js(mi.action) 
                 for mi in quicklinks.items]
               )
       

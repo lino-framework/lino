@@ -908,6 +908,7 @@ class DisplayElement(FieldElement):
     
     def __init__(self,*args,**kw):
         kw.setdefault('value','<br/>') # see blog/2012/0527
+        kw.update(always_enabled=True)
         FieldElement.__init__(self,*args,**kw)
         if self.field.max_length:
             self.preferred_width = self.field.max_length

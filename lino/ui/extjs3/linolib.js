@@ -1775,8 +1775,6 @@ Lino.show_detail = function(panel,btn) {
     function(rec) {
       //~ panel.loadMask.show();
       panel.ls_detail_handler.run({
-        //~ listeners: {show: function() {panel.loadMask.hide();}}
-        },{
         record_id:rec.id,
         base_params:panel.get_base_params()
       });
@@ -1801,7 +1799,7 @@ Lino.show_fk_detail = function(combo,handler) {
 Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
   //~ console.log('20120125 Lino.show_insert',bp)
-  panel.ls_insert_handler.run({},{record_id:-99999,base_params:bp});
+  panel.ls_insert_handler.run({record_id:-99999,base_params:bp});
 };
 
 Lino.show_insert_duplicate = function(panel,btn) {
@@ -2373,6 +2371,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ p.an = this.containing_window.config.action_name;
     //~ p.fmt = 'json';
     //~ p.fmt = '$ext_requests.URL_FORMAT_JSON';
+    p.$URL_PARAM_PANEL = this.getId();
     p.$ext_requests.URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
@@ -2447,7 +2446,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       if (record.data.disable_editing) {
           //~ console.log("20120202 disable_editing",record.title);
           this.form.items.each(function(cmp){
-            cmp.disable();
+            if (!cmp.always_enabled) cmp.disable();
           },this);
       } else {
           this.form.items.each(function(cmp){
@@ -2573,7 +2572,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             } else if (this.ls_detail_handler) {
                 //~ console.log("20120217 case 2");
                 Lino.kill_current_window();
-                this.ls_detail_handler.run(null,{
+                this.ls_detail_handler.run({
                     record_id:action.result.record_id,
                     data_record: action.result.data_record,
                     base_params:this.get_base_params()

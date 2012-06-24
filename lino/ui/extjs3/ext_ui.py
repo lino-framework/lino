@@ -153,14 +153,14 @@ class HtmlRenderer(object):
             after_show.update(data_record=elem2rec_insert(ar,ar.ah,elem))
             #~ after_show.update(record_id=-99999)
             # see tickets/56
-            s += self.action_href_js(a,params,after_show,_("New"))
+            s += self.action_href_js(a,after_show,_("New"))
             after_show = ar.get_status(self)
         n = ar.get_total_count()
         if n > 0:
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
             s += ' ' + self.action_href_js(
-                ar.ah.actor.detail_action,params,after_show,_("Show Last"))
+                ar.ah.actor.detail_action,after_show,_("Show Last"))
             #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
             s += ' ' + self.href_to_request(ar,_("Show All"))
         #~ return '<p>%s</p>' % s
@@ -192,14 +192,14 @@ class HtmlRenderer(object):
                 after_show.update(data_record=elem2rec_insert(rr,rr.ah,elem))
                 #~ after_show.update(record_id=-99999)
                 # see tickets/56
-                return self.action_href_js(a,params,after_show,_("Upload"))
+                return self.action_href_js(a,after_show,_("Upload"))
         if rr.get_total_count() == 1:
             obj = rr.data_iterator[0]
             s = ''
             s += ' [<a href="%s" target="_blank">show</a>]' % (self.ui.media_url(obj.file.name))
             if True:
                 after_show.update(record_id=obj.pk)
-                s += ' ' + self.action_href_js(rr.ah.actor.detail_action,params,after_show,_("Edit"))
+                s += ' ' + self.action_href_js(rr.ah.actor.detail_action,after_show,_("Edit"))
             else:
                 after_show.update(record_id=obj.pk)
                 s += ' ' + self.action_href_http(rr.ah.actor.detail_action,_("Edit"),params,after_show)
@@ -352,7 +352,7 @@ class ExtRenderer(HtmlRenderer):
     #~ def action_url_js(self,a,after_show):
         #~ return self.js2url(self.action_call(a,after_show))
 
-    def action_href_js(self,a,params,after_show={},label=None):
+    def action_href_js(self,a,after_show={},label=None):
         """
         Return a HTML chunk for a button that will execute this 
         action using a *Javascript* link to this action.
@@ -368,10 +368,10 @@ class ExtRenderer(HtmlRenderer):
         which runs the action when clicked.
         """
         if a.opens_a_window:
-            params = None
+            #~ params = None
             after_show = ar.get_status(self)
             after_show.update(record_id=obj.pk)
-            return self.action_href_js(a,params,after_show,a.label)
+            return self.action_href_js(a,after_show,a.label)
         else:
             label = cgi.escape(unicode(a.label))
             #~ url = self.js2url('Lino.%s(%s,Lino.%s_window.main_item)' % (a,py2js(obj.pk),ar.action))
