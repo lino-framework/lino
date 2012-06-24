@@ -398,6 +398,34 @@ Lino.calling_window = function() {
     if (Lino.window_history.length) return Lino.window_history[Lino.window_history.length-1];
 }
 
+Lino.window_action = function(mainItemClass,windowConfig,mainConfig,ppf) {
+    //~ if(!mainConfig) mainConfig = {};
+    mainConfig.is_main_window = true;
+    this.windowConfig = windowConfig;
+    if (ppf) mainConfig.params_panel.fields = ppf;
+    this.mainConfig = mainConfig;
+    this.mainItemClass = mainItemClass;
+};
+
+Lino.window_action = Ext.extend(Lino.window_action,{
+    window : null,
+    //~ mainItemClass: null,
+    get_window : function(mainConfig) {
+      if(mainConfig) Ext.apply(this.mainConfig,mainConfig);
+      if (this.window == null)  {
+          this.windowConfig.main_item = new this.mainItemClass(this.mainConfig);
+          this.window = new Lino.Window(this.windowConfig);
+      }
+      return this.window;
+    },
+    run : function(mainConfig,status) {
+      //~ console.log('20120623 window_action.run()',this)
+      Lino.open_window(this.get_window(mainConfig),status);
+    }
+  
+});
+
+
 Lino.PanelMixin = {
   get_containing_window : function (){
       if (this.containing_window) return this.containing_window;
@@ -1129,7 +1157,7 @@ Lino.show_in_own_window_button = function(handler) {
       //~ panel.containing_window = ww; // for HtmlBox. see blog/2010/1022
       //~ handler(panel,{base_params:bp});
       //~ handler(panel,{base_params:panel.get_master_params()});
-      handler({},{base_params:panel.containing_panel.get_master_params()});
+      handler.run({},{base_params:panel.containing_panel.get_master_params()});
       //~ handler(panel,{master_panel:panel.containing_window.main_item});
     }
   }
@@ -1174,7 +1202,7 @@ Lino.delete_selected = function(panel) {
   });
 };
 
-Lino.action_handler = function (panel,on_success,gridmode,on_confirm) {
+Lino.action_handler = function (panel,on_success,on_confirm) {
   return function (response) {
     //~ console.log(20120608,panel);
     if (panel instanceof Lino.GridPanel) {
@@ -1581,7 +1609,7 @@ Lino.fk_renderer = function(fkname,handlername) {
     //~ if (record.phantom) return '';
     if (value) {
         var s = '<a href="javascript:' ;
-        s += handlername + '({},{record_id:\'' + String(record.data[fkname]) + '\'})">';
+        s += handlername + '.run({},{record_id:\'' + String(record.data[fkname]) + '\'})">';
         s += value + '</a>';
         //~ console.log('Lino.fk_renderer',value,'-->',s);
         return s
@@ -1688,33 +1716,39 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
   return fn(rec);
 };
 
-Lino.row_action_handler = function(actionName,gridmode) {
+
+Lino.call_row_action = function(panel,rec_id,actionName,step,fn,p) {
+  var url = panel.get_record_url(rec_id);
+  p['$ext_requests.URL_PARAM_ACTION_NAME'] = actionName;
+  if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
+  panel.loadMask.show(); 
+  Ext.Ajax.request({
+    method: 'GET',
+    url: url,
+    params: p,
+    success: Lino.action_handler(panel,undefined,fn)
+  });
+};
+
+Lino.row_action_handler = function(actionName) {
   var fn = function(panel,btn,step) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
-      var url = panel.get_record_url(rec.id);
       var p = Ext.apply({},panel.get_base_params());
-      //~ var p = Ext.apply({},panel.get_master_params());
-      p['$ext_requests.URL_PARAM_ACTION_NAME'] = actionName;
-      if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
-      //~ p.an = action_name;
-      //~ url += "?" + Ext.urlEncode(p);
-      //~ window.open(url);
-      panel.loadMask.show(); // 20120211
-      Ext.Ajax.request({
-        method: 'GET',
-        url: url,
-        params: p,
-        success: Lino.action_handler(panel,undefined,gridmode,fn)
-      });
+      Lino.call_row_action(panel,rec.id,actionName,step,fn,p);
     });
   };
   return fn;
 };
 
-Lino.run_row_action = function(panel,url,pk,actionName) {
-  console.log(20120618,actionName,url,pk,panel);
-  Lino.row_action_handler(actionName,true)(panel);
+
+Lino.run_row_action = function(rp,action,status,url,pk,actionName) {
+  //~ var panel = action.get_window().main_item;
+  var panel = Ext.getCmp(rp);
+  var fn = function(panel,btn,step) {
+    Lino.call_row_action(panel,pk,actionName,step,fn,status.base_params);
+  }
+  fn(panel,null,null);
 }
 
 
@@ -1730,7 +1764,7 @@ Lino.list_action_handler = function(actionName,gridmode) {
       method: 'GET',
       url: url,
       params: p,
-      success: Lino.action_handler(panel,undefined,gridmode,fn)
+      success: Lino.action_handler(panel,undefined,fn)
     });
   };
   return fn;
@@ -1740,7 +1774,7 @@ Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel, 
     function(rec) {
       //~ panel.loadMask.show();
-      panel.ls_detail_handler({
+      panel.ls_detail_handler.run({
         //~ listeners: {show: function() {panel.loadMask.hide();}}
         },{
         record_id:rec.id,
@@ -1767,7 +1801,7 @@ Lino.show_fk_detail = function(combo,handler) {
 Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
   //~ console.log('20120125 Lino.show_insert',bp)
-  panel.ls_insert_handler({},{record_id:-99999,base_params:bp});
+  panel.ls_insert_handler.run({},{record_id:-99999,base_params:bp});
 };
 
 Lino.show_insert_duplicate = function(panel,btn) {
@@ -1776,7 +1810,7 @@ Lino.show_insert_duplicate = function(panel,btn) {
       var newRec = {};
       Ext.apply(newRec,rec);
       newRec.id = -99999;
-      panel.ls_insert_handler({data_record:rec});
+      panel.ls_insert_handler.run({data_record:rec});
     });
 };
 
@@ -2539,7 +2573,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             } else if (this.ls_detail_handler) {
                 //~ console.log("20120217 case 2");
                 Lino.kill_current_window();
-                this.ls_detail_handler(null,{
+                this.ls_detail_handler.run(null,{
                     record_id:action.result.record_id,
                     data_record: action.result.data_record,
                     base_params:this.get_base_params()
@@ -2666,6 +2700,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     if (!options) options = {};
     if (!options.params) options.params = {};
     options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
+    options.params.$URL_PARAM_PANEL = this.grid_panel.getId();
       
     var ps = this.grid_panel.calculatePageSize();
     
@@ -2873,8 +2908,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             Ext.apply(p,this.get_base_params());
             //~ var p = Ext.apply({},this.get_base_params());
             //~ p['fmt'] = 'pdf';
-            //~ p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PDF";
-            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_ODT";
+            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PDF";
+            //~ p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_ODT";
             this.add_param_values(p);
             //~ url += "?" + Ext.urlEncode(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
@@ -3480,7 +3515,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         success: Lino.action_handler( this, function(result) {
           self.getStore().commitChanges(); // get rid of the red triangles
           self.getStore().reload();        // reload our datastore.
-          },true),
+          }),
         scope: this,
         failure: Lino.ajax_error_handler(this)
     };

@@ -243,6 +243,10 @@ class TableRequest(actions.ActionRequest):
         if quick_search:
             kw.update(quick_search=quick_search)
             
+        requesting_panel = rqdata.get(ext_requests.URL_PARAM_PANEL,None)
+        if requesting_panel:
+            kw.update(requesting_panel=requesting_panel)
+            
         sort = rqdata.get(ext_requests.URL_PARAM_SORT,None)
         if sort:
             #~ self.sort_column = sort
@@ -290,10 +294,12 @@ class TableRequest(actions.ActionRequest):
             #~ create_rows=None,
             gridfilters=None,
             exclude=None,
+            requesting_panel=None,
             extra=None,
             **kw):
             
         self.quick_search = quick_search
+        self.requesting_panel = requesting_panel
         self.order_by = order_by
         
             

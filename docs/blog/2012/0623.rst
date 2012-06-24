@@ -16,3 +16,57 @@ until now it printed the detailed content
 of the first object for each type of error message.
 
 
+Dann doch noch eine Änderung, die nicht angefragt war: 
+ich habe die Kursanfragen auf Workflows umgestellt.
+CourseRequestStates statt CourseEnding
+
+Dabei kam noch ein Bug zum Vorschein: Workflow-Buttons 
+funktionierten nur, 
+wenn die Grid bereits in einem eigenen Fenster geöffnet wurde.
+Beim Eintragen/Austragen von Kursanfragen ist das meistens nicht der Fall.
+Hier ist der momentane Code::
+
+  Lino.courses.CandidatesByCourse.detail_action_window = null;
+  Lino.courses.CandidatesByCourse.detail_action = function(mainConfig,status) { 
+    if(!mainConfig) mainConfig = {};
+    if (Lino.courses.CandidatesByCourse.detail_action_window == null) {
+      mainConfig.is_main_window = true;
+      Lino.courses.CandidatesByCourse.detail_action_window = new Lino.Window({
+        main_item: new Lino.courses.CandidatesByCourse.detail_actionPanel(mainConfig)
+      });
+    }
+    Lino.open_window(Lino.courses.CandidatesByCourse.detail_action_window,status);
+  };
+  
+Der muss ersetzt werden durch::  
+
+  Lino.courses.CandidatesByCourse.detail_action =
+    Lino.window_action(Lino.courses.CandidatesByCourse.detail_actionPanel)
+  
+Mit folgender neuer Library-Klasse::
+  
+  Lino.window_action = function() {
+      window: null,
+      mainItemClass: null,
+      
+      constructor : function(mainItemClass) {
+        this.mainItemClass = mainItemClass;
+      }
+      
+      get_window : function(mainConfig) {
+        if(!mainConfig) mainConfig = {};
+        if (this.window == null)  {
+            mainConfig.is_main_window = true;
+            this.window = new Lino.Window({
+              main_item: new this.mainItem(mainConfig)
+            });
+        }
+        return this.window;
+      },
+      run : function(mainConfig,status) {
+        Lino.open_window(this.get_window(mainConfig),status);
+
+      }
+  };
+  
+

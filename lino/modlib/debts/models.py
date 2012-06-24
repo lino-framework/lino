@@ -951,7 +951,8 @@ class PrintEntriesByBudget(dd.VirtualTable):
     def description(self,obj,ar):
         return obj.description
         
-    @dd.displayfield(_("Partner"))
+    #~ @dd.displayfield(_("Partner"))
+    @dd.virtualfield(models.ForeignKey(contacts.Partner))
     def partner(self,obj,ar):
         return obj.partner
         

@@ -280,11 +280,12 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         h = ar.renderer.instance_handler(v)
         if h is None:
             #~ return cgi.escape(force_unicode(obj))
-            return xghtml.E.p(xghtml.E.b(cgi.escape(force_unicode(v))))
+            #~ return xghtml.E.p(xghtml.E.b(cgi.escape(force_unicode(v))))
+            return xghtml.E.p(xghtml.E.b(force_unicode(v)))
         url = 'javascript:' + h
         #~ url = ar.renderer.js2url(h)
         #~ return self.href(url,text or cgi.escape(force_unicode(obj)))
-        return xghtml.E.p(xghtml.E.a(cgi.escape(force_unicode(v)),href=url))
+        return xghtml.E.p(xghtml.E.a(force_unicode(v),href=url))
         
         #~ xml = ar.renderer.href_to(v)
         #~ # Python 2.6 : encode() takes no keyword arguments

@@ -1168,6 +1168,21 @@ def migrate_from_1_4_3(globals_dict):
     globals_dict.update(create_bcss_identifypersonrequest=create_bcss_identifypersonrequest)
     
     
+    from lino.modlib.courses.models import CourseRequestStates
+    #~ courses_CourseRequest = resolve_model("courses.CourseRequest")
+    dsbe_CourseRequest = resolve_model("courses.CourseRequest")
+    def create_dsbe_courserequest(id, person_id, offer_id, content_id, date_submitted, urgent, course_id, remark, date_ended, ending_id):
+        state=CourseRequestStates.migrate(ending_id)
+        if course_id is not None:
+            if state == CourseRequestStates.candidate:
+                state = CourseRequestStates.registered
+        return dsbe_CourseRequest(id=id,person_id=person_id,offer_id=offer_id,content_id=content_id,date_submitted=date_submitted,
+            urgent=urgent,
+            course_id=course_id,remark=remark,date_ended=date_ended,
+            state=state)
+            #~ ending_id=ending_id)    
+    globals_dict.update(create_dsbe_courserequest=create_dsbe_courserequest)
+    
     from lino.apps.pcsw.models import CivilState
     contacts_Person = resolve_model("contacts.Person")
     def create_contacts_person(contact_ptr_id, birth_date, first_name, last_name, title, gender, is_active, newcomer, is_deprecated, activity_id, bank_account1, bank_account2, remarks2, gesdos_id, is_cpas, is_senior, group_id, coached_from, coached_until, coach1_id, coach2_id, birth_place, birth_country_id, civil_state, national_id, health_insurance_id, pharmacy_id, nationality_id, card_number, card_valid_from, card_valid_until, card_type, card_issuer, noble_condition, residence_type, in_belgium_since, unemployed_since, needs_residence_permit, needs_work_permit, work_permit_suspended_until, aid_type_id, income_ag, income_wg, income_kg, income_rente, income_misc, is_seeking, unavailable_until, unavailable_why, obstacles, skills, job_agents, job_office_contact_id, broker_id, faculty_id):

@@ -340,7 +340,8 @@ class GridEdit(TableAction):
 
 class ShowDetailAction(RowAction):
     opens_a_window = True
-  
+    show_in_workflow = False
+    
     #~ sort_index = 1
     callable_from = (GridEdit,)
     #~ show_in_detail = False

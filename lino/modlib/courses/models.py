@@ -32,6 +32,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy 
 from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode 
 from django.utils.functional import lazy
@@ -149,27 +150,27 @@ class CourseProviders(pcsw.Companies):
 #
 # COURSE ENDINGS
 #
-class CourseEnding(dd.Model):
-    u"""
-    Eine Kursbeendigung ist eine *Art und Weise, wie eine Kursanfrage beendet wurde*.
-    Später können wir dann Statistiken machen, wieviele Anfragen auf welche Art und 
-    Weise beendet wurden.
-    """
-    class Meta:
-        verbose_name = _("Course Ending")
-        verbose_name_plural = _('Course Endings')
+#~ class CourseEnding(dd.Model):
+    #~ u"""
+    #~ Eine Kursbeendigung ist eine *Art und Weise, wie eine Kursanfrage beendet wurde*.
+    #~ Später können wir dann Statistiken machen, wieviele Anfragen auf welche Art und 
+    #~ Weise beendet wurden.
+    #~ """
+    #~ class Meta:
+        #~ verbose_name = _("Course Ending")
+        #~ verbose_name_plural = _('Course Endings')
         
-    name = models.CharField(_("designation"),max_length=200)
+    #~ name = models.CharField(_("designation"),max_length=200)
     
-    def __unicode__(self):
-        return unicode(self.name)
+    #~ def __unicode__(self):
+        #~ return unicode(self.name)
         
-class CourseEndings(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
-    model = CourseEnding
-    column_names = 'name *'
-    order_by = ['name']
+#~ class CourseEndings(dd.Table):
+    #~ required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
+    #~ model = CourseEnding
+    #~ column_names = 'name *'
+    #~ order_by = ['name']
 
   
 class CourseContent(dd.Model):
@@ -303,12 +304,41 @@ class Course(dd.Model,mixins.Printable):
         """
         return CandidatesByCourse.request(master_instance=self).data_iterator
         
+from lino.utils.choicelists import ChoiceList
+
+class CourseRequestStates(ChoiceList):
+    label = _("State")
+    @classmethod
+    def migrate(cls,old):
+        """
+        Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
+        """
+        cv = {
+          None: 'candidate',
+          1:'award',
+          2:'passed',
+          3:'failed',
+          4:'aborted'
+          }
+        return getattr(cls,cv[old])
         
+add = CourseRequestStates.add_item
+add('10', _("Candidate"),"candidate")   
+#~ add('20', _("Urgent"),"urgent")   
+add('20', _("Registered"),"registered")
+add('30', _("Passed"),"passed")   # bestanden
+add('40', _("Award"),"award")   # gut bestanden
+add('50', pgettext_lazy("courses","Failed"),"failed")   # nicht bestanden
+add('60', _("Aborted"),"aborted")   # abgebrochen
+    
+    
 class CourseRequest(dd.Model):
     """
     A Course Request is created when a certain Person expresses her 
     wish to participate in a Course with a certain CourseContent.
     """
+    workflow_state_field = 'state'
+    
     class Meta:
         verbose_name = _("Course Requests")
         verbose_name_plural = _('Course Requests')
@@ -341,6 +371,8 @@ class CourseRequest(dd.Model):
     #~ def provider_choices(cls):
         #~ return CourseProviders.request().queryset
         
+    state = CourseRequestStates.field(default=CourseRequestStates.candidate)
+        
     course = models.ForeignKey("courses.Course",blank=True,null=True,
         verbose_name=_("Course found"))
     u"""
@@ -366,13 +398,13 @@ class CourseRequest(dd.Model):
     Datum der effektives Beendigung dieser Kursteilname.
     """
     
-    ending = models.ForeignKey("courses.CourseEnding",blank=True,null=True,
-        verbose_name=_("Ending"))
-    u"""
-    Die Art der Beendigung 
-    (ein Objekt vom Typ :class:`CourseEnding`.)
-    Das wird benutzt für spätere Statistiken.
-    """
+    #~ ending = models.ForeignKey("courses.CourseEnding",blank=True,null=True,
+        #~ verbose_name=_("Ending"))
+    #~ u"""
+    #~ Die Art der Beendigung 
+    #~ (ein Objekt vom Typ :class:`CourseEnding`.)
+    #~ Das wird benutzt für spätere Statistiken.
+    #~ """
     
     def save(self,*args,**kw):
         if self.offer and self.offer.content:
@@ -424,13 +456,18 @@ class CourseOffersByProvider(CourseOffers):
     master_key = 'provider'
 
 class CourseRequests(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required=dict(user_groups=['integ'],user_level='manager')
+    #~ required_user_level = UserLevels.manager
     model = CourseRequest
     
+    #~ detail_template = """
+    #~ date_submitted person content offer urgent 
+    #~ course date_ended ending id:8 
+    #~ remark  uploads.UploadsByController 
+    #~ """
     detail_template = """
     date_submitted person content offer urgent 
-    course date_ended ending id:8 
+    course state date_ended id:8 
     remark  uploads.UploadsByController 
     """
     
@@ -438,12 +475,13 @@ class CourseRequests(dd.Table):
     active_fields = ['offer']
 
 class CourseRequestsByPerson(CourseRequests):
-    required_user_level = None
+    required=dict(user_groups=['integ'])
     master_key = 'person'
     column_names = 'date_submitted:10 content:15 offer:15 course:20 * id'
 
 class RequestsByCourse(CourseRequests):
-    required_user_level = None
+    required=dict(user_groups=['integ'])
+    #~ required_user_level = None
     master_key = 'course'
   
     @classmethod
@@ -452,50 +490,54 @@ class RequestsByCourse(CourseRequests):
         if obj.course is not None:
             obj.content = obj.course.offer.content
         return obj
-    
-#~ class RegisterCandidate(dd.RowAction):
-    #~ """
-    #~ Register the given :class:`Candidate` for the given :class:`Course`.
-    #~ This action is available on a row of :class:`CandidatesByCourse`.
-    #~ """
-    #~ label = _("Register")
-    #~ url_action_name = "register"
-    #~ def run(self,rr,elem):
-        #~ elem.course = rr.master_instance
-        #~ elem.save()
-        #~ return rr.ui.success_response(refresh_all=True,
-          #~ message=_("%(person)s has been registered to %(course)s") % dict(
-              #~ person=elem.person,course=elem.course))
 
-#~ class UnregisterCandidate(dd.RowAction):
-    #~ """
-    #~ Unregister the given :class:`Candidate` for the given :class:`Course`.
-    #~ This action is available on a row of :class:`ParticipantsByCourse`.
-    #~ """
-    #~ label = _("Unregister")
-    #~ url_action_name = "unregister"
-    #~ def run(self,rr,elem):
-        #~ course = elem.course
-        #~ elem.course = None
-        #~ elem.save()
-        #~ return rr.ui.success_response(refresh_all=True,
-          #~ message=_("%(person)s has been unregistered from %(course)s") % dict(person=elem.person,course=course))
 
 class ParticipantsByCourse(RequestsByCourse):
     """
     List of participating :class:`Candidates <Candidate>` for the given :class:`Course`.
     """
     label = _("Participants")
-    column_names = 'person remark date_ended ending'
+    column_names = 'person remark:20 date_ended state workflow_buttons'
     #~ do_unregister = UnregisterCandidate()
     
-    @dd.action(_("Unregister"))
+    @dd.action(_("Passed"),required=dict(states=['registered']))
+    def passed(elem,ar):
+        elem.state = CourseRequestStates.passed
+        if not elem.date_ended:
+            elem.date_ended = datetime.date.today()
+        elem.save()
+        return ar.success_response(refresh=True,
+          message=_("%(person)s passed %(course)s") 
+            % dict(person=elem.person,course=self.course))
+            
+    @dd.action(pgettext_lazy("courses","Failed"),required=dict(states=['registered']))
+    def failed(elem,ar):
+        elem.state = CourseRequestStates.failed
+        if not elem.date_ended:
+            elem.date_ended = datetime.date.today()
+        elem.save()
+        return ar.success_response(refresh=True,
+          message=_("%(person)s failed in %(course)s") 
+            % dict(person=elem.person,course=self.course))
+            
+    @dd.action(_("Aborted"),required=dict(states=['registered']))
+    def aborted(elem,ar):
+        elem.state = CourseRequestStates.aborted
+        #~ if not elem.date_ended:
+            #~ elem.date_ended = datetime.date.today()
+        elem.save()
+        return ar.success_response(refresh=True,
+          message=_("%(person)s aborted from %(course)s") 
+            % dict(person=elem.person,course=self.course))
+            
+    @dd.action(_("Unregister"),required=dict(states=['registered']))
     def unregister(elem,ar):
         """
         Unregister the given :class:`Candidate` for the given :class:`Course`.
         This action is available on a row of :class:`ParticipantsByCourse`.
         """
         course = elem.course
+        elem.state = CourseRequestStates.candidate
         elem.course = None
         elem.save()
         return ar.ui.success_response(refresh_all=True,
@@ -503,9 +545,6 @@ class ParticipantsByCourse(RequestsByCourse):
             % dict(person=elem.person,course=course))
     
     
-    #~ @classmethod
-    #~ def setup_actions(self):
-        #~ self.add_action(UnregisterCandidate())
 
 class CandidatesByCourse(RequestsByCourse):
     """
@@ -513,7 +552,7 @@ class CandidatesByCourse(RequestsByCourse):
     which are not registiered.
     """
     label = _("Candidates")
-    column_names = 'person remark content date_submitted'
+    column_names = 'person remark:20 date_submitted state workflow_buttons content'
     #~ can_add = perms.never
     
     #~ do_register = RegisterCandidate()
@@ -522,15 +561,19 @@ class CandidatesByCourse(RequestsByCourse):
     #~ def setup_actions(self):
         #~ self.add_action(RegisterCandidate())
         
-    @dd.action(_("Register"))
+    @dd.action(_("Register"),required=dict(states=['candidate','']))
     def register(elem,ar):
         """
         Register the given :class:`Candidate` for the given :class:`Course`.
         This action is available on a row of :class:`CandidatesByCourse`.
         """
-        elem.course = ar.master_instance
+        if ar.master_instance is not None:
+            elem.course = ar.master_instance
+        if not elem.course:
+            return ar.error.response(_("Cannot register to unknown course."))
+        elem.state = CourseRequestStates.registered
         elem.save()
-        return ar.ui.success_response(refresh_all=True,
+        return ar.success_response(refresh_all=True,
             message=_("%(person)s has been registered to %(course)s") % dict(
                 person=elem.person,course=elem.course))
         
@@ -666,7 +709,7 @@ def setup_my_menu(site,ui,user,m): pass
 def setup_config_menu(site,ui,user,m):
     m = m.add_menu("courses",MODULE_LABEL)
     m.add_action(CourseContents)
-    m.add_action(CourseEndings)
+    #~ m.add_action(CourseEndings)
             
   
 def setup_explorer_menu(site,ui,user,m):
