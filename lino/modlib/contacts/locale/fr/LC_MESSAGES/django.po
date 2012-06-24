@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 05:00+0100\n"
-"PO-Revision-Date: 2012-06-08 11:19+0200\n"
+"POT-Creation-Date: 2012-06-24 20:44+0100\n"
+"PO-Revision-Date: 2012-06-24 22:45+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
 "MIME-Version: 1.0\n"
@@ -32,11 +32,11 @@ msgstr "M."
 
 #: .\models.py:99
 msgid "company type"
-msgstr "type de société"
+msgstr "Type d'organisation"
 
 #: .\models.py:100
 msgid "company types"
-msgstr "Types de sociétés"
+msgstr "Types d'organisation"
 
 #: .\models.py:102
 msgid "Abbreviation"
@@ -50,7 +50,8 @@ msgstr "Partenaire"
 msgid "Partners"
 msgstr "Partenaires"
 
-#: .\models.py:133 .\models.py:260
+#: .\models.py:133
+#: .\models.py:260
 msgid "Name"
 msgstr "Nom"
 
@@ -110,7 +111,9 @@ msgstr "Fax"
 msgid "Remarks"
 msgstr "Remarques"
 
-#: .\models.py:246 .\models.py:255 .\models.py:299
+#: .\models.py:246
+#: .\models.py:255
+#: .\models.py:299
 msgid "Address"
 msgstr "Adresse"
 
@@ -162,11 +165,11 @@ msgstr "Allocution"
 
 #: .\models.py:510
 msgid "Company"
-msgstr "Société"
+msgstr "Organisation"
 
 #: .\models.py:511
 msgid "Companies"
-msgstr "Sociétés"
+msgstr "Organisations"
 
 #: .\models.py:514
 msgid "VAT id"
@@ -214,11 +217,11 @@ msgstr "La société ou tourne ce site"
 
 #: .\models.py:801
 msgid "is Person"
-msgstr "Personne"
+msgstr "est une Personne"
 
 #: .\models.py:806
 msgid "is Company"
-msgstr "Société"
+msgstr "est une Organisation"
 
 #: .\models.py:811
 msgid "Contacts"
