@@ -38,7 +38,7 @@ Hier ist der momentane Code::
     Lino.open_window(Lino.courses.CandidatesByCourse.detail_action_window,status);
   };
   
-Der muss ersetzt werden durch::  
+Der muss ersetzt werden durch etwas im Stil::  
 
   Lino.courses.CandidatesByCourse.detail_action =
     Lino.window_action(Lino.courses.CandidatesByCourse.detail_actionPanel)
@@ -69,4 +69,12 @@ Mit folgender neuer Library-Klasse::
       }
   };
   
+Die Wirklichkeit war dann natürlich doch noch etwas anders 
+als dieser erste Entwurf.
+Insbesondere war dies vielleicht insgesamt eine Verbesserung 
+des generierten JS-Codes, aber erwies sich dann als völlig 
+unnütz für unser Problem. 
+Ein Slave-Panel ist ja nun mal nicht das entsprechende Panel im eigenen Fenster.
 
+, dass 
+brauche ich jetzt einen neuen Parameter `requesting_panel`

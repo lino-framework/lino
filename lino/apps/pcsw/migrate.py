@@ -1021,6 +1021,7 @@ def migrate_from_1_4_3(globals_dict):
     - table thirds.Third no longer exists
     - new fields MailableType to cal.EventType and notes.NoteType
     - severe test in isip.Contract
+    - added workflow to courses.CourseRequest
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child
@@ -1036,7 +1037,7 @@ def migrate_from_1_4_3(globals_dict):
     globals_dict.update(dsbe_AidType = resolve_model("pcsw.AidType"))
     globals_dict.update(dsbe_Course = resolve_model("courses.Course"))
     globals_dict.update(dsbe_CourseContent = resolve_model("courses.CourseContent"))
-    globals_dict.update(dsbe_CourseEnding = resolve_model("courses.CourseEnding"))
+    #~ globals_dict.update(dsbe_CourseEnding = resolve_model("courses.CourseEnding"))
     globals_dict.update(dsbe_CourseOffer = resolve_model("courses.CourseOffer"))
     globals_dict.update(dsbe_CourseProvider = resolve_model("courses.CourseProvider"))
     globals_dict.update(dsbe_CourseRequest = resolve_model("courses.CourseRequest"))
@@ -1213,6 +1214,10 @@ def migrate_from_1_4_3(globals_dict):
     def create_thirds_third(id, seqno, owner_type_id, owner_id, person_id, company_id, remark):
         return None
     globals_dict.update(create_thirds_third=create_thirds_third)
+    
+    def create_dsbe_courseending(id, seqno, owner_type_id, owner_id, person_id, company_id, remark):
+        return None
+    globals_dict.update(create_dsbe_courseending=create_dsbe_courseending)
     
     objects = globals_dict['objects']
     def new_objects():

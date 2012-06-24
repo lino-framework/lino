@@ -1717,8 +1717,9 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 };
 
 
-Lino.call_row_action = function(panel,rec_id,actionName,step,fn,p) {
+Lino.call_row_action = function(panel,rec_id,actionName,step,fn) {
   var url = panel.get_record_url(rec_id);
+  var p = Ext.apply({},panel.get_base_params());
   p['$ext_requests.URL_PARAM_ACTION_NAME'] = actionName;
   if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
   panel.loadMask.show(); 
@@ -1734,19 +1735,18 @@ Lino.row_action_handler = function(actionName) {
   var fn = function(panel,btn,step) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
-      var p = Ext.apply({},panel.get_base_params());
-      Lino.call_row_action(panel,rec.id,actionName,step,fn,p);
+      Lino.call_row_action(panel,rec.id,actionName,step,fn);
     });
   };
   return fn;
 };
 
 
-Lino.run_row_action = function(rp,action,status,url,pk,actionName) {
+Lino.run_row_action = function(rp,action,url,pk,actionName) {
   //~ var panel = action.get_window().main_item;
   var panel = Ext.getCmp(rp);
   var fn = function(panel,btn,step) {
-    Lino.call_row_action(panel,pk,actionName,step,fn,status.base_params);
+    Lino.call_row_action(panel,pk,actionName,step,fn);
   }
   fn(panel,null,null);
 }
