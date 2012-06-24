@@ -410,17 +410,17 @@ Lino.WindowAction = function(mainItemClass,windowConfig,mainConfig,ppf) {
 Lino.WindowAction = Ext.extend(Lino.WindowAction,{
     window : null,
     //~ mainItemClass: null,
-    get_window : function(mainConfig) {
-      if(mainConfig) Ext.apply(this.mainConfig,mainConfig);
+    get_window : function() {
+      //~ if(mainConfig) Ext.apply(this.mainConfig,mainConfig);
       if (this.window == null)  {
           this.windowConfig.main_item = new this.mainItemClass(this.mainConfig);
           this.window = new Lino.Window(this.windowConfig);
       }
       return this.window;
     },
-    run : function(mainConfig,status) {
+    run : function(status) {
       //~ console.log('20120623 window_action.run()',this)
-      Lino.open_window(this.get_window(mainConfig),status);
+      Lino.open_window(this.get_window(),status);
     }
   
 });
