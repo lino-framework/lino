@@ -1174,9 +1174,8 @@ def migrate_from_1_4_3(globals_dict):
     dsbe_CourseRequest = resolve_model("courses.CourseRequest")
     def create_dsbe_courserequest(id, person_id, offer_id, content_id, date_submitted, urgent, course_id, remark, date_ended, ending_id):
         state=CourseRequestStates.migrate(ending_id)
-        if course_id is not None:
-            if state == CourseRequestStates.candidate:
-                state = CourseRequestStates.registered
+        if course_id is not None and state == CourseRequestStates.candidate:
+            state = CourseRequestStates.registered
         return dsbe_CourseRequest(id=id,person_id=person_id,offer_id=offer_id,content_id=content_id,date_submitted=date_submitted,
             urgent=urgent,
             course_id=course_id,remark=remark,date_ended=date_ended,
@@ -1212,12 +1211,12 @@ def migrate_from_1_4_3(globals_dict):
     globals_dict.update(create_cal_gueststatus=create_cal_gueststatus)
     
     def create_thirds_third(*args):
-        logger.info("Ignored thirds.Third %r",args)
+        dblogger.info("Ignored thirds.Third %r",args)
         return None
     globals_dict.update(create_thirds_third=create_thirds_third)
     
     def create_dsbe_courseending(*args):
-        logger.info("Ignored dsbe.CourseEnding %r",args)
+        dblogger.info("Ignored dsbe.CourseEnding %r",args)
         return None
     globals_dict.update(create_dsbe_courseending=create_dsbe_courseending)
     
