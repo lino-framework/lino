@@ -398,7 +398,7 @@ Lino.calling_window = function() {
     if (Lino.window_history.length) return Lino.window_history[Lino.window_history.length-1];
 }
 
-Lino.window_action = function(mainItemClass,windowConfig,mainConfig,ppf) {
+Lino.WindowAction = function(mainItemClass,windowConfig,mainConfig,ppf) {
     //~ if(!mainConfig) mainConfig = {};
     mainConfig.is_main_window = true;
     this.windowConfig = windowConfig;
@@ -407,7 +407,7 @@ Lino.window_action = function(mainItemClass,windowConfig,mainConfig,ppf) {
     this.mainItemClass = mainItemClass;
 };
 
-Lino.window_action = Ext.extend(Lino.window_action,{
+Lino.WindowAction = Ext.extend(Lino.WindowAction,{
     window : null,
     //~ mainItemClass: null,
     get_window : function(mainConfig) {

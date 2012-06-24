@@ -1211,11 +1211,13 @@ def migrate_from_1_4_3(globals_dict):
         pass
     globals_dict.update(create_cal_gueststatus=create_cal_gueststatus)
     
-    def create_thirds_third(id, seqno, owner_type_id, owner_id, person_id, company_id, remark):
+    def create_thirds_third(*args):
+        logger.info("Ignored thirds.Third %r",args)
         return None
     globals_dict.update(create_thirds_third=create_thirds_third)
     
-    def create_dsbe_courseending(id, seqno, owner_type_id, owner_id, person_id, company_id, remark):
+    def create_dsbe_courseending(*args):
+        logger.info("Ignored dsbe.CourseEnding %r",args)
         return None
     globals_dict.update(create_dsbe_courseending=create_dsbe_courseending)
     

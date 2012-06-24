@@ -2591,12 +2591,12 @@ tinymce.init({
             for ln in jsgen.declare_vars(params):
                 yield ln
             mainConfig.update(params_panel=js_code(str(params)))
-            yield "Lino.%s = new Lino.window_action(%s,%s,%s,%s);" % (
+            yield "Lino.%s = new Lino.WindowAction(%s,%s,%s,%s);" % (
                 action,s,py2js(windowConfig),
                 py2js(mainConfig),
                 py2js([e for e in params.walk() if isinstance(e,ext_elems.FieldElement)]))
         else:
-            yield "Lino.%s = new Lino.window_action(%s,%s,%s);" % (
+            yield "Lino.%s = new Lino.WindowAction(%s,%s,%s);" % (
                 action,s,py2js(windowConfig),py2js(mainConfig))
 
 
