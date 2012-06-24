@@ -207,18 +207,19 @@ class HtmlRenderer(object):
         return '[?!]'
 
   
-class PdfRenderer(HtmlRenderer):
-    """
-    Deserves more documentation.
-    """
-    def href_to_request(self,rr,text=None):
-        return text or ("<b>%s</b>" % cgi.escape(force_unicode(rr.label)))
-    def href_to(self,obj,text=None):
-        #~ text = text or ("<b>%s</b>" % cgi.escape(force_unicode(obj)))
-        text = text or cgi.escape(force_unicode(obj))
-        return "<b>%s</b>" % text
-    def instance_handler(self,obj):
-        return None
+#~ class PdfRenderer(HtmlRenderer):
+    #~ """
+    #~ Deserves more documentation.
+    #~ """
+    #~ def href_to_request(self,rr,text=None):
+        #~ return text or ("<b>%s</b>" % cgi.escape(force_unicode(rr.label)))
+    #~ def href_to(self,obj,text=None):
+        #~ text = text or cgi.escape(force_unicode(obj))
+        #~ return "<b>%s</b>" % text
+    #~ def instance_handler(self,obj):
+        #~ return None
+    #~ def request_handler(self,ar,*args,**kw):
+        #~ return ''
         
 
 #~ class ExtRendererPermalink(HtmlRenderer):
@@ -392,11 +393,10 @@ class ExtRenderer(HtmlRenderer):
             #~ raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
             return self.action_call(a,dict(record_id=obj.pk))
         
-    def request_handler(self,rr,*args,**kw):
+    def request_handler(self,ar,*args,**kw):
         #~ bp = rr.request2kw(self.ui,**kw)
-        st = rr.get_status(self.ui,**kw)
-        #~ return self.action_call(rr.action,after_show=dict(base_params=bp))
-        return self.action_call(rr.action,after_show=st)
+        st = ar.get_status(self.ui,**kw)
+        return self.action_call(ar.action,after_show=st)
         
     def href_to_request(self,rr,text=None):
         url = self.js2url(self.request_handler(rr))
@@ -651,7 +651,7 @@ class ExtUI(base.UI):
     #~ def __init__(self,*args,**kw):
     def __init__(self):
         #~ raise Exception("20120614")
-        self.pdf_renderer = PdfRenderer(self)
+        #~ self.pdf_renderer = PdfRenderer(self) # 20120624
         self.ext_renderer = ExtRenderer(self)
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
         jsgen.register_converter(self.ext_renderer.py2js_converter)
@@ -1483,7 +1483,8 @@ tinymce.init({
                 target_parts = ['cache', 'appypdf', str(rpt) + '.' + fmt]
                 target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
                 target_url = self.media_url(*target_parts)
-                ar.renderer = self.pdf_renderer
+                #~ ar.renderer = self.pdf_renderer
+                ar.renderer = self.ext_renderer # 20120624
                 #~ body = ar.table2xhtml().toxml()
                 """
                 [NOTE] :doc:`/blog/2012/0211`:
@@ -1523,7 +1524,8 @@ tinymce.init({
             if fmt == ext_requests.URL_FORMAT_PRINTER:
                 if ar.get_total_count() > MAX_ROW_COUNT:
                     raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-                ar.renderer = self.pdf_renderer
+                #~ ar.renderer = self.pdf_renderer # 20120624
+                ar.renderer = self.ext_renderer
                 
                 if False:
                     response = HttpResponse(content_type='text/html;charset="utf-8"')

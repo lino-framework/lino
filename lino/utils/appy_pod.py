@@ -410,7 +410,7 @@ class Renderer(AppyRenderer):
                 try:
                     txt = unicode(txt)
                 except UnicodeDecodeError,e:
-                    print 20120622, repr(txt)
+                    logger.warning("20120622 %r : %s", txt,e)
                     txt = repr(txt)
             #~ if not isinstance(txt,basestring): 
                 #~ raise Exception("Expected Element or basestring, got %r" % txt.__class__)
@@ -423,7 +423,8 @@ class Renderer(AppyRenderer):
             try:
                 tc.addElement(p)
             except Exception,e:
-                print 20120614, i, fld, val, e
+                logger.warning("20120614 %s %s %r %s: %s", i, fld, val, e)
+                #~ print 20120614, i, fld, val, e
                 
             #~ yield P(stylename=tablecontents,text=text)
             

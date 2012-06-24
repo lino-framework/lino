@@ -475,15 +475,6 @@ the same instance for all actors.
 
 
 
-#~ class ActionRequest(object):
-    #~ def __init__(self,ui,action):
-        #~ self.ui = ui
-        #~ self.action = action
-        
-    #~ def get_status(self,ui,**kw):
-        #~ return kw
-
-#~ class ActorRequest(ActionRequest):
 class ActionRequest(object):
     """
     Deserves more documentation.
@@ -493,6 +484,8 @@ class ActionRequest(object):
     
     def __init__(self,ui,actor,request=None,action=None,renderer=None,**kw):
         #~ ActionRequest.__init__(self,ui,action)
+        if ui is None:
+            from lino.extjs import ui
         self.ui = ui
         self.error_response = ui.error_response
         self.success_response = ui.success_response
@@ -516,7 +509,6 @@ class ActionRequest(object):
         if self.actor.parameters and request is not None:
             param_values = self.ui.parse_params(self.ah,request)
                 
-            self.param_values = AttrDict()
             for k,pf in self.actor.parameters.items():
                 v = param_values.get(k,None)
                 if v is None:
@@ -555,14 +547,16 @@ class ActionRequest(object):
     def setup(self,
             user=None,
             subst_user=None,
-            #~ param_values={},
+            param_values={},
             known_values=None,
             renderer=None,
             **kw):
         self.user = user
         if renderer is not None:
             self.renderer = renderer
-        #~ self.param_values = param_values
+        if self.actor.parameters:
+            self.param_values = AttrDict(**param_values)
+            #~ self.param_values = param_values
         self.subst_user = subst_user
         #~ 20120111 
         #~ self.known_values = known_values or self.report.known_values
@@ -572,8 +566,6 @@ class ActionRequest(object):
             kw.setdefault(k,v)
         if known_values:
             kw.update(known_values)
-        #~ if self.report.__class__.__name__ == 'SoftSkillsByPerson':
-            #~ logger.info("20111223 %r %r", kw, self.report.known_values)
         self.known_values = kw
         
         

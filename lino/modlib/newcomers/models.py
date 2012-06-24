@@ -29,10 +29,10 @@ from lino import dd
 #~ from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
+from lino.utils.perms import UserLevels, UserProfiles
 from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils.choosers import chooser
-from lino.utils.perms import UserLevels
 from lino.utils import babel
 from lino import mixins
 from django.conf import settings
@@ -67,8 +67,8 @@ class Brokers(dd.Table):
     """
     List of Brokers on this site.
     """
-    required_user_groups = ['newcomers']
-    required_user_level = UserLevels.manager
+    required=dict(user_groups=['newcomers'],user_level='manager')
+    #~ required_user_level = UserLevels.manager
     model = Broker
     column_names = 'name *'
     order_by = ["name"]
@@ -90,11 +90,17 @@ class Faculty(babel.BabelNamed):
     
 
 class Faculties(dd.Table):
-    required_user_groups = ['newcomers']
-    required_user_level = UserLevels.manager
+    required=dict(user_groups=['newcomers'],user_level='manager')
+    #~ required_user_groups = ['newcomers']
+    #~ required_user_level = UserLevels.manager
     model = Faculty
     column_names = 'name *'
     order_by = ["name"]
+    detail_template = """
+    id name
+    CompetencesByFaculty
+    NewcomersByFaculty
+    """
 
 class Competence(mixins.AutoUser,mixins.Sequenced):
     """
@@ -111,14 +117,16 @@ class Competence(mixins.AutoUser,mixins.Sequenced):
         return u'%s #%s' % (self._meta.verbose_name,self.pk)
         
 class Competences(dd.Table):
-    required_user_groups = ['newcomers']
-    required_user_level = UserLevels.manager
+    required=dict(user_groups=['newcomers'],user_level='manager')
+    #~ required_user_groups = ['newcomers']
+    #~ required_user_level = UserLevels.manager
     model = Competence
     column_names = 'id *'
     order_by = ["id"]
 
 class CompetencesByUser(Competences):
-    required_user_level = None
+    required=dict(user_groups=['newcomers'])
+    #~ required_user_level = None
     master_key = 'user'
     column_names = 'seqno faculty *'
     order_by = ["seqno"]
@@ -137,7 +145,8 @@ class Newcomers(AllPersons):
     """
     Persons who have the "Newcomer" checkbox on.
     """
-    required_user_groups = ['newcomers']
+    required=dict(user_groups=['newcomers'])
+    #~ required_user_groups = ['newcomers']
     
     #~ filter = dict(newcomer=True)
     known_values = dict(newcomer=True)
@@ -148,8 +157,13 @@ class Newcomers(AllPersons):
     def get_actor_label(self):
         return _("Newcomers")
         
+class NewcomersByFaculty(Newcomers):
+    master_key = 'faculty'
+    column_names = "name_column broker address_column *"
+        
 class NewClients(AllPersons):
-    required_user_groups = ['newcomers']
+    required=dict(user_groups=['newcomers'])
+    #~ required_user_groups = ['newcomers']
     label = _("New Clients")
     use_as_default_table = False
     
@@ -181,6 +195,7 @@ class NewClients(AllPersons):
         return qs
             
     
+    
         
 #~ class UsersByNewcomer(dd.VirtualTable):
 #~ class UsersByNewcomer(dd.Table):
@@ -188,11 +203,13 @@ class UsersByNewcomer(users.Users):
     """
     A list of the Users that are susceptible to become responsible for a Newcomer.
     """
-    required_user_groups = ['newcomers']
+    required=dict(user_groups=['newcomers'])
+    #~ required_user_groups = ['newcomers']
     #~ model = users.User
     editable = False # even root should not edit here
     #~ filter = models.Q(is_spis=True)
-    filter = models.Q(integ_level__isnull=False)
+    filter = models.Q(profile__in=[p for p in UserProfiles.items() if p.integ_level])
+    #~ filter = models.Q(integ_level__isnull=False)
     label = _("Users by Newcomer")
     column_names = 'name_column primary_clients active_clients new_clients newcomer_quota newcomer_score'
     parameters = dict(

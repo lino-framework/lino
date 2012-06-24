@@ -1157,7 +1157,7 @@ Lino.show_in_own_window_button = function(handler) {
       //~ panel.containing_window = ww; // for HtmlBox. see blog/2010/1022
       //~ handler(panel,{base_params:bp});
       //~ handler(panel,{base_params:panel.get_master_params()});
-      handler.run({},{base_params:panel.containing_panel.get_master_params()});
+      handler.run({base_params:panel.containing_panel.get_master_params()});
       //~ handler(panel,{master_panel:panel.containing_window.main_item});
     }
   }
@@ -1786,11 +1786,11 @@ Lino.show_detail = function(panel,btn) {
   );
 };
 
-Lino.show_fk_detail = function(combo,handler) {
+Lino.show_fk_detail = function(combo,detail_action) {
     //~ console.log("Lino.show_fk_detail",combo,handler);
     pk = combo.getValue();
     if (pk) {
-        handler({},{record_id: pk})
+        detail_action.run({record_id: pk})
       } else {
         Lino.notify("$_('Cannot show detail for empty foreign key.')");
       }

@@ -141,8 +141,6 @@ class Chooser(FieldChooser):
         """
         kw = {}
         
-        
-        
         # 20120202
         if tbl.master_field is not None:
             mt = ar.request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)

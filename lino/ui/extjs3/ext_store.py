@@ -416,7 +416,7 @@ class RequestStoreField(StoreField):
         url = 'javascript:' + ar.renderer.request_handler(v)
         #~ url = ar.renderer.js2url(h)
         #~ return xghtml.E.a(cgi.escape(force_unicode(v.label)),href=url)
-        return xghtml.E.a(str(n),href=url)
+        return xghtml.E.p(xghtml.E.a(str(n),href=url))
       
         #~ s = self.format_value(ar,v)
         #~ if not s: return s

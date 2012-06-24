@@ -12,6 +12,12 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Die Kolonne "Workflows" wird beim Ausdruck nicht korrekt gerendert. 
+    Weil das Feld :meth:`action_buttons <lino.core.actors.Actor.action_buttons>` 
+    noch nicht xmlgen.html verwendet.
+    Hat beim Ausdruck sowieso keinen Sinn und sollte automatisch 
+    versteckt werden.
+    
 #.  Optisch kennzeichnen, wenn ein Kolonnentitel einen Hilfetext hat.
 
 #.  Versteckte Reiter werden nicht aktualisiert. 
