@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 05:00+0100\n"
+"POT-Creation-Date: 2012-06-24 21:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,127 +17,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:69
-msgid "Recipient Type"
-msgstr ""
-
-#: .\models.py:72
-msgid "to"
-msgstr ""
-
-#: .\models.py:73
-msgid "cc"
-msgstr ""
-
-#: .\models.py:74
-msgid "bcc"
-msgstr ""
-
-#: .\models.py:100
-msgid "Mail"
-msgstr ""
-
-#: .\models.py:194 .\models.py:510
-msgid "Recipient"
-msgstr ""
-
-#: .\models.py:195 .\models.py:364
-msgid "Recipients"
-msgstr ""
-
-#: .\models.py:201
-msgid "Address"
-msgstr ""
-
-#: .\models.py:202
-msgid "Name"
-msgstr ""
-
-#: .\models.py:245
-msgid "Send email"
-msgstr ""
-
-#: .\models.py:313
-msgid "Outgoing Mail"
-msgstr ""
-
-#: .\models.py:314
-msgid "Outgoing Mails"
-msgstr ""
-
-#: .\models.py:318
-msgid "Date"
-msgstr ""
-
-#: .\models.py:324
-msgid "Subject"
-msgstr ""
-
-#: .\models.py:328
-msgid "Body"
-msgstr ""
-
-#: .\models.py:386
-msgid "My Outbox"
-msgstr ""
-
-#: .\models.py:416
-msgid "Attachment"
-msgstr ""
-
-#: .\models.py:417
-msgid "Attachments"
-msgstr ""
-
-#: .\models.py:458 .\models.py:466 .\models.py:594
-msgid "Outbox"
-msgstr ""
-
-#: .\models.py:475
-msgid "Sent Mails"
-msgstr ""
-
-#: .\models.py:496
+#: .\models.py:60
 msgid "Posting State"
 msgstr ""
 
-#: .\models.py:498
-msgid "New"
+#: .\models.py:62
+msgid "Open"
 msgstr ""
 
-#: .\models.py:499
+#: .\models.py:63
 msgid "Ready to print"
 msgstr ""
 
-#: .\models.py:500
+#: .\models.py:64
 msgid "Printed"
 msgstr ""
 
-#: .\models.py:501
+#: .\models.py:65
 msgid "Sent"
 msgstr ""
 
-#: .\models.py:502
+#: .\models.py:66
 msgid "Returned"
 msgstr ""
 
-#: .\models.py:507
+#: .\models.py:75
 msgid "Posting"
 msgstr ""
 
-#: .\models.py:508
+#: .\models.py:76
 msgid "Postings"
 msgstr ""
 
-#: .\models.py:521
+#: .\models.py:79
+msgid "Recipient"
+msgstr ""
+
+#: .\models.py:90
 msgid "Print"
 msgstr ""
 
-#: .\models.py:551
-msgid "Post"
+#: .\models.py:126
+msgid "Create posting"
 msgstr ""
 
-#: .\models.py:557
+#: .\models.py:132
 #, python-format
 msgid "Going to create %(num)d postings for %(elem)s"
+msgstr ""
+
+#: .\models.py:167
+msgid "Outbox"
 msgstr ""

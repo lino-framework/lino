@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 20:46+0100\n"
+"POT-Creation-Date: 2012-06-24 21:10+0100\n"
 "PO-Revision-Date: 2012-06-24 22:55+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -40,9 +40,7 @@ msgstr "Employant"
 msgid "Job Providers"
 msgstr "Employants"
 
-#: .\models.py:187
-#: .\models.py:846
-#: .\models.py:1319
+#: .\models.py:187 .\models.py:846 .\models.py:1319
 msgid "Jobs"
 msgstr "Emplois"
 
@@ -66,13 +64,8 @@ msgstr "Secteur d'activité"
 msgid "Job Sectors"
 msgstr "Secteurs d'activité"
 
-#: .\models.py:254
-#: .\models.py:275
-#: .\models.py:349
-#: .\models.py:638
-#: .\models.py:688
-#: .\models.py:869
-#: .\models.py:995
+#: .\models.py:254 .\models.py:275 .\models.py:349 .\models.py:638
+#: .\models.py:688 .\models.py:869 .\models.py:995
 msgid "Remark"
 msgstr "Remarque"
 
@@ -92,8 +85,7 @@ msgstr "Contrat de travail"
 msgid "Job Contracts"
 msgstr "Contrats de travail"
 
-#: .\models.py:319
-#: .\models.py:860
+#: .\models.py:319 .\models.py:860
 msgid "Contract Type"
 msgstr "Type de contrat"
 
@@ -101,8 +93,7 @@ msgstr "Type de contrat"
 msgid "duration (days)"
 msgstr "durée (jours)"
 
-#: .\models.py:337
-#: .\models.py:862
+#: .\models.py:337 .\models.py:862
 msgid "hourly rate"
 msgstr "coûr horaire"
 
@@ -130,8 +121,7 @@ msgstr "Responsable (ISP)"
 msgid "My contracts"
 msgstr "mes contrats"
 
-#: .\models.py:629
-#: .\models.py:854
+#: .\models.py:629 .\models.py:854
 msgid "Job Type"
 msgstr "Type d'emploi"
 
@@ -151,8 +141,7 @@ msgstr "Offre d'emploi"
 msgid "Job Offers"
 msgstr "Offres d'emploi"
 
-#: .\models.py:674
-#: .\models.py:850
+#: .\models.py:674 .\models.py:850
 msgid "Name"
 msgstr "Nom"
 
@@ -192,13 +181,11 @@ msgstr "Type d'études"
 msgid "Study content"
 msgstr "Contenu des études"
 
-#: .\models.py:753
-#: .\models.py:812
+#: .\models.py:753 .\models.py:812
 msgid "started"
 msgstr "commencé"
 
-#: .\models.py:754
-#: .\models.py:813
+#: .\models.py:754 .\models.py:813
 msgid "stopped"
 msgstr "arrêté"
 
@@ -214,8 +201,7 @@ msgstr "Langue"
 msgid "School"
 msgstr "Ecole"
 
-#: .\models.py:769
-#: .\models.py:815
+#: .\models.py:769 .\models.py:815
 msgid "Remarks"
 msgstr "Remarques"
 
@@ -268,9 +254,7 @@ msgstr "date d'envoi"
 msgid "Candidature by %(person)s"
 msgstr "Candidatures par %(person)s"
 
-#: .\models.py:1103
-#: .\models.py:1107
-#: .\models.py:1285
+#: .\models.py:1103 .\models.py:1107 .\models.py:1285
 msgid "Candidates"
 msgstr "Candidats"
 
@@ -310,8 +294,7 @@ msgstr ""
 msgid "is Job Provider"
 msgstr "est Employant"
 
-#: .\models.py:1333
-#: .\models.py:1348
+#: .\models.py:1333 .\models.py:1348
 msgid "~Jobs"
 msgstr "~Art.60§7"
 

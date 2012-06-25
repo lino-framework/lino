@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 20:32+0100\n"
+"POT-Creation-Date: 2012-06-24 21:09+0100\n"
 "PO-Revision-Date: 2012-06-24 22:37+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -16,10 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:103
-#: .\models.py:365
-#: .\models.py:1543
-#: .\models.py:1552
+#: .\models.py:103 .\models.py:365 .\models.py:1543 .\models.py:1552
 #: .\models.py:1564
 msgid "Calendar"
 msgstr "Calendrier"
@@ -36,8 +33,7 @@ msgstr ""
 msgid "Name"
 msgstr "Nom"
 
-#: .\models.py:110
-#: .\models.py:423
+#: .\models.py:110 .\models.py:423
 msgid "Description"
 msgstr "Description"
 
@@ -65,8 +61,7 @@ msgstr "calendrier par défaut"
 msgid "is hidden"
 msgstr "caché"
 
-#: .\models.py:123
-#: .\models.py:394
+#: .\models.py:123 .\models.py:394
 msgid "Start date"
 msgstr "Date début"
 
@@ -129,8 +124,7 @@ msgstr "Heure de fin"
 msgid "UID"
 msgstr ""
 
-#: .\models.py:422
-#: .\models.py:1335
+#: .\models.py:422 .\models.py:1335
 msgid "Summary"
 msgstr "Sommaire"
 
@@ -193,14 +187,11 @@ msgstr ""
 msgid "Reminder"
 msgstr "Rappel"
 
-#: .\models.py:781
-#: .\utils.py:192
+#: .\models.py:781 .\utils.py:192
 msgid "Notified"
 msgstr "Communiqué"
 
-#: .\models.py:788
-#: .\utils.py:195
-#: .\utils.py:209
+#: .\models.py:788 .\utils.py:195 .\utils.py:209
 msgid "Confirmed"
 msgstr "Confirmé"
 
@@ -220,8 +211,7 @@ msgstr "Date d'échéance"
 msgid "Due time"
 msgstr "Heure d'échéance"
 
-#: .\models.py:815
-#: .\utils.py:165
+#: .\models.py:815 .\utils.py:165
 msgid "Done"
 msgstr "accomplie"
 
@@ -273,8 +263,7 @@ msgstr "Inviter"
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: .\models.py:1124
-#: .\models.py:1493
+#: .\models.py:1124 .\models.py:1493
 msgid "Upcoming reminders"
 msgstr "Rappels à venir"
 
@@ -377,8 +366,7 @@ msgstr "mois"
 msgid "years"
 msgstr "années"
 
-#: .\utils.py:146
-#: .\utils.py:172
+#: .\utils.py:146 .\utils.py:172
 #, fuzzy
 msgid "Event State"
 msgstr "Etat de rendez-vous"
@@ -391,8 +379,7 @@ msgstr ""
 msgid "Started"
 msgstr "Début"
 
-#: .\utils.py:166
-#: .\utils.py:199
+#: .\utils.py:166 .\utils.py:199
 msgid "Cancelled"
 msgstr "Annulé"
 
@@ -408,8 +395,7 @@ msgstr "a eu lieu"
 msgid "Rescheduled"
 msgstr "Déplacé"
 
-#: .\utils.py:200
-#: .\utils.py:211
+#: .\utils.py:200 .\utils.py:211
 msgid "Absent"
 msgstr "Absent"
 

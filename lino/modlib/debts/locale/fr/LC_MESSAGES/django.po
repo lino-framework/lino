@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 20:39+0100\n"
+"POT-Creation-Date: 2012-06-24 21:09+0100\n"
 "PO-Revision-Date: 2012-06-24 22:41+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -48,9 +48,7 @@ msgstr "Groupe de comptes"
 msgid "Budget Account Groups"
 msgstr "Groupe de compteGroupes de comptes"
 
-#: .\models.py:188
-#: .\models.py:215
-#: .\models.py:262
+#: .\models.py:188 .\models.py:215 .\models.py:262
 msgid "Introduction"
 msgstr ""
 
@@ -70,8 +68,7 @@ msgstr "obligatoire pour ménages"
 msgid "Required for Persons"
 msgstr "obligatoire pour personnes"
 
-#: .\models.py:214
-#: .\models.py:701
+#: .\models.py:214 .\models.py:701
 msgid "Periods"
 msgstr "Périodes"
 
@@ -157,8 +154,7 @@ msgstr "Acteurs"
 msgid "Header"
 msgstr ""
 
-#: .\models.py:626
-#: .\models.py:688
+#: .\models.py:626 .\models.py:688
 msgid "Remark"
 msgstr "Remarque"
 
@@ -174,13 +170,8 @@ msgstr "Entrée"
 msgid "Budget Entries"
 msgstr "Entrées"
 
-#: .\models.py:674
-#: .\models.py:961
-#: .\models.py:965
-#: .\models.py:969
-#: .\models.py:973
-#: .\models.py:977
-#: .\models.py:1073
+#: .\models.py:674 .\models.py:961 .\models.py:965 .\models.py:969
+#: .\models.py:973 .\models.py:977 .\models.py:1073
 msgid "Amount"
 msgstr "Montant"
 
@@ -196,10 +187,7 @@ msgstr "distribuer"
 msgid "To Do"
 msgstr ""
 
-#: .\models.py:692
-#: .\models.py:725
-#: .\models.py:950
-#: .\models.py:1069
+#: .\models.py:692 .\models.py:725 .\models.py:950 .\models.py:1069
 msgid "Description"
 msgstr ""
 

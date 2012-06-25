@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 20:51+0100\n"
+"POT-Creation-Date: 2012-06-24 21:09+0100\n"
 "PO-Revision-Date: 2012-06-24 22:54+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -111,13 +111,11 @@ msgstr "Projet chevauche avec %(ctype)s #%(id)s"
 msgid "%(ctype)s #%(id)s : %(msg)s"
 msgstr ""
 
-#: .\models.py:432
-#: .\models.py:499
+#: .\models.py:432 .\models.py:499
 msgid "ISIP"
 msgstr "PIIS"
 
-#: .\models.py:433
-#: .\models.py:547
+#: .\models.py:433 .\models.py:547
 msgid "ISIPs"
 msgstr "Liste des PIIS"
 

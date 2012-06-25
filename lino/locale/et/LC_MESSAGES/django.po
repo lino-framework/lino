@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 04:59+0100\n"
+"POT-Creation-Date: 2012-06-24 21:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,23 +41,23 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: .\__init__.py:1015
+#: .\__init__.py:1012
 msgid "Master"
 msgstr ""
 
-#: .\__init__.py:1017
+#: .\__init__.py:1014
 msgid "My menu"
 msgstr ""
 
-#: .\__init__.py:1019
+#: .\__init__.py:1016
 msgid "Configure"
 msgstr ""
 
-#: .\__init__.py:1021
+#: .\__init__.py:1018
 msgid "Explorer"
 msgstr ""
 
-#: .\__init__.py:1023
+#: .\__init__.py:1020
 msgid "Site"
 msgstr ""
 
@@ -65,7 +65,7 @@ msgstr ""
 msgid "Rebuild site cache"
 msgstr ""
 
-#: .\models.py:65 .\mixins\printable.py:652
+#: .\models.py:65 .\mixins\printable.py:636
 msgid "Are you sure?"
 msgstr ""
 
@@ -121,7 +121,7 @@ msgstr ""
 msgid "Text Field Templates"
 msgstr ""
 
-#: .\models.py:297 .\utils\babel.py:350
+#: .\models.py:297 .\utils\babel.py:352
 msgid "Designation"
 msgstr ""
 
@@ -197,40 +197,40 @@ msgstr ""
 msgid "Server up since"
 msgstr ""
 
-#: .\models.py:645 .\utils\perms.py:83
+#: .\models.py:646 .\utils\perms.py:83
 msgid "System"
 msgstr ""
 
-#: .\core\actions.py:348
+#: .\core\actions.py:350
 msgid "Detail"
 msgstr ""
 
-#: .\core\actions.py:366 .\ui\extjs3\ext_ui.py:156
+#: .\core\actions.py:368 .\ui\extjs3\ext_ui.py:156
 msgid "New"
 msgstr ""
 
-#: .\core\actions.py:372
+#: .\core\actions.py:374
 #, python-format
 msgid "Insert into %s"
 msgstr ""
 
-#: .\core\actions.py:385 .\mixins\__init__.py:259 .\mixins\duplicable.py:78
+#: .\core\actions.py:387 .\mixins\__init__.py:259 .\mixins\duplicable.py:78
 msgid "Duplicate"
 msgstr ""
 
-#: .\core\actions.py:408
+#: .\core\actions.py:410
 msgid "Calendar"
 msgstr ""
 
-#: .\core\actions.py:442
+#: .\core\actions.py:444
 msgid "Delete"
 msgstr ""
 
-#: .\core\actions.py:453 .\core\actions.py:458
+#: .\core\actions.py:455 .\core\actions.py:460
 msgid "Save"
 msgstr ""
 
-#: .\core\actors.py:576
+#: .\core\actors.py:570
 msgid "Workflows"
 msgstr ""
 
@@ -243,11 +243,11 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: .\core\table.py:683
+#: .\core\table.py:691
 msgid "You have no permission to delete this row."
 msgstr ""
 
-#: .\core\table.py:751
+#: .\core\table.py:759
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
@@ -332,37 +332,37 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: .\mixins\printable.py:498
+#: .\mixins\printable.py:480
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:557
+#: .\mixins\printable.py:539
 #, python-format
 msgid "%s printable has been built."
 msgstr ""
 
-#: .\mixins\printable.py:559
+#: .\mixins\printable.py:541
 #, python-format
 msgid "Reused %s printable from cache."
 msgstr ""
 
-#: .\mixins\printable.py:635
+#: .\mixins\printable.py:617
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:651
+#: .\mixins\printable.py:635
 msgid "This will discard all changes in the generated file."
 msgstr ""
 
-#: .\mixins\printable.py:676
+#: .\mixins\printable.py:662
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:685
+#: .\mixins\printable.py:671
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:728
+#: .\mixins\printable.py:714
 msgid "build time"
 msgstr ""
 
@@ -416,17 +416,17 @@ msgstr ""
 msgid "Django administration"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:744 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:746 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:965
+#: .\ui\extjs3\ext_elems.py:968
 msgid "show"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:1504 .\ui\extjs3\ext_ui.py:2467
+#: .\ui\extjs3\ext_elems.py:1508 .\ui\extjs3\ext_ui.py:2475
 #: .\ui\extjs3\linolib.js.py:13
 msgid "No data to display."
 msgstr ""
@@ -443,32 +443,32 @@ msgstr ""
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs3\ext_store.py:654 .\utils\tables.py:577
+#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:583
 msgid "Yes"
 msgstr ""
 
-#: .\ui\extjs3\ext_store.py:654 .\utils\tables.py:577
+#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:583
 msgid "No"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:161
+#: .\ui\extjs3\ext_ui.py:163
 msgid "Show Last"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:163
+#: .\ui\extjs3\ext_ui.py:165
 msgid "Show All"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:193 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:195 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:200 .\ui\extjs3\ext_ui.py:203
+#: .\ui\extjs3\ext_ui.py:202 .\ui\extjs3\ext_ui.py:205
 #: .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:622 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
+#: .\ui\extjs3\ext_ui.py:631 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
@@ -494,22 +494,22 @@ msgstr ""
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1468 .\ui\extjs3\ext_ui.py:1525
+#: .\ui\extjs3\ext_ui.py:1468 .\ui\extjs3\ext_ui.py:1526
 #, python-format
 msgid "List contains more than %d rows"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1593 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1595 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1799
+#: .\ui\extjs3\ext_ui.py:1801
 #, python-format
 msgid "Action \"%(action)s\" failed for %(record)s:"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1804
+#: .\ui\extjs3\ext_ui.py:1806
 msgid "An error report has been sent to the system administrator."
 msgstr ""
 
@@ -673,7 +673,7 @@ msgstr ""
 msgid "Choices for %s"
 msgstr ""
 
-#: .\utils\babel.py:364
+#: .\utils\babel.py:366
 msgid "Language"
 msgstr ""
 

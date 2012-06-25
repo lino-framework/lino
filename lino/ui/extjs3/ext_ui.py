@@ -2550,7 +2550,7 @@ tinymce.init({
         yield "};"
         
         
-    def js_render_window_action(self,rh,action,user):
+    def old_js_render_window_action(self,rh,action,user):
       
         rpt = rh.actor
         
@@ -2602,6 +2602,61 @@ tinymce.init({
                 action,s,py2js(windowConfig),py2js(mainConfig))
 
 
+    def js_render_window_action(self,rh,action,user):
+      
+        rpt = rh.actor
+        
+        if isinstance(action,actions.ShowDetailAction):
+            mainPanelClass = "Lino.%sPanel" % action
+        elif isinstance(action,actions.InsertRow): # also printable.InitiateListing
+            mainPanelClass = "Lino.%sPanel" % action
+        elif isinstance(action,actions.GridEdit):
+            mainPanelClass = "Lino.%s.GridPanel" % rpt
+        elif isinstance(action,actions.Calendar):
+            mainPanelClass = "Lino.CalendarPanel"
+        else:
+            return 
+        if action.actor is None:
+            raise Exception("20120524 %s %s actor is None" % (rh.actor,action))
+        if rpt.parameters:
+            params = rh.params_layout.main
+            #~ assert params.__class__.__name__ == 'ParameterPanel'
+        else:
+            params = None
+        windowConfig = dict()
+        
+        ws = action.actor.window_size
+        if ws:
+            windowConfig.update(
+                width=ws[0],
+                height=ws[1],
+                maximized=False,
+                draggable=True, 
+                maximizable=True, 
+                modal=True)
+                
+        #~ yield "var fn = function() {" 
+        #~ yield "};" 
+        yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action,py2js(windowConfig))
+        #~ yield "  console.log('20120625 fn');" 
+        yield "  var p = {};" 
+        if action.hide_top_toolbar:
+            yield "  p.hide_top_toolbar = true;" 
+        if action.actor.hide_window_title:
+            yield "  p.hide_window_title = true;" 
+        yield "  p.is_main_window = true;" # workaround for problem 20111206
+        if params:
+            for ln in jsgen.declare_vars(params):
+                yield '  '  + ln
+            yield "  p.params_panel = %s;" % params
+            yield "  p.params_panel.fields = %s;" % py2js(
+              [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
+        
+        yield "  var rv = new %s(p);" % mainPanelClass
+        #~ yield "  console.log('20120625 rv is',rv);" 
+        yield "  return rv;"
+        yield "});" 
+        
     def old_js_render_window_action(self,rh,action,user):
       
         rpt = rh.actor

@@ -36,11 +36,13 @@ See :mod:`lino.utils.config`.
 .. xfile:: linolib.js
 .. xfile:: lino.js
 
-The ExtJS3 user interface generates a big file :file:`lino.js` at server startup which 
-contains the client side application logic. 
+The ExtJS3 user interface generates a series of files 
+:file:`lino_PROFILE_LANG.js` 
+at server startup which contain the 
+client side application logic. 
 The first part of this file comes from
-a file :srcref:`/lino/ui/extjs3/linolib.js` 
-(the second part is purely generated from your models and reports).
+a file :srcref:`/lino/ui/extjs3/linolib.js`,
+the second part is purely generated from your models and reports).
 
 
 .. xfile:: .po

@@ -398,13 +398,15 @@ Lino.calling_window = function() {
     if (Lino.window_history.length) return Lino.window_history[Lino.window_history.length-1];
 }
 
-Lino.WindowAction = function(mainItemClass,windowConfig,mainConfig,ppf) {
+//~ Lino.WindowAction = function(mainItemClass,windowConfig,mainConfig,ppf) {
+Lino.WindowAction = function(windowConfig,main_item_fn) {
     //~ if(!mainConfig) mainConfig = {};
-    mainConfig.is_main_window = true;
+    //~ mainConfig.is_main_window = true;
     this.windowConfig = windowConfig;
-    if (ppf) mainConfig.params_panel.fields = ppf;
-    this.mainConfig = mainConfig;
-    this.mainItemClass = mainItemClass;
+    this.main_item_fn = main_item_fn;
+    //~ if (ppf) mainConfig.params_panel.fields = ppf;
+    //~ this.mainConfig = mainConfig;
+    //~ this.mainItemClass = mainItemClass;
 };
 
 Lino.WindowAction = Ext.extend(Lino.WindowAction,{
@@ -413,13 +415,14 @@ Lino.WindowAction = Ext.extend(Lino.WindowAction,{
     get_window : function() {
       //~ if(mainConfig) Ext.apply(this.mainConfig,mainConfig);
       if (this.window == null)  {
-          this.windowConfig.main_item = new this.mainItemClass(this.mainConfig);
+          //~ this.windowConfig.main_item = new this.mainItemClass(this.mainConfig);
+          this.windowConfig.main_item = this.main_item_fn();
           this.window = new Lino.Window(this.windowConfig);
       }
       return this.window;
     },
     run : function(status) {
-      //~ console.log('20120623 window_action.run()',this)
+      //~ console.log('20120625 window_action.run()',this)
       Lino.open_window(this.get_window(),status);
     }
   

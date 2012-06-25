@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 20:41+0100\n"
+"POT-Creation-Date: 2012-06-24 21:09+0100\n"
 "PO-Revision-Date: 2012-06-24 22:44+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -28,9 +28,7 @@ msgstr "Types de ménage"
 msgid "Household"
 msgstr "Ménage"
 
-#: .\models.py:70
-#: .\models.py:315
-#: .\models.py:320
+#: .\models.py:70 .\models.py:315 .\models.py:320
 msgid "Households"
 msgstr "Ménages"
 
@@ -50,8 +48,7 @@ msgstr "donneur de nom"
 msgid "Household Member"
 msgstr "Membre de ménage"
 
-#: .\models.py:236
-#: .\models.py:275
+#: .\models.py:236 .\models.py:275
 msgid "Household Members"
 msgstr "Membres de ménage"
 
@@ -62,4 +59,3 @@ msgstr "Membre de "
 #: .\models.py:299
 msgid "is Household"
 msgstr "est un ménage"
-

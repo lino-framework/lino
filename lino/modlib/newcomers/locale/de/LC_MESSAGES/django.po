@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 05:01+0100\n"
+"POT-Creation-Date: 2012-06-24 21:10+0100\n"
 "PO-Revision-Date: 2012-02-05 02:06+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -32,55 +32,55 @@ msgstr "Fachbereich"
 msgid "Faculties"
 msgstr "Fachbereiche"
 
-#: .\models.py:105
+#: .\models.py:111
 msgid "Competence"
 msgstr "Kompetenz"
 
-#: .\models.py:106
+#: .\models.py:112
 msgid "Competences"
 msgstr "Kompetenzen"
 
-#: .\models.py:149 .\models.py:262
+#: .\models.py:158 .\models.py:279
 msgid "Newcomers"
 msgstr "Neuzugänge"
 
-#: .\models.py:153 .\models.py:251
+#: .\models.py:167 .\models.py:268
 msgid "New Clients"
 msgstr "Neue Klienten"
 
-#: .\models.py:157
+#: .\models.py:171
 msgid "Coached by"
 msgstr "Begleitet durch"
 
-#: .\models.py:158
+#: .\models.py:172
 msgid "Since"
 msgstr "Seit"
 
-#: .\models.py:196
+#: .\models.py:213
 msgid "Users by Newcomer"
 msgstr "Sozis vorschlagen"
 
-#: .\models.py:200
+#: .\models.py:217
 msgid "Show suggested agents for"
 msgstr "Zeige Vorschläge für"
 
-#: .\models.py:202
+#: .\models.py:219
 msgid "Count Newcomers since"
 msgstr "Neue Klienten seit"
 
-#: .\models.py:243
+#: .\models.py:260
 msgid "Primary clients"
 msgstr "Komplette Akten"
 
-#: .\models.py:247
+#: .\models.py:264
 msgid "Active clients"
 msgstr "Aktive Klienten"
 
-#: .\models.py:255
+#: .\models.py:272
 msgid "Score"
 msgstr "Quote"
 
-#: .\models.py:267
+#: .\models.py:284
 msgid "Newcomers Quota"
 msgstr "Quote NZ"
 

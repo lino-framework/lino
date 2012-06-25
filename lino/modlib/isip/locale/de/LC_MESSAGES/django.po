@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 05:00+0100\n"
+"POT-Creation-Date: 2012-06-24 21:09+0100\n"
 "PO-Revision-Date: 2012-02-05 02:02+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -28,130 +28,130 @@ msgstr "VSE-Arten"
 msgid "Reference"
 msgstr "Referenz"
 
-#: .\models.py:125
+#: .\models.py:124
 msgid "Examination Policy"
 msgstr "Auswertungsstrategie"
 
-#: .\models.py:126
+#: .\models.py:125
 msgid "Examination Policies"
 msgstr "Auswertungsstrategien"
 
-#: .\models.py:140
+#: .\models.py:138
 msgid "Contract Ending"
 msgstr "Vertragsbeendigung"
 
-#: .\models.py:141
+#: .\models.py:139
 msgid "Contract Endings"
 msgstr "Vertragsbeendigungen"
 
-#: .\models.py:143
+#: .\models.py:141
 msgid "designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:188
+#: .\models.py:185
 msgid "Person"
 msgstr "Person"
 
-#: .\models.py:192
+#: .\models.py:189
 msgid "Company"
 msgstr "Firma"
 
-#: .\models.py:202
+#: .\models.py:199
 msgid "represented by"
 msgstr "Vertreten durch"
 
-#: .\models.py:208
+#: .\models.py:205
 msgid "applies from"
 msgstr "Laufzeit von"
 
-#: .\models.py:209
+#: .\models.py:206
 msgid "applies until"
 msgstr "Laufzeit bis"
 
-#: .\models.py:210
+#: .\models.py:207
 msgid "date decided"
 msgstr "Beschlossen am"
 
-#: .\models.py:211
+#: .\models.py:208
 msgid "date issued"
 msgstr "Ausgestellt am"
 
-#: .\models.py:214
+#: .\models.py:211
 msgid "responsible (ASD)"
 msgstr "Verantwortlicher (ASD)"
 
-#: .\models.py:226
+#: .\models.py:223
 msgid "Ending"
 msgstr "Beendigung"
 
-#: .\models.py:227
+#: .\models.py:224
 msgid "date ended"
 msgstr "Beendet am"
 
-#: .\models.py:342
+#: .\models.py:339
 #, python-format
 msgid "Evaluation %d"
 msgstr "Auswertung %d"
 
-#: .\models.py:354
+#: .\models.py:351
 msgid "Contract ends in a month"
 msgstr "Vertrag endet in einem Monat"
 
-#: .\models.py:406
+#: .\models.py:403
 msgid "Date range lies outside of coached period"
 msgstr "Datumsbereich außerhalb Begleitungsperiode"
 
-#: .\models.py:409
+#: .\models.py:406
 #, python-format
 msgid "Date range overlaps with %(ctype)s #%(id)s"
 msgstr "Datumsbereich überschneidet sich mit %(ctype)s #%(id)s"
 
-#: .\models.py:421
+#: .\models.py:418
 #, python-format
 msgid "%(ctype)s #%(id)s : %(msg)s"
 msgstr ""
 
-#: .\models.py:435 .\models.py:502
+#: .\models.py:432 .\models.py:499
 msgid "ISIP"
 msgstr "VSE"
 
-#: .\models.py:436 .\models.py:555
+#: .\models.py:433 .\models.py:547
 msgid "ISIPs"
 msgstr "VSEs"
 
-#: .\models.py:440
+#: .\models.py:437
 msgid "Contract Type"
 msgstr "Vertragsart"
 
-#: .\models.py:442
+#: .\models.py:439
 msgid "stages"
 msgstr "Etappen"
 
-#: .\models.py:444
+#: .\models.py:441
 msgid "goals"
 msgstr "Zielsetzungen"
 
-#: .\models.py:446
+#: .\models.py:443
 msgid "duties ASD"
 msgstr "Verpflichtungen ASD"
 
-#: .\models.py:448
+#: .\models.py:445
 msgid "duties DSBE"
 msgstr "Verpflichtungen DSBE"
 
-#: .\models.py:450
+#: .\models.py:447
 msgid "duties company"
 msgstr "Verpflichtungen Firma"
 
-#: .\models.py:452
+#: .\models.py:449
 msgid "duties person"
 msgstr "Verpflichtungen Person"
 
-#: .\models.py:461
+#: .\models.py:458
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
-#: .\models.py:501
+#: .\models.py:498
 msgid "General"
 msgstr "Allgemein"
 

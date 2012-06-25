@@ -1,0 +1,42 @@
+20120625
+========
+
+Beim Aufwachen fiel mir auf, dass meine gestrige Neuimplementierung der 
+window action handlers mit `Lino.ActionWindow` noch einen dicken 
+Bug hatte::
+
+
+  var contract_type6788 = new Lino.TwinCombo(...});
+  var date6789 = new Lino.DateField(...);
+  var job_type6790 = new Lino.TwinCombo(...);
+  var main_panel6791 = new Ext.form.FormPanel(...);
+  Lino.jobs.JobsOverview.default_action = new Lino.WindowAction(
+      Lino.jobs.JobsOverview.default_actionPanel,
+      {},
+      { "params_panel": main_panel6791 },
+      [ contract_type6788, date6789, job_type6790 ]
+      );
+
+
+Da werden die Komponenten also schon im globalen Namespace instanziert. 
+Das ist zu früh. 
+So ist es besser::
+
+  Lino.jobs.JobsOverview.default_action = new Lino.WindowAction({  },function(){
+    var p = {};
+    p.is_main_window = true;
+    var contract_type6788 = new Lino.TwinCombo({ "fieldLabel": "contract type", "name": "contract_type", "pageSize": 20, "onTrigger2Click": function(e){ Lino.show_fk_detail(this,Lino.jobs.ContractTypes.detail_action)}, "emptyText": "Choisir Type de contrat de travail...", "selectOnFocus": true, "hiddenName": "contract_typeHidden", "anchor": "100%", "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/jobs/JobsOverview/contract_type", "method": "GET" }) }) });
+    var date6789 = new Lino.DateField({ "selectOnFocus": true, "fieldLabel": "date", "anchor": "100%", "name": "date" });
+    var job_type6790 = new Lino.TwinCombo({ "fieldLabel": "job type", "name": "job_type", "pageSize": 20, "onTrigger2Click": function(e){ Lino.show_fk_detail(this,Lino.jobs.JobTypes.detail_action)}, "emptyText": "Choisir Type d'emploi...", "selectOnFocus": true, "hiddenName": "job_typeHidden", "anchor": "100%", "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/jobs/JobsOverview/job_type", "method": "GET" }) }) });
+    var main_panel6791 = new Ext.form.FormPanel({hidden:true, layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel({ "autoHeight": true, "layout": "hbox", "items": [ { "flex": 41, "autoHeight": true, "layout": "form", "xtype": "panel", "items": contract_type6788, "labelAlign": "top" }, { "flex": 16, "autoHeight": true, "layout": "form", "xtype": "panel", "items": date6789, "labelAlign": "top" }, { "flex": 41, "autoHeight": true, "layout": "form", "xtype": "panel", "items": job_type6790, "labelAlign": "top" } ], "frame": false, "layoutConfig": { "align": "stretchmax" }, "hideCheckBoxLabels": true, "labelWidth": 126, "border": false, "labelAlign": "top" })});
+    p.params_panel = main_panel6791;
+    p.params_panel.fields = [ contract_type6788, date6789, job_type6790 ];
+    return new Lino.jobs.JobsOverview.default_actionPanel(p);
+  });
+
+(und natürlich Änderungen in der `Lino.ActionWindow`, siehe :xfile:`linolib.js`).
+
+N.B. Als Python-verwöhnter Programmierer hatte ich das keyword ``new`` 
+im obigen Code (hinterm ``return``) vergessen. 
+Resultat war eine JavaScript-Fehlermeldung in der Console, die erst 
+viel später losknallte. Das hat mich ca. eine Stunde Fehlersuche gekostet.
