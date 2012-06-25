@@ -1612,7 +1612,7 @@ Lino.fk_renderer = function(fkname,handlername) {
     //~ if (record.phantom) return '';
     if (value) {
         var s = '<a href="javascript:' ;
-        s += handlername + '.run({},{record_id:\'' + String(record.data[fkname]) + '\'})">';
+        s += handlername + '.run({record_id:\'' + String(record.data[fkname]) + '\'})">';
         s += value + '</a>';
         //~ console.log('Lino.fk_renderer',value,'-->',s);
         return s
