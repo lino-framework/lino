@@ -266,7 +266,7 @@ msgstr "%(details)s de %(master)s"
 #. Translators: will also be concatenated with '(type)' '(object)'
 #: .\mixins\__init__.py:72
 msgid "Controlled by"
-msgstr "Contrōolé par"
+msgstr "Contrôlé par"
 
 #: .\mixins\__init__.py:87
 msgid "(type)"
@@ -282,8 +282,8 @@ msgstr "utilisateur"
 
 #: .\mixins\__init__.py:197
 #, python-format
-msgid "My %s"
-msgstr "Mes %s"
+msgid "My "
+msgstr "Mes "
 
 #: .\mixins\__init__.py:256
 msgid "Seq.No."

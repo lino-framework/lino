@@ -145,7 +145,7 @@ class Newcomers(AllPersons):
     """
     Persons who have the "Newcomer" checkbox on.
     """
-    required=dict(user_groups=['newcomers'])
+    required = dict(user_groups=['newcomers'])
     #~ required_user_groups = ['newcomers']
     
     #~ filter = dict(newcomer=True)
@@ -153,9 +153,10 @@ class Newcomers(AllPersons):
     #~ use_as_default_table = False
     column_names = "name_column broker faculty address_column *"
     
-    @classmethod
-    def get_actor_label(self):
-        return _("Newcomers")
+    #~ @classmethod
+    #~ def get_actor_label(self):
+        #~ return _("Newcomers")
+    label = _("Newcomers")
         
 class NewcomersByFaculty(Newcomers):
     master_key = 'faculty'

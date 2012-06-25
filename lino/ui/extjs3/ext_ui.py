@@ -1821,7 +1821,8 @@ tinymce.init({
         kw.update(success=False)
         #~ if e is not None:
         if isinstance(e,Exception):
-            logger.exception(e)
+            if False: # useful when debugging, but otherwise rather disturbing
+                logger.exception(e)
             if hasattr(e,'message_dict'):
                 kw.update(errors=e.message_dict)
         #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))

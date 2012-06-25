@@ -122,7 +122,7 @@ class Lino(Lino):
             
             #~ self.modules.cal.setup_my_menu(self,ui,user,m)
             #~ self.modules.outbox.setup_my_menu(self,ui,user,m)
-            m.add_action(self.modules.uploads.MyUploads)
+            #~ m.add_action(self.modules.uploads.MyUploads)
             m.add_action(self.modules.lino.MyTextFieldTemplates)
 
             #~ m.add_instance_action(user,label="My user preferences")
@@ -167,7 +167,7 @@ class Lino(Lino):
             #~ links.setup_config_menu(self,ui,user,cfg)
             
             
-            config_pcsw.add_action(self.modules.uploads.UploadTypes)
+            #~ config_pcsw.add_action(self.modules.uploads.UploadTypes)
             
             #~ self.modules.cal.setup_config_menu(self,ui,user,cfg)
             #~ self.modules.outbox.setup_config_menu(self,ui,user,cfg)
@@ -181,7 +181,7 @@ class Lino(Lino):
             
             self.on_each_app('setup_explorer_menu',ui,user,m)
             
-            m.add_action(self.modules.uploads.Uploads)
+            #~ m.add_action(self.modules.uploads.Uploads)
             m.add_action(self.modules.pcsw.Exclusions)
             m.add_action(self.modules.pcsw.PersonSearches)
             #~ m.add_action(self.modules.lino.ContentTypes)

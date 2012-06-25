@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-24 21:10+0100\n"
-"PO-Revision-Date: 2012-06-08 11:59+0200\n"
+"PO-Revision-Date: 2012-06-25 13:25+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -91,7 +91,8 @@ msgstr "Registre des étrangers"
 msgid "Waiting for registry"
 msgstr "Registre d'attente "
 
-#: .\models.py:220 .\models.py:1063
+#: .\models.py:220
+#: .\models.py:1063
 msgid "eID card type"
 msgstr "Type de carte eID"
 
@@ -163,7 +164,8 @@ msgstr "Compte en banque 2"
 msgid "Cannot delete companies and persons imported from TIM"
 msgstr "On ne peut effacer les sociétés et les personnes importées de TIM"
 
-#: .\models.py:360 .\models.py:1030
+#: .\models.py:360
+#: .\models.py:1030
 msgid "Person"
 msgstr "Personne"
 
@@ -193,9 +195,12 @@ msgstr "Phase d'intégration"
 
 #: .\models.py:382
 msgid "Coached from"
-msgstr "Début de l'accompagnement"
+msgstr "Accompagné depuis"
 
-#: .\models.py:385 .\models.py:431 .\models.py:1531 .\models.py:1647
+#: .\models.py:385
+#: .\models.py:431
+#: .\models.py:1531
+#: .\models.py:1647
 msgid "until"
 msgstr "jusque"
 
@@ -269,7 +274,7 @@ msgstr "suspendu jusque"
 
 #: .\models.py:478
 msgid "unemployment benefit"
-msgstr "allocation de chōmage"
+msgstr "allocation de chômage"
 
 #: .\models.py:479
 msgid "waiting pay"
@@ -383,7 +388,8 @@ msgstr "On ne peut effacer les contacts importés de TIM"
 msgid "hourly rate"
 msgstr "coûr horaire"
 
-#: .\models.py:868 .\models.py:2081
+#: .\models.py:868
+#: .\models.py:2081
 msgid "General"
 msgstr "Général"
 
@@ -511,7 +517,8 @@ msgstr "Clients actifs de %s"
 msgid "Data Test Clients"
 msgstr ""
 
-#: .\models.py:1278 .\models.py:1639
+#: .\models.py:1278
+#: .\models.py:1639
 msgid "Coached by"
 msgstr "Accompagné par"
 
@@ -533,7 +540,7 @@ msgstr ""
 
 #: .\models.py:1341
 msgid "Users with their Clients"
-msgstr ""
+msgstr "Agents et leurs clients"
 
 #: .\models.py:1432
 msgid "Total"
@@ -667,7 +674,8 @@ msgstr "écrit"
 msgid "Wanted property"
 msgstr "Propriété désirée"
 
-#: .\models.py:1690 .\models.py:1710
+#: .\models.py:1690
+#: .\models.py:1710
 msgid "Wanted properties"
 msgstr "Propriétés désirées"
 
@@ -675,7 +683,8 @@ msgstr "Propriétés désirées"
 msgid "Unwanted property"
 msgstr "Propriété non désirée"
 
-#: .\models.py:1698 .\models.py:1716
+#: .\models.py:1698
+#: .\models.py:1716
 msgid "Unwanted properties"
 msgstr "Propriétés non-désirées"
 
@@ -712,9 +721,8 @@ msgid "usable in contracts"
 msgstr "utilisable dans contrats"
 
 #: .\models.py:2085
-#, fuzzy
 msgid "More"
-msgstr "Cours"
+msgstr "Plus"
 
 #: .\models.py:2152
 msgid "Integration"
@@ -722,7 +730,7 @@ msgstr "Intégration"
 
 #: .\models.py:2153
 msgid "CBSS"
-msgstr ""
+msgstr "BCSS"
 
 #: .\models.py:2154
 msgid "Newcomers"
@@ -733,14 +741,12 @@ msgid "Debts"
 msgstr ""
 
 #: .\models.py:2165
-#, fuzzy
 msgid "Integration Agent (Senior)"
-msgstr "Phase d'intégration"
+msgstr "Agent d'insertion (chef de service)"
 
 #: .\models.py:2170
-#, fuzzy
 msgid "Integration Agent"
-msgstr "Intégration"
+msgstr "Agent d'insertion"
 
 #: .\models.py:2175
 msgid "Newcomers consultant"
@@ -748,12 +754,11 @@ msgstr ""
 
 #: .\models.py:2180
 msgid "Debts consultant"
-msgstr ""
+msgstr "Consultate médiateur dettes"
 
 #: .\models.py:2184
-#, fuzzy
 msgid "Administrator"
-msgstr "~Administrateur du site local"
+msgstr "Administrateur"
 
 #: .\settings.py:78
 msgid "Master"

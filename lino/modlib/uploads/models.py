@@ -38,8 +38,8 @@ from lino.modlib.cal.models import DurationUnits, update_reminder
 class UploadType(dd.Model):
     
     class Meta:
-        verbose_name = _("upload type")
-        verbose_name_plural = _("upload types")
+        verbose_name = _("Upload Type")
+        verbose_name_plural = _("Upload Types")
         
     name = models.CharField(max_length=200,verbose_name=_('Name'))
     
@@ -62,6 +62,10 @@ class Upload(
     
     allow_cascaded_delete = True
     
+    class Meta:
+        verbose_name = _("Upload")
+        verbose_name_plural = _("Uploads")
+        
     type = models.ForeignKey("uploads.UploadType",
       blank=True,null=True)
       #~ verbose_name=_('upload type'))
@@ -145,8 +149,33 @@ class UploadsByController(Uploads):
     slave_grid_format = 'summary'
     
     
-class MyUploads(mixins.ByUser,Uploads):
+class MyUploads(Uploads,mixins.ByUser):
     #~ column_names = "file user person company owner created modified"
     column_names = "file description user owner *"
-    label = _("My uploads")
+    #~ label = _("My uploads")
     order_by = ["modified"]
+
+
+MODULE_LABEL = _("Uploads")
+
+def site_setup(site):
+    pass
+  
+def setup_main_menu(site,ui,user,m):
+    pass
+            
+  
+def setup_master_menu(site,ui,user,m): 
+    pass
+  
+def setup_my_menu(site,ui,user,m): 
+    m  = m.add_menu("uploads",MODULE_LABEL)
+    m.add_action(MyUploads)
+    
+def setup_config_menu(site,ui,user,m): 
+    m  = m.add_menu("uploads",MODULE_LABEL)
+    m.add_action(UploadTypes)
+  
+def setup_explorer_menu(site,ui,user,m):
+    m  = m.add_menu("uploads",MODULE_LABEL)
+    m.add_action(Uploads)

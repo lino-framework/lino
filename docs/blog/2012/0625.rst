@@ -40,3 +40,29 @@ N.B. Als Python-verwöhnter Programmierer hatte ich das keyword ``new``
 im obigen Code (hinterm ``return``) vergessen. 
 Resultat war eine JavaScript-Fehlermeldung in der Console, die erst 
 viel später losknallte. Das hat mich ca. eine Stunde Fehlersuche gekostet.
+
+
+Diverse Bugfixes
+----------------
+
+- Kompetenzen: Wert keine Dropdownauswahl möglich außer bei Führerschein.
+  Da kam in der Tat ein 500::
+
+    TypeError
+    object of type 'generator' has no len()
+
+    TRACEBACK:
+      File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+
+      File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/ext_ui.py", line 2169, in choices_view
+        count = len(qs)
+
+
+- Übersetzungen FR. 
+- Eingabe VSEs: 
+  - Fehlermeldung "Période %(p1)s hors période d'accompagnement %(p2)s." 
+    nennt jetzt die beanstandeten Daten.
+    Und wenn beide Daten (Beginn und Ende) eines Vertrags leer sind, 
+    macht er diese Fehlermeldung nicht.
+  

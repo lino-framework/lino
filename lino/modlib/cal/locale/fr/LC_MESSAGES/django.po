@@ -229,7 +229,7 @@ msgstr "Date"
 
 #: .\models.py:964
 msgid "Guest Role"
-msgstr "Rōle de participant"
+msgstr "Rôle de participant"
 
 #: .\models.py:965
 msgid "Guest Roles"

@@ -178,11 +178,11 @@ msgstr "Type de société"
 
 #: .\models.py:562
 msgid "Role Type"
-msgstr "Type de rōle"
+msgstr "Type de rôle"
 
 #: .\models.py:563
 msgid "Role Types"
-msgstr "Types de rōle"
+msgstr "Types de rôle"
 
 #: .\models.py:580
 msgid "Contact Person"
@@ -194,7 +194,7 @@ msgstr "Personnes de contact"
 
 #: .\models.py:591
 msgid "Contact Role"
-msgstr "Rōle"
+msgstr "Rôle"
 
 #: .\models.py:650
 msgid "Contact persons"

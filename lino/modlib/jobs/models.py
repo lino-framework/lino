@@ -608,9 +608,9 @@ class ContractsBySchedule(Contracts):
     master_key = 'schedule'
     column_names = 'job applies_from applies_until user type *'
 
-class MyContracts(mixins.ByUser,Contracts):
+class MyContracts(Contracts,mixins.ByUser):
     column_names = "applies_from person job *"
-    label = _("My contracts")
+    #~ label = _("My contracts")
     #~ order_by = "reminder_date"
     #~ column_names = "reminder_date person company *"
     order_by = ["applies_from"]

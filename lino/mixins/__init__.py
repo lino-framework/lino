@@ -194,7 +194,9 @@ if settings.LINO.user_model:
         
         @classmethod
         def get_actor_label(self):
-            return _("My %s") % self.model._meta.verbose_name_plural
+            return string_concat(
+                _("My "),self.model._meta.verbose_name_plural)
+            #~ return _("My %s") % self.model._meta.verbose_name_plural
             
         @classmethod
         def setup_request(self,rr):

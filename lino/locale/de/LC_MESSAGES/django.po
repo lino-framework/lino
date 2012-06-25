@@ -271,8 +271,8 @@ msgstr "Benutzer"
 
 #: .\mixins\__init__.py:197
 #, python-format
-msgid "My %s"
-msgstr "Meine %s"
+msgid "My "
+msgstr "Meine "
 
 #: .\mixins\__init__.py:256
 msgid "Seq.No."

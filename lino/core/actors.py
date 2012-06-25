@@ -353,13 +353,26 @@ class Actor(object):
     panel should be visible when this table is being displayed.
     """
     
-    #~ _lino_detail = None
     
     
-    
-    #~ _actor_name = None
     title = None
+    """
+    The text to appear e.g. as window title when the actor's 
+    default action has been called.
+    If this is not set, Lino will use the :attr:`label` as title.
+    """
+    
     label = None
+    """
+    The text to appear e.g. on a button that will call 
+    the default action of an actor.
+    This attribute is *not* inherited to subclasses.
+    For :class:`lino.core.table.Table` subclasses
+    that don't have a label, 
+    Lino will call 
+    :meth:`get_actor_label <lino.core.table.Table.get_actor_label>`.
+    """
+    
     #~ actions = []
     default_action = None
     actor_id = None

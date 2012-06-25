@@ -34,11 +34,11 @@ msgstr "Ménages"
 
 #: .\models.py:196
 msgid "Household Role"
-msgstr "Rōle dans ménage"
+msgstr "Rôle dans ménage"
 
 #: .\models.py:197
 msgid "Household Roles"
-msgstr "Rōles dans ménage"
+msgstr "Rôles dans ménage"
 
 #: .\models.py:199
 msgid "name-giving"

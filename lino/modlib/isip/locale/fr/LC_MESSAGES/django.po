@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 21:09+0100\n"
-"PO-Revision-Date: 2012-06-24 22:54+0200\n"
+"POT-Creation-Date: 2012-06-25 12:33+0100\n"
+"PO-Revision-Date: 2012-06-25 14:37+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -62,19 +62,19 @@ msgstr "représenté par"
 
 #: .\models.py:205
 msgid "applies from"
-msgstr "est d'application à partir de"
+msgstr "Début de contrat"
 
 #: .\models.py:206
 msgid "applies until"
-msgstr "est d'application jusque"
+msgstr "Fin prévue"
 
 #: .\models.py:207
 msgid "date decided"
-msgstr "date de décision"
+msgstr "Décidé le"
 
 #: .\models.py:208
 msgid "date issued"
-msgstr "date fournie ?"
+msgstr "Délivré le"
 
 #: .\models.py:211
 msgid "responsible (ASD)"
@@ -82,11 +82,11 @@ msgstr "Responsable (SSG)"
 
 #: .\models.py:223
 msgid "Ending"
-msgstr "Fin"
+msgstr "Cause d'abandon"
 
 #: .\models.py:224
 msgid "date ended"
-msgstr "date de fin"
+msgstr "Abandon le"
 
 #: .\models.py:339
 #, python-format
@@ -97,61 +97,64 @@ msgstr "Evaluation %d"
 msgid "Contract ends in a month"
 msgstr "Projet termine dans un mois"
 
-#: .\models.py:403
-msgid "Date range lies outside of coached period"
-msgstr "Date du projet hors période d'accompagnement"
+#: .\models.py:405
+#, python-format
+msgid "Date range %(p1)s lies outside of coached period %(p2)s."
+msgstr "Période %(p1)s hors période d'accompagnement %(p2)s."
 
-#: .\models.py:406
+#: .\models.py:409
 #, python-format
 msgid "Date range overlaps with %(ctype)s #%(id)s"
 msgstr "Projet chevauche avec %(ctype)s #%(id)s"
 
-#: .\models.py:418
+#: .\models.py:421
 #, python-format
 msgid "%(ctype)s #%(id)s : %(msg)s"
 msgstr ""
 
-#: .\models.py:432 .\models.py:499
+#: .\models.py:435
+#: .\models.py:502
 msgid "ISIP"
 msgstr "PIIS"
 
-#: .\models.py:433 .\models.py:547
+#: .\models.py:436
+#: .\models.py:550
 msgid "ISIPs"
-msgstr "Liste des PIIS"
+msgstr "PIISs"
 
-#: .\models.py:437
+#: .\models.py:440
 msgid "Contract Type"
 msgstr "Type de contrat"
 
-#: .\models.py:439
+#: .\models.py:442
 msgid "stages"
 msgstr "stages"
 
-#: .\models.py:441
+#: .\models.py:444
 msgid "goals"
 msgstr "buts"
 
-#: .\models.py:443
+#: .\models.py:446
 msgid "duties ASD"
 msgstr "devoirs SSG"
 
-#: .\models.py:445
+#: .\models.py:448
 msgid "duties DSBE"
 msgstr "devois ISP"
 
-#: .\models.py:447
+#: .\models.py:450
 msgid "duties company"
 msgstr "devoirs entreprise"
 
-#: .\models.py:449
+#: .\models.py:452
 msgid "duties person"
 msgstr "Devoirs personne"
 
-#: .\models.py:458
+#: .\models.py:461
 msgid "responsible (DSBE)"
 msgstr "Responsable (ISP)"
 
-#: .\models.py:498
+#: .\models.py:501
 msgid "General"
 msgstr "Général"
 

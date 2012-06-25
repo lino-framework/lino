@@ -525,7 +525,10 @@ class Table(AbstractTable):
                     
     @classmethod
     def get_actor_label(self):
-        "Compute the label of this actor. Called only if `label` is not set."
+        """
+        Compute the label of this actor. 
+        Called only if `label` is not set, and only once during site startup.
+        """
         return self.model._meta.verbose_name_plural
         
     @classmethod

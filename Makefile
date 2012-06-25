@@ -33,6 +33,7 @@ mm:
   
 
 cm:  
+	export DJANGO_SETTINGS_MODULE=lino.apps.pcsw.settings
 	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) compilemessages 
 	@for MOD in $(MODULES); \
 	do \

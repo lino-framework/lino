@@ -45,9 +45,8 @@ An open range is a range that has at least one limit set to `None`.
 --------------------------------------------------
 
 
-
 """
-
+from lino.utils import babel
 
 
 def constrain(value,lowest,highest):
@@ -95,6 +94,9 @@ def isrange(a,b):
     if a is None or b is None: return True
     if a <= b: return True
     return False
+    
+def rangefmt(r):
+    return babel.dtos(r[0]) + '...' + babel.dtos(r[1])
     
 def overlap2(a,b):
     """
