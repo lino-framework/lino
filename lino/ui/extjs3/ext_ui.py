@@ -2105,7 +2105,7 @@ tinymce.init({
             #~ logger.info("20120202 %r",field)
             chooser = choosers.get_for_field(field)
             if chooser:
-                qs = chooser.get_request_choices(ar,rpt)
+                qs = list(chooser.get_request_choices(ar,rpt))
                 #~ logger.info("20120213 %s",qs)
                 #~ if qs is None:
                     #~ qs = []
