@@ -66,3 +66,7 @@ Diverse Bugfixes
     Und wenn beide Daten (Beginn und Ende) eines Vertrags leer sind, 
     macht er diese Fehlermeldung nicht.
   
+  
+- Termin Duplizieren ging nicht. Da kommt "L'action Dupliquer a échoué  pour Rendez-vous "Rendez-vous #1208": type object 'Guest' has no attribute 'allow_cascaded_delete'. An error report has been sent to the system administrator.
+  
+- Weiter mit Tx25  

@@ -12,11 +12,9 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Termin Duplizieren geht nicht. Da kommt "L'action Dupliquer a échoué 
-    pour Rendez-vous "Rendez-vous #1208": type object 'Guest' has no attribute
-    'allow_cascaded_delete'. An error report has been sent to the system 
-    administrator.
+#.  Wenn man auf einem Auswertungs Termin, der automatisch generiert wurde durch eine VSE oder VBE, auf "Duplizieren" klickt, dann dupliziert er ihn zwar intern, löscht ihn aber anschließend gleich wieder, weil die VSE die komplette Serie neu generiert. Zu analysieren, wann so eine Aktion da überhaupt Sinn macht. 
 
+#.  Bei Klick auf owner_type kommt "ContentType has no method get_row_permission".
 
 #.  Die Kolonne "Workflows" wird beim Ausdruck nicht korrekt gerendert. 
     Weil das Feld :meth:`action_buttons <lino.core.actors.Actor.action_buttons>` 

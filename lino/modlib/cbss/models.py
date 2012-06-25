@@ -43,8 +43,6 @@ Adds models and tables used to make the following :term:`CBSS` requests
 - :class:`RetrieveTIGroupsRequest`: 
   Obtenir des informations à propos d’une personne dans le cadre de l’enquête sociale.
 
-
-
 """
 
 import os
