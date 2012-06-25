@@ -60,6 +60,9 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         verbose_name=_("History"),default=False,
         help_text = "Whatever this means.")
         
+    def get_print_language(self,pm):
+        return self.language
+        
     def get_service_reply(self,**kwargs):
         client = get_client(self)
         meth = client.service.retrieveTI
@@ -208,7 +211,7 @@ def NameType(n):
     
 def deldate(n):
     if hasattr(n,'DelDate'):
-        return [', until %s' % dtos(rn2date(n.DelDate))]
+        return [',' + unicode(_(' until ')) + dtos(rn2date(n.DelDate))]
     return []
     
 #~ def simpleattr(n,name):
@@ -270,6 +273,8 @@ def DeliveryType(n):
     
 def DiplomaticPostType(n):
     return code_label(n)
+def TerritoryType(n):
+    return code_label(n)
 def ProvinceType(n):
     return code_label(n)
     
@@ -283,7 +288,7 @@ def ResidenceType(n):
     return code_label(n)
     
 def NationalNumberType(n):
-    info = addinfo(n,'NationalNumber')
+    info = addinfo(n,'NationalNumber','')
     return info # [n.NationalNumber]
     
 def PartnerType(n):
@@ -322,9 +327,11 @@ def Residence(n):
     
     
 def IT140(n):
-    info = code_label(n.FamilyRole)
-    info += addinfo(n,'NationalNumber',': ',NationalNumberType)
-    info += addinfo(n,'Name',' ',NameType)
+    info = addinfo(n,'Name',' ',NameType)
+    #~ info += addinfo(n,'NationalNumber',' (',NationalNumberType)
+    info += addinfo(n,'NationalNumber',' (',NationalNumberType,')')
+    info += _(' as ')
+    info += code_label(n.FamilyRole)
     info += addinfo(n,'Housing',None,HousingType)
     info += deldate(n)
     return info
@@ -332,6 +339,21 @@ def IT140(n):
 def HousingType(n):
     return code_label(info)
     
+def AddressType(n):
+    info = []
+    #~ pd = n.Address.Address
+    info += addinfo(n,'Country',', ',CountryType)
+    #~ info.append(', ')
+    info += addinfo(n,'Graphic1',', ')
+    info += addinfo(n,'Graphic2',', ')
+    info += addinfo(n,'Graphic3',', ')
+    #~ info.append(E.b(pd.Graphic1))
+    #~ info.append(', ')
+    #~ info.append(E.b(pd.Graphic2))
+    #~ info.append(', ')
+    #~ info.append(E.b(pd.Graphic3))
+    #~ info += addinfo(pd,'Graphic3')
+    return info
     
 
 class RowHandlers:
@@ -382,21 +404,22 @@ class RowHandlers:
 
     @staticmethod
     def ResidenceAbroad(node,name):
+        def ResidenceAbroadAddressType(n):
+            info = ['Address']
+            info += addinfo(n,'PosteDiplomatique',None,DiplomaticPostType)
+            info += addinfo(n,'Territory',_(', '),TerritoryType)
+            info += addinfo(n,'Address',_(', '),AddressType)
+            return info
         group = _("Residence Abroad")
         for n in node.ResidenceAbroad:
             info = []
-            info += code_label(n.Address.PosteDiplomatique)
-            info.append(', ')
-            info += code_label(n.Address.Territory)
-            info.append(', ')
-            pd = n.Address.Address
-            info += code_label(pd.Country)
-            info.append(', ')
-            info.append(E.b(pd.Graphic1))
-            info.append(', ')
-            info.append(E.b(pd.Graphic2))
-            info.append(', ')
-            info.append(E.b(pd.Graphic3))
+            info += addinfo(n,'Address','',ResidenceAbroadAddressType)
+            
+            #~ info += code_label(n.Address.PosteDiplomatique)
+            #~ info.append(', ')
+            #~ info += code_label(n.Address.Territory)
+            #~ info.append(', ')
+            info += deldate(n)
             yield datarow(group,n,n.Date,info)
             group = ''
         
@@ -437,17 +460,17 @@ class RowHandlers:
         group = _("Filiations")
         for n in node.Filiation:
             info = code_label(n.FiliationType)
-            info.append(' of ')
-            info += addinfo(n.Parent1,'NationalNumber','(',NationalNumberType,')')
-            #~ info.append(n.Parent1.NationalNumber.NationalNumber)
-            info.append(' ')
+            info.append(_(' of '))
+            #~ info.append(' ')
             #~ info += name2info(n.Parent1.Name)
             info += addinfo(n.Parent1,'Name','',NameType)
-            info.append(' and ')
-            info += addinfo(n.Parent2,'NationalNumber','(',NationalNumberType,')')
-            #~ info.append(n.Parent2.NationalNumber.NationalNumber)
-            info.append(' ')
+            info += addinfo(n.Parent1,'NationalNumber',' (',NationalNumberType,')')
+            #~ info.append(n.Parent1.NationalNumber.NationalNumber)
+            info.append(_(' and '))
+            #~ info.append(' ')
             info += addinfo(n.Parent2,'Name','',NameType)
+            info += addinfo(n.Parent2,'NationalNumber',' (',NationalNumberType,')')
+            #~ info.append(n.Parent2.NationalNumber.NationalNumber)
             #~ info += name2info(n.Parent2.Name)
             yield datarow(group,n,n.Date,info)
             group = ''

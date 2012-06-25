@@ -89,7 +89,7 @@ class Duplicable(dd.Model):
         related = []
         for m,fk in self._lino_ddh.fklist:
             #~ related[fk] = m.objects.filter(**kw)
-            if m.allow_cascaded_delete:
+            if getattr(m,'allow_cascaded_delete',False):
                 related.append((fk,m.objects.filter(**{fk.name:self})))
             #~ if issubclass(m,Duplicable):
                 #~ related[fk.related_name] = getattr(self,fk.name)

@@ -12,6 +12,12 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Termin Duplizieren geht nicht. Da kommt "L'action Dupliquer a échoué 
+    pour Rendez-vous "Rendez-vous #1208": type object 'Guest' has no attribute
+    'allow_cascaded_delete'. An error report has been sent to the system 
+    administrator.
+
+
 #.  Die Kolonne "Workflows" wird beim Ausdruck nicht korrekt gerendert. 
     Weil das Feld :meth:`action_buttons <lino.core.actors.Actor.action_buttons>` 
     noch nicht xmlgen.html verwendet.

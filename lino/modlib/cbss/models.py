@@ -521,9 +521,6 @@ The raw XML response received.
           
         
           
-    def get_print_language(self,pm):
-        return self.language
-        
         
         
             
