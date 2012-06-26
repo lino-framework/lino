@@ -70,7 +70,9 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         help_text = "Whatever this means.")
         
     def get_print_language(self,pm):
-        return self.language
+        if self.language.value in babel.AVAILABLE_LANGUAGES:
+            return self.language.value
+        return babel.DEFAULT_LANGUAGE
         
     def get_service_reply(self,**kwargs):
         client = get_client(self)
