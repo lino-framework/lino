@@ -983,9 +983,12 @@ class Lino(object):
         url = "javascript:Lino.close_all_windows()"
         main.add_url_button(url,label=_("Home"))
         
-        if user:
-            main.add_separator("->")
-            main.add_instance_action(user)
+        #~ 20120626 if self.user_model:
+            #~ from lino.modlib.users import models as users
+            #~ main.add_separator("->")
+            #~ main.add_instance_action(user)
+            #~ main.add_action(users.MyDetail)
+            #~ main.add_action(users.Users.detail_action)
         
         return main
         

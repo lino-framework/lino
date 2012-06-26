@@ -49,6 +49,8 @@
 - Das Hauptmenü sitzt jetzt in einer Variablen Lino.main_menu in der 
   :xfile:`lino*.js`, wird also nicht mehr bei jedem Request neu 
   generiert, sondern ist ein Teil des Site-Cache.
+  (was einen Bug :doc:`/blog/2012/0626` zur Folge hatte)
+  
   
 - Wenn zwei Module für :meth:`lino.utils.menus.Menu.add_menu` 
   den gleichen (internen) Namen nehmen, dann werden die beiden Menüs jetzt 

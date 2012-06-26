@@ -1517,9 +1517,7 @@ Lino.ajax_error_handler = function(panel) {
   }
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
-
-//~ Lino.main_menu = new Ext.Toolbar({});
-  
+ 
 #if $settings.LINO.use_quicktips
 
 Ext.QuickTips.init();

@@ -1,0 +1,24 @@
+20120626
+========
+
+Demo in Eupen
+-------------
+
+10 Minuten vor Beginn der wichtigsten öffentlichen Demo in 
+der bisherigen Geschichte von Lino ruft mich Gerd an und meldet:
+"Sag mal, ich bin als Gerd angemeldet, aber im Hauptmenü 
+oben rechts steht 'Luc' und nicht 'Gerd'."
+
+Erklärung: Das Hauptmenü sitzt ja seit :doc:`/blog/2012/0622` 
+in einer Variablen 
+`Lino.main_menu` in der :xfile:`lino*.js` und wird also nicht 
+mehr bei jedem Request neu generiert, 
+sondern ist ein Teil des Site-Cache.
+Woran ich dabei nicht gedacht hatte: 
+Der Button oben rechts im Hauptmenü 
+zum Anzeigen des eigenen User-Records
+ist natürlich request-spezifisch. 
+Der wurde jetzt also immer mit dem Namen und 
+dem `user_id` desjenigen gerufen, 
+der die :xfile:`lino*.js` generiert hatte. 
+    

@@ -210,7 +210,7 @@ class Menu(MenuItem):
     def add_instance_action(self,obj,**kw):
         kw.update(instance=obj)
         return self._add_item(MenuItem(self,None,**kw))
-   
+    
     def add_item(self,name,label,**kw):
         return self._add_item(MenuItem(self,None,name,label,**kw))
         
@@ -233,10 +233,6 @@ class Menu(MenuItem):
         if mi.action is not None:
             if not mi.action.actor.get_view_permission(self.user):
                 return 
-            #~ if mi.instance is not None:
-                #~ if not mi.instance.get_row_permission(self.user,state,mi.action): 
-                    #~ return
-            #~ if not mi.action.get_row_permission(self.user,mi.instance): return
         if mi.name is not None:
             old = self.items_dict.get(mi.name)
             if old is not None:

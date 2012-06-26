@@ -27,6 +27,7 @@ from lino.utils import mti
 from lino.utils import choicelists
 from lino.utils.choosers import chooser
 from lino import mixins
+from lino.core import actions
 
 #~ from lino.mixins import PersonMixin
 #~ from lino.modlib.contacts.models import Contact
@@ -316,5 +317,17 @@ class Users(dd.Table):
         #~ mti.EnableChild('users.User',verbose_name=_("is User")),
         #~ """Whether this Partner is also a User."""
         #~ )
+        
+        
+#~ if settings.LINO.user_model: 
+  
+    #~ class MyDetail(Users):
+        #~ label = _("My Detail")
+        
+        #~ default_action = actions.ShowDetailAction()
+        
+        #~ @classmethod
+        #~ def get_data_rows(self,ar):
+            #~ return [ar.get_user()]
 
 

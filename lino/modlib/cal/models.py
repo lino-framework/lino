@@ -542,6 +542,9 @@ class Component(ComponentBase,
     
         
         
+    def on_duplicate(self,ar,master):
+        self.auto_type = None
+        
     def disabled_fields(self,ar):
         if self.auto_type:
             #~ return settings.LINO.TASK_AUTO_FIELDS

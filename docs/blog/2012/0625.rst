@@ -70,3 +70,5 @@ Diverse Bugfixes
 - Termin Duplizieren ging nicht. Da kommt "L'action Dupliquer a échoué  pour Rendez-vous "Rendez-vous #1208": type object 'Guest' has no attribute 'allow_cascaded_delete'. An error report has been sent to the system administrator.
   
 - Weiter mit Tx25  
+
+- Klick auf Termin im Kalender-Panel funktionierte noch nicht.

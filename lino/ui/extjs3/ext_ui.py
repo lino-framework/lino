@@ -284,13 +284,6 @@ class ExtRenderer(HtmlRenderer):
                 #return py2js(kw)
             return dict(text=prepare_label(v),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
-            #~ if v.href is not None:
-                #~ if v.parent.parent is None:
-                    #~ # special case for href items in main menubar
-                    #~ return dict(
-                      #~ xtype='button',text=prepare_label(v),
-                      #~ handler=js_code("function() {window.location='%s';}" % v.href))
-                #~ return dict(text=prepare_label(v),href=v.href)
             if v.params is not None:
                 ar = v.action.actor.request(self.ui,None,v.action,**v.params)
                 return handler_item(v,self.request_handler(ar))
@@ -1120,7 +1113,15 @@ tinymce.init({
         yield '<script type="text/javascript">'
 
         yield 'Ext.onReady(function(){'
+        
         #~ yield "console.time('onReady');"
+        
+        # 20120626
+        user = request.user
+        handler = self.ext_renderer.instance_handler(user)
+        handler = "function(){%s}" % handler
+        login_menu = dict(text=unicode(user),handler=js_code(handler))
+        yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
         
         #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"
           
