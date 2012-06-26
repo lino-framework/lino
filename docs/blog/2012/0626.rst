@@ -22,3 +22,17 @@ Der wurde jetzt also immer mit dem Namen und
 dem `user_id` desjenigen gerufen, 
 der die :xfile:`lino*.js` generiert hatte. 
     
+:checkin:`d79781c92755`.
+
+
+Tx25 wird kompletter
+--------------------
+
+Demo-Fall 3 (der allerdings noch nicht veröffentlich ist, 
+weil ich ihn noch manuell unkenntlich machen muss) 
+hat jetzt keine "No handler for FooBarBaz/TI123" mehr. 
+Dieses Schreiben von neuen TI-Handlern macht mir ungefähr 
+so viel Spaß wie anderen Leuten ein Computerspiel.
+Aber ich fange an mich zu fragen, ob diese Fummelei nicht 
+irgendwie automatisiert werden kann.
+Wäre das ein Fall für XSLT?

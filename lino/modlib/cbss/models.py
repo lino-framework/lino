@@ -198,7 +198,7 @@ class RequestStates(ChoiceList):
     """
     The status of a :class:`CBSSRequest`.
     """
-    label = _("Request State")
+    label = _("State")
 
 add = RequestStates.add_item
 #~ add('0',_("New"),'new')
