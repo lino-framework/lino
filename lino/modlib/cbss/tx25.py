@@ -43,7 +43,7 @@ except ImportError, e:
 
 
 from lino.modlib.cbss.models import NewStyleRequest,SSIN, get_client, \
-  CBSSRequestDetail, CBSSRequests, cbss2gender, RequestStates
+  CBSSRequestDetail, CBSSRequests, cbss2gender, RequestStates, CBSS_ERROR_MESSAGE
   
 class RequestLanguages(ChoiceList):
     label = _("Language")
