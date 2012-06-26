@@ -86,7 +86,7 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         si = client.factory.create('ns0:SearchInformationType')
         si.ssin = self.get_ssin()
         if self.language:
-            si.language = self.language
+            si.language = self.language.value
         #~ if self.history:
             #~ si.history = 'true'
         si.history = self.history
