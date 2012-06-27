@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
 
 import os
 import sys
@@ -55,7 +57,7 @@ class Model(models.Model):
         """
         Called by :class:`lino.mixins.Controllable`.
         """
-        print '20120627 tools.Model.update_owned_instance'
+        #~ print '20120627 tools.Model.update_owned_instance'
         pass
                 
     def after_update_owned_instance(self,controllable):
@@ -63,6 +65,20 @@ class Model(models.Model):
         Called by :class:`lino.mixins.Controllable`.
         """
         pass
+        
+    def get_mailable_recipients(self):
+        """
+        Return or yield a list of (type,partner) tuples to be 
+        used as recipents when creating an outbox.Mail from this object.
+        """
+        return []
+        
+    def get_postable_recipients(self):
+        """
+        Return or yield a list of Partners to be 
+        used as recipents when creating a posting.Post from this object.
+        """
+        return []
         
         
 def is_devserver():
@@ -129,7 +145,7 @@ class UnresolvedModel:
     #~ def __getattr__(self,name):
         #~ raise AttributeError("%s has no attribute %r" % (self,name))
 
-def resolve_model(model_spec,app_label=None,strict=False):
+def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
     """
     See also django.db.models.fields.related.add_lazy_relation()
     """
@@ -148,7 +164,7 @@ def resolve_model(model_spec,app_label=None,strict=False):
             #~ model_name = model_spec
             
         #~ model = models.get_model(app_label,model_name,seed_cache=False)
-        model = models.get_model(app_label,model_name)
+        model = models.get_model(app_label,model_name,seed_cache=seed_cache)
     else:
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
@@ -156,6 +172,7 @@ def resolve_model(model_spec,app_label=None,strict=False):
             raise Exception(
                 "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
                 model_spec,app_label,model,settings.SETTINGS_MODULE))
+        logger.info("20120628 unresolved %r",model)
         return UnresolvedModel(model_spec,app_label)
     return model
     

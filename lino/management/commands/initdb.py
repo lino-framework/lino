@@ -77,6 +77,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
       
+        from lino.core.kernel import analyze_models
+        analyze_models()
+      
         from lino.utils import dblogger
             
         if not dblogger.logger.isEnabledFor(logging.INFO):

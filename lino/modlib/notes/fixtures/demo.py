@@ -12,6 +12,11 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+TODO: this fixture fails if settings.LINO.project_model is 
+empty or points to a model that has no `name` field.
+"""
+
 import decimal
 
 from django.conf import settings
@@ -25,17 +30,16 @@ from lino.utils import i2d, Cycler
 from lino.modlib.users import models as auth
 
 def objects():
-  
     #~ User = settings.LINO.user_model()
     User = resolve_model(settings.LINO.user_model)
-    Person = resolve_model(settings.LINO.person_model)
-    Company = resolve_model(settings.LINO.company_model)
+    Person = resolve_model(settings.LINO.project_model)
+    #~ Company = resolve_model(settings.LINO.company_model)
     Note = resolve_model('notes.Note')
     NoteType = resolve_model('notes.NoteType')
     
     USERS = Cycler(User.objects.all())
     PERSONS = Cycler(Person.objects.filter(name__startswith="A"))
-    COMPANIES = Cycler(Company.objects.all())
+    #~ COMPANIES = Cycler(Company.objects.all())
     NTYPES = Cycler(NoteType.objects.all())
     
     #~ u = User.objects.get(username='root')
@@ -49,8 +53,8 @@ def objects():
         yield Note(user=USERS.pop(),
             date=settings.LINO.demo_date(days=i),
             subject="Important note %d" % i,
-            company=COMPANIES.pop(),
-            person=PERSONS.pop(),
+            #~ company=COMPANIES.pop(),
+            project=PERSONS.pop(),
             type=NTYPES.pop())
         
     

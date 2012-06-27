@@ -1243,6 +1243,14 @@ def migrate_from_1_4_3(globals_dict):
           name_en=name_en)
     globals_dict.update(create_notes_notetype=create_notes_notetype)
     
+    notes_Note = resolve_model("notes.Note")
+    def create_notes_note(id, user_id, build_time, person_id, company_id, date, type_id, event_type_id, subject, body, language):
+        return notes_Note(id=id,user_id=user_id,build_time=build_time,
+          #~ person_id=person_id,
+          project_id=person_id,
+          company_id=company_id,date=date,type_id=type_id,event_type_id=event_type_id,subject=subject,body=body,language=language)    
+    globals_dict.update(create_notes_note=create_notes_note)
+    
     cal_EventType = resolve_model("cal.EventType")
     def create_cal_eventtype(id, name, build_method, template, name_fr, name_en):
         return cal_EventType(id=id,name=name,build_method=build_method,template=template,

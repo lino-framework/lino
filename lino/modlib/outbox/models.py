@@ -224,10 +224,6 @@ class Mailable(dd.Model):
         """
         return unicode(self)
         
-    def get_mailable_recipients(self):
-        "return or yield a list of (type,partner) tuples"
-        return []
-        
 
   
 class Recipient(dd.Model):

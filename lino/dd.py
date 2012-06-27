@@ -140,21 +140,53 @@ def fields_list(model,field_names):
         #~ print 20110929, [get_field(model,n) for n in field_names.split()]
     return [get_field(model,n).name for n in field_names.split()]
 
-    
-def inject_field(model,name,field,doc=None):
+
+PENDING_INJECTS = dict()
+PREPARED_MODELS = dict()
+
+def on_class_prepared(signal,sender=None,**kw):
+    model = sender
+    #~ return
+    #~ if model is None:
+        #~ return 
+    k = model._meta.app_label + '.' + model.__name__
+    PREPARED_MODELS[k] = model
+    #~ logger.info("20120627 on_class_prepared %r = %r",k,model)
+    injects = PENDING_INJECTS.pop(k,None)
+    if injects is not None:
+        for f in injects:
+            f(model)
+        #~ for k,v in injects.items():
+            #~ model.add_to_class(k,v)
+            
+models.signals.class_prepared.connect(on_class_prepared)
+
+def inject_field(model_spec,name,field,doc=None):
     """
     Adds the given field to the given model.
     See also :doc:`/tickets/49`.
     """
-    #~ model = resolve_model(model,strict=True)
-    model = resolve_model(model)
-    if isinstance(model,UnresolvedModel): 
-        logger.warning("Cannot inject_field(%r) to %s", name,model)
-        return
     if doc:
         field.__doc__ = doc
-    model.add_to_class(name,field)
-    return field
+    #~ model = resolve_model(model,strict=True)
+    def todo(model):
+        model.add_to_class(name,field)
+    #~ model = resolve_model(model_spec,seed_cache=False)
+    if isinstance(model_spec,basestring):
+        k = model_spec
+        model = PREPARED_MODELS.get(k,None)
+    else:
+        model = model_spec
+        k = model._meta.app_label + '.' + model.__name__
+    #~ if isinstance(model,UnresolvedModel): 
+    if model is None: 
+        injects = PENDING_INJECTS.setdefault(k,[])
+        injects.append(todo)
+        #~ d[name] = field
+        #~ logger.info("20120627 Defer inject_field(%r,%r,%r)", model_spec,name,field)
+        return
+    todo(model)
+    #~ return field
 
 def update_field(model,name,**kw):
     """

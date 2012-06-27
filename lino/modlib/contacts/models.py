@@ -728,8 +728,10 @@ class PartnerDocument(dd.Model):
         return s
             
     def update_owned_instance(self,other):
-        print '20120627 PartnerDocument.update_owned_instance'
+        #~ print '20120627 PartnerDocument.update_owned_instance'
         if isinstance(other,mixins.ProjectRelated):
+            # the following hack doesn't work when loading data by dumpy
+            # because LINO.person_model are still strings at that moment
             if isinstance(self.person,settings.LINO.person_model):
                 other.project = self.person
             elif isinstance(self.company,settings.LINO.person_model):
@@ -738,29 +740,6 @@ class PartnerDocument(dd.Model):
         other.company = self.company
         super(PartnerDocument,self).update_owned_instance(other)
         
-#~ class ContactDocument(dd.Model):
-    #~ """
-    #~ A document whose recipient is a :class:`Partner`.
-    #~ """
-  
-    #~ class Meta:
-        #~ abstract = True
-        
-    #~ contact = models.ForeignKey(Partner,
-        #~ # blank=True,null=True,
-        #~ related_name="%(app_label)s_%(class)s_by_contact",
-        #~ # related_name="%(app_label)s_%(class)s_related",
-        #~ # verbose_name=_("Partner")
-        #~ )
-    #~ language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
-
-    #~ def get_mailable_contacts(self):
-        #~ yield ('to',self.contact)
-
-    #~ def get_recipient(self):
-        #~ return self.contact
-    #~ recipient = property(get_recipient)
-
 
 
     

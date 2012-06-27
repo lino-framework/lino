@@ -148,7 +148,7 @@ class Controllable(dd.Model):
     def save(self,*args,**kw):
         if self.owner: #  and not self.is_user_modified():
             self.owner.update_owned_instance(self)
-            print "20120627 called update_owned_instance of ", self.owner.__class__
+            #~ print "20120627 called update_owned_instance of ", self.owner.__class__
             #~ m = getattr(self.owner,'update_owned_instance',None)
             #~ if m:
                 #~ m(self)
@@ -199,7 +199,7 @@ class AutoUser(dd.Model):
                 self.user = u
         
     def update_owned_instance(self,other):
-        print '20120627 AutoUser.update_owned_instance'
+        #~ print '20120627 AutoUser.update_owned_instance'
         other.user = self.user
         super(AutoUser,self).update_owned_instance(other)
         
@@ -373,6 +373,18 @@ class ProjectRelated(dd.Model):
         if isinstance(other,ProjectRelated):
             other.project = self.project
         super(ProjectRelated,self).update_owned_instance(other)
+        
+    def get_mailable_recipients(self):
+        if isinstance(self.project,settings.LINO.modules.contacts.Partner):
+            yield ('to',self.project)
+        for r in super(ProjectRelated,self).get_mailable_recipients():
+            yield r
+
+    def get_postable_recipients(self):
+        if isinstance(self.project,settings.LINO.modules.contacts.Partner):
+            yield self.project
+        for p in super(ProjectRelated,self).get_postable_recipients():
+            yield p
 
 
 from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction

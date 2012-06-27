@@ -811,7 +811,7 @@ class Event(Component,Ended,
         TODO: 20120627
         """
         if isinstance(action,postings.CreatePostings):
-            print 20120627
+            #~ print 20120627
             if self.state < EventState.scheduled:
                 return False
         return super(Event,self).get_row_permission(user,state,action)

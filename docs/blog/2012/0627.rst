@@ -130,4 +130,18 @@ get_view_permission wird benutzt zum Generieren des JS-Codes.
 Da ist also normalerweise kein spezieller Record gemeint, 
 also `obj` ist `None`.
 
+Pending injects
+---------------
+notes.Note ist jetzt ProjectRelated statt PartnerDocument.
+Um ein subtiles Problem mit update_owned_instance in notes.Note 
+zu lösen und weil notes.Note eigentlich nur aus historischen 
+Gründen ein PartnerDocument war.
+
+Um das Feld "company" in apps.pcsw dennoch zu behalten, 
+mache ich ein dd.inject_field darauf. 
+
+Dabei entstand erstmals das Problem, dass notes.Note 
+zu diesem Zeitpunkt irgendwie noch nicht existiert:
+resolve_model gibt UnresolvedModel zurück.
+
 

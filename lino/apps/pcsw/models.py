@@ -1936,6 +1936,15 @@ dd.inject_field('contacts.RoleType',
     #~ order_by = ['sent']
   
 
+dd.inject_field('notes.Note','company',
+    models.ForeignKey(settings.LINO.company_model,
+        blank=True,null=True,
+        help_text="""\
+Probably not useful."""
+        )
+    )
+  
+
 
 """
 Here is how we install case-insensitive sorting in sqlite3.
@@ -2120,7 +2129,7 @@ def site_setup(site):
         left = """
         date:10 event_type:25 type:25
         subject 
-        person company
+        project company
         id user:10 language:8 build_time
         body
         """,
@@ -2129,6 +2138,7 @@ def site_setup(site):
         uploads.UploadsByController
         # thirds.ThirdsByController:30
         outbox.MailsByController
+        postings.PostingsByController
         cal.TasksByController
         """,
         

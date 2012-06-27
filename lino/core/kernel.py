@@ -75,26 +75,37 @@ from lino.utils.perms import make_permission
 #~ BLANK_STATE = ''
 
 
-def analyze_models(self):
+DONE = False
+
+def analyze_models():
     """
     This is a part of a Lino site setup.
     The Django Model definitions are done, now Lino analyzes them and does certain actions.
-    The parameter `self` is the :class:`lino.Lino` instance 
-    defined in `settings.LINO`.
     
     - Load .dtl files and install them into `_lino_detail_layouts`
     - Install a DisableDeleteHandler for each Model into  `_lino_ddh`
     
     """
+    global DONE
+    if DONE: return
+    DONE = True
     
-    ## The following causes django.db.models.loading.cache to 
-    ## be populated. This must be done before calling actors.discover() 
-    ## or resolve_model().
-
+    logger.info("Analyzing models...")
+    
+    if dd.PENDING_INJECTS:
+        msg = ''
+        for spec,funcs in dd.PENDING_INJECTS.items():
+            msg += spec + ': ' 
+            #~ msg += '\n'.join([str(dir(func)) for func in funcs])
+            #~ msg += '\n'.join([str(func.func_code.co_consts) for func in funcs])
+            msg += str(funcs)
+        raise Exception("Oops, there are pending injects: %s" % msg)
+    #~ logger.info("20120627 pending injects: %s", dd.pending_injects)
+        
+    
+    
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
-    
 
-    #~ ddhdict = {}
     for model in models.get_models():
         model._lino_ddh = DisableDeleteHandler(model)
         if hasattr(model,'before_save'): 
@@ -102,41 +113,6 @@ def analyze_models(self):
               "%s has a method before_save! see :doc:`/blog/2010/0804`, :doc:`/blog/2011/0226`" % 
               model)
         
-        
-    for model in models.get_models():
-      
-        if hasattr(model,'site_setup'):
-            model.site_setup(self)
-    
-        for k,v in class_dict_items(model):
-            if isinstance(v,dd.VirtualField):
-                v.lino_kernel_setup(model,k)
-            
-        for f, m in model._meta.get_fields_with_model():
-            if isinstance(f,models.CharField) and f.null:
-                raise Exception("20110907 Nullable CharField %s in %s" % (f.name,model))
-            if isinstance(f,models.ForeignKey):
-                f.rel.to._lino_ddh.add_fk(model,f)
-                if f.verbose_name == f.name.replace('_', ' '):
-                    """
-                    If verbose name was not set by user code, 
-                    Django sets it to ``field.name.replace('_', ' ')``.
-                    We replace this default value by
-                    ``f.rel.to._meta.verbose_name``.
-                    """
-                    f.verbose_name = f.rel.to._meta.verbose_name
-                    
-    if settings.LINO.is_installed('contenttypes'):
-      
-        from django.db.utils import DatabaseError
-        try:
-            from lino.models import HelpText
-            for ht in HelpText.objects.filter(help_text__isnull=False):
-                resolve_field(unicode(ht)).help_text = ht.help_text
-        except DatabaseError,e:
-            logger.warning("No help texts : %s",e)
-            pass
-                    
 
         
 #~ def install_summary_rows():
@@ -379,7 +355,7 @@ def setup_site(self):
         #~ self.configure(get_site_config())
         #~ self._siteconfig = get_site_config()
       
-        analyze_models(self)
+        analyze_models()
         
         if self.user_model:
             self.user_model = resolve_model(self.user_model)
@@ -389,10 +365,48 @@ def setup_site(self):
         
         if self.project_model:
             self.project_model = resolve_model(self.project_model)
+            
+            
+        
+        for model in models.get_models():
+          
+            if hasattr(model,'site_setup'):
+                model.site_setup(self)
+        
+            for k,v in class_dict_items(model):
+                if isinstance(v,dd.VirtualField):
+                    v.lino_kernel_setup(model,k)
+                
+            for f, m in model._meta.get_fields_with_model():
+                if isinstance(f,models.CharField) and f.null:
+                    raise Exception("20110907 Nullable CharField %s in %s" % (f.name,model))
+                if isinstance(f,models.ForeignKey):
+                    f.rel.to._lino_ddh.add_fk(model,f)
+                    if f.verbose_name == f.name.replace('_', ' '):
+                        """
+                        If verbose name was not set by user code, 
+                        Django sets it to ``field.name.replace('_', ' ')``.
+                        We replace this default value by
+                        ``f.rel.to._meta.verbose_name``.
+                        """
+                        f.verbose_name = f.rel.to._meta.verbose_name
+                        
+        if self.is_installed('contenttypes'):
+          
+            from django.db.utils import DatabaseError
+            try:
+                from lino.models import HelpText
+                for ht in HelpText.objects.filter(help_text__isnull=False):
+                    resolve_field(unicode(ht)).help_text = ht.help_text
+            except DatabaseError,e:
+                logger.warning("No help texts : %s",e)
+                pass
+                        
+        
+        
         
         actors.discover()
         
-        #~ logger.debug("analyze_models() done")
         
         # set _lino_default_table for all models:
         

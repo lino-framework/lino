@@ -111,7 +111,8 @@ class EventTypes(dd.Table):
 #~ class Note(mixins.TypedPrintable,mixins.AutoUser):
 class Note(mixins.TypedPrintable,
       mixins.AutoUser,
-      contacts.PartnerDocument,
+      #~ contacts.PartnerDocument,
+      mixins.ProjectRelated,
       outbox.Mailable,
       postings.Postable,
       mixins.DiffingMixin):
@@ -239,6 +240,7 @@ class Note(mixins.TypedPrintable,
     def get_mailable_type(self):
         return self.type
         
+        
     
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'
@@ -319,7 +321,6 @@ class NotesByCompany(Notes):
     order_by = ["-date"]
     
     
-  
   
 def setup_main_menu(site,ui,user,m): pass
   

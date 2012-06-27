@@ -162,10 +162,6 @@ class Postable(dd.Model):
     def print_from_posting(self,posting,ar):
         return ar.error_response("Not implemented")
         
-    def get_postable_recipients(self):
-        """return or yield a list of Partners"""
-        return []
-        
 
   
 
