@@ -1021,7 +1021,7 @@ def migrate_from_1_4_3(globals_dict):
     - table thirds.Third no longer exists
     - new fields MailableType to cal.EventType and notes.NoteType
     - severe test in isip.Contract
-    - added workflow to courses.CourseRequest
+    - added workflow to modules courses and cal
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child
@@ -1118,10 +1118,10 @@ def migrate_from_1_4_3(globals_dict):
         #~ return create_child(contacts_Contact,contact_ptr_id,users_User,
         if not date_joined:
             date_joined = datetime.datetime.now()
-
         return users_User(partner_id=contact_ptr_id,
           id=contact_ptr_id,
           first_name=first_name,last_name=last_name,
+          email=contacts_Contact.objects.get(contact_ptr_id).email,
           #~ title=title,gender=gender,
           username=username,
           #~ is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,
