@@ -569,13 +569,6 @@ class Contracts(dd.Table):
     #~ """
     detail_layout = ContractDetail()
     
-    #~ @classmethod
-    #~ def get_row_permission(self,action,user,row):
-        #~ if not action.readonly:
-            #~ if row.user != user and user.integ_level < UserLevels.manager: 
-                #~ return False
-        #~ return super(Contracts,self).get_row_permission(action,user,row)
-    
     
     
 class ContractsByPerson(Contracts):

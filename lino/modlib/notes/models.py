@@ -62,6 +62,23 @@ class NoteType(babel.BabelNamed,mixins.PrintableType,outbox.MailableType):
     def __unicode__(self):
         return self.name
 
+
+class NoteTypes(dd.Table):
+    """
+    Displays all rows of :class:`NoteType`.
+    """
+    model = 'notes.NoteType'
+    #~ label = _("Note types")
+    column_names = 'name build_method template *'
+    order_by = ["name"]
+    
+    detail_template = """
+    id name
+    build_method template email_template attach_to_email
+    remark:60x5
+    notes.NotesByType
+    """
+
 class EventType(babel.BabelNamed):
     """
     A possible choice for :attr:`Note.event_type`.
@@ -214,9 +231,10 @@ class Note(mixins.TypedPrintable,
             s += ' ' + cgi.escape(self.subject) 
         return s
     
-    def update_owned_instance(self,task):
-        mixins.AutoUser.update_owned_instance(self,task)
-        contacts.PartnerDocument.update_owned_instance(self,task)
+    #~ def update_owned_instance(self,task):
+        #~ mixins.AutoUser.update_owned_instance(self,task)
+        #~ contacts.PartnerDocument.update_owned_instance(self,task)
+        #~ super(ContractBase,self).update_owned_instance(other)
         
     def get_mailable_type(self):
         return self.type
@@ -225,18 +243,6 @@ class Note(mixins.TypedPrintable,
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'
     
-class NoteTypes(dd.Table):
-    model = 'notes.NoteType'
-    #~ label = _("Note types")
-    column_names = 'name build_method template *'
-    order_by = ["name"]
-    
-    detail_template = """
-    id name
-    build_method template
-    remark:60x5
-    notes.NotesByType
-    """
 
 class NoteDetail(dd.DetailLayout):
     main = """

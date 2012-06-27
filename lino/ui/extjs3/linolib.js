@@ -1209,8 +1209,8 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
   return function (response) {
     //~ console.log(20120608,panel);
     if (panel instanceof Lino.GridPanel) {
-        gridmode = false;
-        //~ gridmode = true;
+        //~ gridmode = false;
+        gridmode = true;
         //~ console.log('20120608 yes');
     } else {
         gridmode = false;
@@ -1566,7 +1566,7 @@ Lino.help_text_editor = function() {
     //~ };
     //~ console.log(20120202,bp);
   //~ Lino.lino.ContentTypes.detail({},{base_params:bp});
-  Lino.lino.ContentTypes.detail_action({},{record_id:this.content_type});
+  Lino.lino.ContentTypes.detail_action.run({record_id:this.content_type});
 }
 
 // Path to the blank image should point to a valid location on your server
@@ -4163,7 +4163,7 @@ Lino.show_mti_child = function(fieldname,detail_handler) {
     }else if (rec.data[fieldname]) {
       //~ console.log('show_mti_child',rec.id);
       //~ detail_handler(Lino.current_window.main_item,{},{record_id:rec.id});
-      detail_handler({},{record_id:rec.id});
+      detail_handler.run({record_id:rec.id});
       //~ window.open(urlroot + '/' + rec.id);
       //~ document.location = urlroot + '/' + rec.id;
       //~ window.open(urlroot + '/' + rec.id,'_blank');

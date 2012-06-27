@@ -143,7 +143,7 @@ class TaskState(ChoiceList):
     """
     State of a Calendar Task. Used as Workflow selector.
     """
-    label = _("Event State")
+    label = _("State")
     @classmethod
     def migrate(cls,status_id):
         """
@@ -169,7 +169,7 @@ class EventState(ChoiceList):
     """
     State of a Calendar Event. Used as Workflow selector.
     """
-    label = _("Event State")
+    label = _("State")
     
     @classmethod
     def migrate(cls,status_id):
@@ -188,8 +188,9 @@ class EventState(ChoiceList):
         return cv[status_id]
         
 add = EventState.add_item
-add('10', _("Scheduled"), 'scheduled')
-add('20', _("Notified"),'notified')
+add('10', _("Draft"), 'draft') # is_user_modified
+add('20', _("Scheduled"), 'scheduled')
+add('30', _("Notified"),'notified')
 #~ add('20', _("Suggested"),'suggested')
 #~ add('30', _("Published"),'published')
 add('40', _("Confirmed"),'confirmed')

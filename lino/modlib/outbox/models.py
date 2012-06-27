@@ -62,6 +62,9 @@ from lino.utils.perms import UserLevels
 from Cheetah.Template import Template as CheetahTemplate
 #~ from lino.utils import dtosl, dtos
 
+uploads = dd.resolve_app("uploads")
+
+
 class RecipientType(ChoiceList):
     """
     A list of possible values for the `type` field of a 
@@ -99,20 +102,22 @@ class MailableType(dd.Model):
     class Meta:
         abstract = True
         
-    attach_to_email = models.BooleanField(_("Attach to email"))
+    attach_to_email = models.BooleanField(_("Attach to email"),help_text="""\
+Whether the printable file should be attached to the email
+when creating an email from a mailable of this type.
+""")
     #~ email_as_attachment = models.BooleanField(_("Email as attachment"))
     email_template = models.CharField(max_length=200,
       verbose_name=_("Email template"),
       blank=True,help_text="""\
-The name of the file to be used as template when creating an email 
-from a mailable of this type.
+The name of the file to be used as template 
+when creating an email from a mailable of this type.
 """)
     
     @dd.chooser(simple_values=True)
     def email_template_choices(cls):
         return find_template_config_files('.eml.html',cls.templates_group)
       
-        
     
 
 
@@ -127,14 +132,19 @@ class CreateMailAction(dd.RowAction):
     label = _('Create email')
     callable_from = None
     
-    #~ def get_view_permission(self,user):
-        #~ if not user.email:
-            #~ return False
-        #~ return super(CreateMailAction,self).get_view_permission(user)
-        
     def get_action_permission(self,user,obj,state):
+        """
+        This action is not available:
+        
+        - when the user has not email address
+        - on an obj whose MailableType is empty or has no :attr:`MailableType.email_template` configured
+        """
         if not user.email:
             return False
+        if obj is not None:
+            mt = obj.get_mailable_type()
+            if not mt or not mt.email_template:
+                return False
         return super(CreateMailAction,self).get_action_permission(user,obj,state)
         
     def run(self,elem,ar,**kw):
@@ -281,6 +291,11 @@ class SendMailAction(dd.RowAction):
     label = _('Send email')
     callable_from = None
             
+    def get_action_permission(self,user,obj,state):
+        if obj is not None and obj.sent:
+            return False
+        return super(SendMailAction,self).get_action_permission(user,obj,state)
+        
     def run(self,elem,rr,**kw):
         #~ if elem.sent:
             #~ return rr.ui.error_response(message='Mail has already been sent.')
@@ -308,7 +323,7 @@ class SendMailAction(dd.RowAction):
                 #~ logger.info("Ignoring recipient %s (type %s)",r,r.type)
         if not found:
             return rr.error_response("No recipients found.")
-        as_attachment = elem.owner.attach_to_email(rr)
+        #~ as_attachment = elem.owner.attach_to_email(rr)
         #~ body = elem.body
         #~ if as_attachment:
             #~ body = elem.body
@@ -325,6 +340,12 @@ class SendMailAction(dd.RowAction):
             fn = att.owner.get_target_name()
             #~ msg.attach(os.path.split(fn)[-1],open(fn).read())
             msg.attach_file(fn)
+            
+        for up in uploads.UploadsByController.request(master_instance=elem):
+        #~ for up in uploads.Upload.objects.filter(owner=elem):
+            fn = os.path.join(settings.MEDIA_ROOT,up.file.name)
+            msg.attach_file(fn)
+            
         num_sent = msg.send()
             
         elem.sent = datetime.datetime.now()
@@ -333,9 +354,9 @@ class SendMailAction(dd.RowAction):
         #~ msg = "Email %s from %s has been sent to %s." % (
             #~ elem.id,elem.sender,', '.join([
                 #~ r.address for r in elem.recipient_set.all()]))
-        msg = "Email %s from %s has been sent to %d recipients." % (
-            elem.id,sender,num_sent)
-        kw.update(message=msg)
+        msg = _("Email %(id)s from %(sender)s has been sent to %(num)d recipients.") % dict(
+            id=elem.id,sender=sender,num=num_sent)
+        kw.update(message=msg,alert=True)
         #~ for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
             #~ msg += "\n" + n + " = " + unicode(getattr(settings,n))
         logger.info(msg)
@@ -411,11 +432,15 @@ class Mails(dd.Table):
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
     detail_template = """
-    id user date sent 
-    subject
-    RecipientsByMail:50x5 AttachmentsByMail:20x5
+    subject project date 
+    user sent #build_time id owner
+    RecipientsByMail:50x5 AttachmentsByMail:20x5 uploads.UploadsByController:20x5
     body:90x10
     """
+    
+if not settings.LINO.project_model:
+    Mails.detail_template.replace('project','')
+    
     
 class MyOutbox(Mails):
     required_user_level = None

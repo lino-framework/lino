@@ -35,7 +35,7 @@ from lino.utils.ranges import constrain
 from lino.utils import jsgen
 from lino.utils import mti
 from lino.utils import choicelists
-from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
+from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
@@ -121,7 +121,7 @@ def before_row_edit(panel):
     #~ return js_code('function(record){ %s }' % (' '.join(l)))
     return l
 
-class GridColumn(Component):
+class GridColumn(jsgen.Component):
     """
     The component that generates the JS of a grid column.
     """
@@ -206,31 +206,31 @@ class GridColumn(Component):
                 kw.update(editor=editor)
         else:
             kw.update(editable=False)
-        Component.__init__(self,editor.name,**kw)
+        jsgen.Component.__init__(self,editor.name,**kw)
     
         #~ if self.editable:
             #~ editor = self.get_field_options()
         
         
-class Toolbar(Component):
+class Toolbar(jsgen.Component):
     value_template = "new Ext.Toolbar(%s)"
     
-class ComboBox(Component):
+class ComboBox(jsgen.Component):
     value_template = 'new Ext.form.ComboBox(%s)'
     
-class ExtPanel(Component): # todo: rename this to Panel, and Panel to PanelElement or sth else
+class ExtPanel(jsgen.Component): # todo: rename this to Panel, and Panel to PanelElement or sth else
     value_template = "new Ext.Panel(%s)"
 
 #~ class FormPanel(Component): 
     #~ value_template = "new Ext.form.FormPanel(%s)"
 
-class Calendar(Component): 
+class Calendar(jsgen.Component): 
     value_template = "new Lino.CalendarPanel(%s)"
     
                     
         
         
-class VisibleComponent(Component):
+class VisibleComponent(jsgen.Component):
     vflex = False
     hflex = True
     width = None
@@ -242,7 +242,7 @@ class VisibleComponent(Component):
     def __init__(self,name,
         width=None,height=None,label=None,preferred_width=None,
         **kw):
-        Component.__init__(self,name,**kw)
+        jsgen.Component.__init__(self,name,**kw)
         if preferred_width is not None:
             self.preferred_width = preferred_width
         if width is not None:
@@ -260,7 +260,7 @@ class VisibleComponent(Component):
 
     def __str__(self):
         "This shows how elements are specified"
-        name = Component.__str__(self)
+        name = jsgen.Component.__str__(self)
         if self.width is None:
             return name
         if self.height is None:
@@ -1049,6 +1049,13 @@ class HtmlBoxElement(DisplayElement):
 
 
 class Container(LayoutElement,jsgen.Permittable):
+    """
+    Base class for Layout Elements that can contain other Layout Elements:
+    :class:`Panel`,
+    :class:`TabPanel`,
+    :class:`FormPanel`,
+    :class:`GridPanel`
+    """
     vertical = False
     hpad = 1
     is_fieldset = False
@@ -1549,27 +1556,7 @@ class GridElement(Container):
         #~ not direct parent (Container), only LayoutElement
         kw = LayoutElement.ext_options(self,**kw)
         return kw
-        
-        
 
-            
-#~ class MainPanel(jsgen.Variable):
-    #~ declare_type = jsgen.DECLARE_INLINE
-    #~ refers_to_ww = True
-  
-    #~ def apply_window_config(self,wc):
-        #~ pass
-  
-
-
-
-#~ class GridMainPanel(GridElement,MainPanel):
-#~ class GridMainPanel(GridElement):
-    #~ pass
-    #~ def __init__(self,lh,name,vertical,*columns,**kw):
-        #~ """Note that this ignores the "vertical" arg"""
-        #~ GridElement.__init__(self,lh,name,lh.layout.table,*columns,**kw)
-        
 
 
 

@@ -727,9 +727,16 @@ class PartnerDocument(dd.Model):
             s += " (" + href_to(self.company) + ")"
         return s
             
-    def update_owned_instance(self,task):
-        task.person = self.person
-        task.company = self.company
+    def update_owned_instance(self,other):
+        print '20120627 PartnerDocument.update_owned_instance'
+        if isinstance(other,mixins.ProjectRelated):
+            if isinstance(self.person,settings.LINO.person_model):
+                other.project = self.person
+            elif isinstance(self.company,settings.LINO.person_model):
+                other.project = self.company
+        other.person = self.person
+        other.company = self.company
+        super(PartnerDocument,self).update_owned_instance(other)
         
 #~ class ContactDocument(dd.Model):
     #~ """

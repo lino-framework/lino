@@ -594,8 +594,9 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
               
           
     #~ def get_auto_task_defaults(self,**kw):
-    def update_owned_instance(self,task):
-        task.project = self
+    def update_owned_instance(self,owned):
+        owned.project = self
+        super(Person,self).update_owned_instance(owned)
         
     @classmethod
     def get_reminders(model,ui,user,today,back_until):
@@ -2080,7 +2081,7 @@ def site_setup(site):
     description GuestsByEvent 
     """,_("General"))
     site.modules.cal.Events.add_detail_panel("more","""
-    id calendar created:20 modified:20 user_modified 
+    id calendar created:20 modified:20  
     outbox.MailsByController postings.PostingsByController
     """,_("More"))
     
@@ -2137,12 +2138,12 @@ def site_setup(site):
     )
     
     
-    site.modules.outbox.Mails.set_detail("""
-    subject project date 
-    user sent #build_time id owner
-    RecipientsByMail:50x5 AttachmentsByMail:20x5
-    body:90x10
-    """)
+    #~ site.modules.outbox.Mails.set_detail("""
+    #~ subject project date 
+    #~ user sent #build_time id owner
+    #~ RecipientsByMail:50x5 AttachmentsByMail:20x5 uploads.UploadsByOwner:20x5
+    #~ body:90x10
+    #~ """)
         
     #~ site.modules.courses.CourseProviders.set_detail(CourseProviderDetail())
 

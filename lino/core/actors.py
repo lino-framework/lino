@@ -171,13 +171,10 @@ class ActorMetaClass(type):
 
     def __str__(self):
         return self.actor_id 
-        
   
-#~ from lino.utils.perms import Permittable
 
 #~ class Actor(Handled,ViewPermission):
 #~ class Actor(ViewPermissionClass):
-#~ class Actor(Permittable):
 class Actor(object):
     """
     Base class for Tables and Frames. 

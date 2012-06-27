@@ -64,7 +64,7 @@ from lino.utils.daemoncommand import DaemonCommand
 #~ from lino.apps.pcsw.models  import is_valid_niss
 
 from lino.apps.pcsw.management.commands.initdb_tim import convert_sex, \
-    ADR_id, country2kw, par2person, pxs2person, is_company
+    ADR_id, country2kw, par2person, pxs2person, is_company, isolang
 
 Country = resolve_model('countries.Country')
 City = resolve_model('countries.City')
@@ -223,6 +223,10 @@ class PAR(Controller):
         )
         ADR_applydata(obj,data) # ,**mapper)
         #~ kw.update(street2kw(join_words(data['RUE'],
+        
+        if data.has_key('LANGUE'):
+            obj.language = isolang(data['LANGUE'])
+        
         
         #~ dblogger.info("20111223 %r",data)
         if data.has_key('ATTRIB'):

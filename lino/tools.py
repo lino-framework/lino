@@ -51,7 +51,19 @@ class Model(models.Model):
         """
         return action.get_action_permission(user,self,state)
 
+    def update_owned_instance(self,controllable):
+        """
+        Called by :class:`lino.mixins.Controllable`.
+        """
+        print '20120627 tools.Model.update_owned_instance'
+        pass
                 
+    def after_update_owned_instance(self,controllable):
+        """
+        Called by :class:`lino.mixins.Controllable`.
+        """
+        pass
+        
         
 def is_devserver():
     """

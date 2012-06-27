@@ -51,7 +51,6 @@ import lino
 from lino.core import table
 from lino.core import actions
 #~ from lino.core import layouts
-#~ from lino.utils import perms
 #~ from lino.utils import dblogger
 #~ from lino.utils import babel
 from lino.core import actors
@@ -71,7 +70,7 @@ from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
 from lino.utils import AttrDict
-from lino.utils import perms
+from lino.utils.perms import make_permission
 
 #~ BLANK_STATE = ''
 
@@ -269,11 +268,11 @@ def load_workflows(self):
                     return fn(*args)
                 return classmethod(fn2)
             return classmethod(fn)
-        cls.allow_read = wrap(perms.make_permission(cls,**cls.required))
+        cls.allow_read = wrap(make_permission(cls,**cls.required))
         if cls.editable:
-            cls.allow_create = wrap(perms.make_permission(cls,**cls.create_required))
-            cls.allow_update = wrap(perms.make_permission(cls,**cls.update_required))
-            cls.allow_delete = wrap(perms.make_permission(cls,**cls.delete_required))
+            cls.allow_create = wrap(make_permission(cls,**cls.create_required))
+            cls.allow_update = wrap(make_permission(cls,**cls.update_required))
+            cls.allow_delete = wrap(make_permission(cls,**cls.delete_required))
         
         for a in actor.get_actions():
             def wrap(a,fn):
@@ -283,43 +282,8 @@ def load_workflows(self):
                         return fn(*args)
                     return fn2
                 return fn
-            a.allow = curry(wrap(a,perms.make_permission(actor,**a.required)),a)
+            a.allow = curry(wrap(a,make_permission(actor,**a.required)),a)
             
-
-        
-                
-            #~ for an in a.workflow_actions:
-                #~ if not isinstance(an,basestring):
-                    #~ raise Exception("Invalid action name %r in %s" % (an,a))
-                    
-            #~ ab hier alles raus
-            #~ l = []
-            #~ possible_states = [st.value for st in actor.workflow_state_field.choicelist.items()] + [BLANK_STATE]
-            #~ for action in actor._actions_list:
-                #~ if action.required_states is not None:
-                    #~ rs = []
-                    #~ for st in action.required_states:
-                        #~ if not st in possible_states:
-                            #~ raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
-                        #~ if isinstance(st,choicelists.Choice):
-                            #~ st = st.value
-                        #~ rs.append(st)
-                    #~ l.append(action)
-                    #~ action.required_states = frozenset(rs)
-            #~ if len(l) == 0:
-                #~ continue
-                
-            #~ actor.workflow_actions = l
-            #~ self.workflow_actors[str(actor)] = actor
-                
-            #~ for a in actor.workflow_actions:
-                #~ a._rule_handlers = dict()
-                #~ if actor.workflow_owner_field is not None and a.owned_only:
-                    #~ rh = OwnedOnlyRuleHandler()
-                #~ else:
-                    #~ rh = RuleHandler()
-                #~ for k in possible_states:
-                    #~ a._rule_handlers[k] = rh # Never() # Always()
                 
     if False:
       if self.is_installed('workflows'):
@@ -362,6 +326,7 @@ def load_workflows(self):
       self.workflow_actor_choices = self.workflow_actors.items()
       self.workflow_actor_choices.sort(cmpfn)
         
+
         
         
 #~ import threading

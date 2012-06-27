@@ -40,7 +40,7 @@ from lino.modlib.contacts.utils import name2kw, street2kw
 from lino.utils import join_words
 #~ from lino.modlib.contacts.models import name2kw, street2kw, join_words
 from lino.utils.instantiator import Instantiator
-from lino.modlib.users.models import UserProfiles
+#~ from lino.modlib.users.models import UserProfiles
 
 from lino.tools import resolve_model, obj2str
 from lino.tools import is_valid_email
@@ -54,6 +54,7 @@ Country = resolve_model('countries.Country')
 City = resolve_model('countries.City')
 Person = resolve_model(settings.LINO.person_model)
 Company = resolve_model(settings.LINO.company_model)
+
 
 
 def store(kw,**d):
@@ -171,7 +172,6 @@ def pxs2person(row,person):
     kw = {}
     store(kw,
       card_number=row['CARDNUMBER'],
-      card_type=row.get('CARDTYPE',''),      # 20110110
       card_issuer=row.get('CARDISSUER',''),      # 20110110
       noble_condition=row.get('NOBLEECOND',''),      # 20110110
       birth_place=row.get('BIRTHPLACE',''),
@@ -183,6 +183,13 @@ def pxs2person(row,person):
     
     par2person(row,person)    
         
+    if row.has_key('CARDTYPE'):
+        #~ row.card_type = pcsw.BeIdCardType.items_dict.get(row['CARDTYPE'].strip(),'')
+        from lino.apps.pcsw import models as pcsw
+        if row['CARDTYPE'] == 0:
+            person.card_type = pcsw.BeIdCardType.blank_item
+        else:
+            person.card_type = pcsw.BeIdCardType.get_by_value(str(row['CARDTYPE']))
     if row['IDMUT']:
         try:
             person.health_insurance = Company.objects.get(pk=ADR_id(row['IDMUT']))

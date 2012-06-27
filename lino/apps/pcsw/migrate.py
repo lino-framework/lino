@@ -1228,6 +1228,22 @@ def migrate_from_1_4_3(globals_dict):
         return None
     globals_dict.update(create_dsbe_courseending=create_dsbe_courseending)
     
+    notes_NoteType = resolve_model("notes.NoteType")
+    def create_notes_notetype(id, name, build_method, template, important, remark, name_fr, name_en):
+        return notes_NoteType(id=id,name=name,build_method=build_method,
+          email_template='Default.eml.html',
+          template=template,important=important,remark=remark,name_fr=name_fr,
+          name_en=name_en)
+    globals_dict.update(create_notes_notetype=create_notes_notetype)
+    
+    cal_EventType = resolve_model("cal.EventType")
+    def create_cal_eventtype(id, name, build_method, template, name_fr, name_en):
+        return cal_EventType(id=id,name=name,build_method=build_method,template=template,
+          email_template='Default.eml.html',
+          name_fr=name_fr,name_en=name_en)    
+    globals_dict.update(create_cal_eventtype=create_cal_eventtype)
+    
+    
     objects = globals_dict['objects']
     def new_objects():
         from lino.modlib.households.fixtures import std

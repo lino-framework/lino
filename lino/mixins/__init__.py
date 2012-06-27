@@ -118,10 +118,16 @@ class Controllable(dd.Model):
                     full_model_name(self.owner_type.model_class()),value)
             
             
-    def update_owned_instance(self,task):
-        m = getattr(self.owner,'update_owned_instance',None)
-        if m:
-            m(task)
+    def update_owned_instance(self,controllable):
+        """
+        If this (acting as a controller) is itself controlled, 
+        forward the call to the controller.
+        """
+        if self.owner:
+            self.owner.update_owned_instance(controllable)
+        #~ m = getattr(self.owner,'update_owned_instance',None)
+        #~ if m:
+            #~ m(controllable)
 
     #~ def data_control(self):
         #~ "Used by :class:`lino.models.DataControlListing`."
@@ -130,7 +136,28 @@ class Controllable(dd.Model):
         #~ ...
         #~ msgs.append(unicode(e))
         #~ return msgs
+        
+    #~ def is_user_modified(self):
+        #~ """
+        #~ When a controlled `cal.Event` has been manually modified 
+        #~ by the user, then the controller is no longer
+        #~ """
+        #~ raise NotImplementedError
+        #~ return False
 
+    def save(self,*args,**kw):
+        if self.owner: #  and not self.is_user_modified():
+            self.owner.update_owned_instance(self)
+            print "20120627 called update_owned_instance of ", self.owner.__class__
+            #~ m = getattr(self.owner,'update_owned_instance',None)
+            #~ if m:
+                #~ m(self)
+        super(Controllable,self).save(*args,**kw)
+        if self.owner: #  and self.is_user_modified():
+            self.owner.after_update_owned_instance(self)
+            #~ m = getattr(self.owner,'after_update_owned_instance',None)
+            #~ if m:
+                #~ m(self)
 
 
 
@@ -172,7 +199,10 @@ class AutoUser(dd.Model):
                 self.user = u
         
     def update_owned_instance(self,other):
+        print '20120627 AutoUser.update_owned_instance'
         other.user = self.user
+        super(AutoUser,self).update_owned_instance(other)
+        
 
     def get_row_permission(self,user,state,action):
         """
@@ -301,8 +331,17 @@ class Sequenced(Duplicable):
   
 
 class ProjectRelated(dd.Model):
-    """Related to a project. 
-    Deserves more documentation.
+    """
+    Mixin for Models that are automatically 
+    related to a "project". 
+    A project means here 
+    "the central most important thing that is used to classify most other things".
+    For example in lino.apps.pcsw, the "project" is a Client.
+    
+    Whether an application has such a concept of "project", 
+    and which model has this privileged status, 
+    is set in :attr:`lino.Lino.project_model`.
+    
     """
     
     class Meta:
@@ -324,6 +363,16 @@ class ProjectRelated(dd.Model):
                 s += " (" + ui.href_to(self.project) + ")"
         return s
             
+    def update_owned_instance(self,other):
+        """
+        When a :class:`project-related <ProjectRelated>` 
+        object controls another project-related object, 
+        then the controlled automatically inherits 
+        the `project` of its controller.
+        """
+        if isinstance(other,ProjectRelated):
+            other.project = self.project
+        super(ProjectRelated,self).update_owned_instance(other)
 
 
 from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction

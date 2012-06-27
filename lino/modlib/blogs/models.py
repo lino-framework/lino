@@ -95,9 +95,9 @@ class Entry(mixins.TypedPrintable,
             s += ' ' + cgi.escape(self.subject) 
         return s
     
-    def update_owned_instance(self,task):
-        mixins.AutoUser.update_owned_instance(self,task)
-        contacts.PartnerDocument.update_owned_instance(self,task)
+    #~ def update_owned_instance(self,task):
+        #~ mixins.AutoUser.update_owned_instance(self,task)
+        #~ contacts.PartnerDocument.update_owned_instance(self,task)
     
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'

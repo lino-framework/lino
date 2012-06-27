@@ -113,6 +113,11 @@ class PostingsByPartner(Postings):
     master_key = 'partner'
     column_names = 'date owner *'
     
+class PostingsByProject(Postings):
+    required=dict()
+    master_key = 'project'
+    column_names = 'date owner *'
+    
     
 class CreatePostings(dd.RowAction):
     """

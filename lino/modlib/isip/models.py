@@ -315,14 +315,16 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
         super(ContractBase,self).full_clean(*args,**kw)
         
 
-    def update_owned_instance(self,comp):
+    def update_owned_instance(self,other):
         #~ mixins.Reminder.update_owned_task(self,task)
         #~ contacts.PartnerDocument.update_owned_task(self,task)
-        comp.project = self.person
         #~ task.company = self.company
+        if isinstance(other,mixins.ProjectRelated):
+            other.project = self.person
+        super(ContractBase,self).update_owned_instance(other)
         
-    def after_update_owned_instance(self,comp):
-        if comp.user_modified:
+    def after_update_owned_instance(self,other):
+        if other.is_user_modified():
             self.update_reminders()
         
         
@@ -511,12 +513,6 @@ class Contracts(dd.Table):
     active_fields = ['company']
     detail_layout = ContractDetail()
     
-    #~ @classmethod
-    #~ def get_row_permission(self,action,user,row):
-        #~ if not action.readonly:
-            #~ if row.user != user and user.integ_level < UserLevels.manager: 
-                #~ return False
-        #~ return super(Contracts,self).get_row_permission(action,user,row)
     
 class ContractsByPerson(Contracts):
     master_key = 'person'

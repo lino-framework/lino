@@ -110,10 +110,10 @@ class Upload(
           _("%s expires") % self.type,
           2,DurationUnits.months)
       
-    def update_owned_instance(self,task):
-        #~ logger.info("Upload.update_owned_instance() %s : owner is %s", self.pk, self.owner)
-        mixins.AutoUser.update_owned_instance(self,task)
-        mixins.Controllable.update_owned_instance(self,task)
+    #~ def update_owned_instance(self,task):
+        #~ # logger.info("Upload.update_owned_instance() %s : owner is %s", self.pk, self.owner)
+        #~ mixins.AutoUser.update_owned_instance(self,task)
+        #~ mixins.Controllable.update_owned_instance(self,task)
           
         
 class Uploads(dd.Table):

@@ -273,6 +273,7 @@ class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
         if ev.presence_set.count() == 0:
             for e in self.enrolment_set.all():
                 Presence(pupil=e.pupil,event=ev).save()
+        super(Course,self).update_owned_instance(ev)
         
   
 
@@ -351,7 +352,7 @@ class EventDetail(cal.EventDetail):
     event = """
     id:8 user priority access_class transparent #rset 
     type summary status 
-    calendar created:20 modified:20 user_modified 
+    calendar created:20 modified:20 
     description
     cal.GuestsByEvent 
     """

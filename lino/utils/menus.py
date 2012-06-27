@@ -42,27 +42,10 @@ class MenuItem:
                  request=None,
                  instance=None,
                  href=None):
-        #~ p = parent
-        #~ l = []
-        #~ while p is not None:
-            #~ if p in l:
-                #~ raise Exception("circular parent")
-            #~ l.append(p)
-            #~ p = p.parent
         self.parent = parent
         
         self.action = action
-        #~ if params is None and action is not None:
-            #~ params = action.actor.default_params
-        #~ if params is not None:
         self.params = params
-            
-        #~ if params:
-            #~ assert request is None
-            #~ assert action is not None
-            #~ request = action.request(**params)
-            
-        #~ self.params = params
         self.href = href
         self.request = request
         self.instance = instance
@@ -72,12 +55,8 @@ class MenuItem:
                 label = unicode(instance)
                 
         if action is not None:
-            #~ if name is None:
-                #~ name = action.name
             if label is None:
                 label = action.get_button_label()
-            #~ if can_view is None:
-                #~ can_view = action.can_view
         
         if name is not None:
             self.name = name
@@ -86,11 +65,8 @@ class MenuItem:
         self.hotkey = hotkey
         
         if label:
-            #~ if "~" in label:
             label = label.replace('~','')
         self.label = label
-        
-        #~ self.can_view = can_view or perms.always
         
         
     def compress(self):
@@ -185,8 +161,6 @@ class Menu(MenuItem):
                 a = spec.get_url_action(action)
             else:
                 a = spec.default_action
-                #~ if a.actor is not spec:
-                    #~ raise Exception("20120103 %r != %r" % (a.actor,spec))
 
         else:
             raise Exception("(%r,%r) is not a valid action specifier" % (spec,action))

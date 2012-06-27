@@ -245,7 +245,9 @@ List of choices is configured in `Configure --> Households --> Roles`.
         #~ related_name='membersbypartner')
     household = models.ForeignKey(Household)
     person = models.ForeignKey(settings.LINO.person_model,
-        related_name='membersbyperson')
+      related_name='membersbyperson')
+    start_date = models.DateField(_("From"),blank=True,null=True)
+    end_date = models.DateField(_("Until"),blank=True,null=True)
     #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       #~ verbose_name=_("contact type"))
 
@@ -270,20 +272,21 @@ List of choices is configured in `Configure --> Households --> Roles`.
 
 class Members(dd.Table):
     model = Member
+    order_by = ['start_date', 'end_date']
     
 class MembersByHousehold(Members):
     label = _("Household Members")
     master_key = 'household'
-    column_names = 'person role *'
+    column_names = 'person role start_date end_date *'
 
 class MembersByPerson(Members):
     label = _("Member of")
     master_key = 'person'
-    column_names = 'household role *'
+    column_names = 'household role start_date end_date *'
 
 class MembersByRole(Members):
     master_key = 'role'
-    column_names = 'person household *'
+    column_names = 'person household start_date end_date *'
     
     
     

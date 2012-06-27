@@ -38,10 +38,8 @@ from lino import mixins
 from lino import dd
 #~ from lino.core import reports
 from lino.core import actions
-from lino.utils import perms
 from lino.utils import babel
 from lino.utils import dblogger
-from lino.utils.perms import UserLevels
 from lino.tools import resolve_model, obj2str
 
 from lino.modlib.contacts import models as contacts
@@ -354,6 +352,11 @@ class EventType(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
 class EventTypes(dd.Table):
     model = EventType
     column_names = 'name build_method template *'
+    detail_template = """
+    id name
+    build_method template email_template attach_to_email
+    cal.EventsByType
+    """
 
 
 
@@ -531,8 +534,8 @@ class Component(ComponentBase,
         
     auto_type = models.IntegerField(null=True,blank=True,editable=False) 
     
-    user_modified = models.BooleanField(_("modified by user"),
-        default=False,editable=False) 
+    #~ user_modified = models.BooleanField(_("modified by user"),
+        #~ default=False,editable=False) 
     
     #~ rset = models.ForeignKey(RecurrenceSet,
         #~ verbose_name=_("Recurrence Set"),
@@ -568,23 +571,13 @@ class Component(ComponentBase,
             raise Exception('Cannot create local calendar components because settings.LINO.uid is empty.')
         return "%s@%s" % (self.pk,settings.LINO.uid)
             
-    def save(self,*args,**kw):
-        if self.owner and not self.user_modified:
-            m = getattr(self.owner,'update_owned_instance',None)
-            if m:
-                m(self)
-              
-        super(Component,self).save(*args,**kw)
-        if self.owner and self.user_modified:
-            m = getattr(self.owner,'after_update_owned_instance',None)
-            if m:
-                m(self)
 
-
+    def is_user_modified(self):
+        return self.state
+        
     def on_user_change(self,request):
-        self.user_modified = True
-        #~ if change_type == 'POST': 
-            #~ self.isdirty=True
+        raise NotImplementedError
+        #~ self.user_modified = True
         
     #~ def summary_row(self,ui,rr,**kw):
         #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
@@ -727,6 +720,11 @@ class Event(Component,Ended,
             self.state = EventState.obsolete
         super(Event,self).save(*args,**kw)
         
+    def on_user_change(self,request):
+        if not self.state:
+            self.state = EventState.draft
+        #~ self.user_modified = True
+        
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
         if issubclass(settings.LINO.project_model,contacts.Partner):
@@ -851,6 +849,11 @@ class Task(Component):
         return ar.success_response(refresh=True)
     
 
+    def on_user_change(self,request):
+        if not self.state:
+            self.state = TaskState.todo
+        #~ self.user_modified = True
+        
     @classmethod
     def site_setup(cls,lino):
         #~ lino.TASK_AUTO_FIELDS = dd.fields_list(cls,
@@ -870,7 +873,7 @@ class EventDetail(dd.DetailLayout):
     type summary user 
     start end #all_day #duration state
     place priority access_class transparent #rset 
-    calendar owner created:20 modified:20 user_modified 
+    calendar owner created:20 modified:20  
     description
     GuestsByEvent outbox.MailsByController
     """
@@ -902,6 +905,9 @@ class Events(dd.Table):
 class EventsByCalendar(Events):
     master_key = 'calendar'
     
+class EventsByType(Events):
+    master_key = 'type'
+    
 class EventsByPartner(Events):
     master_key = 'user'
     
@@ -913,6 +919,7 @@ class EventsByPlace(Events):
 
 class EventsByController(Events):
     master_key = 'owner'
+    column_names = 'start_date start_time summary state *'
 
 if settings.LINO.project_model:    
   
@@ -1027,7 +1034,7 @@ class Tasks(dd.Table):
     start_date state due_date id
     summary 
     user project 
-    calendar owner created:20 modified:20 user_modified  
+    calendar owner created:20 modified:20   
     description #notes.NotesByTask    
     """
     
@@ -1052,7 +1059,7 @@ if settings.LINO.project_model:
         master_key = 'project'
     
 
-class GuestRole(outbox.MailableType,babel.BabelNamed):
+class GuestRole(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
     """
     A possible value for the `role` field of an :class:`Guest`.
     """
@@ -1065,11 +1072,19 @@ class GuestRole(outbox.MailableType,babel.BabelNamed):
 
 
 class GuestRoles(dd.Table):
+    """
+    Table showing all :class:`GuestRole` objects.
+    """
     model = GuestRole
+    detail_template = """
+    id name
+    build_method template email_template attach_to_email
+    cal.GuestsByRole
+    """
     
 
 class Guest(#contacts.ContactDocument,
-            mixins.CachedPrintable,outbox.Mailable):
+            mixins.TypedPrintable,outbox.Mailable):
     """
     A Guest is a Partner who is invited to an :class:`Event`.
     """
@@ -1079,6 +1094,7 @@ class Guest(#contacts.ContactDocument,
     class Meta:
         verbose_name = _("Guest")
         verbose_name_plural = _("Guests")
+        
         
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
@@ -1090,17 +1106,6 @@ class Guest(#contacts.ContactDocument,
         #~ )
     #~ language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
-    def get_mailable_type(self):  
-        return self.role
-        
-
-    def get_mailable_recipients(self):
-        yield ('to',self.partner)
-
-    #~ def get_recipient(self):
-        #~ return self.partner
-    #~ recipient = property(get_recipient)
-        
     role = models.ForeignKey('cal.GuestRole',
         verbose_name=_("Role"),
         blank=True,null=True) 
@@ -1121,6 +1126,20 @@ class Guest(#contacts.ContactDocument,
     def __unicode__(self):
         return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.event)
 
+    def get_printable_type(self):
+        return self.role
+        
+    def get_mailable_type(self):  
+        return self.role
+        
+
+    def get_mailable_recipients(self):
+        yield ('to',self.partner)
+
+    #~ def get_recipient(self):
+        #~ return self.partner
+    #~ recipient = property(get_recipient)
+        
     #~ @classmethod
     #~ def setup_report(cls,rpt):
         #~ mixins.CachedPrintable.setup_report(rpt)
@@ -1154,6 +1173,9 @@ class Guests(dd.Table):
         
 class GuestsByEvent(Guests):
     master_key = 'event'
+
+class GuestsByRole(Guests):
+    master_key = 'role'
 
 class GuestsByPartner(Guests):
     master_key = 'partner'
@@ -1271,7 +1293,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
           owner_id=owner.pk,
           owner_type=ot,
           auto_type=autotype)
-        if not obj.user_modified:
+        if not obj.is_user_modified():
             original_state = dict(obj.__dict__)
             if obj.user != user:
                 #~ logger.info("20120211 must save %s because user changed",obj.pk)
@@ -1304,7 +1326,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
         except model.DoesNotExist:
             pass
         else:
-            if not obj.user_modified:
+            if not obj.is_user_modified():
                 obj.delete()
                 
         

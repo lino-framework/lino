@@ -15,6 +15,8 @@
 #~ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from lino.utils import choicelists
+from lino.utils import curry
+
 
 class UserLevels(choicelists.ChoiceList):
     """
@@ -103,10 +105,37 @@ add('1', _("User"),level=UserLevels.user)
 add('2', _("Administrator"),level=UserLevels.admin)
 
 
-BLANK_STATE = ''
+class Permittable(object): 
+    """
+    Base class for Components that have permissions control.
+    """
+    required = {}
+    """
+    Conditions required to READ (view) this component.
+    """
+    workflow_state_field = None # internally needed for make_permission
+    workflow_owner_field = None # internally needed for make_permission
+    
+    
+    #~ def allow_read(self,user,obj,state):
+        #~ return True
+    
+    def __init__(self):
+        #~ super(PermissionComponent,self).__init__(self,*args,**kw)
+        self.allow_read = curry(make_permission(self,**self.required),self)
+
+        
+    def get_view_permission(self,user):
+        #~ logger.info("20120622 %s.get_view_permission",self)
+        return self.allow_read(user,None,None)
+        
+        
 
 
-#~ def make_permission(actor,required_user_level=None,required_user_groups=None,required_states=None):
+
+#~ BLANK_STATE = ''
+
+
 def make_permission(actor,user_level=None,user_groups=None,states=None):
     """
     Return a function that will test whether permission is given or not.
@@ -182,4 +211,3 @@ def make_permission(actor,user_level=None,user_groups=None,states=None):
         raise Exception("Exception while making permissions for %s: %s" % (actor,e))
 
         
-

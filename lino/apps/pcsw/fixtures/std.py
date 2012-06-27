@@ -31,7 +31,7 @@ ExclusionType = resolve_model('pcsw.ExclusionType')
 
 def objects():
   
-    noteType = Instantiator('notes.NoteType',"name").build
+    noteType = Instantiator('notes.NoteType',"name",email_template='Default.eml.html').build
     
     yield noteType(u"Beschluss")
     yield noteType(u"Konvention",remark=u"Einmaliges Dokument in Verbindung mit Arbeitsvertrag")
@@ -45,12 +45,19 @@ def objects():
     yield noteType((u"Auswertungsbogen allgemein"),build_method='rtf',template=u'Auswertungsbogen_allgemein.rtf')
     yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
     yield noteType((u"Lebenslauf"),build_method='appyrtf',template=u'cv.odt')
+    yield noteType(u"Erstgespräch")
     
-    eventType = Instantiator('notes.EventType',"name").build
+    eventType = Instantiator('notes.EventType',"name remark").build
     
-    yield eventType(u"Eröffnungsbericht")
-    yield eventType(u"Erstgespräch")
-    yield eventType(u"Abschlussbericht")
+    yield eventType(u"Aktennotiz",remark="Alle Notizen/Ereignisse, die keine andere Form haben")
+    yield eventType(u"Brief",remark="Brief an Kunde, Personen, Organisationen")
+    yield eventType(u"E-Mail","E-Mail an Kunde, Personen, Organisationen")
+    yield eventType(u"Einschreiben","Brief, der per Einschreiben an Kunde oder an externe Personen / Dienst verschickt wird	")
+    yield eventType(u"Gespräch EXTERN","Persönliches Gespräch außerhalb des ÖSHZ, wie z.B. Vorstellungsgespräch im Betrieb, Auswertungsgespräch, gemeinsamer Termin im Arbeitsamt, im Integrationsprojekt, .")
+    yield eventType(u"Gespräch INTERN","Persönliches Gespräch im ÖSHZ")
+    yield eventType(u"Hausbesuch","Hausbesuch beim Kunden")
+    yield eventType(u"Kontakt ÖSHZ intern","Kontakte mit Kollegen oder Diensten im ÖSHZ, z.B. Fallbesprechung mit Allgemeinem Sozialdienst, Energieberatung, Schuldnerberatung, Sekretariat, ...")
+    yield eventType(u"Telefonat","Telefonischer Kontakt mit dem Kunden, anderen Personen, Diensten oder Organisationen ....")
     
     #~ projectType = Instantiator('projects.ProjectType',"name").build
     #~ yield projectType(u"VSE Ausbildung")

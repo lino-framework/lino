@@ -91,10 +91,8 @@ from django.utils.encoding import force_unicode
 
 
 import lino
-from lino.utils import IncompleteDate, curry
-from lino.utils import perms
-#~ from lino.utils.perms import ViewPermissionInstance
-#~ from lino.utils.perms import Permittable
+from lino.utils import IncompleteDate
+from lino.utils.perms import Permittable
 from lino.utils.xmlgen import etree
 
 
@@ -433,39 +431,6 @@ class Component(Variable):
                 yield e
       
 
-#~ class PermissionComponent(Component): 
-class Permittable(object): 
-    """
-    """
-    required = {}
-    """
-    Conditions required to READ (view) this component.
-    """
-    workflow_state_field = None # internally needed for make_permission
-    
-    
-    #~ def allow_read(self,user,obj,state):
-        #~ return True
-    
-    def __init__(self):
-        #~ super(PermissionComponent,self).__init__(self,*args,**kw)
-        self.allow_read = curry(perms.make_permission(self,**self.required),self)
-
-        #~ Permittable.__init__()
-        #~ Permittable.setup_permissions()
-        #~ self.update(**self.ext_options())
-        
-    def get_view_permission(self,user):
-        #~ logger.info("20120622 %s.get_view_permission",self)
-        return self.allow_read(user,None,None)
-        
-    #~ def get_view_permission(self):
-        #~ """
-        #~ Whether this Component should be rendered into the js 
-        #~ of current user (`_for_user`).
-        #~ """
-        #~ return super(Component,self).get_view_permission(_for_user)
-        
 
 
 #~ class Function(Variable):
