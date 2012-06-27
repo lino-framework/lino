@@ -243,6 +243,7 @@ class ChoiceList(object):
         blank.choicelist = cls
         blank.value = ''
         blank.text = ''
+        blank.name = 'blank_item'
         cls.blank_item = blank
         
         #~ cls.max_length = 1
