@@ -119,8 +119,12 @@ class Choice(object):
     def __str__(self):
         #~ return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
           #~ self.__class__.__name__,self.value)
-        return "%s (%s:%s)" % (unicode(self.text),
-            self.choicelist.__name__,self.value)
+        name = getattr(self,'name',None)
+        if name is None:
+            return "%s (%s:%s)" % (unicode(self.text),
+                self.choicelist.__name__,self.value)
+        return "%s (%s.%s:%s)" % (unicode(self.text),
+            self.choicelist.__name__,name,self.value)
         
     def __unicode__(self):
         return unicode(self.text)
