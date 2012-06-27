@@ -1,0 +1,35 @@
+20120627
+========
+
+Action parameters
+-----------------
+
+TODO: 
+
+#.  Was Lino noch braucht und nicht hat, ist die Möglichkeit, 
+    dass beim Klicken auf den Button einer Aktion vor deren Abschicken 
+    noch ein Dialogfenster mit Optionen kommt. 
+    Zum Beispiel eine Aktion `cal.Event.defer`, 
+    die vorher noch wissen muss, um wieviele Tage (Wochen, Monate) oder 
+    bis zu welchem Datum sie verschieben soll.
+
+#.  `on_user_change` and `after_ui_save` are two answers 
+    for the same question. Can replace `after_ui_save` 
+    with `on_user_change`, but `on_user_change` should receive 
+    the complete `ar`, not only the web request.
+
+
+Calendar workflows
+------------------
+
+The calendar is becoming usable.
+
+Added new tables 
+:class:`lino.modlib.cal.MyEventsToSchedule`,
+:class:`lino.modlib.cal.MyEventsToNotify`,
+:class:`lino.modlib.cal.EventsToNotify`,
+:class:`lino.modlib.cal.MyEventsToConfirm`,
+:class:`lino.modlib.cal.EventsToConfirm`,
+:class:`lino.modlib.cal.TasksToDo`
+Wrote documentation for `attr:`lino.core.actions.Action.sort_index`.
+

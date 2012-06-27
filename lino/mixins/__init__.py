@@ -152,7 +152,7 @@ class AutoUser(dd.Model):
             
     if settings.LINO.user_model: 
       
-        #~ workflow_owner_field = 'user' # used by :mod:`lino.modlib.workflows.models`
+        workflow_owner_field = 'user' # used by :mod:`lino.modlib.workflows.models`
         
         user = models.ForeignKey(settings.LINO.user_model,
             verbose_name=_("user"),

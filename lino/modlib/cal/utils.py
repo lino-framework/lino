@@ -188,7 +188,7 @@ class EventState(ChoiceList):
         return cv[status_id]
         
 add = EventState.add_item
-add('10', _("Draft"), 'draft')
+add('10', _("Scheduled"), 'scheduled')
 add('20', _("Notified"),'notified')
 #~ add('20', _("Suggested"),'suggested')
 #~ add('30', _("Published"),'published')
@@ -198,6 +198,7 @@ add('50', _("Took place"),'took_place')
 add('60', _("Rescheduled"),'rescheduled')
 add('70', _("Cancelled"),'cancelled')
 add('80', _("Absent"),'absent')
+add('90', _("Obsolete"),'obsolete')
     
 class GuestState(ChoiceList):
     """

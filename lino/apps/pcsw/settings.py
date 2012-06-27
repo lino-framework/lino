@@ -68,6 +68,8 @@ class Lino(Lino):
         tb.add_action(self.modules.isip.MyContracts)
         tb.add_action(self.modules.jobs.MyContracts)
         #~ tb.add_action(self.modules.pcsw.Home)
+        tb.add_action(self.modules.cal.MyEventsToSchedule)
+        tb.add_action(self.modules.cal.MyTasksToDo)
         
         
     def setup_menu(self,ui,user,main):

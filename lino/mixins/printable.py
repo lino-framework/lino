@@ -475,7 +475,10 @@ def get_build_method(elem):
 
 #~ class PrintAction(actions.RedirectAction):
 class BasePrintAction(actions.RowAction):
-    sort_index = 10
+    """
+    Base class for all "Print" actions.
+    """
+    sort_index = 50
     url_action_name = 'print'
     label = _('Print')
     

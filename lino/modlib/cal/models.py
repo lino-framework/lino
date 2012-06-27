@@ -447,7 +447,11 @@ class ComponentBase(mixins.ProjectRelated,Started):
         setattr(self,name+'_time',value.time())
         
     def get_datetime(self,name,altname=None):
-        "`name` can be 'start' or 'end'."
+        """
+        Return a `datetime` value from the two corresponding 
+        date and time fields.
+        `name` can be 'start' or 'end'.
+        """
         d = getattr(self,name+'_date')
         t = getattr(self,name+'_time')
         if not d and altname is not None: 
@@ -510,6 +514,8 @@ class Component(ComponentBase,
     Abstract base class for :class:`Event` and :class:`Task`.
     
     """
+    workflow_state_field = 'state'
+    
     class Meta:
         abstract = True
         
@@ -564,23 +570,12 @@ class Component(ComponentBase,
             
     def save(self,*args,**kw):
         if self.owner and not self.user_modified:
-        #~ if self.owner and self.user_modified:
-            #~ if self.owner.__class__.__name__ == 'Person':
-                #~ self.person = self.owner
-            #~ elif self.owner.__class__.__name__ == 'Company':
-                #~ self.company = self.owner
-            #~ logger.info("20120211 update_owned_instance %s",self.summary)
             m = getattr(self.owner,'update_owned_instance',None)
-            #~ m = getattr(self.owner,'update_owned_task',None)
             if m:
-                #~ print "20111014 call update_owned_task() on", self.owner
                 m(self)
-            #~ else:
-                #~ print "20111014 no update_owned_task on", self
               
         super(Component,self).save(*args,**kw)
         if self.owner and self.user_modified:
-            #~ logger.info("20120211 after_update_owned_instance %s",self.summary)
             m = getattr(self.owner,'after_update_owned_instance',None)
             if m:
                 m(self)
@@ -651,11 +646,11 @@ class ExtAllDayField(dd.VirtualField):
         
 #~ from lino.modlib.workflows import models as workflows # Workflowable
 
-class Components(dd.Table):
-#~ class Components(dd.Table,workflows.Workflowable):
+#~ class Components(dd.Table):
+#~ # class Components(dd.Table,workflows.Workflowable):
   
-    workflow_owner_field = 'user'    
-    workflow_state_field = 'state'
+    #~ workflow_owner_field = 'user'    
+    #~ workflow_state_field = 'state'
     
     #~ def disable_editing(self,request):
     #~ def get_row_permission(cls,row,user,action):
@@ -727,6 +722,11 @@ class Event(Component,Ended,
     #~ def end_date_changed(self,oldvalue): self.compute_times()
     #~ def end_time_changed(self,oldvalue): self.compute_times()
         
+    def save(self,*args,**kw):
+        if not self.state and self.start_date and self.start_date < datetime.date.today():
+            self.state = EventState.obsolete
+        super(Event,self).save(*args,**kw)
+        
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
         if issubclass(settings.LINO.project_model,contacts.Partner):
@@ -781,19 +781,42 @@ class Event(Component,Ended,
             return self.project.get_print_language(bm)
         return self.user.language
         
-    @dd.action(_("Notified"),required=dict(states=['','draft']))
+    @dd.action(_("Scheduled"),sort_index=10,required=dict(states=['']))
+    def mark_scheduled(self,ar):
+        #~ print 'TODO: would suggest', self
+        if not self.start_time:
+            raise actions.Warning(_("Cannot mark scheduled with empty start time."))
+        self.state = EventState.scheduled
+        self.save()
+        return ar.ui.success_response(refresh=True)
+    
+    @dd.action(_("Notified"),sort_index=11,required=dict(states=['scheduled']))
     def mark_notified(self,ar):
+        """
+        Running this action means 
+        "This event has somehow (no matter how) been notified to the guests."
+        """
         #~ print 'TODO: would suggest', self
         self.state = EventState.notified
         self.save()
         return ar.ui.success_response(refresh=True)
     
-    @dd.action(_("Confirmed"),required=dict(states=['','draft','notified']))
+    @dd.action(_("Confirmed"),sort_index=12,required=dict(states=['scheduled','notified']))
     def mark_confirmed(self,ar):
         #~ print 'TODO: would publish', self
         self.state = EventState.confirmed
         self.save()
         return ar.ui.success_response(refresh=True)
+        
+    def get_row_permission(self,user,state,action):
+        """
+        """
+        if isinstance(action,postings.CreatePostings):
+            print 20120627
+            if self.state < EventState.scheduled:
+                return False
+        return super(Event,self).get_row_permission(user,state,action)
+        
         
 
 #~ class Task(Component,contacts.PartnerDocument):
@@ -815,10 +838,16 @@ class Task(Component):
     due_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("Due time"))
-    done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
+    #~ done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
     state = TaskState.field(blank=True) # iCal:STATUS
     #~ status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
+    
+    @dd.action(_("Done"),required=dict(states=['','todo','started']))
+    def mark_done(self,ar):
+        self.state = TaskState.done
+        self.save()
+        return ar.success_response(refresh=True)
     
 
     @classmethod
@@ -845,10 +874,11 @@ class EventDetail(dd.DetailLayout):
     GuestsByEvent outbox.MailsByController
     """
     
-class Events(Components):
+class Events(dd.Table):
     model = 'cal.Event'
-    column_names = 'start_date start_time summary state workflow_buttons *'
+    column_names = 'start_date start_time user summary state *'
     #~ active_fields = ['all_day']
+    order_by = ["start_date","start_time"]
     
     detail_layout = EventDetail()
     
@@ -879,30 +909,6 @@ class EventsByPlace(Events):
     Displays the :class:`Events <Event>` at a given :class:`Place`.
     """
     master_key = 'place'
-    
-class Tasks(Components):
-    model = 'cal.Task'
-    column_names = 'start_date summary done state *'
-    #~ hidden_columns = set('owner_id owner_type'.split())
-    
-    #~ detail_template = """
-    #~ start_date status due_date user done 
-    #~ summary 
-    #~ created:20 modified:20 owner #owner_type #owner_id
-    #~ description #notes.NotesByTask    
-    #~ """
-    detail_template = """
-    start_date state workflow_buttons due_date done id
-    summary 
-    user project 
-    calendar owner created:20 modified:20 user_modified  
-    description #notes.NotesByTask    
-    """
-    
-    
-class TasksByController(Tasks):
-    master_key = 'owner'
-    #~ hidden_columns = set('owner_id owner_type'.split())
 
 class EventsByController(Events):
     master_key = 'owner'
@@ -912,16 +918,66 @@ if settings.LINO.project_model:
     class EventsByProject(Events):
         master_key = 'project'
     
-    class TasksByProject(Tasks):
-        master_key = 'project'
-    
 if settings.LINO.user_model:    
   
     class MyEvents(Events,mixins.ByUser):
+        column_names = 'start_date start_time project summary state workflow_buttons *'
         #~ model = 'cal.Event'
         #~ label = _("My Events")
-        order_by = ["-start_date","-start_time"]
         #~ column_names = 'start_date start_time summary state *'
+        
+    class MyEventsToSchedule(MyEvents):
+        """
+        A list of events that aren't yet scheduled. 
+        The user is supposed to fill at least a start_date and start_time.
+        Clicking on "mark scheduled" 
+        means "I made up my mind on when this event should happen"
+        and will remove this Event from this 
+        table and make it appear in 
+        :class:`EventsToNotify` and 
+        :class:`MyEventsToNotify`.
+        """
+        column_names = 'start_date start_time project summary workflow_buttons *'
+        label = _("My event scheduler")
+        order_by = ["start_date","start_time"]
+        filter = models.Q(state=EventState.blank_item)
+        
+    class EventsToNotify(Events):
+        """
+        A list of events that need to be notified (i.e. communicated to the guests). 
+        Clicking on :attr:`Event.mark_notified` 
+        will remove this Event from this 
+        table and make it appear 
+        in :class:`MyEventsToConfirm`.
+        or :class:`MyEventsConfirmed`.
+        """
+        required = dict(user_level='manager')
+        column_names = 'start_date start_time user project summary workflow_buttons *'
+        label = _("Events to notify")
+        order_by = ["start_date","start_time"]
+        filter = models.Q(state=EventState.scheduled)
+        
+    class MyEventsToNotify(EventsToNotify,MyEvents):
+        required = dict()
+        column_names = 'start_date start_time project summary workflow_buttons *'
+        label = _("My events to notify")
+        
+    class EventsToConfirm(MyEvents):
+        """
+        A list of events that need to be confirmed
+        (i.e. the user made sure that the guests received 
+        their notification and plan to attend to the event). 
+        """
+        required = dict(user_level='manager')
+        column_names = 'start_date start_time project user summary workflow_buttons *'
+        label = _("Events to confirm")
+        order_by = ["start_date","start_time"]
+        filter = models.Q(state=EventState.scheduled)
+        
+    class MyEventsToConfirm(EventsToConfirm):
+        required = dict()
+        label = _("My events to confirm")
+        column_names = 'start_date start_time project summary workflow_buttons *'
         
     class MyEventsToday(MyEvents):
         column_names = 'start_time summary state workflow_buttons *'
@@ -949,11 +1005,45 @@ if settings.LINO.user_model:
             #~ rr.known_values = dict(start_date=datetime.date.today())
             #~ super(MyEventsToday,self).setup_request(rr)
             
-            
+
+class Tasks(dd.Table):
+    model = 'cal.Task'
+    column_names = 'start_date summary state *'
+    #~ hidden_columns = set('owner_id owner_type'.split())
+    
+    #~ detail_template = """
+    #~ start_date status due_date user  
+    #~ summary 
+    #~ created:20 modified:20 owner #owner_type #owner_id
+    #~ description #notes.NotesByTask    
+    #~ """
+    detail_template = """
+    start_date state due_date id
+    summary 
+    user project 
+    calendar owner created:20 modified:20 user_modified  
+    description #notes.NotesByTask    
+    """
+    
+class TasksByController(Tasks):
+    master_key = 'owner'
+    #~ hidden_columns = set('owner_id owner_type'.split())
+
+if settings.LINO.user_model:    
         
     class MyTasks(Tasks,mixins.ByUser):
         order_by = ["start_date","start_time"]
-        column_names = 'start_date summary done state workflow_buttons  *'
+        column_names = 'start_date summary state workflow_buttons  *'
+    
+    class MyTasksToDo(MyTasks):
+    #~ class MyOpenTasks(MyTasks):
+        label = _("To-do list")
+        filter = models.Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
+    
+if settings.LINO.project_model:    
+  
+    class TasksByProject(Tasks):
+        master_key = 'project'
     
 
 class GuestRole(outbox.MailableType,babel.BabelNamed):
@@ -977,6 +1067,9 @@ class Guest(#contacts.ContactDocument,
     """
     A Guest is a Partner who is invited to an :class:`Event`.
     """
+    
+    workflow_state_field = 'state'
+    
     class Meta:
         verbose_name = _("Guest")
         verbose_name_plural = _("Guests")
@@ -1044,7 +1137,7 @@ class Guest(#contacts.ContactDocument,
 class Guests(dd.Table):
     model = Guest
     column_names = 'partner role state workflow_buttons remark event *'
-    workflow_state_field = 'state'
+    #~ workflow_state_field = 'state'
     #~ column_names = 'contact role state remark event *'
     #~ workflow_actions = ['invite','notify']
     #~ workflow_owner_field = 'event__user'
@@ -1108,7 +1201,8 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
         **filterkw).order_by('start_date'):
         add(o)
         
-    filterkw.update(done=False)
+    #~ filterkw.update(done=False)
+    filterkw.update(state__in=[TaskState.blank_item,TaskState.todo])
             
     for task in Task.objects.filter(**filterkw).order_by('start_date'):
         add(task)
@@ -1414,7 +1508,8 @@ def reminders(ui,user,days_back=None,days_forward=None,**kw):
         **filterkw).order_by('start_date'):
         add(o)
         
-    filterkw.update(done=False)
+    #~ filterkw.update(done=False)
+    filterkw.update(state__in=[TaskState.blank_item,TaskState.todo])
             
     for task in Task.objects.filter(**filterkw).order_by('start_date'):
         add(task)
@@ -1545,8 +1640,13 @@ def setup_master_menu(site,ui,user,m): pass
 def setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("Calendar"))
     m.add_action(MyTasks)
+    m.add_action(MyTasksToDo)
     m.add_action(MyEvents)
-    m.add_action(MyEventsToday)
+    m.add_action(MyEventsToSchedule)
+    m.add_action(MyEventsToNotify)
+    m.add_action(EventsToNotify)
+    m.add_action(MyEventsToConfirm)
+    #~ m.add_action(MyEventsToday)
     if site.use_extensible:
         m.add_action(Panel)
     #~ m.add_action_(actions.Calendar())

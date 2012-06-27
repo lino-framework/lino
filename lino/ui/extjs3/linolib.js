@@ -1209,7 +1209,8 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
   return function (response) {
     //~ console.log(20120608,panel);
     if (panel instanceof Lino.GridPanel) {
-        gridmode = true;
+        gridmode = false;
+        //~ gridmode = true;
         //~ console.log('20120608 yes');
     } else {
         gridmode = false;

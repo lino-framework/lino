@@ -590,7 +590,7 @@ class Table(AbstractTable):
                 self.label = self.get_actor_label()
           
               
-            for name in ('workflow_state_field',):
+            for name in ('workflow_state_field','workflow_owner_field'):
                 if getattr(self,name) is None:
                     v = getattr(self.model,name,None)
                     if v is not None:

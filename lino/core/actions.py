@@ -125,7 +125,20 @@ class Action(object):
     """
     Abstract base class for all Actions
     """
-    sort_index = 99
+    
+    sort_index = 90
+    """
+    Predefined sort_index values are:
+    
+    value action
+    ----- -----------
+    20    :class:`Insert <InsertRow>`
+    30    :class:`Delete <DeleteSelected>`
+    50    :class:`Print <lino.mixins.printable.BasePrintAction>`
+    60    :attr:`Duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
+    90    default for all custom row actions created using `@dd.action`
+    
+    """
     opens_a_slave = False
     label = None
     
@@ -255,7 +268,7 @@ class Action(object):
     def get_action_permission(self,user,obj,state):
         """
         The default implementation simply calls this action's 
-        opermission handler.
+        permission handler.
         Derived Action classes may override this to add vetos.
         E.g. DispatchAction is not available for a User with empty partner.
         """
@@ -356,9 +369,14 @@ class ShowDetailAction(RowAction):
 RowAction.callable_from = (GridEdit,ShowDetailAction)
 
 class InsertRow(TableAction):
+    """
+    Opens the Insert window filled with a blank row. 
+    The new row will be actually created only when this 
+    window gets submitted.
+    """
     show_in_workflow = False
     opens_a_window = True
-    sort_index = 2
+    sort_index = 20
     hide_top_toolbar = True
     readonly = False
     required = dict(user_level='user')
@@ -435,7 +453,10 @@ class ListAction(Action):
     
 
 class DeleteSelected(RowAction):
-    sort_index = 3
+    """
+    Delete the row.
+    """
+    sort_index = 30
     readonly = False
     show_in_workflow = False
     required = dict(user_level='user')
