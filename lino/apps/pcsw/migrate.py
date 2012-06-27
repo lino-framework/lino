@@ -1121,7 +1121,7 @@ def migrate_from_1_4_3(globals_dict):
         return users_User(partner_id=contact_ptr_id,
           id=contact_ptr_id,
           first_name=first_name,last_name=last_name,
-          email=contacts_Contact.objects.get(contact_ptr_id).email,
+          email=contacts_Contact.objects.get(pk=contact_ptr_id).email,
           #~ title=title,gender=gender,
           username=username,
           #~ is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,
