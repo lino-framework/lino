@@ -860,7 +860,7 @@ class CompanyDetail(dd.DetailLayout):
     bottom_box
     """
     
-    notes = "notes.NotesByCompany"
+    notes = "pcsw.NotesByCompany"
     
     main = "general notes"
 
@@ -1005,7 +1005,7 @@ class PersonDetail(dd.DetailLayout):
     """
       
     history = """
-    notes.NotesByPerson #:60 #pcsw.LinksByPerson:20
+    pcse.NotesByPerson #:60 #pcsw.LinksByPerson:20
     outbox.OutboxByProject
     """
     
