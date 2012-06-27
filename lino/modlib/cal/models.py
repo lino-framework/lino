@@ -927,7 +927,7 @@ if settings.LINO.user_model:
         #~ label = _("My Events")
         #~ column_names = 'start_date start_time summary state *'
         
-    class MyEventsToSchedule(MyEvents):
+    class EventsToSchedule(Events):
         """
         A list of events that aren't yet scheduled. 
         The user is supposed to fill at least a start_date and start_time.
@@ -938,10 +938,15 @@ if settings.LINO.user_model:
         :class:`EventsToNotify` and 
         :class:`MyEventsToNotify`.
         """
-        column_names = 'start_date start_time project summary workflow_buttons *'
-        label = _("My event scheduler")
-        order_by = ["start_date","start_time"]
+        label = _("Events to schedule")
+        required = dict(user_level='manager')
+        column_names = 'start_date start_time user project summary workflow_buttons *'
         filter = models.Q(state=EventState.blank_item)
+        
+    class MyEventsToSchedule(EventsToSchedule,MyEvents):
+        required = dict()
+        column_names = 'start_date start_time project summary workflow_buttons *'
+        label = _("My events to schedule")
         
     class EventsToNotify(Events):
         """
@@ -1635,23 +1640,30 @@ def site_setup(site):
     
 
 
-def setup_main_menu(site,ui,user,m): pass
-def setup_master_menu(site,ui,user,m): pass
-
-def setup_my_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("Calendar"))
-    m.add_action(MyTasks)
-    m.add_action(MyTasksToDo)
+    #~ m  = m.add_menu("events",_("Events"))
     m.add_action(MyEvents)
+    m.add_action(EventsToSchedule)
     m.add_action(MyEventsToSchedule)
-    m.add_action(MyEventsToNotify)
     m.add_action(EventsToNotify)
+    m.add_action(MyEventsToNotify)
+    m.add_action(EventsToConfirm)
     m.add_action(MyEventsToConfirm)
     #~ m.add_action(MyEventsToday)
     if site.use_extensible:
         m.add_action(Panel)
     #~ m.add_action_(actions.Calendar())
+    m  = m.add_menu("tasks",_("Tasks"))
+    m.add_action(MyTasks)
+    m.add_action(MyTasksToDo)
   
+def setup_master_menu(site,ui,user,m): 
+    pass
+    
+def setup_my_menu(site,ui,user,m): 
+    pass
+    
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("Calendar"))
     m.add_action(Places)
