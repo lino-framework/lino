@@ -1936,7 +1936,10 @@ dd.inject_field('contacts.RoleType',
     #~ order_by = ['sent']
   
 
-dd.inject_field('notes.Note','company',
+from lino.modlib.notes.models import Note, Notes
+
+#~ dd.inject_field('notes.Note','company',
+dd.inject_field(Note,'company',
     models.ForeignKey(settings.LINO.company_model,
         blank=True,null=True,
         help_text="""\
@@ -1944,6 +1947,16 @@ Probably not useful."""
         )
     )
   
+class NotesByPerson(Notes):
+    master_key = 'project'
+    column_names = "date event_type type subject body user company *"
+    order_by = ["-date"]
+  
+class NotesByCompany(Notes):
+    master_key = 'company'
+    column_names = "date event_type type subject body user person *"
+    order_by = ["-date"]
+    
 
 
 """

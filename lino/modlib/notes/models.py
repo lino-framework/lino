@@ -307,19 +307,11 @@ class NotesByEventType(Notes):
     
     
 
-class NotesByPerson(Notes):
-    master_key = 'person'
-    #~ column_names = "date type event_type subject body_html user company *"
-    column_names = "date event_type type subject body user company *"
+class NotesByProject(Notes):
+    master_key = 'project'
+    column_names = "date event_type type subject body user *"
     order_by = ["-date"]
   
-class NotesByCompany(Notes):
-    master_key = 'company'
-    #~ column_names = "date type event_type subject body_html user person *"
-    column_names = "date event_type type subject body user person *"
-    order_by = ["-date"]
-    
-    
   
 def setup_main_menu(site,ui,user,m): pass
   
