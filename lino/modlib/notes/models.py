@@ -248,8 +248,7 @@ def html_text(s):
 class NoteDetail(dd.DetailLayout):
     main = """
     date:10 event_type:25 type:25
-    subject 
-    person company
+    subject project 
     id user:10 language:8 build_time
     body outbox.MailsByController
     """
@@ -262,7 +261,7 @@ class Notes(dd.Table):
     model = 'notes.Note'
     detail_layout = NoteDetail()
     #~ column_names = "id date user type event_type subject * body_html"
-    column_names = "id date user event_type type person company subject * body"
+    column_names = "id date user event_type type project subject * body"
     #~ hide_columns = "body"
     #~ hidden_columns = frozenset(['body'])
     order_by = ["id"]
@@ -271,7 +270,7 @@ class Notes(dd.Table):
 
 class MyNotes(mixins.ByUser,Notes):
     #~ master_key = 'user'
-    column_names = "date event_type type subject person company body *"
+    column_names = "date event_type type subject project body *"
     #~ column_names = "date event_type type subject body *"
     #~ column_names = "date type event_type subject body_html *"
     #~ can_view = perms.is_authenticated
@@ -296,14 +295,12 @@ class NotesByType(Notes):
     master_key = 'type'
     column_names = "date event_type subject user *"
     order_by = ["date"]
-    #~ label = _("Notes by person")
   
   
 class NotesByEventType(Notes):
     master_key = 'event_type'
     column_names = "date type subject user *"
     order_by = ["date"]
-    #~ label = _("Notes by person")
     
     
 
