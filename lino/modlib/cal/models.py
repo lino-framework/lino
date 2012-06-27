@@ -810,6 +810,7 @@ class Event(Component,Ended,
         
     def get_row_permission(self,user,state,action):
         """
+        TODO: 20120627
         """
         if isinstance(action,postings.CreatePostings):
             print 20120627
