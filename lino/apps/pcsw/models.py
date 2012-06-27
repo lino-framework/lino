@@ -1954,7 +1954,7 @@ class NotesByPerson(Notes):
   
 class NotesByCompany(Notes):
     master_key = 'company'
-    column_names = "date event_type type subject body user person *"
+    column_names = "date project event_type type subject body user *"
     order_by = ["-date"]
     
 
