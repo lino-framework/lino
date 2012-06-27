@@ -1642,18 +1642,20 @@ def site_setup(site):
 
 def setup_main_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("Calendar"))
-    #~ m  = m.add_menu("events",_("Events"))
-    m.add_action(MyEvents)
-    m.add_action(EventsToSchedule)
-    m.add_action(MyEventsToSchedule)
-    m.add_action(EventsToNotify)
-    m.add_action(MyEventsToNotify)
-    m.add_action(EventsToConfirm)
-    m.add_action(MyEventsToConfirm)
-    #~ m.add_action(MyEventsToday)
     if site.use_extensible:
         m.add_action(Panel)
-    #~ m.add_action_(actions.Calendar())
+    #~ m  = m.add_menu("events",_("Events"))
+    m.add_action(MyEvents)
+    #~ m.add_action(MyEventsToday)
+    m.add_action(MyEventsToSchedule)
+    m.add_action(MyEventsToNotify)
+    m.add_action(MyEventsToConfirm)
+    
+    m.add_action(Events)
+    m.add_action(EventsToSchedule)
+    m.add_action(EventsToNotify)
+    m.add_action(EventsToConfirm)
+    
     m  = m.add_menu("tasks",_("Tasks"))
     m.add_action(MyTasks)
     m.add_action(MyTasksToDo)
@@ -1678,7 +1680,6 @@ def setup_config_menu(site,ui,user,m):
   
 def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("cal",_("Calendar"))
-    m.add_action(Events)
     m.add_action(Tasks)
     m.add_action(Guests)
     #~ m.add_action(RecurrenceSets)
