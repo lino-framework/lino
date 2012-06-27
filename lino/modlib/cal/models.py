@@ -1651,6 +1651,7 @@ def setup_main_menu(site,ui,user,m):
     m.add_action(MyEventsToNotify)
     m.add_action(MyEventsToConfirm)
     
+    m.add_separator('-')
     m.add_action(Events)
     m.add_action(EventsToSchedule)
     m.add_action(EventsToNotify)
