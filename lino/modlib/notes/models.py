@@ -207,16 +207,15 @@ class Note(mixins.TypedPrintable,
         #~ return ''
     #~ body_html.return_type = fields.DisplayField(_("Body"))
     
-    def disabled_fields(self,ar):
-        #~ if self.must_build:
-        if not self.build_time:
-            return []
-        return settings.LINO.NOTE_PRINTABLE_FIELDS
+    #~ def disabled_fields(self,ar):
+        #~ if not self.build_time:
+            #~ return []
+        #~ return settings.LINO.NOTE_PRINTABLE_FIELDS
 
-    @classmethod
-    def site_setup(cls,lino):
-        lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
-        '''date subject body language person company type event_type''')
+    #~ @classmethod
+    #~ def site_setup(cls,lino):
+        #~ lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
+        #~ '''date subject body language person company type event_type''')
         
     #~ @classmethod
     #~ def site_setup(cls,lino):

@@ -172,7 +172,7 @@ def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
             raise Exception(
                 "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
                 model_spec,app_label,model,settings.SETTINGS_MODULE))
-        logger.info("20120628 unresolved %r",model)
+        #~ logger.info("20120628 unresolved %r",model)
         return UnresolvedModel(model_spec,app_label)
     return model
     

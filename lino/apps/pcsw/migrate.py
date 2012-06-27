@@ -1022,6 +1022,8 @@ def migrate_from_1_4_3(globals_dict):
     - new fields MailableType to cal.EventType and notes.NoteType
     - severe test in isip.Contract
     - added workflow to modules courses and cal
+    - notes.Note is now ProjectRelated 
+      (and field `company` is injected by lino.apps.pcsw)
     """
     from lino.tools import resolve_model
     from lino.utils.mti import create_child

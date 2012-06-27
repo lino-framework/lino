@@ -132,10 +132,11 @@ also `obj` ist `None`.
 
 Pending injects
 ---------------
+
 notes.Note ist jetzt ProjectRelated statt PartnerDocument.
-Um ein subtiles Problem mit update_owned_instance in notes.Note 
-zu lösen und weil notes.Note eigentlich nur aus historischen 
-Gründen ein PartnerDocument war.
+Das war um ein subtiles Problem mit update_owned_instance in notes.Note 
+zu lösen, und weil notes.Note eigentlich nur aus historischen 
+Gründen noch ein PartnerDocument war.
 
 Um das Feld "company" in apps.pcsw dennoch zu behalten, 
 mache ich ein dd.inject_field darauf. 
