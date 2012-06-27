@@ -1005,7 +1005,7 @@ class PersonDetail(dd.DetailLayout):
     """
       
     history = """
-    pcse.NotesByPerson #:60 #pcsw.LinksByPerson:20
+    pcsw.NotesByPerson #:60 #pcsw.LinksByPerson:20
     outbox.OutboxByProject
     """
     
