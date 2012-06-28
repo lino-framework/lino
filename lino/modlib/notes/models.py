@@ -19,6 +19,7 @@ import datetime
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy 
 #~ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 from django.db import IntegrityError
@@ -84,7 +85,8 @@ class EventType(babel.BabelNamed):
     A possible choice for :attr:`Note.event_type`.
     """
     class Meta:
-        verbose_name = _("Event Type")
+        verbose_name = pgettext_lazy(u"notes",u"Event Type")
+        #~ verbose_name = _("Event Type")
         verbose_name_plural = _("Event Types")
     #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     remark = models.TextField(verbose_name=_("Remark"),blank=True)

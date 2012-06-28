@@ -2114,32 +2114,14 @@ def site_setup(site):
     #~ newcomers_level newcomer_quota
     #~ debts_level
     #~ """)
-    site.modules.users.Users.set_detail(box2="""
-    newcomer_quota
-    """,
-    main = """
-    box1:50 box2:20
+    site.modules.users.Users.set_detail("""
+    box1:50 box2:25
     remarks 
+    """,
+    box2="""
+    newcomer_quota
     """)
     
-    #~ class NoteDetail(dd.DetailLayout):
-        #~ left = """
-        #~ date:10 event_type:25 type:25
-        #~ subject 
-        #~ person company
-        #~ id user:10 language:8 build_time
-        #~ body
-        #~ """
-        
-        #~ right = """
-        #~ uploads.UploadsByController
-        #~ thirds.ThirdsByController:30
-        #~ cal.TasksByController
-        #~ """
-        
-        #~ main = """
-        #~ left:60 right:30
-        #~ """
         
     #~ site.modules.notes.Notes.set_detail(NoteDetail())
     site.modules.notes.Notes.set_detail(

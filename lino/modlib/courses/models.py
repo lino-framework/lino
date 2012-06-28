@@ -328,7 +328,7 @@ add('10', _("Candidate"),"candidate")
 add('20', _("Registered"),"registered")
 add('30', _("Passed"),"passed")   # bestanden
 add('40', _("Award"),"award")   # gut bestanden
-add('50', pgettext_lazy("courses","Failed"),"failed")   # nicht bestanden
+add('50', pgettext_lazy(u"courses",u"Failed"),"failed")   # nicht bestanden
 add('60', _("Aborted"),"aborted")   # abgebrochen
     
     
@@ -510,7 +510,7 @@ class ParticipantsByCourse(RequestsByCourse):
           message=_("%(person)s passed %(course)s") 
             % dict(person=elem.person,course=self.course))
             
-    @dd.action(pgettext_lazy("courses","Failed"),required=dict(states=['registered']))
+    @dd.action(pgettext_lazy(u"courses",u"Failed"),required=dict(states=['registered']))
     def failed(elem,ar):
         elem.state = CourseRequestStates.failed
         if not elem.date_ended:

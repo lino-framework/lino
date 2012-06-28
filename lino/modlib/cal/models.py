@@ -346,8 +346,8 @@ class EventType(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
     templates_group = 'cal/Event'
     
     class Meta:
-        verbose_name = pgettext_lazy("cal","Event Type")
-        verbose_name_plural = pgettext_lazy("cal",'Event Types')
+        verbose_name = pgettext_lazy(u"cal",u"Event Type")
+        verbose_name_plural = pgettext_lazy(u"cal",u'Event Types')
 
 class EventTypes(dd.Table):
     model = EventType
@@ -674,8 +674,8 @@ class Event(Component,Ended,
     
     class Meta:
         #~ abstract = True
-        verbose_name = pgettext_lazy("cal","Event")
-        verbose_name_plural = pgettext_lazy("cal","Events")
+        verbose_name = pgettext_lazy(u"cal",u"Event")
+        verbose_name_plural = pgettext_lazy(u"cal",u"Events")
         
     transparent = models.BooleanField(_("Transparent"),default=False)
     type = models.ForeignKey(EventType,null=True,blank=True)

@@ -52,7 +52,7 @@ There are two big use cases:
 
 See also
 
-- :doc:`/admin/dpytutorial`
+- :doc:`/tutorials/dumpy`
 - http://code.djangoproject.com/ticket/10664
  
 

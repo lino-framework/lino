@@ -10,7 +10,8 @@ Here are the next tutorials for you:
 .. toctree::
    :maxdepth: 2
 
-   t1
-   t3
+   minimal_apps
+   polls
+   lets
 
 

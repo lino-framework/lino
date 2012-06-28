@@ -1907,10 +1907,26 @@ tinymce.init({
                 if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
                     logger.debug("%s is up to date.",fn)
                     return 0
-                
+                    
         logger.info("Building %s ...", fn)
         makedirs_if_missing(os.path.dirname(fn))
         f = codecs.open(fn,'w',encoding='utf-8')
+        try:
+            self.write_lino_js(f,user)
+            #~ f.write(jscompress(js))
+            f.close()
+        except Exception, e:
+            """
+            If some error occurs, remove the half generated file 
+            to make sure that Lino will try to generate it again on next request
+            (and report the same error message again).
+            """
+            f.close()
+            os.remove(fn)
+            raise
+        #~ logger.info("Wrote %s ...", fn)
+            
+    def write_lino_js(self,f,user):
         tpl = self.linolib_template()
         f.write(jscompress(unicode(tpl)+'\n'))
         
@@ -1973,11 +1989,6 @@ tinymce.init({
                 elif a.show_in_workflow:
                     for ln in self.js_render_workflow_action(rh,a,user):
                         f.write(ln + '\n')
-
-
-        #~ f.write(jscompress(js))
-        f.close()
-        #~ logger.info("Wrote %s ...", fn)
         return 1
           
         

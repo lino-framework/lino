@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 08:40+0100\n"
+"POT-Creation-Date: 2012-06-28 20:57+0100\n"
 "PO-Revision-Date: 2012-06-24 23:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -36,28 +36,28 @@ msgstr "Néerlandais"
 msgid "Estonian"
 msgstr "Estonien"
 
-#: .\__init__.py:984 .\models.py:586 .\templates\500.html.py:4
+#: .\__init__.py:985 .\models.py:586 .\templates\500.html.py:4
 #: .\templates\base.html.py:26
 msgid "Home"
 msgstr ""
 
-#: .\__init__.py:1015
+#: .\__init__.py:1016
 msgid "Master"
 msgstr "Signalétique"
 
-#: .\__init__.py:1017
+#: .\__init__.py:1018
 msgid "My menu"
 msgstr "Mon menu"
 
-#: .\__init__.py:1019
+#: .\__init__.py:1020
 msgid "Configure"
 msgstr "Configuration"
 
-#: .\__init__.py:1021
+#: .\__init__.py:1022
 msgid "Explorer"
 msgstr "Explorateur"
 
-#: .\__init__.py:1023
+#: .\__init__.py:1024
 msgid "Site"
 msgstr "Site"
 
@@ -123,7 +123,7 @@ msgstr ""
 msgid "Text Field Templates"
 msgstr ""
 
-#: .\models.py:297 .\utils\babel.py:352
+#: .\models.py:297 .\utils\babel.py:348
 msgid "Designation"
 msgstr "Description"
 
@@ -207,7 +207,7 @@ msgstr "à propos"
 msgid "Server up since"
 msgstr ""
 
-#: .\models.py:646 .\utils\perms.py:78
+#: .\models.py:646
 msgid "System"
 msgstr ""
 
@@ -244,13 +244,13 @@ msgstr "Sauvegarder"
 msgid "Workflows"
 msgstr ""
 
-#: .\core\kernel.py:178
+#: .\core\kernel.py:175
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 "%(self)s ne peut être effacé parce que %(count)d  %(refs)s y font référence"
 
-#: .\core\layouts.py:394
+#: .\core\layouts.py:406
 msgid "General"
 msgstr "Général"
 
@@ -437,7 +437,7 @@ msgstr "Choisir %s..."
 msgid "show"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:1515 .\ui\extjs3\ext_ui.py:2477
+#: .\ui\extjs3\ext_elems.py:1515 .\ui\extjs3\ext_ui.py:2478
 #: .\ui\extjs3\linolib.js.py:13
 msgid "No data to display."
 msgstr ""
@@ -454,11 +454,11 @@ msgstr "La clé primaire %r existante ne peut être modifiée"
 msgid "%r (invalid choice)"
 msgstr "%r (choix non valide)"
 
-#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:583
+#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:582
 msgid "Yes"
 msgstr "Oui"
 
-#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:583
+#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:582
 msgid "No"
 msgstr "Non"
 
@@ -688,72 +688,72 @@ msgstr "L'action %(action)s a échoué pour %(record)s: %(error)s"
 msgid "Choices for %s"
 msgstr "Choix pour %s"
 
-#: .\utils\babel.py:366
+#: .\utils\babel.py:362
 msgid "Language"
 msgstr "Langue"
 
-#: .\utils\choicelists.py:390
+#: .\utils\choicelists.py:395
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (choix non valable pour %(list)s)"
 
-#: .\utils\choicelists.py:524
+#: .\utils\choicelists.py:529
 msgid "certainly not...very much"
 msgstr "Certainement pas...beaucoup"
 
-#: .\utils\choicelists.py:527
+#: .\utils\choicelists.py:532
 msgid "certainly not"
 msgstr "Certainement pas"
 
-#: .\utils\choicelists.py:528
+#: .\utils\choicelists.py:533
 msgid "rather not"
 msgstr "plutôt pas"
 
-#: .\utils\choicelists.py:529
+#: .\utils\choicelists.py:534
 msgid "normally"
 msgstr "moyennement"
 
-#: .\utils\choicelists.py:530
+#: .\utils\choicelists.py:535
 msgid "quite much"
 msgstr "assez bien"
 
-#: .\utils\choicelists.py:531
+#: .\utils\choicelists.py:536
 msgid "very much"
 msgstr "très bien"
 
-#: .\utils\choicelists.py:544
+#: .\utils\choicelists.py:549
 msgid "not at all...very well"
 msgstr "pas du tout...très bien"
 
-#: .\utils\choicelists.py:547
+#: .\utils\choicelists.py:552
 msgid "not at all"
 msgstr "pas du tout"
 
-#: .\utils\choicelists.py:548
+#: .\utils\choicelists.py:553
 msgid "a bit"
 msgstr "un peu"
 
-#: .\utils\choicelists.py:549
+#: .\utils\choicelists.py:554
 msgid "moderate"
 msgstr "moyennement"
 
-#: .\utils\choicelists.py:550
+#: .\utils\choicelists.py:555
 msgid "quite well"
 msgstr "bien"
 
-#: .\utils\choicelists.py:551
+#: .\utils\choicelists.py:556
 msgid "very well"
 msgstr "très bien"
 
-#: .\utils\choicelists.py:559
+#: .\utils\choicelists.py:564
 msgid "Gender"
 msgstr "Sexe"
 
-#: .\utils\choicelists.py:561
+#: .\utils\choicelists.py:566
 msgid "Male"
 msgstr "Masculin"
 
-#: .\utils\choicelists.py:562
+#: .\utils\choicelists.py:567
 msgid "Female"
 msgstr "Féminin"
 
@@ -769,7 +769,7 @@ msgstr ""
 msgid "Restricted"
 msgstr ""
 
-#: .\utils\perms.py:56 .\utils\perms.py:104
+#: .\utils\perms.py:56 .\utils\perms.py:105
 #, fuzzy
 msgid "User"
 msgstr "utilisateur"
@@ -779,7 +779,7 @@ msgstr "utilisateur"
 msgid "Manager"
 msgstr "Langue"
 
-#: .\utils\perms.py:58 .\utils\perms.py:105
+#: .\utils\perms.py:58 .\utils\perms.py:106
 msgid "Administrator"
 msgstr ""
 
@@ -791,7 +791,7 @@ msgstr ""
 msgid "User Group"
 msgstr ""
 
-#: .\utils\perms.py:99
+#: .\utils\perms.py:100
 msgid "User Profile"
 msgstr ""
 

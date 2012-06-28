@@ -117,7 +117,7 @@ class Competence(mixins.AutoUser,mixins.Sequenced):
         return u'%s #%s' % (self._meta.verbose_name,self.pk)
         
 class Competences(dd.Table):
-    required=dict(user_groups=['newcomers'],user_level='manager')
+    required = dict(user_groups=['newcomers'],user_level='manager')
     #~ required_user_groups = ['newcomers']
     #~ required_user_level = UserLevels.manager
     model = Competence
@@ -125,7 +125,7 @@ class Competences(dd.Table):
     order_by = ["id"]
 
 class CompetencesByUser(Competences):
-    required=dict(user_groups=['newcomers'])
+    required = dict(user_groups=['newcomers'])
     #~ required_user_level = None
     master_key = 'user'
     column_names = 'seqno faculty *'

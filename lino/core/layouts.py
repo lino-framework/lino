@@ -356,6 +356,14 @@ class BaseLayout(object):
         for k,v in kw.items():
             #~ if not hasattr(self,k):
                 #~ raise Exception("%s has no attribute %r" % (self,k))
+            msg = """\
+In %s, updating attribute %r:
+--- before:
+%s
+--- after:
+%s
+---""" % (self,k,getattr(self,k,'(undefined)'),v)
+            logger.debug(msg)
             setattr(self,k,v)
             
     def add_panel(self,name,tpl,label=None,**kw):
@@ -367,6 +375,11 @@ class BaseLayout(object):
            raise Exception("name may not contain any whitespace") 
         if getattr(self,name,None) is not None:
            raise Exception("name %r already defined in %s" % (name,self)) 
+        msg = """\
+Adding panel %r to %s ---:
+%s
+---""" % (name,self,tpl)
+        logger.debug(msg)
         setattr(self,name,tpl)
         if label is not None:
             self._labels[name] = label
@@ -386,14 +399,20 @@ class BaseLayout(object):
            raise Exception("name may not contain any whitespace") 
         if '\n' in self.main:
             if hasattr(self,'general'):
-                raise NotImplementedError(
-                    """Sorry, %s has both a vertical `main` *and* a panel called `general`.
-                    """ % self)
+                raise NotImplementedError("""\
+%s has both a vertical `main` and a panel called `general`.""" % self)
             self.general = self.main
             self.main = "general " + name
             self._labels['general'] = _("General")
+            msg = """\
+add_tabpanel() on %s moving content of vertical 'main' panel to 'general'.
+New 'main' panel is %r"""
+            logger.debug(msg,self,self.main)
         else:
             self.main += " " + name
+            msg = """\
+add_tabpanel() on %s horizontal 'main' panel %r."""
+            logger.debug(msg,self,self.main)
         if tpl is not None:
             if hasattr(self,name):
                 raise Exception("Oops: %s has already a name %r" % (self,name))

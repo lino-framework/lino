@@ -1,10 +1,11 @@
 DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
-APPS = pcsw igen
+APPS = pcsw
 MODULES = courses cbss debts households cv isip outbox cal jobs thirds products properties contacts countries notes sales finan uploads users newcomers postings
 TESTS_OPTIONS = --verbosity=2 --traceback
-MMOPTS := -s -a  --settings lino.apps.pcsw.settings
+MMOPTS := -s -a --settings lino.apps.pcsw.settings
+CMOPTS := --settings lino.apps.pcsw.settings
 
 #LANGUAGES = de fr nl et
 #INPUT_FILES = lino\\actions.py lino\\ui\\extjs\\ext_ui.py lino\\modlib\\fields.py lino\\modlib\\system\\models.py
@@ -21,7 +22,7 @@ help:
 mm:
 	#~ $(DJANGO_ADMIN) dtl2py --settings lino.apps.pcsw.settings
 	#~ $(DJANGO_ADMIN) dtl2py --settings lino.apps.igen.settings
-	export DJANGO_SETTINGS_MODULE=lino.apps.pcsw.settings
+	#~ export DJANGO_SETTINGS_MODULE=lino.apps.pcsw.settings
 	pwd
 	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) makemessages -i 'sandbox*' -i 'modlib*' -i 'apps*' -i 'test_apps*' $(MMOPTS)
 	for MOD in $(MODULES); do \
@@ -33,14 +34,14 @@ mm:
   
 
 cm:  
-	export DJANGO_SETTINGS_MODULE=lino.apps.pcsw.settings
-	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) compilemessages 
+	#~ export DJANGO_SETTINGS_MODULE=lino.apps.pcsw.settings
+	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) compilemessages $(CMOPTS)
 	@for MOD in $(MODULES); \
 	do \
-	  cd $(LINO_ROOT)/lino/modlib/$$MOD && $(DJANGO_ADMIN) compilemessages; \
+	  cd $(LINO_ROOT)/lino/modlib/$$MOD && $(DJANGO_ADMIN) compilemessages $(CMOPTS); \
 	done
 	for i in $(APPS); do \
-	  cd $(LINO_ROOT)/lino/apps/$$i && $(DJANGO_ADMIN) compilemessages; \
+	  cd $(LINO_ROOT)/lino/apps/$$i && $(DJANGO_ADMIN) compilemessages $(CMOPTS); \
 	done
   
 tests:  

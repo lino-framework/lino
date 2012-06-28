@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 08:40+0100\n"
+"POT-Creation-Date: 2012-06-28 20:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,28 +36,28 @@ msgstr ""
 msgid "Estonian"
 msgstr ""
 
-#: .\__init__.py:984 .\models.py:586 .\templates\500.html.py:4
+#: .\__init__.py:985 .\models.py:586 .\templates\500.html.py:4
 #: .\templates\base.html.py:26
 msgid "Home"
 msgstr ""
 
-#: .\__init__.py:1015
+#: .\__init__.py:1016
 msgid "Master"
 msgstr ""
 
-#: .\__init__.py:1017
+#: .\__init__.py:1018
 msgid "My menu"
 msgstr ""
 
-#: .\__init__.py:1019
+#: .\__init__.py:1020
 msgid "Configure"
 msgstr ""
 
-#: .\__init__.py:1021
+#: .\__init__.py:1022
 msgid "Explorer"
 msgstr ""
 
-#: .\__init__.py:1023
+#: .\__init__.py:1024
 msgid "Site"
 msgstr ""
 
@@ -121,7 +121,7 @@ msgstr ""
 msgid "Text Field Templates"
 msgstr ""
 
-#: .\models.py:297 .\utils\babel.py:352
+#: .\models.py:297 .\utils\babel.py:348
 msgid "Designation"
 msgstr ""
 
@@ -197,7 +197,7 @@ msgstr ""
 msgid "Server up since"
 msgstr ""
 
-#: .\models.py:646 .\utils\perms.py:78
+#: .\models.py:646
 msgid "System"
 msgstr ""
 
@@ -234,12 +234,12 @@ msgstr ""
 msgid "Workflows"
 msgstr ""
 
-#: .\core\kernel.py:178
+#: .\core\kernel.py:175
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: .\core\layouts.py:394
+#: .\core\layouts.py:406
 msgid "General"
 msgstr ""
 
@@ -425,7 +425,7 @@ msgstr ""
 msgid "show"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:1515 .\ui\extjs3\ext_ui.py:2477
+#: .\ui\extjs3\ext_elems.py:1515 .\ui\extjs3\ext_ui.py:2478
 #: .\ui\extjs3\linolib.js.py:13
 msgid "No data to display."
 msgstr ""
@@ -442,11 +442,11 @@ msgstr ""
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:583
+#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:582
 msgid "Yes"
 msgstr ""
 
-#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:583
+#: .\ui\extjs3\ext_store.py:657 .\utils\tables.py:582
 msgid "No"
 msgstr ""
 
@@ -672,72 +672,72 @@ msgstr ""
 msgid "Choices for %s"
 msgstr ""
 
-#: .\utils\babel.py:366
+#: .\utils\babel.py:362
 msgid "Language"
 msgstr ""
 
-#: .\utils\choicelists.py:390
+#: .\utils\choicelists.py:395
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr ""
 
-#: .\utils\choicelists.py:524
+#: .\utils\choicelists.py:529
 msgid "certainly not...very much"
 msgstr ""
 
-#: .\utils\choicelists.py:527
+#: .\utils\choicelists.py:532
 msgid "certainly not"
 msgstr ""
 
-#: .\utils\choicelists.py:528
+#: .\utils\choicelists.py:533
 msgid "rather not"
 msgstr ""
 
-#: .\utils\choicelists.py:529
+#: .\utils\choicelists.py:534
 msgid "normally"
 msgstr ""
 
-#: .\utils\choicelists.py:530
+#: .\utils\choicelists.py:535
 msgid "quite much"
 msgstr ""
 
-#: .\utils\choicelists.py:531
+#: .\utils\choicelists.py:536
 msgid "very much"
 msgstr ""
 
-#: .\utils\choicelists.py:544
+#: .\utils\choicelists.py:549
 msgid "not at all...very well"
 msgstr ""
 
-#: .\utils\choicelists.py:547
+#: .\utils\choicelists.py:552
 msgid "not at all"
 msgstr ""
 
-#: .\utils\choicelists.py:548
+#: .\utils\choicelists.py:553
 msgid "a bit"
 msgstr ""
 
-#: .\utils\choicelists.py:549
+#: .\utils\choicelists.py:554
 msgid "moderate"
 msgstr ""
 
-#: .\utils\choicelists.py:550
+#: .\utils\choicelists.py:555
 msgid "quite well"
 msgstr ""
 
-#: .\utils\choicelists.py:551
+#: .\utils\choicelists.py:556
 msgid "very well"
 msgstr ""
 
-#: .\utils\choicelists.py:559
+#: .\utils\choicelists.py:564
 msgid "Gender"
 msgstr ""
 
-#: .\utils\choicelists.py:561
+#: .\utils\choicelists.py:566
 msgid "Male"
 msgstr ""
 
-#: .\utils\choicelists.py:562
+#: .\utils\choicelists.py:567
 msgid "Female"
 msgstr ""
 
@@ -753,7 +753,7 @@ msgstr ""
 msgid "Restricted"
 msgstr ""
 
-#: .\utils\perms.py:56 .\utils\perms.py:104
+#: .\utils\perms.py:56 .\utils\perms.py:105
 msgid "User"
 msgstr ""
 
@@ -761,7 +761,7 @@ msgstr ""
 msgid "Manager"
 msgstr ""
 
-#: .\utils\perms.py:58 .\utils\perms.py:105
+#: .\utils\perms.py:58 .\utils\perms.py:106
 msgid "Administrator"
 msgstr ""
 
@@ -773,6 +773,6 @@ msgstr ""
 msgid "User Group"
 msgstr ""
 
-#: .\utils\perms.py:99
+#: .\utils\perms.py:100
 msgid "User Profile"
 msgstr ""

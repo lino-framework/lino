@@ -645,14 +645,25 @@ class Actor(object):
         """
         Update the `detail_layout` of this actor. 
         Create a new layout if there wasn't one before.
+        The first argument can be either a string or a DetailLayout instance.
+        If it is a string, it will replace the currently defined 'main' panel.
+        With the special case that if the current main panel is horizontal 
+        (i.e. the detail_layout has tabs) it replaces the 'general' tab.
         """
         if dtl is not None:
             if isinstance(dtl,basestring):
                 if self.detail_layout is None:
                     self.detail_layout = layouts.DetailLayout(self,dtl,**kw)
                     return
-                assert not kw.has_key('main')
-                kw['main'] = dtl
+                if '\n' in dtl and not '\n' in self.detail_layout.main:
+                    name = 'general'
+                else:
+                    name = 'main'
+                if kw.has_key(name):
+                    raise Exception("""\
+set_detail() got two definitions for %r.""" % name)
+                kw[name] = dtl
+                #~ kw['main'] = dtl
             else:
                 assert dtl._table is None
                 dtl._table = self

@@ -537,7 +537,7 @@ class BudgetDetail(dd.DetailLayout):
         h.general.label = _("General")
         h.entries1.label = _("Expenses & Income")
         h.entries2.label = _("Liabilities & Assets")
-        h.summary_tab.label = pgettext_lazy("debts","Summary")
+        h.summary_tab.label = pgettext_lazy(u"debts",u"Summary")
         #~ h.tmp_tab.label = _("Preview")
         
     

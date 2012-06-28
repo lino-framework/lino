@@ -335,7 +335,7 @@ class Value(object):
         return self.value_template % py2js(self.value)
         
         
-variable_counter = 0
+VARIABLE_COUNTER = 0
         
 class Variable(Value):
     declare_type = DECLARE_INLINE
@@ -344,16 +344,17 @@ class Variable(Value):
     ext_name = None
     
     def __init__(self,name,value):
+      
+        global VARIABLE_COUNTER
+        VARIABLE_COUNTER += 1
+        if name is None:
+            self.ext_name = "var%s%d" % (self.ext_suffix,VARIABLE_COUNTER)
+        else:
+            self.ext_name = "%s%s%d" % (id2js(name),self.ext_suffix,VARIABLE_COUNTER)
         Value.__init__(self,value)
         #~ assert self.declare_type != DECLARE_INLINE
-        global variable_counter
-        variable_counter += 1
         
-        if name is None:
-            self.ext_name = "var%s%d" % (self.ext_suffix,variable_counter)
-        else:
-            self.ext_name = "%s%s%d" % (id2js(name),self.ext_suffix,variable_counter)
-            self.name = name
+        self.name = name
         #~ if name is None:
             #~ assert self.declare_type == DECLARE_INLINE
             #~ #self.name = "unnamed %s" % self.__class__.__name__
@@ -363,7 +364,7 @@ class Variable(Value):
         #~ self.ext_name = id2js(name) + self.ext_suffix
         
     def __str__(self):
-        #~ assert self.name is not None
+        #~ assert self.ext_name is not None
         return self.ext_name
         
     def js_declare(self):

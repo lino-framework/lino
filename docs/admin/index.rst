@@ -33,5 +33,4 @@ Other
     ConfigureNotesTemplates
     tim2lino
     settings
-    dpytutorial
    

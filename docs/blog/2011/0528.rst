@@ -6,7 +6,7 @@ The first Lino tutorial
 -----------------------
 
 This morning I woke up with an idea for the first Lino tutorial: 
-:doc:`/admin/dpytutorial`
+:doc:`/tutorials/dumpy`
 
 Customizable format of text fields
 ----------------------------------

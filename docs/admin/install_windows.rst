@@ -328,6 +328,3 @@ Where to go from here
 
 - Now you are ready for our :doc:`/tutorials/index` section.
 
-- You can also read the :doc:`dpytutorial` and play 
-  around with some of the fixtures that come with Lino.
-

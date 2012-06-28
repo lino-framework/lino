@@ -24,24 +24,31 @@ please read this:
 `django-admin.py and manage.py <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
 
 Lino's :mod:`initdb <lino.management.commands.initdb>` 
-command performs a database reset, removing 
-*all existing tables* from the database 
-(not only Django tables), 
-then runs Django's standard `syncdb` and `loaddata` 
-commands to create tables and load the specified fixtures 
-for all applications.
+command performs three actions in one:
+
+- a flush of your database, removing *all existing tables* 
+  (not only Django tables)
+  from the database specified in your :xfile:`settings.py`,
+  
+- then runs Django's `syncdb` command to re-create all tables,
+- and finally runs Django's `loaddata` command to load 
+  the specified fixtures.
 
 That may sound dangerous, but that's what we want when we have a 
 :doc:`dpy dump </topics/dpy>` to restore our database.
 Keep in mind that you should rather not let 
 Lino and some other application share the same database.
 
-Note that the above line is almost equivalent to::
+The above line is functionally equivalent to::
 
-  python manage.py reset
+  python manage.py reset <list of all app_labels listed in your INSTALLED_APPS>
   python manage.py loaddata std all_countries few_cities all_languages props demo 
 
-(But Django's `reset` command has been deprecated...)
+Lino's `initdb` reimplements a simplified version 
+of Django's `reset` command, but
+does not even try to offer a possibility of deleting only *some* 
+data (the thing which caused so big problems that 
+Django decided to deprecate the `reset` command.
 
 
 Fixtures
@@ -80,27 +87,27 @@ Create a directory `fixtures` in your local project directory::
 
    mkdir /usr/local/django/mysite/fixtures
    
-Create a file `dpytut1.py` in that directory as the following.
+Create a file `dumpy1.py` in that directory as the following.
 But put your real name and data, this is your local file.
 
-.. literalinclude:: dpytut1.py
+.. literalinclude:: dumpy1.py
     :linenos:
     
    
 Try to apply this fixture::    
 
-  $ python manage.py initdb dpytut1
+  $ python manage.py initdb dumpy1
   Gonna flush your database (myproject).
   Are you sure (y/n) ?y
-  INFO Lino initdb ('dpytut1',) started on database myproject.
+  INFO Lino initdb ('dumpy1',) started on database myproject.
   INFO Lino version 1.1.11 using Python 2.7.1, Django 1.4 pre-alpha SVN-16280, 
   python-dateutil 1.4.1, Cheetah 2.4.4, docutils 0.7, PyYaml 3.08, 
   pyratemp (not installed), xhtml2pdf 3.0.32, ReportLab Toolkit 2.4, 
   appy.pod 0.6.6 (2011/04/26 20:50)
   No fixtures found.
-  INFO Saved 2 instances from t:\hgwork\lino\docs\admin\dpytut1.py.
+  INFO Saved 2 instances from t:\hgwork\lino\docs\tutorials\dumpy1.py.
   Installed 1 object(s) from 1 fixture(s)
-  INFO Lino initdb done ('dpytut1',) on database t:\data\luc\lino\dsbe\dsbe_test.db.
+  INFO Lino initdb done ('dumpy1',) on database t:\data\luc\lino\dsbe\dsbe_test.db.
 
 
 Second step
@@ -114,7 +121,7 @@ way to create many records of a same table. That's why
 :class:`lino.utils.instantiator.Instantiator` was written.
 Here is the same fixture in a more compact way:
 
-.. literalinclude:: dpytut2.py
+.. literalinclude:: dumpy2.py
     :linenos:
 
 

@@ -128,7 +128,7 @@ class CreateMailAction(dd.RowAction):
   
     url_action_name = 'mail'
     #~ label = _('Create email')
-    #~ label = pgettext_lazy('verb','Mail')
+    #~ label = pgettext_lazy(u'verb',u'Mail')
     label = _('Create email')
     callable_from = None
     

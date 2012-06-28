@@ -283,6 +283,10 @@ class UserDetail(dd.DetailLayout):
     remarks 
     """
     
+"""
+If contacts is not installed, then a field `partner` doesn't exist, 
+so we remove it from the layout.
+"""
 if not settings.LINO.is_installed('contacts'):
     UserDetail.box1.replace('partner','')
  

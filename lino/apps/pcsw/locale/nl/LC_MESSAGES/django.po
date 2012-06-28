@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 08:41+0100\n"
+"POT-Creation-Date: 2012-06-28 20:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -716,39 +716,39 @@ msgstr ""
 msgid "More"
 msgstr ""
 
-#: .\models.py:2176
+#: .\models.py:2162
 msgid "Integration"
 msgstr ""
 
-#: .\models.py:2177
+#: .\models.py:2163
 msgid "CBSS"
 msgstr ""
 
-#: .\models.py:2178
+#: .\models.py:2164
 msgid "Newcomers"
 msgstr ""
 
-#: .\models.py:2179
+#: .\models.py:2165
 msgid "Debts"
 msgstr ""
 
-#: .\models.py:2189
+#: .\models.py:2175
 msgid "Integration Agent (Senior)"
 msgstr ""
 
-#: .\models.py:2194
+#: .\models.py:2180
 msgid "Integration Agent"
 msgstr ""
 
-#: .\models.py:2199
+#: .\models.py:2185
 msgid "Newcomers consultant"
 msgstr ""
 
-#: .\models.py:2204
+#: .\models.py:2190
 msgid "Debts consultant"
 msgstr ""
 
-#: .\models.py:2208
+#: .\models.py:2194
 msgid "Administrator"
 msgstr ""
 

@@ -173,6 +173,7 @@ class ChoiceListMeta(type):
         classDict.setdefault('max_length',1)
         cls = type.__new__(meta, classname, bases, classDict)
         
+        cls.items_dict = {}
         cls.clear()
         cls._fields = []
         #~ cls.max_length = 1
@@ -237,6 +238,10 @@ class ChoiceList(object):
     def clear(cls):
         """
         """
+        for ci in cls.items():
+            if ci.name is not None:
+                delattr(cls,ci.name)
+                
         cls.choices = []
         
         blank = cls.item_class()

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 08:41+0100\n"
+"POT-Creation-Date: 2012-06-28 20:58+0100\n"
 "PO-Revision-Date: 2012-06-28 11:06+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -91,8 +91,7 @@ msgstr "Fremdenregister"
 msgid "Waiting for registry"
 msgstr "Warteregister"
 
-#: .\models.py:220
-#: .\models.py:1064
+#: .\models.py:220 .\models.py:1064
 msgid "eID card type"
 msgstr "eID-Kartenart"
 
@@ -110,7 +109,9 @@ msgstr "Habilitierung"
 
 #: .\models.py:229
 msgid "Foreigner card A"
-msgstr "A (Bescheinigung der Eintragung im Ausländerregister - Vorübergehender Aufenthalt)"
+msgstr ""
+"A (Bescheinigung der Eintragung im Ausländerregister - Vorübergehender "
+"Aufenthalt)"
 
 #: .\models.py:233
 msgid "Foreigner card B"
@@ -164,8 +165,7 @@ msgstr "Bankkonto 2"
 msgid "Cannot delete companies and persons imported from TIM"
 msgstr "Aus TIM importierte Partner dürfen nicht gelöscht werden."
 
-#: .\models.py:360
-#: .\models.py:1031
+#: .\models.py:360 .\models.py:1031
 msgid "Person"
 msgstr "Person"
 
@@ -197,10 +197,7 @@ msgstr "Integrationsphase"
 msgid "Coached from"
 msgstr "Begleitet seit"
 
-#: .\models.py:385
-#: .\models.py:431
-#: .\models.py:1532
-#: .\models.py:1648
+#: .\models.py:385 .\models.py:431 .\models.py:1532 .\models.py:1648
 msgid "until"
 msgstr "bis"
 
@@ -388,8 +385,7 @@ msgstr "Aus TIM importierte Partner dürfen nicht gelöscht werden."
 msgid "hourly rate"
 msgstr "Stundensatz"
 
-#: .\models.py:869
-#: .\models.py:2104
+#: .\models.py:869 .\models.py:2104
 msgid "General"
 msgstr "Allgemein"
 
@@ -517,8 +513,7 @@ msgstr "Aktive Klienten von %s"
 msgid "Data Test Clients"
 msgstr "Datenkontrolle Klienten"
 
-#: .\models.py:1279
-#: .\models.py:1640
+#: .\models.py:1279 .\models.py:1640
 msgid "Coached by"
 msgstr "Begleitet durch"
 
@@ -674,8 +669,7 @@ msgstr "Schrift"
 msgid "Wanted property"
 msgstr "Gesuchte Eigenschaft"
 
-#: .\models.py:1691
-#: .\models.py:1711
+#: .\models.py:1691 .\models.py:1711
 msgid "Wanted properties"
 msgstr "Gesuchte Eigenschaften"
 
@@ -683,8 +677,7 @@ msgstr "Gesuchte Eigenschaften"
 msgid "Unwanted property"
 msgstr "Unerwünschte Eigenschaft"
 
-#: .\models.py:1699
-#: .\models.py:1717
+#: .\models.py:1699 .\models.py:1717
 msgid "Unwanted properties"
 msgstr "Unerwünschte Eigenschaften"
 
@@ -724,39 +717,39 @@ msgstr "erlaubt in Verträgen"
 msgid "More"
 msgstr "Mehr"
 
-#: .\models.py:2176
+#: .\models.py:2162
 msgid "Integration"
 msgstr "Integration"
 
-#: .\models.py:2177
+#: .\models.py:2163
 msgid "CBSS"
 msgstr "KBSS"
 
-#: .\models.py:2178
+#: .\models.py:2164
 msgid "Newcomers"
 msgstr "Neuzugänge"
 
-#: .\models.py:2179
+#: .\models.py:2165
 msgid "Debts"
 msgstr "Schuldnerberatung"
 
-#: .\models.py:2189
+#: .\models.py:2175
 msgid "Integration Agent (Senior)"
 msgstr "Integrations-Assistent (Dienstleiter)"
 
-#: .\models.py:2194
+#: .\models.py:2180
 msgid "Integration Agent"
 msgstr "Integrations-Assisten"
 
-#: .\models.py:2199
+#: .\models.py:2185
 msgid "Newcomers consultant"
 msgstr "Berater Neuanträge"
 
-#: .\models.py:2204
+#: .\models.py:2190
 msgid "Debts consultant"
 msgstr "Schuldenberater"
 
-#: .\models.py:2208
+#: .\models.py:2194
 msgid "Administrator"
 msgstr "Verwalter"
 

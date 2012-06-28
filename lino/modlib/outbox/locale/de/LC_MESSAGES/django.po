@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 08:40+0100\n"
+"POT-Creation-Date: 2012-06-28 20:57+0100\n"
 "PO-Revision-Date: 2012-06-28 11:43+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -48,8 +48,7 @@ msgstr "per E-Mail"
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:237
-#: .\models.py:420
+#: .\models.py:237 .\models.py:420
 msgid "Recipients"
 msgstr "Empfänger"
 
@@ -94,10 +93,7 @@ msgstr "Inhalt"
 msgid "My Outbox"
 msgstr "Mein E-Mail-Ausgang"
 
-#: .\models.py:471
-#: .\models.py:479
-#: .\models.py:488
-#: .\models.py:547
+#: .\models.py:471 .\models.py:479 .\models.py:488 .\models.py:547
 msgid "Outbox"
 msgstr "E-Mail-Ausgang"
 

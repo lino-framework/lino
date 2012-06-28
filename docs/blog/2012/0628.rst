@@ -57,5 +57,35 @@ Kleinkram
 ---------
 
 - Übersetzungen Tx25
+
 -  moved lino.tools and lino.core.coretools to a single module 
   :mod:`lino.core.modeltools`.
+  
+- Worked on documentation. Updated tutorials. New 
+
+- Miscellaneous optimizations 
+  "pour Joël qui va peut-être trouver le temps de se lancer dans Lino".
+
+- Bugfix: Lino didn't add a PhantomRow in slave grids without 
+  detail layout.
+  
+Lazy object returned unexpected type.
+-------------------------------------
+
+This error can come when you have `lino.Lino.languages` 
+set to only ``['en']``, and when the application module uses 
+Django's `pgettext_lazy` function 
+which is needed when you need to specify a context 
+for a translation message.
+
+Sander van Leeuwen fortunately found 
+and reported a workaround on `stackoverflow.com
+<http://stackoverflow.com/questions/10148303/why-does-pgettext-lazy-break-my-template-but-ugettext-lazy-does-not>`__
+
+E.g. in :mod:`lino.modlib.courses` we have a line::
+
+  add('50', pgettext_lazy("courses","Failed"),"failed")   # nicht bestanden
+  
+Sander's workaround is to always pass unicode strings to `pgettext_lazy()`::
+
+  add('50', pgettext_lazy(u"courses",u"Failed"),"failed")   # nicht bestanden

@@ -179,6 +179,36 @@ class Sessions(dd.Table):
     
 class SessionsByTicket(Sessions):
     master_key = 'ticket'
+    
+if settings.LINO.user_model:    
+  
+    class MySessions(Sessions,mixins.ByUser):
+        order_by = ['date','start_time']
+        column_names = 'date start_time end_time break_time project ticket description *'
+    
+    class MySessionsByDate(MySessions):
+        #~ master_key = 'date'
+        order_by = ['start_time']
+        label = _("My sessions by date")
+        column_names = 'start_time end_time break_time project ticket description *'
+    
+        parameters = dict(
+          today = models.DateField(_("Date"),
+          blank=True,default=datetime.date.today),
+        )
+        @classmethod
+        def get_request_queryset(self,ar):
+            qs = super(MySessions,self).get_request_queryset(ar)
+            #~ if ar.param_values.date:
+            return qs.filter(date=ar.param_values.today)
+            #~ return qs
+            
+        @classmethod
+        def create_instance(self,ar,**kw):
+            kw.update(date=ar.param_values.today)
+            return super(MySessions,self).create_instance(ar,**kw)
+
+    
 
 if blogs:
   
@@ -224,32 +254,6 @@ if settings.LINO.user_model:
         order_by = ["created","id"]
         column_names = 'created id project summary state *'
         
-    class MySessions(Sessions,mixins.ByUser):
-        order_by = ['date','start_time']
-        column_names = 'date start_time end_time break_time project ticket description *'
-    
-    class MySessionsByDate(MySessions):
-        master_key = 'date'
-        order_by = ['start_time']
-        label = _("My sessions by date")
-        column_names = 'start_time end_time break_time project ticket description *'
-    
-        parameters = dict(
-          date = models.DateField(_("Date"),
-          blank=True,default=datetime.date.today),
-        )
-        @classmethod
-        def get_request_queryset(self,ar):
-            qs = super(MySessions,self).get_request_queryset(ar)
-            #~ if ar.param_values.date:
-            return qs.filter(date=ar.param_values.date)
-            #~ return qs
-            
-        @classmethod
-        def create_instance(self,ar,**kw):
-            kw.update(date=ar.param_values.date)
-            return super(MySessions,self).create_instance(ar,**kw)
-
 
 #~ if dd.is_installed('cal'):
 

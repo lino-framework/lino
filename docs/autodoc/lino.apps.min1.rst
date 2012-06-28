@@ -2,6 +2,10 @@
 The :mod:`lino.apps.min1` package
 =================================
 
+.. automodule:: lino.apps.min1
+    :members:
+    :show-inheritance:
+
 :mod:`lino.apps.min1.models`
 ----------------------------
 
