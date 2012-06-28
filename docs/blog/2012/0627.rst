@@ -74,6 +74,8 @@ DONE:
   - Und eigentlich sollten sie sogar noch eine dritte Möglichkeit kriegen: 
     Bestehende Uploads auswählen und anhängen.
 
+- In den Details von Notiz und Person fehlt noch das Fenster "Postversendungen"
+
 TODO:
 
 - Fallbeispiel: Sozi macht sich Notiz nach Gespräch mit Klienten. 
@@ -87,10 +89,12 @@ TODO:
 - Label "Kontrolliert durch:" ersetzen durch "Verknüpft mit:"
 - Label "als E-Mail" ersetzen durch "E-Mail erstellen"
 
+WAIT:
+
 - Irritierend: in "Name" eines Mail-Empfängers 
   steht einmal "Max MUSTERMANN" (Person) und einmal "MUSTERMANN Max" (Partner)
-- In den Details von Notiz und Person fehlt noch das Fenster "Postversendungen"
-- Historie (virtuelle Tabelle). Darf ruhig lange dauern.
+
+- Historie (virtuelle Tabelle).
 
 
 

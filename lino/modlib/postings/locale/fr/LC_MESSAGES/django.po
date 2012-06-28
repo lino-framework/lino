@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 21:10+0100\n"
+"POT-Creation-Date: 2012-06-28 08:41+0100\n"
 "PO-Revision-Date: 2011-09-14 21:28+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: .\models.py:60
-msgid "Posting State"
+msgid "State"
 msgstr ""
 
 #: .\models.py:62
@@ -57,17 +57,17 @@ msgstr "Destinataire"
 msgid "Print"
 msgstr ""
 
-#: .\models.py:126
+#: .\models.py:131
 #, fuzzy
 msgid "Create posting"
 msgstr "Céer courrier"
 
-#: .\models.py:132
+#: .\models.py:137
 #, python-format
 msgid "Going to create %(num)d postings for %(elem)s"
 msgstr ""
 
-#: .\models.py:167
+#: .\models.py:168
 #, fuzzy
 msgid "Outbox"
 msgstr "Courrier sortant"

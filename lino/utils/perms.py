@@ -113,8 +113,8 @@ class Permittable(object):
     """
     Conditions required to READ (view) this component.
     """
-    workflow_state_field = None # internally needed for make_permission
-    workflow_owner_field = None # internally needed for make_permission
+    workflow_state_field = None # internally needed for make_permission_handler
+    workflow_owner_field = None # internally needed for make_permission_handler
     
     
     #~ def allow_read(self,user,obj,state):
@@ -122,7 +122,7 @@ class Permittable(object):
     
     def __init__(self):
         #~ super(PermissionComponent,self).__init__(self,*args,**kw)
-        self.allow_read = curry(make_permission(self,**self.required),self)
+        self.allow_read = curry(make_permission_handler(self,self,**self.required),self)
 
         
     def get_view_permission(self,user):
@@ -136,7 +136,7 @@ class Permittable(object):
 #~ BLANK_STATE = ''
 
 
-def make_permission(actor,user_level=None,user_groups=None,states=None):
+def make_permission_handler(elem,actor,user_level=None,user_groups=None,states=None):
     """
     Return a function that will test whether permission is given or not.
     The function will always expect three arguments user, obj and state.
@@ -184,7 +184,10 @@ def make_permission(actor,user_level=None,user_groups=None,states=None):
                 
         if states is not None:
             if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):
-                raise Exception("Cannot specify `states` here (workflow_state_field is %r)." % actor.workflow_state_field)
+                raise Exception(
+                    """\
+Cannot specify `states` on %s.required (`workflow_state_field` is %r).
+                    """ % (elem,actor.workflow_state_field))
             #~ else:
                 #~ print 20120621, "ok", actor
             lst = actor.workflow_state_field.choicelist
@@ -200,9 +203,9 @@ def make_permission(actor,user_level=None,user_groups=None,states=None):
                 #~ if not st in possible_states:
                     #~ raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
             states = frozenset(ns)
-            allow1 = allow
+            allow2 = allow
             def allow(self,user,obj,state):
-                if not allow1(self,user,obj,state): return False
+                if not allow2(self,user,obj,state): return False
                 if obj is None: return True
                 return state in states
         #~ return perms.Permission(allow)

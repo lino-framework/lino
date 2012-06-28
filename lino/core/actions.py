@@ -213,6 +213,13 @@ class Action(object):
                 raise Exception("Invalid keyword %s" % k)
             setattr(self,k,v)
         
+    def set_required(self,**kw):
+        #~ logger.info("20120628 set_required %s(%s)",self,kw)
+        new = dict()
+        new.update(self.required)
+        new.update(kw)
+        self.required = new
+        
     def __str__(self):
         #~ raise Exception("Must use action2str(actor,action)")
         if self.actor is None:
@@ -605,7 +612,8 @@ class ActionRequest(object):
             #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)
             return 
         #~ if not self.actor.get_permission(self.get_user(),self.actor.create_action):
-        if not self.actor.allow_create(self.get_user(),None,None):
+        #~ if not self.actor.allow_create(self.get_user(),None,None):
+        if not self.actor.create_action.allow(self.get_user(),None,None):
             return
         return PhantomRow(self,**kw)
       

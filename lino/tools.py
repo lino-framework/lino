@@ -80,6 +80,13 @@ class Model(models.Model):
         """
         return []
         
+    @classmethod
+    def setup_table(cls,t):
+        """
+        Called during site startup once on each Table that 
+        uses this model.
+        """
+        pass
         
 def is_devserver():
     """

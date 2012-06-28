@@ -397,6 +397,15 @@ class Actor(object):
     #~ The default value `None` means
     #~ """
     
+    @classmethod
+    def set_required(self,**kw):
+        new = dict()
+        new.update(self.required)
+        new.update(kw)
+        self.required = new
+        
+    
+    
     
     _handle_class = None
     "For internal use"
@@ -461,8 +470,8 @@ class Actor(object):
                 if isinstance(v,actions.Action):
                     #~ if not cls.__dict__.has_key(k):
                     #~ if cls.__name__ == 'Home':
-                        #~ print "20120524 %s.%s inherits %s from %s" % (cls,k,v.__class__,b)
                     if cls.__dict__.get(k,None) is None:
+                        #~ logger.info("20120628 %s.%s copied from %s",cls,k,b)
                         v = copy.deepcopy(v)
                         v.name = None
                         setattr(cls,k,v)
@@ -476,8 +485,8 @@ class Actor(object):
         
     @classmethod
     def get_view_permission(self,user):
-        return self.allow_read(user,None,None)
-        #~ return self.show_action.permission.allow(None,jsgen._for_user)
+        return self.default_action.allow(user,None,None)
+        #~ return self.allow_read(user,None,None)
 
     @classmethod
     def get_row_permission(cls,obj,user,state,action):
@@ -522,7 +531,8 @@ class Actor(object):
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
         """
-        Note that Action instances on base classes have been copied to this Actor's __dict__
+        Note that Action instances on base classes have 
+        been copied to this Actor's __dict__
         """
         cls._actions_list = []
         for k,v in cls.__dict__.items():
@@ -588,7 +598,8 @@ class Actor(object):
         l = []
         state = actor.get_row_state(obj)
         for a in actor.get_actions(ar.action):
-            if a.show_in_workflow and a.get_action_permission(ar.get_user(),obj,state):
+            #~ if a.show_in_workflow and a.get_action_permission(ar.get_user(),obj,state):
+            if a.show_in_workflow and obj.get_row_permission(ar.get_user(),state,a):
                 l.append(ar.renderer.row_action_button(obj,ar,a))
         return ', '.join(l)
         
@@ -684,6 +695,10 @@ class Actor(object):
     #~ def get_url(self,ui,**kw):
         #~ return ui.action_url_http(self,self.default_action,**kw)
 
+    #~ @classmethod
+    #~ def setup_permissions(self):
+        #~ pass
+        
     @classmethod
     def after_site_setup(self):
         #~ raise "20100616"
@@ -714,6 +729,7 @@ class Actor(object):
                 check_for_chooser(self,v)
         
         self.do_setup()
+        #~ self.setup_permissions()
         self._setup_doing = False
         self._setup_done = True
         #~ logger.debug("20120103 Actor.setup() done: %s, default_action is %s", 

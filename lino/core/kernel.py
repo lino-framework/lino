@@ -70,7 +70,7 @@ from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
 from lino.utils import AttrDict
-from lino.utils.perms import make_permission
+from lino.utils.perms import make_permission_handler
 
 #~ BLANK_STATE = ''
 
@@ -237,20 +237,31 @@ def load_workflows(self):
             #~ a.workflow_owner_field = a.model._meta.get_field(a.workflow_owner_field)
             
         cls = actor
-        def wrap(fn):
-            if False:
-                def fn2(*args):
-                    logger.info("20120621 %s",[obj2str(x) for x in args])
-                    return fn(*args)
-                return classmethod(fn2)
-            return classmethod(fn)
-        cls.allow_read = wrap(make_permission(cls,**cls.required))
-        if cls.editable:
-            cls.allow_create = wrap(make_permission(cls,**cls.create_required))
-            cls.allow_update = wrap(make_permission(cls,**cls.update_required))
-            cls.allow_delete = wrap(make_permission(cls,**cls.delete_required))
+        #~ def wrap(fn):
+            #~ if False:
+                #~ def fn2(*args):
+                    #~ logger.info("20120621 %s",[obj2str(x) for x in args])
+                    #~ return fn(*args)
+                #~ return classmethod(fn2)
+            #~ return classmethod(fn)
+        #~ cls.allow_read = wrap(make_permission_handler(cls,**cls.required))
+        #~ if cls.editable:
+            #~ cls.allow_create = wrap(make_permission_handler(cls,**cls.create_required))
+            #~ cls.allow_update = wrap(make_permission_handler(cls,**cls.update_required))
+            #~ cls.allow_delete = wrap(make_permission_handler(cls,**cls.delete_required))
         
         for a in actor.get_actions():
+            required = dict()
+            if a.readonly:
+                required.update(actor.required)
+            elif isinstance(a,actions.InsertRow):
+                required.update(actor.create_required)
+            elif isinstance(a,actions.DeleteSelected):
+                required.update(actor.delete_required)
+            else:
+                required.update(actor.update_required)
+            required.update(a.required)
+            #~ print 20120628, str(a), required
             def wrap(a,fn):
                 if False: # not a.readonly:
                     def fn2(*args):
@@ -258,7 +269,7 @@ def load_workflows(self):
                         return fn(*args)
                     return fn2
                 return fn
-            a.allow = curry(wrap(a,make_permission(actor,**a.required)),a)
+            a.allow = curry(wrap(a,make_permission_handler(a,actor,**required)),a)
             
                 
     if False:

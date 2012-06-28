@@ -42,7 +42,7 @@ class Company(contacts.Partner,contacts.CompanyMixin):
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
     
-class Note(notes.Note,mixins.Owned):
+class Note(notes.Note,mixins.Controllable):
      class Meta(notes.Note.Meta):
         app_label = 'notes'
         # see :doc:`/tickets/14`

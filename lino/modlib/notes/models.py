@@ -39,9 +39,9 @@ from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 from lino.modlib.contacts import models as contacts
 from lino.modlib.outbox import models as outbox
-#~ from lino.modlib.postings import models as postings
+from lino.modlib.postings import models as postings
 
-postings = dd.resolve_app('postings')
+#~ postings = dd.resolve_app('postings')
 
 #~ TEMPLATE_GROUP = 'notes'
 
@@ -108,7 +108,6 @@ class EventTypes(dd.Table):
     """
     
 
-#~ class Note(mixins.TypedPrintable,mixins.AutoUser):
 class Note(mixins.TypedPrintable,
       mixins.AutoUser,
       #~ contacts.PartnerDocument,

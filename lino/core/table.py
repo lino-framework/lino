@@ -667,9 +667,18 @@ class Table(AbstractTable):
         else:
             self._slaves = []
             
-        m = getattr(self.model,'setup_report',None)
-        if m:
+        #~ m = getattr(self.model,'setup_report',None)
+        #~ if m:
+            #~ m(self)
+        m = getattr(self.model,'setup_table',None)
+        if m is not None:
             m(self)
+        
+    #~ @classmethod
+    #~ def setup_permissions(self):
+        #~ if self.model is not None:
+        #~ super(Table,self).setup_permissions()
+        
         
     @classmethod
     def get_row_permission(cls,obj,user,state,action):

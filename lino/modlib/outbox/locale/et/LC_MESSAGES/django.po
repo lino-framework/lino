@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 21:09+0100\n"
+"POT-Creation-Date: 2012-06-28 08:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,90 +17,91 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:70
+#: .\models.py:73
 msgid "Recipient Type"
 msgstr ""
 
-#: .\models.py:73
+#: .\models.py:76
 msgid "to"
 msgstr ""
 
-#: .\models.py:74
+#: .\models.py:77
 msgid "cc"
 msgstr ""
 
-#: .\models.py:75
+#: .\models.py:78
 msgid "bcc"
 msgstr ""
 
-#: .\models.py:102
+#: .\models.py:105
 msgid "Attach to email"
 msgstr ""
 
-#: .\models.py:105
+#: .\models.py:111
 msgid "Email template"
 msgstr ""
 
-#: .\models.py:127
+#: .\models.py:132
 msgid "Create email"
 msgstr ""
 
-#: .\models.py:230
+#: .\models.py:236
 msgid "Recipient"
 msgstr ""
 
-#: .\models.py:231 .\models.py:401
+#: .\models.py:237 .\models.py:420
 msgid "Recipients"
 msgstr ""
 
-#: .\models.py:237
+#: .\models.py:243
 msgid "Address"
 msgstr ""
 
-#: .\models.py:238
+#: .\models.py:244
 msgid "Name"
 msgstr ""
 
-#: .\models.py:281
+#: .\models.py:289
 msgid "Send email"
 msgstr ""
 
-#: .\models.py:350
+#: .\models.py:355
+#, python-format
+msgid "Email %(id)s from %(sender)s has been sent to %(num)d recipients."
+msgstr ""
+
+#: .\models.py:369
 msgid "Outgoing Mail"
 msgstr ""
 
-#: .\models.py:351
+#: .\models.py:370
 msgid "Outgoing Mails"
 msgstr ""
 
-#: .\models.py:355
+#: .\models.py:374
 msgid "Date"
 msgstr ""
 
-#: .\models.py:361
+#: .\models.py:380
 msgid "Subject"
 msgstr ""
 
-#: .\models.py:365
+#: .\models.py:384
 msgid "Body"
 msgstr ""
 
-#: .\models.py:423
+#: .\models.py:448
 msgid "My Outbox"
 msgstr ""
 
-#: .\models.py:453
-msgid "Attachment"
-msgstr ""
-
-#: .\models.py:454
-msgid "Attachments"
-msgstr ""
-
-#: .\models.py:495 .\models.py:503 .\models.py:525
+#: .\models.py:471 .\models.py:479 .\models.py:488 .\models.py:547
 msgid "Outbox"
 msgstr ""
 
-#: .\models.py:512
-msgid "Sent Mails"
+#: .\models.py:507
+msgid "Attachment"
+msgstr ""
+
+#: .\models.py:508
+msgid "Attachments"
 msgstr ""

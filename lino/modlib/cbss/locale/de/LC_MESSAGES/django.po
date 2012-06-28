@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-26 19:28+0100\n"
-"PO-Revision-Date: 2012-06-26 21:20+0200\n"
+"POT-Creation-Date: 2012-06-28 08:40+0100\n"
+"PO-Revision-Date: 2012-06-28 11:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,8 @@ msgstr ""
 msgid "State"
 msgstr "Status"
 
-#: .\models.py:205 .\models.py:349
+#: .\models.py:205
+#: .\models.py:349
 msgid "Sent"
 msgstr "Abgeschickt"
 
@@ -48,7 +49,8 @@ msgstr "Fehlermeldungen"
 msgid "Execute"
 msgstr "Ausführen"
 
-#: .\models.py:267 .\models.py:302
+#: .\models.py:267
+#: .\models.py:302
 msgid "Sector"
 msgstr "Sektor"
 
@@ -56,7 +58,8 @@ msgstr "Sektor"
 msgid "Sectors"
 msgstr "Sektoren"
 
-#: .\models.py:272 .\models.py:306
+#: .\models.py:272
+#: .\models.py:306
 msgid "Code"
 msgstr ""
 
@@ -88,7 +91,8 @@ msgstr ""
 msgid "Ticket"
 msgstr ""
 
-#: .\models.py:364 .\models.py:576
+#: .\models.py:364
+#: .\models.py:576
 msgid "Request"
 msgstr "Abfrage"
 
@@ -104,7 +108,8 @@ msgstr "Debug-Meldungen"
 msgid "Info messages"
 msgstr "Info-Meldungen"
 
-#: .\models.py:546 .\models.py:578
+#: .\models.py:546
+#: .\models.py:578
 msgid "Result"
 msgstr "Resultat"
 
@@ -124,11 +129,13 @@ msgstr "Parameter"
 msgid "Request has been validated against XSD files"
 msgstr ""
 
-#: .\models.py:924 .\models.py:1256
+#: .\models.py:924
+#: .\models.py:1256
 msgid "National ID"
 msgstr "NR-Nummer"
 
-#: .\models.py:930 .\models.py:1277
+#: .\models.py:930
+#: .\models.py:1277
 msgid "Birth date"
 msgstr "Geburtsdatum"
 
@@ -140,11 +147,13 @@ msgstr "SIS-Karten-Nr"
 msgid "ID card number"
 msgstr "ID-Karten-Nr"
 
-#: .\models.py:943 .\models.py:1266
+#: .\models.py:943
+#: .\models.py:1266
 msgid "First name"
 msgstr "Vorname"
 
-#: .\models.py:948 .\models.py:1261
+#: .\models.py:948
+#: .\models.py:1261
 msgid "Last name"
 msgstr "Nachname"
 
@@ -172,7 +181,8 @@ msgstr "Suche per NISS"
 msgid "Using phonetic search"
 msgstr "Phonetische Suche"
 
-#: .\models.py:1219 .\tx25.py:1083
+#: .\models.py:1219
+#: .\tx25.py:1085
 msgid "Results"
 msgstr "Resultate"
 
@@ -272,13 +282,14 @@ msgstr ""
 msgid "CBSS"
 msgstr "KBSS"
 
-#: .\models.py:1639 .\models.py:1647
+#: .\models.py:1639
+#: .\models.py:1647
 msgid "INS code"
 msgstr "INS-Code"
 
 #: .\tx25.py:49
 msgid "Language"
-msgstr ""
+msgstr "Sprache"
 
 #: .\tx25.py:51
 msgid "Dutch"
@@ -304,254 +315,276 @@ msgstr "Tx25-Anfragen"
 msgid "History"
 msgstr "Historie"
 
-#: .\tx25.py:198
+#: .\tx25.py:200
 msgid "until "
 msgstr "bis "
 
-#: .\tx25.py:352
+#: .\tx25.py:354
 msgid "Province"
 msgstr "Provinz"
 
-#: .\tx25.py:353
+#: .\tx25.py:355
 msgid "Diplomatic post"
 msgstr "Botschaft"
 
-#: .\tx25.py:409
+#: .\tx25.py:411
 msgid "Move from "
 msgstr "Wegziehen aus "
 
-#: .\tx25.py:410
+#: .\tx25.py:412
 msgid "Move to "
 msgstr "Umziehen nach "
 
-#: .\tx25.py:423
+#: .\tx25.py:425
 msgid "as "
 msgstr "als "
 
-#: .\tx25.py:435 .\tx25.py:641 .\tx25.py:654 .\tx25.py:853 .\tx25.py:854
-#: .\tx25.py:891 .\tx25.py:998 .\tx25.py:999 .\tx25.py:1006 .\tx25.py:1007
-#: .\tx25.py:1056
+#: .\tx25.py:437
+#: .\tx25.py:643
+#: .\tx25.py:656
+#: .\tx25.py:855
+#: .\tx25.py:856
+#: .\tx25.py:893
+#: .\tx25.py:1000
+#: .\tx25.py:1001
+#: .\tx25.py:1008
+#: .\tx25.py:1009
+#: .\tx25.py:1058
 msgid "in "
 msgstr "in "
 
-#: .\tx25.py:466 .\tx25.py:483 .\tx25.py:492 .\tx25.py:494 .\tx25.py:511
-#: .\tx25.py:565 .\tx25.py:983
+#: .\tx25.py:468
+#: .\tx25.py:485
+#: .\tx25.py:494
+#: .\tx25.py:496
+#: .\tx25.py:513
+#: .\tx25.py:567
+#: .\tx25.py:985
 msgid "no. "
 msgstr "Nr. "
 
-#: .\tx25.py:467 .\tx25.py:987
+#: .\tx25.py:469
+#: .\tx25.py:989
 msgid "delivered in "
 msgstr "ausgestellt in "
 
-#: .\tx25.py:482 .\tx25.py:493
+#: .\tx25.py:484
+#: .\tx25.py:495
 msgid "categories "
 msgstr "Kategorien "
 
-#: .\tx25.py:484 .\tx25.py:495
+#: .\tx25.py:486
+#: .\tx25.py:497
 msgid "delivered "
 msgstr "ausgestellt in "
 
-#: .\tx25.py:487 .\tx25.py:498 .\tx25.py:528 .\tx25.py:985
+#: .\tx25.py:489
+#: .\tx25.py:500
+#: .\tx25.py:530
+#: .\tx25.py:987
 msgid "expires "
 msgstr "gültig bis "
 
-#: .\tx25.py:510
+#: .\tx25.py:512
 msgid "type "
 msgstr "Typ "
 
-#: .\tx25.py:519
+#: .\tx25.py:521
 msgid "status "
 msgstr "Status"
 
-#: .\tx25.py:521
+#: .\tx25.py:523
 msgid "issued by "
 msgstr "ausgestellt durch "
 
-#: .\tx25.py:522
+#: .\tx25.py:524
 msgid "renewal no. "
 msgstr "Erneuerungsnr."
 
-#: .\tx25.py:523
+#: .\tx25.py:525
 msgid "serial no. "
 msgstr "Seriennr."
 
-#: .\tx25.py:524
+#: .\tx25.py:526
 msgid "second no. "
 msgstr "Zeitnummer "
 
-#: .\tx25.py:525
+#: .\tx25.py:527
 msgid "replacement of "
 msgstr "Ersatz für "
 
-#: .\tx25.py:526
+#: .\tx25.py:528
 msgid "addition to "
 msgstr ""
 
-#: .\tx25.py:527
+#: .\tx25.py:529
 msgid "produced "
 msgstr ""
 
-#: .\tx25.py:580 .\tx25.py:606
+#: .\tx25.py:582
+#: .\tx25.py:608
 msgid "SSIN "
 msgstr "NR-Nr. "
 
-#: .\tx25.py:736
+#: .\tx25.py:738
 msgid "National Number"
 msgstr "NR-Nummer"
 
-#: .\tx25.py:747
+#: .\tx25.py:749
 msgid "Residences"
 msgstr "Wohnsitze"
 
-#: .\tx25.py:755
+#: .\tx25.py:757
 msgid "Ascertained Legal Main Addresses"
 msgstr "Geprüfte legale Hauptadressen"
 
-#: .\tx25.py:765
+#: .\tx25.py:767
 msgid "Address Change Intention"
 msgstr "Adressänderungsabsicht"
 
-#: .\tx25.py:773
+#: .\tx25.py:775
 msgid "Address References"
 msgstr ""
 
-#: .\tx25.py:783
+#: .\tx25.py:785
 msgid "Names"
 msgstr "Namen"
 
-#: .\tx25.py:793
+#: .\tx25.py:795
 msgid "Legal Main Addresses"
 msgstr "Legale Hauptadressen"
 
-#: .\tx25.py:810 .\tx25.py:811
+#: .\tx25.py:812
+#: .\tx25.py:813
 msgid " "
 msgstr ""
 
-#: .\tx25.py:813
+#: .\tx25.py:815
 msgid "Residence Abroad"
 msgstr "Wohnsitz im Ausland"
 
-#: .\tx25.py:828
+#: .\tx25.py:830
 msgid "Nationalities"
 msgstr "Nationalitäten"
 
-#: .\tx25.py:836
+#: .\tx25.py:838
 msgid "Occupations"
 msgstr "Beschäftigungen"
 
-#: .\tx25.py:848
+#: .\tx25.py:850
 msgid "Birth Place"
 msgstr "Geburtsort"
 
-#: .\tx25.py:861
+#: .\tx25.py:863
 msgid "Filiations"
 msgstr ""
 
-#: .\tx25.py:864
+#: .\tx25.py:866
 msgid "of "
 msgstr "von "
 
-#: .\tx25.py:870
+#: .\tx25.py:872
 msgid "and "
 msgstr "und "
 
-#: .\tx25.py:881
+#: .\tx25.py:883
 msgid "Civil States"
 msgstr "Zivilstände"
 
-#: .\tx25.py:887 .\tx25.py:1005
+#: .\tx25.py:889
+#: .\tx25.py:1007
 msgid "with "
 msgstr "mit "
 
-#: .\tx25.py:901
+#: .\tx25.py:903
 msgid "Family Members"
 msgstr "Familienmitglieder"
 
-#: .\tx25.py:909
+#: .\tx25.py:911
 msgid "Head Of Family"
 msgstr "Familienoberhaupt"
 
-#: .\tx25.py:913
+#: .\tx25.py:915
 msgid "in family headed by "
 msgstr "in Familie mit Vorstand "
 
-#: .\tx25.py:924
+#: .\tx25.py:926
 msgid "Driving Licenses Old Model"
 msgstr "Führerscheine (altes Modell)"
 
-#: .\tx25.py:932
+#: .\tx25.py:934
 msgid "Driving Licenses"
 msgstr "Führerscheine"
 
-#: .\tx25.py:940
+#: .\tx25.py:942
 msgid "Work Permits"
 msgstr "Arbeitsgenehmigungen"
 
-#: .\tx25.py:948
+#: .\tx25.py:950
 msgid "Public Security Numbers"
 msgstr ""
 
-#: .\tx25.py:956
+#: .\tx25.py:958
 msgid "Special Infos"
 msgstr ""
 
-#: .\tx25.py:964
+#: .\tx25.py:966
 msgid "Refugee Types"
 msgstr ""
 
-#: .\tx25.py:972
+#: .\tx25.py:974
 msgid "Status of refugee"
 msgstr ""
 
-#: .\tx25.py:980
+#: .\tx25.py:982
 msgid "Identity Cards"
 msgstr "Personalausweise"
 
-#: .\tx25.py:1010
+#: .\tx25.py:1012
 msgid "Legal cohabitations"
 msgstr "Legale Kohabitationen"
 
-#: .\tx25.py:1021
+#: .\tx25.py:1023
 msgid "Passports"
 msgstr "Reisepässe"
 
-#: .\tx25.py:1029
+#: .\tx25.py:1031
 msgid "Organizations in charge"
 msgstr ""
 
-#: .\tx25.py:1037
+#: .\tx25.py:1039
 msgid "Registration registers"
 msgstr ""
 
-#: .\tx25.py:1045
+#: .\tx25.py:1047
 msgid "Choosen residences"
 msgstr "Gewählte Wohnsitze"
 
-#: .\tx25.py:1053
+#: .\tx25.py:1055
 msgid "Organ Donations"
 msgstr "Organspenden"
 
-#: .\tx25.py:1063
+#: .\tx25.py:1065
 msgid "Creation Date"
 msgstr "Erstelldatum"
 
-#: .\tx25.py:1070
+#: .\tx25.py:1072
 msgid "Last Update"
 msgstr "Zuletzt geändert"
 
-#: .\tx25.py:1086
+#: .\tx25.py:1088
 msgid "Group"
 msgstr "Gruppe"
 
-#: .\tx25.py:1090
+#: .\tx25.py:1092
 msgid "TI"
 msgstr ""
 
-#: .\tx25.py:1094
+#: .\tx25.py:1096
 msgid "Since"
 msgstr "Seit"
 
-#: .\tx25.py:1098
+#: .\tx25.py:1100
 msgid "Info"
 msgstr "Information"
 

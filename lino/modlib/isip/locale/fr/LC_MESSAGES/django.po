@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-25 12:33+0100\n"
+"POT-Creation-Date: 2012-06-28 08:40+0100\n"
 "PO-Revision-Date: 2012-06-25 14:37+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -88,73 +88,71 @@ msgstr "Cause d'abandon"
 msgid "date ended"
 msgstr "Abandon le"
 
-#: .\models.py:339
+#: .\models.py:341
 #, python-format
 msgid "Evaluation %d"
 msgstr "Evaluation %d"
 
-#: .\models.py:351
+#: .\models.py:353
 msgid "Contract ends in a month"
 msgstr "Projet termine dans un mois"
 
-#: .\models.py:405
+#: .\models.py:407
 #, python-format
 msgid "Date range %(p1)s lies outside of coached period %(p2)s."
 msgstr "Période %(p1)s hors période d'accompagnement %(p2)s."
 
-#: .\models.py:409
+#: .\models.py:411
 #, python-format
 msgid "Date range overlaps with %(ctype)s #%(id)s"
 msgstr "Projet chevauche avec %(ctype)s #%(id)s"
 
-#: .\models.py:421
+#: .\models.py:423
 #, python-format
 msgid "%(ctype)s #%(id)s : %(msg)s"
 msgstr ""
 
-#: .\models.py:435
-#: .\models.py:502
+#: .\models.py:437 .\models.py:504
 msgid "ISIP"
 msgstr "PIIS"
 
-#: .\models.py:436
-#: .\models.py:550
+#: .\models.py:438 .\models.py:546
 msgid "ISIPs"
 msgstr "PIISs"
 
-#: .\models.py:440
+#: .\models.py:442
 msgid "Contract Type"
 msgstr "Type de contrat"
 
-#: .\models.py:442
+#: .\models.py:444
 msgid "stages"
 msgstr "stages"
 
-#: .\models.py:444
+#: .\models.py:446
 msgid "goals"
 msgstr "buts"
 
-#: .\models.py:446
+#: .\models.py:448
 msgid "duties ASD"
 msgstr "devoirs SSG"
 
-#: .\models.py:448
+#: .\models.py:450
 msgid "duties DSBE"
 msgstr "devois ISP"
 
-#: .\models.py:450
+#: .\models.py:452
 msgid "duties company"
 msgstr "devoirs entreprise"
 
-#: .\models.py:452
+#: .\models.py:454
 msgid "duties person"
 msgstr "Devoirs personne"
 
-#: .\models.py:461
+#: .\models.py:463
 msgid "responsible (DSBE)"
 msgstr "Responsable (ISP)"
 
-#: .\models.py:501
+#: .\models.py:503
 msgid "General"
 msgstr "Général"
 

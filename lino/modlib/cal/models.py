@@ -44,9 +44,9 @@ from lino.tools import resolve_model, obj2str
 
 from lino.modlib.contacts import models as contacts
 
-#~ from lino.modlib.mails import models as mails # import Mailable
-from lino.modlib.outbox import models as outbox # import Mailable
-postings = dd.resolve_app('postings')
+from lino.modlib.outbox import models as outbox 
+from lino.modlib.postings import models as postings
+#~ postings = dd.resolve_app('postings')
 
 
 from lino.modlib.cal.utils import \
@@ -672,8 +672,6 @@ class Event(Component,Ended,
     is a scheduled lapse of time where something happens.
     """
     
-    #~ workflow_state_field = 'state'
-    
     class Meta:
         #~ abstract = True
         verbose_name = pgettext_lazy("cal","Event")
@@ -757,11 +755,6 @@ class Event(Component,Ended,
         #~ mixins.TypedPrintable.setup_report(rpt)
         #~ outbox.Mailable.setup_report(rpt)
         
-    @classmethod
-    def site_setup(cls,lino):
-        cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
-            '''summary''')
-            
     @dd.displayfield(_("Link URL"))
     def url(self,request): return 'foo'
     #~ url.return_type = dd.DisplayField(_("Link URL"))
@@ -806,63 +799,29 @@ class Event(Component,Ended,
         self.save()
         return ar.ui.success_response(refresh=True)
         
-    def get_row_permission(self,user,state,action):
-        """
-        TODO: 20120627
-        """
-        if isinstance(action,postings.CreatePostings):
-            #~ print 20120627
-            if self.state < EventState.scheduled:
-                return False
-        return super(Event,self).get_row_permission(user,state,action)
-        
-        
-
-#~ class Task(Component,contacts.PartnerDocument):
-class Task(Component):
-    """
-    A Task is when a user plans to to something and wants to 
-    get reminded about it.
-    
-    """
-    
-    class Meta:
-        verbose_name = _("Task")
-        verbose_name_plural = _("Tasks")
-        #~ abstract = True
-        
-    due_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Due date"))
-    due_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("Due time"))
-    #~ done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
-    percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
-    state = TaskState.field(blank=True) # iCal:STATUS
-    #~ status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
-    
-    @dd.action(_("Done"),required=dict(states=['','todo','started']))
-    def mark_done(self,ar):
-        self.state = TaskState.done
-        self.save()
-        return ar.success_response(refresh=True)
-    
-
-    def on_user_change(self,request):
-        if not self.state:
-            self.state = TaskState.todo
-        #~ self.user_modified = True
+    #~ def get_row_permission(self,user,state,action):
+        #~ """
+        #~ """
+        #~ if isinstance(action,postings.CreatePostings):
+            #~ if self.state < EventState.scheduled:
+                #~ return False
+        #~ return super(Event,self).get_row_permission(user,state,action)
         
     @classmethod
     def site_setup(cls,lino):
-        #~ lino.TASK_AUTO_FIELDS = dd.fields_list(cls,
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
-            '''start_date start_time summary''')
-
-    #~ def __unicode__(self):
-        #~ return "#" + str(self.pk)
+            '''summary''')
+            
+    @classmethod
+    def setup_table(cls,t):
+        #~ cls.create_postings.required.update(states=['scheduled'])
+        t.create_postings.set_required(states=['scheduled'])
         
+  
+            
+        
+        
+
 
 class EventDetail(dd.DetailLayout):
   
@@ -1018,6 +977,52 @@ if settings.LINO.user_model:
             #~ rr.known_values = dict(start_date=datetime.date.today())
             #~ super(MyEventsToday,self).setup_request(rr)
             
+
+#~ class Task(Component,contacts.PartnerDocument):
+class Task(Component):
+    """
+    A Task is when a user plans to to something and wants to 
+    get reminded about it.
+    
+    """
+    
+    class Meta:
+        verbose_name = _("Task")
+        verbose_name_plural = _("Tasks")
+        #~ abstract = True
+        
+    due_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Due date"))
+    due_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Due time"))
+    #~ done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
+    percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
+    state = TaskState.field(blank=True) # iCal:STATUS
+    #~ status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
+    
+    @dd.action(_("Done"),required=dict(states=['','todo','started']))
+    def mark_done(self,ar):
+        self.state = TaskState.done
+        self.save()
+        return ar.success_response(refresh=True)
+    
+
+    def on_user_change(self,request):
+        if not self.state:
+            self.state = TaskState.todo
+        #~ self.user_modified = True
+        
+    @classmethod
+    def site_setup(cls,lino):
+        #~ lino.TASK_AUTO_FIELDS = dd.fields_list(cls,
+        cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
+            '''start_date start_time summary''')
+
+    #~ def __unicode__(self):
+        #~ return "#" + str(self.pk)
+        
 
 class Tasks(dd.Table):
     model = 'cal.Task'

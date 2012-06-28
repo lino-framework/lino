@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 21:10+0100\n"
+"POT-Creation-Date: 2012-06-28 08:41+0100\n"
 "PO-Revision-Date: 2012-06-22 19:19+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -17,8 +17,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: .\models.py:60
-msgid "Posting State"
-msgstr "Postsendungs-Status"
+msgid "State"
+msgstr ""
 
 #: .\models.py:62
 msgid "Open"
@@ -56,18 +56,21 @@ msgstr "Empfänger"
 msgid "Print"
 msgstr "Drucken"
 
-#: .\models.py:126
+#: .\models.py:131
 msgid "Create posting"
 msgstr "per Post"
 
-#: .\models.py:132
+#: .\models.py:137
 #, python-format
 msgid "Going to create %(num)d postings for %(elem)s"
 msgstr "Hierdurch werden %(num)d Postsendung(en) %(elem)s erstellt"
 
-#: .\models.py:167
+#: .\models.py:168
 msgid "Outbox"
 msgstr "Postausgang"
+
+#~ msgid "Posting State"
+#~ msgstr "Postsendungs-Status"
 
 #~ msgid "Post"
 #~ msgstr "Versenden"
