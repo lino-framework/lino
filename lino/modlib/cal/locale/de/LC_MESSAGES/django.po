@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.cal\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-28 08:40+0100\n"
-"PO-Revision-Date: 2012-06-28 11:09+0200\n"
+"PO-Revision-Date: 2012-06-28 11:15+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -214,7 +214,7 @@ msgstr "Termine zu planen"
 
 #: .\models.py:915
 msgid "My events to schedule"
-msgstr "Meine Termine zu planen"
+msgstr "Meine zu planenden Termine"
 
 #: .\models.py:928
 msgid "Events to notify"
