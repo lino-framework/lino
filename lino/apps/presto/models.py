@@ -12,6 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+"""
+
 import os
 import cgi
 import datetime
@@ -50,17 +53,14 @@ class Company(contacts.Partner,contacts.CompanyMixin):
         #~ verbose_name_plural = _("Events/Notes")
 
 
-#~ def site_setup(site):
-    #~ """
-    #~ This is the place where we can override or 
-    #~ define application-specific things.
-    #~ This includes especially those detail layouts 
-    #~ which depend on the *combination* of installed modules.
-    #~ """
-    
-    #~ site.modules.tickets.Ticket.set_detail("""
-    #~ project summary user created modified
-    #~ description
-    #~ SessionsByTicket blog.EntriesByController
-    #~ """
+def site_setup(site):
+    """
+    This is the place where we can override or 
+    define application-specific things.
+    This includes especially those detail layouts 
+    which depend on the *combination* of installed modules.
+    """
+    site.modules.contacts.Partners.add_detail_tab("tickets","tickets.ProjectsByPartner")
+    site.modules.contacts.Companies.add_detail_tab("tickets","tickets.ProjectsByPartner")
+    site.modules.contacts.Persons.add_detail_tab("tickets","tickets.ProjectsByPartner")
     

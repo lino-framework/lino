@@ -69,6 +69,8 @@ Kleinkram
 - Bugfix: Lino didn't add a PhantomRow in slave grids without 
   detail layout.
   
+- Worked on :mod:`lino.apps.presto`.
+  
 Lazy object returned unexpected type.
 -------------------------------------
 

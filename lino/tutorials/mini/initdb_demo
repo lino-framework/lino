@@ -1,2 +1,4 @@
-python manage.py initdb std few_countries few_cities few_languages props demo --traceback --noinput %*
-# python manage.py initdb std all_countries be all_languages props demo --traceback %*
+python manage.py initdb std few_countries few_cities few_languages demo demo_fr --traceback %*
+# python manage.py initdb std few_countries few_cities few_languages demo --traceback %*
+# python manage.py initdb std few_countries few_cities few_languages demo --traceback --noinput %*
+# python manage.py initdb std all_countries be all_languages demo --traceback %*

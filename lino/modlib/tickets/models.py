@@ -69,8 +69,9 @@ class Project(mixins.AutoUser,mixins.Printable):
         verbose_name = _("Project")
         verbose_name_plural = _('Projects')
         
-    parent = models.ForeignKey('self',blank=True,null=True)
+    parent = models.ForeignKey('self',blank=True,null=True,verbose_name=_("Parent"))
     type = models.ForeignKey('tickets.ProjectType',blank=True,null=True)
+    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     name = models.CharField(_("Name"),max_length=20)
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
     description = dd.RichTextField(_("Description"),blank=True,format='plain')
@@ -82,7 +83,8 @@ class Project(mixins.AutoUser,mixins.Printable):
 class Projects(dd.Table):
     model = 'tickets.Project'
     detail_template = """
-    name summary type user 
+    name summary parent
+    type user partner 
     description
     TicketsByProject ProjectsByProject
     # cal.EventsByProject
@@ -91,6 +93,12 @@ class Projects(dd.Table):
 class ProjectsByProject(Projects):
     master_key = 'parent'
     label = _("Sub-projects")
+    column_names = "name summary partner *"
+
+class ProjectsByPartner(Projects):
+    master_key = 'partner'
+    column_names = "name summary *"
+    #~ label = _("Sub-projects")
 
 
 class TicketState(babel.BabelNamed):
@@ -138,6 +146,7 @@ class Tickets(dd.Table):
     
 class TicketsByProject(Tickets):
     master_key = 'project'
+    column_names = "summary user *"
 
 #~ class EventsByTicket(cal.Events):
     #~ master_key = 'ticket'

@@ -19,20 +19,20 @@ from django.conf import settings
 from lino.utils.choicelists import Gender
 from lino.utils import Cycler
 from lino import dd
-from lino.utils import demonames as demo
+from lino.utils import demonames 
             
   
 def objects():
                 
-    last_names = demo.LAST_NAMES_BELGIUM
-    male_first_names = demo.MALE_FIRST_NAMES_FRANCE
-    female_first_names = demo.FEMALE_FIRST_NAMES_FRANCE
+    last_names = demonames.LAST_NAMES_BELGIUM
+    male_first_names = demonames.MALE_FIRST_NAMES_FRANCE
+    female_first_names = demonames.FEMALE_FIRST_NAMES_FRANCE
 
     Person = dd.resolve_model(settings.LINO.person_model)
     City = dd.resolve_model('countries.City')
     
     CITIES = Cycler(City.objects.filter(country_id='BE',zip_code__startswith='40'))
-    STREETS = streets_of_liege()
+    STREETS = demonames.streets_of_liege()
     
     common = dict(language='fr',country_id='BE')
     for i in range(100):

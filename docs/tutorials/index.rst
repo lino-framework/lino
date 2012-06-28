@@ -9,7 +9,7 @@ here are some tutorials for gettings started.
    :maxdepth: 2
 
    dumpy
-   minimal_apps
+   mini
    polls
    lets
 

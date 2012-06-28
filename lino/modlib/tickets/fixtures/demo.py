@@ -24,10 +24,13 @@ from lino.utils import dblogger
 def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
     User = resolve_model(settings.LINO.user_model)
+    Company = resolve_model(settings.LINO.company_model)
     Session = resolve_model('tickets.Session')
     u = User.objects.get(username='root')
     
-    project = Instantiator('tickets.Project',"name",user=u).build
+    rumma = Company.objects.get(name=u'Rumma & Ko OÜ')
+    
+    project = Instantiator('tickets.Project',"name",user=u,partner=rumma).build
     yield project("TIM")
     lino = project("Lino")
     yield lino
@@ -37,24 +40,30 @@ def objects():
     yield cbss 
     
     ticket = Instantiator('tickets.Ticket',"summary",user=u,project=presto).build
-    t = ticket(summary="write a first prototype",project=presto)
-    yield t
+    presto_proto = ticket(summary="write a first prototype",project=presto)
+    yield presto_proto
 
     #~ session = Instantiator('tickets.Session',"description",user=u,ticket=t).build
     yield Session(date=i2d(20111113),
-        user=u,ticket=t,start_time='21:45',end_time='23:28',
+        user=u,ticket=presto_proto,start_time='21:45',end_time='23:28',
         description="""\
 Created new module (tested in `lino_local.luc`).
 Tried first with EventsByTicket instead of Comments,
 but Comments are not usually planned.""")
     yield Session(date=i2d(20120603),
-        user=u,ticket=t,start_time='21:45',end_time='23:28',
+        user=u,ticket=presto_proto,start_time='21:45',end_time='23:28',
         description="""\
 replaced Comment by Session.
 """)
 
     yield Session(date=i2d(20120604),
-        user=u,ticket=t,start_time='08:10',end_time='10:30',
+        user=u,ticket=presto_proto,start_time='08:10',end_time='10:30',
         description="""\
 labels, titles, tidy up, EntriesBySession.
+""")
+
+    yield Session(date=i2d(20120629),
+        user=u,ticket=presto_proto,start_time='00:05',end_time='01:15',
+        description="""\
+ProjectsByPartner
 """)
