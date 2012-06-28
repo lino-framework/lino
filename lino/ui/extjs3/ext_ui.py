@@ -1827,7 +1827,7 @@ tinymce.init({
             if hasattr(e,'message_dict'):
                 kw.update(errors=e.message_dict)
         #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
-        kw.update(alert=True)
+        #~ 20120628b kw.update(alert=True)
         #~ kw.update(message=message)
         if message is None:
             message = unicode(e)

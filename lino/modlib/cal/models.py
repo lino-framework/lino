@@ -772,11 +772,14 @@ class Event(Component,Ended,
             return self.project.get_print_language(bm)
         return self.user.language
         
-    @dd.action(_("Scheduled"),sort_index=10,required=dict(states=['']))
+    @dd.action(_("Scheduled"),sort_index=10,required=dict(states=['','draft']))
     def mark_scheduled(self,ar):
         #~ print 'TODO: would suggest', self
         if not self.start_time:
-            raise actions.Warning(_("Cannot mark scheduled with empty start time."))
+            return ar.error_response(
+                _("Cannot mark scheduled with empty start time."),
+                alert=True)
+            #~ raise actions.Warning(_("Cannot mark scheduled with empty start time."))
         self.state = EventState.scheduled
         self.save()
         return ar.ui.success_response(refresh=True)
@@ -792,10 +795,32 @@ class Event(Component,Ended,
         self.save()
         return ar.ui.success_response(refresh=True)
     
-    @dd.action(_("Confirmed"),sort_index=12,required=dict(states=['scheduled','notified']))
+    @dd.action(_("Confirmed"),sort_index=12,
+        required=dict(states=['scheduled','notified']))
     def mark_confirmed(self,ar):
         #~ print 'TODO: would publish', self
         self.state = EventState.confirmed
+        self.save()
+        return ar.ui.success_response(refresh=True)
+        
+    @dd.action(_("Took place"),sort_index=13,
+        required=dict(states=['scheduled','notified','confirmed']))
+    def mark_took_place(self,ar):
+        self.state = EventState.took_place
+        self.save()
+        return ar.ui.success_response(refresh=True)
+        
+    @dd.action(_("Cancelled"),sort_index=13,
+        required=dict(states=['scheduled','notified','confirmed']))
+    def mark_cancelled(self,ar):
+        self.state = EventState.cancelled
+        self.save()
+        return ar.ui.success_response(refresh=True)
+        
+    @dd.action(_("Absent"),sort_index=13,
+        required=dict(states=['scheduled','notified','confirmed']))
+    def mark_present(self,ar):
+        self.state = EventState.absent
         self.save()
         return ar.ui.success_response(refresh=True)
         
@@ -907,7 +932,7 @@ if settings.LINO.user_model:
         label = _("Events to schedule")
         required = dict(user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
-        filter = models.Q(state=EventState.blank_item)
+        filter = models.Q(state__in=(EventState.blank_item,EventState.draft))
         
     class MyEventsToSchedule(EventsToSchedule,MyEvents):
         required = dict()

@@ -613,6 +613,8 @@ class ActionRequest(object):
             return 
         #~ if not self.actor.get_permission(self.get_user(),self.actor.create_action):
         #~ if not self.actor.allow_create(self.get_user(),None,None):
+        if self.actor.create_action is None:
+            return
         if not self.actor.create_action.allow(self.get_user(),None,None):
             return
         return PhantomRow(self,**kw)

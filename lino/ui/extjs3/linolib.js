@@ -1234,7 +1234,8 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
           return;
       }
       if (result.message) {
-          if (result.alert && ! gridmode) {
+          //~ if (result.alert && ! gridmode) {
+          if (result.alert) { // 20120628b 
               //~ Ext.MessageBox.alert('Alert',result.alert_msg);
               if (result.alert === true) result.alert = "$_('Alert')";
               Ext.MessageBox.alert(result.alert,result.message);
