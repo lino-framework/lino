@@ -57,7 +57,7 @@ class PostingState(ChoiceList):
     List of possible values for the `state` field of a 
     :class:`Posting`.
     """
-    label = _("Posting State")
+    label = _("State")
 add = PostingState.add_item
 add('10',_("Open"),'open') # owner still working on it
 add('20',_("Ready to print"),'ready') # secretary can send it out
@@ -99,24 +99,24 @@ class Postings(dd.Table):
     column_names = 'date user owner partner *'
     
 class MyPostings(Postings,mixins.ByUser):
-    required=dict()
+    required = dict()
     master_key = 'owner'
     column_names = 'date partner state workflow_buttons *'
   
 class PostingsByController(Postings):
-    required=dict()
+    required = dict()
     master_key = 'owner'
     column_names = 'date partner state workflow_buttons *'
   
 class PostingsByPartner(Postings):
-    required=dict()
+    required = dict()
     master_key = 'partner'
-    column_names = 'date owner *'
+    column_names = 'date owner state workflow_buttons *'
     
 class PostingsByProject(Postings):
-    required=dict()
+    required = dict()
     master_key = 'project'
-    column_names = 'date owner *'
+    column_names = 'date partner state workflow_buttons *'
     
     
 class CreatePostings(dd.RowAction):

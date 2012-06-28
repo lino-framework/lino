@@ -1,0 +1,44 @@
+20120628
+========
+
+Noch permissions
+----------------
+
+Ich fange an klar zu sehen für die workflows im Kalender. 
+Beim Programmieren kam aber noch ein Design-Fehler zutage: 
+ich kann Aktionen wie Print und Post nicht vom Model aus 
+mit permission handler versehen.
+Das brauchen wir noch.
+
+Also noch mal eine Operation unter Vollnarkose.
+Noch mal der Versuch eines Überblicks.
+
+Permission handler sind namenlose Funktionen, die in 
+:func:`lino.core.kernel.make_permission` erzeugt werden. 
+Das sind die Dinger, die optimal laufen müssen 
+(also möglichst wenig unnütze Dinge nachprüfen), 
+weil sie *oft* aufgerufen werden.
+
+Permission handler werden beim Server-Start 
+:func:`lino.core.kernel.load_workflows` 
+einmalig erzeugt.
+
+Die Option `required` ist (wenn definiert) ein `dict` mit den 
+keys `user_level` und/oder `user_groups`. Kann definiert sein:
+- :attr:`lino.core.actors.Actor.required`
+- :attr:`lino.core.actions.Action.required`
+
+Permission handler sitzen an folgenden Stellen: 
+
+- :attr:`lino.ui.extjs3.ext_elems.Container.allow_read`
+  wird beim Instanzieren des Containers generiert 
+  (was erst beim ersten `get_handle` des Elements stattfindet, 
+  z.B. beim Generieren der `lino*.js`)
+  
+- Actor.allow_read
+Container
+Action.allow
+
+get_view_permission wird benutzt zum Generieren des JS-Codes. 
+Da ist also normalerweise kein spezieller Record gemeint, 
+also `obj` ist `None`.

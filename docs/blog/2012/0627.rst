@@ -38,10 +38,12 @@ Endspurt outbox
 ---------------
 
 DONE:
-- Empfänger manuell hinzufügen -> "Partner darf nicht leer sein." kommt
-als Warnung. (gridmode muss da aktiviert sein)
+
+- Empfänger manuell hinzufügen -> "Partner darf nicht leer sein." 
+  kommt als Warnung. (gridmode muss da aktiviert sein)
 - Auf "E-Mail senden" klicken muss eine sichtbare Antwort "Wurde
-versendet" kriegen.
+  versendet" kriegen.
+  
 - Button "E-Mail senden" muss disabled sein, wenn sie verschickt wurde.
 - Zwei neue Datenfelder "von" und "bis" in household.Member
 - updated Event Types in apps.pcsw.fixtures.std. 
@@ -64,71 +66,33 @@ versendet" kriegen.
 
 - E-Mail-Ausgang auf Person : hier soll man direkt eine Mail 
   erstellen können.
+  
+- Anhang manuell hinzufügen. Also irgendeine Datei vom lokalen Rechner des 
+  Benutzers. Allerdings ist das noch nicht perfekt:
+  
+  - Benutzer sehen irritierenderweise zwei Panels mit Anhängen
+  - Und eigentlich sollten sie sogar noch eine dritte Möglichkeit kriegen: 
+    Bestehende Uploads auswählen und anhängen.
 
 TODO:
-- Fallbeispiel: Notiz nach Gespräch mit Klienten. Die soll dann per
-E-Mail an die Kollegen verschickt werden.
+
+- Fallbeispiel: Sozi macht sich Notiz nach Gespräch mit Klienten. 
+  Die soll dann per E-Mail an die Kollegen verschickt werden.
 
 - Label von Feld outbox.Mail.project sollte nicht "Person" heißen,
-sondern "Klient um den es geht (nicht unbedingt Empfänger)"
+  sondern... "Akte"? Hilfetext z.B. 
+  "Der Klient, um den es geht (nicht unbedingt Empfänger)"
+  
 - Label für outbox.user muss "Absender" oder "von" heißen
 - Label "Kontrolliert durch:" ersetzen durch "Verknüpft mit:"
 - Label "als E-Mail" ersetzen durch "E-Mail erstellen"
 
 - Irritierend: in "Name" eines Mail-Empfängers 
   steht einmal "Max MUSTERMANN" (Person) und einmal "MUSTERMANN Max" (Partner)
-- Anhang manuell hinzufügen. Also irgendeine Datei vom lokalen Rechner des 
-  Benutzers.
-- In den Details von Notiz und Person fehlt noch das Fenster
-"Postversendungen"
+- In den Details von Notiz und Person fehlt noch das Fenster "Postversendungen"
 - Historie (virtuelle Tabelle). Darf ruhig lange dauern.
 
 
-
-
-
-
-Noch permissions
-----------------
-
-Ich fange an klar zu sehen für die workflows im Kalender. 
-Beim Programmieren kam aber noch ein Design-Fehler zutage: 
-ich kann Aktionen wie Print und Post nicht vom Model aus 
-mit permission handler versehen.
-Das brauchen wir noch.
-
-Also noch mal eine Operation unter Vollnarkose.
-Noch mal der Versuch eines Überblicks.
-
-Permission handler sind namenlose Funktionen, die in 
-:func:`lino.core.kernel.make_permission` erzeugt werden. 
-Das sind die Dinger, die optimal laufen müssen 
-(also möglichst wenig unnütze Dinge nachprüfen), 
-weil sie *oft* aufgerufen werden.
-
-Permission handler werden beim Server-Start 
-:func:`lino.core.kernel.load_workflows` 
-einmalig erzeugt.
-
-Die Option `required` ist (wenn definiert) ein `dict` mit den 
-keys `user_level` und/oder `user_groups`. Kann definiert sein:
-- :attr:`lino.core.actors.Actor.required`
-- :attr:`lino.core.actions.Action.required`
-
-Permission handler sitzen an folgenden Stellen: 
-
-- :attr:`lino.ui.extjs3.ext_elems.Container.allow_read`
-  wird beim Instanzieren des Containers generiert 
-  (was erst beim ersten `get_handle` des Elements stattfindet, 
-  z.B. beim Generieren der `lino*.js`)
-  
-- Actor.allow_read
-Container
-Action.allow
-
-get_view_permission wird benutzt zum Generieren des JS-Codes. 
-Da ist also normalerweise kein spezieller Record gemeint, 
-also `obj` ist `None`.
 
 Pending injects
 ---------------

@@ -55,7 +55,7 @@ from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 from lino.utils.config import find_config_file
 from lino.utils.choicelists import ChoiceList
-from lino.utils.perms import UserLevels
+#~ from lino.utils.perms import UserLevels
 #~ from lino.utils.choosers import chooser
 
 
@@ -264,13 +264,15 @@ class Recipient(dd.Model):
 
 
 class Recipients(dd.Table):
-    required_user_level = UserLevels.manager
+    required = dict(user_level='manager')
+    #~ required_user_level = UserLevels.manager
     model = Recipient
     #~ column_names = 'mail  type *'
     #~ order_by = ["address"]
 
 class RecipientsByMail(Recipients):
-    required_user_level = None
+    required = dict()
+    #~ required_user_level = None
     master_key = 'mail'
     column_names = 'type:10 partner:20 address:20 name:20 *'
     #~ column_names = 'type owner_type owner_id'
@@ -423,7 +425,8 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
     #~ """
 
 class Mails(dd.Table):
-    required_user_level = UserLevels.manager
+    #~ read_access = dd.required(user_level='manager')
+    required = dict(user_level='manager')
     model = Mail
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
@@ -439,7 +442,8 @@ if not settings.LINO.project_model:
     
     
 class MyOutbox(Mails):
-    required_user_level = None
+    required = dict()
+    #~ required_user_level = None
     #~ known_values = dict(outgoing=True)
     label = _("My Outbox")
     #~ filter = models.Q(sent__isnull=True)
@@ -456,14 +460,43 @@ class MyOutbox(Mails):
     #~ filter = models.Q(sent__isnull=False)
     
 class MailsByController(Mails):
+    required = dict()
     master_key = 'owner'
     #~ label = _("Postings")
     #~ slave_grid_format = 'summary'
 
+  
+class MailsByUser(Mails):
+    required = dict()
+    label = _("Outbox")
+    column_names = 'sent subject recipients'
+    #~ order_by = ['sent']
+    order_by = ['-date']
+    master_key = 'user'
 
-#~ class MailsByPartner(object):
-    #~ master = 'contacts.Partner'
-    #~ can_add = perms.never
+class MailsByProject(Mails):
+    required = dict()
+    label = _("Outbox")
+    column_names = 'date subject recipients user *'
+    #~ order_by = ['sent']
+    order_by = ['-date']
+    master_key = 'project'
+    
+class SentByPartner(Mails):
+    required = dict()
+    master = 'contacts.Partner'
+    label = _("Outbox")
+    column_names = 'sent subject user'
+    order_by = ['sent']
+    
+    @classmethod
+    def get_request_queryset(self,rr):
+        q1 = Recipient.objects.filter(partner=rr.master_instance).values('mail').query
+        qs = Mail.objects.filter(id__in=q1)
+        qs = qs.order_by('sent')
+        return qs
+
+    
     
 
 class Attachment(mixins.Controllable):
@@ -508,38 +541,6 @@ class AttachmentsByMail(Attachments):
 class AttachmentsByController(Attachments):
     master_key = 'owner'
 
-
-  
-#~ class OutboxByPartner(Outbox,MailsByPartner):
-class OutboxByUser(Mails):
-    required_user_level = None
-    label = _("Outbox")
-    column_names = 'sent subject recipients'
-    #~ order_by = ['sent']
-    order_by = ['-date']
-    master_key = 'user'
-
-class OutboxByProject(Mails):
-    required_user_level = None
-    label = _("Outbox")
-    column_names = 'date subject recipients user *'
-    #~ order_by = ['sent']
-    order_by = ['-date']
-    master_key = 'project'
-    
-class SentByPartner(Mails):
-    required_user_level = None
-    master = 'contacts.Partner'
-    label = _("Sent Mails")
-    column_names = 'sent subject user'
-    order_by = ['sent']
-    
-    @classmethod
-    def get_request_queryset(self,rr):
-        q1 = Recipient.objects.filter(partner=rr.master_instance).values('mail').query
-        qs = Mail.objects.filter(id__in=q1)
-        qs = qs.order_by('sent')
-        return qs
 
 
 
