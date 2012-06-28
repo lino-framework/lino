@@ -64,22 +64,22 @@ from lino.utils.perms import UserLevels
 from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.tools import get_field
-from lino.tools import resolve_field
-from lino.tools import range_filter
+from lino.core.modeltools import get_field
+from lino.core.modeltools import resolve_field
+from lino.core.modeltools import range_filter
 from lino.utils import babel 
 from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.properties import models as properties
 from lino.modlib.households import models as households
 #~ from lino.modlib.contacts.models import Contact
-#~ from lino.tools import resolve_model, UnresolvedModel
+#~ from lino.core.modeltools import resolve_model, UnresolvedModel
 
 from lino.mixins.printable import decfmt
 
@@ -93,14 +93,14 @@ class AccountType(ChoiceList):
     
     Note that the Belgian and French PCMN has 7+1 top-level accounts:
     
-    |CLASSE 0 : Droits & engagements hors bilan
-    |CLASSE 1 : Fonds propres, provisions pour risques & charges et Dettes à plus d'un an
-    |CLASSE 2 : Frais d'établissement, actifs immobilisés et créances à plus d'un an
-    |CLASSE 3 : Stock & commandes en cours d'exécution
-    |CLASSE 4 : Créances et dettes à un an au plus
-    |CLASSE 5 : Placements de trésorerie et valeurs disponibles
-    |CLASSE 6 : Charges
-    |CLASSE 7 : Produits
+    | CLASSE 0 : Droits & engagements hors bilan
+    | CLASSE 1 : Fonds propres, provisions pour risques & charges et Dettes à plus d'un an
+    | CLASSE 2 : Frais d'établissement, actifs immobilisés et créances à plus d'un an
+    | CLASSE 3 : Stock & commandes en cours d'exécution
+    | CLASSE 4 : Créances et dettes à un an au plus
+    | CLASSE 5 : Placements de trésorerie et valeurs disponibles
+    | CLASSE 6 : Charges
+    | CLASSE 7 : Produits
     
     TODO: explain the differences and understand how to solve this.
     See also 

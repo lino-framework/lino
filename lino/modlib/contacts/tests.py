@@ -26,7 +26,7 @@ from lino.utils.test import TestCase
 #from lino.modlib.countries.models import Country
 from lino.utils import babel
 
-from lino.tools import resolve_model,resolve_app
+from lino.core.modeltools import resolve_model,resolve_app
 Person = resolve_model(settings.LINO.person_model)
 contacts = resolve_app('contacts')
 from lino.utils.instantiator import Instantiator

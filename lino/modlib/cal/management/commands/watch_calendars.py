@@ -48,11 +48,11 @@ from django.utils import simplejson
 
 import lino
 
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 from lino.utils import confirm, iif
 from lino.utils import dblogger
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 from lino.utils.daemoncommand import DaemonCommand
 from lino.modlib.cal.utils import aware, dt2kw, setkw

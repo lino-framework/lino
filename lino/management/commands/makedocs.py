@@ -37,14 +37,14 @@ from django.db.models import loading
 
 import re
 import lino
-from lino.core.coretools import app_labels
+from lino.core.modeltools import app_labels
 from lino.utils import confirm, curry
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
 from lino.core import table
 
-from lino.tools import makedirs_if_missing, full_model_name
+from lino.core.modeltools import makedirs_if_missing, full_model_name
 
 # Copied from doctest:
 

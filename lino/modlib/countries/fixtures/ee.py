@@ -22,7 +22,7 @@ import csv
 import os
 import codecs
 
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
 
 # http://www.python.org/doc/current/library/csv.html#module-csv

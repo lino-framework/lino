@@ -14,7 +14,7 @@
 
 from django.conf import settings
 
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator, i2d
 from lino.utils import dblogger
 #from lino import reports

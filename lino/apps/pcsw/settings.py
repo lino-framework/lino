@@ -214,7 +214,7 @@ class Lino(Lino):
         automatic reminders for the specified user.
         Used by :func:`lino.modlib.cal.update_reminders`.
         """
-        from lino.tools import models_by_abc
+        from lino.core.modeltools import models_by_abc
         from django.db.models import Q
         from lino.modlib.isip import models as isip
         #~ from lino.apps.pcsw.models import only_my_persons

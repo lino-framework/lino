@@ -29,7 +29,7 @@ from lino.utils import Warning
 
 from lino.ui import requests as ext_requests
 
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 from lino.utils.perms import UserLevels
 from lino.utils import perms 

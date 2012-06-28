@@ -21,7 +21,7 @@ from django.conf import settings
 
 from lino import dd
 from lino.utils.instantiator import Instantiator, i2d
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 #from lino.apps.ledger import models as ledger
 #from lino.apps.contacts import models as contacts

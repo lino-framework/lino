@@ -1,19 +1,21 @@
-T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:12: (WARNING/2) autodoc can't import/find module 'lino.apps.igen.settings', it reported error: "cannot import name UserLevels", please check your spelling and sys.path
-t:\hgwork\lino\lino\apps\igen\models.py:docstring of lino.apps.igen.models:35: (WARNING/2) Literal block ends without a blank line; unexpected unindent.
-T:\hgwork\lino\docs\autodoc\lino.mixins.mails.rst:4: (WARNING/2) autodoc can't import/find module 'lino.mixins.mails', it reported error: "No longer used", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.sales.models', it reported error: "'module' object has no attribute 'is_authenticated'", please check your spelling and sys.path
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:8: WARNING: py:class reference target not found: str
-T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:25: WARNING: py:class reference target not found: django.db.models.fields.CharField
-T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:9: WARNING: py:mod reference target not found: lino.apps.igen.settings
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:1: WARNING: py:mod reference target not found: mixins
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:8: WARNING: py:class reference target not found: lino.tools.Model
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:97: WARNING: py:class reference target not found: lino.tools.Model
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:104: WARNING: py:mod reference target not found: lino.modlibs.cal
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:108: WARNING: py:mod reference target not found: lino.modlib.purchases
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:180: WARNING: py:class reference target not found: lino.tools.Model
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:231: WARNING: py:class reference target not found: lino.core.frames.Frame
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:298: WARNING: py:class reference target not found: lino.tools.Model
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:346: WARNING: py:class reference target not found: lino.mixins.duplicable.Duplicable
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:378: WARNING: py:class reference target not found: lino.modlib.thirds.models.Third
-T:\hgwork\lino\docs\autodoc\lino.mixins.mails.rst:1: WARNING: py:mod reference target not found: lino.mixins.mails
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
+T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\ref\glossary.rst:37: WARNING: py:mod reference target not found: lino.utils.choices
+T:\hgwork\lino\docs\ref\glossary.rst:52: WARNING: unknown document: /blog/2010/0809
+T:\hgwork\lino\docs\ref\glossary.rst:95: WARNING: term not in glossary: report
+T:\hgwork\lino\docs\topics\minimal_apps.rst:11: WARNING: py:mod reference target not found: lino.apps.min1
+T:\hgwork\lino\docs\topics\minimal_apps.rst:14: WARNING: py:mod reference target not found: lino.apps.min2
+T:\hgwork\lino\docs\topics\minimal_apps.rst:14: WARNING: py:mod reference target not found: lino.modlib.projects
+T:\hgwork\lino\docs\topics\minimal_apps.rst:14: WARNING: py:mod reference target not found: lino.modlib.uploads
+T:\hgwork\lino\docs\topics\minimal_apps.rst:21: WARNING: py:mod reference target not found: lino.apps.min2
+T:\hgwork\lino\docs\topics\minimal_apps.rst:22: WARNING: py:mod reference target not found: lino.apps.presto
+T:\hgwork\lino\docs\tutorials\t1.rst:125: WARNING: term not in glossary: tables
+T:\hgwork\lino\docs\tutorials\t1.rst:180: WARNING: term not in glossary: slave table
+T:\hgwork\lino\docs\tutorials\t1.rst:180: WARNING: py:attr reference target not found: lino.core.table.Table.master_key

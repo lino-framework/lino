@@ -26,7 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 
 from lino import dd
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 
 #~ def duplicate_row(obj,**kw):

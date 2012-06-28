@@ -27,8 +27,10 @@ class Lino(Lino):
     use_extensible = False
     #~ project_model = 'contacts.Person'
     #~ project_model = 'contacts.Person'
-    project_model = None
-    user_model = None
+    #~ project_model = None
+    #~ user_model = None
+    
+    default_user = 'root'
     
     #~ languages = ('de', 'fr')
     languages = ['en']
@@ -57,7 +59,7 @@ INSTALLED_APPS = (
   #~ 'django.contrib.sites',
   #~ 'django.contrib.markup',
   'lino',
-  #~ 'lino.modlib.users',
+  'lino.modlib.users',
   'lino.modlib.countries',
   'lino.modlib.contacts',
   'lino.apps.min1',

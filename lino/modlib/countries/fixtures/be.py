@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
 
 # copied from http://www.charline.be/info/codepost/cpost.htm

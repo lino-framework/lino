@@ -39,7 +39,7 @@ from fnmatch import fnmatch
 from django.conf import settings
 from django.utils.importlib import import_module
 
-from lino.tools import makedirs_if_missing
+from lino.core.modeltools import makedirs_if_missing
 from lino.utils import iif
 
 class ConfigDir:

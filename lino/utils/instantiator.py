@@ -27,7 +27,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 #~ import lino
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 from lino.utils import i2d # for backward compatibility of .py fixtures
 from lino.core import fields

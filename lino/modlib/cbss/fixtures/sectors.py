@@ -22,7 +22,7 @@ from django.conf import settings
 from lino.utils import ucsv
 #~ from lino.utils.babel import babel_values
 from lino.utils import babel
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from os.path import join, dirname
 
 ENCODING = 'latin1' # the encoding used by the mdb file

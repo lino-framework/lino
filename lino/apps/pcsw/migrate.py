@@ -27,7 +27,7 @@ set to ``"lino.apps.pcsw.migrate"``
 
 import datetime
 from django.conf import settings
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.utils import mti
 from lino.utils import dblogger
 from lino import __version__
@@ -1025,7 +1025,7 @@ def migrate_from_1_4_3(globals_dict):
     - notes.Note is now ProjectRelated 
       (and field `company` is injected by lino.apps.pcsw)
     """
-    from lino.tools import resolve_model
+    from lino.core.modeltools import resolve_model
     from lino.utils.mti import create_child
     from lino.modlib.users.models import UserProfiles
     #~ from lino.utils import mti

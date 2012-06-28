@@ -38,7 +38,7 @@ from lino import reports
 from lino import fields
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
-#~ from lino.tools import obj2str
+#~ from lino.core.modeltools import obj2str
 
 class StoreField(object):
   

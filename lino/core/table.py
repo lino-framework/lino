@@ -58,7 +58,7 @@ from lino.core import fields
 from lino.core import actions
 from lino.utils import perms, menus, call_on_bases
 from lino.utils import babel
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
 #~ from lino.core import boolean_texts
@@ -69,9 +69,9 @@ from lino.ui import base
 
 from lino.ui import requests as ext_requests
 
-from lino.tools import resolve_model, resolve_field, full_model_name, get_field, UnresolvedModel
+from lino.core.modeltools import resolve_model, resolve_field, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
-from lino.core.coretools import get_slave, get_model_report, get_data_elem
+from lino.core.modeltools import get_model_report, get_data_elem
 from lino.utils.tables import AbstractTable, TableRequest, VirtualTable
 #~ from lino.utils.tables import GridEdit #, ComputedColumn
 

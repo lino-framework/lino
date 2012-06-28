@@ -40,8 +40,8 @@ from lino.mixins import printable
 from lino.utils import babel
 from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
-from lino.tools import obj2str, sorted_models_list
-from lino.tools import resolve_field
+from lino.core.modeltools import obj2str, sorted_models_list
+from lino.core.modeltools import resolve_field
 from lino.utils.choosers import chooser, get_for_field
 from lino.modlib.users.models import UserLevels
 from lino.utils.restify import restify

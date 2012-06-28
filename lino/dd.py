@@ -16,12 +16,16 @@ A shortcut to classes and methods needed
 when defining your database structure in a `models` module.
 The name "dd" stands for "Data Definition". 
 
+A small wrapper around Django's `Model` class 
+which adds some Lino specific features:
+
+- :class:`Model <lino.core.modeltools.Model>`
+
 Tables:
 
 - :class:`Table <lino.core.table.Table>`
 - :class:`VirtualTable <lino.utils.tables.VirtualTable>`
 - :class:`Frame <lino.core.frames.Frame>`
-
 
 Extended Fields:
 
@@ -49,12 +53,11 @@ Virtual Fields:
   :class:`@virtualfield <lino.core.fields.virtualfield>`
 - :class:`HtmlBox <lino.core.fields.HtmlBox>`
   
-
 Utilities:
 
-- :func:`resolve_field <lino.tools.resolve_field>`
-- :func:`resolve_model <lino.tools.resolve_model>`
-- :func:`resolve_app <lino.tools.resolve_app>` 
+- :func:`resolve_field <lino.core.modeltools.resolve_field>`
+- :func:`resolve_model <lino.core.modeltools.resolve_model>`
+- :func:`resolve_app <lino.core.modeltools.resolve_app>` 
 - :func:`chooser <lino.utils.choosers.chooser>` 
 
 
@@ -68,8 +71,8 @@ from lino.utils.tables import VirtualTable
 #~ from lino.utils.tables import computed
 #~ from lino.utils.tables import ComputedColumn
 
-from lino.tools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
-from lino.tools import Model
+from lino.core.modeltools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
+from lino.core.modeltools import Model
 
 #~ from lino.core.table import fields_list, inject_field
 from lino.core.table import has_fk

@@ -21,8 +21,8 @@ from django.utils.translation import ugettext as _
 from django.db import models
 from django.conf import settings
 
-from lino.tools import obj2str
-from lino.tools import Model
+from lino.core.modeltools import obj2str
+from lino.core.modeltools import Model
 
 #~ from lino import layouts
 

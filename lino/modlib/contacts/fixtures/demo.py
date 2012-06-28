@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
 from lino.utils.choicelists import Gender

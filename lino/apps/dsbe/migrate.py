@@ -14,7 +14,11 @@
 
 """
 
-Backward compat when loading dumpy fixtures created by a lino.apps.pcsw before 1.4.4.
+For backward compatibility when loading dumpy fixtures 
+created by a lino.apps.pcsw before 1.4.4.
+
+Will be removed when the last known user has migrated.
+
 
 These fixtures contain the following lines at the end::
 

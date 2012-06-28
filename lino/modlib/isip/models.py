@@ -45,8 +45,8 @@ from lino.utils.choicelists import HowWell
 from lino.utils.perms import UserLevels
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.tools import get_field
-from lino.tools import resolve_field
+from lino.core.modeltools import get_field
+from lino.core.modeltools import resolve_field
 from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem, language_choices
 from lino.utils.htmlgen import UL
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
@@ -57,7 +57,7 @@ from lino.utils import mti
 from lino.utils.ranges import isrange, overlap, overlap2, encompass, rangefmt
 from lino.mixins.printable import DirectPrintAction
 #~ from lino.mixins.reminder import ReminderEntry
-from lino.tools import obj2str, models_by_abc
+from lino.core.modeltools import obj2str, models_by_abc
 
 #~ from lino.modlib.cal.models import update_auto_task
 

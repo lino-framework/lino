@@ -54,9 +54,9 @@ from lino.utils.choicelists import HowWell, Gender
 from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.tools import get_field
-from lino.tools import resolve_field
-from lino.tools import range_filter
+from lino.core.modeltools import get_field
+from lino.core.modeltools import resolve_field
+from lino.core.modeltools import range_filter
 from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils.babel import language_choices
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
@@ -65,13 +65,13 @@ from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.properties import models as properties
 from lino.modlib.cal.models import update_reminder
 #~ from lino.modlib.contacts.models import Contact
-from lino.tools import resolve_model, UnresolvedModel
+from lino.core.modeltools import resolve_model, UnresolvedModel
 
 #~ # not used here, but these modules are required in INSTALLED_APPS, 
 #~ # and other code may import them using 

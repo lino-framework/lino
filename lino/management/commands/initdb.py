@@ -51,7 +51,7 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.db import models
 
 import lino
-from lino.core.coretools import app_labels
+from lino.core.modeltools import app_labels
 from lino.utils import *
 
 USE_SQLDELETE = True

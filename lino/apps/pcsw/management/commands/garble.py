@@ -41,7 +41,7 @@ from lino.utils import Cycler, join_words
 from lino.utils.choicelists import Gender
 
 from lino import dd
-#~ from lino.tools import is_valid_email
+#~ from lino.core.modeltools import is_valid_email
 #~ import lino
 
 from lino.utils import confirm

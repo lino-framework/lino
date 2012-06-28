@@ -39,7 +39,6 @@ from lino.utils import perms
 from lino.utils import babel 
 #~ from lino.utils.babel import add_babel_field, babelattr
 
-#~ from lino.tools import resolve_app
 
 #~ journals = resolve_app('journals')
 #~ journals = models.get_app('journals')
@@ -625,7 +624,6 @@ class SalesDocuments(dd.Table):
 class Orders(SalesDocuments):
     model = Order
     order_by = ["number"]
-    can_view = perms.is_authenticated
     
     #~ def inlines(self):
         #~ d = super(Orders,self).inlines()
@@ -684,7 +682,7 @@ class SignAction(actions.Action):
 class DocumentsToSign(Invoices):
     use_as_default_table = False
     filter = dict(user__isnull=True)
-    can_add = perms.never
+    #~ can_add = perms.never
     column_names = "number:4 order creation_date " \
                   "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "

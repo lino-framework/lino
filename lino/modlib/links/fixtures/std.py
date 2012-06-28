@@ -20,7 +20,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import babel_values, DEFAULT_LANGUAGE, AVAILABLE_LANGUAGES
-from lino.tools import resolve_model,UnresolvedModel
+from lino.core.modeltools import resolve_model,UnresolvedModel
 
 
 

@@ -23,7 +23,7 @@ But :mod:`lino.utils.auth`
 (where :class:`RemoteUserMiddleware <lino.utils.auth.RemoteUserMiddleware>` 
 is defined) did exactly this. 
 It called, at the module level,
-:func:`lino.tools.resolve_model` on the 
+:func:`resolve_model <lino.core.modeltools.resolve_model>` on the 
 :attr:`lino.Lino.user_model`.
 
 But it turned out that this was just another detail which didn't 

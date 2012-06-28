@@ -14,7 +14,6 @@
 
 import datetime
 from django.conf import settings
-#~ from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 #from lino import reports
 #contacts = reports.get_app('contacts')

@@ -46,7 +46,7 @@ from django.conf import settings
 
 from lino.utils import dblogger
 from lino.utils.instantiator import Instantiator
-from lino.tools import resolve_model, full_model_name
+from lino.core.modeltools import resolve_model, full_model_name
 
 from lino.apps.pcsw.models import Company, Person, PersonGroup
 from lino.modlib.countries.models import City, Country
@@ -59,7 +59,7 @@ from lino.modlib.isip import models as isip
 from lino.modlib.properties import models as properties
 
 from lino.utils.mdbtools import Loader
-from lino.tools import is_valid_url, is_valid_email
+from lino.core.modeltools import is_valid_url, is_valid_email
 
 CboStatutJuridique = {
   'Personne Physique' : 3,

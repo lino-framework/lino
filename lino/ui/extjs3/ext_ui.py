@@ -73,9 +73,9 @@ from lino.utils import tables
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
-from lino.tools import makedirs_if_missing
-from lino.tools import full_model_name
-from lino.tools import is_devserver
+from lino.core.modeltools import makedirs_if_missing
+from lino.core.modeltools import full_model_name
+from lino.core.modeltools import is_devserver
     
 from lino.utils import dblogger
 from lino.utils import ucsv
@@ -97,7 +97,7 @@ else:
       
 from lino.mixins import printable
 
-from lino.core.coretools import app_labels
+from lino.core.modeltools import app_labels
 
 from lino.utils.babel import LANGUAGE_CHOICES
 
@@ -105,7 +105,7 @@ from lino.utils.choicelists import DoYouLike, HowWell
 STRENGTH_CHOICES = DoYouLike.get_choices()
 KNOWLEDGE_CHOICES = HowWell.get_choices()
 
-from lino.tools import resolve_model, obj2str, obj2unicode
+from lino.core.modeltools import resolve_model, obj2str, obj2unicode
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
 User = resolve_model(settings.LINO.user_model)
@@ -1851,7 +1851,8 @@ tinymce.init({
         #~ return ('cache','js','site.js')
         #~ return ('cache','js','lino.js')
         #~ return ('cache','js','lino_'+user.get_profile()+'_'+translation.get_language()+'.js')
-        return ('cache','js','lino_'+(user.profile.name or user.username)+'_'+translation.get_language()+'.js')
+        #~ return ('cache','js','lino_'+(user.profile.name or user.username)+'_'+translation.get_language()+'.js')
+        return ('cache','js','lino_' + user.profile.name + '_' + translation.get_language()+'.js')
         
     def build_site_cache(self,force=False):
         """

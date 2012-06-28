@@ -24,7 +24,7 @@ from lino import dd
 from lino.utils import Warning
 from lino.utils import join_words
 from lino.utils import AttrDict, IncompleteDate
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 from lino.utils import babel
 

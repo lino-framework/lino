@@ -16,7 +16,7 @@ Adds an arbitrary selection of a few demo cities.
 """
 
 from lino.utils import dblogger
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
 
 

@@ -44,7 +44,8 @@ from django.utils import translation
 from django.conf import settings
 
 from lino.utils import babel
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
+#~ from lino.utils.perms import UserProfiles
 
 class NoUserMiddleware(object):
     """
@@ -52,8 +53,11 @@ class NoUserMiddleware(object):
     empty :attr:`lino.Lino.user_model`.
     It just adds a `user` attribute whose value is None.
     """
+    #~ class NoUser(object):
+        #~ profile = UserProfiles.admin
+        
     def process_request(self, request):
-        request.user = None
+        request.user = None # self.NoUser()
         
         
 

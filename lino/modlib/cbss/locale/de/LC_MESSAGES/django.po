@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-28 08:40+0100\n"
-"PO-Revision-Date: 2012-06-28 11:10+0200\n"
+"PO-Revision-Date: 2012-06-28 17:35+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -444,7 +444,7 @@ msgstr "Adressänderungsabsicht"
 
 #: .\tx25.py:775
 msgid "Address References"
-msgstr ""
+msgstr "Referenzadressen"
 
 #: .\tx25.py:785
 msgid "Names"
@@ -477,7 +477,7 @@ msgstr "Geburtsort"
 
 #: .\tx25.py:863
 msgid "Filiations"
-msgstr ""
+msgstr "Abstammung"
 
 #: .\tx25.py:866
 msgid "of "
@@ -522,19 +522,19 @@ msgstr "Arbeitsgenehmigungen"
 
 #: .\tx25.py:950
 msgid "Public Security Numbers"
-msgstr ""
+msgstr "Nummer Öffentliche Sicherheit"
 
 #: .\tx25.py:958
 msgid "Special Infos"
-msgstr ""
+msgstr "Zusätzliche Informationen"
 
 #: .\tx25.py:966
 msgid "Refugee Types"
-msgstr ""
+msgstr "Flüchtlingsart"
 
 #: .\tx25.py:974
 msgid "Status of refugee"
-msgstr ""
+msgstr "Flüchtlingsstatus"
 
 #: .\tx25.py:982
 msgid "Identity Cards"
@@ -550,11 +550,11 @@ msgstr "Reisepässe"
 
 #: .\tx25.py:1031
 msgid "Organizations in charge"
-msgstr ""
+msgstr "Zuständige Organisation"
 
 #: .\tx25.py:1039
 msgid "Registration registers"
-msgstr ""
+msgstr "Registereintragung"
 
 #: .\tx25.py:1047
 msgid "Choosen residences"

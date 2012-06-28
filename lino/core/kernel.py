@@ -50,16 +50,13 @@ import lino
         
 from lino.core import table
 from lino.core import actions
-#~ from lino.core import layouts
-#~ from lino.utils import dblogger
-#~ from lino.utils import babel
 from lino.core import actors
-from lino.core.coretools import app_labels # , data_elems # , get_unbound_meth
+from lino.core.modeltools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
 #~ from lino.utils.perms import ViewPermissionInstance
 
-from lino.tools import resolve_model, resolve_field, get_field, full_model_name, obj2str
-from lino.tools import is_devserver
+from lino.core.modeltools import resolve_model, resolve_field, get_field, full_model_name, obj2str
+from lino.core.modeltools import is_devserver
     
 from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers

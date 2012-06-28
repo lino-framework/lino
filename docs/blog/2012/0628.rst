@@ -10,11 +10,14 @@ ich kann Aktionen wie Print und Post nicht vom Model aus
 mit permission handler versehen.
 Das brauchen wir noch.
 
+Das Folgende ist eigentlich teilweise schon wieder veraltet. 
+Bei Gelegenheit muss ich mal ordentliche Doku schreiben...
+
 Also noch mal eine Operation unter Vollnarkose.
 Noch mal der Versuch eines Überblicks.
 
 Permission handler sind namenlose Funktionen, die in 
-:func:`lino.core.kernel.make_permission` erzeugt werden. 
+:func:`lino.utils.perms.make_permission_handler` erzeugt werden. 
 Das sind die Dinger, die optimal laufen müssen 
 (also möglichst wenig unnütze Dinge nachprüfen), 
 weil sie *oft* aufgerufen werden.
@@ -25,8 +28,15 @@ einmalig erzeugt.
 
 Die Option `required` ist (wenn definiert) ein `dict` mit den 
 keys `user_level` und/oder `user_groups`. Kann definiert sein:
-- :attr:`lino.core.actors.Actor.required`
-- :attr:`lino.core.actions.Action.required`
+- Auf dem Actor (der Tabelle): 
+  :attr:`required <lino.core.actors.Actor.required>`,
+  :attr:`change_required <lino.core.actors.Actor.change_required>`,
+  :attr:`delete_required <lino.core.actors.Actor.delete_required>`,
+  :attr:`create_required <lino.core.actors.Actor.create_required>`
+- Auf einer Aktion: 
+  :attr:`required <lino.core.actions.Action.required>`
+  :attr:`required <lino.utils.perms.Permittable.required>`
+- Auf einem Layout-Panel: 
 
 Permission handler sitzen an folgenden Stellen: 
 
@@ -42,3 +52,10 @@ Action.allow
 get_view_permission wird benutzt zum Generieren des JS-Codes. 
 Da ist also normalerweise kein spezieller Record gemeint, 
 also `obj` ist `None`.
+
+Kleinkram
+---------
+
+- Übersetzungen Tx25
+-  moved lino.tools and lino.core.coretools to a single module 
+  :mod:`lino.core.modeltools`.

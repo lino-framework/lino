@@ -59,7 +59,6 @@ from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson as json
 
-#~ from lino.tools import Model
 from lino.core import actors
 from lino.core import actions
 from lino.core.fields import FakeField

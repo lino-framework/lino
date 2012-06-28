@@ -36,8 +36,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from lino.utils import i2d
 from lino.utils import babel
-from lino.tools import resolve_model
-from lino.tools import obj2str
+from lino.core.modeltools import resolve_model
+from lino.core.modeltools import obj2str
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 

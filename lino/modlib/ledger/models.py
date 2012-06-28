@@ -27,9 +27,6 @@ from lino.modlib.journals import models as journals
 #from lino.modlib.contacts import models as contacts
 #from lino.modlib.journals import models as journals
 
-#~ from lino.tools import resolve_model
-#~ Person = resolve_model('contacts.Person')
-#~ Company = resolve_model('contacts.Company')
 
 
 class Account(dd.Model):

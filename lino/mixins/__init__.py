@@ -31,7 +31,7 @@ from django.utils.translation import string_concat
 from lino import dd
 #~ from lino.models import Workflow
 #~ from lino.utils import perms
-from lino.tools import full_model_name
+from lino.core.modeltools import full_model_name
 from lino.core import frames
 from lino.core import actions
 from lino.utils.choosers import chooser

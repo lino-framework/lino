@@ -32,7 +32,7 @@ from lino.core import actions
 from lino.utils import perms
 from lino.utils import babel
 from lino.utils import dblogger
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 from lino.utils.babel import dtosl
 

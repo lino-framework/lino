@@ -35,7 +35,7 @@ from django.conf import settings
 
 from lino.utils import i2d
 from lino.utils import babel
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 
@@ -301,7 +301,7 @@ def test05(self):
     See :doc:`/blog/2011/0728`.
     """
     from lino.apps.pcsw.models import Activity, Person
-    from lino.tools import obj2str
+    from lino.core.modeltools import obj2str
     a = Activity(name=u"Sozialhilfeempfänger")
     p = Person(last_name="Test",activity=a)
     self.assertEqual(unicode(a),u"Sozialhilfeempfänger")
@@ -334,7 +334,7 @@ def test06(self):
     """
     from django.db import models
     from lino.apps.pcsw.models import Person
-    from lino.core.coretools import get_data_elem
+    from lino.core.modeltools import get_data_elem
     de = get_data_elem(Person,'id')
     #~ print de.__class__
     self.assertEqual(de.__class__,models.AutoField)

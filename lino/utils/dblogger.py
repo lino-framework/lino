@@ -31,7 +31,7 @@ debug = logger.debug
 #~ getLevel = logger.getLevel
 #~ setLevel = logger.setLevel
 
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 
 class DiffingMixin(object):

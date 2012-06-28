@@ -38,6 +38,11 @@ from lino.core import actions
 from lino.utils.perms import UserLevels, UserProfiles
 #~ from lino.utils import perms 
 
+if settings.LINO.user_model != 'users.User':
+    raise Exception("""\
+You are using lino.modlib.users in your INSTALLED_APPS, 
+but settings.LINO.user_model is %r (should be 'users.User').
+""" % settings.LINO.user_model)
 
 #~ class User(contacts.Partner,contacts.PersonMixin):
 #~ class User(dd.Model):
@@ -263,9 +268,9 @@ class UserDetail(dd.DetailLayout):
     created modified
     """
 
-    box2 = """
-    #level
-    """
+    #~ box2 = """
+    #~ #level
+    #~ """
     #~ general = """
     #~ box1:50 box2:20
     #~ remarks 
@@ -274,7 +279,7 @@ class UserDetail(dd.DetailLayout):
     #~ main = "general"
   
     main = """
-    box1:50 box2:20
+    box1
     remarks 
     """
     

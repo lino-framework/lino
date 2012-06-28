@@ -29,8 +29,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 
 
-from lino.tools import resolve_model
-#~ from lino.tools import Model
+from lino.core.modeltools import resolve_model
 from lino.core.fields import VirtualField
 
 

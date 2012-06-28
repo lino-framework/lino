@@ -57,12 +57,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino.core import fields
-from lino.tools import Model
+from lino.core.modeltools import Model
 
-#~ from lino.tools import Model
-#~ from lino import dd # 20120620
-
-#~ from lino.tools import default_language
 
 DEFAULT_LANGUAGE = settings.LANGUAGE_CODE[:2]
 """
@@ -231,7 +227,7 @@ def _contribute_to_class(field,cls,fieldclass,**kw):
     for lang in BABEL_LANGS:
         kw.update(verbose_name=string_concat(field.verbose_name,' ('+lang+')'))
         newfield = fieldclass(**kw)
-        newfield._lino_babel_field = True # used by coretools.get_data_elems
+        newfield._lino_babel_field = True # used by modeltools.get_data_elems
         cls.add_to_class(field.name + '_' + lang,newfield)
 
 class BabelCharField(models.CharField):
@@ -250,7 +246,7 @@ class BabelCharField(models.CharField):
         #~ for lang in BABEL_LANGS:
             #~ kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
             #~ newfield = models.CharField(**kw)
-            #~ newfield._lino_babel_field = True # used by coretools.get_data_elems
+            #~ newfield._lino_babel_field = True # used by modeltools.get_data_elems
             #~ cls.add_to_class(self.name + '_' + lang,newfield)
             
 
@@ -274,7 +270,7 @@ class BabelTextField(fields.RichTextField):
             #~ kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
             #~ # newfield = models.TextField(**kw)
             #~ newfield = fields.RichTextField(**kw)
-            #~ newfield._lino_babel_field = True # used by coretools.get_data_elems
+            #~ newfield._lino_babel_field = True # used by modeltools.get_data_elems
             #~ cls.add_to_class(self.name + '_' + lang,newfield)
 
 

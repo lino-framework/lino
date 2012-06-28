@@ -90,6 +90,7 @@ class UserProfile(choicelists.Choice):
             setattr(self,attname,kw.pop(attname,''))
         if kw:
             raise Exception("UserProfile got unexpected arguments %s" % kw)
+
         
 class UserProfiles(choicelists.ChoiceList):
     """
@@ -101,8 +102,8 @@ class UserProfiles(choicelists.ChoiceList):
     max_length = 20
     
 add = UserProfiles.add_item
-add('1', _("User"),level=UserLevels.user)
-add('2', _("Administrator"),level=UserLevels.admin)
+add('10', _("User"),'user', level=UserLevels.user)
+add('20', _("Administrator"),'admin', level=UserLevels.admin)
 
 
 class Permittable(object): 
@@ -111,7 +112,7 @@ class Permittable(object):
     """
     required = {}
     """
-    Conditions required to READ (view) this component.
+    Conditions required to read (view) this component.
     """
     workflow_state_field = None # internally needed for make_permission_handler
     workflow_owner_field = None # internally needed for make_permission_handler
@@ -136,12 +137,16 @@ class Permittable(object):
 #~ BLANK_STATE = ''
 
 
-def make_permission_handler(elem,actor,user_level=None,user_groups=None,states=None):
+def make_permission_handler(elem,actor,
+    user_level=None,user_groups=None,states=None):
     """
     Return a function that will test whether permission is given or not.
-    The function will always expect three arguments user, obj and state.
-    The latter two may be None depending on the context. 
-    For example a read_required is expected to not test on obj or state.
+    
+    The generated function will always expect three arguments user, obj and state.
+    The latter two may be None depending on the context
+    (for example a read_required is expected to not test on obj or 
+    state because these values are not known when generating the 
+    :xfile:`lino*.js` files.).
     
     `user_level`
         A string (e.g. ``'manager'``, ``'user'``,...) 

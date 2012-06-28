@@ -52,7 +52,7 @@ from django.test.utils import override_settings
 
 from lino.utils import i2d
 from lino.utils import babel
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 from lino.utils.instantiator import Instantiator
 #~ from lino.utils.choicelists import UserLevel

@@ -46,8 +46,8 @@ from lino.utils import babel
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
 from lino.utils.config import find_template_config_files
-from lino.tools import makedirs_if_missing
-from lino.tools import Model
+from lino.core.modeltools import makedirs_if_missing
+from lino.core.modeltools import Model
 from lino.mixins.duplicable import Duplicable
 
 

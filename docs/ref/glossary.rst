@@ -109,8 +109,4 @@ Glossary
     different tables.
     
   Minimal application
-    Minimal applications are for testing, demonstrations and didactical use.
-    They are minimal in the sense that they don't define any applicaton logic 
-    for themselves, they just use a combination of modules 
-    from :doc:`/ref/modlib`.  
-    Currently Lino has two of them :mod:`lino.apps.min1` and :mod:`lino.apps.min2`.
+    See :doc:`/topics/minimal_apps`

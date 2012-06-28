@@ -50,7 +50,7 @@ from lino.utils import choosers
 from lino.utils import curry
 from lino.utils import babel
 from lino.utils import iif
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 from lino.utils import IncompleteDate
 from lino.utils import tables
 #~ from lino.utils import moneyfmt

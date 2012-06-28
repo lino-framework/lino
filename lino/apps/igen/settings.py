@@ -19,7 +19,7 @@ import os
 import sys
 from os.path import join,dirname, normpath, abspath
 from lino.apps.std.settings import *
-from lino.utils.choicelists import UserLevels
+from lino.utils.perms import UserLevels
 
 class Lino(Lino):
   

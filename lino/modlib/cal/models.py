@@ -40,7 +40,7 @@ from lino import dd
 from lino.core import actions
 from lino.utils import babel
 from lino.utils import dblogger
-from lino.tools import resolve_model, obj2str
+from lino.core.modeltools import resolve_model, obj2str
 
 from lino.modlib.contacts import models as contacts
 
@@ -839,6 +839,9 @@ class Event(Component,Ended,
             
     @classmethod
     def setup_table(cls,t):
+        """
+        See also :meth:`lino.core.table.Table.setup_table`
+        """
         #~ cls.create_postings.required.update(states=['scheduled'])
         t.create_postings.set_required(states=['scheduled'])
         

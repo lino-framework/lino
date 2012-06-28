@@ -50,14 +50,14 @@ from lino.modlib.users import models as auth
 
 import lino
 
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.modlib.contacts.utils import name2kw, street2kw
 from lino.utils import join_words
 
 from lino.utils import confirm
 from lino.utils import dblogger
 from lino.utils import mti
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 from lino.utils.daemoncommand import DaemonCommand
 

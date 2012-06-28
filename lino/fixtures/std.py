@@ -15,7 +15,7 @@
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from lino.utils.instantiator import Instantiator
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 def objects():
     if settings.LINO.user_model:

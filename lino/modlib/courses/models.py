@@ -62,12 +62,12 @@ from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.cal.models import update_reminder
 #~ from lino.modlib.contacts.models import Contact
-from lino.tools import resolve_model, UnresolvedModel
+from lino.core.modeltools import resolve_model, UnresolvedModel
 
 from lino.apps.pcsw import models as pcsw
 

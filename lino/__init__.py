@@ -237,7 +237,7 @@ class Lino(object):
     that each file is built upon need (when a first request comes in).
     
     The default value `None` means that Lino decides automatically 
-    (using :func:`lino.tools.is_devserver`).
+    (using :func:`lino.core.modeltools.is_devserver`).
     """
     
     # tree constants used by lino.modlib.workflows:
@@ -341,13 +341,14 @@ class Lino(object):
     Used by :mod:`lino.utils.auth`.
     """
     
-    #~ remote_user_header = "REMOTE_USER"
-    remote_user_header = None
+    remote_user_header = "REMOTE_USER"
+    #~ remote_user_header = None
     """
     The name of the header (set by the web server) that Lino consults 
     for finding the user of a request.
-    This is usually set to ``"REMOTE_USER"``
-    The default `None` means that http authentication is not used at all.
+    Default value is ``"REMOTE_USER"``.
+    Settings this to `None` means that http authentication 
+    is not used at all.
     """
     
     #~ simulate_remote_user = False
@@ -1077,7 +1078,11 @@ class Lino(object):
             yield 'lino.utils.auth.RemoteUserMiddleware'
             yield 'django.middleware.doc.XViewMiddleware'
         else:
-            yield 'lino.utils.auth.NoUserMiddleware'
+            if self.user_model is None:
+                yield 'lino.utils.auth.NoUserMiddleware'
+            else:
+                raise Exception("""\
+`user_model` is None, but no `remote_user_header` in your settings.LINO.""")
         #~ yield 'lino.utils.editing.EditingMiddleware'
         yield 'lino.utils.ajax.AjaxExceptionResponse'
 

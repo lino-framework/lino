@@ -35,9 +35,9 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
 import lino
-from lino.core.coretools import app_labels
+from lino.core.modeltools import app_labels
 from lino.utils import rstgen
-from lino.tools import obj2str, full_model_name, sorted_models_list
+from lino.core.modeltools import obj2str, full_model_name, sorted_models_list
 
 class Command(BaseCommand):
     help = __doc__

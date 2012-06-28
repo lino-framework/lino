@@ -27,7 +27,7 @@ from lino.ui import base
 from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.utils import curry, AttrDict
 #~ from lino.utils.perms import ViewPermissionClass
 from lino.utils import choicelists
@@ -786,7 +786,6 @@ class Actor(object):
             rpt = settings.LINO.modules[s[0]].get(s[1],None)
         else:
             raise Exception("Invalid data element name %r" % name)
-        #~ rpt = get_slave(model,name)
         if rpt is not None: 
             #~ if rpt.master is not None and rpt.master is not ContentType:
                 #~ ok = True

@@ -87,7 +87,7 @@ from lino.utils.choicelists import DoYouLike, HowWell
 STRENGTH_CHOICES = DoYouLike.get_choices()
 KNOWLEDGE_CHOICES = HowWell.get_choices()
 
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 

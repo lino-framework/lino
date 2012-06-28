@@ -136,10 +136,15 @@ class Menu(MenuItem):
         newitems = []
         for mi in self.items:
             if isinstance(mi,Menu):
-                if len(mi.items) == 1:
-                    newitems.append(mi.items[0])
-                if len(mi.items) > 1:
-                    newitems.append(mi)
+                #~ if len(mi.items) == 1:
+                    #~ newitems.append(mi.items[0])
+                #~ elif len(mi.items) > 1:
+                    #~ newitems.append(mi)
+                if len(mi.items) > 0:
+                    if self.parent is None or len(mi.items) > 1:
+                        newitems.append(mi)
+                    elif len(mi.items) == 1:
+                        newitems.append(mi.items[0])
             else:
                 newitems.append(mi)
         self.items = newitems

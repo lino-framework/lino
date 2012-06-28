@@ -38,24 +38,15 @@ for your `DJANGO_SETTINGS_MODULE`.
 
 When you've done and learned all this, we go further.
 
+Lino uses some tricks to make Django settings 
+files more pleasant to work with,
+especially if you maintain Lino sites for several customers.
+
 Replace the :xfile:`settings.py` 
 of your project directory 
 with the following:
 
 .. literalinclude:: ../../lino/tutorials/t1/settings.py
-
-    
-
-
-More about the `settings.py` file
----------------------------------
-
-Let's take your :xfile:`settings.py` file again and 
-make some more changes to it.
-
-Lino uses some tricks to make Django settings 
-files more pleasant to work with,
-especially if you maintain Lino sites for several customers.
 
 At the beginning of the file are the following four lines of code::
 
@@ -66,6 +57,20 @@ At the beginning of the file are the following four lines of code::
     
 The first line caused your settings to "inherit" 
 from one of the predefined Lino applications.
+
+The predefined applications that come with Lino 
+are under :mod:`lino.apps`.
+They are basically are just another module to be added to :setting:`INSTALLED_APPS`,
+but one important difference with modules from :mod:`lino.modlib` is that they 
+also provide a :xfile:`settings.py` file.
+
+There are two classes of predefined applications:
+(a) full-featured and complex applications that are being used on real sites,
+and 
+(b) the minimal applications used for testing, demonstrations and didactical purposes.
+Maybe you prefer to play with the minimal 
+:doc:`/topics/minimal_apps`.
+
 Since this is going to be your own application, 
 replace the ``pcsw`` or ``igen`` by ``std``::
 

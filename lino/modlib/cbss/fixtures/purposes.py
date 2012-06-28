@@ -19,7 +19,7 @@ http://www.bcss.fgov.be/binaries/documentation/fr/documentation/general/lijst_ho
 """
 
 from lino.utils.babel import babel_values
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 
 PURPOSES = u"""

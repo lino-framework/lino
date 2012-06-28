@@ -6,19 +6,12 @@ The :mod:`lino.core` Package
     :undoc-members:
     :show-inheritance:
 
-The :mod:`actors` Module
-------------------------
 
-.. automodule:: lino.core.actors
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. toctree::
 
-The :mod:`coretools` Module
----------------------------
-
-.. automodule:: lino.core.coretools
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+    lino.core.table
+    lino.core.actors
+    lino.core.actions
+    lino.core.fields
+    lino.core.modeltools
+    lino.core.layouts

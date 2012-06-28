@@ -32,7 +32,7 @@ from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
 
 import lino
-from lino.tools import obj2str, sorted_models_list, full_model_name
+from lino.core.modeltools import obj2str, sorted_models_list, full_model_name
 from lino.utils import dblogger
 from lino.utils import babel
 from lino import dd
@@ -67,7 +67,7 @@ class Serializer(base.Serializer):
             #~ self.stream.write('from lino.utils import i2d\n')
             #~ self.stream.write('from lino.utils.mti import insert_child\n')
             self.stream.write('from lino.utils.mti import create_child\n')
-            self.stream.write('from lino.tools import resolve_model\n')
+            self.stream.write('from lino.dd import resolve_model\n')
             self.stream.write('from django.contrib.contenttypes.models import ContentType\n')
             self.stream.write('from django.conf import settings\n')
             self.stream.write('''

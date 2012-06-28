@@ -13,7 +13,7 @@ Person
 (You can ignore the following lines of Python code; 
 they are here because this article is being tested automatically)
 
->>> from lino.tools import resolve_model
+>>> from lino.dd import resolve_model
 >>> Person = resolve_model('contacts.Person')
 >>> person = Person.objects.get(pk=117)
 

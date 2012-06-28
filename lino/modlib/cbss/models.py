@@ -65,7 +65,7 @@ from lino import dd
 from lino.utils import Warning
 from lino.utils import join_words
 from lino.utils import AttrDict, IncompleteDate
-from lino.tools import obj2str
+from lino.core.modeltools import obj2str
 
 from lino.utils import babel
 from lino.utils.choosers import chooser
@@ -73,7 +73,7 @@ from lino.utils.choosers import chooser
 from lino.utils.xmlgen import html as xghtml
 
 #~ from lino.utils import dblogger
-#~ from lino.tools import resolve_model
+#~ from lino.core.modeltools import resolve_model
 #~ from lino.utils.xmlgen import etree
 #~ from lino.utils.xmlgen import cbss
 
@@ -83,7 +83,7 @@ from lino.utils.choicelists import ChoiceList
 from lino.utils.choicelists import Gender
 from lino.modlib.users.models import UserLevels
 #~ from lino.modlib.contacts import models as contacts
-from lino.tools import makedirs_if_missing
+from lino.core.modeltools import makedirs_if_missing
 #~ from lino.mixins.printable import DirectPrintAction
 
 from lino.apps.pcsw import models as pcsw

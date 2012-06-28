@@ -27,7 +27,7 @@ from lino.utils import perms
 
 from django.db import models
 #~ from lino import fields
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 
 contacts = dd.resolve_app('contacts')
 #~ ledger = dd.resolve_app('ledger')

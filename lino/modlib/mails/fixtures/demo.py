@@ -19,7 +19,7 @@ from django.conf import settings
 from django.db import models
 
 from lino.utils.instantiator import Instantiator, i2d
-from lino.tools import resolve_model
+from lino.core.modeltools import resolve_model
 from lino.utils.babel import babel_values, babelitem
 from lino.modlib.mails.utils import RecipientType
 

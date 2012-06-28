@@ -1,3 +1,4 @@
+=================
 :mod:`lino.utils`
 =================
 
@@ -5,7 +6,34 @@
     :members:
     :undoc-members:
     :show-inheritance:
+    
+.. toctree::
+    
+    lino.utils.appy_pod
+    lino.utils.auth
+    lino.utils.sqllog
+    lino.utils.log
+    lino.utils.dblogger
+    lino.utils.demonames
+    lino.utils.dumpy
+    lino.utils.jsgen
+    lino.utils.mti
+    lino.utils.daemoncommand
+    lino.utils.choicelists
+    lino.utils.babel
+    lino.utils.choosers
+    lino.utils.memo
+    lino.utils.ranges
+    lino.utils.tables
+    lino.utils.test
+    lino.utils.xmlgen
+    lino.utils.xmlgen.odf
+    lino.utils.xmlgen.cbss
+    lino.utils.xmlgen.intervat
+    
 
+More modules
+============
 
 The :mod:`dbfreader` Module
 ---------------------------

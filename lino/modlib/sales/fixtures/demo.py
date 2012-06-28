@@ -21,7 +21,6 @@ from dateutil import parser as dateparser
 from lino import dd
 from lino.modlib.sales import utils
 from lino.utils.instantiator import Instantiator, i2d
-#~ from lino.tools import resolve_model
 
 def objects():
   
