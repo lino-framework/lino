@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-28 08:40+0100\n"
-"PO-Revision-Date: 2012-06-28 11:04+0200\n"
+"PO-Revision-Date: 2012-06-28 11:42+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -266,7 +266,7 @@ msgstr "%(details)s von %(master)s"
 #. Translators: will also be concatenated with '(type)' '(object)'
 #: .\mixins\__init__.py:72
 msgid "Controlled by"
-msgstr "Kontrolliert durch"
+msgstr "Verknüpft mit"
 
 #: .\mixins\__init__.py:87
 msgid "(type)"
