@@ -1,1 +1,2 @@
+export REMOTE_USER=root
 python manage.py runserver

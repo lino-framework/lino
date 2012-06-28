@@ -1017,6 +1017,7 @@ class Lino(object):
         self.on_each_app('setup_master_menu',ui,user,m)
         m = main.add_menu("my",_("My menu"))
         self.on_each_app('setup_my_menu',ui,user,m)
+        self.on_each_app('setup_main_menu',ui,user,main)
         m = main.add_menu("config",_("Configure"))
         self.on_each_app('setup_config_menu',ui,user,m)
         m = main.add_menu("explorer",_("Explorer"))

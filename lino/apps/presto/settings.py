@@ -23,7 +23,7 @@ class Lino(Lino):
     
     project_model = 'tickets.Project'
     
-    remote_user_header = "REMOTE_USER"
+    #~ remote_user_header = "REMOTE_USER"
     
     def get_app_source_file(self): return __file__
         

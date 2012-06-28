@@ -1,4 +1,6 @@
+=======================
 :mod:`lino.apps.presto`
+=======================
 
 .. automodule:: lino.apps.presto
     :members:

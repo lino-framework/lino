@@ -1,10 +1,3 @@
-T:\hgwork\lino\docs\autodoc\lino.apps.presto.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
+T:\hgwork\lino\docs\autodoc\lino.apps.presto.rst:18: WARNING: py:mod reference target not found: lino.modlib.blogs
+T:\hgwork\lino\docs\autodoc\lino.apps.presto.rst:19: WARNING: py:mod reference target not found: lino.modlib.uploads

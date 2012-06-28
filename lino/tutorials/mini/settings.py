@@ -2,7 +2,7 @@
 #~ from lino.apps.min2.settings import *
 from lino.apps.presto.settings import *
 class Lino(Lino):
-    title = "Playing with minimal applications"
+    title = "mini tutorial"
     languages = ['en', 'de','fr']
     #~ languages = ['en']
     
