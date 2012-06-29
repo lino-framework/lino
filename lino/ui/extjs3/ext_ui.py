@@ -1852,7 +1852,7 @@ tinymce.init({
         #~ return ('cache','js','lino.js')
         #~ return ('cache','js','lino_'+user.get_profile()+'_'+translation.get_language()+'.js')
         #~ return ('cache','js','lino_'+(user.profile.name or user.username)+'_'+translation.get_language()+'.js')
-        return ('cache','js','lino_' + user.profile.name + '_' + translation.get_language()+'.js')
+        return ('cache','js','lino_' + user.profile.value + '_' + translation.get_language()+'.js')
         
     def build_site_cache(self,force=False):
         """

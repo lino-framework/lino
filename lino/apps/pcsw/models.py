@@ -2164,37 +2164,27 @@ add('cbss',_("CBSS"),'cbss')
 add('newcomers',_("Newcomers"),'newcomers')
 add('debts',_("Debts"),'debts')
 
-#~ class UserProfile(users.UserProfile):
-    #~ def __init__(self,integ_level='',**kw):
-        #~ self.integ_level = integ_level
-        #~ self.newcomers_level = integ_level
-        #~ super(UserProfile,self).__init__(**kw)
-        
 UserProfiles.clear()
-add = UserProfiles.add_item
-add('10', _("Integration Agent (Senior)"), 'melanie',
-          level=UserLevels.user,
-          integ_level=UserLevels.manager,
-          cbss_level=UserLevels.user,
-          )
-add('11', _("Integration Agent"), 'hubert',
-          level=UserLevels.user,
-          integ_level=UserLevels.user,
-          cbss_level=UserLevels.user,
-          )
-add('20', _("Newcomers consultant"), 'caroline',
-          level=UserLevels.user,
-          newcomers_level=UserLevels.user,
-          cbss_level=UserLevels.user,
-          )
-add('30', _("Debts consultant"), 'kerstin',
-          level=UserLevels.user,
-          debts_level=UserLevels.user,
-          )
-add('90', _("Administrator"), 'admin',
-          level=UserLevels.admin,
-          integ_level=UserLevels.admin,
-          newcomers_level=UserLevels.admin,
-          debts_level=UserLevels.admin,
-          cbss_level=UserLevels.admin,
-          )
+
+#~ add = UserProfiles.add_item
+#~ """
+    #~ #     label                            name       level    integ       cbss    newcomers debts
+    #~ ====  ================================ ========== ======== =========== ======= ========= ========"""
+#~ add('10', _("Integration Agent"),          'hubert',  'user',  'user',    'user')
+#~ add('11', _("Integration Agent (Senior)"), 'melanie', 'user',  'manager', 'user')
+#~ add('20', _("Newcomers consultant"),       'caroline','user',  '',        'user',  'user')
+#~ add('30', _("Debts consultant"),           'kerstin', 'user',  '',        '',      '',       'user')
+#~ add('90', _("Administrator"),              'admin',   'admin', 'admin',   'admin', 'admin',  'admin')
+
+def add(value,label,*args):
+    UserProfiles.add_item(value,label,None,*args)
+
+"""
+    #     label                            level    integ       cbss    newcomers debts
+    ====  ================================ ======== =========== ======= ========= ========"""
+add('10', _("Integration Agent"),          'user',  'user',    'user')
+add('11', _("Integration Agent (Senior)"), 'user',  'manager', 'user')
+add('20', _("Newcomers consultant"),       'user',  '',        'user',  'user')
+add('30', _("Debts consultant"),           'user',  '',        '',      '',       'user')
+add('90', _("Administrator"),              'admin', 'admin',   'admin', 'admin',  'admin')
+

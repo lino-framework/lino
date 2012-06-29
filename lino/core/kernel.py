@@ -79,8 +79,10 @@ def analyze_models():
     This is a part of a Lino site setup.
     The Django Model definitions are done, now Lino analyzes them and does certain actions.
     
-    - Load .dtl files and install them into `_lino_detail_layouts`
-    - Install a DisableDeleteHandler for each Model into  `_lino_ddh`
+    - Verify that there are no more pending injects
+    - Install a DisableDeleteHandler for each Model into `_lino_ddh`
+    - Install a `get_row_permission` method for Models that
+      don't inherit from :class:`lino.dd.Model`.
     
     """
     global DONE
@@ -105,10 +107,11 @@ def analyze_models():
 
     for model in models.get_models():
         model._lino_ddh = DisableDeleteHandler(model)
-        if hasattr(model,'before_save'): 
-            raise Exception(
-              "%s has a method before_save! see :doc:`/blog/2010/0804`, :doc:`/blog/2011/0226`" % 
-              model)
+        for k in ('get_row_permission',):
+            if not hasattr(model,k):
+                #~ setattr(model,k,getattr(dd.Model,k))
+                setattr(model,k,dd.Model.__dict__[k])
+                #~ model.__dict__[k] = getattr(dd.Model,k)
         
 
         
@@ -405,6 +408,7 @@ def setup_site(self):
             try:
                 from lino.models import HelpText
                 for ht in HelpText.objects.filter(help_text__isnull=False):
+                    #~ logger.info("20120629 %s.help_text", ht)
                     resolve_field(unicode(ht)).help_text = ht.help_text
             except DatabaseError,e:
                 logger.warning("No help texts : %s",e)

@@ -196,11 +196,6 @@ class ChoiceList(object):
     The class of items of this list.
     """
     
-    #~ items = []
-    #~ """
-    #~ The list of items all items.
-    #~ """
-    
     stored_name = None
     """
     Every subclass of ChoiceList will be automatically registered.
@@ -213,9 +208,9 @@ class ChoiceList(object):
     
     show_values = False
     """
+    Set this to True if the user interface should include the `value`
+    attribute of each choice.
     """
-    
-    #~ _fields = []
     
     
     preferred_width = 5
@@ -238,7 +233,7 @@ class ChoiceList(object):
     def clear(cls):
         """
         """
-        for ci in cls.items():
+        for ci in cls.items_dict.values():
             if ci.name is not None:
                 delattr(cls,ci.name)
                 
@@ -278,12 +273,12 @@ class ChoiceList(object):
         
     @classmethod
     #~ def add_item(cls,value,text,alias=None):
-    def add_item(cls,value,text,name=None,**kw):
+    def add_item(cls,value,text,name=None,*args,**kw):
         if cls is ChoiceList:
             raise Exception("Cannot define items on the base class")
         if cls.items_dict.has_key(value):
             raise Exception("Duplicate value %r in choicelist %s.",(value,cls.label))
-        i = cls.item_class(**kw)
+        i = cls.item_class(*args,**kw)
         # these attributes are always set:
         i.choicelist = cls
         i.value = value
@@ -312,10 +307,6 @@ Django creates copies of them when inheriting models.
             setattr(cls,name,i)
             i.name = name
         return i
-        
-    #~ @classmethod
-    #~ def __getitem__(cls,name):
-        #~ return cls.items_dict[name]
         
     @classmethod
     def to_python(cls, value):
@@ -383,7 +374,8 @@ Django creates copies of them when inheriting models.
       
     @classmethod
     def items(self):
-        return self.items_dict.values()
+        #~ return self.items_dict.values()
+        return [choice[0] for choice in self.choices]
         
     @classmethod
     def get_text_for_value(self,value):

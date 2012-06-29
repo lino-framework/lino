@@ -1,0 +1,50 @@
+20120629
+========
+
+Endspurt vor dem Release
+------------------------
+
+Der Help-Text-Editor funktionierte noch immer nicht. Da kam::
+
+  AttributeError
+  'ContentType' object has no attribute 'get_row_permission'
+
+  TRACEBACK:
+  File "l:\snapshots\django\django\core\handlers\base.py", line 111, in
+  get_response
+  (...)
+
+  File "t:\hgwork\lino\lino\core\table.py", line 690, in get_row_permission
+  return obj.get_row_permission(user,state,action)
+
+
+
+Die Definition der Benutzerprofile (in :mod:`lino.apps.pcsw.models`) 
+sah bis gestern so aus::
+
+    UserProfiles.clear()
+    add = UserProfiles.add_item
+    add('10', _("Integration Agent (Senior)"), 'melanie',
+              level=UserLevels.user,
+              integ_level=UserLevels.manager,
+              cbss_level=UserLevels.user,
+              )
+    ...
+    
+Und dann einen solchen add()-Block für jedes Profil.
+Jetzt ist sie deutlich leserlicher::
+
+  UserProfiles.clear()
+  add = UserProfiles.add_item
+
+  """
+      #     label                            name       level    integ       cbss    newcomers debts
+      ====  ================================ ========== ======== =========== ======= ========= ========"""
+  add('10', _("Integration Agent"),          'hubert',  'user',  'user',    'user')
+  add('11', _("Integration Agent (Senior)"), 'melanie', 'user',  'manager', 'user')
+  add('20', _("Newcomers consultant"),       'caroline','user',  '',        'user',  'user')
+  add('30', _("Debts consultant"),           'kerstin', 'user',  '',        '',      '',       'user')
+  add('90', _("Administrator"),              'admin',   'admin', 'admin',   'admin', 'admin',  'admin')
+
+N.B. Andererseits ist es denkbar, dass wir diese Tabelle irgendwann mal durch 
+eine lokale Konfigurationsdatei auch für Nichtprogrammierer bearbeitbar machen.

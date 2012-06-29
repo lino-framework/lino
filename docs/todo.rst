@@ -12,9 +12,27 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Wenn man auf einem Auswertungs Termin, der automatisch generiert wurde durch eine VSE oder VBE, auf "Duplizieren" klickt, dann dupliziert er ihn zwar intern, löscht ihn aber anschließend gleich wieder, weil die VSE die komplette Serie neu generiert. Zu analysieren, wann so eine Aktion da überhaupt Sinn macht. 
+#.  Was Lino noch braucht und nicht hat, ist die Möglichkeit, 
+    dass beim Klicken auf den Button einer Aktion vor deren Abschicken 
+    noch ein Dialogfenster mit Optionen kommt. 
+    Zum Beispiel eine Aktion `cal.Event.defer`, 
+    die vorher noch wissen muss, um wieviele Tage (Wochen, Monate) oder 
+    bis zu welchem Datum sie verschieben soll.
 
-#.  Bei Klick auf owner_type kommt "ContentType has no method get_row_permission".
+#.  `on_user_change` and `after_ui_save` are two answers 
+    for the same question. Can replace `after_ui_save` 
+    with `on_user_change`, but `on_user_change` should receive 
+    the complete `ar`, not only the web request.
+
+#.  Tabelle der Benutzerprofile (und generell alle choicelists) in 
+    eine lokale Konfigurationsdatei auslagern und dadurch auch für 
+    Nichtprogrammierer bearbeitbar machen.
+
+#.  Wenn man auf einem Auswertungs Termin, der automatisch generiert wurde 
+    durch eine VSE oder VBE, auf "Duplizieren" klickt, dann dupliziert Lino 
+    ihn zwar intern, löscht ihn aber anschließend gleich wieder, weil die 
+    VSE die komplette Serie neu generiert. Zu analysieren, wann so eine 
+    Aktion da überhaupt Sinn macht. 
 
 #.  Die Kolonne "Workflows" wird beim Ausdruck nicht korrekt gerendert. 
     Weil das Feld :meth:`action_buttons <lino.core.actors.Actor.action_buttons>` 

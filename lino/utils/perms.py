@@ -79,14 +79,21 @@ class UserGroups(choicelists.ChoiceList):
 
 
 class UserProfile(choicelists.Choice):
-    def __init__(self,level='',**kw):
+    def __init__(self,level='',*args,**kw):
     #~ def __init__(self,**kw):
         self.level = level
-        for g in UserGroups.items():
-            #~ if g.value == 'system':
-                #~ attname = 'level'
-            #~ else:
-            attname = g.value + '_level'
+        groups = UserGroups.items()
+        if len(args) > len(groups):
+            raise Exception("More arguments than user groups.")
+        for i,levelname in enumerate(args):
+            attname = groups[i].value + '_level'
+            if levelname:
+                v = getattr(UserLevels,levelname)
+            else:
+                v = ''
+            setattr(self,attname,v)
+        for i,grp in enumerate(groups):
+            attname = grp.value + '_level'
             setattr(self,attname,kw.pop(attname,''))
         if kw:
             raise Exception("UserProfile got unexpected arguments %s" % kw)
@@ -98,7 +105,7 @@ class UserProfiles(choicelists.ChoiceList):
     """
     item_class = UserProfile
     label = _("User Profile")
-    show_values = False
+    show_values = True
     max_length = 20
     
 add = UserProfiles.add_item
