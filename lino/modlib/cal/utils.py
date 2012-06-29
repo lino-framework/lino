@@ -182,7 +182,7 @@ class EventState(ChoiceList):
           1:EventState.scheduled,
           2:EventState.confirmed,
           3:EventState.cancelled,
-          4:EventState.rescheduled,
+          #~ 4:EventState.rescheduled,
           5:EventState.absent,
         }
         return cv[status_id]
