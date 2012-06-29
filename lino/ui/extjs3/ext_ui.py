@@ -1248,10 +1248,6 @@ tinymce.init({
             
         try:
             elem.save(**kw2save)
-            m = getattr(elem,"after_ui_save",None)
-            #~ m = getattr(instance,"_changed",None)
-            if m is not None:
-                m(ar)
             
         #~ except Exception,e:
         except IntegrityError,e:
@@ -1266,6 +1262,12 @@ tinymce.init({
                 #~ record_id=elem.pk)
         else:
             kw.update(message=_("%s has been saved.") % obj2unicode(elem))
+            
+        m = getattr(elem,"after_ui_save",None)
+        #~ m = getattr(instance,"_changed",None)
+        if m is not None:
+            kw = m(ar,**kw)
+            
         if restful:
             # restful mode (used only for Ext.ensible) needs list_fields, not detail_fields
             kw.update(rows=[rh.store.row2dict(ar,elem,rh.store.list_fields)])

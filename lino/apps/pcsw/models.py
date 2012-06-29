@@ -1414,13 +1414,13 @@ class UsersWithClients(dd.VirtualTable):
             #~ # flt = Q(integ_level__isnull=False,is_superuser=False)
             #~ flt = Q(integ_level__gt='',level__gte=UserLevels.expert)
         #~ qs = User.objects.exclude(integ_level='')
-        #~ profiles = [p.value for p in UserProfiles.items() if p.integ_level]
-        profiles = [p for p in UserProfiles.items()]
-        #~ logger.info('20120629 %r', [repr(x) for x in profiles])
+        profiles = [p for p in UserProfiles.items() if p.integ_level]
+        #~ profiles = [p for p in UserProfiles.items()]
+        #~ logger.info('20120629 %r', [x.value for x in profiles])
         #~ logger.info('20120629 %r', profiles)
         #~ (UserProfiles.melanie,UserProfiles.hubert,UserProfiles.admin)
-        #~ qs = User.objects.filter(profile__in=profiles)
-        qs = User.objects.all()
+        qs = User.objects.filter(profile__in=profiles)
+        #~ qs = User.objects.all()
         if ar.get_user().profile.level < UserLevels.admin:
             #~ qs = qs.exclude(level__gte=UserLevels.manager)
             qs = qs.exclude(profile__gte=UserLevels.admin)

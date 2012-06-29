@@ -394,12 +394,13 @@ Vielleicht mit Fußnoten?
         #~ super(Budget,self).save(*args,**kw)
         
     #~ def _changed(self,ar):
-    def after_ui_save(self,ar):
+    def after_ui_save(self,ar,**kw):
         """
         Called from `extjs3.ext_ui.ExtUI.form2obj_and_save`
         after successful save()
         """
         self.fill_defaults(ar)
+        return kw
         
     def fill_defaults(self,ar):
         #~ if self.closed:

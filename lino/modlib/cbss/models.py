@@ -226,7 +226,7 @@ add('50',_("Errors"),'errors') # there's a ticket, but no usable result. cannot 
     
 
 
-class ExecuteRequest(dd.RowAction):
+class unused_ExecuteRequest(dd.RowAction):
     """
     This defines the "Execute" button on a 
     :class:`CBSSRequest` or
@@ -384,7 +384,7 @@ The raw XML response received.
         verbose_name=_("Info messages"),
         editable=False,blank=True)
 
-    send_action = ExecuteRequest()
+    #~ send_action = ExecuteRequest()
     print_action = mixins.DirectPrintAction(required=dict(states=['ok','warnings']))
     
     
@@ -450,6 +450,21 @@ The raw XML response received.
         
     def __unicode__(self):
         return u"%s #%s" % (self._meta.verbose_name,self.pk)
+        
+    def after_ui_save(self,ar,**kw):
+        self.execute_request(ar)
+        if self.status == RequestStates.failed:
+            kw.update(message=self.debug_messages)
+            kw.update(alert=True)
+        elif self.status == RequestStates.warnings:
+            kw.update(message=self.info_messages)
+            #~ kw.update(message=_("Got valid response, but it contains warnings."))
+            kw.update(alert=True)
+        #~ kw.update(refresh=True)
+        #~ return ar.success_response(**kw)
+        return kw
+
+        
 
     def execute_request(self,ar=None,now=None,simulate_response=None,environment=None):
         """
@@ -1699,7 +1714,7 @@ def site_setup(self):
     Adds a new tab "CBSS" to the Detail of `contacts.Persons`.
     """
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
-    cbss_identify_person cbss_manage_access  cbss_retrieve_ti_groups
+    cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
     cbss_summary
     """,MODULE_NAME,required=dict(user_groups=['cbss'])
     )
