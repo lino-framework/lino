@@ -31,20 +31,21 @@ sah bis gestern so aus::
               )
     ...
     
-Und dann einen solchen add()-Block für jedes Profil.
+Und dann einen solchen add()-Block für jedes der bisher 5 Profile.
 Jetzt ist sie deutlich leserlicher::
 
   UserProfiles.clear()
-  add = UserProfiles.add_item
-
+  def add(value,label,*args):
+      UserProfiles.add_item(value,label,None,*args)
   """
-      #     label                            name       level    integ       cbss    newcomers debts
-      ====  ================================ ========== ======== =========== ======= ========= ========"""
-  add('10', _("Integration Agent"),          'hubert',  'user',  'user',    'user')
-  add('11', _("Integration Agent (Senior)"), 'melanie', 'user',  'manager', 'user')
-  add('20', _("Newcomers consultant"),       'caroline','user',  '',        'user',  'user')
-  add('30', _("Debts consultant"),           'kerstin', 'user',  '',        '',      '',       'user')
-  add('90', _("Administrator"),              'admin',   'admin', 'admin',   'admin', 'admin',  'admin')
+      #     label                            level    integ       cbss    newcomers debts
+      ====  ================================ ======== =========== ======= ========= ========"""
+  add('10', _("Integration Agent"),          'user',  'user',    'user')
+  add('11', _("Integration Agent (Senior)"), 'user',  'manager', 'user')
+  add('20', _("Newcomers consultant"),       'user',  '',        'user',  'user')
+  add('30', _("Debts consultant"),           'user',  '',        '',      '',       'user')
+  add('90', _("Administrator"),              'admin', 'admin',   'admin', 'admin',  'admin')
+
 
 N.B. Andererseits ist es denkbar, dass wir diese Tabelle irgendwann mal durch 
 eine lokale Konfigurationsdatei auch für Nichtprogrammierer bearbeitbar machen.

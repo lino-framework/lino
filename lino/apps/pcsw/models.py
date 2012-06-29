@@ -2178,7 +2178,6 @@ UserProfiles.clear()
 
 def add(value,label,*args):
     UserProfiles.add_item(value,label,None,*args)
-
 """
     #     label                            level    integ       cbss    newcomers debts
     ====  ================================ ======== =========== ======= ========= ========"""
