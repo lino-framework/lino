@@ -1935,13 +1935,12 @@ tinymce.init({
         
         details = set()
         for a in actors_list:
-            dtl = a.get_detail()
-            if dtl is not None:
-                details.add(dtl)
-                
-        for dtl in details:
-            dh = dtl.get_layout_handle(self)
-            for ln in self.js_render_detail_FormPanel(dh,user):
+            for fl in (a.detail_layout, a.insert_layout):
+                if fl is not None:
+                    details.add(fl)
+        for fl in details:
+            lh = fl.get_layout_handle(self)
+            for ln in self.js_render_FormPanel(lh,user):
                 f.write(ln + '\n')
         
         for rpt in actors_list:
@@ -2326,12 +2325,13 @@ tinymce.init({
         return on_render
         
       
-    def js_render_detail_FormPanel(self,dh,user):
+    def js_render_FormPanel(self,dh,user):
         
         tbl = dh.layout._table
         
         yield ""
-        yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % tbl
+        #~ yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % tbl
+        yield "%s = Ext.extend(Lino.FormPanel,{" % dh.layout.formpanel_name()
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
         if settings.LINO.is_installed('contenttypes') and issubclass(tbl,table.Table):
@@ -2350,10 +2350,12 @@ tinymce.init({
             yield "    this.onRender = function(ct, position) {"
             for ln in on_render:
                 yield "      " + ln
-            yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % tbl
+            #~ yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % tbl
+            yield "      %s.superclass.onRender.call(this, ct, position);" % dh.layout.formpanel_name()
             yield "    }"
 
-        yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % tbl
+        #~ yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % tbl
+        yield "    %s.superclass.initComponent.call(this);" % dh.layout.formpanel_name()
         
         if tbl.active_fields:
             yield '    // active_fields:'
@@ -2373,10 +2375,12 @@ tinymce.init({
         rpt = rh.actor
         yield ""
         #~ yield "// js_render_detail_action_FormPanel %s" % action
-        dtl = rpt.detail_layout
+        dtl = action.get_window_layout()
+        #~ dtl = rpt.detail_layout
         if dtl is None:
             raise Exception("action %s on table %r == %r without detail?" % (action,action.actor,rpt))
-        yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._table)
+        #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._table)
+        yield "Lino.%sPanel = Ext.extend(%s,{" % (action,dtl.formpanel_name())
         yield "  empty_title: %s," % py2js(action.get_button_label())
         #~ if not isinstance(action,actions.InsertRow):
         if action.hide_navigator:
@@ -2384,7 +2388,6 @@ tinymce.init({
             
         if rh.actor.params_panel_hidden:
             yield "  params_panel_hidden: true,"
-            
 
         yield "  ls_bbar_actions: %s," % py2js([
             rh.ui.a2btn(a) for a in rpt.get_actions(action) 
@@ -2394,11 +2397,9 @@ tinymce.init({
             yield "  action_name: %s," % py2js(action.url_action_name)
         #~ yield "  active_fields: %s," % py2js(rpt.active_fields)
         yield "  initComponent : function() {"
-        #~ a = rpt.get_action('detail')
         a = rpt.detail_action
         if a:
             yield "    this.ls_detail_handler = Lino.%s;" % a
-        #~ a = rpt.get_action('insert')
         a = rpt.insert_action
         if a:
             yield "    this.ls_insert_handler = Lino.%s;" % a

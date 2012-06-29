@@ -369,6 +369,9 @@ class ShowDetailAction(RowAction):
     url_action_name = 'detail'
     label = _("Detail")
     
+    def get_window_layout(self):
+        return self.actor.detail_layout
+        
     #~ def get_elem_title(self,elem):
         #~ return _("%s (Detail)")  % unicode(elem)
         
@@ -397,6 +400,9 @@ class InsertRow(TableAction):
     
     def get_action_title(self,rr):
         return _("Insert into %s") % force_unicode(rr.get_title())
+        
+    def get_window_layout(self):
+        return self.actor.insert_layout or self.actor.detail_layout
 
 
 

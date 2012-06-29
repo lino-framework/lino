@@ -50,18 +50,24 @@ N.B. Andererseits ist es denkbar, dass wir diese Tabelle irgendwann mal durch
 eine lokale Konfigurationsdatei auch für Nichtprogrammierer bearbeitbar machen.
 
 
-insert_layout and insert_template
-=================================
+Operation "insert_layout"
+=========================
 
 Vor dem Release sollte eines noch gemacht werden: ein 
 benutzerfreundlicheres Interface zum Ausführen einer Tx25.
 Erstens soll nach "Save" automatisch "Ausführen" gemacht werden. 
 Dieser Button kann komplett weg.
+Das war leicht,
+:meth:`after_ui_save <lino.core.modeltools.Model.after_ui_save>`
+funktioniert jetzt etwas anders.
 
-Aber darüpber hinaus ist es doch recht störend, dass vor dem Einfügen das 
-Fenster schon den ganzen Bildschirm einnimmt. 
-Es enthält schon das Slave-Grid für das spätere 
-Resultat, das aber hier fehl am Platze ist.
+Aber darüber hinaus ist es doch recht störend, 
+dass das Insert-Fenster (also das, was nach Klick auf den 
+"Neu"-Button angezeigt wird) 
+den ganzen Bildschirm einnimmt. 
+Es enthält außerdem schon das Slave-Grid 
+für das spätere Resultat, 
+das aber hier zwar leer, aber gänzlich fehl am Platze ist.
 
 Man müsste (optional) ein separates Layout für das 
 Insert-FormPanel definieren können.
@@ -190,4 +196,9 @@ instanzieren und öffnen::
   });
   
 
-
+So, ich glaube jetzt habe ich genug erzählt und mich eingearbeitet, 
+jetzt kann es losgehen mit der Operation. 
+Lino geht in Narkose.
+Vorher noch ein 
+:checkin:`1ca37bb7a526` (bisher noch kein Schnitt, alles 
+lediglich Vorbereitung).

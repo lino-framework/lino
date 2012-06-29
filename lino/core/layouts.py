@@ -441,10 +441,16 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             
 class DetailLayout(BaseLayout):
     join_str = "\n"
+    
+    def formpanel_name(self):
+        return "Lino.%s.DetailFormPanel" % self._table
 
-class InsertLayout(BaseLayout):
+class InsertLayout(DetailLayout):
     join_str = "\n"
 
+    def formpanel_name(self):
+        return "Lino.%s.InsertFormPanel" % self._table
+        
 class ListLayout(BaseLayout):
     join_str = " "
 

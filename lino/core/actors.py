@@ -154,6 +154,18 @@ class ActorMetaClass(type):
             assert dl._table is None
             dl._table = cls
             cls.detail_layout = dl
+            
+        # the same for insert_template and insert_layout:
+        dt = classDict.get('insert_template',None)
+        dl = classDict.get('insert_layout',None)
+        if dt is not None:
+            if dl is not None:
+                raise Exception("%r has both insert_template and insert_layout" % cls)
+            cls.insert_layout = layouts.InsertLayout(cls,dt)
+        elif dl is not None:
+            assert dl._table is None
+            dl._table = cls
+            cls.insert_layout = dl
                 
         if classname not in (
             'Table','AbstractTable','VirtualTable',
@@ -377,6 +389,9 @@ class Actor(object):
     detail_layout = None
     detail_template = None
     
+    insert_layout = None
+    insert_template = None
+    
     
     detail_action = None
     insert_action = None
@@ -516,7 +531,6 @@ class Actor(object):
         Also fill _actions_list.
         """
         if cls.detail_layout or cls.detail_template:
-        #~ if self._lino_detail:
             cls.detail_action = actions.ShowDetailAction()
         if cls.detail_action and cls.editable:
             cls.insert_action = actions.InsertRow()
@@ -525,7 +539,6 @@ class Actor(object):
             if cls.detail_action:
                 if not cls.hide_top_toolbar:
                     cls.create_action = actions.SubmitInsert(sort_index=1)
-          
         if cls.editable and not cls.hide_top_toolbar:
             cls.delete_action = actions.DeleteSelected(sort_index=5)
             
@@ -637,48 +650,51 @@ class Actor(object):
     def override_column_headers(self,ar):
         return {}
         
-    @classmethod
-    def get_detail(self):
-        return self.detail_layout
+    #~ @classmethod
+    #~ def get_detail(self):
+        #~ return self.detail_layout
 
         
     @classmethod
-    def set_detail(self,dtl=None,**kw):
-        """
-        Update the `detail_layout` of this actor, or 
-        create a new layout if there wasn't one before.
+    def set_detail(self,*args,**kw):
+        return self.set_form_layout(layouts.DetailLayout,'detail_layout',*args,**kw)
         
-        The first argument can be either a string or a 
-          :class:`lino.core.layouts.DetailLayout` instance.
+    @classmethod
+    def set_insert_layout(self,*args,**kw):
+        return self.set_form_layout(layouts.InsertLayout,'insert_layout',*args,**kw)
+        
+    @classmethod
+    def set_form_layout(self,klass,attname,dtl=None,**kw):
+        """
+        Update the `detail_layout` or `insert_layout` 
+        of this actor, or create a new layout if there wasn't one before.
+        
+        The first argument can be either a string or a
+        :class:`DetailLayout <lino.core.layouts.DetailLayout>` or
+        :class:`InsertLayout <lino.core.layouts.InsertLayout>` instance.
         If it is a string, it will replace the currently defined 'main' panel.
         With the special case that if the current main panel is horizontal 
-        (i.e. the detail_layout has tabs) it replaces the 'general' tab.
+        (i.e. the layout has tabs) it replaces the 'general' tab.
         """
         if dtl is not None:
             if isinstance(dtl,basestring):
-                if self.detail_layout is None:
-                    self.detail_layout = layouts.DetailLayout(self,dtl,**kw)
+                if getattr(self,attname) is None:
+                    setattr(self,attname,klass(self,dtl,**kw))
                     return
-                if '\n' in dtl and not '\n' in self.detail_layout.main:
+                if '\n' in dtl and not '\n' in getattr(self,attname).main:
                     name = 'general'
                 else:
                     name = 'main'
                 if kw.has_key(name):
-                    raise Exception("""\
-set_detail() got two definitions for %r.""" % name)
+                    raise Exception("set_detail() got two definitions for %r." % name)
                 kw[name] = dtl
-                #~ kw['main'] = dtl
             else:
-                assert isintance(dtl,layouts.DetailLayout)
+                assert isintance(dtl,klass)
                 assert dtl._table is None
                 dtl._table = self
-                self.detail_layout = dtl
+                setattr(self,attname,dtl)
         if kw:
-            self.detail_layout.update(**kw)
-            #~ if hasattr(self.detail_layout,'_extjs3_handle'):
-                #~ raise Exception("Cannot set_detail after UI has been set up.")
-            #~ for k,v in kw.items():
-                #~ setattr(self.detail_layout,k,v)
+            getattr(self,attname).update(**kw)
                 
     @classmethod
     def add_detail_panel(self,*args,**kw):

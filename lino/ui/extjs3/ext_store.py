@@ -884,12 +884,15 @@ class Store:
         if not issubclass(rh.actor,frames.Frame):
             self.collect_fields(self.list_fields,rh.get_list_layout())
             
-        dtl = rh.actor.get_detail()
-        if dtl:
-            dh = dtl.get_layout_handle(rh.ui)
-            #~ self.collect_fields(self.detail_fields,*dh.lh_list)
+        form = rh.actor.detail_layout
+        if form:
+            dh = form.get_layout_handle(rh.ui)
             self.collect_fields(self.detail_fields,dh)
-        
+            
+        form = rh.actor.insert_layout
+        if form:
+            dh = form.get_layout_handle(rh.ui)
+            self.collect_fields(self.detail_fields,dh)
         
         if issubclass(rh.actor,table.Table):
             self.pk_index = 0

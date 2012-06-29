@@ -300,6 +300,12 @@ class Users(dd.Table):
     #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
     column_names = 'username profile first_name last_name *'
     detail_layout = UserDetail()
+    insert_template = """
+    username email 
+    first_name last_name
+    partner
+    language profile     
+    """
 
     #~ @classmethod
     #~ def get_row_permission(cls,action,user,obj):
