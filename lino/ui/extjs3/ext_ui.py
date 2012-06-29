@@ -1263,10 +1263,10 @@ tinymce.init({
         else:
             kw.update(message=_("%s has been saved.") % obj2unicode(elem))
             
-        m = getattr(elem,"after_ui_save",None)
-        #~ m = getattr(instance,"_changed",None)
-        if m is not None:
-            kw = m(ar,**kw)
+        kw = elem.after_ui_save(ar,**kw)
+        #~ m = getattr(elem,"after_ui_save",None)
+        #~ if m is not None:
+            #~ kw = m(ar,**kw)
             
         if restful:
             # restful mode (used only for Ext.ensible) needs list_fields, not detail_fields
@@ -1285,33 +1285,6 @@ tinymce.init({
             #~ rows=[elem])
 
 
-        
-    def unused_detail_config_view(self,request,app_label=None,actor=None):
-        #~ rpt = actors.get_actor2(app_label,actor)
-        rpt = self.requested_report(request,app_label,actor)
-        #~ if not rpt.can_config.passes(request.user):
-            #~ msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
-            #~ return http.HttpResponseForbidden(msg)
-        if request.method == 'GET':
-            #~ raise Exception("TODO: convert after 20111127")
-            tab = int(request.GET.get('tab','0'))
-            return json_response_kw(success=True,tab=tab,desc=rpt.get_detail().layouts[tab]._desc)
-        if request.method == 'PUT':
-            PUT = http.QueryDict(request.raw_post_data)
-            tab = int(PUT.get('tab',0))
-            desc = PUT.get('desc',None)
-            if desc is None:
-                return json_response_kw(success=False,message="desc is mandatory")
-            rh = rpt.get_handle(self)
-            try:
-                rh.update_detail(tab,desc)
-            except Exception,e:
-                logger.exception(e)
-                return json_response_kw(success=False,
-                    message=unicode(e),alert=True)
-            self.build_site_cache(True)
-            return json_response_kw(success=True)
-            #detail_layout
       
     def grid_config_view(self,request,app_label=None,actor=None):
         rpt = actors.get_actor2(app_label,actor)
@@ -2358,29 +2331,16 @@ tinymce.init({
         tbl = dh.layout._table
         
         yield ""
-        #~ yield "// js_render_detail_FormPanel"
-        #~ yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % full_model_name(dh.detail.model)
         yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % tbl
-        
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
-        #~ yield "  content_type: %s," % py2js(dh.content_type)
-        
         if settings.LINO.is_installed('contenttypes') and issubclass(tbl,table.Table):
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
-
-        
         yield "  initComponent : function() {"
-            
-            
-        #~ yield "    var ww = this.containing_window;"
         yield "    var containing_panel = this;"
-        
         for ln in jsgen.declare_vars(dh.main):
             yield "    " + ln
         yield "    this.items = %s;" % dh.main.as_ext()
-        
-
         yield "    this.before_row_edit = function(record) {"
         for ln in ext_elems.before_row_edit(dh.main):
             yield "      " + ln
@@ -2390,31 +2350,20 @@ tinymce.init({
             yield "    this.onRender = function(ct, position) {"
             for ln in on_render:
                 yield "      " + ln
-            #~ yield "    Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % full_model_name(dh.detail.model)
             yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % tbl
             yield "    }"
 
-
-        #~ 20111125 see ext_elems.py too
-        #~ if self.main.listeners:
-            #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
-        #~ yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
-        #~ yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % full_model_name(dh.detail.model)
         yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % tbl
         
         if tbl.active_fields:
             yield '    // active_fields:'
-            #~ dh = dtl.get_handle(rh.ui)
             for name in tbl.active_fields:
                 e = dh.main.find_by_name(name)
-                #~ yield '    %s.on("change",function(){this.save()},this);' % py2js(e)
-                #~ yield '    %s.on("check",function(){this.save()},this);' % py2js(e)
                 yield '    %s.on("%s",function(){this.save()},this);' % (py2js(e),e.active_change_event)
                 """
                 Seems that checkboxes don't emit a change event when they are changed.
                 http://www.sencha.com/forum/showthread.php?43350-2.1-gt-2.2-OPEN-Checkbox-missing-the-change-event
                 """
-                
         yield "  }"
         yield "});"
         yield ""
@@ -2424,9 +2373,7 @@ tinymce.init({
         rpt = rh.actor
         yield ""
         #~ yield "// js_render_detail_action_FormPanel %s" % action
-        #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,full_model_name(rpt.model))
-        #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,action.actor)
-        dtl = rpt.get_detail()
+        dtl = rpt.detail_layout
         if dtl is None:
             raise Exception("action %s on table %r == %r without detail?" % (action,action.actor,rpt))
         yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._table)

@@ -314,16 +314,6 @@ class unused_ListLayoutHandle(LayoutHandle):
 
 
 
-#~ LAYOUTS = []
-
-#~ class LayoutMeta(type):
-  
-    #~ def __new__(meta, classname, bases, classDict):
-        #~ cls = type.__new__(meta, classname, bases, classDict)
-        #~ LAYOUTS.append(cls)
-        #~ return cls
-
-
 class BaseLayout(object):
   
     _handle_class = LayoutHandle
@@ -450,30 +440,15 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         
             
 class DetailLayout(BaseLayout):
-    #~ show_labels = True
     join_str = "\n"
-    #~ only_for_report = None
-    #~ tabbed = False
-    #~ def __init__(self,*args,**kw):
-        #~ BaseLayout.__init(self,*args,**kw)
-        #~ if self.main
-        
-    #~ def __init__(self,*args,**kw):
-        #~ super(DetailLayout,self).__init__(None,*args,**kw)
-        
-        
-        
+
+class InsertLayout(BaseLayout):
+    join_str = "\n"
 
 class ListLayout(BaseLayout):
-    #~ _handle_class = ListLayoutHandle
-    #~ show_labels = False
     join_str = " "
-    
-    
 
 class ParamsLayout(BaseLayout):
-    #~ label_align = LABEL_ALIGN_TOP
-    #~ show_labels = True
     join_str = " "
 
     def get_data_elem(self,name): 

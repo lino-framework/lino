@@ -107,7 +107,7 @@ def analyze_models():
 
     for model in models.get_models():
         model._lino_ddh = DisableDeleteHandler(model)
-        for k in ('get_row_permission',):
+        for k in ('get_row_permission','after_ui_save'):
             if not hasattr(model,k):
                 #~ setattr(model,k,getattr(dd.Model,k))
                 setattr(model,k,dd.Model.__dict__[k])

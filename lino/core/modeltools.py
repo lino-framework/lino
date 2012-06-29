@@ -59,6 +59,19 @@ class Model(models.Model):
     class Meta:
         abstract = True
         
+    def after_ui_save(self,ar,**kw):
+        """
+        This is called after a PUT or POST on this row, 
+        and after the row has been saved.
+        It must return (and may modify) the `kw` which will become 
+        the ajax response to the save() call.
+        Used by :class:`lino.modlib.debts.models.Budget` 
+        to fill default entries to a new Budget,
+        or by :class:`lino.modlib.cbss.models.CBSSRequest` 
+        to execute the request.
+        """
+        return kw
+        
     def get_row_permission(self,user,state,action):
         """
         Returns True or False whether this row instance 

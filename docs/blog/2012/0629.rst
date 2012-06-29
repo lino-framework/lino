@@ -37,8 +37,7 @@ Jetzt ist sie deutlich leserlicher::
   UserProfiles.clear()
   def add(value,label,*args):
       UserProfiles.add_item(value,label,None,*args)
-  """
-      #     label                            level    integ       cbss    newcomers debts
+  """ #     label                            level    integ       cbss    newcomers debts
       ====  ================================ ======== =========== ======= ========= ========"""
   add('10', _("Integration Agent"),          'user',  'user',    'user')
   add('11', _("Integration Agent (Senior)"), 'user',  'manager', 'user')
@@ -49,3 +48,146 @@ Jetzt ist sie deutlich leserlicher::
 
 N.B. Andererseits ist es denkbar, dass wir diese Tabelle irgendwann mal durch 
 eine lokale Konfigurationsdatei auch für Nichtprogrammierer bearbeitbar machen.
+
+
+insert_layout and insert_template
+=================================
+
+Vor dem Release sollte eines noch gemacht werden: ein 
+benutzerfreundlicheres Interface zum Ausführen einer Tx25.
+Erstens soll nach "Save" automatisch "Ausführen" gemacht werden. 
+Dieser Button kann komplett weg.
+
+Aber darüpber hinaus ist es doch recht störend, dass vor dem Einfügen das 
+Fenster schon den ganzen Bildschirm einnimmt. 
+Es enthält schon das Slave-Grid für das spätere 
+Resultat, das aber hier fehl am Platze ist.
+
+Man müsste (optional) ein separates Layout für das 
+Insert-FormPanel definieren können.
+
+Nehmen wir das Modell :class:`User <lino.modlib.users.models.User>` 
+als Beispiel.
+Dieses Modell hat (in lino.apps.pcsw) 
+zwei Tabellen, die darauf basieren:
+:class:`Users <lino.modlib.users.Users>` 
+und :class:`UsersByNewcomer <lino.modlib.newcomers.UsersByNewcomer>`.
+Für `User` sind es nur zwei, aber viele Modelle haben 
+deutlich mehr Tabellen.
+
+Hier die beiden Tabellen-Ansichten dieser Tabellen:
+
+.. image:: /screenshots/users.Users.grid.jpg
+  :scale: 50
+  
+.. image:: /screenshots/newcomers.UsersByNewcomer.grid.jpg
+  :scale: 50
+
+- http://127.0.0.1:8000/api/users/Users
+- http://127.0.0.1:8000/api/newcomers/UsersByNewcomer?pv=&pv=
+
+Und hier die beiden Detail-Ansichten 
+(in beiden Tabellen kann man ja auf einer Zeile doppelklicken, 
+um das Detail-Fenster zu öffnen, und für beide Tabellen wird 
+da die gleiche Layout-Definition verwendet. Allerdings hat 
+`UsersByNewcomer` noch Parameter, 
+die auch in der Detail-Ansicht vorhanden sind).
+
+.. image:: /screenshots/users.User.detail.jpg
+  :scale: 50
+
+.. image:: /screenshots/newcomers.UsersByNewcomer.detail.jpg
+  :scale: 50
+ 
+- http://127.0.0.1:8000/api/newcomers/UsersByNewcomer/2?an=detail&pv=&pv=
+- http://127.0.0.1:8000/api/users/Users?an=detail
+ 
+Ein Insert-Fenster gibt es in der `UsersByNewcomer` nicht, 
+weil man dort nicht einfügen darf. 
+Deshalb also nur *ein* Insert-Fenster:
+
+.. image:: /screenshots/users.User.insert.jpg
+  :scale: 50
+
+- http://127.0.0.1:8000/api/users/Users?an=insert
+
+Jetzt schauen wir uns mal den generierten 
+JS-Code an.
+Erstens steht irgendwo die Definition eines 
+`Lino.users.Users.FormPanel`::
+
+  Lino.users.Users.FormPanel = Ext.extend(Lino.FormPanel,{
+    layout: 'fit',
+    auto_save: true,
+    content_type: 5,
+    initComponent : function() {
+      var containing_panel = this;
+      var username2197 = new Ext.form.TextField({ ... });
+      var id2198 = { ... };
+      var profile2199 = new Lino.ChoicesFieldElement({ ... });
+      var box1_1_panel2200 = new Ext.Panel({ ... });
+      ...
+      var general_panel2226 = new Ext.Panel({ ... });
+      var cal_RemindersByUser_grid2249 = new Lino.cal.RemindersByUser.GridPanel({ ... });
+      var newcomers_CompetencesByUser_grid2254 = new Lino.newcomers.CompetencesByUser.GridPanel({ ... });
+      var main_panel2255 = new Ext.TabPanel({ ... });
+      this.items = main_panel2255;
+      this.before_row_edit = function(record) {
+        cal_RemindersByUser_grid2249.on_master_changed();
+        newcomers_CompetencesByUser_grid2254.on_master_changed();
+      }
+      Lino.users.Users.FormPanel.superclass.initComponent.call(this);
+    }
+  });
+
+
+Diese Definition wird für alle abgeleiteten Tabellen benutzt, 
+und zwar normalerweise zweimal pro Tabelle: einmal für Detail 
+und einmal für Insert::
+
+  Lino.users.Users.insert_actionPanel = Ext.extend(Lino.users.Users.FormPanel,{
+    ...
+  });
+
+  Lino.users.Users.detail_actionPanel = Ext.extend(Lino.users.Users.FormPanel,{
+    ...
+  });
+  
+  Lino.newcomers.UsersByNewcomer.detail_actionPanel = Ext.extend(Lino.users.Users.FormPanel,{
+    ... 
+  });
+  
+In unserem Beispiel sind es nicht vier sondern drei, 
+weil man wie gesagt in `UsersByNewcomer` nicht einfügen darf.
+Sonst gäbe es auch noch 
+eine `Lino.newcomers.UsersByNewcomer.insert_actionPanel`.
+
+Später kommen dann noch die eigentlichen Aktionen, die diese Fenster 
+instanzieren und öffnen::
+  
+  Lino.users.Users.insert_action = new Lino.WindowAction({  },function(){
+    var p = {};
+    p.hide_top_toolbar = true;
+    p.is_main_window = true;
+    return new Lino.users.Users.insert_actionPanel(p);
+  });
+
+  Lino.users.Users.detail_action = new Lino.WindowAction({  },function(){
+    var p = {};
+    p.is_main_window = true;
+    return new Lino.users.Users.detail_actionPanel(p);
+  });
+  
+  Lino.newcomers.UsersByNewcomer.detail_action = new Lino.WindowAction({  },function(){
+    var p = {};
+    p.is_main_window = true;
+    var for_client4609 = new Lino.TwinCombo(... });
+    var since4610 = new Lino.DateField({ ... });
+    var main_panel4611 = new Ext.form.FormPanel({...});
+    p.params_panel = main_panel4611;
+    p.params_panel.fields = [ for_client4609, since4610 ];
+    return new Lino.newcomers.UsersByNewcomer.detail_actionPanel(p);
+  });
+  
+
+

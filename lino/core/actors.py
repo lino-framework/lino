@@ -376,6 +376,8 @@ class Actor(object):
     
     detail_layout = None
     detail_template = None
+    
+    
     detail_action = None
     insert_action = None
     update_action = None
@@ -643,9 +645,11 @@ class Actor(object):
     @classmethod
     def set_detail(self,dtl=None,**kw):
         """
-        Update the `detail_layout` of this actor. 
-        Create a new layout if there wasn't one before.
-        The first argument can be either a string or a DetailLayout instance.
+        Update the `detail_layout` of this actor, or 
+        create a new layout if there wasn't one before.
+        
+        The first argument can be either a string or a 
+          :class:`lino.core.layouts.DetailLayout` instance.
         If it is a string, it will replace the currently defined 'main' panel.
         With the special case that if the current main panel is horizontal 
         (i.e. the detail_layout has tabs) it replaces the 'general' tab.
@@ -665,6 +669,7 @@ set_detail() got two definitions for %r.""" % name)
                 kw[name] = dtl
                 #~ kw['main'] = dtl
             else:
+                assert isintance(dtl,layouts.DetailLayout)
                 assert dtl._table is None
                 dtl._table = self
                 self.detail_layout = dtl
@@ -747,10 +752,6 @@ set_detail() got two definitions for %r.""" % name)
             #~ self.actor_id,self.default_action)
         return True
         
-    #~ @classmethod
-    #~ def setup_actions(self):
-        #~ if self.detail_layout:
-            #~ self.detail_action = self.add_action(actions.ShowDetailAction())
         
     @classmethod
     def get_url_action(self,name):

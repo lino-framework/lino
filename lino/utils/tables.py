@@ -479,21 +479,7 @@ class TableHandle(base.Handle):
     def get_slaves(self):
         return [ sl.get_handle(self.ui) for sl in self.actor._slaves ]
             
-    #~ def get_action(self,name):
-        #~ return self.actor.get_action(name)
-    #~ def get_actions(self,*args,**kw):
-        #~ return self.actor.get_actions(*args,**kw)
         
-    def update_detail(self,tab,desc):
-        #~ raise Exception("Not yet fully converted to Lino 1.3.0")
-        old_dl = self.actor.get_detail().layouts[tab]
-        dtl = DetailLayout(desc,old_dl.filename,old_dl.cd)
-        self.actor.get_detail().layouts[tab] = dtl
-        #~ dh = dtl.get_handle(self.ui)
-        #~ self._layouts[tab+1] = LayoutHandle(self.ui,self.actor.model,dtl)
-        self.ui.setup_handle(self)
-        #~ self.actor.save_config()
-        dtl.save_config()
 
 class Group(object):
   
