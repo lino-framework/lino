@@ -2180,7 +2180,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       ]);
           
     }
-    if (config.content_type) {
+    if (config.content_type && this.action_name != 'insert') {
       config.bbar = config.bbar.concat([
         '->',
         { text: '[$_("Help Text Editor")]',
@@ -3845,6 +3845,7 @@ Lino.TwinCombo = Ext.extend(Lino.RemoteComboFieldElement,{
   });
 //~ Lino.TwinCombo.prototype.initComponent = Ext.form.TwinTriggerField.prototype.initComponent;
 Lino.TwinCombo.prototype.getTrigger = Ext.form.TwinTriggerField.prototype.getTrigger;
+Lino.TwinCombo.prototype.getOuterSize = Ext.form.TwinTriggerField.prototype.getOuterSize;
 Lino.TwinCombo.prototype.initTrigger = Ext.form.TwinTriggerField.prototype.initTrigger;
 Lino.TwinCombo.prototype.onTrigger1Click = Ext.form.ComboBox.prototype.onTriggerClick;
 //~ Lino.TwinCombo.prototype.onTrigger2Click = function() {
@@ -3852,6 +3853,8 @@ Lino.TwinCombo.prototype.onTrigger1Click = Ext.form.ComboBox.prototype.onTrigger
 //~ };
 
 
+Lino.chars2width = function(cols) {  return cols * 8; }
+Lino.rows2height = function(cols) {  return cols * 20; }
 
 Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
   displayField: 'value', 

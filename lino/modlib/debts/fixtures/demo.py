@@ -26,7 +26,7 @@ from lino.utils import i2d
 from lino.utils.instantiator import Instantiator
 from lino.core.modeltools import resolve_model
 from lino.utils.babel import babel_values
-from lino.utils.perms import UserProfiles
+#~ from lino.utils.perms import UserProfiles
 
 from lino.modlib.debts.models import AccountType
 
@@ -38,7 +38,7 @@ def objects():
     User = resolve_model('users.User')
     kerstin = User(username="kerstin",
         first_name="Kerstin",last_name=u"Küpper",
-        profile=UserProfiles.kerstin)
+        profile='300') # UserProfiles.kerstin)
         #~ level=UserLevel.user,
         #~ debts_level=UserLevel.user)
     yield kerstin

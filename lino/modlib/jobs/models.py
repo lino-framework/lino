@@ -1004,8 +1004,9 @@ class Candidature(SectorFunction):
                   #~ "Cannot satisfy a Candidature with a Contract on another Person")
         #~ super(Candidature,self).clean(*args,**kw)
     
-    def on_create(self,req):
+    def on_create(self,ar):
         self.date_submitted = datetime.date.today()
+        super(Candidature,self).on_create(ar)
     
 
 class Candidatures(dd.Table):
@@ -1214,6 +1215,9 @@ COLS = 8
 
 
 class JobsOverview(mixins.EmptyTable):
+    """
+    """
+    required = dict(user_groups=['integ'])
     label = _("Contracts Situation") 
     #~ detail_layout = JobsOverviewDetail()
     detail_template = "body"

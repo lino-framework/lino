@@ -149,12 +149,13 @@ class HtmlRenderer(object):
         #~ a = ar.actor.get_action('insert')
         a = ar.actor.insert_action
         if a is not None:
-            elem = ar.create_instance()
-            after_show.update(data_record=elem2rec_insert(ar,ar.ah,elem))
-            #~ after_show.update(record_id=-99999)
-            # see tickets/56
-            s += self.action_href_js(a,after_show,_("New"))
-            after_show = ar.get_status(self)
+            if a.get_action_permission(ar.get_user(),None,None):
+                elem = ar.create_instance()
+                after_show.update(data_record=elem2rec_insert(ar,ar.ah,elem))
+                #~ after_show.update(record_id=-99999)
+                # see tickets/56
+                s += self.action_href_js(a,after_show,_("New"))
+                after_show = ar.get_status(self)
         n = ar.get_total_count()
         if n > 0:
             obj = ar.data_iterator[n-1]
@@ -312,7 +313,7 @@ class ExtRenderer(HtmlRenderer):
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
               
                 #~ url = self.get_detail_url(v.instance,an='detail')
-                url = self.get_detail_url(v.instance)
+                #~ url = self.get_detail_url(v.instance)
             else:
                 # a separator
                 #~ return dict(text=v.label)
@@ -876,8 +877,6 @@ class ExtUI(base.UI):
 
   
     def get_urls(self):
-        #~ urlpatterns = patterns('',
-            #~ (r'^$', self.index_view))
         rx = '^'
         urlpatterns = patterns('',
             (rx+'$', self.index_view),
@@ -1149,7 +1148,9 @@ tinymce.init({
         jsgen.set_for_user(request.user)
         for ln in jsgen.declare_vars(win):
             yield ln
-        yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
+        #~ yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
+        yield '  Lino.viewport = new Ext.Viewport({layout:"fit",items:%s});' % py2js(win)
+        yield '  Lino.viewport.render("body");'
             
         #~ yield '  Ext.QuickTips.init();'
         
@@ -1200,6 +1201,7 @@ tinymce.init({
         #~ if settings.LINO.index_view_action:
             #~ kw.update(on_ready=self.ext_renderer.action_call(
               #~ settings.LINO.index_view_action))
+        #~ logger.info("20120701 index_view() %s %r",request.user, request.user.profile)
         #~ logger.info("20120222 index_view() uses %r",settings.LINO.modules.lino.Home)
         kw.update(on_ready=self.ext_renderer.action_call(
           settings.LINO.modules.lino.Home.default_action))
@@ -1369,7 +1371,7 @@ tinymce.init({
             #~ return self.form2obj_and_save(request,rh,request.POST,instance,True,ar)
             
         if request.method == 'GET':
-            
+            #~ print 20120630, 'api_list_view'
             fmt = request.GET.get(
                 ext_requests.URL_PARAM_FORMAT,
                 ar.action.default_format)
@@ -1397,6 +1399,8 @@ tinymce.init({
                 after_show = ar.get_status(self)
                 if isinstance(ar.action,actions.InsertRow):
                     elem = ar.create_instance()
+                    #~ print 20120630
+                    #~ print elem.national_id
                     rec = elem2rec_insert(ar,rh,elem)
                     after_show.update(data_record=rec)
 
@@ -2334,6 +2338,8 @@ tinymce.init({
         yield "%s = Ext.extend(Lino.FormPanel,{" % dh.layout.formpanel_name()
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
+        if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
+            yield "  autoHeight: true,"
         if settings.LINO.is_installed('contenttypes') and issubclass(tbl,table.Table):
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
         yield "  initComponent : function() {"
@@ -2512,58 +2518,6 @@ tinymce.init({
         yield "  Lino.run_row_action(rp,action,%s,pk,%s);" % (
             py2js(url),py2js(action.url_action_name))
         yield "};"
-        
-        
-    def old_js_render_window_action(self,rh,action,user):
-      
-        rpt = rh.actor
-        
-        if isinstance(action,actions.ShowDetailAction):
-            s = "Lino.%sPanel" % action
-        elif isinstance(action,actions.InsertRow): # also printable.InitiateListing
-            s = "Lino.%sPanel" % action
-        elif isinstance(action,actions.GridEdit):
-            s = "Lino.%s.GridPanel" % rpt
-        elif isinstance(action,actions.Calendar):
-            s = "Lino.CalendarPanel"
-        else:
-            return 
-        if action.actor is None:
-            raise Exception("20120524 %s %s actor is None" % (rh.actor,action))
-        if rpt.parameters:
-            params = rh.params_layout.main
-            #~ assert params.__class__.__name__ == 'ParameterPanel'
-        else:
-            params = None
-        mainConfig = dict()
-        windowConfig = dict()
-        
-        ws = action.actor.window_size
-        if ws:
-            windowConfig.update(
-                width=ws[0],
-                height=ws[1],
-                maximized=False,
-                draggable=True, 
-                maximizable=True, 
-                modal=True)
-        
-        if action.hide_top_toolbar:
-            mainConfig.update(hide_top_toolbar=True)
-        if action.actor.hide_window_title:
-            mainConfig.update(hide_window_title=True)
-        if params:
-            paramsPanelFields = dict()
-            for ln in jsgen.declare_vars(params):
-                yield ln
-            mainConfig.update(params_panel=js_code(str(params)))
-            yield "Lino.%s = new Lino.WindowAction(%s,%s,%s,%s);" % (
-                action,s,py2js(windowConfig),
-                py2js(mainConfig),
-                py2js([e for e in params.walk() if isinstance(e,ext_elems.FieldElement)]))
-        else:
-            yield "Lino.%s = new Lino.WindowAction(%s,%s,%s);" % (
-                action,s,py2js(windowConfig),py2js(mainConfig))
 
 
     def js_render_window_action(self,rh,action,user):
@@ -2572,7 +2526,7 @@ tinymce.init({
         
         if isinstance(action,actions.ShowDetailAction):
             mainPanelClass = "Lino.%sPanel" % action
-        elif isinstance(action,actions.InsertRow): # also printable.InitiateListing
+        elif isinstance(action,actions.InsertRow): 
             mainPanelClass = "Lino.%sPanel" % action
         elif isinstance(action,actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
@@ -2587,17 +2541,28 @@ tinymce.init({
             #~ assert params.__class__.__name__ == 'ParameterPanel'
         else:
             params = None
+            
         windowConfig = dict()
-        
-        ws = action.actor.window_size
-        if ws:
-            windowConfig.update(
-                width=ws[0],
-                height=ws[1],
-                maximized=False,
-                draggable=True, 
-                maximizable=True, 
-                modal=True)
+        #~ ws = action.actor.window_size
+        wl = action.get_window_layout()
+        if wl is not None:
+            ws = wl.window_size
+            if ws:
+                windowConfig.update(
+                    #~ width=ws[0],
+                    width=js_code('Lino.chars2width(%d)' % ws[0]),
+                    maximized=False,
+                    draggable=True, 
+                    maximizable=True, 
+                    modal=True)
+                if ws[1] == 'auto':
+                    windowConfig.update(autoHeight=True)
+                elif isinstance(ws[1],int):
+                    #~ windowConfig.update(height=ws[1])
+                    windowConfig.update(height=js_code('Lino.rows2height(%d)' % ws[1]))
+                else:
+                    raise ValueError("height")
+                #~ print 20120629, action, windowConfig
                 
         #~ yield "var fn = function() {" 
         #~ yield "};" 
@@ -2621,54 +2586,6 @@ tinymce.init({
         yield "  return rv;"
         yield "});" 
         
-    def old_js_render_window_action(self,rh,action,user):
-      
-        rpt = rh.actor
-        
-        if isinstance(action,actions.ShowDetailAction):
-            s = "Lino.%sPanel" % action
-        elif isinstance(action,actions.InsertRow): # also printable.InitiateListing
-            s = "Lino.%sPanel" % action
-        elif isinstance(action,actions.GridEdit):
-            s = "Lino.%s.GridPanel" % rpt
-        elif isinstance(action,actions.Calendar):
-            s = "Lino.CalendarPanel"
-        else:
-            return 
-        if action.actor is None:
-            raise Exception("20120524 %s %s actor is None" % (rh.actor,action))
-        if rpt.parameters:
-            params = rh.params_layout.main
-            #~ assert params.__class__.__name__ == 'ParameterPanel'
-        else:
-            params = None
-        yield "Lino.%s_window = null;" % action
-        yield "Lino.%s = function(mainConfig,status) { " % action
-        yield "  if(!mainConfig) mainConfig = {};"
-        yield "  if (Lino.%s_window == null) {" % action
-        if action.hide_top_toolbar:
-            yield "    mainConfig.hide_top_toolbar = true;" 
-        if action.actor.hide_window_title:
-            yield "    mainConfig.hide_window_title = true;" 
-        yield "    mainConfig.is_main_window = true;" # workaround for problem 20111206
-        if params:
-            for ln in jsgen.declare_vars(params):
-                yield '    '  + ln
-            yield "    mainConfig.params_panel = %s;" % params
-            yield "    mainConfig.params_panel.fields = %s;" % py2js(
-              [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
-            
-        yield "    Lino.%s_window = new Lino.Window({" % action
-        if action.actor.window_size:
-            yield "      width: %d, height: %d, " % action.actor.window_size
-            yield "      maximized: false, draggable: true, maximizable: true, modal: true,"
-        yield "      main_item: new %s(mainConfig)" % s
-        yield "    });"
-        yield "  }"
-        yield "  Lino.open_window(Lino.%s_window,status);" % action
-        yield "};"
-            
-
     
     def table2xhtml(self,ar,max_row_count=300):
         doc = xghtml.Document(force_unicode(ar.get_title()))

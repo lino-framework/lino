@@ -50,14 +50,58 @@ def is_valid_email(s):
         
 class Model(models.Model):
     """
-    Thin wrapper around Django's Model base class. 
-    This adds some Lino specific features. 
-    Lino can also handle simple Django Models,
-    but it is recommended to use 
-    this and not Django's Model class as base for your models.
+    Adds Lino specific features to Django's Model base class. 
+    If a Lino application uses simple Django Models,
+    the attributes and methods defined here are added to these 
+    modules during :func:`lino.core.kernel.analyze_models`.
     """
     class Meta:
         abstract = True
+        
+    allow_cascaded_delete = False
+    """
+    Lino, like Django, by default forbids to delete an object that is 
+    referenced by other objects.
+
+    Set this to `True` on models whose objects should get automatically 
+    deleted if a related object gets deleted. 
+    Example: Lino should not refuse to delete 
+    a Mail just because it has some Recipient. 
+    When deleting a Mail, Lino should also delete its Recipients.
+    That's why :class:`lino.modlib.outbox.models.Recipient` 
+    has ``allow_cascaded_delete = True``.
+    
+    Other examples of such models are 
+    :class:`lino.modlib.cv.models.PersonProperty`,
+    :class:`lino.modlib.cv.models.LanguageKnowledge`,
+    :class:`lino.modlib.debts.models.Actor`,
+    :class:`lino.modlib.debts.models.Entry`,
+    ...
+    
+    """
+    
+    workflow_state_field = None
+    """
+    If this is set on a Model, then it will be used as default 
+    value for :attr:`lino.core.table.Table.workflow_state_field` 
+    on all tables based on this Model.
+    """
+    
+    workflow_owner_field = None
+    """
+    If this is set on a Model, then it will be used as default 
+    value for :attr:`lino.core.table.Table.workflow_owner_field` 
+    on all tables based on this Model.
+    """
+    
+        
+    def on_create(self,ar):
+        """
+        Used e.g. by modlib.notes.Note.on_create().
+        on_create gets the action request as argument.
+        Didn't yet find out how to do that using a standard Django signal.
+        """
+        pass
         
     def after_ui_save(self,ar,**kw):
         """

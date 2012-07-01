@@ -11,6 +11,15 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This defines the :class:`Actor` class, the base class 
+for 
+:class:`dd.Table <lino.core.table.Table>`,
+:class:`dd.VirtualTable <lino.utils.tables.VirtualTable>`
+and :class:`dd.Frame <lino.core.frames.Frame>`.
+
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -159,6 +168,8 @@ class ActorMetaClass(type):
         dt = classDict.get('insert_template',None)
         dl = classDict.get('insert_layout',None)
         if dt is not None:
+            if not isinstance(dt,basestring):
+                raise ValueError("%r : insert_template %r is not a string" % (cls,dt))
             if dl is not None:
                 raise Exception("%r has both insert_template and insert_layout" % cls)
             cls.insert_layout = layouts.InsertLayout(cls,dt)
@@ -217,6 +228,13 @@ class Actor(object):
     default_elem_action_name =  'detail'
     
     #~ hide_top_toolbar = False
+    
+    debug_permissions = False
+    """
+    When this is `True`, Lino logs an ``info`` message each time a permission handler 
+    for an action on this actor is called. 
+    Not to be used on a production site but useful for debugging.
+    """
     
     required = dict()
     create_required = dict()
@@ -534,11 +552,10 @@ class Actor(object):
             cls.detail_action = actions.ShowDetailAction()
         if cls.detail_action and cls.editable:
             cls.insert_action = actions.InsertRow()
+            if not cls.hide_top_toolbar:
+                cls.create_action = actions.SubmitInsert(sort_index=1)
         if cls.editable:
             cls.update_action = actions.SubmitDetail(sort_index=1)
-            if cls.detail_action:
-                if not cls.hide_top_toolbar:
-                    cls.create_action = actions.SubmitInsert(sort_index=1)
         if cls.editable and not cls.hide_top_toolbar:
             cls.delete_action = actions.DeleteSelected(sort_index=5)
             
@@ -657,16 +674,8 @@ class Actor(object):
         
     @classmethod
     def set_detail(self,*args,**kw):
-        return self.set_form_layout(layouts.DetailLayout,'detail_layout',*args,**kw)
-        
-    @classmethod
-    def set_insert_layout(self,*args,**kw):
-        return self.set_form_layout(layouts.InsertLayout,'insert_layout',*args,**kw)
-        
-    @classmethod
-    def set_form_layout(self,klass,attname,dtl=None,**kw):
         """
-        Update the `detail_layout` or `insert_layout` 
+        Update the :attr:`detail_layout` 
         of this actor, or create a new layout if there wasn't one before.
         
         The first argument can be either a string or a
@@ -676,6 +685,19 @@ class Actor(object):
         With the special case that if the current main panel is horizontal 
         (i.e. the layout has tabs) it replaces the 'general' tab.
         """
+        return self.set_form_layout(layouts.DetailLayout,'detail_layout',*args,**kw)
+        
+    @classmethod
+    def set_insert_layout(self,*args,**kw):
+        """
+        Update the :attr:`insert_layout` 
+        of this actor, or create a new layout if there wasn't one before.
+        Otherwise same usage as :meth:`set_detail`.
+        """
+        return self.set_form_layout(layouts.InsertLayout,'insert_layout',*args,**kw)
+        
+    @classmethod
+    def set_form_layout(self,klass,attname,dtl=None,**kw):
         if dtl is not None:
             if isinstance(dtl,basestring):
                 if getattr(self,attname) is None:

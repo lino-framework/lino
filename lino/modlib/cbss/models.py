@@ -285,7 +285,7 @@ class Sectors(dd.Table):
     model = Sector
     #~ read_permission = perms.Required(user_groups = ['cbss'])
     #~ required_user_groups = ['cbss']
-    required = dict(user_groups = ['cbss'])
+    required = dict(user_groups='cbss')
     column_names = 'code subcode abbr name *'
     order_by = ['code','subcode']
     
@@ -312,7 +312,7 @@ class Purpose(babel.BabelNamed):
 
 class Purposes(dd.Table):
     model = Purpose
-    required = dict(user_groups = ['cbss'])
+    required = dict(user_groups='cbss')
     #~ required_user_groups = ['cbss']
     column_names = 'sector_code code name *'
     order_by = ['sector_code','code']
@@ -585,6 +585,7 @@ class CBSSRequestDetail(dd.DetailLayout):
     id person user environment sent status ticket
     """
     
+    
     #~ response = "response_xml\nlogged_messages"
     
     def setup_handle(self,lh):
@@ -594,7 +595,8 @@ class CBSSRequestDetail(dd.DetailLayout):
         lh.technical.label = _("Technical")
         #~ lh.technical.required_user_level = UserLevels.manager
         #~ lh.technical.read_permission = perms.Required(user_groups = ['cbss'])
-        lh.technical.required = dict(user_level='manager')
+        #~ lh.technical.required = dict(user_level='admin')
+        lh.technical.required.update(user_level='admin')
 
         #~ lh.response.label = _("Response")
         #~ lh.log.label = _("Log")
@@ -921,15 +923,9 @@ class NewStyleRequest(CBSSRequest):
 
 
 
-
-
-
-
-
-
 class SSIN(dd.Model):
     """
-    Abstract base for models that have a field `national_id` and a method 
+    Abstract base for Requests that have a field `national_id` and a method 
     :meth:`get_ssin`.
     """
     class Meta:
@@ -940,6 +936,34 @@ class SSIN(dd.Model):
         ,validators=[pcsw.niss_validator]
         )
         
+    def get_ssin(self):
+        national_id = self.national_id.replace('=','')
+        national_id = national_id.replace(' ','')
+        national_id = national_id.replace('-','')
+        return national_id
+        
+    #~ def save(self,*args,**kw):
+        #~ if self.person_id and not self.last_name: 
+            #~ self.fill_from_person(self.person)
+        #~ super(SSIN,self).save(*args,**kw)
+        
+    def on_create(self,ar):
+        #~ print '20120629 SSIN.on_create', obj2str(self), ar
+        #~ super(ContractBase,self).on_create(request)
+        self.person_changed(ar)
+        super(SSIN,self).on_create(ar)
+        
+    def person_changed(self,ar):
+        #~ print '20120603 person_changed'
+        if self.person_id: 
+            self.fill_from_person(self.person)
+        
+    def fill_from_person(self,person):
+        self.national_id = person.national_id
+        
+        
+class WithPerson(SSIN):
+  
     birth_date = dd.IncompleteDateField(
         blank=True,
         verbose_name=_("Birth date"))
@@ -963,26 +987,6 @@ The number of the ID card used to authenticate the person.""")
       verbose_name=_('Last name'))
     """Last name (family name)."""
     
-    def get_ssin(self):
-        national_id = self.national_id.replace('=','')
-        national_id = national_id.replace(' ','')
-        national_id = national_id.replace('-','')
-        return national_id
-        
-    def save(self,*args,**kw):
-        if self.person_id and not self.last_name: 
-            self.fill_from_person(self.person)
-        super(SSIN,self).save(*args,**kw)
-        
-    def on_create(self,ar):
-        #~ print '20120527 SSIN.on_create', obj2str(self), ar
-        #~ super(ContractBase,self).on_create(request)
-        self.person_changed(ar)
-        
-    def person_changed(self,ar):
-        #~ print '20120603 person_changed', obj2str(self)
-        if self.person_id: 
-            self.fill_from_person(self.person)
         
     def fill_from_person(self,person):
         self.national_id = person.national_id
@@ -993,7 +997,7 @@ The number of the ID card used to authenticate the person.""")
         #~ print '20120603 fill_from_person', self.national_id
                 
         
-class IdentifyPersonRequest(SSDNRequest,SSIN):
+class IdentifyPersonRequest(SSDNRequest,WithPerson):
     """
     A request to the IdentifyPerson service.
     
@@ -1061,9 +1065,9 @@ class IdentifyPersonRequest(SSDNRequest,SSIN):
       
       
         
-    def on_create(self,ar):
-        mixins.AutoUser.on_create(self,ar)
-        SSIN.on_create(self,ar)
+    #~ def on_create(self,ar):
+        #~ mixins.AutoUser.on_create(self,ar)
+        #~ SSIN.on_create(self,ar)
 
     def get_result_table(self,ar):
         return ar.spawn(IdentifyPersonResult,master_instance=self)
@@ -1184,6 +1188,7 @@ class IdentifyPersonRequestDetail(CBSSRequestDetail):
     
 
 class CBSSRequests(dd.Table):
+    #~ create_required = dict(user_level='user')
     pass
     #~ @classmethod
     #~ def get_row_permission(cls,action,user,row):
@@ -1196,20 +1201,11 @@ class CBSSRequests(dd.Table):
     
 class IdentifyPersonRequests(CBSSRequests):
     #~ window_size = (500,400)
-    required = dict(user_groups = ['cbss'])
+    required = dict(user_groups='cbss')
     #~ required_user_groups = ['cbss']
     model = IdentifyPersonRequest
     active_fields = ['person']
     detail_layout = IdentifyPersonRequestDetail()
-    #~ detail_template = """
-    #~ id project 
-    #~ national_id
-    #~ first_name middle_name last_name
-    #~ birth_date tolerance  gender 
-    #~ sent status 
-    #~ request_xml
-    #~ response_xml
-    #~ """
     
     @dd.constant()
     def spacer(self,ui):  return '<br/>'
@@ -1353,7 +1349,7 @@ add('1',_("Primary"),'PRIMARY')
 add('2',_("Secondary"),'SECONDARY')
 add('3',_("All"),'ALL')
 
-class ManageAccessRequest(SSDNRequest,SSIN):
+class ManageAccessRequest(SSDNRequest,WithPerson):
     """
     A request to the ManageAccess service.
     
@@ -1430,11 +1426,9 @@ for register/unregister it is mandatory.""")
             Q(sector_code=sector.code)|Q(sector_code__isnull=True)).order_by('code')
 
 
-    def on_create(self,ar):
-        #~ self.query_register = QueryRegister.ALL
-        #~ self.action = ManageAction.LIST
-        mixins.AutoUser.on_create(self,ar)
-        SSIN.on_create(self,ar)
+    #~ def on_create(self,ar):
+        #~ mixins.AutoUser.on_create(self,ar)
+        #~ SSIN.on_create(self,ar)
 
     def build_request(self):
         """Construct and return the root element of the (inner) service request."""
@@ -1537,7 +1531,7 @@ class ManageAccessRequests(CBSSRequests):
     #~ window_size = (500,400)
     model = ManageAccessRequest
     detail_layout = ManageAccessRequestDetail()
-    required = dict(user_groups = ['cbss'])
+    required = dict(user_groups='cbss')
     #~ required_user_groups = ['cbss']
     active_fields = ['person']
     
@@ -1716,7 +1710,7 @@ def site_setup(self):
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
     cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
     cbss_summary
-    """,MODULE_NAME,required=dict(user_groups=['cbss'])
+    """,MODULE_NAME,required=dict(user_groups='cbss')
     )
     #~ required_user_groups=['cbss']
     #~ cbss.IdentifyRequestsByPerson
@@ -1731,7 +1725,7 @@ def site_setup(self):
     self.modules.lino.SiteConfigs.add_detail_tab('cbss',"""
     cbss_org_unit sector ssdn_user_id ssdn_email
     cbss_http_username cbss_http_password
-    """,MODULE_NAME,required=dict(user_groups=['cbss']))
+    """,MODULE_NAME,required=dict(user_groups='cbss'))
     
     
     

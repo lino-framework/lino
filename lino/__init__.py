@@ -1015,8 +1015,9 @@ class Lino(object):
         from django.utils.translation import ugettext_lazy as _
         m = main.add_menu("master",_("Master"))
         self.on_each_app('setup_master_menu',ui,user,m)
-        m = main.add_menu("my",_("My menu"))
-        self.on_each_app('setup_my_menu',ui,user,m)
+        if not user.profile.readonly:
+            m = main.add_menu("my",_("My menu"))
+            self.on_each_app('setup_my_menu',ui,user,m)
         self.on_each_app('setup_main_menu',ui,user,main)
         m = main.add_menu("config",_("Configure"))
         self.on_each_app('setup_config_menu',ui,user,m)

@@ -362,6 +362,13 @@ Django creates copies of them when inheriting models.
         #~ return _(bc)
         
     @classmethod
+    def get_by_name(self,name):
+        if name:
+            return getattr(self,name,None)
+        else:
+            return self.blank_item
+            
+    @classmethod
     def get_by_value(self,value):
         """
         Return the item (a :class:`Choice` instance) 
@@ -370,7 +377,9 @@ Django creates copies of them when inheriting models.
         if not isinstance(value,basestring):
             raise Exception("%r is not a string" % value)
         #~ print "get_text_for_value"
-        return self.items_dict.get(value,None)
+        #~ return self.items_dict.get(value,None)
+        #~ return self.items_dict.get(value)
+        return self.items_dict[value]
       
     @classmethod
     def items(self):

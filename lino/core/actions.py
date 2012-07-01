@@ -147,6 +147,7 @@ class Action(object):
     #~ Whether this action is ruled by workflows.
     #~ """
     actor = None
+    #~ debug = False
     name = None
     url_action_name = None
     #~ inheritable = True
@@ -356,9 +357,15 @@ class GridEdit(TableAction):
         self.label = actor.label
         super(GridEdit,self).attach_to_actor(actor,name)
 
+    def get_window_layout(self):
+        #~ return self.actor.list_layout
+        return None
 
 
 class ShowDetailAction(RowAction):
+    """
+    An action that opens the Detail Window of its actor.
+    """
     opens_a_window = True
     show_in_workflow = False
     
@@ -442,6 +449,9 @@ class Calendar(Action):
     url_action_name = 'grid' # because...
     default_format = 'html'
     
+    def get_window_layout(self):
+        return None
+        
     #~ def __init__(self,*args,**kw):
         #~ self.actor = actor # actor who offers this action
         #~ super(Calendar,self).__init__(*args,**kw)
@@ -491,7 +501,7 @@ class SubmitDetail(RowAction):
     
 class SubmitInsert(SubmitDetail):
     #~ url_action_name = 'SubmitInsert'
-    label = _("Save")
+    label = _("Create")
     #~ label = _("Insert")
     callable_from = (InsertRow,)
 
@@ -632,6 +642,7 @@ class ActionRequest(object):
             kw.update(self.known_values)
         #~ print "20120527 create_instance", self, kw
         obj = self.actor.create_instance(self,**kw)
+        #~ print 20120630, self.actor, 'actions.TableRequest.create_instance'
         #~ if self.known_values is not None:
             #~ self.ah.store.form2obj(self.known_values,obj,True)
             #~ for k,v in self.known_values:

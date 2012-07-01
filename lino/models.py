@@ -433,6 +433,7 @@ class Inspector(dd.VirtualTable):
     
     """
     label = _("Inspector")
+    required = dict(user_level='admin')
     column_names = "i_name i_type i_value"
     parameters = dict(
       inspected=models.CharField(_("Inspected object"),max_length=100,blank=True),
@@ -528,27 +529,31 @@ class Inspector(dd.VirtualTable):
         return cgi.escape(str(type(obj.value)))
         
 
-#~ class AboutDetail(dd.DetailLayout):
-  
-    #~ main = """
-    #~ versions:40x5 startup_time:30
-    #~ lino.Models:70x10
-    #~ """
+class AboutDetail(dd.DetailLayout):
+    """
+    The Detail Layout for :class:`About`
+    """
+    window_size = (60,30)
+    main = """
+    versions:40x5 startup_time:30
+    lino.Models:70x10
+    """
 
 
 class About(mixins.EmptyTable):
     """
-    A modal window displaying information about this Lino server.
+    A modal window displaying information about this server.
     """
     label = _("About") 
     #~ hide_window_title = True
     hide_top_toolbar = True
-    window_size = (700,400)
-    #~ detail_layout = AboutDetail()
-    detail_template = """
-    versions:40x5 startup_time:30
-    lino.Models:70x10
-    """
+    #~ window_size = (700,400)
+    #~ detail_layout = AboutDetail(window_size = (700,400))
+    detail_layout = AboutDetail()
+    #~ detail_template = """
+    #~ versions:40x5 startup_time:30
+    #~ lino.Models:70x10
+    #~ """
     
     #~ versions = dd.Constant(lino.welcome_html())
     
@@ -583,6 +588,7 @@ class Home(mixins.EmptyTable):
     This is the "home page" or "welcome screen", the window to be displayed 
     when no other window is opened.
     """
+    #~ debug_actions = True
     label = _("Home") 
     hide_window_title = True
     hide_top_toolbar = True

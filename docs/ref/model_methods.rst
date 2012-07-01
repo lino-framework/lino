@@ -1,18 +1,8 @@
 Special model attributes and methods
 ------------------------------------
 
-.. modattr:: workflow_state_field
+See :class:`lino.core.modeltools.Model`
 
-  If this is set on a Model, then it will be used as default 
-  value for :attr:`lino.core.table.Table.workflow_state_field` 
-  on all tables based on this Model.
-  
-.. modattr:: workflow_owner_field
-
-  If this is set on a Model, then it will be used as default 
-  value for :attr:`lino.core.table.Table.workflow_owner_field` 
-  on all tables based on this Model.
-  
 .. modattr:: _lino_preferred_width
 
     Used to set an explicit default `preferred_width` (in characters) 
@@ -24,27 +14,6 @@ Special model attributes and methods
 
     Used internally. Lino chooses during the kernel startup, for each model, 
     one of the discovered Table subclasses as the "default table".
-
-.. modattr:: allow_cascaded_delete
-
-    Lino, like Django, by default forbids to delete an object that is 
-    referenced by other objects.
-
-    Set this to `True` on models whose objects should get automatically 
-    deleted if a related object gets deleted. 
-    Example: Lino should not refuse to delete 
-    a Mail just because it has some Recipient. 
-    When deleting a Mail, Lino should also delete its Recipients.
-    That's why :class:`lino.modlib.outbox.models.Recipient` 
-    has ``allow_cascaded_delete = True``.
-    
-    Other examples of such models are 
-    :class:`lino.modlib.cv.models.PersonProperty`,
-    :class:`lino.modlib.cv.models.LanguageKnowledge`,
-    :class:`lino.modlib.debts.models.Actor`,
-    :class:`lino.modlib.debts.models.Entry`,
-    ...
-    
 
     
     
@@ -73,7 +42,6 @@ Special model attributes and methods
           if self.is_imported:
               return _("Cannot delete imported records.")
             
-    
         
 .. modattr:: disable_editing
 

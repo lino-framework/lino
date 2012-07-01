@@ -55,14 +55,16 @@ def objects():
     User = resolve_model('users.User')
     yield User(username="caroline",
         first_name="Caroline",last_name="Carnol",
-        profile=UserProfiles.caroline)
+        profile='200') # UserProfiles.caroline)
         #~ newcomers_level=UserLevel.user)
     #~ yield I(username="doris",first_name="Doris",last_name="Decker",profile='caroline')
     
     FACULTIES = Cycler(Faculty.objects.all())
     #~ USERS = Cycler(User.objects.filter(is_spis=True))
     #~ USERS = Cycler(User.objects.filter(integ_level__isnull=False))
-    USERS = Cycler(User.objects.filter(profile__in=(UserProfiles.melanie,UserProfiles.hubert)))
+    profiles = [p for p in UserProfiles.items() if p.integ_level]
+    #~ USERS = Cycler(User.objects.filter(profile__in=(UserProfiles.melanie,UserProfiles.hubert)))
+    USERS = Cycler(User.objects.filter(profile__in=profiles))
     for i in range(7):
         yield Competence(user=USERS.pop(),faculty=FACULTIES.pop())
     for p in Person.objects.filter(newcomer=True):

@@ -120,20 +120,28 @@ def niss_validator(national_id):
     if not national_id:
         return
     if len(national_id) != 13:
-        raise ValidationError(_('Invalid Belgian NISS %r (length)') % national_id)
+        raise ValidationError(
+          force_unicode(_('Invalid Belgian SSIN %s : ') % national_id) 
+          + force_unicode(_('An SSIN has always 13 positions'))
+          ) 
     xtest = national_id[:6] + national_id[7:10]
     if national_id[6] == "=":
         xtest = "2" + xtest
     try:
         xtest = int(xtest)
-    except ValueError:
-        raise ValidationError(_('Invalid Belgian NISS %r (value)') % national_id)
+    except ValueError,e:
+        raise ValidationError(
+          _('Invalid Belgian SSIN %s : ') % national_id + str(e)
+          )
     xtest = abs((xtest-97*(int(xtest/97)))-97)
     if xtest == 0:
         xtest = 97
-    if xtest != int(national_id[11:13]):
-        raise ValidationError(_("Invalid Belgian NISS %r (checkdigit)") 
-            % national_id)
+    found = int(national_id[11:13])
+    if xtest != found:
+        raise ValidationError(
+            force_unicode(_("Invalid Belgian SSIN %s :") % national_id)
+            + _("Check digit should be %d (found %d)") % (xtest, found)
+            )
 
 
 
@@ -1071,6 +1079,7 @@ class AllPersons(Partners):
     """
     List of all Persons.
     """
+    #~ debug_actions = True
     model = settings.LINO.person_model
     detail_layout = PersonDetail()
     order_by = "last_name first_name id".split()
@@ -1201,7 +1210,7 @@ class MyPersons(Persons):
     beiden Daten coached_from und coached_until ausgefüllt sein.
     
     """
-    required=dict(user_groups = ['integ'])
+    required = dict(user_groups = ['integ'])
     #~ required_user_groups = ['integ']
     #~ required_user_level = UserLevels.manager
     
@@ -1272,7 +1281,7 @@ class ClientsTest(Persons):
     """
     Table of persons whose data seems unlogical or inconsistent.
     """
-    required=dict(user_level = 'manager')
+    required = dict(user_level='manager')
     #~ required_user_level = UserLevels.manager
     label = _("Data Test Clients")
     parameters = dict(
@@ -1337,7 +1346,7 @@ class UsersWithClients(dd.VirtualTable):
     New implementation of persons_by_user
     A customized overview report.
     """
-    required_user_groups = ['integ','newcomers']
+    required = dict(user_groups='integ newcomers')
     #~ label = _("Overview Clients By User")
     label = _("Users with their Clients")
     #~ column_defaults = dict(width=8)
@@ -1469,7 +1478,7 @@ class PersonGroups(dd.Table):
     model = PersonGroup
     #~ required_user_groups = ['integ']
     #~ required_user_level = UserLevels.manager
-    required = dict(user_level='manager',user_groups=['integ'])
+    required = dict(user_level='manager',user_groups='integ')
 
     order_by = ["ref_name"]
 
@@ -1493,7 +1502,7 @@ class Activity(dd.Model):
 class Activities(dd.Table):
     model = Activity
     #~ required_user_level = UserLevels.manager
-    required=dict(user_level='manager')
+    required = dict(user_level='manager')
     #~ label = _('Activities')
 
 #~ class ActivitiesByPerson(Activities):
@@ -1544,13 +1553,13 @@ class Exclusion(dd.Model):
         return s
 
 class Exclusions(dd.Table):
-    required=dict(user_level='manager')
+    required = dict(user_level='manager')
     #~ required_user_level = UserLevels.manager
     model = Exclusion
     #~ label = _('Exclusions')
     
 class ExclusionsByPerson(Exclusions):
-    required=dict(user_groups=['integ'])
+    required = dict(user_groups='integ')
     #~ required_user_level = None
     master_key = 'person'
     column_names = 'excluded_from excluded_until type remark'
@@ -1612,7 +1621,7 @@ class AidTypes(dd.Table):
     model = AidType
     column_names = 'name *'
     #~ required_user_level = UserLevels.manager
-    required=dict(user_level='manager')
+    required = dict(user_level='manager')
 
 
 
@@ -1670,7 +1679,7 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
         #~ rpt.add_action(DirectPrintAction('suchliste',_("Print"),'suchliste'))
         
 class PersonSearches(dd.Table):
-    required_user_groups = ['integ']
+    required = dict(user_groups='integ')
     model = PersonSearch
     detail_template = """
     id:8 title 
@@ -1706,19 +1715,19 @@ class UnwantedSkill(properties.PropertyOccurence):
     
     
 class LanguageKnowledgesBySearch(dd.Table):
-    required_user_groups = ['integ']
+    required = dict(user_groups='integ')
     label = _("Wanted language knowledges")
     master_key = 'search'
     model = WantedLanguageKnowledge
 
 class WantedPropsBySearch(dd.Table):
-    required_user_groups = ['integ']
+    required = dict(user_groups = 'integ')
     label = _("Wanted properties")
     master_key = 'search'
     model = WantedSkill
 
 class UnwantedPropsBySearch(dd.Table):
-    required_user_groups = ['integ']
+    required = dict(user_groups = 'integ')
     label = _("Unwanted properties")
     master_key = 'search'
     model = UnwantedSkill
@@ -1735,7 +1744,7 @@ class PersonsBySearch(AllPersons):
     :meth:`get_request_queryset`
     """
   
-    required_user_groups = ['integ']
+    required = dict(user_groups = 'integ')
     #~ model = Person
     master = PersonSearch
     #~ 20110822 app_label = 'pcsw'
@@ -1827,7 +1836,7 @@ class PersonsBySearch(AllPersons):
 
 
 class OverlappingContracts(dd.Table):
-    required_user_groups = ['integ']
+    required = dict(user_groups = 'integ')
     model = Person
     use_as_default_table = False
     #~ base_queryset = only_coached_persons(Person.objects.all())
@@ -2161,15 +2170,16 @@ def site_setup(site):
         
     #~ site.modules.courses.CourseProviders.set_detail(CourseProviderDetail())
 
-from lino.utils.perms import UserLevels, UserGroups, UserProfiles
+#~ from lino.utils.perms import UserLevels, UserGroups, UserProfiles
 #~ from lino.utils import perms 
-add = UserGroups.add_item
+add = dd.UserGroups.add_item
+add('office',_("Calendar & Outbox"),'office')
 add('integ',_("Integration"),'integ')
 add('cbss',_("CBSS"),'cbss')
 add('newcomers',_("Newcomers"),'newcomers')
 add('debts',_("Debts"),'debts')
 
-UserProfiles.clear()
+dd.UserProfiles.clear()
 
 #~ add = UserProfiles.add_item
 #~ """
@@ -2181,14 +2191,16 @@ UserProfiles.clear()
 #~ add('30', _("Debts consultant"),           'kerstin', 'user',  '',        '',      '',       'user')
 #~ add('90', _("Administrator"),              'admin',   'admin', 'admin',   'admin', 'admin',  'admin')
 
-def add(value,label,*args):
-    UserProfiles.add_item(value,label,None,*args)
+def add(value,label,*args,**kw):
+    dd.UserProfiles.add_item(value,label,None,*args,**kw)
 """
-    #     label                            level    integ       cbss    newcomers debts
-    ====  ================================ ======== =========== ======= ========= ========"""
-add('10', _("Integration Agent"),          'user',  'user',    'user')
-add('11', _("Integration Agent (Senior)"), 'user',  'manager', 'user')
-add('20', _("Newcomers consultant"),       'user',  '',        'user',  'user')
-add('30', _("Debts consultant"),           'user',  '',        '',      '',       'user')
-add('90', _("Administrator"),              'admin', 'admin',   'admin', 'admin',  'admin')
+    #     label                            level      office      integ       cbss       newcomers  debts
+    ====  ================================ ========== =========== =========== ========== ========== ========"""
+add('100', _("Integration Agent"),          'user',    'user',     'user',    'user',    '',        '')
+add('110', _("Integration Agent (Senior)"), 'user',    'manager',  'manager', 'user',    '',        '')
+add('200', _("Newcomers consultant"),       'user',    'user',     '',        'user',    'user',    '')
+add('300', _("Debts consultant"),           'user',    'user',     '',        '',        '',        'user')
+add('400', _("Readonly Manager"),           'manager', 'manager',  'manager', 'manager', 'manager', 'manager', readonly=True)
+add('500', _("CBSS only"),                  'user',    '',         '',        'user',    '',        '')
+add('900', _("Administrator"),              'admin',   'admin',    'admin',   'admin',   'admin',   'admin')
 

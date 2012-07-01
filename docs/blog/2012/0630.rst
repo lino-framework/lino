@@ -1,0 +1,117 @@
+20120630
+========
+
+Voilà, jetzt haben wir ein benutzerfreundlicheres Einfügefenster, 
+das nicht mehr den kompletten Bildschirm füllt
+und nicht mehr all den 
+unnützen Kram des Detail-Fensters enthält, 
+der erst nach dem Erstellen gebraucht wird:
+
+.. image:: /screenshots/users.User.insert.jpg
+  :scale: 50
+
+- http://127.0.0.1:8000/api/users/Users?an=insert
+
+Der Code dafür sieht so aus::
+
+  class UserInsert(dd.InsertLayout):
+    
+      window_size = (60,'auto')
+      
+      main = """
+      username email 
+      first_name last_name
+      partner
+      language profile     
+      """
+      
+  class Users(dd.Table):
+      model = User
+      ...
+      insert_layout = UserInsert()
+      ...
+
+
+Man könnte stattdessen auch schreiben::
+
+  class Users(dd.Table):
+      model = User
+      ...
+      
+  Users.set_insert_layout("""
+      username email 
+      first_name last_name
+      partner
+      language profile     
+      """,window_size=(60,'auto'))
+
+
+Zu notieren, dass dieses Fenster erstmals 
+mit `autoHeight` arbeitet, ein Feature von 
+ExtJS, das Lino bisher nicht nutzen konnte.
+
+Diese neue Möglichkeit werde ich voraussichtlich schon bald an 
+vielen anderen Stellen nutzen.
+
+Technische Details:
+
+- The :attr:`window_size <lino.core.layouts.BaseLayout.window_size>` 
+  attribute of a Layout
+  no longer expects pixels as the unit, 
+  but uses relative character size.
+
+- :xfile:`linolib.js` now has two little utility functions
+  `Lino.chars2width` and 
+  `Lino.rows2height` who currently just do a simple multiplication 
+  by an experimental constant. 
+  One day I might extend them so that they work correctly with 
+  different font sizes.
+
+
+- Aus komplexen Gründen (die ich nicht zu Ende erforscht habe)
+  muss ich jetzt auch 
+  Animals Trick mit dem `anchor="-25"  <http://www.sencha.com/forum/showthread.php?97706-DEFER-FormLayout-does-not-account-for-vertical-scrollbar-width-when-calulating-width&p=469342&viewfull=1#post469342>`__
+  anwenden.
+
+- Außerdem ein doofer Layout-Bug weniger: 
+  in einer :class:`HtmlBoxElement <lino.ui.extjs3.ext_elems.HtmlBoxElement>` 
+  setzte das `autoScroll=True` in das äußere Panel. 
+  Muss aber im `Ext.BoxComponent` stehen.
+
+
+CBSS connection
+---------------
+
+KBSS-Anfragen sind jetzt schon deutlich benutzerfreundlicher: 
+das Fenster beim Erstellen einer neuen Anfrage ist jetzt kleiner
+und mit den korrekten Standardwerten ausgefüllt.
+Der Submit-Button in allen Insert-Fenstern heißt nicht mehr 
+"Save" ("Speichern"), sondern "Create" ("Erstellen").
+Die Anfrage wird automatisch ausgeführt beim Speichern.
+Zum Ausdrucken muss man weiterhin explizit auf "Drucken" 
+klicken (im ÖSHZ wird auch so schon genug Papier verbraucht).
+
+- Zum Glück habe ich jetzt `lino.core.modeltools.Model.on_create`!
+  `lino.mixins.AutoUser.on_create` nutzte das noch nicht 
+  und reichte den Funktionsaufruf nicht weiter an ihre `super()`.
+  Deshalb wurde :meth:`lino.modlib.cbss.models.SSIN.on_create` nie gerufen.
+  Danach habe ich mehr als eine halbe Stunde lang gesucht.
+  Fiese Bugs sind das.
+
+- make_permission_handler had a bug in evaluating the user level.
+  To find this, I added a new attribute 
+  :attr:`lino.core.actors.Actor.debug_actions` and the 
+  method :meth:`lino.utils.perms.UserProfile.__repr__`
+  
+- UserProfile.readonly : "read-only users" can see everything 
+  (according to their group memberships), but cannot 
+  edit anything. They also don't have a "My menu" 
+  (which is handled separately: they have the permission to see 
+  these actions, but that makes no sense since my menu (by convention) 
+  would contain only empty tables.
+  
+Das mit dem Readonly-Benutzer war aber eher unnötig.
+Ich suche noch nach einem stark reduzierten Benutzerprofil für Leute, 
+die Lino nur zum Konsultieren der Tx25 benutzen wollen:
+Neue Benutzergruppe "Office (Kalender und Outbox)", in der das neue 
+Profil "CBSS only" als einziges nicht drin ist.

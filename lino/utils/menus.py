@@ -131,6 +131,10 @@ class Menu(MenuItem):
         self.items_dict = {}
 
     def compress(self):
+        """
+        Dynamically removes empty menu entries.
+        Collapses menu with only one item into their parent.
+        """
         for mi in self.items:
             mi.compress()
         newitems = []
@@ -141,10 +145,18 @@ class Menu(MenuItem):
                 #~ elif len(mi.items) > 1:
                     #~ newitems.append(mi)
                 if len(mi.items) > 0:
-                    if self.parent is None or len(mi.items) > 1:
+                    #~ if self.parent is None or len(mi.items) > 1:
+                        #~ newitems.append(mi)
+                    #~ elif len(mi.items) == 1:
+                        #~ newitems.append(mi.items[0])
+                    if len(mi.items) == 1:
+                        if not mi.items[0].label.startswith('-'):
+                            if self.parent is None:
+                                newitems.append(mi)
+                            else:
+                                newitems.append(mi.items[0])
+                    elif len(mi.items) > 1:
                         newitems.append(mi)
-                    elif len(mi.items) == 1:
-                        newitems.append(mi.items[0])
             else:
                 newitems.append(mi)
         self.items = newitems
@@ -210,7 +222,8 @@ class Menu(MenuItem):
     def _add_item(self,mi):
         assert isinstance(mi,MenuItem)
         if mi.action is not None:
-            if not mi.action.actor.get_view_permission(self.user):
+            #~ if not mi.action.actor.get_view_permission(self.user):
+            if not mi.action.get_action_permission(self.user,None,None):
                 return 
         if mi.name is not None:
             old = self.items_dict.get(mi.name)

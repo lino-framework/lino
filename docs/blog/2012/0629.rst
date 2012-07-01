@@ -112,7 +112,7 @@ Ein Insert-Fenster gibt es in der `UsersByNewcomer` nicht,
 weil man dort nicht einfügen darf. 
 Deshalb also nur *ein* Insert-Fenster:
 
-.. image:: /screenshots/users.User.insert.jpg
+.. image:: /screenshots/users.User.insert-20120630.jpg
   :scale: 50
 
 - http://127.0.0.1:8000/api/users/Users?an=insert
@@ -202,3 +202,12 @@ Lino geht in Narkose.
 Vorher noch ein 
 :checkin:`1ca37bb7a526` (bisher noch kein Schnitt, alles 
 lediglich Vorbereitung).
+
+Die eigentliche Operation hat dann überraschenderweise 
+nur eine halbe Stunde gedauert. 
+Gute Vorbereitung ist manchmal alles!
+
+Was noch fehlt, ist, dass ich mir fürs Angeben der `window_size` 
+eine andere Stelle ausdenken muss. Das ist aber weniger dramatisch.
+Erstmal :checkin:`c39f0bd6d40f` und Abendessen.
+

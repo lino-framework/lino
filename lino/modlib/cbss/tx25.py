@@ -74,6 +74,11 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
             return self.language.value
         return babel.DEFAULT_LANGUAGE
         
+    def fill_from_person(self,person):
+        self.national_id = person.national_id
+        self.language = person.language # .value # babel.DEFAULT_LANGUAGE
+        
+        
     def get_service_reply(self,**kwargs):
         client = get_client(self)
         meth = client.service.retrieveTI
@@ -158,6 +163,7 @@ class RetrieveTIGroupsRequest(NewStyleRequest,SSIN):
         #~ print self.response_xml
         return reply
         
+          
     def Result(self,ar):
         return ar.spawn(RetrieveTIGroupsResult,master_instance=self)
         
@@ -171,10 +177,21 @@ class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
     
     #~ def setup_handle(self,lh):
         #~ CBSSRequestDetail.setup_handle(self,lh)
+        
+class RetrieveTIGroupsRequestInsert(dd.InsertLayout):
+    window_size = (40,'auto')
+    main = """
+    person
+    national_id language 
+    history
+    """
 
 class RetrieveTIGroupsRequests(CBSSRequests):
+    debug_permissions = True
     model = RetrieveTIGroupsRequest
     detail_layout = RetrieveTIGroupsRequestDetail()
+    insert_layout = RetrieveTIGroupsRequestInsert()
+    #~ insert_layout = RetrieveTIGroupsRequestInsert(window_size=(400,'auto'))
     required_user_groups = ['cbss']
         
     #~ @dd.virtualfield(dd.HtmlBox())

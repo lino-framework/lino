@@ -264,7 +264,7 @@ class Recipient(dd.Model):
 
 
 class Recipients(dd.Table):
-    required = dict(user_level='manager')
+    required = dict(user_level='manager',user_groups='office')
     #~ required_user_level = UserLevels.manager
     model = Recipient
     #~ column_names = 'mail  type *'
@@ -426,7 +426,7 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
 
 class Mails(dd.Table):
     #~ read_access = dd.required(user_level='manager')
-    required = dict(user_level='manager')
+    required = dict(user_level='manager',user_groups='office')
     model = Mail
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
@@ -529,6 +529,7 @@ class Attachment(mixins.Controllable):
         
 class Attachments(dd.Table):
     model = Attachment
+    required = dict(user_groups='office')
     #~ window_size = (400,500)
     #~ detail_template = """
     #~ mail owner

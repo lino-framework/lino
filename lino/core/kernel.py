@@ -107,7 +107,12 @@ def analyze_models():
 
     for model in models.get_models():
         model._lino_ddh = DisableDeleteHandler(model)
-        for k in ('get_row_permission','after_ui_save'):
+        for k in ('get_row_permission',
+                  'after_ui_save',
+                  'allow_cascaded_delete',
+                  'workflow_state_field',
+                  'workflow_owner_field',
+                  'on_create'):
             if not hasattr(model,k):
                 #~ setattr(model,k,getattr(dd.Model,k))
                 setattr(model,k,dd.Model.__dict__[k])
@@ -262,14 +267,19 @@ def load_workflows(self):
                 required.update(actor.update_required)
             required.update(a.required)
             #~ print 20120628, str(a), required
-            def wrap(a,fn):
-                if False: # not a.readonly:
-                    def fn2(*args):
-                        logger.info(u"20120621 %s %s",a.actor,[obj2str(x) for x in args])
-                        return fn(*args)
-                    return fn2
+            def wrap(a,required,fn):
+                #~ if actor.debug_actions: # False: # not a.readonly:
+                    #~ def fn2(*args):
+                        #~ v = fn(*args)
+                        #~ if not v:
+                            #~ logger.info(u"debug_actions %s.%s.allow(%s,%s,%s) %s --> %s",
+                              #~ a.actor,a.name,args[1].username,obj2str(args[2]),args[3],required,v)
+                        #~ return v
+                    #~ return fn2
                 return fn
-            a.allow = curry(wrap(a,make_permission_handler(a,actor,**required)),a)
+                
+            a.allow = curry(wrap(a,required,make_permission_handler(
+                a,actor,a.readonly,actor.debug_permissions,**required)),a)
             
                 
     if False:

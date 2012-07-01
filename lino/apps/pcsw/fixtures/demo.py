@@ -352,20 +352,30 @@ def objects():
     #~ User = resolve_model('users.User')
     melanie = User(username="melanie",
         first_name=u"Mélanie",last_name=u"Mélard",
-        profile=UserProfiles.melanie)
+        profile='110') # UserProfiles.melanie)
         #~ level=UserLevels.manager,
         #~ integ_level=UserLevel.manager)
     yield melanie 
     hubert = User(username="hubert",
         first_name="Hubert",last_name="Huppertz",
-        profile=UserProfiles.hubert)
+        profile='100') # UserProfiles.hubert)
         #~ level=UserLevel.user,
         #~ integ_level=UserLevel.user)
     yield hubert
     alicia = User(username="alicia",
         first_name="Alicia",last_name="Allmanns",
-        profile=UserProfiles.hubert)
+        profile='100') # UserProfiles.hubert)
     yield alicia
+    
+    elmar = User(username="elmar",
+        first_name="Elmar",last_name="Elsen",
+        profile='400') # UserProfiles.hubert)
+    yield elmar
+    
+    elmar = User(username="karl",
+        first_name="Christian",last_name=u"Cabeil-Esaice",
+        profile='500') # UserProfiles.hubert)
+    yield elmar
     
     
     #~ user = auth.User.objects.get(username='user')

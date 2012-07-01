@@ -12,18 +12,53 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 '''
+Layouts are one of Lino's important and innovative features.
+Concept and implementation is fully the author's idea, and we 
+didn't yet find a similar approach in any other framework.
 
-A Layout consists of "data elements" arranged in "panels".
-Panels are either horizontal or vertical.
-A layout must have at least a main panel. 
-It can define more panels.
-Data elements are database fields, table fields or slave tables.
-For a :class:`ParamsLayout`, data elements are names of parameters defined on the table.
+A :class:`Layout <BaseLayout>` is an abstract pythonical description 
+of how to arrange the fields and other elements of a form.
 
-- Indentation doesn't matter.
+Application programmers write Layouts by subclassing
+:class:`dd.DetailLayout <DetailLayout>`
+(or :class:`dd.InsertLayout <InsertLayout>`)
+and settings the 
+:attr:`detail_layout <lino.core.actors.Actor.detail_layout>`
+(or 
+:attr:`insert_layout <lino.core.actors.Actor.insert_layout>`)
+attribute of an :attr:`Actor <lino.core.actors.Actor>` subclass.
 
-If the `main` panel of a DetailLayout is horizontal, ExtJS will interpret 
-this as a tabbed main panel. If you want a hbox layout instead, just insert 
+
+**A Layout consists of "panels".**
+Each panel is a class attribute defined on your subclass,
+containing a string value to be used as 
+template describibing the content of that panel.
+A Layout must define at least a ``main`` panel. 
+It can define more panels whose names 
+may be chosen by the application developer
+(just don't chose the name :attr:`window_size` 
+which has a special meaning, and don't start you panel 
+names with an underscore because these are reserved for internal use).
+
+A layout template (the value of a panel attribute) 
+is a string containing words, where each word is 
+either the name of a *data element*, 
+or the name of another panel.
+
+**Data elements** are database fields, table fields or :term:`slave tables <slave table>`
+(except for a :class:`ParamsLayout`, where data elements are names of 
+:attr:`parameters <lino.core.actors.Actor.parameters>`
+defined on the actor.
+
+Panels are **either horizontal or vertical**, 
+depending on whether their template contains 
+at least one newline character or not.
+
+Indentation doesn't matter.
+
+If the `main` panel of a :class:`DetailLayout` is horizontal, 
+ExtJS will render the Layout using as a tabbed main panel. 
+If you want a horizontal main panel instead, just insert 
 a newline somewhere in your main's template. Example::
 
 
@@ -48,6 +83,20 @@ a newline somewhere in your main's template. Example::
       left:60 right:30
       """
 
+A :class:`ListLayout` is a special case for describing the columns of a GridPanel
+and therefore may contain only one `main` panel descriptor 
+which must be horizontal.
+ListLayouts are created automatically by Lino, using the 
+:attr:`column_names <lino.core.actors.Actor.column_names>` 
+attribute of the Actor as `main` panel.
+
+A :class:`ParamsLayout` is a special case for 
+describing the layout of a parameters panel.
+
+
+Some blog entries with more examples of layout definition:
+
+- :doc:`/blog/2012/0630`
 
 '''
 
@@ -78,7 +127,8 @@ LABEL_ALIGN_RIGHT = 'right'
 
 class LayoutHandle:
     """
-    LayoutHandle analyzes a Layout and builds a tree of LayoutElements.
+    LayoutHandle analyzes a Layout and stores the 
+    resulting LayoutElements provided by the UI.
     
     """
     
@@ -95,11 +145,6 @@ class LayoutHandle:
         #~ self.datalink = layout.get_datalink(ui)
         #~ self.label = layout.label # or ''
         self._store_fields = []
-        #~ self._elems_by_field = {}
-        #~ self._submit_fields = []
-        #~ self.slave_grids = []
-        #~ self._buttons = []
-        #~ self.main_class = ui.main_panel_class(layout)
         
         self.define_panel('main',layout.main)
         
@@ -241,17 +286,20 @@ class LayoutHandle:
         #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
         return e
             
-    def create_element(self,desc_name,**kw):
+    #~ def create_element(self,desc_name,**kw):
+    def create_element(self,desc_name):
         #~ logger.debug("create_element(%r)", desc_name)
         name,pkw = self.splitdesc(desc_name)
-        kw.update(pkw)
+        #~ kw.update(pkw)
         e = getattr(self,name,None)
         if e is not None:
             return e
         desc = getattr(self.layout,name,None)
         if desc is not None:
-            return self.define_panel(name,desc,**kw)
-        e = self.ui.create_layout_element(self,name,**kw)
+            return self.define_panel(name,desc,**pkw)
+            #~ return self.define_panel(name,desc)
+        e = self.ui.create_layout_element(self,name,**pkw)
+        #~ e = self.ui.create_layout_element(self,name)
         if e is None: return None # e.g. NullField
         # todo: cannot hide babelfields
         if name in self.layout.hidden_elements:
@@ -260,8 +308,11 @@ class LayoutHandle:
         #~ self.setup_element(e)
         return e
         
-    def splitdesc(self,picture,**kw):
+    #~ def splitdesc(self,picture,**kw):
+    def splitdesc(self,picture):
+        kw = dict()
         if picture.endswith(')'):
+            raise Exception("No longer supported sincve 20120630")
             a = picture.split("(",1)
             if len(a) == 2:
                 pkw = eval('dict('+a[1])
@@ -315,15 +366,40 @@ class unused_ListLayoutHandle(LayoutHandle):
 
 
 class BaseLayout(object):
-  
+    """
+    Base class for all Layouts (:class:`DetailLayout`
+    :class:`InsertLayout`, :class:`ListLayout` 
+    and  :class:`ParamsLayout`).
+    
+    A Layout instance just holds the string templates. 
+    It is designed to be subclassed by applications programmers, 
+    but in most cases it is more convenient (and recommended) 
+    to use the methods 
+    :meth:`set_detail <lino.core.actors.Actor.set_detail>`,
+    :meth:`add_detail_panel <lino.core.actors.Actor.add_detail_panel>`
+    and
+    :meth:`add_detail_tab <lino.core.actors.Actor.add_detail_tab>`
+    on the :class:`Actor <lino.core.actors.Actor>`.
+
+    
+    """
     _handle_class = LayoutHandle
     #~ __metaclass__ = LayoutMeta
     
     _table = None
     
+    window_size = None
+    """
+    A tuple `(width,height)` that specifies the size of the window to be used for this layout.
+    For example, specifying `window_size=(50,30)` means "50 characters wide and 30 lines high".
+    The `height` value can also be the string ``'auto'``.
+    """
+    
+    #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
     def __init__(self,table=None,main=None,hidden_elements=frozenset()):
-        self._labels = dict()
         self._table = table
+        self._labels = dict()
+        #~ self._window_size = window_size
         self.hidden_elements = hidden_elements 
         self._element_options = dict()
         if main is not None:
@@ -440,21 +516,33 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         
             
 class DetailLayout(BaseLayout):
+    """
+    A Layout description for the morm panel of a Detail Window.
+    """
     join_str = "\n"
     
     def formpanel_name(self):
         return "Lino.%s.DetailFormPanel" % self._table
 
 class InsertLayout(DetailLayout):
+    """
+    A Layout description for the main panel of an Insert Window.
+    """
     join_str = "\n"
 
     def formpanel_name(self):
         return "Lino.%s.InsertFormPanel" % self._table
         
 class ListLayout(BaseLayout):
+    """
+    A Layout description for the columns of a GridPanel.
+    """
     join_str = " "
 
 class ParamsLayout(BaseLayout):
+    """
+    A Layout description for a parameter panel.
+    """
     join_str = " "
 
     def get_data_elem(self,name): 

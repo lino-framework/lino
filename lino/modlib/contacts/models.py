@@ -103,7 +103,7 @@ class CompanyType(babel.BabelNamed):
     
         
 class CompanyTypes(dd.Table):
-    required_user_level = UserLevels.manager
+    required = dict(user_level='manager')
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
@@ -564,7 +564,7 @@ class RoleType(babel.BabelNamed):
 
 
 class RoleTypes(dd.Table):
-    required_user_level = UserLevels.manager
+    required = dict(user_level='manager')
     model = 'contacts.RoleType'
 
 
@@ -642,17 +642,20 @@ class Role(dd.Model):
     #~ column_names = 'company type *'
     
 class Roles(dd.Table):
-    required_user_level = UserLevels.manager
+    required = dict(user_level='manager')
+    #~ required_user_level = UserLevels.manager
     model = 'contacts.Role'   
     
 class RolesByCompany(Roles):
-    required_user_level = None
+    required = dict()
+    #~ required_user_level = None
     label = _("Contact persons")
     master_key = 'company'
     column_names = 'person type *'
 
 class RolesByPerson(Roles):
-    required_user_level = None
+    required = dict()
+    #~ required_user_level = None
     label = _("Contact for")
     master_key = 'person'
     column_names = 'company type *'

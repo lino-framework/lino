@@ -290,22 +290,30 @@ so we remove it from the layout.
 if not settings.LINO.is_installed('contacts'):
     UserDetail.box1.replace('partner','')
  
-
-class Users(dd.Table):
-    """Shows the list of users on this site.
+class UserInsert(dd.InsertLayout):
+  
+    window_size = (60,'auto')
+    
+    main = """
+    username email 
+    first_name last_name
+    partner
+    language profile     
     """
+    
+class Users(dd.Table):
+    """
+    Shows the list of all users on this site.
+    """
+    #~ debug_actions  = True
+    required = dict(user_level='manager')
     model = User
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
     column_names = 'username profile first_name last_name *'
     detail_layout = UserDetail()
-    insert_template = """
-    username email 
-    first_name last_name
-    partner
-    language profile     
-    """
+    insert_layout = UserInsert()
 
     #~ @classmethod
     #~ def get_row_permission(cls,action,user,obj):

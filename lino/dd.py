@@ -52,6 +52,11 @@ Virtual Fields:
 - :class:`VirtualField <lino.core.fields.VirtualField>` and
   :class:`@virtualfield <lino.core.fields.virtualfield>`
 - :class:`HtmlBox <lino.core.fields.HtmlBox>`
+
+Layouts:
+
+- :class:`DetailLayout <lino.core.layouts.DetailLayout>`
+- :class:`InsertLayout <lino.core.layouts.InsertLayout>`
   
 Utilities:
 
@@ -59,6 +64,12 @@ Utilities:
 - :func:`resolve_model <lino.core.modeltools.resolve_model>`
 - :func:`resolve_app <lino.core.modeltools.resolve_app>` 
 - :func:`chooser <lino.utils.choosers.chooser>` 
+
+Miscellaneous:
+
+- :class:`UserProfiles <lino.utils.perms.UserProfiles>`
+- :class:`UserGroups <lino.utils.perms.UserGroups>`
+- :class:`UserLevels <lino.utils.perms.UserLevels>`
 
 
 """
@@ -114,10 +125,10 @@ from lino.utils.babel import BabelCharField, BabelTextField
 
 from lino.utils.choosers import chooser
 
+#~ from lino.utils.perms import UserLevels, UserProfiles
+from lino.utils.perms import UserLevels, UserGroups, UserProfiles
 
-#~ from lino.utils import perms
-
-from lino.core.layouts import DetailLayout
+from lino.core.layouts import DetailLayout, InsertLayout
 
 
 class Module(object):

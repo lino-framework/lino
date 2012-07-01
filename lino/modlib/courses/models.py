@@ -418,8 +418,9 @@ class CourseRequest(dd.Model):
         return CourseOffer.objects.all()
         
     
-    def on_create(self,req):
+    def on_create(self,ar):
         self.date_submitted = datetime.date.today()
+        super(CourseRequest,self).on_create(ar)
     
         
 class Courses(dd.Table):

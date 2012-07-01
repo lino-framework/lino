@@ -43,6 +43,13 @@ from lino.ui import requests as ext_requests
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
 
+#~ FULLWIDTH = '100%'
+#~ FULLHEIGHT = '100%'
+
+FULLWIDTH = '-20' 
+FULLHEIGHT = '-10' 
+
+
 #~ DEFAULT_GC_NAME = 'std'
 DEFAULT_GC_NAME = 0
 
@@ -488,7 +495,8 @@ class FieldElement(LayoutElement):
         if not self.sortable:
             kw.update(sortable=False)
         w = self.width or self.preferred_width
-        kw.update(width=w*EXT_CHAR_WIDTH)
+        #~ kw.update(width=w*EXT_CHAR_WIDTH)
+        kw.update(width=js_code("Lino.chars2width(%d)" % w))
         return kw    
         
         
@@ -1011,6 +1019,9 @@ class RecurrenceElement(DisplayElement):
     value_template = "new Ext.ensible.cal.RecurrenceField(%s)"
     
 class HtmlBoxElement(DisplayElement):
+    """
+    Element that renders to a `Lino.HtmlBoxPanel`.
+    """
     ext_suffix = "_htmlbox"
     #~ declare_type = jsgen.DECLARE_VAR
     value_template = "new Lino.HtmlBoxPanel(%s)"
@@ -1029,7 +1040,7 @@ class HtmlBoxElement(DisplayElement):
         kw.update(name=self.field.name)
         kw.update(containing_panel=js_code("this"))
         kw.update(layout='fit')
-        kw.update(autoScroll=True)
+        #~ kw.update(autoScroll=True)
         
         # hide horizontal scrollbar      
         # for this trick thanks to Vladimir 
@@ -1038,7 +1049,8 @@ class HtmlBoxElement(DisplayElement):
         
         #~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
-        kw.update(items=js_code("new Ext.BoxComponent()"))
+        kw.update(items=js_code("new Ext.BoxComponent({autoScroll:true})"))
+        #~ kw.update(items=js_code("new Ext.BoxComponent({})"))
         if self.label:
             #~ kw.update(title=unicode(self.label)) 20111111
             kw.update(title=self.label)
@@ -1095,8 +1107,8 @@ class Container(LayoutElement,jsgen.Permittable):
                     #~ self.has_fields = True
             #~ kw.update(items=elements)
                 
+        jsgen.Permittable.__init__(self,layout_handle.layout._table)
         LayoutElement.__init__(self,layout_handle,name,**kw)
-        jsgen.Permittable.__init__(self)
         
         
     def subvars(self):
@@ -1164,9 +1176,13 @@ class Wrapper(VisibleComponent):
             setattr(self,n,getattr(e,n))
         #~ e.update(anchor="100%")
         if e.vflex: 
-            e.update(anchor="100% 100%")
+            #~ 20120630 e.update(anchor="100% 100%")
+            #~ e.update(anchor="-25 -25")
+            e.update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
         else:
-            e.update(anchor="100%")
+            #~ e.update(anchor="100%")
+            #~ e.update(anchor="-25")
+            e.update(anchor=FULLWIDTH)
         #~ e.update(padding=DEFAULT_PADDING)
         #~ self.allow_read = e.allow_read
         #~ self.get_view_permission = e.get_view_permission
@@ -1346,10 +1362,15 @@ class Panel(Container):
             self.wrap_formlayout_elements()
             #~ d.update(autoHeight=True)
             if len(self.elements) == 1 and self.elements[0].vflex:
-                self.elements[0].update(anchor="100% 100%")
+                #~ 20120630 self.elements[0].update(anchor="100% 100%")
+                #~ self.elements[0].update(anchor="-25 -25")
+                self.elements[0].update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
+                
             else:
                 for e in self.elements:
-                    e.update(anchor="100%")
+                    #~ 20120630 e.update(anchor="100%")
+                    #~ e.update(anchor="-25")
+                    e.update(anchor=FULLWIDTH)
                 
         elif d['layout'] == 'hbox':
                 
@@ -1582,6 +1603,9 @@ class DetailMainPanel(Panel):
         kw = Panel.ext_options(self,**kw)
         #~ if self.layout_handle.layout.label:
             #~ kw.update(title=_(self.layout_handle.layout.label))
+        #~ ws = self.layout_handle.layout._window_size
+        #~ if ws is not None and ws[1] == 'auto':
+            #~ kw.update(autoHeight=True)
         if self.layout_handle.main.label:
             kw.update(title=_(self.layout_handle.main.label))
         return kw
@@ -1651,7 +1675,7 @@ class TabPanel(Panel):
         
         kw.update(
           split=True,
-          activeTab=0,
+          activeTab=0, 
           #~ layoutOnTabChange=True, # 20101028
           #~ forceLayout=True, # 20101028
           #~ deferredRender=False, # 20120212
@@ -1672,40 +1696,6 @@ class TabPanel(Panel):
       
         #~ super(TabPanel,self).__init__(kw)
         
-
-
-class FormPanel(jsgen.Component):
-    declare_type = jsgen.DECLARE_VAR
-    #~ listeners = None
-    
-    def __init__(self,rh,action,**kw):
-        self.rh = rh
-        self.value_template = "new Lino.%sPanel(%%s)" % action
-        #~ hmm....
-        #~ kw.update(
-          #~ layout='fit',
-          #~ empty_title=action.get_button_label()
-        #~ )
-        #~ kw.update(containing_window=js_code("ww"))
-        #~ if not isinstance(action,table.InsertRow):
-            #~ kw.update(has_navigator=rh.report.has_navigator)
-            
-        #~ rpt = rh.report
-        #~ a = rpt.get_action('detail')
-        #~ if a:
-            #~ kw.update(ls_detail_handler=js_code("Lino.%s" % a))
-        #~ a = rpt.get_action('insert')
-        #~ if a:
-            #~ kw.update(ls_insert_handler=js_code("Lino.%s" % a))
-        
-        #~ kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rpt.get_actions(action)])
-        #~ kw.update(ls_url=rpt2url(rpt))
-        #~ ... hmm
-        jsgen.Component.__init__(self,'form_panel',**kw)
-        jsgen.Permittable.__init__(self)
-        
-    def unused_has_field(self,f):
-        return self.main.has_field(f)
 
 
 

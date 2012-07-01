@@ -18,7 +18,7 @@ from lino.utils.instantiator import Instantiator
 #from lino import reports
 #contacts = reports.get_app('contacts')
 
-from lino.utils.perms import UserProfiles
+#~ from lino.utils.perms import UserProfiles
 
 def objects():
     def create_user(*args,**kw):
@@ -31,5 +31,5 @@ def objects():
     #~ kw = dict()
     #~ for f in settings.LINO.user_profile_fields:
         #~ kw[f] = UserLevel.expert
-    yield create_user('root','root@example.com','Root','User',profile=UserProfiles.admin) 
-    yield create_user('luc','luc@example.com','Luc','Saffre',profile=UserProfiles.admin) 
+    yield create_user('root','root@example.com','Root','User',profile='900') # UserProfiles.admin) 
+    yield create_user('luc','luc@example.com','Luc','Saffre',profile='900') # UserProfiles.admin) 

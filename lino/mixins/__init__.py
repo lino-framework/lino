@@ -193,10 +193,14 @@ class AutoUser(dd.Model):
         
         
     def on_create(self,ar):
+        """
+        Adds the requesting user to the `user` field.
+        """
         if self.user_id is None:
             u = ar.get_user()
             if u is not None:
                 self.user = u
+        super(AutoUser,self).on_create(ar)
         
     def update_owned_instance(self,other):
         #~ print '20120627 AutoUser.update_owned_instance'

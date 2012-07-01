@@ -373,10 +373,10 @@ def has_fk(rr,name):
     return False
 
         
-def model2report(m):
+#~ def model2report(m):
+def model2actor(m):
     def f(table,*args):
         return m(*args)
-        #~ return getattr(obj,name)(request)
     return classmethod(f)
 
 
@@ -592,9 +592,10 @@ class Table(AbstractTable):
               
             for name in ('workflow_state_field','workflow_owner_field'):
                 if getattr(self,name) is None:
-                    v = getattr(self.model,name,None)
-                    if v is not None:
-                        setattr(self,name,v)
+                    setattr(self,name,getattr(self.model,name))
+                    #~ v = getattr(self.model,name,None)
+                    #~ if v is not None:
+                        #~ setattr(self,name,v)
                         
             for name in ('disabled_fields',
                          'handle_uploaded_files', 
@@ -605,9 +606,9 @@ class Table(AbstractTable):
                     m = getattr(self.model,name,None)
                     if m is not None:
                         #~ logger.debug('20111113 Install model method %s.%s to %s',self.model.__name__,name,self)
-                        setattr(self,name,model2report(m))
+                        setattr(self,name,model2actor(m))
                         #~ 'dictproxy' object does not support item assignment:
-                        #~ self.__dict__[name] = model2report(m) 
+                        #~ self.__dict__[name] = model2actor(m) 
                         
             if self.master_key:
                 #~ assert self.model is not None, "%s has .master_key but .model is None" % self
@@ -853,18 +854,14 @@ class Table(AbstractTable):
 
     @classmethod
     def create_instance(self,ar,**kw):
+        #~ print 20120630, "Actor.create_instance", kw
         instance = self.model(**kw)
         #~ self.on_create(instance,ar)
         
-        """
-        Used e.g. by modlib.notes.Note.on_create().
-        on_create gets the request as argument.
-        Didn't yet find out how to do that using a standard Django signal.
-        """
-        m = getattr(instance,'on_create',None)
-        #~ print "20120527 Table.create_instance on_create is", m
-        if m:
-            m(ar)
+        instance.on_create(ar)
+        #~ m = getattr(instance,'on_create',None)
+        #~ if m:
+            #~ m(ar)
         return instance
         
     @classmethod

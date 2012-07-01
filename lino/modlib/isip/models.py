@@ -282,9 +282,9 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
             else:
                 self.user_asd = self.person.coach1
                 
-    def on_create(self,request):
-        super(ContractBase,self).on_create(request)
-        self.person_changed(request)
+    def on_create(self,ar):
+        super(ContractBase,self).on_create(ar)
+        self.person_changed(ar)
       
     def full_clean(self,*args,**kw):
         r = self.active_period()

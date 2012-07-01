@@ -140,10 +140,6 @@ class CreatePostings(dd.RowAction):
             p = Posting(owner=elem,partner=p,date=datetime.date.today())
             p.full_clean()
             p.save()
-        #~ js = rr.renderer.instance_handler(m)
-        #~ url = rr.renderer.js2url(js)
-        #~ kw.update(open_url=rr.renderer.get_detail_url(m))
-        #~ kw.update(open_url=url)
         kw.update(refresh=True)
         return ar.success_response(**kw)
         

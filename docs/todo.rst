@@ -12,6 +12,22 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Benutzer, die nicht Systemverwalter sind, können momentan ihr 
+    Benutzerkonto nichtmal sehen: ein Klick auf den Benutzerbutton oben 
+    rechts führt zu einer Fehlermeldung in der JS-Console.
+    
+    Da will ich noch was drüber meditieren.
+    Liegt daran, dass ein Detail-Fenster momentan die gleichen 
+    Zugriffsbedingungen (``required``) hat wie die Tabelle, 
+    in der es definert ist (für users.User ist das users.Users),
+    und weil instance_handler einfach die `detail_action` 
+    der `_lino_default_table` ohne nachzuprüfen, 
+    ob der Benutzer die view permission hat.
+    Am besten wäre wahrscheinlich, wenn instance_handler() 
+    (und href_to(),row_summary()... ) den Benutzer mitbekommen 
+    und es nachprüfen, *und* wenn wir ein DetailLayout separat 
+    mit `required` versehen können.
+
 #.  Was Lino noch braucht und nicht hat, ist die Möglichkeit, 
     dass beim Klicken auf den Button einer Aktion vor deren Abschicken 
     noch ein Dialogfenster mit Optionen kommt. 
@@ -272,8 +288,11 @@ Medium-term
 -----------
 
 
-TODO:
-
+#.  UserProfiles muss ich lokal verwaltbar machen. Spätestens wenn ein zweites ÖSHZ Benutzer wird.
+    Denn es werden ja sicherlich 10 UserGroups werden, das wären 100 mögliche Profile,
+    von denen jedes ÖSHZ nur einen Bruchteil benutzt.
+    Vorher will ich aber ChoiceLists mit einem app_label versehen. 
+    
 #.  lino*.js aufsplitten: der Teil aus linolib.js ist ja 
     konstant für alle Benutzerprofile.
     
