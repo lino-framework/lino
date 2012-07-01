@@ -1113,15 +1113,15 @@ def migrate_from_1_4_3(globals_dict):
             #~ kw.update(level=level)
             #~ kw.update(newcomers_level = level)
         if username in ('gerd','lsaffre'):
-            kw.update(profile='90') # UserProfiles.admin)
+            kw.update(profile='900') # UserProfiles.admin)
         elif username in ('hubert','alicia','uwe'):
-            kw.update(profile='10') # UserProfiles.hubert)
+            kw.update(profile='100') # UserProfiles.hubert)
         #~ elif username == 'gerd':
             #~ kw.update(debts_level=UserLevel.manager)
         elif username == 'kerstin':
-            kw.update(profile='30') # UserProfiles.kerstin)
+            kw.update(profile='300') # UserProfiles.kerstin)
         elif username == 'caroline':
-            kw.update(profile='20') # UserProfiles.caroline)
+            kw.update(profile='200') # UserProfiles.caroline)
             #~ kw.update(debts_level=UserLevel.user)
             #~ kw.update(level=UserLevel.user)
         #~ return create_child(contacts_Contact,contact_ptr_id,users_User,
