@@ -732,20 +732,14 @@ class CachedPrintable(Duplicable,Printable):
         #~ rpt.add_action(PrintAction())
         #~ rpt.add_action(ClearCacheAction())
         
-    def get_row_permission(self,user,state,action):
-        """
-        Cached printables may not be edited after they have been printed.
-        """
-        if self.build_time and not action.readonly:
-            return False
-        return super(CachedPrintable,self).get_row_permission(user,state,action)
+    #~ def get_row_permission(self,user,state,action):
+        #~ """
+        #~ Cached printables may not be edited after they have been printed.
+        #~ """
+        #~ if self.build_time and not action.readonly:
+            #~ return False
+        #~ return super(CachedPrintable,self).get_row_permission(user,state,action)
       
-    #~ def get_permission(self,action,user):
-        #~ if isinstance(action,ClearCacheAction):
-            #~ if not self.build_time:
-                #~ return False
-        #~ return super(CachedPrintable,self).get_permission(action,user)
-
     def print_from_posting(self,posting,ar):
         return self.do_print.run(self,ar)
         

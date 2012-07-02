@@ -207,6 +207,7 @@ As long as nobody protests, I'll save some time by writing in German.
   
 .. |Jul| replace::  **July**
   |br| 
+  :doc:`02 <0702>`
 
 .. |Aug| replace::  **August**
   |br| 

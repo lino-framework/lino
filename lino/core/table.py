@@ -436,8 +436,6 @@ class Table(AbstractTable):
     #~ """
     
     
-    
-    
     handle_uploaded_files = None
     """
     Handler for uploaded files.

@@ -94,6 +94,8 @@ class Model(models.Model):
     on all tables based on this Model.
     """
     
+    def disabled_fields(self,ar):
+        return []
         
     def on_create(self,ar):
         """
