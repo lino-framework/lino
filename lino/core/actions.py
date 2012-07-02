@@ -692,7 +692,9 @@ class ActionRequest(object):
         """
         kw.setdefault('user',self.user)
         kw.setdefault('renderer',self.renderer)
-        kw.setdefault('request',self.request)
+        #~ kw.setdefault('request',self.request) 
+        # removed 20120702 because i don't want to inherit quick_search from spawning request
+        # and because i couldn't remember why 'request' was passed to the spawned request.
         if actor is None:
             actor = self.actor
         #~ kw.update(request=self.request)

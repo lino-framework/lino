@@ -1,1 +1,4 @@
+T:\hgwork\lino\docs\blog\2012\0702.rst:111: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\blog\2012\0702.rst:58: WARNING: py:class reference target not found: lino.mixins.printable.CachedPrintable
+T:\hgwork\lino\docs\blog\2012\0702.rst:76: WARNING: py:class reference target not found: lino.mixins.printable.CachedPrintable

@@ -35,7 +35,8 @@ class Handle:
 ACTION_RESPONSES = frozenset((
   'message','success','alert', 
   'errors',
-  'new_status',
+  #~ 'new_status',
+  'goto_record_id',
   'refresh','refresh_all',
   'confirm_message', 'step',
   'open_url','open_davlink_url','eval_js'))

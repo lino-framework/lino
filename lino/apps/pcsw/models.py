@@ -932,7 +932,7 @@ class PersonDetail(dd.DetailLayout):
     """
     
     box3 = """
-    gender birth_date age:10 civil_state noble_condition 
+    gender:10 birth_date age:10 civil_state:15 noble_condition 
     birth_country birth_place nationality:15 national_id:15 
     """
     

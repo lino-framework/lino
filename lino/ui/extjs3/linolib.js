@@ -342,6 +342,10 @@ Ext.namespace('Lino');
 
 Lino.current_window = null;
 Lino.window_history = Array();
+    
+Lino.chars2width = function(cols) {  return cols * 8; }
+Lino.rows2height = function(cols) {  return cols * 20; }
+    
 
 Lino.open_window = function(win,st) {
   //~ console.log("20120203 Lino.open_window()",win,st);
@@ -712,6 +716,7 @@ Lino.TimeField = Ext.extend(Ext.form.TimeField,{
   increment: 15
   });
 Lino.DateField = Ext.extend(Ext.form.DateField,{
+  boxMinWidth: Lino.chars2width(11),
   format: '$settings.LINO.date_format_extjs',
   altFormats: '$settings.LINO.alt_date_formats_extjs'
   });
@@ -732,6 +737,8 @@ Lino.URLField = Ext.extend(Ext.form.TriggerField,{
 Lino.IncompleteDateField = Ext.extend(Ext.form.TextField,{
   //~ regex: /^-?\d+-[01]\d-[0123]\d$/,
   //~ regex: /^[0123]\d\.[01]\d\.-?\d+$/,
+  maxLength: 10,
+  boxMinWidth: Lino.chars2width(10),
   regex: $settings.LINO.date_format_regex,
   regexText: '$_("Enter a date in format YYYY-MM-DD (use zeroes for unknown parts).")'
   });
@@ -1249,8 +1256,13 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
           panel.set_status({data_record:result.data_record});
       }
       else if (result.new_status && ! gridmode) {
+          //~ not used
           //~ console.log('20120607 new_status');
           panel.set_status(result.new_status);
+      }
+      else if (result.goto_record_id != undefined && ! gridmode) {
+          //~ console.log('20120607 new_status');
+          panel.load_record_id(result.goto_record_id);
       }
       else if (result.refresh_all) {
           var cw = panel.get_containing_window();
@@ -3853,8 +3865,6 @@ Lino.TwinCombo.prototype.onTrigger1Click = Ext.form.ComboBox.prototype.onTrigger
 //~ };
 
 
-Lino.chars2width = function(cols) {  return cols * 8; }
-Lino.rows2height = function(cols) {  return cols * 20; }
 
 Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
   displayField: 'value', 

@@ -838,10 +838,6 @@ class AbstractTable(actors.Actor):
         
 
 
-#~ class VirtualTableRequest(AbstractTableRequest):
-    #~ pass
-
-
 class VirtualTable(AbstractTable):
     """
     An :class:`AbstractTable` that works on an 

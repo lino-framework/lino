@@ -131,7 +131,7 @@ class HtmlRenderer(object):
     def quick_add_buttons(self,ar):
         """
         Returns a HTML chunk that displays "quick add buttons"
-        for the given :class:`request <lino.core.table.TableRequest>`:
+        for the given :class:`action request <lino.core.table.TableRequest>`:
         a button  :guilabel:`[New]` followed possibly 
         (if the request has rows) by a :guilabel:`[Show last]` 
         and a :guilabel:`[Show all]` button.
@@ -157,6 +157,7 @@ class HtmlRenderer(object):
                 s += self.action_href_js(a,after_show,_("New"))
                 after_show = ar.get_status(self)
         n = ar.get_total_count()
+        print 20120702, [o for o in ar]
         if n > 0:
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)

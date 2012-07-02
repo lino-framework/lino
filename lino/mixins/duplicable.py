@@ -148,8 +148,9 @@ class Duplicable(dd.Model):
         kw = dict()
         kw.update(refresh=True)
         kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
-        kw.update(new_status=dict(record_id=new.pk))
-        return ar.ui.success_response(**kw)
+        #~ kw.update(new_status=dict(record_id=new.pk))
+        kw.update(goto_record_id=new.pk)
+        return ar.success_response(**kw)
         
     def on_duplicate(self,ar,master):
         pass

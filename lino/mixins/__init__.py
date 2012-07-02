@@ -380,7 +380,8 @@ class ProjectRelated(dd.Model):
         
     def get_mailable_recipients(self):
         if isinstance(self.project,settings.LINO.modules.contacts.Partner):
-            yield ('to',self.project)
+            if self.project.email:
+                yield ('to',self.project)
         for r in super(ProjectRelated,self).get_mailable_recipients():
             yield r
 

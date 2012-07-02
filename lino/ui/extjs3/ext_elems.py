@@ -616,6 +616,10 @@ class CharFieldElement(FieldElement):
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         kw.update(maxLength=self.field.max_length)
+        if self.field.max_length is not None:
+            if self.field.max_length <= 10:
+                kw.update(boxMinWidth=js_code('Lino.chars2width(%d)' % self.field.max_length))
+        
         #~ kw.update(style=dict(padding=DEFAULT_PADDING))
         #~ kw.update(margins='10px')
         return kw
@@ -806,6 +810,7 @@ class DateFieldElement(FieldElement):
         kw.update(xtype='datecolumn')
         #~ kw.update(format=self.layout_handle.rh.actor.date_format)
         kw.update(format=settings.LINO.date_format_extjs)
+        #~ kw.update(boxMinWidth=js_code('Lino.chars2width(%d)' % 12)) # experimental value. 
         return kw
     
 class MonthFieldElement(DateFieldElement):
@@ -836,14 +841,20 @@ class IntegerFieldElement(FieldElement):
     #~ data_type = 'int' 
 
 class IncompleteDateFieldElement(CharFieldElement):
+    """
+    Widget for :class:`lino.core.fields.IncompleteDate` fields.
+    """
     preferred_width = 10
     value_template = "new Lino.IncompleteDateField(%s)"
-    def __init__(self,*args,**kw):
-        FieldElement.__init__(self,*args,**kw)
+    
+    #~ def __init__(self,*args,**kw):
+        #~ FieldElement.__init__(self,*args,**kw)
         
     def get_field_options(self,**kw):
+        # skip CharFieldElement.get_field_options because 
+        # boxMinWidth and maxLength are set by Lino.IncompleteDateField
         kw = FieldElement.get_field_options(self,**kw)
-        kw.update(maxLength=10)
+        #~ kw.update(maxLength=10)
         return kw
         
 

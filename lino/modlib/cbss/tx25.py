@@ -187,7 +187,7 @@ class RetrieveTIGroupsRequestInsert(dd.InsertLayout):
     """
 
 class RetrieveTIGroupsRequests(CBSSRequests):
-    debug_permissions = True
+    #~ debug_permissions = True
     model = RetrieveTIGroupsRequest
     detail_layout = RetrieveTIGroupsRequestDetail()
     insert_layout = RetrieveTIGroupsRequestInsert()

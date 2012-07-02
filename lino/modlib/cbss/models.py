@@ -1623,11 +1623,18 @@ def cbss_summary(self,ar):
     """
     #~ qs = IdentifyPersonRequest.objects.filter(person=self,status=RequestStates.ok)
     html = '<p><ul>'
-    for m in (IdentifyPersonRequest,ManageAccessRequest,RetrieveTIGroupsRequest):
-        n = m.objects.filter(person=self).count()
+    #~ for m in (IdentifyPersonRequest,ManageAccessRequest,RetrieveTIGroupsRequest):
+        #~ n = m.objects.filter(person=self).count()
+        #~ if n > 0:
+            #~ html += "<li>%d %s</li>" % (n,unicode(m._meta.verbose_name_plural))
+    #~ html += '</ul></p>'
+    #~ html += '<p>Using XyzByPerson:<ul>'
+    for t in (IdentifyRequestsByPerson,ManageAccessRequestsByPerson,RetrieveTIGroupsRequestsByPerson):
+        n = ar.spawn(t,master_instance=self).get_total_count()
         if n > 0:
-            html += "<li>%d %s</li>" % (n,unicode(m._meta.verbose_name_plural))
+            html += "<li>%d %s</li>" % (n,unicode(t.model._meta.verbose_name_plural))
     html += '</ul></p>'
+    html = '<div class="htmlText">%s</div>' % html
     return html
     
 dd.inject_field(pcsw.Person,
