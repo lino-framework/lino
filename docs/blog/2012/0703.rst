@@ -75,7 +75,7 @@ Some free changes (not asked by any user):
 - outbox.Mail objects are now readonly after they have been sent.
   
   
-Answers to bugs reported by users:
+Bug reported by Gerd:
 
 - "Wenn ich eine Notiz eines Kollegen per E-Mail verschicke, 
   steht als Sender der Kollege."

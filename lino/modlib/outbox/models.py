@@ -290,7 +290,7 @@ class RecipientsByMail(Recipients):
     required = dict()
     #~ required_user_level = None
     master_key = 'mail'
-    column_names = 'type:10 partner:20 address:20 name:20 *'
+    column_names = 'partner:20 address:20 name:20 type:10 *'
     #~ column_names = 'type owner_type owner_id'
     #~ column_names = 'type owner'
 
