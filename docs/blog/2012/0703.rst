@@ -68,6 +68,10 @@ Some free changes (not asked by any user):
   I added an `insert_template` for `notes.Note`. 
   Creating a Note is now much more intuitive.
   
+- Creating an E-Mail on a Note whose NoteType 
+  specifies "Mail as attachment" is now disabled as long 
+  as the Note hasn't been printed.
+  
   
 Answers to bugs reported by users:
 

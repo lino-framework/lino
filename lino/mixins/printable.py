@@ -773,7 +773,8 @@ class CachedPrintable(Duplicable,Printable):
         #~ return 'pisa'
         
     def get_target_name(self):
-        return get_build_method(self).get_target_name(self.do_print,self)
+        if self.build_time:
+            return get_build_method(self).get_target_name(self.do_print,self)
         
     def get_target_url(self,ui):
         return get_build_method(self).get_target_url(self.do_print,self,ui)

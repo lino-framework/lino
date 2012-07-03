@@ -150,6 +150,9 @@ class CreateMailAction(dd.RowAction):
             mt = obj.get_mailable_type()
             if not mt or not mt.email_template:
                 return False
+            if obj.attach_to_email(ar) and obj.get_target_name() is None:
+                return False
+              
         return super(CreateMailAction,self).get_action_permission(user,obj,state)
         
     def run(self,elem,ar,**kw):
@@ -341,7 +344,8 @@ class SendMailAction(dd.RowAction):
         for att in elem.attachment_set.all():
             #~ if as_attachment or att.owner != elem.owner:
             fn = att.owner.get_target_name()
-            #~ msg.attach(os.path.split(fn)[-1],open(fn).read())
+            if fn is None:
+                raise Warning(_("Couldn't find target file of %s") % att.owner)
             msg.attach_file(fn)
             
         for up in uploads.UploadsByController.request(master_instance=elem):
