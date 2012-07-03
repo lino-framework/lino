@@ -38,6 +38,8 @@ from lino import mixins
 #~ from lino.mixins import mails
 from lino import tools
 from lino import dd
+from lino.core import actions
+
 #~ from lino.utils.babel import default_language
 #~ from lino import reports
 #~ from lino import layouts
@@ -130,7 +132,10 @@ class CreateMailAction(dd.RowAction):
     #~ label = _('Create email')
     #~ label = pgettext_lazy(u'verb',u'Mail')
     label = _('Create email')
-    callable_from = None
+    
+    callable_from = (actions.GridEdit, 
+        actions.ShowDetailAction,
+        actions.ShowEmptyTable) # but not from InsertRow
     
     def get_action_permission(self,user,obj,state):
         """

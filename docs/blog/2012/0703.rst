@@ -17,10 +17,80 @@ Der komplette KBSS-Baum aus dem "Mein Menü" kommt raus, fertig.
 --> New attribute :attr:`lino.core.actions.Action.auto_save`.
 
 
+Customization functions
+-----------------------
 
-TODO
-- Empfängerart wird erst sichtbar, wenn man auch einen Empfänger eingegeben hat
-- Wenn ich eine Notiz eines Kollegen per E-Mail verschicke, 
-  steht als Sender der Kollege. 
-- Labels der vier Buttons auf einer neuen E-Mail...
-- Übersetzung Label für "Create": "Erstellen"
+Another little problem occured which is worth some principal thoughts.
+
+In :mod:`lino.apps.pcsw`, 
+since :class:`models.Note <lino.modlib.notes.models.Note>` 
+has become a :class:`ProjectRelated <lino.mixins.ProjectRelated>`, 
+the internal name of the ForeignKey to the Person has changed 
+from `person` to `project`.
+And the field `company` became an application-specific field, 
+injected in :mod:`lino.apps.pcsw.models`.
+We wanted it like this because it makes the :mod:`lino.modlib.notes` module 
+available for usage in other applications.
+
+But then we discovered that the appy template for printing a CV no longer works. 
+Of course: it contains references to the `person` field.
+Solution is easy: make an application-specific property `person`::
+
+    def get_person(self):
+        return self.project
+    Note.person = property(get_person)
+
+This code sits in :mod:`lino.apps.pcsw.models`,
+more precisely in the 
+:func:`customize_notes <lino.apps.pcsw.models.customize_notes>` 
+function of that module.
+
+Formulated the new concept of :term:`customization functions`, 
+and :mod:`lino.apps.pcsw.models` defines six of them:
+
+- :func:`customize_siteconfig <lino.apps.pcsw.models.customize_siteconfig>`
+- :func:`customize_notes <lino.apps.pcsw.models.customize_notes>`
+- :func:`customize_contacts <lino.apps.pcsw.models.customize_contacts>`
+- :func:`customize_sqlite <lino.apps.pcsw.models.customize_sqlite>`
+- :func:`customize_user_groups <lino.apps.pcsw.models.customize_user_groups>`
+- :func:`customize_user_profiles <lino.apps.pcsw.models.customize_user_profiles>`
+
+
+Miscellaneous
+-------------
+
+Some free changes (not asked by any user):
+
+- The CreatePostings and CreateMail actions were wrongly 
+  callable from an insert window.
+  
+- Awesome!
+  I added an `insert_template` for `notes.Note`. 
+  Creating a Note is now much more intuitive.
+  
+  
+Answers to bugs reported by users:
+
+- "Wenn ich eine Notiz eines Kollegen per E-Mail verschicke, 
+  steht als Sender der Kollege."
+  
+This was because :class:`UserAuthored <lino.mixins.UserAuthored>` 
+had the following method::
+
+  def update_owned_instance(self,other):
+      other.user = self.user
+      super(UserAuthored,self).update_owned_instance(other)
+      
+Removed that method because we cannot generally say that this is 
+a wanted behaviour. Don't even remember where it is useful.
+(If it was, then these cases will pop up as bug reports... sorry).
+
+
+TODO:
+
+- "Empfängerart wird erst sichtbar, wenn man auch einen Empfänger eingegeben hat."
+  
+- Evtl. Labels der vier Buttons auf einer neuen E-Mail anpassen, 
+  sowie Übersetzung Label für "Create": "Erstellen"
+
+

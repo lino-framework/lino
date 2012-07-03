@@ -44,6 +44,7 @@ from lino import dd
 #~ from lino.utils import perms
 #~ from lino.utils import printable
 from lino.utils import babel
+from lino.core import actions
 #~ from lino.utils import call_optional_super
 from django.conf import settings
 
@@ -129,7 +130,11 @@ class CreatePostings(dd.RowAction):
     url_action_name = 'post'
     #~ label = _('Create email')
     label = _('Create posting')
-    callable_from = None
+    
+    callable_from = (actions.GridEdit, 
+        actions.ShowDetailAction,
+        actions.ShowEmptyTable) # but not from InsertRow
+    
     
     def run(self,elem,ar,**kw):
         recs = tuple(elem.get_postable_recipients())

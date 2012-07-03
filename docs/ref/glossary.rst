@@ -5,6 +5,11 @@ Glossary
 .. glossary::
   :sorted:
   
+  customization functions
+    See :doc:`/topics/customization`.
+
+  
+  
   DavLink
     See :doc:`/davlink/index`
     

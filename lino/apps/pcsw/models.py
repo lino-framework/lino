@@ -1861,172 +1861,149 @@ class OverlappingContracts(dd.Table):
 
 
 
-
-"""
-
-
-"""
-
-from lino.models import SiteConfig
-dd.inject_field(SiteConfig,
-    'job_office',
-    #~ models.ForeignKey("contacts.Company",
-    models.ForeignKey(settings.LINO.company_model,
-        blank=True,null=True,
-        verbose_name=_("Local job office"),
-        related_name='job_office_sites'),
-    """The Company whose contact persons will be 
-    choices for `Person.job_office_contact`.
-    """)
+def customize_siteconfig():
+    """
+    Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
     
-dd.inject_field(SiteConfig,
-    'residence_permit_upload_type',
-    #~ UploadType.objects.get(pk=2)
-    models.ForeignKey("uploads.UploadType",
-        blank=True,null=True,
-        verbose_name=_("Upload Type for residence permit"),
-        related_name='residence_permit_sites'),
-    """The UploadType for `Person.residence_permit`.
-    """)
+    """
     
-dd.inject_field(SiteConfig,
-    'work_permit_upload_type',
-    #~ UploadType.objects.get(pk=2)
-    models.ForeignKey("uploads.UploadType",
-        blank=True,null=True,
-        verbose_name=_("Upload Type for work permit"),
-        related_name='work_permit_sites'),
-    """The UploadType for `Person.work_permit`.
-    """)
-
-dd.inject_field(SiteConfig,
-    'driving_licence_upload_type',
-    models.ForeignKey("uploads.UploadType",
-        blank=True,null=True,
-        verbose_name=_("Upload Type for driving licence"),
-        related_name='driving_licence_sites'))
-    
-
-
-"""
-...
-"""
-#~ settings.LINO.add_user_field('integ_level',UserLevels.field(_("Integration")))
-#~ settings.LINO.add_user_group('integ',_("Integration"))
-              
+    from lino.models import SiteConfig
+    dd.inject_field(SiteConfig,
+        'job_office',
+        #~ models.ForeignKey("contacts.Company",
+        models.ForeignKey(settings.LINO.company_model,
+            blank=True,null=True,
+            verbose_name=_("Local job office"),
+            related_name='job_office_sites'),
+        """The Company whose contact persons will be 
+        choices for `Person.job_office_contact`.
+        """)
         
-#~ RoleType = resolve_model('contacts.RoleType')
-#~ if not isinstance(RoleType,UnresolvedModel):
-"""
-`autodoc` imports this module with :mod:`lino.apps.std.settings` 
-which has no 'contacts' app. but inject_field handles that case.
-"""
-dd.inject_field('contacts.RoleType',
-    'use_in_contracts',
-    models.BooleanField(
-        verbose_name=_("usable in contracts"),
-        default=True
-    ),"""Whether Links of this type can be used as contact person of a job contract.
-    Deserves more documentation.
-    """)
+    dd.inject_field(SiteConfig,
+        'residence_permit_upload_type',
+        #~ UploadType.objects.get(pk=2)
+        models.ForeignKey("uploads.UploadType",
+            blank=True,null=True,
+            verbose_name=_("Upload Type for residence permit"),
+            related_name='residence_permit_sites'),
+        """The UploadType for `Person.residence_permit`.
+        """)
         
-#~ dd.inject_field(settings.LINO.user_model,
-    #~ 'partner',
-    #~ models.ForeignKey('contacts.Partner',
-        #~ blank=True,null=True))
+    dd.inject_field(SiteConfig,
+        'work_permit_upload_type',
+        #~ UploadType.objects.get(pk=2)
+        models.ForeignKey("uploads.UploadType",
+            blank=True,null=True,
+            verbose_name=_("Upload Type for work permit"),
+            related_name='work_permit_sites'),
+        """The UploadType for `Person.work_permit`.
+        """)
 
-
-
-#~ dd.inject_field('outbox.Mail','person',
-    #~ models.ForeignKey(Person,
-        #~ blank=True,null=True,
-        #~ related_name='outbox_mail_set',
-        #~ help_text="""The related Person`."""
-        #~ ))
-
-#~ class OutboxByPerson(dd.Table):
-    #~ master_key = 'person'
-    #~ model = 'oubox.Mail'
-    #~ order_by = ['sent']
-  
-
-from lino.modlib.notes.models import Note, Notes
-
-#~ dd.inject_field('notes.Note','company',
-dd.inject_field(Note,'company',
-    models.ForeignKey(settings.LINO.company_model,
-        blank=True,null=True,
-        help_text="""\
-Probably not useful."""
-        )
-    )
-  
-class NotesByPerson(Notes):
-    master_key = 'project'
-    column_names = "date event_type type subject body user company *"
-    order_by = ["-date"]
-  
-class NotesByCompany(Notes):
-    master_key = 'company'
-    column_names = "date project event_type type subject body user *"
-    order_by = ["-date"]
+    dd.inject_field(SiteConfig,
+        'driving_licence_upload_type',
+        models.ForeignKey("uploads.UploadType",
+            blank=True,null=True,
+            verbose_name=_("Upload Type for driving licence"),
+            related_name='driving_licence_sites'))
     
 
 
-"""
-Here is how we install case-insensitive sorting in sqlite3.
-Note that this caused noticeable performance degradation...
+def customize_contacts():
+    """
+    Injects application-specific fields to :mod:`contacts <lino.modlib.contacts>`.
+    """
+    dd.inject_field('contacts.RoleType',
+        'use_in_contracts',
+        models.BooleanField(
+            verbose_name=_("usable in contracts"),
+            default=True
+        ),"""Whether Links of this type can be used as contact person of a job contract.
+        Deserves more documentation.
+        """)
+        
 
-Thanks to 
-- http://efreedom.com/Question/1-3763838/Sort-Order-SQLite3-Umlauts
-- http://docs.python.org/library/sqlite3.html#sqlite3.Connection.create_collation
-- http://www.sqlite.org/lang_createindex.html
-"""
-from django.db.backends.signals import connection_created
+def customize_notes():
+    """
+    Application-specific changes to :mod:`lino.modlib.notes`.
+    """
+    from lino.modlib.notes.models import Note, Notes
 
-def belgian(s):
-  
-    s = s.decode('utf-8').lower()
-    
-    s = s.replace(u'ä',u'a')
-    s = s.replace(u'à',u'a')
-    s = s.replace(u'â',u'a')
-    
-    s = s.replace(u'ç',u'c')
-    
-    s = s.replace(u'é',u'e')
-    s = s.replace(u'è',u'e')
-    s = s.replace(u'ê',u'e')
-    s = s.replace(u'ë',u'e')
-    
-    s = s.replace(u'ö',u'o')
-    s = s.replace(u'õ',u'o')
-    s = s.replace(u'ô',u'o')
-    
-    s = s.replace(u'ß',u'ss')
-    
-    s = s.replace(u'ù',u'u')
-    s = s.replace(u'ü',u'u')
-    s = s.replace(u'û',u'u')
-    
-    return s
-    
-def stricmp(str1, str2):
-    return cmp(belgian(str1),belgian(str2))
-    
-def my_callback(sender,**kw):
-    from django.db.backends.sqlite3.base import DatabaseWrapper
-    if sender is DatabaseWrapper:
-        db = kw['connection']
-        db.connection.create_collation('BINARY', stricmp)
+    dd.inject_field(Note,'company',
+        models.ForeignKey(settings.LINO.company_model,
+            blank=True,null=True,
+            help_text="""\
+    An optional third-party Organization that is related to this Note.
+    The note will then be visible in that company's history panel.
+    """
+        ))
+        
+    def get_person(self):
+        return self.project
+    Note.person = property(get_person)
+        
+      
+    class NotesByPerson(Notes):
+        master_key = 'project'
+        column_names = "date event_type type subject body user company *"
+        order_by = ["-date"]
+      
+    class NotesByCompany(Notes):
+        master_key = 'company'
+        column_names = "date project event_type type subject body user *"
+        order_by = ["-date"]
+        
 
-connection_created.connect(my_callback)
 
-#~ class ContactPersons(links.LinksFromThis):
-    #~ label = _("Contact persons")
-    
-  
-    
+def customize_sqlite():
+    """
+    Here is how we install case-insensitive sorting in sqlite3.
+    Note that this caused noticeable performance degradation...
+
+    Thanks to 
+    - http://efreedom.com/Question/1-3763838/Sort-Order-SQLite3-Umlauts
+    - http://docs.python.org/library/sqlite3.html#sqlite3.Connection.create_collation
+    - http://www.sqlite.org/lang_createindex.html
+    """
+    from django.db.backends.signals import connection_created
+
+    def belgian(s):
+      
+        s = s.decode('utf-8').lower()
+        
+        s = s.replace(u'ä',u'a')
+        s = s.replace(u'à',u'a')
+        s = s.replace(u'â',u'a')
+        
+        s = s.replace(u'ç',u'c')
+        
+        s = s.replace(u'é',u'e')
+        s = s.replace(u'è',u'e')
+        s = s.replace(u'ê',u'e')
+        s = s.replace(u'ë',u'e')
+        
+        s = s.replace(u'ö',u'o')
+        s = s.replace(u'õ',u'o')
+        s = s.replace(u'ô',u'o')
+        
+        s = s.replace(u'ß',u'ss')
+        
+        s = s.replace(u'ù',u'u')
+        s = s.replace(u'ü',u'u')
+        s = s.replace(u'û',u'u')
+        
+        return s
+        
+    def stricmp(str1, str2):
+        return cmp(belgian(str1),belgian(str2))
+        
+    def my_callback(sender,**kw):
+        from django.db.backends.sqlite3.base import DatabaseWrapper
+        if sender is DatabaseWrapper:
+            db = kw['connection']
+            db.connection.create_collation('BINARY', stricmp)
+
+    connection_created.connect(my_callback)
+
 
 
 class Home(cal.Home):
@@ -2137,7 +2114,6 @@ def site_setup(site):
     """)
     
         
-    #~ site.modules.notes.Notes.set_detail(NoteDetail())
     site.modules.notes.Notes.set_detail(
         left = """
         date:10 event_type:25 type:25
@@ -2160,6 +2136,11 @@ def site_setup(site):
         """
     )
     
+    site.modules.notes.Notes.set_insert_layout("""
+    event_type:25 type:25
+    subject 
+    project company
+    """,window_size=(50,'auto'))
     
     #~ site.modules.outbox.Mails.set_detail("""
     #~ subject project date 
@@ -2169,38 +2150,51 @@ def site_setup(site):
     #~ """)
         
     #~ site.modules.courses.CourseProviders.set_detail(CourseProviderDetail())
+    
+    
+    
+    
+def customize_user_groups():
+    """
+    Define application-specific 
+    :class:`UserGroups <lino.utils.perms.UserGroups>`.
+    """
+    add = dd.UserGroups.add_item
+    add('office',_("Calendar & Outbox"),'office')
+    add('integ',_("Integration"),'integ')
+    add('cbss',_("CBSS"),'cbss')
+    add('newcomers',_("Newcomers"),'newcomers')
+    add('debts',_("Debts"),'debts')
 
-#~ from lino.utils.perms import UserLevels, UserGroups, UserProfiles
-#~ from lino.utils import perms 
-add = dd.UserGroups.add_item
-add('office',_("Calendar & Outbox"),'office')
-add('integ',_("Integration"),'integ')
-add('cbss',_("CBSS"),'cbss')
-add('newcomers',_("Newcomers"),'newcomers')
-add('debts',_("Debts"),'debts')
+def customize_user_profiles():
+  """
+  Define application-specific 
+  :class:`UserProfiles <lino.utils.perms.UserProfiles>`.
+  
+  This will usually be reconfigured again *locally per site*.
+  """
+  
+  dd.UserProfiles.clear()
 
-dd.UserProfiles.clear()
+  def add(value,label,*args,**kw):
+      dd.UserProfiles.add_item(value,label,None,*args,**kw)
+  """
+      #     label                            level      office      integ       cbss       newcomers  debts
+      ====  ================================ ========== =========== =========== ========== ========== ========"""
+  add('100', _("Integration Agent"),          'user',    'user',     'user',    'user',    '',        '')
+  add('110', _("Integration Agent (Senior)"), 'user',    'manager',  'manager', 'user',    '',        '')
+  add('200', _("Newcomers consultant"),       'user',    'user',     '',        'user',    'user',    '')
+  add('300', _("Debts consultant"),           'user',    'user',     '',        '',        '',        'user')
+  add('400', _("Readonly Manager"),           'manager', 'manager',  'manager', 'manager', 'manager', 'manager', readonly=True)
+  add('500', _("CBSS only"),                  'user',    '',         '',        'user',    '',        '')
+  add('900', _("Administrator"),              'admin',   'admin',    'admin',   'admin',   'admin',   'admin')
 
-#~ add = UserProfiles.add_item
-#~ """
-    #~ #     label                            name       level    integ       cbss    newcomers debts
-    #~ ====  ================================ ========== ======== =========== ======= ========= ========"""
-#~ add('10', _("Integration Agent"),          'hubert',  'user',  'user',    'user')
-#~ add('11', _("Integration Agent (Senior)"), 'melanie', 'user',  'manager', 'user')
-#~ add('20', _("Newcomers consultant"),       'caroline','user',  '',        'user',  'user')
-#~ add('30', _("Debts consultant"),           'kerstin', 'user',  '',        '',      '',       'user')
-#~ add('90', _("Administrator"),              'admin',   'admin', 'admin',   'admin', 'admin',  'admin')
 
-def add(value,label,*args,**kw):
-    dd.UserProfiles.add_item(value,label,None,*args,**kw)
-"""
-    #     label                            level      office      integ       cbss       newcomers  debts
-    ====  ================================ ========== =========== =========== ========== ========== ========"""
-add('100', _("Integration Agent"),          'user',    'user',     'user',    'user',    '',        '')
-add('110', _("Integration Agent (Senior)"), 'user',    'manager',  'manager', 'user',    '',        '')
-add('200', _("Newcomers consultant"),       'user',    'user',     '',        'user',    'user',    '')
-add('300', _("Debts consultant"),           'user',    'user',     '',        '',        '',        'user')
-add('400', _("Readonly Manager"),           'manager', 'manager',  'manager', 'manager', 'manager', 'manager', readonly=True)
-add('500', _("CBSS only"),                  'user',    '',         '',        'user',    '',        '')
-add('900', _("Administrator"),              'admin',   'admin',    'admin',   'admin',   'admin',   'admin')
 
+customize_siteconfig()
+customize_contacts()        
+customize_notes()
+customize_sqlite()
+customize_user_groups()
+customize_user_profiles()
+  

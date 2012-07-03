@@ -482,8 +482,9 @@ class BasePrintAction(actions.RowAction):
     url_action_name = 'print'
     label = _('Print')
     
-    callable_from = (actions.GridEdit, actions.ShowDetailAction,
-        actions.ShowEmptyTable)
+    callable_from = (actions.GridEdit, 
+        actions.ShowDetailAction,
+        actions.ShowEmptyTable) # but not from InsertRow
     
     #~ def __init__(self,rpt,*args,**kw):
         #~ self.actor = rpt

@@ -396,7 +396,7 @@ class BaseLayout(object):
     """
     
     #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
-    def __init__(self,table=None,main=None,hidden_elements=frozenset()):
+    def __init__(self,table=None,main=None,hidden_elements=frozenset(),**kw):
         self._table = table
         self._labels = dict()
         #~ self._window_size = window_size
@@ -406,6 +406,10 @@ class BaseLayout(object):
             self.main = main
         elif not hasattr(self,'main'):
             raise Exception("Cannot instantiate %s without `main`." % self.__class__)
+        for k,v in kw.items():
+            if not hasattr(self,k):
+                raise Exception("Got unexpected keyword %s=%r" % (k,v))
+            setattr(self,k,v)
     
     def get_data_elem(self,name): 
         return self._table.get_data_elem(name)

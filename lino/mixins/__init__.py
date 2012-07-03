@@ -161,7 +161,8 @@ class Controllable(dd.Model):
 
 
 
-class AutoUser(dd.Model):
+#~ class AutoUser(dd.Model):
+class UserAuthored(dd.Model):
     """
     Mixin for models that have a `user` field which is automatically 
     set to the requesting user.
@@ -200,12 +201,12 @@ class AutoUser(dd.Model):
             u = ar.get_user()
             if u is not None:
                 self.user = u
-        super(AutoUser,self).on_create(ar)
+        super(UserAuthored,self).on_create(ar)
         
-    def update_owned_instance(self,other):
+    #~ def update_owned_instance(self,other):
         #~ print '20120627 AutoUser.update_owned_instance'
-        other.user = self.user
-        super(AutoUser,self).update_owned_instance(other)
+        #~ other.user = self.user
+        #~ super(UserAuthored,self).update_owned_instance(other)
         
 
     def get_row_permission(self,user,state,action):
@@ -214,10 +215,11 @@ class AutoUser(dd.Model):
         """
         if self.user != user and user.profile.level < UserLevels.manager:
             return False
-        if not super(AutoUser,self).get_row_permission(user,state,action):
+        if not super(UserAuthored,self).get_row_permission(user,state,action):
             return False
         return True
 
+AutoUser = UserAuthored # backwards compatibility
 
 
 if settings.LINO.user_model: 

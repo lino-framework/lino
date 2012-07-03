@@ -240,9 +240,9 @@ class Note(mixins.TypedPrintable,
     def get_mailable_type(self):
         return self.type
         
-    def get_person(self):
-        return self.project
-    person = property(get_person)
+    #~ def get_person(self):
+        #~ return self.project
+    #~ person = property(get_person)
         
         
     

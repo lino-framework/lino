@@ -1670,9 +1670,9 @@ Lino.build_buttons = function(panel,actions) {
           var h = actions[i].panel_btn_handler.createCallback(panel,buttons[i]);
           //~ if (actions[i].must_save) {
           if (actions[i].auto_save == true) {
-              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,true,[h]));
+              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,[true,h]));
           } else if (actions[i].auto_save == null) {
-              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,false,[h]));
+              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,[false,h]));
           } else if (actions[i].auto_save == false) {
               buttons[i].on('click',h);
           } else {
