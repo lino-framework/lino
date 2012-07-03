@@ -150,7 +150,8 @@ class CreateMailAction(dd.RowAction):
             mt = obj.get_mailable_type()
             if not mt or not mt.email_template:
                 return False
-            if obj.attach_to_email(ar) and obj.get_target_name() is None:
+            #~ if obj.attach_to_email(ar) and obj.get_target_name() is None:
+            if mt.attach_to_email and obj.get_target_name() is None:
                 return False
               
         return super(CreateMailAction,self).get_action_permission(user,obj,state)
