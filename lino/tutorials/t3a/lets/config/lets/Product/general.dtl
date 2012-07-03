@@ -1,4 +1,0 @@
-main = 
-  id name
-  OffersByProduct DemandsByProduct
-  

@@ -136,7 +136,7 @@ class Address(CountryCity):
         """
         return linesep.join(self.address_location_lines())
         
-class AddressDetail(dd.DetailLayout):
+class AddressDetail(dd.FormLayout):
     address = """
     country region city zip_code
     addr1

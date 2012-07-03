@@ -61,7 +61,7 @@ Miscellaneous
 
 Some free changes (not asked by any user):
 
-- The 
+- The
   :class:`CreatePostings <lino.modlib.postings.models.CreatePostings>`, 
   :class:`CreateMail <lino.modlib.outbox.models.CreateMail>`
   and
@@ -100,32 +100,35 @@ a wanted behaviour. Don't even remember where it is useful.
 (If it was, then these cases will pop up as bug reports... sorry).
 
 
-Solved **another bug** reported by Gerd:
+Solved another bug reported by Gerd:
 
 - "Empfängerart wird erst sichtbar, wenn man auch einen Empfänger eingegeben hat."
 
 This is not truly fixed, but I moved the Recipient.type column to the right so 
 that the user first selects the Partner. IMHO that's enough.
 
+- Übersetzung Label für "Create": "Erstellen"
+
+
 
 InsertLayout cannot inherit from a DetailLayout
 -----------------------------------------------
 
-When also defining a separate `insert_template` for `cal.Events`, 
-I understood a subtle design problem: 
+Also added a separate `insert_template` for `cal.Events`.
+But there I understood a subtle design problem: 
 having InsertLayout and DetailLayout two different classes made 
 it impossible to define an insert_layout that inherits from a 
 detail_layout.
-The detail_layout of cal.Events defines to panels `start` and `end`,
-and we could not reuse them for the insert_layout.
-Internal changes to make this possible.
-Reduced InsertLayout and DetailLayout to a single class
-:class:`FormPanel <lino.core.layouts.FormPanel>`.
+The detail_layout of cal.Events defines two panels `start` and `end`,
+and we were not able to reuse them for the insert_layout.
+Internal changes to make this possible:
+reduced InsertLayout and DetailLayout to a single class
+:class:`FormLayout <lino.core.layouts.FormLayout>`.
 
 
-TODO:
- 
-- Evtl. Labels der vier Buttons auf einer neuen E-Mail anpassen, 
-  sowie Übersetzung Label für "Create": "Erstellen"
 
+Updated LETS tutorial
+---------------------
 
+Oops, the :doc:`/tutorials/lets` was really very obsolete. 
+Now it works again.

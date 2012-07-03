@@ -277,7 +277,7 @@ class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
         
   
 
-class CourseDetail(dd.DetailLayout):
+class CourseDetail(dd.FormLayout):
     #~ start = "start_date start_time"
     #~ end = "end_date end_time"
     #~ freq = "every every_unit"

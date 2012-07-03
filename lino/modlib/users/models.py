@@ -117,7 +117,12 @@ class User(mixins.CreatedModified):
     #~ date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
     
     if settings.LINO.is_installed('contacts'):
+      
         partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
+        
+    else:
+      
+        partner = dd.DummyField()
     
 
     def __unicode__(self):
@@ -226,40 +231,8 @@ class User(mixins.CreatedModified):
         
 
 
-#~ class UserDetail(dd.DetailLayout):
-  
-    #~ box2 = """
-    #~ username profile 
-    #~ level
-    #~ """
-    
-    #~ box3 = """
-    #~ country region
-    #~ city zip_code:10
-    #~ street_prefix street:25 street_no street_box
-    #~ addr2:40
-    #~ """
 
-    #~ box4 = """
-    #~ email:40 
-    #~ url
-    #~ phone
-    #~ gsm
-    #~ """
-
-    #~ box1 = """
-    #~ first_name last_name language id
-    #~ box3:40 box4:30 
-    #~ date_joined last_login 
-    #~ """
-    #~ general = """
-    #~ box1:50 box2:20
-    #~ remarks 
-    #~ """
-    
-    #~ main = "general"
-
-class UserDetail(dd.DetailLayout):
+class UserDetail(dd.FormLayout):
   
     box1 = """
     username id profile 
@@ -268,29 +241,12 @@ class UserDetail(dd.DetailLayout):
     created modified
     """
 
-    #~ box2 = """
-    #~ #level
-    #~ """
-    #~ general = """
-    #~ box1:50 box2:20
-    #~ remarks 
-    #~ """
-    
-    #~ main = "general"
-  
     main = """
     box1
     remarks 
     """
     
-"""
-If contacts is not installed, then a field `partner` doesn't exist, 
-so we remove it from the layout.
-"""
-if not settings.LINO.is_installed('contacts'):
-    UserDetail.box1.replace('partner','')
- 
-class UserInsert(dd.InsertLayout):
+class UserInsert(dd.FormLayout):
   
     window_size = (60,'auto')
     
@@ -301,6 +257,15 @@ class UserInsert(dd.InsertLayout):
     language profile     
     """
     
+#~ """
+#~ If contacts is not installed, then a field `partner` doesn't exist, 
+#~ so we remove it from the layout.
+#~ """
+#~ if not settings.LINO.is_installed('contacts'):
+    #~ print "20120703 contacts is not installed"
+    #~ UserDetail.box1.replace('partner','')
+    #~ UserInsert.main.replace('partner','')
+ 
 class Users(dd.Table):
     """
     Shows the list of all users on this site.

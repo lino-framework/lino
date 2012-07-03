@@ -620,7 +620,8 @@ class IncompleteDateField(models.CharField):
         #~ value = self._get_val_from_obj(obj)
         #~ return self.get_prep_value(value)
         
-
+class DummyField(object):
+    pass
 
 class RecurrenceField(models.CharField):
     """

@@ -262,7 +262,7 @@ class Collection(dd.Model):
 # reports
 
 
-class SongDetail(dd.DetailLayout):
+class SongDetail(dd.FormLayout):
     datalink = 'songs.Song'
     main = """
     id title language voices
@@ -275,7 +275,7 @@ class SongDetail(dd.DetailLayout):
     def inlines(self):
         return dict(events=EventsBySong())
 
-class PerformanceDetail(dd.DetailLayout):
+class PerformanceDetail(dd.FormLayout):
     datalink = 'songs.Performance'
   
     main = """

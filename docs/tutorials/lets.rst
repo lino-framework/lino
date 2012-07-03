@@ -17,7 +17,7 @@ to show to your customer that looks a little bit like
 the final product, and with wich you can play to test 
 whether your analysis of the database structure is okay.
 
-The code for such a first draft is in :srcref:`/lino/tutorials/t3a`.
+The code for such a first draft is in :srcref:`/lino/tutorials/lets1`.
 
 Please explore these files and and copy 
 them to a local project directory 
@@ -29,9 +29,6 @@ The directory structure should be as follows::
   manage.py
   lets/__init__.py
   lets/models.py
-  lets/config/lets/Customer/general.dtl
-  lets/config/lets/Provider/general.dtl
-  lets/config/lets/Product/general.dtl
   fixtures/__init__.py
   fixtures/demo.py
 

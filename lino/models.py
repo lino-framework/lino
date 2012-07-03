@@ -96,7 +96,7 @@ class SiteConfig(dd.Model):
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))
 
-#~ class SiteConfigDetail(dd.DetailLayout):
+#~ class SiteConfigDetail(dd.FormLayout):
     #~ about = """
     #~ versions:40x5 startup_time:30
     #~ lino.ModelsBySite:70x10
@@ -529,7 +529,7 @@ class Inspector(dd.VirtualTable):
         return cgi.escape(str(type(obj.value)))
         
 
-class AboutDetail(dd.DetailLayout):
+class AboutDetail(dd.FormLayout):
     """
     The Detail Layout for :class:`About`
     """

@@ -98,7 +98,9 @@ add('bcc',_("bcc"),'bcc')
 from lino.utils.config import find_template_config_files
 
 class MailableType(dd.Model):
-  
+    """
+    Mixin for Models that serve as `type` of a :class:`Mailable`.
+    """
     templates_group = None
 
     class Meta:
@@ -123,7 +125,7 @@ when creating an email from a mailable of this type.
     
 
 
-class CreateMailAction(dd.RowAction):
+class CreateMail(dd.RowAction):
     """
     Creates an outbox mail and displays it.
     """
@@ -153,7 +155,7 @@ class CreateMailAction(dd.RowAction):
             #~ if obj.attach_to_email(ar) and obj.get_target_name() is None:
             if mt.attach_to_email and not obj.get_target_name():
                 return False
-        return super(CreateMailAction,self).get_action_permission(user,obj,state)
+        return super(CreateMail,self).get_action_permission(user,obj,state)
         
     def run(self,elem,ar,**kw):
       
@@ -190,7 +192,7 @@ class Mailable(dd.Model):
     class Meta:
         abstract = True
         
-    create_mail = CreateMailAction()
+    create_mail = CreateMail()
     #~ post2 = PostAction(True)
     
     #~ post_as_attachment = models.BooleanField(_("Post as attachment"),default=False)
@@ -449,7 +451,7 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
       
 dd.update_field(Mail,'user',verbose_name=_("Sender"))
 
-#~ class MailDetail(dd.DetailLayout):
+#~ class MailDetail(dd.FormLayout):
     #~ main = """
     #~ """
 

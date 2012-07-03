@@ -833,7 +833,7 @@ class Company(CpasPartner,contacts.Partner,contacts.CompanyMixin):
   
     
 
-class CompanyDetail(dd.DetailLayout):
+class CompanyDetail(dd.FormLayout):
   
     box3 = """
     country region
@@ -907,8 +907,8 @@ class Companies(Partners):
 
 
 
-class PersonDetail(dd.DetailLayout):
-  
+class PersonDetail(dd.FormLayout):
+    
     #~ actor = 'contacts.Person'
     
     main = "tab1 tab2 tab3 tab4 tab5 tab5b history contracts calendar misc"

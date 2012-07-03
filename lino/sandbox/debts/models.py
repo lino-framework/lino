@@ -288,7 +288,7 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
             
         
       
-class BudgetDetail(dd.DetailLayout):
+class BudgetDetail(dd.FormLayout):
     """
     Defines the Detail of a :class:`Budget`, with four tabs 
     :guilabel:`General`,
@@ -473,7 +473,7 @@ class Actor(mixins.Sequenced,ActorBase):
             self.partner = self.sub_budget.partner
         super(Actor,self).save(*args,**kw)
         
-#~ class ActorDetail(dd.DetailLayout):
+#~ class ActorDetail(dd.FormLayout):
     #~ main = "general ExpensesByActor IncomesByActor DebtsByActor"
     #~ general = """
     #~ budget seqno child header

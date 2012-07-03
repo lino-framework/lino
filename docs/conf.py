@@ -237,6 +237,7 @@ def setup(app):
     #app.connect('build-finished', handle_finished)
     
     app.connect('autodoc-skip-member',autodoc_skip_member)
+    app.connect('autodoc-process-docstring', autodoc_add_srcref)
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
@@ -257,7 +258,27 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
     #~ if what == 'exception': 
         #~ print 'autodoc_skip_member',what, repr(name), repr(obj), skip
         #~ return True
+        
+
+SIDEBAR = """
+.. sidebar:: Use the source, Luke
+
+  We generally recommend to also consult the source code.
+  This module's source code is available at
+  :srcref:`/%s.py`
+
+"""  
     
+def autodoc_add_srcref(app,what,name,obj,options,lines):
+    if what == 'module':
+        s = (SIDEBAR % name.replace('.','/')).splitlines()
+        s.reverse()
+        for ln in s:
+            lines.insert(0,ln)
+        #~ lines.insert(0,'')
+        #~ lines.insert(0,'(We also recommend to read the source code at :srcref:`/%s.py`)' % name.replace('.','/'))
+    
+
     
 extlinks = {
   'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
@@ -282,3 +303,4 @@ html_theme = "default"
 html_theme_options = dict(collapsiblesidebar=True,externalrefs=True)
 
 todo_include_todos = True
+

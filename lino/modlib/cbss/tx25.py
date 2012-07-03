@@ -178,7 +178,7 @@ class RetrieveTIGroupsRequestDetail(CBSSRequestDetail):
     #~ def setup_handle(self,lh):
         #~ CBSSRequestDetail.setup_handle(self,lh)
         
-class RetrieveTIGroupsRequestInsert(dd.InsertLayout):
+class RetrieveTIGroupsRequestInsert(dd.FormLayout):
     window_size = (40,'auto')
     main = """
     person

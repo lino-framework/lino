@@ -11,6 +11,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This defines the :class:`Table` class (``dd.Table``).
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -421,7 +425,7 @@ class Table(AbstractTable):
     
     use_as_default_table = True
     """
-    Set this to False if this Table should not become the model's default table.
+    Set this to False if this Table should not become the Model's default table.
     """
     
     expand_memos = False

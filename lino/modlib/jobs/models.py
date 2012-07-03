@@ -529,7 +529,7 @@ class Contract(ContractBase):
             'date_decided date_issued ')
         #~ super(Contract,cls).site_setup(lino)
 
-class ContractDetail(dd.DetailLayout):
+class ContractDetail(dd.FormLayout):
     box1 = """
     id:8 person:25 user:15 user_asd:15 language:8
     job type company contact:20     

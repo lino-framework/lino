@@ -124,7 +124,7 @@ class Household(pcsw.CpasPartner,contacts.Partner):
         #~ return self.name
 
 
-class HouseholdDetail(dd.DetailLayout):
+class HouseholdDetail(dd.FormLayout):
   
     box3 = """
     country region

@@ -263,7 +263,7 @@ but e.g. :class:`PersonMixin` overrides this.
         return unicode(self)
     
 
-class PartnerDetail(dd.DetailLayout):
+class PartnerDetail(dd.FormLayout):
   
     main = """
     address_box:60 contact_box:30

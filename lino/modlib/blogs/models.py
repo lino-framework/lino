@@ -114,7 +114,7 @@ class EntryTypes(dd.Table):
     blogs.EntriesByType
     """
 
-class EntryDetail(dd.DetailLayout):
+class EntryDetail(dd.FormLayout):
     main = """
     type:25 owner
     subject 

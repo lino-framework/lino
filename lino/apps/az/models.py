@@ -31,7 +31,6 @@ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
 
 
 class PersonDetail(contacts.PersonDetail):
-#~ class PersonDetail(dd.DetailLayout):
    
     
     #~ contact = contacts.PersonDetail.main

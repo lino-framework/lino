@@ -476,7 +476,7 @@ Vielleicht mit Fußnoten?
         return html
         
       
-class BudgetDetail(dd.DetailLayout):
+class BudgetDetail(dd.FormLayout):
     """
     Defines the Detail form of a :class:`Budget`.
     

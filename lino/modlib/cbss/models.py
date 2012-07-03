@@ -565,7 +565,7 @@ Not actually sending because environment is empty. Request would be:
 #~ dd.update_field(CBSSRequest,'project',blank=False,null=False)
 dd.update_field(CBSSRequest,'user',blank=False,null=False)
 
-class CBSSRequestDetail(dd.DetailLayout):
+class CBSSRequestDetail(dd.FormLayout):
     #~ main = 'request response'
     main = 'request technical'
     

@@ -1,5 +1,5 @@
-The :mod:`lino.core` Package
-============================
+:mod:`lino.core`
+================
 
 .. automodule:: lino.core
     :members:

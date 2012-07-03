@@ -860,7 +860,7 @@ class Event(Component,Ended,
 
 
     
-class EventDetailLayout(dd.DetailLayout):
+class EventDetailLayout(dd.FormLayout):
     start = "start_date start_time"
     end = "end_date end_time"
     main = """

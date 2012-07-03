@@ -695,6 +695,8 @@ class ExtUI(base.UI):
         #~ if isinstance(de,fields.NullField):
             #~ return None
             
+        if isinstance(de,fields.DummyField):
+            return None
         if isinstance(de,fields.Constant):
             return ext_elems.ConstantElement(lh,de,**kw)
             
@@ -2322,9 +2324,9 @@ tinymce.init({
         return on_render
         
     #~ def formpanel_name(self,layout):
-        #~ if isinstance(layout,layouts.InsertLayout
+        #~ if isinstance(layout,layouts.FormLayout
             #~ return "Lino.%s.InsertFormPanel" % self._table
-        #~ elif isinstance(layout,layouts.DetailLayout):
+        #~ elif isinstance(layout,layouts.FormLayout):
             #~ return "Lino.%s.DetailFormPanel" % self._table
         #~ raise Exception("Unknown Form Layout %s" % layout)
       

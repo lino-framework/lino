@@ -480,7 +480,7 @@ class Contract(ContractBase):
         return self.PRINTABLE_FIELDS
 
 
-class ContractDetail(dd.DetailLayout):    
+class ContractDetail(dd.FormLayout):    
     general = """
     id:8 person:25 user:15 user_asd:15 language:8
     type company contact:20     

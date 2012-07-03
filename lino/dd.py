@@ -36,7 +36,8 @@ Extended Fields:
 - :class:`PriceField<lino.core.fields.PriceField>`
 - :class:`GenericForeignKey <lino.core.fields.GenericForeignKey>`
 - :class:`GenericForeignKeyIdField <lino.core.fields.GenericForeignKeyIdField>`
-- :class:`RecurrenceField <lino.core.fields.RecurrenceField >`
+- :class:`RecurrenceField <lino.core.fields.RecurrenceField>`
+- :class:`DummyField <lino.core.fields.DummyField>`
 
 Babel fields:
 
@@ -55,8 +56,7 @@ Virtual Fields:
 
 Layouts:
 
-- :class:`DetailLayout <lino.core.layouts.DetailLayout>`
-- :class:`InsertLayout <lino.core.layouts.InsertLayout>`
+- :class:`FormLayout <lino.core.layouts.FormLayout>`
   
 Utilities:
 
@@ -106,7 +106,8 @@ from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
 from lino.core.actions import Calendar
 
-from lino.core.fields import RecurrenceField 
+from lino.core.fields import DummyField
+from lino.core.fields import RecurrenceField
 from lino.core.fields import GenericForeignKey
 from lino.core.fields import GenericForeignKeyIdField
 from lino.core.fields import IncompleteDateField
@@ -129,7 +130,7 @@ from lino.utils.choosers import chooser
 from lino.utils.perms import UserLevels, UserGroups, UserProfiles
 
 from lino.core.layouts import FormLayout
-DetailLayout = InsertLayout = FormLayout
+#~ DetailLayout = InsertLayout = FormLayout
 
 #~ from lino.core.layouts import DetailLayout, InsertLayout
 

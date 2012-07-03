@@ -172,7 +172,7 @@ class ActorMetaClass(type):
                 raise ValueError("%r : insert_template %r is not a string" % (cls,dt))
             if dl is not None:
                 raise Exception("%r has both insert_template and insert_layout" % cls)
-            cls.insert_layout = layouts.InsertLayout(cls,dt)
+            cls.insert_layout = layouts.FormLayout(cls,dt)
         elif dl is not None:
             assert dl._table is None
             dl._table = cls
@@ -679,8 +679,7 @@ class Actor(object):
         of this actor, or create a new layout if there wasn't one before.
         
         The first argument can be either a string or a
-        :class:`DetailLayout <lino.core.layouts.DetailLayout>` or
-        :class:`InsertLayout <lino.core.layouts.InsertLayout>` instance.
+        :class:`FormLayout <lino.core.layouts.FormLayout>` instance.
         If it is a string, it will replace the currently defined 'main' panel.
         With the special case that if the current main panel is horizontal 
         (i.e. the layout has tabs) it replaces the 'general' tab.

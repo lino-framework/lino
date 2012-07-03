@@ -1525,7 +1525,7 @@ class GridElement(Container):
     
     def __init__(self,layout_handle,name,rpt,*columns,**kw):
         """
-        :param layout_handle: the handle of the DetailLayout owning this grid
+        :param layout_handle: the handle of the FormLayout owning this grid
         :param rpt: the report being displayed
         """
         #~ assert isinstance(rpt,dd.AbstractTable), "%r is not a Table!" % rpt

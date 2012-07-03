@@ -250,7 +250,7 @@ def html_text(s):
     return '<div class="htmlText">' + s + '</div>'
     
 
-class NoteDetail(dd.DetailLayout):
+class NoteDetail(dd.FormLayout):
     main = """
     date:10 event_type:25 type:25
     subject project 

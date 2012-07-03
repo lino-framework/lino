@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from lino.core.modeltools import resolve_model
+from lino.dd import resolve_model
 
 def findbyname(model,name):
     """

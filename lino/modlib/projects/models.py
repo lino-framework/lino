@@ -56,7 +56,7 @@ class Project(mixins.AutoUser,mixins.CachedPrintable):
     def __unicode__(self):
         return self.name
         
-#~ class ProjectDetail(layouts.DetailLayout):
+#~ class ProjectDetail(layouts.FormLayout):
     #~ datalink = 'projects.Project'
     #~ main = """
     #~ name type

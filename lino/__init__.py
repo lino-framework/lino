@@ -962,6 +962,7 @@ class Lino(object):
         for s in settings.INSTALLED_APPS:
             if s.endswith(app_label):
                 return True
+        print "20120703 not installed: %r" % app_label
 
         
 

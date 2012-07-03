@@ -130,8 +130,8 @@ class UserProfiles(choicelists.ChoiceList):
     max_length = 20
     
 add = UserProfiles.add_item
-add('10', _("User"),'user', level='user')
-add('20', _("Administrator"),'admin', level='admin')
+add('100', _("User"),'user', level='user')
+add('900', _("Administrator"),'admin', level='admin')
 
 
 class Permittable(object):  

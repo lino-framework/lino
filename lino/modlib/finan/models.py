@@ -173,27 +173,8 @@ class DocItem(dd.Model):
     #~ credit = fields.PriceField(default=0)
     
 
-##
-## report definitions
-##        
         
 
-#~ class FinDocDetail(layouts.DetailLayout):
-    #~ datalink = 'finan.BankStatement'
-    #~ box1 = """
-    #~ date value_date
-    #~ ledger_remark
-    #~ """
-    
-    #~ balance = """
-    #~ balance1
-    #~ balance2
-    #~ """
-    
-    #~ main = """
-            #~ box1 balance
-            #~ finan.ItemsByDocument
-            #~ """
     
 class BankStatements(journals.DocumentsByJournal):
     model = BankStatement

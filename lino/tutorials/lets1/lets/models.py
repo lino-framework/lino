@@ -7,6 +7,11 @@ class Place(dd.Model):
     def __unicode__(self):
         return self.name
         
+class Places(dd.Table):
+    model = Place
+    
+    
+
 class Provider(dd.Model):
     name = models.CharField(max_length=200)
     place = models.ForeignKey(Place,blank=True,null=True)
@@ -15,6 +20,15 @@ class Provider(dd.Model):
     def __unicode__(self):
         return self.name
 
+class Providers(dd.Table):
+    model = Provider
+    
+    detail_template = """
+    id name place email
+    OffersByProvider
+    """
+    
+    
 class Customer(dd.Model):
     name = models.CharField(max_length=200)
     place = models.ForeignKey(Place,blank=True,null=True)
@@ -23,11 +37,29 @@ class Customer(dd.Model):
     def __unicode__(self):
         return self.name
 
+class Customers(dd.Table):
+    model = Customer
+    
+    detail_template = """
+    id name place email
+    DemandsByCustomer
+    """
+    
+    
 class Product(dd.Model):
     name = models.CharField(max_length=200)
     
     def __unicode__(self):
         return self.name
+
+class Products(dd.Table):
+    model = Product
+    
+    detail_template = """
+    id name
+    OffersByProduct DemandsByProduct
+    """
+    
 
 class Offer(dd.Model):
     provider = models.ForeignKey(Provider)
@@ -36,6 +68,17 @@ class Offer(dd.Model):
     
     def __unicode__(self):
         return "%s offered by %s" % (self.product,self.provider)
+        
+class Offers(dd.Table):
+    model = Offer
+
+class OffersByProvider(Offers):
+    master_key = 'provider'
+        
+class OffersByProduct(Offers):
+    master_key = 'product'
+
+        
 
 class Demand(dd.Model):
     customer = models.ForeignKey(Customer)
@@ -44,24 +87,7 @@ class Demand(dd.Model):
     def __unicode__(self):
         return "%s (%s)" % (self.product,self.provider)
 
-class Providers(dd.Table):
-    model = Provider
     
-class Customers(dd.Table):
-    model = Customer
-
-class Products(dd.Table):
-    model = Product
-
-class Offers(dd.Table):
-    model = Offer
-
-class Places(dd.Table):
-    model = Place
-
-class OffersByProvider(Offers):
-    master_key = 'provider'
-        
 class Demands(dd.Table):
     model = Demand
 
@@ -71,6 +97,6 @@ class DemandsByCustomer(Demands):
 class DemandsByProduct(Demands):
     master_key = 'product'
 
-class OffersByProduct(Offers):
-    master_key = 'product'
         
+    
+

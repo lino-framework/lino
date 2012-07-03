@@ -12,6 +12,17 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Wenn man auf einer Notiz "per E-Mail" klickt, kommt ein Fenster mit der 
+    neu erstellten E-Mail. 
+    Die Mail ist da schon in der Datenbank erstellt worden 
+    Das ist suboptimal, denn man kann hier nicht einfach mit Escape abbrechen.
+    Das kommt, weil Empänger eine Slave-Tabelle ist und wir diese Tabelle 
+    doch eigentlich auch schon "beim Erstellen" sehen wollen.
+    Eigentlich müsste das insert_layout kommen.
+    Probieren, wie es aussieht, wenn wir die Empängerliste eben erst nach 
+    Klick auf "Erstellen" eingeben.
+    
+
 #.  Benutzer, die nicht Systemverwalter sind, können momentan ihr 
     Benutzerkonto nichtmal sehen: ein Klick auf den Benutzerbutton oben 
     rechts führt zu einer Fehlermeldung in der JS-Console.
