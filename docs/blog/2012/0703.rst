@@ -72,6 +72,8 @@ Some free changes (not asked by any user):
   specifies "Mail as attachment" is now disabled as long 
   as the Note hasn't been printed.
   
+- outbox.Mail objects are now readonly after they have been sent.
+  
   
 Answers to bugs reported by users:
 

@@ -151,9 +151,8 @@ class CreateMailAction(dd.RowAction):
             if not mt or not mt.email_template:
                 return False
             #~ if obj.attach_to_email(ar) and obj.get_target_name() is None:
-            if mt.attach_to_email and obj.get_target_name() is None:
+            if mt.attach_to_email and not obj.get_target_name():
                 return False
-              
         return super(CreateMailAction,self).get_action_permission(user,obj,state)
         
     def run(self,elem,ar,**kw):
@@ -429,6 +428,14 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         
+    def get_row_permission(self,user,state,action):
+        """
+        Mails may not be edited after they have been sent.
+        """
+        if self.sent and not action.readonly:
+            return False
+        return super(Mail,self).get_row_permission(user,state,action)
+      
 
 #~ class MailDetail(dd.DetailLayout):
     #~ main = """
