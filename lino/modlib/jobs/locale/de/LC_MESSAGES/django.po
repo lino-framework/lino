@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 20:57+0100\n"
+"POT-Creation-Date: 2012-07-03 15:32+0100\n"
 "PO-Revision-Date: 2012-01-28 04:13+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -40,7 +40,7 @@ msgstr "Stellenanbieter"
 msgid "Job Providers"
 msgstr "Stellenanbieter"
 
-#: .\models.py:187 .\models.py:839 .\models.py:1312
+#: .\models.py:187 .\models.py:839 .\models.py:1316
 msgid "Jobs"
 msgstr "Stellen"
 
@@ -250,47 +250,47 @@ msgstr "eingereicht am "
 msgid "Candidature by %(person)s"
 msgstr "Kandidatur von %(person)s"
 
-#: .\models.py:1096 .\models.py:1100 .\models.py:1278
+#: .\models.py:1097 .\models.py:1101 .\models.py:1282
 msgid "Candidates"
 msgstr "Kandidaten"
 
-#: .\models.py:1156
+#: .\models.py:1157
 msgid "Job Contracts Search"
 msgstr "Suche Art.60§7-Konventionen"
 
-#: .\models.py:1163
+#: .\models.py:1164
 msgid "Only contracts of type"
 msgstr "Nur Vertragsart"
 
-#: .\models.py:1164
+#: .\models.py:1165
 msgid "past contracts"
 msgstr "ausgelaufene Verträge"
 
-#: .\models.py:1165
+#: .\models.py:1166
 msgid "active contracts"
 msgstr "aktive Verträge"
 
-#: .\models.py:1166
+#: .\models.py:1167
 msgid "coming contracts"
 msgstr "zukünftige Verträge"
 
-#: .\models.py:1167
+#: .\models.py:1168
 msgid "on"
 msgstr "am"
 
-#: .\models.py:1217
+#: .\models.py:1221
 msgid "Contracts Situation"
 msgstr "Übersicht Art.60§7-Konventionen"
 
-#: .\models.py:1228
+#: .\models.py:1232
 msgid "Body"
 msgstr ""
 
-#: .\models.py:1304
+#: .\models.py:1308
 msgid "is Job Provider"
 msgstr "Stellenanbieter"
 
-#: .\models.py:1326 .\models.py:1341
+#: .\models.py:1330 .\models.py:1345
 msgid "~Jobs"
 msgstr "~Stellen"
 

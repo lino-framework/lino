@@ -128,7 +128,10 @@ from lino.utils.choosers import chooser
 #~ from lino.utils.perms import UserLevels, UserProfiles
 from lino.utils.perms import UserLevels, UserGroups, UserProfiles
 
-from lino.core.layouts import DetailLayout, InsertLayout
+from lino.core.layouts import FormLayout
+DetailLayout = InsertLayout = FormLayout
+
+#~ from lino.core.layouts import DetailLayout, InsertLayout
 
 
 class Module(object):

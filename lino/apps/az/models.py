@@ -90,7 +90,7 @@ class Task(cal.Task):
      
      
 def site_setup(site):
-    site.modules.contacts.Persons.set_detail(PersonDetail())
+    site.modules.contacts.Persons.set_detail_layout(PersonDetail())
     
     # remove `project` field
     site.modules.cal.Tasks.set_detail("""

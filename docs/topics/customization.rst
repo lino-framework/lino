@@ -15,7 +15,7 @@ There is an importand difference between
 customization functions and a `site_setup` function: 
 
 - Customization functions are called at the module level, 
-  i.e. unconditionally when :mod:`lino.apps.pcsw.models` 
+  i.e. unconditionally when the application's `models` module
   is imported.
   They are formulated as separate functions just for 
   maintainablilty and documentation.
@@ -26,9 +26,9 @@ customization functions and a `site_setup` function:
   
   
 - The `site_setup` function in contrast gets called only 
-  when Lino starts up. 
-  Thats too late to make changes the database structure.
-  Django doesn't know about it. 
+  when Lino starts up.  
+  Django has don'e his work and it's too late to make changes 
+  the database structure.
 
 
 

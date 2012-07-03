@@ -890,21 +890,6 @@ class Table(AbstractTable):
         return HttpResponse("1", mimetype='text/x-json')
 
 
-    #~ @classmethod
-    #~ def reset_details(cls):
-        #~ return
-        #~ cls.detail_layouts = []
-      
-    #~ @classmethod
-    #~ def add_detail(cls,*args,**kw):
-        #~ return
-        #~ dtl = DetailLayout(*args,**kw)
-        #~ cls.detail_layouts = list(cls.detail_layouts) # disconnect from base class
-        #~ for i,layout in enumerate(cls.detail_layouts):
-            #~ if layout.label == dtl.label:
-                #~ cls.detail_layouts[i] = dtl
-                #~ return
-        #~ cls.detail_layouts.append(dtl)
 
 
 

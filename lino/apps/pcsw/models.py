@@ -140,7 +140,8 @@ def niss_validator(national_id):
     if xtest != found:
         raise ValidationError(
             force_unicode(_("Invalid Belgian SSIN %s :") % national_id)
-            + _("Check digit should be %d (found %d)") % (xtest, found)
+            + _("Check digit is %(found)d but should be %(expected)d") % dict(
+              expected=xtest, found=found)
             )
 
 
@@ -529,7 +530,7 @@ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Pri
         # table.add_action(DirectPrintAction(table,'eid',_("eID sheet"),'eid-content'))
         #~ table.add_action(DirectPrintAction('eid',_("eID sheet"),'eid-content'))
         # table.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
-        # table.set_detail(PersonDetail(table))
+        # table.set_detail_layout(PersonDetail(table))
         
     def __unicode__(self):
         #~ return u"%s (%s)" % (self.get_full_name(salutation=False),self.pk)
@@ -2024,20 +2025,20 @@ def site_setup(site):
     which depend on the *combination* of installed modules.
     """
     
-    site.modules.lino.SiteConfigs.set_detail("""
+    site.modules.lino.SiteConfigs.set_detail_layout("""
     site_company:20 default_build_method:20 next_partner_id:20 job_office:20
     propgroup_skills propgroup_softskills propgroup_obstacles
     residence_permit_upload_type work_permit_upload_type driving_licence_upload_type
     # lino.ModelsBySite
     """)
     
-    site.modules.properties.Properties.set_detail("""
+    site.modules.properties.Properties.set_detail_layout("""
     id group type 
     name
     cv.PersonPropsByProp
     """)
     
-    site.modules.countries.Cities.set_detail("""
+    site.modules.countries.Cities.set_detail_layout("""
     name country inscode
     contacts.PartnersByCity jobs.StudiesByCity
     """)
@@ -2047,12 +2048,12 @@ def site_setup(site):
     #~ contacts.PartnersByCity jobs.StudiesByCity
     #~ """)
     
-    site.modules.countries.Countries.set_detail("""
+    site.modules.countries.Countries.set_detail_layout("""
     isocode name short_code inscode
     countries.CitiesByCountry jobs.StudiesByCountry
     """)
     
-    site.modules.uploads.Uploads.set_detail("""
+    site.modules.uploads.Uploads.set_detail_layout("""
     file user
     type description valid_until
     # person company
@@ -2075,9 +2076,9 @@ def site_setup(site):
         #~ calendar owner created:20 modified:20 user_modified 
         #~ description GuestsByEvent
         #~ """
-    #~ site.modules.cal.Events.set_detail(EventDetail())
+    #~ site.modules.cal.Events.set_detail_layout(EventDetail())
     
-    #~ site.modules.cal.Events.set_detail("""
+    #~ site.modules.cal.Events.set_detail_layout("""
     #~ type summary user project
     #~ start end #all_day #duration state workflow_buttons 
     #~ place priority access_class transparent #rset 
@@ -2085,7 +2086,7 @@ def site_setup(site):
     #~ description GuestsByEvent
     #~ """)
     
-    site.modules.cal.Events.set_detail("general more")
+    site.modules.cal.Events.set_detail_layout("general more")
     site.modules.cal.Events.add_detail_panel("general","""
     type summary user project 
     start end 
@@ -2098,14 +2099,23 @@ def site_setup(site):
     outbox.MailsByController postings.PostingsByController
     """,_("More"))
     
-    #~ site.modules.users.Users.set_detail(box2 = """
+    site.modules.cal.Events.set_insert_layout("""
+    summary 
+    start end 
+    type project 
+    """,
+    start="start_date start_time",
+    end="end_date end_time",
+    window_size=(60,'auto'))
+    
+    #~ site.modules.users.Users.set_detail_layout(box2 = """
     #~ level
     #~ integ_level
     #~ cbss_level
     #~ newcomers_level newcomer_quota
     #~ debts_level
     #~ """)
-    site.modules.users.Users.set_detail("""
+    site.modules.users.Users.set_detail_layout("""
     box1:50 box2:25
     remarks 
     """,
@@ -2114,7 +2124,7 @@ def site_setup(site):
     """)
     
         
-    site.modules.notes.Notes.set_detail(
+    site.modules.notes.Notes.set_detail_layout(
         left = """
         date:10 event_type:25 type:25
         subject 
@@ -2142,14 +2152,14 @@ def site_setup(site):
     project company
     """,window_size=(50,'auto'))
     
-    #~ site.modules.outbox.Mails.set_detail("""
+    #~ site.modules.outbox.Mails.set_detail_layout("""
     #~ subject project date 
     #~ user sent #build_time id owner
     #~ RecipientsByMail:50x5 AttachmentsByMail:20x5 uploads.UploadsByOwner:20x5
     #~ body:90x10
     #~ """)
         
-    #~ site.modules.courses.CourseProviders.set_detail(CourseProviderDetail())
+    #~ site.modules.courses.CourseProviders.set_detail_layout(CourseProviderDetail())
     
     
     

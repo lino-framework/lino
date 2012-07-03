@@ -158,7 +158,7 @@ class ActorMetaClass(type):
         if dt is not None:
             if dl is not None:
                 raise Exception("%r has both detail_template and detail_layout" % cls)
-            cls.detail_layout = layouts.DetailLayout(cls,dt)
+            cls.detail_layout = layouts.FormLayout(cls,dt)
         elif dl is not None:
             assert dl._table is None
             dl._table = cls
@@ -673,7 +673,7 @@ class Actor(object):
 
         
     @classmethod
-    def set_detail(self,*args,**kw):
+    def set_detail_layout(self,*args,**kw):
         """
         Update the :attr:`detail_layout` 
         of this actor, or create a new layout if there wasn't one before.
@@ -685,23 +685,23 @@ class Actor(object):
         With the special case that if the current main panel is horizontal 
         (i.e. the layout has tabs) it replaces the 'general' tab.
         """
-        return self.set_form_layout(layouts.DetailLayout,'detail_layout',*args,**kw)
+        return self.set_form_layout('detail_layout',*args,**kw)
         
     @classmethod
     def set_insert_layout(self,*args,**kw):
         """
-        Update the :attr:`insert_layout` 
+        Update the :attr:`insert_layout`
         of this actor, or create a new layout if there wasn't one before.
-        Otherwise same usage as :meth:`set_detail`.
+        Otherwise same usage as :meth:`set_detail_layout`.
         """
-        return self.set_form_layout(layouts.InsertLayout,'insert_layout',*args,**kw)
+        return self.set_form_layout('insert_layout',*args,**kw)
         
     @classmethod
-    def set_form_layout(self,klass,attname,dtl=None,**kw):
+    def set_form_layout(self,attname,dtl=None,**kw):
         if dtl is not None:
             if isinstance(dtl,basestring):
                 if getattr(self,attname) is None:
-                    setattr(self,attname,klass(self,dtl,**kw))
+                    setattr(self,attname,layouts.FormLayout(self,dtl,**kw))
                     return
                 if '\n' in dtl and not '\n' in getattr(self,attname).main:
                     name = 'general'
@@ -711,7 +711,7 @@ class Actor(object):
                     raise Exception("set_detail() got two definitions for %r." % name)
                 kw[name] = dtl
             else:
-                assert isintance(dtl,klass)
+                assert isintance(dtl,layouts.FormLayout)
                 assert dtl._table is None
                 dtl._table = self
                 setattr(self,attname,dtl)

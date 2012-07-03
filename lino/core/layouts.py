@@ -20,14 +20,12 @@ A :class:`Layout <BaseLayout>` is an abstract pythonical description
 of how to arrange the fields and other elements of a form.
 
 Application programmers write Layouts by subclassing
-:class:`dd.DetailLayout <DetailLayout>`
-(or :class:`dd.InsertLayout <InsertLayout>`)
-and settings the 
+:class:`dd.FormLayout <FormLayout>`
+and setting the 
 :attr:`detail_layout <lino.core.actors.Actor.detail_layout>`
 (or 
 :attr:`insert_layout <lino.core.actors.Actor.insert_layout>`)
 attribute of an :attr:`Actor <lino.core.actors.Actor>` subclass.
-
 
 **A Layout consists of "panels".**
 Each panel is a class attribute defined on your subclass,
@@ -56,13 +54,13 @@ at least one newline character or not.
 
 Indentation doesn't matter.
 
-If the `main` panel of a :class:`DetailLayout` is horizontal, 
+If the `main` panel of a :class:`FormLayout` is horizontal, 
 ExtJS will render the Layout using as a tabbed main panel. 
 If you want a horizontal main panel instead, just insert 
 a newline somewhere in your main's template. Example::
 
 
-  class NoteDetail(dd.DetailLayout):
+  class NoteLayout(dd.FormLayout):
       left = """
       date type subject 
       person company
@@ -367,15 +365,15 @@ class unused_ListLayoutHandle(LayoutHandle):
 
 class BaseLayout(object):
     """
-    Base class for all Layouts (:class:`DetailLayout`
-    :class:`InsertLayout`, :class:`ListLayout` 
+    Base class for all Layouts (:class:`FormLayout`, :class:`ListLayout` 
     and  :class:`ParamsLayout`).
     
     A Layout instance just holds the string templates. 
     It is designed to be subclassed by applications programmers, 
     but in most cases it is more convenient (and recommended) 
     to use the methods 
-    :meth:`set_detail <lino.core.actors.Actor.set_detail>`,
+    :meth:`set_detail_layout <lino.core.actors.Actor.set_detail_layout>`,
+    :meth:`set_insert_layout <lino.core.actors.Actor.set_insert_layout>`,
     :meth:`add_detail_panel <lino.core.actors.Actor.add_detail_panel>`
     and
     :meth:`add_detail_tab <lino.core.actors.Actor.add_detail_tab>`
@@ -407,8 +405,8 @@ class BaseLayout(object):
         elif not hasattr(self,'main'):
             raise Exception("Cannot instantiate %s without `main`." % self.__class__)
         for k,v in kw.items():
-            if not hasattr(self,k):
-                raise Exception("Got unexpected keyword %s=%r" % (k,v))
+            #~ if not hasattr(self,k):
+                #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self,k,v)
     
     def get_data_elem(self,name): 
@@ -422,7 +420,7 @@ class BaseLayout(object):
         Update the template of one or more panels.
         """
         if hasattr(self,'_extjs3_handle'):
-            raise Exception("Cannot set_detail after UI has been set up.")
+            raise Exception("Cannot update form layout after UI has been set up.")
         for k,v in kw.items():
             #~ if not hasattr(self,k):
                 #~ raise Exception("%s has no attribute %r" % (self,k))
@@ -438,7 +436,7 @@ In %s, updating attribute %r:
             
     def add_panel(self,name,tpl,label=None,**kw):
         if hasattr(self,'_extjs3_handle'):
-            raise Exception("Cannot set_detail after UI has been set up.")
+            raise Exception("Cannot update for layout after UI has been set up.")
         if '\n' in name:
            raise Exception("name may not contain any newline") 
         if ' ' in name:
@@ -462,7 +460,7 @@ Adding panel %r to %s ---:
         """
         #~ print "20120526 add_detail_tab", self, name
         if hasattr(self,'_extjs3_handle'):
-            raise Exception("Cannot set_detail after UI has been set up.")
+            raise Exception("Cannot update form layout after UI has been set up.")
         if '\n' in name:
            raise Exception("name may not contain any newline") 
         if ' ' in name:
@@ -519,23 +517,12 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
 
         
             
-class DetailLayout(BaseLayout):
+class FormLayout(BaseLayout):
     """
-    A Layout description for the morm panel of a Detail Window.
+    A Layout description for the main panel of a DetailWindow or InsertWindow.
     """
     join_str = "\n"
     
-    def formpanel_name(self):
-        return "Lino.%s.DetailFormPanel" % self._table
-
-class InsertLayout(DetailLayout):
-    """
-    A Layout description for the main panel of an Insert Window.
-    """
-    join_str = "\n"
-
-    def formpanel_name(self):
-        return "Lino.%s.InsertFormPanel" % self._table
         
 class ListLayout(BaseLayout):
     """

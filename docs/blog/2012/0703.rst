@@ -61,21 +61,29 @@ Miscellaneous
 
 Some free changes (not asked by any user):
 
-- The CreatePostings and CreateMail actions were wrongly 
+- The 
+  :class:`CreatePostings <lino.modlib.postings.models.CreatePostings>`, 
+  :class:`CreateMail <lino.modlib.outbox.models.CreateMail>`
+  and
+  :class:`SendMail <lino.modlib.outbox.models.SendMail>`, 
+  actions were (wrongly) 
   callable from an insert window.
   
-- Awesome!
-  I added an `insert_template` for `notes.Note`. 
+- Wow!
+  :func:`lino.apps.pcsw.models.site_setup` now 
+  adds an `insert_template` for `notes.Note`. 
   Creating a Note is now much more intuitive.
   
 - Creating an E-Mail on a Note whose NoteType 
   specifies "Mail as attachment" is now disabled as long 
   as the Note hasn't been printed.
   
-- outbox.Mail objects are now readonly after they have been sent.
+- `outbox.Mail` objects are now readonly after they have 
+  been sent.
+
+- The `outbox.Mail.user` field is now labelled "Sender" instead of "User".
   
-  
-Bug reported by Gerd:
+Fixed a bug reported by Gerd:
 
 - "Wenn ich eine Notiz eines Kollegen per E-Mail verschicke, 
   steht als Sender der Kollege."
@@ -92,10 +100,31 @@ a wanted behaviour. Don't even remember where it is useful.
 (If it was, then these cases will pop up as bug reports... sorry).
 
 
-TODO:
+Solved **another bug** reported by Gerd:
 
 - "Empfängerart wird erst sichtbar, wenn man auch einen Empfänger eingegeben hat."
-  
+
+This is not truly fixed, but I moved the Recipient.type column to the right so 
+that the user first selects the Partner. IMHO that's enough.
+
+
+InsertLayout cannot inherit from a DetailLayout
+-----------------------------------------------
+
+When also defining a separate `insert_template` for `cal.Events`, 
+I understood a subtle design problem: 
+having InsertLayout and DetailLayout two different classes made 
+it impossible to define an insert_layout that inherits from a 
+detail_layout.
+The detail_layout of cal.Events defines to panels `start` and `end`,
+and we could not reuse them for the insert_layout.
+Internal changes to make this possible.
+Reduced InsertLayout and DetailLayout to a single class
+:class:`FormPanel <lino.core.layouts.FormPanel>`.
+
+
+TODO:
+ 
 - Evtl. Labels der vier Buttons auf einer neuen E-Mail anpassen, 
   sowie Übersetzung Label für "Create": "Erstellen"
 

@@ -800,7 +800,7 @@ dd.inject_field(Partner,
 MODULE_NAME = _("Contacts")
 
 def site_setup(site):
-    site.modules.countries.Cities.set_detail("""
+    site.modules.countries.Cities.set_detail_layout("""
     name country 
     contacts.PartnersByCity
     """)

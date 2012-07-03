@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 20:58+0100\n"
+"POT-Creation-Date: 2012-07-03 15:32+0100\n"
 "PO-Revision-Date: 2012-06-08 11:19+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
@@ -196,31 +196,31 @@ msgstr "Kontaktpersonen"
 msgid "Contact Role"
 msgstr "Funktion"
 
-#: .\models.py:650
+#: .\models.py:652
 msgid "Contact persons"
 msgstr "Kontaktpersonen"
 
-#: .\models.py:656
+#: .\models.py:659
 msgid "Contact for"
 msgstr "Kontaktperson für"
 
-#: .\models.py:767
+#: .\models.py:770
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste Partnernummer"
 
-#: .\models.py:776
+#: .\models.py:779
 msgid "The company that runs this site"
 msgstr "Firma, die diesen Site betreibt"
 
-#: .\models.py:787
+#: .\models.py:790
 msgid "is Person"
 msgstr "ist Person"
 
-#: .\models.py:792
+#: .\models.py:795
 msgid "is Company"
 msgstr "ist Organisation"
 
-#: .\models.py:797
+#: .\models.py:800
 msgid "Contacts"
 msgstr "Kontakte"
 

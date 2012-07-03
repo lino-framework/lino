@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 20:58+0100\n"
+"POT-Creation-Date: 2012-07-03 15:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,55 +17,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:60
+#: .\models.py:61
 msgid "State"
 msgstr ""
 
-#: .\models.py:62
+#: .\models.py:63
 msgid "Open"
 msgstr ""
 
-#: .\models.py:63
+#: .\models.py:64
 msgid "Ready to print"
 msgstr ""
 
-#: .\models.py:64
+#: .\models.py:65
 msgid "Printed"
 msgstr ""
 
-#: .\models.py:65
+#: .\models.py:66
 msgid "Sent"
 msgstr ""
 
-#: .\models.py:66
+#: .\models.py:67
 msgid "Returned"
 msgstr ""
 
-#: .\models.py:75
+#: .\models.py:76
 msgid "Posting"
 msgstr ""
 
-#: .\models.py:76
+#: .\models.py:77
 msgid "Postings"
 msgstr ""
 
-#: .\models.py:79
+#: .\models.py:80
 msgid "Recipient"
 msgstr ""
 
-#: .\models.py:90
+#: .\models.py:91
 msgid "Print"
 msgstr ""
 
-#: .\models.py:131
+#: .\models.py:132
 msgid "Create posting"
 msgstr ""
 
-#: .\models.py:137
+#: .\models.py:142
 #, python-format
 msgid "Going to create %(num)d postings for %(elem)s"
 msgstr ""
 
-#: .\models.py:168
+#: .\models.py:169
 msgid "Outbox"
 msgstr ""

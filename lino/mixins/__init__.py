@@ -183,7 +183,7 @@ class UserAuthored(dd.Model):
         workflow_owner_field = 'user' # used by :mod:`lino.modlib.workflows.models`
         
         user = models.ForeignKey(settings.LINO.user_model,
-            verbose_name=_("user"),
+            #~ verbose_name=_("user"),
             related_name="%(app_label)s_%(class)s_set_by_user",
             blank=True,null=True
             )

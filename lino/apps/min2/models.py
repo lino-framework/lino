@@ -45,8 +45,8 @@ class CompanyDetail(contacts.CompanyDetail):
         dh.general.label = _("General")
 
 def site_setup(site):
-    contacts.Persons.set_detail(PersonDetail())
-    contacts.Companies.set_detail(CompanyDetail())
+    contacts.Persons.set_detail_layout(PersonDetail())
+    contacts.Companies.set_detail_layout(CompanyDetail())
 
 #~ def setup_master_menu(site,ui,user,m):
     #~ m.add_action(site.modules.contacts.Persons)

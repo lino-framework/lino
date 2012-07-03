@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 20:58+0100\n"
+"POT-Creation-Date: 2012-07-03 15:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -197,30 +197,30 @@ msgstr ""
 msgid "Contact Role"
 msgstr ""
 
-#: .\models.py:650
+#: .\models.py:652
 msgid "Contact persons"
 msgstr ""
 
-#: .\models.py:656
+#: .\models.py:659
 msgid "Contact for"
 msgstr ""
 
-#: .\models.py:767
+#: .\models.py:770
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:776
+#: .\models.py:779
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:787
+#: .\models.py:790
 msgid "is Person"
 msgstr ""
 
-#: .\models.py:792
+#: .\models.py:795
 msgid "is Company"
 msgstr ""
 
-#: .\models.py:797
+#: .\models.py:800
 msgid "Contacts"
 msgstr ""

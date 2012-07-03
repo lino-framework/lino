@@ -727,7 +727,7 @@ class ExtUI(base.UI):
         #~ if isinstance(de,type) and issubclass(de,dd.Table):
         if isinstance(de,type) and issubclass(de,tables.AbstractTable):
             kw.update(master_panel=js_code("this"))
-            if isinstance(lh.layout,layouts.DetailLayout):
+            if isinstance(lh.layout,layouts.FormLayout):
                 """a Table in a DetailWindow"""
                 kw.update(tools=[
                   js_code("Lino.show_in_own_window_button(Lino.%s)" % de.default_action)
@@ -1939,10 +1939,16 @@ tinymce.init({
             #~ '\n'.join([str(d) for d in table.all_details]))
         
         details = set()
-        for a in actors_list:
-            for fl in (a.detail_layout, a.insert_layout):
-                if fl is not None:
+        def add(actor,fl,nametpl):
+            if fl is not None:
+                if not fl in details:
+                    fl._formpanel_name = nametpl % actor
                     details.add(fl)
+                    
+        for a in actors_list:
+            add(a,a.detail_layout, "Lino.%s.DetailFormPanel")
+            add(a,a.insert_layout, "Lino.%s.InsertFormPanel")
+            
         for fl in details:
             lh = fl.get_layout_handle(self)
             for ln in self.js_render_FormPanel(lh,user):
@@ -2286,7 +2292,7 @@ tinymce.init({
         dh.on_render = self.build_on_render(dh.main)
             
     def build_on_render(self,main):
-        "dh is a DetailLayout or a ListLayout"
+        "dh is a FormLayout or a ListLayout"
         on_render = []
         elems_by_field = {}
         field_elems = []
@@ -2315,14 +2321,21 @@ tinymce.init({
                             el.as_ext(),e.as_ext(),f.name))
         return on_render
         
+    #~ def formpanel_name(self,layout):
+        #~ if isinstance(layout,layouts.InsertLayout
+            #~ return "Lino.%s.InsertFormPanel" % self._table
+        #~ elif isinstance(layout,layouts.DetailLayout):
+            #~ return "Lino.%s.DetailFormPanel" % self._table
+        #~ raise Exception("Unknown Form Layout %s" % layout)
+      
+        
       
     def js_render_FormPanel(self,dh,user):
         
         tbl = dh.layout._table
         
         yield ""
-        #~ yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % tbl
-        yield "%s = Ext.extend(Lino.FormPanel,{" % dh.layout.formpanel_name()
+        yield "%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
@@ -2344,11 +2357,11 @@ tinymce.init({
             for ln in on_render:
                 yield "      " + ln
             #~ yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % tbl
-            yield "      %s.superclass.onRender.call(this, ct, position);" % dh.layout.formpanel_name()
+            yield "      %s.superclass.onRender.call(this, ct, position);" % dh.layout._formpanel_name
             yield "    }"
 
         #~ yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % tbl
-        yield "    %s.superclass.initComponent.call(this);" % dh.layout.formpanel_name()
+        yield "    %s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
         
         if tbl.active_fields:
             yield '    // active_fields:'
@@ -2373,7 +2386,7 @@ tinymce.init({
         if dtl is None:
             raise Exception("action %s on table %r == %r without detail?" % (action,action.actor,rpt))
         #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._table)
-        yield "Lino.%sPanel = Ext.extend(%s,{" % (action,dtl.formpanel_name())
+        yield "Lino.%sPanel = Ext.extend(%s,{" % (action,dtl._formpanel_name)
         yield "  empty_title: %s," % py2js(action.get_button_label())
         #~ if not isinstance(action,actions.InsertRow):
         if action.hide_navigator:
@@ -2675,7 +2688,7 @@ tinymce.init({
                 #~ if lh.layout._table.params_panel_hidden:
                     #~ fkw.update(hidden=True)
                 #~ return ext_elems.FormPanel(**fkw)
-            if isinstance(lh.layout,layouts.DetailLayout): 
+            if isinstance(lh.layout,layouts.FormLayout): 
                 if len(elems) == 1 or vertical:
                     return ext_elems.DetailMainPanel(lh,name,vertical,*elems,**pkw)
                 else:

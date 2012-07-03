@@ -427,7 +427,7 @@ dd.inject_field(Person,
     )
 
 def site_setup(site):
-    site.modules.cal.Events.set_detail(EventDetail())
+    site.modules.cal.Events.set_detail_layout(EventDetail())
 
     
 def setup_main_menu(site,ui,user,m): pass

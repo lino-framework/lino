@@ -296,19 +296,23 @@ class RecipientsByMail(Recipients):
 
 
 
-class SendMailAction(dd.RowAction):
+class SendMail(dd.RowAction):
     """
     Sends this as an email.
     """
   
     url_action_name = 'send'
     label = _('Send email')
-    callable_from = None
+    callable_from = (actions.GridEdit, 
+        actions.ShowDetailAction,
+        actions.ShowEmptyTable) # but not from InsertRow
+    
+    #~ callable_from = None
             
     def get_action_permission(self,user,obj,state):
         if obj is not None and obj.sent:
             return False
-        return super(SendMailAction,self).get_action_permission(user,obj,state)
+        return super(SendMail,self).get_action_permission(user,obj,state)
         
     def run(self,elem,rr,**kw):
         #~ if elem.sent:
@@ -386,7 +390,7 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
         verbose_name = _("Outgoing Mail")
         verbose_name_plural = _("Outgoing Mails")
         
-    send_mail = SendMailAction()
+    send_mail = SendMail()
     
     date = models.DateField(verbose_name=_("Date"),
         auto_now_add=True,
@@ -402,7 +406,6 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
     
     #~ type = models.ForeignKey(MailType,null=True,blank=True)
     
-    #~ send = SendMailAction()
         
     #~ sender = models.ForeignKey(settings.LINO.user_model,
         #~ verbose_name=_("Sender"))
@@ -444,6 +447,7 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
             return False
         return super(Mail,self).get_row_permission(user,state,action)
       
+dd.update_field(Mail,'user',verbose_name=_("Sender"))
 
 #~ class MailDetail(dd.DetailLayout):
     #~ main = """

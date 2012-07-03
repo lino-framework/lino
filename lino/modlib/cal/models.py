@@ -729,6 +729,12 @@ class Event(Component,Ended,
             self.state = EventState.draft
         #~ self.user_modified = True
         
+    def on_create(self,ar):
+        self.start_date = datetime.date.today()
+        self.start_time = datetime.datetime.now().time()
+        super(Event,self).on_create(ar)
+        
+        
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
         if issubclass(settings.LINO.project_model,contacts.Partner):
@@ -850,18 +856,13 @@ class Event(Component,Ended,
         """
         #~ cls.create_postings.required.update(states=['scheduled'])
         t.create_postings.set_required(states=['scheduled'])
-        
   
-            
-        
-        
 
 
-class EventDetail(dd.DetailLayout):
-  
+    
+class EventDetailLayout(dd.DetailLayout):
     start = "start_date start_time"
     end = "end_date end_time"
-    
     main = """
     type summary user 
     start end #all_day #duration state
@@ -869,6 +870,13 @@ class EventDetail(dd.DetailLayout):
     calendar owner created:20 modified:20  
     description
     GuestsByEvent outbox.MailsByController
+    """
+
+class EventInsertLayout(EventDetailLayout):
+    main = """
+    type summary 
+    start end 
+    place priority access_class transparent 
     """
     
 class Events(dd.Table):
@@ -878,23 +886,12 @@ class Events(dd.Table):
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
     
-    detail_layout = EventDetail()
+    detail_layout = EventDetailLayout()
+    insert_layout = EventInsertLayout()
     
 
-    #~ def setup_actions(self):
-        #~ super(dd.Table,self).setup_actions()
-        #~ self.add_action(mails.CreateMailAction())
-        
-    #~ @classmethod
-    #~ def disabled_fields(self,obj,request):
-        #~ if obj.start_time is None:
-            #~ return ['start_time','end_time']
-        #~ return []
-        
         
     
-#~ class EventsBySet(Events):
-    #~ master_key = 'rset'
     
 class EventsByCalendar(Events):
     master_key = 'calendar'
