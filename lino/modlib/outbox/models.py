@@ -269,6 +269,14 @@ class Recipient(dd.Model):
                 self.name = self.partner.get_full_name(salutation=False)
         super(Recipient,self).full_clean()
         
+    def get_row_permission(self,user,state,action):
+        """
+        Recipients of a Mail may not be edited if the Mail is read-only.
+        """
+        if self.mail_id and not self.mail.get_row_permission(user,state,action):
+            return False
+        return super(Recipient,self).get_row_permission(user,state,action)
+      
 
 
 class Recipients(dd.Table):
