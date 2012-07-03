@@ -44,8 +44,6 @@ You are using lino.modlib.users in your INSTALLED_APPS,
 but settings.LINO.user_model is %r (should be 'users.User').
 """ % settings.LINO.user_model)
 
-#~ class User(contacts.Partner,contacts.PersonMixin):
-#~ class User(dd.Model):
 class User(mixins.CreatedModified):
     """
     Represents a User of this site.
@@ -76,45 +74,13 @@ class User(mixins.CreatedModified):
         
     profile = UserProfiles.field()
     
-    #~ profile = models.CharField(_('Same profile as'), 
-        #~ max_length=30, blank=True,
-        #~ help_text=_("""
-        #~ The user profile. Leave empty for "profile-giving" users, that is: 
-        #~ users who have their own combination of group memberships and 
-        #~ userlevels.
-        #~ """))
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True)
     
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
-    
-    #~ level = UserLevel.field()
-    
     language = babel.LanguageField()
-    
-    #~ is_active = models.BooleanField(_('is active'), default=True, 
-        #~ help_text=_("""
-        #~ Designates whether this user should be treated as active. 
-        #~ Unselect this instead of deleting accounts.
-        #~ """))
-    #~ is_staff = models.BooleanField(_('is staff'), default=False, 
-        #~ help_text=_("""
-        #~ Designates whether the user can log into this admin site.
-        #~ """))
-    #~ is_expert = models.BooleanField(_('is expert'), default=False, 
-        #~ help_text=_("""
-        #~ Designates whether this user has access to functions that require expert rights.
-        #~ """))
-    #~ is_superuser = models.BooleanField(_('is superuser'), 
-        #~ default=False, 
-        #~ help_text=_("""
-        #~ Designates that this user has all permissions without 
-        #~ explicitly assigning them.
-        #~ """))
-    #~ last_login = models.DateTimeField(_('last login'), default=datetime.datetime.now)
-    #~ date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
     
     if settings.LINO.is_installed('contacts'):
       
@@ -126,17 +92,7 @@ class User(mixins.CreatedModified):
     
 
     def __unicode__(self):
-        #~ return self.username
         return self.get_full_name()
-        
-    #~ def get_profile(self):
-        #~ return self.profile or self.username
-        
-    #~ @chooser(simple_values=True)
-    #~ def profile_choices(self,username):
-        #~ qs = User.objects.filter(profile='').exclude(
-          #~ username=username).order_by('username')
-        #~ return [u.username for u in qs]
         
 
     def get_full_name(self):
@@ -150,14 +106,8 @@ class User(mixins.CreatedModified):
     def name_column(self,request):
         #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
-        
 
 
-    #~ def email_user(self, subject, message, from_email=None):
-        #~ "Sends an e-mail to this User."
-        #~ from django.core.mail import send_mail
-        #~ send_mail(subject, message, from_email, [self.email])
-    
     if settings.LINO.is_installed('contacts'):
         def get_person(self):
             if self.partner:
@@ -168,37 +118,6 @@ class User(mixins.CreatedModified):
     
     person = property(get_person)
 
-    #~ def save(self,*args,**kw):
-        #~ if self.profile == self.username:
-            #~ self.profile = ''
-        #~ if self.profile:
-            #~ u = self.__class__.objects.get(username=self.profile)
-            #~ for k in settings.LINO.user_profile_fields:
-                #~ setattr(self,k,getattr(u,k))
-        #~ super(User,self).save(*args,**kw)
-        #~ if not self.profile:
-            #~ for u in self.__class__.objects.filter(profile=self.username):
-                #~ for k in settings.LINO.user_profile_fields:
-                    #~ setattr(u,k,getattr(self,k))
-                    #~ u.save()
-                
-        
-    #~ def full_clean(self,*args,**kw):
-        #~ """
-        #~ Almost like PersonMixin.full_clean, but 
-        #~ takes username if first_name and last_name are empty.
-        #~ """
-        #~ l = filter(lambda x:x,[self.last_name,self.first_name])
-        #~ self.name = " ".join(l)
-        #~ if not self.name:
-            #~ self.name = self.username
-        #~ dd.Model.full_clean(self,*args,**kw)
-        
-    #~ def disable_editing(self,ar):
-        #~ if ar.get_user().is_superuser: return False
-        #~ if ar.get_user() == self: return False
-        #~ return True
-        
     def get_row_permission(self,user,state,action):
         """
         Only system managers may edit other users.
@@ -257,14 +176,6 @@ class UserInsert(dd.FormLayout):
     language profile     
     """
     
-#~ """
-#~ If contacts is not installed, then a field `partner` doesn't exist, 
-#~ so we remove it from the layout.
-#~ """
-#~ if not settings.LINO.is_installed('contacts'):
-    #~ print "20120703 contacts is not installed"
-    #~ UserDetail.box1.replace('partner','')
-    #~ UserInsert.main.replace('partner','')
  
 class Users(dd.Table):
     """
@@ -294,28 +205,4 @@ class Users(dd.Table):
         #~ return False
           
   
-#~ if settings.LINO.is_installed('contacts'):
-    #~ """
-    #~ Cannot install modlib.users without installing modlib.contacts.
-    #~ But Sphinx's autodoc
-    #~ """
-
-    #~ dd.inject_field(contacts.Partner,
-        #~ 'is_user',
-        #~ mti.EnableChild('users.User',verbose_name=_("is User")),
-        #~ """Whether this Partner is also a User."""
-        #~ )
-        
-        
-#~ if settings.LINO.user_model: 
-  
-    #~ class MyDetail(Users):
-        #~ label = _("My Detail")
-        
-        #~ default_action = actions.ShowDetailAction()
-        
-        #~ @classmethod
-        #~ def get_data_rows(self,ar):
-            #~ return [ar.get_user()]
-
 

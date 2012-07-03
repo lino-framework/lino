@@ -3578,7 +3578,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     });
   },
   after_delete : function() {
-    console.log('Lino.GridPanel.after_delete');
+    //~ console.log('Lino.GridPanel.after_delete');
     this.refresh();
   },
   add_row_listener : function(fn,scope) {
@@ -4231,7 +4231,7 @@ Ext.ensible.cal.EventRecord.reconfigure();
 
 
 Lino.on_eventclick = function(cp,rec,el) {
-  console.log("Lino.on_eventclick",arguments);
+  //~ console.log("Lino.on_eventclick",arguments);
   Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
   return false;
 }
