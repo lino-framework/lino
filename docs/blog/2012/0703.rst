@@ -1,0 +1,26 @@
+20120703
+========
+
+Zu den gestern entdeckten offenen Problemen:
+
+- Wenn man über "Meine Tx25-Anfragen" eine neue Anfrage erstellt, 
+  füllt Lino die NR-Nr. nicht ein, nachdem man den Klienten ausgewählt hat. 
+    
+--> Das ist nicht nur nicht einfach, sondern auch nicht sinnvoll.
+Der komplette KBSS-Baum aus dem "Mein Menü" kommt raus, fertig.
+    
+- Kann Fenster mit ungültigen Angaben nicht schließen, 
+  weil `auto_save` fälschlicherweise auch beim close button 
+  zuschlägt und den Record dann jedesmal zu speichern versucht 
+  (was jedesmal fehlschlägt).
+
+--> New attribute :attr:`lino.core.actions.Action.auto_save`.
+
+
+
+TODO
+- Empfängerart wird erst sichtbar, wenn man auch einen Empfänger eingegeben hat
+- Wenn ich eine Notiz eines Kollegen per E-Mail verschicke, 
+  steht als Sender der Kollege. 
+- Labels der vier Buttons auf einer neuen E-Mail...
+- Übersetzung Label für "Create": "Erstellen"

@@ -160,6 +160,14 @@ class Action(object):
     opens_a_window = False
     show_in_bbar = True
     show_in_workflow = True
+    
+    auto_save = True
+    """
+    What to do when this action is being called while the user is on a dirty record.
+    - `False` means: forget any changes in current record and run the action.
+    - `True` means: save any changes in current record before running the action.
+    - `None` means: ask the user.
+    """
     #~ can_view = perms.always
     
     #~ required_user_groups = None
@@ -479,6 +487,7 @@ class DeleteSelected(RowAction):
     """
     Delete the row.
     """
+    auto_save = False
     sort_index = 30
     readonly = False
     show_in_workflow = False
@@ -492,6 +501,7 @@ class DeleteSelected(RowAction):
     
         
 class SubmitDetail(RowAction):
+    auto_save = False
     show_in_workflow = False
     readonly = False
     required = dict(user_level='user')

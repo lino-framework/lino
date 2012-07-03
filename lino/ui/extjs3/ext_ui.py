@@ -2229,52 +2229,38 @@ tinymce.init({
         
     def a2btn(self,a,**kw):
         if isinstance(a,actions.SubmitDetail):
-            #~ kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
-            #~ kw.update(handler=js_code('function() {ww.save()}'))
             kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
             
-            #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
-        #~ elif isinstance(a,table.SubmitInsert):
-            #~ kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
-            #~ kw.update(handler=js_code('function() {ww.save()}'))
-            #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
-            #~ kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
-        #~ elif isinstance(a,actions.UpdateRowAction):
-            #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
-            #~ kw.update(panel_btn_handler=js_code('Lino.show_detail_handler()'))
-            #~ kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
         elif isinstance(a,actions.InsertRow):
             kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code(
                 'function(panel){Lino.show_insert(panel)}'))
-            #~ kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
         elif isinstance(a,actions.DuplicateRow):
             kw.update(panel_btn_handler=js_code(
                 'function(panel){Lino.show_insert_duplicate(panel)}'))
         elif isinstance(a,actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
                 #~ "Lino.delete_selected" % a))
-        #~ elif isinstance(a,actions.RedirectAction):
-            #~ kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
         elif isinstance(a,actions.RowAction):
-            kw.update(must_save=True)
             if a.url_action_name is None:
                 raise Exception("Action %r has no url_action_name" % a)
+            kw.update(must_save=True)
             kw.update(
               panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.url_action_name))
         elif isinstance(a,actions.ListAction):
-            kw.update(must_save=True)
             if a.url_action_name is None:
                 raise Exception("Action %r has no url_action_name" % a)
             kw.update(
               panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.url_action_name))
+            kw.update(must_save=True)
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(
           text=a.label,
           #~ name=a.name,
+          auto_save=a.auto_save,
           itemId=a.name,
           #~ text=unicode(a.label),
         )

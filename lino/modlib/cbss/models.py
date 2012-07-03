@@ -1739,13 +1739,13 @@ def site_setup(self):
 def setup_main_menu(site,ui,user,m): pass
 def setup_master_menu(site,ui,user,m): pass
   
-def setup_my_menu(site,ui,user,m): 
-    if user.profile.cbss_level < UserLevels.user: 
-        return
-    m  = m.add_menu("cbss",MODULE_NAME)
-    m.add_action(MyIdentifyPersonRequests)
-    m.add_action(MyManageAccessRequests)
-    m.add_action(MyRetrieveTIGroupsRequests)
+#~ def setup_my_menu(site,ui,user,m): 
+    #~ if user.profile.cbss_level < UserLevels.user: 
+        #~ return
+    #~ m  = m.add_menu("cbss",MODULE_NAME)
+    #~ m.add_action(MyIdentifyPersonRequests)
+    #~ m.add_action(MyManageAccessRequests)
+    #~ m.add_action(MyRetrieveTIGroupsRequests)
     
 def setup_config_menu(site,ui,user,m):
     m  = m.add_menu("cbss",MODULE_NAME)

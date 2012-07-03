@@ -107,7 +107,7 @@ Es gab noch ein subtiles Layout-Problem, das jetzt eine politisch
 vorbildliche Lösung gefunden hat. 
 
 Betrachten wir folgenden Ausschnitt aus dem Detail eines MAR.
-Das Feld "T/A/B" (`environment`) ist deklariert mit `max_length=4. 
+Das Feld "T/A/B" (`environment`) ist deklariert mit `max_length=4`. 
 Aber in der hier gezeigten Fenstergröße und Auflösung
 (das Problem kam nur, "wenn es eng wird")
 war es nicht breit genug, um diese vier Buchstaben anzuzeigen:
@@ -163,3 +163,28 @@ aber in Lino benutze ich jetzt `boxMinWidth` um das zu verhindern:
   hinein.
 
 
+:checkin:`ebbec0736a5e` und Upgrade testlino in Eupen.
+
+Es gibt noch mindestens zwei offene Probleme:
+
+#.  Wenn man über "Meine Tx25-Anfragen" eine neue Anfrage erstellt, 
+    füllt Lino die NR-Nr. nicht ein, nachdem man den Klienten ausgewählt hat. 
+    
+    Das ist auch nicht so einfach hinzukriegen, weil ich nicht 
+    einfach z.B. das Feld `person` aktiv machen kann. Für gut müssten 
+    aktive Felder eines Insert-Fensters 
+    kein echtes save bewirken, sondern der Server muss create_instance 
+    aufrufen, dann form2obj_and_save *ohne* save aufrufen und dann mit 
+    diesem `data_record` antworten. Sehr subtil.
+  
+- Wenn man es über den Klienten macht ([Neu]-Button im Reiter KBSS), 
+  *und* wenn der Klient eine ungültige NR-Nr. in den Stammdaten hat, 
+  dann kommt das im Insert-Fenster zur Sprache, aber man kann dieses Fenster 
+  dann nicht mehr schließen, weil `auto_save` 
+  fälschlicherweise auch beim close button 
+  zuschlägt und den Record dann jedesmal zu speichern versucht 
+  (was jedesmal fehlschlägt). Irritierend.
+  
+- Auch für ManageAccessRequest (MAR) ein separates `insert_template` machen.
+  Hier stellt sich jedoch vorher die Frage, wie wir das überhaupt mit den 
+  MAR regeln. 

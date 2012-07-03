@@ -712,7 +712,11 @@ class Printable(object):
         
   
 class CachedPrintable(Duplicable,Printable):
+    """
+    Mixin for Models that generate a unique external file at a 
+    determined place when being printed.
     
+    """
     #~ must_build = models.BooleanField(_("must build"),default=True,editable=False)
     build_time = models.DateTimeField(_("build time"),null=True,editable=False)
     """
@@ -786,6 +790,9 @@ class CachedPrintable(Duplicable,Printable):
 
 class TypedPrintable(CachedPrintable):
     """
+    A :class:`CachedPrintable` that uses a "Type" for deciding which template 
+    to use on a given instance. 
+    
     A TypedPrintable model must define itself a field `type` which is a ForeignKey 
     to a Model that implements :class:`PrintableType`.
     

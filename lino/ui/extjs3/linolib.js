@@ -1381,7 +1381,7 @@ Lino.permalink_handler = function (ww) {
 Lino.MainPanel = {
   config_containing_window : function(wincfg) { }
   ,init_containing_window : function(win) { }
-  ,do_when_clean : function(todo) { todo() }
+  ,do_when_clean : function(auto_save,todo) { todo() }
   ,get_master_params : function() {
     var p = {}
     p['$URL_PARAM_MASTER_TYPE'] = this.content_type; 
@@ -1668,11 +1668,15 @@ Lino.build_buttons = function(panel,actions) {
       cmenu[i] = actions[i]
       if (actions[i].panel_btn_handler) {
           var h = actions[i].panel_btn_handler.createCallback(panel,buttons[i]);
-          if (actions[i].must_save) {
-              //~ buttons[i].on('click',function() { panel.do_when_clean(h) });
-              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,[h]));
-          } else {
+          //~ if (actions[i].must_save) {
+          if (actions[i].auto_save == true) {
+              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,true,[h]));
+          } else if (actions[i].auto_save == null) {
+              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,false,[h]));
+          } else if (actions[i].auto_save == false) {
               buttons[i].on('click',h);
+          } else {
+              console.log("20120703 unhandled auto_save value",actions[i])
           }
           cmenu[i].handler = actions[i].panel_btn_handler.createCallback(panel,cmenu[i]);
       }
@@ -1891,7 +1895,7 @@ Lino.FieldBoxMixin = {
     //~ if (actions) config.bbar = actions.bbar;
     //~ Lino.FieldBoxMixin.superclass.constructor.call(this, config);
   //~ },
-  do_when_clean : function(todo) { todo() },
+  do_when_clean : function(auto_save,todo) { todo() },
   //~ format_data : function(html) { return '<div class="htmlText">' + html + '</div>' },
   format_data : function(html) { return html },
   get_base_params : function() {
@@ -2180,7 +2184,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       config.tbar = config.tbar.concat([
         {
           //~ text:'Refresh',
-          handler:function(){ this.do_when_clean(this.refresh.createDelegate(this)) },
+          handler:function(){ this.do_when_clean(true,this.refresh.createDelegate(this)) },
           iconCls: 'x-tbar-loading',
           tooltip:"$_('Reload current record')",
           scope:this}
@@ -2338,10 +2342,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     }
   },
   
-  do_when_clean : function(todo) {
+  do_when_clean : function(auto_save,todo) {
     var this_ = this;
     if (this.form.isDirty()) {
-        if (this.auto_save) {
+        if (auto_save) {
             this_.save(todo);
         } else {
           //~ console.log('20111217 do_when_clean() form is dirty',this.form);
@@ -2370,7 +2374,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ console.log('20110701 Lino.FormPanel.goto_record_id()',record_id);
     //~ var this_ = this;
     //~ this.do_when_clean(function() { this_.load_record_id(record_id) }
-    this.do_when_clean(this.load_record_id.createDelegate(this,[record_id]));
+    this.do_when_clean(true,this.load_record_id.createDelegate(this,[record_id]));
   },
   
   load_record_id : function(record_id,after) {
@@ -3976,35 +3980,12 @@ Lino.Window = Ext.extend(Ext.Window,{
   //~ },
   hide : function() { 
       //~ var t = this;
-      this.main_item.do_when_clean(function() { 
+      this.main_item.do_when_clean(false,function() { 
         //~ Lino.close_window(t); });
         Lino.close_window(); });
   },
   hide_really : function() { 
     Lino.Window.superclass.hide.call(this);
-  },
-  unused_hide : function() { 
-      //~ console.log("Gonna close");
-      var this_ = this;
-      var caller = this.caller;
-      this.main_item.do_when_clean(function() {
-        Lino.Window.superclass.hide.call(this_);
-        Lino.current_window = null;
-        if (caller) {
-          //~ console.log('20120124 caller is', caller);
-          var cw = caller.get_containing_window();
-          if (cw) {
-              //~ console.log("20120118 refresh caller's window", cw);
-              Lino.current_window = cw;
-              cw.main_item.refresh();
-          //~ } else {
-              //~ console.log('20120124 caller had no containing window', caller);
-              //~ caller.refresh();
-          }
-        //~ } else {
-          //~ console.log('20120124 cannot refresh: no caller');
-        }
-      });
   },
   onRender : function(ct, position){
     //~ console.log('20120110 Lino.Window.onRender() 1');
