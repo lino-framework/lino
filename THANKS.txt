@@ -4,6 +4,11 @@ Thanks to
 Here is a list of other publications who are at least partially being 
 distributed with Lino.
 
+- :srcref:`/lino/utils/html2text.py` :
+  Unmodified copy from http://www.aaronsw.com/2002/html2text/
+  Copyright 2004-2008 Aaron Swartz. 
+  GNU GPL 3.
+
 - :file:`lino/utils/daemoncommand.py` :
   Copyright (c) 2009, Sean Creeley.
   Modifications by Luc Saffre.

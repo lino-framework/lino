@@ -81,7 +81,7 @@ def analyze_models():
     
     - Verify that there are no more pending injects
     - Install a DisableDeleteHandler for each Model into `_lino_ddh`
-    - Install a `get_row_permission` method for Models that
+    - Install a `get_row_permission` and other methods for Models that
       don't inherit from :class:`lino.dd.Model`.
     
     """
@@ -112,6 +112,7 @@ def analyze_models():
                   'allow_cascaded_delete',
                   'workflow_state_field',
                   'workflow_owner_field',
+                  'on_duplicate',
                   'on_create'):
             if not hasattr(model,k):
                 #~ setattr(model,k,getattr(dd.Model,k))

@@ -16,6 +16,7 @@
     lino.utils.dblogger
     lino.utils.demonames
     lino.utils.dumpy
+    lino.utils.html2text
     lino.utils.jsgen
     lino.utils.mti
     lino.utils.daemoncommand
@@ -23,6 +24,7 @@
     lino.utils.babel
     lino.utils.choosers
     lino.utils.memo
+    lino.utils.perms
     lino.utils.ranges
     lino.utils.tables
     lino.utils.test
@@ -75,21 +77,6 @@ The :mod:`menus` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`perms` Module
------------------------
-
-.. automodule:: lino.utils.perms
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`requests` Module
---------------------------
-
-.. automodule:: lino.utils.requests
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 The :mod:`restify` Module
 -------------------------

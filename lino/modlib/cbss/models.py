@@ -397,6 +397,13 @@ The raw XML response received.
         #~ if self.ticket: return True
 
     def on_duplicate(self,ar,master):
+        """
+        When duplicating a CBSS request, we want re-execute it. 
+        So please duplicate only the parameters, 
+        not the execution data like `ticket`, `sent` and `status`.
+        Note that also the `user` will be set to the user who asked to duplicate
+        (because this is a subclass of :mod:`lino.mixins.UserAuthored`.
+        """
         self.debug_messages = ''
         self.info_messages = ''
         self.ticket = ''
@@ -471,10 +478,10 @@ The raw XML response received.
         This is the general method for all SSDN services,
         executed when a user runs :class:`ExecuteRequest`.
         """
+        if self.ticket:
+            raise Warning("Cannot re-execute %s with non-empty ticket." % self)
         if ar is not None:
             logger.info("%s executes CBSS request %s",ar.get_user(),self)
-        if self.ticket:
-            raise Exception("Cannot re-execute %s with non-empty ticket." % self)
         if now is None:
             now = datetime.datetime.now()
         if environment is None:
@@ -954,7 +961,8 @@ class SSIN(dd.Model):
         super(SSIN,self).on_create(ar)
         
     def person_changed(self,ar):
-        #~ print '20120603 person_changed'
+        #~ raise Exception("20120704")
+        #~ print '20120704 person_changed'
         if self.person_id: 
             self.fill_from_person(self.person)
         
@@ -1164,6 +1172,11 @@ class IdentifyPersonRequest(SSDNRequest,WithPerson):
         
 
 dd.update_field(IdentifyPersonRequest,'birth_date',blank=False)
+"""
+DocumentInvalid
+Element '{http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson}BirthDate': [facet 'length'] The value has a length of '0'; this differs from the allowed length of '10'., line 7
+
+"""
 #~ dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
 #~ dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
 
@@ -1230,7 +1243,7 @@ class MyIdentifyPersonRequests(mixins.ByUser,IdentifyPersonRequests):
     
 class IdentifyRequestsByPerson(IdentifyPersonRequests):
     master_key = 'person'
-    column_names = 'user sent status'
+    column_names = 'user sent status *'
     
 
 

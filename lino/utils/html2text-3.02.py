@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 """html2text: Turn HTML into equivalent Markdown-structured text."""
-"""
-
-Almost unmodified copy from http://www.aaronsw.com/2002/html2text/ 
-
-- set `UNICODE_SNOB` to 1
-
-"""
-__version__ = "3.1"
+# an unmodified copy from http://www.aaronsw.com/2002/html2text/
+__version__ = "3.02"
 __author__ = "Aaron Swartz (me@aaronsw.com)"
 __copyright__ = "(C) 2004-2008 Aaron Swartz. GNU GPL 3."
 __contributors__ = ["Martin 'Joey' Schulze", "Ricardo Reyes", "Kevin Jay North"]
@@ -43,7 +37,7 @@ try: from textwrap import wrap
 except: pass
 
 # Use Unicode characters instead of their ascii psuedo-replacements
-UNICODE_SNOB = 1
+UNICODE_SNOB = 0
 
 # Put the links after each paragraph instead of at the end.
 LINKS_EACH_PARAGRAPH = 0
@@ -53,16 +47,7 @@ BODY_WIDTH = 78
 
 # Don't show internal links (href="#local-anchor") -- corresponding link targets
 # won't be visible in the plain text file anyway.
-SKIP_INTERNAL_LINKS = True
-
-# Use inline, rather than reference, formatting for images and links
-INLINE_LINKS = True
-
-# Number of pixels Google indents nested lists
-GOOGLE_LIST_INDENT = 36
-
-IGNORE_ANCHORS = False
-IGNORE_IMAGES = False
+SKIP_INTERNAL_LINKS = False
 
 ### Entity Nonsense ###
 
@@ -82,8 +67,7 @@ unifiable = {'rsquo':"'", 'lsquo':"'", 'rdquo':'"', 'ldquo':'"',
 'egrave':'e', 'eacute':'e', 'ecirc':'e', 'euml':'e', 
 'igrave':'i', 'iacute':'i', 'icirc':'i', 'iuml':'i',
 'ograve':'o', 'oacute':'o', 'ocirc':'o', 'otilde':'o', 'ouml':'o', 
-'ugrave':'u', 'uacute':'u', 'ucirc':'u', 'uuml':'u',
-'lrm':'', 'rlm':''}
+'ugrave':'u', 'uacute':'u', 'ucirc':'u', 'uuml':'u'}
 
 unifiable_n = {}
 
@@ -167,97 +151,18 @@ def hn(tag):
             if n in range(1, 10): return n
         except ValueError: return 0
 
-def dumb_property_dict(style):
-    """returns a hash of css attributes"""
-    return dict([(x.strip(), y.strip()) for x, y in [z.split(':', 1) for z in style.split(';') if ':' in z]]);
-
-def dumb_css_parser(data):
-    """returns a hash of css selectors, each of which contains a hash of css attributes"""
-    # remove @import sentences
-    importIndex = data.find('@import')
-    while importIndex != -1:
-        data = data[0:importIndex] + data[data.find(';', importIndex) + 1:]
-        importIndex = data.find('@import')
-
-    # parse the css. reverted from dictionary compehension in order to support older pythons
-    elements =  [x.split('{') for x in data.split('}') if '{' in x.strip()]
-    elements = dict([(a.strip(), dumb_property_dict(b)) for a, b in elements])
-
-    return elements
-
-def element_style(attrs, style_def, parent_style):
-    """returns a hash of the 'final' style attributes of the element"""
-    style = parent_style.copy()
-    if 'class' in attrs:
-        for css_class in attrs['class'].split():
-            css_style = style_def['.' + css_class]
-            style.update(css_style)
-    if 'style' in attrs:
-        immediate_style = dumb_property_dict(attrs['style'])
-        style.update(immediate_style)
-    return style
-
-def google_list_style(style):
-    """finds out whether this is an ordered or unordered list"""
-    if 'list-style-type' in style:
-        list_style = style['list-style-type']
-        if list_style in ['disc', 'circle', 'square', 'none']:
-            return 'ul'
-    return 'ol'
-
-def google_nest_count(style):
-    """calculate the nesting count of google doc lists"""
-    nest_count = 0
-    if 'margin-left' in style:
-        nest_count = int(style['margin-left'][:-2]) / GOOGLE_LIST_INDENT
-    return nest_count
-
-def google_has_height(style):
-    """check if the style of the element has the 'height' attribute explicitly defined"""
-    if 'height' in style:
-        return True
-    return False
-
-def google_text_emphasis(style):
-    """return a list of all emphasis modifiers of the element"""
-    emphasis = []
-    if 'text-decoration' in style:
-        emphasis.append(style['text-decoration'])
-    if 'font-style' in style:
-        emphasis.append(style['font-style'])
-    if 'font-weight' in style:
-        emphasis.append(style['font-weight'])
-    return emphasis
-
-def google_fixed_width_font(style):
-    """check if the css of the current element defines a fixed width font"""
-    font_family = ''
-    if 'font-family' in style:
-        font_family = style['font-family']
-    if 'Courier New' == font_family or 'Consolas' == font_family:
-        return True
-    return False
-
-def list_numbering_start(attrs):
-    """extract numbering from list element attributes"""
-    if 'start' in attrs:
-        return int(attrs['start']) - 1
-    else:
-        return 0
-
 class _html2text(HTMLParser.HTMLParser):
     def __init__(self, out=None, baseurl=''):
         HTMLParser.HTMLParser.__init__(self)
         
         if out is None: self.out = self.outtextf
         else: self.out = out
-        self.outtextlist = [] # empty list to store output characters before they are  "joined"
         try:
             self.outtext = unicode()
         except NameError: # Python3
             self.outtext = str()
         self.quiet = 0
-        self.p_p = 0 # number of newline character to print before next output
+        self.p_p = 0
         self.outcount = 0
         self.start = 1
         self.space = 0
@@ -268,51 +173,28 @@ class _html2text(HTMLParser.HTMLParser):
         self.blockquote = 0
         self.pre = 0
         self.startpre = 0
-        self.code = False
-        self.br_toggle = ''
         self.lastWasNL = 0
-        self.lastWasList = False
-        self.style = 0
-        self.style_def = {}
-        self.tag_stack = []
-        self.emphasis = 0
-        self.drop_white_space = 0
-        self.inheader = False
         self.abbr_title = None # current abbreviation definition
         self.abbr_data = None # last inner HTML (for abbr being defined)
         self.abbr_list = {} # stack of abbreviations to write later
         self.baseurl = baseurl
-
-        if options.google_doc:
-            del unifiable_n[name2cp('nbsp')]
-            unifiable['nbsp'] = '&nbsp_place_holder;'
-    
-    def feed(self, data):
-        data = data.replace("</' + 'script>", "</ignore>")
-        HTMLParser.HTMLParser.feed(self, data)
     
     def outtextf(self, s): 
-        self.outtextlist.append(s)
-        if s: self.lastWasNL = s[-1] == '\n'
+        self.outtext += s
     
     def close(self):
         HTMLParser.HTMLParser.close(self)
         
         self.pbr()
         self.o('', 0, 'end')
-
-        self.outtext = self.outtext.join(self.outtextlist)
-        
-        if options.google_doc:
-            self.outtext = self.outtext.replace('&nbsp_place_holder;', ' ');
         
         return self.outtext
         
     def handle_charref(self, c):
-        self.o(charref(c), 1)
+        self.o(charref(c))
 
     def handle_entityref(self, c):
-        self.o(entityref(c), 1)
+        self.o(entityref(c))
             
     def handle_starttag(self, tag, attrs):
         self.handle_tag(tag, attrs, 1)
@@ -343,113 +225,14 @@ class _html2text(HTMLParser.HTMLParser):
 
             if match: return i
 
-    def drop_last(self, nLetters):
-        if not self.quiet:
-            self.outtext = self.outtext[:-nLetters]
-           
-    def handle_emphasis(self, start, tag_style, parent_style):
-        """handles various text emphases"""
-        tag_emphasis = google_text_emphasis(tag_style)
-        parent_emphasis = google_text_emphasis(parent_style)
-
-        # handle Google's text emphasis
-        strikethrough =  'line-through' in tag_emphasis and options.hide_strikethrough
-        bold = 'bold' in tag_emphasis and not 'bold' in parent_emphasis
-        italic = 'italic' in tag_emphasis and not 'italic' in parent_emphasis
-        fixed = google_fixed_width_font(tag_style) and not \
-                google_fixed_width_font(parent_style) and not self.pre
-
-        if start:
-            # crossed-out text must be handled before other attributes
-            # in order not to output qualifiers unnecessarily
-            if bold or italic or fixed:
-                self.emphasis += 1
-            if strikethrough:
-                self.quiet += 1
-            if italic:
-                self.o("_")
-                self.drop_white_space += 1
-            if bold:
-                self.o("**")
-                self.drop_white_space += 1
-            if fixed:
-                self.o('`')
-                self.drop_white_space += 1
-                self.code = True
-        else:
-            if bold or italic or fixed:
-                # there must not be whitespace before closing emphasis mark
-                self.emphasis -= 1
-                self.space = 0
-                self.outtext = self.outtext.rstrip()
-            if fixed:
-                if self.drop_white_space:
-                    # empty emphasis, drop it
-                    self.drop_last(1)
-                    self.drop_white_space -= 1
-                else:
-                    self.o('`')
-                self.code = False
-            if bold:
-                if self.drop_white_space:
-                    # empty emphasis, drop it
-                    self.drop_last(2)
-                    self.drop_white_space -= 1
-                else:
-                    self.o("**")
-            if italic:
-                if self.drop_white_space:
-                    # empty emphasis, drop it
-                    self.drop_last(1)
-                    self.drop_white_space -= 1
-                else:
-                    self.o("_")
-            # space is only allowed after *all* emphasis marks
-            if (bold or italic) and not self.emphasis:
-                    self.o(" ")
-            if strikethrough:
-                self.quiet -= 1
-
     def handle_tag(self, tag, attrs, start):
         #attrs = fixattrs(attrs)
-        if attrs is None:
-            attrs = {}
-        else:
-            attrs = dict(attrs)
-
-        if options.google_doc:
-            # the attrs parameter is empty for a closing tag. in addition, we
-            # need the attributes of the parent nodes in order to get a
-            # complete style description for the current element. we assume
-            # that google docs export well formed html.
-            parent_style = {}
-            if start:
-                if self.tag_stack:
-                  parent_style = self.tag_stack[-1][2]
-                tag_style = element_style(attrs, self.style_def, parent_style)
-                self.tag_stack.append((tag, attrs, tag_style))
-            else:
-                dummy, attrs, tag_style = self.tag_stack.pop()
-                if self.tag_stack:
-                    parent_style = self.tag_stack[-1][2]
-
+    
         if hn(tag):
             self.p()
-            if start:
-                self.inheader = True
-                self.o(hn(tag)*"#" + ' ')
-            else:
-                self.inheader = False
-                return # prevent redundant emphasis marks on headers
+            if start: self.o(hn(tag)*"#" + ' ')
 
-        if tag in ['p', 'div']:
-            if options.google_doc:
-                if start and google_has_height(tag_style):
-                    self.p()
-                else:
-                    self.soft_br()
-            else:
-                self.p()
+        if tag in ['p', 'div']: self.p()
         
         if tag == "br" and start: self.o("  \n")
 
@@ -461,10 +244,6 @@ class _html2text(HTMLParser.HTMLParser):
         if tag in ["head", "style", 'script']: 
             if start: self.quiet += 1
             else: self.quiet -= 1
-
-        if tag == "style":
-            if start: self.style += 1
-            else: self.style -= 1
 
         if tag in ["body"]:
             self.quiet = 0 # sites like 9rules.com never close <head>
@@ -479,20 +258,13 @@ class _html2text(HTMLParser.HTMLParser):
         
         if tag in ['em', 'i', 'u']: self.o("_")
         if tag in ['strong', 'b']: self.o("**")
-        if tag in ['del', 'strike']:
-            if start:                                                           
-                self.o("<"+tag+">")
-            else:
-                self.o("</"+tag+">")
-
-        if options.google_doc:
-            if not self.inheader:
-                # handle some font attributes, but leave headers clean
-                self.handle_emphasis(start, tag_style, parent_style)
-
         if tag == "code" and not self.pre: self.o('`') #TODO: `` `this` ``
         if tag == "abbr":
             if start:
+                attrsD = {}
+                for (x, y) in attrs: attrsD[x] = y
+                attrs = attrsD
+                
                 self.abbr_title = None
                 self.abbr_data = ''
                 if has_key(attrs, 'title'):
@@ -503,8 +275,11 @@ class _html2text(HTMLParser.HTMLParser):
                     self.abbr_title = None
                 self.abbr_data = ''
         
-        if tag == "a" and not IGNORE_ANCHORS:
+        if tag == "a":
             if start:
+                attrsD = {}
+                for (x, y) in attrs: attrsD[x] = y
+                attrs = attrsD
                 if has_key(attrs, 'href') and not (SKIP_INTERNAL_LINKS and attrs['href'].startswith('#')): 
                     self.astack.append(attrs)
                     self.o("[")
@@ -514,39 +289,34 @@ class _html2text(HTMLParser.HTMLParser):
                 if self.astack:
                     a = self.astack.pop()
                     if a:
-                        if INLINE_LINKS:
-                            self.o("](" + a['href'] + ")")
+                        i = self.previousIndex(a)
+                        if i is not None:
+                            a = self.a[i]
                         else:
-                            i = self.previousIndex(a)
-                            if i is not None:
-                                a = self.a[i]
-                            else:
-                                self.acount += 1
-                                a['count'] = self.acount
-                                a['outcount'] = self.outcount
-                                self.a.append(a)
-                            self.o("][" + str(a['count']) + "]")
+                            self.acount += 1
+                            a['count'] = self.acount
+                            a['outcount'] = self.outcount
+                            self.a.append(a)
+                        self.o("][" + str(a['count']) + "]")
         
-        if tag == "img" and start and not IGNORE_IMAGES:
+        if tag == "img" and start:
+            attrsD = {}
+            for (x, y) in attrs: attrsD[x] = y
+            attrs = attrsD
             if has_key(attrs, 'src'):
                 attrs['href'] = attrs['src']
                 alt = attrs.get('alt', '')
-                if INLINE_LINKS:
-                    self.o("![")
-                    self.o(alt)
-                    self.o("]("+ attrs['href'] +")")
+                i = self.previousIndex(attrs)
+                if i is not None:
+                    attrs = self.a[i]
                 else:
-                    i = self.previousIndex(attrs)
-                    if i is not None:
-                        attrs = self.a[i]
-                    else:
-                        self.acount += 1
-                        attrs['count'] = self.acount
-                        attrs['outcount'] = self.outcount
-                        self.a.append(attrs)
-                    self.o("![")
-                    self.o(alt)
-                    self.o("]["+ str(attrs['count']) +"]")
+                    self.acount += 1
+                    attrs['count'] = self.acount
+                    attrs['outcount'] = self.outcount
+                    self.a.append(attrs)
+                self.o("![")
+                self.o(alt)
+                self.o("]["+ str(attrs['count']) +"]")
         
         if tag == 'dl' and start: self.p()
         if tag == 'dt' and not start: self.pbr()
@@ -554,37 +324,26 @@ class _html2text(HTMLParser.HTMLParser):
         if tag == 'dd' and not start: self.pbr()
         
         if tag in ["ol", "ul"]:
-            # Google Docs create sub lists as top level lists
-            if (not self.list) and (not self.lastWasList):
-                self.p()
             if start:
-                if options.google_doc:
-                    list_style = google_list_style(tag_style)
-                else:
-                    list_style = tag
-                numbering_start = list_numbering_start(attrs)
-                self.list.append({'name':list_style, 'num':numbering_start})
+                self.list.append({'name':tag, 'num':0})
             else:
                 if self.list: self.list.pop()
-            self.lastWasList = True
-        else:
-            self.lastWasList = False
+            
+            self.p()
         
         if tag == 'li':
-            self.pbr()
             if start:
+                self.pbr()
                 if self.list: li = self.list[-1]
                 else: li = {'name':'ul', 'num':0}
-                if options.google_doc:
-                    nest_count = google_nest_count(tag_style)
-                else:
-                    nest_count = len(self.list)
-                self.o("  " * nest_count) #TODO: line up <ol><li>s > 9 correctly.
-                if li['name'] == "ul": self.o(options.ul_item_mark + " ")
+                self.o("  "*len(self.list)) #TODO: line up <ol><li>s > 9 correctly.
+                if li['name'] == "ul": self.o("* ")
                 elif li['name'] == "ol":
                     li['num'] += 1
                     self.o(str(li['num'])+". ")
                 self.start = 1
+            else:
+                self.pbr()
         
         if tag in ["table", "tr"] and start: self.p()
         if tag == 'td': self.pbr()
@@ -601,30 +360,18 @@ class _html2text(HTMLParser.HTMLParser):
         if self.p_p == 0: self.p_p = 1
 
     def p(self): self.p_p = 2
-
-    def soft_br(self):
-        self.pbr()
-        self.br_toggle = '  '
     
     def o(self, data, puredata=0, force=0):
         if self.abbr_data is not None: self.abbr_data += data
         
         if not self.quiet: 
-            if options.google_doc:
-                # prevent white space immediately after 'begin emphasis' marks ('**' and '_')
-                lstripped_data = data.lstrip()
-                if self.drop_white_space and not (self.pre or self.code):
-                    data = lstripped_data
-                if lstripped_data != '':
-                    self.drop_white_space = 0
-            
             if puredata and not self.pre:
                 data = re.sub('\s+', ' ', data)
                 if data and data[0] == ' ':
                     self.space = 1
                     data = data[1:]
             if not data and not force: return
-
+            
             if self.startpre:
                 #self.out(" :") #TODO: not output when already one there
                 self.startpre = 0
@@ -647,10 +394,10 @@ class _html2text(HTMLParser.HTMLParser):
                 self.out("\n")
                 self.space = 0
 
+
             if self.p_p:
-                self.out((self.br_toggle+'\n'+bq)*self.p_p)
+                self.out(('\n'+bq)*self.p_p)
                 self.space = 0
-                self.br_toggle = ''
                 
             if self.space:
                 if not self.lastWasNL: self.out(' ')
@@ -678,14 +425,11 @@ class _html2text(HTMLParser.HTMLParser):
 
             self.p_p = 0
             self.out(data)
+            self.lastWasNL = data and data[-1] == '\n'
             self.outcount += 1
 
     def handle_data(self, data):
         if r'\/script>' in data: self.quiet -= 1
-
-        if self.style:
-            self.style_def.update(dumb_css_parser(data))
-
         self.o(data, 1)
     
     def unknown_decl(self, data): pass
@@ -706,38 +450,12 @@ def html2text_file(html, out=wrapwrite, baseurl=''):
 def html2text(html, baseurl=''):
     return optwrap(html2text_file(html, None, baseurl))
 
-class Storage: pass
-options = Storage()
-options.google_doc = False
-options.ul_item_mark = '*'
-
 if __name__ == "__main__":
     baseurl = ''
-    
+
     p = optparse.OptionParser('%prog [(filename|url) [encoding]]',
                               version='%prog ' + __version__)
-    p.add_option("-g", "--google-doc", action="store_true", dest="google_doc",
-        default=False, help="convert an html-exported Google Document")
-    p.add_option("-d", "--dash-unordered-list", action="store_true", dest="ul_style_dash",
-        default=False, help="use a dash rather than a star for unordered list items")
-    p.add_option("-b", "--body-width", dest="body_width", action="store", type="int",
-        default=78, help="number of characters per output line, 0 for no wrap")
-    p.add_option("-i", "--google-list-indent", dest="list_indent", action="store", type="int",
-        default=GOOGLE_LIST_INDENT, help="number of pixels Google indents nested lists")
-    p.add_option("-s", "--hide-strikethrough", action="store_true", dest="hide_strikethrough",
-        default=False, help="hide strike-through text. only relevent when -g is specified as well")
-    (options, args) = p.parse_args()
-
-    # handle options
-    if options.ul_style_dash:
-        options.ul_item_mark = '-'
-    else:
-        options.ul_item_mark = '*'
-
-    BODY_WIDTH = options.body_width
-    GOOGLE_LIST_INDENT = options.list_indent
-
-    # process input
+    args = p.parse_args()[1]
     if len(args) > 0:
         file_ = args[0]
         encoding = None

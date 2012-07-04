@@ -2200,7 +2200,7 @@ tinymce.init({
                     or h.actor.model._meta.abstract:
                     #~ logger.info('20120621 %s : no real table',h)
                     return
-            ll = layouts.ListLayout(h.actor,h.actor.get_column_names(ar),hidden_elements=h.actor.hidden_columns)
+            ll = layouts.ListLayout(h.actor.get_column_names(ar),h.actor,hidden_elements=h.actor.hidden_columns)
             #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.actor.hidden_columns)
             h.list_layout = ll.get_layout_handle(self)
         else:
@@ -2212,7 +2212,7 @@ tinymce.init({
             else:
                 #~ params_template= ' '.join([pf.name for pf in h.actor.params])
                 params_template= ' '.join(h.actor.parameters.keys())
-            pl = layouts.ParamsLayout(h.actor,params_template)
+            pl = layouts.ParamsLayout(params_template,h.actor)
             h.params_layout = pl.get_layout_handle(self)
             #~ h.params_layout.main.update(hidden = h.actor.params_panel_hidden)
             #~ h.params_layout = layouts.LayoutHandle(self,pl)
@@ -2534,6 +2534,8 @@ tinymce.init({
             mainPanelClass = "Lino.%s.GridPanel" % rpt
         elif isinstance(action,actions.Calendar):
             mainPanelClass = "Lino.CalendarPanel"
+            #~ mainPanelClass = "Lino.CalendarAppPanel"
+            #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
         else:
             return 
         if action.actor is None:
@@ -2570,22 +2572,27 @@ tinymce.init({
         #~ yield "};" 
         yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action,py2js(windowConfig))
         #~ yield "  console.log('20120625 fn');" 
-        yield "  var p = {};" 
-        if action.hide_top_toolbar:
-            yield "  p.hide_top_toolbar = true;" 
-        if action.actor.hide_window_title:
-            yield "  p.hide_window_title = true;" 
-        yield "  p.is_main_window = true;" # workaround for problem 20111206
-        if params:
-            for ln in jsgen.declare_vars(params):
-                yield '  '  + ln
-            yield "  p.params_panel = %s;" % params
-            yield "  p.params_panel.fields = %s;" % py2js(
-              [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
-        
-        yield "  var rv = new %s(p);" % mainPanelClass
+        if isinstance(action,actions.Calendar):
+            yield "  return Lino.calendar_app.get_main_panel();"
+        else:
+            yield "  var p = {};" 
+            if action.hide_top_toolbar:
+                yield "  p.hide_top_toolbar = true;" 
+            if action.actor.hide_window_title:
+                yield "  p.hide_window_title = true;" 
+            yield "  p.is_main_window = true;" # workaround for problem 20111206
+            #~ if isinstance(action,actions.Calendar):
+                #~ yield "  p.items = Lino.CalendarAppPanel_items;" 
+            if params:
+                for ln in jsgen.declare_vars(params):
+                    yield '  '  + ln
+                yield "  p.params_panel = %s;" % params
+                yield "  p.params_panel.fields = %s;" % py2js(
+                  [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
+            
+            yield "  return new %s(p);" % mainPanelClass
         #~ yield "  console.log('20120625 rv is',rv);" 
-        yield "  return rv;"
+        #~ yield "  return rv;"
         yield "});" 
         
     
@@ -2601,36 +2608,37 @@ tinymce.init({
         """
         tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
         
-        widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-        col_names = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
-        hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
-        
         fields = ar.ah.store.list_fields
         headers = [force_unicode(col.label or col.name) for col in ar.ah.list_layout.main.columns]
         cellwidths = None
-        
         columns = ar.ah.list_layout.main.columns
-        if col_names:
-            fields = []
-            headers = []
-            cellwidths = []
-            columns = []
-            for i,cn in enumerate(col_names):
-                col = None
-                for e in ar.ah.list_layout.main.columns:
-                    if e.name == cn:
-                        col = e
-                        break
-                #~ col = ar.ah.list_layout._main.find_by_name(cn)
-                #~ col = ar.ah.list_layout._main.columns[ci]
-                if col is None:
-                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
-                if not hiddens[i]:
-                    columns.append(col)
-                    fields.append(col.field._lino_atomizer)
-                    headers.append(force_unicode(col.label or col.name))
-                    cellwidths.append(widths[i])
+        
+        if ar.request is not None:
+            widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+            col_names = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
+        
+            if col_names:
+                fields = []
+                headers = []
+                cellwidths = []
+                columns = []
+                for i,cn in enumerate(col_names):
+                    col = None
+                    for e in ar.ah.list_layout.main.columns:
+                        if e.name == cn:
+                            col = e
+                            break
+                    #~ col = ar.ah.list_layout._main.find_by_name(cn)
+                    #~ col = ar.ah.list_layout._main.columns[ci]
+                    if col is None:
+                        #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
+                        raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
+                    if not hiddens[i]:
+                        columns.append(col)
+                        fields.append(col.field._lino_atomizer)
+                        headers.append(force_unicode(col.label or col.name))
+                        cellwidths.append(widths[i])
           
         
         #~ for k,v in ar.actor.override_column_headers(ar):

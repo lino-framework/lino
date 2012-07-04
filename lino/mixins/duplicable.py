@@ -76,20 +76,17 @@ class Duplicable(dd.Model):
         
     
     @dd.action(_("Duplicate"),sort_index=60,show_in_workflow=False)
-    def duplicate_row(self,ar,**kw):
+    def duplicate_row(self,ar):
         #~ if not isinstance(ar,actions.ActionRequest):
             #~ raise Exception("Expected and ActionRequest but got %r" % ar)
         #~ related = dict()
-        for f in self._meta.fields:
-            if not f.primary_key:
-                kw[f.name] = getattr(self,f.name)
         #~ for m2m in self._meta.many_to_many:
             #~ print m2m
         #~ print self._lino_ddh.fklist
         related = []
         for m,fk in self._lino_ddh.fklist:
             #~ related[fk] = m.objects.filter(**kw)
-            if getattr(m,'allow_cascaded_delete',False):
+            if m.allow_cascaded_delete:
                 related.append((fk,m.objects.filter(**{fk.name:self})))
             #~ if issubclass(m,Duplicable):
                 #~ related[fk.related_name] = getattr(self,fk.name)
@@ -113,26 +110,43 @@ class Duplicable(dd.Model):
                 #~ raise Exception("20120612 Cannot handle %r" % de)
                 
         #~ print 20120608, kw
-        new = ar.create_instance(**kw)
+        if True:
+            kw = dict()
+            for f in self._meta.fields:
+                if not f.primary_key:
+                    kw[f.name] = getattr(self,f.name)
+            new = self.__class__(**kw)
+            #~ new = ar.create_instance(**kw)
+            """
+            20120704 create_instances causes fill_from_person() on a CBSS request.
+            """
+        else:
+            # doesn't seem to want to work
+            new = self
+            for f in self._meta.fields:
+                if f.primary_key:
+                    setattr(new,f.name,None) # causes Django to consider this an unsaved instance
+            #~ new.pk = None # causes Django to consider this an unsaved instance
+        
+        #~ print 20120704, obj2str(new)
+        new.save(force_insert=True)
         #~ new = duplicate_row(self)
         #~ new.on_duplicate(ar)
         new.on_duplicate(ar,None)
         #~ m = getattr(new,'on_duplicate',None)
         #~ if m is not None:
             #~ m(ar,None)
-        #~ print 20120612, obj2str(new)
-        new.save(force_insert=True)
         
         for fk,qs in related:
             for obj in qs:
-                obj.pk = None
+                obj.pk = None # causes Django to save a copy
                 setattr(obj,fk.name,new)
-                if isinstance(obj,Duplicable):
-                    obj.on_duplicate(ar,new)
+                #~ if isinstance(obj,Duplicable):
+                obj.on_duplicate(ar,new)
                 #~ m = getattr(obj,'on_duplicate',None)
                 #~ if m is not None:
                     #~ m(ar,new)
-                obj.save()
+                obj.save(force_insert=True)
         
         #~ for de,rm in related.items():
             #~ # rm is the RelatedManager
@@ -152,6 +166,3 @@ class Duplicable(dd.Model):
         kw.update(goto_record_id=new.pk)
         return ar.success_response(**kw)
         
-    def on_duplicate(self,ar,master):
-        pass
-  

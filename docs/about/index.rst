@@ -110,3 +110,4 @@ See also :doc:`/tutorials/t1`
    why_gpl
    why_extjs
    compared
+   thanks

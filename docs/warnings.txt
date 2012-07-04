@@ -1,8 +1,45 @@
-T:\hgwork\lino\docs\admin\install_debian.rst:83: (ERROR/3) Unknown target name: "set up your python path".
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\admin\install_debian.rst:198: WARNING: unknown document: /tutorials/t1
-T:\hgwork\lino\docs\admin\install_debian.rst:260: WARNING: xfile reference target not found: __init__.py
-T:\hgwork\lino\docs\admin\pythonpath.rst:14: WARNING: xfile reference target not found: mypy
-T:\hgwork\lino\docs\admin\pythonpath.rst:32: WARNING: xfile reference target not found: mypy
-T:\hgwork\lino\docs\admin\pythonpath.rst:32: WARNING: xfile reference target not found: local.pth
-T:\hgwork\lino\docs\admin\pythonpath.rst:58: WARNING: xfile reference target not found: local.pth
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:mod reference target not found: base
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:25: WARNING: py:mod reference target not found: requests
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference target not found: urls
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:210: WARNING: py:class reference target not found: FormPanel
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:210: WARNING: py:class reference target not found: GridPanel
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:394: WARNING: py:class reference target not found: lino.core.fields.DisplayField
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:635: WARNING: py:class reference target not found: lino.core.fields.IncompleteDate
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:104: WARNING: py:attr reference target not found: ACTION_RESPONSES
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:146: WARNING: py:class reference target not found: lino.modles.BuildSiteCache
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:160: WARNING: xfile reference target not found: lino*.js
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:242: WARNING: py:meth reference target not found: row_action_button
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:327: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:343: WARNING: py:class reference target not found: lino.core.table.TableRequest
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:356: WARNING: py:class reference target not found: lino.core.table.TableRequest
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:370: WARNING: py:class reference target not found: django.http.HttpResponse
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:387: WARNING: unknown document: /blog/2010/0716
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:387: WARNING: unknown document: /blog/2010/0721
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:387: WARNING: unknown document: /blog/2010/1116
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:387: WARNING: unknown document: /blog/2010/1207
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:35: WARNING: py:mod reference target not found: ext_store
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:186: WARNING: unknown document: /blog/2010/0803
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:324: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:489: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:545: WARNING: py:attr reference target not found: Store.pk_index
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:47: WARNING: py:class reference target not found: dict
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:168: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:40: WARNING: py:mod reference target not found: dbfreader
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:48: WARNING: py:mod reference target not found: html2xhtml
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: HTMLParser.HTMLParser
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:56: WARNING: py:mod reference target not found: instantiator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:27: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:80: WARNING: py:class reference target not found: lino.fields.LinkedForeignKey
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:64: WARNING: py:mod reference target not found: latex
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:72: WARNING: py:mod reference target not found: menus
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:81: WARNING: py:mod reference target not found: restify
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:11: WARNING: py:mod reference target not found: docutils.examples
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:21: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:33: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:89: WARNING: py:mod reference target not found: ucsv
+T:\hgwork\lino\docs\autodoc\lino.utils.choosers.rst:24: WARNING: py:class reference target not found: lino.utils.choosers.FieldChooser
+T:\hgwork\lino\docs\autodoc\lino.utils.choosers.rst:45: WARNING: py:class reference target not found: lino.ui.extjs.ext_store.Store

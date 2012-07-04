@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-03 15:31+0100\n"
+"POT-Creation-Date: 2012-07-04 20:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,28 +36,28 @@ msgstr ""
 msgid "Estonian"
 msgstr ""
 
-#: .\__init__.py:985 .\models.py:592 .\templates\500.html.py:4
+#: .\__init__.py:986 .\models.py:592 .\templates\500.html.py:4
 #: .\templates\base.html.py:26
 msgid "Home"
 msgstr ""
 
-#: .\__init__.py:1016
+#: .\__init__.py:1017
 msgid "Master"
 msgstr ""
 
-#: .\__init__.py:1019
+#: .\__init__.py:1020
 msgid "My menu"
 msgstr ""
 
-#: .\__init__.py:1022
+#: .\__init__.py:1023
 msgid "Configure"
 msgstr ""
 
-#: .\__init__.py:1024
+#: .\__init__.py:1025
 msgid "Explorer"
 msgstr ""
 
-#: .\__init__.py:1026
+#: .\__init__.py:1027
 msgid "Site"
 msgstr ""
 
@@ -201,36 +201,36 @@ msgstr ""
 msgid "System"
 msgstr ""
 
-#: .\core\actions.py:385
+#: .\core\actions.py:402
 msgid "Detail"
 msgstr ""
 
-#: .\core\actions.py:411 .\ui\extjs3\ext_ui.py:157
+#: .\core\actions.py:428 .\ui\extjs3\ext_ui.py:157
 msgid "New"
 msgstr ""
 
-#: .\core\actions.py:417
+#: .\core\actions.py:434
 #, python-format
 msgid "Insert into %s"
 msgstr ""
 
-#: .\core\actions.py:433 .\mixins\__init__.py:297 .\mixins\duplicable.py:78
+#: .\core\actions.py:450 .\mixins\__init__.py:297 .\mixins\duplicable.py:78
 msgid "Duplicate"
 msgstr ""
 
-#: .\core\actions.py:456
+#: .\core\actions.py:473
 msgid "Calendar"
 msgstr ""
 
-#: .\core\actions.py:497
+#: .\core\actions.py:514
 msgid "Delete"
 msgstr ""
 
-#: .\core\actions.py:509
+#: .\core\actions.py:526
 msgid "Save"
 msgstr ""
 
-#: .\core\actions.py:514
+#: .\core\actions.py:531
 msgid "Create"
 msgstr ""
 
@@ -238,20 +238,20 @@ msgstr ""
 msgid "Workflows"
 msgstr ""
 
-#: .\core\kernel.py:183
+#: .\core\kernel.py:184
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: .\core\layouts.py:476
+#: .\core\layouts.py:474
 msgid "General"
 msgstr ""
 
-#: .\core\table.py:702
+#: .\core\table.py:706
 msgid "You have no permission to delete this row."
 msgstr ""
 
-#: .\core\table.py:770
+#: .\core\table.py:774
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
@@ -270,7 +270,7 @@ msgid "(object)"
 msgstr ""
 
 #: .\mixins\__init__.py:186
-msgid "user"
+msgid "Author"
 msgstr ""
 
 #: .\mixins\__init__.py:234
@@ -286,7 +286,7 @@ msgstr ""
 msgid "Row # %s"
 msgstr ""
 
-#: .\mixins\duplicable.py:150
+#: .\mixins\duplicable.py:164
 #, python-format
 msgid "Duplicated %(old)s to %(new)s."
 msgstr ""
@@ -429,7 +429,7 @@ msgstr ""
 msgid "show"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:1547 .\ui\extjs3\ext_ui.py:2432
+#: .\ui\extjs3\ext_elems.py:1547 .\ui\extjs3\ext_ui.py:2447
 #: .\ui\extjs3\linolib.js.py:13
 msgid "No data to display."
 msgstr ""
@@ -476,43 +476,43 @@ msgstr ""
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1264 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs3\ext_ui.py:1266 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1267 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs3\ext_ui.py:1269 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1296 .\ui\extjs4\ext_ui.py:827
+#: .\ui\extjs3\ext_ui.py:1298 .\ui\extjs4\ext_ui.py:827
 #: .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632 .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1323
+#: .\ui\extjs3\ext_ui.py:1325
 #, python-format
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1449 .\ui\extjs3\ext_ui.py:1507
+#: .\ui\extjs3\ext_ui.py:1451 .\ui\extjs3\ext_ui.py:1509
 #, python-format
 msgid "List contains more than %d rows"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1576 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1578 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1782
+#: .\ui\extjs3\ext_ui.py:1784
 #, python-format
 msgid "Action \"%(action)s\" failed for %(record)s:"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1787
+#: .\ui\extjs3\ext_ui.py:1789
 msgid "An error report has been sent to the system administrator."
 msgstr ""
 

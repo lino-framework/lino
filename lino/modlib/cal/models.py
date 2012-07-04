@@ -419,7 +419,10 @@ class Ended(dd.Model):
   
     
 class ComponentBase(mixins.ProjectRelated,Started):
-  
+    """
+    Abstract model used as base class for 
+    both :class:`Event` and :class:`Task`.
+    """
     class Meta:
         abstract = True
         
@@ -450,9 +453,18 @@ class ComponentBase(mixins.ProjectRelated,Started):
         return html
         
     def set_datetime(self,name,value):
+        """
+        Given a datetime `value`, update the two corresponding 
+        fields `FOO_date` and `FOO_time` 
+        (where FOO is specified in `name` which must be 
+        either "start" or "end").
+        """
         #~ logger.info("20120119 set_datetime(%r)",value)
         setattr(self,name+'_date',value.date())
-        setattr(self,name+'_time',value.time())
+        t = value.time()
+        if not t:
+            t = None
+        setattr(self,name+'_time',t)
         
     def get_datetime(self,name,altname=None):
         """
@@ -529,7 +541,8 @@ class Component(ComponentBase,
         abstract = True
         
     #~ access_class = AccessClass.field() # iCal:CLASS
-    access_class = models.ForeignKey(AccessClass,blank=True,null=True)
+    access_class = models.ForeignKey(AccessClass,blank=True,null=True,help_text=_("""\
+Indicates whether this is private or public (or somewhere between)."""))
     sequence = models.IntegerField(_("Revision"),default=0)
     #~ alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
     #~ alarm_unit = DurationUnit.field(_("Unit"),blank=True,
@@ -639,7 +652,7 @@ class ExtAllDayField(dd.VirtualField):
                 obj.end_time = datetime.time(10,0,0)
         #~ obj.save()
         
-    def value_from_object(self,obj,request):
+    def value_from_object(self,obj,ar):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         return (obj.start_time is None)
         
@@ -683,7 +696,8 @@ class Event(Component,Ended,
         verbose_name = pgettext_lazy(u"cal",u"Event")
         verbose_name_plural = pgettext_lazy(u"cal",u"Events")
         
-    transparent = models.BooleanField(_("Transparent"),default=False)
+    transparent = models.BooleanField(_("Transparent"),default=False,help_text=_("""\
+Indicates that this Event shouldn't prevent other Events at the same time."""))
     type = models.ForeignKey(EventType,null=True,blank=True)
     place = models.ForeignKey(Place,null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
@@ -784,7 +798,7 @@ class Event(Component,Ended,
             return self.project.get_print_language(bm)
         return self.user.language
         
-    @dd.action(_("Scheduled"),sort_index=10,required=dict(states=['','draft']))
+    @dd.action(EventState.scheduled.text,sort_index=10,required=dict(states=['','draft']))
     def mark_scheduled(self,ar):
         #~ print 'TODO: would suggest', self
         if not self.start_time:
@@ -796,7 +810,7 @@ class Event(Component,Ended,
         self.save()
         return ar.ui.success_response(refresh=True)
     
-    @dd.action(_("Notified"),sort_index=11,required=dict(states=['scheduled']))
+    @dd.action(EventState.notified.text,sort_index=11,required=dict(states=['scheduled']))
     def mark_notified(self,ar):
         """
         Running this action means 
@@ -807,7 +821,7 @@ class Event(Component,Ended,
         self.save()
         return ar.ui.success_response(refresh=True)
     
-    @dd.action(_("Confirmed"),sort_index=12,
+    @dd.action(EventState.confirmed.text,sort_index=12,
         required=dict(states=['scheduled','notified']))
     def mark_confirmed(self,ar):
         #~ print 'TODO: would publish', self
@@ -815,14 +829,14 @@ class Event(Component,Ended,
         self.save()
         return ar.ui.success_response(refresh=True)
         
-    @dd.action(_("Took place"),sort_index=13,
+    @dd.action(EventState.took_place.text,sort_index=13,
         required=dict(states=['scheduled','notified','confirmed']))
     def mark_took_place(self,ar):
         self.state = EventState.took_place
         self.save()
         return ar.ui.success_response(refresh=True)
         
-    @dd.action(_("Cancelled"),sort_index=13,
+    @dd.action(EventState.cancelled.text,sort_index=13,
         required=dict(states=['scheduled','notified','confirmed']))
     def mark_cancelled(self,ar):
         self.state = EventState.cancelled
@@ -849,13 +863,13 @@ class Event(Component,Ended,
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''summary''')
             
-    @classmethod
-    def setup_table(cls,t):
-        """
-        See also :meth:`lino.core.table.Table.setup_table`
-        """
-        #~ cls.create_postings.required.update(states=['scheduled'])
-        t.create_postings.set_required(states=['scheduled'])
+    #~ @classmethod
+    #~ def setup_table(cls,t):
+        #~ """
+        #~ See also :meth:`lino.core.table.Table.setup_table`
+        #~ """
+        #~ t.create_postings.set_required(states=['scheduled'])
+        #~ t.create_mail.set_required(states=['scheduled'])
   
 
 
@@ -1013,9 +1027,8 @@ if settings.LINO.user_model:
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(Component):
     """
-    A Task is when a user plans to to something and wants to 
-    get reminded about it.
-    
+    A Task is when a user plans to to something 
+    (and optionally wants to get reminded about it).
     """
     
     class Meta:
@@ -1034,9 +1047,28 @@ class Task(Component):
     state = TaskState.field(blank=True) # iCal:STATUS
     #~ status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     
-    @dd.action(_("Done"),required=dict(states=['','todo','started']))
+    #~ @dd.action(_("Done"),required=dict(states=['','todo','started']))
+    @dd.action(TaskState.todo.text,required=dict(states=['']))
+    def mark_todo(self,ar):
+        self.state = TaskState.todo
+        self.save()
+        return ar.success_response(refresh=True)
+    
+    @dd.action(TaskState.done.text,required=dict(states=['','todo','started']))
     def mark_done(self,ar):
         self.state = TaskState.done
+        self.save()
+        return ar.success_response(refresh=True)
+    
+    @dd.action(TaskState.started.text,required=dict(states=['','todo']))
+    def mark_started(self,ar):
+        self.state = TaskState.started
+        self.save()
+        return ar.success_response(refresh=True)
+    
+    @dd.action(TaskState.sleeping.text,required=dict(states=['','todo']))
+    def mark_sleeping(self,ar):
+        self.state = TaskState.sleeping
         self.save()
         return ar.success_response(refresh=True)
     
@@ -1075,6 +1107,10 @@ class Tasks(dd.Table):
     calendar owner created:20 modified:20   
     description #notes.NotesByTask    
     """
+    insert_layout = dd.FormLayout("""
+    summary
+    user project
+    """,window_size=(50,'auto'))
     
 class TasksByController(Tasks):
     master_key = 'owner'
@@ -1089,7 +1125,8 @@ if settings.LINO.user_model:
     class MyTasksToDo(MyTasks):
     #~ class MyOpenTasks(MyTasks):
         label = _("To-do list")
-        filter = models.Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
+        #~ filter = models.Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
+        filter = models.Q(state__in=(TaskState.todo,TaskState.started))
     
 if settings.LINO.project_model:    
   
@@ -1440,7 +1477,7 @@ class ExtDateTimeField(dd.VirtualField):
     def set_value_in_object(self,request,obj,value):
         obj.set_datetime(self.name_prefix,value)
         
-    def value_from_object(self,obj,request):
+    def value_from_object(self,obj,ar):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
         return obj.get_datetime(self.name_prefix,self.alt_prefix)
 
@@ -1463,11 +1500,17 @@ class ExtSummaryField(dd.VirtualField):
                 value = value[len(s):]
         obj.summary = value
         
-    def value_from_object(self,obj,request):
+    def value_from_object(self,obj,ar):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
+        if obj.user != ar.get_user():
+            s = "%s " % obj.user.username 
+        else:
+            s = ''
         if settings.LINO.project_model is not None and obj.project is not None:
-            return u"%s %s" % (obj.project,obj.summary)
-        return obj.summary
+            s += u"%s %s" % (obj.project,obj.summary)
+        else:
+            s += obj.summary
+        return s
 
 
 if settings.LINO.use_extensible:

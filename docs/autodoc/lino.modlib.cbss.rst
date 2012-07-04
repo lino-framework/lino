@@ -14,6 +14,11 @@ Models
     :members:
     :show-inheritance:
 
+
+.. automodule:: lino.modlib.cbss.tx25
+    :members:
+    :show-inheritance:
+
 The `cbss_validate_request` management command
 ==============================================
 

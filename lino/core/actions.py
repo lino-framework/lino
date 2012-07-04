@@ -159,7 +159,15 @@ class Action(object):
     hide_navigator = False
     opens_a_window = False
     show_in_bbar = True
-    show_in_workflow = True
+    """
+    Whether this action should be displayed as a button in the bottom toolbar and the context menu.
+    """
+    
+    show_in_workflow = False
+    """
+    Whether this action should be displayed 
+    among the :meth:`workflow_buttons <lino.core.actors.Actor.workflow_buttons>`.
+    """
     
     auto_save = True
     """
@@ -221,6 +229,8 @@ class Action(object):
             if not hasattr(self,k):
                 raise Exception("Invalid keyword %s" % k)
             setattr(self,k,v)
+        self.set_required()
+
         
     def set_required(self,**kw):
         #~ logger.info("20120628 set_required %s(%s)",self,kw)
@@ -228,6 +238,13 @@ class Action(object):
         new.update(self.required)
         new.update(kw)
         self.required = new
+        if self.required.has_key('states'):
+            #~ kw.setdefault('show_in_bbar',False)
+            self.show_in_bbar = False
+            self.show_in_workflow = True
+        else:
+            self.show_in_workflow = False
+            self.show_in_bbar = True
         
     def __str__(self):
         #~ raise Exception("Must use action2str(actor,action)")

@@ -158,7 +158,7 @@ class ActorMetaClass(type):
         if dt is not None:
             if dl is not None:
                 raise Exception("%r has both detail_template and detail_layout" % cls)
-            cls.detail_layout = layouts.FormLayout(cls,dt)
+            cls.detail_layout = layouts.FormLayout(dt,cls)
         elif dl is not None:
             assert dl._table is None
             dl._table = cls
@@ -172,7 +172,7 @@ class ActorMetaClass(type):
                 raise ValueError("%r : insert_template %r is not a string" % (cls,dt))
             if dl is not None:
                 raise Exception("%r has both insert_template and insert_layout" % cls)
-            cls.insert_layout = layouts.FormLayout(cls,dt)
+            cls.insert_layout = layouts.FormLayout(dt,cls)
         elif dl is not None:
             assert dl._table is None
             dl._table = cls
@@ -700,7 +700,7 @@ class Actor(object):
         if dtl is not None:
             if isinstance(dtl,basestring):
                 if getattr(self,attname) is None:
-                    setattr(self,attname,layouts.FormLayout(self,dtl,**kw))
+                    setattr(self,attname,layouts.FormLayout(dtl,self,**kw))
                     return
                 if '\n' in dtl and not '\n' in getattr(self,attname).main:
                     name = 'general'

@@ -394,7 +394,7 @@ class BaseLayout(object):
     """
     
     #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
-    def __init__(self,table=None,main=None,hidden_elements=frozenset(),**kw):
+    def __init__(self,main=None,table=None,hidden_elements=frozenset(),**kw):
         self._table = table
         self._labels = dict()
         #~ self._window_size = window_size

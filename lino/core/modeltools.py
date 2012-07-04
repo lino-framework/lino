@@ -78,6 +78,11 @@ class Model(models.Model):
     :class:`lino.modlib.debts.models.Entry`,
     ...
     
+    Not that this currently is also consulted by
+    :meth:`lino.mixins.duplicable.Duplicable.duplicate_row`
+    to decide whether slaves of a record being duplicated
+    should be duplicated as well.
+    
     """
     
     workflow_state_field = None
@@ -160,6 +165,16 @@ class Model(models.Model):
         """
         pass
         
+    def on_duplicate(self,ar,master):
+        """
+        Called by :meth:`lino.mixins.duplicable.Duplicable.duplicate_row`.
+        `ar` is the action request that asked to duplicate.
+        If `master` is not None, then this is a cascaded duplicate initiated
+        be a duplicate() on the specifie `master`.
+        """
+        pass
+        
+  
 def is_devserver():
     """
     Returns True if we are running a development server.

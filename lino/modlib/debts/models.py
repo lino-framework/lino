@@ -261,7 +261,8 @@ Vielleicht mit Fußnoten?
 """)
     intro = dd.RichTextField(_("Introduction"),format="html",blank=True)
     conclusion = dd.RichTextField(_("Conclusion"),format="html",blank=True)
-    dist_amount = dd.PriceField(_("Disposable amount"),default=120)
+    dist_amount = dd.PriceField(_("Disposable amount"),default=120,help_text=_("""\
+The monthly amount available for distribution among debtors."""))
     
     #~ def duplicated_fields(self):
         #~ return dd.fields_list('partner print_todo intro conclusion dist_amount')
@@ -553,6 +554,11 @@ class Budgets(dd.Table):
     required=dict(user_groups = ['debts'])
     #~ required_user_groups = ['debts']
     detail_layout = BudgetDetail()
+    insert_layout = dd.FormLayout("""
+    partner 
+    date user 
+    """,
+    window_size=(50,'auto'))
     
     @dd.constant()
     def spacer(self,ui):  return '<br/>'

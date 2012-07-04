@@ -236,7 +236,11 @@ class PAR(Controller):
         
         if obj.__class__ is Person:
             par2person(data,obj)
-            mapper.update(title='ALLO')
+            #~ mapper.update(title='ALLO')
+            title = data.get('ALLO','')
+            if title in ("Herr","Herrn","Frau",u"Fräulein","Madame"):
+                title = ''
+            obj.title = title
             mapper.update(gesdos_id='NB1')
             if data.has_key('IDUSR'):
                 username = settings.TIM2LINO_USERNAME(data['IDUSR'])

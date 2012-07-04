@@ -1,0 +1,172 @@
+20120704
+========
+
+Done
+----
+
+- Wenn ein Fehler während Tx25.Result passiert, bleiben jetzt nicht mehr die 
+  Daten der vorigen Person da stehen.
+
+- Neue Fälle Tx25: wrote handlers for DeclaredBirthDate, 
+  ResidenceUpdateDates, DocumentTypes, ...
+
+- Übersetzungen. in "Wohnsitze" stand noch ein "Language",
+  Organization, RegistrationRegister (Eintragungsregister),
+  [Show all], ...
+
+- html2text : holte alle Umlaute raus. Das war zu viel des Guten.
+  
+- IPR PhoneticSearch ist jetzt vorausgefüllt.
+  (Couldn't reproduce this. )
+  
+- IPR.duplicate kopiert birth_date nicht.
+  Genauer gesagt rief er dann `person_changed` auf und setzte folglich für 
+  alle Paremeterfelder wieder die Standardwerte ein.
+  
+- The label of the `user` field of a :class:`lino.mixins.UserAuthored` 
+  is now "Author" instead of "User".
+  
+- debts.Budgets and cal.Tasks now also have their separate insert window
+  
+- Hilfetexte für "nicht blockierend", "Zugriffsklasse" und "Status"
+
+- Übersetzung Task-Status "Started" ist "Begonnen" nicht "Beginn".
+  Added new Task State "sleeping".
+
+- To-Do-Liste darf nur todo-Einträge (und "Begonnen") anzeigen. Aber nicht die mit leerem Status.
+
+- :term:`watch_tim` : Wenn "Herr" bzw. "Frau" in Anrede steht -> nicht übernehmen.
+  Auch :mod:`lino.apps.pcsw.migrate`, so dass bestehende Daten korrekt übernommen werden.
+  Momentan werden folgende Anreden ignoriert: "Herr","Herrn","Frau","Fräulein","Madame"
+  
+- Im Calendar-Panel steht im Titel von Terminen anderer Benutzer deren Benutzername.
+
+- CalendarApp statt nur CalendarPanel: der Kalender zeigt jetzt links die Liste der 
+  Kalender an, mit denen man die Termine der anderen Benutzer ausschalten kann.
+  
+- Lino setzte dann die Uhrzeit von leer auf 00:00, wenn man einen Ganztagstermin verschob. 
+  (:meth:`lino.modlib.cal.models.ComponentBase.set_datetime` now tests for empty time.)
+  
+- Termin im Status "Entwurf" -> Klick auf "Geplant" 
+  meldet "Uncaught TypeError: Cannot call method 'get_record_url' of undefined"
+  
+  This happened after having saved the record. `FormPanel.save()` didn't 
+  pass `requesting_panel` (URL_PARAM_PANEL), so the 
+  :meth:`workflow_buttons <lino.core.actors.Actor.workflow_buttons>` 
+  of the `data_record` returned by the POST or PUT 
+  got rendered with "None" as requesting panel id.
+  
+- Workflow actions (i.e. who have a `states` requirement) 
+  are now shown only in the 
+  :meth:`workflow_buttons <lino.core.actors.Actor.workflow_buttons>`
+  field while "stateless" actions 
+  are now always shown only in the bottom toolbar (or the context menu).
+  
+- Nicht (mehr?) reproduzierbar: 
+  CalendarPanel : "Detail editieren" bewirkt "Uncaught TypeError: Cannot read property 'ID' 
+  of undefined"  
+
+
+Yet to do
+---------
+
+- Automatisch erstellte Auswertungstermine haben Terminart leer. 
+  Sollte konfigurierbar sein.
+  Auch eine Uhrzeit sollte gesetzt werden, weil sie im CalendarPanel sonst als Ganztagestermine 
+  behandelt werden.
+- Hilfetexte auf die Workflow-Buttons
+- Wenn Termin Status "Verjährt" hat und von gestern nach übermorgen verschoben 
+  wird, darf Status nicht auf verjährt bleiben. Muss "geplant" werden.
+- Was heißt das Glöckchen hinter dem Titel eines Termins im CalendarPanel?
+- Doku : Anweisungen um Default.eml.html zu bearbeiten
+
+  
+Remarks
+-------
+
+- html2text: Updated from 3.02 to 3.1.
+  Added :mod:`lino.utils.html2text` to autodoc and to 
+  the :doc:`/about/thanks` page.
+  
+- :class:`lino.ui.console.Console` now forwards `get_handle` to :mod:`lino.extjs.ui`.
+  Here is why:: 
+
+    Error while evaluating the expression "table(self.Result(ar))" defined in the "from" part of a statement.
+    File "<string>", line 1, in <module>
+    File "t:\hgwork\lino\lino\utils\appy_pod.py", line 272, in insert_table
+    columns = ah.list_layout.main.columns
+    <type 'exceptions.AttributeError'>: TableHandle instance has no attribute 'list_layout'
+    
+  Had to modify the local script :file:`print_tx25.py` (which then was again 
+  very useful for adding new handlers to :mod:`lino.modlib.cbss.tx25`).
+  
+    import sys
+    from lino.ui.console import Console
+    if len(sys.argv) < 2:
+        print "Must specify Lino number of Tx25"
+        sys.exit(-1)
+    pk = sys.argv[1]
+    ui = Console()
+    from lino.modlib.cbss.tx25 import RetrieveTIGroupsRequests as Tx25
+    ui.run(Tx25.print_action,pk)
+
+  
+- The default `duplicate_row` method (which does nothing) is now defined on 
+  :class:`lino.code.modeltools.Model`, and :func:`lino.core.kernel.analyze_models` 
+  now injects this to models that don't have it.
+  :meth:`lino.mixins.duplicable.Duplicable.duplicate_row` 
+  no longer tests whether related slaves are an instance 
+  of :mod:`lino.mixins.duplicable.Duplicable` before calling their on_duplicate.
+
+- When creating a new debts.Budget, Lino had an AttributeError::
+
+    'NoneType' object has no attribute 'REQUEST'
+    TRACEBACK:
+      ...
+      File "t:\hgwork\lino\lino\modlib\debts\models.py", line 470, in render
+        html += ar.ui.table2xhtml(sar)
+      File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 2595, in table2xhtml
+        self.ar2html(ar,t)
+      File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 2604, in ar2html
+        widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+- Changed signature of :meth:`lino.core.layouts.BaseLayout.__init__` 
+  because application code should be allowed to write::
+  
+    insert_layout = dd.FormLayout("""
+    partner 
+    date user 
+    """,window_size=(50,'auto'))
+  
+- It was the first time that I added *translatable* hard-coded `help_text` 
+  to some fields.
+
+"Workflow" versus "Stateless" actions
+-------------------------------------
+
+A "workflow action" is an action that has a `states` requirement.
+Other actions are called "stateless".
+Stateless actions are shown in the bottom toolbar,
+Workflow actions in the
+:meth:`workflow_buttons <lino.core.actors.Actor.workflow_buttons>`
+field.
+
+The :meth:`set_required <lino.core.actions.Action.set_required>` 
+method of an action also sets the 
+`show_in_bbar <lino.core.actions.Action.show_in_bbar>` 
+and 
+`show_in_workflow <lino.core.actions.Action.show_in_workflow>` 
+attributes.
+
+Application developers 
+can define a :meth:`setup_table <lino.core.table.Table.setup_table>` 
+method on a Table 
+which calls 
+:meth:`Action.set_required <lino.core.actions.Action.set_required>` 
+to turn e.g. the "Print" action into a 
+workflow action::
+  
+    @classmethod
+    def setup_table(cls,t):
+        t.create_mail.set_required(states=['scheduled'])
+  
+  

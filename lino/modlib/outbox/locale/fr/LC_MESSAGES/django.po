@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-03 15:32+0100\n"
+"POT-Creation-Date: 2012-07-04 20:39+0100\n"
 "PO-Revision-Date: 2011-09-14 21:28+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -32,88 +32,88 @@ msgstr ""
 msgid "bcc"
 msgstr ""
 
-#: .\models.py:107
+#: .\models.py:109
 msgid "Attach to email"
 msgstr ""
 
-#: .\models.py:113
+#: .\models.py:115
 msgid "Email template"
 msgstr ""
 
-#: .\models.py:134
+#: .\models.py:136
 msgid "Create email"
 msgstr "Céer courrier"
 
-#: .\models.py:244
+#: .\models.py:246
 msgid "Recipient"
 msgstr "Destinataire"
 
-#: .\models.py:245 .\models.py:440
+#: .\models.py:247 .\models.py:442
 msgid "Recipients"
 msgstr "DestinataireDestinataires"
 
-#: .\models.py:251
+#: .\models.py:253
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:252
+#: .\models.py:254
 msgid "Name"
 msgstr "Nom"
 
-#: .\models.py:305
+#: .\models.py:307
 msgid "Send email"
 msgstr "Envoyer"
 
-#: .\models.py:360
+#: .\models.py:362
 #, python-format
 msgid "Couldn't find target file of %s"
 msgstr ""
 
-#: .\models.py:376
+#: .\models.py:378
 #, python-format
 msgid "Email %(id)s from %(sender)s has been sent to %(num)d recipients."
 msgstr ""
 
-#: .\models.py:390
+#: .\models.py:392
 msgid "Outgoing Mail"
 msgstr ""
 
-#: .\models.py:391
+#: .\models.py:393
 msgid "Outgoing Mails"
 msgstr ""
 
-#: .\models.py:395
+#: .\models.py:397
 msgid "Date"
 msgstr ""
 
-#: .\models.py:401
+#: .\models.py:403
 msgid "Subject"
 msgstr "Objet"
 
-#: .\models.py:405
+#: .\models.py:407
 msgid "Body"
 msgstr "Contenu"
 
-#: .\models.py:450
+#: .\models.py:452
 #, fuzzy
 msgid "Sender"
 msgstr "Envoyer"
 
-#: .\models.py:477
+#: .\models.py:479
 #, fuzzy
 msgid "My Outbox"
 msgstr "Courrier sortant"
 
-#: .\models.py:500 .\models.py:508 .\models.py:517 .\models.py:577
+#: .\models.py:502 .\models.py:510 .\models.py:519 .\models.py:579
 #, fuzzy
 msgid "Outbox"
 msgstr "Courrier sortant"
 
-#: .\models.py:536
+#: .\models.py:538
 msgid "Attachment"
 msgstr "Pièce jointe"
 
-#: .\models.py:537
+#: .\models.py:539
 msgid "Attachments"
 msgstr "Pièces jointes"
 

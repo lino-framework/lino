@@ -19,6 +19,7 @@ This module deserves more documentation.
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy 
 
 from lino.utils.choicelists import ChoiceList, Choice
 
@@ -126,8 +127,6 @@ class DurationUnits(ChoiceList):
     item_class = DurationUnit
     
     
-    
-    
 add = DurationUnits.add_item
 add('s', _('seconds'),'seconds')
 add('m', _('minutes'),'minutes')
@@ -161,9 +160,10 @@ class TaskState(ChoiceList):
     
 add = TaskState.add_item
 add('10', _("To do"),'todo')
-add('20', _("Started"),'started')
+add('20', pgettext_lazy(u"cal",u"Started"),'started')
 add('30', _("Done"),'done')
-add('40', _("Cancelled"),'cancelled')
+add('40', _("Sleeping"),'sleeping')
+add('50', _("Cancelled"),'cancelled')
 
 class EventState(ChoiceList):
     """
