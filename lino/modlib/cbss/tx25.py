@@ -13,6 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import datetime
+import traceback
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -241,8 +242,11 @@ class Info(object):
             prefix = '%s ' % name
         else:
             prefix = force_unicode(prefix)
-        if len(self.chunks) and not prefix.startswith(' '):
-            prefix = ', ' + prefix
+        if len(self.chunks):
+            if not prefix.startswith(' '):
+                prefix = ', ' + prefix
+            if prefix[-1] not in ' :':
+                prefix += ': '
         self.chunks += [prefix] + fmt(v).chunks
         if suffix:
             self.chunks.append(force_unicode(suffix))
@@ -407,8 +411,8 @@ def DeclarationType(n):
     
 def Residence(n):
     info = Info().addfrom(n,'Residence','',ResidenceType)
-    info.addfrom(n,'Fusion')
-    info.addfrom(n,'Language')
+    info.addfrom(n,'Fusion',_("Fusion"))
+    info.addfrom(n,'Language',_("Language"))
     info.add_deldate(n)
     return info
     
@@ -430,11 +434,43 @@ def IT005(n): # AddressChangeIntention
     info.add_deldate(n)
     return info
   
+def IT006(n):
+    info = Info()
+    info.addfrom(n,'Country','',CountryType)
+    info.addfrom(n,'Graphic',' ')
+    info.add_deldate(n)
+    return info
+
 def IT024(n): 
     info = Info()
     info.add_deldate(n)
     return info
   
+def FiliationType(n):
+    return code_label(n)
+def ParentType(n):
+    info = Info()
+    info.addfrom(n,'Name','',NameType)
+    info.addfrom(n,'NationalNumber',' (',NationalNumberType,')')
+    return info
+def IT110(n):
+    #~ info = code_label(n.FiliationType)
+    #~ info.addfrom(n.Parent1,'Name','',NameType)
+    #~ info.addfrom(n.Parent1,'NationalNumber',' (',NationalNumberType,')')
+    #~ info.chunks.append(_('and '))
+    #~ info.addfrom(n.Parent2,'Name','',NameType)
+    #~ info.addfrom(n.Parent2,'NationalNumber',' (',NationalNumberType,')')
+    info = Info()
+    info.addfrom(n,'FiliationType','',FiliationType)
+    #~ info.chunks.append()
+    info.addfrom(n,'Parent1',_('of '),ParentType)
+    info.addfrom(n,'Parent2',_('and '),ParentType)
+    info.addfrom(n,'ActNumber',_("Act no. "))
+    info.addfrom(n,'Place',_("in "),PlaceType)
+    info.addfrom(n,'Graphic'," ")
+    info.add_deldate(n)
+    return info
+    
 def IT140(n):
     info = Info().addfrom(n,'Name',' ',NameType)
     info.addfrom(n,'NationalNumber',' (',NationalNumberType,')')
@@ -535,7 +571,7 @@ def IT199(n):
     #~ info.chunks.append('Number ')
     #~ info.chunks.append(E.b(n.PassportIdent.PassportNumber))
     #~ info.append(', status ')
-    info.addfrom(n,'Status',_("status "),code_label)
+    info.addfrom(n,'Status',_("status"),code_label)
     info.addfrom(n,'PassportIdent','',PassportIdentType)
     info.addfrom(n,'Issuer',_('issued by '),IssuerType)
     info.addfrom(n,'RenewalNumber',_('renewal no. '),boldstring)
@@ -557,7 +593,7 @@ def IT199(n):
     return info
 
 def HousingType(n):
-    return code_label(info)
+    return code_label(n)
     
 def AddressType(n):
     info = Info()
@@ -576,6 +612,9 @@ def AddressType(n):
     return info
     
 
+def CertificateType(n):
+    return code_label(n)
+    
 
 
 
@@ -609,7 +648,7 @@ def IT205(n):
 def OrganizationType(n): return code_label(n)
 def GeneralInfoType(n):
     info = code_label(n)
-    info.addfrom(n,'Organization',None,OrganizationType)
+    info.addfrom(n,'Organization',_("Organization"),OrganizationType)
     return info
     
 def OrigineType(n): 
@@ -662,8 +701,8 @@ def ApplicationFiledType(n):
     
 def DecisionType206(n):
     info = code_label(n)
-    info.addfrom(n,'Reference')
-    info.addfrom(n,'OpenClose',None,OpenCloseType)
+    info.addfrom(n,'Reference',_("Reference"))
+    info.addfrom(n,'OpenClose',_("Open/Close"),OpenCloseType)
     info.addfrom(n,'Comments')
     info.addfrom(n,'Term')
     return info
@@ -692,18 +731,18 @@ def IT206(n):
         
     info = Info()
     info.addfrom(n,'GeneralInfo','',GeneralInfoType)
-    info.addfrom(n,'Procedure',None,ProcedureType)
+    info.addfrom(n,'Procedure',_("Procedure"),ProcedureType)
     info.addfrom(n,'StrikingOut',None,StrikingOutType)
-    info.addfrom(n,'DecisionCancelled',None,DecisionCancelledType)
-    info.addfrom(n,'Protection',None,ProtectionType)
+    info.addfrom(n,'DecisionCancelled',_("Decision cancelled"),DecisionCancelledType)
+    info.addfrom(n,'Protection',_("Protection"),ProtectionType)
     info.addfrom(n,'DelayLeaveGranted',None,DelayLeaveGrantedType)
-    info.addfrom(n,'Escape',None,Status)
+    info.addfrom(n,'Escape',_("Escape"),Status)
     info.addfrom(n,'UnrestrictedStay',None,Status)
-    info.addfrom(n,'ApplicationRenounced',None,Status)
-    info.addfrom(n,'TerritoryLeft',None,TerritoryLeftType)
+    info.addfrom(n,'ApplicationRenounced',_("Application renounced"),Status)
+    info.addfrom(n,'TerritoryLeft',_("Territory left"),TerritoryLeftType)
     info.addfrom(n,'AdviceFromCGVS',None,AdviceFromCGVSType)
-    info.addfrom(n,'Decision',None,DecisionType206)
-    info.addfrom(n,'ApplicationFiled',None,ApplicationFiledType)
+    info.addfrom(n,'Decision',_("Decision"),DecisionType206)
+    info.addfrom(n,'ApplicationFiled',_("Application filed"),ApplicationFiledType)
     info.addfrom(n,'NotificationByDVZ',None,NotificationByDVZType)
     info.addfrom(n,'NotificationByOrg',None,NotificationByOrgType)
     info.addfrom(n,'AppealLodged',None,AppealLodgedType)
@@ -716,7 +755,8 @@ def InitiativeType(n):
     return code_label(n)
     
 def SocialWelfareType(n):
-    info = Info().addfrom(n,'Place',None,PlaceType)
+    info = Info()
+    info.addfrom(n,'Place',_("in "),PlaceType)
     info.addfrom(n,'Initiative',None,InitiativeType)
     info.add_deldate(n)
     return info
@@ -725,24 +765,45 @@ def RefugeeCentreType(n):
     return code_label(n)
     
 def IT207(n):
-    info = Info().addfrom(n,'SocialWelfare',None,SocialWelfareType)
-    info = Info().addfrom(n,'RefugeeCentre',None,RefugeeCentreType)
+    info = Info()
+    info.addfrom(n,'SocialWelfare',_("Social Welfare Centre"),SocialWelfareType)
+    info.addfrom(n,'RefugeeCentre',_("Refugee Centre"),RefugeeCentreType)
     info.add_deldate(n)
     return info
     
 def RegistrationRegisterType(n):
     return code_label(n)
-    
 def IT210(n):
-    info = Info().addfrom(n,'RegistrationRegister',None,RegistrationRegisterType)
+    info = Info()
+    info.addfrom(n,'RegistrationRegister',_("Registration register"),RegistrationRegisterType)
     info.add_deldate(n)
     return info
     
+
+
+
+def IdentificationType(n):
+    return code_label(n)
+def IT211(n):
+    info = Info()
+    info.addfrom(n,'TypeOfDocument','',IdentificationType)
+    info.add_deldate(n)
+    return info
+    
+
+
+
+
 def ChoosenResidenceType(n):
     return code_label(n)
 def IT212(n):
     info = Info().addfrom(n,'Residence',None,ChoosenResidenceType)
     info.addfrom(n,'Graphic','')
+    info.add_deldate(n)
+    return info
+    
+def IT251(n):
+    info = Info()
     info.add_deldate(n)
     return info
     
@@ -826,8 +887,8 @@ class RowHandlers:
         def ResidenceAbroadAddressType(n):
             info = Info('Address')
             info.addfrom(n,'PosteDiplomatique',None,DiplomaticPostType)
-            info.addfrom(n,'Territory',_(' '),TerritoryType)
-            info.addfrom(n,'Address',_(' '),AddressType)
+            info.addfrom(n,'Territory',' ',TerritoryType)
+            info.addfrom(n,'Address',' ',AddressType)
             return info
         group = _("Residence Abroad")
         for n in node.ResidenceAbroad:
@@ -871,29 +932,28 @@ class RowHandlers:
         info = Info()
         info.addfrom(n,'Place1',_('in '),PlaceType)
         info.addfrom(n,'Place2',_('in '),GraphicPlaceType)
-        info.addfrom(n,'ActNumber')
+        info.addfrom(n,'ActNumber',_("Act no. "))
         info.addfrom(n,'SuppletoryRegister')
         yield datarow(group,n,n.Date,info)
+        
+    @staticmethod
+    def IT101(n,name):
+        group = _("Declared Birth Date") # Date de naissance déclarée
+        info = Info()
+        info.addfrom(n,'DeclaredBirthDate','',DateType)
+        info.addfrom(n,'Certificate','',CertificateType)
+        info.add_deldate(n)
+        yield datarow(group,n,n.Date,info)
+        
         
     @staticmethod
     def Filiations(node,name):
         group = _("Filiations")
         for n in node.Filiation:
-            info = code_label(n.FiliationType)
-            info.chunks.append(_('of '))
-            #~ info.append(' ')
-            #~ info += name2info(n.Parent1.Name)
-            info.addfrom(n.Parent1,'Name','',NameType)
-            info.addfrom(n.Parent1,'NationalNumber',' (',NationalNumberType,')')
-            #~ info.append(n.Parent1.NationalNumber.NationalNumber)
-            info.chunks.append(_('and '))
-            #~ info.append(' ')
-            info.addfrom(n.Parent2,'Name','',NameType)
-            info.addfrom(n.Parent2,'NationalNumber',' (',NationalNumberType,')')
-            #~ info.append(n.Parent2.NationalNumber.NationalNumber)
-            #~ info += name2info(n.Parent2.Name)
+            info = IT110(n)
             yield datarow(group,n,n.Date,info)
             group = ''
+          
         
     @staticmethod
     def CivilStates(node,name):
@@ -909,7 +969,8 @@ class RowHandlers:
                 info.chunks.append(')')
             info.addfrom(n,'Lieu',_('in '),LieuType)
             #~ info += LieuType(n.Lieu)
-            info.addfrom(n,'ActNumber')
+            info.addfrom(n,'ActNumber',_("Act no. "))
+            #~ info.addfrom(n,'ActNumber')
             info.addfrom(n,'SuppletoryRegister')
             info.add_deldate(n)
             yield datarow(group,n,n.Date,info)
@@ -999,6 +1060,7 @@ class RowHandlers:
         group = _("Identity Cards")
         for n in node.IdentityCard:
             info = code_label(n.TypeOfCard)
+            info.chunks.append(' ')
             info.chunks.append(_('no. '))
             info.chunks.append(E.b(n.CardNumber))
             info.addfrom(n,'ExpiryDate',_('expires '),DateType)
@@ -1012,15 +1074,15 @@ class RowHandlers:
     @staticmethod
     def LegalCohabitations(node,name):
         def CessationType(n):
-            info = Info('Cessation')
-            info.addfrom(n,'Reason',None,ReasonType)
+            info = Info()
+            info.addfrom(n,'Reason',_("Reason"),ReasonType)
             info.addfrom(n,'Place',_('in '),PlaceType)
             info.addfrom(n,'Notification',_('in '),NotificationType)
             return info
       
         def DeclarationType(n):
-            info = Info('Declaration')
-            info.addfrom(n,'RegistrationDate',' ',DateType)
+            info = Info()
+            info.addfrom(n,'RegistrationDate','',DateType)
             info.addfrom(n,'Partner',_('with '),PartnerType)
             info.addfrom(n,'Place',_('in '),PlaceType)
             info.addfrom(n,'Notary',_('in '),NotaryType)
@@ -1028,8 +1090,9 @@ class RowHandlers:
     
         group = _("Legal cohabitations")
         for n in node.LegalCohabitation:
-            info = Info().addfrom(n,'Declaration','',DeclarationType)
-            info.addfrom(n,'Cessation','',CessationType)
+            info = Info()
+            info.addfrom(n,'Declaration',_("Declaration"),DeclarationType)
+            info.addfrom(n,'Cessation',_("Cessation"),CessationType)
             info.add_deldate(n)
             yield datarow(group,n,n.Date,info)
             group = ''
@@ -1078,6 +1141,30 @@ class RowHandlers:
             group = ''
         
     @staticmethod
+    def ResidenceUpdateDates(node,name):
+        group = _("Residence Update Dates") # Date mise à jour de la résidence principale
+        for n in node.ResidenceUpdateDate:
+            info = IT251(n)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+    @staticmethod
+    def DocumentTypes(node,name):
+        group = _("Document Types") # Type de document pour déterminer identité
+        for n in node.DocumentType:
+            info = IT211(n)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+    @staticmethod
+    def CountriesOfOrigin(node,name):
+        group = _("Countries Of Origin") # Pays d'origine
+        for n in node.CountryOfOrigin:
+            info = IT006(n)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+    @staticmethod
     def IT253(node,name):
         group = _("Creation Date")
         n = node # res.CreationDate
@@ -1120,32 +1207,42 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
             
     @classmethod
     def get_data_rows(self,ar):
-        rti = ar.master_instance
-        if rti is None: 
-            #~ print "20120606 ipr is None"
-            return
-        #~ if not ipr.status in (RequestStates.ok,RequestStates.fictive):
-        #~ if not rti.status in (RequestStates.ok,RequestStates.warnings):
-            #~ return
-        reply = rti.get_service_reply()
-        if reply is None:
-            return
+        try:
+            rti = ar.master_instance
+            if rti is None: 
+                #~ print "20120606 ipr is None"
+                return
+            #~ if not ipr.status in (RequestStates.ok,RequestStates.fictive):
+            #~ if not rti.status in (RequestStates.ok,RequestStates.warnings):
+                #~ return
+            reply = rti.get_service_reply()
+            if reply is None:
+                return
+                
+                
+            res = reply.rrn_it_implicit
             
+            for name, node in res:
+                #~ print name, node.__class__
+                m = getattr(RowHandlers,node.__class__.__name__,None)
+                if m is None:
+                    yield AttrDict(
+                      info="No handler for %s (%s) in %s" % (
+                          name, node.__class__.__name__,rti),
+                      group='Error',
+                      type='',
+                      since=datetime.date.today(),
+                      )
+                else:
+                    for row in m(node,name): yield row
+        except Exception, e:
+            yield AttrDict(
+              info=traceback.format_exc(e),
+              group='Traceback',
+              type='',
+              since=datetime.date.today(),
+              )
             
-        res = reply.rrn_it_implicit
-        
-        for name, node in res:
-            #~ print name, node.__class__
-            m = getattr(RowHandlers,node.__class__.__name__,None)
-            if m is None:
-                yield AttrDict(
-                  info="No handler for %s/%s in %s" % (name, node.__class__,rti),
-                  group='Error',
-                  type='',
-                  since=datetime.date.today(),
-                  )
-            else:
-                for row in m(node,name): yield row
         
         
         

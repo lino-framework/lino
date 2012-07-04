@@ -967,6 +967,7 @@ class WithPerson(SSIN):
     birth_date = dd.IncompleteDateField(
         blank=True,
         verbose_name=_("Birth date"))
+        
     sis_card_no = models.CharField(verbose_name=_('SIS card number'),
         max_length=10,
         blank=True, help_text="""\
@@ -1162,7 +1163,7 @@ class IdentifyPersonRequest(SSDNRequest,WithPerson):
             #~ self.on_cbss_ok(reply)
         
 
-#~ dd.update_field(IdentifyPersonRequest,'birth_date',blank=False)
+dd.update_field(IdentifyPersonRequest,'birth_date',blank=False)
 #~ dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
 #~ dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
 
@@ -1186,6 +1187,19 @@ class IdentifyPersonRequestDetail(CBSSRequestDetail):
         lh.p2.label = _("Using phonetic search")
         CBSSRequestDetail.setup_handle(self,lh)
     
+class IdentifyPersonRequestInsert(IdentifyPersonRequestDetail):
+    window_size = (60,'auto')
+    main = """
+    person national_id
+    p2
+    """
+    p2 = """
+    first_name middle_name last_name
+    birth_date tolerance  gender 
+    """
+    
+    def setup_handle(self,lh):
+        lh.p2.label = _("Phonetic search")
 
 class CBSSRequests(dd.Table):
     #~ create_required = dict(user_level='user')
@@ -1206,6 +1220,7 @@ class IdentifyPersonRequests(CBSSRequests):
     model = IdentifyPersonRequest
     active_fields = ['person']
     detail_layout = IdentifyPersonRequestDetail()
+    insert_layout = IdentifyPersonRequestInsert()
     
     @dd.constant()
     def spacer(self,ui):  return '<br/>'

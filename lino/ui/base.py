@@ -126,6 +126,19 @@ class UI:
             kw.update(message=message)
         return self.action_response(kw)
 
+    def error_response(self,e=None,message=None,**kw):
+        kw.update(success=False)
+        #~ if e is not None:
+        if isinstance(e,Exception):
+            if False: # useful when debugging, but otherwise rather disturbing
+                logger.exception(e)
+            if hasattr(e,'message_dict'):
+                kw.update(errors=e.message_dict)
+        if message is None:
+            message = unicode(e)
+        kw.update(message=message)
+        return self.action_response(kw)
+    
     def action_response(self,kw):
         raise NotImplementedError
         

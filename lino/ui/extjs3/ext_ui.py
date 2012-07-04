@@ -157,7 +157,7 @@ class HtmlRenderer(object):
                 s += self.action_href_js(a,after_show,_("New"))
                 after_show = ar.get_status(self)
         n = ar.get_total_count()
-        print 20120702, [o for o in ar]
+        #~ print 20120702, [o for o in ar]
         if n > 0:
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
@@ -1800,7 +1800,7 @@ tinymce.init({
         #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.actor))
         
         
-    def error_response(self,e=None,message=None,**kw):
+    def unused_error_response(self,e=None,message=None,**kw):
         kw.update(success=False)
         #~ if e is not None:
         if isinstance(e,Exception):
