@@ -127,8 +127,14 @@ reduced InsertLayout and DetailLayout to a single class
 
 
 
-Updated LETS tutorial
----------------------
+Miscellaneous
+-------------
 
-Oops, the :doc:`/tutorials/lets` was really very obsolete. 
-Now it works again.
+- Oops, the :doc:`/tutorials/lets` was really very obsolete. 
+  Now it works again.
+
+
+- Started a 
+  `French User Guide <http://sites.saffre-rumma.net/lino_pcsw_fr/>`_ 
+  for :mod:`lino.apps.pcsw`:
+

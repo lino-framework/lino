@@ -1162,7 +1162,7 @@ class IdentifyPersonRequest(SSDNRequest,WithPerson):
             #~ self.on_cbss_ok(reply)
         
 
-dd.update_field(IdentifyPersonRequest,'birth_date',blank=False)
+#~ dd.update_field(IdentifyPersonRequest,'birth_date',blank=False)
 #~ dd.update_field(IdentifyPersonRequest,'first_name',blank=True)
 #~ dd.update_field(IdentifyPersonRequest,'last_name',blank=True)
 

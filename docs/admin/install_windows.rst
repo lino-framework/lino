@@ -153,7 +153,8 @@ should have the following content::
   c:\snapshots\PyYAML-3.10\lib
   c:\mypy
   
-The directory :file:`c:\\mypy` is the place where you will hold your local Python projects.
+The directory :file:`c:\\mypy` is the place where you will hold 
+your local Python projects.
 You may choose some other location, but we recommend 
 a name without spaces and non-ascii characters.
 
@@ -167,8 +168,7 @@ Test whether Lino is installed
   Type "help", "copyright", "credits" or "license" for more information.
   >>> import lino
   >>> print lino.welcome_text()
-  Lino version 1.3.0 using Python 2.7.1, Django 1.4 pre-alpha SVN-16714, python-dateutil 1.5, Cheetah 2.4.4, docutils 0.7,
-   PyYaml 3.08, xhtml2pdf 3.0.32, ReportLab Toolkit 2.4, appy.pod 0.6.7 (2011/06/28 09:13)
+  Using Lino 1.4.4, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.  
    
 If things fail: contact me.
 

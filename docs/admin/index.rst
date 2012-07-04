@@ -8,6 +8,7 @@ Installation
     :maxdepth: 2
 
     install
+    pythonpath
     media
     install_apache
     ApacheHttpAuth

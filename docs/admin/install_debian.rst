@@ -117,6 +117,26 @@ Just remember where you installed it and
 specify this path in your your :xfile:`settings.py` 
 (see later).
 
+
+Set up the Python Path
+----------------------
+
+Please read :doc:`pythonpath`
+
+
+Test whether Lino is installed
+------------------------------
+
+::
+
+  $ python
+  Python 2.7.1 (r271:86832, Nov 27 2010, 18:30:46) [MSC v.1500 32 bit (Intel)] on win32
+  Type "help", "copyright", "credits" or "license" for more information.
+  >>> import lino
+  >>> print lino.welcome_text()
+  Using Lino 1.4.4, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.  
+   
+
 Install other software
 ----------------------
 
@@ -392,4 +412,3 @@ Where to go from here
 .. toctree::
     :maxdepth: 2
 
-    pythonpath
