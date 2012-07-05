@@ -1748,10 +1748,11 @@ def site_setup(site):
     site.modules.users.Users.add_detail_tab('cal.RemindersByUser')
     
     
+MODULE_LABEL = _("Calendar")
 
 
 def setup_main_menu(site,ui,user,m): 
-    m  = m.add_menu("cal",_("Calendar"))
+    m  = m.add_menu("cal",MODULE_LABEL)
     if site.use_extensible:
         m.add_action(Panel)
     #~ m  = m.add_menu("events",_("Events"))
@@ -1778,7 +1779,7 @@ def setup_my_menu(site,ui,user,m):
     pass
     
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("cal",_("Calendar"))
+    m  = m.add_menu("cal",MODULE_LABEL)
     m.add_action(Places)
     m.add_action(Priorities)
     m.add_action(AccessClasses)
@@ -1790,7 +1791,9 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(Calendars)
   
 def setup_explorer_menu(site,ui,user,m):
-    m  = m.add_menu("cal",_("Calendar"))
+    m  = m.add_menu("cal",MODULE_LABEL)
     m.add_action(Tasks)
     m.add_action(Guests)
     #~ m.add_action(RecurrenceSets)
+
+dd.add_user_group('office',MODULE_LABEL)

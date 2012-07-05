@@ -30,6 +30,21 @@ class Lino(Lino):
     def setup_quicklinks(self,ui,user,tb):
         tb.add_action(self.modules.contacts.Persons.detail_action)
         
+    def setup_user_profiles(self):
+        """
+        This defines default user profiles for :mod:`lino.apps.pcsw`.
+        """
+        from lino import dd
+        from django.utils.translation import ugettext_lazy as _
+        dd.UserProfiles.reset('* office')
+        add = dd.UserProfiles.add_item
+        add('100', _("User"),            'U U')
+        add('900', _("Administrator"),   'A A')
+        
+        for p in dd.UserProfiles.items():
+            print 20120705, repr(p)
+            
+        
     
 LINO = Lino(__file__,globals()) 
 

@@ -101,6 +101,8 @@ try:
 except ImportError, e:
     pass
 
+
+
 countries = dd.resolve_app('countries')
 
 _clients_dict = dict()
@@ -1670,11 +1672,11 @@ dd.inject_field(pcsw.Person,
     dd.VirtualField(dd.HtmlBox(_("CBSS summary")),cbss_summary))
     
 
-MODULE_NAME = _("CBSS")
+MODULE_LABEL = _("CBSS")
 
-#~ settings.LINO.add_user_field('cbss_level',UserLevels.field(MODULE_NAME))
-#~ settings.LINO.add_user_group('cbss',MODULE_NAME)
-#~ settings.LINO.add_user_field('cbss_level',UserLevels.field(MODULE_NAME))
+#~ settings.LINO.add_user_field('cbss_level',UserLevels.field(MODULE_LABEL))
+#~ settings.LINO.add_user_group('cbss',MODULE_LABEL)
+#~ settings.LINO.add_user_field('cbss_level',UserLevels.field(MODULE_LABEL))
 
 dd.inject_field('countries.City',
     'inscode',
@@ -1745,7 +1747,7 @@ def site_setup(self):
     self.modules.contacts.AllPersons.add_detail_tab('cbss',"""
     cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
     cbss_summary
-    """,MODULE_NAME,required=dict(user_groups='cbss')
+    """,MODULE_LABEL,required=dict(user_groups='cbss')
     )
     #~ required_user_groups=['cbss']
     #~ cbss.IdentifyRequestsByPerson
@@ -1754,13 +1756,13 @@ def site_setup(self):
     #~ cbss_manage_access 
     #~ cbss_retrieve_ti_groups
     #~ """,_("CBSS Requests"))
-    #~ self.modules.contacts.AllPersons.add_detail_tab('cbss',"cbssrequests",MODULE_NAME,required_user_groups=['cbss'])
+    #~ self.modules.contacts.AllPersons.add_detail_tab('cbss',"cbssrequests",MODULE_LABEL,required_user_groups=['cbss'])
     #~ 
     
     self.modules.lino.SiteConfigs.add_detail_tab('cbss',"""
     cbss_org_unit sector ssdn_user_id ssdn_email
     cbss_http_username cbss_http_password
-    """,MODULE_NAME,required=dict(user_groups='cbss'))
+    """,MODULE_LABEL,required=dict(user_groups='cbss'))
     
     
     
@@ -1770,21 +1772,23 @@ def setup_master_menu(site,ui,user,m): pass
 #~ def setup_my_menu(site,ui,user,m): 
     #~ if user.profile.cbss_level < UserLevels.user: 
         #~ return
-    #~ m  = m.add_menu("cbss",MODULE_NAME)
+    #~ m  = m.add_menu("cbss",MODULE_LABEL)
     #~ m.add_action(MyIdentifyPersonRequests)
     #~ m.add_action(MyManageAccessRequests)
     #~ m.add_action(MyRetrieveTIGroupsRequests)
     
 def setup_config_menu(site,ui,user,m):
-    m  = m.add_menu("cbss",MODULE_NAME)
+    m  = m.add_menu("cbss",MODULE_LABEL)
     m.add_action(Sectors)
     m.add_action(Purposes)
   
 def setup_explorer_menu(site,ui,user,m):
     if user.profile.cbss_level < UserLevels.manager: 
         return
-    m  = m.add_menu("cbss",MODULE_NAME)
+    m  = m.add_menu("cbss",MODULE_LABEL)
     m.add_action(IdentifyPersonRequests)
     m.add_action(ManageAccessRequests)
     m.add_action(RetrieveTIGroupsRequests)
     
+dd.add_user_group('cbss',MODULE_LABEL)
+

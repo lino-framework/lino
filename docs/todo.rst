@@ -12,16 +12,8 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Wenn man auf einer Notiz "per E-Mail" klickt, kommt ein Fenster mit der 
-    neu erstellten E-Mail. 
-    Die Mail ist da schon in der Datenbank erstellt worden 
-    Das ist suboptimal, denn man kann hier nicht einfach mit Escape abbrechen.
-    Das kommt, weil Empänger eine Slave-Tabelle ist und wir diese Tabelle 
-    doch eigentlich auch schon "beim Erstellen" sehen wollen.
-    Eigentlich müsste das insert_layout kommen.
-    Probieren, wie es aussieht, wenn wir die Empängerliste eben erst nach 
-    Klick auf "Erstellen" eingeben.
-    
+#.  Make ChoiceLists visible through the web interface. Show UserGroups and 
+    UserProfiles in :class:`lino.models.About`.
 
 #.  Benutzer, die nicht Systemverwalter sind, können momentan ihr 
     Benutzerkonto nichtmal sehen: ein Klick auf den Benutzerbutton oben 
@@ -155,33 +147,15 @@ Short-term
           "Choices are: %s" % (name, ", ".join(names)))
 
 
-#.  Continue with BCSS-Connection: 
+#.  http://ckeditor.com/demo
 
-    - add more fields to existing first service
-    - button to quickly create a request
-    
-#.  Mails verschicken: notes.Note und mails.OutMail könnten 
-    zusammengeführt werden. Kann sein, dass thirds.Third dann 
-    unnötig wird. Mein Vorschlag:
-    
-    - "Ereignis/Notiz" umbenennen nach "Notiz". Eine Notiz ist 
-      ein "ausgehendes Dokument", das ein bestimmter Benutzer 
-      (der Autor) erstellt hat.
-    
-#.  Kontakte als common base class für Personen und Firmen : 
-    beibehalten oder wieder trennen?
-
-#.  Layout problem "wrong background color" in Detail of a Note 
-    and parameter panels.
-    
 #.  [pdf] button : generate html table without THEAD, TFOOT and TBODY.
     Am besten sogar separate Methoden Table.header_html() und Table.body_html().
     Dazu muss ich vielleicht voerher den Store generalisieren
     :doc:`/tickets/57`.
-    "StoreField" wird nach "Atomizer" umbenannt und im Model 
+    "StoreField" wird nach "Atomizer" umbenannt und im Model gespeichert
     
-#.  Continue with Report Generator (:doc:`/tickets/54`).
-    Listings 
+#.  Listings 
     "Personnes par phase d'intégration par AI" 
     and
     "Contrats par Employeur et par AI":
@@ -298,27 +272,19 @@ Short-term
 Medium-term
 -----------
 
+#.  Wenn man auf einer Notiz "per E-Mail" klickt, kommt ein Fenster mit der 
+    neu erstellten E-Mail. 
+    Die Mail ist da schon in der Datenbank erstellt worden 
+    Das ist suboptimal, denn man kann hier nicht einfach mit Escape abbrechen.
+    Das kommt, weil Empänger eine Slave-Tabelle ist und wir diese Tabelle 
+    doch eigentlich auch schon "beim Erstellen" sehen wollen.
+    Eigentlich müsste das insert_layout kommen.
+    Probieren, wie es aussieht, wenn wir die Empängerliste eben erst nach 
+    Klick auf "Erstellen" eingeben.
 
-#.  UserProfiles muss ich lokal verwaltbar machen. Spätestens wenn ein zweites ÖSHZ Benutzer wird.
-    Denn es werden ja sicherlich 10 UserGroups werden, das wären 100 mögliche Profile,
-    von denen jedes ÖSHZ nur einen Bruchteil benutzt.
-    Vorher will ich aber ChoiceLists mit einem app_label versehen. 
-    
 #.  lino*.js aufsplitten: der Teil aus linolib.js ist ja 
     konstant für alle Benutzerprofile.
     
-#.  :meth:`lino.ui.extjs3.ext_elems.Panel.get_view_permission` 
-    macht momentan einen Vorschau-Loop durch seine Elemente. Wenn kein einziges sichtbar 
-    ist, wird auch das Panel selbst unsichtbar.
-    Das ist ein bischen Ressourcenverschwendung, aber immerhin nur beim Generieren 
-    der :xfile:`lino*.js`.
-    Optimaler wäre wahrscheinlich, dass (1) ext_store aus dem UI rauskommt und (2)
-    die LayoutHandles und TableHandles gar nicht mehr aufbewahrt werden, sondern 
-    pro Benutzerprofil instanziert und nach dem Generieren weggeworfen werden: 
-    die sind nämlich gar nicht nötig während des laufenden Betriebs. (Zu überprüfen.)    
-  
-#.  Menü einmalig beim Server-Start generieren statt bei jedem Request 
-
 #.  :func:`lino.modlib.cal.models.default_calendar` is called only when 
     a user has created at least one Event or Task. Problem: when a user 
     create their first event using CalendarPanel, they don't see their 
@@ -329,6 +295,9 @@ Medium-term
     Zero values are currently *always* hidden (printed as 
     empty cells, not "0" or "0,00") 
     It is not yet possible to configure this behaviour.
+
+#.  :meth:`lino.utils.appy_pod.Renderer.insert_table`: 
+    Accept the table's width as a parameter. Currently is it hardcoded to "18cm".
 
 #.  Lino doesn't yet support :term:`remote fields <remote field>` 
     that point to a *virtual* field.

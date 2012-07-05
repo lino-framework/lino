@@ -1204,7 +1204,7 @@ tinymce.init({
         #~ if settings.LINO.index_view_action:
             #~ kw.update(on_ready=self.ext_renderer.action_call(
               #~ settings.LINO.index_view_action))
-        #~ logger.info("20120701 index_view() %s %r",request.user, request.user.profile)
+        logger.info("20120701 index_view() %s %r",request.user, request.user.profile)
         #~ logger.info("20120222 index_view() uses %r",settings.LINO.modules.lino.Home)
         kw.update(on_ready=self.ext_renderer.action_call(
           settings.LINO.modules.lino.Home.default_action))

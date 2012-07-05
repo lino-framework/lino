@@ -125,6 +125,7 @@ class DurationUnits(ChoiceList):
     """
     label = _("Duration Unit")
     item_class = DurationUnit
+        
     
     
 add = DurationUnits.add_item

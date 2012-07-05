@@ -83,7 +83,7 @@ from lino.modlib.properties import models as properties
 from lino.modlib.cv import models as cv
 #~ from lino.modlib.contacts.models import Contact
 from lino.core.modeltools import resolve_model, UnresolvedModel
-from lino.utils.perms import UserProfiles
+#~ from lino.utils.perms import UserProfiles
 
 #~ # not used here, but these modules are required in INSTALLED_APPS, 
 #~ # and other code may import them using 
@@ -1424,7 +1424,7 @@ class UsersWithClients(dd.VirtualTable):
             #~ # flt = Q(integ_level__isnull=False,is_superuser=False)
             #~ flt = Q(integ_level__gt='',level__gte=UserLevels.expert)
         #~ qs = User.objects.exclude(integ_level='')
-        profiles = [p for p in UserProfiles.items() if p.integ_level]
+        profiles = [p for p in dd.UserProfiles.items() if p.integ_level]
         #~ profiles = [p for p in UserProfiles.items()]
         #~ logger.info('20120629 %r', [x.value for x in profiles])
         #~ logger.info('20120629 %r', profiles)
@@ -2162,49 +2162,77 @@ def site_setup(site):
     #~ site.modules.courses.CourseProviders.set_detail_layout(CourseProviderDetail())
     
     
+dd.add_user_group('integ',_("Integration"))
     
     
-def customize_user_groups():
-    """
-    Define application-specific 
-    :class:`UserGroups <lino.utils.perms.UserGroups>`.
-    """
-    add = dd.UserGroups.add_item
-    add('office',_("Calendar & Outbox"),'office')
-    add('integ',_("Integration"),'integ')
-    add('cbss',_("CBSS"),'cbss')
-    add('newcomers',_("Newcomers"),'newcomers')
-    add('debts',_("Debts"),'debts')
+#~ def customize_user_groups():
+    #~ """
+    #~ Define application-specific 
+    #~ :class:`UserGroups <lino.utils.perms.UserGroups>`.
+    #~ """
+    #~ add = dd.UserGroups.add_item
+    #~ add('office',_("Calendar & Outbox"),'office')
+    #~ add('integ',_("Integration"),'integ')
+    #~ add('cbss',_("CBSS"),'cbss')
+    #~ add('newcomers',_("Newcomers"),'newcomers')
+    #~ add('debts',_("Debts"),'debts')
 
-def customize_user_profiles():
-  """
-  Define application-specific 
-  :class:`UserProfiles <lino.utils.perms.UserProfiles>`.
-  
-  This will usually be reconfigured again *locally per site*.
-  """
-  
-  dd.UserProfiles.clear()
-
-  def add(value,label,*args,**kw):
-      dd.UserProfiles.add_item(value,label,None,*args,**kw)
-  """
-      #     label                            level      office      integ       cbss       newcomers  debts
-      ====  ================================ ========== =========== =========== ========== ========== ========"""
-  add('100', _("Integration Agent"),          'user',    'user',     'user',    'user',    '',        '')
-  add('110', _("Integration Agent (Senior)"), 'user',    'manager',  'manager', 'user',    '',        '')
-  add('200', _("Newcomers consultant"),       'user',    'user',     '',        'user',    'user',    '')
-  add('300', _("Debts consultant"),           'user',    'user',     '',        '',        '',        'user')
-  add('400', _("Readonly Manager"),           'manager', 'manager',  'manager', 'manager', 'manager', 'manager', readonly=True)
-  add('500', _("CBSS only"),                  'user',    '',         '',        'user',    '',        '')
-  add('900', _("Administrator"),              'admin',   'admin',    'admin',   'admin',   'admin',   'admin')
-
+#~ def customize_user_profiles():
+    
+    #~ def add(value,label,*args,**kw):
+        #~ dd.UserProfiles.add_item(value,label,None,*args,**kw)
+    #~ """
+        #~ #     label                            level      office      integ       cbss       newcomers  debts
+        #~ ====  ================================ ========== =========== =========== ========== ========== ========"""
+    #~ add('100', _("Integration Agent"),          'user',    'user',     'user',    'user',    '',        '')
+    #~ add('110', _("Integration Agent (Senior)"), 'user',    'manager',  'manager', 'user',    '',        '')
+    #~ add('200', _("Newcomers consultant"),       'user',    'user',     '',        'user',    'user',    '')
+    #~ add('300', _("Debts consultant"),           'user',    'user',     '',        '',        '',        'user')
+    #~ add('400', _("Readonly Manager"),           'manager', 'manager',  'manager', 'manager', 'manager', 'manager', readonly=True)
+    #~ add('500', _("CBSS only"),                  'user',    '',         '',        'user',    '',        '')
+    #~ add('900', _("Administrator"),              'admin',   'admin',    'admin',   'admin',   'admin',   'admin')
+    
+    
+    #~ short_levels = dict(A='admin',U='user',_='',M='manager',G='guest')
+    #~ keys = ['level'] + [g.value+'_level' for g in UserGroups.items()]
+    #~ def add(value,label,name,memberships,**kw):
+        #~ if len(memberships.split()) != len(attrs):
+            #~ raise Exception(
+                #~ "Invalid profile specification %r : must contain %d letters" 
+                #~ % (memberships,len(attrs))
+        #~ for i,k in enumerate(memberships.split()):
+            #~ kw[keys[i]] = short_levels[k]
+        #~ dd.UserProfiles.add_item(value,label,None,**kw)
+    
+    
+    
+    
+    #~ add = dd.UserProfiles.add_item
+    
+    #~ kw = dict(level='user',office_level='user',integ_level='user',cbss_level='user',
+        #~ newcomers_level='',debts_level='')
+    #~ add('100',_("Integration Agent"),**kw)
+    
+    #~ kw.update(integ_level='manager')
+    #~ add('110', _("Integration Agent (Senior)"),**kw)
+    
+    #~ kw.update(integ_level='',newcomers_level='user')
+    #~ add('200', _("Newcomers consultant"),**kw)
+    
+    #~ kw.update(newcomers_level='',debts_level='user')
+    #~ add('200', _("Debts consultant"),**kw)
+    
+    #~ def get_user_profiles(self):
+        #~ def add(value,label,*args,**kw):
+            #~ dd.UserProfiles.add_item(value,label,None,*args,**kw)
+        #~ yield '100', _("Integration Agent"),          'user',    'user',     'user',    'user',    '',        '')
 
 
 customize_siteconfig()
 customize_contacts()        
 customize_notes()
 customize_sqlite()
-customize_user_groups()
-customize_user_profiles()
+#~ customize_user_groups()
+#~ customize_user_profiles()
+#~ setup_user_profiles()
   

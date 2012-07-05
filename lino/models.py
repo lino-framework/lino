@@ -669,3 +669,4 @@ def setup_site_menu(site,ui,user,m):
     m.add_action(site.modules.lino.About)
     m.add_action(site.modules.lino.Inspector)
 
+#~ settings.LINO.setup_user_profiles()

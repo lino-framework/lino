@@ -1176,3 +1176,5 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(Budgets)
     m.add_action(Entries)
     #~ m.add_action(Debts)
+
+dd.add_user_group('debts',MODULE_LABEL)

@@ -57,6 +57,26 @@ class Lino(Lino):
     def get_app_source_file(self):
         return __file__
         
+    def setup_user_profiles(self):
+        """
+        This defines default user profiles for :mod:`lino.apps.pcsw`.
+        """
+        from lino import dd
+        from django.utils.translation import ugettext_lazy as _
+        dd.UserProfiles.reset('* office integ cbss newcomers debts')
+        add = dd.UserProfiles.add_item
+        add('100', _("Integration Agent"),          'U U U U _ _')
+        add('110', _("Integration Agent (Senior)"), 'U M M U _ _')
+        add('200', _("Newcomers consultant"),       'U U _ U U _')
+        add('300', _("Debts consultant"),           'U U _ _ _ U')
+        add('400', _("Readonly Manager"),           'M M M M M M', readonly=True)
+        add('500', _("CBSS only"),                  'U _ _ U _ _')
+        add('900', _("Administrator"),              'A A A A A A',name='admin')
+        
+        #~ for p in dd.UserProfiles.items():
+            #~ print 20120705, repr(p)
+            
+
     def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons().detail)
         #~ tb.add_action(self.modules.contacts.Persons,'detail')

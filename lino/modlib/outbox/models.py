@@ -596,3 +596,6 @@ def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("outbox",MODULE_LABEL)
     m.add_action(Mails)
   
+  
+dd.add_user_group('office',MODULE_LABEL)
+  

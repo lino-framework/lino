@@ -942,7 +942,17 @@ class Lino(object):
         #~ UserGroup.add_item(name,label,name)
         #~ self.add_user_field(name+'_level',UserLevel.field(label),profile=True)
         
-    #~ def add_user_field(self,name,fld,profile=True):
+    def setup_user_profiles(self):
+        """
+        Define application-specific 
+        :class:`UserProfiles <lino.utils.perms.UserProfiles>`.
+        
+        This will usually be reconfigured locally per site.
+        See :meth:`lino.apps.pcsw.settings.Lino.setup_user_profiles` 
+        for a usage example.
+        """
+        pass
+        
     def add_user_field(self,name,fld):
         if self.user_model:
             from lino import dd

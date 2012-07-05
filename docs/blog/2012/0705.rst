@@ -2,4 +2,52 @@
 ========
 
 - Translations FR and one bugfix in :mod:`lino.modlib.courses`.
-- 
+
+
+Configuring User Groups and Profiles
+------------------------------------
+
+The `state` field of :class:`lino.modlib.tickets.Ticket`
+is now a ChoiceListField.
+New module :mod:`lino.modlib.tickets.utils`.
+
+Discovered a conceptual problem:
+both modules 
+:mod:`lino.modlib.cal`
+and
+:mod:`lino.modlib.outbox`
+expect a UserGroup named "office", 
+which 
+:mod:`lino.apps.pcsw` defines in 
+:func:`customize_user_groups <lino.apps.pcsw.models.customize_user_groups>`::
+
+    add('office',_("Calendar & Outbox"),'office')
+    
+But since the modules don't define this group themselves, 
+a Lino application cannot use them "out of the box".
+
+Another problem was to make UserProfiles locally configurable.
+
+It took me almost four hours to solve these two problems.
+
+- :meth:`lino.Lino.setup_user_profiles`
+- :func:`lino.dd.add_user_group`
+- Changes in :mod:`lino.utils.choicelists`
+  (e.g. :meth:`lino.utils.choicelists.ChoiceListField._get_choices`)
+- :class:`lino.modlib.newcomers.models.UsersByNewcomer` was defined as follows::
+   
+    class UsersByNewcomer(users.Users):
+        ...
+        filter = models.Q(profile__in=[p for p in UserProfiles.items() if p.integ_level])
+          
+  This had to change to a dynamic filter because UserProfiles now aren't yet defined 
+  when the models modules are being imported::
+  
+    class UsersByNewcomer(users.Users):
+        ...
+        @classmethod
+        def get_request_queryset(self,ar):
+            profiles = [p for p in UserProfiles.items() if p.integ_level]
+            return super(UsersByNewcomer,self,ar).filter(models.Q(profile__in=profiles))
+            
+    

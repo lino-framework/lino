@@ -113,7 +113,7 @@ def configure(config):
     determine whether that is the case or not.".
     
     """
-        
+    
     #~ djangoLogger = logging.getLogger('django')
     linoLogger = logging.getLogger('lino')
     #~ sudsLogger = logging.getLogger('suds')

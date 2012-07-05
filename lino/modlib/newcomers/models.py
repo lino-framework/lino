@@ -208,9 +208,7 @@ class UsersByNewcomer(users.Users):
     #~ required_user_groups = ['newcomers']
     #~ model = users.User
     editable = False # even root should not edit here
-    #~ filter = models.Q(is_spis=True)
-    filter = models.Q(profile__in=[p for p in UserProfiles.items() if p.integ_level])
-    #~ filter = models.Q(integ_level__isnull=False)
+    #~ filter = models.Q(profile__in=[p for p in UserProfiles.items() if p.integ_level])
     label = _("Users by Newcomer")
     column_names = 'name_column primary_clients active_clients new_clients newcomer_quota newcomer_score'
     parameters = dict(
@@ -225,6 +223,12 @@ class UsersByNewcomer(users.Users):
     @chooser()
     def for_client_choices(cls):
         return Newcomers.request().data_iterator
+        
+    @classmethod
+    def get_request_queryset(self,ar):
+        profiles = [p for p in UserProfiles.items() if p.integ_level]
+        return super(UsersByNewcomer,self,ar).filter(models.Q(profile__in=profiles))
+        
         
     #~ @classmethod
     #~ def get_permission(self,action,user):
@@ -330,4 +334,6 @@ def setup_explorer_menu(site,ui,user,m):
     if user.profile.newcomers_level < UserLevels.manager:
         return
     m.add_action(Competences)
+  
+dd.add_user_group('newcomers',MODULE_LABEL)
   

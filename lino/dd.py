@@ -246,3 +246,18 @@ def inject_quick_add_buttons(model,name,target):
         VirtualField(DisplayField(
             target.model._meta.verbose_name_plural),fn))
     
+def add_user_group(name,label):
+    """
+    Add a user group to the :class:`UserGroups <lino.utils.perms.UserGroups>` 
+    choicelist. If a group with that name already exists, add `label` to the 
+    existing group.
+    """
+    #~ logging.info("add_user_group(%s,%s)",name,label)
+    #~ print "20120705 add_user_group(%s,%s)" % (name,unicode(label))
+    g = UserGroups.items_dict.get(name)
+    if g is None:
+        UserGroups.add_item(name,label)
+    else:
+        if g.text != label:
+            g.text += " & " + unicode(label)
+    

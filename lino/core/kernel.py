@@ -120,6 +120,9 @@ def analyze_models():
                 #~ model.__dict__[k] = getattr(dd.Model,k)
         
 
+    from django.conf import settings
+    settings.LINO.setup_user_profiles()
+    
         
 #~ def install_summary_rows():
   

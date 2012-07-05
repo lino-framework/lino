@@ -1,5 +1,5 @@
-#54 : Report Generator
-======================
+#54 [closed] : Report Generator
+===============================
 
 - New notion of groups and totals. These would be ignored when 
   rendering the table in an editor grid.

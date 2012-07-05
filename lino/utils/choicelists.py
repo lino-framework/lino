@@ -36,7 +36,7 @@ DoYouLike : certainly not...very much
 Gender : Gender
 HowWell : not at all...very well
 
->>> for bc,text in Gender.get_choices():
+>>> for bc,text in Gender.choices:
 ...     print "%s : %s" % (bc.value, unicode(text))
 M : Male
 F : Female
@@ -96,10 +96,11 @@ class Choice(object):
     Used by :class:`lino.utils.choicelists`.
 
     """
-    #~ def __init__(self,choicelist,value,text):
-        #~ self.choicelist = choicelist
-        #~ self.value = value
-        #~ self.text = text
+    def __init__(self,choicelist,value,text,name):
+        self.choicelist = choicelist
+        self.value = value
+        self.text = text
+        self.name = name
         
     def __len__(self):
         return len(self.value)
@@ -119,12 +120,12 @@ class Choice(object):
     def __str__(self):
         #~ return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
           #~ self.__class__.__name__,self.value)
-        name = getattr(self,'name',None)
-        if name is None:
+        #~ name = getattr(self,'name',None)
+        if self.name is None:
             return "%s (%s:%s)" % (unicode(self.text),
                 self.choicelist.__name__,self.value)
         return "%s (%s.%s:%s)" % (unicode(self.text),
-            self.choicelist.__name__,name,self.value)
+            self.choicelist.__name__,self.name,self.value)
         
     def __unicode__(self):
         return unicode(self.text)
@@ -233,21 +234,19 @@ class ChoiceList(object):
     def clear(cls):
         """
         """
+        
+        # remove previously defined choices from class dict:
         for ci in cls.items_dict.values():
-            if ci.name is not None:
+            if ci.name:
                 delattr(cls,ci.name)
-                
+        cls.items_dict = {}
         cls.choices = []
         
-        blank = cls.item_class()
-        blank.choicelist = cls
-        blank.value = ''
-        blank.text = ''
-        blank.name = 'blank_item'
-        cls.blank_item = blank
+        cls.add_item('','',name='blank_item')
+        
+        #~ cls.items_dict = {'' : cls.blank_item }
         
         #~ cls.max_length = 1
-        cls.items_dict = {'' : cls.blank_item }
         #~ cls.items = []
         
     @classmethod
@@ -272,40 +271,38 @@ class ChoiceList(object):
         return fld
         
     @classmethod
-    #~ def add_item(cls,value,text,alias=None):
-    def add_item(cls,value,text,name=None,*args,**kw):
-        if cls is ChoiceList:
-            raise Exception("Cannot define items on the base class")
-        if cls.items_dict.has_key(value):
-            raise Exception("Duplicate value %r in choicelist %s.",(value,cls.label))
-        i = cls.item_class(*args,**kw)
-        # these attributes are always set:
-        i.choicelist = cls
-        i.value = value
-        i.text = text
+    def add_item(cls,value,text,name=None):
+        return cls.add_item_instance(cls.item_class(cls,value,text,name))
         
+    @classmethod
+    def add_item_instance(cls,i):
+        #~ if cls is ChoiceList:
+            #~ raise Exception("Cannot define items on the base class")
+        if cls.items_dict.has_key(i.value):
+            raise Exception("Duplicate value %r in %s." % (i.value,cls))
         dt = cls.display_text(i)
         cls.choices.append((i,dt))
         cls.preferred_width = max(cls.preferred_width,len(unicode(dt)))
-        cls.items_dict[value] = i
+        cls.items_dict[i.value] = i
         #~ cls.items_dict[i] = i
-        if len(value) > cls.max_length:
+        if len(i.value) > cls.max_length:
             if len(cls._fields) > 0:
                 raise Exception(
                     "%s cannot add value %r because fields exist and max_length is %d."
-                    % (cls,value,cls.max_length)+"""\
+                    % (cls,i.value,cls.max_length)+"""\
 When fields have been created, we cannot simply change their max_length because 
 Django creates copies of them when inheriting models.
 """)
-            cls.max_length = len(value)
+            cls.max_length = len(i.value)
             #~ for fld in cls._fields:
                 #~ fld.set_max_length(cls.max_length)
-        if name:
-            if hasattr(cls,name):
-                raise Exception("Item %r already defined in %s" % (
-                    name,cls.__name__))
-            setattr(cls,name,i)
-            i.name = name
+        if i.name:
+            #~ if hasattr(cls,i.name):
+            if cls.__dict__.has_key(i.name):
+                raise Exception("An item named %r is already defined in %s" % (
+                    i.name,cls.__name__))
+            setattr(cls,i.name,i)
+            #~ i.name = name
         return i
         
     @classmethod
@@ -329,20 +326,24 @@ Django creates copies of them when inheriting models.
         
     @classmethod
     def get_choices(cls):
-        """
-        make it dynamic
+        return cls.choices
         
-        https://docs.djangoproject.com/en/dev/ref/models/fields/
-        note that choices can be any iterable object -- not necessarily 
-        a list or tuple. This lets you construct choices dynamically. 
-        But if you find yourself hacking choices to be dynamic, you're 
-        probably better off using a proper database table with a 
-        ForeignKey. choices is meant for static data that doesn't 
-        change much, if ever.        
-        """
-        for c in cls.choices:
-            yield c
-        #~ return cls.choices
+    #~ @classmethod
+    #~ def get_choices(cls):
+        #~ """
+        #~ We must make it dynamic since e.g. UserProfiles can change after 
+        #~ the fields have been created.
+        
+        #~ https://docs.djangoproject.com/en/dev/ref/models/fields/
+        #~ note that choices can be any iterable object -- not necessarily 
+        #~ a list or tuple. This lets you construct choices dynamically. 
+        #~ But if you find yourself hacking choices to be dynamic, you're 
+        #~ probably better off using a proper database table with a 
+        #~ ForeignKey. choices is meant for static data that doesn't 
+        #~ change much, if ever.        
+        #~ """
+        #~ for c in cls.choices:
+            #~ yield c
       
     @classmethod
     def display_text(cls,bc):
@@ -422,7 +423,7 @@ class ChoiceListField(models.CharField):
         self.force_selection = force_selection
         defaults = dict(
             #~ choices=KNOWLEDGE_CHOICES,
-            choices=choicelist.get_choices(),
+            #~ choices=choicelist.get_choices(),
             max_length=choicelist.max_length,
             blank=True,  # null=True,
             #~ validators=[validate_knowledge],
@@ -449,6 +450,22 @@ class ChoiceListField(models.CharField):
         #~ if value is None: # see 20110907
             #~ value = ''
         #~ return value
+        
+    def _get_choices(self):
+        """
+        HACK: Django by default stores a copy of our list 
+        when the `choices` of a field are evaluated for the 
+        first time.
+        """
+        return self.choicelist.choices
+        #~ if hasattr(self._choices, 'next'):
+            #~ choices, self._choices = tee(self._choices)
+            #~ return choices
+        #~ else:
+            #~ return self._choices
+    choices = property(_get_choices)
+
+        
         
     def get_prep_value(self, value):
         #~ if self.attname == 'query_register':

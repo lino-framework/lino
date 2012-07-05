@@ -80,41 +80,70 @@ class UserGroups(choicelists.ChoiceList):
 #~ add = UserGroups.add_item
 #~ add('system', _("System"))
 
+SHORT_LEVELS = dict(A='admin',U='user',_='',M='manager',G='guest')
 
 class UserProfile(choicelists.Choice):
-    def __init__(self,level='',*args,**kw):
+  
+    def __init__(self,cls,value,text,name=None,memberships=None,readonly=False,**kw):
+      
+        super(UserProfile,self).__init__(cls,value,text,name)
+        
+        #~ keys = ['level'] + [g+'_level' for g in choicelist.groups_list]
+        #~ keys = ['level'] + [g+'_level' for g in choicelist.membership_keys]
+        self.readonly = readonly
+
+        if memberships is None:
+            for k in cls.membership_keys:
+                kw[k] = UserLevels.blank_item
+        else:
+            if len(memberships.split()) != len(cls.membership_keys):
+                raise Exception(
+                    "Invalid memberships specification %r : must contain %d letters" 
+                    % (memberships,len(cls.membership_keys)))
+            for i,k in enumerate(memberships.split()):
+                kw[cls.membership_keys[i]] = UserLevels.get_by_name(SHORT_LEVELS[k])
+                
+        #~ print 20120705, value, kw
+            
+        for k,v in kw.items():
+            setattr(self,k,v)
+            
+        
+        #~ for grp in enumerate(UserGroups.items()):
+            #~ attname = grp.value + '_level'
+            #~ setattr(self,attname,kw.pop(attname,''))
+        #~ if kw:
+            #~ raise Exception("UserProfile got unexpected arguments %s" % kw)
+            
+        #~ dd.UserProfiles.add_item(value,label,None,**kw)
+      
+    #~ def __init__(self,level='',*args,**kw):
     #~ def __init__(self,level='',*args):
     #~ def __init__(self,**kw):
         #~ if level:
             #~ self.level = getattr(UserLevels,level)
         #~ else:
             #~ self.level = UserLevels.blank_item
-        self.level = UserLevels.get_by_name(level)
-        groups = UserGroups.items()
-        if len(args) > len(groups):
-            raise Exception("More arguments than user groups.")
-        for i,levelname in enumerate(args):
-            attname = groups[i].value + '_level'
-            v = UserLevels.get_by_name(levelname)
-            #~ if levelname:
-                #~ v = getattr(UserLevels,levelname)
-            #~ else:
-                #~ v = UserLevels.blank_item
-            setattr(self,attname,v)
-        kw.setdefault('readonly',False)
-        for k,v in kw.items():
-            setattr(self,k,v)
-        #~ for i,grp in enumerate(groups):
-            #~ attname = grp.value + '_level'
-            #~ setattr(self,attname,kw.pop(attname,''))
-        #~ if kw:
-            #~ raise Exception("UserProfile got unexpected arguments %s" % kw)
+        #~ self.level = UserLevels.get_by_name(level)
+        #~ groups = UserGroups.items()
+        #~ if len(args) > len(groups):
+            #~ raise Exception("More arguments than user groups.")
+        #~ for i,levelname in enumerate(args):
+            #~ attname = groups[i].value + '_level'
+            #~ v = UserLevels.get_by_name(levelname)
+            #~ setattr(self,attname,v)
+        #~ kw.setdefault('readonly',False)
+        #~ for k,v in kw.items():
+            #~ setattr(self,k,v)
             
     def __repr__(self):
-        s = self.__class__.__name__ + "("
+        s = self.__class__.__name__ + ":" + self.value + "("
         s += "level=%s" % self.level.name
         for g in UserGroups.items():
-            s += ",%s=%s" % (g.name,getattr(self,g.name+'_level').name)
+            if g.value: # no level for UserGroups.blank_item
+                v = getattr(self,g.value+'_level',None)
+                if v is not None:
+                    s += ",%s=%s" % (g.value,v.name)
         s += ")"
         return s
         
@@ -124,14 +153,50 @@ class UserProfiles(choicelists.ChoiceList):
     """
     
     """
-    item_class = UserProfile
+    #~ item_class = UserProfile
     label = _("User Profile")
     show_values = True
     max_length = 20
+    membership_keys = ('level',)
+    
+    #~ @classmethod
+    #~ def clear(cls):
+        #~ cls.groups_list = [g.value for g in UserGroups.items()]
+        #~ super(UserProfiles,cls).clear()
+          
+
+    #~ @classmethod
+    #~ def clear(cls,groups='*'):
+    @classmethod
+    def reset(cls,groups):
+        #~ cls.groups_list = [g.value for g in UserGroups.items()]
+        s = []
+        expected_names = set(['*']+[g.value for g in UserGroups.items() if g.value])
+        for g in groups.split():
+            if not g in expected_names:
+                raise Exception("Unexpected name %r (UserGroups are: %s)" % (
+                    g,[g.value for g in UserGroups.items() if g.value]))
+            else:
+                expected_names.remove(g)
+                if g == '*':
+                    s.append('level')
+                else:
+                    if not UserGroups.get_by_value(g):
+                        raise Exception("Unknown group %r" % g)
+                    s.append(g+'_level')
+        if len(expected_names) > 0:
+            raise Exception("Missing name(s) %s in %r" % (expected_names,groups))
+        cls.membership_keys = tuple(s)
+        cls.clear()
+
+    @classmethod
+    def add_item(cls,value,text,memberships=None,name=None,**kw):
+        return cls.add_item_instance(UserProfile(cls,value,text,name,memberships,**kw))
+          
     
 add = UserProfiles.add_item
-add('100', _("User"),'user', level='user')
-add('900', _("Administrator"),'admin', level='admin')
+add('100', _("User"), name='user', level='user')
+add('900', _("Administrator"), name='admin', level='admin')
 
 
 class Permittable(object):  
@@ -221,8 +286,9 @@ def make_permission_handler(
                 user_level = UserLevels.user
                 #~ raise Exception("20120621")
             for g in user_groups:
-                if not UserGroups.get_by_name(g):
-                    raise Exception("Invalid UserGroup %r" % g)
+                UserGroups.get_by_value(g) # raise Exception if no such group exists
+                #~ if not UserGroups.get_by_name(g):
+                    #~ raise Exception("Invalid UserGroup %r" % g)
             allow1 = allow
             def allow(action,user,obj,state):
                 if not allow1(action,user,obj,state): return False
