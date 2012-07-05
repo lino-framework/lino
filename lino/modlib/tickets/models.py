@@ -35,6 +35,7 @@ from lino.utils import babel
 
 blogs = dd.resolve_app('blogs')
 
+from lino.modlib.tickets.utils import TicketStates
 
 class ProjectType(mixins.PrintableType,babel.BabelNamed):
     "Deserves more documentation."
@@ -54,7 +55,7 @@ class SessionType(babel.BabelNamed):
     "Deserves more documentation."
   
     class Meta:
-        verbose_name = _("SessionType")
+        verbose_name = _("Session Type")
         verbose_name_plural = _('Session Types')
 
 class SessionTypes(dd.Table):
@@ -62,7 +63,7 @@ class SessionTypes(dd.Table):
     column_names = 'name *'
 
 
-class Project(mixins.AutoUser,mixins.Printable):
+class Project(mixins.UserAuthored,mixins.Printable):
     """
     """
     class Meta:
@@ -101,24 +102,24 @@ class ProjectsByPartner(Projects):
     #~ label = _("Sub-projects")
 
 
-class TicketState(babel.BabelNamed):
-    """
-    The state of a ticket (new, open, closed, ...)
-    """
+#~ class TicketState(babel.BabelNamed):
+    #~ """
+    #~ The state of a ticket (new, open, closed, ...)
+    #~ """
     
-    class Meta:
-        verbose_name = _("Ticket State")
-        verbose_name_plural = _('Ticket States')
+    #~ class Meta:
+        #~ verbose_name = _("Ticket State")
+        #~ verbose_name_plural = _('Ticket States')
 
-class TicketStates(dd.Table):
-    model = TicketState
-    column_names = 'name *'
-
+#~ class TicketStates(dd.Table):
+    #~ model = TicketState
+    #~ column_names = 'name *'
 
 
 class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
     """
     """
+    workflow_state_field = 'state'
     
     class Meta:
         verbose_name = _("Ticket")
@@ -126,7 +127,8 @@ class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
         
     #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
-    state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
+    #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
+    state = TicketStates.field()
     description = dd.RichTextField(_("Description"),blank=True,format='plain')
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),

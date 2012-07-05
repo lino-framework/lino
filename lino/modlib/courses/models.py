@@ -502,48 +502,48 @@ class ParticipantsByCourse(RequestsByCourse):
     #~ do_unregister = UnregisterCandidate()
     
     @dd.action(_("Passed"),required=dict(states=['registered']))
-    def passed(elem,ar):
-        elem.state = CourseRequestStates.passed
-        if not elem.date_ended:
-            elem.date_ended = datetime.date.today()
-        elem.save()
+    def passed(self,ar):
+        self.state = CourseRequestStates.passed
+        if not self.date_ended:
+            self.date_ended = datetime.date.today()
+        self.save()
         return ar.success_response(refresh=True,
           message=_("%(person)s passed %(course)s") 
-            % dict(person=elem.person,course=self.course))
+            % dict(person=self.person,course=self.course))
             
     @dd.action(pgettext_lazy(u"courses",u"Failed"),required=dict(states=['registered']))
-    def failed(elem,ar):
-        elem.state = CourseRequestStates.failed
-        if not elem.date_ended:
-            elem.date_ended = datetime.date.today()
-        elem.save()
+    def failed(self,ar):
+        self.state = CourseRequestStates.failed
+        if not self.date_ended:
+            self.date_ended = datetime.date.today()
+        self.save()
         return ar.success_response(refresh=True,
           message=_("%(person)s failed in %(course)s") 
-            % dict(person=elem.person,course=self.course))
+            % dict(person=self.person,course=self.course))
             
     @dd.action(_("Aborted"),required=dict(states=['registered']))
-    def aborted(elem,ar):
-        elem.state = CourseRequestStates.aborted
-        #~ if not elem.date_ended:
-            #~ elem.date_ended = datetime.date.today()
-        elem.save()
+    def aborted(self,ar):
+        self.state = CourseRequestStates.aborted
+        #~ if not self.date_ended:
+            #~ self.date_ended = datetime.date.today()
+        self.save()
         return ar.success_response(refresh=True,
           message=_("%(person)s aborted from %(course)s") 
-            % dict(person=elem.person,course=self.course))
+            % dict(person=self.person,course=self.course))
             
     @dd.action(_("Unregister"),required=dict(states=['registered']))
-    def unregister(elem,ar):
+    def unregister(self,ar):
         """
         Unregister the given :class:`Candidate` for the given :class:`Course`.
         This action is available on a row of :class:`ParticipantsByCourse`.
         """
-        course = elem.course
-        elem.state = CourseRequestStates.candidate
-        elem.course = None
-        elem.save()
+        course = self.course
+        self.state = CourseRequestStates.candidate
+        self.course = None
+        self.save()
         return ar.ui.success_response(refresh_all=True,
           message=_("%(person)s has been unregistered from %(course)s") 
-            % dict(person=elem.person,course=course))
+            % dict(person=self.person,course=course))
     
     
 
@@ -558,25 +558,22 @@ class CandidatesByCourse(RequestsByCourse):
     
     #~ do_register = RegisterCandidate()
     
-    #~ @classmethod
-    #~ def setup_actions(self):
-        #~ self.add_action(RegisterCandidate())
         
     @dd.action(_("Register"),required=dict(states=['candidate','']))
-    def register(elem,ar):
+    def register(self,ar):
         """
         Register the given :class:`Candidate` for the given :class:`Course`.
         This action is available on a row of :class:`CandidatesByCourse`.
         """
         if ar.master_instance is not None:
-            elem.course = ar.master_instance
-        if not elem.course:
+            self.course = ar.master_instance
+        if not self.course:
             return ar.error.response(_("Cannot register to unknown course."))
-        elem.state = CourseRequestStates.registered
-        elem.save()
+        self.state = CourseRequestStates.registered
+        self.save()
         return ar.success_response(refresh_all=True,
             message=_("%(person)s has been registered to %(course)s") % dict(
-                person=elem.person,course=elem.course))
+                person=self.person,course=self.course))
         
     
     @classmethod

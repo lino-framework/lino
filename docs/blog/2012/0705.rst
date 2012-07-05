@@ -1,0 +1,5 @@
+20120705
+========
+
+- Translations FR and one bugfix in :mod:`lino.modlib.courses`.
+- 

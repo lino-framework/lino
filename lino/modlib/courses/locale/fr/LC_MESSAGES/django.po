@@ -3,15 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-04 20:39+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2012-07-05 10:33+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,35 +18,37 @@ msgstr ""
 
 #: .\models.py:94
 msgid "Course provider"
-msgstr ""
+msgstr "Organisateur de cours"
 
 #: .\models.py:95
 msgid "Course providers"
-msgstr ""
+msgstr "Organisateurs de cours"
 
 #: .\models.py:106
 msgid "is Course Provider"
-msgstr ""
+msgstr "est un organisateur de cours"
 
 #: .\models.py:182
 msgid "Course Content"
-msgstr ""
+msgstr "Contenu de cours"
 
 #: .\models.py:183
 msgid "Course Contents"
-msgstr ""
+msgstr "Contenus de cours"
 
-#: .\models.py:187 .\models.py:204 .\models.py:258
+#: .\models.py:187
+#: .\models.py:204
+#: .\models.py:258
 msgid "Name"
 msgstr ""
 
 #: .\models.py:200
 msgid "Course Offer"
-msgstr ""
+msgstr "Offre de cours"
 
 #: .\models.py:201
 msgid "Course Offers"
-msgstr ""
+msgstr "Offres de cours"
 
 #: .\models.py:221
 msgid "Description"
@@ -55,84 +56,90 @@ msgstr ""
 
 #: .\models.py:250
 msgid "Course"
-msgstr ""
+msgstr "Cours"
 
-#: .\models.py:251 .\models.py:696
+#: .\models.py:251
+#: .\models.py:696
 msgid "Courses"
-msgstr ""
+msgstr "Cours"
 
 #: .\models.py:260
 msgid "start date"
-msgstr ""
+msgstr "Date de début"
 
-#: .\models.py:266 .\models.py:391
+#: .\models.py:266
+#: .\models.py:391
 msgid "Remark"
-msgstr ""
+msgstr "Remarque"
 
 #: .\models.py:280
 msgid "List of candidates"
-msgstr ""
+msgstr "Liste des candidats"
 
 #: .\models.py:281
 msgid "List of participants"
-msgstr ""
+msgstr "Liste des participants"
 
 #: .\models.py:310
 msgid "State"
-msgstr ""
+msgstr "Etat"
 
 #: .\models.py:326
 msgid "Candidate"
-msgstr ""
+msgstr "Candidat"
 
 #: .\models.py:328
 msgid "Registered"
-msgstr ""
+msgstr "Enregistré"
 
-#: .\models.py:329 .\models.py:504
+#: .\models.py:329
+#: .\models.py:504
 msgid "Passed"
-msgstr ""
+msgstr "Réussi"
 
 #: .\models.py:330
 msgid "Award"
-msgstr ""
+msgstr "Bien réussi"
 
-#: .\models.py:331 .\models.py:514
+#: .\models.py:331
+#: .\models.py:514
 msgctxt "courses"
 msgid "Failed"
-msgstr ""
+msgstr "Echoué"
 
-#: .\models.py:332 .\models.py:524
+#: .\models.py:332
+#: .\models.py:524
 msgid "Aborted"
-msgstr ""
+msgstr "Abandonné"
 
-#: .\models.py:343 .\models.py:344
+#: .\models.py:343
+#: .\models.py:344
 msgid "Course Requests"
-msgstr ""
+msgstr "Demande de cours"
 
 #: .\models.py:348
 msgid "Person"
-msgstr ""
+msgstr "Personne"
 
 #: .\models.py:354
 msgid "Course content"
-msgstr ""
+msgstr "Contenu"
 
 #: .\models.py:358
 msgid "date submitted"
-msgstr ""
+msgstr "Date déntrée"
 
 #: .\models.py:361
 msgid "Needed for job search"
-msgstr ""
+msgstr "cause professionnelle"
 
 #: .\models.py:377
 msgid "Course found"
-msgstr ""
+msgstr "Cours trouvé"
 
 #: .\models.py:396
 msgid "date ended"
-msgstr ""
+msgstr "Date de fin"
 
 #: .\models.py:500
 msgid "Participants"
@@ -193,4 +200,5 @@ msgstr ""
 
 #: .\models.py:662
 msgid "unknown age"
-msgstr ""
+msgstr "age inconnu"
+
