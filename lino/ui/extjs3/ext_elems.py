@@ -1786,4 +1786,4 @@ def field2elem(layout_handle,field,**kw):
     if isinstance(field,fields.RemoteField):
         raise NotImplementedError("No LayoutElement for RemoteField %s on %s" % (
           field.name,field.field.__class__))
-    raise NotImplementedError("No LayoutElement for %s" % field.__class__)
+    raise NotImplementedError("No LayoutElement for %s (%s) in %s" % (field.name,field.__class__,layout_handle.layout)
