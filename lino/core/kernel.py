@@ -371,9 +371,9 @@ def startup_site(self):
     try:
     
         if self._setting_up:
-            #~ logger.warning("LinoSite.setup() called recursively.")
-            #~ return 
-            raise Exception("LinoSite.setup() called recursively.")
+            logger.warning("LinoSite.startup() called recursively.")
+            return 
+            #~ raise Exception("LinoSite.setup() called recursively.")
         #~ try:
         self._setting_up = True
         
