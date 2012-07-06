@@ -18,8 +18,6 @@ from lino.utils.instantiator import Instantiator
 #from lino import reports
 #contacts = reports.get_app('contacts')
 
-#~ from lino.utils.perms import UserProfiles
-
 def objects():
     def create_user(*args,**kw):
         user = Instantiator('users.User',

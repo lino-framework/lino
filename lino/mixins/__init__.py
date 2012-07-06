@@ -37,7 +37,7 @@ from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable
     
-from lino.utils.perms import UserLevels
+from lino.core.perms import UserLevels
 
 #~ class Owned(dd.Model):
 class Controllable(dd.Model):

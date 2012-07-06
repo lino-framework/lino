@@ -22,8 +22,6 @@ import decimal
 #~ from django import forms
 
 from lino import dd
-#~ from lino import layouts
-from lino.utils import perms
 
 from django.db import models
 #~ from lino import fields

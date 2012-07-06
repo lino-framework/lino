@@ -31,7 +31,7 @@ from lino import dd
 #~ from lino.utils.babel import default_language
 #~ from lino import reports
 #~ from lino import layouts
-from lino.utils import perms
+#~ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils import babel

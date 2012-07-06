@@ -25,7 +25,6 @@ from django.utils.encoding import force_unicode
 from django.db import models
 
 from lino.core import actors
-from lino.utils import perms
 from lino.utils.jsgen import js_code
 from lino.core import actions
 

@@ -48,7 +48,7 @@ from lino.utils import confirm
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
-from lino.utils.menus import Menu, MenuItem
+from lino.core.menus import Menu, MenuItem
 #~ from lino.utils.jsgen import py2js
 from lino.utils import jsgen
 from lino.core.modeltools import makedirs_if_missing

@@ -50,7 +50,7 @@ Männlich
 
 Comparing Choices uses their *value* (not the alias or text):
 
->>> from lino.utils.perms import UserLevels
+>>> from lino.core.perms import UserLevels
 
 >>> UserLevels.manager > UserLevels.user
 True
@@ -349,7 +349,7 @@ Django creates copies of them when inheriting models.
     def display_text(cls,bc):
         """
         Override this to customize the display text of choices.
-        :class:`lino.utils.perms.UserGroups` and :class:`lino.modlib.cv.models.CefLevel`
+        :class:`lino.core.perms.UserGroups` and :class:`lino.modlib.cv.models.CefLevel`
         used to do this before we had the 
         :attr:`ChoiceList.show_values` option.
         """

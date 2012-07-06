@@ -20,7 +20,7 @@ from lino.core.modeltools import resolve_model
 
 #~ from django.db import models
 from lino.utils.babel import babel_values, babelitem
-from lino.utils.perms import UserProfiles
+from lino.core.perms import UserProfiles
 
 def objects():
   

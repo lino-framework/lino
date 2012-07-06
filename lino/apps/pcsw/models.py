@@ -45,7 +45,7 @@ from django.utils.functional import lazy
 #~ from lino import reports
 from lino import dd
 #~ from lino import layouts
-from lino.utils import perms
+#~ from lino.core import perms
 #~ from lino.utils import printable
 from lino import mixins
 #~ from lino import actions
@@ -83,7 +83,6 @@ from lino.modlib.properties import models as properties
 from lino.modlib.cv import models as cv
 #~ from lino.modlib.contacts.models import Contact
 from lino.core.modeltools import resolve_model, UnresolvedModel
-#~ from lino.utils.perms import UserProfiles
 
 #~ # not used here, but these modules are required in INSTALLED_APPS, 
 #~ # and other code may import them using 
@@ -2168,7 +2167,7 @@ dd.add_user_group('integ',_("Integration"))
 #~ def customize_user_groups():
     #~ """
     #~ Define application-specific 
-    #~ :class:`UserGroups <lino.utils.perms.UserGroups>`.
+    #~ :class:`UserGroups <lino.core.perms.UserGroups>`.
     #~ """
     #~ add = dd.UserGroups.add_item
     #~ add('office',_("Calendar & Outbox"),'office')

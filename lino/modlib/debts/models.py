@@ -60,7 +60,7 @@ from lino.modlib.uploads import models as uploads
 from lino.modlib.cal import models as cal
 #~ from lino.modlib.users import models as users
 from lino.utils.choicelists import HowWell, Gender
-from lino.utils.perms import UserLevels
+#~ from lino.core.perms import UserLevels
 from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
@@ -1155,14 +1155,14 @@ def setup_main_menu(site,ui,user,m):  pass
 def setup_master_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    if user.profile.debts_level < UserLevels.user: 
-        return
+    #~ if user.profile.debts_level < UserLevels.user: 
+        #~ return
     m  = m.add_menu("debts",MODULE_LABEL)
     m.add_action(MyBudgets)
   
 def setup_config_menu(site,ui,user,m): 
-    if user.profile.debts_level < UserLevels.manager: 
-        return
+    #~ if user.profile.debts_level < UserLevels.manager: 
+        #~ return
     m  = m.add_menu("debts",MODULE_LABEL)
     #~ m.add_action(Accounts)
     m.add_action(AccountGroups)
@@ -1170,8 +1170,8 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(Accounts)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.profile.debts_level < UserLevels.manager:
-        return
+    #~ if user.profile.debts_level < UserLevels.manager:
+        #~ return
     m  = m.add_menu("debts",MODULE_LABEL)
     m.add_action(Budgets)
     m.add_action(Entries)

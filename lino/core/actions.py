@@ -31,8 +31,8 @@ from lino.ui import requests as ext_requests
 
 from lino.core.modeltools import resolve_model
 
-from lino.utils.perms import UserLevels
-from lino.utils import perms 
+#~ from lino.core.perms import UserLevels
+#~ from lino.core import perms 
 
 
 class VirtualRow(object):

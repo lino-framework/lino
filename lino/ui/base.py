@@ -62,7 +62,8 @@ class UI:
             assert not prefix.startswith('/')
             assert not prefix.endswith('/')
             self.root_url += '/' + prefix
-        settings.LINO.setup(**options)
+        #~ 20120706 settings.LINO.setup(**options)
+        
         #~ print 'settings.LINO.root_url:', settings.LINO.root_url
         #~ print 'ui.root_url:', self.root_url
         

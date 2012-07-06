@@ -65,7 +65,7 @@ from lino.utils import dblogger
 from lino.utils import ucsv
 from lino.utils import choosers
 from lino.utils import babel
-from lino.utils import menus
+from lino.core import menus
 from lino.utils.config import find_config_file
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js

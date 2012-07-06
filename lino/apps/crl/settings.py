@@ -36,10 +36,9 @@ class Lino(Lino):
     def get_app_source_file(self):
         return __file__
         
-    def get_site_menu(self,ui,user):
+    def unused_get_site_menu(self,ui,user):
         from django.utils.translation import ugettext_lazy as _
-        from lino.utils import perms
-        from lino.utils import menus
+        from lino.core import menus
         from lino.apps.dsbe import models as dsbe
         from lino.modlib.properties import models as properties
         from lino.modlib.cal import models as cal

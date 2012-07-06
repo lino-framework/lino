@@ -33,7 +33,6 @@ from django.utils.encoding import force_unicode
 
 
 from lino import dd
-from lino.utils import perms
 from lino.utils import dblogger
 #~ from lino.utils import printable
 from lino import mixins
@@ -42,7 +41,6 @@ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.utils.choicelists import HowWell
-from lino.utils.perms import UserLevels
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.core.modeltools import get_field

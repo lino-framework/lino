@@ -45,7 +45,6 @@ from django.conf import settings
 
 from lino.utils import babel
 from lino.core.modeltools import resolve_model
-#~ from lino.utils.perms import UserProfiles
 
 class NoUserMiddleware(object):
     """
@@ -86,12 +85,19 @@ if settings.LINO.user_model:
             if not username:
                 raise Exception("No %s in %s" 
                   % (settings.LINO.remote_user_header,request.META))
+                  
+            # trigger site startup if necessary
+            settings.LINO.startup()
+            
+            #~ from lino.extjs import ui
+            
             """
             20120110 : alicia hatte es geschafft, beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
             Apache ließ sie als " alicia" durch.
             Und Lino legte brav einen neuen User " alicia" an.
             """
             username = username.strip()
+            
             #~ User = settings.LINO.user_model        
             try:
                 request.user = USER_MODEL.objects.get(username=username)

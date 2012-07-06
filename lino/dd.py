@@ -67,9 +67,9 @@ Utilities:
 
 Miscellaneous:
 
-- :class:`UserProfiles <lino.utils.perms.UserProfiles>`
-- :class:`UserGroups <lino.utils.perms.UserGroups>`
-- :class:`UserLevels <lino.utils.perms.UserLevels>`
+- :class:`UserProfiles <lino.core.perms.UserProfiles>`
+- :class:`UserGroups <lino.core.perms.UserGroups>`
+- :class:`UserLevels <lino.core.perms.UserLevels>`
 
 
 """
@@ -126,8 +126,7 @@ from lino.utils.babel import BabelCharField, BabelTextField
 
 from lino.utils.choosers import chooser
 
-#~ from lino.utils.perms import UserLevels, UserProfiles
-from lino.utils.perms import UserLevels, UserGroups, UserProfiles
+from lino.core.perms import UserLevels, UserGroups, UserProfiles
 
 from lino.core.layouts import FormLayout
 #~ DetailLayout = InsertLayout = FormLayout
@@ -248,7 +247,7 @@ def inject_quick_add_buttons(model,name,target):
     
 def add_user_group(name,label):
     """
-    Add a user group to the :class:`UserGroups <lino.utils.perms.UserGroups>` 
+    Add a user group to the :class:`UserGroups <lino.core.perms.UserGroups>` 
     choicelist. If a group with that name already exists, add `label` to the 
     existing group.
     """

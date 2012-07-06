@@ -111,8 +111,8 @@ import yaml
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils import perms
-from lino.utils import curry
+#~ from lino.core import perms
+#~ from lino.utils import curry
 
 
 class LayoutError(RuntimeError):

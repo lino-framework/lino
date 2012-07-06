@@ -23,7 +23,6 @@ from lino import reports
 #~ from lino import forms
 from lino.ui import base
 from lino.core import actors
-from lino.utils import menus
 #~ from lino.utils import choosers
 from lino.utils import jsgen
 #~ from lino.utils import build_url

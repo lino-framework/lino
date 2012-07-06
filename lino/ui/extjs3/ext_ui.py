@@ -82,7 +82,7 @@ from lino.utils import ucsv
 from lino.utils import choosers
 from lino.utils import babel
 from lino.utils import choicelists
-from lino.utils import menus
+from lino.core import menus
 from lino.utils import jsgen
 from lino.utils import isiterable
 from lino.utils.config import find_config_file
@@ -1204,8 +1204,7 @@ tinymce.init({
         #~ if settings.LINO.index_view_action:
             #~ kw.update(on_ready=self.ext_renderer.action_call(
               #~ settings.LINO.index_view_action))
-        logger.info("20120701 index_view() %s %r",request.user, request.user.profile)
-        #~ logger.info("20120222 index_view() uses %r",settings.LINO.modules.lino.Home)
+        #~ logger.info("20120706 index_view() %s %r",request.user, request.user.profile)
         kw.update(on_ready=self.ext_renderer.action_call(
           settings.LINO.modules.lino.Home.default_action))
         #~ kw.update(title=settings.LINO.modules.pcsw.Home.label)

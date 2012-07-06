@@ -19,7 +19,6 @@ import os
 import sys
 from os.path import join,dirname, normpath, abspath
 from lino.apps.std.settings import *
-from lino.utils.perms import UserLevels
 
 class Lino(Lino):
   
@@ -49,9 +48,9 @@ class Lino(Lino):
     def get_app_source_file(self):
         return __file__
         
-    def setup_menu(self,ui,user,main):
+    def unused_setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
-        from lino.utils import perms
+        from lino.core import perms
 
         #~ from lino.modlib.cal import models as cal
         #~ from lino.modlib.notes import models as notes

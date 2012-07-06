@@ -64,7 +64,6 @@ from lino.core import actions
 from lino.core.fields import FakeField
 from lino.ui import base
 from lino.ui import requests as ext_requests
-#~ from lino.utils import perms
 from lino.utils.config import Configured, load_config_files
 
 
@@ -566,10 +565,6 @@ class AbstractTable(actors.Actor):
     #~ date_format = lino.DATE_FORMAT_EXTJS
     #~ boolean_texts = boolean_texts
     boolean_texts = boolean_texts = (_('Yes'),_('No'),' ')
-    
-    #~ can_view = perms.always
-    #~ can_change = perms.is_authenticated
-    #~ can_config = perms.is_staff
     
     #~ show_prev_next = True
     show_detail_navigator = False

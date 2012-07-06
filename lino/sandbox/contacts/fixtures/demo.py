@@ -25,7 +25,7 @@ from lino.utils.babel import default_language
 from lino.utils.babel import babel_values
 from lino.utils.choicelists import Gender
 #~ from lino.utils.perms import UserLevels
-from lino.utils.perms import UserProfiles
+#~ from lino.core.perms import UserProfiles
 from lino.utils import dblogger
 from lino.utils import Cycler
 

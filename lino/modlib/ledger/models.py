@@ -18,9 +18,6 @@ from lino import dd
 
 from django import forms
 
-#~ from lino import reports
-from lino.utils import perms
-
 #contacts = reports.get_app('contacts')
 from lino.modlib.journals import models as journals
 #~ journals = reports.get_app('journals')

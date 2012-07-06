@@ -42,7 +42,7 @@ ONE_DAY = datetime.timedelta(days=1)
 
 from lino import dd
 #~ from lino import layouts
-from lino.utils import perms
+from lino.core import perms
 from lino.utils import dblogger
 #~ from lino.utils import printable
 from lino import mixins
@@ -50,7 +50,6 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
-from lino.utils.perms import UserLevels
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.core.modeltools import get_field
@@ -128,8 +127,7 @@ class Schedule(babel.BabelNamed):
         verbose_name_plural = _('Work Schedules')
         
 class Schedules(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required = dict(user_groups='integ',user_level='manager')
     model = Schedule
     order_by = ['name']
     detail_template = """
@@ -144,8 +142,9 @@ class Regime(babel.BabelNamed):
         verbose_name_plural = _('Work Regimes')
         
 class Regimes(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required = dict(user_groups='integ',user_level='manager')
+    #~ required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
     model = Regime
     order_by = ['name']
     detail_template = """
@@ -193,7 +192,8 @@ class JobProviders(pcsw.Companies,dd.Table):
     """
     List of Companies that have `Company.is_jobprovider` activated.
     """
-    required_user_groups = ['integ']
+    required = dict(user_groups='integ')
+    #~ required_user_groups = ['integ']
     #~ required_user_level = UserLevels.manager
     #~ use_as_default_table = False
     model = JobProvider
@@ -232,8 +232,9 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         
 
 class ContractTypes(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required = dict(user_groups='integ',user_level='manager')
+    #~ required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
     model = ContractType
     column_names = 'name ref build_method template *'
     detail_template = """
@@ -254,8 +255,9 @@ class Sector(babel.BabelNamed):
         verbose_name=_("Remark"))
         
 class Sectors(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required = dict(user_groups='integ',user_level='manager')
+    #~ required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
     model = Sector
     order_by = ['name']
     detail_template = """
@@ -280,8 +282,9 @@ class Function(babel.BabelNamed):
         #~ blank=True,null=True)
         
 class Functions(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required = dict(user_groups='integ',user_level='manager')
+    #~ required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
     model = Function
     column_names = 'name sector *'
     order_by = ['name']
@@ -551,7 +554,8 @@ class ContractDetail(dd.FormLayout):
     
   
 class Contracts(dd.Table):
-    required_user_groups = ['integ']
+    required = dict(user_groups='integ')
+    #~ required_user_groups = ['integ']
     #~ required_user_level = UserLevels.manager
     model = Contract
     column_names = 'id job applies_from applies_until user type *'
@@ -686,7 +690,8 @@ class Offer(SectorFunction):
         return u'%s @ %s' % (self.function,self.provider)
   
 class Offers(dd.Table):
-    required_user_groups = ['integ']
+    required = dict(user_groups='integ')
+    #~ required_user_groups = ['integ']
     #~ required_user_level = UserLevels.manager
     model = Offer
     detail_template = """
@@ -1013,8 +1018,9 @@ class Candidatures(dd.Table):
     """
     List of :class:`Candidatures <Candidature>`.
     """
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required = dict(user_groups='integ',user_level='manager')
+    #~ required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
     model = Candidature
     order_by = ['date_submitted']
     column_names = 'date_submitted job:25 * id'
@@ -1103,7 +1109,8 @@ class ExperiencesByOffer(SectorFunctionByOffer):
 
 
 class Jobs(dd.Table):
-    required_user_groups = ['integ']
+    required = dict(user_groups='integ')
+    #~ required_user_groups = ['integ']
     #~ required_user_level = UserLevels.manager
     model = Job
     #~ order_by = ['start_date']
@@ -1119,8 +1126,9 @@ class Jobs(dd.Table):
     
 
 class JobTypes(dd.Table):
-    required_user_groups = ['integ']
-    required_user_level = UserLevels.manager
+    required = dict(user_groups='integ',user_level='manager')
+    #~ required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
     model = JobType
     order_by = ['name']
     detail_template = """
@@ -1311,8 +1319,8 @@ if True: # dd.is_installed('contacts') and dd.is_installed('jobs'):
 
 
 def setup_main_menu(site,ui,user,m): 
-    if user.profile.integ_level < UserLevels.user:
-        return
+    #~ if user.profile.integ_level < UserLevels.user:
+        #~ return
     m = m.add_menu("jobs",_("Jobs"))
     m.add_action(JobProviders)
     m.add_action(Jobs)
@@ -1320,13 +1328,13 @@ def setup_main_menu(site,ui,user,m):
     m.add_action(ContractsSearch)
 
 def setup_my_menu(site,ui,user,m): 
-    if user.profile.integ_level < UserLevels.user:
-        return
+    #~ if user.profile.integ_level < UserLevels.user:
+        #~ return
     m.add_action(MyContracts)
   
 def setup_config_menu(site,ui,user,m): 
-    if user.profile.integ_level < UserLevels.manager:
-        return
+    #~ if user.profile.integ_level < UserLevels.manager:
+        #~ return
     m  = m.add_menu("jobs",_("~Jobs"))
     m.add_action(ContractTypes)
     m.add_action(JobTypes)
@@ -1340,8 +1348,8 @@ def setup_config_menu(site,ui,user,m):
     
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.profile.integ_level < UserLevels.manager:
-        return
+    #~ if user.profile.integ_level < UserLevels.manager:
+        #~ return
     m  = m.add_menu("jobs",_("~Jobs"))
     m.add_action(Contracts)
     m.add_action(Candidatures)

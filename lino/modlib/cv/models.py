@@ -39,7 +39,6 @@ from django.utils.functional import lazy
 #~ from lino import reports
 from lino import dd
 #~ from lino import layouts
-from lino.utils import perms
 #~ from lino.utils import printable
 from lino import mixins
 #~ from lino import actions

@@ -35,8 +35,7 @@ from lino.core import actions
 
 #~ contacts = dd.resolve_app('contacts')
 
-from lino.utils.perms import UserLevels, UserProfiles
-#~ from lino.utils import perms 
+from lino.core.perms import UserLevels, UserProfiles
 
 if settings.LINO.user_model != 'users.User':
     raise Exception("""\

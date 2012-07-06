@@ -29,7 +29,6 @@ from lino import mixins
 from lino import dd
 #~ from lino.core import reports
 from lino.core import actions
-from lino.utils import perms
 from lino.utils import babel
 from lino.utils import dblogger
 from lino.core.modeltools import resolve_model

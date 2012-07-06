@@ -125,11 +125,11 @@ class Renderer(AppyRenderer):
         context.update(restify=self.restify_func)
         context.update(html=self.html_func)
         context.update(table=self.insert_table)
-        from lino.extjs import ui
-        #~ from lino.ui.extjs3 import urls
-        #~ self.ui = urls.ui
-        self.extjs_ui = ui
-        context.update(ui=ui)
+        #~ from lino.extjs import ui
+        #~ self.extjs_ui = ui
+        #~ self.extjs_ui = settings.LINO.ui
+        #~ context.update(ui=self.extjs_ui)
+        context.update(ui=settings.LINO.ui)
         kw.update(finalizeFunction=self.finalize_func)
         AppyRenderer.__init__(self,template,context,result, **kw)
         #~ self.my_automaticstyles = odf.style.automaticstyles()
@@ -245,7 +245,8 @@ class Renderer(AppyRenderer):
             fields = []
             widths = []
             headers = []
-            ah = ar.actor.get_handle(self.extjs_ui)
+            #~ ah = ar.actor.get_handle(self.extjs_ui)
+            ah = ar.actor.get_handle(settings.LINO.ui)
             for i,cn in enumerate(columns):
                 col = None
                 for e in ah.list_layout.main.columns:
@@ -264,7 +265,8 @@ class Renderer(AppyRenderer):
             if column_names:
                 from lino.core import layouts
                 ll = layouts.ListLayout(ar.actor,column_names)
-                lh = ll.get_layout_handle(self.extjs_ui)
+                #~ lh = ll.get_layout_handle(self.extjs_ui)
+                lh = ll.get_layout_handle(settings.LINO.ui)
                 columns = lh.main.columns
             else:
                 #~ ah = ar.actor.get_handle(self.extjs_ui)

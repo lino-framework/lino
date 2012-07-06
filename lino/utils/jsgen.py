@@ -92,7 +92,7 @@ from django.utils.encoding import force_unicode
 
 import lino
 from lino.utils import IncompleteDate
-from lino.utils.perms import Permittable
+from lino.core.perms import Permittable
 from lino.utils.xmlgen import etree
 
 
@@ -236,7 +236,7 @@ def py2js(v):
 
 """
 The following works only for Python 2.6 and above, which is not available on Lenny.
-Siehe auch http://code.google.com/p/lino/wiki/20100215
+See also http://code.google.com/p/lino/wiki/20100215
 
 class LinoJSONEncoder(DjangoJSONEncoder):
     def _iterencode_default(self, o, markers=None):

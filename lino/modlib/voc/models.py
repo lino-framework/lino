@@ -25,7 +25,6 @@ from django.db import models
 from django.utils.safestring import mark_safe 
 
 from lino import reports
-from lino.utils import perms
 
 from lino.utils.validatingmodel import TomModel, ModelValidationError
 
@@ -227,8 +226,7 @@ class Entries(reports.Report):
 # menu setup
 #
 def lino_setup(lino):
-    m = lino.add_menu("voc","Vocabulary",
-      can_view=perms.is_authenticated)
+    m = lino.add_menu("voc","Vocabulary")
     m.add_action(Units(),label="List of All Units",)
     m.add_action(UnitsPerParent(None),name="tree",
         label="Table of Contents")

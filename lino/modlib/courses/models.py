@@ -45,7 +45,6 @@ from django.utils.functional import lazy
 #~ from lino import reports
 from lino import dd
 #~ from lino import layouts
-from lino.utils import perms
 #~ from lino.utils import printable
 from lino import mixins
 #~ from lino import actions
@@ -54,7 +53,6 @@ from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 #~ from lino.modlib.uploads import models as uploads
-from lino.utils.perms import UserLevels
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.utils import babel 

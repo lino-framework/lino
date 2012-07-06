@@ -39,7 +39,6 @@ from django.utils import translation
 
 import lino
 #~ from lino import layouts
-from lino.utils import perms
 
 from lino import dd
 #~ from lino import fields
@@ -48,7 +47,6 @@ from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
 from lino.utils.choicelists import Gender
-from lino.utils.perms import UserLevels
 from lino.utils import babel 
 #~ from lino.models import get_site_config
 

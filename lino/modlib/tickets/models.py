@@ -294,7 +294,7 @@ def setup_my_menu(site,ui,user,m):
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(ProjectTypes)
-    m.add_action(TicketStates)
+    #~ m.add_action(TicketStates)
     m.add_action(SessionTypes)
   
 def setup_explorer_menu(site,ui,user,m):

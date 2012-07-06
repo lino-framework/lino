@@ -57,8 +57,6 @@ from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 from lino.utils.config import find_config_file
 from lino.utils.choicelists import ChoiceList
-#~ from lino.utils.perms import UserLevels
-#~ from lino.utils.choosers import chooser
 
 
 from Cheetah.Template import Template as CheetahTemplate

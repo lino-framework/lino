@@ -30,7 +30,6 @@ from django.contrib.contenttypes import generic
 #~ logger.debug(__file__+' : started')
 
 from lino import dd
-from lino.utils import perms
 from lino import mixins
 from lino.modlib.contacts import models as contacts
 from lino.modlib.cal.models import DurationUnits, update_reminder

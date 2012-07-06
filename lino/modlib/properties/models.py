@@ -45,8 +45,6 @@ from django.utils.encoding import force_unicode
 
 
 from lino import dd
-#~ from lino import layouts
-from lino.utils import perms
 from lino.utils import babel
 #~ from lino.utils.babel import babelattr
 #~ from lino.utils import printable

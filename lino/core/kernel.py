@@ -53,7 +53,6 @@ from lino.core import actions
 from lino.core import actors
 from lino.core.modeltools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
-#~ from lino.utils.perms import ViewPermissionInstance
 
 from lino.core.modeltools import resolve_model, resolve_field, get_field, full_model_name, obj2str
 from lino.core.modeltools import is_devserver
@@ -67,7 +66,7 @@ from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
 from lino.utils import AttrDict
-from lino.utils.perms import make_permission_handler
+from lino.core.perms import make_permission_handler
 
 #~ BLANK_STATE = ''
 
@@ -88,6 +87,9 @@ def analyze_models():
     global DONE
     if DONE: return
     DONE = True
+    
+    #~ from django.conf import settings
+    #~ settings.LINO.setup_user_profiles()
     
     logger.info("Analyzing models...")
     
@@ -120,9 +122,6 @@ def analyze_models():
                 #~ model.__dict__[k] = getattr(dd.Model,k)
         
 
-    from django.conf import settings
-    settings.LINO.setup_user_profiles()
-    
         
 #~ def install_summary_rows():
   
@@ -335,7 +334,7 @@ def load_workflows(self):
 
 #~ def setup_site(self,make_messages=False):
 #~ def setup_site(self,no_site_cache=False):
-def setup_site(self):
+def startup_site(self):
     """
     `self` is the Lino instance stored as :setting:`LINO` in your :xfile:`settings.py`.
     
@@ -390,7 +389,8 @@ def setup_site(self):
         
         if self.project_model:
             self.project_model = resolve_model(self.project_model)
-            
+
+        self.setup_user_profiles()
             
         
         for model in models.get_models():

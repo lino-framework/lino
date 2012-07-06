@@ -21,6 +21,6 @@ Application code doesn't need to worry about this.
 
 """
 
-from lino.extjs import ui
-ui.build_site_cache()
-urlpatterns = ui.get_patterns()
+from django.conf import settings
+settings.LINO.ui.build_site_cache()
+urlpatterns = settings.LINO.ui.get_patterns()

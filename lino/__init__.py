@@ -719,6 +719,7 @@ class Lino(object):
     # for internal use:
     
     _site_config = None
+    _extjs_ui = None
     
     
     def __init__(self,project_file,settings_dict):
@@ -807,6 +808,14 @@ class Lino(object):
         #~ from lino.models import get_site_config
         #~ self.config = get_site_config()
         
+
+    def get_ui(self):
+        if self._extjs_ui is None:
+            self.startup()
+            from lino.ui.extjs3 import UI
+            self._extjs_ui = UI()
+        return self._extjs_ui
+    ui = property(get_ui)
 
 
     def parse_date(self,s):
@@ -919,18 +928,19 @@ class Lino(object):
         sc.save()
     
         
-        
-    def setup(self,**options):
+    def startup(self,**options):
         """
+        Start the Lino site. 
+        This is called when Django has done his work 
+        (all models modules have been imported).
+        
         This is called whenever a user interface 
         (:class:`lino.ui.base.UI`) gets instantiated (which usually 
         happenes in some URLConf, for example in:mod:`lino.ui.extjs3.urls`). 
-        #~ Also called by :term:`makedocs` with keyword argument `make_messages`.
-        #~ Also called by :term:`dtl2py` with keyword argument `make_messages`.
         Also called by some test cases.
         """
-        from lino.core.kernel import setup_site
-        setup_site(self,**options)
+        from lino.core.kernel import startup_site
+        startup_site(self,**options)
         
         
     #~ def has_module(self,name):
@@ -944,12 +954,23 @@ class Lino(object):
         
     def setup_user_profiles(self):
         """
-        Define application-specific 
-        :class:`UserProfiles <lino.utils.perms.UserProfiles>`.
+        Define application-specific default
+        :class:`UserProfiles <lino.core.perms.UserProfiles>`.
         
-        This will usually be reconfigured locally per site.
-        See :meth:`lino.apps.pcsw.settings.Lino.setup_user_profiles` 
-        for a usage example.
+        Lino by default has two user profiles "User" 
+        and "Administrator", defined in :mod:`lino.core.perms`.
+        
+        Application developers who use group-based requirements 
+        must override this in their application's :xfile:`settings.py` 
+        to provide a default list of user profiles for their 
+        application.
+        
+        See the source code of :mod:`lino.apps.presto` 
+        or :mod:`lino.apps.pcsw` for a usage example.
+        
+        Local site administrators may again override this in their 
+        :xfile:`settings.py`.
+        
         """
         pass
         
@@ -978,14 +999,14 @@ class Lino(object):
 
 
     def get_quicklinks(self,ui,user):
-        from lino.utils import menus
+        from lino.core import menus
         tb = menus.Toolbar(user,'quicklinks')
         self.setup_quicklinks(ui,user,tb)
         return tb
         
     def get_site_menu(self,ui,user):
         from django.utils.translation import ugettext_lazy as _
-        from lino.utils import menus
+        from lino.core import menus
         main = menus.Toolbar(user,'main')
         self.setup_menu(ui,user,main)
         main.compress()

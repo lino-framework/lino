@@ -19,7 +19,6 @@ from lino import dd
 #journals = models.get_app('journals')
 #~ from lino import reports
 #~ from lino import layouts
-from lino.utils import perms
 from lino.utils import babel
 
 
@@ -38,7 +37,6 @@ class ProductCat(babel.BabelNamed):
 class ProductCats(dd.Table):
     model = ProductCat
     order_by = ["id"]
-    #~ can_view = perms.is_staff
 
 class Product(babel.BabelNamed):
   

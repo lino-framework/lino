@@ -42,7 +42,7 @@ from django.utils.importlib import import_module
 from django.db import models
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
-from django import forms
+#~ from django import forms
 from django.conf.urls.defaults import patterns, url, include
 #~ from django.forms.models import modelform_factory
 #~ from django.forms.models import _get_foreign_key
@@ -60,7 +60,6 @@ import lino
 #~ from lino import layouts
 from lino.core import fields
 from lino.core import actions
-from lino.utils import perms, menus, call_on_bases
 from lino.utils import babel
 from lino.core.modeltools import obj2str
 from lino.utils.config import load_config_files, Configured

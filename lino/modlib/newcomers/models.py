@@ -28,8 +28,7 @@ from lino import dd
 #~ from lino.utils.babel import default_language
 #~ from lino import reports
 #~ from lino import layouts
-from lino.utils import perms
-from lino.utils.perms import UserLevels, UserProfiles
+from lino.core.perms import UserProfiles
 from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils.choosers import chooser
@@ -310,8 +309,8 @@ def site_setup(site):
     site.modules.users.Users.add_detail_tab('newcomers.CompetencesByUser')
   
 def setup_main_menu(site,ui,user,m):
-    if user.profile.newcomers_level < UserLevels.user:
-        return
+    #~ if user.profile.newcomers_level < UserLevels.user:
+        #~ return
     m  = m.add_menu("newcomers",MODULE_LABEL)
     m.add_action(Newcomers)
     m.add_action(UsersByNewcomer)
@@ -324,15 +323,15 @@ def setup_my_menu(site,ui,user,m):
     pass
     
 def setup_config_menu(site,ui,user,m): 
-    if user.profile.newcomers_level < UserLevels.manager:
-        return
+    #~ if user.profile.newcomers_level < UserLevels.manager:
+        #~ return
     m  = m.add_menu("newcomers",MODULE_LABEL)
     m.add_action(Brokers)
     m.add_action(Faculties)
   
 def setup_explorer_menu(site,ui,user,m):
-    if user.profile.newcomers_level < UserLevels.manager:
-        return
+    #~ if user.profile.newcomers_level < UserLevels.manager:
+        #~ return
     m.add_action(Competences)
   
 dd.add_user_group('newcomers',MODULE_LABEL)

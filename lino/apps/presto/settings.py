@@ -32,7 +32,8 @@ class Lino(Lino):
         
     def setup_user_profiles(self):
         """
-        This defines default user profiles for :mod:`lino.apps.pcsw`.
+        Defines application-specific default user profiles.
+        Local site administrators can override this in their :xfile:.
         """
         from lino import dd
         from django.utils.translation import ugettext_lazy as _
@@ -41,8 +42,8 @@ class Lino(Lino):
         add('100', _("User"),            'U U')
         add('900', _("Administrator"),   'A A')
         
-        for p in dd.UserProfiles.items():
-            print 20120705, repr(p)
+        #~ for p in dd.UserProfiles.items():
+            #~ print 20120705, repr(p)
             
         
     

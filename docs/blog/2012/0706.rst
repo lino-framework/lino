@@ -1,0 +1,66 @@
+20120706
+========
+
+There was still a problem with yesterday's version.
+
+A development server on :mod:`lino.apps.presto` answered 
+with an `AttributeError` "'UserProfile' object has no attribute 'office_level'" 
+
+to the first request.
+
+To understand the problem, let's make a tour to the internals 
+of Lino and Django::
+
+  T:\data\luc\lino_local\presto>python manage.py shell
+  Python 2.7.1 (r271:86832, Nov 27 2010, 18:30:46) [MSC v.1500 32 bit (Intel)] on win32
+  Type "help", "copyright", "credits" or "license" for more information.
+  (InteractiveConsole)
+  >>> from lino.modlib.users.models import User
+  >>> User.objects.all()
+  [<User: Root User>, <User: Luc Saffre>]
+  >>> u = User.objects.all()[0]
+  >>> print repr(u.profile)
+  UserProfile:900(level=blank_item)
+  
+Indeed, UserProfile has no attribute `office_level`.
+That's because the application's 
+:meth:`setup_user_profiles <lino.Lino.setup_user_profiles>` 
+(which redefines the UserProfiles choicelist 
+and adds an `office_level` attribute) has not yet been 
+called.
+
+Before loading a user, I must somehow call
+:func:`analyze_models <lino.core.kernel.analyze_models>`,
+e.g. by doing::
+
+  >>> from django.conf import settings
+  >>> settings.LINO.startup()
+  INFO Starting Lino...
+  INFO Analyzing models...
+  20120705 UserProfile:(level=blank_item,office=blank_item)
+  20120705 UserProfile:100(level=user,office=user)
+  20120705 UserProfile:900(level=admin,office=admin)
+  INFO Lino Site 'presto@armand' started. Languages: de. 117 actors.
+  INFO Using Lino 1.4.4, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.
+  4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.
+  
+
+Until now, this was silently happening when the first 
+web request comes in.
+
+
+And now, magic::
+
+  >>> u = User.objects.all()[0]
+  >>> print repr(u.profile)
+  UserProfile:900(level=admin,office=admin)
+
+But how can I make this transparent?
+
+
+
+Moved `perms` and `menus` from `lino.utils` to `lino.core`.
+
+:mod:`lino.modlib.jobs` still used the old syntax for specifying requirements.
+
+
