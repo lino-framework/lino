@@ -1263,6 +1263,12 @@ def migrate_from_1_4_3(globals_dict):
           name_fr=name_fr,name_en=name_en)    
     globals_dict.update(create_cal_eventtype=create_cal_eventtype)
     
+    cal_Calendar= resolve_model("cal.Calendar")
+    def create_cal_calendar(id, user_id, type, name, description, 
+        url_template, username, password, readonly, is_default, is_hidden, start_date, color):
+        return cal_Calendar(id=id,user_id=user_id,type=type,name=name,description=description,url_template=url_template,username=username,password=password,readonly=readonly,is_default=is_default,is_private=is_hidden,start_date=start_date,color=color)    
+    globals_dict.update(create_cal_calendar=create_cal_calendar)
+    
     
     objects = globals_dict['objects']
     def new_objects():

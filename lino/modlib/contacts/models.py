@@ -831,3 +831,7 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(site.modules.contacts.Roles)
     m.add_action(site.modules.countries.Cities)
   
+#~ def setup_quicklinks(site,ui,user,m):
+    #~ m.add_action(Person.detail_action)
+        
+  

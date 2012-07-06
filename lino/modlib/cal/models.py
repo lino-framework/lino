@@ -89,7 +89,7 @@ COLOR_CHOICES = [i + 1 for i in range(32)]
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 
-class Calendar(mixins.AutoUser):
+class Calendar(mixins.UserAuthored):
     """
     A Calendar is a collection of events and tasks.
     There are local calendars and remote calendars.
@@ -115,8 +115,9 @@ class Calendar(mixins.AutoUser):
     readonly = models.BooleanField(_("read-only"),default=False)
     is_default = models.BooleanField(
         _("is default"),default=False)
-    is_hidden = models.BooleanField(
-        _("is hidden"),default=False)
+    is_private = models.BooleanField(
+        _("private"),default=False,help_text=_("""\
+Whether other users may subscribe to this Calendar."""))
     start_date = models.DateField(
         verbose_name=_("Start date"),
         blank=True,null=True)
@@ -169,14 +170,15 @@ class Calendar(mixins.AutoUser):
 class Calendars(dd.Table):
     required = dict(user_groups='office')
     model = 'cal.Calendar'
-    column_names = "user type name color readonly is_hidden is_default *"
+    column_names = "user type name color readonly is_private is_default *"
     
     detail_template = """
     type name user id 
     url_template username password
     description
-    readonly is_default is_hidden color start_date
+    readonly is_default is_private color start_date
     EventsByCalendar
+    SubscriptionsByCalendar
     """
 
 def default_calendar(user):
@@ -201,6 +203,46 @@ def default_calendar(user):
 
 
 
+
+class Subscription(mixins.UserAuthored):
+    """
+    A Suscription is when a User subscribes to somebody else's Calendar.
+    
+    :user: points to the author (recipient) of this subscription
+    :calendar: points to the subscribed Calendar
+    
+    """
+    class Meta:
+        verbose_name = _("Subscription")
+        verbose_name_plural = _("Subscriptions")
+    calendar = models.ForeignKey(Calendar,help_text=_("""\
+The calendar you want to subscribe to.
+You can subscribe to *non-private* calendars of *other* users."""))
+    is_hidden = models.BooleanField(
+        _("hidden"),default=False,help_text=_("""\
+Whether this subscription should initially be hidden in your calendar panel."""))
+    
+    @dd.chooser()
+    def calendar_choices(cls,user):
+        # 'user' is the owner of this subscription who doesn't 
+        # want to subscribe to her own calendars
+        #~ return Calendar.objects.exclude(user=user,is_private=True)
+        return Calendar.objects.exclude(user=user).filter(is_private=False)
+    
+        
+class Subscriptions(dd.Table):
+    model = Subscription
+
+#~ class MySubscriptions(Subscriptions,mixins.ByUser):
+    #~ pass
+
+class SubscriptionsByUser(Subscriptions):
+    master_key = 'user'
+
+class SubscriptionsByCalendar(Subscriptions):
+    master_key = 'calendar'
+
+
 class Place(babel.BabelNamed):
     """
     A location where Events can happen.
@@ -218,10 +260,14 @@ class Place(babel.BabelNamed):
 class Places(dd.Table):
     required = dict(user_groups='office')
     model = Place
+    detail_layout = """
+    id name
+    cal.EventsByPlace
+    """
     
     
     
-class EventGenerator(mixins.AutoUser):
+class EventGenerator(mixins.UserAuthored):
     """
     Base class for things that generate a suite of events.
     Examples
@@ -365,7 +411,7 @@ class EventTypes(dd.Table):
 
 
 
-class CalendarRelated(dd.Model):
+class CalendarRelated(mixins.UserAuthored):
     "Deserves more documentation."
     class Meta:
         abstract = True
@@ -387,10 +433,25 @@ class CalendarRelated(dd.Model):
         We cannot do this only in `save()` because otherwise 
         `full_clean()` (when called) will complain 
         about the empty fields.
+        
+        If an administrator changes the user of an Event, 
+        the calendar should change accordingly
+        
         """
         if not self.calendar_id:
             self.calendar = default_calendar(self.user)
             #~ print "20111217 calendar_id was empty. set to", self.calendar, "because", self.user
+        if self.calendar.user != self.user:
+            self.calendar = default_calendar(self.user)
+            
+    @dd.chooser()
+    def calendar_choices(cls,user):
+        return Calendar.objects.filter(user=user)
+        
+    #~ def user_changed(self,ar):
+        #~ """
+        #~ """
+        #~ self.before_clean()
             
 
 class Started(dd.Model):
@@ -529,7 +590,6 @@ class RecurrenceSets(dd.Table):
 class Component(ComponentBase,
                 CalendarRelated,
                 mixins.Controllable,
-                mixins.AutoUser,
                 mixins.CreatedModified):
     """
     Abstract base class for :class:`Event` and :class:`Task`.
@@ -541,7 +601,9 @@ class Component(ComponentBase,
         abstract = True
         
     #~ access_class = AccessClass.field() # iCal:CLASS
-    access_class = models.ForeignKey(AccessClass,blank=True,null=True,help_text=_("""\
+    access_class = models.ForeignKey(AccessClass,
+        blank=True,null=True,
+        help_text=_("""\
 Indicates whether this is private or public (or somewhere between)."""))
     sequence = models.IntegerField(_("Revision"),default=0)
     #~ alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
@@ -1512,6 +1574,15 @@ class ExtSummaryField(dd.VirtualField):
             s += obj.summary
         return s
 
+def user_calendars(qs,user):
+    Q = models.Q
+    subs = Subscription.objects.filter(user=user).values_list('calendar__id',flat=True)
+    return qs.filter(Q(user=user) | Q(id__in=subs))
+
+def user_events(qs,user):
+    Q = models.Q
+    subs = Subscription.objects.filter(user=user).values_list('calendar__id',flat=True)
+    return qs.filter(Q(user=user) | Q(calendar_id__in=subs))
 
 if settings.LINO.use_extensible:
   
@@ -1526,18 +1597,28 @@ if settings.LINO.use_extensible:
     class PanelCalendars(Calendars):
         required = dict(user_groups='office')
         column_names = 'id name description color is_hidden'
-        #~ can_add = perms.never
-      
+        
+        @classmethod
+        def get_request_queryset(self,ar):
+            qs = super(PanelCalendars,self).get_request_queryset(ar)
+            return user_calendars(qs,ar.get_user())
+            
+        @dd.virtualfield(models.BooleanField(_('Hidden')))
+        def is_hidden(cls,self,ar):
+            if self.user == ar.get_user():
+                return False
+            sub = Subscription.objects.get(user=ar.get_user(),calendar=self)
+            return sub.is_hidden
+
+            
     class PanelEvents(Events):
         """
-        The report used for Ext.ensible CalendarPanel.
+        The table used for Ext.ensible CalendarPanel.
         """
         required = dict(user_groups='office')
         use_as_default_table = False
-        #~ filter = models.Q(start_date__isnull=False)
         
         column_names = 'id start_dt end_dt summary description user place calendar #rset url all_day reminder'
-        #~ can_add = perms.never
         
         start_dt = ExtDateTimeField('start',None,_("Start"))
         end_dt = ExtDateTimeField('end','start',_("End"))
@@ -1546,13 +1627,11 @@ if settings.LINO.use_extensible:
         "Note that this overrides the database field of same name"
         
         
-        #~ @dd.displayfield(_("Summary"))
-        #~ def summary(cls,self,request):
-            #~ "Note that this overrides the database field of same name"
-            #~ if self.project:
-                #~ return u"%s %s" % (self.project,self.summary)
-            #~ return self.summary
-            
+        @classmethod
+        def get_request_queryset(self,ar):
+            qs = super(PanelEvents,self).get_request_queryset(ar)
+            return user_events(qs,ar.get_user())
+      
         @classmethod
         def parse_req(self,request,rqdata,**kw):
             #~ filter = kw.get('filter',{})
@@ -1745,7 +1824,10 @@ def site_setup(site):
     #~ cal.ComingReminders:40x16 cal.MissedReminders:40x16
     #~ """)
     
-    site.modules.users.Users.add_detail_tab('cal.RemindersByUser')
+    site.modules.users.Users.add_detail_tab('cal',"""
+    cal.SubscriptionsByUser:30 cal.RemindersByUser:60
+    """,MODULE_LABEL,required=dict(user_groups='office'))
+    #~ site.modules.users.Users.add_detail_tab('cal.RemindersByUser')
     
     
 MODULE_LABEL = _("Calendar")
@@ -1776,7 +1858,8 @@ def setup_master_menu(site,ui,user,m):
     pass
     
 def setup_my_menu(site,ui,user,m): 
-    pass
+    m  = m.add_menu("cal",MODULE_LABEL)
+    #~ m.add_action(MySubscriptions)
     
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("cal",MODULE_LABEL)
@@ -1794,6 +1877,13 @@ def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("cal",MODULE_LABEL)
     m.add_action(Tasks)
     m.add_action(Guests)
+    m.add_action(Subscriptions)
     #~ m.add_action(RecurrenceSets)
 
+def setup_quicklinks(site,ui,user,m):
+    #~ print 20120706
+    if site.use_extensible:
+        #~ m.add_action(self.modules.cal.Panel)
+        m.add_action(Panel)
+        
 dd.add_user_group('office',MODULE_LABEL)

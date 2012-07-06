@@ -1,8 +1,8 @@
 =======================
-:mod:`lino.utils.perms`
+:mod:`lino.core.menus`
 =======================
 
-.. automodule:: lino.utils.perms
+.. automodule:: lino.core.menus
     :members:
     :show-inheritance:
 

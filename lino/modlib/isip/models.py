@@ -303,7 +303,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
                 else:
                     #~ print "20120227 clear contact!"
                     self.contact = None
-        # The severe test is ready but not yet activated :
+        # The severe test is ready and now also activated :
         if True:
           if self.person_id is not None:
             msg = OverlappingContractsTest(self.person).check(self)

@@ -40,15 +40,22 @@ You'll need the following Debian packages installed:
 * Packages needed by Lino to work::
 
     python-dateutil python-yaml python-cheetah python-docutils python-vobject python-lxml
-    
-* Some database frontend (choose one)::
-
     python-pysqlite2
     mysql-server python-mysqldb
     
+  Alternatively you can use PyPI to install these::
+    
+    python-dateutil
+    Cheetah
+    docutils
+    vobject 
+    lxml
+    pysqlite2
+    MySQL-python    
+    
 * If :attr:`lino.Lino.use_tinymce` is `True` (probably yes)::
 
-    tinymce 
+    tinymce
     
 * If you run :term:`watch_tim` as a daemon (probably not)::
 

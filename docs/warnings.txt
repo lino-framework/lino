@@ -1,27 +1,3 @@
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:47: WARNING: py:class reference target not found: dict
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:168: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:40: WARNING: py:mod reference target not found: dbfreader
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:48: WARNING: py:mod reference target not found: html2xhtml
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: HTMLParser.HTMLParser
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:56: WARNING: py:mod reference target not found: instantiator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:27: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:80: WARNING: py:class reference target not found: lino.fields.LinkedForeignKey
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:64: WARNING: py:mod reference target not found: latex
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:72: WARNING: py:mod reference target not found: menus
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:81: WARNING: py:mod reference target not found: restify
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:11: WARNING: py:mod reference target not found: docutils.examples
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:21: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:33: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:89: WARNING: py:mod reference target not found: ucsv
-T:\hgwork\lino\docs\autodoc\lino.utils.log.rst:85: WARNING: unknown document: /blog/2010/1129
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:11: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1227
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1229
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1230
-T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: ../2010/1231
-T:\hgwork\lino\docs\blog\2012\0706.rst:17: WARNING: py:meth reference target not found: lino.apps.presto.settings.Lino.setup_user_profiles
-T:\hgwork\lino\docs\blog\2012\0706.rst:17: WARNING: py:func reference target not found: lino.core.kernel.analyze_models
+T:\hgwork\lino\docs\blog\2012\0706.rst:31: WARNING: py:func reference target not found: lino.core.kernel.analyze_models
+T:\hgwork\lino\docs\blog\2012\0706.rst:56: WARNING: py:mod reference target not found: lino.extjs.urls

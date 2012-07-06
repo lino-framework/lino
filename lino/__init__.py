@@ -1025,13 +1025,14 @@ class Lino(object):
         
         return main
         
-    def setup_quicklinks(self,ui,user,tb):
-        """Override this 
+    def setup_quicklinks(self,ui,user,m):
+        """
+        Override this 
         in application-specific (or even local) :xfile:`settings.py` files 
         to define a series of *quick links* to appear below the main menu bar.
         Example see :meth:`lino.apps.pcsw.settings.Lino.setup_quicklinks`.
         """
-        pass
+        self.on_each_app('setup_quicklinks',ui,user,m)
         
     def setup_menu(self,ui,user,main):
         """
@@ -1061,15 +1062,19 @@ class Lino(object):
 
 
     def on_each_app(self,methname,*args):
-        """Call the named method on each module in :setting:`INSTALLED_APPS`
+        """
+        Call the named method on each module in :setting:`INSTALLED_APPS`
         that defines it.
         """
         from django.conf import settings
         from django.utils.importlib import import_module
+        from lino.utils import dblogger
+        
         for app_name in settings.INSTALLED_APPS:
             mod = import_module('.models', app_name)
             meth = getattr(mod,methname,None)
             if meth is not None:
+                dblogger.debug("Running %s of %s", methname, mod.__name__)
                 meth(self,*args)
         
         

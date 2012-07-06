@@ -2390,7 +2390,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ p.an = this.containing_window.config.action_name;
     //~ p.fmt = 'json';
     //~ p.fmt = '$ext_requests.URL_FORMAT_JSON';
-    p.$URL_PARAM_PANEL = this.getId();
+    p.$URL_PARAM_REQUESTING_PANEL = this.getId();
     p.$ext_requests.URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
@@ -2561,7 +2561,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     if (rec) {
       var p = {};
       Ext.apply(p,this.get_base_params());
-      p.$URL_PARAM_PANEL = this.getId();
+      p.$URL_PARAM_REQUESTING_PANEL = this.getId();
       if (rec.phantom) {
         if (this.action_name != 'insert') 
             console.log("Warning: phantom record, but action_name is",this.action_name)
@@ -2721,7 +2721,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     if (!options) options = {};
     if (!options.params) options.params = {};
     options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
-    options.params.$URL_PARAM_PANEL = this.grid_panel.getId();
+    options.params.$URL_PARAM_REQUESTING_PANEL = this.grid_panel.getId();
       
     var ps = this.grid_panel.calculatePageSize();
     
@@ -3955,36 +3955,8 @@ Lino.Window = Ext.extend(Ext.Window,{
     Lino.Window.superclass.initComponent.call(this);
   
   },
-  //~ toggle_params_panel : function() {
-      //~ if (this.main_item.params_panel.isVisible()) 
-          //~ this.main_item.params_panel.hide();
-      //~ else
-          //~ this.main_item.params_panel.show();
-      //~ this.doLayout();
-  //~ },
-  unused_show : function(animateTarget,callback,scope,after_show) {
-      //~ console.log('20120110 Lino.Window.show()',after_show);
-      if (this.caller && !this.caller.get_containing_window) 
-          console.log('20120124 WARNING: no get_containing_window in caller', this.caller);
-    
-      Lino.Window.superclass.show.call(this,animateTarget,callback,scope);
-      Lino.current_window = this;
-      if (!after_show) after_show = {};
-      this.main_item.after_show(after_show);
-      //~ this.window.show();
-      //~ this.refresh();
-      //~ Lino.load_mask.hide();
-      //~ console.log('20120110 Lino.Window.show() 2');
-      return this;
-  },
-  //~ kill : function() {
-    //~ Lino.Window.superclass.hide.call(this);
-    //~ Lino.current_window = this;
-  //~ },
   hide : function() { 
-      //~ var t = this;
       this.main_item.do_when_clean(false,function() { 
-        //~ Lino.close_window(t); });
         Lino.close_window(); });
   },
   hide_really : function() { 
@@ -4190,14 +4162,7 @@ Lino.davlink_open = function(webdavURL) {
 /*
 Mappings towards lino.modlib.cal.models.PanelCalendars
 */
-#set $S = $site.modules.cal.PanelCalendars.get_handle($ui).store
-//~ Ext.ensible.cal.CalendarMappings = {
-    //~ CalendarId:   {name:'ID', mapping: $S.column_index('id'), type: 'int'},
-    //~ Title:        {name:'CalTitle', mapping: $S.column_index('name'), type: 'string'},
-    //~ Description:  {name:'Desc', mapping: $S.column_index('description'), type: 'string'},
-    //~ ColorId:      {name:'Color', mapping: $S.column_index('color'), type: 'int'},
-    //~ IsHidden:     {name:'Hidden', mapping: $S.column_index('is_hidden'), type: 'boolean'},    
-//~ };
+// Sset SS = Ssite.modules.cal.PanelCalendars.get_handle(Sui).store
 Ext.ensible.cal.CalendarMappings = {
     CalendarId:   {name:'ID',       mapping: 'id', type: 'int'},
     Title:        {name:'CalTitle', mapping: 'name', type: 'string'},
@@ -4211,7 +4176,7 @@ Ext.ensible.cal.CalendarRecord.reconfigure();
 /*
 Mappings towards lino.modlib.cal.models.PanelEvents 
 */
-#set $S = $site.modules.cal.PanelEvents.get_handle($ui).store
+// Sset SS = Ssite.modules.cal.PanelEvents.get_handle(Sui).store
 Ext.ensible.cal.EventMappings = {
     EventId:     {name: 'ID',        mapping: 'id', type:'int'},
     CalendarId:  {name: 'CalID',     mapping: 'calendarHidden', type: 'int'},
@@ -4235,6 +4200,7 @@ Ext.ensible.cal.EventRecord.reconfigure();
 
 Lino.on_eventclick = function(cp,rec,el) {
   //~ console.log("Lino.on_eventclick",arguments);
+  //~ p.$URL_PARAM_REQUESTING_PANEL = cp.getId();
   Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
   return false;
 }
@@ -4407,25 +4373,13 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
       Lino.eventStore.load({params:p});
     }
   }
+  ,set_status : function(status) { this.refresh();}
+  ,refresh : function() {Lino.eventStore.reload();}
     
-  //~ ,enableEditDetails: false
-  //~ ,monthViewCfg: Lino.CalendarCfg
-  //~ ,weekViewCfg: Lino.CalendarCfg
-  //~ ,multiDayViewCfg: Lino.CalendarCfg
-  //~ ,multiWeekViewCfg: Lino.CalendarCfg
-  //~ ,dayViewCfg: Lino.CalendarCfg
-  
-  // This is the app UI layout code.  All of the calendar views are subcomponents of
-  // CalendarPanel, but the app title bar and sidebar/navigation calendar are separate
-  // pieces that are composed in app-specific layout code since they could be omitted
-  // or placed elsewhere within the application.
+    
   //~ ,layout: 'border'
   ,layout: 'fit'
   //~ ,items: Lino.CalendarAppPanel_items
-  // The CalendarPanel itself supports the standard Panel title config, but that title
-  // only spans the calendar views.  For a title that spans the entire width of the app
-  // we added a title to the layout's outer center region that is app-specific. This code
-  // updates that outer title based on the currently-selected view range anytime the view changes.
         
 });
 
@@ -4486,12 +4440,12 @@ Lino.calendar_app = function() { return {
                   // Lino.CalendarCfg
                   dateParamFormat: '$settings.LINO.date_format_extjs',
                   dateParamStart:'sd',
-                  dateParamEnd:'ed'
+                  dateParamEnd:'ed',
                 
                   //enableFx: false,
                   //ddIncrement: 10, //only applies to DayView and subclasses, but convenient to put it here
-                  //viewStartHour: 6,
-                  //viewEndHour: 18,
+                  viewStartHour: 8,
+                  viewEndHour: 18
                   //minEventDisplayMinutes: 15
               },
               

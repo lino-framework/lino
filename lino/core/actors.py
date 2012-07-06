@@ -157,11 +157,17 @@ class ActorMetaClass(type):
         if dt is not None:
             if dl is not None:
                 raise Exception("%r has both detail_template and detail_layout" % cls)
-            cls.detail_layout = layouts.FormLayout(dt,cls)
-        elif dl is not None:
-            assert dl._table is None
-            dl._table = cls
-            cls.detail_layout = dl
+            dl = dt
+            #~ cls.detail_layout = layouts.FormLayout(dt,cls)
+            
+        if dl is not None:
+            if isinstance(dl,basestring):
+                cls.detail_layout = layouts.FormLayout(dl,cls)
+            elif dl._table is None:
+                dl._table = cls
+                cls.detail_layout = dl
+            else:
+                raise Exception("Cannot reuse layout owned by another table")
             
         # the same for insert_template and insert_layout:
         dt = classDict.get('insert_template',None)

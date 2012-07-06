@@ -1,11 +1,13 @@
 20120706
 ========
 
+Configuring User Profiles
+-------------------------
+
 There was still a problem with yesterday's version.
 
 A development server on :mod:`lino.apps.presto` answered 
 with an `AttributeError` "'UserProfile' object has no attribute 'office_level'" 
-
 to the first request.
 
 To understand the problem, let's make a tour to the internals 
@@ -46,23 +48,35 @@ And now the magic has happened::
   >>> print repr(u.profile)
   UserProfile:900(level=admin,office=admin)
 
-Again, it's a pity that Django doesn't provide a "startup" signal which is
-launched once when all INSTALLED_APPS have been imported. 
-A startup signal would make these things less magic.
-
 Lino does this magic (calling `settings.LINO.startup()`) 
 when the first web request comes in.
+But more precisely,
+until now this magic was done in :mod:`lino.extjs3.urls`.
+Now it is also done in :mod:`lino.utils.auth` because 
+it's there where the User gets loaded.
+
+Again, it's a pity that Django doesn't provide a "startup" signal which is
+launched once when all INSTALLED_APPS have been imported. 
+A startup signal would make these things less magic,
+and save a few ticks per request for not needing to 
+check again and again whether it is the first one or not.
+
+Moved `perms` and `menus` from `lino.utils` to `lino.core`. 
+This  was an absolutely internal change, but it made me 
+discover a bug in :mod:`lino.apps.pcsw`: 
+
+- :mod:`lino.modlib.jobs` still used the old syntax for 
+  specifying requirements
 
 
-Until now this magic was done in :mod:`lino.extjs.urls`.
-Now it is also done in :mod:`lino.utils.auth`.
+Calendar
+--------
 
+- New model :class:`lino.modlib.cal.models.Subscription`.
+  Users now see other people's Events only if they have subscribed to their calendar.
+  
+- Calendar Panel now refreshes after editing the detail of an event  
 
-
-
-
-Moved `perms` and `menus` from `lino.utils` to `lino.core`.
-
-:mod:`lino.modlib.jobs` still used the old syntax for specifying requirements.
-
-
+- Day and Week view of calendar Panel now display hours between 8 and 18 
+  (and no longer between 0 and 24). This is currently a hard-coded value 
+  (`viewStartHour: 8, viewEndHour: 18`) and cannot be configured.

@@ -241,7 +241,7 @@ class TableRequest(actions.ActionRequest):
         if quick_search:
             kw.update(quick_search=quick_search)
             
-        requesting_panel = rqdata.get(ext_requests.URL_PARAM_PANEL,None)
+        requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
         if requesting_panel:
             kw.update(requesting_panel=requesting_panel)
             

@@ -24,7 +24,6 @@
     lino.utils.babel
     lino.utils.choosers
     lino.utils.memo
-    lino.utils.perms
     lino.utils.ranges
     lino.utils.tables
     lino.utils.test
@@ -65,14 +64,6 @@ The :mod:`latex` Module
 -----------------------
 
 .. automodule:: lino.utils.latex
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`menus` Module
------------------------
-
-.. automodule:: lino.utils.menus
     :members:
     :undoc-members:
     :show-inheritance:

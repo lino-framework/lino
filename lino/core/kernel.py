@@ -88,7 +88,8 @@ def analyze_models():
     if DONE: return
     DONE = True
     
-    #~ from django.conf import settings
+    settings.LINO.setup_user_profiles()
+    
     #~ settings.LINO.setup_user_profiles()
     
     logger.info("Analyzing models...")
@@ -390,8 +391,6 @@ def startup_site(self):
         if self.project_model:
             self.project_model = resolve_model(self.project_model)
 
-        self.setup_user_profiles()
-            
         
         for model in models.get_models():
           

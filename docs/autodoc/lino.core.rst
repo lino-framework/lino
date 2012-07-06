@@ -9,9 +9,11 @@
 
 .. toctree::
 
-    lino.core.table
-    lino.core.actors
     lino.core.actions
+    lino.core.actors
     lino.core.fields
-    lino.core.modeltools
     lino.core.layouts
+    lino.core.menus
+    lino.core.modeltools
+    lino.core.perms
+    lino.core.table

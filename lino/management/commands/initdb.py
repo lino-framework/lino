@@ -77,6 +77,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
       
+        #~ settings.LINO.startup()
+      
         from lino.core.kernel import analyze_models
         analyze_models()
       
