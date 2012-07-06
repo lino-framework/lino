@@ -37,25 +37,27 @@ e.g. by doing::
   >>> settings.LINO.startup()
   INFO Starting Lino...
   INFO Analyzing models...
-  20120705 UserProfile:(level=blank_item,office=blank_item)
-  20120705 UserProfile:100(level=user,office=user)
-  20120705 UserProfile:900(level=admin,office=admin)
   INFO Lino Site 'presto@armand' started. Languages: de. 117 actors.
-  INFO Using Lino 1.4.4, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.
-  4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.
+  INFO Using Lino 1.4.4, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.
   
-
-Until now, this was silently happening when the first 
-web request comes in.
-
-
-And now, magic::
+And now the magic has happened::
 
   >>> u = User.objects.all()[0]
   >>> print repr(u.profile)
   UserProfile:900(level=admin,office=admin)
 
-But how can I make this transparent?
+Again, it's a pity that Django doesn't provide a "startup" signal which is
+launched once when all INSTALLED_APPS have been imported. 
+A startup signal would make these things less magic.
+
+Lino does this magic (calling `settings.LINO.startup()`) 
+when the first web request comes in.
+
+
+Until now this magic was done in :mod:`lino.extjs.urls`.
+Now it is also done in :mod:`lino.utils.auth`.
+
+
 
 
 

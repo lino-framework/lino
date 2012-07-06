@@ -54,7 +54,7 @@ from lino.ui import base
         #~ return rr.render()
         
 from lino.utils.tables import TableRequest
-from lino.extjs import ui as extui
+#~ from lino.extjs import ui as extui
 
 class PseudoRequest:
     def __init__(self,name):
@@ -71,11 +71,11 @@ class Console(base.UI):
         #~ settings.LINO.setup()
         #~ self.request = PseudoRequest(username)
         base.UI.__init__(self)
-        self.create_layout_element = extui.create_layout_element
-        self.create_layout_panel = extui.create_layout_panel
+        self.create_layout_element = settings.LINO.ui.create_layout_element
+        self.create_layout_panel = settings.LINO.ui.create_layout_panel
         
     def setup_handle(self,h,ar):
-        extui.setup_handle(h,ar)
+        settings.LINO.ui.setup_handle(h,ar)
         
     #~ def create_layout_element(self,lh,name,**kw):
         #~ return extui.create_layout_element(lh,name,**kw)

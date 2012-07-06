@@ -38,6 +38,7 @@ from lino.utils.xmlgen import etree
 
 
 from django.utils.encoding import force_unicode
+from django.conf import settings
 
 
 #~ from lino.utils.xmlgen import odf
