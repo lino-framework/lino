@@ -1582,7 +1582,7 @@ def user_calendars(qs,user):
 def user_events(qs,user):
     Q = models.Q
     subs = Subscription.objects.filter(user=user).values_list('calendar__id',flat=True)
-    return qs.filter(Q(user=user) | Q(calendar_id__in=subs))
+    return qs.filter(Q(user=user) | Q(calendar__id__in=subs))
 
 if settings.LINO.use_extensible:
   
