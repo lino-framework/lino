@@ -102,6 +102,14 @@ def objects():
     USERS = Cycler(User.objects.all())
     ETYPES = Cycler(EventType.objects.all())
     TIMES = Cycler(['08:30','09:40','10:20','11:10','13:30'])
+    #~ dict(en='Lunch',de=u"Mittagessen",fr=u"Diner")
+    #~ dict(en='Dinner',de=u"Abendessen",fr=u"Souper")
+    #~ dict(en='Breakfast',de=u"Frühstück",fr=u"Petit-déjeuner")
+    #~ dict(en='Meeting',de=u"Treffen",fr=u"Rencontre")
+    #~ dict(en='Consultation',de=u"Beratung",fr=u"Consultation")
+    #~ dict(en='Seminar',de=u"Seminar",fr=u"Séminaire")
+    #~ dict(en='Evaluation',de=u"Auswertung",fr=u"Evaluation")
+    #~ dict(en='First meeting',de=u"Erstgespräch",fr=u"Première rencontre")
     SUMMARIES = Cycler("""\
 Meeting with Michael
 Seminar in Brussels

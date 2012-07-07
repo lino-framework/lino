@@ -1,0 +1,10 @@
+20120707
+========
+
+
+- New algorithm for generating automatic events. 
+  :class:`lino.modlib.cal.EventGenerator`.
+  
+- If the user has no permission to see a configuration table, 
+  FKs to that table were still rendered with a Lino.fk_renderer. 
+  Fixed.

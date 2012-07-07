@@ -80,3 +80,18 @@ Calendar
 - Day and Week view of calendar Panel now display hours between 8 and 18 
   (and no longer between 0 and 24). This is currently a hard-coded value 
   (`viewStartHour: 8, viewEndHour: 18`) and cannot be configured.
+
+
+Lino at Pixelbar
+----------------
+
+A new Lino is born!
+There is now a first public demo of Lino at 
+http://lino.pixelbar-bahamut.net/
+
+Note: the following error message was due to the fact that it used Django 1.3:
+
+  NotImplementedError at /
+  No LayoutElement for permissions (<class 'django.db.models.fields.related.ManyToManyField'>) in ListLayout on auth.GroupTable
+
+

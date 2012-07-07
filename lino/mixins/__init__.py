@@ -211,7 +211,7 @@ class UserAuthored(dd.Model):
 
     def get_row_permission(self,user,state,action):
         """
-        Managers can edit other users' work.
+        Only system managers can edit other users' work.
         """
         if self.user != user and user.profile.level < UserLevels.manager:
             return False

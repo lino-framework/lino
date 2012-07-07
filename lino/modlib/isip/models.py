@@ -332,11 +332,14 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
     def update_cal_from(self):
         return self.applies_from
         
+    def update_cal_event_type(self,i):
+        return self.exam_policy.event_type
+        
     def update_cal_until(self):
         return self.date_ended or self.applies_until
         
     def update_cal_subject(self,i):
-        return _("Evaluation %d") % (i + 1)
+        return _("Evaluation %d") % i
         
     def update_reminders(self):
         super(ContractBase,self).update_reminders()

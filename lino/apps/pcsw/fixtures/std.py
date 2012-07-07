@@ -189,14 +189,22 @@ def objects():
     
     
     from lino.modlib.cal.utils import DurationUnits
+    from lino.modlib.cal.models import EventType
+    
+    et = EventType(**babel_values('name',
+      de=u'Auswertung',
+      fr=u"Evaluation",
+      en=u"Evaluation",
+      ))
+    yield et
 
     exam_policy = Instantiator('isip.ExamPolicy','every',every_unit=DurationUnits.months).build
-    yield exam_policy(1,**babel_values('name',en='every month',de='monatlich',fr="mensuel"))
-    yield exam_policy(2,**babel_values('name',en='every 2 months',de='zweimonatlich',fr="bimensuel"))
-    yield exam_policy(3,**babel_values('name',en='every 3 months',de='alle 3 Monate',fr="tous les 3 mois"))
+    yield exam_policy(1,event_type=et,start_time="9:00",**babel_values('name',en='every month',de='monatlich',fr="mensuel"))
+    yield exam_policy(2,event_type=et,start_time="9:00",**babel_values('name',en='every 2 months',de='zweimonatlich',fr="bimensuel"))
+    yield exam_policy(3,event_type=et,start_time="9:00",**babel_values('name',en='every 3 months',de='alle 3 Monate',fr="tous les 3 mois"))
     exam_policy = Instantiator('isip.ExamPolicy','every',every_unit=DurationUnits.weeks).build
-    yield exam_policy(2,**babel_values('name',en='every 2 weeks',de='zweiwöchentlich',fr="hebdomadaire"))
-    exam_policy = Instantiator('isip.ExamPolicy','every').build
+    yield exam_policy(2,event_type=et,start_time="9:00",**babel_values('name',en='every 2 weeks',de='zweiwöchentlich',fr="hebdomadaire"))
+    exam_policy = Instantiator('isip.ExamPolicy').build
     yield exam_policy(0,**babel_values('name',en='other',de='andere',fr="autre"))
         
     #~ def create_dsbe_aidtype(id,name,name_fr):

@@ -552,7 +552,3 @@ class Command(DaemonCommand):
         main(*args,**options)
 
 
-    #~ def handle(self, *args, **options):
-        #~ logger.info("handle(%r,%r)",args,options)
-        #~ dblogger.info("handle(%r,%r)",args,options)
-        #~ return DaemonCommand.handle(self,*args,**options)

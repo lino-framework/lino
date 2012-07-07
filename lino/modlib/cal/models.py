@@ -39,7 +39,7 @@ from lino import dd
 #~ from lino.core import reports
 from lino.core import actions
 from lino.utils import babel
-from lino.utils import dblogger
+from lino.utils import AttrDict
 from lino.core.modeltools import resolve_model, obj2str
 
 from lino.modlib.contacts import models as contacts
@@ -197,7 +197,7 @@ def default_calendar(user):
         cal = Calendar(user=user,is_default=True,color=color)
         cal.full_clean()
         cal.save()
-        dblogger.debug(u"Created default calendar for %s.",user)
+        logger.debug(u"Created default calendar for %s.",user)
         return cal
 
 
@@ -265,105 +265,6 @@ class Places(dd.Table):
     cal.EventsByPlace
     """
     
-    
-    
-class EventGenerator(mixins.UserAuthored):
-    """
-    Base class for things that generate a suite of events.
-    Examples
-    :class:`isip.Contract`,     :class:`jobs.Contract`, 
-    :class:`schools.Course`
-    """
-    
-    class Meta:
-        abstract = True
-        
-    def save(self,*args,**kw):
-        super(EventGenerator,self).save(*args,**kw)
-        self.update_reminders()
-  
-    def update_cal_rset(self):
-        return self.exam_policy
-        
-    def update_cal_from(self):
-        return self.applies_from
-        
-    def update_cal_until(self):
-        return self.date_ended or self.applies_until
-        
-    def update_cal_subject(self,i):
-        return _("Evaluation %d") % (i + 1)
-
-    def update_reminders(self):
-        """
-        Generate automatic calendar events owned by this contract.
-        
-        [NOTE1] if one event has been manually rescheduled, all following events
-        adapt to the new rythm.
-        
-        """
-        #~ MAX_AUTO_EVENTS = 36
-        if True: # self.user:
-            rset = self.update_cal_rset()
-            if rset and rset.every > 0 and rset.every_unit:
-                date = self.update_cal_from()
-                defaults = dict(start_time=rset.start_time,end_time=rset.end_time)
-            else:
-                date = None
-                defaults = dict()
-            until = self.update_cal_until()
-            if not until:
-                date = None
-            for i in range(settings.LINO.max_auto_events):
-                if date:
-                    date = rset.every_unit.add_duration(date,rset.every)
-                    #~ date = DurationUnit.months.add_duration(
-                            #~ date,self.exam_policy.every)
-                    if until and date > until:
-                        date = None
-                #~ subject = _("Evaluation %d") % (i + 1)
-                subject = self.update_cal_subject(i)
-                e = update_auto_event(
-                  i + 1,
-                  self.user,
-                  date,subject,self,
-                  **defaults)
-                if e: # [NOTE1]
-                    date = e.start_date
-    
-
-#~ class EventStatus(babel.BabelNamed):
-    #~ "The status of an Event."
-    #~ class Meta:
-        #~ verbose_name = _("Event Status")
-        #~ verbose_name_plural = _('Event Statuses')
-    #~ ref = models.CharField(max_length='1')
-    #~ reminder = models.BooleanField(_("Reminder"),default=True)
-    
-#~ class EventStatuses(dd.Table):
-    #~ model = EventStatus
-    #~ column_names = 'name *'
-
-#~ class TaskStatus(babel.BabelNamed):
-    #~ "The status of a Task."
-    #~ class Meta:
-        #~ verbose_name = _("Task Status")
-        #~ verbose_name_plural = _('Task Statuses')
-    #~ ref = models.CharField(max_length='1')
-#~ class TaskStatuses(dd.Table):
-    #~ model = TaskStatus
-    #~ column_names = 'name *'
-
-#~ class GuestStatus(babel.BabelNamed):
-    #~ "The status of a Guest."
-    #~ class Meta:
-        #~ verbose_name = _("Guest Status")
-        #~ verbose_name_plural = _('Guest Statuses')
-    #~ ref = models.CharField(max_length='1')
-#~ class GuestStatuses(dd.Table):
-    #~ model = GuestStatus
-    #~ column_names = 'name *'
-
 class Priority(babel.BabelNamed):
     "The priority of a Task or Event."
     class Meta:
@@ -410,6 +311,229 @@ class EventTypes(dd.Table):
     """
 
 
+
+    
+    
+#~ class AutoEvent(object):
+    #~ def __init__(self,auto_id,user,date,subject,owner,start_time,end_time):
+        #~ self.auto_id = auto_id
+        #~ self.user = user
+        #~ self.date = date
+        #~ self.subject = subject
+        #~ self.owner = owner
+        #~ self.start_time = start_time
+        #~ self.end_time = end_time
+    
+    
+class EventGenerator(mixins.UserAuthored):
+    """
+    Base class for things that generate a suite of events.
+    Examples
+    :class:`isip.Contract`,     :class:`jobs.Contract`, 
+    :class:`schools.Course`
+    """
+    
+    class Meta:
+        abstract = True
+        
+    def save(self,*args,**kw):
+        super(EventGenerator,self).save(*args,**kw)
+        self.update_reminders()
+  
+    def update_cal_rset(self):
+        return self.exam_policy
+        
+    def update_cal_from(self):
+        return self.applies_from
+        
+    def update_cal_event_type(self,i):
+        return None
+        
+    def update_cal_until(self):
+        return self.date_ended or self.applies_until
+        
+    def update_cal_subject(self,i):
+        raise NotImplementedError()
+        #~ return _("Evaluation %d") % i
+
+    def update_reminders(self):
+        """
+        Generate automatic calendar events owned by this contract.
+        
+        [NOTE1] if one event has been manually rescheduled, all following events
+        adapt to the new rythm.
+        
+        """
+        return self.update_auto_events()
+            
+        #~ rset = self.update_cal_rset()
+        #~ if rset and rset.every > 0 and rset.every_unit:
+            #~ date = self.update_cal_from()
+            #~ defaults = dict(start_time=rset.start_time,end_time=rset.end_time)
+        #~ else:
+            #~ date = None
+            #~ defaults = dict()
+        #~ until = self.update_cal_until()
+        #~ if not until:
+            #~ date = None
+        #~ for i in range(settings.LINO.max_auto_events):
+            #~ if date:
+                #~ date = rset.every_unit.add_duration(date,rset.every)
+                #~ if until and date > until:
+                    #~ date = None
+            #~ subject = self.update_cal_subject(i)
+            #~ e = update_auto_event(
+              #~ i + 1,
+              #~ self.user,
+              #~ date,subject,self,
+              #~ **defaults)
+            #~ if e: # [NOTE1]
+                #~ date = e.start_date
+                
+    def update_auto_events(self):
+        if settings.LINO.loading_from_dump: 
+            #~ print "20111014 loading_from_dump"
+            return 
+        qs = self.get_existing_auto_events()
+        wanted = self.get_wanted_auto_events()
+        current = 0
+        #~ LEN = len(wanted)
+        
+        msg = obj2str(self)
+        msg += ", qs=" + str([e.auto_type for e in qs])
+        msg += ", wanted=" + str([babel.dtos(e.start_date) for e in wanted.values()])
+        logger.info('20120707 ' + msg)
+        
+        for e in qs:
+            ae = wanted.pop(e.auto_type,None)
+            if ae is None:
+                # there is an unwanted event in the database
+                if not e.is_user_modified():
+                    e.delete()
+                #~ else:
+                    #~ e.auto_type = None
+                    #~ e.save()
+            elif e.is_user_modified():
+                if e.start_date != ae.start_date:
+                    # modify subsequent dates
+                    delta = e.start_date - ae.start_date
+                    for se in wanted.values():
+                        se.start_date += delta
+            else:
+                self.compare_auto_event(e,ae)
+        # create new Events for remaining wanted
+        for ae in wanted.values():
+            Event(**ae).save()
+            
+    def compare_auto_event(self,obj,ae):
+        original_state = dict(obj.__dict__)
+        if obj.user != ae.user:
+            obj.user = ae.user
+        summary = force_unicode(ae.summary)
+        if obj.summary != summary:
+            obj.summary = summary
+        if obj.start_date != ae.start_date:
+            obj.start_date = ae.start_date
+        if obj.start_time != ae.start_time:
+            obj.start_time = ae.start_time
+        if obj.end_time != ae.end_time:
+            obj.end_time = ae.end_time
+        if obj.type != ae.type:
+            obj.type = ae.type
+        if obj.__dict__ != original_state:
+            obj.save()
+      
+    def get_wanted_auto_events(self):
+        wanted = dict()
+        rset = self.update_cal_rset()
+        if rset and rset.every > 0 and rset.every_unit:
+            date = self.update_cal_from()
+            if not date:
+                return wanted
+        else:
+            return wanted
+        until = self.update_cal_until()
+        if not until:
+            return wanted
+        i = 0
+        obsolete = datetime.date.today() + datetime.timedelta(days=-7)
+        while i <= settings.LINO.max_auto_events:
+            i += 1
+            date = rset.every_unit.add_duration(date,rset.every)
+            if date > until:
+                return wanted
+            if date > obsolete:
+                wanted[i] = AttrDict(
+                    auto_type=i,
+                    user=self.user,
+                    start_date=date,
+                    summary=self.update_cal_subject(i),
+                    owner=self,
+                    type=self.update_cal_event_type(i),
+                    start_time=rset.start_time,
+                    end_time=rset.end_time)
+        return wanted
+                    
+        
+    def get_existing_auto_events(self):
+        ot = ContentType.objects.get_for_model(self.__class__)
+        return Event.objects.filter(
+            owner_type=ot,owner_id=self.pk,
+            auto_type__isnull=False).order_by('auto_type')
+        
+        #~ if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
+            #~ defaults.setdefault('user',user)
+            #~ obj,created = model.objects.get_or_create(
+              #~ defaults=defaults,
+              #~ owner_id=owner.pk,
+              #~ owner_type=ot,
+              #~ auto_type=autotype)
+            #~ if not obj.is_user_modified():
+                #~ original_state = dict(obj.__dict__)
+                #~ if obj.user != user:
+                    #~ obj.user = user
+                #~ summary = force_unicode(summary)
+                #~ if obj.summary != summary:
+                    #~ obj.summary = summary
+                #~ if obj.start_date != date:
+                    #~ obj.start_date = date
+                #~ if created or obj.__dict__ != original_state:
+                    #~ obj.save()
+            #~ return obj
+                
+
+
+#~ class EventStatus(babel.BabelNamed):
+    #~ "The status of an Event."
+    #~ class Meta:
+        #~ verbose_name = _("Event Status")
+        #~ verbose_name_plural = _('Event Statuses')
+    #~ ref = models.CharField(max_length='1')
+    #~ reminder = models.BooleanField(_("Reminder"),default=True)
+    
+#~ class EventStatuses(dd.Table):
+    #~ model = EventStatus
+    #~ column_names = 'name *'
+
+#~ class TaskStatus(babel.BabelNamed):
+    #~ "The status of a Task."
+    #~ class Meta:
+        #~ verbose_name = _("Task Status")
+        #~ verbose_name_plural = _('Task Statuses')
+    #~ ref = models.CharField(max_length='1')
+#~ class TaskStatuses(dd.Table):
+    #~ model = TaskStatus
+    #~ column_names = 'name *'
+
+#~ class GuestStatus(babel.BabelNamed):
+    #~ "The status of a Guest."
+    #~ class Meta:
+        #~ verbose_name = _("Guest Status")
+        #~ verbose_name_plural = _('Guest Statuses')
+    #~ ref = models.CharField(max_length='1')
+#~ class GuestStatuses(dd.Table):
+    #~ model = GuestStatus
+    #~ column_names = 'name *'
 
 class CalendarRelated(mixins.UserAuthored):
     "Deserves more documentation."
@@ -565,6 +689,8 @@ class RecurrenceSet(ComponentBase,Ended):
         default=DurationUnits.months,
         blank=True) # iCal:DURATION
         
+    event_type = models.ForeignKey(EventType,null=True,blank=True)
+    
     #~ rdates = models.TextField(_("Recurrence dates"),blank=True)
     #~ exdates = models.TextField(_("Excluded dates"),blank=True)
     #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
@@ -795,10 +921,10 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     #~ def end_date_changed(self,oldvalue): self.compute_times()
     #~ def end_time_changed(self,oldvalue): self.compute_times()
         
-    def save(self,*args,**kw):
-        if not self.state and self.start_date and self.start_date < datetime.date.today():
-            self.state = EventState.obsolete
-        super(Event,self).save(*args,**kw)
+    #~ def save(self,*args,**kw):
+        #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
+            #~ self.state = EventState.obsolete
+        #~ super(Event,self).save(*args,**kw)
         
     def on_user_change(self,request):
         if not self.state:
@@ -1397,16 +1523,14 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     s = '<div class="htmlText">%s</div>' % s
     return s
 
-#~ SKIP_AUTO_TASKS = False 
-#~ "See :doc:`/blog/2011/0727`"
 
 def update_auto_event(autotype,user,date,summary,owner,**defaults):
-    model = resolve_model('cal.Event')
-    return update_auto_component(model,autotype,user,date,summary,owner,**defaults)
+    #~ model = resolve_model('cal.Event')
+    return update_auto_component(Event,autotype,user,date,summary,owner,**defaults)
   
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
-    model = resolve_model('cal.Task')
-    return update_auto_component(model,autotype,user,date,summary,owner,**defaults)
+    #~ model = resolve_model('cal.Task')
+    return update_auto_component(Task,autotype,user,date,summary,owner,**defaults)
     
 def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     """
@@ -1422,7 +1546,6 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     if settings.LINO.loading_from_dump: 
         #~ print "20111014 loading_from_dump"
         return None
-    #~ if is_deserializing(): return 
     ot = ContentType.objects.get_for_model(owner.__class__)
     if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
         #~ defaults = owner.get_auto_task_defaults(**defaults)
@@ -1435,25 +1558,12 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
         if not obj.is_user_modified():
             original_state = dict(obj.__dict__)
             if obj.user != user:
-                #~ logger.info("20120211 must save %s because user changed",obj.pk)
                 obj.user = user
-                #~ must_save = True
             summary = force_unicode(summary)
             if obj.summary != summary:
-                #~ logger.info("20120211 must save %s because summary changed",obj.pk)
                 obj.summary = summary
-                #~ must_save = True
-            #~ obj.summary = summary
             if obj.start_date != date:
-                #~ logger.info("20120211 must save %s because start_date changed",obj.pk)
                 obj.start_date = date
-                #~ must_save = True
-            #~ print "20111014 gonna save() task", task
-            #~ for k,v in kw.items():
-                #~ setattr(obj,k,v)
-            #~ obj.due_date = date - delta
-            #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
-            #~ owner.update_owned_task(task)
             if created or obj.__dict__ != original_state:
                 obj.save()
         return obj
@@ -1476,13 +1586,10 @@ def update_reminder(type,owner,user,orig,msg,num,unit):
     A reminder task is a message about something that will 
     happen in the future.
     """
-    #~ kw = dict(unit=unit,num=num,msg=msg)
     update_auto_task(
       type,user,
       unit.add_duration(orig,-num),
       msg,
-      #~ _("%(msg)s in %(num)d %(unit)s") % kw,
-      #~ unicode(msg)+,' ',_("in %(num)d %(unit)s" % kw)),
       owner)
             
 

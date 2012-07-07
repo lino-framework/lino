@@ -240,8 +240,6 @@ class Lino(Lino):
         
         for obj in self.modules.contacts.Person.objects.filter(
           Q(coach2=user)|Q(coach2__isnull=True,coach1=user)):
-        #~ for obj in only_my_persons(
-            #~ self.modules.contacts.Person.objects.all(),user):
             yield obj
         for obj in self.modules.uploads.Upload.objects.filter(user=user):
             yield obj

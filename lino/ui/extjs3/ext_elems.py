@@ -178,9 +178,10 @@ class GridColumn(jsgen.Component):
                 # FK fields are clickable if their target has a detail view
                 rpt = fld.rel.to._lino_default_table
                 if rpt.detail_action is not None:
-                    return "Lino.fk_renderer('%s','Lino.%s')" % (
-                      name + ext_requests.CHOICES_HIDDEN_SUFFIX,
-                      rpt.detail_action)
+                    if rpt.detail_action.get_action_permission(jsgen._for_user,None,None):
+                        return "Lino.fk_renderer('%s','Lino.%s')" % (
+                          name + ext_requests.CHOICES_HIDDEN_SUFFIX,
+                          rpt.detail_action)
               
             rend = None
             if isinstance(editor.field,models.AutoField):

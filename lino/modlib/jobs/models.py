@@ -536,7 +536,7 @@ class ContractDetail(dd.FormLayout):
     box1 = """
     id:8 person:25 user:15 user_asd:15 language:8
     job type company contact:20     
-    applies_from duration applies_until 
+    applies_from duration applies_until exam_policy
     regime:20 schedule:30 hourly_rate:10 refund_rate:10
     date_decided date_issued date_ended ending
     reference_person build_time
