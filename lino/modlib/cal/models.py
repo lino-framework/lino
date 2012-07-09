@@ -212,9 +212,13 @@ class Subscription(mixins.UserAuthored):
     :calendar: points to the subscribed Calendar
     
     """
+    
     class Meta:
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
+        
+    quick_search_fields = ('user__username','user__first_name','user__last_name')
+    
     calendar = models.ForeignKey(Calendar,help_text=_("""\
 The calendar you want to subscribe to.
 You can subscribe to *non-private* calendars of *other* users."""))

@@ -5,7 +5,7 @@ When a state has a `required` attribute, Lino will automatically
 add a corresponding `StateAction`.
 This allows for more concise code when defining simple workflows.
 
-For example, the Event workflow is now as this::
+For example, the code to define calendar events workflow is now as this::
 
   add = EventState.add_item
   add('10', _("Draft"), 'draft')
@@ -18,15 +18,11 @@ For example, the Event workflow is now as this::
   add('80', _("Absent"),'absent',required=dict(states=['scheduled','notified','confirmed']))
   add('90', _("Obsolete"),'obsolete',required=dict(states=[]))
   
-Previously we had to write a whole action similar to the following 
-for each line in above code::
+Previously we had to write, for each line in above code, 
+a whole method similar to the following::
   
     @dd.action(EventState.notified.text,sort_index=11,required=dict(states=['scheduled']))
     def mark_notified(self,ar):
-        """
-        Running this action means 
-        "This event has somehow (no matter how) been notified to the guests."
-        """
         self.state = EventState.notified
         self.save()
         return ar.ui.success_response(refresh=True)
@@ -49,6 +45,14 @@ defined "by hand".
 
 
 TODO: 
-- replace before_state_change by state_changed
-- StateAction would currently work if workflow_state_field 
-  is something else tahn "state".
+
+- replace `before_state_change` by `state_changed`?
+
+- StateAction would currently not work if workflow_state_field 
+  is something else than "state".
+  
+- The choicelist that opens for Subscription.calendar
+  still ignores the query string.   
+  One new feature is 
+  :attr:`lino.core.modeltools.Model.quick_search_fields`,
+  though that wasn't yet the solution.

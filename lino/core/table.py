@@ -175,11 +175,21 @@ def add_quick_search_filter(qs,search_text):
     if not isinstance(qs,QuerySet): 
         # TODO: filter also simple lists 
         return qs
+    logger.info("20120709 add_quick_search_filter(%s,%r)",qs.model,search_text)
     q = models.Q()
-    for field in qs.model._meta.fields:
-        if isinstance(field,models.CharField):
-            kw = {field.name+"__icontains": search_text}
+    if qs.model.quick_search_fields is not None:
+        for fn in qs.model.quick_search_fields:
+            kw = {fn+"__icontains": search_text}
             q = q | models.Q(**kw)
+            logger.info("20120709 %s__icontains=%r",fn,search_text)
+    else:
+        for field in qs.model._meta.fields:
+            if isinstance(field,models.CharField):
+                kw = {field.name+"__icontains": search_text}
+                q = q | models.Q(**kw)
+                logger.info("20120709 %s__icontains=%r",field.name,search_text)
+            else:
+                logger.info("20120709 %s : not a CharField",field.name)
     if search_text.isdigit():
         for field in qs.model._meta.fields:
             if isinstance(field,(models.IntegerField,models.AutoField)):

@@ -59,6 +59,7 @@ class Chooser(FieldChooser):
     simple_values = False
     instance_values = True
     force_selection = True
+    #~ quick_search_fields = None
     #~ force_selection = True
     #~ on_quick_insert = None
     #~ quick_insert_field = None

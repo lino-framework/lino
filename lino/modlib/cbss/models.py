@@ -387,7 +387,8 @@ The raw XML response received.
         editable=False,blank=True)
 
     #~ send_action = ExecuteRequest()
-    print_action = mixins.DirectPrintAction(required=dict(states=['ok','warnings']))
+    #~ print_action = mixins.DirectPrintAction(required=dict(states=['ok','warnings']))
+    print_action = mixins.DirectPrintAction()
     
     
     #~ def save(self,*args,**kw):

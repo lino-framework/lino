@@ -2103,7 +2103,7 @@ tinymce.init({
         else:
             """
             NOTE: if you define a *parameter* with the same name 
-            as some existing *data* element name, then the parameter 
+            as some existing *data element* name, then the parameter 
             will override the data element. At least here in choices view.
             """
             #~ field = find_field(rpt.model,fldname)
@@ -2113,7 +2113,8 @@ tinymce.init({
             #~ logger.info("20120202 %r",field)
             chooser = choosers.get_for_field(field)
             if chooser:
-                qs = list(chooser.get_request_choices(ar,rpt))
+                qs = chooser.get_request_choices(ar,rpt)
+                #~ qs = list(chooser.get_request_choices(ar,rpt))
                 #~ logger.info("20120213 %s",qs)
                 #~ if qs is None:
                     #~ qs = []
@@ -2149,19 +2150,8 @@ tinymce.init({
                 
             elif isinstance(field,models.ForeignKey):
                 m = field.rel.to
-                #~ cr = getattr(m,'_lino_choices_table',None)
                 t = getattr(m,'_lino_choices_table',m._lino_default_table)
-                #~ tblclass = getattr(m,'_lino_choices_table',m._lino_default_table)
-                #~ if tblclass is not None:
-                    #~ tbl = tblclass()
-                #~ else:
-                    #~ tbl = m._lino_default_table
                 qs = t.request(self,request).data_iterator
-                #~ ar = table.TableRequest(self,tbl,request,tbl.default_action)
-                #~ qs = ar.get_queryset()
-                #~ qs = mr.request(self,**mr.default_params).get_queryset()
-                #~ qs = get_default_qs(field.rel.to)
-                #~ qs = field.rel.to.objects.all()
                 def row2dict(obj,d):
                     d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
                     d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
@@ -2170,9 +2160,9 @@ tinymce.init({
                 raise Http404("No choices for %s" % fldname)
                 
                 
-        quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
-        if quick_search is not None:
-            qs = table.add_quick_search_filter(qs,quick_search)
+        #~ quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
+        #~ if quick_search is not None:
+            #~ qs = table.add_quick_search_filter(qs,quick_search)
             
         count = len(qs)
             

@@ -85,6 +85,14 @@ class Model(models.Model):
     
     """
     
+    quick_search_fields = None
+    """
+    When quick_search text is given for a table on this model, 
+    Lino by default searches the query text in all CharFields.
+    But on models with `quick_search_fields` will search only those fields.
+    """
+
+    
     workflow_state_field = None
     """
     If this is set on a Model, then it will be used as default 
