@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-04 20:40+0100\n"
+"POT-Creation-Date: 2012-07-08 10:59+0100\n"
 "PO-Revision-Date: 2012-02-21 20:01+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -16,43 +16,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:66
+#: .\models.py:65
 msgid "User"
 msgstr "Benutzer"
 
-#: .\models.py:67
+#: .\models.py:66
 msgid "Users"
 msgstr "Benutzer"
 
-#: .\models.py:69
+#: .\models.py:68
 #, fuzzy
 msgid "Username"
 msgstr "Benutzername"
 
-#: .\models.py:71
+#: .\models.py:70
 msgid ""
 "\n"
 "        Required. Must be unique. \n"
 "        "
 msgstr ""
 
-#: .\models.py:77
+#: .\models.py:76
 msgid "First name"
 msgstr ""
 
-#: .\models.py:78
+#: .\models.py:77
 msgid "Last name"
 msgstr ""
 
-#: .\models.py:79
+#: .\models.py:78
 msgid "e-mail address"
 msgstr ""
 
-#: .\models.py:81
+#: .\models.py:80
 msgid "Remarks"
 msgstr ""
 
-#: .\models.py:105
+#: .\models.py:104
 msgid "Name"
 msgstr ""
 

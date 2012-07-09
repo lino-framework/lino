@@ -963,7 +963,11 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ return self.description
         
             
-        
+    def allow_state_scheduled(self,user):
+        #~ print '20120709 allow_state_scheduled'
+        if not self.start_time: return False
+        return True
+      
     #~ @classmethod
     #~ def setup_report(cls,rpt):
         #~ mixins.TypedPrintable.setup_report(rpt)
@@ -986,57 +990,53 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             return self.project.get_print_language(bm)
         return self.user.language
         
-    @dd.action(EventState.scheduled.text,sort_index=10,required=dict(states=['','draft']))
-    def mark_scheduled(self,ar):
-        #~ print 'TODO: would suggest', self
-        if not self.start_time:
-            return ar.error_response(
-                _("Cannot mark scheduled with empty start time."),
-                alert=True)
-            #~ raise actions.Warning(_("Cannot mark scheduled with empty start time."))
-        self.state = EventState.scheduled
-        self.save()
-        return ar.ui.success_response(refresh=True)
+    #~ @dd.action(EventState.scheduled.text,sort_index=10,required=dict(states=['','draft']))
+    #~ def mark_scheduled(self,ar):
+        #~ if not self.start_time:
+            #~ return ar.error_response(
+                #~ _("Cannot mark scheduled with empty start time."),
+                #~ alert=True)
+        #~ self.state = EventState.scheduled
+        #~ self.save()
+        #~ return ar.ui.success_response(refresh=True)
     
-    @dd.action(EventState.notified.text,sort_index=11,required=dict(states=['scheduled']))
-    def mark_notified(self,ar):
-        """
-        Running this action means 
-        "This event has somehow (no matter how) been notified to the guests."
-        """
-        #~ print 'TODO: would suggest', self
-        self.state = EventState.notified
-        self.save()
-        return ar.ui.success_response(refresh=True)
+    #~ @dd.action(EventState.notified.text,sort_index=11,required=dict(states=['scheduled']))
+    #~ def mark_notified(self,ar):
+        #~ """
+        #~ Running this action means 
+        #~ "This event has somehow (no matter how) been notified to the guests."
+        #~ """
+        #~ self.state = EventState.notified
+        #~ self.save()
+        #~ return ar.ui.success_response(refresh=True)
     
-    @dd.action(EventState.confirmed.text,sort_index=12,
-        required=dict(states=['scheduled','notified']))
-    def mark_confirmed(self,ar):
-        #~ print 'TODO: would publish', self
-        self.state = EventState.confirmed
-        self.save()
-        return ar.ui.success_response(refresh=True)
+    #~ @dd.action(EventState.confirmed.text,sort_index=12,
+        #~ required=dict(states=['scheduled','notified']))
+    #~ def mark_confirmed(self,ar):
+        #~ self.state = EventState.confirmed
+        #~ self.save()
+        #~ return ar.ui.success_response(refresh=True)
         
-    @dd.action(EventState.took_place.text,sort_index=13,
-        required=dict(states=['scheduled','notified','confirmed']))
-    def mark_took_place(self,ar):
-        self.state = EventState.took_place
-        self.save()
-        return ar.ui.success_response(refresh=True)
+    #~ @dd.action(EventState.took_place.text,sort_index=13,
+        #~ required=dict(states=['scheduled','notified','confirmed']))
+    #~ def mark_took_place(self,ar):
+        #~ self.state = EventState.took_place
+        #~ self.save()
+        #~ return ar.ui.success_response(refresh=True)
         
-    @dd.action(EventState.cancelled.text,sort_index=13,
-        required=dict(states=['scheduled','notified','confirmed']))
-    def mark_cancelled(self,ar):
-        self.state = EventState.cancelled
-        self.save()
-        return ar.ui.success_response(refresh=True)
+    #~ @dd.action(EventState.cancelled.text,sort_index=13,
+        #~ required=dict(states=['scheduled','notified','confirmed']))
+    #~ def mark_cancelled(self,ar):
+        #~ self.state = EventState.cancelled
+        #~ self.save()
+        #~ return ar.ui.success_response(refresh=True)
         
-    @dd.action(_("Absent"),sort_index=13,
-        required=dict(states=['scheduled','notified','confirmed']))
-    def mark_present(self,ar):
-        self.state = EventState.absent
-        self.save()
-        return ar.ui.success_response(refresh=True)
+    #~ @dd.action(_("Absent"),sort_index=13,
+        #~ required=dict(states=['scheduled','notified','confirmed']))
+    #~ def mark_present(self,ar):
+        #~ self.state = EventState.absent
+        #~ self.save()
+        #~ return ar.ui.success_response(refresh=True)
         
     #~ def get_row_permission(self,user,state,action):
         #~ """
@@ -1122,6 +1122,7 @@ if settings.LINO.project_model:
 if settings.LINO.user_model:    
   
     class MyEvents(Events,mixins.ByUser):
+        help_text = _("Table of all my events.")
         column_names = 'start_date start_time project summary state workflow_buttons *'
         #~ model = 'cal.Event'
         #~ label = _("My Events")
@@ -1138,12 +1139,14 @@ if settings.LINO.user_model:
         :class:`EventsToNotify` and 
         :class:`MyEventsToNotify`.
         """
+        help_text = _("Table of all events that need to be scheduled.")
         label = _("Events to schedule")
         required = dict(user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
         filter = models.Q(state__in=(EventState.blank_item,EventState.draft))
         
     class MyEventsToSchedule(EventsToSchedule,MyEvents):
+        help_text = _("Table of all my events that need to be scheduled.")
         required = dict(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
         label = _("My events to schedule")
@@ -1157,6 +1160,7 @@ if settings.LINO.user_model:
         in :class:`MyEventsToConfirm`.
         or :class:`MyEventsConfirmed`.
         """
+        help_text = _("Table of all events that need to be communicated to guests.")
         required = dict(user_level='manager',user_groups='office')
         column_names = 'start_date start_time user project summary workflow_buttons *'
         label = _("Events to notify")
@@ -1164,6 +1168,7 @@ if settings.LINO.user_model:
         filter = models.Q(state=EventState.scheduled)
         
     class MyEventsToNotify(EventsToNotify,MyEvents):
+        help_text = _("Table of all my events that need to be communicated to guests.")
         required = dict(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
         label = _("My events to notify")
@@ -1174,6 +1179,7 @@ if settings.LINO.user_model:
         (i.e. the user made sure that the guests received 
         their notification and plan to attend to the event). 
         """
+        help_text = _("Table of all events that are waiting for confirmation from guests.")
         required = dict(user_level='manager',user_groups='office')
         column_names = 'start_date start_time project user summary workflow_buttons *'
         label = _("Events to confirm")
@@ -1181,11 +1187,13 @@ if settings.LINO.user_model:
         filter = models.Q(state=EventState.scheduled)
         
     class MyEventsToConfirm(EventsToConfirm):
+        help_text = _("Table of all my events that are waiting for confirmation from guests.")
         required = dict(user_groups='office')
         label = _("My events to confirm")
         column_names = 'start_date start_time project summary workflow_buttons *'
         
     class MyEventsToday(MyEvents):
+        help_text = _("Table of my events per day.")
         column_names = 'start_time summary state workflow_buttons *'
         label = _("My events today")
         order_by = ['start_time']
@@ -1218,6 +1226,7 @@ class Task(Component):
     A Task is when a user plans to to something 
     (and optionally wants to get reminded about it).
     """
+    #~ workflow_state_field = 'state'
     
     class Meta:
         verbose_name = _("Task")
@@ -1236,29 +1245,29 @@ class Task(Component):
     #~ status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     
     #~ @dd.action(_("Done"),required=dict(states=['','todo','started']))
-    @dd.action(TaskState.todo.text,required=dict(states=['']))
-    def mark_todo(self,ar):
-        self.state = TaskState.todo
-        self.save()
-        return ar.success_response(refresh=True)
+    #~ @dd.action(TaskState.todo.text,required=dict(states=['']))
+    #~ def mark_todo(self,ar):
+        #~ self.state = TaskState.todo
+        #~ self.save()
+        #~ return ar.success_response(refresh=True)
     
-    @dd.action(TaskState.done.text,required=dict(states=['','todo','started']))
-    def mark_done(self,ar):
-        self.state = TaskState.done
-        self.save()
-        return ar.success_response(refresh=True)
+    #~ @dd.action(TaskState.done.text,required=dict(states=['','todo','started']))
+    #~ def mark_done(self,ar):
+        #~ self.state = TaskState.done
+        #~ self.save()
+        #~ return ar.success_response(refresh=True)
     
-    @dd.action(TaskState.started.text,required=dict(states=['','todo']))
-    def mark_started(self,ar):
-        self.state = TaskState.started
-        self.save()
-        return ar.success_response(refresh=True)
+    #~ @dd.action(TaskState.started.text,required=dict(states=['','todo']))
+    #~ def mark_started(self,ar):
+        #~ self.state = TaskState.started
+        #~ self.save()
+        #~ return ar.success_response(refresh=True)
     
-    @dd.action(TaskState.sleeping.text,required=dict(states=['','todo']))
-    def mark_sleeping(self,ar):
-        self.state = TaskState.sleeping
-        self.save()
-        return ar.success_response(refresh=True)
+    #~ @dd.action(TaskState.sleeping.text,required=dict(states=['','todo']))
+    #~ def mark_sleeping(self,ar):
+        #~ self.state = TaskState.sleeping
+        #~ self.save()
+        #~ return ar.success_response(refresh=True)
     
 
     def on_user_change(self,request):
@@ -1277,6 +1286,7 @@ class Task(Component):
         
 
 class Tasks(dd.Table):
+    debug_permissions = True
     model = 'cal.Task'
     required = dict(user_groups='office')
     column_names = 'start_date summary state *'
@@ -1289,7 +1299,7 @@ class Tasks(dd.Table):
     #~ description #notes.NotesByTask    
     #~ """
     detail_template = """
-    start_date state due_date id
+    start_date due_date id state workflow_buttons 
     summary 
     user project 
     calendar owner created:20 modified:20   
@@ -1307,11 +1317,13 @@ class TasksByController(Tasks):
 if settings.LINO.user_model:    
         
     class MyTasks(Tasks,mixins.ByUser):
+        help_text = _("Table of all my tasks.")
         order_by = ["start_date","start_time"]
-        column_names = 'start_date summary state workflow_buttons  *'
+        column_names = 'start_date summary state workflow_buttons *'
     
     class MyTasksToDo(MyTasks):
-    #~ class MyOpenTasks(MyTasks):
+        help_text = _("Table of my tasks marked 'to do'.")
+        column_names = 'start_date summary state workflow_buttons *'
         label = _("To-do list")
         #~ filter = models.Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
         filter = models.Q(state__in=(TaskState.todo,TaskState.started))
@@ -1320,6 +1332,7 @@ if settings.LINO.project_model:
   
     class TasksByProject(Tasks):
         master_key = 'project'
+        column_names = 'start_date user summary state workflow_buttons *'
     
 
 class GuestRole(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):

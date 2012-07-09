@@ -147,6 +147,7 @@ class Action(object):
     #~ Whether this action is ruled by workflows.
     #~ """
     actor = None
+    help_text = None
     #~ debug = False
     name = None
     url_action_name = None
@@ -202,7 +203,7 @@ class Action(object):
     #~ def __init__(self,actor=None,name=None,label=None,**kw):
     #~ def __init__(self,name=None,label=None,url_action_name=None,**kw):
     #~ def __init__(self,label=None,**kw):
-    def __init__(self,label=None,url_action_name=None,**kw):
+    def __init__(self,label=None,url_action_name=None,required={},**kw):
         #~ self.actor = actor # actor who offers this action
         #~ if actor is not None:
             #~ self.actor = actor # actor who offers this action
@@ -229,7 +230,7 @@ class Action(object):
             if not hasattr(self,k):
                 raise Exception("Invalid keyword %s" % k)
             setattr(self,k,v)
-        self.set_required()
+        self.set_required(**required)
 
         
     def set_required(self,**kw):
@@ -238,8 +239,8 @@ class Action(object):
         new.update(self.required)
         new.update(kw)
         self.required = new
+        #~ if isinstance(self,StateAction):
         if self.required.has_key('states'):
-            #~ kw.setdefault('show_in_bbar',False)
             self.show_in_bbar = False
             self.show_in_workflow = True
         else:
@@ -268,6 +269,8 @@ class Action(object):
         self.actor = actor
         if actor.hide_top_toolbar:
             self.hide_top_toolbar = True
+        if self.help_text is None and self is actor.default_action:
+            self.help_text  = actor.help_text
         #~ if name == 'default_action':
             #~ print 20120527, self
             
@@ -307,14 +310,6 @@ class Action(object):
         """
         #~ logger.info("20120622 Action.get_action_permission")
         return self.allow(user,obj,state)
-        #~ if not self.allow_read(user,obj,state)
-        #~ if self.readonly:
-            #~ return 
-        #~ if self.readonly:
-            #~ return True
-        #~ if user.profile.level <= UserLevels.guest:
-            #~ return False
-        #~ return self.actor.editable
         
     #~ def run(self,elem,ar,**kw):
         #~ raise NotImplementedError("%s has no run() method" % self.__class__)
@@ -356,7 +351,38 @@ class RowAction(Action):
             self.url_action_name = name 
 
 
-
+class StateAction(RowAction):
+    
+    def __init__(self,actor,target_state,**kw):
+        self.target_state = target_state
+        kw.update(label=target_state.text)
+        required = getattr(target_state,'required',None)
+        if required is not None:
+            if target_state.name:
+                m = getattr(actor.model,'allow_state_'+target_state.name,None)
+                if m is not None:
+                    def allow(action,user,obj,state):
+                        return m(obj,user)
+                    required.update(allow=allow)
+            kw.update(required=required)
+        help_text = getattr(target_state,'help_text',None)
+        if help_text:
+            kw.update(help_text=help_text)
+        super(StateAction,self).__init__(**kw)
+        #~ print 20120709, self, self.show_in_workflow
+        
+    #~ def get_action_permission(self,user,obj,state):
+        #~ if state and not state.get_state_permission(self,user,obj):
+            #~ return False
+        #~ return self.allow(user,obj,state)
+        
+    def run(self,row,ar,**kw):
+        row.before_state_change(ar,row.state,self.target_state)
+        row.state = self.target_state
+        row.save()
+        return ar.ui.success_response(refresh=True)
+        
+    
 
 class RedirectAction(Action):
     

@@ -1,0 +1,13 @@
+#65 : Class-based views
+=======================
+
+Lino doesn't yet use Django's `Class-based views
+<http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_ 
+because this concept didn't yet exist when I started.
+(I discovered it in :doc:`March 2011 </blog/2011/0311>`)
+
+- The concept sounds good
+- The old function-based views will be deprecated in Django 1.5
+- Ticket :doc:`/tickets/64` is waiting for this.
+
+

@@ -81,7 +81,6 @@ def discover():
     
     for a in actors_list:
         a.class_init()
-        #~ a.collect_actions() # too early: e.g. Cities has no detail_layout yet, but pcsw.site_setup() defines one
         
         
 
@@ -98,6 +97,7 @@ class ActorMetaClass(type):
         classDict.setdefault('label',None)
         #~ classDict.setdefault('button_label',None)
         classDict.setdefault('title',None)
+        classDict.setdefault('help_text',None)
         
         cls = type.__new__(meta, classname, bases, classDict)
         
@@ -415,6 +415,7 @@ class Actor(object):
     insert_layout = None
     insert_template = None
     
+    help_text = None
     
     detail_action = None
     insert_action = None
@@ -563,8 +564,27 @@ class Actor(object):
             cls.update_action = actions.SubmitDetail(sort_index=1)
         if cls.editable and not cls.hide_top_toolbar:
             cls.delete_action = actions.DeleteSelected(sort_index=5)
-            
-                
+
+
+        if isinstance(cls.workflow_owner_field,basestring):
+            cls.workflow_owner_field = cls.get_data_elem(cls.workflow_owner_field)
+
+        #~ if isinstance(cls.workflow_state_field,basestring):
+            #~ fld = cls.get_data_elem(cls.workflow_state_field)
+            #~ if fld is not None: # e.g. cal.Component
+                #~ cls.workflow_state_field = fld
+                #~ for name,a in cls.get_state_actions():
+                    #~ print 20120709, cls,name,a
+                    #~ setattr(cls,name,a)
+
+        if isinstance(cls.workflow_state_field,basestring):
+            cls.workflow_state_field = cls.get_data_elem(cls.workflow_state_field)
+            #~ note that fld may be none e.g. cal.Component
+        if cls.workflow_state_field is not None:
+            for name,a in cls.get_state_actions():
+                #~ print 20120709, cls,name,a
+                setattr(cls,name,a)
+
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
         """
@@ -586,6 +606,17 @@ class Actor(object):
         #~ logger.info('20120614 %s : %s',cls, [str(a) for a in cls._actions_list])
         
         
+    @classmethod
+    def get_state_actions(self):
+        i = 10
+        for st in self.workflow_state_field.choicelist.items():
+            if hasattr(st,'required'):
+                name = 'mark_' + st.value
+                a = actions.StateAction(self,st,sort_index=i)
+                #~ print 20120709, self, name, a
+                yield name,a
+                i += 1
+            
     @classmethod
     def _attach_action(self,name,a):
         a.attach_to_actor(self,name)
@@ -635,9 +666,10 @@ class Actor(object):
         l = []
         state = actor.get_row_state(obj)
         for a in actor.get_actions(ar.action):
-            #~ if a.show_in_workflow and a.get_action_permission(ar.get_user(),obj,state):
-            if a.show_in_workflow and obj.get_row_permission(ar.get_user(),state,a):
-                l.append(ar.renderer.row_action_button(obj,ar,a))
+            #~ print 20120709, a.name
+            if a.show_in_workflow:
+                if obj.get_row_permission(ar.get_user(),state,a):
+                    l.append(ar.renderer.row_action_button(obj,ar,a))
         return ', '.join(l)
         
     @classmethod
@@ -772,11 +804,6 @@ class Actor(object):
         #~ logger.debug("Actor.setup() %s", self)
         self._setup_doing = True
         
-        #~ if self.label is None:
-            #~ self.label = self.__name__
-        #~ if self.title is None:
-            #~ self.title = self.label
-            
         self._collect_actions()
             
         if self.parameters:

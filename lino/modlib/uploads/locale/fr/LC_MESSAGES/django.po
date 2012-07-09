@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.uploads\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-04 20:40+0100\n"
+"POT-Creation-Date: 2012-07-08 10:59+0100\n"
 "PO-Revision-Date: 2012-06-25 14:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@googlegroups.com>\n"
@@ -16,35 +16,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:41
+#: .\models.py:40
 msgid "Upload Type"
 msgstr "Type d'upload"
 
-#: .\models.py:42
+#: .\models.py:41
 msgid "Upload Types"
 msgstr "Types d'upload"
 
-#: .\models.py:44
+#: .\models.py:43
 msgid "Name"
 msgstr "Nom"
 
-#: .\models.py:66
+#: .\models.py:65
 msgid "Upload"
 msgstr "Upload"
 
-#: .\models.py:67 .\models.py:159
+#: .\models.py:66 .\models.py:158
 msgid "Uploads"
 msgstr "Uploads"
 
-#: .\models.py:75
+#: .\models.py:74
 msgid "valid until"
 msgstr "expire le"
 
-#: .\models.py:81
+#: .\models.py:80
 msgid "Description"
 msgstr ""
 
-#: .\models.py:110
+#: .\models.py:109
 #, python-format
 msgid "%s expires"
 msgstr "%s expire"

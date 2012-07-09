@@ -174,6 +174,11 @@ class Model(models.Model):
         """
         pass
         
+    def before_state_change(self,user,old,new):
+        """
+        Called after a state change.
+        """
+        pass
   
 def is_devserver():
     """

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.thirds\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-04 20:40+0100\n"
+"POT-Creation-Date: 2012-07-08 10:59+0100\n"
 "PO-Revision-Date: 2011-05-11 16:39+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -16,14 +16,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:40
+#: .\models.py:39
 msgid "Third Party"
 msgstr "Drittpartner"
 
-#: .\models.py:41
+#: .\models.py:40
 msgid "Third Parties"
 msgstr "Drittpartner"
 
-#: .\models.py:43
+#: .\models.py:42
 msgid "Remark"
 msgstr "Bemerkung"

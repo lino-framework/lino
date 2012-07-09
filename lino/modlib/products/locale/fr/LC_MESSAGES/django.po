@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-04 20:40+0100\n"
+"POT-Creation-Date: 2012-07-08 10:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:30
+#: .\models.py:29
 msgid "Product Category"
 msgstr ""
 
-#: .\models.py:31
+#: .\models.py:30
 msgid "Product Categories"
 msgstr ""
 
-#: .\models.py:46
+#: .\models.py:44
 msgid "Product"
 msgstr ""
 
-#: .\models.py:47
+#: .\models.py:45
 msgid "Products"
 msgstr ""
 

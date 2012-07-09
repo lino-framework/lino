@@ -125,7 +125,10 @@ class HtmlRenderer(object):
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
         
-    def href_button(self,url,text):
+    def href_button(self,url,text,title=None):
+        if title:
+            return '[<a href="%s" title="%s">%s</a>]' % (
+                url,cgi.escape(unicode(title)),text)
         return '[<a href="%s">%s</a>]' % (url,text)
         
     def quick_add_buttons(self,ar):
@@ -288,12 +291,12 @@ class ExtRenderer(HtmlRenderer):
         if isinstance(v,menus.MenuItem):
             if v.params is not None:
                 ar = v.action.actor.request(self.ui,None,v.action,**v.params)
-                return handler_item(v,self.request_handler(ar))
+                return handler_item(v,self.request_handler(ar),v.action.help_text)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
             if v.action:
                 if True:
                     #~ handler = self.action_call(v.action,params=v.params)
-                    return handler_item(v,self.action_call(v.action))
+                    return handler_item(v,self.action_call(v.action),v.action.help_text)
                     #~ handler = "function(){%s}" % self.action_call(
                         #~ v.action,None,v.params)
                     #~ return dict(text=prepare_label(v),handler=js_code(handler))
@@ -309,7 +312,7 @@ class ExtRenderer(HtmlRenderer):
             elif v.instance is not None:
                 h = self.instance_handler(v.instance)
                 assert h is not None
-                return handler_item(v,h)
+                return handler_item(v,h,None)
                 #~ handler = "function(){%s}" % self.instance_handler(v.instance)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
               
@@ -335,8 +338,6 @@ class ExtRenderer(HtmlRenderer):
                 after_show.update(record_id=-99998)
             if after_show:
                 return "Lino.%s.run(%s)" % (a,py2js(after_show))
-            #~ if params:
-                #~ return "Lino.%s.run(%s)" % (a,py2js(params))
             return "Lino.%s.run()" % a
         return "?"
 
@@ -356,7 +357,7 @@ class ExtRenderer(HtmlRenderer):
         label = cgi.escape(force_unicode(label or a.get_button_label()))
         #~ url = self.action_url_js(a,after_show)
         url = self.js2url(self.action_call(a,after_show))
-        return self.href_button(url,label)
+        return self.href_button(url,label,a.help_text)
         
     def row_action_button(self,obj,ar,a):
         """
@@ -379,7 +380,7 @@ class ExtRenderer(HtmlRenderer):
                     a,str(ar.requesting_panel),
                     py2js(obj.pk),ar.action))
             #~ url = self.js2url('Lino.row_action(%s,%s)' % (py2js(obj.pk),py2js(a.name)))
-            return self.href_button(url,label)
+            return self.href_button(url,label,a.help_text)
         
     def instance_handler(self,obj):
         #~ a = obj.__class__._lino_default_table.get_action('detail')
@@ -456,9 +457,16 @@ def prepare_label(mi):
         #~ #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
     #~ return label
     
-def handler_item(mi,handler):
+def handler_item(mi,handler,help_text):
     handler = "function(){%s}" % handler
-    return dict(text=prepare_label(mi),handler=js_code(handler))
+    #~ d = dict(text=prepare_label(mi),handler=js_code(handler),tooltip="Foo")
+    d = dict(text=prepare_label(mi),handler=js_code(handler))
+    if settings.LINO.use_quicktips and help_text:
+        d.update(listeners=dict(render=js_code(
+          "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'),py2js(help_text)))
+        ))
+    
+    return d
 
 
 #~ def element_name(elem):
@@ -2271,6 +2279,8 @@ tinymce.init({
           itemId=a.name,
           #~ text=unicode(a.label),
         )
+        if a.help_text:
+            kw.update(tooltip=a.help_text)
         return kw
         
     def unused_setup_detail_handle(self,dh):

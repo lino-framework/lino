@@ -12,8 +12,8 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Make ChoiceLists visible through the web interface. Show UserGroups and 
-    UserProfiles in :class:`lino.models.About`.
+#.  Make ChoiceLists visible through the web interface. 
+    Show UserGroups and UserProfiles in :class:`lino.models.About`.
 
 #.  Benutzer, die nicht Systemverwalter sind, können momentan ihr 
     Benutzerkonto nichtmal sehen: ein Klick auf den Benutzerbutton oben 
@@ -969,21 +969,8 @@ Long-term
 
 #.  :doc:`/tickets/26`
 
-#.  Was ist aus meinem Ticket
-    :djangoticket:`BooleanField should work for ExtJS Checkboxes <15497>`
-    geworden?
-    Falls die das wirklich tun sollten, kann meine 
-    :meth:`lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value` 
-    komplett raus.
-    
 #.  Man kann es momentan nicht verhindern, dass ein Babel-Feld expandiert wird.
     
-#.  Think about differences and common things between 
-    Lino's Table and Django's new 
-    `Class-based views
-    <http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_ 
-    (Discovered :doc:`/blog/2011/0311`)
-
 #.  Check whether Lino should use
     http://django-rest-framework.org/
     instead of reinventing the wheel.

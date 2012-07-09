@@ -61,6 +61,7 @@ from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.core.modeltools import obj2str
+from lino.utils.choicelists import ChoiceList
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.cal.models import update_reminder
@@ -302,7 +303,42 @@ class Course(dd.Model,mixins.Printable):
         """
         return CandidatesByCourse.request(master_instance=self).data_iterator
         
-from lino.utils.choicelists import ChoiceList
+
+        
+class Courses(dd.Table):
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
+    model = Course
+    order_by = ['start_date']
+    detail_template = """
+    id:8 start_date offer title 
+    remark
+    courses.ParticipantsByCourse
+    courses.CandidatesByCourse
+    """
+    
+class CoursesByOffer(Courses):
+    master_key = 'offer'
+    column_names = 'start_date * id'
+
+class CourseContents(dd.Table):
+    model = CourseContent
+    order_by = ['name']
+
+class CourseOffers(dd.Table):
+    required_user_groups = ['integ']
+    #~ required_user_level = UserLevels.manager
+    model = CourseOffer
+    detail_template = """
+    id:8 title content provider
+    description
+    CoursesByOffer
+    """
+    
+class CourseOffersByProvider(CourseOffers):
+    master_key = 'provider'
+
+
 
 class CourseRequestStates(ChoiceList):
     label = _("State")
@@ -321,13 +357,15 @@ class CourseRequestStates(ChoiceList):
         return getattr(cls,cv[old])
         
 add = CourseRequestStates.add_item
-add('10', _("Candidate"),"candidate")   
-#~ add('20', _("Urgent"),"urgent")   
-add('20', _("Registered"),"registered")
-add('30', _("Passed"),"passed")   # bestanden
+add('10', _("Candidate"),"candidate") # required=dict(states=['','registered']))   # Unregister
+add('20', _("Registered"),"registered") # required=dict(states=['candidate'])) # Register
+add('30', _("Passed"),"passed",
+  required=dict(states=['registered']))   # bestanden
 add('40', _("Award"),"award")   # gut bestanden
-add('50', pgettext_lazy(u"courses",u"Failed"),"failed")   # nicht bestanden
-add('60', _("Aborted"),"aborted")   # abgebrochen
+add('50', pgettext_lazy(u"courses",u"Failed"),"failed",
+  required=dict(states=['registered']))   # nicht bestanden
+add('60', _("Aborted"),"aborted",
+  required=dict(states=['registered']))   # abgebrochen
     
     
 class CourseRequest(dd.Model):
@@ -404,6 +442,10 @@ class CourseRequest(dd.Model):
     #~ Das wird benutzt für spätere Statistiken.
     #~ """
     
+    def on_create(self,ar):
+        self.date_submitted = datetime.date.today()
+        super(CourseRequest,self).on_create(ar)
+
     def save(self,*args,**kw):
         if self.offer and self.offer.content:
             self.content = self.offer.content
@@ -414,62 +456,26 @@ class CourseRequest(dd.Model):
         if content:
             return CourseOffer.objects.filter(content=content)
         return CourseOffer.objects.all()
+    
+    def before_state_change(self,ar,old,new):
+        if new.name in ('passed','award','failed','aborted'):
+            if not self.date_ended:
+                self.date_ended = datetime.date.today()
+      
+    def allow_state_candidate(self,user):
+        if self.course:
+            return True
+        return False
         
-    
-    def on_create(self,ar):
-        self.date_submitted = datetime.date.today()
-        super(CourseRequest,self).on_create(ar)
-    
         
-class Courses(dd.Table):
-    required_user_groups = ['integ']
-    #~ required_user_level = UserLevels.manager
-    model = Course
-    order_by = ['start_date']
-    detail_template = """
-    id:8 start_date offer title 
-    remark
-    courses.ParticipantsByCourse
-    courses.CandidatesByCourse
-    """
-    
-class CoursesByOffer(Courses):
-    master_key = 'offer'
-    column_names = 'start_date * id'
-
-class CourseContents(dd.Table):
-    model = CourseContent
-    order_by = ['name']
-
-class CourseOffers(dd.Table):
-    required_user_groups = ['integ']
-    #~ required_user_level = UserLevels.manager
-    model = CourseOffer
-    detail_template = """
-    id:8 title content provider
-    description
-    CoursesByOffer
-    """
-    
-class CourseOffersByProvider(CourseOffers):
-    master_key = 'provider'
-
 class CourseRequests(dd.Table):
-    required=dict(user_groups=['integ'],user_level='manager')
-    #~ required_user_level = UserLevels.manager
     model = CourseRequest
-    
-    #~ detail_template = """
-    #~ date_submitted person content offer urgent 
-    #~ course date_ended ending id:8 
-    #~ remark  uploads.UploadsByController 
-    #~ """
+    required=dict(user_groups=['integ'],user_level='manager')
     detail_template = """
     date_submitted person content offer urgent 
     course state date_ended id:8 
     remark  uploads.UploadsByController 
     """
-    
     order_by = ['date_submitted']
     active_fields = ['offer']
 
@@ -480,7 +486,6 @@ class CourseRequestsByPerson(CourseRequests):
 
 class RequestsByCourse(CourseRequests):
     required=dict(user_groups=['integ'])
-    #~ required_user_level = None
     master_key = 'course'
   
     @classmethod
@@ -496,38 +501,36 @@ class ParticipantsByCourse(RequestsByCourse):
     List of participating :class:`Candidates <Candidate>` for the given :class:`Course`.
     """
     label = _("Participants")
-    column_names = 'person remark:20 date_ended state workflow_buttons'
+    column_names = 'person remark:20 date_ended state workflow_buttons:60'
     #~ do_unregister = UnregisterCandidate()
     
-    @dd.action(_("Passed"),required=dict(states=['registered']))
-    def passed(self,ar):
-        self.state = CourseRequestStates.passed
-        if not self.date_ended:
-            self.date_ended = datetime.date.today()
-        self.save()
-        return ar.success_response(refresh=True,
-          message=_("%(person)s passed %(course)s") 
-            % dict(person=self.person,course=self.course))
-            
-    @dd.action(pgettext_lazy(u"courses",u"Failed"),required=dict(states=['registered']))
-    def failed(self,ar):
-        self.state = CourseRequestStates.failed
-        if not self.date_ended:
-            self.date_ended = datetime.date.today()
-        self.save()
-        return ar.success_response(refresh=True,
-          message=_("%(person)s failed in %(course)s") 
-            % dict(person=self.person,course=self.course))
-            
-    @dd.action(_("Aborted"),required=dict(states=['registered']))
-    def aborted(self,ar):
-        self.state = CourseRequestStates.aborted
+    #~ @dd.action(_("Passed"),required=dict(states=['registered']))
+    #~ def passed(self,ar):
+        #~ self.state = CourseRequestStates.passed
         #~ if not self.date_ended:
             #~ self.date_ended = datetime.date.today()
-        self.save()
-        return ar.success_response(refresh=True,
-          message=_("%(person)s aborted from %(course)s") 
-            % dict(person=self.person,course=self.course))
+        #~ self.save()
+        #~ return ar.success_response(refresh=True,
+          #~ message=_("%(person)s passed %(course)s") 
+            #~ % dict(person=self.person,course=self.course))
+            
+    #~ @dd.action(pgettext_lazy(u"courses",u"Failed"),required=dict(states=['registered']))
+    #~ def failed(self,ar):
+        #~ self.state = CourseRequestStates.failed
+        #~ if not self.date_ended:
+            #~ self.date_ended = datetime.date.today()
+        #~ self.save()
+        #~ return ar.success_response(refresh=True,
+          #~ message=_("%(person)s failed in %(course)s") 
+            #~ % dict(person=self.person,course=self.course))
+            
+    #~ @dd.action(_("Aborted"),required=dict(states=['registered']))
+    #~ def aborted(self,ar):
+        #~ self.state = CourseRequestStates.aborted
+        #~ self.save()
+        #~ return ar.success_response(refresh=True,
+          #~ message=_("%(person)s aborted from %(course)s") 
+            #~ % dict(person=self.person,course=self.course))
             
     @dd.action(_("Unregister"),required=dict(states=['registered']))
     def unregister(self,ar):
@@ -539,7 +542,7 @@ class ParticipantsByCourse(RequestsByCourse):
         self.state = CourseRequestStates.candidate
         self.course = None
         self.save()
-        return ar.ui.success_response(refresh_all=True,
+        return ar.success_response(refresh_all=True,
           message=_("%(person)s has been unregistered from %(course)s") 
             % dict(person=self.person,course=course))
     
@@ -551,7 +554,7 @@ class CandidatesByCourse(RequestsByCourse):
     which are not registiered.
     """
     label = _("Candidates")
-    column_names = 'person remark:20 date_submitted state workflow_buttons content'
+    column_names = 'person remark:20 date_submitted state workflow_buttons:60 content'
     #~ can_add = perms.never
     
     #~ do_register = RegisterCandidate()

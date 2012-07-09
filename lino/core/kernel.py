@@ -233,31 +233,6 @@ def load_workflows(self):
     """
     #~ self.workflow_actors = {}
     for actor in actors.actors_list:
-        #~ if a.model is not None and a.workflow_actions is not None:
-        #~ if actor.workflow_state_field is not None:
-        if isinstance(actor.workflow_state_field,basestring):
-            fld = actor.get_data_elem(actor.workflow_state_field)
-            if fld is None:
-                continue # e.g. cal.Components
-            actor.workflow_state_field = fld
-            #~ a.workflow_state_field = a.model._meta.get_field(a.workflow_state_field)
-        if isinstance(actor.workflow_owner_field,basestring):
-            actor.workflow_owner_field = actor.get_data_elem(actor.workflow_owner_field)
-            #~ a.workflow_owner_field = a.model._meta.get_field(a.workflow_owner_field)
-            
-        cls = actor
-        #~ def wrap(fn):
-            #~ if False:
-                #~ def fn2(*args):
-                    #~ logger.info("20120621 %s",[obj2str(x) for x in args])
-                    #~ return fn(*args)
-                #~ return classmethod(fn2)
-            #~ return classmethod(fn)
-        #~ cls.allow_read = wrap(make_permission_handler(cls,**cls.required))
-        #~ if cls.editable:
-            #~ cls.allow_create = wrap(make_permission_handler(cls,**cls.create_required))
-            #~ cls.allow_update = wrap(make_permission_handler(cls,**cls.update_required))
-            #~ cls.allow_delete = wrap(make_permission_handler(cls,**cls.delete_required))
         
         for a in actor.get_actions():
             required = dict()
@@ -272,20 +247,12 @@ def load_workflows(self):
             required.update(a.required)
             #~ print 20120628, str(a), required
             def wrap(a,required,fn):
-                #~ if actor.debug_actions: # False: # not a.readonly:
-                    #~ def fn2(*args):
-                        #~ v = fn(*args)
-                        #~ if not v:
-                            #~ logger.info(u"debug_actions %s.%s.allow(%s,%s,%s) %s --> %s",
-                              #~ a.actor,a.name,args[1].username,obj2str(args[2]),args[3],required,v)
-                        #~ return v
-                    #~ return fn2
                 return fn
                 
             a.allow = curry(wrap(a,required,make_permission_handler(
                 a,actor,a.readonly,actor.debug_permissions,**required)),a)
             
-                
+
     if False:
       if self.is_installed('workflows'):
           Rule = resolve_model('workflows.Rule')
@@ -499,7 +466,7 @@ def startup_site(self):
                 
         """
         `after_site_setup()` definitively collects actions of each actor.
-        Now we can apply workflow rules.
+        Now we can install permission handlers.
         """
         load_workflows(self)
             

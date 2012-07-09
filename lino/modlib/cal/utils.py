@@ -160,11 +160,11 @@ class TaskState(ChoiceList):
         return cv[status_id]
     
 add = TaskState.add_item
-add('10', _("To do"),'todo')
-add('20', pgettext_lazy(u"cal",u"Started"),'started')
-add('30', _("Done"),'done')
-add('40', _("Sleeping"),'sleeping')
-add('50', _("Cancelled"),'cancelled')
+add('10', _("To do"),'todo',required=dict(states=['']))
+add('20', pgettext_lazy(u"cal",u"Started"),'started',required=dict(states=['','todo']))
+add('30', _("Done"),'done',required=dict(states=['','todo','started']))
+add('40', _("Sleeping"),'sleeping',required=dict(states=['','todo']))
+add('50', _("Cancelled"),'cancelled',required=dict(states=['todo','sleeping']))
 
 class EventState(ChoiceList):
     """
@@ -188,19 +188,31 @@ class EventState(ChoiceList):
         }
         return cv[status_id]
         
+#~ def allow_scheduled(action,user,obj,state):
+    #~ if not obj.start_time: return False
+    #~ return True
+    
 add = EventState.add_item
-add('10', _("Draft"), 'draft') # is_user_modified
-add('20', _("Scheduled"), 'scheduled')
-add('30', _("Notified"),'notified')
+add('10', _("Draft"), 'draft',
+  #~ required=dict(states=['','scheduled']),
+  help_text=_("Will automatically be set if user saves some changes.")
+  ) # is_user_modified
+add('20', _("Scheduled"), 'scheduled',
+  #~ required=dict(allow=allow_scheduled,states=['','draft']),
+  required=dict(states=['','draft']),
+  help_text=_("Author is aware of this event and guests should get notified. Requires a start_time.")
+  )
+add('30', _("Notified"),'notified',required=dict(states=['scheduled']))
 #~ add('20', _("Suggested"),'suggested')
 #~ add('30', _("Published"),'published')
-add('40', _("Confirmed"),'confirmed')
-#~ add('40', _("Done"),'done')
-add('50', _("Took place"),'took_place')
-add('60', _("Rescheduled"),'rescheduled')
-add('70', _("Cancelled"),'cancelled')
-add('80', _("Absent"),'absent')
-add('90', _("Obsolete"),'obsolete')
+add('40', _("Confirmed"),'confirmed',required=dict(states=['scheduled','notified']))
+add('50', _("Took place"),'took_place',required=dict(states=['scheduled','notified','confirmed']))
+add('60', _("Rescheduled"),'rescheduled',required=dict(states=['scheduled','notified','confirmed']))
+add('70', _("Cancelled"),'cancelled',required=dict(states=['scheduled','notified','confirmed']))
+add('80', _("Absent"),'absent',required=dict(states=['scheduled','notified','confirmed']))
+add('90', _("Obsolete"),'obsolete',required=dict(states=[]))
+
+
     
 class GuestState(ChoiceList):
     """

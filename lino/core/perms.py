@@ -238,7 +238,7 @@ class Permittable(object):
 def make_permission_handler(
     elem,actor,
     readonly,debug_permissions,
-    user_level=None,user_groups=None,states=None):
+    user_level=None,user_groups=None,states=None,allow=None):
     """
     Return a function that will test whether permission is given or not.
     
@@ -269,15 +269,16 @@ def make_permission_handler(
     
     """
     try:
-        if user_level is None:
+        if allow is None:
             def allow(action,user,obj,state):
                 return True
-        else:
+        if user_level is not None:
             user_level = getattr(UserLevels,user_level)
+            allow_user_level = allow
             def allow(action,user,obj,state):
                 if user.profile.level is None or user.profile.level < user_level:
                     return False
-                return True
+                return allow_user_level(action,user,obj,state)
                 
         if user_groups is not None:
             if isinstance(user_groups,basestring):

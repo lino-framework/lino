@@ -1,0 +1,192 @@
+=========================
+Über die Zukunft von Lino
+=========================
+
+Das folgende sind philosophische Gedanken
+und kein definitiver Standpunkt, sondern eine spontane 
+Bestandsaufnahme meiner Zukunftspläne. 
+
+Geld regiert die Welt
+---------------------
+
+Vorgestern schrieb ich einem guten Freund:
+
+  Lino ist momentan wie ein großer Kuchen, den ich gebacken habe, 
+  und der jetzt aus der Backstube rausgetragen werden muss. 
+  Und wer mir dabei hilft, kriegt natürlich auch sein Stück davon ab.
+  
+Aber wie soll ich vorgehen?
+
+- Soll ich über meine eigene Firma Personal einstellen?
+
+  Dieser Weg gefällt mir nicht, weil ich dann sehr bald keine Zeit 
+  mehr zum Programmieren hätte.
+  
+- Soll ich bestehende Softwarehäuser ansprechen, die Lino als
+  Framework in ihr Repertoire aufnehmen?
+  
+  Das ist in Ordnung und daran arbeiten wir ja auch, aber 
+  es löst nicht die Frage, wer die Entwicklung des Frameworks 
+  kontrollieren soll.
+    
+Als geistiger Vater, der sein "Kind" liebt, fühle ich mich 
+verantwortlich für das langfristige Wohlergehen des Frameworks.
+Ich möchte, dass Lino auch ohne mich überlebensfähig ist,
+wenn ich mal in Pension gehe.
+
+Es muss also eine Firma oder Organisation her, 
+die mehrere Programmierer einstellt, 
+von denen einer voraussichtlich ich selber sein muss.
+
+Und hier meldet sich mein Gewissen:
+  
+  Ich will eine V.o.G. (oder NGO) und keine AG oder GmbH, weil 
+  sich die Idee der freien Software prinzipiell nicht mit 
+  Privatkapital vereinbaren lässt.    
+
+Besagter Freund antwortete mir auf meine Bedingung von der V.o.G.:
+
+  Ich lese aus Deinen Zeilen und Fakten, dass Du bislang von einer zentralen Überzeugung ausgegangen sein könntest, die nicht funktionieren kann. 
+  Die Überzeugung nämlich, dass sich das herkömmliche christliche 
+  Prinzip auch im Geschäftsleben durchsetzt: tue unmittelbar Gutes und das Gute 
+  wird sich durchsetzen. 
+
+  Ich würde diese Interpretation der Bibel als etwas "narrow minded" (im wahrsten Sinne dieser Worte) bezeichnen. Die göttiche Rückkopplung von vermeintlich unmittelbar guten, offenen und ehrlichen Taten kommt im Geschäftsleben oftmals nur sehr, sehr zeitverzögert und sehr diffus an. Du kannst leider nicht erwarten, dass die gleichen Leute, denen Du Gutes tust in gleicher Hinsicht Dein Wohl im Fokus haben. Im geschäftlichen Leben ist das eigentlch nicht leider sonder sinnvollerweise die übliche Umgangsweise. Da besteht nach meiner Einschätzung ein großes Kompatibilitätsproblem, wenn Du weiterhin von dieser unmittelbaren Rückkopplung ausgehst. (...)
+  
+  Die unmittelbare göttliche Rückkopplung wie noch zu Zeiten, als die Wirtschaft auf kleinen dörflichen Einheiten basierte,  kann man heute nur noch in von der Außenwelt und dem Zeitablauf weitgehend abgekapselten Wirschaftseinheiten wie bei Stämmen im Amazonas, auf Papua Neuginea und in einigen ländlichen Gebieten Afrikas ansatzweise finden.
+
+  In einer hoch arbeitsteiligen, globalen Welt funktioniert das nicht, da die positiven Effekte räumlich und zeitlich chaosmäßig verbreitet werden und damit nicht mehr dem Verstand der einzelnen Personen erfassbar und begreifbar sind, die von diesen Effekten profitieren. (...)
+  
+Und das ist nur ein Auszug.
+Also wenn jemand mich dazu überredet kriegt, 
+aus der GPL-Welt in die Geschäftswelt (zurück) 
+zu kommen, dann ist das dieser Freund.
+Vielleicht hat er Recht?
+Wenn Lino nicht GPL-lizenziert wäre, 
+wäre er wahrscheinlich schon viel verbreiteter.
+
+Mein Gewissen ist ja auch nur das Resultat des Mörtels 
+meiner persönlichen Lebenserfahrungen auf dem Fachwerk 
+meines persönlichen Charakters. 
+Sehr individuell zwar, aber keineswegs absolut.
+Ich wüsste nicht, weshalb mein Gewissen mehr Recht haben 
+soll als das anderer Menschen.
+
+Und in der Tat hindert mich nichts daran, die Lizenz zu ändern, 
+weil es bisher keine direkten Kontributoren gibt 
+(andere Programmierer, die Teile von Lino geschrieben 
+haben und dadurch Mitspracherecht bzgl. der Lizenz hätten).
+
+Der Gedanke eines "Managers", der sich um den Verkauf kümmert, 
+so dass ich mehr Zeit fürs Träumen und Programmieren habe, 
+gefiel mir.
+
+Anekdote am Rande: Bei diesen Gedanken musste ich Feierabend 
+machen, weil unsere Vierjährige ihre Gute-Nacht-Geschichte forderte. 
+Sie hatte das Märchen 
+`Bruder Lustig 
+<http://www.hekaya.de/txt.hx/bruder-lustig--maerchen--grimm_khm_81>`_
+ausgewählt, das ich ihr dann vorlas.
+An der folgenden Stelle musste ich einfach mal Pause machen:
+
+  Der heilige Petrus aber wollte nichts nehmen, und je mehr 
+  ihn die Bauersleute baten, desto mehr weigerte er sich. 
+  Der Bruder Lustig aber stieß den heiligen Petrus an und sagte 
+  "so nimm doch was, wir brauchen es ja."
+  
+Diese Situation ähnelte nun doch allzu sehr dem, 
+worüber ich kurz zuvor nachgedacht hatte.
+Kann sowas denn noch Zufall sein?
+
+Heute morgen habe ich dann mal gesurft:
+
+- `Geld regiert die Welt, aber wer regiert das Geld? <http://www.theintelligence.de/index.php/wirtschaft/finanzen/2599-geld-regiert-die-welt-aber-wer-regiert-das-geld.html>`__
+
+- `Geld regiert die Welt – Warum eigentlich?
+  <http://www.subhash.at/freigeld/geldregiert.html>`__
+  
+- `Geld regiert die Welt - oder?
+  <http://www.weltinderschule.uni-bremen.de/geld_1.htm>`_
+  
+Ja, der Zufall von gestern abend und die altbekannten Eindrücke 
+beim Lesen solcher Texte bestätigen es mir. 
+Mein Wunsch, dass es eine VoG und keine kommerzielle Firma 
+sein muss, kommt daher, dass ich glaube:
+
+  **Geld regiert die Welt, 
+  aber eigentlich sollten wir Menschen das tun**
+
+Ich habe keine Lösungen, aber ich will mich wenigstens möglichst 
+raushalten aus dem *struggle for life*.
+
+Also vorläufiges Fazit: eine Firma wäre einfacher, 
+aber würde die Freiheit von Lino unterwandern.
+Ich persönlich will jedenfalls bis auf weiteres 
+keine Energie in diese Richtung vergeuden.
+
+Braucht Lino einen Verkäufer?
+-----------------------------
+
+Ist es Zeit, einen "Verkäufer" einzustellen? 
+Diese Frage beantworte ich (jetzt nach all diesen 
+Überlegungen) aus dem Gefühl raus mit einem klaren **Nein**.
+Ein Verkäufer würde zunächst mal die Kosten noch vermehren.
+Was gut ist, verkauft sich selbst.
+
+Über die Gründung einer VoG denke ich gelegentlich nach. 
+Deren Hauptziel würde ich momentan z.B. wie folgt formulieren:
+
+- Langfristige Trägerschaft der Entwicklung und 
+  des Unterhalts ausgewählter freier Softwareprojekte.
+  Die Liste der unterstützten Projekte ist öffentlich einsehbar
+  und kann nur durch Beschluss der GV verändert werden.
+  Zum Zeitpunkt der Gründung sind Lino (das Framework) 
+  und Lino für ÖSHZ (die Anwendung) die einzigen Projekte.
+
+... aber eigentlich gibt es dringenderes zu tun.
+Ich bin überzeugt: es werden sich Menschen finden, 
+die sich um den administrativen Teil kümmern, 
+*wenn Lino erst mal bekannter ist*.
+
+
+Wie kann Lino wachsen?
+----------------------
+
+Aber wie kommen wir dahin? 
+Wie machen wir Lino bekannter? Wie kann Lino wachsen?
+
+Nein, wir brauchen keinen Verkäufer, sondern 
+einfach noch ein bisschen Geduld.
+Und ein offenes Ohr, um den nächsten Lino-Benutzer zu finden.
+
+Der nächste Lino-Benutzer wird wahrscheinlich eine 
+kleinere Firma oder Organisation sein, 
+die ein informatisches Bedürfnis hat, das Lino lösen kann.
+Die Anwendung sollte möglichst wiederverwertbar sein, 
+also es sollten möglichst viele andere 
+Firmen oder Organisationen mit ähnlichen Bedürfnissen existieren.
+
+Lino in zehn Jahren
+-------------------
+
+Wie stelle ich mir Lino in zehn Jahren vor?
+Hier meine spontane und unverbindliche Antwort:
+
+- In zehn Jahren ist Lino weltweit bekannt
+  als "SAP für alle", und zum Heimgebrauch 
+  out of the box 
+  auf allen Ubuntu-Rechnern verfügbar
+  in Form einer standardisierten "Killer-Anwendung".
+
+- Zudem bieten viele Internet-Hoster 
+  Lino-Anwendungen ab 10€ pro Monat an.
+
+- Besagte "Killer-Anwendung" könnte z.B. eine integrierte 
+  Kontakte-Mail-Kalender-Blogger-Buchhaltungs-Dokumentverwaltung 
+  sein, die die nahtlose Integration dieser bekannten Office-Funktionen 
+  sowie deren Erweiterbarkeit als wichtiges neues Feature hat.
+
+- Ich selbst darf hoffentlich bis an mein Lebensende weiterhin 
+  immer weitere Lino-Träume spinnen und implementieren, 
+  ohne mir um mein finanzielles Überleben Sorgen machen zu müssen.
+

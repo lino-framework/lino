@@ -1,0 +1,26 @@
+#64 : Application-specific user manual
+======================================
+
+Überlegungen zum Befehl :term:`makedocs`, 
+der momentan noch nicht brauchbar ist,
+der aber prinzipiell automatisch ein 
+anwendungsspezifisches Benutzerhandbuch generieren könnte.
+
+- Via Sphinx oder direkt?
+  Für Sphinx braucht er ein temporäres Verzeichnis, 
+  in das er zunächst die .rst-Dateien schreibt (mitsamt `conf.py`).
+  
+  Mit Sphinx bräuchte ich mich nicht um Webdesign zu kümmern. 
+  Andererseits werde ich das Thema selbstgestricktes HTML 
+  sowieso irgendwann angehen müssen, wenn wir ein plain html 
+  interface kriegen wollen.
+  Das wiederum mach ich am besten erst, wenn ich auf class-based 
+  views konvertiert habe.
+
+- Resultat sollte jedenfalls statisches html im Verzeichnis `/media/docs` 
+  sein. (Ich sehe momentan keinen Grund für dynamisches HTML)
+
+/media/docs/de/index.html               Hauptseite (1 pro Sprache)
+/media/docs/de/contacts/index.html      Modul
+/media/docs/de/contacts/Person.html     Modell
+/media/docs/de/contacts/Persons.html    Tabelle

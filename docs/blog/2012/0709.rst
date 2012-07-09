@@ -1,0 +1,54 @@
+20120709
+========
+
+When a state has a `required` attribute, Lino will automatically 
+add a corresponding `StateAction`.
+This allows for more concise code when defining simple workflows.
+
+For example, the Event workflow is now as this::
+
+  add = EventState.add_item
+  add('10', _("Draft"), 'draft')
+  add('20', _("Scheduled"), 'scheduled',required=dict(states=['','draft']))
+  add('30', _("Notified"),'notified',required=dict(states=['scheduled']))
+  add('40', _("Confirmed"),'confirmed',required=dict(states=['scheduled','notified']))
+  add('50', _("Took place"),'took_place',required=dict(states=['scheduled','notified','confirmed']))
+  add('60', _("Rescheduled"),'rescheduled',required=dict(states=['scheduled','notified','confirmed']))
+  add('70', _("Cancelled"),'cancelled',required=dict(states=['scheduled','notified','confirmed']))
+  add('80', _("Absent"),'absent',required=dict(states=['scheduled','notified','confirmed']))
+  add('90', _("Obsolete"),'obsolete',required=dict(states=[]))
+  
+Previously we had to write a whole action similar to the following 
+for each line in above code::
+  
+    @dd.action(EventState.notified.text,sort_index=11,required=dict(states=['scheduled']))
+    def mark_notified(self,ar):
+        """
+        Running this action means 
+        "This event has somehow (no matter how) been notified to the guests."
+        """
+        self.state = EventState.notified
+        self.save()
+        return ar.ui.success_response(refresh=True)
+
+Since application developers will now try to avoid writing complete 
+actions, a workflowed model can now define methods `allow_state_FOO` 
+that can put additional requirements on a state. 
+For example the following 
+method on :class:`lino.modlib.cal.Event` causes the "Scheduled" 
+action *not* to appear as long as the start_time field is empty::
+
+    def allow_state_scheduled(self,user):
+        if not self.start_time: return False
+        return True
+        
+
+The "Register" and "Unregister" actions in the :mod:`lino.modlib.courses` 
+module however are an example of more complex actions that must be 
+defined "by hand".
+
+
+TODO: 
+- replace before_state_change by state_changed
+- StateAction would currently work if workflow_state_field 
+  is something else tahn "state".
