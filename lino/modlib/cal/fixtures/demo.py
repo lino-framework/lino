@@ -57,22 +57,22 @@ def objects():
           et=u"Sekretär",
           ))
           
-    etype = Instantiator('cal.EventType').build
+    etype = Instantiator('cal.Calendar').build
     yield etype(**babel_values('name',
           de=u"Besprechung",
           fr=u"Coordination",
           en=u"Coordination",
           ))
-    yield etype(**babel_values('name',
-          de=u"Erstgespräch",
-          fr=u"Première rencontre",
-          en=u"First meeting",
-          ))
-    yield etype(**babel_values('name',
-          de=u"Auswertungsgespräch",
-          fr=u"Évaluation",
-          en=u"Evaluation",
-          ))
+    #~ yield etype(**babel_values('name',
+          #~ de=u"Erstgespräch",
+          #~ fr=u"Première rencontre",
+          #~ en=u"First meeting",
+          #~ ))
+    #~ yield etype(**babel_values('name',
+          #~ de=u"Auswertungsgespräch",
+          #~ fr=u"Évaluation",
+          #~ en=u"Evaluation",
+          #~ ))
     
     place = Instantiator('cal.Place').build
     yield place(**babel_values('name',
@@ -97,10 +97,10 @@ def objects():
     #~ yield event("user",start_date=settings.LINO.demo_date(days=2),type=2)
     
     User = resolve_model('users.User')
-    EventType = resolve_model('cal.EventType')
+    Calendar = resolve_model('cal.Calendar')
     Event = resolve_model('cal.Event')
     USERS = Cycler(User.objects.all())
-    ETYPES = Cycler(EventType.objects.all())
+    ETYPES = Cycler(Calendar.objects.all())
     TIMES = Cycler(['08:30','09:40','10:20','11:10','13:30'])
     #~ dict(en='Lunch',de=u"Mittagessen",fr=u"Diner")
     #~ dict(en='Dinner',de=u"Abendessen",fr=u"Souper")
@@ -121,7 +121,7 @@ Lunch with Luc""".splitlines())
     for i in range(10):
         yield Event(user=USERS.pop(),
           start_date=settings.LINO.demo_date(days=i),
-          type=ETYPES.pop(),start_time=TIMES.pop(),
+          calendar=ETYPES.pop(),start_time=TIMES.pop(),
           summary=SUMMARIES.pop())
     #~ yield event(user=user,start_date=settings.LINO.demo_date(days=1),type=2)
     #~ yield event(user=user,start_date=settings.LINO.demo_date(days=2),type=2)

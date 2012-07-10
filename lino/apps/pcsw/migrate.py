@@ -1066,10 +1066,13 @@ def migrate_from_1_4_3(globals_dict):
                 state = EventState.obsolete
             elif user_modified:
                 state = EventState.draft
+        calendar_id = type_id
         return cal_Event(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,build_time=build_time,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,
             #~ user_modified=user_modified,
             #~ rset_id=rset_id,
-            end_date=end_date,end_time=end_time,transparent=transparent,type_id=type_id,place_id=place_id,priority_id=priority_id,state=state)
+            end_date=end_date,end_time=end_time,transparent=transparent,
+            #~ type_id=type_id,
+            place_id=place_id,priority_id=priority_id,state=state)
     globals_dict.update(create_cal_event=create_cal_event)
     
     cal_Task = resolve_model("cal.Task")
@@ -1080,7 +1083,9 @@ def migrate_from_1_4_3(globals_dict):
             state = TaskState.done
         elif state is None and user_modified:
             state = TaskState.todo
-        return cal_Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,
+        calendar_id = None
+        return cal_Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,
+            project_id=project_id,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,
             #~ user_modified=user_modified,
             #~ rset_id=rset_id,
             due_date=due_date,due_time=due_time,
@@ -1256,17 +1261,32 @@ def migrate_from_1_4_3(globals_dict):
           company_id=company_id,date=date,type_id=type_id,event_type_id=event_type_id,subject=subject,body=body,language=language)    
     globals_dict.update(create_notes_note=create_notes_note)
     
-    cal_EventType = resolve_model("cal.EventType")
+    #~ cal_EventType = resolve_model("cal.EventType")
+    #~ def create_cal_eventtype(id, name, build_method, template, name_fr, name_en):
+        #~ return cal_EventType(id=id,name=name,build_method=build_method,template=template,
+          #~ email_template='Default.eml.html',
+          #~ name_fr=name_fr,name_en=name_en)    
+    #~ globals_dict.update(create_cal_eventtype=create_cal_eventtype)
+    
+    #~ cal_Calendar= resolve_model("cal.Calendar")
+    #~ def create_cal_calendar(id, user_id, type, name, description, 
+        #~ url_template, username, password, readonly, is_default, is_hidden, start_date, color):
+        #~ return cal_Calendar(id=id,user_id=user_id,type=type,name=name,description=description,url_template=url_template,username=username,password=password,readonly=readonly,is_default=is_default,is_private=is_hidden,start_date=start_date,color=color)    
+    #~ globals_dict.update(create_cal_calendar=create_cal_calendar)
+    
+    
+    cal_Calendar= resolve_model("cal.Calendar")
+    #~ cal_EventType = resolve_model("cal.EventType")
     def create_cal_eventtype(id, name, build_method, template, name_fr, name_en):
-        return cal_EventType(id=id,name=name,build_method=build_method,template=template,
+        return cal_Calendar(id=id,name=name,build_method=build_method,template=template,
           email_template='Default.eml.html',
           name_fr=name_fr,name_en=name_en)    
     globals_dict.update(create_cal_eventtype=create_cal_eventtype)
     
-    cal_Calendar= resolve_model("cal.Calendar")
     def create_cal_calendar(id, user_id, type, name, description, 
         url_template, username, password, readonly, is_default, is_hidden, start_date, color):
-        return cal_Calendar(id=id,user_id=user_id,type=type,name=name,description=description,url_template=url_template,username=username,password=password,readonly=readonly,is_default=is_default,is_private=is_hidden,start_date=start_date,color=color)    
+        return None
+        #~ return cal_Calendar(id=id,user_id=user_id,type=type,name=name,description=description,url_template=url_template,username=username,password=password,readonly=readonly,is_default=is_default,is_private=is_hidden,start_date=start_date,color=color)    
     globals_dict.update(create_cal_calendar=create_cal_calendar)
     
     

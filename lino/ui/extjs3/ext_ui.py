@@ -2113,6 +2113,7 @@ tinymce.init({
             #~ logger.info("20120202 %r",field)
             chooser = choosers.get_for_field(field)
             if chooser:
+                logger.info('20120710 choices_view() : has chooser')
                 qs = chooser.get_request_choices(ar,rpt)
                 #~ qs = list(chooser.get_request_choices(ar,rpt))
                 #~ logger.info("20120213 %s",qs)
@@ -2152,6 +2153,7 @@ tinymce.init({
                 m = field.rel.to
                 t = getattr(m,'_lino_choices_table',m._lino_default_table)
                 qs = t.request(self,request).data_iterator
+                logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
                 def row2dict(obj,d):
                     d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
                     d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')

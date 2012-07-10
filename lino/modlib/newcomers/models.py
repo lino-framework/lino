@@ -203,7 +203,9 @@ class UsersByNewcomer(users.Users):
     """
     A list of the Users that are susceptible to become responsible for a Newcomer.
     """
-    required=dict(user_groups=['newcomers'])
+    use_as_default_table = False
+    
+    required = dict(user_groups=['newcomers'])
     #~ required_user_groups = ['newcomers']
     #~ model = users.User
     editable = False # even root should not edit here

@@ -332,8 +332,9 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
     def update_cal_from(self):
         return self.applies_from
         
-    def update_cal_event_type(self,i):
-        return self.exam_policy.event_type
+    def update_cal_calendar(self,i):
+        #~ return self.exam_policy.event_type
+        return self.exam_policy.calendar
         
     def update_cal_until(self):
         return self.date_ended or self.applies_until

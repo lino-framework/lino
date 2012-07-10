@@ -856,14 +856,14 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     #~ yield etype("Termin beim Arbeitgeber")
     
     event = Instantiator('cal.Event',
-      'type start_date project summary',
+      'start_date project summary',
       user=alicia).build
     #~ yield event(1,i2d(20100727),hans,u"Stand der Dinge")
     #~ yield event(2,i2d(20100727),annette,u"Problem Kühlschrank")
     #~ yield event(3,i2d(20100727),andreas,u"Mein dritter Termin")
-    yield event(1,settings.LINO.demo_date(+1),hans,u"Stand der Dinge")
-    yield event(2,settings.LINO.demo_date(+1),annette,u"Problem Kühlschrank")
-    yield event(3,settings.LINO.demo_date(+2),andreas,u"Mein dritter Termin")
+    yield event(settings.LINO.demo_date(+1),hans,u"Stand der Dinge")
+    yield event(settings.LINO.demo_date(+1),annette,u"Problem Kühlschrank")
+    yield event(settings.LINO.demo_date(+2),andreas,u"Mein dritter Termin")
 
     i = pcsw.Person.objects.order_by('name').__iter__()
     p = i.next()

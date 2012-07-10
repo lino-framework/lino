@@ -2087,21 +2087,21 @@ def site_setup(site):
     
     site.modules.cal.Events.set_detail_layout("general more")
     site.modules.cal.Events.add_detail_panel("general","""
-    type summary user project 
+    calendar summary user project 
     start end 
     place priority access_class transparent #rset 
     owner state workflow_buttons
     description GuestsByEvent 
     """,_("General"))
     site.modules.cal.Events.add_detail_panel("more","""
-    id calendar created:20 modified:20  
+    id created:20 modified:20  
     outbox.MailsByController postings.PostingsByController
     """,_("More"))
     
     site.modules.cal.Events.set_insert_layout("""
     summary 
     start end 
-    type project 
+    calendar project 
     """,
     start="start_date start_time",
     end="end_date end_time",

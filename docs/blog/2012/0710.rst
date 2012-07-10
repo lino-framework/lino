@@ -1,0 +1,8 @@
+20120710
+========
+
+Experiment: 
+
+- removed cal.EventType (functionally replaced by cal.Calendar)
+- Calender is no longer UserAuthored
+- Calendar Events and Tasks no longer need to have a 'calender'
