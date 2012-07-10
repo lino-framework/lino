@@ -4199,8 +4199,7 @@ Ext.ensible.cal.EventRecord.reconfigure();
 
 
 Lino.on_eventclick = function(cp,rec,el) {
-  //~ console.log("Lino.on_eventclick",arguments);
-  //~ p.$URL_PARAM_REQUESTING_PANEL = cp.getId();
+  console.log("Lino.on_eventclick",arguments);
   Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
   return false;
 }
@@ -4260,11 +4259,9 @@ Lino.eventStore = new Ext.data.JsonStore({
     //~ console.log('20120710 eventStore.load()',this.cal_panel);
     //~ foo.bar = baz; // 20120213
       if (!options) options = {};
-      if (!options.params) options.params = {$ext_requests.URL_PARAM_TEAM_VIEW: false};
+      if (!options.params) options.params = {};
+      options.params.$ext_requests.URL_PARAM_TEAM_VIEW = Lino.calendar_app.team_view_button.pressed;
       
-    //~ if (this.cal_panel.team_view_button.pressed) {
-        //~ options.params.$URL_PARAM_FORMAT = 'ext_requests.URL_FORMAT_TEAMVIEW';
-    //~ }
       var view = this.cal_panel.getActiveView();
       var bounds = view.getViewBounds();
       //~ var p = {sd:'05.02.2012',ed:'11.02.2012'};
@@ -4358,7 +4355,7 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
 
 Lino.calendar_app = function() { return {
   get_main_panel : function() {
-      var mp = new Lino.CalendarAppPanel({ items : 
+      return new Lino.CalendarAppPanel({ items : 
         //~ [{
           //~ id: 'app-header',
           //~ region: 'north',
@@ -4450,7 +4447,24 @@ Lino.calendar_app = function() { return {
               monthViewCfg: {
                   showHeader: true,
                   showWeekLinks: true,
-                  showWeekNumbers: true
+                  showWeekNumbers: true,
+                  eventBodyMarkup: ['{Title}',
+                    //~ '<tpl if="url">',
+                        //~ '<a href="{url}">XX</a>',
+                    //~ '</tpl>',
+                    '<tpl if="_isReminder">',
+                        '<i class="ext-cal-ic ext-cal-ic-rem">&#160;</i>',
+                    '</tpl>',
+                    '<tpl if="_isRecurring">',
+                        '<i class="ext-cal-ic ext-cal-ic-rcr">&#160;</i>',
+                    '</tpl>',
+                    '<tpl if="spanLeft">',
+                        '<i class="ext-cal-spl">&#160;</i>',
+                    '</tpl>',
+                    '<tpl if="spanRight">',
+                        '<i class="ext-cal-spr">&#160;</i>',
+                    '</tpl>'
+                ].join('')
               },
               
               multiWeekViewCfg: {
@@ -4479,12 +4493,12 @@ Lino.calendar_app = function() { return {
               },
               
               listeners: {
-                  'eventclick': {
-                      fn: function(vw, rec, el){
-                          this.clearMsg();
-                      },
-                      scope: this
-                  },
+                  //~ 'eventclick': {
+                      //~ fn: function(vw, rec, el){
+                          //~ this.clearMsg();
+                      //~ },
+                      //~ scope: this
+                  //~ },
                   'eventover': function(vw, rec, el){
                       //console.log('Entered evt rec='+rec.data[Ext.ensible.cal.EventMappings.Title.name]', view='+ vw.id +', el='+el.id);
                   },
@@ -4578,8 +4592,6 @@ Lino.calendar_app = function() { return {
         //~ ]
         
       });
-      Lino.eventStore.cal_panel = mp;
-      return mp;
       
   }
   ,updateTitle: function(startDt, endDt){

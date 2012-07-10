@@ -1000,7 +1000,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ return not self.start_time
     
     @dd.virtualfield(dd.DisplayField(_("Reminder")))
-    def reminder(self,request): return 'foo'
+    def reminder(self,request): return False
     #~ reminder.return_type = dd.DisplayField(_("Reminder"))
 
     def get_print_language(self,bm):

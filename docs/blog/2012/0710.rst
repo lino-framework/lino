@@ -69,7 +69,24 @@ Das Verwalten von Gruppenterminen fängt jetzt an:
 
 - Die Workflow-Buttons für Gäste eines Termins funktionierten noch nicht.
 
-- Neue Tabellen "Meine X Y Einladungen"
+- Neue Tabellen:
+
+  - : 
+  -  : 
+  
+  - MyInvitations (Meine Einladungen) : alle Einladungen, die ich erhalten habe.
+    Das sind alle Einträge, wo ich als Gast eines Termins vorkomme.
+    
+  - MyPendingInvitations (Meine offenen Einladungen) : idem, aber diesmal 
+    nur die Einladungen die im Status "zu bestätigen" sind. 
+    Hier sollte man normalerweise auf "Bestätigen" klicken, damit der 
+    Verantwortliche des Termins
+  
+  - MySentInvitations
+  
+    
+  - MyPendingSentInvitations
+  
   
 
 Miscellaneous

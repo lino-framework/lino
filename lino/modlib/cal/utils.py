@@ -222,9 +222,10 @@ class GuestState(ChoiceList):
     label = _("State")
 add = GuestState.add_item
 add('10', _("Invited"),'invited',required=dict(states=['']),action_label=_("Invite"))
-add('20', _("Confirmed"),'confirmed',required=dict(states=['','invited']))
-add('30', _("Present"),'present',required=dict(states=['invited','confirmed']))
-add('40', _("Absent"),'absent',required=dict(states=['invited','confirmed']))
+add('20', _("Confirmed"),'confirmed',required=dict(states=['','invited']),action_label=_("Confirm"))
+add('30', _("Rejected"),'rejected',required=dict(states=['','invited']),action_label=_("Reject"))
+add('40', _("Present"),'present',required=dict(states=['invited','confirmed']))
+add('50', _("Absent"),'absent',required=dict(states=['invited','confirmed']))
 
 
 class AccessClasses(ChoiceList):
