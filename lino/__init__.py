@@ -952,9 +952,11 @@ class Lino(object):
         #~ UserGroup.add_item(name,label,name)
         #~ self.add_user_field(name+'_level',UserLevel.field(label),profile=True)
         
-    def setup_user_profiles(self):
+    def setup_choicelists(self):
         """
-        Define application-specific default
+        Redefine application-specific Choice Lists.
+        
+        Especially used to define application-specific
         :class:`UserProfiles <lino.core.perms.UserProfiles>`.
         
         Lino by default has two user profiles "User" 

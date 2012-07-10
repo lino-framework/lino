@@ -30,7 +30,7 @@ class Lino(Lino):
     #~ def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons.detail_action)
         
-    def setup_user_profiles(self):
+    def setup_choicelists(self):
         """
         Defines application-specific default user profiles.
         Local site administrators can override this in their :xfile:.

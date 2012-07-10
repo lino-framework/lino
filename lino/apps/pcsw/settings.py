@@ -57,7 +57,8 @@ class Lino(Lino):
     def get_app_source_file(self):
         return __file__
         
-    def setup_user_profiles(self):
+    #~ def setup_user_profiles(self):
+    def setup_choicelists(self):
         """
         This defines default user profiles for :mod:`lino.apps.pcsw`.
         """

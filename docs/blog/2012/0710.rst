@@ -1,8 +1,44 @@
 20120710
 ========
 
-Experiment: 
+Database change in :mod:`lino.modlib.cal`
+-----------------------------------------
+
+This is to be considered an experiment: 
 
 - removed cal.EventType (functionally replaced by cal.Calendar)
 - Calender is no longer UserAuthored
-- Calendar Events and Tasks no longer need to have a 'calender'
+- Calendar Events and Tasks no longer *need* to have a 'calender'
+
+
+dumpdata and UserProfiles
+-------------------------
+
+Because Django's `dumpdata` command doesn't call :meth:`lino.Lino.startup`, it says::
+
+  Traceback (most recent call last):
+    File "manage.py", line 19, in <module>
+      execute_manager(settings)
+    File "/var/snapshots/django/django/core/management/__init__.py", line 442, in execute_manager
+      utility.execute()
+    File "/var/snapshots/django/django/core/management/__init__.py", line 379, in execute
+      self.fetch_command(subcommand).run_from_argv(self.argv)
+    File "/var/snapshots/django/django/core/management/base.py", line 191, in run_from_argv
+      self.execute(*args, **options.__dict__)
+    File "/var/snapshots/django/django/core/management/base.py", line 220, in execute
+      output = self.handle(*args, **options)
+    File "/var/snapshots/django/django/core/management/commands/dumpdata.py", line 110, in handle
+      objects.extend(model._default_manager.using(using).all())
+    File "/var/snapshots/django/django/db/models/query.py", line 84, in __len__
+      self._result_cache.extend(self._iter)
+    File "/var/snapshots/django/django/db/models/query.py", line 286, in iterator
+      obj = model(*row[index_start:aggregate_start])
+    File "/var/snapshots/django/django/db/models/base.py", line 300, in __init__
+      setattr(self, field.attname, val)
+    File "/var/snapshots/django/django/db/models/fields/subclassing.py", line 34, in __set__
+      obj.__dict__[self.field.name] = self.field.to_python(value)
+    File "/usr/local/django/test_dsbe/using/lino/lino/utils/choicelists.py", line 450, in to_python
+      return self.choicelist.to_python(value)
+    File "/usr/local/django/test_dsbe/using/lino/lino/utils/choicelists.py", line 316, in to_python
+      raise Exception("Unresolved value %r for %s" % (value,cls))
+  Exception: Unresolved value u'200' for <class 'lino.core.perms.UserProfiles'>

@@ -88,7 +88,7 @@ def analyze_models():
     if DONE: return
     DONE = True
     
-    settings.LINO.setup_user_profiles()
+    settings.LINO.setup_choicelists()
     
     #~ settings.LINO.setup_user_profiles()
     
