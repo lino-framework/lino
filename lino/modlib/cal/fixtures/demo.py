@@ -27,6 +27,7 @@ from lino.utils.instantiator import Instantiator
 from lino.core.modeltools import resolve_model
 from lino.utils.babel import babel_values
 
+from lino.modlib.cal import models as cal
 
 
 def objects():
@@ -96,33 +97,46 @@ def objects():
     #~ yield event("user",start_date=settings.LINO.demo_date(days=1),type=2)
     #~ yield event("user",start_date=settings.LINO.demo_date(days=2),type=2)
     
-    User = resolve_model('users.User')
-    Calendar = resolve_model('cal.Calendar')
-    Event = resolve_model('cal.Event')
-    USERS = Cycler(User.objects.all())
-    ETYPES = Cycler(Calendar.objects.all())
+    
+    #~ User = resolve_model('users.User')
+    #~ Calendar = resolve_model('cal.Calendar')
+    #~ Event = resolve_model('cal.Event')
+    if settings.LINO.project_model:
+        PROJECTS = Cycler(settings.LINO.project_model.objects.all())
+    USERS = Cycler(settings.LINO.user_model.objects.all())
+    ETYPES = Cycler(cal.Calendar.objects.all())
     TIMES = Cycler(['08:30','09:40','10:20','11:10','13:30'])
-    #~ dict(en='Lunch',de=u"Mittagessen",fr=u"Diner")
-    #~ dict(en='Dinner',de=u"Abendessen",fr=u"Souper")
-    #~ dict(en='Breakfast',de=u"Frühstück",fr=u"Petit-déjeuner")
-    #~ dict(en='Meeting',de=u"Treffen",fr=u"Rencontre")
-    #~ dict(en='Consultation',de=u"Beratung",fr=u"Consultation")
-    #~ dict(en='Seminar',de=u"Seminar",fr=u"Séminaire")
-    #~ dict(en='Evaluation',de=u"Auswertung",fr=u"Evaluation")
-    #~ dict(en='First meeting',de=u"Erstgespräch",fr=u"Première rencontre")
-    SUMMARIES = Cycler("""\
-Meeting with Michael
-Seminar in Brussels
-Consultation with Claudine
-Lunch with Luc""".splitlines())
+    ACL = Cycler(cal.AccessClasses.items())
+    SUMMARIES = Cycler((
+      dict(en='Lunch',de=u"Mittagessen",fr=u"Diner")
+      ,dict(en='Dinner',de=u"Abendessen",fr=u"Souper")
+      ,dict(en='Breakfast',de=u"Frühstück",fr=u"Petit-déjeuner")
+      ,dict(en='Meeting',de=u"Treffen",fr=u"Rencontre")
+      ,dict(en='Consultation',de=u"Beratung",fr=u"Consultation")
+      ,dict(en='Seminar',de=u"Seminar",fr=u"Séminaire")
+      ,dict(en='Evaluation',de=u"Auswertung",fr=u"Evaluation")
+      ,dict(en='First meeting',de=u"Erstgespräch",fr=u"Première rencontre")
+      ,dict(en='Interview',de=u"Interview",fr=u"Interview")
+      ))
+    #~ SUMMARIES = Cycler("""\
+#~ Meeting with Michael
+#~ Seminar in Brussels
+#~ Consultation with Claudine
+#~ Lunch with Luc""".splitlines())
     #~ Event = resolve_model('cal.Event')
     #~ user = User.objects.get(username='user')
     #~ event = Instantiator('cal.Event').build
-    for i in range(10):
-        yield Event(user=USERS.pop(),
+    for i in range(40):
+        u = USERS.pop()
+        s = SUMMARIES.pop().get(u.language,None) or SUMMARIES.pop().get('en')
+        kw = dict(user=u,
           start_date=settings.LINO.demo_date(days=i),
           calendar=ETYPES.pop(),start_time=TIMES.pop(),
-          summary=SUMMARIES.pop())
+          summary=s)
+        kw.update(access_class=ACL.pop())
+        if settings.LINO.project_model:
+            kw.update(project=PROJECTS.pop())
+        yield cal.Event(**kw)
     #~ yield event(user=user,start_date=settings.LINO.demo_date(days=1),type=2)
     #~ yield event(user=user,start_date=settings.LINO.demo_date(days=2),type=2)
     

@@ -642,13 +642,6 @@ class BooleanStoreField(StoreField):
         Ext.ensible CalendarPanel sends boolean values as 
         """
         #~ print "20110717 parse_form_value", self.field.name, v, obj
-        if v in ('true','on',True):
-            return True
-        if v in ('false','off',False):
-            return False
-        raise Exception("Invalid boolean value %r for field %s" % (v,self.name))
-        
-        
         return ext_requests.parse_boolean(v)
 
         

@@ -4241,40 +4241,41 @@ Lino.on_eventupdate  = function(cp,rec,el) {
 //~ Lino.eventStore = new Ext.ensible.cal.EventStore({ 
 //~ Lino.eventStore = new Ext.data.ArrayStore({ 
 Lino.eventStore = new Ext.data.JsonStore({ 
-      listeners: { exception: Lino.on_store_exception }
-      ,url: ROOT_URL + '/restful/cal/PanelEvents'
-      ,restful : true
-      ,proxy: new Ext.data.HttpProxy({ 
-          url: ROOT_URL + '/restful/cal/PanelEvents', 
-          disableCaching: false // no need for cache busting when loading via Ajax
-          //~ disableCaching:true,
-      })
-      //~ ,reader : new Ext.data.JsonReader({
-        ,fields: Ext.ensible.cal.EventRecord.prototype.fields.getRange()
-        ,totalProperty: "count"
-        ,root: "rows"
-        ,idProperty: Ext.ensible.cal.EventMappings.EventId.mapping
-        //~ ,idIndex: Ext.ensible.cal.EventMappings.EventId.mapping
-      //~ })
-      ,writer : new Ext.data.JsonWriter({
-          writeAllFields: false
-          //~ ,encode: false
-          //~ ,createRecord : function(rec) {
-              //~ return Lino.on_eventadd(null,rec);
-          //~ }
-          //~ ,destroyRecord : function(rec) {
-              //~ return Lino.on_eventdelete(null,rec);
-          //~ }
-          //~ ,updateRecord : function(rec) {
-              //~ return Lino.on_eventupdate(null,rec);
-          //~ }
-        
-      })
-      //~ ,disableCaching:true
-      //~ ,autoLoad: true
-      //~ ,remoteSort: true
-      //~ ,baseParams: bp
-    });
+  listeners: { exception: Lino.on_store_exception }
+  ,url: ROOT_URL + '/restful/cal/PanelEvents'
+  ,restful : true
+  ,proxy: new Ext.data.HttpProxy({ 
+      url: ROOT_URL + '/restful/cal/PanelEvents', 
+      disableCaching: false // no need for cache busting when loading via Ajax
+      //~ disableCaching:true,
+  })
+  ,fields: Ext.ensible.cal.EventRecord.prototype.fields.getRange()
+  ,totalProperty: "count"
+  ,root: "rows"
+  ,idProperty: Ext.ensible.cal.EventMappings.EventId.mapping
+  ,writer : new Ext.data.JsonWriter({
+    writeAllFields: false
+  })
+  ,load: function(options) {
+    //~ console.log('20120710 eventStore.load()',this.cal_panel);
+    //~ foo.bar = baz; // 20120213
+      if (!options) options = {};
+      if (!options.params) options.params = {$ext_requests.URL_PARAM_TEAM_VIEW: false};
+      
+    //~ if (this.cal_panel.team_view_button.pressed) {
+        //~ options.params.$URL_PARAM_FORMAT = 'ext_requests.URL_FORMAT_TEAMVIEW';
+    //~ }
+      var view = this.cal_panel.getActiveView();
+      var bounds = view.getViewBounds();
+      //~ var p = {sd:'05.02.2012',ed:'11.02.2012'};
+      //~ var p = {};
+      options.params[view.dateParamStart] = bounds.start.format(view.dateParamFormat);
+      options.params[view.dateParamEnd] = bounds.end.format(view.dateParamFormat);
+      //~ Ext.apply(options.params,p)
+    
+    return Ext.data.JsonStore.prototype.load.call(this,options);
+  }
+});
 
 //~ Lino.calendarStore = new Ext.data.ArrayStore({ 
 Lino.calendarStore = new Ext.data.JsonStore({ 
@@ -4309,9 +4310,9 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
   empty_title : "$site.modules.cal.Panel.label"
   ,activeItem: 1 // 0: day, 1: week
-  ,eventStore: Lino.eventStore
   ,ls_url: '/cal/Panel'
   //~ ,disableCaching:true
+  ,eventStore: Lino.eventStore
   ,calendarStore: Lino.calendarStore
   ,listeners: { 
     editdetails: Lino.on_editdetails
@@ -4322,14 +4323,10 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
     ,afterrender : function(config) {
       //~ console.log("20120704 afterrender");
       Lino.calendarStore.load();
-      var view = this.getActiveView();
-      var bounds = view.getViewBounds();
-      //~ var p = {sd:'05.02.2012',ed:'11.02.2012'};
-      var p = {};
-      p[view.dateParamStart] = bounds.start.format(view.dateParamFormat);
-      p[view.dateParamEnd] = bounds.end.format(view.dateParamFormat);
       //~ console.log("20120704 afterrender calls eventStore.load()",p);
-      Lino.eventStore.load({params:p});
+      Lino.eventStore.cal_panel = this;
+      //~ Lino.eventStore.load({params:p});
+      Lino.eventStore.load();
       //~ Lino.CalendarPanel.superclass.constructor.call(this, config);
       //~ console.log(20120118, config,this);
     }
@@ -4354,38 +4351,14 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
   empty_title : "$site.modules.cal.Panel.label"
   ,ls_url: '/cal/Panel'
-  //~ ,activeItem: 1 // 0: day, 1: week
-  //~ ,eventStore: Lino.eventStore
-  //~ ,calendarStore: Lino.calendarStore
-  ,unused_listeners: { 
-    //~ editdetails: Lino.on_editdetails
-    //~ ,eventclick: Lino.on_eventclick
-    afterrender : function(config) {
-      Lino.calendarStore.load();
-      //~ var cp = Ext.get('app-calendar');
-      var cp = this.findById('app-calendar');
-      //~ console.log(20120704, this,cp);
-      var view = cp.getActiveView();
-      var bounds = view.getViewBounds();
-      var p = {};
-      p[view.dateParamStart] = bounds.start.format(view.dateParamFormat);
-      p[view.dateParamEnd] = bounds.end.format(view.dateParamFormat);
-      Lino.eventStore.load({params:p});
-    }
-  }
   ,set_status : function(status) { this.refresh();}
   ,refresh : function() {Lino.eventStore.reload();}
-    
-    
-  //~ ,layout: 'border'
   ,layout: 'fit'
-  //~ ,items: Lino.CalendarAppPanel_items
-        
 });
 
 Lino.calendar_app = function() { return {
   get_main_panel : function() {
-      return new Lino.CalendarAppPanel({ items : 
+      var mp = new Lino.CalendarAppPanel({ items : 
         //~ [{
           //~ id: 'app-header',
           //~ region: 'north',
@@ -4420,6 +4393,29 @@ Lino.calendar_app = function() { return {
                           scope: this
                       }
                   }
+              //~ },{ 
+                //~ layout:'fit',
+                //~ items: [
+                  //~ new Ext.form.Checkbox({
+                    //~ boxLabel:"$_('Team view')",
+                    //~ hideLabel:true
+                    //~ listeners: { click: }
+                  //~ })
+                //~ ]
+              },{ 
+                layout:'form',
+                items: [
+                  this.team_view_button = new Ext.Button({
+                    text:"$_('Team view')",
+                    enableToggle:true,
+                    pressed:false,
+                    toggleHandler: function(btn,state) { 
+                      //~ console.log('20120710 teamView.toggle()');
+                      Lino.eventStore.load({params:{$ext_requests.URL_PARAM_TEAM_VIEW:state}});
+                      //~ console.log("team view",state);
+                    }
+                  })
+                ]
               },{
                   xtype: 'extensible.calendarlist',
                   store: Lino.calendarStore,
@@ -4433,7 +4429,7 @@ Lino.calendar_app = function() { return {
               border: false,
               id:'app-calendar',
               region: 'center',
-              activeItem: 3, // month view
+              //~ activeItem: 3, // month view
               
               // Any generic view options that should be applied to all sub views:
               viewConfig: {
@@ -4582,6 +4578,9 @@ Lino.calendar_app = function() { return {
         //~ ]
         
       });
+      Lino.eventStore.cal_panel = mp;
+      return mp;
+      
   }
   ,updateTitle: function(startDt, endDt){
       var p = Ext.getCmp('app-center');

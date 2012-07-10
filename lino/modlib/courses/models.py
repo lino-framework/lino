@@ -596,6 +596,7 @@ class PendingCourseRequests(CourseRequests):
     """
     List of pending course requests.
     """
+    required = dict(user_groups=['integ'])
     label = _("Pending Course Requests")
     order_by = ['date_submitted']
     filter = models.Q(course__isnull=True)

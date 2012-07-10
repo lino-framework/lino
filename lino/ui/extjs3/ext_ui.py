@@ -1601,17 +1601,6 @@ tinymce.init({
         else:
             elem = rpt.get_row_by_pk(pk)
         
-        #~ elem = None
-        #~ if pk is not None:
-            #~ try:
-                #~ elem = rpt.model.objects.get(pk=pk)
-            #~ except ValueError:
-                #~ msg = "Invalid primary key %r for %s." % pk,full_model_name(rpt.model)
-                #~ raise Http404(msg)
-            #~ except rpt.model.DoesNotExist:
-                #~ raise Http404("%s %s does not exist." % (rpt,pk))
-        
-        
         ar = rpt.request(self,request,a)
         rh = ar.ah
             

@@ -168,7 +168,7 @@ class TableRequest(actions.ActionRequest):
         
         
     def parse_req(self,request,rqdata,**kw):
-        #~ logger.info("20120121 %s.parse_req()",self)
+        #~ logger.info("20120710 %s.parse_req()",self.actor)
         #~ rh = self.ah
         master = kw.get('master',self.actor.master)
         if master is ContentType or master is models.Model:

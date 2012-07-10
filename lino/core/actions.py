@@ -355,7 +355,7 @@ class StateAction(RowAction):
     
     def __init__(self,actor,target_state,**kw):
         self.target_state = target_state
-        kw.update(label=target_state.text)
+        kw.update(label=getattr(target_state,'action_label',target_state.text))
         required = getattr(target_state,'required',None)
         if required is not None:
             if target_state.name:

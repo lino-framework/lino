@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,11 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Installas standard values for the following models:
-- :class:`lino.modlib.cal.models.TaskStatus`
-- :class:`lino.modlib.cal.models.EventStatus`
-- :class:`lino.modlib.cal.models.AccessClass`
-- :class:`lino.modlib.cal.models.Priority`
+Installs standard values for :mod:`lino.modlib.cal`.
 
 """
 
@@ -54,10 +50,10 @@ def objects():
     #~ yield add('2',**babel_values('name',en=u"completed",de=u"erledigt",   fr=u"complétée"))
     #~ yield add('3',**babel_values('name',en=u"cancelled",de=u"storniert",   fr=u"annulée"))
 
-    add = Instantiator('cal.AccessClass','ref').build
-    yield add('0',**babel_values('name',en=u"Public",de=u"Öffentlich",   fr=u"Public"))
-    yield add('1',**babel_values('name',en=u"Private",de=u"Privat",   fr=u"Privé"))
-    yield add('2',**babel_values('name',en=u"Confidential",de=u"Vertraulich",   fr=u"Confidentiel"))
+    #~ add = Instantiator('cal.AccessClass','ref').build
+    #~ yield add('0',**babel_values('name',en=u"Public",de=u"Öffentlich",   fr=u"Public"))
+    #~ yield add('1',**babel_values('name',en=u"Private",de=u"Privat",   fr=u"Privé"))
+    #~ yield add('2',**babel_values('name',en=u"Confidential",de=u"Vertraulich",   fr=u"Confidentiel"))
 
     add = Instantiator('cal.Priority','ref').build
     yield add('1',**babel_values('name',en=u"very urgent",de=u"sehr dringend",   fr=u"très urgent"))

@@ -855,15 +855,12 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     #~ yield etype("Termin beim Klienten")
     #~ yield etype("Termin beim Arbeitgeber")
     
-    event = Instantiator('cal.Event',
-      'start_date project summary',
-      user=alicia).build
-    #~ yield event(1,i2d(20100727),hans,u"Stand der Dinge")
-    #~ yield event(2,i2d(20100727),annette,u"Problem Kühlschrank")
-    #~ yield event(3,i2d(20100727),andreas,u"Mein dritter Termin")
-    yield event(settings.LINO.demo_date(+1),hans,u"Stand der Dinge")
-    yield event(settings.LINO.demo_date(+1),annette,u"Problem Kühlschrank")
-    yield event(settings.LINO.demo_date(+2),andreas,u"Mein dritter Termin")
+    #~ event = Instantiator('cal.Event',
+      #~ 'start_date project summary',
+      #~ user=alicia).build
+    #~ yield event(settings.LINO.demo_date(+1),hans,u"Stand der Dinge")
+    #~ yield event(settings.LINO.demo_date(+1),annette,u"Problem Kühlschrank")
+    #~ yield event(settings.LINO.demo_date(+2),andreas,u"Mein dritter Termin")
 
     i = pcsw.Person.objects.order_by('name').__iter__()
     p = i.next()
@@ -874,3 +871,10 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
             date_submitted=settings.LINO.demo_date(offset))
         p = i.next()
         offset -= 1
+
+    from lino.modlib.cal import models as cal
+
+    for u in settings.LINO.user_model.objects.all():
+        for tm in settings.LINO.user_model.objects.exclude(id=u.id):
+            yield cal.Subscription(user=u,watched_user=tm)
+    

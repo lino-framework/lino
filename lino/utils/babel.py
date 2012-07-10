@@ -342,6 +342,9 @@ class BabelNamed(Model):
     Mixin for models that have a non-nullable field `name` 
     (labelled "Description") for each language.
     """
+    
+    grid_search_field = 'name'
+
     class Meta:
         abstract = True
         

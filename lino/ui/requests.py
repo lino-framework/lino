@@ -23,6 +23,8 @@ CHOICES_VALUE_FIELD = 'value'
 CHOICES_HIDDEN_SUFFIX = "Hidden"
 
 
+URL_PARAM_TEAM_VIEW = 'tv'
+
 URL_PARAM_PARAM_VALUES = 'pv'
 
 URL_PARAM_ACTION_NAME = 'an'
@@ -119,3 +121,11 @@ def authenticated_user(user):
         #~ return None
     return user
         
+
+def parse_boolean(v):
+    if v in ('true','on',True):
+        return True
+    if v in ('false','off',False):
+        return False
+    #~ raise Exception("Invalid boolean value %r for field %s" % (v,self.name))
+    raise Exception("Invalid boolean value %r" % v)

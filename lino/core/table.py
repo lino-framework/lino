@@ -175,28 +175,30 @@ def add_quick_search_filter(qs,search_text):
     if not isinstance(qs,QuerySet): 
         # TODO: filter also simple lists 
         return qs
-    logger.info("20120709 add_quick_search_filter(%s,%r)",qs.model,search_text)
-    q = models.Q()
-    if qs.model.quick_search_fields is not None:
-        for fn in qs.model.quick_search_fields:
-            kw = {fn+"__icontains": search_text}
-            q = q | models.Q(**kw)
-            logger.info("20120709 %s__icontains=%r",fn,search_text)
-    else:
-        for field in qs.model._meta.fields:
-            if isinstance(field,models.CharField):
-                kw = {field.name+"__icontains": search_text}
-                q = q | models.Q(**kw)
-                logger.info("20120709 %s__icontains=%r",field.name,search_text)
-            else:
-                logger.info("20120709 %s : not a CharField",field.name)
-    if search_text.isdigit():
-        for field in qs.model._meta.fields:
-            if isinstance(field,(models.IntegerField,models.AutoField)):
-                kw = {field.name: int(search_text)}
-                q = q | models.Q(**kw)
-    return qs.filter(q)
+    return qs.filter(quick_search_filter(qs.model,search_text))
     
+def quick_search_filter(model,search_text,prefix=''):
+    #~ logger.info("20120709 add_quick_search_filter(%s,%r)",qs.model,search_text)
+    q = models.Q()
+    if model.quick_search_fields is not None:
+        for fn in model.quick_search_fields:
+            kw = {prefix+fn+"__icontains": search_text}
+            q = q | models.Q(**kw)
+            #~ logger.info("20120709 %s__icontains=%r",fn,search_text)
+    else:
+        for field in model._meta.fields:
+            if isinstance(field,models.CharField):
+                kw = {prefix+field.name+"__icontains": search_text}
+                q = q | models.Q(**kw)
+                #~ logger.info("20120709 %s__icontains=%r",field.name,search_text)
+            #~ else:
+                #~ logger.info("20120709 %s : not a CharField",field.name)
+    if search_text.isdigit():
+        for field in model._meta.fields:
+            if isinstance(field,(models.IntegerField,models.AutoField)):
+                kw = {prefix+field.name: int(search_text)}
+                q = q | models.Q(**kw)
+    return q
     
 def add_gridfilters(qs,gridfilters):
     """
@@ -217,30 +219,37 @@ def add_gridfilters(qs,gridfilters):
         kw = {}
         if flttype == 'string':
             if isinstance(field,models.CharField):
-                kw[field.name+"__contains"] =  flt['value']
+                kw[field.name+"__icontains"] =  flt['value']
+                q = q & models.Q(**kw)
             elif isinstance(field,models.ForeignKey):
-                search_field = getattr(field.rel.to,'grid_search_field',None)
-                if search_field is None:
-                    search_field = 'name'
-                kw[field.name + "__%s__contains" % search_field] = flt['value']
+                q = q & quick_search_filter(field.rel.to,flt['value'],field.name+"__")
+                #~ rq = models.Q()
+                #~ search_field = field.rel.to.grid_search_field
+                #~ for search_field in field.rel.to.quick_search_fields:
+                #~ search_field = getattr(field.rel.to,'grid_search_field',None)
+                #~ if search_field is not None:
+                    #~ rq = rq | models.Q(**{field.name+"__%s__icontains" % search_field : flt['value']})
+                #~ q = q & rq
             else:
                 raise NotImplementedError(repr(flt))
         elif flttype == 'numeric':
             cmp = str(flt['comparison'])
             if cmp == 'eq': cmp = 'exact'
             kw[field.name+"__"+cmp] = flt['value']
+            q = q & models.Q(**kw)
         elif flttype == 'boolean':
             kw[field.name+"__equals"] = flt['value']
+            q = q & models.Q(**kw)
         elif flttype == 'date':
             v = datetime.date(*settings.LINO.parse_date(flt['value']))
             #~ v = parse_js_date(flt['value'],field.name)
             cmp = str(flt['comparison'])
             if cmp == 'eq': cmp = 'exact'
             kw[field.name+"__"+cmp] = v
+            q = q & models.Q(**kw)
             #~ print kw
         else:
             raise NotImplementedError(repr(flt))
-        q = q & models.Q(**kw)
     return qs.filter(q)
         
 

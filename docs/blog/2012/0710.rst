@@ -1,16 +1,6 @@
 20120710
 ========
 
-Database change in :mod:`lino.modlib.cal`
------------------------------------------
-
-This is to be considered an experiment: 
-
-- removed cal.EventType (functionally replaced by cal.Calendar)
-- Calender is no longer UserAuthored
-- Calendar Events and Tasks no longer *need* to have a 'calender'
-
-
 dumpdata and UserProfiles
 -------------------------
 
@@ -42,3 +32,53 @@ Because Django's `dumpdata` command doesn't call :meth:`lino.Lino.startup`, it s
     File "/usr/local/django/test_dsbe/using/lino/lino/utils/choicelists.py", line 316, in to_python
       raise Exception("Unresolved value %r for %s" % (value,cls))
   Exception: Unresolved value u'200' for <class 'lino.core.perms.UserProfiles'>
+  
+That's why Lino now includes an override of that 
+command: :mod:`lino.management.commands.dumpdata`.
+
+Database change in :mod:`lino.modlib.cal`
+-----------------------------------------
+
+This is to be considered an experiment: 
+
+- removed cal.EventType (functionally replaced by cal.Calendar)
+- Calender is no longer UserAuthored
+- Calendar Events and Tasks no longer *need* to have a 'calender'
+
+
+Kalender
+--------
+ 
+Eine prinzipielle Entscheidung ist für mich gefallen: 
+die experimentelle Änderung von dieser Nacht bleibt. 
+Es gibt nicht einen Kalender pro Benutzer, sondern einen pro Terminart. 
+Denn auch in der Demo von Ext.ensible benutzen sie 
+die verschiedenen Kalender zum Differenzieren von Terminarten 
+(nicht von Benutzern):
+http://ext.ensible.com/deploy/dev/examples/calendar/TestApp/test-app.html
+
+Das Verwalten von Gruppenterminen fängt jetzt an: 
+
+- CalendarPanel hat jetzt einen Button "Team View", der 
+  zwischen "Meine Termine" und "Team-Ansicht" umschaltet.
+
+- Kalenderliste wird momentan für alle Benutzer die gleiche genommen. 
+  Braucht man nicht zu abonnieren.
+  Dafür muss man sein "Team" definieren: eine Liste aller anderen 
+  Benutzer,  deren Termine man in der Team-Ansicht sehen möchte.
+
+- Die Workflow-Buttons für Gäste eines Termins funktionierten noch nicht.
+
+- Neue Tabellen "Meine X Y Einladungen"
+  
+
+Miscellaneous
+-------------
+
+- Setting a column filter on a ForeignKey field didn't work on 
+  all models. Now it uses exactly like the quick search field of a table on that model would work
+  Using :attr:`lino.core.modeltools.Model.quick_search_fields`
+  of the foreign model. Works fine. It's now also possible to search for a primary key.
+  
+- Offene Kursabfragen war nur für Manager sichtbar. 
+  

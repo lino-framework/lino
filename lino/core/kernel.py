@@ -88,7 +88,16 @@ def analyze_models():
     if DONE: return
     DONE = True
     
-    settings.LINO.setup_choicelists()
+    self = settings.LINO
+    
+    if self.user_model:
+        self.user_model = resolve_model(self.user_model)
+    if self.person_model:
+        self.person_model = resolve_model(self.person_model)
+    if self.project_model:
+        self.project_model = resolve_model(self.project_model)
+    
+    self.setup_choicelists()
     
     #~ settings.LINO.setup_user_profiles()
     
@@ -349,15 +358,6 @@ def startup_site(self):
       
         analyze_models()
         
-        if self.user_model:
-            self.user_model = resolve_model(self.user_model)
-        
-        if self.person_model:
-            self.person_model = resolve_model(self.person_model)
-        
-        if self.project_model:
-            self.project_model = resolve_model(self.project_model)
-
         
         for model in models.get_models():
           

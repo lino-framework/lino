@@ -1289,6 +1289,10 @@ def migrate_from_1_4_3(globals_dict):
         #~ return cal_Calendar(id=id,user_id=user_id,type=type,name=name,description=description,url_template=url_template,username=username,password=password,readonly=readonly,is_default=is_default,is_private=is_hidden,start_date=start_date,color=color)    
     globals_dict.update(create_cal_calendar=create_cal_calendar)
     
+    def create_cal_accessclass(*args):
+        return None
+    globals_dict.update(create_cal_accessclass=create_cal_accessclass)
+    
     
     objects = globals_dict['objects']
     def new_objects():

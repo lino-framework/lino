@@ -218,9 +218,18 @@ class GuestState(ChoiceList):
     """
     State of a Calendar Event Guest. Used as Workflow selector.
     """
-    label = _("Guest State")
+    #~ label = _("Guest State")
+    label = _("State")
 add = GuestState.add_item
-add('10', _("Invited"),'invited')
-add('20', _("Confirmed"),'confirmed')
-add('30', _("Present"),'present')
-add('40', _("Absent"),'absent')
+add('10', _("Invited"),'invited',required=dict(states=['']),action_label=_("Invite"))
+add('20', _("Confirmed"),'confirmed',required=dict(states=['','invited']))
+add('30', _("Present"),'present',required=dict(states=['invited','confirmed']))
+add('40', _("Absent"),'absent',required=dict(states=['invited','confirmed']))
+
+
+class AccessClasses(ChoiceList):
+    label = _("Access Class")
+add = AccessClasses.add_item
+add('10', _('Private'),'private')
+add('20', _('Show busy'),'show_busy')
+add('30', _('Public'),'public')
