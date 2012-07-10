@@ -1716,7 +1716,8 @@ def user_events(qs,user):
     subs = Subscription.objects.filter(user=user).values_list('calendar__id',flat=True)
     #~ cal_ids = tuple(my_own_calendars+my_subcriptions)
     #~ return qs.filter(Q(user=user) | Q(calendar__id__in=subs))
-    return qs.filter(calendar_id__in=subs)
+    #~ print subs
+    return qs.filter(calendar__id__in=subs)
 
 if settings.LINO.use_extensible:
   
