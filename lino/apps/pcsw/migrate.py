@@ -1067,7 +1067,9 @@ def migrate_from_1_4_3(globals_dict):
             elif user_modified:
                 state = EventState.draft
         calendar_id = type_id or 2
-        return cal_Event(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,build_time=build_time,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,
+        return cal_Event(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,build_time=build_time,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,
+            #~ access_class_id=access_class_id,
+            sequence=sequence,auto_type=auto_type,
             #~ user_modified=user_modified,
             #~ rset_id=rset_id,
             end_date=end_date,end_time=end_time,transparent=transparent,
@@ -1085,7 +1087,9 @@ def migrate_from_1_4_3(globals_dict):
             state = TaskState.todo
         calendar_id = None
         return cal_Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,
-            project_id=project_id,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class_id=access_class_id,sequence=sequence,auto_type=auto_type,
+            project_id=project_id,calendar_id=calendar_id,uid=uid,start_date=start_date,start_time=start_time,summary=summary,description=description,
+            #~ access_class_id=access_class_id,
+            sequence=sequence,auto_type=auto_type,
             #~ user_modified=user_modified,
             #~ rset_id=rset_id,
             due_date=due_date,due_time=due_time,
