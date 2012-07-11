@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-08 10:58+0100\n"
+"POT-Creation-Date: 2012-07-11 17:53+0100\n"
 "PO-Revision-Date: 2012-06-25 14:37+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -88,71 +88,71 @@ msgstr "Cause d'abandon"
 msgid "date ended"
 msgstr "Abandon le"
 
-#: .\models.py:342
+#: .\models.py:343
 #, python-format
 msgid "Evaluation %d"
 msgstr "Evaluation %d"
 
-#: .\models.py:354
+#: .\models.py:355
 msgid "Contract ends in a month"
 msgstr "Projet termine dans un mois"
 
-#: .\models.py:408
+#: .\models.py:409
 #, python-format
 msgid "Date range %(p1)s lies outside of coached period %(p2)s."
 msgstr "Période %(p1)s hors période d'accompagnement %(p2)s."
 
-#: .\models.py:412
+#: .\models.py:413
 #, python-format
 msgid "Date range overlaps with %(ctype)s #%(id)s"
 msgstr "Projet chevauche avec %(ctype)s #%(id)s"
 
-#: .\models.py:424
+#: .\models.py:425
 #, python-format
 msgid "%(ctype)s #%(id)s : %(msg)s"
 msgstr ""
 
-#: .\models.py:438 .\models.py:505
+#: .\models.py:439 .\models.py:506
 msgid "ISIP"
 msgstr "PIIS"
 
-#: .\models.py:439 .\models.py:547
+#: .\models.py:440 .\models.py:548
 msgid "ISIPs"
 msgstr "PIISs"
 
-#: .\models.py:443
+#: .\models.py:444
 msgid "Contract Type"
 msgstr "Type de contrat"
 
-#: .\models.py:445
+#: .\models.py:446
 msgid "stages"
 msgstr "stages"
 
-#: .\models.py:447
+#: .\models.py:448
 msgid "goals"
 msgstr "buts"
 
-#: .\models.py:449
+#: .\models.py:450
 msgid "duties ASD"
 msgstr "devoirs SSG"
 
-#: .\models.py:451
+#: .\models.py:452
 msgid "duties DSBE"
 msgstr "devois ISP"
 
-#: .\models.py:453
+#: .\models.py:454
 msgid "duties company"
 msgstr "devoirs entreprise"
 
-#: .\models.py:455
+#: .\models.py:456
 msgid "duties person"
 msgstr "Devoirs personne"
 
-#: .\models.py:464
+#: .\models.py:465
 msgid "responsible (DSBE)"
 msgstr "Responsable (ISP)"
 
-#: .\models.py:504
+#: .\models.py:505
 msgid "General"
 msgstr "Général"
 

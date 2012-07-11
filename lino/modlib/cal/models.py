@@ -1575,8 +1575,8 @@ class MySentInvitations(Guests):
     
     @classmethod
     def get_request_queryset(self,ar):
-        datelimit = datetime.date.today() + dateutil.relativedelta(days=-7)
-        ar.filter = models.Q(event__user=ar.get_user(),event__date__gte=datelimit)
+        datelimit = datetime.date.today() + dateutil.relativedelta.relativedelta(days=-7)
+        ar.filter = models.Q(event__user=ar.get_user(),event__start_date__gte=datelimit)
         return super(MySentInvitations,self).get_request_queryset(ar)
     
 class MyPendingSentInvitations(MySentInvitations):
@@ -1910,10 +1910,11 @@ if settings.LINO.use_extensible:
             for_me = models.Q(user=request.user)
             
             # also show events to which i am invited
-            #~ if request.user.partner:
+            if request.user.partner:
                 #~ me_as_guest = Guest.objects.filter(partner=request.user.partner)
                 #~ for_me = for_me | models.Q(guest_set__count__gt=0)
                 #~ for_me = for_me | models.Q(guest_count__gt=0)
+                for_me = for_me | models.Q(guest__partner=request.user.partner)
             
             # in team view, show also events of all my team members
             tv = rqdata.get(ext_requests.URL_PARAM_TEAM_VIEW,False)

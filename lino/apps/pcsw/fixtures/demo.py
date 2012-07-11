@@ -312,6 +312,7 @@ def objects():
     
     gerd = person(first_name="Gerd",
       last_name="Xhonneux",city=kettenis,
+      email='gerd@example.com',
       name="Xhonneux Gerd",country='BE',gender=Gender.male)
     yield gerd
     yield role(company=cpas,person=gerd,type=4)
@@ -351,18 +352,21 @@ def objects():
     yield User(username='gerd',partner=gerd,profile='900')
     
     melanie = person(first_name=u"Mélanie",last_name=u"Mélard",
+        email='melanie@example.com',
         city=eupen,country='BE',gender=Gender.female)
     yield melanie
     melanie = User(username="melanie",partner=melanie,profile='110') 
     yield melanie
     
     hubert = person(first_name=u"Hubert",last_name=u"Huppertz",
+        email='hubert@example.com',
         city=eupen,country='BE',gender=Gender.male)
     yield hubert
     hubert = User(username="hubert",partner=hubert,profile='100') 
     yield hubert
     
     alicia = person(first_name=u"Alicia",last_name=u"Allmanns",
+        email='alicia@example.com',
         city=eupen,country='BE',gender=Gender.female)
     yield alicia
     alicia = User(username="alicia",partner=alicia,profile='100') 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-08 10:59+0100\n"
+"POT-Creation-Date: 2012-07-11 17:54+0100\n"
 "PO-Revision-Date: 2012-06-25 13:25+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -723,64 +723,64 @@ msgstr "Plus"
 msgid "Integration"
 msgstr "Intégration"
 
-#: .\settings.py:68
+#: .\settings.py:69
 msgid "Integration Agent"
 msgstr "Agent d'insertion"
 
-#: .\settings.py:69
+#: .\settings.py:70
 msgid "Integration Agent (Senior)"
 msgstr "Agent d'insertion (chef de service)"
 
-#: .\settings.py:70
+#: .\settings.py:71
 msgid "Newcomers consultant"
 msgstr ""
 
-#: .\settings.py:71
+#: .\settings.py:72
 msgid "Debts consultant"
 msgstr "Consultate médiateur dettes"
 
-#: .\settings.py:72
+#: .\settings.py:73
 msgid "Readonly Manager"
 msgstr ""
 
-#: .\settings.py:73
+#: .\settings.py:74
 #, fuzzy
 msgid "CBSS only"
 msgstr "BCSS"
 
-#: .\settings.py:74
+#: .\settings.py:75
 msgid "Administrator"
 msgstr "Administrateur"
 
-#: .\settings.py:100
+#: .\settings.py:101
 msgid "Master"
 msgstr "Signalétique"
 
-#: .\settings.py:102
+#: .\settings.py:103
 msgid "Contacts"
 msgstr "Contacts"
 
-#: .\settings.py:122
+#: .\settings.py:123
 msgid "My menu"
 msgstr "Mon menu"
 
-#: .\settings.py:162
+#: .\settings.py:163
 msgid "Listings"
 msgstr ""
 
-#: .\settings.py:168
+#: .\settings.py:169
 msgid "Configure"
 msgstr "Configurer"
 
-#: .\settings.py:178
+#: .\settings.py:179
 msgid "SIS"
 msgstr "SAIS"
 
-#: .\settings.py:199
+#: .\settings.py:200
 msgid "Explorer"
 msgstr "Explorateur"
 
-#: .\settings.py:221
+#: .\settings.py:222
 msgid "Site"
 msgstr "Site"
 

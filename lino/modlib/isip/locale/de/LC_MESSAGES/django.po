@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-08 10:58+0100\n"
+"POT-Creation-Date: 2012-07-11 17:53+0100\n"
 "PO-Revision-Date: 2012-06-25 14:38+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -88,71 +88,71 @@ msgstr "Beendigung"
 msgid "date ended"
 msgstr "Beendet am"
 
-#: .\models.py:342
+#: .\models.py:343
 #, python-format
 msgid "Evaluation %d"
 msgstr "Auswertung %d"
 
-#: .\models.py:354
+#: .\models.py:355
 msgid "Contract ends in a month"
 msgstr "Vertrag endet in einem Monat"
 
-#: .\models.py:408
+#: .\models.py:409
 #, python-format
 msgid "Date range %(p1)s lies outside of coached period %(p2)s."
 msgstr "Datumsbereich %(p1)s außerhalb Begleitungsperiode %(p2)s."
 
-#: .\models.py:412
+#: .\models.py:413
 #, python-format
 msgid "Date range overlaps with %(ctype)s #%(id)s"
 msgstr "Datumsbereich überschneidet sich mit %(ctype)s #%(id)s"
 
-#: .\models.py:424
+#: .\models.py:425
 #, python-format
 msgid "%(ctype)s #%(id)s : %(msg)s"
 msgstr ""
 
-#: .\models.py:438 .\models.py:505
+#: .\models.py:439 .\models.py:506
 msgid "ISIP"
 msgstr "VSE"
 
-#: .\models.py:439 .\models.py:547
+#: .\models.py:440 .\models.py:548
 msgid "ISIPs"
 msgstr "VSEs"
 
-#: .\models.py:443
+#: .\models.py:444
 msgid "Contract Type"
 msgstr "Vertragsart"
 
-#: .\models.py:445
+#: .\models.py:446
 msgid "stages"
 msgstr "Etappen"
 
-#: .\models.py:447
+#: .\models.py:448
 msgid "goals"
 msgstr "Zielsetzungen"
 
-#: .\models.py:449
+#: .\models.py:450
 msgid "duties ASD"
 msgstr "Verpflichtungen ASD"
 
-#: .\models.py:451
+#: .\models.py:452
 msgid "duties DSBE"
 msgstr "Verpflichtungen DSBE"
 
-#: .\models.py:453
+#: .\models.py:454
 msgid "duties company"
 msgstr "Verpflichtungen Firma"
 
-#: .\models.py:455
+#: .\models.py:456
 msgid "duties person"
 msgstr "Verpflichtungen Person"
 
-#: .\models.py:464
+#: .\models.py:465
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
-#: .\models.py:504
+#: .\models.py:505
 msgid "General"
 msgstr "Allgemein"
 

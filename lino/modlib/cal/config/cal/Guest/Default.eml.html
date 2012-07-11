@@ -1,6 +1,21 @@
-<p>Dear $instance.contact,</p>
-<p>we <strong>confirm</strong> your attendance 
-to our event <strong>$instance.event</strong>.</p>
-<p>Best regards<br/>
+<p>Hallo Kollege,</p>
+#if $instance.state.name == 'invited'
+ich lade dich zu folgendem Termin ein:
+#end if
+#if $instance.state.name == 'accepted'
+du hast zu folgendem Termin zugesagt:
+#end if
+<ul>
+<li>am $dtosl($instance.event.start_date) um $dtosl($instance.event.start_time) Uhr</li>
+<li>$instance.event.calendar</li>
+</ul>
+
+
+<p>Bitte best&auml;tige, indem du du in Lino unter
+<a href="http://127.0.0.1:8000/api/cal/MyPendingInvitations">Meine offenen erhaltenen Einladungen</a>
+auf [Zusagen] klickst!
+</p>
+
+<p>Mit freundlichen Gr&uuml;&szlig;en<br/>
 $instance.event.user
 </p>

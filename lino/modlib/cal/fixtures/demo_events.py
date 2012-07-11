@@ -54,11 +54,12 @@ def objects():
       ,dict(en='First meeting',de=u"Erstgespräch",fr=u"Première rencontre")
       ,dict(en='Interview',de=u"Interview",fr=u"Interview")
       ))
-    date = settings.LINO.demo_date()
-    for i in range(20):
+    #~ for i in range(20):
+    for u in settings.LINO.user_model.objects.exclude(email=''):
         u = USERS.pop()
-        for j in range(10):
-            if i % 5:
+        date = settings.LINO.demo_date()
+        for i in range(12):
+            if i % 3:
                 date += relativedelta(days=1)
             s = SUMMARIES.pop().get(u.language,None) or SUMMARIES.pop().get('en')
             kw = dict(user=u,
@@ -72,7 +73,7 @@ def objects():
     #~ yield event(user=user,start_date=settings.LINO.demo_date(days=1),type=2)
     #~ yield event(user=user,start_date=settings.LINO.demo_date(days=2),type=2)
     
-    for u in settings.LINO.user_model.objects.all():
+    #~ for u in settings.LINO.user_model.objects.all():
         for obj in settings.LINO.user_model.objects.exclude(
               profile=dd.UserProfiles.blank_item).exclude(id=u.id):
             yield cal.Membership(user=u,watched_user=obj)

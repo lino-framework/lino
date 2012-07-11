@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-08 10:59+0100\n"
+"POT-Creation-Date: 2012-07-11 17:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -724,63 +724,63 @@ msgstr ""
 msgid "Integration"
 msgstr ""
 
-#: .\settings.py:68
+#: .\settings.py:69
 msgid "Integration Agent"
 msgstr ""
 
-#: .\settings.py:69
+#: .\settings.py:70
 msgid "Integration Agent (Senior)"
 msgstr ""
 
-#: .\settings.py:70
+#: .\settings.py:71
 msgid "Newcomers consultant"
 msgstr ""
 
-#: .\settings.py:71
+#: .\settings.py:72
 msgid "Debts consultant"
 msgstr ""
 
-#: .\settings.py:72
+#: .\settings.py:73
 msgid "Readonly Manager"
 msgstr ""
 
-#: .\settings.py:73
+#: .\settings.py:74
 msgid "CBSS only"
 msgstr ""
 
-#: .\settings.py:74
+#: .\settings.py:75
 msgid "Administrator"
 msgstr ""
 
-#: .\settings.py:100
+#: .\settings.py:101
 msgid "Master"
 msgstr ""
 
-#: .\settings.py:102
+#: .\settings.py:103
 msgid "Contacts"
 msgstr ""
 
-#: .\settings.py:122
+#: .\settings.py:123
 msgid "My menu"
 msgstr ""
 
-#: .\settings.py:162
+#: .\settings.py:163
 msgid "Listings"
 msgstr ""
 
-#: .\settings.py:168
+#: .\settings.py:169
 msgid "Configure"
 msgstr ""
 
-#: .\settings.py:178
+#: .\settings.py:179
 msgid "SIS"
 msgstr ""
 
-#: .\settings.py:199
+#: .\settings.py:200
 msgid "Explorer"
 msgstr ""
 
-#: .\settings.py:221
+#: .\settings.py:222
 msgid "Site"
 msgstr ""
 
