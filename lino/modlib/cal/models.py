@@ -43,6 +43,7 @@ from lino.utils import babel
 from lino.utils import AttrDict
 from lino.ui import requests as ext_requests
 from lino.core.modeltools import resolve_model, obj2str
+#~ from lino.core.perms import UserProfiles
 
 from lino.modlib.contacts import models as contacts
 
@@ -121,6 +122,8 @@ class Calendar(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
     password = dd.PasswordField(_("Password"),
         max_length=200,blank=True) # ,null=True)
     readonly = models.BooleanField(_("read-only"),default=False)
+    invite_team_members = models.BooleanField(
+        _("Invite team members"),default=False)
     #~ is_default = models.BooleanField(
         #~ _("is default"),default=False)
     #~ is_private = models.BooleanField(
@@ -172,15 +175,15 @@ class Calendar(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
         
     
 class Calendars(dd.Table):
-    required = dict(user_groups='office')
+    required = dict(user_groups='office',user_level='manager')
     model = 'cal.Calendar'
     column_names = "name type color readonly build_method template *"
     
     detail_template = """
     type name id 
-    description
+    # description
     url_template username password
-    readonly color start_date
+    readonly invite_team_members color start_date
     build_method template email_template attach_to_email
     EventsByCalendar
     # SubscriptionsByCalendar
@@ -208,10 +211,10 @@ class Calendars(dd.Table):
 
 class Subscription(mixins.UserAuthored):
     """
-    A Suscription is when a User subscribes to somebody else's Calendar.
+    A Suscription is when a User subscribes to some Calendar.
     
     :user: points to the author (recipient) of this subscription
-    :watched_user: points to the watched user
+    :calendar: points to the Calendar to subscribe
     
     """
     
@@ -221,34 +224,79 @@ class Subscription(mixins.UserAuthored):
         
     #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
     
-    watched_user = models.ForeignKey(settings.LINO.user_model,help_text=_("""\
-The user whose calendar events you want to see in team view."""))
 
-
-    #~ calendar = models.ForeignKey(Calendar,help_text=_("""\
-#~ The calendar you want to subscribe to.
-#~ You can subscribe to *non-private* calendars of *other* users."""))
-    #~ is_hidden = models.BooleanField(
-        #~ _("hidden"),default=False,help_text=_("""\
-#~ Whether this subscription should initially be hidden in your calendar panel."""))
+    calendar = models.ForeignKey(Calendar,help_text=_("""\
+The calendar you want to subscribe to.
+You can subscribe to *non-private* calendars of *other* users."""))
+    is_hidden = models.BooleanField(
+        _("hidden"),default=False,help_text=_("""\
+Whether this subscription should initially be hidden in your calendar panel."""))
     
 
-    @dd.chooser()
-    def watched_user_choices(cls,user):
-        return settings.LINO.user_model.objects.exclude(id=user.id)
     
         
 class Subscriptions(dd.Table):
+    required = dict(user_groups='office',user_level='manager')
     model = Subscription
+
+class SubscriptionsByCalendar(Subscriptions):
+    master_key = 'calendar'
+
+class SubscriptionsByUser(Subscriptions):
+    required = dict(user_groups='office')
+    master_key = 'user'
 
 #~ class MySubscriptions(Subscriptions,mixins.ByUser):
     #~ pass
 
-class SubscriptionsByUser(Subscriptions):
-    master_key = 'user'
 
-#~ class SubscriptionsByCalendar(Subscriptions):
-    #~ master_key = 'calendar'
+
+class Membership(mixins.UserAuthored):
+    """
+    A Membership is when a User decides that subscribes to somebody else's Calendar.
+    
+    :user: points to the author (recipient) of this membership
+    :watched_user: points to the watched user
+    
+    """
+    
+    class Meta:
+        verbose_name = _("Membership")
+        verbose_name_plural = _("Memberships")
+        
+    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
+    
+    watched_user = models.ForeignKey(settings.LINO.user_model,
+        help_text=_("""\
+The user whose calendar events you want to see in team view."""))
+
+
+
+    @dd.chooser()
+    def watched_user_choices(cls,user):
+        return settings.LINO.user_model.objects.exclude(
+            profile=dd.UserProfiles.blank_item).exclude(id=user.id)
+    
+        
+class Memberships(dd.Table):
+    required = dict(user_groups='office',user_level='manager')
+    model = Membership
+
+
+class MembershipsByUser(Memberships):
+    required = dict(user_groups='office')
+    master_key = 'user'
+    label = _("Team Members")
+
+
+
+
+
+
+
+
+
+
 
 
 class Place(babel.BabelNamed):
@@ -772,8 +820,11 @@ Whether this is private, public or between.""")) # iCal:CLASS
         
         
     def save(self,*args,**kw):
+        if not self.calendar:
+            self.calendar = self.user.calendar
         if not self.access_class:
-            self.access_class = AccessClasses.public
+            self.access_class = self.user.access_class
+            #~ self.access_class = AccessClasses.public
         super(Component,self).save(*args,**kw)
         
     def on_duplicate(self,ar,master):
@@ -939,10 +990,18 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     #~ def end_date_changed(self,oldvalue): self.compute_times()
     #~ def end_time_changed(self,oldvalue): self.compute_times()
         
-    #~ def save(self,*args,**kw):
+    def save(self,*args,**kw):
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
             #~ self.state = EventState.obsolete
-        #~ super(Event,self).save(*args,**kw)
+        super(Event,self).save(*args,**kw)
+        if self.calendar.invite_team_members:
+            if self.access_class == AccessClasses.public:
+                if self.state == EventState.scheduled:
+                    if self.guest_set.all().count() == 0:
+                        #~ print 20120711
+                        for obj in Membership.objects.filter(user=self.user):
+                            if obj.watched_user.partner:
+                                Guest(event=self,partner=obj.watched_user.partner).save()
         
     def on_user_change(self,request):
         if not self.state:
@@ -1101,7 +1160,7 @@ class EventInsertLayout(EventDetailLayout):
     
 class Events(dd.Table):
     model = 'cal.Event'
-    required = dict(user_groups='office')
+    required = dict(user_groups='office',user_level='manager')
     column_names = 'start_date start_time user summary state *'
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
@@ -1120,6 +1179,7 @@ class EventsByCalendar(Events):
     #~ master_key = 'type'
     
 class EventsByPartner(Events):
+    required = dict(user_groups='office')
     master_key = 'user'
     
 class EventsByPlace(Events):
@@ -1129,18 +1189,21 @@ class EventsByPlace(Events):
     master_key = 'place'
 
 class EventsByController(Events):
+    required = dict(user_groups='office')
     master_key = 'owner'
     column_names = 'start_date start_time summary state *'
 
 if settings.LINO.project_model:    
   
     class EventsByProject(Events):
+        required = dict(user_groups='office')
         master_key = 'project'
     
 if settings.LINO.user_model:    
   
     class MyEvents(Events,mixins.ByUser):
-        help_text = _("Table of all my events.")
+        required = dict(user_groups='office')
+        help_text = _("Table of all my calendar events.")
         column_names = 'start_date start_time project summary state workflow_buttons *'
         #~ model = 'cal.Event'
         #~ label = _("My Events")
@@ -1159,7 +1222,7 @@ if settings.LINO.user_model:
         """
         help_text = _("Table of all events that need to be scheduled.")
         label = _("Events to schedule")
-        required = dict(user_level='manager')
+        required = dict(user_groups='office',user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
         filter = models.Q(state__in=(EventState.blank_item,EventState.draft))
         
@@ -1211,6 +1274,7 @@ if settings.LINO.user_model:
         column_names = 'start_date start_time project summary workflow_buttons *'
         
     class MyEventsToday(MyEvents):
+        required = dict(user_groups='office')
         help_text = _("Table of my events per day.")
         column_names = 'start_time summary state workflow_buttons *'
         label = _("My events today")
@@ -1413,6 +1477,11 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
 
     remark = models.CharField(
         _("Remark"),max_length=200,blank=True)
+        
+    def get_user(self):
+        # used to apply `owner` requirement in GuestState
+        return self.event.user
+    user = property(get_user)
 
     #~ def __unicode__(self):
         #~ return self._meta.verbose_name + " #" + str(self.pk)
@@ -1429,6 +1498,14 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
 
     def get_mailable_recipients(self):
         yield ('to',self.partner)
+        
+    @dd.displayfield(_("Event"))
+    def event_summary(self,ar):
+        return ar.renderer.href_to(
+            self.event,event_summary(self.event,ar.get_user()))
+        #~ return event_summary(self.event,ar.get_user())
+        
+        
 
     #~ def get_recipient(self):
         #~ return self.partner
@@ -1472,29 +1549,38 @@ class GuestsByPartner(Guests):
     column_names = 'event role state workflow_buttons remark *'
 
 class MyInvitations(GuestsByPartner):
-    label = _("My Invitations")
+    order_by = ['event__start_date','event__start_time']
+    label = _("My Received Invitations")
+    help_text = _("""Shows all my received invitations, independently of their state.""")
+    column_names = 'event__start_date event__start_time event_summary role state workflow_buttons remark *'
+    
     @classmethod
     def get_request_queryset(self,ar):
         ar.master_instance = ar.get_user().partner
         return super(MyInvitations,self).get_request_queryset(ar)
+        
     
 class MyPendingInvitations(MyInvitations):
-    label = _("My Pending Invitations")
+    help_text = _("""Shows received invitations which I must accept or reject.""")
+    label = _("My Pending Received Invitations")
     filter = models.Q(state=GuestState.invited)
     
 class MySentInvitations(Guests):
+    help_text = _("""Shows invitations which I sent accept or reject.""")
   
     label = _("My Sent Invitations")
     
-    order_by = ['event__start_date']
+    order_by = ['event__start_date','event__start_time']
+    column_names = 'event__start_date event__start_time event_summary role state workflow_buttons remark *'
     
     @classmethod
     def get_request_queryset(self,ar):
-        datelimit = datetime.today() + dateutil.relativedelta(days=-7)
+        datelimit = datetime.date.today() + dateutil.relativedelta(days=-7)
         ar.filter = models.Q(event__user=ar.get_user(),event__date__gte=datelimit)
         return super(MySentInvitations,self).get_request_queryset(ar)
     
 class MyPendingSentInvitations(MySentInvitations):
+    help_text = _("""Shows invitations which I sent, and for which I accept or reject.""")
     label = _("My Pending Sent Invitations")
     @classmethod
     def get_request_queryset(self,ar):
@@ -1726,17 +1812,23 @@ class ExtSummaryField(dd.VirtualField):
         
     def value_from_object(self,obj,ar):
         #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
-        s = obj.summary
-        if obj.user != ar.get_user():
-            if obj.access_class == AccessClasses.show_busy:
-                s = _("Busy")
-            s = obj.user.username + ': ' + unicode(s)
-        if settings.LINO.project_model is not None and obj.project is not None:
-            s += " " + unicode(_("with")) + " " + unicode(obj.project)
-        n = obj.guest_set.all().count()
-        if n:
-            s = ("[%d] " % n) + s
-        return s
+        return event_summary(obj,ar.get_user())
+
+
+def event_summary(obj,user):
+    s = obj.summary
+    if obj.user != user:
+        if obj.access_class == AccessClasses.show_busy:
+            s = _("Busy")
+        s = obj.user.username + ': ' + unicode(s)
+    elif settings.LINO.project_model is not None and obj.project is not None:
+        s += " " + unicode(_("with")) + " " + unicode(obj.project)
+    if obj.state:
+        s = ("(%s) " % unicode(obj.state)) + s
+    n = obj.guest_set.all().count()
+    if n:
+        s = ("[%d] " % n) + s
+    return s
 
 def user_calendars(qs,user):
     #~ Q = models.Q
@@ -1759,10 +1851,10 @@ if settings.LINO.use_extensible:
         required = dict(user_groups='office')
         column_names = 'id name description color is_hidden'
         
-        #~ @classmethod
-        #~ def get_request_queryset(self,ar):
-            #~ qs = super(PanelCalendars,self).get_request_queryset(ar)
-            #~ return user_calendars(qs,ar.get_user())
+        @classmethod
+        def get_request_queryset(self,ar):
+            qs = super(PanelCalendars,self).get_request_queryset(ar)
+            return user_calendars(qs,ar.get_user())
             
         @dd.virtualfield(models.BooleanField(_('Hidden')))
         def is_hidden(cls,self,ar):
@@ -1789,8 +1881,6 @@ if settings.LINO.use_extensible:
         summary = ExtSummaryField(_("Summary"))
         #~ overrides the database field of same name
         
-        
-            
       
         @classmethod
         def parse_req(self,request,rqdata,**kw):
@@ -1816,23 +1906,38 @@ if settings.LINO.use_extensible:
             
             filter = models.Q(**fkw)
             
+            # show al my events
+            for_me = models.Q(user=request.user)
+            
+            # also show events to which i am invited
+            #~ if request.user.partner:
+                #~ me_as_guest = Guest.objects.filter(partner=request.user.partner)
+                #~ for_me = for_me | models.Q(guest_set__count__gt=0)
+                #~ for_me = for_me | models.Q(guest_count__gt=0)
+            
+            # in team view, show also events of all my team members
             tv = rqdata.get(ext_requests.URL_PARAM_TEAM_VIEW,False)
             if tv and ext_requests.parse_boolean(tv):
+                # positive list of ACLs for events of team members
                 team_classes = (AccessClasses.blank_item,AccessClasses.public,AccessClasses.show_busy)
                 #~ logger.info('20120710 %r', tv)
-                team = Subscription.objects.filter(user=request.user).values_list('watched_user__id',flat=True)
+                team_ids = Membership.objects.filter(user=request.user).values_list('watched_user__id',flat=True)
                 #~ team.append(request.user.id)
-                t = models.Q(user=request.user) | models.Q(user__id__in=team,access_class__in=team_classes)
+                for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
                 #~ kw.update(exclude = models.Q(user__id__in=team))
-                filter = filter & t
-            else:
-                #~ filter.update(user=request.user)
-                only_me = models.Q(user=request.user)
-                #~ only_me = only_me | models.Q(as_guest__count=0)
-                filter = filter & only_me
+            filter = filter & for_me
             #~ logger.info('20120710 %s', filter)
             kw.update(filter=filter)
             return kw
+            
+        @classmethod
+        def get_request_queryset(self,ar):
+            qs = super(PanelEvents,self).get_request_queryset(ar)
+            #~ if ar.get_user().partner:
+                #~ inner = Guest.objects.filter(partner=ar.get_user().partner)
+            #~ qs = qs.annotate(guest_count=models.Count('guest'))
+            return qs
+            
             
 
 from lino.utils.babel import dtosl
@@ -1988,28 +2093,49 @@ class Home(lino.Home):
             #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
 
+
+def customize_users():
+    """
+    Injects application-specific fields to users.User.
+    """
+    
+    dd.inject_field(settings.LINO.user_model,
+        'access_class',
+        AccessClasses.field(
+            default=AccessClasses.public,
+            verbose_name=_("Default access class"),
+            help_text=_("""The default access class for your calendar events and tasks.""")
+    ))
+    dd.inject_field(settings.LINO.user_model,
+        'calendar',
+        models.ForeignKey(Calendar,
+            blank=True,null=True,
+            verbose_name=_("Default calendar"),
+            help_text=_("""The default calendar for your events and tasks.""")
+    ))
+        
+
     
 
 def site_setup(site):
     """
     (Called during site setup.)
     
-    - Adds the :class:`UpdateReminders` action to users.Users list
-    - adds a detail tab to 
+    Adds a "Calendar" tab and the :class:`UpdateReminders` 
+    action to `users.User`
     """
-    #~ print "20120525 cal.site_setup"
-    #~ from lino.modlib.users.models import Users
-    #~ site.modules.users.Users.add_action(UpdateReminders())
     site.modules.users.Users.update_reminders = UpdateReminders()
-    #~ site.modules.lino.Home.set_detail("""
-    #~ quick_links:80x1
-    #~ cal.ComingReminders:40x16 cal.MissedReminders:40x16
-    #~ """)
     
+    site.modules.users.Users.add_detail_panel('cal_left',"""
+    calendar access_class 
+    cal.SubscriptionsByUser
+    cal.MembershipsByUser
+    """)
     site.modules.users.Users.add_detail_tab('cal',"""
-    cal.SubscriptionsByUser:30 cal.RemindersByUser:60
+    cal_left:30 cal.RemindersByUser:60
     """,MODULE_LABEL,required=dict(user_groups='office'))
     #~ site.modules.users.Users.add_detail_tab('cal.RemindersByUser')
+    
     
     
 MODULE_LABEL = _("Calendar")
@@ -2049,7 +2175,8 @@ def setup_master_menu(site,ui,user,m):
     pass
     
 def setup_my_menu(site,ui,user,m): 
-    m  = m.add_menu("cal",MODULE_LABEL)
+    pass
+    #~ m  = m.add_menu("cal",MODULE_LABEL)
     #~ m.add_action(MySubscriptions)
     
 def setup_config_menu(site,ui,user,m): 
@@ -2069,6 +2196,7 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(Tasks)
     m.add_action(Guests)
     m.add_action(Subscriptions)
+    m.add_action(Memberships)
     #~ m.add_action(RecurrenceSets)
 
 def setup_quicklinks(site,ui,user,m):
@@ -2078,3 +2206,5 @@ def setup_quicklinks(site,ui,user,m):
         m.add_action(Panel)
         
 dd.add_user_group('office',MODULE_LABEL)
+
+customize_users()

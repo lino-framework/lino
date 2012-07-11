@@ -29,6 +29,13 @@
     :members:
     :show-inheritance:
 
+:mod:`lino.modlib.cal.fixtures.demo_events`
+-------------------------------------------
+
+.. automodule:: lino.modlib.cal.fixtures.demo_events
+    :members:
+    :show-inheritance:
+
 
 :mod:`lino.modlib.cal.management.commands.watch_calendars`
 ----------------------------------------------------------

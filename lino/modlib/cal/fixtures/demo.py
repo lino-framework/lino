@@ -58,11 +58,34 @@ def objects():
           et=u"Sekretär",
           ))
           
-    etype = Instantiator('cal.Calendar').build
-    yield etype(**babel_values('name',
-          de=u"Besprechung",
-          fr=u"Coordination",
-          en=u"Coordination",
+    calendar = Instantiator('cal.Calendar').build
+    #~ yield calendar(**babel_values('name',
+          #~ de=u"Klientengespräche intern",
+          #~ fr=u"Rencontres internes avec client",
+          #~ en=u"Internal meetings with client",
+          #~ ))
+    yield calendar(color=1,**babel_values('name',
+          de=u"Klientengespräche extern",
+          fr=u"Rencontres client externes",
+          en=u"External meetings with client",
+          ))
+    
+    yield calendar(color=4,**babel_values('name',
+          de=u"Versammlung intern",
+          fr=u"Réunions internes",
+          en=u"Internal meetings",
+          ))
+    
+    yield calendar(color=8,**babel_values('name',
+          de=u"Versammlung extern",
+          fr=u"Réunions externes",
+          en=u"External meetings",
+          ))
+          
+    yield calendar(color=12,invite_team_members=True,**babel_values('name',
+          de=u"Team-Besprechungen",
+          fr=u"Coordinations en équipe",
+          en=u"Team Meetings",
           ))
     #~ yield etype(**babel_values('name',
           #~ de=u"Erstgespräch",
@@ -92,51 +115,3 @@ def objects():
           en=u"at employer's",
           ))
 
-    #~ event = Instantiator('cal.Event','user:username').build
-    #~ yield event("user",start_date=settings.LINO.demo_date(),type=1)
-    #~ yield event("user",start_date=settings.LINO.demo_date(days=1),type=2)
-    #~ yield event("user",start_date=settings.LINO.demo_date(days=2),type=2)
-    
-    
-    #~ User = resolve_model('users.User')
-    #~ Calendar = resolve_model('cal.Calendar')
-    #~ Event = resolve_model('cal.Event')
-    if settings.LINO.project_model:
-        PROJECTS = Cycler(settings.LINO.project_model.objects.all())
-    USERS = Cycler(settings.LINO.user_model.objects.all())
-    ETYPES = Cycler(cal.Calendar.objects.all())
-    TIMES = Cycler(['08:30','09:40','10:20','11:10','13:30'])
-    ACL = Cycler(cal.AccessClasses.items())
-    SUMMARIES = Cycler((
-      dict(en='Lunch',de=u"Mittagessen",fr=u"Diner")
-      ,dict(en='Dinner',de=u"Abendessen",fr=u"Souper")
-      ,dict(en='Breakfast',de=u"Frühstück",fr=u"Petit-déjeuner")
-      ,dict(en='Meeting',de=u"Treffen",fr=u"Rencontre")
-      ,dict(en='Consultation',de=u"Beratung",fr=u"Consultation")
-      ,dict(en='Seminar',de=u"Seminar",fr=u"Séminaire")
-      ,dict(en='Evaluation',de=u"Auswertung",fr=u"Evaluation")
-      ,dict(en='First meeting',de=u"Erstgespräch",fr=u"Première rencontre")
-      ,dict(en='Interview',de=u"Interview",fr=u"Interview")
-      ))
-    #~ SUMMARIES = Cycler("""\
-#~ Meeting with Michael
-#~ Seminar in Brussels
-#~ Consultation with Claudine
-#~ Lunch with Luc""".splitlines())
-    #~ Event = resolve_model('cal.Event')
-    #~ user = User.objects.get(username='user')
-    #~ event = Instantiator('cal.Event').build
-    for i in range(40):
-        u = USERS.pop()
-        s = SUMMARIES.pop().get(u.language,None) or SUMMARIES.pop().get('en')
-        kw = dict(user=u,
-          start_date=settings.LINO.demo_date(days=i),
-          calendar=ETYPES.pop(),start_time=TIMES.pop(),
-          summary=s)
-        kw.update(access_class=ACL.pop())
-        if settings.LINO.project_model:
-            kw.update(project=PROJECTS.pop())
-        yield cal.Event(**kw)
-    #~ yield event(user=user,start_date=settings.LINO.demo_date(days=1),type=2)
-    #~ yield event(user=user,start_date=settings.LINO.demo_date(days=2),type=2)
-    

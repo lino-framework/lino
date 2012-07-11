@@ -147,6 +147,14 @@ class User(mixins.CreatedModified):
             #~ l += settings.LINO.user_profile_fields
         return l
         
+    def save(self,*args,**kw):
+        p = self.person
+        if p is not None:
+            for n in ('first_name','last_name','email'):
+                if not getattr(self,n):
+                    setattr(self,n,getattr(p,n))
+        super(User,self).save(*args,**kw)
+        
 
 
 

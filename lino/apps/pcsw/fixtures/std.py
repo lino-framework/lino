@@ -198,13 +198,21 @@ def objects():
           #~ en=u"First meeting",
       #~ ))
     #~ yield et
-
-    et = Calendar(**babel_values('name',
-      de=u'Auswertungen',
-      fr=u"Evaluations",
-      en=u"Evaluations",
-      ))
+    
+    calendar = Instantiator('cal.Calendar').build
+    et = calendar(color=20,**babel_values('name',
+          de=u"Klientengespräche intern",
+          fr=u"Rencontres internes avec client",
+          en=u"Internal meetings with client",
+          ))
     yield et
+    
+
+    #~ et = Calendar(**babel_values('name',
+      #~ de=u'Auswertungen',
+      #~ fr=u"Evaluations",
+      #~ en=u"Evaluations",
+      #~ ))
 
     exam_policy = Instantiator('isip.ExamPolicy','every',every_unit=DurationUnits.months).build
     yield exam_policy(1,calendar=et,start_time="9:00",**babel_values('name',en='every month',de='monatlich',fr="mensuel"))

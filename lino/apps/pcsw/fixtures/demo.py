@@ -32,8 +32,7 @@ from lino.utils.restify import restify
 from lino.utils import dblogger
 #~ from lino.models import update_site_config
 from lino.utils import mti
-#~ from lino.utils.choicelists import UserLevels
-from lino.modlib.users.models import UserLevels, UserProfiles
+from lino import dd
 
 #~ from django.contrib.auth import models as auth
 #~ from lino.modlib.users import models as auth
@@ -349,47 +348,38 @@ def objects():
       
     DIRECTORS = (annette,hans,andreas,bernard)
     
-    #~ User = resolve_model('users.User')
-    melanie = User(username="melanie",
-        first_name=u"Mélanie",last_name=u"Mélard",
-        profile='110') # UserProfiles.melanie)
-        #~ level=UserLevels.manager,
-        #~ integ_level=UserLevel.manager)
-    yield melanie 
-    hubert = User(username="hubert",
-        first_name="Hubert",last_name="Huppertz",
-        profile='100') # UserProfiles.hubert)
-        #~ level=UserLevel.user,
-        #~ integ_level=UserLevel.user)
+    yield User(username='gerd',partner=gerd,profile='900')
+    
+    melanie = person(first_name=u"Mélanie",last_name=u"Mélard",
+        city=eupen,country='BE',gender=Gender.female)
+    yield melanie
+    melanie = User(username="melanie",partner=melanie,profile='110') 
+    yield melanie
+    
+    hubert = person(first_name=u"Hubert",last_name=u"Huppertz",
+        city=eupen,country='BE',gender=Gender.male)
     yield hubert
-    alicia = User(username="alicia",
-        first_name="Alicia",last_name="Allmanns",
-        profile='100') # UserProfiles.hubert)
+    hubert = User(username="hubert",partner=hubert,profile='100') 
+    yield hubert
+    
+    alicia = person(first_name=u"Alicia",last_name=u"Allmanns",
+        city=eupen,country='BE',gender=Gender.female)
+    yield alicia
+    alicia = User(username="alicia",partner=alicia,profile='100') 
     yield alicia
     
-    elmar = User(username="elmar",
-        first_name="Elmar",last_name="Elsen",
-        profile='400') # UserProfiles.hubert)
+    elmar = person(first_name=u"Elmar",last_name=u"Elsen",
+        city=eupen,country='BE',gender=Gender.male)
+    yield elmar
+    elmar = User(username="elmar",partner=elmar,profile='400') 
     yield elmar
     
-    elmar = User(username="karl",
-        first_name="Christian",last_name=u"Cabeil-Esaice",
-        profile='500') # UserProfiles.hubert)
-    yield elmar
+    charles = person(first_name=u"Charles",last_name=u"Cabeil-Esaice",
+        city=eupen,country='BE',gender=Gender.male)
+    yield charles
+    charles = User(username="charles",partner=charles,profile='500') 
+    yield charles
     
-    
-    #~ user = auth.User.objects.get(username='user')
-    #~ root = User.objects.get(username='root')
-    #~ root.is_spis = True
-    #~ root.integ_level = UserLevel.expert
-    #~ root.newcomers_level=UserLevel.expert
-    #~ root.debts_level=UserLevel.expert
-    #~ root.save()
-    #~ user.is_spis = True
-    #~ user.integ_level = UserLevel.user
-    #~ root.newcomers_level=UserLevel.user
-    #~ root.debts_level=UserLevel.user
-    #~ user.save()
     
     #~ USERS = Cycler(root,melanie,hubert,alicia)
     AGENTS = Cycler(melanie,hubert,alicia)
@@ -847,8 +837,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.gender = Gender.female
     p.group = standby
     p.save()
-
-
+    
 
     #~ etype = Instantiator('cal.EventType','name').build
     #~ yield etype("interner Termin")
@@ -871,10 +860,3 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
             date_submitted=settings.LINO.demo_date(offset))
         p = i.next()
         offset -= 1
-
-    from lino.modlib.cal import models as cal
-
-    for u in settings.LINO.user_model.objects.all():
-        for tm in settings.LINO.user_model.objects.exclude(id=u.id):
-            yield cal.Subscription(user=u,watched_user=tm)
-    

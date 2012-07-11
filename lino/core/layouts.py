@@ -12,89 +12,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 '''
-Layouts are one of Lino's important and innovative features.
-Concept and implementation is fully the author's idea, and we 
-didn't yet find a similar approach in any other framework.
 
-A :class:`Layout <BaseLayout>` is an abstract pythonical description 
-of how to arrange the fields and other elements of a form.
-
-Application programmers write Layouts by subclassing
-:class:`dd.FormLayout <FormLayout>`
-and setting the 
-:attr:`detail_layout <lino.core.actors.Actor.detail_layout>`
-(or 
-:attr:`insert_layout <lino.core.actors.Actor.insert_layout>`)
-attribute of an :attr:`Actor <lino.core.actors.Actor>` subclass.
-
-**A Layout consists of "panels".**
-Each panel is a class attribute defined on your subclass,
-containing a string value to be used as 
-template describibing the content of that panel.
-A Layout must define at least a ``main`` panel. 
-It can define more panels whose names 
-may be chosen by the application developer
-(just don't chose the name :attr:`window_size` 
-which has a special meaning, and don't start you panel 
-names with an underscore because these are reserved for internal use).
-
-A layout template (the value of a panel attribute) 
-is a string containing words, where each word is 
-either the name of a *data element*, 
-or the name of another panel.
-
-**Data elements** are database fields, table fields or :term:`slave tables <slave table>`
-(except for a :class:`ParamsLayout`, where data elements are names of 
-:attr:`parameters <lino.core.actors.Actor.parameters>`
-defined on the actor.
-
-Panels are **either horizontal or vertical**, 
-depending on whether their template contains 
-at least one newline character or not.
-
-Indentation doesn't matter.
-
-If the `main` panel of a :class:`FormLayout` is horizontal, 
-ExtJS will render the Layout using as a tabbed main panel. 
-If you want a horizontal main panel instead, just insert 
-a newline somewhere in your main's template. Example::
-
-
-  class NoteLayout(dd.FormLayout):
-      left = """
-      date type subject 
-      person company
-      body
-      """
-      
-      right = """
-      uploads.UploadsByController
-      cal.TasksByController
-      """
-      
-      # the following will create a tabbed main panel:
-      
-      main = "left:60 right:30"
-      
-      # to avoid a tabbed main panel, specify:
-      main = """
-      left:60 right:30
-      """
-
-A :class:`ListLayout` is a special case for describing the columns of a GridPanel
-and therefore may contain only one `main` panel descriptor 
-which must be horizontal.
-ListLayouts are created automatically by Lino, using the 
-:attr:`column_names <lino.core.actors.Actor.column_names>` 
-attribute of the Actor as `main` panel.
-
-A :class:`ParamsLayout` is a special case for 
-describing the layout of a parameters panel.
-
-
-Some blog entries with more examples of layout definition:
-
-- :doc:`/blog/2012/0630`
+See :doc:`/topics/layouts`
 
 '''
 
@@ -434,7 +353,17 @@ In %s, updating attribute %r:
             logger.debug(msg)
             setattr(self,k,v)
             
-    def add_panel(self,name,tpl,label=None,**kw):
+    def add_panel(self,name,tpl,label=None,**options):
+        """
+        Adds a new panel to this layout.
+        
+        Arguments:
+        
+        - `name` is the internal name of the panel
+        - `tpl` the template string
+        - `label` an optional label
+        - any further keyword are passed as options to the new panel
+        """
         if hasattr(self,'_extjs3_handle'):
             raise Exception("Cannot update for layout after UI has been set up.")
         if '\n' in name:
@@ -451,12 +380,21 @@ Adding panel %r to %s ---:
         setattr(self,name,tpl)
         if label is not None:
             self._labels[name] = label
-        if kw:
-            self._element_options[name] = kw
+        if options:
+            self._element_options[name] = options
         
-    def add_tabpanel(self,name,tpl=None,label=None,**kw):
+    def add_tabpanel(self,name,tpl=None,label=None,**options):
         """
         Add a tab panel to an existing layout.
+        Arguments: see :meth:`BaseLayout.add_panel`.
+        The difference with :meth:`BaseLayout.add_panel` 
+        is that this potentially turns the existing `main` panel to a tabbed panel.
+        
+        Arguments:
+        
+        - `name` is the internal name of the panel
+        - `tpl` the template string
+        - `label` an optional label
         """
         #~ print "20120526 add_detail_tab", self, name
         if hasattr(self,'_extjs3_handle'):
@@ -487,7 +425,7 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             setattr(self,name,tpl)
         if label is not None:
             self._labels[name] = label
-        self._element_options[name] = kw
+        self._element_options[name] = options
         #~ if kw:
             #~ print 20120525, self, self.detail_layout._element_options
             

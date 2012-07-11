@@ -1,0 +1,56 @@
+20120711
+========
+
+Yet another series of aweful new features for the :mod:`lino.modlib.cal` module.
+It's all about managing team meetings. 
+
+- Added new model 
+  :class:`Membership <lino.modlib.cal.models.Membership>`:
+  each user defines his own "team", of which he is the leader,
+  and for which he can select other users to be members.
+  The only effect of this strange kind of team is to tell 
+  Lino which other users's events should be shown when using the 
+  new `Team View` button of the CalendarPanel.
+  
+- Added new field `invite_team_members` to the
+  :class:`Calendar <lino.modlib.cal.models.Calendar>` model.
+  Events in this calendar (if they are public and scheduled) 
+  will automatically get the guests list filled with the owner's team members.
+
+- :func:`lino.modlib.cal.models.customize_users` 
+  now adds the new fields "Default access class" and "Default calendar"
+  to :class:`lino.modlib.users.models.User`.
+
+- The Calendar tab of the User Detail 
+  is now more complex (and it is enjoyable to see how easy this job is done 
+  in  :func:`site_setup <lino.modlib.cal.models.site_setup>`)::
+  
+    site.modules.users.Users.add_detail_tab('cal',"""
+    cal_left:30 cal.RemindersByUser:60
+    """,MODULE_LABEL,required=dict(user_groups='office'))
+    
+    site.modules.users.Users.add_detail_panel('cal_left',"""
+    access_class
+    cal.SubscriptionsByUser
+    cal.MembershipsByUser
+    """)
+    
+    
+  This also revealed a new layout rendering bug. That panel is 
+  currently rendered correctly only when not in background 
+  (i.e. after clicking the permalink button).
+  
+- Documented 
+  :meth:`add_detail_panel <lino.core.actors.Actor.add_detail_panel>` 
+  and :meth:`add_detail_tab <lino.core.actors.Actor.add_detail_tab>`.
+  New documentation page :doc:`/topics/layouts`.
+
+- New fixture :mod:`demo_events <lino.modlib.cal.fixtures.demo_events>`
+  which generates a more or less useful suite of demo events. 
+  (In fact this needs still some more tuning, but we're on our way.)
+  
+TODO:
+
+- Didn't yet manage to show ni PanelEvents also the events to which I am invited.
+- Aforementioned layout bug
+  

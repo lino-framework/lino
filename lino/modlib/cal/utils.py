@@ -221,11 +221,11 @@ class GuestState(ChoiceList):
     #~ label = _("Guest State")
     label = _("State")
 add = GuestState.add_item
-add('10', _("Invited"),'invited',required=dict(states=['']),action_label=_("Invite"))
-add('20', _("Confirmed"),'confirmed',required=dict(states=['','invited']),action_label=_("Confirm"))
-add('30', _("Rejected"),'rejected',required=dict(states=['','invited']),action_label=_("Reject"))
-add('40', _("Present"),'present',required=dict(states=['invited','confirmed']))
-add('50', _("Absent"),'absent',required=dict(states=['invited','confirmed']))
+add('10', _("Invited"),'invited',required=dict(states=[''],owner=True),action_label=_("Invite"))
+add('20', _("Confirmed"),'confirmed',required=dict(states=['','invited'],owner=False),action_label=_("Confirm"))
+add('30', _("Rejected"),'rejected',required=dict(states=['','invited'],owner=False),action_label=_("Reject"))
+add('40', _("Present"),'present',required=dict(states=['invited','confirmed'],owner=True))
+add('50', _("Absent"),'absent',required=dict(states=['invited','confirmed'],owner=True))
 
 
 class AccessClasses(ChoiceList):

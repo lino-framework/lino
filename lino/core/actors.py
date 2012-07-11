@@ -758,6 +758,7 @@ class Actor(object):
     def add_detail_panel(self,*args,**kw):
         """
         Adds a panel to the Detail of this actor.
+        Arguments: see :meth:`lino.core.layouts.BaseLayout.add_panel`
         """
         self.detail_layout.add_panel(*args,**kw)
     
@@ -765,6 +766,7 @@ class Actor(object):
     def add_detail_tab(self,*args,**kw):
         """
         Adds a tab panel to the Detail of this actor.
+        See :meth:`lino.core.layouts.BaseLayout.add_tabpanel`
         """
         self.detail_layout.add_tabpanel(*args,**kw)
     

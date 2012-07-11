@@ -71,9 +71,6 @@ Das Verwalten von Gruppenterminen fängt jetzt an:
 
 - Neue Tabellen:
 
-  - : 
-  -  : 
-  
   - MyInvitations (Meine Einladungen) : alle Einladungen, die ich erhalten habe.
     Das sind alle Einträge, wo ich als Gast eines Termins vorkomme.
     
@@ -84,7 +81,6 @@ Das Verwalten von Gruppenterminen fängt jetzt an:
   
   - MySentInvitations
   
-    
   - MyPendingSentInvitations
   
   
