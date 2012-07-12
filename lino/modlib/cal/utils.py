@@ -219,7 +219,7 @@ add('40', _("Scheduled"), 'scheduled',
 add('50', _("Took place"),'took_place',required=dict(states=['scheduled','notified','confirmed']))
 add('60', _("Rescheduled"),'rescheduled',required=dict(states=['scheduled','notified','confirmed']))
 add('70', _("Cancelled"),'cancelled',required=dict(states=['scheduled','notified','confirmed']))
-#~ add('80', _("Absent"),'absent',required=dict(states=['scheduled','notified','confirmed']))
+add('80', _("Absent"),'absent',required=dict(states=['scheduled','notified','confirmed']))
 add('90', _("Obsolete"),'obsolete',required=dict(states=[]))
 
 
