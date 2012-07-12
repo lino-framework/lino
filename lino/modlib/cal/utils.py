@@ -180,8 +180,8 @@ class EventState(ChoiceList):
         #~ if status_id is None: return cls.blank_item
         cv = {
           None: '',
-          1:EventState.scheduled,
-          2:EventState.confirmed,
+          1:EventState.suggested,
+          2:EventState.scheduled,
           3:EventState.cancelled,
           4:EventState.rescheduled,
           5:EventState.absent,
