@@ -192,9 +192,23 @@ class Model(models.Model):
         """
         pass
         
-    def before_state_change(self,user,old,new):
+    def before_state_change(self,ar,kw,old,new):
+        """
+        Called before a state change.
+        """
+        pass
+  
+    def after_state_change(self,ar,kw,old,new):
         """
         Called after a state change.
+        """
+        kw.update(refresh=True)
+        
+    def after_send_mail(self,mail,ar,kw):
+        """
+        Called when an outbox email controlled by self has been sent
+        (i.e. when the :class:`lino.modlib.outbox.models.SendMail` 
+        action has successfully completed).
         """
         pass
   

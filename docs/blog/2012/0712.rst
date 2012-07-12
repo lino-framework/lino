@@ -1,0 +1,39 @@
+20120712
+========
+
+- Removed MySentInvitations and MyPendingSentInvitations because the 
+  owner of a team event will not manage invitations one by one, she 
+  will rather just go to "My notified events".
+  
+- Added new email template `Event/Team.eml.html` used to 
+  notify team members of changes in an event. 
+  Depending on the event's state, the mail is formulated as 
+  invitation, reminder or confirmation.
+
+- New method 
+  :meth:`after_state_change <lino.core.modeltools.Model.after_state_change>`.
+  Modified signature of 
+  :meth:`before_state_change <lino.core.modeltools.Model.before_state_change>`:
+  added a `kw` argument where subclasses may update the action response.
+  
+  Example usage is :meth:`lino.modlib.cal.models.Event.after_state_change`.
+  
+  TODO: store the action response into the 
+  :class:`ActionRequest <lino.core.actions.ActionRequest>`   
+  and remove the `kw` argument.
+  
+- New method 
+  :meth:`after_state_change <lino.core.modeltools.Model.after_sendmail>`.
+  An event changes automatically from "suggested" to "notified" when it 
+  has been sent by email.
+  
+- Added `ar` (the 
+  :class:`ActionRequest <lino.core.actions.ActionRequest>`) 
+  to the CheetahTemplate context during 
+  :meth:`lino.modlib.outbox.Mailable.get_mailable_intro`.
+  
+- The guests of a team event (i.e. whose Calendar.invite_team_members is set)  
+  Are now filled independently of the access_class.
+  A private team event will be seen by those who are invited, 
+  but not by other users.
+  

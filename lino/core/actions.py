@@ -377,10 +377,12 @@ class StateAction(RowAction):
         #~ return self.allow(user,obj,state)
         
     def run(self,row,ar,**kw):
-        row.before_state_change(ar,row.state,self.target_state)
+        old = row.state
+        row.before_state_change(ar,kw,old,self.target_state)
         row.state = self.target_state
         row.save()
-        return ar.ui.success_response(refresh=True)
+        row.after_state_change(ar,kw,old,self.target_state)
+        return ar.ui.success_response(**kw)
         
     
 
@@ -582,7 +584,8 @@ class ActionRequest(object):
     def __init__(self,ui,actor,request=None,action=None,renderer=None,**kw):
         #~ ActionRequest.__init__(self,ui,action)
         if ui is None:
-            from lino.extjs import ui
+            ui = settings.LINO.ui
+            #~ from lino.ui.extjs3 import ui
         self.ui = ui
         self.error_response = ui.error_response
         self.success_response = ui.success_response

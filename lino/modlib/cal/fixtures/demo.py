@@ -82,7 +82,9 @@ def objects():
           en=u"External meetings",
           ))
           
-    yield calendar(color=12,invite_team_members=True,**babel_values('name',
+    yield calendar(color=12,
+        invite_team_members=True,email_template='Team.eml.html',
+        **babel_values('name',
           de=u"Team-Besprechungen",
           fr=u"Coordinations en équipe",
           en=u"Team Meetings",

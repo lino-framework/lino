@@ -215,11 +215,12 @@ class Mailable(dd.Model):
             raise Exception("No config file %s / %s" % (mt.templates_group,mt.email_template))
             #~ return ''
         #~ logger.info("Using email template %s",fn)
-        tpl = CheetahTemplate(file(fn).read())
+        tpl = CheetahTemplate(file(fn).read().decode('utf-8'))
         #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
         tpl.instance = self
         tpl.dtosl = babel.dtosl
         tpl.dtos = babel.dtos
+        tpl.ar = ar
         return unicode(tpl)
         
     #~ def get_mailable_body(self,ar):
@@ -248,7 +249,7 @@ class Recipient(dd.Model):
         #~ verbose_name=_("Recipient"),
         blank=True,null=True)
     type = RecipientType.field(default=RecipientType.to)
-    address = models.EmailField(_("Address"))
+    address = models.EmailField(_("Address"),blank=True)
     name = models.CharField(_("Name"),max_length=200)
     #~ address_type = models.ForeignKey(ContentType)
     #~ address_id = models.PositiveIntegerField()
@@ -258,7 +259,8 @@ class Recipient(dd.Model):
         return '%s <%s>' % (self.name,self.address)      
         
     def __unicode__(self):
-        return "[%s]" % unicode(self.name or self.address)
+        #~ return "[%s]" % unicode(self.name or self.address)
+        return unicode(self.name or self.address)
         #~ return "[%s]" % unicode(self.address)
         
     def full_clean(self):
@@ -314,7 +316,7 @@ class SendMail(dd.RowAction):
             return False
         return super(SendMail,self).get_action_permission(user,obj,state)
         
-    def run(self,elem,rr,**kw):
+    def run(self,elem,ar,**kw):
         #~ if elem.sent:
             #~ return rr.ui.error_response(message='Mail has already been sent.')
         #~ subject = elem.subject
@@ -326,6 +328,7 @@ class SendMail(dd.RowAction):
         bcc = []
         #~ [r.name_address() for r in elem.recipient_set.filter(type=mails.RecipientType.cc)]
         found = False
+        missing_addresses = []
         for r in elem.recipient_set.all():
             recipients = None
             if r.type == RecipientType.to:
@@ -335,12 +338,21 @@ class SendMail(dd.RowAction):
             elif r.type == RecipientType.bcc:
                 recipients = bcc
             if recipients is not None:
-                recipients.append(r.name_address())
+                if not r.address:
+                    missing_addresses.append(r)
+                if r.address.endswith('@example.com'):
+                    logger.info("20120712 ignored recipient %s",r.name_address())
+                else:
+                    recipients.append(r.name_address())
                 found = True
             #~ else:
                 #~ logger.info("Ignoring recipient %s (type %s)",r,r.type)
         if not found:
-            return rr.error_response("No recipients found.")
+            return ar.error_response("No recipients found.")
+        if len(missing_addresses):
+            msg = _("There are recipients without address: ")
+            msg += ', '.join([unicode(r) for r in missing_addresses])
+            return ar.error_response(msg,alert=True)
         #~ as_attachment = elem.owner.attach_to_email(rr)
         #~ body = elem.body
         #~ if as_attachment:
@@ -360,7 +372,7 @@ class SendMail(dd.RowAction):
                 raise Warning(_("Couldn't find target file of %s") % att.owner)
             msg.attach_file(fn)
             
-        for up in uploads.UploadsByController.request(master_instance=elem):
+        for up in uploads.UploadsByController.request(ar.ui,master_instance=elem):
         #~ for up in uploads.Upload.objects.filter(owner=elem):
             fn = os.path.join(settings.MEDIA_ROOT,up.file.name)
             msg.attach_file(fn)
@@ -368,7 +380,6 @@ class SendMail(dd.RowAction):
         num_sent = msg.send()
             
         elem.sent = datetime.datetime.now()
-        elem.save()
         kw.update(refresh=True)
         #~ msg = "Email %s from %s has been sent to %s." % (
             #~ elem.id,elem.sender,', '.join([
@@ -379,7 +390,10 @@ class SendMail(dd.RowAction):
         #~ for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
             #~ msg += "\n" + n + " = " + unicode(getattr(settings,n))
         logger.info(msg)
-        return rr.success_response(**kw)
+        if elem.owner:
+            elem.owner.after_send_mail(elem,ar,kw)
+        elem.save()
+        return ar.success_response(**kw)
 
 
 

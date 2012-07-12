@@ -867,7 +867,8 @@ Whether this is private, public or between.""")) # iCal:CLASS
         #~ if self.owner and not self.auto_type:
         html = ui.ext_renderer.href_to(self)
         if self.start_time:
-            html += _(" at ") + babel.dtos(self.start_time)
+            #~ html += _(" at ") + unicode(self.start_time)
+            html += _(" at ") + self.start_time.strftime(settings.LINO.time_format_strftime)
         if self.state:
             html += ' [%s]' % cgi.escape(force_unicode(self.state))
         if self.summary:
@@ -995,14 +996,32 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             #~ self.state = EventState.obsolete
         super(Event,self).save(*args,**kw)
         if self.calendar.invite_team_members:
-            if self.access_class == AccessClasses.public:
-                if self.state == EventState.scheduled:
+            if True or self.access_class == AccessClasses.public:
+                if not self.state in (EventState.blank_item, EventState.draft):
                     if self.guest_set.all().count() == 0:
                         #~ print 20120711
                         for obj in Membership.objects.filter(user=self.user):
                             if obj.watched_user.partner:
                                 Guest(event=self,partner=obj.watched_user.partner).save()
         
+    def after_state_change(self,ar,kw,old,new):
+        """
+        Tell the user that they should now inform the guests.
+        """
+        super(Event,self).after_state_change(ar,kw,old,new)
+        if new.name in ('suggested','cancelled','scheduled','rescheduled'):
+            if self.guest_set.all().count() > 0:
+                kw.update(alert=True,message=_("You should now inform the guests about this state change."))
+                
+    def after_send_mail(self,mail,ar,kw):
+        if self.state.name == 'suggested':
+            self.state = EventState.notified
+            kw['message'] += '\n('  +_("Event %s has been marked *notified*.") % self + ')'
+            self.save()
+        #~ else:
+            #~ kw['message'] += '\n(' + _("Event remains *%s*.") % self.state + ')'
+                
+            
     def on_user_change(self,request):
         if not self.state:
             self.state = EventState.draft
@@ -1040,10 +1059,13 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ return self.description
         
             
-    def allow_state_scheduled(self,user):
-        #~ print '20120709 allow_state_scheduled'
+    def allow_state_suggest(self,user):
         if not self.start_time: return False
         return True
+      
+    #~ def allow_state_scheduled(self,user):
+        #~ if not self.start_time: return False
+        #~ return True
       
     #~ @classmethod
     #~ def setup_report(cls,rpt):
@@ -1161,7 +1183,7 @@ class EventInsertLayout(EventDetailLayout):
 class Events(dd.Table):
     model = 'cal.Event'
     required = dict(user_groups='office',user_level='manager')
-    column_names = 'start_date start_time user summary state *'
+    column_names = 'start_date start_time user summary calendar state *'
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
     
@@ -1204,74 +1226,104 @@ if settings.LINO.user_model:
     class MyEvents(Events,mixins.ByUser):
         required = dict(user_groups='office')
         help_text = _("Table of all my calendar events.")
-        column_names = 'start_date start_time project summary state workflow_buttons *'
+        column_names = 'start_date start_time calendar project summary state workflow_buttons *'
         #~ model = 'cal.Event'
         #~ label = _("My Events")
         #~ column_names = 'start_date start_time summary state *'
         
-    class EventsToSchedule(Events):
+    class EventsSuggested(Events):
         """
-        A list of events that aren't yet scheduled. 
-        The user is supposed to fill at least a start_date and start_time.
-        Clicking on "mark scheduled" 
-        means "I made up my mind on when this event should happen"
-        and will remove this Event from this 
-        table and make it appear in 
-        :class:`EventsToNotify` and 
-        :class:`MyEventsToNotify`.
         """
-        help_text = _("Table of all events that need to be scheduled.")
-        label = _("Events to schedule")
+        help_text = _("Table of all suggested events.")
+        label = _("Suggested Events")
         required = dict(user_groups='office',user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
-        filter = models.Q(state__in=(EventState.blank_item,EventState.draft))
+        known_values = dict(state=EventState.suggested)
         
-    class MyEventsToSchedule(EventsToSchedule,MyEvents):
-        help_text = _("Table of all my events that need to be scheduled.")
+    class MyEventsSuggested(EventsSuggested,MyEvents):
+        help_text = _("Table of my suggested events (to become notified).")
         required = dict(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
-        label = _("My events to schedule")
+        label = _("My suggested Events")
         
-    class EventsToNotify(Events):
+    class EventsNotified(Events):
         """
-        A list of events that need to be notified (i.e. communicated to the guests). 
-        Clicking on :attr:`Event.mark_notified` 
-        will remove this Event from this 
-        table and make it appear 
-        in :class:`MyEventsToConfirm`.
-        or :class:`MyEventsConfirmed`.
         """
-        help_text = _("Table of all events that need to be communicated to guests.")
-        required = dict(user_level='manager',user_groups='office')
+        help_text = _("Table of all notified events (waiting to become scheduled).")
+        label = _("Notified Events")
+        required = dict(user_groups='office',user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
-        label = _("Events to notify")
-        order_by = ["start_date","start_time"]
-        filter = models.Q(state=EventState.scheduled)
+        known_values = dict(state=EventState.notified)
         
-    class MyEventsToNotify(EventsToNotify,MyEvents):
-        help_text = _("Table of all my events that need to be communicated to guests.")
+    class MyEventsNotified(EventsNotified,MyEvents):
+        help_text = _("Table of my notified events (waiting to become scheduled).")
         required = dict(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
-        label = _("My events to notify")
+        label = _("My notified Events")
         
-    class EventsToConfirm(MyEvents):
-        """
-        A list of events that need to be confirmed
-        (i.e. the user made sure that the guests received 
-        their notification and plan to attend to the event). 
-        """
-        help_text = _("Table of all events that are waiting for confirmation from guests.")
-        required = dict(user_level='manager',user_groups='office')
-        column_names = 'start_date start_time project user summary workflow_buttons *'
-        label = _("Events to confirm")
-        order_by = ["start_date","start_time"]
-        filter = models.Q(state=EventState.scheduled)
+    #~ class EventsToNotify(Events):
+        #~ """
+        #~ A list of events that need to be notified (i.e. communicated to the guests). 
+        #~ Clicking on :attr:`Event.mark_notified` 
+        #~ will remove this Event from this 
+        #~ table and make it appear 
+        #~ in :class:`MyEventsToConfirm`.
+        #~ or :class:`MyEventsConfirmed`.
+        #~ """
+        #~ help_text = _("Table of all events that need to be communicated to guests.")
+        #~ required = dict(user_level='manager',user_groups='office')
+        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
+        #~ label = _("Events to notify")
+        #~ order_by = ["start_date","start_time"]
+        #~ filter = models.Q(state=EventState.scheduled)
         
-    class MyEventsToConfirm(EventsToConfirm):
-        help_text = _("Table of all my events that are waiting for confirmation from guests.")
-        required = dict(user_groups='office')
-        label = _("My events to confirm")
-        column_names = 'start_date start_time project summary workflow_buttons *'
+    #~ class MyEventsToNotify(EventsToNotify,MyEvents):
+        #~ help_text = _("Table of all my events that need to be communicated to guests.")
+        #~ required = dict(user_groups='office')
+        #~ column_names = 'start_date start_time project summary workflow_buttons *'
+        #~ label = _("My events to notify")
+        
+    #~ class EventsToSchedule(Events):
+        #~ """
+        #~ A list of events that aren't yet scheduled. 
+        #~ The user is supposed to fill at least a start_date and start_time.
+        #~ Clicking on "mark scheduled" 
+        #~ means "I made up my mind on when this event should happen"
+        #~ and will remove this Event from this 
+        #~ table and make it appear in 
+        #~ :class:`EventsToNotify` and 
+        #~ :class:`MyEventsToNotify`.
+        #~ """
+        #~ help_text = _("Table of all events that need to be scheduled.")
+        #~ label = _("Events to schedule")
+        #~ required = dict(user_groups='office',user_level='manager')
+        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
+        #~ filter = models.Q(state__in=(EventState.blank_item,EventState.draft))
+        
+    #~ class MyEventsToSchedule(EventsToSchedule,MyEvents):
+        #~ help_text = _("Table of all my events that need to be scheduled.")
+        #~ required = dict(user_groups='office')
+        #~ column_names = 'start_date start_time project summary workflow_buttons *'
+        #~ label = _("My events to schedule")
+        
+    #~ class EventsToConfirm(MyEvents):
+        #~ """
+        #~ A list of events that need to be confirmed
+        #~ (i.e. the user made sure that the guests received 
+        #~ their notification and plan to attend to the event). 
+        #~ """
+        #~ help_text = _("Table of all events that are waiting for confirmation from guests.")
+        #~ required = dict(user_level='manager',user_groups='office')
+        #~ column_names = 'start_date start_time project user summary workflow_buttons *'
+        #~ label = _("Events to confirm")
+        #~ order_by = ["start_date","start_time"]
+        #~ filter = models.Q(state=EventState.scheduled)
+        
+    #~ class MyEventsToConfirm(EventsToConfirm):
+        #~ help_text = _("Table of all my events that are waiting for confirmation from guests.")
+        #~ required = dict(user_groups='office')
+        #~ label = _("My events to confirm")
+        #~ column_names = 'start_date start_time project summary workflow_buttons *'
         
     class MyEventsToday(MyEvents):
         required = dict(user_groups='office')
@@ -1550,7 +1602,7 @@ class GuestsByPartner(Guests):
 
 class MyInvitations(GuestsByPartner):
     order_by = ['event__start_date','event__start_time']
-    label = _("My Received Invitations")
+    label = _("My received invitations")
     help_text = _("""Shows all my received invitations, independently of their state.""")
     column_names = 'event__start_date event__start_time event_summary role state workflow_buttons remark *'
     
@@ -1562,31 +1614,31 @@ class MyInvitations(GuestsByPartner):
     
 class MyPendingInvitations(MyInvitations):
     help_text = _("""Shows received invitations which I must accept or reject.""")
-    label = _("My Pending Received Invitations")
+    label = _("My pending received invitations")
     filter = models.Q(state=GuestState.invited)
     
-class MySentInvitations(Guests):
-    help_text = _("""Shows invitations which I sent accept or reject.""")
+#~ class MySentInvitations(Guests):
+    #~ help_text = _("""Shows invitations which I sent accept or reject.""")
   
-    label = _("My Sent Invitations")
+    #~ label = _("My Sent Invitations")
     
-    order_by = ['event__start_date','event__start_time']
-    column_names = 'event__start_date event__start_time event_summary role state workflow_buttons remark *'
+    #~ order_by = ['event__start_date','event__start_time']
+    #~ column_names = 'event__start_date event__start_time event_summary role state workflow_buttons remark *'
     
-    @classmethod
-    def get_request_queryset(self,ar):
-        datelimit = datetime.date.today() + dateutil.relativedelta.relativedelta(days=-7)
-        ar.filter = models.Q(event__user=ar.get_user(),event__start_date__gte=datelimit)
-        return super(MySentInvitations,self).get_request_queryset(ar)
+    #~ @classmethod
+    #~ def get_request_queryset(self,ar):
+        #~ datelimit = datetime.date.today() + dateutil.relativedelta.relativedelta(days=-7)
+        #~ ar.filter = models.Q(event__user=ar.get_user(),event__start_date__gte=datelimit)
+        #~ return super(MySentInvitations,self).get_request_queryset(ar)
     
-class MyPendingSentInvitations(MySentInvitations):
-    help_text = _("""Shows invitations which I sent, and for which I accept or reject.""")
-    label = _("My Pending Sent Invitations")
-    @classmethod
-    def get_request_queryset(self,ar):
-        ar.filter = models.Q(state=GuestState.invited,event__user=ar.get_user())
-        # ! note that we skip one mro parent:
-        return super(MySentInvitations,self).get_request_queryset(ar)
+#~ class MyPendingSentInvitations(MySentInvitations):
+    #~ help_text = _("""Shows invitations which I sent, and for which I accept or reject.""")
+    #~ label = _("My Pending Sent Invitations")
+    #~ @classmethod
+    #~ def get_request_queryset(self,ar):
+        #~ ar.filter = models.Q(state=GuestState.invited,event__user=ar.get_user())
+        #~ # ! note that we skip one mro parent:
+        #~ return super(MySentInvitations,self).get_request_queryset(ar)
     
 
     
@@ -1631,7 +1683,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     
     for o in Event.objects.filter(
         #~ models.Q(status=None) | models.Q(status__reminder=True),
-        models.Q(state=None) | models.Q(state__lte=EventState.confirmed),
+        models.Q(state=None) | models.Q(state__lte=EventState.scheduled),
         **filterkw).order_by('start_date'):
         add(o)
         
@@ -1984,7 +2036,7 @@ def reminders(ui,user,days_back=None,days_forward=None,**kw):
     
     for o in Event.objects.filter(
         #~ models.Q(status=None) | models.Q(status__reminder=True),
-        models.Q(state=None) | models.Q(state__lte=EventState.confirmed),
+        models.Q(state=None) | models.Q(state__lte=EventState.scheduled),
         **filterkw).order_by('start_date'):
         add(o)
         
@@ -2149,15 +2201,19 @@ def setup_main_menu(site,ui,user,m):
     #~ m  = m.add_menu("events",_("Events"))
     m.add_action(MyEvents)
     #~ m.add_action(MyEventsToday)
-    m.add_action(MyEventsToSchedule)
-    m.add_action(MyEventsToNotify)
-    m.add_action(MyEventsToConfirm)
+    m.add_action(MyEventsSuggested)
+    m.add_action(MyEventsNotified)
+    #~ m.add_action(MyEventsToSchedule)
+    #~ m.add_action(MyEventsToNotify)
+    #~ m.add_action(MyEventsToConfirm)
     
     m.add_separator('-')
     m.add_action(Events)
-    m.add_action(EventsToSchedule)
-    m.add_action(EventsToNotify)
-    m.add_action(EventsToConfirm)
+    m.add_action(EventsSuggested)
+    m.add_action(EventsNotified)
+    #~ m.add_action(EventsToSchedule)
+    #~ m.add_action(EventsToNotify)
+    #~ m.add_action(EventsToConfirm)
     
     m.add_separator('-')
     #~ m  = m.add_menu("tasks",_("Tasks"))
@@ -2168,8 +2224,8 @@ def setup_main_menu(site,ui,user,m):
     
     m.add_action(MyInvitations)
     m.add_action(MyPendingInvitations)
-    m.add_action(MySentInvitations)
-    m.add_action(MyPendingSentInvitations)
+    #~ m.add_action(MySentInvitations)
+    #~ m.add_action(MyPendingSentInvitations)
     
   
 def setup_master_menu(site,ui,user,m): 
@@ -2205,6 +2261,9 @@ def setup_quicklinks(site,ui,user,m):
     if site.use_extensible:
         #~ m.add_action(self.modules.cal.Panel)
         m.add_action(Panel)
+        m.add_action(MyEventsSuggested)
+        m.add_action(MyEventsNotified)
+        m.add_action(MyTasksToDo)
         
 dd.add_user_group('office',MODULE_LABEL)
 
