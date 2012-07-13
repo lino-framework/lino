@@ -630,10 +630,6 @@ class ActionRequest(object):
             #~ kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
         
-        #~ 20120111 kw.update(user=request.user)
-        #~ user = request.user
-        #~ if user is not None and user.is_superuser:
-        #~ if True:
         if settings.LINO.user_model:
             username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
             if username:
@@ -641,7 +637,6 @@ class ActionRequest(object):
                     kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))
                 except settings.LINO.user_model.DoesNotExist, e:
                     pass
-            #~ kw.update(user=user)
         return kw
       
     def setup(self,

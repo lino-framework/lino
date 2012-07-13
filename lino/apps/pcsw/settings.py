@@ -57,6 +57,10 @@ class Lino(Lino):
     def get_app_source_file(self):
         return __file__
         
+    override_modlib_models = ['contacts.Person','contacts.Company']
+        
+        
+        
     #~ def setup_user_profiles(self):
     def setup_choicelists(self):
         """

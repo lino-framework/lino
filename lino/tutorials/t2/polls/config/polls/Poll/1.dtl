@@ -1,3 +1,0 @@
-main = 
-  id question pub_date
-  polls.ChoicesByPoll

@@ -89,8 +89,6 @@ if settings.LINO.user_model:
             # trigger site startup if necessary
             settings.LINO.startup()
             
-            #~ from lino.extjs import ui
-            
             """
             20120110 : alicia hatte es geschafft, beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
             Apache ließ sie als " alicia" durch.
@@ -98,7 +96,6 @@ if settings.LINO.user_model:
             """
             username = username.strip()
             
-            #~ User = settings.LINO.user_model        
             try:
                 request.user = USER_MODEL.objects.get(username=username)
                 if len(babel.AVAILABLE_LANGUAGES) > 1:
@@ -112,13 +109,6 @@ if settings.LINO.user_model:
                 raise Exception(
                   "Unknown username %r. Please contact your system administrator." 
                   % username)
-                """
-                """
-                #~ u = USER_MODEL(username=username)
-                #~ u.full_clean()
-                #~ u.save()
-                #~ logger.info("Creating new user %s from request %s",u,request)
-                #~ request.user = u
             
             
         

@@ -16,37 +16,38 @@ A :term:`minimal application` used for
 tests, demonstrations and didactical purposes.
 """
 
+if False: # no longer necessary after 20120713
 
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
+    from django.db import models
+    from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+    from lino import dd
 
-from lino.modlib.contacts import models as contacts
+    from lino.modlib.contacts import models as contacts
 
-class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
-    class Meta(contacts.PersonMixin.Meta):
-        app_label = 'contacts'
+    class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
+        class Meta(contacts.PersonMixin.Meta):
+            app_label = 'contacts'
 
-class PersonDetail(contacts.PersonDetail):
-    general = contacts.PersonDetail.main
-    main = "general outbox.SentByPartner"
-    def setup_handle(self,dh):
-        dh.general.label = _("General")
-    
-class Company(contacts.Partner,contacts.CompanyMixin):
-    class Meta(contacts.CompanyMixin.Meta):
-        app_label = 'contacts'
+    class PersonDetail(contacts.PersonDetail):
+        general = contacts.PersonDetail.main
+        main = "general outbox.SentByPartner"
+        def setup_handle(self,dh):
+            dh.general.label = _("General")
         
-class CompanyDetail(contacts.CompanyDetail):
-    general = contacts.CompanyDetail.main
-    main = "general outbox.SentByPartner"
-    def setup_handle(self,dh):
-        dh.general.label = _("General")
+    class Company(contacts.Partner,contacts.CompanyMixin):
+        class Meta(contacts.CompanyMixin.Meta):
+            app_label = 'contacts'
+            
+    class CompanyDetail(contacts.CompanyDetail):
+        general = contacts.CompanyDetail.main
+        main = "general outbox.SentByPartner"
+        def setup_handle(self,dh):
+            dh.general.label = _("General")
 
-def site_setup(site):
-    contacts.Persons.set_detail_layout(PersonDetail())
-    contacts.Companies.set_detail_layout(CompanyDetail())
+    def site_setup(site):
+        contacts.Persons.set_detail_layout(PersonDetail())
+        contacts.Companies.set_detail_layout(CompanyDetail())
 
 #~ def setup_master_menu(site,ui,user,m):
     #~ m.add_action(site.modules.contacts.Persons)

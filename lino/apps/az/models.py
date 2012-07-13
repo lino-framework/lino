@@ -22,9 +22,9 @@ from lino import mixins
 from lino.modlib.contacts import models as contacts
 from lino.modlib.cal import models as cal
 
-class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
-    class Meta(contacts.PersonMixin.Meta):
-        app_label = 'contacts'
+#~ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
+    #~ class Meta(contacts.PersonMixin.Meta):
+        #~ app_label = 'contacts'
         #~ # see :doc:`/tickets/14`
         #~ verbose_name = _("Person")
         #~ verbose_name_plural = _("Persons")
@@ -72,9 +72,9 @@ class PersonDetail(contacts.PersonDetail):
 
 
 
-class Company(contacts.Partner,contacts.CompanyMixin):
-    class Meta(contacts.CompanyMixin.Meta):
-        app_label = 'contacts'
+#~ class Company(contacts.Partner,contacts.CompanyMixin):
+    #~ class Meta(contacts.CompanyMixin.Meta):
+        #~ app_label = 'contacts'
         #~ # see :doc:`/tickets/14`
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")

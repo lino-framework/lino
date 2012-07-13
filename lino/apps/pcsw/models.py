@@ -357,7 +357,8 @@ class CpasPartner(dd.Model,mixins.DiffingMixin):
           
 
 
-class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Printable):
+#~ class Person(CpasPartner,contacts.PersonMixin,contacts.Partner,contacts.Born,Printable):
+class Person(CpasPartner,contacts.Person,contacts.Born,Printable):
     """
     Represents a physical person.
     
@@ -804,17 +805,14 @@ class AllPartners(contacts.AllPartners,Partners):
     app_label = 'contacts'
     #~ pass
 
-class Company(CpasPartner,contacts.Partner,contacts.CompanyMixin):
+class Company(CpasPartner,contacts.Company):
   
     """
     Inner class Meta is necessary because of :doc:`/tickets/14`.
     """
     
-    class Meta(contacts.CompanyMixin.Meta):
-    #~ class Meta:
+    class Meta(contacts.Company.Meta):
         app_label = 'contacts'
-        #~ verbose_name = _("Company")
-        #~ verbose_name_plural = _("Companies")
         
         
     #~ vat_id = models.CharField(max_length=200,blank=True)

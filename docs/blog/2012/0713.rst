@@ -1,0 +1,100 @@
+20120713
+========
+
+New application attribute :attr:`lino.Lino.override_modlib_models`
+------------------------------------------------------------------
+
+Following a sudden inspiration, I added the new 
+application attribute :attr:`lino.Lino.override_modlib_models`
+and adapted the applications under `lino.apps`.
+This is finally a solution to the old problem that all Lino applications 
+which use lino.modlib.contacts were obliged to define 
+themselves a non-abstract Person and a Company model.
+This problem was a perpetual stumbling block when writing 
+tutorials and minimal applications.
+
+Fixed a bug in :mod:`lino.utils.dumpy`
+--------------------------------------
+
+Because of the above change I also made a 
+:term:`double dump test`, which revealed the following problem::
+
+  WARNING Abandoning with 6 unsaved instances from t:\data\luc\lino_local\dsbe\fixtures\d20120713.py:
+  - debts.Entry [u"Cannot set both 'Distribute' and 'Monthly rate'"] (6 object(s) with primary key 135, 136, 137, 140, 141
+  , 142)
+  
+This problem existed already before my sudden inspiration,
+and it would have caused me much more work if I had discovered 
+it only after the 1.4.4 release.
+
+Here is the application code 
+(from :class:`lino.modlib.debts.models.Entry`) 
+which caused it::
+
+    def full_clean(self,*args,**kw):
+        if self.periods <= 0:
+            raise ValidationError(_("Periods must be > 0"))
+        if self.monthly_rate and self.distribute:
+            raise ValidationError(
+              _("Cannot set both 'Distribute' and 'Monthly rate'"))
+        super(Entry,self).full_clean(*args,**kw)
+
+Changed this code so that the message becomes more specific::
+        
+  WARNING Abandoning with 6 unsaved instances from t:\data\luc\lino_local\dsbe\fixtures\d20120713.py:
+  - debts.Entry [u"Cannot set 'Distribute' when 'Monthly rate' is '0'"] (6 object(s) with primary key 135, 136, 137, 140,
+  141, 142)        
+      
+The generated dumpy file is as follows::
+
+  def create_debts_entry(id, seqno, ..., monthly_rate):
+      return debts_Entry(id=id,seqno=seqno,...,monthly_rate=monthly_rate)
+
+  def debts_entry_objects():
+      ...
+      yield create_debts_entry(135,48,...,'0')
+
+This is the reason for our problem. 
+A DecimalField accepts a `string` value and will convert it to a `Decimal`,
+*but* only when reading it from the database.
+For example (supposing that `Company.hourly_rate` is a DecimalField)::
+
+  >>> from lino.apps.pcsw.models import Company
+  >>> c = Company(name="test",hourly_rate='0.25')
+  >>> print repr(c.hourly_rate)
+  '0.25'
+  >>> c.save()
+  >>> print repr(c.hourly_rate)
+  '0.25'
+  
+Only after loading it again from database::
+
+  >>> c2 = Company.objects.get(pk=c.pk)
+  >>> print repr(c2.hourly_rate)
+  Decimal('0.25')
+
+It is one of Django's oddnesses to allow storing a `string` 
+value in a DecimalField and leave it there unconverted.
+We'll forgive that oddness by modifying 
+:mod:`lino.utils.dumpy` so that it generates code which instantiates models 
+using true Decimal values::
+
+  def create_debts_entry(id, seqno, ... monthly_rate):
+      if monthly_rate is not None: monthly_rate = Decimal(monthly_rate)
+      return debts_Entry(id=id,seqno=seqno,...,monthly_rate=monthly_rate)
+      
+Note that another (easier) solution would have been to 
+modify :meth:`lino.utils.dumpy.Serializer.value2string` in order to 
+write the correct value directly for each debts_entry_objects line
+instead of testing and converting each field in create_debts_entry::
+
+
+  def debts_entry_objects():
+      ...
+      yield create_debts_entry(135,48,...,Decimal('0'))
+
+But we prefer to keep the *file size* small
+(and *load performance* is less important).
+
+
+

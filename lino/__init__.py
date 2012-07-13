@@ -217,7 +217,6 @@ class Lino(object):
     
     """
     
-    #~ auto_build_site_cache = True
     never_build_site_cache = False
     """
     Set this to `True` if you want that Lino 
@@ -817,7 +816,37 @@ class Lino(object):
         return self._extjs_ui
     ui = property(get_ui)
 
+    override_modlib_models = []
+    """
+    A list of names of modlib models which are being 
+    redefined by this application.
+    
+    The following modlib models currently support this:
+    - :class:`contacts.Person <lino.modlib.contacts.models.Person>`
+    - :class:`contacts.Company <lino.modlib.contacts.models.Company>`
+    
+    Usage: in your application's `settings.py`, specify::
+    
+      class Lino(Lino):
+          override_modlib_models = ['contacts.Person']
+          
+    This will cause the modlib Person model to be abstract, 
+    and hence your application is responsible for defining anoter 
+    `Person` class with "contacts" as `app_label`::
+          
+    class Person(contacts.Person,contacts.Born):
+        class Meta(contacts.Person.Meta):
+            app_label = 'contacts'
+            
+        def kiss(self):
+            ...
+          
+    
+    """
 
+    def is_abstract_model(self,name):
+        return name in self.override_modlib_models
+        
     def parse_date(self,s):
         """Convert a string formatted using 
         :attr:`date_format_strftime` or  :attr:`date_format_extjs` 

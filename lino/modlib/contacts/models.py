@@ -390,13 +390,11 @@ class Born(dd.Model):
 
 class PersonMixin(dd.Model):
     """
-    Mixin for models that represent a physical person. 
+    Can be used also for Persons that are no Partners
     """
     class Meta:
         abstract = True
-        verbose_name = _("Person")
-        verbose_name_plural = _("Persons")
-
+        
     first_name = models.CharField(max_length=200,
       #~ blank=True,
       verbose_name=_('First name'))
@@ -440,6 +438,18 @@ Optional `salutation_options` see :func:`get_salutation`.
     full_name = property(get_full_name)
     #~ full_name.return_type = models.CharField(max_length=200,verbose_name=_('Full name'))
     
+  
+#~ class Person(dd.Model):
+class Person(Partner,PersonMixin):
+    """
+    Mixin for models that represent a physical person. 
+    """
+    class Meta:
+        #~ abstract = True
+        abstract = settings.LINO.is_abstract_model('contacts.Person')
+        verbose_name = _("Person")
+        verbose_name_plural = _("Persons")
+
     def address_person_lines(self,*args,**kw):
         "Deserves more documentation."
         if self.title:
@@ -459,7 +469,7 @@ Optional `salutation_options` see :func:`get_salutation`.
         #~ l = filter(lambda x:x,[self.last_name,self.first_name])
         #~ self.name = " ".join(l)
         self.name = join_words(self.last_name,self.first_name)
-        super(PersonMixin,self).full_clean(*args,**kw)
+        super(Person,self).full_clean(*args,**kw)
 
 
 
@@ -496,14 +506,15 @@ class Persons(dd.Table):
     
 
 
-class CompanyMixin(dd.Model):
-#~ class Company(Contact):
+#~ class CompanyMixin(dd.Model):
+class Company(Partner):
     """
     Abstract base class for a company.
     See also :doc:`/tickets/14`.
     """
     class Meta:
-        abstract = True
+        abstract = settings.LINO.is_abstract_model('contacts.Company')
+        #~ abstract = True
         app_label = 'contacts'
         verbose_name = _("Company")
         verbose_name_plural = _("Companies")

@@ -260,12 +260,17 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
         #~ return True
         
 
-SIDEBAR = """
-.. sidebar:: Use the source, Luke
+#~ SIDEBAR = """
+#~ .. sidebar:: Use the source, Luke
 
-  We generally recommend to also consult the source code.
-  This module's source code is available at
-  :srcref:`/%s.py`
+  #~ We generally recommend to also consult the source code.
+  #~ This module's source code is available at
+  #~ :srcref:`/%s.py`
+
+#~ """  
+
+SIDEBAR = """
+(This module's source code is available at :srcref:`/%s.py`)
 
 """  
     

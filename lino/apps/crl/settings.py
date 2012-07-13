@@ -36,6 +36,11 @@ class Lino(Lino):
     def get_app_source_file(self):
         return __file__
         
+    def is_abstract_model(self,name):
+        if name == 'contacts.Person':
+            return True
+        return False
+        
     def unused_get_site_menu(self,ui,user):
         from django.utils.translation import ugettext_lazy as _
         from lino.core import menus

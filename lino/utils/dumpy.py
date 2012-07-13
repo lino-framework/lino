@@ -62,6 +62,7 @@ class Serializer(base.Serializer):
             self.stream.write('# -*- coding: UTF-8 -*-\n\n')
             #~ self.stream.write('# Created using Lino version %s\n' % lino.__version__)
             self.stream.write('SOURCE_VERSION = %r\n' % lino.__version__)
+            self.stream.write('from decimal import Decimal\n')
             self.stream.write('from datetime import datetime as dt\n')
             self.stream.write('from datetime import time,date\n')
             #~ self.stream.write('from lino.utils import i2d\n')
@@ -96,7 +97,9 @@ def new_content_type_id(m):
             self.stream.write('def create_%s(%s):\n' % (
                 model._meta.db_table,', '.join([f.attname for f in fields])))
             if model._meta.parents:
-                assert len(model._meta.parents) == 1
+                if len(model._meta.parents) != 1:
+                    msg = "%s : model._meta.parents is %r" % (model,model._meta.parents)
+                    raise Exception(msg)
                 pm,pf = model._meta.parents.items()[0]
                 child_fields = [f for f in fields if f != pf]
                 if child_fields:
@@ -110,6 +113,10 @@ def new_content_type_id(m):
                     full_model_name(pm,'_'),pf.attname,full_model_name(model,'_'),attrs))
             else:
                 for f in fields:
+                    if isinstance(f,models.DecimalField):
+                        self.stream.write(
+                            '    if %s is not None: %s = Decimal(%s)\n' % (
+                            f.attname,f.attname,f.attname))
                     if isinstance(f,models.ForeignKey) and f.rel.to is ContentType:
                         #~ self.stream.write(
                             #~ '    %s = ContentType.objects.get_for_model(%s).pk\n' % (

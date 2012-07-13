@@ -1,11 +1,14 @@
-#60 : What is a Contact? 
+#60 : What is a Partner? 
 ------------------------
+
+(TODO: integrate these into the documentation. 
+Besides that the ticket can be considered closed.)
 
 We want :mod:`lino.modlib.contacts` to be flexible enough to handle 
 a majority of applications. 
 
-What should the contacts.Contact model be for 
-Companies, Persons, Families, Customers,...:
+What should the contacts.Partner model be for 
+Companies, Persons, Families, Customers, Providers, Households...:
 (1) the MTI parent or (2) a refering model?
 
 Observations
@@ -15,7 +18,7 @@ Observations
   We call them **Partner Documents**.
   
 - A **Partner** is either a Person or a Company (or a Family...) 
-  susceptible to receive a Partner Document.
+  susceptible to become recipient of a Partner Document.
   A Partner is *either* a Person *or* a Company, not both.
   
 - Lino does not require to differentiate between 
@@ -44,7 +47,7 @@ Observations
     Person or Company. If a Person has different roles in different 
     Companies, she will usually still have the same mobild phone number.
   - a *phone number* is usually linked to a physical/geographical 
-    place and it's postal address.
+    place and a postal address.
   - Every Partner (be it a Person or a Company) 
     should have a known "official" address.
   - an *email address* can be used for different partners

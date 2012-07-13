@@ -756,9 +756,10 @@ Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
     def full_clean(self,*args,**kw):
         if self.periods <= 0:
             raise ValidationError(_("Periods must be > 0"))
-        if self.monthly_rate and self.distribute:
+        if self.distribute and self.monthly_rate:
             raise ValidationError(
-              _("Cannot set both 'Distribute' and 'Monthly rate'"))
+              #~ _("Cannot set both 'Distribute' and 'Monthly rate'"))
+              _("Cannot set 'Distribute' when 'Monthly rate' is %r") % self.monthly_rate)
         super(Entry,self).full_clean(*args,**kw)
       
     def save(self,*args,**kw):

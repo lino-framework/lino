@@ -63,9 +63,9 @@ from lino import dd
 from lino import mixins
 from lino.models import SiteConfig
 
-from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.notes import models as notes
-from lino.modlib.cal import models as cal
+#~ from lino.modlib.cal import models as cal
 
 if True: # dd.is_installed('igen'):
 
@@ -75,20 +75,19 @@ if True: # dd.is_installed('igen'):
 
     #~ class Person(contacts.Person,contacts.Contact):
     #~ class Person(contacts.Contact,contacts.Born,contacts.Person):
-    class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
-        class Meta(contacts.PersonMixin.Meta):
-            app_label = 'contacts'
-            #~ # see :doc:`/tickets/14`
-            verbose_name = _("Person")
-            verbose_name_plural = _("Persons")
+    #~ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
+        #~ class Meta(contacts.PersonMixin.Meta):
+            #~ app_label = 'contacts'
+            # see :doc:`/tickets/14`
+            #~ verbose_name = _("Person")
+            #~ verbose_name_plural = _("Persons")
 
                   
-    class Company(contacts.Partner,contacts.CompanyMixin):
-        class Meta(contacts.CompanyMixin.Meta):
-            app_label = 'contacts'
-            #~ # see :doc:`/tickets/14`
-            verbose_name = _("Company")
-            verbose_name_plural = _("Companies")
+    #~ class Company(contacts.Partner,contacts.CompanyMixin):
+        #~ class Meta(contacts.CompanyMixin.Meta):
+            #~ app_label = 'contacts'
+            #~ verbose_name = _("Company")
+            #~ verbose_name_plural = _("Companies")
         
     #~ class Note(notes.Note,mixins.Owned):
          #~ class Meta:
@@ -98,13 +97,13 @@ if True: # dd.is_installed('igen'):
             #~ verbose_name_plural = _("Notes")
             
      
-    class Event(cal.Event):
-        class Meta(cal.Event.Meta):
-            app_label = 'cal'
+    #~ class Event(cal.Event):
+        #~ class Meta(cal.Event.Meta):
+            #~ app_label = 'cal'
 
-    class Task(cal.Task):
-        class Meta(cal.Task.Meta):
-            app_label = 'cal'
+    #~ class Task(cal.Task):
+        #~ class Meta(cal.Task.Meta):
+            #~ app_label = 'cal'
      
      
     dd.inject_field(

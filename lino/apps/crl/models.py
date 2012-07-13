@@ -26,7 +26,8 @@ from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.cal import models as cal
 
-class Person(contacts.Partner,contacts.Born,contacts.PersonMixin):
+#~ class Person(contacts.Partner,contacts.Born,contacts.PersonMixin):
+class Person(contacts.Person,contacts.Born):
     class Meta(contacts.PersonMixin.Meta):
         app_label = 'contacts'
     died_date = models.DateField(
@@ -34,31 +35,28 @@ class Person(contacts.Partner,contacts.Born,contacts.PersonMixin):
         verbose_name=_("Died date"))
 
               
-class Company(contacts.Partner,contacts.CompanyMixin):
-    pass
+#~ class Company(contacts.Partner,contacts.CompanyMixin):
+    #~ pass
     #~ class Meta(contacts.CompanyMixin.Meta):
         #~ app_label = 'contacts'
         # see :doc:`/tickets/14`
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
     
-class Note(notes.Note,mixins.Controllable):
-     class Meta(notes.Note.Meta):
-        app_label = 'notes'
+#~ class Note(notes.Note,mixins.Controllable):
+     #~ class Meta(notes.Note.Meta):
+        #~ app_label = 'notes'
         # see :doc:`/tickets/14`
         #~ verbose_name = _("Note")
         #~ verbose_name_plural = _("Notes")
  
-class Event(cal.Event):
-    class Meta(cal.Event.Meta):
-        app_label = 'cal'
+#~ class Event(cal.Event):
+    #~ class Meta(cal.Event.Meta):
+        #~ app_label = 'cal'
 
-class Task(cal.Task):
-    class Meta(cal.Task.Meta):
-        app_label = 'cal'
-
-        
-        
+#~ class Task(cal.Task):
+    #~ class Meta(cal.Task.Meta):
+        #~ app_label = 'cal'
 
 
 

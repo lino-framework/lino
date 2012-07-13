@@ -459,7 +459,7 @@ class EventGenerator(mixins.UserAuthored):
         msg = obj2str(self)
         msg += ", qs=" + str([e.auto_type for e in qs])
         msg += ", wanted=" + str([babel.dtos(e.start_date) for e in wanted.values()])
-        logger.info('20120707 ' + msg)
+        #~ logger.info('20120707 ' + msg)
         
         for e in qs:
             ae = wanted.pop(e.auto_type,None)

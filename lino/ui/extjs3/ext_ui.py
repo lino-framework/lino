@@ -1193,6 +1193,7 @@ tinymce.init({
             #~ // $site.title ($lino.welcome_text())
             yield "Ext.BLANK_IMAGE_URL = '%s/extjs/resources/images/default/s.gif';" % self.media_url()
             yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
+            # TODO: replace the following lines by a generic method for all ChoiceLists
             yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
             yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
             yield "MEDIA_URL = %r;" % (self.media_url())
@@ -1738,10 +1739,6 @@ tinymce.init({
                 
                 return HttpResponse(self.html_page(request,a.label,
                   on_ready=self.ext_renderer.action_call(a,after_show)))
-                #~ return HttpResponse(self.html_page(request,
-                  #~ on_ready=['Lino.%s(undefined,%s,%s);' % (
-                    #~ a,py2js(params),py2js(after_show))]))
-                
                 
             if isinstance(a,actions.RedirectAction):
                 target = a.get_target_url(elem)

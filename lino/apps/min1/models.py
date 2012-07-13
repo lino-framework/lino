@@ -16,20 +16,20 @@ A :term:`minimal application` that uses only the
 :mod:`lino.modlib.contacts` module.
 """
 
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
+#~ from django.db import models
+#~ from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+#~ from lino import dd
 
-from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.contacts import models as contacts
 
-class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
-    class Meta(contacts.PersonMixin.Meta):
-        app_label = 'contacts'
+#~ class Person(contacts.Person,contacts.Born):
+    #~ class Meta(contacts.Person.Meta):
+        #~ app_label = 'contacts'
 
-class Company(contacts.Partner,contacts.CompanyMixin):
-    class Meta(contacts.CompanyMixin.Meta):
-        app_label = 'contacts'
+#~ class Company(contacts.Partner,contacts.CompanyMixin):
+    #~ class Meta(contacts.CompanyMixin.Meta):
+        #~ app_label = 'contacts'
         
 
 #~ def setup_master_menu(site,ui,user,m):
