@@ -108,7 +108,9 @@ KNOWLEDGE_CHOICES = HowWell.get_choices()
 from lino.core.modeltools import resolve_model, obj2str, obj2unicode
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
-User = resolve_model(settings.LINO.user_model)
+if settings.LINO.user_model:
+    #~ User = resolve_model(settings.LINO.user_model)
+    from lino.modlib.users import models as users
 
 MAX_ROW_COUNT = 300
 
@@ -296,7 +298,7 @@ class ExtRenderer(HtmlRenderer):
             if v.action:
                 if True:
                     #~ handler = self.action_call(v.action,params=v.params)
-                    return handler_item(v,self.action_call(v.action),v.action.help_text)
+                    return handler_item(v,self.action_call(None,v.action),v.action.help_text)
                     #~ handler = "function(){%s}" % self.action_call(
                         #~ v.action,None,v.params)
                     #~ return dict(text=prepare_label(v),handler=js_code(handler))
@@ -332,8 +334,10 @@ class ExtRenderer(HtmlRenderer):
             return dict(text=prepare_label(v),href=url)
         return v
         
-    def action_call(self,a,after_show={}):
+    def action_call(self,request,a,after_show={}):
         if a.opens_a_window:
+            if request and request.subst_user:
+                after_show[ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
             if isinstance(a,actions.ShowEmptyTable):
                 after_show.update(record_id=-99998)
             if after_show:
@@ -356,7 +360,7 @@ class ExtRenderer(HtmlRenderer):
         """
         label = cgi.escape(force_unicode(label or a.get_button_label()))
         #~ url = self.action_url_js(a,after_show)
-        url = self.js2url(self.action_call(a,after_show))
+        url = self.js2url(self.action_call(None,a,after_show))
         return self.href_button(url,label,a.help_text)
         
     def row_action_button(self,obj,ar,a):
@@ -387,12 +391,12 @@ class ExtRenderer(HtmlRenderer):
         a = obj.__class__._lino_default_table.detail_action
         if a is not None:
             #~ raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
-            return self.action_call(a,dict(record_id=obj.pk))
+            return self.action_call(None,a,dict(record_id=obj.pk))
         
     def request_handler(self,ar,*args,**kw):
         #~ bp = rr.request2kw(self.ui,**kw)
         st = ar.get_status(self.ui,**kw)
-        return self.action_call(ar.action,after_show=st)
+        return self.action_call(ar.request,ar.action,after_show=st)
         
     def href_to_request(self,rr,text=None):
         url = self.js2url(self.request_handler(rr))
@@ -1126,12 +1130,79 @@ tinymce.init({
         
         #~ yield "console.time('onReady');"
         
-        # 20120626
-        user = request.user
-        handler = self.ext_renderer.instance_handler(user)
-        handler = "function(){%s}" % handler
-        login_menu = dict(text=unicode(user),handler=js_code(handler))
-        yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
+        if settings.LINO.user_model:
+        
+            if request.subst_user:
+                #~ yield "Lino.subst_user = %s;" % py2js(request.subst_user.id)
+                yield "Lino.set_subst_user(%s,%s);" % (
+                    py2js(request.subst_user.id),
+                    py2js(unicode(request.subst_user)))
+                user_text = unicode(request.user) + " (" + _("as") + " " + unicode(request.subst_user) + ")"
+            else:
+                #~ yield "Lino.subst_user = null;"
+                yield "Lino.set_subst_user(null);"
+                user_text = unicode(request.user) 
+                
+            user = request.user
+            
+            yield "Lino.user = %s;" % py2js(dict(id=user.id,name=unicode(user)))
+            
+            if user.profile.level >= dd.UserLevels.admin:
+                authorities = [(u.id,unicode(u)) 
+                    for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)]
+            else:
+                authorities = [(u.id,unicode(u)) 
+                    for u in users.Authority.objects.filter(user=user)]
+            if False:
+                config = dict()
+                config.update(store=authorities)
+                config.update(emptyText=_("As myself"))
+                config.update(maxWidth=js_code("Lino.chars2width(20)"))
+                #~ config.update(forceSelection=True)
+                #~ config.update(editable=False)
+                config.update(listeners=dict(select=js_code("function(){Lino.current_window.main_item.refresh()}")))
+                if request.subst_user:
+                    config.update(value=request.subst_user.id)
+                else:
+                    config.update(value=None)
+                yield "Lino.subst_user_field = new Ext.form.ComboBox(%s);" % py2js(config)
+            
+            #~ yield "console.log(20120714,Lino.subst_user_field);" 
+            #~ yield "Lino.subst_user_field.setStore(%s);" % py2js(
+                #~ user.get_received_mandates())
+            #~ if request.subst_user:
+                #~ yield "Lino.subst_user_field.setValue(%s);" % py2js(request.subst_user.id)
+            #~ else:
+                #~ yield "Lino.subst_user_field.setValue(null);" 
+            
+            handler = self.ext_renderer.instance_handler(user)
+            handler = "function(){%s}" % handler
+            if False:
+                login_menu = dict(text=unicode(user),handler=js_code(handler))
+                yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.subst_user_field,%s]);" % py2js(login_menu)
+            else:
+                if len(authorities):
+                    mysettings = dict(text=_("My settings"),handler=js_code(handler))
+                    #~ act_as = [
+                        #~ dict(text=unicode(u),handler=js_code("function(){Lino.set_subst_user(%s)}" % i)) 
+                            #~ for i,u in user.get_received_mandates()]
+                    act_as = [
+                        dict(text=t,handler=js_code("function(){Lino.set_subst_user(%s,%s)}" % (v,py2js(t)))) 
+                            for v,t in authorities]
+                            #~ for v,t in user.get_received_mandates()]
+                    act_as.insert(0,dict(
+                        text="Myself",
+                        handler=js_code("function(){Lino.set_subst_user(null)}")))
+                    act_as = dict(text=_("Act as..."),menu=dict(items=act_as))
+                    login_menu = dict(
+                        text=user_text,
+                        menu=dict(items=[act_as,mysettings]))
+                else:
+                    login_menu = dict(text=user_text,handler=js_code(handler))
+                    
+                yield "Lino.login_menu = %s;" % py2js(login_menu)
+                yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
+                
         
         #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"
           
@@ -1215,6 +1286,7 @@ tinymce.init({
               #~ settings.LINO.index_view_action))
         #~ logger.info("20120706 index_view() %s %r",request.user, request.user.profile)
         kw.update(on_ready=self.ext_renderer.action_call(
+          request,
           settings.LINO.modules.lino.Home.default_action))
         #~ kw.update(title=settings.LINO.modules.pcsw.Home.label)
         #~ kw.update(title=lino_site.title)
@@ -1416,7 +1488,7 @@ tinymce.init({
                     after_show.update(data_record=rec)
 
                 kw = dict(on_ready=
-                    self.ext_renderer.action_call(ar.action,after_show))
+                    self.ext_renderer.action_call(ar.request,ar.action,after_show))
                 #~ print '20110714 on_ready', params
                 kw.update(title=ar.get_title())
                 return HttpResponse(self.html_page(request,**kw))
@@ -1603,6 +1675,8 @@ tinymce.init({
             elem = rpt.get_row_by_pk(pk)
         
         ar = rpt.request(self,request,a)
+        #~ if not ar.ah.actor.__name__.startswith('Panel'):
+            #~ raise Exception("actor is %s" % ar.ah.actor)
         rh = ar.ah
             
         if request.method == 'GET':
@@ -1645,6 +1719,8 @@ tinymce.init({
                 #~ fmt = data.get('fmt',None)
                 a = rpt.get_url_action(rpt.default_list_action_name)
                 ar = rpt.request(self,request,a)
+                #~ if not ar.ah.actor.__name__.startswith('Panel'):
+                    #~ raise Exception("actor is %s" % ar.ah.actor)
                 ar.renderer = self.ext_renderer
                 return self.form2obj_and_save(ar,data,elem,False,True) # force_update=True)
             else:
@@ -1738,7 +1814,7 @@ tinymce.init({
                 #~ params.update(base_params=bp)
                 
                 return HttpResponse(self.html_page(request,a.label,
-                  on_ready=self.ext_renderer.action_call(a,after_show)))
+                  on_ready=self.ext_renderer.action_call(request,a,after_show)))
                 
             if isinstance(a,actions.RedirectAction):
                 target = a.get_target_url(elem)
@@ -1853,15 +1929,15 @@ tinymce.init({
         if force or settings.LINO.build_js_cache_on_startup:
             count = 0
             langs = babel.AVAILABLE_LANGUAGES
-            users = User.objects.filter(profile='').exclude(level='')
+            qs = users.User.objects.filter(profile=dd.UserProfiles.blank_item) # .exclude(level='')
             for lang in langs:
                 babel.set_language(lang)
-                for user in users:
+                for user in qs:
                     count += self.build_js_cache_for_user(user,force)
             babel.set_language(None)
                 
             logger.info("%d lino*.js files have been built in %s seconds.",
-              count,time.time()-started)
+                count,time.time()-started)
           
     def build_js_cache_for_user(self,user,force=False):
         """
@@ -2562,12 +2638,19 @@ tinymce.init({
         if isinstance(action,actions.Calendar):
             yield "  return Lino.calendar_app.get_main_panel();"
         else:
-            yield "  var p = {};" 
+            p = dict()
+            if action is settings.LINO.modules.lino.Home.default_action:
+                p.update(is_home_page=True)
+            #~ yield "  var p = {};" 
             if action.hide_top_toolbar:
-                yield "  p.hide_top_toolbar = true;" 
+                p.update(hide_top_toolbar=True)
+                #~ yield "  p.hide_top_toolbar = true;" 
             if action.actor.hide_window_title:
-                yield "  p.hide_window_title = true;" 
-            yield "  p.is_main_window = true;" # workaround for problem 20111206
+                #~ yield "  p.hide_window_title = true;" 
+                p.update(hide_window_title=True)
+            #~ yield "  p.is_main_window = true;" # workaround for problem 20111206
+            p.update(is_main_window=True) # workaround for problem 20111206
+            yield "  var p = %s;"  % py2js(p)
             #~ if isinstance(action,actions.Calendar):
                 #~ yield "  p.items = Lino.CalendarAppPanel_items;" 
             if params:

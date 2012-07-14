@@ -71,8 +71,7 @@ class DurationUnit(Choice):
     def add_duration(unit,orig,value):
         """
         Return a date or datetime obtained by adding `value` 
-        times the specified `unit` to the specified 
-        value `orig`.
+        times this `unit` to the specified value `orig`.
         Returns None is `orig` is empty.
         
         This is intended for use as a 

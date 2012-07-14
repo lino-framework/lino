@@ -155,7 +155,10 @@ class User(mixins.CreatedModified):
                     setattr(self,n,getattr(p,n))
         super(User,self).save(*args,**kw)
         
-
+    def get_received_mandates(self):
+        #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]
+        return [ [u.id,unicode(u)] for u in self.__class__.objects.all()]
+        #~ return self.__class__.objects.all()
 
 
 class UserDetail(dd.FormLayout):
@@ -169,7 +172,7 @@ class UserDetail(dd.FormLayout):
 
     main = """
     box1
-    remarks 
+    remarks AuthoritiesByUser
     """
     
 class UserInsert(dd.FormLayout):
@@ -211,5 +214,52 @@ class Users(dd.Table):
         #~ if user is not None and user == obj: return True
         #~ return False
           
-  
+#~ class MySettings(mixins.EmptyTable):
+    #~ detail_layout = UserDetail()
+    
+
+
+class Authority(mixins.UserAuthored):
+    """
+    An Authority is when a User gives another User the right to "represent him"
+   
+    :user: points to the user who gives the right of representation. author of this Authority
+    :authorized: points to the user who gets the right to represent the author
+    
+    """
+    
+    class Meta:
+        verbose_name = _("Authority")
+        verbose_name_plural = _("Authorities")
+        
+    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
+    
+    authorized = models.ForeignKey(settings.LINO.user_model,
+        help_text=_("""\
+The user who gets authority to act in your name."""))
+
+
+
+    @dd.chooser()
+    def authorized_choices(cls,user):
+        return settings.LINO.user_model.objects.exclude(
+            profile=dd.UserProfiles.blank_item).exclude(
+              id=user.id).exclude(level>=UserLevels.admin)
+    
+        
+class Authorities(dd.Table):
+    required = dict(user_level='manager')
+    model = Authority
+
+
+class AuthoritiesByUser(Authorities):
+    required = dict()
+    master_key = 'user'
+    label = _("Authorities given")
+
+class AuthoritiesByAuthorized(Authorities):
+    required = dict()
+    master_key = 'authorized'
+    label = _("Authorities taken")
+
 

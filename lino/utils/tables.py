@@ -361,10 +361,8 @@ class TableRequest(actions.ActionRequest):
         
     def get_status(self,ui,**kw):
         kw = actions.ActionRequest.get_status(self,ui,**kw)
-        bp = kw.setdefault('base_params',{})
-        if self.subst_user is not None:
-            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
-            
+        #~ bp = kw.setdefault('base_params',{})
+        bp = kw['base_params']
         if self.quick_search:
             bp[ext_requests.URL_PARAM_FILTER] = self.quick_search
             
@@ -379,7 +377,6 @@ class TableRequest(actions.ActionRequest):
             
         #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
             #~ print 20111223, self.known_values
-        bp = kw.setdefault('base_params',{})
         if self.master_instance is not None:
             if self.master is not None:
                 bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk

@@ -629,14 +629,14 @@ class ActionRequest(object):
         #~ if self.actor.parameters:
             #~ kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
-        
-        if settings.LINO.user_model:
-            username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
-            if username:
-                try:
-                    kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))
-                except settings.LINO.user_model.DoesNotExist, e:
-                    pass
+        kw.update(subst_user=request.subst_user)
+        #~ if settings.LINO.user_model:
+            #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
+            #~ if username:
+                #~ try:
+                    #~ kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))
+                #~ except settings.LINO.user_model.DoesNotExist, e:
+                    #~ pass
         return kw
       
     def setup(self,
@@ -734,6 +734,9 @@ class ActionRequest(object):
             #~ kw.update(param_values=self.ah.store.pv2list(self.param_values))
             kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
             #~ kw[ext_requests.URL_PARAM_PARAM_VALUES] = self.ah.store.pv2list(self.param_values)
+        bp = kw.setdefault('base_params',{})
+        if self.subst_user is not None:
+            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
         return kw
         
 

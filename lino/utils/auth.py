@@ -42,9 +42,11 @@ logger = logging.getLogger(__name__)
 
 from django.utils import translation
 from django.conf import settings
+from django import http
 
 from lino.utils import babel
 from lino.core.modeltools import resolve_model
+from lino.ui import requests as ext_requests
 
 class NoUserMiddleware(object):
     """
@@ -102,6 +104,27 @@ if settings.LINO.user_model:
                     if request.user.language:
                         translation.activate(request.user.language)
                         request.LANGUAGE_CODE = translation.get_language()
+                        
+                if request.method == 'GET':
+                    su = request.GET.get(ext_requests.URL_PARAM_SUBST_USER,None)
+                elif request.method == 'PUT':
+                    PUT = http.QueryDict(request.raw_post_data)
+                    su = PUT.get(ext_requests.URL_PARAM_SUBST_USER,None)
+                elif request.method == 'POST':
+                    su = request.POST.get(ext_requests.URL_PARAM_SUBST_USER,None)
+                else:
+                    su = None
+                if su:
+                    #~ logger.info("20120714 su is %r",su)
+                    try:
+                        request.subst_user = settings.LINO.user_model.objects.get(id=int(su))
+                        #~ logger.info("20120714 su is %s",request.subst_user.username)
+                    except settings.LINO.user_model.DoesNotExist, e:
+                        request.subst_user = None
+                else:
+                    request.subst_user = None
+                    
+                        
             except USER_MODEL.DoesNotExist,e:
                 # [C1]
                 request.user = None  

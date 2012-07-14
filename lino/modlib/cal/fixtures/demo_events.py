@@ -16,9 +16,11 @@
 Generates a suite of ficive demo events.
 """
 
+import datetime
 import decimal
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
+DEMO_DURATION = relativedelta(hours=1,minutes=30)
 
 from django.db import models
 from django.conf import settings
@@ -41,7 +43,16 @@ def objects():
         PROJECTS = Cycler(settings.LINO.project_model.objects.all())
     USERS = Cycler(settings.LINO.user_model.objects.all())
     ETYPES = Cycler(cal.Calendar.objects.all())
-    TIMES = Cycler(['08:30','09:40','10:20','11:10','13:30'])
+    def s2duration(s):
+        h,m = map(int,s.split(':'))
+        #~ return relativedelta(hours=h,minutes=m)
+        return datetime.timedelta(hours=h,minutes=m)
+    def s2time(s):
+        h,m = map(int,s.split(':'))
+        return datetime.time(h,m)
+    TIMES = Cycler([s2time(s) for s in ('08:30','09:40','10:20','11:10','13:30')])
+    #~ DURATIONS = Cycler([s2duration(s) for s in ('00:30','00:40','1:00','1:30','2:00','3:00')])
+    DURATIONS = Cycler([s2duration(s) for s in ('01:00','01:15','1:30','1:45','2:00','2:30','3:00')])
     ACL = Cycler(cal.AccessClasses.items())
     SUMMARIES = Cycler((
       dict(en='Lunch',de=u"Mittagessen",fr=u"Diner")
@@ -60,16 +71,20 @@ def objects():
         date = settings.LINO.demo_date()
         for i in range(12):
             if i % 3:
-                date += relativedelta(days=1)
+                date += ONE_DAY # relativedelta(days=1)
             s = SUMMARIES.pop().get(u.language,None) or SUMMARIES.pop().get('en')
+            st = TIMES.pop()
             kw = dict(user=u,
               start_date=date,
-              calendar=ETYPES.pop(),start_time=TIMES.pop(),
+              calendar=ETYPES.pop(),
+              start_time=st,
               summary=s)
             kw.update(access_class=ACL.pop())
             if settings.LINO.project_model:
                 kw.update(project=PROJECTS.pop())
-            yield cal.Event(**kw)
+            e = cal.Event(**kw)
+            e.set_datetime('end',e.get_datetime('start')+ DURATIONS.pop())
+            yield e
     #~ yield event(user=user,start_date=settings.LINO.demo_date(days=1),type=2)
     #~ yield event(user=user,start_date=settings.LINO.demo_date(days=2),type=2)
     

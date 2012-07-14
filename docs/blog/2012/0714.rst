@@ -1,0 +1,43 @@
+20120714
+========
+
+Acting as somebody else
+-----------------------
+
+Lino now generally supports "acting as somebody else" 
+(aka "switching between different user roles").
+
+- New table Authorities (Vollmächte) : 
+  In your user settings you can give authorities to other users. 
+  These other users then get the possibility to act in your name.
+  
+- For users who have authority to act as at least one other user,
+  the "User button" (in the top right corner) is now 
+  a menu with two entries: 
+  - "My settings" (the action which until now was triggered by the simple button)
+  - "Act as..." which opens a submenu containing one entry for each user who has 
+    given me a **mandate**.
+  
+  
+  
+- System administrators (User.level >= 'admin' have automatic 
+  authority to act in any user's name.
+  
+  
+This caused quite some little code changes:
+(search for `subst_user` and `is_home_page` in linolib.js and `ext_ui.py`).
+`subst_user` is now parsed and handled already in the 
+middleware (lino.utils.auth).
+The last problem was: when acting as somebody else, 
+after updating an event in the 
+CalendarPanel (e.g. by resizing it), the PUT request didn't 
+pass the su parameter. Which lead to a wrong summary field 
+(the one for the real user).
+Lino.set_subst_user also configures the eventStore.
+Reproduceable in 
+http://127.0.0.1:8000/api/cal/Panel
+and
+http://127.0.0.1:8000/api/cal/Panel?su=7
+after resizing an existing event.
+
+:checkin:``.

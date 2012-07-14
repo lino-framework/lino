@@ -1958,15 +1958,18 @@ if settings.LINO.use_extensible:
             
             filter = models.Q(**fkw)
             
+            # who am i ?
+            me = request.subst_user or request.user
+            
             # show al my events
-            for_me = models.Q(user=request.user)
+            for_me = models.Q(user=me)
             
             # also show events to which i am invited
-            if request.user.partner:
+            if me.partner:
                 #~ me_as_guest = Guest.objects.filter(partner=request.user.partner)
                 #~ for_me = for_me | models.Q(guest_set__count__gt=0)
                 #~ for_me = for_me | models.Q(guest_count__gt=0)
-                for_me = for_me | models.Q(guest__partner=request.user.partner)
+                for_me = for_me | models.Q(guest__partner=me.partner)
             
             # in team view, show also events of all my team members
             tv = rqdata.get(ext_requests.URL_PARAM_TEAM_VIEW,False)
@@ -1974,7 +1977,7 @@ if settings.LINO.use_extensible:
                 # positive list of ACLs for events of team members
                 team_classes = (AccessClasses.blank_item,AccessClasses.public,AccessClasses.show_busy)
                 #~ logger.info('20120710 %r', tv)
-                team_ids = Membership.objects.filter(user=request.user).values_list('watched_user__id',flat=True)
+                team_ids = Membership.objects.filter(user=me).values_list('watched_user__id',flat=True)
                 #~ team.append(request.user.id)
                 for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
                 #~ kw.update(exclude = models.Q(user__id__in=team))
@@ -1983,13 +1986,10 @@ if settings.LINO.use_extensible:
             kw.update(filter=filter)
             return kw
             
-        @classmethod
-        def get_request_queryset(self,ar):
-            qs = super(PanelEvents,self).get_request_queryset(ar)
-            #~ if ar.get_user().partner:
-                #~ inner = Guest.objects.filter(partner=ar.get_user().partner)
-            #~ qs = qs.annotate(guest_count=models.Count('guest'))
-            return qs
+        #~ @classmethod
+        #~ def get_request_queryset(self,ar):
+            #~ qs = super(PanelEvents,self).get_request_queryset(ar)
+            #~ return qs
             
             
 
