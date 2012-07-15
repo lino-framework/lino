@@ -27,19 +27,19 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import mixins
 
-from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.notes import models as notes
 
-class Person(contacts.PersonMixin,contacts.Partner,contacts.Born,mixins.Printable):
-    class Meta(contacts.PersonMixin.Meta):
-        app_label = 'contacts'
+#~ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born,mixins.Printable):
+    #~ class Meta(contacts.PersonMixin.Meta):
+        #~ app_label = 'contacts'
         
 
 
-class Company(contacts.Partner,contacts.CompanyMixin):
+#~ class Company(contacts.Partner,contacts.CompanyMixin):
     
-    class Meta(contacts.CompanyMixin.Meta):
-        app_label = 'contacts'
+    #~ class Meta(contacts.CompanyMixin.Meta):
+        #~ app_label = 'contacts'
 
 #~ class Companies(contacts.Partners):
     #~ model = Company

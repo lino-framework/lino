@@ -124,14 +124,13 @@ class User(mixins.CreatedModified):
         See also :meth:`User.disabled_fields`.
         """
         #~ print 20120621, self, user, state, action
-        #~ if not super(User,obj).get_row_permission(action,user):
-            #~ return False
         if action.readonly: return True
         if user.profile.level >= UserLevels.admin: return True
         #~ print 20120621, user.profile.level, 'is not', UserLevels.admin
         if user.profile.level >= UserLevels.user: 
-            if user is not None and user == self: return True
-        return False
+            if user == self: return True
+        return super(User,self).get_row_permission(user,state,action)
+        #~ return False
         
     def disabled_fields(self,ar):
         """

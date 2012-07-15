@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-11 17:53+0100\n"
+"POT-Creation-Date: 2012-07-15 10:14+0100\n"
 "PO-Revision-Date: 2012-06-28 11:43+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -44,74 +44,78 @@ msgstr "E-Mail-Vorlage"
 msgid "Create email"
 msgstr "per E-Mail"
 
-#: .\models.py:244
+#: .\models.py:245
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:245 .\models.py:440
+#: .\models.py:246 .\models.py:454
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: .\models.py:251
+#: .\models.py:252
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:252
+#: .\models.py:253
 msgid "Name"
 msgstr ""
 
-#: .\models.py:305
+#: .\models.py:307
 msgid "Send email"
 msgstr "E-Mail senden"
 
-#: .\models.py:360
+#: .\models.py:353
+msgid "There are recipients without address: "
+msgstr ""
+
+#: .\models.py:372
 #, python-format
 msgid "Couldn't find target file of %s"
 msgstr ""
 
-#: .\models.py:376
+#: .\models.py:387
 #, python-format
 msgid "Email %(id)s from %(sender)s has been sent to %(num)d recipients."
 msgstr "Email %(id)s von %(sender)s wurde verschickt an %(num)d Empfänger."
 
-#: .\models.py:390
+#: .\models.py:404
 msgid "Outgoing Mail"
 msgstr "E-Mail-Ausgang"
 
-#: .\models.py:391
+#: .\models.py:405
 msgid "Outgoing Mails"
 msgstr "E-Mail-Ausgänge"
 
-#: .\models.py:395
+#: .\models.py:409
 msgid "Date"
 msgstr "Datum"
 
-#: .\models.py:401
+#: .\models.py:415
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:405
+#: .\models.py:419
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:450
+#: .\models.py:464
 #, fuzzy
 msgid "Sender"
 msgstr "E-Mail senden"
 
-#: .\models.py:477
+#: .\models.py:491
 msgid "My Outbox"
 msgstr "Mein E-Mail-Ausgang"
 
-#: .\models.py:500 .\models.py:508 .\models.py:517 .\models.py:577
+#: .\models.py:514 .\models.py:522 .\models.py:531 .\models.py:591
 msgid "Outbox"
 msgstr "E-Mail-Ausgang"
 
-#: .\models.py:536
+#: .\models.py:550
 msgid "Attachment"
 msgstr "Anhang"
 
-#: .\models.py:537
+#: .\models.py:551
 msgid "Attachments"
 msgstr "Anhänge"
 

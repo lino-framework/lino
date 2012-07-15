@@ -27,12 +27,12 @@ from lino.modlib.links import models as links
 from lino.modlib.cal import models as cal
 
 #~ class Person(contacts.Partner,contacts.Born,contacts.PersonMixin):
-class Person(contacts.Person,contacts.Born):
-    class Meta(contacts.PersonMixin.Meta):
-        app_label = 'contacts'
-    died_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Died date"))
+#~ class Person(contacts.Person,contacts.Born):
+    #~ class Meta(contacts.PersonMixin.Meta):
+        #~ app_label = 'contacts'
+    #~ died_date = models.DateField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Died date"))
 
               
 #~ class Company(contacts.Partner,contacts.CompanyMixin):
@@ -99,6 +99,10 @@ we store these strings as their hexadecimal representation.
         
 
 dd.inject_field(countries.City,'crl',CrlField())
-dd.inject_field(Person,'crl',CrlField())
-dd.inject_field(Company,'crl',CrlField())
+dd.inject_field(contacts.Person,'crl',CrlField())
+dd.inject_field(contacts.Person,'died_date',
+    models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Died date")))
+dd.inject_field(contacts.Company,'crl',CrlField())
 

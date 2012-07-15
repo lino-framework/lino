@@ -70,3 +70,10 @@ because they have no access to users.Users.
 Solved this using the new actor
 :class:`lino.modlib.users.models.MySettings`.
 
+
+Use the source, Luke
+--------------------
+
+The references to the source files of each in :doc:`/autodoc/index`
+weren't correct when it was a package.
+New function :func:`lino.utils.srcref` used in :srcref:`/docs/conf.py`.

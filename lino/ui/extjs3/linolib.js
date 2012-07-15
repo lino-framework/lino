@@ -356,11 +356,9 @@ Lino.insert_subst_user = function(p){
 Lino.set_subst_user = function(id,name) {
     console.log(20120714,'Lino.set_subst_user',id,name);
     Lino.subst_user = id;
+#if $settings.LINO.use_extensible and $settings.LINO.is_installed('lino.modlib.cal')
     Lino.eventStore.setBaseParam("$ext_requests.URL_PARAM_SUBST_USER",id);
-    //~ var text = Lino.user.name;
-    //~ if (id != null) text += " (" + "$_('as')" + name + ")"
-    //~ Lino.main_menu.items.last().setText(text);
-    //~ Lino.current_window.main_item.refresh();
+#end if  
     if (Lino.viewport) Lino.permalink_handler(Lino.current_window)();
 }
 

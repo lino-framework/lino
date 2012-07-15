@@ -170,12 +170,6 @@ class Lino(Lino):
         if user.profile.level >= UserLevels.manager: # is_staff:
             cfg = main.add_menu("config",_("Configure"))
             
-            #~ self.modules.contacts.setup_config_menu(self,ui,user,cfg)
-            
-            #~ config_notes    = cfg.add_menu("notes",_("~Notes"))
-            #~ config_cv       = cfg.add_menu("cv",_("CV"))
-            
-            
             self.on_each_app('setup_config_menu',ui,user,cfg)
             
             config_pcsw     = cfg.add_menu("pcsw",_("SIS"))
@@ -184,18 +178,6 @@ class Lino(Lino):
             config_pcsw.add_action(self.modules.pcsw.ExclusionTypes)
             config_pcsw.add_action(self.modules.pcsw.AidTypes)
             
-            #~ config_jobs.add_action('jobs.Jobs')
-            #~ m.add_action('pcsw.JobTypes')
-            #~ m.add_action('pcsw.CoachingTypes')
-            
-            #~ links.setup_config_menu(self,ui,user,cfg)
-            
-            
-            #~ config_pcsw.add_action(self.modules.uploads.UploadTypes)
-            
-            #~ self.modules.cal.setup_config_menu(self,ui,user,cfg)
-            #~ self.modules.outbox.setup_config_menu(self,ui,user,cfg)
-            #~ self.modules.lino.setup_config_menu(self,ui,user,cfg)
             
         if user.profile.level >= UserLevels.manager: # is_staff:
           

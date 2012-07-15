@@ -12,6 +12,8 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Handle anonymous requests without database query.
+
 #.  Make ChoiceLists visible through the web interface. 
     Show UserGroups and UserProfiles in :class:`lino.models.About`.
 
@@ -22,8 +24,8 @@ Short-term
     die vorher noch wissen muss, um wieviele Tage (Wochen, Monate) oder 
     bis zu welchem Datum sie verschieben soll.
 
-#.  `on_user_change` and `after_ui_save` are two answers 
-    for the same question. Can replace `after_ui_save` 
+#.  `on_user_change` and `after_ui_save` are two solutions 
+    for the same problem. Can replace `after_ui_save` 
     with `on_user_change`, but `on_user_change` should receive 
     the complete `ar`, not only the web request.
 

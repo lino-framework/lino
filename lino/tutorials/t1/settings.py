@@ -11,6 +11,8 @@ class Lino(Lino):
         m.add_action(self.modules.polls.Polls)
         m.add_action(self.modules.polls.Choices)
         
+        super(Lino,self).setup_menu(ui,user,main)
+        
         #~ m = main.add_menu("config","~Configure")
         #~ m.add_action(self.modules.users.Users)
         
@@ -21,13 +23,13 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', 
-        'NAME': abspath(join(
-            dirname(__file__),'..','..','..','tmp','t1.db')),
+        'NAME': abspath(join(dirname(__file__),'test.db'))
     }
 }
 
 INSTALLED_APPS = (
   'lino',
+  'lino.modlib.users',
   'lino.tutorials.t1.polls'
 )
 

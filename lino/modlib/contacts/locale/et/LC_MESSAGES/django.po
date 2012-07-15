@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-11 17:53+0100\n"
+"POT-Creation-Date: 2012-07-15 10:15+0100\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -142,93 +142,93 @@ msgstr ""
 msgid "%d years"
 msgstr ""
 
-#: .\models.py:397
-msgid "Person"
-msgstr "Isik"
-
-#: .\models.py:398
-msgid "Persons"
-msgstr "Isikud"
-
-#: .\models.py:402
+#: .\models.py:400
 msgid "First name"
 msgstr "Eesnimi"
 
-#: .\models.py:407
+#: .\models.py:405
 msgid "Last name"
 msgstr "Perekonnanimi"
 
-#: .\models.py:411
+#: .\models.py:409
 msgid "Title"
 msgstr ""
 
-#: .\models.py:508
+#: .\models.py:450
+msgid "Person"
+msgstr "Isik"
+
+#: .\models.py:451
+msgid "Persons"
+msgstr "Isikud"
+
+#: .\models.py:519
 msgid "Company"
 msgstr "Firma"
 
-#: .\models.py:509
+#: .\models.py:520
 msgid "Companies"
 msgstr "Firmad"
 
-#: .\models.py:512
+#: .\models.py:523
 msgid "VAT id"
 msgstr "KMKR nr"
 
-#: .\models.py:517
+#: .\models.py:528
 msgid "Company type"
 msgstr "Firmaliik"
 
-#: .\models.py:560
+#: .\models.py:571
 msgid "Role Type"
 msgstr ""
 
-#: .\models.py:561
+#: .\models.py:572
 msgid "Role Types"
 msgstr ""
 
-#: .\models.py:578
+#: .\models.py:589
 #, fuzzy
 msgid "Contact Person"
 msgstr "Kontaktisik"
 
-#: .\models.py:579
+#: .\models.py:590
 #, fuzzy
 msgid "Contact Persons"
 msgstr "Kontaktisik"
 
-#: .\models.py:589
+#: .\models.py:600
 #, fuzzy
 msgid "Contact Role"
 msgstr "Kontaktisik"
 
-#: .\models.py:650
+#: .\models.py:661
 #, fuzzy
 msgid "Contact persons"
 msgstr "Kontaktiliigid"
 
-#: .\models.py:657
+#: .\models.py:668
 msgid "Contact for"
 msgstr "Kontaktisik"
 
-#: .\models.py:768
+#: .\models.py:779
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:777
+#: .\models.py:788
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:788
+#: .\models.py:799
 #, fuzzy
 msgid "is Person"
 msgstr "Isik"
 
-#: .\models.py:793
+#: .\models.py:804
 #, fuzzy
 msgid "is Company"
 msgstr "Firma"
 
-#: .\models.py:798
+#: .\models.py:809
 #, fuzzy
 msgid "Contacts"
 msgstr "Kontaktid"
