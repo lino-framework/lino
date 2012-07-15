@@ -2114,7 +2114,7 @@ def site_setup(site):
     #~ """)
     site.modules.users.Users.set_detail_layout("""
     box1:50 box2:25
-    remarks 
+    remarks AuthoritiesByUser
     """,
     box2="""
     newcomer_quota

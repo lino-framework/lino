@@ -15,22 +15,6 @@ Short-term
 #.  Make ChoiceLists visible through the web interface. 
     Show UserGroups and UserProfiles in :class:`lino.models.About`.
 
-#.  Benutzer, die nicht Systemverwalter sind, können momentan ihr 
-    Benutzerkonto nichtmal sehen: ein Klick auf den Benutzerbutton oben 
-    rechts führt zu einer Fehlermeldung in der JS-Console.
-    
-    Da will ich noch was drüber meditieren.
-    Liegt daran, dass ein Detail-Fenster momentan die gleichen 
-    Zugriffsbedingungen (``required``) hat wie die Tabelle, 
-    in der es definert ist (für users.User ist das users.Users),
-    und weil instance_handler einfach die `detail_action` 
-    der `_lino_default_table` ohne nachzuprüfen, 
-    ob der Benutzer die view permission hat.
-    Am besten wäre wahrscheinlich, wenn instance_handler() 
-    (und href_to(),row_summary()... ) den Benutzer mitbekommen 
-    und es nachprüfen, *und* wenn wir ein DetailLayout separat 
-    mit `required` versehen können.
-
 #.  Was Lino noch braucht und nicht hat, ist die Möglichkeit, 
     dass beim Klicken auf den Button einer Aktion vor deren Abschicken 
     noch ein Dialogfenster mit Optionen kommt. 

@@ -1,5 +1,5 @@
 Names, labels, and titles
-========================
+=========================
 
 A name is *internal* (usable in Python code) 
 and identifies the actor in its module's 
@@ -15,3 +15,9 @@ button or menu item that *will* open this actor.
 Both label and title of a model table default to 
 Django's `verbose_name_plural`.
 
+The class 
+:class:`lino.utils.babel.BabelNamed`
+should one day be renamed to 
+:class:`lino.utils.babel.BabelLabeled`,
+and (less easy because it will cause much 
+code for the data migration) have a field `label` instead of `name`.

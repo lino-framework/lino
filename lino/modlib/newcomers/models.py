@@ -124,7 +124,8 @@ class Competences(dd.Table):
     order_by = ["id"]
 
 class CompetencesByUser(Competences):
-    required = dict(user_groups=['newcomers'])
+    #~ required = dict(user_groups=['newcomers'])
+    required = dict()
     #~ required_user_level = None
     master_key = 'user'
     column_names = 'seqno faculty *'

@@ -1153,55 +1153,32 @@ tinymce.init({
             else:
                 authorities = [(u.id,unicode(u)) 
                     for u in users.Authority.objects.filter(user=user)]
-            if False:
-                config = dict()
-                config.update(store=authorities)
-                config.update(emptyText=_("As myself"))
-                config.update(maxWidth=js_code("Lino.chars2width(20)"))
-                #~ config.update(forceSelection=True)
-                #~ config.update(editable=False)
-                config.update(listeners=dict(select=js_code("function(){Lino.current_window.main_item.refresh()}")))
-                if request.subst_user:
-                    config.update(value=request.subst_user.id)
-                else:
-                    config.update(value=None)
-                yield "Lino.subst_user_field = new Ext.form.ComboBox(%s);" % py2js(config)
             
-            #~ yield "console.log(20120714,Lino.subst_user_field);" 
-            #~ yield "Lino.subst_user_field.setStore(%s);" % py2js(
-                #~ user.get_received_mandates())
-            #~ if request.subst_user:
-                #~ yield "Lino.subst_user_field.setValue(%s);" % py2js(request.subst_user.id)
-            #~ else:
-                #~ yield "Lino.subst_user_field.setValue(null);" 
-            
-            handler = self.ext_renderer.instance_handler(user)
+            #~ handler = self.ext_renderer.instance_handler(user)
+            a = users.MySettings.default_action
+            handler = self.ext_renderer.action_call(None,a,dict(record_id=user.pk))
             handler = "function(){%s}" % handler
-            if False:
-                login_menu = dict(text=unicode(user),handler=js_code(handler))
-                yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.subst_user_field,%s]);" % py2js(login_menu)
+            if len(authorities):
+                mysettings = dict(text=_("My settings"),handler=js_code(handler))
+                #~ act_as = [
+                    #~ dict(text=unicode(u),handler=js_code("function(){Lino.set_subst_user(%s)}" % i)) 
+                        #~ for i,u in user.get_received_mandates()]
+                act_as = [
+                    dict(text=t,handler=js_code("function(){Lino.set_subst_user(%s,%s)}" % (v,py2js(t)))) 
+                        for v,t in authorities]
+                        #~ for v,t in user.get_received_mandates()]
+                act_as.insert(0,dict(
+                    text=_("Myself"),
+                    handler=js_code("function(){Lino.set_subst_user(null)}")))
+                act_as = dict(text=_("Act as..."),menu=dict(items=act_as))
+                login_menu = dict(
+                    text=user_text,
+                    menu=dict(items=[act_as,mysettings]))
             else:
-                if len(authorities):
-                    mysettings = dict(text=_("My settings"),handler=js_code(handler))
-                    #~ act_as = [
-                        #~ dict(text=unicode(u),handler=js_code("function(){Lino.set_subst_user(%s)}" % i)) 
-                            #~ for i,u in user.get_received_mandates()]
-                    act_as = [
-                        dict(text=t,handler=js_code("function(){Lino.set_subst_user(%s,%s)}" % (v,py2js(t)))) 
-                            for v,t in authorities]
-                            #~ for v,t in user.get_received_mandates()]
-                    act_as.insert(0,dict(
-                        text="Myself",
-                        handler=js_code("function(){Lino.set_subst_user(null)}")))
-                    act_as = dict(text=_("Act as..."),menu=dict(items=act_as))
-                    login_menu = dict(
-                        text=user_text,
-                        menu=dict(items=[act_as,mysettings]))
-                else:
-                    login_menu = dict(text=user_text,handler=js_code(handler))
-                    
-                yield "Lino.login_menu = %s;" % py2js(login_menu)
-                yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
+                login_menu = dict(text=user_text,handler=js_code(handler))
+                
+            yield "Lino.login_menu = %s;" % py2js(login_menu)
+            yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
                 
         
         #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"

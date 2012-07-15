@@ -64,6 +64,7 @@ class User(mixins.CreatedModified):
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')
+        ordering = ['last_name','first_name']
 
     username = models.CharField(_('Username'), max_length=30, 
         unique=True, 
@@ -214,8 +215,15 @@ class Users(dd.Table):
         #~ if user is not None and user == obj: return True
         #~ return False
           
-#~ class MySettings(mixins.EmptyTable):
+class MySettings(Users):
+    use_as_default_table = False 
+    default_action = actions.ShowDetailAction()
+    hide_top_toolbar = True
+    #~ model = User
+    #~ detail_layout = Users.detail_layout
     #~ detail_layout = UserDetail()
+    required = dict()
+    
     
 
 

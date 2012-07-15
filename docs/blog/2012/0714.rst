@@ -40,4 +40,33 @@ and
 http://127.0.0.1:8000/api/cal/Panel?su=7
 after resizing an existing event.
 
-:checkin:``.
+:checkin:`8c6d25d02f2f`.
+
+My settings
+-----------
+
+As noted earlier, users who are not system administrators 
+were not able to edit their own User Detail.
+Lino even doesn't generate the definition for the User Detail form
+because they have no access to users.Users.
+
+#.  Benutzer, die nicht Systemverwalter sind, können momentan ihr 
+    Benutzerkonto nichtmal sehen: ein Klick auf den Benutzerbutton oben 
+    rechts führt zu einer Fehlermeldung in der JS-Console.
+    
+    Da will ich noch was drüber meditieren.
+    Liegt daran, dass ein Detail-Fenster momentan die gleichen 
+    Zugriffsbedingungen (``required``) hat wie die Tabelle, 
+    in der es definert ist (für users.User ist das users.Users),
+    und weil instance_handler einfach die `detail_action` 
+    der `_lino_default_table` ohne nachzuprüfen, 
+    ob der Benutzer die view permission hat.
+    Am besten wäre wahrscheinlich, wenn instance_handler() 
+    (und href_to(),row_summary()... ) den Benutzer mitbekommen 
+    und es nachprüfen, *und* wenn wir ein DetailLayout separat 
+    mit `required` versehen können.
+
+
+Solved this using the new actor
+:class:`lino.modlib.users.models.MySettings`.
+

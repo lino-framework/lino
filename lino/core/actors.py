@@ -168,6 +168,7 @@ class ActorMetaClass(type):
                 cls.detail_layout = dl
             else:
                 raise Exception("Cannot reuse layout owned by another table")
+                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
             
         # the same for insert_template and insert_layout:
         dt = classDict.get('insert_template',None)
@@ -555,7 +556,10 @@ class Actor(object):
         Also fill _actions_list.
         """
         if cls.detail_layout or cls.detail_template:
-            cls.detail_action = actions.ShowDetailAction()
+            if isinstance(cls.default_action,actions.ShowDetailAction):
+                cls.detail_action = cls.default_action
+            else:
+                cls.detail_action = actions.ShowDetailAction()
         if cls.detail_action and cls.editable:
             cls.insert_action = actions.InsertRow()
             if not cls.hide_top_toolbar:
@@ -619,6 +623,8 @@ class Actor(object):
             
     @classmethod
     def _attach_action(self,name,a):
+        if a.actor is self:
+            return
         a.attach_to_actor(self,name)
         if a.url_action_name:
             if self._actions_dict.has_key(a.url_action_name):

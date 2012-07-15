@@ -736,7 +736,8 @@ class ActionRequest(object):
             #~ kw[ext_requests.URL_PARAM_PARAM_VALUES] = self.ah.store.pv2list(self.param_values)
         bp = kw.setdefault('base_params',{})
         if self.subst_user is not None:
-            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
+            #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
+            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id
         return kw
         
 

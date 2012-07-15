@@ -114,6 +114,7 @@ class SiteConfigs(dd.Table):
     See also :meth:`lino.Lino.get_site_config`.
     Deserves more documentation.
     """
+    default_action = actions.ShowDetailAction()
     model = SiteConfig
     required = dict(user_level='manager')
     #~ default_action_class = dd.OpenDetailAction
@@ -124,65 +125,9 @@ class SiteConfigs(dd.Table):
     default_build_method
     # lino.ModelsBySite
     """
-    #~ detail_layout = SiteConfigDetail()
-    #~ editable = True
-    
-    #~ window_size = (700,400)
-    #~ detail_layout = AboutDetail()
-    #~ detail_template = """
-    #~ """
-    
-    #~ @classmethod
-    #~ def get_permission(self,action,user,obj):
-        #~ if not user.level < UserLevels.expert:
-            #~ return action.readonly
-        #~ return True
         
     do_build = BuildSiteCache()
     
-    #~ @classmethod
-    #~ def setup_actions(self):
-        #~ super(SiteConfigs,self).setup_actions()
-        #~ self.add_action(BuildSiteCache())
-        #~ self.remove_action(actions.DeleteSelected
-   
-    #~ @dd.constant(_("Versions"))
-    #~ def versions(cls,ui):
-        #~ return lino.welcome_html(ui)
-        
-    #~ @dd.displayfield(_("Versions"))
-    #~ def versions(self,obj,ar):
-        #~ return lino.welcome_html(ar.ui)
-        
-    #~ @dd.constantfield(_("Versions"))
-    #~ def versions(cls,self,req):
-        #~ return lino.welcome_html()
-        
-    #~ @dd.virtualfield(models.DateTimeField(_("Server up since")))
-    #~ def startup_time(cls,self,req):
-        #~ return settings.LINO.startup_time
-    
-
-    
-    
-#~ def get_site_config():
-    #~ try:
-        #~ return SiteConfig.objects.get(pk=1)
-    #~ # except SiteConfig.DoesNotExist:
-    #~ except Exception,e:
-        #~ kw = dict(pk=1)
-        #~ kw.update(settings.LINO.site_config_defaults)
-        #~ logger.debug("Creating SiteConfig record (%s)",e)
-        #~ sc = SiteConfig(**kw)
-        #~ # do NOT save the instance here
-        #~ # sc.save()
-        #~ return sc
-
-#~ def update_site_config(**kw):
-    #~ sc = get_site_config()
-    #~ for k,v in kw.items():
-        #~ setattr(sc,k,v)
-    #~ sc.save()
 
 if settings.LINO.is_installed('contenttypes'):
 

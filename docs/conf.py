@@ -276,7 +276,12 @@ SIDEBAR = """
     
 def autodoc_add_srcref(app,what,name,obj,options,lines):
     if what == 'module':
-        s = (SIDEBAR % name.replace('.','/')).splitlines()
+        srcref = obj.__file__
+        if srcref.endswith('.pyc'):
+            srcref = srcref[:-1]
+        srcref = srcref.replace(os.path.sep,'/')
+        #~ srcref = name.replace('.','/')
+        s = (SIDEBAR % srcref).splitlines()
         s.reverse()
         for ln in s:
             lines.insert(0,ln)

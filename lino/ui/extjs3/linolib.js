@@ -342,7 +342,7 @@ Ext.namespace('Lino');
 //~ Lino.subst_user_field = new Ext.form.ComboBox({});
 //~ Lino.subst_user = null;
 Lino.insert_subst_user = function(p){
-    //~ console.log(20120714,Lino.subst_user_field.getValue());
+    console.log('20120714 insert_subst_user',Lino.subst_user,p);
     //~ if (Lino.subst_user_field.getValue()) {
     if (Lino.subst_user) {
         //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user_field.getValue();
@@ -350,10 +350,11 @@ Lino.insert_subst_user = function(p){
     } else {
         delete p.$ext_requests.URL_PARAM_SUBST_USER;
     }
+    console.log('20120714 insert_subst_user -->',Lino.subst_user,p);
 }
 
 Lino.set_subst_user = function(id,name) {
-    //~ console.log(20120714,'Lino.set_subst_user',id,name);
+    console.log(20120714,'Lino.set_subst_user',id,name);
     Lino.subst_user = id;
     Lino.eventStore.setBaseParam("$ext_requests.URL_PARAM_SUBST_USER",id);
     //~ var text = Lino.user.name;
@@ -1409,6 +1410,7 @@ Lino.permalink_handler = function (ww) {
     //~ console.log(20100923,ww.get_permalink());
     //~ document.location = ww.main_item.get_permalink();
     location.replace(ww.main_item.get_permalink());
+    //~ console.log(20120715, ww.main_item.get_permalink());
     //~ document.location = "?permalink=" + ww.get_permalink();
     //~ document.location = "?permalink=" + ww.config.permalink_name +'()';
   }
@@ -1449,7 +1451,8 @@ Lino.MainPanel = {
      //~ p.fmt = 'html';
     //~ console.log('get_permalink',p,this.get_permalink_params());
     if (this.is_home_page)
-        var url = '';
+        //~ var url = '';
+        var url = ROOT_URL + '/';
     else 
         var url = this.get_permalink_url();
     if (Ext.urlEncode(p)) url = url + "?" + Ext.urlEncode(p);
@@ -2807,6 +2810,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     }
       
     this.grid_panel.add_param_values(options.params);
+    Lino.insert_subst_user(options.params);
     //~ console.log("20120213 GridStore.load()",options.params);
     //~ if (FOO > 0) {
         //~ foo.bar = baz;

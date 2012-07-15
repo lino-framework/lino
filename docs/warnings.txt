@@ -56,6 +56,7 @@ T:\hgwork\lino\docs\blog\2012\0628.rst:49: (WARNING/2) Bullet list ends without 
 T:\hgwork\lino\docs\blog\2012\0628.rst:62: (WARNING/2) Bullet list ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\blog\2012\0704.rst:106: (ERROR/3) Unexpected indentation.
 T:\hgwork\lino\docs\blog\2012\0704.rst:108: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0714.rst:19: (ERROR/3) Unexpected indentation.
 T:\hgwork\lino\docs\tickets\28.rst:4: (WARNING/2) Inline literal start-string without end-string.
 T:\hgwork\lino\docs\tickets\56.rst:27: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
 T:\hgwork\lino\docs\todo.rst:392: (WARNING/2) Enumerated list ends without a blank line; unexpected unindent.
@@ -260,8 +261,8 @@ T:\hgwork\lino\docs\autodoc\lino.modlib.properties.rst:114: WARNING: py:class re
 T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:13: WARNING: py:class reference target not found: contacts.Partner
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:7: WARNING: py:mod reference target not found: django.contrib.auth
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:14: WARNING: py:mod reference target not found: django.contrib.sessions
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:15: WARNING: unknown document: /topics/http_auth
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:30: WARNING: py:meth reference target not found: Users.get_row_permission
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:27: WARNING: unknown document: /topics/http_auth
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:42: WARNING: py:meth reference target not found: Users.get_row_permission
 T:\hgwork\lino\docs\autodoc\lino.test_apps.1.rst:2: WARNING: py:mod reference target not found: lino.test_apps.1
 T:\hgwork\lino\docs\autodoc\lino.test_apps.1.rst:142: WARNING: py:class reference target not found: lino.fields.VirtualField
 T:\hgwork\lino\docs\autodoc\lino.test_apps.1.rst:166: WARNING: py:meth reference target not found: lino.fields.VirtualField.value_from_object

@@ -637,8 +637,6 @@ class AbstractTable(actors.Actor):
     
     """
     
-    default_action = actions.GridEdit()
-    
     
     def __init__(self,*args,**kw):
         raise NotImplementedError("20120104")
@@ -656,6 +654,9 @@ class AbstractTable(actors.Actor):
         
     @classmethod
     def class_init(self):
+        if self.default_action is None:
+            self.default_action = actions.GridEdit()
+    
         if self.get_data_rows is not None:
             self.show_detail_navigator = False
             
