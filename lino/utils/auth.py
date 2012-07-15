@@ -46,7 +46,25 @@ from django import http
 
 from lino.utils import babel
 from lino.core.modeltools import resolve_model
+from lino.core import perms
 from lino.ui import requests as ext_requests
+
+class AnonymousUser(object):
+  
+    authenticated = False
+    username = 'anonymous'
+    modified = None
+    
+    def __init__(self):
+        try:
+            self.profile = perms.UserProfiles.get_by_value(settings.LINO.anonymous_user_profile)
+        except KeyError:
+            raise Exception(
+                "Invalid value %r for `LINO.anonymous_user_profile`. Must be one of %s" % (
+                    settings.LINO.anonymous_user_profile,
+                    [i.value for i in perms.UserProfiles.items()]))
+        
+
 
 class NoUserMiddleware(object):
     """
@@ -54,11 +72,18 @@ class NoUserMiddleware(object):
     empty :attr:`lino.Lino.user_model`.
     It just adds a `user` attribute whose value is None.
     """
+    anonymous_user = None
     #~ class NoUser(object):
         #~ profile = UserProfiles.admin
         
     def process_request(self, request):
-        request.user = None # self.NoUser()
+        # trigger site startup if necessary
+        settings.LINO.startup()
+        
+        if self.anonymous_user is None:
+            self.anonymous_user = AnonymousUser()
+        request.user = self.anonymous_user
+        request.subst_user = None
         
         
 

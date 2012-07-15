@@ -115,17 +115,17 @@ def wildcard_data_elems(model):
 
 
 #~ def summary_row(obj,ui,rr,**kw):
-def summary_row(obj,ui,**kw):
+def summary_row(obj,ar,**kw):
     #~ return obj.summary_row(ui,**kw)
     m = getattr(obj,'summary_row',None)
     if m:
-        return m(ui,**kw)
-    return ui.ext_renderer.href_to(obj)
-    #~ return ui.href_to(obj)
+        return m(ar,**kw)
+    return ar.renderer.href_to(obj)
+    #~ return ar.ui.ext_renderer.href_to(obj)
   
 
 #~ def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
-def summary(ui,objects,separator=', ',max_items=5,before='',after='',**kw):
+def summary(ar,objects,separator=', ',max_items=5,before='',after='',**kw):
     """
     Returns this table as a unicode string.
     
@@ -144,7 +144,7 @@ def summary(ui,objects,separator=', ',max_items=5,before='',after='',**kw):
             s += before
         n += 1
         #~ s += summary_row(i,ui,rr,**kw)
-        s += summary_row(i,ui,**kw)
+        s += summary_row(i,ar,**kw)
         #~ s += i.summary_row(ui,rr,**kw)
         if n >= max_items:
             s += separator + '...' + after
@@ -890,26 +890,19 @@ class Table(AbstractTable):
         Creates and returns the method to be used when 
         :attr:`AbstractTable.slave_grid_format` is 'summary'.
         """
-        def meth(master,request):
-            #~ rr = TableRequest(ui,self,None,self.default_action,master_instance=master)
-            ar = self.request(ui,None,master_instance=master)
-            s = summary(ui,ar.data_iterator,row_separator)
+        def meth(master,ar):
+            #~ print 20120715, ar
+            ar = ar.spawn(self,master_instance=master)
+            #~ ar = self.request(ui,None,master_instance=master)
+            s = summary(ar,ar.data_iterator,row_separator)
             return s
         return meth
         
-    #~ def on_create(self,instance,request):
-        #~ pass
         
-    #~ def get_label(self):
-        #~ return self.label
-        
-    #~ def __str__(self):
-        #~ return rc_name(self.__class__)
-        
-    @classmethod
-    def ajax_update(self,request):
-        print request.POST
-        return HttpResponse("1", mimetype='text/x-json')
+    #~ @classmethod
+    #~ def ajax_update(self,request):
+        #~ print request.POST
+        #~ return HttpResponse("1", mimetype='text/x-json')
 
 
 

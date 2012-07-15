@@ -757,6 +757,11 @@ class ActionRequest(object):
         #~ return self.__class__(self.ui,actor,**kw)
         return self.ui.request(actor,**kw)
         
+    def absolute_uri(self,*args,**kw):
+        ar = self.spawn(*args,**kw)
+        location = ar.renderer.get_request_url(ar)
+        return self.request.build_absolute_uri(location)
+        
 
 def action(*args,**kw):
     def decorator(fn):

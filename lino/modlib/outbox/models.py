@@ -562,11 +562,12 @@ class Attachment(mixins.Controllable):
             raise Exception("Controllers of Attachment must define a method `get_target_url`.")
         super(Attachment,self).save(*args,**kw)
         
-    def summary_row(self,ui,**kw):
-        url = self.owner.get_target_url(ui)
+    def summary_row(self,ar,**kw):
+        url = self.owner.get_target_url(ar.ui)
         #~ url = ui.build_url(*parts)
         text = url.split('/')[-1]
-        return ui.ext_renderer.href(url,text)
+        #~ return ui.ext_renderer.href(url,text)
+        return ar.renderer.href(url,text)
         
         
         

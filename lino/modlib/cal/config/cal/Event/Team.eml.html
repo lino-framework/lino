@@ -30,7 +30,7 @@ der folgende Termin ist <b>abgesagt</b>.
 
 #if $instance.state.name in ('suggested','notified')
 <p>Bitte melde dich bei mir, oder gehe in Lino nach
-<a href="http://127.0.0.1:8000/api/cal/MyPendingInvitations">Meine offenen erhaltenen Einladungen</a>
+<a href="$ar.absolute_uri("cal.MyPendingInvitations")">Meine offenen erhaltenen Einladungen</a>
 und klicke auf [Zusagen] oder [Absagen]!
 </p>
 #end if

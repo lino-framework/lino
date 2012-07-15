@@ -47,6 +47,7 @@ class Lino(Lino):
     
     #~ project_model = 'contacts.Person'
     project_model = 'contacts.Person'
+    user_model = 'users.User'
     
     languages = ('de', 'fr', 'nl', 'en')
     
@@ -79,7 +80,7 @@ class Lino(Lino):
         add('900', _("Administrator"),              'A A A A A A',name='admin')
         
         #~ for p in dd.UserProfiles.items():
-            #~ print 20120705, repr(p)
+            #~ print 20120715, repr(p)
             
 
     def setup_quicklinks(self,ui,user,tb):

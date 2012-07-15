@@ -361,12 +361,14 @@ class ProjectRelated(dd.Model):
             )
 
     #~ def summary_row(self,ui,rr,**kw):
-    def summary_row(self,ui,**kw):
-        s = ui.ext_renderer.href_to(self)
+    def summary_row(self,ar,**kw):
+        s = ar.renderer.href_to(self)
+        #~ s = ui.ext_renderer.href_to(self)
         if settings.LINO.project_model:
             #~ if self.project and not dd.has_fk(rr,'project'):
             if self.project:
-                s += " (" + ui.href_to(self.project) + ")"
+                #~ s += " (" + ui.href_to(self.project) + ")"
+                s += " (" + ar.renderer.href_to(self.project) + ")"
         return s
             
     def update_owned_instance(self,other):

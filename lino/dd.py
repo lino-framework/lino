@@ -225,7 +225,8 @@ def update_field(model,name,**kw):
     except FieldDoesNotExist:
         logger.warning("Cannot update unresolved field %s.%s", model,name)
         return
-        return
+    if fld.model != model:
+        logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
     for k,v in kw.items():
         setattr(fld,k,v)
         

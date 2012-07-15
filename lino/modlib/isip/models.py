@@ -222,8 +222,8 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
     date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
     
     #~ def summary_row(self,ui,rr,**kw):
-    def summary_row(self,ui,**kw):
-        s = ui.href_to(self)
+    def summary_row(self,ar,**kw):
+        s = ar.renderer.href_to(self)
         #~ s += " (" + ui.href_to(self.person) + ")"
         #~ s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.provider) + ")"
         return s

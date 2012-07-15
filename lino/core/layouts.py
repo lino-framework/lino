@@ -199,11 +199,11 @@ class LayoutHandle:
             #~ if label:
                 #~ elems[0].label = label
             return elems[0]
+        #~ kw.update(self.layout.panel_options.get(elemname,{}))
         e = self.ui.create_layout_panel(self,elemname,vertical,elems,**kw)
         #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
         return e
             
-    #~ def create_element(self,desc_name,**kw):
     def create_element(self,desc_name):
         #~ logger.debug("create_element(%r)", desc_name)
         name,pkw = self.splitdesc(desc_name)
@@ -311,6 +311,11 @@ class BaseLayout(object):
     For example, specifying `window_size=(50,30)` means "50 characters wide and 30 lines high".
     The `height` value can also be the string ``'auto'``.
     """
+    
+    #~ panel_options = {}
+    #~ """
+    #~ A dict of 
+    #~ """
     
     #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
     def __init__(self,main=None,table=None,hidden_elements=frozenset(),**kw):

@@ -1369,7 +1369,8 @@ Lino.do_action = function(caller,action) {
   };
   Ext.applyIf(action,{
     waitMsg: 'Please wait...',
-    failure: Lino.ajax_error_handler(caller)
+    failure: Lino.ajax_error_handler(caller),
+    params: {}
   });
   //~ action.params.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
   Lino.insert_subst_user(action.params);

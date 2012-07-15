@@ -2061,6 +2061,13 @@ def site_setup(site):
     # show_date time timestamp
     """)
 
+    site.modules.uploads.Uploads.set_insert_layout("""
+    file user
+    type valid_until
+    description 
+    # owner
+    """,window_size=(60,'auto'))
+
   
     #~ from lino.modlib.cal import models as cal
 

@@ -41,7 +41,7 @@ def objects():
     
     if settings.LINO.project_model:
         PROJECTS = Cycler(settings.LINO.project_model.objects.all())
-    USERS = Cycler(settings.LINO.user_model.objects.all())
+    #~ USERS = Cycler(settings.LINO.user_model.objects.all())
     ETYPES = Cycler(cal.Calendar.objects.all())
     def s2duration(s):
         h,m = map(int,s.split(':'))
@@ -67,7 +67,7 @@ def objects():
       ))
     #~ for i in range(20):
     for u in settings.LINO.user_model.objects.exclude(email=''):
-        u = USERS.pop()
+        #~ u = USERS.pop()
         date = settings.LINO.demo_date()
         for i in range(12):
             if i % 3:

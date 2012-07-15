@@ -14,6 +14,19 @@ Short-term
 
 #.  Handle anonymous requests without database query.
 
+#.  ManageAccessRequest now also has a separate insert_layout. 
+    But we cannot inherit here from ManageAccessRequestDetail 
+    and thus had to (almost) duplicate the `setup_handle`::
+  
+    def setup_handle(self,lh):
+        lh.p1.label = _("Requested action")
+        lh.proof.label = _("Proof of authentication")
+        super(ManageAccessRequestInsert,self).setup_handle(lh)
+  
+    TODO: more transparent/reusable system to specify labels.
+
+
+
 #.  Make ChoiceLists visible through the web interface. 
     Show UserGroups and UserProfiles in :class:`lino.models.About`.
 

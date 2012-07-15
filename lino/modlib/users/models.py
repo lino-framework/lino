@@ -61,6 +61,8 @@ class User(mixins.CreatedModified):
     
     _lino_preferred_width = 15 
     
+    authenticated = True
+    
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')

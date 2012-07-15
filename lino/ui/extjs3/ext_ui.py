@@ -423,11 +423,19 @@ class ExtRenderer(HtmlRenderer):
     def get_actor_url(self,actor,*args,**kw):
         return self.build_url("api",actor.app_label,actor.__name__,*args,**kw)
         
-    def get_request_url(self,rr,*args,**kw):
-        raise Exception("20120203")
-        kw = rr.get_status(self,**kw)
+    def get_request_url(self,ar,*args,**kw):
+        """
+        Called from ActionRequest.absolute_url() used in Team.eml.html
+        
+        http://127.0.0.1:8000/api/cal/MyPendingInvitations?base_params=%7B%7D
+        http://127.0.0.1:8000/api/cal/MyPendingInvitations
+        
+        """
+        kw = ar.get_status(self,**kw)
+        if not kw['base_params']:
+            del kw['base_params']
         #~ kw = self.request2kw(rr,**kw)
-        return self.build_url('api',rr.actor.app_label,rr.actor.__name__,*args,**kw)
+        return ar.ui.build_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
         #~ rpt = obj._lino_default_table
@@ -2409,11 +2417,12 @@ tinymce.init({
             yield '    // active_fields:'
             for name in tbl.active_fields:
                 e = dh.main.find_by_name(name)
-                yield '    %s.on("%s",function(){this.save()},this);' % (py2js(e),e.active_change_event)
-                """
-                Seems that checkboxes don't emit a change event when they are changed.
-                http://www.sencha.com/forum/showthread.php?43350-2.1-gt-2.2-OPEN-Checkbox-missing-the-change-event
-                """
+                if e is not None: # 20120715
+                    yield '    %s.on("%s",function(){this.save()},this);' % (py2js(e),e.active_change_event)
+                    """
+                    Seems that checkboxes don't emit a change event when they are changed.
+                    http://www.sencha.com/forum/showthread.php?43350-2.1-gt-2.2-OPEN-Checkbox-missing-the-change-event
+                    """
         yield "  }"
         yield "});"
         yield ""

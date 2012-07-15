@@ -974,6 +974,11 @@ class SSIN(dd.Model):
         
         
 class WithPerson(SSIN):
+    """
+    Mixin for models that have certain fields
+    """
+    class Meta:
+        abstract = True
   
     birth_date = dd.IncompleteDateField(
         blank=True,
@@ -1414,14 +1419,15 @@ class ManageAccessRequest(SSDNRequest,WithPerson):
 #~ when information about sectors is required.""")
 
     sector = models.ForeignKey(Sector,
-      blank=True, editable=False,
+      #~ blank=True, 
+      editable=False,
       help_text="""\
 For register and unregister this element is ignored. 
 It can be used for list, 
 when information about sectors is required.""")
 
     purpose = models.ForeignKey(Purpose,
-      blank=True,null=True,
+      #~ blank=True,null=True,
       help_text="""\
 The purpose for which the inscription needs to be 
 registered/unregistered or listed. 
@@ -1429,10 +1435,10 @@ For listing this field is optional,
 for register/unregister it is mandatory.""")
 
     start_date = models.DateField(
-        blank=True,null=True,
+        #~ blank=True,null=True,
         verbose_name=_("Period from"))
     end_date = models.DateField(
-        blank=True,null=True,
+        #~ blank=True,null=True,
         verbose_name=_("Period until"))
 
     # 20120527 : Django converts default value to unicode. didnt yet understand why.
@@ -1531,7 +1537,7 @@ for register/unregister it is mandatory.""")
         
         
     
-dd.update_field(ManageAccessRequest,'national_id',help_text="""\
+dd.update_field(ManageAccessRequest,'national_id',blank=False,help_text="""\
 The SSIN of the person to register/unregister/list.
 """)
 
@@ -1550,18 +1556,41 @@ class ManageAccessRequestDetail(CBSSRequestDetail):
     """
     parameters = "p1 proof"
     
-    #~ result = "result"
-    
     def setup_handle(self,lh):
         lh.p1.label = _("Requested action")
         lh.proof.label = _("Proof of authentication")
         CBSSRequestDetail.setup_handle(self,lh)
+        
+class ManageAccessRequestInsert(dd.FormLayout):
+    window_size = (60,'auto')
+    
+    p1 = """
+    action start_date end_date 
+    purpose query_register
+    """
+    proof = """
+    national_id sis_card_no id_card_no
+    first_name last_name birth_date 
+    """
+    main = """
+    person
+    p1 
+    proof
+    """
+    
+    def setup_handle(self,lh):
+        lh.p1.label = _("Requested action")
+        lh.proof.label = _("Proof of authentication")
+        super(ManageAccessRequestInsert,self).setup_handle(lh)
+    
+        
     
 
 class ManageAccessRequests(CBSSRequests):
     #~ window_size = (500,400)
     model = ManageAccessRequest
     detail_layout = ManageAccessRequestDetail()
+    insert_layout = ManageAccessRequestInsert()
     required = dict(user_groups='cbss')
     #~ required_user_groups = ['cbss']
     active_fields = ['person']

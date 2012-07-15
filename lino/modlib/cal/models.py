@@ -717,8 +717,8 @@ class ComponentBase(mixins.ProjectRelated,Started):
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
 
-    def summary_row(self,ui,**kw):
-        html = mixins.ProjectRelated.summary_row(self,ui,**kw)
+    def summary_row(self,ar,**kw):
+        html = mixins.ProjectRelated.summary_row(self,ar,**kw)
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
@@ -862,10 +862,11 @@ Whether this is private, public or between.""")) # iCal:CLASS
         #~ html += _(" on ") + babel.dtos(self.start_date)
         #~ return html
         
-    def summary_row(self,ui,**kw):
+    def summary_row(self,ar,**kw):
         #~ logger.info("20120217 Component.summary_row() %s", self)
         #~ if self.owner and not self.auto_type:
-        html = ui.ext_renderer.href_to(self)
+        #~ html = ui.ext_renderer.href_to(self)
+        html = ar.renderer.href_to(self)
         if self.start_time:
             #~ html += _(" at ") + unicode(self.start_time)
             html += _(" at ") + self.start_time.strftime(settings.LINO.time_format_strftime)
@@ -878,7 +879,7 @@ Whether this is private, public or between.""")) # iCal:CLASS
         #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
             #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
         if self.project:
-            html += " (%s)" % dd.summary_row(self.project,ui)
+            html += " (%s)" % dd.summary_row(self.project,ar)
             #~ print 20120217, self.project.__class__, self
             #~ html += " (%s)" % self.project.summary_row(ui)
         return html
@@ -1995,11 +1996,12 @@ if settings.LINO.use_extensible:
 
 from lino.utils.babel import dtosl
     
-def reminders(ui,user,days_back=None,days_forward=None,**kw):
+def reminders(ar,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user.
     
     """
+    user = ar.get_user()
     Task = resolve_model('cal.Task')
     Event = resolve_model('cal.Event')
     today = datetime.date.today()
@@ -2053,7 +2055,7 @@ def reminders(ui,user,days_back=None,days_forward=None,**kw):
             sorted_days.reverse()
         for day in sorted_days:
             yield '<h3>'+dtosl(day) + '</h3>'
-            yield dd.summary(ui,lookup[day],**kw)
+            yield dd.summary(ar,lookup[day],**kw)
             
     if days_back is not None:
         s = ''.join([chunk for chunk in loop(past,True)])
@@ -2120,12 +2122,12 @@ class Home(lino.Home):
     
     @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
     def missed_reminders(cls,self,ar):
-        return reminders(ar.ui,ar.get_user(),days_back=90,
+        return reminders(ar,days_back=90,
           max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
     @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
     def coming_reminders(cls,self,ar):
-        return reminders(ar.ui,ar.get_user(),days_forward=30,
+        return reminders(ar,days_forward=30,
             max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
 

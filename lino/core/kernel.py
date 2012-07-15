@@ -66,7 +66,8 @@ from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
 from lino.utils import AttrDict
-from lino.core.perms import make_permission_handler
+#~ from lino.core.perms import make_permission_handler
+from lino.core import perms
 
 #~ BLANK_STATE = ''
 
@@ -258,7 +259,7 @@ def load_workflows(self):
             def wrap(a,required,fn):
                 return fn
                 
-            a.allow = curry(wrap(a,required,make_permission_handler(
+            a.allow = curry(wrap(a,required,perms.make_permission_handler(
                 a,actor,a.readonly,actor.debug_permissions,**required)),a)
             
 

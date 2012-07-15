@@ -94,8 +94,10 @@ class UserProfile(choicelists.Choice):
 
         if memberships is None:
             for k in cls.membership_keys:
-                kw[k] = UserLevels.blank_item
+                #~ kw[k] = UserLevels.blank_item
+                kw.setdefault(k,UserLevels.blank_item)
         else:
+        #~ if memberships is not None:
             if len(memberships.split()) != len(cls.membership_keys):
                 raise Exception(
                     "Invalid memberships specification %r : must contain %d letters" 
@@ -104,6 +106,8 @@ class UserProfile(choicelists.Choice):
                 kw[cls.membership_keys[i]] = UserLevels.get_by_name(SHORT_LEVELS[k])
                 
         #~ print 20120705, value, kw
+        
+        assert kw.has_key('level')
             
         for k,v in kw.items():
             setattr(self,k,v)
@@ -287,7 +291,9 @@ def make_permission_handler(
             user_level = getattr(UserLevels,user_level)
             allow_user_level = allow
             def allow(action,user,obj,state):
-                if user.profile.level is None or user.profile.level < user_level:
+                #~ if user.profile.level is None or user.profile.level < user_level:
+                if user.profile.level < user_level:
+                    #~ print 20120715, user.profile.level
                     return False
                 return allow_user_level(action,user,obj,state)
                 

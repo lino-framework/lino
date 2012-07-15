@@ -323,8 +323,10 @@ class Lino(object):
     model used as project in your application.
     """
     
-    user_model = "users.User"
-    """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
+    #~ user_model = "users.User"
+    user_model = None
+    """
+    Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
     `lino.modlib.users`. 
     
     Set it to `None` to remove any user management 
@@ -339,6 +341,10 @@ class Lino(object):
     configured to allow it.
     Used by :mod:`lino.utils.auth`.
     """
+    
+    anonymous_user_profile = '900'
+    
+    
     
     remote_user_header = "REMOTE_USER"
     #~ remote_user_header = None
@@ -1144,15 +1150,14 @@ class Lino(object):
             yield 'django.middleware.locale.LocaleMiddleware'
         #~ yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
         #~ if self.user_model:
-        if self.remote_user_header:
+        if self.user_model is None:
+            yield 'lino.utils.auth.NoUserMiddleware'
+        elif self.remote_user_header:
             yield 'lino.utils.auth.RemoteUserMiddleware'
             yield 'django.middleware.doc.XViewMiddleware'
         else:
-            if self.user_model is None:
-                yield 'lino.utils.auth.NoUserMiddleware'
-            else:
-                raise Exception("""\
-`user_model` is None, but no `remote_user_header` in your settings.LINO.""")
+            raise Exception("""\
+`user_model` is not None, but no `remote_user_header` in your settings.LINO.""")
         #~ yield 'lino.utils.editing.EditingMiddleware'
         yield 'lino.utils.ajax.AjaxExceptionResponse'
 

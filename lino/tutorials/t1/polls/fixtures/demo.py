@@ -6,6 +6,7 @@ Choice = dd.resolve_model('polls.Choice')
 DATA = """
 What is your preferred colour? | Blue | Red | Yellow | other
 Do you like Django? | Yes | No | Not yet decided
+Do you like ExtJS? | Yes | No | Not yet decided
 """
 
 def objects():

@@ -71,9 +71,52 @@ Solved this using the new actor
 :class:`lino.modlib.users.models.MySettings`.
 
 
-Use the source, Luke
---------------------
+Miscellaneous
+-------------
 
-The references to the source files of each in :doc:`/autodoc/index`
-weren't correct when it was a package.
-New function :func:`lino.utils.srcref` used in :srcref:`/docs/conf.py`.
+- The references to the source files of each in :doc:`/autodoc/index`
+  weren't correct when it was a package.
+  New function :func:`lino.utils.srcref` used in :srcref:`/docs/conf.py`.
+  
+- translations
+
+- ManageAccessRequest now also has a separate insert_layout. 
+  Several fields were (wrongly) declared blank=True.
+  
+- Uploads now also has a separate insert_layout.
+  Adding an Upload is more intuitive.
+  
+- Worked on :mod:`lino.tutorials.t1`. 
+  
+- summary_row is now being called with the ar and not the ui as first argument.  
+
+- Team.eml.html now uses `HttpRequest.build_absolute_uri
+  <https://docs.djangoproject.com/en/dev/ref/request-response/#django.http.HttpRequest.build_absolute_uri>`_
+  for the link::
+  
+    <a href="$ar.request.build_absolute_uri('/api/cal/MyPendingInvitations')">Meine offenen erhaltenen Einladungen</a>
+    
+  And even better::
+  
+    <a href="$ar.absolute_uri("cal.MyPendingInvitations")">Meine offenen erhaltenen Einladungen</a>
+  
+  
+
+The `national_id` field of ManageAccessRequest may not be blank, but 
+:class:`WithPerson <lino.modlib.cbss.models.WithPerson>` 
+(where it is defined) doesn't know that. It declares the field 
+with `blank=False`.
+So I added the following to cbss.models::
+
+  dd.update_field(ManageAccessRequest,'national_id',blank=False,help_text="""\
+  The SSIN of the person to register/unregister/list.
+  """)
+
+Later I got a ValidationError "{'national_id': [u'Dieses Feld darf nicht leer sein.']}" 
+for an 
+:class:`IdentifyPersonRequest <lino.modlib.cbss.models.IdentifyPersonRequest>`.
+
+Explanation: the WithPerson mixin wrongly wasn't declared ``abstract``.
+So I had an additional database table without even noticing it:
++1 for Django!
+

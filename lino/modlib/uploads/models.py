@@ -129,6 +129,11 @@ class Uploads(dd.Table):
     # show_date time timestamp
     """
     
+    insert_layout = dd.FormLayout("""
+    file user
+    type description 
+    """,window_size=(60,'auto'))
+    
     
     
 
