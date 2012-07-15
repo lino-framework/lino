@@ -44,7 +44,16 @@ This is a test
 >>> print join_words('This','is','','another','test')
 This is another test
 
+:func:`srcref`
+--------------
 
+>>> from lino.utils import log
+>>> print srcref(log)
+lino/utils/log.py
+
+>>> from lino import utils
+>>> print srcref(utils)
+lino/utils/__init__.py
 
 
 """
@@ -58,6 +67,7 @@ from dateutil import parser as dateparser
 from decimal import Decimal
 import stat
 
+import lino
 
 def confirm(prompt=None):
     """
@@ -494,6 +504,18 @@ def moneyfmt(value, places=2, curr='', sep=',', dp='.',
     return ''.join(reversed(result))
     
     
+def srcref(mod):
+    """
+    Return the `source file name` for Sphinx's ``srcref`` role.
+    """
+    if not mod.__name__.startswith('lino.'): 
+        return
+    srcref = mod.__file__
+    srcref = srcref[len(lino.__file__)-17:]
+    if srcref.endswith('.pyc'):
+        srcref = srcref[:-1]
+    srcref = srcref.replace(os.path.sep,'/')
+    return srcref
 
 
 def _test():

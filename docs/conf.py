@@ -13,6 +13,7 @@
 
 import sys, os
 import lino
+from lino.utils import srcref
 
 # If your extensions are in another directory, add it here. If the directory
 # is relative to the documentation root, use os.path.abspath to make it
@@ -276,17 +277,15 @@ SIDEBAR = """
     
 def autodoc_add_srcref(app,what,name,obj,options,lines):
     if what == 'module':
-        srcref = obj.__file__
-        if srcref.endswith('.pyc'):
-            srcref = srcref[:-1]
-        srcref = srcref.replace(os.path.sep,'/')
-        #~ srcref = name.replace('.','/')
-        s = (SIDEBAR % srcref).splitlines()
-        s.reverse()
-        for ln in s:
-            lines.insert(0,ln)
-        #~ lines.insert(0,'')
-        #~ lines.insert(0,'(We also recommend to read the source code at :srcref:`/%s.py`)' % name.replace('.','/'))
+        s = srcref(obj)
+        if s:
+            #~ srcref = name.replace('.','/')
+            s = (SIDEBAR % s).splitlines()
+            s.reverse()
+            for ln in s:
+                lines.insert(0,ln)
+            #~ lines.insert(0,'')
+            #~ lines.insert(0,'(We also recommend to read the source code at :srcref:`/%s.py`)' % name.replace('.','/'))
     
 
     
