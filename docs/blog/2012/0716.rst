@@ -1,8 +1,35 @@
 20120716
 ========
 
-Wenn man im Kalender-Panel "Team View" angeschaltet hatte und auf den Termin 
-eines *anderen* Team-Mitglieds klickte um dessen Detail-Fenster zu sehen, dann zeigte Lino entweder 
-einen falschen Termin an, oder meldete "Detail-Fenster wird geschlossen". 
-Weil das Kalender-Panel den Parameter tv bisher nur bei load übergab.
-Muss aber natürlich auch bei allen anderen Operationen mit übergeben werden.
+- Wenn man im Kalender-Panel "Team View" angeschaltet hatte und auf den Termin 
+  eines *anderen* Team-Mitglieds klickte um dessen Detail-Fenster zu sehen, dann zeigte Lino entweder 
+  einen falschen Termin an, oder meldete "Detail-Fenster wird geschlossen". 
+  Weil das Kalender-Panel den Parameter tv bisher nur bei load übergab.
+  Muss aber natürlich auch bei allen anderen Operationen mit übergeben werden.
+  
+  
+- Wenn man versuchte, eine Vollmacht zu erteilen, kam folgendes::
+
+    NameError
+    global name 'level' is not defined
+
+    TRACEBACK:
+      File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+
+      File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/ext_ui.py", line 2164, in choices_view
+        qs = chooser.get_request_choices(ar,rpt)
+
+      File "/usr/local/django/test_dsbe/using/lino/lino/utils/choosers.py", line 179, in get_request_choices
+        return self.get_choices(**kw)
+
+      File "/usr/local/django/test_dsbe/using/lino/lino/utils/choosers.py", line 129, in get_choices
+        return self.meth(*args)
+
+      File "/usr/local/django/test_dsbe/using/lino/lino/utils/choosers.py", line 246, in wrapped
+        return fn(*args)
+
+      File "/usr/local/django/test_dsbe/using/lino/lino/modlib/users/models.py", line 256, in authorized_choices
+        id=user.id).exclude(level>=UserLevels.admin)
+
+      

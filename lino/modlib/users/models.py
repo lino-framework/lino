@@ -252,8 +252,8 @@ The user who gets authority to act in your name."""))
     @dd.chooser()
     def authorized_choices(cls,user):
         return settings.LINO.user_model.objects.exclude(
-            profile=dd.UserProfiles.blank_item).exclude(
-              id=user.id).exclude(level__gte=UserLevels.admin)
+            profile=dd.UserProfiles.blank_item).exclude(id=user.id)
+              #~ .exclude(level__gte=UserLevels.admin)
     
         
 class Authorities(dd.Table):
