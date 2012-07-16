@@ -2,7 +2,7 @@
 ========
 
 Wenn man im Kalender-Panel "Team View" angeschaltet hatte und auf den Termin 
-eines anderen Team-Mitglieds klickte um den zu sehen, dann zeigte Lino entweder 
+eines *anderen* Team-Mitglieds klickte um dessen Detail-Fenster zu sehen, dann zeigte Lino entweder 
 einen falschen Termin an, oder meldete "Detail-Fenster wird geschlossen". 
 Weil das Kalender-Panel den Parameter tv bisher nur bei load übergab.
 Muss aber natürlich auch bei allen anderen Operationen mit übergeben werden.
