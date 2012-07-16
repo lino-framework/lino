@@ -1,4 +1,3 @@
-t:\hgwork\lino\lino\__init__.py:docstring of lino.Lino.override_modlib_models:17: (WARNING/2) Literal block expected; none found.
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:23: (WARNING/2) autodoc can't import/find module 'lino.apps.pcsw.models', it reported error: "You are using lino.modlib.users in your INSTALLED_APPS, 
 but settings.LINO.user_model is None (should be 'users.User').
 ", please check your spelling and sys.path
@@ -26,79 +25,16 @@ but settings.LINO.user_model is None (should be 'users.User').
 T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:36: (WARNING/2) autodoc can't import/find module 'lino.modlib.cbss.tests.cbss_tests', it reported error: "You are using lino.modlib.users in your INSTALLED_APPS, 
 but settings.LINO.user_model is None (should be 'users.User').
 ", please check your spelling and sys.path
-t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.PartnerDocument.summary_row:1: (ERROR/3) Unknown interpreted text role "modmeth".
 T:\hgwork\lino\docs\autodoc\lino.modlib.isip.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.isip.models', it reported error: "ChoiceList name 'RecipientType' already defined by <class 'lino.modlib.outbox.models.RecipientType'>", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.modlib.notes.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.notes.models', it reported error: "ChoiceList name 'RecipientType' already defined by <class 'lino.modlib.outbox.models.RecipientType'>", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.modlib.outbox.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.outbox.models', it reported error: "ChoiceList name 'RecipientType' already defined by <class 'lino.modlib.outbox.models.RecipientType'>", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.users.models', it reported error: "You are using lino.modlib.users in your INSTALLED_APPS, 
 but settings.LINO.user_model is None (should be 'users.User').
 ", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst:27: WARNING: duplicate object description of lino.utils.auth.NoUserMiddleware, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst:27: WARNING: duplicate object description of lino.utils.auth.NoUserMiddleware, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
-T:\hgwork\lino\docs\blog\2012\0714.rst:19: (ERROR/3) Unexpected indentation.
-T:\hgwork\lino\docs\todo.rst:21: (WARNING/2) Literal block expected; none found.
-T:\hgwork\lino\docs\todo.rst:391: (WARNING/2) Enumerated list ends without a blank line; unexpected unindent.
-T:\hgwork\lino\docs\todo.rst:395: (ERROR/3) Unexpected indentation.
-T:\hgwork\lino\docs\todo.rst:396: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
-T:\hgwork\lino\docs\todo.rst:934: (WARNING/2) Enumerated list ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.rst:76: WARNING: py:mod reference target not found: lino.modlib.cbss.models
-T:\hgwork\lino\docs\autodoc\lino.rst:97: WARNING: model reference target not found: lino.modlib.contacts
-T:\hgwork\lino\docs\autodoc\lino.rst:299: WARNING: py:meth reference target not found: lino.utils.dumpy.Serializer.serialize
-T:\hgwork\lino\docs\autodoc\lino.rst:299: WARNING: py:func reference target not found: lino.modlib.cal.models.update_auto_task
-T:\hgwork\lino\docs\autodoc\lino.rst:299: WARNING: py:mod reference target not found: lino.modlib.mails.models
-T:\hgwork\lino\docs\autodoc\lino.rst:321: WARNING: py:class reference target not found: lino.modlib.cal.models.EventOwner
-T:\hgwork\lino\docs\autodoc\lino.rst:337: WARNING: xfile reference target not found: lino*.js
-T:\hgwork\lino\docs\autodoc\lino.rst:391: WARNING: unknown document: /blog/2010/1130
-T:\hgwork\lino\docs\autodoc\lino.rst:417: WARNING: model reference target not found: lino.modlib.contacts
-T:\hgwork\lino\docs\autodoc\lino.rst:435: WARNING: xfile reference target not found: fixtures
-T:\hgwork\lino\docs\autodoc\lino.rst:521: WARNING: py:meth reference target not found: lino.apps.pcsw.settings.Lino.setup_quicklinks
-T:\hgwork\lino\docs\autodoc\lino.rst:548: WARNING: py:mod reference target not found: lino.utils.config
-T:\hgwork\lino\docs\autodoc\lino.rst:574: WARNING: py:class reference target not found: lino.fields.RichTextField
-T:\hgwork\lino\docs\autodoc\lino.rst:640: WARNING: py:mod reference target not found: lino.modlib.cbss.models
-T:\hgwork\lino\docs\autodoc\lino.rst:648: WARNING: py:mod reference target not found: lino.modlib.cbss.models
-T:\hgwork\lino\docs\autodoc\lino.rst:690: WARNING: py:mod reference target not found: lino.modlib.cbss.models
-T:\hgwork\lino\docs\autodoc\lino.rst:713: WARNING: py:class reference target not found: lino.models.HelpText
-T:\hgwork\lino\docs\autodoc\lino.rst:742: WARNING: py:class reference target not found: lino.models.HelpText
-T:\hgwork\lino\docs\autodoc\lino.rst:771: WARNING: py:mod reference target not found: lino.test_apps.1
-T:\hgwork\lino\docs\autodoc\lino.rst:793: WARNING: term not in glossary: webdav
-T:\hgwork\lino\docs\autodoc\lino.rst:793: WARNING: xfile reference target not found: sitecustomize_lino.py
-T:\hgwork\lino\docs\autodoc\lino.rst:802: WARNING: term not in glossary: runserver
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:13: WARNING: py:class reference target not found: lino.apps.std.settings.Lino
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:28: WARNING: py:func reference target not found: lino.modlib.cal.update_reminders
 T:\hgwork\lino\docs\autodoc\lino.apps.pcsw.rst:71: WARNING: py:class reference target not found: lino.fields.IncompleteDate
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:11: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:56: WARNING: py:meth reference target not found: lino.core.actors.Actor.workflow_buttons
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:66: WARNING: py:attr reference target not found: lino.mixins.duplicable.Duplicable.duplicate_row
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:79: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:87: WARNING: py:meth reference target not found: Action.run
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:101: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:118: WARNING: py:class reference target not found: lino.core.actions.VirtualRow
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:120: WARNING: py:class reference target not found: EmptyTable
-T:\hgwork\lino\docs\autodoc\lino.core.layouts.rst:13: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.core.perms.rst:11: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.core.perms.rst:70: WARNING: py:class reference target not found: lino.core.fields.ChoiceListField
-T:\hgwork\lino\docs\autodoc\lino.core.perms.rst:91: WARNING: xfile reference target not found: lino*.js
-T:\hgwork\lino\docs\autodoc\lino.core.perms.rst:98: WARNING: py:class reference target not found: lino.utils.choicelists.UserLevels
-T:\hgwork\lino\docs\autodoc\lino.core.perms.rst:116: WARNING: py:class reference target not found: lino.modlib.cal.models.Guest
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:15: WARNING: py:class reference target not found: AbstractTable
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:116: WARNING: py:attr reference target not found: AbstractTable.slave_grid_format
-T:\hgwork\lino\docs\autodoc\lino.core.table.rst:130: WARNING: py:class reference target not found: django.db.models.query.QuerySet
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:20: WARNING: py:class reference target not found: lino.core.frames.Frame
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:26: WARNING: py:class reference target not found: lino.core.fields.MonthField
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:27: WARNING: py:class reference target not found: lino.core.fields.QuantityField
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:28: WARNING: py:class reference target not found: lino.core.fields.PriceField
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:32: WARNING: py:class reference target not found: lino.core.fields.DummyField
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:41: WARNING: py:class reference target not found: lino.core.fields.Constant
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:43: WARNING: py:class reference target not found: lino.core.fields.DisplayField
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:47: WARNING: py:class reference target not found: lino.core.fields.HtmlBox
-T:\hgwork\lino\docs\autodoc\lino.dd.rst:58: WARNING: py:func reference target not found: lino.utils.choosers.chooser
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:1: WARNING: py:mod reference target not found: mixins
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:59: WARNING: py:mod reference target not found: lino.modlibs.cal
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:63: WARNING: py:mod reference target not found: lino.modlib.purchases
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:186: WARNING: py:class reference target not found: lino.core.frames.Frame
-T:\hgwork\lino\docs\autodoc\lino.mixins.rst:338: WARNING: py:class reference target not found: lino.modlib.thirds.models.Third
 T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:10: WARNING: py:mod reference target not found: lino.modlib.cal.models
 T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:15: WARNING: py:class reference target not found: Event
 T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:30: WARNING: py:meth reference target not found: lino.apps.pcsw.migrate.migrate_from_1_4_4
@@ -108,107 +44,9 @@ T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:18: WARNING: py:class reference
 T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:23: WARNING: term not in glossary: mod_wsgi
 T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:33: WARNING: py:mod reference target not found: lino.modlib.cbss.tests.cbss_tests
 T:\hgwork\lino\docs\autodoc\lino.modlib.cbss.rst:15: WARNING: py:mod reference target not found: lino.modlib.cbss.models
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:153: WARNING: py:attr reference target not found: Partner.name
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:180: WARNING: py:func reference target not found: lino.apps.pcsw.tests.pcsw_tests.test04
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:180: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:196: WARNING: py:func reference target not found: lino.apps.pcsw.tests.pcsw_tests.test04
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:196: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
 T:\hgwork\lino\docs\autodoc\lino.modlib.isip.rst:10: WARNING: py:mod reference target not found: lino.modlib.isip.models
 T:\hgwork\lino\docs\autodoc\lino.modlib.notes.rst:10: WARNING: py:mod reference target not found: lino.modlib.notes.models
 T:\hgwork\lino\docs\autodoc\lino.modlib.outbox.rst:10: WARNING: py:mod reference target not found: lino.modlib.outbox.models
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:7: WARNING: py:mod reference target not found: django.contrib.auth
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:14: WARNING: py:mod reference target not found: django.contrib.sessions
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:10: WARNING: py:mod reference target not found: lino.modlib.users.models
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:mod reference target not found: base
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:25: WARNING: py:mod reference target not found: requests
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference target not found: urls
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:206: WARNING: py:class reference target not found: FormPanel
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:206: WARNING: py:class reference target not found: GridPanel
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:390: WARNING: py:class reference target not found: lino.core.fields.DisplayField
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:631: WARNING: py:class reference target not found: lino.core.fields.IncompleteDate
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:106: WARNING: py:attr reference target not found: ACTION_RESPONSES
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:148: WARNING: py:class reference target not found: lino.modles.BuildSiteCache
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:162: WARNING: xfile reference target not found: lino*.js
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:244: WARNING: py:meth reference target not found: row_action_button
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:329: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:345: WARNING: py:class reference target not found: lino.core.table.TableRequest
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:358: WARNING: py:class reference target not found: lino.core.table.TableRequest
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:372: WARNING: py:class reference target not found: django.http.HttpResponse
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:389: WARNING: unknown document: /blog/2010/0716
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:389: WARNING: unknown document: /blog/2010/0721
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:389: WARNING: unknown document: /blog/2010/1116
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:389: WARNING: unknown document: /blog/2010/1207
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:35: WARNING: py:mod reference target not found: ext_store
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:182: WARNING: unknown document: /blog/2010/0803
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:320: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:485: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:541: WARNING: py:attr reference target not found: Store.pk_index
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:41: WARNING: py:class reference target not found: dict
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:162: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:39: WARNING: py:mod reference target not found: dbfreader
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:47: WARNING: py:mod reference target not found: html2xhtml
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:13: WARNING: py:class reference target not found: HTMLParser.HTMLParser
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:55: WARNING: py:mod reference target not found: instantiator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:23: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:76: WARNING: py:class reference target not found: lino.fields.LinkedForeignKey
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:63: WARNING: py:mod reference target not found: latex
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:72: WARNING: py:mod reference target not found: restify
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target not found: docutils.examples
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:80: WARNING: py:mod reference target not found: ucsv
-T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst:30: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.utils.choosers.rst:20: WARNING: py:class reference target not found: lino.utils.choosers.FieldChooser
-T:\hgwork\lino\docs\autodoc\lino.utils.choosers.rst:41: WARNING: py:class reference target not found: lino.ui.extjs.ext_store.Store
-T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst:30: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\blog\2012\0714.rst:70: WARNING: py:class reference target not found: lino.modlib.users.models.MySettings
-T:\hgwork\lino\docs\blog\2012\0714.rst:89: WARNING: py:mod reference target not found: lino.tutorials.t1
-T:\hgwork\lino\docs\blog\2012\0714.rst:105: WARNING: py:class reference target not found: lino.modlib.cbss.models.WithPerson
-T:\hgwork\lino\docs\blog\2012\0714.rst:115: WARNING: py:class reference target not found: lino.modlib.cbss.models.IdentifyPersonRequest
-T:\hgwork\lino\docs\todo.rst:55: WARNING: py:meth reference target not found: lino.core.actors.Actor.action_buttons
-T:\hgwork\lino\docs\todo.rst:97: WARNING: py:attr reference target not found: disables
-T:\hgwork\lino\docs\todo.rst:99: WARNING: py:attr reference target not found: enables
-T:\hgwork\lino\docs\todo.rst:251: WARNING: py:class reference target not found: auth.User
-T:\hgwork\lino\docs\todo.rst:287: WARNING: py:func reference target not found: lino.modlib.cal.models.default_calendar
-T:\hgwork\lino\docs\todo.rst:325: WARNING: py:class reference target not found: lino.apps.pcsw.models.MyPersons
-T:\hgwork\lino\docs\todo.rst:368: WARNING: py:class reference target not found: lino.dd.Table
-T:\hgwork\lino\docs\todo.rst:391: WARNING: py:class reference target not found: lino.reports.Calendar
-T:\hgwork\lino\docs\todo.rst:428: WARNING: unknown document: /blog/20110725
-T:\hgwork\lino\docs\todo.rst:428: WARNING: unknown document: /blog/20110809
-T:\hgwork\lino\docs\todo.rst:451: WARNING: py:class reference target not found: lino.reports.Report
-T:\hgwork\lino\docs\todo.rst:451: WARNING: py:class reference target not found: lino.List
-T:\hgwork\lino\docs\todo.rst:451: WARNING: py:class reference target not found: lino.Detail
-T:\hgwork\lino\docs\todo.rst:719: WARNING: xfile reference target not found: welcome.html
-T:\hgwork\lino\docs\todo.rst:723: WARNING: unknown document: /blog/2010/1029
-T:\hgwork\lino\docs\todo.rst:723: WARNING: unknown document: /blog/2010/1112
-T:\hgwork\lino\docs\todo.rst:771: WARNING: xfile reference target not found: lino_settings.py
-T:\hgwork\lino\docs\todo.rst:771: WARNING: py:mod reference target not found: lino.demos.igen
-T:\hgwork\lino\docs\todo.rst:779: WARNING: py:mod reference target not found: lino.modlib.pcsw
-T:\hgwork\lino\docs\todo.rst:805: WARNING: unknown document: /blog/2010/0811
-T:\hgwork\lino\docs\todo.rst:837: WARNING: py:mod reference target not found: lino.modlib.system.models.SiteConfig
-T:\hgwork\lino\docs\todo.rst:837: WARNING: py:mod reference target not found: django.contrib.sites
-T:\hgwork\lino\docs\todo.rst:839: WARNING: xfile reference target not found: make_staff.py
-T:\hgwork\lino\docs\todo.rst:849: WARNING: py:attr reference target not found: pcsw.models.Person.work_permit
-T:\hgwork\lino\docs\todo.rst:885: WARNING: py:meth reference target not found: lino.reports.Report.slave_as_summary_meth
-T:\hgwork\lino\docs\todo.rst:890: WARNING: py:class reference target not found: lino.utils.printable.LatexBuildMethod
-T:\hgwork\lino\docs\todo.rst:893: WARNING: py:attr reference target not found: links.Link.parent
-T:\hgwork\lino\docs\todo.rst:898: WARNING: py:attr reference target not found: links.Link.sequence
-T:\hgwork\lino\docs\todo.rst:898: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\todo.rst:900: WARNING: py:meth reference target not found: contacts.Contact.address
-T:\hgwork\lino\docs\todo.rst:900: WARNING: py:class reference target not found: contacts.Persons
-T:\hgwork\lino\docs\todo.rst:910: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\todo.rst:912: WARNING: py:class reference target not found: notes.Note
-T:\hgwork\lino\docs\todo.rst:912: WARNING: py:class reference target not found: notes.NoteType
-T:\hgwork\lino\docs\todo.rst:922: WARNING: py:mod reference target not found: lino.modlib.finan
-T:\hgwork\lino\docs\todo.rst:929: WARNING: unknown document: /blog/2010/1103
-T:\hgwork\lino\docs\todo.rst:946: WARNING: py:meth reference target not found: Action.run
-T:\hgwork\lino\docs\todo.rst:946: WARNING: unknown document: /blog/2010/1124
-T:\hgwork\lino\docs\todo.rst:1002: WARNING: unknown document: /blog/2010/1024
-T:\hgwork\lino\docs\todo.rst:1014: WARNING: py:class reference target not found: lino.modlib.users.models.UserDetail
-T:\hgwork\lino\docs\todo.rst:1014: WARNING: py:meth reference target not found: lino.core.actor.Actor.add_detail_tab
-T:\hgwork\lino\docs\tutorials\polls.rst:139: WARNING: term not in glossary: tables
-T:\hgwork\lino\docs\tutorials\polls.rst:194: WARNING: term not in glossary: slave table
-T:\hgwork\lino\docs\tutorials\polls.rst:194: WARNING: py:attr reference target not found: lino.core.table.Table.master_key

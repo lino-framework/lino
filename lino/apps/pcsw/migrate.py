@@ -1315,3 +1315,5 @@ def migrate_from_1_4_3(globals_dict):
     
     return '1.4.4'
             
+def migrate_from_1_4_4(globals_dict): 
+    return '1.4.5'
