@@ -4258,7 +4258,7 @@ Ext.ensible.cal.EventRecord.reconfigure();
 Lino.on_eventclick = function(cp,rec,el) {
   console.log("Lino.on_eventclick",arguments);
   //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-  Lino.cal.PanelEvents.detail_action.run({record_id:rec.data.ID});
+  Lino.cal.PanelEvents.detail_action.run({record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
   return false;
 }
     
@@ -4266,7 +4266,7 @@ Lino.on_editdetails = function(cp,rec,el) {
   console.log("Lino.on_editdetails",arguments);
   if (rec.data.ID)
       //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-      Lino.cal.PanelEvents.detail_action.run({record_id:rec.data.ID});
+      Lino.cal.PanelEvents.detail_action.run({record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
   return false;
 }
 
@@ -4315,11 +4315,10 @@ Lino.eventStore = new Ext.data.JsonStore({
     writeAllFields: false
   })
   ,load: function(options) {
-    //~ console.log('20120710 eventStore.load()',this.cal_panel);
     //~ foo.bar = baz; // 20120213
       if (!options) options = {};
       if (!options.params) options.params = {};
-      options.params.$ext_requests.URL_PARAM_TEAM_VIEW = Lino.calendar_app.team_view_button.pressed;
+      //~ options.params.$ext_requests.URL_PARAM_TEAM_VIEW = Lino.calendar_app.team_view_button.pressed;
       
       var view = this.cal_panel.getActiveView();
       var bounds = view.getViewBounds();
@@ -4329,6 +4328,7 @@ Lino.eventStore = new Ext.data.JsonStore({
       options.params[view.dateParamEnd] = bounds.end.format(view.dateParamFormat);
       Lino.insert_subst_user(options.params);
       //~ Ext.apply(options.params,p)
+      console.log('20120710 eventStore.load()',this.baseParams,options);
     
     return Ext.data.JsonStore.prototype.load.call(this,options);
   }
@@ -4467,8 +4467,10 @@ Lino.calendar_app = function() { return {
                     enableToggle:true,
                     pressed:false,
                     toggleHandler: function(btn,state) { 
-                      //~ console.log('20120710 teamView.toggle()');
-                      Lino.eventStore.load({params:{$ext_requests.URL_PARAM_TEAM_VIEW:state}});
+                      console.log('20120716 teamView.toggle()');
+                      Lino.eventStore.setBaseParam('$ext_requests.URL_PARAM_TEAM_VIEW',state);
+                      Lino.eventStore.load();
+                      //~ Lino.eventStore.load({params:{$ext_requests.URL_PARAM_TEAM_VIEW:state}});
                       //~ console.log("team view",state);
                     }
                   })
