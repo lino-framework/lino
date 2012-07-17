@@ -114,7 +114,7 @@ def configure(config):
     
     """
     
-    #~ djangoLogger = logging.getLogger('django')
+    djangoLogger = logging.getLogger('django')
     linoLogger = logging.getLogger('lino')
     #~ sudsLogger = logging.getLogger('suds')
     
@@ -131,7 +131,9 @@ def configure(config):
     logger_names = config.get('loggers','lino')
     level = getattr(logging,config.get('level','notset').upper())
     #~ print 20120613, logger_names
-    loggers = [logging.getLogger(n) for n in logger_names.split()]
+    if isinstance(logger_names,basestring):
+        logger_names = logger_names.split()
+    loggers = [logging.getLogger(n) for n in logger_names]
     
     for l in loggers: l.setLevel(level)
     #~ linoLogger.setLevel(level)
@@ -142,7 +144,8 @@ def configure(config):
     #~ aeh = AdminEmailHandler()
     aeh.setLevel(logging.ERROR)
     for l in loggers: l.addHandler(aeh)
-    #~ djangoLogger.addHandler(aeh)
+    if not 'django' in logger_names:
+        djangoLogger.addHandler(aeh)
     #~ linoLogger.addHandler(aeh)
     #~ sudsLogger.addHandler(aeh)
     

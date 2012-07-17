@@ -1023,7 +1023,8 @@ class IdentifyPersonRequest(SSDNRequest,WithPerson):
     ssdn_service_id = 'OCMWCPASIdentifyPerson'
     ssdn_service_version = '20050930'
     xsd_filename = xsdpath('SSDN','OCMW_CPAS',
-        'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
+        'IdentifyPerson','IdentifyPersonRequest.xsd')
+        #~ 'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
     
     #~ cbss_namespace = cbss.IPR # IdentifyPersonRequest
     

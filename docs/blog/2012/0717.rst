@@ -5,3 +5,7 @@ Beim Aufwachen fiel mir ein, dass :term:`watch_tim`
 noch gar nicht von den Haushalten weiß. Tests. In der Tat: 
 da mach ich am besten noch ein Release, bevor sie in Eupen 
 zu arbeiten anfangen: :doc:`/releases/1.4.6`.
+
+ANd a subtle problem in lino.utils.log : 
+djangoLogger didn't get an AdminEmailHandler. But that's rather necessary 
+on a production server with :setting:`DEBUG` False.

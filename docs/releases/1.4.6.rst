@@ -1,6 +1,8 @@
 Version 1.4.6 (20120717)
 ========================
 
+:checkin:`92598a80f49a`
+
 Bugfix release because of one important bug:
 
 - :term:`watch_tim` didn't yet support synchronizing of Households.
