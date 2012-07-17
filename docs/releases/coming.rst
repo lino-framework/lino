@@ -1,3 +1,32 @@
 Coming
 ======
 
+- Wenn man manuell einen Termin erstellte und im Insert Window das Feld "Kalender" 
+  leer ließ, dann kam eine "Ajax Communication failed". 
+  Jetzt darf man das Feld leer lassen.
+  
+  Lino nennt "Kalender" das, was wir bisher "Termin-Arten" nannten. 
+  Ich schlage vor, dass wir uns an diese Sicht der Dinge gewöhnen,
+  also das Wort "Termin-Art" (bis auf weiteres) aus unserem Wortschatz 
+  streichen und durch "Kalender" ersetzen.
+  Ein Kalender ist eine Gruppe von Terminen:
+  
+  - die in der Kalender-Ansicht ein- und ausgeblendet werden können, 
+  - die jede in ihrer eigenen Farbe dargestellt werden, 
+  - auf die man sich "abonnieren" kann oder nicht,
+  - die aus einem öffentlichen Kalender runtergeladen werden können. 
+    (ich bin z.B. auf die Kalender "Christliche Feiertage" und 
+    "Belgische Feiertage" abonniert)
+    
+
+- Neue Kolonne "Begleiter 2" in Offene Kursanfragen 
+
+- Bugfix
+  "Wenn ich in UsersWithClients auf die "21" von Alicia / VSE 1 Begleiter klicke, 
+  öffnet Lino korrekt die Liste dieser 21 Klienten, aber wenn ich dann dort auf 
+  einer OPerson doppelklicke, kommt entweder "Keine weiteren Records vorhanden" 
+  oder das Detail einer anderen Person"
+  
+- Tx25 kennt jetzt die `AddressDeclarationAbroad` (TI018, 
+  Adresse déclarée à l'étranger). 
+  Außerdem ein paar allgemeine Optimierungen Formatierung.

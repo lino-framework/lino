@@ -342,7 +342,7 @@ Ext.namespace('Lino');
 //~ Lino.subst_user_field = new Ext.form.ComboBox({});
 //~ Lino.subst_user = null;
 Lino.insert_subst_user = function(p){
-    console.log('20120714 insert_subst_user',Lino.subst_user,p);
+    //~ console.log('20120714 insert_subst_user',Lino.subst_user,p);
     //~ if (Lino.subst_user_field.getValue()) {
     if (Lino.subst_user) {
         //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user_field.getValue();
@@ -350,11 +350,11 @@ Lino.insert_subst_user = function(p){
     } else {
         delete p.$ext_requests.URL_PARAM_SUBST_USER;
     }
-    console.log('20120714 insert_subst_user -->',Lino.subst_user,p);
+    //~ console.log('20120714 insert_subst_user -->',Lino.subst_user,p);
 }
 
 Lino.set_subst_user = function(id,name) {
-    console.log(20120714,'Lino.set_subst_user',id,name);
+    //~ console.log(20120714,'Lino.set_subst_user',id,name);
     Lino.subst_user = id;
 #if $settings.LINO.use_extensible and $settings.LINO.is_installed('lino.modlib.cal')
     Lino.eventStore.setBaseParam("$ext_requests.URL_PARAM_SUBST_USER",id);
@@ -514,7 +514,7 @@ Lino.edit_tinymce_text = function(panel,options) {
     var params = Ext.apply({},panel.containing_panel.get_base_params());
     params[panel.editor.name] = editor.getValue();
     //~ params.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
-    Lino.insert_subst_user(params);
+    //~ Lino.insert_subst_user(params);
     var a = { 
       params: params, 
       method: 'PUT',
@@ -1446,7 +1446,7 @@ Lino.MainPanel = {
     delete p.fmt;
     //~ if (p.fmt) delete p.fmt;
     Ext.apply(p,this.get_permalink_params());
-    Lino.insert_subst_user(p);
+    //~ Lino.insert_subst_user(p);
      //~ p.fmt = 'html';
     //~ console.log('get_permalink',p,this.get_permalink_params());
     if (this.is_home_page)
@@ -1479,7 +1479,11 @@ Lino.MainPanel = {
   ,set_status : function(status) {}
   ,get_status : function() { return {}}
   ,refresh : function() {}
-  ,get_base_params : function() { return {}}
+  ,get_base_params : function() { 
+    var p = {};
+    Lino.insert_subst_user(p);
+    return p;
+  }
   ,add_params_panel : function (tbar) {
       if (this.params_panel) {
         tbar = tbar.concat([{ scope:this, 
@@ -1788,7 +1792,7 @@ Lino.call_row_action = function(panel,rec_id,actionName,step,fn) {
   var p = Ext.apply({},panel.get_base_params());
   p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
-  Lino.insert_subst_user(p);
+  //~ Lino.insert_subst_user(p);
     
   if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
   panel.loadMask.show(); 
@@ -1828,7 +1832,7 @@ Lino.list_action_handler = function(actionName,gridmode) {
     var p = Ext.apply({},panel.get_base_params());
     p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
     //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
-    Lino.insert_subst_user(p);
+    //~ Lino.insert_subst_user(p);
     if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
     panel.loadMask.show(); // 20120211
     Ext.Ajax.request({
@@ -1952,7 +1956,9 @@ Lino.FieldBoxMixin = {
   format_data : function(html) { return html },
   get_base_params : function() {
     // needed for insert action
-    return this.base_params;
+    var p = Ext.apply({},this.base_params);
+    Lino.insert_subst_user(p);
+    return p;
   },
   set_base_params : function(p) {
     this.base_params = Ext.apply({},p);
@@ -2354,7 +2360,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
   get_base_params : function() {
     // needed for insert action
-    return this.base_params;
+    var p = Ext.apply({},this.base_params);
+    Lino.insert_subst_user(p);
+    return p;
+    //~ return this.base_params;
   },
   set_base_params : function(p) {
     //~ this.base_params = Ext.apply({},p);
@@ -2434,6 +2443,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ var p = { fmt: this.containing_window.config.action_name};
     //~ var p = Ext.apply({},this.containing_window.config.base_params);
     var p = Ext.apply({},this.get_base_params());
+    //~ Lino.insert_subst_user(p);
     //~ console.log('20110713 action_name=',this.containing_window.config.action_name,
       //~ 'base_params=',this.containing_window.config.base_params);
     if (this.action_name)
@@ -2444,7 +2454,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ p.fmt = '$ext_requests.URL_FORMAT_JSON';
     p.$URL_PARAM_REQUESTING_PANEL = this.getId();
     //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
-    Lino.insert_subst_user(p);
     p.$ext_requests.URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
@@ -3285,7 +3294,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   
   get_base_params : function() {
     //~ return this.containing_window.config.base_params;
-    return this.store.baseParams;
+    var p = Ext.apply({},this.store.base_params);
+    Lino.insert_subst_user(p);
+    return p;
+    //~ return this.store.baseParams;
   },
   set_base_params : function(p) {
     //~ console.log('GridPanel.set_base_params',p)

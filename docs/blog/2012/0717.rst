@@ -1,11 +1,75 @@
 20120717
 ========
 
+Released Lino 1.4.6
+-------------------
+
 Beim Aufwachen fiel mir ein, dass :term:`watch_tim` 
 noch gar nicht von den Haushalten weiß. Tests. In der Tat: 
 da mach ich am besten noch ein Release, bevor sie in Eupen 
 zu arbeiten anfangen: :doc:`/releases/1.4.6`.
 
-ANd a subtle problem in lino.utils.log : 
-djangoLogger didn't get an AdminEmailHandler. But that's rather necessary 
-on a production server with :setting:`DEBUG` False.
+And a subtle problem in lino.utils.log : 
+djangoLogger didn't get an AdminEmailHandler
+(but that's rather necessary on a production server with :setting:`DEBUG` False!)
+
+The following error came because :attr:`cbss_live_tests <lino.Lino.cbss_live_tests>` 
+wasn't set to True (and because these files are wrongly named using captitals)::
+
+  IOError at /api/cbss/IdentifyRequestsByPerson/15
+
+  Error reading file '/var/snapshots/lino/lino/modlib/cbss/XSD/SSDN/OCMW_CPAS/IDENTIFYPERSON/IDENTIFYPERSONREQUEST.XSD': 
+  failed to load external entity "/var/snapshots/lino/lino/modlib/cbss/XSD/SSDN/OCMW_CPAS/IDENTIFYPERSON/IDENTIFYPERSONREQUEST.XSD"
+
+
+
+Miscellaneous
+-------------
+
+- Wenn man eine 60/7-Konvention erstellte, 
+  deren Auswertungsstrategie zu einer Serie von automatischen Terminen führte,
+  (und wenn `ExamPolicy.calendar` dieser Auswertungsstrategie leer war),
+  dann kriegte man die Meldung "Ajax Communication failed".
+
+- Wenn man manuell einen Termin erstellte und im Insert Window das Feld "Kalender" 
+  leer ließ, dann kam eine "Ajax Communication failed" (cal/models.py line 1003)
+  
+- Quick Link [Meine VSEs] ging nicht. 
+  Wegen einer lokalen Datei `isip.MyContracts.gc`, 
+  die mit 1.4.3 erstellt war::
+
+    columns: [applies_from, applies_until, person, id, contact, language, date_decided,
+      date_issued, user_asd, exam_policy, ending, date_ended, type, company, stages, goals,
+      duties_asd, duties_dsbe, duties_company, duties_person]
+    hiddens: [false, false, false, false, false, false, false, false, false, false, false,
+      false, false, false, false, false, false, false, false, false]
+    label: !!python/unicode 'Standard'
+    widths: [76, 72, 90, 45, 90, 180, 72, 72, 90, 90, 90, 72, 90, 90, 540, 540, 540, 540,
+      540, 540]
+      
+- :term:`watch_tim` meldete "Unresolved value u'110' for <class 'lino.core.perms.UserProfiles'>".
+  Lag daran, dass er die lokalen Benutzerprofile nicht lud. 
+  Behoben.
+
+- PendingCourseRequests hat jetzt eine neue Kolonne coach2
+
+- Behoben:
+
+  "Wenn ich in UsersWithClients auf die "21" von Alicia / VSE 1 Begleiter klicke, 
+  öffnet er korrekt die Liste dieser 21 Klienten.
+  Aber wenn ich dann dort auf Detail klicke, kommt entweder 
+  "Keine weiteren Records vorhanden" 
+  oder ein falsche Detail."
+
+  
+  Auf der "21" macht er korrekt:
+
+    javascript:Lino.pcsw.MyPersonsByGroup.default_action.run({
+    "base_params": { "mt": 82, "mk": 2, "su": 200096 } })
+
+  Aber das 'su' wird nicht ans Detail weitergegeben. 
+  Auch im Permalink fehlte das 'su'.
+  Und übrigens auch im [csv] und noch an ein paar anderen 
+  subtilen Stellen.
+
+- Tx25 now also handles `AddressDeclarationAbroad` (TI018)

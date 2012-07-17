@@ -54,21 +54,6 @@ if cbss:
         [ cbss.RetrieveTIGroupsRequest, 
           dict(national_id='680307 001-74',history=True), 
           'demo_tx25_2.xml' ],
-        [ cbss.RetrieveTIGroupsRequest, 
-          dict(national_id='620430 001-41',history=True), 
-          'demo_tx25_3.xml' ],
-        [ cbss.RetrieveTIGroupsRequest, 
-          dict(national_id='680601 053-29',history=True,language='fr'), 
-          'demo_tx25_4.xml' ],
-        [ cbss.RetrieveTIGroupsRequest, 
-          dict(national_id='680601 053-29',history=True,language='de'), 
-          'demo_tx25_5.xml' ],
-        [ cbss.RetrieveTIGroupsRequest, 
-          dict(national_id='680601 053-29',history=True,language='de'), 
-          'demo_tx25_6.xml' ],
-        [ cbss.RetrieveTIGroupsRequest, 
-          dict(national_id='680601 053-29',history=True,language='de'), 
-          'demo_tx25_7.xml' ],
     ]
 
     def objects():

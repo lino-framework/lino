@@ -553,6 +553,8 @@ def main(*args,**options):
     msg = "Started watch_tim %s on %s ..."
     #~ logger.info(msg,data_dir)
     dblogger.info(msg,lino.__version__,data_dir)
+    
+    settings.LINO.startup() 
         
     def goodbye():
         msg = "Stopped watch_tim %s on %s ..."

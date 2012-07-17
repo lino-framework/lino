@@ -605,12 +605,12 @@ class PendingCourseRequests(CourseRequests):
     @classmethod
     def setup_columns(self):
         """
-        Builds columns dynamically for the differenc age slices.
+        Builds columns dynamically for the different age slices.
         Called when kernel setup is done, 
         before the UI handle is being instantiated.
         """
         self.column_names = 'date_submitted person age '
-        self.column_names += 'address person__gsm person__phone person__coach1 '
+        self.column_names += 'address person__gsm person__phone person__coach1 person__coach2 '
         #~ self.column_names += 'person__address_column person__age ' 
         self.column_names += 'content urgent remark'
         age_slices = [(16,24), (25,30), (31,40), (41,50),(51,60),(61,None)]

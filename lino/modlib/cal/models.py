@@ -1000,7 +1000,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
             #~ self.state = EventState.obsolete
         super(Event,self).save(*args,**kw)
-        if self.calendar.invite_team_members:
+        if self.calendar and self.calendar.invite_team_members:
             if True or self.access_class == AccessClasses.public:
                 if not self.state in (EventState.blank_item, EventState.draft):
                     if self.guest_set.all().count() == 0:

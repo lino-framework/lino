@@ -112,6 +112,11 @@ def configure(config):
     specifically flag that it is a non interactive application and not use magic to 
     determine whether that is the case or not.".
     
+    Automatically adds an AdminEmailHandler with level ERROR to all specified loggers
+    *and* to the 'django' logger (even if 'django' is nmot specified in `loggers`).
+    Because that's rather necessary on a production server with :setting:`DEBUG` False.
+
+    
     """
     
     djangoLogger = logging.getLogger('django')

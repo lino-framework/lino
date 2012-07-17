@@ -245,8 +245,8 @@ class Info(object):
         if len(self.chunks):
             if not prefix.startswith(' '):
                 prefix = ', ' + prefix
-            if prefix[-1] not in ' :':
-                prefix += ': '
+        if prefix and prefix[-1] not in ' :':
+            prefix += ': '
         self.chunks += [prefix] + fmt(v).chunks
         if suffix:
             self.chunks.append(force_unicode(suffix))
@@ -438,6 +438,12 @@ def IT006(n):
     info = Info()
     info.addfrom(n,'Country','',CountryType)
     info.addfrom(n,'Graphic',' ')
+    info.add_deldate(n)
+    return info
+
+def IT018(n):
+    info = Info()
+    info.addfrom(n,'Address','',AddressType)
     info.add_deldate(n)
     return info
 
@@ -1165,6 +1171,14 @@ class RowHandlers:
             group = ''
         
     @staticmethod
+    def AddressDeclarationAbroad(node,name):
+        group = _("Address Declaration Abroad") 
+        for n in node.Address:
+            info = IT018(n)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+    @staticmethod
     def IT253(node,name):
         group = _("Creation Date")
         n = node # res.CreationDate
@@ -1187,7 +1201,7 @@ class RetrieveTIGroupsResult(dd.VirtualTable):
     master = RetrieveTIGroupsRequest
     master_key = None
     label = _("Results")
-    column_names = 'group:18 type:10 since:14 info:50'
+    column_names = 'group:18 type:5 since:14 info:50'
     
     @dd.displayfield(_("Group"))
     def group(self,obj,ar):
