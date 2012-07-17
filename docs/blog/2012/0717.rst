@@ -74,13 +74,21 @@ Miscellaneous
 
 - Tx25 now also handles `AddressDeclarationAbroad` (TI018)
 
+Release 1.4.7
+-------------
+
 So, ich denke, das kann ich jetzt rauslassen. 
 :checkin:`b5c0b1925fe4`.
 
-Upps, ich muss ja noch die Versionsnummer hochsetzen. 
+Upps, ich muss ja noch die Versionsnummer hochsetzen:
 :checkin:`b4fc87ba413c`
 
-Ach ja, und auch noch eine leere Migrationsprozedur
-:checkin:`b4fc87ba413c`.
+Ach ja, und auch noch eine leere Migrationsprozedur:
+:checkin:`c951862a4ccf`.
 
 Hab ich jetzt alles?
+Dann mal los::
+
+  make sdist
+  
+Et voilà: :doc:`/releases/1.4.7`

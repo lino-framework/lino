@@ -1,5 +1,7 @@
-Coming
-======
+Version 1.4.7 (20120717)
+========================
+
+Download: http://pypi.python.org/pypi/lino/1.4.7
 
 - Bugfix
   "Wenn ich in UsersWithClients auf die "21" von Alicia / VSE 1 Begleiter klicke, 

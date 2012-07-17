@@ -353,7 +353,7 @@ T:\hgwork\lino\docs\autodoc\lino.utils.dumpy.rst:21: WARNING: py:class reference
 T:\hgwork\lino\docs\autodoc\lino.utils.dumpy.rst:45: WARNING: py:class reference target not found: django.core.serializers.base.Serializer
 T:\hgwork\lino\docs\autodoc\lino.utils.jsgen.rst:71: WARNING: py:class reference target not found: lino.utils.jsgen.Variable
 T:\hgwork\lino\docs\autodoc\lino.utils.jsgen.rst:79: WARNING: py:class reference target not found: Variable
-T:\hgwork\lino\docs\autodoc\lino.utils.log.rst:81: WARNING: unknown document: /blog/2010/1129
+T:\hgwork\lino\docs\autodoc\lino.utils.log.rst:86: WARNING: unknown document: /blog/2010/1129
 T:\hgwork\lino\docs\autodoc\lino.utils.mti.rst:16: WARNING: py:class reference target not found: django.db.models.deletion.Collector
 T:\hgwork\lino\docs\autodoc\lino.utils.mti.rst:47: WARNING: py:class reference target not found: django.db.models.base.Model
 T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst:30: WARNING: py:class reference target not found: object
