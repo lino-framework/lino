@@ -305,6 +305,10 @@ class Partners(dd.Table):
     order_by = ['name','id']
     #~ column_names = "name * id" 
     detail_layout = PartnerDetail()
+    insert_layout = dd.FormLayout("""
+    name
+    language email
+    """,window_size=(40,'auto'))
     
     @classmethod
     def get_queryset(self):
@@ -504,6 +508,11 @@ class Persons(dd.Table):
     column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"
     detail_layout = PersonDetail()
     
+    insert_layout = dd.FormLayout("""
+    title first_name last_name
+    gender language
+    """,window_size=(60,'auto'))
+    
 
 
 #~ class CompanyMixin(dd.Model):
@@ -556,6 +565,10 @@ class Companies(Partners):
     model = settings.LINO.company_model
     order_by = ["name"]
     detail_layout = CompanyDetail()
+    insert_layout = dd.FormLayout("""
+    name type
+    language email
+    """,window_size=(40,'auto'))
     
     
     

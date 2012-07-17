@@ -1914,7 +1914,7 @@ tinymce.init({
         if force or settings.LINO.build_js_cache_on_startup:
             count = 0
             langs = babel.AVAILABLE_LANGUAGES
-            qs = users.User.objects.filter(profile=dd.UserProfiles.blank_item) # .exclude(level='')
+            qs = users.User.objects.exclude(profile=dd.UserProfiles.blank_item) # .exclude(level='')
             for lang in langs:
                 babel.set_language(lang)
                 for user in qs:
@@ -1951,6 +1951,7 @@ tinymce.init({
             self.write_lino_js(f,user)
             #~ f.write(jscompress(js))
             f.close()
+            return 1
         except Exception, e:
             """
             If some error occurs, remove the half generated file 

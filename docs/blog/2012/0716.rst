@@ -33,3 +33,36 @@
         id=user.id).exclude(level>=UserLevels.admin)
 
       
+      
+      
+Releases 1.4.4 and 1.4.5
+------------------------
+
+Today we released the long-wating Lino 1.4.4.
+And it comes even twice:
+released 1.4.5 shortly thereafter
+(I actually wanted to rewrite the 1.4.4 because it had a simple packaging problem:
+*.wsdl and *.xsd files were not included to the source dist)
+
+
+
+And here are already the first changes in development trunk 
+(not yet released because these problems don't seem so urgent):
+
+- Detail of a Calendar now includes SubscriptionsByCalendar
+
+- cal.Calendars now has a separate insert_layout
+
+- cal.Tasks accidentally had 
+  :attr:`debug_permissions <lino.core.modeltools.Model.debug_permissions>` 
+  set to `True`
+  
+- :attr:`lino.Lino.build_js_cache_on_startup` 
+  must be False in 1.4.5 because it didn't work::
+
+   File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1921, in build_site_cache
+     count += self.build_js_cache_for_user(user,force)
+ TypeError: unsupported operand type(s) for +=: 'int' and 'NoneType'
+
+
+

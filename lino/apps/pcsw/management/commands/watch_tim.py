@@ -64,12 +64,30 @@ from lino.utils.daemoncommand import DaemonCommand
 #~ from lino.apps.pcsw.models  import is_valid_niss
 
 from lino.apps.pcsw.management.commands.initdb_tim import convert_sex, \
-    ADR_id, country2kw, par2person, pxs2person, is_company, isolang
+    ADR_id, country2kw, par2person, pxs2person, isolang
 
 Country = resolve_model('countries.Country')
 City = resolve_model('countries.City')
 Person = resolve_model(settings.LINO.person_model)
 Company = resolve_model(settings.LINO.company_model)
+Household = resolve_model('households.Household')
+households_Type = resolve_model("households.Type")
+
+#~ def is_company(data):
+def PAR_model(data):
+    """
+    - wer eine nationalregisternummer hat ist eine Person, selbst wenn er auch eine MwSt-Nummer hat.
+    
+    """
+    if data.get('NB2',False):
+        return Person
+    if data.get('NOTVA',False):
+        if data.get('ALLO','') in (u"Eheleute"):
+            return Household
+        return Company
+    return Person
+    
+
     
 def json2py(dct):
     if '__date__' in dct:
@@ -238,7 +256,7 @@ class PAR(Controller):
             par2person(data,obj)
             #~ mapper.update(title='ALLO')
             title = data.get('ALLO','')
-            if title in ("Herr","Herrn","Frau",u"Fräulein","Madame"):
+            if title in ("Herr","Herrn","Frau",u"Fräulein","Madame","Monsieur"):
                 title = ''
             obj.title = title
             mapper.update(gesdos_id='NB1')
@@ -257,10 +275,17 @@ class PAR(Controller):
             if data.has_key('FIRME'):
                 for k,v in name2kw(data['FIRME']).items():
                     setattr(obj,k,v)
-        if obj.__class__ is Company:
+        elif obj.__class__ is Company:
             mapper.update(prefix='ALLO')
             mapper.update(vat_id='NOTVA')
             mapper.update(name='FIRME')
+        elif obj.__class__ is Household:
+            #~ mapper.update(prefix='ALLO')
+            #~ mapper.update(vat_id='NOTVA')
+            mapper.update(name='FIRME')
+            if data.get('ALLO','') == "Eheleute":
+                obj.type = households_Type.objects.get(pk=1)
+            
         Controller.applydata(self,obj,data,**mapper)
         
     def swapclass(self,obj,new_class,data):
@@ -271,7 +296,8 @@ class PAR(Controller):
             if v is not None:
                 kw[n] = v
         old_class = obj.__class__
-        obj = obj.contact_ptr
+        #~ obj = obj.contact_ptr
+        obj = obj.partner_ptr
         mti.delete_child(obj,old_class)
         newobj = mti.insert_child(obj,new_class)
         #~ obj.delete()
@@ -285,30 +311,40 @@ class PAR(Controller):
         try:
             return Person.objects.get(pk=id)
         except Person.DoesNotExist:
-            try:
-                return Company.objects.get(pk=id)
-            except Company.DoesNotExist:
-                pass
+            pass
+        try:
+            return Company.objects.get(pk=id)
+        except Company.DoesNotExist:
+            pass
+        try:
+            return Household.objects.get(pk=id)
+        except Household.DoesNotExist:
+            pass
         
     def PUT_special(self,obj,**kw):
-        #~ vat_id = kw['data'].get('NOTVA',None)
-        #~ if vat_id:
-        if is_company(kw['data']):
-            if obj.__class__ is Person:
-                dblogger.info("%s:%s (%s) : Person becomes Company",kw['alias'],kw['id'],obj2str(obj))
-                self.swapclass(obj,Company,kw['data'])
-                return True
-        else:
-            if obj.__class__ is Company:
-                dblogger.info("%s:%s (%s) : Company becomes Person",kw['alias'],kw['id'],obj2str(obj))
-                self.swapclass(obj,Person,kw['data'])
-                return True
+        model = PAR_model(kw['data'])
+        if obj.__class__ != model:
+            dblogger.info("%s:%s (%s) : %s becomes %s",kw['alias'],kw['id'],obj2str(obj),
+                obj.__class__.__name__,model.__name__)
+            self.swapclass(obj,model,kw['data'])
+            return True
+        #~ if is_company(kw['data']):
+            #~ if obj.__class__ is Person:
+                #~ dblogger.info("%s:%s (%s) : Person becomes Company",kw['alias'],kw['id'],obj2str(obj))
+                #~ self.swapclass(obj,Company,kw['data'])
+                #~ return True
+        #~ else:
+            #~ if obj.__class__ is Company:
+                #~ dblogger.info("%s:%s (%s) : Company becomes Person",kw['alias'],kw['id'],obj2str(obj))
+                #~ self.swapclass(obj,Person,kw['data'])
+                #~ return True
             
     def create_object(self,kw):
-        if is_company(kw['data']):
-            return Company()
-        else:
-            return Person()
+        return PAR_model(kw['data'])()
+        #~ if is_company(kw['data']):
+            #~ return Company()
+        #~ else:
+            #~ return Person()
       
     #~ def POST(self,**kw):
         #~ self.applydata(obj,kw['data'])

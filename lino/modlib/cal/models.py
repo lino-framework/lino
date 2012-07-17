@@ -185,9 +185,13 @@ class Calendars(dd.Table):
     url_template username password
     readonly invite_team_members color start_date
     build_method template email_template attach_to_email
-    EventsByCalendar
-    # SubscriptionsByCalendar
+    EventsByCalendar SubscriptionsByCalendar
     """
+
+    insert_layout = dd.FormLayout("""
+    name 
+    type invite_team_members color 
+    """,window_size=(60,'auto'))
 
 #~ def default_calendar(user):
     #~ """
@@ -1421,7 +1425,7 @@ class Task(Component):
         
 
 class Tasks(dd.Table):
-    debug_permissions = True
+    #~ debug_permissions = True
     model = 'cal.Task'
     required = dict(user_groups='office')
     column_names = 'start_date summary state *'

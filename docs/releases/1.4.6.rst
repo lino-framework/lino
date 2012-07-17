@@ -1,0 +1,26 @@
+Version 1.4.6 (20120717)
+========================
+
+Bugfix release because of one important bug:
+
+- :term:`watch_tim` didn't yet support synchronizing of Households.
+
+Other changes:
+
+- Detail of a Calendar now includes SubscriptionsByCalendar. 
+  System Admin can now easily add Subscriptions for the concerned 
+  users after creating a new Calendar.
+
+- cal.Calendars, Persons, Companies and Partners now also 
+  have their separate insert_layout
+
+- cal.Tasks accidentally had 
+  :attr:`debug_permissions <lino.core.modeltools.Model.debug_permissions>` 
+  set to `True`
+  
+- Setting:attr:`lino.Lino.build_js_cache_on_startup` to `True`
+  didn't work.
+
+
+
+

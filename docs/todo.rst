@@ -12,7 +12,11 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Handle anonymous requests without database query.
+
+#.  MySettings shows an empty `SubscriptionsByUser` users?
+    Users cannot themselves edit their subscriptions?
+  
+
 
 #.  ManageAccessRequest now also has a separate insert_layout. 
     But we cannot inherit here from ManageAccessRequestDetail 

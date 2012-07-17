@@ -28,7 +28,7 @@ setup(name='lino',
       #~ dist_dir=os.path.join('docs','dist'),
       author='Luc Saffre',
       author_email='luc.saffre@gmail.com',
-      requires=['django','dateutil'],
+      requires=['django','dateutil','suds','PyYAML','odfpy'],
       url="http://lino.saffre-rumma.net",
       classifiers="""\
 Programming Language :: Python

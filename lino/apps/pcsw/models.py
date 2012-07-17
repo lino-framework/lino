@@ -1080,19 +1080,15 @@ class AllPersons(Partners):
     #~ debug_actions = True
     model = settings.LINO.person_model
     detail_layout = PersonDetail()
+    insert_layout = dd.FormLayout("""
+    title first_name last_name
+    gender language
+    """,window_size=(60,'auto'))
+    
     order_by = "last_name first_name id".split()
-    #~ can_view = perms.is_authenticated
-    #~ column_names = "name_column national_id gsm street street_no street_box city age email phone id bank_account1 aid_type coach1 language *"
-    #~ column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10 *"
     column_names = "name_column:20 national_id:10 gsm:10 address_column age:10 email phone:10 id bank_account1 aid_type coach1 language:10"
     
     app_label = 'contacts'
-    
-    #~ default_params = dict(is_active=True)
-    #~ extra = dict(
-      #~ select=dict(sort_name='lower(last_name||first_name)'),
-      #~ order_by=['sort_name'])
-    #~ order_by = None # clear the default value from contacts.Persons.order_by since we use extra order_by
     
     
     @classmethod
