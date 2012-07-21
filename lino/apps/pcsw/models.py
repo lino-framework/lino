@@ -92,8 +92,8 @@ from lino.core.modeltools import resolve_model, UnresolvedModel
 #~ # from lino.modlib.notes.models import NoteType
 #~ from lino.modlib.countries.models import Country, City
 
-if settings.LINO.user_model:
-    User = resolve_model(settings.LINO.user_model,strict=True)
+#~ if settings.LINO.user_model:
+    #~ User = resolve_model(settings.LINO.user_model,strict=True)
 
 
 def is_valid_niss(national_id):
@@ -393,10 +393,10 @@ class Person(CpasPartner,contacts.Person,contacts.Born,Printable):
         blank=True,null=True,
         verbose_name=_("until"))
     
-    coach1 = models.ForeignKey(settings.LINO.user_model,
+    coach1 = dd.ForeignKey(settings.LINO.user_model,
         blank=True,null=True,
         verbose_name=_("Coach 1"),related_name='coached1')
-    coach2 = models.ForeignKey(settings.LINO.user_model,
+    coach2 = dd.ForeignKey(settings.LINO.user_model,
         blank=True,null=True,
         verbose_name=_("Coach 2"),related_name='coached2')
         
@@ -418,12 +418,12 @@ class Person(CpasPartner,contacts.Person,contacts.Born,Printable):
         #~ ,validators=[niss_validator]
         )
         
-    health_insurance = models.ForeignKey(settings.LINO.company_model,blank=True,null=True,
+    health_insurance = dd.ForeignKey(settings.LINO.company_model,blank=True,null=True,
         verbose_name=_("Health insurance"),related_name='health_insurance_for')
-    pharmacy = models.ForeignKey(settings.LINO.company_model,blank=True,null=True,
+    pharmacy = dd.ForeignKey(settings.LINO.company_model,blank=True,null=True,
         verbose_name=_("Pharmacy"),related_name='pharmacy_for')
     
-    nationality = models.ForeignKey('countries.Country',
+    nationality = dd.ForeignKey('countries.Country',
         blank=True,null=True,
         related_name='by_nationality',
         verbose_name=_("Nationality"))
@@ -1279,7 +1279,7 @@ class ClientsTest(Persons):
     #~ required_user_level = UserLevels.manager
     label = _("Data Test Clients")
     parameters = dict(
-      user = models.ForeignKey(User,blank=True,verbose_name=_("Coached by")),
+      user = dd.ForeignKey(settings.LINO.user_model,blank=True,verbose_name=_("Coached by")),
       today = models.DateField(_("only active on"),blank=True,default=datetime.date.today),
       invalid_niss = models.BooleanField(_("Check NISS validity"),default=True),
       overlapping_contracts = models.BooleanField(_("Check for overlapping contracts"),default=True),
@@ -1422,7 +1422,7 @@ class UsersWithClients(dd.VirtualTable):
         #~ logger.info('20120629 %r', [x.value for x in profiles])
         #~ logger.info('20120629 %r', profiles)
         #~ (UserProfiles.melanie,UserProfiles.hubert,UserProfiles.admin)
-        qs = User.objects.filter(profile__in=profiles)
+        qs = users.User.objects.filter(profile__in=profiles)
         #~ qs = User.objects.all()
         if ar.get_user().profile.level < UserLevels.admin:
             #~ qs = qs.exclude(level__gte=UserLevels.manager)
@@ -1644,7 +1644,7 @@ class PersonSearch(mixins.AutoUser,mixins.Printable):
     
     only_my_persons = models.BooleanField(_("Only my persons")) # ,default=True)
     
-    coached_by = models.ForeignKey(settings.LINO.user_model,
+    coached_by = dd.ForeignKey(settings.LINO.user_model,
         verbose_name=_("Coached by"),
         related_name='persons_coached',
         blank=True,null=True)

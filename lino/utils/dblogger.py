@@ -69,17 +69,17 @@ class DiffingMixin(object):
 
 
 
-def on_user_change(request,elem):    
-    m = getattr(elem,'on_user_change',None)
-    if m: 
-        m(request)
+#~ def on_user_change(request,elem):    
+    #~ m = getattr(elem,'on_user_change',None)
+    #~ if m: 
+        #~ m(request)
 
 def log_created(request,elem):
-    on_user_change(request,elem)
+    #~ on_user_change(request,elem)
     logger.info(u"%s created by %s.",obj2str(elem),request.user)
     
 def log_deleted(request,elem):
-    on_user_change(request,elem)
+    #~ on_user_change(request,elem)
     logger.info(u"%s deleted by %s.",obj2str(elem),request.user)
     
 def log_changes(request,elem):
@@ -87,7 +87,7 @@ def log_changes(request,elem):
     Log the changes that have been made to every field of `elem` 
     if `elem` is an instance of `DiffingMixin`, otherwise does nothing.
     """
-    on_user_change(request,elem)
+    #~ on_user_change(request,elem)
     
     if isinstance(elem,DiffingMixin):
         changes = []

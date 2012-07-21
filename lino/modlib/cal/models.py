@@ -253,44 +253,44 @@ class SubscriptionsByUser(Subscriptions):
 #~ class MySubscriptions(Subscriptions,mixins.ByUser):
     #~ pass
 
+if settings.LINO.user_model:
 
-
-class Membership(mixins.UserAuthored):
-    """
-    A Membership is when a User decides that subscribes to somebody else's Calendar.
-    
-    :user: points to the author (recipient) of this membership
-    :watched_user: points to the watched user
-    
-    """
-    
-    class Meta:
-        verbose_name = _("Membership")
-        verbose_name_plural = _("Memberships")
+    class Membership(mixins.UserAuthored):
+        """
+        A Membership is when a User decides that subscribes to somebody else's Calendar.
         
-    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
-    
-    watched_user = models.ForeignKey(settings.LINO.user_model,
-        help_text=_("""\
-The user whose calendar events you want to see in team view."""))
-
-
-
-    @dd.chooser()
-    def watched_user_choices(cls,user):
-        return settings.LINO.user_model.objects.exclude(
-            profile=dd.UserProfiles.blank_item).exclude(id=user.id)
-    
+        :user: points to the author (recipient) of this membership
+        :watched_user: points to the watched user
         
-class Memberships(dd.Table):
-    required = dict(user_groups='office',user_level='manager')
-    model = Membership
+        """
+        
+        class Meta:
+            verbose_name = _("Membership")
+            verbose_name_plural = _("Memberships")
+            
+        #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
+        
+        watched_user = models.ForeignKey(settings.LINO.user_model,
+            help_text=_("""\
+    The user whose calendar events you want to see in team view."""))
 
 
-class MembershipsByUser(Memberships):
-    required = dict(user_groups='office')
-    master_key = 'user'
-    label = _("Team Members")
+
+        @dd.chooser()
+        def watched_user_choices(cls,user):
+            return settings.LINO.user_model.objects.exclude(
+                profile=dd.UserProfiles.blank_item).exclude(id=user.id)
+        
+            
+    class Memberships(dd.Table):
+        required = dict(user_groups='office',user_level='manager')
+        model = Membership
+
+
+    class MembershipsByUser(Memberships):
+        required = dict(user_groups='office')
+        master_key = 'user'
+        label = _("Team Members")
 
 
 
@@ -855,8 +855,8 @@ Whether this is private, public or between.""")) # iCal:CLASS
     def is_user_modified(self):
         return self.state
         
-    def on_user_change(self,request):
-        raise NotImplementedError
+    #~ def on_user_change(self,request):
+        #~ raise NotImplementedError
         #~ self.user_modified = True
         
     #~ def summary_row(self,ui,rr,**kw):
@@ -1001,13 +1001,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             #~ self.state = EventState.obsolete
         super(Event,self).save(*args,**kw)
         if self.calendar and self.calendar.invite_team_members:
-            if True or self.access_class == AccessClasses.public:
-                if not self.state in (EventState.blank_item, EventState.draft):
-                    if self.guest_set.all().count() == 0:
-                        #~ print 20120711
-                        for obj in Membership.objects.filter(user=self.user):
-                            if obj.watched_user.partner:
-                                Guest(event=self,partner=obj.watched_user.partner).save()
+            if not self.state in (EventState.blank_item, EventState.draft):
+                if self.guest_set.all().count() == 0:
+                    #~ print 20120711
+                    for obj in Membership.objects.filter(user=self.user):
+                        if obj.watched_user.partner:
+                            Guest(event=self,partner=obj.watched_user.partner).save()
         
     def after_state_change(self,ar,kw,old,new):
         """
@@ -1027,10 +1026,25 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             #~ kw['message'] += '\n(' + _("Event remains *%s*.") % self.state + ')'
                 
             
-    def on_user_change(self,request):
+    def before_ui_save(self,ar,**kw):
+        """
+        Mark the event as "user modified" by setting a default state.
+        This is important because EventGenerators may not modify any user-modified Events.
+        """
         if not self.state:
-            self.state = EventState.draft
-        #~ self.user_modified = True
+            if ar.request.subst_user:
+                self.state = EventState.suggested
+                #~ self.state = EventState.reserved
+            else:
+                self.state = EventState.draft
+        return super(Event,self).before_ui_save(ar,**kw)
+        
+    #~ def on_user_change(self,request):
+        #~ if not self.state:
+            #~ if request.subst_user:
+                #~ self.state = EventState.reserved
+            #~ else:
+                #~ self.state = EventState.draft
         
     def on_create(self,ar):
         self.start_date = datetime.date.today()
@@ -1229,16 +1243,25 @@ if settings.LINO.project_model:
 if settings.LINO.user_model:    
   
     class MyEvents(Events,mixins.ByUser):
-        required = dict(user_groups='office')
         help_text = _("Table of all my calendar events.")
+        required = dict(user_groups='office')
         column_names = 'start_date start_time calendar project summary state workflow_buttons *'
-        #~ model = 'cal.Event'
-        #~ label = _("My Events")
-        #~ column_names = 'start_date start_time summary state *'
+        
+    #~ class EventsReserved(Events):
+        #~ help_text = _("Table of all reserved events.")
+        #~ label = _("Reserved Events")
+        #~ required = dict(user_groups='office',user_level='manager')
+        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
+        #~ known_values = dict(state=EventState.reserved)
+        
+    #~ class MyEventsReserved(EventsReserved,MyEvents):
+        #~ help_text = _("Table of my reserved events (to become scheduled).")
+        #~ required = dict(user_groups='office')
+        #~ column_names = 'start_date start_time project summary workflow_buttons *'
+        #~ label = _("My reserved Events")
+        
         
     class EventsSuggested(Events):
-        """
-        """
         help_text = _("Table of all suggested events.")
         label = _("Suggested Events")
         required = dict(user_groups='office',user_level='manager')
@@ -1252,8 +1275,6 @@ if settings.LINO.user_model:
         label = _("My suggested Events")
         
     class EventsNotified(Events):
-        """
-        """
         help_text = _("Table of all notified events (waiting to become scheduled).")
         label = _("Notified Events")
         required = dict(user_groups='office',user_level='manager')
@@ -1409,9 +1430,14 @@ class Task(Component):
         #~ return ar.success_response(refresh=True)
     
 
-    def on_user_change(self,request):
+    def before_ui_save(self,ar,**kw):
         if not self.state:
             self.state = TaskState.todo
+        return super(Task,self).before_ui_save(ar,**kw)
+        
+    #~ def on_user_change(self,request):
+        #~ if not self.state:
+            #~ self.state = TaskState.todo
         #~ self.user_modified = True
         
     @classmethod
@@ -1562,6 +1588,14 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
             self.event,event_summary(self.event,ar.get_user()))
         #~ return event_summary(self.event,ar.get_user())
         
+    def before_ui_save(self,ar,**kw):
+        if not self.state:
+            self.state = GuestState.invited
+        return super(Guest,self).before_ui_save(ar,**kw)
+        
+    #~ def on_user_change(self,request):
+        #~ if not self.state:
+            #~ self.state = GuestState.invited
         
 
     #~ def get_recipient(self):
@@ -2207,6 +2241,7 @@ def setup_main_menu(site,ui,user,m):
     #~ m  = m.add_menu("events",_("Events"))
     m.add_action(MyEvents)
     #~ m.add_action(MyEventsToday)
+    #~ m.add_action(MyEventsReserved)
     m.add_action(MyEventsSuggested)
     m.add_action(MyEventsNotified)
     #~ m.add_action(MyEventsToSchedule)
@@ -2215,6 +2250,7 @@ def setup_main_menu(site,ui,user,m):
     
     m.add_separator('-')
     m.add_action(Events)
+    #~ m.add_action(EventsReserved)
     m.add_action(EventsSuggested)
     m.add_action(EventsNotified)
     #~ m.add_action(EventsToSchedule)
@@ -2270,6 +2306,12 @@ def setup_quicklinks(site,ui,user,m):
         m.add_action(MyEventsSuggested)
         m.add_action(MyEventsNotified)
         m.add_action(MyTasksToDo)
+        
+def whats_up(site,ui,user):
+    #~ MyEventsReserved
+    MyEventsSuggested
+    MyEventsNotified
+    
         
 dd.add_user_group('office',MODULE_LABEL)
 

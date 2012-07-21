@@ -10,6 +10,9 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Defines classes :class:`Frame` and :class:`FrameHandle`
+"""
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,6 +22,9 @@ from lino.core import actors
 from lino.core import actions
 
 class FrameHandle(base.Handle): 
+    """
+    Deserves more documentation.
+    """
     def __init__(self,ui,frame):
         #~ assert issubclass(frame,Frame)
         self.actor = frame
@@ -34,6 +40,7 @@ class FrameHandle(base.Handle):
 
 class Frame(actors.Actor): 
     """
+    Deserves more documentation.
     """
     _handle_class = FrameHandle
     #~ default_action_class = None

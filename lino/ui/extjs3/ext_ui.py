@@ -1125,11 +1125,25 @@ tinymce.init({
         #~ yield '<!-- overrides to library -->'
         #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % self.media_url()
         
+        
+        """
+        Acting as another user will not give you the access permissions of that user.
+        A secretary who has authority to act as her boss in order to manage his calendar
+        should not also see e.g. statistic reports to which she has no access.
+        For system admins it is different: 
+        when a system admin acts as another user, 
+        he inherits this user's access permissions. 
+        System admins use this feature to test the permissions of other users.
+        """
+        user = request.user
+        if user.profile.level >= dd.UserLevels.admin:
+            if request.subst_user:
+                user = request.subst_user
         if not settings.LINO.build_js_cache_on_startup:
-            self.build_js_cache_for_user(request.user)
-            
+            self.build_js_cache_for_user(user)
         yield '<script type="text/javascript" src="%s"></script>' % (
-            self.media_url(*self.lino_js_parts(request.user)))
+            self.media_url(*self.lino_js_parts(user)))
+            
 
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -1301,6 +1315,8 @@ tinymce.init({
             return self.error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
         #~ logger.info('20120228 store.form2obj passed, elem is %s' % obj2str(elem))
+        
+        elem.before_ui_save(ar)
         
         if not is_new:
             dblogger.log_changes(request,elem)

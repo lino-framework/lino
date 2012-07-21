@@ -1026,7 +1026,8 @@ class Candidatures(dd.Table):
     column_names = 'date_submitted job:25 * id'
 
 class CandidaturesByPerson(Candidatures):
-    required_user_level = None
+    required = dict(user_groups='integ')
+    #~ required_user_level = None
     master_key = 'person'
 
 class CandidaturesBySector(Candidatures):
@@ -1036,7 +1037,8 @@ class CandidaturesByFunction(Candidatures):
     master_key = 'function'
 
 class CandidaturesByJob(Candidatures):
-    required_user_level = None
+    required = dict(user_groups='integ')
+    #~ required_user_level = None
     master_key = 'job'
     column_names = 'date_submitted person:25 * id'
   
@@ -1156,7 +1158,7 @@ class ContractsByType(Contracts):
 if True: # settings.LINO.user_model:
   
     from lino.core.modeltools import resolve_model, UnresolvedModel
-    USER_MODEL = resolve_model(settings.LINO.user_model)
+    #~ USER_MODEL = resolve_model(settings.LINO.user_model)
     
     class ContractsSearch(Contracts):
         """
@@ -1167,7 +1169,7 @@ if True: # settings.LINO.user_model:
         use_as_default_table = False
         
         parameters = dict(
-          user = models.ForeignKey(USER_MODEL,blank=True),
+          user = dd.ForeignKey(settings.LINO.user_model,blank=True),
           #~ user = models.ForeignKey(settings.LINO.user_model,blank=True),
           type = models.ForeignKey(ContractType,blank=True,verbose_name=_("Only contracts of type")),
           show_past = models.BooleanField(_("past contracts"),default=True),

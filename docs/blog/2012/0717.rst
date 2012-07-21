@@ -92,3 +92,23 @@ Dann mal los::
   make sdist
   
 Et voilà: :doc:`/releases/1.4.7`
+
+Nachdem ich die 1.4.7 dann beim Kunden installiert habe, 
+merke ich, dass ich den wichtigsten angeblich gelösten Bug 
+(der mit dem 'su') noch gar nicht getestet hatte, weil ich mir so sicher war. 
+Ein schneller Test ergibt, dass nichts sicher ist, und dass der Bug 
+in Wirklichkeit noch überhaupt nicht behoben ist.
+
+Also Release rückgängig machen: zunächst mal nur die 
+Archivdateien auf PyPI übers Web-Interface löschen
+bevor sie noch jemand runterlädt.
+Dann Abendessen.
+
+21.40 Uhr : So, jetzt ist der Bug endlich behoben.
+:checkin:`2f249e68276b`, nochmal ``make sdist``, 
+beim Kunden wieder runterladen und installieren. 
+
+Wie könnte man solchen Kuddelmuddel 
+im Release-Prozess vermeiden?
+Und jetzt sagt nicht, ich sollte einfach besser 
+testen bevor ich ein Release auf PyPI veröffentliche.

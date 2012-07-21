@@ -12,6 +12,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Defines classes :class:`Frame` and :class:`FrameHandle`
+"""
+
 
 from django.conf import settings
 from django.db import models
@@ -71,6 +75,9 @@ class RichTextField(models.TextField):
     
   
 class PercentageField(models.SmallIntegerField):
+    """
+    Deserves more documentation.
+    """
     def __init__(self, *args, **kw):
         defaults = dict(
             max_length=3,
@@ -80,6 +87,9 @@ class PercentageField(models.SmallIntegerField):
   
 #~ class MonthField(models.CharField):
 class MonthField(models.DateField):
+    """
+    Deserves more documentation.
+    """
     def __init__(self, *args, **kw):
         #~ defaults = dict(
             #~ max_length=10,
@@ -89,6 +99,9 @@ class MonthField(models.DateField):
         models.DateField.__init__(self,*args, **kw)
   
 class PriceField(models.DecimalField):
+    """
+    Deserves more documentation.
+    """
     def __init__(self, *args, **kwargs):
         defaults = dict(
             max_length=10,
@@ -116,6 +129,9 @@ class PriceField(models.DecimalField):
         
         
 class QuantityField(models.DecimalField):
+    """
+    Deserves more documentation.
+    """
     def __init__(self, *args, **kwargs):
         defaults = dict(
             max_length=5,
@@ -132,6 +148,11 @@ class QuantityField(models.DecimalField):
         #~ return fld
 
 class FakeField(object):
+    """
+    Base class for 
+    :class:`RemoteField`
+    :class:`DisplayField`
+    """
     choices = None
     primary_key = False
     editable = False
@@ -169,7 +190,9 @@ class RemoteField(FakeField):
         
 
 class DisplayField(FakeField):
-    
+    """
+    Deserves more documentation.
+    """
     choices = None
     blank = True
     drop_zone = None
@@ -190,6 +213,9 @@ class DisplayField(FakeField):
 
         
 class HtmlBox(DisplayField):
+    """
+    Deserves more documentation.
+    """
     pass
     
 #~ class QuickAction(DisplayField):
@@ -271,6 +297,9 @@ class VirtualField(FakeField): # (Field):
         return m(obj,ar)
         
 class Constant(object):
+    """
+    Deserves more documentation.
+    """
     #~ get = None
     def __init__(self,text_fn):
         self.text_fn = text_fn
@@ -278,7 +307,7 @@ class Constant(object):
 #~ def constant(verbose_name=None):
 def constant():
     """
-    Decorator to turn a method into a Constant.
+    Decorator to turn a method into a :class:`Constant`.
     """
     def decorator(fn):
         #~ def wrapped(*args):
@@ -289,6 +318,9 @@ def constant():
 
 
 class RequestField(VirtualField):
+    """
+    Deserves more documentation.
+    """
     def __init__(self,get,*args,**kw):
         kw.setdefault('max_length',8)
         VirtualField.__init__(self,DisplayField(*args,**kw),get)
@@ -621,10 +653,17 @@ class IncompleteDateField(models.CharField):
         #~ return self.get_prep_value(value)
         
 class DummyField(object):
-    pass
+    """
+    Deserves more documentation.
+    """
+    def __init__(self,*args,**kw):
+        pass
+    def set_attributes_from_name(self,k):
+        pass
 
 class RecurrenceField(models.CharField):
     """
+    Deserves more documentation.
     """
     #~ __metaclass__ = models.SubfieldBase
 

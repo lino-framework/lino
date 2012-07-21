@@ -1,0 +1,108 @@
+20120720
+========
+
+Printing the Lino version
+-------------------------
+
+In a Tx25 it is meaningful to also print the Lino version 
+because if a user executes a Tx25, prints it out, then dicovers 
+and reports a "missing handler" error, I fix it, 
+the user prints it again and zack! we two different documents 
+of the same request.
+That's not ISO 9002 compatible.
+Solution is to always print the Lino version and the date 
+of printing.
+
+New method :meth:`lino.Lino.site_header`.
+
+ 
+
+KeyError: u'row'
+----------------
+
+When an IdentifyPersonRequest has no answer because there were error messages 
+(e.g. requests no. 
+:srcref:`2 </lino/modlib/cbss/fixtures/demo_ipr_2.xml>`
+and
+:srcref:`5 </lino/modlib/cbss/fixtures/demo_ipr_5.xml>`
+of the demo fixture), then trying to print it causes 
+the following traceback::
+
+  201207-17 10:00:14 WARNING ext_ui : Action "Drucken" failed for IdentifyPerson-Anfrage "IdentifyPerson-Anfrage #18":
+  u'row'. Ein Fehlerbericht wurde an den Systemverwalter geschickt.
+  201207-17 10:00:14 ERROR ext_ui : u'row'
+  Traceback (most recent call last):
+    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1817, in api_element_view
+      rv = a.run(elem,ar)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 595, in run
+      bm.build(ar,self,elem)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 274, in build
+      return self.simple_build(ar,elem,tplfile,target)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 322, in simple_build
+      renderer.run()
+    File "/var/snapshots/appy-current/appy/pod/renderer.py", line 350, in run
+      self.currentParser.parse(self.contentXml)
+    File "/var/snapshots/appy-current/appy/shared/xml_parser.py", line 193, in parse
+      self.parser.parse(inputSource)
+    File "/usr/lib/python2.6/xml/sax/expatreader.py", line 107, in parse
+      xmlreader.IncrementalParser.parse(self, source)
+    File "/usr/lib/python2.6/xml/sax/xmlreader.py", line 123, in parse
+      self.feed(buffer)
+    File "/usr/lib/python2.6/xml/sax/expatreader.py", line 207, in feed
+      self._parser.Parse(data, isFinal)
+    File "/usr/lib/python2.6/xml/sax/expatreader.py", line 304, in end_element
+      self._cont_handler.endElement(name)
+    File "/var/snapshots/appy-current/appy/pod/pod_parser.py", line 279, in endElement
+      e.currentBuffer.action.execute()
+    File "/var/snapshots/appy-current/appy/pod/actions.py", line 76, in execute
+      self.do()
+    File "/var/snapshots/appy-current/appy/pod/actions.py", line 198, in do
+      del context[self.iter]
+  KeyError: u'row'  
+
+
+The document template has the following command::
+
+    do text for row in self.get_result_table(ar)
+
+And `get_result_table` in our case is a generator function that yields no results.
+
+The bug is in `appy.pod.actions.ForAction 
+<http://bazaar.launchpad.net/~appy-dev/appy/trunk/view/head:/pod/actions.py>`_::
+
+  class ForAction(BufferAction):
+      ...
+      def do(self):
+          context = self.buffer.env.context
+          ...
+          for item in self.exprResult:
+              context[self.iter] = item
+              ...
+          if hasHiddenVariable:
+              ...
+          else:
+              if self.exprResult:
+                  del context[self.iter]
+
+When `self.exprResult` is an empty iterator, the above traceback will occur.
+Discovered that I had already posted this bug to 
+the `appy forum <https://bugs.launchpad.net/appy/+bug/897755>`_.
+Applied my own workaround described there::
+
+    do text for row in list/self.get_result_table(ar))
+
+Posted my suggestion for a solution.
+
+Miscellaneous
+-------------
+
+Acting as another user will not give you the access permissions of that user.
+A secretary who has authority to act as her boss in order to manage his calendar
+should not also see e.g. statistic reports to which she has no access.
+New exception to this rule:
+For system admins it is different: 
+when a system admin acts as another user, 
+he inherits this user's access permissions. 
+System admins use this feature to test the permissions of other users.
+
+

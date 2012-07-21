@@ -128,9 +128,15 @@ class Model(models.Model):
         """
         pass
         
+    def before_ui_save(self,ar):
+        """
+        Called after a PUT or POST on this row, and before saving the row.
+        """
+        pass
+        
     def after_ui_save(self,ar,**kw):
         """
-        This is called after a PUT or POST on this row, 
+        Called after a PUT or POST on this row, 
         and after the row has been saved.
         It must return (and may modify) the `kw` which will become 
         the ajax response to the save() call.
@@ -138,6 +144,8 @@ class Model(models.Model):
         to fill default entries to a new Budget,
         or by :class:`lino.modlib.cbss.models.CBSSRequest` 
         to execute the request.
+        Or by :class:`lino.modlib.cal.models.Event` to mark the 
+        event as user modified by setting a default state.
         """
         return kw
         

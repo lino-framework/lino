@@ -4434,6 +4434,21 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   ,set_status : function(status) { this.refresh();}
   ,refresh : function() {Lino.eventStore.reload();}
   ,layout: 'fit'
+  ,get_base_params : function() {
+    var p = Ext.apply({},this.base_params);
+    Lino.insert_subst_user(p);
+    return p;
+  }
+  ,set_base_params : function(p) {
+    this.base_params = Ext.apply({},p);
+  }
+  ,clear_base_params : function() {
+      this.base_params = {};
+  }
+  ,set_base_param : function(k,v) {
+      if (!this.base_params) this.base_params = {};
+      this.base_params[k] = v;
+  }
 });
 
 Lino.calendar_app = function() { return {

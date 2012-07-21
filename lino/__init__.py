@@ -731,6 +731,8 @@ class Lino(object):
       
         #~ self.user_profile_fields = ['level']
         
+        #~ self.version = __version__
+        
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         
@@ -837,18 +839,34 @@ class Lino(object):
           override_modlib_models = ['contacts.Person']
           
     This will cause the modlib Person model to be abstract, 
-    and hence your application is responsible for defining anoter 
+    and hence your application is responsible for defining another 
     `Person` class with "contacts" as `app_label`::
           
-    class Person(contacts.Person,contacts.Born):
-        class Meta(contacts.Person.Meta):
-            app_label = 'contacts'
-            
-        def kiss(self):
-            ...
+      class Person(contacts.Person,contacts.Born):
+          class Meta(contacts.Person.Meta):
+              app_label = 'contacts'
+              
+          def kiss(self):
+              ...
           
     
     """
+    
+    def site_header(self):
+        """
+        Used e.g. in footnote or header of certain printed documents.
+        """
+        if self.is_installed('contacts'):
+            if self.site_config.site_company:
+                return self.site_config.site_company.address('<br/>')
+                #~ s = unicode(self.site_config.site_company) + " / "  + s
+        #~ return s
+
+    def site_version(self):
+        """
+        Used e.g. in footnote or header of certain printed documents.
+        """
+        return "Lino " + __version__
 
     def is_abstract_model(self,name):
         return name in self.override_modlib_models

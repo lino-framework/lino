@@ -16,19 +16,16 @@ Short-term
 #.  MySettings shows an empty `SubscriptionsByUser` users?
     Users cannot themselves edit their subscriptions?
   
-
-
 #.  ManageAccessRequest now also has a separate insert_layout. 
     But we cannot inherit here from ManageAccessRequestDetail 
     and thus had to (almost) duplicate the `setup_handle`::
   
-    def setup_handle(self,lh):
-        lh.p1.label = _("Requested action")
-        lh.proof.label = _("Proof of authentication")
-        super(ManageAccessRequestInsert,self).setup_handle(lh)
+      def setup_handle(self,lh):
+          lh.p1.label = _("Requested action")
+          lh.proof.label = _("Proof of authentication")
+          super(ManageAccessRequestInsert,self).setup_handle(lh)
   
     TODO: more transparent/reusable system to specify labels.
-
 
 
 #.  Make ChoiceLists visible through the web interface. 
@@ -41,17 +38,12 @@ Short-term
     die vorher noch wissen muss, um wieviele Tage (Wochen, Monate) oder 
     bis zu welchem Datum sie verschieben soll.
 
-#.  `on_user_change` and `after_ui_save` are two solutions 
-    for the same problem. Can replace `after_ui_save` 
-    with `on_user_change`, but `on_user_change` should receive 
-    the complete `ar`, not only the web request.
-
 #.  Tabelle der Benutzerprofile (und generell alle choicelists) in 
     eine lokale Konfigurationsdatei auslagern und dadurch auch für 
     Nichtprogrammierer bearbeitbar machen.
 
-#.  Wenn man auf einem Auswertungs Termin, der automatisch generiert wurde 
-    durch eine VSE oder VBE, auf "Duplizieren" klickt, dann dupliziert Lino 
+#.  Wenn man auf einem Auswertungstermin (der automatisch generiert wurde 
+    durch eine VSE oder VBE), auf "Duplizieren" klickt, dann dupliziert Lino 
     ihn zwar intern, löscht ihn aber anschließend gleich wieder, weil die 
     VSE die komplette Serie neu generiert. Zu analysieren, wann so eine 
     Aktion da überhaupt Sinn macht. 
@@ -61,6 +53,8 @@ Short-term
     noch nicht xmlgen.html verwendet.
     Hat beim Ausdruck sowieso keinen Sinn und sollte automatisch 
     versteckt werden.
+    Workaround: En attendant müssen die Benutzer wissen, dass sie 
+    diese Kolonne vor dem Ausdruck selber ausblenden müssen.
     
 #.  Optisch kennzeichnen, wenn ein Kolonnentitel einen Hilfetext hat.
 
@@ -73,8 +67,6 @@ Short-term
     > der Dropdown der Ausgaben immer noch die alten. Nur im "eigenen Fenster"
     > sind sie aktualisiert.
     
-
-#.  Vertragsüberschneidungen bei save() statt erst in der Datenkontrollliste.
 
 #.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 
     Basisklassen anzeigen. 

@@ -1,0 +1,35 @@
+20120721
+========
+
+- `on_user_change` and `after_ui_save` are two solutions 
+  for the same problem. Can replace `after_ui_save` 
+  with `on_user_change`, but `on_user_change` should receive 
+  the complete `ar`, not only the web request.
+
+
+--> Replaced `on_user_change` by new method 
+:meth:`lino.core.modeltools.Model.before_ui_save`.
+And we now call it from 
+:meth:`lino.ui.extjs3.ext_ui.ExtUI.form2obj_and_save`
+and no longer from :mod:`lino.utils.dblogger` 
+(who is responsible just for logging:
+e.g. it is also used by :term:`watch_tim` 
+which cannot be considered as a user change).
+
+
+
+- Bugfix: Calling "Act as..." from the Calendar Panel doesn't work.
+
+Caused a "Uncaught TypeError: Object [object Object] has no 
+method 'set_base_param'" in JS console.
+
+
+Calendar workflow
+-----------------
+
+Event state "suggested" now means that your colleague has 
+fixed a rendez-vous in your name with a client,
+the client is informed and 
+you must confirm that the date/time suits you.
+If it doesn't, *you* are responsible for contacting 
+the client and finding a new date/time.

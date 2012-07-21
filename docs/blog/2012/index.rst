@@ -224,6 +224,10 @@ As long as nobody protests, I'll save some time by writing in German.
   |br| 
   :doc:`16 <0716>`
   :doc:`17 <0717>`
+  :doc:`18 <0718>`
+  19
+  :doc:`20 <0720>`
+  :doc:`21 <0721>`
 
 .. |Aug| replace::  **August**
   |br| 
@@ -231,7 +235,6 @@ As long as nobody protests, I'll save some time by writing in German.
 .. |Sep| replace::  **September**
   |br| 
   
-
 .. |Oct| replace::  **October**
   |br| 
 

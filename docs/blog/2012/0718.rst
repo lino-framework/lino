@@ -1,0 +1,64 @@
+20120718
+========
+
+There were some failures while generating :doc:`/autodoc/index`.
+Documenting reusable Django models using Sphinx's 
+autodoc isn't easy because they -by design- 
+can work with different `DJANGO_SETTINGS_MODULES`.
+:func:`lino.dd.ForeignKey` is one of the subtle tricks 
+to get it working.
+
+
+choicelists.Choice caused UnicodeEncodeError 
+--------------------------------------------
+
+Today we had this traceback::
+
+  201207-18 09:05:54 ERROR watch_tim : 'ascii' codec can't encode character u'\xe4' in position 39: ordinal not in range($
+  Traceback (most recent call last):
+    File "/var/snapshots/lino/lino/apps/pcsw/management/commands/watch_tim.py", line 529, in watch
+      process_line(i,ln)
+    File "/var/snapshots/lino/lino/apps/pcsw/management/commands/watch_tim.py", line 502, in process_line
+      m(**kw)
+    File "/var/snapshots/lino/lino/apps/pcsw/management/commands/watch_tim.py", line 203, in PUT
+      self.validate_and_save(obj)
+    File "/var/snapshots/lino/lino/apps/pcsw/management/commands/watch_tim.py", line 137, in validate_and_save
+      dblogger.log_changes(REQUEST,obj)
+    File "/var/snapshots/lino/lino/utils/dblogger.py", line 95, in log_changes
+      changes.append(u"%s : %s --> %s" % (k,obj2str(v['old']),obj2str(v['new'])))
+    File "/var/snapshots/lino/lino/core/modeltools.py", line 402, in obj2str
+      return repr(i)
+    File "/var/snapshots/lino/lino/utils/choicelists.py", line 120, in __repr__
+      return str(self)
+  UnicodeEncodeError: 'ascii' codec can't encode character u'\xe4' in position 39: ordinal not in range(128)
+
+
+
+The explanation for riddle 2 is that
+:meth:`lino.utils.choicelists.Choice.__repr__` returns a unicode string::
+
+    def __repr__(self):
+        return str(self)
+
+"In Python2, __repr__ (and __str__) must return a string object, not a 
+unicode object. In Python3, the situation is reversed, __repr__ and __str__ 
+must return unicode objects, not byte (née string) objects" 
+(unutbu on `stackoverflow 
+<http://stackoverflow.com/questions/3627793/best-output-type-and-coding-practices-for-repr-functions>`__
+
+After also consulting the 
+`Python docs <http://docs.python.org/reference/datamodel.html#object.__repr__>`, 
+I'd say the the best solution is to have the following methods in 
+:class:`lino.utils.choicelists.Choice`::
+
+    def __unicode__(self):
+        return unicode(self.text)
+                
+    def __str__(self):
+        return unicode(self.text).encode(errors='backslashreplace')
+        
+    def __repr__(self):
+        if self.name is None:
+            return "%s (%s:%s)" % (self,self.choicelist.__name__,self.value)
+        return "%s (%s.%s:%s)" % (self,self.choicelist.__name__,self.name,self.value)
+  

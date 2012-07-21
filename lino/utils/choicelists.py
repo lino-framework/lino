@@ -22,7 +22,7 @@ are "batteries included" usage examples.
 Usage:
 
 (Doctesting this module requires the Django translation machine, 
-so we must set :setting:`DJANGO_SETTINGS_MODULE`)
+so we must set :envvar:`DJANGO_SETTINGS_MODULE`)
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.std.settings'
@@ -117,17 +117,13 @@ class Choice(object):
         #~ return curry(getattr(self.choicelist,name),self)
         
     def __repr__(self):
-        return str(self)
+        if self.name is None:
+            return "%s (%s:%s)" % (self,self.choicelist.__name__,self.value)
+        return "%s (%s.%s:%s)" % (self,self.choicelist.__name__,self.name,self.value)
+        
         
     def __str__(self):
-        #~ return "%s (%s:%s)" % (self.texts[babel.DEFAULT_LANGUAGE],
-          #~ self.__class__.__name__,self.value)
-        #~ name = getattr(self,'name',None)
-        if self.name is None:
-            return "%s (%s:%s)" % (unicode(self.text),
-                self.choicelist.__name__,self.value)
-        return "%s (%s.%s:%s)" % (unicode(self.text),
-            self.choicelist.__name__,self.name,self.value)
+        return unicode(self.text).encode(errors='backslashreplace')
         
     def __unicode__(self):
         return unicode(self.text)

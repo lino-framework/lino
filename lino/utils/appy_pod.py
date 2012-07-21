@@ -131,6 +131,7 @@ class Renderer(AppyRenderer):
         #~ self.extjs_ui = settings.LINO.ui
         #~ context.update(ui=self.extjs_ui)
         context.update(ui=settings.LINO.ui)
+        context.update(settings=settings)
         kw.update(finalizeFunction=self.finalize_func)
         AppyRenderer.__init__(self,template,context,result, **kw)
         #~ self.my_automaticstyles = odf.style.automaticstyles()

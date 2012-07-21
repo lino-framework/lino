@@ -194,31 +194,41 @@ class EventState(ChoiceList):
     
 add = EventState.add_item
 add('10', _("Draft"), 'draft',
-  required=dict(states=['','notified','suggested','scheduled']),
-  help_text=_("Will automatically be set if user saves some changes.")
+  required=dict(states=['']),
+  #~ required=dict(states=['','notified','suggested','scheduled']),
+  help_text=_("Default state of a new event.")
   ) # is_user_modified
+#~ add('11', _("Reserved"), 'reserved',
+  #~ required=dict(states=['']),
+  #~ help_text=_("Created by colleague. External guests are notified, but user must confirm.")
+  #~ ) # is_user_modified
 add('20', _("Suggested"), 'suggested',
+  #~ required=dict(states=['','notified','suggested','scheduled']),
+  required=dict(states=['']),
+  help_text=_("Created by colleague. External guests are notified, but user must confirm.")
   #~ required=dict(allow=allow_scheduled,states=['','draft']),
-  required=dict(states=['','draft']),
-  help_text=_("Author is waiting for feedback from guests. Requires a start_time.")
+  #~ required=dict(states=['','draft']),
+  #~ help_text=_("Waiting for feedback from colleagues.")
   )
 add('30', _("Notified"),'notified',
-    required=dict(states=['suggested']),
-    action_name=_("Notify guests"))
+    required=dict(states=['draft']),
+    action_name=_("Notify guests"),
+    help_text=_("Invitations have been sent. Waiting for feedback from guests.")
+    )
 #~ add('20', _("Suggested"),'suggested')
 #~ add('30', _("Published"),'published')
 add('40', _("Scheduled"), 'scheduled',
   #~ required=dict(allow=allow_scheduled,states=['','draft']),
   required=dict(states=['','draft','suggested']),
-  help_text=_("Confirmed. Events in this state are read-only.")
+  help_text=_("Confirmed. All participants have been informed.")
   )
 #~ add('40', _("Confirmed"),'confirmed',
     #~ required=dict(states=['scheduled','notified']),
     #~ help_text=_("""Confirmed. Events in this state are read-only."""))
-add('50', _("Took place"),'took_place',required=dict(states=['scheduled','notified','confirmed']))
-add('60', _("Rescheduled"),'rescheduled',required=dict(states=['scheduled','notified','confirmed']))
-add('70', _("Cancelled"),'cancelled',required=dict(states=['scheduled','notified','confirmed']))
-add('80', _("Absent"),'absent',required=dict(states=['scheduled','notified','confirmed']))
+add('50', _("Took place"),'took_place',required=dict(states=['scheduled','notified']))
+add('60', _("Rescheduled"),'rescheduled',required=dict(states=['suggested','scheduled','notified']))
+add('70', _("Cancelled"),'cancelled',required=dict(states=['suggested','scheduled','notified']))
+add('80', _("Absent"),'absent',required=dict(states=['scheduled','notified']))
 add('90', _("Obsolete"),'obsolete',required=dict(states=[]))
 
 

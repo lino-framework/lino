@@ -38,6 +38,7 @@ Extended Fields:
 - :class:`GenericForeignKeyIdField <lino.core.fields.GenericForeignKeyIdField>`
 - :class:`RecurrenceField <lino.core.fields.RecurrenceField>`
 - :class:`DummyField <lino.core.fields.DummyField>`
+- :func:`ForeignKey`
 
 Babel fields:
 
@@ -64,6 +65,10 @@ Utilities:
 - :func:`resolve_model <lino.core.modeltools.resolve_model>`
 - :func:`resolve_app <lino.core.modeltools.resolve_app>` 
 - :func:`chooser <lino.utils.choosers.chooser>` 
+- :func:`add_user_group` 
+- :func:`inject_quick_add_buttons` 
+- :func:`update_field` 
+- :func:`inject_field` 
 
 Miscellaneous:
 
@@ -183,6 +188,8 @@ def inject_field(model_spec,name,field,doc=None):
     Adds the given field to the given model.
     See also :doc:`/tickets/49`.
     """
+    if model_spec is None:
+        return # e.g. inject_field during autodoc when user_model is None
     if doc:
         field.__doc__ = doc
     #~ model = resolve_model(model,strict=True)
@@ -260,4 +267,18 @@ def add_user_group(name,label):
     else:
         if g.text != label:
             g.text += " & " + unicode(label)
+    
+def ForeignKey(othermodel,*args,**kw):
+    """
+    This is exactly the same as 
+    `django.db.models.ForeignKey <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`, 
+    except for a subtle difference: it supports `othermodel` being `None`
+    and returns a :class:`DummyField <lino.core.fields.DummyField>` 
+    in that case.
+    This difference is useful when designing reusable models.
+    """
+    if othermodel is None: 
+        return DummyField(othermodel,*args,**kw)
+    return models.ForeignKey(othermodel,*args,**kw)
+    
     

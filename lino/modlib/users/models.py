@@ -37,11 +37,11 @@ from lino.core import actions
 
 from lino.core.perms import UserLevels, UserProfiles
 
-if settings.LINO.user_model != 'users.User':
-    raise Exception("""\
-You are using lino.modlib.users in your INSTALLED_APPS, 
-but settings.LINO.user_model is %r (should be 'users.User').
-""" % settings.LINO.user_model)
+#~ if settings.LINO.is_installed('users') and settings.LINO.user_model != 'users.User':
+    #~ raise Exception("""\
+#~ You are using lino.modlib.users in your INSTALLED_APPS, 
+#~ but settings.LINO.user_model is %r (should be 'users.User').
+#~ """ % settings.LINO.user_model)
 
 class User(mixins.CreatedModified):
     """
@@ -227,48 +227,49 @@ class MySettings(Users):
     
     
 
-
-class Authority(mixins.UserAuthored):
-    """
-    An Authority is when a User gives another User the right to "represent him"
-   
-    :user: points to the user who gives the right of representation. author of this Authority
-    :authorized: points to the user who gets the right to represent the author
-    
-    """
-    
-    class Meta:
-        verbose_name = _("Authority")
-        verbose_name_plural = _("Authorities")
+if settings.LINO.user_model:
+  
+    class Authority(mixins.UserAuthored):
+        """
+        An Authority is when a User gives another User the right to "represent him"
+       
+        :user: points to the user who gives the right of representation. author of this Authority
+        :authorized: points to the user who gets the right to represent the author
         
-    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
-    
-    authorized = models.ForeignKey(settings.LINO.user_model,
-        help_text=_("""\
-The user who gets authority to act in your name."""))
-
-
-
-    @dd.chooser()
-    def authorized_choices(cls,user):
-        return settings.LINO.user_model.objects.exclude(
-            profile=dd.UserProfiles.blank_item).exclude(id=user.id)
-              #~ .exclude(level__gte=UserLevels.admin)
-    
+        """
         
-class Authorities(dd.Table):
-    required = dict(user_level='manager')
-    model = Authority
+        class Meta:
+            verbose_name = _("Authority")
+            verbose_name_plural = _("Authorities")
+            
+        #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
+        
+        authorized = models.ForeignKey(settings.LINO.user_model,
+            help_text=_("""\
+    The user who gets authority to act in your name."""))
 
 
-class AuthoritiesByUser(Authorities):
-    required = dict()
-    master_key = 'user'
-    label = _("Authorities given")
 
-class AuthoritiesByAuthorized(Authorities):
-    required = dict()
-    master_key = 'authorized'
-    label = _("Authorities taken")
+        @dd.chooser()
+        def authorized_choices(cls,user):
+            return settings.LINO.user_model.objects.exclude(
+                profile=dd.UserProfiles.blank_item).exclude(id=user.id)
+                  #~ .exclude(level__gte=UserLevels.admin)
+        
+            
+    class Authorities(dd.Table):
+        required = dict(user_level='manager')
+        model = Authority
+
+
+    class AuthoritiesByUser(Authorities):
+        required = dict()
+        master_key = 'user'
+        label = _("Authorities given")
+
+    class AuthoritiesByAuthorized(Authorities):
+        required = dict()
+        master_key = 'authorized'
+        label = _("Authorities taken")
 
 
