@@ -88,6 +88,7 @@ from lino.utils import isiterable
 from lino.utils.config import find_config_file
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
+from lino.utils.config import make_dummy_messages_file
 
 from lino.utils.jscompressor import JSCompressor
 if False:
@@ -114,7 +115,7 @@ if settings.LINO.user_model:
 
 MAX_ROW_COUNT = 300
 
-
+from lino.modlib.cal.utils import CalendarAction
     
 
 class HtmlRenderer(object):
@@ -1981,7 +1982,14 @@ tinymce.init({
             
     def write_lino_js(self,f,user):
         tpl = self.linolib_template()
+        
+        messages = set()
+        def mytranslate(s):
+            messages.add(s)
+            return _(s)
+        tpl._ = mytranslate
         f.write(jscompress(unicode(tpl)+'\n'))
+        make_dummy_messages_file(self.linolib_template_name(),messages)
         
         actors_list = [
             rpt for rpt in table.master_reports \
@@ -1996,7 +2004,6 @@ tinymce.init({
         """
         
         f.write("Lino.main_menu = %s;\n" % py2js(settings.LINO.get_site_menu(self,user)))
-            
 
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
@@ -2007,7 +2014,6 @@ tinymce.init({
 
         actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           
-                 
         #~ logger.info('20120120 table.all_details:\n%s',
             #~ '\n'.join([str(d) for d in table.all_details]))
         
@@ -2598,7 +2604,7 @@ tinymce.init({
             mainPanelClass = "Lino.%sPanel" % action
         elif isinstance(action,actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
-        elif isinstance(action,actions.Calendar):
+        elif isinstance(action,CalendarAction):
             mainPanelClass = "Lino.CalendarPanel"
             #~ mainPanelClass = "Lino.CalendarAppPanel"
             #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
@@ -2638,7 +2644,7 @@ tinymce.init({
         #~ yield "};" 
         yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action,py2js(windowConfig))
         #~ yield "  console.log('20120625 fn');" 
-        if isinstance(action,actions.Calendar):
+        if isinstance(action,CalendarAction):
             yield "  return Lino.calendar_app.get_main_panel();"
         else:
             p = dict()
@@ -2654,7 +2660,7 @@ tinymce.init({
             #~ yield "  p.is_main_window = true;" # workaround for problem 20111206
             p.update(is_main_window=True) # workaround for problem 20111206
             yield "  var p = %s;"  % py2js(p)
-            #~ if isinstance(action,actions.Calendar):
+            #~ if isinstance(action,CalendarAction):
                 #~ yield "  p.items = Lino.CalendarAppPanel_items;" 
             if params:
                 for ln in jsgen.declare_vars(params):

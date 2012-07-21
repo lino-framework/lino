@@ -496,23 +496,6 @@ class ShowEmptyTable(ShowDetailAction):
     #~ def __str__(self):
         #~ return str(self.actor)+'.'+self.name
         
-class Calendar(Action):
-    opens_a_window = True
-    label = _("Calendar")
-    url_action_name = 'grid' # because...
-    default_format = 'html'
-    
-    def get_window_layout(self):
-        return None
-        
-    #~ def __init__(self,*args,**kw):
-        #~ self.actor = actor # actor who offers this action
-        #~ super(Calendar,self).__init__(*args,**kw)
-        
-    #~ def __str__(self):
-        #~ return str(self.actor) + '.' + self.name
-
-
     
 
 class UpdateRowAction(RowAction):

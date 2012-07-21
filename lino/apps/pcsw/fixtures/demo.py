@@ -353,7 +353,7 @@ def objects():
     
     melanie = person(first_name=u"Mélanie",last_name=u"Mélard",
         email='melanie@example.com',
-        city=eupen,country='BE',gender=Gender.female)
+        city=eupen,country='BE',gender=Gender.female,language='fr')
     yield melanie
     melanie = User(username="melanie",partner=melanie,profile='110') 
     yield melanie

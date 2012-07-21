@@ -105,11 +105,12 @@ from lino.core.frames import Frame
 #~ from lino.core.frames import EmptyTable
 
 from lino.core.actions import action
+#~ from lino.core.actions import Action
 from lino.core.actions import RowAction
 from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
-from lino.core.actions import Calendar
+#~ from lino.core.actions import Calendar
 
 from lino.core.fields import DummyField
 from lino.core.fields import RecurrenceField

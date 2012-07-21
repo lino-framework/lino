@@ -33,3 +33,53 @@ the client is informed and
 you must confirm that the date/time suits you.
 If it doesn't, *you* are responsible for contacting 
 the client and finding a new date/time.
+
+
+Writing end-user documentation
+------------------------------
+
+I started a user documentation page for the calendar module:
+:doc:`/pcsw/calendrier`.
+But this page obviously is another example of why you should not 
+ask the developer of a framework to write end-user documentation 
+for one of the applications developed using that framework.
+
+I got stuck when I had the feeling that now I should add some screenshots,
+and I wanted them to be in French, of course.
+Instead of screenshots, Lino has now a series of subtle 
+optimizations and bugfixes which are useful only in 
+multilingual sites:
+
+Automatic events and tasks are now generated in the user's language.
+cal.PanelCalendars now returns calendar descriptions in the user's language.
+Users now inherit the language of their partner (if they have one).
+The messages in :xfile:`linolib.js` hadn't been extracted during the last 5 months.
+
+Or a funny little problems like with this 
+excerpt from :srcref:`/lino/ui/extjs3/linolib.js`::
+
+    config.bbar = config.bbar.concat([
+      '->',
+      { text: '[$_("Help Text Editor")]',
+        handler: Lino.help_text_editor,
+        qtip: "$_('Edit help texts for fields on this model.')",
+        scope: this}
+    ])
+
+(And the French for "Help Text Editor" is "Editeur textes d'aide". 
+Do you guess why there was a Javascript syntax error after translating?)
+
+Some bugs are not yet fixed:
+
+- Event.summary_row generates the following link 
+  which is supposed to open the detail window on that event::
+
+    javascript:Lino.cal.Events.detail_action.run({ "record_id": 238 })
+  
+  But normal users don't have `Lino.cal.Events` (seeing all Events 
+  at once is reserved to managers). Lino should link to the detail action
+  of EventsByPerson for example. But how to do this without too much 
+  work for the API developer? To be meditated.
+
+- Buttons "Save" and "Delete" are displayed in German also for French users.
+

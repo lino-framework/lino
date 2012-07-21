@@ -131,6 +131,8 @@ class Model(models.Model):
     def before_ui_save(self,ar):
         """
         Called after a PUT or POST on this row, and before saving the row.
+        Example in :class:`lino.modlib.cal.models.Event` to mark the 
+        event as user modified by setting a default state.
         """
         pass
         
@@ -144,8 +146,6 @@ class Model(models.Model):
         to fill default entries to a new Budget,
         or by :class:`lino.modlib.cbss.models.CBSSRequest` 
         to execute the request.
-        Or by :class:`lino.modlib.cal.models.Event` to mark the 
-        event as user modified by setting a default state.
         """
         return kw
         

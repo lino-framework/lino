@@ -22,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
 
 from lino.utils.choicelists import ChoiceList, Choice
+from lino.core import actions
 
 from dateutil.tz import tzlocal
 
@@ -53,6 +54,15 @@ def setkw(obj,**kw):
     for k,v in kw.items():
         setattr(obj,k,v)
                               
+class CalendarAction(actions.Action):
+    opens_a_window = True
+    label = _("Calendar")
+    url_action_name = 'grid' # because...
+    default_format = 'html'
+    
+    def get_window_layout(self):
+        return None
+  
 
 
 class Weekday(ChoiceList):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-15 10:15+0100\n"
+"POT-Creation-Date: 2012-07-21 17:01+0100\n"
 "PO-Revision-Date: 2012-02-21 20:01+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -16,63 +16,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:65
+#: .\models.py:67
 msgid "User"
 msgstr "Benutzer"
 
-#: .\models.py:66
+#: .\models.py:68
 msgid "Users"
 msgstr "Benutzer"
 
-#: .\models.py:69
+#: .\models.py:71
 #, fuzzy
 msgid "Username"
 msgstr "Benutzername"
 
-#: .\models.py:71
+#: .\models.py:73
 msgid ""
 "\n"
 "        Required. Must be unique. \n"
 "        "
 msgstr ""
 
-#: .\models.py:77
+#: .\models.py:79
 msgid "First name"
 msgstr ""
 
-#: .\models.py:78
+#: .\models.py:80
 msgid "Last name"
 msgstr ""
 
-#: .\models.py:79
+#: .\models.py:81
 msgid "e-mail address"
 msgstr ""
 
-#: .\models.py:81
+#: .\models.py:83
 msgid "Remarks"
 msgstr ""
 
-#: .\models.py:105
+#: .\models.py:107
 msgid "Name"
 msgstr ""
 
-#: .\models.py:240
+#: .\models.py:248
 msgid "Authority"
 msgstr ""
 
-#: .\models.py:241
+#: .\models.py:249
 msgid "Authorities"
 msgstr ""
 
-#: .\models.py:246
-msgid "The user who gets authority to act in your name."
+#: .\models.py:254
+msgid "    The user who gets authority to act in your name."
 msgstr ""
 
-#: .\models.py:266
+#: .\models.py:274
 msgid "Authorities given"
 msgstr ""
 
-#: .\models.py:271
+#: .\models.py:279
 msgid "Authorities taken"
 msgstr ""
 

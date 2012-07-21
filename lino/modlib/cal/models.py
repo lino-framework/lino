@@ -53,10 +53,9 @@ from lino.modlib.postings import models as postings
 
 
 from lino.modlib.cal.utils import \
-    Weekday, DurationUnits, setkw, dt2kw, EventState, GuestState, TaskState, AccessClasses
-#~ from lino.modlib.cal.utils import EventStatus, \
-    #~ TaskStatus, DurationUnit, Priority, AccessClass, \
-    #~ GuestStatus, setkw, dt2kw
+    Weekday, DurationUnits, setkw, dt2kw, \
+    EventState, GuestState, TaskState, AccessClasses, \
+    CalendarAction
 
 from lino.utils.babel import dtosl
 
@@ -165,8 +164,8 @@ class Calendar(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
               password=self.password)
         return ''
                     
-    def __unicode__(self):
-        return self.name
+    #~ def __unicode__(self):
+        #~ return self.name
         
     #~ def color(self,request):
         #~ return settings.LINO.get_calendar_color(self,request)
@@ -331,6 +330,7 @@ class Priority(babel.BabelNamed):
         verbose_name = _("Priority")
         verbose_name_plural = _('Priorities')
     ref = models.CharField(max_length='1')
+
 class Priorities(dd.Table):
     required = dict(user_groups='office')
     model = Priority
@@ -398,7 +398,10 @@ class EventGenerator(mixins.UserAuthored):
         
     def save(self,*args,**kw):
         super(EventGenerator,self).save(*args,**kw)
+        lang = babel.get_language()
+        babel.set_language(self.user.language)
         self.update_reminders()
+        babel.set_language(lang)
   
     def update_cal_rset(self):
         return self.exam_policy
@@ -1927,6 +1930,7 @@ def user_calendars(qs,user):
     #~ print 20120710, subs
     return qs.filter(id__in=subs)
 
+
 if settings.LINO.use_extensible:
   
     def parsedate(s):
@@ -1934,18 +1938,23 @@ if settings.LINO.use_extensible:
   
     class Panel(dd.Frame):
         required = dict(user_groups='office')
-        default_action = dd.Calendar()
+        default_action = CalendarAction()
         #~ default_action_class = dd.Calendar
 
     class PanelCalendars(Calendars):
         use_as_default_table = False
         required = dict(user_groups='office')
-        column_names = 'id name description color is_hidden'
+        #~ column_names = 'id name description color is_hidden'
+        column_names = 'id babel_name description color is_hidden'
         
         @classmethod
         def get_request_queryset(self,ar):
             qs = super(PanelCalendars,self).get_request_queryset(ar)
             return user_calendars(qs,ar.get_user())
+            
+        @dd.displayfield()
+        def babel_name(cls,self,ar):
+            return babel.babelattr(self,'name')
             
         @dd.virtualfield(models.BooleanField(_('Hidden')))
         def is_hidden(cls,self,ar):
@@ -2124,7 +2133,7 @@ class UpdateReminders(actions.RowAction):
     callable_from = (actions.GridEdit, actions.ShowDetailAction)
         
     def run(self,user,ar,**kw):
-        logger.info("Updating reminders for %s",user)
+        logger.info("Updating reminders for %s",unicode(user))
         n = update_reminders(user)
         kw.update(success=True)
         msg = _("%(num)d reminders for %(user)s have been updated."

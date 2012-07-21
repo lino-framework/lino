@@ -82,7 +82,7 @@ class User(mixins.CreatedModified):
     
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
-    language = babel.LanguageField()
+    language = babel.LanguageField(default=models.NOT_PROVIDED)
     
     if settings.LINO.is_installed('contacts'):
       
@@ -149,13 +149,19 @@ class User(mixins.CreatedModified):
             #~ l += settings.LINO.user_profile_fields
         return l
         
-    def save(self,*args,**kw):
+    def full_clean(self,*args,**kw):
         p = self.person
         if p is not None:
-            for n in ('first_name','last_name','email'):
+            for n in ('first_name','last_name','email','language'):
                 if not getattr(self,n):
                     setattr(self,n,getattr(p,n))
-        super(User,self).save(*args,**kw)
+            #~ self.language = p.language
+        if not self.language:
+            self.language = babel.DEFAULT_LANGUAGE
+        super(User,self).full_clean(*args,**kw)
+        
+    #~ def save(self,*args,**kw):
+        #~ super(User,self).save(*args,**kw)
         
     def get_received_mandates(self):
         #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]

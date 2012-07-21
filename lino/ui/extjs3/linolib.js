@@ -2262,7 +2262,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     if (config.content_type && this.action_name != 'insert') {
       config.bbar = config.bbar.concat([
         '->',
-        { text: '[$_("Help Text Editor")]',
+        { text: "[$_('Help Text Editor')]",
           handler: Lino.help_text_editor,
           qtip: "$_('Edit help texts for fields on this model.')",
           scope: this}
@@ -4245,7 +4245,7 @@ Mappings towards lino.modlib.cal.models.PanelCalendars
 // Sset SS = Ssite.modules.cal.PanelCalendars.get_handle(Sui).store
 Ext.ensible.cal.CalendarMappings = {
     CalendarId:   {name:'ID',       mapping: 'id', type: 'int'},
-    Title:        {name:'CalTitle', mapping: 'name', type: 'string'},
+    Title:        {name:'CalTitle', mapping: 'babel_name', type: 'string'},
     Description:  {name:'Desc',     mapping: 'description', type: 'string'},
     ColorId:      {name:'Color',    mapping: 'color', type: 'int'},
     IsHidden:     {name:'Hidden',   mapping: 'is_hidden', type: 'boolean'},    

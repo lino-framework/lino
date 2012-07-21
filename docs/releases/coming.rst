@@ -1,34 +1,17 @@
 Coming
 ======
 
-- Bugfix
-  "Wenn ich in UsersWithClients auf die "21" von Alicia / VSE 1 Begleiter klicke, 
-  öffnet Lino korrekt die Liste dieser 21 Klienten, aber wenn ich dann dort auf 
-  einer Person doppelklicke, kommt entweder "Keine weiteren Records vorhanden" 
-  oder das Detail einer anderen Person"
-  
-- Wenn man manuell einen Termin erstellte und im Insert Window das Feld "Kalender" 
-  leer ließ, dann kam eine "Ajax Communication failed". 
-  Jetzt darf man das Feld leer lassen.
-  
-  Lino nennt "Kalender" das, was wir bisher "Termin-Arten" nannten. 
-  Ich schlage vor, dass wir uns an diese Sicht der Dinge gewöhnen,
-  also das Wort "Termin-Art" (bis auf weiteres) aus unserem Wortschatz 
-  streichen und durch "Kalender" ersetzen.
-  Ein Kalender ist eine Gruppe von Terminen:
-  
-  - die in der Kalender-Ansicht ein- und ausgeblendet werden können, 
-  - die jede in ihrer eigenen Farbe dargestellt werden, 
-  - auf die man sich "abonnieren" kann oder nicht,
-  - die aus einem öffentlichen Kalender runtergeladen werden können. 
-    (ich bin z.B. auf die Kalender "Christliche Feiertage" und 
-    "Belgische Feiertage" abonniert)
-    
+- Neuer Terminzustand "Vorgemerkt" statt "Vorgeschlagen". 
+  Diverse Optimierungen im Workflow von Terminen.
 
-- Neue Kolonne "Begleiter 2" in Offene Kursanfragen 
-
-- Tx25 kennt jetzt die `AddressDeclarationAbroad` (TI018, 
-  Adresse déclarée à l'étranger). 
-  Außerdem ein paar allgemeine Optimierungen Formatierung.
+- Wenn Systemverwalter als jemand anderer arbeitet, kriegt er 
+  jetzt auch dessen Lesezugriffsrechte 
+  (Welche Menübefehle und Panels im UI sichtbar sind).
   
+- Beim Ausdruck von KBSS-Anfragen sowie in allen [pdf]-Ausdrucken
+  stehen jetzt mehr Infos in der Kopfzeile:
+  Name und Adresse des Betreibers, Lino-Version, Druckdatum.
+  
+- Diverse Bugfixes
+
   
