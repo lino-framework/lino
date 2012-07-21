@@ -116,11 +116,11 @@ def wildcard_data_elems(model):
 
 #~ def summary_row(obj,ui,rr,**kw):
 def summary_row(obj,ar,**kw):
-    #~ return obj.summary_row(ui,**kw)
-    m = getattr(obj,'summary_row',None)
-    if m:
-        return m(ar,**kw)
-    return ar.renderer.href_to(obj)
+    return obj.summary_row(ar,**kw)
+    #~ m = getattr(obj,'summary_row',None)
+    #~ if m:
+        #~ return m(ar,**kw)
+    #~ return ar.renderer.href_to(obj)
     #~ return ar.ui.ext_renderer.href_to(obj)
   
 
@@ -543,6 +543,10 @@ class Table(AbstractTable):
         return a
 
                     
+    @classmethod
+    def is_valid_row(self,row):
+        return isinstance(row,self.model)
+        
     @classmethod
     def get_actor_label(self):
         """

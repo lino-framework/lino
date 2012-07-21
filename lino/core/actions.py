@@ -15,7 +15,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import traceback
-from django.utils.translation import ugettext as _
+#~ from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.conf import settings
 from django import http
@@ -608,6 +609,9 @@ class ActionRequest(object):
             #~ return
         #~ raise ConfirmationRequired(step,messages)
 
+    def href_to(self,*args,**kw):
+        return self.renderer.href_to(self,*args,**kw)
+        
     def parse_req(self,request,rqdata,**kw): 
         #~ if self.actor.parameters:
             #~ kw.update(param_values=self.ui.parse_params(self.ah,request))

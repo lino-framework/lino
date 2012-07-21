@@ -220,6 +220,9 @@ class Model(models.Model):
         """
         pass
   
+    def summary_row(self,ar,**kw):
+        return ar.href_to(self)
+        
 def is_devserver():
     """
     Returns True if we are running a development server.

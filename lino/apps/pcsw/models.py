@@ -1408,30 +1408,15 @@ class UsersWithClients(dd.VirtualTable):
         So we add the rule that only system admins see other system admins.
         
         """
-        #~ if ar.get_user().is_superuser:
-        #~ if ar.get_user().level >= UserLevels.expert:
-            #~ # flt = Q(is_spis=True) 
-            #~ flt = Q(integ_level__gt='') 
-        #~ else:
-            #~ # flt = Q(is_spis=True,is_superuser=False)
-            #~ # flt = Q(integ_level__isnull=False,is_superuser=False)
-            #~ flt = Q(integ_level__gt='',level__gte=UserLevels.expert)
-        #~ qs = User.objects.exclude(integ_level='')
         profiles = [p for p in dd.UserProfiles.items() if p.integ_level]
-        #~ profiles = [p for p in UserProfiles.items()]
-        #~ logger.info('20120629 %r', [x.value for x in profiles])
-        #~ logger.info('20120629 %r', profiles)
-        #~ (UserProfiles.melanie,UserProfiles.hubert,UserProfiles.admin)
         qs = users.User.objects.filter(profile__in=profiles)
-        #~ qs = User.objects.all()
         if ar.get_user().profile.level < UserLevels.admin:
-            #~ qs = qs.exclude(level__gte=UserLevels.manager)
             qs = qs.exclude(profile__gte=UserLevels.admin)
         for user in qs.order_by('username'):
             r = MyPersons.request(ar.ui,subst_user=user)
             if r.get_total_count():
-            #~ if len(r.data_iterator):
                 user.my_persons = r
+                #~ user._detail_action = users.MySettings.default_action
                 yield user
                 
     @dd.virtualfield('contacts.Person.coach1')

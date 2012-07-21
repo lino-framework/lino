@@ -173,7 +173,7 @@ class CreateMail(dd.RowAction):
         if as_attachment:
             a = Attachment(mail=m,owner=elem)
             a.save()
-        js = ar.renderer.instance_handler(m)
+        js = ar.renderer.instance_handler(ar,m)
         #~ url = rr.renderer.js2url(js)
         #~ kw.update(open_url=rr.renderer.get_detail_url(m))
         #~ kw.update(open_url=url)
@@ -445,11 +445,6 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
         #~ recs = []
         recs = [ unicode(r) for r in 
             Recipient.objects.filter(mail=self,type=RecipientType.to)]
-          
-            #~ s = rr.ui.href_to(r.owner)
-            #~ if r.type != RecipientType.to:
-                #~ s += "(%s)" % r.type
-            #~ recs.append(s)
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         

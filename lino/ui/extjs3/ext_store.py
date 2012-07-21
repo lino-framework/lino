@@ -277,7 +277,7 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         #~ return req.ui.href_to(obj)
         
     def value2html(self,ar,v):
-        h = ar.renderer.instance_handler(v)
+        h = ar.renderer.instance_handler(ar,v)
         if h is None:
             #~ return cgi.escape(force_unicode(obj))
             #~ return xghtml.E.p(xghtml.E.b(cgi.escape(force_unicode(v))))
@@ -458,7 +458,7 @@ class GenericForeignKeyField(StoreField):
     def full_value_from_object(self,obj,ar):
         owner = getattr(obj,self.name)
         if owner is None: return ''
-        return ar.renderer.href_to(owner)
+        return ar.href_to(owner)
   
 class SpecialStoreField(StoreField):
     field = None 

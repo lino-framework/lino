@@ -152,7 +152,8 @@ if settings.LINO.is_installed('contenttypes'):
                   if getattr(cl,'_meta',False) and not cl._meta.abstract:
                       #~ logger.info("20120205 adding(%r)",cl)
                       ct = contenttypes.ContentType.objects.get_for_model(cl)
-                      chunks.append(ar.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
+                      #~ chunks.append(ar.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
+                      chunks.append(ar.href_to(ct,unicode(cl._meta.verbose_name)))
           if obj is not None:
               #~ add(obj.model_class())
               for b in obj.model_class().__bases__:

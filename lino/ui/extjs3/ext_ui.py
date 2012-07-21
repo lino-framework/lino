@@ -255,8 +255,8 @@ class ExtRenderer(HtmlRenderer):
     """
     Deserves more documentation.
     """
-    def href_to(self,obj,text=None):
-        h = self.instance_handler(obj)
+    def href_to(self,ar,obj,text=None):
+        h = self.instance_handler(ar,obj)
         if h is None:
             return cgi.escape(force_unicode(obj))
         url = self.js2url(h)
@@ -313,7 +313,7 @@ class ExtRenderer(HtmlRenderer):
             elif v.request is not None:
                 url = self.get_request_url(v.request)
             elif v.instance is not None:
-                h = self.instance_handler(v.instance)
+                h = self.instance_handler(None,v.instance)
                 assert h is not None
                 return handler_item(v,h,None)
                 #~ handler = "function(){%s}" % self.instance_handler(v.instance)
@@ -387,12 +387,18 @@ class ExtRenderer(HtmlRenderer):
             #~ url = self.js2url('Lino.row_action(%s,%s)' % (py2js(obj.pk),py2js(a.name)))
             return self.href_button(url,label,a.help_text)
         
-    def instance_handler(self,obj):
+    def instance_handler(self,ar,obj):
         #~ a = obj.__class__._lino_default_table.get_action('detail')
-        a = obj.__class__._lino_default_table.detail_action
+        a = getattr(obj,'_detail_action',None)
+        if a is None:
+        #~ if ar is not None and ar.actor.is_valid_row(obj):
+            #~ a = ar.actor.detail_action
+        #~ else:
+            a = obj.__class__._lino_default_table.detail_action
         if a is not None:
-            #~ raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
-            return self.action_call(None,a,dict(record_id=obj.pk))
+            if ar is None or a.get_action_permission(ar.get_user(),obj,None):
+                #~ raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
+                return self.action_call(None,a,dict(record_id=obj.pk))
         
     def request_handler(self,ar,*args,**kw):
         #~ bp = rr.request2kw(self.ui,**kw)

@@ -126,6 +126,7 @@ def analyze_models():
                   'allow_cascaded_delete',
                   'workflow_state_field',
                   'workflow_owner_field',
+                  'summary_row',
                   'on_duplicate',
                   'on_create'):
             if not hasattr(model,k):
@@ -134,33 +135,6 @@ def analyze_models():
                 #~ model.__dict__[k] = getattr(dd.Model,k)
         
 
-        
-#~ def install_summary_rows():
-  
-    #~ """ 
-    #~ Install a :modmeth:`summary_row` method to models that 
-    #~ don't have their own.
-    #~ """
-          
-    #~ for model in models.get_models():
-        #~ m = get_class_attr(model,'get_row_permission') 
-        #~ if m is None:
-            #~ def get_row_permission(obj,user,state,action):
-                #~ return action.get_action_permission(user,obj,state)
-            #~ model.get_row_permission = get_row_permission
-            #~ logger.info('20120621 %s : installed get_row_permission method', model)
-        
-        #~ m = get_class_attr(model,'summary_row') 
-        #~ if m is None:
-            #~ if model._lino_default_table.detail_layout:
-                #~ def f(obj,ui,**kw):
-                    #~ return ui.ext_renderer.href_to(obj)
-                #~ logger.info('20120217 %s : installed clickable summary_row', model)
-            #~ else:
-                #~ def f(obj,ui,**kw):
-                    #~ return unicode(obj)
-                #~ logger.info('20120217 %s : installed plain summary_row', model)
-            #~ model.summary_row = f
         
 
 

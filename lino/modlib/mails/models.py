@@ -269,11 +269,6 @@ class Mail(mixins.TypedPrintable,mixins.ProjectRelated):
         #~ recs = []
         recs = [ unicode(r) for r in 
             Recipient.objects.filter(mail=self,type=RecipientType.to)]
-          
-            #~ s = rr.ui.href_to(r.owner)
-            #~ if r.type != RecipientType.to:
-                #~ s += "(%s)" % r.type
-            #~ recs.append(s)
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         

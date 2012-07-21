@@ -419,30 +419,6 @@ class Contract(ContractBase):
             return df 
         return df + self.PRINTABLE_FIELDS
         
-    def unused_get_reminder_html(self,ui,user):
-        #~ url = ui.get_detail_url(self,fmt='detail')
-        #~ if self.type:
-            #~ s = unicode(self.type)
-        #~ else:
-            #~ s = self._meta.verbose_name
-        #~ s += ' #' + unicode(self.pk)
-        
-        #~ s = ui.href(url,cgi.escape(s))
-        s = ui.href_to(self)
-        
-        more = []
-        if self.person:
-            more.append(ui.href_to(self.person))
-        if self.company:
-            more.append(ui.href_to(self.company))
-        if self.user and self.user != user:
-            more.append(cgi.escape(unicode(self.user)))
-        if self.reminder_text:
-            more.append(cgi.escape(self.reminder_text))
-        else:
-            more.append(cgi.escape(_('Due date reached')))
-        return s + '&nbsp;: ' + (', '.join(more))
-        
     #~ def save(self,*args,**kw):
         #~ if self.job_id is not None:
             #~ qs = self.person.candidature_set.filter(contract=self)

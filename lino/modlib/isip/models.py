@@ -223,7 +223,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,cal.EventGenerator)
     
     #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ar,**kw):
-        s = ar.renderer.href_to(self)
+        s = ar.href_to(self)
         #~ s += " (" + ui.href_to(self.person) + ")"
         #~ s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.provider) + ")"
         return s

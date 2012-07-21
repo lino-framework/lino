@@ -873,7 +873,7 @@ Whether this is private, public or between.""")) # iCal:CLASS
         #~ logger.info("20120217 Component.summary_row() %s", self)
         #~ if self.owner and not self.auto_type:
         #~ html = ui.ext_renderer.href_to(self)
-        html = ar.renderer.href_to(self)
+        html = ar.href_to(self)
         if self.start_time:
             #~ html += _(" at ") + unicode(self.start_time)
             html += _(" at ") + self.start_time.strftime(settings.LINO.time_format_strftime)
@@ -1587,8 +1587,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         
     @dd.displayfield(_("Event"))
     def event_summary(self,ar):
-        return ar.renderer.href_to(
-            self.event,event_summary(self.event,ar.get_user()))
+        return ar.href_to(self.event,event_summary(self.event,ar.get_user()))
         #~ return event_summary(self.event,ar.get_user())
         
     def before_ui_save(self,ar,**kw):
@@ -2049,8 +2048,8 @@ def reminders(ar,days_back=None,days_forward=None,**kw):
     
     """
     user = ar.get_user()
-    Task = resolve_model('cal.Task')
-    Event = resolve_model('cal.Event')
+    #~ Task = resolve_model('cal.Task')
+    #~ Event = resolve_model('cal.Event')
     today = datetime.date.today()
     
     past = {}
@@ -2068,32 +2067,45 @@ def reminders(ar,days_back=None,days_forward=None,**kw):
         else:
             day.append(cmp)
             
-    #~ filterkw = { 'due_date__lte' : today }
-    filterkw = {}
+    #~ filterkw = {}
+    flt = models.Q()
     if days_back is not None:
-        filterkw.update({ 
-            'start_date__gte' : today - datetime.timedelta(days=days_back)
-            #~ 'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
-        })
+        flt = flt & models.Q(start_date__gte = today - datetime.timedelta(days=days_back))
+        #~ filterkw.update({ 
+            #~ 'start_date__gte' : today - datetime.timedelta(days=days_back)
+        #~ })
     if days_forward is not None:
-        filterkw.update({ 
-            'start_date__lte' : today + datetime.timedelta(days=days_forward)
-            #~ 'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
-        })
+        flt = flt & models.Q(start_date__lte=today + datetime.timedelta(days=days_forward))
+        #~ filterkw.update({ 
+            #~ 'start_date__lte' : today + datetime.timedelta(days=days_forward)
+        #~ })
     #~ filterkw.update(dt_alarm__isnull=False)
-    filterkw.update(user=user)
+    #~ filterkw.update(user=user)
     
-    for o in Event.objects.filter(
-        #~ models.Q(status=None) | models.Q(status__reminder=True),
-        models.Q(state=None) | models.Q(state__lte=EventState.scheduled),
-        **filterkw).order_by('start_date'):
+    events = ar.spawn(MyEvents,
+        master_instance=user,
+        filter=flt & (models.Q(state=None) | models.Q(state__lte=EventState.scheduled)))
+    tasks = ar.spawn(MyTasks,master_instance=user,
+        filter=flt & models.Q(state__in=[TaskState.blank_item,TaskState.todo]))
+    
+    for o in events:
+        o._detail_action = MyEvents.detail_action
         add(o)
         
+    for o in tasks:
+        o._detail_action = MyTasks.detail_action
+        add(o)
+        
+    #~ for o in Event.objects.filter(
+        #~ models.Q(state=None) | models.Q(state__lte=EventState.scheduled),
+        #~ **filterkw).order_by('start_date'):
+        #~ add(o)
+        
     #~ filterkw.update(done=False)
-    filterkw.update(state__in=[TaskState.blank_item,TaskState.todo])
+    #~ filterkw.update(state__in=[TaskState.blank_item,TaskState.todo])
             
-    for task in Task.objects.filter(**filterkw).order_by('start_date'):
-        add(task)
+    #~ for task in Task.objects.filter(**filterkw).order_by('start_date'):
+        #~ add(task)
         
     def loop(lookup,reverse):
         sorted_days = lookup.keys()
@@ -2102,6 +2114,7 @@ def reminders(ar,days_back=None,days_forward=None,**kw):
             sorted_days.reverse()
         for day in sorted_days:
             yield '<h3>'+dtosl(day) + '</h3>'
+            #~ yield dd.summary(ar,lookup[day],**kw)
             yield dd.summary(ar,lookup[day],**kw)
             
     if days_back is not None:

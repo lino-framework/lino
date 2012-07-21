@@ -466,6 +466,11 @@ class Actor(object):
         if self.get_handle_name is None:
             return self._get_handle(ar,ar.ui,ar.ui._handle_attr_name)
         return self._get_handle(ar,ar.ui,self.get_handle_name(ar))
+        
+    @classmethod
+    def is_valid_row(self,row):
+        return False
+        
       
         
     @classmethod
@@ -514,7 +519,10 @@ class Actor(object):
                     #~ if cls.__name__ == 'Home':
                     if cls.__dict__.get(k,None) is None:
                         #~ logger.info("20120628 %s.%s copied from %s",cls,k,b)
+                        #~ label = v.label
                         v = copy.deepcopy(v)
+                        #~ v.label = label
+                        #~ v = copy.copy(v)
                         v.name = None
                         setattr(cls,k,v)
                         #~ cls.define_action(k,v)

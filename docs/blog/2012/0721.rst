@@ -69,17 +69,39 @@ excerpt from :srcref:`/lino/ui/extjs3/linolib.js`::
 (And the French for "Help Text Editor" is "Editeur textes d'aide". 
 Do you guess why there was a Javascript syntax error after translating?)
 
-Some bugs are not yet fixed:
+Another subtile bug was:
 
-- Event.summary_row generates the following link 
-  which is supposed to open the detail window on that event::
+- Event.summary_row generated the following link 
+  which was supposed to open the detail window on that event::
 
     javascript:Lino.cal.Events.detail_action.run({ "record_id": 238 })
   
-  But normal users don't have `Lino.cal.Events` (seeing all Events 
-  at once is reserved to managers). Lino should link to the detail action
-  of EventsByPerson for example. But how to do this without too much 
-  work for the API developer? To be meditated.
+  That worked for system admins, but normal users 
+  don't have `Lino.cal.Events` (seeing all Events 
+  at once is reserved to managers). 
+  
+Lino now links to the detail action of MyEvents. 
+:func:`lino.modlib.cal.reminders` manually adds a `_detail_action` attribute 
+to each instance which is detected by 
+:meth:`instance_handler <lino.ui.extjs3.ext_ui.ExtRenderer.instance_handler>`.
+This solution is not beautiful, but works at least.
+
+:meth:`instance_handler <lino.ui.extjs3.ext_ui.ExtRenderer.instance_handler>` 
+now also tests whether the user has permission to execute that detail handler.
+For example the user names in jobs.UsersWithClients are no longer clickable 
+for normal users because only system administrators may see the detail of 
+other users.
+
+And this one took me also quite some time:
 
 - Buttons "Save" and "Delete" are displayed in German also for French users.
 
+It was simply due to the fact that :mod:`lino.core.actions`
+used `ugettext` and not `ugettext_lazy` as `_`::
+
+  # from django.utils.translation import ugettext as _
+  from django.utils.translation import ugettext_lazy as _
+  
+But the most difficult and not yet solved problem is: 
+the Ext.ensible CalendarPanel translates "Calendar" 
+to "Agenda" in French...
