@@ -8,26 +8,25 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-22 13:08+0100\n"
-"PO-Revision-Date: 2012-02-21 20:01+0200\n"
+"PO-Revision-Date: 2012-07-22 15:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
-"Language-Team: de\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: .\models.py:67
 msgid "User"
-msgstr "Benutzer"
+msgstr "Utilisateur"
 
 #: .\models.py:68
 msgid "Users"
-msgstr "Benutzer"
+msgstr "Utilisateurs"
 
 #: .\models.py:71
-#, fuzzy
 msgid "Username"
-msgstr "Benutzername"
+msgstr "Nom d'utilisateur"
 
 #: .\models.py:73
 msgid ""
@@ -38,31 +37,31 @@ msgstr ""
 
 #: .\models.py:79
 msgid "First name"
-msgstr ""
+msgstr "Prénom"
 
 #: .\models.py:80
 msgid "Last name"
-msgstr ""
+msgstr "Nom de famille"
 
 #: .\models.py:81
 msgid "e-mail address"
-msgstr ""
+msgstr "adresse e-mail"
 
 #: .\models.py:83
 msgid "Remarks"
-msgstr ""
+msgstr "Remarques"
 
 #: .\models.py:107
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: .\models.py:248
 msgid "Authority"
-msgstr ""
+msgstr "Procuration"
 
 #: .\models.py:249
 msgid "Authorities"
-msgstr ""
+msgstr "Procurations"
 
 #: .\models.py:254
 msgid "    The user who gets authority to act in your name."
@@ -70,29 +69,9 @@ msgstr ""
 
 #: .\models.py:274
 msgid "Authorities given"
-msgstr ""
+msgstr "Procurations accordées"
 
 #: .\models.py:279
 msgid "Authorities taken"
-msgstr ""
+msgstr "Procurations reçues"
 
-#~ msgid "is staff"
-#~ msgstr "Dienstleiter"
-
-#~ msgid "is expert"
-#~ msgstr "Experte"
-
-#~ msgid "is active"
-#~ msgstr "aktiv"
-
-#~ msgid "is superuser"
-#~ msgstr "Superuser"
-
-#~ msgid "last login"
-#~ msgstr "Zuletzt eingeloggt um"
-
-#~ msgid "date joined"
-#~ msgstr "Konto erstellt am"
-
-#~ msgid "is User"
-#~ msgstr "ist Benutzer"

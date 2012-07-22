@@ -569,8 +569,8 @@ class Actor(object):
             else:
                 cls.detail_action = actions.ShowDetailAction()
         if cls.detail_action and cls.editable:
-            cls.insert_action = actions.InsertRow()
             if not cls.hide_top_toolbar:
+                cls.insert_action = actions.InsertRow()
                 cls.create_action = actions.SubmitInsert(sort_index=1)
         if cls.editable:
             cls.update_action = actions.SubmitDetail(sort_index=1)

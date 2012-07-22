@@ -1440,7 +1440,7 @@ Lino.MainPanel = {
     } else {
       p['mk'] = undefined;
     }
-    //~ console.log('get_master_params returns',p,'using record',rec);
+    console.log('get_master_params returns',p,'using record',rec);
     return p;
   }
   ,get_permalink : function() {
@@ -2506,7 +2506,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   },
   
   set_current_record : function(record,after) {
-    //~ console.log('20111201 Lino.FormPanel.set_current_record',record.title,record);
+    console.log('20120722 Lino.FormPanel.set_current_record',record.title,record);
     if (this.record_selector) {
         this.record_selector.clearValue();
         // e.g. InsertWrapper FormPanel doesn't have a record_selector
@@ -2552,7 +2552,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           //~ }
       };
       
-      if (! this.hide_navigator && record.navinfo) {
+      if (record.navinfo && ! this.hide_top_toolbar && ! this.hide_navigator) {
         this.first.setDisabled(!record.navinfo.first);
         this.prev.setDisabled(!record.navinfo.prev);
         this.next.setDisabled(!record.navinfo.next);

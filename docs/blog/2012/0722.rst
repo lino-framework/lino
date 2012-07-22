@@ -1,0 +1,31 @@
+20120722
+========
+
+- :meth:`Person.update_reminders <lino.apps.pcsw.models.Person.update_reminders>` 
+  didn't yet switch to the user's language.
+  
+- New function :func:`lino.utils.babel.run_with_language`
+  used in 
+  :meth:`Person.update_reminders <lino.apps.pcsw.models.Person.update_reminders>`,
+  :class:`EventGenerator <lino.modlib.cal.models.EventGenerator>`,
+  :class:`AppyBuildMethod <lino.mixins.printable.AppyBuildMethod>`.
+  
+- Renamed 
+  AuthoritiesByUser to AuthoritiesGiven and 
+  AuthoritiesByAuthorized to AuthoritiesTaken.
+
+- AuthoritiesGiven and AuthoritiesTaken didn't work in MySettings. 
+  Because the AJAX call had an empty :attr:`mk <lino.ui.requests.URL_PARAM_MASTER_PK>`.
+  Due to a bug when `hide_top_toolbar` was `true` and `hide_navigator` not.
+  
+- AuthoritiesTaken isn't really useful. You can see the list of taken authorities 
+  (those given to you by somebody else) automatically from the "Act as..." menu.
+  Removed it from User Detail since it also made it possible to give 
+  yourself an authority from another user.
+  
+- The "Act as..." menu for non-system-admin users 
+  didn't show the user names (neither did it work).
+  
+- Added :menuselection:`Explorer --> Authorities` menu command.
+
+- Added French translations to :mod:`lino.modlib.users`.

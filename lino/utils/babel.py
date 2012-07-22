@@ -371,3 +371,18 @@ class LanguageField(models.CharField):
         models.CharField.__init__(self,*args, **defaults)
 
                 
+def run_with_language(lang,func):                
+    """
+    Selects the specified language `lang`, 
+    calls the specified functon `func`,
+    restores the previously selected language.
+    """
+    current_lang = get_language()
+    set_language(lang)
+    try:
+        func()
+    except Exception:
+        set_language(current_lang)
+        raise
+    set_language(current_lang)
+                

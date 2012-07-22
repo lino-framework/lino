@@ -607,7 +607,9 @@ def setup_config_menu(site,ui,user,m):
     m.add_instance_action(site.site_config)
         
   
-def setup_explorer_menu(site,ui,user,m): pass
+def setup_explorer_menu(site,ui,user,m):
+    m.add_action(site.modules.users.Authorities)
+  
   
 def setup_site_menu(site,ui,user,m): 
     m.add_action(site.modules.lino.About)

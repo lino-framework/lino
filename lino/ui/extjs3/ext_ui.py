@@ -1180,8 +1180,8 @@ tinymce.init({
                 authorities = [(u.id,unicode(u)) 
                     for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)]
             else:
-                authorities = [(u.id,unicode(u)) 
-                    for u in users.Authority.objects.filter(user=user)]
+                authorities = [(a.user.id,unicode(a.user)) 
+                    for a in users.Authority.objects.filter(authorized=user)]
             
             #~ handler = self.ext_renderer.instance_handler(user)
             a = users.MySettings.default_action

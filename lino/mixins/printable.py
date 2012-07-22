@@ -312,15 +312,12 @@ class AppyBuildMethod(SimpleBuildMethod):
         lang = str(elem.get_print_language(self))
         logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
             tpl,target,lang,settings.LINO.appy_params)
-        savelang = babel.get_language()
-        babel.set_language(lang)
-        #~ locale.setlocale(locale.LC_ALL,ls)
-        #~ Error: unsupported locale setting
-        renderer = Renderer(tpl, context, target,**settings.LINO.appy_params)
-        #~ setup_renderer(renderer)
-        #~ renderer.context.update(restify=debug_restify)
-        renderer.run()
-        babel.set_language(savelang)
+        #~ savelang = babel.get_language()
+        #~ babel.set_language(lang)
+        def f():
+            Renderer(tpl, context, target,**settings.LINO.appy_params).run()
+        babel.run_with_language(lang,f)
+        #~ babel.set_language(savelang)
         return os.path.getmtime(target)
         
 

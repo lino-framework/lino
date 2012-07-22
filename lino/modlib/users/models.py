@@ -180,7 +180,7 @@ class UserDetail(dd.FormLayout):
 
     main = """
     box1
-    remarks AuthoritiesByUser
+    remarks AuthoritiesGiven 
     """
     
 class UserInsert(dd.FormLayout):
@@ -223,7 +223,7 @@ class Users(dd.Table):
         #~ return False
           
 class MySettings(Users):
-    use_as_default_table = False 
+    use_as_default_table = False
     default_action = actions.ShowDetailAction()
     hide_top_toolbar = True
     #~ model = User
@@ -252,15 +252,18 @@ if settings.LINO.user_model:
         
         authorized = models.ForeignKey(settings.LINO.user_model,
             help_text=_("""\
-    The user who gets authority to act in your name."""))
+The user who gets authority to act in your name."""))
 
 
 
         @dd.chooser()
         def authorized_choices(cls,user):
-            return settings.LINO.user_model.objects.exclude(
-                profile=dd.UserProfiles.blank_item).exclude(id=user.id)
-                  #~ .exclude(level__gte=UserLevels.admin)
+            qs = settings.LINO.user_model.objects.exclude(
+                profile=dd.UserProfiles.blank_item)
+            if user is not None:
+                qs = qs.exclude(id=user.id)
+                #~ .exclude(level__gte=UserLevels.admin)
+            return qs
         
             
     class Authorities(dd.Table):
@@ -268,14 +271,16 @@ if settings.LINO.user_model:
         model = Authority
 
 
-    class AuthoritiesByUser(Authorities):
+    class AuthoritiesGiven(Authorities):
         required = dict()
         master_key = 'user'
         label = _("Authorities given")
+        column_names = 'authorized'
 
-    class AuthoritiesByAuthorized(Authorities):
+    class AuthoritiesTaken(Authorities):
         required = dict()
         master_key = 'authorized'
         label = _("Authorities taken")
+        column_names = 'user'
 
 

@@ -585,21 +585,26 @@ class Person(CpasPartner,contacts.Person,contacts.Born,Printable):
         self.update_reminders()
         
     def update_reminders(self):
+        """
+        Creates or updates automatic tasks controlled directly by this Person.
+        """
         user = self.coach2 or self.coach1
         if user:
-            M = DurationUnits.months
-            update_reminder(1,self,user,
-              self.card_valid_until,
-              _("eID card expires in 2 months"),2,M)
-            update_reminder(2,self,user,
-              self.unavailable_until,
-              _("becomes available again in 1 month"),1,M)
-            update_reminder(3,self,user,
-              self.work_permit_suspended_until,
-              _("work permit suspension ends in 1 month"),1,M)
-            update_reminder(4,self,user,
-              self.coached_until,
-              _("coaching ends in 1 month"),1,M)
+            def f():
+                M = DurationUnits.months
+                update_reminder(1,self,user,
+                  self.card_valid_until,
+                  _("eID card expires in 2 months"),2,M)
+                update_reminder(2,self,user,
+                  self.unavailable_until,
+                  _("becomes available again in 1 month"),1,M)
+                update_reminder(3,self,user,
+                  self.work_permit_suspended_until,
+                  _("work permit suspension ends in 1 month"),1,M)
+                update_reminder(4,self,user,
+                  self.coached_until,
+                  _("coaching ends in 1 month"),1,M)
+            babel.run_with_language(user.language,f)
               
           
     #~ def get_auto_task_defaults(self,**kw):
@@ -2102,7 +2107,7 @@ def site_setup(site):
     #~ """)
     site.modules.users.Users.set_detail_layout("""
     box1:50 box2:25
-    remarks AuthoritiesByUser
+    remarks AuthoritiesGiven 
     """,
     box2="""
     newcomer_quota
