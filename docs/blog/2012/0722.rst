@@ -29,3 +29,6 @@
 - Added :menuselection:`Explorer --> Authorities` menu command.
 
 - Added French translations to :mod:`lino.modlib.users`.
+
+:checkin:`39ea0ba7ffcd`. This is probably going to be 
+released as version 1.4.8

@@ -1,0 +1,25 @@
+Version 1.4.8 (20120722)
+========================
+
+Download: http://pypi.python.org/pypi/lino/1.4.8
+
+
+- Terminzustand "Vorgeschlagen" hat jetzt die 
+  Bedeutung "Termin wurde von einem Kollegen erstellt. Klient ist informiert. 
+  Sozi muss bestätigen oder Klienten kontaktieren."
+  
+- Diverse Optimierungen im Workflow von Terminen. 
+  Ist alles noch nicht perfekt.
+
+- Wenn Systemverwalter als jemand anderer arbeitet, kriegt er 
+  jetzt auch dessen Lesezugriffsrechte 
+  (also die gleichen Menübefehle und Panels im UI wie für den Benutzer selber).
+  
+- Beim Ausdruck von KBSS-Anfragen sowie in allen [pdf]-Ausdrucken
+  stehen jetzt mehr Infos in der Kopfzeile:
+  Name und Adresse des Betreibers, Lino-Version, Druckdatum.
+  
+- Diverse Bugfixes, u.a. funktionierten die Vollmachten noch nicht.
+
+  
+  

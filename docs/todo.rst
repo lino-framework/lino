@@ -13,6 +13,9 @@ Short-term
 ----------
 
 
+#.  extensible-lang-fr.js translates "Calendar" to "Agenda". 
+    Disturbing.
+
 #.  MySettings shows an empty `SubscriptionsByUser` users?
     Users cannot themselves edit their subscriptions?
   
