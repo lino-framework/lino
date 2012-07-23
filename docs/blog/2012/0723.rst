@@ -1,0 +1,107 @@
+20120723
+========
+
+Zukunft von Lino (Nachtrag)
+---------------------------
+
+Um noch mal auf die :doc:`Zukunft von Lino <0708>` zurück zu kommen:
+
+Otto hat mir vor einigen Tagen klargemacht, dass die GPL keineswegs 
+verhindert, kommerzielle Lino-Anwendungen zu schreiben.
+Das macht die Sache natürlich um einiges einfacher.
+
+Eine VoG "Lino für alle" wird es voraussichtlich nicht geben, 
+weil das nicht nötig ist.
+Um die Findung oder Gründung einer Organisation 
+für den Vertrieb von "Lino für ÖSHZ" kümmert 
+sich hauptsächlich das ÖSHZ Eupen selber. 
+Nicht ohne meine Mithilfe, aber ich bin für dieses Projekt eher Berater.
+
+Irgendwann wird es voraussichtlich auch 
+eine internationale "Lino Software Foundation" geben,
+ähnlich wie es das auch für 
+`Python <http://python.org/psf/>`_
+und
+`Django <https://www.djangoproject.com/foundation/>`_
+gibt.
+Ein konkretes Bedürfnis dafür wird aber erst kommen, 
+wenn es mindestens zwei Firmen oder sonstige 
+Organisationen gibt, 
+die die Entwicklung des Frameworks beeinflussen wollen.
+Bis dahin kann man ruhig sagen, dass das Framework 
+von Rumma & Ko als meinem Arbeitgeber getragen 
+und kontrolliert wird.
+
+
+How to respond to anonymous visitors
+------------------------------------
+
+#.  Using ExtJS 
+
+    We can respond to anonymous visitors using the ExtJS interface.
+    The anonymous UI is the same as for authenticated users, 
+    but -of course- anonymous visitors will hopefully not 
+    have the same access permissions than authenticated users.
+    The application defines a read-only user profile 
+    for anonymous visitors and sets :attr:`lino.Lino.anonymous_user_profile` 
+    accordingly. 
+
+    Today there were changes to better support this method:
+
+    - :mod:`lino.utils.auth`: removed class `NoUserMiddleware`.
+      Lino applications always use the same middleware 
+      :class:`lino.utils.auth.RemoteUserMiddleware` which now installs an 
+      :class:`AnonymousUser <lino.utils.auth.AnonymousUser>` when the REMOTE_USER 
+      is empty (i.e. Apache configured to have a public part being handled by 
+      our Lino application).
+      
+    - :func:`lino.core.perms.make_permission_handler` : 
+      new requirement `auth=True`. 
+      This is used for `cal.CalendarPanel` and all `MyXxx` tables.
+
+
+#.  Using Django templates
+
+    It is true that classical web applications have a "designed" public part
+    and a link to a "manage" or "admin" interface which requires authentication.
+    
+    So another possibility is to simply write Django views 
+    and templates.
+
+    TODO: write an example (the poll tutorial) to demonstrate this way.
+    
+    Choosing this way means that you (or somebody else) needs to "do the 
+    designer work" of fiddling with templates, html and css. 
+    There may be good reasons to do so:
+    
+    - need for a shiny look of the public part
+    - The ExtJS interface is rather overkill and not optimal 
+      for a read-only interface.
+      For anonymous visitors it should 
+      be rather surprising to directly get
+      into an ExtJS application.
+
+      
+
+#.  Using GROPH
+  
+    Another possibile direction is what I try to implement in the 
+    new :mod:`lino.ui.groph` module.
+    GROPH stands for Generated Read-Only Plain Html.
+    
+    
+Solved some other general to-do's:
+
+- :class:`lino.core.actions.StateAction` now also works 
+  if :attr:`lino.core.modelstools.workflow_state_field` is 
+  something else than "state".
+
+  
+- The `vote` buttons in :mod:`lino.tutorials.t1` now 
+  finally work!  Action buttons worked only in a 
+  GridPanel or a FormPanel, not in a HtmlBox.
+
+- Converted 
+  :mod:`lino.ui.extjs3.ext_ui` 
+  to use Django's class-based views.
+  New module :mod:`lino.ui.extjs3.views`.

@@ -242,7 +242,7 @@ class Permittable(object):
 def make_permission_handler(
     elem,actor,
     readonly,debug_permissions,
-    user_level=None,user_groups=None,states=None,allow=None,owner=None):
+    user_level=None,user_groups=None,states=None,allow=None,owner=None,auth=False):
     """
     Return a function that will test whether permission is given or not.
     
@@ -273,13 +273,17 @@ def make_permission_handler(
     `allow`
         An additional custom permission handler
         
+    `auth`
+        If True, permission is given for any authenticated user 
+        (and not for :class:`lino.utils.auth.AnonymousUser`).
+        
     `owner`
         If True, permission is given only to the author of the object. 
         If False, permission is given only to users who are not the author of the object. 
         To be used on models that have a field `user` which 
-        contains the "owner".  Usually this is UserAuthored. 
-        But e.g. :class:`lino.modlib.cal.models.Guest` 
-        defines a property `user` because it has no own `user` field.
+        contains the "owner" (usually a subclass of UserAuthored,
+        but e.g. :class:`lino.modlib.cal.models.Guest` 
+        defines a property `user` because it has no own `user` field).
     
     
     """
@@ -287,6 +291,13 @@ def make_permission_handler(
         if allow is None:
             def allow(action,user,obj,state):
                 return True
+        if auth:
+            allow_before_auth = allow
+            def allow(action,user,obj,state):
+                if not user.authenticated:
+                    return False
+                return allow_before_auth(action,user,obj,state)
+                
         if user_level is not None:
             user_level = getattr(UserLevels,user_level)
             allow_user_level = allow

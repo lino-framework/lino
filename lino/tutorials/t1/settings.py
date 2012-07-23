@@ -8,6 +8,10 @@ class Lino(Lino):
     
     #~ anonymous_user_profile = '123'
     
+    def get_main_action(self,user):
+        return self.modules.polls.PollsList.default_action
+    
+    
     def setup_menu(self,ui,user,main):
         m = main.add_menu("polls","~Polls")
         m.add_action(self.modules.polls.Polls)

@@ -245,7 +245,7 @@ class Action(object):
             self.show_in_bbar = False
             self.show_in_workflow = True
         else:
-            self.show_in_workflow = False
+            #~ self.show_in_workflow = False
             self.show_in_bbar = True
         
     def __str__(self):
@@ -378,9 +378,13 @@ class StateAction(RowAction):
         #~ return self.allow(user,obj,state)
         
     def run(self,row,ar,**kw):
-        old = row.state
+        state_field_name = self.actor.workflow_state_field.attname
+        assert isinstance(state_field_name,basestring)
+        #~ old = row.state
+        old = getattr(row,state_field_name)
         row.before_state_change(ar,kw,old,self.target_state)
-        row.state = self.target_state
+        #~ row.state = self.target_state
+        setattr(row,state_field_name,self.target_state)
         row.save()
         row.after_state_change(ar,kw,old,self.target_state)
         return ar.ui.success_response(**kw)
@@ -624,6 +628,10 @@ class ActionRequest(object):
                     #~ kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))
                 #~ except settings.LINO.user_model.DoesNotExist, e:
                     #~ pass
+        requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
+        if requesting_panel:
+            kw.update(requesting_panel=requesting_panel)
+        #~ logger.info("20120723 ActionRequest.parse_req() --> %s",kw)
         return kw
       
     def setup(self,
@@ -631,8 +639,10 @@ class ActionRequest(object):
             subst_user=None,
             param_values={},
             known_values=None,
+            requesting_panel=None,
             renderer=None,
             **kw):
+        self.requesting_panel = requesting_panel
         self.user = user
         if renderer is not None:
             self.renderer = renderer
@@ -733,6 +743,8 @@ class ActionRequest(object):
         Create a new ActionRequest, taking default values from this one.
         """
         kw.setdefault('user',self.user)
+        kw.setdefault('user',self.user)
+        kw.setdefault('requesting_panel',self.requesting_panel)
         kw.setdefault('renderer',self.renderer)
         #~ kw.setdefault('request',self.request) 
         # removed 20120702 because i don't want to inherit quick_search from spawning request

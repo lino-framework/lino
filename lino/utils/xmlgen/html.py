@@ -129,6 +129,7 @@ ul
 var 
 
 class
+id
 bgcolor
 cellspacing
 width

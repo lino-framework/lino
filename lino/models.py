@@ -608,7 +608,8 @@ def setup_config_menu(site,ui,user,m):
         
   
 def setup_explorer_menu(site,ui,user,m):
-    m.add_action(site.modules.users.Authorities)
+    if site.user_model:
+        m.add_action(site.modules.users.Authorities)
   
   
 def setup_site_menu(site,ui,user,m): 

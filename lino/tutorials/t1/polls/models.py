@@ -19,62 +19,64 @@ class Poll(dd.Model):
 
     def summary_row(self,ar,**kw):
         html = '<b>%s</b> ' % cgi.escape(self.question)
-        if False:
-            html += ' / '.join([
-                '<a href="oops">%s</a>' % cgi.escape(obj.choice)
-                    for obj in self.choice_set.all()])
-        else:
-            """
-            TODO: change summary_row() signature to include `ar`
-            """
-            chunks = []
-            for obj in self.choice_set.all():
-                #~ ar = self.request(ui,None,master_instance=master)
-                chunks.append(ar.renderer.row_action_button(obj,ar,ar.actor.vote))
-                #~ ar = Choices.row_action_request('vote',choice)
-                #~ chunks.append(ui.ext_renderer.href_to_request(ar))
-            html += ' / '.join(chunks)
-        html += "<br/><small>(published %s)</small>" % babel.dtosl(self.pub_date)
+        #~ raise Exception('20120723')
+        #~ print ar
+        chunks = []
+        for obj in self.choice_set.all():
+            #~ ar = self.request(ui,None,master_instance=master)
+            chunks.append(ar.renderer.row_action_button(obj,ar,Choices.vote,unicode(obj)))
+        html += ' / '.join(chunks)
+        
+        html += "<br/><small>Published %s" % babel.dtosl(self.pub_date)
+        chunks = []
+        for obj in self.choice_set.all():
+            chunks.append("%d %s" % (obj.votes,cgi.escape(unicode(obj))))
+        html += '<br/>Results: %s' % (', '.join(chunks))
+        html += '</small>'
         return html
-      
-      
-class Choice(dd.Model):
-    poll = models.ForeignKey(Poll)
-    choice = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
-    
-    @dd.action()
-    def vote(self,ar,**kw):
-        self.votes += 1
-        self.save()
-        
-    def __unicode__(self):
-        return self.choice    
-        
 
 
 class Polls(dd.Table):
-    debug_permissions = True
     model = Poll
+    
     detail_template = """
     id question pub_date
     polls.ChoicesByPoll
     """
+    
     insert_layout = dd.FormLayout("""
     question
     pub_date
     """,window_size=(40,'auto'))
     
+    
+class PollsList(Polls):
+    label = None
+    slave_grid_format = 'summary'
+    
+      
+
+class Choice(dd.Model):
+    poll = models.ForeignKey(Poll)
+    choice = models.CharField(max_length=200)
+    votes = models.IntegerField(default=0)
+    
+    @dd.action(show_in_workflow=True)
+    def vote(self,ar,**kw):
+        self.votes += 1
+        self.save()
+        kw.update(refresh=True)
+        kw.update(message="Thank you for voting")
+        return ar.success_response(**kw)
+        
+    def __unicode__(self):
+        return self.choice    
+        
 class Choices(dd.Table):
     model = Choice
         
 class ChoicesByPoll(Choices):
     master_key = 'poll'
-    
-    
-class PollsList(Polls):
-    label = None
-    slave_grid_format = 'summary'
     
 
 def site_setup(site):
@@ -84,23 +86,6 @@ def site_setup(site):
     site.modules.lino.Home.set_detail_layout("""
     polls.PollsList
     """)
-    
-    
-    
-#~ from lino import models as lino
-
-#~ class Home(lino.Home):
-    #~ app_label = 'lino'
-    #~ detail_template = """
-    #~ welcome
-    #~ """
-    #~ @dd.displayfield()
-    #~ def welcome(cls,self,ar):
-        #~ s = "<p>Welcome to the <b>%s</b> server.</p>" % cgi.escape(settings.LINO.title)
-        #~ s += dd.summary(ar.ui,Poll.objects.all(),
-          #~ separator='</li><li>',before="<ul><li>",after="</li></ul>")
-        #~ return '<div class="htmlText">%s</div>' % s
-
     
     
     

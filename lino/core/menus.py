@@ -19,7 +19,7 @@ import copy
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
-from django.utils.safestring import mark_safe
+#~ from django.utils.safestring import mark_safe
 from django import template 
 from django.utils.encoding import force_unicode
 from django.db import models
@@ -102,18 +102,22 @@ class MenuItem:
             #~ p = p.parent
         #~ return l
   
-    #~ def get_url_path(self):
-        #~ if self.parent:
-            #~ s = self.parent.get_url_path()
-            #~ if len(s) and not s.endswith("/"):
-                #~ s += "/"
-        #~ else:
-            #~ s='/'
-        #~ return s + self.name
+    def get_url_path(self):
+        if self.action:
+            return str(self.action)
+        if self.parent:
+            s = self.parent.get_url_path()
+            if len(s) and not s.endswith("/"):
+                s += "/"
+        else:
+            s='/'
+        if self.name:
+            return s + self.name
+        return s
 
-    #~ def as_html(self,request,level=None):
-        #~ return mark_safe('<a href="%s">%s</a>' % (
-              #~ self.get_url_path(),self.label))
+    def as_html(self,request,level=None):
+        return '<a href="%s">%s</a>' % (
+              self.get_url_path(),self.label)
               
     def menu_request(self,user):
         #~ if self.can_view.passes(user):
@@ -263,19 +267,21 @@ class Menu(MenuItem):
         try:
             #~ if not self.can_view.passes(request):
                 #~ return u''
-            items = [i for i in self.items if i.can_view.passes(request)]
+            #~ items = [i for i in self.items if i.can_view.passes(request)]
             if level == 1:
                 s = '<ul class="jd_menu">' 
             else:
                 #s = Component.as_html(self,request)
                 s = self.label
                 s += '\n<ul>' 
-            for mi in items:
+            for mi in self.items:
                 s += '\n<li>%s</li>' % mi.as_html(request,level+1)
             s += '\n</ul>\n'
-            return mark_safe(s)
+            #~ return mark_safe(s)
+            return s
         except Exception, e:
-            traceback.print_exc(e)
+            raise
+            #~ traceback.print_exc(e)
 
     def menu_request(self,user):
         #~ if self.can_view.passes(user):

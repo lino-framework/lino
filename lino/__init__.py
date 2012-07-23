@@ -24,7 +24,7 @@ import datetime
 from os.path import join, abspath, dirname, normpath
 
 
-__version__ = "1.4.8"
+__version__ = "1.4.9"
 """
 Lino version number. 
 *Released* versions are listed under :doc:`/releases`.
@@ -725,6 +725,7 @@ class Lino(object):
     
     _site_config = None
     _extjs_ui = None
+    _groph_ui = None
     
     
     def __init__(self,project_file,settings_dict):
@@ -823,6 +824,14 @@ class Lino(object):
             self._extjs_ui = UI()
         return self._extjs_ui
     ui = property(get_ui)
+
+    def get_groph_ui(self):
+        if self._groph_ui is None:
+            self.startup()
+            from lino.ui.groph.groph_ui import UI
+            self._groph_ui = UI()
+        return self._groph_ui
+    groph_ui = property(get_groph_ui)
 
     override_modlib_models = []
     """
@@ -1168,11 +1177,12 @@ class Lino(object):
             yield 'django.middleware.locale.LocaleMiddleware'
         #~ yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
         #~ if self.user_model:
-        if self.user_model is None:
-            yield 'lino.utils.auth.NoUserMiddleware'
-        elif self.remote_user_header:
+        #~ if self.user_model is None:
+            #~ yield 'lino.utils.auth.NoUserMiddleware'
+        #~ elif self.remote_user_header:
+        if self.remote_user_header:
             yield 'lino.utils.auth.RemoteUserMiddleware'
-            yield 'django.middleware.doc.XViewMiddleware'
+            #~ yield 'django.middleware.doc.XViewMiddleware'
         else:
             raise Exception("""\
 `user_model` is not None, but no `remote_user_header` in your settings.LINO.""")
@@ -1192,6 +1202,12 @@ class Lino(object):
             yield 'lino.utils.sqllog.SQLLogToConsoleMiddleware'
             #~ yield 'lino.utils.sqllog.SQLLogMiddleware'
             
+    def get_main_action(self,user):
+        """
+        Return the action to show as top-level "index.html"
+        """
+        return self.modules.lino.Home.default_action
+        
     def get_reminder_generators_by_user(self,user):
         """
         Override this per application to return a list of 

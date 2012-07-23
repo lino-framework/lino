@@ -61,6 +61,8 @@ from django.utils import simplejson as json
 
 from lino.core import actors
 from lino.core import actions
+from lino.core.modeltools import obj2str
+
 from lino.core.fields import FakeField
 from lino.ui import base
 from lino.ui import requests as ext_requests
@@ -168,7 +170,7 @@ class TableRequest(actions.ActionRequest):
         
         
     def parse_req(self,request,rqdata,**kw):
-        #~ logger.info("20120710 %s.parse_req()",self.actor)
+        #~ logger.info("20120723 %s.parse_req()",self.actor)
         #~ rh = self.ah
         master = kw.get('master',self.actor.master)
         if master is ContentType or master is models.Model:
@@ -241,10 +243,6 @@ class TableRequest(actions.ActionRequest):
         if quick_search:
             kw.update(quick_search=quick_search)
             
-        requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
-        if requesting_panel:
-            kw.update(requesting_panel=requesting_panel)
-            
         sort = rqdata.get(ext_requests.URL_PARAM_SORT,None)
         if sort:
             #~ self.sort_column = sort
@@ -292,12 +290,10 @@ class TableRequest(actions.ActionRequest):
             #~ create_rows=None,
             gridfilters=None,
             exclude=None,
-            requesting_panel=None,
             extra=None,
             **kw):
             
         self.quick_search = quick_search
-        self.requesting_panel = requesting_panel
         self.order_by = order_by
         
             
@@ -424,7 +420,8 @@ class TableRequest(actions.ActionRequest):
         #~ kw = dict(actor=str(self.actor))
         kw = dict()
         if self.master_instance is not None:
-            kw.update(master_instance=self.master_instance.pk)
+            #~ kw.update(master_instance=self.master_instance.pk)
+            kw.update(master_instance=obj2str(self.master_instance))
         if self.filter is not None:
             kw.update(filter=str(self.filter))
         if self.known_values:

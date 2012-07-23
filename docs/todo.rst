@@ -1,49 +1,52 @@
 To-do list
 ==========
 
-See also :doc:`/tickets/index` which is a list of tickets.
-
-.. todolist::
-
-The rest of this document is partly in German because it 
-is rather for internal use. 
-
-
 Short-term
 ----------
 
+#.  Übersetzung für "Scheduled" ist momentan "Geplant". 
+    Sollte besser "Festgelegt" o.ä. sein.
+    Und statt "vorgeschlagen" sollte Lino vielleicht besser 
+    "vorgemerkt" sagen.
+    
+#.  Ein festgelegter Termin darf nicht verschoben werden können. 
+    Auch nicht im Kalender-Panel.
+    
+#.  Wie soll es funktionieren, wenn ein einmal festgelegter und offiziel 
+    mitgeteilter Termin dann doch verschoben werden muss?
+    Momentan kann man den Terminzustand auf "Verlegt" setzen und dann auf 
+    "per Mail" klicken, und in der Mail steht dann schon ein entsprechender Satz.
 
+#.  Wenn `invite_team_members` angekreuzt ist und Gäste automatisch erstellt 
+    werden, dann stehen die trotzdem noch nicht auf "Eingeladen".
+    
+#.  Brauchen wir die Notion von "Teams"? 
+    Momentan ist die Konfigurierung etwas skurril: 
+    jeder Benutzer stellt sich "sein Team" zusammen.
+    Pro Kalender sollte neben `invite_team_members` auch stehen, 
+    welches das Team ist.
+    Und in einem könnten wir auch eine Option `auto_subscribe` 
+    in Calendar machen: solche Kalender brauchen gar nicht erst 
+    explizit abonniert zu werden.
+    
+#.  Einladung sollte ein ical haben, damit der Empfänger es in seinen
+    Calendar-client importieren kann
+    
+#.  Schnellsuche "Must", dann Doppelklick auf Max Mustermann, 
+    dann im GeheZu nach 'jupa' suchen: Klienten mit "jupa" werden zwar im 
+    Dropdown angezeigt, aber Lino springt nach Auswahl nicht darauf.
+    (Da wird der alte search_text nicht gelöscht o.ä.)
+    
+    
+#.  Man sieht im Kalender-Panel noch nicht, wenn man nur Gast ist und
+    noch zusagen bzw. absagen muss.
+  
+#.  Layout-Problem Reiter "Kalender" im User Detail.
+    Hier muss man bis auf weiteres auf den Permalink-Button klicken, 
+    damit der Bildschirm korrekt gerendert wird.
+    
 #.  extensible-lang-fr.js translates "Calendar" to "Agenda". 
     Disturbing.
-
-#.  MySettings shows an empty `SubscriptionsByUser` users?
-    Users cannot themselves edit their subscriptions?
-  
-#.  ManageAccessRequest now also has a separate insert_layout. 
-    But we cannot inherit here from ManageAccessRequestDetail 
-    and thus had to (almost) duplicate the `setup_handle`::
-  
-      def setup_handle(self,lh):
-          lh.p1.label = _("Requested action")
-          lh.proof.label = _("Proof of authentication")
-          super(ManageAccessRequestInsert,self).setup_handle(lh)
-  
-    TODO: more transparent/reusable system to specify labels.
-
-
-#.  Make ChoiceLists visible through the web interface. 
-    Show UserGroups and UserProfiles in :class:`lino.models.About`.
-
-#.  Was Lino noch braucht und nicht hat, ist die Möglichkeit, 
-    dass beim Klicken auf den Button einer Aktion vor deren Abschicken 
-    noch ein Dialogfenster mit Optionen kommt. 
-    Zum Beispiel eine Aktion `cal.Event.defer`, 
-    die vorher noch wissen muss, um wieviele Tage (Wochen, Monate) oder 
-    bis zu welchem Datum sie verschieben soll.
-
-#.  Tabelle der Benutzerprofile (und generell alle choicelists) in 
-    eine lokale Konfigurationsdatei auslagern und dadurch auch für 
-    Nichtprogrammierer bearbeitbar machen.
 
 #.  Wenn man auf einem Auswertungstermin (der automatisch generiert wurde 
     durch eine VSE oder VBE), auf "Duplizieren" klickt, dann dupliziert Lino 
@@ -270,14 +273,41 @@ Short-term
 Medium-term
 -----------
 
+#.  ManageAccessRequest now also has a separate insert_layout. 
+    But we cannot inherit here from ManageAccessRequestDetail 
+    and thus had to (almost) duplicate the `setup_handle`::
+  
+      def setup_handle(self,lh):
+          lh.p1.label = _("Requested action")
+          lh.proof.label = _("Proof of authentication")
+          super(ManageAccessRequestInsert,self).setup_handle(lh)
+  
+    TODO: more transparent/reusable system to specify labels.
+
+
+#.  Make ChoiceLists visible through the web interface. 
+    Show UserGroups and UserProfiles in :class:`lino.models.About`.
+
+#.  Was Lino noch braucht und nicht hat, ist die Möglichkeit, 
+    dass beim Klicken auf den Button einer Aktion vor deren Abschicken 
+    noch ein Dialogfenster mit Optionen kommt. 
+    Zum Beispiel eine Aktion `cal.Event.defer`, 
+    die vorher noch wissen muss, um wieviele Tage (Wochen, Monate) oder 
+    bis zu welchem Datum sie verschieben soll.
+
+#.  Tabelle der Benutzerprofile (und generell alle choicelists) in 
+    eine lokale Konfigurationsdatei auslagern und dadurch auch für 
+    Nichtprogrammierer bearbeitbar machen.
+
 #.  Wenn man auf einer Notiz "per E-Mail" klickt, kommt ein Fenster mit der 
     neu erstellten E-Mail. 
-    Die Mail ist da schon in der Datenbank erstellt worden 
-    Das ist suboptimal, denn man kann hier nicht einfach mit Escape abbrechen.
+    Die Mail ist da schon in der Datenbank erstellt worden .
+    Das ist suboptimal, denn wenn man hier einfach mit Escape abbricht, 
+    bleibt die halbfertige Mail bestehen.
     Das kommt, weil Empänger eine Slave-Tabelle ist und wir diese Tabelle 
     doch eigentlich auch schon "beim Erstellen" sehen wollen.
     Eigentlich müsste das insert_layout kommen.
-    Probieren, wie es aussieht, wenn wir die Empängerliste eben erst nach 
+    Probieren, wie es aussieht, wenn wir die Empfängerliste eben erst nach 
     Klick auf "Erstellen" eingeben.
 
 #.  lino*.js aufsplitten: der Teil aus linolib.js ist ja 
@@ -1039,4 +1069,12 @@ Benutzern überlegen.
     über die Befehle `Meine VSEs` und `Meine Art-60-7-Konventionen` 
     kriegen können.
     Zu analysieren mit den Benutzern.
+
+Sonstige
+--------
+
+Here also some collected todo entries.
+
+.. todolist::
+
 

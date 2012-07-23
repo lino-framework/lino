@@ -13,6 +13,10 @@ Es muss also eine Firma oder Organisation her,
 die mehrere Programmierer einstellt, 
 von denen einer voraussichtlich ich selber sein muss.
 
+(Das folgende ist inhaltlich 
+korrigiert in meinem `:doc:`Nachtrag vom 23.07.2012`)
+
+
 
 Geld regiert die Welt
 ---------------------

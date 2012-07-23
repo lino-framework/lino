@@ -1440,7 +1440,7 @@ Lino.MainPanel = {
     } else {
       p['mk'] = undefined;
     }
-    console.log('get_master_params returns',p,'using record',rec);
+    //~ console.log('get_master_params returns',p,'using record',rec);
     return p;
   }
   ,get_permalink : function() {
@@ -1792,8 +1792,9 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 };
 
 
-Lino.call_row_action = function(panel,rec_id,actionName,step,fn) {
-  var url = panel.get_record_url(rec_id);
+Lino.call_row_action = function(panel,url,actionName,step,fn) {
+//~ Lino.call_row_action = function(panel,rec_id,actionName,step,fn) {
+  //~ var url = panel.get_record_url(rec_id);
   var p = Ext.apply({},panel.get_base_params());
   p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
@@ -1813,18 +1814,21 @@ Lino.row_action_handler = function(actionName) {
   var fn = function(panel,btn,step) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
-      Lino.call_row_action(panel,rec.id,actionName,step,fn);
+      //~ 20120723 Lino.call_row_action(panel,rec.id,actionName,step,fn);
+      Lino.call_row_action(panel,panel.get_record_url(rec.id),actionName,step,fn);
     });
   };
   return fn;
 };
 
 
-Lino.run_row_action = function(rp,action,url,pk,actionName) {
+Lino.run_row_action = function(rp,url,pk,actionName) {
   //~ var panel = action.get_window().main_item;
+  url = ROOT_URL + '/api' + url  + '/' + pk;
   var panel = Ext.getCmp(rp);
   var fn = function(panel,btn,step) {
-    Lino.call_row_action(panel,pk,actionName,step,fn);
+    //~ 20120723 Lino.call_row_action(panel,pk,actionName,step,fn);
+    Lino.call_row_action(panel,url,actionName,step,fn);
   }
   fn(panel,null,null);
 }
@@ -2506,7 +2510,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   },
   
   set_current_record : function(record,after) {
-    console.log('20120722 Lino.FormPanel.set_current_record',record.title,record);
+    //~ console.log('20120722 Lino.FormPanel.set_current_record',record.title,record);
     if (this.record_selector) {
         this.record_selector.clearValue();
         // e.g. InsertWrapper FormPanel doesn't have a record_selector
@@ -4388,9 +4392,9 @@ Lino.CalendarCfg = {
 Ext.override(Ext.ensible.cal.CalendarPanel,Lino.MainPanel);
 Ext.override(Ext.ensible.cal.CalendarPanel,{
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
-  empty_title : "$site.modules.cal.Panel.label"
+  empty_title : "$site.modules.cal.CalendarPanel.label"
   ,activeItem: 1 // 0: day, 1: week
-  ,ls_url: '/cal/Panel'
+  ,ls_url: '/cal/CalendarPanel'
   //~ ,disableCaching:true
   ,eventStore: Lino.eventStore
   ,calendarStore: Lino.calendarStore
@@ -4429,8 +4433,8 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
 Lino.CalendarAppPanel = Ext.extend(Ext.Panel,Lino.MainPanel);
 Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
-  empty_title : "$site.modules.cal.Panel.label"
-  ,ls_url: '/cal/Panel'
+  empty_title : "$site.modules.cal.CalendarPanel.label"
+  ,ls_url: '/cal/CalendarPanel'
   ,set_status : function(status) { this.refresh();}
   ,refresh : function() {Lino.eventStore.reload();}
   ,layout: 'fit'

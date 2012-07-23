@@ -1248,7 +1248,7 @@ if settings.LINO.user_model:
   
     class MyEvents(Events,mixins.ByUser):
         help_text = _("Table of all my calendar events.")
-        required = dict(user_groups='office')
+        required = dict(user_groups='office',auth=True)
         column_names = 'start_date start_time calendar project summary state workflow_buttons *'
         
     #~ class EventsReserved(Events):
@@ -1274,7 +1274,7 @@ if settings.LINO.user_model:
         
     class MyEventsSuggested(EventsSuggested,MyEvents):
         help_text = _("Table of my suggested events (to become notified).")
-        required = dict(user_groups='office')
+        required = dict(user_groups='office',auth=True)
         column_names = 'start_date start_time project summary workflow_buttons *'
         label = _("My suggested Events")
         
@@ -1287,7 +1287,7 @@ if settings.LINO.user_model:
         
     class MyEventsNotified(EventsNotified,MyEvents):
         help_text = _("Table of my notified events (waiting to become scheduled).")
-        required = dict(user_groups='office')
+        required = dict(user_groups='office',auth=True)
         column_names = 'start_date start_time project summary workflow_buttons *'
         label = _("My notified Events")
         
@@ -1356,7 +1356,7 @@ if settings.LINO.user_model:
         #~ column_names = 'start_date start_time project summary workflow_buttons *'
         
     class MyEventsToday(MyEvents):
-        required = dict(user_groups='office')
+        required = dict(user_groups='office',auth=True)
         help_text = _("Table of my events per day.")
         column_names = 'start_time summary state workflow_buttons *'
         label = _("My events today")
@@ -1486,11 +1486,14 @@ class TasksByController(Tasks):
 if settings.LINO.user_model:    
         
     class MyTasks(Tasks,mixins.ByUser):
+        required = dict(user_groups='office',auth=True)
+        #~ required = dict()
         help_text = _("Table of all my tasks.")
         order_by = ["start_date","start_time"]
         column_names = 'start_date summary state workflow_buttons *'
     
     class MyTasksToDo(MyTasks):
+        required = dict(user_groups='office',auth=True)
         help_text = _("Table of my tasks marked 'to do'.")
         column_names = 'start_date summary state workflow_buttons *'
         label = _("To-do list")
@@ -1643,6 +1646,7 @@ class GuestsByPartner(Guests):
     column_names = 'event role state workflow_buttons remark *'
 
 class MyInvitations(GuestsByPartner):
+    required = dict(user_groups='office',auth=True)
     order_by = ['event__start_date','event__start_time']
     label = _("My received invitations")
     help_text = _("""Shows all my received invitations, independently of their state.""")
@@ -1936,14 +1940,14 @@ if settings.LINO.use_extensible:
     def parsedate(s):
         return datetime.date(*settings.LINO.parse_date(s))
   
-    class Panel(dd.Frame):
-        required = dict(user_groups='office')
+    class CalendarPanel(dd.Frame):
+        required = dict(user_groups='office',auth=True)
         default_action = CalendarAction()
         #~ default_action_class = dd.Calendar
 
     class PanelCalendars(Calendars):
         use_as_default_table = False
-        required = dict(user_groups='office')
+        required = dict(user_groups='office',auth=True)
         #~ column_names = 'id name description color is_hidden'
         column_names = 'id babel_name description color is_hidden'
         
@@ -1969,7 +1973,7 @@ if settings.LINO.use_extensible:
         """
         The table used for Ext.ensible CalendarPanel.
         """
-        required = dict(user_groups='office')
+        required = dict(user_groups='office',auth=True)
         use_as_default_table = False
         #~ parameters = dict(team_view=models.BooleanField(_("Team View")))
         
@@ -2043,12 +2047,12 @@ if settings.LINO.use_extensible:
 
 from lino.utils.babel import dtosl
     
-def reminders(ar,days_back=None,days_forward=None,**kw):
+def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user.
-    
     """
     user = ar.get_user()
+    if not user.authenticated: return ''
     #~ Task = resolve_model('cal.Task')
     #~ Event = resolve_model('cal.Event')
     today = datetime.date.today()
@@ -2183,12 +2187,12 @@ class Home(lino.Home):
     
     @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
     def missed_reminders(cls,self,ar):
-        return reminders(ar,days_back=90,
+        return reminders_as_html(ar,days_back=90,
           max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
     @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
     def coming_reminders(cls,self,ar):
-        return reminders(ar,days_forward=30,
+        return reminders_as_html(ar,days_forward=30,
             max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
 
@@ -2259,17 +2263,13 @@ MODULE_LABEL = _("Calendar")
 
 def setup_main_menu(site,ui,user,m): 
     m  = m.add_menu("cal",MODULE_LABEL)
+    
     if site.use_extensible:
-        m.add_action(Panel)
-    #~ m  = m.add_menu("events",_("Events"))
+        m.add_action(CalendarPanel)
     m.add_action(MyEvents)
     #~ m.add_action(MyEventsToday)
-    #~ m.add_action(MyEventsReserved)
     m.add_action(MyEventsSuggested)
     m.add_action(MyEventsNotified)
-    #~ m.add_action(MyEventsToSchedule)
-    #~ m.add_action(MyEventsToNotify)
-    #~ m.add_action(MyEventsToConfirm)
     
     m.add_separator('-')
     m.add_action(Events)
@@ -2325,7 +2325,7 @@ def setup_quicklinks(site,ui,user,m):
     #~ print 20120706
     if site.use_extensible:
         #~ m.add_action(self.modules.cal.Panel)
-        m.add_action(Panel)
+        m.add_action(CalendarPanel)
         m.add_action(MyEventsSuggested)
         m.add_action(MyEventsNotified)
         m.add_action(MyTasksToDo)
