@@ -40,7 +40,7 @@ from lino.mixins import printable
 from lino.utils import babel
 #~ from lino import choices_method, simple_choices_method
 from lino.core.modeltools import obj2str, sorted_models_list
-from lino.core.modeltools import resolve_field
+from lino.core.modeltools import resolve_field, UnresolvedModel
 from lino.utils.choosers import chooser, get_for_field
 #~ from lino.modlib.users.models import UserLevels
 from lino.utils.restify import restify
@@ -203,7 +203,10 @@ if settings.LINO.is_installed('contenttypes'):
       @dd.virtualfield(models.CharField(_("Verbose name"),max_length=200))
       def verbose_name(self,request):
           #~ return unicode(self)
-          m = dd.resolve_model(self.content_type.app_label + '.' + self.content_type.name)
+          #~ m = dd.resolve_model(self.content_type.app_label + '.' + self.content_type.name)
+          m = self.content_type.model_class()
+          #~ if isinstance(m,UnresolvedModel):
+              #~ return str(m)
           de = m._lino_default_table.get_data_elem(self.field)
           if isinstance(de,models.Field):
               #~ return unicode(de.verbose_name)

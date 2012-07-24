@@ -16,7 +16,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django import http
-#~ from django.http import HttpResponse, Http404
 from django.db import models
 from django.conf import settings
 from django.views.generic import View
@@ -57,12 +56,7 @@ def json_response_kw(**kw):
     return json_response(kw)
     
 def json_response(x,content_type='application/json'):
-    #~ logger.info("20120208")
-    #s = simplejson.dumps(kw,default=unicode)
-    #return HttpResponse(s, mimetype='text/html')
     s = py2js(x)
-    #~ logger.info("20120208 json_response(%r)\n--> %s",x,s)
-    #~ logger.debug("json_response() -> %r", s)
     """
     Theroretically we should send content_type='application/json'
     (http://stackoverflow.com/questions/477816/the-right-json-content-type),
@@ -84,11 +78,6 @@ def elem2rec1(ar,rh,elem,**rec):
     rec.update(data=rh.store.row2dict(ar,elem))
     return rec
 
-#~ def elem2rec_empty(ar,ah,**rec):
-    #~ rec.update(data=dict())
-    #~ rec.update(title='Empty detail')
-    #~ return rec
-    
 def elem2rec_insert(ar,ah,elem):
     """
     Returns a dict of this record, designed for usage by an InsertWindow.
@@ -136,12 +125,7 @@ def elem2rec_detailed(ar,elem,**rec):
         rec.update(title=unicode(elem))
     else:
         rec.update(title=ar.get_title() + u" » " + unicode(elem))
-    #~ rec.update(title=ar.actor.get_detail_title(ar,elem))
-    #~ rec.update(title=rh.actor.model._meta.verbose_name + u"«%s»" % unicode(elem))
-    #~ rec.update(title=unicode(elem))
     rec.update(id=elem.pk)
-    #~ if rh.actor.disable_delete:
-    #~ rec.update(disabled_actions=rh.actor.disabled_actions(ar,elem))
     rec.update(disable_delete=rh.actor.disable_delete(elem,ar))
     if rh.actor.show_detail_navigator:
         first = None
@@ -172,10 +156,8 @@ def elem2rec_detailed(ar,elem,**rec):
                 else:
                     recno = i + 1
                     if i > 0:
-                        #~ prev = ar.queryset[i-1]
                         prev = id_list[i-1]
                     if i < len(id_list) - 1:
-                        #~ next = ar.queryset[i+1]
                         next = id_list[i+1]
             else:
                 first = ar.queryset[0]
@@ -313,23 +295,17 @@ class Index(View):
 
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
-        #~ from lino.lino_site import lino_site
-        #~ if settings.LINO.index_view_action:
-            #~ kw.update(on_ready=self.ext_renderer.action_call(
-              #~ settings.LINO.index_view_action))
-        #~ logger.info("20120706 index_view() %s %r",request.user, request.user.profile)
-        main = settings.LINO.get_main_action(request.subst_user or request.user)
-        kw.update(on_ready=ui.ext_renderer.action_call(request,main))
-        #~ kw.update(title=settings.LINO.modules.pcsw.Home.label)
-        #~ kw.update(title=lino_site.title)
-        #~ mnu = py2js(lino_site.get_site_menu(request.user))
-        #~ print mnu
-        #~ tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
+        a = settings.LINO.get_main_action(request.subst_user or request.user)
+        if a is not None:
+            kw.update(on_ready=ui.ext_renderer.action_call(request,a))
         return http.HttpResponse(ui.html_page(request,**kw))
-        #~ html = '\n'.join(self.html_page(request,main,konsole,**kw))
-        #~ return HttpResponse(html)
 
 
+class MainHtml(View):
+    def get(self, request, *args, **kw):
+        ui = settings.LINO.ui
+        return ui.success_response(html=ui.get_main_html(request))
+        
 class Templates(View):
   
     #~ def templates_view(self,request,
@@ -574,21 +550,6 @@ class ApiElement(View):
         else:
             elem = None
         
-        #~ if request.method == 'DELETE':
-            #~ ar = rpt.request(ui,request)
-            #~ return delete_element(ar,elem)
-            
-        #~ if request.method == 'PUT':
-            #~ if elem is None:
-                #~ raise Http404('Tried to PUT on element -99999')
-            #~ data = http.QueryDict(request.raw_post_data)
-            #~ a = rpt.get_url_action(rpt.default_list_action_name)
-            #~ ar = rpt.request(ui,request,a)
-            #~ ar.renderer = ui.ext_renderer
-            #~ return form2obj_and_save(ar,data,elem,False,False) # force_update=True)
-            
-        #~ if request.method == 'GET':
-                    
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
           rpt.default_elem_action_name)
         a = rpt.get_url_action(action_name)
@@ -619,21 +580,12 @@ class ApiElement(View):
                 
                 return json_response(datarec)
                 
-            #~ after_show = dict(data_record=datarec)
-            #~ after_show = dict()
-            #~ params = dict()
             after_show = ar.get_status(ui,record_id=pk)
-            #~ bp = ui.request2kw(ar)
             
-            #~ if a.window_wrapper.tabbed:
-            #~ if rpt.get_detail().tabbed:
-            #~ if rpt.model._lino_detail.get_handle(ui).tabbed:
-            if True:
-                tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
-                if tab is not None: 
-                    tab = int(tab)
-                    after_show.update(active_tab=tab)
-            #~ params.update(base_params=bp)
+            tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
+            if tab is not None: 
+                tab = int(tab)
+                after_show.update(active_tab=tab)
             
             return http.HttpResponse(ui.html_page(request,a.label,
               on_ready=ui.ext_renderer.action_call(request,a,after_show)))
@@ -645,7 +597,6 @@ class ApiElement(View):
             return http.HttpResponseRedirect(target)
             
         if isinstance(a,actions.RowAction):
-            #~ return a.run(ar,elem)
             if pk == '-99998':
                 assert elem is None
                 elem = ar.create_instance()
@@ -684,11 +635,6 @@ class ApiElement(View):
           
         raise NotImplementedError("Action %s is not implemented)" % a)
                 
-              
-        #~ return settings.LINO.ui.error_response(None,
-            #~ "Method %r not supported for elements of %s." % (
-                #~ request.method,ah.actor))
-        #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.actor))
         
     def put(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
@@ -720,7 +666,7 @@ class ApiList(View):
         rpt = requested_report(app_label,actor)
         
         #~ action_name = request.GET.get(
-        action_name = request.REQUEST.get(
+        action_name = request.POST.get(
             ext_requests.URL_PARAM_ACTION_NAME,
             rpt.default_list_action_name)
         a = rpt.get_url_action(action_name)
@@ -731,23 +677,14 @@ class ApiList(View):
         ar.renderer = ui.ext_renderer
         rh = ar.ah
         
-        #~ data = rh.store.get_from_form(request.POST)
-        #~ instance = ar.create_instance(**data)
-        #~ ar = ext_requests.ViewReportRequest(request,rh,rh.actor.list_action)
-        #~ ar = ext_requests.ViewReportRequest(request,rh,rh.actor.default_action)
         elem = ar.create_instance()
-        # store uploaded files. 
-        # html forms cannot send files with PUT or GET, only with POST
-        #~ logger.info("20120208 list POST %s",obj2str(elem,force_detailed=True))
         if rh.actor.handle_uploaded_files is not None:
             rh.actor.handle_uploaded_files(elem,request)
             file_upload = True
         else:
             file_upload = False
         return form2obj_and_save(ar,request.POST,elem,True,False,file_upload)
-        #~ return form2obj_and_save(request,rh,request.POST,instance,True,ar)
       
-    #~ def api_list_view(self,request,app_label=None,actor=None):
     def get(self,request,app_label=None,actor=None):
         """
         - GET : List the members of the collection. 
@@ -761,8 +698,7 @@ class ApiList(View):
         ui = settings.LINO.ui
         rpt = requested_report(app_label,actor)
         
-        #~ action_name = request.GET.get(
-        action_name = request.REQUEST.get(
+        action_name = request.GET.get(
             ext_requests.URL_PARAM_ACTION_NAME,
             rpt.default_list_action_name)
         a = rpt.get_url_action(action_name)
@@ -849,96 +785,54 @@ class ApiList(View):
             if ar.get_total_count() > MAX_ROW_COUNT:
                 raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
         
-            #~ from lino.utils.appy_pod import setup_renderer
             from lino.utils.appy_pod import Renderer
-            #~ from appy.pod.renderer import Renderer
             
             tpl_leaf = "Table.odt" 
-            #~ tplgroup = rpt.app_label + '/' + rpt.__name__
             tplgroup = None
             tplfile = find_config_file(tpl_leaf,tplgroup)
             if not tplfile:
                 raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
                 
-            #~ target_parts = ['cache', 'appypdf', str(rpt) + '.odt']
-            #~ target_parts = ['cache', 'appypdf', str(rpt) + '.pdf']
             target_parts = ['cache', 'appypdf', str(rpt) + '.' + fmt]
             target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
             target_url = ui.media_url(*target_parts)
-            #~ ar.renderer = self.pdf_renderer
             ar.renderer = ui.ext_renderer # 20120624
-            #~ body = ar.table2xhtml().toxml()
             """
-            [NOTE] :doc:`/blog/2012/0211`:
+            [NOTE] :doc:`/blog/2012/0211`
             
             """
-            #~ body = etree.tostring(self.table2xhtml(ar))
-            #~ logger.info("20120122 body is %s",body)
             context = dict(
                 ar=ar,
                 title=unicode(ar.get_title()),
-                #~ table_body=body,
                 dtos=babel.dtos,
                 dtosl=babel.dtosl,
                 dtomy=babel.dtomy,
                 babelattr=babel.babelattr,
                 babelitem=babel.babelitem,
                 tr=babel.babelitem,
-                #~ iif=iif,
                 settings=settings,
-                #~ restify=restify,
-                #~ site_config = get_site_config(),
-                #~ site_config = settings.LINO.site_config,
                 _ = _,
                 #~ knowledge_text=fields.knowledge_text,
                 )
-            #~ lang = str(elem.get_print_language(self))
             if os.path.exists(target_file):
                 os.remove(target_file)
             logger.info(u"appy.pod render %s -> %s (params=%s",
                 tplfile,target_file,settings.LINO.appy_params)
             renderer = Renderer(tplfile, context, target_file,**settings.LINO.appy_params)
-            #~ setup_renderer(renderer)
-            #~ renderer.context.update(restify=debug_restify)
             renderer.run()
             return http.HttpResponseRedirect(target_url)
             
         if fmt == ext_requests.URL_FORMAT_PRINTER:
             if ar.get_total_count() > MAX_ROW_COUNT:
                 raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-            #~ ar.renderer = self.pdf_renderer # 20120624
             ar.renderer = ui.ext_renderer
-            
-            if False:
-                response = http.HttpResponse(content_type='text/html;charset="utf-8"')
-                doc = xhg.HTML()
-                doc.set_title(ar.get_title())
-                t = ui.table2xhtml(ar)
-                doc.add_to_body(t)
-                xhg.Writer(response).render(doc)
-                return response
-            
-            if True:
-                response = http.HttpResponse(content_type='text/html;charset="utf-8"')
-                doc = xghtml.Document(force_unicode(ar.get_title()))
-                doc.body.append(xghtml.E.h1(doc.title))
-                t = doc.add_table()
-                ui.ar2html(ar,t)
-                doc.write(response,encoding='utf-8')
-                #~ xhg.Writer(response).render(doc)
-                return response
-            
-            if False:
-                from lxml.html import builder as html
-                title = unicode(ar.get_title())
-                doc = html.BODY(
-                  html.HEAD(html.TITLE(title)),
-                  html.BODY(
-                    html.H1(title),
-                    ui.table2xhtml(ar)
-                  )
-                )
-                return http.HttpResponse(etree.tostring(doc),content_type='text/html;charset="utf-8"')
+            response = http.HttpResponse(content_type='text/html;charset="utf-8"')
+            doc = xghtml.Document(force_unicode(ar.get_title()))
+            doc.body.append(xghtml.E.h1(doc.title))
+            t = doc.add_table()
+            ui.ar2html(ar,t)
+            doc.write(response,encoding='utf-8')
+            return response
             
         raise http.Http404("Format %r not supported for GET on %s" % (fmt,rpt))
 

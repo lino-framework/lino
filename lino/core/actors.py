@@ -683,7 +683,7 @@ class Actor(object):
             #~ print 20120709, a.name
             if a.show_in_workflow:
                 if obj.get_row_permission(ar.get_user(),state,a):
-                    l.append(ar.renderer.row_action_button(obj,ar,a))
+                    l.append(ar.renderer.action_button(obj,ar,a))
         return ', '.join(l)
         
     @classmethod

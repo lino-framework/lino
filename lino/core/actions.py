@@ -621,6 +621,7 @@ class ActionRequest(object):
             #~ kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
         kw.update(subst_user=request.subst_user)
+        kw.update(requesting_panel=request.requesting_panel)
         #~ if settings.LINO.user_model:
             #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
             #~ if username:
@@ -628,9 +629,6 @@ class ActionRequest(object):
                     #~ kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))
                 #~ except settings.LINO.user_model.DoesNotExist, e:
                     #~ pass
-        requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
-        if requesting_panel:
-            kw.update(requesting_panel=requesting_panel)
         #~ logger.info("20120723 ActionRequest.parse_req() --> %s",kw)
         return kw
       
@@ -727,10 +725,7 @@ class ActionRequest(object):
 
     def get_status(self,ui,**kw):
         if self.actor.parameters:
-            #~ pv = kw.setdefault('param_values',{})
-            #~ kw.update(param_values=self.ah.store.pv2list(self.param_values))
             kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
-            #~ kw[ext_requests.URL_PARAM_PARAM_VALUES] = self.ah.store.pv2list(self.param_values)
         bp = kw.setdefault('base_params',{})
         if self.subst_user is not None:
             #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
@@ -743,7 +738,7 @@ class ActionRequest(object):
         Create a new ActionRequest, taking default values from this one.
         """
         kw.setdefault('user',self.user)
-        kw.setdefault('user',self.user)
+        kw.setdefault('subst_user',self.subst_user)
         kw.setdefault('requesting_panel',self.requesting_panel)
         kw.setdefault('renderer',self.renderer)
         #~ kw.setdefault('request',self.request) 
@@ -751,9 +746,6 @@ class ActionRequest(object):
         # and because i couldn't remember why 'request' was passed to the spawned request.
         if actor is None:
             actor = self.actor
-        #~ kw.update(request=self.request)
-        #~ return ViewReportRequest(None,rh,rpt.default_action,**kw)
-        #~ return self.__class__(self.ui,actor,**kw)
         return self.ui.request(actor,**kw)
         
     def absolute_uri(self,*args,**kw):

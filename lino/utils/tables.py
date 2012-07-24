@@ -357,22 +357,14 @@ class TableRequest(actions.ActionRequest):
         
     def get_status(self,ui,**kw):
         kw = actions.ActionRequest.get_status(self,ui,**kw)
-        #~ bp = kw.setdefault('base_params',{})
         bp = kw['base_params']
         if self.quick_search:
             bp[ext_requests.URL_PARAM_FILTER] = self.quick_search
             
         if self.known_values:
-            #~ kv = dict()
             for k,v in self.known_values.items():
                 if self.actor.known_values.get(k,None) != v:
                     bp[k] = v
-            #~ kw.update(known_values = kv)
-                
-            #~ kw[ext_requests.URL_PARAM_KNOWN_VALUES] = self.known_values
-            
-        #~ if self.report.__class__.__name__ == 'MyPersonsByGroup':
-            #~ print 20111223, self.known_values
         if self.master_instance is not None:
             if self.master is not None:
                 bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk

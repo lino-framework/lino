@@ -338,6 +338,8 @@ Ext.Element.addMethods(
 
 
 Ext.namespace('Lino');
+    
+    
 
 //~ Lino.subst_user_field = new Ext.form.ComboBox({});
 //~ Lino.subst_user = null;
@@ -376,7 +378,63 @@ Lino.window_history = Array();
     
 Lino.chars2width = function(cols) {  return cols * 8; }
 Lino.rows2height = function(cols) {  return cols * 20; }
+
+
+
+Lino.Viewport = Ext.extend(Ext.Viewport,{
+  layout:"fit"
+  ,initComponent : function(){
+    Lino.Viewport.superclass.initComponent.call(this);
+    this.on('render',function(){
+      this.loadMask = new Ext.LoadMask(this.el,{msg:"$_('Please wait...')"});
+    },this);
+  }
+  ,get_base_params : function() { 
+    var p = {};
+    Lino.insert_subst_user(p);
+    return p;
+  }
+  ,refresh : function() {
+      var caller = this;
+      var success = function(response) {
+        if (caller.loadMask) caller.loadMask.hide();
+        if (response.responseText) {
+          var result = Ext.decode(response.responseText);
+          //~ console.log('Lino.do_action()',action.name,'result is',result);
+          if (result.html) {
+              Ext.getCmp('main_area').update(result.html);
+          }
+          if (result.message) {
+              if (result.alert) {
+                  //~ Ext.MessageBox.alert('Alert',result.alert_msg);
+                  Ext.MessageBox.alert('Alert',result.message);
+              } else {
+                  Lino.notify(result.message);
+              }
+          }
+          
+          if (result.notify_msg) Lino.notify(result.notify_msg);
+          if (result.js_code) { 
+            var jsr = result.js_code(caller);
+            //~ console.log('Lino.do_action()',action,'returned from js_code in',result);
+          };
+        }
+      };
+      var action = {
+        url : ROOT_URL + '/api/main_html',
+        waitMsg: "$_('Please wait...')",
+        failure: Lino.ajax_error_handler(caller),
+        success: success,
+        method: 'GET',
+        params: {}
+      };
+      Lino.insert_subst_user(action.params);
+      Ext.Ajax.request(action);
     
+  }
+});
+
+
 
 Lino.open_window = function(win,st) {
   //~ console.log("20120203 Lino.open_window()",win,st);
@@ -410,6 +468,7 @@ Lino.close_window = function(status_update) {
 
 Lino.close_all_windows = function() {
   if (Lino.window_history.length == 0) {
+      //~ Lino.viewport.refresh();
       var url = ROOT_URL + "/"
       //~ console.log("20120222 Lino.close_all_windows() : location.replace(",ROOT_URL,")");
       //~ if (ROOT_URL) 
@@ -1371,7 +1430,7 @@ Lino.do_action = function(caller,action) {
     }
   };
   Ext.applyIf(action,{
-    waitMsg: 'Please wait...',
+    waitMsg: "$_('Please wait...')",
     failure: Lino.ajax_error_handler(caller),
     params: {}
   });
@@ -1795,13 +1854,14 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 Lino.call_row_action = function(panel,url,actionName,step,fn) {
 //~ Lino.call_row_action = function(panel,rec_id,actionName,step,fn) {
   //~ var url = panel.get_record_url(rec_id);
-  var p = Ext.apply({},panel.get_base_params());
-  p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
+  var p = {$ext_requests.URL_PARAM_ACTION_NAME : actionName};
+  if (!panel) panel = Lino.viewport;
+  Ext.apply(p,panel.get_base_params());
+  panel.loadMask.show(); 
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
   //~ Lino.insert_subst_user(p);
     
   if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
-  panel.loadMask.show(); 
   Ext.Ajax.request({
     method: 'GET',
     url: url,

@@ -35,6 +35,7 @@ class Handle:
 ACTION_RESPONSES = frozenset((
   'message','success','alert', 
   'errors',
+  'html',
   #~ 'new_status',
   'goto_record_id',
   'refresh','refresh_all',

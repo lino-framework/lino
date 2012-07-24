@@ -80,11 +80,9 @@ Because we no longer inherit settings
 from one of the predefined Lino applications, 
 we now need to define the :setting:`INSTALLED_APPS` 
 setting.
-For this tutorial, put the following value::
+For this tutorial, we have the following value::
 
     INSTALLED_APPS = (
-      'django.contrib.contenttypes',
-      'lino.modlib.users',
       'lino',
       'mysite.polls'
     )
@@ -92,15 +90,19 @@ For this tutorial, put the following value::
 Where you maybe need to change the last item to the name you used
 during the Django Tutorial.
 
-  
 A few comments: 
-  
-- Most of the ``django.contrib.*`` modules are not 
-  used in Lino, one exception is 
-  ``django.contrib.contenttypes``.
-- The ``lino.modlib.users`` is Lino's replacement 
-  for Django's ``django.contrib.auth``.
+
 - ``lino`` is mandatory for every Lino application.
+  
+- To keep things simple in this first tutorial, we didn't use 
+  the following modules which are almost mandatory for 
+  any real application:
+
+    - ``django.contrib.contenttypes``
+      (though most of the other ``django.contrib.*`` modules are not 
+      used in Lino)
+    - ``lino.modlib.users``, is Lino's replacement for Django's ``django.contrib.auth``.
+
   
 Some more settings deserve our attention at this moment:
 

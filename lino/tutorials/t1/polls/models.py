@@ -17,24 +17,6 @@ class Poll(dd.Model):
         return self.pub_date == datetime.date.today()        
         #~ return self.pub_date.date() == datetime.date.today()        
 
-    def summary_row(self,ar,**kw):
-        html = '<b>%s</b> ' % cgi.escape(self.question)
-        #~ raise Exception('20120723')
-        #~ print ar
-        chunks = []
-        for obj in self.choice_set.all():
-            #~ ar = self.request(ui,None,master_instance=master)
-            chunks.append(ar.renderer.row_action_button(obj,ar,Choices.vote,unicode(obj)))
-        html += ' / '.join(chunks)
-        
-        html += "<br/><small>Published %s" % babel.dtosl(self.pub_date)
-        chunks = []
-        for obj in self.choice_set.all():
-            chunks.append("%d %s" % (obj.votes,cgi.escape(unicode(obj))))
-        html += '<br/>Results: %s' % (', '.join(chunks))
-        html += '</small>'
-        return html
-
 
 class Polls(dd.Table):
     model = Poll
@@ -50,11 +32,6 @@ class Polls(dd.Table):
     """,window_size=(40,'auto'))
     
     
-class PollsList(Polls):
-    label = None
-    slave_grid_format = 'summary'
-    
-      
 
 class Choice(dd.Model):
     poll = models.ForeignKey(Poll)
@@ -67,6 +44,7 @@ class Choice(dd.Model):
         self.save()
         kw.update(refresh=True)
         kw.update(message="Thank you for voting")
+        kw.update(alert="Voted!")
         return ar.success_response(**kw)
         
     def __unicode__(self):
@@ -79,13 +57,24 @@ class ChoicesByPoll(Choices):
     master_key = 'poll'
     
 
-def site_setup(site):
-    """
-    (Called during site setup.)
-    """
-    site.modules.lino.Home.set_detail_layout("""
-    polls.PollsList
-    """)
-    
-    
+def recent_polls(request):
+    html = '<h1>%s</h1> ' % cgi.escape("Recent polls")
+    html += '<ul>'
+    for poll in Poll.objects.order_by('pub_date'):
+        html += '<li>'
+        html += '<b>%s</b> ' % cgi.escape(poll.question)
+        chunks = []
+        for obj in poll.choice_set.all():
+            chunks.append(settings.LINO.ui.row_action_button(obj,request,Choices.vote,unicode(obj)))
+        html += ' / '.join(chunks)
+        
+        html += "<br/><small>Published %s" % babel.dtosl(poll.pub_date)
+        chunks = []
+        for obj in poll.choice_set.all():
+            chunks.append("%d %s" % (obj.votes,cgi.escape(unicode(obj))))
+        html += '<br/>Results: %s' % (', '.join(chunks))
+        html += '</small>'
+        html += '</li>'
+    html += '</ul>'
+    return html
     

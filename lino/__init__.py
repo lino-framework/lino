@@ -1060,8 +1060,6 @@ class Lino(object):
         #~ print "20120703 not installed: %r" % app_label
 
         
-
-
     def get_quicklinks(self,ui,user):
         from lino.core import menus
         tb = menus.Toolbar(user,'quicklinks')
@@ -1208,6 +1206,14 @@ class Lino(object):
         """
         return self.modules.lino.Home.default_action
         
+    def get_main_html(self,request):
+        """
+        Return the html chunk to be displayed in the main area.
+        This is visible only if :meth:`get_main_action` returns `None`.
+        """
+        return None
+
+
     def get_reminder_generators_by_user(self,user):
         """
         Override this per application to return a list of 
