@@ -22,6 +22,7 @@ from django.views.generic import View
 from django.utils import simplejson as json
 from django.core import exceptions
 from django.utils.translation import ugettext as _
+from django.utils.encoding import force_unicode
 
 from lino import dd
 
@@ -37,6 +38,8 @@ from lino.core.modeltools import obj2str, obj2unicode
 
 from lino.ui import requests as ext_requests
 from lino.ui.extjs3 import ext_elems
+
+MAX_ROW_COUNT = 300
 
 
 

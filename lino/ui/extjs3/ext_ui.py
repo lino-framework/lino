@@ -103,8 +103,6 @@ KNOWLEDGE_CHOICES = HowWell.get_choices()
 if settings.LINO.user_model:
     from lino.modlib.users import models as users
 
-MAX_ROW_COUNT = 300
-
 from lino.modlib.cal.utils import CalendarAction
     
 from lino.ui.extjs3 import views

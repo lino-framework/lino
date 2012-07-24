@@ -326,8 +326,8 @@ class Models(dd.VirtualTable):
         
     @dd.displayfield(_("docstring"))
     def docstring(self,obj,ar):
-        #~ return obj.__doc__
-        return restify(unicode(obj.__doc__))
+        return obj.__doc__
+        #~ return restify(unicode(obj.__doc__))
         
     @dd.requestfield(_("Rows"))
     def rows(self,obj,ar):

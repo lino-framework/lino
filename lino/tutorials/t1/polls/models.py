@@ -16,23 +16,7 @@ class Poll(dd.Model):
     def was_published_today(self):
         return self.pub_date == datetime.date.today()        
         #~ return self.pub_date.date() == datetime.date.today()        
-
-
-class Polls(dd.Table):
-    model = Poll
-    
-    detail_template = """
-    id question pub_date
-    polls.ChoicesByPoll
-    """
-    
-    insert_layout = dd.FormLayout("""
-    question
-    pub_date
-    """,window_size=(40,'auto'))
-    
-    
-
+        
 class Choice(dd.Model):
     poll = models.ForeignKey(Poll)
     choice = models.CharField(max_length=200)
@@ -50,6 +34,24 @@ class Choice(dd.Model):
     def __unicode__(self):
         return self.choice    
         
+        
+
+
+class Polls(dd.Table):
+    model = Poll
+    
+    detail_template = """
+    id question pub_date
+    polls.ChoicesByPoll
+    """
+    
+    insert_layout = dd.FormLayout("""
+    question
+    pub_date
+    """,window_size=(40,'auto'))
+    
+    
+
 class Choices(dd.Table):
     model = Choice
         
