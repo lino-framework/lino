@@ -63,7 +63,7 @@ Continued on :doc:`/tutorials/polls` and :mod:`lino.tutorials.t1`.
   saying "Error in formatting: encode() takes no keyword arguments".
   
   
-Changed
+- Internal changes to Action.__init__()
 
 - Another little bug::
   
@@ -77,4 +77,26 @@ Changed
       File "t:\hgwork\lino\lino\core\actions.py", line 422, in run
         row.before_state_change(ar,kw,old,self.target_state)
     TypeError: before_state_change() takes exactly 4 arguments (5 given)  
+
+- Fixed the following reported bug:
+
+    Im Grid-Fenster Personen. Schnellsuche "Muster", dann Doppelklick auf Max Mustermann, 
+    dann im GeheZu nach 'jupa' suchen: Klienten mit "jupa" werden zwar im 
+    Dropdown angezeigt, aber Lino springt nach Auswahl nicht darauf.
+    Im Detail-Fenster blieb (zumindest für manche Operationen) 
+    der quick-search-text aus der grid aktiv.
+    
+  New rule: 
+  
+    **Text entered in the quick search field of a grid window 
+    is not forwarded to the detail window.**
+    Because a separate quick search field is not necessary in detail view. 
+    The record selector field works exactly as a quick search field.
+    
+  One drawback of this new rule is that you cannot do the following 
+  any more (but I doubt that any user was aware of this possibility): 
+  in grid view specify a quick search text to select, 
+  let's say, 10 records out of 1000, then double click and browse 
+  these 10 records using the detail navigator.
+  
 

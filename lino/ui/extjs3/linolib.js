@@ -2234,12 +2234,13 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,Lino.PanelMixin);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   params_panel_hidden : false,
-  base_params : {},
+  //~ base_params : {},
   //~ trackResetOnLoad : true,
   //~ query_params : {},
   //~ 20110119b quick_search_text : '',
   constructor : function(config,params){
     if (params) Ext.apply(config,params);
+    this.base_params = {};
     //~ ww.config.base_params.query = ''; // 20111018
     //~ console.log(config);
     //~ console.log('FormPanel.constructor() 1',config)
@@ -2250,7 +2251,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
     Lino.FormPanel.superclass.constructor.call(this, config);
       
-    this.set_base_param('$URL_PARAM_FILTER',''); // 20111018
+    //~ this.set_base_param('$URL_PARAM_FILTER',null); // 20111018
+    //~ this.set_base_param('$URL_PARAM_FILTER',''); // 20111018
       
   },
   initComponent : function(){
@@ -2435,15 +2437,33 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ return this.base_params;
   },
   set_base_params : function(p) {
-    //~ this.base_params = Ext.apply({},p);
+    //~ this.base_params = Ext.apply({},this.base_params); // make sure it is an instance variable
+    delete p['$URL_PARAM_FILTER'] // 20120725
     Ext.apply(this.base_params,p);
     //~ if (p.param_values) this.set_param_values(p.param_values);  
+    if (this.record_selector) {
+        var store = this.record_selector.getStore();
+        for (k in p) store.setBaseParam(k,p[k]);
+        delete this.record_selector.lastQuery;
+        //~ console.log("20120725 record_selector.setBaseParam",p)
+    }
   },
   clear_base_params : function() {
       this.base_params = {};
+      //~ if (this.record_selector) {
+          //~ var store = this.record_selector.getStore();
+          //~ for (k in store.baseParams) store.setBaseParam(k,undefined);
+          //~ delete this.record_selector.lastQuery;
+          //~ console.log("20120725 record_selector.getBaseParams() -->",store.baseParams)
+      //~ }
   },
   set_base_param : function(k,v) {
+    //~ this.base_params = Ext.apply({},this.base_params); // make sure it is an instance variable
     this.base_params[k] = v;
+    //~ if (this.record_selector) {
+        //~ this.record_selector.getStore().setBaseParam(k,v);
+        //~ delete this.record_selector.lastQuery;
+    //~ }
   },
   
   after_delete : function() {
@@ -3982,7 +4002,7 @@ Lino.ComplexRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
 Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   mode: 'remote',
   //~ forceSelection:false,
-  minChars: 2, // default 4 is to much
+  minChars: 2, // default 4 is too much
   queryDelay: 300, // default 500 is maybe slow
   queryParam: '$URL_PARAM_FILTER', 
   //~ typeAhead: true,

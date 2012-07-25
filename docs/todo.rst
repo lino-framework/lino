@@ -34,11 +34,6 @@ Short-term
 #.  Einladung sollte ein ical haben, damit der Empfänger es in seinen
     Calendar-client importieren kann
 
-#.  Schnellsuche "Muster", dann Doppelklick auf Max Mustermann, 
-    dann im GeheZu nach 'jupa' suchen: Klienten mit "jupa" werden zwar im 
-    Dropdown angezeigt, aber Lino springt nach Auswahl nicht darauf.
-    (Da wird der alte search_text nicht gelöscht o.ä.)
-
 #.  Man sieht im Kalender-Panel noch nicht, wenn man nur Gast ist und
     noch zusagen bzw. absagen muss.
 
