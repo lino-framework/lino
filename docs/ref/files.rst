@@ -5,15 +5,9 @@ Files
 
   See :doc:`/blog/2012/0508`.
   
-.. xfile:: .dtl
-
-Configuration file that describes the layout of (one tab of) 
-a :term:`Detail Window`.
-See :doc:`/topics/dtl`.
-
 .. xfile:: settings.py
 
-See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project
+See :doc:`/tutorials/polls` 
 
 .. xfile:: urls.py
 

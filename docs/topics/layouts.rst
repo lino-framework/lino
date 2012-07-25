@@ -23,7 +23,7 @@ and setting the
 attribute of an :attr:`Actor <lino.core.actors.Actor>` subclass.
 
 For simple form layouts it is enough to specify just a 
-string template. See later.
+string template. See the :doc:`/tutorials/polls` tutorial.
 
 **A Layout consists of "panels".**
 Each panel is a class attribute defined on your subclass,

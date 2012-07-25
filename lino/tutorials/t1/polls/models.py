@@ -9,9 +9,14 @@ from lino.utils import babel
 
 
 class Poll(dd.Model):
-    question = models.CharField(max_length=200)
-    hidden = models.BooleanField()
-    pub_date = models.DateTimeField('date published',auto_now_add=True)
+    question = models.CharField("Question text", max_length=200)
+    hidden = models.BooleanField("Hidden",help_text="""\
+Whether this poll should not be shown in the main window.""")
+    pub_date = models.DateTimeField('Date published',auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Poll'
+        verbose_name_plural = 'Polls'
     
     def __unicode__(self):
         return self.question
@@ -21,8 +26,12 @@ class Poll(dd.Model):
         
 class Choice(dd.Model):
     poll = models.ForeignKey(Poll)
-    choice = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
+    choice = models.CharField("Choice text",max_length=200)
+    votes = models.IntegerField("No. of votes",default=0)
+    
+    class Meta:
+        verbose_name = 'Choice'
+        verbose_name_plural = 'Choices'
     
     def __unicode__(self):
         return self.choice    
@@ -44,10 +53,12 @@ class Choice(dd.Model):
 
 class Polls(dd.Table):
     model = Poll
+    sort_order = ['pub_date']
     
     detail_layout = """
-    id question pub_date
-    polls.ChoicesByPoll
+    id question 
+    hidden pub_date
+    ChoicesByPoll
     """
     
     insert_layout = dd.FormLayout("""

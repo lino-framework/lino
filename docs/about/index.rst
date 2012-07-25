@@ -33,7 +33,7 @@ Some of Lino's features:
 - Innovative solutions for 
   :doc:`data migration </topics/datamig>`,
   :doc:`polymorphism  </topics/mti>`,
-  :doc:`user-interface agnostic form design </topics/dtl>`
+  :doc:`user-interface agnostic form design </topics/layouts>`
   and
   :doc:`multilingual database content </topics/babel>`.
 

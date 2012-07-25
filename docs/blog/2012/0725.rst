@@ -2,7 +2,7 @@
 ========
 
 
-Continued on :doc:`/tutorials/polls` and :mod:lino.tutorials.t1`.
+Continued on :doc:`/tutorials/polls` and :mod:`lino.tutorials.t1`.
 
 - New attribute :attr:`lino.core.actions.Action.custom_handler`
   to avoid having to specify show_in_workflow in 
@@ -49,3 +49,32 @@ Continued on :doc:`/tutorials/polls` and :mod:lino.tutorials.t1`.
   
 - Added BooleanField `polls.Poll.hidden` to avoid layout problem when 
   a form layout has only one field.
+  
+- Found and fixed some more bugs in the development version:
+
+  - "global name 'find_config_file' is not defined" when trying to 
+    use the [pdf] button.
+  
+  - "AttributeError: 'module' object has no attribute 'get_actor2'" 
+    when trying to save a grid config.
+    
+- Discovered and fixed a bug in version 1.4.8 : 
+  __repr__ of a choicelist Choice failed under Python 2.6.6, 
+  saying "Error in formatting: encode() takes no keyword arguments".
+  
+  
+Changed
+
+- Another little bug::
+  
+    WARNING Action "Bestanden" failed for Kursanfragen "CourseRequest object":
+    before_state_change() takes exactly 4 arguments (5 given).
+    Ein Fehlerbericht wurde an den Systemverwalter geschickt.
+    ERROR before_state_change() takes exactly 4 arguments (5 given)
+    Traceback (most recent call last):
+      File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 612, in get
+        rv = a.run(elem,ar)
+      File "t:\hgwork\lino\lino\core\actions.py", line 422, in run
+        row.before_state_change(ar,kw,old,self.target_state)
+    TypeError: before_state_change() takes exactly 4 arguments (5 given)  
+

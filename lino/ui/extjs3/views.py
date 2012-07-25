@@ -15,6 +15,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import os
+
 from django import http
 from django.db import models
 from django.conf import settings
@@ -28,7 +30,9 @@ from lino import dd
 
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.jsgen import py2js, js_code, id2js
+from lino.utils.config import find_config_file
 from lino.utils import choosers
+from lino.utils import babel
 from lino.utils import isiterable
 from lino.utils import dblogger
 
@@ -845,7 +849,8 @@ class GridConfig(View):
     #~ def grid_config_view(self,request,app_label=None,actor=None):
     def put(self,request,app_label=None,actor=None):
         ui = settings.LINO.ui
-        rpt = actors.get_actor2(app_label,actor)
+        rpt = requested_report(app_label,actor)
+        #~ rpt = actors.get_actor2(app_label,actor)
         PUT = http.QueryDict(request.raw_post_data)
         gc = dict(
           widths = [int(x) for x in PUT.getlist(ext_requests.URL_PARAM_WIDTHS)],
@@ -871,7 +876,7 @@ class GridConfig(View):
         except IOError,e:
             msg = _("Error while saving GC for %(table)s: %(error)s") % dict(
                 table=rpt,error=e)
-            return settings.LINO.ui.error_response(None,msg)
+            return settings.LINO.ui.error_response(None,msg,alert=True)
         #~ logger.info(msg)
         settings.LINO.ui.build_site_cache(True)            
         return settings.LINO.ui.success_response(msg)

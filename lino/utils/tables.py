@@ -494,8 +494,6 @@ class AbstractTable(actors.Actor):
     """
     _handle_class = TableHandle
     
-    #~ field = None
-    
     column_names = '*'
     """
     A string that describes the list of columns of this table.

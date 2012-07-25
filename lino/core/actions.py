@@ -143,14 +143,10 @@ class Action(object):
     ===== =================================
     
     """
-    label = None
-    name = None
-    url_action_name = None
     
-    actor = None
+    label = None
     """
-    Internally used to store the :class:`lino.core.actors.Actor` 
-    who owns this action.
+    The text to appear on the button.
     """
     
     help_text = None
@@ -158,6 +154,37 @@ class Action(object):
     A help text that shortly explains what this action does.
     ExtJS uses this as tooltip text.
     """
+    
+    auto_save = True
+    """
+    What to do when this action is being called while the user is on a dirty record.
+    
+    - `False` means: forget any changes in current record and run the action.
+    - `True` means: save any changes in current record before running the action.
+    - `None` means: ask the user.
+    """
+    
+    required = {}
+    """
+    A dict with permission requirements.
+    See :func:`lino.core.perms.make_permission_handler`.
+    """
+    
+    name = None
+    """
+    Internally used to store the name of this action within the Actor's namespace.
+    """
+    
+    url_action_name = None
+    """
+    """
+    
+    actor = None
+    """
+    Internally used to store the :class:`lino.core.actors.Actor` 
+    who owns this action.
+    """
+    
     key = None
     """
     The hotkey. Currently not used.
@@ -172,6 +199,9 @@ class Action(object):
     """
     
     default_format = 'html'
+    """
+    Used internally.
+    """
     
     readonly = True
     """
@@ -193,7 +223,6 @@ class Action(object):
     Used internally if :attr:`opens_a_window` to say whether the window has a navigator.
     """
     
-    
     show_in_bbar = True
     """
     Used internally.
@@ -207,20 +236,6 @@ class Action(object):
     as the :meth:`workflow_buttons <lino.core.actors.Actor.workflow_buttons>`.
     """
     
-    auto_save = True
-    """
-    What to do when this action is being called while the user is on a dirty record.
-    
-    - `False` means: forget any changes in current record and run the action.
-    - `True` means: save any changes in current record before running the action.
-    - `None` means: ask the user.
-    """
-    required = {}
-    """
-    A dict with requirements to specify permissions.
-    See :func:`lino.core.perms.make_permission_handler`.
-    """
-    
     custom_handler = False
     """
     Whether this action is implemented as Javascript function call.
@@ -228,22 +243,30 @@ class Action(object):
     """
     
     
-    def __init__(self,label=None,url_action_name=None,required={},**kw):
-        
-        if url_action_name is not None:
-            if not isinstance(url_action_name,basestring):
-                raise Exception("%s name %r is not a string" % (self.__class__,url_action_name))
-            self.url_action_name = url_action_name
-        if label is None:
-            label = self.label or self.url_action_name 
-        self.label = label
-        assert self.callable_from is None or isinstance(
-            self.callable_from,(tuple,type)), "%s" % self
+    #~ def __init__(self,label=None,url_action_name=None,required={},**kw):
+    def __init__(self,label=None,**kw):
+        """
+        The first argument is the optional `label`,
+        other arguments should be specified as keywords and can be 
+        any of the existing class attributes.
+        """
+        #~ if url_action_name is not None:
+            #~ if not isinstance(url_action_name,basestring):
+                #~ raise Exception("%s name %r is not a string" % (self.__class__,url_action_name))
+            #~ self.url_action_name = url_action_name
+        if label is not None:
+            self.label = label
+            
+        #~ if label is None:
+            #~ label = self.label or self.url_action_name 
         for k,v in kw.items():
             if not hasattr(self,k):
                 raise Exception("Invalid keyword %s" % k)
             setattr(self,k,v)
-        self.set_required(**required)
+        self.set_required()
+        #~ self.set_required(**required)
+        assert self.callable_from is None or isinstance(
+            self.callable_from,(tuple,type)), "%s" % self
 
         
     def set_required(self,**kw):
@@ -285,6 +308,8 @@ class Action(object):
             raise Exception("%s tried to attach action %s of %s" % (actor,name,self.actor))
         self.name = name
         self.actor = actor
+        if self.label is None:
+            self.label = name
         if actor.hide_top_toolbar:
             self.hide_top_toolbar = True
         if self.help_text is None and self is actor.default_action:
@@ -561,7 +586,14 @@ class SubmitInsert(SubmitDetail):
 
 class ActionRequest(object):
     """
-    Deserves more documentation.
+    Holds information about an indivitual web request and provides methods like
+
+    - :class:`success_response <lino.core.actions.ActionRequest.success_response>`
+    - :class:`error_response <lino.core.actions.ActionRequest.error_response>`
+    - :class:`confirm <lino.core.actions.ActionRequest.confirm>`
+    - :class:`spawn <lino.core.actions.ActionRequest.spawn>`
+
+    
     """
     create_kw = None
     renderer = None
@@ -605,11 +637,6 @@ class ActionRequest(object):
                     self.param_values.define(k,v)
                 
         
-    #~ def confirm(self,step,*messages):
-        #~ if self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,None) == str(step):
-            #~ return
-        #~ raise ConfirmationRequired(step,messages)
-
     def href_to(self,*args,**kw):
         return self.renderer.href_to(self,*args,**kw)
         
@@ -658,7 +685,17 @@ class ActionRequest(object):
         
     def confirm(self,*messages):
         """
-        Calling this from an Action's :meth:`Action.run`
+        Calling this from an Action's :meth:`Action.run` method will
+        interrupt the execution, send the specified message(s) back to 
+        the user, waiting for confirmation before continuing.
+        
+        Note that this is implemented without any server sessions 
+        and cookies. While this system is genial, it has one drawback 
+        which you should be aware of: the code execution does not 
+        *continue* after the call to `confirm` but starts again at the 
+        beginning (with the difference that the client this time calls it with 
+        an internal `step` parameter that tells Lino that this `confirm()` 
+        has been answered and should no longer raise stop execution.
         """
         assert len(messages) > 0 and messages[0], "At least one non-empty message required"
         self.step += 1
@@ -713,10 +750,6 @@ class ActionRequest(object):
     def render_to_dict(self):
         return self.action.render_to_dict(self)
         
-    #~ def row2dict(self,row,d):
-        #~ # overridden in extjs.ext_requests.ViewReportRequest
-        #~ return self.report.row2dict(row,d)
-
     def get_request_url(self,*args,**kw):
         return self.ui.get_request_url(self,*args,**kw)
 
@@ -752,6 +785,14 @@ class ActionRequest(object):
         
 
 def action(*args,**kw):
+    """
+    Decorator to define custom actions.
+    Same signature as :meth:`Action.__init__`.
+    In practice you'll possibly use:
+    :attr:`label <Action.label>`,
+    :attr:`help_text <Action.help_text>` and
+    :attr:`required <Action.required>`
+    """
     def decorator(fn):
         kw.setdefault('custom_handler',True)
         a = RowAction(*args,**kw)

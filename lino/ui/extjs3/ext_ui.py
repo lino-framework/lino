@@ -78,7 +78,6 @@ from lino.utils import babel
 from lino.utils import choicelists
 from lino.core import menus
 from lino.utils import jsgen
-from lino.utils.config import find_config_file
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.config import make_dummy_messages_file
@@ -515,20 +514,6 @@ class ExtUI(base.UI):
         #~ base.UI.__init__(self,*args,**kw) # will create a.window_wrapper for all actions
         base.UI.__init__(self) 
         
-        #~ self.welcome_template = get_template('welcome.html')
-        
-        #~ from django.template.loader import find_template
-        #~ source, origin = find_template('welcome.html')
-        #~ print source, origin
-        
-        if False:
-            fn = find_config_file('welcome.html')
-            logger.info("Using welcome template %s",fn)
-            self.welcome_template = CheetahTemplate(file(fn).read())
-        
-        #~ self.build_site_cache()
-            
-        #~ self.generate_linolib_messages()
         
     def create_layout_element(self,lh,name,**kw):
         if False: 
@@ -1880,4 +1865,7 @@ tinymce.init({
 
 
     def row_action_button(self,*args,**kw):
+        """
+        See :meth:`ExtRenderer.row_action_button`
+        """
         return self.ext_renderer.row_action_button(*args,**kw)

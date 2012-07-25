@@ -457,7 +457,7 @@ class CourseRequest(dd.Model):
             return CourseOffer.objects.filter(content=content)
         return CourseOffer.objects.all()
     
-    def before_state_change(self,ar,old,new):
+    def before_state_change(self,ar,kw,old,new):
         if new.name in ('passed','award','failed','aborted'):
             if not self.date_ended:
                 self.date_ended = datetime.date.today()

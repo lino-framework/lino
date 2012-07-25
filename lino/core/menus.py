@@ -12,6 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Defines the classes :class:`MenuItem`
+"""
 
 import traceback
 import copy
@@ -29,7 +32,9 @@ from lino.utils.jsgen import js_code
 from lino.core import actions
 
 class MenuItem:
-  
+    """
+    Represents a menu item
+    """
     HOTKEY_MARKER = '~'
     
     name = None
@@ -126,6 +131,10 @@ class MenuItem:
 
 
 class Menu(MenuItem):
+    """
+    Represents a menu. A menu is conceptually a :class:`MenuItem` 
+    which contains other menu items.
+    """
     #~ template_to_response = 'lino/menu.html'
     def __init__(self,user,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,None,name,label,**kw)
@@ -300,13 +309,8 @@ class Menu(MenuItem):
         return m
 
 class Toolbar(Menu):
+    """
+    A Toolbar is a top-level :class:`Menu`.
+    """
     pass
-
-
-#~ def menu_request(menu,request):
-    #~ if menu.can_view.passes(request):
-        #~ m = copy.copy(menu)
-        #~ items = [i for i in m.items if i.can_view.passes(request)]
-        #~ m.items = items
-        #~ return m
 

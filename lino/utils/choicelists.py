@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-u"""
+ur"""
 Utility for defining hard-coded multi-lingual choice lists 
 whose value is rendered according to the current language.
 
@@ -48,6 +48,12 @@ Male
 >>> print unicode(Gender.male)
 Männlich
 
+>>> print str(Gender.male)
+M\xe4nnlich
+
+>>> print repr(Gender.male)
+M\xe4nnlich (Gender.male:M)
+
 Comparing Choices uses their *value* (not the alias or text):
 
 >>> from lino.core.perms import UserLevels
@@ -78,6 +84,8 @@ automatically available as a property value in
 
 
 """
+
+import sys
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
@@ -123,7 +131,9 @@ class Choice(object):
         
         
     def __str__(self):
-        return unicode(self.text).encode(errors='backslashreplace')
+        return unicode(self.text).encode(sys.getdefaultencoding(),'backslashreplace')
+        # Python 2.6.6 said "Error in formatting: encode() takes no keyword arguments"
+        #~ return unicode(self.text).encode(errors='backslashreplace')
         
     def __unicode__(self):
         return unicode(self.text)
@@ -239,8 +249,8 @@ class ChoiceList(object):
                 delattr(cls,ci.name)
         cls.items_dict = {}
         cls.choices = []
-        
         cls.add_item('','',name='blank_item')
+        cls.choices = [] # remove blank_item from choices
         
         #~ cls.items_dict = {'' : cls.blank_item }
         

@@ -123,12 +123,18 @@ class UI:
         return actor.request(self,**kw)
         
     def success_response(self,message=None,**kw):
+        """
+        Shortcut for building a success response.
+        """
         kw.update(success=True)
         if message:
             kw.update(message=message)
         return self.action_response(kw)
 
     def error_response(self,e=None,message=None,**kw):
+        """
+        Shortcut for building an error response.
+        """
         kw.update(success=False)
         #~ if e is not None:
         if isinstance(e,Exception):
@@ -142,5 +148,7 @@ class UI:
         return self.action_response(kw)
     
     def action_response(self,kw):
+        """
+        """
         raise NotImplementedError
         
