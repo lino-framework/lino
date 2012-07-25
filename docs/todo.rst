@@ -4,14 +4,15 @@ To-do list
 Short-term
 ----------
 
+#.  Polls tutorial : SiteConfig geht nicht.
+
 #.  Übersetzung für "Scheduled" ist momentan "Geplant". 
     Sollte besser "Festgelegt" o.ä. sein.
-    Und statt "vorgeschlagen" sollte Lino vielleicht besser 
-    "vorgemerkt" sagen.
-    
+    Und statt "vorgeschlagen" sollte Lino vielleicht besser "vorgemerkt" sagen.
+
 #.  Ein festgelegter Termin darf nicht verschoben werden können. 
     Auch nicht im Kalender-Panel.
-    
+
 #.  Wie soll es funktionieren, wenn ein einmal festgelegter und offiziel 
     mitgeteilter Termin dann doch verschoben werden muss?
     Momentan kann man den Terminzustand auf "Verlegt" setzen und dann auf 
@@ -19,32 +20,32 @@ Short-term
 
 #.  Wenn `invite_team_members` angekreuzt ist und Gäste automatisch erstellt 
     werden, dann stehen die trotzdem noch nicht auf "Eingeladen".
-    
-#.  Brauchen wir die Notion von "Teams"? 
+
+#.  Brauchen wir die Notion von "Teams"? Oder besser Partnerlisten.
     Momentan ist die Konfigurierung etwas skurril: 
     jeder Benutzer stellt sich "sein Team" zusammen.
     Pro Kalender sollte neben `invite_team_members` auch stehen, 
     welches das Team ist.
-    Und in einem könnten wir auch eine Option `auto_subscribe` 
+    
+#.  Und in einem könnten wir auch eine Option `auto_subscribe` 
     in Calendar machen: solche Kalender brauchen gar nicht erst 
     explizit abonniert zu werden.
     
 #.  Einladung sollte ein ical haben, damit der Empfänger es in seinen
     Calendar-client importieren kann
-    
-#.  Schnellsuche "Must", dann Doppelklick auf Max Mustermann, 
+
+#.  Schnellsuche "Muster", dann Doppelklick auf Max Mustermann, 
     dann im GeheZu nach 'jupa' suchen: Klienten mit "jupa" werden zwar im 
     Dropdown angezeigt, aber Lino springt nach Auswahl nicht darauf.
     (Da wird der alte search_text nicht gelöscht o.ä.)
-    
-    
+
 #.  Man sieht im Kalender-Panel noch nicht, wenn man nur Gast ist und
     noch zusagen bzw. absagen muss.
-  
+
 #.  Layout-Problem Reiter "Kalender" im User Detail.
     Hier muss man bis auf weiteres auf den Permalink-Button klicken, 
     damit der Bildschirm korrekt gerendert wird.
-    
+
 #.  extensible-lang-fr.js translates "Calendar" to "Agenda". 
     Disturbing.
 
@@ -61,7 +62,7 @@ Short-term
     versteckt werden.
     Workaround: En attendant müssen die Benutzer wissen, dass sie 
     diese Kolonne vor dem Ausdruck selber ausblenden müssen.
-    
+
 #.  Optisch kennzeichnen, wenn ein Kolonnentitel einen Hilfetext hat.
 
 #.  Versteckte Reiter werden nicht aktualisiert. 
@@ -72,7 +73,6 @@ Short-term
     > Wenn ich die Kolonnenüberschriften bei den Akteuren ändere, stehen in
     > der Dropdown der Ausgaben immer noch die alten. Nur im "eigenen Fenster"
     > sind sie aktualisiert.
-    
 
 #.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 
     Basisklassen anzeigen. 

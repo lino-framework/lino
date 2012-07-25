@@ -129,99 +129,111 @@ class Action(object):
     
     sort_index = 90
     """
+    
     Predefined sort_index values are:
     
+    ===== =================================
     value action
-    ----- -----------
+    ===== =================================
     20    :class:`Insert <InsertRow>`
     30    :class:`Delete <DeleteSelected>`
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
     60    :attr:`Duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
-    90    default for all custom row actions created using `@dd.action`
+    90    default for all custom row actions created using :func:`@dd.action <action>`
+    ===== =================================
     
     """
-    opens_a_slave = False
     label = None
-    
-    #~ ruled = False 
-    #~ """
-    #~ Whether this action is ruled by workflows.
-    #~ """
-    actor = None
-    help_text = None
-    #~ debug = False
     name = None
     url_action_name = None
-    #~ inheritable = True
+    
+    actor = None
+    """
+    Internally used to store the :class:`lino.core.actors.Actor` 
+    who owns this action.
+    """
+    
+    help_text = None
+    """
+    A help text that shortly explains what this action does.
+    ExtJS uses this as tooltip text.
+    """
     key = None
+    """
+    The hotkey. Currently not used.
+    """
+    
     callable_from = None
+    """
+    Either `None`(default) or a tuple of class 
+    objects (subclasses of :class:`Action`).
+    If specified, this action is available only within a window 
+    that has been opened by one of the given actions.
+    """
+    
     default_format = 'html'
+    
     readonly = True
-    hide_top_toolbar = False
-    hide_navigator = False
+    """
+    Whether this action possibly modifies data.
+    """
+    
     opens_a_window = False
+    """
+    Used internally to say whether this action opens a window.
+    """
+    
+    hide_top_toolbar = False
+    """
+    Used internally if :attr:`opens_a_window` to say whether the window has a top toolbar.
+    """
+    
+    hide_navigator = False
+    """
+    Used internally if :attr:`opens_a_window` to say whether the window has a navigator.
+    """
+    
+    
     show_in_bbar = True
     """
+    Used internally.
     Whether this action should be displayed as a button in the bottom toolbar and the context menu.
     """
     
     show_in_workflow = False
     """
+    Used internally.
     Whether this action should be displayed 
-    among the :meth:`workflow_buttons <lino.core.actors.Actor.workflow_buttons>`.
+    as the :meth:`workflow_buttons <lino.core.actors.Actor.workflow_buttons>`.
     """
     
     auto_save = True
     """
     What to do when this action is being called while the user is on a dirty record.
+    
     - `False` means: forget any changes in current record and run the action.
     - `True` means: save any changes in current record before running the action.
     - `None` means: ask the user.
     """
-    #~ can_view = perms.always
-    
-    #~ required_user_groups = None
-    #~ required_user_level = None
-    #~ required_states = None
     required = {}
     """
-    A dict with conditions to specify permissions.
-    #~ If this is set, the action is available only on rows 
-    #~ that meet the specified conditions.
-    
+    A dict with requirements to specify permissions.
+    See :func:`lino.core.perms.make_permission_handler`.
     """
     
-    #~ owned_only = False
-    #~ """
-    #~ If this is `True` 
-    #~ (and if :attr:`lino.core.actors.Actor.workflow_owner_field` is set),
-    #~ the action will be available only on rows owned by the requesting user.
-    #~ """
+    custom_handler = False
+    """
+    Whether this action is implemented as Javascript function call.
+    (...)
+    """
     
     
-    
-    
-    #~ def __init__(self,actor=None,name=None,label=None,**kw):
-    #~ def __init__(self,name=None,label=None,url_action_name=None,**kw):
-    #~ def __init__(self,label=None,**kw):
     def __init__(self,label=None,url_action_name=None,required={},**kw):
-        #~ self.actor = actor # actor who offers this action
-        #~ if actor is not None:
-            #~ self.actor = actor # actor who offers this action
-            #~ if actor.hide_top_toolbar:
-                #~ self.hide_top_toolbar = True
         
         if url_action_name is not None:
             if not isinstance(url_action_name,basestring):
                 raise Exception("%s name %r is not a string" % (self.__class__,url_action_name))
             self.url_action_name = url_action_name
-        #~ if name is None:
-            #~ if self.name is None:
-                #~ self.name = self.__class__.__name__ 
-        #~ else:
-            #~ self.name = name 
-        #~ if not isinstance(self.name,basestring):
-            #~ raise Exception("%s name %r is not a string" % (self.__class__,self.name))
         if label is None:
             label = self.label or self.url_action_name 
         self.label = label
@@ -235,6 +247,10 @@ class Action(object):
 
         
     def set_required(self,**kw):
+        """
+        Override existing permission requirements.
+        Arguments: see :func:`lino.core.perms.make_permission_handler`.
+        """
         #~ logger.info("20120628 set_required %s(%s)",self,kw)
         new = dict()
         new.update(self.required)
@@ -242,10 +258,11 @@ class Action(object):
         self.required = new
         #~ if isinstance(self,StateAction):
         if self.required.has_key('states'):
-            self.show_in_bbar = False
             self.show_in_workflow = True
+            self.custom_handler = True
+            self.show_in_bbar = False
         else:
-            #~ self.show_in_workflow = False
+            self.show_in_workflow = False
             self.show_in_bbar = True
         
     def __str__(self):
@@ -353,7 +370,7 @@ class RowAction(Action):
 
 
 class StateAction(RowAction):
-    
+    ajax = True
     def __init__(self,actor,target_state,**kw):
         self.target_state = target_state
         kw.update(label=getattr(target_state,'action_label',target_state.text))
@@ -371,11 +388,6 @@ class StateAction(RowAction):
             kw.update(help_text=help_text)
         super(StateAction,self).__init__(**kw)
         #~ print 20120709, self, self.show_in_workflow
-        
-    #~ def get_action_permission(self,user,obj,state):
-        #~ if state and not state.get_state_permission(self,user,obj):
-            #~ return False
-        #~ return self.allow(user,obj,state)
         
     def run(self,row,ar,**kw):
         state_field_name = self.actor.workflow_state_field.attname
@@ -407,9 +419,6 @@ class GridEdit(TableAction):
     callable_from = tuple()
     url_action_name = 'grid'
     
-    #~ def __init__(self,*args,**kw):
-        #~ TableAction.__init__(self,*args,**kw)
-        
     def attach_to_actor(self,actor,name):
         #~ self.label = actor.button_label or actor.label
         self.label = actor.label
@@ -451,6 +460,7 @@ class InsertRow(TableAction):
     """
     show_in_workflow = False
     opens_a_window = True
+    hide_navigator = True
     sort_index = 20
     hide_top_toolbar = True
     readonly = False
@@ -461,7 +471,6 @@ class InsertRow(TableAction):
     label = _("New")
     key = INSERT # (ctrl=True)
     #~ needs_selection = False
-    hide_navigator = True
     
     def get_action_title(self,rr):
         return _("Insert into %s") % force_unicode(rr.get_title())
@@ -483,7 +492,6 @@ class DuplicateRow(RowAction):
     label = _("Duplicate")
 
 
-#~ class ShowEmptyTable(InsertRow):
 class ShowEmptyTable(ShowDetailAction):
     callable_from = tuple()
     url_action_name = 'show' 
@@ -547,17 +555,6 @@ class SubmitInsert(SubmitDetail):
     label = _("Create")
     #~ label = _("Insert")
     callable_from = (InsertRow,)
-
-
-"""
-"General actions" don't need to know their actor, so we can have 
-the same instance for all actors.
-"""
-#~ VIEW = ViewAction(sort_index=1)
-#~ CREATE = SubmitInsert(sort_index=1)
-#~ UPDATE = SubmitDetail(sort_index=1)
-#~ DELETE = DeleteSelected(sort_index=5)
-
 
 
 
@@ -756,6 +753,7 @@ class ActionRequest(object):
 
 def action(*args,**kw):
     def decorator(fn):
+        kw.setdefault('custom_handler',True)
         a = RowAction(*args,**kw)
         #~ a.run = curry(fn,a)
         a.run = fn

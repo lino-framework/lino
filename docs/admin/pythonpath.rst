@@ -15,29 +15,58 @@ The :xfile:`mypy` directory
 ---------------------------
 
 We recommend to create directory 
-:file:`/home/lsaffre/mypy` 
-(:file:`C:\\mypy` under Windows)
+:file:`~/mypy` 
+(or :file:`C:\\mypy` under Windows)
 where you will hold your local Python projects.
 You may choose some other location, but it should be 
 a name without spaces and non-ascii characters.
 
-Then you add this directory to you Python Path by saying::
+Then you add this directory to you Python Path by saying in 
+your `.bashrc` (or whatever login script y use)::
 
-  export PYTHONPATH = /home/lsaffre/mypy
+  export PYTHONPATH = ~/mypy
   
-(or under Windows by clicking around to find the place 
-where you can define environment variables and defining 
+(Under Windows you click around to find the place 
+where you can define *environment variables* and define
 a variable `PYTHONPATH` with the value ``C:\\mypy``).
+
+The result is that any Python script in or below this directory 
+is now available as an importable Python module. 
+
+For example 
+if you create a file :file:`~/mypy/foo.py` with the following content...
+
+::
+
+  def hello():
+      print "Hello, world!"
+      
+... then you can import a module ``foo`` from any Python process, 
+independently of the current directory::
+
+  $ python
+  Python 2.7.1 (r271:86832, Nov 27 2010, 18:30:46) ...
+  Type "help", "copyright", "credits" or "license" for more information.
+  >>> import foo
+  >>> foo.hello()
+  Hello, world!
+  >>> from foo import hello
+  >>> hello()
+  Hello, world!
+  >>>
+
+The :xfile:`local.pth` file
+---------------------------
  
 In your :xfile:`mypy` directory, create a file :xfile:`local.pth`, 
-a plain txt file that contains simply a list of directories 
+a plain txt file that contains a list of directories 
 which Python should also add to its path.
 
 Under Debian, this file should look like this::
 
-  /home/lsaffre/snapshots/lino
-  /home/lsaffre/snapshots/django-dev
-  /home/lsaffre/snapshots/appy
+  ~/snapshots/lino
+  ~/snapshots/django-dev
+  ~/snapshots/appy
   
 Under Windows it should have the following content::
 

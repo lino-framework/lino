@@ -1,53 +1,58 @@
 import cgi
 import datetime
+from django.utils import timezone
 from django.db import models
 from django.conf import settings
+
 from lino import dd
 from lino.utils import babel
 
+
 class Poll(dd.Model):
     question = models.CharField(max_length=200)
-    pub_date = models.DateField('date published',blank=True,null=True)
-    #~ pub_date = models.DateTimeField('date published',auto_now_add=True)
+    hidden = models.BooleanField()
+    pub_date = models.DateTimeField('date published',auto_now_add=True)
     
     def __unicode__(self):
         return self.question
         
-    def was_published_today(self):
-        return self.pub_date == datetime.date.today()        
-        #~ return self.pub_date.date() == datetime.date.today()        
+    def was_published_recently(self):
+        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)        
         
 class Choice(dd.Model):
     poll = models.ForeignKey(Poll)
     choice = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
     
-    @dd.action(show_in_workflow=True)
+    def __unicode__(self):
+        return self.choice    
+
+    @dd.action(help_text="Click here to see how Lino implements custom actions.")
     def vote(self,ar,**kw):
+        if self.votes > 2:
+            msg = "%s has already %d votes!" % (self,self.votes)
+            msg += "\nDo you still want to vote for it?"
+            ar.confirm(msg)
         self.votes += 1
         self.save()
         kw.update(refresh=True)
-        kw.update(message="Thank you for voting")
         kw.update(alert="Voted!")
+        kw.update(message="Thank you for voting %s" % self)
         return ar.success_response(**kw)
-        
-    def __unicode__(self):
-        return self.choice    
-        
         
 
 
 class Polls(dd.Table):
     model = Poll
     
-    detail_template = """
+    detail_layout = """
     id question pub_date
     polls.ChoicesByPoll
     """
     
     insert_layout = dd.FormLayout("""
     question
-    pub_date
+    hidden
     """,window_size=(40,'auto'))
     
     
@@ -62,7 +67,7 @@ class ChoicesByPoll(Choices):
 def recent_polls(request):
     html = '<h1>%s</h1> ' % cgi.escape("Recent polls")
     html += '<ul>'
-    for poll in Poll.objects.order_by('pub_date'):
+    for poll in Poll.objects.filter(hidden=False).order_by('pub_date'):
         html += '<li>'
         html += '<b>%s</b> ' % cgi.escape(poll.question)
         chunks = []

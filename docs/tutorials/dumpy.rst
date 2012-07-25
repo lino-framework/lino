@@ -6,51 +6,6 @@ You have installed Lino on your server as explained in
 You can see that data through your browser.
 Now we suggest that you write your first local fixture.
 
-More about the :mod:`initdb <lino.management.commands.initdb>` command
-----------------------------------------------------------------------
-
-Remember that we told you to run the command::
-
-  python manage.py initdb std all_countries few_cities all_languages props demo 
-  
-The :xfile:`manage.py` Python script is as with every Django site.
-
-The :mod:`initdb <lino.management.commands.initdb>` 
-command is a 
-`custom management command <https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
-provided by Lino.
-I you don't know what *Django management commands* are, 
-please read this:
-`django-admin.py and manage.py <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
-
-Lino's :mod:`initdb <lino.management.commands.initdb>` 
-command performs three actions in one:
-
-- a flush of your database, removing *all existing tables* 
-  (not only Django tables)
-  from the database specified in your :xfile:`settings.py`,
-  
-- then runs Django's `syncdb` command to re-create all tables,
-- and finally runs Django's `loaddata` command to load 
-  the specified fixtures.
-
-That may sound dangerous, but that's what we want when we have a 
-:doc:`dpy dump </topics/dpy>` to restore our database.
-Keep in mind that you should rather not let 
-Lino and some other application share the same database.
-
-The above line is functionally equivalent to::
-
-  python manage.py reset <list of all app_labels listed in your INSTALLED_APPS>
-  python manage.py loaddata std all_countries few_cities all_languages props demo 
-
-Lino's `initdb` reimplements a simplified version 
-of Django's `reset` command, but
-does not even try to offer a possibility of deleting only *some* 
-data (the thing which caused so big problems that 
-Django decided to deprecate the `reset` command.
-
-
 Fixtures
 --------
 
@@ -62,30 +17,73 @@ article of the Django documentation.
 
 Django's documentation 
 says that "fixtures can be written as XML, YAML, or JSON documents". 
-
 Lino adds another format to this list: 
 Python modules. 
 
-`.py` fixtures are pure Python modules that must define 
+`.py` fixtures are pure Python modules which define 
 a function named ``objects`` which is expected to return 
 (or `yield <http://stackoverflow.com/questions/231767/the-python-yield-keyword-explained>`_) 
-the list of Model instances you want to create. A dictive minimal Example::
+the list of Model instances you want to create. A fictive minimal Example::
 
   from myapp.models import Foo
   def objects():
       yield Foo(name="First")
       yield Foo(name="Second")
 
+If you are curious, read more details in :doc:`/topics/dumpy`.
 
-If you are curious, read more details in :doc:`/topics/dpy`.
+
+More about the :mod:`initdb <lino.management.commands.initdb>` command
+----------------------------------------------------------------------
+
+Remember that we told you (in :doc:`/admin/install`) to "prepare your database" 
+by running the command::
+
+  python manage.py initdb std all_countries few_cities all_languages props demo 
+  
+The words "std", "all_countries", "few_cities" etc. are names of some *fixtures* 
+included with Lino.
+  
+The :xfile:`manage.py` Python script is the standard Django interface to 
+run management commands.
+I you don't know what *Django management commands* are, 
+please read this:
+`django-admin.py and manage.py <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
+
+The :mod:`initdb <lino.management.commands.initdb>` 
+command is a 
+`custom management command <https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
+provided by Lino.
+It performs three actions in one:
+
+- a flush of your database, removing *all existing tables* 
+  (not only Django tables)
+  from the database specified in your :xfile:`settings.py`,
+ 
+- then runs Django's `syncdb` command to re-create all tables,
+- and finally runs Django's `loaddata` command to load 
+  the specified fixtures.
+
+Removing all existing tables
+may sound dangerous, but that's what we want when we have a 
+:doc:`Python dump </topics/dumpy>` to restore our database.
+Keep in mind that you should rather not let 
+Lino and some other application share the same database.
+
+The above line is roughly equivalent to::
+
+  python manage.py flush
+  python manage.py syncdb
+  python manage.py loaddata std all_countries few_cities all_languages props demo 
 
 
-First step
-----------
+
+Writing your own fixture
+------------------------
 
 Create a directory `fixtures` in your local project directory::
 
-   mkdir /usr/local/django/mysite/fixtures
+   mkdir ~/mypy/mysite/fixtures
    
 Create a file `dumpy1.py` in that directory as the following.
 But put your real name and data, this is your local file.
@@ -116,7 +114,7 @@ Second step
 Since `.py` fixtures are normal Python modules, there are 
 no limits to our phantasy when creating new objects.
 
-A first thing that drops into mind is: there shoudl be a more compact 
+A first thing that drops into mind is: there should be a more compact 
 way to create many records of a same table. That's why 
 :class:`lino.utils.instantiator.Instantiator` was written.
 Here is the same fixture in a more compact way:
@@ -127,12 +125,6 @@ Here is the same fixture in a more compact way:
 
 Third step
 ----------
-
-
-Have a look at the automatically generated 
-reference documentation for your application: 
-either :doc:`/dsbe/appdocs/index` 
-or :doc:`/igen/appdocs/index`.
 
 Play around and try to add some more objects to your local demo database!
 
@@ -172,4 +164,4 @@ Where to go now
 ---------------
 
 Now we suggesst that your continue to read
-:doc:`/tutorial/t1`
+:doc:`/tutorials/polls`

@@ -953,7 +953,7 @@ class Lino(object):
         
     def on_site_config_saved(self,sc):
         """
-        Called by SiteConfig.save()
+        Used internally. Called by SiteConfig.save() to update the cached instance.
         """
         self._site_config = sc
         
@@ -975,8 +975,11 @@ class Lino(object):
                 kw.update(self.site_config_defaults)
                 #~ logger.debug("Creating SiteConfig record (%s)",e)
                 self._site_config = SiteConfig(**kw)
-                # do NOT save the instance here
-                # sc.save()
+                # 20120725 
+                # tutorials.t1 menu selection `Config --> Site Parameters` 
+                # said "SiteConfig 1 does not exist"
+                # don't remember why we wanted to NOT save the instance here 
+                self._site_config.save()
         return self._site_config
     site_config = property(get_site_config)
     
@@ -1003,6 +1006,8 @@ class Lino(object):
         """
         from lino.core.kernel import startup_site
         startup_site(self,**options)
+        #~ print "20120725 save site config"
+        #~ self.site_config.save()
         
         
     #~ def has_module(self,name):
@@ -1204,11 +1209,12 @@ class Lino(object):
         """
         Return the action to show as top-level "index.html"
         """
-        return self.modules.lino.Home.default_action
+        return None
+        #~ return self.modules.lino.Home.default_action
         
     def get_main_html(self,request):
         """
-        Return the html chunk to be displayed in the main area.
+        Return a chunk of html to be displayed in the main area.
         This is visible only if :meth:`get_main_action` returns `None`.
         """
         return None

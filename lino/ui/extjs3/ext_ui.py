@@ -1295,8 +1295,9 @@ tinymce.init({
                               f.write(ln + '\n')
                     for ln in self.js_render_window_action(rh,a,user):
                         f.write(ln + '\n')
-                elif a.show_in_workflow:
-                    for ln in self.js_render_workflow_action(rh,a,user):
+                #~ elif a.show_in_workflow:
+                elif a.custom_handler:
+                    for ln in self.js_render_custom_action(rh,a,user):
                         f.write(ln + '\n')
         return 1
           
@@ -1400,7 +1401,6 @@ tinymce.init({
     def a2btn(self,a,**kw):
         if isinstance(a,actions.SubmitDetail):
             kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
-            
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
         elif isinstance(a,actions.InsertRow):
@@ -1412,7 +1412,6 @@ tinymce.init({
                 'function(panel){Lino.show_insert_duplicate(panel)}'))
         elif isinstance(a,actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
-                #~ "Lino.delete_selected" % a))
         elif isinstance(a,actions.RowAction):
             if a.url_action_name is None:
                 raise Exception("Action %r has no url_action_name" % a)
@@ -1675,9 +1674,9 @@ tinymce.init({
         yield ""
       
             
-    def js_render_workflow_action(self,rh,action,user):
+    def js_render_custom_action(self,rh,action,user):
         """
-        Defines the non-window action used by :meth:`row_action_button`
+        Defines the non-window action handler used by :meth:`row_action_button`
         """
         # 20120723 : removed useless js param "action"
         yield "Lino.%s = function(rp,pk) { " % action

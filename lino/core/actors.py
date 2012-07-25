@@ -178,8 +178,11 @@ class ActorMetaClass(type):
                 raise ValueError("%r : insert_template %r is not a string" % (cls,dt))
             if dl is not None:
                 raise Exception("%r has both insert_template and insert_layout" % cls)
-            cls.insert_layout = layouts.FormLayout(dt,cls)
-        elif dl is not None:
+            #~ cls.insert_layout = layouts.FormLayout(dt,cls)
+            dl = dt
+        if dl is not None:
+            if isinstance(dl,basestring):
+                cls.insert_layout = layouts.FormLayout(dl,cls)
             assert dl._table is None
             dl._table = cls
             cls.insert_layout = dl
@@ -411,10 +414,20 @@ class Actor(object):
     actor_id = None
     
     detail_layout = None
-    detail_template = None
+    """
+    Define the form layout to use for the detail window.
+    Actors without `detail_layout` don't have a show_detail action.
+    """
     
     insert_layout = None
-    insert_template = None
+    """
+    Define the form layout to use for the insert window.
+    If there's a detail_layout but no insert_layout, 
+    Lino will use detail_layout for the insert window.
+    """
+    
+    detail_template = None # deprecated: use detail_layout with a string value instead
+    insert_template = None # deprecated: use insert_layout with a string value instead
     
     help_text = None
     

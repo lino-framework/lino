@@ -1,0 +1,51 @@
+20120725
+========
+
+
+Continued on :doc:`/tutorials/polls` and :mod:lino.tutorials.t1`.
+
+- New attribute :attr:`lino.core.actions.Action.custom_handler`
+  to avoid having to specify show_in_workflow in 
+  :mod:`lino.tutorials.t1.polls.models`.
+
+- Discovered and fixed a bug when trying to print a calendar 
+  event whose Calendar.build_method is empty::
+
+    Traceback (most recent call last):
+      File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 608, in get
+        rv = a.run(elem,ar)
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 553, in run
+        kw = self.run_(ar,elem,**kw)
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 527, in run_
+        bm = get_build_method(elem)
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 454, in get_build_method
+        bmname = elem.get_build_method()
+      File "t:\hgwork\lino\lino\mixins\printable.py", line 824, in get_build_method
+        if ptype.build_method:
+    AttributeError: type object 'exceptions.NotImplementedError' has no attribute 'build_method'
+
+
+- :menuselection:`Configuration --> Site Parameters` said::
+  
+    Http404
+    lino.SiteConfigs has no row with prmiary key u'1'
+
+    TRACEBACK:
+      File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+
+      File "l:\snapshots\django\django\views\generic\base.py", line 58, in view
+        return self.dispatch(request, *args, **kwargs)
+
+      File "l:\snapshots\django\django\views\generic\base.py", line 79, in dispatch
+        return handler(request, *args, **kwargs)
+
+      File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 551, in get
+        raise http.Http404("%s has no row with prmiary key %r" % (rpt,pk))
+
+  --> 
+  :meth:`lino.Lino.get_site_config` now saves the instance if it doesn't exist.
+  Don't remember why we wanted to NOT save the instance here.
+  
+- Added BooleanField `polls.Poll.hidden` to avoid layout problem when 
+  a form layout has only one field.

@@ -2,5 +2,5 @@
 ========
 
 More internal optimizations to get :mod:`lino.tutorials.t1` 
-to something presentable.
+running.
 

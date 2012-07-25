@@ -1,9 +1,6 @@
 Your first standalone Lino application
 ======================================
 
-(Work in progress. 
-Please don't blame me if the documentation grows less quickly than Lino...)
-
 In this tutorial you are going to write your first 
 standalone Lino application.
 Don't hesitate to send us your feedback 
@@ -18,10 +15,9 @@ Create a local Django project
 -----------------------------
 
 Lino applications are Django projects.
-In case you don't know Django, you should 
-now follow
+That's why we recommend to start by reading
 `Part 1 of the Django tutorial
-<https://docs.djangoproject.com/en/1.3/intro/tutorial01/>`_
+<https://docs.djangoproject.com/en/1.4/intro/tutorial01/>`_,
 which applies entirely for a Lino application.
 The Django documentation is good,
 and it introduces some important notions about
@@ -32,55 +28,80 @@ Creating models,
 Activating models,
 and Playing with the API.
 
-Choose `c:\\mypy\\mysite` 
-for your Django project directory and `mysite.settings`
-for your `DJANGO_SETTINGS_MODULE`.
+Since you have already installed Lino and 
+set up your Python Path as explained in 
+:doc:`/admin/pythonpath`, we suggest that 
+you take `c:\\mypy\\mysite` 
+as your Django project directory and 
+`mysite.settings`
+for your `DJANGO_SETTINGS_MODULE`
+when following the Django tutorial.
 
-When you've done and learned all this, we go further.
+- So please go now and follow
+  `Part 1 of the Django tutorial
+  <https://docs.djangoproject.com/en/1.4/intro/tutorial01/>`_.
+  Afterwards we meet here again. See you later!
 
-Lino uses some tricks to make Django settings 
+Done? I hope you enjoyed it! Now we go further.
+
+Most files remain unchanged, they are the same as with every Django project:
+:xfile:`__init__.py`, :xfile:`manage.py`,
+:xfile:`urls.py` and :xfile:`wsgi.py`.
+But we will now have a closer look to the file :xfile:`settings.py`.
+
+The :xfile:`settings.py` file
+-----------------------------
+
+Lino uses some tricks to make Django :xfile:`settings.py`
 files more pleasant to work with,
 especially if you maintain Lino sites for several customers.
 
-Replace the :xfile:`settings.py` 
-of your project directory 
-with the following:
+- Change the contents of your :xfile:`settings.py` 
+  to the following (except for the :setting:`DATABASES` setting,
+  which you should take over from your original file):
 
 .. literalinclude:: ../../lino/tutorials/t1/settings.py
 
-At the beginning of the file are the following four lines of code::
+A few explanations:
 
-    from lino.apps.pcsw.settings import *
-    class Lino(Lino):
-        title = "Lino Tutorial"
-    LINO = Lino(__file__,globals()) 
-    
-The first line caused your settings to "inherit" 
-from one of the predefined Lino applications.
-
-The predefined applications that come with Lino 
-are under :mod:`lino.apps`.
-They are basically are just another module to be added to :setting:`INSTALLED_APPS`,
-but one important difference with modules from :mod:`lino.modlib` is that they 
-also provide a :xfile:`settings.py` file.
-
-There are two classes of predefined applications:
-(a) full-featured and complex applications that are being used on real sites,
-and 
-(b) the minimal applications used for testing, demonstrations and didactical purposes.
-Maybe you prefer to play with the minimal 
-:doc:`/topics/minimal_apps`.
-
-Since this is going to be your own application, 
-replace the ``pcsw`` or ``igen`` by ``std``::
+Look at the following four lines of code which 
+occur in almost every Lino :xfile:`settings.py` file 
+and which are the thing that turns a Django project into 
+a Lino application::
 
     from lino.apps.std.settings import *
+    class Lino(Lino):
+        ...
+    LINO = Lino(__file__,globals()) 
     
-Because we no longer inherit settings 
-from one of the predefined Lino applications, 
-we now need to define the :setting:`INSTALLED_APPS` 
-setting.
-For this tutorial, we have the following value::
+- The first line caused your settings to "inherit" 
+  from :mod:`lino.apps.std`, the common ancestor 
+  of all Lino applications.
+
+- The following lines (where the ``...`` part can be much more 
+  than in our example) optionally override some of the class 
+  attributes and methods defined for :class:`lino.Lino`. 
+  For example the :attr:`lino.Lino.title` is a simple string to 
+  occur in the browser's title bar (and possibly at other places).
+  :meth:`setup_menu <lino.Lino.setup_menu>` 
+  :meth:`get_main_html <lino.Lino.get_main_html>` 
+
+- The last line finally *instantiates* your local ``LINO``.
+  Every Lino application requires a setting named ``LINO`` 
+  which must be a :class:`lino.Lino` instance.
+  It is available in your application code as ``settings.LINO``.
+  
+  The first argument of the instantiator is the built-in Python variable `__file__`.
+  This is how Lino knows the full path of your local settings file.
+  
+  The second argument is the `global()` namespace of your settings module.
+  Lino uses this to fill "intelligent default values" to your settings.
+  That's why these lines should be at the *beginning* of your file.
+
+One important setting to be defined by every Lino application 
+is :setting:`INSTALLED_APPS`.
+
+For this tutorial, we gave it the following value::
 
     INSTALLED_APPS = (
       'lino',
@@ -90,10 +111,11 @@ For this tutorial, we have the following value::
 Where you maybe need to change the last item to the name you used
 during the Django Tutorial.
 
-A few comments: 
-
-- ``lino`` is mandatory for every Lino application.
+``lino`` is mandatory for every Lino application. 
+It will cause the :mod:`lino.models` module to be loaded 
+which defines some system tables and general application logic.
   
+
 - To keep things simple in this first tutorial, we didn't use 
   the following modules which are almost mandatory for 
   any real application:
@@ -105,15 +127,6 @@ A few comments:
 
   
 Some more settings deserve our attention at this moment:
-
-- Lino requires a setting named ``LINO`` which must 
-  be a :class:`lino.Lino` instance.
-  The first argument of the instantiator for the Lino class
-  is the built-in Python variable `__file__`.
-  This way you tell Lino the full path of your local settings file.
-  The second argument is the `global()` namespace of your settings module.
-  Lino will use this to fill "intelligent default values" to your settings.
-  That's why these lines should be at the *beginning* of your file.
 
 - More documentation about the :setting:`LOGGING` 
   setting in :func:`lino.utils.log.configure`
@@ -138,17 +151,24 @@ we leave them alone and continue "the Lino way" of defining
 our application's user interface.
 Remember that Lino is an alternative to Django's Admin module.
 
-First we will add three :term:`Tables`.
+First we add an import statement::
+
+  from lino import dd
+
+See :mod:`lino.dd`.
+
+Finally we add three :term:`Tables`.
 A Table is the definition of a tabular view, 
 usually displayed in a Grid.
-A Table definition has 
-attributes
+
+A Table definition has attributes
 like `filter` and `sort_order` 
-which will be forwarded to the QuerySet 
-and which we sometimes call "row parameters" 
-because they influence the rows to be selected.
-But it also has configurable attributes like 
-`column_names` or `detail_template` 
+which you know from Django's QuerySet.
+
+But it also has attributes like 
+:attr:`column_names <lino.utils.table.AbstractTable.column_names>` 
+or 
+:attr:`detail_template <lino.core.actors.Actor.detail_template>` 
 who go beyond the concept of a QuerySet.
 You'll soon learn more about them.
 
@@ -157,8 +177,6 @@ Tables never get instantiated.
 Lino discovers and analyzes them when it initializes.
 
 Add the following code to the end your :file:`polls/models.py`::
-
-  from lino import dd
 
   class Polls(dd.Table):
       "Displays the list of all Polls."
@@ -193,16 +211,17 @@ In our code `ChoicesByPoll` inherits from `Choices`
 and not directly from `Table`.
 that's why we don't need to explicitly specify that 
 
-Note also that `ChoicesByPoll` is a :term:`slave table`
-because it has a class attribute 
+`ChoicesByPoll` is an example of a :term:`slave table`.
+`ChoicesByPoll` means: the table of `Choices` 
+of a given `Poll`. That given Poll is called the "master" 
+of these choices.
+A slave table is a table who depends on a master.
+
+A table is a slave table when it has a class attribute 
 :attr:`master_key <lino.core.table.Table.master_key>`.
 This is a string containing 
-the name of a ForeignKey field which must exist in the Table's 
-model.
-`ChoicesByPoll` is a table of `Choice` instances
-having a `Poll` instance as master. 
-A slave table is a table who depends on a master.
-needs to know on which master it is to execute.
+the name of a ForeignKey field which 
+must exist in the Table's model.
 
 Note that you can define more than one Table per Model.
 This is a fundamental difference from Django's concept of 

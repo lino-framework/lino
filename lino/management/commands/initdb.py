@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Performs a database reset, removing 
+Performs a database flush, removing 
 *all existing tables* from the database 
 (not only Django tables), 
 then runs Django's standard `syncdb` and `loaddata` 
@@ -30,8 +30,16 @@ Django's `reset` command may fail after an upgrade if the new Lino
 version defines new tables. In that case, flush sends a DROP TABLE 
 which fails because that table doesn't exist. 
 
-See also ticket :doc:`/tickets/50`.
+Lino's `initdb` reimplements a simplified version 
+of Django's `reset` command (which has been deprecated in 
+`Django 1.3
+<https://docs.djangoproject.com/en/dev/releases/1.3/#reset-and-sqlreset-management-commands>`__), 
+but does not even try to offer a possibility of deleting only *some* 
+data (the thing which caused so big problems that 
+Django 1.3. decided to deprecate the `reset` command).
 
+
+See also ticket :doc:`/tickets/50`.
 
 """
 

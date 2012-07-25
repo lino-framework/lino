@@ -800,7 +800,8 @@ class TypedPrintable(CachedPrintable):
     this is :attr:`lino.modlib.sales.models.SalesDocument.imode`.
     """
     
-    type = NotImplementedError
+    #~ type = NotImplementedError
+    type = None
     """
     Override this by a ForeignKey field.
     """

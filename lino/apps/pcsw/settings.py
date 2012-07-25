@@ -60,6 +60,8 @@ class Lino(Lino):
         
     override_modlib_models = ['contacts.Person','contacts.Company']
         
+    def get_main_action(self,user):
+        return self.modules.lino.Home.default_action
         
         
     anonymous_user_profile = '400'
