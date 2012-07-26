@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2011 Luc Saffre 
+## Copyright 2011-2012 Luc Saffre 
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,15 +12,31 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+ur"""
+Defines the :func:`html2xhtml` function used in :mod:`lino.utils.appy_pod`.
+
+>>> print repr(html2xhtml('''\
+... <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>
+... <img src="foo.org">'''))
+u'<p>Hello,\xa0world!<br/>Again I say: Hello,\xa0world!</p>\n<img src="foo.org"/>'
+
+
+>>> html = '''\
+... <p style="font-family: &quot;Verdana&quot;;">Verdana</p>'''
+>>> print repr(html2xhtml(html))
+u'<p style=\'font-family: "Verdana";\'>Verdana</p>'
+
+
+
 """
-Defines the :func:`html2xhtml` function used in :mod:`lino.utils.appy_pod`
-"""
+from xml.sax.saxutils import quoteattr
 
 from HTMLParser import HTMLParser
 from htmlentitydefs import name2codepoint
 
 def attrs2xml(attrs):
-    return ' '.join(['%s="%s"' % a for a in attrs])
+    #~ return ' '.join(['%s="%s"' % a for a in attrs])
+    return ' '.join(['%s=%s' % (k,quoteattr(v)) for k,v in attrs])
 
 class MyHTMLParser(HTMLParser):
     def __init__(self,*args,**kw):
@@ -72,13 +88,7 @@ def html2xhtml(html):
 
 
 
-if __name__ == "__main__"	:
-    html = '''
-    <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>
-    <img src="foo.org">
-    '''
-    print html
-    print html2xhtml(html)
+#~ if __name__ == "__main__"	:
     
     #~ print html2xhtml('''
     #~ <p><span style="background-color: rgb(255, 255, 255); " id="ext-gen416">
@@ -90,4 +100,12 @@ if __name__ == "__main__"	:
     #~ 2px; -webkit-border-vertical-spacing: 2px;">.Note.body` 
     #~ gilt das nicht.&nbsp;</span><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; ">Dafür ist er ideal. Auch der Ausdruck funktioniert einfach,&nbsp;</span><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; ">indem ich in&nbsp;</span><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; "><a href="https://github.com/VinylFox/ExtJS.ux.HtmlEditor.Plugins" target="_self">appy.pod</a></span></div><div id="ext-gen420"><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; ">die folgende Formel verwende::</span></div><div><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; "><br/></span></div></span><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><span style="background-color: rgb(255, 255, 255); "><div><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">&nbsp; do text</span></div></span><span style="background-color: rgb(255, 255, 255); "><div><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">&nbsp; from xhtml(self.body)</span></div></span></blockquote><span style="background-color: rgb(255, 255, 255); "><div><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">&nbsp;&nbsp;</span></div><div style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; "><br/></div></span></p>
     #~ ''')
+    
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+
     

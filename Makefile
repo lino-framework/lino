@@ -49,6 +49,7 @@ tests:
 	python lino/utils/jsgen.py
 	python lino/utils/__init__.py
 	python lino/utils/ranges.py
+	python lino/utils/html2xhtml.py
 	#~ python lino\utils\xmlgen\__init__.py
 	#~ python lino/utils/xmlgen/cbss/__init__.py
 	#~ python lino/utils/xmlgen/intervat/__init__.py

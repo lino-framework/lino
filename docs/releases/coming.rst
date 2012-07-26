@@ -27,3 +27,8 @@ Bugfixes:
   and
   "Forced update did not affect any rows".
 
+- :mod:`lino.utils.html2xhtml` produzierte ungültigen XHTML, 
+  wenn im HTML Attribute mit Gänsefüßen waren. 
+  Dadurch wurden manchmal Textfragmente (z.B. Aufgabenbereich eines Art607) 
+  nicht ausgedruckt (und in der generierten `.odt` stand als 
+  Fehlermeldung "not well-formed (invalid token)")

@@ -17,6 +17,7 @@
     lino.utils.demonames
     lino.utils.dumpy
     lino.utils.html2text
+    lino.utils.html2xhtml
     lino.utils.jsgen
     lino.utils.mti
     lino.utils.daemoncommand
@@ -40,14 +41,6 @@ The :mod:`dbfreader` Module
 ---------------------------
 
 .. automodule:: lino.utils.dbfreader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`html2xhtml` Module
-----------------------------
-
-.. automodule:: lino.utils.html2xhtml
     :members:
     :undoc-members:
     :show-inheritance:

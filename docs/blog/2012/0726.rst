@@ -43,13 +43,98 @@ Forced update did not affect any rows
 
 Ein anderer Traceback auf dem Server gestern war 
 "Forced update did not affect any rows".
-Der kommt immer, wenn man Speichern klickt, 
+Der kommt, wenn man auf einem JobProvider 
+"Speichern" klickt, 
 obwohl man gar nichts verändert hat. 
-Kommt nicht mit SQLite, wohl aber mit MySQL.
+Kommt nur mit MySQL (nicht mit SQLite).
+Kommt nur auf einer MTI-Tabelle.
 
 Um das zu verhindern, mache ich in form2obj_and_save 
 jetzt einen Test ähnlich wie 
-:class:`lino.utils.dblogger.DiffingMixin`
-und im obigen Falle kommt dann jetzt "%s : nothing to save."
-N.B. `before_ui_save` und `full_clean` werden dann auch gar 
+:class:`lino.utils.dblogger.DiffingMixin`,
+und wenn sich nichts verändert hat, 
+kommt jetzt "%s : nothing to save.",
+und `before_ui_save` und `full_clean` werden dann auch gar 
 nicht erst aufgerufen. 
+Das gilt bei allen Records, nicht nur in MTI-Tabellen.
+
+
+Konvention #270 : Aufgabenbereich wird nicht gedruckt
+-----------------------------------------------------
+
+Hier der Text, der in Contract.responsibilities steht::
+
+
+  <p><span style="font-family: Verdana;">Arbeitszeiten:</span></p>
+  <p><span style="font-family: Verdana;">Montag-Dienstag von 11:00-18:30 (1Stunde Mittagspause)</span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black;">Mittwoch: frei</span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black;">Donnerstag: 12:00-19:30 (1 Stunde Mittagspause)</span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black;">Freitag: 13:00-20:30 (1 Stunde Mittagspause)</span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black;">Samstag: 8:00-14:30 (1/2 Stunde Mittagspause)</span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black;">Sonntag: frei&nbsp;</span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--></span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black;">Aufgabenbereiche:&nbsp;</span></p>
+  <p><span style="font-family: Verdana; font-size: 7.5pt;">* Truck wash (lavage des camions)</span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black; mso-ansi-language: FR;"><span style="font-size: 7.5pt; font-family: Verdana; color: black; mso-ansi-language: FR;" lang="FR">* Aide au niveau du garage (r&eacute;paration de planchers de camions, &eacute;clairage de remorques, remplacement de pi&egrave;ces de carrosserie,...)</span></span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black; mso-ansi-language: FR;"><span style="font-size: 7.5pt; font-family: Verdana; color: black; mso-ansi-language: FR;" lang="FR">* Entretien des abords (plantations, tonde des herbes et des hailles,...)</span></span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; color: black; mso-ansi-language: FR;"><span style="font-size: 7.5pt; font-family: Verdana; color: black; mso-ansi-language: FR;" lang="FR">* Service b&acirc;timents (Petits travaux &eacute;lectriques, maintenance,...)</span></span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; mso-fareast-font-family: &quot;Times New Roman&quot;; mso-bidi-font-family: &quot;Times New Roman&quot;; color: black; mso-ansi-language: FR; mso-fareast-language: DE; mso-bidi-language: AR-SA;" lang="FR"><span style="font-size: 7.5pt; font-family: Verdana; mso-fareast-font-family: &quot;Times New Roman&quot;; mso-bidi-font-family: &quot;Times New Roman&quot;; color: black; mso-ansi-language: FR; mso-fareast-language: DE; mso-bidi-language: AR-SA;">* Nettoyage et rangement dans l'entrep&ocirc;t.</span></span></p>
+  <p><span style="font-size: 7.5pt; font-family: Verdana; mso-fareast-font-family: &quot;Times New Roman&quot;; mso-bidi-font-family: &quot;Times New Roman&quot;; color: black; mso-ansi-language: FR; mso-fareast-language: DE; mso-bidi-language: AR-SA;" lang="FR"><span style="font-size: 7.5pt; font-family: Verdana; mso-fareast-font-family: &quot;Times New Roman&quot;; mso-bidi-font-family: &quot;Times New Roman&quot;; color: black; mso-ansi-language: FR; mso-fareast-language: DE; mso-bidi-language: AR-SA;"><br /></span></span></p>
+
+
+Hier die Fehlermeldung im Dokument (nur sichtbar, nachdem ich Druckmethode 
+von AppyPdf nach AppyOdt umgeschaltet habe)::
+
+  Error while evaluating the expression "html(self.responsibilities)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "/var/snapshots/lino/lino/utils/appy_pod.py", line 189, in html_func
+  return self.renderXhtml(html,**kw)
+  File "/var/snapshots/appy-current/appy/pod/renderer.py", line 242, in renderXhtml
+  stylesMapping, ns).run()
+  File "/var/snapshots/appy-current/appy/pod/xhtml2odt.py", line 497, in run
+  self.xhtmlParser.parse(self.xhtmlString)
+  File "/var/snapshots/appy-current/appy/shared/xml_parser.py", line 193, in parse
+  self.parser.parse(inputSource)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 107, in parse
+  xmlreader.IncrementalParser.parse(self, source)
+  File "/usr/lib/python2.6/xml/sax/xmlreader.py", line 123, in parse
+  self.feed(buffer)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 211, in feed
+  self._err_handler.fatalError(exc)
+  File "/usr/lib/python2.6/xml/sax/handler.py", line 38, in fatalError
+  raise exception
+  <class 'xml.sax._exceptions.SAXParseException'>: <unknown>:14:82: not well-formed (invalid token)
+
+
+12 Uhr : Ich vermute, dass es an den Gänsefüßchen in ``family: "Times New Roman"`` liegt::
+
+  ----------------------------------------------------------------------------------
+  <p><span style="font-size: 7.5pt; font-family: Verdana; mso-fareast-font-family: "Times New Roman"; mso-bidi-font-family
+  : "Times New Roman"; color: black; mso-ansi-language: FR; mso-fareast-language: DE; mso-bidi-language: AR-SA;" lang="FR"
+  ><span style="font-size: 7.5pt; font-family: Verdana; mso-fareast-font-family: "Times New Roman"; mso-bidi-font-family:
+  "Times New Roman"; color: black; mso-ansi-language: FR; mso-fareast-language: DE; mso-bidi-language: AR-SA;">* Nettoyage
+   et rangement dans l'entrepôt.</span></span></p>
+   
+
+13.10 Uhr : Da! Ich habs! 
+Mein Modul :mod:`lino.utils.html2xhtml` produzierte ungültigen XHTML, 
+wenn im HTML Attribute mit Gänsefüßen waren::
+
+  def attrs2xml(attrs):
+      return ' '.join(['%s="%s"' % a for a in attrs])
+      
+So ist es besser::
+
+  from xml.sax.saxutils import quoteattr
+  def attrs2xml(attrs):
+      return ' '.join(['%s=%s' % (k,quoteattr(v)) for k,v in attrs])
+
+
+Im Docstring des Moduls mach ich jetzt auch einen test case dafür::
+
+  >>> html = '''\
+  ... <p style="font-family: &quot;Verdana&quot;;">Verdana</p>'''
+  >>> print repr(html2xhtml(html))
+  u'<p style=\'font-family: "Verdana";\'>Verdana</p>'
+
+
