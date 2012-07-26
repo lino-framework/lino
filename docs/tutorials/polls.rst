@@ -403,26 +403,33 @@ Each Table class must have at least one class attribute
 table will "work".
 
 There are a lot of other options for tables, 
-and they are documented in Lino's API doc for the
-:class:`lino.core.table.Table` class.
+and a consistent overview has yet to be written.
+But you can try to work through the API docs, 
+knowing that
+:class:`lino.core.table.Table` 
+inherits from
+:class:`lino.utils.tables.AbstractTable` 
+who inherits from
+:class:`lino.core.actors.Actor`.
 
 Since tables are normal Python classes 
 they can use inheritance.
-In our code `ChoicesByPoll` inherits from `Choices` 
-and not directly from `Table`.
-that's why we don't need to explicitly specify that 
+In our code `ChoicesByPoll` inherits from `Choices`. 
+That's why we don't need to explicitly specify 
+a `model` attribute for `ChoicesByPoll`.
 
-`ChoicesByPoll` is an example of a :term:`slave table`.
-`ChoicesByPoll` means: the table of `Choices` 
-of a given `Poll`. That given Poll is called the "master" 
-of these choices.
-A slave table is a table who depends on a master.
-
-A table is a slave table when it has a class attribute 
+`ChoicesByPoll` is an example of a **slave table**.
+`ChoicesByPoll` means: the table of `Choices` of a given `Poll`. 
+This given Poll is called the "master" of these Choices.
+We also say that a slave table *depends* on its master.
+Lino manages this dependency almost automatically.
+The application developer just needs to specify a 
+class attribute 
 :attr:`master_key <lino.core.table.Table.master_key>`.
-This is a string containing 
-the name of a ForeignKey field which 
+This is attribute, when set, must be a string containing 
+the name of a `ForeignKey` field which 
 must exist in the Table's model.
+
 
 Note that you can define more than one Table per Model.
 This is a fundamental difference from Django's concept of 
@@ -443,8 +450,7 @@ instance holds a few important pieces of information:
 - permission requirements : specify who and under which conditions this action is available (a complex subject, we'll talk about it in a later tutorial)
 - handler function : the function to execute when the action is invoked
 
-
-Many actions are managed automatically by Lino. For example:
+Many actions are created automatically by Lino. For example:
 
 - each table has a "default action" which is 
   to open a window which displays this table as a grid.
@@ -461,28 +467,33 @@ Many actions are managed automatically by Lino. For example:
   buttons in the bottom toolbar of the Detail window have their own 
   :class:`Action <lino.core.actions.Action>` instance.
   
+Custom actions are the actions defined by the application developer.
+
 One way to define custom actions is to decorate a model method with the
 :func:`dd.action <lino.core.actions.action>` decorator.
+
 The decorator itself can have keyword parameters to specify 
 information about the action. In practice these may be 
 :attr:`label <lino.core.actions.Action.label>`,
 :attr:`help_text <lino.core.actions.Action.help_text>` and
 :attr:`required <lino.core.actions.Action.required>`.
 
-The action itself (i.e. the method) should have the following signature::
+The action method itself should have the following signature::
 
     def vote(self,ar,**kw):
         ...
-        return kw
+        return ar.success_response(kw)
         
 Where `ar` is an :class:`ActionRequest <lino.core.actions.ActionRequest>` 
 instance that holds information about the web request and provides methods 
 like
+:meth:`confirm <lino.core.actions.ActionRequest.confirm>` or
+:meth:`get_user <lino.core.actions.ActionRequest.get_user>` or
+:meth:`success_response <lino.ui.base.UI.success_response>`
+and
+:meth:`error_response <lino.ui.base.UI.error_response>`.
 
-- :class:`success_response <lino.core.actions.ActionRequest.success_response>`
-- :class:`error_response <lino.core.actions.ActionRequest.error_response>`
-- :class:`confirm <lino.core.actions.ActionRequest.confirm>`
-- :class:`spawn <lino.core.actions.ActionRequest.spawn>`
+
 
 
 

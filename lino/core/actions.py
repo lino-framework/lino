@@ -205,7 +205,8 @@ class Action(object):
     
     readonly = True
     """
-    Whether this action possibly modifies data.
+    Whether this action possibly modifies data *in the given object*.
+    This means that :class:`InsertRow` is a `readonly` action.
     """
     
     opens_a_window = False
@@ -351,7 +352,6 @@ class Action(object):
         Derived Action classes may override this to add vetos.
         E.g. DispatchAction is not available for a User with empty partner.
         """
-        #~ logger.info("20120622 Action.get_action_permission")
         return self.allow(user,obj,state)
         
     #~ def run(self,elem,ar,**kw):
@@ -483,17 +483,17 @@ class InsertRow(TableAction):
     The new row will be actually created only when this 
     window gets submitted.
     """
+    label = _("New")
     show_in_workflow = False
     opens_a_window = True
     hide_navigator = True
     sort_index = 20
     hide_top_toolbar = True
-    readonly = False
+    #~ readonly = False # see blog/2012/0726
     required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
     url_action_name = 'insert'
     #~ label = _("Insert")
-    label = _("New")
     key = INSERT # (ctrl=True)
     #~ needs_selection = False
     
@@ -503,6 +503,11 @@ class InsertRow(TableAction):
     def get_window_layout(self):
         return self.actor.insert_layout or self.actor.detail_layout
 
+    def get_action_permission(self,user,obj,state):
+        # see blog/2012/0726
+        if user.profile.readonly: 
+            return False
+        return super(InsertRow,self).get_action_permission(user,obj,state)
 
 
 
@@ -567,12 +572,13 @@ class DeleteSelected(RowAction):
     
         
 class SubmitDetail(RowAction):
+    label = _("Save")
     auto_save = False
     show_in_workflow = False
+    #~ show_in_bbar = True
     readonly = False
     required = dict(user_level='user')
     #~ url_action_name = 'SubmitDetail'
-    label = _("Save")
     callable_from = (ShowDetailAction,)
     
 class SubmitInsert(SubmitDetail):
@@ -588,10 +594,11 @@ class ActionRequest(object):
     """
     Holds information about an indivitual web request and provides methods like
 
-    - :class:`success_response <lino.core.actions.ActionRequest.success_response>`
-    - :class:`error_response <lino.core.actions.ActionRequest.error_response>`
-    - :class:`confirm <lino.core.actions.ActionRequest.confirm>`
-    - :class:`spawn <lino.core.actions.ActionRequest.spawn>`
+    - :meth:`get_user <lino.core.actions.ActionRequest.get_user>`
+    - :meth:`confirm <lino.core.actions.ActionRequest.confirm>`
+    - :meth:`success_response <lino.ui.base.UI.success_response>`
+    - :meth:`error_response <lino.ui.base.UI.error_response>`
+    - :meth:`spawn <lino.core.actions.ActionRequest.spawn>`
 
     
     """
@@ -739,6 +746,12 @@ class ActionRequest(object):
         #~ return s.encode('us-ascii','replace')
         
     def get_user(self):
+        """
+        Return the :class:`User <lino.modlib.users.models.User>` 
+        instance of the user who issued the request.
+        If the authenticated user is acting as somebody else, 
+        return that :class:`User <lino.modlib.users.models.User>` instance.
+        """
         return self.subst_user or self.user
         
     def get_action_title(self):

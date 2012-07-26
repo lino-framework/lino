@@ -719,10 +719,8 @@ class Actor(object):
             state = self.get_row_state(obj)
             u = ar.get_user()
             for a in self.get_actions(ar.action):
-                if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
-                #~ if not obj.get_row_permission(a,u):
-                #~ if not a.get_row_permission(u,obj):
-                #~ if not self.get_permission(a,u,obj):
+                if a.show_in_bbar and not obj.get_row_permission(u,state,a):
+                #~ if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
                     d[a.name] = True
         return d
         

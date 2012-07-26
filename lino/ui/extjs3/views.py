@@ -233,6 +233,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     
     #~ logger.info('20120228 before store.form2obj , elem is %s' % obj2str(elem))
     # store normal form data (POST or PUT)
+    original_state = dict(elem.__dict__)
     try:
         rh.store.form2obj(ar,data,elem,is_new)
     except exceptions.ValidationError,e:
@@ -241,38 +242,50 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
        #~ return error_response(e,_("There was a problem while validating your data : "))
     #~ logger.info('20120228 store.form2obj passed, elem is %s' % obj2str(elem))
     
-    elem.before_ui_save(ar)
-    
-    if not is_new:
-        dblogger.log_changes(request,elem)
-        
-    try:
-        elem.full_clean()
-    except exceptions.ValidationError, e:
-        return settings.LINO.ui.error_response(e) #,_("There was a problem while validating your data : "))
-        
-    kw2save = {}
-    if is_new:
-        kw2save.update(force_insert=True)
-    else:
-        kw2save.update(force_update=True)
-        
-    try:
-        elem.save(**kw2save)
-        
-    #~ except Exception,e:
-    except IntegrityError,e:
-        return settings.LINO.ui.error_response(e) # ,_("There was a problem while saving your data : "))
-        #~ return views.json_response_kw(success=False,
-              #~ msg=_("There was a problem while saving your data:\n%s") % e)
     kw = dict(success=True)
-    if is_new:
-        dblogger.log_created(request,elem)
-        kw.update(
-            message=_("%s has been created.") % obj2unicode(elem))
-            #~ record_id=elem.pk)
+    
+    dirty = False
+    missing = object()
+    for k, v in original_state.iteritems():
+        if v != elem.__dict__.get(k, missing):
+            dirty = True
+    if not dirty:
+      
+        kw.update(message=_("%s : nothing to save.") % obj2unicode(elem))
+        
     else:
-        kw.update(message=_("%s has been saved.") % obj2unicode(elem))
+    
+        elem.before_ui_save(ar)
+        
+        if not is_new:
+            dblogger.log_changes(request,elem)
+            
+        try:
+            elem.full_clean()
+        except exceptions.ValidationError, e:
+            return settings.LINO.ui.error_response(e) #,_("There was a problem while validating your data : "))
+            
+        kw2save = {}
+        if is_new:
+            kw2save.update(force_insert=True)
+        else:
+            kw2save.update(force_update=True)
+            
+        try:
+            elem.save(**kw2save)
+            
+        #~ except Exception,e:
+        except IntegrityError,e:
+            return settings.LINO.ui.error_response(e) # ,_("There was a problem while saving your data : "))
+            #~ return views.json_response_kw(success=False,
+                  #~ msg=_("There was a problem while saving your data:\n%s") % e)
+        if is_new:
+            dblogger.log_created(request,elem)
+            kw.update(
+                message=_("%s has been created.") % obj2unicode(elem))
+                #~ record_id=elem.pk)
+        else:
+            kw.update(message=_("%s has been saved.") % obj2unicode(elem))
         
     kw = elem.after_ui_save(ar,**kw)
     #~ m = getattr(elem,"after_ui_save",None)

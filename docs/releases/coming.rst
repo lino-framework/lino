@@ -22,5 +22,8 @@ Bugfixes:
   event whose Calendar.build_method is empty.
   (:doc:`/blog/2012/0725`)
 
-    
+- Tracebacks
+  "Cannot re-execute Tx25-Anfrage #9 with non-empty ticket"
+  and
+  "Forced update did not affect any rows".
 

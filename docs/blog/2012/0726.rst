@@ -1,0 +1,55 @@
+20120726
+========
+
+
+Cannot re-execute Tx25-Anfrage #9 with non-empty ticket
+-------------------------------------------------------
+
+Alicia hatte auf einer bereits ausgeführten Tx25 
+(die mit `disable_editing` komplett schreibgeschützt ist)
+auf "Speichern" geklickt. Sie bekam 
+dann "AJAX communication failed" als Antwort, und der 
+Server machte einen Traceback 
+"Cannot re-execute Tx25-Anfrage #9 with non-empty ticket.".
+
+Der Fehler war, dass der Speichern-Button 
+trotz `disable_editing`aktiv war. Das lag an einem Bug in 
+:meth:`lino.core.actors.Actor.disabled_actions`: die rief 
+`a.get_action_permission(ar.get_user(),obj,state)` statt 
+`obj.get_row_permission(u,state,a)`. Behoben.
+
+Aber dann fiel mir auf: dadurch wurden nicht nur die 
+Buttons "Speichern" und "Löschen" disabled, sondern auch "Neu".
+Das war logisch aber falsch: logisch, 
+weil `InsertRow.readonly` `False` war 
+und `Tx25.get_row_permission` folglich Veto erhebt, 
+falsch weil man hier ja doch auf "Neu" klicken können soll.
+Die Bedeutung von `Action.readonly` muss sein: 
+ob diese Aktion *im gegebenen Objekt* etwas ändert. 
+So gesehen ist `InsertRow` keine verändernde Aktion.
+
+Also: InsertRow hat ab jetzt `readonly=True`, 
+und damit readonly-Benutzer jetzt nicht plötzlich einfügen 
+können, überschreiben wir ihre `get_action_permission`::
+
+    def get_action_permission(self,user,obj,state):
+        if user.profile.readonly: 
+            return False
+        return super(InsertRow,self).get_action_permission(oser,obj,state)
+
+
+Forced update did not affect any rows
+-------------------------------------
+
+Ein anderer Traceback auf dem Server gestern war 
+"Forced update did not affect any rows".
+Der kommt immer, wenn man Speichern klickt, 
+obwohl man gar nichts verändert hat. 
+Kommt nicht mit SQLite, wohl aber mit MySQL.
+
+Um das zu verhindern, mache ich in form2obj_and_save 
+jetzt einen Test ähnlich wie 
+:class:`lino.utils.dblogger.DiffingMixin`
+und im obigen Falle kommt dann jetzt "%s : nothing to save."
+N.B. `before_ui_save` und `full_clean` werden dann auch gar 
+nicht erst aufgerufen. 

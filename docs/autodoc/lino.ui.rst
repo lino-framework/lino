@@ -10,22 +10,10 @@ Subpackages
 
 .. toctree::
 
+    lino.ui.base
+    lino.ui.requests
     lino.ui.console
     lino.ui.extjs3
     lino.ui.qx
 
-The :mod:`base` Module
-----------------------
 
-.. automodule:: lino.ui.base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`requests` Module
---------------------------
-
-.. automodule:: lino.ui.requests
-    :members:
-    :undoc-members:
-    :show-inheritance:
