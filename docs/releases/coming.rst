@@ -1,6 +1,9 @@
 Coming
 ======
 
+
+:checkin:`086ae8661d28`
+
 Bugfixes:
 
 - Im Grid-Fenster Personen. Schnellsuche "Muster", dann Doppelklick auf Max Mustermann, 

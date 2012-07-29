@@ -102,3 +102,8 @@ Tidying up the Unit test suite
 ------------------------------
 
 - PersonMixin.get_full_name was overridden by Partner.get_full_name
+
+
+Release 1.4.9
+-------------
+
