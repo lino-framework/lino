@@ -22,6 +22,7 @@ class Lino(Lino):
     #~ languages = 'de fr et en'.split()
     
     project_model = 'tickets.Project'
+    user_model = 'users.User'
     
     #~ remote_user_header = "REMOTE_USER"
     

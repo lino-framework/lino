@@ -197,3 +197,14 @@ class Instantiator:
         return instance
   
 
+def create_and_get(model,**kw):
+    """
+    Instantiate, full_clean, save 
+    and read back from database (the latter to avoid certain Django side effects)
+    """
+    model = resolve_model(model)
+    o = model(**kw)
+    o.full_clean()
+    o.save()
+    return model.objects.get(pk=o.pk)
+        

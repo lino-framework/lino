@@ -350,10 +350,11 @@ class CpasPartner(dd.Model,mixins.DiffingMixin):
         blank=True,# null=True,
         verbose_name=_("Bank account 2"))
         
-    def disable_delete(self,ar):
+    def disable_delete(self):
         #~ if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
         if settings.LINO.is_imported_partner(self):
             return _("Cannot delete companies and persons imported from TIM")
+        return super(CpasPartner,self).disable_delete()
           
 
 
@@ -785,12 +786,11 @@ class Partners(contacts.Partners):
             return self.imported_fields
         return []
         
-    @classmethod
-    def disable_delete(self,obj,ar):
-        #~ if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
-        if settings.LINO.is_imported_partner(obj):
-            return _("Cannot delete contacts imported from TIM")
-        return super(Partners,self).disable_delete(obj,ar)
+    #~ @classmethod
+    #~ def disable_delete(self,obj,ar):
+        #~ if settings.LINO.is_imported_partner(obj):
+            #~ return _("Cannot delete contacts imported from TIM")
+        #~ return super(Partners,self).disable_delete(obj,ar)
         
     @classmethod
     def do_setup(self):

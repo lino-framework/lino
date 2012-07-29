@@ -92,7 +92,7 @@ from django.utils.translation import string_concat
 from django.utils.functional import lazy
 from django.db import models
 
-from lino.utils import curry
+from lino.utils import curry, unicode_string
 
 
 
@@ -131,9 +131,8 @@ class Choice(object):
         
         
     def __str__(self):
-        return unicode(self.text).encode(sys.getdefaultencoding(),'backslashreplace')
-        # Python 2.6.6 said "Error in formatting: encode() takes no keyword arguments"
-        #~ return unicode(self.text).encode(errors='backslashreplace')
+        return unicode_string(self.text)
+        #~ return unicode(self.text).encode(sys.getdefaultencoding(),'backslashreplace')
         
     def __unicode__(self):
         return unicode(self.text)

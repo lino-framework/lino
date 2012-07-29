@@ -15,8 +15,45 @@
 """
 This module adds models for Projects, Tickets and Sessions.
 
+A **Project** is something into which somebody invests time, energy and/or money.
+Projects form a tree: each Project can have a `parent` 
+(another Project for which it is a sub-project).
+
+A **Milestone** is a named step of evolution of a Project.
+(For software projects we usually call them a "release" and they are named by a version number.)
+
+A **Ticket** is a concrete question or problem formulated 
+by a `reporter` (a Partner). 
+A Ticket is always related to a given Project.
+
+A **Session** is when a User works during a given lapse of time 
+on a given Project and/or Ticket.
+
+All the Sessions related to a given Project represent the time 
+invested into that Project.
+
 Projects are handled by their *name* while Tickets are handled by their *number*.
 Projects are long-term while Tickets are short-term.
+
+Extreme case of a session: 
+
+- I start to work on an existing ticket #1 at 9:23.
+  A customer phones at 10:17 with a question. Created #2.
+  That call is interrupted several times (by the customer himself).
+  During the first interruption another customer calls, 
+  with another problem (ticket #3) which we solve together within 5 minutes.
+  During the second interruption (which lasts 7 minutes) I make a coffee break.
+  During the third interruption I continue to analyze the customer's problem.
+  When ticket #2 is solved, I decided that it's not worth to keep track of each interruption and that the overall session time for this ticket
+  can be estimated to 0:40.
+  
+  ::
+  
+    Ticket start end    Pause  Duration
+    #1     9:23  13:12  0:45
+    #2     10:17 11:12  0:12       0:43   
+    #3     10:23 10:28         0:05
+
 
 """
 import cgi
@@ -65,17 +102,18 @@ class SessionTypes(dd.Table):
 
 class Project(mixins.UserAuthored,mixins.Printable):
     """
+    The `user` ("Autor") of a project is the User who manages that Project.
     """
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _('Projects')
         
+    name = models.CharField(_("Name"),max_length=20)
     parent = models.ForeignKey('self',blank=True,null=True,verbose_name=_("Parent"))
     type = models.ForeignKey('tickets.ProjectType',blank=True,null=True)
-    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
-    name = models.CharField(_("Name"),max_length=20)
+    #~ partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
-    description = dd.RichTextField(_("Description"),blank=True,format='plain')
+    #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
     
     def __unicode__(self):
         return self.name
@@ -83,23 +121,59 @@ class Project(mixins.UserAuthored,mixins.Printable):
     
 class Projects(dd.Table):
     model = 'tickets.Project'
-    detail_template = """
+    detail_layout = """
     name summary parent
-    type user partner 
-    description
-    TicketsByProject ProjectsByProject
+    type user 
+    # description
+    MilestonesByProject TicketsByProject ProjectsByProject 
     # cal.EventsByProject
     """
 
 class ProjectsByProject(Projects):
     master_key = 'parent'
     label = _("Sub-projects")
-    column_names = "name summary partner *"
-
-class ProjectsByPartner(Projects):
-    master_key = 'partner'
     column_names = "name summary *"
+
+#~ class ProjectsByPartner(Projects):
+    #~ master_key = 'partner'
+    #~ column_names = "name summary *"
     #~ label = _("Sub-projects")
+
+
+
+
+
+class Milestone(mixins.ProjectRelated):
+    """
+    """
+    class Meta:
+        verbose_name = _("Milestone")
+        verbose_name_plural = _('Milestones')
+        
+    label = models.CharField(_("Label"),max_length=20)
+    expected = models.DateField(_("Expected for"),blank=True,null=True)
+    reached = models.DateField(_("Reached"),blank=True,null=True)
+    
+    def __unicode__(self):
+        return self.label
+        
+
+class Milestones(dd.Table):
+    model = Milestone
+    detail_layout = """
+    project label expected reached id
+    TicketsFixed TicketsReported
+    """
+    insert_layout = dd.FormLayout("""
+    project label 
+    """,window_size=(40,'auto'))
+    
+class MilestonesByProject(Milestones):
+    master_key = 'project'
+    column_names = "label expected reached *"
+
+
+
 
 
 #~ class TicketState(babel.BabelNamed):
@@ -125,8 +199,24 @@ class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
         verbose_name = _("Ticket")
         verbose_name_plural = _('Tickets')
         
+    reported = dd.ForeignKey(Milestone,
+        related_name='tickets_reported',
+        verbose_name='Reported for',
+        blank=True,null=True,
+        help_text=_("Milestone for which this ticket has been reported."))
+    fixed = dd.ForeignKey(Milestone,
+        related_name='tickets_fixed',
+        verbose_name='Fixed for',
+        blank=True,null=True,
+        help_text=_("The milestone for which this ticket has been fixed."))
+    partner = models.ForeignKey('contacts.Partner',
+        blank=True,null=True,
+        help_text=_("The partner who reported this ticket."))
+    #~ partner = models.ForeignKey('contacts.Partner')
     #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
-    summary = models.CharField(_("Summary"),max_length=200,blank=True)
+    summary = models.CharField(_("Summary"),max_length=200,
+        blank=True,
+        help_text=_("Short summary of the problem."))
     #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
     state = TicketStates.field()
     description = dd.RichTextField(_("Description"),blank=True,format='plain')
@@ -136,22 +226,70 @@ class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
     
     def __unicode__(self):
         return u"#%d (%s)" % (self.id,self.summary)
+        
+    @dd.chooser()
+    def reported_choices(cls,project):
+        if not project: return []
+        return project.tickets_milestone_set_by_project.filter(reached__isnull=False)
+        
+    @dd.chooser()
+    def fixed_choices(cls,project):
+        if not project: return []
+        return project.tickets_milestone_set_by_project.all()
+        
 
+    def allow_state_accepted(self,user):
+        if not self.reported:
+            return False
+        return True
+        
+    def allow_state_working(self,user):
+        if not self.user:
+            return False
+        return True
+        
+    def allow_state_fixed(self,user):
+        if not self.fixed:
+            return False
+        return True
+        
 
 class Tickets(dd.Table):
     model = Ticket
-    detail_template = """
-    project summary user created modified
-    description
+    detail_layout = """
+    partner project reported summary id
+    user created modified state workflow_buttons fixed
+    description 
     SessionsByTicket EntriesByTicket
     """
+    insert_layout = dd.FormLayout("""
+    partner 
+    project 
+    summary 
+    """,window_size=(50,'auto'))
     
+class UnassignedTickets(Tickets):
+    column_names = "summary project partner *"
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = "summary user *"
+    column_names = "summary user partner *"
 
-#~ class EventsByTicket(cal.Events):
-    #~ master_key = 'ticket'
+class TicketsByPartner(Tickets):
+    master_key = 'partner'
+    column_names = "summary project user *"
+
+class TicketsFixed(Tickets):
+    label = _("Tickets Fixed")
+    master_key = 'fixed'
+    column_names = "summary user partner *"
+    editable = False
+
+class TicketsReported(Tickets):
+    label = _("Tickets Reported")
+    master_key = 'reported'
+    column_names = "summary user partner *"
+    editable = False
+
     
     
 class Session(mixins.AutoUser,mixins.ProjectRelated):
@@ -181,7 +319,7 @@ class Sessions(dd.Table):
     model = Session
     column_names = 'date start_time end_time break_time description user *'
     order_by = ['date','start_time']
-    detail_template = """
+    detail_layout = """
     date start_time end_time break_time project ticket
     user id 
     description
@@ -251,7 +389,7 @@ if blogs:
     
 else:
   
-    Tickets.detail_template = Tickets.detail_template.replace(' EntriesByTicket','')
+    Tickets.detail_layout = Tickets.detail_layout.replace(' EntriesByTicket','')
 
 
 
@@ -281,15 +419,16 @@ if settings.LINO.user_model:
 
 
 
-def setup_main_menu(site,ui,user,m): pass
-
-def setup_my_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,user,m): 
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(MyProjects)
     m.add_action(MyTickets)
     m.add_action(MySessions)
     m.add_action(MySessionsByDate)
     #~ m.add_action(MySessionsByDate,params=dict(master_instance=datetime.date.today()))
+
+def setup_my_menu(site,ui,user,m): 
+    pass
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("tickets",_("Tickets"))
@@ -302,4 +441,5 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(Projects)
     m.add_action(Tickets)
     m.add_action(Sessions)
+    m.add_action(Milestones)
   

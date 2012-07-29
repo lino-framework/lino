@@ -47,12 +47,13 @@ from django.db.utils import DatabaseError
 from django.utils import simplejson
 #~ from django.contrib.auth import models as auth
 from lino.modlib.users import models as auth
+from django.utils.encoding import force_unicode
 
 import lino
 
 from lino.core.modeltools import resolve_model
 from lino.modlib.contacts.utils import name2kw, street2kw
-from lino.utils import join_words
+from lino.utils import join_words, unicode_string
 
 from lino.utils import confirm
 from lino.utils import dblogger
@@ -76,13 +77,13 @@ households_Type = resolve_model("households.Type")
 #~ def is_company(data):
 def PAR_model(data):
     """
-    - wer eine nationalregisternummer hat ist eine Person, selbst wenn er auch eine MwSt-Nummer hat.
+    - wer eine Nationalregisternummer hat ist eine Person, selbst wenn er auch eine MwSt-Nummer hat.
     
     """
     if data.get('NB2',False):
         return Person
     if data.get('NOTVA',False):
-        if data.get('ALLO','') in (u"Eheleute"):
+        if data.get('ALLO','') in (u"Eheleute",):
             return Household
         return Company
     return Person
@@ -296,6 +297,9 @@ class PAR(Controller):
             if v is not None:
                 kw[n] = v
         old_class = obj.__class__
+        #~ msg = obj.disable_delete()
+        #~ if msg:
+            #~ raise Exception(unicode_string(msg))
         #~ obj = obj.contact_ptr
         obj = obj.partner_ptr
         mti.delete_child(obj,old_class)

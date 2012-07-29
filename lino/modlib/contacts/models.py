@@ -186,6 +186,7 @@ Returns a one-line string representing this Partner.
 The default returns simply the `name` field, ignoring any parameters, 
 but e.g. :class:`PersonMixin` overrides this.
         """
+        #~ print '20120729 Partner.get_full_name`'
         
         #~ try:
             #~ p = getattr(self,'person')
@@ -433,6 +434,7 @@ for some examples.
 
 Optional `salutation_options` see :func:`get_salutation`.
         """
+        #~ print '20120729 PersonMixin.get_full_name`'
         #~ return '%s %s' % (self.first_name, self.last_name.upper())
         words = []
         if salutation:
@@ -444,7 +446,8 @@ Optional `salutation_options` see :func:`get_salutation`.
     
   
 #~ class Person(dd.Model):
-class Person(Partner,PersonMixin):
+#~ class Person(Partner,PersonMixin): 20120728 : PersonMixin.get_full_name was overridden by Partner.get_full_name
+class Person(PersonMixin,Partner):
     """
     Mixin for models that represent a physical person. 
     """
@@ -487,7 +490,8 @@ class PersonDetail(PartnerDetail):
     #~ """
     
     name_box = "last_name first_name:15 gender title:10"
-    info_box = "id:5 language:10 birth_date:10"
+    #~ info_box = "id:5 language:10 birth_date:10"
+    info_box = "id:5 language:10"
 
     bottom_box = "remarks contacts.RolesByPerson"
         
@@ -541,6 +545,7 @@ class Company(Partner):
     #~ def get_full_name(self,**salutation_options):
     def get_full_name(self,salutation=True,**salutation_options):
         """Deserves more documentation."""
+        #~ print '20120729 Company.get_full_name`'
         if self.type:
             return join_words(self.type.abbr,self.name)
         return self.name

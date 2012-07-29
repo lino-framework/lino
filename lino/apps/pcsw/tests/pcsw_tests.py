@@ -171,7 +171,7 @@ def test01b(self):
     from lino.mixins.printable import PrintAction
     from lino.modlib.users.models import User
     from lino.apps.pcsw.models import Person
-    root = User(username='root') # ,last_name="Superuser")
+    root = User(username='root',language='en',profile='900') # ,last_name="Superuser")
     root.save()
     
     jp = JobProvider(name="Test")

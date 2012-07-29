@@ -1,0 +1,14 @@
+20120727
+========
+
+Ideas about :mod:`lino.modlib.tickets`.
+
+Project is now BabelNamed.
+Tickets are now related to a given Partner, not Projects.
+Added new Model `Milestone`.
+
+
+Fixed a bug in :mod:`lino.modlib.cal`:
+KeyError at /
+"Unknown element 'partner' referred in layout ListLayout on tickets.ProjectsByProject.Cannot handle None"
+Request Method:	GET

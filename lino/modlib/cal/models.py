@@ -1198,7 +1198,7 @@ class EventDetailLayout(dd.FormLayout):
 
 class EventInsertLayout(EventDetailLayout):
     main = """
-    type summary 
+    calendar summary 
     start end 
     place priority access_class transparent 
     """

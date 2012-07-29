@@ -522,6 +522,19 @@ def srcref(mod):
     srcref = srcref[len(lino.__file__)-17:]
     srcref = srcref.replace(os.path.sep,'/')
     return srcref
+    
+def unicode_string(x):
+    """
+    When we want unicode strings (e.g. translated exception messages) 
+    to appear in an Exception, 
+    we must first encode them using a non-strict errorhandler.
+    Because the message of an Exception may not be a unicode string.
+    
+    """
+    return unicode(x).encode(sys.getdefaultencoding(),'backslashreplace')
+    # Python 2.6.6 said "Error in formatting: encode() takes no keyword arguments"
+    #~ return unicode(x).encode(errors='backslashreplace')
+    
 
 
 def _test():

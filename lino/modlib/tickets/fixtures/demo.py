@@ -30,7 +30,7 @@ def objects():
     
     rumma = Company.objects.get(name=u'Rumma & Ko OÜ')
     
-    project = Instantiator('tickets.Project',"name",user=u,partner=rumma).build
+    project = Instantiator('tickets.Project',"name",user=u).build
     yield project("TIM")
     lino = project("Lino")
     yield lino
@@ -39,7 +39,14 @@ def objects():
     cbss = project("CBSS connection",parent=lino)
     yield cbss 
     
-    ticket = Instantiator('tickets.Ticket',"summary",user=u,project=presto).build
+    milestone = Instantiator('tickets.Milestone',"label reached",project=lino).build
+    yield milestone('1.4.3',i2d(20120328))
+    yield milestone('1.4.5',i2d(20120716))
+    yield milestone('1.4.7',i2d(20120717))
+    yield milestone('1.4.8',i2d(20120722))
+    yield milestone('1.4.9',None)
+    
+    ticket = Instantiator('tickets.Ticket',"summary",user=u,project=presto,partner=rumma).build
     presto_proto = ticket(summary="write a first prototype",project=presto)
     yield presto_proto
 
@@ -66,4 +73,10 @@ labels, titles, tidy up, EntriesBySession.
         user=u,ticket=presto_proto,start_time='00:05',end_time='01:15',
         description="""\
 ProjectsByPartner
+""")
+
+    yield Session(date=i2d(20120727),
+        user=u,ticket=presto_proto,start_time='02:30',end_time='03:15',
+        description="""\
+TicketsByPartner
 """)

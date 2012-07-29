@@ -24,6 +24,26 @@ class TicketStates(ChoiceList):
 
 add = TicketStates.add_item
 
-add('10',_("New"),'new')
-add('20',_("Assigned"),'assigned')
-add('30',_("Closed"),'closed')
+add('10',_("Accepted"),'accepted')
+add('20',_("Working"),'working',
+    required=dict(states=['','accepted']),
+    action_name=_("Start"),
+    help_text=_("Ticket has been assigned to somebody who is working on it."))
+add('30',_("Waiting"),'waiting',
+    required=dict(states=['working']),
+    action_name=_("Wait for feedback"),
+    help_text=_("Waiting for feedback from partner."))
+#~ add('20',_("Assigned"),'assigned')
+add('40',_("Fixed"),'fixed',
+    required=dict(states=['working']),
+    help_text=_("Has been fixed. Waiting for test results."))
+add('50',_("Tested"),'tested',
+    required=dict(states=['fixed']),
+    help_text=_("Has been tested. Waiting to be closed."))
+add('60',_("Closed"),'closed',
+    required=dict(states=['tested']),
+    help_text=_("Definitively closed. Cannot be undone."))
+add('90',_("Cancelled"),'cancelled',
+    required=dict(states=['working']),
+    help_text=_("Has been cancelled for some reason."))
+

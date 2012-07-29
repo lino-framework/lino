@@ -81,8 +81,8 @@ def analyze_models():
     
     - Verify that there are no more pending injects
     - Install a DisableDeleteHandler for each Model into `_lino_ddh`
-    - Install a `get_row_permission` and other methods for Models that
-      don't inherit from :class:`lino.dd.Model`.
+    - Install :class:`lino.dd.Model` attributes and methods into Models that
+      don't inherit from it.
     
     """
     global DONE
@@ -127,6 +127,7 @@ def analyze_models():
                   'workflow_state_field',
                   'workflow_owner_field',
                   'summary_row',
+                  'disable_delete',
                   'on_duplicate',
                   'on_create'):
             if not hasattr(model,k):
@@ -134,8 +135,30 @@ def analyze_models():
                 setattr(model,k,dd.Model.__dict__[k])
                 #~ model.__dict__[k] = getattr(dd.Model,k)
         
-
+    for model in models.get_models():
         
+        for f, m in model._meta.get_fields_with_model():
+            if isinstance(f,models.CharField) and f.null:
+                raise Exception("20110907 Nullable CharField %s in %s" % (f.name,model))
+            if isinstance(f,models.ForeignKey):
+                if f.verbose_name == f.name.replace('_', ' '):
+                    """
+                    If verbose name was not set by user code, 
+                    Django sets it to ``field.name.replace('_', ' ')``.
+                    We replace this default value by
+                    ``f.rel.to._meta.verbose_name``.
+                    """
+                    f.verbose_name = f.rel.to._meta.verbose_name
+                    
+                """
+                If JobProvider is an MTI child of Company,
+                then mti.delete_child(JobProvider) must not fail if the 
+                JobProvider is being refered only by objects that can refer 
+                to a Company as well.
+                """
+                #~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
+                f.rel.to._lino_ddh.add_fk(m or model,f)
+                        
 
 
 class DisableDeleteHandler():
@@ -144,7 +167,7 @@ class DisableDeleteHandler():
     Lino's default behaviour is to forbit deletion if there is any other 
     object in the database that refers to this. To implement this, 
     Lino installs a DisableDeleteHandler instance on each model 
-    during :func:`analyze_models`.
+    during :func:`analyze_models`. In an attribute `_lino_ddh`.
     """
     def __init__(self,model):
         self.model = model
@@ -156,13 +179,13 @@ class DisableDeleteHandler():
     def __str__(self):
         return ','.join([m.__name__+'.'+fk.name for m,fk in self.fklist])
         
-    def disable_delete(self,obj,ar):
+    def disable_delete_on_object(self,obj):
         #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
-        h = getattr(self.model,'disable_delete',None)
-        if h is not None:
-            msg = h(obj,ar)
-            if msg is not None:
-                return msg
+        #~ h = getattr(self.model,'disable_delete',None)
+        #~ if h is not None:
+            #~ msg = h(obj,ar)
+        #~     if msg is not None:
+            #~     return msg
         for m,fk in self.fklist:
             kw = {}
             kw[fk.name] = obj
@@ -344,20 +367,6 @@ def startup_site(self):
                 if isinstance(v,dd.VirtualField):
                     v.lino_kernel_setup(model,k)
                 
-            for f, m in model._meta.get_fields_with_model():
-                if isinstance(f,models.CharField) and f.null:
-                    raise Exception("20110907 Nullable CharField %s in %s" % (f.name,model))
-                if isinstance(f,models.ForeignKey):
-                    f.rel.to._lino_ddh.add_fk(model,f)
-                    if f.verbose_name == f.name.replace('_', ' '):
-                        """
-                        If verbose name was not set by user code, 
-                        Django sets it to ``field.name.replace('_', ' ')``.
-                        We replace this default value by
-                        ``f.rel.to._meta.verbose_name``.
-                        """
-                        f.verbose_name = f.rel.to._meta.verbose_name
-                        
         if self.is_installed('contenttypes'):
           
             from django.db.utils import DatabaseError

@@ -285,6 +285,7 @@ def objects():
     
     luc = Person.objects.get(name__exact="Saffre Luc")
     luc.birth_place = 'Eupen'
+    luc.birth_date = '1968-06-01'
     luc.birth_country = be
     luc.national_id = '680601 053-29'
     luc.full_clean()

@@ -167,7 +167,7 @@ class ActorMetaClass(type):
                 dl._table = cls
                 cls.detail_layout = dl
             else:
-                raise Exception("Cannot reuse layout owned by another table")
+                raise Exception("Cannot reuse detail_layout owned by another table")
                 #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
             
         # the same for insert_template and insert_layout:
@@ -183,9 +183,12 @@ class ActorMetaClass(type):
         if dl is not None:
             if isinstance(dl,basestring):
                 cls.insert_layout = layouts.FormLayout(dl,cls)
-            assert dl._table is None
-            dl._table = cls
-            cls.insert_layout = dl
+            elif dl._table is None:
+                dl._table = cls
+                cls.insert_layout = dl
+            else:
+                raise Exception("Cannot reuse detail_layout owned by another table")
+                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
                 
         if classname not in (
             'Table','AbstractTable','VirtualTable',

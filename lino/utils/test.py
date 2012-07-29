@@ -173,6 +173,8 @@ class TestCase(DjangoTestCase):
         who actually have been emitted.
         """
         for i,x1 in enumerate(expected):
+            if len(connection.queries) <= i:
+                self.fail("SQL %d expected %s, found nothing" % (i,x1))
             sql = connection.queries[i]['sql'].strip()
             x2 = x1.split('[...]')
             if len(x2) == 2:

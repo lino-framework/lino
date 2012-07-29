@@ -60,7 +60,7 @@ from lino.utils.test import TestCase
 
 class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]
-    fixtures = 'std few_countries few_cities few_languages props demo cbss'.split()
+    fixtures = 'std few_countries few_cities few_languages props cbss demo demo_events'.split()
     #~ fixtures = 'std all_countries few_cities all_languages props demo'.split()
     never_build_site_cache = True
     
@@ -78,8 +78,8 @@ def test001(self):
     """
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
     """
-    from lino.apps.pcsw.models import Person
-    self.assertEquals(Person.objects.count(), 73)
+    #~ from lino.apps.pcsw.models import Person
+    self.assertEquals(settings.LINO.person_model.objects.count(), 82)
     
     p = Person.objects.get(pk=118)
     #~ self.assertEquals(unicode(p), "ARENS Annette (118)")

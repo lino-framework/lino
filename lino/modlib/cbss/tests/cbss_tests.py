@@ -54,10 +54,12 @@ from lino.utils import Warning
 from lino.modlib.cbss import models as cbss
 
 from lino.utils import IncompleteDate
+from lino.utils.instantiator import create_and_get
 
 
 class QuickTest(TestCase):
     never_build_site_cache = False
+    fixtures = 'sectors purposes cbss_demo'.split()
     #~ pass
     #~ def setUp(self):
         #~ settings.LINO.never_build_site_cache = False
@@ -80,18 +82,21 @@ def test01(self):
     """
     Execute an IdentifyPersonRequest.
     """
+    #~ create_and_get('cbss.Sector')
+    #~ from lino.ui.extjs3 import urls # create cache/wsdl files
+    settings.LINO.startup() # create cache/wsdl files
     
-    from lino.ui.extjs3 import urls # create cache/wsdl files
-    
-    User = resolve_model(settings.LINO.user_model)
     global root
-    root = User(username='root')
-    root.save()
+    #~ User = resolve_model(settings.LINO.user_model)
+    #~ root = User(username='root')
+    #~ root.save()
+    root = create_and_get(settings.LINO.user_model,username='root')
     
-    Person = resolve_model(settings.LINO.person_model)
+    #~ Person = resolve_model(settings.LINO.person_model)
     global luc
-    luc = Person(first_name='Luc',last_name='Saffre')
-    luc.save()
+    #~ luc = Person(first_name='Luc',last_name='Saffre')
+    #~ luc.save()
+    luc = create_and_get(settings.LINO.person_model,first_name='Luc',last_name='Saffre')
     
     # save site settings
     #~ saved_cbss_environment = settings.LINO.cbss_environment
@@ -160,7 +165,7 @@ def test01(self):
     
     #~ IdentifyPersonRequest = resolve_model('cbss.IdentifyPersonRequest')
     req = cbss.IdentifyPersonRequest(
-        user=root,project=luc,
+        user=root,person=luc,
         last_name="MUSTERMANN",
         first_name="Max",
         birth_date=IncompleteDate(1938,6,1))
@@ -267,7 +272,7 @@ AuthorCodeList : CBSS"""
     LastName "SAFFRE" and BirthDate 1968-06-01:
     """
     req = cbss.IdentifyPersonRequest(
-        user=root,project=luc,
+        user=root,person=luc,
         last_name="SAFFRE",
         birth_date=IncompleteDate(1968,6,1))
     req.execute_request()
@@ -285,7 +290,7 @@ AuthorCodeList : CBSS"""
     Third IPR live test. NISS and birth_date are not enough.
     """
     req = cbss.IdentifyPersonRequest(
-        user=root,project=luc,
+        user=root,person=luc,
         national_id="70100853190",birth_date=IncompleteDate(1970,10,8))
     req.execute_request()
     
@@ -315,7 +320,7 @@ def test02(self):
     
     #~ RetrieveTIGroupsRequest = resolve_model('cbss.RetrieveTIGroupsRequest')
     req = cbss.RetrieveTIGroupsRequest(
-        user=root,project=luc,
+        user=root,person=luc,
         national_id='12345678901',language='fr')
     
     """
@@ -369,7 +374,7 @@ description : A validation error occurred.
     second request with a valid SSIN but which is not not integrated.
     """
     req = cbss.RetrieveTIGroupsRequest(
-        user=root,project=luc,
+        user=root,person=luc,
         national_id='70100853190',
         language='fr',history=False)
     reply = req.execute_request()
@@ -391,7 +396,7 @@ description : The given SSIN is not integrated correctly.
     kw.update(purpose=1) # dossier in onderzoek voor een maximale periode van twee maanden
     kw.update(national_id='68060105329') 
     kw.update(user=root) 
-    kw.update(project=luc) 
+    kw.update(person=luc) 
     kw.update(start_date=today)
     kw.update(end_date=today) 
     kw.update(action=cbss.ManageAction.REGISTER) 
@@ -442,7 +447,7 @@ description : The given SSIN is not integrated correctly.
         self.assertEquivalent(expected,req.response_xml,report_plain=True)
 
     req = cbss.RetrieveTIGroupsRequest(
-        user=root,project=luc,
+        user=root,person=luc,
         national_id='68060105329',
         language='fr',history=False)
     reply = req.execute_request()

@@ -268,6 +268,10 @@ Short-term
 Medium-term
 -----------
 
+#.  Historique des "choses" consultées pendant une session 
+    pour facilement naviguer d’une "chose" à l’autre.
+    Chose = configurable: Personnes, Clients, Demandes,...
+
 #.  ManageAccessRequest now also has a separate insert_layout. 
     But we cannot inherit here from ManageAccessRequestDetail 
     and thus had to (almost) duplicate the `setup_handle`::

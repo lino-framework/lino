@@ -41,7 +41,10 @@ Données signalétiques spécifiques aux CPAS
 Pour leurs Clients, les CPAS retiennent 
 toute une série de données signalétiques 
 spécifiques (non définies dans :mod:`lino.modlib.contacts`)
-tels que `id_card_no` (n° de carte d'identité) 
+tels que 
+`id_card_no` (n° de carte d'identité),
+`national_id` (NISS) 
+`civil_state` (Etat civil) 
 et `birth_place` (lieu de naissance).
 
 (Liste complète: 
@@ -92,57 +95,69 @@ ou ajouter une nouvelle table `Client`?
 On pourrait différencier entre "Personnes" simples et "Clients". 
 Ces derniers étant des personnes spéciales pour lesquelles 
 Lino gère plus d'information que pour des simples personnes de contact.
+Une simple personne de contact est p.ex. le directeur d'une société employante,
+pour lequel Lino requiert une entrée dans le signalétique "Person" 
+car il figure en tant que représentant pour une série de contrats.
 
 Observations:
 
-- Si une personne reçoit une nouvelle carte d'identité, je suppose 
-  que le CPAS modifiera simplement le champ `id_card_no` sans 
-  garder l'ancien numéro (de manière accessible) : 
-  un CPAS ne s'intéresse pas aux cartes d'identité périmées.
-  
-  Quelle est la probabilité qu'un CPAS donné voudrait 
-  garder un historique accessible pour les cartes d'identité?
-
-- Pour le champ `birth_place` par contre il est 
+- Pour le champ `birth_place` il est 
   inutile de maintenir un historique de manière accessible.
+  Le lieu de naissance d'une personne ne change jamais 
+  (sauf correction d'erreeer d'encodage)
+
+  Je dis "historique accessible" parce qu'il y a toujours la possibilité 
+  de consulter le system log pour voir qand la valeur d'un champ a été modifiée 
+  et par qui. Ce changelog (qui pour l'instant est encore primitif) deviendra en 
+  plus plus facilement consultable dans le futur quand Lino aura la possibilité 
+  d'un historique général des changements. 
+  Mais il restera toujours en arrière-plan.
+  "Historique accessible" par contre veut dire 
+  "relativement visible pour l'utilisateur".
+  
+- Si une personne reçoit une nouvelle carte d'identité, 
+  le CPAS modifiera simplement le champ `id_card_no` sans 
+  garder l'ancien numéro (dans un historique accessible) : 
+  un CPAS ne s'intéresse pas aux cartes d'identité périmées.
 
 - Il ne faudrait pas que ces données se voient dupliquées 
   inutilement p.ex. quand la personne change d'un centre vers un autre.
-
-Je dis "historique accessible" parce qu'il y a toujours la possibilité 
-de consulter le system log pour voir qand la valeur d'un champ a été modifiée 
-et par qui. Ce changelog (qui pour l'instant est encore primitif) deviendra en 
-plus plus facilement consultable dans le futur quand Lino aura la possibilité 
-d'un historique général des changements. 
-Mais il restera toujours en arrière-plan.
-"Historique accessible" par contre veut dire 
-"relativement visible pour l'utilisateur".
   
-Mon plan c'est de **garder ces champs dans Person**.
+- Le NISS est obligatoire pour devenir Client.
 
-Ce qui veut dire que même pour le directeur d'une société employante
-(pour lequel Lino requiert une entrée dans le signalétique "Person" 
-car il figure en tant que représentant pour une série de contrats)
-nous avons la possiblité d'encoder ces données.
+- Lino doit refuser de créer plusieurs Personnes avec le même NISS.
+
+Ces deux derniers points sont décisifs: 
+**il faut une table séparée pour les Clients**.
+
+Ce qui veut dire qu'il y aura un réarrangement au niveau 
+de la table "Personnes".
+
+.. 
+
+  Ce qui veut dire que même pour le directeur d'une société employante
+  (pour lequel Lino requiert une entrée dans le signalétique "Person" 
+  car il figure en tant que représentant pour une série de contrats)
+  nous avons la possiblité d'encoder ces données.
 
 
 
 Accompagnements
 ---------------
 
-Un changement qui est quasi décidé (mais pas encore implémenté): 
-les champs `coached_from`, `coached_until`, `coach1` et `coach2`
+Les champs `coached_from`, `coached_until`, `coach1` et `coach2`
 doivent passer de Person vers une nouvelle table 
-dont le nom sera soit "Client" soit "Coaching".
+`Coaching` ("Accompagnements").
 
-- En plus Lino devra connaître le notion de Centre (une table contenant un 
-  record pour chaque CPAS "connu")
+En plus Lino devra connaître le notion de Centre (une table contenant un 
+record pour chaque CPAS "connu")
 
-- Plusieurs CPAS doivent pouvoir travailler dans une même base de données.
-  Ce scénario deviendra réel dès que le module Médiation des Dettes 
-  entre en production.
+Plusieurs CPAS doivent pouvoir travailler dans une même base de données.
+Ce scénario deviendra réel dès que le module Médiation des Dettes 
+entre en production.
  
-Voici une première idée (variante "Client") pour structurer cela::
+  
+Voici la nouvelle structure (code simplifié)::
 
   class Centre(dd.Model):
       company = models.ForeignKey('contacts.Company')
@@ -150,42 +165,23 @@ Voici une première idée (variante "Client") pour structurer cela::
       president = models.ForeignKey('contacts.Person')
       secretary  = models.ForeignKey('contacts.Person')
       
-  class Client(dd.Model):
-      person = models.ForeignKey('contacts.Person')
-      centre = models.ForeignKey(Centre)
-      start_date = models.DateField()
-      end_date = models.DateField()
-      integ_agent = models.ForeignKey('users.User',verbose_name="Assistant d'insertion")
-      social_agent = models.ForeignKey('users.User',verbose_name="Assistant social")
-      debts_agent = models.ForeignKey('users.User',verbose_name="Conseiller Dettes")
-  
-À propos du champ `code_cbss` d'un Centre: 
-
-- Quand on fait une demande ManageAccess LIST, 
-  Lino pourrait convertir la réponse en une suite de Clients.
-  Le centre de Verviers, même s'il n'utilise pas Lino, 
-  pourrait se trouver dans notre base de données.
-  Le `code_cbss` sert à l'identifier quand nous communiqons avec la BCSS.
-
-
-Alternativement (variante "Coaching"), 
-Lino pourrait différencier d'avantage et faire une 
-Entrée par "Accompagnement". Càd au lieu d'avoir trois champs
-`integ_agent`, `social_agent` et/ou `debts_agent`, nous aurions::
-
-  class Centre(dd.Model): #  comme ci-dessus
-      
-  class Service(dd.BabelNamed):
-      centre = models.ForeignKey(Centre)
-      (une table avec trois Services: Intégration, Social et Dettes)
+  #class Service(dd.BabelNamed):
+  #    centre = models.ForeignKey(Centre)
+  #    (une table avec trois Services: Intégration, Social et Dettes)
     
   class Coaching(dd.Model):
-      person = models.ForeignKey('contacts.Person')
-      service = models.ForeignKey(Service)
+      client = models.ForeignKey('pcsw.Client')
+      # service = models.ForeignKey(Service)
       start_date = models.DateField()
       end_date = models.DateField()
       agent = models.ForeignKey('users.User',verbose_name="Assistant responsable")
     
+À propos du champ `code_cbss` d'un Centre: 
+Quand on fait une demande ManageAccess LIST, 
+Lino pourrait convertir la réponse en une suite de Coachings.
+Le centre de Verviers, même si celui-ci n'utilise pas Lino, 
+pourrait se trouver dans notre base de données.
+Le `code_cbss` sert à l'identifier quand nous communiqons avec la BCSS.
 
 Regardons quelques cas limites:
 
@@ -207,37 +203,63 @@ Regardons quelques cas limites:
   :class:`ManageAccess <lino.modlib.cbss.models.ManageAccessRequest>`.
 
 
-- Un assistant social meurt ou quitte définitivement 
-  son endroit de travail. 
-  Ses collègues prennent en charge les clients qu'il a accompagné. 
+- Un assistant social meurt ou quitte définitivement son endroit de travail. 
+  Ses collègues prennent en charge les Clients qu'il a accompagné. 
+  
+  Pour faciliter la réattribution des clients, Lino aura une table 
+  `CoachingsByAgent`.
 
-  L'aide sociale octroyée et intégration à la BCSS 
+  L'aide sociale octroyée des clients et intégration à la BCSS 
   ne sont pas influencées.
   Il n'y a donc aucune raison d'informer la BCSS, 
   pas besoin de faire une déclaration
   :class:`ManageAccess <lino.modlib.cbss.models.ManageAccessRequest>`.
 
-  Il faudra bien-sûr changer les champs 
-  `integ_agent`, `social_agent` et/ou `debts_agent`
-  de tous les clients concernés. 
 
 
   Chaque CPAS est libre de décider pour soi s'il crée dans ce 
-  cas un nouveau Client (Coaching) pour chaque personne concernée, 
-  ou s'il change simplement les champs `integ_agent`, `social_agent` etc. 
-  des Clients/Coachings existants. 
+  cas un nouveau Coaching pour chaque personne concernée, 
+  ou s'il change simplement les champs `agent` des Coachings existants. 
   Les petits centres ne sont peut-être pas intéressés d'avoir un historique 
   de ces données.
   
-Décision ouverte: Clients ou Coachings?
+Intégrations
+------------
 
-- Si nous voulons, par utilisateur, une *seule* liste des Clients ou Coachings,  
-  alors il faut la variante Coaching.
+Est-ce que les "intégrations" de la BCSS peuvent entrer dans 
+notre table Coachings? 
+Oubien faut-il une table supplémentaire pour les stocker?
+Oubien suffit-il de dire quil faut consulter la dernière requête
+ManageAccess?
+
+Exemples fictifs:
+
+- Personne qui n'a jamais été client autrepart que chez nous. 
+  C'est d'abord Caroline qui l'accueuille pour décider qui 
+  accompagnera cette personne. Elle fait les formalités 
+  d'identification et crée le Client dans Lino. 
+  Puis elle décide avec ses collègues de passer la 
+  personne à Roger pour le service social général (SS) 
+  et Alicia pour le service d'intégration (SI).
+  Un mois plus tard le SI décide qu'Alicia passe son client à Hubert.
   
-- S'il est important d'avoir une représentation de la notion d'intégration 
-  de la BCSS, alors il faut la variante "Client".
+
+    Coachings:                          Intégrations:
   
-- On pourrait aussi vouloir les deux variantes::
+    début    fin      Agent  Service    début    fin      Qualité Centre
+    -------- -------- -------- -----    -------- -------- ------- ------
+    20.02.05 01.03.05 Caroline  SA      01.04.05   .  .   1       Eupen
+    01.03.05   .  .   Roger     SS
+    01.03.05 31.03.05 Alicia    SI
+    01.04.05   .  .   Hubert    SI
+  
+    début    fin      Agent  Service    début    fin      Qualité Centre
+    -------- -------- -------- -----    -------- -------- ------- ------
+    01.02.05   .  .   Caroline  SS      01.04.05   .  .   1       Eupen
+    01.03.05 31.03.05 Alicia    SI
+    01.04.05   .  .   Hubert    SI
+  
+- Personne qui a traversé d'autres Centres avant d'avoir abouti chez nous:
 
     Coachings:                          Intégrations:
   
@@ -246,7 +268,6 @@ Décision ouverte: Clients ou Coachings?
     01.02.05   .  .   Caroline  SS      01.04.05   .  .   1       Eupen
     01.03.05 31.03.05 Alicia    SI
     01.04.05   .  .   Hubert    SI
-  
 
 
   
@@ -288,10 +309,26 @@ Questions ouvertes
   ("Personne de contact ONE") pourrait être remplacé 
   par un quatrième service, cette fois-ci un "service externe".
   Dans ce cas le champ `Coaching.agent` serait FK vers Person (au lieu de User).
+  
+- Est-ce vrai
+  que les CPAS ne s'intéressent pas aux cartes d'identité périmées?
+  
 
 
 Demandes d'aide
 ---------------
 
-Il y aura bientôt aussi une nouvelle 
-Table "AidRequests" ("Dossiers sociaux").
+Il y aura une nouvelle 
+Table "Dossiers" ("Dossiers sociaux").
+Un Dossier représente le fait qu'une Personne a introduit une demande d'aide.
+
+- client
+- centre
+- date de début
+
+DossiersByPerson: Historique des demandes d'aide
+
+
+
+
+

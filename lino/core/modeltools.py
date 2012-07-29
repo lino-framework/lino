@@ -117,6 +117,13 @@ class Model(models.Model):
     on all tables based on this Model.
     """
     
+    def disable_delete(self):
+        """
+        Return None if it is okay to delete this object,
+        otherwise a nonempty string explaining why.
+        """
+        return self._lino_ddh.disable_delete_on_object(self)
+        
     def disabled_fields(self,ar):
         return []
         

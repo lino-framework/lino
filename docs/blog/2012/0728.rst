@@ -1,0 +1,104 @@
+20120728
+========
+
+Kleiner Bug mit großen Folgen
+-----------------------------
+
+Lino hat seinen ersten Datenunfall größeren Ausmaßes hervorgerufen.
+Und ich kann jetzt die Suppe auslöffeln.
+
+In :term:`watch_tim` hatte ich ein Komma vergessen in der 
+Funktion, die entscheidet, ob ein Partner aus TIM 
+zu einer Person, einer Firma oder einem Haushalt wird::
+
+  def PAR_model(data):
+      if data.get('NB2',False):
+          return Person
+      if data.get('NOTVA',False):
+          if data.get('ALLO','') in (u"Eheleute"):
+              return Household
+          return Company
+      return Person
+      
+Dort war natürlich gemeint::
+
+    if data.get('ALLO','') in (u"Eheleute",):
+
+Denn in Python muss man nun mal ein `tuple` mit nur einem Element durch 
+dieses "überflüssige" Komma kennzeichnen, weil die Klammern ansonsten 
+als einfache Gruppierer gedeutet werden::
+
+  >>> '' in ('Eheleute',)
+  False
+  >>> '' in ('Eheleute')
+  True
+
+Dadurch konvertierte watch_tim alle Firmen (deren Feld ALLO quasi 
+immer leer ist), zu Haushalten, sobald sie in TIM bearbeitet wurden.
+
+Das allein wäre noch nicht so schlimm gewesen, 
+wenn :term:`watch_tim` nicht auch noch einen zweiten Bug gehabt 
+hätte: er hielt sich beim Konvertieren von Partnern nicht an den 
+:class:`DisableDeleteHandler <lino.core.kernel.DisableDeleteHandler>`.
+
+Und wenn man Django allein darüber entscheiden lässt, dann macht 
+der kurzen Prozess: Firma löschen? Kein Problem, aber dann auch alle 
+Notizen, Stellen, Stellenangebote, Verträge usw...
+
+Das ist die Erklärung, weshalb eine Serie von Verträgen mit dem Alternheim 
+plötzlich spurlos verschwunden waren.
+
+
+Erster Schritt: den Bug beheben. 
+`disable_delete` sitzt jetzt in :meth:`<lino.core.modeltools.Model.disable_delete>`.
+Was zu Änderungen an einigen anderen Stellen führt 
+(:func:`lino.utils.mti.delete_child`,
+:class:`lino.core.kernel.DisableDeleteHandler`,
+:mod:`lino.modlib.jobs.models.JobProvider`,
+:mod:`lino.modlib.courses.models.CourseProvider`,
+:mod:`lino.apps.pcsw.models.CpasPartner`...)
+
+Wenn das nochmal passieren sollte (reproduzierbar z.B. indem man in 
+TIM in einer Firma die Anrede auf "Eheleute" setzt), dann kommt im watch_tim 
+jetzt ein Traceback::
+
+  Traceback (most recent call last):
+    File "t:\hgwork\lino\lino\apps\pcsw\management\commands\watch_tim.py", line 533, in watch
+      process_line(i,ln)
+    File "t:\hgwork\lino\lino\apps\pcsw\management\commands\watch_tim.py", line 506, in process_line
+      m(**kw)
+    File "t:\hgwork\lino\lino\apps\pcsw\management\commands\watch_tim.py", line 201, in PUT
+      if self.PUT_special(obj,**kw):
+    File "t:\hgwork\lino\lino\apps\pcsw\management\commands\watch_tim.py", line 333, in PUT_special
+      self.swapclass(obj,model,kw['data'])
+    File "t:\hgwork\lino\lino\apps\pcsw\management\commands\watch_tim.py", line 302, in swapclass
+      raise Exception(unicode_string(msg))
+  Exception: Aus TIM importierte Partner d\xfcrfen nicht gel\xf6scht werden.
+
+Und das gilt jetzt allgemein wenn man in TIM etwas löscht, das in Lino nicht 
+gelöscht werden darf.
+
+TODO:
+
+- watch_tim abschalten bis zum nächsten Release
+- Datenreparatur: gelöschte Notizen und Verträge wiederherstellen
+- cron-Job, der jede Nacht ein Dump macht
+- test suite in Ordnung bringen und weitere test cases schreiben
+
+Die Datenreparatur war einfach: in den log-Dateien nachgeschaut, 
+wann der Unfall passiert ist. Das war am 19.07., 
+zwei Tage nach dem Upgrade::
+
+  /var/log/lino/2012-07-17.log:201207-19 09:27:41 INFO watch_tim :
+  PAR:0000087368 (Company #87368) : Company becomes Household
+
+Aus einem Dump vom 17.07. habe ich dann eine Fixture r20120728.py 
+zusammengeklebt, die alle Notizen und Verträge von #87368 wieder 
+in die Datenbank lädt. (Diese Fixture kann ich natürlich nicht 
+hier veröffentlichen, weil sie Personendaten enthält.)
+
+
+Tidying up the Unit test suite
+------------------------------
+
+- PersonMixin.get_full_name was overridden by Partner.get_full_name

@@ -29,22 +29,52 @@ from lino.utils import babel
 from lino.core.modeltools import resolve_model,resolve_app
 Person = resolve_model(settings.LINO.person_model)
 contacts = resolve_app('contacts')
-from lino.utils.instantiator import Instantiator
+from lino.utils.instantiator import Instantiator, create_and_get
+from lino.utils.babel import babel_values
+from lino.utils.choicelists import Gender
 
-class DemoTest(TestCase):
+class QuickTest(TestCase):
     #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
     #~ fixtures = 'few_countries few_languages demo_cities std demo demo_ee'.split()
-    fixtures = 'std few_countries few_cities few_languages props demo'.split()
+    #~ fixtures = 'std few_countries few_cities few_languages props demo'.split()
+    pass
     
     
 person = Instantiator(settings.LINO.person_model).build
 company = Instantiator(settings.LINO.company_model).build
-        
+
 def test01(self):
     """
     Tests some basic funtionality.
     """
-    luc = Person.objects.get(first_name__exact='Luc',last_name__exact='Saffre')
+    ee = create_and_get('countries.Country',
+        isocode='EE',**babel_values('name',
+        de=u"Estland",
+        fr=u'Estonie',
+        en=u"Estonia",
+        nl=u'Estland',
+        et=u'Eesti',
+        ))
+    be = create_and_get('countries.Country',
+        isocode='BE',**babel_values('name',
+        de=u"Belgien",
+        fr=u'Belgique',
+        en=u"Belgium",
+        nl=u'Belgie',
+        et=u'Belgia',
+        ))
+          
+    eupen = create_and_get('countries.City',name=u'Eupen',country=be,zip_code='4700')
+    vigala = create_and_get('countries.City',name=u'Vigala',country=ee)
+          
+    
+    luc = create_and_get(settings.LINO.person_model,
+        first_name='Luc',last_name='Saffre',
+        gender=Gender.male,
+        country=ee,street='Uus', street_no='1',
+        addr2=u'Vana-Vigala küla',
+        city=vigala,zip_code='78003')
+        
     if 'en' in babel.AVAILABLE_LANGUAGES:
         babel.set_language('en')
         self.assertEquals(luc.address(), u'''\
@@ -68,11 +98,11 @@ Estland''')
 def test02(self):
     """
     """
-    from lino.modlib.users.models import User
-    u = User.objects.get(username='root')
-    lang = u.language
-    u.language = ''
-    u.save()
+    u = create_and_get(settings.LINO.user_model,
+        username='root',language=babel.DEFAULT_LANGUAGE)
+    #~ lang = u.language
+    #~ u.language = ''
+    #~ u.save()
     
     #~ settings.LINO.never_build_site_cache = True
     
@@ -113,7 +143,7 @@ def test02(self):
         self.assertEqual(result['data']['country'],"Estonie")
         self.assertEqual(result['data']['gender'],u"Masculin")
         
-    u.language = lang
-    u.save()
+    #~ u.language = lang
+    #~ u.save()
     # restore is_imported_partner method
     settings.LINO.is_imported_partner = save_iip

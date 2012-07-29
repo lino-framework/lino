@@ -59,14 +59,11 @@ from lino.utils.instantiator import Instantiator
 from lino.modlib.users.models import UserProfiles
 
 
-def create_user(*args):
+#~ def create_user(*args):
     #~ user = Instantiator('users.User',
       #~ 'username email first_name last_name is_staff is_superuser',
       #~ is_active=True,last_login=NOW,date_joined=NOW).build
-    user = Instantiator('users.User',
-      'username email first_name last_name level',
-      last_login=NOW,date_joined=NOW).build
-    return user(*args)
+    #~ return user(*args)
 
 
 
@@ -88,16 +85,16 @@ def test01(self):
     """
     
     """
-    The first web request will trigger Lino site setup.
-    During site setup Lino does some database requests.
+    The first web request will trigger Lino site startup.
+    During site startup Lino does some database requests.
     When running this test together with other tests, 
-    the setup probably has been done already and won't execute 
+    the startup probably has been done already and won't execute 
     another time.
     To make sure that these db lookups don't interfere here, we 
     now call `settings.LINO.setup()` followed by `reset_queries()`.
     
     """
-    settings.LINO.setup()
+    settings.LINO.startup()
     reset_queries()
     
     #~ 'SELECT "lino_helptext"."id", [...] FROM "lino_helptext" WHERE "lino_helptext"."help_text" IS NOT NULL',
@@ -112,12 +109,14 @@ def test01(self):
     #~ user = create_user('user','user@example.com','John','Jones',False,False)
     #~ user.save()
     #~ root = create_user('root','root@example.com','Dick','Dickens',True,True)    
-    root = create_user('root','root@example.com','Dick','Dickens',UserProfiles.root)    
+    user = Instantiator(settings.LINO.user_model,'username email first_name last_name profile').build
+    root = user('root','root@example.com','Dick','Dickens','900')    
+    
     root.save()
     
     self.check_sql_queries(
       'INSERT INTO "users_user" [...]',
-      'SELECT "users_user"."id", [...] FROM "users_user" WHERE "users_user"."profile" = root'
+      'SELECT "users_user"."id", [...] FROM "users_user" WHERE "users_user"."profile" = 900'
     )
     #~ self.check_sql_queries(
       #~ 'SELECT (1) AS "a" FROM "lino_siteconfig" [...]',

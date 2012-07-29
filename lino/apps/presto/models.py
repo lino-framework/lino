@@ -60,7 +60,8 @@ def site_setup(site):
     This includes especially those detail layouts 
     which depend on the *combination* of installed modules.
     """
-    site.modules.contacts.Partners.add_detail_tab("tickets","tickets.ProjectsByPartner")
-    site.modules.contacts.Companies.add_detail_tab("tickets","tickets.ProjectsByPartner")
-    site.modules.contacts.Persons.add_detail_tab("tickets","tickets.ProjectsByPartner")
+    #~ todo: 
+    site.modules.contacts.Partners.add_detail_tab("tickets","tickets.TicketsByPartner")
+    site.modules.contacts.Companies.add_detail_tab("tickets","tickets.TicketsByPartner")
+    site.modules.contacts.Persons.add_detail_tab("tickets","tickets.TicketsByPartner")
     
