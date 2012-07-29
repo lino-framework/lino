@@ -24,11 +24,13 @@ from django.conf import settings
 
 from django.core.management.commands.loaddata import Command as OriginalCommand
 
-
+from lino.core.kernel import analyze_models
 
 class Command(OriginalCommand):
   
     def handle(self, *app_labels, **options):
-        settings.LINO.startup()
+        #~ settings.LINO.startup()
+        analyze_models()
+        # startup would create a SiteConfig object
         return OriginalCommand.handle(self, *app_labels, **options)
   

@@ -2,7 +2,7 @@ Coming
 ======
 
 
-:checkin:`086ae8661d28`
+:checkin:`06d0fdda9e04`
 
 Bugfixes:
 
@@ -35,3 +35,5 @@ Bugfixes:
   Dadurch wurden manchmal Textfragmente (z.B. Aufgabenbereich eines Art607) 
   nicht ausgedruckt (und in der generierten `.odt` stand als 
   Fehlermeldung "not well-formed (invalid token)")
+
+- Added override to `loaddata` command
