@@ -200,8 +200,7 @@ def test01b(self):
         self.assertEqual(
           result['message'],
           u"""\
-Invalid template '' configured for ContractType u'Art.60\\xa77' (expected filename ending with '.pisa.html').
-An error report has been sent to the system administrator.""")
+Invalid template '' configured for ContractType u'Art.60\\xa77' (expected filename ending with '.pisa.html').""")
 
     
 

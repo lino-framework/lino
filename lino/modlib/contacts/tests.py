@@ -99,10 +99,9 @@ def test02(self):
     """
     """
     u = create_and_get(settings.LINO.user_model,
-        username='root',language=babel.DEFAULT_LANGUAGE)
+        username='root',language='')
     #~ lang = u.language
-    #~ u.language = ''
-    #~ u.save()
+    #~ print 20120729, repr(u.language)
     
     #~ settings.LINO.never_build_site_cache = True
     
@@ -114,16 +113,21 @@ def test02(self):
     def f(obj): return False
     settings.LINO.is_imported_partner = f
     
+    
     luc = Person.objects.get(name__exact="Saffre Luc")
     url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
     if 'en' in babel.AVAILABLE_LANGUAGES:
-        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
+        u.language = 'en'
+        u.save()
+        response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='en')
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estonia")
         self.assertEqual(result['data']['gender'],"Male")
     
     if 'de' in babel.AVAILABLE_LANGUAGES:
-        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
+        u.language = 'de'
+        u.save()
+        response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='de')
         result = self.check_json_result(
           response,
           'navinfo disable_delete data id title')
@@ -134,11 +138,10 @@ def test02(self):
         self.assertEqual(result['data']['disabled_fields'],{'id': True})
         
         
-        # TODO: the following would fail if LINO.date_format_* have been modified
-        self.assertEqual(result['data']['birth_date'],"01.06.1968")
-        
     if 'fr' in babel.AVAILABLE_LANGUAGES:
-        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='fr')
+        u.language = 'fr'
+        u.save()
+        response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='fr')
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estonie")
         self.assertEqual(result['data']['gender'],u"Masculin")

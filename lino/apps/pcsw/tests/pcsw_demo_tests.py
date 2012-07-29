@@ -79,7 +79,7 @@ def test001(self):
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
     """
     #~ from lino.apps.pcsw.models import Person
-    self.assertEquals(settings.LINO.person_model.objects.count(), 82)
+    self.assertEquals(settings.LINO.person_model.objects.count(), 78)
     
     p = Person.objects.get(pk=118)
     #~ self.assertEquals(unicode(p), "ARENS Annette (118)")
