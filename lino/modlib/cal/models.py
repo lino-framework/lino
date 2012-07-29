@@ -1780,7 +1780,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     Specifying `None` for `date` means that 
     the automatic component should be deleted.
     """
-    #~ print "20111014 update_auto_task"
+    #~ print "20120729 update_auto_component", model,autotype,user, date, settings.LINO.loading_from_dump
     #~ if SKIP_AUTO_TASKS: return 
     if settings.LINO.loading_from_dump: 
         #~ print "20111014 loading_from_dump"
@@ -1788,6 +1788,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     ot = ContentType.objects.get_for_model(owner.__class__)
     if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
         #~ defaults = owner.get_auto_task_defaults(**defaults)
+        #~ print "20120729 b"
         defaults.setdefault('user',user)
         obj,created = model.objects.get_or_create(
           defaults=defaults,
@@ -1807,6 +1808,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
                 obj.save()
         return obj
     else:
+        #~ print "20120729 c"
         # delete task if it exists
         try:
             obj = model.objects.get(owner_id=owner.pk,

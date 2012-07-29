@@ -4,6 +4,10 @@ To-do list
 Short-term
 ----------
 
+#.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail eines Uploads, 
+    der keine Reminder hat, via Permalink öffnet, dann sit die Tabelle der 
+    Aufgaben nicht leer, sondern voll irgendwelcher Einträge.
+    
 #.  Polls tutorial : SiteConfig geht nicht.
 
 #.  Übersetzung für "Scheduled" ist momentan "Geplant". 
