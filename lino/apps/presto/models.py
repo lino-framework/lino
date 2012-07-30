@@ -26,20 +26,42 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from lino import mixins
+from lino import dd
 
-#~ from lino.modlib.contacts import models as contacts
+def customize_contacts():
+    dd.inject_field('contacts.Partner',
+        'national_id_et',
+        models.CharField(max_length=200,
+        blank=True,verbose_name=_("National ID")
+        #~ ,validators=[niss_validator]
+        )
+      )
+    dd.inject_field('contacts.Partner',
+        'bank_account1',
+        models.CharField(max_length=100,
+        blank=True,verbose_name=_("Bank account")
+        #~ ,validators=[niss_validator]
+        )
+      )
+  
+
+customize_contacts()
+
+from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.notes import models as notes
 
 #~ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born,mixins.Printable):
-    #~ class Meta(contacts.PersonMixin.Meta):
-        #~ app_label = 'contacts'
+class Person(contacts.Person,contacts.Born,mixins.Printable,mixins.CreatedModified):
+    class Meta(contacts.Person.Meta):
+        app_label = 'contacts'
         
 
 
 #~ class Company(contacts.Partner,contacts.CompanyMixin):
+class Company(contacts.Company,mixins.CreatedModified):
     
-    #~ class Meta(contacts.CompanyMixin.Meta):
-        #~ app_label = 'contacts'
+    class Meta(contacts.Company.Meta):
+        app_label = 'contacts'
 
 #~ class Companies(contacts.Partners):
     #~ model = Company
@@ -51,6 +73,7 @@ from lino import mixins
         #~ app_label = 'notes'
         #~ verbose_name = _("Event/Note") # application-specific override
         #~ verbose_name_plural = _("Events/Notes")
+
 
 
 def site_setup(site):

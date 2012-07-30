@@ -79,7 +79,8 @@ class Entry(mixins.TypedPrintable,
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     language = babel.LanguageField()
     type = models.ForeignKey(EntryType,blank=True,null=True)
-    subject = models.CharField(_("Subject"),max_length=200,blank=True) # ,null=True)
+    title = models.CharField(_("Title"),max_length=200,blank=True) # ,null=True)
+    summary = dd.RichTextField(_("Summary"),blank=True,format='html') 
     body = dd.RichTextField(_("Body"),blank=True,format='html')
     
     def __unicode__(self):
@@ -90,8 +91,8 @@ class Entry(mixins.TypedPrintable,
         #~ s = super(Note,self).summary_row(ui,rr)
         s = super(Entry,self).summary_row(ar)
         #~ s = contacts.ContactDocument.summary_row(self,ui,rr)
-        if self.subject:
-            s += ' ' + cgi.escape(self.subject) 
+        if self.title:
+            s += ' ' + cgi.escape(self.title) 
         return s
     
     #~ def update_owned_instance(self,task):
@@ -116,7 +117,8 @@ class EntryTypes(dd.Table):
 class EntryDetail(dd.FormLayout):
     main = """
     type:25 owner
-    subject 
+    title
+    summary    
     id created modified user:10 language:8 build_time
     body
     """
@@ -128,7 +130,7 @@ class EntryDetail(dd.FormLayout):
 class Entries(dd.Table):
     model = Entry
     detail_layout = EntryDetail()
-    column_names = "id modified user type subject * body"
+    column_names = "id modified user type title summary * body"
     #~ hide_columns = "body"
     #~ hidden_columns = frozenset(['body'])
     order_by = ["id"]
@@ -137,7 +139,7 @@ class Entries(dd.Table):
 
 class MyEntries(mixins.ByUser,Entries):
     #~ master_key = 'user'
-    column_names = "modified type subject body *"
+    column_names = "modified type title summary body *"
     #~ column_names = "date event_type type subject body *"
     #~ column_names = "date type event_type subject body_html *"
     #~ can_view = perms.is_authenticated
@@ -159,14 +161,14 @@ class MyEntries(mixins.ByUser,Entries):
   
 class EntriesByType(Entries):
     master_key = 'type'
-    column_names = "modified subject user *"
+    column_names = "modified title summary user *"
     order_by = ["modified-"]
     #~ label = _("Notes by person")
   
   
 class EntriesByController(Entries):
     master_key = 'owner'
-    column_names = "modified subject user *"
+    column_names = "modified title summary user *"
     order_by = ["modified-"]
     #~ label = _("Notes by person")
   

@@ -26,6 +26,8 @@ class Lino(Lino):
     
     #~ remote_user_header = "REMOTE_USER"
     
+    override_modlib_models = ['contacts.Person','contacts.Company']
+    
     def get_app_source_file(self): return __file__
         
     #~ def setup_quicklinks(self,ui,user,tb):

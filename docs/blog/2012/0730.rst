@@ -13,18 +13,33 @@ over 40 times (probably just some robots, but anyway).
 So a quick bugfix release 
 
 About version numbering.
-
-Add new globale variable :attr:`lino.__release__` and call it 
+Should I add a new global variable :attr:`lino.__release__` and call it 
 1.4.9.2 instead?
+--> No. The version number doesn't reflect whether a database migration 
+is required or not. Applications just add an empty migration step 
+if there's no migration needed.
 
 
 
 - "Ich möchte eine Nachricht in Historik bei einer Person. 
   Lino will nicht und gibt an "Internal Server Error"
 
-  --> Traceback auf dem Server::
+  --> Stimmt. Man kann seit der 1.4.8 *überhaupt nichts* löschen.
+  
+  Auf dem Server kommt dann folgender Traceback::
   
     'WSGIRequest' object has no attribute 'subst_user'
-    Request Method: 	DELETE
+    Request Method: DELETE
+    
+  Ist doch immer wieder erstaunlich, was für tolle Fehler es schaffen,
+  unbemerkt durchzuschlüpfen.
+    
 
 :doc:`/releases/1.4.10`.
+
+
+Worked on :mod:`lino.apps.presto`: 
+
+
+- blogs.Entry : renamed field `subject` to `title`, added a field `summary`
+- presto.fixtures.tim2lino
