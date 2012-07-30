@@ -164,9 +164,9 @@ class JobProvider(pcsw.Company):
         verbose_name_plural = _('Job Providers')
     
     def disable_delete(self):
-        #~ return dd.Model.disable_delete(self)
-        # skip pcsw.CpasPartner.disable_delete
+        # skip the is_imported_partner test
         return super(pcsw.CpasPartner,self).disable_delete()
+        
 
 class JobProviderDetail(pcsw.CompanyDetail):
     """

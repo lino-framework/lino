@@ -27,7 +27,6 @@ from os.path import join, abspath, dirname, normpath
 __version__ = "1.4.9"
 """
 Lino version number. 
-*Released* versions are listed under :doc:`/releases`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
@@ -88,6 +87,7 @@ if False:
 
 
 NOT_FOUND_MSG = '(not installed)'
+
 
 def using(ui=None):
     """
@@ -983,6 +983,16 @@ class Lino(object):
         return self._site_config
     site_config = property(get_site_config)
     
+    def is_imported_partner(self,obj):
+        """
+        Return whether the specified
+        :class:`Partner <lino.modlib.contacts.models.Partner>` instance
+        `obj` is to be considered as imported from some legacy database.
+        """
+        #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
+        return False
+        #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
+                  
     def update_site_config(self,**kw):
         """
         Update and save the one and only :class:`lino.models.SiteConfig` instance.

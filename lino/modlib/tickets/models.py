@@ -15,7 +15,7 @@
 """
 This module adds models for Projects, Tickets and Sessions.
 
-A **Project** is something into which somebody invests time, energy and/or money.
+A **Project** is something into which somebody invests time, energy and money.
 Projects form a tree: each Project can have a `parent` 
 (another Project for which it is a sub-project).
 
@@ -33,7 +33,6 @@ All the Sessions related to a given Project represent the time
 invested into that Project.
 
 Projects are handled by their *name* while Tickets are handled by their *number*.
-Projects are long-term while Tickets are short-term.
 
 Extreme case of a session: 
 
@@ -171,9 +170,6 @@ class Milestones(dd.Table):
 class MilestonesByProject(Milestones):
     master_key = 'project'
     column_names = "label expected reached *"
-
-
-
 
 
 #~ class TicketState(babel.BabelNamed):
@@ -329,7 +325,7 @@ class Sessions(dd.Table):
 class SessionsByTicket(Sessions):
     master_key = 'ticket'
     
-if settings.LINO.user_model:    
+if settings.LINO.user_model:
   
     class MySessions(Sessions,mixins.ByUser):
         order_by = ['date','start_time']

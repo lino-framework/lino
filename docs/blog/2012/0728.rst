@@ -109,23 +109,23 @@ Release 1.4.9
 
 - Added override to `loaddata` command because::
 
-    lsaffre@lino:/usr/local/django/dsbe_eupen$ python manage.py loaddata r20120728
+    $ python manage.py loaddata r20120728
     INFO Deferred Contract #105 (u'Art.60\xa77-Konvention#105') : Unresolved value u'110' for <class 'lino.core.perms.UserProfiles'>
-    INFO Saved 35 instances from /usr/local/django/dsbe_eupen/fixtures/r20120728.py.
+    INFO Saved 35 instances from /usr/local/django/.../fixtures/r20120728.py.
     INFO Trying again with 6 unsaved instances.
     INFO Deferred Contract #105 (u'Art.60\xa77-Konvention#105') : Unresolved value u'110' for <class 'lino.core
     .perms.UserProfiles'>
     INFO Saved 0 instances.
-    WARNING Abandoning with 6 unsaved instances from /usr/local/django/dsbe_eupen/fixtures/r20120728.py:
+    WARNING Abandoning with 6 unsaved instances from /usr/local/django/.../fixtures/r20120728.py:
     - jobs.Contract Unresolved value u'110' for <class 'lino.core.perms.UserProfiles'> (6 object(s) with primary key 105, 10
     8, 109, 112, 136, 251)
     Installed 41 object(s) from 1 fixture(s)
 
-  (wobei ich noch nicht verstehe, weshalb dieser Fehler bei meinen lokalen Tests nicht gekommen ist)
+  (Wobei ich noch nicht verstehe, weshalb dieser Fehler bei meinen lokalen Tests nicht gekommen ist.)
   
 - Und noch eine Überraschung::
 
-    WARNING Abandoning with 2 unsaved instances from /usr/local/django/dsbe_eupen/fixtures/b20120729_225900.py:
+    WARNING Abandoning with 2 unsaved instances from /usr/local/django/.../fixtures/b20120729_225900.py:
     - isip.Contract [u'Datumsbereich 01.09.2011...31.08.2014 au\xdferhalb Begleitungsperiode 25.01.2011...01.04.2012.'] (1 object(s) with primary key 162)
     - isip.Contract [u'Datumsbereich 01.02.2012...30.06.2012 au\xdferhalb Begleitungsperiode 30.05.2011...01.03.2012.'] (1 object(s) with primary key 312)  
     
@@ -137,5 +137,10 @@ Release 1.4.9
     Person 20720: coached_until 01.04.2012 -> 31.08.2014
     Person 21686: coached_until 01.03.2012 -> 31.08.2014
   
-  (wobei ich noch nicht verstehe, wieso diese beiden ungültigen Verträge 
-  überhaupt in der Datenbank stehen konnten. ob da das full_clean irgendwo nicht aufgerufen wird?)
+  (Wobei ich noch nicht verstehe, wieso diese beiden ungültigen Verträge 
+  überhaupt in der Datenbank stehen konnten. 
+  ob da das full_clean irgendwo nicht aufgerufen wird?)
+  
+  (Eine letzte kleine Änderung in loaddata (analyze_models statt startup) 
+  habe ich nicht mehr neu eingepackt, sondern beim Kunden manuell eingebaut. 
+  Ein zweites Re-Release deswegen lohnte sich nicht.)

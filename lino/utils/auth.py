@@ -137,9 +137,9 @@ class RemoteUserMiddleware(object):
             rqdata = http.QueryDict(request.raw_post_data)
         elif request.method == 'POST':
             rqdata = request.POST
-        else:
-            #~ request.subst_user = None
-            #~ request.requesting_panel = None
+        else: # DELETE
+            request.subst_user = None
+            request.requesting_panel = None
             return 
         su = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
         if su:
@@ -149,10 +149,7 @@ class RemoteUserMiddleware(object):
             except settings.LINO.user_model.DoesNotExist, e:
                 pass
         request.subst_user = su
-        
         request.requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
-        #~ if requesting_panel:
-            #~ kw.update(requesting_panel=requesting_panel)
         
             
                 

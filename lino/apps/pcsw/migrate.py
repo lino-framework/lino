@@ -1315,13 +1315,9 @@ def migrate_from_1_4_3(globals_dict):
     
     return '1.4.4'
             
-def migrate_from_1_4_4(globals_dict): 
-    return '1.4.5'
-def migrate_from_1_4_5(globals_dict): 
-    return '1.4.6'
-def migrate_from_1_4_6(globals_dict): 
-    return '1.4.7'
-def migrate_from_1_4_7(globals_dict): 
-    return '1.4.8'
-def migrate_from_1_4_8(globals_dict): 
-    return '1.4.9'
+def migrate_from_1_4_4(globals_dict): return '1.4.5'
+def migrate_from_1_4_5(globals_dict): return '1.4.6'
+def migrate_from_1_4_6(globals_dict): return '1.4.7'
+def migrate_from_1_4_7(globals_dict): return '1.4.8'
+def migrate_from_1_4_8(globals_dict): return '1.4.9'
+def migrate_from_1_4_9(globals_dict): return '1.4.10'

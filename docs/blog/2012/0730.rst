@@ -1,0 +1,30 @@
+20120730
+========
+
+- 1.4.9. had still a bug: when the disable_delete method of 
+  households.Household, courses.CourseProvider and jobs.JobProvider 
+  didn't yet correctly skip the :meth:`lino.Lino.is_imported_partner` 
+  test. 
+  Very subtle, but it caused watch_tim to fail when trying to 
+  re-convert the two Companies that had become Households.
+
+Don't want to cancel release 1.4.9 because it has been downloaded 
+over 40 times (probably just some robots, but anyway).
+So a quick bugfix release 
+
+About version numbering.
+
+Add new globale variable :attr:`lino.__release__` and call it 
+1.4.9.2 instead?
+
+
+
+- "Ich möchte eine Nachricht in Historik bei einer Person. 
+  Lino will nicht und gibt an "Internal Server Error"
+
+  --> Traceback auf dem Server::
+  
+    'WSGIRequest' object has no attribute 'subst_user'
+    Request Method: 	DELETE
+
+:doc:`/releases/1.4.10`.

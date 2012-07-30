@@ -97,6 +97,11 @@ class Household(pcsw.CpasPartner,contacts.Partner):
                 self.name = "-"
         super(Household,self).full_clean(*args,**kw)
         
+    def disable_delete(self):
+        # skip the is_imported_partner test
+        return super(pcsw.CpasPartner,self).disable_delete()
+    
+        
     #~ @chooser()
     #~ def father_choices(cls):
         # Person = dd.resolve_model('contacts.Person')

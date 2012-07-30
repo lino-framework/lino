@@ -1,0 +1,12 @@
+Version 1.4.10 (20120730)
+=========================
+
+Bugfix release. 
+
+- Bug in :term:`watch_tim`. It was not possible to uncheck the mti.IsChild 
+  checkboxes Company.is_courseprovider, Company.is_household and 
+  Company.is_jobsprovider for imported partners 
+  (:meth:`lino.Lino.is_imported_partner`)
+
+- When trying to delete some record, the server had a traceback
+  'WSGIRequest' object has no attribute 'subst_user'

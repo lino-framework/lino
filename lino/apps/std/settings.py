@@ -28,14 +28,9 @@ import lino
 
 from lino import Lino
 
-class Lino(Lino):
-  
-    def is_imported_partner(self,obj):
-        "`obj` is either a Person or a Company"
-        #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
-        return False
-        #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
-                  
+#~ class Lino(Lino):
+    #~ pass
+    
 
 LINO = Lino(__file__,globals())
 
