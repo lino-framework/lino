@@ -11,11 +11,27 @@ Allgemeingut sein sollten.
 Zum Beispiel die Listen aller Länder, Städte und Dörfer 
 der Erde, die Liste aller Sprachen... um nur einige zu nennen. 
 Solche Daten sollten eigentlich durch eine weltweite unabhängige 
-Organisation gepflegt und für alle verfügbar gemacht werden. 
+Organisation gepflegt und für alle verfügbar gemacht werden.
+
 Die Wikipedia ist ja so ein zentraler Ort,
-aber anders als bei der Wikipedia müssten solche Daten klarer 
+z.B. haben wir dort die wohl am besten gepflegte 
+freie `Liste der Staaten der Erde 
+<http://de.wikipedia.org/wiki/Liste_der_Staaten_der_Erde>`_.
+
+Bestehende Lösungsansätze
+
+- http://www.geonames.org/export/
+
+Aber anders als bei der Wikipedia müssten solche Daten klarer 
 strukturiert sein, um auch maschinell leichter 
 verarbeitet werden zu können.
+
+Seit kurzem gibt es die `Gemeinsame Normdatei
+<http://de.wikipedia.org/wiki/Gemeinsame_Normdatei>`_
+
+Für Länder, Sprachen, Währungen
+gibt es wahrscheinlich einigermaßen
+freie und brauchbare Listen, die einigermaßen gepflegt sind.
 
 In Lino finden wir einen Ansatz zu einer Lösung in diversen `fixtures`:
 
@@ -37,3 +53,6 @@ mithelfen, dass die Angaben korrekt sind.
 So wie 
 `hier <http://www.grenzecho.net/ArtikelLoad.aspx?aid=45E57E0F-980C-4A7B-86C1-D77C7BAA7369&mode=all>`_ 
 beschrieben sollten wir es natürlich nicht machen...
+
+20120811 :
+

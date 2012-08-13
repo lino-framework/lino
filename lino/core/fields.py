@@ -25,6 +25,7 @@ from django.contrib.contenttypes import generic
 
 import datetime
 
+from decimal import Decimal
 
 #~ from south.modelsinspector import add_introspection_rules
 #~ add_introspection_rules([], ["^lino\.fields\.LanguageField"])
@@ -48,6 +49,9 @@ from lino.core.modeltools import resolve_field
 #~ from lino.utils import choosers
 from lino.utils import choicelists
 from lino.utils import IncompleteDate, d2iso
+#~ from lino.utils.quantities import Duration
+from lino.utils import quantities 
+
 
 class PasswordField(models.CharField):
     """Stored as plain text in database, but not displayed in user interface."""
@@ -128,18 +132,18 @@ class PriceField(models.DecimalField):
         
         
         
-class QuantityField(models.DecimalField):
-    """
-    Deserves more documentation.
-    """
-    def __init__(self, *args, **kwargs):
-        defaults = dict(
-            max_length=5,
-            max_digits=5,
-            decimal_places=0,
-            )
-        defaults.update(kwargs)
-        super(QuantityField, self).__init__(*args, **defaults)
+#~ class QuantityField(models.DecimalField):
+    #~ """
+    #~ Deserves more documentation.
+    #~ """
+    #~ def __init__(self, *args, **kwargs):
+        #~ defaults = dict(
+            #~ max_length=5,
+            #~ max_digits=5,
+            #~ decimal_places=0,
+            #~ )
+        #~ defaults.update(kwargs)
+        #~ super(QuantityField, self).__init__(*args, **defaults)
         
     #~ def formfield(self, **kwargs):
         #~ fld = super(QuantityField, self).formfield(**kwargs)
@@ -613,6 +617,48 @@ class GenericForeignKey(generic.GenericForeignKey):
 
 
 
+       
+  
+class QuantityField(models.CharField):
+#~ class QuantityField(models.DecimalField):
+#~ class QuantityField(models.Field):
+    """
+    A field that accepts both 
+    :class:`lino.utils.quantity.Decimal`,
+    :class:`lino.utils.quantity.Percentage` 
+    and 
+    :class:`lino.utils.quantity.Duration` 
+    values.
+    Implemented as a CharField (sorting or filter ranges may not work)
+    """
+    __metaclass__ = models.SubfieldBase
+    description = _("Quantity (Decimal or Duration)")
+
+    def __init__(self,*args,**kw):
+        kw.setdefault('max_length',6)
+        models.Field.__init__(self,*args,**kw)
+        #~ models.CharField.__init__(self,*args,**kw)
+      
+    #~ def get_internal_type(self):
+        #~ return "CharField"
+        
+    def to_python(self, value):
+        if isinstance(value,Decimal):
+            return value
+        if value:
+            return quantities.parse(value)
+        return None
+        
+    #~ def get_db_prep_save(self, value, connection):
+        #~ if value is None:
+            #~ return ''
+        #~ return str(value)
+        
+    def get_prep_value(self,value):
+        if value is None:
+            return ''
+        return str(value)
+        
 class IncompleteDateField(models.CharField):
     """
     A field that behaves like a DateField, but accepts
@@ -625,8 +671,8 @@ class IncompleteDateField(models.CharField):
         kw.update(max_length=11)
         models.CharField.__init__(self,*args,**kw)
       
-    def get_internal_type(self):
-        return "CharField"
+    #~ def get_internal_type(self):
+        #~ return "CharField"
         
     def to_python(self, value):
         if isinstance(value,IncompleteDate):

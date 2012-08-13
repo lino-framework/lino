@@ -219,9 +219,11 @@ class ConfiguredPropsByPerson(PropsByPerson):
                        # defines new attribute(s) propgroup_config_name"
     #~ def setup_actions(self):
     @classmethod
-    def class_init(self):
+    #~ def class_init(self):
+    def site_setup(self,site):
         if self.propgroup_config_name:
-            pg = getattr(settings.LINO.site_config,self.propgroup_config_name)
+            #~ pg = getattr(settings.LINO.site_config,self.propgroup_config_name)
+            pg = getattr(site.site_config,self.propgroup_config_name)
             self.known_values = dict(group=pg)
             if pg is None:
                 self.label = _("(Site setting %s is empty)" % self.propgroup_config_name)

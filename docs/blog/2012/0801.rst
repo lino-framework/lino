@@ -1,0 +1,4 @@
+20120801
+========
+
+- Continued with getting the test suite running again.

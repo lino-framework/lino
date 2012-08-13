@@ -58,6 +58,7 @@ Virtual Fields:
 Layouts:
 
 - :class:`FormLayout <lino.core.layouts.FormLayout>`
+- :class:`Panel <lino.core.layouts.Panel>`
   
 Utilities:
 
@@ -134,7 +135,7 @@ from lino.utils.choosers import chooser
 
 from lino.core.perms import UserLevels, UserGroups, UserProfiles
 
-from lino.core.layouts import FormLayout
+from lino.core.layouts import FormLayout, Panel
 #~ DetailLayout = InsertLayout = FormLayout
 
 #~ from lino.core.layouts import DetailLayout, InsertLayout

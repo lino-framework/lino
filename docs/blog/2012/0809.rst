@@ -1,0 +1,16 @@
+20120809
+========
+
+
+- New module :mod:`lino.utils.quantities` and 
+  new implementation for 
+  :class:`dd.QuantityField <lino.core.fields.QuantityField>`.
+  
+  No longer a subclass of DecimalField
+  whose value is a `decimals.Decimal`, 
+  but a CharField whose values are instances 
+  of :class:`Quantity <lino.utils.quantities.Quantity>`.
+
+- Bug fixed:
+  NameError "global name 'IntegrityError' is not defined",
+  :srcref:`/lino/ui/extjs3/views.py` in form2obj_and_save, line 279

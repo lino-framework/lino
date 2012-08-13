@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by sicksicksick (socksocksock) -->
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:Common65="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65Common" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65Common" schemaLocation="LoiWet65_Common.xsd"/>
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/CommonDataTypes.xsd"/>
+	<xs:element name="L65_DF_DecisionReply">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Common65:FileIdentification"/>
+				<xs:element name="DecisionResultDF" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ReferenceMonth" type="xs:gYearMonth" minOccurs="0"/>
+							<xs:element name="EntryDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="ReferenceDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="UniqueAttestID">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="15"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ReferenceSPP_POD">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="10"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="SSIN" type="common:t_SSIN"/>
+							<xs:element name="Suffix">
+								<xs:simpleType>
+									<xs:restriction base="xs:int">
+										<xs:minInclusive value="0"/>
+										<xs:maxInclusive value="99"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Evaluation" type="Common65:Evaluation">
+								<xs:annotation>
+									<xs:documentation>Evaluatie - Evaluation</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ManualVerificationCode" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:boolean"/>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ErrorsOnForm" type="Common65:ReturnCode" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:element name="DecisionOnAmounts" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="FinancialAid" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="MedicalCosts" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="PharmaceuticalCosts" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="MutBaseContribution" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="MutComplementaryContribution" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="MutRegularization" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="RapatriationCosts" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="PlacementCosts" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="HousingCosts" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="BirthAllowance" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="GuaranteedChildAllowance" type="Common65:decisionType" minOccurs="0"/>
+										<xs:element name="HospitalizationcostsBill" minOccurs="0" maxOccurs="5">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Number" block="restriction">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="15"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Amount">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="HospitalizationCostsRemainingAmount" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:integer">
+													<xs:totalDigits value="8"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="AmbultantCosts" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="MedicalcostsAmount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="PharmaceuticalCostsAmount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="PrimaryBeneficiaryAids" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Art60p7Amount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Art61Amount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="ActivationAmount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="PartnerconventionAmount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="AlimonyAmount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="PartnerAids" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Art60p7Amount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Art61Amount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="ActivationAmount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="PartnerconventionAmount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="AlimonyAmount" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:totalDigits value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="OtherRequestedAids" type="Common65:decisionType" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalAcceptedAmount" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:integer">
+										<xs:totalDigits value="8"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

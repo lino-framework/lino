@@ -191,6 +191,10 @@ class Model(models.Model):
         return []
         
     @classmethod
+    def site_setup(self,site):
+        pass
+        
+    @classmethod
     def setup_table(cls,t):
         """
         Called during site startup once on each Table that 

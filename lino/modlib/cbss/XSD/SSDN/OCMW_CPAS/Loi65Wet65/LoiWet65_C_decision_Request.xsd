@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by sicksicksick (socksocksock) -->
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:Common65="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65Common" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65Common" schemaLocation="LoiWet65_Common.xsd"/>
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/CommonDataTypes.xsd"/>
+	<xs:element name="L65_C_DecisionRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Common65:FileIdentification"/>
+				<xs:element name="CancellationFormC" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="EntryDate">
+								<xs:simpleType>
+									<xs:restriction base="xs:date">
+										<xs:minInclusive value="2002-01-01"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="UniqueAttestID">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="15"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="SSIN" type="common:t_SSIN"/>
+							<xs:element name="Suffix">
+								<xs:simpleType>
+									<xs:restriction base="xs:int">
+										<xs:minInclusive value="0"/>
+										<xs:maxInclusive value="99"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="AidCancellation">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="DecisionDate" type="xs:date"/>
+										<xs:element name="Decisionnature">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="CancellationReason" block="restriction">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="2"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FormerCformcancellation" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="1"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Integration" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:complexContent>
+										<xs:extension base="common:ClosedPeriodType">
+											<xs:attribute name="qualitycode" type="xs:int" use="required"/>
+										</xs:extension>
+									</xs:complexContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Desintegration" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:complexContent>
+										<xs:extension base="common:ClosedPeriodType">
+											<xs:attribute name="qualitycode" type="xs:int" use="required"/>
+										</xs:extension>
+									</xs:complexContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="CBSSEvaluation" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:pattern value="ACCEPTED"/>
+										<xs:pattern value="REFUSED"/>
+										<xs:enumeration value="ACCEPTED"/>
+										<xs:enumeration value="REFUSED"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="IntegrationSecondaryBeneficiary" minOccurs="0" maxOccurs="17">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="SSIN" type="common:t_SSIN"/>
+							<xs:element name="Integration" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:complexContent>
+										<xs:extension base="common:ClosedPeriodType">
+											<xs:attribute name="qualitycode" type="xs:int" use="required"/>
+										</xs:extension>
+									</xs:complexContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Desintegration" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:complexContent>
+										<xs:extension base="common:ClosedPeriodType">
+											<xs:attribute name="qualitycode" type="xs:int" use="required"/>
+										</xs:extension>
+									</xs:complexContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="CBSSEvaluation" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:pattern value="ACCEPTED"/>
+										<xs:pattern value="REFUSED"/>
+										<xs:enumeration value="ACCEPTED"/>
+										<xs:enumeration value="REFUSED"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

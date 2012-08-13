@@ -951,12 +951,6 @@ class Lino(object):
     #~ def configure(self,sc):
         #~ self.config = sc
         
-    def on_site_config_saved(self,sc):
-        """
-        Used internally. Called by SiteConfig.save() to update the cached instance.
-        """
-        self._site_config = sc
-        
     def get_site_config(self):
         """
         Returns the one and only :class:`lino.models.SiteConfig` instance.
@@ -965,6 +959,7 @@ class Lino(object):
         we create it and set some default values from :attr:`site_config_defaults`.
         """
         if self._site_config is None:
+            #~ print '20120801 create _site_config'
             from lino.models import SiteConfig
             try:
                 self._site_config = SiteConfig.objects.get(pk=1)
@@ -983,6 +978,24 @@ class Lino(object):
         return self._site_config
     site_config = property(get_site_config)
     
+    def on_site_config_saved(self,sc):
+        """
+        Used internally. Called by SiteConfig.save() to update the cached instance.
+        """
+        self._site_config = sc
+        #~ print '20120801 site_conf saved', sc.propgroup_softskills
+        
+    def update_site_config(self,**kw):
+        """
+        Update and save the one and only :class:`lino.models.SiteConfig` instance.
+        """
+        #~ print '20120801 update_site_config', kw
+        sc = self.site_config
+        for k,v in kw.items():
+            setattr(sc,k,v)
+        sc.save()
+        #~ self.on_site_config_saved(sc)
+    
     def is_imported_partner(self,obj):
         """
         Return whether the specified
@@ -993,15 +1006,6 @@ class Lino(object):
         return False
         #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
                   
-    def update_site_config(self,**kw):
-        """
-        Update and save the one and only :class:`lino.models.SiteConfig` instance.
-        """
-        sc = self.site_config
-        for k,v in kw.items():
-            setattr(sc,k,v)
-        sc.save()
-    
         
     def startup(self,**options):
         """

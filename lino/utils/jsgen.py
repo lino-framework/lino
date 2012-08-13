@@ -82,6 +82,8 @@ logger = logging.getLogger(__name__)
 import types
 import datetime
 import decimal
+import fractions 
+
 
 #~ from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
@@ -92,6 +94,7 @@ from django.utils.encoding import force_unicode
 
 import lino
 from lino.utils import IncompleteDate
+from lino.utils.quantities import Quantity
 from lino.core.perms import Permittable
 from lino.utils.xmlgen import etree
 
@@ -203,7 +206,9 @@ def py2js(v):
         return str(v).lower()
     #~ if isinstance(v,CRL):
         #~ return str(v)
-    if isinstance(v, (int, long, decimal.Decimal)):
+    if isinstance(v, Quantity):
+        return '"%s"' % v
+    if isinstance(v, (int, long, decimal.Decimal,fractions.Fraction)):
         return str(v)
     if isinstance(v, IncompleteDate):
         return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
@@ -399,6 +404,7 @@ class Variable(Value):
         
 class Component(Variable): 
     """
+    A Component is a Variable whose value is a dict of otpions.
     Deserves more documentation.
     """
     

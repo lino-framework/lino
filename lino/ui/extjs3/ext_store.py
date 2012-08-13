@@ -502,9 +502,9 @@ class DisabledFieldsStoreField(SpecialStoreField):
     def full_value_from_object(self,obj,ar):
         #~ l = [ f.name for f in self.store.actor.disabled_fields(request,obj)]
         d = dict()
-        if self.store.actor.disabled_fields is not None:
-            for name in self.store.actor.disabled_fields(obj,ar):
-                d[name] = True
+        #~ if self.store.actor.disabled_fields is not None:
+        for name in self.store.actor.disabled_fields(obj,ar):
+            d[name] = True
         #~ l = list(self.store.actor.disabled_fields(obj,request))
         # disable also the primary key field
         if self.store.pk is not None and obj.pk is not None:
@@ -1071,10 +1071,10 @@ class Store:
 
     def form2obj(self,ar,form_values,instance,is_new):
         #~ raise Exception('20120211')
-        if self.actor.disabled_fields:
-            disabled_fields = set(self.actor.disabled_fields(instance,ar))
-        else:
-            disabled_fields = set()
+        #~ if self.actor.disabled_fields:
+        disabled_fields = set(self.actor.disabled_fields(instance,ar))
+        #~ else:
+            #~ disabled_fields = set()
         #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
             #~ self.report,form_values,disabled_fields,self.all_fields)
         #~ print 20110406, disabled_fields

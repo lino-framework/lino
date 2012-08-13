@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by sicksicksick (socksocksock) -->
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns:Common65="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65Common">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65Common" schemaLocation="LoiWet65_Common.xsd"/>
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/CommonDataTypes.xsd"/>
+	<xs:element name="L65_AB_DecisionReply">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Common65:FileIdentification"/>
+				<xs:element name="DecisionResult" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="UniqueAttestID">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="15"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ReferenceSPP_POD">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="10"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="SSIN" type="common:t_SSIN"/>
+							<xs:element name="Suffix">
+								<xs:simpleType>
+									<xs:restriction base="xs:int">
+										<xs:minInclusive value="0"/>
+										<xs:maxInclusive value="99"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="EntryDate" type="xs:date"/>
+							<xs:element name="Percentage" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>En centièmes de pourcents</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:int">
+										<xs:minInclusive value="0"/>
+										<xs:maxInclusive value="10000"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Evaluation" type="Common65:Evaluation">
+								<xs:annotation>
+									<xs:documentation>Evaluatie - Evaluation</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ErrorsOnForm" type="Common65:ReturnCode" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:element name="ProvesChecked" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="CHECKED"/>
+										<xs:enumeration value="INPROGRESS"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RefundedAids">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="FinancialAid" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="MedicalAndPharmaceuticalCosts" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="MutBaseContribution" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="MutComplementaryContribution" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="MutRegularization" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="RepatriationCosts" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="PlacementCosts" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="HousingCosts" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="BirthAllowance" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="GuaranteedChildAllowances" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="AmbulantMedicalAndPharmaceuticalCosts" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="HospitalizationCosts" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="OtherRequestedAids" type="xs:boolean" minOccurs="0"/>
+										<xs:element name="PrimaryBeneficiary">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Art60p7" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="Art61" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="ActivationType" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="PartnerConvention" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="Alimony" type="xs:boolean" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Partner">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Art60p7" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="Art61" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="ActivationType" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="PartnerConvention" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="Alimony" type="xs:boolean" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="MaximumDate" type="xs:date" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

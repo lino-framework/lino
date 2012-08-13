@@ -60,6 +60,7 @@ def register_actor(a):
     if old is not None:
         logger.debug("register_actor %s : %r replaced by %r",a,old,a)
         actors_list.remove(old)
+        #~ old._replaced_by = a
     #~ actors_dict[a.actor_id] = a
     actors_list.append(a)
     return a
@@ -129,6 +130,7 @@ class ActorMetaClass(type):
         cls._constants = {}
         cls._actions_dict = {}
         cls._actions_list = None
+        #~ cls._replaced_by = None
         
         # inherit virtual fields defined on parent tables
         for b in bases:
@@ -302,7 +304,7 @@ class Actor(object):
     
     
     
-    disabled_fields = None
+    #~ disabled_fields = None
     """
     Return a list of field names that should not be editable 
     for the specified `obj` and `request`.
@@ -328,6 +330,11 @@ class Actor(object):
     
     See also :doc:`/tickets/2`.
     """
+    
+    @classmethod
+    def disabled_fields(cls,obj,ar):
+        return []
+    
     
     #~ get_row_permission = None
     #~ """
@@ -508,6 +515,8 @@ class Actor(object):
         # attention, don't inherit from parent!
         h = self.__dict__.get(hname,None)
         if h is None:
+            #~ if self._replaced_by is not None:
+                #~ raise Exception("Trying to get handle for %s which is replaced by %s" % (self,self._replaced_by))
             h = self._handle_class(ui,self)
             setattr(self,hname,h)
             h.setup(ar)

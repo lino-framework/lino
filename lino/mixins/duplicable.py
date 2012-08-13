@@ -76,7 +76,7 @@ class Duplicable(dd.Model):
         
     
     @dd.action(_("Duplicate"),sort_index=60,show_in_workflow=False)
-    def duplicate_row(self,ar):
+    def duplicate_row(self,ar,**kw):
         #~ if not isinstance(ar,actions.ActionRequest):
             #~ raise Exception("Expected and ActionRequest but got %r" % ar)
         #~ related = dict()
@@ -111,7 +111,7 @@ class Duplicable(dd.Model):
                 
         #~ print 20120608, kw
         if True:
-            kw = dict()
+            #~ kw = dict()
             for f in self._meta.fields:
                 if not f.primary_key:
                     kw[f.name] = getattr(self,f.name)

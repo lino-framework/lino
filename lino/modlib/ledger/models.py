@@ -51,9 +51,9 @@ class Account(dd.Model):
     #~ account = models.ForeignKey(Account)
     
     
-class Booked(dd.Model):
+class Bookable(dd.Model):
     """
-    A model that subclasses Booked must also 
+    A model that subclasses Bookable must also 
     subclass :class:`lino.modlib.journals.models.Journaled`::
     
       value_date = models.DateField(auto_now=True)
@@ -66,7 +66,7 @@ class Booked(dd.Model):
     class Meta:
         abstract = True
         
-    value_date = models.DateField(auto_now=True)
+    #~ value_date = models.DateField(auto_now=True)
     ledger_remark = models.CharField("Remark for ledger",
       max_length=200,blank=True)
     booked = models.BooleanField(default=False)
@@ -91,11 +91,13 @@ class Booked(dd.Model):
         
     def create_booking(self,**kw):
         kw['journal'] = self.journal
+        kw['year'] = self.year
         kw['number'] = self.number
         #~ kw['document'] = self
         #kw['number'] = self.number
-        if not kw.get('date',None):
-            kw['date'] = self.value_date
+        kw.setdefault('date',self.date)
+        #~ if not kw.get('date',None):
+            #~ kw['date'] = self.value_date
         b = Booking(**kw)
         #print b.date
         #b.save()
@@ -127,21 +129,20 @@ class Booked(dd.Model):
 class Booking(dd.Model):
     journal = journals.JournalRef()
     number = journals.DocumentRef()
+    year = journals.YearRef()
     #~ document = models.ForeignKey(LedgerDocument)
     pos = models.IntegerField("Position",blank=True,null=True)
     date = models.DateField()
     account = models.ForeignKey(Account)
-    contact = models.ForeignKey('contacts.Contact',blank=True,null=True)
-    #~ person = models.ForeignKey(Person,blank=True,null=True)
-    #~ company = models.ForeignKey(Company,blank=True,null=True)
+    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     debit = dd.PriceField(default=0)
     credit = dd.PriceField(default=0)
     
     def __unicode__(self):
-        return u"%s.%d" % (self.document,self.pos)
+        return u"%s.%d" % (self.document(),self.pos)
         
     def document(self,request):
-        return "%s-%s" % (self.journal,self.number)
+        return "%s-%s/%s" % (self.journal,self.year,self.number)
     document.return_type = models.CharField(max_length=30)
     
 

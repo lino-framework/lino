@@ -39,7 +39,7 @@ from lino.utils import babel
 
 from lino.utils import mti
 from lino.modlib.contacts import models as contacts
-from lino.apps.pcsw import models as pcsw
+#~ from lino.apps.pcsw import models as pcsw
 
 class Type(babel.BabelNamed):
     """
@@ -58,26 +58,18 @@ class Types(dd.Table):
     """
 
 
-#~ pcsw = dd.resolve_app('pcsw')
-#~ Partner = dd.resolve_model('contacts.Partner')
-class Household(pcsw.CpasPartner,contacts.Partner):
+class Household(contacts.Partner):
     """
     A Household is a Partner that represents several Persons living together.
     list of :class:`members <Member>`.
     """
     class Meta:
+        abstract = settings.LINO.is_abstract_model('households.Household')
         verbose_name = _("Household")
         verbose_name_plural = _("Households")
     
     prefix = models.CharField(max_length=200,blank=True) 
     type = models.ForeignKey(Type,blank=True,null=True)
-    #~ father = models.ForeignKey(settings.LINO.person_model,
-        #~ related_name='father_for',blank=True,null=True,
-        #~ verbose_name=_("Father"))
-    #~ mother = models.ForeignKey(settings.LINO.person_model,
-        #~ related_name='mother_for',blank=True,null=True,
-        #~ verbose_name=_("Mother"))
-        
     #~ dummy = models.CharField(max_length=1,blank=True) 
     # workaround for https://code.djangoproject.com/ticket/13864
         
@@ -97,25 +89,6 @@ class Household(pcsw.CpasPartner,contacts.Partner):
                 self.name = "-"
         super(Household,self).full_clean(*args,**kw)
         
-    def disable_delete(self):
-        # skip the is_imported_partner test
-        return super(pcsw.CpasPartner,self).disable_delete()
-    
-        
-    #~ @chooser()
-    #~ def father_choices(cls):
-        # Person = dd.resolve_model('contacts.Person')
-        #~ Person = settings.LINO.person_model
-        #~ return Person.objects.filter(gender=Gender.male)
-        
-    #~ @chooser()
-    #~ def mother_choices(cls):
-        # Person = dd.resolve_model('contacts.Person')
-        #~ Person = settings.LINO.person_model
-        #~ return Person.objects.filter(gender=Gender.female)
-        
-        
-        
     #~ def get_full_name(self,**salutation_options):
     def get_full_name(self,salutation=True,**salutation_options):
         """Deserves more documentation."""
@@ -126,7 +99,6 @@ class Household(pcsw.CpasPartner,contacts.Partner):
     
     def __unicode__(self):
         return unicode(self.get_full_name())
-        #~ return self.name
 
 
 class HouseholdDetail(dd.FormLayout):
@@ -136,7 +108,6 @@ class HouseholdDetail(dd.FormLayout):
     city zip_code:10
     street_prefix street:25 street_no street_box
     addr2:40
-    activity bank_account1:12 bank_account2:12
     """
 
     box4 = """
@@ -148,7 +119,7 @@ class HouseholdDetail(dd.FormLayout):
 
     address_box = "box3 box4"
 
-    bottom_box = "remarks MembersByHousehold"
+    bottom_box = "remarks households.MembersByHousehold"
 
     intro_box = """
     type name language:10 id 
@@ -160,27 +131,12 @@ class HouseholdDetail(dd.FormLayout):
     bottom_box
     """
     
-
-
               
-class Households(pcsw.Partners):
-    model = Household
+#~ class Households(pcsw.Partners):
+class Households(contacts.Partners):
+    model = 'households.Household'
     order_by = ["name"]
     detail_layout = HouseholdDetail()
-    
-    @classmethod
-    def do_setup(self):
-        super(Households,self).do_setup()
-        self.imported_fields = dd.fields_list(self.model,
-          '''name remarks region zip_code city country 
-          street_prefix street street_no street_box 
-          addr2
-          language 
-          phone fax email url
-          is_person is_company
-          bank_account1 bank_account2 activity 
-          is_active newcomer is_deprecated 
-          ''')
     
     
 class HouseholdsByType(Households):
@@ -248,7 +204,7 @@ List of choices is configured in `Configure --> Households --> Roles`.
       #~ )
     #~ partner = models.ForeignKey(contacts.Partner,
         #~ related_name='membersbypartner')
-    household = models.ForeignKey(Household)
+    household = models.ForeignKey('households.Household')
     person = models.ForeignKey(settings.LINO.person_model,
       related_name='membersbyperson')
     start_date = models.DateField(_("From"),blank=True,null=True)
@@ -304,7 +260,7 @@ if settings.LINO.is_installed('households'):
     dd.inject_field(contacts.Partner,
         'is_household',
         #~ mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
-        mti.EnableChild(Household,verbose_name=_("is Household")),
+        mti.EnableChild('households.Household',verbose_name=_("is Household")),
         """Whether this Partner is a Household."""
         )
 
@@ -314,7 +270,7 @@ if settings.LINO.is_installed('households'):
 def setup_main_menu(site,ui,user,m): pass
     
 def setup_master_menu(site,ui,user,m): 
-    m.add_action(Households)
+    m.add_action('households.Households')
 
 def setup_my_menu(site,ui,user,m): 
     pass

@@ -115,8 +115,8 @@ def test01(self):
     root.save()
     
     self.check_sql_queries(
-      'INSERT INTO "users_user" [...]',
-      'SELECT "users_user"."id", [...] FROM "users_user" WHERE "users_user"."profile" = 900'
+      'INSERT INTO "users_user" [...]'
+      #~ 'SELECT "users_user"."id", [...] FROM "users_user" WHERE "users_user"."profile" = 900'
     )
     #~ self.check_sql_queries(
       #~ 'SELECT (1) AS "a" FROM "lino_siteconfig" [...]',

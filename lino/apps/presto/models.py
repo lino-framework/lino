@@ -47,19 +47,21 @@ def customize_contacts():
 
 customize_contacts()
 
-from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.notes import models as notes
+contacts = dd.resolve_app('contacts')
+households = dd.resolve_app('households')
 
 #~ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born,mixins.Printable):
 class Person(contacts.Person,contacts.Born,mixins.Printable,mixins.CreatedModified):
     class Meta(contacts.Person.Meta):
         app_label = 'contacts'
-        
 
+class Household(households.Household,mixins.CreatedModified):
+    class Meta(households.Household.Meta):
+        app_label = 'households'
 
-#~ class Company(contacts.Partner,contacts.CompanyMixin):
 class Company(contacts.Company,mixins.CreatedModified):
-    
     class Meta(contacts.Company.Meta):
         app_label = 'contacts'
 

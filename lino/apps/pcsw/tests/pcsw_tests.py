@@ -33,15 +33,16 @@ from django.conf import settings
 #~ from lino.modlib.contacts.models import Companies
 
 
+from lino import dd
 from lino.utils import i2d
 from lino.utils import babel
-from lino.core.modeltools import resolve_model
+#~ from lino.core.modeltools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 
-Person = resolve_model('contacts.Person')
-Property = resolve_model('properties.Property')
-PersonProperty = resolve_model('properties.PersonProperty')
+Person = dd.resolve_model('contacts.Person')
+Property = dd.resolve_model('properties.Property')
+PersonProperty = dd.resolve_model('properties.PersonProperty')
 
 #~ from lino.apps.pcsw.models import Person
 #~ from lino.modlib.cv.models import PersonProperty
@@ -217,7 +218,7 @@ def test02(self):
     i = NoteType(build_method='appyodt',template="Default.odt",id=1)
     i.save()
     response = self.client.get('/api/notes/NoteTypes/1?fmt=json',REMOTE_USER='root')
-    result = self.check_json_result(response,'data title navinfo disable_delete id disabled_actions')
+    result = self.check_json_result(response,'data title navinfo disable_delete id')
     self.assertEqual(result['data']['template'],'Default.odt')
     self.assertEqual(result['data'].has_key('templateHidden'),False)
     
@@ -259,8 +260,8 @@ def test04(self):
     """
     from lino.utils.choicelists import Gender
     from lino.apps.pcsw.models import Person, Company
-    Country = resolve_model('countries.Country')
-    City = resolve_model('countries.City')
+    Country = dd.resolve_model('countries.Country')
+    City = dd.resolve_model('countries.City')
     be = Country(isocode="BE",name="Belgique")
     be.save()
     bxl = City(name="Bruxelles",country=be)
@@ -363,3 +364,47 @@ bank_account1 bank_account2 hourly_rate'''.split()
     #~ print [de for de in Companies.wildcard_data_elems()]
     self.assertEqual(wcde,expected)
         
+
+def test08(self):
+    """
+    Test disabled fields on imported partners
+    """
+    save_iip = settings.LINO.is_imported_partner
+    def f(obj): return True
+    settings.LINO.is_imported_partner = f
+    
+    
+    def check_disabled(obj,df,names):
+        for n in names.split():
+            if not n in df:
+                self.fail(
+                  "Field %r expected to be disabled on imported %s" % (n,obj))
+    def check_enabled(obj,df,names):
+        for n in names.split():
+            if n in df:
+                self.fail(
+                  "Field %r expected to be enabled on imported %s" % (n,obj))
+    
+    
+    Person = dd.resolve_model('contacts.Person')
+    p = Person(last_name="Test Person")
+    p.save()
+    url = '/api/contacts/Person/%d?an=detail&fmt=json' % p.pk
+    response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='en')
+    result = self.check_json_result(response,'navinfo disable_delete data id title')
+    df = result['data']['disabled_fields']
+    check_disabled(p,df,'id first_name last_name bank_account1')
+    check_enabled(p,df,'gsm')
+                
+    from lino.apps.pcsw.models import Household
+    from lino.modlib.households.models import Households
+    h = Household(name="Test Household")
+    h.save()
+    df = Households.disabled_fields(h,None)
+    #~ print df
+    check_disabled(h,df,'name bank_account1')
+    check_enabled(h,df,'gsm type')
+    
+                
+    # restore is_imported_partner method
+    settings.LINO.is_imported_partner = save_iip

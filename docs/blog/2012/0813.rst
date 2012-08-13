@@ -1,0 +1,6 @@
+20120813
+========
+
+Uff! Es war gar nicht so einfach, das Feature 
+"Specify quantities as durations (hh:mm) or fractions (x/y)" 
+zu implementieren.

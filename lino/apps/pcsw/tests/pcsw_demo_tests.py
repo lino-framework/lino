@@ -22,8 +22,6 @@ To run only this test suite::
 
   python manage.py test pcsw.DemoTest
   
-See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`
-
 Functions named `test0*` do not modify any data.
 
 """
@@ -72,20 +70,23 @@ class DemoTest(TestCase):
 class PseudoRequest:
     def __init__(self,name):
         self.user = settings.LINO.user_model.objects.get(username=name)
+        self.subst_user = None
 
             
 def test001(self):
     """
-    See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
+    Some simple tests:
+    - total number of Person records
+    - name of some person
     """
     #~ from lino.apps.pcsw.models import Person
     self.assertEquals(settings.LINO.person_model.objects.count(), 78)
     
-    p = Person.objects.get(pk=118)
+    p = settings.LINO.person_model.objects.get(pk=118)
     #~ self.assertEquals(unicode(p), "ARENS Annette (118)")
     #~ self.assertEquals(unicode(p), "AUSDEMWALD Alfons (118)")
     self.assertEquals(unicode(p), "COLLARD Charlotte (118)")
-    
+    #~ self.assertEquals(unicode(p), "BASTIAENSEN Laurent (118)")
     
         
 def test002(self):
@@ -102,13 +103,14 @@ def test002(self):
     u.save()
     
     pk = 124
-    url = '/api/cv/SoftSkillsByPerson?mt=22&mk=%d&fmt=json' % pk
+    url = '/api/cv/SoftSkillsByPerson?mt=20&mk=%d&fmt=json' % pk
     
     if 'en' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
-        result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
+        #~ result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
+        result = self.check_json_result(response,'count rows gc_choices title')
         self.assertEqual(result['title'],"Properties of EVERTZ Bernd (%d)" % pk)
-        self.assertEqual(len(result['rows']),2)
+        self.assertEqual(len(result['rows']),5)
         row = result['rows'][0]
         self.assertEqual(row[0],"Obedient")
         #~ self.assertEqual(row[1],7)
@@ -117,9 +119,9 @@ def test002(self):
         
     if 'de' in babel.AVAILABLE_LANGUAGES:
         response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
-        result = self.check_json_result(response,'count rows gc_choices disabled_actions title')
+        result = self.check_json_result(response,'count rows gc_choices title')
         self.assertEqual(result['title'],"Eigenschaften von EVERTZ Bernd (%d)" % pk)
-        self.assertEqual(len(result['rows']),2)
+        self.assertEqual(len(result['rows']),5)
         row = result['rows'][0]
         self.assertEqual(row[0],"Gehorsam")
         #~ self.assertEqual(row[1],7)
@@ -151,19 +153,18 @@ def test002(self):
 def test003(self):
     """
     Test whether the AJAX call issued for Detail of Annette Arens is correct.
-    See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
-    
     """
     cases = [
     #  [ id,         name, recno, first, prev, next, last ]
-       [ 119,  "Charlier",     7,   115,  168,  117, 198  ],
-       [ 117,     "Arens",     2,   115,  119,   118, 198  ],
+       [ 119,  "Charlier",     8,   199,  201,  118, 166  ],
+       [ 167, u"Ärgerlich",   56,   199,  164,  166, 166  ],
+       [ 166, u"Östges",      57,   199,  167, None, 166  ],
     ]
     # 
     for case in cases:
         url = '/api/contacts/Persons/%s?fmt=json' % case[0]
         response = self.client.get(url,REMOTE_USER='root')
-        result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
+        result = self.check_json_result(response,'navinfo disable_delete data id title')
         # disabled because they depend on local database sorting configuration
         # re-enabled because demo fixtures no longer contain cyrillic chars
         self.assertEqual(result['data']['last_name'],case[1])
@@ -199,7 +200,7 @@ def test004(self):
         url = "/api/jobs/Contracts/1?fmt=json"
         response = self.client.get(url,REMOTE_USER='root')
         #~ print 20110723, response
-        result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
+        result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['applies_from'],value)
 
 def test005(self):
@@ -218,14 +219,13 @@ def test005(self):
     
     url ='/api/countries/Countries/BE?fmt=json'
     response = self.client.get(url,REMOTE_USER='root')
-    result = self.check_json_result(response,'navinfo disable_delete data id title disabled_actions')
+    result = self.check_json_result(response,'navinfo disable_delete data id title')
     self.assertEqual(result['data']['name'],value)
 
 
 def test006(self):
     """
     Testing BabelValues.
-    See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_demo_tests.py`.
     """
     from lino.utils import babel
     from lino.apps.pcsw.models import Person

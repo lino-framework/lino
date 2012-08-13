@@ -32,6 +32,7 @@ import os
 from django.db import models
 import lino
 from lino import dd
+from lino import mixins
 from lino.utils.babel import babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
 #~ from lino import mixins
@@ -67,7 +68,8 @@ def get_doctype(cl):
     return None
     
 
-class Journal(dd.Model):
+#~ class Journal(dd.Model):
+class Journal(mixins.Sequenced):
   
     id = models.CharField(max_length=4,primary_key=True)
     name = models.CharField(max_length=100)
@@ -75,7 +77,7 @@ class Journal(dd.Model):
     force_sequence = models.BooleanField(default=False)
     account = models.ForeignKey('ledger.Account',blank=True,null=True)
     #~ account = models.CharField(max_length=6,blank=True)
-    pos = models.IntegerField()
+    #~ pos = models.IntegerField()
     #~ printed_name = models.CharField(max_length=100,blank=True)
     printed_name = BabelCharField(max_length=100,blank=True)
     
@@ -87,6 +89,11 @@ class Journal(dd.Model):
     def get_doc_report(self):
         return DOCTYPES[self.doctype][1]
 
+    def get_document(self,year=None,number=None,**kw):
+        cl = self.get_doc_model()
+        kw.update(journal=self,year=year,number=number) 
+        return cl.objects.get(**kw)
+        
     def create_document(self,**kw):
         """Create an instance of this Journal's document model (:meth:`get_doc_model`)."""
         cl = self.get_doc_model()
@@ -126,8 +133,8 @@ class Journal(dd.Model):
     def full_clean(self,*args,**kw):
         if not self.name:
             self.name = self.id
-        if not self.pos:
-            self.pos = self.__class__.objects.all().count() + 1
+        #~ if not self.pos:
+            #~ self.pos = self.__class__.objects.all().count() + 1
         super(Journal,self).full_clean(*args,**kw)
       
         
@@ -147,6 +154,9 @@ def JournalRef(**kw):
 
 def DocumentRef(**kw):
     return models.IntegerField(**kw)
+    
+def YearRef(**kw):
+    return models.IntegerField(**kw)
 
 
 class Journaled(mti.MultiTableBase):
@@ -161,8 +171,10 @@ class Journaled(mti.MultiTableBase):
     
     class Meta:
         abstract = True
+        unique_together = ['journal','year','number']
         
     journal = JournalRef()
+    year = YearRef()
     number = DocumentRef(blank=True)
     
     @classmethod
@@ -172,23 +184,23 @@ class Journaled(mti.MultiTableBase):
         #jcl = self.journal._meta.rel.to.__class__
         #print jcl, " == ", cls.journal_class
         #jnl = cls.journal_class(cls,*args,**kw)
-        jnl.full_clean()
-        jnl.save()
+        #~ jnl.full_clean()
+        #~ jnl.save()
         return jnl
         
     @classmethod
     def get_journals(cls):
         doctype = get_doctype(cls)
-        return Journal.objects.filter(doctype=doctype).order_by('pos')
+        return Journal.objects.filter(doctype=doctype).order_by('seqno')
             
         
     def __unicode__(self):
-        if self.id is None:
-            return "(Unsaved %s document (journal=%r,number=%r))" % (
-              self.__class__,self.journal,self.number)
+        #~ if self.id is None:
+            #~ return "(Unsaved %s document (journal=%r,number=%r))" % (
+              #~ self.__class__,self.journal,self.number)
             #~ return "%s#%d (%d)" % (self.journal.id,self.number, self.id)
-        #~ return "%s#%s (%d)" % (self.journal,self.number,self.id)
-        return babelattr(self.journal,'printed_name') % self.number
+        return "%s %s/%s (%d)" % (self.journal,self.year,self.number,self.id)
+        #~ return babelattr(self.journal,'printed_name') % self.number
         
     def full_clean(self,*args,**kw):
         #~ logger.info('Journaled.full_clean')
@@ -276,9 +288,6 @@ class Sendable(dd.Model):
             self.save()
             
     
-        
-        
-        
     def pdf_filename(self):
         return self.journal.id + "/" + str(self.number) + '.pdf'
         #return os.path.join(self.journal.id,str(self.number)) + '.pdf'
@@ -287,14 +296,11 @@ class Sendable(dd.Model):
 
 
 
-##
-## report definitions
-##        
         
 
 class Journals(dd.Table):
     model = Journal
-    order_by = ["pos"]
+    order_by = ["seqno"]
     column_names = "id name doctype force_sequence *"
     
     

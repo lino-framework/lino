@@ -37,14 +37,15 @@ from lino import mixins
 from lino.utils import mti
 from lino.utils import babel 
 #~ from lino.utils.babel import add_babel_field, babelattr
+#~ from lino.utils.quantities import Duration
 
 
 #~ journals = resolve_app('journals')
 #~ journals = models.get_app('journals')
 #~ auth = resolve_app('auth')
 from lino.modlib.users import models as auth
-#~ ledger = models.get_app('ledger')
-from lino.modlib.ledger import models as ledger
+ledger = dd.resolve_app('ledger')
+#~ from lino.modlib.ledger import models as ledger
 from lino.modlib.journals import models as journals
 from lino.modlib.products import models as products
 from lino.modlib.contacts import models as contacts
@@ -65,7 +66,8 @@ from lino.utils.choicelists import ChoiceList
 
 
 class PaymentTerm(babel.BabelNamed):
-    """Represents a convention on how an Invoice should be paid. 
+    """
+    A convention on how an Invoice should be paid. 
     """
     
     class Meta:
@@ -101,18 +103,18 @@ class InvoicingMode(mixins.PrintableType,babel.BabelNamed):
     #~ id = models.CharField(max_length=3, primary_key=True)
     #~ journal = journals.JournalRef()
     price = dd.PriceField(blank=True,null=True,help_text=_("""\
-        Additional fee charged when using this invoicing mode."""))
+Additional fee charged when using this invoicing mode."""))
     #~ channel = Channel.field(help_text="""
         #~ Method used to send the invoice.""")
     #~ channel = models.CharField(max_length=1, 
                 #~ choices=CHANNEL_CHOICES,help_text="""
     #~ Method used to send the invoice. 
                 #~ """)
-    advance_days = models.IntegerField(default=0,
-                   help_text="""
-    Invoices must be sent out X days in advance so that the customer
-    has a chance to pay them in time. 
-    """)
+    advance_days = models.IntegerField(
+        default=0,
+        help_text="""
+How many days in advance invoices should be posted so that the customer
+has a chance to pay them in time.""")
     
     #~ def __unicode__(self):
         #~ return unicode(babel.babelattr(self,'name'))
@@ -169,7 +171,8 @@ class SalesRule(dd.Model):
 
 class Customer(contacts.Partner):
     """
-    A Customer is a :class:`contacts.Partner` that can receive sales invoices.
+    A Customer is a :class:`contacts.Partner` 
+    that can receive sales invoices.
     """    
     class Meta:
         verbose_name =_("Customer")
@@ -179,9 +182,13 @@ class Customer(contacts.Partner):
     #~ company = models.ForeignKey('contacts.Company',blank=True,null=True)
     #~ person = models.ForeignKey('contacts.Person',blank=True,null=True)
     
-    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    vat_exempt = models.BooleanField(default=False)
-    item_vat = models.BooleanField(default=False)
+    payment_term = models.ForeignKey(PaymentTerm,
+        blank=True,null=True,help_text="""\
+The default payment term of sales invoices for this customer.""")
+    vat_exempt = models.BooleanField(default=False,help_text="""\
+The default `VAT exempt` setting of sales invoices for this customer.""")
+    item_vat = models.BooleanField(default=False,help_text="""\
+The default item_vat settings of sales invoices for this customer.""")
     
     #~ def __unicode__(self):
         #~ if self.name is None:
@@ -214,7 +221,7 @@ class Customer(contacts.Partner):
 class SalesDocument(
       mixins.UserAuthored,
       #~ journals.Sendable,
-      #~ journals.Journaled,
+      journals.Journaled,
       #~ contacts.ContactDocument,
       mixins.TypedPrintable):
     """Common base class for :class:`Order` and :class:`Invoice`.
@@ -231,7 +238,8 @@ class SalesDocument(
         )
     language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
     
-    creation_date = models.DateField(blank=True,auto_now_add=True)
+    date = models.DateField(help_text="""\
+The official date of this document.""")
     #~ customer = models.ForeignKey(Customer,
         #~ related_name="customer_%(class)s")
     #~ ship_to = models.ForeignKey(Customer,
@@ -246,23 +254,24 @@ class SalesDocument(
     subject = models.CharField("Subject line",max_length=200,blank=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
-    total_excl = dd.PriceField(default=0)
-    total_vat = dd.PriceField(default=0)
+    total_excl = dd.PriceField(blank=True,null=True)
+    total_vat = dd.PriceField(blank=True,null=True)
     intro = models.TextField("Introductive Text",blank=True)
     #~ user = models.ForeignKey(settings.LINO.user_model,blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    discount = models.IntegerField(_("Discount"),blank=True,null=True)
         
         
     def add_item(self,product=None,qty=None,**kw):
         if product is not None:
             if not isinstance(product,products.Product):
                 product = products.Product.objects.get(pk=product)
-            if qty is None:
-                qty = 1
+            #~ if qty is None:
+                #~ qty = Duration(1)
         kw['product'] = product 
         unit_price = kw.get('unit_price',None)
-        if type(unit_price) == float:
-            kw['unit_price'] = "%.2f" % unit_price
+        #~ if type(unit_price) == float:
+            #~ kw['unit_price'] = "%.2f" % unit_price
         kw['qty'] = qty
         #print self,kw
         kw['document'] = self
@@ -271,9 +280,8 @@ class SalesDocument(
         #~ return self.items.create(**kw)
     
     @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
-    def total_incl(self,request=None):
+    def total_incl(self,ar=None):
         return self.total_excl + self.total_vat
-    #~ total_incl.return_type = dd.PriceField()
     
     def update_total(self):
         if self.pk is None:
@@ -307,7 +315,7 @@ class SalesDocument(
       
 #~ SALES_PRINTABLE_FIELDS = dd.fields_list(SalesDocument,
   #~ 'customer imode payment_term '
-  #~ 'creation_date your_ref subject '
+  #~ 'date your_ref subject '
   #~ 'language vat_exempt item_vat ')
 
 
@@ -336,7 +344,7 @@ class Order(SalesDocument):
     #~ objects = OrderManager()
     
     #~ def get_last_invoice(self):
-        #~ invoices = self.invoice_set.order_by('creation_date')
+        #~ invoices = self.invoice_set.order_by('date')
         #~ cnt = invoices.count()
         #~ if cnt == 0:
             #~ return None
@@ -360,11 +368,11 @@ class Order(SalesDocument):
     #~ def before_save(self):
         #~ SalesDocument.before_save(self)
         #~ if self.start_date is None:
-            #~ self.start_date = self.creation_date
+            #~ self.start_date = self.date
             
     def full_clean(self,*args,**kw):
         if self.start_date is None:
-            self.start_date = self.creation_date
+            self.start_date = self.date
         super(Order,self).full_clean(*args,**kw)
             
     def make_invoice(self,make_until=None,simulate=False,today=None):
@@ -428,7 +436,7 @@ class Order(SalesDocument):
         #jnl = journals.get_journal(self.imode.journal)
         #~ invoice = self.imode.journal.create_document(
         invoice = Invoice(
-            creation_date=today,
+            date=today,
             order=self,
             customer=self.customer,
             #~ ship_to=self.ship_to,
@@ -455,7 +463,7 @@ class Order(SalesDocument):
             
         
     
-class Invoice(SalesDocument):
+class Invoice(SalesDocument,ledger.Bookable):
   
     #~ # implements Booked:
     #~ value_date = models.DateField(auto_now=True)
@@ -472,7 +480,7 @@ class Invoice(SalesDocument):
         if self.due_date is None:
             if self.payment_term is not None:
                 self.due_date = self.payment_term.get_due_date(
-                    self.creation_date)
+                    self.date)
         #SalesDocument.before_save(self)
         #ledger.LedgerDocumentMixin.before_save(self)
         super(Invoice,self).full_clean(*args,**kw)
@@ -495,16 +503,17 @@ class DocItem(mixins.Sequenced):
     "Base class for InvoiceItem and OrderItem"
     class Meta:
         abstract = True
-        unique_together  = ('document','pos')
+        #~ unique_together  = ('document','seqno')
     
     product = models.ForeignKey('products.Product',blank=True,null=True)
     title = models.CharField(max_length=200,blank=True)
     description = dd.RichTextField(_("Description"),blank=True,null=True)
     
-    discount = models.IntegerField("Discount %",default=0)
+    discount = models.IntegerField(_("Discount"),default=0)
     unit_price = dd.PriceField(blank=True,null=True) 
     qty = dd.QuantityField(blank=True,null=True)
     total = dd.PriceField(blank=True,null=True)
+    
     
     #~ def total_excl(self):
         #~ if self.unitPrice is not None:
@@ -518,11 +527,14 @@ class DocItem(mixins.Sequenced):
         #~ self.before_save()
         #~ super(DocItem,self).save(*args,**kwargs)
                     
+    def get_siblings(self):
+        return self.document.items      
+    
     def full_clean(self,*args,**kw):
         #print "before_save()", self
         if self.document.pk is not None:
-            if self.pos is None:
-                self.pos = self.document.items.count() + 1
+            #~ if self.pos is None:
+                #~ self.pos = self.document.items.count() + 1
             if self.product:
                 if not self.title:
                     self.title = self.product.name
@@ -580,7 +592,7 @@ class OrdersByJournal(Orders):
     order_by = ["number"]
     #master = journals.Journal
     master_key = 'journal' # see django issue 10808
-    column_names = "number:4 creation_date customer:20 imode " \
+    column_names = "number:4 date customer:20 imode " \
                   "sales_remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     
@@ -597,17 +609,23 @@ class PendingOrders(Orders):
         assert master_instance is None
         return Order.objects.pending(make_until=make_until)
 
+
     
 class Invoices(SalesDocuments):
     model = Invoice
     order_by = ["id"]
+    detail_layout = """
+    id date journal year number 
+    customer user
+    ItemsByInvoice    
+    """
     #~ can_view = perms.is_staff
     
 class InvoicesByJournal(Invoices):
     order_by = ["number"]
     master_key = 'journal' # see django issue 10808
     #master = journals.Journal
-    column_names = "number:4 creation_date due_date " \
+    column_names = "number:4 date due_date " \
                   "customer:10 " \
                   "total_incl order subject:10 sales_remark:10 " \
                   "ledger_remark:10 " \
@@ -629,7 +647,7 @@ class DocumentsToSign(Invoices):
     use_as_default_table = False
     filter = dict(user__isnull=True)
     #~ can_add = perms.never
-    column_names = "number:4 order creation_date " \
+    column_names = "number:4 order date " \
                   "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
     #~ actions = Invoices.actions + [ SignAction() ]
@@ -652,7 +670,7 @@ class InvoicesByOrder(SalesDocuments):
     model = Invoice
     master_key = "order"
     order_by = ["number"]
-    column_names = "number creation_date your_ref total_excl *"
+    column_names = "number date your_ref total_excl *"
 
     
 #~ class ItemsByDocumentListLayout(layouts.ListLayout):
@@ -663,9 +681,9 @@ class InvoicesByOrder(SalesDocuments):
     #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
 
 class ItemsByDocument(dd.Table):
-    column_names = "pos:3 product title description:20x1 discount unit_price qty total"
+    column_names = "seqno:3 product title description:20x1 discount unit_price qty total"
     master_key = 'document'
-    order_by = ["pos"]
+    order_by = ["seqno"]
     
 
 class ItemsByOrder(ItemsByDocument):
@@ -685,9 +703,9 @@ class ItemsByInvoice(ItemsByDocument):
             
 
 class SalesByCustomer(SalesDocuments):
-    column_names = "journal:4 number:4 creation_date:8 " \
+    column_names = "journal:4 number:4 date:8 " \
                    "total_incl total_excl total_vat *"
-    order_by = ["creation_date"]
+    order_by = ["date"]
     master_key = 'customer'
     
 class OrdersByCustomer(SalesByCustomer):
@@ -697,9 +715,9 @@ class InvoicesByCustomer(SalesByCustomer):
     model = 'sales.Invoice'
 
 #~ class SalesByPerson(SalesDocuments):
-    #~ column_names = "journal:4 number:4 creation_date:8 " \
+    #~ column_names = "journal:4 number:4 date:8 " \
                    #~ "total_incl total_excl total_vat *"
-    #~ order_by = ["creation_date"]
+    #~ order_by = ["date"]
     #~ master_key = 'person'
 
         
@@ -708,50 +726,31 @@ class InvoicesByCustomer(SalesByCustomer):
 journals.register_doctype(Order,OrdersByJournal)
 journals.register_doctype(Invoice,InvoicesByJournal)
 
-if settings.LINO.is_installed('igen'):
+def customize_contacts():
 
-    #~ from lino.modlib.contacts.models import Contact
-
-    dd.inject_field(contacts.Partner,
+    dd.inject_field('contacts.Partner',
         'is_customer',
         mti.EnableChild('sales.Customer',verbose_name=_("is Customer")),
         """Whether this Partner is also a Customer."""
         )
 
+customize_contacts()
 
 
-    #~ dd.inject_field(
-        #~ Contact,'payment_term',
-        #~ models.ForeignKey(PaymentTerm,
-            #~ blank=True,null=True,
-            #~ verbose_name=_("payment term")),
-        #~ """The default PaymentTerm for sales invoices to this Contact.
-        #~ """)
-    #~ dd.inject_field(
-        #~ Contact, 'vat_exempt',
-        #~ models.BooleanField(default=False,
-            #~ verbose_name=_("VAT exempt")),
-        #~ """The default value for vat_exempt for sales invoices to this Contact.
-        #~ """)
-    #~ dd.inject_field(
-        #~ Contact, 'item_vat',
-        #~ models.BooleanField(default=False,
-            #~ verbose_name=_("item_vat")),
-        #~ """The default value for item_vat for sales invoices to this Contact.
-        #~ """)
-
+MODULE_LABEL = _("Sales")
 
 def setup_main_menu(site,ui,user,m): 
+    m = m.add_menu("sales",MODULE_LABEL)
     m.add_action(Orders)
     m.add_action(Invoices)
-    m.add_action(DocumentsToSign)
-    m.add_action(PendingOrders)
+    #~ m.add_action(DocumentsToSign)
+    #~ m.add_action(PendingOrders)
 
 def setup_my_menu(site,ui,user,m): 
     pass
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("sales",_("Sales"))
+    m = m.add_menu("sales",MODULE_LABEL)
     m.add_action(InvoicingModes)
     m.add_action(ShippingModes)
     m.add_action(PaymentTerms)

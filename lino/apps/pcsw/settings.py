@@ -55,10 +55,13 @@ class Lino(Lino):
     
     remote_user_header = "REMOTE_USER"
     
+    override_modlib_models = [
+        'contacts.Person','contacts.Company',
+        'households.Household'
+        ]
+        
     def get_app_source_file(self):
         return __file__
-        
-    override_modlib_models = ['contacts.Person','contacts.Company']
         
     def get_main_action(self,user):
         return self.modules.lino.Home.default_action

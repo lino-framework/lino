@@ -32,7 +32,6 @@ import codecs
 from Cheetah.Template import Template as CheetahTemplate
 
 from django.db import models
-from django.db import IntegrityError
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.utils import functional
@@ -72,7 +71,6 @@ from lino.core.modeltools import makedirs_if_missing
 from lino.core.modeltools import full_model_name
 from lino.core.modeltools import is_devserver
     
-from lino.utils import ucsv
 from lino.utils import choosers
 from lino.utils import babel
 from lino.utils import choicelists
@@ -515,8 +513,36 @@ class ExtUI(base.UI):
         base.UI.__init__(self) 
         
         
+    def create_layout_panel(self,lh,name,vertical,elems,**kw):
+        pkw = dict()
+        pkw.update(labelAlign=kw.pop('label_align','top'))
+        pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels',True))
+        pkw.update(label=kw.pop('label',None))
+        pkw.update(width=kw.pop('width',None))
+        pkw.update(height=kw.pop('height',None))
+        if kw:
+            raise Exception("Unknown panel attributes %r" % kw)
+        if name == 'main':
+            if isinstance(lh.layout,layouts.ListLayout):
+                #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
+                #~ return ext_elems.GridMainPanel(lh,name,lh.layout._table,*elems,**pkw)
+                return ext_elems.GridElement(lh,name,lh.layout._table,*elems,**pkw)
+            if isinstance(lh.layout,layouts.ParamsLayout) : 
+                return ext_elems.ParamsPanel(lh,name,vertical,*elems,**pkw)
+                #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
+                #~ if lh.layout._table.params_panel_hidden:
+                    #~ fkw.update(hidden=True)
+                #~ return ext_elems.FormPanel(**fkw)
+            if isinstance(lh.layout,layouts.FormLayout): 
+                if len(elems) == 1 or vertical:
+                    return ext_elems.DetailMainPanel(lh,name,vertical,*elems,**pkw)
+                else:
+                    return ext_elems.TabPanel(lh,name,*elems,**pkw)
+            raise Exception("No element class for layout %r" % lh.layout)
+        return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
+
     def create_layout_element(self,lh,name,**kw):
-        if False: 
+        if True: # don't catch any exception. useful when there's some problem within the framework 
             de = lh.get_data_elem(name)
         else:
             try:
@@ -1255,6 +1281,7 @@ tinymce.init({
                     details.add(fl)
                     
         for a in actors_list:
+            #~ if a._replaced_by is None:
             add(a,a.detail_layout, "Lino.%s.DetailFormPanel")
             add(a,a.insert_layout, "Lino.%s.InsertFormPanel")
             
@@ -1835,34 +1862,6 @@ tinymce.init({
             
             
     
-    def create_layout_panel(self,lh,name,vertical,elems,**kw):
-        pkw = dict()
-        pkw.update(labelAlign=kw.pop('label_align','top'))
-        pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels',True))
-        pkw.update(label=kw.pop('label',None))
-        pkw.update(width=kw.pop('width',None))
-        pkw.update(height=kw.pop('height',None))
-        if kw:
-            raise Exception("Unknown panel attributes %r" % kw)
-        if name == 'main':
-            if isinstance(lh.layout,layouts.ListLayout):
-                #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
-                #~ return ext_elems.GridMainPanel(lh,name,lh.layout._table,*elems,**pkw)
-                return ext_elems.GridElement(lh,name,lh.layout._table,*elems,**pkw)
-            if isinstance(lh.layout,layouts.ParamsLayout) : 
-                return ext_elems.ParamsPanel(lh,name,vertical,*elems,**pkw)
-                #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
-                #~ if lh.layout._table.params_panel_hidden:
-                    #~ fkw.update(hidden=True)
-                #~ return ext_elems.FormPanel(**fkw)
-            if isinstance(lh.layout,layouts.FormLayout): 
-                if len(elems) == 1 or vertical:
-                    return ext_elems.DetailMainPanel(lh,name,vertical,*elems,**pkw)
-                else:
-                    return ext_elems.TabPanel(lh,name,*elems,**pkw)
-            raise Exception("No element class for layout %r" % lh.layout)
-        return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
-
 
     def row_action_button(self,*args,**kw):
         """

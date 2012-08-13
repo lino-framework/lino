@@ -41,6 +41,7 @@ LABEL_ALIGN_TOP = 'top'
 LABEL_ALIGN_LEFT = 'left'
 LABEL_ALIGN_RIGHT = 'right'
 
+DEBUG_LAYOUTS = False
 
 class LayoutHandle:
     """
@@ -130,6 +131,11 @@ class LayoutHandle:
         #logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
         #assert desc != 'Countries_choices2'
         
+        if isinstance(desc,Panel):
+            assert len(kw) == 0
+            kw = desc.options
+            desc = desc.desc
+        
         # flatten continued lines:
         desc = desc.replace('\\\n','')
         
@@ -157,8 +163,7 @@ class LayoutHandle:
             for x in desc.splitlines():
                 x = x.strip()
                 if len(x) > 0 and not x.startswith("# "):
-                  
-                    if x.startswith(':'):
+                    if x.startswith(':'): # unused feature 
                         a = x.split(':',2)
                         if len(a) != 3:
                             raise LayoutError('Expected attribute `:attr: value` ')
@@ -188,7 +193,6 @@ class LayoutHandle:
                     elif isinstance(e,list):
                         elems += e
                     else:
-                        #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
                         elems.append(e)
         if len(elems) == 0:
             return None
@@ -198,6 +202,7 @@ class LayoutHandle:
         if len(elems) == 1 and elemname != 'main': # panelclass != self.main_class:
             #~ if label:
                 #~ elems[0].label = label
+            elems[0].setup(**kw)
             return elems[0]
         #~ kw.update(self.layout.panel_options.get(elemname,{}))
         e = self.ui.create_layout_panel(self,elemname,vertical,elems,**kw)
@@ -346,16 +351,15 @@ class BaseLayout(object):
         if hasattr(self,'_extjs3_handle'):
             raise Exception("Cannot update form layout after UI has been set up.")
         for k,v in kw.items():
-            #~ if not hasattr(self,k):
-                #~ raise Exception("%s has no attribute %r" % (self,k))
-            msg = """\
+            if DEBUG_LAYOUTS:
+                msg = """\
 In %s, updating attribute %r:
 --- before:
 %s
 --- after:
 %s
 ---""" % (self,k,getattr(self,k,'(undefined)'),v)
-            logger.debug(msg)
+                logger.debug(msg)
             setattr(self,k,v)
             
     def add_panel(self,name,tpl,label=None,**options):
@@ -377,11 +381,12 @@ In %s, updating attribute %r:
            raise Exception("name may not contain any whitespace") 
         if getattr(self,name,None) is not None:
            raise Exception("name %r already defined in %s" % (name,self)) 
-        msg = """\
+        if DEBUG_LAYOUTS:
+            msg = """\
 Adding panel %r to %s ---:
 %s
 ---""" % (name,self,tpl)
-        logger.debug(msg)
+            logger.debug(msg)
         setattr(self,name,tpl)
         if label is not None:
             self._labels[name] = label
@@ -415,15 +420,17 @@ Adding panel %r to %s ---:
             self.general = self.main
             self.main = "general " + name
             self._labels['general'] = _("General")
-            msg = """\
+            if DEBUG_LAYOUTS:
+                msg = """\
 add_tabpanel() on %s moving content of vertical 'main' panel to 'general'.
 New 'main' panel is %r"""
-            logger.debug(msg,self,self.main)
+                logger.debug(msg,self,self.main)
         else:
             self.main += " " + name
-            msg = """\
+            if DEBUG_LAYOUTS:
+                msg = """\
 add_tabpanel() on %s horizontal 'main' panel %r."""
-            logger.debug(msg,self,self.main)
+                logger.debug(msg,self,self.main)
         if tpl is not None:
             if hasattr(self,name):
                 raise Exception("Oops: %s has already a name %r" % (self,name))
@@ -482,3 +489,7 @@ class ParamsLayout(BaseLayout):
     def get_data_elem(self,name): 
         return self._table.get_param_elem(name)
 
+class Panel(object):
+    def __init__(self,desc,**options):
+        self.desc = desc
+        self.options = options

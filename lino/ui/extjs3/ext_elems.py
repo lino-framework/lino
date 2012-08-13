@@ -247,10 +247,14 @@ class VisibleComponent(jsgen.Component):
     preferred_height = 1
     #flex = None
     
-    def __init__(self,name,
-        width=None,height=None,label=None,preferred_width=None,
-        **kw):
-        jsgen.Component.__init__(self,name,**kw)
+    def __init__(self,name,**kw):
+        jsgen.Component.__init__(self,name)
+        self.setup(**kw)
+        
+    def setup(self,width=None,height=None,label=None,preferred_width=None,**kw):
+        #~ ):
+        self.value.update(kw)
+        #~ jsgen.Component.__init__(self,name,**kw)
         if preferred_width is not None:
             self.preferred_width = preferred_width
         if width is not None:
@@ -259,11 +263,6 @@ class VisibleComponent(jsgen.Component):
             self.height = height
         if label is not None:
             self.label = label
-        #~ if name == 'versions':
-            #~ assert self.height is not None
-            #~ logger.info("20120210 c __init__() %s" % self)
-        #~ if flex is not None:
-            #~ self.flex = flex
     
 
     def __str__(self):
@@ -366,7 +365,9 @@ class LayoutElement(VisibleComponent):
     def ext_options(self,**kw):
         if isinstance(self.parent,TabPanel):
             if not self.label:
-                raise Exception("Item %s of TabPanel %s has no label!" % (self,self.parent))
+                raise Exception(
+                    "Item %s of tabbed %s has no label!" % (
+                    self,self.layout_handle))
             #~ if self.value_template != 'new Lino.VBorderPanel(%s)':
             #~ if self.value_template == "%s":
             #~ if self.value_template == "new Ext.Container":
@@ -1733,6 +1734,7 @@ _FIELD2ELEM = (
     (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
+    (dd.QuantityField, CharFieldElement),
     (models.BooleanField, BooleanFieldElement),
     #~ (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),

@@ -46,7 +46,9 @@ class Product(babel.BabelNamed):
     
     #~ name = babel.BabelCharField(max_length=200)
     description = babel.BabelTextField(blank=True,null=True)
-    cat = models.ForeignKey(ProductCat,verbose_name="Category")
+    cat = models.ForeignKey(ProductCat,
+        verbose_name="Category",
+        blank=True,null=True)
     vatExempt = models.BooleanField(default=False)
     price = dd.PriceField(blank=True,null=True)
     #image = models.ImageField(blank=True,null=True,
@@ -65,3 +67,20 @@ class Products(dd.Table):
 class ProductsByCategory(Products):
     master_key = 'cat'
     
+    
+MODULE_LABEL = _("Products")
+
+def setup_main_menu(site,ui,user,m): 
+    m  = m.add_menu("products",MODULE_LABEL)
+    m.add_action(Products)
+    m.add_action(ProductCats)
+
+def setup_my_menu(site,ui,user,m): 
+    pass
+  
+def setup_config_menu(site,ui,user,m): 
+    pass
+  
+def setup_explorer_menu(site,ui,user,m):
+    pass
+      

@@ -237,10 +237,19 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`27 <0727>`
   :doc:`28 <0728>`
   |br| 
-  :doc:`30 <0730>`
 
 .. |Aug| replace::  **August**
   |br| 
+  :doc:`30 <0730>`
+  :doc:`31 <0731>`
+  :doc:`01 <0801>`
+  02 03 04 05 
+  |br| 
+  06 07 08 
+  :doc:`09 <0809>`
+  10
+  |br| 
+  :doc:`13 <0813>`
 
 .. |Sep| replace::  **September**
   |br| 

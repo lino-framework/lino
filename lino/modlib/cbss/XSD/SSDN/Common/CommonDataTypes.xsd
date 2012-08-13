@@ -236,4 +236,9 @@
 			<xs:enumeration value="ERROR"/>
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:element name="SSIN" type="t_SSIN">
+		<xs:annotation>
+			<xs:documentation>element representing an SSIN</xs:documentation>
+		</xs:annotation>
+	</xs:element>
 </xs:schema>

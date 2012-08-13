@@ -174,7 +174,8 @@ class Menu(MenuItem):
         self.items = newitems
                 
     def add_action(self,spec,action=None,**kw):
-        #~ if isinstance(spec,basestring):
+        if isinstance(spec,basestring):
+            spec = settings.LINO.modules.resolve(spec)
             #~ a = actors.resolve_action(spec)
             #~ if a is None:
                 #~ raise Exception("Could not resolve action specifier %r" % spec)

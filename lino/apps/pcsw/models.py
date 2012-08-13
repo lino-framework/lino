@@ -95,6 +95,7 @@ from lino.core.modeltools import resolve_model, UnresolvedModel
 #~ if settings.LINO.user_model:
     #~ User = resolve_model(settings.LINO.user_model,strict=True)
 
+households = dd.resolve_app('households')
 
 def is_valid_niss(national_id):
     try:
@@ -350,6 +351,41 @@ class CpasPartner(dd.Model,mixins.DiffingMixin):
         blank=True,# null=True,
         verbose_name=_("Bank account 2"))
         
+        
+    _imported_fields = set()
+    
+    @classmethod
+    def declare_imported_fields(cls,names):
+        cls._imported_fields = cls._imported_fields | set(dd.fields_list(cls,names))
+        #~ logger.info('20120801 %s.declare_imported_fields() --> %s' % (
+            #~ cls,cls._imported_fields))
+        
+    @classmethod
+    def site_setup(cls,site):
+        super(CpasPartner,cls).site_setup(site)
+        #~ self.imported_fields = dd.fields_list(contacts.Partner,
+        cls.declare_imported_fields('''
+          name remarks region zip_code city country 
+          street_prefix street street_no street_box 
+          addr2
+          language 
+          phone fax email url
+          bank_account1 bank_account2 activity 
+          is_active newcomer is_deprecated 
+          ''')
+        if cls is CpasPartner: # not e.g. on JobProvider who has no own site_setup()
+            cls.declare_imported_fields('''
+            is_person is_company
+              ''')
+        
+    #~ @classmethod
+    def disabled_fields(self,ar):
+        #~ logger.info("20120731 CpasPartner.disabled_fields()")
+        #~ raise Exception("20120731 CpasPartner.disabled_fields()")
+        if settings.LINO.is_imported_partner(self):
+            return self._imported_fields
+        return []
+        
     def disable_delete(self):
         #~ if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
         if settings.LINO.is_imported_partner(self):
@@ -511,6 +547,26 @@ class Person(CpasPartner,contacts.Person,contacts.Born,Printable):
       related_name='persons_job_office')
       
     print_eid_content = DirectPrintAction(_("eID sheet"),'eid-content')
+    
+    @classmethod
+    def site_setup(cls,site):
+        #~ cls.PERSON_TIM_FIELDS = dd.fields_list(cls,
+        super(Person,cls).site_setup(site)
+        cls.declare_imported_fields(
+        #~ cls._imported_fields = dd.fields_list(cls,
+          '''name first_name last_name title remarks remarks2
+          zip_code city country street street_no street_box 
+          birth_date gender birth_place coach1 language 
+          phone fax email 
+          card_type card_number card_valid_from card_valid_until
+          noble_condition card_issuer
+          national_id health_insurance pharmacy 
+          is_cpas is_senior 
+          gesdos_id 
+          nationality
+          ''')
+
+    
     
     @chooser()
     def job_office_contact_choices(cls):
@@ -771,45 +827,37 @@ class Partners(contacts.Partners):
     """
     Base class for Companies and Persons tables,
     *and* for households.Households.
-    Manages disabled_fields using a list of `imported_fields` 
-    defined by subclasses.
     """
     
     #~ app_label = 'contacts'
     
-    imported_fields = []
     detail_layout = PartnerDetail()
     
-    @classmethod
-    def disabled_fields(self,obj,ar):
-        if settings.LINO.is_imported_partner(obj):
-            return self.imported_fields
-        return []
-        
-    #~ @classmethod
-    #~ def disable_delete(self,obj,ar):
-        #~ if settings.LINO.is_imported_partner(obj):
-            #~ return _("Cannot delete contacts imported from TIM")
-        #~ return super(Partners,self).disable_delete(obj,ar)
-        
-    @classmethod
-    def do_setup(self):
-        super(Partners,self).do_setup()
-        #~ self.imported_fields = dd.fields_list(contacts.Partner,
-        self.imported_fields = dd.fields_list(self.model,
-          '''name remarks region zip_code city country 
-          street_prefix street street_no street_box 
-          addr2
-          language 
-          phone fax email url
-          is_person is_company
-          ''')
-        
 
 class AllPartners(contacts.AllPartners,Partners):
     app_label = 'contacts'
     #~ pass
 
+
+
+class Household(CpasPartner,households.Household):
+    """
+    for lino.apps.pcsw we want to inherit also from CpasPartner
+    """
+    class Meta(households.Household.Meta):
+        app_label = 'households'
+        
+    #~ @classmethod
+    #~ def site_setup(cls,site):
+        #~ super(Household,cls).site_setup(site)
+        #~ cls.declare_imported_fields('type')
+          
+    def disable_delete(self):
+        # skip the is_imported_partner test
+        return super(CpasPartner,self).disable_delete()
+        
+
+    
 class Company(CpasPartner,contacts.Company):
   
     """
@@ -819,6 +867,19 @@ class Company(CpasPartner,contacts.Company):
     class Meta(contacts.Company.Meta):
         app_label = 'contacts'
         
+    @classmethod
+    def site_setup(cls,site):
+        #~ if cls.model is None:
+            #~ raise Exception("%r.model is None" % cls)
+        super(Company,cls).site_setup(site)
+        #~ cls._imported_fields = dd.fields_list(cls,
+        cls.declare_imported_fields(
+            '''name remarks
+            zip_code city country street street_no street_box 
+            language vat_id
+            phone fax email 
+            bank_account1 bank_account2 activity''')
+
         
     #~ vat_id = models.CharField(max_length=200,blank=True)
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
@@ -895,17 +956,7 @@ class Companies(Partners):
     app_label = 'contacts'
     #~ column_names = ''
     
-    @classmethod
-    def do_setup(cls):
-        #~ if cls.model is None:
-            #~ raise Exception("%r.model is None" % cls)
-        super(Companies,cls).do_setup()
-        cls.imported_fields = dd.fields_list(cls.model,
-            '''name remarks
-            zip_code city country street street_no street_box 
-            language vat_id
-            phone fax email 
-            bank_account1 bank_account2 activity''')
+
 
 
 
@@ -1101,22 +1152,6 @@ class AllPersons(Partners):
         return string_concat(
           self.model._meta.verbose_name_plural,' ',_("(all)"))
     
-    @classmethod
-    def do_setup(cls):
-        #~ cls.PERSON_TIM_FIELDS = dd.fields_list(cls,
-        super(AllPersons,cls).do_setup()
-        cls.imported_fields = dd.fields_list(cls.model,
-          '''name first_name last_name title remarks remarks2
-          zip_code city country street street_no street_box 
-          birth_date gender birth_place coach1 language 
-          phone fax email 
-          card_type card_number card_valid_from card_valid_until
-          noble_condition card_issuer
-          national_id health_insurance pharmacy 
-          bank_account1 bank_account2 activity 
-          gesdos_id 
-          is_cpas is_senior is_active newcomer is_deprecated nationality''')
-
     #~ @classmethod
     #~ def disabled_fields(self,request):
         #~ if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
@@ -2007,6 +2042,29 @@ def site_setup(site):
     This includes especially those detail layouts 
     which depend on the *combination* of installed modules.
     """
+    
+    #~ class HouseholdDetail(households.HouseholdDetail):
+        #~ box3 = """
+        #~ country region
+        #~ city zip_code:10
+        #~ street_prefix street:25 street_no street_box
+        #~ addr2:40
+        #~ activity bank_account1:12 bank_account2:12
+        #~ """
+
+    #~ class Households(households.Households):
+        #~ model = 'households.Household'
+        #~ detail_layout = HouseholdDetail()
+        
+
+    site.modules.households.Households.set_detail_layout(box3="""
+    country region
+    city zip_code:10
+    street_prefix street:25 street_no street_box
+    addr2:40
+    activity bank_account1:12 bank_account2:12
+    """)
+    
     
     site.modules.lino.SiteConfigs.set_detail_layout("""
     site_company:20 default_build_method:20 next_partner_id:20 job_office:20

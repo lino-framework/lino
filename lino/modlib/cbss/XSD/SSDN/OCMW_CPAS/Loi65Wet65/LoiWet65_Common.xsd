@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by sicksicksick (socksocksock) -->
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by BANQUE CARREFOUR DE LA SECURITE SOCIALE (BANQUE CARREFOUR DE LA SECURITE SOCIALE) -->
+<xs:schema targetNamespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65Common" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:common="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" xmlns:Common65="http://www.ksz-bcss.fgov.be/XSD/SSDN/LoiWet65" xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/LoiWet65Common" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:import namespace="http://www.ksz-bcss.fgov.be/XSD/SSDN/Common" schemaLocation="../../Common/CommonDataTypes.xsd"/>
+	<xs:complexType name="decisionType">
+		<xs:sequence>
+			<xs:element name="AcceptedAmount">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Percentage">
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:totalDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="FileIdentification">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="KBOBCE" type="xs:integer"/>
+				<xs:element name="FileID">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="11"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BeneficiaryID">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SSIN" type="common:t_SSIN"/>
+				<xs:element name="Name" type="xs:string" minOccurs="0"/>
+				<xs:element name="Firstname" type="xs:string" minOccurs="0"/>
+				<xs:element name="BirthDate" type="common:t_IncompleteDate" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Address">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Street" type="xs:string"/>
+				<xs:element name="HouseNumber" type="xs:string" minOccurs="0"/>
+				<xs:element name="Box" type="xs:string" minOccurs="0"/>
+				<xs:element name="PostalCode">
+					<xs:simpleType>
+						<xs:restriction base="xs:nonNegativeInteger">
+							<xs:totalDigits value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Duration">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Days" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Jours - Dagen</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:minInclusive value="0"/>
+							<xs:maxInclusive value="366"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Weeks" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Semaines - Weken</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:minInclusive value="0"/>
+							<xs:maxInclusive value="52"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Months" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Mois - Maanden</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:minInclusive value="0"/>
+							<xs:maxInclusive value="12"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="SocialAid">
+		<xs:sequence>
+			<xs:element name="Art60p7" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Type" type="t_Code"/>
+						<xs:element name="Schedule" type="t_Code"/>
+						<xs:element name="WorkPlace" type="t_Code"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Art61" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="ActivationType" type="t_Code" minOccurs="0"/>
+			<xs:element name="PartnerConvention" type="t_Code" minOccurs="0"/>
+			<xs:element name="Alimony" type="xs:boolean" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="t_Code">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="DecisionB2">
+		<xs:sequence>
+			<xs:element name="DecisionDate" type="xs:date"/>
+			<xs:element ref="Duration"/>
+			<xs:element name="AmbulantMedicalAndPharmaceuticalCosts" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="HospitalizationCosts" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="RN_RR_Inscription" type="t_Code" minOccurs="0"/>
+			<xs:element name="JuridicalProcedure" type="xs:boolean" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReturnCode">
+		<xs:sequence>
+			<xs:element name="Code">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Description" type="common:DescriptionType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="Evaluation">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ACCEPTED"/>
+			<xs:enumeration value="REFUSED"/>
+			<xs:enumeration value="PARTIALLYACCEPTED"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

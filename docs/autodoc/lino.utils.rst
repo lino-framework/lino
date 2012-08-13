@@ -25,6 +25,7 @@
     lino.utils.babel
     lino.utils.choosers
     lino.utils.memo
+    lino.utils.quantities
     lino.utils.ranges
     lino.utils.tables
     lino.utils.test

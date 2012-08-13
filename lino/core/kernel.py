@@ -127,6 +127,7 @@ def analyze_models():
                   'workflow_state_field',
                   'workflow_owner_field',
                   'summary_row',
+                  'site_setup',
                   'disable_delete',
                   'on_duplicate',
                   'on_create'):
@@ -139,7 +140,11 @@ def analyze_models():
         
         for f, m in model._meta.get_fields_with_model():
             if isinstance(f,models.CharField) and f.null:
-                raise Exception("20110907 Nullable CharField %s in %s" % (f.name,model))
+                msg = "Nullable CharField %s in %s" % (f.name,model)
+                if f.__class__ is models.CharField:
+                    raise Exception(msg)
+                else:
+                    logger.info(msg)
             if isinstance(f,models.ForeignKey):
                 if f.verbose_name == f.name.replace('_', ' '):
                     """
@@ -360,8 +365,8 @@ def startup_site(self):
         
         for model in models.get_models():
           
-            if hasattr(model,'site_setup'):
-                model.site_setup(self)
+            #~ if hasattr(model,'site_setup'):
+            model.site_setup(self)
         
             for k,v in class_dict_items(model):
                 if isinstance(v,dd.VirtualField):
@@ -383,7 +388,6 @@ def startup_site(self):
         
         
         actors.discover()
-        
         
         # set _lino_default_table for all models:
         

@@ -1,0 +1,22 @@
+20120731
+========
+
+- Worked on :mod:`lino.apps.presto`.
+
+  Presto now also uses :mod:`lino.modlib.households`. 
+
+  :mod:`lino.modlib.households` no longer depends on :mod:`lino.apps.pcsw`.
+
+  `households.Household` now also supports being listed in 
+  :attr:`override_modlib_models <lino.Lino.override_modlib_models>`
+
+- Bugfix: TypeError 
+  "duplicate_row() got an unexpected keyword argument 'seqno'"
+  when trying to duplicate a budget entry.
+  
+- Bugfix: NameError "global name 'ucsv' is not defined" when `[csv]`
+
+- Reversed sort order of cal.Tasks: newest tasks come first.
+
+- Continued with the test suite.
+

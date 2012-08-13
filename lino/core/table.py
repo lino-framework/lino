@@ -568,7 +568,7 @@ class Table(AbstractTable):
         if self.model is not None:
             self.model = resolve_model(self.model,self.app_label)
             
-        #~ logger.debug("20120103 class_init(%s) : model is %s",self,self.model)
+        #~ logger.debug("20120731 class_init(%r) : model is %s",self,self.model)
         
         if isinstance(self.model,UnresolvedModel):
             self.model = None
@@ -621,7 +621,7 @@ class Table(AbstractTable):
                     #~ if v is not None:
                         #~ setattr(self,name,v)
                         
-            for name in ('disabled_fields',
+            for name in ( #'disabled_fields',
                          'handle_uploaded_files', 
                          #~ 'get_row_permission', 
                          #~ 'disable_editing',
@@ -629,7 +629,7 @@ class Table(AbstractTable):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)
                     if m is not None:
-                        #~ logger.debug('20111113 Install model method %s.%s to %s',self.model.__name__,name,self)
+                        logger.debug('20120731 Install model method %s from %r to %r',name,self.model,self)
                         setattr(self,name,model2actor(m))
                         #~ 'dictproxy' object does not support item assignment:
                         #~ self.__dict__[name] = model2actor(m) 
@@ -704,6 +704,10 @@ class Table(AbstractTable):
         #~ if self.model is not None:
         #~ super(Table,self).setup_permissions()
         
+    @classmethod
+    def disabled_fields(cls,obj,ar):
+        return obj.disabled_fields(ar)
+        
         
     @classmethod
     def get_row_permission(cls,obj,user,state,action):
@@ -744,7 +748,8 @@ class Table(AbstractTable):
             
         if self.model is None:
             return None
-        
+        if not isinstance(self.model,type) or not issubclass(self.model,models.Model):
+            raise Exception("%s.model is %r (and not a Model subclass)" % (self,self.model))
         parts = name.split('__')
         if len(parts) > 1:
             #~ logger.warning("20120406 RemoteField %s in %s",name,self)

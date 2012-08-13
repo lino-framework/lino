@@ -26,7 +26,9 @@ class Lino(Lino):
     
     #~ remote_user_header = "REMOTE_USER"
     
-    override_modlib_models = ['contacts.Person','contacts.Company']
+    override_modlib_models = [
+      'contacts.Person','contacts.Company',
+      'households.Household']
     
     def get_app_source_file(self): return __file__
         
@@ -65,6 +67,11 @@ INSTALLED_APPS = (
   #~ 'lino.modlib.documents',
   'lino.modlib.properties',
   'lino.modlib.contacts',
+  'lino.modlib.households',
+  'lino.modlib.products',
+  'lino.modlib.ledger',
+  'lino.modlib.journals',
+  'lino.modlib.sales',
   #~ 'lino.modlib.projects',
   'lino.modlib.blogs',
   'lino.modlib.tickets',

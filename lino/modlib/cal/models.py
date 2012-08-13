@@ -1459,6 +1459,7 @@ class Tasks(dd.Table):
     model = 'cal.Task'
     required = dict(user_groups='office')
     column_names = 'start_date summary state *'
+    order_by = ["-start_date","-start_time"]
     #~ hidden_columns = set('owner_id owner_type'.split())
     
     #~ detail_template = """
@@ -1489,7 +1490,6 @@ if settings.LINO.user_model:
         required = dict(user_groups='office',auth=True)
         #~ required = dict()
         help_text = _("Table of all my tasks.")
-        order_by = ["start_date","start_time"]
         column_names = 'start_date summary state workflow_buttons *'
     
     class MyTasksToDo(MyTasks):

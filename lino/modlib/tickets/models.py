@@ -107,36 +107,45 @@ class Project(mixins.UserAuthored,mixins.Printable):
         verbose_name = _("Project")
         verbose_name_plural = _('Projects')
         
-    name = models.CharField(_("Name"),max_length=20)
+    name = models.CharField(_("Name"),max_length=200)
+    iname = models.CharField(_("Internal Name"),max_length=20,blank=True)
     parent = models.ForeignKey('self',blank=True,null=True,verbose_name=_("Parent"))
     type = models.ForeignKey('tickets.ProjectType',blank=True,null=True)
-    #~ partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
+    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
     #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
     
     def __unicode__(self):
         return self.name
         
+
+class ProjectDetail(dd.FormLayout):
+    main = "general tickets"
     
-class Projects(dd.Table):
-    model = 'tickets.Project'
-    detail_layout = """
+    general = dd.Panel("""
     name summary parent
     type user 
     # description
-    MilestonesByProject TicketsByProject ProjectsByProject 
+    MilestonesByProject ProjectsByProject 
     # cal.EventsByProject
-    """
+    """,label=_("General"))
+    
+    tickets = dd.Panel("""
+    TicketsByProject SessionsByProject
+    """,label=_("Tickets"))
+  
+class Projects(dd.Table):
+    model = 'tickets.Project'
+    detail_layout = ProjectDetail()
 
 class ProjectsByProject(Projects):
     master_key = 'parent'
     label = _("Sub-projects")
     column_names = "name summary *"
 
-#~ class ProjectsByPartner(Projects):
-    #~ master_key = 'partner'
-    #~ column_names = "name summary *"
-    #~ label = _("Sub-projects")
+class ProjectsByPartner(Projects):
+    master_key = 'partner'
+    column_names = "name summary *"
 
 
 
@@ -172,19 +181,6 @@ class MilestonesByProject(Milestones):
     column_names = "label expected reached *"
 
 
-#~ class TicketState(babel.BabelNamed):
-    #~ """
-    #~ The state of a ticket (new, open, closed, ...)
-    #~ """
-    
-    #~ class Meta:
-        #~ verbose_name = _("Ticket State")
-        #~ verbose_name_plural = _('Ticket States')
-
-#~ class TicketStates(dd.Table):
-    #~ model = TicketState
-    #~ column_names = 'name *'
-
 
 class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
     """
@@ -215,6 +211,7 @@ class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
         help_text=_("Short summary of the problem."))
     #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
     state = TicketStates.field()
+    closed = models.DateTimeField(_("Closed since"),editable=False,null=True)
     description = dd.RichTextField(_("Description"),blank=True,format='plain')
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),
@@ -290,14 +287,20 @@ class TicketsReported(Tickets):
     
 class Session(mixins.AutoUser,mixins.ProjectRelated):
     """
-    A Session is when a user works on a project or ticket. This just keeps track 
+    A Session is when a user works on a project or ticket. 
     """
     class Meta:
         verbose_name = _("Session")
         verbose_name_plural = _('Sessions')
 
+    partner = models.ForeignKey('contacts.Partner',
+        blank=True,null=True,
+        help_text=_("The partner to be invoiced for this session."))
     #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
     ticket = models.ForeignKey('tickets.Ticket',blank=True,null=True)
+    summary = models.CharField(_("Summary"),max_length=200,
+        blank=True,
+        help_text=_("Short summary of the session."))
     description = dd.RichTextField(_("Description"),blank=True,format='plain')
     date = models.DateField(verbose_name=_("Date"))
     start_time = models.TimeField(
@@ -309,11 +312,20 @@ class Session(mixins.AutoUser,mixins.ProjectRelated):
     break_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("Break Time"))
+    is_private = models.BooleanField(verbose_name=_("is private"))
     
+    def __unicode__(self):
+        if self.start_time and self.end_time:
+            return u"%s %s-%s" % (
+                self.date.strftime(settings.LINO.date_format_strftime),
+                self.start_time.strftime(settings.LINO.time_format_strftime),
+                self.end_time.strftime(settings.LINO.time_format_strftime))
+        return super(Session,self).__unicode__()
+        
     
 class Sessions(dd.Table):
     model = Session
-    column_names = 'date start_time end_time break_time description user *'
+    column_names = 'date start_time end_time break_time summary user *'
     order_by = ['date','start_time']
     detail_layout = """
     date start_time end_time break_time project ticket
@@ -325,17 +337,20 @@ class Sessions(dd.Table):
 class SessionsByTicket(Sessions):
     master_key = 'ticket'
     
+class SessionsByProject(Sessions):
+    master_key = 'project'
+    
 if settings.LINO.user_model:
   
     class MySessions(Sessions,mixins.ByUser):
         order_by = ['date','start_time']
-        column_names = 'date start_time end_time break_time project ticket description *'
+        column_names = 'date start_time end_time break_time project ticket summary *'
     
     class MySessionsByDate(MySessions):
         #~ master_key = 'date'
         order_by = ['start_time']
         label = _("My sessions by date")
-        column_names = 'start_time end_time break_time project ticket description *'
+        column_names = 'start_time end_time break_time project ticket summary *'
     
         parameters = dict(
           today = models.DateField(_("Date"),
@@ -396,8 +411,13 @@ if settings.LINO.user_model:
         column_names = 'name id summary *'
         
     class MyTickets(Tickets,mixins.ByUser):
-        order_by = ["created","id"]
+        order_by = ["-created","id"]
         column_names = 'created id project summary state *'
+        
+    class MyOpenTickets(Tickets,mixins.ByUser):
+        order_by = ["-created","id"]
+        column_names = 'created id project summary state *'
+        filter = models.Q(closed__isnull=True)
         
 
 #~ if dd.is_installed('cal'):
@@ -418,6 +438,7 @@ if settings.LINO.user_model:
 def setup_main_menu(site,ui,user,m): 
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(MyProjects)
+    m.add_action(MyOpenTickets)
     m.add_action(MyTickets)
     m.add_action(MySessions)
     m.add_action(MySessionsByDate)
