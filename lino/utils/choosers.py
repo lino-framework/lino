@@ -135,7 +135,8 @@ class Chooser(FieldChooser):
             #~ args.append(getattr(obj,varname,None))
         #~ return self.meth(*args)
 
-    def get_request_choices(self,ar,tbl):
+    #~ def get_request_choices(self,ar,tbl):
+    def get_request_choices(self,request,tbl):
         """
         Return a list of choices for this chooser, 
         using a HttpRequest to build the context.
@@ -144,13 +145,13 @@ class Chooser(FieldChooser):
         
         # 20120202
         if tbl.master_field is not None:
-            mt = ar.request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
+            mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
             try:
                 master = ContentType.objects.get(pk=mt).model_class()
             except ContentType.DoesNotExist,e:
                 pass
                 
-            pk = ar.request.REQUEST.get(ext_requests.URL_PARAM_MASTER_PK,None)
+            pk = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_PK,None)
             if pk:
                 try:
                     kw[tbl.master_field.name] = master.objects.get(pk=pk)
@@ -161,20 +162,21 @@ class Chooser(FieldChooser):
                     raise Exception("There's no %s with primary key %r" % (master.__name__,pk))
       
         
-        for k,v in ar.request.GET.items():
+        for k,v in request.GET.items():
             kw[str(k)] = v
         for cv in self.converters:
             kw = cv.convert(**kw)
-            
-        #~ ar = tbl.request(ui,request,tbl.default_action)
-        if ar.create_kw:
-            kw.update(ar.create_kw)
-        if ar.known_values:
-            kw.update(ar.known_values)
-        if tbl.master_key:
-            kw[tbl.master_key] = ar.master_instance
-        #~ if tbl.known_values:
-            #~ kw.update(tbl.known_values)
+        
+        if False: # removed 20120815 #1114
+            #~ ar = tbl.request(ui,request,tbl.default_action)
+            if ar.create_kw:
+                kw.update(ar.create_kw)
+            if ar.known_values:
+                kw.update(ar.known_values)
+            if tbl.master_key:
+                kw[tbl.master_key] = ar.master_instance
+            #~ if tbl.known_values:
+                #~ kw.update(tbl.known_values)
         #~ logger.info("20120602 get_request_choices(%r) -> %r",self.converters,kw)
         return self.get_choices(**kw)
         

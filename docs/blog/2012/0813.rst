@@ -4,3 +4,14 @@
 Uff! Es war gar nicht so einfach, das Feature 
 "Specify quantities as durations (hh:mm) or fractions (x/y)" 
 zu implementieren.
+Checkin.
+
+TODO:
+
+- Nullable CharField qty in <class 'lino.modlib.sales.models.OrderItem'>
+- Typing "750" in a qty field whose default format is Duration 
+  should convert to 7:50
+- Entering "6,5" causes an Internal Server Error 
+  "Invalid literal for Decimal: u'6,5'"
+- `GridPanel.on_afteredit`) should not refresh the whole grid 
+  on each celledit

@@ -37,6 +37,7 @@ from django.core.management.base import BaseCommand, CommandError
 from lino.utils import dbfreader
 from lino.utils import dblogger
 from lino.utils import mti
+from lino.utils import dumpy
 #~ from lino import diag
 
 from lino.modlib.contacts.utils import name2kw, street2kw
@@ -92,6 +93,7 @@ def mton(s): # PriceField
     #~ return s.strip()
     s = s.strip()
     if s: return Decimal(s)
+    return Decimal()
               
 def qton(s): # QuantityField
     return s.strip()
@@ -135,7 +137,8 @@ def par_pk(pk):
         return int(pk)
         
 def row2jnl(row):
-    year = 2000 + int(row.iddoc[:2])
+    year = journals.Years.from_int(2000 + int(row.iddoc[:2]))
+    
     num = int(row.iddoc[2:])
     if row.idjnl == 'VKR':
         jnl = journals.Journal.objects.get(id=row.idjnl)
@@ -219,25 +222,25 @@ def load_tim_data(dbpath):
     # Countries already exist after initial_data, but their short_code is 
     # needed as lookup field for Cities.
     def load_nat(row):
-        if not row['isocode']: 
+        if not row['isocode'].strip(): 
             return
         try:
-            country = Country.objects.get(isocode=row['isocode'])
+            country = Country.objects.get(isocode=row['isocode'].strip())
         except Country.DoesNotExist,e:
-            country = Country(isocode=row['isocode'])
-            country.name = row['name']
-        if row['idnat']:
-            country.short_code = row['idnat']
+            country = Country(isocode=row['isocode'].strip())
+            country.name = row['name'].strip()
+        if row['idnat'].strip():
+            country.short_code = row['idnat'].strip()
         return country
         
     def load_plz(row):
         try:
-            country = Country.objects.get(short_code=row['pays'])
+            country = Country.objects.get(short_code=row['pays'].strip())
         except Country.DoesNotExist,e:
             return 
         kw = dict(
-          zip_code=row['cp'] or '',
-          name=row['nom'] or row['cp'],
+          zip_code=row['cp'].strip() or '',
+          name=row['nom'].strip() or row['cp'].strip(),
           country=country,
           )
         return City(**kw)
@@ -253,27 +256,27 @@ def load_tim_data(dbpath):
         if cl is Company:
             cl = Company
             store(kw,
-              vat_id=row['notva'],
-              national_id_et=row['regkood'],
-              prefix=row['allo'],
-              name=row['firme'],
+              vat_id=row['notva'].strip(),
+              national_id_et=row['regkood'].strip(),
+              prefix=row['allo'].strip(),
+              name=row['firme'].strip(),
             )
         elif cl is Household:
             store(kw,
-              prefix=row['allo'],
-              name=row['firme'],
+              prefix=row['allo'].strip(),
+              name=row['firme'].strip(),
             )
         elif cl is Person:
             #~ cl = Person
-            kw.update(**name2kw(row['firme']))
+            kw.update(**name2kw(row['firme'].strip()))
             store(kw,
               gender=convert_gender(row['sex']),
-              first_name=row['vorname'],
-              last_name=row['firme'],
-              national_id_et=row['regkood'],
+              first_name=row['vorname'].strip(),
+              last_name=row['firme'].strip(),
+              national_id_et=row['regkood'].strip(),
               #~ birth_date=row['gebdat'],
-              bank_account1=row['compte1'],
-              title=row['allo'],
+              bank_account1=row['compte1'].strip(),
+              title=row['allo'].strip(),
             )
         else:
             dblogger.warning("Ignored PAR record %s (IdPrt %r)" % (
@@ -290,7 +293,7 @@ def load_tim_data(dbpath):
         
         kw.update(created=row['datcrea'])
         kw.update(modified=datetime.datetime.now())
-        country = row['pays']
+        country = row['pays'].strip()
         if country:
             try:
                 country = Country.objects.get(short_code__exact=country)
@@ -303,16 +306,16 @@ def load_tim_data(dbpath):
         if email and is_valid_email(email):
             kw.update(email=email)
         store(kw,
-          phone=row['tel'],
-          fax=row['fax'],
-          street=row['rue'],
+          phone=row['tel'].strip(),
+          fax=row['fax'].strip(),
+          street=row['rue'].strip(),
           street_no=row['ruenum'],
-          street_box=row['ruebte'],
+          street_box=row['ruebte'].strip(),
           )
           
         #~ kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
         
-        zip_code = row['cp']
+        zip_code = row['cp'].strip()
         if zip_code:
             kw.update(zip_code=zip_code)
             try:
@@ -340,13 +343,13 @@ def load_tim_data(dbpath):
     #~ PRJPAR = dict()
     
     def load_prj(row,**kw):
-        pk = int(row.idprj)
+        pk = int(row.idprj.strip())
         kw.update(id=pk)
         if row.parent.strip():
             kw.update(parent_id=int(row.parent))
         kw.update(name=row.name1.strip())
         if row.idpar.strip():
-            kw.update(partner_id=par_pk(row.idpar))
+            kw.update(partner_id=par_pk(row.idpar.strip()))
             #~ PRJPAR[pk] = 
         kw.update(iname=row.seq.strip())
         kw.update(user=ROOT)
@@ -433,6 +436,8 @@ def load_tim_data(dbpath):
         kw.update(date=row.date)
         kw.update(user=ROOT)
         kw.update(imode=DIM)
+        if row.idprj.strip():
+            kw.update(project_id=int(row.idprj.strip()))
         kw.update(total_excl=mton(row.montr))
         kw.update(total_vat=mton(row.montt))
         kw.update(discount=mton(row.remise))
@@ -446,11 +451,12 @@ def load_tim_data(dbpath):
         jnl,year,number = row2jnl(row)
         if jnl is None:
             return 
-        try:
-            doc = jnl.get_document(year,number)
-        except Exception,e:
-            dblogger.warning(str(e))
-            return 
+        doc = jnl.get_document(year,number)
+        #~ try:
+            #~ doc = jnl.get_document(year,number)
+        #~ except Exception,e:
+            #~ dblogger.warning(str(e))
+            #~ return 
         #~ kw.update(document=doc)
         kw.update(seqno=int(row.line.strip()))
         if row.code in ('A','F'):
@@ -471,10 +477,18 @@ def load_tim_data(dbpath):
     yield load_dbf(dbpath,'NAT',load_nat)
     yield load_dbf(dbpath,'PLZ',load_plz)
     yield load_dbf(dbpath,'PAR',load_par)
+    yield load_dbf(dbpath,'PRJ',load_prj)
+    
+    yield dumpy.FlushDeferredObjects
+    """
+    We need a FlushDeferredObjects here because otherwise most Project 
+    objects don't get saved at the first attempt
+    """
+    
     yield load_dbf(dbpath,r'RUMMA\VEN',load_ven)
     yield load_dbf(dbpath,r'RUMMA\VNL',load_vnl)
+    
     if False:
-        yield load_dbf(dbpath,'PRJ',load_prj)
         yield load_dbf(dbpath,'PIN',load_pin)
         yield load_dbf(dbpath,'DLS',load_dls)
     

@@ -319,7 +319,11 @@ class FakeDeserializedObject(base.DeserializedObject):
                 # hand-written fixtures are designed to not raise any exception
                 dblogger.warning("Failed to save %s:" % obj2str(obj))
                 raise
-            if obj.pk is None:
+            if False: # obj.pk is None: 
+                """
+                presto.tim2lino creates invoices without pk which possibly fail to save 
+                on first attempt because their project
+                """
                 if True:
                     msg = "Failed to save %s without %s: %s." % (
                         obj.__class__,obj._meta.pk.attname,obj2str(obj))
@@ -355,6 +359,15 @@ class FakeDeserializedObject(base.DeserializedObject):
     #~ See :doc:`/blog/2011/0727`.
     #~ """
     #~ return IS_DESERIALIZING
+    
+class FlushDeferredObjects: 
+    """
+    Indicator class object. 
+    Fixture may yield a ``dumpy.FlushDeferredObjects`` 
+    to indicate that all deferred objects should get 
+    saved before going on.
+    """
+    pass
 
 class DpyDeserializer:
     """
@@ -367,6 +380,27 @@ class DpyDeserializer:
         self.save_later = {}
         self.saved = 0
   
+    def flush_deferred_objects(self):
+        """
+        Flush the list of deferred objects.
+        """
+        while self.saved and self.save_later:
+            try_again = []
+            for msg_objlist in self.save_later.values():
+                for objlist in msg_objlist.values():
+                    try_again += objlist
+            dblogger.info("Trying again with %d unsaved instances.",
+                len(try_again))
+            self.save_later = {}
+            self.saved = 0
+            for obj in try_again:
+                obj.try_save() # ,*args,**kw):
+                #~ if obj.try_save(): # ,*args,**kw):
+                    #~ self.saved += 1
+                #~ else:
+                    #~ self.save_later.append(obj)
+            dblogger.info("Saved %d instances.",self.saved)
+            
     def deserialize(self,fp, **options):
         #~ dblogger.info("20120225 DpyDeserializer.deserialize()")
         if isinstance(fp, basestring):
@@ -386,6 +420,8 @@ class DpyDeserializer:
         def expand(obj):
             if obj is None:
                 pass # ignore None values
+            elif obj is FlushDeferredObjects:
+                self.flush_deferred_objects()
             elif isinstance(obj,models.Model):
                 yield FakeDeserializedObject(self,obj)
             elif hasattr(obj,'__iter__'):
@@ -418,24 +454,9 @@ See <https://code.djangoproject.com/ticket/18213>.
 """ % fp.name)
           
         dblogger.info("Saved %d instances from %s.",self.saved,fp.name)
-                    
-        while self.saved and self.save_later:
-            try_again = []
-            for msg_objlist in self.save_later.values():
-                for objlist in msg_objlist.values():
-                    try_again += objlist
-            dblogger.info("Trying again with %d unsaved instances.",
-                len(try_again))
-            self.save_later = {}
-            self.saved = 0
-            for obj in try_again:
-                obj.try_save() # ,*args,**kw):
-                #~ if obj.try_save(): # ,*args,**kw):
-                    #~ self.saved += 1
-                #~ else:
-                    #~ self.save_later.append(obj)
-            dblogger.info("Saved %d instances.",self.saved)
-            
+        
+        self.flush_deferred_objects()
+        
         if self.save_later:
             count = 0
             s = ''

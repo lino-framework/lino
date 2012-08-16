@@ -631,16 +631,16 @@ class ActionRequest(object):
         self.ah = actor.get_request_handle(self)
         
         if self.actor.parameters and request is not None:
-            param_values = self.ui.parse_params(self.ah,request)
+            rpv = self.ui.parse_params(self.ah,request)
                 
             for k,pf in self.actor.parameters.items():
-                v = param_values.get(k,None)
+                v = rpv.get(k,None)
                 if v is None:
                     v = pf.get_default()
                 self.param_values.define(k,v)
-            if param_values:
+            if rpv:
                 #~ logger.info("20120608 param_values is %s",param_values)
-                for k,v in param_values.items():
+                for k,v in rpv.items():
                     self.param_values.define(k,v)
                 
         

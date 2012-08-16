@@ -2713,7 +2713,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     if (rec) {
       var p = {};
       Ext.apply(p,this.get_base_params());
-      p.$URL_PARAM_REQUESTING_PANEL = this.getId();
+      p.$ext_requests.URL_PARAM_REQUESTING_PANEL = this.getId();
+      p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
       if (rec.phantom) {
         if (this.action_name != 'insert') 
             console.log("Warning: phantom record, but action_name is",this.action_name)
@@ -2783,7 +2784,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             //~ 20110701 panel.form.my_loadRecord(rec);
             this.loadMask.hide();
             Lino.notify(action.result.message);
-            this.set_current_record(action.result.data_record,after);
+            if (action.result.data_record)
+                this.set_current_record(action.result.data_record,after);
+            else
+                console.log("Warning: no data_record in response to FormPanel.PUT")
             //~ this.refresh_with_after(after);
             //~ if (after) after(); else panel.refresh();
           },
@@ -2867,8 +2871,8 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 
 
 Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
-  autoLoad: false,
-  load: function(options) {
+  autoLoad: false
+  ,load: function(options) {
     //~ foo.bar = baz; // 20120213
     if (!options) options = {};
     if (!options.params) options.params = {};
@@ -2879,7 +2883,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     
     if (!ps) {
         //~ this.gridpanel.on('render',this.load())
-      //~ console.log("20120213 GridStore.load() failed to calculate pagesize");
+      //~ console.log("20120814 GridStore.load() failed to calculate pagesize");
       return false;
         //~ params.$URL_PARAM_LIMIT = 1;
         //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
@@ -2908,7 +2912,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
       
     this.grid_panel.add_param_values(options.params);
     //~ Lino.insert_subst_user(options.params);
-    //~ console.log("20120717 GridStore.load()",options.params,this.baseParams);
+    //~ console.log("20120814 GridStore.load()",options.params,this.baseParams);
     //~ if (FOO > 0) {
         //~ foo.bar = baz;
     //~ } else FOO += 1;
@@ -2952,6 +2956,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   config_containing_window : function(wincfg) { 
       if (wincfg.tools != undefined) 
         wincfg.tools = [
+          //~ {handler:this.save_grid_data,
+            //~ qtip:"$_("Save Grid Data")",
+            //~ scope:this, id:"save_data"}, // 20120814
           {handler:this.save_grid_config,
             qtip:"$_("Save Grid Configuration")",
             scope:this, id:"save"}
@@ -2992,29 +2999,45 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ if (this.base_params) Ext.apply(bp,this.base_params);  
     //~ bp['fmt'] = 'json';
     
+    //~ function on_proxy_write( proxy, action,data, response,rs,options) {
+      //~ console.log('20120814 on_proxy_write',action,data,response)
+      //~ this.getStore().doUpdate();
+      //~ this.getStore().loadData(data);
+    //~ }
     //~ function on_proxy_load( proxy, transactionObject, callbackOptions ) {
       //~ console.log('on_proxy_load',transactionObject)
     //~ }
     var proxy = new Ext.data.HttpProxy({ 
-      url: ROOT_URL + '/api' + this.ls_url, 
-      method: "GET"
-      //~ listeners: {load:on_proxy_load} 
+      // 20120814 
+      url: ROOT_URL + '/api' + this.ls_url
+      ,method: "GET"
+      //~ ,url: ROOT_URL + '/restful' + this.ls_url
+      //~ ,restful: true 
+      //~ ,listeners: {load:on_proxy_load} 
+      //~ ,listeners: {write:on_proxy_write} 
     });
     //~ config.store = new Ext.data.JsonStore({ 
     //~ this.store = new Ext.data.ArrayStore({ 
     this.store = new Lino.GridStore({ 
-      listeners: { exception: Lino.on_store_exception }, 
-      grid_panel: this,
-      proxy: proxy, 
-      //~ autoLoad: this.containing_window ? true : false,
-      idIndex: this.pk_index,
-      remoteSort: true, 
-      //~ baseParams: bp, 
-      fields: this.ls_store_fields, 
-      totalProperty: "count", 
-      root: "rows", 
-      //~ id: "id" });
-      idProperty: this.ls_id_property });
+      grid_panel: this
+      ,listeners: { exception: Lino.on_store_exception }
+      ,remoteSort: true
+      ,totalProperty: "count"
+      ,root: "rows"
+      //~ ,id: "id" 
+      ,proxy: proxy
+      //~ autoLoad: this.containing_window ? true : false
+      ,idIndex: this.pk_index
+      //~ ,baseParams: bp
+      ,fields: this.ls_store_fields
+      ,idProperty: this.ls_id_property 
+      // 20120814
+      //~ ,writer : new Ext.data.JsonWriter({
+        //~ writeAllFields: false
+        //~ ,listful: true
+      //~ })
+      //~ ,restful : true
+    });
       
     //~ console.log('config.pk_index',config.pk_index,config.store),
     delete this.ls_store_fields;
@@ -3022,7 +3045,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     var this_ = this;
     //~ var grid = this;
     this.store.on('load', function() {
-        //~ console.log('20120531 GridStore.on(load)',this_.store.reader.arrayData);
+        //~ console.log('20120814 GridStore.on(load)',this_.store);
         //~ var da = this_.store.reader.arrayData.disabled_actions;
         //~ if (da) {
             //~ this.cmenu.cascade(function(item){ 
@@ -3225,7 +3248,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       this.view_is_ready = true;
       this.refresh();
       },this);
-    this.on('afteredit', this.on_afteredit);
+    this.on('afteredit', this.on_afteredit); // 20120814
+    //~ this.on('afteredit', this.new_on_afteredit);
     this.on('beforeedit', this.on_beforeedit);
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
     this.on('cellcontextmenu', Lino.cell_context_menu, this);
@@ -3622,6 +3646,16 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       //~ }
     //~ }
   },
+  save_grid_data : function() {
+      //~ console.log("20120814 save_grid_data");
+      this.getStore().commitChanges();
+  },
+  new_on_afteredit : function(e) {
+      //~ this.getStore().commitChanges();
+      //~ this.getStore().doUpdate();
+      //~ this.getStore().loadData(data);
+      console.log("20120814 new_on_afteredit",e);
+  },
   on_afteredit : function(e) {
     /*
     e.grid - The grid that fired the event
@@ -3698,8 +3732,25 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         params:p,
         waitMsg: 'Saving your data...',
         success: Lino.action_handler( this, function(result) {
-          self.getStore().commitChanges(); // get rid of the red triangles
-          self.getStore().reload();        // reload our datastore.
+          //~ if (result.data_record) {
+          if (result.rows) {
+              //~ self.getStore().loadData(result,true);
+              var r = self.getStore().reader.readRecords(result);
+              if (e.record.phantom) {
+                  //~ console.log("20120816 afteredit.success POST",r);
+                  self.getStore().insert(e.row,r.records);
+              }else{
+                  //~ console.log("20120816 afteredit.success PUT",r);
+                  self.getStore().doUpdate(r.records[0]);
+              }
+              self.getStore().rejectChanges(); /* 
+              get rid of the red triangles without saving the record again
+              */
+              //~ self.getStore().commitChanges(); // get rid of the red triangles
+          } else {
+              self.getStore().commitChanges(); // get rid of the red triangles
+              self.getStore().reload();        // reload our datastore.
+          }
           }),
         scope: this,
         failure: Lino.ajax_error_handler(this)

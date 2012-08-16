@@ -62,6 +62,13 @@ from lino.utils.choicelists import ChoiceList
 #~ add('P',_("Paper"))
 #~ add('E',_("E-mail"))
 
+class InvoiceStates(ChoiceList):
+    label = _("State")
+add = InvoiceStates.add_item
+add('10',_("Booked"),'booked',help_text=_("Ready to sign"))
+add('20',_("Signed"),'signed')
+add('30',_("Sent"),'sent')
+add('40',_("Paid"),'paid')
 
 
 
@@ -220,6 +227,7 @@ The default item_vat settings of sales invoices for this customer.""")
 
 class SalesDocument(
       mixins.UserAuthored,
+      mixins.ProjectRelated,
       #~ journals.Sendable,
       journals.Journaled,
       #~ contacts.ContactDocument,
@@ -281,6 +289,8 @@ The official date of this document.""")
     
     @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
     def total_incl(self,ar=None):
+        if self.total_excl is None:
+            return None
         return self.total_excl + self.total_vat
     
     def update_total(self):
@@ -476,6 +486,10 @@ class Invoice(SalesDocument,ledger.Bookable):
     due_date = models.DateField("Payable until",blank=True,null=True)
     order = models.ForeignKey('sales.Order',blank=True,null=True)
     
+    state = InvoiceStates.field()
+    
+    workflow_state_field = 'state'
+    
     def full_clean(self,*args,**kw):
         if self.due_date is None:
             if self.payment_term is not None:
@@ -485,6 +499,9 @@ class Invoice(SalesDocument,ledger.Bookable):
         #ledger.LedgerDocumentMixin.before_save(self)
         super(Invoice,self).full_clean(*args,**kw)
 
+    #~ def items(self,ar):
+        #~ return ar.spawn(ItemsByInvoice,master_instance=self)
+        
 
     #~ def collect_bookings(self):
         #~ jnl = self.get_journal()
@@ -610,27 +627,60 @@ class PendingOrders(Orders):
         return Order.objects.pending(make_until=make_until)
 
 
+class InvoiceDetail(dd.FormLayout):
+    main = "general ledger"
+    
+    totals = """
+    
+    discount
+    total_excl
+    total_vat
+    total_incl
+    workflow_buttons
+    """
+    
+    general = dd.Panel("""
+    id date customer language user project state
+    due_date order your_ref sales_remark subject 
+    imode shipping_mode payment_term  vat_exempt item_vat
+    ItemsByInvoice:60 totals:20
+    """,label=_("General"))
+    
+    ledger = dd.Panel("""
+    journal year number ledger_remark 
+    ledger.BookingsByBookable
+    """,label=_("Ledger"))
     
 class Invoices(SalesDocuments):
+    #~ parameters = dict(pyear=journals.YearRef())
+    parameters = dict(year=journals.Years.field())
     model = Invoice
     order_by = ["id"]
-    detail_layout = """
-    id date journal year number 
-    customer user
-    ItemsByInvoice    
-    """
-    #~ can_view = perms.is_staff
+    detail_layout = InvoiceDetail()
+    
+    @classmethod
+    def get_request_queryset(cls,ar):
+        qs = super(Invoices,cls).get_request_queryset(ar)
+        if ar.param_values.year:
+            qs = qs.filter(year=ar.param_values.year)
+        return qs
+    
+    
     
 class InvoicesByJournal(Invoices):
     order_by = ["number"]
     master_key = 'journal' # see django issue 10808
     #master = journals.Journal
-    column_names = "number:4 date due_date " \
-                  "customer:10 " \
+    column_names = "number date due_date " \
+                  "customer " \
                   "total_incl order subject:10 sales_remark:10 " \
-                  "ledger_remark:10 " \
-                  "total_excl total_vat user "
+                  "total_excl total_vat user *"
+                  #~ "ledger_remark:10 " \
 
+class InvoicesByProject(Invoices):
+    order_by = ['-date']
+    master_key = 'project' 
+    
 class SignAction(actions.Action):
     label = "Sign"
     def run(self,obj,ar):
@@ -738,6 +788,8 @@ customize_contacts()
 
 
 MODULE_LABEL = _("Sales")
+
+
 
 def setup_main_menu(site,ui,user,m): 
     m = m.add_menu("sales",MODULE_LABEL)

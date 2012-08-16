@@ -61,7 +61,7 @@ from django.utils import simplejson as json
 
 from lino.core import actors
 from lino.core import actions
-from lino.core.modeltools import obj2str
+from lino.core.modeltools import obj2str, Model
 
 from lino.core.fields import FakeField
 from lino.ui import base
@@ -173,33 +173,38 @@ class TableRequest(actions.ActionRequest):
         #~ logger.info("20120723 %s.parse_req()",self.actor)
         #~ rh = self.ah
         master = kw.get('master',self.actor.master)
-        if master is ContentType or master is models.Model:
-            mt = rqdata.get(ext_requests.URL_PARAM_MASTER_TYPE)
-            try:
-                master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
-            except ContentType.DoesNotExist,e:
-                pass
-                #~ master is None
-                #~ raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
-                
-            #~ print kw
-        if master is not None and not kw.has_key('master_instance'):
-            pk = rqdata.get(ext_requests.URL_PARAM_MASTER_PK,None)
-            #~ print '20100406a', self.actor,URL_PARAM_MASTER_PK,"=",pk
-            #~ if pk in ('', '-99999'):
-            if pk == '':
-                pk = None
-            if pk is None:
-                kw['master_instance'] = None
-            else:
+        if master is not None:
+            """
+            If `master` is `ContentType` or some abstract model, then 
+            """
+            #~ if master is ContentType or master is models.Model:
+            if master is ContentType or master._meta.abstract:
+                mt = rqdata.get(ext_requests.URL_PARAM_MASTER_TYPE)
                 try:
-                    kw['master_instance'] = master.objects.get(pk=pk)
-                except ValueError,e:
-                    raise Exception("Invalid primary key %r for %s",pk,master.__name__)
-                except master.DoesNotExist,e:
-                    # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
-                    raise Exception("There's no %s with primary key %r" % (master.__name__,pk))
-            #~ print '20100212', self #, kw['master_instance']
+                    master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
+                except ContentType.DoesNotExist,e:
+                    pass
+                    #~ master is None
+                    #~ raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
+                    
+                #~ print kw
+            if not kw.has_key('master_instance'):
+                pk = rqdata.get(ext_requests.URL_PARAM_MASTER_PK,None)
+                #~ print '20100406a', self.actor,URL_PARAM_MASTER_PK,"=",pk
+                #~ if pk in ('', '-99999'):
+                if pk == '':
+                    pk = None
+                if pk is None:
+                    kw['master_instance'] = None
+                else:
+                    try:
+                        kw['master_instance'] = master.objects.get(pk=pk)
+                    except ValueError,e:
+                        raise Exception("Invalid primary key %r for %s",pk,master.__name__)
+                    except master.DoesNotExist,e:
+                        # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
+                        raise Exception("There's no %s with primary key %r" % (master.__name__,pk))
+                #~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.actor,kw
         
         if settings.LINO.use_filterRow:
@@ -331,7 +336,7 @@ class TableRequest(actions.ActionRequest):
         
         """
         20120519 : outbox.MyOutbox had no phantom record when called from menu.
-        When called by permalink it had. This was get_create_kw was called before 
+        When called by permalink it had. Because get_create_kw was called before 
         Actor.setup_request() which sets the master_instance.
         """
         self.actor.setup_request(self)

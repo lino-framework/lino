@@ -41,6 +41,7 @@ from lino.utils import dblogger
 
 from lino.core import actions
 from lino.core import actors
+from lino.core import table
 from lino.core.modeltools import obj2str, obj2unicode
 
 from lino.ui import requests as ext_requests
@@ -61,6 +62,20 @@ def requested_report(app_label,actor):
     if issubclass(cl,dd.Model):
         return cl._lino_default_table
     return cl
+    
+def action_request(app_label,actor,request,rqdata):
+    rpt = requested_report(app_label,actor)
+    action_name = rqdata.get(
+        ext_requests.URL_PARAM_ACTION_NAME,
+        rpt.default_list_action_name)
+    a = rpt.get_url_action(action_name)
+    if a is None:
+        raise http.Http404("%s has no url action %r" % (rpt,action_name))
+    ar = rpt.request(settings.LINO.ui,request,a)
+    ar.renderer = settings.LINO.ui.ext_renderer
+    return ar
+  
+    
         
 def json_response_kw(**kw):
     return json_response(kw)
@@ -231,7 +246,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     #~ self = settings.LINO.ui
     request = ar.request
     rh = ar.ah
-    #~ logger.info('20111217 form2obj_and_save %r', data)
+    #~ logger.info('20120814 form2obj_and_save %r', data)
     #~ print 'form2obj_and_save %r' % data
     
     #~ logger.info('20120228 before store.form2obj , elem is %s' % obj2str(elem))
@@ -291,9 +306,6 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             kw.update(message=_("%s has been saved.") % obj2unicode(elem))
         
     kw = elem.after_ui_save(ar,**kw)
-    #~ m = getattr(elem,"after_ui_save",None)
-    #~ if m is not None:
-        #~ kw = m(ar,**kw)
         
     if restful:
         # restful mode (used only for Ext.ensible) needs list_fields, not detail_fields
@@ -301,17 +313,15 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     elif file_upload:
         kw.update(record_id=elem.pk)
         return json_response(kw,content_type='text/html')
-    else:
-        kw.update(data_record=elem2rec_detailed(ar,elem))
+    else: # 20120814 
+        logger.info("20120816 %r", ar.action)
+        if isinstance(ar.action,actions.GridEdit):
+            kw.update(rows=[rh.store.row2list(ar,elem)])
+        else:
+            kw.update(data_record=elem2rec_detailed(ar,elem))
     #~ logger.info("20120208 form2obj_and_save --> %r",kw)
     return json_response(kw)
             
-        
-    #~ return settings.LINO.ui.success_response(
-        #~ _("%s has been saved.") % obj2unicode(elem),
-        #~ rows=[elem])
-    
-        
 
 
 class Index(View):
@@ -380,9 +390,8 @@ class Choices(View):
         If `fldname` is not specified, returns the choices for the `jumpto` widget.
         """
         rpt = requested_report(app_label,rptname)
-        #~ rpt = actors.get_actor2(app_label,rptname)
-        ar = rpt.request(settings.LINO.ui,request,rpt.default_action)
         if fldname is None:
+            ar = rpt.request(settings.LINO.ui,request,rpt.default_action)
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
             #~ ar = table.TableRequest(self,rpt,request,rpt.default_action)
@@ -408,7 +417,7 @@ class Choices(View):
             chooser = choosers.get_for_field(field)
             if chooser:
                 #~ logger.info('20120710 choices_view() : has chooser')
-                qs = chooser.get_request_choices(ar,rpt)
+                qs = chooser.get_request_choices(request,rpt)
                 #~ qs = list(chooser.get_request_choices(ar,rpt))
                 #~ logger.info("20120213 %s",qs)
                 #~ if qs is None:
@@ -456,9 +465,9 @@ class Choices(View):
                 raise http.Http404("No choices for %s" % fldname)
                 
                 
-        #~ quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
-        #~ if quick_search is not None:
-            #~ qs = table.add_quick_search_filter(qs,quick_search)
+        quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
+        if quick_search is not None:
+            qs = table.add_quick_search_filter(qs,quick_search)
             
         count = len(qs)
             
@@ -514,18 +523,17 @@ class Restful(View):
         ar = rpt.request(ui,request,a)
         return delete_element(ar,elem)
       
-    #~ def restful_view(self,request,app_label=None,actor=None,pk=None):
     def get(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
         rpt = requested_report(app_label,actor)
         a = rpt.default_action
-        if pk is None:
-            elem = None
-        else:
-            elem = rpt.get_row_by_pk(pk)
+        assert pk is None, 20120814
+        #~ if pk is None:
+            #~ elem = None
+        #~ else:
+            #~ elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(ui,request,a)
         rh = ar.ah
-            
         rows = [ 
           rh.store.row2dict(ar,row,rh.store.list_fields) 
             for row in ar.sliced_data_iterator ]
@@ -660,15 +668,26 @@ class ApiElement(View):
                 
         
     def put(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
-        elem = rpt.get_row_by_pk(pk)
-        if elem is None:
-            raise http.Http404("%s has no row with prmiary key %r" % (rpt,pk))
+      
         data = http.QueryDict(request.raw_post_data)
-        a = rpt.get_url_action(rpt.default_list_action_name)
-        ar = rpt.request(ui,request,a)
-        ar.renderer = ui.ext_renderer
+        ar = action_request(app_label,actor,request,data)
+      
+        #~ ui = settings.LINO.ui
+        #~ rpt = requested_report(app_label,actor)
+        #~ # data = http.QueryDict(request.raw_post_data).get('rows')
+        #~ # data = json.loads(data)
+        #~ a = rpt.get_url_action(rpt.default_list_action_name)
+        #~ ar = rpt.request(ui,request,a)
+        
+        #~ ar.renderer = ui.ext_renderer
+        #~ print 20120814, data
+        #~ assert isinstance(data,dict)
+        #~ data = data[0]
+        
+        elem = ar.actor.get_row_by_pk(pk)
+        if elem is None:
+            raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
+            
         return form2obj_and_save(ar,data,elem,False,False) # force_update=True)
             
     def delete(self,request,app_label=None,actor=None,pk=None):
@@ -681,23 +700,22 @@ class ApiElement(View):
         return delete_element(ar,elem)
         
         
-  
 class ApiList(View):
 
     def post(self,request,app_label=None,actor=None):
-        ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        #~ ui = settings.LINO.ui
+        #~ rpt = requested_report(app_label,actor)
         
-        #~ action_name = request.GET.get(
-        action_name = request.POST.get(
-            ext_requests.URL_PARAM_ACTION_NAME,
-            rpt.default_list_action_name)
-        a = rpt.get_url_action(action_name)
-        if a is None:
-            raise http.Http404("%s has no url action %r" % (rpt,action_name))
-            
-        ar = rpt.request(ui,request,a)
-        ar.renderer = ui.ext_renderer
+        #~ action_name = request.POST.get(
+            #~ ext_requests.URL_PARAM_ACTION_NAME,
+            #~ rpt.default_list_action_name)
+        #~ a = rpt.get_url_action(action_name)
+        #~ if a is None:
+            #~ raise http.Http404("%s has no url action %r" % (rpt,action_name))
+        #~ ar = rpt.request(ui,request,a)
+        
+        ar = action_request(app_label,actor,request,request.POST)
+        #~ ar.renderer = ui.ext_renderer
         rh = ar.ah
         
         elem = ar.create_instance()
@@ -718,18 +736,20 @@ class ApiList(View):
         
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
-        ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        #~ ui = settings.LINO.ui
+        #~ rpt = requested_report(app_label,actor)
         
-        action_name = request.GET.get(
-            ext_requests.URL_PARAM_ACTION_NAME,
-            rpt.default_list_action_name)
-        a = rpt.get_url_action(action_name)
-        if a is None:
-            raise http.Http404("%s has no url action %r" % (rpt,action_name))
+        #~ action_name = request.GET.get(
+            #~ ext_requests.URL_PARAM_ACTION_NAME,
+            #~ rpt.default_list_action_name)
+        #~ a = rpt.get_url_action(action_name)
+        #~ if a is None:
+            #~ raise http.Http404("%s has no url action %r" % (rpt,action_name))
             
-        ar = rpt.request(ui,request,a)
-        ar.renderer = ui.ext_renderer
+        #~ ar = rpt.request(ui,request,a)
+        
+        ar = action_request(app_label,actor,request,request.GET)
+        #~ ar.renderer = ui.ext_renderer
         rh = ar.ah
         
         #~ print 20120630, 'api_list_view'
@@ -738,7 +758,7 @@ class ApiList(View):
             ar.action.default_format)
       
         if fmt == ext_requests.URL_FORMAT_JSON:
-            ar.renderer = ui.ext_renderer
+            #~ ar.renderer = ui.ext_renderer
             rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
             #~ return json_response_kw(msg="20120124")
             #~ total_count = len(ar.data_iterator)
@@ -751,13 +771,14 @@ class ApiList(View):
                 total_count += 1
             return json_response_kw(count=total_count,
               rows=rows,
+              success=True,
               title=unicode(ar.get_title()),
               #~ disabled_actions=rpt.disabled_actions(ar,None),
-              gc_choices=[gc.data for gc in rpt.grid_configs])
+              gc_choices=[gc.data for gc in ar.actor.grid_configs])
                 
         if fmt == ext_requests.URL_FORMAT_HTML:
-            ar.renderer = ui.ext_renderer
-            after_show = ar.get_status(ui)
+            #~ ar.renderer = ui.ext_renderer
+            after_show = ar.get_status(ar.ui)
             if isinstance(ar.action,actions.InsertRow):
                 elem = ar.create_instance()
                 #~ print 20120630
@@ -766,10 +787,11 @@ class ApiList(View):
                 after_show.update(data_record=rec)
 
             kw = dict(on_ready=
-                ui.ext_renderer.action_call(ar.request,ar.action,after_show))
+                ar.renderer.action_call(ar.request,ar.action,after_show))
+                #~ ui.ext_renderer.action_call(ar.request,ar.action,after_show))
             #~ print '20110714 on_ready', params
             kw.update(title=ar.get_title())
-            return http.HttpResponse(ui.html_page(request,**kw))
+            return http.HttpResponse(ar.ui.html_page(request,**kw))
         
         if fmt == 'csv':
             #~ response = HttpResponse(mimetype='text/csv')
@@ -816,10 +838,10 @@ class ApiList(View):
             if not tplfile:
                 raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
                 
-            target_parts = ['cache', 'appypdf', str(rpt) + '.' + fmt]
+            target_parts = ['cache', 'appypdf', str(ar.actor) + '.' + fmt]
             target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
-            target_url = ui.media_url(*target_parts)
-            ar.renderer = ui.ext_renderer # 20120624
+            target_url = ar.ui.media_url(*target_parts)
+            ar.renderer = ar.ui.ext_renderer # 20120624
             """
             [NOTE] :doc:`/blog/2012/0211`
             
@@ -848,16 +870,16 @@ class ApiList(View):
         if fmt == ext_requests.URL_FORMAT_PRINTER:
             if ar.get_total_count() > MAX_ROW_COUNT:
                 raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-            ar.renderer = ui.ext_renderer
+            #~ ar.renderer = ui.ext_renderer
             response = http.HttpResponse(content_type='text/html;charset="utf-8"')
             doc = xghtml.Document(force_unicode(ar.get_title()))
             doc.body.append(xghtml.E.h1(doc.title))
             t = doc.add_table()
-            ui.ar2html(ar,t)
+            ar.ui.ar2html(ar,t)
             doc.write(response,encoding='utf-8')
             return response
             
-        raise http.Http404("Format %r not supported for GET on %s" % (fmt,rpt))
+        raise http.Http404("Format %r not supported for GET on %s" % (fmt,ar.actor))
 
       
 class GridConfig(View):

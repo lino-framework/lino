@@ -90,3 +90,5 @@ def site_setup(site):
     site.modules.contacts.Companies.add_detail_tab("tickets","tickets.TicketsByPartner")
     site.modules.contacts.Persons.add_detail_tab("tickets","tickets.TicketsByPartner")
     
+    site.modules.tickets.Projects.add_detail_tab("sales","sales.InvoicesByProject")
+

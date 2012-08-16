@@ -40,6 +40,11 @@ class Account(dd.Model):
         #~ return self.id
         #return super(Account,self).__unicode__()
 
+class Accounts(dd.Table):
+    model = Account
+    #column_names = "id name:50"
+
+    
 
 #~ class LedgerJournal(journals.Journal):
   
@@ -87,7 +92,7 @@ class Bookable(dd.Model):
         #self.save()
         
     def collect_bookings(self):
-        pass
+        return []
         
     def create_booking(self,**kw):
         kw['journal'] = self.journal
@@ -129,7 +134,8 @@ class Bookable(dd.Model):
 class Booking(dd.Model):
     journal = journals.JournalRef()
     number = journals.DocumentRef()
-    year = journals.YearRef()
+    #~ year = journals.YearRef()
+    year = journals.Years.field()
     #~ document = models.ForeignKey(LedgerDocument)
     pos = models.IntegerField("Position",blank=True,null=True)
     date = models.DateField()
@@ -146,15 +152,21 @@ class Booking(dd.Model):
     document.return_type = models.CharField(max_length=30)
     
 
-##
-## report definitions
-##        
-        
+class Bookings(dd.Table): 
+    model = Booking
+    
+class BookingsByBookable(Bookings):
+    master = Bookable
+    column_names = 'pos date account partner'
+    
+    @classmethod
+    def get_filter_kw(self,master_instance,**kw):
+        kw['journal'] = master_instance.journal
+        kw['year'] = master_instance.year
+        kw['number'] = master_instance.number
+        return kw
 
-class Accounts(dd.Table):
-    model = Account
-    #column_names = "id name:50"
-
+      
     
 #~ class LedgerJournals(journals.Journals):
     #~ model = LedgerJournal

@@ -819,7 +819,7 @@ class Table(AbstractTable):
     @classmethod
     def get_request_queryset(self,rr):
         """
-        Build a Queryset for the specified request on this report.
+        Build a Queryset for the specified request on this table.
         Upon first call, this will also lazily install Table.queryset 
         which will be reused on every subsequent call.
         """

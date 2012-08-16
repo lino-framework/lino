@@ -1,0 +1,10 @@
+20120816
+========
+
+A seemingly simple but really complicated change is terminated: 
+GridPanel no longer issues a full refresh in afteredit, and the 
+cell cursor remains at its place.
+
+Continued on `lino.apps.presto` (tim2lino, sales, journals, ledger ...)
+
+Checkin.

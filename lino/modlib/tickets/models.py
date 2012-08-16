@@ -263,6 +263,7 @@ class Tickets(dd.Table):
     
 class UnassignedTickets(Tickets):
     column_names = "summary project partner *"
+    
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = "summary user partner *"

@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -27,16 +27,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-#import logging ; logger = logging.getLogger('lino.apps.journals')
+import datetime
 
 from django.db import models
-import lino
+from django.utils.translation import ugettext_lazy as _
+
 from lino import dd
 from lino import mixins
 from lino.utils.babel import babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
 #~ from lino import mixins
 from lino.utils import mti
+from lino.utils.choicelists import ChoiceList
 
 
 class DocumentError(Exception):
@@ -155,8 +157,30 @@ def JournalRef(**kw):
 def DocumentRef(**kw):
     return models.IntegerField(**kw)
     
-def YearRef(**kw):
-    return models.IntegerField(**kw)
+
+class Years(ChoiceList):
+    label = _("Year")
+    
+    @classmethod
+    def from_int(cls,year):
+        return cls.get_by_value(str(year)[2:])
+
+for y in range(2000,datetime.date.today().year+1):
+#~ y = 2000
+#~ while y < datetime.date.today().year:
+    s = str(y)
+    Years.add_item(s[2:],s)
+    #~ y += 1
+
+
+    
+#~ def default_year():
+    #~ return datetime.date.today().year
+    
+#~ def YearRef(**kw):
+    #~ kw.setdefault('default',default_year)
+    #~ return models.IntegerField(**kw)
+
 
 
 class Journaled(mti.MultiTableBase):
@@ -174,7 +198,8 @@ class Journaled(mti.MultiTableBase):
         unique_together = ['journal','year','number']
         
     journal = JournalRef()
-    year = YearRef()
+    #~ year = YearRef()
+    year = Years.field()
     number = DocumentRef(blank=True)
     
     @classmethod

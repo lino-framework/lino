@@ -42,7 +42,7 @@ from django.template.loader import get_template
 from django.template import RequestContext
 
 from django.utils.translation import ugettext as _
-from django.utils import simplejson as json
+#~ from django.utils import simplejson as json
 from django.utils import translation
 
 from django.contrib.contenttypes.models import ContentType
