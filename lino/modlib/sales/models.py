@@ -335,6 +335,10 @@ class Order(SalesDocument):
     given set of "products".
     """
     
+    class Meta:
+        verbose_name = _("Order")
+        verbose_name_plural = _("Orders")
+  
     #~ item_class = OrderItem
   
     CYCLE_CHOICES = (
@@ -474,6 +478,10 @@ class Order(SalesDocument):
         
     
 class Invoice(SalesDocument,ledger.Bookable):
+  
+    class Meta:
+        verbose_name = _("Invoice")
+        verbose_name_plural = _("Invoices")
   
     #~ # implements Booked:
     #~ value_date = models.DateField(auto_now=True)
@@ -653,9 +661,10 @@ class InvoiceDetail(dd.FormLayout):
     
 class Invoices(SalesDocuments):
     #~ parameters = dict(pyear=journals.YearRef())
-    parameters = dict(year=journals.Years.field())
+    parameters = dict(year=journals.Years.field(),journal=journals.JournalRef())
     model = Invoice
     order_by = ["id"]
+    column_names = "id date customer total_incl user *" 
     detail_layout = InvoiceDetail()
     
     @classmethod
@@ -663,6 +672,8 @@ class Invoices(SalesDocuments):
         qs = super(Invoices,cls).get_request_queryset(ar)
         if ar.param_values.year:
             qs = qs.filter(year=ar.param_values.year)
+        if ar.param_values.journal:
+            qs = qs.filter(journal=ar.param_values.journal)
         return qs
     
     

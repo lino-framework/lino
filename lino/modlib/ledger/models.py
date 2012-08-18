@@ -45,17 +45,6 @@ class Accounts(dd.Table):
     #column_names = "id name:50"
 
     
-
-#~ class LedgerJournal(journals.Journal):
-  
-    #~ def __init__(self,docclass,id,account_id=None,**kw):
-        #~ assert type(account_id) == type('')
-        #~ self.account_id = account_id
-        #~ journals.Journal.__init__(self,docclass,id,**kw)
-        
-    #~ account = models.ForeignKey(Account)
-    
-    
 class Bookable(dd.Model):
     """
     A model that subclasses Bookable must also 
@@ -109,53 +98,51 @@ class Bookable(dd.Model):
         return b
         
         
-
-#~ ACCOUNTS = dict(
-  #~ #providers='4400',
-  #~ #customers='4000',
-  #~ sales_base='7000',
-  #~ sales_vat='4510',
-#~ )
-
-#~ def set_accounts(**kw):
-    #~ for k,v in kw.items():
-        #~ if not ACCOUNTS.has_key(k):
-            #~ raise RuntimeError("invalid account name %s" % k)
-        #~ ACCOUNTS[k] = v
-
-#~ def get_account(name):
-    #~ x = ACCOUNTS[name]
-    #~ a = Account.objects.get(pk=x)
-    #~ if a is None:
-        #~ raise ConfigurationError("No account %s defined" % x)
-    #~ return a
-    
         
-class Booking(dd.Model):
+
+class Transaction(mixins.Controllable):
+  
+    #~ class Meta:
+        #~ abstract = True
+        
+    controller_is_optional = False
+    
     journal = journals.JournalRef()
-    number = journals.DocumentRef()
     #~ year = journals.YearRef()
     year = journals.Years.field()
-    #~ document = models.ForeignKey(LedgerDocument)
-    pos = models.IntegerField("Position",blank=True,null=True)
+    number = journals.DocumentRef()
     date = models.DateField()
+    
+    def __unicode__(self):
+        return "%s-%s/%s" % (self.journal,self.year,self.number)
+    
+class Movement(mixins.Sequenced):
+    transaction = models.ForeignKey(Transaction)
+    #~ pos = models.IntegerField("Position",blank=True,null=True)
     account = models.ForeignKey(Account)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     debit = dd.PriceField(default=0)
     credit = dd.PriceField(default=0)
     
-    def __unicode__(self):
-        return u"%s.%d" % (self.document(),self.pos)
+    def get_siblings(self):
+        return self.transaction.movement_set.order_by('seqno')
+        #~ return self.__class__.objects.filter().order_by('seqno')
         
-    def document(self,request):
-        return "%s-%s/%s" % (self.journal,self.year,self.number)
-    document.return_type = models.CharField(max_length=30)
+    def __unicode__(self):
+        return u"%s.%d" % (unicode(self.transaction),self.pos)
+        
+    #~ def document(self,request):
+        #~ return "%s-%s/%s" % (self.journal,self.year,self.number)
+    #~ document.return_type = models.CharField(max_length=30)
     
 
-class Bookings(dd.Table): 
-    model = Booking
+class Movements(dd.Table): 
+    model = Movement
     
-class BookingsByBookable(Bookings):
+class MovementsByTransaction(Movements):
+    master_key = 'transaction'
+    
+class BookingsByBookable(Movements):
     master = Bookable
     column_names = 'pos date account partner'
     

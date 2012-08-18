@@ -186,10 +186,6 @@ for y in range(2000,datetime.date.today().year+1):
 class Journaled(mti.MultiTableBase):
     """
     A Journaled is a numbered document in a Journal.
-    A model that subclasses Journaled must provide 2 fields::
-    
-      journal = journals.JournalRef()
-      number = journals.DocumentRef()
       
     """
     

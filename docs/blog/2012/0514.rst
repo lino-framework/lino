@@ -54,15 +54,23 @@ when being used on a MySQL database::
       raise ValidationError(errors)
   ValidationError: {'__all__': [u'City with this Country, Name and Zip code already exists.']}
 
-While working on this I discovered that 
+Copyright on `sihtnumbrid.csv`
+------------------------------
+
+Oops: while working on the above problem I discovered that 
 "3.1.9 Kliendil on keelatud sihtnumbrite andmebaasi 
 publitseerimine ilma POSTI eelneva nõusolekuta."
-Oops. Don't remember that this was there at the time I 
-wrote :mod:`lino.modlib.countries.fixtures.ee`,
-but anyway I decided to remove the file `sihtnumbrid.csv`.
+
+Don't remember that this was there at the time I 
+wrote :mod:`lino.modlib.countries.fixtures.ee`...
+but of course, this means that I cannot distribute 
+the file `sihtnumbrid.csv` together with Lino,
+and therefore we must remove it from the repository.
+
 So the :mod:`lino.modlib.countries.fixtures.ee` 
-fixture is no longer available until we find some other 
+fixture is broken until we find some other 
 solution.
+
 In fact we need a GPL-licensed version of something like 
 http://www.addressdoctor.com/. 
 IOW we need the :doc:`/topics/gpdn`.

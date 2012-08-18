@@ -65,8 +65,6 @@ class Controllable(dd.Model):
     Some fields are read-only on an automatic Task because 
     it makes no sense to modify them.
     
-    
-    
     """
     # Translators: will also be concatenated with '(type)' '(object)'
     owner_label = _('Controlled by')
@@ -75,7 +73,11 @@ class Controllable(dd.Model):
     `owned_type`, `owned_id` and `owned`
     are derived from this attribute which 
     may be overridden by subclasses.
+    """
     
+    controller_is_optional = True
+    """
+    Whether the controller is optional (may be NULL)
     """
     
     class Meta:
@@ -83,12 +85,12 @@ class Controllable(dd.Model):
         
     owner_type = models.ForeignKey(ContentType,
         editable=True,
-        blank=True,null=True,
+        blank=controller_is_optional,null=controller_is_optional,
         verbose_name=string_concat(owner_label,' ',_('(type)')))
     owner_id = dd.GenericForeignKeyIdField(
         owner_type,
         editable=True,
-        blank=True,null=True,
+        blank=controller_is_optional,null=controller_is_optional,
         verbose_name=string_concat(owner_label,' ',_('(object)')))
     owner = dd.GenericForeignKey(
         'owner_type', 'owner_id',
@@ -106,9 +108,6 @@ class Controllable(dd.Model):
             return owner_type.model_class().objects.all()
         return []
       
-    #~ owner_id_choices.instance_values = True
-    #~ owner_id_choices = classmethod(owner_id_choices)
-        
     def get_owner_id_display(self,value):
         if self.owner_type:
             try:
@@ -129,22 +128,6 @@ class Controllable(dd.Model):
         #~ if m:
             #~ m(controllable)
 
-    #~ def data_control(self):
-        #~ "Used by :class:`lino.models.DataControlListing`."
-        #~ msgs = []
-        #~ ct = ContentType.objects.get_for_id()
-        #~ ...
-        #~ msgs.append(unicode(e))
-        #~ return msgs
-        
-    #~ def is_user_modified(self):
-        #~ """
-        #~ When a controlled `cal.Event` has been manually modified 
-        #~ by the user, then the controller is no longer
-        #~ """
-        #~ raise NotImplementedError
-        #~ return False
-
     def save(self,*args,**kw):
         if self.owner: #  and not self.is_user_modified():
             self.owner.update_owned_instance(self)
@@ -161,7 +144,6 @@ class Controllable(dd.Model):
 
 
 
-#~ class AutoUser(dd.Model):
 class UserAuthored(dd.Model):
     """
     Mixin for models that have a `user` field which is automatically 

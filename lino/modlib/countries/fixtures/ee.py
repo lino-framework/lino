@@ -1,4 +1,4 @@
-## Copyright 2010-2011 Luc Saffre 
+## Copyright 2010-2012 Luc Saffre 
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,8 +13,15 @@
 
 
 """
-Imports file `sihtnumbrid.csv` which I obtained from
-http://www.post.ee
+Imports file `sihtnumbrid.csv` which you can obtain from
+`Estonian Post office <http://www.post.ee>`_.
+
+A copy of this file was accidentally published here 
+between June 2010 and May 2012, until we realized that 
+this wasn't allowed due to copyright restrictions.
+
+You can still use this fixture if you download the file yourself
+from http://www.post.ee/ariklient_sihtnumbrid_allalaadimiseks
 
 """
 

@@ -1,0 +1,9 @@
+20120818
+========
+
+Continued on `lino.apps.presto`: mainly sales, journals and ledger.
+
+Edited :doc:`/blog/2012/0514` so that the last paragraph becomes 
+understandable by somebody else.
+
+Checkin.
