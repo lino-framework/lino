@@ -23,6 +23,8 @@ See lino.testapps.journals for more documentation.
 
 """
 
+raise Exception("merged into lino.modlib.ledger")
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -45,142 +47,6 @@ class DocumentError(Exception):
     pass
   
 
-DOCTYPES = []
-DOCTYPE_CHOICES = []
-
-def register_doctype(docclass,rptclass=None):
-    #assert not docclass in DOCTYPE_CLASSES
-    #~ i = 0
-    #~ for cl in DOCTYPE_CLASSES:
-        #~ if cl == docclass:
-            #~ return i
-        #~ i += 1
-    type_id = len(DOCTYPE_CHOICES)
-    DOCTYPE_CHOICES.append((type_id,docclass.__name__))
-    DOCTYPES.append((docclass,rptclass))
-    docclass.doctype = type_id
-    return type_id
-
-def get_doctype(cl):
-    i = 0
-    for c,r in DOCTYPES:
-        if c is cl:
-            return i
-        i += 1
-    return None
-    
-
-#~ class Journal(dd.Model):
-class Journal(mixins.Sequenced):
-  
-    id = models.CharField(max_length=4,primary_key=True)
-    name = models.CharField(max_length=100)
-    doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
-    force_sequence = models.BooleanField(default=False)
-    account = models.ForeignKey('ledger.Account',blank=True,null=True)
-    #~ account = models.CharField(max_length=6,blank=True)
-    #~ pos = models.IntegerField()
-    #~ printed_name = models.CharField(max_length=100,blank=True)
-    printed_name = BabelCharField(max_length=100,blank=True)
-    
-    def get_doc_model(self):
-        """The model of documents in this Journal."""
-        #print self,DOCTYPE_CLASSES, self.doctype
-        return DOCTYPES[self.doctype][0]
-
-    def get_doc_report(self):
-        return DOCTYPES[self.doctype][1]
-
-    def get_document(self,year=None,number=None,**kw):
-        cl = self.get_doc_model()
-        kw.update(journal=self,year=year,number=number) 
-        return cl.objects.get(**kw)
-        
-    def create_document(self,**kw):
-        """Create an instance of this Journal's document model (:meth:`get_doc_model`)."""
-        cl = self.get_doc_model()
-        #~ kw.update(journal=self) # wouldn't work. See Django ticket #10808
-        try:
-            doc = cl(**kw)
-        except TypeError,e:
-            #~ print 20100804, cl
-            raise
-        doc.journal = self
-        #~ doc.full_clean()
-        #~ doc.save()
-        return doc
-        
-    def get_next_number(self):
-        self.save()
-        cl = self.get_doc_model()
-        d = cl.objects.filter(journal=self).aggregate(
-            models.Max('number'))
-        number = d['number__max']
-        if number is None:
-            return 1
-        return number + 1
-        
-    def __unicode__(self):
-        return self.id
-        
-    def save(self,*args,**kw):
-        #~ self.before_save()
-        r = super(Journal,self).save(*args,**kw)
-        self.after_save()
-        return r
-        
-    def after_save(self):
-        pass
-        
-    def full_clean(self,*args,**kw):
-        if not self.name:
-            self.name = self.id
-        #~ if not self.pos:
-            #~ self.pos = self.__class__.objects.all().count() + 1
-        super(Journal,self).full_clean(*args,**kw)
-      
-        
-    def pre_delete_document(self,doc):
-        #print "pre_delete_document", doc.number, self.get_next_number()
-        if self.force_sequence:
-            if doc.number + 1 != self.get_next_number():
-                raise DocumentError(
-                  "%s is not the last document in journal" % unicode(doc)
-                  )
-
-                  
-def JournalRef(**kw):
-    #~ kw.update(blank=True,null=True) # Django Ticket #12708
-    kw.update(related_name="%(app_label)s_%(class)s_set_by_journal")
-    return models.ForeignKey(Journal,**kw)
-
-def DocumentRef(**kw):
-    return models.IntegerField(**kw)
-    
-
-class Years(ChoiceList):
-    label = _("Year")
-    
-    @classmethod
-    def from_int(cls,year):
-        return cls.get_by_value(str(year)[2:])
-
-for y in range(2000,datetime.date.today().year+1):
-#~ y = 2000
-#~ while y < datetime.date.today().year:
-    s = str(y)
-    Years.add_item(s[2:],s)
-    #~ y += 1
-
-
-    
-#~ def default_year():
-    #~ return datetime.date.today().year
-    
-#~ def YearRef(**kw):
-    #~ kw.setdefault('default',default_year)
-    #~ return models.IntegerField(**kw)
-
 
 
 class Journaled(mti.MultiTableBase):
@@ -198,23 +64,6 @@ class Journaled(mti.MultiTableBase):
     year = Years.field()
     number = DocumentRef(blank=True)
     
-    @classmethod
-    def create_journal(cls,id,**kw):
-        doctype = get_doctype(cls)
-        jnl = Journal(doctype=doctype,id=id,**kw)
-        #jcl = self.journal._meta.rel.to.__class__
-        #print jcl, " == ", cls.journal_class
-        #jnl = cls.journal_class(cls,*args,**kw)
-        #~ jnl.full_clean()
-        #~ jnl.save()
-        return jnl
-        
-    @classmethod
-    def get_journals(cls):
-        doctype = get_doctype(cls)
-        return Journal.objects.filter(doctype=doctype).order_by('seqno')
-            
-        
     def __unicode__(self):
         #~ if self.id is None:
             #~ return "(Unsaved %s document (journal=%r,number=%r))" % (
@@ -222,13 +71,6 @@ class Journaled(mti.MultiTableBase):
             #~ return "%s#%d (%d)" % (self.journal.id,self.number, self.id)
         return "%s %s/%s (%d)" % (self.journal,self.year,self.number,self.id)
         #~ return babelattr(self.journal,'printed_name') % self.number
-        
-    def full_clean(self,*args,**kw):
-        #~ logger.info('Journaled.full_clean')
-        if self.number is None:
-            self.number = self.journal.get_next_number()
-        #~ logger.info('Journaled.full_clean : number is %r',self.number)
-        super(Journaled,self).full_clean(*args,**kw)
         
     #~ def before_save(self):
         #~ pass
@@ -243,15 +85,6 @@ class Journaled(mti.MultiTableBase):
     def after_save(self):
         #logger.info("Saved document %s",self)
         pass
-        
-    def delete(self):
-        #jnl = self.get_journal()
-        self.journal.pre_delete_document(self)
-        return super(AbstractDocument,self).delete()
-        
-    def get_child_model(self):
-        ## overrides Typed
-        return DOCTYPES[self.journal.doctype][0]
         
         
 class ModifiedMixin(dd.Model):

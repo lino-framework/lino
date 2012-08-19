@@ -40,6 +40,7 @@ from lino.utils import mti
 from lino.utils import dumpy
 #~ from lino import diag
 
+from lino.modlib.ledger.utils import AccountTypes
 from lino.modlib.contacts.utils import name2kw, street2kw
 from lino.utils import join_words
 #~ from lino.modlib.contacts.models import name2kw, street2kw, join_words
@@ -66,7 +67,8 @@ users = dd.resolve_app('users')
 tickets = dd.resolve_app('tickets')
 households = dd.resolve_app('households')
 sales = dd.resolve_app('sales')
-journals = dd.resolve_app('journals')
+#~ journals = dd.resolve_app('journals')
+ledger = dd.resolve_app('ledger')
 products = dd.resolve_app('products')
 contacts = dd.resolve_app('contacts')
 
@@ -137,11 +139,10 @@ def par_pk(pk):
         return int(pk)
         
 def row2jnl(row):
-    year = journals.Years.from_int(2000 + int(row.iddoc[:2]))
-    
+    year = ledger.Years.from_int(2000 + int(row.iddoc[:2]))
     num = int(row.iddoc[2:])
     if row.idjnl == 'VKR':
-        jnl = journals.Journal.objects.get(id=row.idjnl)
+        jnl = ledger.Journal.objects.get(id=row.idjnl.strip())
         #~ cl = sales.Invoice
         return jnl,year,num
     return None,None,None
@@ -444,6 +445,7 @@ def load_tim_data(dbpath):
         doc = jnl.create_document(**kw)
         #~ doc.full_clean()
         #~ doc.save()
+        VENDICT[(jnl,year,number)] = doc
         return doc
         #~ return cl(**kw)
     
@@ -451,7 +453,10 @@ def load_tim_data(dbpath):
         jnl,year,number = row2jnl(row)
         if jnl is None:
             return 
-        doc = jnl.get_document(year,number)
+        doc = VENDICT.get((jnl,year,number))
+        if doc is None:
+            raise Exception("VNL %r without document" % list(jnl,year,number))
+        #~ doc = jnl.get_document(year,number)
         #~ try:
             #~ doc = jnl.get_document(year,number)
         #~ except Exception,e:
@@ -492,11 +497,24 @@ def load_tim_data(dbpath):
         yield load_dbf(dbpath,'PIN',load_pin)
         yield load_dbf(dbpath,'DLS',load_dls)
     
+VENDICT = dict()
+
+
 
 def objects():
     yield users.User(username='root',profile='900',last_name="Root")
     yield sales.InvoicingMode(name='Default')
     yield sales.Invoice.create_journal("VKR")
+    ca = ledger.Account(name="Customers",type=AccountTypes.asset)
+    yield ca
+    sba = ledger.Account(name="Sales Receipts (Turnover)",type=AccountTypes.income)
+    yield sba
+    sva = ledger.Account(name="VAT Collected",type=AccountTypes.income)
+    yield sva
+    settings.LINO.update_site_config(
+        customers_account=ca,
+        sales_base_account=sba,
+        sales_vat_account=sva)
         
     settings.LINO.loading_from_dump = True
     for obj in load_tim_data(settings.LINO.legacy_data_path):

@@ -3,7 +3,52 @@
 
 Continued on `lino.apps.presto`: mainly sales, journals and ledger.
 
-Edited :doc:`/blog/2012/0514` so that the last paragraph becomes 
+Edited :doc:`/blog/2012/0514` 
+so that the last paragraph becomes 
 understandable by somebody else.
+Also adapted the docstring of 
+:mod:`lino.modlib.countries.fixtures.ee`.
+
 
 Checkin.
+
+
+Here is another typical problem when documenting Django 
+modules with Sphinx's autodoc::
+
+  Traceback (most recent call last):
+    File "l:\snapshots\sphinx\sphinx\ext\autodoc.py", line 321, in import_object
+      __import__(self.modname)
+    File "t:\hgwork\lino\lino\apps\pcsw\models.py", line 843, in <module>
+      class Household(CpasPartner,households.Household):
+  AttributeError: 'NoneType' object has no attribute 'Household'
+
+
+The modules module contains::
+
+  households = dd.resolve_app('households')
+  ...
+  class Household(CpasPartner,households.Household):
+      ...
+      
+One workaround would be to add an ``if`` statement::
+      
+  households = dd.resolve_app('households')
+  ...
+  if households:
+      class Household(CpasPartner,households.Household):
+          ...      
+          
+But the problem is fundamental:  you cannot write static 
+documentation for a module whose content depends on 
+dynamic conditions. 
+
+There is no thing which can be called *the* 
+docstring for module `lino.apps.pcsw.models`, 
+because there are at least two versions of that docstring:
+when there is another module called `households` 
+in :settings:`INSTALLE_APPS` or not.
+
+
+
+

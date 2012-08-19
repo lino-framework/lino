@@ -278,8 +278,8 @@ class ChoiceList(object):
         return fld
         
     @classmethod
-    def add_item(cls,value,text,name=None,**kw):
-        return cls.add_item_instance(cls.item_class(cls,value,text,name,**kw))
+    def add_item(cls,value,text,name=None,*args,**kw):
+        return cls.add_item_instance(cls.item_class(cls,value,text,name,*args,**kw))
         
     @classmethod
     def add_item_instance(cls,i):

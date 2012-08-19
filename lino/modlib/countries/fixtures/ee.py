@@ -13,10 +13,10 @@
 
 
 """
-Imports file `sihtnumbrid.csv` which you can obtain from
+Imports file :file:`sihtnumbrid.csv` which you can obtain from
 `Estonian Post office <http://www.post.ee>`_.
 
-A copy of this file was accidentally published here 
+A copy of file :file:`sihtnumbrid.csv` was accidentally published here 
 between June 2010 and May 2012, until we realized that 
 this wasn't allowed due to copyright restrictions.
 

@@ -46,7 +46,7 @@ from lino.utils import babel
 from lino.modlib.users import models as auth
 ledger = dd.resolve_app('ledger')
 #~ from lino.modlib.ledger import models as ledger
-from lino.modlib.journals import models as journals
+#~ from lino.modlib.journals import models as journals
 from lino.modlib.products import models as products
 from lino.modlib.contacts import models as contacts
 #~ products = models.get_app('products')
@@ -229,10 +229,13 @@ class SalesDocument(
       mixins.UserAuthored,
       mixins.ProjectRelated,
       #~ journals.Sendable,
-      journals.Journaled,
+      #~ journals.Journaled,
       #~ contacts.ContactDocument,
       mixins.TypedPrintable):
     """Common base class for :class:`Order` and :class:`Invoice`.
+    
+    #~ Subclasses must either add themselves a date field (as does Order) 
+    #~ or inherit it from Transaction (as does Invoice)
     """
     class Meta:
         abstract = True
@@ -246,8 +249,6 @@ class SalesDocument(
         )
     language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
     
-    date = models.DateField(help_text="""\
-The official date of this document.""")
     #~ customer = models.ForeignKey(Customer,
         #~ related_name="customer_%(class)s")
     #~ ship_to = models.ForeignKey(Customer,
@@ -328,12 +329,24 @@ The official date of this document.""")
   #~ 'date your_ref subject '
   #~ 'language vat_exempt item_vat ')
 
+class SalesDocuments(dd.Table):
+    pass
+    #~ model = SalesDocument
+    #~ page_layouts = (DocumentPageLayout,)
+    #actions = reports.Report.actions + [ PrintAction ]
+    
+    #~ def inlines(self):
+        #~ return dict(items=ItemsByDocument())
+
+
 
 class Order(SalesDocument):
     """
     An Order is when a :class:`Customer` asks us to "deliver" a 
     given set of "products".
     """
+    
+    #~ date = models.DateField(help_text="""The official date of this document.""")
     
     class Meta:
         verbose_name = _("Order")
@@ -476,8 +489,46 @@ class Order(SalesDocument):
         return invoice
             
         
+
+class Orders(SalesDocuments):
+    model = Order
+    #~ order_by = ["number"]
     
-class Invoice(SalesDocument,ledger.Bookable):
+    column_names = "customer:20 imode " \
+                  "sales_remark:20 subject:20 total_incl " \
+                  "cycle start_date covered_until"
+                  
+    #~ def inlines(self):
+        #~ d = super(Orders,self).inlines()
+        #~ d.update(emitted_invoices=InvoicesByOrder())
+        #~ return d
+    
+#~ class OrdersByJournal(Orders):
+    #~ order_by = ["number"]
+    #~ master_key = 'journal' # see django issue 10808
+    #~ column_names = "number:4 date customer:20 imode " \
+                  #~ "sales_remark:20 subject:20 total_incl " \
+                  #~ "cycle start_date covered_until"
+    
+
+class PendingOrdersParams(forms.Form):
+    make_until = forms.DateField(label="Make invoices until",
+      initial=datetime.date.today()+ONE_DAY,required=False)
+
+class PendingOrders(Orders):
+    param_form = PendingOrdersParams
+    
+    @classmethod
+    def get_queryset(self,master_instance,make_until=None):
+        assert master_instance is None
+        return Order.objects.pending(make_until=make_until)
+
+
+
+
+
+
+class Invoice(SalesDocument,ledger.Voucher):
   
     class Meta:
         verbose_name = _("Invoice")
@@ -511,17 +562,18 @@ class Invoice(SalesDocument,ledger.Bookable):
         #~ return ar.spawn(ItemsByInvoice,master_instance=self)
         
 
-    #~ def collect_bookings(self):
+    def get_wanted_movements(self):
         #~ jnl = self.get_journal()
-        #~ yield self.create_booking(
-          #~ account=ledger.get_account('sales_base'),
-          #~ debit=self.total_excl)
-        #~ yield self.create_booking(
-          #~ account=ledger.get_account('sales_vat'),
-          #~ debit=self.total_vat)
-        #~ yield self.create_booking(
-          #~ account=ledger.Account.objects.get(pk=jnl.account_id),
-          #~ credit=self.total_excl+self.total_vat)
+        yield self.create_movement(
+          settings.LINO.site_config.sales_base_account,
+          self.total_excl)
+        if self.total_vat:
+            yield self.create_movement(
+              settings.LINO.site_config.sales_vat_account,
+              self.total_vat)
+        yield self.create_movement(
+          settings.LINO.site_config.customers_account,
+          self.total_excl+self.total_vat)
 
 
 class DocItem(mixins.Sequenced):
@@ -594,46 +646,6 @@ class InvoiceItem(DocItem):
 
     
 
-class SalesDocuments(dd.Table):
-    pass
-    #~ model = SalesDocument
-    #~ page_layouts = (DocumentPageLayout,)
-    #actions = reports.Report.actions + [ PrintAction ]
-    
-    #~ def inlines(self):
-        #~ return dict(items=ItemsByDocument())
-
-
-class Orders(SalesDocuments):
-    model = Order
-    order_by = ["number"]
-    
-    #~ def inlines(self):
-        #~ d = super(Orders,self).inlines()
-        #~ d.update(emitted_invoices=InvoicesByOrder())
-        #~ return d
-    
-class OrdersByJournal(Orders):
-    order_by = ["number"]
-    #master = journals.Journal
-    master_key = 'journal' # see django issue 10808
-    column_names = "number:4 date customer:20 imode " \
-                  "sales_remark:20 subject:20 total_incl " \
-                  "cycle start_date covered_until"
-    
-
-class PendingOrdersParams(forms.Form):
-    make_until = forms.DateField(label="Make invoices until",
-      initial=datetime.date.today()+ONE_DAY,required=False)
-
-class PendingOrders(Orders):
-    param_form = PendingOrdersParams
-    
-    @classmethod
-    def get_queryset(self,master_instance,make_until=None):
-        assert master_instance is None
-        return Order.objects.pending(make_until=make_until)
-
 
 class InvoiceDetail(dd.FormLayout):
     main = "general ledger"
@@ -655,13 +667,13 @@ class InvoiceDetail(dd.FormLayout):
     """,label=_("General"))
     
     ledger = dd.Panel("""
-    journal year number ledger_remark 
-    ledger.BookingsByBookable
+    journal year number narration
+    ledger.MovementsByVoucher
     """,label=_("Ledger"))
     
 class Invoices(SalesDocuments):
     #~ parameters = dict(pyear=journals.YearRef())
-    parameters = dict(year=journals.Years.field(),journal=journals.JournalRef())
+    parameters = dict(year=ledger.Years.field(blank=True),journal=ledger.JournalRef(blank=True))
     model = Invoice
     order_by = ["id"]
     column_names = "id date customer total_incl user *" 
@@ -763,17 +775,20 @@ class ItemsByInvoice(ItemsByDocument):
 #~ contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
             
 
-class SalesByCustomer(SalesDocuments):
-    column_names = "journal:4 number:4 date:8 " \
-                   "total_incl total_excl total_vat *"
+#~ class SalesByCustomer(SalesDocuments):
+class OrdersByCustomer(Orders):
+    #~ model = 'sales.Order'
+    master_key = 'customer'
+    order_by = ["start_date"]
+    column_names = "start_date total_incl total_excl total_vat *"
+    
+
+class InvoicesByCustomer(Invoices):
+    #~ model = 'sales.Invoice'
     order_by = ["date"]
     master_key = 'customer'
+    column_names = "date total_incl total_excl total_vat *"
     
-class OrdersByCustomer(SalesByCustomer):
-    model = 'sales.Order'
-
-class InvoicesByCustomer(SalesByCustomer):
-    model = 'sales.Invoice'
 
 #~ class SalesByPerson(SalesDocuments):
     #~ column_names = "journal:4 number:4 date:8 " \
@@ -784,8 +799,38 @@ class InvoicesByCustomer(SalesByCustomer):
         
 
 
-journals.register_doctype(Order,OrdersByJournal)
-journals.register_doctype(Invoice,InvoicesByJournal)
+#~ journals.register_doctype(Order,OrdersByJournal)
+ledger.register_voucher_type(Invoice,InvoicesByJournal)
+
+
+def customize_siteconfig():
+    """
+    Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
+    """
+    
+    from lino.models import SiteConfig
+    dd.inject_field(SiteConfig,
+        'sales_base_account',
+        #~ models.ForeignKey("contacts.Company",
+        models.ForeignKey('ledger.Account',
+            blank=True,null=True,
+            verbose_name=_("Account for base amounts in sales invoices"),
+            related_name='sales_base_account'))
+    dd.inject_field(SiteConfig,
+        'sales_vat_account',
+        #~ models.ForeignKey("contacts.Company",
+        models.ForeignKey('ledger.Account',
+            blank=True,null=True,
+            verbose_name=_("Account for VAT in sales invoices"),
+            related_name='sales_vat_account'))
+    dd.inject_field(SiteConfig,
+        'customers_account',
+        models.ForeignKey('ledger.Account',
+            blank=True,null=True,
+            verbose_name=_("The account which represents the debts of our customers"),
+            related_name='customers_account'))
+        
+
 
 def customize_contacts():
 
@@ -795,11 +840,17 @@ def customize_contacts():
         """Whether this Partner is also a Customer."""
         )
 
-customize_contacts()
-
 
 MODULE_LABEL = _("Sales")
 
+def site_setup(site):
+    if site.is_installed('tickets'):
+        site.modules.tickets.Projects.add_detail_tab("sales","sales.InvoicesByProject")
+    site.modules.lino.SiteConfigs.add_detail_tab("sales","""
+    sales_base_account
+    sales_vat_account
+    customers_account
+    """,label=_("Sales"))
 
 
 def setup_main_menu(site,ui,user,m): 
@@ -820,4 +871,8 @@ def setup_config_menu(site,ui,user,m):
     
 def setup_explorer_menu(site,ui,user,m):
     pass
+  
+customize_contacts()
+customize_siteconfig()
+
   

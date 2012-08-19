@@ -25,6 +25,13 @@ Fixtures
     :members:
     :show-inheritance:
 
+``ee``
+------
+
+.. automodule:: lino.modlib.countries.fixtures.ee
+    :members:
+    :show-inheritance:
+
 ``few_cities``
 --------------
 

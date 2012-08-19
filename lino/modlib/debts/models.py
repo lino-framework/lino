@@ -78,54 +78,13 @@ from lino.core.modeltools import obj2str
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.properties import models as properties
 from lino.modlib.households import models as households
+from lino.modlib.ledger.utils import AccountTypes
 #~ from lino.modlib.contacts.models import Contact
 #~ from lino.core.modeltools import resolve_model, UnresolvedModel
 
 from lino.mixins.printable import decfmt
 
 MAX_SUB_BUDGETS = 3
-
-
-class AccountType(ChoiceList):
-    u"""
-    Lino has a hard-coded list of the five 
-    basic "account types" or "top-level accounts".
-    
-    Note that the Belgian and French PCMN has 7+1 top-level accounts:
-    
-    | CLASSE 0 : Droits & engagements hors bilan
-    | CLASSE 1 : Fonds propres, provisions pour risques & charges et Dettes à plus d'un an
-    | CLASSE 2 : Frais d'établissement, actifs immobilisés et créances à plus d'un an
-    | CLASSE 3 : Stock & commandes en cours d'exécution
-    | CLASSE 4 : Créances et dettes à un an au plus
-    | CLASSE 5 : Placements de trésorerie et valeurs disponibles
-    | CLASSE 6 : Charges
-    | CLASSE 7 : Produits
-    
-    TODO: explain the differences and understand how to solve this.
-    See also 
-    
-    - http://code.gnucash.org/docs/help/acct-types.html
-    - http://www.futureaccountant.com/accounting-process/study-notes/financial-accounting-account-types.php
-    
-    Provisions pour risques et charges : Gesetzliche Rücklagen.
-    Créances et dettes : Kredite, Anleihen, Schulden.
-    
-    - "Assets = Liabilities + Capital"
-    - "Passif = Actif"
-    - A liability is capital acquired from others 
-    - Passiva is synonym for "Liabilities + Capital" in this context
-
-    """
-
-    label = _("Account Type")
-    
-add = AccountType.add_item
-add('A', _("Assets"),"asset")   # Aktiva, Anleihe, Vermögen, Anlage
-add('L', _("Liabilities"),"liability") # Guthaben, Schulden, Verbindlichkeit
-add('C', _("Capital"),"capital")  # Kapital owner's Equities
-add('I', _("Incomes"),"income") # Gain/Revenue     Einnahmen  Produits
-add('E', _("Expenses"),"expense") # Loss/Cost       Ausgaben   Charges
 
 
 class PeriodsField(models.DecimalField):
@@ -183,7 +142,7 @@ class AccountGroup(babel.BabelNamed,mixins.Sequenced):
         verbose_name = _("Budget Account Group")
         verbose_name_plural = _("Budget Account Groups")
         
-    account_type = AccountType.field()
+    account_type = AccountTypes.field()
     #~ entries_columns = models.CharField(_("Columns in Entries tables"),max_length=200,blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
@@ -203,7 +162,7 @@ class Account(babel.BabelNamed,mixins.Sequenced):
         verbose_name = _("Budget Account")
         verbose_name_plural = _("Budget Accounts")
     group = models.ForeignKey(AccountGroup)
-    type = AccountType.field()
+    type = AccountTypes.field()
     #~ account = models.ForeignKey(Account)
     required_for_household = models.BooleanField(
         _("Required for Households"),default=False)
@@ -331,9 +290,9 @@ The monthly amount available for distribution among debtors."""))
         Yield all AccountGroups which have at least one Entry in this Budget.
         """
         if types is not None:
-            kw.update(account_type__in=[AccountType.items_dict[t] for t in types])
+            kw.update(account_type__in=[AccountTypes.items_dict[t] for t in types])
         #~ for t in types:
-        #~ types = [AccountType.items_dict[t] for t in types]
+        #~ types = [AccountTypes.items_dict[t] for t in types]
         #~ types = [t for t in types]
         for g in AccountGroup.objects.filter(**kw).order_by('seqno'):
             if Entry.objects.filter(budget=self,account__group=g).count():
@@ -368,7 +327,7 @@ The monthly amount available for distribution among debtors."""))
         """
         fldnames = [fldname]
         if types is not None:
-            kw.update(account_type__in=[AccountType.items_dict[t] for t in types])
+            kw.update(account_type__in=[AccountTypes.items_dict[t] for t in types])
         #~ d = Entry.objects.filter(budget=self,**kw).aggregate(models.Sum(*fldnames))
         sa = [models.Sum(n) for n in fldnames]
         rv = decimal.Decimal(0)
@@ -674,7 +633,7 @@ class Entry(SequencedBudgetComponent):
     allow_cascaded_delete = True
     
     #~ group = models.ForeignKey(AccountGroup)
-    account_type = AccountType.field()
+    account_type = AccountTypes.field()
     account = models.ForeignKey(Account)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     #~ name = models.CharField(_("Remark"),max_length=200,blank=True)
@@ -821,17 +780,17 @@ class EntriesByBudget(Entries):
 
         
 class ExpensesByBudget(EntriesByBudget,EntriesByType):
-    _account_type = AccountType.expense
+    _account_type = AccountTypes.expense
         
 class IncomesByBudget(EntriesByBudget,EntriesByType):
-    _account_type = AccountType.income
+    _account_type = AccountTypes.income
     
 class LiabilitiesByBudget(EntriesByBudget,EntriesByType):
-    _account_type = AccountType.liability
+    _account_type = AccountTypes.liability
     column_names = "account partner remark amount actor:10 distribute monthly_rate todo seqno"
     
 class AssetsByBudget(EntriesByBudget,EntriesByType):
-    _account_type = AccountType.asset
+    _account_type = AccountTypes.asset
     column_names = "account remark amount actor todo seqno"
 
 
@@ -992,21 +951,21 @@ class PrintExpensesByBudget(PrintEntriesByBudget):
     """
     Print version of :class:`ExpensesByBudget` table.
     """
-    _account_type = AccountType.expense
+    _account_type = AccountTypes.expense
     column_names = "description dynamic_amounts"
         
 class PrintIncomesByBudget(PrintEntriesByBudget):
     """
     Print version of :class:`IncomesByBudget` table.
     """
-    _account_type = AccountType.income
+    _account_type = AccountTypes.income
     column_names = "description dynamic_amounts"
     
 class PrintLiabilitiesByBudget(PrintEntriesByBudget):
     """
     Print version of :class:`LiabilitiesByBudget` table.
     """
-    _account_type = AccountType.liability
+    _account_type = AccountTypes.liability
     #~ column_names = "partner description total monthly_rate todo"
     column_names = "partner:20 description:20 dynamic_amounts"
     
@@ -1014,7 +973,7 @@ class PrintAssetsByBudget(PrintEntriesByBudget):
     """
     Print version of :class:`AssetsByBudget` table.
     """
-    _account_type = AccountType.asset
+    _account_type = AccountTypes.asset
     column_names = "description dynamic_amounts"
 
 ENTRIES_BY_TYPE_TABLES = (
@@ -1097,7 +1056,7 @@ class DistByBudget(EntriesByBudget):
     column_names = "partner description amount dist_perc dist_amount"
     filter = models.Q(distribute=True)
     label = _("Debts distribution")
-    known_values = dict(account_type=AccountType.liability)
+    known_values = dict(account_type=AccountTypes.liability)
     
     @classmethod
     def get_data_rows(self,ar):

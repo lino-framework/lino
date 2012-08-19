@@ -1,0 +1,11 @@
+20120819
+========
+
+Continued on `lino.apps.presto`: mainly sales and ledger.
+
+Moved the AccountType choicelist 
+from `lino.modlib.debts` to `lino.modlibv.ledger.utils`.
+Renamed AccountType to AccountTypes.
+
+
+:mod:`lino`

@@ -1007,6 +1007,8 @@ Long-term
     instead of reinventing the wheel.
     (Discovered :doc:`/blog/2011/0311`)
     
+    
+    
 Together with a Linux freak
 ---------------------------
 
@@ -1016,6 +1018,13 @@ Together with a Linux freak
     `/usr/share/zoneinfo/iso3166.tab`
     But how to find the same in French, German, Estonian?
     
+#.  (for Mercurial experts) 
+    The file `sihtnumbrid.csv` is still in the repository, e.g under
+    http://code.google.com/p/lino/source/search?q=sihtnumbrid&origq=sihtnumbrid&btnG=Search+Trunk
+    
+    That's because it's rather difficult to really remove something from history.
+    As explained in http://mercurial.selenic.com/wiki/EditingHistory
+
 
 
 Documentation

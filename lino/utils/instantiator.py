@@ -27,7 +27,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 #~ import lino
-from lino.core.modeltools import resolve_model
+from lino.core.modeltools import resolve_model, UnresolvedModel
 
 from lino.utils import i2d # for backward compatibility of .py fixtures
 from lino.core import fields
@@ -134,6 +134,9 @@ def make_converter(f,lookup_fields={}):
 class Instantiator:
     def __init__(self,model,fieldnames=None,converter_classes={},**kw):
         self.model = resolve_model(model)
+        if isinstance(self.model,UnresolvedModel):
+            logger.warning("20120818 unresolved model %s",model)
+            return 
         if self.model._meta.pk is None: 
             raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
         if type(fieldnames) == str:
