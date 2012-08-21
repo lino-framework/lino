@@ -3,9 +3,104 @@
 
 Continued on `lino.apps.presto`: mainly sales and ledger.
 
-Moved the AccountType choicelist 
-from `lino.modlib.debts` to `lino.modlibv.ledger.utils`.
-Renamed AccountType to AccountTypes.
+Moved the `AccountType` choicelist 
+from `lino.modlib.debts` to :mod:`lino.modlib.ledger.utils`.
+Renamed `AccountType` to `AccountTypes`.
+
+The basic accounting reports
+----------------------------
+
+I read the guide 
+`Set up a basic record-keeping system
+<http://www.businesslink.gov.uk/bdotg/action/detail?itemId=1073789112&r.l1=1073858808&r.l2=1073860617&r.s=sc&type=RESOURCES>`_,
+published by the United Kingdom government.
+It descibes six basic sets of "financial records":
+
+- cash sales book :
+  Date,
+  Customer,
+  Amount received,
+  Cash sales,
+  Cheque,
+  Credit/debit card,
+  Bank pay-in amounts
 
 
-:mod:`lino`
+- cash purchases book :
+  Date,
+  Supplier,
+  Amount paid,
+  Paid cash,
+  Paid cheque,
+  Paid credit/debit card
+
+
+- Cash Book Summary (Reconciliation) with the following lines:
+
+  | Opening cash balance (A) 
+  | Cash receipts (B)
+  | Cash banked (C)
+  | Cash payments (D)
+  | Closing cash balance (E) = A+B-(C+D)
+           
+  | Opening cheque account balance (F)	 
+  | Total value of pay-ins for period (G)	 
+  | Total value of payments for period (H)	 
+  | Closing cheque account balance (I)	
+        
+        
+
+- Sales Ledger : 
+  one row per sales.Invoice in a given period.
+  Columns:
+  Date,
+  Invoice number,
+  Customer,
+  Net,
+  VAT,
+  Gross,
+  Date paid,
+  Payment type
+ 	 	 	 	 	 	 	 
+
+- Purchase Ledger :
+  one row per purchase.Invoice in a given period.
+  Columns:
+  Date,
+  Supplier,
+  Reference number (or your company's purchase order number),
+  Item purchased,
+  Net value,
+  VAT,
+  Gross value,
+  Date paid,
+  Payment type (cash, cheque, credit/debit card)  
+  
+  
+- Wages Book (only needed if you employ staff) (...)
+    
+
+
+Centralisation Types
+--------------------
+
+I'm still looking for the correct word to group-designate the following three concepts:
+
+- sales      
+- purchase
+- wages
+
+Background: 
+We need a table that holds configuration information which depends on this choice.
+The question is: How to name that table? 
+
+In TIM I called it "centralisation types" which wasn't really intuitive.
+
+These transaction types 
+
+Some ideas for a better name:
+
+- Partner Account Types
+- Accounting Partner Types
+- Partner Transaction Types
+

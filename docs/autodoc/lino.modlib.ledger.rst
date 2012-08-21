@@ -13,3 +13,10 @@ Models
     :members:
     :show-inheritance:
 
+Utilities
+---------
+
+.. automodule:: lino.modlib.ledger.utils
+    :members:
+    :show-inheritance:
+

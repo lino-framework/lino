@@ -57,6 +57,7 @@ tests:
 	python lino/utils/rstgen.py
 	python lino/utils/appy_pod.py
 	python lino/modlib/contacts/utils.py
+	python lino/modlib/ledger/utils.py
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings

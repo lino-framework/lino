@@ -33,7 +33,7 @@ from lino.utils.choicelists import ChoiceList
 #from lino.modlib.contacts import models as contacts
 #from lino.modlib.journals import models as journals
 from django.utils.translation import ugettext_lazy as _
-from lino.modlib.ledger.utils import AccountTypes
+from lino.modlib.ledger.utils import AccountTypes, FiscalYears
 
 
 DOCTYPES = []
@@ -192,22 +192,6 @@ def VoucherNumber(**kw):
     return models.IntegerField(**kw)
     
 
-class Years(ChoiceList):
-    label = _("Year")
-    
-    @classmethod
-    def from_int(cls,year):
-        return cls.get_by_value(str(year)[2:])
-
-for y in range(2000,datetime.date.today().year+1):
-#~ y = 2000
-#~ while y < datetime.date.today().year:
-    s = str(y)
-    Years.add_item(s[2:],s)
-    #~ y += 1
-
-
-    
 
     
         
@@ -224,7 +208,7 @@ class Voucher(mixins.UserAuthored):
     #~ controller_is_optional = False
     
     journal = JournalRef()
-    year = Years.field()
+    year = FiscalYears.field()
     number = VoucherNumber(blank=True)
     date = models.DateField()
     #~ ledger_remark = models.CharField("Remark for ledger",

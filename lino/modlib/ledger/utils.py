@@ -16,23 +16,6 @@ ur"""
 Lino has a hard-coded list of the five 
 basic "account types" or "top-level accounts".
 
-Note that the Belgian and French PCMN has 7+1 top-level accounts:
-
-| CLASSE 0 : Droits & engagements hors bilan
-| CLASSE 1 : Fonds propres, provisions pour risques & charges et Dettes à plus d'un an
-| CLASSE 2 : Frais d'établissement, actifs immobilisés et créances à plus d'un an
-| CLASSE 3 : Stock & commandes en cours d'exécution
-| CLASSE 4 : Créances et dettes à un an au plus
-| CLASSE 5 : Placements de trésorerie et valeurs disponibles
-| CLASSE 6 : Charges
-| CLASSE 7 : Produits
-
-TODO: explain the differences and understand how to solve this.
-See also 
-
-- http://code.gnucash.org/docs/help/acct-types.html
-- http://www.futureaccountant.com/accounting-process/study-notes/financial-accounting-account-types.php
-
 An accounting transaction is either Debit or Credit.
 We represent this internally as a boolean, but define two names DEBIT and CREDIT:
 
@@ -101,12 +84,69 @@ capital   |Capital        |Credit
 
 Yes.
 
+
+TODO
+----
+
+- The Belgian and French PCMN has 7+1 top-level accounts:
+
+    | CLASSE 0 : Droits & engagements hors bilan
+    | CLASSE 1 : Fonds propres, provisions pour risques & charges et Dettes à plus d'un an
+    | CLASSE 2 : Frais d'établissement, actifs immobilisés et créances à plus d'un an
+    | CLASSE 3 : Stock & commandes en cours d'exécution
+    | CLASSE 4 : Créances et dettes à un an au plus
+    | CLASSE 5 : Placements de trésorerie et valeurs disponibles
+    | CLASSE 6 : Charges
+    | CLASSE 7 : Produits
+
+  explain the differences and how to solve this.
+  See also 
+
+  - http://code.gnucash.org/docs/help/acct-types.html
+  - http://www.futureaccountant.com/accounting-process/study-notes/financial-accounting-account-types.php
+
+
+
 """
 
 from django.utils.translation import ugettext_lazy as _
 
 
 from lino.utils.choicelists import Choice,ChoiceList
+
+
+class FiscalMonth(Choice):
+    pass
+    
+class FiscalMonths(ChoiceList):
+    item_class = FiscalMonth
+    label = _("Fiscal Month")
+    
+    
+class FiscalYear(Choice):
+    def __init__(self,cls,year,value=None,text=None,name=None,monthly=True,**kw):
+        s = str(year)  
+        super(FiscalYear,self).__init__(cls,s[2:],s)
+        if monthly:
+        
+    
+class FiscalYears(ChoiceList):
+    item_class = FiscalYear
+    label = _("Fiscal Year")
+    
+    @classmethod
+    def from_int(cls,year):
+        return cls.get_by_value(str(year)[2:])
+
+for y in range(2000,datetime.date.today().year+5):
+    s = str(y)
+    FiscalYears.add_item(s[2:],s)
+
+
+    
+
+
+
 
 DEBIT = True
 CREDIT = False
@@ -120,8 +160,6 @@ DC = {
 class AccountType(Choice):
     def __init__(self,cls,value,text,name,dc=True,**kw):
         self.dc = dc
-        #~ self.credit = is_credit
-        #~ self.debit = not is_credit
         super(AccountType,self).__init__(cls,value,text,name)
     
 class AccountTypes(ChoiceList):
