@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-General Ledger. The base module required for accounting.
+General Ledger. 
 
 """
 
@@ -33,7 +33,8 @@ from lino.utils.choicelists import ChoiceList
 #from lino.modlib.contacts import models as contacts
 #from lino.modlib.journals import models as journals
 from django.utils.translation import ugettext_lazy as _
-from lino.modlib.ledger.utils import AccountTypes, FiscalYears
+from lino.modlib.ledger.utils import FiscalYears
+#~ from lino.modlib.accounts.utils import AccountTypes
 
 
 DOCTYPES = []
@@ -63,26 +64,6 @@ def get_doctype(cl):
 
 
 
-class Account(dd.Model):
-    type = AccountTypes.field()
-    #~ id = models.CharField(max_length=8,primary_key=True)
-    match = models.CharField(max_length=50,blank=True)
-    name = models.CharField(max_length=200)
-    
-    def __unicode__(self):
-        if self.match:
-            return "%s (%s)" % (self.match,self.name)
-        return self.name
-        #~ if self.name:
-            #~ return self.name
-        #~ return self.id
-        #return super(Account,self).__unicode__()
-
-class Accounts(dd.Table):
-    model = Account
-    #column_names = "id name:50"
-    
-
 
 
     
@@ -103,7 +84,7 @@ class Journal(mixins.Sequenced):
     name = models.CharField(max_length=100)
     doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
     force_sequence = models.BooleanField(default=False)
-    account = models.ForeignKey('ledger.Account',blank=True,null=True)
+    account = models.ForeignKey('accounts.Account',blank=True,null=True)
     #~ account = models.CharField(max_length=6,blank=True)
     #~ pos = models.IntegerField()
     #~ printed_name = models.CharField(max_length=100,blank=True)
@@ -292,7 +273,7 @@ ZERO = Decimal()
 class Movement(mixins.Sequenced):
     voucher = models.ForeignKey(Voucher)
     #~ pos = models.IntegerField("Position",blank=True,null=True)
-    account = models.ForeignKey(Account)
+    account = models.ForeignKey('accounts.Account')
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     amount = dd.PriceField(default=0)
     #~ is_credit = models.BooleanField(_("Credit"),default=False)

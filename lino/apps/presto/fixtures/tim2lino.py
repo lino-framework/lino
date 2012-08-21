@@ -40,7 +40,7 @@ from lino.utils import mti
 from lino.utils import dumpy
 #~ from lino import diag
 
-from lino.modlib.ledger.utils import AccountTypes
+from lino.modlib.accounts.utils import AccountTypes
 from lino.modlib.contacts.utils import name2kw, street2kw
 from lino.utils import join_words
 #~ from lino.modlib.contacts.models import name2kw, street2kw, join_words
@@ -69,6 +69,7 @@ households = dd.resolve_app('households')
 sales = dd.resolve_app('sales')
 #~ journals = dd.resolve_app('journals')
 ledger = dd.resolve_app('ledger')
+accounts = dd.resolve_app('accounts')
 products = dd.resolve_app('products')
 contacts = dd.resolve_app('contacts')
 
@@ -139,7 +140,7 @@ def par_pk(pk):
         return int(pk)
         
 def row2jnl(row):
-    year = ledger.Years.from_int(2000 + int(row.iddoc[:2]))
+    year = ledger.FiscalYears.from_int(2000 + int(row.iddoc[:2]))
     num = int(row.iddoc[2:])
     if row.idjnl == 'VKR':
         jnl = ledger.Journal.objects.get(id=row.idjnl.strip())
@@ -505,11 +506,20 @@ def objects():
     yield users.User(username='root',profile='900',last_name="Root")
     yield sales.InvoicingMode(name='Default')
     yield sales.Invoice.create_journal("VKR")
-    ca = ledger.Account(name="Customers",type=AccountTypes.asset)
+    chart  = accounts.Chart.objects.get(pk=1)
+    #~ chart  = accounts.Chart(name="Default")
+    #~ yield chart
+    #~ ag = 
+    #~ ca = accounts.Account(chart=chart,name="Customers",type=AccountTypes.asset)
+    ca = accounts.Account(group=accounts.Group.objects.get(ref='4000'))
     yield ca
-    sba = ledger.Account(name="Sales Receipts (Turnover)",type=AccountTypes.income)
+    sba = accounts.Account(group=accounts.Group.objects.get(ref='70'))
+    #~ sba = accounts.Account(chart=chart,
+        #~ name="Sales Receipts (Turnover)",type=AccountTypes.income)
     yield sba
-    sva = ledger.Account(name="VAT Collected",type=AccountTypes.income)
+    sva = accounts.Account(group=accounts.Group.objects.get(ref='4510'))
+    #~ sva = accounts.Account(chart=chart,
+      #~ name="VAT Collected",type=AccountTypes.income)
     yield sva
     settings.LINO.update_site_config(
         customers_account=ca,

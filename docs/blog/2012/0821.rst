@@ -1,0 +1,16 @@
+20120821
+========
+
+I united the Account and AccountGroup models from lino.modlib.debts 
+and lino.modlib.ledger to a common new module lino.modlib.accounts.
+Added new Model `accounts.Chart`.
+
+New fixture `lino.modlib.accounts.fixtures.mini` is an attempt to 
+create a "universal account chart" (...)
+
+TODO: 
+
+- translations
+- apps.pcsw.migrate:
+    debts_AccountGroup -> accounts.Group
+    debts_Account -> accounts.Account

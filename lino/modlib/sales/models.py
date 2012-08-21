@@ -673,7 +673,9 @@ class InvoiceDetail(dd.FormLayout):
     
 class Invoices(SalesDocuments):
     #~ parameters = dict(pyear=journals.YearRef())
-    parameters = dict(year=ledger.Years.field(blank=True),journal=ledger.JournalRef(blank=True))
+    parameters = dict(
+        year=ledger.FiscalYears.field(blank=True),
+        journal=ledger.JournalRef(blank=True))
     model = Invoice
     order_by = ["id"]
     column_names = "id date customer total_incl user *" 
@@ -812,20 +814,20 @@ def customize_siteconfig():
     dd.inject_field(SiteConfig,
         'sales_base_account',
         #~ models.ForeignKey("contacts.Company",
-        models.ForeignKey('ledger.Account',
+        models.ForeignKey('accounts.Account',
             blank=True,null=True,
             verbose_name=_("Account for base amounts in sales invoices"),
             related_name='sales_base_account'))
     dd.inject_field(SiteConfig,
         'sales_vat_account',
         #~ models.ForeignKey("contacts.Company",
-        models.ForeignKey('ledger.Account',
+        models.ForeignKey('accounts.Account',
             blank=True,null=True,
             verbose_name=_("Account for VAT in sales invoices"),
             related_name='sales_vat_account'))
     dd.inject_field(SiteConfig,
         'customers_account',
-        models.ForeignKey('ledger.Account',
+        models.ForeignKey('accounts.Account',
             blank=True,null=True,
             verbose_name=_("The account which represents the debts of our customers"),
             related_name='customers_account'))

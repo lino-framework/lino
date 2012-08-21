@@ -69,6 +69,7 @@ INSTALLED_APPS = (
   'lino.modlib.contacts',
   'lino.modlib.households',
   'lino.modlib.products',
+  'lino.modlib.accounts',
   'lino.modlib.ledger',
   #~ 'lino.modlib.journals',
   'lino.modlib.sales',

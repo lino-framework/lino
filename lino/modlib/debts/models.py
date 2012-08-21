@@ -136,61 +136,6 @@ class PeriodsField(models.DecimalField):
 
 
 
-class AccountGroup(babel.BabelNamed,mixins.Sequenced):
-  
-    class Meta:
-        verbose_name = _("Budget Account Group")
-        verbose_name_plural = _("Budget Account Groups")
-        
-    account_type = AccountTypes.field()
-    #~ entries_columns = models.CharField(_("Columns in Entries tables"),max_length=200,blank=True)
-    help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
-    
-class AccountGroups(dd.Table):
-    model = AccountGroup
-    required = dict(user_groups=['debts'],user_level='manager')
-    #~ required_user_groups = ['debts']
-    #~ required_user_level = UserLevels.manager
-    
-
-
-class Account(babel.BabelNamed,mixins.Sequenced):
-    """
-    An Account of the accounts chart used in budgets.
-    """
-    class Meta:
-        verbose_name = _("Budget Account")
-        verbose_name_plural = _("Budget Accounts")
-    group = models.ForeignKey(AccountGroup)
-    type = AccountTypes.field()
-    #~ account = models.ForeignKey(Account)
-    required_for_household = models.BooleanField(
-        _("Required for Households"),default=False)
-    required_for_person = models.BooleanField(
-        _("Required for Persons"),default=False)
-    #~ optional = models.BooleanField(_("Optional"),default=False)
-    #~ yearly = models.BooleanField(_("Yearly"),default=False)
-    periods = PeriodsField(_("Periods"))
-    help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
-    
-    #~ @chooser()
-    #~ def account_choices(cls,account_type):
-        #~ Account.objects.filter(type=account_type)
-    
-    def save(self,*args,**kw):
-        if not self.type:
-            self.type = self.group.account_type
-        super(Account,self).save(*args,**kw)
-        
-    
-class Accounts(dd.Table):
-    model = Account
-    #~ required_user_level = UserLevels.manager
-    #~ required_user_groups = ['debts']
-    required=dict(user_groups = ['debts'],user_level='manager')
-    
-    
-
 
 class Budget(mixins.AutoUser,mixins.CachedPrintable,mixins.Duplicable):
     """
@@ -510,7 +455,7 @@ class Budgets(dd.Table):
     but is directly used by :menuselection:`Explorer --> Debts -->Budgets`.
     """
     model = Budget
-    required=dict(user_groups = ['debts'])
+    required = dict(user_groups = ['debts'])
     #~ required_user_groups = ['debts']
     detail_layout = BudgetDetail()
     insert_layout = dd.FormLayout("""
@@ -610,7 +555,7 @@ class Actor(ActorBase,SequencedBudgetComponent):
         
     
 class Actors(dd.Table):
-    required=dict(user_groups = ['debts'])
+    required = dict(user_groups = ['debts'])
     #~ required_user_groups = ['debts']
     model = Actor
     column_names = "budget seqno partner header remark *"
@@ -753,7 +698,7 @@ Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
             
 class Entries(dd.Table):
     model = Entry
-    required=dict(user_groups = ['debts'],user_level='manager')
+    required = dict(user_groups = ['debts'],user_level='manager')
     #~ required_user_groups = ['debts']
     #~ required_user_level = UserLevels.manager
 
@@ -1109,6 +1054,9 @@ def site_setup(site):
     site.modules.contacts.Partners.add_detail_tab('debts.BudgetsByPartner')
     site.modules.contacts.AllPersons.add_detail_tab('debts.BudgetsByPartner')
     site.modules.households.Households.add_detail_tab('debts.BudgetsByPartner')
+    #~ site.modules.accounts.Accounts.set_required(
+        #~ user_groups=['debts'],user_level='manager')
+
 
 def setup_main_menu(site,ui,user,m):  pass
   
@@ -1138,3 +1086,23 @@ def setup_explorer_menu(site,ui,user,m):
     #~ m.add_action(Debts)
 
 dd.add_user_group('debts',MODULE_LABEL)
+
+
+def customize_accounts():
+    dd.inject_field('accounts.Account',
+        'required_for_household',
+        models.BooleanField(
+        _("Required for Households"),default=False)
+      )
+    dd.inject_field('accounts.Account',
+        'required_for_person',
+        models.BooleanField(
+        _("Required for Persons"),default=False)
+      )
+    dd.inject_field('accounts.Account',
+        'periods',
+        PeriodsField(_("Periods"))
+      )
+
+customize_accounts()
+

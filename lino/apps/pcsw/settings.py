@@ -292,6 +292,7 @@ INSTALLED_APPS = (
   'lino.modlib.cbss',
   'lino.modlib.newcomers',
   'lino.modlib.households',
+  'lino.modlib.accounts',
   'lino.modlib.debts',
   'lino.modlib.courses',
   'lino.apps.pcsw',
