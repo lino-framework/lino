@@ -66,6 +66,7 @@ Company = resolve_model(settings.LINO.company_model)
 users = dd.resolve_app('users')
 tickets = dd.resolve_app('tickets')
 households = dd.resolve_app('households')
+#~ vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
 #~ journals = dd.resolve_app('journals')
 ledger = dd.resolve_app('ledger')
@@ -81,7 +82,25 @@ def store(kw,**d):
 
 #~ def convert_username(name):
     #~ return name.lower()
+    
+from lino.modlib.vat.models import VatClasses
   
+def tax2vat(idtax):
+    idtax = idtax.strip()
+    if idtax == 'D20':
+        return VatClasses.normal
+    elif idtax == 'D18':
+        return VatClasses.normal
+    elif idtax == '0':
+        return VatClasses.exempt
+    elif idtax == 'IS':
+        return VatClasses.normal
+    elif idtax == 'XS':
+        return VatClasses.normal
+    else:
+        return VatClasses.normal
+    raise Exception("Unknown VNl->IdTax %r" % idtax)
+        
 def tim2bool(x):
     if not x.strip():
         return False
@@ -142,12 +161,21 @@ def par_pk(pk):
 def row2jnl(row):
     year = ledger.FiscalYears.from_int(2000 + int(row.iddoc[:2]))
     num = int(row.iddoc[2:])
-    if row.idjnl == 'VKR':
-        jnl = ledger.Journal.objects.get(id=row.idjnl.strip())
+    if row.idjnl in ('VKR','EKR'):
+        jnl = ledger.Journal.objects.get(id=row.idjnl)
         #~ cl = sales.Invoice
         return jnl,year,num
     return None,None,None
         
+def get_customer(pk):
+    try:
+        return sales.Customer.objects.get(pk=pk)
+    except sales.Customer.DoesNotExist:
+        obj = mti.create_child(contacts.Partner,pk,sales.Customer)
+        obj.save()
+        #~ return obj
+        return sales.Customer.objects.get(pk=pk)
+        #~ obj = sales.Customer()
 
 def ticket_state(idpns):
     if idpns == ' ':
@@ -207,20 +235,31 @@ def load_dbf(dbpath,tableName,load):
   
 def load_tim_data(dbpath):
   
+    ROOT = users.User(username='root',profile='900',last_name="Root")
+    yield ROOT
+    
+    settings.LINO.loading_from_dump = True
+    
+    yield accounts.Chart(name="Default")
+    
+    
+    DIM = sales.InvoicingMode(name='Default')
+    yield DIM
+    yield sales.Invoice.create_journal("VKR",'sales',name="Verkaufsrechnungen")
+    yield ledger.AccountInvoice.create_journal("EKR",'purchases',name="Einkaufsrechnungen")
+
     #~ from lino.modlib.users import models as users
     
-    ROOT = users.User.objects.get(username='root')
-    DIM = sales.InvoicingMode.objects.get(name='Default')
+    #~ ROOT = users.User.objects.get(username='root')
+    #~ DIM = sales.InvoicingMode.objects.get(name='Default')
     
-    def get_customer(pk):
-        try:
-            return sales.Customer.objects.get(pk=pk)
-        except sales.Customer.DoesNotExist:
-            obj = mti.create_child(contacts.Partner,pk,sales.Customer)
-            obj.save()
-            return obj
-            #~ obj = sales.Customer()
-            
+    PROD_617010 = products.Product(name=u"Edasimüük remondikulud",id=40)
+    yield PROD_617010
+    def vnlg2product(row):
+        a = row.idart.strip()
+        if a == '617010':
+            return PROD_617010
+        
     # Countries already exist after initial_data, but their short_code is 
     # needed as lookup field for Cities.
     def load_nat(row):
@@ -426,6 +465,17 @@ def load_tim_data(dbpath):
         names2kw(kw,row.name1,row.name2,row.name3)
         return products.Product(**kw)
         
+    def load_gen(row,**kw):
+        kw.update(chart=accounts.Chart.objects.get(pk=1))
+        kw.update(ref=row.idgen.strip())
+        def names2kw(kw,*names):
+            names = [n.strip() for n in names]
+            kw.update(name=names[0])
+        names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
+        ag = accounts.Group(**kw)
+        yield ag
+        yield accounts.Account(group=ag)
+        
     def load_ven(row,**kw):
         jnl,year,number = row2jnl(row)
         if jnl is None:
@@ -433,17 +483,24 @@ def load_tim_data(dbpath):
         kw.update(year=year)
         kw.update(number=number)
         #~ kw.update(id=pk)
-        cu = get_customer(par_pk(row.idpar))
-        kw.update(customer=cu)
+        if jnl.trade_type.name == 'sales':
+            partner = get_customer(par_pk(row.idpar))
+            kw.update(partner=partner)
+            kw.update(imode=DIM)
+            if row.idprj.strip():
+                kw.update(project_id=int(row.idprj.strip()))
+            kw.update(discount=mton(row.remise))
+        elif jnl.trade_type.name == 'purchases':
+            kw.update(partner=contacts.Partner.objects.get(pk=par_pk(row.idpar)))
+            #~ partner=contacts.Partner.objects.get(pk=par_pk(row.idpar))
+        else:
+            raise Exception("Unkonwn TradeType %r" % jnl.trade_type)
         kw.update(date=row.date)
         kw.update(user=ROOT)
-        kw.update(imode=DIM)
-        if row.idprj.strip():
-            kw.update(project_id=int(row.idprj.strip()))
         kw.update(total_excl=mton(row.montr))
         kw.update(total_vat=mton(row.montt))
-        kw.update(discount=mton(row.remise))
         doc = jnl.create_document(**kw)
+        #~ doc.partner = partner
         #~ doc.full_clean()
         #~ doc.save()
         VENDICT[(jnl,year,number)] = doc
@@ -465,11 +522,20 @@ def load_tim_data(dbpath):
             #~ return 
         #~ kw.update(document=doc)
         kw.update(seqno=int(row.line.strip()))
-        if row.code in ('A','F'):
-            idart = row.idart.strip()
-            if idart != '*':
-                kw.update(product=int(idart))
+        idart = row.idart.strip()
+        if isinstance(doc,sales.ProductDocItem):
+            if row.code in ('A','F'):
+                if idart != '*':
+                    kw.update(product=int(idart))
+            elif row.code == 'G':
+                a = vnlg2product(row)
+                if a is not None:
+                    kw.update(account=a)
+        elif isinstance(doc,ledger.InvoiceItem):
+            if row.code == 'G':
+                kw.update(account=idart)
         kw.update(title=row.desig.strip())
+        kw.update(vat_class=tax2vat(row.idtax))
         kw.update(unit_price=mton(row.prixu))
         kw.update(total=mton(row.cmont))
         kw.update(qty=qton(row.qte))
@@ -479,6 +545,24 @@ def load_tim_data(dbpath):
         #~ kw.update(date=row.date)
         return doc.add_item(**kw)
         
+    yield load_dbf(dbpath,r'RUMMA\GEN',load_gen)
+    
+    yield dumpy.FlushDeferredObjects
+    
+    PROD_617010.sales_account=accounts.Account.objects.get(group__ref='617010')
+    PROD_617010.save()
+    
+    #~ ca = accounts.Account(group=accounts.Group.objects.get(ref='400000'))
+    #~ yield ca
+    #~ sba = accounts.Account(group=accounts.Group.objects.get(ref='700000'))
+    #~ yield sba
+    #~ sva = accounts.Account(group=accounts.Group.objects.get(ref='451000'))
+    #~ yield sva
+    #~ settings.LINO.update_site_config(customers_account=ca)
+        #~ sales_base_account=sba,
+        #~ sales_vat_account=sva)
+        
+    
     yield load_dbf(dbpath,r'RUMMA\ART',load_art)
     yield load_dbf(dbpath,'NAT',load_nat)
     yield load_dbf(dbpath,'PLZ',load_plz)
@@ -503,29 +587,6 @@ VENDICT = dict()
 
 
 def objects():
-    yield users.User(username='root',profile='900',last_name="Root")
-    yield sales.InvoicingMode(name='Default')
-    yield sales.Invoice.create_journal("VKR")
-    chart  = accounts.Chart.objects.get(pk=1)
-    #~ chart  = accounts.Chart(name="Default")
-    #~ yield chart
-    #~ ag = 
-    #~ ca = accounts.Account(chart=chart,name="Customers",type=AccountTypes.asset)
-    ca = accounts.Account(group=accounts.Group.objects.get(ref='4000'))
-    yield ca
-    sba = accounts.Account(group=accounts.Group.objects.get(ref='70'))
-    #~ sba = accounts.Account(chart=chart,
-        #~ name="Sales Receipts (Turnover)",type=AccountTypes.income)
-    yield sba
-    sva = accounts.Account(group=accounts.Group.objects.get(ref='4510'))
-    #~ sva = accounts.Account(chart=chart,
-      #~ name="VAT Collected",type=AccountTypes.income)
-    yield sva
-    settings.LINO.update_site_config(
-        customers_account=ca,
-        sales_base_account=sba,
-        sales_vat_account=sva)
-        
-    settings.LINO.loading_from_dump = True
+    settings.LINO.startup()
     for obj in load_tim_data(settings.LINO.legacy_data_path):
         yield obj

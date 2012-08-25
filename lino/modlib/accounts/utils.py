@@ -24,6 +24,8 @@ True
 >>> CREDIT
 False
 
+
+
 Accounting Equation:
 
   Assets = Liabilities + Capital
@@ -42,19 +44,6 @@ That's what the :attr:`dc <AccountType.dc>` attribute means.
 Debit
 >>> print unicode(DC[AccountTypes.expense.dc])
 Debit
-
-
-
-
-
-Provisions pour risques et charges : Gesetzliche Rücklagen.
-Créances et dettes : Kredite, Anleihen, Schulden.
-
-- "Actif = Passif"
-- A liability is capital acquired from others 
-- Passiva is synonym for "Liabilities + Capital" in this context
-
-
 
 
   
@@ -98,12 +87,35 @@ TODO
     | CLASSE 5 : Placements de trésorerie et valeurs disponibles
     | CLASSE 6 : Charges
     | CLASSE 7 : Produits
+    
 
   explain the differences and how to solve this.
   See also 
 
   - http://code.gnucash.org/docs/help/acct-types.html
   - http://www.futureaccountant.com/accounting-process/study-notes/financial-accounting-account-types.php
+  
+
+- A Liability is Capital acquired from others. 
+  Both together is what French accountants call *passif*.
+  
+  The accounting equation "Assets = Liabilities + Capital" 
+  in French is simply:
+
+      Actif = Passif
+      
+  I found an excellent definition of these two terms at 
+  `plancomptable.com <http://www.plancomptable.com/titre-II/titre-II.htm>`_:
+
+  - Un actif est un élément identifiable du patrimoine ayant une valeur économique positive pour l’entité, c’est-à-dire un élément générant une ressource que l’entité contrôle du fait d’événements passés et dont elle attend des avantages économiques futurs.
+  
+  - Un passif est un élément du patrimoine ayant une valeur économique négative pour l'entité, c'est-à-dire une obligation de l'entité à l'égard d'un tiers dont il est probable ou certain qu'elle provoquera une sortie des ressources au bénéfice de ce tiers, sans contrepartie au moins équivalente attendue de celui-ci. 
+  
+
+Some vocabulary
+
+- Provisions pour risques et charges : Gesetzliche Rücklagen.
+- Créances et dettes : Kredite, Anleihen, Schulden.
 
 
 
@@ -139,6 +151,7 @@ add('L', _("Liabilities"),"liability",CREDIT) # Guthaben, Schulden, Verbindlichk
 add('I', _("Incomes"),"income",CREDIT) # Gain/Revenue     Einnahmen  Produits
 add('E', _("Expenses"),"expense",DEBIT) # Loss/Cost       Ausgaben   Charges
 add('C', _("Capital"),"capital",CREDIT)  # Kapital owner's Equities
+
 
 
 def _test():

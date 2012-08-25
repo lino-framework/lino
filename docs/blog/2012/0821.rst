@@ -5,8 +5,8 @@ I united the Account and AccountGroup models from lino.modlib.debts
 and lino.modlib.ledger to a common new module lino.modlib.accounts.
 Added new Model `accounts.Chart`.
 
-New fixture `lino.modlib.accounts.fixtures.mini` is an attempt to 
-create a "universal account chart" (...)
+New fixture :mod:`lino.modlib.accounts.fixtures.mini` is an attempt to 
+create a "universal account chart"
 
 TODO: 
 

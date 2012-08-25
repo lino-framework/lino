@@ -21,26 +21,32 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
+from lino import dd
 
 from lino.utils import i2d
 from lino.utils.instantiator import Instantiator
 from lino.core.modeltools import resolve_model
 from lino.utils.babel import babel_values
 
-from lino.modlib.debts.models import AccountType
+#~ from lino.modlib.debts.models import AccountTypes
+accounts = dd.resolve_app('accounts')
+
+AccountTypes = accounts.AccountTypes
 
 def n2dec(v):
     return decimal.Decimal("%.2d" % v)
    
 def objects():
-    group = Instantiator('debts.AccountGroup').build
-    g = group(account_type=AccountType.income,**babel_values('name',
+    c = accounts.Chart(name="debts.default")
+    yield c
+    group = Instantiator('accounts.Group',chart=c).build
+    g = group(ref="10",account_type=AccountTypes.income,**babel_values('name',
           de=u"Monatliche Einkünfte",
           fr=u"Revenus mensuels",
           en=u"Monthly incomes"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g).build
+    account = Instantiator('accounts.Account',group=g).build
     yield account(required_for_person=True,**babel_values('name',
           de=u"Gehälter",
           fr=u"Salaires",
@@ -77,13 +83,13 @@ def objects():
           en=u"Andere"
           ))
 
-    g = group(account_type=AccountType.income,**babel_values('name',
+    g = group(ref="20",account_type=AccountTypes.income,**babel_values('name',
           de=u"Jährliche Einkünfte",
           fr=u"Revenus annuels",
           en=u"Yearly incomes"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g,periods=12).build
+    account = Instantiator('accounts.Account',group=g,periods=12).build
     yield account(required_for_person=True,**babel_values('name',
           de=u"Urlaubsgeld",
           fr=u"Congé payé",
@@ -100,13 +106,13 @@ def objects():
           en=u"Gewerkschaftsprämie"
           ))
 
-    g = group(account_type=AccountType.expense,**babel_values('name',
+    g = group(ref="30",account_type=AccountTypes.expense,**babel_values('name',
           de=u"Monatliche Ausgaben",
           fr=u"Dépenses mensuelles",
           en=u"Monthly expenses"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g).build
+    account = Instantiator('accounts.Account',group=g).build
     yield account(required_for_household=True,**babel_values('name',
           de=u"Miete",
           fr=u"Loyer",
@@ -224,13 +230,13 @@ def objects():
           ))
 
 
-    g = group(account_type=AccountType.expense,**babel_values('name',
+    g = group(ref="40",account_type=AccountTypes.expense,**babel_values('name',
           de=u"Steuern",
           fr=u"Taxes",
           en=u"Taxes"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g,periods=12).build
+    account = Instantiator('accounts.Account',group=g,periods=12).build
     yield account(required_for_household=True,**babel_values('name',
           de=u"Gemeindesteuer",
           fr=u"Taxe communale",
@@ -262,13 +268,13 @@ def objects():
           en=u"Other"
           ))
 
-    g = group(account_type=AccountType.expense,**babel_values('name',
+    g = group(ref="50",account_type=AccountTypes.expense,**babel_values('name',
           de=u"Versicherungen",
           fr=u"Assurances",
           en=u"Insurances"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g,periods=12).build
+    account = Instantiator('accounts.Account',group=g,periods=12).build
     yield account(required_for_household=True,**babel_values('name',
           de=u"Feuer",
           fr=u"Incendie",
@@ -296,13 +302,13 @@ def objects():
           ))
           
           
-    g = group(account_type=AccountType.asset,**babel_values('name',
+    g = group(ref="60",account_type=AccountTypes.asset,**babel_values('name',
           de=u"Aktiva, Vermögen, Kapital",
           fr=u"Actifs",
           en=u"Assets"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g).build
+    account = Instantiator('accounts.Account',group=g).build
     yield account(**babel_values('name',
           de=u"Haus",
           fr=u"Maison",
@@ -315,13 +321,13 @@ def objects():
           ))
     
     
-    g = group(account_type=AccountType.liability,**babel_values('name',
+    g = group(ref="70",account_type=AccountTypes.liability,**babel_values('name',
           de=u"Guthaben, Schulden, Verbindlichkeit",
           fr=u"Créances et dettes",
           en=u"Liabilities"
           ))
     yield g
-    account = Instantiator('debts.Account',group=g).build
+    account = Instantiator('accounts.Account',group=g).build
     yield account(**babel_values('name',
           de=u"Kredite",
           fr=u"Crédits",

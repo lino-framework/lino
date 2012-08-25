@@ -27,7 +27,7 @@ from lino.utils.instantiator import Instantiator
 from lino.core.modeltools import resolve_model
 from lino.utils.babel import babel_values
 
-from lino.modlib.debts.models import AccountType
+from lino.modlib.accounts.utils import AccountTypes
 
 def n2dec(v):
     return decimal.Decimal("%.2d" % v)
@@ -53,20 +53,20 @@ def objects():
         
     Budget = resolve_model('debts.Budget')
     Entry = resolve_model('debts.Entry')
-    Account = resolve_model('debts.Account')
+    Account = resolve_model('accounts.Account')
     Company = resolve_model('contacts.Company')
     INCOME_AMOUNTS = Cycler([i*200 for i in range(8)])
     EXPENSE_AMOUNTS = Cycler([i*5.24 for i in range(10)])
     DEBT_AMOUNTS = Cycler([(i+1)*300 for i in range(5)])
     PARTNERS = Cycler(Company.objects.all())
-    LIABILITIES = Cycler(Account.objects.filter(type=AccountType.liability))
+    LIABILITIES = Cycler(Account.objects.filter(type=AccountTypes.liability))
     for b in Budget.objects.all():
         #~ n = min(3,b.actor_set.count())
         for e in b.entry_set.all():
             #~ for i in range(n):
-            if e.account.type == AccountType.income:
+            if e.account.type == AccountTypes.income:
                 amount = INCOME_AMOUNTS.pop()
-            elif e.account.type == AccountType.expense:
+            elif e.account.type == AccountTypes.expense:
                 amount = EXPENSE_AMOUNTS.pop()
             if e.account.required_for_household:
                 e.amount = n2dec(amount)

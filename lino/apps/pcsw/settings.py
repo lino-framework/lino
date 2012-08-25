@@ -135,17 +135,6 @@ class Lino(Lino):
             #~ m.add_action('projects.Projects')
             m.add_action(self.modules.notes.MyNotes)
             
-            #~ if user.is_spis:
-            if user.profile.integ_level:
-                mypersons = m.add_menu("mypersons",self.modules.pcsw.MyPersons.label)
-                mypersons.add_action(self.modules.pcsw.MyPersons)
-                for pg in self.modules.pcsw.PersonGroup.objects.order_by('ref_name'):
-                    mypersons.add_action(
-                      self.modules.pcsw.MyPersonsByGroup,
-                      label=pg.name,
-                      params=dict(master_instance=pg))
-                    #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
-                    #~ params=dict(master_id=pg.pk))
             self.on_each_app('setup_my_menu',ui,user,m)
             #~ self.modules.isip.setup_my_menu(self,ui,user,m)
             #~ self.modules.jobs.setup_my_menu(self,ui,user,m)

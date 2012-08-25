@@ -2034,6 +2034,20 @@ class Home(cal.Home):
     coming_reminders:40x16 missed_reminders:40x16
     """
 
+def setup_my_menu(site,ui,user,m): 
+    #~ if user.is_spis:
+    if user.profile.integ_level:
+        #~ mypersons = m.add_menu("mypersons",self.modules.pcsw.MyPersons.label)
+        mypersons = m.add_menu("mypersons",MyPersons.label)
+        mypersons.add_action(MyPersons)
+        for pg in PersonGroup.objects.order_by('ref_name'):
+            mypersons.add_action(
+              MyPersonsByGroup,
+              label=pg.name,
+              params=dict(master_instance=pg))
+            #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
+            #~ params=dict(master_id=pg.pk))
+  
 
 def site_setup(site):
     """
@@ -2080,7 +2094,9 @@ def site_setup(site):
     """)
     
     site.modules.countries.Cities.set_detail_layout("""
-    name country inscode
+    name country inscode 
+    parent type id
+    CitiesByCity
     contacts.PartnersByCity jobs.StudiesByCity
     """)
     
@@ -2211,70 +2227,6 @@ def site_setup(site):
     
     
 dd.add_user_group('integ',_("Integration"))
-    
-    
-#~ def customize_user_groups():
-    #~ """
-    #~ Define application-specific 
-    #~ :class:`UserGroups <lino.core.perms.UserGroups>`.
-    #~ """
-    #~ add = dd.UserGroups.add_item
-    #~ add('office',_("Calendar & Outbox"),'office')
-    #~ add('integ',_("Integration"),'integ')
-    #~ add('cbss',_("CBSS"),'cbss')
-    #~ add('newcomers',_("Newcomers"),'newcomers')
-    #~ add('debts',_("Debts"),'debts')
-
-#~ def customize_user_profiles():
-    
-    #~ def add(value,label,*args,**kw):
-        #~ dd.UserProfiles.add_item(value,label,None,*args,**kw)
-    #~ """
-        #~ #     label                            level      office      integ       cbss       newcomers  debts
-        #~ ====  ================================ ========== =========== =========== ========== ========== ========"""
-    #~ add('100', _("Integration Agent"),          'user',    'user',     'user',    'user',    '',        '')
-    #~ add('110', _("Integration Agent (Senior)"), 'user',    'manager',  'manager', 'user',    '',        '')
-    #~ add('200', _("Newcomers consultant"),       'user',    'user',     '',        'user',    'user',    '')
-    #~ add('300', _("Debts consultant"),           'user',    'user',     '',        '',        '',        'user')
-    #~ add('400', _("Readonly Manager"),           'manager', 'manager',  'manager', 'manager', 'manager', 'manager', readonly=True)
-    #~ add('500', _("CBSS only"),                  'user',    '',         '',        'user',    '',        '')
-    #~ add('900', _("Administrator"),              'admin',   'admin',    'admin',   'admin',   'admin',   'admin')
-    
-    
-    #~ short_levels = dict(A='admin',U='user',_='',M='manager',G='guest')
-    #~ keys = ['level'] + [g.value+'_level' for g in UserGroups.items()]
-    #~ def add(value,label,name,memberships,**kw):
-        #~ if len(memberships.split()) != len(attrs):
-            #~ raise Exception(
-                #~ "Invalid profile specification %r : must contain %d letters" 
-                #~ % (memberships,len(attrs))
-        #~ for i,k in enumerate(memberships.split()):
-            #~ kw[keys[i]] = short_levels[k]
-        #~ dd.UserProfiles.add_item(value,label,None,**kw)
-    
-    
-    
-    
-    #~ add = dd.UserProfiles.add_item
-    
-    #~ kw = dict(level='user',office_level='user',integ_level='user',cbss_level='user',
-        #~ newcomers_level='',debts_level='')
-    #~ add('100',_("Integration Agent"),**kw)
-    
-    #~ kw.update(integ_level='manager')
-    #~ add('110', _("Integration Agent (Senior)"),**kw)
-    
-    #~ kw.update(integ_level='',newcomers_level='user')
-    #~ add('200', _("Newcomers consultant"),**kw)
-    
-    #~ kw.update(newcomers_level='',debts_level='user')
-    #~ add('200', _("Debts consultant"),**kw)
-    
-    #~ def get_user_profiles(self):
-        #~ def add(value,label,*args,**kw):
-            #~ dd.UserProfiles.add_item(value,label,None,*args,**kw)
-        #~ yield '100', _("Integration Agent"),          'user',    'user',     'user',    'user',    '',        '')
-
 
 customize_siteconfig()
 customize_contacts()        

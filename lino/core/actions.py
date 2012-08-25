@@ -605,7 +605,7 @@ class ActionRequest(object):
     create_kw = None
     renderer = None
     
-    def __init__(self,ui,actor,request=None,action=None,renderer=None,**kw):
+    def __init__(self,ui,actor,request=None,action=None,renderer=None,param_values={},**kw):
         #~ ActionRequest.__init__(self,ui,action)
         if ui is None:
             ui = settings.LINO.ui
@@ -627,21 +627,30 @@ class ActionRequest(object):
             kw = self.parse_req(request,rqdata,**kw)
         #~ 20120605 self.ah = actor.get_handle(ui)
         self.setup(**kw)
-        # 20120605 : Actor.get_request_handle() ar instead of ui
         self.ah = actor.get_request_handle(self)
-        
-        if self.actor.parameters and request is not None:
-            rpv = self.ui.parse_params(self.ah,request)
+        """
+        See 20120825
+        """
+        if self.actor.parameters:
+            if request is not None:
+                param_values.update(self.ui.parse_params(self.ah,request))
                 
             for k,pf in self.actor.parameters.items():
-                v = rpv.get(k,None)
-                if v is None:
-                    v = pf.get_default()
-                self.param_values.define(k,v)
-            if rpv:
-                #~ logger.info("20120608 param_values is %s",param_values)
-                for k,v in rpv.items():
-                    self.param_values.define(k,v)
+                if not param_values.has_key(k):
+                    param_values[k] = pf.get_default()
+                    
+                #~ v = param_values.get(k,None)
+                #~ if v is None:
+                    #~ v = pf.get_default()
+                    #~ param_values
+                #~ param_values.define(k,v)
+                
+            self.param_values = AttrDict(**param_values)
+            
+            #~ if param_values:
+                #~ # logger.info("20120608 param_values is %s",param_values)
+                #~ for k,v in param_values.items():
+                    #~ self.param_values.define(k,v)
                 
         
     def href_to(self,*args,**kw):
@@ -666,7 +675,7 @@ class ActionRequest(object):
     def setup(self,
             user=None,
             subst_user=None,
-            param_values={},
+            #~ param_values={},
             known_values=None,
             requesting_panel=None,
             renderer=None,
@@ -675,9 +684,8 @@ class ActionRequest(object):
         self.user = user
         if renderer is not None:
             self.renderer = renderer
-        if self.actor.parameters:
-            self.param_values = AttrDict(**param_values)
-            #~ self.param_values = param_values
+        #~ if self.actor.parameters:
+            #~ self.param_values = AttrDict(**param_values)
         self.subst_user = subst_user
         #~ 20120111 
         #~ self.known_values = known_values or self.report.known_values

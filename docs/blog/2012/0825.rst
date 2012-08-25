@@ -1,0 +1,21 @@
+20120825
+========
+
+
+New module :mod:`lino.modlib.vat`. 
+
+Discovered and fixed the following bug in
+:class:`lino.core.actions.ActionRequest`:
+
+A programmatic request (without HttpRequest) 
+on a table with parameters didn't fill default values 
+into `param_values`.
+
+This bug was discovered by the following 
+code (in :mod:`lino.modlib.ledger`)::
+
+    for jnl in Journal.objects.all():
+        m.add_action(jnl.voucher_type.table_class,
+            label=unicode(jnl)+' (%s)' % jnl.id,
+            params=dict(master_instance=jnl))
+

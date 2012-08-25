@@ -1234,6 +1234,40 @@ class Lino(object):
         return None
 
 
+    def get_product_base_account(self,tt,product):
+        #~ from lino.modlib.ledger.models import JournalTypes
+        #~ if item.voucher.journal.type == JournalTypes.sales:
+        if tt.name == 'sales':
+            return '704000'
+        elif tt.name == 'purchases':
+        #~ elif item.voucher.journal.type == JournalTypes.purchases:
+            return '604000'
+        
+    #~ def get_sales_item_account(self,item):
+        #~ return self.modules.accounts.Account.objects.get(group__ref='704000')
+        
+    def get_partner_account(self,voucher):
+        tt = voucher.get_trade_type()
+        if tt.name == 'sales':
+        #~ if voucher.journal.type == JournalTypes.sales:
+            return '400000'
+        elif tt.name == 'purchases':
+        #~ elif voucher.journal.type == JournalTypes.purchases:
+            return '440000'
+        
+    def get_vat_account(self,jt,vc,vr):
+        return '472100'
+
+    def get_vat_rate(self,jt,vc,vr):
+        VAT_RATES = dict(
+          exempt=Decimal(),
+          reduced=Decimal('0.07'),
+          normal=Decimal('0.20')
+        )
+        return VAT_RATES[vc.name]
+
+        
+        
     def get_reminder_generators_by_user(self,user):
         """
         Override this per application to return a list of 

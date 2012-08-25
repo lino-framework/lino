@@ -19,34 +19,48 @@ from lino.utils import dblogger
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
 
+from lino import dd
 
 def objects():
     #~ dblogger.info("Installing countries few_cities fixture")
-    City = resolve_model('countries.City')
+    countries = dd.resolve_app('countries')
+    #~ City = resolve_model('countries.City')
+    City = countries.City
+    CityTypes = countries.CityTypes
     city = Instantiator(City,'name country').build
     def make_city(name,country_id,**kw):
         try:
-            return City.objects.get(country__isocode=country_id,name=name)
+            return City.objects.exclude(type=CityTypes.county).get(
+                country__isocode=country_id,name=name)
         except City.DoesNotExist:
             return city(name,country_id,**kw)
         
-    yield make_city(u'Eupen','BE',zip_code='4700')
-    yield make_city(u'Kelmis','BE',zip_code='4720')
-    yield make_city(u'Kettenis','BE',zip_code='4701')
-    yield make_city(u'Raeren','BE',zip_code='4730')
-    yield make_city(u'Angleur','BE',zip_code='4031')
-    yield make_city(u'Liège','BE',zip_code='4000')
-    yield make_city(u'Bruxelles','BE',zip_code='1000')
+    yield make_city(u'Eupen','BE',zip_code='4700',type=CityTypes.city)
+    yield make_city(u'Kelmis','BE',zip_code='4720',type=CityTypes.city)
+    yield make_city(u'Kettenis','BE',zip_code='4701',type=CityTypes.village)
+    yield make_city(u'Raeren','BE',zip_code='4730',type=CityTypes.village)
+    yield make_city(u'Angleur','BE',zip_code='4031',type=CityTypes.city)
+    yield make_city(u'Liège','BE',zip_code='4000',type=CityTypes.city)
+    yield make_city(u'Bruxelles','BE',zip_code='1000',type=CityTypes.city)
     #~ yield city('Brussel','BE',zip_code='1000')
     #~ yield city(u'Brüssel','BE',zip_code='1000')
-    yield make_city(u'Oostende','BE',zip_code='8400')
+    yield make_city(u'Oostende','BE',zip_code='8400',type=CityTypes.city)
     
-    yield make_city(u'Vigala','EE')
-    yield make_city(u'Tallinn','EE')
-    yield make_city(u'Pärnu','EE')
-    yield make_city(u'Tartu','EE')
-    yield make_city(u'Narva','EE')
-    yield make_city(u'Ääsmäe','EE')
+    harjumaa = make_city(u'Harjumaa','EE',type=CityTypes.county)
+    yield harjumaa
+    parnumaa = make_city(u'Pärnumaa','EE',type=CityTypes.county)
+    yield parnumaa
+    raplamaa = make_city(u'Raplamaa','EE',type=CityTypes.county)
+    yield raplamaa
+    
+    yield make_city(u'Vigala','EE',type=CityTypes.municipality,parent=raplamaa)
+    yield make_city(u'Rapla','EE',type=CityTypes.town,parent=raplamaa)
+    
+    yield make_city(u'Tallinn','EE',type=CityTypes.city,parent=harjumaa)
+    yield make_city(u'Pärnu','EE',type=CityTypes.town,parent=parnumaa)
+    yield make_city(u'Tartu','EE',type=CityTypes.town)
+    yield make_city(u'Narva','EE',type=CityTypes.town)
+    yield make_city(u'Ääsmäe','EE',type=CityTypes.town,parent=harjumaa)
 
     yield make_city(u'Aachen','DE')
     yield make_city(u'Köln','DE')

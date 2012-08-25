@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-General Ledger. The base module required for accounting.
+Accounts. The base module required for accounting.
 
 """
 
@@ -34,6 +34,8 @@ from lino.utils.choicelists import ChoiceList
 #from lino.modlib.journals import models as journals
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.accounts.utils import AccountTypes
+
+
 
 
 class Chart(babel.BabelNamed):
@@ -112,6 +114,24 @@ class AccountsByGroup(Accounts):
 
     
 
+def customize_products():
+    dd.inject_field('products.Product',
+        'sales_account',
+        models.ForeignKey('accounts.Account',
+            verbose_name=_("Sales account"),
+            blank=True,null=True,
+            related_name="products_sales",
+            help_text=_("The account to move when this product is used in a sales invoice.")
+        ))
+    dd.inject_field('products.Product',
+        'purchases_account',
+        models.ForeignKey('accounts.Account',
+            verbose_name=_("Purchases account"),
+            blank=True,null=True,
+            related_name="products_purchases",
+            help_text=_("The account to move when this product is used in a purchases invoice.")
+        ))
+
 
 
 MODULE_LABEL = _("Accounts")
@@ -141,3 +161,5 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(Accounts)
 
 #~ dd.add_user_group('debts',MODULE_LABEL)
+
+customize_products()

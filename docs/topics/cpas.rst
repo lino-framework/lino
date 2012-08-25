@@ -2,6 +2,8 @@
 Lino pour CPAS
 ==============
 
+(no longer maintained)
+
 Ceci est la page où je collectione, en français, les idées et plans pour le déceloppement futur de Lino pour CPAS.
 
 Lino pour CPAS est une application Lino, 

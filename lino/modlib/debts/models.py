@@ -77,10 +77,14 @@ from lino.core.modeltools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.properties import models as properties
-from lino.modlib.households import models as households
-from lino.modlib.ledger.utils import AccountTypes
+#~ from lino.modlib.households import models as households
+from lino.modlib.accounts.utils import AccountTypes
 #~ from lino.modlib.contacts.models import Contact
 #~ from lino.core.modeltools import resolve_model, UnresolvedModel
+
+accounts = dd.resolve_app('accounts')
+households = dd.resolve_app('households')
+properties = dd.resolve_app('properties')
 
 from lino.mixins.printable import decfmt
 
@@ -316,7 +320,7 @@ The monthly amount available for distribution among debtors."""))
         self.save()
         flt = models.Q(required_for_household=True)
         flt = flt | models.Q(required_for_person=True)
-        required = Account.objects.filter(flt)\
+        required = accounts.Account.objects.filter(flt)\
             .order_by('seqno').values_list('id',flat=True)
         missing = set(required)
         seqno = 1
@@ -579,7 +583,7 @@ class Entry(SequencedBudgetComponent):
     
     #~ group = models.ForeignKey(AccountGroup)
     account_type = AccountTypes.field()
-    account = models.ForeignKey(Account)
+    account = models.ForeignKey(accounts.Account)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     #~ name = models.CharField(_("Remark"),max_length=200,blank=True)
     amount = dd.PriceField(_("Amount"),default=0)
@@ -627,7 +631,7 @@ Wenn hier ein Betrag steht, darf "Verteilen" nicht angekreuzt sein.
 
     @chooser()
     def account_choices(cls,account_type):
-        return Account.objects.filter(type=account_type)
+        return accounts.Account.objects.filter(type=account_type)
         
     @chooser()
     def actor_choices(cls,budget):
@@ -1069,13 +1073,14 @@ def setup_my_menu(site,ui,user,m):
     m.add_action(MyBudgets)
   
 def setup_config_menu(site,ui,user,m): 
+    pass
     #~ if user.profile.debts_level < UserLevels.manager: 
         #~ return
-    m  = m.add_menu("debts",MODULE_LABEL)
+    #~ m  = m.add_menu("debts",MODULE_LABEL)
     #~ m.add_action(Accounts)
-    m.add_action(AccountGroups)
+    #~ m.add_action(accounts.Groups)
     #~ m.add_action(DebtTypes)
-    m.add_action(Accounts)
+    #~ m.add_action(Accounts)
   
 def setup_explorer_menu(site,ui,user,m):
     #~ if user.profile.debts_level < UserLevels.manager:
@@ -1089,17 +1094,17 @@ dd.add_user_group('debts',MODULE_LABEL)
 
 
 def customize_accounts():
-    dd.inject_field('accounts.Account',
+    dd.inject_field(accounts.Account,
         'required_for_household',
         models.BooleanField(
         _("Required for Households"),default=False)
       )
-    dd.inject_field('accounts.Account',
+    dd.inject_field(accounts.Account,
         'required_for_person',
         models.BooleanField(
         _("Required for Persons"),default=False)
       )
-    dd.inject_field('accounts.Account',
+    dd.inject_field(accounts.Account,
         'periods',
         PeriodsField(_("Periods"))
       )

@@ -319,8 +319,9 @@ class FakeDeserializedObject(base.DeserializedObject):
                 # hand-written fixtures are designed to not raise any exception
                 dblogger.warning("Failed to save %s:" % obj2str(obj))
                 raise
-            if False: # obj.pk is None: 
+            if obj.pk is None: 
                 """
+                (no longer true:) 
                 presto.tim2lino creates invoices without pk which possibly fail to save 
                 on first attempt because their project
                 """

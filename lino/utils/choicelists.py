@@ -204,6 +204,12 @@ class ChoiceList(object):
     The class of items of this list.
     """
     
+    blank = True
+    """
+    Set this to False if you don't want to accept 
+    any blank value for your ChoiceList.
+    """
+    
     stored_name = None
     """
     Every subclass of ChoiceList will be automatically registered.
@@ -248,7 +254,8 @@ class ChoiceList(object):
                 delattr(cls,ci.name)
         cls.items_dict = {}
         cls.choices = []
-        cls.add_item('','',name='blank_item')
+        if cls.blank:
+            cls.add_item('','',name='blank_item')
         cls.choices = [] # remove blank_item from choices
         
         #~ cls.items_dict = {'' : cls.blank_item }
@@ -432,7 +439,7 @@ class ChoiceListField(models.CharField):
             #~ choices=KNOWLEDGE_CHOICES,
             #~ choices=choicelist.get_choices(),
             max_length=choicelist.max_length,
-            blank=True,  # null=True,
+            blank=choicelist.blank,  # null=True,
             #~ validators=[validate_knowledge],
             #~ limit_to_choices=True,
             )

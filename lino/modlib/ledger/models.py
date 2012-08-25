@@ -19,14 +19,17 @@ General Ledger.
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db import models
 import datetime
 from decimal import Decimal
+
+from django.db import models
+from django.conf import settings
 
 from lino import dd
 from lino import mixins
 from lino.utils import babel
-from lino.utils.choicelists import ChoiceList
+from lino.core.modeltools import full_model_name
+from lino.utils.choicelists import ChoiceList, Choice
 #contacts = reports.get_app('contacts')
 #~ from lino.modlib.journals import models as journals
 #~ journals = reports.get_app('journals')
@@ -36,30 +39,28 @@ from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
 #~ from lino.modlib.accounts.utils import AccountTypes
 
+accounts = dd.resolve_app('accounts')
+vat = dd.resolve_app('vat')
 
-DOCTYPES = []
-DOCTYPE_CHOICES = []
+ZERO = Decimal()
 
-def register_voucher_type(docclass,rptclass=None):
-    #assert not docclass in DOCTYPE_CLASSES
+#~ DOCTYPES = []
+#~ DOCTYPE_CHOICES = []
+
+#~ def register_voucher_type(docclass,rptclass=None):
+    #~ type_id = len(DOCTYPE_CHOICES)
+    #~ DOCTYPE_CHOICES.append((type_id,docclass.__name__))
+    #~ DOCTYPES.append((docclass,rptclass))
+    #~ docclass.doctype = type_id
+    #~ return type_id
+
+#~ def get_doctype(cl):
     #~ i = 0
-    #~ for cl in DOCTYPE_CLASSES:
-        #~ if cl == docclass:
+    #~ for c,r in DOCTYPES:
+        #~ if c is cl:
             #~ return i
         #~ i += 1
-    type_id = len(DOCTYPE_CHOICES)
-    DOCTYPE_CHOICES.append((type_id,docclass.__name__))
-    DOCTYPES.append((docclass,rptclass))
-    docclass.doctype = type_id
-    return type_id
-
-def get_doctype(cl):
-    i = 0
-    for c,r in DOCTYPES:
-        if c is cl:
-            return i
-        i += 1
-    return None
+    #~ return None
 
 
 
@@ -74,17 +75,74 @@ def get_doctype(cl):
     #~ kw.setdefault('default',default_year)
     #~ return models.IntegerField(**kw)
 
+      
+class VoucherType(Choice):
+    def __init__(self,cls,model,table_class):
+        self.table_class = table_class
+        self.model = model
+        value = full_model_name(model)
+        text = model._meta.verbose_name + ' (%s.%s)' % (
+            model.__module__,model.__name__)
+        name = None
+        super(VoucherType,self).__init__(cls,value,text,name)
+        
+class VoucherTypes(ChoiceList):
+    item_class = VoucherType
+    blank = False
+    max_length = 100
+    
+    @classmethod
+    def add_item(cls,model,table_class):
+        return cls.add_item_instance(VoucherType(cls,model,table_class))
+    
+  
+#~ class VatClasses(ChoiceList):
+    #~ """
+    #~ A VAT rate determines the *rate* of VAT.
+    #~ The actual rates are not stored here, 
+    #~ they vary depending on your country, 
+    #~ the time and type of the operation, 
+    #~ and possibly other factors.
+    #~ """
+    #~ label = _("VAT Rate")
+#~ add = VatClasses.add_item
+#~ add('0',_("Exempt"),'exempt')
+#~ add('1',_("Reduced"),'reduced')
+#~ add('2',_("Normal"),'normal')
+
+
+#~ class VatRegimes(ChoiceList):
+    #~ """
+    #~ While the rate of VAT is determined using :class:`VatClasses`,
+    #~ the VAT regime determines how the VAT is being handled: 
+    #~ whether and how it is to be paid.
+    #~ """
+    #~ label = _("VAT Regimes")
+#~ add = VatRegimes.add_item
+#~ add('10',_("Private person"),'private')
+#~ add('20',_("Subject to VAT"),'subject')
+#~ add('25',_("Co-contractor"),'cocontractor')
+#~ add('30',_("Intra-community"),'intracom')
+#~ add('40',_("Outside EU"),'outside')
+
 
     
-    
-#~ class Journal(dd.Model):
-class Journal(mixins.Sequenced):
+#~ class JournalTypes(ChoiceList):
+    #~ label = _("Journal Type")
+#~ add = JournalTypes.add_item
+#~ add('S',_("Sales"),'sales')
+#~ add('P',_("Purchases"),'purchases')
+#~ add('F',_("Financial"),'financial')
+
+class Journal(babel.BabelNamed,mixins.Sequenced):
   
     id = models.CharField(max_length=4,primary_key=True)
-    name = models.CharField(max_length=100)
-    doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
+    #~ name = models.CharField(max_length=100)
+    trade_type = vat.TradeTypes.field()
+    #~ doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
+    voucher_type = VoucherTypes.field() 
     force_sequence = models.BooleanField(default=False)
-    account = models.ForeignKey('accounts.Account',blank=True,null=True)
+    #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
     #~ account = models.CharField(max_length=6,blank=True)
     #~ pos = models.IntegerField()
     #~ printed_name = models.CharField(max_length=100,blank=True)
@@ -93,10 +151,12 @@ class Journal(mixins.Sequenced):
     def get_doc_model(self):
         """The model of documents in this Journal."""
         #print self,DOCTYPE_CLASSES, self.doctype
-        return DOCTYPES[self.doctype][0]
+        return self.voucher_type.model
+        #~ return DOCTYPES[self.doctype][0]
 
     def get_doc_report(self):
-        return DOCTYPES[self.doctype][1]
+        return self.voucher_type.table_class
+        #~ return DOCTYPES[self.doctype][1]
 
     def get_document(self,year=None,number=None,**kw):
         cl = self.get_doc_model()
@@ -106,13 +166,17 @@ class Journal(mixins.Sequenced):
     def create_document(self,**kw):
         """Create an instance of this Journal's document model (:meth:`get_doc_model`)."""
         cl = self.get_doc_model()
-        #~ kw.update(journal=self) # wouldn't work. See Django ticket #10808
+        kw.update(journal=self) 
         try:
-            doc = cl(**kw)
+            doc = cl() 
+            #~ doc = cl(**kw) # wouldn't work. See Django ticket #10808
+            #~ doc.journal = self
+            for k,v in kw.items():
+                setattr(doc,k,v)
+            #~ print 20120825, kw
         except TypeError,e:
             #~ print 20100804, cl
             raise
-        doc.journal = self
         #~ doc.full_clean()
         #~ doc.save()
         return doc
@@ -128,7 +192,7 @@ class Journal(mixins.Sequenced):
         return number + 1
         
     def __unicode__(self):
-        return self.id
+        return self.id +' (%s)' % babel.BabelNamed.__unicode__(self)
         
     def save(self,*args,**kw):
         #~ self.before_save()
@@ -160,7 +224,12 @@ class Journal(mixins.Sequenced):
 class Journals(dd.Table):
     model = Journal
     order_by = ["seqno"]
-    column_names = "id name doctype force_sequence *"
+    column_names = "seqno id trade_type voucher_type name force_sequence *"
+    detail_layout = """
+    seqno id trade_type voucher_type force_sequence 
+    name
+    printed_name
+    """
     
 
                   
@@ -196,16 +265,26 @@ class Voucher(mixins.UserAuthored):
       #~ max_length=200,blank=True)
     narration = models.CharField(_("Narration"),max_length=200,blank=True)
     
+    #~ @classmethod
+    #~ def create_journal(cls,id,**kw):
+        #~ doctype = get_doctype(cls)
+        #~ jnl = Journal(doctype=doctype,id=id,**kw)
+        #~ return jnl
+        
     @classmethod
-    def create_journal(cls,id,**kw):
-        doctype = get_doctype(cls)
-        jnl = Journal(doctype=doctype,id=id,**kw)
+    def create_journal(cls,jnl_id,trade_type,**kw):
+        #~ doctype = get_doctype(cls)
+        #~ jnl = Journal(doctype=doctype,id=jnl_id,*args,**kw)
+        tt = vat.TradeTypes.get_by_name(trade_type)
+        vt = VoucherTypes.get_by_value(full_model_name(cls))
+        jnl = Journal(trade_type=tt,voucher_type=vt,id=jnl_id,**kw)
         return jnl
         
     @classmethod
     def get_journals(cls):
-        doctype = get_doctype(cls)
-        return Journal.objects.filter(doctype=doctype).order_by('seqno')
+        vt = VoucherTypes.get_by_value(full_model_name(cls))
+        #~ doctype = get_doctype(cls)
+        return Journal.objects.filter(voucher_type=vt).order_by('seqno')
             
         
     def __unicode__(self):
@@ -234,9 +313,9 @@ class Voucher(mixins.UserAuthored):
         self.journal.pre_delete_document(self)
         return super(Voucher,self).delete()
         
-    def get_child_model(self):
-        ## overrides Typed
-        return DOCTYPES[self.journal.doctype][0]
+    #~ def get_child_model(self):
+        #~ ## overrides Typed
+        #~ return DOCTYPES[self.journal.doctype][0]
         
         
     def get_wanted_movements(self):
@@ -252,8 +331,15 @@ class Voucher(mixins.UserAuthored):
         
     def create_movement(self,account,amount,**kw):
         kw['voucher'] = self
+        account = accounts.Account.objects.get(group__ref=account)
         kw['account'] = account
-        kw['amount'] = amount
+        if amount >= 0:
+            kw['amount'] = amount
+            kw['dc'] = account.type.dc
+        else:
+            kw['amount'] = - amount
+            kw['dc'] = not account.type.dc
+        
         #~ kw['journal'] = self.journal
         #~ kw['year'] = self.year
         #~ kw['number'] = self.number
@@ -268,12 +354,17 @@ class Voucher(mixins.UserAuthored):
         return b
         
         
-ZERO = Decimal()        
+
+class DebitOrCreditField(models.BooleanField):
+    pass
+
+
     
 class Movement(mixins.Sequenced):
     voucher = models.ForeignKey(Voucher)
     #~ pos = models.IntegerField("Position",blank=True,null=True)
-    account = models.ForeignKey('accounts.Account')
+    dc = DebitOrCreditField()
+    account = models.ForeignKey(accounts.Account)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     amount = dd.PriceField(default=0)
     #~ is_credit = models.BooleanField(_("Credit"),default=False)
@@ -282,13 +373,13 @@ class Movement(mixins.Sequenced):
     
     @dd.virtualfield(dd.PriceField(_("Debit")))
     def debit(self,ar):
-        if self.account.type.dc: 
+        if self.dc: 
             return ZERO
         return self.amount
     
     @dd.virtualfield(dd.PriceField(_("Credit")))
     def credit(self,ar):
-        if self.account.type.dc: 
+        if self.dc: 
             return self.amount
         return ZERO
             
@@ -331,3 +422,241 @@ class MovementsByVoucher(Movements):
     #~ column_names = journals.Journals.column_names + " account"
     
 
+
+
+class LedgerInvoiceStates(ChoiceList):
+    label = _("State")
+add = LedgerInvoiceStates.add_item
+add('10',_("Booked"),'booked',help_text=_("Ready to sign"))
+#~ add('20',_("Signed"),'signed')
+#~ add('30',_("Sent"),'sent')
+add('40',_("Paid"),'paid')
+
+
+
+#~ class VatDocument(mixins.UserAuthored):
+    #~ """
+    #~ This is also used for Offers and other non-ledger partner documents
+    #~ """
+    #~ class Meta:
+        #~ abstract = True
+  
+    #~ partner = models.ForeignKey("contacts.Partner")
+    #~ item_vat = models.BooleanField(default=False)
+    #~ vat_regime = VatRegimes.field()
+    #~ total_excl = dd.PriceField(blank=True,null=True)
+    #~ total_vat = dd.PriceField(blank=True,null=True)
+    
+    #~ @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
+    #~ def total_incl(self,ar=None):
+        #~ if self.total_excl is None:
+            #~ return None
+        #~ return self.total_excl + self.total_vat
+        
+    #~ def get_sums(self):
+        #~ sums_dict = dict()
+        #~ def move(account,amount):
+            #~ if sums_dict.has_key(account):
+                #~ sums_dict[account] += amount
+            #~ else:
+                #~ sums_dict[account] = amount
+        #~ # if self.journal.type == JournalTypes.purchases:
+        #~ for i in self.items.order_by('seqno'):
+            #~ # move(i.get_base_account(),i.total)
+            #~ if self.item_vat:
+                #~ move(i.get_base_account(),i.total)
+                #~ move(settings.LINO.get_vat_account(),i.total)
+        #~ return sums_dict
+        
+    #~ def get_wanted_movements(self):
+        #~ sums_dict = self.get_sums()
+        #~ sum = ZERO
+        #~ for a,m in sums_dict.items():
+            #~ yield self.create_movement(a,m)
+            #~ sum += i.total
+        #~ yield self.create_movement(settings.LINO.get_partner_account(self),sum,partner=self.partner)
+        
+#~ class PartnerDocItemBase(mixins.Sequenced):
+    #~ """
+    #~ Abstract Base class for InvoiceItem and OrderItem.
+    #~ Subclasses MUST define a field called "document" which is a FK with related_name="items".
+    #~ """
+    #~ class Meta:
+        #~ abstract = True
+        #~ # unique_together  = ('document','seqno')
+    
+    #~ vat_class = VatClasses.field()
+    #~ unit_price = dd.PriceField(blank=True,null=True) 
+    #~ qty = dd.QuantityField(blank=True,null=True)
+    #~ total = dd.PriceField(blank=True,null=True)
+    
+    
+    #~ # def total_excl(self):
+        #~ # if self.unitPrice is not None:
+            #~ # qty = self.qty or 1
+            #~ # return self.unitPrice * qty
+        #~ # elif self.total is not None:
+            #~ # return self.total
+        #~ # return 0
+        
+    #~ def get_base_account(self):
+        #~ raise NotImplementedError
+        
+    #~ def get_siblings(self):
+        #~ return self.document.items      
+    
+    #~ def full_clean(self,*args,**kw):
+        #~ if self.unit_price is not None and self.qty is not None:
+            #~ self.total = self.unit_price * self.qty
+        #~ super(PartnerDocItemBase,self).full_clean(*args,**kw)
+
+    
+class AccountInvoice(vat.VatDocument,Voucher):
+    
+    class Meta:
+        verbose_name = _("Invoice")
+        verbose_name_plural = _("Invoices")
+    
+    your_ref = models.CharField(_("Your reference"),
+        max_length=200,blank=True)
+    
+    due_date = models.DateField(_("Due date"),blank=True,null=True)
+    
+    state = LedgerInvoiceStates.field()
+    
+    workflow_state_field = 'state'
+    
+    def add_item(self,account=None,qty=None,**kw):
+        if account is not None:
+            if not isinstance(account,accounts.Account):
+                account = accounts.Account.objects.get(group__ref=account)
+        kw['account'] = account
+        unit_price = kw.get('unit_price',None)
+        #~ if type(unit_price) == float:
+            #~ kw['unit_price'] = "%.2f" % unit_price
+        kw['qty'] = qty
+        #print self,kw
+        kw['document'] = self
+        return self.items.model(**kw)
+        
+    def get_trade_type(self):
+        return self.journal.trade_type
+        
+    
+    
+
+
+
+
+class InvoiceItem(vat.VatItemBase):
+    
+    document = models.ForeignKey(AccountInvoice,related_name='items') 
+    
+    account = models.ForeignKey('accounts.Account',blank=True,null=True)
+    title = models.CharField(max_length=200,blank=True)
+    
+    def get_base_account(self):
+        return self.account
+        
+    
+
+
+
+    
+
+
+class InvoiceDetail(dd.FormLayout):
+    main = "general ledger"
+    
+    totals = """
+    total_excl
+    total_vat
+    total_incl
+    workflow_buttons
+    """
+    
+    general = dd.Panel("""
+    id date partner user state
+    due_date your_ref vat_regime item_vat
+    ItemsByInvoice:60 totals:20
+    """,label=_("General"))
+    
+    ledger = dd.Panel("""
+    journal year number narration
+    MovementsByVoucher
+    """,label=_("Ledger"))
+    
+class Invoices(dd.Table):
+    #~ parameters = dict(pyear=journals.YearRef())
+    parameters = dict(
+        year=FiscalYears.field(blank=True),
+        journal=JournalRef(blank=True))
+    model = AccountInvoice
+    order_by = ["id"]
+    column_names = "id date partner total_incl user *" 
+    detail_layout = InvoiceDetail()
+    
+    @classmethod
+    def get_request_queryset(cls,ar):
+        qs = super(Invoices,cls).get_request_queryset(ar)
+        if ar.param_values.year:
+            qs = qs.filter(year=ar.param_values.year)
+        if ar.param_values.journal:
+            qs = qs.filter(journal=ar.param_values.journal)
+        return qs
+    
+    
+    
+class InvoicesByJournal(Invoices):
+    order_by = ["number"]
+    master_key = 'journal' # see django issue 10808
+    #master = journals.Journal
+    column_names = "number date due_date " \
+                  "partner " \
+                  "total_incl " \
+                  "total_excl total_vat user *"
+                  #~ "ledger_remark:10 " \
+
+
+class ItemsByInvoice(dd.Table):
+    model = InvoiceItem
+    column_names = "seqno:3 account title unit_price qty total"
+    master_key = 'document'
+    order_by = ["seqno"]
+    
+
+class InvoicesByPartner(Invoices):
+    order_by = ["date"]
+    master_key = 'partner'
+    column_names = "date total_incl total_excl total_vat *"
+    
+
+
+#~ register_voucher_type(Invoice,InvoicesByJournal)
+VoucherTypes.add_item(AccountInvoice,InvoicesByJournal)
+
+MODULE_LABEL = _("Ledger")
+
+def site_setup(site):
+    pass
+
+
+def setup_main_menu(site,ui,user,m): 
+    m = m.add_menu("ledger",MODULE_LABEL)
+    for jnl in Journal.objects.all():
+        m.add_action(jnl.voucher_type.table_class,
+            label=unicode(jnl),
+            params=dict(master_instance=jnl))
+    
+def setup_my_menu(site,ui,user,m): 
+    pass
+  
+def setup_config_menu(site,ui,user,m): 
+    m = m.add_menu("ledger",MODULE_LABEL)
+    m.add_action(Journals)
+    
+    
+def setup_explorer_menu(site,ui,user,m):
+    m = m.add_menu("ledger",MODULE_LABEL)
+    m.add_action(Invoices)
+  

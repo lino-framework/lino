@@ -50,7 +50,8 @@ from lino.utils.choicelists import Gender
 from lino.utils import babel 
 #~ from lino.models import get_site_config
 
-from lino.modlib.countries.models import CountryCity
+#~ from lino.modlib.countries.models import CountryCity
+from lino.modlib.countries.models import CountryRegionCity
 
 #~ from lino.modlib.contacts.utils import get_salutation
 #~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
@@ -110,7 +111,7 @@ class CompanyTypes(dd.Table):
 
 
 #~ class Contact(mti.MultiTableBase,CountryCity):
-class Partner(mti.MultiTableBase,CountryCity):
+class Partner(mti.MultiTableBase,CountryRegionCity):
     """
     Base class for anything that has contact information 
     (postal address, email, phone,...).
@@ -149,10 +150,10 @@ class Partner(mti.MultiTableBase,CountryCity):
         max_length=200,blank=True,
         help_text="Address line to print below street line")
     
-    zip_code = models.CharField(_("Zip code"),
-        max_length=10,blank=True)
-    region = models.CharField(_("Region"),
-        max_length=200,blank=True)
+    #~ zip_code = models.CharField(_("Zip code"),
+        #~ max_length=10,blank=True)
+    #~ region = models.CharField(_("Region"),
+        #~ max_length=200,blank=True)
     language = babel.LanguageField()
     
     email = models.EmailField(_('E-Mail'),blank=True) # ,null=True)
@@ -830,8 +831,11 @@ MODULE_NAME = _("Contacts")
 def site_setup(site):
     site.modules.countries.Cities.set_detail_layout("""
     name country 
+    parent type id
+    CitiesByCity
     contacts.PartnersByCity
     """)
+    
 
 
 def setup_main_menu(site,ui,user,m): pass

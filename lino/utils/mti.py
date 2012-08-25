@@ -246,6 +246,14 @@ def create_child(parent_model,pk_,child_model,**kw):
     Similar to :func:`insert_child`, but very tricky. 
     Used by :mod:`lino.utils.dumpy`
     See :mod:`lino.test_apps.1.models`.
+    
+    The return value is almost a normal model instance,
+    but whose `save` and `full_clean` methods have been 
+    hacked. They are the only methods that will be 
+    called by :class:`lino.utils.dumpy.Deserializer`.
+    You should not use this instance for anything else
+    and throw it away when the save() has been called.
+
     """
     parent_link_field = child_model._meta.parents.get(parent_model,None)
     if parent_link_field is None:

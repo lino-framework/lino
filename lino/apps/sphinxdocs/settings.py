@@ -16,6 +16,10 @@
 
 A special settings module to be used as DJANGO_SETTINGS_MODULE 
 when Sphinx generates the Lino docs.
+It contains *all* modlib modules, which makes no sense in practice 
+and would raise errors if you try to initialize a database or 
+validate the models, but it is enough to have autodocs do its job. 
+And that's all we want.
 
 """
 
@@ -53,16 +57,21 @@ INSTALLED_APPS = (
   'lino.modlib.properties',
   'lino.modlib.contacts',
   #~ 'lino.modlib.projects',
+  'lino.modlib.journals',
+  'lino.modlib.ledger',
+  'lino.modlib.vat',
+  'lino.modlib.sales',
   'lino.modlib.notes',
   #~ 'lino.modlib.links',
   'lino.modlib.uploads',
   'lino.modlib.thirds',
   'lino.modlib.cal',
-  'lino.modlib.mails',
+  'lino.modlib.outbox',
+  'lino.modlib.inbox',
   'lino.modlib.jobs',
   'lino.modlib.isip',
   'lino.modlib.cbss',
   'lino.apps.pcsw',
-  #~ 'south', # http://south.aeracode.org
+  'lino.apps.presto',
 )
 

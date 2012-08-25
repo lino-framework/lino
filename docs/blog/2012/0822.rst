@@ -1,0 +1,26 @@
+20120822
+========
+
+I finally started to work on the "regions problem" 
+in :mod:`lino.modlib.countries`.
+
+`countries.City` is now designed to contain 
+all geographic areas that are smaller than a 
+Country (in the meaning of a sovereign state) 
+and bigger than a Street.
+
+The new choicelist CityTypes is an attempt to make a universal 
+classification of the words that designate such areas.
+A perfect classification is probably not possible, 
+and it will possibly still evolve.
+
+There are "country drivers" to limit the list of possible CityTypes for a given Country.
+
+Partner.region is no longer a simple text field but also a ForeignKey.
+
+The choices for Partner.region are Cities with a type < 50
+The choices for Partner.city are Cities with a type >= 50.
+
+
+
+
