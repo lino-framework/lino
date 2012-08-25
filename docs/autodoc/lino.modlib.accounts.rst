@@ -1,16 +1,16 @@
 ===========================
-:mod:`lino.modlib.journals`
+:mod:`lino.modlib.accounts`
 ===========================
 
-.. automodule:: lino.modlib.journals
+.. automodule:: lino.modlib.accounts
     :members:
     :show-inheritance:
     
 
-:mod:`lino.modlib.journals.models`
+:mod:`lino.modlib.accounts.models`
 ----------------------------------
 
-.. automodule:: lino.modlib.journals.models
+.. automodule:: lino.modlib.accounts.models
     :members:
     :show-inheritance:
 

@@ -1060,8 +1060,8 @@ class Lino(object):
     def add_user_field(self,name,fld):
         if self.user_model:
             from lino import dd
-            User = dd.resolve_model(self.user_model)            
-            dd.inject_field(User,name,fld)
+            #~ User = dd.resolve_model(self.user_model)            
+            dd.inject_field(self.user_model,name,fld)
             #~ if profile:
                 #~ self.user_profile_fields.append(name)
 

@@ -19,9 +19,11 @@ Accounts. The base module required for accounting.
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db import models
 import datetime
 from decimal import Decimal
+
+from django.db import models
+from django.conf import settings
 
 from lino import dd
 from lino import mixins
@@ -162,4 +164,5 @@ def setup_explorer_menu(site,ui,user,m):
 
 #~ dd.add_user_group('debts',MODULE_LABEL)
 
+#~ if settings.LINO.is_installed('products'):
 customize_products()

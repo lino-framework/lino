@@ -62,7 +62,6 @@ from lino.utils.choicelists import ChoiceList
 from Cheetah.Template import Template as CheetahTemplate
 #~ from lino.utils import dtosl, dtos
 
-uploads = dd.resolve_app("uploads")
 
 
 class RecipientType(ChoiceList):
@@ -372,6 +371,7 @@ class SendMail(dd.RowAction):
                 raise Warning(_("Couldn't find target file of %s") % att.owner)
             msg.attach_file(fn)
             
+        uploads = dd.resolve_app("uploads")
         for up in uploads.UploadsByController.request(ar.ui,master_instance=elem):
         #~ for up in uploads.Upload.objects.filter(owner=elem):
             fn = os.path.join(settings.MEDIA_ROOT,up.file.name)

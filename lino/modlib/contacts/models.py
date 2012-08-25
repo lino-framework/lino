@@ -164,6 +164,16 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
     
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
+    is_person = mti.EnableChild(
+        settings.LINO.person_model,
+        verbose_name=_("is Person"),
+        help_text=_("Whether this Partner is a Person."))
+        
+    is_company = mti.EnableChild(
+        settings.LINO.company_model,
+        verbose_name=_("is Company"),
+        help_text=_("Whether this Partner is a Company."))
+        
     def save(self,*args,**kw):
         if self.id is None:
             sc = settings.LINO.site_config # get_site_config()
@@ -807,23 +817,21 @@ dd.inject_field(SiteConfig,
         blank=True,null=True,
         verbose_name=_("The company that runs this site"),
         related_name='site_company_sites',
-        help_text="""\
-The Company to be used as sender in documents."""
-        )
-    )
+        help_text=_("The Company to be used as sender in documents.")))
     
 
-dd.inject_field(Partner,
-    'is_person',
-    #~ mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
-    mti.EnableChild(settings.LINO.person_model,verbose_name=_("is Person")),
-    """Whether this Partner is a Person."""
-    )
-dd.inject_field(Partner,
-    'is_company',
-    mti.EnableChild(settings.LINO.company_model,verbose_name=_("is Company")),
-    """Whether this Partner is a Company."""
-    )
+#~ dd.inject_field(Partner,
+    #~ 'is_person',
+    #~ mti.EnableChild(
+        #~ settings.LINO.person_model,
+        #~ verbose_name=_("is Person"),
+        #~ help_text=_("Whether this Partner is a Person.")))
+#~ dd.inject_field(Partner,
+    #~ 'is_company',
+    #~ mti.EnableChild(
+        #~ settings.LINO.company_model,
+        #~ verbose_name=_("is Company"),
+        #~ help_text=_("Whether this Partner is a Company.")))
 
 
 MODULE_NAME = _("Contacts")

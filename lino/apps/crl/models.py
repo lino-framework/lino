@@ -22,9 +22,9 @@ from lino import mixins
 from lino.models import SiteConfig
 from lino.modlib.countries import models as countries
 from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
-from lino.modlib.links import models as links
-from lino.modlib.cal import models as cal
+#~ from lino.modlib.notes import models as notes
+#~ from lino.modlib.links import models as links
+#~ from lino.modlib.cal import models as cal
 
 #~ class Person(contacts.Partner,contacts.Born,contacts.PersonMixin):
 #~ class Person(contacts.Person,contacts.Born):

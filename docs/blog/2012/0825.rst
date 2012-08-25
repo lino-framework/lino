@@ -1,21 +1,28 @@
 20120825
 ========
 
+- New module :mod:`lino.modlib.vat`. 
 
-New module :mod:`lino.modlib.vat`. 
+- Discovered and fixed the following bug in
+  :class:`lino.core.actions.ActionRequest`:
 
-Discovered and fixed the following bug in
-:class:`lino.core.actions.ActionRequest`:
+    A programmatic request (without HttpRequest) 
+    on a table with parameters didn't fill default values 
+    into `param_values`.
 
-A programmatic request (without HttpRequest) 
-on a table with parameters didn't fill default values 
-into `param_values`.
+  This bug was discovered by the following 
+  code (in :mod:`lino.modlib.ledger`)::
 
-This bug was discovered by the following 
-code (in :mod:`lino.modlib.ledger`)::
+      for jnl in Journal.objects.all():
+          m.add_action(jnl.voucher_type.table_class,
+              label=unicode(jnl)+' (%s)' % jnl.id,
+              params=dict(master_instance=jnl))
 
-    for jnl in Journal.objects.all():
-        m.add_action(jnl.voucher_type.table_class,
-            label=unicode(jnl)+' (%s)' % jnl.id,
-            params=dict(master_instance=jnl))
 
+- Another subtile bug fixed:
+  :func:`lino.dd.inject_field` now does nothing when it is called for a Model 
+  whose `app` is not installed. 
+  Discovered by :mod:`lino.modlib.accounts` where it wouldn't be intuitive 
+  to require the application developer to check whether `products` 
+  is installed before calling `inject_field`.
+  

@@ -112,8 +112,7 @@ def analyze_models():
             #~ msg += '\n'.join([str(func.func_code.co_consts) for func in funcs])
             msg += str(funcs)
         raise Exception("Oops, there are pending injects: %s" % msg)
-    #~ logger.info("20120627 pending injects: %s", dd.pending_injects)
-        
+        #~ logger.warning("pending injects: %s", msg)
     
     
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()

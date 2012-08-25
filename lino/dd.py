@@ -96,6 +96,7 @@ from lino.core.table import has_fk
 from lino.core.table import Table
 from django.db.models.fields import FieldDoesNotExist
 from django.db import models
+from django.conf import settings
 #~ Model = models.Model
 #~ from lino.core import table
 #~ Table = table.Table
@@ -176,45 +177,58 @@ def on_class_prepared(signal,sender=None,**kw):
     k = model._meta.app_label + '.' + model.__name__
     PREPARED_MODELS[k] = model
     #~ logger.info("20120627 on_class_prepared %r = %r",k,model)
-    injects = PENDING_INJECTS.pop(k,None)
-    if injects is not None:
-        for f in injects:
+    todos = PENDING_INJECTS.pop(k,None)
+    if todos is not None:
+        for f in todos:
             f(model)
         #~ for k,v in injects.items():
             #~ model.add_to_class(k,v)
             
 models.signals.class_prepared.connect(on_class_prepared)
 
+
+def do_when_prepared(model_spec,todo):
+    if model_spec is None:
+        return # e.g. inject_field during autodoc when user_model is None
+        
+    if isinstance(model_spec,basestring):
+        app_label, model_name = model_spec.split(".")
+        if not settings.LINO.is_installed(app_label):
+            return
+        k = model_spec
+        model = PREPARED_MODELS.get(k,None)
+        if model is None: 
+            injects = PENDING_INJECTS.setdefault(k,[])
+            injects.append(todo)
+            #~ d[name] = field
+            #~ logger.info("20120627 Defer inject_field(%r,%r,%r)", model_spec,name,field)
+            return
+    else:
+        model = model_spec
+        #~ k = model_spec._meta.app_label + '.' + model_spec.__name__
+    todo(model)
+
+
 def inject_field(model_spec,name,field,doc=None):
     """
     Adds the given field to the given model.
     See also :doc:`/tickets/49`.
+    
+    Since `inject_field` is usually called at the global level 
+    of `models modules`, it cannot know whether the given `model_spec` 
+    has already been imported (and its class prepared) or not. 
+    That's why it uses Django's `class_prepared` signal to maintain 
+    its own list of models.
     """
-    if model_spec is None:
-        return # e.g. inject_field during autodoc when user_model is None
     if doc:
         field.__doc__ = doc
-    #~ model = resolve_model(model,strict=True)
     def todo(model):
         model.add_to_class(name,field)
-    #~ model = resolve_model(model_spec,seed_cache=False)
-    if isinstance(model_spec,basestring):
-        k = model_spec
-        model = PREPARED_MODELS.get(k,None)
-    else:
-        model = model_spec
-        k = model._meta.app_label + '.' + model.__name__
-    #~ if isinstance(model,UnresolvedModel): 
-    if model is None: 
-        injects = PENDING_INJECTS.setdefault(k,[])
-        injects.append(todo)
-        #~ d[name] = field
-        #~ logger.info("20120627 Defer inject_field(%r,%r,%r)", model_spec,name,field)
-        return
-    todo(model)
-    #~ return field
+    return do_when_prepared(model_spec,todo)    
+    
+    
 
-def update_field(model,name,**kw):
+def update_field(model_spec,name,**kw):
     """
     Update some attribute of the specified existing field.
     For example 
@@ -229,15 +243,17 @@ def update_field(model,name,**kw):
       dd.update_field(MyPerson,'first_name',blank=True)
     
     """
-    try:
-        fld = model._meta.get_field_by_name(name)[0]
-    except FieldDoesNotExist:
-        logger.warning("Cannot update unresolved field %s.%s", model,name)
-        return
-    if fld.model != model:
-        logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
-    for k,v in kw.items():
-        setattr(fld,k,v)
+    def todo(model):
+        try:
+            fld = model._meta.get_field_by_name(name)[0]
+        except FieldDoesNotExist:
+            logger.warning("Cannot update unresolved field %s.%s", model,name)
+            return
+        if fld.model != model:
+            logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
+        for k,v in kw.items():
+            setattr(fld,k,v)
+    return do_when_prepared(model_spec,todo)    
         
 
 def inject_quick_add_buttons(model,name,target):

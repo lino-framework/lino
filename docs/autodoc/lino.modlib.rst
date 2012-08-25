@@ -12,6 +12,7 @@ Subpackages
 
 .. toctree::
 
+    lino.modlib.accounts
     lino.modlib.cal
     lino.modlib.cbss
     lino.modlib.contacts
@@ -21,7 +22,6 @@ Subpackages
     lino.modlib.households
     lino.modlib.isip
     lino.modlib.jobs
-    lino.modlib.journals
     lino.modlib.sales
     lino.modlib.ledger
     lino.modlib.links
@@ -34,5 +34,6 @@ Subpackages
     lino.modlib.users
     lino.modlib.vocbook
     lino.modlib.courses
+    lino.modlib.vat
     lino.modlib.workflows
 
