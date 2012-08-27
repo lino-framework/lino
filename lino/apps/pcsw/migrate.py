@@ -1327,6 +1327,7 @@ def migrate_from_1_4_9(globals_dict): return '1.4.10'
 def migrate_from_1_4_10(globals_dict): 
     """
     - convert contacts.Partner.region from a CHAR to a FK(City)
+    - add a Default accounts.Chart for debts module
     - debts.Account renamed to accounts.Account
     - debts.AccountGroup renamed to accounts.AccountGroup
     """
@@ -1364,7 +1365,7 @@ def migrate_from_1_4_10(globals_dict):
         return debts_Account(id=id,name=name,seqno=seqno,group_id=group_id,type=type,required_for_household=required_for_household,required_for_person=required_for_person,periods=periods,help_text=help_text,name_fr=name_fr,name_en=name_en)
     globals_dict.update(create_debts_account=create_debts_account)
     
-    debts_AccountGroup = resolve_model("accounts.AccountGroup")    
+    debts_AccountGroup = resolve_model("accounts.Group")
     def create_debts_accountgroup(id, name, seqno, account_type, help_text, name_fr, name_en):
         return debts_AccountGroup(id=id,chart=_chart,name=name,seqno=seqno,account_type=account_type,help_text=help_text,name_fr=name_fr,name_en=name_en)    
     globals_dict.update(create_debts_accountgroup=create_debts_accountgroup)
