@@ -163,6 +163,15 @@ class City(dd.Model):
     """
     Implements the :class:`countries.City` convention.
     """
+    
+    class Meta:
+        verbose_name = _("Place")
+        verbose_name_plural = _("Places")
+        if not settings.LINO.allow_duplicate_cities:
+            unique_together = ('country','parent','name','type')
+            #~ unique_together = ('country','parent','name','type','zip_code')
+    
+    
     name = models.CharField(max_length=200)
     country = models.ForeignKey('countries.Country')
     zip_code = models.CharField(max_length=8,blank=True)
@@ -170,13 +179,6 @@ class City(dd.Model):
     parent = models.ForeignKey('self',
         blank=True,null=True,
         verbose_name=_("Part of"))
-    
-    class Meta:
-        verbose_name = _("City")
-        verbose_name_plural = _("Cities")
-        if not settings.LINO.allow_duplicate_cities:
-            unique_together = ('country','parent','name','type')
-            #~ unique_together = ('country','parent','name','type','zip_code')
     
     def __unicode__(self):
         return self.name
@@ -277,7 +279,7 @@ class CountryRegionCity(CountryCity):
                 flt = models.Q(type__in=cd.region_types)
             else:
                 flt = models.Q(type__lt=CityTypes.get_by_value('50'))
-            flt = flt | models.Q(type=CityTypes.blank_item)
+            #~ flt = flt | models.Q(type=CityTypes.blank_item)
             flt = flt & models.Q(country=country)
             return City.objects.filter(flt).order_by('name')
             #~ return City.filter(flt).order_by('name')
@@ -306,7 +308,7 @@ class CountryRegionCity(CountryCity):
             
         if region is not None:
             parent_list = [p.pk for p in region.get_parents()] + [None]
-            print 20120822, region,region.get_parents(), parent_list
+            #~ print 20120822, region,region.get_parents(), parent_list
             flt = flt & models.Q(parent__id__in=parent_list)
             print flt
             
