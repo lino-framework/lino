@@ -15,10 +15,12 @@
 """
 This is a real-world example of how the application developer 
 can provide automatic data migrations for 
-:doc:`python dumps </topics/dumpy>` .
+:doc:`python dumps </topics/dumpy>`.
 
-This module is used when loading a python dump that was created by a previous version.
-Lino writes the corresponding ``import`` statement into every python dump because
+This module is used when loading a python dump that was 
+created by a previous version.
+Lino writes the corresponding ``import`` statement 
+into every python dump because
 :mod:`lino.apps.pcsw.settings.Lino` has
 :attr:`lino.Lino.migration_module` 
 set to ``"lino.apps.pcsw.migrate"``
@@ -1321,3 +1323,8 @@ def migrate_from_1_4_6(globals_dict): return '1.4.7'
 def migrate_from_1_4_7(globals_dict): return '1.4.8'
 def migrate_from_1_4_8(globals_dict): return '1.4.9'
 def migrate_from_1_4_9(globals_dict): return '1.4.10'
+
+def migrate_from_1_4_10(globals_dict): 
+    """
+    """
+    return '1.4.11'

@@ -318,8 +318,9 @@ class Voucher(mixins.UserAuthored):
         #~ return DOCTYPES[self.journal.doctype][0]
         
         
-    def get_wanted_movements(self):
-        return []
+    #~ def get_wanted_movements(self):
+        #~ raise NotImplementedError()
+        #~ return []
         
     #~ def create_movement_credit(self,account,amount,**kw):
         #~ kw.update(is_credit=True)
@@ -363,10 +364,10 @@ class DebitOrCreditField(models.BooleanField):
 class Movement(mixins.Sequenced):
     voucher = models.ForeignKey(Voucher)
     #~ pos = models.IntegerField("Position",blank=True,null=True)
-    dc = DebitOrCreditField()
     account = models.ForeignKey(accounts.Account)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     amount = dd.PriceField(default=0)
+    dc = DebitOrCreditField()
     #~ is_credit = models.BooleanField(_("Credit"),default=False)
     #~ debit = dd.PriceField(default=0)
     #~ credit = dd.PriceField(default=0)
@@ -389,7 +390,7 @@ class Movement(mixins.Sequenced):
         #~ return self.__class__.objects.filter().order_by('seqno')
         
     def __unicode__(self):
-        return u"%s.%d" % (unicode(self.voucher),self.pos)
+        return u"%s.%d" % (unicode(self.voucher),self.seqno)
         
     #~ def document(self,request):
         #~ return "%s-%s/%s" % (self.journal,self.year,self.number)
@@ -404,23 +405,6 @@ class MovementsByVoucher(Movements):
     master_key = 'voucher'
     column_names = 'seqno account debit credit'
     
-#~ class BookingsByBookable(Movements):
-    #~ master = Bookable
-    #~ column_names = 'pos date account partner'
-    
-    #~ @classmethod
-    #~ def get_filter_kw(self,master_instance,**kw):
-        #~ kw['journal'] = master_instance.journal
-        #~ kw['year'] = master_instance.year
-        #~ kw['number'] = master_instance.number
-        #~ return kw
-
-      
-    
-#~ class LedgerJournals(journals.Journals):
-    #~ model = LedgerJournal
-    #~ column_names = journals.Journals.column_names + " account"
-    
 
 
 
@@ -434,81 +418,6 @@ add('40',_("Paid"),'paid')
 
 
 
-#~ class VatDocument(mixins.UserAuthored):
-    #~ """
-    #~ This is also used for Offers and other non-ledger partner documents
-    #~ """
-    #~ class Meta:
-        #~ abstract = True
-  
-    #~ partner = models.ForeignKey("contacts.Partner")
-    #~ item_vat = models.BooleanField(default=False)
-    #~ vat_regime = VatRegimes.field()
-    #~ total_excl = dd.PriceField(blank=True,null=True)
-    #~ total_vat = dd.PriceField(blank=True,null=True)
-    
-    #~ @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
-    #~ def total_incl(self,ar=None):
-        #~ if self.total_excl is None:
-            #~ return None
-        #~ return self.total_excl + self.total_vat
-        
-    #~ def get_sums(self):
-        #~ sums_dict = dict()
-        #~ def move(account,amount):
-            #~ if sums_dict.has_key(account):
-                #~ sums_dict[account] += amount
-            #~ else:
-                #~ sums_dict[account] = amount
-        #~ # if self.journal.type == JournalTypes.purchases:
-        #~ for i in self.items.order_by('seqno'):
-            #~ # move(i.get_base_account(),i.total)
-            #~ if self.item_vat:
-                #~ move(i.get_base_account(),i.total)
-                #~ move(settings.LINO.get_vat_account(),i.total)
-        #~ return sums_dict
-        
-    #~ def get_wanted_movements(self):
-        #~ sums_dict = self.get_sums()
-        #~ sum = ZERO
-        #~ for a,m in sums_dict.items():
-            #~ yield self.create_movement(a,m)
-            #~ sum += i.total
-        #~ yield self.create_movement(settings.LINO.get_partner_account(self),sum,partner=self.partner)
-        
-#~ class PartnerDocItemBase(mixins.Sequenced):
-    #~ """
-    #~ Abstract Base class for InvoiceItem and OrderItem.
-    #~ Subclasses MUST define a field called "document" which is a FK with related_name="items".
-    #~ """
-    #~ class Meta:
-        #~ abstract = True
-        #~ # unique_together  = ('document','seqno')
-    
-    #~ vat_class = VatClasses.field()
-    #~ unit_price = dd.PriceField(blank=True,null=True) 
-    #~ qty = dd.QuantityField(blank=True,null=True)
-    #~ total = dd.PriceField(blank=True,null=True)
-    
-    
-    #~ # def total_excl(self):
-        #~ # if self.unitPrice is not None:
-            #~ # qty = self.qty or 1
-            #~ # return self.unitPrice * qty
-        #~ # elif self.total is not None:
-            #~ # return self.total
-        #~ # return 0
-        
-    #~ def get_base_account(self):
-        #~ raise NotImplementedError
-        
-    #~ def get_siblings(self):
-        #~ return self.document.items      
-    
-    #~ def full_clean(self,*args,**kw):
-        #~ if self.unit_price is not None and self.qty is not None:
-            #~ self.total = self.unit_price * self.qty
-        #~ super(PartnerDocItemBase,self).full_clean(*args,**kw)
 
     
 class AccountInvoice(vat.VatDocument,Voucher):
@@ -528,7 +437,8 @@ class AccountInvoice(vat.VatDocument,Voucher):
     
     def add_item(self,account=None,qty=None,**kw):
         if account is not None:
-            if not isinstance(account,accounts.Account):
+            #~ if not isinstance(account,accounts.Account):
+            if isinstance(account,basestring):
                 account = accounts.Account.objects.get(group__ref=account)
         kw['account'] = account
         unit_price = kw.get('unit_price',None)

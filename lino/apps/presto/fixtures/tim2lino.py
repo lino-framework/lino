@@ -523,7 +523,7 @@ def load_tim_data(dbpath):
         #~ kw.update(document=doc)
         kw.update(seqno=int(row.line.strip()))
         idart = row.idart.strip()
-        if isinstance(doc,sales.ProductDocItem):
+        if isinstance(doc,sales.Invoice):
             if row.code in ('A','F'):
                 if idart != '*':
                     kw.update(product=int(idart))
@@ -531,7 +531,7 @@ def load_tim_data(dbpath):
                 a = vnlg2product(row)
                 if a is not None:
                     kw.update(account=a)
-        elif isinstance(doc,ledger.InvoiceItem):
+        elif isinstance(doc,ledger.AccountInvoice):
             if row.code == 'G':
                 kw.update(account=idart)
         kw.update(title=row.desig.strip())
