@@ -1326,5 +1326,24 @@ def migrate_from_1_4_9(globals_dict): return '1.4.10'
 
 def migrate_from_1_4_10(globals_dict): 
     """
+    - convert contacts.Partner.region from a CHAR to a FK(City)
     """
+    
+    countries_City = resolve_model("countries.City")
+    def convert_region(region):
+        region = region.strip()
+        if not region: return None
+        try:
+            return countries_City.objects.get(name=region,country__id='BE')
+        except countries_City.DoesNotExist:
+            o = countries_City(name=region,country__id='BE')
+            o.full_clean()
+            o.save()
+            logger.info("Created region %s",o)
+            return o
+    def create_contacts_partner(id, country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks):
+        region = convert_region(region)
+        return contacts_Partner(id=id,country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks)    
+    globals_dict.update(create_contacts_partner=create_contacts_partner)
+    
     return '1.4.11'
