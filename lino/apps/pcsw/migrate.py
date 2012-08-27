@@ -1330,6 +1330,7 @@ def migrate_from_1_4_10(globals_dict):
     """
     
     countries_City = resolve_model("countries.City")
+    contacts_Partner = resolve_model("contacts.Partner")
     def convert_region(region):
         region = region.strip()
         if not region: return None
