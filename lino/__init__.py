@@ -24,7 +24,9 @@ import datetime
 from os.path import join, abspath, dirname, normpath
 
 
-__version__ = "1.4.11"
+__version__ = file(os.path.join(os.path.dirname(
+    __file__),'..','VERSION')).read().strip()
+#~ __version__ = "1.4.11"
 """
 Lino version number. 
 """

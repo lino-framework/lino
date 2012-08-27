@@ -46,12 +46,13 @@ class CityTypes(ChoiceList):
     """
     label = _("Settlement Type")
 add = CityTypes.add_item
-add('10', pgettext_lazy(u'countries','State'))             # de:Bundesland
+#~ add('10', pgettext_lazy(u'countries','State'))             # de:Bundesland
+add('10', _('Member State'))      # de:Bundesland
 add('11', _('Division'))
 add('12', _('Region'))
-add('13', _('City-state'))        # et:Linnriik  de:Stadtstaat  fr:cité-État
-add('14', _('Community'))
-add('15', _('Territory'))
+add('13', _('Community'))
+add('14', _('Territory'))
+#~ add('15', _('City-state'))        # et:Linnriik  de:Stadtstaat  fr:Cité-État
 
 add('20', _('County'),'county')            # et:maakond   de:Regierungsbezirk
 add('21', _('Province'),'province')
@@ -88,8 +89,8 @@ class CountryDriver(object):
 class CountryDrivers:
     BE =  CountryDriver('21','50 70')
     EE =  CountryDriver('20','50 51 52 61 62 70')
-    DE =  CountryDriver('10 13','51 52 61 62 70')
-    FR =  CountryDriver('24 25','53 70')
+    DE =  CountryDriver('10','51 52 61 62 70')
+    FR =  CountryDriver('24','53 70')
 
 
 #~ class Language(dd.Model):

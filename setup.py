@@ -12,16 +12,19 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-#~ import os
+import os
 from distutils.core import setup
 #~ from distutils.core import setup, Distribution
 import lino
 
 #~ class MyDistribution(Distribution):
+
+version = file(os.path.join(os.path.dirname(__file__),'VERSION')).read().strip()
     
 setup(name='lino',
       #~ distclass=MyDistribution,
-      version=lino.__version__,
+      #~ version=lino.__version__,
+      version=lino.version,
       description="A web application framework using Django and ExtJS",
       license='GPL',
       packages=['lino'],

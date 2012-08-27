@@ -4,6 +4,9 @@ To-do list
 Short-term
 ----------
 
+#.  Wenn der Begleitungszeitraum einer *Person* geändert wird, merkt Lino nicht, 
+    wenn dadurch ein Vertrag ungültig wird.                                                      
+
 #.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail eines Uploads, 
     der keine Reminder hat, via Permalink öffnet, dann ist die Tabelle der 
     Aufgaben nicht leer, sondern voll irgendwelcher Einträge.

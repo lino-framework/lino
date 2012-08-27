@@ -1351,6 +1351,11 @@ def migrate_from_1_4_10(globals_dict):
         return contacts_Partner(id=id,country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks)    
     globals_dict.update(create_contacts_partner=create_contacts_partner)
     
+    def create_countries_city(id, name, country_id, zip_code, inscode):
+        return countries_City(id=id,name=name,
+            type=CityTypes.city,
+            country_id=country_id,zip_code=zip_code,inscode=inscode)    
+    globals_dict.update(create_countries_city=create_countries_city)
     
     debts_Account = resolve_model("accounts.Account")    
     def create_debts_account(id, name, seqno, group_id, type, required_for_household, required_for_person, periods, help_text, name_fr, name_en):

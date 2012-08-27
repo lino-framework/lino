@@ -4,7 +4,7 @@ Coming
 Lino/Welfare
 ------------
 
-- countries.Cities und Partner.region 
+- countries.City.type und Partner.region 
 
 - Es gibt eine neue Tabelle "Kontenpläne" (Account Charts), in der bis 
   auf weiteres jedoch nur ein einziger Kontenplan "debts Default" steht. 
