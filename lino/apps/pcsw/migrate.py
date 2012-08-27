@@ -28,6 +28,7 @@ set to ``"lino.apps.pcsw.migrate"``
 """
 
 import datetime
+from decimal import Decimal
 from django.conf import settings
 from lino.core.modeltools import resolve_model
 from lino.utils import mti
