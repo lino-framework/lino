@@ -1324,7 +1324,7 @@ def migrate_from_1_4_7(globals_dict): return '1.4.8'
 def migrate_from_1_4_8(globals_dict): return '1.4.9'
 def migrate_from_1_4_9(globals_dict): return '1.4.10'
 
-def migrate_from_1_4_10(globals_dict): 
+def migrate_from_1_4_10(globals_dict):
     """
     - convert contacts.Partner.region from a CHAR to a FK(City)
     - add a Default accounts.Chart for debts module
@@ -1351,14 +1351,6 @@ def migrate_from_1_4_10(globals_dict):
     globals_dict.update(create_contacts_partner=create_contacts_partner)
     
     
-    accounts_Chart = resolve_model("accounts.Chart")    
-    _chart = None
-    def default_chart():
-        if _chart is None:
-            _chart = accounts_Chart(name="debts Default")
-            _chart.save()
-        return _chart
-        
     debts_Account = resolve_model("accounts.Account")    
     def create_debts_account(id, name, seqno, group_id, type, required_for_household, required_for_person, periods, help_text, name_fr, name_en):
         if periods is not None: periods = Decimal(periods)
@@ -1367,7 +1359,15 @@ def migrate_from_1_4_10(globals_dict):
     
     debts_AccountGroup = resolve_model("accounts.Group")
     def create_debts_accountgroup(id, name, seqno, account_type, help_text, name_fr, name_en):
-        return debts_AccountGroup(id=id,chart=default_chart(),name=name,seqno=seqno,account_type=account_type,help_text=help_text,name_fr=name_fr,name_en=name_en)    
+        return debts_AccountGroup(id=id,chart__id=1,name=name,seqno=seqno,account_type=account_type,help_text=help_text,name_fr=name_fr,name_en=name_en)    
     globals_dict.update(create_debts_accountgroup=create_debts_accountgroup)
+    
+    accounts_Chart = resolve_model("accounts.Chart")    
+    objects = globals_dict['objects']
+    def new_objects():
+        yield accounts_Chart(name="debts Default")
+        yield objects()
+    globals_dict.update(objects=new_objects)
+    
     
     return '1.4.11'
