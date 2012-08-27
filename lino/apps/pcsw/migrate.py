@@ -1370,5 +1370,4 @@ def migrate_from_1_4_10(globals_dict):
         yield objects()
     globals_dict.update(objects=new_objects)
     
-    
     return '1.4.11'
