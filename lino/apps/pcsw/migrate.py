@@ -1327,6 +1327,8 @@ def migrate_from_1_4_9(globals_dict): return '1.4.10'
 def migrate_from_1_4_10(globals_dict): 
     """
     - convert contacts.Partner.region from a CHAR to a FK(City)
+    - debts.Account renamed to accounts.Account
+    - debts.AccountGroup renamed to accounts.AccountGroup
     """
     
     countries_City = resolve_model("countries.City")
@@ -1346,5 +1348,25 @@ def migrate_from_1_4_10(globals_dict):
         region = convert_region(region)
         return contacts_Partner(id=id,country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks)    
     globals_dict.update(create_contacts_partner=create_contacts_partner)
+    
+    
+    accounts_Chart = resolve_model("accounts.Chart")    
+    _chart = None
+    def default_chart():
+        if _chart is None:
+            _chart = accounts_Chart(name="debts Default")
+            _chart.save()
+        return _chart
+        
+    debts_Account = resolve_model("accounts.Account")    
+    def create_debts_account(id, name, seqno, group_id, type, required_for_household, required_for_person, periods, help_text, name_fr, name_en):
+        if periods is not None: periods = Decimal(periods)
+        return debts_Account(id=id,name=name,seqno=seqno,group_id=group_id,type=type,required_for_household=required_for_household,required_for_person=required_for_person,periods=periods,help_text=help_text,name_fr=name_fr,name_en=name_en)
+    globals_dict.update(create_debts_account=create_debts_account)
+    
+    debts_AccountGroup = resolve_model("accounts.AccountGroup")    
+    def create_debts_accountgroup(id, name, seqno, account_type, help_text, name_fr, name_en):
+        return debts_AccountGroup(id=id,chart=_chart,name=name,seqno=seqno,account_type=account_type,help_text=help_text,name_fr=name_fr,name_en=name_en)    
+    globals_dict.update(create_debts_accountgroup=create_debts_accountgroup)
     
     return '1.4.11'
