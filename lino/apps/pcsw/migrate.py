@@ -1367,7 +1367,7 @@ def migrate_from_1_4_10(globals_dict):
     
     debts_AccountGroup = resolve_model("accounts.Group")
     def create_debts_accountgroup(id, name, seqno, account_type, help_text, name_fr, name_en):
-        return debts_AccountGroup(id=id,chart=_chart,name=name,seqno=seqno,account_type=account_type,help_text=help_text,name_fr=name_fr,name_en=name_en)    
+        return debts_AccountGroup(id=id,chart=default_chart(),name=name,seqno=seqno,account_type=account_type,help_text=help_text,name_fr=name_fr,name_en=name_en)    
     globals_dict.update(create_debts_accountgroup=create_debts_accountgroup)
     
     return '1.4.11'
