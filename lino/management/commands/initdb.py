@@ -102,7 +102,7 @@ class Command(BaseCommand):
             
         options.update(interactive=False)
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
-        dblogger.info(lino.welcome_text())
+        dblogger.info(settings.LINO.welcome_text())
         
         if USE_DROP_CREATE:
         

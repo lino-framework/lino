@@ -24,17 +24,17 @@ import datetime
 from os.path import join, abspath, dirname, normpath
 
 
-__version__ = file(os.path.join(os.path.dirname(
-    __file__),'..','VERSION')).read().strip()
-#~ __version__ = "1.4.11"
+#~ __version__ = file(os.path.join(os.path.dirname(
+    #~ __file__),'..','VERSION')).read().strip()
+__version__ = "1.5.0"
 """
 Lino version number. 
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
-__url__ = "http://lino.saffre-rumma.net"
-#~ __url__ = "http://code.google.com/p/lino/"
+#~ __url__ = "http://lino.saffre-rumma.net"
+__url__ = "http://code.google.com/p/lino/"
 
 __copyright__ = """\
 Copyright (c) 2002-2012 Luc Saffre.
@@ -89,110 +89,6 @@ if False:
 
 
 NOT_FOUND_MSG = '(not installed)'
-
-
-def using(ui=None):
-    """
-    Yields a list of third-party software descriptors used by Lino.
-    Each descriptor is a tuple (name, version, url).
-    
-    """
-    
-    yield ("Lino",__version__,"http://lino.saffre-rumma.net")
-    
-    import django
-    yield ("Django",django.get_version(),"http://www.djangoproject.com")
-    
-    import dateutil
-    version = getattr(dateutil,'__version__','')
-    yield ("python-dateutil",version,"http://labix.org/python-dateutil")
-    
-    try:
-        import Cheetah
-        version = Cheetah.Version 
-    except ImportError:
-        version = NOT_FOUND_MSG
-    yield ("Cheetah",version ,"http://cheetahtemplate.org/")
-
-    try:
-        from odf import opendocument
-        version = opendocument.__version__
-    except ImportError:
-        version = NOT_FOUND_MSG
-    yield ("OdfPy",version ,"http://pypi.python.org/pypi/odfpy")
-
-    try:
-        import docutils
-        version = docutils.__version__
-    except ImportError:
-        version = NOT_FOUND_MSG
-    yield ("docutils",version ,"http://docutils.sourceforge.net/")
-
-    try:
-        import suds
-        version = suds.__version__
-    except ImportError:
-        version = NOT_FOUND_MSG
-    yield ("suds",version ,"https://fedorahosted.org/suds/")
-
-    import yaml
-    version = getattr(yaml,'__version__','')
-    yield ("PyYaml",version,"http://pyyaml.org/")
-    
-    if False:
-        try:
-            import pyratemp
-            version = getattr(pyratemp,'__version__','')
-        except ImportError:
-            version = NOT_FOUND_MSG
-        yield ("pyratemp",version,"http://www.simple-is-better.org/template/pyratemp.html")
-    
-    if False:
-        try:
-            import ho.pisa as pisa
-            version = getattr(pisa,'__version__','')
-            yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
-        except ImportError:
-            pass
-
-        try:
-            import reportlab
-            version = reportlab.Version
-        except ImportError:
-            version = NOT_FOUND_MSG
-        yield ("ReportLab",version,"http://www.reportlab.org/rl_toolkit.html")
-               
-    try:
-        #~ import appy
-        from appy import version
-        version = version.verbose
-    except ImportError:
-        version = NOT_FOUND_MSG
-    yield ("Appy",version ,"http://appyframework.org/pod.html")
-    
-    import sys
-    version = "%d.%d.%d" % sys.version_info[:3]
-    yield ("Python",version,"http://www.python.org/")
-    
-    if ui is not None:
-        #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
-        onclick = "alert('ExtJS client version is ' + Ext.version);"
-        tip = "Click to see ExtJS client version"
-        text = "(version)"
-        version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
-        yield ("ExtJS",version ,"http://www.sencha.com")
-
-
-def welcome_text():
-    #~ return "Lino version %s using %s" % (
-    return "Using %s." % (', '.join(["%s %s" % (n,v) for n,v,u in using()]))
-
-def welcome_html(ui=None):
-    #~ return "Lino version %s using %s" % (
-      #~ __version__,
-      #~ ', '.join(['<a href="%s" target="_blank">%s</a> %s' % (u,n,v) for n,v,u in using(ui)]))
-    sep = '<br/>'
-    return sep.join(['<a href="%s" target="_blank">%s</a> %s' % (u,n,v) for n,v,u in using(ui)])
 
 
 class Lino(object):
@@ -873,12 +769,6 @@ class Lino(object):
                 #~ s = unicode(self.site_config.site_company) + " / "  + s
         #~ return s
 
-    def site_version(self):
-        """
-        Used e.g. in footnote or header of certain printed documents.
-        """
-        return "Lino " + __version__
-
     def is_abstract_model(self,name):
         return name in self.override_modlib_models
         
@@ -1288,8 +1178,9 @@ class Lino(object):
         #~ dblogger = logging.getLogger(__name__)
         from lino.utils import dblogger
         from django.utils.importlib import import_module
-        if globals_dict['SOURCE_VERSION'] == __version__:
-            dblogger.info("Source version is %s : no migration needed", __version__)
+        name,current_version,url = self.using().next()
+        if globals_dict['SOURCE_VERSION'] == current_version:
+            dblogger.info("Source version is %s : no migration needed", current_version)
             return
         if self.migration_module:
             migmod = import_module(self.migration_module)
@@ -1311,8 +1202,139 @@ class Lino(object):
                 dblogger.info(msg)
                 globals_dict['SOURCE_VERSION'] = to_version
             else:
-                if from_version != __version__:
-                    dblogger.warning("No method for migrating from version %s to %s",from_version,__version__)
+                if from_version != current_version:
+                    dblogger.warning("No method for migrating from version %s to %s",
+                        from_version,current_version)
                 break
 
           
+    def using(self,ui=None):
+        """
+        Yields a list of (name, version, url) tuples
+        describing the software used on this site.
+        
+        The first tuple is expected to describe the application itself.
+        Application developers should override this in their Lino 
+        subclass by something linke this::
+        
+            def using(self,*args,**kw):
+                from myapp import __version__, __url__
+                yield ("MyApp",__version__,__url__)
+                for u in super(Lino,self).using(*args,**kw):
+                    yield u
+        
+        This function is used by 
+        :meth:`welcome_text`,
+        :meth:`welcome_html`
+        and
+        :meth:`site_version`.
+        
+        """
+        
+        yield ("Lino",__version__,"http://lino.saffre-rumma.net")
+        
+        import django
+        yield ("Django",django.get_version(),"http://www.djangoproject.com")
+        
+        import dateutil
+        version = getattr(dateutil,'__version__','')
+        yield ("python-dateutil",version,"http://labix.org/python-dateutil")
+        
+        try:
+            import Cheetah
+            version = Cheetah.Version 
+        except ImportError:
+            version = NOT_FOUND_MSG
+        yield ("Cheetah",version ,"http://cheetahtemplate.org/")
+
+        try:
+            from odf import opendocument
+            version = opendocument.__version__
+        except ImportError:
+            version = NOT_FOUND_MSG
+        yield ("OdfPy",version ,"http://pypi.python.org/pypi/odfpy")
+
+        try:
+            import docutils
+            version = docutils.__version__
+        except ImportError:
+            version = NOT_FOUND_MSG
+        yield ("docutils",version ,"http://docutils.sourceforge.net/")
+
+        try:
+            import suds
+            version = suds.__version__
+        except ImportError:
+            version = NOT_FOUND_MSG
+        yield ("suds",version ,"https://fedorahosted.org/suds/")
+
+        import yaml
+        version = getattr(yaml,'__version__','')
+        yield ("PyYaml",version,"http://pyyaml.org/")
+        
+        if False:
+            try:
+                import pyratemp
+                version = getattr(pyratemp,'__version__','')
+            except ImportError:
+                version = NOT_FOUND_MSG
+            yield ("pyratemp",version,"http://www.simple-is-better.org/template/pyratemp.html")
+        
+        if False:
+            try:
+                import ho.pisa as pisa
+                version = getattr(pisa,'__version__','')
+                yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
+            except ImportError:
+                pass
+
+            try:
+                import reportlab
+                version = reportlab.Version
+            except ImportError:
+                version = NOT_FOUND_MSG
+            yield ("ReportLab",version,"http://www.reportlab.org/rl_toolkit.html")
+                   
+        try:
+            #~ import appy
+            from appy import version
+            version = version.verbose
+        except ImportError:
+            version = NOT_FOUND_MSG
+        yield ("Appy",version ,"http://appyframework.org/pod.html")
+        
+        import sys
+        version = "%d.%d.%d" % sys.version_info[:3]
+        yield ("Python",version,"http://www.python.org/")
+        
+        if ui is not None:
+            #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
+            onclick = "alert('ExtJS client version is ' + Ext.version);"
+            tip = "Click to see ExtJS client version"
+            text = "(version)"
+            version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+            yield ("ExtJS",version ,"http://www.sencha.com")
+
+
+    def welcome_text(self):
+        """
+        Text to display in a console window when Lino starts.
+        """
+        return "Using %s." % (', '.join(["%s %s" % (n,v) for n,v,u in self.using()]))
+
+    def welcome_html(self,ui=None):
+        """
+        Text to display in the "about" dialog of a GUI application.
+        """
+        sep = '<br/>'
+        return sep.join(['<a href="%s" target="_blank">%s</a> %s' 
+            % (u,n,v) for n,v,u in self.using(ui)])
+
+    def site_version(self):
+        """
+        Used in footnote or header of certain printed documents.
+        """
+        name,version,url = self.using().next()
+        return name + ' ' + version
+        #~ return "Lino " + __version__
+

@@ -32,7 +32,7 @@ from django.utils.encoding import force_unicode
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-import lino
+#~ import lino
 from lino import mixins
 from lino import dd
 #~ from lino import commands
@@ -514,7 +514,7 @@ class About(mixins.EmptyTable):
     #~ @dd.constant(_("Versions"))
     @dd.constant()
     def versions(cls,ui):
-        return lino.welcome_html(ui)
+        return settings.LINO.welcome_html(ui)
         
     #~ @dd.displayfield(_("Versions"))
     #~ def versions(self,obj,ar):

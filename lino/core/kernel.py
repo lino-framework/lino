@@ -475,7 +475,7 @@ def startup_site(self):
         
         logger.info("Lino Site %r started. Languages: %s. %s actors.", 
             self.title, ', '.join(babel.AVAILABLE_LANGUAGES),len(actors.actors_list))
-        logger.info(lino.welcome_text())
+        logger.info(self.welcome_text())
     finally:
         #~ write_lock.release()
         self._setup_done = True

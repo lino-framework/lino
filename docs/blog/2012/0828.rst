@@ -1,8 +1,35 @@
 20120828
 ========
 
-Tx25 : Zwei neue Handler (NameModifications und AddressChangeDeclaration) 
-und ein Bugfix (Handler für HeadOfFamily war noch nach alter Methode 
-programmiert).
+- Tx25 : Zwei neue Handler (NameModifications und AddressChangeDeclaration) 
+  und ein Bugfix (Handler für HeadOfFamily war noch nach alter Methode 
+  programmiert).
+  
+The big fork
+-------------
+
+J'ai enfin pris la peine de séparer "Lino" et "Lino pour CPAS".
+Ce blog-ci ne parlera plus que du *framework*,
+les fonctionnalités spécifiques aux CPAS seront dorénavant 
+documentées sur http://code.google.com/p/lino-welfare/
 
 
+First changes after the split
+-----------------------------
+
+- :func:`lino.dd.update_field` was capable to cause errors 
+  due to circular imports because internally it used Django's 
+  `get_field_by_name` method. Now it uses `get_field`.
+  
+- Changes in :meth:`lino.Lino.using` and :meth:`lino.Lino.install_migrations`
+  because (of course) we must now differentiate between Lino the framework 
+  and Lino the application.
+  
+  The *framework* version skips from 1.4.10 to 1.5.0,
+  while Lino-Welfare starts over at version 0.0.1.
+  
+  This will lead to the funny message when running the Lino-Welfare data migration::
+  
+    INFO Migrating from version 1.4.10 to 0.0.1
+    
+  
