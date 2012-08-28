@@ -1,0 +1,8 @@
+20120828
+========
+
+Tx25 : Zwei neue Handler (NameModifications und AddressChangeDeclaration) 
+und ein Bugfix (Handler für HeadOfFamily war noch nach alter Methode 
+programmiert).
+
+

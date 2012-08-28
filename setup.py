@@ -19,12 +19,12 @@ import lino
 
 #~ class MyDistribution(Distribution):
 
-version = file(os.path.join(os.path.dirname(__file__),'VERSION')).read().strip()
+VERSION = file(os.path.join(os.path.dirname(__file__),'VERSION')).read().strip()
     
 setup(name='lino',
       #~ distclass=MyDistribution,
       #~ version=lino.__version__,
-      version=lino.version,
+      version=VERSION,
       description="A web application framework using Django and ExtJS",
       license='GPL',
       packages=['lino'],

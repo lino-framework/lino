@@ -4,7 +4,7 @@
 - Started to write 
   :func:`lino.apps.pcsw.migrate.migrate_from_1_4_10`.
   
-- Published Lino docs on `readthedocs.org <http://readthedocs.org/projects/lino/>`.
+- Published Lino docs on `readthedocs.org <http://readthedocs.org/projects/lino/>`_.
   This required modifications to
   :srcref:`docs/conf.py`,
   :srcref:`lino/__init__.py` and :srcref:`setup.py`.

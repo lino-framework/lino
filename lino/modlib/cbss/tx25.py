@@ -447,6 +447,13 @@ def IT018(n):
     info.add_deldate(n)
     return info
 
+def IT013(n):
+    info = Info()
+    info.addfrom(n,'ModificationType','',ModificationTypeType)
+    info.addfrom(n,'Graphic','')
+    info.add_deldate(n)
+    return info
+
 def IT024(n): 
     info = Info()
     info.add_deldate(n)
@@ -486,6 +493,16 @@ def IT140(n):
     info.add_deldate(n)
     return info
     
+def IT141(n):
+    info = Info()
+    info.addfrom(n,'Housing',None,HousingType)
+    info.addfrom(n,'FamilyRole','',code_label)
+    info.addfrom(n,'Name',_('in family headed by '),NameType)
+    info.addfrom(n,'NationalNumber',' (',NationalNumberType,')')
+    info.add_deldate(n)
+    return info
+        
+  
 def TypeOfLicenseType(n):
     return code_label(n)
     
@@ -599,6 +616,9 @@ def IT199(n):
     return info
 
 def HousingType(n):
+    return code_label(n)
+    
+def ModificationTypeType(n):
     return code_label(n)
     
 def AddressType(n):
@@ -826,6 +846,21 @@ class RowHandlers:
           E.b(n.NationalNumber),
           ' ('+unicode(cbss2gender(n.Sex))+')')
         yield datarow(group,n,n.Date,info)
+        
+    @staticmethod
+    def IT019(n,name):
+        group = _("Address Change Declaration") 
+        #~ print 20120829, n
+        info = Info()
+        
+        def AddressType(n):
+            info = Info()
+            info.addfrom(n,'Graphic','')
+            return info
+        
+        info.addfrom(n,'Address','',AddressType)
+        info.add_deldate(n)
+        yield datarow(group,n,n.Date,info)
 
 
     @staticmethod
@@ -942,6 +977,7 @@ class RowHandlers:
         info.addfrom(n,'SuppletoryRegister')
         yield datarow(group,n,n.Date,info)
         
+        
     @staticmethod
     def IT101(n,name):
         group = _("Declared Birth Date") # Date de naissance déclarée
@@ -994,17 +1030,10 @@ class RowHandlers:
     def HeadOfFamily(node,name):
         group = _("Head Of Family")
         for n in node.HeadOfFamily:
-            info = Info()
-            info.addfrom(n,'FamilyRole','',code_label)
-            info.addfrom(n,'Name',_('in family headed by '),NameType)
-            #~ info += name2info(n.Name)
-            info.chunks.append(' (')
-            info.chunks.append(n.NationalNumber.NationalNumber)
-            info.chunks.append(')')
-            info.add_deldate(n)
+            info = IT141(n)
             yield datarow(group,n,n.Date,info)
             group = ''
-        
+          
     @staticmethod
     def DrivingLicensesOldModel(node,name):
         group = _("Driving Licenses Old Model")
@@ -1159,6 +1188,14 @@ class RowHandlers:
         group = _("Document Types") # Type de document pour déterminer identité
         for n in node.DocumentType:
             info = IT211(n)
+            yield datarow(group,n,n.Date,info)
+            group = ''
+        
+    @staticmethod
+    def NameModifications(node,name):
+        group = _("Name Modifications") # Type de document pour déterminer identité
+        for n in node.NameModification:
+            info = IT013(n)
             yield datarow(group,n,n.Date,info)
             group = ''
         
