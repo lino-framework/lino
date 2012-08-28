@@ -12,6 +12,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Transaction 25
+--------------
+
+"""
+
 import datetime
 import traceback
 from django.conf import settings
@@ -836,6 +842,25 @@ def IT251(n):
     
 
 class RowHandlers:
+  
+    """
+    List of supported TIs
+
+    === ======= ================================
+    IT  Status
+    === ======= ================================
+    000 ok      National Number
+    001 ok      Residences
+    002 -       Dossier de référence
+    003 ok      Ascertained Legal Main Addresses
+    005 ok      Address Change Intention
+    019 ok      Address Change Declaration
+    024 ok      Address References
+    === ======= ================================
+    
+    
+    
+    """
   
     @staticmethod
     def IT000(n,name):

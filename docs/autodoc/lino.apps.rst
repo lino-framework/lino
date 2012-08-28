@@ -13,7 +13,6 @@ Subpackages
 .. toctree::
 
     lino.apps.std
-    lino.apps.pcsw
     lino.apps.igen
     lino.apps.crl
     lino.apps.min1

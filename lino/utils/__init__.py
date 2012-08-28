@@ -493,36 +493,6 @@ def moneyfmt(value, places=2, curr='', sep=',', dp='.',
     return ''.join(reversed(result))
     
     
-def srcref(mod):
-    """
-    Return the `source file name` for usageby Sphinx's ``srcref`` role.
-    Returns None if the source file is empty (which happens e.g. for __init__.py 
-    files whose only purpose is to mark a package).
-    
-    >>> from lino.utils import log
-    >>> print srcref(log)
-    lino/utils/log.py
-
-    >>> from lino import utils
-    >>> print srcref(utils)
-    lino/utils/__init__.py
-    
-    >>> from lino.management import commands
-    >>> print srcref(commands)
-    None
-
-    """
-    if not mod.__name__.startswith('lino.'): 
-        return
-    srcref = mod.__file__
-    if srcref.endswith('.pyc'):
-        srcref = srcref[:-1]
-    if os.stat(srcref).st_size == 0:
-        return 
-    srcref = srcref[len(lino.__file__)-17:]
-    srcref = srcref.replace(os.path.sep,'/')
-    return srcref
-    
 def unicode_string(x):
     """
     When we want unicode strings (e.g. translated exception messages) 

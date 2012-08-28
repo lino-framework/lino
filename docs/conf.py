@@ -11,40 +11,11 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-"""
-
-
->>> from lino.utils import log
->>> print srcref(log)
-lino/utils/log.py
-
->>> from lino import utils
->>> print srcref(utils)
-lino/utils/__init__.py
-
->>> from lino.management import commands
->>> print srcref(commands)
-None
-
-"""
 
 import sys, os
-#~ import lino
+import lino
 
-ROOT_LEN = len(os.path.abspath(__file__))-12
-
-def srcref(mod):
-    # because "from lino.utils import srcref" won't work on readthedocs.org
-    if not mod.__name__.startswith('lino.'): 
-        return
-    srcref = mod.__file__
-    if srcref.endswith('.pyc'):
-        srcref = srcref[:-1]
-    if os.stat(srcref).st_size == 0:
-        return 
-    srcref = srcref[ROOT_LEN:]
-    srcref = srcref.replace(os.path.sep,'/')
-    return srcref
+os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.sphinxdocs.settings'
 
 
 # If your extensions are in another directory, add it here. If the directory
@@ -92,8 +63,8 @@ copyright = u'2002-2012, Luc Saffre'
 #
 
 # The full version, including alpha/beta/rc tags.
-release = file(os.path.join(os.path.dirname(__file__),'..','VERSION')).read().strip()
-#~ release = lino.__version__
+#~ release = file(os.path.join(os.path.dirname(__file__),'..','VERSION')).read().strip()
+release = lino.__version__
 
 # The short X.Y version.
 version = '.'.join(release.split('.')[:2])
@@ -117,7 +88,6 @@ version = '.'.join(release.split('.')[:2])
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.
 exclude_trees = [
-  '.build', 
   'blog/2009',
   'blog/2010'
   ]
@@ -256,75 +226,8 @@ latex_documents = [
 #~ srcref_base_uri="http://code.google.com/p/lino/source/browse/#hg" 
 #~ from timtools.sphinx import setup
 
-def setup(app):
-    app.add_object_type(directivename='xfile',rolename='xfile',
-      indextemplate='pair: %s; file')
-    app.add_object_type(directivename='setting',rolename='setting',
-      indextemplate='pair: %s; setting')
-    #~ app.add_object_type(directivename='model',rolename='model',
-      #~ indextemplate='pair: %s; model')
-    #~ app.add_object_type(directivename='field',rolename='field',
-      #~ indextemplate='pair: %s; field')
-    app.add_object_type(directivename='table',rolename='table',
-      indextemplate='pair: %s; table')
-    app.add_object_type(directivename='modattr',rolename='modattr',
-      indextemplate='pair: %s; model attribute')
-    app.add_object_type(directivename='model',rolename='model',
-      indextemplate='pair: %s; model')
-    #app.connect('build-finished', handle_finished)
-    
-    app.connect('autodoc-skip-member',autodoc_skip_member)
-    app.connect('autodoc-process-docstring', autodoc_add_srcref)
+from lino.utils.sphinx import setup
 
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-
-def autodoc_skip_member(app, what, name, obj, skip, options):
-    if name != '__builtins__':
-        #~ print 'autodoc_skip_member', what, repr(name), repr(obj)
-    
-        if what == 'class':
-            if name.endswith('MultipleObjectsReturned'):
-                return True
-            if name.endswith('DoesNotExist'):
-                return True
-                
-            #~ if isinstance(obj,ObjectDoesNotExist) \
-              #~ or isinstance(obj,MultipleObjectsReturned): 
-                #~ return True
-        
-    #~ if what == 'exception': 
-        #~ print 'autodoc_skip_member',what, repr(name), repr(obj), skip
-        #~ return True
-        
-
-#~ SIDEBAR = """
-#~ .. sidebar:: Use the source, Luke
-
-  #~ We generally recommend to also consult the source code.
-  #~ This module's source code is available at
-  #~ :srcref:`/%s.py`
-
-#~ """  
-
-SIDEBAR = """
-(This module's source code is available at :srcref:`/%s`)
-
-"""  
-    
-def autodoc_add_srcref(app,what,name,obj,options,lines):
-    if what == 'module':
-        s = srcref(obj)
-        if s:
-            #~ srcref = name.replace('.','/')
-            s = (SIDEBAR % s).splitlines()
-            s.reverse()
-            for ln in s:
-                lines.insert(0,ln)
-            #~ lines.insert(0,'')
-            #~ lines.insert(0,'(We also recommend to read the source code at :srcref:`/%s.py`)' % name.replace('.','/'))
-    
-
-    
 extlinks = {
   'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
   'checkin': ('http://code.google.com/p/lino/source/detail?r=%s', 'Checkin '),
@@ -344,15 +247,8 @@ autosummary_generate = True
 #~ nitpicky = True # use -n in Makefile instead
 
 # http://sphinx.pocoo.org/theming.html
-html_theme = "default"
+#~ html_theme = "default"
 html_theme_options = dict(collapsiblesidebar=True,externalrefs=True)
 
 todo_include_todos = True
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()
 

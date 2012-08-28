@@ -1607,7 +1607,6 @@ class MyManageAccessRequests(ManageAccessRequests,mixins.ByUser):
 
 from lino.modlib.cbss.tx25 import *
     
-
 from lino.models import SiteConfig
 dd.inject_field(SiteConfig,
     'sector',

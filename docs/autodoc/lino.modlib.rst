@@ -14,26 +14,19 @@ Subpackages
 
     lino.modlib.accounts
     lino.modlib.cal
-    lino.modlib.cbss
     lino.modlib.contacts
     lino.modlib.countries
-    lino.modlib.cv
-    lino.modlib.debts
     lino.modlib.households
-    lino.modlib.isip
-    lino.modlib.jobs
     lino.modlib.sales
     lino.modlib.ledger
     lino.modlib.links
     lino.modlib.outbox
-    lino.modlib.newcomers
     lino.modlib.notes
     lino.modlib.postings
     lino.modlib.properties
     lino.modlib.tickets
     lino.modlib.users
     lino.modlib.vocbook
-    lino.modlib.courses
     lino.modlib.vat
     lino.modlib.workflows
 

@@ -456,7 +456,6 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
             return False
         return super(Mail,self).get_row_permission(user,state,action)
       
-dd.update_field(Mail,'user',verbose_name=_("Sender"))
 
 #~ class MailDetail(dd.FormLayout):
     #~ main = """
@@ -607,3 +606,5 @@ def setup_explorer_menu(site,ui,user,m):
   
 dd.add_user_group('office',MODULE_LABEL)
   
+  
+dd.update_field(Mail,'user',verbose_name=_("Sender"))

@@ -34,6 +34,7 @@ class Lino(Lino):
     title = "lino.apps.sphinxdocs"
     
     project_model = 'contacts.Person'
+    user_model = 'users.User'
     
     #~ languages = ('de', 'fr', 'nl', 'en')
     languages = ['en']
@@ -56,6 +57,13 @@ INSTALLED_APPS = (
   #~ 'lino.modlib.documents',
   'lino.modlib.properties',
   'lino.modlib.contacts',
+  
+  'lino.modlib.uploads',
+  'lino.modlib.thirds',
+  'lino.modlib.notes',
+  #~ 'lino.modlib.links',
+  
+  
   #~ 'lino.modlib.projects',
   'lino.modlib.outbox',
   'lino.modlib.cal',
@@ -66,17 +74,13 @@ INSTALLED_APPS = (
   'lino.modlib.accounts',
   'lino.modlib.ledger',
   'lino.modlib.vat',
+  'lino.modlib.products',
   'lino.modlib.sales',
   
-  'lino.modlib.uploads',
-  'lino.modlib.thirds',
-  'lino.modlib.notes',
-  #~ 'lino.modlib.links',
-  
-  'lino.modlib.jobs',
-  'lino.modlib.isip',
-  'lino.modlib.cbss',
-  'lino.apps.pcsw',
+  #~ 'lino.modlib.jobs',
+  #~ 'lino.modlib.isip',
+  #~ 'lino.modlib.cbss',
+  #~ 'lino.apps.pcsw',
   'lino.apps.presto',
 )
 

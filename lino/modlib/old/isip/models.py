@@ -37,7 +37,9 @@ from lino.utils import dblogger
 #~ from lino.utils import printable
 from lino import mixins
 from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
+#~ from lino.modlib.notes import models as notes
+notes = dd.resolve_app('notes')
+
 #~ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.utils.choicelists import HowWell

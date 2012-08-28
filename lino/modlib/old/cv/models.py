@@ -43,11 +43,15 @@ from lino import dd
 from lino import mixins
 #~ from lino import actions
 #~ from lino import fields
-from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
-from lino.modlib.uploads import models as uploads
-from lino.modlib.cal import models as cal
+#~ from lino.modlib.uploads import models as uploads
+#~ from lino.modlib.cal import models as cal
+cal = dd.resolve_app('cal')
+uploads = dd.resolve_app('uploads')
+notes = dd.resolve_app('notes')
+contacts = dd.resolve_app('contacts')
 #~ from lino.modlib.users import models as users
 from lino.utils.choicelists import HowWell, Gender
 from lino.utils.choicelists import ChoiceList

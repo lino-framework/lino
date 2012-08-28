@@ -46,10 +46,15 @@ from lino.core import perms
 from lino.utils import dblogger
 #~ from lino.utils import printable
 from lino import mixins
-from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
+
+uploads = dd.resolve_app('uploads')
+notes = dd.resolve_app('notes')
+contacts = dd.resolve_app('contacts')
+
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
-from lino.modlib.uploads import models as uploads
+#~ from lino.modlib.uploads import models as uploads
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.core.modeltools import get_field
@@ -75,11 +80,13 @@ from lino.modlib.cal.utils import DurationUnits
 # ``from lino.apps.pcsw.models import Property``
 
 from lino.modlib.properties.models import Property
-from lino.modlib.notes.models import NoteType
+#~ from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
 from lino.modlib.isip.models import ContractBase
 #~ from lino.apps.pcsw.models import Company, Companies, CompanyDetail
-from lino.apps.pcsw import models as pcsw
+#~ from lino.apps.pcsw import models as pcsw
+pcsw = dd.resolve_app('pcsw')
+
 
 
 #~ SCHEDULE_CHOICES = {

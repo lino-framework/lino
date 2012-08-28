@@ -245,7 +245,8 @@ def update_field(model_spec,name,**kw):
     """
     def todo(model):
         try:
-            fld = model._meta.get_field_by_name(name)[0]
+            fld = model._meta.get_field(name)
+            #~ fld = model._meta.get_field_by_name(name)[0]
         except FieldDoesNotExist:
             logger.warning("Cannot update unresolved field %s.%s", model,name)
             return

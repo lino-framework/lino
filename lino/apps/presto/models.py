@@ -43,7 +43,6 @@ def customize_contacts():
         #~ ,validators=[niss_validator]
         )
       )
-  
 
 customize_contacts()
 

@@ -45,11 +45,6 @@ from lino.ui import requests as ext_requests
 from lino.core.modeltools import resolve_model, obj2str
 #~ from lino.core.perms import UserProfiles
 
-from lino.modlib.contacts import models as contacts
-
-from lino.modlib.outbox import models as outbox 
-from lino.modlib.postings import models as postings
-#~ postings = dd.resolve_app('postings')
 
 
 from lino.modlib.cal.utils import \
@@ -59,6 +54,14 @@ from lino.modlib.cal.utils import \
 
 from lino.utils.babel import dtosl
 
+
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.outbox import models as outbox
+#~ from lino.modlib.postings import models as postings
+
+contacts = dd.resolve_app('contacts')
+postings = dd.resolve_app('postings')
+outbox = dd.resolve_app('outbox')
 
 
 class CalendarType(object):

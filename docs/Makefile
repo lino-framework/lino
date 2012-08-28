@@ -1,7 +1,5 @@
 DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 SITENAME               = lino
-#~ DJANGO_SETTINGS_MODULE = dsbe.demo.settings
-#~ DJANGO_SETTINGS_MODULE = lino.demos.std.settings
 TEMPDIR                = C:\\temp\\sphinxbuild\\$(SITENAME)
 #~ TEMPDIR                = /cygdrive/c/temp/sphinxbuild/$(SITENAME)
 BUILDDIR               = $(TEMPDIR)\\html
@@ -44,7 +42,7 @@ clean:
 html:
 	mkdir -p $(CACHEDIR) 
 	mkdir -p $(BUILDDIR)
-	export DJANGO_SETTINGS_MODULE=lino.apps.sphinxdocs.settings ; $(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
+	$(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
 	cp -ru dist $(BUILDDIR)
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
