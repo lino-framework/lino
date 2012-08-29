@@ -25,4 +25,36 @@
   values.
   
   
-- `VoucherTypes.blank_item`
+- `VoucherTypes` caused problems because it had no `blank_item`::
+
+    Exception
+    Unresolved value '' for <class 'lino.modlib.ledger.models.VoucherTypes'>
+    TRACEBACK:
+      File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+      File "l:\snapshots\django\django\views\generic\base.py", line 58, in view
+        return self.dispatch(request, *args, **kwargs)
+      File "l:\snapshots\django\django\views\generic\base.py", line 79, in dispatch
+        return handler(request, *args, **kwargs)
+      File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 603, in get
+        elem = ar.create_instance()
+      File "t:\hgwork\lino\lino\core\actions.py", line 739, in create_instance
+        obj = self.actor.create_instance(self,**kw)
+      File "t:\hgwork\lino\lino\core\table.py", line 887, in create_instance
+        instance = self.model(**kw)
+      File "l:\snapshots\django\django\db\models\base.py", line 361, in __init__
+        setattr(self, field.attname, val)
+      File "l:\snapshots\django\django\db\models\fields\subclassing.py", line 34, in __set__
+        obj.__dict__[self.field.name] = self.field.to_python(value)
+      File "t:\hgwork\lino\lino\utils\choicelists.py", line 462, in to_python
+        return self.choicelist.to_python(value)
+      File "t:\hgwork\lino\lino\utils\choicelists.py", line 328, in to_python
+        raise Exception("Unresolved value %r for %s" % (value,cls))
+
+
+  I completely removed the `blank_item` 
+  from :class:`ChoiceList <lino.utils.choicelists.ChoiceList>` 
+  and replaced it by `None`.
+  My feeling (had already been saying before that this `blank_item` was a strange thing).
+  But not yet sure whether there will be surprises...
+  

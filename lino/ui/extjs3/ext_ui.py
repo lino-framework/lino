@@ -1006,7 +1006,8 @@ tinymce.init({
             
             if user.profile.level >= dd.UserLevels.admin:
                 authorities = [(u.id,unicode(u)) 
-                    for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)]
+                    #~ for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)] 20120829
+                    for u in users.User.objects.exclude(profile=None)]
             else:
                 authorities = [(a.user.id,unicode(a.user)) 
                     for a in users.Authority.objects.filter(authorized=user)]
@@ -1187,7 +1188,8 @@ tinymce.init({
         if force or settings.LINO.build_js_cache_on_startup:
             count = 0
             langs = babel.AVAILABLE_LANGUAGES
-            qs = users.User.objects.exclude(profile=dd.UserProfiles.blank_item) # .exclude(level='')
+            #~ qs = users.User.objects.exclude(profile=dd.UserProfiles.blank_item) 20120829
+            qs = users.User.objects.exclude(profile=None) # .exclude(level='')
             for lang in langs:
                 babel.set_language(lang)
                 for user in qs:

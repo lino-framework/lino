@@ -186,7 +186,7 @@ def ticket_state(idpns):
         return tickets.TicketStates.closed
     if idpns == 'X':
         return tickets.TicketStates.cancelled
-    return tickets.TicketStates.blank_item
+    return None # 20120829 tickets.TicketStates.blank_item
      
 #~ def country2kw(row,kw):
     
@@ -530,7 +530,7 @@ def load_tim_data(dbpath):
             elif row.code == 'G':
                 a = vnlg2product(row)
                 if a is not None:
-                    kw.update(account=a)
+                    kw.update(product=a)
         elif isinstance(doc,ledger.AccountInvoice):
             if row.code == 'G':
                 kw.update(account=idart)

@@ -425,7 +425,7 @@ class PersonMixin(dd.Model):
       verbose_name=_('Title'))
     """Text to print as part of the first address line in front of first_name."""
         
-    gender = Gender.field()
+    gender = Gender.field(blank=True)
         
     def get_salutation(self,**salutation_options):
         return get_salutation(

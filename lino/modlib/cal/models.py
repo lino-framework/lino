@@ -282,7 +282,8 @@ if settings.LINO.user_model:
         @dd.chooser()
         def watched_user_choices(cls,user):
             return settings.LINO.user_model.objects.exclude(
-                profile=dd.UserProfiles.blank_item).exclude(id=user.id)
+                #~ profile=dd.UserProfiles.blank_item).exclude(id=user.id) 20120829
+                profile=None).exclude(id=user.id)
         
             
     class Memberships(dd.Table):
@@ -1009,7 +1010,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             #~ self.state = EventState.obsolete
         super(Event,self).save(*args,**kw)
         if self.calendar and self.calendar.invite_team_members:
-            if not self.state in (EventState.blank_item, EventState.draft):
+            #~ if not self.state in (EventState.blank_item, EventState.draft): 20120829
+            if not self.state in (None, EventState.draft):
                 if self.guest_set.all().count() == 0:
                     #~ print 20120711
                     for obj in Membership.objects.filter(user=self.user):
@@ -1734,7 +1736,8 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
         add(o)
         
     #~ filterkw.update(done=False)
-    filterkw.update(state__in=[TaskState.blank_item,TaskState.todo])
+    #~ filterkw.update(state__in=[TaskState.blank_item,TaskState.todo]) 20120829
+    filterkw.update(state__in=[None,TaskState.todo])
             
     for task in Task.objects.filter(**filterkw).order_by('start_date'):
         add(task)
@@ -2029,7 +2032,8 @@ if settings.LINO.use_extensible:
             tv = rqdata.get(ext_requests.URL_PARAM_TEAM_VIEW,False)
             if tv and ext_requests.parse_boolean(tv):
                 # positive list of ACLs for events of team members
-                team_classes = (AccessClasses.blank_item,AccessClasses.public,AccessClasses.show_busy)
+                #~ team_classes = (AccessClasses.blank_item,AccessClasses.public,AccessClasses.show_busy) 20120829
+                team_classes = (None,AccessClasses.public,AccessClasses.show_busy)
                 #~ logger.info('20120710 %r', tv)
                 team_ids = Membership.objects.filter(user=me).values_list('watched_user__id',flat=True)
                 #~ team.append(request.user.id)
@@ -2093,7 +2097,8 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
         master_instance=user,
         filter=flt & (models.Q(state=None) | models.Q(state__lte=EventState.scheduled)))
     tasks = ar.spawn(MyTasks,master_instance=user,
-        filter=flt & models.Q(state__in=[TaskState.blank_item,TaskState.todo]))
+        #~ filter=flt & models.Q(state__in=[TaskState.blank_item,TaskState.todo])) 20120829
+        filter=flt & models.Q(state__in=[None,TaskState.todo]))
     
     for o in events:
         o._detail_action = MyEvents.detail_action

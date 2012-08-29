@@ -259,7 +259,8 @@ The user who gets authority to act in your name."""))
         @dd.chooser()
         def authorized_choices(cls,user):
             qs = settings.LINO.user_model.objects.exclude(
-                profile=dd.UserProfiles.blank_item)
+                profile=None)
+                #~ profile=dd.UserProfiles.blank_item) 20120829
             if user is not None:
                 qs = qs.exclude(id=user.id)
                 #~ .exclude(level__gte=UserLevels.admin)

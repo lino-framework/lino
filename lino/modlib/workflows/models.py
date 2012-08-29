@@ -14,6 +14,8 @@
 """
 """
 
+raise Exception("Not used")
+
 import logging
 logger = logging.getLogger(__name__)
 

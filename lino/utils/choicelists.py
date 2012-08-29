@@ -204,11 +204,11 @@ class ChoiceList(object):
     The class of items of this list.
     """
     
-    blank = True
-    """
-    Set this to False if you don't want to accept 
-    any blank value for your ChoiceList.
-    """
+    #~ blank = True
+    #~ """
+    #~ Set this to False if you don't want to accept 
+    #~ any blank value for your ChoiceList.
+    #~ """
     
     stored_name = None
     """
@@ -254,8 +254,8 @@ class ChoiceList(object):
                 delattr(cls,ci.name)
         cls.items_dict = {}
         cls.choices = []
-        if cls.blank:
-            cls.add_item('','',name='blank_item')
+        #~ if cls.blank:
+            #~ cls.add_item('','',name='blank_item')
         cls.choices = [] # remove blank_item from choices
         
         #~ cls.items_dict = {'' : cls.blank_item }
@@ -323,6 +323,8 @@ Django creates copies of them when inheriting models.
     def to_python(cls, value):
         #~ if isinstance(value, babel.BabelChoice):
             #~ return value        
+        if not value:
+            return None
         v = cls.items_dict.get(value) 
         if v is None:
             raise Exception("Unresolved value %r for %s" % (value,cls))
@@ -381,7 +383,8 @@ Django creates copies of them when inheriting models.
         if name:
             return getattr(self,name,None)
         else:
-            return self.blank_item
+            #~ return self.blank_item
+            return None
             
     @classmethod
     def get_by_value(self,value):
@@ -439,7 +442,7 @@ class ChoiceListField(models.CharField):
             #~ choices=KNOWLEDGE_CHOICES,
             #~ choices=choicelist.get_choices(),
             max_length=choicelist.max_length,
-            blank=choicelist.blank,  # null=True,
+            #~ blank=choicelist.blank,  # null=True,
             #~ validators=[validate_knowledge],
             #~ limit_to_choices=True,
             )
@@ -484,10 +487,10 @@ class ChoiceListField(models.CharField):
     def get_prep_value(self, value):
         #~ if self.attname == 'query_register':
             #~ print '20120527 get_prep_value()', repr(value)
-        return value.value
-        #~ if value:
-            #~ return value.value
-        #~ return '' # see 20110907
+        #~ return value.value
+        if value:
+            return value.value
+        return '' 
         #~ return None
         
     def value_to_string(self, obj):

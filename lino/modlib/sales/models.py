@@ -551,7 +551,7 @@ class Invoice(SalesDocument,ledger.Voucher):
     due_date = models.DateField("Payable until",blank=True,null=True)
     order = models.ForeignKey('sales.Order',blank=True,null=True)
     
-    state = InvoiceStates.field()
+    state = InvoiceStates.field(blank=True)
     
     workflow_state_field = 'state'
     

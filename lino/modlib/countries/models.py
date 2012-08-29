@@ -297,7 +297,8 @@ class CountryRegionCity(CountryCity):
             cd = getattr(CountryDrivers,country.isocode,None)
             flt = models.Q(country=country)
             
-        types = [CityTypes.blank_item]
+        #~ types = [CityTypes.blank_item] 20120829
+        types = [None]
         if cd:
             types += cd.city_types
             #~ flt = flt & models.Q(type__in=cd.city_types)

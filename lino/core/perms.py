@@ -95,7 +95,8 @@ class UserProfile(choicelists.Choice):
         if memberships is None:
             for k in cls.membership_keys:
                 #~ kw[k] = UserLevels.blank_item
-                kw.setdefault(k,UserLevels.blank_item)
+                #~ kw.setdefault(k,UserLevels.blank_item) 20120829
+                kw.setdefault(k,None)
         else:
         #~ if memberships is not None:
             if len(memberships.split()) != len(cls.membership_keys):

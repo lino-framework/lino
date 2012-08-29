@@ -210,7 +210,7 @@ class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
         blank=True,
         help_text=_("Short summary of the problem."))
     #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
-    state = TicketStates.field()
+    state = TicketStates.field(blank=True)
     closed = models.DateTimeField(_("Closed since"),editable=False,null=True)
     description = dd.RichTextField(_("Description"),blank=True,format='plain')
     #~ start_date = models.DateField(

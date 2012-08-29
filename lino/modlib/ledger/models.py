@@ -258,7 +258,7 @@ class Voucher(mixins.UserAuthored):
     #~ controller_is_optional = False
     
     journal = JournalRef()
-    year = FiscalYears.field()
+    year = FiscalYears.field(blank=True)
     number = VoucherNumber(blank=True)
     date = models.DateField()
     #~ ledger_remark = models.CharField("Remark for ledger",
@@ -431,7 +431,7 @@ class AccountInvoice(vat.VatDocument,Voucher):
     
     due_date = models.DateField(_("Due date"),blank=True,null=True)
     
-    state = LedgerInvoiceStates.field()
+    state = LedgerInvoiceStates.field(blank=True)
     
     workflow_state_field = 'state'
     

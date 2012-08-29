@@ -70,6 +70,7 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     A Posting is the fact that a letter or other item 
     has been sent using snail mail.
     """
+    workflow_state_field = 'state'
     class Meta:
         verbose_name = _("Posting")
         verbose_name_plural = _("Postings")
@@ -77,7 +78,7 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     partner = models.ForeignKey('contacts.Partner',
         verbose_name=_("Recipient"),
         blank=True,null=True)
-    state = PostingState.field()
+    state = PostingState.field(blank=True)
     #~ sender = models.ForeignKey(settings.LINO.user_model)
     date = models.DateField()
     
@@ -92,7 +93,6 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     
 
 class Postings(dd.Table):
-    workflow_state_field = 'state'
     required=dict(user_level='manager')
     model = Posting
     column_names = 'date user owner partner *'
