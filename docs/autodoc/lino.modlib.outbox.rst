@@ -15,3 +15,9 @@
     :show-inheritance:
 
 
+dummy
+======
+
+.. automodule:: lino.modlib.outbox.dummy
+    :members:
+    :show-inheritance:

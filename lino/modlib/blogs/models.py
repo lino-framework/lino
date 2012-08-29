@@ -36,7 +36,8 @@ from lino.utils import babel
 from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
-from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.contacts import models as contacts
+#~ contacts = dd.resolve_app('contacts')
 
 #~ TEMPLATE_GROUP = 'notes'
 

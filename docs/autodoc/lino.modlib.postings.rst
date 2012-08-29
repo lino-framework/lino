@@ -15,3 +15,9 @@ Models
     :show-inheritance:
 
 
+dummy
+=====
+
+.. automodule:: lino.modlib.postings.dummy
+    :members:
+    :show-inheritance:

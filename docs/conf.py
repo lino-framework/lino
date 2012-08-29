@@ -89,7 +89,8 @@ version = '.'.join(release.split('.')[:2])
 # for source files.
 exclude_trees = [
   'blog/2009',
-  'blog/2010'
+  'blog/2010',
+  'blog/2011'
   ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.

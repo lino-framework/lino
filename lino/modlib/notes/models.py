@@ -38,11 +38,14 @@ from lino.utils import babel
 from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
-from lino.modlib.contacts import models as contacts
-from lino.modlib.outbox import models as outbox
-from lino.modlib.postings import models as postings
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.outbox import models as outbox
+#~ from lino.modlib.postings import models as postings
 
-#~ postings = dd.resolve_app('postings')
+
+outbox = dd.resolve_app('outbox')
+postings = dd.resolve_app('postings')
+#~ contacts = dd.resolve_app('contacts')
 
 #~ TEMPLATE_GROUP = 'notes'
 

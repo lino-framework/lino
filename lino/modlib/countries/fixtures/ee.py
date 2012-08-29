@@ -15,14 +15,14 @@
 
 """
 Imports file :file:`sihtnumbrid.csv` which you can obtain from
-`Estonian Post office <http://www.post.ee>`_.
+`Estonian Post office <http://www.post.ee/ariklient_sihtnumbrid_allalaadimiseks>`_.
 
 A copy of file :file:`sihtnumbrid.csv` was accidentally published here 
 between June 2010 and May 2012, until we realized that 
 this wasn't allowed due to copyright restrictions.
 
-You can still use this fixture if you download the file yourself
-from http://www.post.ee/ariklient_sihtnumbrid_allalaadimiseks
+You must download the file yourself and place it into your 
+:attr:`project directory <lino.Lino.project_dir>`.
 
 """
 
@@ -113,7 +113,7 @@ def objects():
                     #~ if ct != CityTypes.municipality:
                         #~ print "20120822", vald, "expected municipality, found", ct
                     #~ else:
-                    print "20120822 vald", vald, vald.pk
+                    #~ print "20120822 vald", vald, vald.pk
                     names[ln[1]] = vald
                 else:
                     vald.zip_code = ''
@@ -134,7 +134,7 @@ def objects():
                 else:
                     laak = city(name=ln[2],type=ct,parent=vald,zip_code=ln[7])
                 yield laak
-                print "20120822", laak.type, laak, laak.pk
+                #~ print "20120822", laak.type, laak, laak.pk
                 names[ln[2]] = laak
                 #~ else:
                     #~ print "20120822 pole vald ega Tallinn:", ln

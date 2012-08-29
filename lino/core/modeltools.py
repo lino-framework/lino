@@ -250,19 +250,35 @@ def is_devserver():
 
 def resolve_app(app_label):
     """
-    Return the `modules` module of the given `app_label` if it is installed, 
-    otherwise `None`.
+    Return the `modules` module of the given `app_label` if it is installed. 
+    Otherwise return either the :term:`dummy module` for `app_label` 
+    if it exists, or `None`.
     
-    This is called in models modules instead of "from x.y import models as y"
-    May not be called during loading.appcache._populate().
+    This function is designed for use in models modules and available 
+    through the shortcut ``dd.resolve_app``.
     
-    It is probably quicker than `django.db.loading.get_app()`.
-    Didn't test how they compare in multi-threading cases.
+    For example, instead of writing::
+    
+        from lino.modlib.contacts import models as contacts
+        
+    it is recommended to write::
+        
+        contacts = dd.resolve_app('contacts')
+        
+    Because it makes your code usable 
+    (1) on sites that don't have the 'contacts' module installed
+    and
+    (2) on sites who have another implementation of the contacts module.
     
     """
     for app_name in settings.INSTALLED_APPS:
         if app_name.endswith('.'+app_label):
             return import_module('.models', app_name)
+    try:
+        return import_module('lino.modlib.%s.dummy' % app_label)
+    except ImportError:
+        pass
+        
     #~ if not emptyOK:
     #~ raise ImportError("No application labeled %r." % app_label)
 #~ resolve_app = get_app

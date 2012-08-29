@@ -7,6 +7,9 @@ Glossary
   
   customization functions
     See :doc:`/topics/customization`.
+    
+  dummy module
+    See :func:`lino.core.modeltools.resolve_app`.
 
   
   

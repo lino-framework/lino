@@ -31,11 +31,12 @@ are fictitious.
 Any resemblance to real persons, living or dead, is purely coincidental.
 
 
-`PCSW <http://pcsw-demo.saffre-rumma.net>`__
+`Lino-Welfare <http://pcsw-demo.saffre-rumma.net>`__
   A tool for social assistants that  
   help receivers of public aid to 
   find a suitable job or education.
-  :doc:`More about Lino PCSW </pcsw/index>`
+  `More about Lino-Welfare 
+  <http://packages.python.org/lino-welfare/en/index.html>`_
 
 `iGen <http://igen-demo.saffre-rumma.net>`__ 
   An accounting tool focussed on     

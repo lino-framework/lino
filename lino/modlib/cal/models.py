@@ -64,6 +64,7 @@ postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
 
+
 class CalendarType(object):
     
     def validate_calendar(self,cal):
@@ -1061,7 +1062,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
-        if issubclass(settings.LINO.project_model,contacts.Partner):
+        if contacts and issubclass(settings.LINO.project_model,contacts.Partner):
             if self.project:
                 yield self.project
         for g in self.guest_set.all():
@@ -1073,7 +1074,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         return self.calendar
         
     def get_mailable_recipients(self):
-        if issubclass(settings.LINO.project_model,contacts.Partner):
+        if contacts and issubclass(settings.LINO.project_model,contacts.Partner):
             if self.project:
                 yield ('to',self.project)
         for g in self.guest_set.all():
@@ -1550,12 +1551,8 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
         
-    partner = models.ForeignKey(contacts.Partner)
-        #~ related_name="%(app_label)s_%(class)s_by_contact",
-        # related_name="%(app_label)s_%(class)s_related",
-        # verbose_name=_("Partner")
-        #~ )
-    #~ language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
+    if contacts:
+        partner = models.ForeignKey(contacts.Partner)
 
     role = models.ForeignKey('cal.GuestRole',
         verbose_name=_("Role"),

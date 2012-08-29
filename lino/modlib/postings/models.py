@@ -51,8 +51,6 @@ from django.conf import settings
 
 from lino.utils.choicelists import ChoiceList
 
-
-
 class PostingState(ChoiceList):
     """
     List of possible values for the `state` field of a 

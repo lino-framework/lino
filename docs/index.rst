@@ -47,7 +47,6 @@ Some external links:
    topics/index
    ref/index
    autodoc/index
-   download
    demos
 
 

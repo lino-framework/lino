@@ -55,8 +55,9 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings
-	$(DJANGO_ADMIN) test --settings=lino.apps.pcsw.settings $(TESTS_OPTIONS)
+	#~ $(DJANGO_ADMIN) test --settings=lino.apps.pcsw.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.igen.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.apps.presto.settings $(TESTS_OPTIONS)
 
 
 unused_appdocs:
@@ -64,7 +65,8 @@ unused_appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
 
 sdist:
-	python setup.py register sdist --formats=gztar,zip --dist-dir=docs/dist upload 
+	python setup.py register sdist --formats=gztar,zip upload 
+	#~ python setup.py register sdist --formats=gztar,zip --dist-dir=docs/dist upload 
 	#~ python setup.py sdist --formats=gztar,zip --dist-dir=docs/dist
   
 html:

@@ -14,6 +14,13 @@ Models
     :members:
     :show-inheritance:
 
+dummy
+======
+
+.. automodule:: lino.modlib.contacts.dummy
+    :members:
+    :show-inheritance:
+
 
 Utilities
 =========

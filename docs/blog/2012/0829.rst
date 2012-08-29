@@ -5,3 +5,8 @@
   :mod:`lino.modlib.accounts`
   and
   :mod:`lino.modlib.ledger`.
+  
+- New feature: Lino now supports writing :term:`dummy modules <dummy module>`.
+  A little change in :func:`lino.core.modeltools.resolve_app`,
+  and a first example `lino.modlib.postings.dummy` 
+  used in :mod:`lino.modlib.cal.models`.  
