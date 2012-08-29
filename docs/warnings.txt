@@ -1,34 +1,10 @@
-t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.PartnerDocument.summary_row:1: (ERROR/3) Unknown interpreted text role "modmeth".
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:10: (WARNING/2) toctree contains reference to nonexisting document u'autodoc/lino.utils.html2xhtml'
 T:\hgwork\lino\docs\blog\index.rst:19: (WARNING/2) toctree contains reference to nonexisting document u'blog/2011/index'
 T:\hgwork\lino\docs\demos.rst:51: (WARNING/2) toctree contains reference to nonexisting document u'pcsw/index'
 T:\hgwork\lino\docs\autodoc\lino.utils.html2txhtml.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:13: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:15: WARNING: py:func reference target not found: lino.core.kernel.analyze_models
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:39: WARNING: py:class reference target not found: lino.modlib.debts.models.Budget
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:39: WARNING: py:class reference target not found: lino.modlib.cbss.models.CBSSRequest
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:71: WARNING: py:class reference target not found: lino.modlib.cv.models.PersonProperty
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:71: WARNING: py:class reference target not found: lino.modlib.cv.models.LanguageKnowledge
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:71: WARNING: py:class reference target not found: lino.modlib.debts.models.Actor
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:71: WARNING: py:class reference target not found: lino.modlib.debts.models.Entry
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:78: WARNING: py:meth reference target not found: lino.mixins.duplicable.Duplicable.duplicate_row
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:139: WARNING: py:meth reference target not found: lino.mixins.duplicable.Duplicable.duplicate_row
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:176: WARNING: py:attr reference target not found: lino.core.table.Table.workflow_owner_field
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:185: WARNING: py:attr reference target not found: lino.core.table.Table.workflow_state_field
-T:\hgwork\lino\docs\autodoc\lino.core.modeltools.rst:193: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:69: WARNING: py:class reference target not found: lino.modlib.countries.models.CountryRegionCity
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:143: WARNING: py:attr reference target not found: Partner.name
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:170: WARNING: py:func reference target not found: lino.apps.pcsw.tests.pcsw_tests.test04
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:170: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:186: WARNING: py:func reference target not found: lino.apps.pcsw.tests.pcsw_tests.test04
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:186: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
-T:\hgwork\lino\docs\autodoc\lino.modlib.households.rst:34: WARNING: py:class reference target not found: Person
-T:\hgwork\lino\docs\autodoc\lino.modlib.households.rst:10: WARNING: py:class reference target not found: households.Role
-T:\hgwork\lino\docs\autodoc\lino.modlib.notes.rst:13: WARNING: py:attr reference target not found: Note.event_type
-T:\hgwork\lino\docs\autodoc\lino.modlib.outbox.rst:32: WARNING: py:attr reference target not found: MailableType.email_template
-T:\hgwork\lino\docs\autodoc\lino.modlib.outbox.rst:79: WARNING: py:class reference target not found: inbox.Recipient
-T:\hgwork\lino\docs\autodoc\lino.modlib.outbox.rst:79: WARNING: py:class reference target not found: outbox.Recipient
+T:\hgwork\lino\docs\autodoc\lino.test_apps.quantityfield.rst:1: WARNING: py:mod reference target not found: lino.test_apps.quantityfield
+T:\hgwork\lino\docs\autodoc\lino.test_apps.quantityfield.rst:10: WARNING: py:mod reference target not found: lino.utils.quantity
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:41: WARNING: py:class reference target not found: dict
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:162: WARNING: py:class reference target not found: exceptions.Exception
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:175: WARNING: unknown document: /blog/2011/0914
@@ -44,4 +20,5 @@ T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference targe
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:82: WARNING: unknown document: /blog/2011/0525
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:74: WARNING: py:mod reference target not found: ucsv
+T:\hgwork\lino\docs\blog\2012\0829.rst:14: WARNING: py:mod reference target not found: lino.tests_apps.quantityfield
 T:\hgwork\lino\docs\index.rst:17: WARNING: unknown document: /blog/2011/0615

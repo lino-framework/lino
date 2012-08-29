@@ -88,7 +88,7 @@ class VoucherType(Choice):
         
 class VoucherTypes(ChoiceList):
     item_class = VoucherType
-    blank = False
+    #~ blank = False
     max_length = 100
     
     @classmethod

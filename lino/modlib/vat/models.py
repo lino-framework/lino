@@ -145,7 +145,7 @@ class VatItemBase(mixins.Sequenced):
     
     vat_class = VatClasses.field()
     unit_price = dd.PriceField(blank=True,null=True) 
-    qty = dd.QuantityField(blank=True,null=True)
+    qty = dd.QuantityField(blank=True) # ,null=True)
     total = dd.PriceField(blank=True,null=True)
     
     

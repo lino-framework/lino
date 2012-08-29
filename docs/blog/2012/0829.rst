@@ -10,3 +10,19 @@
   A little change in :func:`lino.core.modeltools.resolve_app`,
   and a first example `lino.modlib.postings.dummy` 
   used in :mod:`lino.modlib.cal.models`.  
+  
+- New test application :mod:`lino.test_apps.quantityfield`.
+
+  QuantityFields are implemented as CharFields and 
+  therefore should *not* be declared `null=True`. 
+  The message 
+  `"Nullable CharField %s in %s" % (f.name,model)` 
+  produced by  
+  :func:`lino.core.kernel.analyze_models`
+  is now again a plain Exception.
+  
+  But if `blank=True`, empty strings are converted to `None` 
+  values.
+  
+  
+- `VoucherTypes.blank_item`

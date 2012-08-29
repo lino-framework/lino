@@ -54,11 +54,14 @@ tests:
 	python lino/modlib/ledger/utils.py
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.quantityfield.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.pcsw.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.igen.settings $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.apps.presto.settings $(TESTS_OPTIONS)
 
+tt:  
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.quantityfield.settings $(TESTS_OPTIONS)
 
 unused_appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.pcsw.settings docs/pcsw/appdocs

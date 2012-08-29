@@ -140,10 +140,11 @@ def analyze_models():
         for f, m in model._meta.get_fields_with_model():
             if isinstance(f,models.CharField) and f.null:
                 msg = "Nullable CharField %s in %s" % (f.name,model)
-                if f.__class__ is models.CharField:
-                    raise Exception(msg)
-                else:
-                    logger.info(msg)
+                raise Exception(msg)
+                #~ if f.__class__ is models.CharField:
+                    #~ raise Exception(msg)
+                #~ else:
+                    #~ logger.info(msg)
             if isinstance(f,models.ForeignKey):
                 if f.verbose_name == f.name.replace('_', ' '):
                     """

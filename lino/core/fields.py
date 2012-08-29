@@ -27,17 +27,6 @@ import datetime
 
 from decimal import Decimal
 
-#~ from south.modelsinspector import add_introspection_rules
-#~ add_introspection_rules([], ["^lino\.fields\.LanguageField"])
-#~ add_introspection_rules([], ["^lino\.fields\.PriceField"])
-#~ add_introspection_rules([], ["^lino\.fields\.KnowledgeField"])
-#~ add_introspection_rules([], ["^lino\.fields\.StrengthField"])
-#~ add_introspection_rules([], ["^lino\.fields\.PercentageField"])
-#~ add_introspection_rules([], ["^lino\.fields\.MyDateField"])
-#~ add_introspection_rules([], ["^lino\.fields\.MonthField"])
-#~ add_introspection_rules([], ["^lino\.fields\.QuantityField"])
-#~ add_introspection_rules([], ["^lino\.fields\.HtmlTextField"])
-
 
 import logging
 logger = logging.getLogger(__name__)
@@ -132,24 +121,6 @@ class PriceField(models.DecimalField):
         
         
         
-#~ class QuantityField(models.DecimalField):
-    #~ """
-    #~ Deserves more documentation.
-    #~ """
-    #~ def __init__(self, *args, **kwargs):
-        #~ defaults = dict(
-            #~ max_length=5,
-            #~ max_digits=5,
-            #~ decimal_places=0,
-            #~ )
-        #~ defaults.update(kwargs)
-        #~ super(QuantityField, self).__init__(*args, **defaults)
-        
-    #~ def formfield(self, **kwargs):
-        #~ fld = super(QuantityField, self).formfield(**kwargs)
-        #~ fld.widget.attrs['size'] = "3"
-        #~ fld.widget.attrs['style'] = "text-align:right;"
-        #~ return fld
 
 class FakeField(object):
     """
@@ -629,7 +600,14 @@ class QuantityField(models.CharField):
     and 
     :class:`lino.utils.quantity.Duration` 
     values.
+    
     Implemented as a CharField (sorting or filter ranges may not work)
+    
+    QuantityFields are implemented as CharFields and 
+    therefore should *not* be declared `null=True`. 
+    But if `blank=True`, empty strings are converted to `None` 
+    values.    
+  
     """
     __metaclass__ = models.SubfieldBase
     description = _("Quantity (Decimal or Duration)")
