@@ -95,7 +95,7 @@ class VatDocument(mixins.UserAuthored):
   
     partner = models.ForeignKey("contacts.Partner")
     item_vat = models.BooleanField(default=False)
-    vat_regime = VatRegimes.field()
+    vat_regime = VatRegimes.field(blank=True)
     total_excl = dd.PriceField(blank=True,null=True)
     total_vat = dd.PriceField(blank=True,null=True)
     
@@ -143,7 +143,7 @@ class VatItemBase(mixins.Sequenced):
         abstract = True
         #~ unique_together  = ('document','seqno')
     
-    vat_class = VatClasses.field()
+    vat_class = VatClasses.field(blank=True)
     unit_price = dd.PriceField(blank=True,null=True) 
     qty = dd.QuantityField(blank=True) # ,null=True)
     total = dd.PriceField(blank=True,null=True)

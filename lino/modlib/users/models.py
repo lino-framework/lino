@@ -74,7 +74,7 @@ class User(mixins.CreatedModified):
         Required. Must be unique. 
         """))
         
-    profile = UserProfiles.field()
+    profile = UserProfiles.field(blank=True)
     
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
