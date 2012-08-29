@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-21 17:00+0100\n"
+"POT-Creation-Date: 2012-08-29 05:40+0100\n"
 "PO-Revision-Date: 2012-06-24 22:44+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -24,46 +24,46 @@ msgstr "Type de ménage"
 msgid "Household Types"
 msgstr "Types de ménage"
 
-#: .\models.py:69
+#: .\models.py:68
 msgid "Household"
 msgstr "Ménage"
 
-#: .\models.py:70 .\models.py:318 .\models.py:323
+#: .\models.py:69 .\models.py:279 .\models.py:284
 msgid "Households"
 msgstr "Ménages"
 
-#: .\models.py:196
+#: .\models.py:157
 msgid "Household Role"
 msgstr "Rôle dans ménage"
 
-#: .\models.py:197
+#: .\models.py:158
 msgid "Household Roles"
 msgstr "Rôles dans ménage"
 
-#: .\models.py:199
+#: .\models.py:160
 msgid "name-giving"
 msgstr "donneur de nom"
 
-#: .\models.py:235
+#: .\models.py:196
 msgid "Household Member"
 msgstr "Membre de ménage"
 
-#: .\models.py:236 .\models.py:278
+#: .\models.py:197 .\models.py:239
 msgid "Household Members"
 msgstr "Membres de ménage"
 
-#: .\models.py:249
+#: .\models.py:210
 msgid "From"
 msgstr ""
 
-#: .\models.py:250
+#: .\models.py:211
 msgid "Until"
 msgstr ""
 
-#: .\models.py:283
+#: .\models.py:244
 msgid "Member of"
 msgstr "Membre de "
 
-#: .\models.py:302
+#: .\models.py:263
 msgid "is Household"
 msgstr "est un ménage"

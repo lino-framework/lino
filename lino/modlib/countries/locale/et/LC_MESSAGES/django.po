@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-21 17:00+0100\n"
+"POT-Creation-Date: 2012-08-29 05:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,26 +16,134 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\models.py:41
-msgid "Language"
+#: .\models.py:47
+msgid "Settlement Type"
 msgstr ""
 
-#: .\models.py:42
-msgid "Languages"
+#: .\models.py:50
+msgid "Member State"
+msgstr ""
+
+#: .\models.py:51
+msgid "Division"
+msgstr ""
+
+#: .\models.py:52 .\models.py:269
+msgid "Region"
+msgstr ""
+
+#: .\models.py:53
+msgid "Community"
+msgstr ""
+
+#: .\models.py:54
+msgid "Territory"
+msgstr ""
+
+#: .\models.py:57
+msgid "County"
+msgstr ""
+
+#: .\models.py:58
+msgid "Province"
+msgstr ""
+
+#: .\models.py:59
+msgid "Shire"
+msgstr ""
+
+#: .\models.py:60
+msgid "Subregion"
+msgstr ""
+
+#: .\models.py:61
+msgid "Department"
+msgstr ""
+
+#: .\models.py:62
+msgid "Arrondissement"
+msgstr ""
+
+#: .\models.py:63
+msgid "Prefecture"
+msgstr ""
+
+#: .\models.py:64
+msgid "District"
+msgstr ""
+
+#: .\models.py:65
+msgid "Sector"
 msgstr ""
 
 #: .\models.py:67
-msgid "Country"
-msgstr ""
-
-#: .\models.py:68
-msgid "Countries"
-msgstr ""
-
-#: .\models.py:107
 msgid "City"
 msgstr ""
 
-#: .\models.py:108
-msgid "Cities"
+#: .\models.py:68
+msgid "Town"
+msgstr ""
+
+#: .\models.py:69
+msgid "Municipality"
+msgstr ""
+
+#: .\models.py:70
+msgid "Commune"
+msgstr ""
+
+#: .\models.py:71
+msgid "Parish"
+msgstr ""
+
+#: .\models.py:72
+msgid "Township"
+msgstr ""
+
+#: .\models.py:73
+msgid "Quarter"
+msgstr ""
+
+#: .\models.py:75
+msgid "Borough"
+msgstr ""
+
+#: .\models.py:76
+msgid "Small borough"
+msgstr ""
+
+#: .\models.py:78
+msgid "Village"
+msgstr ""
+
+#: .\models.py:99
+msgid "Language"
+msgstr ""
+
+#: .\models.py:100
+msgid "Languages"
+msgstr ""
+
+#: .\models.py:125
+msgid "Country"
+msgstr ""
+
+#: .\models.py:126
+msgid "Countries"
+msgstr ""
+
+#: .\models.py:169
+msgid "Place"
+msgstr ""
+
+#: .\models.py:170
+msgid "Places"
+msgstr ""
+
+#: .\models.py:182
+msgid "Part of"
+msgstr ""
+
+#: .\models.py:270
+msgid "Zip code"
 msgstr ""

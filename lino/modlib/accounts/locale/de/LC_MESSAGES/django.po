@@ -1,0 +1,204 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-29 05:43+0100\n"
+"PO-Revision-Date: 2012-08-29 07:45+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:46
+msgid "Account Chart"
+msgstr "Kontenplan"
+
+#: .\models.py:47
+msgid "Account Charts"
+msgstr "Kontenpläne"
+
+#: .\models.py:60
+msgid "Account Group"
+msgstr "Kontengruppe"
+
+#: .\models.py:61
+msgid "Account Groups"
+msgstr "Kontengruppen"
+
+#: .\models.py:67
+#: .\models.py:95
+msgid "Introduction"
+msgstr "Einleitung"
+
+#: .\models.py:90
+msgid "Account"
+msgstr "Konto"
+
+#: .\models.py:91
+#: .\models.py:139
+msgid "Accounts"
+msgstr "Konten"
+
+#: .\models.py:123
+msgid "Sales account"
+msgstr "Konto für Verkäufe"
+
+#: .\models.py:126
+msgid "The account to move when this product is used in a sales invoice."
+msgstr ""
+
+#: .\models.py:131
+msgid "Purchases account"
+msgstr "Konto für Einkäufe"
+
+#: .\models.py:134
+msgid "The account to move when this product is used in a purchases invoice."
+msgstr ""
+
+#: .\utils.py:131
+msgid "Debit"
+msgstr "Debit"
+
+#: .\utils.py:132
+msgid "Credit"
+msgstr "Kredit"
+
+#: .\utils.py:142
+msgid "Account Type"
+msgstr "Kontenart"
+
+#: .\utils.py:149
+msgid "Assets"
+msgstr "Vermögen"
+
+#: .\utils.py:150
+msgid "Liabilities"
+msgstr "Verpflichtungen"
+
+#: .\utils.py:151
+msgid "Incomes"
+msgstr "Einkünfte"
+
+#: .\utils.py:152
+msgid "Expenses"
+msgstr "Ausgaben"
+
+#: .\utils.py:153
+msgid "Capital"
+msgstr "Kapital"
+
+#~ msgid "Budget Account"
+#~ msgstr "Budgetkonto"
+
+#~ msgid "Budget Accounts"
+#~ msgstr "Budgetkonten"
+
+#~ msgid "Required for Households"
+#~ msgstr "verpflichtend für Haushalte"
+
+#~ msgid "Required for Persons"
+#~ msgstr "verpflichtend für Personen"
+
+#~ msgid "Periods"
+#~ msgstr "Perioden"
+
+#~ msgid "Budget"
+#~ msgstr "Budget"
+
+#~ msgid "Budgets"
+#~ msgstr "Budgets"
+
+#~ msgid "Date"
+#~ msgstr "Datum"
+
+#~ msgid "Print to-do list"
+#~ msgstr "To-do-Liste drucken"
+
+#~ msgid "Conclusion"
+#~ msgstr "Schlussfolgerung"
+
+#~ msgid "Budget %(pk)d for %(partner)s"
+#~ msgstr "Budget Nr. %(pk)d für %(partner)s"
+
+#~ msgid "Common"
+#~ msgstr "Gemeinsam"
+
+#~ msgid "Mr."
+#~ msgstr "Herr"
+
+#~ msgid "Mrs."
+#~ msgstr "Frau"
+
+#~ msgid "Preview"
+#~ msgstr "Vorschau"
+
+#~ msgid "General"
+#~ msgstr "Allgemein"
+
+#~ msgid "Expenses & Income"
+#~ msgstr "Ausgaben und Einkünfte"
+
+#~ msgid "Liabilities & Assets"
+#~ msgstr "Verpflichtungen & Vermögen"
+#~ msgctxt "debts"
+
+#~ msgid "Summary"
+#~ msgstr "Zusammenfassung"
+
+#~ msgid "Budget Actor"
+#~ msgstr "Budget-Akteur"
+
+#~ msgid "Budget Actors"
+#~ msgstr "Budget-Akteure"
+
+#~ msgid "Header"
+#~ msgstr "Kolonnenüberschrift"
+
+#~ msgid "Remark"
+#~ msgstr "Bemerkung"
+
+#~ msgid "Actor"
+#~ msgstr "Akteur"
+
+#~ msgid "Budget Entry"
+#~ msgstr "Eintrag"
+
+#~ msgid "Budget Entries"
+#~ msgstr "Einträge"
+
+#~ msgid "Circa"
+#~ msgstr "ca."
+
+#~ msgid "Distribute"
+#~ msgstr "Verteilen"
+
+#~ msgid "To Do"
+#~ msgstr "to do"
+
+#~ msgid "Description"
+#~ msgstr "Beschreibung"
+
+#~ msgid "Monthly rate"
+#~ msgstr "Monatsrte"
+
+#~ msgid "Overview"
+#~ msgstr "Übersicht"
+
+#~ msgid "Debts distribution"
+#~ msgstr "Schuldenverteilung"
+
+#~ msgid "Debts mediation"
+#~ msgstr "Schuldnerberatung"
+
+#~ msgid "Duplicate"
+#~ msgstr "Duplizieren"
+
+#~ msgid "Closed"
+#~ msgstr "Abgeschlossen"

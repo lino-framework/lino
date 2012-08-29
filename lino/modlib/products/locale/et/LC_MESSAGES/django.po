@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.products\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-21 17:00+0100\n"
+"POT-Creation-Date: 2012-08-29 05:40+0100\n"
 "PO-Revision-Date: 2011-03-02 00:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <luc.saffre@gmx.net>\n"
@@ -28,7 +28,7 @@ msgstr "Tootekategooriad"
 msgid "Product"
 msgstr "Toode"
 
-#: .\models.py:45
+#: .\models.py:45 .\models.py:71
 msgid "Products"
 msgstr "Tooted"
 

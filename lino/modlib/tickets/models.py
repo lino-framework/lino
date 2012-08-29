@@ -401,7 +401,7 @@ if blogs:
     
 else:
   
-    Tickets.detail_layout = Tickets.detail_layout.replace(' EntriesByTicket','')
+    Tickets.detail_layout.main = Tickets.detail_layout.main.replace(' EntriesByTicket','')
 
 
 

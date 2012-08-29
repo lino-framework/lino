@@ -1,0 +1,7 @@
+20120829
+========
+
+- Added i18n support (``locale`` dirs) for modules 
+  :mod:`lino.modlib.accounts`
+  and
+  :mod:`lino.modlib.ledger`.

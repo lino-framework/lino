@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-21 17:00+0100\n"
+"POT-Creation-Date: 2012-08-29 05:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,59 +17,59 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:73
+#: .\models.py:72
 msgid "Recipient Type"
 msgstr ""
 
-#: .\models.py:76
+#: .\models.py:75
 msgid "to"
 msgstr ""
 
-#: .\models.py:77
+#: .\models.py:76
 msgid "cc"
 msgstr ""
 
-#: .\models.py:78
+#: .\models.py:77
 msgid "bcc"
 msgstr ""
 
-#: .\models.py:107
+#: .\models.py:106
 msgid "Attach to email"
 msgstr ""
 
-#: .\models.py:113
+#: .\models.py:112
 msgid "Email template"
 msgstr ""
 
-#: .\models.py:134
+#: .\models.py:133
 msgid "Create email"
 msgstr ""
 
-#: .\models.py:245
+#: .\models.py:244
 msgid "Recipient"
 msgstr ""
 
-#: .\models.py:246 .\models.py:454
+#: .\models.py:245 .\models.py:449
 msgid "Recipients"
 msgstr ""
 
-#: .\models.py:252
+#: .\models.py:251
 msgid "Address"
 msgstr ""
 
-#: .\models.py:253
+#: .\models.py:252
 msgid "Name"
 msgstr ""
 
-#: .\models.py:307
+#: .\models.py:306
 msgid "Send email"
 msgstr ""
 
-#: .\models.py:353
+#: .\models.py:352
 msgid "There are recipients without address: "
 msgstr ""
 
-#: .\models.py:372
+#: .\models.py:371
 #, python-format
 msgid "Couldn't find target file of %s"
 msgstr ""
@@ -99,22 +99,22 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: .\models.py:464
-msgid "Sender"
-msgstr ""
-
-#: .\models.py:491
+#: .\models.py:485
 msgid "My Outbox"
 msgstr ""
 
-#: .\models.py:514 .\models.py:522 .\models.py:531 .\models.py:592
+#: .\models.py:508 .\models.py:516 .\models.py:525 .\models.py:586
 msgid "Outbox"
 msgstr ""
 
-#: .\models.py:550
+#: .\models.py:544
 msgid "Attachment"
 msgstr ""
 
-#: .\models.py:551
+#: .\models.py:545
 msgid "Attachments"
+msgstr ""
+
+#: .\models.py:610
+msgid "Sender"
 msgstr ""
