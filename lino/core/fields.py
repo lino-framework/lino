@@ -204,19 +204,24 @@ class VirtualField(FakeField): # (Field):
     """
     
     def __init__(self,return_type,get):
-        if isinstance(return_type,basestring):
-            return_type = resolve_field(return_type)
         self.return_type = return_type # a Django Field instance
         self.get = get
-        #~ self.set = set
-        #~ self.name = None
-        #~ Field.__init__(self)
+            
+    def lino_resolve_type(self,actor_or_model,name):
+        """
+        Unlike lino_kernel_setup, this is also called on virtual 
+        fields that are defined on an Actor
+        """
+        self.name = name
+        if isinstance(self.return_type,basestring):
+            self.return_type = resolve_field(self.return_type)
         for k in ('''to_python choices save_form_data 
           value_to_string verbose_name max_length rel
           max_digits decimal_places
           blank'''.split()):
-            setattr(self,k,getattr(return_type,k,None))
-            
+            setattr(self,k,getattr(self.return_type,k,None))
+        #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
+      
     def unused_contribute_to_class(self, cls, name):
         ## if defined in abstract base class, called once on each submodel
         if self.name:
@@ -256,8 +261,9 @@ class VirtualField(FakeField): # (Field):
         #~ self.return_type.name = name
         #~ self.return_type.attname = name
         #~ if issubclass(model,models.Model):
+        self.lino_resolve_type(model,name)
         model._meta.add_virtual_field(self)
-        logger.debug('Found VirtualField %s.%s',full_model_name(model),name)
+        #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
         
     #~ def value_from_object(self,request,obj):
     def value_from_object(self,obj,ar=None):

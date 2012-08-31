@@ -1598,7 +1598,7 @@ tinymce.init({
     def js_render_GridPanel_class(self,rh,user):
         
         yield ""
-        #~ yield "// js_render_GridPanel_class"
+        yield "// js_render_GridPanel_class %s" % rh
         yield "Lino.%s.GridPanel = Ext.extend(Lino.GridPanel,{" % rh.actor
         
         kw = dict()

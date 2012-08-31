@@ -164,7 +164,11 @@ def analyze_models():
                 #~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
                 f.rel.to._lino_ddh.add_fk(m or model,f)
                         
+    #~ for model in models.get_models():
 
+            #~ for k,v in class_dict_items(model):
+                #~ if isinstance(v,dd.VirtualField):
+                    #~ v.lino_resolve_type()
 
 class DisableDeleteHandler():
     """
@@ -439,7 +443,15 @@ def startup_site(self):
             fn = getattr(a,'site_setup',None)
             if fn is not None:
                 fn(self)
-                
+
+        """
+        """
+
+        for a in actors.actors_list:
+            for k,v in class_dict_items(a):
+                if isinstance(v,dd.VirtualField):
+                    v.lino_resolve_type(a,k)
+            
         """
         Actor.after_site_setup() is called after site_setup() on each actor.
         Example: pcsw.site_setup() adds a detail to properties.Properties, 

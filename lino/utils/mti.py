@@ -168,6 +168,7 @@ def insert_child(obj,child_model,**attrs):
     #~ logger.debug(u"Promote %s to %s",
         #~ obj.__class__.__name__,child_model.__name__)
     new_obj = child_model(**attrs)
+    #~ logger.info("20120830 insert_child %s",obj2str(new_obj))
     new_obj.save()
     return new_obj
 

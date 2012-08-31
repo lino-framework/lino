@@ -1,0 +1,32 @@
+20120831
+========
+
+Optimized error reporting:
+
+- Error message "Part coach1 
+  of <class 'lino_welfare.modlib.pcsw.models.Person'> got None"
+  replaced by 
+  "Invalid RemoteField 
+  courses.CourseRequest.person__coach1 (no coach1 in contacts.Person)".
+  (:meth:`lino.core.table.Table.get_data_elem`).
+  
+- Added "in %s" to rrror message 
+  "No LayoutElement for VirtualField user on <class 'lino.core.modeltools.UnresolvedField'> in ListLayout on pcsw.UsersWithClients"
+  (:func:`lino.ui.extjs3.ext_elems.field2elem`)
+  
+- `lino.core.modeltools.resolve_field` no longer returns an 
+  UnresolvedField but raises an exception
+  
+- New method `VirtualField.resolve_type` is 
+  called during `kernel.analyze_models`.
+  
+  virtualfield UsersWithClients.user.
+  Da funktionierte das resolve_field('pcsw.Client.coach1') nicht mehr.        
+  Ich habe nicht genau verstanden warum, aber offenbar findet                 
+  models.get_model zu dem Zeitpunkt die pcsw.Client noch nicht.               
+  Workaround: resolve_field erst in kernel.analyze_models aufrufen.           
+  Das war nicht einfach: habe eine neue Methode resolve_type gemacht.         
+  Das alles war aber unnütz, letzten Endes half nur, dass ich das             
+  "populate_cache=False" von models.get_model() entfernt habe.                
+  Ich weiß nicht mehr, wieso das da war.                                      
+  

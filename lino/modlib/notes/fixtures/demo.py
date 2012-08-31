@@ -32,13 +32,14 @@ from lino.modlib.users import models as auth
 def objects():
     #~ User = settings.LINO.user_model()
     User = resolve_model(settings.LINO.user_model)
-    Person = resolve_model(settings.LINO.project_model)
+    Project = resolve_model(settings.LINO.project_model)
     #~ Company = resolve_model(settings.LINO.company_model)
     Note = resolve_model('notes.Note')
     NoteType = resolve_model('notes.NoteType')
     
     USERS = Cycler(User.objects.all())
-    PERSONS = Cycler(Person.objects.filter(name__startswith="A"))
+    PERSONS = Cycler(Project.objects.filter(name__startswith="A"))
+    #~ PERSONS = Cycler(Project.objects.all())
     #~ COMPANIES = Cycler(Company.objects.all())
     NTYPES = Cycler(NoteType.objects.all())
     

@@ -447,7 +447,7 @@ class FieldElement(LayoutElement):
         #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
         #~ if self.field.__doc__:
             #~ kw.update(toolTipText=self.field.__doc__)
-        label = field.verbose_name
+        #~ label = field.verbose_name
         #~ if not self.field.blank:
             #~ label = string_concat('<b>',label,'</b>')
             #~ label = string_concat(label,' [*]')
@@ -455,7 +455,7 @@ class FieldElement(LayoutElement):
         #~ kw.update(style=dict(padding=DEFAULT_PADDING))
         #~ kw.update(style=dict(marginLeft=DEFAULT_PADDING))
         #~ kw.update(style='padding: 10px')
-        
+        #~ logger.info("20120931 %s %s",layout_handle,field.name)
         kw.setdefault('label',field.verbose_name)
         #~ kw.setdefault('label',string_concat('<b>',field.verbose_name,'</b>'))
         #~ kw.setdefault('label',
@@ -1784,8 +1784,8 @@ def field2elem(layout_handle,field,**kw):
         if isinstance(selector_field,cl):
             return x(layout_handle,field,**kw)
     if isinstance(field,dd.VirtualField):
-        raise NotImplementedError("No LayoutElement for VirtualField %s on %s" % (
-          field.name,field.return_type.__class__))
+        raise NotImplementedError("No LayoutElement for VirtualField %s on %s in %s" % (
+          field.name,field.return_type.__class__,layout_handle.layout))
     if isinstance(field,fields.RemoteField):
         raise NotImplementedError("No LayoutElement for RemoteField %s on %s" % (
           field.name,field.field.__class__))

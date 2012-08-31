@@ -39,7 +39,7 @@ from lino import dd
 from lino.mixins import printable
 from lino.utils import babel
 #~ from lino import choices_method, simple_choices_method
-from lino.core.modeltools import obj2str, sorted_models_list
+from lino.core.modeltools import obj2str, sorted_models_list, full_model_name
 from lino.core.modeltools import resolve_field, UnresolvedModel
 from lino.utils.choosers import chooser, get_for_field
 #~ from lino.modlib.users.models import UserLevels
@@ -176,7 +176,8 @@ if settings.LINO.is_installed('contenttypes'):
           blank=True,null=True,format='plain')
       
       def __unicode__(self):
-          return self.content_type.app_label + '.' + self.content_type.name + '.' + self.field
+          return self.content_type.app_label + '.' + self.content_type.model + '.' + self.field
+          #~ return self.content_type.app_label + '.' + self.content_type.name + '.' + self.field
           
       @chooser(simple_values=True)
       def field_choices(cls,content_type):

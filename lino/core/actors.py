@@ -812,7 +812,8 @@ class Actor(object):
     @classmethod
     def add_virtual_field(cls,name,vf):
         cls.virtual_fields[name] = vf
-        vf.name = name
+        vf.lino_resolve_type(cls,name)
+        #~ vf.name = name
         vf.get = curry(vf.get,cls)
         
     @classmethod

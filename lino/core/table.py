@@ -758,7 +758,10 @@ class Table(AbstractTable):
                 assert model is not None
                 fld = get_data_elem(model,n)
                 if fld is None:
-                    raise Exception("Part %s of %s got None" % (n,model))
+                    #~ raise Exception("Part %s of %s got None" % (n,model))
+                    raise Exception(
+                        "Invalid RemoteField %s.%s (no %s in %s)" % 
+                        (full_model_name(self.model),name,n,full_model_name(model)))
                 if fld.rel:
                     model = fld.rel.to
                 else:
