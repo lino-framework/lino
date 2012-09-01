@@ -265,20 +265,6 @@ class TableRequest(actions.ActionRequest):
         if limit:
             kw.update(limit=int(limit))
         
-        
-        #~ kw.update(param_values=request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES))
-        
-        #~ def parse_param(fld,request,kv):
-            #~ v = request.REQUEST.get(fld.name,None)
-            #~ if v is not None:
-                #~ kv[fld.name] = v
-            
-        #~ kv = kw.get('known_values',{})
-        #~ for fld in self.report.params:
-            #~ parse_param(fld,request,kv)
-        #~ if kv:
-            #~ kw.update(known_values=kv)
-        
         return self.actor.parse_req(request,rqdata,**kw)
         
             
@@ -377,7 +363,6 @@ class TableRequest(actions.ActionRequest):
                 bp[ext_requests.URL_PARAM_MASTER_TYPE] = mt
             else:
                 bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance
-                
         return kw
         
         

@@ -108,6 +108,7 @@ URL_FORMAT_PDF = 'pdf'
 URL_FORMAT_ODT = 'odt'
 URL_FORMAT_PRINTER = 'printer'
 URL_FORMAT_HTML = 'html'
+URL_FORMAT_PLAIN = 'plain'
 
 def dict2kw(d):
     newd = {}

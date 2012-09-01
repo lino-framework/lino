@@ -63,7 +63,7 @@ def requested_report(app_label,actor):
         return cl._lino_default_table
     return cl
     
-def action_request(app_label,actor,request,rqdata):
+def action_request(app_label,actor,request,rqdata,**kw):
     rpt = requested_report(app_label,actor)
     action_name = rqdata.get(
         ext_requests.URL_PARAM_ACTION_NAME,
@@ -71,7 +71,7 @@ def action_request(app_label,actor,request,rqdata):
     a = rpt.get_url_action(action_name)
     if a is None:
         raise http.Http404("%s has no url action %r" % (rpt,action_name))
-    ar = rpt.request(settings.LINO.ui,request,a)
+    ar = rpt.request(settings.LINO.ui,request,a,**kw)
     ar.renderer = settings.LINO.ui.ext_renderer
     return ar
   
@@ -593,6 +593,45 @@ class ApiElement(View):
         
         #~ fmt = request.GET.get('fmt',a.default_format)
         fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,a.default_format)
+        
+        if fmt == ext_requests.URL_FORMAT_PLAIN:
+            ar.renderer = ar.ui.plain_renderer
+            
+            datarec = elem2rec_detailed(ar,elem)
+            
+            E = xghtml.E
+            response = http.HttpResponse(content_type='text/html;charset="utf-8"')
+            doc = xghtml.Document(datarec['title'])
+            
+            doc.body.append(E.h1(doc.title))
+            
+            navinfo = datarec['navinfo']
+            if navinfo:
+                buttons = []
+                buttons.append( ('*',_("Home"), '/' ))
+                
+                #~ kw = {ext_requests.URL_PARAM_FORMAT:ext_requests.URL_FORMAT_PLAIN}
+                buttons.append( ('<<',_("First page"), ar.pk2url(navinfo['first']) ))
+                buttons.append( ('<',_("Previous page"), ar.pk2url(navinfo['prev']) ))
+                buttons.append( ('>',_("Next page"), ar.pk2url(navinfo['next']) ))
+                buttons.append( ('>>',_("Last page"), ar.pk2url(navinfo['last']) ))
+                    
+                chunks = []
+                for text,title,url in buttons:
+                    chunks.append('[')
+                    if url:
+                        chunks.append(E.a(text,href=url,title=title))
+                    else:
+                        chunks.append(text)
+                    chunks.append('] ')
+                doc.body.append(E.p(*chunks))
+                
+            doc.body.append(E.p(force_unicode(datarec['data'])))
+            #~ t = doc.add_table()
+            #~ ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
+            doc.write(response,encoding='utf-8')
+            return response
+        
 
         #~ if isinstance(a,actions.OpenWindowAction):
         if a.opens_a_window:
@@ -699,6 +738,8 @@ class ApiElement(View):
         ar = rpt.request(ui,request)
         return delete_element(ar,elem)
         
+
+PLAIN_PAGE_LENGTH = 5
         
 class ApiList(View):
 
@@ -736,20 +777,7 @@ class ApiList(View):
         
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
-        #~ ui = settings.LINO.ui
-        #~ rpt = requested_report(app_label,actor)
-        
-        #~ action_name = request.GET.get(
-            #~ ext_requests.URL_PARAM_ACTION_NAME,
-            #~ rpt.default_list_action_name)
-        #~ a = rpt.get_url_action(action_name)
-        #~ if a is None:
-            #~ raise http.Http404("%s has no url action %r" % (rpt,action_name))
-            
-        #~ ar = rpt.request(ui,request,a)
-        
-        ar = action_request(app_label,actor,request,request.GET)
-        #~ ar.renderer = ui.ext_renderer
+        ar = action_request(app_label,actor,request,request.GET,limit=PLAIN_PAGE_LENGTH)
         rh = ar.ah
         
         #~ print 20120630, 'api_list_view'
@@ -813,19 +841,6 @@ class ApiList(View):
                 w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
             return response
             
-        #~ if fmt == ext_requests.URL_FORMAT_ODT:
-            #~ if ar.get_total_count() > MAX_ROW_COUNT:
-                #~ raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-            #~ target_parts = ['cache', 'odt', str(rpt) + '.odt']
-            #~ target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
-            #~ target_url = self.media_url(*target_parts)
-            #~ ar.renderer = self.pdf_renderer
-            #~ if os.path.exists(target_file):
-                #~ os.remove(target_file)
-            #~ logger.info(u"odfpy render %s -> %s",rpt,target_file)
-            #~ self.table2odt(ar,target_file)
-            #~ return http.HttpResponseRedirect(target_url)
-        
         if fmt in (ext_requests.URL_FORMAT_PDF,ext_requests.URL_FORMAT_ODT):
             if ar.get_total_count() > MAX_ROW_COUNT:
                 raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
@@ -875,7 +890,70 @@ class ApiList(View):
             doc = xghtml.Document(force_unicode(ar.get_title()))
             doc.body.append(xghtml.E.h1(doc.title))
             t = doc.add_table()
-            ar.ui.ar2html(ar,t)
+            ar.ui.ar2html(ar,t,ar.data_iterator)
+            doc.write(response,encoding='utf-8')
+            return response
+            
+        if fmt == ext_requests.URL_FORMAT_PLAIN:
+            ar.renderer = ar.ui.plain_renderer
+            E = xghtml.E
+            response = http.HttpResponse(content_type='text/html;charset="utf-8"')
+            doc = xghtml.Document(force_unicode(ar.get_title()))
+            #~ doc.body.append(E.h1(doc.title))
+            
+            buttons = []
+            buttons.append( ('*',_("Home"), '/' ))
+            pglen = ar.limit # or PLAIN_PAGE_LENGTH
+            if ar.offset is None:
+                page = 1
+            else:
+                """
+                (assuming pglen is 5)
+                offset page
+                0      1
+                5      2
+                """
+                page = int( ar.offset / pglen) + 1
+            kw = dict()
+            kw = {ext_requests.URL_PARAM_FORMAT:ext_requests.URL_FORMAT_PLAIN}
+            if pglen != PLAIN_PAGE_LENGTH:
+                kw[ext_requests.URL_PARAM_LIMIT] = pglen
+              
+            if page > 1:
+                kw[ext_requests.URL_PARAM_START] = pglen * (page-2) 
+                prev_url = ar.get_request_url(**kw)
+                kw[ext_requests.URL_PARAM_START] = 0
+                first_url = ar.get_request_url(**kw)
+            else:
+                prev_url = None
+                first_url = None
+            buttons.append( ('<<',_("First page"), first_url ))
+            buttons.append( ('<',_("Previous page"), prev_url ))
+            
+            next_start = pglen * page 
+            if next_start < ar.get_total_count():
+                kw[ext_requests.URL_PARAM_START] = next_start
+                next_url = ar.get_request_url(**kw)
+                last_page = int((ar.get_total_count()-1) / pglen)
+                kw[ext_requests.URL_PARAM_START] = pglen * last_page
+                last_url = ar.get_request_url(**kw)
+            else:
+                next_url = None 
+                last_url = None 
+            buttons.append( ('>',_("Next page"), next_url ))
+            buttons.append( ('>>',_("Last page"), last_url ))
+                
+            chunks = []
+            for text,title,url in buttons:
+                chunks.append('[')
+                if url:
+                    chunks.append(E.a(text,href=url,title=title))
+                else:
+                    chunks.append(text)
+                chunks.append('] ')
+            doc.body.append(E.p(*chunks))
+            t = doc.add_table()
+            ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
             doc.write(response,encoding='utf-8')
             return response
             

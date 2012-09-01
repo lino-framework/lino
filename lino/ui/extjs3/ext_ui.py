@@ -237,10 +237,58 @@ class HtmlRenderer(object):
             #~ self.get_detail_url(obj),
             #~ text or cgi.escape(force_unicode(obj)))
             
+class PlainRenderer(HtmlRenderer):
+    def instance_handler(self,ar,obj):
+        a = getattr(obj,'_detail_action',None)
+        if a is None:
+            a = obj.__class__._lino_default_table.detail_action
+        if a is not None:
+            if ar is None or a.get_action_permission(ar.get_user(),obj,None):
+                return self.get_detail_url(obj)
+  
+        
+    def obj2html(self,ar,obj,text=None):
+        url = self.instance_handler(ar,obj)
+        if text is None: text = force_unicode(obj)
+        if url is None:
+            return xghtml.E.p(xghtml.E.b(text))
+        return xghtml.E.p(xghtml.E.a(text,href=url))
+        
+    def pk2url(self,ar,pk,**kw):
+        if pk is not None:
+            kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
+            return self.ui.build_url('api',
+                ar.actor.model._meta.app_label,
+                ar.actor.model.__name__,
+                str(pk),**kw)
+            
+    def get_detail_url(self,obj,*args,**kw):
+        kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
+        return self.ui.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
+        
+    def get_request_url(self,ar,*args,**kw):
+        kw.setdefault(ext_requests.URL_PARAM_FORMAT,ext_requests.URL_FORMAT_PLAIN)
+        if ar.offset is not None:
+            kw.setdefault(ext_requests.URL_PARAM_START,ar.offset)
+        if ar.limit is not None:
+            kw.setdefault(ext_requests.URL_PARAM_LIMIT,ar.limit)
+        if ar.order_by is not None:
+            sc = ar.order_by[0]
+            if sc.startswith('-'):
+                sc = sc[1:]
+                kw.setdefault(ext_requests.URL_PARAM_SORTDIR,'DESC')
+            kw.setdefault(ext_requests.URL_PARAM_SORT,sc)
+        #~ print '20120901 TODO get_request_url'
+        return ar.ui.build_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
+        
+  
 class ExtRenderer(HtmlRenderer):
     """
     Deserves more documentation.
     """
+    def pk2url(self,ar,pk,**kw):
+        return None
+        
     def href_to(self,ar,obj,text=None):
         h = self.instance_handler(ar,obj)
         if h is None:
@@ -283,14 +331,11 @@ class ExtRenderer(HtmlRenderer):
                 return handler_item(v,self.request_handler(ar),v.action.help_text)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
             if v.action:
-                if True:
                     #~ handler = self.action_call(v.action,params=v.params)
                     return handler_item(v,self.action_call(None,v.action),v.action.help_text)
                     #~ handler = "function(){%s}" % self.action_call(
                         #~ v.action,None,v.params)
                     #~ return dict(text=prepare_label(v),handler=js_code(handler))
-                else:
-                    url = self.action_url_http(v.action)
             #~ elif v.params is not None:
                 #~ ar = v.action.actor.request(self,None,v.action,**v.params)
                 #~ url = self.get_request_url(ar)
@@ -370,17 +415,21 @@ class ExtRenderer(HtmlRenderer):
         return self.href_button(url,label,a.help_text)
         
     def instance_handler(self,ar,obj):
-        #~ a = obj.__class__._lino_default_table.get_action('detail')
         a = getattr(obj,'_detail_action',None)
         if a is None:
-        #~ if ar is not None and ar.actor.is_valid_row(obj):
-            #~ a = ar.actor.detail_action
-        #~ else:
             a = obj.__class__._lino_default_table.detail_action
         if a is not None:
             if ar is None or a.get_action_permission(ar.get_user(),obj,None):
-                #~ raise Exception("No detail action for %s" % obj.__class__._lino_default_table)
                 return self.action_call(None,a,dict(record_id=obj.pk))
+                
+    def obj2html(self,ar,obj,text=None):
+        h = self.instance_handler(ar,obj)
+        if text is None: text = force_unicode(obj)
+        if h is None:
+            return xghtml.E.p(xghtml.E.b(text))
+        url = 'javascript:' + h
+        return xghtml.E.p(xghtml.E.a(text,href=url))
+        
         
     def request_handler(self,ar,*args,**kw):
         #~ bp = rr.request2kw(self.ui,**kw)
@@ -402,19 +451,12 @@ class ExtRenderer(HtmlRenderer):
         label = cgi.escape(force_unicode(label or a.get_button_label()))
         return '[<a href="%s">%s</a>]' % (self.action_url_http(a,**params),label)
         
-    #~ def get_action_url(self,action,*args,**kw):
-    def action_url_http(self,action,*args,**kw):
-        #~ if not action is action.actor.default_action:
-        if action != action.actor.default_action:
-            kw.update(an=action.name)
-        return self.build_url("api",action.actor.app_label,action.actor.__name__,*args,**kw)
-            
     def get_actor_url(self,actor,*args,**kw):
         return self.build_url("api",actor.app_label,actor.__name__,*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
         """
-        Called from ActionRequest.absolute_url() used in Team.eml.html
+        Called from ActionRequest.absolute_url() used in `Team.eml.html`
         
         http://127.0.0.1:8000/api/cal/MyPendingInvitations?base_params=%7B%7D
         http://127.0.0.1:8000/api/cal/MyPendingInvitations
@@ -497,6 +539,7 @@ class ExtUI(base.UI):
         #~ raise Exception("20120614")
         #~ self.pdf_renderer = PdfRenderer(self) # 20120624
         self.ext_renderer = ExtRenderer(self)
+        self.plain_renderer = PlainRenderer(self)
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
         jsgen.register_converter(self.ext_renderer.py2js_converter)
         #~ self.window_configs = {}
@@ -745,27 +788,17 @@ class ExtUI(base.UI):
     def get_urls(self):
         rx = '^'
         urlpatterns = patterns('',
-            #~ (rx+'$', self.index_view),
             (rx+'$', views.Index.as_view()),
-            #~ (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.grid_config_view),
             (rx+r'api/main_html$', views.MainHtml.as_view()),
             (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', views.GridConfig.as_view()),
-            #~ (rx+r'detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
-            #~ (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', views.ApiList.as_view()),
-            
-            #~ (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.ApiElement.as_view()),
-            #~ (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$', self.restful_view),
             (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$', views.Restful.as_view()),
-            #~ (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.restful_view),
             (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.Restful.as_view()),
-            #~ (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.choices_view),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', views.Choices.as_view()),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
         )
         if settings.LINO.use_tinymce:
-            #~ self.templates_view
             urlpatterns += patterns('',
                 (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$', 
                     views.Templates.as_view()),
@@ -783,7 +816,6 @@ class ExtUI(base.UI):
             target = join(settings.MEDIA_ROOT,short_name)
             if exists(target):
                 return
-            #~ if settings.LINO.extjs_root:
             if attr_name:
                 source = getattr(settings.LINO,attr_name)
                 if not source:
@@ -793,7 +825,6 @@ class ExtUI(base.UI):
             if not exists(source):
                 raise Exception("LINO.%s (%s) does not exist" % (attr_name,p))
             if is_devserver():
-                #~ urlpatterns += patterns('django.views.static',
                 urlpatterns.extend(patterns('django.views.static',
                 (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 
                     'serve', {
@@ -811,10 +842,6 @@ class ExtUI(base.UI):
         if settings.LINO.use_tinymce:
             setup_media_link('tinymce','tinymce_root')
             
-        #~ lino_root = join(settings.LINO.project_dir,'using','lino')
-        #~ if not exists(lino_root):
-            #~ lino_root = 
-        #~ setup_media_link('lino',source=join(lino_root,'media'))
         setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
 
         if is_devserver():
@@ -1785,10 +1812,10 @@ tinymce.init({
     def table2xhtml(self,ar,max_row_count=300):
         doc = xghtml.Document(force_unicode(ar.get_title()))
         t = doc.add_table()
-        self.ar2html(ar,t)
+        self.ar2html(ar,t,ar.data_iterator)
         return xghtml.E.tostring(t.as_element())
         
-    def ar2html(self,ar,tble):
+    def ar2html(self,ar,tble,data_iterator):
         """
         Using lino.utils.xmlgen.html
         """
@@ -1837,6 +1864,12 @@ tinymce.init({
                     headers[i] = unicode(header)
             #~ print 20120507, oh, headers
           
+        if True:
+            #~ print 20120901, ar.order_by
+            for i,e in enumerate(columns):
+                kw = {ext_requests.URL_PARAM_SORT:e.name}
+                url = ar.renderer.get_request_url(ar,**kw)
+                headers[i] = xghtml.E.a(headers[i],href=url)
         
         sums  = [fld.zero for fld in fields]
         #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
@@ -1847,7 +1880,7 @@ tinymce.init({
                 td.attrib.update(width=cellwidths[i])
         #~ print 20120623, ar.actor
         recno = 0
-        for row in ar.data_iterator:
+        for row in data_iterator:
             recno += 1
             cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums)]
             #~ print 20120623, cells
@@ -1870,3 +1903,11 @@ tinymce.init({
         See :meth:`ExtRenderer.row_action_button`
         """
         return self.ext_renderer.row_action_button(*args,**kw)
+
+
+    def action_url_http(self,action,*args,**kw):
+        #~ if not action is action.actor.default_action:
+        if action != action.actor.default_action:
+            kw.update(an=action.name)
+        return self.build_url("api",action.actor.app_label,action.actor.__name__,*args,**kw)
+            

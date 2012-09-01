@@ -1,0 +1,4 @@
+20120901
+========
+
+Added new format URL_FORMAT_PLAIN.

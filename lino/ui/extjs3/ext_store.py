@@ -131,6 +131,11 @@ class StoreField(object):
         The default implementation returns a unicode string obtained from :meth:`format_value`.
         """
         #~ return "<span>%s</span>" % force_unicode(v)
+        if self.field.primary_key:
+            url = ar.renderer.pk2url(ar,v)
+            if url is not None:
+                return xghtml.E.a(self.format_value(ar,v),href=url)
+            #~ return ar.renderer.obj2html(ar,v,self.format_value(ar,v))
         return self.format_value(ar,v)
       
     def format_value(self,ar,v):
@@ -277,21 +282,7 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         #~ return req.ui.href_to(obj)
         
     def value2html(self,ar,v):
-        h = ar.renderer.instance_handler(ar,v)
-        if h is None:
-            #~ return cgi.escape(force_unicode(obj))
-            #~ return xghtml.E.p(xghtml.E.b(cgi.escape(force_unicode(v))))
-            return xghtml.E.p(xghtml.E.b(force_unicode(v)))
-        url = 'javascript:' + h
-        #~ url = ar.renderer.js2url(h)
-        #~ return self.href(url,text or cgi.escape(force_unicode(obj)))
-        return xghtml.E.p(xghtml.E.a(force_unicode(v),href=url))
-        
-        #~ xml = ar.renderer.href_to(v)
-        #~ # Python 2.6 : encode() takes no keyword arguments
-        #~ # xml = xml.encode('utf-8',errors='xmlcharrefreplace')
-        #~ xml = xml.encode('utf-8','xmlcharrefreplace')
-        #~ return xghtml.RAW(xml)
+        return ar.renderer.obj2html(ar,v)
         
         
     def get_value_text(self,v,obj):

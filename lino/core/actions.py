@@ -799,6 +799,12 @@ class ActionRequest(object):
             actor = self.actor
         return self.ui.request(actor,**kw)
         
+    def pk2url(self,*args,**kw):
+        return self.renderer.pk2url(self,*args,**kw)
+        
+    def get_request_url(self,*args,**kw):
+        return self.renderer.get_request_url(self,*args,**kw)
+        
     def absolute_uri(self,*args,**kw):
         ar = self.spawn(*args,**kw)
         location = ar.renderer.get_request_url(ar)
