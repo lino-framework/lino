@@ -1115,6 +1115,9 @@ tinymce.init({
         #~ yield '<div id="konsole"></div>'
         yield "</body></html>"
         
+        
+        
+        
     def get_main_html(self,request):
         html = settings.LINO.get_main_html(request)
         if html:

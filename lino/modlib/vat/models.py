@@ -101,6 +101,9 @@ class VatDocument(mixins.UserAuthored):
     
     @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
     def total_incl(self,ar=None):
+        """
+        Virtual field returning the sum of `total_excl` and `total_vat`.
+        """
         if self.total_excl is None:
             return None
         return self.total_excl + self.total_vat

@@ -135,7 +135,12 @@ class FakeField(object):
     help_text = None
     
     def is_enabled(self,lh):
-        return True
+        """
+        Overridden by mti.EnableChild
+        """
+        return False
+        #~ return True
+        #~ return not self.editable
         
     def has_default(self):
         return False
@@ -206,6 +211,17 @@ class VirtualField(FakeField): # (Field):
     def __init__(self,return_type,get):
         self.return_type = return_type # a Django Field instance
         self.get = get
+        return_type.editable = False
+        """
+        Normal VirtualFields are *by definition* read-only and not editable.
+        We don't want to require application developers to explicitly 
+        specify `editable=False` in their return_type::
+        
+          @dd.virtualfield(dd.PriceField(_("Total")))
+          def total(self,ar=None):
+              return self.total_excl + self.total_vat
+        
+        """
             
     def lino_resolve_type(self,actor_or_model,name):
         """
@@ -222,6 +238,16 @@ class VirtualField(FakeField): # (Field):
             setattr(self,k,getattr(self.return_type,k,None))
         #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
       
+    def lino_kernel_setup(self,model,name):
+        self.model = model
+        self.name = name
+        #~ self.return_type.name = name
+        #~ self.return_type.attname = name
+        #~ if issubclass(model,models.Model):
+        self.lino_resolve_type(model,name)
+        model._meta.add_virtual_field(self)
+        #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
+        
     def unused_contribute_to_class(self, cls, name):
         ## if defined in abstract base class, called once on each submodel
         if self.name:
@@ -252,18 +278,7 @@ class VirtualField(FakeField): # (Field):
         This special behaviour is needed to implement 
         :class:`lino.utils.mti.EnableChild`.
         """
-        raise NotImplementedError
-        #~ pass
-        
-    def lino_kernel_setup(self,model,name):
-        self.model = model
-        self.name = name
-        #~ self.return_type.name = name
-        #~ self.return_type.attname = name
-        #~ if issubclass(model,models.Model):
-        self.lino_resolve_type(model,name)
-        model._meta.add_virtual_field(self)
-        #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
+        raise NotImplementedError("Cannot write %r to field %s" % (value,self))
         
     #~ def value_from_object(self,request,obj):
     def value_from_object(self,obj,ar=None):

@@ -136,6 +136,8 @@ width
 align
 valign
 href
+type
+rel
 """)
 
 def table_header_row(*headers,**kw):
@@ -177,9 +179,13 @@ class Table(object):
 
 
 class Document(object):
-    def __init__(self,title):
+    def __init__(self,title,stylesheets=None):
         self.title = title
         self.body = []
+        self.stylesheets = stylesheets or []
+        
+    def add_stylesheet(self,url):
+        self.stylesheets.append(url)
         
     def add_table(self):
         t = Table()
@@ -196,8 +202,13 @@ class Document(object):
                 body.append(e.as_element())
             else:
                 body.append(e)
+        headers = []
+        for css in self.stylesheets:
+            headers.append(E.link(rel="stylesheet",type="text/css",href=css))
+        headers.append(E.title(self.title))
+
         return E.html(
-          E.head(E.title(self.title)),
+          E.head(*headers),
           E.body(*body)
           )
           

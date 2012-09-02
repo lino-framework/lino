@@ -29,6 +29,8 @@ from django.db import models
 
 from lino.core import actors
 from lino.utils.jsgen import js_code
+from lino.utils.xmlgen import html as xghtml
+
 from lino.core import actions
 
 class MenuItem:
@@ -47,7 +49,6 @@ class MenuItem:
                  instance=None,
                  href=None):
         self.parent = parent
-        
         self.action = action
         self.params = params
         self.href = href
@@ -120,9 +121,21 @@ class MenuItem:
             return s + self.name
         return s
 
-    def as_html(self,request,level=None):
-        return '<a href="%s">%s</a>' % (
-              self.get_url_path(),self.label)
+    def as_html(self,ar,level=None):
+        if self.action:
+            sr = ar.spawn(self.action.actor,action=self.action)
+            url = sr.get_request_url()
+        elif self.request:
+            url = self.request.get_request_url()
+        else:
+            url = self.href
+        assert self.label is not None
+        if url is None:
+            return xghtml.E.p() # spacer
+            #~ raise Exception("20120901 %s" % self.__dict__)
+        return xghtml.E.a(self.label,href=url)
+        #~ return '<a href="%s">%s</a>' % (
+              #~ self.get_url_path(),self.label)
               
     def menu_request(self,user):
         #~ if self.can_view.passes(user):
@@ -273,11 +286,20 @@ class Menu(MenuItem):
             #~ self.items_dict[i.name] = i
                 
 
-    def as_html(self,request,level=1):
+    def as_html(self,ar,level=1):
+        items = [xghtml.E.li(mi.as_html(ar,level+1)) for mi in self.items]
+        #~ print 20120901, items
+        if level == 1:
+            #~ return xghtml.E.ul(*items,class_='jd_menu')
+            #~ return xghtml.E.ul(*items,id='navbar')
+            #~ return xghtml.E.ul(*items,id='Navigation') # SelfHTML
+            #~ return xghtml.E.ul(*items,class_='dd_menu')
+            return xghtml.E.ul(*items,id='nav')
+        assert self.label is not None
+        return xghtml.E.p(self.label,xghtml.E.ul(*items))
+      
+    def old_as_html(self,request,level=1):
         try:
-            #~ if not self.can_view.passes(request):
-                #~ return u''
-            #~ items = [i for i in self.items if i.can_view.passes(request)]
             if level == 1:
                 s = '<ul class="jd_menu">' 
             else:
@@ -287,7 +309,6 @@ class Menu(MenuItem):
             for mi in self.items:
                 s += '\n<li>%s</li>' % mi.as_html(request,level+1)
             s += '\n</ul>\n'
-            #~ return mark_safe(s)
             return s
         except Exception, e:
             raise

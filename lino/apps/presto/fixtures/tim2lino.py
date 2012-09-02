@@ -17,6 +17,8 @@
 Import of your TIM data. 
 Mandatory argument is the path to your TIM data directory.
 
+It uses Ethan Furman's ``dbf`` package from http://pypi.python.org/pypi/dbf/
+
 """
 
 import os

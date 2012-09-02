@@ -1,4 +1,68 @@
 20120901
 ========
 
-Added new format URL_FORMAT_PLAIN.
+Continued on lino.apps.presto
+
+
+- Added new format URL_FORMAT_PLAIN.
+  Not finished. But the proof of concept is promising.
+  
+- Added fields birth_date and age to the Persons detail.
+  
+- Discovered a bug which had pass undiscovered until now: 
+  The `total_inc` field 
+  of :class:`lino.modlib.vat.models.VatDocument`
+  caused an "Ajax communication failed" error when the user 
+  tried to save an Invoice::
+  
+    TRACEBACK:
+      File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+      File "l:\snapshots\django\django\views\generic\base.py", line 58, in view
+        return self.dispatch(request, *args, **kwargs)
+      File "l:\snapshots\django\django\views\generic\base.py", line 79, in dispatch
+        return handler(request, *args, **kwargs)
+      File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 780, in put
+        return form2obj_and_save(ar,data,elem,False,False) # force_update=True)
+      File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 273, in form2obj_and_save
+        rh.store.form2obj(ar,data,elem,is_new)
+      File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 1073, in form2obj
+        if f.form2obj(ar.request,instance,form_values,is_new):
+      File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 198, in form2obj
+        return self.set_value_in_object(request,instance,v)
+      File "t:\hgwork\lino\lino\core\fields.py", line 255, in set_value_in_object
+        raise NotImplementedError
+
+  This field is declared as a virtual PriceField::
+  
+    @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
+    def total_incl(self,ar=None):
+        if self.total_excl is None:
+            return None
+        return self.total_excl + self.total_vat
+        
+  Explanation: the `field` of a VirtStoreField was `editable`. 
+  :class:`lino.core.fields.VirtualField`
+  now does `return_type.editable = False`.
+  
+- Another aspect of the previous problem was that the `total_inc` 
+  field, though it is 
+  `readonly`, didn't not have the `x-item-disabled` class, as does 
+  the `id` field of the same form::
+
+    <input type="text" size="20" autocomplete="off" id="ext-comp-1155" name="id" 
+    class="x-form-text x-form-field x-form-num-field x-item-disabled" 
+    style="width: 28px; " disabled="">
+    ...
+    <input type="text" size="20" autocomplete="off" id="ext-comp-1239" name="total_incl" 
+    class="x-form-text x-form-field x-form-num-field" readonly="" 
+    style="width: 221px; ">  
+    
+  Seems that there is a bug in ExtJS (3.3.1): doesn't set
+  the `x-item-disabled` class when 'disabled' is in the original config. 
+  Only when dynamically setting it afterwards.
+  
+  Workaround: virtual fields are now also being added to the 
+  dictionary returned by `DisabledFieldsStoreField`. 
+    
+  

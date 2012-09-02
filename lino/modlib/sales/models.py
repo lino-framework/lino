@@ -294,11 +294,11 @@ class SalesDocument(
         #~ cannot use create here because that would try to save() the item
         #~ return self.items.create(**kw)
     
-    @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
-    def total_incl(self,ar=None):
-        if self.total_excl is None:
-            return None
-        return self.total_excl + self.total_vat
+    #~ @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
+    #~ def total_incl(self,ar=None):
+        #~ if self.total_excl is None:
+            #~ return None
+        #~ return self.total_excl + self.total_vat
     
     def update_total(self):
         if self.pk is None:

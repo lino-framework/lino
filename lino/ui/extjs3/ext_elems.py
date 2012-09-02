@@ -456,7 +456,9 @@ class FieldElement(LayoutElement):
         #~ kw.update(style=dict(marginLeft=DEFAULT_PADDING))
         #~ kw.update(style='padding: 10px')
         #~ logger.info("20120931 %s %s",layout_handle,field.name)
+        
         kw.setdefault('label',field.verbose_name)
+        
         #~ kw.setdefault('label',string_concat('<b>',field.verbose_name,'</b>'))
         #~ kw.setdefault('label',
           #~ string_concat('<span class="ttdef"><a class="tooltip" href="#">',
@@ -466,8 +468,9 @@ class FieldElement(LayoutElement):
           #~ string_concat('<div class="ttdef"><a class="tooltip" href="#">',
             #~ field.verbose_name,
             #~ '<span class="classic">This is a test...</span></a></div>'))
+            
         self.add_default_value(kw)
-        #~ kw.update(label=field.verbose_name) 
+        
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
 
     def cell_html(self,ui,row):
@@ -535,7 +538,7 @@ class FieldElement(LayoutElement):
             kw.update(selectOnFocus=True)
         else:
             kw.update(disabled=True)
-            kw.update(readOnly=True)
+            #~ kw.update(readOnly=True)
         return kw
         
     def ext_options(self,**kw):
@@ -1176,6 +1179,7 @@ class Container(LayoutElement,jsgen.Permittable):
         return False
         
 class Wrapper(VisibleComponent):
+    #~ label = None
     def __init__(self,e,**kw):
         kw.update(layout='form')
         if not isinstance(e,TextFieldElement):

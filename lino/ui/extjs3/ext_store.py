@@ -79,6 +79,10 @@ class StoreField(object):
     def __init__(self,field,name,**options):
         self.field = field
         self.name = name
+        #~ if isinstance(field,generic.GenericForeignKey):
+            #~ self.editable = False
+        #~ else:
+            #~ self.editable = field.editable # VirtualField changes this
         #~ options.update(name=name or field.name)
         options.update(name=name)
         self.options = options
@@ -342,6 +346,7 @@ class VirtStoreField(StoreField):
     def __init__(self,vf,delegate,name):
         self.vf = vf
         StoreField.__init__(self,vf.return_type,name)
+        #~ self.editable = vf.editable 
         self.as_js = delegate.as_js
         self.column_names = delegate.column_names
         self.list_values_count = delegate.list_values_count
@@ -361,7 +366,7 @@ class VirtStoreField(StoreField):
         self.delegate = delegate
 
     def __repr__(self):
-        return self.vf.__class__.__name__ + ' ' + self.name + '(virtual)' 
+        return '(virtual)' + self.delegate.__class__.__name__ + ' ' + self.name
         
     def full_value_from_object(self,obj,ar):
         return self.vf.value_from_object(obj,ar)
@@ -372,6 +377,7 @@ class RequestStoreField(StoreField):
     def __init__(self,vf,delegate,name):
         self.vf = vf 
         StoreField.__init__(self,vf.return_type,name)
+        #~ self.editable = False
         self.as_js = delegate.as_js
         self.column_names = delegate.column_names
         self.list_values_count = delegate.list_values_count
@@ -454,6 +460,7 @@ class GenericForeignKeyField(StoreField):
 class SpecialStoreField(StoreField):
     field = None 
     name = None
+    editable = False
   
     def __init__(self,store):
         self.options = dict(name=self.name)
@@ -497,7 +504,13 @@ class DisabledFieldsStoreField(SpecialStoreField):
         for name in self.store.actor.disabled_fields(obj,ar):
             d[name] = True
         #~ l = list(self.store.actor.disabled_fields(obj,request))
-        # disable also the primary key field
+        
+        for f in self.store.all_fields:
+            if f.field is not None and not f.field.editable:
+                d[f.name] = True
+        #~ print "20120901 TODO: maybe not necessary:", d
+        
+        # disable the primary key field if pk is set (i.e. on saved instance):
         if self.store.pk is not None and obj.pk is not None:
             d[self.store.pk.attname] = True
             #~ l.append(self.store.pk.attname)
@@ -1061,17 +1074,14 @@ class Store:
             return ComboStoreField(fld,name,**kw)
 
     def form2obj(self,ar,form_values,instance,is_new):
-        #~ raise Exception('20120211')
-        #~ if self.actor.disabled_fields:
         disabled_fields = set(self.actor.disabled_fields(instance,ar))
-        #~ else:
-            #~ disabled_fields = set()
         #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
             #~ self.report,form_values,disabled_fields,self.all_fields)
         #~ print 20110406, disabled_fields
         changed_triggers = []
         for f in self.all_fields:
-            #~ if f.field is None or not f.field.name in disabled_fields:
+          #~ if f.field is not None and f.field.editable:
+          #~ if f.editable:
             if not f.name in disabled_fields:
                 try:
                     if f.form2obj(ar.request,instance,form_values,is_new):
@@ -1081,7 +1091,7 @@ class Store:
                 except exceptions.ValidationError,e:
                     raise exceptions.ValidationError({f.name:e})
                 except Exception,e:
-                    logger.warning("%s : %s", f.name,e)
+                    logger.warning("Exception during Store.form2obj (field %s) : %s", f.name,e)
                     logger.exception(e)
                     raise 
                 #~ logger.info("20120228 Store.form2obj %s -> %s", f, obj2str(instance))

@@ -357,6 +357,10 @@ class Action(object):
     #~ def run(self,elem,ar,**kw):
         #~ raise NotImplementedError("%s has no run() method" % self.__class__)
 
+    def request(self,*args,**kw):
+        kw.update(action=self)
+        return self.actor.request(*args,**kw)
+        
 
 class TableAction(Action):
     """
@@ -605,6 +609,10 @@ class ActionRequest(object):
     create_kw = None
     renderer = None
     
+    offset = None
+    limit = None
+    order_by = None
+    
     def __init__(self,ui,actor,request=None,action=None,renderer=None,param_values={},**kw):
         #~ ActionRequest.__init__(self,ui,action)
         if ui is None:
@@ -652,9 +660,6 @@ class ActionRequest(object):
                 #~ for k,v in param_values.items():
                     #~ self.param_values.define(k,v)
                 
-        
-    def href_to(self,*args,**kw):
-        return self.renderer.href_to(self,*args,**kw)
         
     def parse_req(self,request,rqdata,**kw): 
         #~ if self.actor.parameters:
@@ -799,11 +804,9 @@ class ActionRequest(object):
             actor = self.actor
         return self.ui.request(actor,**kw)
         
-    def pk2url(self,*args,**kw):
-        return self.renderer.pk2url(self,*args,**kw)
-        
-    def get_request_url(self,*args,**kw):
-        return self.renderer.get_request_url(self,*args,**kw)
+    def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
+    def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)
+    def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)
         
     def absolute_uri(self,*args,**kw):
         ar = self.spawn(*args,**kw)

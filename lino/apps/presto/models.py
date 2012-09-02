@@ -88,6 +88,11 @@ def site_setup(site):
     site.modules.contacts.Partners.add_detail_tab("tickets","tickets.TicketsByPartner")
     site.modules.contacts.Companies.add_detail_tab("tickets","tickets.TicketsByPartner")
     site.modules.contacts.Persons.add_detail_tab("tickets","tickets.TicketsByPartner")
+    site.modules.contacts.Persons.set_detail_layout(
+        name_box = """last_name first_name:15 
+        gender title:10 birth_date""",
+        info_box = "id:5 language:10 \nage")
+    
     
 
 

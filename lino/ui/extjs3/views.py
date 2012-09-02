@@ -49,10 +49,27 @@ from lino.ui.extjs3 import ext_elems
 
 MAX_ROW_COUNT = 300
 
+E = xghtml.E
 
 
 class HttpResponseDeleted(http.HttpResponse):
     status_code = 204
+    
+    
+def plain_html_page(ar,title,navigator,main):
+    menu = settings.LINO.get_site_menu(ar.ui,ar.get_user())
+    menu = menu.as_html(ar)
+    response = http.HttpResponse(content_type='text/html;charset="utf-8"')
+    doc = xghtml.Document(force_unicode(title))
+    doc.add_stylesheet('/media/lino/plain/lino.css')
+    doc.body.append(E.h1(doc.title))
+    doc.body.append(menu)
+    if navigator is not None:
+        doc.body.append(navigator)
+    doc.body.append(main)
+    doc.write(response,encoding='utf-8')
+    return response
+    
     
 
 
@@ -599,18 +616,11 @@ class ApiElement(View):
             
             datarec = elem2rec_detailed(ar,elem)
             
-            E = xghtml.E
-            response = http.HttpResponse(content_type='text/html;charset="utf-8"')
-            doc = xghtml.Document(datarec['title'])
-            
-            doc.body.append(E.h1(doc.title))
-            
             navinfo = datarec['navinfo']
             if navinfo:
                 buttons = []
                 buttons.append( ('*',_("Home"), '/' ))
                 
-                #~ kw = {ext_requests.URL_PARAM_FORMAT:ext_requests.URL_FORMAT_PLAIN}
                 buttons.append( ('<<',_("First page"), ar.pk2url(navinfo['first']) ))
                 buttons.append( ('<',_("Previous page"), ar.pk2url(navinfo['prev']) ))
                 buttons.append( ('>',_("Next page"), ar.pk2url(navinfo['next']) ))
@@ -624,13 +634,53 @@ class ApiElement(View):
                     else:
                         chunks.append(text)
                     chunks.append('] ')
-                doc.body.append(E.p(*chunks))
+                navigator = E.p(*chunks)
+            else:
+                navigator = None
                 
-            doc.body.append(E.p(force_unicode(datarec['data'])))
-            #~ t = doc.add_table()
-            #~ ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
-            doc.write(response,encoding='utf-8')
-            return response
+            #~ main = xghtml.Table()
+            
+            wl = ar.action.get_window_layout()
+            #~ print 20120901, wl.main
+            lh = wl.get_layout_handle(ar.ui)
+            
+            def render_detail(ar,obj,elem):
+                print '20120901 render_detail(%s %s)' % (elem.__class__.__name__,elem)
+                if isinstance(elem,ext_elems.Wrapper):
+                    for chunk in render_detail(ar,obj,elem.wrapped):
+                        yield chunk
+                    return
+                #~ if elem.label:
+                    #~ yield E.p(unicode(elem.label))
+                if isinstance(elem,ext_elems.FieldElement):
+                    value = elem.field.value_from_object(obj)
+                    text = unicode(value)
+                    if not text: text = " "
+                    yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
+                if isinstance(elem,ext_elems.Container):
+                    children = []
+                    for e in elem.elements:
+                        for chunk in render_detail(ar,obj,e):
+                            children.append(chunk)
+                    if elem.vertical:
+                        yield E.div(*children)
+                    else:
+                        tr = E.tr(*[E.td(ch) for ch in children])
+                        yield E.table(tr)
+                    
+            main = E.div(*[e for e in render_detail(ar,elem,lh.main)])
+            #~ print 20120901, lh.main.__html__(ar)
+            
+            
+            #~ for k,v in datarec['data'].items():
+                #~ print k,v
+                
+            return plain_html_page(ar,datarec['title'],navigator,main)
+            
+                
+            #~ doc.body.append(E.p(force_unicode(datarec['data'])))
+            #~ doc.write(response,encoding='utf-8')
+            #~ return response
         
 
         #~ if isinstance(a,actions.OpenWindowAction):
@@ -897,12 +947,10 @@ class ApiList(View):
         if fmt == ext_requests.URL_FORMAT_PLAIN:
             ar.renderer = ar.ui.plain_renderer
             E = xghtml.E
-            response = http.HttpResponse(content_type='text/html;charset="utf-8"')
-            doc = xghtml.Document(force_unicode(ar.get_title()))
-            #~ doc.body.append(E.h1(doc.title))
             
             buttons = []
             buttons.append( ('*',_("Home"), '/' ))
+            buttons.append( ('Ext',_("Using ExtJS"), ar.ui.ext_renderer.get_request_url(ar) ))
             pglen = ar.limit # or PLAIN_PAGE_LENGTH
             if ar.offset is None:
                 page = 1
@@ -951,11 +999,13 @@ class ApiList(View):
                 else:
                     chunks.append(text)
                 chunks.append('] ')
-            doc.body.append(E.p(*chunks))
-            t = doc.add_table()
+                
+            t = xghtml.Table()
+            #~ t = doc.add_table()
             ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
-            doc.write(response,encoding='utf-8')
-            return response
+            
+            return plain_html_page(ar,ar.get_title(),E.p(*chunks),t)
+                
             
         raise http.Http404("Format %r not supported for GET on %s" % (fmt,ar.actor))
 
