@@ -6,6 +6,10 @@ Continued on lino.apps.presto
 
 - Added new format URL_FORMAT_PLAIN.
   Not finished. But the proof of concept is promising.
+  This is currently hidden behind the [html] button which 
+  now calls URL_FORMAT_PLAIN instead of URL_FORMAT_PRINTER.
+  Note that URL_FORMAT_PRINTER is still being used for '
+  when slave_format='html'.
   
 - Added fields birth_date and age to the Persons detail.
   
@@ -65,4 +69,5 @@ Continued on lino.apps.presto
   Workaround: virtual fields are now also being added to the 
   dictionary returned by `DisabledFieldsStoreField`. 
     
-  
+- (Added some songs to :mod:`lino.modlib.vocbook.fr4et`)
+

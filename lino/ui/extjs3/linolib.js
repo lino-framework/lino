@@ -3086,12 +3086,21 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             //~ url += "?" + Ext.urlEncode(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
+        //~ { scope:this, 
+          //~ text: "[html]", 
+          //~ handler: function() { 
+            //~ var p = this.get_current_grid_config();
+            //~ Ext.apply(p,this.get_base_params());
+            //~ p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PRINTER";
+            //~ this.add_param_values(p);
+            //~ window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+          //~ } },
         { scope:this, 
           text: "[html]", 
           handler: function() { 
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
-            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PRINTER";
+            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
@@ -3101,15 +3110,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
             p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PDF";
-            this.add_param_values(p);
-            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-          } },
-        { scope:this, 
-          text: "[plain]", 
-          handler: function() { 
-            var p = this.get_current_grid_config();
-            Ext.apply(p,this.get_base_params());
-            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }

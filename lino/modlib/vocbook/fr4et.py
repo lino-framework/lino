@@ -209,9 +209,9 @@ Prantsuse keeles tuleb tihti ette, et sõna lõpeb *lühikese* täishäälikuga.
 """)
 Intro.parse_words(Nom,u"""
 le menu [mə'nü] : menüü
-le chocolat [šoko’la] : šokolaad
+le chocolat [šoko'la] : šokolaad
 le plat [pla] : roog | kauss
-le cinéma [sine’ma] : kino
+le cinéma [sine'ma] : kino
 le paradis [para'di] : paradiis
 """)
 
@@ -596,7 +596,7 @@ u"""
 välja arvatud siis kui järgneb täishäälik või teine **n** või **m**.
 """,ref="on")
 Reeglid.parse_words(Nom,u"""
-le salon [sa’lO~] : salong (= uhke tuba)
+le salon [sa'lO~] : salong (= uhke tuba)
 un oncle [O~klə] : onu
 la bombe ['bO~mbə] : pomm
 """)
@@ -626,8 +626,8 @@ u"""
 välja arvatud siis kui järgneb täishäälik või teine **n** või **m**.
 """,ref="en")
 Reeglid.parse_words(Nom,u"""
-le rendez-vous [rA~de’vu] : kohtumine
-le commentaire [komA~’täär] : märkus, kommentar
+le rendez-vous [rA~de'vu] : kohtumine
+le commentaire [komA~'täär] : märkus, kommentar
 le centre ['sA~trə] : keskus
 le genre [žA~rə] : žanre
 un enfant [A~'fA~] : laps
@@ -970,7 +970,7 @@ Ettevaatust, **gn** ei ole **ng**!
     """)
     Eesti.parse_words(Autre,u"""
     ces ingrédients [säz Ä~gre'djA~] : need koostisained
-    c'est un crétin [sätÖ~ kre’tÄ~] : ta on kretiin
+    c'est un crétin [sätÖ~ kre'tÄ~] : ta on kretiin
     je dors [žə dOOr] : ma magan
     j'ai tort [žee tOOr] : ma eksin
     """)
@@ -1092,6 +1092,77 @@ le marcassin [marka'sÄ~] : metsseapõrsas
 
 if FULL_CONTENT:
 
+  Fun.add_lesson(u"Sur le pont d'Avignon", u"""
+  | Sur le pont d'Avignon,
+  | L’on y danse, l’on y danse ;
+  | Sur le pont d’Avignon,
+  | L’on y danse tout en rond !
+  
+  | Les beaux messieurs font comme ça,
+  | Et puis encore comme ça.
+  
+  | Sur le pont d’Avignon,
+  | L’on y danse, on y danse ;
+  | Sur le pont d’Avignon,
+  | L’on y danse tout en rond !
+  
+  | Les belles dames font comme ça
+  | Et puis encore comme ça.  
+  """)
+  
+  
+  Fun.add_lesson(u"J'ai du bon tabac", u"""
+  
+  | J'ai du bon tabac dans ma tabatière,
+  | J'ai du bon tabac, tu n'en auras pas.
+  
+  | J'en ai du fin et du bien râpé
+  | Mais, ce n'est pas pour ton vilain nez
+
+  | J'ai du bon tabac dans ma tabatière
+  | J'ai du bon tabac, tu n'en auras pas
+
+  """)
+  
+  
+  Fun.add_lesson(u"Au clair de la lune", u"""
+  | Au clair de la lune,
+  | Mon ami Pierrot,
+  | Prête-moi ta plume
+  | Pour écrire un mot.
+  | Ma chandelle est morte,
+  | Je n'ai plus de feu ;
+  | Ouvre-moi ta porte,
+  | Pour l'amour de Dieu.
+  """)
+  Fun.parse_words(None,u"""
+  le clair de lune : kuuvalgus
+  un ami : sõber
+  """)
+  Fun.parse_words(Verbe,u"""
+  prêter : laenama
+  écrire : kirjutama
+  ouvrir : avama
+  """)
+  Fun.parse_words(None,u"""
+  la plume : sulg
+  """)
+  Fun.parse_words(Verbe,u"""
+  """)
+  Fun.parse_words(None,u"""
+  le mot : sõna
+  la chandelle : küünlalamp
+  """)
+  Fun.parse_words(Adjectif,u"""
+  mort | morte (adj.) : surnud
+  """)
+  Fun.parse_words(None,u"""
+  le feu [föö] : tuli
+  la porte [pOrt] : uks
+  un amour : armastus
+  Dieu : Jumal
+  """)
+  
   Fun.add_lesson(u"Põdral maja", u"""
   | Dans sa maison un grand cerf 
   | regardait par la fenêtre
@@ -1128,18 +1199,6 @@ la dinde [dÄ~də] : emakalkun
 le pigeon [pi'žO~] : tuvi
 """)
 
-General.add_lesson(u"Kalad", u"""
-""")
-General.parse_words(Nom,u"""
-le brochet [bro'šä] : haug
-une anguille [A~'giijə] : angerjas
-la perche [pärš] : ahven
-le *hareng [ar'~A] : heeringas
-le sprat [sprat] : sprot
-le thon [tO~] : tuunikala
-le requin [rə'kÄ~] : haikala
-""")
-
 
 
 
@@ -1153,7 +1212,9 @@ la chaise [šääz] : tool
 le couteau [ku'too] : nuga
 la fourchette [fur'šet] : kahvel
 la cuillère [kwi'jäär] : lusikas
+les couverts [ku'väär] : noad-kahvlid
 une assiette [as'jät] : taldrik
+le bol [bOl] : joogikauss
 le verre [väär] : klaas
 la tasse [tas] : tass
 le plat [pla] : kauss
@@ -1211,8 +1272,8 @@ Kokadele.add_lesson(u"Liha", u"""
 Kokadele.parse_words(Nom,u"""
 la viande [vjA~də] : liha
 la volaille [vo'lajə] : linnuliha
+le poulet [pu'lä] : kana
 le gibier [žibiee] : jahiloomad
-le poisson [pwa'sO~] : kala
 
 la boucherie [bušə'rii] : lihakauplus, lihakarn
 le lard [laar] : pekk
@@ -1229,6 +1290,20 @@ le cœur [kÖÖr] : süda
 le rognon [ron'jO~] : neer
 la cervelle [ser'vell] : aju
 les abats [a'ba] : subproduktid (maks,süda, neerud, keel, jalad)
+""")
+
+Kokadele.add_lesson(u"Kala", u"""
+""")
+Kokadele.parse_words(Nom,u"""
+le poisson [pwa'sO~] : kala
+les crustacés [krüsta'see] : karploomad | koorikloomad
+le brochet [bro'šä] : haug
+une anguille [A~'giijə] : angerjas
+la perche [pärš] : ahven
+le *hareng [ar'~A] : heeringas
+le sprat [sprat] : sprot
+le thon [tO~] : tuunikala
+le requin [rə'kÄ~] : haikala
 """)
 
 
@@ -1421,7 +1496,7 @@ Kokadele.parse_words(Nom,u"""
 le ingrédient [Ä~gre'djA~] : koostisosa 
 le lait [lä] : piim
 le beurre [bÖÖr]: või
-la crème [kr’ääm] : kreem | koor
+la crème [kr'ääm] : kreem | koor
 le sucre ['sükrə] : suhkur
 le sel [säl] : sool
 le poivre ['pwaavrə] : pipar
@@ -1446,24 +1521,35 @@ le gingembre [žÄ~žA~brə] : ingver
 """)
 
 
-Kokadele.add_lesson(u"Köögiriistad", u"""""")
+Kokadele.add_lesson(u"Köögis", u"""""")
 Kokadele.parse_words(Nom,u"""
 la cuisine [kwi'zin] : köök
 la cuisinière [kwizin'jäär] : pliit
 le four [fuur] : ahi
 le four à micro-ondes [fuur a mikro 'O~də] : mikrolaine ahi
-le fouet [fu'ä] : vispel
 le moulin [mu'lÄ~] : veski
-la alumette [alu'mät] : tuletikk
+le congélateur [kO~gela'tÖÖr] : külmutuskapp
+un évier [evi'ee] : kraanikauss
+une armoire [arm'waar] : kapp
+le placard [pla'kaar] : seinakapp
+""")
+
+Kokadele.add_lesson(u"Köögiriistad", u"""""")
+Kokadele.parse_words(Nom,u"""
+le fouet [fu'ä] : vispel
+la louche [lušə] : kulp
+la alumette [alu'mätə] : tuletikk
 la coquille [ko'kiijə] : merekarp
 la cocotte [ko'kot] : malmkastrul, kokott
 la poêle [pwal] : pann
 la râpe [rap] : riiv
 la casserole [kas'roll] : kastrul
+la russe [rüs] : kastrul
 la marmite [mar'mit] : katel
 la braisière [bräz'jäär] : pott smoorimiseks 
 le caquelon [kak'lO~] : fondüüpott
 le bain-marie [bÄ~ma'rii] : veevann
+la passoire [pas'waar] : sõel
 """)
 
 
@@ -1517,7 +1603,7 @@ braiser [brä'zee] : smoorima
 
 u"""
 On met une majuscule 
-uniquement quand l’adjectif est employé comme 
+uniquement quand l'adjectif est employé comme 
 nom pour désigner une personne. 
 Ex. : Les Français parlent en français à leurs amis français
 """
@@ -1611,7 +1697,8 @@ le jus lié [žu li'ee] : maisi või nooljuurejahuga pruun kaste
 
 le mirepoix [mirə'pwa] : praetud kuubikud (sibul, porgand, seller)
 
-la coupe en brunoise [kup A~ brün'waaz] : juur- või puuvilja kuubikud (2mm)
+la coupe en dés [kup A~ 'dee] : lõikamine kuubikuteks
+la coupe en brunoise [kup A~ brün'waaz] : juurvilja lõikamine kuubikuteks (2mm)
 la coupe julienne [kup jül'jän] : juurvilja lõikamine ribadeks (2mm)
 la coupe jardinière [kup žardin'jäär] : juurvilja lõikamine ribadeks
 la coupe à la paysanne [kup ala päi'zan] : juurvilja lõikamine ketasteks
@@ -1777,7 +1864,7 @@ if FULL_CONTENT:
     la cuisine [kwi'zin] : köök
     la salle de bain : vannituba
     la chambre à coucher : magamistuba
-    le salon [sa’lO~] : elutuba
+    le salon [sa'lO~] : elutuba
     un escalier [eskal'jee] : trepp
     la fenêtre [fə'näätrə] : aken
     le parterre [par'täär] : esimene korrus

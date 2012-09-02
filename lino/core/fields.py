@@ -211,7 +211,6 @@ class VirtualField(FakeField): # (Field):
     def __init__(self,return_type,get):
         self.return_type = return_type # a Django Field instance
         self.get = get
-        return_type.editable = False
         """
         Normal VirtualFields are *by definition* read-only and not editable.
         We don't want to require application developers to explicitly 
@@ -231,6 +230,7 @@ class VirtualField(FakeField): # (Field):
         self.name = name
         if isinstance(self.return_type,basestring):
             self.return_type = resolve_field(self.return_type)
+        self.return_type.editable = self.editable
         for k in ('''to_python choices save_form_data 
           value_to_string verbose_name max_length rel
           max_digits decimal_places
