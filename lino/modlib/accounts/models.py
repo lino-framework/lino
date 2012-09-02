@@ -61,7 +61,7 @@ class Group(babel.BabelNamed):
         unique_together = ['chart','ref']
         
     chart = models.ForeignKey(Chart)
-    ref = models.CharField(max_length=10)
+    ref = models.CharField(max_length=100,unique=True)
     account_type = AccountTypes.field(blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
@@ -89,8 +89,9 @@ class Account(babel.BabelNamed,mixins.Sequenced):
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
     group = models.ForeignKey(Group)
+    ref = models.CharField(max_length=10,unique=True)
     #~ chart = models.ForeignKey(Chart)
-    type = AccountTypes.field(blank=True)
+    type = AccountTypes.field() # blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
     def full_clean(self,*args,**kw):
@@ -105,6 +106,7 @@ class Account(babel.BabelNamed,mixins.Sequenced):
     
 class Accounts(dd.Table):
     model = Account
+    order_by = ['ref']
     #~ required=dict(user_groups=['debts'],user_level='manager')
     
 #~ class AccountsByChart(Accounts):

@@ -306,8 +306,10 @@ class SalesDocument(
         total_excl = 0
         total_vat = 0
         for i in self.items.all():
-            if i.total is not None:
-                total_excl += i.total
+            if i.total_excl is not None:
+                total_excl += i.total_excl
+            if i.total_vat is not None:
+                total_vat += i.total_vat
             #~ if not i.product.vatExempt:
                 #~ total_vat += i.total_excl() * 0.18
         self.total_excl = total_excl
@@ -721,7 +723,7 @@ class InvoicesByOrder(SalesDocuments):
     #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
 
 class ItemsByDocument(dd.Table):
-    column_names = "seqno:3 product title description:20x1 discount unit_price qty total"
+    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl"
     master_key = 'document'
     order_by = ["seqno"]
     

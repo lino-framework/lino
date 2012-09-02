@@ -86,16 +86,10 @@ add('S',_("Sales"),'sales')
 add('P',_("Purchases"),'purchases')
 
 
-class VatDocument(mixins.UserAuthored):
-    """
-    This is also used for Offers and other non-ledger documents
-    """
+class VatTotal(dd.Model):
     class Meta:
         abstract = True
-  
-    partner = models.ForeignKey("contacts.Partner")
-    item_vat = models.BooleanField(default=False)
-    vat_regime = VatRegimes.field(blank=True)
+        
     total_excl = dd.PriceField(blank=True,null=True)
     total_vat = dd.PriceField(blank=True,null=True)
     
@@ -108,6 +102,17 @@ class VatDocument(mixins.UserAuthored):
             return None
         return self.total_excl + self.total_vat
         
+class VatDocument(mixins.UserAuthored,VatTotal):
+    """
+    This is also used for Offers and other non-ledger documents
+    """
+    class Meta:
+        abstract = True
+  
+    partner = models.ForeignKey("contacts.Partner")
+    item_vat = models.BooleanField(default=False,
+      help_text=_("Whether item unit price includes VAT or not."))
+    vat_regime = VatRegimes.field(blank=True)
     def get_trade_type(self):
         return TradeTypes.sales
         
@@ -122,25 +127,29 @@ class VatDocument(mixins.UserAuthored):
         tt = self.get_trade_type()
         for i in self.items.order_by('seqno'):
             #~ move(i.get_base_account(),i.total)
-            if self.item_vat:
-                move(i.get_base_account(tt),i.total)
-                move(settings.LINO.get_vat_account(tt),i.total)
+            move(i.get_base_account(tt),i.total_excl)
+            move(
+                settings.LINO.get_vat_account(tt,i.vat_class,self.vat_regime),
+                i.total_vat)
         return sums_dict
         
     def get_wanted_movements(self):
         sums_dict = self.get_sums()
+        #~ logger.info("20120901 get_wanted_movements %s",sums_dict)
         sum = ZERO
         for a,m in sums_dict.items():
-            yield self.create_movement(a,m)
-            sum += i.total
+            if m:
+                yield self.create_movement(a,m)
+                sum += m
         a = settings.LINO.get_partner_account(self)
         yield self.create_movement(a,sum,partner=self.partner)
         
         
-class VatItemBase(mixins.Sequenced):
+class VatItemBase(mixins.Sequenced,VatTotal):
     """
     Abstract Base class for InvoiceItem and OrderItem.
-    Subclasses MUST define a field called "document" which is a FK with related_name="items".
+    Subclasses MUST define a field called "document" 
+    which MUST be a FK with related_name="items" to the owning document, which in turn MUST be a subclass of :class:`VatDocument`).
     """
     class Meta:
         abstract = True
@@ -149,7 +158,7 @@ class VatItemBase(mixins.Sequenced):
     vat_class = VatClasses.field(blank=True)
     unit_price = dd.PriceField(blank=True,null=True) 
     qty = dd.QuantityField(blank=True) # ,null=True)
-    total = dd.PriceField(blank=True,null=True)
+    #~ total = dd.PriceField(blank=True,null=True)
     
     
     #~ def total_excl(self):
@@ -164,15 +173,28 @@ class VatItemBase(mixins.Sequenced):
         #~ self.before_save()
         #~ super(DocItem,self).save(*args,**kwargs)
                     
-    def get_base_account(self):
+    def get_base_account(self,tt):
         raise NotImplementedError
+        
+    #~ def unit_price_includes_vat(self):
+        #~ return True
         
     def get_siblings(self):
         return self.document.items      
     
     def full_clean(self,*args,**kw):
         if self.unit_price is not None and self.qty is not None:
-            self.total = self.unit_price * self.qty
+            tt = self.document.get_trade_type()
+            rate = settings.LINO.get_vat_rate(tt,
+                self.vat_class,
+                self.document.vat_regime)
+            if self.document.item_vat: # unit_price_includes_vat
+                total_incl = self.unit_price * self.qty
+                self.total_excl = total_incl / (1 + rate)
+                self.total_vat = total_incl - self.total_excl
+            else:
+                self.total_excl = self.unit_price * self.qty
+                self.total_vat = self.total_excl * rate
         super(VatItemBase,self).full_clean(*args,**kw)
     #~ before_save.alters_data = True
 

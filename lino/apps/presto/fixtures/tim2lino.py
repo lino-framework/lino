@@ -64,6 +64,7 @@ Household = resolve_model('households.Household')
 Person = resolve_model(settings.LINO.person_model)
 Company = resolve_model(settings.LINO.company_model)
 
+LEN_IDGEN = 6
 
 users = dd.resolve_app('users')
 tickets = dd.resolve_app('tickets')
@@ -102,6 +103,15 @@ def tax2vat(idtax):
     else:
         return VatClasses.normal
     raise Exception("Unknown VNl->IdTax %r" % idtax)
+    
+def pcmn2type(idgen):
+    if idgen[0] == '6':
+        return AccountTypes.expense
+    if idgen[0] == '7':
+        return AccountTypes.income
+    if idgen[0] == '4':
+        return AccountTypes.liability
+    return AccountTypes.asset
         
 def tim2bool(x):
     if not x.strip():
@@ -277,8 +287,11 @@ def load_tim_data(dbpath):
         return country
         
     def load_plz(row):
+        pk = row['pays'].strip()
+        if not pk:
+            return
         try:
-            country = Country.objects.get(short_code=row['pays'].strip())
+            country = Country.objects.get(short_code=pk)
         except Country.DoesNotExist,e:
             return 
         kw = dict(
@@ -467,16 +480,44 @@ def load_tim_data(dbpath):
         names2kw(kw,row.name1,row.name2,row.name3)
         return products.Product(**kw)
         
-    def load_gen(row,**kw):
+    GROUPS = dict()
+    
+    def load_gen1(row,**kw):
+        idgen = row.idgen.strip()
+        if not idgen: return
+        if len(idgen) == LEN_IDGEN: return
+        dclsel = row.dclsel.strip()
         kw.update(chart=accounts.Chart.objects.get(pk=1))
-        kw.update(ref=row.idgen.strip())
+        kw.update(ref=idgen)
+        kw.update(account_type=pcmn2type(idgen))
         def names2kw(kw,*names):
             names = [n.strip() for n in names]
             kw.update(name=names[0])
         names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
         ag = accounts.Group(**kw)
+        GROUPS[idgen] = ag
         yield ag
-        yield accounts.Account(group=ag)
+        
+    def load_gen2(row,**kw):
+        idgen = row.idgen.strip()
+        if not idgen: return
+        if len(idgen) < LEN_IDGEN: return
+        ag = None
+        for length in range(len(idgen),0,-1):
+            print idgen[:length]
+            ag = GROUPS.get(idgen[:length])
+            if ag is not None:
+                break
+        dclsel = row.dclsel.strip()
+        #~ kw.update(chart=accounts.Chart.objects.get(pk=1))
+        kw.update(ref=idgen)
+        kw.update(group=ag)
+        kw.update(type=pcmn2type(idgen))
+        def names2kw(kw,*names):
+            names = [n.strip() for n in names]
+            kw.update(name=names[0])
+        names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
+        yield accounts.Account(**kw)
         
     def load_ven(row,**kw):
         jnl,year,number = row2jnl(row)
@@ -539,19 +580,21 @@ def load_tim_data(dbpath):
         kw.update(title=row.desig.strip())
         kw.update(vat_class=tax2vat(row.idtax))
         kw.update(unit_price=mton(row.prixu))
-        kw.update(total=mton(row.cmont))
         kw.update(qty=qton(row.qte))
+        kw.update(total_excl=mton(row.cmont))
+        kw.update(total_vat=mton(row.montt))
         #~ kw.update(qty=row.idtax.strip())
         #~ kw.update(qty=row.montt.strip())
         #~ kw.update(qty=row.attrib.strip())
         #~ kw.update(date=row.date)
         return doc.add_item(**kw)
         
-    yield load_dbf(dbpath,r'RUMMA\GEN',load_gen)
+    yield load_dbf(dbpath,r'RUMMA\GEN',load_gen1)
+    yield load_dbf(dbpath,r'RUMMA\GEN',load_gen2)
     
     yield dumpy.FlushDeferredObjects
     
-    PROD_617010.sales_account=accounts.Account.objects.get(group__ref='617010')
+    PROD_617010.sales_account=accounts.Account.objects.get(ref='617010')
     PROD_617010.save()
     
     #~ ca = accounts.Account(group=accounts.Group.objects.get(ref='400000'))

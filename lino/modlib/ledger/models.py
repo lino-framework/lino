@@ -332,7 +332,8 @@ class Voucher(mixins.UserAuthored):
         
     def create_movement(self,account,amount,**kw):
         kw['voucher'] = self
-        account = accounts.Account.objects.get(group__ref=account)
+        #~ account = accounts.Account.objects.get(group__ref=account)
+        account = accounts.Account.objects.get(ref=account)
         kw['account'] = account
         if amount >= 0:
             kw['amount'] = amount
@@ -439,7 +440,8 @@ class AccountInvoice(vat.VatDocument,Voucher):
         if account is not None:
             #~ if not isinstance(account,accounts.Account):
             if isinstance(account,basestring):
-                account = accounts.Account.objects.get(group__ref=account)
+                #~ account = accounts.Account.objects.get(group__ref=account)
+                account = accounts.Account.objects.get(ref=account)
         kw['account'] = account
         unit_price = kw.get('unit_price',None)
         #~ if type(unit_price) == float:
@@ -467,12 +469,8 @@ class InvoiceItem(vat.VatItemBase):
     
     def get_base_account(self):
         return self.account
-        
-    
 
 
-
-    
 
 
 class InvoiceDetail(dd.FormLayout):
@@ -497,7 +495,6 @@ class InvoiceDetail(dd.FormLayout):
     """,label=_("Ledger"))
     
 class Invoices(dd.Table):
-    #~ parameters = dict(pyear=journals.YearRef())
     parameters = dict(
         year=FiscalYears.field(blank=True),
         journal=JournalRef(blank=True))
@@ -530,7 +527,7 @@ class InvoicesByJournal(Invoices):
 
 class ItemsByInvoice(dd.Table):
     model = InvoiceItem
-    column_names = "seqno:3 account title unit_price qty total"
+    column_names = "seqno:3 account title unit_price qty total_excl total_vat total_incl"
     master_key = 'document'
     order_by = ["seqno"]
     

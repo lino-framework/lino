@@ -22,6 +22,8 @@ import os
 import sys
 import datetime
 from os.path import join, abspath, dirname, normpath
+from decimal import Decimal
+
 
 
 #~ __version__ = file(os.path.join(os.path.dirname(
@@ -1147,10 +1149,18 @@ class Lino(object):
         #~ elif voucher.journal.type == JournalTypes.purchases:
             return '440000'
         
-    def get_vat_account(self,jt,vc,vr):
+    def get_vat_account(self,tt,vc,vr):
+        """
+        Return a string with the `ref` of the account into which 
+        the VAT amount should be booked.
+        `tt` is a TradeType (usually either sales or purchases)
+        `vc` is a VatClass
+        `vr` is a VatRegime
+        
+        """
         return '472100'
 
-    def get_vat_rate(self,jt,vc,vr):
+    def get_vat_rate(self,tt,vc,vr):
         VAT_RATES = dict(
           exempt=Decimal(),
           reduced=Decimal('0.07'),

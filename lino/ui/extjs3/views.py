@@ -331,7 +331,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         kw.update(record_id=elem.pk)
         return json_response(kw,content_type='text/html')
     else: # 20120814 
-        logger.info("20120816 %r", ar.action)
+        #~ logger.info("20120816 %r", ar.action)
         if isinstance(ar.action,actions.GridEdit):
             kw.update(rows=[rh.store.row2list(ar,elem)])
         else:
