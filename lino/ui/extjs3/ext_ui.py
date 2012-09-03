@@ -60,9 +60,9 @@ from lino.ui import requests as ext_requests
 from lino import dd
 from lino.core import actions 
 #~ from lino.core.actions import action2str
-from lino.core import table
+from lino.core import dbtables
 from lino.core import layouts
-from lino.utils import tables
+from lino.core import tables
 #~ from lino.utils.xmlgen import xhtml as xhg
 from lino.core import fields
 from lino.ui import base
@@ -123,7 +123,7 @@ class HtmlRenderer(object):
     def quick_add_buttons(self,ar):
         """
         Returns a HTML chunk that displays "quick add buttons"
-        for the given :class:`action request <lino.core.table.TableRequest>`:
+        for the given :class:`action request <lino.core.dbtables.TableRequest>`:
         a button  :guilabel:`[New]` followed possibly 
         (if the request has rows) by a :guilabel:`[Show last]` 
         and a :guilabel:`[Show all]` button.
@@ -164,7 +164,7 @@ class HtmlRenderer(object):
         """
         Returns a HTML chunk that displays "quick upload buttons":
         either one button :guilabel:`[Upload]` 
-        (if the given :class:`TableTequest <lino.core.table.TableRequest>`
+        (if the given :class:`TableTequest <lino.core.dbtables.TableRequest>`
         has no rows)
         or two buttons :guilabel:`[Show]` and :guilabel:`[Edit]` 
         if it has one row.
@@ -223,7 +223,7 @@ class HtmlRenderer(object):
     #~ def href_to_request(self,rr,text=None):
         #~ """
         #~ Returns a HTML chunk with a clickable link to 
-        #~ the given :class:`TableTequest <lino.core.table.TableRequest>`.
+        #~ the given :class:`TableTequest <lino.core.dbtables.TableRequest>`.
         #~ """
         #~ return self.href(
             #~ self.get_request_url(rr),
@@ -618,10 +618,10 @@ class ExtUI(base.UI):
                     return elems
             return self.create_field_element(lh,de,**kw)
             
-        if isinstance(de,fields.LinkedForeignKey):
-            de.primary_key = False # for ext_store.Store()
-            lh.add_store_field(de)
-            return ext_elems.LinkedForeignKeyElement(lh,de,**kw)
+        #~ if isinstance(de,fields.LinkedForeignKey):
+            #~ de.primary_key = False # for ext_store.Store()
+            #~ lh.add_store_field(de)
+            #~ return ext_elems.LinkedForeignKeyElement(lh,de,**kw)
             
         if isinstance(de,generic.GenericForeignKey):
             # create a horizontal panel with 2 comboboxes
@@ -1280,11 +1280,11 @@ tinymce.init({
         make_dummy_messages_file(self.linolib_template_name(),messages)
         
         actors_list = [
-            rpt for rpt in table.master_reports \
-               + table.slave_reports \
-               + table.generic_slaves.values() \
-               + table.custom_tables \
-               + table.frames_list ]
+            rpt for rpt in dbtables.master_reports \
+               + dbtables.slave_reports \
+               + dbtables.generic_slaves.values() \
+               + dbtables.custom_tables \
+               + dbtables.frames_list ]
                
         """
         Call Ext.namespace for *all* actors because e.g. outbox.Mails.FormPanel 
@@ -1302,8 +1302,8 @@ tinymce.init({
 
         actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           
-        #~ logger.info('20120120 table.all_details:\n%s',
-            #~ '\n'.join([str(d) for d in table.all_details]))
+        #~ logger.info('20120120 dbtables.all_details:\n%s',
+            #~ '\n'.join([str(d) for d in dbtables.all_details]))
         
         details = set()
         def add(actor,fl,nametpl):
@@ -1324,7 +1324,7 @@ tinymce.init({
         
         for rpt in actors_list:
             rh = rpt.get_handle(self) 
-            if isinstance(rpt,type) and issubclass(rpt,table.AbstractTable):
+            if isinstance(rpt,type) and issubclass(rpt,dbtables.AbstractTable):
                 #~ if rpt.model is None:
                 #~ f.write('// 20120621 %s\n' % rpt)
                     #~ continue
@@ -1401,7 +1401,7 @@ tinymce.init({
         """
         #~ logger.info('20120621 ExtUI.setup_handle() %s',h)
         if isinstance(h,tables.TableHandle):
-            if issubclass(h.actor,table.Table):
+            if issubclass(h.actor,dbtables.Table):
                 if h.actor.model is None \
                     or h.actor.model is dd.Model \
                     or h.actor.model._meta.abstract:
@@ -1433,8 +1433,8 @@ tinymce.init({
         #~ 20120614 if h.list_layout:
             #~ h.on_render = self.build_on_render(h.list_layout.main)
             
-        #~ elif isinstance(h,table.FrameHandle):
-            #~ if issubclass(h.report,table.EmptyTable):
+        #~ elif isinstance(h,dbtables.FrameHandle):
+            #~ if issubclass(h.report,dbtables.EmptyTable):
                 #~ h.store = ext_store.Store(h)
           
                 
@@ -1549,7 +1549,7 @@ tinymce.init({
         yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
             yield "  autoHeight: true,"
-        if settings.LINO.is_installed('contenttypes') and issubclass(tbl,table.Table):
+        if settings.LINO.is_installed('contenttypes') and issubclass(tbl,dbtables.Table):
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
         yield "  initComponent : function() {"
         yield "    var containing_panel = this;"

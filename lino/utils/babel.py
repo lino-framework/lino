@@ -57,7 +57,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino.core import fields
-from lino.core.modeltools import Model
+from lino.core.model import Model
 
 
 DEFAULT_LANGUAGE = settings.LANGUAGE_CODE[:2]

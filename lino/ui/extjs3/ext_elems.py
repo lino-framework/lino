@@ -27,7 +27,7 @@ from django.conf import settings
 import lino
 
 from lino import dd
-from lino.core import table
+from lino.core import dbtables
 from lino.core import layouts
 from lino.core import fields
 from lino.core import actions
@@ -57,8 +57,7 @@ DEFAULT_PADDING = 2
 
 def form_field_name(f):
     if isinstance(f,models.ForeignKey) \
-        or (isinstance(f,models.Field) and f.choices) \
-        or isinstance(f,dd.LinkedForeignKey):
+        or (isinstance(f,models.Field) and f.choices): #~ or isinstance(f,dd.LinkedForeignKey):
         return f.name + ext_requests.CHOICES_HIDDEN_SUFFIX
     else:
         return f.name
@@ -192,9 +191,9 @@ class GridColumn(jsgen.Component):
                 rend = 'Lino.text_renderer'
             #~ elif isinstance(editor.field,models.DecimalField):
                 #~ rend = 'Lino.hide_zero_renderer'
-            elif isinstance(editor.field,dd.LinkedForeignKey):
-                rend = "Lino.lfk_renderer(this,'%s')" % \
-                  (editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX)
+            #~ elif isinstance(editor.field,dd.LinkedForeignKey):
+                #~ rend = "Lino.lfk_renderer(this,'%s')" % \
+                  #~ (editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX)
             elif isinstance(editor.field,models.ForeignKey):
                 rend = fk_renderer(editor.field,editor.field.name)
             elif isinstance(editor.field,fields.VirtualField):
@@ -725,8 +724,8 @@ class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
         return kw
         
         
-class LinkedForeignKeyElement(ComplexRemoteComboFieldElement):
-    pass
+#~ class LinkedForeignKeyElement(ComplexRemoteComboFieldElement):
+    #~ pass
   
 class ForeignKeyElement(ComplexRemoteComboFieldElement):
   
@@ -740,7 +739,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         if pw is not None:
             kw.setdefault('preferred_width',pw)
             #~ kw.update(preferred_width=pw)
-        self.actor = table.get_model_report(field.rel.to)
+        self.actor = dbtables.get_model_report(field.rel.to)
         #~ if self.actor.model is None:
             #~ raise Exception("20120621 ForeignKeyElement for %s.%s" % (self.actor,field))
         a = self.actor.detail_action
@@ -1723,7 +1722,7 @@ _FIELD2ELEM = (
     #~ (dd.QuickAction, QuickActionElement),
     (dd.DisplayField, DisplayElement),
     (dd.IncompleteDateField, IncompleteDateFieldElement),
-    (dd.LinkedForeignKey, LinkedForeignKeyElement),
+    #~ (dd.LinkedForeignKey, LinkedForeignKeyElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),

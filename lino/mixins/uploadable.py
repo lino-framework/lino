@@ -22,7 +22,7 @@ from django.db import models
 from django.conf import settings
 
 from lino.core.modeltools import obj2str
-from lino.core.modeltools import Model
+from lino.core.model import Model
 
 #~ from lino import layouts
 

@@ -48,9 +48,10 @@ from django.utils.safestring import mark_safe
 
 import lino
         
-from lino.core import table
 from lino.core import actions
+from lino.core import fields
 from lino.core import actors
+from lino.core import dbtables
 from lino.core.modeltools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
 
@@ -113,7 +114,6 @@ def analyze_models():
             msg += str(funcs)
         raise Exception("Oops, there are pending injects: %s" % msg)
         #~ logger.warning("pending injects: %s", msg)
-    
     
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
 
@@ -369,13 +369,12 @@ def startup_site(self):
         
         for model in models.get_models():
           
-            #~ if hasattr(model,'site_setup'):
             model.site_setup(self)
         
             for k,v in class_dict_items(model):
                 if isinstance(v,dd.VirtualField):
-                    v.lino_kernel_setup(model,k)
-                
+                    v.attach_to_model(model,k)
+                    
         if self.is_installed('contenttypes'):
           
             from django.db.utils import DatabaseError
@@ -395,7 +394,7 @@ def startup_site(self):
         
         # set _lino_default_table for all models:
         
-        table.discover()
+        dbtables.discover()
         
         choosers.discover()
         
@@ -447,10 +446,13 @@ def startup_site(self):
         """
         """
 
-        for a in actors.actors_list:
-            for k,v in class_dict_items(a):
-                if isinstance(v,dd.VirtualField):
-                    v.lino_resolve_type(a,k)
+        #~ for a in actors.actors_list:
+            #~ for k,v in class_dict_items(a):
+                #~ if isinstance(v,dd.VirtualField):
+                    #~ v.lino_resolve_type(a,k)
+                #~ if isinstance(v,dd.VirtualField):
+                    #~ if v.name is None:
+                        #~ a.add_virtual_field(k,v) # 20120903b
             
         """
         Actor.after_site_setup() is called after site_setup() on each actor.
@@ -464,7 +466,14 @@ def startup_site(self):
         for a in actors.actors_list:
             #~ a.setup()
             a.after_site_setup()
+            
+        """
+        resolve_virtual_fields() comes after after_site_setup() because after_site_setup()
+        may add more virtual fields in custom setup_columns methods.
+        """
                 
+        fields.resolve_virtual_fields()
+    
         """
         `after_site_setup()` definitively collects actions of each actor.
         Now we can install permission handlers.

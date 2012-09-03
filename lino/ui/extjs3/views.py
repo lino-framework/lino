@@ -41,7 +41,7 @@ from lino.utils import dblogger
 
 from lino.core import actions
 from lino.core import actors
-from lino.core import table
+from lino.core import dbtables
 from lino.core.modeltools import obj2str, obj2unicode
 
 from lino.ui import requests as ext_requests
@@ -411,7 +411,7 @@ class Choices(View):
             ar = rpt.request(settings.LINO.ui,request,rpt.default_action)
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
-            #~ ar = table.TableRequest(self,rpt,request,rpt.default_action)
+            #~ ar = dbtables.TableRequest(self,rpt,request,rpt.default_action)
             #~ rh = ar.ah
             #~ qs = ar.get_data_iterator()
             qs = ar.data_iterator
@@ -484,7 +484,7 @@ class Choices(View):
                 
         quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search is not None:
-            qs = table.add_quick_search_filter(qs,quick_search)
+            qs = dbtables.add_quick_search_filter(qs,quick_search)
             
         count = len(qs)
             

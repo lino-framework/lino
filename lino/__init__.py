@@ -1115,15 +1115,16 @@ class Lino(object):
             
     def get_main_action(self,user):
         """
-        Return the action to show as top-level "index.html"
+        Return the action to show as top-level "index.html".
+        The default implementation returns `None`, which means 
+        that Lino will call :meth:`get_main_html`.
         """
         return None
-        #~ return self.modules.lino.Home.default_action
         
     def get_main_html(self,request):
         """
         Return a chunk of html to be displayed in the main area.
-        This is visible only if :meth:`get_main_action` returns `None`.
+        This is being called only if :meth:`get_main_action` returns `None`.
         """
         return None
 

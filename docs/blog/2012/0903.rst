@@ -1,12 +1,99 @@
 20120903
 ========
 
-- ext_store : added `DisabledFieldsStoreField.disabled_fields` 
-  because GenericForeignKey
+- :mod:`lino.ui.extjs3.ext_store` : 
+  added `DisabledFieldsStoreField.disabled_fields` 
+  because GenericForeignKey has no attribute `editable`.
   
-- default value for accouts.Account.ref  
+- :class:`Account <lino.modlib.accounts.models.Account>`:
+  The new `ref` field now is blank=True but not null=True.
+  If not specified, 
+  a default value is being set in `full_clean`.
 
-- outbox : 
+- :mod:`lino.modlib.outbox` : added new menu command 
+  :menuseletion:`Explorer --> Attachments`
 
-  - Added new menu command :menuseletion`Explorer --> Attachments`
-  
+- renamed lino.core.table to lino.core.dbtables,
+  renamed lino.utils.tables to lino.core.tables
+
+A subtile side effect occurs when lino_welfare tried 
+to generate docs. 
+Here is a snippet that reproduces it:
+
+.. literalinclude:: 0903.py
+ 
+It causes the following traceback::
+
+  Traceback (most recent call last):
+    File "0903.py", line 3, in <module>
+      from lino_welfare.modlib.pcsw import models as pcsw
+    File "t:\hgwork\welfare\lino_welfare\modlib\pcsw\models.py", line 1344, in <module>
+      class UsersWithClients(dd.VirtualTable):
+    File "t:\hgwork\lino\lino\core\actors.py", line 145, in __new__
+      cls.add_virtual_field(k,v)
+    File "t:\hgwork\lino\lino\core\actors.py", line 815, in add_virtual_field
+      vf.lino_resolve_type(cls,name)
+    File "t:\hgwork\lino\lino\core\fields.py", line 233, in lino_resolve_type
+      self.return_type = resolve_field(self.return_type)
+    File "t:\hgwork\lino\lino\core\modeltools.py", line 404, in resolve_field
+      model = models.get_model(app_label,l[0])
+    File "l:\snapshots\django\django\db\models\loading.py", line 213, in get_model
+      self._populate()
+    File "l:\snapshots\django\django\db\models\loading.py", line 67, in _populate
+      self.load_app(app_name)
+    File "l:\snapshots\django\django\db\models\loading.py", line 88, in load_app
+      models = import_module('.models', app_name)
+    File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+      __import__(name)
+    File "t:\hgwork\welfare\lino_welfare\modlib\jobs\models.py", line 88, in <module>
+      from lino_welfare.modlib.pcsw import models as pcsw
+  ImportError: cannot import name models  
+
+The reason was that `lino_resolve_type` 
+of virtual fields on actors was being called too early 
+during the startup process. 
+Here it triggered a premature call to _populate() Django's model cache.
+
+
+Accessing virtual fields
+------------------------
+
+While working on the template for printing a sales invoice, 
+I stumbled over a missing feature which I described as follows 
+in the MTI tutorial (:mod:`lino.test_apps.1`):
+
+    :class:`lino.fields.VirtualField` instances are 
+    no Django fields, Django ignores them and so doesn't 
+    install the simple attribute instance get/set 
+    access for them.
+    That's why the following ``obj.is_restaurant`` does not 
+    give ``False`` as you might expect.
+
+      obj.is_restaurant
+      <lino.utils.mti.EnableChild object at ...>
+
+    This is not implemented because the only 
+    need for it would be to make the following 
+    examples more elegant...
+
+
+Added the following simple `__get__` and `__set__` methods to 
+:class:`lino.core.fields.VirtualField`::
+
+
+    def __get__(self,instance,owner):
+        if instance is None: return self
+        return self.value_from_object(instance)
+
+    def __set__(self,instance,value):
+        return self.set_value_in_object(None,instance,value)
+
+Which turns virtual fields into `descriptors
+<http://docs.python.org/reference/datamodel.html#implementing-descriptors>`_.
+
+So the above section from the MTI tutorial is no longer necessary 
+because the feature is no longer missing.
+
+
+
+

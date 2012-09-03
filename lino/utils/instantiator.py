@@ -89,13 +89,13 @@ class ForeignKeyConverter(Converter):
             #~ logger.info("20111213 %s %s -> %r", self.field.name,self.__class__,value)
         return kw
 
-class LinkedForeignKeyConverter(ForeignKeyConverter):
-    """Converter for :class:`lino.fields.LinkedForeignKey` fields."""
-    def get_rel_to(self,obj):
-        ct = self.field.get_content_type(obj)
-        if ct is None:
-            return None
-        return ct.model_class()
+#~ class LinkedForeignKeyConverter(ForeignKeyConverter):
+    #~ """Converter for :class:`lino.fields.LinkedForeignKey` fields."""
+    #~ def get_rel_to(self,obj):
+        #~ ct = self.field.get_content_type(obj)
+        #~ if ct is None:
+            #~ return None
+        #~ return ct.model_class()
 
 class ManyToManyConverter(Converter):
     splitsep = None
@@ -121,9 +121,8 @@ class ManyToManyConverter(Converter):
 def make_converter(f,lookup_fields={}):
     if isinstance(f,models.ForeignKey):
         return ForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
-    if isinstance(f,fields.LinkedForeignKey):
-        #~ logger.info("20111213 created LFKConverter for %r",f.name)
-        return LinkedForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
+    #~ if isinstance(f,fields.LinkedForeignKey):
+        #~ return LinkedForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
     if isinstance(f,models.ManyToManyField):
         return ManyToManyConverter(f,lookup_fields.get(f.name,"pk"))
     if isinstance(f,models.DateField):

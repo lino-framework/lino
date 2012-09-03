@@ -19,12 +19,12 @@ The name "dd" stands for "Data Definition".
 A small wrapper around Django's `Model` class 
 which adds some Lino specific features:
 
-- :class:`Model <lino.core.modeltools.Model>`
+- :class:`Model <lino.core.model.Model>`
 
 Tables:
 
-- :class:`Table <lino.core.table.Table>`
-- :class:`VirtualTable <lino.utils.tables.VirtualTable>`
+- :class:`Table <lino.core.dbtables.Table>`
+- :class:`VirtualTable <lino.core.tables.VirtualTable>`
 - :class:`Frame <lino.core.frames.Frame>`
 
 Extended Fields:
@@ -84,16 +84,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from lino.utils.tables import VirtualTable
-#~ from lino.utils.tables import computed
-#~ from lino.utils.tables import ComputedColumn
+from lino.core.tables import VirtualTable
 
 from lino.core.modeltools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
-from lino.core.modeltools import Model
+from lino.core.model import Model
 
 #~ from lino.core.table import fields_list, inject_field
-from lino.core.table import has_fk
-from lino.core.table import Table
+from lino.core.dbtables import has_fk
+from lino.core.dbtables import Table
 from django.db.models.fields import FieldDoesNotExist
 from django.db import models
 from django.conf import settings
@@ -101,7 +99,7 @@ from django.conf import settings
 #~ from lino.core import table
 #~ Table = table.Table
 
-from lino.core.table import summary, summary_row
+from lino.core.dbtables import summary, summary_row
 
 from lino.core.frames import Frame
 #~ from lino.core.frames import EmptyTable
@@ -121,7 +119,7 @@ from lino.core.fields import GenericForeignKeyIdField
 from lino.core.fields import IncompleteDateField
 from lino.core.fields import PasswordField
 from lino.core.fields import MonthField
-from lino.core.fields import LinkedForeignKey
+#~ from lino.core.fields import LinkedForeignKey
 from lino.core.fields import QuantityField
 from lino.core.fields import HtmlBox, PriceField, RichTextField
 

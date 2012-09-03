@@ -1,17 +1,18 @@
 20120901
 ========
 
-Continued on lino.apps.presto
+Continued on :mod:`lino.apps.presto`
 
 
-- Added new format URL_FORMAT_PLAIN.
-  Not finished. But the proof of concept is promising.
-  This is currently hidden behind the [html] button which 
-  now calls URL_FORMAT_PLAIN instead of URL_FORMAT_PRINTER.
-  Note that URL_FORMAT_PRINTER is still being used for '
-  when slave_format='html'.
+Added new format URL_FORMAT_PLAIN.
+Not finished. But the proof of concept is promising.
+This is currently hidden behind the [html] button which 
+now calls URL_FORMAT_PLAIN instead of URL_FORMAT_PRINTER.
+Note that URL_FORMAT_PRINTER is still being used 
+when :attr:`slave_grid_format 
+<lino.core.tables.AbstractTable.slave_grid_format>` is 'html'.
   
-- Added fields birth_date and age to the Persons detail.
+- Added fields `birth_date` and `age` to the Persons detail.
   
 - Discovered a bug which had pass undiscovered until now: 
   The `total_inc` field 

@@ -203,6 +203,15 @@ class HtmlBox(DisplayField):
     
 #~ from django.db.models.fields import Field
 
+VIRTUAL_FIELDS = []
+
+def resolve_virtual_fields():
+    global VIRTUAL_FIELDS
+    for vf in VIRTUAL_FIELDS: 
+        vf.lino_resolve_type()
+    VIRTUAL_FIELDS = None
+      
+
 class VirtualField(FakeField): # (Field):
     """
     Currently subclassed only by :class:`lino.utils.mti.EnableChild`.    
@@ -211,6 +220,7 @@ class VirtualField(FakeField): # (Field):
     def __init__(self,return_type,get):
         self.return_type = return_type # a Django Field instance
         self.get = get
+        VIRTUAL_FIELDS.append(self)
         """
         Normal VirtualFields are *by definition* read-only and not editable.
         We don't want to require application developers to explicitly 
@@ -219,15 +229,28 @@ class VirtualField(FakeField): # (Field):
           @dd.virtualfield(dd.PriceField(_("Total")))
           def total(self,ar=None):
               return self.total_excl + self.total_vat
-        
         """
             
-    def lino_resolve_type(self,actor_or_model,name):
+    def attach_to_model(self,model,name):
+        self.model = model
+        self.name = name
+        #~ self.return_type.name = name
+        #~ self.return_type.attname = name
+        #~ if issubclass(model,models.Model):
+        #~ self.lino_resolve_type(model,name)
+        model._meta.add_virtual_field(self)
+        #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
+        
+    def lino_resolve_type(self):
         """
-        Unlike lino_kernel_setup, this is also called on virtual 
+        Unlike attach_to_model, this is also called on virtual 
         fields that are defined on an Actor
         """
-        self.name = name
+        #~ logger.info("20120903 lino_resolve_type %s.%s", actor_or_model, name)
+        #~ if self.name is not None:
+            #~ if self.name != name:
+                #~ raise Exception("Tried to re-use %s.%s" % (actor_or_model,name))
+        #~ self.name = name
         if isinstance(self.return_type,basestring):
             self.return_type = resolve_field(self.return_type)
         self.return_type.editable = self.editable
@@ -238,16 +261,6 @@ class VirtualField(FakeField): # (Field):
             setattr(self,k,getattr(self.return_type,k,None))
         #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
       
-    def lino_kernel_setup(self,model,name):
-        self.model = model
-        self.name = name
-        #~ self.return_type.name = name
-        #~ self.return_type.attname = name
-        #~ if issubclass(model,models.Model):
-        self.lino_resolve_type(model,name)
-        model._meta.add_virtual_field(self)
-        #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
-        
     def unused_contribute_to_class(self, cls, name):
         ## if defined in abstract base class, called once on each submodel
         if self.name:
@@ -292,6 +305,27 @@ class VirtualField(FakeField): # (Field):
         #~ print self.field.name
         return m(obj,ar)
         
+    def __get__(self,instance,owner):
+        if instance is None: return self
+        return self.value_from_object(instance)
+        
+    def __set__(self,instance,value):
+        return self.set_value_in_object(None,instance,value)
+        
+
+def virtualfield(return_type):
+    """
+    Decorator to turn a method into a VirtualField.
+    """
+    def decorator(fn):
+        #~ def wrapped(*args):
+            #~ return fn(*args)
+        #~ return VirtualField(return_type,wrapped)
+        return VirtualField(return_type,fn)
+    return decorator
+    
+
+
 class Constant(object):
     """
     Deserves more documentation.
@@ -322,17 +356,6 @@ class RequestField(VirtualField):
         VirtualField.__init__(self,DisplayField(*args,**kw),get)
         
 
-def virtualfield(return_type):
-    """
-    Decorator to turn a method into a VirtualField.
-    """
-    def decorator(fn):
-        #~ def wrapped(*args):
-            #~ return fn(*args)
-        #~ return VirtualField(return_type,wrapped)
-        return VirtualField(return_type,fn)
-    return decorator
-    
 def displayfield(*args,**kw):
     """
     Decorator shortcut to turn a method into a virtual DisplayField.
@@ -365,9 +388,9 @@ class MethodField(VirtualField):
         self.kw = kw
         VirtualField.__init__(self,return_type,get)
         
-    def lino_kernel_setup(self,model,name):
+    def attach_to_model(self,model,name):
         self.get = getattr(model,get)
-        VirtualField.lino_kernel_setup(self,model,name)
+        VirtualField.attach_to_model(self,model,name)
       
     #~ def value_from_object(self,request,obj):
     def value_from_object(self,obj,ar=None):
@@ -389,7 +412,7 @@ class MethodField(VirtualField):
         
 
 
-class LinkedForeignKey(generic.GenericForeignKey):
+class unused_LinkedForeignKey(generic.GenericForeignKey):
     """
     Like a GenericForeignKey, but the content type 
     is not stored in another model.

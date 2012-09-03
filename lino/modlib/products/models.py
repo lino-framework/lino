@@ -37,6 +37,11 @@ class ProductCat(babel.BabelNamed):
 class ProductCats(dd.Table):
     model = ProductCat
     order_by = ["id"]
+    detail_layout = """
+    id name
+    description
+    ProductsByCategory
+    """
 
 class Product(babel.BabelNamed):
   
@@ -44,7 +49,6 @@ class Product(babel.BabelNamed):
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
     
-    #~ name = babel.BabelCharField(max_length=200)
     description = babel.BabelTextField(blank=True,null=True)
     cat = models.ForeignKey(ProductCat,
         verbose_name="Category",
@@ -63,6 +67,11 @@ class Products(dd.Table):
     model = Product
     order_by = ["id"]
     column_names = "id:3 name cat vatExempt price:6 *"
+    detail_layout = """
+    id cat price vatExempt 
+    name 
+    description
+    """
     
 class ProductsByCategory(Products):
     master_key = 'cat'

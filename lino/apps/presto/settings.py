@@ -32,6 +32,9 @@ class Lino(Lino):
     
     def get_app_source_file(self): return __file__
         
+    def get_main_action(self,user):
+        return self.modules.lino.Home.default_action
+        
     #~ def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons.detail_action)
         

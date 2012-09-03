@@ -52,5 +52,4 @@ Any resemblance to real persons, living or dead, is purely coincidental.
    :maxdepth: 2
    :hidden:
 
-   pcsw/index
    igen/index

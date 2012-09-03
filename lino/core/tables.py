@@ -61,7 +61,8 @@ from django.utils import simplejson as json
 
 from lino.core import actors
 from lino.core import actions
-from lino.core.modeltools import obj2str, Model
+from lino.core.modeltools import obj2str
+from lino.core.model import Model
 
 from lino.core.fields import FakeField
 from lino.ui import base

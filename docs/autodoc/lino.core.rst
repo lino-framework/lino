@@ -11,9 +11,10 @@
 
     lino.core.actions
     lino.core.actors
+    lino.core.dbtables
     lino.core.fields
     lino.core.layouts
     lino.core.menus
     lino.core.modeltools
     lino.core.perms
-    lino.core.table
+    lino.core.tables

@@ -90,8 +90,8 @@ class VatTotal(dd.Model):
     class Meta:
         abstract = True
         
-    total_excl = dd.PriceField(blank=True,null=True)
-    total_vat = dd.PriceField(blank=True,null=True)
+    total_excl = dd.PriceField(_("Total excl. VAT"),blank=True,null=True)
+    total_vat = dd.PriceField(_("VAT"),blank=True,null=True)
     
     @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
     def total_incl(self,ar=None):

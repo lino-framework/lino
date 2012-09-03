@@ -27,7 +27,6 @@
     lino.utils.memo
     lino.utils.quantities
     lino.utils.ranges
-    lino.utils.tables
     lino.utils.test
     lino.utils.xmlgen
     lino.utils.xmlgen.odf

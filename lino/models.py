@@ -340,7 +340,7 @@ class FieldsByModel(dd.VirtualTable):
     label = _("Fields")
     #~ master_key = "model"
     master = Models
-    column_names = "name verbose_name help_text"
+    column_names = "name verbose_name help_text_column"
     
     @classmethod
     def get_data_rows(self,ar):
@@ -358,7 +358,7 @@ class FieldsByModel(dd.VirtualTable):
         return unicode(fld.vebose_name)
         
     @dd.displayfield(_("help text"))
-    def help_text(self,obj,ar):
+    def help_text_column(self,obj,ar):
         #~ return obj.__doc__
         return restify(unicode(obj.help_text))
 

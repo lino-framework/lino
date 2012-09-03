@@ -1,8 +1,8 @@
 ========================
-:mod:`lino.utils.tables`
+:mod:`lino.core.tables`
 ========================
 
-.. automodule:: lino.utils.tables
+.. automodule:: lino.core.tables
     :members:
     :show-inheritance:
 

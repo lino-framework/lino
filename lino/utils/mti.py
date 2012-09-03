@@ -203,9 +203,9 @@ class EnableChild(VirtualField):
         return lh.layout._table.model != self.child_model \
           and issubclass(self.child_model,lh.layout._table.model)
 
-    def lino_kernel_setup(self,model,name):
+    def attach_to_model(self,model,name):
         self.child_model = resolve_model(self.child_model,model._meta.app_label)
-        VirtualField.lino_kernel_setup(self,model,name)
+        VirtualField.attach_to_model(self,model,name)
     
     def has_child(self,obj,request=None):
         """

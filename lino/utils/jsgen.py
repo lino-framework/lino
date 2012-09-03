@@ -13,6 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 r"""
+
 Example:
 
 >>> class TextField(Component):

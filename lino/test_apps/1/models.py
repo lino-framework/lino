@@ -134,19 +134,6 @@ Let's take Place #1 and look at it.
 >>> obj
 <Place: #1 (name=First,owners=Alfred,Bert)>
 
-:class:`lino.fields.VirtualField` instances are 
-no Django fields, Django ignores them and so doesn't 
-install the simple attribute instance get/set 
-access for them.
-That's why the following ``obj.is_restaurant`` does not 
-give ``False`` as you might expect.
-
->>> obj.is_restaurant
-<lino.utils.mti.EnableChild object at ...>
-
-This is not implemented because the only 
-need for it would be to make the following 
-examples more elegant...
 
 Before using virtual fields, we must setup 
 the Lino application. 
@@ -156,7 +143,11 @@ imports it's  :setting:`ROOT_URLCONF`.
 This is needed to discover virtual fields:
 
 >>> from django.conf import settings
->>> settings.LINO.setup()
+>>> settings.LINO.startup()
+
+>>> obj.is_restaurant
+False
+
 
 To access the values that are "stored" in virtual fields,
 we must behave like a lino.ui would do, 
@@ -167,8 +158,7 @@ and
 
 
 >>> for instance in Place.objects.all():
-...    value = instance.is_restaurant.value_from_object(instance)
-...    print value, instance
+...    print instance.is_restaurant, instance
 False #1 (name=First,owners=Alfred,Bert)
 True #2 (name=Second,owners=Bert)
 
@@ -225,14 +215,13 @@ we add two more models::
             self.purpose, self.person, self.place.name)
 
   class Meal(dd.Model):
+      allow_cascaded_delete = True
       person = models.ForeignKey(Person)
       restaurant = models.ForeignKey(Restaurant)
       what = models.CharField(max_length=50)
       def __unicode__(self):
           return "%s eats %s at %s" % (
             self.person, self.what, self.restaurant.name)
-
-
 
 
 Bert, the owner of Restaurant #2 does two visits:
@@ -250,20 +239,38 @@ Claude and Dirk, now workless, still go to eat in restaurants:
 >>> second.meal_set.all()
 [<Meal: Claude eats Fish at Second>, <Meal: Dirk eats Meat at Second>]
 
-Now we reduce Second to a Place. 
+Now we reduce Second to a Place:
 
 >>> second = Place.objects.get(pk=2)
->>> delete_child(second,Restaurant)
+>>> second.is_restaurant = False
 >>> second
 <Place: #2 (name=Second,owners=Bert)>
 
-The owner and visits have been taken over, but the meals have been deleted:
+Setting an EnableChild virtual field doesn't 
+wait until you call `save()` on the instance. It is executed immediately. 
+Restaurant #2 no longer exists:
+
+>>> Restaurant.objects.get(pk=2)
+Traceback (most recent call last):
+...
+DoesNotExist: Restaurant matching query does not exist. Lookup parameters were {'pk': 2}
+
+Note that `Meal` has :attr:`allow_cascaded_delete 
+<lino.core.modeltools.Model.allow_cascaded_delete>`
+set to True, otherwise the above code would have raised a
+ValidationError "Cannot delete #2 
+(name=Second,owners=Bert,cooks=Bert) because 2 meals refer to it."
+But the meals have been deleted:
+
+>>> Meal.objects.all()
+[]
+
+Of course, #2 remains as a Place
+The owner and visits have been taken over:
 
 >>> second = Place.objects.get(pk=2)
 >>> second.visit_set.all()
 [<Visit: Say hello visit by Bert at Second>, <Visit: Hang around visit by Bert at Second>]
->>> Meal.objects.all()
-[]
 
 
 The :func:`create_child <lino.utils.mti.create_child>` function
@@ -370,7 +377,7 @@ class Person(dd.Model):
     def __unicode__(self):
         return self.name
 
-class Place(dd.Model):  
+class Place(dd.Model):
     name = models.CharField(max_length=50)
     owners = models.ManyToManyField(Person)
     is_restaurant = EnableChild('Restaurant',verbose_name="is a restaurant")
@@ -379,7 +386,7 @@ class Place(dd.Model):
             self.pk,self.name, 
             ','.join([unicode(o) for o in self.owners.all()]))
         
-class Restaurant(Place):  
+class Restaurant(Place):
     serves_hot_dogs = models.BooleanField()
     cooks = models.ManyToManyField(Person)
     def __unicode__(self):
@@ -397,6 +404,7 @@ class Visit(dd.Model):
           self.purpose, self.person, self.place.name)
 
 class Meal(dd.Model):
+    allow_cascaded_delete = True
     person = models.ForeignKey(Person)
     restaurant = models.ForeignKey(Restaurant)
     what = models.CharField(max_length=50)

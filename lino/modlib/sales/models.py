@@ -550,7 +550,7 @@ class Invoice(SalesDocument,ledger.Voucher):
     
     #~ item_class = InvoiceItem
     
-    due_date = models.DateField("Payable until",blank=True,null=True)
+    due_date = models.DateField(_("Date of payment"),blank=True,null=True)
     order = models.ForeignKey('sales.Order',blank=True,null=True)
     
     state = InvoiceStates.field(blank=True)
@@ -609,8 +609,6 @@ class OrderItem(ProductDocItem):
 
 class InvoiceItem(ProductDocItem):
     document = models.ForeignKey(Invoice,related_name='items') 
-
-    
 
 
 class InvoiceDetail(dd.FormLayout):
@@ -729,10 +727,19 @@ class ItemsByDocument(dd.Table):
     
 
 class ItemsByOrder(ItemsByDocument):
-    model = 'sales.OrderItem'
+    model = OrderItem
 
 class ItemsByInvoice(ItemsByDocument):
-    model = 'sales.InvoiceItem'
+    model = InvoiceItem
+    
+
+class OrderItemsByProduct(ItemsByOrder):
+    master_key = 'product'
+
+class InvoiceItemsByProduct(ItemsByInvoice):
+    master_key = 'product'
+
+    
 
 
 #~ class DocumentsByPartnerDetail(layouts.PageLayout):
@@ -811,7 +818,11 @@ def customize_contacts():
 
 MODULE_LABEL = _("Sales")
 
-#~ def site_setup(site):
+def site_setup(site):
+    if site.is_installed('products'):
+        site.modules.products.Products.add_detail_tab("sales",
+            "sales.OrderItemsByProduct\nsales.InvoiceItemsByProduct",
+            label=MODULE_LABEL)
     #~ if site.is_installed('tickets'):
         #~ site.modules.tickets.Projects.add_detail_tab("sales","sales.InvoicesByProject")
     #~ site.modules.lino.SiteConfigs.add_detail_tab("sales","""

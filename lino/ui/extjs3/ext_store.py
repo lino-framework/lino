@@ -40,7 +40,7 @@ from lino.utils.jsgen import py2js, Component, id2js, js_code
 from lino.ui import requests as ext_requests
 
 import lino
-from lino.core import table
+from lino.core import dbtables
 from lino.core import fields
 from lino.core import actions
 from lino.core import frames
@@ -52,7 +52,7 @@ from lino.utils import babel
 from lino.utils import iif
 from lino.core.modeltools import obj2str
 from lino.utils import IncompleteDate
-from lino.utils import tables
+#~ from lino.core import tables
 #~ from lino.utils import moneyfmt
 from lino.mixins.printable import decfmt
 
@@ -331,13 +331,13 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
             #~ logger.info("Could not find %s#%s",relto_model,v)
         return None
             
-class LinkedForeignKeyField(ForeignKeyStoreField):
+#~ class LinkedForeignKeyField(ForeignKeyStoreField):
   
-    def get_rel_to(self,obj):
-        ct = self.field.get_content_type(obj)
-        if ct is None:
-            return None
-        return ct.model_class()
+    #~ def get_rel_to(self,obj):
+        #~ ct = self.field.get_content_type(obj)
+        #~ if ct is None:
+            #~ return None
+        #~ return ct.model_class()
         
 
 
@@ -868,7 +868,7 @@ class Store:
         >>> p.save()
         >>>        
         """
-        #~ if issubclass(rh.report,table.Table):
+        #~ if issubclass(rh.report,dbtables.Table):
             #~ self.pk = self.report.model._meta.pk
             #~ assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
               #~ self.report.actor_id,self.report.model)
@@ -898,7 +898,7 @@ class Store:
             dh = form.get_layout_handle(rh.ui)
             self.collect_fields(self.detail_fields,dh)
         
-        if issubclass(rh.actor,table.Table):
+        if issubclass(rh.actor,dbtables.Table):
             self.pk_index = 0
             found = False
             for fld in self.list_fields:
@@ -927,7 +927,7 @@ class Store:
             #~ for pf in rh.report.params:
                 self.param_fields.append(self.create_field(pf,pf.name))
         
-        #~ if not issubclass(rh.report,table.Table):
+        #~ if not issubclass(rh.report,dbtables.Table):
             #~ addfield(RecnoStoreField(self))
           
         #~ if rh.report.disabled_fields is not None:
@@ -994,7 +994,7 @@ class Store:
                         self.pk = df
                 #~ fields.add(fld)
         #~ if not self.pk in fields:
-        if issubclass(self.actor,table.Table):
+        if issubclass(self.actor,dbtables.Table):
             if self.pk is None:
                 self.pk = self.actor.model._meta.pk
             if not pk_found:
@@ -1030,9 +1030,8 @@ class Store:
             return MethodStoreField(fld,name)
         #~ if isinstance(fld,fields.HtmlBox):
             #~ ...
-        if isinstance(fld,dd.LinkedForeignKey):
-            #~ logger.info("Store.create_field(%s)", fld)
-            return LinkedForeignKeyField(fld,name)
+        #~ if isinstance(fld,dd.LinkedForeignKey):
+            #~ return LinkedForeignKeyField(fld,name)
         if isinstance(fld,dd.RequestField):
             delegate = self.create_field(fld.return_type,fld.name)
             return RequestStoreField(fld,delegate,name)
@@ -1129,8 +1128,8 @@ class Store:
         
 
     def row2list(self,request,row):
-        #~ assert isinstance(request,table.AbstractTableRequest)
-        #~ if not isinstance(request,table.ListActionRequest):
+        #~ assert isinstance(request,dbtables.AbstractTableRequest)
+        #~ if not isinstance(request,dbtables.ListActionRequest):
             #~ raise Exception()
         #~ logger.info("20120107 Store %s row2list(%s)", self.report.model, obj2str(row))
         l = []
@@ -1151,7 +1150,7 @@ class Store:
         return l
       
     def row2dict(self,ar,row,fields=None,**d):
-        #~ assert isinstance(ar,table.AbstractTableRequest)
+        #~ assert isinstance(ar,dbtables.AbstractTableRequest)
         #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
         if fields is None:
             fields = self.detail_fields

@@ -27,7 +27,6 @@ import copy
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
 
 import lino
 from lino.ui import base
@@ -132,7 +131,7 @@ class ActorMetaClass(type):
         cls._actions_list = None
         #~ cls._replaced_by = None
         
-        # inherit virtual fields defined on parent tables
+        # inherit virtual fields defined on parent Actors
         for b in bases:
             bd = getattr(b,'virtual_fields',None)
             if bd:
@@ -141,7 +140,8 @@ class ActorMetaClass(type):
         for k,v in classDict.items():
             if isinstance(v,fields.Constant):
                 cls.add_constant(k,v)
-            if isinstance(v,fields.VirtualField):
+            if isinstance(v,fields.VirtualField): # 20120903b
+                #~ logger.warning("20120903 VirtualField %s on Actor %s" % (k,cls.actor_id))
                 cls.add_virtual_field(k,v)
                 
                 
@@ -689,28 +689,7 @@ class Actor(object):
         
         
         
-    #~ @classmethod
-    #~ def debug_summary(self):
-        #~ return "%s (%s)" % (self.__class__,','.join([
-            #~ a.name for a in self._actions_list]))
             
-    @fields.displayfield(_("Workflows"))
-    def workflow_buttons(self,obj,ar):
-        """
-        Displays the workflow buttons for this row and this user.
-        """
-        actor = ar.actor
-        #~ print 20120621 , actor,  self
-        #~ print 20120618, ar
-        l = []
-        state = actor.get_row_state(obj)
-        for a in actor.get_actions(ar.action):
-            #~ print 20120709, a.name
-            if a.show_in_workflow:
-                if obj.get_row_permission(ar.get_user(),state,a):
-                    l.append(ar.renderer.action_button(obj,ar,a))
-        return ', '.join(l)
-        
     @classmethod
     def get_row_state(self,obj):
         if self.workflow_state_field is not None:
@@ -806,14 +785,14 @@ class Actor(object):
         See :meth:`lino.core.layouts.BaseLayout.add_tabpanel`
         """
         self.detail_layout.add_tabpanel(*args,**kw)
-    
-        
 
     @classmethod
     def add_virtual_field(cls,name,vf):
+        if cls.virtual_fields.has_key(name):
+            raise Exception("Duplicate add_virtual_field() %s.%s" % (cls,name))
         cls.virtual_fields[name] = vf
-        vf.lino_resolve_type(cls,name)
-        #~ vf.name = name
+        #~ vf.lino_resolve_type(cls,name)
+        vf.name = name
         vf.get = curry(vf.get,cls)
         
     @classmethod
