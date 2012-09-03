@@ -100,7 +100,7 @@ class Account(babel.BabelNamed,mixins.Sequenced):
     def full_clean(self,*args,**kw):
         self.chart  = self.group.chart
         if not self.ref:
-            self.ref = str(self.chart.account_set().count()+1)
+            self.ref = str(self.chart.account_set.count()+1)
         if not self.name:
             self.name = self.group.name
         if not self.type:
