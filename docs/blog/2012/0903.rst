@@ -5,3 +5,8 @@
   because GenericForeignKey
   
 - default value for accouts.Account.ref  
+
+- outbox : 
+
+  - Added new menu command :menuseletion`Explorer --> Attachments`
+  

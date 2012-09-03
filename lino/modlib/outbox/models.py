@@ -553,7 +553,7 @@ class Attachment(mixins.Controllable):
         
     def save(self,*args,**kw):
         if not hasattr(self.owner,'get_target_url'):
-            raise Exception("Controllers of Attachment must define a method `get_target_url`.")
+            raise Exception("Controller %r has no method `get_target_url`." % self.owner)
         super(Attachment,self).save(*args,**kw)
         
     def summary_row(self,ar,**kw):
@@ -602,6 +602,7 @@ def setup_explorer_menu(site,ui,user,m):
     #~ if user.level >= UserLevels.manager:
     m  = m.add_menu("outbox",MODULE_LABEL)
     m.add_action(Mails)
+    m.add_action(Attachments)
   
   
 dd.add_user_group('office',MODULE_LABEL)
