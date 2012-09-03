@@ -1,0 +1,7 @@
+20120903
+========
+
+- ext_store : added `DisabledFieldsStoreField.disabled_fields` 
+  because GenericForeignKey
+  
+- default value for accouts.Account.ref  

@@ -497,6 +497,14 @@ class DisabledFieldsStoreField(SpecialStoreField):
     """
     name = 'disabled_fields'
     
+    def __init__(self,store):
+        SpecialStoreField.__init__(self,store)
+        self.disabled_fields = set()
+        for f in self.store.all_fields:
+            if f.field is not None and not isinstance(f.field,generic.GenericForeignKey):
+                if not f.field.editable:
+                    self.disabled_fields.add(f.name)
+        
     def full_value_from_object(self,obj,ar):
         #~ l = [ f.name for f in self.store.actor.disabled_fields(request,obj)]
         d = dict()
@@ -505,9 +513,8 @@ class DisabledFieldsStoreField(SpecialStoreField):
             d[name] = True
         #~ l = list(self.store.actor.disabled_fields(obj,request))
         
-        for f in self.store.all_fields:
-            if f.field is not None and not f.field.editable:
-                d[f.name] = True
+        for name in self.disabled_fields:
+            d[name] = True
         #~ print "20120901 TODO: maybe not necessary:", d
         
         # disable the primary key field if pk is set (i.e. on saved instance):

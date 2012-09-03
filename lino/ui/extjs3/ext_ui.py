@@ -1870,9 +1870,10 @@ tinymce.init({
         if True:
             #~ print 20120901, ar.order_by
             for i,e in enumerate(columns):
-                kw = {ext_requests.URL_PARAM_SORT:e.name}
-                url = ar.renderer.get_request_url(ar,**kw)
-                headers[i] = xghtml.E.a(headers[i],href=url)
+                if e.sortable and ar.order_by != [e.name]:
+                    kw = {ext_requests.URL_PARAM_SORT:e.name}
+                    url = ar.renderer.get_request_url(ar,**kw)
+                    headers[i] = xghtml.E.a(headers[i],href=url)
         
         sums  = [fld.zero for fld in fields]
         #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
