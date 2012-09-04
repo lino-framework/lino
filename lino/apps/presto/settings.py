@@ -31,7 +31,10 @@ class Lino(Lino):
       'households.Household']
     
     def get_app_source_file(self): return __file__
-        
+      
+    def get_application_info(self):
+        return ("Lino Presto",'0.0','http://code.google.com/p/lino/')
+      
     def get_main_action(self,user):
         return self.modules.lino.Home.default_action
         

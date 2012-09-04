@@ -301,7 +301,7 @@ class Models(dd.VirtualTable):
     #~ column_names = "app name verbose_name docstring rows"
     column_names = "app name docstring rows"
     #~ master = SiteConfig
-    detail_template = """
+    detail_layout = """
     app name docstring rows
     lino.FieldsByModel
     """

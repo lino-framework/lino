@@ -834,16 +834,6 @@ class Lino(object):
         """
         pass
 
-    #~ def update(self,**kw):
-        #~ for k,v in kw.items():
-            #~ assert self.hasattr(k)
-            #~ setattr(self,k,v)
-            
-    #~ def update_settings(self,**kw):
-        #~ self._settings_dict.update(kw)
-            
-    #~ def configure(self,sc):
-        #~ self.config = sc
         
     def get_site_config(self):
         """
@@ -1219,20 +1209,31 @@ class Lino(object):
                 break
 
           
+    def get_application_info(self):
+        """
+        
+        Application developers must implement 
+        this in their Lino 
+        subclass by something like this::
+        
+            def get_application_info(self):
+                from myapp import __version__, __url__
+                return ("MyApp",__version__,__url__)
+        
+        This function is used by 
+        :meth:`using` and :meth:`site_version`.
+        
+        """
+        return ("Lino App",'0.1','http://code.google.com/p/lino/')
+        
+        #~ raise NotImplementedError()
+        
     def using(self,ui=None):
         """
         Yields a list of (name, version, url) tuples
         describing the software used on this site.
         
-        The first tuple is expected to describe the application itself.
-        Application developers should override this in their Lino 
-        subclass by something linke this::
-        
-            def using(self,*args,**kw):
-                from myapp import __version__, __url__
-                yield ("MyApp",__version__,__url__)
-                for u in super(Lino,self).using(*args,**kw):
-                    yield u
+        The first tuple describes the application itself.
         
         This function is used by 
         :meth:`welcome_text`,
@@ -1241,6 +1242,10 @@ class Lino(object):
         :meth:`site_version`.
         
         """
+        
+        ai = self.get_application_info()
+        if ai is not None:
+            yield ai
         
         yield ("Lino",__version__,"http://lino.saffre-rumma.net")
         
@@ -1345,7 +1350,8 @@ class Lino(object):
         """
         Used in footnote or header of certain printed documents.
         """
-        name,version,url = self.using().next()
+        #~ name,version,url = self.using().next()
+        name,version,url = self.get_application_info()
         return name + ' ' + version
         #~ return "Lino " + __version__
 

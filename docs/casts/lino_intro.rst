@@ -5,7 +5,9 @@ In this screencast I'd like to present Lino:
 how a Lino application looks like, 
 and what it can do.
 
-Lino is a framework for developing customized database applications.
+Lino is a framework for developing 
+customized database applications.
+
 I've been working on this project during the last years 
 and I now start to hope that other programmers will join the project, 
 write their own Lino applications 

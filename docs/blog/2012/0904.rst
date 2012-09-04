@@ -1,0 +1,11 @@
+20120904
+========
+
+- New method :meth:`lino.Lino.get_application_info`.
+
+- Fixed a bug that caused the list of models in `lino.About` 
+  to not open in a separate window.
+  :meth:`lino.core.actors.Actor.disabled_actions` returns now 
+  an empty dict, but is overridden by
+  :meth:`lino.core.dbtables.Table.disabled_actions`
+  which tests for `get_row_permission`.
