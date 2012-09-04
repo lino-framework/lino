@@ -87,10 +87,13 @@ class Model(models.Model):
     on all tables based on this Model.
     """
     
-    def disable_delete(self):
+    def disable_delete(self,ar):
         """
         Return None if it is okay to delete this object,
         otherwise a nonempty string explaining why.
+        The argument `ar` contains the :class:`lino.core.actions.ActionRequest` 
+        which is trying to delete. `ar` is possibly `None` when this is 
+        being called from a script or batch process.
         """
         return self._lino_ddh.disable_delete_on_object(self)
         

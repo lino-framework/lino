@@ -112,7 +112,7 @@ def get_child(obj,child_model):
     except child_model.DoesNotExist:
         return None
   
-def delete_child(obj,child_model,using=None):
+def delete_child(obj,child_model,ar=None,using=None):
     """
     Delete the `child_model` instance related to `obj` without 
     deleting the parent `obj` itself.
@@ -123,7 +123,7 @@ def delete_child(obj,child_model,using=None):
     if child is None:
         raise Exception("%s has no child in %s" % (obj,child_model.__name__))
     #~ msg = child_model._lino_ddh.disable_delete(child)
-    msg = child.disable_delete()
+    msg = child.disable_delete(ar)
     if msg:
         raise ValidationError(msg)
     #~ logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
@@ -223,13 +223,13 @@ class EnableChild(VirtualField):
             return False
         return True
 
-    def set_value_in_object(self,request,obj,v):
+    def set_value_in_object(self,ar,obj,v):
         if self.has_child(obj):
             #~ logger.debug('set_value_in_object : %s has child %s',
                 #~ obj.__class__.__name__,self.child_model.__name__)
             # child exists, delete it if it may not 
             if not v:
-                delete_child(obj,self.child_model)
+                delete_child(obj,self.child_model,ar)
         else:
             #~ logger.debug('set_value_in_object : %s has no child %s',
                 #~ obj.__class__.__name__,self.child_model.__name__)

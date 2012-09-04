@@ -9,3 +9,28 @@
   an empty dict, but is overridden by
   :meth:`lino.core.dbtables.Table.disabled_actions`
   which tests for `get_row_permission`.
+  
+- Added an argument `ar` to 
+  :meth:`lino.core.model.Model.disable_delete`
+  and
+  :func:`lino.utils.mti.delete_child`,
+  because :term:`watch_tim` 
+  needs special permission to modify imported partners.
+  It got a "Cannot delete companies and persons imported from TIM" 
+  veto when trying to convert a Person to a Company or vice-versa.
+
+  Application code before::
+
+      def disable_delete(self):
+          if settings.LINO.is_imported_partner(self):
+              return _("Cannot delete companies and persons imported from TIM")
+          return super(CpasPartner,self).disable_delete()
+          
+  ... and after::        
+          
+      def disable_delete(self,ar):
+          if ar is not None and settings.LINO.is_imported_partner(self):
+              return _("Cannot delete companies and persons imported from TIM")
+          return super(CpasPartner,self).disable_delete(ar)
+
+    
