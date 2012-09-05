@@ -1,0 +1,34 @@
+20120905
+========
+
+Today I solved two very subtle problems: 
+
+- add (in an application) the fields `created` and `modified`
+  to `contacts.Partner` using :class:`lino.mixins.CreatedModified`
+- imported fields were not disabled on a Partner  
+
+
+The trick was to override `contacts.Partner` instead of defining a `CpasPartner` mixin.
+
+It is another usage example of our relatively new 
+:attr:`lino.Lino.override_modlib_models` in the application's settings::
+
+    override_modlib_models = [
+        'contacts.Partner', 
+        'contacts.Person', 'contacts.Company',
+        'households.Household'
+        ]
+
+which required :class:`lino.modlib.contacts.models.Partner` to become overridable::
+
+    class Meta:
+        abstract = settings.LINO.is_abstract_model('contacts.Partner')
+
+
+The current solution unfortunately works only 
+when :djangoticket:`10808` is solved
+(at least it's main part, the `assigned_fields` 
+thing in `django/db/models/base.py`).
+Which means that Lino currently would require to 
+patch Django.
+

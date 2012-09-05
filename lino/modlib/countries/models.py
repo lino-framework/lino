@@ -266,7 +266,9 @@ class CountryCity(dd.Model):
 class CountryRegionCity(CountryCity):
     region = models.ForeignKey('countries.City',
         blank=True,null=True,
-        verbose_name=_('Region'),related_name='regions')
+        verbose_name=_('Region'),
+        related_name="%(app_label)s_%(class)s_set_by_region")
+        #~ related_name='regions')
     zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)
         
     class Meta:

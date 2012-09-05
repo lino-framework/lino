@@ -87,6 +87,12 @@ class Model(models.Model):
     on all tables based on this Model.
     """
     
+    def __init__(self,**kw):
+        models.Model.__init(self)
+        for k,v in kw.items():
+            setattr(self,k,v)
+        
+    
     def disable_delete(self,ar):
         """
         Return None if it is okay to delete this object,

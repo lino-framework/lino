@@ -760,7 +760,7 @@ class Actor(object):
                     raise Exception("set_detail() got two definitions for %r." % name)
                 kw[name] = dtl
             else:
-                assert isintance(dtl,layouts.FormLayout)
+                assert isinstance(dtl,layouts.FormLayout)
                 assert dtl._table is None
                 dtl._table = self
                 setattr(self,attname,dtl)

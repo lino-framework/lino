@@ -1554,7 +1554,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         verbose_name=_("Event")) 
         
     if contacts:
-        partner = models.ForeignKey(contacts.Partner)
+        partner = models.ForeignKey('contacts.Partner')
 
     role = models.ForeignKey('cal.GuestRole',
         verbose_name=_("Role"),

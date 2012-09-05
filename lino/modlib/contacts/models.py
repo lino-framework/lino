@@ -125,7 +125,7 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
     
   
     class Meta:
-        #~ abstract = True
+        abstract = settings.LINO.is_abstract_model('contacts.Partner')
         verbose_name = _("Partner")
         verbose_name_plural = _("Partners")
   
@@ -356,13 +356,6 @@ class Born(dd.Model):
     birth_date = dd.IncompleteDateField(
         blank=True,
         verbose_name=_("Birth date"))
-        
-    #~ birth_date = models.DateField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Birth date"))
-    #~ birth_date_circa = models.BooleanField(
-        #~ default=False,
-        #~ verbose_name=_("not exact"))
     
     def get_age_years(self,today=None):
         if self.birth_date and self.birth_date.year:
@@ -382,27 +375,8 @@ class Born(dd.Model):
         if self.birth_date and self.birth_date.is_complete():
             return s
         return u"±" + s
-    
-    #~ @dd.displayfield(_("Age"))
-    #~ def age(self,request,today=None):
-        #~ if self.birth_date and self.birth_date.year:
-            #~ if today is None:
-                #~ today = datetime.date.today()
-            #~ try:
-                #~ dd = today - self.birth_date.as_date()
-            #~ except ValueError:
-                #~ pass
-            #~ else:
-                #~ s = _("%d years") % (dd.days / 365)
-                #~ if self.birth_date.is_complete():
-                    #~ return s
-                #~ return u"±" + s
-        #~ return _('unknown')
-    
 
 
-#~ Note `PersonMixin` must not be named `Person` because users.User also inherits 
-#~ from it and would then also find all contacs/Person/*.dtl !
 
 class PersonMixin(dd.Model):
     """
@@ -456,8 +430,6 @@ Optional `salutation_options` see :func:`get_salutation`.
     #~ full_name.return_type = models.CharField(max_length=200,verbose_name=_('Full name'))
     
   
-#~ class Person(dd.Model):
-#~ class Person(Partner,PersonMixin): 20120728 : PersonMixin.get_full_name was overridden by Partner.get_full_name
 class Person(PersonMixin,Partner):
     """
     Mixin for models that represent a physical person. 

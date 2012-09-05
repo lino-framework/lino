@@ -272,6 +272,8 @@ def obj2str(i,force_detailed=False):
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])
     pairs = []
     for (fld,model) in i._meta.get_fields_with_model():
+        if fld.name == 'language':
+            print 20120905, model, fld
         if isinstance(fld,models.ForeignKey):
             v = getattr(i,fld.attname) 
             #~ v = getattr(i,fld.name+"_id") 
@@ -285,7 +287,8 @@ def obj2str(i,force_detailed=False):
     #~ s = ','.join(["%s=%s" % (n, obj2str(getattr(i,n))) for n in names])
     #~ print i, i._meta.get_all_field_names()
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in i._meta.get_all_field_names()])
-    return "%s(%s)" % (i.__class__.__name__,s)
+    #~ return "%s(%s)" % (i.__class__.__name__,s)
+    return "%s(%s)" % (i.__class__,s)
 
 
 def sorted_models_list():

@@ -439,6 +439,7 @@ class DpyDeserializer:
             else:
                 dblogger.warning("Ignored unknown object %r",obj)
                 
+        dblogger.info("Loading %s...",fp.name)
         empty_fixture = True
         for obj in module.objects():
             for o in expand(obj): 
@@ -454,7 +455,7 @@ We're sorry, but Django doesn't like that.
 See <https://code.djangoproject.com/ticket/18213>.
 """ % fp.name)
           
-        dblogger.info("Saved %d instances from %s.",self.saved,fp.name)
+        #~ dblogger.info("Saved %d instances from %s.",self.saved,fp.name)
         
         self.flush_deferred_objects()
         

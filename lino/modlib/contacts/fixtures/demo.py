@@ -13,11 +13,12 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from lino.core.modeltools import resolve_model
+from lino.core.modeltools import resolve_model, obj2str
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
 from lino.utils.choicelists import Gender
 from lino.utils import dblogger
+#~ from lino import dd
 #from lino import reports
 #contacts = reports.get_app('contacts')
 
@@ -26,6 +27,10 @@ def objects():
     
     company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='EE').build
     yield company(u'Rumma & Ko OÜ','10115','Tallinn',u'Tartu mnt','71')
+    #~ Company = resolve_model('contacts.Company')
+    #~ obj = Company(name=u'Rumma & Ko OÜ',zip_code='10115',street=u'Tartu mnt',street_no='71')
+    #~ print obj2str(obj)
+    #~ yield obj
     
     company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='BE').build
     yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
