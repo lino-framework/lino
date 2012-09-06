@@ -43,8 +43,8 @@ def file_handler(filename,rotate,**kw):
             cl = TimedRotatingFileHandler
         else:
             cl = RotatingFileHandler
-        kw.setdefault('maxBytes',1000000)
-        kw.setdefault('backupCount',10)
+            kw.setdefault('maxBytes',1000000)
+            #~ kw.setdefault('backupCount',10)
         h = cl(filename,**kw)
     #~ if hasattr(logging,'RotatingFileHandler'):
         #~ h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
