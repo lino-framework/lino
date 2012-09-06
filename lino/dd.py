@@ -168,6 +168,17 @@ PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
 
 def on_class_prepared(signal,sender=None,**kw):
+    """
+    This is Lino's general `class_prepared` handler.
+    It does two things:
+    
+    - Run pending calls to :func:`inject_field` and :func:`update_field`.
+    
+    - Apply a workaround for Django's ticket 10808.
+      In a Diamond inheritance pattern, `_meta._field_cache` contains certain fields twice.    
+      So we remove these duplicate fields from `_meta._field_cache`.
+      (A better solution would be of course to not collect them.)
+    """
     model = sender
     #~ return
     #~ if model is None:
@@ -181,9 +192,22 @@ def on_class_prepared(signal,sender=None,**kw):
             f(model)
         #~ for k,v in injects.items():
             #~ model.add_to_class(k,v)
-            
-models.signals.class_prepared.connect(on_class_prepared)
 
+
+    if hasattr(model._meta,'_field_cache'):
+        cache = []
+        field_names = set()
+        for f,m in model._meta._field_cache:
+            if f.attname not in field_names:
+                field_names.add(f.attname)
+                cache.append( (f,m) )
+        model._meta._field_cache = tuple(cache)
+        model._meta._field_name_cache = [x for x, _ in cache]
+    #~ else:
+        #~ logger.info("20120905 Could not fix Django issue #10808 for %s",model)
+
+
+models.signals.class_prepared.connect(on_class_prepared)
 
 def do_when_prepared(model_spec,todo):
     if model_spec is None:

@@ -1,0 +1,11 @@
+20120906
+========
+
+Virtual fields declared on the model must have
+been attached before calling Model.site_setup(),
+e.g. because pcsw.Person.site_setup()
+declares `is_client` as imported field.
+
+
+New class :class:`lino.modlib.contats.models.CompanyContact` 
+comes from `ContractBase` of `lino_welfare.modlib.isip`.

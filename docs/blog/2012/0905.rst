@@ -7,7 +7,6 @@ Today I solved two very subtle problems:
   to `contacts.Partner` using :class:`lino.mixins.CreatedModified`
 - imported fields were not disabled on a Partner  
 
-
 The trick was to override `contacts.Partner` instead of defining a `CpasPartner` mixin.
 
 It is another usage example of our relatively new 
@@ -24,11 +23,27 @@ which required :class:`lino.modlib.contacts.models.Partner` to become overridabl
     class Meta:
         abstract = settings.LINO.is_abstract_model('contacts.Partner')
 
+One difficulty was that this caused a Diamond inheritance structure:
 
-The current solution unfortunately works only 
-when :djangoticket:`10808` is solved
-(at least it's main part, the `assigned_fields` 
-thing in `django/db/models/base.py`).
-Which means that Lino currently would require to 
-patch Django.
+.. graphviz::
+
+   digraph foo {
+      "contacts.Partner" -> "contacts.Person";
+      "contacts.Partner" -> "contacts.Company";
+      "contacts.Partner" -> "pcsw.Partner";
+      "contacts.Person" -> "pcsw.Person";
+      "contacts.Company" -> "pcsw.Company";
+      "pcsw.Partner" -> "pcsw.Person";
+      "pcsw.Partner" -> "pcsw.Company";
+   }
+   
+
+And Django still has a problem with Diamond inheritance 
+(see :djangoticket:`10808`).
+Here is one visible aspect of the problem:
+
+.. literalinclude:: 0905.py
+
+Because we don't want Lino to require to patch Django, 
+I wrote a workaround in :func:`lino.dd.on_class_prepared`.
 

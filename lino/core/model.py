@@ -15,6 +15,8 @@ from django.db import models
 #~ from django.conf import settings
 from django.utils.translation import ugettext as _
 
+from django.db.models.base import signals, ModelState, DeferredAttribute, ManyToOneRel, izip
+
 
 from lino.core import fields
 
@@ -87,11 +89,6 @@ class Model(models.Model):
     on all tables based on this Model.
     """
     
-    def __init__(self,**kw):
-        models.Model.__init(self)
-        for k,v in kw.items():
-            setattr(self,k,v)
-        
     
     def disable_delete(self,ar):
         """

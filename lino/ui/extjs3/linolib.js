@@ -4355,7 +4355,7 @@ Lino.show_mti_child = function(fieldname,detail_handler) {
       //~ document.location = urlroot + '/' + rec.id;
       //~ window.open(urlroot + '/' + rec.id,'_blank');
     } else {
-      Lino.notify('$_("Cannot show MTI child if checkbox is off.")');
+      Lino.alert('$_("Cannot show MTI child if checkbox is off.")');
     }
   } else {
     Lino.notify('No current record.');

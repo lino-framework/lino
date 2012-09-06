@@ -548,7 +548,6 @@ class CompanyDetail(PartnerDetail):
 
 
 
-              
 class Companies(Partners):
     model = settings.LINO.company_model
     order_by = ["name"]
@@ -557,9 +556,6 @@ class Companies(Partners):
     name type
     language email
     """,window_size=(40,'auto'))
-    
-    
-    
 
 
 
@@ -684,15 +680,10 @@ class PartnerDocument(dd.Model):
         abstract = True
         
     company = models.ForeignKey(settings.LINO.company_model,
-        blank=True,null=True,
-        #~ verbose_name=_("Company")
-        )
+        blank=True,null=True)
         
-    #~ person = models.ForeignKey("contacts.Person",
     person = models.ForeignKey(settings.LINO.person_model,
-        blank=True,null=True,
-        #~ verbose_name=_("Person")
-        )
+        blank=True,null=True)
         
     def get_partner(self):
         if self.company is not None:
@@ -754,6 +745,48 @@ class PartnerDocument(dd.Model):
         other.company = self.company
         super(PartnerDocument,self).update_owned_instance(other)
         
+
+
+
+class CompanyContact(dd.Model):
+  
+    class Meta:
+        abstract = True
+        
+    company = models.ForeignKey(settings.LINO.company_model,
+        related_name="%(app_label)s_%(class)s_set_by_company",
+        verbose_name=_("Company"),
+        blank=True,null=True)
+        
+    contact = models.ForeignKey("contacts.Role",
+      related_name="%(app_label)s_%(class)s_set_by_contact",
+      blank=True,null=True,
+      verbose_name=_("represented by"))
+      
+    @chooser()
+    def contact_choices(cls,company):
+        if company is not None:
+            return self.contact_choices_queryset(company)
+        return []
+        
+    @classmethod
+    def contact_choices_queryset(cls,company):
+        return contacts.Role.objects.filter(
+            company=company)
+
+    def full_clean(self,*args,**kw):
+        if self.company:
+            if self.contact is None \
+              or self.contact.company is None \
+              or self.contact.company.pk != self.company.pk:
+                qs = self.contact_choices_queryset(self.company)
+                #~ qs = self.company.rolesbyparent.all()
+                if qs.count() == 1:
+                    self.contact = qs[0]
+                else:
+                    #~ print "20120227 clear contact!"
+                    self.contact = None
+        super(CompanyContact,self).full_clean(*args,**kw)
 
 
     

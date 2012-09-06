@@ -369,12 +369,19 @@ def startup_site(self):
         
         for model in models.get_models():
           
-            model.site_setup(self)
-        
+            """
+            Virtual fields declared on the model must have 
+            been attached before calling Model.site_setup(), 
+            e.g. because pcsw.Person.site_setup() 
+            declares `is_client` as imported field.
+            """
+          
             for k,v in class_dict_items(model):
                 if isinstance(v,dd.VirtualField):
                     v.attach_to_model(model,k)
                     
+            model.site_setup(self)
+        
         if self.is_installed('contenttypes'):
           
             from django.db.utils import DatabaseError
