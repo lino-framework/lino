@@ -9,3 +9,7 @@ declares `is_client` as imported field.
 
 New class :class:`lino.modlib.contats.models.CompanyContact` 
 comes from `ContractBase` of `lino_welfare.modlib.isip`.
+
+Added `when` and `interval` parameters to 
+:func:`lino.utils.log.configure` for creating 
+a timed rotating logger.

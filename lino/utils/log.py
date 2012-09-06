@@ -27,7 +27,7 @@ import os
 import sys
 import logging
 
-from logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 
 from django.utils.log import AdminEmailHandler
 
@@ -39,9 +39,13 @@ def file_handler(filename,rotate,**kw):
     if sys.platform == 'win32' or not rotate: 
         h = logging.FileHandler(filename,**kw)
     else:
+        if kw.has_key('when'):
+            cl = TimedRotatingFileHandler
+        else:
+            cl = RotatingFileHandler
         kw.setdefault('maxBytes',1000000)
         kw.setdefault('backupCount',10)
-        h = RotatingFileHandler(filename,**kw)
+        h = cl(filename,**kw)
     #~ if hasattr(logging,'RotatingFileHandler'):
         #~ h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
     #~ else:
@@ -75,6 +79,12 @@ def configure(config):
     :param rotate:   if `logfile` specified, set this to `False` if you 
                      don't want a rotating logfile.
                      Ignored on Windows where this feature is not available.
+                     
+    :param when:     If this is specified, Lino will create a `TimedRotatingFileHandler
+                     <http://docs.python.org/library/logging.handlers.html#timedrotatingfilehandler>`_
+                     
+    :param interval: If `when` is specified, you can also specify an `interval` to forward to 
+                     `TimedRotatingFileHandler`
                      
     :param maxBytes: rotate if logfile's size gets bigger than this.
     :param backupCount: number of rotated logfiles to keep.
@@ -113,7 +123,7 @@ def configure(config):
     determine whether that is the case or not.".
     
     Automatically adds an AdminEmailHandler with level ERROR to all specified loggers
-    *and* to the 'django' logger (even if 'django' is nmot specified in `loggers`).
+    *and* to the 'django' logger (even if 'django' is not specified in `loggers`).
     Because that's rather necessary on a production server with :setting:`DEBUG` False.
 
     
@@ -134,6 +144,8 @@ def configure(config):
     logfile = config.get('filename',None)
     rotate = config.get('rotate',True)
     logger_names = config.get('loggers','lino')
+    #~ when = config.get('when',None)
+    #~ interval = config.get('interval',None)
     level = getattr(logging,config.get('level','notset').upper())
     #~ print 20120613, logger_names
     if isinstance(logger_names,basestring):
@@ -151,15 +163,10 @@ def configure(config):
     for l in loggers: l.addHandler(aeh)
     if not 'django' in logger_names:
         djangoLogger.addHandler(aeh)
-    #~ linoLogger.addHandler(aeh)
-    #~ sudsLogger.addHandler(aeh)
     
         
     try:
         if sys.stdout.isatty():
-            #~ print 20110728, sys.stdout.encoding
-            #~ if sys.stdout.encoding == 'ascii':
-                #~ raise Exception("Your tty's encoding is ascii, that will lead to problems" % )
             h = logging.StreamHandler()
             #~ h.setLevel(level)
             if logfile is not None:
@@ -167,19 +174,14 @@ def configure(config):
             fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
             h.setFormatter(fmt)
             for l in loggers: l.addHandler(h)
-            #~ linoLogger.addHandler(h)
-            #~ sudsLogger.addHandler(h)
-            #~ djangoLogger.addHandler(h)
     except IOError:
         # happens under mod_wsgi
         linoLogger.info("mod_wsgi mode (no sys.stdout)")
-        #~ pass
         
     if logfile is not None:
-      
         try:
             kw = {}
-            for k in ('mode','encoding','maxBytes','backupCount'):
+            for k in ('mode','encoding','maxBytes','backupCount','when','interval'):
                 if config.has_key(k):
                     kw[k] = config[k]
             h = file_handler(logfile,rotate,**kw)
