@@ -771,8 +771,7 @@ class CompanyContact(dd.Model):
         
     @classmethod
     def contact_choices_queryset(cls,company):
-        return contacts.Role.objects.filter(
-            company=company)
+        return Role.objects.filter(company=company)
 
     def full_clean(self,*args,**kw):
         if self.company:
