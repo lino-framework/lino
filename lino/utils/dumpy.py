@@ -316,10 +316,16 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except (ValidationError,ObjectDoesNotExist), e:
         except Exception, e:
             if not settings.LINO.loading_from_dump:
-                # hand-written fixtures are designed to not raise any exception
+                # hand-written fixtures are expected to not raise any exception
                 dblogger.warning("Failed to save %s:" % obj2str(obj))
                 raise
-            if obj.pk is None: 
+            if False:
+              """
+              20120906 deactivated this test. also fixtures from dump may yield instances without pk.
+              example migrate_from_1_4_10 adds pcsw.Third instances without pk, and which need to 
+              get a second chance.
+              """
+              if obj.pk is None: 
                 """
                 (no longer true:) 
                 presto.tim2lino creates invoices without pk which possibly fail to save 
