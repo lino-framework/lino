@@ -350,6 +350,13 @@ class Index(View):
             kw.update(on_ready=ui.ext_renderer.action_call(request,a))
         return http.HttpResponse(ui.html_page(request,**kw))
 
+class RunJasmine(View):
+    """
+    """
+    def get(self, request, *args, **kw):
+        ui = settings.LINO.ui
+        return http.HttpResponse(ui.html_page(request,run_jasmine=True))
+
 
 class MainHtml(View):
     def get(self, request, *args, **kw):

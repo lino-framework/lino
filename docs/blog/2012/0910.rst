@@ -10,9 +10,12 @@ Added Lino configuration parameters
 and
 :attr:`lino.Lino.jasmine_root`.
 
-To run the tests interactively, 
-I simply add a line ``LINO.use_jasmine = True``  
-to the end of my local `settings.py` file.
+Added :class:`lino.ui.extjs3.views.RunJasmine` view.
+To run the tests interactively, I simply point 
+my browser to http://127.0.0.1:8000/run_jasmine
+
+Note that this works only for *read-only* (non-modifying) tests. 
+  
 
 TODO: 
 

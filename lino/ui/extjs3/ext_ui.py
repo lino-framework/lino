@@ -798,6 +798,10 @@ class ExtUI(base.UI):
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', views.Choices.as_view()),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
         )
+        if settings.LINO.use_jasmine:
+            urlpatterns += patterns('',
+                (rx+r'run_jasmine$', views.RunJasmine.as_view()),
+            )
         if settings.LINO.use_tinymce:
             urlpatterns += patterns('',
                 (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$', 
@@ -858,7 +862,7 @@ class ExtUI(base.UI):
     def html_page(self,*args,**kw):
         return '\n'.join([ln for ln in self.html_page_lines(*args,**kw)])
         
-    def html_page_lines(self,request,title=None,on_ready='',**kw):
+    def html_page_lines(self,request,title=None,on_ready='',run_jasmine=False):
         """Generates the lines of Lino's HTML reponse.
         """
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
@@ -873,7 +877,7 @@ class ExtUI(base.UI):
             url = self.media_url() + url
             return '<script type="text/javascript" src="%s"></script>' % url
             
-        if settings.LINO.use_jasmine:
+        if run_jasmine: # settings.LINO.use_jasmine:
             yield stylesheet("/jasmine/jasmine.css")
         yield stylesheet('/extjs/resources/css/ext-all.css')
         
@@ -950,7 +954,7 @@ tinymce.init({
         #~ yield '<script type="text/javascript" src="%s/lino/extjs/Ext.ux.form.DateTime.js"></script>' % self.media_url()
         yield javascript("/lino/extjs/Ext.ux.form.DateTime.js")
         
-        if settings.LINO.use_jasmine:
+        if run_jasmine: # settings.LINO.use_jasmine:
             yield javascript("/jasmine/jasmine.js")
             yield javascript("/jasmine/jasmine-html.js")
             
@@ -1115,7 +1119,7 @@ tinymce.init({
         #~ yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
         yield '  Lino.viewport = new Lino.Viewport({items:%s});' % py2js(win)
         
-        if settings.LINO.use_jasmine:
+        if run_jasmine: # settings.LINO.use_jasmine:
             yield '  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());'
             yield '  jasmine.getEnv().execute();'
         else:
