@@ -1,0 +1,25 @@
+20120910
+========
+
+Cool: I discovered 
+`Unit Testing with Jasmine
+<http://docs.sencha.com/ext-js/4-0/#!/guide/testing>`_
+and wrote my first JavaScript tests.
+Added Lino configuration parameters 
+:attr:`lino.Lino.use_jasmine`
+and
+:attr:`lino.Lino.jasmine_root`.
+
+To run the tests interactively, 
+I simply add a line ``LINO.use_jasmine = True``  
+to the end of my local `settings.py` file.
+
+TODO: 
+
+- automatically generate the application-specific part of `lino/media/jasmine/specs.js` 
+  to `media/cache/js` and have `html_page_lines` include it.
+  
+- Run it from command-line using http://phantomjs.org/
+
+- Generate screenshots using 
+  http://code.google.com/p/phantomjs/wiki/QuickStart#Rendering

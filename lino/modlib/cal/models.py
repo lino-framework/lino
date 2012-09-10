@@ -298,15 +298,6 @@ if settings.LINO.user_model:
 
 
 
-
-
-
-
-
-
-
-
-
 class Place(babel.BabelNamed):
     """
     A location where Events can happen.
@@ -317,9 +308,6 @@ class Place(babel.BabelNamed):
         verbose_name = _("Place")
         verbose_name_plural = _("Places")
         
-    #~ name = models.CharField(_("Name"),max_length=200)
-    #~ def __unicode__(self):
-        #~ return self.name 
   
 class Places(dd.Table):
     required = dict(user_groups='office')
@@ -340,18 +328,6 @@ class Priorities(dd.Table):
     required = dict(user_groups='office')
     model = Priority
     column_names = 'name *'
-
-#~ class AccessClass(babel.BabelNamed):
-    #~ "The access class of a Task or Event."
-    #~ required = dict(user_groups='office')
-    #~ class Meta:
-        #~ verbose_name = _("Access Class")
-        #~ verbose_name_plural = _('Access Classes')
-    #~ ref = models.CharField(max_length='1')
-#~ class AccessClasses(dd.Table):
-    #~ model = AccessClass
-    #~ column_names = 'name *'
-
 
 
 #~ class EventType(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
@@ -573,79 +549,6 @@ class EventGenerator(mixins.UserAuthored):
                 
 
 
-#~ class EventStatus(babel.BabelNamed):
-    #~ "The status of an Event."
-    #~ class Meta:
-        #~ verbose_name = _("Event Status")
-        #~ verbose_name_plural = _('Event Statuses')
-    #~ ref = models.CharField(max_length='1')
-    #~ reminder = models.BooleanField(_("Reminder"),default=True)
-    
-#~ class EventStatuses(dd.Table):
-    #~ model = EventStatus
-    #~ column_names = 'name *'
-
-#~ class TaskStatus(babel.BabelNamed):
-    #~ "The status of a Task."
-    #~ class Meta:
-        #~ verbose_name = _("Task Status")
-        #~ verbose_name_plural = _('Task Statuses')
-    #~ ref = models.CharField(max_length='1')
-#~ class TaskStatuses(dd.Table):
-    #~ model = TaskStatus
-    #~ column_names = 'name *'
-
-#~ class GuestStatus(babel.BabelNamed):
-    #~ "The status of a Guest."
-    #~ class Meta:
-        #~ verbose_name = _("Guest Status")
-        #~ verbose_name_plural = _('Guest Statuses')
-    #~ ref = models.CharField(max_length='1')
-#~ class GuestStatuses(dd.Table):
-    #~ model = GuestStatus
-    #~ column_names = 'name *'
-
-#~ class CalendarRelated(mixins.UserAuthored):
-    #~ "Deserves more documentation."
-    #~ class Meta:
-        #~ abstract = True
-        
-    #~ calendar = models.ForeignKey(Calendar,verbose_name=_("Calendar"),blank=True)
-    
-    #~ def full_clean(self,*args,**kw):
-        #~ self.before_clean()
-        #~ super(CalendarRelated,self).full_clean(*args,**kw)
-        
-    #~ def save(self,*args,**kw):
-        #~ self.before_clean()
-        #~ super(CalendarRelated,self).save(*args,**kw)
-        
-    #~ def before_clean(self):
-        #~ """
-        #~ Called also from `save()` because `get_or_create()` 
-        #~ doesn't call full_clean().
-        #~ We cannot do this only in `save()` because otherwise 
-        #~ `full_clean()` (when called) will complain 
-        #~ about the empty fields.
-        
-        #~ If an administrator changes the user of an Event, 
-        #~ the calendar should change accordingly
-        
-        #~ """
-        #~ if not self.calendar_id:
-            #~ self.calendar = default_calendar(self.user)
-        #~ if self.calendar.user != self.user:
-            #~ self.calendar = default_calendar(self.user)
-            
-    #~ @dd.chooser()
-    #~ def calendar_choices(cls,user):
-        #~ return Calendar.objects.filter(user=user)
-        
-    #~ def user_changed(self,ar):
-        #~ """
-        #~ """
-        #~ self.before_clean()
-            
 
 class Started(dd.Model):
     class Meta:
@@ -985,26 +888,6 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     #~ all_day = models.BooleanField(_("all day"),default=False)
     
     
-    #~ def compute_times(self):
-        #~ if self.duration_value is None or not self.duration_unit:
-            #~ return
-        #~ if self.start_time:
-            #~ dt = self.get_datetime('start')
-            #~ end_time = self.duration_unit.add_duration(dt,self.duration_value)
-            #~ # end_time = add_duration(dt,self.duration_value,self.duration_unit)
-            #~ setkw(self,**dt2kw(end_time,'end'))
-        #~ elif self.end_time:
-            #~ dt = self.get_datetime('end')
-            #~ end_time = self.duration_unit.add_duration(dt,-self.duration_value)
-            #~ setkw(self,**dt2kw(end_time,'start'))
-        
-    #~ def duration_value_changed(self,oldvalue): self.compute_times()
-    #~ def duration_unit_changed(self,oldvalue): self.compute_times()
-    #~ def start_date_changed(self,oldvalue): self.compute_times()
-    #~ def start_time_changed(self,oldvalue): self.compute_times()
-    #~ def end_date_changed(self,oldvalue): self.compute_times()
-    #~ def end_time_changed(self,oldvalue): self.compute_times()
-        
     def save(self,*args,**kw):
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
             #~ self.state = EventState.obsolete
@@ -1028,20 +911,19 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                 kw.update(alert=True,message=_("You should now inform the guests about this state change."))
                 
     def after_send_mail(self,mail,ar,kw):
-        if self.state.name == 'suggested':
+        if self.state == EventState.suggested:
             self.state = EventState.notified
             kw['message'] += '\n('  +_("Event %s has been marked *notified*.") % self + ')'
             self.save()
         #~ else:
             #~ kw['message'] += '\n(' + _("Event remains *%s*.") % self.state + ')'
-                
             
     def before_ui_save(self,ar,**kw):
         """
         Mark the event as "user modified" by setting a default state.
         This is important because EventGenerators may not modify any user-modified Events.
         """
-        if not self.state:
+        if self.state is None:
             if ar.request.subst_user:
                 self.state = EventState.suggested
                 #~ self.state = EventState.reserved
@@ -1049,18 +931,17 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                 self.state = EventState.draft
         return super(Event,self).before_ui_save(ar,**kw)
         
-    #~ def on_user_change(self,request):
-        #~ if not self.state:
-            #~ if request.subst_user:
-                #~ self.state = EventState.reserved
-            #~ else:
-                #~ self.state = EventState.draft
-        
     def on_create(self,ar):
         self.start_date = datetime.date.today()
         self.start_time = datetime.datetime.now().time()
         super(Event,self).on_create(ar)
         
+        
+    def allow_state_suggest(self,user):
+        if not self.start_time: return False
+        return True
+        
+      
         
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
@@ -1088,26 +969,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ return self.description
         
             
-    def allow_state_suggest(self,user):
-        if not self.start_time: return False
-        return True
-      
-    #~ def allow_state_scheduled(self,user):
-        #~ if not self.start_time: return False
-        #~ return True
-      
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ mixins.TypedPrintable.setup_report(rpt)
-        #~ outbox.Mailable.setup_report(rpt)
-        
     @dd.displayfield(_("Link URL"))
     def url(self,request): return 'foo'
     #~ url.return_type = dd.DisplayField(_("Link URL"))
-    
-    #~ @dd.virtualfield(models.BooleanField(_("all day")))
-    #~ def all_day(self,request): 
-        #~ return not self.start_time
     
     @dd.virtualfield(dd.DisplayField(_("Reminder")))
     def reminder(self,request): return False
@@ -1118,78 +982,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             return self.project.get_print_language(bm)
         return self.user.language
         
-    #~ @dd.action(EventState.scheduled.text,sort_index=10,required=dict(states=['','draft']))
-    #~ def mark_scheduled(self,ar):
-        #~ if not self.start_time:
-            #~ return ar.error_response(
-                #~ _("Cannot mark scheduled with empty start time."),
-                #~ alert=True)
-        #~ self.state = EventState.scheduled
-        #~ self.save()
-        #~ return ar.ui.success_response(refresh=True)
-    
-    #~ @dd.action(EventState.notified.text,sort_index=11,required=dict(states=['scheduled']))
-    #~ def mark_notified(self,ar):
-        #~ """
-        #~ Running this action means 
-        #~ "This event has somehow (no matter how) been notified to the guests."
-        #~ """
-        #~ self.state = EventState.notified
-        #~ self.save()
-        #~ return ar.ui.success_response(refresh=True)
-    
-    #~ @dd.action(EventState.confirmed.text,sort_index=12,
-        #~ required=dict(states=['scheduled','notified']))
-    #~ def mark_confirmed(self,ar):
-        #~ self.state = EventState.confirmed
-        #~ self.save()
-        #~ return ar.ui.success_response(refresh=True)
-        
-    #~ @dd.action(EventState.took_place.text,sort_index=13,
-        #~ required=dict(states=['scheduled','notified','confirmed']))
-    #~ def mark_took_place(self,ar):
-        #~ self.state = EventState.took_place
-        #~ self.save()
-        #~ return ar.ui.success_response(refresh=True)
-        
-    #~ @dd.action(EventState.cancelled.text,sort_index=13,
-        #~ required=dict(states=['scheduled','notified','confirmed']))
-    #~ def mark_cancelled(self,ar):
-        #~ self.state = EventState.cancelled
-        #~ self.save()
-        #~ return ar.ui.success_response(refresh=True)
-        
-    #~ @dd.action(_("Absent"),sort_index=13,
-        #~ required=dict(states=['scheduled','notified','confirmed']))
-    #~ def mark_present(self,ar):
-        #~ self.state = EventState.absent
-        #~ self.save()
-        #~ return ar.ui.success_response(refresh=True)
-        
-    #~ def get_row_permission(self,user,state,action):
-        #~ """
-        #~ """
-        #~ if isinstance(action,postings.CreatePostings):
-            #~ if self.state < EventState.scheduled:
-                #~ return False
-        #~ return super(Event,self).get_row_permission(user,state,action)
-        
     @classmethod
     def site_setup(cls,lino):
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''summary''')
-            
-    #~ @classmethod
-    #~ def setup_table(cls,t):
-        #~ """
-        #~ See also :meth:`lino.core.table.Table.setup_table`
-        #~ """
-        #~ t.create_postings.set_required(states=['scheduled'])
-        #~ t.create_mail.set_required(states=['scheduled'])
-  
 
 
-    
 class EventDetailLayout(dd.FormLayout):
     start = "start_date start_time"
     end = "end_date end_time"
@@ -1220,8 +1018,6 @@ class Events(dd.Table):
     insert_layout = EventInsertLayout()
     
 
-        
-    
     
 class EventsByCalendar(Events):
     master_key = 'calendar'

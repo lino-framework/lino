@@ -575,11 +575,10 @@ class RoleTypes(dd.Table):
 
 
 #~ class Contact(dd.Model):
-#~ class RoleOccurence(dd.Model):
 class Role(dd.Model):
-#~ class unused_Role(object):
     """
     The role of a given :class:`Person` in a given :class:`Company`.
+    TODO: rename "Role" to "Contact".
     """
   
     class Meta:
@@ -749,7 +748,9 @@ class PartnerDocument(dd.Model):
 
 
 class CompanyContact(dd.Model):
-  
+    """
+    Abstract class which adds two fields `company` and `contact`.
+    """
     class Meta:
         abstract = True
         

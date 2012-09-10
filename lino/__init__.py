@@ -159,6 +159,14 @@ class Lino(object):
     directory has no symbolic link to the ExtJS root directory.
     """
     
+    jasmine_root = None
+    """
+    Path to the Jasmine root directory. 
+    Only used on a development server
+    if the `media` directory has no symbolic link to the Jasmine root directory
+    and only if :attr:`use_jasmine` is True.
+    """
+    
     extensible_root = None
     """
     Path to the Extensible root directory. 
@@ -313,6 +321,11 @@ class Lino(object):
     """
     Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
     See :doc:`/blog/2011/0523`
+    """
+    
+    use_jasmine = False
+    """
+    Whether to use the `Jasmine <https://github.com/pivotal/jasmine>`_ testing library.
     """
     
     use_extensible = True
