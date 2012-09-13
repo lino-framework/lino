@@ -791,6 +791,9 @@ class Actor(object):
         #~ vf.lino_resolve_type(cls,name)
         vf.name = name
         vf.get = curry(vf.get,cls)
+        #~ for k,v in self.virtual_fields.items():
+            #~ if isinstance(v,models.ForeignKey):
+                #~ v.rel.to = resolve_model(v.rel.to)
         
     @classmethod
     def add_constant(cls,name,vf):

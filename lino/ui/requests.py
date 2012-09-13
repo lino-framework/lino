@@ -42,11 +42,18 @@ URL_PARAM_MASTER_PK = 'mk'
 The pk of the master instance.
 """
 
+URL_PARAM_USER_LANGUAGE = 'ul'
+"""
+override user language
+"""
+
+
 #~ URL_PARAM_EUSER = 'euser'
 #~ URL_PARAM_EUSER = 'su'
+
 URL_PARAM_SUBST_USER = 'su'
 """
-substutute user
+substitute user
 """
 
 URL_PARAM_KNOWN_VALUES = 'kv'
@@ -90,6 +97,7 @@ URL_PARAMS = [
   #~ 'URL_PARAM_EXPAND',
   #~ 'URL_PARAM_EUSER',
   'URL_PARAM_SUBST_USER',
+  'URL_PARAM_USER_LANGUAGE',
   'URL_PARAM_ACTION_STEP',
   #~ 'TEST',
 ]

@@ -612,6 +612,13 @@ class Lino(object):
     
     """
     
+    #~ def override_user_language(self):
+        #~ """
+        #~ Called for each request. If this returns a non-empty string, 
+        #~ it overrides the value of user's language field.
+        #~ """
+        #~ return None
+    
     site_config_defaults = {}
     """
     Default values to be used when creating the persistent 

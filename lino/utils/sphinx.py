@@ -28,6 +28,25 @@ import lino
 
 #~ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
+from docutils import nodes
+from docutils.parsers.rst import directives
+
+
+class ScreenshotDirective(directives.images.Image):
+    """
+    Directive to insert a screenshot.
+    """
+    def run(self):
+        assert len(self.arguments) == 1
+        #~ name = '/../gen/screenshots/' + self.arguments[0]
+        name = '/gen/screenshots/' + self.arguments[0]
+        self.arguments = [name]
+        (image_node,) = directives.images.Image.run(self)
+        return [image_node]
+
+
+
+
 
 def srcref(mod):
     """
@@ -128,6 +147,11 @@ def setup(app):
     
     app.connect('autodoc-skip-member',autodoc_skip_member)
     app.connect('autodoc-process-docstring', autodoc_add_srcref)
+
+    #~ app.add_directive('screenshot', ScreenshotDirective)
+    #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
+
+
 
 
 def _test():

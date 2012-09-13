@@ -541,6 +541,11 @@ class ExtUI(base.UI):
         self.ext_renderer = ExtRenderer(self)
         self.plain_renderer = PlainRenderer(self)
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
+        names = set()
+        for n in self.reserved_names:
+            if n in names:
+                raise Exception("Duplicate reserved name %r" % n)
+            names.add(n)
         jsgen.register_converter(self.ext_renderer.py2js_converter)
         #~ self.window_configs = {}
         #~ if os.path.exists(self.window_configs_file):
@@ -800,7 +805,7 @@ class ExtUI(base.UI):
         )
         if settings.LINO.use_jasmine:
             urlpatterns += patterns('',
-                (rx+r'run_jasmine$', views.RunJasmine.as_view()),
+                (rx+r'run-jasmine$', views.RunJasmine.as_view()),
             )
         if settings.LINO.use_tinymce:
             urlpatterns += patterns('',

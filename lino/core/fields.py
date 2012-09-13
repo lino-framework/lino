@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 from lino.core.modeltools import full_model_name
 from lino.core.modeltools import obj2str
 from lino.core.modeltools import resolve_field
+from lino.core.modeltools import resolve_model
 
 #~ from lino.utils import choosers
 from lino.utils import choicelists
@@ -253,6 +254,9 @@ class VirtualField(FakeField): # (Field):
         #~ self.name = name
         if isinstance(self.return_type,basestring):
             self.return_type = resolve_field(self.return_type)
+        if isinstance(self.return_type,models.ForeignKey):
+            self.return_type.rel.to = resolve_model(self.return_type.rel.to)
+
         self.return_type.editable = self.editable
         for k in ('''to_python choices save_form_data 
           value_to_string verbose_name max_length rel

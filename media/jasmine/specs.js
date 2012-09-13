@@ -82,4 +82,4 @@ describe("Applications-specific", function() {
     });
 });
 
-Lino.lino.About.default_action.run()
+//~ Lino.lino.About.default_action.run()

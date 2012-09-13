@@ -12,9 +12,44 @@ and
 
 Added :class:`lino.ui.extjs3.views.RunJasmine` view.
 To run the tests interactively, I simply point 
-my browser to http://127.0.0.1:8000/run_jasmine
+my browser to http://127.0.0.1:8000/run-jasmine
 
-Note that this works only for *read-only* (non-modifying) tests. 
+Added a ´lino_welfare.demo` site which is used 
+to run the Jasmine tests from a command line 
+(requires `PhantomJS <http://phantomjs.org>`)::
+
+  T:\hgwork\welfare\lino_welfare\demo>run-jasmine-tests.bat
+  'waitFor()' finished in 4379ms.
+  7 specs, 1 failure in 4.227s
+
+  Applications-specific
+  can run Lino.pcsw.Clients
+  can run Lino.lino.About
+  can run Lino.pcsw.UsersWithClients
+  can run Lino.pcsw.ClientsByCoach1
+  can run CalendarPanel
+
+That same site is also used to generate screenshots
+(using PhantomJS's `render <http://code.google.com/p/phantomjs/wiki/QuickStart#Rendering>`_  
+function)::
+
+  T:\hgwork\welfare\lino_welfare\demo>makedocs.bat
+  screenshooter.js has been loaded
+  Loading http://127.0.0.1:8000
+  try again after 1 second
+  try again after 1 second
+  done
+  Rendering to ../../docs/gen/screenshots/index.png true
+  Loading http://127.0.0.1:8000/api/cal/CalendarPanel
+  try again after 1 second
+  try again after 1 second
+  done
+  Rendering to ../../docs/gen/screenshots/cal.CalendarPanel.png true
+  Loading http://127.0.0.1:8000/api/cal/CalendarPanel?su=8
+  try again after 1 second
+  done
+  Rendering to ../../docs/gen/screenshots/cal.CalendarPanel-su.png true
+  (...)
   
 
 TODO: 
@@ -22,7 +57,8 @@ TODO:
 - automatically generate the application-specific part of `lino/media/jasmine/specs.js` 
   to `media/cache/js` and have `html_page_lines` include it.
   
-- Run it from command-line using http://phantomjs.org/
+- Write documentation pages that use the generated screenshots.
 
-- Generate screenshots using 
-  http://code.google.com/p/phantomjs/wiki/QuickStart#Rendering
+- The whole system currently works only for *read-only* 
+  (non-modifying) tests. 
+

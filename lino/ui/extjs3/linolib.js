@@ -1208,7 +1208,17 @@ Lino.alert = function(msg) {
   //~ }).show();
 //~ };
 
+function obj2str(o) {
+  if (typeof o != 'object') return String(o);
+  var s = '';
+  for (var p in o) {
+    s += p + ': ' + obj2str(o[p]) + '\n';
+  }
+  return s;
+}
+
 Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
+  //~ throw reponse;
   console.log("on_store_exception: store=",store,
     "type=",type,
     "action=",action,
@@ -1485,6 +1495,7 @@ Lino.MainPanel = {
   is_home_page : false,
   config_containing_window : function(wincfg) { }
   ,init_containing_window : function(win) { }
+  ,is_loading : function() { return true; } // overridden by subclasses
   ,do_when_clean : function(auto_save,todo) { todo() }
   ,get_master_params : function() {
     var p = {}
@@ -2379,6 +2390,24 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
   },
   
+  is_loading : function() { 
+    if (this.current_record == null) return true; 
+    var loading = false;
+    this.cascade(function(cmp){
+        if (cmp instanceof Lino.GridPanel && cmp.is_loading()) {
+            //~ console.log(cmp.title,'is loading');
+            loading = true;
+            return false;
+        }
+      });
+    return loading;
+    //~ var a = this.findByType(Lino.GridPanel);
+    //~ for (i=0;i<a.length;i++) {
+        //~ if (a[i].is_loading()) return true;
+    //~ }
+    //~ return false;
+  },
+  
   get_status : function(){
       var st = {
         base_params: this.get_base_params(),
@@ -2951,6 +2980,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         //~ this.containing_window.on('show',this.refresh,this);
     //~ }
     
+  },
+  
+  is_loading : function() { 
+    //~ return this.store.getCount() > 0; 
+    return !this.loadMask.disabled; 
   },
   
   config_containing_window : function(wincfg) { 
@@ -4571,6 +4605,11 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   ,set_status : function(status) { this.refresh();}
   ,refresh : function() {Lino.eventStore.reload();}
   ,layout: 'fit'
+  ,is_loading : function() { 
+      var loading = Lino.calendarStore.getCount() == 0 | Lino.eventStore.getCount() == 0
+      //~ console.log("CalendarPanel loading:",loading);
+      return loading; 
+  }
   ,get_base_params : function() {
     var p = Ext.apply({},this.base_params);
     Lino.insert_subst_user(p);

@@ -119,8 +119,10 @@ class RemoteUserMiddleware(object):
                   % username)
             
             if len(babel.AVAILABLE_LANGUAGES) > 1:
-                if request.user.language:
-                    translation.activate(request.user.language)
+                #~ lang = settings.LINO.override_user_language() or request.user.language
+                lang = request.user.language
+                if lang:
+                    translation.activate(lang)
                     request.LANGUAGE_CODE = translation.get_language()
                 
         else:
@@ -151,6 +153,11 @@ class RemoteUserMiddleware(object):
         request.subst_user = su
         request.requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
         
+        ul = rqdata.get(ext_requests.URL_PARAM_USER_LANGUAGE,None)
+        if ul:
+            translation.activate(ul)
+            request.LANGUAGE_CODE = translation.get_language()
+            
             
                 
         
