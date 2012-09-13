@@ -965,6 +965,8 @@ tinymce.init({
             
             yield javascript("/lino/jasmine/specs.js")
             
+        if settings.LINO.use_beid_jslib:
+            yield javascript('/beid-jslib/be_belgium_eid.js')
             
             
         if settings.LINO.use_gridfilters:
@@ -1138,6 +1140,32 @@ tinymce.init({
         #~ yield "console.timeEnd('onReady');"
         yield "}); // end of onReady()"
         yield '</script></head><body>'
+
+        if settings.LINO.use_beid_jslib:
+            p = self.media_url('beid-jslib')
+            #~ print p
+            yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
+            yield 'codebase = "%s"' % p
+            yield 'width="1" height="1"'
+            yield 'name   = "BEIDAppletLauncher"'
+            yield 'id   = "BEIDAppletLauncher"'
+            yield 'archive="applet-launcher.jar,beid35libJava.jar,BEID_Applet.jar">'
+    
+            yield '<param name="codebase_lookup" value="false">'
+            yield '<param name="subapplet.classname" value="be.belgium.beid.BEID_Applet">'
+            yield '<param name="progressbar" value="true">'
+            yield '<param name="jnlpNumExtensions" value="1">'
+            yield '<param name="jnlpExtension1" value= "' + p + '/beid.jnlp">'
+
+            yield '<param name="debug" value="false"/>'
+            yield '<param name="Reader" value=""/>'
+            yield '<param name="OCSP" value="-1"/>'
+            yield '<param name="CRL" value="-1"/>'
+            yield '<param name="jnlp_href" value="' + p + '/beid_java_plugin.jnlp" />'
+            yield '</applet>'
+
+
+          
         if settings.LINO.use_davlink:
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
             yield '        archive="%s/lino/applets/DavLink.jar"' % self.media_url()

@@ -1893,10 +1893,10 @@ Lino.row_action_handler = function(actionName) {
 };
 
 
-Lino.run_row_action = function(rp,url,pk,actionName) {
+Lino.run_row_action = function(requesting_panel,url,pk,actionName) {
   //~ var panel = action.get_window().main_item;
   url = ROOT_URL + '/api' + url  + '/' + pk;
-  var panel = Ext.getCmp(rp);
+  var panel = Ext.getCmp(requesting_panel);
   var fn = function(panel,btn,step) {
     //~ 20120723 Lino.call_row_action(panel,pk,actionName,step,fn);
     Lino.call_row_action(panel,url,actionName,step,fn);
@@ -4927,3 +4927,57 @@ function captureEvents(observable) {
     );		
 }
  
+
+
+#if $settings.LINO.use_beid_jslib
+
+var cardReader = new be.belgium.eid.CardReader();
+
+function noCardPresentHandler() {
+	window.alert("No card present!");
+}
+cardReader.setNoCardPresentHandler(noCardPresentHandler);
+
+function noReaderDetectedHandler() {
+	window.alert("No reader detected!");
+}
+cardReader.setNoReaderDetectedHandler(noReaderDetectedHandler);
+
+function appletNotFoundHandler() {
+	window.alert("Applet not found!");
+}
+cardReader.setAppletNotFoundHandler(appletNotFoundHandler);
+
+function appletExceptionHandler(e) {
+	window.alert("Error reading card!\r\nException: " + e + "\r\nPlease try again.");
+}
+cardReader.setAppletExceptionHandler(appletExceptionHandler);
+
+//~ function clearPicture() {
+	//~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64,";
+//~ }
+
+Lino.read_beid_card = function(requesting_panel) {
+	//~ clearPicture();
+  var panel = Ext.getCmp(requesting_panel);
+  console.log("readCard",panel);
+	//~ document.getElementById("content").value = "Please wait ...";
+	var card = cardReader.read();
+	if (card != null) {
+		var content = card.toString();
+    Lino.alert(content);
+		//~ if (typeof(base64) != "undefined") {
+			//~ var encodedPicture = base64.encode(card.getPicture(), false, false);
+			//~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64," + encodedPicture;
+			//~ content += "\r\n\r\n" + encodedPicture;
+		//~ } else {
+			//~ window.alert("base64 object not defined");
+			//~ content += "\r\n\r\n" + "base64 object not defined";
+		//~ }
+		//~ document.getElementById("content").value = content;
+	} else {
+      Lino.alert("No card returned.");
+	}
+}
+
+#end if

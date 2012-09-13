@@ -299,7 +299,7 @@ class Models(dd.VirtualTable):
     label = _("Models")
     #~ column_defaults = dict(width=8)
     #~ column_names = "app name verbose_name docstring rows"
-    column_names = "app name docstring rows"
+    column_names = "app name docstring rows detail_action"
     #~ master = SiteConfig
     detail_layout = """
     app name docstring rows
@@ -320,6 +320,10 @@ class Models(dd.VirtualTable):
     @dd.displayfield(_("name"))
     def name(self,obj,ar):
         return obj.__name__
+        
+    @dd.displayfield(_("detail_action"))
+    def detail_action(self,obj,ar):
+        return str(obj._lino_default_table.detail_action)
         
     #~ @dd.displayfield(_("verbose name"))
     #~ def vebose_name(self,obj,ar):

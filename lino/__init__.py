@@ -280,6 +280,15 @@ class Lino(object):
     
     use_gridfilters = True
     
+    use_beid_jslib = True
+    """
+    Whether to include functionality to read Belgian eid cards.
+    
+    If this is True, Lino expects Johan De Schutter's
+    `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_
+    to be installed in a directory `media/beid-jslib`.
+    """
+    
     use_filterRow = not use_gridfilters
     """
     See :doc:`/blog/2011/0630`

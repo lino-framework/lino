@@ -1,7 +1,14 @@
 20120913
 ========
 
-ActionRequest.__init__() : 
+ : 
+Changes in how ActionRequest.__init__() handles parameter values.
 
-    E.g. newcomers.Newcomers is a simple pcsw.Clients with known_values=dict(client_state=newcomer)
-    and since there is a parameter `client_state`, we override that paremter's default value.
+E.g. newcomers.Newcomers is now a simple subclass of pcsw.Clients 
+with known_values=dict(client_state=Clientstates.newcomer),
+and since there is a parameter `client_state`, 
+we override that parameter's default value.
+
+
+Lino.fk_renderer('projectHidden','Lino.pcsw.ClientsTest.detail_action')
+
