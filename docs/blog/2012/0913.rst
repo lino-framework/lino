@@ -1,0 +1,7 @@
+20120913
+========
+
+ActionRequest.__init__() : 
+
+    E.g. newcomers.Newcomers is a simple pcsw.Clients with known_values=dict(client_state=newcomer)
+    and since there is a parameter `client_state`, we override that paremter's default value.

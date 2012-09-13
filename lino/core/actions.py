@@ -653,6 +653,15 @@ class ActionRequest(object):
                     #~ param_values
                 #~ param_values.define(k,v)
                 
+                
+            """
+            E.g. newcomers.Newcomers is a simple pcsw.Clients with known_values=dict(client_state=newcomer)
+            and since there is a parameter `client_state`, we override that paremter's default value.
+            """
+            for k,v in self.known_values.items():
+                if param_values.has_key(k):
+                    param_values[k] = v
+                
             self.param_values = AttrDict(**param_values)
             
             #~ if param_values:
