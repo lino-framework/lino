@@ -1197,6 +1197,16 @@ class Store:
                     yield x
                 #~ yield fld.cell_html(ar,row)
                 
+    def row2text(self,ar,fields,row,sums):
+        for i,fld in enumerate(fields):
+            if fld.field is not None:
+                v = fld.full_value_from_object(row,ar)
+                if v is None:
+                    yield ''
+                else:
+                    sums[i] += fld.value2num(v)
+                    yield fld.format_value(ar,v)
+                
     def sums2html(self,ar,fields,sums):
         return [fld.format_sum(ar,sums,i)
           for i,fld in enumerate(fields)]

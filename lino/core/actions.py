@@ -613,7 +613,7 @@ class ActionRequest(object):
     limit = None
     order_by = None
     
-    def __init__(self,ui,actor,request=None,action=None,renderer=None,param_values={},**kw):
+    def __init__(self,ui,actor,request=None,action=None,renderer=None,param_values=None,**kw):
         #~ ActionRequest.__init__(self,ui,action)
         if ui is None:
             ui = settings.LINO.ui
@@ -639,28 +639,24 @@ class ActionRequest(object):
         """
         See 20120825
         """
+        if param_values is None:
+            param_values = {}
         if self.actor.parameters:
-            if request is not None:
-                param_values.update(self.ui.parse_params(self.ah,request))
-                
             for k,pf in self.actor.parameters.items():
-                if not param_values.has_key(k):
-                    param_values[k] = pf.get_default()
-                    
-                #~ v = param_values.get(k,None)
-                #~ if v is None:
-                    #~ v = pf.get_default()
-                    #~ param_values
-                #~ param_values.define(k,v)
-                
+                #~ if not param_values.has_key(k):
+                param_values[k] = pf.get_default()
                 
             """
+            New since 20120913.
             E.g. newcomers.Newcomers is a simple pcsw.Clients with known_values=dict(client_state=newcomer)
-            and since there is a parameter `client_state`, we override that paremter's default value.
+            and since there is a parameter `client_state`, we override that parameter's default value.
             """
             for k,v in self.known_values.items():
                 if param_values.has_key(k):
                     param_values[k] = v
+                
+            if request is not None:
+                param_values.update(self.ui.parse_params(self.ah,request))
                 
             self.param_values = AttrDict(**param_values)
             

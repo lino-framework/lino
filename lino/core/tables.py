@@ -57,6 +57,7 @@ from django.contrib.contenttypes import generic
 
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
 from django.utils import simplejson as json
 
 from lino.core import actors
@@ -339,6 +340,41 @@ class TableRequest(actions.ActionRequest):
     
     def table2xhtml(self):
         return self.ui.table2xhtml(self)
+        
+    def to_rst(self):
+        fields = self.ah.store.list_fields
+        headers = [force_unicode(col.label or col.name) for col in self.ah.list_layout.main.columns]
+        cellwidths = None
+        columns = self.ah.list_layout.main.columns
+        
+        oh = self.actor.override_column_headers(self)
+        if oh:
+            for i,e in enumerate(columns):
+                header = oh.get(e.name,None)
+                if header is not None:
+                    headers[i] = unicode(header)
+                    
+        sums  = [fld.zero for fld in fields]
+        rows = []  
+        recno = 0
+        for row in self:
+            recno += 1
+            rows.append([x for x in self.ah.store.row2text(self,fields,row,sums)])
+                
+        has_sum = False
+        for i in sums:
+            if i:
+                has_sum = True
+                break
+        if has_sum:
+            rows.append([x for x in self.ah.store.sums2html(self,fields,sums)])
+        from lino.utils import rstgen
+        return rstgen.table(headers,rows)
+          
+                    
+        
+      
+        
         
     def get_title(self):
         if self.title is not None:  
