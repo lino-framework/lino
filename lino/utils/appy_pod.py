@@ -229,6 +229,8 @@ class Renderer(AppyRenderer):
         #~ self.my_styles[name] = e
         return e
         
+      
+        
     def insert_table(self,ar,column_names=None):
         """
         Render an :class:`lino.core.actions.ActionRequest` as an OpenDocument table.
@@ -236,60 +238,8 @@ class Renderer(AppyRenderer):
         ``do text from table(...)`` statement.
         """
         
-        if ar.request is None:
-            columns = None
-        else:
-            columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+        fields, headers, widths = ar.get_field_info(column_names)
         
-        if columns:
-            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-            all_widths = ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)
-            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
-            fields = []
-            widths = []
-            headers = []
-            #~ ah = ar.actor.get_handle(self.extjs_ui)
-            ah = ar.actor.get_handle(settings.LINO.ui)
-            for i,cn in enumerate(columns):
-                col = None
-                for e in ah.list_layout.main.columns:
-                    if e.name == cn:
-                        col = e
-                        break
-                if col is None:
-                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                    #~ raise Exception("No column named %r in %s" % (cn,ah.list_layout.main.columns))
-                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
-                if not hiddens[i]:
-                    fields.append(col.field._lino_atomizer)
-                    headers.append(unicode(col.label or col.name))
-                    widths.append(int(all_widths[i]))
-        else:
-            if column_names:
-                from lino.core import layouts
-                ll = layouts.ListLayout(ar.actor,column_names)
-                #~ lh = ll.get_layout_handle(self.extjs_ui)
-                lh = ll.get_layout_handle(settings.LINO.ui)
-                columns = lh.main.columns
-            else:
-                #~ ah = ar.actor.get_handle(self.extjs_ui)
-                ah = ar.actor.get_request_handle(ar)
-                columns = ah.list_layout.main.columns
-                #~ columns = ar.ah.list_layout.main.columns
-            #~ fields = ar.ah.store.list_fields
-            headers = [unicode(col.label or col.name) for col in columns]
-            widths = [(col.width or col.preferred_width) for col in columns]
-            fields = [col.field._lino_atomizer for col in columns]
-
-        oh = ar.actor.override_column_headers(ar)
-        if oh:
-            for i,e in enumerate(columns):
-                header = oh.get(e.name,None)
-                if header is not None:
-                    headers[i] = header
-            #~ print 20120507, oh, headers
-            
-                  
         tw = sum(widths)
         """
         specifying relative widths doesn't seem to work

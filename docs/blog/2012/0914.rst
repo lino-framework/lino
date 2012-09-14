@@ -112,3 +112,13 @@ Der Perma-Link dieser Liste lautet::
 
   http://127.0.0.1:8000/api/pcsw/MyClientsByGroup?mt=79&mk=1&su=8&pv=14.09.2012&pv=&pv=1&pv=false
 
+
+Erklärung war: ich musste distinct() benutzen, weil der Filter von 
+z.B. `only_coached_by` jetzt einen outer join produziert::
+
+  def only_coached_by(qs,user):
+      return qs.filter(pcsw_coaching_set_by_project__user=user).distinct()
+    
+Das folgende Skript hat mir geholfen, das zu verstehen:
+
+.. literalinclude:: 0914b.py

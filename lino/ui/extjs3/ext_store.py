@@ -105,7 +105,7 @@ class StoreField(object):
         
     def format_sum(self,ar,sums,i):
         if i == 0:
-            return unicode(_("Total"))
+            return unicode(_("Total (%d rows)")) % ar.get_total_count()
         return ''
         
     def __repr__(self):
@@ -375,7 +375,9 @@ class VirtStoreField(StoreField):
 
         
 class RequestStoreField(StoreField):
-  
+    """
+    StoreField for :class:`lino.core.fields.RequestField`.
+    """
     def __init__(self,vf,delegate,name):
         self.vf = vf 
         StoreField.__init__(self,vf.return_type,name)
@@ -411,10 +413,10 @@ class RequestStoreField(StoreField):
         n = v.get_total_count()
         if n == 0:
             return ''
-        if n == 6:
-            logger.info("20120914 %s",v)
         #~ return ar.renderer.href_to_request(v,str(n))
         url = 'javascript:' + ar.renderer.request_handler(v)
+        #~ if n == 6:
+            #~ logger.info("20120914 value2html(%s) --> %s",v,url)
         #~ url = ar.renderer.js2url(h)
         #~ return xghtml.E.a(cgi.escape(force_unicode(v.label)),href=url)
         return xghtml.E.p(xghtml.E.a(str(n),href=url))
@@ -438,6 +440,8 @@ class RequestStoreField(StoreField):
         n = v.get_total_count()
         if n == 0:
             return ''
+        #~ if n == 6:
+            #~ logger.info("20120914 format_value(%s) --> %s",v,n)
         return ar.renderer.href_to_request(v,str(n))
 
 
@@ -668,6 +672,8 @@ class BooleanStoreField(StoreField):
         if v: return 1
         return 0
       
+    def format_sum(self,ar,sums,i):
+        return str(sums[i])
 
 class DisplayStoreField(StoreField):
   

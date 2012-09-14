@@ -556,6 +556,22 @@ class Companies(Partners):
     name type
     language email
     """,window_size=(40,'auto'))
+    
+#~ class List(Partner):
+    #~ pass
+
+#~ class Lists(Partners):
+    #~ model = List
+    #~ order_by = ["name"]
+    #~ detail_layout = """
+    #~ id name
+    #~ language email
+    #~ MembersByList
+    #~ """
+    #~ insert_layout = dd.FormLayout("""
+    #~ name 
+    #~ language email
+    #~ """,window_size=(40,'auto'))
 
 
 

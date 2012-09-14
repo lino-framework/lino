@@ -341,21 +341,82 @@ class TableRequest(actions.ActionRequest):
     def table2xhtml(self):
         return self.ui.table2xhtml(self)
         
-    def to_rst(self):
-        """
-        Returns a string with this request as a table in reStructuredText markup
-        """
-        fields = self.ah.store.list_fields
-        headers = [force_unicode(col.label or col.name) for col in self.ah.list_layout.main.columns]
-        cellwidths = None
-        columns = self.ah.list_layout.main.columns
+    def get_field_info(ar,column_names=None):
+      
+        if ar.request is None:
+            columns = None
+        else:
+            columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
         
-        oh = self.actor.override_column_headers(self)
+        if columns:
+            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+            all_widths = ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)
+            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
+            fields = []
+            widths = []
+            headers = []
+            #~ ah = ar.actor.get_handle(self.extjs_ui)
+            ah = ar.actor.get_handle(settings.LINO.ui)
+            for i,cn in enumerate(columns):
+                col = None
+                for e in ah.list_layout.main.columns:
+                    if e.name == cn:
+                        col = e
+                        break
+                if col is None:
+                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
+                    #~ raise Exception("No column named %r in %s" % (cn,ah.list_layout.main.columns))
+                    raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
+                if not hiddens[i]:
+                    fields.append(col.field._lino_atomizer)
+                    headers.append(unicode(col.label or col.name))
+                    widths.append(int(all_widths[i]))
+        else:
+            if column_names:
+                from lino.core import layouts
+                ll = layouts.ListLayout(column_names,table=ar.actor)
+                #~ lh = ll.get_layout_handle(self.extjs_ui)
+                lh = ll.get_layout_handle(settings.LINO.ui)
+                columns = lh.main.columns
+            else:
+                #~ ah = ar.actor.get_handle(self.extjs_ui)
+                ah = ar.actor.get_request_handle(ar)
+                columns = ah.list_layout.main.columns
+                #~ columns = ar.ah.list_layout.main.columns
+            #~ fields = ar.ah.store.list_fields
+            headers = [unicode(col.label or col.name) for col in columns]
+            widths = [(col.width or col.preferred_width) for col in columns]
+            fields = [col.field._lino_atomizer for col in columns]
+
+        oh = ar.actor.override_column_headers(ar)
         if oh:
             for i,e in enumerate(columns):
                 header = oh.get(e.name,None)
                 if header is not None:
-                    headers[i] = unicode(header)
+                    headers[i] = header
+            #~ print 20120507, oh, headers
+            
+        return fields, headers, widths
+        
+        
+    def to_rst(self,column_names=None):
+        """
+        Returns a string with this request as a table in reStructuredText markup
+        """
+        
+        fields, headers, widths = self.get_field_info(column_names)
+        
+        #~ fields = self.ah.store.list_fields
+        #~ headers = [force_unicode(col.label or col.name) for col in self.ah.list_layout.main.columns]
+        #~ cellwidths = None
+        #~ columns = self.ah.list_layout.main.columns
+        
+        #~ oh = self.actor.override_column_headers(self)
+        #~ if oh:
+            #~ for i,e in enumerate(columns):
+                #~ header = oh.get(e.name,None)
+                #~ if header is not None:
+                    #~ headers[i] = unicode(header)
                     
         sums  = [fld.zero for fld in fields]
         rows = []  
@@ -367,6 +428,7 @@ class TableRequest(actions.ActionRequest):
         has_sum = False
         for i in sums:
             if i:
+                #~ print '20120914 zero?', repr(i)
                 has_sum = True
                 break
         if has_sum:
