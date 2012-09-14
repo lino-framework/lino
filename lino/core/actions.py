@@ -621,6 +621,8 @@ class ActionRequest(object):
         self.ui = ui
         self.error_response = ui.error_response
         self.success_response = ui.success_response
+        if renderer is None:
+            renderer = ui.text_renderer
         self.renderer = renderer
         self.action = action or actor.default_action
         self.step = 0 # confirmation counter

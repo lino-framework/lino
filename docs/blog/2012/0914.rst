@@ -1,0 +1,37 @@
+20120914
+========
+
+New method :meth:`lino.core.tables.TableRequest.to_rst`.
+
+Here is a usage example:
+
+.. literalinclude:: 0914.py
+
+The result is::
+
+  INFO Starting Lino...
+  INFO Analyzing models...
+  INFO Lino Site 'DSBE@armand' started. Languages: de, fr, en. 260 actors.
+  INFO Using Lino/Welfare 0.1.0, Lino 1.5.0, Django 1.5.dev17942, python-dateutil 1.5, Cheetah 
+  2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), 
+  Python 2.7.1.
+  =============== ===== ========= ========= ======= ======= =============== =============== =====
+  Begleiter 1     Bilan Formation Recherche Travail Standby Komplette Akten Aktive Klienten Total
+  =============== ===== ========= ========= ======= ======= =============== =============== =====
+  Hubert Huppertz       1                                                   1               1
+  Mélanie Mélard        1                                                   1               1
+  Root User             1                                                   1               1
+  Total           0     3         0         0       0       0               3               3
+  =============== ===== ========= ========= ======= ======= =============== =============== =====  
+
+Where the table is rendered as follows:
+
+=============== ===== ========= ========= ======= ======= =============== =============== =====
+Begleiter 1     Bilan Formation Recherche Travail Standby Komplette Akten Aktive Klienten Total
+=============== ===== ========= ========= ======= ======= =============== =============== =====
+Hubert Huppertz       1                                                   1               1
+Mélanie Mélard        1                                                   1               1
+Root User             1                                                   1               1
+Total           0     3         0         0       0       0               3               3
+=============== ===== ========= ========= ======= ======= =============== =============== =====  
+

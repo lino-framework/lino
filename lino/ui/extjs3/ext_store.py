@@ -104,6 +104,8 @@ class StoreField(object):
         #~ return self.format_sum(v)
         
     def format_sum(self,ar,sums,i):
+        if i == 0:
+            return unicode(_("Total"))
         return ''
         
     def __repr__(self):

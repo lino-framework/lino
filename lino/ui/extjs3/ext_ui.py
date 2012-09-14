@@ -201,42 +201,25 @@ class HtmlRenderer(object):
         return '[?!]'
 
   
-#~ class PdfRenderer(HtmlRenderer):
-    #~ """
-    #~ Deserves more documentation.
-    #~ """
-    #~ def href_to_request(self,rr,text=None):
-        #~ return text or ("<b>%s</b>" % cgi.escape(force_unicode(rr.label)))
-    #~ def href_to(self,obj,text=None):
-        #~ text = text or cgi.escape(force_unicode(obj))
-        #~ return "<b>%s</b>" % text
-    #~ def instance_handler(self,obj):
-        #~ return None
-    #~ def request_handler(self,ar,*args,**kw):
-        #~ return ''
+    def obj2html(self,ar,obj,text=None):
+        url = self.instance_handler(ar,obj)
+        if text is None: text = force_unicode(obj)
+        if url is None:
+            return xghtml.E.p(xghtml.E.b(text))
+        return xghtml.E.p(xghtml.E.a(text,href=url))
         
-
-#~ class ExtRendererPermalink(HtmlRenderer):
-    #~ """
-    #~ Deserves more documentation.
-    #~ """
-    #~ def href_to_request(self,rr,text=None):
-        #~ """
-        #~ Returns a HTML chunk with a clickable link to 
-        #~ the given :class:`TableTequest <lino.core.dbtables.TableRequest>`.
-        #~ """
-        #~ return self.href(
-            #~ self.get_request_url(rr),
-            #~ text or cgi.escape(force_unicode(rr.label)))
-    #~ def href_to(self,obj,text=None):
-        #~ """
-        #~ Returns a HTML chunk with a clickable link to 
-        #~ the given model instance.
-        #~ """
-        #~ return self.href(
-            #~ self.get_detail_url(obj),
-            #~ text or cgi.escape(force_unicode(obj)))
-            
+class TextRenderer(HtmlRenderer):
+    def instance_handler(self,ar,obj):
+        return None
+    def pk2url(self,ar,pk,**kw):
+        return None
+    def get_request_url(self,ar,*args,**kw):
+        return None
+    def href_to_request(self,rr,text=None):
+        if text is None:
+            text = '#'
+        return text
+  
 class PlainRenderer(HtmlRenderer):
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
@@ -246,14 +229,6 @@ class PlainRenderer(HtmlRenderer):
             if ar is None or a.get_action_permission(ar.get_user(),obj,None):
                 return self.get_detail_url(obj)
   
-        
-    def obj2html(self,ar,obj,text=None):
-        url = self.instance_handler(ar,obj)
-        if text is None: text = force_unicode(obj)
-        if url is None:
-            return xghtml.E.p(xghtml.E.b(text))
-        return xghtml.E.p(xghtml.E.a(text,href=url))
-        
     def pk2url(self,ar,pk,**kw):
         if pk is not None:
             kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
@@ -478,6 +453,42 @@ class ExtRenderer(HtmlRenderer):
         #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
         
     
+#~ class PdfRenderer(HtmlRenderer):
+    #~ """
+    #~ Deserves more documentation.
+    #~ """
+    #~ def href_to_request(self,rr,text=None):
+        #~ return text or ("<b>%s</b>" % cgi.escape(force_unicode(rr.label)))
+    #~ def href_to(self,obj,text=None):
+        #~ text = text or cgi.escape(force_unicode(obj))
+        #~ return "<b>%s</b>" % text
+    #~ def instance_handler(self,obj):
+        #~ return None
+    #~ def request_handler(self,ar,*args,**kw):
+        #~ return ''
+        
+
+#~ class ExtRendererPermalink(HtmlRenderer):
+    #~ """
+    #~ Deserves more documentation.
+    #~ """
+    #~ def href_to_request(self,rr,text=None):
+        #~ """
+        #~ Returns a HTML chunk with a clickable link to 
+        #~ the given :class:`TableTequest <lino.core.dbtables.TableRequest>`.
+        #~ """
+        #~ return self.href(
+            #~ self.get_request_url(rr),
+            #~ text or cgi.escape(force_unicode(rr.label)))
+    #~ def href_to(self,obj,text=None):
+        #~ """
+        #~ Returns a HTML chunk with a clickable link to 
+        #~ the given model instance.
+        #~ """
+        #~ return self.href(
+            #~ self.get_detail_url(obj),
+            #~ text or cgi.escape(force_unicode(obj)))
+            
             
 
 
@@ -540,6 +551,7 @@ class ExtUI(base.UI):
         #~ self.pdf_renderer = PdfRenderer(self) # 20120624
         self.ext_renderer = ExtRenderer(self)
         self.plain_renderer = PlainRenderer(self)
+        self.text_renderer = TextRenderer(self)
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
         names = set()
         for n in self.reserved_names:

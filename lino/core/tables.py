@@ -342,6 +342,9 @@ class TableRequest(actions.ActionRequest):
         return self.ui.table2xhtml(self)
         
     def to_rst(self):
+        """
+        Returns a string with this request as a table in reStructuredText markup
+        """
         fields = self.ah.store.list_fields
         headers = [force_unicode(col.label or col.name) for col in self.ah.list_layout.main.columns]
         cellwidths = None
