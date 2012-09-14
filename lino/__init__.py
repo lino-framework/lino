@@ -1068,7 +1068,7 @@ class Lino(object):
             mod = import_module('.models', app_name)
             meth = getattr(mod,methname,None)
             if meth is not None:
-                dblogger.debug("Running %s of %s", methname, mod.__name__)
+                #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
                 meth(self,*args)
         
         

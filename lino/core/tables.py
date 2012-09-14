@@ -412,17 +412,18 @@ class TableRequest(actions.ActionRequest):
         return self.data_iterator[int(pk) - 1]
         
     def get_data_iterator(self):
-        if self.actor.get_data_rows:
+        if self.actor.get_data_rows is not None:
             l = []
             rows = self.actor.get_data_rows(self)
             for row in rows:
                 if len(l) > 300:
                     raise Exception("20120521 More than 300 items in %s" % 
                         unicode(rows))
-                #~ l.append(row)
                 group = self.actor.group_from_row(row)
                 group.process_row(l,row)
             return l
+        #~ logger.info("20120914 tables.get_data_iterator %s",self)
+        #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)
         return self.actor.get_request_queryset(self)
         
     def get_total_count(self):
@@ -448,6 +449,9 @@ class TableRequest(actions.ActionRequest):
             kw.update(filter=str(self.filter))
         if self.known_values:
             kw.update(known_values=self.known_values)
+        u = self.get_user()
+        if u is not None:
+            kw.update(su=u.username)
         #~ return self.__class__.__name__ + '(%s)' % kw
         return self.__class__.__name__ + ' '+str(self.action)+'(%s)' % kw
 

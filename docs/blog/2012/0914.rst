@@ -1,8 +1,10 @@
 20120914
 ========
 
-New method :meth:`lino.core.tables.TableRequest.to_rst`.
+Rendering tables to plain text
+------------------------------
 
+New method :meth:`lino.core.tables.TableRequest.to_rst`.
 Here is a usage example:
 
 .. literalinclude:: 0914.py
@@ -34,4 +36,79 @@ Mélanie Mélard        1                                                   1   
 Root User             1                                                   1               1
 Total           0     3         0         0       0       0               3               3
 =============== ===== ========= ========= ======= ======= =============== =============== =====  
+
+
+Miscellaneous
+-------------
+
+- More changes in how ActionRequest.__init__() handles parameter values.
+
+- add_detail_tab()
+
+Mausefalle
+----------
+
+Ich wollte die CoachingsByUser sichtbar machen. Ist doch einfach::
+
+
+    site.modules.users.Users.add_detail_panel('coaching',"""
+    pcsw.CoachingsByUser
+    """,_("Coaching"))
+    
+Dachte ich zumindest. Richtig wäre gewesen::
+    
+    site.modules.users.Users.add_detail_tab('coaching',"""
+    pcsw.CoachingsByUser
+    """)
+    
+Und weil das einzige Symptom folgender Traceback war::
+
+  LayoutHandle for UserDetail on users.Users has no attribute 'coaching' 
+  (layout.main is 'general cal newcomers.CompetencesByUser')
+  
+... habe ich zwei Stunden lang an allen möglichen Ecken gesucht, 
+bevor ich die tatsächliche Erklärung hatte.
+
+
+
+Ein Layout-Bug weniger
+----------------------
+
+
+Lino.VBorderPanel.onBodyResize hatte einen Bug::
+
+    ...
+    this.items.each(function(item){
+      ...
+              availableHeight -= item.getHeight();
+              
+Das produzierte machmal einen JS-Fehler in der Console. 
+Weil noch nicht alle Kinder gerendert waren.
+Folge war, dass dass z.B. der zweite Reiter (Kalender) 
+vom UserDetail nicht beim ersten Mal korrekt war.
+Jetzt geht es besser::
+
+    ...
+    this.items.each(function(item){
+      ...
+              if (item.rendered) availableHeight -= item.getHeight();
+
+
+UsersWithClients
+----------------
+
+In UsersWithClients, bei Alicia in Kolonne "Bilan" steht eine 6.
+Also Alicia hat angeblich sech Bilan-Kunden.
+Die 6 ist ein ``<a>`` mit folgendem `href`::
+
+  javascript:Lino.pcsw.MyClientsByGroup.default_action.run({ "param_values": { 
+    "only_coached_on": "14.09.2012", 
+    "group": "Bilan", "client_stateHidden": null, "show_deprecated": false, 
+    "groupHidden": 1, "client_state": null 
+    }, "base_params": { "mt": 79, "mk": 1, "su": 8 } })
+
+Wenn ich drauf klicke, zeigt er aber nur 2 Klienten an. 
+Der Perma-Link dieser Liste lautet::
+
+  http://127.0.0.1:8000/api/pcsw/MyClientsByGroup?mt=79&mk=1&su=8&pv=14.09.2012&pv=&pv=1&pv=false
 

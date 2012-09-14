@@ -411,6 +411,8 @@ class RequestStoreField(StoreField):
         n = v.get_total_count()
         if n == 0:
             return ''
+        if n == 6:
+            logger.info("20120914 %s",v)
         #~ return ar.renderer.href_to_request(v,str(n))
         url = 'javascript:' + ar.renderer.request_handler(v)
         #~ url = ar.renderer.js2url(h)

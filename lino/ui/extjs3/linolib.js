@@ -960,23 +960,34 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
       if (this.isVisible()) { // to avoid "Uncaught TypeError: Cannot call method 'getHeight' of undefined."
         var sumflex = 0;
         var availableHeight = this.getInnerHeight();
-        for(var i=0; i < this.items.length;i++) {
-          var item = this.items.get(i);
-          //~ if (this.isVertical(item) && item.getResizeEl()) {
-          if (this.isVertical(item)) {
+        var me = this;
+        this.items.each(function(item){
+          if (me.isVertical(item)) {
               if (item.collapsed || item.flex == 0 || item.flex === undefined) {
-                  //~ item.syncSize()
-                  //~ item.doLayout()
-                  //~ if (item.region == "north") console.log('region north',item.getHeight(),item.id, item);
-                  //~ if (item.getHeight() == 0) console.log(20100921,'both flex and getHeight() are 0!');
-                  availableHeight -= item.getHeight();
+                  if (item.rendered) availableHeight -= item.getHeight();
               } else {
                   sumflex += item.flex;
-                  //~ console.log(item.flex);
               }
           } 
-          //~ else console.log('non-vertical item in VBoderPanel:',item)
-        }
+          
+        });
+        //~ for(var i=0; i < this.items.length;i++) {
+          //~ var item = this.items.get(i);
+          //~ // if (this.isVertical(item) && item.getResizeEl()) {
+          //~ if (this.isVertical(item)) {
+              //~ if (item.collapsed || item.flex == 0 || item.flex === undefined) {
+                  //~ // item.syncSize()
+                  //~ // item.doLayout()
+                  //~ // if (item.region == "north") console.log('region north',item.getHeight(),item.id, item);
+                  //~ // if (item.getHeight() == 0) console.log(20100921,'both flex and getHeight() are 0!');
+                  //~ availableHeight -= item.getHeight();
+              //~ } else {
+                  //~ sumflex += item.flex;
+                  //~ // console.log(item.flex);
+              //~ }
+          //~ } 
+          //~ // else console.log('non-vertical item in VBoderPanel:',item)
+        //~ }
         var hunit = availableHeight / sumflex;
         //~ console.log('sumflex=',sumflex,'hunit=',hunit, 'availableHeight=',availableHeight);
         for(var i=0; i < this.items.length;i++) {

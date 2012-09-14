@@ -725,8 +725,8 @@ class Actor(object):
     @classmethod
     def set_detail_layout(self,*args,**kw):
         """
-        Update the :attr:`detail_layout` 
-        of this actor, or create a new layout if there wasn't one before.
+        Update the :attr:`detail_layout` of this actor, 
+        or create a new layout if there wasn't one before.
         
         The first argument can be either a string or a
         :class:`FormLayout <lino.core.layouts.FormLayout>` instance.
@@ -739,8 +739,8 @@ class Actor(object):
     @classmethod
     def set_insert_layout(self,*args,**kw):
         """
-        Update the :attr:`insert_layout`
-        of this actor, or create a new layout if there wasn't one before.
+        Update the :attr:`insert_layout` of this actor, 
+        or create a new layout if there wasn't one before.
         Otherwise same usage as :meth:`set_detail_layout`.
         """
         return self.set_form_layout('insert_layout',*args,**kw)
@@ -748,11 +748,12 @@ class Actor(object):
     @classmethod
     def set_form_layout(self,attname,dtl=None,**kw):
         if dtl is not None:
+            existing = getattr(self,attname) # 20120914c
             if isinstance(dtl,basestring):
-                if getattr(self,attname) is None:
+                if existing is None:
                     setattr(self,attname,layouts.FormLayout(dtl,self,**kw))
                     return
-                if '\n' in dtl and not '\n' in getattr(self,attname).main:
+                if '\n' in dtl and not '\n' in existing.main:
                     name = 'general'
                 else:
                     name = 'main'
@@ -762,6 +763,18 @@ class Actor(object):
             else:
                 assert isinstance(dtl,layouts.FormLayout)
                 assert dtl._table is None
+                if existing is not None: # added for 20120914c but it wasn't the problem
+                    if not isinstance(dtl,existing.__class__):
+                        raise NotImplementedError(
+                            "Cannot replace existing %s %s by %s" % (attname,existing,dtl))
+                    if existing._added_panels:
+                        if '\n' in dtl.main:
+                            raise NotImplementedError(
+                                "Cannot replace existing %s with added panels %s" %(existing,existing._added_panels))
+                        dtl.main += ' ' + (' '.join(existing._added_panels.keys()))
+                        #~ logger.info('20120914 %s',dtl.main)
+                        dtl._added_panels.update(existing._added_panels)
+                    dtl._element_options.update(existing._element_options)
                 dtl._table = self
                 setattr(self,attname,dtl)
         if kw:

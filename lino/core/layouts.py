@@ -41,7 +41,10 @@ LABEL_ALIGN_TOP = 'top'
 LABEL_ALIGN_LEFT = 'left'
 LABEL_ALIGN_RIGHT = 'right'
 
-DEBUG_LAYOUTS = False
+def DEBUG_LAYOUTS(lo):
+    #~ if lo._table.__name__ == 'Users':
+        #~ return True
+    return False
 
 class LayoutHandle:
     """
@@ -76,6 +79,8 @@ class LayoutHandle:
         
         self.layout.setup_handle(self)
         for k,v in self.layout._labels.items():
+            if not hasattr(self,k):
+                raise Exception("%s has no attribute %r (layout.main is %r)" % (self,k,layout.main))
             getattr(self,k).label = v
         
         
@@ -195,6 +200,7 @@ class LayoutHandle:
                     else:
                         elems.append(e)
         if len(elems) == 0:
+            #~ raise Exception("20120914 %s %s" % (self,elemname))
             return None
         #return self.vbox_class(self,name,*elems,**kw)
         #~ kw = self.ui.panel_attr2kw(**kw)
@@ -326,6 +332,7 @@ class BaseLayout(object):
     def __init__(self,main=None,table=None,hidden_elements=frozenset(),**kw):
         self._table = table
         self._labels = dict()
+        self._added_panels = dict() # 20120914c
         #~ self._window_size = window_size
         self.hidden_elements = hidden_elements 
         self._element_options = dict()
@@ -351,7 +358,7 @@ class BaseLayout(object):
         if hasattr(self,'_extjs3_handle'):
             raise Exception("Cannot update form layout after UI has been set up.")
         for k,v in kw.items():
-            if DEBUG_LAYOUTS:
+            if DEBUG_LAYOUTS(self):
                 msg = """\
 In %s, updating attribute %r:
 --- before:
@@ -359,7 +366,7 @@ In %s, updating attribute %r:
 --- after:
 %s
 ---""" % (self,k,getattr(self,k,'(undefined)'),v)
-                logger.debug(msg)
+                logger.info(msg)
             setattr(self,k,v)
             
     def add_panel(self,name,tpl,label=None,**options):
@@ -381,13 +388,21 @@ In %s, updating attribute %r:
            raise Exception("name may not contain any whitespace") 
         if getattr(self,name,None) is not None:
            raise Exception("name %r already defined in %s" % (name,self)) 
-        if DEBUG_LAYOUTS:
+        self._add_panel(name,tpl,label,options)
+        
+    def _add_panel(self,name,tpl,label,options):
+        if tpl is None:
+            return # when does this occur?
+        if hasattr(self,name):
+            raise Exception("Oops: %s has already a name %r" % (self,name))
+        if DEBUG_LAYOUTS(self):
             msg = """\
 Adding panel %r to %s ---:
 %s
 ---""" % (name,self,tpl)
-            logger.debug(msg)
+            logger.info(msg)
         setattr(self,name,tpl)
+        self._added_panels[name] = tpl # 20120914c
         if label is not None:
             self._labels[name] = label
         if options:
@@ -420,24 +435,25 @@ Adding panel %r to %s ---:
             self.general = self.main
             self.main = "general " + name
             self._labels['general'] = _("General")
-            if DEBUG_LAYOUTS:
+            if DEBUG_LAYOUTS(self):
                 msg = """\
 add_tabpanel() on %s moving content of vertical 'main' panel to 'general'.
 New 'main' panel is %r"""
-                logger.debug(msg,self,self.main)
+                logger.info(msg,self,self.main)
         else:
             self.main += " " + name
-            if DEBUG_LAYOUTS:
+            if DEBUG_LAYOUTS(self):
                 msg = """\
 add_tabpanel() on %s horizontal 'main' panel %r."""
-                logger.debug(msg,self,self.main)
-        if tpl is not None:
-            if hasattr(self,name):
-                raise Exception("Oops: %s has already a name %r" % (self,name))
-            setattr(self,name,tpl)
-        if label is not None:
-            self._labels[name] = label
-        self._element_options[name] = options
+                logger.info(msg,self,self.main)
+        #~ if tpl is not None:
+        self._add_panel(name,tpl,label,options)
+            #~ self._add_panel(name,tpl)
+            #~ setattr(self,name,tpl)
+            #~ self._added_panels[name] = tpl # 20120914c
+        #~ if label is not None:
+            #~ self._labels[name] = label
+        #~ self._element_options[name] = options
         #~ if kw:
             #~ print 20120525, self, self.detail_layout._element_options
             

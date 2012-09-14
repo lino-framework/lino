@@ -656,6 +656,14 @@ class ActionRequest(object):
             for k,v in self.known_values.items():
                 if param_values.has_key(k):
                     param_values[k] = v
+            """
+            New since 20120914.
+            Or this one: MyClientsByGroup has a known group, this 
+            must also appear as `group` parameter value.
+            """
+            if self.actor.master_key is not None:
+                if param_values.has_key(self.actor.master_key):
+                    param_values[self.actor.master_key] = self.master_instance
                 
             if request is not None:
                 param_values.update(self.ui.parse_params(self.ah,request))
