@@ -783,7 +783,7 @@ class CompanyContact(dd.Model):
     @chooser()
     def contact_choices(cls,company):
         if company is not None:
-            return self.contact_choices_queryset(company)
+            return cls.contact_choices_queryset(company)
         return []
         
     @classmethod

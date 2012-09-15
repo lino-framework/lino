@@ -1,0 +1,7 @@
+20120915
+========
+
+
+- Fixed an unreleased bug: 
+  Traceback when trying to select a contact of a 
+  :class:`lino.modlib.contacts.models.CompanyContact`.
