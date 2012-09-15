@@ -864,6 +864,8 @@ class ExtUI(base.UI):
             setup_media_link('extensible','extensible_root')
         if settings.LINO.use_tinymce:
             setup_media_link('tinymce','tinymce_root')
+        if settings.LINO.use_beid_jslib:
+            setup_media_link('beid-jslib','beid_jslib_root')
             
         setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
 
@@ -894,7 +896,7 @@ class ExtUI(base.UI):
             url = self.media_url() + url
             return '<script type="text/javascript" src="%s"></script>' % url
             
-        if run_jasmine: # settings.LINO.use_jasmine:
+        if run_jasmine: 
             yield stylesheet("/jasmine/jasmine.css")
         yield stylesheet('/extjs/resources/css/ext-all.css')
         

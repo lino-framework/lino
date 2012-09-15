@@ -171,7 +171,7 @@ class Lino(object):
     """
     Path to the Extensible root directory. 
     Only used on a development server
-    if the `media` directory has no symbolic link to the Extensible root directory
+    if the `media` directory has no symbolic link to the Extensible root directory,
     and only if :attr:`use_extensible` is True.
     """
     
@@ -179,9 +179,19 @@ class Lino(object):
     """
     Path to the tinymce root directory. 
     Only to be used on a development server
-    if the `media` directory has no symbolic link to the TinyMCE root directory
+    if the `media` directory has no symbolic link to the TinyMCE root directory,
     and only if :attr:`use_tinymce` is True.
     """
+    
+    beid_jslib_root = None
+    """
+    Path to the `beid_jslib` root directory. 
+    Only to be used on a development server
+    if the `media` directory has no symbolic link to the directory,
+    and only if :attr:`use_beid_jslib` is True.
+    """
+    
+    
     
     allow_duplicate_cities = False
     """Set this to True if that's what you want. 
@@ -287,7 +297,10 @@ class Lino(object):
     If this is True, Lino expects Johan De Schutter's
     `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_
     to be installed in a directory `media/beid-jslib`.
+    See also :attr:`beid_jslib_root`.
+    
     """
+    
     
     use_filterRow = not use_gridfilters
     """
@@ -329,7 +342,8 @@ class Lino(object):
     use_tinymce = True
     """
     Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
-    See :doc:`/blog/2011/0523`
+    See also :attr:`tinymce_root`.
+    See :doc:`/blog/2011/0523`.
     """
     
     use_jasmine = False

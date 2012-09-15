@@ -4942,53 +4942,60 @@ function captureEvents(observable) {
 
 #if $settings.LINO.use_beid_jslib
 
-var cardReader = new be.belgium.eid.CardReader();
+try {
 
-function noCardPresentHandler() {
-	window.alert("No card present!");
-}
-cardReader.setNoCardPresentHandler(noCardPresentHandler);
+  var cardReader = new be.belgium.eid.CardReader();
 
-function noReaderDetectedHandler() {
-	window.alert("No reader detected!");
-}
-cardReader.setNoReaderDetectedHandler(noReaderDetectedHandler);
+  function noCardPresentHandler() {
+    window.alert("No card present!");
+  }
+  cardReader.setNoCardPresentHandler(noCardPresentHandler);
 
-function appletNotFoundHandler() {
-	window.alert("Applet not found!");
-}
-cardReader.setAppletNotFoundHandler(appletNotFoundHandler);
+  function noReaderDetectedHandler() {
+    window.alert("No reader detected!");
+  }
+  cardReader.setNoReaderDetectedHandler(noReaderDetectedHandler);
 
-function appletExceptionHandler(e) {
-	window.alert("Error reading card!\r\nException: " + e + "\r\nPlease try again.");
-}
-cardReader.setAppletExceptionHandler(appletExceptionHandler);
+  function appletNotFoundHandler() {
+    window.alert("Applet not found!");
+  }
+  cardReader.setAppletNotFoundHandler(appletNotFoundHandler);
 
-//~ function clearPicture() {
-	//~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64,";
-//~ }
+  function appletExceptionHandler(e) {
+    window.alert("Error reading card!\r\nException: " + e + "\r\nPlease try again.");
+  }
+  cardReader.setAppletExceptionHandler(appletExceptionHandler);
 
-Lino.read_beid_card = function(requesting_panel) {
-	//~ clearPicture();
-  var panel = Ext.getCmp(requesting_panel);
-  console.log("readCard",panel);
-	//~ document.getElementById("content").value = "Please wait ...";
-	var card = cardReader.read();
-	if (card != null) {
-		var content = card.toString();
-    Lino.alert(content);
-		//~ if (typeof(base64) != "undefined") {
-			//~ var encodedPicture = base64.encode(card.getPicture(), false, false);
-			//~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64," + encodedPicture;
-			//~ content += "\r\n\r\n" + encodedPicture;
-		//~ } else {
-			//~ window.alert("base64 object not defined");
-			//~ content += "\r\n\r\n" + "base64 object not defined";
-		//~ }
-		//~ document.getElementById("content").value = content;
-	} else {
-      Lino.alert("No card returned.");
-	}
-}
+  //~ function clearPicture() {
+    //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64,";
+  //~ }
+
+  Lino.read_beid_card = function(requesting_panel) {
+    //~ clearPicture();
+    var panel = Ext.getCmp(requesting_panel);
+    console.log("readCard",panel);
+    //~ document.getElementById("content").value = "Please wait ...";
+    var card = cardReader.read();
+    if (card != null) {
+      var content = card.toString();
+      Lino.alert(content);
+      //~ if (typeof(base64) != "undefined") {
+        //~ var encodedPicture = base64.encode(card.getPicture(), false, false);
+        //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64," + encodedPicture;
+        //~ content += "\r\n\r\n" + encodedPicture;
+      //~ } else {
+        //~ window.alert("base64 object not defined");
+        //~ content += "\r\n\r\n" + "base64 object not defined";
+      //~ }
+      //~ document.getElementById("content").value = content;
+    } else {
+        Lino.alert("No card returned.");
+    }
+  }
+} catch (err){
+  Lino.read_beid_card = function(requesting_panel) {
+      Lino.alert("`Lino.use_beid_jslib` is True, but `/media/beid-jslib/be_belgium_eid.js` not found");
+  }
+}  
 
 #end if

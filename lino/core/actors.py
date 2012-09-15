@@ -916,9 +916,6 @@ class Actor(object):
               
     @classmethod
     def request(self,ui=None,request=None,action=None,**kw):
-        #~ self = cls
-        #~ if action is None:
-            #~ action = self.default_action
         return actions.ActionRequest(ui,self,request,action,**kw)
 
         

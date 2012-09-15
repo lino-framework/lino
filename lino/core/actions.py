@@ -614,6 +614,13 @@ class ActionRequest(object):
     order_by = None
     
     def __init__(self,ui,actor,request=None,action=None,renderer=None,param_values=None,**kw):
+        """
+        An ActionRequest is instantiated from different shortcut methods:
+        
+        - :meth:`lino.core.actors.Actor.request`
+        - :meth:`lino.core.actions.Action.request`
+        
+        """
         #~ ActionRequest.__init__(self,ui,action)
         if ui is None:
             ui = settings.LINO.ui
@@ -641,12 +648,11 @@ class ActionRequest(object):
         """
         See 20120825
         """
-        if param_values is None:
-            param_values = {}
+        pv = {}
         if self.actor.parameters:
             for k,pf in self.actor.parameters.items():
                 #~ if not param_values.has_key(k):
-                param_values[k] = pf.get_default()
+                pv[k] = pf.get_default()
                 
             """
             New since 20120913.
@@ -654,21 +660,25 @@ class ActionRequest(object):
             and since there is a parameter `client_state`, we override that parameter's default value.
             """
             for k,v in self.known_values.items():
-                if param_values.has_key(k):
-                    param_values[k] = v
+                if pv.has_key(k):
+                    pv[k] = v
             """
             New since 20120914.
-            Or this one: MyClientsByGroup has a known group, this 
+            MyClientsByGroup has a known group, this 
             must also appear as `group` parameter value.
+            Lino now understands tables where the master_key is also a parameter.
             """
             if self.actor.master_key is not None:
-                if param_values.has_key(self.actor.master_key):
-                    param_values[self.actor.master_key] = self.master_instance
+                if pv.has_key(self.actor.master_key):
+                    pv[self.actor.master_key] = self.master_instance
                 
             if request is not None:
-                param_values.update(self.ui.parse_params(self.ah,request))
+                pv.update(self.ui.parse_params(self.ah,request))
                 
-            self.param_values = AttrDict(**param_values)
+            if param_values is not None:
+                pv.update(param_values)
+                
+            self.param_values = AttrDict(**pv)
             
             #~ if param_values:
                 #~ # logger.info("20120608 param_values is %s",param_values)

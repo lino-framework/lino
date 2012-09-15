@@ -43,4 +43,16 @@ a file `/etc/logrotate.d/lino` with e.g. the  following content::
           endscript
   }  
   
-  
+Specifying `param_values` to a request
+---------------------------------------
+
+Fixed an internal Bug (since yesterday): 
+:meth:`lino.core.actions.ActionRequest.__init__`
+didn't obey when caller explicitly specified 
+`param_values`.
+
+
+`beid_jslib_root`
+-----------------
+
+New Lino site setting  :attr:`lino.Lino.beid_jslib_root`.
