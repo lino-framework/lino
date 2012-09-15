@@ -27,7 +27,7 @@ import os
 import sys
 import logging
 
-from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler, WatchedFileHandler
 
 from django.utils.log import AdminEmailHandler
 
@@ -36,16 +36,18 @@ def file_handler(filename,rotate,**kw):
     See also :doc:`/blog/2010/1129`
     """
     kw.setdefault('encoding','UTF-8')
-    if sys.platform == 'win32' or not rotate: 
-        h = logging.FileHandler(filename,**kw)
+    if sys.platform == 'win32': 
+        cl = logging.FileHandler
     else:
         if kw.has_key('when'):
             cl = TimedRotatingFileHandler
-        else:
+        elif rotate:
             cl = RotatingFileHandler
             kw.setdefault('maxBytes',1000000)
             #~ kw.setdefault('backupCount',10)
-        h = cl(filename,**kw)
+        else:
+            cl = WatchedFileHandler
+    h = cl(filename,**kw)
     #~ if hasattr(logging,'RotatingFileHandler'):
         #~ h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
     #~ else:

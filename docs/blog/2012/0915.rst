@@ -5,3 +5,42 @@
 - Fixed an unreleased bug: 
   Traceback when trying to select a contact of a 
   :class:`lino.modlib.contacts.models.CompanyContact`.
+
+
+Rotating logfiles
+-----------------
+
+Noticed that the testlino logger does *not* as expected rotate at midnight.
+Main reason was a bug in :mod:`lino.utils.log`.
+
+But I also discovered this post:
+`Why doesn't my TimedRotatingFileHandler rotate at midnight?
+<http://stackoverflow.com/questions/3496727/why-doesnt-my-timedrotatingfilehandler-rotate-at-midnight>`_
+which makes me think 
+that TimedRotatingFileHandler is *not* a candidate for a Django site, because:
+
+- Several processes share the same logfile
+- Some processes are long-running (mod_wsgi, watch_tim), some others not 
+  (most other management commands)
+  
+Next attempt is to use WatchedFileHandler, which (after today) happens if 
+there's neither a `when` nor a `rotate` keyword::
+  
+  LOGGING = dict(filename='/var/log/lino/testlino.log',level='INFO')
+  
+This supposes of course that you also configure logrotate by creating 
+a file `/etc/logrotate.d/lino` with e.g. the  following content::
+
+  /var/log/lino/testlino.log {
+          weekly
+          missingok
+          rotate 52
+          compress
+          delaycompress
+          notifempty
+          create 640 root adm
+          sharedscripts
+          endscript
+  }  
+  
+  
