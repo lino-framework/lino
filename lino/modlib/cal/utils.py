@@ -147,6 +147,9 @@ add('M', _('months') ,'months' )
 add('Y', _('years')  ,'years'  )
 
 
+def amonthago():
+    return DurationUnits.months.add_duration(datetime.date.today(),-1)
+        
 
 class TaskState(ChoiceList):
     """

@@ -913,6 +913,38 @@ class Actor(object):
             return rpt
         #~ logger.info("20120202 Actor.get_data_elem found nothing")
         return None
+        
+    @classmethod
+    def param_defaults(self,**kw):
+        """
+        Return a dict with default values for the parameters of a request.
+        
+        Usage example. The Clients table has a parameter `coached_since` 
+        whose default value is empty::
+        
+          class Clients(dd.Table):
+              parameters = dict(
+                ...
+                coached_since=models.dateField(blank=True))
+                
+        But NewClients is a subclass of Clients with the only difference 
+        that the default value is `amonthago`::
+                
+              
+          class NewClients(Clients):
+              @classmethod
+              def param_defaults(self,**kw):
+                  kw = super(NewClients,self).param_defaults(**kw)
+                  kw.update(coached_since=amonthago())
+                  return kw
+        
+            
+
+        """
+        for k,pf in self.parameters.items():
+            #~ if not param_values.has_key(k):
+            kw[k] = pf.get_default()
+        return kw
               
     @classmethod
     def request(self,ui=None,request=None,action=None,**kw):

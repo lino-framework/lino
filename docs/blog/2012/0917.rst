@@ -1,0 +1,5 @@
+20120917
+========
+
+New method 
+:meth:`lino.core.actors.param_defaults`

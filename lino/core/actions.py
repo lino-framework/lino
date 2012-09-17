@@ -648,12 +648,10 @@ class ActionRequest(object):
         """
         See 20120825
         """
-        pv = {}
         if self.actor.parameters:
-            for k,pf in self.actor.parameters.items():
-                #~ if not param_values.has_key(k):
-                pv[k] = pf.get_default()
-                
+          
+            pv = self.actor.param_defaults()
+            
             """
             New since 20120913.
             E.g. newcomers.Newcomers is a simple pcsw.Clients with known_values=dict(client_state=newcomer)
