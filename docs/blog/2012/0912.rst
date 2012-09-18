@@ -1,4 +1,71 @@
 20120912
 ========
 
-Finished with :doc:`0910`.
+- Finished with :doc:`0910`.
+
+
+- A selection of screenshots 
+  are now under :doc:`/user/screenshots`
+  and :doc:`/user/calendar`.
+  These screenshat have been generated 
+  in German and French using PhantomJS.
+
+
+- Error message "Exception 'contacts.Partner' has no _lino_default_table"
+  when trying to display the detail of a Budget. TRACEBACK::
+  
+    File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+
+    File "l:\snapshots\django\django\views\generic\base.py", line 58, in view
+      return self.dispatch(request, *args, **kwargs)
+
+    File "l:\snapshots\django\django\views\generic\base.py", line 79, in dispatch
+      return handler(request, *args, **kwargs)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 706, in get
+      datarec = elem2rec_detailed(ar,elem)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 165, in elem2rec_detailed
+      rec = elem2rec1(ar,rh,elem,**rec)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 120, in elem2rec1
+      rec.update(data=rh.store.row2dict(ar,elem))
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 1159, in row2dict
+      v = fld.full_value_from_object(row,ar)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 372, in full_value_from_object
+      return self.vf.value_from_object(obj,ar)
+
+    File "t:\hgwork\lino\lino\core\fields.py", line 306, in value_from_object
+      return m(obj,ar)
+
+    File "t:\hgwork\welfare\lino_welfare\modlib\debts\models.py", line 382, in preview
+      html += render(self.entries_by_group(ar,grp))
+
+    ...
+
+    File "t:\hgwork\lino\lino\core\layouts.py", line 190, in desc2elem
+      e = self.create_element(x)
+
+    File "t:\hgwork\lino\lino\core\layouts.py", line 223, in create_element
+      e = self.ui.create_layout_element(self,name,**pkw)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 694, in create_layout_element
+      return self.create_vurt_element(lh,name,de,**kw)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 723, in create_vurt_element
+      e = self.create_field_element(lh,vf,**kw)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 760, in create_field_element
+      e = ext_elems.field2elem(lh,field,**kw)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_elems.py", line 1788, in field2elem
+      return x(layout_handle,field,**kw)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_elems.py", line 742, in __init__
+      self.actor = dbtables.get_model_report(field.rel.to)
+
+    File "t:\hgwork\lino\lino\core\modeltools.py", line 357, in get_model_report
+      raise Exception("%r has no _lino_default_table" % model)

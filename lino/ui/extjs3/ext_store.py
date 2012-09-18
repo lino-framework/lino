@@ -500,8 +500,11 @@ class SpecialStoreField(StoreField):
 
 class DisabledFieldsStoreField(SpecialStoreField):
     """
-    See :doc:`/blog/2010/0803`,
-    :doc:`/blog/2011/1003`
+    See 20100803, 20111003, 20120901
+    NB: disabled_fields:
+    - vat.VatDocument.total_incl must be disabled and may not get submitted. 
+      ExtJS requires us to set this dynamically each time.
+    - JobsOverview.body may not be have the disbaled class
     """
     name = 'disabled_fields'
     
@@ -523,7 +526,6 @@ class DisabledFieldsStoreField(SpecialStoreField):
         
         for name in self.disabled_fields:
             d[name] = True
-        #~ print "20120901 TODO: maybe not necessary:", d
         
         # disable the primary key field if pk is set (i.e. on saved instance):
         if self.store.pk is not None and obj.pk is not None:
@@ -1256,9 +1258,9 @@ class Store:
         if pv and len(self.param_fields) == len(pv):
             for i,f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f,pv[i])
-        else:
-            for i,f in enumerate(self.param_fields):
-                kw[f.field.name] = parse(f,'')
+        #~ else: removed 20120918
+            #~ for i,f in enumerate(self.param_fields):
+                #~ kw[f.field.name] = parse(f,'')
         #~ logger.info("20120221 2 parse_params(%s) --> %r",pv,kw)
         return kw
         

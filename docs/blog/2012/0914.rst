@@ -1,6 +1,10 @@
 20120914
 ========
 
+Diverse Änderungen Endspurt "Coachings und Contacts".
+Vor allem an der Demo-Fixture habe ich einiges geschwitzt. 
+Coaching stories.
+
 Rendering tables to plain text
 ------------------------------
 

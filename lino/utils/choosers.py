@@ -120,12 +120,12 @@ class Chooser(FieldChooser):
                 return vf
         return self.model._meta.get_field(name)
             
-    def get_choices(self,**context):
+        
+    def get_choices(self,**context): # 20120918b
         "Return a list of choices for this chooser, using keyword parameters as context."
         args = []
         for varname in self.context_params:
             args.append(context.get(varname,None))
-        #~ print args
         return self.meth(*args)
       
     #~ def get_instance_choices(self,obj):
@@ -167,6 +167,9 @@ class Chooser(FieldChooser):
         for cv in self.converters:
             kw = cv.convert(**kw)
         
+        if tbl.known_values:
+            kw.update(tbl.known_values)
+                
         if False: # removed 20120815 #1114
             #~ ar = tbl.request(ui,request,tbl.default_action)
             if ar.create_kw:
@@ -178,7 +181,7 @@ class Chooser(FieldChooser):
             #~ if tbl.known_values:
                 #~ kw.update(tbl.known_values)
         #~ logger.info("20120602 get_request_choices(%r) -> %r",self.converters,kw)
-        return self.get_choices(**kw)
+        return self.get_choices(**kw) # 20120918b
         
     def get_text_for_value(self,value,obj):
         m = getattr(self.field,'get_text_for_value',None)
@@ -247,6 +250,7 @@ def chooser(**options):
             #~ print 20101220, args
             return fn(*args)
         wrapped.context_params = fn.func_code.co_varnames[1:fn.func_code.co_argcount]
+        #~ 20120918b wrapped.context_params = fn.func_code.co_varnames[2:fn.func_code.co_argcount]
         for k,v in options.items():
             setattr(wrapped,k,v)
         return classmethod(wrapped)

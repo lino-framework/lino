@@ -179,6 +179,13 @@ class Action(object):
     """
     """
     
+    use_param_panel = False
+    """
+    Used internally. This is True for window actions whose window 
+    use the parameter panel: grid and emptytable (but not showdetail)
+    """
+    
+    
     actor = None
     """
     Internally used to store the :class:`lino.core.actors.Actor` 
@@ -442,6 +449,7 @@ class RedirectAction(Action):
 
 class GridEdit(TableAction):
   
+    use_param_panel = True
     show_in_workflow = False
     opens_a_window = True
 
@@ -527,6 +535,7 @@ class DuplicateRow(RowAction):
 
 
 class ShowEmptyTable(ShowDetailAction):
+    use_param_panel = True
     callable_from = tuple()
     url_action_name = 'show' 
     default_format = 'html'
@@ -650,7 +659,7 @@ class ActionRequest(object):
         """
         if self.actor.parameters:
           
-            pv = self.actor.param_defaults()
+            pv = self.actor.param_defaults(self)
             
             """
             New since 20120913.
@@ -809,6 +818,8 @@ class ActionRequest(object):
         if self.subst_user is not None:
             #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
             bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id
+        #~ if self.actor.__name__ == 'MyClients':
+            #~ print "20120918 actions.get_status", kw
         return kw
         
 

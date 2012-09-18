@@ -1,0 +1,5 @@
+20120908
+========
+
+- worked on migrate
+- renamed Third to ProjectContact

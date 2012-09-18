@@ -56,3 +56,43 @@ didn't obey when caller explicitly specified
 -----------------
 
 New Lino site setting  :attr:`lino.Lino.beid_jslib_root`.
+
+
+lino_welfare
+------------
+
+
+- ClientContactTypes, HealthInsurances, Pharmacies ...
+
+  In der Tabelle Klientenkontakte (Kontakte pro Klient) hängt die 
+  Auswahlliste der Firmen jetzt von der Kontaktart ab. 
+  Also bei Kontaktart "Krankenkasse" kann man nur noch Krankenkassen 
+  auswählen etc.
+  
+- tim2lino, migrate: Personen, die keine NISS aber wohl eine Gesdos-Nr haben, 
+  bleiben jetzt ebenfalls Klienten, und kriegen die Partner-Nr als NISS.
+  
+- Removed obsolete field Company.hourly_rate  
+
+- Removed the tables MyClients, MyClientsByGroup, 
+  MyActiveClients and MyPrimaryClients because these cases 
+  are now handled via `Clients.parameters`.
+
+Uff! die Tabelle :class:`lino_welfare.modlib.pcsw.models.UsersWithClients` 
+in der Demo-Datenbank hat jetzt einen einigermaßen realistischen Inhalt:
+
+=============== ===== ========= ========= ======= ======= =============== =============== =====
+Begleiter 1     Bilan Formation Recherche Travail Standby Komplette Akten Aktive Klienten Total
+=============== ===== ========= ========= ======= ======= =============== =============== =====
+Alicia Allmanns 3     3         5         2       2       7               13              15
+Hubert Huppertz 4     5         5         5       5       9               19              24
+Mélanie Mélard  6     5         7         4       6       17              22              28
+Total (3 rows)  13    13        17        11      13      33              54              67
+=============== ===== ========= ========= ======= ======= =============== =============== =====  
+
+Hier übrigens das Skript, das ich zum Generieren obiger Tabelle benutzt habe:
+
+
+.. literalinclude:: 0915.py
+
+

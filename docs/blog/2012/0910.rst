@@ -5,6 +5,11 @@ Cool: I discovered
 `Unit Testing with Jasmine
 <http://docs.sencha.com/ext-js/4-0/#!/guide/testing>`_
 and wrote my first JavaScript tests.
+
+Worked on the new ProjectContacts and Coaching tables. 
+CoachingType, ClientState, demo fixtures and watch_tim.
+
+
 Added Lino configuration parameters 
 :attr:`lino.Lino.use_jasmine`
 and

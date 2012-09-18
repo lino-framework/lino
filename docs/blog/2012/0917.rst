@@ -1,5 +1,16 @@
 20120917
 ========
 
-New method 
-:meth:`lino.core.actors.param_defaults`
+- New method 
+  :meth:`lino.core.actors.Actor.param_defaults`.
+
+- Fixed bug in :term:`testing` that caused a
+  server traceback when trying to open 
+  :class:`lino_welfare.modlib.jobs.models.JobsOverview`::
+
+    AttributeError 'module' object has no attribute 'only_coached_persons'
+    ...
+    File "/var/snapshots/lino-welfare-dev/lino_welfare/modlib/jobs/models.py", line 1260, in body
+        qs = pcsw.only_coached_persons(qs,today,
+
+

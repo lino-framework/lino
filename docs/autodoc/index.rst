@@ -28,3 +28,4 @@ extension.
     lino.utils
 
     lino.test_apps
+

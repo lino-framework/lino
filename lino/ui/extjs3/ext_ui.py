@@ -302,21 +302,18 @@ class ExtRenderer(HtmlRenderer):
             return dict(text=prepare_label(v),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
             if v.params is not None:
-                ar = v.action.actor.request(self.ui,None,v.action,**v.params)
+                #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
+                ar = v.action.request(self.ui,**v.params)
                 return handler_item(v,self.request_handler(ar),v.action.help_text)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
             if v.action:
-                    #~ handler = self.action_call(v.action,params=v.params)
-                    return handler_item(v,self.action_call(None,v.action),v.action.help_text)
-                    #~ handler = "function(){%s}" % self.action_call(
-                        #~ v.action,None,v.params)
-                    #~ return dict(text=prepare_label(v),handler=js_code(handler))
-            #~ elif v.params is not None:
-                #~ ar = v.action.actor.request(self,None,v.action,**v.params)
-                #~ url = self.get_request_url(ar)
+                return handler_item(v,self.action_call(None,v.action,{}),v.action.help_text)
+                #~ ar = v.action.request(self.ui)
+                #~ return handler_item(v,self.request_handler(ar),v.action.help_text)
             elif v.href is not None:
                 url = v.href
             elif v.request is not None:
+                raise Exception("20120918 request %r still used?" % v.request)
                 url = self.get_request_url(v.request)
             elif v.instance is not None:
                 h = self.instance_handler(None,v.instance)
@@ -341,8 +338,10 @@ class ExtRenderer(HtmlRenderer):
             return dict(text=prepare_label(v),href=url)
         return v
         
-    def action_call(self,request,a,after_show={}):
+    def action_call(self,request,a,after_show):
         if a.opens_a_window:
+            #~ if after_show is None:
+                #~ after_show = {}
             if request and request.subst_user:
                 after_show[ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
             if isinstance(a,actions.ShowEmptyTable):
@@ -409,7 +408,7 @@ class ExtRenderer(HtmlRenderer):
     def request_handler(self,ar,*args,**kw):
         #~ bp = rr.request2kw(self.ui,**kw)
         st = ar.get_status(self.ui,**kw)
-        return self.action_call(ar.request,ar.action,after_show=st)
+        return self.action_call(ar.request,ar.action,st)
         
     def href_to_request(self,rr,text=None):
         url = self.js2url(self.request_handler(rr))
@@ -1491,12 +1490,14 @@ tinymce.init({
             h.list_layout = None
                 
         if h.actor.parameters:
-            if h.actor.params_template:
-                params_template = h.actor.params_template
+            #~ if h.actor.params_layout:
+                #~ raise Exception("20120918 rename params_template to params_layout!")
+            if h.actor.params_layout:
+                params_layout = h.actor.params_layout
             else:
-                #~ params_template= ' '.join([pf.name for pf in h.actor.params])
-                params_template= ' '.join(h.actor.parameters.keys())
-            pl = layouts.ParamsLayout(params_template,h.actor)
+                #~ params_layout= ' '.join([pf.name for pf in h.actor.params])
+                params_layout= ' '.join(h.actor.parameters.keys())
+            pl = layouts.ParamsLayout(params_layout,h.actor)
             h.params_layout = pl.get_layout_handle(self)
             #~ h.params_layout.main.update(hidden = h.actor.params_panel_hidden)
             #~ h.params_layout = layouts.LayoutHandle(self,pl)
@@ -1812,12 +1813,20 @@ tinymce.init({
       
         rpt = rh.actor
         
+        if rpt.parameters and action.use_param_panel:
+            params = rh.params_layout.main
+        else:
+            params = None
+        #~ params = None
+        
         if isinstance(action,actions.ShowDetailAction):
             mainPanelClass = "Lino.%sPanel" % action
         elif isinstance(action,actions.InsertRow): 
             mainPanelClass = "Lino.%sPanel" % action
         elif isinstance(action,actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
+            #~ if rh.actor.parameters:
+                #~ params = rh.params_layout.main
         elif isinstance(action,CalendarAction):
             mainPanelClass = "Lino.CalendarPanel"
             #~ mainPanelClass = "Lino.CalendarAppPanel"
@@ -1826,12 +1835,6 @@ tinymce.init({
             return 
         if action.actor is None:
             raise Exception("20120524 %s %s actor is None" % (rh.actor,action))
-        if rpt.parameters:
-            params = rh.params_layout.main
-            #~ assert params.__class__.__name__ == 'ParameterPanel'
-        else:
-            params = None
-            
         windowConfig = dict()
         #~ ws = action.actor.window_size
         wl = action.get_window_layout()

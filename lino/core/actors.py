@@ -387,7 +387,9 @@ class Actor(object):
     Set this to a `dict` of `name = models.XyzField()` pairs.
     """
     
-    params_template = None
+    #~ params_template = None # no longer used
+    
+    params_layout = None
     """
     If this table has parameters, specify here how they should be 
     laid out in the parameters panel.
@@ -676,9 +678,9 @@ class Actor(object):
         return self.label
         
     @classmethod
-    def get_title(self,rr):
+    def get_title(self,ar):
         """
-        Return the title of this Table for the given request `rr`.
+        Return the title of this Table for the given request `ar`.
         Override this if your Table's title should mention for example filter conditions.
         """
         return self.title or self.label
@@ -915,7 +917,7 @@ class Actor(object):
         return None
         
     @classmethod
-    def param_defaults(self,**kw):
+    def param_defaults(self,ar,**kw):
         """
         Return a dict with default values for the parameters of a request.
         
@@ -925,7 +927,7 @@ class Actor(object):
           class Clients(dd.Table):
               parameters = dict(
                 ...
-                coached_since=models.dateField(blank=True))
+                coached_since=models.DateField(blank=True))
                 
         But NewClients is a subclass of Clients with the only difference 
         that the default value is `amonthago`::
@@ -933,8 +935,8 @@ class Actor(object):
               
           class NewClients(Clients):
               @classmethod
-              def param_defaults(self,**kw):
-                  kw = super(NewClients,self).param_defaults(**kw)
+              def param_defaults(self,ar,**kw):
+                  kw = super(NewClients,self).param_defaults(ar,**kw)
                   kw.update(coached_since=amonthago())
                   return kw
         

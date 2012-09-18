@@ -1,6 +1,13 @@
 20120831
 ========
 
+Lino-Welfare:
+Not every Person is a Client.
+An important but almost invisible change, 
+which is a challenge to the framework and 
+mainly to data migration: 
+new model 'Client' is now an MTI child of Person.
+
 Optimized error reporting:
 
 - Error message "Part coach1 

@@ -391,7 +391,7 @@ class Inspector(dd.VirtualTable):
       inspected=models.CharField(_("Inspected object"),max_length=100,blank=True),
       show_callables=models.BooleanField(_("show callables"),default=False)
       )
-    params_template = 'inspected show_callables'
+    params_layout = 'inspected show_callables'
     #~ editable = False
     #~ slave_grid_format = 'html'    
   

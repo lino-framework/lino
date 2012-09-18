@@ -1162,7 +1162,7 @@ if True: # settings.LINO.user_model:
           show_coming = models.BooleanField(_("coming contracts"),default=True),
           today = models.DateField(_("on"),blank=True,default=datetime.date.today),
         )
-        params_template = """type show_past show_active show_coming today user"""
+        params_layout = """type show_past show_active show_coming today user"""
         #~ params_panel_hidden = False
         
         #~ master_key = 'user'

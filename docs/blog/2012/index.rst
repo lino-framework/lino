@@ -276,6 +276,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`05 <0905>`
   :doc:`06 <0906>`
   07
+  :doc:`08 <0908>`
   |br| 
   :doc:`10 <0910>`
   11 12
@@ -284,6 +285,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`15 <0915>`
   |br| 
   :doc:`17 <0917>`
+  :doc:`18 <0918>`
   
   
 .. |Oct| replace::  **October**

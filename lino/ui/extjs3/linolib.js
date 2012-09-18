@@ -437,9 +437,10 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
 
 
 Lino.open_window = function(win,st) {
-  //~ console.log("20120203 Lino.open_window()",win,st);
+  //~ console.log("20120918 Lino.open_window()",win,st);
   var cw = Lino.current_window;
   if (cw) {
+    //~ console.log("20120918 Lino.open_window() save current status",cw.main_item.get_status());
     Lino.window_history.push({
       window:cw,
       status:cw.main_item.get_status()
@@ -1604,11 +1605,22 @@ Lino.MainPanel = {
   }
   ,add_param_values : function (p) {
     if (this.params_panel) {
+      /* 
+      20120918 add param_values to the request string 
+      *only if the params_form is dirty*.
+      Otherwise Actor.default_params() would never be used.
+      */
+      if (!this.params_panel.form.isDirty()) return;
       //~ var formdata = Lino.form2dict(this.params_panel);
       //~ console.log('20120203 add_param_values formdata', formdata);
       //~ p.$ext_requests.URL_PARAM_PARAM_VALUES = formdata;
       //~ return;
       //~ var formdata = Ext.lib.Ajax.serializeForm(frm);
+      p.$ext_requests.URL_PARAM_PARAM_VALUES = this.get_param_values();
+      //~ console.log("20120203 add_param_values added pv",pv,"to",p);
+    }
+  },
+  get_param_values : function() {
       var fields = this.params_panel.fields;
       //~ console.log('20120116 gonna loop on', fields);
       var pv = Array(fields.length);
@@ -1620,14 +1632,12 @@ Lino.MainPanel = {
               pv[i] = f.getValue(); 
           }
       }
-      p.$ext_requests.URL_PARAM_PARAM_VALUES = pv;
-      //~ console.log("20120203 add_param_values added pv",pv,"to",p);
-    }
-    
+      return pv;
   },
   set_param_values : function(pv) {
-    //~ console.log('20120203 set_param_values', pv);
     if (this.params_panel) {
+      //~ console.log('20120203 MainPanel.set_param_values', pv);
+      this.status_param_values = pv;
       if (pv) this.params_panel.form.my_loadRecord(pv);
       else this.params_panel.form.reset(); 
       
@@ -1940,10 +1950,15 @@ Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel, 
     function(rec) {
       //~ panel.loadMask.show();
-      panel.ls_detail_handler.run({
+      var pv = {};
+      panel.add_param_values(pv); // 20120918
+      var status = {
         record_id:rec.id,
         base_params:panel.get_base_params()
-      });
+        //~ param_values: pv.$ext_requests.URL_PARAM_PARAM_VALUES
+      }
+      //~ console.log("20120918 Lino.show_detail",status);
+      panel.ls_detail_handler.run(status);
       //~ panel.loadMask.hide();
       //~ panel.containing_window.window.hideMask();
       //~ panel.el.unmask();
@@ -2428,13 +2443,15 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       if (tp instanceof Ext.TabPanel) {
         st.active_tab = tp.getActiveTab();
       }
+      st.param_values = this.status_param_values;
       return st;
   },
   set_status : function(status){
-    //~ console.log('20120622 FormPanel.set_status()',this,status);
+    //~ console.log('20120918 FormPanel.set_status()',status);
     this.clear_base_params();
     if (status == undefined) status = {};
-    if (status.param_values) this.set_param_values(status.param_values);
+    //~ if (status.param_values) 
+    this.set_param_values(status.param_values);
     if (status.base_params) this.set_base_params(status.base_params);
     var tp = this.items.get(0);
     if (tp instanceof Ext.TabPanel) {
@@ -2480,7 +2497,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ this.base_params = Ext.apply({},this.base_params); // make sure it is an instance variable
     delete p['$URL_PARAM_FILTER'] // 20120725
     Ext.apply(this.base_params,p);
-    //~ if (p.param_values) this.set_param_values(p.param_values);  
     if (this.record_selector) {
         var store = this.record_selector.getStore();
         for (k in p) store.setBaseParam(k,p[k]);
@@ -2600,7 +2616,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         if (this.loadMask) this.loadMask.hide();
         if (response.responseText) {
           var rec = Ext.decode(response.responseText);
-          //~ console.log('goto_record_id success',rec);
+          //~ console.log('20120918 goto_record_id success',rec);
+          this.set_param_values(rec.param_values);
           if (rec.navinfo && rec.navinfo.recno == 0) {
               /* 
                 recno 0 means "the requested pk exists but is not contained in the requested queryset".
@@ -3098,6 +3115,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
               //~ if (da[item.itemId]) item.disable(); else item.enable();
             //~ });
         //~ };
+        this_.set_param_values(this_.store.reader.arrayData.param_values);
+        //~ this_.set_status(this_.store.reader.arrayData.status);
+        //~ 20120918
         if (this_.containing_window)
             this_.set_window_title(this_.store.reader.arrayData.title);
             //~ this_.containing_window.setTitle(this_.store.reader.arrayData.title);
@@ -3315,22 +3335,23 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   
   
   get_status : function(){
-    var p = { base_params : this.get_base_params()};
+    var st = { base_params : this.get_base_params()};
     if (!this.hide_top_toolbar) {
-        p.current_page = this.getTopToolbar().current;
+        st.current_page = this.getTopToolbar().current;
     }
-    //~ console.log("20120213 GridPanel.get_status",p);
-    return p;
+    st.param_values = this.status_param_values;
+    //~ console.log("20120213 GridPanel.get_status",st);
+    return st;
   },
   
   /* 
   Lino.GridPanel.set_status() 
   */
   set_status : function(status){
-    //~ console.log("20120717 GridPanel.set_status",status);
+    //~ console.log("20120918 GridPanel.set_status",status);
     this.clear_base_params();
     if (status == undefined) status = {};
-    if (status.param_values) this.set_param_values(status.param_values);
+    this.set_param_values(status.param_values);
     if (status.base_params) { 
       this.set_base_params(status.base_params);
     }
@@ -4302,22 +4323,35 @@ Lino.unused_ParamWindow = Ext.extend(Lino.Window,{
 })(); 
 
 Ext.override(Ext.form.BasicForm,{
-    my_loadRecord : function(record_data){
+    my_loadRecord : function(values){
     //~ loadRecord : function(record){
-        /* Forward also `record` to field.setValue() 
-        so that Lino.Combobox can use it. 
-        Lino never uses an array record here, so we can ignore this case. 
+        /* Same as ExtJS's loadRecord() (setValues()), except that we 
+        forward also the record to field.setValue() so that Lino.Combobox 
+        can use it. 
         */
-        //~ console.log('20110214e loadRecord',record.data)
-        var field, id;
-        for(id in record_data){
-            if(!Ext.isFunction(record_data[id]) && (field = this.findField(id))){
-                field.setValue(record_data[id],record_data);
-                if(this.trackResetOnLoad){
-                    field.originalValue = field.getValue();
-                    //~ if (field.hiddenField) {
-                      //~ field.hiddenField.originalValue = field.hiddenField.value;
-                    //~ }
+        //~ console.log('20120918 my_loadRecord',values)
+        if(Ext.isArray(values)){ 
+            for(var i = 0, len = values.length; i < len; i++){
+                var v = values[i];
+                var f = this.findField(v.id);
+                if(f){
+                    f.setValue(v.value,values);
+                    if(this.trackResetOnLoad){
+                        f.originalValue = f.getValue();
+                    }
+                }
+            }
+        }else{ 
+            var field, id;
+            for(id in values){
+                if(!Ext.isFunction(values[id]) && (field = this.findField(id))){
+                    field.setValue(values[id],values);
+                    if(this.trackResetOnLoad){
+                        field.originalValue = field.getValue();
+                        //~ if (field.hiddenField) {
+                          //~ field.hiddenField.originalValue = field.hiddenField.value;
+                        //~ }
+                    }
                 }
             }
         }

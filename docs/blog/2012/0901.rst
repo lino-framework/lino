@@ -1,6 +1,14 @@
 20120901
 ========
 
+
+Lino-Welfare migrate:
+
+- Personen mit is_deprecated werden jetzt immer zu normalen Menschen, 
+  nie zu Klienten. Denn die NISS-Dubletten in den bestehenden Daten 
+  sind wahrscheinlich ausnahmslos solche Fälle.
+
+
 Continued on :mod:`lino.apps.presto`
 
 

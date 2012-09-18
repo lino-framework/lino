@@ -1,0 +1,28 @@
+20120918
+========
+
+
+- API: 
+  To specify the template of the layout of a parameter panel, 
+  you no longer use `params_template` but 
+  :attr:`params_layout <lino.core.actors.Actor.params_layout>`.
+  
+- Several details didn't yet work when using parameters more heavily. 
+  The status of a grid window now also includes the content of these fields.
+  A Detail Window now longer has a parameters panel.
+  
+- jobs.JobsOverview was blue. Because `disabled_fields` contained `{body:true}`.
+  removed `ext_store.DisabledFieldsStoreField.disabled_fields` which was used 
+  to explicitly disable all non-editable fields (see :doc:`0901`).
+  
+- :class:`lino_welfare.modlib.jobs.models.JobsOverview` had useless scrollbars. Added a autoScroll=False 
+  in `ext_options` method of :class:`lino.ui.extjs3.ext_elems.Panel`.
+
+- Fixed an internal bug in :meth:`lino.utils.choosers.Chooser.get_request_choices`:
+  The table's `known_values` wasn't used to fill the context, 
+  causing `account_choices` of 
+  :class:`lino_welfare.modlib.debts.models.Entry`
+  to return empty list even when called from 
+  :class:`lino_welfare.modlib.debts.models.LiabilitiesByBudget` 
+  where the account_type *is* known.
+  

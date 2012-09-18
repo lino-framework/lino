@@ -242,6 +242,10 @@ extlinks = {
   #~ 'django': ('http://docs.djangoproject.com', 'http://docs.djangoproject.com/en/dev/objects.inv')
 #~ }
 
+#~ welfare_inv = os.path.join('..','..','welfare','objects.inv')
+intersphinx_mapping = {
+  'welfare': ('http://packages.python.org/lino-welfare/en', None )
+}
 
 autosummary_generate = True
 

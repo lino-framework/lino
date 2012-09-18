@@ -142,6 +142,8 @@ def elem2rec_empty(ar,ah,elem,**rec):
     rec.update(title=ar.get_action_title())
     rec.update(id=-99998)
     #~ rec.update(id=elem.pk) or -99999)
+    if ar.actor.parameters:
+        rec.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
     return rec
 
 def elem2rec_detailed(ar,elem,**rec):
@@ -347,7 +349,7 @@ class Index(View):
         ui = settings.LINO.ui
         a = settings.LINO.get_main_action(request.subst_user or request.user)
         if a is not None:
-            kw.update(on_ready=ui.ext_renderer.action_call(request,a))
+            kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
         return http.HttpResponse(ui.html_page(request,**kw))
 
 class RunJasmine(View):
@@ -411,7 +413,8 @@ class Choices(View):
         Return a JSON object with two attributes `count` and `rows`,
         where `rows` is a list of `(display_text,value)` tuples.
         Used by ComboBoxes or similar widgets.
-        If `fldname` is not specified, returns the choices for the `jumpto` widget.
+        If `fldname` is not specified, returns the choices for 
+        the `record_selector` widget.
         """
         rpt = requested_report(app_label,rptname)
         if fldname is None:
@@ -458,7 +461,7 @@ class Choices(View):
                     # same code as for ForeignKey
                     def row2dict(obj,d):
                         d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                        d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+                        d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
                         return d
                 else:
                     def row2dict(obj,d):
@@ -483,7 +486,7 @@ class Choices(View):
                 #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
                 def row2dict(obj,d):
                     d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                    d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+                    d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk 
                     return d
             else:
                 raise http.Http404("No choices for %s" % fldname)
@@ -854,12 +857,17 @@ class ApiList(View):
                 d = rh.store.row2list(ar,row)
                 rows.append(d)
                 total_count += 1
-            return json_response_kw(count=total_count,
+            #~ 20120918
+            kw = dict(count=total_count,
               rows=rows,
               success=True,
-              title=unicode(ar.get_title()),
+              #~ status=ar.get_status(ar.ui),
+              title=unicode(ar.get_title()))
               #~ disabled_actions=rpt.disabled_actions(ar,None),
-              gc_choices=[gc.data for gc in ar.actor.grid_configs])
+              #~ gc_choices=[gc.data for gc in ar.actor.grid_configs])
+            if ar.actor.parameters:
+                kw.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
+            return json_response(kw) 
                 
         if fmt == ext_requests.URL_FORMAT_HTML:
             #~ ar.renderer = ui.ext_renderer

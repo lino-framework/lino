@@ -158,18 +158,71 @@ class TableRequest(actions.ActionRequest):
     offset = None
     #~ create_rows = None
     
+    _data_iterator = None
+    _sliced_data_iterator = None
+    
     def __init__(self,ui,actor,request=None,action=None,**kw):
         if not (isinstance(actor,type) and issubclass(actor,AbstractTable)):
             raise Exception("Expected an AbstractTable subclass, got %r" % actor)
         actions.ActionRequest.__init__(self,ui,actor,request,action,**kw)
-        #~ self.setup(*args,**kw)
-        self.data_iterator = self.get_data_iterator()
-        self.sliced_data_iterator = self.data_iterator
-        if self.offset is not None:
-            self.sliced_data_iterator = self.sliced_data_iterator[self.offset:]
-        if self.limit is not None:
-            self.sliced_data_iterator = self.sliced_data_iterator[:self.limit]
+        #~ self.execute()
         
+    def execute(self):
+        self._data_iterator = self.get_data_iterator()
+        self._sliced_data_iterator = self._data_iterator
+        if self.offset is not None:
+            self._sliced_data_iterator = self._sliced_data_iterator[self.offset:]
+        if self.limit is not None:
+            self._sliced_data_iterator = self._sliced_data_iterator[:self.limit]
+            
+    def get_data_iterator_property(self):
+        if self._data_iterator is None:
+            self.execute()
+        return self._data_iterator
+        
+    def get_sliced_data_iterator_property(self):
+        if self._sliced_data_iterator is None:
+            self.execute()
+        return self._sliced_data_iterator 
+        
+    data_iterator = property(get_data_iterator_property)
+    sliced_data_iterator = property(get_sliced_data_iterator_property)
+    
+
+    @classmethod
+    def get_row_by_pk(self,pk):
+        return self.data_iterator[int(pk) - 1]
+        
+    def get_data_iterator(self):
+        if self.actor.get_data_rows is not None:
+            l = []
+            rows = self.actor.get_data_rows(self)
+            for row in rows:
+                if len(l) > 300:
+                    raise Exception("20120521 More than 300 items in %s" % 
+                        unicode(rows))
+                group = self.actor.group_from_row(row)
+                group.process_row(l,row)
+            return l
+        #~ logger.info("20120914 tables.get_data_iterator %s",self)
+        #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)
+        return self.actor.get_request_queryset(self)
+        
+    def get_total_count(self):
+        """
+        Calling `len()` on a QuerySet will execute the whole SELECT.
+        See :doc:`/blog/2012/0124`
+        """
+        di = self.data_iterator
+        if isinstance(di,QuerySet):
+            return di.count()
+        return len(di)
+        
+
+    def __iter__(self):
+        return self.data_iterator.__iter__()
+        
+    
         
     def parse_req(self,request,rqdata,**kw):
         #~ logger.info("20120723 %s.parse_req()",self.actor)
@@ -467,39 +520,6 @@ class TableRequest(actions.ActionRequest):
                 bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance
         return kw
         
-        
-
-    @classmethod
-    def get_row_by_pk(self,pk):
-        return self.data_iterator[int(pk) - 1]
-        
-    def get_data_iterator(self):
-        if self.actor.get_data_rows is not None:
-            l = []
-            rows = self.actor.get_data_rows(self)
-            for row in rows:
-                if len(l) > 300:
-                    raise Exception("20120521 More than 300 items in %s" % 
-                        unicode(rows))
-                group = self.actor.group_from_row(row)
-                group.process_row(l,row)
-            return l
-        #~ logger.info("20120914 tables.get_data_iterator %s",self)
-        #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)
-        return self.actor.get_request_queryset(self)
-        
-    def get_total_count(self):
-        """
-        Calling `len()` on a QuerySet will execute the whole SELECT.
-        See :doc:`/blog/2012/0124`
-        """
-        if isinstance(self.data_iterator,QuerySet):
-            return self.data_iterator.count()
-        return len(self.data_iterator)
-        
-
-    def __iter__(self):
-        return self.data_iterator.__iter__()
         
     def __str__(self):
         #~ kw = dict(actor=str(self.actor))

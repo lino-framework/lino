@@ -1,6 +1,19 @@
 20120913
 ========
 
+Der Endspurt vor dem Release der Version 0.1.0 hat begonnen.
+
+- Ein Coaching hat keinen Status, wohl aber einen Typ (`type`), 
+  der auf primär (Begleiter 1) oder sekundär (Begleiter 2) steht.
+  
+- Wie nennen wir die Tabelle mit den Krankenkassen, Kontaktpersonen ADG, Rechtsanwälten, Apotheken...? "Klientenkontakte" (ClientContacts) oder "Drittpersonen" (Thirds)?
+
+- Neuer Button "eId-Karte einlesen" auf einem Klienten.
+  Momentan zeigt er die eingelesenen Daten nur am Bildschirm an.  
+  Dank an Johan De Schutter und seine 
+  `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_.
+
+
 - Changes in how ActionRequest.__init__() handles parameter values.
   E.g. newcomers.Newcomers is now a simple subclass of pcsw.Clients 
   with known_values=dict(client_state=Clientstates.newcomer),

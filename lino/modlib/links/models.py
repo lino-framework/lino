@@ -80,8 +80,8 @@ class Link(dd.Model):
         blank=True,null=True,
         verbose_name=_('(b object)'))
         
-    a = dd.LinkedForeignKey(type,'a')
-    b = dd.LinkedForeignKey(type,'b')
+    #~ a = dd.LinkedForeignKey(type,'a')
+    #~ b = dd.LinkedForeignKey(type,'b')
     
     
     #~ a = dd.GenericForeignKey(

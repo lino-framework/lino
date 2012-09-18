@@ -11,7 +11,8 @@ Glossary
   dummy module
     See :func:`lino.core.modeltools.resolve_app`.
 
-  
+  testing
+    The version that is currently being tested.
   
   DavLink
     See :doc:`/davlink/index`

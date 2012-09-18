@@ -1,6 +1,15 @@
 20120829
 ========
 
+- Lino-Welfare:
+  Miscellaneous translations.
+  Added explicit `blank=True` to ChoiceList fields where necessary.
+  
+  "jobs.Contract [u'Datumsbereich 01.12.2011...31.12.2011 
+  au\xdferhalb Begleitungsperiode 01.08.2012....'] 
+  (1 object(s) with primary key 180)"
+
+
 - Added i18n support (``locale`` dirs) for modules 
   :mod:`lino.modlib.accounts`
   and

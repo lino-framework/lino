@@ -1,6 +1,10 @@
 20120906
 ========
 
+:mod:`lino_welfare`. Added new models 
+:class:`Coaching <lino_welfare.modlib.pcsw.models.Coaching>` 
+:class:`Third <lino_welfare.modlib.pcsw.models.ClientContact>`.
+
 Virtual fields declared on the model must have
 been attached before calling Model.site_setup(),
 e.g. because pcsw.Person.site_setup()
