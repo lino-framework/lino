@@ -1,0 +1,11 @@
+20120919
+========
+
+Endspurt vor Release 1.5.0:
+Fehlersuche "Keine weiteren Records" (Lino.show_detail muss pv nach base_params setzen)                                                 
+Übersetzungen                                                       
+Clients.get_title                                                   
+alte Felder jetzt wirklich raus                                     
+Lino.get_reminder_generators_by_user
+Client.update_reminders                                                    
+

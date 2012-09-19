@@ -873,10 +873,17 @@ def setup_my_menu(site,ui,user,m):
     pass
   
 def setup_master_menu(site,ui,user,m): 
+    """
+    The contacts module adds entries to the master menu only 
+    if none of Persons, Companies, Partners is abstract.
+    """
     m = m.add_menu("contacts",MODULE_NAME)
-    m.add_action(Persons)
-    m.add_action(Companies)
-    m.add_action(Partners)
+    #~ actors = (Persons,Companies,Partners)
+    for m in (Person,Company,Partner):
+        if m._meta.abstract: 
+            return 
+    for a in (Persons,Companies,Partners):
+        m.add_action(a)
     
 def setup_config_menu(site,ui,user,m): 
     config_contacts = m.add_menu("contacts",MODULE_NAME)

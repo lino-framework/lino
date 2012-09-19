@@ -2036,6 +2036,9 @@ def customize_users():
             verbose_name=_("Default calendar"),
             help_text=_("""The default calendar for your events and tasks.""")
     ))
+    
+    users = dd.resolve_app('users')
+    users.User.update_reminders = UpdateReminders()
         
 
     
@@ -2047,7 +2050,7 @@ def site_setup(site):
     Adds a "Calendar" tab and the :class:`UpdateReminders` 
     action to `users.User`
     """
-    site.modules.users.Users.update_reminders = UpdateReminders()
+    #~ site.modules.users.User.update_reminders = UpdateReminders()
     
     site.modules.users.Users.add_detail_panel('cal_left',"""
     calendar access_class 

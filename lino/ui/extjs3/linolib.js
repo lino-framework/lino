@@ -1950,11 +1950,12 @@ Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel, 
     function(rec) {
       //~ panel.loadMask.show();
-      var pv = {};
-      panel.add_param_values(pv); // 20120918
+      var bp = panel.get_base_params();
+      //~ var bp = {};
+      panel.add_param_values(bp); // 20120918
       var status = {
         record_id:rec.id,
-        base_params:panel.get_base_params()
+        base_params:bp
         //~ param_values: pv.$ext_requests.URL_PARAM_PARAM_VALUES
       }
       //~ console.log("20120918 Lino.show_detail",status);
