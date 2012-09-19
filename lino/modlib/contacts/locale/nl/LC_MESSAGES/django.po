@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-29 05:41+0100\n"
+"POT-Creation-Date: 2012-09-19 10:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -136,95 +136,99 @@ msgstr ""
 msgid "Birth date"
 msgstr ""
 
-#: .\models.py:376
+#: .\models.py:369
 msgid "Age"
 msgstr ""
 
-#: .\models.py:380
+#: .\models.py:373
 msgid "unknown"
 msgstr ""
 
-#: .\models.py:381
+#: .\models.py:374
 #, python-format
 msgid "%d years"
 msgstr ""
 
-#: .\models.py:416
+#: .\models.py:390
 msgid "First name"
 msgstr ""
 
-#: .\models.py:421
+#: .\models.py:395
 msgid "Last name"
 msgstr ""
 
-#: .\models.py:425
+#: .\models.py:399
 msgid "Title"
 msgstr ""
 
-#: .\models.py:468
+#: .\models.py:440
 msgid "Person"
 msgstr ""
 
-#: .\models.py:469
+#: .\models.py:441
 msgid "Persons"
 msgstr ""
 
-#: .\models.py:543
+#: .\models.py:515 .\models.py:775
 msgid "Company"
 msgstr ""
 
-#: .\models.py:544
+#: .\models.py:516
 msgid "Companies"
 msgstr ""
 
-#: .\models.py:547
+#: .\models.py:519
 msgid "VAT id"
 msgstr ""
 
-#: .\models.py:552
+#: .\models.py:524
 msgid "Company type"
 msgstr ""
 
-#: .\models.py:600
+#: .\models.py:584
 msgid "Role Type"
 msgstr ""
 
-#: .\models.py:601
+#: .\models.py:585
 msgid "Role Types"
 msgstr ""
 
-#: .\models.py:618
+#: .\models.py:601
 msgid "Contact Person"
 msgstr ""
 
-#: .\models.py:619
+#: .\models.py:602
 msgid "Contact Persons"
 msgstr ""
 
-#: .\models.py:629
+#: .\models.py:612
 msgid "Contact Role"
 msgstr ""
 
-#: .\models.py:690
+#: .\models.py:673
 msgid "Contact persons"
 msgstr ""
 
-#: .\models.py:697
+#: .\models.py:680
 msgid "Contact for"
 msgstr ""
 
-#: .\models.py:809
+#: .\models.py:781
+msgid "represented by"
+msgstr ""
+
+#: .\models.py:830
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:818
+#: .\models.py:839
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:820
+#: .\models.py:841
 msgid "The Company to be used as sender in documents."
 msgstr ""
 
-#: .\models.py:837
+#: .\models.py:858
 msgid "Contacts"
 msgstr ""

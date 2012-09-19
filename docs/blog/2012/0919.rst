@@ -2,10 +2,16 @@
 ========
 
 Endspurt vor Release 1.5.0:
-Fehlersuche "Keine weiteren Records" (Lino.show_detail muss pv nach base_params setzen)                                                 
-Übersetzungen                                                       
-Clients.get_title                                                   
-alte Felder jetzt wirklich raus                                     
-Lino.get_reminder_generators_by_user
-Client.update_reminders                                                    
+Fehlersuche "Keine weiteren Records" (Lino.show_detail muss pv nach base_params setzen).
+Übersetzungen.
+Clients.get_title.
 
+Alte Felder `coach1`, `coach2`, `coached_from` und `coached_until` jetzt wirklich aus Client raus.
+Lino.get_reminder_generators_by_user.
+Client.update_reminders.
+
+Migrate: wenn coach1 == coach2 ist, nur ein Coaching erstellen.
+
+broker und faculty zurück in den Reiter Status.
+
+Im Reiter Kompetenzen zeigten alle drei tabellen die gleiche Info.

@@ -824,7 +824,7 @@ class Actor(object):
         #~ pass
         
     @classmethod
-    def after_site_setup(self):
+    def after_site_setup(self,site):
         #~ raise "20100616"
         #~ assert not self._setup_done, "%s.setup() called again" % self
         if self._setup_done:

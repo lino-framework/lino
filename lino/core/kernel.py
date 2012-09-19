@@ -472,7 +472,7 @@ def startup_site(self):
         
         for a in actors.actors_list:
             #~ a.setup()
-            a.after_site_setup()
+            a.after_site_setup(self)
             
         """
         resolve_virtual_fields() comes after after_site_setup() because after_site_setup()

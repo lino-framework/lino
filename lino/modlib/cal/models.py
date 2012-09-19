@@ -1287,6 +1287,18 @@ class TasksByController(Tasks):
     #~ hidden_columns = set('owner_id owner_type'.split())
 
 if settings.LINO.user_model:    
+  
+    #~ class RemindersByUser(dd.Table):
+    class TasksByUser(Tasks):
+        """
+        Shows the list of automatically generated tasks for this user.
+        """
+        #~ model = Task
+        #~ label = _("Reminders")
+        master_key = 'user'
+        #~ column_names = "start_date summary *"
+        #~ order_by = ["start_date"]
+        #~ filter = Q(auto_type__isnull=False)
         
     class MyTasks(Tasks,mixins.ByUser):
         required = dict(user_groups='office',auth=True)
@@ -1963,17 +1975,6 @@ class UpdateReminders(actions.RowAction):
         logger.info(msg)
         return ar.ui.success_response(**kw)
         
-class RemindersByUser(dd.Table):
-    """
-    Shows the list of automatically generated tasks for this user.
-    """
-    model = Task
-    label = _("Reminders")
-    master_key = 'user'
-    column_names = "start_date summary *"
-    order_by = ["start_date"]
-    filter = Q(auto_type__isnull=False)
-    
 
 from lino import models as lino
 
@@ -2058,9 +2059,9 @@ def site_setup(site):
     cal.MembershipsByUser
     """)
     site.modules.users.Users.add_detail_tab('cal',"""
-    cal_left:30 cal.RemindersByUser:60
+    cal_left:30 cal.TasksByUser:60
     """,MODULE_LABEL,required=dict(user_groups='office'))
-    #~ site.modules.users.Users.add_detail_tab('cal.RemindersByUser')
+    #~ site.modules.users.Users.add_detail_tab('cal.TasksByUser')
     
     
     

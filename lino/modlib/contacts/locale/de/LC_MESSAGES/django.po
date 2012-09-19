@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-29 05:41+0100\n"
+"POT-Creation-Date: 2012-09-19 10:13+0100\n"
 "PO-Revision-Date: 2012-06-08 11:19+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
@@ -135,96 +135,100 @@ msgstr "Alle %s"
 msgid "Birth date"
 msgstr "Geburtsdatum"
 
-#: .\models.py:376
+#: .\models.py:369
 msgid "Age"
 msgstr "Alter"
 
-#: .\models.py:380
+#: .\models.py:373
 msgid "unknown"
 msgstr "unbekannt"
 
-#: .\models.py:381
+#: .\models.py:374
 #, python-format
 msgid "%d years"
 msgstr "%d Jahre"
 
-#: .\models.py:416
+#: .\models.py:390
 msgid "First name"
 msgstr "Vorname"
 
-#: .\models.py:421
+#: .\models.py:395
 msgid "Last name"
 msgstr "Familienname"
 
-#: .\models.py:425
+#: .\models.py:399
 msgid "Title"
 msgstr "Anrede"
 
-#: .\models.py:468
+#: .\models.py:440
 msgid "Person"
 msgstr "Person"
 
-#: .\models.py:469
+#: .\models.py:441
 msgid "Persons"
 msgstr "Personen"
 
-#: .\models.py:543
+#: .\models.py:515 .\models.py:775
 msgid "Company"
 msgstr "Organisation"
 
-#: .\models.py:544
+#: .\models.py:516
 msgid "Companies"
 msgstr "Organisationen"
 
-#: .\models.py:547
+#: .\models.py:519
 msgid "VAT id"
 msgstr "MWSt.-Nr."
 
-#: .\models.py:552
+#: .\models.py:524
 msgid "Company type"
 msgstr "Organisationsart"
 
-#: .\models.py:600
+#: .\models.py:584
 msgid "Role Type"
 msgstr "Funktion"
 
-#: .\models.py:601
+#: .\models.py:585
 msgid "Role Types"
 msgstr "Funktionen"
 
-#: .\models.py:618
+#: .\models.py:601
 msgid "Contact Person"
 msgstr "Kontaktperson"
 
-#: .\models.py:619
+#: .\models.py:602
 msgid "Contact Persons"
 msgstr "Kontaktpersonen"
 
-#: .\models.py:629
+#: .\models.py:612
 msgid "Contact Role"
 msgstr "Funktion"
 
-#: .\models.py:690
+#: .\models.py:673
 msgid "Contact persons"
 msgstr "Kontaktpersonen"
 
-#: .\models.py:697
+#: .\models.py:680
 msgid "Contact for"
 msgstr "Kontaktperson für"
 
-#: .\models.py:809
+#: .\models.py:781
+msgid "represented by"
+msgstr "Vertreten durch"
+
+#: .\models.py:830
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste Partnernummer"
 
-#: .\models.py:818
+#: .\models.py:839
 msgid "The company that runs this site"
 msgstr "Firma, die diesen Site betreibt"
 
-#: .\models.py:820
+#: .\models.py:841
 msgid "The Company to be used as sender in documents."
 msgstr ""
 
-#: .\models.py:837
+#: .\models.py:858
 msgid "Contacts"
 msgstr "Kontakte"
 
@@ -254,9 +258,6 @@ msgstr "Kontakte"
 
 #~ msgid "Sex"
 #~ msgstr "Geschlecht"
-
-#~ msgid "represented by"
-#~ msgstr "Vertreten durch"
 
 #~ msgid "Designation"
 #~ msgstr "Bezeichnung"

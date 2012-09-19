@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-29 05:43+0100\n"
+"POT-Creation-Date: 2012-09-19 10:13+0100\n"
 "PO-Revision-Date: 2012-08-29 07:45+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -16,49 +16,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:46
+#: .\models.py:45
 msgid "Account Chart"
 msgstr "Kontenplan"
 
-#: .\models.py:47
+#: .\models.py:46
 msgid "Account Charts"
 msgstr "Kontenpläne"
 
-#: .\models.py:60
+#: .\models.py:59
 msgid "Account Group"
 msgstr "Kontengruppe"
 
-#: .\models.py:61
+#: .\models.py:60
 msgid "Account Groups"
 msgstr "Kontengruppen"
 
-#: .\models.py:67
-#: .\models.py:95
+#: .\models.py:66 .\models.py:98
 msgid "Introduction"
 msgstr "Einleitung"
 
-#: .\models.py:90
+#: .\models.py:89
 msgid "Account"
 msgstr "Konto"
 
-#: .\models.py:91
-#: .\models.py:139
+#: .\models.py:90 .\models.py:146
 msgid "Accounts"
 msgstr "Konten"
 
-#: .\models.py:123
+#: .\models.py:130
 msgid "Sales account"
 msgstr "Konto für Verkäufe"
 
-#: .\models.py:126
+#: .\models.py:133
 msgid "The account to move when this product is used in a sales invoice."
 msgstr ""
 
-#: .\models.py:131
+#: .\models.py:138
 msgid "Purchases account"
 msgstr "Konto für Einkäufe"
 
-#: .\models.py:134
+#: .\models.py:141
 msgid "The account to move when this product is used in a purchases invoice."
 msgstr ""
 
@@ -147,8 +145,8 @@ msgstr "Kapital"
 
 #~ msgid "Liabilities & Assets"
 #~ msgstr "Verpflichtungen & Vermögen"
-#~ msgctxt "debts"
 
+#~ msgctxt "debts"
 #~ msgid "Summary"
 #~ msgstr "Zusammenfassung"
 

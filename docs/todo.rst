@@ -4,6 +4,11 @@ To-do list
 Short-term
 ----------
 
+#.  Bestehende Person zu einem Klienten machen. 
+    Statt "AJAX communication failed" sollte er zumindest sagen 
+    "IntegrityError: column national_id is not unique", oder (die Luxus-Version) 
+    "Kann Person X nicht zu einem Klienten machen, weil Klient Y noch keine NISS bekommen hat"
+
 #.  Wenn der Begleitungszeitraum einer *Person* geändert wird, merkt Lino nicht, 
     wenn dadurch ein Vertrag ungültig wird.                                                      
 

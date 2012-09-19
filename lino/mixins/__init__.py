@@ -248,8 +248,8 @@ class CreatedModified(dd.Model):
     class Meta:
         abstract = True
         
-    created = models.DateTimeField(editable=False)
-    modified = models.DateTimeField(editable=False)
+    created = models.DateTimeField(_("Created"),editable=False)
+    modified = models.DateTimeField(_("Modified"),editable=False)
     
     def save(self, *args, **kwargs):
         '''

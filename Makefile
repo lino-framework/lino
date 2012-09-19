@@ -5,7 +5,7 @@ LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 MODULES = accounts ledger households outbox cal thirds products properties contacts countries notes sales finan uploads users postings
 TESTS_OPTIONS = --verbosity=2 --traceback
 MMOPTS := -s -a --settings lino.apps.sphinxdocs.settings
-CMOPTS := --settings lino.apps.pcsw.settings
+CMOPTS := --settings lino.apps.sphinxdocs.settings
 
 .PHONY: mm cm makedocs tests sdist
 

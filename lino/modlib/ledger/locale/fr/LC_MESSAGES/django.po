@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-29 05:40+0100\n"
+"POT-Creation-Date: 2012-09-19 10:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,51 +21,51 @@ msgstr ""
 msgid "Narration"
 msgstr ""
 
-#: .\models.py:375
+#: .\models.py:376
 msgid "Debit"
 msgstr ""
 
-#: .\models.py:381
+#: .\models.py:382
 msgid "Credit"
 msgstr ""
 
-#: .\models.py:412
+#: .\models.py:413
 msgid "State"
 msgstr ""
 
-#: .\models.py:414
+#: .\models.py:415
 msgid "Booked"
 msgstr ""
 
-#: .\models.py:414
+#: .\models.py:415
 msgid "Ready to sign"
 msgstr ""
 
-#: .\models.py:417
+#: .\models.py:418
 msgid "Paid"
 msgstr ""
 
-#: .\models.py:426
+#: .\models.py:427
 msgid "Invoice"
 msgstr ""
 
-#: .\models.py:427
+#: .\models.py:428
 msgid "Invoices"
 msgstr ""
 
-#: .\models.py:429
+#: .\models.py:430
 msgid "Your reference"
 msgstr ""
 
-#: .\models.py:432
+#: .\models.py:433
 msgid "Due date"
 msgstr ""
 
-#: .\models.py:492
+#: .\models.py:490
 msgid "General"
 msgstr ""
 
-#: .\models.py:497 .\models.py:548
+#: .\models.py:495 .\models.py:545
 msgid "Ledger"
 msgstr ""
 

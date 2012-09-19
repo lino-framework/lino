@@ -1,0 +1,130 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-19 09:54+0100\n"
+"PO-Revision-Date: 2012-09-19 10:58+0100\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.3\n"
+
+#: .\models.py:67
+msgid "State"
+msgstr "Status"
+
+#: .\models.py:69
+msgid "Booked"
+msgstr "Gebucht"
+
+#: .\models.py:69
+msgid "Ready to sign"
+msgstr "Zu unterschreiben"
+
+#: .\models.py:70
+msgid "Signed"
+msgstr "Unterschrieben"
+
+#: .\models.py:71
+msgid "Sent"
+msgstr "Versendet"
+
+#: .\models.py:72
+msgid "Paid"
+msgstr "Bezahlt"
+
+#: .\models.py:82
+msgid "Payment Term"
+msgstr "Zahlungsbedingung"
+
+#: .\models.py:83
+msgid "Payment Terms"
+msgstr "Zahlungsbedingungen"
+
+#: .\models.py:109
+msgid "Invoicing Mode"
+msgstr "Fakturationsmodus"
+
+#: .\models.py:110
+msgid "Invoicing Modes"
+msgstr "Fakturationsmodi"
+
+#: .\models.py:113
+msgid "Additional fee charged when using this invoicing mode."
+msgstr ""
+
+#: .\models.py:141
+msgid "Shipping Mode"
+msgstr "Lieferart"
+
+#: .\models.py:142
+msgid "Shipping Modes"
+msgstr "Lieferarten"
+
+#: .\models.py:163
+msgid "Sales Rule"
+msgstr "Verkaufsregel"
+
+#: .\models.py:164
+msgid "Sales Rules"
+msgstr "Verkaufsregeln"
+
+#: .\models.py:186
+msgid "Customer"
+msgstr "Kunde"
+
+#: .\models.py:187
+msgid "Customers"
+msgstr "Kunden"
+
+#: .\models.py:273 .\models.py:590
+msgid "Discount"
+msgstr "Ermäßigung"
+
+#: .\models.py:360
+msgid "Order"
+msgstr "Auftrag"
+
+#: .\models.py:361
+msgid "Orders"
+msgstr "Aufträge"
+
+#: .\models.py:542
+msgid "Invoice"
+msgstr "Rechnung"
+
+#: .\models.py:543
+msgid "Invoices"
+msgstr "Rechnungen"
+
+#: .\models.py:553
+msgid "Date of payment"
+msgstr "Zahlungsziel"
+
+#: .\models.py:589
+msgid "Description"
+msgstr "Beschreibung"
+
+#: .\models.py:631
+msgid "General"
+msgstr "Allgemein"
+
+#: .\models.py:636
+msgid "Ledger"
+msgstr ""
+
+#: .\models.py:814
+msgid "is Customer"
+msgstr "ist Kunde"
+
+#: .\models.py:819
+msgid "Sales"
+msgstr "Verkauf"

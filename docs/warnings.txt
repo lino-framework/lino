@@ -1,4 +1,3 @@
-WARNING: intersphinx inventory ['http://packages.python.org/lino-welfare/en', None] not fetchable due to <type 'exceptions.AttributeError'>: 'list' object has no attribute 'find'
 T:\hgwork\lino\docs\admin\install_apache.rst:2: (WARNING/2) Duplicate explicit target name: "*".
 T:\hgwork\lino\docs\admin\install_debian.rst:90: (ERROR/3) Unknown target name: "set up your python path".
 T:\hgwork\lino\docs\admin\oood.rst:47: (WARNING/2) Literal block expected; none found.
